@@ -1,0 +1,4 @@
+--recursive
+--check-leaks
+--colors
+--full-trace

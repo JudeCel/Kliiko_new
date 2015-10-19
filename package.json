@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/JudeCel/Kliiko#readme",
   "dependencies": {
+    "bcryptjs": "^2.3.0",
     "body-parser": "~1.13.2",
     "config": "^1.16.0",
     "connect-redis": "^3.0.1",
