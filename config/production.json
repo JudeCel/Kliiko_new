@@ -1,0 +1,7 @@
+{
+  "redis_session": {
+    "host": "localhost",
+    "port": "6379"
+  },
+  "session_secret": "ajksi3n#mef_dkdj322$23emf)dsc"
+}
