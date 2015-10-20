@@ -1,3 +1,6 @@
 /node_modules/*
-/public/uploads/*
+/source/static/uploads/*
+/.idea/*
+/config/config.json
+/build/*
 /npm-debug.log
