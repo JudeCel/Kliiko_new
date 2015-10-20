@@ -31,6 +31,16 @@ Use [Sequelize Migrations ](http://docs.sequelizejs.com/en/latest/docs/migration
 ### Run Gulp
 
  TO DO
+Run commands in terminal:
+
+1) npm install gulp -g
+
+2) npm install  (in project folder)
+
+3) gulp ( if some dependenices are missing, please install them by hand for example npm install --save-dev gulp-image)
+
+4) New folder will be created "build" , gulp run front end and back end and does many tasks as concatenation,
+  minification and a lot of other staff.
 
 ### Run Tests
  ```sh
