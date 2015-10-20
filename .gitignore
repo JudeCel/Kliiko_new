@@ -1,5 +1,5 @@
 /node_modules/*
-/source/static/uploads/*
+/static/uploads/*
 /.idea/*
 /config/config.json
 /build/*

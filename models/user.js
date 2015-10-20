@@ -3,12 +3,7 @@ var bcrypt = require('bcrypt');
 
 module.exports = (Sequelize, DataTypes) => {
   var User = Sequelize.define('User', {
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-      allowNull: false
-    },
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, allowNull: false },
     first_name: {type: DataTypes.INTEGER, allowNull: false},
     last_name: {type: DataTypes.INTEGER, allowNull: false},
     email: {type: DataTypes.STRING, allowNull: false, unique: true},
@@ -34,11 +29,7 @@ module.exports = (Sequelize, DataTypes) => {
     current_sign_in_ip: {type : DataTypes.STRING, allowNull: true},
     last_sign_in_ip: {type : DataTypes.STRING, allowNull: true},
     created_at: {type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW},
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW
-    },
+    updated_at: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW},
     promo_code: {type: DataTypes.INTEGER, allowNull: true}
   }, { hooks: {
         beforeValidate: (user, options) => {

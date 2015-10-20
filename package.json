@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/JudeCel/Kliiko#readme",
   "devDependencies": {
+    "chai": "^3.3.0",
     "gulp": "*",
     "gulp-autoprefixer": "*",
     "gulp-concat": "*",
@@ -42,7 +43,8 @@
     "gulp-strip-debug": "*",
     "gulp-uglify": "*",
     "gulp-utf8-convert": "*",
-    "gulp-util": "^3.0.6"
+    "gulp-util": "^3.0.6",
+    "mocha": "^2.3.3"
   },
   "dependencies": {
     "bcryptjs": "^2.3.0",

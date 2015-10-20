@@ -1,4 +1,7 @@
+--require ./test/common.js
 --recursive
 --check-leaks
 --colors
+--timeout 60000
+--slow 200
 --full-trace
