@@ -30,7 +30,6 @@ Use [Sequelize Migrations ](http://docs.sequelizejs.com/en/latest/docs/migration
 
 ### Run Gulp
 
- TO DO
 Run commands in terminal:
 
 1) npm install gulp -g
