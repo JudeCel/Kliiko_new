@@ -54,12 +54,12 @@ gulp.task('alex', function() {
 var
 	devBuild = ((process.env.NODE_ENV || 'development').trim().toLowerCase() !== 'production'),
 
-	source = 'source/',
+	source = './',
 	dest = 'build/',
 
 	config = {
-		in: 'config/**/*.*',
-		out: dest + 'config/'
+		in: source + 'config/**/*.*',
+		out: dest
 	},
 	models = {
 		in: source + 'models/**/*.*',
@@ -71,8 +71,8 @@ var
 		out: dest
 	},
 
-	bin1 = {
-		in: source + 'bin/*.*',
+	bin = {
+		in: source + 'bin/*',
 		out: dest + 'bin/'
 	},
 
@@ -202,12 +202,12 @@ gulp.task('config', function() {
 		.pipe(gulp.dest(config.out));
 });
 
-gulp.task('bin1', function() {
-	return gulp.src(bin1.in)
+gulp.task('bin', function() {
+	return gulp.src(bin.in)
 
-		.pipe(newer(bin1.out))
+		.pipe(newer(bin.out))
 
-		.pipe(gulp.dest(bin1.out));
+		.pipe(gulp.dest(bin.out));
 });
 
 gulp.task('package1', function() {
@@ -323,7 +323,10 @@ gulp.task('browsersync', function() {
 });
 
 // default task
-gulp.task('default', ['ejs', 'bin1', 'package1', 'config', 'files', 'test', 'models', 'routes', 'images', 'fonts', 'sass', 'css1', 'js', 'browsersync', 'alex'], function() {
+gulp.task('default',['ejs', 'bin', 'package1', 'config', 'files', 'test',
+										 'models', 'routes', 'images', 'fonts', 'sass', 'css1',
+										 'js', 'browsersync', 'alex'
+										 ], function() {
 
 	// html changes
 	gulp.watch(ejs.watch, ['ejs', browsersync.reload]);
@@ -333,7 +336,7 @@ gulp.task('default', ['ejs', 'bin1', 'package1', 'config', 'files', 'test', 'mod
 
 	gulp.watch(config.in, ['config']);
 	gulp.watch(models.in, ['models']);
-	gulp.watch(bin1.in, ['bin1']);
+	gulp.watch(bin.in, ['bin']);
 	gulp.watch(test.in, ['test']);
 	gulp.watch(files.in, ['files']);
 	gulp.watch(package1.in, ['package1']);
