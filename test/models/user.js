@@ -20,7 +20,7 @@ describe('User', () => {
       }
       User.build(attrs).validate().done(function(errors, user) {
         assert.equal(errors, undefined);
-        done()
+        done();
       });
     });
   });
