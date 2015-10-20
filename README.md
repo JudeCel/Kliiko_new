@@ -18,8 +18,15 @@ Redis 3.0.5
 ```sh
  cd project_path
  npm install
- npm install mocha -g
- npm install gulp -g
+```
+
+1) Copy  ```./config/config.json.sample``` to  ``` ./config/config.json```
+
+2) Need create databases with names from ``` ./config/config.json```
+
+3) Need run migrations
+```sh
+  node node_modules/.bin/sequelize
 ```
 
 ### Database ORM
@@ -32,16 +39,17 @@ Use [Sequelize Migrations ](http://docs.sequelizejs.com/en/latest/docs/migration
 
 Run commands in terminal:
 
-1) npm install gulp -g
+1) ``` npm install gulp -g```
 
-2) npm install  (in project folder)
+2) ``` npm install ```  (in project folder)
 
-3) gulp ( if some dependenices are missing, please install them by hand for example npm install --save-dev gulp-image)
+3) ``` gulp ``` ( if some dependenices are missing, please install them by hand for example npm install --save-dev gulp-image)
 
 4) New folder will be created "build" , gulp run front end and back end and does many tasks as concatenation,
   minification and a lot of other staff.
 
 ### Run Tests
  ```sh
+ npm install mocha -g
  mocha test
  ```
