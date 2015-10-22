@@ -6,11 +6,8 @@ var passport = require('passport');
 
 
 router.use(function (req, res, next) {
-  console.log(req.session);
   next();
 });
-
-
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -40,7 +37,7 @@ router.post('/registration', function(req, res, next) {
 });
 
 router.get('/login', function(req, res, next) {
-  res.render('login', { title: 'Login', error: ""});
+  res.render('login', { user: req.user, title: 'Login', error: ""});
 });
 
 router.post('/login',
@@ -50,5 +47,10 @@ router.post('/login',
     res.redirect('/');
   }
 );
+
+router.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
 
 module.exports = router;

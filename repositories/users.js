@@ -38,6 +38,7 @@ function prepare_erros(error) {
 
 function prepare_params(req, errors) {
   return _.assign({
+    user: req.user,
     title: 'Registration',
     display_name: '',
     first_name: '',
