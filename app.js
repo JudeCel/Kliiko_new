@@ -29,6 +29,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser(config.get("cookie_secret")));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session({
+    store: new RedisStore(config.get("redis_session")),
+    secret: config.get("session_secret"),
+    resave: true, saveUninitialized: false
+}));
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
@@ -59,12 +64,6 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-app.use(session({
-    store: new RedisStore(config.get("redis_session")),
-    secret: config.get("session_secret"),
-    resave: true, saveUninitialized: false,
-    cookie: { secure: true, maxAge: 600000 }
-}));
 
 app.use(passport.initialize());
 app.use(passport.session());

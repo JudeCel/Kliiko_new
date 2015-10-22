@@ -6,11 +6,11 @@ var passport = require('passport');
 
 
 router.use(function (req, res, next) {
-  // let s_id = req.signedCookies.sessionID
-  // console.log(s_id);
   console.log(req.session);
   next();
 });
+
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
