@@ -13,7 +13,7 @@ function create(params, callback) {
   });
 };
 
-function session(email, password, callback) {
+function compare_password(email, password, callback) {
   User.find({where: {email: email}}).done(function(result){
     if (result) {
       bcrypt.compare(password, result.encrypted_password, function(err, res) {
@@ -52,7 +52,8 @@ function prepare_params(req, errors) {
 
 module.exports = {
     create: create,
-    session: session,
+    user: User,
+    compare_password: compare_password,
     prepare_erros: prepare_erros,
     prepare_params: prepare_params
 }

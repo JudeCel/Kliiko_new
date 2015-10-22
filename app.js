@@ -9,17 +9,12 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
-var routes = require('./routes/root');
+
+var usersRepo = require('./repositories/users.js');
+var User  = usersRepo.user;
+var LocalStrategy = require('passport-local').Strategy;
 
 var app = express();
-
-app.use(session({
-    store: new RedisStore(config.get("redis_session")),
-    secret: config.get("session_secret"),
-    resave: true,
-    saveUninitialized: true,
-    cookie: { secure: true }
-}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -31,20 +26,50 @@ app.set('view options', { layout: 'layout.ejs' });
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser(config.get("cookie_secret")));
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+passport.use(new LocalStrategy({
+  usernameField: 'email',
+  passwordField: 'password'
+  },
+  function(username, password, done) {
+    usersRepo.compare_password(username, password, function(failed, result) {
+      if (failed) {
+        return done(null, false);
+      }else{
+        return done(null, result);
+      }
+    });
+  }
+));
 
 passport.serializeUser(function(user, done) {
   done(null, {id: user.id, email: user.email, display_name: user.display_name});
 });
 
-passport.deserializeUser(function(user, done) {
-  done(null, {id: user.id, email: user.email, display_name: user.display_name});
+passport.deserializeUser(function(id, done) {
+  User.find({where: {id: id}}).done(function(result){
+    if (result) {
+      done(null, {id: result.id, email: result.email, display_name: result.display_name});
+    }else{
+      done("not found", null);
+    };
+  });
 });
+
+app.use(session({
+    store: new RedisStore(config.get("redis_session")),
+    secret: config.get("session_secret"),
+    resave: true, saveUninitialized: false,
+    cookie: { secure: true, maxAge: 600000 }
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
+var routes = require('./routes/root');
 app.use('/', routes);
 
 // catch 404 and forward to error handler
