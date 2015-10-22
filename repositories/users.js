@@ -13,21 +13,19 @@ function create(params, callback) {
   });
 };
 
-function session(req, email, password, callback) {
+function session(email, password, callback) {
   User.find({where: {email: email}}).done(function(result){
     if (result) {
       bcrypt.compare(password, result.encrypted_password, function(err, res) {
-        if (err) { return callback(true, false) }
+        if (err) { return callback(true, null) }
         if (res == true) {
-          req.login(result, function(err) {
-            if (err) { return callback(true, false) }
-            return callback(false, true)
-          });
+          callback(null, result);
         }
       });
+    }else {
+      callback(true, null);
     };
   });
-  return callback(true, false)
 };
 
 function prepare_erros(error) {

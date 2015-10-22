@@ -8,7 +8,7 @@ module.exports = (Sequelize, DataTypes) => {
     last_name: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} } },
     email: {type: DataTypes.STRING, allowNull: false, unique: {args: true, msg: "already taken"},
     validate: { notEmpty: {args: true, msg: "can't be empty"} , isEmail : {args: true, msg: "is wrong format"} }},
-    display_name: {type: DataTypes.STRING, allowNull: false, unique: true, validate: { notEmpty: {args: true, msg: "can't be empty"} }},
+    display_name: {type: DataTypes.STRING, allowNull: false, unique: {args: true, msg: "already taken"}, validate: { notEmpty: {args: true, msg: "can't be empty"} }},
     encrypted_password:  {type : DataTypes.STRING, allowNull: false, validate: { notEmpty: true}},
     password: {
       type: DataTypes.VIRTUAL,

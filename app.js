@@ -9,7 +9,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
-
 var routes = require('./routes/root');
 
 var app = express();
@@ -34,6 +33,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+passport.serializeUser(function(user, done) {
+  done(null, {id: user.id, email: user.email, display_name: user.display_name});
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, {id: user.id, email: user.email, display_name: user.display_name});
+});
+
 app.use(passport.initialize());
 app.use(passport.session());
 
