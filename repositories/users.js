@@ -7,13 +7,13 @@ function create(params, callback) {
   User.create(params).then(function(result) {
     return callback(null, result);
   }).catch(User.sequelize.ValidationError, function(err) {
-    return callback(err, this);
+    return callback(prepareErrors(err, params), this);
   }).catch(function(err) {
-    return callback(err, this);
+    return callback(prepareErrors(err, params), this);
   });
 };
 
-function compare_password(email, password, callback) {
+function comparePassword(email, password, callback) {
   User.find({where: {email: email}}).done(function(result){
     if (result) {
       bcrypt.compare(password, result.encrypted_password, function(err, res) {
@@ -28,15 +28,29 @@ function compare_password(email, password, callback) {
   });
 };
 
-function prepare_erros(error) {
-  let errors = {};
+function prepareErrors(error, params) {
+  let errors = validateVirtualAttrs(params)
   _.map(error.errors, function(n) {
     errors[n.path] = _.startCase(n.path) +" " +n.message;
   });
   return errors
 };
 
-function prepare_params(req, errors) {
+
+function validateVirtualAttrs(params){
+  let errors = {}
+  console.log(params);
+  if ((params['t_and_c'] !== 'on')) {
+    errors['t_and_c'] = 'Need Accept TOS'
+  }
+  if ((params['password_confirmation'] !== params['password'])) {
+    errors['password'] = 'Password need to be eql with Password Confirmation'
+    errors['password_confirmation'] = 'Password confirmation need to be eql with Password'
+  }
+  return errors
+}
+
+function prepareParams(req, errors) {
   return _.assign({
     user: req.user,
     title: 'Registration',
@@ -54,7 +68,6 @@ function prepare_params(req, errors) {
 module.exports = {
     create: create,
     user: User,
-    compare_password: compare_password,
-    prepare_erros: prepare_erros,
-    prepare_params: prepare_params
+    comparePassword: comparePassword,
+    prepareParams: prepareParams
 }

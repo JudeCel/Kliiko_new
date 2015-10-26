@@ -29,10 +29,15 @@
         <span class="has-error"><%= errors.password_confirmation%></span>
 				<input type="password" name="password_confirmation" id="password_confirmation" class="form-control input-lg" placeholder="Confirm Password" tabindex="6">
 			</div>
+
 			<div class="row">
 				<div class="col-xs-4 col-sm-3 col-md-3">
-          <span class="has-error"><%= errors.t_and_c%></span>
-				<input type="checkbox" name="t_and_c" id="t_and_c" value="<%= t_and_c %>"> Agree
+        <span class="has-error"><%= errors.t_and_c%></span>
+        <% if (!!t_and_c ){ %>
+				      <input type="checkbox" name="t_and_c" id="t_and_c" checked > Agree
+        <% }else {%>
+          <input type="checkbox" name="t_and_c" id="t_and_c"> Agree
+        <% }%>
 			</div>
 
 			<hr class="colorgraph">
