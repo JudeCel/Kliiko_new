@@ -1,6 +1,6 @@
 module.exports = function () {
     var client = './src/client/';
-    var clientApp = client + 'app/';
+    var clientApp = './public/';
     var temp = './.tmp/';
     var server = './bin/';
     var config = {
@@ -21,7 +21,7 @@ module.exports = function () {
         index: client + 'index.html',
         js: [
             server + '**/*.*/',
-            clientApp + '**/*.modules.js',
+            clientApp + '**/*.js',
             clientApp + '**/*.js',
             '!' + clientApp + '**/*.spec.js'
         ],
