@@ -27,12 +27,12 @@ app.set('view options', { layout: 'layout.ejs' });
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser(config.get("cookie_secret")));
+app.use(cookieParser(config.get("cookieSecret")));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-    store: new RedisStore(config.get("redis_session")),
-    secret: config.get("session_secret"),
+    store: new RedisStore(config.get("redisSession")),
+    secret: config.get("sessionSecret"),
     resave: true, saveUninitialized: false
 }));
 
@@ -52,9 +52,9 @@ passport.use(new LocalStrategy({
 ));
 
 passport.use(new FacebookStrategy({
-    clientID: '895147450520688',
-    clientSecret: '5c18ba36fe2a55ae05fd64fe41bcb002',
-    callbackURL: "http://localhost:3000/auth/facebook/callback"
+    clientID: config.get("facebookclientID") ,
+    clientSecret: config.get("facebookClientSecret") ,
+    callbackURL: config.get("facebookCallbackURL")
   },
   function(accessToken, refreshToken, profile, done) {
     console.log(profile);
