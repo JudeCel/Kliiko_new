@@ -45,6 +45,8 @@ Run commands in terminal:
 
 3) ``` npm install ```  (in project folder)
 
+4) RUN GULP   ``` gulp ```
+
 
 ### Run Tests
  ```sh
