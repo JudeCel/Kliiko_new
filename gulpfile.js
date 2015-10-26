@@ -1,359 +1,217 @@
-// Gulp.js configuration
-
-// include gulp and plugins
-var
-	gulp = require('gulp'),
-	newer = require('gulp-newer'),
-	concat = require('gulp-concat'),
-	preprocess = require('gulp-preprocess'),
-	htmlclean = require('gulp-htmlclean'),
-	imagemin = require('gulp-imagemin'),
-	imageResize = require('gulp-image-resize'),
-	imacss = require('gulp-imacss'),
-	sass = require('gulp-sass'),
-	pleeease = require('gulp-pleeease'),
+// gulp task manager
+var gulp = require('gulp'),
 	jshint = require('gulp-jshint'),
-	deporder = require('gulp-deporder'),
-	stripdebug = require('gulp-strip-debug'),
-	uglify = require('gulp-uglify'),
-	size = require('gulp-size'),
-	minifyCSS = require('gulp-minify-css'),
-	rename = require('gulp-rename'),
+	jscs = require('gulp-jscs'),
+	util = require('gulp-util'),
+	gulpPrint = require('gulp-print'),
+	gulpif = require('gulp-if'),
+	args = require('yargs').argv,
+	config = require('./gulp.config')(),
+	less = require('gulp-less'),
 	autoprefixer = require('gulp-autoprefixer'),
 	del = require('del'),
-	fileinclude = require('gulp-file-include'),
-	browsersync = require('browser-sync'),
-    gutil = require('gulp-util'),
-	pkg = require('./package.json'),
-
-nodemon = require('gulp-nodemon'),
-notify = require('gulp-notify'),
-livereload = require('gulp-livereload');
-
-// Task
-gulp.task('alex', function() {
-	// listen for changes
-	livereload.listen();
-	// configure nodemon
-	nodemon({
-		// the script to run the app
-		script: 'build/bin/www',
-		ext: 'js'
-	}).on('restart', function(){
-		// when the app has restarted, run livereload.
-		gulp.src('build/bin/www')
-			.pipe(livereload())
-			.pipe(notify('Reloading page, please wait...'));
-	})
-})
+	wiredep = require('wiredep'),
+	inject = require('gulp-inject'),
+	nodemon = require('gulp-nodemon'),
+	plumber = require('gulp-plumber'),
+	browserSync = require('browser-sync'),
+	taskListing = require('gulp-task-listing'),
+	newer = require('gulp-newer'),
+	templateCache = require('gulp-angular-templatecache'),
+	imagemin = require('gulp-imagemin'),
+	useref = require('gulp-useref'),
+	minifyHtml = require('gulp-minify-html'),
+	port = process.env.PORT || config.defaultPort;
 
 
 
+gulp.task('help', taskListing);
+gulp.task('default', ['help']);
 
-// file locations
-var
-	devBuild = ((process.env.NODE_ENV || 'development').trim().toLowerCase() !== 'production'),
+gulp.task('vet', function () {
+	log('Analyzing source with JSHINT and JSCS');
+	gulp.src(config.alljs)
+		.pipe(gulpif(args.verbose, gulpPrint()))
+		.pipe(jscs())
+		.pipe(jshint())
+		.pipe(jshint.reporter('jshint-stylish', {verbose: true}));
+	//  .pipe(jshint.reporter('fail'))
 
-	source = './',
-	dest = 'build/',
+});
 
-	config = {
-		in: source + 'config/**/*.*',
-		out: dest
-	},
-	models = {
-		in: source + 'models/**/*.*',
-		out: dest + 'models/'
-	},
+gulp.task('templatecache', function (){
+	log('Creating AngularJS $templateCache');
 
-	package1 = {
-		in:  'package.json',
-		out: dest
-	},
+	return gulp
+		.src(config.htmlTemplates)
+		.pipe(minifyHtml({empty: true}))
+		.pipe(templateCache(config.templateCache.file,
+			config.templateCache.options))
+		.pipe(gulp.dest(config.temp));
 
-	bin = {
-		in: source + 'bin/*',
-		out: dest + 'bin/'
-	},
+});
 
-	test = {
-		in: source + 'test/**/*.*',
-		out: dest + 'test/'
-	},
+gulp.task('optimize', ['inject'], function(){
+	log('Optimizing the javascript, css, html');
+	var templateCache = config.temp + config.templateCache.file;
+	var assets = useref.assets({searchPath: './'});
+	return gulp
+		.src(config.index)
+		.pipe(plumber())
+		.pipe(inject(gulp.src(templateCache,{read: false}), {starttag: '<!--inject:templates:js-->'}))
+		.pipe(assets)
+		.pipe(assets.restore())
+		.pipe(useref())
+		.pipe(gulp.dest(config.build));
+} );
 
-	files = {
-		in: source + '*.*',
-		out: dest
-	},
+gulp.task('clean-code', function(done){
+	var files = [].concat(
+		config.temp + '**/*.js',
+		config.build + '**/*.html,',
+		config.build + 'js/**/*.js'
 
-	ejs = {
-		in: source + 'views/*.ejs',
-		watch: [source + 'views/*.ejs'],
-		out: dest + 'views/',
-		context: {
-			devBuild: devBuild,
-			author: pkg.author,
-			version: pkg.version
-		}
-	},
+	);
+	clean(files,done);
+});
 
-	images = {
-		in: source + 'static/images/*.*',
-		out: dest + 'static/images/'
-	},
+gulp.task('styles', function () {
+	log('Compiling Less --> CSS');
+	return gulp
+		.src(config.less)
+		.pipe(plumber())
+		.pipe(less())
 
-	imguri = {
-		in: source + 'static/images/inline/*',
-		out: source + 'static/scss/images/',
-		filename: '_datauri.scss',
-		namespace: 'img'
-	},
+		//   .on('error', errorLoger)
+		.pipe(autoprefixer({browsers: ['last 2 version', '> 5%']}))
+		.pipe(gulp.dest(config.temp))
+});
+gulp.task('images', function(){
+	log('Copying and compressing the images');
+	return gulp
+		.src(config.images)
+		.pipe(newer(config.build + 'images'))
+		.pipe(imagemin({optimization: 4}))
+		.pipe(gulp.dest(config.build + 'images'))
+});
+gulp.task('fonts', function(){
+	return gulp
+		.src(config.fonts)
+		.pipe(gulp.dest(config.build + 'fonts'));
+});
+gulp.task('wiredep', function () {
+	log("Wire up the bower css js and our app js and css");
+	var options = config.getWiredepDefaultOptions();
+	var wiredep = require('wiredep').stream;
+	return gulp
+		.src(config.index)
+		.pipe(wiredep(options))
+		.pipe(inject(gulp.src(config.js)))
+		.pipe(gulp.dest(config.client))
 
-	css = {
-		in: source + 'static/scss/main.scss',
-		watch: [source + 'static/scss/**/*', '!' + imguri.out + imguri.filename],
-		out: dest + 'static/css/',
-		sassOpts: {
-			outputStyle: 'nested',
-			imagePath: '../images',
-			precision: 3,
-			errLogToConsole: true
+});
+gulp.task('inject', ['wiredep', 'styles', 'templatecache'], function () {
+	log('Wire up the app css into html and call wiredep');
+
+	return gulp
+		.src(config.index)
+		.pipe(inject(gulp.src(config.css)))
+		.pipe(gulp.dest(config.client))
+
+});
+gulp.task('serve-dev', ['inject'], function () {
+	var isDev = true;
+	var nodeOptions = {
+		script: config.nodeServer,
+		delayTime: 0,
+		env: {
+			'PORT': port,
+			'NOE_ENV': isDev ? 'dev' : 'build'
 		},
-		pleeeaseOpts: {
-			autoprefixer: { browsers: ['last 2 versions', '> 2%'] },
-			rem: ['16px'],
-			pseudoElements: true,
-			mqpacker: true,
-			minifier: !devBuild
-		}
-	},
-
-	fonts = {
-		in: source + 'static/fonts/**/*.*',
-		out: dest + 'static/fonts/'
-	},
-
-	js = {
-		in: source + 'static/js/**/*',
-		out: dest + 'static/js/',
-		filename: 'main.js'
-	},
-	routes = {
-		in: source + 'routes/**/*',
-		out: dest + 'routes/'
-
-	},
-
-
-	syncOpts = {
-		server: {
-			baseDir: dest,
-			index: 'index.html'
-		},
-		open: false,
-		notify: true
+		watch: [config.server]
 	};
+	return nodemon(nodeOptions)
+		.on('restart', ['vet'], function (ev) {
+			log("*** nodemon restarted");
+			log('*** files changed on restart:\n' + ev);
+			setTimeout(function() {
+				browserSync.notify('reloading now ...');
+				browserSync.reload({stream: false});
+			}, config.browserReloadDelay)
+		})
 
-// show build type
-console.log(pkg.name + ' ' + pkg.version + ', ' + (devBuild ? 'development' : 'production') + ' build');
+		.on('start', function () {
+			log("*** nodemon started");
+			startBrowserSync();
+		})
+		.on('crash', function () {
+			log("*** nodemon crashed");
+		})
+		.on('exit', function () {
+			log("*** nodemon exited cleanly");
+		});
 
-// clean the build folder
-gulp.task('clean', function() {
-	del([
-		dest + '*'
-	]);
 });
 
-// build HTML files
-gulp.task('ejs', function() {
-	var page = gulp.src(ejs.in).pipe(preprocess({ context: ejs.context }));
-	if (!devBuild) {
-		page = page
-			.pipe(fileinclude({
-				prefix: '@@',
-				basepath: '@file'}))
-			.pipe(size({ title: 'HTML in' }))
-			.pipe(htmlclean())
-			.pipe(size({ title: 'HTML out' }))
-
+function startBrowserSync() {
+	if (browserSync.active) {
+		return;
 	}
-	return page .pipe(fileinclude({
-		prefix: '@@',
-		basepath: '@file'
-	}))
 
-		.pipe(gulp.dest(ejs.out));
+	function changeEvent(event) {
+		var srcPattern = new RegExp('/.*(?=/' + config.source + ')/');
+		log('File' + event.path.replace(srcPattern, '') + ' ' + event.type);
+	}
+
+	log('Starting browser-sync on port' + port);
+
+	gulp.watch([config.less], ['styles'])
+		.on('change', function (event) {
+			changeEvent(event);
+		});
+
+	var options = {
+		proxy: 'localhost:' + port,
+		port: 3000,
+		files: [config.migrations, config.config, config.repositories, config.models, config.routes, config.views, '!' + config.less
+		],
+		ghostNode: {
+			clicks: true,
+			location: false,
+			forms: true,
+			scroll: true
+		},
+		injectChanges: true,
+		logFileChanges: true,
+		loglevel: 'debug',
+		logPrefix: 'gulp-pattern',
+		notify: true,
+		reloadDelay: 0
+	};
+	browserSync(options);
+}
+gulp.task('clean', function (done) {
+	var files = config.temp + '**/*.css';
+	clean(files, done)
 });
 
-// manage images
-gulp.task('images', function() {
-	return gulp.src(images.in)
-
-		.pipe(newer(images.out))
-		.pipe(imagemin())
-		.pipe(gulp.dest(images.out));
-});
-
-gulp.task('config', function() {
-	return gulp.src(config.in)
-
-		.pipe(newer(config.out))
-
-		.pipe(gulp.dest(config.out));
-});
-
-gulp.task('bin', function() {
-	return gulp.src(bin.in)
-
-		.pipe(newer(bin.out))
-
-		.pipe(gulp.dest(bin.out));
-});
-
-gulp.task('package1', function() {
-	return gulp.src(package1.in)
-
-		.pipe(newer(package1.out))
-
-		.pipe(gulp.dest(package1.out));
-});
-
-gulp.task('files', function() {
-	return gulp.src(files.in)
-
-		.pipe(newer(files.out))
-
-		.pipe(gulp.dest(files.out));
-});
-
-gulp.task('test', function() {
-	return gulp.src(test.in)
-
-		.pipe(newer(test.out))
-
-		.pipe(gulp.dest(test.out));
-});
+gulp.task('default', ['serve-dev']);
 
 
-gulp.task('models', function() {
-	return gulp.src(models.in)
+function clean(path, done) {
+	log('Cleanening:' + util.colors.blue(path));
+	del(path, done);
+}
 
-		.pipe(newer(models.out))
-
-		.pipe(gulp.dest(models.out));
-});
-
-
-
-// convert inline images to dataURIs in SCSS source
-gulp.task('imguri', function() {
-	return gulp.src(imguri.in)
-		.pipe(imagemin())
-		.pipe(imacss(imguri.filename, imguri.namespace))
-		.pipe(gulp.dest(imguri.out));
-});
-
-// copy fonts
-gulp.task('fonts', function() {
-	return gulp.src(fonts.in)
-		.pipe(newer(fonts.out))
-		.pipe(gulp.dest(fonts.out));
-});
-
-// compile Sass
-gulp.task('sass', ['imguri'], function() {
-	return gulp.src(css.in)
-		.pipe(sass(css.sassOpts))
-		.pipe(size({title: 'CSS in '}))
-		.pipe(pleeease(css.pleeeaseOpts))
-		.pipe(size({title: 'CSS out '}))
-		.pipe(gulp.dest(css.out))
-		.pipe(browsersync.reload({ stream: true }));
-});
-
-gulp.task('css1', function(){
-	gulp.src(source +'static/css/*.css')
-		.pipe(minifyCSS())
-		.pipe(rename('bootstrap.min.css'))
-		.pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
-		.pipe(gulp.dest(dest + 'static/css/'))
-		.pipe(browsersync.reload({ stream: true }));
-});
-gulp.task('routes', function() {
-
-		return gulp.src(routes.in)
-			.pipe(newer(routes.out))
-			//	.pipe(jshint())
-			//.pipe(jshint.reporter('default'))
-			//.pipe(jshint.reporter('fail'))
-			.pipe(gulp.dest(routes.out));
-	});
-
-gulp.task('js', function() {
-	if (devBuild) {
-		return gulp.src(js.in)
-			.pipe(newer(js.out))
-		//	.pipe(jshint())
-			//.pipe(jshint.reporter('default'))
-			//.pipe(jshint.reporter('fail'))
-			.pipe(gulp.dest(js.out));
+function log(msg) {
+	if (typeof (msg) === 'object') {
+		for (var item in msg) {
+			if (msg.hasOwnProperty(item)) {
+				util.log(util.colors.blue(msg[item]));
+			}
+		}
 	}
 	else {
-		del([
-			dest + 'js/*'
-		]);
-		return gulp.src(js.in)
-			.pipe(deporder())
-			.pipe(concat(js.filename))
-			.pipe(size({ title: 'JS in '}))
-			.pipe(stripdebug())
-			.pipe(uglify())
-			.pipe(size({ title: 'JS out '}))
-			.pipe(gulp.dest(js.out));
+		util.log(util.colors.blue(msg));
 	}
-});
-
-
-
-
-
-// browser sync
-gulp.task('browsersync', function() {
-	browsersync(syncOpts);
-});
-
-// default task
-gulp.task('default',['ejs', 'bin', 'package1', 'config', 'files', 'test',
-										 'models', 'routes', 'images', 'fonts', 'sass', 'css1',
-										 'js', 'browsersync', 'alex'
-										 ], function() {
-
-	// html changes
-	gulp.watch(ejs.watch, ['ejs', browsersync.reload]);
-
-	// image changes
-	gulp.watch(images.in, ['images']);
-
-	gulp.watch(config.in, ['config']);
-	gulp.watch(models.in, ['models']);
-	gulp.watch(bin.in, ['bin']);
-	gulp.watch(test.in, ['test']);
-	gulp.watch(files.in, ['files']);
-	gulp.watch(package1.in, ['package1']);
-
-
-	// font changes
-	gulp.watch(fonts.in, ['fonts']);
-
-	// sass changes
-	gulp.watch([css.watch, imguri.in], ['sass']);
-
-	gulp.watch(source + 'css/*.css', function () {
-		gulp.run('css1');
-	});
-
-	// javascript changes
-	gulp.watch(js.in, ['js', browsersync.reload]);
-	gulp.watch(routes.in, ['routes', browsersync.reload]);
-
-});
+}
