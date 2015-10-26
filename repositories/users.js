@@ -6,7 +6,6 @@ var bcrypt = require('bcrypt');
 function create(params, callback) {
   validateForCreate(params, function(error, user) {
     if (Object.keys(error).length > 1) {
-      console.log(error);
       return callback(error, user)
     }else {
       createUser(params, function(error, result) {

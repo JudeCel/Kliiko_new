@@ -1,11 +1,12 @@
 "use strict";
 var assert = require('assert');
-var User  = require('./../../models').User;
+var models  = require('./../../models');
+var User  = models.User;
 
 describe('User', () => {
   describe('set encrypte password',  ()=>  {
     before((done) => {
-      User.sync({ force: true }).then(() => {
+      models.sequelize.sync({ force: true }).then(() => {
         done();
       });
     });

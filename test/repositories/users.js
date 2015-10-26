@@ -1,18 +1,19 @@
 "use strict";
 var assert = require('assert');
-var User  = require('./../../models').User;
+var models  = require('./../../models');
+var User  = models.User;
 var UserRepo  = require('./../../repositories/users');
 
 describe('User Repo', () => {
   describe('Create',  () => {
     beforeEach((done) => {
-      User.sync({force: true}).done((error, result) => {
+      models.sequelize.sync({force: true}).done((error, result) => {
         done();
       });
     });
 
     afterEach(function(done) {
-      User.sync({force: true}).done((error, result) => {
+      models.sequelize.sync({force: true}).done((error, result) => {
         done();
       });
     });
