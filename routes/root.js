@@ -15,15 +15,16 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/registration', function(req, res, next) {
-  res.render('registration', users_repo.prepare_params(req));
+  res.render('registration', users_repo.prepareParams(req));
 });
 
 router.post('/registration', function(req, res, next) {
-  users_repo.create(users_repo.prepare_params(req), function(error, result) {
+  users_repo.create(users_repo.prepareParams(req), function(error, result) {
+    console.log(req.body);
     if (error) {
-      res.render('registration', users_repo.prepare_params(req, users_repo.prepare_erros(error)));
+      res.render('registration', users_repo.prepareParams(req, error));
     }else{
-      users_repo.compare_password(result.email, result.password, function(failed, result) {
+      users_repo.comparePassword(result.email, result.password, function(failed, result) {
         if (failed) {
           res.render('login', { title: 'Login', error: "Wrong email or password"})
         }else{

@@ -40,7 +40,7 @@ passport.use(new LocalStrategy({
   passwordField: 'password'
   },
   function(username, password, done) {
-    usersRepo.compare_password(username, password, function(failed, result) {
+    usersRepo.comparePassword(username, password, function(failed, result) {
       if (failed) {
         return done(null, false);
       }else{
