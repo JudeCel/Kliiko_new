@@ -43,9 +43,11 @@ Run commands in terminal:
 
 2) ``` npm install bower -g```
 
-3) ``` npm install ```  (in project folder)
+3) ``` npm install ```  
 
-4) RUN GULP   ``` gulp ```
+4) ``` bower install```
+
+5) RUN GULP   ``` gulp ```
 
 
 ### Run Tests

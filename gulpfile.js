@@ -107,7 +107,7 @@ gulp.task('wiredep', function () {
 		.src(config.index)
 		.pipe(wiredep(options))
 		.pipe(inject(gulp.src(config.js)))
-		.pipe(gulp.dest(config.client))
+		.pipe(gulp.dest(config.layout))
 
 });
 gulp.task('inject', ['wiredep', 'styles', 'templatecache'], function () {
@@ -116,7 +116,7 @@ gulp.task('inject', ['wiredep', 'styles', 'templatecache'], function () {
 	return gulp
 		.src(config.index)
 		.pipe(inject(gulp.src(config.css)))
-		.pipe(gulp.dest(config.client))
+		.pipe(gulp.dest(config.layout))
 
 });
 gulp.task('serve-dev', ['inject'], function () {
