@@ -1,6 +1,5 @@
 "use strict";
 var bcrypt = require('bcrypt');
-var User = require('./user').User;
 
 module.exports = (Sequelize, DataTypes) => {
   var SocialProfile = Sequelize.define('SocialProfile', {
@@ -9,7 +8,7 @@ module.exports = (Sequelize, DataTypes) => {
     providerUserId: {type: DataTypes.STRING, allowNull: false},
     userId: {type: DataTypes.INTEGER, allowNull: false}
   },
-   {indexes: [
+   { indexes: [
       { name: 'SocialProfileProviderIndex',
         method: 'BTREE',
         fields: ['provider']
@@ -18,8 +17,12 @@ module.exports = (Sequelize, DataTypes) => {
         method: 'BTREE',
         fields: ['userId']
       }
-   ]}
+   ],
+   classMethods: {
+        associate: function(models) {
+          SocialProfile.belongsTo(models.User, {foreignKey: 'userId'});
+        }
+      }}
 );
-  // SocialProfile.belongsTo(User, {foreignKey: 'userId'});
   return SocialProfile;
 };

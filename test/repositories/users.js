@@ -41,7 +41,7 @@ describe('User Repo', () => {
         email: "dainis_gmail.com"
       }
 
-      UserRepo.create(attrs, function(err, user) {
+      UserRepo.createUser(attrs, function(err, user) {
         assert.equal(Object.keys(err).length, 3)
         done();
       });

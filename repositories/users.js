@@ -9,16 +9,26 @@ function create(params, callback) {
       console.log(error);
       return callback(error, user)
     }else {
-      User.create(params).then(function(result) {
-        return callback(null, result);
-      }).catch(User.sequelize.ValidationError, function(err) {
-        return callback(prepareErrors(err, params), this);
-      }).catch(function(err) {
-        return callback(prepareErrors(err, params), this);
-      });
+      createUser(params, function(error, result) {
+        if (error) {
+            return callback(error, result);
+        }else {
+          return callback(null, result);
+        }
+      })
     }
   })
 };
+
+function createUser(params, callback) {
+  User.create(params).then(function(result) {
+    return callback(null, result);
+  }).catch(User.sequelize.ValidationError, function(err) {
+    return callback(prepareErrors(err), this);
+  }).catch(function(err) {
+    return callback(prepareErrors(err), this);
+  });
+}
 
 
 function validateForCreate(params, callback){
@@ -88,6 +98,7 @@ function prepareParams(req, errors) {
 module.exports = {
     create: create,
     user: User,
+    createUser: createUser,
     comparePassword: comparePassword,
     prepareParams: prepareParams
 }
