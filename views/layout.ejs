@@ -20,10 +20,11 @@
   </head>
   <body>
     <% if(user) { %>
-      You are logged in as <%= user.display_name %>
+      You are logged in as <%= user.displayName %>
       <a href="/logout" class="btn btn-danger"><span class="glyphicon glyphicon-log-out"></span> Log out</a>
-    <%}else {%>
+    <%} else {%>
       <a href="/login" class="btn btn-danger"><span class="glyphicon glyphicon-log-in"></span> Log in</a>
+      <a href="/auth/facebook"><span class="glyphicon glyphicon-icon-facebook"></span> Login with Facebook</a>
     <% }%>
   </body>
 </html>

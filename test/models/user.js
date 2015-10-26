@@ -13,9 +13,9 @@ describe('User', () => {
 
     it('set encrypte password', (done) =>  {
       let attrs = {
-        display_name: "DainisL",
-        first_name: "Dainis",
-        last_name: "Lapins",
+        displayName: "DainisL",
+        firstName: "Dainis",
+        lastName: "Lapins",
         password: "cool_password",
         email: "dainis@gmail.com"
       }

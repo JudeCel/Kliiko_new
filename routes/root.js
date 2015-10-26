@@ -37,6 +37,11 @@ router.post('/registration', function(req, res, next) {
   });
 });
 
+router.get('/auth/facebook', passport.authenticate('facebook'));
+router.get('/auth/facebook/callback',
+  passport.authenticate('facebook', { successRedirect: '/',
+                                      failureRedirect: '/login' }));
+
 router.get('/login', function(req, res, next) {
   res.render('login', { user: req.user, title: 'Login', error: ""});
 });

@@ -13,6 +13,7 @@ var passport = require('passport');
 var usersRepo = require('./repositories/users.js');
 var User  = usersRepo.user;
 var LocalStrategy = require('passport-local').Strategy;
+var FacebookStrategy = require('passport-facebook').Strategy;
 
 var app = express();
 
@@ -50,14 +51,28 @@ passport.use(new LocalStrategy({
   }
 ));
 
+passport.use(new FacebookStrategy({
+    clientID: '895147450520688',
+    clientSecret: '5c18ba36fe2a55ae05fd64fe41bcb002',
+    callbackURL: "http://localhost:4000/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    console.log(profile);
+    // User.findOrCreate(..., function(err, user) {
+    //   if (err) { return done(err); }
+      done("error",null);
+    // });
+  }
+));
+
 passport.serializeUser(function(user, done) {
-  done(null, {id: user.id, email: user.email, display_name: user.display_name});
+  done(null, {id: user.id, email: user.email, displayName: user.displayName});
 });
 
 passport.deserializeUser(function(id, done) {
   User.find({where: {id: id}}).done(function(result){
     if (result) {
-      done(null, {id: result.id, email: result.email, display_name: result.display_name});
+      done(null, {id: result.id, email: result.email, displayName: result.displayName});
     }else{
       done("not found", null);
     };

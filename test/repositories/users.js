@@ -20,9 +20,9 @@ describe('User Repo', () => {
 
     it('succsess', (done) =>  {
       let attrs = {
-        display_name: "DainisL",
-        first_name: "Dainis",
-        last_name: "Lapins",
+        displayName: "DainisL",
+        firstName: "Dainis",
+        lastName: "Lapins",
         password: "cool_password",
         email: "dainis@gmail.com"
       }
@@ -35,14 +35,14 @@ describe('User Repo', () => {
 
     it('Fails', function(done){
       let attrs = {
-        display_name: "DainisL",
-        first_name: "Dainis",
+        displayName: "DainisL",
+        firstName: "Dainis",
         password: "cool",
         email: "dainis_gmail.com"
       }
 
       UserRepo.create(attrs, function(err, user) {
-        assert.equal(err.errors.length, 3)
+        assert.equal(Object.keys(err).length, 3)
         done();
       });
     });

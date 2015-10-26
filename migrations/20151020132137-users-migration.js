@@ -3,21 +3,20 @@ module.exports = {
   up: function (queryInterface, Sequelize) {
     return queryInterface.createTable('Users', {
       id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true, allowNull: false },
-      display_name: {type: Sequelize.STRING, allowNull: false, unique: true},
-      promo_code: {type: Sequelize.STRING, allowNull: true},
-      reset_password_token: {type : Sequelize.STRING, allowNull: true},
-      reset_password_sent_at: {type : Sequelize.DATE, allowNull: true},
-      current_sign_in_ip: {type : Sequelize.STRING, allowNull: true},
-      first_name: {type: Sequelize.STRING, allowNull: false},
-      last_name: {type: Sequelize.STRING, allowNull: false},
+      displayName: {type: Sequelize.STRING, allowNull: false, unique: true},
+      promoCode: {type: Sequelize.STRING, allowNull: true},
+      resetPasswordToken: {type : Sequelize.STRING, allowNull: true},
+      resetPasswordSentAt: {type : Sequelize.DATE, allowNull: true},
+      currentSignInIp: {type : Sequelize.STRING, allowNull: true},
+      firstName: {type: Sequelize.STRING, allowNull: false},
+      lastName: {type: Sequelize.STRING, allowNull: false},
       email: {type: Sequelize.STRING, allowNull: false, unique: true},
-      encrypted_password:  {type : Sequelize.STRING, allowNull: false},
-      created_at: {type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.NOW},
-      updated_at: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.NOW},
+      encryptedPassword: { type : Sequelize.STRING, allowNull: false},
+      createdAt: {type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.NOW},
+      updatedAt: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.NOW}
       },
     {
-      charset: 'utf8',
-      underscored: true
+      charset: 'utf8'
     }
   )
   },
