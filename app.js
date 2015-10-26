@@ -70,7 +70,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-  User.find({where: {id: id}}).done(function(result){
+  User.find({attributes: ['email', 'displayName', 'id'], where: {id: id}}).done(function(result){
     if (result) {
       done(null, {id: result.id, email: result.email, displayName: result.displayName});
     }else{
