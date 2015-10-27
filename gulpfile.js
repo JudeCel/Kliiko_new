@@ -7,7 +7,7 @@ var gulp = require('gulp'),
 	gulpif = require('gulp-if'),
 	args = require('yargs').argv,
 	config = require('./gulp.config')(),
-	less = require('gulp-less'),
+	sass = require('gulp-sass'),
 	autoprefixer = require('gulp-autoprefixer'),
 	del = require('del'),
 	wiredep = require('wiredep'),
@@ -76,15 +76,15 @@ gulp.task('clean-code', function(done){
 });
 
 gulp.task('styles', function () {
-	log('Compiling Less --> CSS');
+	log('Compiling SASS --> CSS');
 	return gulp
-		.src(config.less)
+		.src(config.sass)
 		.pipe(plumber())
-		.pipe(less())
+		.pipe(sass())
 
 		//   .on('error', errorLoger)
 		.pipe(autoprefixer({browsers: ['last 2 version', '> 5%']}))
-		.pipe(gulp.dest(config.temp))
+		.pipe(gulp.dest(config.css))
 });
 gulp.task('images', function(){
 	log('Copying and compressing the images');
@@ -165,7 +165,7 @@ function startBrowserSync() {
 
 	log('Starting browser-sync on port' + port);
 
-	gulp.watch([config.less], ['styles'])
+	gulp.watch([config.sass], ['styles'])
 		.on('change', function (event) {
 			changeEvent(event);
 		});
@@ -173,7 +173,7 @@ function startBrowserSync() {
 	var options = {
 		proxy: 'localhost:' + port,
 		port: 3000,
-		files: [config.migrations, config.config, config.repositories, config.models, config.routes, config.views, '!' + config.less
+		files: [config.migrations, config.config, config.repositories, config.models, config.routes, config.views, '!' + config.sass
 		],
 		ghostNode: {
 			clicks: true,

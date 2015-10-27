@@ -12,7 +12,7 @@ module.exports = function () {
         repositories: 'repositories/**/*.*',
         routes: 'routes/**/*.*',
         views: 'views/**/*.*',
-
+        temp: temp,
         alljs: ['*.js', './**/*.js'],
         client: client,
         build: './build/',
@@ -27,9 +27,9 @@ module.exports = function () {
             clientApp + '**/*.js',
             '!' + clientApp + '**/*.spec.js'
         ],
-        less: client + 'styles/styles.less',
+        sass: clientApp + 'scss/**/*.*',
         server: server,
-        temp: temp,
+       // temp: clientApp + './css/*.css',
         templateCache: {
             file: 'templates.js',
             options: {
@@ -39,7 +39,7 @@ module.exports = function () {
             }
         },
         browserReloadDelay: 0,
-        css: clientApp + './css/*.css',
+        css: clientApp + 'css/',
         bower: {
             json: require('./bower.json'),
             directory: './bower_components/',
