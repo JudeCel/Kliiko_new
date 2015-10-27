@@ -75,7 +75,18 @@ gulp.task('clean-code', function(done){
 	clean(files,done);
 });
 
-gulp.task('styles', function () {
+gulp.task('bootstrap', function () {
+	log('Compiling Bootstrap SASS --> CSS');
+	return gulp
+		.src(config.bootstrap)
+		.pipe(plumber())
+		.pipe(sass())
+
+		//   .on('error', errorLoger)
+		.pipe(autoprefixer({browsers: ['last 2 version', '> 5%']}))
+		.pipe(gulp.dest(config.css))
+});
+gulp.task('sass', function () {
 	log('Compiling SASS --> CSS');
 	return gulp
 		.src(config.sass)
@@ -110,7 +121,7 @@ gulp.task('wiredep', function () {
 		.pipe(gulp.dest(config.layout))
 
 });
-gulp.task('inject', ['wiredep', 'styles', 'templatecache'], function () {
+gulp.task('inject', ['wiredep', 'bootstrap', 'sass', 'templatecache'], function () {
 	log('Wire up the app css into html and call wiredep');
 
 	return gulp
@@ -165,7 +176,7 @@ function startBrowserSync() {
 
 	log('Starting browser-sync on port' + port);
 
-	gulp.watch([config.sass], ['styles'])
+	gulp.watch([config.sass], ['bootstrap'])
 		.on('change', function (event) {
 			changeEvent(event);
 		});

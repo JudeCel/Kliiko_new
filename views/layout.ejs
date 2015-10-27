@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <title><%= title %></title>
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+          integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ=="
+          crossorigin="anonymous">
 
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"
+          integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
 
     <!--build:css css/lib.css-->
     <!--bower:css-->
@@ -19,7 +24,8 @@
     <!--build:css css/app.css-->
     <!-- inject:css-->
 
-    <link rel="stylesheet" href="/public/css/bootstrap.css">
+    <link rel="stylesheet" href="/public/css/bootstrap/bootstrap.css">
+    <link rel="stylesheet" href="/public/css/fonts.css">
 
     <!-- endinject-->
     <!--endbuild-->
@@ -27,47 +33,55 @@
 
     <!-- HTML5 shim, for IE6-8 support of HTML elements -->
     <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
     <!-- styles -->
     <!-- <link href="stylesheets/style.css" rel="stylesheet"> -->
 
-  </head>
-  <body>
-    <% if(user) { %>
-      You are logged in as <%= user.displayName %>
-      <a href="/logout" class="btn btn-danger"><span class="glyphicon glyphicon-log-out"></span> Log out</a>
-    <%} else {%>
-      <a href="/login" class="btn btn-danger"><span class="glyphicon glyphicon-log-in"></span> Log in</a>
-      <a href="/auth/facebook"><span class="glyphicon glyphicon-icon-facebook"></span> Login with Facebook</a>
-    <% }%>
+</head>
+<body>
 
-    <!--build:js js/lib.js-->
+<% if(user) { %>
+You are logged in as <%= user.displayName %>
+<a href="/logout" class="btn btn-danger"><span class="glyphicon glyphicon-log-out"></span> Log out</a>
+<% } else { %>
+<a href="/login" class="btn btn-danger"><span class="glyphicon glyphicon-log-in"></span> Log in</a>
+<a href="/auth/facebook"><span class="glyphicon glyphicon-icon-facebook"></span> Login with Facebook</a>
+<% } %>
 
-    <!-- bower:js -->
-    <script src="../bower_components/jquery/dist/jquery.js"></script>
-    <script src="../bower_components/angular/angular.js"></script>
-    <script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
-    <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="../bower_components/extras.angular.plus/ngplus-overlay.js"></script>
-    <script src="../bower_components/moment/moment.js"></script>
-    <script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-    <script src="../bower_components/toastr/toastr.js"></script>
-    <script src="../bower_components/angular-animate/angular-animate.js"></script>
-    <script src="../bower_components/angular-resource/angular-resource.js"></script>
-    <script src="../bower_components/bootstrap-sass/assets/javascripts/bootstrap.js"></script>
-    <!-- endbower -->
-    <!--endbuild-->
 
-    <!--build:js js/app.js-->
-    <!--inject:js-->
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
+        integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ=="
+        crossorigin="anonymous"></script>
 
-    <!--endinject-->
 
-    <!--inject:templates:js-->
-    <!--endinject-->
+<!--build:js js/lib.js-->
 
-    <!--endbuild-->
-  </body>
+<!-- bower:js -->
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+<script src="../bower_components/angular/angular.js"></script>
+<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
+<script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="../bower_components/extras.angular.plus/ngplus-overlay.js"></script>
+<script src="../bower_components/moment/moment.js"></script>
+<script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="../bower_components/toastr/toastr.js"></script>
+<script src="../bower_components/angular-animate/angular-animate.js"></script>
+<script src="../bower_components/angular-resource/angular-resource.js"></script>
+<script src="../bower_components/bootstrap-sass/assets/javascripts/bootstrap.js"></script>
+<!-- endbower -->
+<!--endbuild-->
+
+<!--build:js js/app.js-->
+<!--inject:js-->
+
+<!--endinject-->
+
+<!--inject:templates:js-->
+<!--endinject-->
+
+<!--endbuild-->
+</body>
 </html>

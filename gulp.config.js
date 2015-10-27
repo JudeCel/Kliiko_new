@@ -27,7 +27,8 @@ module.exports = function () {
             clientApp + '**/*.js',
             '!' + clientApp + '**/*.spec.js'
         ],
-        sass: clientApp + 'scss/**/*.scss',
+        sass: clientApp + 'scss/*.scss',
+        bootstrap: clientApp + 'scss/**/bootstrap.scss',
         server: server,
        // temp: clientApp + './css/*.css',
         templateCache: {
