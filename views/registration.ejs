@@ -6,8 +6,8 @@
 			<h2>Please Sign Up <small>It's free and always will be.</small></h2>
 			<hr class="colorgraph">
 			<div class="form-group">
-        <span class="has-error"><%= errors.displayName%></span>
-				<input type="text" value="<%= displayName %>" name="displayName" id="display_name" class="form-control input-lg" placeholder="Display Name" tabindex="3">
+        <span class="has-error"><%= errors.accountName%></span>
+				<input type="text" value="<%= accountName %>" name="accountName" id="account_name" class="form-control input-lg" placeholder="Display Name" tabindex="3">
 			</div>
 			<div class="form-group">
         <span class="has-error"><%= errors.firstName%></span>
@@ -25,19 +25,10 @@
         <span class="has-error"><%= errors.password%></span>
 				<input type="password"  name="password" id="password" class="form-control input-lg" placeholder="Password" tabindex="5">
 			</div>
-			<div class="form-group">
-        <span class="has-error"><%= errors.passwordConfirmation%></span>
-				<input type="password" name="passwordConfirmation" id="passwordConfirmation" class="form-control input-lg" placeholder="Confirm Password" tabindex="6">
-			</div>
-
 			<div class="row">
 				<div class="col-xs-4 col-sm-3 col-md-3">
         <span class="has-error"><%= errors.t_and_c%></span>
-        <% if (!!t_and_c ){ %>
-				      <input type="checkbox" name="t_and_c" id="t_and_c" checked > Agree
-        <% }else {%>
-          <input type="checkbox" name="t_and_c" id="t_and_c"> Agree
-        <% }%>
+        <input type="checkbox" name="tipsAndUpdate" id="tipsAndUpdate"> Agree
 			</div>
 
 			<hr class="colorgraph">
