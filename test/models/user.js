@@ -5,7 +5,7 @@ var User  = models.User;
 var encryptedPasswordLength = 60
 describe('User', () => {
   describe('set encrypte password',  ()=>  {
-    before((done) => {
+    beforeEach((done) => {
       models.sequelize.sync({ force: true }).then(() => {
         done();
       });
@@ -39,7 +39,7 @@ describe('User', () => {
       password: "cool_password",
       email: "dainis@gmail.com"
     }
-    before((done) => {
+    beforeEach((done) => {
       models.sequelize.sync({ force: true }).then(() => {
         User.build(attrs).save()
           .then(function(user) {

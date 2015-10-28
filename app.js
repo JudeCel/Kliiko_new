@@ -11,6 +11,7 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 
 var usersRepo = require('./repositories/users.js');
+var socialProfileRepo = require('./repositories/socialProfile.js');
 var User  = usersRepo.user;
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
@@ -54,14 +55,17 @@ passport.use(new LocalStrategy({
 passport.use(new FacebookStrategy({
     clientID: config.get("facebookclientID") ,
     clientSecret: config.get("facebookClientSecret") ,
-    callbackURL: config.get("facebookCallbackURL")
+    callbackURL: config.get("facebookCallbackURL"),
+    passReqToCallback : true,
+    profileFields: ['id', 'emails', 'name']
+
   },
-  function(accessToken, refreshToken, profile, done) {
-    console.log(profile);
-    // User.findOrCreate(..., function(err, user) {
-    //   if (err) { return done(err); }
-      done("error",null);
-    // });
+  function(req, accessToken, refreshToken, profile, done) {
+    socialProfileRepo.findOrCreateFacebook(profile, function(error, result) {
+      socialProfileRepo.socialProfile.find({where: {id: result.id }, include: [ User ]}).done(function(sp) {
+        done(null, sp.User);
+      })
+    })
   }
 ));
 
@@ -69,8 +73,8 @@ passport.serializeUser(function(user, done) {
   done(null, {id: user.id, email: user.email, accountName: user.accountName});
 });
 
-passport.deserializeUser(function(id, done) {
-  User.find({attributes: ['email', 'accountName', 'id'], where: {id: id}}).done(function(result){
+passport.deserializeUser(function(userObject, done) {
+  User.find({attributes: ['email', 'accountName', 'id'], where: {id: userObject.id}}).done(function(result){
     if (result) {
       done(null, {id: result.id, email: result.email, accountName: result.accountName});
     }else{
