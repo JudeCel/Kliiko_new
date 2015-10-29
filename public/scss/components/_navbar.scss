@@ -93,26 +93,36 @@
   margin-left: 40px;
   line-height: 30px;
 }
-input[type=checkbox] {
-  display:none;
-}
+input[class=checkbox-login] {
+  display: none; }
 
-input[type=checkbox] + label
-{
+input[class=checkbox-login] + label {
   background: url("/icons/checkbox_off.png") no-repeat;
   float: left;
   height: 32px;
-  width: 32px;
+  width: 32px; }
 
-}
-input[type=checkbox]:checked + label
-{
+input[class=checkbox-login]:checked + label {
   background: url("/icons/checkbox_on.png") no-repeat;
-
   height: 32px;
   width: 32px;
-
 }
+
+input[class=checkbox-signup] {
+  display: none; }
+
+input[class=checkbox-signup] + label {
+  background: url("/icons/checkbox_off.png") no-repeat;
+  float: left;
+  height: 32px;
+  width: 32px; }
+
+input[class=checkbox-signup]:checked + label {
+  background: url("/icons/checkbox_on.png") no-repeat;
+  height: 32px;
+  width: 32px;
+}
+
 .tab-content{
 
   padding-top: 10px;
@@ -176,6 +186,11 @@ input[type=checkbox]:checked + label
 
 //  font-family: $s-pro;
 }
+.input-group-btn:last-child > .btn, .input-group-btn:last-child > .btn-group {
+
+   margin-top: -20px;
+ }
+
 html,body {
   height: 100%;
   margin: 0px;
