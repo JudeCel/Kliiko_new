@@ -43,25 +43,11 @@ module.exports = function () {
         },
         browserReloadDelay: 0,
         css: clientApp + 'css/',
-        bower: {
-            json: require('./bower.json'),
-            directory: './bower_components/',
-            ignorePath: '../..'
-        },
+
         defaultPort: 7203,
         nodeServer: './bin/www'
     };
 
-    config.getWiredepDefaultOptions = function () {
-        var options = {
-            bowerJson: config.bower.json,
-            directory: config.bower.directory,
-            ignorepath: config.bower.ignorePath
-        };
-        return options;
-
-
-    };
 
     return config;
 };

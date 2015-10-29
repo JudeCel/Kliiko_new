@@ -10,7 +10,6 @@ var gulp = require('gulp'),
 	sass = require('gulp-sass'),
 	autoprefixer = require('gulp-autoprefixer'),
 	del = require('del'),
-	wiredep = require('wiredep'),
 	inject = require('gulp-inject'),
 	nodemon = require('gulp-nodemon'),
 	plumber = require('gulp-plumber'),
@@ -115,18 +114,8 @@ gulp.task('fonts', function(){
 		.src(config.fonts)
 		.pipe(gulp.dest(config.build + 'fonts'));
 });
-gulp.task('wiredep', function () {
-	log("Wire up the bower css js and our app js and css");
-	var options = config.getWiredepDefaultOptions();
-	var wiredep = require('wiredep').stream;
-	return gulp
-		.src(config.index)
-		.pipe(wiredep(options))
-		.pipe(inject(gulp.src(config.js)))
-		.pipe(gulp.dest(config.layout))
 
-});
-gulp.task('inject', ['wiredep', 'bootstrap', 'sass', 'templatecache'], function () {
+gulp.task('inject', ['bootstrap', 'sass', 'templatecache'], function () {
 	log('Wire up the app css into html and call wiredep');
 
 	return gulp
