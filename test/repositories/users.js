@@ -18,7 +18,6 @@ describe('User Repo', () => {
       });
     });
 
-
     it('succsess', (done) =>  {
       let attrs = {
         accountName: "DainisL",
@@ -29,7 +28,8 @@ describe('User Repo', () => {
       }
 
       UserRepo.create(attrs, function(errors, user) {
-        assert.notEqual(errors, undefined);
+        assert.equal(errors, null);
+        assert.equal(user.accountName, attrs.accountName);
         done()
       });
     });
