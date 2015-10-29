@@ -32,7 +32,7 @@ passport.use(new FacebookStrategy({
   function(req, accessToken, refreshToken, profile, done) {
     socialProfileRepo.findOrCreateFacebook(profile, function(error, result) {
       if (error) {
-        done(null, sp.User);
+        done(error, null);
       }else{
         models.SocialProfile.find({where: {id: result.id }, include: [ models.User ]}).done(function(sp) {
           done(null, sp.User);
