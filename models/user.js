@@ -49,8 +49,14 @@ module.exports = (Sequelize, DataTypes) => {
     },
     resetPasswordToken: {type : DataTypes.STRING, allowNull: true},
     resetPasswordSentAt: {type : DataTypes.DATE, allowNull: true},
+
+    confirmationToken: {type : DataTypes.STRING, allowNull: true},
+    confirmationSentAt: {type : DataTypes.DATE, allowNull: true},
+    confirmedAt: {type : DataTypes.DATE, allowNull: true},
+
     currentSignInIp: {type : DataTypes.STRING, allowNull: true},
     promoCode: {type: DataTypes.INTEGER, allowNull: true},
+    mobile: {type: DataTypes.STRING, allowNull: true},
     tipsAndUpdate: {type: DataTypes.ENUM, values: ['off', 'on'], allowNull: false, defaultValue: 'on'},
   },{
       classMethods: {
