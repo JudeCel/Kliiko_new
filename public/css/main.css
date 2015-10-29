@@ -62,6 +62,9 @@
   text-align: center;
   color: #5F4A3E; }
 
+.form-control {
+  max-width: 300px; }
+
 #email {
   max-width: 300px;
   float: none; }
@@ -160,7 +163,7 @@ input[type=checkbox]:checked + label {
   background-color: green; }
 
 .main-first-page {
-  background-color: #6ea74d;
+  background-color: #72ad4f;
   height: 100%; }
 
 html, body {

@@ -55,7 +55,9 @@
   text-align:center;
   color: $color_main;
 }
-
+.form-control{
+  max-width: 300px;
+}
 #email{
   max-width: 300px;
   float: none;
