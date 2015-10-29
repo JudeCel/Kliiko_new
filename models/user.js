@@ -9,22 +9,24 @@ module.exports = (Sequelize, DataTypes) => {
     requiredEmail: { type: DataTypes.VIRTUAL, defaultValue: true },
     email: {type: DataTypes.STRING, allowNull: true,
     validate:{
-      validateEmail: function(val, done) {
+      validateEmail: function(val, next) {
         if (this.requiredEmail) {
           let re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 
           if (!(re.test(val))) {
-            throw new Error("is wrong format");
+            return next("is wrong format");
           }
 
-          User.find({attributes: ['email'], where:{email: val}})
-          .then(function (user) {
+          User.findOne({attributes: ['email'], where: { email: val } }).done(function (error, user) {
+            if (error) {
+              return next(error);
+            }
             if(user){
-              throw new Error("already taken");
+              return next('already taken');
             }
           });
         }
-        done();
+        next();
       }
     }},
     accountName: {type: DataTypes.STRING, allowNull: false, unique: {args: true, msg: "already taken"}, validate: { notEmpty: {args: true, msg: "can't be empty"} }},
@@ -50,7 +52,13 @@ module.exports = (Sequelize, DataTypes) => {
     currentSignInIp: {type : DataTypes.STRING, allowNull: true},
     promoCode: {type: DataTypes.INTEGER, allowNull: true},
     tipsAndUpdate: {type: DataTypes.ENUM, values: ['off', 'on'], allowNull: false, defaultValue: 'on'},
-  }
+  },{
+      classMethods: {
+        associate: function(models) {
+          User.hasMany(models.SocialProfile, {foreignKey: 'userId'})
+        }
+      }
+    }
 );
 
   return User;
