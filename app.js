@@ -34,7 +34,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 var routes = require('./routes/root');
+var dashboard = require('./routes/dashboard');
 app.use('/', routes);
+app.use('/dashboard', dashboard);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
