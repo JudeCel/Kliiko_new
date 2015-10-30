@@ -1,114 +1,99 @@
 <% include layout %>
 
 <main class="main-first-page-registration">
+    <div class="container">
+        <h1 id="welcome">Welcome!</h1>
+        <ul class="nav nav-tabs">
+            <li><a href="/login">LOG IN</a></li>
+            <li class="active"><a data-toggle="tab" href="#signup">SIGN UP</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="signup" class="tab-pane fade in active">
+                <h2>Sign up for your account</h2>
 
-	<div class="container">
-		<h1 id="welcome">Welcome!</h1>
-		<ul class="nav nav-tabs">
-			<li><a  href="/login">LOG IN</a></li>
-			<li  class="active"><a data-toggle="tab" href="#signup">SIGN UP</a></li>
-		</ul>
-		<div class="tab-content">
+                <form>
+                    <div class="form-group">
+                        <span class="has-error"><%= errors.accountName %></span>
+                        <label for="accountName">Account name*</label>
+                        <input type="text" value="<%= accountName %>" class="form-control center-block"
+                               name="accountName" id="account_name" placeholder="Account name">
+                    </div>
+                    <div class="form-group">
+                        <span class="has-error"><%= errors.firstName %></span>
+                        <label for="firstName">First name*</label>
+                        <input type="text" value="<%= firstName %>" class="form-control center-block" name="firstName"
+                               id="first_name"
+                               placeholder="First name">
+                    </div>
+                    <div class="form-group">
+                        <span class="has-error"><%= errors.lastName %></span>
+                        <label for="firstName">Last name*</label>
+                        <input type="text" value="<%= lastName %>" class="form-control center-block" name="lastName"
+                               id="last_name"
+                               placeholder="Last name">
+                    </div>
+                    <div class="form-group">
+                        <span class="has-error"><%= errors.email %></span>
+                        <label for="email">E-mail*</label>
+                        <input type="email" value="<%= email %>" class="form-control center-block" name="email"
+                               id="email" placeholder="E-mail">
+                    </div>
+                    <div class="form-group">
+                        <label for="mobile">Mobile (Optional)</label>
+                        <input type="tel" class="form-control center-block" id="mobile" name="mobile"
+                               placeholder="Mobile">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password*</label>
+                        <span class="has-error"><%= errors.password %></span>
+                        <input type="password" class="form-control center-block" name="password" id="password"
+                               placeholder="Password">
 
-			<div id="signup" class="tab-pane fade in active">
-				<h2>Sign up for your account</h2>
+                        <div class="form-group center-block">
+                            <div class="check center-block">
+                                <input type='checkbox' class="checkbox-signup" name='thing2' value='valuable2'
+                                       id="checkbox-signup"/><label for="checkbox-signup">
+                                    <div id="remember2">Show</div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group center-block">
+                        <span class="has-error"><%= errors.t_and_c %></span>
 
-				<form>
-					<div class="form-group">
+                        <div class="check center-block">
+                            <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate"
+                                   value='receive-updates'/><label for="tipsAndUpdate">
+                                <div id="remember3">I'd like to receive tips & updates</div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group center-block">
+                        <div class="check center-block">
+                            <button type="submit" value="Register" class="btn login">Sign up</button>
+                        </div>
+                    </div>
+                    <a id="forgot-password">Forgot your password?</a>
+                </form>
+                <h2 id="or">Or</h2>
 
-						<span class="has-error"><%= errors.accountName%></span>
-						<label for="accountName">Account name*</label>
-						<input type="text" value="<%= accountName %>"  class="form-control center-block" name="accountName" id="account_name"  placeholder="Account name">
-					</div>
-					<div class="form-group">
-						<span class="has-error"><%= errors.firstName%></span>
-						<label for="firstName">First name*</label>
-						<input type="text" value="<%= firstName%>" class="form-control center-block" name="firstName" id="first_name"
-							   placeholder="First name">
-					</div>
-
-					<div class="form-group">
-						<span class="has-error"><%= errors.lastName%></span>
-						<label for="firstName">Last name*</label>
-						<input type="text" value="<%= lastName%>" class="form-control center-block" name="lastName" id="last_name"
-							   placeholder="Last name">
-					</div>
-
-					<div class="form-group">
-						<span class="has-error"><%= errors.email%></span>
-						<label for="email">E-mail*</label>
-						<input type="email" value="<%= email%>" class="form-control center-block" name="email" id="email"placeholder="E-mail">
-
-					</div>
-
-
-
-					<div class="form-group">
-						<label for="mobile">Mobile (Optional)</label>
-						<input type="tel" class="form-control center-block" id="mobile" name="mobile" placeholder="Mobile">
-					</div>
-
-					<div class="form-group">
-						<label for="password">Password*</label>
-						<span class="has-error"><%= errors.password%></span>
-						<input type="password" class="form-control center-block" name="password" id="password"
-							   placeholder="Password">
-						<div class="form-group center-block">
-							<div class="check center-block">
-								<input type='checkbox' class="checkbox-signup" name='thing2' value='valuable2' id="checkbox-signup"/><label for="checkbox-signup">
-									<div id="remember2">Show</div>
-								</label>
-							</div>
-						</div>
-					</div>
-
-					<div class="form-group center-block">
-						<span class="has-error"><%= errors.t_and_c%></span>
-						<div class="check center-block">
-							<input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate" value='receive-updates'/><label for="tipsAndUpdate">
-								<div id="remember3">I'd like to receive tips & updates</div>
-							</label>
-						</div>
-					</div>
-
-
-
-					<div class="form-group center-block">
-						<div class="check center-block">
-							<button type="submit" value="Register" class="btn login">Sign up</button>
-						</div>
-					</div>
-					<a id="forgot-password">Forgot your password?</a>
-
-				</form>
-
-				<h2 id="or">Or</h2>
-
-				<div class="form-group center-block">
-					<div class="check-google center-block">
-						<a class="btn btn-block btn-social btn-google">
-							<i class="fa fa-google"></i> Sign up with Google
-						</a>
-					</div>
-				</div>
-
-				<div class="form-group center-block">
-					<div class="check-facebook center-block">
-						<a href="/auth/facebook" class="btn btn-block btn-social btn-facebook">
-							<i class="fa fa-facebook"></i> Sign up with Facebook
-						</a>
-					</div>
-				</div>
-
-
-
-			</div>
-
-
-		</div>
-
-
-	</div>
+                <div class="form-group center-block">
+                    <div class="check-google center-block">
+                        <a class="btn btn-block btn-social btn-google">
+                            <i class="fa fa-google"></i> Sign up with Google
+                        </a>
+                    </div>
+                </div>
+                <div class="form-group center-block">
+                    <div class="check-facebook center-block">
+                        <a href="/auth/facebook" class="btn btn-block btn-social btn-facebook">
+                            <i class="fa fa-facebook"></i> Sign up with Facebook
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 
