@@ -38,7 +38,8 @@
   margin-right: 10px; }
 
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-  color: #389043; }
+  color: #389043;
+  padding-bottom: 6px; }
 
 .navbar-nav > li > a:hover {
   color: #FFFFFF;
@@ -76,6 +77,12 @@
 .check {
   max-width: 300px; }
 
+#checkbox-signup {
+  max-width: 300px; }
+
+.checkbox-signup {
+  margin-top: -20px; }
+
 .check-google {
   max-width: 300px;
   margin-top: 20px; }
@@ -95,6 +102,11 @@
   margin-left: 40px;
   line-height: 30px; }
 
+#remember3 {
+  margin-left: 40px;
+  line-height: 30px;
+  width: 200px; }
+
 input[class=checkbox-login] {
   display: none; }
 
@@ -102,7 +114,9 @@ input[class=checkbox-login] + label {
   background: url("/icons/checkbox_off.png") no-repeat;
   float: left;
   height: 32px;
-  width: 32px; }
+  width: 32px;
+  margin-top: 0;
+  margin-left: 0; }
 
 input[class=checkbox-login]:checked + label {
   background: url("/icons/checkbox_on.png") no-repeat;
@@ -116,18 +130,28 @@ input[class=checkbox-signup] + label {
   background: url("/icons/checkbox_off.png") no-repeat;
   float: left;
   height: 32px;
-  width: 32px; }
+  width: 32px;
+  margin-top: -33px;
+  margin-left: 210px; }
+
+#remember2 {
+  margin-left: 40px;
+  margin-top: 8px; }
 
 input[class=checkbox-signup]:checked + label {
   background: url("/icons/checkbox_on.png") no-repeat;
   height: 32px;
   width: 32px; }
 
+.checkbox-signup {
+  position: relative; }
+
 .tab-content {
   padding-top: 10px;
   border: 4px solid #389043;
   border-radius: 20px;
-  background-color: white; }
+  background-color: white;
+  margin-top: -3px; }
 
 .nav-tabs {
   border: 0px; }
@@ -146,7 +170,8 @@ input[class=checkbox-signup]:checked + label {
   padding-left: 40px;
   padding-right: 40px;
   font-size: 12px;
-  font-weight: bold; }
+  font-weight: bold;
+  margin-left: -5px; }
 
 .nav-tabs > li > a:hover {
   background-color: #389043; }
@@ -177,14 +202,14 @@ input[class=checkbox-signup]:checked + label {
   background-color: green; }
 
 .main-first-page {
-  background-color: #72ad4f;
+  background-image: url("/icons/background.png");
   height: 100%; }
 
 .input-group-btn:last-child > .btn, .input-group-btn:last-child > .btn-group {
   margin-top: -20px; }
 
 html, body {
-  height: 100%;
+  height: 105%;
   margin: 0px;
   padding: 0px;
   font-family: Source Sans Pro; }
