@@ -1,40 +1,167 @@
 <% include layout %>
 
-<div class="container">
-	<div class="row">
-    <div class=".col-xs-12 .col-md-12">
-  		<h4 style="border-bottom: 1px solid #c5c5c5;">
-    		<i class="glyphicon glyphicon-user"></i>
-    		Account Access
-  		</h4>
-  		<div style="padding: 20px;" id="form-olvidado">
-				<span class="has-error"><%= error%></span>
-	  		<form accept-charset="UTF-8" role="form" id="login-form" method="post">
-		      <fieldset>
-		        <div class="form-group input-group">
-		          <span class="input-group-addon">
-		            @
-		          </span>
-		          <input class="form-control" placeholder="email" name="email" type="email" required="" autofocus="">
-		        </div>
-		        <div class="form-group input-group">
-		          <span class="input-group-addon">
-		            <i class="glyphicon glyphicon-lock">
-		            </i>
-		          </span>
-		          <input class="form-control" placeholder="password" name="password" type="password" value="" required="">
-		        </div>
-		        <div class="form-group">
-		          <button type="submit" class="btn btn-primary btn-block">
-		            Access
-		          </button>
-		          <p class="help-block">
-		            <a class="pull-right text-muted" href="#" id="olvidado"><small>Forgot your password?</small></a>
-		          </p>
-		        </div>
-		      </fieldset>
-	    	</form>
-  		</div>
+<main class="main-first-page">
+
+	<div class="container">
+		<h1 id="welcome">Welcome!</h1>
+		<ul class="nav nav-tabs">
+			<li class="active"><a  href="#login">LOG IN</a></li>
+			<li  ><a  href="/registration">SIGN UP</a></li>
+		</ul>
+		<div class="tab-content">
+			<div id="login" class="tab-pane fade in active">
+				<h2>Log in to your account</h2>
+
+				<form method="post" >
+					<div class="form-group">
+						<label for="email">E-mail</label>
+						<input type="email" class="form-control center-block" id="email" placeholder="E-mail">
+					</div>
+					<div class="form-group">
+						<label for="password">Password</label>
+						<input type="password" class="form-control center-block" id="password"
+							   placeholder="Password">
+					</div>
+
+					<div class="form-group center-block">
+						<div class="check center-block">
+							<input type="checkbox" class="checkbox-login" name='thing' value='valuable' id="thing"/><label for="thing">
+								<div id="remember">Remember</div>
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group center-block">
+						<div class="check center-block">
+							<button type="submit" class="btn login">Login</button>
+						</div>
+					</div>
+					<a id="forgot-password">Forgot your password?</a>
+
+					<h2 id="or">Or</h2>
+
+
+				</form>
+
+
+
+				<div class="form-group center-block">
+					<div class="check-google center-block">
+						<a class="btn btn-block btn-social btn-google">
+							<i class="fa fa-google"></i> Log in with Google
+						</a>
+					</div>
+				</div>
+
+				<div class="form-group center-block">
+					<div class="check-facebook center-block">
+						<a href="/auth/facebook" class="btn btn-block btn-social btn-facebook">
+							<i class="fa fa-facebook"></i> Log in with Facebook
+						</a>
+					</div>
+				</div>
+
+
+			</div>
+
+
+
+
+
+			<div id="signup" class="tab-pane fade">
+				<h2>Sign up for your account</h2>
+
+				<form>
+					<div class="form-group">
+
+						<label for="accountName">Account name*</label>
+						<input type="text"   class="form-control center-block" name="accountName" id="account_name"  placeholder="Account name">
+					</div>
+					<div class="form-group">
+						<label for="firstName">First name*</label>
+						<input type="text"  class="form-control center-block" name="firstName" id="first_name"
+							   placeholder="First name">
+					</div>
+
+					<div class="form-group">
+						<label for="firstName">Last name*</label>
+						<input type="text"  class="form-control center-block" name="lastName" id="last_name"
+							   placeholder="Last name">
+					</div>
+
+					<div class="form-group">
+						<label for="email">E-mail*</label>
+						<input type="email"  class="form-control center-block" name="email" id="email"placeholder="E-mail">
+
+					</div>
+
+
+
+					<div class="form-group">
+						<label for="mobile">Mobile (Optional)</label>
+						<input type="number" class="form-control center-block" id="mobile" name="mobile" placeholder="Mobile">
+					</div>
+
+					<div class="form-group">
+						<label for="password">Password*</label>
+						<input type="password" class="form-control center-block" name="password" id="password"
+							   placeholder="Password">
+						<div class="form-group center-block">
+							<div class="check center-block">
+								<input type='checkbox' class="checkbox-signup" name='thing2' value='valuable2' id="checkbox-signup"/><label for="checkbox-signup">
+									<div id="remember2">Show</div>
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group center-block">
+
+						<div class="check center-block">
+							<input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate" value='receive-updates'/><label for="tipsAndUpdate">
+								<div id="remember3">I'd like to receive tips & updates</div>
+							</label>
+						</div>
+					</div>
+
+
+
+					<div class="form-group center-block">
+						<div class="check center-block">
+							<button type="submit" value="Register" class="btn login">Sign up</button>
+						</div>
+					</div>
+					<a id="forgot-password">Forgot your password?</a>
+
+				</form>
+
+				<h2 id="or">Or</h2>
+
+				<div class="form-group center-block">
+					<div class="check-google center-block">
+						<a class="btn btn-block btn-social btn-google">
+							<i class="fa fa-google"></i> Log in with Google
+						</a>
+					</div>
+				</div>
+
+				<div class="form-group center-block">
+					<div class="check-facebook center-block">
+						<a href="/auth/facebook" class="btn btn-block btn-social btn-facebook">
+							<i class="fa fa-facebook"></i> Log in with Facebook
+						</a>
+					</div>
+				</div>
+
+
+
+			</div>
+
+
 		</div>
+
+
 	</div>
-</div>
+</main>
+
+
