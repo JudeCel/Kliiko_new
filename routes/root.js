@@ -28,7 +28,7 @@ router.post('/registration', function(req, res, next) {
           res.render('login', { title: 'Login', error: "Wrong email or password"})
         }else{
           req.login(result, function(err) {
-            res.redirect("/")
+            res.redirect("/dashboard")
           });
         };
       });
@@ -38,7 +38,7 @@ router.post('/registration', function(req, res, next) {
 
 router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
 router.get('/auth/facebook/callback',
-  passport.authenticate('facebook', { successRedirect: '/',
+  passport.authenticate('facebook', { successRedirect: '/dashboard',
                                       failureRedirect: '/login' }));
 
 router.get('/login', function(req, res, next) {
@@ -48,7 +48,7 @@ router.get('/login', function(req, res, next) {
 router.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
   function(req, res) {
-    res.redirect('/');
+    res.redirect('/dashboard');
   }
 );
 

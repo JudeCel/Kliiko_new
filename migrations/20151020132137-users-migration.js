@@ -5,11 +5,18 @@ module.exports = {
       id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true, allowNull: false },
       accountName: {type: Sequelize.STRING, allowNull: false, unique: true},
       promoCode: {type: Sequelize.STRING, allowNull: true},
+
       resetPasswordToken: {type : Sequelize.STRING, allowNull: true},
       resetPasswordSentAt: {type : Sequelize.DATE, allowNull: true},
+
+      confirmationToken: {type : Sequelize.STRING, allowNull: true},
+      confirmationSentAt: {type : Sequelize.DATE, allowNull: true},
+      confirmedAt: {type : Sequelize.DATE, allowNull: true},
+
       currentSignInIp: {type : Sequelize.STRING, allowNull: true},
       firstName: {type: Sequelize.STRING, allowNull: false},
       lastName: {type: Sequelize.STRING, allowNull: false},
+      mobile: {type: Sequelize.STRING, allowNull: false},
       email: {type: Sequelize.STRING, allowNull: false, unique: true},
       encryptedPassword: { type : Sequelize.STRING, allowNull: false},
       createdAt: {type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.NOW},
