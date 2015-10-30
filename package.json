@@ -4,7 +4,7 @@
   "description": "",
   "private": true,
   "scripts": {
-    "start": "DEBUG=kliiko node ./bin/www",
+    "start": "node ./bin/www",
     "test": "mocha test"
   },
   "repository": {
