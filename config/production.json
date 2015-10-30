@@ -1,7 +1,15 @@
 {
-  "redis_session": {
+  "server":{
+    "port": 3000,
+    "domain": "localhost"
+  },
+  "redisSession": {
     "host": "localhost",
     "port": "6379"
   },
-  "session_secret": "ajksi3n#mef_dkdj322$23emf)dsc"
+  "sessionSecret": "c4be0a2cc8658004a3f2417e62281f65e995ac7c564e39e727d764a62d69e836",
+  "cookieSecret": "ee9b7f3df25f0759a0876762da2b721cdeba47b1f5df4003807c6383c581f409",
+  "facebookclientID": "895147450520688",
+  "facebookClientSecret": "5c18ba36fe2a55ae05fd64fe41bcb002",
+  "facebookCallbackURL": "http://localhost:3000/auth/facebook/callback"
 }
