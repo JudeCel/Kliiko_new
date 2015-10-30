@@ -1,0 +1,24 @@
+{
+  "development": {
+    "username": "root",
+    "password": "toor",
+    "database": "kliiko_development",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": "toor",
+    "database": "kliiko_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "logging": false
+  },
+  "production": {
+    "username": "root",
+    "password": "toor",
+    "database": "kliiko_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
