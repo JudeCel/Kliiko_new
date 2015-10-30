@@ -1,7 +1,7 @@
 {
   "server":{
-    "port": 3000,
-    "domain": "localhost"
+    "port": 80,
+    "host": "192.168.10.233"
   },
   "redisSession": {
     "host": "localhost",
@@ -11,5 +11,5 @@
   "cookieSecret": "ee9b7f3df25f0759a0876762da2b721cdeba47b1f5df4003807c6383c581f409",
   "facebookclientID": "895147450520688",
   "facebookClientSecret": "5c18ba36fe2a55ae05fd64fe41bcb002",
-  "facebookCallbackURL": "http://localhost:3000/auth/facebook/callback"
+  "facebookCallbackURL": "http://192.168.10.233:80/auth/facebook/callback"
 }

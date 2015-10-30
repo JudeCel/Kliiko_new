@@ -8,12 +8,13 @@ var app = require('../app');
 var debug = require('debug')('kliiko:server');
 var http = require('http');
 var models = require("../models");
+var config = require('config');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || config.get("server")['port']);
 var environment = process.env.NODE_ENV;
 app.set('port', port);
 
