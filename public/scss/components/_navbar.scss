@@ -214,9 +214,16 @@ input[class=checkbox-signup]:checked + label {
 .main-first-page{
   background-image: url("/icons/background.png");
 //  background-color: $background;
-  height: 100%;
+  height: 90%;
 
 //  font-family: $s-pro;
+}
+.main-first-page-registration{
+  background-image: url("/icons/background.png");
+  //  background-color: $background;
+  height: 105%;
+
+  //  font-family: $s-pro;
 }
 .input-group-btn:last-child > .btn, .input-group-btn:last-child > .btn-group {
 
@@ -224,7 +231,7 @@ input[class=checkbox-signup]:checked + label {
  }
 
 html,body {
-  height: 105%;
+  height: 100%;
   margin: 0px;
   padding: 0px;
   font-family: $s-pro;
