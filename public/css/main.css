@@ -203,13 +203,17 @@ input[class=checkbox-signup]:checked + label {
 
 .main-first-page {
   background-image: url("/icons/background.png");
-  height: 100%; }
+  height: 90%; }
+
+.main-first-page-registration {
+  background-image: url("/icons/background.png");
+  height: 105%; }
 
 .input-group-btn:last-child > .btn, .input-group-btn:last-child > .btn-group {
   margin-top: -20px; }
 
 html, body {
-  height: 105%;
+  height: 100%;
   margin: 0px;
   padding: 0px;
   font-family: Source Sans Pro; }
