@@ -26,7 +26,7 @@ Redis 3.0.5
 
 3) Need run migrations
 ```sh
-  node node_modules/.bin/sequelize
+  node node_modules/.bin/sequelize  db:migrate
 ```
 
 ### Database ORM
