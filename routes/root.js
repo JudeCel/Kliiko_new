@@ -11,7 +11,7 @@ router.use(function (req, res, next) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: '', user: req.user });
+  res.render('login', { title: '', user: req.user });
 });
 
 router.get('/registration', function(req, res, next) {
