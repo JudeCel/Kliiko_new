@@ -11,19 +11,19 @@
             <div id="login" class="tab-pane fade in active">
                 <h2>Log in to your account</h2>
 
-                <form method="post">
+                <form method="post" action="/login" >
                     <div class="form-group">
                         <label for="email">E-mail</label>
-                        <input type="email" class="form-control center-block" id="email" placeholder="E-mail">
+                        <input type="email" name='email' class="form-control center-block" id="email" placeholder="E-mail">
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" class="form-control center-block" id="password"
-                               placeholder="Password">
+                               placeholder="Password" name='password'>
                     </div>
                     <div class="form-group center-block">
                         <div class="check center-block">
-                            <input type="checkbox" class="checkbox-login" name='thing' value='valuable'
+                            <input type="checkbox" class="checkbox-login" name='rememberMe' value='valuable'
                                    id="thing"/><label for="thing">
                                 <div id="remember">Remember</div>
                             </label>
@@ -56,5 +56,3 @@
         </div>
     </div>
 </main>
-
-

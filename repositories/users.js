@@ -79,6 +79,7 @@ function prepareParams(req, errors) {
     firstName: '',
     lastName: '',
     email: '',
+    mobile: '',
     password: '',
     tipsAndUpdate: 'on',
     errors: (errors || {})
