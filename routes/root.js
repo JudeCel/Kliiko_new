@@ -5,15 +5,17 @@ var users_repo = require('./../repositories/users.js');
 var passport = require('passport');
 var subdomains = require('../lib/subdomains.js');
 
-
 router.use(function (req, res, next) {
-  console.log(req.vhost);
-  if (req.user) {
-    // subdomains.url(req, req.user.accountName, '/dashboard')
-  }else{
-    // res.redirect(subdomains.url(req, 'insider', '/'));
+
+  if (req.path == '/logout') {
+    return next();
   }
-  next();
+
+  if (req.user && (req.path.indexOf('dashboard') == -1) ) {
+    res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
+  }else{
+    next();
+  }
 });
 
 /* GET home page. */
