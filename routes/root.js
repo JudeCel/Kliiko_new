@@ -3,15 +3,22 @@ var express = require('express');
 var router = express.Router();
 var users_repo = require('./../repositories/users.js');
 var passport = require('passport');
+var subdomains = require('../lib/subdomains.js');
 
 
 router.use(function (req, res, next) {
+  console.log(req.vhost);
+  if (req.user) {
+    // subdomains.url(req, req.user.accountName, '/dashboard')
+  }else{
+    // res.redirect(subdomains.url(req, 'insider', '/'));
+  }
   next();
 });
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('login', { title: '', user: req.user });
+  res.render('login', { title: ''});
 });
 
 router.get('/registration', function(req, res, next) {
@@ -38,8 +45,11 @@ router.post('/registration', function(req, res, next) {
 
 router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
 router.get('/auth/facebook/callback',
-  passport.authenticate('facebook', { successRedirect: '/dashboard',
-                                      failureRedirect: '/login' }));
+  passport.authenticate('facebook', {failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
+  }
+);
 
 router.get('/login', function(req, res, next) {
   res.render('login', { user: req.user, title: 'Login', error: ""});
@@ -48,13 +58,15 @@ router.get('/login', function(req, res, next) {
 router.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
   function(req, res) {
-    res.redirect('/dashboard');
+    subdomains.url(req, req.user.accountName, '/dashboard')
+    res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
   }
 );
 
 router.get('/logout', function(req, res){
   req.logout();
-  res.redirect('/');
+  res.redirect(subdomains.url(req, 'insider', '/'));
 });
+
 
 module.exports = router;

@@ -8,11 +8,10 @@ let views_name_space = "dashboard/"
 }
 
 router.use(function (req, res, next) {
-  if (req.user) {
-    next();
-  } else {
-    res.redirect('/');
-  }
+  console.log("==================dashboard================");
+  console.log(req.headers);
+  console.log("==================dashboard END================");
+  next();
 });
 
 router.get('/', function(req, res, next) {
