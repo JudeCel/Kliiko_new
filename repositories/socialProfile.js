@@ -37,10 +37,10 @@ function findSociaProfile(provider, id, callback) {
   SocialProfile.find({where: { provider: provider, providerUserId: id }, include: [ models.User ]})
     .done(function(result) {
       if (result) {
-        callback(null, result)
-      }else{
-        callback(null, null)
+        return callback(null, result)
       };
+
+      callback(null, null)
     });
 }
 
