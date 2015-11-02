@@ -1,6 +1,6 @@
 {
   "server":{
-    "port": 3000,
+    "port": 80,
     "baseDomain": ".dev.insiderfocus.diatomdemo.com",
     "domain": "dev.insiderfocus.diatomdemo.com"
   },
