@@ -176,7 +176,8 @@ function startBrowserSync() {
 		});
 
 	var options = {
-		proxy: 'localhost:' + port,
+		proxy: config.dns + port,
+		open: false,
 		port: 3000,
 		files: [config.migrations, config.config, config.clientApp, config.repositories, config.models, config.routes, config.views, '!' + config.sass
 		],
