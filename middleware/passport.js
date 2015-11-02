@@ -26,16 +26,16 @@ passport.use(new FacebookStrategy({
   clientSecret: config.get("facebookClientSecret") ,
   callbackURL: config.get("facebookCallbackURL"),
   passReqToCallback : true,
-  profileFields: ['id', 'emails', 'name']
+  profileFields: ['id', 'displayName','emails', 'name']
 
   },
   function(req, accessToken, refreshToken, profile, done) {
     socialProfileRepo.findOrCreateFacebook(profile, function(error, result) {
       if (error) {
-        done(error, null);
+        done(error);
       }else{
         models.SocialProfile.find({where: {id: result.id }, include: [ models.User ]}).done(function(sp) {
-          done(null, sp.User);
+          return done(null, sp.User);
         });
       }
     });

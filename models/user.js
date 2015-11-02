@@ -16,17 +16,19 @@ module.exports = (Sequelize, DataTypes) => {
           if (!(re.test(val))) {
             return next("is wrong format");
           }
+        }
 
-          User.findOne({attributes: ['email'], where: { email: val } }).done(function (error, user) {
-            if (error) {
-              return next(error);
-            }
+        if (!!val) {
+          User.findOne({attributes: ['email'], where: { email: val } }).then(function (user) {
             if(user){
               return next('already taken');
+            }else{
+              next();
             }
           });
+        }else{
+          next();
         }
-        next();
       }
     }},
     accountName: {type: DataTypes.STRING, allowNull: false, unique: {args: true, msg: "already taken"}, validate: { notEmpty: {args: true, msg: "can't be empty"} }},

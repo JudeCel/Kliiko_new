@@ -15,6 +15,10 @@ Redis 3.0.5
 
 ## Set up Project
 
+Need modify ``` /etc/hosts ``` with ``` 127.0.0.1 insider.focus.com```
+
+If needed use specific subdomain name for users then ``` 127.0.0.1 acountName.focus.com ```
+
 ```sh
  cd project_path
  npm install

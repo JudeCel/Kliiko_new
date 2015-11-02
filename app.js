@@ -27,14 +27,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     store: new RedisStore(config.get("redisSession")),
     secret: config.get("sessionSecret"),
-    resave: true, saveUninitialized: false
+    resave: true, saveUninitialized: false,
+    domain: config.get('server')['domain'],
+    cookie: { domain: config.get('server')['domain'] }
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
+
 app.use('/', routes);
 app.use('/dashboard', dashboard);
 
