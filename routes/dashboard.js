@@ -1,6 +1,7 @@
 "use strict";
 var express = require('express');
 var router = express.Router();
+var subdomains = require('../lib/subdomains.js');
 
 function views_path(action) {
 let views_name_space = "dashboard/"
@@ -11,7 +12,7 @@ router.use(function (req, res, next) {
   if (req.user) {
     next();
   } else {
-    res.redirect('/');
+    res.redirect(subdomains.url(req, 'insider', '/'));
   }
 });
 
