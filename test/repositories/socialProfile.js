@@ -43,7 +43,7 @@ describe('Social Profile Repo', () => {
       SocialProfileRepo.findOrCreateFacebook(attrs, function(errors, result) {
         SocialProfile.find({where: {id: result.id}, include: [ models.User ]}).done(function(socialProfile) {
           assert.equal(socialProfile.User.id, 1);
-          assert.equal(socialProfile.User.accountName, "client_1");
+          assert.equal(socialProfile.User.accountName, "client1");
           assert.equal(socialProfile.providerUserId, attrs.id);
           assert.equal(socialProfile.provider, attrs.provider);
           done();

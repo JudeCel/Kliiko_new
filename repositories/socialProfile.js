@@ -65,9 +65,9 @@ function prepareUserAttrs(params, callback) {
 
     User.findOne({order: [['createdAt', 'DESC']]}).done(function(result) {
       if (result) {
-        userAttrs['accountName'] = "client_" + (result.id + 1);
+        userAttrs['accountName'] = "client" + (result.id + 1);
       }else{
-        userAttrs['accountName'] = "client_1"
+        userAttrs['accountName'] = "client1"
       }
 
       callback(null, userAttrs, params)
