@@ -6,7 +6,6 @@ var passport = require('passport');
 var subdomains = require('../lib/subdomains.js');
 
 router.use(function (req, res, next) {
-
   if (req.path == '/logout') {
     return next();
   }
@@ -14,8 +13,8 @@ router.use(function (req, res, next) {
   if (req.user && (req.path.indexOf('dashboard') == -1) ) {
     res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
   }else{
-    next();
   }
+    next();
 });
 
 /* GET home page. */
@@ -39,7 +38,7 @@ router.post('/registration', function(req, res, next) {
           res.render('login', { title: 'Login', error: "Wrong email or password"})
         }else{
           req.login(result, function(err) {
-            res.redirect("/dashboard")
+            res.redirect(subdomains.url(req, result.accountName, '/dashboard'))
           });
         };
       });
@@ -62,7 +61,6 @@ router.get('/login', function(req, res, next) {
 router.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
   function(req, res) {
-    subdomains.url(req, req.user.accountName, '/dashboard')
     res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
   }
 );

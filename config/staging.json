@@ -1,7 +1,8 @@
 {
   "server":{
     "port": 3000,
-    "domain": ".dev.insiderfocus.diatomdemo.com"
+    "baseDomain": ".dev.insiderfocus.diatomdemo.com",
+    "domain": "dev.insiderfocus.diatomdemo.com"
   },
   "redisSession": {
     "host": "localhost",

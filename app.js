@@ -28,8 +28,8 @@ app.use(session({
     store: new RedisStore(config.get("redisSession")),
     secret: config.get("sessionSecret"),
     resave: true, saveUninitialized: false,
-    domain: config.get('server')['domain'],
-    cookie: { domain: config.get('server')['domain'] }
+    domain: config.get('server')['baseDomain'],
+    cookie: { domain: config.get('server')['baseDomain'] }
 }));
 
 app.use(passport.initialize());

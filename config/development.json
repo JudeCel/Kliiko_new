@@ -1,7 +1,8 @@
 {
   "server":{
     "port": 3000,
-    "domain": ".focus.com"
+    "baseDomain": ".focus.com",
+    "domain": "insider.focus.com"
   },
   "redisSession": {
     "host": "localhost",
