@@ -4,6 +4,7 @@ var router = express.Router();
 var users_repo = require('./../repositories/users.js');
 var passport = require('passport');
 var subdomains = require('../lib/subdomains.js');
+var session = require('../middleware/session.js');
 
 router.use(function (req, res, next) {
   if (req.path == '/logout') {
@@ -13,8 +14,8 @@ router.use(function (req, res, next) {
   if (req.user && (req.path.indexOf('dashboard') == -1) ) {
     res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
   }else{
-  }
     next();
+  }
 });
 
 /* GET home page. */
@@ -60,8 +61,13 @@ router.get('/login', function(req, res, next) {
 
 router.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
+  function(req, res, next) {
+    session.rememberMe(req, function(err, result) {
+      if (err) { throw err}
+      if (result) {
+        res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
+      }
+    })
   }
 );
 
