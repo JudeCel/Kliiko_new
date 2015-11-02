@@ -17,7 +17,9 @@ router.get('/', function(req, res, next) {
 router.get('/registration', function(req, res, next) {
   res.render('registration', users_repo.prepareParams(req));
 });
-
+router.get('/landing', function(req, res, next) {
+  res.render('landing', { title: 'landing', user: req.user });
+});
 router.post('/registration', function(req, res, next) {
   users_repo.create(users_repo.prepareParams(req), function(error, result) {
     if (error) {
@@ -42,7 +44,7 @@ router.get('/auth/facebook/callback',
                                       failureRedirect: '/login' }));
 
 router.get('/login', function(req, res, next) {
-  res.render('login', { user: req.user, title: 'Login', error: ""});
+  res.render('login', { title: 'Login', error: ""});
 });
 
 router.post('/login',
