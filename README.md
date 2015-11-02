@@ -32,6 +32,16 @@ If needed use specific subdomain name for users then ``` 127.0.0.1 acountName.fo
 ```sh
   node node_modules/.bin/sequelize  db:migrate
 ```
+##  Subdomain setup for WINDOWS
+
+1) you must have admin permissions
+
+2) go to ``` C:\Windows\System32\drivers\etc ```
+
+3) change hosts file (  127.0.0.1       insider.focus.com
+                        127.0.0.1       www.insider.focus.com   )
+                        
+4) remove localhost
 
 ### Database ORM
 
@@ -51,13 +61,9 @@ Run commands in terminal:
 
 1) ``` npm install gulp -g```
 
-2) ``` npm install bower -g```
+2) ``` npm install ```  
 
-3) ``` npm install ```  
-
-4) ``` bower install```
-
-5) RUN GULP   ``` gulp ```
+3) RUN GULP   ``` gulp ```
 
 
 ### Run Tests
