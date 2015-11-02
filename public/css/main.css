@@ -9,6 +9,14 @@
   width: 100px;
   line-height: 20px; }
 
+.input-group-addon, .input-group-btn {
+  width: auto; }
+
+.input-group {
+  margin-left: auto;
+  margin-right: auto;
+  width: 300px; }
+
 .fa-lg {
   margin-left: 10px; }
 
@@ -209,7 +217,7 @@ input[class=checkbox-signup]:checked + label {
 
 .main-first-page {
   background-image: url("/icons/background.png");
-  height: 90%; }
+  height: 91%; }
 
 .main-first-page-registration {
   background-image: url("/icons/background.png");
