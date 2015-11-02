@@ -1,6 +1,6 @@
 {
   "server":{
-    "port": 3000,
+    "port": 80,
     "baseDomain": ".dev.insiderfocus.diatomdemo.com",
     "domain": "dev.insiderfocus.diatomdemo.com"
   },
@@ -12,5 +12,5 @@
   "cookieSecret": "ee9b7f3df25f0759a0876762da2b721cdeba47b1f5df4003807c6383c581f409",
   "facebookclientID": "896567070378726",
   "facebookClientSecret": "4b81e13605d1945df93d93be4a9a8eff",
-  "facebookCallbackURL": "http://dev.insiderfocus.diatomdemo.com:3000/auth/facebook/callback"
+  "facebookCallbackURL": "http://dev.insiderfocus.diatomdemo.com:80/auth/facebook/callback"
 }
