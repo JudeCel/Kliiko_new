@@ -78,7 +78,7 @@ function prepareParams(req, errors) {
     accountName: '',
     firstName: '',
     lastName: '',
-    email: '',
+    email: '"Wrong email or password"',
     mobile: '',
     password: '',
     tipsAndUpdate: 'on',

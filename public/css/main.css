@@ -217,7 +217,7 @@ input[class=checkbox-signup]:checked + label {
 
 .main-first-page {
   background-image: url("/icons/background.png");
-  height: 91%; }
+  height: 100%; }
 
 .main-first-page-registration {
   background-image: url("/icons/background.png");
@@ -244,6 +244,11 @@ html, body {
   color: green;
   width: 100px;
   line-height: 20px; }
+
+#warning-email-password {
+  color: red;
+  font-size: 1.4em;
+  font-weight: bold; }
 
 @font-face {
   font-family: SourceSansPro-Black;

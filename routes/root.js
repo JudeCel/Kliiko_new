@@ -20,7 +20,7 @@ router.use(function (req, res, next) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('login', { title: ''});
+  res.render('login', { title: 'Login', error: ""});
 });
 
 router.get('/registration', function(req, res, next) {
@@ -45,6 +45,20 @@ router.post('/registration', function(req, res, next) {
       });
     };
   });
+});
+
+router.post('/login', function(req, res, next) {
+ var post = req.body;
+      users_repo.comparePassword(post.email, post.password, function(failed, result) {
+        if (failed) {
+          res.render('login', { title: 'Login', error: "Wrong email or password"})
+        }else{
+          req.login(result, function(err) {
+            res.redirect(subdomains.url(req, result.accountName, '/dashboard'))
+          });
+        };
+      });
+
 });
 
 router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
