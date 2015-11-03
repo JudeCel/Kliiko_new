@@ -29,9 +29,7 @@ app.use(session({
     secret: config.get("sessionSecret"),
     resave: true, saveUninitialized: false,
     domain: config.get('server')['baseDomain'],
-    cookie: { domain: config.get('server')['baseDomain'],
-              maxAge: 32 * 120 * 1000
-            }
+    cookie: { domain: config.get('server')['baseDomain']}
 }));
 
 app.use(passport.initialize());
