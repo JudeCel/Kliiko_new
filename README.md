@@ -77,6 +77,7 @@ Install mocha ```  npm install mocha -g ```
  Run
  
  ``` mocha test```
+ 
  or
  
  ``` npm test ```
