@@ -7,6 +7,10 @@
     "start": "node ./bin/www",
     "test": "mocha test"
   },
+  "engineStrict": true,
+  "engine": {
+    "node": "~ 4.2"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JudeCel/Kliiko.git"
@@ -62,7 +66,6 @@
   "dependencies": {
     "async": "^1.5.0",
     "bcrypt": "^0.8.5",
-    "bcryptjs": "^2.3.0",
     "body-parser": "^1.13.3",
     "config": "^1.16.0",
     "connect-redis": "^3.0.1",

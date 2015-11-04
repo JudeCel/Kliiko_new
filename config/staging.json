@@ -1,7 +1,8 @@
 {
   "server":{
     "port": 3000,
-    "host": "192.168.10.233"
+    "baseDomain": ".dev.insiderfocus.diatomdemo.com",
+    "domain": "dev.insiderfocus.diatomdemo.com"
   },
   "redisSession": {
     "host": "localhost",
@@ -18,5 +19,5 @@
   "cookieSecret": "ee9b7f3df25f0759a0876762da2b721cdeba47b1f5df4003807c6383c581f409",
   "facebookclientID": "896567070378726",
   "facebookClientSecret": "4b81e13605d1945df93d93be4a9a8eff",
-  "facebookCallbackURL": "http://83.99.159.202:3000/auth/facebook/callback"
+  "facebookCallbackURL": "http://dev.insiderfocus.diatomdemo.com:3000/auth/facebook/callback"
 }

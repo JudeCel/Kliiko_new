@@ -214,14 +214,15 @@ input[class=checkbox-signup]:checked + label {
 .main-first-page{
   background-image: url("/icons/background.png");
 //  background-color: $background;
-  height: 90%;
+  height: 100%;
 
 //  font-family: $s-pro;
 }
+
 .main-first-page-registration{
   background-image: url("/icons/background.png");
   //  background-color: $background;
-  height: 105%;
+  height: 110%;
 
   //  font-family: $s-pro;
 }
@@ -238,3 +239,19 @@ html,body {
  // font-family: $s-pro;
 }
 
+#welcome-download-pdf{
+  text-decoration: underline;
+  color: white;
+  text-align: center;
+  text-align: center;
+  color: white;
+}
+
+.go{
+
+  border: 0px;
+  color: green;
+  width: 100px;
+  line-height: 20px;
+
+}

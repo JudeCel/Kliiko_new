@@ -8,6 +8,7 @@ module.exports = function () {
     var config = {
 
         config: 'config/**/*.*',
+        dns: 'insider.focus.com:',
         migrations: 'migrations/**/*.*',
         models: "models/**/*.*",
         repositories: 'repositories/**/*.*',

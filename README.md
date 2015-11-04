@@ -1,5 +1,5 @@
 # Kliiko
-Tested on: Node version 4.2.1 LTS, NPM version 3.3.8
+Tested on: Node version 4.2.* LTS, NPM version 3.3.*
 
 ## Dependencies
 
@@ -15,10 +15,6 @@ Redis 3.0.5
 
 ## Set up Project
 
-Need modify ``` /etc/hosts ``` with ``` 127.0.0.1 insider.focus.com```
-
-If needed use specific subdomain name for users then ``` 127.0.0.1 acountName.focus.com ```
-
 ```sh
  cd project_path
  npm install
@@ -32,8 +28,25 @@ If needed use specific subdomain name for users then ``` 127.0.0.1 acountName.fo
 ```sh
   node node_modules/.bin/sequelize  db:migrate
 ```
+##  Subdomain setup
 
-### Database ORM
+### Linux
+
+Need modify ``` /etc/hosts ``` with ``` 127.0.0.1 insider.focus.com```
+If needed use specific subdomain name for users then ``` 127.0.0.1 acountName.focus.com ```
+
+### WINDOWS
+
+1) you must have admin permissions
+
+2) go to ``` C:\Windows\System32\drivers\etc ```
+
+3) change hosts file (  127.0.0.1       insider.focus.com
+                        127.0.0.1       www.insider.focus.com   )
+                        
+4) remove localhost
+
+## Database ORM
 
 Use [Sequelize](http://docs.sequelizejs.com/en/latest/)
 
@@ -45,23 +58,26 @@ To restart DB run command
 
 This delete all DB tables and create new tables
 
-### Run Gulp
+## Run Gulp
 
 Run commands in terminal:
 
 1) ``` npm install gulp -g```
 
-2) ``` npm install bower -g```
+2) ``` npm install ```  
 
-3) ``` npm install ```  
+3) RUN GULP   ``` gulp ```
 
-4) ``` bower install```
-
-5) RUN GULP   ``` gulp ```
+4) Open browser: ``` http://insider.focus.com:3000/ ```
 
 
-### Run Tests
- ```sh
- npm install mocha -g
- mocha test
- ```
+### Tests
+Install mocha ```  npm install mocha -g ```
+ 
+ Run
+ 
+ ``` mocha test```
+ 
+ or
+ 
+ ``` npm test ```

@@ -3,6 +3,20 @@
   padding: 0px;
   font-family: Source Sans Pro; }
 
+.go {
+  border: 0px;
+  color: green;
+  width: 100px;
+  line-height: 20px; }
+
+.input-group-addon, .input-group-btn {
+  width: auto; }
+
+.input-group {
+  margin-left: auto;
+  margin-right: auto;
+  width: 300px; }
+
 .fa-lg {
   margin-left: 10px; }
 
@@ -203,11 +217,11 @@ input[class=checkbox-signup]:checked + label {
 
 .main-first-page {
   background-image: url("/icons/background.png");
-  height: 90%; }
+  height: 100%; }
 
 .main-first-page-registration {
   background-image: url("/icons/background.png");
-  height: 105%; }
+  height: 110%; }
 
 .input-group-btn:last-child > .btn, .input-group-btn:last-child > .btn-group {
   margin-top: -20px; }
@@ -217,6 +231,24 @@ html, body {
   margin: 0px;
   padding: 0px;
   font-family: Source Sans Pro; }
+
+#welcome-download-pdf {
+  text-decoration: underline;
+  color: white;
+  text-align: center;
+  text-align: center;
+  color: white; }
+
+.go {
+  border: 0px;
+  color: green;
+  width: 100px;
+  line-height: 20px; }
+
+#warning-email-password {
+  color: red;
+  font-size: 1.4em;
+  font-weight: bold; }
 
 @font-face {
   font-family: SourceSansPro-Black;
