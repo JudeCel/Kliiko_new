@@ -2,11 +2,11 @@
 var express = require('express');
 var async = require('async');
 var router = express.Router();
-var users_repo = require('./../repositories/users.js');
+var users_repo = require('./../repositories/users');
 var passport = require('passport');
-var subdomains = require('../lib/subdomains.js');
-var mail = require('../lib/mailer');
+var subdomains = require('../lib/subdomains');
 var config = require('config');
+var mailers = require('../mailers');
 
 router.use(function (req, res, next) {
 
@@ -91,16 +91,15 @@ router.route('/forgotpassword')
           users_repo.setResetToken(email, next);
         },
         function(token, next) {
+
           if(!token) return next();
 
           var params = {
-            to: email,
-            subject: 'Insider Focus - Reset password'
+            token: token,
+            email: email
           };
-          var message = "A request was made to change your password for.  Click link to reset: ";
-              message += "http://"+config.get('server')['domain']+":"+config.get('server')['port']+"/resetpassword/"+token;
 
-          mail(message, params, next);
+          mailers.users.sendResetPasswordToken(params, next);
         }
       ], function(err ) {
         if (err) {
@@ -116,22 +115,44 @@ router.route('/forgotpassword')
       error = 'Please fill e-mail fields';
       res.render('forgotpassword', { title: title, email: email, error: error, success: success});
     }
-
   });
 
 router.route('/resetpassword/:token')
   .get(function(req, res, next) {
-    /*
-    users_repo.getUserByToken(req.params.token, function(err, user){
-      if (err) return  next();
-      if (user) {
 
+    users_repo.getUserByToken(req.params.token, function(err, user){
+
+      if (err) return  next();
+
+      var tokenCreated = new Date(user.get("resetPasswordSentAt"));
+      var tokenEnd = tokenCreated.setHours(tokenCreated.getHours() + 24);
+      var now = new Date().getTime();
+      if ( now > tokenEnd) {
+        user = null;
       }
+
+      res.render('resetpassword', { title: 'Reset password', user: user, token: req.params.token, errors: {}});
     });
-    */
-    res.render('resetpassword', { title: 'Reset password', errors: {}});
+
   }).post( function(req, res, next) {
-    res.render('resetpassword', { title: 'Reset  password', errors: {}});
+
+    if ( !req.params.token || !req.body.password ) return  next();
+
+    users_repo.getUserByToken(req.params.token, function(err, user){
+
+      if (err) return  next();
+
+      users_repo.resetPassword(req.params.token, req.body.password, function(err, data){
+
+        if (err) {
+           res.render('resetpassword', { title: 'Reset password', user: 1, token: req.params.token, errors: {password : err.message}});
+        } else {
+          mailers.users.sendResetPasswordSuccess({email: user.get('email')}, function(err, data){
+            res.redirect("/login");
+          });
+        }
+      });
+    });
   });
 
 module.exports = router;

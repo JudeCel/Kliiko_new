@@ -30,7 +30,6 @@ function createUser(params, callback) {
   });
 }
 
-
 function validateVirtualAttrs(params){
   let errors = {}
   return errors;
@@ -92,7 +91,8 @@ function getUserByToken(token, callback) {
   User.find({
     where: {
       resetPasswordToken: token
-    }
+    },
+    attributes: ['id', 'resetPasswordSentAt', 'email']
   })
   .then(function (result) {
     callback(null, result);
@@ -103,7 +103,19 @@ function getUserByToken(token, callback) {
 }
 
 function resetPassword(token, password, callback) {
-  callback();
+  User.update({
+    resetPasswordToken: null,
+    resetPasswordSentAt: null,
+    password: password
+  },{
+    where: { resetPasswordToken : token }
+  })
+  .then(function (result) {
+    callback(null, result);
+  })
+  .catch(function (err) {
+    callback(err);
+  });
 }
 
 function setResetToken(email, callback) {
@@ -123,7 +135,7 @@ function setResetToken(email, callback) {
       callback(null, null);
     }
   })
-  .catch(function () {
+  .catch(function (err) {
     callback(true, null);
   });
 
