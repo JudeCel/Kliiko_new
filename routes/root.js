@@ -22,7 +22,7 @@ router.use(function (req, res, next) {
   }
 });
 
-/* GET home page. */
+/* GET root page. */
 router.get('/', function(req, res, next) {
   res.render('login', { title: 'Login', error: ""});
 });
