@@ -2,6 +2,7 @@
 var User  = require('./../models').User;
 var _ = require('lodash');
 var bcrypt = require('bcrypt');
+var uuid = require('node-uuid');
 
 function create(params, callback) {
   validateForCreate(params, function(error, user) {
@@ -28,7 +29,6 @@ function createUser(params, callback) {
     return callback(prepareErrors(err), this);
   });
 }
-
 
 function validateVirtualAttrs(params){
   let errors = {}
@@ -71,6 +71,7 @@ function prepareErrors(err, _errors_object) {
   });
   return errors
 };
+
 function prepareParams(req, errors) {
   return _.assign({
     user: req.user,
@@ -86,10 +87,67 @@ function prepareParams(req, errors) {
   }, req.body, req.query);
 }
 
+function getUserByToken(token, callback) {
+  User.find({
+    where: {
+      resetPasswordToken: token
+    },
+    attributes: ['id', 'resetPasswordSentAt', 'email']
+  })
+  .then(function (result) {
+    callback(null, result);
+  })
+  .catch(function (err) {
+    callback(err);
+  });
+}
+
+function resetPassword(token, password, callback) {
+  User.update({
+    resetPasswordToken: null,
+    resetPasswordSentAt: null,
+    password: password
+  },{
+    where: { resetPasswordToken : token }
+  })
+  .then(function (result) {
+    callback(null, result);
+  })
+  .catch(function (err) {
+    callback(err);
+  });
+}
+
+function setResetToken(email, callback) {
+
+  var token = uuid.v1();
+
+  User.update({
+    resetPasswordToken: token,
+    resetPasswordSentAt: new Date()
+  },{
+    where: { email : email }
+  })
+  .then(function (result) {
+    if (result[0]>0){
+      callback(null, token);
+    } else {
+      callback(null, null);
+    }
+  })
+  .catch(function (err) {
+    callback(true, null);
+  });
+
+}
+
 module.exports = {
     create: create,
     user: User,
     createUser: createUser,
     comparePassword: comparePassword,
-    prepareParams: prepareParams
+    prepareParams: prepareParams,
+    resetPassword: resetPassword,
+    setResetToken: setResetToken,
+    getUserByToken: getUserByToken
 }
