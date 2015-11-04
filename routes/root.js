@@ -166,7 +166,7 @@ router.route('/resetpassword/:token')
       users_repo.resetPassword(req.params.token, req.body.password, function(err, data){
 
         if (err) {
-           res.render('resetpassword', { title: 'Reset password', user: 1, token: req.params.token, errors: {password : err.message}});
+           res.render('resetpassword', { title: 'Reset password', user: user, token: req.params.token, errors: {password : err.message}});
         } else {
           mailers.users.sendResetPasswordSuccess({email: user.get('email')}, function(err, data){
             res.redirect("/login");
