@@ -24,7 +24,7 @@ Redis 3.0.5
 
 2) Create databases with the names from ``` ./config/config.json```
 
-3) Need run migrations
+3) Run migrations in order to sycnhronize database
 ```sh
   node node_modules/.bin/sequelize  db:migrate
 ```
