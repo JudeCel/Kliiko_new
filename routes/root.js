@@ -52,7 +52,7 @@ router.post('/registration', function(req, res, next) {
 });
 
 router.post('/login', function(req, res, next) {
-  var post = req.body;
+  let post = req.body;
   usersRepo.comparePassword(post.email, post.password, function(failed, result) {
     if (failed) {
       res.render('login', { title: 'Login', error: "Wrong email or password"})

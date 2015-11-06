@@ -1,24 +1,21 @@
 var nodemailer = require('nodemailer');
 var config = require('config');
-var ejs = require('ejs');
-var fs = require('fs')
-
+var helpers = require('./helpers');
 var users = exports;
+
+var mailFrom = helpers.mailFrom();
 
 users.sendResetPasswordToken = function(params, callback) {
 
-  var tplfile = __dirname + '/templates/resetPasswordToken.ejs';
+    var link = { url: helpers.getResetPaswordUrl(params.token)};
 
-  fs.readFile(tplfile, 'utf8', function (err, tpl) {
-    if (err) return callback(err);
+    helpers.renderMailTemplate('resetPasswordToken', link, function(err, data){
+      if (err) return callback(err);
 
-    var url = "http://"+config.get('server')['domain']+":"+config.get('server')['port']+"/resetpassword/"+params.token;
-    var html = ejs.render(tpl, { url: url});
-
-    var transporter = nodemailer.createTransport(config.get('mail')['transport']);
+      var transporter = nodemailer.createTransport(config.get('mail')['transport']);
 
       transporter.sendMail({
-        from: config.get('mail')['fromName']+" <"+config.get('mail')['fromEmail']+">",
+        from: mailFrom,
         to: params.email,
         subject: 'Insider Focus - Reset password',
         html: html
@@ -28,21 +25,17 @@ users.sendResetPasswordToken = function(params, callback) {
 
 users.sendResetPasswordSuccess = function(params, callback) {
 
-  var tplfile = __dirname + '/templates/resetPasswordSuccess.ejs';
+    helpers.renderMailTemplate('resetPasswordSuccess', {}, function(err, data){
+      if (err) return callback(err);
 
-  fs.readFile(tplfile, 'utf8', function (err, tpl) {
-    if (err) return callback(err);
+      var transporter = nodemailer.createTransport(config.get('mail')['transport']);
 
-    var html = ejs.render(tpl, {});
-
-    var transporter = nodemailer.createTransport(config.get('mail')['transport']);
-
-    transporter.sendMail({
-      from: config.get('mail')['fromName']+" <"+config.get('mail')['fromEmail']+">",
-      to: params.email,
-      subject: 'Insider Focus - Reset password Success',
-      html: html
-    }, callback);
-  });
+      transporter.sendMail({
+        from: mailFrom,
+        to: params.email,
+        subject: 'Insider Focus - Reset password Success',
+        html: html
+      }, callback);
+    });
 };
 
