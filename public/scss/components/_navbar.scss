@@ -206,19 +206,13 @@ input[class=checkbox-signup]:checked + label {
   padding-top: 6px;
   font-size: 13px;
   font-weight: bold;
-  //margin-right: 10px;
 
   margin-bottom: -10px;
-  //padding-left: 15px;
-  //padding-right: 15px;
   padding-bottom: 2px;
 
   font-weight: bold;
   width: 100%;
   line-height: 20px;
-  //padding-top: 10px;
-  //padding-bottom: 7px;
-  //border-bottom: 0px;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 
@@ -243,7 +237,6 @@ input[class=checkbox-signup]:checked + label {
   padding-right: 15px;
 }
 #nav-tabs-dashboard > li > a:hover {
-  //background-color: white;
 }
 
 .tab-content-payment{
@@ -269,7 +262,6 @@ input[class=checkbox-signup]:checked + label {
 
 }
 #nav-tabs-payments > li.active > a, .nav-tabs > li.active > a:hover{
-  //border: 1px solid $text-summary;
   margin: 0;
   background-color: white;
   color: $text-summary;
@@ -278,8 +270,6 @@ input[class=checkbox-signup]:checked + label {
   font-weight: bold;
   width: 100%;
   line-height: 40px;
-  //padding-top: 10px;
-  //padding-bottom: 7px;
   border-bottom: 0px;
   border-top-left-radius: 8px;
   padding-right: 0px;
@@ -308,11 +298,7 @@ input[class=checkbox-signup]:checked + label {
   float: left;
 
 }
-//#chat-sessions > li > a{
-//  padding-right: 50px;
-//}
 #nav-tabs-payments > li > a{
-  //border: 1px solid $text-summary;
   margin: 0;
   font-size: 14px;
   font-weight: bold;
@@ -334,7 +320,6 @@ input[class=checkbox-signup]:checked + label {
 }
 #nav-tabs-payments > li > a:hover {
 
-  //background-color: white;
 }
 .login {
   color: white;
@@ -365,18 +350,14 @@ input[class=checkbox-signup]:checked + label {
 }
 .main-first-page{
   background-image: url("/icons/background.png");
-//  background-color: $background;
   height: 100%;
 
-//  font-family: $s-pro;
 }
 
 .main-first-page-registration{
   background-image: url("/icons/background.png");
-  //  background-color: $background;
   height: 110%;
 
-  //  font-family: $s-pro;
 }
 .input-group-btn:last-child > .btn, .input-group-btn:last-child > .btn-group {
 
@@ -389,7 +370,6 @@ html,body {
   margin: 0px;
   padding: 0px;
   font-family: $s-pro;
- // font-family: $s-pro;
 }
 
 #welcome-download-pdf{
