@@ -179,10 +179,147 @@ input[class=checkbox-signup]:checked + label {
   padding-right: 40px;
   font-size: 12px;
   font-weight: bold;
-  margin-left: -5px;
+  //margin-left: -5px;
+  margin-right: 10px;
+
 }
 .nav-tabs > li > a:hover {
   background-color: $border;
+}
+#nav-tabs-dashboard{
+  border: 0px;
+}
+#nav-tabs-dashboard{
+  border: 0px;
+
+}
+#nav-tabs-dashboard > li{
+
+  margin-right: 10px;
+
+}
+#nav-tabs-dashboard > li.active > a, .nav-tabs > li.active > a:hover{
+  border: 0px solid $border;
+  border-bottom: 0px solid $border;
+  background-color: white;
+  color: $border;
+  padding-top: 6px;
+  font-size: 13px;
+  font-weight: bold;
+
+  margin-bottom: -10px;
+  padding-bottom: 2px;
+
+  font-weight: bold;
+  width: 100%;
+  line-height: 20px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+
+  //float: left;
+
+
+}
+#nav-tabs-dashboard > li > a {
+  background-color: $border;
+  color: white;
+
+}
+
+#nav-tabs-dashboard > li > a{
+  padding-top: 4px;
+  font-size: 13px;
+  font-weight: bold;
+  margin-right: 0px;
+  padding-bottom: 0px;
+
+  padding-left: 15px;
+  padding-right: 15px;
+}
+#nav-tabs-dashboard > li > a:hover {
+}
+
+.tab-content-payment{
+  border-left: 2px solid $text-sessions;
+  border-right: 2px solid $text-sessions;
+  border-bottom: 2px solid $text-sessions;
+  border-top: 0px solid $text-sessions;
+  height: auto;
+  margin-bottom: 20px;
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+#nav-tabs-payments{
+
+  width: 100%;
+  border-left: 2px solid $text-sessions ;
+  border-right: 2px solid $text-sessions ;
+  border-top: 2px solid $text-sessions ;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+
+
+}
+#nav-tabs-payments > li.active > a, .nav-tabs > li.active > a:hover{
+  margin: 0;
+  background-color: white;
+  color: $text-summary;
+  border-radius: 0px;
+  font-size: 14px;
+  font-weight: bold;
+  width: 100%;
+  line-height: 40px;
+  border-bottom: 0px;
+  border-top-left-radius: 8px;
+  padding-right: 0px;
+  padding-left: 0px;
+  float: left;
+}
+#nav-tabs-payments > li.active {
+  border-radius: 0px;
+  width: 50%;
+  margin-left: 0;
+  margin-right: 0;
+  border-bottom: 0px;
+  padding-right: 0px;
+  padding-left: 0px;
+
+}
+#nav-tabs-payments > li {
+  color: $text-summary;
+  border-radius: 0px;
+  width: 50%;
+  margin-left: 0;
+  margin-right: 0;
+  border-bottom: 0px;
+  padding-right: 0px;
+  padding-left: 0px;
+  float: left;
+
+}
+#nav-tabs-payments > li > a{
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+  width: 100%;
+  line-height: 40px;
+  background-color: $text-sessions;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 0px;
+  color: $text-summary;
+
+
+
+  padding-top: 15px;
+  padding-bottom: 10px;
+
+  border-bottom: 0px;
+  padding-right: 0px;
+  padding-left: 0px;
+}
+#nav-tabs-payments > li > a:hover {
+
 }
 .login {
   color: white;
@@ -213,18 +350,14 @@ input[class=checkbox-signup]:checked + label {
 }
 .main-first-page{
   background-image: url("/icons/background.png");
-//  background-color: $background;
   height: 100%;
 
-//  font-family: $s-pro;
 }
 
 .main-first-page-registration{
   background-image: url("/icons/background.png");
-  //  background-color: $background;
   height: 110%;
 
-  //  font-family: $s-pro;
 }
 .input-group-btn:last-child > .btn, .input-group-btn:last-child > .btn-group {
 
@@ -233,10 +366,10 @@ input[class=checkbox-signup]:checked + label {
 
 html,body {
   height: 100%;
+
   margin: 0px;
   padding: 0px;
   font-family: $s-pro;
- // font-family: $s-pro;
 }
 
 #welcome-download-pdf{
@@ -254,4 +387,31 @@ html,body {
   width: 100px;
   line-height: 20px;
 
+}
+
+.credit-card-label{
+  text-align: right;
+  float: right;
+  line-height: 33px;
+  right: 0px;
+  width: 100%;
+}
+
+#card-name{
+
+  margin-top: 8px;
+
+}
+
+.form-horizontal .control-label{
+  text-align: right;
+
+}
+
+#label-right{
+
+}
+#card-confirmation{
+  margin-top: 20px;
+  margin-bottom: 20px;
 }

@@ -22,9 +22,9 @@ Redis 3.0.5
 
 1) Copy  ```./config/config.json.sample``` to  ``` ./config/config.json```
 
-2) Need create databases with names from ``` ./config/config.json```
+2) Create databases with the names from ``` ./config/config.json```
 
-3) Need run migrations
+3) Run migrations in order to sycnhronize database
 ```sh
   node node_modules/.bin/sequelize  db:migrate
 ```
@@ -46,17 +46,14 @@ If needed use specific subdomain name for users then ``` 127.0.0.1 acountName.fo
                         
 4) remove localhost
 
-## Database ORM
+## Database migrations and ORM
 
-Use [Sequelize](http://docs.sequelizejs.com/en/latest/)
+In the project we use ORM [Sequelize](http://docs.sequelizejs.com/en/latest/)
 
-Use [Sequelize Migrations ](http://docs.sequelizejs.com/en/latest/docs/migrations/)
+Also we use code-first migrations [Sequelize Migrations ](http://docs.sequelizejs.com/en/latest/docs/migrations/)
 
-
-To restart DB run command
+To restart DB, delete and recreate all tables based on the models, run this command from root directory of the project:
 ``` node lib/tasks/db_reset.js ```
-
-This delete all DB tables and create new tables
 
 ## Run Gulp
 
