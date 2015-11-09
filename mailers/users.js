@@ -1,3 +1,5 @@
+"use strict";
+
 var config = require('config');
 var helpers = require('./helpers');
 var users = exports;
@@ -7,7 +9,7 @@ var transporter = helpers.createTransport();
 
 users.sendResetPasswordToken = function(params, callback) {
 
-    var link = { url: helpers.getResetPaswordUrl(params.token)};
+    let link = { url: helpers.getResetPaswordUrl(params.token)};
 
     helpers.renderMailTemplate('resetPasswordToken', link, function(err, html){
       if (err) {
