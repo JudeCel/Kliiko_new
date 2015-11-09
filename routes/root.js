@@ -26,6 +26,50 @@ router.use(function (req, res, next) {
 router.get('/', function(req, res, next) {
   res.render('dashboard/dashboard', { title: 'Dashboard', user: req.user, error: ""});
 });
+
+router.route('/forgotpassword')
+    .get( function(req, res, next) {
+      res.render('forgotPassword', { title: 'Forgot your password?', email: '', error: '', success: ''});
+    })
+    .post( function(req, res, next) {
+
+      var error = '';
+      var success = '';
+      var title = 'Forgot your password?';
+      var email = req.body.email;
+
+      if (email) {
+
+        async.waterfall([
+          function(next) {
+            usersRepo.setResetToken(email, next);
+          },
+          function(token, next) {
+
+            if(!token) return next();
+
+            var params = {
+              token: token,
+              email: email
+            };
+
+            mailers.users.sendResetPasswordToken(params, next);
+          }
+        ], function(err ) {
+          if (err) {
+            error = 'Failed to send data. Please try later';
+          }else {
+            success = 'Account recovery email sent to ' + email;
+          }
+
+          res.render('forgotPassword', { title: title, email: email, error: error, success: success});
+        });
+
+      }else{
+        error = 'Please fill e-mail fields';
+        res.render('forgotPassword', { title: title, email: email, error: error, success: success});
+      }
+    });
 router.get('/registration', function(req, res, next) {
   res.render('registration', users_repo.prepareParams(req));
 });
@@ -48,6 +92,19 @@ router.post('/registration', function(req, res, next) {
       });
     };
   });
+});
+router.post('/forgotpassword', function(req, res, next) {
+  var post = req.body;
+  users_repo.comparePassword(post.email, post.password, function(failed, result) {
+    if (failed) {
+      res.render('forgotpassword', { title: 'forgotpassword', error: "Wrong email or password"})
+    }else{
+      req.login(result, function(err) {
+        res.redirect(subdomains.url(req, result.accountName, '/landing'))
+      });
+    };
+  });
+
 });
 
 router.post('/login', function(req, res, next) {
