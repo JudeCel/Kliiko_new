@@ -1,13 +1,13 @@
 {
   "server":{
-    "port": 3000,
-    "baseDomain": ".dev.insiderfocus.diatomdemo.com",
-    "domain": "dev.insiderfocus.diatomdemo.com"
+    "port": 5678,
+    "baseDomain": ".focus.com",
+    "domain": "insider.focus.com"
   },
   "redisSession": {
     "host": "localhost",
     "port": "6379",
-    "db": 1
+    "db": 5
   },
   "mail": {
     "fromName": "Insider Focus",
@@ -22,7 +22,7 @@
   },
   "sessionSecret": "c4be0a2cc8658004a3f2417e62281f65e995ac7c564e39e727d764a62d69e836",
   "cookieSecret": "ee9b7f3df25f0759a0876762da2b721cdeba47b1f5df4003807c6383c581f409",
-  "facebookclientID": "896567070378726",
-  "facebookClientSecret": "4b81e13605d1945df93d93be4a9a8eff",
-  "facebookCallbackURL": "http://dev.insiderfocus.diatomdemo.com:3000/auth/facebook/callback"
+  "facebookclientID": "895147450520688",
+  "facebookClientSecret": "5c18ba36fe2a55ae05fd64fe41bcb002",
+  "facebookCallbackURL": "http://insider.focus.com:5678/auth/facebook/callback"
 }
