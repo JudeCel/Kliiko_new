@@ -1,3 +1,5 @@
+"use strict";
+
 var ejs = require('ejs');
 var fs = require('fs');
 var config = require('config');
@@ -14,7 +16,7 @@ helpers.getResetPaswordUrl = function(token){
 };
 
 helpers.renderMailTemplate = function(filename, params, callback){
-  var tplfile = __dirname + '/templates/' + filename + '.ejs';
+  let tplfile = __dirname + '/templates/' + filename + '.ejs';
 
   fs.readFile(tplfile, 'utf8', function (err, tpl) {
     if (err) {
