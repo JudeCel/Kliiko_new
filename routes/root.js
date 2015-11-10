@@ -3,6 +3,7 @@ var express = require('express');
 var async = require('async');
 var router = express.Router();
 var usersRepo = require('./../repositories/users');
+var resetPassword = require('./../repositories/resetPassword');
 var passport = require('passport');
 var subdomains = require('../lib/subdomains');
 var config = require('config');
@@ -99,84 +100,74 @@ router.route('/forgotpassword')
   })
   .post( function(req, res, next) {
 
-    var error = '';
-    var success = '';
-    var title = 'Forgot your password?';
+    var tplData = {
+      title: 'Forgot your password?',
+      error: '',
+      success: '',
+      email: ''
+    };
     var email = req.body.email;
 
-    if (email) {
-
-      async.waterfall([
-        function(next) {
-          usersRepo.setResetToken(email, next);
-        },
-        function(token, next) {
-
-          if(!token) return next();
-
-          var params = {
-            token: token,
-            email: email
-          };
-
-          mailers.users.sendResetPasswordToken(params, next);
-        }
-      ], function(err ) {
-        if (err) {
-          error = 'Failed to send data. Please try later';
-        }else {
-          success = 'Account recovery email sent to ' + email;
-        }
-
-        res.render('forgotPassword', { title: title, email: email, error: error, success: success});
-      });
-
-    }else{
-      error = 'Please fill e-mail fields';
-      res.render('forgotPassword', { title: title, email: email, error: error, success: success});
+    if(!req.body.email) {
+      tplData.error = 'Please fill e-mail fields';
+      res.render('forgotPassword', tplData);
+      return;
     }
+
+    resetPassword.sendToken(email, function(err){
+      if (err) {
+        tplData.error = 'Failed to send data. Please try later';
+      }else {
+        tplData.success = 'Account recovery email sent to ' + email;
+      }
+      res.render('forgotPassword', tplData);
+    });
   });
 
 router.route('/resetpassword/:token')
   .get(function(req, res, next) {
+    var tplData = {
+      title: 'Reset password',
+      user: true,
+      token: req.params.token,
+      errors: {}
+    };
 
-    usersRepo.getUserByToken(req.params.token, function(err, user){
+    resetPassword.checkTokenExpired(req.params.token, function(err, user){
       if (err || !user) {
-        res.render('resetPassword', { title: 'Reset password', user: false, token: req.params.token, errors: {}});
-        return;
+        tplData.user = false;
       }
-
-      var tokenCreated = new Date(user.get("resetPasswordSentAt"));
-      var tokenEnd = tokenCreated.setHours(tokenCreated.getHours() + 24);
-      var now = new Date().getTime();
-      if ( now > tokenEnd) {
-        user = null;
-      }
-
-      res.render('resetPassword', { title: 'Reset password', user: user, token: req.params.token, errors: {}});
+      res.render('resetPassword', tplData);
     });
 
   }).post( function(req, res, next) {
+    var tplData = {
+      title: 'Reset password',
+      user: true,
+      token: req.params.token,
+      errors: {}
+    };
 
-    if ( req.body.password !== req.body.repassword ) {
-      res.render('resetPassword', { title: 'Reset password', user: true, token: req.params.token, errors: {password : "Passwords not equal"}});
+    if ( !req.body.password || !req.body.repassword ) {
+      tplData.errors.password = "Please fill both passwords";
+      res.render('resetPassword', tplData);
       return;
     }
 
-    usersRepo.getUserByToken(req.params.token, function(err, user){
+    if ( req.body.password !== req.body.repassword ) {
+      tplData.errors.password = "Passwords not equal";
+      res.render('resetPassword', tplData);
+      return;
+    }
+
+    resetPassword.resetByToken(req, function(err, user){
       if (err) {
-        res.render('resetPassword', { title: 'Reset password', user: false, token: req.params.token, errors: {}});
+        tplData.errors.password = "Reset password failed";
+        res.render('resetPassword', tplData);
         return;
       }
-      usersRepo.resetPassword(req.params.token, req.body.password, function(err, data){
-
-        if (err) {
-           res.render('resetPassword', { title: 'Reset password', user: user, token: req.params.token, errors: {password : err.message}});
-        } else {
-          mailers.users.sendResetPasswordSuccess({email: user.get('email')}, function(err, data){
-            res.redirect("/login");
-          });
-        }
+      mailers.users.sendResetPasswordSuccess({email: user.get('email')}, function(err, data){
+        res.redirect("/login");
       });
     });
   });
