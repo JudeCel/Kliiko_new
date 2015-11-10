@@ -41,9 +41,9 @@ function checkTokenExpired(token, callback){
       return callback(new Error('User not found'));
     }
 
-    var tokenCreated = new Date(user.get("resetPasswordSentAt"));
-    var tokenEnd = tokenCreated.setHours(tokenCreated.getHours() + 24);
-    var now = new Date().getTime();
+    let tokenCreated = new Date(user.get("resetPasswordSentAt"));
+    let tokenEnd = tokenCreated.setHours(tokenCreated.getHours() + 24);
+    let now = new Date().getTime();
     if ( now > tokenEnd) {
       user = null;
     }

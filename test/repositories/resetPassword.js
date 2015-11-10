@@ -1,11 +1,14 @@
 "use strict";
 var models  = require('./../../models');
 var User  = models.User;
-var userRepo  = require('./../../repositories/users');
+var usersRepo  = require('./../../repositories/users');
 var resetPassword  = require('./../../repositories/resetPassword');
 var assert = require('assert');
+var bcrypt = require('bcrypt');
 
-describe('Expiration period', function() {
+describe('Reset Password', function() {
+
+  var uid;
 
   before(function(done) {
     var attrs = {
@@ -20,59 +23,55 @@ describe('Expiration period', function() {
     models.sequelize.sync({ force: true }).then(() => {
       User.build(attrs).save()
         .then(function(user) {
+          uid = user.get("id");
           done();
         });
     });
   });
 
-  it('should return user for valid token', function () {
+  after(function(done) {
+    models.sequelize.sync({ force: true }).then(() => {
+      User.destroy({
+        where: {
+          id: uid
+        }
+      }).then(function(user) {
+        done();
+      });
+    });
+  });
+
+  it('should return user for valid token', function (done) {
     resetPassword.checkTokenExpired('123456', function(err, user){
       assert.equal(err, null);
-      assert.equal(user.get('token'), '123456');
+      assert.equal(user.get('resetPasswordToken'), '123456');
+      done();
     });
   });
 
-  it('should return null for valid token', function () {
-    resetPassword.checkTokenExpired('123456', function(err, user){
-      assert.equal(user, null);
+  it('should return null for valid token', function (done) {
+    resetPassword.checkTokenExpired('12345678', function(err, user){
+      assert.equal(user, undefined);
+      done();
     });
   });
 
-});
-
-describe('Password is changed', function() {
-
-  before(function(done) {
-    var attrs = {
-      accountName: "Lilo",
-      firstName: "Lilu",
-      lastName: "Dalas",
-      password: "multipassword",
-      email: "lilu.tanya@gmail.com",
-      resetPasswordToken: '12345678',
-      resetPasswordSentAt: new Date(),
-    }
-    models.sequelize.sync({ force: true }).then(() => {
-      User.build(attrs).save()
-        .then(function(user) {
-          done();
-        });
-    });
-  });
-
-  it('should reset password  by token', function () {
+  it('should reset password  by token', function (done) {
     var req = {
       params: {
         token: '123456'
       },
       body: {
-        password: '12345679'
+        password: 'supermultipassword'
       }
     };
 
-    resetPassword.resetByToken('123456', function(err, user){
+    resetPassword.resetByToken(req, function(err, user){
       assert.equal(err, null);
-      //
+      usersRepo.comparePassword(user.get("email"), req.body.password, function(failed, result) {
+        assert.equal(failed, null);
+        done();
+      });
     });
   });
 
