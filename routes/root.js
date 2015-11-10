@@ -100,13 +100,13 @@ router.route('/forgotpassword')
   })
   .post( function(req, res, next) {
 
-    var tplData = {
+    let tplData = {
       title: 'Forgot your password?',
       error: '',
       success: '',
       email: ''
     };
-    var email = req.body.email;
+    let email = req.body.email;
 
     if(!req.body.email) {
       tplData.error = 'Please fill e-mail fields';
@@ -126,7 +126,7 @@ router.route('/forgotpassword')
 
 router.route('/resetpassword/:token')
   .get(function(req, res, next) {
-    var tplData = {
+    let tplData = {
       title: 'Reset password',
       user: true,
       token: req.params.token,
@@ -141,7 +141,7 @@ router.route('/resetpassword/:token')
     });
 
   }).post( function(req, res, next) {
-    var tplData = {
+    let tplData = {
       title: 'Reset password',
       user: true,
       token: req.params.token,

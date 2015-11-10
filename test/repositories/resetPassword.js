@@ -37,7 +37,7 @@ describe('Reset Password', function() {
   it('should return user for valid token', function (done) {
     resetPassword.checkTokenExpired(testToken, function(err, user){
       assert.equal(err, null);
-      assert.equal(user.get('resetPasswordToken'), '123456');
+      assert.equal(user.get('resetPasswordToken'), testToken);
       done();
     });
   });

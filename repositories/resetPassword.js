@@ -9,8 +9,11 @@ function sendToken(email, callback) {
       usersRepo.setResetToken(email, next);
     },
     function(token, next) {
-      if(!token) return next(new Error('Failed create token'));
-      var params = {
+      if (!token) {
+        return next(new Error('Failed create token'));
+      }
+
+      let params = {
         token: token,
         email: email
       };
