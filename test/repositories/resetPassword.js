@@ -8,7 +8,7 @@ var bcrypt = require('bcrypt');
 
 describe('Reset Password', function() {
 
-  var uid;
+  var testToken = '123456';
 
   before(function(done) {
     var attrs = {
@@ -17,13 +17,12 @@ describe('Reset Password', function() {
       lastName: "Dalas",
       password: "multipassword",
       email: "lilu.tanya@gmail.com",
-      resetPasswordToken: '123456',
+      resetPasswordToken: testToken,
       resetPasswordSentAt: new Date(),
     }
     models.sequelize.sync({ force: true }).then(() => {
       User.build(attrs).save()
         .then(function(user) {
-          uid = user.get("id");
           done();
         });
     });
@@ -31,25 +30,19 @@ describe('Reset Password', function() {
 
   after(function(done) {
     models.sequelize.sync({ force: true }).then(() => {
-      User.destroy({
-        where: {
-          id: uid
-        }
-      }).then(function(user) {
-        done();
-      });
+      done();
     });
   });
 
   it('should return user for valid token', function (done) {
-    resetPassword.checkTokenExpired('123456', function(err, user){
+    resetPassword.checkTokenExpired(testToken, function(err, user){
       assert.equal(err, null);
       assert.equal(user.get('resetPasswordToken'), '123456');
       done();
     });
   });
 
-  it('should return null for valid token', function (done) {
+  it('should return null for invalid token', function (done) {
     resetPassword.checkTokenExpired('12345678', function(err, user){
       assert.equal(user, undefined);
       done();
@@ -59,7 +52,7 @@ describe('Reset Password', function() {
   it('should reset password  by token', function (done) {
     var req = {
       params: {
-        token: '123456'
+        token: testToken
       },
       body: {
         password: 'supermultipassword'
