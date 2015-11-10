@@ -1,0 +1,61 @@
+"use strict";
+var usersRepo  = require('./users');
+var async = require('async');
+var mailers = require('../mailers');
+
+function sendToken(email, callback) {
+  async.waterfall([
+    function(next) {
+      usersRepo.setResetToken(email, next);
+    },
+    function(token, next) {
+      if (!token) {
+        return next(new Error('Failed create token'));
+      }
+
+      let params = {
+        token: token,
+        email: email
+      };
+      mailers.users.sendResetPasswordToken(params, next);
+    }
+  ],callback);
+}
+
+function resetByToken(req, callback){
+  usersRepo.getUserByToken(req.params.token, function(err, user){
+    if (err) {
+      return callback(err);
+    }
+    usersRepo.resetPassword(req.params.token, req.body.password, function(err, data){
+      if (err) {
+        return callback(err);
+      }
+      callback(null, user);
+    });
+  });
+}
+
+function checkTokenExpired(token, callback){
+
+  usersRepo.getUserByToken(token, function(err, user){
+
+    if (err || !user) {
+      return callback(new Error('User not found'));
+    }
+
+    let tokenCreated = new Date(user.get("resetPasswordSentAt"));
+    let tokenEnd = tokenCreated.setHours(tokenCreated.getHours() + 24);
+    let now = new Date().getTime();
+    if ( now > tokenEnd) {
+      user = null;
+    }
+    callback(null, user);
+  });
+}
+
+module.exports = {
+  sendToken: sendToken,
+  resetByToken: resetByToken,
+  checkTokenExpired: checkTokenExpired
+}

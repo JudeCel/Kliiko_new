@@ -19,7 +19,6 @@ describe('Social Profile Repo', () => {
       });
     });
 
-
     it('succsess', (done) =>  {
       let attrs = { id: '918975494859219',
         username: undefined,

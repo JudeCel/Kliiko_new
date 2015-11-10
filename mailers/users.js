@@ -1,35 +1,43 @@
-var nodemailer = require('nodemailer');
-var config = require('config');
+"use strict";
 
+var config = require('config');
+var helpers = require('./helpers');
 var users = exports;
+
+var mailFrom = helpers.mailFrom();
+var transporter = helpers.createTransport();
 
 users.sendResetPasswordToken = function(params, callback) {
 
-  var transporter = nodemailer.createTransport(config.get('mail'));
+    let link = { url: helpers.getResetPaswordUrl(params.token)};
 
-  var message = "A request was made to change your password for.  Click link to reset: ";
-      message += "http://"+config.get('server')['domain']+":"+config.get('server')['port']+"/resetpassword/"+params.token;
+    helpers.renderMailTemplate('resetPasswordToken', link, function(err, html){
+      if (err) {
+        return callback(err);
+      }
 
-    transporter.sendMail({
-        from: 'Insider Focus <insiderfocus.noreply@gmail.com>',
+      transporter.sendMail({
+        from: mailFrom,
         to: params.email,
         subject: 'Insider Focus - Reset password',
-        html: message
-    }, callback);
-
+        html: html
+      }, callback);
+    });
 };
 
 users.sendResetPasswordSuccess = function(params, callback) {
 
-  var transporter = nodemailer.createTransport(config.get('mail'));
-  var message = " Your password reset successfully";
+    helpers.renderMailTemplate('resetPasswordSuccess', {}, function(err, html){
+      if (err) {
+        return callback(err);
+      }
 
-    transporter.sendMail({
-        from: 'Insider Focus <insiderfocus.noreply@gmail.com>',
+      transporter.sendMail({
+        from: mailFrom,
         to: params.email,
         subject: 'Insider Focus - Reset password Success',
-        html: message
-    }, callback);
-
+        html: html
+      }, callback);
+    });
 };
 

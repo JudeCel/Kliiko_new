@@ -92,10 +92,10 @@ function getUserByToken(token, callback) {
     where: {
       resetPasswordToken: token
     },
-    attributes: ['id', 'resetPasswordSentAt', 'email']
+    attributes: ['id', 'resetPasswordSentAt', 'email', 'resetPasswordToken']
   })
   .then(function (result) {
-    callback(null, result);
+    return callback(null, result);
   })
   .catch(function (err) {
     callback(err);
@@ -111,7 +111,7 @@ function resetPassword(token, password, callback) {
     where: { resetPasswordToken : token }
   })
   .then(function (result) {
-    callback(null, result);
+    return callback(null, result);
   })
   .catch(function (err) {
     callback(err);
@@ -130,7 +130,7 @@ function setResetToken(email, callback) {
   })
   .then(function (result) {
     if (result[0]>0){
-      callback(null, token);
+      return callback(null, token);
     } else {
       callback(null, null);
     }
