@@ -20,4 +20,9 @@ router.get('/', function(req, res, next) {
   res.render(views_path('index'), { title: '', user: req.user });
 });
 
+router.get('/changepassword', function(req, res, next) {
+  res.render(views_path('changePassword'), { title: '', user: req.user });
+});
+
+
 module.exports = router;
