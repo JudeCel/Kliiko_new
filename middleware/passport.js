@@ -1,6 +1,8 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
+var GooglePlusStrategy = require('passport-google-plus').Strategy;
+
 var config = require('config');
 var models  = require('./../models');
 var usersRepo = require('./../repositories/users.js');
@@ -39,6 +41,16 @@ passport.use(new FacebookStrategy({
         });
       }
     });
+  }
+));
+
+passport.use(new GooglePlusStrategy({
+    clientId: config.get("googlePlusClientID"),
+    clientSecret: config.get("googlePlusClientSecret")
+  },
+  function(tokens, profile, done) {
+    // Create or update user, call done() when complete...
+    done(null, profile, tokens);
   }
 ));
 

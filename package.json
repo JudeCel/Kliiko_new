@@ -60,6 +60,7 @@
     "gulp-util": "^3.0.7",
     "jshint-stylish": "^2.0.1",
     "mocha": "^2.3.3",
+    "passport-google-plus": "^0.5.1",
     "supertest": "^1.1.0",
     "wiredep": "^2.2.2",
     "yargs": "^3.29.0"
