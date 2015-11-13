@@ -28,6 +28,10 @@ router.get('/', function(req, res, next) {
   res.render('login', { title: 'Login', error: ""});
 });
 
+router.get('/dashboard', function(req, res, next) {
+  res.render('dashboard', { title: 'dashboard', error: ""});
+});
+
 router.get('/registration', function(req, res, next) {
   res.render('registration', usersRepo.prepareParams(req));
 });
