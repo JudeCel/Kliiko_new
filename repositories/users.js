@@ -87,6 +87,20 @@ function prepareParams(req, errors) {
   }, req.body, req.query);
 }
 
+function changePassword(id, password, callback) {
+  User.update({
+    password: password
+  },{
+    where: { id : id }
+  })
+  .then(function (result) {
+    return callback(null, result);
+  })
+  .catch(function (err) {
+    callback(err);
+  });
+}
+
 function getUserByToken(token, callback) {
   User.find({
     where: {
@@ -149,5 +163,6 @@ module.exports = {
     prepareParams: prepareParams,
     resetPassword: resetPassword,
     setResetToken: setResetToken,
-    getUserByToken: getUserByToken
+    getUserByToken: getUserByToken,
+    changePassword: changePassword
 }
