@@ -33,6 +33,10 @@ function findOrCreateFacebook(params, callback) {
   })
 }
 
+function findOrCreateGoogle(params, callback) {
+  callback();
+}
+
 function findSociaProfile(provider, id, callback) {
   SocialProfile.find({where: { provider: provider, providerUserId: id }, include: [ models.User ]})
     .done(function(result) {
@@ -98,5 +102,6 @@ function creatUser(attrs, params, callback) {
 
 module.exports = {
     findOrCreateFacebook: findOrCreateFacebook,
+    findOrCreateGoogle: findOrCreateGoogle,
     socialProfile: SocialProfile
 }

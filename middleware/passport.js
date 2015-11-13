@@ -1,7 +1,7 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
-var GooglePlusStrategy = require('passport-google-plus').Strategy;
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var config = require('config');
 var models  = require('./../models');
@@ -44,13 +44,26 @@ passport.use(new FacebookStrategy({
   }
 ));
 
-passport.use(new GooglePlusStrategy({
-    clientId: config.get("googlePlusClientID"),
-    clientSecret: config.get("googlePlusClientSecret")
+passport.use(new GoogleStrategy({
+    clientID: config.get("googleClientID"),
+    clientSecret: config.get("googleClientSecret"),
+    callbackURL: config.get("googleCallbackURL")
   },
-  function(tokens, profile, done) {
+  function(token, refreshToken, profile, done) {
     // Create or update user, call done() when complete...
-    done(null, profile, tokens);
+    //done(null, profile, tokens);
+
+    socialProfileRepo.findOrCreateGoogle(profile, function(error, result) {
+      if (error) {
+        done(error);
+      }else{
+        models.SocialProfile.find({where: {id: result.id }, include: [ models.User ]}).done(function(sp) {
+          return done(null, sp.User);
+        });
+      }
+    });
+
+
   }
 ));
 

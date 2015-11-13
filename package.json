@@ -60,7 +60,6 @@
     "gulp-util": "^3.0.7",
     "jshint-stylish": "^2.0.1",
     "mocha": "^2.3.3",
-    "passport-google-plus": "^0.5.1",
     "supertest": "^1.1.0",
     "wiredep": "^2.2.2",
     "yargs": "^3.29.0"
@@ -88,6 +87,7 @@
     "nodemailer": "^1.8.0",
     "passport": "^0.3.0",
     "passport-facebook": "^2.0.0",
+    "passport-google-oauth": "^0.2.0",
     "passport-local": "^1.0.0",
     "sequelize": "^3.12.1",
     "sequelize-cli": "^2.0.0",

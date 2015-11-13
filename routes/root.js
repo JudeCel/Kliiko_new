@@ -73,6 +73,17 @@ router.get('/auth/facebook/callback',
   }
 );
 
+router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+//router.get('/auth/google', passport.authenticate('google', {scope: 'https://www.googleapis.com/auth/plus.me https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile'}));
+
+router.get('/auth/google/callback',
+  passport.authenticate('google', {failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
+  }
+);
+
+
 router.get('/login', function(req, res, next) {
   res.render('login', { title: 'Login', error: ""});
 });
