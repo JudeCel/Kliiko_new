@@ -5,12 +5,11 @@
 
 /* Controllers */
 
-angular.module('Kliiko', []).controller('dashboardCtrl', ['$scope', '$routeParams',
-    function($scope, $routeParams) {
-console.log('asdasd');
-        //TODO write here your code for this controller
-
+angular.module('DashboardCtrl', []).controller('DashboardCtrl', ['$scope',
+    function($scope) {
         $scope.alex = 10;
-
-
     }]);
+
+
+
+

@@ -5,12 +5,8 @@
 
 /* App Module */
 
-var kliiko = angular.module('Kliiko', [
+var kliikoApp = angular.module('KliikoApp', [])
+    .controller('DashboardCtrl', ['$scope',
+    function($scope) {
 
-    //'kliikoFilters',
-    'kliikoServices',
-
-    //controllers
-    'dashboardCtrl'
-
-]);
+    }]);
