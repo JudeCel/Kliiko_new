@@ -1,6 +1,6 @@
 <% include ../header %>
 
-<main class="main-first-page">
+<main class="main-first-page" ng-controller="dashboardCtrl">
     <div class="container">
         <h1 id="welcome">Welcome!</h1>
         <ul class="nav nav-tabs" id="nav-tabs-dashboard">
@@ -9,6 +9,7 @@
             <li><a href="#">Chat Sessions<img id="ic_tab_profile_active" src="icons/ic_tab_sessions.png"></a></li>
             <li><a href="#">Resources<img id="ic_tab_profile_active" src="icons/ic_tab_resources.png"></a></li>
         </ul>
+        {{alex}}
         <div class="tab-content">
             <div id="login" class="tab-pane fade in active">
                 <div class="container-fluid">
