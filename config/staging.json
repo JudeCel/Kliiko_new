@@ -25,7 +25,7 @@
   "facebookclientID": "896567070378726",
   "facebookClientSecret": "4b81e13605d1945df93d93be4a9a8eff",
   "facebookCallbackURL": "http://dev.insiderfocus.diatomdemo.com:3000/auth/facebook/callback",
-  "googleClientID": "423827252082-4ha7t8h1o0j1r2edfkcn15jkmsn57tp3.apps.googleusercontent.com",
-  "googleClientSecret": "hpT37ABiJ3rxxIDw96idBuBP",
-  "googleCallbackURL": "http://localhost:3000/auth/google/callback"
+  "googleClientID": "423827252082-ou6mol0l1jadrdu5it990m8vgulqglj8.apps.googleusercontent.com",
+  "googleClientSecret": "8u0EG1SJjU7GahIuMRz3gYne",
+  "googleCallbackURL": "http://dev.insiderfocus.diatomdemo.com:3000/auth/google/callback"
 }
