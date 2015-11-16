@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="KliikoApp">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title><%= title %></title>
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/bootstrap-theme.css">
     <link rel="stylesheet" href="/css/font-awesome.css">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="../css/main.css">
 
 
     <!-- HTML5 shim, for IE6-8 support of HTML elements -->
@@ -19,11 +19,11 @@
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 </head>
-<body >
+<body>
 <nav class="navbar" id="fixed-width">
     <div class="container">
         <div class="navbar-header">
-            <a class="navbar-brand " href="/"><img class="img-responsive" src="icons/IF_Logo_home.png"></a>
+            <a class="navbar-brand " href="/"><img class="img-responsive" src="../icons/IF_Logo_home.png"></a>
         </div>
         <ul class="nav navbar-nav navbar-right">
             <li>
@@ -34,7 +34,15 @@
             </li>
         </ul>
         <li>
-            <a class="btn" href="/logout">Logout</a>
+          <a class="btn blue" href="#team">Tour Video<i class="fa fa-caret-right fa-lg"></i></a>
         </li>
+        <li>
+          <a class="btn" href="#team">Help<i class="fa fa-question fa-lg"></i></a>
+        </li>
+
+        <li>
+          <a class="btn" href="/logout">Logout</a>
+        </li>
+      </ul>
     </div>
 </nav>
