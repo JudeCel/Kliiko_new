@@ -8,70 +8,84 @@ var bcrypt = require('bcrypt');
 
 describe('Change Password', function() {
 
-  var testToken = '123456';
+  var testUser = null;
 
-  before(function(done) {
+  beforeEach(function(done) {
     var attrs = {
-      accountName: "Lilo",
-      firstName: "Lilu",
-      lastName: "Dalas",
+      accountName: "Lauris",
+      firstName: "Lauris",
+      lastName: "Blīgzna",
       password: "multipassword",
-      email: "lilu.tanya@gmail.com",
+      email: "bligzna.lauris@gmail.com",
     }
     models.sequelize.sync({ force: true }).then(() => {
       User.build(attrs).save()
         .then(function(user) {
+          testUser = user;
           done();
         });
     });
   });
 
-  after(function(done) {
+  afterEach(function(done) {
     models.sequelize.sync({ force: true }).then(() => {
       done();
     });
   });
 
   it('fails on password mismatch', function (done) {
-    changePassword.save(function(err, user){
-      assert.equal(err, null);
-      assert.equal(user.get('resetPasswordToken'), testToken);
+    let attrs = { 
+      body: { 
+        password: 'correct', 
+        repassword: 'wrong' 
+      }
+    }
+
+    changePassword.save(attrs, function(errors, user){
+      assert.equal(errors.message, 'Passwords not equal');
       done();
     });
   });
 
-  // it('should return user for valid token', function (done) {
-  //   resetPassword.checkTokenExpired(testToken, function(err, user){
-  //     assert.equal(err, null);
-  //     assert.equal(user.get('resetPasswordToken'), testToken);
-  //     done();
-  //   });
-  // });
+  it('fails on password not filled', function (done) {
+    let attrs = { 
+      body: { 
+        password: '', 
+        repassword: '' 
+      }
+    }
 
-  // it('should return null for invalid token', function (done) {
-  //   resetPassword.checkTokenExpired('12345678', function(err, user){
-  //     assert.equal(user, undefined);
-  //     done();
-  //   });
-  // });
+    changePassword.save(attrs, function(errors, user){
+      assert.equal(errors.message, 'Please fill both password fields.');
+      done();
+    });
+  });
 
-  // it('should reset password  by token', function (done) {
-  //   var req = {
-  //     params: {
-  //       token: testToken
-  //     },
-  //     body: {
-  //       password: 'supermultipassword'
-  //     }
-  //   };
+  it('fails on password to short', function (done) {
+    let attrs = { 
+      body: { 
+        password: '123', 
+        repassword: '123' 
+      },
+      user: testUser.dataValues
+    }
+    changePassword.save(attrs, function(errors, user){
+      assert.equal(errors.message, 'Validation error: too short, must be at least 7 characters');
+      done();
+    });
+  });
 
-  //   resetPassword.resetByToken(req, function(err, user){
-  //     assert.equal(err, null);
-  //     usersRepo.comparePassword(user.get("email"), req.body.password, function(failed, result) {
-  //       assert.equal(failed, null);
-  //       done();
-  //     });
-  //   });
-  // });
-
+  it('change the password', function (done) {
+    let attrs = { 
+      body: { 
+        password: 'okpassword', 
+        repassword: 'okpassword' 
+      },
+      user: testUser.dataValues
+    }
+    changePassword.save(attrs, function(errors, message, user){
+      assert.equal(message, 'Password successfully change.');
+      done();
+    });
+  });
 });
