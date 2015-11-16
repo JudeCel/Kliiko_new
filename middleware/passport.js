@@ -5,8 +5,8 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var config = require('config');
 var models  = require('./../models');
-var usersRepo = require('./../repositories/users.js');
-var socialProfileRepo = require('./../repositories/socialProfile.js');
+var usersRepo = require('./../services/users.js');
+var socialProfileRepo = require('./../services/socialProfile.js');
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
