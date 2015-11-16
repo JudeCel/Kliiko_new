@@ -26,14 +26,11 @@ router.get('/changepassword', function(req, res) {
 });
 
 router.post('/changepassword', function(req, res) {
-  let message = ""
-
-  changePassword.save(req, function(errors, user){
+  changePassword.save(req, function(errors, message, user){    
     if (errors) {
       res.render(views_path('changePassword'), { title: 'Change password', user: req.user, error: errors.message, message: message });
     }else{
-      message = "Password successfully change."
-      res.render(views_path('changePassword'), { title: 'Change password', user: req.user, error: {}, message: message });
+      res.render(views_path('changePassword'), { title: 'Change password', user: req.user, error: "", message: message });
     }
   });
 });

@@ -1,5 +1,6 @@
 "use strict";
 var usersRepo  = require('./users');
+var mailers = require('../mailers');
 
 function save(req, callback){
   let errors = {message: ""};
@@ -16,11 +17,18 @@ function save(req, callback){
     return callback(errors);
   }
 
-  usersRepo.changePassword(req.user.id, req.body.password, function(err, data){
+  let userId = req.user.id;
+  let newPassword = req.body.password;
+  let message = "";
+  let params = {email: req.user.email};
+
+  usersRepo.changePassword(userId, newPassword, function(err, data){
     if (err) {
       return callback(err);
     }
-    callback(null, req.user);
+    message = "Password successfully change."
+    mailers.users.sendPasswordChangedSuccess(params);
+    callback(null, message, req.user);
   });
 }
 
