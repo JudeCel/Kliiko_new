@@ -31,7 +31,7 @@ passport.use(new FacebookStrategy({
     profileFields: ['id', 'displayName','emails', 'name']
   },
   function(req, accessToken, refreshToken, profile, done) {
-    findOrCreateUser(profile, done);
+    socialProfileRepo.findOrCreateUser(profile, done);
   }
 ));
 
@@ -43,7 +43,7 @@ passport.use(new GoogleStrategy({
   function(token, refreshToken, profile, done) {
 
     process.nextTick(function() {
-      findOrCreateUser(profile, done);
+      socialProfileRepo.findOrCreateUser(profile, done);
     });
   }
 ));
@@ -62,17 +62,5 @@ passport.deserializeUser(function(userObject, done) {
     };
   });
 });
-
-function findOrCreateUser(profile, done){
-  socialProfileRepo.findOrCreateUser(profile, function(error, result) {
-    if (error) {
-      done(error);
-    }else{
-      models.SocialProfile.find({where: {id: result.id }, include: [ models.User ]}).done(function(sp) {
-        return done(null, sp.User);
-      });
-    }
-  });
-}
 
 module.exports = passport;

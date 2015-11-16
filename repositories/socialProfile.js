@@ -26,7 +26,13 @@ function findOrCreateUser(params, callback) {
       ]
 
       async.waterfall(creatNewUserFunctionList, function(error, result) {
-        callback(error, result)
+        if (error) {
+          return callback(error);
+        }else{
+          models.SocialProfile.find({where: {id: result.id }, include: [ models.User ]}).done(function(sp) {
+            return callback(null, sp.User);
+          });
+        }
       });
     }
   })
@@ -56,14 +62,21 @@ function prepareUserAttrs(params, callback) {
         userAttrs.accountName = "client1";
       }
 
-      userAttrs = mapSocialData(params, userAttrs);
+      mapSocialData(params, userAttrs, function(error, userAttrs){
+        if (error){
+          return callback(error);
+        }else{
+          return callback(null, userAttrs, params);
+        }
+      });
 
-      callback(null, userAttrs, params)
     })
   });
 };
 
-function mapSocialData(params, userAttrs) {
+function mapSocialData(params, userAttrs, callback) {
+  let error = null;
+
   switch(params.provider){
     case 'google':
       userAttrs.firstName = params.name.familyName;
@@ -79,8 +92,10 @@ function mapSocialData(params, userAttrs) {
         userAttrs.requiredEmail = false;
       }
       break;
+    default:
+      error = new Error("No data found");
   }
-  return userAttrs;
+  return callback(null, userAttrs);
 }
 
 function createSocialProfile(user, params, callback) {
