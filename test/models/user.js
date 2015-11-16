@@ -103,7 +103,7 @@ describe('User', () => {
           throw new Error("should not get there");
           done();
         }).catch(function(error) {
-          assert.equal(error.errors[0].message, 'is wrong format');
+          assert.equal(error.errors[0].message, 'Invalid e-mail format');
           done();
         })
     });

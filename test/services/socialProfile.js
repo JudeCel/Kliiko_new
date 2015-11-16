@@ -2,7 +2,7 @@
 var assert = require('assert');
 var models  = require('./../../models');
 var SocialProfile  = models.SocialProfile;
-var SocialProfileRepo  = require('./../../repositories/socialProfile');
+var SocialProfileRepo  = require('./../../services/socialProfile');
 var User  = models.User;
 
 describe('Social Profile Repo', () => {

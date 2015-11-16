@@ -2,7 +2,7 @@
 var express = require('express');
 var router = express.Router();
 var subdomains = require('../lib/subdomains.js');
-var changePassword = require('../repositories/changePassword');
+var changePassword = require('../services/changePassword');
 
 function views_path(action) {
 let views_name_space = "dashboard/";
@@ -26,7 +26,7 @@ router.get('/changepassword', function(req, res) {
 });
 
 router.post('/changepassword', function(req, res) {
-  changePassword.save(req, function(errors, message, user){    
+  changePassword.save(req, function(errors, message, user){
     if (errors) {
       res.render(views_path('changePassword'), { title: 'Change password', user: req.user, error: errors.message, message: message });
     }else{

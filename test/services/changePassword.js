@@ -1,8 +1,8 @@
 "use strict";
 var models  = require('./../../models');
 var User  = models.User;
-var usersRepo  = require('./../../repositories/users');
-var changePassword  = require('./../../repositories/changePassword');
+var usersRepo  = require('./../../services/users');
+var changePassword  = require('./../../services/changePassword');
 var assert = require('assert');
 
 describe('Change Password', function() {
@@ -33,10 +33,10 @@ describe('Change Password', function() {
   });
 
   it('fails on password mismatch', function (done) {
-    let attrs = { 
-      body: { 
-        password: 'correct', 
-        repassword: 'wrong' 
+    let attrs = {
+      body: {
+        password: 'correct',
+        repassword: 'wrong'
       }
     }
 
@@ -47,10 +47,10 @@ describe('Change Password', function() {
   });
 
   it('fails on password not filled', function (done) {
-    let attrs = { 
-      body: { 
-        password: '', 
-        repassword: '' 
+    let attrs = {
+      body: {
+        password: '',
+        repassword: ''
       }
     }
 
@@ -61,24 +61,24 @@ describe('Change Password', function() {
   });
 
   it('fails on password to short', function (done) {
-    let attrs = { 
-      body: { 
-        password: '123', 
-        repassword: '123' 
+    let attrs = {
+      body: {
+        password: '123',
+        repassword: '123'
       },
       user: testUser.dataValues
     }
     changePassword.save(attrs, function(errors, user){
-      assert.equal(errors.message, 'Validation error: too short, must be at least 7 characters');
+      assert.equal(errors.message, 'Validation error: Make sure your password is longer than 7 characters');
       done();
     });
   });
 
   it('change the password', function (done) {
-    let attrs = { 
-      body: { 
-        password: 'okpassword', 
-        repassword: 'okpassword' 
+    let attrs = {
+      body: {
+        password: 'okpassword',
+        repassword: 'okpassword'
       },
       user: testUser.dataValues
     }

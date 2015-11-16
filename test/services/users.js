@@ -2,7 +2,7 @@
 var assert = require('assert');
 var models  = require('./../../models');
 var User  = models.User;
-var UserRepo  = require('./../../repositories/users');
+var UserRepo  = require('./../../services/users');
 
 describe('User Repo', () => {
   describe('Create',  () => {
