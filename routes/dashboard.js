@@ -26,28 +26,14 @@ router.get('/changepassword', function(req, res) {
 });
 
 router.post('/changepassword', function(req, res) {
-  let error = {}
   let message = ""
-
-  if ( !req.body.password || !req.body.repassword ) {
-    error.password = "Please fill both password fields.";
-    res.render(views_path('changePassword'), { title: 'Change password', user: req.user, error: error.password, message: message });
-    return;
-  }
-
-  if ( req.body.password !== req.body.repassword ) {
-    error.password = "Passwords not equal";
-    res.render(views_path('changePassword'), { title: 'Change password', user: req.user, error: error.password, message: message });
-    return;
-  }
 
   changePassword.save(req, function(errors, user){
     if (errors) {
-      error = errors.message
-      res.render(views_path('changePassword'), { title: 'Change password', user: req.user, error: error, message: message });
+      res.render(views_path('changePassword'), { title: 'Change password', user: req.user, error: errors.message, message: message });
     }else{
       message = "Password successfully change."
-      res.render(views_path('changePassword'), { title: 'Change password', user: req.user, error: error, message: message });
+      res.render(views_path('changePassword'), { title: 'Change password', user: req.user, error: {}, message: message });
     }
   });
 });
