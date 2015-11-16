@@ -36,18 +36,14 @@ describe('User Repo', () => {
     });
 
     describe('Ceate Account',  () => {
-      var user = null;
-
-      before((done) => {
-        UserRepo.create(validAttrs, function(errors, result) {
-          user = result
-          done();
-        });
-      });
-
       it('Succsess', (done) =>  {
-        assert.equal(user.getAccounts[0], user.id);
-        done();
+        UserRepo.create(validAttrs, function(errors, result) {
+          result.getAccounts().done(function(results) {
+            assert.equal(results.length, 1);
+            assert.equal(results[0].name, validAttrs.accountName);
+            done();
+          });
+        });
       });
     });
     //
