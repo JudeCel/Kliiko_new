@@ -5,14 +5,13 @@ var AccountUser  = require('./../models').AccountUser;
 var _ = require('lodash');
 
 function create(account, user, callback) {
-  let attrs = { "accountId": account.id, "userId": user.id, "rools": "accountManager"}
-  AccountUser.create(attrs).then(function(result) {
-    callback(null, user);
-  }).catch(AccountUser.sequelize.ValidationError, function(err) {
-    callback(err);
-  }).catch(function(err) {
-    callback(err);
-  });
+    user.addAccount(account, { role: 'accountManager'}).then(function(result) {
+      return callback(null, user);
+    }).catch(AccountUser.sequelize.ValidationError, function(err) {
+      return callback(err);
+    }).catch(function(err) {
+      return callback(err);
+    });
 }
 module.exports = {
   create: create

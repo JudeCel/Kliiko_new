@@ -30,7 +30,7 @@ describe('User Repo', () => {
     it('Succsess User', (done) =>  {
       UserRepo.create(validAttrs, function(errors, user) {
         assert.equal(errors, null);
-        assert.equal(user.firstName, attrs.firstName);
+        assert.equal(user.firstName, validAttrs.firstName);
         done();
       });
     });
@@ -46,12 +46,9 @@ describe('User Repo', () => {
       });
 
       it('Succsess', (done) =>  {
-        User.find({where: {id: user.id}, include: [models.Account]}).then(function(result) {
-          assert.equal(result.account.userId, user.id);
-          done();
-        }).catch(function(err) {
-          done(err);
-        })
+        console.log(user.getAccounts());
+        assert.equal(user.getAccounts[0], user.id);
+        done();
       });
     });
     //

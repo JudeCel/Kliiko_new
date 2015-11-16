@@ -62,7 +62,7 @@ module.exports = (Sequelize, DataTypes) => {
       classMethods: {
         associate: function(models) {
           User.hasMany(models.SocialProfile, {foreignKey: 'userId'});
-          User.belongsToMany(models.Account, { through: 'AccountUsers', foreignKey: 'accountId' });
+          User.belongsToMany(models.Account, { through: models.AccountUser, foreignKey: 'accountId' });
         }
       }
     }

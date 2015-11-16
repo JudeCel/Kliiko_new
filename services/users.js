@@ -13,8 +13,8 @@ function create(params, callback) {
       return callback(error, params)
     } else {
       createUser(params, function(error, result) {
-        if (Object.keys(error).length > 1) {
-          return callback(error, result);
+        if (error) {
+          return callback(error);
         }else {
           return callback(null, result);
         }
