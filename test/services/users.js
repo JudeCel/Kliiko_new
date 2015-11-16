@@ -2,7 +2,16 @@
 var assert = require('assert');
 var models  = require('./../../models');
 var User  = models.User;
+var Account  = models.Account;
+var AccountUser  = models.AccountUser;
 var UserRepo  = require('./../../services/users');
+var validAttrs = {
+  accountName: "DainisL",
+  firstName: "Dainis",
+  lastName: "Lapins",
+  password: "cool_password",
+  email: "dainis@gmail.com"
+}
 
 describe('User Repo', () => {
   describe('Create',  () => {
@@ -18,21 +27,37 @@ describe('User Repo', () => {
       });
     });
 
-    it('succsess', (done) =>  {
-      let attrs = {
-        accountName: "DainisL",
-        firstName: "Dainis",
-        lastName: "Lapins",
-        password: "cool_password",
-        email: "dainis@gmail.com"
-      }
-
-      UserRepo.create(attrs, function(errors, user) {
+    it('Succsess User', (done) =>  {
+      UserRepo.create(validAttrs, function(errors, user) {
         assert.equal(errors, null);
-        assert.equal(user.accountName, attrs.accountName);
-        done()
+        assert.equal(user.firstName, attrs.firstName);
+        done();
       });
     });
+
+    describe('Ceate Account',  () => {
+      var user = null;
+
+      before((done) => {
+        UserRepo.create(validAttrs, function(errors, result) {
+          user = result
+          done();
+        });
+      });
+
+      it('Succsess', (done) =>  {
+        User.find({where: {id: user.id}, include: [models.Account]}).then(function(result) {
+          assert.equal(result.account.userId, user.id);
+          done();
+        }).catch(function(err) {
+          done(err);
+        })
+      });
+    });
+    //
+    // describe('Succsess AccountUser',  () => {
+    //
+    // });
 
     it('Fails', function(done){
       let attrs = {

@@ -31,7 +31,6 @@ module.exports = (Sequelize, DataTypes) => {
         }
       }
     }},
-    accountId: {type: DataTypes.INTEGER, allowNull: false},
     encryptedPassword:  {type : DataTypes.STRING, allowNull: false, validate: { notEmpty: true}},
     password: {
       type: DataTypes.VIRTUAL,

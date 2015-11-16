@@ -2,7 +2,7 @@
 var models  = require('./../models');
 var User = models.User;
 var SocialProfile  = require('./../models').SocialProfile;
-var usersRepo  = require('./users');
+var usersService  = require('./users');
 var async = require('async');
 
 var _ = require('lodash');
@@ -114,7 +114,7 @@ function createSocialProfile(user, params, callback) {
 }
 
 function creatUser(attrs, params, callback) {
-  usersRepo.createUser(attrs, function(error, user) {
+  usersService.createUser(attrs, function(error, user) {
     callback(error, user, params)
   })
 }
