@@ -93,9 +93,9 @@ function mapSocialData(params, userAttrs, callback) {
       }
       break;
     default:
-      error = new Error("No data found");
+      error = new Error("Social profile provider not found " + params.provider);
   }
-  return callback(null, userAttrs);
+  return callback(error, userAttrs);
 }
 
 function createSocialProfile(user, params, callback) {

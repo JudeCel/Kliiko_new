@@ -14,7 +14,7 @@ module.exports = (Sequelize, DataTypes) => {
           let re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 
           if (!(re.test(val))) {
-            return next("is wrong format");
+            return next("Invalid e-mail format");
           }
         }
 
@@ -33,7 +33,7 @@ module.exports = (Sequelize, DataTypes) => {
     }},
     accountName: {type: DataTypes.STRING, allowNull: false, unique: {args: true, msg: "already taken"},
       validate: { notEmpty: {args: true, msg: "can't be empty"},
-                  is: ["^[a-zA-Z0-9]+$",'i'] 
+                  is: ["^[a-zA-Z0-9]+$",'i']
                 }
     },
     encryptedPassword:  {type : DataTypes.STRING, allowNull: false, validate: { notEmpty: true}},
@@ -48,7 +48,7 @@ module.exports = (Sequelize, DataTypes) => {
       validate: {
         isLongEnough: function(value) {
           if(value.length < 7) {
-          throw new Error("too short, must be at least 7 characters");
+          throw new Error("Make sure your password is longer than 7 characters");
           }
         }
       }

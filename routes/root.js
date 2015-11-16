@@ -116,15 +116,22 @@ router.route('/forgotpassword')
     };
     let email = req.body.email;
 
-    if(!req.body.email) {
+    if (!email) {
       tplData.error = 'Please fill e-mail fields';
+      res.render('forgotPassword', tplData);
+      return;
+    }
+
+    let regexp = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+    if (!regexp.test(email)) {
+      tplData.error = 'Invalid e-mail format';
       res.render('forgotPassword', tplData);
       return;
     }
 
     resetPassword.sendToken(email, function(err){
       if (err) {
-        tplData.error = 'Failed to send data. Please try later';
+        tplData.error = err.message;
       }else {
         tplData.success = 'Account recovery email sent to ' + email;
       }
@@ -163,14 +170,14 @@ router.route('/resetpassword/:token')
     }
 
     if ( req.body.password !== req.body.repassword ) {
-      tplData.errors.password = "Passwords not equal";
+      tplData.errors.password = "Passwords don't match";
       res.render('resetPassword', tplData);
       return;
     }
 
     resetPassword.resetByToken(req, function(err, user){
       if (err) {
-        tplData.errors.password = "Reset password failed";
+        tplData.errors.password = err.message;
         res.render('resetPassword', tplData);
         return;
       }
