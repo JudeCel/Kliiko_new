@@ -4,7 +4,6 @@ var User  = models.User;
 var usersRepo  = require('./../../repositories/users');
 var changePassword  = require('./../../repositories/changePassword');
 var assert = require('assert');
-var bcrypt = require('bcrypt');
 
 describe('Change Password', function() {
 
