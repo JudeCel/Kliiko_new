@@ -46,7 +46,6 @@ describe('User Repo', () => {
       });
 
       it('Succsess', (done) =>  {
-        console.log(user.getAccounts());
         assert.equal(user.getAccounts[0], user.id);
         done();
       });
@@ -65,7 +64,7 @@ describe('User Repo', () => {
       }
 
       UserRepo.createUser(attrs, function(err, user) {
-        assert.equal(Object.keys(err).length, 3)
+        assert.equal(err.errors.length, 3)
         done();
       });
     });
