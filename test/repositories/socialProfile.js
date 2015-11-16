@@ -6,7 +6,7 @@ var SocialProfileRepo  = require('./../../repositories/socialProfile');
 var User  = models.User;
 
 describe('Social Profile Repo', () => {
-  describe('Facebook',  () => {
+  describe('Facebook and Google',  () => {
     beforeEach((done) => {
       models.sequelize.sync({force: true}).done((error, result) => {
         done();
@@ -19,7 +19,7 @@ describe('Social Profile Repo', () => {
       });
     });
 
-    it('succsess', (done) =>  {
+    it('facebook succsess', (done) =>  {
       let attrs = { id: '918975494859219',
         username: undefined,
         displayName: undefined,
@@ -39,7 +39,7 @@ describe('Social Profile Repo', () => {
            first_name: 'Dainis' }
         }
 
-      SocialProfileRepo.findOrCreateFacebook(attrs, function(errors, result) {
+      SocialProfileRepo.findOrCreateUser(attrs, function(errors, result) {
         SocialProfile.find({where: {id: result.id}, include: [ models.User ]}).done(function(socialProfile) {
           assert.equal(socialProfile.User.id, 1);
           assert.equal(socialProfile.User.accountName, "client1");
@@ -48,6 +48,27 @@ describe('Social Profile Repo', () => {
           done();
         })
       });
+    });
+
+    it('google succsess', (done) =>  {
+      let attrs = {
+        provider: 'google',
+        id: '308735433402234182096',
+        displayName: 'Забуга Татьяна',
+        name: { familyName: 'Татьяна', givenName: 'Забуга' },
+        emails: [ { value: 'lilu.tanya@gmail.com', type: 'account' } ]
+      }
+
+      SocialProfileRepo.findOrCreateUser(attrs, function(errors, result) {
+        SocialProfile.find({where: {id: result.id}, include: [ models.User ]}).done(function(socialProfile) {
+          assert.equal(socialProfile.User.id, 1);
+          assert.equal(socialProfile.User.accountName, "client1");
+          assert.equal(socialProfile.providerUserId, attrs.id);
+          assert.equal(socialProfile.provider, attrs.provider);
+          done();
+        })
+      });
+
     });
   });
 });

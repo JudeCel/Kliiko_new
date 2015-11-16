@@ -10,7 +10,7 @@ function sendToken(email, callback) {
     },
     function(token, next) {
       if (!token) {
-        return next(new Error('Failed create token'));
+        return next(new Error('E-mail not found'));
       }
 
       let params = {
