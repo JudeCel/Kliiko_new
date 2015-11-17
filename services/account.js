@@ -2,13 +2,9 @@
 var Account  = require('./../models').Account;
 
 function validate(params, callback) {
-  Account.find({attributes: ['name'], where: { name: params.accountName } }).then(function (account) {
-    if(account){
-      let errors = {accountName:" Account already taken " }
-      callback(errors, params)
-    }else{
-      callback(null, params)
-    };
+  let attrs = {name: params.accountName}
+  Account.build(attrs).validate().done(function(errors, _account) {
+    callback(errors, params);
   });
 }
 

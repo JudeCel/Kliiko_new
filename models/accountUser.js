@@ -5,6 +5,7 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     accountId: {type: DataTypes.INTEGER, allowNull: false},
     userId: {type: DataTypes.INTEGER, allowNull: false},
+    owner: {type: DataTypes.BOOLEAN, allowNull: false, default: false},
     role: {type: DataTypes.ENUM, allowNull: false,
       values: ["admin", "accountManager", "facilitator", "observer", "participant"],
   }

@@ -22,6 +22,13 @@ function create(params, callback) {
     }
   })
 };
+function prepareErrors(err) {
+  let errors = ({})
+  _.map(err.errors, function(n) {
+    errors[n.path] = _.startCase(n.path) +": " + n.message;
+  });
+  return errors
+};
 
 function createUser(params, callback) {
   // TODO: Need added transaction
@@ -47,17 +54,16 @@ function createUser(params, callback) {
 function validateForCreate(params, callback){
   let validateNewUserFunctionList = [
     function(cb) {
-      User.build(params).validate().done(function(errors, user) {
+      User.build(params).validate().done(function(errors, _user) {
         cb(errors, params);
       });
     },
     accountService.validate
-    //,
-    // accountUserService.validate
   ]
 
   async.waterfall(validateNewUserFunctionList, function(error, params) {
-    return callback(error, params);
+    if (error) { return callback(prepareErrors(error), params)};
+    callback(null, params);
   });
 }
 

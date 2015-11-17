@@ -5,7 +5,7 @@ var AccountUser  = require('./../models').AccountUser;
 var _ = require('lodash');
 
 function create(account, user, callback) {
-    user.addAccount(account, { role: 'accountManager'}).then(function(result) {
+    user.addAccount(account, { role: 'accountManager', owner: true}).then(function(result) {
       return callback(null, user);
     }).catch(AccountUser.sequelize.ValidationError, function(err) {
       return callback(err);
