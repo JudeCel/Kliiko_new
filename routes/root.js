@@ -69,21 +69,21 @@ router.post('/login', function(req, res, next) {
   });
 });
 
-router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
-router.get('/auth/facebook/callback',
-  passport.authenticate('facebook', {failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
-  }
-);
-
-router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
-router.get('/auth/google/callback',
-  passport.authenticate('google', {failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
-  }
-);
+// router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
+// router.get('/auth/facebook/callback',
+//   passport.authenticate('facebook', {failureRedirect: '/login' }),
+//   function(req, res) {
+//     res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
+//   }
+// );
+//
+// router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+// router.get('/auth/google/callback',
+//   passport.authenticate('google', {failureRedirect: '/login' }),
+//   function(req, res) {
+//     res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
+//   }
+// );
 
 router.get('/login', function(req, res, next) {
   res.render('login', { title: 'Login', error: ""});

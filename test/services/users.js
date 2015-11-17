@@ -46,10 +46,6 @@ describe('User Repo', () => {
         });
       });
     });
-    //
-    // describe('Succsess AccountUser',  () => {
-    //
-    // });
 
     it('Fails', function(done){
       let attrs = {
