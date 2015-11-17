@@ -16,11 +16,11 @@ router.use(function (req, res, next) {
     return next();
   }
 
-  if (req.user && (req.path.indexOf('dashboard') == -1) ) {
-    res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
-  }else{
+   if (req.user && (req.path.indexOf('dashboard') == -1) ) {
+     res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
+   }else{
     next();
-  }
+   }
 });
 
 /* GET root page. */
@@ -28,15 +28,12 @@ router.get('/', function(req, res, next) {
   res.render('login', { title: 'Login', error: ""});
 });
 
-router.get('/dashboard', function(req, res, next) {
-  res.render('dashboard', { title: 'dashboard', error: ""});
-});
 
 router.get('/registration', function(req, res, next) {
   res.render('registration', usersRepo.prepareParams(req));
 });
 router.get('/landing', function(req, res, next) {
-  res.render('landing', { title: 'landing', user: req.user });
+  res.render('landing', { title: 'landing', user: req.user.subdomain });
 });
 router.post('/registration', function(req, res, next) {
   usersRepo.create(usersRepo.prepareParams(req), function(error, result) {
@@ -48,7 +45,7 @@ router.post('/registration', function(req, res, next) {
           res.render('login', { title: 'Login', error: "Wrong email or password"})
         }else{
           req.login(result, function(err) {
-            res.redirect(subdomains.url(req, result.accountName, '/dashboard'))
+            res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'))
           });
         };
       });
@@ -56,24 +53,37 @@ router.post('/registration', function(req, res, next) {
   });
 });
 
+
 router.post('/login', function(req, res, next) {
-  let post = req.body;
-  usersRepo.comparePassword(post.email, post.password, function(failed, result) {
-    if (failed) {
-      res.render('login', { title: 'Login', error: "Wrong email or password"})
-    }else{
-      req.login(result, function(err) {
-        res.redirect(subdomains.url(req, result.accountName, '/dashboard'))
+  passport.authenticate('local', function(err, user, info) {
+    if (err || !user) {
+      return res.render('login', { title: 'Login', error: "Wrong email or password"})
+    }
+    req.login(user, function(err) {
+      if (err) { return next(err); }
+      session.rememberMe(req, function(err, result) {
+        if (err) { throw err}
+        if (result) {
+          return res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
+        }
       });
-    };
-  });
+    });
+  })(req, res, next);
 });
 
+router.get('/login', function(req, res, next) {
+  res.render('login', { title: 'Login', error: ""});
+});
+
+
+
+
+// Disable by customer
 // router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
 // router.get('/auth/facebook/callback',
 //   passport.authenticate('facebook', {failureRedirect: '/login' }),
 //   function(req, res) {
-//     res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
+//     res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
 //   }
 // );
 //
@@ -81,25 +91,10 @@ router.post('/login', function(req, res, next) {
 // router.get('/auth/google/callback',
 //   passport.authenticate('google', {failureRedirect: '/login' }),
 //   function(req, res) {
-//     res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
+//     res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
 //   }
 // );
 
-router.get('/login', function(req, res, next) {
-  res.render('login', { title: 'Login', error: ""});
-});
-
-router.post('/login',
-  passport.authenticate('local', { failureRedirect: '/login' }),
-  function(req, res, next) {
-    session.rememberMe(req, function(err, result) {
-      if (err) { throw err}
-      if (result) {
-        res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
-      }
-    })
-  }
-);
 
 router.get('/logout', function(req, res){
   req.logout();

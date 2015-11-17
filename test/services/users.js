@@ -38,7 +38,7 @@ describe('User Repo', () => {
     describe('Ceate Account',  () => {
       it('Succsess', (done) =>  {
         UserRepo.create(validAttrs, function(errors, result) {
-          result.getAccounts().done(function(results) {
+          result.getOwnerAccount().done(function(results) {
             assert.equal(results.length, 1);
             assert.equal(results[0].name, validAttrs.accountName);
             done();
