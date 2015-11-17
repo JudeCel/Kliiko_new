@@ -11,11 +11,9 @@ var mailers = require('../mailers');
 var session = require('../middleware/session')
 
 router.use(function (req, res, next) {
-
   if (req.path == '/logout') {
     return next();
   }
-
    if (req.user && (req.path.indexOf('dashboard') == -1) ) {
      res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
    }else{
@@ -28,7 +26,6 @@ router.get('/', function(req, res, next) {
   res.render('login', { title: 'Login', error: ""});
 });
 
-
 router.get('/registration', function(req, res, next) {
   res.render('registration', usersRepo.prepareParams(req));
 });
@@ -40,15 +37,7 @@ router.post('/registration', function(req, res, next) {
     if (error) {
       res.render('registration', usersRepo.prepareParams(req, error));
     }else{
-      usersRepo.comparePassword(result.email, result.password, function(failed, result) {
-        if (failed) {
-          res.render('login', { title: 'Login', error: "Wrong email or password"})
-        }else{
-          req.login(result, function(err) {
-            res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'))
-          });
-        };
-      });
+      res.render('login', { title: 'Login', error: ""})
     };
   });
 });
