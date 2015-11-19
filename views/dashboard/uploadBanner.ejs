@@ -22,20 +22,22 @@
                 <form method='post' action='/dashboard/uploadbanner' enctype='multipart/form-data'>
                   <div class="form-group">
                     <label for="profile">Account profile</label>
-                    <span class="has-error"><%= error %></span>
-                    <img src="../banners/profile.png">
+                    <span class="has-error"><%= error.profile %></span>
+                    <%if(banners.profile) { %>
+                      <img src='../<%= banners.profile || "../icons/ic_add.png" %>'>
+                    <% } %>
                     <input type='file' name='profile' class='center-block'/>
                   </div>
                   <div class="form-group">
                     <label for="sessions">Chat sessions</label>
-                    <span class="has-error"><%= error %></span>
-                    <img src="../banners/sessions.png">
+                    <span class="has-error"><%= error.sessions %></span>
+                    <img src='../<%= banners.sessions || "../icons/ic_add.png" %>'>
                     <input type='file' name='sessions' class='center-block'/>
                   </div>
                   <div class="form-group">
                     <label for="resources">Resources</label>
-                    <span class="has-error"><%= error %></span>
-                    <img src="../banners/resources.png">
+                    <span class="has-error"><%= error.resources %></span>
+                    <img src='../<%= banners.resources || "../icons/ic_add.png" %>'>
                     <input type='file' name='resources' class='center-block'/>
                   </div>
                   <div class="check center-block">

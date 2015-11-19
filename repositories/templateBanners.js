@@ -3,13 +3,13 @@ var TemplateBanner = require('./../models').TemplateBanner;
 var _ = require('lodash');
 
 function create(params, callback) {
-  validateForCreate(params, function(error, user) {
+  validateForCreate(params, function(error, banner) {
     if (Object.keys(error).length > 1) {
-      return callback(error, user)
+      return callback(error)
     } else {
       createTemplateBanner(params, function(error, result) {
         if (Object.keys(error).length > 1) {
-          return callback(error, result);
+          return callback(error);
         }else {
           return callback(null, result);
         }
@@ -21,11 +21,12 @@ function create(params, callback) {
 function createOrUpdate(params, callback) {
   TemplateBanner.find({ where: { page: params.page }}).done(function(result) {
     if(result) {
-      result.update(params).then(function (result) {
-        return callback(null, result);
+      TemplateBanner.update(params, { where: { page: params.page } })
+      .then(function (updated) {
+        callback(null, params);
       })
       .catch(function (err) {
-        callback(err, result);
+        callback(err);
       });
     } else {
       create(params, callback);
@@ -50,12 +51,12 @@ function validateVirtualAttrs(params){
 
 function validateForCreate(params, callback){
   let errorsObject = validateVirtualAttrs(params)
-  TemplateBanner.build(params).validate().done(function(errors, user) {
+  TemplateBanner.build(params).validate().done(function(errors, banner) {
     if (errors) {
       errorsObject = prepareErrors(errors, {});
       callback(errorsObject, this);
     }else{
-      callback(errorsObject, user);
+      callback(errorsObject, banner);
     }
   });
 }

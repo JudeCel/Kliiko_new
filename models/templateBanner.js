@@ -1,5 +1,4 @@
 "use strict";
-var bcrypt = require('bcrypt');
 
 module.exports = (Sequelize, DataTypes) => {
   var TemplateBanner = Sequelize.define('TemplateBanner', {
