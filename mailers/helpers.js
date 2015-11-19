@@ -14,7 +14,10 @@ helpers.mailFrom = function(){
 helpers.getResetPaswordUrl = function(token){
   return "http://"+config.get('server')['domain']+":"+config.get('server')['port']+"/resetpassword/"+token;
 };
+helpers.getEmailConfirmationUrl = function(token){
 
+  return "http://"+config.get('server')['domain']+":"+config.get('server')['port']+"/emailConfirmation/"+token;
+};
 helpers.renderMailTemplate = function(filename, params, callback){
   let tplfile = __dirname + '/templates/' + filename + '.ejs';
 
