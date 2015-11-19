@@ -52,6 +52,7 @@ function sendTokenEmailConfirmation(email, callback) {
         }
     ], callback);
 }
+
 function getEmailConfirmationByToken(req, callback) {
     usersService.getUserByToken(req.params.token, function (err, user) {
         if (err) {
