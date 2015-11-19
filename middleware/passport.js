@@ -1,3 +1,4 @@
+"use strict";
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
@@ -5,8 +6,8 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var config = require('config');
 var models  = require('./../models');
-var usersRepo = require('./../repositories/users.js');
-var socialProfileRepo = require('./../repositories/socialProfile.js');
+var usersRepo = require('./../services/users.js');
+var socialProfileRepo = require('./../services/socialProfile.js');
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
@@ -15,9 +16,12 @@ passport.use(new LocalStrategy({
   function(username, password, done) {
     usersRepo.comparePassword(username, password, function(failed, result) {
       if (failed) {
-        return done(null, false);
+        done("Wrong email or password");
       }else{
-        return done(null, result);
+        result.getOwnerAccount().then(function(accounts) {
+          let accaount = accounts[0]
+          done(null, {id: result.id, email: result.email, subdomain: accaount.name });
+        });
       }
     });
   }
@@ -49,14 +53,16 @@ passport.use(new GoogleStrategy({
 ));
 
 passport.serializeUser(function(user, done) {
-  done(null, {id: user.id, email: user.email, accountName: user.accountName});
+  done(null, user);
 });
 
 passport.deserializeUser(function(userObject, done) {
-
-  models.User.find({attributes: ['email', 'accountName', 'id'], where: {id: userObject.id}}).done(function(result){
+  models.User.find({attributes: ['email', 'id'], where: {id: userObject.id}}).done(function(result){
     if (result) {
-      done(null, {id: result.id, email: result.email, accountName: result.accountName});
+      result.getOwnerAccount().then(function(result) {
+        let accaount = result[0]
+        done(null, {id: result.id, email: result.email, subdomain: accaount.name});
+      });
     }else{
       done("not found", null);
     };

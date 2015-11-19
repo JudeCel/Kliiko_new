@@ -1,8 +1,8 @@
 "use strict";
 var models  = require('./../../models');
 var User  = models.User;
-var usersRepo  = require('./../../repositories/users');
-var resetPassword  = require('./../../repositories/resetPassword');
+var usersRepo  = require('./../../services/users');
+var resetPassword  = require('./../../services/resetPassword');
 var assert = require('assert');
 var bcrypt = require('bcrypt');
 

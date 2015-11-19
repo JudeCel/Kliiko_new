@@ -2,7 +2,8 @@
   "server":{
     "port": 3000,
     "baseDomain": ".focus.com",
-    "domain": "insider.focus.com"
+    "domain": "insider.focus.com",
+    "baseSubdomain": "insider"
   },
   "redisSession": {
     "host": "127.0.0.1",
