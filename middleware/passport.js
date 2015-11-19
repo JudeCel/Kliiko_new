@@ -59,8 +59,8 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(userObject, done) {
   models.User.find({attributes: ['email', 'id'], where: {id: userObject.id}}).done(function(result){
     if (result) {
-      result.getOwnerAccount().then(function(result) {
-        let accaount = result[0]
+      result.getOwnerAccount().then(function(accaounts) {
+        let accaount = accaounts[0]
         done(null, {id: result.id, email: result.email, subdomain: accaount.name});
       });
     }else{

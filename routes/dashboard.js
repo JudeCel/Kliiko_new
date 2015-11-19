@@ -11,6 +11,7 @@ let views_name_space = "dashboard/";
 
 router.use(function (req, res, next) {
   if (req.user) {
+    console.log(req.currentDomain);
     next();
   } else {
     res.redirect(subdomains.url(req, 'insider', '/'));
