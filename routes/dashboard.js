@@ -18,10 +18,8 @@ router.use(function (req, res, next) {
   }
 });
 
-router.get('/', function(req, res, next) {
-  policy.authorized(["admin", "accountManager"], req, res, function() {
-    res.render(views_path('index'), { title: '', user: req.user });
-  });
+router.get('/', policy.authorized(["admin", "accountManager"]) , function(req, res, next) {
+  res.render(views_path('index'), { title: '', user: req.user });
 });
 
 router.get('/changepassword', function(req, res) {

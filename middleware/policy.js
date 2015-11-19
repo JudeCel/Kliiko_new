@@ -1,16 +1,26 @@
 "use strict";
 var _ = require('lodash');
+var accessDeniedMessage = 'Access Denied!!!!'
 
-function authorized(allowedRoles, req, res, nextCallback, faildeCallback) {
-  let roles = req.currentDomain.roles
-  let result = _.intersection(allowedRoles, roles)
+function checkRoles(roles, allowedRoles) {
+  let result = _.intersection(allowedRoles, roles);
+  return(result.length > 0)
+}
 
-  if (result.length > 0) { return nextCallback() }
-  if (faildeCallback) { faildeCallback() }
+function authorized(allowedRoles) {
+  return function(req, res, next) {
+    if (!req.currentDomain) { throw new Error('currentDomain not definite in request') }
+    let roles = req.currentDomain.roles;
 
-  res.status(404).send('Access Denain!!!!');
+    if (checkRoles(roles, allowedRoles)) {
+      return next();
+    } else {
+      return res.status(404).send(accessDeniedMessage);
+    }
+  }
 }
 
 module.exports = {
+  accessDeniedMessage: accessDeniedMessage,
   authorized: authorized
 }
