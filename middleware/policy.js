@@ -9,6 +9,12 @@ function authorized(req, res, next) {
 
 }
 
+
+function assignCurrentDomain(req, req, res, next) {
+  req.currentDomain = {name: "", roles: []}
+  next()
+}
+
 models.exports = {
   authorized: authorized
 }
