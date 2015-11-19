@@ -3,6 +3,7 @@ var express = require('express');
 var router = express.Router();
 var subdomains = require('../lib/subdomains.js');
 var changePassword = require('../services/changePassword');
+var roles = require('../middleware/policy.js');
 
 function views_path(action) {
 let views_name_space = "dashboard/";
@@ -11,7 +12,6 @@ let views_name_space = "dashboard/";
 
 router.use(function (req, res, next) {
   if (req.user) {
-    console.log(req.currentDomain);
     next();
   } else {
     res.redirect(subdomains.url(req, 'insider', '/'));
@@ -19,7 +19,9 @@ router.use(function (req, res, next) {
 });
 
 router.get('/', function(req, res, next) {
-  res.render(views_path('index'), { title: '', user: req.user });
+  roles.authorized(["admin", "accountManager"], req, res, function() {
+    res.render(views_path('index'), { title: '', user: req.user });
+  });
 });
 
 router.get('/changepassword', function(req, res) {

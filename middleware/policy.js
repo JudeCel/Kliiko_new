@@ -1,20 +1,16 @@
 "use strict";
 var _ = require('lodash');
 
-var roles = [
-  "admin", "accountManager", "facilitator", "observer", "participant"]
-]
+function authorized(allowedRoles, req, res, nextCallback, faildeCallback) {
+  let roles = req.currentDomain.roles
+  let result = _.intersection(allowedRoles, roles)
 
-function authorized(req, res, next) {
+  if (result.length > 0) { return nextCallback() }
+  if (faildeCallback) { faildeCallback() }
 
+  res.status(404).send('Access Denain!!!!');
 }
 
-
-function assignCurrentDomain(req, req, res, next) {
-  req.currentDomain = {name: "", roles: []}
-  next()
-}
-
-models.exports = {
+module.exports = {
   authorized: authorized
 }
