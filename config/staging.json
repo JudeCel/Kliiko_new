@@ -2,7 +2,8 @@
   "server":{
     "port": 3000,
     "baseDomain": ".diatomdemo.com",
-    "domain": "insider.diatomdemo.com"
+    "domain": "insider.diatomdemo.com",
+    "baseSubdomain": "insider"
   },
   "redisSession": {
     "host": "localhost",
