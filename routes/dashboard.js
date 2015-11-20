@@ -3,6 +3,7 @@ var express = require('express');
 var router = express.Router();
 var subdomains = require('../lib/subdomains.js');
 var changePassword = require('../services/changePassword');
+var policy = require('../middleware/policy.js');
 var uploadBanner = require('./dashboard/uploadBanner');
 
 function views_path(action) {
@@ -18,7 +19,7 @@ router.use(function (req, res, next) {
   }
 });
 
-router.get('/', function(req, res, next) {
+router.get('/', policy.authorized(["admin", "accountManager"]) , function(req, res, next) {
   res.render(views_path('index'), { title: '', user: req.user });
 });
 
