@@ -62,49 +62,24 @@ router.post('/registration', function (req, res, next) {
         ;
     });
 });
-//   I committed this as I have done new router.post for login (Alex)
 
-
-//router.post('/login', function(req, res, next) {
-//  passport.authenticate('local', function(err, user, info) {
-//    if (err || !user) {
-//      return res.render('login', { title: 'Login', error: "Wrong email or password"})
-//    }
-//    req.login(user, function(err) {
-//      if (err) { return next(err); }
-//      session.rememberMe(req, function(err, result) {
-//        if (err) { throw err}
-//        if (result) {
-//          return res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
-//        }
-//      });
-//    });
-//  })(req, res, next);
-//});
-router.post('/login', function (req, res, next) {
-    let post = req.body;
-    usersRepo.comparePassword(post.email, post.password, function (failed, result) {
-        if (failed) {
-            res.render('login', {title: 'Login', error: "Wrong email or password"})
-        } else {
-
-            usersRepo.checkConfirmationEmail(post.email, post.password, function (failed, result) {
-                if (failed) {
-
-                    res.render('login', {
-                        title: 'Login',
-                        error: "You need to confirm you email to get access to your dashboard"
-                    })
-                }
-                else
-                    req.login(result, function (err) {
-                        res.redirect('/dashboard');
-                    });
-            });
+router.post('/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err || !user) {
+      return  res.render('login', {title: 'Login', error: "Wrong email or password or email is not confirmed"})
+    }
+    req.login(user, function(err) {
+      if (err) { return next(err); }
+      session.rememberMe(req, function(err, result) {
+        if (err) { throw err}
+        if (result) {
+          return res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
         }
-        ;
+      });
     });
+  })(req, res, next);
 });
+
 
 router.get('/login', function (req, res, next) {
     res.render('login', {title: 'Login', error: ""});

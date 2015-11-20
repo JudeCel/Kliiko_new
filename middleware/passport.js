@@ -13,7 +13,7 @@ passport.use(new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password'
   },
-  function(username, password, done) {
+  function (username, password, done) {
     usersRepo.comparePassword(username, password, function(failed, result) {
       if (failed) {
         done("Wrong email or password");
