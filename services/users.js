@@ -92,25 +92,7 @@ function comparePassword(email, password, callback) {
         ;
     });
 };
-function checkConfirmationEmail(email, password, callback) {
 
-    User.find({where: {email: email}}).done(function (result) {
-        if (result) {
-
-            if (result.confirmedAt !== null) {
-
-                callback(null, result);
-            }
-            else {
-                callback(true, null);
-            }
-
-        }
-        else {
-            callback(true, result);
-        }
-    })
-}
 function getUserByTokenEmail(token, callback) {
 
     User.find({
@@ -130,7 +112,7 @@ function getUserByTokenEmail(token, callback) {
 
 function setEmailConfirmationToken(email, callback) {
 
-    var token = uuid.v1();
+    let token = uuid.v1();
 
     User.update({
         confirmationToken: token,
@@ -166,29 +148,7 @@ function emailConfirmation(token, password, callback) {
             callback(err);
         });
 }
-function setEmailConfirmationToken(email, callback) {
 
-    var token = uuid.v1();
-
-    User.update({
-        confirmationToken: token,
-        confirmationSentAt: new Date()
-
-    }, {
-        where: {email: email}
-    })
-        .then(function (result) {
-            if (result[0] > 0) {
-                return callback(null, token);
-            } else {
-                callback(null, null);
-            }
-        })
-        .catch(function (err) {
-            callback(true, null);
-        });
-
-}
 function prepareParams(req, errors) {
     return _.assign({
         user: req.user,
