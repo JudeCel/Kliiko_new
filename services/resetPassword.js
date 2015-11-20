@@ -1,12 +1,12 @@
 "use strict";
-var usersRepo  = require('./users');
+var usersService  = require('./users');
 var async = require('async');
 var mailers = require('../mailers');
 
 function sendToken(email, callback) {
   async.waterfall([
     function(next) {
-      usersRepo.setResetToken(email, next);
+      usersService.setResetToken(email, next);
     },
     function(token, next) {
       if (!token) {
@@ -23,11 +23,11 @@ function sendToken(email, callback) {
 }
 
 function resetByToken(req, callback){
-  usersRepo.getUserByToken(req.params.token, function(err, user){
+  usersService.getUserByToken(req.params.token, function(err, user){
     if (err) {
       return callback(err);
     }
-    usersRepo.resetPassword(req.params.token, req.body.password, function(err, data){
+    usersService.resetPassword(req.params.token, req.body.password, function(err, data){
       if (err) {
         return callback(err);
       }
@@ -38,7 +38,7 @@ function resetByToken(req, callback){
 
 function checkTokenExpired(token, callback){
 
-  usersRepo.getUserByToken(token, function(err, user){
+  usersService.getUserByToken(token, function(err, user){
 
     if (err || !user) {
       return callback(new Error('User not found'));

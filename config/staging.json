@@ -1,8 +1,9 @@
 {
   "server":{
     "port": 3000,
-    "baseDomain": ".dev.insiderfocus.diatomdemo.com",
-    "domain": "dev.insiderfocus.diatomdemo.com"
+    "baseDomain": ".kliiko.diatomdemo.com",
+    "domain": "insider.kliiko.diatomdemo.com",
+    "baseSubdomain": "insider"
   },
   "redisSession": {
     "host": "localhost",
@@ -24,8 +25,8 @@
   "cookieSecret": "ee9b7f3df25f0759a0876762da2b721cdeba47b1f5df4003807c6383c581f409",
   "facebookclientID": "896567070378726",
   "facebookClientSecret": "4b81e13605d1945df93d93be4a9a8eff",
-  "facebookCallbackURL": "http://dev.insiderfocus.diatomdemo.com:3000/auth/facebook/callback",
+  "facebookCallbackURL": "http://insider.kliiko.diatomdemo.com:3000/auth/facebook/callback",
   "googleClientID": "423827252082-ou6mol0l1jadrdu5it990m8vgulqglj8.apps.googleusercontent.com",
   "googleClientSecret": "8u0EG1SJjU7GahIuMRz3gYne",
-  "googleCallbackURL": "http://dev.insiderfocus.diatomdemo.com:3000/auth/google/callback"
+  "googleCallbackURL": "http://insider.kliiko.diatomdemo.com:3000/auth/google/callback"
 }

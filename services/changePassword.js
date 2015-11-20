@@ -1,5 +1,5 @@
 "use strict";
-var usersRepo  = require('./users');
+var usersService  = require('./users');
 var mailers = require('../mailers');
 
 function save(req, callback){
@@ -22,7 +22,7 @@ function save(req, callback){
   let message = "";
   let params = {email: req.user.email};
 
-  usersRepo.changePassword(userId, newPassword, function(err, data){
+  usersService.changePassword(userId, newPassword, function(err, data){
     if (err) {
       return callback(err);
     }

@@ -9,7 +9,9 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('./middleware/passport');
+var subdomain = require('./middleware/subdomain');
 var app = express();
+app.use(subdomain);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

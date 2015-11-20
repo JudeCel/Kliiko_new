@@ -31,11 +31,6 @@ module.exports = (Sequelize, DataTypes) => {
         }
       }
     }},
-    accountName: {type: DataTypes.STRING, allowNull: false, unique: {args: true, msg: "already taken"},
-      validate: { notEmpty: {args: true, msg: "can't be empty"},
-                  is: ["^[a-zA-Z0-9]+$",'i']
-                }
-    },
     encryptedPassword:  {type : DataTypes.STRING, allowNull: false, validate: { notEmpty: true}},
     password: {
       type: DataTypes.VIRTUAL,
@@ -59,7 +54,6 @@ module.exports = (Sequelize, DataTypes) => {
     confirmationToken: {type : DataTypes.STRING, allowNull: true},
     confirmationSentAt: {type : DataTypes.DATE, allowNull: true},
     confirmedAt: {type : DataTypes.DATE, allowNull: true},
-
     currentSignInIp: {type : DataTypes.STRING, allowNull: true},
     promoCode: {type: DataTypes.INTEGER, allowNull: true},
     mobile: {type: DataTypes.STRING, allowNull: true},
@@ -67,7 +61,11 @@ module.exports = (Sequelize, DataTypes) => {
   },{
       classMethods: {
         associate: function(models) {
-          User.hasMany(models.SocialProfile, {foreignKey: 'userId'})
+          User.hasMany(models.SocialProfile, {foreignKey: 'userId'});
+          User.belongsToMany(models.Account, { through: models.AccountUser, foreignKey: 'accountId' });
+          User.belongsToMany(models.Account, { through: { model: models.AccountUser, scope: { owner: true }},
+            foreignKey: 'accountId',  as: 'OwnerAccount'}
+          );
         }
       }
     }

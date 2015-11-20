@@ -2,7 +2,7 @@
 var express = require('express');
 var router = express.Router();
 var subdomains = require('../lib/subdomains.js');
-var changePassword = require('../repositories/changePassword');
+var changePassword = require('../services/changePassword');
 var templateBanners = require('./uploadBanner');
 
 function views_path(action) {
