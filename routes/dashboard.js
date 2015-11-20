@@ -3,7 +3,7 @@ var express = require('express');
 var router = express.Router();
 var subdomains = require('../lib/subdomains.js');
 var changePassword = require('../services/changePassword');
-var templateBanners = require('./uploadBanner');
+var uploadBanner = require('./dashboard/uploadBanner');
 
 function views_path(action) {
 let views_name_space = "dashboard/";
@@ -36,7 +36,8 @@ router.post('/changepassword', function(req, res) {
   });
 });
 
-router.get('/uploadbanner', templateBanners.get);
-router.post('/uploadbanner', templateBanners.upload_fields, templateBanners.post);
+router.get('/uploadbanner', uploadBanner.get);
+router.post('/uploadbanner', uploadBanner.uploadFields, uploadBanner.post);
+router.get('/uploadbanner/:page', uploadBanner.destroy);
 
 module.exports = router;
