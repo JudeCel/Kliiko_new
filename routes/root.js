@@ -4,11 +4,12 @@ var async = require('async');
 var router = express.Router();
 var usersRepo = require('./../services/users');
 var resetPassword = require('./../services/resetPassword');
+var emailConfirmation = require('./../services/confirmationEmail');
 var passport = require('passport');
 var subdomains = require('../lib/subdomains');
 var config = require('config');
 var mailers = require('../mailers');
-var session = require('../middleware/session')
+var session = require('../middleware/session');
 
 router.use(function (req, res, next) {
     if (req.path == '/logout') {
@@ -47,7 +48,7 @@ router.post('/registration', function (req, res, next) {
                         };
                         let email = req.body.email;
 
-                        resetPassword.sendTokenEmailConfirmation(email, function (err) {
+                        emailConfirmation.sendTokenEmailConfirmation(email, function (err) {
                             if (err) {
                                 tplData.error = 'Failed to send data. Please try later';
                             } else {
@@ -141,7 +142,7 @@ router.route('/emailConfirmation/:token')
                 tplData.user = false;
             }
 
-            resetPassword.getEmailConfirmationByToken(req, function (err, user) {
+            emailConfirmation.getEmailConfirmationByToken(req, function (err, user) {
 
                 if (err) {
 
