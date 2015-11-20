@@ -32,27 +32,13 @@ router.get('/registration', function (req, res, next) {
 router.get('/landing', function (req, res, next) {
     res.render('landing', {title: 'landing', user: req.user.subdomain});
 });
-//router.post('/registration', function (req, res, next) {
-//    usersRepo.create(usersRepo.prepareParams(req), function (error, result) {
-//        if (error) {
-//            res.render('registration', usersRepo.prepareParams(req, error));
-//        } else {
-//            res.render('login', {title: 'Login', error: ""})
-//        }
-//        ;
-//    });
-//});
+
 router.post('/registration', function (req, res, next) {
     usersRepo.create(usersRepo.prepareParams(req), function (error, result) {
         if (error) {
             res.render('registration', usersRepo.prepareParams(req, error));
         } else {
-            usersRepo.comparePassword(result.email, result.password, function (failed, result) {
-                if (failed) {
-                    res.render('login', {title: 'Login', error: "Wrong email or password"})
-                } else {
                     req.login(result, function (err) {
-
                         let tplData = {
                             title: 'Email Confirmation',
                             error: '',
@@ -70,9 +56,7 @@ router.post('/registration', function (req, res, next) {
                         });
                         res.render('login', {title: 'Login', error: "Please, Confirm Your Email"});
                     });
-                }
                 ;
-            });
         }
         ;
     });
