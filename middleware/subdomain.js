@@ -49,7 +49,7 @@ module.exports = function(req, res, next) {
       if(result){
         assignCurrentDomain(result, req, next)
       }else{
-        res.status(404).send('Account not found or you no access to this page.');
+        res.status(404).send('Account not found or you do not have access to this page');
       };
     })
   }else{

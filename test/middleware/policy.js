@@ -5,9 +5,7 @@ var policy = require('./../../middleware/policy.js');
 describe('Middleware policy', () => {
   let req = {}
   let res = { status: (argument) => { return { send: (test) => { return test } } } }
-  let next = function(done) {
-    return done()
-  }
+
   describe('authorized ', () => {
     describe('success ', () => {
       it('call next Callback', (done) =>  {

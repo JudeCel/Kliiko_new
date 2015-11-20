@@ -9,7 +9,7 @@ function checkRoles(roles, allowedRoles) {
 
 function authorized(allowedRoles) {
   return function(req, res, next) {
-    if (!req.currentDomain) { throw new Error('currentDomain not definite in request') }
+    if (!req.currentDomain) { throw new Error('currentDomain is not defined in the request') }
     let roles = req.currentDomain.roles;
 
     if (checkRoles(roles, allowedRoles)) {
