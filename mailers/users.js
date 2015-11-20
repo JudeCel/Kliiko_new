@@ -8,8 +8,8 @@ var mailFrom = helpers.mailFrom();
 var transporter = helpers.createTransport();
 
 users.sendResetPasswordToken = function(params, callback) {
-
-    let link = { url: helpers.getResetPaswordUrl(params.token)};
+    let resetPasswordPath = '/resetpassword/';
+    let link = { url: helpers.getUrl(params.token, resetPasswordPath)};
 
     helpers.renderMailTemplate('resetPasswordToken', link, function(err, html){
       if (err) {
@@ -26,8 +26,8 @@ users.sendResetPasswordToken = function(params, callback) {
 };
 
 users.sendEmailConfirmationToken = function(params, callback) {
-
-  let link = { url: helpers.getEmailConfirmationUrl(params.token)};
+  let emailConfirmationPath = '/emailConfirmation/';
+  let link = { url: helpers.getUrl(params.token, emailConfirmationPath)};
 
   helpers.renderMailTemplate('confirmationEmail', link, function(err, html){
     if (err) {
