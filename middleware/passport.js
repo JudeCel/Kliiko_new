@@ -6,7 +6,7 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var config = require('config');
 var models  = require('./../models');
-var usersRepo = require('./../services/users.js');
+var usersService = require('./../services/users.js');
 var socialProfileRepo = require('./../services/socialProfile.js');
 
 passport.use(new LocalStrategy({
@@ -14,7 +14,7 @@ passport.use(new LocalStrategy({
   passwordField: 'password'
   },
   function (username, password, done) {
-    usersRepo.comparePassword(username, password, function(failed, result) {
+    usersService.comparePassword(username, password, function(failed, result) {
       if (failed) {
         done("Wrong email or password");
       }else{

@@ -8,21 +8,21 @@ var mailFrom = helpers.mailFrom();
 var transporter = helpers.createTransport();
 
 users.sendResetPasswordToken = function(params, callback) {
-    let resetPasswordPath = '/resetpassword/';
-    let link = { url: helpers.getUrl(params.token, resetPasswordPath)};
+  let resetPasswordPath = '/resetpassword/';
+  let link = { url: helpers.getUrl(params.token, resetPasswordPath)};
 
-    helpers.renderMailTemplate('resetPasswordToken', link, function(err, html){
-      if (err) {
-        return callback(err);
-      }
+  helpers.renderMailTemplate('resetPasswordToken', link, function(err, html){
+    if (err) {
+      return callback(err);
+    }
 
-      transporter.sendMail({
-        from: mailFrom,
-        to: params.email,
-        subject: 'Insider Focus - Reset password',
-        html: html
-      }, callback);
-    });
+    transporter.sendMail({
+      from: mailFrom,
+      to: params.email,
+      subject: 'Insider Focus - Reset password',
+      html: html
+    }, callback);
+  });
 };
 
 users.sendEmailConfirmationToken = function(params, callback) {
@@ -72,4 +72,3 @@ users.sendPasswordChangedSuccess = function(params, callback) {
     }, callback);
   });
 };
-
