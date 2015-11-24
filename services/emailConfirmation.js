@@ -31,7 +31,7 @@ function getUserByToken(token, callback) {
     attributes: ['id', 'confirmedAt', 'email', 'confirmationToken']
   })
     .then(function (result) {
-      return callback(null, result);
+      callback(null, result);
     })
     .catch(function (err) {
       callback(err);
@@ -50,7 +50,7 @@ function setEmailConfirmationToken(email, callback) {
   })
     .then(function (result) {
       if (result[0] > 0) {
-          return callback(null, token);
+        callback(null, token);
       } else {
         callback(null, null);
       }
@@ -58,8 +58,8 @@ function setEmailConfirmationToken(email, callback) {
     .catch(function (err) {
       callback(true, null);
     });
-
 }
+
 function checkTokenExpired(token, callback) {
   getUserByToken(token, function (err, user) {
     if (err || !user) { return callback(new Error('User not found')) };
@@ -73,7 +73,6 @@ function checkTokenExpired(token, callback) {
 }
 
 function confirm(token, callback) {
-
   User.update({
     confirmedAt: new Date()
   }, {

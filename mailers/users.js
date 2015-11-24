@@ -31,6 +31,7 @@ users.sendEmailConfirmationToken = function(params, callback) {
 
   helpers.renderMailTemplate('confirmationEmail', link, function(err, html){
     if (err) {
+      console.log(err);
       return callback(err);
     }
 
@@ -42,6 +43,7 @@ users.sendEmailConfirmationToken = function(params, callback) {
     }, callback);
   });
 };
+
 users.sendEmailConfirmationSuccess = function(params, callback) {
 
   helpers.renderMailTemplate('confirmationEmailSuccess', {}, function(err, html){

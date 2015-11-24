@@ -4,8 +4,22 @@ var ejs = require('ejs');
 var fs = require('fs');
 var config = require('config');
 var nodemailer = require('nodemailer');
-
+var stubTransport = {
+    name: 'testsend',
+    version: '1',
+    send: function(data, callback) { callback(data) }
+};
 var helpers = exports;
+
+function envConfig() {
+  switch (process.env.NODE_ENV) {
+    case "test":
+      return stubTransport;
+      break;
+    default:
+      return config.get('mail')['transport'];
+  }
+}
 
 helpers.mailFrom = function(){
   return config.get('mail')['fromName']+" <"+config.get('mail')['fromEmail']+">";
@@ -28,7 +42,5 @@ helpers.renderMailTemplate = function(filename, params, callback){
 };
 
 helpers.createTransport = function(token){
-  return nodemailer.createTransport(config.get('mail')['transport']);
+  return nodemailer.createTransport(envConfig());
 };
-
-
