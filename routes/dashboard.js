@@ -17,7 +17,7 @@ router.use(function (req, res, next) {
   } else {
     res.redirect(subdomains.url(req, 'insider', '/'));
   }
-});
+}, uploadBanner.getProfileBanner);
 
 router.get('/', policy.authorized(["admin", "accountManager"]) , function(req, res, next) {
   res.render(views_path('index'), { title: '', user: req.user });
@@ -37,8 +37,8 @@ router.post('/changepassword', function(req, res) {
   });
 });
 
-router.get('/uploadbanner', uploadBanner.get);
-router.post('/uploadbanner', uploadBanner.uploadFields, uploadBanner.post);
-router.get('/uploadbanner/:page', uploadBanner.destroy);
+router.get('/uploadbanner', policy.authorized(['admin']), uploadBanner.get);
+router.post('/uploadbanner', policy.authorized(['admin']), uploadBanner.uploadFields, uploadBanner.post);
+router.get('/uploadbanner/:page', policy.authorized(['admin']), uploadBanner.destroy);
 
 module.exports = router;

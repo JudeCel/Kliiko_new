@@ -2,7 +2,13 @@
 
 <main class="main-first-page">
   <div class="container">
-    <h1 id="welcome">Welcome!</h1>
+    <h1 id="welcome">Welcome!
+    <%if(bannerPath) { %>
+      <div class="col-xs-12 col-sm-12 col-md-12">
+        <img src='<%= bannerPath %>' alt="" />
+      </div>
+    <% } %>
+    </h1>
     <ul class="nav nav-tabs" id="nav-tabs-dashboard">
       <li class="active"><a href="#login">Account Profile<img id="ic_tab_profile_active" src="../icons/ic_tab_profile_active.png"></a></li>
       <li><a href="#">Chat Sessions<img id="ic_tab_profile_active" src="../icons/ic_tab_sessions.png"></a></li>
@@ -23,7 +29,6 @@
                   <div class="form-group">
                     <label for="profile">Account profile</label>
                     <span class="has-error"><%= error.profile %></span>
-                    <% console.log(banners) %>
                     <%if(banners.profile) { %>
                       <img src='../<%= banners.profile %>'>
                       <a href="uploadbanner/profile" class="btn cancel">Remove</a>

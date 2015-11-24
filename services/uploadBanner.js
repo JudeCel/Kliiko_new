@@ -20,6 +20,18 @@ var validations = {
 };
 
 //Exported
+function profilePage(callback) {
+  TemplateBanner.find({
+    where: { page: 'profile' }
+  })
+  .then(function (result) {
+    callback(null, result);
+  })
+  .catch(function (err) {
+    callback(err);
+  });
+}
+
 function write(files, callback) {
   if(Object.keys(files).length == 0)
   {
@@ -67,9 +79,16 @@ function destroy(page, callback) {
     where: { page: page }
   })
   .then(function (result) {
-    fs.unlink('public/' + result.dataValues.filepath);
-    result.destroy();
-    callback(null);
+    let path = 'public/' + result.dataValues.filepath;
+    fs.stat(path, function (err, stats) {
+      if(stats)
+      {
+        fs.unlink(path);
+      }
+    });
+    result.destroy().then(function () {
+      callback(null);
+    });
   })
   .catch(function (err) {
     callback(err);
@@ -84,7 +103,6 @@ function uploadFields() {
     filename: function (req, file, cb) {
       let re = /(?:\.([^.]+))?$/;
       let extension = '.' + re.exec(file.originalname)[1];
-      console.log(file);
       file.originalname = file.fieldname + extension;
       cb(null, file.fieldname + '_temp' + extension);
     }
@@ -109,8 +127,8 @@ function findAllBanners(callback) {
   });
 }
 
-function simpleParams(user, error, message) {
-  return { title: 'Upload banner', user: user, error: error, message: message, banners: {} };
+function simpleParams(error, message) {
+  return { title: 'Upload banner', error: error, message: message, banners: {} };
 }
 
 //Helpers
@@ -166,6 +184,7 @@ function mapJson(array) {
 }
 
 module.exports = {
+  profilePage: profilePage,
   write: write,
   destroy: destroy,
   findAllBanners: findAllBanners,
