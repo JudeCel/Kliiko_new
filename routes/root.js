@@ -30,7 +30,7 @@ router.get('/registration', function(req, res, next) {
   res.render('registration', usersRepo.prepareParams(req));
 });
 router.get('/landing', function(req, res, next) {
-  res.render('landing', { title: 'landing', user: req.user.subdomain });
+  res.render('landing', { title: 'landing' });
 });
 router.post('/registration', function(req, res, next) {
   usersRepo.create(usersRepo.prepareParams(req), function(error, result) {
