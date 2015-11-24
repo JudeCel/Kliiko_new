@@ -41,7 +41,10 @@ var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
 
 app.use('/', routes);
-app.use('/dashboard', dashboard);
+app.use('/dashboard', function (req, res, next) {
+  app.locals.currentUser = req.user;
+  next();
+}, dashboard);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

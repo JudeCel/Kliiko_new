@@ -5,6 +5,8 @@
 <a href="/dashboard/changepassword">
   <button type="button" class="btn-details-managers-etc">Password</button>
 </a>
-<a href="/dashboard/uploadbanner">
-  <button type="button" class="btn-details-managers-etc">Upload banner</button>
-</a>
+<%if(currentUser.role == "admin") { %>
+  <a href="/dashboard/uploadbanner">
+    <button type="button" class="btn-details-managers-etc">Upload banner</button>
+  </a>
+<% } %>
