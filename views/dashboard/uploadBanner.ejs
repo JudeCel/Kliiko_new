@@ -30,7 +30,9 @@
                     <label for="profile">Account profile</label>
                     <span class="has-error"><%= error.profile %></span>
                     <%if(banners.profile) { %>
-                      <img src='../<%= banners.profile %>'>
+                      <div class="col-xs-12 col-sm-12 col-md-12">
+                        <img src='../<%= banners.profile %>'>
+                      </div>
                       <a href="uploadbanner/profile" class="btn cancel">Remove</a>
                     <% } %>
                     <input type='file' name='profile' class='center-block'/>
@@ -39,7 +41,9 @@
                     <label for="sessions">Chat sessions</label>
                     <span class="has-error"><%= error.sessions %></span>
                     <%if(banners.sessions) { %>
-                      <img src='../<%= banners.sessions %>'>
+                      <div class="col-xs-12 col-sm-12 col-md-12">
+                        <img src='../<%= banners.sessions %>'>
+                      </div>
                       <a href="uploadbanner/sessions" class="btn cancel">Remove</a>
                     <% } %>
                     <input type='file' name='sessions' class='center-block'/>
@@ -48,7 +52,9 @@
                     <label for="resources">Resources</label>
                     <span class="has-error"><%= error.resources %></span>
                     <%if(banners.resources) { %>
-                      <img src='../<%= banners.resources %>'>
+                      <div class="col-xs-12 col-sm-12 col-md-12">
+                        <img src='../<%= banners.resources %>'>
+                      </div>
                       <a href="uploadbanner/resources" class="btn cancel">Remove</a>
                     <% } %>
                     <input type='file' name='resources' class='center-block'/>
