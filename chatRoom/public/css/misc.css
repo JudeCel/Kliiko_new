@@ -1,0 +1,134 @@
+/* 
+Title:		misc style that we need 
+Author: 	Adi SF
+*/
+
+
+/* css for fg button*/
+		/* button styles */
+
+.fg-button { outline: 0; margin:0 4px 0 0; padding: .4em 1em; text-decoration:none !important; cursor:pointer; position: relative; text-align: center; zoom: 1; }
+
+
+.fg-button .ui-icon { position: absolute; top: 50%; margin-top: -8px; left: 50%; margin-left: -8px; }
+
+
+
+a.fg-button { float:left; }
+
+
+
+
+/*remove extra button width in IE */
+
+button.fg-button { width:auto; overflow:visible; }
+
+
+
+.fg-button-icon-left { padding-left: 2.1em; }
+
+.fg-button-icon-right { padding-right: 2.1em; }
+
+.fg-button-icon-left .ui-icon { right: auto; left: .2em; margin-left: 0; }
+
+.fg-button-icon-right .ui-icon { left: auto; right: .2em; margin-left: 0; }
+
+
+
+.fg-button-icon-solo { display:block; width:8px; text-indent: -9999px; }	 /* solo icon buttons must have block properties for the text-indent to work */	
+
+
+
+.fg-buttonset { float:left; }
+
+.fg-buttonset .fg-button { float: left; }
+
+.fg-buttonset-single .fg-button, 
+
+.fg-buttonset-multi .fg-button { margin-right: -1px;}
+
+
+
+.fg-toolbar {  margin: 0;  }
+
+.fg-toolbar .fg-buttonset { margin-right:1.5em; padding-left: 1px; }
+
+.fg-toolbar .fg-button { font-size: 1em;  }
+
+/* table customised css   */
+
+#hor-minimalist-a
+{
+	
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	background: # F2B7D3;
+	width: 100%;
+	border-collapse: collapse;
+	text-align: left;
+}
+#hor-minimalist-a th
+{
+	font-size: 14px;
+	font-weight: normal;
+	color: #ffffff;
+	padding: 5px 8px;
+	border-bottom: 2px solid #666;
+	background-color:#C00000;
+	text-align:left;
+}
+#hor-minimalist-a td
+{
+	color: #000000;
+	
+}
+#hor-minimalist-a tbody tr:hover 
+{
+	background-color:#CCC;
+	
+}
+
+div#users-contain table td, div#users-contain table th {  padding: .6em 10px; text-align: left; }
+
+
+
+
+/*--- THE MAGIC ---*/
+/* for placeholder
+This is the best bit!
+*/
+[placeholder]{
+	cursor:pointer;
+	padding:5px;
+	border:1px solid #999;
+	
+	-moz-border-radius:2px;
+	-webkit-border-radius:2px;
+	border-radius:2px;
+}
+[placeholder]:active,
+[placeholder]:focus{
+	cursor:text;
+	border:1px solid #0a0;
+	
+	-moz-box-shadow:0 0 5px #0a0, 0 0 5px rgba(0,0,0,0.25) inset;
+	-webkit-box-shadow:0 0 5px #0a0, 0 0 5px rgba(0,0,0,0.25) inset;
+	box-shadow:0 0 5px #0a0, 0 0 5px rgba(0,0,0,0.25) inset;
+}
+
+
+/* general form css*/
+label { display: inline-block; width: 100px; }
+legend { padding: 0.5em; }
+fieldset fieldset label { display: block; }
+#signupForm { width: 1000px; }
+#signupForm label.error {
+	margin-left:auto: 10px;
+	width: auto;
+	display: inline;
+}
+
+ .chart-title {
+    	background-color:#C00000;
+    	
+    }

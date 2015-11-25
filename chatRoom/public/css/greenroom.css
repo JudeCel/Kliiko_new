@@ -1,0 +1,662 @@
+@font-face {
+    font-family: 'BebasNeueRegular';
+    src: url('../fonts/BebasNeue-webfont.eot');
+    src: url('../fonts/BebasNeue-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/BebasNeue-webfont.woff') format('woff'),
+         url('../fonts/BebasNeue-webfont.ttf') format('truetype'),
+         url('../fonts/BebasNeue-webfont.svg#BebasNeueRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+div.back_button{
+	text-align: right;
+	max-width: 960px;
+	margin: 10px auto;
+}
+
+/* -- greenroom -- */
+
+body#greenroom{
+	background-color: #D7E9D1;
+	font-family: LexiaDaMa, 'Lexia Da Ma', "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+body#greenroom div.notification{
+	display: block;
+	background-color: #E21F3C;
+	padding: 10px;
+	color: white;
+	width: 572px;
+	margin: 20px auto;
+
+	border-radius: 6px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-khtml-border-radius: 6px;
+
+	-webkit-box-shadow:  4px 3px 0px 0px rgba(94, 74, 62, 0.15);        
+  box-shadow:  4px 3px 0px 0px rgba(94, 74, 62, 0.15);
+}
+
+body#greenroom #session_container{
+	background-color: white;
+	border-color: #389017;
+	max-width: 972px;
+}
+
+body#greenroom #session_container > .inner{
+	padding: 5px 20px 10px;
+}
+
+body#greenroom #session_container h1, 
+body#greenroom #session_container h2, 
+body#greenroom #session_container h3,
+body#greenroom #session_container h4 {
+	font-family: 'BebasNeueRegular';
+	font-weight: normal;
+	color: #E21F3C;	
+}
+
+body#greenroom #session_container h1{
+	font-size: 40px;
+	margin: 0 0 4px;
+	letter-spacing: 0.05em;
+}
+
+body#greenroom #session_container h2{
+	font-size: 24px;
+	margin-bottom: 1px;
+	font-weight: normal;
+}
+
+body#greenroom #session_container header{
+	border-bottom: 2px solid #E21F3C;
+	padding-bottom: 7px;	
+}
+
+/* branding */
+
+.lt-ie8 body#greenroom #session_container div#branding{
+	width: 73%;
+}
+
+body#greenroom #session_container div#branding .inner{
+	padding: 5px 0 2px 0;
+	position: relative;
+}
+
+body#greenroom #session_container div#branding .buttons{
+	position: absolute;
+	top: 5px; right: 20px;
+}
+
+body#greenroom #session_container div#branding .buttons a{
+	float: left;
+	margin-left: 5px;
+}
+
+body#greenroom #session_container div#branding .info{
+	border-top: 1px dotted #E21F3C;
+	padding-top: 5px;
+	height: 16px;
+}
+
+body#greenroom #session_container div#branding .info a{
+	color: #F6BCC5;
+	text-transform: uppercase;
+	border-right: 1px dotted #E21F3C;
+	padding-right: 8px;
+	font-size: 11px;
+}
+
+body#greenroom #session_container div#branding .info a.last{
+	border: 0 none;
+	padding: 0 0 0 5px;
+}
+
+/* logo */
+
+.lt-ie8 body#greenroom #session_container div#logo{
+	width: 24%;
+}
+
+body#greenroom #session_container div#logo{
+	position: relative;
+	height: 75px;
+	overflow: hidden;
+	border-left: 1px dotted #E21F3C;	
+}
+
+body#greenroom #session_container div#logo a{
+	display: inline-block;
+	*display: inline; zoom: 1;
+	margin-left: 8%;
+	max-width: 92%;
+	line-height: 75px;
+	width:180px;/*Sherry Added to put restrict logo size*/
+}
+
+body#greenroom #session_container div#logo a img {/*Sherry Changed to put smaller logo in the middle*/
+	/*width: 180px;*/
+	display: block;
+    margin: 0 auto;
+}
+
+@media (max-width: 767px) {
+	body#greenroom #session_container div#branding{
+		border: none;
+		margin-bottom: 20px;
+	}
+
+	body#greenroom #session_container div#branding .inner{
+		padding: 0;
+	}
+
+	body#greenroom #session_container div#branding .buttons{
+		right: 0;
+	}
+
+	body#greenroom #session_container div#logo{
+		height: 200px;
+		border: 0 none;
+	}
+
+	body#greenroom #session_container div#logo a{
+		margin-left: 0;
+		width: 100%;
+		max-width: 100%;
+		text-align: center;
+	}
+
+	body#greenroom #session_container div#logo a img{
+		width: auto;
+		height: 200px;
+		margin-left: 0;
+	}
+}
+
+@media (max-width: 560px){
+	body#greenroom #session_container div#logo{
+		height: 120px;
+	}
+	
+	body#greenroom #session_container div#logo a img{
+		width: auto;
+		height: 120px;
+		margin-left: 0;
+	}
+}
+
+/* content */
+
+body#greenroom #session_container div#content{
+	margin-top: 15px;
+	color: #5E4A3E;
+}
+
+body#greenroom #session_container div#content div#information{
+
+}
+
+body#greenroom #session_container div#content div.section, body#greenroom legend{
+	border-bottom: 1px dotted #AFA49F;
+}
+
+body#greenroom #session_container div#content div#intro{
+		font-size: 16px;
+		line-height: 1.4em;
+}
+
+body#greenroom #session_container div#content aside .info{
+	margin-bottom: 25px;
+	overflow: hidden;
+	display: table;
+}
+
+body#greenroom #session_container div#content aside small{
+	font-size: 95%;
+}
+
+body#greenroom #session_container div#content aside div.session, 
+body#greenroom #session_container div#content aside .info a{
+	display: table-cell;
+	vertical-align: middle;
+	border-collapse: collapse;
+}
+
+body#greenroom #session_container div#content aside .info a{
+	padding: 5px;
+}
+
+body#greenroom #session_container div#content aside div.spacing{
+	width: 5px;
+	display: table-cell;
+}
+
+body#greenroom #session_container div#content aside div.session, 
+body#greenroom #session_container div#content aside .info a,
+body#greenroom input[type=submit],
+body#greenroom #session_container div#content div#identity figure#video_player .video_btn {
+	border-radius: 11px;
+	-moz-border-radius: 11px;
+	-webkit-border-radius: 11px;
+	
+}
+
+body#greenroom input[type=submit],
+body#greenroom #session_container div#content div#identity figure#video_player .video_btn {
+	float: left;	
+}
+
+body#greenroom #session_container div#content aside div.session, body#greenroom #session_container div#content div#identity figure#video_player .video_btn{	
+	padding: 4px 15px;
+	border: 1px solid #DFDBD8;	
+
+	background: #efedec; /* Old browsers */
+	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2VmZWRlYyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjMyJSIgc3RvcC1jb2xvcj0iI2YyZjBlZiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjU0JSIgc3RvcC1jb2xvcj0iI2VmZWRlYyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlMGRhZDciIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+	background: -moz-linear-gradient(top,  #efedec 0%, #f2f0ef 32%, #efedec 54%, #e0dad7 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#efedec), color-stop(32%,#f2f0ef), color-stop(54%,#efedec), color-stop(100%,#e0dad7)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #efedec 0%,#f2f0ef 32%,#efedec 54%,#e0dad7 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #efedec 0%,#f2f0ef 32%,#efedec 54%,#e0dad7 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #efedec 0%,#f2f0ef 32%,#efedec 54%,#e0dad7 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #efedec 0%,#f2f0ef 32%,#efedec 54%,#e0dad7 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#efedec', endColorstr='#e0dad7',GradientType=0 ); /* IE6-8 */
+}
+
+.lt-ie8 body#greenroom #session_container div#content aside div.session{
+	width: 113px;
+	height: 70px;
+	float: left;
+	display: block;
+	margin-right: 5px;
+}
+
+.lt-ie8 body#greenroom #session_container div#content aside .info a{
+	width: 29%;
+}
+
+.lt-ie8 body#greenroom #session_container div#content aside div.spacing{
+	display: none;
+}
+
+body#greenroom #session_container div#content aside div.session{
+	width: 33%;
+	/*margin: 10px 2.1% 0 0;
+	width: 33%;*/
+}
+
+html.ie9 body#greenroom #session_container div#content aside div.session{
+	filter: none;
+}
+
+body#greenroom #session_container div#content aside .info a, body#greenroom input[type=submit]{
+	
+
+	font-family: 'BebasNeueRegular';
+	color: #7E6E65;
+	font-size: 25px;
+	letter-spacing: 0.05em;
+
+	border: 1px solid #DFDBD8;
+	text-align: center;
+
+	background: #cfc9c5; /* Old browsers */
+	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2NmYzljNSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjQxJSIgc3RvcC1jb2xvcj0iI2QzY2RjOSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjYzJSIgc3RvcC1jb2xvcj0iI2NjYzVjMSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNhODljOTUiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+	background: -moz-linear-gradient(top,  #cfc9c5 0%, #d3cdc9 41%, #ccc5c1 63%, #a89c95 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cfc9c5), color-stop(41%,#d3cdc9), color-stop(63%,#ccc5c1), color-stop(100%,#a89c95)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #cfc9c5 0%,#d3cdc9 41%,#ccc5c1 63%,#a89c95 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #cfc9c5 0%,#d3cdc9 41%,#ccc5c1 63%,#a89c95 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #cfc9c5 0%,#d3cdc9 41%,#ccc5c1 63%,#a89c95 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #cfc9c5 0%,#d3cdc9 41%,#ccc5c1 63%,#a89c95 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cfc9c5', endColorstr='#a89c95',GradientType=0 ); /* IE6-8 */
+}
+
+body#greenroom input[type=submit]{
+	display: table;
+	line-height: 1.1em;
+	width: 29.7%;
+
+	padding: 0 8px;
+	margin: 10px 0 0;
+
+	float: left;
+	height: 95px;
+}
+
+
+.lt-ie8 body#greenroom #session_container div#content aside .info a, .lt-ie8 body#greenroom input[type=submit]{
+	height: 78px;
+	line-height: 78px;
+	display: block;
+	text-align: center;
+}
+
+html.ie9 body#greenroom #session_container div#content aside .info a, html.ie9 body#greenroom input[type=submit]{
+	filter: none;
+}
+
+body#greenroom #session_container div#content aside div.session h3{
+	font-size: 14px;
+	color: #7a665d;
+	line-height: 0.9em;
+}
+
+body#greenroom #session_container div#content aside div.session p{
+	font-size: 13px;
+	color: #7a665d;
+	margin: 5px 0;
+	line-height: 1.3em;
+}
+
+/* Identity */
+body#greenroom #session_container div#content div#identity{
+	position: relative;
+}
+
+
+body#greenroom #session_container div#content div#identity .inner{
+	padding: 0 0 0 15px;
+}
+
+body#greenroom #session_container div#content div#identity .block{
+	background-color: #EFEDEC;
+	border: 1px solid #DFDBD8;
+	padding: 12px; margin-bottom: 18px;
+	min-height: 250px;
+
+	border-radius: 11px;
+	-moz-border-radius: 11px;
+	-webkit-border-radius: 11px;
+}
+
+/* Avatar */
+body#greenroom #session_container div#content div#identity .block#avatar{
+	text-align: center;
+	overflow: auto;
+}
+
+.lt-ie9 body#greenroom #session_container div#content div#identity .block#avatar{
+	overflow: visible;
+}
+
+body#greenroom #session_container div#content div#identity .block#avatar svg{
+	width: 400px;
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player{
+	position: relative;
+	min-height: 120px;
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player.full{
+	width: 99%;
+	height: 99%;
+	margin-top: 0.5%;
+} 
+
+body#greenroom #session_container div#content div#identity .block.last{
+	margin-bottom: 0;
+}
+
+body#greenroom #session_container div#content div#identity .block .legend{
+	font-size: 100%;
+	color: white;
+
+	font-family: 'BebasNeueRegular';
+	letter-spacing: 0;
+
+	position: absolute;
+	top: -10px;
+	left: 10%;
+}
+
+body#greenroom #session_container div#content div#identity .block figcaption.legend{
+	margin-left: 60%;
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player .video_btn{
+	font-family: 'BebasNeueRegular';
+	color: #AFA49F;
+	font-size: 1.1em;
+	letter-spacing: 0.07em;
+	padding: 0 10px;
+	height: 80px;	
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player .video_btn.video_set{
+	width: 100%;
+	height: 47px;
+	margin-bottom: 6px;
+	line-height: 1.1em;
+	display: table;
+
+	padding: 10px;
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player .video_btn.video_set span{
+	display: table-cell;
+	vertical-align: middle;
+	width: 100%;
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player #ytapiplayer, 
+body#greenroom #session_container div#content div#identity figure#video_player object,
+body#greenroom #session_container div#content div#identity figure#video_player embed {
+	width: 100%;
+	height: 180px;
+	-webkit-transform-style: preserve-3d; /* Make sure z-index works */
+}
+
+body#greenroom input[type=text], body#greenroom input[type=password]{
+	width: 96%;
+}
+
+body#greenroom div.form_item.half{
+	float: left;
+	width: 46%;	
+}
+
+body#greenroom div.form_item.last{
+	margin-left: 6%;
+}
+
+body#greenroom .span6 > input[type=text], body#greenroom .span6 > input[type=password]{
+	width: 92%;
+}
+
+body#greenroom .span6.left{
+	margin-left: 0;
+}
+
+body#greenroom input#btnSubmit{
+	display: inline;
+}
+
+body#greenroom #profile h2{
+	margin-top: 0;
+}
+
+@media (device-width: 768px) and (device-height: 1024px) and (orientation:landscape){
+	body#greenroom #session_container{
+		position: fixed;
+		top: 1%; left: 2%;
+		width: 98%; height: 97%;
+		margin: 0;		
+	}
+
+	body#greenroom #session_container form#profile_form #btnSubmit{
+		width: 20%;
+		height: 68px;
+		margin-top: 0;	
+	}
+
+	body#greenroom #notification{
+		position: absolute;
+		background-color: #EFEDEC;
+		padding: 0.5em 1em 0;
+		left: 21%;	
+	}
+}
+
+@media (max-width: 767px) {
+	body#greenroom #session_container div#content div#identity .block figcaption.legend{
+		margin-left: 50%;
+	}
+
+	body#greenroom #session_container div#content div#identity figure#video_player #ytapiplayer, 
+	body#greenroom #session_container div#content div#identity figure#video_player object,
+	body#greenroom #session_container div#content div#identity figure#video_player embed {
+		height: 297px;
+	}
+}
+
+@media (max-width: 500px) {
+	body#greenroom #session_container div#content div#identity figure#video_player #ytapiplayer, 
+	body#greenroom #session_container div#content div#identity figure#video_player object,
+	body#greenroom #session_container div#content div#identity figure#video_player embed {
+		height: 150px;
+	}	
+}
+
+@media (min-width: 768px) and (max-width: 972px){
+	
+
+	body#greenroom #session_container div#content div#identity .block figcaption.legend{
+		margin-left: 50%;
+	}
+
+	body#greenroom #session_container div#content div#identity figure#video_player #ytapiplayer, 
+	body#greenroom #session_container div#content div#identity figure#video_player object,
+	body#greenroom #session_container div#content div#identity figure#video_player embed {
+		height: 120px;
+	}
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player #progress{
+	background-color: #D7D2CF;
+	display: block;
+	height: 10px;
+
+	cursor: pointer;
+
+	border-radius: 11px;
+	-moz-border-radius: 11px;
+	-webkit-border-radius: 11px;
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player #progress #elapsed{
+	display: block;
+ 	width: 0;
+ 	height:100%;    
+  background-color: #E21F3C;
+
+  border-radius: 11px;
+	-moz-border-radius: 11px;
+	-webkit-border-radius: 11px;
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player #control #play{
+	background-image: url(../images/video_play.png);
+	*background-image: url(../images/video_play_s.png);
+	background-size: auto 100%;
+}
+
+.lt-ie8 body#greenroom #session_container div#content div#identity figure#video_player #control #play:hover,
+.lt-ie8 body#greenroom #session_container div#content div#identity figure#video_player #control #play.isPlaying {
+	background-image: url(../images/video_play_over_s.png);
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player #control #play:hover,
+body#greenroom #session_container div#content div#identity figure#video_player #control #play.isPlaying {
+	background-image: url(../images/video_play_over.png);	
+	background-size: auto 100%;
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player #control #full{
+	background-image: url(../images/new_layout/full_icon.png);
+	background-size: auto 100%;
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player #control #full:hover,
+body#greenroom #session_container div#content div#identity figure#video_player #control #full.active {
+	background-image: url(../images/new_layout/full_icon_hover.png);
+	background-size: auto 100%;
+}
+
+.lt-ie8 body#greenroom #session_container div#content div#identity figure#video_player #control #pause{
+	background-image: url(../images/video_pause_s.png);
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player #control #pause{
+	background-image: url(../images/video_pause.png);	
+	background-size: auto 100%;
+}
+
+.lt-ie8 body#greenroom #session_container div#content div#identity figure#video_player #control #pause:hover,
+.lt-ie8 body#greenroom #session_container div#content div#identity figure#video_player #control #pause.active {
+	background-image: url(../images/video_pause_over_s.png);
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player #control #pause:hover,
+body#greenroom #session_container div#content div#identity figure#video_player #control #pause.active {
+	background-image: url(../images/video_pause_over.png);	
+	background-size: auto 100%;
+}
+
+.lt-ie8 body#greenroom #session_container div#content div#identity figure#video_player #control #volume{
+	background-image: url(../images/video_volume_on_s.png);
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player #control #volume{
+	background-image: url(../images/video_volume_on.png);	
+	background-position: center;
+	background-size: auto 100%;
+}
+
+.lt-ie8 body#greenroom #session_container div#content div#identity figure#video_player #control #volume:hover{
+	background-image: url(../images/video_volume_on_over_s.png);
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player #control #volume:hover{
+	background-image: url(../images/video_volume_on_over.png);	
+	background-size: auto 100%;
+}
+
+.lt-ie8 body#greenroom #session_container div#content div#identity figure#video_player #control #volume.off{
+	background-image: url(../images/video_volume_off_s.png);
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player #control #volume.off{
+	background-image: url(../images/video_volume_off.png);	
+	background-position: 5px 0;
+	background-size: auto 100%;
+}
+
+body#greenroom #session_container div#content div#identity figure#video_player #control #volume.off:hover{
+	background-image: url(../images/video_volume_off_over.png);
+	background-position: center;
+	background-size: auto 100%;
+
+}
+
+@media (max-width: 767px) {
+	#session_container div#content div#identity #video_player #control div.inner{
+		padding: 20px 0;
+	}
+
+	#session_container #video_player #control .inner a.control{
+		width: 60px;
+		height: 25px;
+	}
+
+	body#greenroom #session_container div#content div#identity{
+		margin-top: 30px;
+	}
+
+	body#greenroom #session_container div#content div#identity .inner{
+		padding: 0;
+	}
+}
