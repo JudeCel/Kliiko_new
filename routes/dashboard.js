@@ -4,7 +4,7 @@ var router = express.Router();
 var subdomains = require('../lib/subdomains.js');
 var changePassword = require('../services/changePassword');
 var policy = require('../middleware/policy.js');
-var uploadBanner = require('./dashboard/uploadBanner');
+var uploadBanner = require('../middleware/uploadBanner.js');
 
 function views_path(action) {
 let views_name_space = "dashboard/";

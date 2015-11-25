@@ -5,8 +5,8 @@ var sizeOf = require('image-size');
 var multer = require('multer');
 var TemplateBanner = require('./../models').TemplateBanner;
 
-var megaByte = 1024*1024;
-var validations = {
+const MEGABYTE = 1024*1024;
+const VALIDATIONS = {
   maxSize: 5, // 5mb
   maxWidth: 768,
   maxHeight: 200,
@@ -33,10 +33,8 @@ function profilePage(callback) {
 }
 
 function write(files, callback) {
-  if(Object.keys(files).length == 0)
-  {
-    callback(null, 'No files selected or not an image');
-    return;
+  if(Object.keys(files).length == 0) {
+    return callback('No files selected or not an image');
   }
 
   let array = [],
@@ -46,28 +44,24 @@ function write(files, callback) {
     let file = files[filename][0],
         errors = validate(filename, file);
 
-    if(errors)
-    {
+    if(errors) {
       fs.unlink(file.path);
-      callback(errors, 'Something went wrong');
-      return;
+      return callback(errors);
     }
-    else
-    {
-      let newpath = file.destination + '/' + file.originalname;
-      fs.rename(file.path, newpath);
-
+    else {
+      fs.rename(file.path, newFilePath(file));
       createOrUpdate({page: filename, filepath: 'banners/' + file.originalname}, function (error, result) {
-        if(error)
-        {
-          callback(error, 'Something went wrong');
-          return;
+        if(error) {
+          return callback(error);
         }
-        else
-        {
+        else {
           array.push(result);
-          if(array.length == size)
-            callback(errors, 'Successfully uploaded banner', array);
+          if(array.length == size) {
+            return callback(null, 'Successfully uploaded banner', array);
+          }
+          else {
+            return;
+          }
         }
       });
     }
@@ -81,8 +75,7 @@ function destroy(page, callback) {
   .then(function (result) {
     let path = 'public/' + result.dataValues.filepath;
     fs.stat(path, function (err, stats) {
-      if(stats)
-      {
+      if(stats) {
         fs.unlink(path);
       }
     });
@@ -108,10 +101,10 @@ function uploadFields() {
     }
   })
   let fileFilter = function (req, file, cb) {
-    cb(null, !(validations.fileTypes.indexOf(file.mimetype) == -1)); // filters file type
+    cb(null, !(VALIDATIONS.fileTypes.indexOf(file.mimetype) == -1)); // filters file type
   }
 
-  let upload = multer({ storage: storage, limits: { fieldSize: validations.maxSize * megaByte }, fileFilter: fileFilter });
+  let upload = multer({ storage: storage, limits: { fieldSize: VALIDATIONS.maxSize * MEGABYTE }, fileFilter: fileFilter });
 
   return upload.fields([
     { name: 'profile', maxCount: 1 },
@@ -128,10 +121,18 @@ function findAllBanners(callback) {
 }
 
 function simpleParams(error, message) {
+  if(typeof error == 'string') {
+    error = { message: error };
+  }
+
   return { title: 'Upload banner', error: error, message: message, banners: {} };
 }
 
 //Helpers
+function newFilePath(file) {
+  return file.destination + '/' + file.originalname;
+}
+
 function createOrUpdate(params, callback) {
   TemplateBanner.findOrCreate({
     where: { page: params.page },
@@ -140,7 +141,7 @@ function createOrUpdate(params, callback) {
     if(created == false)
     {
       templateBanner.update(params, { where: { page: params.page } })
-      .then(function (result) {
+      .then(function (_result) {
         callback(null, params);
       })
       .catch(function (error) {
@@ -159,16 +160,16 @@ function createOrUpdate(params, callback) {
 function validate(type, file) {
   let error = {};
 
-  if(file.size > validations.maxSize * megaByte)
+  if(file.size > VALIDATIONS.maxSize * MEGABYTE)
   {
-    error[type] = 'This file is too big. Allowed size is ' + validations.maxSize + 'MB.';
+    error[type] = 'This file is too big. Allowed size is ' + VALIDATIONS.maxSize + 'MB.';
     return error;
   }
 
   let image_size = sizeOf(file.path);
-  if(image_size.width > validations.maxWidth || image_size.height > validations.maxHeight)
+  if(image_size.width > VALIDATIONS.maxWidth || image_size.height > VALIDATIONS.maxHeight)
   {
-    error[type] = 'File size is out of range. Allowed size is ' + validations.maxWidth + 'x' + validations.maxHeight + 'px.';
+    error[type] = 'File size is out of range. Allowed size is ' + VALIDATIONS.maxWidth + 'x' + VALIDATIONS.maxHeight + 'px.';
     return error;
   }
 }

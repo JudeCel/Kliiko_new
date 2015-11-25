@@ -1,25 +1,23 @@
-"use strict";
-var uploadBanner = require('../../services/uploadBanner');
+'use strict';
+var uploadBanner = require('../services/uploadBanner');
 
 function views_path(action) {
   return 'dashboard/' + action;
-}
+};
 
-exports.getProfileBanner = function (req, res, next) {
+function getProfileBanner(req, res, next) {
   uploadBanner.profilePage(function (error, result) {
-    if(result)
-    {
+    if(result) {
       res.locals.bannerPath = '../' + result.dataValues.filepath;
     }
-    else
-    {
+    else {
       res.locals.bannerPath = null;
     }
     next();
   });
-}
+};
 
-exports.get = function(req, res) {
+function get(req, res) {
   uploadBanner.findAllBanners(function (result) {
     let params = uploadBanner.simpleParams({}, '');
     params['banners'] = result;
@@ -27,7 +25,7 @@ exports.get = function(req, res) {
   });
 };
 
-exports.post = function(req, res) {
+function post(req, res) {
   uploadBanner.write(req.files, function(error, message) {
     uploadBanner.findAllBanners(function (result) {
       let params = uploadBanner.simpleParams(error || {}, message);
@@ -40,10 +38,16 @@ exports.post = function(req, res) {
   });
 };
 
-exports.destroy = function(req, res) {
+function destroy(req, res) {
   uploadBanner.destroy(req.params.page, function(error, message) {
     res.redirect('../uploadbanner');
   });
 };
 
-exports.uploadFields = uploadBanner.uploadFields();
+module.exports = {
+  getProfileBanner: getProfileBanner,
+  get: get,
+  post: post,
+  destroy: destroy,
+  uploadFields: uploadBanner.uploadFields()
+}

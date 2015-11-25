@@ -10,6 +10,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('./middleware/passport');
 var subdomain = require('./middleware/subdomain');
+var currentUser = require('./middleware/currentUser');
 var app = express();
 
 // view engine setup
@@ -41,10 +42,7 @@ var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
 
 app.use('/', routes);
-app.use('/dashboard', function (req, res, next) {
-  app.locals.currentUser = req.user;
-  next();
-}, dashboard);
+app.use('/dashboard', currentUser.assign(app), dashboard);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

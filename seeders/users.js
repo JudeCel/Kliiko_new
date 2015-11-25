@@ -1,6 +1,6 @@
 'use strict';
 
-var UserRepo  = require('./../services/users');
+var UserService = require('./../services/users');
 
 var adminAttrs = {
   accountName: "admin",
@@ -10,7 +10,7 @@ var adminAttrs = {
   email: "admin@insider.com"
 }
 
-UserRepo.create(adminAttrs, function(errors, user) {
+UserService.create(adminAttrs, function(errors, user) {
   if(errors) {
     console.log(errors);
   }
@@ -28,7 +28,7 @@ var userAttrs = {
   email: "user@insider.com"
 }
 
-UserRepo.create(userAttrs, function(errors, user) {
+UserService.create(userAttrs, function(errors, user) {
   if(errors) {
     console.log(errors);
   }

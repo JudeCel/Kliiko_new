@@ -14,8 +14,8 @@ describe('Upload banner', function() {
       encoding: params.encoding || '7bit',
       mimetype: params.mimetype || 'image/png',
       destination: params.destination || 'test/fixtures/uploadBanner',
-      filename: params.filename || 'test_success.png',
-      path: params.path || 'test/fixtures/uploadBanner/test_success.png',
+      filename: params.filename || 'success.png',
+      path: params.path || 'test/fixtures/uploadBanner/success.png',
       size: params.size || 9993
     } ];
     return json;
@@ -34,20 +34,20 @@ describe('Upload banner', function() {
   });
 
   beforeEach((done) => {
-    fs.copySync('test/fixtures/uploadBanner/black_fail_orig.jpg', 'test/fixtures/uploadBanner/black_fail.jpg');
-    fs.copySync('test/fixtures/uploadBanner/test_success_orig.png', 'test/fixtures/uploadBanner/test_success.png');
+    fs.copySync('test/fixtures/uploadBanner/failureOrig.jpg', 'test/fixtures/uploadBanner/failure.jpg');
+    fs.copySync('test/fixtures/uploadBanner/successOrig.png', 'test/fixtures/uploadBanner/success.png');
     done();
   });
 
   afterEach((done) => {
-    fs.stat('test/fixtures/uploadBanner/black_fail.jpg', function (err, stat) {
+    fs.stat('test/fixtures/uploadBanner/failure.jpg', function (err, stat) {
       if(stat) {
-        fs.unlink('test/fixtures/uploadBanner/black_fail.jpg');
+        fs.unlink('test/fixtures/uploadBanner/failure.jpg');
       }
     })
-    fs.stat('test/fixtures/uploadBanner/test_success.png', function (err, stat) {
+    fs.stat('test/fixtures/uploadBanner/success.png', function (err, stat) {
       if(stat) {
-        fs.unlink('test/fixtures/uploadBanner/test_success.png');
+        fs.unlink('test/fixtures/uploadBanner/success.png');
       }
     })
     fs.stat('test/fixtures/uploadBanner/profile_test.png', function (err, stat) {
@@ -63,8 +63,7 @@ describe('Upload banner', function() {
     describe('sad path', function() {
       it('has no file', function (done) {
         uploadBanner.write({}, function (error, message) {
-          assert.equal(error, null);
-          assert.equal(message, 'No files selected or not an image');
+          assert.equal(error, 'No files selected or not an image');
           done();
         });
       });
@@ -73,16 +72,14 @@ describe('Upload banner', function() {
         it('wrong file size', function (done) {
           let json = defaultFile({ size: 600000000 });
           uploadBanner.write(json, function (error, message) {
-            assert.equal(message, 'Something went wrong');
             assert.equal(error['profile'], 'This file is too big. Allowed size is 5MB.');
             done();
           });
         });
 
         it('wrong dimension', function (done) {
-          let json = defaultFile({ path: 'test/fixtures/uploadBanner/black_fail.jpg', filename: 'black_fail.jpg' });
+          let json = defaultFile({ path: 'test/fixtures/uploadBanner/failure.jpg', filename: 'failure.jpg' });
           uploadBanner.write(json, function (error, message) {
-            assert.equal(message, 'Something went wrong');
             assert.equal(error['profile'], 'File size is out of range. Allowed size is 768x200px.');
             done();
           });
