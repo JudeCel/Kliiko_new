@@ -19,8 +19,7 @@ passport.use(new LocalStrategy({
         done("Wrong email or password");
       }else{
         result.getOwnerAccount().then(function(accounts) {
-          let account = accounts[0]
-          done(null, {id: result.id, email: result.email, subdomain: account.name });
+          done(null, userParams(result, accounts[0]));
         });
       }
     });
@@ -60,13 +59,16 @@ passport.deserializeUser(function(userObject, done) {
   models.User.find({attributes: ['email', 'id'], where: {id: userObject.id}}).done(function(result){
     if (result) {
       result.getOwnerAccount().then(function(accounts) {
-        let account = accounts[0]
-        done(null, {id: result.id, email: result.email, subdomain: account.name});
+        done(null, userParams(result, accounts[0]));
       });
     }else{
       done("not found", null);
     };
   });
 });
+
+function userParams(user, account) {
+  return { id: user.id, email: user.email, subdomain: account.name, role: account.AccountUser.role };
+}
 
 module.exports = passport;

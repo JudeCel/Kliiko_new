@@ -43,7 +43,7 @@ If needed use specific subdomain name for users then ``` 127.0.0.1 acountName.fo
 
 3) change hosts file (  127.0.0.1       insider.focus.com
                         127.0.0.1       www.insider.focus.com   )
-                        
+
 4) remove localhost
 
 ## Database migrations and ORM
@@ -54,6 +54,10 @@ Also we use code-first migrations [Sequelize Migrations ](http://docs.sequelizej
 
 To restart DB, delete and recreate all tables based on the models, run this command from root directory of the project:
 ``` node lib/tasks/db_reset.js ```
+
+To run user seeds run this command: ``` node seeders/users.js ```
+
+Default user credentials email ``` admin@insider.com ``` or ``` user@insider.com ``` and password ``` qwerty123 ```
 
 ## Run Gulp
 
@@ -70,11 +74,11 @@ Run commands in terminal:
 
 ### Tests
 Install mocha ```  npm install mocha -g ```
- 
+
  Run
- 
+
  ``` mocha test```
- 
+
  or
- 
+
  ``` npm test ```
