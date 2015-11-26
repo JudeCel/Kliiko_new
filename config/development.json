@@ -1,6 +1,6 @@
 {
   "server":{
-    "port": 3000,
+    "port": 7203,
     "baseDomain": ".focus.com",
     "domain": "insider.focus.com",
     "baseSubdomain": "insider"
