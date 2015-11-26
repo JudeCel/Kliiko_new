@@ -31,7 +31,6 @@ users.sendEmailConfirmationToken = function(params, callback) {
 
   helpers.renderMailTemplate('confirmationEmail', link, function(err, html){
     if (err) {
-      console.log(err);
       return callback(err);
     }
 
