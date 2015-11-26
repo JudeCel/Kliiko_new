@@ -119,7 +119,7 @@ router.route('/emailConfirmation/:token')
             tplData.errors.password = "Something is wrong with email confirmation";
             res.render('/login', tplData);
           }else{
-            mailers.users.sendEmailConfirmationSuccess({email: req.body.email}, function (err, data) {
+            mailers.users.sendEmailConfirmationSuccess({email: user.email}, function (err, data) {
               res.redirect('/');
             });
           };
