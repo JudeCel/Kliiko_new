@@ -42,7 +42,7 @@ var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
 
 app.use('/', routes);
-app.use('/dashboard', currentUser.assign(app), dashboard);
+app.use('/dashboard', currentUser.assign, dashboard);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
