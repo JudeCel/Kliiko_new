@@ -3,6 +3,7 @@
 var fs = require('fs');
 var sizeOf = require('image-size');
 var multer = require('multer');
+var async = require('async');
 var TemplateBanner = require('./../models').TemplateBanner;
 
 const MEGABYTE = 1024*1024;
@@ -37,35 +38,66 @@ function write(files, callback) {
     return callback('No files selected or not an image');
   }
 
-  let array = [],
-      size = Object.keys(files).length;
+  let size = Object.keys(files).length,
+      array = [];
 
-  for(let filename in files) {
-    let file = files[filename][0],
+  async.forEachOf(files, function (value, filename, callback) {
+    let file = value[0],
         errors = validate(filename, file);
 
     if(errors) {
       fs.unlink(file.path);
-      return callback(errors);
+      callback(errors);
     }
     else {
       fs.rename(file.path, newFilePath(file));
-      createOrUpdate({page: filename, filepath: 'banners/' + file.originalname}, function (error, result) {
+      createOrUpdate({ page: filename, filepath: 'banners/' + file.originalname }, function (error, result) {
         if(error) {
-          return callback(error);
+          callback(error);
         }
         else {
           array.push(result);
-          if(array.length == size) {
-            return callback(null, 'Successfully uploaded banner', array);
-          }
-          else {
-            return;
-          }
+          callback();
         }
       });
     }
-  }
+  }, function (err) {
+    if(err) {
+      callback(err);
+    }
+    else if(array.length == size) {
+      callback(null, 'Successfully uploaded banner', array);
+    }
+  });
+
+
+
+  // for(let filename in files) {
+  //   let file = files[filename][0],
+  //       errors = validate(filename, file);
+  //
+  //   if(errors) {
+  //     fs.unlink(file.path);
+  //     return callback(errors);
+  //   }
+  //   else {
+  //     fs.rename(file.path, newFilePath(file));
+  //     createOrUpdate({page: filename, filepath: 'banners/' + file.originalname}, function (error, result) {
+  //       if(error) {
+  //         return callback(error);
+  //       }
+  //       else {
+  //         array.push(result);
+  //         if(array.length == size) {
+  //           return callback(null, , array);
+  //         }
+  //         else {
+  //           return;
+  //         }
+  //       }
+  //     });
+  //   }
+  // }
 }
 
 function destroy(page, callback) {

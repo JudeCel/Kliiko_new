@@ -149,7 +149,7 @@ describe('Upload banner', function() {
   describe('#simpleParams', function() {
     it('will succeed', function (done) {
       let params = uploadBanner.simpleParams('some error', 'some message');
-      assert.deepEqual(params, { title: 'Upload banner', error: 'some error', message: 'some message', banners: {} });
+      assert.deepEqual(params, { title: 'Upload banner', error: { message: 'some error' }, message: 'some message', banners: {} });
       done();
     });
   });
