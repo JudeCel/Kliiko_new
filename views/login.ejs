@@ -1,7 +1,7 @@
 <% include layout %>
 
 <main class="main-first-page">
-    <div class="container">
+    <div class="login-container center-block">
         <h1 id="welcome">Welcome!</h1>
         <ul class="nav nav-tabs">
             <li class="active"><a href="#login">LOG IN</a></li>
@@ -9,18 +9,25 @@
         </ul>
         <div class="tab-content">
             <div id="login" class="tab-pane fade in active">
-                <h2>Log in to your account</h2>
+                <h2>Welcome!</h2>
                 <div id="warning-email-password"><%= error %></div>
                 <form method="post" action='/login'>
+                  <table class="table table-no-inside-borders">
+                    <tr>
                     <div class="form-group">
-                        <label for="email">E-mail</label>
-                        <input type="email" name='email' class="form-control center-block" id="email" placeholder="E-mail">
+                        <td><label for="email">E-mail</label></td>
+                        <td><input type="email" name='email' class="form-control center-block" id="email" placeholder="E-mail"></td>
                     </div>
+                  </tr>
+                  <tr>
                     <div class="form-group center-block">
-                        <label for="password">Password</label>
-                        <input type="password" name='password' class="form-control center-block" id="password"
-                               placeholder="Password">
+                        <td><label for="password">Password</label></td>
+                        <td>
+                          <input type="password" name='password' class="form-control center-block" id="password" placeholder="Password">
+                        </td>
                     </div>
+                  </tr>
+                  </table>
                     <div class="form-group center-block">
                         <div class="check center-block">
                             <input type="checkbox" class="checkbox-login" name="rememberMe"
@@ -36,23 +43,8 @@
                     </div>
                     <a href="/forgotpassword" id="forgot-password">Forgot your password?</a>
 
-                    <h2 id="or">Or</h2>
                 </form>
             </div>
         </div>
     </div>
-    <script>
-        $(function() {
-            $('#password').password().on('show.bs.password', function(e) {
-                $('#eventLog').text('On show event');
-                $('#methods').prop('checked', true);
-            }).on('hide.bs.password', function(e) {
-                $('#eventLog').text('On hide event');
-                $('#methods').prop('checked', false);
-            });
-            $('#methods').click(function() {
-                $('#password').password('toggle');
-            });
-        });
-    </script>
 </main>
