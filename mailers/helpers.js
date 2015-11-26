@@ -7,7 +7,7 @@ var nodemailer = require('nodemailer');
 var stubTransport = {
     name: 'testsend',
     version: '1',
-    send: function(data, callback) { callback(data) }
+    send: function(data, callback) { callback(null, data) }
 };
 var helpers = exports;
 
