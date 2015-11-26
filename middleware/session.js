@@ -1,7 +1,7 @@
 "use strict";
 function rememberMe(req, done) {
   let rememberMeExpiryTime = 3600 * 720 * 1000 // ~30 days
-  let standardExpiryTime = 300 * 320 * 1000 // ~1 day
+  let standardExpiryTime = 3600 * 1000 // 1h
   req.session.cookie.expires = true;
 
   if (!!req.body.rememberMe) {
