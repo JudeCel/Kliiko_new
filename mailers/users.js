@@ -31,7 +31,6 @@ users.sendEmailConfirmationToken = function(params, callback) {
 
   helpers.renderMailTemplate('confirmationEmail', link, function(err, html){
     if (err) {
-      console.log(err);
       return callback(err);
     }
 
@@ -62,6 +61,20 @@ users.sendEmailConfirmationSuccess = function(params, callback) {
 
 users.sendPasswordChangedSuccess = function(params, callback) {
   helpers.renderMailTemplate('changePasswordSuccess', {}, function(err, html){
+    if (err) {
+      return callback(err);
+    }
+
+    transporter.sendMail({
+      from: mailFrom,
+      to: params.email,
+      subject: 'Insider Focus - Change password Success',
+      html: html
+    }, callback);
+  });
+};
+users.sendResetPasswordSuccess = function(params, callback) {
+  helpers.renderMailTemplate('resetPasswordSuccess', {}, function(err, html){
     if (err) {
       return callback(err);
     }

@@ -7,7 +7,8 @@ var adminAttrs = {
   firstName: "admin",
   lastName: "user",
   password: "qwerty123",
-  email: "admin@insider.com"
+  email: "admin@insider.com",
+  confirmedAt: new Date()
 }
 
 UserService.create(adminAttrs, function(errors, user) {
@@ -25,7 +26,8 @@ var userAttrs = {
   firstName: "insider",
   lastName: "user",
   password: "qwerty123",
-  email: "user@insider.com"
+  email: "user@insider.com",
+  confirmedAt: new Date()
 }
 
 UserService.create(userAttrs, function(errors, user) {
