@@ -69,35 +69,6 @@ function write(files, callback) {
       callback(null, 'Successfully uploaded banner', array);
     }
   });
-
-
-
-  // for(let filename in files) {
-  //   let file = files[filename][0],
-  //       errors = validate(filename, file);
-  //
-  //   if(errors) {
-  //     fs.unlink(file.path);
-  //     return callback(errors);
-  //   }
-  //   else {
-  //     fs.rename(file.path, newFilePath(file));
-  //     createOrUpdate({page: filename, filepath: 'banners/' + file.originalname}, function (error, result) {
-  //       if(error) {
-  //         return callback(error);
-  //       }
-  //       else {
-  //         array.push(result);
-  //         if(array.length == size) {
-  //           return callback(null, , array);
-  //         }
-  //         else {
-  //           return;
-  //         }
-  //       }
-  //     });
-  //   }
-  // }
 }
 
 function destroy(page, callback) {
