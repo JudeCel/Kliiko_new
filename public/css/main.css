@@ -408,6 +408,9 @@ html, body {
   margin-top: 20px;
   margin-bottom: 20px; }
 
+.table-no-inside-borders tbody > tr > td, .table-no-inside-borders .table > tfoot > tr > td {
+  border: none !important; }
+
 #warning-email-password {
   color: red;
   font-size: 1.4em;
@@ -526,18 +529,29 @@ html, body {
   font-family: glyphicons-halflings-regular;
   src: url(/fonts/bootstrap/glyphicons-halflings-regular.woff2); }
 
-@media (min-width: 992px) {
+.border-yellow {
+  border: 4px solid #F0E935; }
+
+.border-red {
+  border: 1px solid #f00; }
+
+@media (min-width: 300px) {
   .container {
-    width: 970px; } }
+    width: 970px; }
+  .tab-content {
+    width: auto; } }
 
 @media (min-width: 768px) {
   .container {
-    width: 970px; } }
+    width: 970px; }
+  .login-container {
+    width: 75%; } }
 
-@media (min-width: 300px) {
+@media (min-width: 992px) {
   .container {
-    width: 970px; } }
+    width: 970px; }
+  .login-container {
+    width: 50%; } }
 
-@media (min-width: 300px) {
-  .tab-content {
-    width: auto; } }
+.table-no-inside-borders {
+  border: none !important; }
