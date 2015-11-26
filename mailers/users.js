@@ -74,3 +74,17 @@ users.sendPasswordChangedSuccess = function(params, callback) {
     }, callback);
   });
 };
+users.sendResetPasswordSuccess = function(params, callback) {
+  helpers.renderMailTemplate('resetPasswordSuccess', {}, function(err, html){
+    if (err) {
+      return callback(err);
+    }
+
+    transporter.sendMail({
+      from: mailFrom,
+      to: params.email,
+      subject: 'Insider Focus - Change password Success',
+      html: html
+    }, callback);
+  });
+};
