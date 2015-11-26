@@ -1,9 +1,8 @@
-var config = require('./config/config.json');
-var mtypes = require('if-common').mtypes;
+var mtypes = require('./helpers/mtypes');
 var socketio = require('socket.io');
 var config = require('simpler-config').load(require('./config/config.json'));
-var conflict = config.conflict || 'drop current';
-var expressValidatorStub = require('./tests/testHelpers/expressValidatorStub.js');
+var conflict = 'drop current';
+var expressValidatorStub = require('./helpers/expressValidatorStub.js');
 var io;
 var _ = require('lodash');
 
@@ -13,7 +12,7 @@ module.exports.io = function () {
 }
 
 module.exports.listen = function (server) {
-    var socketHelper = require('./socketHelper.js');
+    var socketHelper = require('./socketHelper');
 
     io = socketio.listen(server);
     io.configure(function () {
