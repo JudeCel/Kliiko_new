@@ -1,7 +1,7 @@
 "use strict";
 var models  = require('./../../models');
 var User  = models.User;
-var usersRepo  = require('./../../services/users');
+var usersServices  = require('./../../services/users');
 var resetPassword  = require('./../../services/resetPassword');
 var assert = require('assert');
 var bcrypt = require('bcrypt');
@@ -61,10 +61,18 @@ describe('Reset Password', function() {
 
     resetPassword.resetByToken(req, function(err, user){
       assert.equal(err, null);
-      usersRepo.comparePassword(user.get("email"), req.body.password, function(failed, result) {
-        assert.equal(failed, null);
-        done();
-      });
+
+      User.update({
+        confirmedAt: new Date()
+      }, {
+        where: {email: user.email}
+      }).then(function (result) {
+        usersServices.comparePassword(user.get("email"), req.body.password, function(failed, result) {
+          console.log(failed);
+          assert.equal(failed, null);
+          done();
+        });
+      })
     });
   });
 
