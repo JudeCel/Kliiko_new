@@ -1,4 +1,4 @@
-var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js');
+var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 
 module.exports = function(topicId, userId, id, tag, command, capturedEvent, callback) {
 

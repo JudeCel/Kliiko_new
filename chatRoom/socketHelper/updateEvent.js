@@ -1,4 +1,4 @@
-var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js');
+var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 
 function updateEvent(topic_id, user_id, object) {
     if (object == null) return;

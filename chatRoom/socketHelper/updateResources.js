@@ -1,5 +1,5 @@
 var mtypes = require('if-common').mtypes;
-var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js');
+var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 
 function updateResources(topic_id, user_id, content, type, Cb) {
     var req = expressValidatorStub({

@@ -3,7 +3,7 @@ var ifData = require('if-data');
 var getResourcesGeneric = ifData.repositories.getResourcesGeneric;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
-var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js');
+var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 
 var validate = function (req, resCb) {
     var err = joi.validate(req.params, {
