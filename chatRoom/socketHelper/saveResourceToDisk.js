@@ -1,4 +1,4 @@
-var mtypes = require('if-common').mtypes;
+var mtypes = require("../helpers/mtypes");
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var uploadResourceCallback = require('./saveResourceToDb.js');
 var fs = require('fs');

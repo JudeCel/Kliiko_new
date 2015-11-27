@@ -1,6 +1,6 @@
 var mtypes = require('./helpers/mtypes');
 var socketio = require('socket.io');
-var config = require('simpler-config').load(require('./config/config.json'));
+var config = require('simpler-config').load(require('./config/config.json')); // need replace with orginal config
 var conflict = 'drop current';
 var expressValidatorStub = require('./helpers/expressValidatorStub.js');
 var io;
@@ -8,7 +8,7 @@ var _ = require('lodash');
 
 
 module.exports.io = function () {
-    return io;
+  return io;
 }
 
 module.exports.listen = function (server) {

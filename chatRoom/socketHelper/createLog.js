@@ -1,4 +1,4 @@
-var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js');
+var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 
 function createLog(userId, type) {
     var req = expressValidatorStub({

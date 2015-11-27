@@ -1,4 +1,4 @@
-var mtypes = require('if-common').mtypes;
+var mtypes = require("../helpers/mtypes");
 var getResourcesGeneric = require('../handlers/getResourcesGeneric.js');
 
 function saveResourceToDb(json, resCb, nextCb) {

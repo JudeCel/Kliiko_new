@@ -1,7 +1,7 @@
 /*
  Renamed from updateEvents.js
  */
-var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js');
+var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 var io = require('../sockets.js').io;
 var getCustomEventParams = require('./getCustomEventParams.js');
 

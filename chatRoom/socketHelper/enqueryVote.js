@@ -1,4 +1,4 @@
-var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js');
+var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 var sockets = require('../sockets.js'), io = sockets.io;
 
 function enqueryVote(socket, voteID, topicID, userID, isfacilitator) {
