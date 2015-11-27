@@ -1,11 +1,13 @@
 "use strict";
 var models  = require('./../models');
 var config = require('config');
+var policy = require('./policy');
 var Account  = models.Account;
 var _ = require('lodash');
 
-function assignCurrentDomain(result, req, next) {
-  req.currentDomain = {name: result.name, roles: result.roles}
+function assignCurrentDomain(result, res, next) {
+  res.locals.currentDomain = { name: result.name, roles: result.roles };
+  res.locals.hasAccess = policy.hasAccess;
   next();
 }
 
@@ -19,15 +21,17 @@ function comparedWithBaseDomainName(subdomain) {
 
 function getAccauntWithRoles(user, subdomain, callback) {
   models.User.find({attributes: ['id'], where: {id: user.id}}).then(function(user){
-    user.getAccounts({where: {name: subdomain},
+    user.getAccounts({where: { name: subdomain },
       include: [ { model: models.AccountUser, attributes: ["role"] }]}
     ).then(function(accounts) {
       if (accounts[0]) {
         let result = {name: subdomain, roles: [accounts[0].AccountUser.role]}
         callback(null, result)
       }else {
-        callback(false, null)
+        callback(true)
       }
+    }).catch(function (err) {
+      callback(err)
     });
   });
 }
@@ -38,7 +42,7 @@ function isDomainAvailableForthisUser(req, subdomain, callback) {
       callback(error, result)
     })
   }else{
-    callback(false, null);
+    callback(true, null);
   }
 }
 
@@ -47,7 +51,7 @@ module.exports = function(req, res, next) {
   if (comparedWithBaseDomainName(subdomain)) {
     isDomainAvailableForthisUser(req, subdomain, function(error, result){
       if(result){
-        assignCurrentDomain(result, req, next)
+        assignCurrentDomain(result, res, next)
       }else{
         res.status(404).send('Account not found or you do not have access to this page');
       };

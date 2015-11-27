@@ -9,8 +9,8 @@ function checkRoles(roles, allowedRoles) {
 
 function authorized(allowedRoles) {
   return function(req, res, next) {
-    if (!req.currentDomain) { throw new Error('currentDomain is not defined in the request') }
-    let roles = req.currentDomain.roles;
+    if (!res.locals.currentDomain) { throw new Error('currentDomain is not defined in the response locals') }
+    let roles = res.locals.currentDomain.roles;
 
     if (checkRoles(roles, allowedRoles)) {
       return next();
@@ -21,6 +21,7 @@ function authorized(allowedRoles) {
 }
 
 module.exports = {
+  hasAccess: checkRoles,
   accessDeniedMessage: accessDeniedMessage,
   authorized: authorized
 }
