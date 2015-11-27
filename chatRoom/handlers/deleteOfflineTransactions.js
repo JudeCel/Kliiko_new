@@ -1,7 +1,8 @@
 "use strict";
-var deleteOfflineTransactions = require('if-data').repositories.deleteOfflineTransactions;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require("joi");
+var models = require("../models");
+var OfflineTransaction = models.OfflineTransaction;
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
@@ -16,8 +17,11 @@ module.exports.validate = function (req, resCb) {
 };
 
 module.exports.run = function (req, resCb, errCb) {
-    deleteOfflineTransactions(req.params)
-        .done(function () {
-            resCb.send();
-        }, errCb);
+  OfflineTransaction.destroy({where: { topic_id: req.params.topicId, reply_user_id: params.replyUserId } })
+  .then(function(data) {
+    resCb.send(data)
+  })
+  .catch(function(err) {
+    errCb(webFaultHelper.getFault(err));
+  });
 };

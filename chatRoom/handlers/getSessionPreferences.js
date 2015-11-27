@@ -15,7 +15,7 @@ module.exports.validate = function (req, resCb) {
 };
 
 module.exports.run = function (req, resCb, errCb) {
-	BrandProjectPreference.create(req.params)
+	BrandProjectPreference.find(req.params)
 	.then(function(data) {
 		resCb.send(data)
 	})

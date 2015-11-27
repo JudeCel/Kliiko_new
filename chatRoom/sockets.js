@@ -35,8 +35,6 @@ module.exports.listen = function (server) {
       });
 
       var resCb = function (result) {
-        console.log(result);
-        console.log(config);
         io.sockets.sockets[socket.id].emit('config_info', config, result);
       };
 
@@ -54,14 +52,12 @@ module.exports.listen = function (server) {
     });
 
     socket.on('sendchat', function (data) {
-      console.log("------------------Done!!: sendchat\n");
       if (data == null) return;
       var chatAsJSON = JSON.stringify({name: socket.username, object: data}, null);
       socketHelper.createCustomEvent(data.topicId, socket.user_id, "chat", chatAsJSON);
     });
 
     socket.on('editchat', function (id, tag, user, data) {
-      console.log("------------------Done!!: editchat\n");
       if (data == null) return;
       if (user != socket.user_id) return;
 
@@ -72,7 +68,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('updateTopic', function (topicId, topicDescription) {
-      console.log("updateTopic");
       if (topicId == null) return;
 
       var req = expressValidatorStub({
@@ -100,7 +95,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('insert_offline_transactions', function (reply_user_id, message_id) {
-      console.log("insert_offline_transactions");
       if (reply_user_id == null || message_id == null) return;
 
       //	lets process our reply
@@ -148,7 +142,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('get_offline_transactions', function (session_id, reply_user_id) {
-      console.log("get_offline_transactions");
 
       var req = expressValidatorStub({
         params: {
@@ -177,7 +170,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('delete_offline_transactions', function (topic_id, reply_user_id) {
-      console.log("delete_offline_transactions");
 
       var req = expressValidatorStub({
         params: {
@@ -201,7 +193,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('sendobject', function (data, all) {
-      console.log("sendobject");
 
       if (data == null || data.action == null) return;
       if (all == null) all = false;			//	default to false
@@ -223,7 +214,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('undo', function (data) {
-      console.log("undo");
 
       var req = expressValidatorStub({
         params: {
@@ -259,7 +249,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('redo', function (data) {
-      console.log("redo");
 
       var req = expressValidatorStub({
         params: {
@@ -295,7 +284,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('deleteimage', function (data) {
-      console.log("deleteimage");
 
       var req = expressValidatorStub({
         params: {
@@ -321,7 +309,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('deletechat', function (data) {
-      console.log("deletechat");
 
       var req = expressValidatorStub({
         params: {
@@ -347,7 +334,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('getreporttopics', function (sessionID, userID) {
-      console.log("getreporttopics");
 
       if (sessionID == null || userID == null) return;
 
@@ -376,7 +362,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('setusername', function (username) {
-      console.log("setusername");
 
       if (username === null) return;
       socket.username = username;
@@ -410,7 +395,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('gettopics', function (session_id) {
-      console.log("------------------Done!!: gettopics\n");
 
       if (session_id === null) return;
 
@@ -438,7 +422,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('thumbs_up', function (event_id, row_id) {
-      console.log("thumbs_up");
 
       if (event_id == null) return;
 
@@ -468,7 +451,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('getchats', function () {
-      console.log("------------------Done!!: getchats\n");
 
       var req = expressValidatorStub({
         params: {
@@ -518,7 +500,6 @@ module.exports.listen = function (server) {
     //	    });
 
     socket.on('getobjects', function () {
-      console.log("getobjects");
 
       var req = expressValidatorStub({
         params: {
@@ -544,7 +525,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('getreport', function (sessionID, userID) {
-      console.log("getreport");
 
       var req = expressValidatorStub({
         params: {
@@ -570,7 +550,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('getresources', function (session_id, type, isfacilitator) {
-      console.log("getresources");
 
       var req = expressValidatorStub({
         params: {
@@ -598,14 +577,12 @@ module.exports.listen = function (server) {
     });
 
     socket.on('shareresource', function (json) {
-      console.log("shareresource");
 
       io.sockets.emit('sharedresource', socket.user_id, socket.topic_id, json);
       socketHelper.createCustomEvent(socket.topic_id, socket.user_id, "shareresource", JSON.stringify(json, null));
     });
 
     socket.on('deleteresource', function (id) {
-      console.log("deleteresource");
 
       if (!id) return;
 
@@ -632,7 +609,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('deleteobject', function (uid) {
-      console.log("deleteobject");
 
       var params = {
         uid: uid
@@ -650,7 +626,6 @@ module.exports.listen = function (server) {
     });
 
     socket.on('restoreobject', function (uid, object) {
-      console.log("restoreobject");
 
       if (uid == null) return;
 
@@ -677,7 +652,6 @@ module.exports.listen = function (server) {
       return client.user_id === user_id;
     });
 
-    console.log("resourceappended");
     if (foundUser) {
 
       foundUser.emit('resourceappended', json);
@@ -685,31 +659,26 @@ module.exports.listen = function (server) {
   }
 
   socket.on('addvideo', function (json) {
-    console.log("addvideo");
 
     socketHelper.updateResources(socket.topic_id, socket.user_id, json, "video", resourceAppendedCallback);
   });
 
   socket.on('addvote', function (json) {
-    console.log("addvote");
 
     socketHelper.updateResources(socket.topic_id, socket.user_id, json, "vote", resourceAppendedCallback);
   });
 
   socket.on('vote', function (json) {
-    console.log("vote");
 
     socketHelper.createCustomEvent(socket.topic_id, socket.user_id, "vote", json);
   });
 
   socket.on('enqueryvote', function (voteID, isfacilitator) {
-    console.log("enqueryvote");
 
     socketHelper.enqueryVote(socket, voteID, socket.topic_id, socket.user_id, isfacilitator);
   });
 
   socket.on('modifyvote', function (json) {
-    console.log("modifyvote");
 
     var req = expressValidatorStub({
       params: {
@@ -742,7 +711,6 @@ module.exports.listen = function (server) {
   });
 
   socket.on('editvote', function (voteId) {
-    console.log("editvote");
 
     var req = expressValidatorStub({
       params: {
@@ -834,7 +802,6 @@ module.exports.listen = function (server) {
   }
 
   socket.on('updateconsole', function (json, topic_id, consoleState, lastConsoleState) {
-    console.log("updateconsole");
 
     if (typeof json === "undefined")
     return;
@@ -944,7 +911,6 @@ module.exports.listen = function (server) {
   });
 
   socket.on('settopicid', function (topic_id, initialTopicSet, user_id) {
-    console.log("------------------Done!!: settopicid\n");
 
 
     if (user_id != socket.user_id) return;
@@ -993,7 +959,6 @@ module.exports.listen = function (server) {
   });
 
   socket.on('setavatarcaption', function (user_id, topic_id, caption) {
-    console.log("setavatarcaption");
 
     //	set the topic within our nameList
     for (var ndx = 0, ln = nameList.length; ndx < ln; ndx++) {
@@ -1007,7 +972,6 @@ module.exports.listen = function (server) {
   });
 
   socket.on('adduser', function (session_id, user_id, username) {
-    console.log("adduser");
 
     //	we store the username in the socket session for this client
     socket.session_id = session_id;		//	really only used here, but lets set it anyway
@@ -1057,13 +1021,11 @@ module.exports.listen = function (server) {
   });
 
   socket.on('updateemotions', function (user_id, topic_id, data) {
-    console.log("updateemotions");
 
     io.sockets.emit('updatedemotions', user_id, topic_id, data);
   });
 
   socket.on('updatetag', function (json) {
-    console.log("------------------Done!!: updatetag\n");
 
     var req = expressValidatorStub({
       params: {
@@ -1092,7 +1054,6 @@ module.exports.listen = function (server) {
   });
 
   socket.on('settmptitle', function (userId, topicId, title, text, formID) {
-    console.log("settmptitle");
 
     var content = {
       title: title,
@@ -1127,7 +1088,6 @@ module.exports.listen = function (server) {
   });
 
   socket.on('getlastsharedresources', function (topicId) {
-    console.log("getlastsharedresources");
 
     var req = expressValidatorStub({
       params: {
@@ -1155,7 +1115,6 @@ module.exports.listen = function (server) {
   });
 
   socket.on('getbrandprojectinfo', function (sessionId) {
-    console.log("getbrandprojectinfo");
 
     var req = expressValidatorStub({
       params: {
@@ -1183,8 +1142,6 @@ module.exports.listen = function (server) {
   });
 
   socket.on('getuserinfo', function (userId, sessionId, brandProjectId, clientCompanyId) {
-    console.log("DainisL: In progressss");
-    console.log("getuserinfo");
 
     var req = expressValidatorStub({
       params: {
@@ -1215,7 +1172,6 @@ module.exports.listen = function (server) {
   });
 
   socket.on('disconnect', function () {
-    console.log("disconnect");
 
     if (socket.user_id == null) return;		//	got here by accident (it happens)...
 
@@ -1235,7 +1191,6 @@ module.exports.listen = function (server) {
   });
 
   socket.on('getavatarinfo', function (userId, sessionId) {
-    console.log("getavatarinfo");
 
     var req = expressValidatorStub({
       params: {
@@ -1264,7 +1219,6 @@ module.exports.listen = function (server) {
   });
 
   socket.on('setavatarinfo', function (userId, avatarInfo) {
-    console.log("setavatarinfo");
 
     var req = expressValidatorStub({
       params: {
@@ -1301,14 +1255,12 @@ module.exports.listen = function (server) {
   });
 
   socket.on('restart', function () {
-    console.log("restart");
 
     io.close();
     server.close();
   });
 
   socket.on('report', function (json) {
-    console.log("report");
 
     var resCb = function (pdfLinks) {
       io.sockets.sockets[socket.id].emit('savedreport', JSON.stringify(pdfLinks, null));

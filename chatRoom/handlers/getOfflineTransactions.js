@@ -1,21 +1,19 @@
 "use strict";
-var getOfflineTransactions = require('if-data').repositories.getOfflineTransactions;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
 var _ = require('lodash');
-
 var models = require("../models");
 var OfflineTransaction = models.OfflineTransaction;
 
 module.exports.validate = function (req, resCb) {
-    var err = joi.validate(req.params, {
-        session_id: joi.number.required(),
-        reply_user_id: joi.number.required()
-    });
-    if (err)
-        return resCb(webFaultHelper.getValidationFault(err.message));
+  var err = joi.validate(req.params, {
+    session_id: joi.number.required(),
+    reply_user_id: joi.number.required()
+  });
+  if (err)
+  return resCb(webFaultHelper.getValidationFault(err.message));
 
-    resCb();
+  resCb();
 };
 
 module.exports.run = function (req, resCb, errCb) {
@@ -28,7 +26,7 @@ module.exports.run = function (req, resCb, errCb) {
         return n.dataValues;
       });
       resCb.send(cloection);
-  }).catch(function(err) {
-    errCb(webFaultHelper.getFault(err));
-  });
-};
+    }).catch(function(err) {
+      errCb(webFaultHelper.getFault(err));
+    });
+  };
