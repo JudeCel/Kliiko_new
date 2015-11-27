@@ -1,88 +1,131 @@
 <% include layout %>
 
 <main class="main-first-page-registration">
-    <div class="container">
+    <div class="login-container center-block">
         <h1 id="welcome">Welcome!</h1>
         <ul class="nav nav-tabs">
             <li><a href="/login">LOG IN</a></li>
             <li class="active"><a data-toggle="tab" href="#signup">SIGN UP</a></li>
         </ul>
-        <div class="tab-content">
+        <div class="tab-content border-green">
             <div id="signup" class="tab-pane fade in active">
-                <h2>Sign up for your account</h2>
-
+                <h2>Welcome!</h2>
+                <h4></h4>
+            <div class="container-fluid">
+              <div class="row">
+              <div class="col-md-12">
                 <form method="post" action="/registration">
-                    <div class="form-group">
-                        <span class="has-error"><%= errors.name %></span>
-                        <label for="accountName">Account name*</label>
-                        <input type="text" value="<%= accountName %>" class="form-control center-block"
-                               name="accountName" id="account_name" placeholder="Account name">
-                    </div>
-                    <div class="form-group">
-                        <span class="has-error"><%= errors.firstName %></span>
-                        <label for="firstName">First name*</label>
-                        <input type="text" value="<%= firstName %>" class="form-control center-block" name="firstName"
-                               id="first_name"
-                               placeholder="First name">
-                    </div>
-                    <div class="form-group">
-                        <span class="has-error"><%= errors.lastName %></span>
-                        <label for="firstName">Last name*</label>
-                        <input type="text" value="<%= lastName %>" class="form-control center-block" name="lastName"
-                               id="last_name"
-                               placeholder="Last name">
-                    </div>
-                    <div class="form-group">
-                        <span class="has-error"><%= errors.email %></span>
-                        <label for="email">E-mail*</label>
-                        <input type="email" value="<%= email %>" class="form-control center-block" name="email"
-                               id="email" placeholder="E-mail">
-                    </div>
-                    <div class="form-group">
-                      <span class="has-error"><%= errors.email %></span>
-                        <label for="mobile">Mobile (Optional)</label>
-                        <input type="tel" value="<%= mobile %>" class="form-control center-block" id="mobile" name="mobile"
-                               placeholder="Mobile">
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password*</label>
-                        <span class="has-error"><%= errors.password %></span>
-                        <input type="password" value="<%= password %>" class="form-control center-block" name="password" id="password"
-                               placeholder="Password">
-                    </div>
-                    <div class="form-group center-block">
-                        <span class="has-error"><%= errors.t_and_c %></span>
+                <table class="table table-no-inside-borders text-left text-gray-dark table-v-content-middle">
+                  <tr>
+                    <td>
+                      <label for="firstName">First name</label>
+                    </td>
+                    <td>
+                      <input type="text" value="<%= firstName %>" class="form-control" name="firstName" id="first_name" placeholder="First name">
+                    </td>
+                  </tr>
 
-                        <div class="check center-block">
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                      <span class="has-error"><%= errors.firstName %>TestestestestesttestTestestestestesttestTestestestestesttestTestestestestesttest</span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <label for="firstName">Last name</label>
+                    </td>
+                    <td>
+                      <input type="text" value="<%= lastName %>" class="form-control" name="lastName" id="last_name" placeholder="Last name">
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                      <span class="has-error"><%= errors.lastName %>TestestestestesttestTestestestestesttestTestestestestesttest</span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                        <label for="email">E-mail</label>
+                    </td>
+                    <td>
+                        <input type="email" value="<%= email %>" class="form-control" name="email" id="email" placeholder="E-mail">
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                        <span class="has-error"><%= errors.email %>TestestestestesttestTestestestestesttestTestestestestesttest</span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                        <label for="mobile">Phone</label>
+                    </td>
+                    <td>
+                      <input type="tel" value="<%= mobile %>" class="form-control" id="mobile" name="mobile" placeholder="Mobile">
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                      <span class="has-error"><%= errors.email %>TestestestestesttestTestestestestesttestTestestestestesttest</span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                          <label for="password">Password</label>
+                    </td>
+                    <td>
+                        <input type="password" value="<%= password %>" class="form-control" name="password" id="password" placeholder="Password">
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                        <span class="has-error"><%= errors.password %>TestestestestesttestTestestestestesttestTestestestestesttest</span>
+                    </td>
+                  </tr>
+
+                </table>
+
+
+                    <div class="form-group">
+                        <div class="check">
+                            <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate"
+                                   value='receive-updates'/><label for="tipsAndUpdate">
+                                <div id="remember3">I'd like to receive tips & updates</div>
+                            </label>
+                        </div>
+                        <div class="check">
                             <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate"
                                    value='receive-updates'/><label for="tipsAndUpdate">
                                 <div id="remember3">I'd like to receive tips & updates</div>
                             </label>
                         </div>
                     </div>
-                    <div class="form-group center-block">
-                        <div class="check center-block">
-                            <button type="submit" value="Register" class="btn login">Sign up</button>
+
+                    <div class="form-group">
+                        <div class="check">
+                            <button type="submit" value="Register" class="btn border-green text-green-dark background-transp pull-right">Sign up</button>
                         </div>
                     </div>
-                    <a id="forgot-password">Forgot your password?</a>
                 </form>
+              </div>
+            </div>
+          </div>
+          </div>
+
             </div>
         </div>
     </div>
-
-    <script>
-        $(function() {
-            $('#password').password().on('show.bs.password', function(e) {
-                $('#eventLog').text('On show event');
-                $('#methods').prop('checked', true);
-            }).on('hide.bs.password', function(e) {
-                $('#eventLog').text('On hide event');
-                $('#methods').prop('checked', false);
-            });
-            $('#methods').click(function() {
-                $('#password').password('toggle');
-            });
-        });
-    </script>
 </main>

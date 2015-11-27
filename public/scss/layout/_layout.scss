@@ -7,6 +7,10 @@
   border:2px solid #E51D39;
 }
 
+.border-green{
+  border: 2px solid #2F9F69;
+}
+
 /* Backgrounds */
 
 .background-transp {
@@ -39,6 +43,9 @@ color: #E51D39;
 .text-gray-dark {
 color: #58595B;
 }
+.text-green-dark{
+color: #2F9F69;
+}
 .text-no-decoration {
   text-decoration: none;
 }
@@ -54,7 +61,7 @@ color: #58595B;
     width: auto;
   }
   .login-container {
-    max-width: 400px;
+    max-width: 500px;
     padding-top: 11vh;
   }
 }
