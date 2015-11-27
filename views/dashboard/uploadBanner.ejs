@@ -1,27 +1,25 @@
 <% include ../header %>
 
-<main class="main-first-page">
-  <div class="container">
-    <h1 id="welcome">Welcome!
-    <%if(bannerPath) { %>
-      <div class="col-xs-12 col-sm-12 col-md-12">
-        <img src='<%= bannerPath %>' alt="" />
-      </div>
-    <% } %>
+<main class='main-first-page' ng-controller='DashboardCtrl'>
+  <div class='container'>
+    <h1 id='welcome'>Welcome!
+      <%if(bannerPath) { %>
+        <div class='col-xs-12 col-sm-12 col-md-12'>
+          <img src='<%= bannerPath %>' alt="" />
+        </div>
+      <% } %>
     </h1>
-    <ul class="nav nav-tabs" id="nav-tabs-dashboard">
-      <li class="active"><a href="#login">Account Profile<img id="ic_tab_profile_active" src="../icons/ic_tab_profile_active.png"></a></li>
-      <li><a href="#">Chat Sessions<img id="ic_tab_profile_active" src="../icons/ic_tab_sessions.png"></a></li>
-      <li><a href="#">Resources<img id="ic_tab_profile_active" src="../icons/ic_tab_resources.png"></a></li>
-    </ul>
-    <div class="tab-content">
-      <div id="login" class="tab-pane fade in active">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-xs-3 col-sm-3 col-md-3">
-              <% include _buttons %>
-            </div>
-            <div class="col-xs-9 col-sm-9 col-md-9">
+
+    <% include _navTabs %>
+
+    <div class='container border-blue'>
+      <div class='row'>
+        <div class='col-xs-12 col-sm-12 col-md-12'>
+          <% include _buttons %>
+        </div>
+        <div class='col-xs-12 col-sm-12 col-md-12'>
+          <div class='row'>
+            <div class='container content'>
               <h2 class="center-block">Upload Banners</h2>
               <div id="signup" class="tab-pane fade in active">
                 <span><%= message || error.message %></span>

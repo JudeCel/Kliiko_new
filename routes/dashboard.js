@@ -23,6 +23,10 @@ router.get('/', policy.authorized(["admin", "accountManager"]) , function(req, r
   res.render(views_path('index'), { title: '', user: req.user });
 });
 
+router.get('/upgradeplans', function(req, res) {
+  res.render(views_path('upgradePlans'), { title: 'Upgrade Plans' });
+});
+
 router.get('/changepassword', function(req, res) {
   res.render(views_path('changePassword'), { title: '', user: req.user, error: "", message: "" });
 });

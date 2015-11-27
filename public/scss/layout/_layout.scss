@@ -11,6 +11,24 @@
   border: 2px solid #2F9F69;
 }
 
+.border-blue{
+  border: 4px solid $blue;
+}
+
+.content {
+  width: 100%;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.dashboard-index {
+  color: $font-color;
+  font-size: 30px;
+  font-family: SourceSansPro-Regular;
+  text-align: center;
+  margin-bottom: 15%;
+}
+
 /* Backgrounds */
 
 .background-transp {
@@ -60,6 +78,11 @@ color: #2F9F69;
   .tab-content {
     width: auto;
   }
+
+  .dashboard-container {
+    width: auto;
+  }
+
   .login-container {
     max-width: 500px;
     padding-top: 11vh;
@@ -72,6 +95,10 @@ color: #2F9F69;
     width: 970px;
   }
 
+  .dashboard-container {
+    width: auto;
+  }
+
   .login-container {
     width: 75%;
   }
@@ -80,7 +107,13 @@ color: #2F9F69;
 @media (min-width: 992px){
   .container
   {
-    width: 970px;
+    width: 90%;
+  }
+
+  .dashboard-container
+  {
+    width: 90%;
+    margin: 0 auto;
   }
 
   .login-container {
