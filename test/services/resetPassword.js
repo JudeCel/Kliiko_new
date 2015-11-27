@@ -68,7 +68,6 @@ describe('Reset Password', function() {
         where: {email: user.email}
       }).then(function (result) {
         usersServices.comparePassword(user.get("email"), req.body.password, function(failed, result) {
-          console.log(failed);
           assert.equal(failed, null);
           done();
         });
