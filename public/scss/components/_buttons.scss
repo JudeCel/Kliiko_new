@@ -1,8 +1,12 @@
-.btn .blue {
-  background-color: $m-blue;
-  padding: 0px;
-  font-family: $s-pro;
+.btn{
+  border-radius: 0;
+  
 
+  &.blue {
+    background-color: $m-blue;
+    padding: 0px;
+    font-family: $s-pro;
+  }
 }
 
 .go {

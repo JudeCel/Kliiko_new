@@ -1,7 +1,9 @@
-.btn .blue {
-  background-color: #58BCE3;
-  padding: 0px;
-  font-family: Source Sans Pro; }
+.btn {
+  border-radius: 0; }
+  .btn.blue {
+    background-color: #58BCE3;
+    padding: 0px;
+    font-family: Source Sans Pro; }
 
 #btn-go {
   border: 0px;
@@ -164,17 +166,20 @@ input[class=checkbox-login] {
   display: none; }
 
 input[class=checkbox-login] + label {
-  background: url("/icons/checkbox_off.png") no-repeat;
-  float: left;
-  height: 32px;
-  width: 32px;
-  margin-top: 0;
-  margin-left: 0; }
+  background: url("/icons/login_checkbox.jpeg") no-repeat;
+  height: 22px;
+  width: 22px;
+  margin-top: 1px;
+  margin-left: 0;
+  margin-bottom: 0;
+  background-size: contain; }
 
 input[class=checkbox-login]:checked + label {
-  background: url("/icons/checkbox_on.png") no-repeat;
-  height: 32px;
-  width: 32px; }
+  background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
+  height: 22px;
+  width: 22px;
+  background-size: contain;
+  margin-top: 1px; }
 
 input[class=checkbox-signup] {
   display: none; }
@@ -201,8 +206,6 @@ input[class=checkbox-signup]:checked + label {
 
 .tab-content {
   padding-top: 10px;
-  border: 4px solid #389043;
-  border-radius: 20px;
   background-color: white;
   margin-top: -3px; }
 
@@ -238,21 +241,24 @@ input[class=checkbox-signup]:checked + label {
 #nav-tabs-dashboard > li {
   margin-right: 10px; }
 
-#nav-tabs-dashboard > li.active > a, .nav-tabs > li.active > a:hover {
-  border: 0px solid #389043;
-  border-bottom: 0px solid #389043;
+#nav-tabs-dashboard > li.active > a,
+.nav-tabs > li.active > a:hover {
+  /*border: 0px solid $border;
+  border-bottom: 0px solid $border;
   background-color: white;
-  color: #389043;
+  color: $border;
   padding-top: 6px;
   font-size: 13px;
   font-weight: bold;
+
   margin-bottom: -10px;
   padding-bottom: 2px;
+
   font-weight: bold;
   width: 100%;
   line-height: 20px;
   border-top-left-radius: 8px;
-  border-top-right-radius: 8px; }
+  border-top-right-radius: 8px;*/ }
 
 #nav-tabs-dashboard > li > a {
   background-color: #389043;
@@ -343,10 +349,6 @@ input[class=checkbox-signup]:checked + label {
   margin-top: 10px;
   line-height: 20px; }
 
-#forgot-password {
-  text-align: center;
-  text-decoration: underline; }
-
 .login:hover {
   color: white; }
 
@@ -408,7 +410,7 @@ html, body {
   margin-top: 20px;
   margin-bottom: 20px; }
 
-.table-no-inside-borders tbody > tr > td, .table-no-inside-borders .table > tfoot > tr > td {
+.table-no-inside-borders tbody > tr > td {
   border: none !important; }
 
 #warning-email-password {
@@ -529,17 +531,54 @@ html, body {
   font-family: glyphicons-halflings-regular;
   src: url(/fonts/bootstrap/glyphicons-halflings-regular.woff2); }
 
+/* Borders */
 .border-yellow {
-  border: 4px solid #F0E935; }
+  border: 2px solid #F0E935; }
 
 .border-red {
-  border: 1px solid #f00; }
+  border: 2px solid #E51D39; }
 
+/* Backgrounds */
+.background-transp {
+  background-color: transparent; }
+
+.background-yellow {
+  background-color: #F0E935 !important; }
+
+.background-green {
+  background-color: #2F9F69 !important; }
+
+/* Typography */
+.text-left {
+  text-align: left; }
+
+.text-shadow-gray {
+  text-shadow: 0 0 5px #58595B !important; }
+
+.text-white {
+  color: #fff !important; }
+
+.text-yellow-dark {
+  color: #F0E935; }
+
+.text-red-dark {
+  color: #E51D39; }
+
+.text-gray-dark {
+  color: #58595B; }
+
+.text-no-decoration {
+  text-decoration: none; }
+
+/* Responsive design */
 @media (min-width: 300px) {
   .container {
     width: 970px; }
   .tab-content {
-    width: auto; } }
+    width: auto; }
+  .login-container {
+    max-width: 400px;
+    padding-top: 11vh; } }
 
 @media (min-width: 768px) {
   .container {
@@ -553,5 +592,29 @@ html, body {
   .login-container {
     width: 50%; } }
 
-.table-no-inside-borders {
-  border: none !important; }
+.login-container .nav-tabs > li > a {
+  border-radius: 0; }
+  .login-container .nav-tabs > li > a:hover, .login-container .nav-tabs > li > a:active, .login-container .nav-tabs > li > a:focus {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    padding-top: 7px;
+    padding-bottom: 5px;
+    padding-left: 40px;
+    padding-right: 40px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 10px; }
+
+.login-container #login .form-control {
+  border-width: 2px;
+  height: 40px;
+  border-radius: 0; }
+
+.login-container #login .table td {
+  padding-left: 0;
+  padding-right: 0; }
+
+.login-container #login .table-v-content-middle td {
+  vertical-align: middle; }
