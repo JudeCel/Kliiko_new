@@ -1,10 +1,49 @@
+/* Borders */
 .border-yellow{
-  border: 4px solid #F0E935;
+  border: 2px solid #F0E935;
 }
 
 .border-red{
-  border:1px solid #f00;
+  border:2px solid #E51D39;
 }
+
+/* Backgrounds */
+
+.background-transp {
+background-color: rgba(0,0,0,0);
+}
+.background-yellow {
+background-color: #F0E935 !important;
+}
+.background-green {
+background-color: #2F9F69 !important;
+}
+
+/* Typography */
+
+.text-left {
+  text-align: left;
+}
+.text-shadow-gray {
+  text-shadow: 0 0 5px #58595B !important;
+}
+.text-white {
+ color: #fff !important;
+}
+.text-yellow-dark {
+  color: #F0E935;
+}
+.text-red-dark {
+color: #E51D39;
+}
+.text-gray-dark {
+color: #58595B;
+}
+.text-no-decoration {
+  text-decoration: none;
+}
+
+/* Responsive design */
 
 @media (min-width: 300px){
   .container
@@ -13,6 +52,10 @@
   }
   .tab-content {
     width: auto;
+  }
+  .login-container {
+    max-width: 400px;
+    padding-top: 11vh;
   }
 }
 

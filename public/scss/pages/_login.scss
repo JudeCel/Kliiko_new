@@ -1,2 +1,40 @@
-#login{
+.login-container {
+  .nav-tabs > li > a{
+    border-radius: 0;
+
+    &:hover,
+    &:active,
+    &:focus{
+      padding: 0;
+      margin:0;
+      border: 0;
+      border-radius: 0;
+      padding-top: 7px;
+    padding-bottom: 5px;
+    padding-left: 40px;
+    padding-right: 40px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 10px;
+    }
+  }
+
+  #login{
+    .form-control {
+      border-width: 2px;
+      height: 40px;
+      border-radius: 0;
+    }
+    .table {
+      td {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+    .table-v-content-middle {
+      td{
+        vertical-align: middle;
+      }
+    }
+  }
 }
