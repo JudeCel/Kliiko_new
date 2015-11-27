@@ -7,8 +7,8 @@ var Topic = models.Topic;
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        topic_id: joi.types.Number().required(),
-	    description: joi.types.String().optional()
+        topic_id: joi.number.required(),
+	    description: joi.string.optional()
     });
     if (err)
         return resCb(webFaultHelper.getValidationFault(err.message));

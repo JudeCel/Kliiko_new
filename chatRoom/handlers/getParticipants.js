@@ -6,8 +6,8 @@ var models = require("../models");
 
 module.exports.validate = function (req, resCb) {
 	var err = joi.validate(req.params, {
-		session_id: joi.types.Number().required(),
-        client_company_id: joi.types.Number().required()
+		session_id: joi.number.required(),
+        client_company_id: joi.number.required()
 	});
 	if (err)
 		return resCb(webFaultHelper.getValidationFault(err.message));

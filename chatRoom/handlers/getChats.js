@@ -9,7 +9,7 @@ var Event = models.Event;
 
 module.exports.validate = function (req, next) {
     var err = joi.validate(req.params, {
-        topic_id: joi.types.Number().required()
+        topic_id: joi.number.required()
     });
     if (err)
         return next(webFaultHelper.getValidationFault(err.message));

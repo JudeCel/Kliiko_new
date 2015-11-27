@@ -8,16 +8,16 @@ var webFaultHelper = require('../helpers/webFaultHelper.js');
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        id: joi.types.Number().required(),
-        user_id: joi.types.Number().optional(),
-        topic_id: joi.types.Number().required(),
-        reply_id: joi.types.Number().optional().nullOk(),
-        cmd: joi.types.String().optional().nullOk(),
-        tag: joi.types.Number().required(),
-        uid: joi.types.String().optional().nullOk(),
-        event: joi.types.String().optional(),
-        thumbs_up: joi.types.Number().optional().nullOk(),
-        timestamp: joi.types.Number().optional(),
+        id: joi.number.required(),
+        user_id: joi.number.optional(),
+        topic_id: joi.number.required(),
+        reply_id: joi.number.optional().nullOk(),
+        cmd: joi.string.optional().nullOk(),
+        tag: joi.number.required(),
+        uid: joi.string.optional().nullOk(),
+        event: joi.string.optional(),
+        thumbs_up: joi.number.optional().nullOk(),
+        timestamp: joi.number.optional(),
         created: joi.types.Object().optional().nullOk(),
         updated: joi.types.Object().optional().nullOk(),
         deleted: joi.types.Object().optional().nullOk()

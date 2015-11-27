@@ -9,9 +9,9 @@ var Log = models.Log;
 
 module.exports.validate = function (req, next) {
     var err = joi.validate(req.params, {
-        user_id: joi.types.Number().required(),
-        timestamp: joi.types.Number().optional(),
-        type: joi.types.String().optional()
+        user_id: joi.number.required(),
+        timestamp: joi.number.optional(),
+        type: joi.string.optional()
     });
 
     if (err)

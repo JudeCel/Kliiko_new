@@ -9,14 +9,14 @@ var dataHelper = require("../helpers/dataHelper.js");
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        user_id: joi.types.Number().required(),
-        topic_id: joi.types.Number().required(),
-        tag: joi.types.Number().required(),
-        timestamp: joi.types.Number().optional(),
-        cmd: joi.types.String().optional(),
-        event: joi.types.String().optional(),
-        uid: joi.types.String().optional(),
-        reply_id: joi.types.Number().optional()
+        user_id: joi.number().required(),
+        topic_id: joi.number().required(),
+        tag: joi.number().required(),
+        timestamp: joi.number().optional(),
+        cmd: joi.string().optional(),
+        event: joi.string().optional(),
+        uid: joi.string().optional(),
+        reply_id: joi.number().optional()
     });
 
     if (err){

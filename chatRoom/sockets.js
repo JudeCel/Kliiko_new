@@ -6,7 +6,6 @@ var expressValidatorStub = require('./helpers/expressValidatorStub.js');
 var io;
 var _ = require('lodash');
 
-
 module.exports.io = function () {
   return io;
 }
@@ -16,6 +15,8 @@ module.exports.listen = function (server) {
   var socketHelper = require('./socketHelper');
 
   io = socketio.listen(server);
+  io.set('log level', 3);
+  io = io.of('/chat');
 
   var userids = [];
   var nameList = new Array();
@@ -24,7 +25,7 @@ module.exports.listen = function (server) {
     user_id: 0
   };
 
-  io.sockets.on('connection', function (socket) {
+  io.on('connection', function (socket) {
 
     socket.on('config_get_info', function (session_id) {
       var req = expressValidatorStub({
@@ -34,6 +35,8 @@ module.exports.listen = function (server) {
       });
 
       var resCb = function (result) {
+        console.log(result);
+        console.log(config);
         io.sockets.sockets[socket.id].emit('config_info', config, result);
       };
 

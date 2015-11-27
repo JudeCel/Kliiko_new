@@ -11,8 +11,8 @@ var validate = function (req, resCb) {
         return resCb("At least one parameter is required");
 
     var err = joi.validate(req.params, {
-        event_id: joi.types.Number().optional(),
-        uid: joi.types.String().optional()
+        event_id: joi.number.optional(),
+        uid: joi.string.optional()
     });
 
     if (err)

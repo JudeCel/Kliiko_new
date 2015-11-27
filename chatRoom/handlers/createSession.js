@@ -5,11 +5,11 @@ var joi = require('joi');
 
 module.exports.validate = function (req, next) {
 	var err = joi.validate(req.params, {
-        brand_project_id: joi.types.Number().required(),
-        name: joi.types.String().max(200).required(),
-        start_time: joi.types.String().required(),
-        end_time: joi.types.String().required(),
-        status_id: joi.types.Number().required()
+        brand_project_id: joi.number.required(),
+        name: joi.string.max(200).required(),
+        start_time: joi.string.required(),
+        end_time: joi.string.required(),
+        status_id: joi.number.required()
     });
 
 	if (err){

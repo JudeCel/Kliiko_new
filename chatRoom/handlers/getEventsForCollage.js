@@ -6,7 +6,7 @@ var models = require("../models");
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        topicId: joi.types.Number().required()
+        topicId: joi.number.required()
     });
 
     if (err)

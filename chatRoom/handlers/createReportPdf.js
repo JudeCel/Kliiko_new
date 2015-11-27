@@ -12,10 +12,10 @@
 //module.exports.validate = function (req, resCb) {
 //    var err = joi.validate(req.params, {
 //        report: joi.types.Object().required(),
-//        type: joi.types.String().required(),
-//        sessionID: joi.types.Number(),
-//        topicID: joi.types.Number(),
-//        userID: joi.types.Number(),
+//        type: joi.string.required(),
+//        sessionID: joi.number,
+//        topicID: joi.number,
+//        userID: joi.number,
 //	    includeFacilitator: joi.types.Boolean()
 //    });
 //

@@ -9,8 +9,8 @@ var OfflineTransaction = models.OfflineTransaction;
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        session_id: joi.types.Number().required(),
-        reply_user_id: joi.types.Number().required()
+        session_id: joi.number.required(),
+        reply_user_id: joi.number.required()
     });
     if (err)
         return resCb(webFaultHelper.getValidationFault(err.message));
