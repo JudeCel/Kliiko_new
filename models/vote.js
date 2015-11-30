@@ -4,7 +4,7 @@ module.exports = (Sequelize, DataTypes) => {
   var Vote = Sequelize.define('Vote', {
     id:	 { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     event_id: { type: DataTypes.INTEGER, allowNull: true},
-    count: { type: DataTypes.INTEGER, allowNull: false, default: 0},
+    count: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
   },
    {
       // indexes: [],

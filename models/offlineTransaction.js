@@ -8,18 +8,14 @@ module.exports = (Sequelize, DataTypes) => {
     topic_id:	{ type: DataTypes.INTEGER, allowNull: false},
     reply_user_id:	{ type: DataTypes.INTEGER, allowNull: true},
     message_id:	{ type: DataTypes.INTEGER, allowNull: true},
-
     event_id: { type: DataTypes.INTEGER, allowNull: true},
-    count: { type: DataTypes.INTEGER, allowNull: false, default: 0},
-    created:	{ type: DataTypes.DATE},// need remove
-    updated:	{ type: DataTypes.DATE},// need remove
-    deleted:	{ type: DataTypes.DATE}// need remove
+    count: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
   },
    {
       // indexes: [],
       timestamps: false,
       tableName: 'offline_transactions',
-      // paranoid: true,
+      paranoid: true,
       classMethods: {
         associate: function(models) {
           OfflineTransaction.belongsTo(models.User, {foreignKey: 'user_id'});

@@ -3,7 +3,7 @@
 module.exports = (Sequelize, DataTypes) => {
   var Session = Sequelize.define('Session', {
     id:	 { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    brand_project_id: { type: DataTypes.INTEGER, allowNull: false},
+    brand_project_id: { type: DataTypes.INTEGER, allowNull: true},
     name:	{ type: DataTypes.STRING, allowNull: false, default: 'untitled'},
     start_time:	{ type: DataTypes.DATE, allowNull: false },
     end_time:	{ type: DataTypes.DATE, allowNull: false },
@@ -11,18 +11,17 @@ module.exports = (Sequelize, DataTypes) => {
     status_id:	{ type: DataTypes.INTEGER, allowNull: false},
     active_topic_id:{ type: DataTypes.INTEGER, allowNull: true},
     colours_used: { type: DataTypes.TEXT, allowNull: true },
-
-    created:	{ type: DataTypes.DATE},// need remove
-    updated:	{ type: DataTypes.DATE},// need remove
-    deleted:	{ type: DataTypes.DATE}// need remove
   },
    {
       // indexes: [],
-      timestamps: false,
-      tableName: 'logs',
-      // paranoid: true,
+      timestamps: true,
+      paranoid: true,
       classMethods: {
         associate: function(models) {
+          Session.belongsTo(models.BrandProject, { foreignKey: 'brand_project_id' });
+          Session.hasMany(models.Topic, { foreignKey: 'session_id' });
+          Session.hasMany(models.BrandProjectPreference, { foreignKey: 'session_id' });
+          Session.hasMany(models.SessionMember, { foreignKey: 'session_id' });
         }
       }
     }
