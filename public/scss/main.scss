@@ -23,10 +23,26 @@
 
 body{
   background-color: #eeeeee;
+  margin: 0 0 50px; /* bottom = footer height */
 }
 
-.box-shadow{
-  box-shadow: 0 50px 60px -50px #58595b;;
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+footer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 50px;
+  width: 100%;
+  text-align: center;
+  a{
+    color: #58595B;
+    line-height: 50px;
+    font-size: 14px;
+  }
 }
 
 .nav  {
@@ -56,15 +72,3 @@ body{
 .box-shadow{
   box-shadow: 0 50px 60px -50px #58595b;;
 }
-
-
-#footer{
-  text-align: center;
-  margin-top: 50px;
-  a{
-    color: #58595B;
-    line-height: 50px;
-    font-size: 14px;
-  }
-}
-  
