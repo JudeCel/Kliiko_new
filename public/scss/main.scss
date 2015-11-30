@@ -19,3 +19,52 @@
 // Pages
 @import "pages/_login.scss";
 @import "pages/_registration.scss";
+@import "pages/_landing.scss";
+
+body{
+  background-color: #eeeeee;
+}
+
+.box-shadow{
+  box-shadow: 0 50px 60px -50px #58595b;;
+}
+
+.nav  {
+  margin-top: 30px;
+  font-family: $s-pro;
+}
+.navbar{
+  margin-bottom: 15px;
+  margin-top: 27px;
+}
+
+.logo{
+  width: 296px;
+  height: 42px;
+  display: inline-block;
+  background-color: #58595B;
+  img{
+    width: 160px;
+    display: inline-block;
+    float: right;
+    background-color: #eeeeee;
+    margin-right: 20px;
+    margin-top: -10px;
+  }
+}
+
+.box-shadow{
+  box-shadow: 0 50px 60px -50px #58595b;;
+}
+
+
+#footer{
+  text-align: center;
+  margin-top: 50px;
+  a{
+    color: #58595B;
+    line-height: 50px;
+    font-size: 14px;
+  }
+}
+  
