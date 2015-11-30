@@ -259,10 +259,6 @@
   .dashboard-header {
     padding-top: 30px; } }
 
-/* Buttons */
-.btn-white {
-  background-color: white; }
-
 .login-container .login-signup-tab {
   width: 180px;
   margin-left: 85px; }
@@ -302,6 +298,14 @@
 .login-container #login .table td {
   padding-left: 0;
   padding-right: 0; }
+
+.login-container #login .table .error-column {
+  padding: 0;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  height: 17px;
+  visibility: hidden;
+  display: none; }
 
 .login-container #login .table-v-content-middle td {
   vertical-align: middle; }
@@ -345,7 +349,12 @@
     padding-right: 15px;
     white-space: nowrap; }
   #signup .table td.error-column {
-    padding: 0; }
+    padding: 0;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    height: 17px;
+    visibility: hidden;
+    display: none; }
 
 #signup .table-v-content-middle td {
   vertical-align: middle; }
