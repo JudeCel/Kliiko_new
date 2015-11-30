@@ -217,6 +217,10 @@
   .login-container {
     width: 50%; } }
 
+/* Buttons */
+.btn-white {
+  background-color: white; }
+
 .login-container .login-signup-tab {
   width: 180px;
   margin-left: 85px; }
@@ -309,6 +313,9 @@
   margin: 0 auto;
   text-align: center;
   color: #58595B; }
+  .main-welcome .welcome .landing-btn-group {
+    margin-top: 50px;
+    margin-bottom: 200px; }
   .main-welcome .welcome h1 {
     margin-top: 20px;
     margin-bottom: 10px; }
