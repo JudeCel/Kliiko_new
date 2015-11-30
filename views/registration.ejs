@@ -1,23 +1,24 @@
 <% include header %>
 
 <main class="main-first-page-registration">
-    <div class="login-container center-block">
+    <div class="login-container center-block text-font-family">
         <ul class="nav nav-tabs">
-            <li><a href="/login">LOG IN</a></li>
-            <li class="active"><a data-toggle="tab" href="#signup">SIGN UP</a></li>
+            <li><a class="background-yellow text-white text-shadow-gray btn login-kliiko-tab" href="/login">Login to Kliiko</a></li>
+            <li class="active"><a class="background-green text-white text-center login-signup-tab" data-toggle="tab" href="#signup">Get a Kliiko Account</a>
+            </li>
         </ul>
         <div class="tab-content border-green">
             <div id="signup" class="tab-pane fade in active">
-                <h2 class="text-center">Welcome!</h2>
-                      <h4 class="text-center">Sign up to Kliiko and hsot your own chat session</h4>
+                <h2 class="text-center text-gray-dark">Welcome!</h2>
+                      <h5 class="text-center text-gray-light">Sign up to Kliiko and hsot your own chat session</h5>
             <div class="container-fluid">
               <div class="row">
               <div class="col-md-12">
                 <form method="post" action="/registration">
-                <table class="table table-no-inside-borders text-left text-gray-dark table-v-content-middle">
+                <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
                   <tr>
                     <td>
-                      <label for="firstName">First name</label>
+                      <label class="text-no-bold text-login-page" for="firstName">First name</label>
                     </td>
                     <td>
                       <input type="text" value="<%= firstName %>" class="form-control" name="firstName" id="first_name" placeholder="First name">
@@ -33,7 +34,7 @@
 
                   <tr>
                     <td>
-                      <label for="firstName">Last name</label>
+                      <label class="text-no-bold text-login-page" for="firstName">Last name</label>
                     </td>
                     <td>
                       <input type="text" value="<%= lastName %>" class="form-control" name="lastName" id="last_name" placeholder="Last name">
@@ -49,10 +50,10 @@
 
                   <tr>
                     <td>
-                        <label for="email">E-mail</label>
+                        <label class="text-no-bold text-login-page" for="email">Email</label>
                     </td>
                     <td>
-                        <input type="email" value="<%= email %>" class="form-control" name="email" id="email" placeholder="E-mail">
+                        <input type="email" value="<%= email %>" class="form-control" name="email" id="email" placeholder="Email">
                     </td>
                   </tr>
 
@@ -65,7 +66,7 @@
 
                   <tr>
                     <td>
-                        <label for="mobile">Phone</label>
+                        <label class="text-no-bold text-login-page" for="mobile">Phone</label>
                     </td>
                     <td>
                       <input type="tel" value="<%= mobile %>" class="form-control" id="mobile" name="mobile" placeholder="Mobile">
@@ -81,7 +82,7 @@
 
                   <tr>
                     <td>
-                          <label for="password">Password</label>
+                          <label class="text-no-bold text-login-page" for="password">Password</label>
                     </td>
                     <td>
                         <input type="password" value="<%= password %>" class="form-control" name="password" id="password" placeholder="Password">
@@ -102,19 +103,18 @@
                         <div class="check">
                             <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate" value='receive-updates'/>
                             <label for="tipsAndUpdate"></label>
-                            <span id="remember3">I'd like to receive tips & updates</span>
+                            <span class="checkbox-signup" id="remember3">You have read and agree to the <a href="url">Administrator Terms & Conditions</a>.</span>
                         </div>
                         <div class="check">
-                            <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate"
-                                   value='receive-updates'/><label for="tipsAndUpdate">
-                                <div id="remember3">I'd like to receive tips & updates</div>
-                            </label>
+                            <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate" value='receive-updates'/>
+                            <label for="tipsAndUpdate"></label>
+                            <span class="checkbox-signup" id="remember3">Yes send me the Kliiko Newsletter which includes hints, tips and updates.</span>
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group text-right">
                         <div class="check">
-                            <button type="submit" value="Register" class="btn border-green text-green-dark background-transp pull-right">Sign up</button>
+                            <button type="submit" value="Register" class="btn border-green border-radius-none text-green-dark background-transp">Sign up</button>
                         </div>
                     </div>
                 </form>
