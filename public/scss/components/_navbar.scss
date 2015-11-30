@@ -17,7 +17,6 @@
   border-bottom: 0;
   border-radius: 0;
   color: $font-color;
-  background-color: $background-color;
   padding-top: 5px;
   padding-left: 40px;
   padding-right: 40px;
@@ -36,7 +35,7 @@
 #nav-tabs-main > li.active > a:focus {
   border: 2px solid $blue;
   background-color: $blue;
-  color: $background-color;
+  color: white;
   height: 45px;
 }
 

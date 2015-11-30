@@ -4,15 +4,15 @@
 }
 
 .border-yellow{
-  border: 2px solid #F0E935;
+  border: 2px solid $yellow;
 }
 
 .border-red{
-  border:2px solid #E51D39;
+  border:2px solid $red;
 }
 
 .border-green{
-  border: 2px solid #2F9F69;
+  border: 2px solid $green;
 }
 
 .border-blue{
@@ -20,14 +20,25 @@
 }
 
 .dashboard-index {
-  width: 100%;
+  background-color: white;
   margin-top: 30px;
-  margin-bottom: 30px;
+  margin-bottom: 15%;
   color: $font-color;
   font-size: 30px;
   font-family: SourceSansPro-Regular;
   text-align: center;
-  margin-bottom: 15%;
+}
+
+.dashboard-header {
+  height: 100px;
+  background-color: white;
+  border: 0;
+  margin-bottom: 100px;
+  box-shadow: 0px 20px 30px -30px #58595b;
+}
+
+.header-dropdown-ul {
+  left: 320px;
 }
 
 /* Backgrounds */
@@ -36,10 +47,10 @@
 background-color: rgba(0,0,0,0);
 }
 .background-yellow {
-background-color: #F0E935 !important;
+background-color: $yellow !important;
 }
 .background-green {
-background-color: #2F9F69 !important;
+background-color: $green !important;
 }
 
 /* Typography */
@@ -48,22 +59,22 @@ background-color: #2F9F69 !important;
   text-align: left;
 }
 .text-shadow-gray {
-  text-shadow: 0 0 5px #58595B !important;
+  text-shadow: 0 0 5px $grey !important;
 }
 .text-white {
  color: #fff !important;
 }
 .text-yellow-dark {
-  color: #F0E935;
+  color: $yellow;
 }
 .text-red-dark {
-color: #E51D39;
+  color: $red;
 }
 .text-gray-dark {
-color: #58595B;
+  color: $grey;
 }
 .text-green-dark{
-color: #2F9F69;
+  color: $green;
 }
 .text-no-decoration {
   text-decoration: none;
@@ -74,7 +85,7 @@ color: #2F9F69;
 @media (min-width: 300px){
   .container
   {
-    width: 970px;
+    width: auto;
   }
   .tab-content {
     width: auto;
@@ -82,6 +93,7 @@ color: #2F9F69;
   }
 
   .dashboard-container {
+    background-color: #fff;
     width: auto;
   }
 
@@ -94,10 +106,6 @@ color: #2F9F69;
 @media (min-width: 768px){
   .container
   {
-    width: 970px;
-  }
-
-  .dashboard-container {
     width: auto;
   }
 
@@ -120,6 +128,10 @@ color: #2F9F69;
 
   .login-container {
     width: 50%;
+  }
+
+  .dashboard-header {
+    padding-top: 30px;
   }
 }
 
