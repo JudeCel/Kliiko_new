@@ -5,7 +5,9 @@
 // Components
 @import "components/_buttons.scss";
 @import "components/_icons.scss";
+@import "components/_modals.scss";
 @import "components/_navbar.scss";
+@import "components/_tables.scss";
 @import "components/_text.scss";
 @import "components/_video.scss";
 
@@ -14,3 +16,40 @@
 
 // Layout
 @import "layout/_layout.scss";
+
+// Pages
+@import "pages/_login.scss";
+@import "pages/_registration.scss";
+@import "pages/_landing.scss";
+
+body{
+  background-color: #eeeeee;
+  margin: 0 0 50px; /* bottom = footer height */
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+footer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 50px;
+  width: 100%;
+  text-align: center;
+  a{
+    color: #58595B;
+    line-height: 50px;
+    font-size: 14px;
+  }
+}
+
+.logo{
+  padding-top: 40px;
+}
+
+.box-shadow{
+  box-shadow: 0 50px 60px -50px #58595b;
+}

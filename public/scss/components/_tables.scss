@@ -1,0 +1,5 @@
+.table-no-inside-borders{
+  tbody > tr > td{
+    border: none !important;
+  }
+}

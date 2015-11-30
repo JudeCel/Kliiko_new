@@ -1,9 +1,11 @@
 # Kliiko
-Tested on: Node version 4.2.* LTS, NPM version 3.3.*
+Tested on: Express version 4.2.* LTS, NPM version 3.3.*
 
 ## Dependencies
 
-NodeJs 4.2.x
+Node.js >= 4.2.2
+
+Express 4.2.x
 
 NPM 3.3.x
 
