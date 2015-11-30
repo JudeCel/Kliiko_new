@@ -19,8 +19,8 @@ router.use(function (req, res, next) {
   }
 }, uploadBanner.getProfileBanner);
 
-router.get('/', policy.authorized(["admin", "accountManager"]) , function(req, res, next) {
-  res.render(views_path('index'), { title: '', user: req.user });
+router.get('/', policy.authorized(['admin', 'accountManager']) , function(req, res, next) {
+  res.render(views_path('index'), { title: 'My Dashboard', user: req.user });
 });
 
 router.get('/upgradeplans', function(req, res) {
@@ -28,15 +28,15 @@ router.get('/upgradeplans', function(req, res) {
 });
 
 router.get('/changepassword', function(req, res) {
-  res.render(views_path('changePassword'), { title: '', user: req.user, error: "", message: "" });
+  res.render(views_path('changePassword'), { title: 'Change Password', user: req.user, error: "", message: "" });
 });
 
 router.post('/changepassword', function(req, res) {
   changePassword.save(req, function(errors, message, user){
     if (errors) {
-      res.render(views_path('changePassword'), { title: 'Change password', user: req.user, error: errors.message, message: message });
+      res.render(views_path('changePassword'), { title: 'Change Password', user: req.user, error: errors.message, message: message });
     }else{
-      res.render(views_path('changePassword'), { title: 'Change password', user: req.user, error: "", message: message });
+      res.render(views_path('changePassword'), { title: 'Change Password', user: req.user, error: "", message: message });
     }
   });
 });

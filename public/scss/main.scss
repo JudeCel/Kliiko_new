@@ -5,6 +5,7 @@
 // Components
 @import "components/_buttons.scss";
 @import "components/_icons.scss";
+@import "components/_modals.scss";
 @import "components/_navbar.scss";
 @import "components/_tables.scss";
 @import "components/_text.scss";
@@ -46,22 +47,9 @@ footer {
 }
 
 .logo{
-  margin-bottom: 15px;
-  margin-top: 27px;
-  width: 296px;
-  height: 42px;
-  display: inline-block;
-  background-color: #58595B;
-  img{
-    width: 160px;
-    display: inline-block;
-    float: right;
-    background-color: #eeeeee;
-    margin-right: 20px;
-    margin-top: -10px;
-  }
+  padding-top: 40px;
 }
 
 .box-shadow{
-  box-shadow: 0 50px 60px -50px #58595b;;
+  box-shadow: 0 50px 60px -50px #58595b;
 }

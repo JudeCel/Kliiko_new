@@ -30,6 +30,8 @@
 }
 
 .dashboard-header {
+  position: relative;
+  z-index: 1050;
   height: 100px;
   background-color: white;
   border: 0;
