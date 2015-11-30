@@ -3,7 +3,7 @@ Tested on: Express version 4.2.* LTS, NPM version 3.3.*
 
 ## Dependencies
 
-Node.js 0.12.x
+Node.js >= 4.2.2
 
 Express 4.2.x
 
