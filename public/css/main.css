@@ -1,3 +1,6 @@
+.dashboard-navigation > a {
+  text-decoration: none; }
+
 .btn-dashboard-menu {
   font-family: SourceSansPro-Regular;
   width: 16%;
@@ -27,6 +30,17 @@
 
 .btn-header-red {
   background-color: #E51D39; }
+
+.btn-simple {
+  margin-left: 10px;
+  font-family: SourceSansPro-Regular;
+  height: 36px;
+  border-radius: 0px;
+  background-color: inherit; }
+
+.changePasswordModal {
+  width: 20%;
+  padding-top: 100px; }
 
 #nav-tabs-main {
   text-align: center;
@@ -159,7 +173,7 @@
   border: 4px solid #4DC0E9; }
 
 .dashboard-index {
-  background-color: white;
+  background-color: inherit;
   margin-top: 30px;
   margin-bottom: 15%;
   color: #58595B;
@@ -168,6 +182,8 @@
   text-align: center; }
 
 .dashboard-header {
+  position: relative;
+  z-index: 1050;
   height: 100px;
   background-color: white;
   border: 0;
@@ -176,6 +192,30 @@
 
 .header-dropdown-ul {
   left: 320px; }
+
+body {
+  background-color: #eeeeee;
+  margin: 0 0 50px;
+  /* bottom = footer height */ }
+
+html {
+  position: relative;
+  min-height: 100%; }
+
+footer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 50px;
+  width: 100%;
+  text-align: center; }
+  footer a {
+    color: #58595B;
+    line-height: 50px;
+    font-size: 14px; }
+
+.box-shadow {
+  box-shadow: 0 50px 60px -50px #58595b; }
 
 /* Backgrounds */
 .background-transp {
@@ -259,6 +299,10 @@
   .dashboard-header {
     padding-top: 30px; } }
 
+/* Buttons */
+.btn-white {
+  background-color: white; }
+
 .login-container .login-signup-tab {
   width: 180px;
   margin-left: 85px; }
@@ -298,14 +342,6 @@
 .login-container #login .table td {
   padding-left: 0;
   padding-right: 0; }
-
-.login-container #login .table .error-column {
-  padding: 0;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  height: 17px;
-  visibility: hidden;
-  display: none; }
 
 .login-container #login .table-v-content-middle td {
   vertical-align: middle; }
@@ -352,9 +388,7 @@
     padding: 0;
     padding-top: 3px;
     padding-bottom: 3px;
-    height: 17px;
-    visibility: hidden;
-    display: none; }
+    height: 17px; }
 
 #signup .table-v-content-middle td {
   vertical-align: middle; }
@@ -405,42 +439,3 @@
   border-bottom: 55px solid transparent;
   border-left: 110px solid #F0e935;
   border-right: none; }
-
-body {
-  background-color: #eeeeee;
-  margin: 0 0 50px;
-  /* bottom = footer height */ }
-
-html {
-  position: relative;
-  min-height: 100%; }
-
-footer {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 50px;
-  width: 100%;
-  text-align: center; }
-  footer a {
-    color: #58595B;
-    line-height: 50px;
-    font-size: 14px; }
-
-.logo {
-  margin-bottom: 15px;
-  margin-top: 27px;
-  width: 296px;
-  height: 42px;
-  display: inline-block;
-  background-color: #58595B; }
-  .logo img {
-    width: 160px;
-    display: inline-block;
-    float: right;
-    background-color: #eeeeee;
-    margin-right: 20px;
-    margin-top: -10px; }
-
-.box-shadow {
-  box-shadow: 0 50px 60px -50px #58595b; }
