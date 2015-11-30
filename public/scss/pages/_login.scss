@@ -1,4 +1,12 @@
 .login-container {
+  .login-signup-tab {
+    width: 180px;
+    margin-left: 85px;
+  }
+  .login-kliiko-tab {
+    width: 180px;
+    margin-left: 25px;
+  }
   .nav-tabs > li > a{
     border-radius: 0;
 
@@ -7,7 +15,7 @@
   #login{
 
     input[class=checkbox-login] {
-      display: none; }
+      display: none;}
 
     input[class=checkbox-login] + label {
       background: url("/icons/login_checkbox.jpeg") no-repeat;
@@ -17,6 +25,7 @@
       margin-left: 0;
       margin-bottom: 0;
       background-size: contain;
+      cursor: pointer;
     }
 
     input[class=checkbox-login]:checked + label {
@@ -26,11 +35,13 @@
       background-size: contain;
       margin-top: 1px;
     }
+
     .form-control {
       border-width: 2px;
       height: 40px;
       border-radius: 0;
     }
+
     .table {
       td {
         padding-left: 0;

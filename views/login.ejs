@@ -1,19 +1,19 @@
-<% include layout %>
+<% include header %>
 
 <main class="main-first-page">
     <div class="login-container center-block">
         <ul class="nav nav-tabs">
             <li class="active">
-              <a class="background-yellow text-white text-shadow-gray btn" href="#login">Login to Kliiko</a>
+              <a class="background-yellow text-white text-shadow-gray btn login-kliiko-tab" href="#login">Login to Kliiko</a>
             </li>
             <li>
-              <a class="background-green text-white" href="/registration">SIGN UP</a>
+              <a class="background-green text-white text-center login-signup-tab" href="/registration">Get a Kliiko Account</a>
             </li>
         </ul>
         <div class="tab-content border-yellow">
             <div id="login" class="tab-pane fade in active">
-                <h2 class="text-center">Welcome!</h2>
-                <div id="warning-email-password"><%= error %></div>
+                <h2 class="text-gray-dark text-center">Welcome!</h2>
+                <div id="warning-email-password error-column"><%= error %></div>
                 <form method="post" action='/login'>
                   <div class="container-fluid">
                     <div class="row">
@@ -72,8 +72,8 @@
 
                     <div class="row">
                       <div class="col-md-12 form-group">
-                        <button type="submit" class="btn border-yellow text-yellow-dark background-transp pull-right">Login</button>
-                        <a class="btn border-red text-red-dark text-no-decoration pull-left" href="/forgotpassword" id="forgot-password">Forgot your password?</a>
+                        <button type="submit" class="btn border-yellow border-radius-none text-yellow-dark background-transp pull-right">Login</button>
+                        <a class="btn border-red border-radius-none text-red-dark text-no-decoration pull-left" href="/forgotpassword" id="forgot-password">Forgot your password?</a>
                       </div>
                     </div>
 
@@ -84,3 +84,5 @@
         </div>
     </div>
 </main>
+
+<% include footer %>

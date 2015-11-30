@@ -1,8 +1,7 @@
-<% include layout %>
+<% include header %>
 
 <main class="main-first-page-registration">
     <div class="login-container center-block">
-        <h1 id="welcome">Welcome!</h1>
         <ul class="nav nav-tabs">
             <li><a href="/login">LOG IN</a></li>
             <li class="active"><a data-toggle="tab" href="#signup">SIGN UP</a></li>
@@ -10,7 +9,7 @@
         <div class="tab-content border-green">
             <div id="signup" class="tab-pane fade in active">
                 <h2 class="text-center">Welcome!</h2>
-                <h4></h4>
+                      <h4 class="text-center">Sign up to Kliiko and hsot your own chat session</h4>
             <div class="container-fluid">
               <div class="row">
               <div class="col-md-12">
@@ -101,10 +100,9 @@
 
                     <div class="form-group">
                         <div class="check">
-                            <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate"
-                                   value='receive-updates'/><label for="tipsAndUpdate">
-                                <div id="remember3">I'd like to receive tips & updates</div>
-                            </label>
+                            <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate" value='receive-updates'/>
+                            <label for="tipsAndUpdate"></label>
+                            <span id="remember3">I'd like to receive tips & updates</span>
                         </div>
                         <div class="check">
                             <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate"
@@ -129,3 +127,4 @@
         </div>
     </div>
 </main>
+<% include footer %>

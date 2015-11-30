@@ -1,0 +1,45 @@
+.main-welcome {
+  .welcome {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+    color: #58595B; 
+    h1{
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    h4{
+      margin: 0 0 20px 0;
+    }
+  }
+
+  #video-placeholder{
+    width: 100%;
+    background-color: white;
+    margin-top: 20px;
+    cursor: pointer; 
+    cursor: hand;
+  }
+
+  #video{
+    margin-top: 20px;
+  }
+
+  .hide{
+    display: none;
+  }
+
+  .play-btn {
+    display: inline-block;
+    margin-top: 23%;
+    margin-bottom: 23%;
+    background-color: white;
+
+    width: 0; 
+    height: 0; 
+    border-top: 55px solid transparent;
+    border-bottom: 55px solid transparent;
+    border-left: 110px solid #F0e935;
+    border-right: none;
+  }
+}
