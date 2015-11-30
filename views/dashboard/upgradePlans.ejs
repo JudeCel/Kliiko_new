@@ -1,7 +1,7 @@
 <% include ../header %>
 
 <main class='main-first-page' ng-controller='DashboardCtrl'>
-  <div class='dashboard-container'>
+  <div class='container'>
     <h1 id='welcome'>Welcome!
       <%if(bannerPath) { %>
         <div class='col-xs-12 col-sm-12 col-md-12'>
@@ -12,14 +12,14 @@
 
     <% include _navTabs %>
 
-    <div class='dashboard-container border-blue'>
+    <div class='container border-blue'>
       <div class='row'>
         <div class='col-xs-12 col-sm-12 col-md-12'>
           <% include _buttons %>
         </div>
         <div class='col-xs-12 col-sm-12 col-md-12'>
           <div class='row'>
-            <div class='dashboard-container content'>
+            <div class='dashboard-container'>
               <h2 class="center-block">Checkout</h2>
               <div id="summary">&nbsp;&nbsp;&nbsp;
                 Order Summary
