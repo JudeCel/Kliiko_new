@@ -127,6 +127,9 @@
   src: url(/fonts/bootstrap/glyphicons-halflings-regular.woff2); }
 
 /* Borders */
+.border-radius-none {
+  border-radius: 0; }
+
 .border-yellow {
   border: 2px solid #F0E935; }
 
@@ -189,7 +192,8 @@
   .container {
     width: 970px; }
   .tab-content {
-    width: auto; }
+    width: auto;
+    background-color: #fff; }
   .dashboard-container {
     width: auto; }
   .login-container {
@@ -213,6 +217,14 @@
   .login-container {
     width: 50%; } }
 
+.login-container .login-signup-tab {
+  width: 180px;
+  margin-left: 85px; }
+
+.login-container .login-kliiko-tab {
+  width: 180px;
+  margin-left: 25px; }
+
 .login-container .nav-tabs > li > a {
   border-radius: 0; }
 
@@ -226,7 +238,8 @@
   margin-top: 1px;
   margin-left: 0;
   margin-bottom: 0;
-  background-size: contain; }
+  background-size: contain;
+  cursor: pointer; }
 
 .login-container #login input[class=checkbox-login]:checked + label {
   background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
@@ -247,26 +260,29 @@
 .login-container #login .table-v-content-middle td {
   vertical-align: middle; }
 
-#signup input[class=checkbox-signup] {
-  display: none; }
-
-#signup input[class=checkbox-signup] + label {
-  background: url("/icons/checkbox_off.png") no-repeat;
-  float: left;
-  height: 32px;
-  width: 32px;
-  margin-top: -33px;
-  margin-left: 210px; }
-
-#signup input[class=checkbox-signup]:checked + label {
-  background: url("/icons/checkbox_on.png") no-repeat;
-  height: 32px;
-  width: 32px; }
-
 #signup .form-control {
   border-width: 2px;
   height: 40px;
   border-radius: 0; }
+
+#signup input[class=checkbox-login] {
+  display: none; }
+
+#signup input[class=checkbox-login] + label {
+  background: url("/icons/login_checkbox.jpeg") no-repeat;
+  height: 22px;
+  width: 22px;
+  margin-top: 1px;
+  margin-left: 0;
+  margin-bottom: 0;
+  background-size: contain; }
+
+#signup input[class=checkbox-login]:checked + label {
+  background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
+  height: 22px;
+  width: 22px;
+  background-size: contain;
+  margin-top: 1px; }
 
 #signup .table td {
   padding-left: 0;
@@ -325,10 +341,25 @@
   border-right: none; }
 
 body {
-  background-color: #eeeeee; }
+  background-color: #eeeeee;
+  margin: 0 0 50px;
+  /* bottom = footer height */ }
 
-.box-shadow {
-  box-shadow: 0 50px 60px -50px #58595b; }
+html {
+  position: relative;
+  min-height: 100%; }
+
+footer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 50px;
+  width: 100%;
+  text-align: center; }
+  footer a {
+    color: #58595B;
+    line-height: 50px;
+    font-size: 14px; }
 
 .nav {
   margin-top: 30px;
@@ -353,11 +384,3 @@ body {
 
 .box-shadow {
   box-shadow: 0 50px 60px -50px #58595b; }
-
-#footer {
-  text-align: center;
-  margin-top: 50px; }
-  #footer a {
-    color: #58595B;
-    line-height: 50px;
-    font-size: 14px; }

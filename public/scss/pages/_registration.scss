@@ -1,25 +1,28 @@
 #signup {
-  input[class=checkbox-signup] {
-    display: none; }
-
-  input[class=checkbox-signup] + label {
-    background: url("/icons/checkbox_off.png") no-repeat;
-    float: left;
-    height: 32px;
-    width: 32px;
-    margin-top: -33px;
-    margin-left: 210px;
-  }
-
-  input[class=checkbox-signup]:checked + label {
-    background: url("/icons/checkbox_on.png") no-repeat;
-    height: 32px;
-    width: 32px;
-  }
   .form-control {
     border-width: 2px;
     height: 40px;
     border-radius: 0;
+  }
+  input[class=checkbox-login] {
+    display: none; }
+
+  input[class=checkbox-login] + label {
+    background: url("/icons/login_checkbox.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    margin-top: 1px;
+    margin-left: 0;
+    margin-bottom: 0;
+    background-size: contain;
+  }
+
+  input[class=checkbox-login]:checked + label {
+    background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    background-size: contain;
+    margin-top: 1px;
   }
   .table {
 
@@ -40,6 +43,7 @@
   }
 
   .table-v-content-middle {
+
     td{
       vertical-align: middle;
     }

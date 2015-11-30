@@ -1,4 +1,8 @@
 /* Borders */
+.border-radius-none {
+  border-radius: 0;
+}
+
 .border-yellow{
   border: 2px solid $yellow;
 }
@@ -85,6 +89,7 @@ background-color: $green !important;
   }
   .tab-content {
     width: auto;
+    background-color: #fff;
   }
 
   .dashboard-container {
