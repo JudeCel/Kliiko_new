@@ -163,9 +163,22 @@
   background-color: #2F9F69 !important; }
 
 /* Typography */
+.text-login-page {
+  font-size: 16px; }
+
+.text-no-decoration {
+  text-decoration: none; }
+
+.text-no-bold {
+  font-weight: normal !important; }
+
+.text-font-family {
+  font-family: Sofia Pro Condensed; }
+
 .text-left {
   text-align: left; }
 
+/* Text COLOR */
 .text-shadow-gray {
   text-shadow: 0 0 5px #58595B !important; }
 
@@ -181,11 +194,14 @@
 .text-gray-dark {
   color: #58595B; }
 
+.text-gray-light {
+  color: #ababab; }
+
+.text-gray-medium {
+  color: #737373; }
+
 .text-green-dark {
   color: #2F9F69; }
-
-.text-no-decoration {
-  text-decoration: none; }
 
 /* Responsive design */
 @media (min-width: 300px) {
@@ -264,6 +280,13 @@
   border-width: 2px;
   height: 40px;
   border-radius: 0; }
+
+#signup .checkbox-signup {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 5px;
+  padding-left: 9px;
+  font-size: 12px; }
 
 #signup input[class=checkbox-login] {
   display: none; }

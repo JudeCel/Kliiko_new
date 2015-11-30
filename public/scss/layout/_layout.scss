@@ -44,9 +44,23 @@ background-color: #2F9F69 !important;
 
 /* Typography */
 
+.text-login-page {
+  font-size: 16px;
+}
+.text-no-decoration {
+  text-decoration: none;
+}
+.text-no-bold {
+  font-weight: normal !important;
+}
+.text-font-family {
+font-family: Sofia Pro Condensed;
+}
 .text-left {
   text-align: left;
 }
+/* Text COLOR */
+
 .text-shadow-gray {
   text-shadow: 0 0 5px #58595B !important;
 }
@@ -62,11 +76,14 @@ color: #E51D39;
 .text-gray-dark {
 color: #58595B;
 }
+.text-gray-light {
+color: #ababab;
+}
+.text-gray-medium {
+color: #737373;
+}
 .text-green-dark{
 color: #2F9F69;
-}
-.text-no-decoration {
-  text-decoration: none;
 }
 
 /* Responsive design */

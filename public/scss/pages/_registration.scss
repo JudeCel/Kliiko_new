@@ -4,6 +4,13 @@
     height: 40px;
     border-radius: 0;
   }
+  .checkbox-signup {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 5px;
+    padding-left: 9px;
+    font-size: 12px;
+  }
   input[class=checkbox-login] {
     display: none; }
 
