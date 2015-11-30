@@ -1,25 +1,19 @@
-<% include ../header %>
+<% include _header %>
 
 <main class='main-first-page' ng-controller='DashboardCtrl'>
   <div class='container'>
-    <h1 id='welcome'>Welcome!
-      <%if(bannerPath) { %>
-        <div class='col-xs-12 col-sm-12 col-md-12'>
-          <img src='<%= bannerPath %>' alt="" />
-        </div>
-      <% } %>
-    </h1>
+    <% include ../pageBanner %>
 
     <% include _navTabs %>
 
-    <div class='container border-blue'>
+    <div class='dashboard-container border-blue box-shadow'>
       <div class='row'>
         <div class='col-xs-12 col-sm-12 col-md-12'>
           <% include _buttons %>
         </div>
         <div class='col-xs-12 col-sm-12 col-md-12'>
           <div class='row'>
-            <div class='container content'>
+            <div class='dashboard-container'>
               <h2 class="center-block">Upload Banners</h2>
               <div id="signup" class="tab-pane fade in active">
                 <span><%= message || error.message %></span>

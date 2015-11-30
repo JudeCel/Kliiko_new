@@ -1,18 +1,12 @@
-<% include ../header %>
+<% include _header %>
 
 <main class='main-first-page' ng-controller='DashboardCtrl'>
   <div class='container'>
-    <h1 id='welcome'>Welcome!
-      <%if(bannerPath) { %>
-        <div class='col-xs-12 col-sm-12 col-md-12'>
-          <img src='<%= bannerPath %>' alt="" />
-        </div>
-      <% } %>
-    </h1>
+    <% include ../pageBanner %>
 
     <% include _navTabs %>
 
-    <div class='container border-blue'>
+    <div class='dashboard-container border-blue'>
       <div class='row'>
         <div class='col-xs-12 col-sm-12 col-md-12'>
           <% include _buttons %>
