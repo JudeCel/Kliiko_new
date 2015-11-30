@@ -1,60 +1,47 @@
-.btn .blue {
-  background-color: $m-blue;
-  padding: 0px;
-  font-family: $s-pro;
-
+.dashboard-navigation > a {
+  text-decoration: none;
 }
 
-.go {
-
+.btn-dashboard-menu {
+  font-family: SourceSansPro-Regular;
+  width: 16%;
+  min-width: 200px;
+  height: 36px;
+  border-radius: 0px;
+  border: 2px solid $blue;
+  color: $blue;
+  background-color: inherit;
+  margin-left: 36px;
+  margin-top: 30px;
+  line-height: 36px;
 }
 
-#btn-go {
-  border: 0px;
-  color: green;
-  width: 130px;
-  height: 50px;
-  line-height: 20px;
-  font-size: 1.6em;
+.btn-header-dropdown {
+  margin-left: 10px;
+  font-family: SourceSansPro-Regular;
+  height: 36px;
+  border-radius: 0px;
+  border: none;
+  color: white;
+  background-color: $yellow;
   font-weight: bold;
+  text-shadow: 2px 2px $grey;
 }
 
-.input-group-addon, .input-group-btn {
-  width: auto;
+.btn-header-green {
+  @extend .btn-header-dropdown;
+  background-color: green;
 }
 
-.input-group {
-  margin-left: auto;
-  margin-right: auto;
-  width: 300px;
+.btn-header-red {
+  @extend .btn-header-dropdown;
+  background-color: $red;
 }
 
-.btn-buy-chat {
-  width: 100%;
-  min-width: 120px;
-  height: 40px;
-  border-radius: 8px;
-  border: 0px;
-  color: white;
-  background-color: $btn-buy-chat;
+.btn-simple {
   margin-left: 10px;
-  margin-top: 15px;
-
-}
-
-#btn-review-order {
-  background-color: $btn-orange;
-  color: white;
-}
-
-.btn-details-managers-etc {
-  width: 100%;
-  min-width: 120px;
-  height: 40px;
-  border-radius: 8px;
-  border: 0px;
-  color: white;
-  background-color: $btn-orange;
-  margin-left: 10px;
-  margin-top: 5px;
+  font-family: SourceSansPro-Regular;
+  height: 36px;
+  border-radius: 0px;
+  background-color: inherit;
 }

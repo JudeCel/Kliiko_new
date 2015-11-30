@@ -1,24 +1,30 @@
 <% include header %>
 
-<main class="main-first-page-registration">
-    <div class="container">
-        <h1 id="welcome">Welcome, James!</h1>
-        <h3 id="welcome">Congratulations! You have 1 free Chat Session to get started </h3>
+<main class="main-welcome">
+  <div class="welcome"> 
+    <h1 class="text-gray-dark text-center">Welcome to Kliiko!</h1>
+    <h4 class="text-gray-dark text-center">Watch the video to see how it works.</h4>
+    
+    <div id="play-video">
+      <div id="video-placeholder" class="box-shadow border-yellow">
+        <div class="play-btn"></div>
+      </div>
 
-        <h2 id="welcome">Here's how it Works...</h2>
-        <h4 id="welcome">Introduction Overview</h4>
-        <div align="center" class="embed-responsive embed-responsive-16by9">
-            <video class="embed-responsive-item" controls>
-                <source src=/video/video_landing_page.mp4 type=video/mp4>
-            </video>
+      <div id="video" style="display: none;">
+        <!-- <iframe width="100%" height="100%" src="https://www.youtube.com/embed/H8PC1_3fjvs?rel=0" frameborder="0" allowfullscreen></iframe> -->
+        <div id="player">
+          
         </div>
-<br>
-        <a id="download-pdf" href="/pdf/IF_Wireframe_Start.pdf" download><h4 id="welcome-download-pdf">Download PDF</h4></a>
-        <br>
-        <button type="submit" id="btn-go" class="btn-default go center-block">
-            let's GO</button>
-
+      </div>
     </div>
+
+    <div class="row landing-btn-group">
+      <div class="col-md-12 form-group">
+        <a type="submit" class="btn border-yellow border-radius-none text-yellow-dark background-transp pull-right btn-white" href="#">Lets Go!</a>
+        <a class="btn border-green border-radius-none text-green-dark text-no-decoration pull-left btn-white" href="/pdf/IF_Wireframe_Start.pdf" download="" id="forgot-password">Download PDF</a>
+      </div>
+    </div>
+  </div>
 </main>
 
 <% include footer %>

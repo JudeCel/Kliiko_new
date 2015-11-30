@@ -1,0 +1,59 @@
+.login-container {
+
+  .login-signup-tab {
+    width: 180px;
+    margin-left: 85px;
+  }
+  .login-kliiko-tab {
+    width: 180px;
+    margin-left: 25px;
+  }
+  .nav-tabs > li > a{
+    border-radius: 0;
+
+  }
+
+  #login{
+
+    input[class=checkbox-login] {
+      display: none;}
+
+    input[class=checkbox-login] + label {
+      background: url("/icons/login_checkbox.jpeg") no-repeat;
+      height: 22px;
+      width: 22px;
+      margin-top: 1px;
+      margin-left: 0;
+      margin-bottom: 0;
+      background-size: contain;
+      cursor: pointer;
+    }
+
+    input[class=checkbox-login]:checked + label {
+      background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
+      height: 22px;
+      width: 22px;
+      background-size: contain;
+      margin-top: 1px;
+    }
+
+    .form-control {
+      border-width: 2px;
+      height: 40px;
+      border-radius: 0;
+    }
+
+    .table {
+      td {
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+    }
+    .table-v-content-middle {
+      td{
+        vertical-align: middle;
+      }
+    }
+  }
+}

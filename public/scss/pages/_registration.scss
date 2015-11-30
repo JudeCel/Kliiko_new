@@ -1,0 +1,69 @@
+#signup {
+  .form-control {
+    border-width: 2px;
+    height: 40px;
+    border-radius: 0;
+  }
+  .checkbox-signup {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 5px;
+    padding-left: 9px;
+    font-size: 12px;
+  }
+  input[class=checkbox-login] {
+    display: none; }
+
+  input[class=checkbox-login] + label {
+    background: url("/icons/login_checkbox.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    margin-top: 1px;
+    margin-left: 0;
+    margin-bottom: 0;
+    background-size: contain;
+  }
+
+  input[class=checkbox-login]:checked + label {
+    background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    background-size: contain;
+    margin-top: 1px;
+  }
+  .table {
+
+    td {
+      padding-left: 0;
+      padding-right: 0;
+      border: 1px solid #f00;
+
+      &:first-of-type {
+      padding-right: 15px;
+      white-space: nowrap;
+    }
+
+      &.error-column {
+        padding: 0;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        height: 17px;
+      }
+    }
+  }
+
+  .table-v-content-middle {
+
+    td{
+      vertical-align: middle;
+    }
+  }
+
+  .has-error{
+    color: #f00;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 370px;
+    display: inline-block;
+  }
+}
