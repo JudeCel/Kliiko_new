@@ -7,7 +7,7 @@ var joi = require('joi');
 
 module.exports.validate = function (req, next) {
 	var err = joi.validate(req.params, {
-		resource_id: joi.number.required()
+		resource_id: joi.number().required()
 	});
 	if (err)
 		return next(webFaultHelper.getValidationFault(err.message));

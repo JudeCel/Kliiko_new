@@ -11,10 +11,10 @@ module.exports = function getCustomEventParams(params) {
     };
 
     var err = joi.validate(params, {
-        topicId: joi.number.required(),
-        userId: joi.number.required(),
-        command: joi.string.required(),
-        event: joi.string.optional(),
+        topicId: joi.number().required(),
+        userId: joi.number().required(),
+        command: joi.string().required(),
+        event: joi.string().optional(),
         encodingRequired: joi.types.Boolean().optional()
     });
 

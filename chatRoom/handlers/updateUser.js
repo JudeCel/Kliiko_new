@@ -6,8 +6,8 @@ var Q = require('q');
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        id: joi.number.required(),
-        avatar_info: joi.string.required()
+        id: joi.number().required(),
+        avatar_info: joi.string().required()
     });
 
     if (err)

@@ -3,13 +3,13 @@ var getChats = require("if-data").repositories.getChats;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
 var _ = require('lodash');
-var models = require("../models");
+var models = require("./../../models");
 var Event = models.Event;
 
 
 module.exports.validate = function (req, next) {
     var err = joi.validate(req.params, {
-        topic_id: joi.number.required()
+        topic_id: joi.number().required()
     });
     if (err)
         return next(webFaultHelper.getValidationFault(err.message));

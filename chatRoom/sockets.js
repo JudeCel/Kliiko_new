@@ -11,10 +11,10 @@ module.exports.io = function () {
 }
 
 module.exports.listen = function (server) {
+  io = require('socket.io')(server);
 
   var socketHelper = require('./socketHelper');
 
-  io = socketio.listen(server);
   io.set('log level', 3);
   io = io.of('/chat');
 
@@ -26,9 +26,6 @@ module.exports.listen = function (server) {
   };
 
   io.on('connection', function (socket) {
-    console.log('connection');
-
-
     socket.on('config_get_info', function (session_id) {
       var req = expressValidatorStub({
         params: {
@@ -37,7 +34,8 @@ module.exports.listen = function (server) {
       });
 
       var resCb = function (result) {
-        io.sockets.sockets[socket.id].emit('config_info', config, result);
+        console.log(io.clients);
+        io.emit('config_info', config, result.dataValues);
       };
 
       var nextCb = function (err) {
@@ -165,7 +163,7 @@ module.exports.listen = function (server) {
       var resCb = function (result) {
         if (!result) return;
         var resultStr = JSON.stringify(result);
-        io.sockets.sockets[socket.id].emit('offlinetransactions', resultStr);
+        io.emit('offlinetransactions', resultStr);
       };
 
       var nextCb = function (err) {
@@ -371,7 +369,7 @@ module.exports.listen = function (server) {
       var res = {
         send: function (result) {
           var resultStr = JSON.stringify(result);
-          io.sockets.sockets[socket.id].emit('showreportbox', resultStr);
+          io.emit('showreportbox', resultStr);
         }
       };
 
@@ -406,7 +404,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.sockets.sockets[socket.id].emit('participants', JSON.stringify(result, null));
+          io.emit('participants', JSON.stringify(result, null));
         }
       };
 
@@ -434,7 +432,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.sockets.sockets[socket.id].emit('topics', JSON.stringify(result, null));
+          io.emit('topics', JSON.stringify(result, null));
         }
       };
 
@@ -490,7 +488,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.sockets.sockets[socket.id].emit('chats', JSON.stringify(result, null));
+          io.emit('chats', JSON.stringify(result, null));
         }
       };
 
@@ -514,7 +512,7 @@ module.exports.listen = function (server) {
     //
     //		    var res = {
     //			    send: function (result) {
-    //				    io.sockets.sockets[socket.id].emit('topic', JSON.stringify(result, null));
+    //				    io.emit('topic', JSON.stringify(result, null));
     //			    }
     //		    };
     //
@@ -541,7 +539,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.sockets.sockets[socket.id].emit('objects', JSON.stringify(result, null));
+          io.emit('objects', JSON.stringify(result, null));
         }
       };
 
@@ -568,7 +566,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.sockets.sockets[socket.id].emit('savepdffile', JSON.stringify(result, null));
+          io.emit('savepdffile', JSON.stringify(result, null));
         }
       };
 
@@ -597,7 +595,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.sockets.sockets[socket.id].emit('resources', JSON.stringify(result, null), type);
+          io.emit('resources', JSON.stringify(result, null), type);
         }
       };
 
@@ -701,13 +699,11 @@ module.exports.listen = function (server) {
   socket.on('addvideo', function (json) {
     console.log("addvideo");
 
-
     socketHelper.updateResources(socket.topic_id, socket.user_id, json, "video", resourceAppendedCallback);
   });
 
   socket.on('addvote', function (json) {
     console.log("addvote");
-
 
     socketHelper.updateResources(socket.topic_id, socket.user_id, json, "vote", resourceAppendedCallback);
   });
@@ -715,20 +711,17 @@ module.exports.listen = function (server) {
   socket.on('vote', function (json) {
     console.log("vote");
 
-
     socketHelper.createCustomEvent(socket.topic_id, socket.user_id, "vote", json);
   });
 
   socket.on('enqueryvote', function (voteID, isfacilitator) {
     console.log("enqueryvote");
 
-
     socketHelper.enqueryVote(socket, voteID, socket.topic_id, socket.user_id, isfacilitator);
   });
 
   socket.on('modifyvote', function (json) {
     console.log("modifyvote");
-
 
     var req = expressValidatorStub({
       params: {
@@ -744,7 +737,7 @@ module.exports.listen = function (server) {
     var resCb = function (result) {
       if (!result.vote) return;
       var resultStr = JSON.stringify(result.vote);
-      io.sockets.sockets[socket.id].emit('showvoteedit', resultStr);
+      io.emit('showvoteedit', resultStr);
     };
 
     var nextCb = function (err) {
@@ -763,7 +756,6 @@ module.exports.listen = function (server) {
   socket.on('editvote', function (voteId) {
     console.log("editvote");
 
-
     var req = expressValidatorStub({
       params: {
         voteId: voteId
@@ -773,7 +765,7 @@ module.exports.listen = function (server) {
     var resCb = function (result) {
       if (!result.vote) return;
       var resultStr = JSON.stringify(result.vote);
-      io.sockets.sockets[socket.id].emit('showvoteedit', resultStr);
+      io.emit('showvoteedit', resultStr);
     };
 
     var nextCb = function (err) {
@@ -879,7 +871,7 @@ module.exports.listen = function (server) {
             if (json.content === "none")
             io.sockets.emit('updatedconsole', socket.topic_id, consoleState, resultAsString);
             else
-            io.sockets.sockets[socket.id].emit('updatedconsole', socket.topic_id, consoleState, resultAsString);
+            io.emit('updatedconsole', socket.topic_id, consoleState, resultAsString);
           });
           break;
 
@@ -957,7 +949,7 @@ module.exports.listen = function (server) {
             json.updateEvent = false; //make sure we dont do this again
             io.sockets.emit('updatedconsole', socket.topic_id, consoleState, json);
           } else
-          io.sockets.sockets[socket.id].emit('updatedconsole', socket.topic_id, consoleState, json);
+          io.emit('updatedconsole', socket.topic_id, consoleState, json);
         })
         break;
       }
@@ -982,7 +974,7 @@ module.exports.listen = function (server) {
     socket.topic_id = topic_id;
     globalVars.topic_id = topic_id;
 
-    io.sockets.sockets[socket.id].emit('topicset', !initialTopicSet);
+    io.emit('topicset', !initialTopicSet);
 
     if (typeof socket.user_id != "undefined") {
       //	reply to the sender
@@ -1054,8 +1046,8 @@ module.exports.listen = function (server) {
         break;
         case "drop current":
         //	disconnect this socket as we should only have one user on at a time...
-        io.sockets.sockets[socket.id].emit('alreadyconnected');
-        io.sockets.sockets[socket.id].disconnect();
+        io.emit('alreadyconnected');
+        io.disconnect();
 
         return;
         break;
@@ -1134,7 +1126,7 @@ module.exports.listen = function (server) {
 
     var resCb = function (result) {
       if (!result) return;
-      io.sockets.sockets[socket.id].emit('submitform', formID);
+      io.emit('submitform', formID);
     };
 
     var nextCb = function (err) {
@@ -1163,7 +1155,7 @@ module.exports.listen = function (server) {
     var resCb = function (result) {
       if (!result) return;
       var jsonData = JSON.stringify(result, null);
-      io.sockets.sockets[socket.id].emit('lastsharedresources', jsonData);
+      io.emit('lastsharedresources', jsonData);
     };
 
     var nextCb = function (err) {
@@ -1182,7 +1174,6 @@ module.exports.listen = function (server) {
   socket.on('getbrandprojectinfo', function (sessionId) {
     console.log("getbrandprojectinfo");
 
-
     var req = expressValidatorStub({
       params: {
         sessionId: sessionId
@@ -1190,9 +1181,10 @@ module.exports.listen = function (server) {
     });
 
     var resCb = function (result) {
+      console.log(result);
       if (!result) return;
       var jsonData = JSON.stringify(result, null);
-      io.sockets.sockets[socket.id].emit('brandprojectinfo', jsonData);
+      io.emit('brandprojectinfo', jsonData);
     };
 
     var nextCb = function (err) {
@@ -1223,7 +1215,7 @@ module.exports.listen = function (server) {
     var resCb = function (result) {
       if (!result) return;
       var jsonData = JSON.stringify(result, null);
-      io.sockets.sockets[socket.id].emit('userinfo', jsonData);
+      io.emit('userinfo', jsonData);
     };
 
     var nextCb = function (err) {
@@ -1273,8 +1265,8 @@ module.exports.listen = function (server) {
 
     var resCb = function (result) {
       if (!result) return;
-      //io.sockets.sockets[socket.id].emit('avatarinfo', config, result);
-      io.sockets.sockets[socket.id].emit('avatarinfo', result[0]);
+      //io.emit('avatarinfo', config, result);
+      io.emit('avatarinfo', result[0]);
     };
 
     var nextCb = function (err) {
@@ -1337,7 +1329,7 @@ module.exports.listen = function (server) {
   socket.on('report', function (json) {
 
     var resCb = function (pdfLinks) {
-      io.sockets.sockets[socket.id].emit('savedreport', JSON.stringify(pdfLinks, null));
+      io.emit('savedreport', JSON.stringify(pdfLinks, null));
     };
 
     var nextCb = function (err) {

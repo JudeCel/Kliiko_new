@@ -12,8 +12,8 @@ var createUserVotes =  ifData.repositories.createUserVotes;
 
 module.exports.validate = function (req, next) {
     var err = joi.validate(req.params, {
-        event_id: joi.number.required(),
-        updating_user_id: joi.number.required()
+        event_id: joi.number().required(),
+        updating_user_id: joi.number().required()
     });
 
     if (err) return next(webFaultHelper.getValidationFault(err.message));

@@ -2,11 +2,11 @@
 // var getEventsForCollage = require('if-data').repositories.getEventsForCollage;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
-var models = require("../models");
+var models = require("./../../models");
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        topicId: joi.number.required()
+        topicId: joi.number().required()
     });
 
     if (err)

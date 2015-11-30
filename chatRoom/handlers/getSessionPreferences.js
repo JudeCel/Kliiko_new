@@ -1,7 +1,7 @@
 "use strict";
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
-var models = require("../../models");
+var models = require("./../../models");
 var BrandProjectPreference = models.BrandProjectPreference;
 
 module.exports.validate = function (req, resCb) {

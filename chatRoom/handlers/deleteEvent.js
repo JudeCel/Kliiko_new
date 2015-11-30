@@ -3,7 +3,7 @@ var deleteEvent = require('if-data').repositories.deleteEvent;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require("joi");
 var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js');
-var models = require("../models");
+var models = require("./../../models");
 var Event = models.Event;
 
 var validate = function (req, resCb) {
@@ -11,8 +11,8 @@ var validate = function (req, resCb) {
         return resCb("At least one parameter is required");
 
     var err = joi.validate(req.params, {
-        event_id: joi.number.optional(),
-        uid: joi.string.optional()
+        event_id: joi.number().optional(),
+        uid: joi.string().optional()
     });
 
     if (err)

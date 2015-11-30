@@ -3,7 +3,7 @@
 //	------
 //
 //	(c) 2011-2014 wavingFree Software
-//	
+//
 //-----------------------------------------------------------------------------
 var thisMain = this;
 
@@ -22,7 +22,7 @@ var paperDashboard = null,
     paperCanvas = null,
     paperHistory = null,
     paperChat = null;
-paperExpand = null,
+    paperExpand = null,
     paperShrink = null,
     paperTitleWhiteboard = null,
     paperTitleConversation = null,
@@ -94,7 +94,7 @@ var imageMenu = null,
 
 var buildChatHistory = null,
     buildWhiteboard = null,
-	buildBillboard = null,
+  	buildBillboard = null,
     buildLastSharedResource = null;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -113,8 +113,7 @@ try {
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-var sessionID = getUrlVar("sid"),
-    topicID = null,
+var topicID = null,
     username = null,
     role = 'participant',
     topicTitle = '';				//	see playbackFinished
@@ -133,7 +132,6 @@ var userInfo = {};	//	this will be filled after "getuserinfo"
 //	sometimes "junk" gets tagged to the end of this, such as "...&sid=98/"
 //	this just removes some of the common errors...
 //	this won't be needed when we move to sessions
-sessionID = sessionID.replace(/[A-Za-z$-/]/g, "");
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 var playbackControl = null;
@@ -967,7 +965,7 @@ function setSocketEvents() {
     socket.on('participants', onParticipants);
     socket.on('resources', onResources);
     socket.on('resourceappended', onResourceAppended);
-	socket.on('topics', onTopics);
+  	socket.on('topics', onTopics);
     socket.on('topicset', onTopicset);
     socket.on('updateavatarcaption', onUpdateavatarcaption);
     socket.on('personalimagesset', onPersonalimagesset);
@@ -1090,7 +1088,8 @@ function setSocketEvents() {
 /*
  config = config.json
  */
-function main(config) {
+function main(config, id) {
+  var sessionID = id;
     //	lets process config
     MODE = config.mode;
 
@@ -1102,11 +1101,9 @@ function main(config) {
     CONFIG_PATH = config.paths.configPath;
     ADMIN_PATH = config.paths.adminPath;
     CHAT_ROOM_PATH = config.paths.chatRoomPath;
-    MYSQL_USER = config.mysql.user;
-    MYSQL_PASS = config.mysql.password;
-    MYSQL_DATABASE = config.mysql.database;
 
-    socket = io.connect("http://" + domain + ':' + port, {
+    // socket = io.connect("http://" + domain + ':' + port, {
+    socket = io.connect('insider.focus.com:7203/chat', {
         'reconnect': true,
         'reconnection delay': 500,
         'max reconnection attempts': 10

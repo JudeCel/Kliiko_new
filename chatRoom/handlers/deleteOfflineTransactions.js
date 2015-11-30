@@ -1,13 +1,13 @@
 "use strict";
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require("joi");
-var models = require("../models");
+var models = require("./../../models");
 var OfflineTransaction = models.OfflineTransaction;
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        topic_id: joi.number.required(),
-        reply_user_id: joi.number.required()
+        topic_id: joi.number().required(),
+        reply_user_id: joi.number().required()
     });
 
     if (err)

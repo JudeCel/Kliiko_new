@@ -5,8 +5,8 @@ var joi = require('joi');
 
 module.exports.validate = function (req, errCb) {
     var err = joi.validate(req.params, {
-        userId: joi.number.required(),
-        sessionId: joi.number.required()
+        userId: joi.number().required(),
+        sessionId: joi.number().required()
     });
 
     if (err)

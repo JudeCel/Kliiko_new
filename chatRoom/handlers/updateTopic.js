@@ -2,13 +2,13 @@
 var updateTopic = require('if-data').repositories.updateTopic;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
-var models = require("../models");
+var models = require("./../../models");
 var Topic = models.Topic;
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        topic_id: joi.number.required(),
-	    description: joi.string.optional()
+        topic_id: joi.number().required(),
+	    description: joi.string().optional()
     });
     if (err)
         return resCb(webFaultHelper.getValidationFault(err.message));

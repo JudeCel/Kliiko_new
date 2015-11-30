@@ -6,11 +6,11 @@ var joi = require('joi');
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        type_id: joi.number.required(),
-        url: joi.string.optional(),
-        topic_id: joi.number.optional(),
-        user_id: joi.number.optional(),
-        JSON: joi.string.optional()
+        type_id: joi.number().required(),
+        url: joi.string().optional(),
+        topic_id: joi.number().optional(),
+        user_id: joi.number().optional(),
+        JSON: joi.string().optional()
     });
     if (err)
         return resCb(webFaultHelper.getValidationFault(err.message));

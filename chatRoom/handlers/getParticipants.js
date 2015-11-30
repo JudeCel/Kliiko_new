@@ -2,12 +2,12 @@
 var getParticipants = require('if-data').repositories.getParticipants;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
-var models = require("../models");
+var models = require("./../../models");
 
 module.exports.validate = function (req, resCb) {
 	var err = joi.validate(req.params, {
-		session_id: joi.number.required(),
-        client_company_id: joi.number.required()
+		session_id: joi.number().required(),
+        client_company_id: joi.number().required()
 	});
 	if (err)
 		return resCb(webFaultHelper.getValidationFault(err.message));

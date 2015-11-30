@@ -7,10 +7,10 @@ var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 
 var validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        id: joi.number,
-        type_id: joi.number,
-        topic_id: joi.number,
-        user_id: joi.number
+        id: joi.number(),
+        type_id: joi.number(),
+        topic_id: joi.number(),
+        user_id: joi.number()
     });
     if (err)
         return resCb(webFaultHelper.getValidationFault(err.message));

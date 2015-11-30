@@ -2,7 +2,7 @@
 var _ = require('lodash');
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
-var models = require("../models");
+var models = require("./../../models");
 var Event = models.Event;
 
 var dataHelper = require("../helpers/dataHelper.js");
@@ -13,9 +13,9 @@ module.exports.validate = function (req, resCb) {
         topic_id: joi.number().required(),
         tag: joi.number().required(),
         timestamp: joi.number().optional(),
-        cmd: joi.string().optional(),
-        event: joi.string().optional(),
-        uid: joi.string().optional(),
+        cmd: joi.string()().optional(),
+        event: joi.string()().optional(),
+        uid: joi.string()().optional(),
         reply_id: joi.number().optional()
     });
 

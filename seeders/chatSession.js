@@ -27,7 +27,7 @@ let createNewChatFunctionList = [
   createSession,
   crateBrandProject,
   addedSessionMember,
-  addBrandProjectToSession,
+  // addBrandProjectToSession,
   addBrandProjectPreferences,
   createTopic
 ]
@@ -64,7 +64,7 @@ function crateBrandProject(user, session, callback) {
     moderator_active: 1
   }
 
-  BrandProject.create(brandProjectAttrs).then(function(result) {
+  session.createBrandProject(brandProjectAttrs).then(function(result) {
     console.log("brandProject is done!");
     callback(null, user, session, result);
   }).catch(BrandProject.sequelize.ValidationError, function(err) {
@@ -86,16 +86,16 @@ function addedSessionMember(user, session, brandProject, callback) {
   });
 }
 
-function addBrandProjectToSession(user, session, brandProject, callback) {
-  console.log("Added Brand Project To Session");
-  brandProject.addSession(session)
-  .then(function (_result) {
-    callback(null, user, session, brandProject);
-  })
-  .catch(function (error) {
-    callback(error);
-  });
-}
+// function addBrandProjectToSession(user, session, brandProject, callback) {
+//   console.log("Added Brand Project To Session");
+//   brandProject.addSession(session)
+//   .then(function (_result) {
+//     callback(null, user, session, brandProject);
+//   })
+//   .catch(function (error) {
+//     callback(error);
+//   });
+// }
 
 function addBrandProjectPreferences(user, session, brandProject, callback) {
   let attrs = {
@@ -127,7 +127,6 @@ function createChat() {
     if (error) {
       console.log("wee get error:" + error);
     }
-    console.log(result);
     console.log("Done!!");
   });
 };

@@ -7,11 +7,11 @@ var webFaultHelper = require('../helpers/webFaultHelper.js');
 var Q = require('q');
 var joi = require('joi');
 
-var models = require("../models");
+var models = require("./../../models");
 
 module.exports.validate = function (req, resCb) {
 	var err = joi.validate(req.params, {
-		topic_id: joi.number.required()
+		topic_id: joi.number().required()
 	});
 
 	if (err)

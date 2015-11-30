@@ -546,20 +546,18 @@ BUTTON_BORDER_COLOUR = '#ffc973';
 <!-- Main									-->
 <!-------------------------------------------->
 <script type="text/javascript">
-"use strict";
 //	lets start the help system now
 window.onload = function () {
-  // var sessionID = getUrlVar("sid");
-  // sessionID = sessionID.replace(/[A-Za-z$-/]/g, "");
+  var sessionID = '<%= id %>'
 
   var socketConfig = io.connect('insider.focus.com:7203/chat', {
     'reconnect': true,
     'reconnection delay': 500,
     'max reconnection attempts': 10
   }, function (result) {
+    console.warn(result);
     var b = result;
   });
-  console.log(socketConfig);
 
   socketConfig.on('config_info', function (config, result) {
     if (result) {
@@ -581,14 +579,12 @@ window.onload = function () {
 
     //	OK, now is a good time to load the main.js script
     $.getScript("/chat_room/js/main.js").done(function (script, textStatus) {
-      main(config);
+      main(config, sessionID);
     }).fail(function (jqxhr, settings, exception) {
       console.log("Error: unable to load main.js");
     });
   });
 
-  //	step 1, get the config info
-  let sessionID = '<%= id %>'  // test case
   socketConfig.emit("config_get_info", sessionID);
 };
 </script>

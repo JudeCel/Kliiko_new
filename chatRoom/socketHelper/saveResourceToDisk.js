@@ -18,9 +18,9 @@ function saveResourceToDisk(params) {
         req: joi.types.Object().required(),
         res: joi.types.Object().required(),
         resCb: joi.types.Function().required(),
-        width: joi.number.optional(),
-        height: joi.number.optional(),
-        type: joi.string.optional()
+        width: joi.number().optional(),
+        height: joi.number().optional(),
+        type: joi.string().optional()
     });
 
     if (err)
