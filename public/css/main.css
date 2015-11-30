@@ -358,13 +358,13 @@
   display: inline-block; }
 
 .main-welcome .welcome {
-  width: 80%;
+  width: 50%;
   margin: 0 auto;
   text-align: center;
   color: #58595B; }
   .main-welcome .welcome .landing-btn-group {
     margin-top: 50px;
-    margin-bottom: 200px; }
+    margin-bottom: 100px; }
   .main-welcome .welcome h1 {
     margin-top: 20px;
     margin-bottom: 10px; }
@@ -379,7 +379,8 @@
   cursor: hand; }
 
 .main-welcome #video {
-  margin-top: 20px; }
+  margin-top: 20px;
+  height: 540px; }
 
 .main-welcome .hide {
   display: none; }
@@ -417,15 +418,9 @@ footer {
     line-height: 50px;
     font-size: 14px; }
 
-.nav {
-  margin-top: 30px;
-  font-family: Source Sans Pro; }
-
-.navbar {
-  margin-bottom: 15px;
-  margin-top: 27px; }
-
 .logo {
+  margin-bottom: 15px;
+  margin-top: 27px;
   width: 296px;
   height: 42px;
   display: inline-block;
