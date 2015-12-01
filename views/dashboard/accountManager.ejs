@@ -1,0 +1,51 @@
+<% include _header %>
+
+<main class='main-first-page' ng-controller='DashboardCtrl'>
+  <div class='container'>
+    <% include ../pageBanner %>
+
+    <% include _navTabs %>
+
+    <div class='dashboard-container border-blue'>
+      <div class='row'>
+        <div class='col-xs-12 col-sm-12 col-md-12'>
+          <% include _buttons %>
+        </div>
+        <div class='col-xs-12 col-sm-12 col-md-12'>
+          <h3 class='text-center'>Account Managers
+          </h3>
+          <button type='button' class='btn-simple border-blue text-blue-dark'>Add New Account Manager</button>
+        </div>
+        <div class='col-xs-12 col-sm-12 col-md-12'>
+          <div class='row'>
+            <div class='dashboard-container'>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Gender</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% for(var i=0; i < accounts.length; i++) { %>
+                    <tr>
+                      <%= console.log(accounts[i]) %>
+                      <td><%= accounts[i].name %></td>
+                      <td><%= accounts[i].lastname %></td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<% include ../footer %>

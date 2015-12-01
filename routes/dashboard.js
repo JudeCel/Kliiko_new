@@ -5,6 +5,7 @@ var subdomains = require('../lib/subdomains.js');
 var changePassword = require('../services/changePassword');
 var policy = require('../middleware/policy.js');
 var uploadBanner = require('../middleware/uploadBanner.js');
+var accountManager = require('../middleware/accountManager.js');
 
 function views_path(action) {
   let views_name_space = 'dashboard/';
@@ -48,5 +49,10 @@ router.post('/changepassword', function(req, res) {
 router.get('/uploadbanner', policy.authorized(['admin']), uploadBanner.get);
 router.post('/uploadbanner', policy.authorized(['admin']), uploadBanner.uploadFields, uploadBanner.post);
 router.get('/uploadbanner/:page', policy.authorized(['admin']), uploadBanner.destroy);
+
+router.get('/accountmanager', policy.authorized(['accountManager']), accountManager.get);
+router.post('/accountmanager/new', policy.authorized(['accountManager']), accountManager.post);
+router.post('/accountmanager/update/:id', policy.authorized(['accountManager']), accountManager.post);
+router.get('/accountmanager/destroy/:id', policy.authorized(['accountManager']), accountManager.destroy);
 
 module.exports = router;

@@ -16,6 +16,12 @@
   line-height: 36px;
 }
 
+.btn-dashboard-menu.active {
+  color: white;
+  background-color: $blue;
+}
+
+
 .btn-header-dropdown {
   margin-left: 10px;
   padding-right: 15px;
