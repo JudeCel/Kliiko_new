@@ -49,7 +49,7 @@ var chat = require('./routes/chat');
 
 app.use('/', routes);
 app.use('/dashboard', currentUser.assign, dashboard);
-app.use('/chat', chat);
+app.use('/chat', currentUser.assign, chat);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

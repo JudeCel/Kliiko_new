@@ -10,7 +10,7 @@ module.exports = (Sequelize, DataTypes) => {
     incentive_details: { type: DataTypes.TEXT, allowNull: true },
     status_id:	{ type: DataTypes.INTEGER, allowNull: false},
     active_topic_id:{ type: DataTypes.INTEGER, allowNull: true},
-    colours_used: { type: DataTypes.TEXT, allowNull: true },
+    colours_used: { type: DataTypes.TEXT, allowNull: true }
   },
    {
       // indexes: [],

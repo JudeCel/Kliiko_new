@@ -549,6 +549,7 @@ BUTTON_BORDER_COLOUR = '#ffc973';
 //	lets start the help system now
 window.onload = function () {
   var sessionID = '<%= id %>'
+  var currentUser = '<%= currentUser %>'
 
   var socketConfig = io.connect('insider.focus.com:7203/chat', {
     'reconnect': true,
