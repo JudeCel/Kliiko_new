@@ -4,41 +4,41 @@
     <div class="login-container center-block text-font-family">
         <ul class="nav nav-tabs">
             <li class="active">
-              <a class="background-yellow text-white text-shadow-gray btn login-kliiko-tab" href="#login">Login to Kliiko</a>
+              <a class="background-yellow text-font-family-tabs text-white text-shadow-gray btn login-kliiko-tab" href="#login">Login to Kliiko</a>
             </li>
             <li>
-              <a class="background-green text-white text-center login-signup-tab" href="/registration">Get a Kliiko Account</a>
+              <a class="background-green text-font-family-tabs text-white text-center login-signup-tab" href="/registration">Get a Kliiko Account</a>
             </li>
         </ul>
         <div class="tab-content border-yellow">
             <div id="login" class="tab-pane fade in active">
-                <h2 class="text-gray-dark text-center">Welcome!</h2>
-                <div id="warning-email-password error-column"><%= error %></div>
+                <h1 class="text-gray-dark text-center">Welcome!</h1>
+                <div class="error-column has-error text-center" id="warning-email-password"><%= error %></div>
                 <form method="post" action='/login'>
                   <div class="container-fluid">
                     <div class="row">
                       <div class="col-md-12">
                         <table class="table table-no-inside-borders text-left text-gray-dark table-v-content-middle">
                           <tr>
-                              <td class="form-group text-gray-medium text-no-bold">
+                              <td class="form-group text-brown-dark text-no-bold">
                                 <label class="text-no-bold text-login-page" for="email">Email</label>
                               </td>
                               <td class="form-group text-center">
                                 <img src="icons/user.png" />
                               </td>
                               <td class="form-group">
-                                <input type="email" name='email' class="form-control center-block" id="email" placeholder="E-mail">
+                                <input type="email" name='email' class="form-control center-block border-brown" id="email" placeholder="E-mail">
                               </td>
                           </tr>
                           <tr>
                               <td class="form-group text-gray-medium">
-                                <label class="text-no-bold text-login-page" for="password">Password</label>
+                                <label class="text-no-bold text-login-page text-brown-dark" for="password">Password</label>
                               </td>
                               <td class="form-group text-center">
                                 <img src="icons/lock.png" />
                               </td>
                               <td class="form-group">
-                                <input type="password" name='password' class="form-control center-block" id="password" placeholder="Password">
+                                <input type="password" name='password' class="form-control center-block border-brown" id="password" placeholder="Password">
                               </td>
 
                           </tr>
@@ -56,8 +56,8 @@
                     </div>
                     <div class="row">
                       <div class="col-md-12 form-group">
-                        <button type="submit" class="btn border-yellow border-radius-none text-brown-dark background-transp pull-right">Login</button>
-                        <a class="btn border-red border-radius-none text-red-dark text-no-decoration pull-left" href="/forgotpassword" id="forgot-password">Forgot your password?</a>
+                        <button type="submit" class="btn border-yellow text-brown-light border-radius-none background-transp pull-right login-btn-size">Login</button>
+                        <a class="btn border-red border-radius-none text-red-dark text-no-decoration pull-left login-btn-size forgot-password-padding" href="/forgotpassword" id="forgot-password">Forgot your password?</a>
                       </div>
                     </div>
 

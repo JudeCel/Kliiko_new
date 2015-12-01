@@ -1,5 +1,7 @@
 #signup {
-
+  .singup-btn-size {
+  height: 45px;
+  }
   .form-control {
     border-width: 2px;
     height: 40px;
@@ -10,7 +12,7 @@
     vertical-align: top;
     margin-top: 5px;
     padding-left: 9px;
-    font-size: 12px;
+    font-size: 13px;
   }
   input[class=checkbox-login] {
     display: none; }
