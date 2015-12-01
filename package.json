@@ -43,6 +43,7 @@
     "gulp-minify-css": "*",
     "gulp-minify-html": "^1.0.4",
     "gulp-newer": "^0.5.1",
+    "gulp-node-inspector": "0.1.*",
     "gulp-nodemon": "^2.0.4",
     "gulp-notify": "^2.2.0",
     "gulp-pleeease": "*",

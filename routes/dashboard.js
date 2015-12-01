@@ -7,7 +7,7 @@ var policy = require('../middleware/policy.js');
 var uploadBanner = require('../middleware/uploadBanner.js');
 
 function views_path(action) {
-let views_name_space = "dashboard/";
+  let views_name_space = 'dashboard/';
   return views_name_space + action
 }
 
@@ -21,6 +21,10 @@ router.use(function (req, res, next) {
 
 router.get('/', policy.authorized(['admin', 'accountManager']) , function(req, res, next) {
   res.render(views_path('index'), { title: 'My Dashboard', user: req.user });
+});
+
+router.get('/landing', function(req, res) {
+  res.render(views_path('landing'), { title: 'Landing page' });
 });
 
 router.get('/upgradeplans', function(req, res) {

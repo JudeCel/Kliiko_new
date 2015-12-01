@@ -1,3 +1,6 @@
+.remove-link-line > a {
+  text-decoration: none; }
+
 .btn-dashboard-menu {
   font-family: SourceSansPro-Regular;
   width: 16%;
@@ -13,6 +16,8 @@
 
 .btn-header-dropdown, .btn-header-green, .btn-header-red {
   margin-left: 10px;
+  padding-right: 15px;
+  padding-left: 15px;
   font-family: SourceSansPro-Regular;
   height: 36px;
   border-radius: 0px;
@@ -27,6 +32,17 @@
 
 .btn-header-red {
   background-color: #E51D39; }
+
+.btn-simple {
+  margin-left: 10px;
+  font-family: SourceSansPro-Regular;
+  height: 36px;
+  border-radius: 0px;
+  background-color: inherit; }
+
+.changePasswordModal {
+  width: 20%;
+  padding-top: 100px; }
 
 #nav-tabs-main {
   text-align: center;
@@ -146,6 +162,9 @@
 .border-radius-none {
   border-radius: 0; }
 
+.border-brown {
+  border: 2px solid #58595B; }
+
 .border-yellow {
   border: 2px solid #F0E935; }
 
@@ -159,7 +178,7 @@
   border: 4px solid #4DC0E9; }
 
 .dashboard-index {
-  background-color: white;
+  background-color: inherit;
   margin-top: 30px;
   margin-bottom: 15%;
   color: #58595B;
@@ -168,14 +187,47 @@
   text-align: center; }
 
 .dashboard-header {
+  position: relative;
+  z-index: 1050;
   height: 100px;
   background-color: white;
   border: 0;
-  margin-bottom: 100px;
+  margin-bottom: 50px;
   box-shadow: 0px 20px 30px -30px #58595b; }
+
+.login-header {
+  height: 100px;
+  margin-top: 30px; }
+
+.page-banner {
+  margin-top: 50px; }
 
 .header-dropdown-ul {
   left: 320px; }
+
+body {
+  background-color: #eeeeee;
+  margin: 0 0 50px;
+  /* bottom = footer height */ }
+
+html {
+  position: relative;
+  min-height: 100%; }
+
+footer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 50px;
+  width: 100%;
+  text-align: center; }
+  footer a {
+    color: #58595B;
+    line-height: 50px;
+    font-size: 14px; }
+
+.box-shadow {
+  box-shadow: 0 50px 60px -50px #58595b; }
 
 /* Backgrounds */
 .background-transp {
@@ -203,6 +255,9 @@
 .text-left {
   text-align: left; }
 
+.text-font-family-tabs {
+  font-family: Source sans pro black; }
+
 /* Text COLOR */
 .text-shadow-gray {
   text-shadow: 0 0 5px #58595b !important; }
@@ -227,6 +282,12 @@
 
 .text-green-dark {
   color: #2F9F69; }
+
+.text-brown-light {
+  color: #7F7426; }
+
+.text-brown-dark {
+  color: #58595B; }
 
 /* Responsive design */
 @media (min-width: 300px) {
@@ -259,6 +320,16 @@
   .dashboard-header {
     padding-top: 30px; } }
 
+/* Buttons */
+.btn-white {
+  background-color: white; }
+
+#login .submit-btn-size {
+  height: 45px; }
+
+#login h5 {
+  font-size: 16px; }
+
 .login-container .login-signup-tab {
   width: 180px;
   margin-left: 85px; }
@@ -269,6 +340,12 @@
 
 .login-container .nav-tabs > li > a {
   border-radius: 0; }
+
+.login-container #login .forgot-password-padding {
+  padding: 10px; }
+
+.login-container #login .login-btn-size {
+  height: 45px; }
 
 .login-container #login input[class=checkbox-login] {
   display: none; }
@@ -295,20 +372,28 @@
   height: 40px;
   border-radius: 0; }
 
+.login-container #login .has-error {
+  color: #f00;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 475px;
+  display: inline-block; }
+
 .login-container #login .table td {
   padding-left: 0;
   padding-right: 0; }
 
-.login-container #login .table .error-column {
+.login-container #login .table.error-column {
   padding: 0;
   padding-top: 3px;
   padding-bottom: 3px;
-  height: 17px;
-  visibility: hidden;
-  display: none; }
+  height: 17px; }
 
 .login-container #login .table-v-content-middle td {
   vertical-align: middle; }
+
+#signup .singup-btn-size {
+  height: 45px; }
 
 #signup .form-control {
   border-width: 2px;
@@ -320,7 +405,7 @@
   vertical-align: top;
   margin-top: 5px;
   padding-left: 9px;
-  font-size: 12px; }
+  font-size: 13px; }
 
 #signup input[class=checkbox-login] {
   display: none; }
@@ -341,10 +426,18 @@
   background-size: contain;
   margin-top: 1px; }
 
+#signup .table .has-error {
+  color: #f00;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 370px;
+  display: inline-block; }
+
 #signup .table td {
   padding-left: 0;
   padding-right: 0;
-  border: 1px solid #f00; }
+  border: 1px solid #f00;
+  margin-left: -25px; }
   #signup .table td:first-of-type {
     padding-right: 15px;
     white-space: nowrap; }
@@ -352,22 +445,13 @@
     padding: 0;
     padding-top: 3px;
     padding-bottom: 3px;
-    height: 17px;
-    visibility: hidden;
-    display: none; }
+    height: 17px; }
 
 #signup .table-v-content-middle td {
   vertical-align: middle; }
 
-#signup .has-error {
-  color: #f00;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 370px;
-  display: inline-block; }
-
 .main-welcome .welcome {
-  width: 50%;
+  width: 40%;
   margin: 0 auto;
   text-align: center;
   color: #58595B; }
@@ -375,7 +459,7 @@
     margin-top: 50px;
     margin-bottom: 100px; }
   .main-welcome .welcome h1 {
-    margin-top: 20px;
+    margin-top: 10px;
     margin-bottom: 10px; }
   .main-welcome .welcome h4 {
     margin: 0 0 20px 0; }
@@ -405,42 +489,3 @@
   border-bottom: 55px solid transparent;
   border-left: 110px solid #F0e935;
   border-right: none; }
-
-body {
-  background-color: #eeeeee;
-  margin: 0 0 50px;
-  /* bottom = footer height */ }
-
-html {
-  position: relative;
-  min-height: 100%; }
-
-footer {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 50px;
-  width: 100%;
-  text-align: center; }
-  footer a {
-    color: #58595B;
-    line-height: 50px;
-    font-size: 14px; }
-
-.logo {
-  margin-bottom: 15px;
-  margin-top: 27px;
-  width: 296px;
-  height: 42px;
-  display: inline-block;
-  background-color: #58595B; }
-  .logo img {
-    width: 160px;
-    display: inline-block;
-    float: right;
-    background-color: #eeeeee;
-    margin-right: 20px;
-    margin-top: -10px; }
-
-.box-shadow {
-  box-shadow: 0 50px 60px -50px #58595b; }

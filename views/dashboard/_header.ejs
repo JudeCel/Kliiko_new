@@ -26,12 +26,14 @@
         <a href='/'><img src='../icons/Kliiko_logo_lines.png'></a>
       </div>
     </div>
-    <div class='col-xs-12 col-sm-12 col-md-6 btn-group' role='group'>
-      Welcome, <%= currentUser.subdomain %>!
-      <button class='btn-header-green' type='button'>
-        Tour video
-        <span class='glyphicon glyphicon-play' aria-hidden='true'></span>
-      </button>
+    <div class='col-xs-12 col-sm-12 col-md-6 btn-group remove-link-line' role='group'>
+      Welcome, <%= currentUser.firstName %>!
+      <a href='/dashboard/landing'>
+        <button class='btn-header-green' type='button'>
+          Tour video
+          <span class='glyphicon glyphicon-play' aria-hidden='true'></span>
+        </button>
+      </a>
 
       <button class='btn-header-red' type='button'>
         Help
@@ -46,7 +48,6 @@
       <ul class='dropdown-menu header-dropdown-ul' aria-labelledby='headerDropdown'>
         <li class='text-right'><a href='#'>Contact Details<img src='../icons/ic_tab_sessions_active.png' alt='' /></a></li>
         <li class='text-right'>
-          <!-- <a href='/dashboard/changepassword'>Change Password<img src='../icons/ic_tab_sessions_active.png' alt='' /></a> -->
           <a href='#' data-toggle='modal' data-target='#changePasswordModal'>Change Password<img src='../icons/ic_tab_sessions_active.png' alt='' /></a>
         </li>
         <li class='text-right'><a href='/dashboard/'>My Dashboard<img src='../icons/ic_tab_sessions_active.png' alt='' /></a></li>

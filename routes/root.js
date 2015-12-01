@@ -31,9 +31,6 @@ router.get('/', function (req, res, next) {
 router.get('/registration', function (req, res, next) {
     res.render('registration', usersRepo.prepareParams(req));
 });
-router.get('/landing', function(req, res, next) {
-  res.render('landing', { title: 'landing' });
-});
 
 router.post('/registration', function (req, res, next) {
   usersRepo.create(usersRepo.prepareParams(req), function (error, result) {
