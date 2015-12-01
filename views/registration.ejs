@@ -12,10 +12,10 @@
                 <h2 class="text-center text-gray-dark">Welcome!</h2>
                       <h5 class="text-center text-gray-light">Sign up to Kliiko and host your own chat session.</h5>
             <div class="container-fluid">
-              <div class="row">
+          <div class="row">
               <div class="col-md-12">
                 <form method="post" action="/registration">
-                <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
+                <table class="table table-no-inside-borders text-right text-gray-medium table-v-content-middle">
                   <tr>
                     <td>
                       <label class="text-no-bold text-login-page" for="firstName">First name</label>
@@ -28,7 +28,7 @@
                   <tr>
                     <td></td>
                     <td class="error-column">
-                      <span class="has-error"><%= errors.firstName %>TestestestestesttestTestestestestesttestTestestestestesttestTestestestestesttest</span>
+                      <span class="has-error"><%= errors.firstName %></span>
                     </td>
                   </tr>
 
@@ -44,7 +44,7 @@
                   <tr>
                     <td></td>
                     <td class="error-column">
-                      <span class="has-error"><%= errors.lastName %>TestestestestesttestTestestestestesttestTestestestestesttest</span>
+                      <span class="has-error"><%= errors.lastName %></span>
                     </td>
                   </tr>
 
@@ -60,7 +60,7 @@
                   <tr>
                     <td></td>
                     <td class="error-column">
-                        <span class="has-error"><%= errors.email %>TestestestestesttestTestestestestesttestTestestestestesttest</span>
+                        <span class="has-error"><%= errors.email %></span>
                     </td>
                   </tr>
 
@@ -76,7 +76,7 @@
                   <tr>
                     <td></td>
                     <td class="error-column">
-                      <span class="has-error"><%= errors.email %>TestestestestesttestTestestestestesttestTestestestestesttest</span>
+                      <span class="has-error"><%= errors.email %></span>
                     </td>
                   </tr>
 
@@ -92,32 +92,40 @@
                   <tr>
                     <td></td>
                     <td class="error-column">
-                        <span class="has-error"><%= errors.password %>TestestestestesttestTestestestestesttestTestestestestesttest</span>
+                        <span class="has-error"><%= errors.password %></span>
                     </td>
                   </tr>
 
                 </table>
 
+                <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                      <div class="check">
+                          <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate" value='receive-updates'/>
+                          <label for="tipsAndUpdate"></label>
+                          <span class="checkbox-signup" id="remember3">You have read and agree to the <a href="url">Administrator Terms & Conditions</a>.</span>
+                      </div>
+                      <div class="check">
+                          <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate" value='receive-updates'/>
+                          <label for="tipsAndUpdate"></label>
+                          <span class="checkbox-signup" id="remember3">Yes send me the Kliiko Newsletter which includes hints, tips and updates.</span>
+                      </div>
+                  </div>
+                </div>
+                </div>
 
-                    <div class="form-group">
-                        <div class="check">
-                            <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate" value='receive-updates'/>
-                            <label for="tipsAndUpdate"></label>
-                            <span class="checkbox-signup" id="remember3">You have read and agree to the <a href="url">Administrator Terms & Conditions</a>.</span>
-                        </div>
-                        <div class="check">
-                            <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate" value='receive-updates'/>
-                            <label for="tipsAndUpdate"></label>
-                            <span class="checkbox-signup" id="remember3">Yes send me the Kliiko Newsletter which includes hints, tips and updates.</span>
-                        </div>
-                    </div>
+                <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group text-right">
+                      <div class="check">
+                          <button type="submit" value="Register" class="btn border-green border-radius-none text-green-dark background-transp">Sign up</button>
+                      </div>
+                  </div>
 
-                    <div class="form-group text-right">
-                        <div class="check">
-                            <button type="submit" value="Register" class="btn border-green border-radius-none text-green-dark background-transp">Sign up</button>
-                        </div>
-                    </div>
-                </form>
+                </div>
+                </div>
+              </form>
               </div>
             </div>
           </div>

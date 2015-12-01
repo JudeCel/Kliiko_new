@@ -1,4 +1,5 @@
 #signup {
+
   .form-control {
     border-width: 2px;
     height: 40px;
@@ -37,6 +38,7 @@
       padding-left: 0;
       padding-right: 0;
       border: 1px solid #f00;
+      margin-left: -25px;
 
       &:first-of-type {
       padding-right: 15px;
@@ -48,8 +50,6 @@
         padding-top: 3px;
         padding-bottom: 3px;
         height: 17px;
-        visibility: hidden;
-        display: none;
       }
     }
   }
