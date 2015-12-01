@@ -1,4 +1,4 @@
-.dashboard-navigation > a {
+.remove-link-line > a {
   text-decoration: none;
 }
 
@@ -18,6 +18,8 @@
 
 .btn-header-dropdown {
   margin-left: 10px;
+  padding-right: 15px;
+  padding-left: 15px;
   font-family: SourceSansPro-Regular;
   height: 36px;
   border-radius: 0px;

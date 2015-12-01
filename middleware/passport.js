@@ -56,7 +56,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(userObject, done) {
-  models.User.find({attributes: ['email', 'id'], where: {id: userObject.id}}).done(function(result){
+  models.User.find({attributes: ['email', 'id', 'firstName'], where: {id: userObject.id}}).done(function(result){
     if (result) {
       result.getOwnerAccount().then(function(accounts) {
         done(null, userParams(result, accounts[0]));
@@ -68,7 +68,7 @@ passport.deserializeUser(function(userObject, done) {
 });
 
 function userParams(user, account) {
-  return { id: user.id, email: user.email, subdomain: account.name, role: account.AccountUser.role };
+  return { id: user.id, email: user.email, subdomain: account.name, role: account.AccountUser.role, firstName: user.firstName };
 }
 
 module.exports = passport;

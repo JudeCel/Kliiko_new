@@ -1,4 +1,4 @@
-.dashboard-navigation > a {
+.remove-link-line > a {
   text-decoration: none; }
 
 .btn-dashboard-menu {
@@ -16,6 +16,8 @@
 
 .btn-header-dropdown, .btn-header-green, .btn-header-red {
   margin-left: 10px;
+  padding-right: 15px;
+  padding-left: 15px;
   font-family: SourceSansPro-Regular;
   height: 36px;
   border-radius: 0px;
@@ -187,8 +189,15 @@
   height: 100px;
   background-color: white;
   border: 0;
-  margin-bottom: 100px;
+  margin-bottom: 50px;
   box-shadow: 0px 20px 30px -30px #58595b; }
+
+.login-header {
+  height: 100px;
+  margin-top: 30px; }
+
+.page-banner {
+  margin-top: 50px; }
 
 .header-dropdown-ul {
   left: 320px; }
@@ -401,7 +410,7 @@ footer {
   display: inline-block; }
 
 .main-welcome .welcome {
-  width: 50%;
+  width: 40%;
   margin: 0 auto;
   text-align: center;
   color: #58595B; }
@@ -409,7 +418,7 @@ footer {
     margin-top: 50px;
     margin-bottom: 100px; }
   .main-welcome .welcome h1 {
-    margin-top: 20px;
+    margin-top: 10px;
     margin-bottom: 10px; }
   .main-welcome .welcome h4 {
     margin: 0 0 20px 0; }
