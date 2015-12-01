@@ -36,6 +36,13 @@
   }
   .table {
 
+    .has-error {
+    color: #f00;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 370px;
+    display: inline-block;
+}
     td {
       padding-left: 0;
       padding-right: 0;
@@ -55,7 +62,6 @@
       }
     }
   }
-
   .table-v-content-middle {
 
     td{
@@ -63,11 +69,5 @@
     }
   }
 
-  .has-error{
-    color: #f00;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 370px;
-    display: inline-block;
-  }
+
 }
