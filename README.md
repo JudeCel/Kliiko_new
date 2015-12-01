@@ -85,9 +85,9 @@ Install mocha ```  npm install mocha -g ```
 
  ``` npm test ```
 
- ### Debugging
+### Debugging
 
  1) Run Gulp with --debug argument ```gulp --debug ```
 
  2) Open Chrome or Opera and go to http://127.0.0.1:8085/?ws=127.0.0.1:8085&port=5858
- 
+
