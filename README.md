@@ -41,12 +41,17 @@ If needed use specific subdomain name for users then ``` 127.0.0.1 acountName.fo
 
 1) you must have admin permissions
 
-2) go to ``` C:\Windows\System32\drivers\etc ```
+2) go to `C:\Windows\System32\drivers\etc`
 
-3) change hosts file (  127.0.0.1       insider.focus.com
-                        127.0.0.1       www.insider.focus.com   )
+3) add next lines to `hosts` file      
+    127.0.0.1     insider.focus.com      
+    127.0.0.1     www.insider.focus.com      
+    127.0.0.1     user.focus.com      
+    127.0.0.1     www.user.focus.com      
 
 4) remove localhost
+
+Also you required to have Python 2.7.x and Visual Studio as C compiler.
 
 ## Database migrations and ORM
 
