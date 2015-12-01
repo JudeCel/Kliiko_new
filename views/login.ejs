@@ -1,58 +1,72 @@
-<% include layout %>
+<% include header %>
 
 <main class="main-first-page">
-    <div class="container">
-        <h1 id="welcome">Welcome!</h1>
+    <div class="login-container center-block text-font-family">
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#login">LOG IN</a></li>
-            <li><a href="/registration">SIGN UP</a></li>
+            <li class="active">
+              <a class="background-yellow text-font-family-tabs text-white text-shadow-gray btn login-kliiko-tab" href="#login">Login to Kliiko</a>
+            </li>
+            <li>
+              <a class="background-green text-font-family-tabs text-white text-center login-signup-tab" href="/registration">Get a Kliiko Account</a>
+            </li>
         </ul>
-        <div class="tab-content">
+        <div class="tab-content border-yellow">
             <div id="login" class="tab-pane fade in active">
-                <h2>Log in to your account</h2>
-                <div id="warning-email-password"><%= error %></div>
+                <h1 class="text-gray-dark text-center">Welcome!</h1>
+                <div class="error-column has-error text-center" id="warning-email-password"><%= error %></div>
                 <form method="post" action='/login'>
-                    <div class="form-group">
-                        <label for="email">E-mail</label>
-                        <input type="email" name='email' class="form-control center-block" id="email" placeholder="E-mail">
-                    </div>
-                    <div class="form-group center-block">
-                        <label for="password">Password</label>
-                        <input type="password" name='password' class="form-control center-block" id="password"
-                               placeholder="Password">
-                    </div>
-                    <div class="form-group center-block">
-                        <div class="check center-block">
-                            <input type="checkbox" class="checkbox-login" name="rememberMe"
-                                   id="rememberMe"/><label for="rememberMe">
-                                <div id="remember">Remember</div>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group center-block">
-                        <div class="check center-block">
-                            <button type="submit" class="btn login">Login</button>
-                        </div>
-                    </div>
-                    <a href="/forgotpassword" id="forgot-password">Forgot your password?</a>
+                  <div class="container-fluid">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <table class="table table-no-inside-borders text-left text-gray-dark table-v-content-middle">
+                          <tr>
+                              <td class="form-group text-brown-dark text-no-bold">
+                                <label class="text-no-bold text-login-page" for="email">Email</label>
+                              </td>
+                              <td class="form-group text-center">
+                                <img src="icons/user.png" />
+                              </td>
+                              <td class="form-group">
+                                <input type="email" name='email' class="form-control center-block border-brown" id="email" placeholder="E-mail">
+                              </td>
+                          </tr>
+                          <tr>
+                              <td class="form-group text-gray-medium">
+                                <label class="text-no-bold text-login-page text-brown-dark" for="password">Password</label>
+                              </td>
+                              <td class="form-group text-center">
+                                <img src="icons/lock.png" />
+                              </td>
+                              <td class="form-group">
+                                <input type="password" name='password' class="form-control center-block border-brown" id="password" placeholder="Password">
+                              </td>
 
-                    <h2 id="or">Or</h2>
+                          </tr>
+                          <tr>
+                            <td></td>
+                            <td class="text-center">
+                                <input type="checkbox" class="checkbox-login" name="rememberMe"id="rememberMe"/>
+                                <label for="rememberMe">
+                                </label>
+                            </td>
+                            <td>Remember me</td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12 form-group">
+                        <button type="submit" class="btn border-yellow text-brown-light border-radius-none background-transp pull-right login-btn-size">Login</button>
+                        <a class="btn border-red border-radius-none text-red-dark text-no-decoration pull-left login-btn-size forgot-password-padding" href="/forgotpassword" id="forgot-password">Forgot your password?</a>
+                      </div>
+                    </div>
+
+                  </div>
+
                 </form>
             </div>
         </div>
     </div>
-    <script>
-        $(function() {
-            $('#password').password().on('show.bs.password', function(e) {
-                $('#eventLog').text('On show event');
-                $('#methods').prop('checked', true);
-            }).on('hide.bs.password', function(e) {
-                $('#eventLog').text('On hide event');
-                $('#methods').prop('checked', false);
-            });
-            $('#methods').click(function() {
-                $('#password').password('toggle');
-            });
-        });
-    </script>
 </main>
+
+<% include footer %>

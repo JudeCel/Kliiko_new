@@ -5,7 +5,9 @@
 // Components
 @import "components/_buttons.scss";
 @import "components/_icons.scss";
+@import "components/_modals.scss";
 @import "components/_navbar.scss";
+@import "components/_tables.scss";
 @import "components/_text.scss";
 @import "components/_video.scss";
 
@@ -14,3 +16,9 @@
 
 // Layout
 @import "layout/_layout.scss";
+
+// Pages
+@import "pages/_forgotPassword.scss";
+@import "pages/_login.scss";
+@import "pages/_registration.scss";
+@import "pages/_landing.scss";
