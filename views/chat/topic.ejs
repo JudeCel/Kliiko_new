@@ -548,8 +548,8 @@ BUTTON_BORDER_COLOUR = '#ffc973';
 <script type="text/javascript">
 //	lets start the help system now
 window.onload = function () {
-  var sessionID = '<%= id %>'
-  var currentUser = '<%= currentUser %>'
+  window.sessionID = '<%= id %>'
+  window.userID = '<%= currentUser.id %>'
 
   var socketConfig = io.connect('insider.focus.com:7203/chat', {
     'reconnect': true,
@@ -580,7 +580,7 @@ window.onload = function () {
 
     //	OK, now is a good time to load the main.js script
     $.getScript("/chat_room/js/main.js").done(function (script, textStatus) {
-      main(config, sessionID);
+      main(config);
     }).fail(function (jqxhr, settings, exception) {
       console.log("Error: unable to load main.js");
     });

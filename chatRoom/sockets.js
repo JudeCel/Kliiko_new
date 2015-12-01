@@ -1181,7 +1181,6 @@ module.exports.listen = function (server) {
     });
 
     var resCb = function (result) {
-      console.log(result);
       if (!result) return;
       var jsonData = JSON.stringify(result, null);
       io.emit('brandprojectinfo', jsonData);
@@ -1200,7 +1199,11 @@ module.exports.listen = function (server) {
     });
   });
 
-  socket.on('getuserinfo', function (userId, sessionId, brandProjectId, clientCompanyId) {
+  socket.on('getuserinfo', function (userId, sessionId, brandProjectId) {
+    console.log(userId);
+    console.log(sessionId);
+    console.log(brandProjectId);
+
     console.log("getuserinfo");
 
     var req = expressValidatorStub({
@@ -1208,7 +1211,6 @@ module.exports.listen = function (server) {
         user_id: userId,
         session_id: sessionId,
         brand_project_id: brandProjectId,
-        client_company_id: clientCompanyId
       }
     });
 

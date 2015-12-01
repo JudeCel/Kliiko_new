@@ -30,6 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/chat_room', express.static(__dirname + '/chatRoom/chat_room'));
 app.use('/onsocket', express.static(__dirname + '/chatRoom/onsocket'));
 app.use('/bootstrap', express.static(__dirname + '/chatRoom/bootstrap'));
+app.use('/chatRoom', express.static(__dirname + '/chatRoom/public'));
 
 app.use(session({
   store: new RedisStore(config.get("redisSession")),

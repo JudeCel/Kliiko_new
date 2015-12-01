@@ -72,12 +72,10 @@ var onBrandprojectinfo = function (data) {
 
             $('#logo-div').prepend('<img src=' + imgURL + ' />')
         } else {
-            //imgURL = window.URL_PATH.replace('admin/', '') + "chat_room/resources/images/logo_180x53.png";
-            imgURL = window.URL_PATH.replace('admin/', '') + "admin/images/logoDefaultInsiderfocus.jpg";
+            imgURL = "/chatRoom/images/logoDefaultInsiderfocus.jpg";
                 $('#logo-div').prepend('<img src=' + imgURL + ' />')
         }
-
-        socket.emit('getuserinfo', window.userID, window.sessionID, window.brandProjectInfo.id, window.brandProjectInfo.client_company_id);
+        socket.emit('getuserinfo', window.userID, window.sessionID, window.brandProjectInfo.id);
         socket.emit('get_offline_transactions', window.sessionID, window.userID);
     }
 };
