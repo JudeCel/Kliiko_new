@@ -1,11 +1,11 @@
 # Kliiko
-Tested on: Express version 4.2.* LTS, NPM version 3.3.*
+Tested on: Node.js version 4.2.* LTS, NPM version 3.3.*
 
 ## Dependencies
 
-Node.js >= 4.2.2
+Node.js >= 4.2.*
 
-Express 4.2.x
+Express 4.1.x
 
 NPM 3.3.x
 
@@ -90,4 +90,3 @@ Install mocha ```  npm install mocha -g ```
  1) Run Gulp with --debug argument ```gulp --debug ```
 
  2) Open Chrome or Opera and go to http://127.0.0.1:8085/?ws=127.0.0.1:8085&port=5858
-
