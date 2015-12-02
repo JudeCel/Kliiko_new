@@ -17,7 +17,7 @@ module.exports = (Sequelize, DataTypes) => {
       associate: function(models) {
         SessionMember.belongsTo(models.Session, {foreignKey: 'session_id'});
         SessionMember.belongsTo(models.User, {foreignKey: 'user_id'});
-        SessionMember.belongsTo(models.Account, {foreignKey: 'account_id'});
+        // SessionMember.belongsTo(models.Account, {foreignKey: 'account_id'});
       }
     }
   }

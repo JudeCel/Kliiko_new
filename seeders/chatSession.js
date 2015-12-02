@@ -27,7 +27,6 @@ let createNewChatFunctionList = [
   createSession,
   crateBrandProject,
   addedSessionMember,
-  // addBrandProjectToSession,
   addBrandProjectPreferences,
   createTopic
 ]
@@ -75,6 +74,7 @@ function crateBrandProject(user, session, callback) {
     callback(err);
   });
 };
+
 function addedSessionMember(user, session, brandProject, callback) {
   console.log("added Session Member");
   session.createSessionMember({ role: "owner", user_id: user.id })
@@ -85,17 +85,6 @@ function addedSessionMember(user, session, brandProject, callback) {
     callback(error);
   });
 }
-
-// function addBrandProjectToSession(user, session, brandProject, callback) {
-//   console.log("Added Brand Project To Session");
-//   brandProject.addSession(session)
-//   .then(function (_result) {
-//     callback(null, user, session, brandProject);
-//   })
-//   .catch(function (error) {
-//     callback(error);
-//   });
-// }
 
 function addBrandProjectPreferences(user, session, brandProject, callback) {
   let attrs = {

@@ -386,15 +386,14 @@ module.exports.listen = function (server) {
       socket.username = username;
     });
 
-    socket.on('getparticipants', function (session_id, client_company_id) {
+    socket.on('getparticipants', function (session_id) {
       console.log("getparticipants");
 
       if (session_id === null) return;
 
       var req = expressValidatorStub({
         params: {
-          session_id: session_id,
-          client_company_id: client_company_id
+          session_id: session_id
         }
       });
 
@@ -1200,10 +1199,6 @@ module.exports.listen = function (server) {
   });
 
   socket.on('getuserinfo', function (userId, sessionId, brandProjectId) {
-    console.log(userId);
-    console.log(sessionId);
-    console.log(brandProjectId);
-
     console.log("getuserinfo");
 
     var req = expressValidatorStub({

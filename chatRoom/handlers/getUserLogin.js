@@ -4,7 +4,7 @@ var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
 var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 var models = require("./../../models");
-var User = models.User;
+var SessionMember = models.SessionMember;
 
 var validate = function (req, resCb) {
   var err = joi.validate(req.params, {
@@ -20,9 +20,12 @@ var validate = function (req, resCb) {
 module.exports.validate = validate;
 
 var run = function (req, resCb, errCb) {
-
-  User.find({where: { id: req.params.sessionId }, include: [models.BrandProject] }).then(function(result) {
-    resCb.send(result.BrandProject);
+  SessionMember.find({where:
+    { user_id: req.params.user_id,  session_id: req.params.session_id },
+    include: [{
+      model: models.User, attributes: ['firstName', 'lastName', 'email']
+    }] }).then(function(result) {
+    resCb.send(result.User);
   }).catch(function(err) {
     errCb(webFaultHelper.getFault(err));
   });
