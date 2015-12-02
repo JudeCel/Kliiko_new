@@ -35,9 +35,9 @@ module.exports.getReportRowObjects = function (data, nextCb) {
             isFirst: i == 0,
             isLast: i == data.length - 1,
             name: rowData.name_first,
-            user_id: rowData.user_id,
+            userId: rowData.userId,
             fsPath: FS_PATH,
-            count: rowData.count_user_id,
+            count: rowData.count_userId,
             topic_id: rowData.topic_id,
             topic_name: rowData.topic_name
         };

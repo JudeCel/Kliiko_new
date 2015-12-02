@@ -1,5 +1,5 @@
-var onUpdatecanvas = function(user_id, topic_id, data) {
-	if (user_id != thisMain.userID) {
+var onUpdatecanvas = function(userId, topic_id, data) {
+	if (userId != thisMain.userID) {
 		if (topicID === topic_id) {
 			if (topic) window.whiteboard.updateCanvas(username, data);
 

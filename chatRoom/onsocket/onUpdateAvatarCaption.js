@@ -1,4 +1,4 @@
-var onUpdateavatarcaption = function(user_id, sessionId, nameList) {
+var onUpdateavatarcaption = function(userId, sessionId, nameList) {
 	//	this should be done for all sessions, not just a particular topic
 	if (sessionId != window.sessionID) return;	//	is this the correct topic?
 

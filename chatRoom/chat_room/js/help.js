@@ -28,7 +28,7 @@ function config(configDomain, configPort, configMode) {
 			'max reconnection attempts': 10
 		});
 
-		function addRowToTable(user_id, data) {
+		function addRowToTable(userId, data) {
 			var table = document.getElementById("tableResults");
 			var row = table.insertRow(1);
 			var cell1 = row.insertCell(0);
@@ -51,7 +51,7 @@ function config(configDomain, configPort, configMode) {
 			var formattedDate = curr_year + "/" + curr_month + "/" + curr_date + " " + curr_hours + ":" + curr_minutes + ":" + curr_seconds + "::" + curr_milliseconds;
 
 			cell1.innerHTML = formattedDate;
-			cell2.innerHTML = user_id;
+			cell2.innerHTML = userId;
 			cell3.innerHTML = data;
 		}
 

@@ -8,7 +8,7 @@ module.exports = function(topicId, userId, id, tag, command, capturedEvent, call
         params: {
             id: id,
             topic_id: topicId,
-            user_id: userId,
+            userId: userId,
             cmd: command,
             tag: tag,
             event: encodeURI(capturedEvent)

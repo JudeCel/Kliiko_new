@@ -10,7 +10,7 @@ var validate = function (req, resCb) {
         id: joi.number(),
         type_id: joi.number(),
         topic_id: joi.number(),
-        user_id: joi.number()
+        userId: joi.number()
     });
     if (err)
         return resCb(webFaultHelper.getValidationFault(err.message));

@@ -8,7 +8,7 @@ var OfflineTransaction = models.OfflineTransaction;
 module.exports.validate = function (req, resCb) {
   var err = joi.validate(req.params, {
     sessionId: joi.number().required(),
-    reply_user_id: joi.number().required()
+    reply_userId: joi.number().required()
   });
   if (err)
   return resCb(webFaultHelper.getValidationFault(err.message));
@@ -18,10 +18,10 @@ module.exports.validate = function (req, resCb) {
 
 module.exports.run = function (req, resCb, errCb) {
   let sessionId = req.params.sessionId;
-  let replyUserId = req.params.reply_user_id;
+  let replyUserId = req.params.reply_userId;
 
   OfflineTransaction.findAll(
-    {where: {sessionId: sessionId, reply_user_id: replyUserId}}).then(function(result) {
+    {where: {sessionId: sessionId, reply_userId: replyUserId}}).then(function(result) {
       let cloection  = _.map(result, function(n) {
         return n.dataValues;
       });

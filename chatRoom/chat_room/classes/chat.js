@@ -99,7 +99,7 @@ view.Chat.prototype.draw = function() {
                 topicId: window.topicID
             };
 
-            socket.emit('editchat', me.mode.id, me.mode.tag, me.mode.user_id, jsonMessage);
+            socket.emit('editchat', me.mode.id, me.mode.tag, me.mode.userId, jsonMessage);
 
         }else{
 
@@ -247,7 +247,7 @@ view.Chat.prototype.setMode = function(mode, json) {
                         this.mode = {
                             type: 'edit',
                             id: json.id,
-                            user_id: json.user_id,
+                            userId: json.userId,
                             tag: json.tag
                         };
 

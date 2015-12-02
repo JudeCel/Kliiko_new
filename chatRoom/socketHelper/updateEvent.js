@@ -1,6 +1,6 @@
 var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 
-function updateEvent(topic_id, user_id, object) {
+function updateEvent(topic_id, userId, object) {
     if (object == null) return;
 
     var req = expressValidatorStub({
@@ -20,7 +20,7 @@ function updateEvent(topic_id, user_id, object) {
 	function createEvent(data) {
 		var req = expressValidatorStub({
 			params: {
-				user_id: user_id,
+				userId: userId,
 				topic_id: topic_id,
 				tag: 16,
 				uid: object.id,

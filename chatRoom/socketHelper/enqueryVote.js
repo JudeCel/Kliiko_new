@@ -23,7 +23,7 @@ function enqueryVote(socket, voteID, topicID, userID, isfacilitator) {
 				var voteEvent = decodeURI(dataAsJSON[ndx].event);
 				var eventAsJson = JSON.parse(voteEvent);
 
-				if (dataAsJSON[ndx].user_id == userID && dataAsJSON[ndx].topic_id == topicID && eventAsJson.answer != "<No Answer>") {
+				if (dataAsJSON[ndx].userId == userID && dataAsJSON[ndx].topic_id == topicID && eventAsJson.answer != "<No Answer>") {
 					tag = true;
 					break;
 				}

@@ -33,7 +33,7 @@ module.exports.getReportRowObjects = function (data, nextCb) {
             isFirst: i == 0,
             isLast: i == data.length - 1,
             name: rowData.name_first,
-            user_id: rowData.user_id,
+            userId: rowData.userId,
             fsPath: FS_PATH,
             tag: rowData.tag,
             cmd: rowData.cmd,
@@ -101,7 +101,7 @@ var clearArea = function (report, coordinates) {
         isLast: true,
         name: "",
         tag: 16,
-        user_id: null
+        userId: null
     };
 
     report.addWhiteboardObjectPDF(bottom);

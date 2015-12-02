@@ -44,13 +44,13 @@ module.exports.getReportRowObjects = function (data, nextCb) {
             isReply: false,
             isTagged: rowData.tag === 1,
             name: rowData.name_first,
-            user_id: rowData.user_id,
+            userId: rowData.userId,
             fsPath: FS_PATH
         };
 
         var rowEvent = null;
         if (rowData.event){
-            if(rowData.user_id == 0){
+            if(rowData.userId == 0){
                 rowObject.isReply = false;
                 //rowData.event=rowData.event.replace(/<!--(.|\n)*-->/g,""); //didn't work. figure out why, and fix it- it'll improve performance.
                 while (rowData.event.indexOf("<!--")>-1)

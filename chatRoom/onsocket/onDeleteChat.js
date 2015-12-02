@@ -1,4 +1,4 @@
-var onDeleteChat = function(user_id, topic_id, id, data) {
+var onDeleteChat = function(userId, topic_id, id, data) {
 	var dataAsJSON = [];
 
 	if (!isEmpty(data)) {
@@ -10,7 +10,7 @@ var onDeleteChat = function(user_id, topic_id, id, data) {
     var rowIndex = null;
 
 	if (topic_id === thisMain.topicID) {
-		if (user_id != thisMain.userID) {
+		if (userId != thisMain.userID) {
 			if (dataAsJSON.length > 0) {
 				for (var index = 0; index < dataAsJSON.length; index++){
 					element = document.getElementById("tag_" + dataAsJSON[index].id);

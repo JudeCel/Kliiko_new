@@ -8,8 +8,8 @@ function saveResourceToDb(json, resCb, nextCb) {
     //		looking at the resources table where the type_id is 99.
     //	2)	With those rows from the resources table, we will look for the
     //		json.filename.
-    //	3)	Once we have a match, we can get the user_id
-    //	4)	The user_id allows us to get the connection so we can send
+    //	3)	Once we have a match, we can get the userId
+    //	4)	The userId allows us to get the connection so we can send
     //		information back to our client.
     var req = {
         type_id: mtypes.resourceType.tmp
@@ -47,7 +47,7 @@ function saveResourceToDb(json, resCb, nextCb) {
                     type_id: mtypes.resourceType.tmp
                 };
 
-                req.user_id = json.user_id = resource.user_id;
+                req.userId = json.userId = resource.userId;
                 req.topic_id = json.topic_id = resource.topic_id;
 
                 getResourcesGeneric.execute(req, function (result) {
@@ -66,17 +66,17 @@ function saveResourceToDb(json, resCb, nextCb) {
 
                             if(isAlreadyUpdateResources == false){
                                 isAlreadyUpdateResources = true;
-                                socketHelper.updateResources(json.topic_id, json.user_id, json, json.type, resCb);
+                                socketHelper.updateResources(json.topic_id, json.userId, json, json.type, resCb);
 
                                 switch (json.type) {
                                     case 'collage':
-                                        socketHelper.createCustomEvent(json.topic_id, json.user_id, "collage", JSON.stringify(json, null));
+                                        socketHelper.createCustomEvent(json.topic_id, json.userId, "collage", JSON.stringify(json, null));
                                         break;
                                 }
                             }
                         }
                         else
-                        resCb(resource.user_id, json);
+                        resCb(resource.userId, json);
                     }
                 }, nextCb)
             }

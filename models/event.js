@@ -3,7 +3,7 @@
 module.exports = (Sequelize, DataTypes) => {
   var Event = Sequelize.define('Event', {
     id:	 { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    user_id:	{type: DataTypes.INTEGER, allowNull: false},
+    userId:	{type: DataTypes.INTEGER, allowNull: false},
     topic_id:	{type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
     reply_id:	{type: DataTypes.INTEGER, allowNull: true},
     cmd:	{type: DataTypes.STRING, allowNull: true},

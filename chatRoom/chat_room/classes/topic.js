@@ -99,7 +99,7 @@ view.Topic = function(json) {
 		//	check if this participant is valid
 		if (isEmpty(this.json.participants[ndx])) continue;
 
-		avatarJSON.userId = this.json.participants[ndx].user_id;
+		avatarJSON.userId = this.json.participants[ndx].userId;
 		avatarJSON.name = this.json.participants[ndx].name;
 		avatarJSON.fullName = this.json.participants[ndx].fullName;
 		avatarJSON.avatarInfo = this.json.participants[ndx].avatar_info;
@@ -273,11 +273,11 @@ view.Topic.prototype.getAvatarIndexByIndex = function(index) {
 	return this.json.participants[index];
 }
 
-view.Topic.prototype.getAvatarIndexByUserId = function(user_id) {
+view.Topic.prototype.getAvatarIndexByUserId = function(userId) {
     var result = null;
 
     for (var ndx = 0, pl = this.json.participants.length; ndx < pl; ndx++) {
-        if (user_id === this.json.participants[ndx].user_id) {
+        if (userId === this.json.participants[ndx].userId) {
             result = ndx;
             break;
         }

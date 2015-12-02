@@ -9,7 +9,7 @@ var dataHelper = require("../helpers/dataHelper.js");
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        user_id: joi.number().required(),
+        userId: joi.number().required(),
         topic_id: joi.number().required(),
         tag: joi.number().required(),
         timestamp: joi.number().optional(),

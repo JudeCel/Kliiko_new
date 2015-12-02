@@ -7,7 +7,7 @@ var SessionMember = models.SessionMember;
 
 var validate = function (req, resCb) {
   var err = joi.validate(req.params, {
-    user_id: joi.number().required(),
+    userId: joi.number().required(),
     sessionId: joi.number().required(),
     // brand_project_id: joi.number().optional(),
   });
@@ -20,7 +20,7 @@ module.exports.validate = validate;
 
 var run = function (req, resCb, errCb) {
   SessionMember.find({
-    where: { userId: req.params.user_id,  sessionId: req.params.sessionId },
+    where: { userId: req.params.userId,  sessionId: req.params.sessionId },
     attributes: ['userId', 'username', 'colour', 'online', 'avatar_info', 'sessionId', 'role'],
     include: [ { model: models.User, attributes: ['firstName', 'lastName'] }] })
   .then(function(result) {

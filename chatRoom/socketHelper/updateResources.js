@@ -1,11 +1,11 @@
 var mtypes = require('if-common').mtypes;
 var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 
-function updateResources(topic_id, user_id, content, type, Cb) {
+function updateResources(topic_id, userId, content, type, Cb) {
     var req = expressValidatorStub({
         params: {
             topic_id: topic_id,
-            user_id: user_id,
+            userId: userId,
             type_id: mtypes.resourceType[type]
         }
     });
@@ -18,12 +18,12 @@ function updateResources(topic_id, user_id, content, type, Cb) {
     var nextCb = function (err) {
         // TBD
         if(Cb)
-            Cb(user_id, content);
+            Cb(userId, content);
     };
 
     var res = { send: function (data) {
         if(Cb)
-            Cb(user_id, content);
+            Cb(userId, content);
     } };
 
     var createResource = require('../handlers/createResource.js');

@@ -1,6 +1,6 @@
-var onUpdatedemotions = function(user_id, topic_id, data) {
+var onUpdatedemotions = function(userId, topic_id, data) {
 	if (topic_id === window.topicID) {
-		if (user_id != window.userID) {
+		if (userId != window.userID) {
 			if (window.avatars === null) {
 				window.avatars = window.topic.getAvatars();
 			}

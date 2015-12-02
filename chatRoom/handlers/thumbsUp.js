@@ -13,7 +13,7 @@ var createUserVotes =  ifData.repositories.createUserVotes;
 module.exports.validate = function (req, next) {
     var err = joi.validate(req.params, {
         event_id: joi.number().required(),
-        updating_user_id: joi.number().required()
+        updating_userId: joi.number().required()
     });
 
     if (err) return next(webFaultHelper.getValidationFault(err.message));
@@ -28,7 +28,7 @@ module.exports.run = function (req, res, mainCb) {
             .then(function (event) {
 			if (!event) return;
 			topicId = event.topic_id;
-			getUserVotes(req.params.updating_user_id, event.topic_id, req.params.event_id)
+			getUserVotes(req.params.updating_userId, event.topic_id, req.params.event_id)
 				.then(function (userVotes) {
 					if (userVotes && userVotes.length > 0) return "no votes";
                         return getVotes(req.params.event_id);
@@ -56,7 +56,7 @@ module.exports.run = function (req, res, mainCb) {
                         if (votes) {
                             createUserVotes({
                                 vote_id: votes.id,
-                                user_id: req.params.updating_user_id,
+                                userId: req.params.updating_userId,
                                 topic_id: topicId,
                                 event_id: req.params.event_id
                             })

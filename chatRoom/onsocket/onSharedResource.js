@@ -1,7 +1,7 @@
 
-var onSharedresource = function(user_id, topic_id, json) {
+var onSharedresource = function(userId, topic_id, json) {
 	if (topic_id === thisMain.topicID) {
-		if (user_id != thisMain.userID) {
+		if (userId != thisMain.userID) {
 			setResource(json);
 		}
 	}

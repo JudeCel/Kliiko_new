@@ -2,7 +2,7 @@
 	json = {
 		name: string,				//	name of the file (no path), e.g., "Daves_Budgie.jpg",
 		type: string,				//	'image' | 'collage' | audio'
-		user_id: int,				//	user id
+		userId: int,				//	user id
 		topic_id: int,				//	topic id
 		format: string,				//	file type, e.g., 'JPEG' | 'PNG' | 'MP3' | 'ACC'
 		width: int, 				//	image specific

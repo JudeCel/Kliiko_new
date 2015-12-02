@@ -1,6 +1,6 @@
-var onUpdatechat = function(user_id, topic_id, data) {
+var onUpdatechat = function(userId, topic_id, data) {
 	if (!isEmpty(topic)) {
-		var avatar = topic.getAvatarByUserId(user_id),
+		var avatar = topic.getAvatarByUserId(userId),
 			avatarJSON = avatar.json;
 	}
 
@@ -62,7 +62,7 @@ var onUpdatechat = function(user_id, topic_id, data) {
 		}
 
 		//	notifiy the user that someone has chatted
-		if (user_id != window.userID) {
+		if (userId != window.userID) {
 			playSound(window.URL_PATH + window.CHAT_ROOM_PATH + "resources/sounds/chat_notification.mp3");
 		}
 	} else {
@@ -100,7 +100,7 @@ var onUpdatechat = function(user_id, topic_id, data) {
 		}
 
 		window.onTopicsUpdateTopic({
-			userID: user_id,				//	make sure we update with the user
+			userID: userId,				//	make sure we update with the user
 			topicID: topic_id
 		});
 

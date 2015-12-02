@@ -300,7 +300,7 @@ var initMainMenu = function(role) {
 	data = [{
 		name: string,			//	{required}	users name
 		fullName: string,
-		user_id,
+		userId,
 		role: string,			//	{default: 'participant'}	'facilitator' | 'owner' | 'participant'
 		colour: int,			//	colour of the participant
 		online: boolean,
@@ -446,7 +446,7 @@ var onParticipants = function(data) {
 
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	//	lets add ourselves now
-	socket.emit('adduser', window.sessionID, currentParticipant.user_id, currentParticipant.name);
+	socket.emit('adduser', window.sessionID, currentParticipant.userId, currentParticipant.name);
 
 	var backgroundWidth = paperBackground.canvas.clientWidth ? paperBackground.canvas.clientWidth : paperBackground.width,
 		backgroundHeight = paperBackground.canvas.clientHeight ? paperBackground.canvas.clientHeight : paperBackground.height,

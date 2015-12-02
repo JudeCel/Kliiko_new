@@ -209,7 +209,7 @@
 //                isFirst: i == 0,
 //                isLast: i == data.length - 1,
 //                name: data[i].name_first,
-//                user_id: data[i].user_id,
+//                userId: data[i].userId,
 //                fsPath: FS_PATH
 //            };
 //            var rowData = data[i];
@@ -292,7 +292,7 @@
 //                    break;
 //
 //                case 'stats':
-//                    rowObject.count = rowData.count_user_id;
+//                    rowObject.count = rowData.count_userId;
 //                    rowObject.topic_id = rowData.topic_id;
 //                    rowObject.topic_name = rowData.topic_name;
 //

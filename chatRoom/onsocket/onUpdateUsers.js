@@ -1,4 +1,4 @@
-var onUpdateusers = function(sessionId, user_id, data) {
+var onUpdateusers = function(sessionId, userId, data) {
 	//	this should be done for all sessions, not just a particular topic
 	if (sessionId != window.sessionID) return;	//	is this the correct topic?
 

@@ -17,13 +17,13 @@ module.exports.validate = function (req, resCb) {
 
 module.exports.run = function (req, resCb, errCb) {
   let params = req.params;
-  let sql = "SELECT id, user_id, event  \
+  let sql = "SELECT id, userId, event  \
               FROM events  \
               WHERE cmd = 'collage' AND topic_id = ? AND deleted IS NULL AND id IN \
                   (SELECT MAX(id)  \
                   FROM events  \
                   WHERE cmd = 'collage' AND topic_id = ? AND deleted IS NULL  \
-                  GROUP BY user_id)";
+                  GROUP BY userId)";
 
 
 	models.sequelize.query(sql,

@@ -21,7 +21,7 @@ module.exports = function(topicId, userId, command, capturedEvent, encode) {
 	var customEventRequest = expressValidatorStub({
 		params: {
 			topic_id: topicId,
-			user_id: userId,
+			userId: userId,
 			cmd: command,
 			tag: customEventParams.tag,
 			event: customEventParams.event,

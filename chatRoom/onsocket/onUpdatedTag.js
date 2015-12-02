@@ -1,6 +1,6 @@
-var onUpdatedTag = function(user_id, topic_id, tag_value){
-	var tag_id = "tag_" + user_id;
-	var row_id = "tr_" + user_id;
+var onUpdatedTag = function(userId, topic_id, tag_value){
+	var tag_id = "tag_" + userId;
+	var row_id = "tr_" + userId;
 
 	var element = document.getElementById(tag_id);
 	switch(tag_value){

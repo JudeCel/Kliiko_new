@@ -62,10 +62,10 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, insertA
 		}
 	}
 
-	window.replyOnClick = function(tag_id, user_id, colour) {
-		//alert("" + event_id + " : " + user_id);
+	window.replyOnClick = function(tag_id, userId, colour) {
+		//alert("" + event_id + " : " + userId);
 		window.chat.setMode("reply", {
-			replyTo: parseInt(user_id),
+			replyTo: parseInt(userId),
 			messageId: parseInt(tag_id),
 			colour: colour
 		});
@@ -104,7 +104,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, insertA
 	//	lets get our reply to info (if needed)
 	if (!isEmpty(replyId)) {
 		for (var ndx = 0, pl = participants.length; ndx < pl; ndx++) {
-			if (replyUserId === participants[ndx].user_id) {
+			if (replyUserId === participants[ndx].userId) {
 				message = "<b><i>@" + participants[ndx].fullName + ":</i></b> " + message;
 				date = stringToDate(data.replyDate);
 				showReply = false;

@@ -1,6 +1,6 @@
-var onUpdateBillboard = function(user_id, topic_id, data) {
+var onUpdateBillboard = function(userId, topic_id, data) {
 	if (isEmpty(topic)) return;
-	var avatar = topic.getAvatarByUserId(user_id);
+	var avatar = topic.getAvatarByUserId(userId);
 	var avatarJSON = avatar.json;
 
 	if (topicID !== topic_id || avatarJSON.role !== "facilitator") return;
@@ -21,7 +21,7 @@ var onUpdateBillboard = function(user_id, topic_id, data) {
 	}
 
 	//	notifiy the user that someone has chatted
-	if (user_id != window.userID) {
+	if (userId != window.userID) {
 		playSound(window.URL_PATH + window.CHAT_ROOM_PATH + "resources/sounds/chat_notification.mp3");
 	}
 

@@ -213,21 +213,21 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 	};
 
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-	window.replyOnClick = function(tag_id, user_id, colour) {
+	window.replyOnClick = function(tag_id, userId, colour) {
 		window.chat.setMode("reply", {
 			tagId: tag_id,
-			replyTo: parseInt(user_id),
+			replyTo: parseInt(userId),
 			messageId: parseInt(tag_id.substring(4)),
 			colour: colour
 		});
 	};
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    window.editOnClick = function(data_id, data_tag, user_id, colour) {
+    window.editOnClick = function(data_id, data_tag, userId, colour) {
         window.chat.setMode("edit", {
             id: data_id,
             tag: data_tag,
-            user_id: user_id,
+            userId: userId,
             colour: colour,
             message: $('#post_' + data_id).html()
         });
@@ -277,7 +277,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 	
 	var date = data.date;
 	var showReply = true;
-	var showThumbsUp = (avatarJSON.user_id != window.userID);
+	var showThumbsUp = (avatarJSON.userId != window.userID);
 	var showEllipsis = true;
 	var showIndent = false;		//	do we indent this comment?
     var showEdit = (avatarJSON.userId == window.userID);
@@ -296,7 +296,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 	//	lets get our reply to info (if needed)
 	if (!isEmpty(replyId)) {
 		for (var ndx = 0, pl = participants.length; ndx < pl; ndx++) {
-			if (replyUserId === participants[ndx].user_id) {
+			if (replyUserId === participants[ndx].userId) {
 				message = "<b><i>@" + participants[ndx].fullName + ":</i></b> " + message;
 				date = data.replyDate;
 				//showReply = false;

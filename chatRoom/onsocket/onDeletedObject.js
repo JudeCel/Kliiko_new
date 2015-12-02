@@ -1,6 +1,6 @@
-var onDeletedObject = function(user_id, topic_id, uid) {
+var onDeletedObject = function(userId, topic_id, uid) {
 	if (topic_id === thisMain.topicID) {
-		if (user_id != thisMain.userID) {
+		if (userId != thisMain.userID) {
 			window.whiteboard.paint.deleteObject(uid);
 		}
 	}

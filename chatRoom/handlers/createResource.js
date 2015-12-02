@@ -9,7 +9,7 @@ module.exports.validate = function (req, resCb) {
         type_id: joi.number().required(),
         url: joi.string().optional(),
         topic_id: joi.number().optional(),
-        user_id: joi.number().optional(),
+        userId: joi.number().optional(),
         JSON: joi.string().optional()
     });
     if (err)

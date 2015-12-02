@@ -7,7 +7,7 @@ var OfflineTransaction = models.OfflineTransaction;
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
         topic_id: joi.number().required(),
-        reply_user_id: joi.number().required()
+        reply_userId: joi.number().required()
     });
 
     if (err)
@@ -17,7 +17,7 @@ module.exports.validate = function (req, resCb) {
 };
 
 module.exports.run = function (req, resCb, errCb) {
-  OfflineTransaction.destroy({where: { topic_id: req.params.topicId, reply_user_id: params.replyUserId } })
+  OfflineTransaction.destroy({where: { topic_id: req.params.topicId, reply_userId: params.replyUserId } })
   .then(function(data) {
     resCb.send(data)
   })

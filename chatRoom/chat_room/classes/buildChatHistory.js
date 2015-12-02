@@ -41,7 +41,7 @@ build.ChatHistory.prototype.init = function() {
 	data = [{
 		id: int,
 		topic_id: int,
-		user_id: int,
+		userId: int,
 		reply_id: int,
 		cmd: string,
 		thumbs_up,
@@ -92,19 +92,19 @@ build.ChatHistory.prototype.processChatHistory = function(data) {
 
 		this.updateAvatarEmotion(event.name, event.object.emotion);
 
-		if (isEmpty(nameIndex[data[ndx].user_id])) {
+		if (isEmpty(nameIndex[data[ndx].userId])) {
 			//var nameNdx = window.topic.getAvatarIndexByName(event.name);
-            var nameNdx = window.topic.getAvatarIndexByUserId(data[ndx].user_id);
-			nameIndex[data[ndx].user_id] = nameNdx;
+            var nameNdx = window.topic.getAvatarIndexByUserId(data[ndx].userId);
+			nameIndex[data[ndx].userId] = nameNdx;
 		} else {
-			nameNdx = nameIndex[data[ndx].user_id];
+			nameNdx = nameIndex[data[ndx].userId];
 		}
 
 		if (isEmpty(nameNdx)) continue;
 
 		avatarInfo = window.topic.getAvatarIndexByIndex(nameNdx);
 		avatarInfo.avatarInfo = avatarInfo.avatar_info;
-		avatarInfo.userId = avatarInfo.user_id;
+		avatarInfo.userId = avatarInfo.userId;
 
 		if (!isEmpty(avatarInfo.colour)) {
 			if (avatarInfo.colour[0] != '#') avatarInfo.colour = colourToHex(avatarInfo.colour);

@@ -4,19 +4,19 @@
 		avatarinfo: string 				//	"head:face:hair:top:accessory:desk", i.e., 0:4:8:9:10:11 (see users table)
 	}
 */
-var onUpdateavatarinfo = function(sessionId, user_id, data) {
+var onUpdateavatarinfo = function(sessionId, userId, data) {
 	//	this should be done for all sessions, not just a particular topic
 	if (isEmpty(sessionId)) return;
 	if (sessionId != window.sessionID) return;	//	is this the correct topic?
 
 	if (isEmpty(window.topic)) return;
 	
-	if (isEmpty(user_id)) return;
+	if (isEmpty(userId)) return;
 	if (isEmpty(data)) return;
 	if (isEmpty(data.avatarinfo)) return;
 
 	//	default values where we can
-	if (isEmpty(data.userid)) data.userid = user_id;
+	if (isEmpty(data.userid)) data.userid = userId;
 
 	//	this is broadcast to everyone, but the user has already updated the avatar
 	if (data.userid === window.userID) return;
