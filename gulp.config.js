@@ -22,7 +22,7 @@ module.exports = function () {
         images: client + 'images/**/*.*',
         htmlTemplates: clientApp + '**/*.html',
         index: views + 'layout.ejs' ,
-        clientApp: clientApp + 'scss/**/*.scss',
+        clientApp: [clientApp + 'scss/**/*.scss', clientApp + 'js/ngApp/**/*.scss'],
         layout: views,
         js: [
             server + '**/*.*/',
