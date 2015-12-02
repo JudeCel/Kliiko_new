@@ -17,7 +17,8 @@ describe('User', () => {
         firstName: "Dainis",
         lastName: "Lapins",
         password: "cool_password",
-        email: "dainis@gmail.com"
+        email: "dainis@gmail.com",
+        gender: "male"
       }
       User.build(attrs).save()
         .then(function(user) {
@@ -37,7 +38,8 @@ describe('User', () => {
       firstName: "Dainis",
       lastName: "Lapins",
       password: "cool_password",
-      email: "dainis@gmail.com"
+      email: "dainis@gmail.com",
+      gender: "male"
     }
     beforeEach((done) => {
       models.sequelize.sync({ force: true }).then(() => {
@@ -75,6 +77,7 @@ describe('User', () => {
         lastName: "Lapins",
         password: "cool_password",
         email: "dainis@gmail.com",
+        gender: "male",
         requiredEmail: true
       }
       User.build(attrs).save()
@@ -94,6 +97,7 @@ describe('User', () => {
         firstName: "Dainis",
         lastName: "Lapins",
         password: "cool_password",
+        gender: "male",
         email: "",
         requiredEmail: true
       }
@@ -114,6 +118,7 @@ describe('User', () => {
         firstName: "Dainis",
         lastName: "Lapins",
         password: "cool_password",
+        gender: "male",
         email: "",
         requiredEmail: false
       }
