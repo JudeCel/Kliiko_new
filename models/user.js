@@ -7,6 +7,10 @@ module.exports = (Sequelize, DataTypes) => {
     firstName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} } },
     lastName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} } },
     requiredEmail: { type: DataTypes.VIRTUAL, defaultValue: true },
+    gender: {type: DataTypes.ENUM, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} }, values: ["male", "female"] },
+    mobileNumber: {type: DataTypes.STRING, allowNull: true },
+    landlineNumber: {type: DataTypes.STRING, allowNull: true },
+    companyName: {type: DataTypes.STRING, allowNull: true },
     email: {type: DataTypes.STRING, allowNull: true,
     validate:{
       validateEmail: function(val, next) {
