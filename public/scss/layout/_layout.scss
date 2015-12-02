@@ -3,6 +3,10 @@
   border-radius: 0;
 }
 
+.border-brown {
+  border: 2px solid #58595B;
+}
+
 .border-yellow{
   border: 2px solid $yellow;
 }
@@ -109,6 +113,11 @@ font-family: Sofia Pro Condensed;
 .text-left {
   text-align: left;
 }
+
+.text-font-family-tabs {
+  font-family: Source sans pro black;
+}
+
 /* Text COLOR */
 
 .text-shadow-gray {
@@ -136,6 +145,13 @@ color: #737373;
   color: $green;
 }
 
+.text-brown-light {
+  color: #7F7426;
+}
+
+.text-brown-dark {
+  color: #58595B;
+}
 /* Responsive design */
 
 @media (min-width: 300px){

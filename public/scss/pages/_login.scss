@@ -15,6 +15,13 @@
 
   #login{
 
+    .forgot-password-padding {
+    padding: 10px;
+    }
+    .login-btn-size {
+    height: 45px;
+    }
+
     input[class=checkbox-login] {
       display: none;}
 
@@ -43,10 +50,24 @@
       border-radius: 0;
     }
 
+    .has-error{
+        color: #f00;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 475px;
+        display: inline-block;
+      }
+
     .table {
       td {
         padding-left: 0;
         padding-right: 0;
+      }
+      &.error-column {
+        padding: 0;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        height: 17px;
       }
 
     }
