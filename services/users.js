@@ -8,21 +8,19 @@ var uuid = require('node-uuid');
 var async = require('async');
 
 function create(params, callback) {
-  console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-  console.log("Create Function");
-  console.log(params);
-  console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+  let err = {};
+
+  if (params.termsAndConditions === "false") {
+    err.termsAndConditions = "You must agree to the terms and conditions before register."
+    return callback(err);
+  }
+
   validateForCreate(params, function (error, params) {
     if (error) {
-      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-      console.log("Create errors Function");
-      console.log(error);
-      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
       return callback(error, params)
     } else {
       createUser(params, function (error, result) {
         if (error) {
-
             return callback(error);
         } else {
             return callback(null, result);
@@ -131,6 +129,7 @@ function prepareParams(req, errors) {
     landlineNumber: '',
     gender: '',
     tipsAndUpdate: 'on',
+    termsAndConditions: 'false',
     errors: (errors || {})
   }, req.body);
 }
