@@ -21,7 +21,7 @@ var onUserinfo = function(data) {
 		});
 	} else {
 		window.userInfo = userInfo;
-		window.username = window.userInfo.firstName;
+		window.username = window.userInfo.username;
 
 		//	make sure we update the username on the server
 		socket.emit('setusername', thisMain.username);

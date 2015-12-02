@@ -3,7 +3,7 @@
 module.exports = (Sequelize, DataTypes) => {
   var Topic = Sequelize.define('Topic', {
     id:	{ type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    session_id:	{ type: DataTypes.INTEGER, allowNull: false},
+    sessionId:	{ type: DataTypes.INTEGER, allowNull: false},
     topic_status_id: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1},
     topic_order_id: { type: DataTypes.INTEGER, allowNull: true},
     type: { type: DataTypes.STRING, allowNull: false, defaultValue: 'chat'},
@@ -18,7 +18,7 @@ module.exports = (Sequelize, DataTypes) => {
       paranoid: true,
       classMethods: {
         associate: function(models) {
-          Topic.belongsTo(models.Session, {foreignKey: 'session_id'});
+          Topic.belongsTo(models.Session, {foreignKey: 'sessionId'});
         }
       }
     }

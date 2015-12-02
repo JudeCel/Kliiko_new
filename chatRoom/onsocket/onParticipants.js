@@ -174,7 +174,7 @@ var initMainMenu = function(role) {
 
 	switch(role) {
 		case 'facilitator':
-		case 'co-facilitator': {
+		case 'owner': {
 			list = [
 				menu.uploadVideo,
 				menu.uploadAudio,
@@ -301,7 +301,7 @@ var initMainMenu = function(role) {
 		name: string,			//	{required}	users name
 		fullName: string,
 		user_id,
-		role: string,			//	{default: 'participant'}	'facilitator' | 'co-facilitator' | 'participant'
+		role: string,			//	{default: 'participant'}	'facilitator' | 'owner' | 'participant'
 		colour: int,			//	colour of the participant
 		online: boolean,
 		avatar_info: string		//	"head:face:hair:top:accessory:desk", i.e., 0:4:8:9:10:11 (see users table)
@@ -318,6 +318,7 @@ var onParticipants = function(data) {
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	//	lets login our user
 	var currentParticipant = null;
+	console.log(window.participants);
 	for (var ndx = 0, pl = window.participants.length; ndx < pl; ndx++) {
 		if (!isEmpty(window.participants[ndx])) {
 			if (!isEmpty(window.participants[ndx].name)) {

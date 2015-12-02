@@ -26,7 +26,7 @@ view.Topic = function(json) {
 			switch(this.json.participants[ndx].role) {
 				case 'observer':
 				case 'facilitator':
-				case 'co-facilitator':
+				case 'owner':
 				break;
 				default: {	//	basically, a participant
 					numberOfActualParticipants = numberOfActualParticipants + 1;
@@ -115,7 +115,7 @@ view.Topic = function(json) {
 		//	do role specific processing
 		switch(avatarJSON.role) {
 			case 'facilitator': {
-				if ((window.role === 'facilitator') || (window.role === 'co-facilitator')) {
+				if ((window.role === 'facilitator') || (window.role === 'owner')) {
 					/*
                     avatarJSON.title = "Click to post a message to the billboard";
 					avatarJSON.clickEvent = {
@@ -144,13 +144,13 @@ view.Topic = function(json) {
 				avatarJSON.colour = 6710886;
 			}
 			break;
-			case 'co-facilitator':
+			case 'owner':
 			case 'observer': {
 				showAvatar = false;
 			}
 			break;
 			default: {	//	basically, a participant
-				if ((window.role === 'facilitator') || (window.role === 'co-facilitator')) {
+				if ((window.role === 'facilitator') || (window.role === 'owner')) {
 					avatarJSON.title = "Click to send a private mail to " + this.json.participants[ndx].fullName;
 					avatarJSON.clickEvent = {
 						type: "email",
@@ -195,7 +195,7 @@ view.Topic = function(json) {
 	for (var ndx = (this.avatar.length - 1); ndx > -1; ndx--) {
 		switch (this.avatar[ndx].json.role) {
 			case 'facilitator':
-			case 'co-facilitator':
+			case 'owner':
 				this.avatar[ndx].say("", null);
 			break;
 			case 'observer':

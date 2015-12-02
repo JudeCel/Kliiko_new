@@ -4,7 +4,7 @@ var view = namespace('sf.ifs.View');
 	json = {
 		userId,							//	avatars Id
 		name: string,					//	avatars nickname
-		role: string,					//	facilitator | co-facilitator | observer | 
+		role: string,					//	facilitator | owner | observer | 
 		title: string,					//	tooltip
 		fullName: string,				//	avatars full name
 		avatarInfo: string,				//	holds the DNA of the avatar
@@ -27,7 +27,7 @@ view.Avatar = function(json) {
 	
 	switch(this.json.role) {
 		case 'facilitator':
-		case 'co-facilitator': {
+		case 'owner': {
 			this.json.colour = avatarColours[8];
 			this.bubble = this.createBubble(this.json);
 		}

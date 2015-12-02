@@ -164,7 +164,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, insertA
 
 	//	only facilitators need to see the tag
 	var divTag = null;
-	if ((window.role === 'facilitator') || (window.role === 'co-facilitator')) {
+	if ((window.role === 'facilitator') || (window.role === 'owner')) {
 		if (isTag) {
 			divTag = "<div class=\"tag tag_set\" id=\"" + tagId + "\" onclick=\"javascript:window.tagOnClick('" + tagId + "')\" />" + "</div>";
 		} else {

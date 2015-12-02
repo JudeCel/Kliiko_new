@@ -357,7 +357,7 @@
 		if (avatar_holder.length) {
 			var json = {
 				userId: user_id,
-				sessionId: session_id,
+				sessionId: sessionId,
 				radius: 15,
 				injectInto: 'avatar'
 			}

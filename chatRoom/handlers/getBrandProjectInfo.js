@@ -18,7 +18,6 @@ module.exports.validate = function (req, resCb) {
 
 module.exports.run = function (req, resCb, errCb) {
   Session.find({where: { id: req.params.sessionId }, include: [models.BrandProject] }).then(function(result) {
-    console.log(result.BrandProject);
     resCb.send(result.BrandProject);
   }).catch(function(err) {
     errCb(webFaultHelper.getFault(err));

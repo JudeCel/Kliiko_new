@@ -3,7 +3,7 @@
 module.exports = (Sequelize, DataTypes) => {
   var BrandProjectPreference = Sequelize.define('BrandProjectPreference', {
     id:	 { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    session_id: { type: DataTypes.INTEGER, allowNull: false},
+    sessionId: { type: DataTypes.INTEGER, allowNull: false},
     brand_project_id:	{ type: DataTypes.INTEGER, allowNull: false},
     colour_browser_background: { type: DataTypes.STRING, allowNull: false, defaultValue: "#def1f8"},
     colour_background:	{ type: DataTypes.STRING, allowNull: false,  defaultValue: "#fff"},
@@ -26,7 +26,7 @@ module.exports = (Sequelize, DataTypes) => {
       paranoid: true,
       classMethods: {
         associate: function(models) {
-          BrandProjectPreference.belongsTo(models.Session, {foreignKey: 'session_id'});
+          BrandProjectPreference.belongsTo(models.Session, {foreignKey: 'sessionId'});
           BrandProjectPreference.belongsTo(models.BrandProject, {foreignKey: 'brand_project_id'});
         }
       }

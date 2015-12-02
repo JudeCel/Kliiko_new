@@ -23,7 +23,7 @@ module.exports = function (params, resCb, nextCb) {
                     type: params.report.type
                 },
                 ifs: {
-                    session_id: params.sessionID,
+                    sessionId: params.sessionID,
                     session: params.report.session,
                     topic_id: params.topicID,
                     topic: params.report.topic

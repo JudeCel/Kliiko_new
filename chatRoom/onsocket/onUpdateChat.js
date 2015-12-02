@@ -43,7 +43,7 @@ var onUpdatechat = function(user_id, topic_id, data) {
 						if (billboardMode) {
 							avatar.say(data, now);
 							window.lastBillboard.message = data.input;
-							if ((window.role === 'facilitator') || (window.role === 'co-facilitator')) {
+							if ((window.role === 'facilitator') || (window.role === 'owner')) {
 								chatHistory.addChat(avatarJSON, json, ndx, data.animate);
 							}
 						} else {

@@ -460,7 +460,7 @@ view.Paint.prototype.updateCanvas = function (name, data, removeDragEvents) {
 
 					/*
 					switch(thisMain.role) {
-						case 'co-facilitator':
+						case 'owner':
 						case 'facilitator': {
 							canIDeleteThis = (typeof el.message != "undefined");
 						}
@@ -1045,7 +1045,7 @@ view.Paint.prototype.updateCorkboard = function(x, y, width, height, personalIma
 
 	//	
 	switch(window.role) {
-		case 'co-facilitator':
+		case 'owner':
 		case 'facilitator': {
 			var onCloseClick = function() {
 				console.log(this);

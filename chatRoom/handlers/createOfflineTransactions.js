@@ -7,7 +7,7 @@ var OfflineTransaction = models.OfflineTransaction;
 module.exports.validate = function (req, next) {
     var err = joi.validate(req.params, {
         user_id: joi.number().required(),
-        session_id: joi.number().required(),
+        sessionId: joi.number().required(),
         topic_id: joi.number().required()
     });
     if (err)

@@ -6,7 +6,7 @@ var Topic = models.Topic;
 
 module.exports.validate = function (req, resCb) {
 	var err = joi.validate(req.params, {
-		session_id: joi.number().required()
+		sessionId: joi.number().required()
 	});
 	if (err)
 		return resCb(webFaultHelper.getValidationFault(err.message));
@@ -26,14 +26,14 @@ module.exports.run = function (req, resCb, errCb) {
 			UNIX_TIMESTAMP(s.start_time) AS start_time_timestamp, \
 			UNIX_TIMESTAMP(s.end_time) AS end_time_timestamp \
 		FROM topics t \
-		JOIN sessions s ON s.id = t.session_id \
+		JOIN sessions s ON s.id = t.sessionId \
 		JOIN status_lookup sl ON sl.id = t.topic_status_id \
-		WHERE t.deleted IS NULL AND t.session_id = ? \
+		WHERE t.deleted IS NULL AND t.sessionId = ? \
 		ORDER BY t.topic_order_id";
 
 
 	models.sequelize.query(sql,
-		{ replacements: [req.params.session_id],
+		{ replacements: [req.params.sessionId],
 			type: models.sequelize.QueryTypes.SELECT} ).then(function(topics) {
 			resCb.send(topics);
   }).catch(function(err) {

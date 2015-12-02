@@ -213,7 +213,7 @@ view.Bubble.prototype.getPath = function(textBBox) {
 			secondaryLocation = "middle";
 		}
 		break;
-		case 'co-facilitator': {
+		case 'owner': {
 			this.x = leftX;
 			primaryLocation = "right";
 			secondaryLocation = "middle";

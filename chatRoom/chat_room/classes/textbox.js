@@ -14,7 +14,7 @@ view.Textbox = function() {
 
 	var textarea = '<textarea id="textbox-textarea" autofocus="autofocus" style="position: absolute; left:130px; top: 180px; height: 120px; width: 400px; resize: none; color: black;"';
 
-	if ((window.role != 'facilitator') && (window.role != 'co-facilitator')) {
+	if ((window.role != 'facilitator') && (window.role != 'owner')) {
 		textarea = textarea + ' maxlength="50"';
 	}
 

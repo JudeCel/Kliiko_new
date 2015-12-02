@@ -26,10 +26,10 @@ module.exports.listen = function (server) {
   };
 
   io.on('connection', function (socket) {
-    socket.on('config_get_info', function (session_id) {
+    socket.on('config_get_info', function (sessionId) {
       var req = expressValidatorStub({
         params: {
-          session_id: session_id
+          sessionId: sessionId
         }
       });
 
@@ -128,7 +128,7 @@ module.exports.listen = function (server) {
         var req = expressValidatorStub({
           params: {
             user_id: socket.user_id,
-            session_id: socket.session_id,
+            sessionId: socket.sessionId,
             topic_id: socket.topic_id,
             reply_user_id: reply_user_id,
             message_id: message_id
@@ -149,13 +149,13 @@ module.exports.listen = function (server) {
       }
     });
 
-    socket.on('get_offline_transactions', function (session_id, reply_user_id) {
+    socket.on('get_offline_transactions', function (sessionId, reply_user_id) {
       console.log('get_offline_transactions');
 
 
       var req = expressValidatorStub({
         params: {
-          session_id: session_id,
+          sessionId: sessionId,
           reply_user_id: reply_user_id
         }
       });
@@ -358,7 +358,7 @@ module.exports.listen = function (server) {
 
       var req = expressValidatorStub({
         params: {
-          session_id: sessionID
+          sessionId: sessionID
         }
       });
 
@@ -386,14 +386,14 @@ module.exports.listen = function (server) {
       socket.username = username;
     });
 
-    socket.on('getparticipants', function (session_id) {
+    socket.on('getparticipants', function (sessionId) {
       console.log("getparticipants");
 
-      if (session_id === null) return;
+      if (sessionId === null) return;
 
       var req = expressValidatorStub({
         params: {
-          session_id: session_id
+          sessionId: sessionId
         }
       });
 
@@ -414,14 +414,14 @@ module.exports.listen = function (server) {
       });
     });
 
-    socket.on('gettopics', function (session_id) {
+    socket.on('gettopics', function (sessionId) {
       console.log("gettopics");
 
-      if (session_id === null) return;
+      if (sessionId === null) return;
 
       var req = expressValidatorStub({
         params: {
-          session_id: session_id
+          sessionId: sessionId
         }
       });
 
@@ -555,7 +555,7 @@ module.exports.listen = function (server) {
 
       var req = expressValidatorStub({
         params: {
-          session_id: sessionID
+          sessionId: sessionID
         }
       });
 
@@ -576,7 +576,7 @@ module.exports.listen = function (server) {
       });
     });
 
-    socket.on('getresources', function (session_id, type, isfacilitator) {
+    socket.on('getresources', function (sessionId, type, isfacilitator) {
       console.log("getresources");
 
 
@@ -1015,15 +1015,15 @@ module.exports.listen = function (server) {
         break;
       }
     }
-    io.sockets.emit("updateavatarcaption", user_id, socket.session_id, nameList);
+    io.sockets.emit("updateavatarcaption", user_id, socket.sessionId, nameList);
   });
 
-  socket.on('adduser', function (session_id, user_id, username) {
+  socket.on('adduser', function (sessionId, user_id, username) {
     console.log("adduser");
 
 
     //	we store the username in the socket session for this client
-    socket.session_id = session_id;		//	really only used here, but lets set it anyway
+    socket.sessionId = sessionId;		//	really only used here, but lets set it anyway
     globalVars.user_id = user_id;
     socket.username = username;
     globalVars.username = username;
@@ -1065,7 +1065,7 @@ module.exports.listen = function (server) {
 
     //	update the list of users in chat, client-side
     //	this message is session specific, not topic specific
-    io.sockets.emit('updateusers', socket.session_id, socket.user_id, nameList);
+    io.sockets.emit('updateusers', socket.sessionId, socket.user_id, nameList);
     socketHelper.createLog(socket.user_id, "connect");
   });
 
@@ -1204,7 +1204,7 @@ module.exports.listen = function (server) {
     var req = expressValidatorStub({
       params: {
         user_id: userId,
-        session_id: sessionId,
+        sessionId: sessionId,
         brand_project_id: brandProjectId,
       }
     });
@@ -1245,7 +1245,7 @@ module.exports.listen = function (server) {
 
 
     // update list of users in chat, client-side
-    io.sockets.emit('updateusers', socket.session_id, socket.user_id, nameList);
+    io.sockets.emit('updateusers', socket.sessionId, socket.user_id, nameList);
     socketHelper.createLog(socket.user_id, "disconnect");      // TBD: where it is defined?
   });
 
@@ -1301,7 +1301,7 @@ module.exports.listen = function (server) {
       //	we are only updating head, face, hair, top & accessories
       //	we are no updating the name tag, so no need for colour, name or gender
       //	one other interesting point, avatars are at a session level, not just a topic level
-      io.sockets.emit('updateavatarinfo', socket.session_id, socket.user_id, avatarinfoAsJSON);
+      io.sockets.emit('updateavatarinfo', socket.sessionId, socket.user_id, avatarinfoAsJSON);
     };
 
     var nextCb = function (err) {

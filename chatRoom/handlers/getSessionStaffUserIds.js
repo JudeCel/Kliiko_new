@@ -7,7 +7,7 @@ var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js
 var validate = function (req, next) {
     var err = joi.validate(req.params, {
         type_id: joi.number(),
-        session_id: joi.number()
+        sessionId: joi.number()
     });
     if (err)
         return next(webFaultHelper.getValidationFault(err.message));

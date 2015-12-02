@@ -1,5 +1,4 @@
 "use strict";
-// var getUserLogin = require('if-data').repositories.getUserLogin;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
 var expressValidatorStub = require('../helpers/expressValidatorStub.js');
@@ -9,8 +8,8 @@ var SessionMember = models.SessionMember;
 var validate = function (req, resCb) {
   var err = joi.validate(req.params, {
     user_id: joi.number().required(),
-    session_id: joi.number().required(),
-    brand_project_id: joi.number().optional(),
+    sessionId: joi.number().required(),
+    // brand_project_id: joi.number().optional(),
   });
   if (err)
   return resCb(webFaultHelper.getValidationFault(err.message));
@@ -20,12 +19,14 @@ var validate = function (req, resCb) {
 module.exports.validate = validate;
 
 var run = function (req, resCb, errCb) {
-  SessionMember.find({where:
-    { user_id: req.params.user_id,  session_id: req.params.session_id },
-    include: [{
-      model: models.User, attributes: ['firstName', 'lastName', 'email']
-    }] }).then(function(result) {
-    resCb.send(result.User);
+  SessionMember.find({
+    where: { userId: req.params.user_id,  sessionId: req.params.sessionId },
+    attributes: ['userId', 'username', 'colour', 'online', 'avatar_info', 'sessionId', 'role'],
+    include: [ { model: models.User, attributes: ['firstName', 'lastName'] }] })
+  .then(function(result) {
+    buildResponse(result, function(error, member) {
+      resCb.send(member);
+    })
   }).catch(function(err) {
     errCb(webFaultHelper.getFault(err));
   });
@@ -42,4 +43,11 @@ module.exports.execute = function (params, resCb, nextCb) {
     if (err) return nextCb(err);
     run(req, res, nextCb);
   });
+}
+
+function buildResponse(member, callback) {
+  let data = member.dataValues;
+  data.fullName = member.User.firstName +" "+ member.User.lastName
+  data.name = data.username; // chat specific
+	callback(null, data)
 }

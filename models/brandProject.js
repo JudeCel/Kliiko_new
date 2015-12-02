@@ -15,7 +15,7 @@ module.exports = (Sequelize, DataTypes) => {
       paranoid: true,
       classMethods: {
         associate: function(models) {
-          BrandProject.hasMany(models.Session, { foreignKey: 'session_id' });
+          BrandProject.hasMany(models.Session, { foreignKey: 'sessionId' });
           BrandProject.hasMany(models.BrandProjectPreference, { foreignKey: 'brand_project_id' });
         }
       }

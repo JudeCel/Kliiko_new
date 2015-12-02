@@ -12,7 +12,7 @@ module.exports.getReportInfo = function (params) {
 
 module.exports.getReportData = function (params, resCb, nextCb) {
     var req = {
-        session_id: params.sessionID
+        sessionId: params.sessionID
     };
 
     getReportData_Statistics.execute(req, resCb, nextCb);

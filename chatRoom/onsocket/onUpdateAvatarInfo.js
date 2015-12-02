@@ -4,10 +4,10 @@
 		avatarinfo: string 				//	"head:face:hair:top:accessory:desk", i.e., 0:4:8:9:10:11 (see users table)
 	}
 */
-var onUpdateavatarinfo = function(session_id, user_id, data) {
+var onUpdateavatarinfo = function(sessionId, user_id, data) {
 	//	this should be done for all sessions, not just a particular topic
-	if (isEmpty(session_id)) return;
-	if (session_id != window.sessionID) return;	//	is this the correct topic?
+	if (isEmpty(sessionId)) return;
+	if (sessionId != window.sessionID) return;	//	is this the correct topic?
 
 	if (isEmpty(window.topic)) return;
 	

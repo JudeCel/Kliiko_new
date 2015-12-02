@@ -14,6 +14,7 @@ var userAttrs = {
   firstName: "insiderFirstName",
   lastName: "insiderLastName",
   password: "qwerty123",
+  gender: "male",
   email: "chatUser@insider.com",
   confirmedAt: new Date()
 }
@@ -77,7 +78,7 @@ function crateBrandProject(user, session, callback) {
 
 function addedSessionMember(user, session, brandProject, callback) {
   console.log("added Session Member");
-  session.createSessionMember({ role: "owner", user_id: user.id, username: "cool user" })
+  session.createSessionMember({ role: "owner", userId: user.id, username: "cool user" })
   .then(function (_result) {
     callback(null, user, session, brandProject);
   })
@@ -88,7 +89,7 @@ function addedSessionMember(user, session, brandProject, callback) {
 
 function addBrandProjectPreferences(user, session, brandProject, callback) {
   let attrs = {
-    session_id: session.id,
+    sessionId: session.id,
     brand_project_id: brandProject.id
   }
 

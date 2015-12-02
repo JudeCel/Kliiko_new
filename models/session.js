@@ -19,9 +19,9 @@ module.exports = (Sequelize, DataTypes) => {
       classMethods: {
         associate: function(models) {
           Session.belongsTo(models.BrandProject, { foreignKey: 'brand_project_id' });
-          Session.hasMany(models.Topic, { foreignKey: 'session_id' });
-          Session.hasMany(models.BrandProjectPreference, { foreignKey: 'session_id' });
-          Session.hasMany(models.SessionMember, { foreignKey: 'session_id' });
+          Session.hasMany(models.Topic, { foreignKey: 'sessionId' });
+          Session.hasMany(models.BrandProjectPreference, { foreignKey: 'sessionId' });
+          Session.hasMany(models.SessionMember, { foreignKey: 'sessionId' });
         }
       }
     }

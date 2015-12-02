@@ -323,7 +323,7 @@ function doIHaveAccess(role, username) {
 
 	if (!isEmpty(role)){
 		switch(role) {
-			case 'co-facilitator':
+			case 'owner':
 			case 'facilitator': {
 				result = true;
 			}

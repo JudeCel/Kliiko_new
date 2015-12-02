@@ -104,7 +104,7 @@
 //                urlPath: URL_PATH
 //            },
 //            ifs: {
-//                session_id: req.params.sessionID,
+//                sessionId: req.params.sessionID,
 //                session: req.params.report.session,
 //                topic_id: req.params.topicID,
 //                topic: req.params.report.topic
@@ -187,7 +187,7 @@
 //            case "stats":
 //                var cmdReq = expressValidatorStub({
 //                    params: {
-//                        session_id: req.params.sessionID
+//                        sessionId: req.params.sessionID
 //                    }
 //                });
 //

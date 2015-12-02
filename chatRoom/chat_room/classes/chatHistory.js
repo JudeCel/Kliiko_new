@@ -72,7 +72,7 @@ view.History.prototype.filterChatHistory = function() {
 	avatarJSON = {
 		fullName: string,
 		userId: int,
-		role: string,			//	{default: 'participant'}	facilitator' | 'co-facilitator' | 'participant'
+		role: string,			//	{default: 'participant'}	facilitator' | 'owner' | 'participant'
 		colour: int,			//	colour of the participant
 		avatarInfo: string		//	"head:face:hair:top:accessory:desk", i.e., 0:4:8:9:10:11 (see users table)
 	}
@@ -400,7 +400,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 	//	only facilitators to filter chat history by avatar
 	var avatarClass = "";
 	var avatarOnClick = null;
-	//if ((window.role === 'facilitator') || (window.role === 'co-facilitator')) {
+	//if ((window.role === 'facilitator') || (window.role === 'owner')) {
 		avatarClass = "avatar_unfiltered";
 		avatarOnClick = "javascript:window.avatarOnClick('" + row.className + "')";
 	//}
@@ -414,9 +414,9 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 		tagClass = "tag_unset";
 	}
 
-	//Only show mini-tag to facilitator and co-facilitator
+	//Only show mini-tag to facilitator and owner
 	var showControlTag = false;
-	if ((window.role === 'facilitator') || (window.role === 'co-facilitator')) {
+	if ((window.role === 'facilitator') || (window.role === 'owner')) {
 		showControlTag = true;
 	}
 	
@@ -456,7 +456,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 			height: tagHeight,
 			inline: true		
 	};
-	if ((window.role === 'facilitator') || (window.role === 'co-facilitator') || (window.role === 'observer')) {
+	if ((window.role === 'facilitator') || (window.role === 'owner') || (window.role === 'observer')) {
 		chatTagElement = {
 			//	Cb
 			tagId: tagId,
