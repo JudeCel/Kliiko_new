@@ -1,4 +1,18 @@
 #signup {
+  .has-error {
+  color: #f00;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 370px;
+  display: inline-block;
+}
+  .btn-radius-padding-left {
+    padding-left: 25px !important;
+  }
+  .btn-radius-text {
+    font-size: 16px !important;
+    padding-right: 30px;
+  }
   .singup-btn-size {
   height: 45px;
   }
@@ -10,10 +24,11 @@
   .checkbox-signup {
     display: inline-block;
     vertical-align: top;
-    margin-top: 5px;
+    margin-top: 8px;
     padding-left: 9px;
     font-size: 13px;
   }
+
   input[class=checkbox-login] {
     display: none; }
 
@@ -34,18 +49,35 @@
     background-size: contain;
     margin-top: 1px;
   }
+
+  /* Radio buttons custom design */
+  input[type="radio"] {
+    display: none; }
+
+  input[type="radio"] + label {
+    border:2px solid #ccc;
+    border-radius: 50%;
+    background: none;
+    background-image: none;
+    height: 34px;
+    width: 34px;
+    transition: background-image 0.9s ease;
+  }
+
+  input[type="radio"]:checked + label {
+    //background-image: -moz-radial-gradient(5px 5px 45deg, circle cover, #999 0%, #fff 100%);
+
+	  //background-image: -webkit-radial-gradient(15px 15px, circle, #666, #666,#666, #fff, #fff, #fff, #fff, #fff, #fff, #fff, #fff);/* iistais!!! */
+
+	  //background-image: radial-gradient(5px 5px 45deg, circle cover, #000, #fff 100%, red 95%);
+    background: #ccc;
+  }
+
   .table {
 
-    .has-error {
-    color: #f00;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 370px;
-    display: inline-block;
-}
     td {
-      padding-left: 0;
-      padding-right: 0;
+      padding-left: 2px;
+      padding-right: 5px;
       border: 1px solid #f00;
       margin-left: -25px;
 
