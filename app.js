@@ -11,6 +11,7 @@ var bodyParser = require('body-parser');
 var passport = require('./middleware/passport');
 var subdomain = require('./middleware/subdomain');
 var currentUser = require('./middleware/currentUser');
+var flash = require('connect-flash');
 var app = express();
 
 // view engine setup
@@ -37,6 +38,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(subdomain);
+app.use(flash());
 
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');

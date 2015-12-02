@@ -13,6 +13,18 @@ function create(account, user, callback) {
       return callback(err);
     });
 }
+
+function createWithRole(account, user, role, callback) {
+    user.addAccount(account, { role: role, owner: false }).then(function(result) {
+      return callback(null, user);
+    }).catch(AccountUser.sequelize.ValidationError, function(err) {
+      return callback(err);
+    }).catch(function(err) {
+      return callback(err);
+    });
+}
+
 module.exports = {
-  create: create
+  create: create,
+  createWithRole: createWithRole
 }

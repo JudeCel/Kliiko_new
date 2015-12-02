@@ -68,7 +68,7 @@ passport.deserializeUser(function(userObject, done) {
 });
 
 function userParams(user, account) {
-  return { id: user.id, email: user.email, subdomain: account.name, role: account.AccountUser.role, firstName: user.firstName };
+  return { id: user.id, email: user.email, subdomain: account.name, role: account.AccountUser.role, firstName: user.firstName, accountId: account.id };
 }
 
 module.exports = passport;

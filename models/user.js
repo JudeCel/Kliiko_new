@@ -58,6 +58,12 @@ module.exports = (Sequelize, DataTypes) => {
     promoCode: {type: DataTypes.INTEGER, allowNull: true},
     mobile: {type: DataTypes.STRING, allowNull: true},
     tipsAndUpdate: {type: DataTypes.ENUM, values: ['off', 'on'], allowNull: false, defaultValue: 'on'},
+    gender: {type: DataTypes.ENUM, values: ['male', 'female'], allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} } },
+    postalAdress: {type: DataTypes.STRING, allowNull: true },
+    city: {type: DataTypes.STRING, allowNull: true },
+    postCode: {type: DataTypes.STRING, allowNull: true },
+    companyName: {type: DataTypes.STRING, allowNull: true },
+    landlineNumber: {type: DataTypes.STRING, allowNull: true }
   },{
       classMethods: {
         associate: function(models) {

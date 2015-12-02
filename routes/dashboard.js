@@ -50,9 +50,9 @@ router.get('/uploadbanner', policy.authorized(['admin']), uploadBanner.get);
 router.post('/uploadbanner', policy.authorized(['admin']), uploadBanner.uploadFields, uploadBanner.post);
 router.get('/uploadbanner/:page', policy.authorized(['admin']), uploadBanner.destroy);
 
-router.get('/accountmanager', policy.authorized(['accountManager']), accountManager.get);
-router.post('/accountmanager/new', policy.authorized(['accountManager']), accountManager.post);
-router.post('/accountmanager/update/:id', policy.authorized(['accountManager']), accountManager.post);
-router.get('/accountmanager/destroy/:id', policy.authorized(['accountManager']), accountManager.destroy);
+router.get('/accountmanager', policy.authorized(['accountManager']), accountManager.index);
+router.get('/accountmanager/manage', policy.authorized(['accountManager']), accountManager.manageGet);
+router.post('/accountmanager/manage', policy.authorized(['accountManager']), accountManager.managePost);
+router.get('/accountmanager/remove/:id', policy.authorized(['accountManager']), accountManager.destroy);
 
 module.exports = router;
