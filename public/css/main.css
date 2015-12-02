@@ -324,6 +324,12 @@ footer {
 .btn-white {
   background-color: white; }
 
+#login .submit-btn-size {
+  height: 45px; }
+
+#login h5 {
+  font-size: 16px; }
+
 .login-container .login-signup-tab {
   width: 180px;
   margin-left: 85px; }
@@ -420,6 +426,13 @@ footer {
   background-size: contain;
   margin-top: 1px; }
 
+#signup .table .has-error {
+  color: #f00;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 370px;
+  display: inline-block; }
+
 #signup .table td {
   padding-left: 0;
   padding-right: 0;
@@ -436,13 +449,6 @@ footer {
 
 #signup .table-v-content-middle td {
   vertical-align: middle; }
-
-#signup .has-error {
-  color: #f00;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 370px;
-  display: inline-block; }
 
 .main-welcome .welcome {
   width: 40%;
