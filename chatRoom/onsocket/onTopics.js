@@ -2,8 +2,8 @@
 	data = [{
 		id: int,					//	topic id
 		name: string,				//	{required}	name of the topic
-		active_topic: boolean,		//	{required}	is this topic the active one?
-	
+		active: boolean,		//	{required}	is this topic the active one?
+
 	},{...}]
 */
 var onTopics = function(data) {
@@ -20,46 +20,46 @@ var onTopics = function(data) {
 		'font-size':		18,
 		fill:				LABEL_COLOUR,
 		opacity:			1.0,
-		'text-anchor':		"start" 
+		'text-anchor':		"start"
 	}
 
 	var headerAttrLabelText = {
 		'font-size':		24,
 		fill:				TEXT_COLOUR,
 		opacity:			1.0,
-		'text-anchor':		"start" 
+		'text-anchor':		"start"
 	}
-	
+
 	var topicAttrLabelText = {
 		'font-size':		18,
 		fill:				TEXT_COLOUR,
 		opacity:			1.0,
-		'text-anchor':		"start" 
+		'text-anchor':		"start"
 	}
-	
+
 	var topicAttrLabelBackground = {
 		fill:				MENU_BACKGROUND_COLOUR,
 		opacity:			0,
 		stroke:				MENU_BORDER_COLOUR,
 		"stroke-width":		2
 	}
-	
+
 	this.sessionLabel = paperTopic.text((this.x - 90), 22, 'Session:').attr(labelAttrLabelText);
 	this.headerLabel = paperTopic.text((this.x - 5), 21, thisMain.topics[0].session_name).attr(headerAttrLabelText);
 	this.topicLabel = paperTopic.text((this.x - 70), 53, 'Topic:').attr(labelAttrLabelText);
-	
+
 	var headerLabelBBox = this.headerLabel.getBBox();
-	
+
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	//	lets set up our slider
 	var currentTopic = null;
 	for (var ndx = 0, tl = thisMain.topics.length; ndx < tl; ndx++) {
 		currentTopic = thisMain.topics[ndx];
-		if (currentTopic.active_topic === "true") {
+		if (currentTopic.active === true) {
 			var topicLabelText = paperTopic.text(this.x, 52, currentTopic.name).attr(topicAttrLabelText);
-			
+
 			var topicLabelBBox = topicLabelText.getBBox();
-			
+
 			var topicLabelBackground = paperTopic.rect(topicLabelBBox.x - 5, topicLabelBBox.y - 5, topicLabelBBox.width + 30, topicLabelBBox.height + 10, 5).attr(topicAttrLabelBackground);
 			topicLabelText.toFront();
 
@@ -70,7 +70,7 @@ var onTopics = function(data) {
 				stroke:				"#365880",
 				"stroke-width":		1
 			})
-			
+
 			//    now we need the counter for chats (see utilities.js)
 			var counter = createCounter({
 				paper: paperTopic,
@@ -108,11 +108,11 @@ var onTopics = function(data) {
 			//	OK, lets update this label, make sure it's set up properly
 			window.topicTitle = currentTopic.name;
 			thisMain.topicLabel.attr({title: "Select Topic"});
-			
+
 			var animationInit = Raphael.animation({"opacity": 1.0}, 500, function() {});
 
 			thisMain.topicLabel.animate(animationInit.delay(0));
-			
+
 			//	what happens if we hover over the button?
 			thisMain.topicLabel.hover(
 				//	hover in
@@ -138,7 +138,7 @@ var onTopics = function(data) {
 					width:				200,
 					height:				height,
 					radius:				5,
-					margin: 			1.75, 
+					margin: 			1.75,
 					thisMain:			thisMain,			//	pointer to the "this" structure in topic.html
 					paper:				paperTopicMenu,		//	pointer to the canvas we are drawing on
 					data:				data
@@ -155,7 +155,7 @@ var onTopics = function(data) {
 					thisMain.topicMenu.hide();
 				}
 			});
-			
+
 			if (!isEmpty(currentTopic.id)) {
 				window.topicID = currentTopic.id;
 				socket.emit('settopicid', window.topicID, false, window.userID);
@@ -178,7 +178,7 @@ var onTopics = function(data) {
 		label: string,						//	{defaults to ""}
 		activeTopic: boolean,				//	{defaults to false}
 		userID: int, 						//	who sent this?
-		topicID: int 						//	{defaults to window.topicID, if this isn't set and activeTopic is true, defaults to the active topic within window.topics[]}	
+		topicID: int 						//	{defaults to window.topicID, if this isn't set and activeTopic is true, defaults to the active topic within window.topics[]}
 	}
 */
 onTopicsUpdateTopic = function(json) {
@@ -255,7 +255,7 @@ onTopicsUpdateTopic = function(json) {
 		}
 	}
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	//	change the chat counter
 	window.topicLabel[3].attr({text: count.toString()});
 	var counterBBox = topicLabel[3].getBBox();
@@ -266,7 +266,7 @@ onTopicsUpdateTopic = function(json) {
 
 	window.topicLabel[2].attr({x: (counterBBox.x - 5), width: (counterBBox.width + 10)});
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	if (count > 0) {
 		window.topicLabel[2].show();
 		window.topicLabel[3].show();
@@ -275,7 +275,7 @@ onTopicsUpdateTopic = function(json) {
 		window.topicLabel[3].hide();
 	}
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	//	change the replies counter
 	window.topicLabel[5].attr({text: countReplies.toString()});
 	var counterBBoxReplies = topicLabel[5].getBBox();
@@ -286,7 +286,7 @@ onTopicsUpdateTopic = function(json) {
 
 	window.topicLabel[4].attr({x: (counterBBoxReplies.x - 5), width: (counterBBoxReplies.width + 10)});
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	if (countReplies > 0) {
 		window.topicLabel[4].show();
 		window.topicLabel[5].show();
@@ -295,7 +295,7 @@ onTopicsUpdateTopic = function(json) {
 		window.topicLabel[5].hide();
 	}
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	//	do we have a topicID?
 	var topicNdx = 0;
 	if (json.topicID > -1) {
@@ -304,7 +304,7 @@ onTopicsUpdateTopic = function(json) {
 			if (json.activeTopic === true) {
 				if (!isEmpty(window.topics)) {
 					for (topicNdx = 0, lt = window.topics.length; topicNdx < lt; topicNdx++) {
-						if (window.topics[topicNdx].active_topic == "true") {
+						if (window.topics[topicNdx].active == true) {
 							json.topicID = window.topics[topicNdx].id;
 							if (window.userID === json.userID) {
 								window.topicID = json.topicID;
@@ -326,7 +326,7 @@ onTopicsUpdateTopic = function(json) {
 	//	OK, json.topicID is now set, lets see if this is infact the active topic
 	for (topicNdx = 0, lt = window.topics.length; topicNdx < lt; topicNdx++) {
 		if (window.topics[topicNdx].id === json.topicID) {
-			json.activeTopic = (window.topics[topicNdx].active_topic == "true") ? true : false;
+			json.activeTopic = (window.topics[topicNdx].active === true);
 
 			break;
 		}
@@ -347,7 +347,7 @@ onTopicsUpdateTopic = function(json) {
 			if (window.userID === json.userID) {
 				//	lets clear out replies we "should" have read by now
 				socket.emit('delete_offline_transactions', json.topicID, window.userID);
-				
+
 				if (!isEmpty(json.label)) {
 					//	this message is for everyone to update the caption under the avatar
 					socket.emit('setavatarcaption', window.userID, window.topicID, json.label);
@@ -356,4 +356,3 @@ onTopicsUpdateTopic = function(json) {
 		}
 	}
 };
-

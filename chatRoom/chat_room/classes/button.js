@@ -12,7 +12,7 @@ var view = namespace('sf.ifs.View');
 		type:				string,			//	text (default) | image | svg | audio
 		label:				string,
 		title: 				string,
-		active_topic:		int,
+		active:		int,
 		counterId:			int,			//	if we need to display a counter, what is the id for it?
 		showCounter:		boolean,		//	do we need to display a counter for this button?
 		hoverHint: 			string,
@@ -317,7 +317,7 @@ view.Button.prototype.draw = function() {
 			me = this.data("this");
 			var json = {
 				text: me.json.label,
-				active_topic: me.json.active_topic
+				active: me.json.active
 			};
 			me.json.click(json);
 		})
