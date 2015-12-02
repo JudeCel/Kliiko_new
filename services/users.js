@@ -8,8 +8,16 @@ var uuid = require('node-uuid');
 var async = require('async');
 
 function create(params, callback) {
+  console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+  console.log("Create Function");
+  console.log(params);
+  console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
   validateForCreate(params, function (error, params) {
     if (error) {
+      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+      console.log("Create errors Function");
+      console.log(error);
+      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
       return callback(error, params)
     } else {
       createUser(params, function (error, result) {
@@ -120,6 +128,8 @@ function prepareParams(req, errors) {
     email: '',
     mobile: '',
     password: '',
+    landlineNumber: '',
+    gender: '',
     tipsAndUpdate: 'on',
     errors: (errors || {})
   }, req.body);

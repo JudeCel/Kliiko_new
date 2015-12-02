@@ -15,108 +15,194 @@
           <div class="row">
             <div class="col-md-12">
               <form method="post" action="/registration">
-              <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
-                <tr>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="firstName">First name</label>
-                  </td>
-                  <td>
-                    <input type="text" value="<%= firstName %>" class="form-control" name="firstName" id="first_name" placeholder="First name">
-                  </td>
-                </tr>
+                <p class="pull-right"> * Required </p>
+                <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
 
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                    <span class="has-error"><%= errors.firstName %></span>
-                  </td>
-                </tr>
+                  <tr>
+                    <td>
+                      <label class="text-no-bold text-login-page" for="accountName"> 
+                        Account 
+                        <br>
+                        Name
+                      </label>
+                    </td>
+                    <td>
+                      <input type="text" value="<%= accountName %>" class="form-control" name="accountName" id="account_name" placeholder="Account name">
+                    </td>
+                    <td>
+                      *
+                    </td>
+                  </tr>
 
-                <tr>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="firstName">Last name</label>
-                  </td>
-                  <td>
-                    <input type="text" value="<%= lastName %>" class="form-control" name="lastName" id="last_name" placeholder="Last name">
-                  </td>
-                </tr>
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                      <span class="has-error"><%= errors.name %></span>
+                    </td>
+                  </tr>
 
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                    <span class="has-error"><%= errors.lastName %></span>
-                  </td>
-                </tr>
 
-                <tr>
-                  <td>
+                  <tr>
+                    <td>
+                      <label class="text-no-bold text-login-page" for="firstName">First name</label>
+                    </td>
+                    <td>
+                      <input type="text" value="<%= firstName %>" class="form-control" name="firstName" id="first_name" placeholder="First name">
+                    </td>
+                    <td>
+                      *
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                      <span class="has-error"><%= errors.firstName %></span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <label class="text-no-bold text-login-page" for="lastName">Last name</label>
+                    </td>
+                    <td>
+                      <input type="text" value="<%= lastName %>" class="form-control" name="lastName" id="last_name" placeholder="Last name">
+                    </td>
+                    <td>
+                      *
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                      <span class="has-error"><%= errors.lastName %></span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
                       <label class="text-no-bold text-login-page" for="email">Email</label>
-                  </td>
-                  <td>
+                    </td>
+                    <td>
                       <input type="email" value="<%= email %>" class="form-control" name="email" id="email" placeholder="Email">
-                  </td>
-                </tr>
+                    </td>
+                    <td>
+                      *
+                    </td>
+                  </tr>
 
-                <tr>
-                  <td></td>
-                  <td class="error-column">
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
                       <span class="has-error"><%= errors.email %></span>
-                  </td>
-                </tr>
+                    </td>
+                  </tr>
 
-                <tr>
-                  <td>
-                      <label class="text-no-bold text-login-page" for="mobile">Phone</label>
-                  </td>
-                  <td>
-                    <input type="tel" value="<%= mobile %>" class="form-control" id="mobile" name="mobile" placeholder="Mobile">
-                  </td>
-                </tr>
+                  <tr>
+                    <td>
+                      <label class="text-no-bold text-login-page" for="gender">Gender</label>
+                    </td>
+                    <td>
+                      <div class="checkbox-inline">
+                        <input type="checkbox" name="gender" id="gender" value='male'/>
+                        <label for="male"></label>
+                        <span class="checkbox-signup" id="male">Male</span>
+                      </div>
+                      <div class="checkbox-inline">
+                        <input type="checkbox" name="gender" id="gender" value='female'/>
+                        <label for="female"></label>
+                        <span class="checkbox-signup" id="female">Female</span>
+                      </div>
+                    </td>
+                    <td>
+                      *
+                    </td>
+                  </tr>
 
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                    <span class="has-error"><%= errors.email %></span>
-                  </td>
-                </tr>
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                        <span class="has-error"><%= errors.gender %></span>
+                    </td>
+                  </tr>
 
-                <tr>
-                  <td>
-                        <label class="text-no-bold text-login-page" for="password">Password</label>
-                  </td>
-                  <td>
+                  <tr>
+                    <td>
+                      <label class="text-no-bold text-login-page" for="mobile">
+                        Mobile
+                        <br>
+                        Number
+                      </label>
+                    </td>
+                    <td>
+                      <input type="tel" value="<%= mobile %>" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number">
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <label class="text-no-bold text-login-page" for="landlineNumber"> 
+                        Landline 
+                        <br>
+                        Number
+                      </label>
+                    </td>
+                    <td>
+                      <input type="text" value="<%= landlineNumber %>" class="form-control" name="landlineNumber" id="landline_number" placeholder="Landline Number">
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <label class="text-no-bold text-login-page" for="password">Password</label>
+                    </td>
+                    <td>
                       <input type="password" value="<%= password %>" class="form-control" name="password" id="password" placeholder="Password">
-                  </td>
-                </tr>
-
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                      <span class="has-error"><%= errors.password %></span>
-                  </td>
-                </tr>
-
-              </table>
+                    </td>
+                    <td>
+                      *
+                    </td>
+                  </tr>
 
 
-                  <div class="form-group">
-                      <div class="check">
-                          <input type="checkbox" class="checkbox-login" name="tesms-and-services" id="tesms-and-services" value='receive-updates'/>
-                          <label for="tesms-and-services"></label>
-                          <span class="checkbox-signup" id="tesms-and-services">You have read and agree to the <a href="url">Administrator Terms & Conditions</a>.</span>
-                      </div>
-                      <div class="check">
-                          <input type="checkbox" class="checkbox-login" name="newsletter" id="newsletter" value='receive-updates'/>
-                          <label for="newsletter"></label>
-                          <span class="checkbox-signup" id="newsletter">Yes send me the Kliiko Newsletter which includes hints, tips and updates.</span>
-                      </div>
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                        <span class="has-error"><%= errors.password %></span>
+                    </td>
+                  </tr>
+
+                </table>
+                <div class="form-group">
+
+                  <!-- <span class="has-error"><%= errors.t_and_c %></span>
+
+                  <div class="check center-block">
+                    <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate" value='receive-updates'/><label for="tipsAndUpdate">
+                      I'd like to receive tips & updates
+                    </label>
+                  </div> -->
+
+                  <div class="check">
+                    <input type="checkbox" class="checkbox-login" name="tesms-and-services" id="tesms-and-services" value='receive-updates'/>
+                    <label for="tesms-and-services"></label>
+                    <span class="checkbox-signup" id="tesms-and-services">You have read and agree to the <a href="url">Administrator Terms & Conditions</a>.</span>
                   </div>
 
-                  <div class="form-group text-right">
-                      <div class="check">
-                          <button type="submit" value="Register" class="btn border-green border-radius-none text-green-dark background-transp">Sign up</button>
-                      </div>
+
+                  <div class="check">
+                    <input type="checkbox" class="checkbox-login" name="newsletter" id="newsletter" value='receive-updates'/>
+                    <label for="newsletter"></label>
+                    <span class="checkbox-signup" id="newsletter">Yes send me the Kliiko Newsletter which includes hints, tips and updates.</span>
                   </div>
+                </div>
+
+                <div class="form-group text-right">
+                  <div class="check">
+                    <button type="submit" value="Register" class="btn border-green border-radius-none text-green-dark background-transp">Sign up</button>
+                  </div>
+                </div>
               </form>
             </div>
           </div>
