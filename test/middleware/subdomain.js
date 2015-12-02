@@ -10,7 +10,8 @@ var validAttrs = {
   firstName: "Dainis",
   lastName: "Lapins",
   password: "cool_password",
-  email: "dainis@gmail.com"
+  email: "dainis@gmail.com",
+  gender: "male"
 }
 
 describe('Middleware subdomain', () => {
