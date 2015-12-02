@@ -132,7 +132,7 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 		json = '{' +
 		'	sessionID: ' + window.sessionID + ', ' +
 		'	userID: ' + window.userID + ', ' +
-		'	topicID: ' + this.topicList[ndx].topic_id + ', ' +
+		'	topicID: ' + this.topicList[ndx].topicId + ', ' +
 		'	report: {' +
 		'		type: \'chat\', ' +
 		'		brand: \'' + brandProject + '\', ' +
@@ -149,7 +149,7 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 		json = '{' +
 		'	sessionID: ' + window.sessionID + ', ' +
 		'	userID: ' + window.userID + ', ' +
-		'	topicID: ' + this.topicList[ndx].topic_id + ', ' +
+		'	topicID: ' + this.topicList[ndx].topicId + ', ' +
 		'	report: {' +
 		'		type: \'chat_stars\', ' +
 		'		brand: \'' + brandProject + '\', ' +
@@ -166,7 +166,7 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 		json = '{' +
 		'	sessionID: ' + window.sessionID + ', ' +
 		'	userID: ' + window.userID + ', ' +
-		'	topicID: ' + this.topicList[ndx].topic_id + ', ' +
+		'	topicID: ' + this.topicList[ndx].topicId + ', ' +
 		'	report: {' +
 		'		type: \'whiteboard\', ' +
 		'		brand: \'' + brandProject + '\', ' +
@@ -189,7 +189,7 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 		json = '{' +
 		'	sessionID: ' + window.sessionID + ', ' +
 		'	userID: ' + window.userID + ', ' +
-		'	topicID: ' + this.topicList[ndx].topic_id + ', ' +
+		'	topicID: ' + this.topicList[ndx].topicId + ', ' +
 		'	report: {' +
 		'		type: \'vote\', ' +
 		'		brand: \'' + brandProject + '\', ' +

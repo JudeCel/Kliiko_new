@@ -1,5 +1,5 @@
-var onUpdatepictureboard = function(topic_id) {
-	if (topic_id === thisMain.topicID) {
+var onUpdatepictureboard = function(topicId) {
+	if (topicId === thisMain.topicID) {
 		//	this gets called if the facilitator deletes an image from the pictureboard
 		//	this can only happen if we are in pictureboard mode, so no need to check these things.
 		console.log("******************************************************************************************");

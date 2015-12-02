@@ -6,7 +6,7 @@ var Topic = models.Topic;
 
 module.exports.validate = function (req, resCb) {
 	var err = joi.validate(req.params, {
-		topic_id: joi.number().required()
+		topicId: joi.number().required()
 	});
 	if (err)
 		return resCb(webFaultHelper.getValidationFault(err.message));
@@ -15,7 +15,7 @@ module.exports.validate = function (req, resCb) {
 };
 
 module.exports.run = function (req, resCb, errCb) {
-	let topicId = req.params.topic_id;
+	let topicId = req.params.topicId;
 	Topic.find({where: topicId}).then(function(result) {
 			resCb.send(result);
 	}).catch(function(err) {

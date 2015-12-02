@@ -1,5 +1,5 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-var participantsDetails = function(topic_id, participants, id, userId) {
+var participantsDetails = function(topicId, participants, id, userId) {
 	for (var ndx = 0, np = participants.length; ndx < np; ndx++) {
 		if (participants[ndx].userId === userId) {
 			return {
@@ -36,7 +36,7 @@ var updateCorkboard = function(personalImage, participantsDetailsJSON) {
 		...
 	}
 */
-var onPersonalimages = function(userId, topic_id, json) {
+var onPersonalimages = function(userId, topicId, json) {
 	if (isEmpty(json)) return;
 	if (typeof json === "object") return;
 	
@@ -44,7 +44,7 @@ var onPersonalimages = function(userId, topic_id, json) {
 	
 	var participantsDetailsJSON = null;
 	for (var ndx = 0, nj = json.length; ndx < nj; ndx++) {
-		participantsDetailsJSON = participantsDetails(topic_id, window.participants, json[ndx].id, json[ndx].userId);
+		participantsDetailsJSON = participantsDetails(topicId, window.participants, json[ndx].id, json[ndx].userId);
 		
 		//	lets draw our image for this participant
 		if (!isEmpty(participantsDetailsJSON)) {

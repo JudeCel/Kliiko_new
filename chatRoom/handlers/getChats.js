@@ -9,7 +9,7 @@ var Event = models.Event;
 
 module.exports.validate = function (req, next) {
     var err = joi.validate(req.params, {
-        topic_id: joi.number().required()
+        topicId: joi.number().required()
     });
     if (err)
         return next(webFaultHelper.getValidationFault(err.message));
@@ -18,9 +18,9 @@ module.exports.validate = function (req, next) {
 };
 
 module.exports.run = function (req, resCb, errCb) {
-  let topicId = req.params.topic_id;
+  let topicId = req.params.topicId;
 
-  Event.findAll({ where: {topic_id: topicId, cmd: 'chat', deleted: null },
+  Event.findAll({ where: {topicId: topicId, cmd: 'chat', deleted: null },
                   include: [models.Vote],
                   order: [['created', 'DESC']] }).then(function(result) {
 

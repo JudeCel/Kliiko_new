@@ -9,7 +9,7 @@ module.exports = (Sequelize, DataTypes) => {
     end_time:	{ type: DataTypes.DATE, allowNull: false },
     incentive_details: { type: DataTypes.TEXT, allowNull: true },
     status_id:	{ type: DataTypes.INTEGER, allowNull: false},
-    active_topic_id:{ type: DataTypes.INTEGER, allowNull: true},
+    active_topicId:{ type: DataTypes.INTEGER, allowNull: true},
     colours_used: { type: DataTypes.TEXT, allowNull: true }
   },
    {

@@ -8,7 +8,7 @@ var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js
 
 var validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        topic_id: joi.number().nullOk().optional(),
+        topicId: joi.number().nullOk().optional(),
         userId: joi.number().nullOk().optional(),
         JSON: joi.types.Object().required(),
         URL: joi.string().required()
@@ -24,7 +24,7 @@ var run = function (req, resCb, errCb) {
     deleteUserTmpResources(req.params)
         .then(function () {
             return createResource({
-                topic_id: req.params.topic_id,
+                topicId: req.params.topicId,
                 userId: req.params.userId,
                 URL: req.params.URL,
                 type_id: mtypes.resourceType.tmp,

@@ -20,7 +20,7 @@ build.Whiteboard = function() {
 /*
 	data = [{
 		id: int,
-		topic_id: int,
+		topicId: int,
 		userId: int,
 		reply_id: int,
 		cmd: string,

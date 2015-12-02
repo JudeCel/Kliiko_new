@@ -8,7 +8,7 @@ var joi = require('joi');
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        topic_id: joi.number().required()
+        topicId: joi.number().required()
     });
 
     if (err)

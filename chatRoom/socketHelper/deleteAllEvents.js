@@ -3,7 +3,7 @@ var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 function deleteAllEvents(topicId) {
   var req = expressValidatorStub({
     params: {
-      topic_id: topicId
+      topicId: topicId
     }
   });
 

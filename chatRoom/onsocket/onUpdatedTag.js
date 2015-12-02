@@ -1,4 +1,4 @@
-var onUpdatedTag = function(userId, topic_id, tag_value){
+var onUpdatedTag = function(userId, topicId, tag_value){
 	var tag_id = "tag_" + userId;
 	var row_id = "tr_" + userId;
 

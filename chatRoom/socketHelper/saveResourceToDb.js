@@ -48,7 +48,7 @@ function saveResourceToDb(json, resCb, nextCb) {
                 };
 
                 req.userId = json.userId = resource.userId;
-                req.topic_id = json.topic_id = resource.topic_id;
+                req.topicId = json.topicId = resource.topicId;
 
                 getResourcesGeneric.execute(req, function (result) {
                     var socketHelper = require('../socketHelper.js');
@@ -66,11 +66,11 @@ function saveResourceToDb(json, resCb, nextCb) {
 
                             if(isAlreadyUpdateResources == false){
                                 isAlreadyUpdateResources = true;
-                                socketHelper.updateResources(json.topic_id, json.userId, json, json.type, resCb);
+                                socketHelper.updateResources(json.topicId, json.userId, json, json.type, resCb);
 
                                 switch (json.type) {
                                     case 'collage':
-                                        socketHelper.createCustomEvent(json.topic_id, json.userId, "collage", JSON.stringify(json, null));
+                                        socketHelper.createCustomEvent(json.topicId, json.userId, "collage", JSON.stringify(json, null));
                                         break;
                                 }
                             }

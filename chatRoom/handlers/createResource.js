@@ -8,7 +8,7 @@ module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
         type_id: joi.number().required(),
         url: joi.string().optional(),
-        topic_id: joi.number().optional(),
+        topicId: joi.number().optional(),
         userId: joi.number().optional(),
         JSON: joi.string().optional()
     });

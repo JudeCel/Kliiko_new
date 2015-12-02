@@ -27,8 +27,8 @@ module.exports.run = function (req, res, mainCb) {
         getEvent(req.params.event_id)
             .then(function (event) {
 			if (!event) return;
-			topicId = event.topic_id;
-			getUserVotes(req.params.updating_userId, event.topic_id, req.params.event_id)
+			topicId = event.topicId;
+			getUserVotes(req.params.updating_userId, event.topicId, req.params.event_id)
 				.then(function (userVotes) {
 					if (userVotes && userVotes.length > 0) return "no votes";
                         return getVotes(req.params.event_id);
@@ -57,7 +57,7 @@ module.exports.run = function (req, res, mainCb) {
                             createUserVotes({
                                 vote_id: votes.id,
                                 userId: req.params.updating_userId,
-                                topic_id: topicId,
+                                topicId: topicId,
                                 event_id: req.params.event_id
                             })
                             return votes.count;

@@ -12,7 +12,7 @@ module.exports.getReportInfo = function (params) {
 
 module.exports.getReportData = function (params, resCb, nextCb) {
     var req = {
-        topic_id: params.topicID
+        topicId: params.topicID
     };
 
     if (!params.includeFacilitator)

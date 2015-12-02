@@ -1,9 +1,9 @@
-var onUpdateBillboard = function(userId, topic_id, data) {
+var onUpdateBillboard = function(userId, topicId, data) {
 	if (isEmpty(topic)) return;
 	var avatar = topic.getAvatarByUserId(userId);
 	var avatarJSON = avatar.json;
 
-	if (topicID !== topic_id || avatarJSON.role !== "facilitator") return;
+	if (topicID !== topicId || avatarJSON.role !== "facilitator") return;
 
 	if (!isEmpty(chatHistory)) {
 		for (var ndx = 0, pl = participants.length; ndx < pl; ndx++) {

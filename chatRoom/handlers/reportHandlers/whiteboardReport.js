@@ -12,7 +12,7 @@ module.exports.getReportInfo = function (params) {
 
 module.exports.getReportData = function (params, resCb, nextCb) {
     getReportData_Whiteboard.execute({
-        topic_id: params.topicID
+        topicId: params.topicID
     }, resCb, nextCb);
 }
 

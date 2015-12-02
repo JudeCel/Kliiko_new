@@ -7,7 +7,7 @@ var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js
 
 var validate = function (req, next) {
     var err = joi.validate(req.params, {
-        topic_id: joi.number().required(),
+        topicId: joi.number().required(),
         sessionStaffTypeToExclude: joi.number().optional() //will be excluded events, belonged to user, which has appropriate Session Staff role in a Topic
     });
     if (err)

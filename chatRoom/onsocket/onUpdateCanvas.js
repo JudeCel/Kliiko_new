@@ -1,6 +1,6 @@
-var onUpdatecanvas = function(userId, topic_id, data) {
+var onUpdatecanvas = function(userId, topicId, data) {
 	if (userId != thisMain.userID) {
-		if (topicID === topic_id) {
+		if (topicID === topicId) {
 			if (topic) window.whiteboard.updateCanvas(username, data);
 
 			var updateThumbPositionJSON = {

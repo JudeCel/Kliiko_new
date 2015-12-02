@@ -1,5 +1,5 @@
-var onPersonalimagesset = function(username, topic_id, json) {
-	if (topic_id === thisMain.topicID) {
+var onPersonalimagesset = function(username, topicId, json) {
+	if (topicId === thisMain.topicID) {
 		//if (username === thisMain.username) {
 			topic.getConsole().setDocument(json);				
 		//}

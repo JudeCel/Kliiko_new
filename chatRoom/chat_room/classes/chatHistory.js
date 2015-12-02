@@ -542,7 +542,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 				title: 'Remove Comment',
 				width: tagWidth,
 				height: tagHeight,
-				onClick: "javascript:window.deleteOnClick('" + data.id + "','" + data.topic_id +"')",
+				onClick: "javascript:window.deleteOnClick('" + data.id + "','" + data.topicId +"')",
 				inline: true
 			},{
 				//	d

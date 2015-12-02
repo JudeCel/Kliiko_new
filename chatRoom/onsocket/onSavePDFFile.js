@@ -27,7 +27,7 @@ var filterResult = function(processedData){
 	for(var i=0; i<=processedData.length-1; i++){
 		var ii = null;
 		for(ii=0; ii<=list.length-1; ii++){
-			if(processedData[i].topic_id == list[ii].topic_id)
+			if(processedData[i].topicId == list[ii].topicId)
 				break;
 		}
 

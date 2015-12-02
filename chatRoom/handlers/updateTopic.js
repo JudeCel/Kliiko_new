@@ -7,7 +7,7 @@ var Topic = models.Topic;
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        topic_id: joi.number().required(),
+        topicId: joi.number().required(),
 	    description: joi.string().optional()
     });
     if (err)
@@ -17,7 +17,7 @@ module.exports.validate = function (req, resCb) {
 };
 
 module.exports.run = function (req, resCb, errCb) {
-  let id = req.params.topic_id;
+  let id = req.params.topicId;
   let description = req.params.description;
 
     let fields = {

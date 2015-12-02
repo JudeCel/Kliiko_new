@@ -1,10 +1,10 @@
-var onUpdatechat = function(userId, topic_id, data) {
+var onUpdatechat = function(userId, topicId, data) {
 	if (!isEmpty(topic)) {
 		var avatar = topic.getAvatarByUserId(userId),
 			avatarJSON = avatar.json;
 	}
 
-	if (topicID === topic_id) {
+	if (topicID === topicId) {
 		if (!isEmpty(chatHistory)) {
 			if (!isEmpty(topic)) {
 				for (var ndx = 0, pl = participants.length; ndx < pl; ndx++) {
@@ -78,30 +78,30 @@ var onUpdatechat = function(userId, topic_id, data) {
 		}
 
 		if (isReply) {
-			if (isEmpty(window.topicRepliesCounter['topic_' + topic_id])) {
-				window.topicRepliesCounter['topic_' + topic_id] = {
+			if (isEmpty(window.topicRepliesCounter['topic_' + topicId])) {
+				window.topicRepliesCounter['topic_' + topicId] = {
 					count: 0,
 					ids: []
 				}
 			}
 
-			window.topicRepliesCounter['topic_' + topic_id].count = (window.topicRepliesCounter['topic_' + topic_id].count + 1);
-			window.topicRepliesCounter['topic_' + topic_id].ids.push(data.mode.messageId)
+			window.topicRepliesCounter['topic_' + topicId].count = (window.topicRepliesCounter['topic_' + topicId].count + 1);
+			window.topicRepliesCounter['topic_' + topicId].ids.push(data.mode.messageId)
 		} else {
-			if (isEmpty(window.topicChatCounter['topic_' + topic_id])) {
-				window.topicChatCounter['topic_' + topic_id] = {
+			if (isEmpty(window.topicChatCounter['topic_' + topicId])) {
+				window.topicChatCounter['topic_' + topicId] = {
 					count: 0,
 					ids: []
 				}
 			}
 
-			window.topicChatCounter['topic_' + topic_id].count = (window.topicChatCounter['topic_' + topic_id].count + 1);
-			window.topicChatCounter['topic_' + topic_id].ids.push(data.id)
+			window.topicChatCounter['topic_' + topicId].count = (window.topicChatCounter['topic_' + topicId].count + 1);
+			window.topicChatCounter['topic_' + topicId].ids.push(data.id)
 		}
 
 		window.onTopicsUpdateTopic({
 			userID: userId,				//	make sure we update with the user
-			topicID: topic_id
+			topicID: topicId
 		});
 
 		if (!isEmpty(avatar)) {

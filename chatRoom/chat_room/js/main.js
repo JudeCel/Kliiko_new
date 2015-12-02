@@ -1023,9 +1023,9 @@ socket.on('topicLoaded', function (data) {
   }
 });
 
-socket.on('updatedconsole', function (topic_id, consoleState, json) {
+socket.on('updatedconsole', function (topicId, consoleState, json) {
   if (!isEmpty(window.topic)) {
-    if (topic_id === window.topicID) {
+    if (topicId === window.topicID) {
       window.topic.getConsole().updateConsole(consoleState, json);
     }
   }

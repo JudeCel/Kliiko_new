@@ -9,7 +9,7 @@ var validate = function (req, resCb) {
     var err = joi.validate(req.params, {
         id: joi.number(),
         type_id: joi.number(),
-        topic_id: joi.number(),
+        topicId: joi.number(),
         userId: joi.number()
     });
     if (err)

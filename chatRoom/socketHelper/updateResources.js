@@ -1,10 +1,10 @@
 var mtypes = require('if-common').mtypes;
 var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 
-function updateResources(topic_id, userId, content, type, Cb) {
+function updateResources(topicId, userId, content, type, Cb) {
     var req = expressValidatorStub({
         params: {
-            topic_id: topic_id,
+            topicId: topicId,
             userId: userId,
             type_id: mtypes.resourceType[type]
         }

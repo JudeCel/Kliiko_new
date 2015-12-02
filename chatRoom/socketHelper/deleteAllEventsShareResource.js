@@ -3,7 +3,7 @@ var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 function deleteEventsShareResource(topicId, nextCb) {
     var req = expressValidatorStub({
         params: {
-            topic_id: topicId
+            topicId: topicId
         }
     });
 

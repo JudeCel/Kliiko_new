@@ -106,7 +106,7 @@
 //            ifs: {
 //                sessionId: req.params.sessionID,
 //                session: req.params.report.session,
-//                topic_id: req.params.topicID,
+//                topicId: req.params.topicID,
 //                topic: req.params.report.topic
 //            },
 //            page: {
@@ -136,7 +136,7 @@
 //            case "chat_stars":
 //                var cmdReq = expressValidatorStub({
 //                    params: {
-//                        topic_id: req.params.topicID
+//                        topicId: req.params.topicID
 //                    }
 //                });
 //
@@ -156,7 +156,7 @@
 //            case "whiteboard":
 //                var cmdReq = expressValidatorStub({
 //                    params: {
-//                        topic_id: req.params.topicID
+//                        topicId: req.params.topicID
 //                    }
 //                });
 //
@@ -170,7 +170,7 @@
 //            case "vote":
 //                var cmdReq = expressValidatorStub({
 //                    params: {
-//                        topic_id: req.params.topicID
+//                        topicId: req.params.topicID
 //                    }
 //                });
 //
@@ -293,7 +293,7 @@
 //
 //                case 'stats':
 //                    rowObject.count = rowData.count_userId;
-//                    rowObject.topic_id = rowData.topic_id;
+//                    rowObject.topicId = rowData.topicId;
 //                    rowObject.topic_name = rowData.topic_name;
 //
 //                    switch (json.type.toLowerCase()) {

@@ -21,7 +21,7 @@ module.exports.listen = function (server) {
   var userids = [];
   var nameList = new Array();
   var globalVars = {
-    topic_id: 0,
+    topicId: 0,
     userId: 0
   };
 
@@ -78,13 +78,13 @@ module.exports.listen = function (server) {
 
       var req = expressValidatorStub({
         params: {
-          topic_id: topicId,
+          topicId: topicId,
           description: topicDescription
         }
       });
 
       var resCb = function (result) {
-        io.sockets.emit('updateBillboard', socket.userId, socket.topic_id, topicDescription);
+        io.sockets.emit('updateBillboard', socket.userId, socket.topicId, topicDescription);
       };
 
       var nextCb = function (err) {
@@ -112,7 +112,7 @@ module.exports.listen = function (server) {
       for (var ndxSocket = 0, nk = keys.length; ndxSocket < nk; ndxSocket++) {
         var currentSocket = io.sockets.sockets[keys[ndxSocket]];
         if (currentSocket.userId === reply_userId) {
-          if (currentSocket.topic_id !== socket.topic_id) {
+          if (currentSocket.topicId !== socket.topicId) {
             updateDB = true;
           }
           found = true;
@@ -129,7 +129,7 @@ module.exports.listen = function (server) {
           params: {
             userId: socket.userId,
             sessionId: socket.sessionId,
-            topic_id: socket.topic_id,
+            topicId: socket.topicId,
             reply_userId: reply_userId,
             message_id: message_id
           }
@@ -179,13 +179,13 @@ module.exports.listen = function (server) {
       });
     });
 
-    socket.on('delete_offline_transactions', function (topic_id, reply_userId) {
+    socket.on('delete_offline_transactions', function (topicId, reply_userId) {
       console.log('delete_offline_transactions');
 
 
       var req = expressValidatorStub({
         params: {
-          topic_id: topic_id,
+          topicId: topicId,
           reply_userId: reply_userId
         }
       });
@@ -216,15 +216,15 @@ module.exports.listen = function (server) {
 
       switch (data.action) {
         case 'deleteAll':
-          socketHelper.deleteAllEvents(socket.topic_id); //remove everything on the screen (this obviously cannot be undone "easily")...
+          socketHelper.deleteAllEvents(socket.topicId); //remove everything on the screen (this obviously cannot be undone "easily")...
         break;
         default:
-          socketHelper.updateEvent(socket.topic_id, userId, data); //lets save this to the events table
+          socketHelper.updateEvent(socket.topicId, userId, data); //lets save this to the events table
         break;
       }
 
       //	make sure we broadcast this object back to everyone else...
-      io.sockets.emit('updatecanvas', userId, socket.topic_id, data);
+      io.sockets.emit('updatecanvas', userId, socket.topicId, data);
     });
 
     socket.on('undo', function (data) {
@@ -252,7 +252,7 @@ module.exports.listen = function (server) {
         send: function (result) {
           if (!result) return;
           var resultStr = JSON.stringify(result);
-          io.sockets.emit('updateundo', socket.username, socket.topic_id, resultStr);
+          io.sockets.emit('updateundo', socket.username, socket.topicId, resultStr);
         }
       };
 
@@ -288,7 +288,7 @@ module.exports.listen = function (server) {
         send: function (result) {
           if (!result) return;
           var resultStr = JSON.stringify(result);
-          io.sockets.emit('updateredo', socket.username, socket.topic_id, resultStr);
+          io.sockets.emit('updateredo', socket.username, socket.topicId, resultStr);
         }
       };
 
@@ -314,7 +314,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.sockets.emit('updatepictureboard', socket.topic_id);
+          io.sockets.emit('updatepictureboard', socket.topicId);
         }
       };
 
@@ -340,7 +340,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.sockets.emit('deletedchat', socket.userId, socket.topic_id, data.id, JSON.stringify(result, null));
+          io.sockets.emit('deletedchat', socket.userId, socket.topicId, data.id, JSON.stringify(result, null));
         }
       };
 
@@ -477,7 +477,7 @@ module.exports.listen = function (server) {
 
       var req = expressValidatorStub({
         params: {
-          topic_id: socket.topic_id
+          topicId: socket.topicId
         }
       });
 
@@ -501,7 +501,7 @@ module.exports.listen = function (server) {
     //	    socket.on('getTopic', function () {
     //		    var req = expressValidatorStub({
     //			    params: {
-    //				    topic_id: socket.topic_id
+    //				    topicId: socket.topicId
     //			    }
     //		    });
     //
@@ -528,7 +528,7 @@ module.exports.listen = function (server) {
 
       var req = expressValidatorStub({
         params: {
-          topic_id: socket.topic_id
+          topicId: socket.topicId
         }
       });
 
@@ -582,7 +582,7 @@ module.exports.listen = function (server) {
 
       var req = expressValidatorStub({
         params: {
-          topic_id: socket.topic_id,
+          topicId: socket.topicId,
           resource_type: mtypes.resourceType[type],
           userId: socket.userId
         }
@@ -609,8 +609,8 @@ module.exports.listen = function (server) {
       console.log("shareresource");
 
 
-      io.sockets.emit('sharedresource', socket.userId, socket.topic_id, json);
-      socketHelper.createCustomEvent(socket.topic_id, socket.userId, "shareresource", JSON.stringify(json, null));
+      io.sockets.emit('sharedresource', socket.userId, socket.topicId, json);
+      socketHelper.createCustomEvent(socket.topicId, socket.userId, "shareresource", JSON.stringify(json, null));
     });
 
     socket.on('deleteresource', function (id) {
@@ -680,7 +680,7 @@ module.exports.listen = function (server) {
       db.query(sqlCmd, function(err, result, fields) {
       if (err) throw err;
 
-      io.sockets.emit('updatecanvas', -1, socket.topic_id, object);
+      io.sockets.emit('updatecanvas', -1, socket.topicId, object);
     }); */
   });
 
@@ -698,25 +698,25 @@ module.exports.listen = function (server) {
   socket.on('addvideo', function (json) {
     console.log("addvideo");
 
-    socketHelper.updateResources(socket.topic_id, socket.userId, json, "video", resourceAppendedCallback);
+    socketHelper.updateResources(socket.topicId, socket.userId, json, "video", resourceAppendedCallback);
   });
 
   socket.on('addvote', function (json) {
     console.log("addvote");
 
-    socketHelper.updateResources(socket.topic_id, socket.userId, json, "vote", resourceAppendedCallback);
+    socketHelper.updateResources(socket.topicId, socket.userId, json, "vote", resourceAppendedCallback);
   });
 
   socket.on('vote', function (json) {
     console.log("vote");
 
-    socketHelper.createCustomEvent(socket.topic_id, socket.userId, "vote", json);
+    socketHelper.createCustomEvent(socket.topicId, socket.userId, "vote", json);
   });
 
   socket.on('enqueryvote', function (voteID, isfacilitator) {
     console.log("enqueryvote");
 
-    socketHelper.enqueryVote(socket, voteID, socket.topic_id, socket.userId, isfacilitator);
+    socketHelper.enqueryVote(socket, voteID, socket.topicId, socket.userId, isfacilitator);
   });
 
   socket.on('modifyvote', function (json) {
@@ -844,7 +844,7 @@ module.exports.listen = function (server) {
     });
   }
 
-  socket.on('updateconsole', function (json, topic_id, consoleState, lastConsoleState) {
+  socket.on('updateconsole', function (json, topicId, consoleState, lastConsoleState) {
     console.log("updateconsole");
 
 
@@ -865,32 +865,32 @@ module.exports.listen = function (server) {
           //if case of 'false': turn the pinboard off
           case 'none':
           case 'true':
-          getCollageEvents(topic_id, function (result) {
+          getCollageEvents(topicId, function (result) {
             var resultAsString = JSON.stringify(result, null);
             if (json.content === "none")
-            io.sockets.emit('updatedconsole', socket.topic_id, consoleState, resultAsString);
+            io.sockets.emit('updatedconsole', socket.topicId, consoleState, resultAsString);
             else
-            io.emit('updatedconsole', socket.topic_id, consoleState, resultAsString);
+            io.emit('updatedconsole', socket.topicId, consoleState, resultAsString);
           });
           break;
 
           case 'toggle':
           {
-            getToggleEventsFlag(topic_id, function (toggleOn) {
+            getToggleEventsFlag(topicId, function (toggleOn) {
               //toggle the picture board
-              socketHelper.createCustomEvent(socket.topic_id, socket.userId, "shareresource", JSON.stringify({
+              socketHelper.createCustomEvent(socket.topicId, socket.userId, "shareresource", JSON.stringify({
                 type: 'pictureboard',
                 content: toggleOn
               }, null));
 
               if (toggleOn)
-              getCollageEvents(topic_id, function (result) {
-                io.sockets.emit('updatedconsole', socket.topic_id, consoleState, JSON.stringify(result, null));
+              getCollageEvents(topicId, function (result) {
+                io.sockets.emit('updatedconsole', socket.topicId, consoleState, JSON.stringify(result, null));
               })
               else {
                 //turn the pinboard off
                 if (consoleState & CS_PICTUREBOARD) consoleState -= CS_PICTUREBOARD;
-                io.sockets.emit('updatedconsole', socket.topic_id, consoleState, "{}");
+                io.sockets.emit('updatedconsole', socket.topicId, consoleState, "{}");
               }
             });
           }
@@ -901,7 +901,7 @@ module.exports.listen = function (server) {
       default:
       {
         //before we do anything, lets see if we have a pictureboard
-        getToggleEventsFlag(topic_id, function (pinboardPresent) {
+        getToggleEventsFlag(topicId, function (pinboardPresent) {
           //do we want to remove the pictureboard?
           if (!pinboardPresent) {
             var removePictureboard = false;
@@ -923,7 +923,7 @@ module.exports.listen = function (server) {
             //OK, lets process the message now
             if (json.updateEvent && removePictureboard) {
               //turn the pinboard off
-              socketHelper.createCustomEvent(socket.topic_id, socket.userId, "shareresource", JSON.stringify({
+              socketHelper.createCustomEvent(socket.topicId, socket.userId, "shareresource", JSON.stringify({
                 type: 'pictureboard',
                 content: "false"
               }, null));
@@ -937,7 +937,7 @@ module.exports.listen = function (server) {
             }
 
             if (processShareResource) {
-              socketHelper.createCustomEvent(socket.topic_id, socket.userId, "shareresource", JSON.stringify(json, null));
+              socketHelper.createCustomEvent(socket.topicId, socket.userId, "shareresource", JSON.stringify(json, null));
             }
           }
 
@@ -946,16 +946,16 @@ module.exports.listen = function (server) {
           //at this point, json.type could be anything other than 'pictureboard'
           if (json.updateEvent) {
             json.updateEvent = false; //make sure we dont do this again
-            io.sockets.emit('updatedconsole', socket.topic_id, consoleState, json);
+            io.sockets.emit('updatedconsole', socket.topicId, consoleState, json);
           } else
-          io.emit('updatedconsole', socket.topic_id, consoleState, json);
+          io.emit('updatedconsole', socket.topicId, consoleState, json);
         })
         break;
       }
     }
   });
 
-  socket.on('settopicid', function (topic_id, initialTopicSet, userId) {
+  socket.on('settopicid', function (topicId, initialTopicSet, userId) {
     console.log("settopicid");
 
     if (userId != socket.userId) return;
@@ -965,24 +965,24 @@ module.exports.listen = function (server) {
     //	set the topic within our nameList
     for (var ndx = 0, ln = nameList.length; ndx < ln; ndx++) {
       if (nameList[ndx].id === socket.userId) {
-        nameList[ndx].topic_id = topic_id;
+        nameList[ndx].topicId = topicId;
         break;
       }
     }
 
-    socket.topic_id = topic_id;
-    globalVars.topic_id = topic_id;
+    socket.topicId = topicId;
+    globalVars.topicId = topicId;
 
     io.emit('topicset', !initialTopicSet);
 
     if (typeof socket.userId != "undefined") {
       //	reply to the sender
-      socketHelper.createCustomEvent(socket.topic_id, socket.userId, "settopic");
+      socketHelper.createCustomEvent(socket.topicId, socket.userId, "settopic");
     }
 
     var req = expressValidatorStub({
       params: {
-        topic_id: socket.topic_id
+        topicId: socket.topicId
       }
     });
 
@@ -1003,14 +1003,14 @@ module.exports.listen = function (server) {
     });
   });
 
-  socket.on('setavatarcaption', function (userId, topic_id, caption) {
+  socket.on('setavatarcaption', function (userId, topicId, caption) {
     console.log("setavatarcaption");
 
 
     //	set the topic within our nameList
     for (var ndx = 0, ln = nameList.length; ndx < ln; ndx++) {
       if (nameList[ndx].id === userId) {
-        nameList[ndx].topic_id = topic_id;
+        nameList[ndx].topicId = topicId;
         nameList[ndx].caption = caption;
         break;
       }
@@ -1069,11 +1069,11 @@ module.exports.listen = function (server) {
     socketHelper.createLog(socket.userId, "connect");
   });
 
-  socket.on('updateemotions', function (userId, topic_id, data) {
+  socket.on('updateemotions', function (userId, topicId, data) {
     console.log("updateemotions");
 
 
-    io.sockets.emit('updatedemotions', userId, topic_id, data);
+    io.sockets.emit('updatedemotions', userId, topicId, data);
   });
 
   socket.on('updatetag', function (json) {
@@ -1083,14 +1083,14 @@ module.exports.listen = function (server) {
     var req = expressValidatorStub({
       params: {
         id: parseInt(json.id.replace(/\D/g, '')),
-        topic_id: socket.topic_id,
+        topicId: socket.topicId,
         tag: json.value
       }
     });
 
     var resCb = function (result) {
       if (!result.fields) return;
-      io.sockets.emit('updatedtag', result.fields.topic_id, result.fields.id, result.fields.tag);
+      io.sockets.emit('updatedtag', result.fields.topicId, result.fields.id, result.fields.tag);
     };
 
     var nextCb = function (err) {
@@ -1117,7 +1117,7 @@ module.exports.listen = function (server) {
     var req = expressValidatorStub({
       params: {
         userId: userId,
-        topic_id: topicId,
+        topicId: topicId,
         URL: "url",
         JSON: content
       }
@@ -1245,7 +1245,7 @@ module.exports.listen = function (server) {
 
 
     // update list of users in chat, client-side
-    io.sockets.emit('updateusers', socket.sessionId, socket.userId, nameList);
+    io.emit('updateusers', socket.sessionId, socket.userId, nameList);
     socketHelper.createLog(socket.userId, "disconnect");      // TBD: where it is defined?
   });
 

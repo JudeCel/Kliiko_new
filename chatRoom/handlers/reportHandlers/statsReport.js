@@ -38,7 +38,7 @@ module.exports.getReportRowObjects = function (data, nextCb) {
             userId: rowData.userId,
             fsPath: FS_PATH,
             count: rowData.count_userId,
-            topic_id: rowData.topic_id,
+            topicId: rowData.topicId,
             topic_name: rowData.topic_name
         };
 

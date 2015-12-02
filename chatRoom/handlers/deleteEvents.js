@@ -11,7 +11,7 @@ var models = require("./../../models");
 
 module.exports.validate = function (req, resCb) {
 	var err = joi.validate(req.params, {
-		topic_id: joi.number().required()
+		topicId: joi.number().required()
 	});
 
 	if (err)
@@ -27,11 +27,11 @@ module.exports.run = function (req, resCb, errCb) {
 		WHERE deleted IS NULL \
 		AND (tag = 0 OR tag = 16) \
 		AND cmd IN ('shareresource', 'object') \
-		AND topic_id = ?";
+		AND topicId = ?";
 
 
 		models.sequelize.query(sql,
-			{ replacements: [req.params.topic_id],
+			{ replacements: [req.params.topicId],
 				type: models.sequelize.QueryTypes.UPDATE} ).then(function(result) {
 				resCb.send();
 	  }).catch(function(err) {

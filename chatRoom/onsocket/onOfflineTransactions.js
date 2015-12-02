@@ -6,7 +6,7 @@ var onOfflinetransactions = function(data) {
 
 			//	if we are still here, then no exception was raised...
 			for (ndx = 0, jl = json.length; ndx < jl; ndx++) {
-				var topicId = json[ndx].topic_id,
+				var topicId = json[ndx].topicId,
 					messageId = json[ndx].message_id;
 
 				//	make sure we reset our unread replies
