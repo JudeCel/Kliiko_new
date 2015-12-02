@@ -3,7 +3,6 @@ var onUserinfo = function(data) {
 
 	window.receivedUsername = true;
 	var userInfo = JSON.parse(data);
-
 	if (!userInfo) {
         var dashboard = window.getDashboard();
         dashboard.showMessage({
@@ -28,7 +27,7 @@ var onUserinfo = function(data) {
 		socket.emit('setusername', thisMain.username);
 
 		//	lets make sure we have our participants list and topics
-		socket.emit('getparticipants', window.sessionID, window.brandProjectInfo.client_company_id);
+		socket.emit('getparticipants', window.sessionID);
 		//socket.emit('gettopics', window.sessionID); //moved in onParticipants.js, waiting for initialization window.topic
 	}
 };

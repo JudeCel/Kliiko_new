@@ -34,7 +34,7 @@ module.exports.listen = function (server) {
       });
 
       var resCb = function (result) {
-        console.log(io.clients);
+        console.log(io.clientsss);
         io.emit('config_info', config, result.dataValues);
       };
 

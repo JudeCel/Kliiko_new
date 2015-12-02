@@ -77,7 +77,7 @@ function crateBrandProject(user, session, callback) {
 
 function addedSessionMember(user, session, brandProject, callback) {
   console.log("added Session Member");
-  session.createSessionMember({ role: "owner", user_id: user.id })
+  session.createSessionMember({ role: "owner", user_id: user.id, username: "cool user" })
   .then(function (_result) {
     callback(null, user, session, brandProject);
   })

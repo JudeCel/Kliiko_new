@@ -863,13 +863,10 @@ function init() {
   paperTopicMenu = null;
   paperWhiteboard = Raphael("whiteboard");
   paperCanvas = ScaleRaphael("canvas", 950, 460);
-
   paperTitleWhiteboard = Raphael("title-whiteboard");
   paperTitleConversation = Raphael("title-conversation");
-
   paperTextbox = Raphael("textbox");
   paperTextboxHTML = Raphael("textbox-html");
-
   //window.textbox = new sf.ifs.View.Textbox();
 
   paperReportbox = Raphael("reportbox");
@@ -1085,7 +1082,7 @@ config = config.json
 function main(config) {
   var sessionID = window.sessionID;
   var userID = window.userID;
-  
+
   //	lets process config
   MODE = config.mode;
 

@@ -1,7 +1,7 @@
 var initMainMenu = function(role) {
 	var iconClick = function() {
 		var id = this.data("id");
-		
+
 		switch (id) {
 			case 'clearconsole': {
 				window.dashboard.showMessage({
@@ -55,11 +55,11 @@ var initMainMenu = function(role) {
 				var json = {
 					type: 'pictureboard',
 					content: 'toggle',
-					updateEvent: true					
+					updateEvent: true
 				}
 
 				topic.getConsole().setConsole(json);
-				
+
 			}
 			break;
 			case 'reports':
@@ -100,12 +100,12 @@ var initMainMenu = function(role) {
 					if (value === window.dashboard.YES) {
 						switch(browser) {
 							case 'firefox': {
-								window.open('', '_parent', ''); 
-								window.close(); 
+								window.open('', '_parent', '');
+								window.close();
 							}
 							default: {
-								window.open('', '_self', ''); 
-								window.close(); 
+								window.open('', '_self', '');
+								window.close();
 							}
 						}
 					}
@@ -113,7 +113,7 @@ var initMainMenu = function(role) {
 					//	make sure we close the dashboard first
 					window.dashboard.toBack();	//	time to hide the dashboard
 				});
-			break; 
+			break;
 		}
 	}
 
@@ -171,7 +171,7 @@ var initMainMenu = function(role) {
 			name: 'Backward'
 		}
 	}
-	
+
 	switch(role) {
 		case 'facilitator':
 		case 'co-facilitator': {
@@ -203,13 +203,13 @@ var initMainMenu = function(role) {
 		}
 		break;
 	}
-	
+
 	//	if we have nothing, lets get out of here (this should never happen)
 	if (isEmpty(list)) return;
 
 	var indexX = 0;
 	var x = 0, y = 24;
-		
+
 	for (var listNdx = 0, nl = list.length; listNdx < nl; listNdx++) {
 		var currentList = list[listNdx];
 
@@ -246,11 +246,11 @@ var initMainMenu = function(role) {
 				switch(browser) {
 					case 'firefox': continue;
 				}
-			break;		
+			break;
 		}
-	
+
 		x = (366 + (indexX * width));
-		
+
 		iconMenus.push({
 			id: currentList.id,
 			title: currentList.title,
@@ -261,7 +261,7 @@ var initMainMenu = function(role) {
 			path: eval("get" + currentList.name + "Path()")
 		});
 	}
-	
+
 	var attr = {fill: ICON_COLOUR, stroke: "none"};
 	var attrMouseOver = {stroke: ICON_COLOUR, "stroke-width": 1};
 	var attrMouseOut = {stroke: "none"};
@@ -275,7 +275,7 @@ var initMainMenu = function(role) {
 		var iconBG = paperTopic.rect(currentIconMenu.position.x, currentIconMenu.position.y, 32, 32).attr({fill: BACKGROUND_COLOUR, stroke: BACKGROUND_COLOUR, title: currentIconMenu.title});
 		var icon = paperTopic.path(currentIconMenu.path);
 		icon.translate(currentIconMenu.position.x, currentIconMenu.position.y). attr(attr).attr({opacity: 0, title: currentIconMenu.title});
-		
+
 		icon.mouseover(function(mouseOverEvent) {
 			this.attr(attrMouseOver);
 		});
@@ -301,7 +301,7 @@ var initMainMenu = function(role) {
 		name: string,			//	{required}	users name
 		fullName: string,
 		user_id,
-		role: string,			//	{default: 'participant'}	facilitator' | 'co-facilitator' | 'participant'
+		role: string,			//	{default: 'participant'}	'facilitator' | 'co-facilitator' | 'participant'
 		colour: int,			//	colour of the participant
 		online: boolean,
 		avatar_info: string		//	"head:face:hair:top:accessory:desk", i.e., 0:4:8:9:10:11 (see users table)
@@ -329,14 +329,14 @@ var onParticipants = function(data) {
 			}
 		}
 	}
-	
+
 	//	did we find a participant?
 	if (isEmpty(currentParticipant)) return;
 
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	//	lets find our role
 	window.role = (!isEmpty(currentParticipant.role)) ? currentParticipant.role : 'participant';
-	
+
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	//	set the colour of this participant
 	if (isEmpty(currentParticipant.colour)) {
@@ -346,7 +346,7 @@ var onParticipants = function(data) {
 				currentParticipant.colour = (255 * 65536);
 			}
 			break;
-			case 'co-facilitator': {
+			case 'owner': {
 				currentParticipant.colour = 6710886;
 			}
 			break;
@@ -359,7 +359,7 @@ var onParticipants = function(data) {
 		//	make sure our colour is a number, not a string
 		currentParticipant.colour = Number(currentParticipant.colour);
 	}
-	
+
 	//------------------------------------------------------------------------
 	/*
 		Blue Room
@@ -442,7 +442,7 @@ var onParticipants = function(data) {
 			thisMain.chatAvatar.draw();
 		}
 	}
-	
+
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	//	lets add ourselves now
 	socket.emit('adduser', window.sessionID, currentParticipant.user_id, currentParticipant.name);
@@ -456,7 +456,7 @@ var onParticipants = function(data) {
 		canvasHeight = paperCanvas.canvas.clientHeight ? paperCanvas.canvas.clientHeight : paperCanvas.height,
 		canvasCenterX = (canvasWidth / 2),
 		canvasCenterY = (canvasHeight / 2);
-		
+
 
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	var getWhiteboardJSON = function(size) {
@@ -524,7 +524,7 @@ var onParticipants = function(data) {
 			}
 			break;
 		}
-		
+
 		return result;
 	}
 
@@ -541,7 +541,7 @@ var onParticipants = function(data) {
 			}
 			break;
 		}
-		
+
 		if (jsonWhiteboard) {
 			thisMain.whiteboard.updateJSON(jsonWhiteboard);
 			thisMain.whiteboard.draw();
@@ -553,7 +553,7 @@ var onParticipants = function(data) {
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	//	[G]	lets draw our white board (small)
 	var jsonWhiteboard = getWhiteboardJSON("small");
-	
+
 	thisMain.whiteboard = new sf.ifs.View.Whiteboard(jsonWhiteboard);
 	thisMain.whiteboard.draw();
 

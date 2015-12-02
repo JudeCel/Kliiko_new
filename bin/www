@@ -40,10 +40,10 @@ var server = http.createServer(app);
 
 // start socet server if given arrgs chat command: npm start chat
 
-if (_.includes(process.argv, 'chat')) {
+// if (_.includes(process.argv, 'chat')) {
   var socketsServer = require('./../chatRoom/sockets');
   socketsServer.listen(server)
-}
+// }
 /**
  * Listen on provided port, on all network interfaces.
  */
