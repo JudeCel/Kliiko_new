@@ -331,7 +331,7 @@ this.clearBillboard = function () {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 this.setTopic = function (id, initialTopicSet) {
   if (isEmpty(id)) return;
-  if (isEmpty(initialTopicSet)) initialTopicSet = true;
+  if (isEmpty(initialTopicSet)) { initialTopicSet = true };
 
   topicID = id;
 

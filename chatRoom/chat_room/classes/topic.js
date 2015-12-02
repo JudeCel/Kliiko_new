@@ -16,9 +16,9 @@ var view = namespace('sf.ifs.View');
 */
 view.Topic = function(json) {
 	this.json = json;
-	
+
 	var baseAvatarRadius = 20;
-	
+
 	var numberOfParticipants = this.json.participants.length;
 	var numberOfActualParticipants = 0;
 	for (var ndx = 0; ndx < numberOfParticipants; ndx++) {
@@ -35,22 +35,22 @@ view.Topic = function(json) {
 			}
 		}
 	}
-	
+
 	//	on some browsers, this.json.paper.canvas.clientWidth is not set
 	var width = this.json.paper.canvas.clientWidth ? this.json.paper.canvas.clientWidth : this.json.paper.width;
 	var height = (this.json.paper.canvas.clientHeight ? this.json.paper.canvas.clientHeight : this.json.paper.height);	//	leave a space for the playback controller
-	
+
 	//	find the centre of the particpants circle
 	var percentageX = 33.3,
 		percentageY = 72;
-	
+
 	var cx = (width / 100) * percentageX,
 		cy = (height / 100) * percentageY;
-		
+
 	var radius = 150;
-		
+
 	radius = radius - (2 * baseAvatarRadius);
-	
+
 	// lets draw our console...
 	var consoleJSON = {
 		x: cx,
@@ -59,18 +59,18 @@ view.Topic = function(json) {
 		thisMain: this.json.thisMain,
 		paper: this.json.paper
 	}
-	
+
 	this.console = new sf.ifs.View.Console(consoleJSON);
 	this.console.draw();
-	
+
 	//	lets adjust where the participants will be drawn
 	var circlePath = getEllipseToPath(cx, cy, (radius * 2.25), (radius * 1.0));
 	var circle = this.json.paper.path(circlePath).attr({"stroke-opacity": 0});
-	
+
 	var circleLength = circle.getTotalLength();
 	var halfCircleLength = (circleLength / 2);
 	var arcLength = (circleLength / numberOfActualParticipants);
-	
+
 	var avatarJSON = {
 		userId: -1,
 		name: '',
@@ -86,7 +86,7 @@ view.Topic = function(json) {
 	}
 
 	this.avatar = new Array();
-	
+
 	//	now lets add the participants
 	var point = circle.getPointAtLength(halfCircleLength);	//	start halfway along the ellipse
 	var lengthLeft = halfCircleLength;
@@ -187,10 +187,10 @@ view.Topic = function(json) {
 			}
 			break;
 		}
-		
+
         if (showAvatar) this.avatar.push(new sf.ifs.View.Avatar(avatarJSON));
 	}
-	
+
 	//	draw from back to front
 	for (var ndx = (this.avatar.length - 1); ndx > -1; ndx--) {
 		switch (this.avatar[ndx].json.role) {
@@ -209,7 +209,7 @@ view.Topic = function(json) {
 
 view.Topic.prototype.getConsole = function() {
 	if (isEmpty(this.console)) return null;
-	
+
 	return this.console;
 };
 
@@ -223,7 +223,7 @@ view.Topic.prototype.getAvatarByName = function(name) {
 			return this.avatar[ndx];
 		}
 	}
-	
+
 	return null;
 };
 
@@ -233,7 +233,7 @@ view.Topic.prototype.getAvatarByUserId = function(id) {
 			return this.avatar[ndx];
 		}
 	}
-	
+
 	return null;
 };
 
@@ -336,7 +336,7 @@ view.Topic.prototype.updateChatFromString = function(name, data, id, tag, replyI
 	data.object.replyId = replyId;
 	data.object.replyUserId = replyUserId;
 	data.object.replyDate = dateReply;
-	
+
 	if (isEmpty(data.type)) data.type = "text";	//	default to text
 	switch(data.type) {
 		case "text":
@@ -351,8 +351,3 @@ view.Topic.prototype.updateConsoleDocumentFromString = function(name, data, date
 	dataDecoded = decodeURI(data);
 	data = JSON.parse(dataDecoded);
 };
-
-
-
-
-

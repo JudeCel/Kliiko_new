@@ -3,10 +3,10 @@ var onUpdateusers = function(sessionId, userId, data) {
 	if (sessionId != window.sessionID) return;	//	is this the correct topic?
 
 	if (isEmpty(window.topic)) return;
-	
+
 	if (window.avatars === null) {
 		window.avatars = window.topic.getAvatars();
-	} 
+	}
 
 	//	first, lets make sure our avatars are asleep
 	var found = false;
@@ -18,7 +18,7 @@ var onUpdateusers = function(sessionId, userId, data) {
 
 			found = false;	//	reset this...
 			for (var ndxData = 0, dl = data.length; ndxData < dl; ndxData++) {
-				if (data[ndxData].id === window.avatars[ndxAvatars].json.userId) {					
+				if (data[ndxData].id === window.avatars[ndxAvatars].json.userId) {
 					//	I am calling this with manifestation to bypass offline check
 					window.avatars[ndxAvatars].manifestation.setEmotion('normal');
 					window.avatars[ndxAvatars].emotion = "normal";

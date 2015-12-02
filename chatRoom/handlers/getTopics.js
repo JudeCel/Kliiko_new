@@ -9,15 +9,16 @@ module.exports.validate = function (req, resCb) {
 		sessionId: joi.number().required()
 	});
 	if (err)
-		return resCb(webFaultHelper.getValidationFault(err.message));
+	return resCb(webFaultHelper.getValidationFault(err.message));
 
-    resCb();
+	resCb();
 };
 
 module.exports.run = function (req, resCb, errCb) {
-	Topic.findAll({where: { sessionId: req.params.sessionId }}).then(function(topics) {
-			resCb.send(topics);
-  }).catch(function(err) {
+	Topic.findAll({where: { sessionId: req.params.sessionId }})
+	.then(function(topics) {
+		resCb.send(topics);
+	}).catch(function(err) {
 		errCb(webFaultHelper.getFault(err));
 	});
 };

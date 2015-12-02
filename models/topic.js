@@ -9,6 +9,7 @@ module.exports = (Sequelize, DataTypes) => {
     type: { type: DataTypes.STRING, allowNull: false, defaultValue: 'chat'},
     name:	{ type: DataTypes.STRING, allowNull: false},
     URL: { type: DataTypes.STRING, allowNull: true},
+    active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     description: { type: DataTypes.TEXT,},
   },
    {

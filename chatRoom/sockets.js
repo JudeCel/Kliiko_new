@@ -960,7 +960,7 @@ module.exports.listen = function (server) {
 
     if (userId != socket.userId) return;
 
-    if (typeof initialTopicSet === "undefined") initialTopicSet = true;
+    if (typeof initialTopicSet === "undefined") { initialTopicSet = true };
 
     //	set the topic within our nameList
     for (var ndx = 0, ln = nameList.length; ndx < ln; ndx++) {
@@ -992,7 +992,7 @@ module.exports.listen = function (server) {
 
     var res = {
       send: function (result) {
-        io.sockets.emit("topicLoaded", JSON.stringify(result, null));
+        io.emit("topicLoaded", JSON.stringify(result, null));
       }
     };
 
@@ -1065,6 +1065,7 @@ module.exports.listen = function (server) {
 
     //	update the list of users in chat, client-side
     //	this message is session specific, not topic specific
+
     io.emit('updateusers', socket.sessionId, socket.userId, nameList);
     socketHelper.createLog(socket.userId, "connect");
   });

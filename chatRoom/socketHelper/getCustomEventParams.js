@@ -15,7 +15,7 @@ module.exports = function getCustomEventParams(params) {
         userId: joi.number().required(),
         command: joi.string().required(),
         event: joi.string().optional(),
-        encodingRequired: joi.types.Boolean().optional()
+        encodingRequired: joi.boolean().optional()
     });
 
     if (err)

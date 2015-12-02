@@ -36,7 +36,7 @@ function createSession(user, callback) {
   let startTime = new Date();
 
   let sessionAttrs = {
-    name: "coolChat",
+    name: "cool session",
     start_time: startTime,
     end_time: startTime.setHours(startTime.getHours() + 2000),
     status_id: 1,

@@ -318,7 +318,6 @@ var onParticipants = function(data) {
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	//	lets login our user
 	var currentParticipant = null;
-	console.log(window.participants);
 	for (var ndx = 0, pl = window.participants.length; ndx < pl; ndx++) {
 		if (!isEmpty(window.participants[ndx])) {
 			if (!isEmpty(window.participants[ndx].name)) {
@@ -458,7 +457,6 @@ var onParticipants = function(data) {
 		canvasCenterX = (canvasWidth / 2),
 		canvasCenterY = (canvasHeight / 2);
 
-
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	var getWhiteboardJSON = function(size) {
 		var result = null;
@@ -582,7 +580,6 @@ var onParticipants = function(data) {
 		thisMain: thisMain,
 		paper: paperTopic
 	}
-
 	window.topic = new sf.ifs.View.Topic(json);
-    socket.emit('gettopics', window.sessionID); //moved from onUserInfo
+  socket.emit('gettopics', window.sessionID); //moved from onUserInfo
 };
