@@ -24,13 +24,20 @@ $('#play-video').on('click',function(){
   player = new YT.Player('player', {
     width : '100%',
     height : '100%',
-    videoId : 'H8PC1_3fjvs',
+    videoId : 'fhaIsQtKl4s',
     playerVars: { 'autoplay': 1 },
     events : {
       'onReady' : onPlayerReady,
       'onStateChange' : onPlayerStateChange
     }
   });
+});
+
+$(".non-resubmitable").submit(function() {
+    $(this).submit(function() {
+        return false;
+    });
+    return true;
 });
 
 var tag = document.createElement('script');
