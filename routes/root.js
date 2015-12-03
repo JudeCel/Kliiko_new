@@ -10,6 +10,7 @@ var subdomains = require('../lib/subdomains');
 var config = require('config');
 var mailers = require('../mailers');
 var session = require('../middleware/session');
+var constants = require('../util/constants')
 
 router.use(function (req, res, next) {
     if (req.path == '/logout') {
@@ -78,23 +79,6 @@ router.get('/login', function (req, res, next) {
     res.render('login', {title: 'Login', error: ""});
 });
 
-
-// Disable by customer
-// router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
-// router.get('/auth/facebook/callback',
-//   passport.authenticate('facebook', {failureRedirect: '/login' }),
-//   function(req, res) {
-//     res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
-//   }
-// );
-//
-// router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
-// router.get('/auth/google/callback',
-//   passport.authenticate('google', {failureRedirect: '/login' }),
-//   function(req, res) {
-//     res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
-//   }
-// );
 router.route('/emailConfirmation/:token')
   .get(function (req, res, next) {
 
@@ -145,13 +129,12 @@ router.route('/forgotpassword')
         let email = req.body.email;
 
         if (!email) {
-            tplData.error = 'Please fill e-mail fields';
+            tplData.error = 'Please fill e-mail field';
             res.render('forgotPassword', tplData);
             return;
         }
 
-        let regexp = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-        if (!regexp.test(email)) {
+        if (!constants.emailRegExp.test(email)) {
             tplData.error = 'Invalid e-mail format';
             res.render('forgotPassword', tplData);
             return;
@@ -161,7 +144,7 @@ router.route('/forgotpassword')
             if (err) {
                 tplData.error = err.message;
             } else {
-                tplData.success = 'Account recovery email sent to ' + email;
+                tplData.success = true;
             }
             res.render('forgotPassword', tplData);
         });
