@@ -60,6 +60,7 @@ module.exports = (Sequelize, DataTypes) => {
     confirmedAt: {type : DataTypes.DATE, allowNull: true},
     currentSignInIp: {type : DataTypes.STRING, allowNull: true},
     promoCode: {type: DataTypes.INTEGER, allowNull: true},
+    signInCount: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
     mobile: {type: DataTypes.STRING, allowNull: true},
     tipsAndUpdate: {type: DataTypes.ENUM, values: ['off', 'on'], allowNull: false, defaultValue: 'on'},
   },{
