@@ -13,6 +13,9 @@
   margin-left: 36px;
   margin-top: 30px;
   line-height: 36px; }
+  .btn-dashboard-menu.active {
+    color: white;
+    background: #4DC0E9; }
 
 .btn-header-dropdown, .btn-header-green, .btn-header-red {
   margin-left: 10px;
@@ -490,5 +493,17 @@ footer {
   border-left: 110px solid #F0e935;
   border-right: none; }
 
-.TTSSTT6565 {
-  background: rosybrown; }
+span.step-number {
+  display: block;
+  width: 61px;
+  margin: 10px;
+  padding: 5px;
+  color: white;
+  font-size: 1.1em;
+  text-align: center;
+  background: #ddd; }
+  span.step-number.active {
+    color: white;
+    background: #4DC0E9; }
+  span.step-number.done {
+    background: rgba(88, 188, 227, 0.65); }

@@ -21,9 +21,9 @@
                 url: "",
                 onEnter: ['$state', '$stateParams','dbg' ,'$location', '$rootScope' ,function($state, $stateParams,dbg, $location, $rootScope) {
                   dbg.rs('dashboard');
-                    setTimeout(function() {
-                        $state.go('dashboard.accountProfile');
-                    }, 200);
+                    //setTimeout(function() {
+                    //    $state.go('dashboard.accountProfile');
+                    //}, 200);
                 }],
                 views: {
                     'dashboard@': { templateUrl: prePath+"dashboard/dashboard.html" },
@@ -49,6 +49,17 @@
                 },
                 onEnter:['dbg', function( dbg) {
                     dbg.rs('dashboard.accountProfile.upgradePlan is on');
+                }]
+
+            })
+
+            .state('dashboard.accountProfile.accountManagers', {
+                url: "/account-managers",
+                views: {
+                    'dashboardContent@dashboard': { templateUrl: prePath+"dashboard-accountProfile-accountManagers/dashboard-content.html" }
+                },
+                onEnter:['dbg', function( dbg) {
+                    dbg.rs('dashboard.accountProfile.accountManagers is on');
                 }]
 
             })

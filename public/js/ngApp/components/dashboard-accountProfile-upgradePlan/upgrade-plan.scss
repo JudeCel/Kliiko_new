@@ -1,0 +1,19 @@
+span.step-number {
+  display: block;
+  width: 61px;
+  margin: 10px;
+  padding: 5px;
+  color: white;
+  font-size: 1.1em;
+  text-align: center;
+  background: $lightGray;
+
+  &.active {
+    color: white;
+    background: $blue;
+  }
+
+  &.done {
+    background: rgba(88, 188, 227, 0.65);
+  }
+}

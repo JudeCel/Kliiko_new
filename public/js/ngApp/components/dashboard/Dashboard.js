@@ -11,9 +11,6 @@
 
         var vm = this;
 
-        vm.tst = 'tst';
-
-        $rootScope.aaa = 4343;
 
     }
 
