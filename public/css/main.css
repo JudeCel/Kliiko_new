@@ -44,6 +44,10 @@
   width: 20%;
   padding-top: 100px; }
 
+.contactDetailsModal {
+  width: 80%;
+  padding-top: 100px; }
+
 #nav-tabs-main {
   text-align: center;
   border: 0px; }
@@ -391,6 +395,12 @@ footer {
 
 .login-container #login .table-v-content-middle td {
   vertical-align: middle; }
+
+.login-container #login .reset-password-success-message {
+  padding: 15px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+ }
 
 #signup {
   /* Radio buttons custom design */ }
