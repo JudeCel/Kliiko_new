@@ -19,10 +19,10 @@ module.exports.run = function (req, resCb, errCb) {
   let params = req.params;
   let sql = "SELECT id, userId, event  \
               FROM events  \
-              WHERE cmd = 'collage' AND topicId = ? AND deleted IS NULL AND id IN \
+              WHERE cmd = 'collage' AND topicId = ? AND deletedAt IS NULL AND id IN \
                   (SELECT MAX(id)  \
                   FROM events  \
-                  WHERE cmd = 'collage' AND topicId = ? AND deleted IS NULL  \
+                  WHERE cmd = 'collage' AND topicId = ? AND deletedAt IS NULL  \
                   GROUP BY userId)";
 
 

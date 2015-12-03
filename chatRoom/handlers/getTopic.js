@@ -16,8 +16,8 @@ module.exports.validate = function (req, resCb) {
 
 module.exports.run = function (req, resCb, errCb) {
 	let topicId = req.params.topicId;
-	Topic.find({where: topicId}).then(function(result) {
-			resCb.send(result);
+	Topic.find({where: {id: topicId}}).then(function(result) {
+		resCb.send(result.dataValues);
 	}).catch(function(err) {
     errCb(webFaultHelper.getFault(err));
   });

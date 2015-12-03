@@ -67,7 +67,7 @@ module.exports.listen = function (server) {
 
       var chatAsJSON = JSON.stringify({name: socket.username, object: data}, null);
       socketHelper.updateCustomEvent(data.topicId, socket.userId, id, tag, "chat", chatAsJSON, function(){
-        io.sockets.emit('updatechatcontent', id, data.input);
+        io.emit('updatechatcontent', id, data.input);
       });
     });
 
@@ -84,7 +84,7 @@ module.exports.listen = function (server) {
       });
 
       var resCb = function (result) {
-        io.sockets.emit('updateBillboard', socket.userId, socket.topicId, topicDescription);
+        io.emit('updateBillboard', socket.userId, socket.topicId, topicDescription);
       };
 
       var nextCb = function (err) {
@@ -224,7 +224,7 @@ module.exports.listen = function (server) {
       }
 
       //	make sure we broadcast this object back to everyone else...
-      io.sockets.emit('updatecanvas', userId, socket.topicId, data);
+      io.emit('updatecanvas', userId, socket.topicId, data);
     });
 
     socket.on('undo', function (data) {
@@ -252,7 +252,7 @@ module.exports.listen = function (server) {
         send: function (result) {
           if (!result) return;
           var resultStr = JSON.stringify(result);
-          io.sockets.emit('updateundo', socket.username, socket.topicId, resultStr);
+          io.emit('updateundo', socket.username, socket.topicId, resultStr);
         }
       };
 
@@ -288,7 +288,7 @@ module.exports.listen = function (server) {
         send: function (result) {
           if (!result) return;
           var resultStr = JSON.stringify(result);
-          io.sockets.emit('updateredo', socket.username, socket.topicId, resultStr);
+          io.emit('updateredo', socket.username, socket.topicId, resultStr);
         }
       };
 
@@ -314,7 +314,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.sockets.emit('updatepictureboard', socket.topicId);
+          io.emit('updatepictureboard', socket.topicId);
         }
       };
 
@@ -340,7 +340,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.sockets.emit('deletedchat', socket.userId, socket.topicId, data.id, JSON.stringify(result, null));
+          io.emit('deletedchat', socket.userId, socket.topicId, data.id, JSON.stringify(result, null));
         }
       };
 
@@ -461,7 +461,7 @@ module.exports.listen = function (server) {
       var res = {
         send: function (result) {
           if (!result) return;
-          io.sockets.emit('updatethumbsup', event_id, result);
+          io.emit('updatethumbsup', event_id, result);
         }
       };
 
@@ -609,7 +609,7 @@ module.exports.listen = function (server) {
       console.log("shareresource");
 
 
-      io.sockets.emit('sharedresource', socket.userId, socket.topicId, json);
+      io.emit('sharedresource', socket.userId, socket.topicId, json);
       socketHelper.createCustomEvent(socket.topicId, socket.userId, "shareresource", JSON.stringify(json, null));
     });
 
@@ -680,7 +680,7 @@ module.exports.listen = function (server) {
       db.query(sqlCmd, function(err, result, fields) {
       if (err) throw err;
 
-      io.sockets.emit('updatecanvas', -1, socket.topicId, object);
+      io.emit('updatecanvas', -1, socket.topicId, object);
     }); */
   });
 
@@ -868,7 +868,7 @@ module.exports.listen = function (server) {
           getCollageEvents(topicId, function (result) {
             var resultAsString = JSON.stringify(result, null);
             if (json.content === "none")
-            io.sockets.emit('updatedconsole', socket.topicId, consoleState, resultAsString);
+            io.emit('updatedconsole', socket.topicId, consoleState, resultAsString);
             else
             io.emit('updatedconsole', socket.topicId, consoleState, resultAsString);
           });
@@ -885,12 +885,12 @@ module.exports.listen = function (server) {
 
               if (toggleOn)
               getCollageEvents(topicId, function (result) {
-                io.sockets.emit('updatedconsole', socket.topicId, consoleState, JSON.stringify(result, null));
+                io.emit('updatedconsole', socket.topicId, consoleState, JSON.stringify(result, null));
               })
               else {
                 //turn the pinboard off
                 if (consoleState & CS_PICTUREBOARD) consoleState -= CS_PICTUREBOARD;
-                io.sockets.emit('updatedconsole', socket.topicId, consoleState, "{}");
+                io.emit('updatedconsole', socket.topicId, consoleState, "{}");
               }
             });
           }
@@ -946,7 +946,7 @@ module.exports.listen = function (server) {
           //at this point, json.type could be anything other than 'pictureboard'
           if (json.updateEvent) {
             json.updateEvent = false; //make sure we dont do this again
-            io.sockets.emit('updatedconsole', socket.topicId, consoleState, json);
+            io.emit('updatedconsole', socket.topicId, consoleState, json);
           } else
           io.emit('updatedconsole', socket.topicId, consoleState, json);
         })
@@ -977,6 +977,7 @@ module.exports.listen = function (server) {
 
     if (typeof socket.userId != "undefined") {
       //	reply to the sender
+
       socketHelper.createCustomEvent(socket.topicId, socket.userId, "settopic");
     }
 
@@ -1015,7 +1016,7 @@ module.exports.listen = function (server) {
         break;
       }
     }
-    io.sockets.emit("updateavatarcaption", userId, socket.sessionId, nameList);
+    io.emit("updateavatarcaption", userId, socket.sessionId, nameList);
   });
 
   socket.on('adduser', function (sessionId, userId, username) {
@@ -1074,7 +1075,7 @@ module.exports.listen = function (server) {
     console.log("updateemotions");
 
 
-    io.sockets.emit('updatedemotions', userId, topicId, data);
+    io.emit('updatedemotions', userId, topicId, data);
   });
 
   socket.on('updatetag', function (json) {
@@ -1091,7 +1092,7 @@ module.exports.listen = function (server) {
 
     var resCb = function (result) {
       if (!result.fields) return;
-      io.sockets.emit('updatedtag', result.fields.topicId, result.fields.id, result.fields.tag);
+      io.emit('updatedtag', result.fields.topicId, result.fields.id, result.fields.tag);
     };
 
     var nextCb = function (err) {
@@ -1302,7 +1303,7 @@ module.exports.listen = function (server) {
       //	we are only updating head, face, hair, top & accessories
       //	we are no updating the name tag, so no need for colour, name or gender
       //	one other interesting point, avatars are at a session level, not just a topic level
-      io.sockets.emit('updateavatarinfo', socket.sessionId, socket.userId, avatarinfoAsJSON);
+      io.emit('updateavatarinfo', socket.sessionId, socket.userId, avatarinfoAsJSON);
     };
 
     var nextCb = function (err) {

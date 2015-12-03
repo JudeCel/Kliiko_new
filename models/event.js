@@ -16,7 +16,7 @@ module.exports = (Sequelize, DataTypes) => {
    {
       // indexes: [],
       tableName: 'events',
-      timestamps: false,
+      timestamps: true,
       paranoid: true,
       classMethods: {
         associate: function(models) {

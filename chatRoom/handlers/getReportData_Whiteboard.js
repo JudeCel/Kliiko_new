@@ -1,9 +1,13 @@
 "use strict";
-var ifData = require('if-data')
-var getReportWhiteboard = ifData.repositories.getReportWhiteboard;
+// var ifData = require('if-data')
+// var getReportWhiteboard = ifData.repositories.getReportWhiteboard;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
-var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js');
+var _ = require('lodash');
+var models = require("./../../models");
+var Event = models.Event;
+
+var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 
 var validate = function (req, next) {
     var err = joi.validate(req.params, {
@@ -17,15 +21,16 @@ var validate = function (req, next) {
 module.exports.validate = validate;
 
 var run = function (req, resCb, errCb) {
-    getReportWhiteboard.getFirstEvent(req.params)
-        .then(function (event) {
-            return getReportWhiteboard.getResult(req.params, event);
-        })
-        .done(function (data) {
-            resCb.send(data);
-        }, function (err) {
-            errCb(webFaultHelper.getFault(err));
-        });
+  Event.findAll({where: {topic_id: req.params.topic_id, cmd: ['object', 'shareresource'] }})
+    .then(function (events) {
+      let cloection  = _.map(events, function(n) {
+        let data = n.dataValues;
+        return data;
+      });
+        resCb.send(cloection);
+    }, function (err) {
+        errCb(webFaultHelper.getFault(err));
+    });
 }
 module.exports.run = run;
 

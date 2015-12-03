@@ -45,8 +45,7 @@ module.exports = function(topicId, userId, command, capturedEvent, encode) {
 
 		var responseObject = customEventParams.responseObject;
         responseObject.id = result.id;
-
-		io().sockets.emit('updatechat', userId, topicId, responseObject);
+		io().emit('updatechat', userId, topicId, responseObject);
 	};
 
 	var res = { send: resCb };

@@ -2,6 +2,7 @@
 var getEventsForToggle = require('if-data').repositories.getEventsForToggle;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
+var models = require("./../../models");
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
@@ -15,10 +16,15 @@ module.exports.validate = function (req, resCb) {
 };
 
 module.exports.run = function (req, resCb, errCb) {
-    getEventsForToggle(req.params)
-        .done(function (event) {
-            resCb.send(event);
-        }, function (err) {
-            errCb(webFaultHelper.getFault(err));
-        });
+  let sql =  "SELECT event \
+        FROM events \
+        WHERE id = (SELECT MAX(id) FROM events WHERE tag = 32 AND topicId = ? AND deletedAt IS NULL)";
+
+    models.sequelize.query(sql,
+    { replacements: [req.params.topicId],
+      type: models.sequelize.QueryTypes.SELECT } ).then(function(event) {
+        resCb.send(event);
+      }).catch(function(err) {
+        errCb(webFaultHelper.getFault(err));
+      });
 };

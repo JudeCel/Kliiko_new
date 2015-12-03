@@ -1,4 +1,6 @@
 var onTopicset = function(useSimpleWait) {
+	console.log(useSimpleWait);
+	console.log(isEmpty(useSimpleWait));
 	if (isEmpty(useSimpleWait)) { useSimpleWait = false };
 
 	dashboard = new sf.ifs.View.Dashboard();	//	lets create and draw our dashboard while things load...

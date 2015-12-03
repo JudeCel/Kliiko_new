@@ -10,7 +10,7 @@ module.exports = (Sequelize, DataTypes) => {
     name:	{ type: DataTypes.STRING, allowNull: false},
     URL: { type: DataTypes.STRING, allowNull: true},
     active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
-    description: { type: DataTypes.TEXT,},
+    description: { type: DataTypes.TEXT},
   },
    {
       // indexes: [],
