@@ -1,5 +1,6 @@
 "use strict";
 var bcrypt = require('bcrypt');
+var constants = require('../util/constants')
 
 module.exports = (Sequelize, DataTypes) => {
   var User = Sequelize.define('User', {
@@ -15,9 +16,7 @@ module.exports = (Sequelize, DataTypes) => {
     validate:{
       validateEmail: function(val, next) {
         if (this.requiredEmail) {
-          let re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-
-          if (!(re.test(val))) {
+          if (!(constants.emailRegExp.test(val))) {
             return next("Invalid e-mail format");
           }
         }
@@ -60,6 +59,7 @@ module.exports = (Sequelize, DataTypes) => {
     confirmedAt: {type : DataTypes.DATE, allowNull: true},
     currentSignInIp: {type : DataTypes.STRING, allowNull: true},
     promoCode: {type: DataTypes.INTEGER, allowNull: true},
+    signInCount: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
     mobile: {type: DataTypes.STRING, allowNull: true},
     tipsAndUpdate: {type: DataTypes.ENUM, values: ['off', 'on'], allowNull: false, defaultValue: 'on'},
   },{
@@ -75,6 +75,5 @@ module.exports = (Sequelize, DataTypes) => {
       }
     }
 );
-
   return User;
 };

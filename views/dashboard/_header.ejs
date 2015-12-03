@@ -46,17 +46,22 @@
       </button>
 
       <ul class='dropdown-menu header-dropdown-ul' aria-labelledby='headerDropdown'>
-        <li class='text-right'><a href='#'>Contact Details<img src='../icons/ic_tab_sessions_active.png' alt='' /></a></li>
-        <li class='text-right'>
-          <a href='#' data-toggle='modal' data-target='#changePasswordModal'>Change Password<img src='../icons/ic_tab_sessions_active.png' alt='' /></a>
-        </li>
-        <li class='text-right'><a href='/dashboard/'>My Dashboard<img src='../icons/ic_tab_sessions_active.png' alt='' /></a></li>
-        <li class='text-right'><a href='#'>Payment Details<img src='../icons/ic_tab_sessions_active.png' alt='' /></a></li>
+        <li class='text-right text-size-dashboard'><a href='#' data-toggle='modal' data-target='#contactDetailsModal'>Contact Details<img class="my-details-container" src='/icons/contact_list_red.png' alt='' /></a></li>
+        <li role="separator" class="divider"></li>
+        <li class='text-right text-size-dashboard'><a href='#' data-toggle='modal' data-target='#changePasswordModal'>Change Password<img class="my-details-container" src='/icons/password_green_flat.png' alt='' /></a></li>
+        <li role="separator" class="divider"></li>
+        <li class='text-right text-size-dashboard'><a href='/dashboard/'>My Dashboard<img class="my-details-container" src='/icons/dashboard_blue.png' alt='' /></a></li>
+        <li role="separator" class="divider"></li>
+        <li class='text-right text-size-dashboard'><a href='#'>Payment Details<img class="my-details-container" src='/icons/payment_green.png' alt='' /></a></li>
         <%if(currentUser.role == "admin") { %>
-          <li class='text-right'><a href='/dashboard/uploadbanner'>Upload Banner<img src='../icons/ic_tab_sessions_active.png' alt='' /></a></li>
+          <li role="separator" class="divider"></li>
+          <li class='text-right text-size-dashboard'><a href='/dashboard/uploadbanner'>Upload Banner<img class="my-details-container" src='/icons/ic_tab_sessions_active.png' alt='' /></a></li>
         <% } %>
-        <li class='text-right'><a href='/logout'>Logout<img src='../icons/ic_tab_sessions_active.png' alt='' /></a></li>
+        <li role="separator" class="divider"></li>
+        <li class='text-right text-size-dashboard'><a href='/logout'>Logout<img class="my-details-container" src='/icons/logout_yellow.png' alt='' /></a></li>
       </ul>
     </div>
   </div>
+
   <% include _changePasswordModal %>
+  <% include _contactDetailsModal %>
