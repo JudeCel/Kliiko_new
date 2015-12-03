@@ -7,8 +7,8 @@ function views_path(action) {
 };
 
 function index(req, res) {
-  accountManager.findUserManagers(req.user, function(error, result) {
-    res.render(views_path('accountManager'), { title: 'Account Managers', accounts: result });
+  accountManager.findUserManagers(req.user, function(error, accounts) {
+    res.render(views_path('accountManager'), { title: 'Account Managers', accounts: accounts, message: req.flash('message')[0] });
   });
 };
 
@@ -17,8 +17,14 @@ function manageGet(req, res) {
 };
 
 function managePost(req, res) {
-  accountManager.createOrUpdateManager(req, function(error, result) {
+  accountManager.createOrUpdateManager(req, function(error, created) {
     if(error) {
+      if(created) {
+        mailers.invite.sendInviteNewUserToAccount(params);
+      }
+      else {
+        mailers.invite.sendInviteNewUserToAccount(params);
+      }
       res.render(views_path('accountManager/manage'), accountManager.simpleParams(error, 'Something went wrong', req.body, req));
     }
     else {
@@ -28,7 +34,16 @@ function managePost(req, res) {
 };
 
 function destroy(req, res) {
+  accountManager.remove(req, function(error, message) {
+    if(error) {
+      req.flash('message', error);
+    }
+    else {
+      req.flash('message', message);
+    }
 
+    res.redirect('../../accountmanager');
+  });
 };
 
 module.exports = {

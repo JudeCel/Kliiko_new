@@ -5,7 +5,7 @@ var AccountUser  = require('./../models').AccountUser;
 var _ = require('lodash');
 
 function create(account, user, callback) {
-    user.addAccount(account, { role: 'accountManager', owner: true}).then(function(result) {
+    user.addAccount(account, { role: 'accountManager', owner: true, status: 'accepted' }).then(function(result) {
       return callback(null, user);
     }).catch(AccountUser.sequelize.ValidationError, function(err) {
       return callback(err);
@@ -15,7 +15,7 @@ function create(account, user, callback) {
 }
 
 function createWithRole(account, user, role, callback) {
-    user.addAccount(account, { role: role, owner: false }).then(function(result) {
+    user.addAccount(account, { role: role, owner: false, status: 'invited' }).then(function(result) {
       return callback(null, user);
     }).catch(AccountUser.sequelize.ValidationError, function(err) {
       return callback(err);

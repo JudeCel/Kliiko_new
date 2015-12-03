@@ -13,6 +13,7 @@
         </div>
         <div class='col-xs-12 col-sm-12 col-md-12'>
           <h3 class='text-center'>Account Managers</h3>
+          <span><%= message %></span>
           <a href='accountmanager/manage'>
             <button type='button' class='btn-simple border-blue text-blue-dark'>Add New Account Manager</button>
           </a>
@@ -28,6 +29,7 @@
                     <th>Gender</th>
                     <th>Email</th>
                     <th>Mobile</th>
+                    <th>Status</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -39,6 +41,7 @@
                       <td><%= accounts[i].User.gender %></td>
                       <td><%= accounts[i].User.email %></td>
                       <td><%= accounts[i].User.mobile %></td>
+                      <td><%= accounts[i].status %></td>
                       <td><a href="accountmanager/remove/<%= accounts[i].id %>">Remove</a></td>
                     </tr>
                   <% } %>
