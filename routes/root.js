@@ -51,7 +51,7 @@ router.post('/registration', function (req, res, next) {
           tplData.success = 'Email confirmation sent to ' + email;
         }
       });
-      res.render('login', {title: 'Login', error: "Please, Confirm Your Email"});
+      res.render('login', {title: 'Login', error: "Please confirm Your Email"});
     };
   });
 });

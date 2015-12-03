@@ -8,6 +8,7 @@ var adminAttrs = {
   lastName: "user",
   password: "qwerty123",
   email: "admin@insider.com",
+  gender: "male",
   confirmedAt: new Date()
 }
 
@@ -27,6 +28,7 @@ var userAttrs = {
   lastName: "user",
   password: "qwerty123",
   email: "user@insider.com",
+  gender: "male",
   confirmedAt: new Date()
 }
 
