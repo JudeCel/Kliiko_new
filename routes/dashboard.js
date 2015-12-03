@@ -32,16 +32,13 @@ router.get('/upgradeplans', function(req, res) {
   res.render(views_path('upgradePlans'), { title: 'Upgrade Plans' });
 });
 
-router.get('/changepassword', function(req, res) {
-  res.render(views_path('changePassword'), { title: 'Change Password', user: req.user, error: "", message: "" });
-});
-
 router.post('/changepassword', function(req, res) {
   changePassword.save(req, function(errors, message, user){
+    res.type('json');
     if (errors) {
-      res.render(views_path('changePassword'), { title: 'Change Password', user: req.user, error: errors.message, message: message });
+      res.status(500).send({ error: errors.message, message: message });
     }else{
-      res.render(views_path('changePassword'), { title: 'Change Password', user: req.user, error: "", message: message });
+      res.status(200).send({ message: message });
     }
   });
 });

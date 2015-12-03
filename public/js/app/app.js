@@ -54,3 +54,33 @@ function onPlayerStateChange(event) {
     player.destroy();
   }
 }
+
+$(function() {
+  $('button#changePasswordButton').click(function() {
+    var button = this;
+    $(button).prop('disabled', true);
+    $.ajax({
+      type: 'POST',
+      url: '/dashboard/changepassword',
+      data: $('form.changePasswordForm').serialize(),
+      success: function(data, ajaxOptions) {
+        $(button).prop('disabled', false);
+        $('#changePasswordMessage').html(data.message);
+        $('#changePasswordError').html('');
+        $('#password').val('');
+        $('#repassword').val('');
+        setTimeout(function() {
+          $('#changePasswordMessage').html('');
+          $('#changePasswordModal').modal('hide');
+        }, 1500);
+      },
+      error: function(xhr, ajaxOptions, thrownError) {
+        $(button).prop('disabled', false);
+        $('#password').val('');
+        $('#repassword').val('');
+        $('#changePasswordMessage').html('');
+        $('#changePasswordError').html(xhr.responseJSON.error);
+      }
+    });
+  });
+});

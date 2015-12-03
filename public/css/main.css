@@ -20,6 +20,11 @@
   .btn-dashboard-menu:hover {
     color: #3DB0D9;
     border-color: #3DB0D9; }
+  .btn-dashboard-menu span {
+    display: inline-block;
+    width: calc(100% - 19px); }
+  .btn-dashboard-menu img {
+    margin-bottom: 3px; }
 
 .btn-dashboard-menu.active {
   color: white;
@@ -423,12 +428,6 @@ footer {
 
 .login-container #login .table-v-content-middle td {
   vertical-align: middle; }
-
-.login-container #login .reset-password-success-message {
-  padding: 15px;
-  padding-top: 30px;
-  padding-bottom: 30px;
- }
 
 #signup {
   /* Radio buttons custom design */ }

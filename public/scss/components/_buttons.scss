@@ -23,6 +23,13 @@
     color: $blueHover;
     border-color: $blueHover;
   }
+  span {
+    display: inline-block;
+    width: calc(100% - 19px);
+  }
+  img {
+    margin-bottom: 3px;
+  }
 }
 
 .btn-dashboard-menu.active {
