@@ -67,7 +67,11 @@ router.post('/login', function(req, res, next) {
       session.rememberMe(req, function(err, result) {
         if (err) { throw err}
         if (result) {
-          return res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
+          if (req.user.signInCount === 1) {
+            return res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard/landing'));
+          } else {
+            return res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
+          }
         }
       });
     });
