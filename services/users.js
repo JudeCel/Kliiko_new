@@ -156,7 +156,11 @@ function getUserByToken(token, callback) {
     attributes: ['id', 'resetPasswordSentAt', 'email', 'resetPasswordToken']
   })
     .then(function (result) {
+      if (result) {
         return callback(null, result);
+      } else {
+        return callback({message: "Password already changed."});
+      }
     })
     .catch(function (err) {
         callback(err);
