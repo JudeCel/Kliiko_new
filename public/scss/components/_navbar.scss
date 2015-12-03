@@ -2,32 +2,38 @@
 #nav-tabs-main {
   text-align: center;
   border: 0px;
-}
 
-#nav-tabs-main > li {
-  float: none;
-  display: inline-block;
-  *display: inline;
-  zoom: 1;
-  margin-right: 10px;
-}
+  & > li {
+    float: none;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    margin-right: 10px;
+    vertical-align: top;
 
-#nav-tabs-main > li > a {
-  border: 2px solid $font-color;
-  border-bottom: 0;
-  border-radius: 0;
-  color: $font-color;
-  padding-top: 5px;
-  padding-left: 40px;
-  padding-right: 40px;
-  font-size: 18px;
-  font-weight: bold;
-  font-family: SourceSansPro-Regular;
-  height: 44px;
-}
+    & > a {
+      border: 2px solid $font-color;
+      border-bottom: 0;
+      border-radius: 0;
+      color: $font-color;
+      padding-top: 8px;
+      padding-left: 25px;
+      padding-right: 25px;
+      font-size: 18px;
+      font-weight: bold;
+      font-family: SourceSansPro-Regular;
+      height: 44px;
 
-#nav-tabs-main > li > a:hover {
-  background-color: $blue;
+      &:hover {
+        background-color: $blue;
+      }
+
+      & > img{
+        padding-left: 20px;
+        padding-bottom: 3px;
+      }
+    }
+  }
 }
 
 #nav-tabs-main > li.active > a,
@@ -35,6 +41,7 @@
 #nav-tabs-main > li.active > a:focus {
   border: 2px solid $blue;
   background-color: $blue;
+  padding-top: 2px;
   color: white;
   height: 45px;
 }
