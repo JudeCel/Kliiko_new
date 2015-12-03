@@ -1,5 +1,4 @@
 "use strict";
-// var updateEvent = require('if-data').repositories.updateEvent;
 var joi = require('joi');
 var models = require("./../../models");
 var Event = models.Event;
@@ -31,7 +30,6 @@ module.exports.validate = function (req, resCb) {
 
 module.exports.run = function (req, resCb, errCb) {
   let params = req.params;
-
   Event.find({ where: {id: params.id} }).done(function(result) {
     if (result) {
       result.updateAttributes(params).then(function(result) {

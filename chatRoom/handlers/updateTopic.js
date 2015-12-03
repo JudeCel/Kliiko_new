@@ -1,5 +1,4 @@
 "use strict";
-var updateTopic = require('if-data').repositories.updateTopic;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
 var models = require("./../../models");
