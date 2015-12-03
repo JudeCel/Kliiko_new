@@ -420,12 +420,6 @@ footer {
 .login-container #login .table-v-content-middle td {
   vertical-align: middle; }
 
-.login-container #login .reset-password-success-message {
-  padding: 15px;
-  padding-top: 30px;
-  padding-bottom: 30px;
- }
-
 #signup {
   /* Radio buttons custom design */ }
   #signup .has-error {
