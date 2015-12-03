@@ -16,6 +16,7 @@ describe('Change Password', function() {
       lastName: "Blīgzna",
       password: "multipassword",
       email: "bligzna.lauris@gmail.com",
+      gender: "male"
     }
     models.sequelize.sync({ force: true }).then(() => {
       User.build(attrs).save()

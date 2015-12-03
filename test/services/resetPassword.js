@@ -17,6 +17,7 @@ describe('Reset Password', function() {
       lastName: "Dalas",
       password: "multipassword",
       email: "lilu.tanya@gmail.com",
+      gender: "male",
       resetPasswordToken: testToken,
       resetPasswordSentAt: new Date(),
     }
