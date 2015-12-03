@@ -111,8 +111,8 @@ module.exports.listen = function (server) {
       var updateDB = false;
       for (var ndxSocket = 0, nk = keys.length; ndxSocket < nk; ndxSocket++) {
         var currentSocket = io.sockets.sockets[keys[ndxSocket]];
-        if (currentSocket.userId === reply_userId) {
-          if (currentSocket.topicId !== socket.topicId) {
+        if (currentSocket.userId == reply_userId) {
+          if (currentSocket.topicId != socket.topicId) {
             updateDB = true;
           }
           found = true;
@@ -382,14 +382,14 @@ module.exports.listen = function (server) {
 
     socket.on('setusername', function (username) {
       console.log("setusername");
-      if (username === null) return;
+      if (username == null) return;
       socket.username = username;
     });
 
     socket.on('getparticipants', function (sessionId) {
       console.log("getparticipants");
 
-      if (sessionId === null) return;
+      if (sessionId == null) return;
 
       var req = expressValidatorStub({
         params: {
@@ -417,7 +417,7 @@ module.exports.listen = function (server) {
     socket.on('gettopics', function (sessionId) {
       console.log("gettopics");
 
-      if (sessionId === null) return;
+      if (sessionId == null) return;
 
       var req = expressValidatorStub({
         params: {
@@ -686,7 +686,7 @@ module.exports.listen = function (server) {
 
   function resourceAppendedCallback(userId, json) {
     var foundUser = _.find(io.sockets.clients(), function (client) {
-      return client.userId === userId;
+      return client.userId == userId;
     });
 
     if (foundUser) {
@@ -811,16 +811,16 @@ module.exports.listen = function (server) {
       return resCb(false);
 
       var jsonResult = JSON.parse(decodeURI(result[0].event), null);
-      return resCb(jsonResult.content === "true");
+      return resCb(jsonResult.content == "true");
       */
 
       var toggleOn = "true";	//	set up our default
-      if (result.length === 1) {
+      if (result.length == 1) {
         if (result[0].event != null) {
 
           if (typeof result[0].event != "undefined") {
             var json = JSON.parse(decodeURI(result[0].event), null);
-            toggleOn = ((json.content === "true") ? "false" : "true");
+            toggleOn = ((json.content == "true") ? "false" : "true");
           }
         }
       }
@@ -848,11 +848,11 @@ module.exports.listen = function (server) {
     console.log("updateconsole");
 
 
-    if (typeof json === "undefined")
+    if (typeof json == "undefined")
     return;
 
     //	set up some defaults
-    if (typeof json.updateEvent === "undefined")
+    if (typeof json.updateEvent == "undefined")
     json.updateEvent = true;	//make sure we call updateEvents()
 
     var CS_PICTUREBOARD = 4;	//check this against console.js
@@ -867,7 +867,7 @@ module.exports.listen = function (server) {
           case 'true':
           getCollageEvents(topicId, function (result) {
             var resultAsString = JSON.stringify(result, null);
-            if (json.content === "none")
+            if (json.content == "none")
             io.emit('updatedconsole', socket.topicId, consoleState, resultAsString);
             else
             io.emit('updatedconsole', socket.topicId, consoleState, resultAsString);
@@ -912,7 +912,7 @@ module.exports.listen = function (server) {
               if ((consoleState & CS_PICTUREBOARD) != CS_PICTUREBOARD) consoleState = (consoleState + CS_PICTUREBOARD);
               break;
               default:
-              if ((consoleState & CS_PICTUREBOARD) === CS_PICTUREBOARD) consoleState = (consoleState - CS_PICTUREBOARD);
+              if ((consoleState & CS_PICTUREBOARD) == CS_PICTUREBOARD) consoleState = (consoleState - CS_PICTUREBOARD);
               removePictureboard = true;
               break;
             }
@@ -933,7 +933,7 @@ module.exports.listen = function (server) {
           if (json.updateEvent) {
             var processShareResource = true;
             if (typeof json.content != "undefined") {
-              if (json.content === 'none') processShareResource = false;
+              if (json.content == 'none') processShareResource = false;
             }
 
             if (processShareResource) {
@@ -960,11 +960,11 @@ module.exports.listen = function (server) {
 
     if (userId != socket.userId) return;
 
-    if (typeof initialTopicSet === "undefined") { initialTopicSet = true };
+    if (typeof initialTopicSet == "undefined") { initialTopicSet = true };
 
     //	set the topic within our nameList
     for (var ndx = 0, ln = nameList.length; ndx < ln; ndx++) {
-      if (nameList[ndx].id === socket.userId) {
+      if (nameList[ndx].id == socket.userId) {
         nameList[ndx].topicId = topicId;
         break;
       }
@@ -1010,7 +1010,7 @@ module.exports.listen = function (server) {
 
     //	set the topic within our nameList
     for (var ndx = 0, ln = nameList.length; ndx < ln; ndx++) {
-      if (nameList[ndx].id === userId) {
+      if (nameList[ndx].id == userId) {
         nameList[ndx].topicId = topicId;
         nameList[ndx].caption = caption;
         break;
@@ -1030,14 +1030,14 @@ module.exports.listen = function (server) {
     globalVars.username = username;
 
     // have we already added this user?
-    if (userids[userId] === userId) {
+    if (userids[userId] == userId) {
       switch (conflict) {
         case "drop existing":
         //	disconnect the other socket as we should only have one user at a time...
         var keys = Object.keys(io.sockets.sockets);
         for (var ndxSocket = 0, nk = keys.length; ndxSocket < nk; ndxSocket++) {
           var currentSocket = io.sockets.sockets[keys[ndxSocket]];
-          if (currentSocket.userId === userId) {
+          if (currentSocket.userId == userId) {
             currentSocket.disconnect();
 
             break;

@@ -17,7 +17,12 @@ module.exports.validate = function (req, resCb) {
 
 module.exports.run = function (req, resCb, errCb) {
   Event.find({where: {uid: req.params.uid}}).then(function(result) {
-    resCb.send(result.dataValues);
+    if (result) {
+      resCb.send(result.dataValues);
+
+    }else{
+      resCb.send(null);
+    }
   }).catch(function(err) {
     errCb(webFaultHelper.getFault(err));
   });

@@ -21,7 +21,7 @@ var validate = function (req, next) {
 module.exports.validate = validate;
 
 var run = function (req, resCb, errCb) {
-  Event.findAll({where: {topic_id: req.params.topic_id, cmd: ['object', 'shareresource'] }})
+  Event.findAll({where: {topicId: req.params.topicId, cmd: ['object', 'shareresource'] }})
     .then(function (events) {
       let cloection  = _.map(events, function(n) {
         let data = n.dataValues;

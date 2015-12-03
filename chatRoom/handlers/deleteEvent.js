@@ -1,8 +1,7 @@
 "use strict";
-var deleteEvent = require('if-data').repositories.deleteEvent;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require("joi");
-var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js');
+var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 var models = require("./../../models");
 var Event = models.Event;
 
@@ -15,8 +14,8 @@ var validate = function (req, resCb) {
         uid: joi.string().optional()
     });
 
-    if (err)
-        return resCb(webFaultHelper.getValidationFault(err));
+    if (err.error)
+      return resCb(webFaultHelper.getValidationFault(err.error));
 
     resCb();
 };

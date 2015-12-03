@@ -20,7 +20,7 @@ module.exports.validate = function (req, next) {
 module.exports.run = function (req, resCb, errCb) {
   let topicId = req.params.topicId;
 
-  Event.findAll({ where: {topicId: topicId, cmd: 'chat', deleted: null },
+  Event.findAll({ where: {topicId: topicId, cmd: 'chat'},
   include: [models.Vote],
   order: [['created', 'DESC']] }).then(function(result) {
 
