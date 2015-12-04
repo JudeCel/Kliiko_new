@@ -26,7 +26,7 @@ function save(req, callback){
     if (err) {
       return callback(err);
     }
-    message = "Password successfully changed."
+    message = 'Password was changed successfully'
     mailers.users.sendPasswordChangedSuccess(params);
     callback(null, message, req.user);
   });

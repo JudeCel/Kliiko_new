@@ -55,6 +55,20 @@ function onPlayerStateChange(event) {
   }
 }
 
+$('form.changePasswordForm').keypress(function (e) {
+  if(e.which == 13) {
+    $('button#changePasswordButton').click();
+    return false;
+  }
+});
+
+$('#changePasswordModal').on('hidden.bs.modal', function () {
+  $('#changePasswordMessage').html('');
+  $('#changePasswordError').html('');
+  $('#password').val('');
+  $('#repassword').val('');
+})
+
 $(function() {
   $('button#changePasswordButton').click(function() {
     var button = this;
@@ -76,10 +90,10 @@ $(function() {
       },
       error: function(xhr, ajaxOptions, thrownError) {
         $(button).prop('disabled', false);
-        $('#password').val('');
-        $('#repassword').val('');
         $('#changePasswordMessage').html('');
         $('#changePasswordError').html(xhr.responseJSON.error);
+        $('#password').val('');
+        $('#repassword').val('');
       }
     });
   });
