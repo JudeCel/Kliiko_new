@@ -481,7 +481,8 @@ module.exports.listen = function (server) {
       });
 
       var nextCb = function (err) {
-        throw err;
+        console.log(err);
+        throw(err);
       };
 
       var res = {

@@ -25,10 +25,10 @@ module.exports.run = function (req, resCb, errCb) {
 
   OfflineTransaction.findAll(
     {where: {sessionId: sessionId, replyUserId: replyUserId}}).then(function(result) {
-      let cloection  = _.map(result, function(n) {
+      let collection  = _.map(result, function(n) {
         return n.dataValues;
       });
-      resCb.send(cloection);
+      resCb.send(collection);
     }).catch(function(err) {
       errCb(webFaultHelper.getFault(err));
     });

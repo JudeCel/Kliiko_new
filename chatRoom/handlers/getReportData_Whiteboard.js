@@ -23,11 +23,11 @@ module.exports.validate = validate;
 var run = function (req, resCb, errCb) {
   Event.findAll({where: {topicId: req.params.topicId, cmd: ['object', 'shareresource'] }})
     .then(function (events) {
-      let cloection  = _.map(events, function(n) {
+      let collection  = _.map(events, function(n) {
         let data = n.dataValues;
         return data;
       });
-        resCb.send(cloection);
+        resCb.send(collection);
     }, function (err) {
         errCb(webFaultHelper.getFault(err));
     });
