@@ -3,24 +3,32 @@
 var config = require('config');
 var helpers = require('./helpers');
 
+var inviteService = require('../services/invite');
 var mailFrom = helpers.mailFrom();
 var transporter = helpers.createTransport();
 
 function sendInviteNewUserToAccount(params, callback) {
-  let inviteNewUserToAccount = '/resetpassword/';
-  let link = { url: helpers.getUrl(params.token, inviteNewUserToAccount) };
-
-  helpers.renderMailTemplate('inviteNewUserToAccount', link, function(err, html){
-    if (err) {
-      return callback(err);
+  inviteService.createInvite(params, function(error, invite) {
+    if(error) {
+      callback(error);
     }
+    else {
+      let inviteNewUserToAccount = '/resetpassword/';
+      let link = { url: helpers.getUrl(invite.token, inviteNewUserToAccount) };
 
-    transporter.sendMail({
-      from: mailFrom,
-      to: params.email,
-      subject: 'Insider Focus - Join account',
-      html: html
-    }, callback);
+      helpers.renderMailTemplate('inviteNewUserToAccount', link, function(error, html){
+        if(error) {
+          return callback(error);
+        }
+
+        transporter.sendMail({
+          from: mailFrom,
+          to: invite.User.email,
+          subject: 'Insider Focus - Join account',
+          html: html
+        }, callback);
+      });
+    }
   });
 };
 

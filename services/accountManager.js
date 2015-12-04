@@ -8,6 +8,7 @@ var userService = require('./../services/users');
 var accountUserService = require('./../services/accountUser');
 var _ = require('lodash');
 
+//Exports
 function findUserManagers(user, callback) {
   AccountUser.findAll({
     include: [ User ],
@@ -34,18 +35,7 @@ function createOrUpdateManager(req, callback) {
     where: { email: params.email }
   }).done(function(foundUser) {
     if(foundUser) {
-      User.find({ where: { id: user.id } }).done(function(currentUser) {
-        foundUser.getAccounts().then(function(accounts) {
-          accountUserService.createWithRole(accounts[0], currentUser, 'participant', function(error, user) {
-            if(error) {
-              callback(error);
-            }
-            else {
-              callback(null, false);
-            }
-          });
-        });
-      });
+      createAccountUser(user, foundUser, callback);
     }
     else {
       params.password = 'qwerty123';
@@ -55,18 +45,7 @@ function createOrUpdateManager(req, callback) {
           callback(error);
         }
         else {
-          User.find({ where: { id: user.id } }).done(function(currentUser) {
-            newUser.getAccounts().then(function(accounts) {
-              accountUserService.createWithRole(accounts[0], currentUser, 'participant', function(error, user) {
-                if(error) {
-                  callback(error);
-                }
-                else {
-                  callback(null, true);
-                }
-              });
-            });
-          });
+          createAccountUser(user, newUser, callback);
         }
       });
     }
@@ -97,6 +76,22 @@ function remove(req, callback) {
 
 function simpleParams(error, message, account, req) {
   return { title: 'Manage Account Managers', error: error || {}, message: message, account: account };
+}
+
+//Helpers
+function createAccountUser(user, foundUser, callback) {
+  User.find({ where: { id: user.id } }).done(function(currentUser) {
+    foundUser.getAccounts().then(function(accounts) {
+      accountUserService.createWithRole(accounts[0], currentUser, 'participant', function(error, user) {
+        if(error) {
+          callback(error);
+        }
+        else {
+          callback(null, true);
+        }
+      });
+    });
+  });
 }
 
 function prepareParams(req, errors) {

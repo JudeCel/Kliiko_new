@@ -1,6 +1,7 @@
 'use strict';
 var accountManager = require('../services/accountManager');
 var User = require('./../models').User;
+var inviteMailer = require('../mailers').Invite;
 
 function views_path(action) {
   return 'dashboard/' + action;
@@ -18,16 +19,18 @@ function manageGet(req, res) {
 
 function managePost(req, res) {
   accountManager.createOrUpdateManager(req, function(error, created) {
+    console.log(error);
     if(error) {
-      if(created) {
-        mailers.invite.sendInviteNewUserToAccount(params);
-      }
-      else {
-        mailers.invite.sendInviteNewUserToAccount(params);
-      }
       res.render(views_path('accountManager/manage'), accountManager.simpleParams(error, 'Something went wrong', req.body, req));
     }
     else {
+      if(created) {
+        inviteMailer.sendInviteNewUserToAccount(req.user);
+      }
+      else {
+        console.log(inviteMailer);
+        inviteMailer.sendInviteNewUserToAccount(req.user);
+      }
       res.redirect('../accountmanager');
     }
   });

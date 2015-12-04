@@ -8,11 +8,11 @@ module.exports = (Sequelize, DataTypes) => {
     sentAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
     expireAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } }
     // status: { type: DataTypes.ENUM, values: ['off', 'on'], allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
-  },{
+  }, {
     classMethods: {
       associate: function(models) {
-        Invite.belongsTo(models.User, {foreignKey: 'userId'});
-        Invite.belongsTo(models.Account, {foreignKey: 'accountId'});
+        Invite.belongsTo(models.User, { foreignKey: 'userId' });
+        Invite.belongsTo(models.Account, { foreignKey: 'accountId' });
       }
     }
   });
