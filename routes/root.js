@@ -26,7 +26,7 @@ router.use(function (req, res, next) {
 
 /* GET root page. */
 router.get('/', function (req, res, next) {
-    res.render('login', {title: 'Login', error: ""});
+    res.render('login', {title: 'Login', error: "", message: ''});
 });
 
 router.get('/registration', function (req, res, next) {
@@ -53,7 +53,7 @@ router.post('/registration', function (req, res, next) {
           tplData.success = 'Email confirmation sent to ' + email;
         }
       });
-      res.render('login', {title: 'Login', error: "Please confirm Your Email"});
+      res.render('login', {title: 'Login', error: "Please confirm Your Email", message: '' });
     };
   });
 });
@@ -61,7 +61,7 @@ router.post('/registration', function (req, res, next) {
 router.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
     if (err || !user) {
-      return  res.render('login', {title: 'Login', error: "Wrong email or password or email is not confirmed"})
+      return  res.render('login', {title: 'Login', error: "Wrong email or password or email is not confirmed", message: ''})
     }
     req.login(user, function(err) {
       if (err) { return next(err); }
@@ -81,7 +81,7 @@ router.post('/login', function(req, res, next) {
 
 
 router.get('/login', function (req, res, next) {
-    res.render('login', {title: 'Login', error: ""});
+    res.render('login', { title: 'Login', error: '', message: req.flash('message')[0] });
 });
 
 router.route('/emailConfirmation/:token')
@@ -98,10 +98,12 @@ router.route('/emailConfirmation/:token')
       if (err || !user) {
         tplData.user = false;
         tplData.errors.password = "Token expired";
+        tplData.message = '';
         res.render('/login', tplData);
       }else{
         emailConfirmation.getEmailConfirmationByToken(user, function (err, user) {
           if (err) {
+            tplData.message = '';
             tplData.errors.password = "Something is wrong with email confirmation";
             res.render('/login', tplData);
           }else{
@@ -198,6 +200,7 @@ router.route('/resetpassword/:token')
                 return;
             }
             mailers.users.sendResetPasswordSuccess({email: user.get('email')}, function (err, data) {
+                req.flash('message', 'Password was changed successfully');
                 res.redirect("/login");
             });
         });

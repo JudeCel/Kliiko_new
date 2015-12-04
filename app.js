@@ -8,6 +8,7 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
+var flash = require('connect-flash');
 var bodyParser = require('body-parser');
 var passport = require('./middleware/passport');
 var subdomain = require('./middleware/subdomain');
@@ -43,6 +44,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(subdomain);
+app.use(flash());
 
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');

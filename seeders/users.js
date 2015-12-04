@@ -36,4 +36,5 @@ UserService.create(userAttrs, function(errors, user) {
   if(errors) {
     console.log(errors);
   }
+  process.exit();
 });

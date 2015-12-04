@@ -104,21 +104,26 @@
                     </td>
                     <td>
                       <form>
-                        <span class="checkbox-signup btn-radius-text">Male</span>
-                        <% if(gender === "male"){ %>
-                           <input type="radio" name="gender" value="male" id="gender_male" checked>
-                        <% } else{ %>  
-                           <input type="radio" name="gender" value="male" id="gender_male">
-                        <% } %>
-                        <label for="gender_male"></label>
+                        
+                        <label for="gender_male" class="radio-button">
 
-                        <span class="checkbox-signup btn-radius-text btn-radius-padding-left">Female</span>
-                        <% if(gender === "female"){ %>
-                           <input type="radio" name="gender" value="female" id="gender_female" checked>
-                        <% } else{ %>  
-                           <input type="radio" name="gender" value="female" id="gender_female">
-                        <% } %>
-                        <label for="gender_female"></label>
+                          <% if(gender === "male"){ %>
+                             <input type="radio" name="gender" value="male" id="gender_male" checked>
+                          <% } else{ %>  
+                             <input type="radio" name="gender" value="male" id="gender_male">
+                          <% } %>
+                          <span class="checkbox-signup btn-radius-text">Male</span>
+                        </label>
+
+                        <label for="gender_female" class="radio-button">
+                          
+                          <% if(gender === "female"){ %>
+                             <input type="radio" name="gender" value="female" id="gender_female" checked>
+                          <% } else{ %>  
+                             <input type="radio" name="gender" value="female" id="gender_female">
+                          <% } %>
+                          <span class="checkbox-signup btn-radius-text btn-radius-padding-left">Female</span>
+                        </label>
                       </form>
                     </td>
                     <td class="text-red-dark">
