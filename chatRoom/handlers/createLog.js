@@ -14,7 +14,7 @@ module.exports.validate = function (req, next) {
   });
 
   if (err.error)
-    return next(webFaultHelper.getValidationFault(err));
+    return next(webFaultHelper.getValidationFault(err.error));
 
   next();
 };

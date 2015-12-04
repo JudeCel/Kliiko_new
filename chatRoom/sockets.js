@@ -99,10 +99,10 @@ module.exports.listen = function (server) {
       });
     });
 
-    socket.on('insert_offline_transactions', function (reply_userId, message_id) {
+    socket.on('insert_offline_transactions', function (replyUserId, message_id) {
       console.log('insert_offline_transactions');
 
-      if (reply_userId == null || message_id == null) return;
+      if (replyUserId == null || message_id == null) return;
 
       //	lets process our reply
       var keys = Object.keys(io.sockets.sockets);
@@ -110,7 +110,7 @@ module.exports.listen = function (server) {
       var updateDB = false;
       for (var ndxSocket = 0, nk = keys.length; ndxSocket < nk; ndxSocket++) {
         var currentSocket = io.sockets.sockets[keys[ndxSocket]];
-        if (currentSocket.userId == reply_userId) {
+        if (currentSocket.userId == replyUserId) {
           if (currentSocket.topicId != socket.topicId) {
             updateDB = true;
           }
@@ -129,7 +129,7 @@ module.exports.listen = function (server) {
             userId: socket.userId,
             sessionId: socket.sessionId,
             topicId: socket.topicId,
-            reply_userId: reply_userId,
+            replyUserId: replyUserId,
             message_id: message_id
           }
         });
@@ -148,14 +148,14 @@ module.exports.listen = function (server) {
       }
     });
 
-    socket.on('get_offline_transactions', function (sessionId, reply_userId) {
+    socket.on('get_offline_transactions', function (sessionId, replyUserId) {
       console.log('get_offline_transactions');
 
 
       var req = expressValidatorStub({
         params: {
           sessionId: sessionId,
-          reply_userId: reply_userId
+          replyUserId: replyUserId
         }
       });
 
@@ -178,14 +178,14 @@ module.exports.listen = function (server) {
       });
     });
 
-    socket.on('delete_offline_transactions', function (topicId, reply_userId) {
+    socket.on('delete_offline_transactions', function (topicId, replyUserId) {
       console.log('delete_offline_transactions');
 
 
       var req = expressValidatorStub({
         params: {
           topicId: topicId,
-          reply_userId: reply_userId
+          replyUserId: replyUserId
         }
       });
 

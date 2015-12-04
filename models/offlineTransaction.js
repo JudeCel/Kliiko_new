@@ -6,7 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
     userId: { type: DataTypes.INTEGER, allowNull: false},
     sessionId:	{ type: DataTypes.INTEGER, allowNull: false},
     topicId:	{ type: DataTypes.INTEGER, allowNull: false},
-    reply_userId:	{ type: DataTypes.INTEGER, allowNull: true},
+    replyUserId:	{ type: DataTypes.INTEGER, allowNull: true},
     message_id:	{ type: DataTypes.INTEGER, allowNull: true},
     event_id: { type: DataTypes.INTEGER, allowNull: true},
     count: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
@@ -21,7 +21,7 @@ module.exports = (Sequelize, DataTypes) => {
           OfflineTransaction.belongsTo(models.User, {foreignKey: 'userId'});
           OfflineTransaction.belongsTo(models.Topic, {foreignKey: 'topicId'});
           OfflineTransaction.belongsTo(models.Session, {foreignKey: 'sessionId'});
-          // OfflineTransaction.belongsTo(models.ReplyUser, {foreignKey: 'reply_userId'});
+          // OfflineTransaction.belongsTo(models.ReplyUser, {foreignKey: 'replyUserId'});
           // OfflineTransaction.belongsTo(models.Message, {foreignKey: 'message_id'});
         }
       }
