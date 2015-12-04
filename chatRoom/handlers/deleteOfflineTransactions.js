@@ -10,7 +10,7 @@ module.exports.validate = function (req, resCb) {
         reply_userId: joi.number().required()
     });
 
-    if (err)
+    if (err.error)
         return resCb(webFaultHelper.getValidationFault(err));
 
     resCb();

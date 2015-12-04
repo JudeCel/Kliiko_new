@@ -16,7 +16,7 @@ module.exports.validate = function (req, next) {
         updating_userId: joi.number().required()
     });
 
-    if (err) return next(webFaultHelper.getValidationFault(err.message));
+    if (err.error) return next(webFaultHelper.getValidationFault(err.error));
 
     next();
 };

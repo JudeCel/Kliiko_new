@@ -9,8 +9,8 @@ var validate = function (req, next) {
         companyId: joi.number(),
         limit: joi.string()
     });
-    if (err)
-        return next(webFaultHelper.getValidationFault(err.message));
+    if (err.error)
+        return next(webFaultHelper.getValidationFault(err.error));
 
     next();
 };

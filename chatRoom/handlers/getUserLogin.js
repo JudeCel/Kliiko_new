@@ -9,10 +9,10 @@ var validate = function (req, resCb) {
   var err = joi.validate(req.params, {
     userId: joi.number().required(),
     sessionId: joi.number().required(),
-    // brand_project_id: joi.number().optional(),
+    brand_project_id: joi.number().optional(),
   });
-  if (err)
-  return resCb(webFaultHelper.getValidationFault(err.message));
+  if (err.error)
+    return resCb(webFaultHelper.getValidationFault(err.error));
 
   resCb();
 };

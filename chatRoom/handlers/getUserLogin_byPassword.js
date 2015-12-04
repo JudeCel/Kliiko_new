@@ -9,8 +9,8 @@ var validate = function (req, resCb) {
         login: joi.string().required(),
         password: joi.string().required()
     });
-    if (err)
-        return resCb(webFaultHelper.getValidationFault(err.message));
+    if (err.error)
+        return resCb(webFaultHelper.getValidationFault(err.error));
 
     resCb();
 };

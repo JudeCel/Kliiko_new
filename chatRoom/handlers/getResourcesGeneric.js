@@ -12,8 +12,8 @@ var validate = function (req, resCb) {
         topicId: joi.number(),
         userId: joi.number()
     });
-    if (err)
-        return resCb(webFaultHelper.getValidationFault(err.message));
+    if (err.error)
+        return resCb(webFaultHelper.getValidationFault(err.error));
 
     resCb();
 };

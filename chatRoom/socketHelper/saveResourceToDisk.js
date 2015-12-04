@@ -23,8 +23,8 @@ function saveResourceToDisk(params) {
         type: joi.string().optional()
     });
 
-    if (err)
-        throw webFaultHelper.getValidationFault(err.message);
+    if (err.error)
+        throw webFaultHelper.getValidationFault(err.error);
 
     var contentType = req.headers['content-type'];
 

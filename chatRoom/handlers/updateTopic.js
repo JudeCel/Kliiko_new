@@ -9,8 +9,8 @@ module.exports.validate = function (req, resCb) {
         topicId: joi.number().required(),
 	    description: joi.string().optional()
     });
-    if (err)
-        return resCb(webFaultHelper.getValidationFault(err.message));
+    if (err.error)
+        return resCb(webFaultHelper.getValidationFault(err.error));
 
     resCb();
 };

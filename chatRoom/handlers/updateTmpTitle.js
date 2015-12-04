@@ -13,8 +13,8 @@ var validate = function (req, resCb) {
         JSON: joi.types.Object().required(),
         URL: joi.string().required()
     });
-    if (err)
-        return resCb(webFaultHelper.getValidationFault(err.message));
+    if (err.error)
+        return resCb(webFaultHelper.getValidationFault(err.error));
 
     resCb();
 };

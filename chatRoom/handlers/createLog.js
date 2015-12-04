@@ -13,8 +13,8 @@ module.exports.validate = function (req, next) {
     type: joi.string().optional()
   });
 
-  if (err)
-  return next(webFaultHelper.getValidationFault(err));
+  if (err.error)
+    return next(webFaultHelper.getValidationFault(err));
 
   next();
 };

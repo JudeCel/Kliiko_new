@@ -10,20 +10,17 @@ module.exports.validate = function (req, resCb) {
         id: joi.number().required(),
         userId: joi.number().optional(),
         topicId: joi.number().required(),
-        reply_id: joi.number().optional().nullOk(),
-        cmd: joi.string().optional().nullOk(),
+        reply_id: joi.number().optional(),
+        cmd: joi.string().optional(),
         tag: joi.number().required(),
-        uid: joi.string().optional().nullOk(),
+        uid: joi.string().optional(),
         event: joi.string().optional(),
-        thumbs_up: joi.number().optional().nullOk(),
+        thumbs_up: joi.number().optional(),
         timestamp: joi.number().optional(),
-        created: joi.types.Object().optional().nullOk(),
-        updated: joi.types.Object().optional().nullOk(),
-        deleted: joi.types.Object().optional().nullOk()
     });
 
-    if (err)
-        return resCb(webFaultHelper.getValidationFault(err.message));
+    if (err.error)
+        return resCb(webFaultHelper.getValidationFault(err.error));
 
     resCb();
 };

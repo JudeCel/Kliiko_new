@@ -10,8 +10,8 @@ var validate = function (req, next) {
         topicId: joi.number().required(),
         sessionStaffTypeToExclude: joi.number().optional() //will be excluded events, belonged to user, which has appropriate Session Staff role in a Topic
     });
-    if (err)
-        return next(webFaultHelper.getValidationFault(err.message));
+    if (err.error)
+        return next(webFaultHelper.getValidationFault(err.error));
 
     next();
 };

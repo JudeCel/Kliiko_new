@@ -14,8 +14,8 @@ var validate = function (req, next) {
         limit: joi.number().required(),
         companyId: joi.number()
     });
-    if (err)
-        return next(webFaultHelper.getValidationFault(err.message));
+    if (err.error)
+        return next(webFaultHelper.getValidationFault(err.error));
 
     next();
 };

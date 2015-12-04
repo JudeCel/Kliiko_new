@@ -11,8 +11,8 @@ var async = require('async');
 
 var userAttrs = {
   accountName: "chatUser",
-  firstName: "insiderFirstName",
-  lastName: "insiderLastName",
+  firstName: "First",
+  lastName: "Last",
   password: "qwerty123",
   gender: "male",
   email: "chatUser@insider.com",

@@ -9,8 +9,8 @@ var validate = function (req, next) {
         type_id: joi.number(),
         sessionId: joi.number()
     });
-    if (err)
-        return next(webFaultHelper.getValidationFault(err.message));
+    if (err.error)
+        return next(webFaultHelper.getValidationFault(err.error));
 
     next();
 };

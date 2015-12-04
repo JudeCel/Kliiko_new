@@ -9,8 +9,8 @@ module.exports.validate = function (req, resCb) {
   var err = joi.validate(req.params, {
     uid: joi.string().max(64).required()
   });
-  if (err)
-  return resCb(webFaultHelper.getValidationFault(err.message));
+  if (err.error)
+    return resCb(webFaultHelper.getValidationFault(err.error));
 
   resCb();
 };

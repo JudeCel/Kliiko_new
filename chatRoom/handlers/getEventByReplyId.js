@@ -7,8 +7,8 @@ module.exports.validate = function (req, next) {
     var err = joi.validate(req.params, {
         reply_id: joi.number().required()
     });
-    if (err)
-        return next(webFaultHelper.getValidationFault(err.message));
+    if (err.error)
+        return next(webFaultHelper.getValidationFault(err.error));
 
     next();
 };

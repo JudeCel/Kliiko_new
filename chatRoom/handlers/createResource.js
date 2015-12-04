@@ -12,8 +12,8 @@ module.exports.validate = function (req, resCb) {
         userId: joi.number().optional(),
         JSON: joi.string().optional()
     });
-    if (err)
-        return resCb(webFaultHelper.getValidationFault(err.message));
+    if (err.error)
+      return resCb(webFaultHelper.getValidationFault(err.error));
 
     resCb();
 };

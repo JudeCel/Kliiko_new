@@ -20,7 +20,7 @@
 //    });
 //
 //    if (err)
-//        return resCb(webFaultHelper.getValidationFault(err.message));
+//        return resCb(webFaultHelper.getValidationFault(err.error));
 //
 //    resCb();
 //};

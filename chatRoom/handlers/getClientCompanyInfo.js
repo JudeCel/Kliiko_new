@@ -13,8 +13,8 @@ var validate = function (req, next) {
         start: joi.number().with('limit'),
         limit: joi.number().with('sidx')
     });
-    if (err)
-        return next(webFaultHelper.getValidationFault(err.message));
+    if (err.error)
+        return next(webFaultHelper.getValidationFault(err.error));
 
     next();
 };

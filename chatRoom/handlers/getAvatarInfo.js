@@ -9,8 +9,8 @@ module.exports.validate = function (req, errCb) {
         sessionId: joi.number().required()
     });
 
-    if (err)
-        return errCb(webFaultHelper.getValidationFault(err.message));
+    if (err.error)
+        return errCb(webFaultHelper.getValidationFault(err.error));
 
     errCb();
 };

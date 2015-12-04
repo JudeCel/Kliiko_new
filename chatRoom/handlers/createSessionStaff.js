@@ -11,7 +11,7 @@ module.exports.validate = function (req, resCb) {
         active: joi.number().required()
     });
 
-	if (err)
+	if (err.error)
 		return resCb(webFaultHelper.getValidationFault(err));
 
     resCb();
@@ -25,4 +25,3 @@ module.exports.run = function (req, resCb, errCb) {
             errCb(webFaultHelper.getFault(err));
 		});
 };
-

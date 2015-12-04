@@ -11,8 +11,8 @@ var validate = function (req, next) {
         sessionStaffTypeToExclude: joi.number(), //will be excluded events, belonged to user, which has appropriate Session Staff role in a Topic
         starsOnly: joi.types.Boolean() //will be included only events w/ tag = 1. by turning this flag on the mode "Stars Only" is enabled
     });
-    if (err)
-        return next(webFaultHelper.getValidationFault(err.message));
+    if (err.error)
+        return next(webFaultHelper.getValidationFault(err.error));
 
     next();
 };
