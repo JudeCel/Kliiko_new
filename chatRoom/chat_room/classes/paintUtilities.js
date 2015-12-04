@@ -100,7 +100,7 @@ function updatePathForObject(object, x, y) {
 				}
 			}
 			break;
-		}	
+		}
 
 		//	we've changed the path, lets rebuild it.
 		if (pl > 0) {
@@ -148,7 +148,7 @@ function callbackFT(object, events) {
 		case "init": {
 		}
 		break;
-		
+
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		case "drag start": {
 			switch(window.whiteboardMode) {
@@ -160,7 +160,7 @@ function callbackFT(object, events) {
 					um.push({
 						action: 'delete',
 						uid: object.subject.message.id,
-						object: newObject	
+						object: newObject
 					});
 
 					socket.emit('deleteobject', object.subject.message.id);
@@ -219,7 +219,7 @@ function callbackFT(object, events) {
 			}
 		}
 		break;
-		
+
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		case "rotate start": {
 			//console.log(":rotate start");
@@ -264,8 +264,8 @@ function callbackFT(object, events) {
 				x: newScale.x - scale.x,
 				y: newScale.y - scale.y
 			};
-			
-			um.push({		
+
+			um.push({
 				action: 'scale',
 				scale: actualScale,
 				uid: object.subject.message.id,
@@ -323,7 +323,7 @@ function doIHaveAccess(role, username) {
 
 	if (!isEmpty(role)){
 		switch(role) {
-			case 'owner':
+			case 'co-facilitator':
 			case 'facilitator': {
 				result = true;
 			}
@@ -436,7 +436,7 @@ function attachFreeTransformToObject(role, paper, object, scale, rotate) {
 
 	//	there is an interesting test now, we check to see if the whiteboard
 	//	is expanded or not, if not, then don't attach the freeTransform just now...
-	
+
 	//if (paper.width != paper.w) return;	//	the whiteboard isn't expanded
 
 	var ftSetup = getFTSetup();

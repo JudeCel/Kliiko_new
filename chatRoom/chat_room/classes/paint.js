@@ -11,9 +11,9 @@ view.Paint = function(json) {
 	//initialization
 	this.json = json;
 	this.json.scale = 1;
-	
+
 	this.personalImages = new Array();
-	
+
 	this.whiteboardImage = null;
 	this.whiteboardImageClose = null;
 
@@ -460,7 +460,7 @@ view.Paint.prototype.updateCanvas = function (name, data, removeDragEvents) {
 
 					/*
 					switch(thisMain.role) {
-						case 'owner':
+						case 'co-facilitator':
 						case 'facilitator': {
 							canIDeleteThis = (typeof el.message != "undefined");
 						}
@@ -471,7 +471,7 @@ view.Paint.prototype.updateCanvas = function (name, data, removeDragEvents) {
 						break;
 					}
 					*/
-					
+
 					if (canIDeleteThis) {
 						try {
 							el.box.remove();
@@ -498,7 +498,7 @@ view.Paint.prototype.updateCanvas = function (name, data, removeDragEvents) {
 	//	if we are in "eraser" or "move" mode, then do nothing
 	//	otherwise, lets put the paint layer back so we can draw on the whiteboard
 	if (
-		this.paint.attribute["pencilShape"] != "eraser" && 
+		this.paint.attribute["pencilShape"] != "eraser" &&
 		this.paint.attribute["pencilShape"] != "move" &&
 		this.paint.attribute["pencilShape"] != "scale" &&
 		this.paint.attribute["pencilShape"] != "rotate"
@@ -507,7 +507,7 @@ view.Paint.prototype.updateCanvas = function (name, data, removeDragEvents) {
 			this.paint.toFront();
 			this.paint.drag(onMove, onStart, onEnd);
 		}
-		
+
 		if (!isEmpty(this.whiteboardImageClose)) {
 			this.whiteboardImageClose.getIcon().toFront();
 		}
@@ -541,7 +541,7 @@ view.Paint.prototype.drawObject = function (name, data, useUndo) {
 			//data.attr["stroke-width"] = strokeWidth;
 			if (!isEmpty(data.path)) {
 				if (data.path.toLowerCase() != "z") {
-					element = this.paint.paper.path(data.path).attr(data.attr).transform(scale).data("strokeWidth", data.strokeWidth);				
+					element = this.paint.paper.path(data.path).attr(data.attr).transform(scale).data("strokeWidth", data.strokeWidth);
 				}
 			}
 		break;
@@ -601,7 +601,7 @@ view.Paint.prototype.drawObject = function (name, data, useUndo) {
 				object: element
 			});
 		}
-		
+
 		//	what does this code do?  Oh, OK, this just orders the objects as they come in...
 		var tempEl = null;
 		var tsBefore = 0;
@@ -621,7 +621,7 @@ view.Paint.prototype.drawObject = function (name, data, useUndo) {
 			} catch(e) {}
 		}
 	}
-	
+
 	//	lets make sure any image on this whiteboard is at the back
 	this.paint.paper.forEach(function (el) {
 		if (!isEmpty(el.data)) {
@@ -632,7 +632,7 @@ view.Paint.prototype.drawObject = function (name, data, useUndo) {
 			}
 		}
 	});
-	
+
 	element = null;
 	tempEl = null;
 };
@@ -652,7 +652,7 @@ view.Paint.prototype.setImage = function (json, clearWhiteboard) {
 
 	var canvasWidth = 951,
 		canvasHeight = 460;
-		
+
 	var whiteboardImageWidth = (canvasWidth * 0.75),
 		whiteboardImageHeight = (canvasHeight * 0.75);
 
@@ -660,7 +660,7 @@ view.Paint.prototype.setImage = function (json, clearWhiteboard) {
 		width: whiteboardImageWidth,
 		height: whiteboardImageHeight
 	};
-	
+
 	if (typeof json.actualSize != "undefined") {
 		dimensions = getFittedDimensions(json.actualSize.width, json.actualSize.height, whiteboardImageWidth, whiteboardImageHeight);
 	}
@@ -698,7 +698,7 @@ view.Paint.prototype.setMove = function (type) {
 	hideFreeTransformToObjects(this.paint.paper);
 
 	switch(type) {
-		case 'move': {	
+		case 'move': {
 			if (lastWhiteboardMode != WHITEBOARD_MODE_MOVE) {
 				this.setAttrPencilShape(type);
 
@@ -825,7 +825,7 @@ view.Paint.prototype.updateUndo = function (eventid, username, topicid, data) {
 	//leave topic id here for further work
 	if (username == this.json.thisMain.username) {
 		this.objects.redoStack.push(eventid);
-		
+
 		//window.whiteboard.redo.update();
 	}
 };
@@ -836,7 +836,7 @@ view.Paint.prototype.updateRedo = function (eventid, username, topicid, data) {
 
 	if (username == this.json.thisMain.username) {
 		this.objects.undoStack.push(eventid);
-		
+
 		//window.whiteboard.undo.update();
 	}
 };
@@ -863,7 +863,7 @@ var objects = new Array();
 							type: "image",
 							content: "none"
 						};
-				
+
 						thisMain.setResource(json);
 						thisMain.imageMenuResourceOnUp(json, false);
 					}
@@ -871,7 +871,7 @@ var objects = new Array();
 			}
 		}
 	});
-	
+
 	for (var ndx = 0, ll = localStack.length; ndx < ll; ndx++) {
 		try {
 			localStack[ndx].box.remove();
@@ -903,7 +903,7 @@ view.Paint.prototype.clearDrawing = function () {
 							type: "image",
 							content: "none"
 						};
-				
+
 						thisMain.setResource(json);
 						thisMain.imageMenuResourceOnUp(json, false);
 					}
@@ -911,7 +911,7 @@ view.Paint.prototype.clearDrawing = function () {
 			}
 		}
 	});
-	
+
 	for (var ndx = 0, ll = localStack.length; ndx < ll; ndx++) {
 		try {
 			localStack[ndx].box.remove();
@@ -927,7 +927,7 @@ view.Paint.prototype.clearDrawing = function () {
 view.Paint.prototype.sortArrayById = function (objects) {
 	//	if objects hasn't been defined, at least return the correct object
 	if (isEmpty(objects)) return new Array();
-	
+
 	var temp;
 	for (var ll = objects.length, i = (ll - 1); i > 0; i--) {
 		for (var j = 0; j < i; j++) {
@@ -958,7 +958,7 @@ view.Paint.prototype.corkboardToFront = function() {
 		for (var ndx = 0; ndx < 8; ndx++) {
 			if (!isEmpty(this.personalImages[ndx])) {
 				this.personalImages[ndx].toFront();
-			} 
+			}
 		}
 	}
 };
@@ -970,7 +970,7 @@ view.Paint.prototype.corkboardToBack = function() {
 		this.corkboard.toBack();
 
 		window.whiteboardSetup = "drawing";
-		
+
 		for (var ndx = 0; ndx < 8; ndx++) {
 			if (!isEmpty(this.personalImages[ndx])) {
 				if (!isEmpty(this.personalImages[ndx][0])) {
@@ -979,7 +979,7 @@ view.Paint.prototype.corkboardToBack = function() {
 						this.personalImages[ndx] = null;
 					}
 				}
-			} 
+			}
 		}
 
 		this.personalImages = new Array();
@@ -1002,20 +1002,20 @@ view.Paint.prototype.updateCorkboard = function(x, y, width, height, personalIma
 	y = y + margin,
 	width = width - (2 * margin),
 	height = height - (2 * margin);
-	
+
 	if (!isEmpty(this.personalImages[participantsDetailsJSON.number])) {
 		this.personalImages[participantsDetailsJSON.number].remove();
 		this.personalImages[participantsDetailsJSON.number] = null;
 	}
-	
+
 	var event = decodeURI(personalImage.event);
-		
+
 	var json = JSON.parse(event);
-		
+
 	var path = window.URL_PATH + window.CHAT_ROOM_PATH + "uploads/" + json.name;
-		
+
 	var fittedDimensions = getFittedDimensions(json.width, json.height, width, height);
-		
+
 	var fittedX = x + ((width - fittedDimensions.width) / 2),
 		fittedY = y + ((height - fittedDimensions.height) / 2);
 
@@ -1043,9 +1043,9 @@ view.Paint.prototype.updateCorkboard = function(x, y, width, height, personalIma
 	this.personalImages[participantsDetailsJSON.number].push(image);
 	this.personalImages[participantsDetailsJSON.number].push(border);
 
-	//	
+	//
 	switch(window.role) {
-		case 'owner':
+		case 'co-facilitator':
 		case 'facilitator': {
 			var onCloseClick = function() {
 				console.log(this);
@@ -1096,7 +1096,7 @@ view.Paint.prototype.updateCorkboard = function(x, y, width, height, personalIma
 				thisMain:	this.json.thisMain,
 				paper:		this.json.paper
 			};
-			
+
 			//	time to draw the close icon
 			var close = new sf.ifs.View.Icon(iconJSON);
 			var iconClose = close.draw();

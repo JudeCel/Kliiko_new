@@ -37,7 +37,7 @@ module.exports = {
     },
 	userRole: {
 		none: 0,
-		accountManager: 106000100,
+		'co-facilitator': 106000100,
 		facilitator: 106000200,
 		observer: 106000300,
 		participant: 106000400

@@ -14,7 +14,7 @@ view.Textbox = function() {
 
 	var textarea = '<textarea id="textbox-textarea" autofocus="autofocus" style="position: absolute; left:130px; top: 180px; height: 120px; width: 400px; resize: none; color: black;"';
 
-	if ((window.role != 'facilitator') && (window.role != 'owner')) {
+	if ((window.role != 'facilitator') && (window.role != 'co-facilitator')) {
 		textarea = textarea + ' maxlength="50"';
 	}
 
@@ -102,7 +102,7 @@ view.Textbox.prototype.toBack = function() {
 view.Textbox.prototype.draw = function() {
 	var canvasWidth = paperTextbox.canvas.clientWidth ? paperTextbox.canvas.clientWidth : paperTextbox.width,
 		canvasHeight = paperTextbox.canvas.clientHeight ? paperTextbox.canvas.clientHeight : paperTextbox.height;
-				
+
 	var areaRadius = 16;
 	var canvasBorder = paperTextbox.path(getRoundedRectToPath(0, 0, (canvasWidth- 0), (canvasHeight - 0), areaRadius));
 	canvasBorder.attr({fill: "#000", "fill-opacity": 0.5, stroke: "none", "stroke-width": 0, "stroke-opacity": 0});
@@ -147,7 +147,7 @@ view.Textbox.prototype.draw = function() {
 	if (!isEmpty(textboxHTML)) textboxHTML.style.display = "block";
 	if (!isEmpty(textboxInnerHTML)) {
 		textboxInnerHTML.style.display = "block";
-		
+
 		textboxInnerHTML.innerHTML = this.html;
 	}
 
@@ -190,7 +190,7 @@ view.Textbox.prototype.close = function() {
 		thisMain:	window,
 		paper:		paperTextbox
 	}
-	
+
 	var close = new sf.ifs.View.Icon(iconJSON);
 	close.draw();
 
@@ -203,4 +203,3 @@ view.Textbox.prototype.push = function(object) {
 		this.textbox.push(object);
 	}
 };
-

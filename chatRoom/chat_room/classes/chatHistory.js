@@ -16,12 +16,12 @@ view.History = function(json) {
 	//Type 0 = no filter
 	//Type 1 = filter by avatar
 	//Type 2 = filter by tag
-	this.filterType = 0; 
+	this.filterType = 0;
 };
 
 view.History.prototype.clearTable = function() {
 	var tableDIV = document.getElementById("chatHistoryArea");
-	
+
 	tableDIV.innerHTML = '<table id="chatHistoryTable"></table>';
 };
 
@@ -33,7 +33,7 @@ view.History.prototype.draw = function() {
 
 	var chatHistoryWidth = this.json.paper.canvas.clientWidth ? this.json.paper.canvas.clientWidth : this.json.paper.width,
 		chatHistoryHeight = this.json.paper.canvas.clientHeight ? this.json.paper.canvas.clientHeight : this.json.paper.height;
-		
+
 	this.myHistoryBorder = this.json.paper.path(getRoundedRectToPath(1, 1, chatHistoryWidth - 2, chatHistoryHeight - 2, this.json.radius)).attr({fill: "#efedec", stroke: "#e1ddda", "stroke-width": 2});
 
 	var title = paperTitleConversation.image(
@@ -72,7 +72,7 @@ view.History.prototype.filterChatHistory = function() {
 	avatarJSON = {
 		fullName: string,
 		userId: int,
-		role: string,			//	{default: 'participant'}	facilitator' | 'owner' | 'participant'
+		role: string,			//	{default: 'participant'}	facilitator' | 'co-facilitator' | 'participant'
 		colour: int,			//	colour of the participant
 		avatarInfo: string		//	"head:face:hair:top:accessory:desk", i.e., 0:4:8:9:10:11 (see users table)
 	}
@@ -98,11 +98,11 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 	var inline = "style=\"display: inline\"";
 	var minHeight = (35 + 24);
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	window.avatarOnClick = function(avatar_id) {
 		var currentFilter = window.chatHistory.filterBy;
 		var currentType = window.chatHistory.filterType;
-		
+
 		if (!isEmpty(currentFilter)) {
 			if (currentFilter === avatar_id) {
 				currentFilter = null;
@@ -115,19 +115,19 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 			currentFilter = avatar_id;
 			currentType = 1;
 		}
-		
+
 		window.chatHistory.filterBy = currentFilter;
 		window.chatHistory.filterType = currentType;
 		window.chatHistory.filterChatHistory();
 	};
-	
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	window.tagOnClick = function(row_id) {
 		var row_tag = document.getElementById(row_id).tag;
 
 		var currentFilter = window.chatHistory.filterBy;
 		var currentType = window.chatHistory.filterType;
-		
+
 		if (!isEmpty(currentFilter)) {
 			if (currentFilter === row_tag) {
 				currentFilter = null;
@@ -140,7 +140,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 			currentFilter = row_tag;
 			currentType = 2;
 		}
-		
+
 		window.chatHistory.filterBy = currentFilter;
 		window.chatHistory.filterType = currentType;
 		window.chatHistory.filterChatHistory();
@@ -149,7 +149,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 	window.miniTagOnClick = function(tag_id, toSet, row_id){
 		var element = document.getElementById(tag_id);
 		var value = null;
-				
+
 		if(toSet){
 			element.setAttribute("class", "chatTag tag_set");
 			value = 1;
@@ -157,7 +157,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 			element.setAttribute("class", "chatTag tag_unset");
 			value = 0;
 		}
-		
+
 		var row = document.getElementById(row_id);
 		if (row.tag != value) {
 			var jsonMessage = {
@@ -203,7 +203,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 		}, function(value) {
 			if (value === window.dashboard.YES) {
 				var dataJson = {
-					id : data_id 
+					id : data_id
 				};
 				window.socket.emit('deletechat', dataJson);
 			}
@@ -212,7 +212,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 		});
 	};
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	window.replyOnClick = function(tag_id, userId, colour) {
 		window.chat.setMode("reply", {
 			tagId: tag_id,
@@ -233,7 +233,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
         });
     };
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	window.messageOnClick = function(message) {
 		message = decodePunctuation(decodeURI(message));
 
@@ -247,7 +247,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 		window.dashboard.toFront();
 		window.dashboard.close();
 	};
-			
+
 	//----------------------------------------------------------------------------
 	//	lets get data from our arguments
 	var message = data.input;
@@ -262,7 +262,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 	var replyUserId = null;
 
 	if (isEmpty(animateChatBackground)) animateChatBackground = false;
-	
+
 	//	do we need to insert this somewhere other than the top?
 	//	that is, is this message a reply to another message?
 	var insertRowIndex = 0;
@@ -274,7 +274,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 		//insertAfter = (element.parentElement.parentElement.rowIndex + 1);
 		insertRowIndex = (getRowIndex(element) + 1);	//	if the rowIndex isn't found, -1 is returned, so insertRowIndex will be 0 anyway...
 	}
-	
+
 	var date = data.date;
 	var showReply = true;
 	var showThumbsUp = (avatarJSON.userId != window.userID);
@@ -301,7 +301,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 				date = data.replyDate;
 				//showReply = false;
 				showIndent = true;		//	we need to indent this comment...
-				
+
 				break;
 			}
 		}
@@ -313,28 +313,28 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 	var numberOfRows = table.rows.length;
 	var row = null;
 	var cell = null;
-	
+
 	var now = new Date();
-				
+
 	//	elements within the innerHTML
 	var avatar = null;
 	var tag = null;
 	var comment = null;
 	var reply = null;
-				
+
 	//var insertRowIndex = 0;
 	//if (typeof insertAfter != "undefined") insertRowIndex = insertAfter;
 
 	//	lets set up our row first...
 	row = table.insertRow(insertRowIndex);
-	
+
 	row.className = "avatar_" + avatarIndex;
 	row.tag = data.tag;
 	row.id = "tr_" + data.id;
 	if (animateChatBackground) {
 		row.style.backgroundColor = MENU_BACKGROUND_COLOUR;
 	}
-	
+
 	var rowClass = ((numberOfRows % 2) === 0) ? "rowEven" : "rowOdd";
 
 	//	format for each chat cell
@@ -390,21 +390,21 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 		textHeight = 17,
 		currentChatHistoryWidth = chatHistoryWidth - avatarWidth,
 		height = minHeight;
-		
+
 	var indentHide = true;
 	if (showIndent) {
 		indentHide = false;
 		currentChatHistoryWidth = currentChatHistoryWidth - avatarWidth;
 	}
-	
+
 	//	only facilitators to filter chat history by avatar
 	var avatarClass = "";
 	var avatarOnClick = null;
-	//if ((window.role === 'facilitator') || (window.role === 'owner')) {
+	//if ((window.role === 'facilitator') || (window.role === 'co-facilitator')) {
 		avatarClass = "avatar_unfiltered";
 		avatarOnClick = "javascript:window.avatarOnClick('" + row.className + "')";
 	//}
-	
+
 	//	show tag according to current tag status
 	var tagClass = "";
 	var tagOnClick = null;
@@ -414,17 +414,17 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 		tagClass = "tag_unset";
 	}
 
-	//Only show mini-tag to facilitator and owner
+	//Only show mini-tag to facilitator and co-facilitator
 	var showControlTag = false;
-	if ((window.role === 'facilitator') || (window.role === 'owner')) {
+	if ((window.role === 'facilitator') || (window.role === 'co-facilitator')) {
 		showControlTag = true;
 	}
-	
+
 	//	do we have any content?
 	var content = "";
-		
+
 	var ellipsisClass = "";
-	
+
 	var contentJSON = formatText(message, 300);
 	if (contentJSON.more) {
 		content = contentJSON.text + "&hellip;";	//	add the horizontal ellipse
@@ -434,14 +434,14 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 		content = contentJSON.text;
 		showEllipsis = false;
 	}
-	
+
 	var replyOnClick = null;
 	var replyClass = "";
 	if (showReply) {
 		replyClass = "chatContentReply_set";
 		replyOnClick = "javascript:window.replyOnClick('" + tagId + "', '" + avatarJSON.userId + "', '" + avatarJSON.colour + "')";
 	}
-	
+
 	//	do we need to show the reply?
 	if(avatarJSON.userId == window.userID){
 		//showReply = false;
@@ -454,9 +454,9 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 			tagId: tagId,
 			width: tagWidth,
 			height: tagHeight,
-			inline: true		
+			inline: true
 	};
-	if ((window.role === 'facilitator') || (window.role === 'owner') || (window.role === 'observer')) {
+	if ((window.role === 'facilitator') || (window.role === 'co-facilitator') || (window.role === 'observer')) {
 		chatTagElement = {
 			//	Cb
 			tagId: tagId,
@@ -598,7 +598,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 
 	//	lets create our cell
 	var cell = row.insertCell(0);
-	
+
 	cell.innerHTML = JSONtoHTML(cellDescriptionAsJSON);
 
 	//	OK, the row has been added.  Lets draw our character (Raphael) into this row
@@ -616,7 +616,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 		case "confused":
 			emotion = 1;
 			break;
-		case "smiling": 
+		case "smiling":
 			emotion = 2;
 			break;
 		case "love":
@@ -631,7 +631,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 		case "surprised":
 			emotion = 6;
 			break;
-		case "offline": 
+		case "offline":
 		default:
 			break;
 	}
@@ -651,4 +651,3 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 		}
 	}
 };
-

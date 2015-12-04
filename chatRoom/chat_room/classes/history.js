@@ -23,7 +23,7 @@ view.History.prototype.draw = function() {
 
 	var historyWidth = this.json.paper.canvas.clientWidth ? this.json.paper.canvas.clientWidth : this.json.paper.width,
 		historyHeight = this.json.paper.canvas.clientHeight ? this.json.paper.canvas.clientHeight : this.json.paper.height;
-		
+
 	this.myHistoryBorder = this.json.paper.path(getRoundedRectToPath(1, 1, historyWidth - 2, historyHeight - 2, this.json.radius)).attr({fill: "#efedec", stroke: "#e1ddda", "stroke-width": 2});
 
 	var title = paperTitleConversation.image(
@@ -39,7 +39,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, insertA
 	window.tagOnClick = function(tag_id) {
 		var element = document.getElementById(tag_id);
 		var value = null;
-				
+
 		switch (element.className) {
 			case 'tag tag_set': {
 				element.setAttribute("class", "tag tag_unset");
@@ -52,7 +52,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, insertA
 			}
 			break;
 		}
-		
+
 		if (!isEmpty(value)) {
 			var jsonMessage = {
 				id: tag_id,
@@ -70,21 +70,21 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, insertA
 			colour: colour
 		});
 	}
-	
+
 	window.messageOnClick = function(message) {
 		message = decodeURI(message);
 
 		var html =	"<div id=\"ta\" style=\"height: 100%; width: 100%;\" > " +
 					"    <textarea style=\"height: 100%; width: 100%;\" >" +
-					message +	
+					message +
 					"    </textarea>" +
 					"</div>";
-		
+
 		window.dashboard.setHTML(html);
 		window.dashboard.toFront();
 		window.dashboard.close();
 	}
-			
+
 	//----------------------------------------------------------------------------
 	//	lets get data from our arguments
 	var message = data.input;
@@ -108,7 +108,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, insertA
 				message = "<b><i>@" + participants[ndx].fullName + ":</i></b> " + message;
 				date = stringToDate(data.replyDate);
 				showReply = false;
-				
+
 				break;
 			}
 		}
@@ -121,15 +121,15 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, insertA
 	var row = null;
 	var cellImages = null;
 	var cellText = null;
-	
+
 	var now = new Date();
-				
+
 	//	elements within the innerHTML
 	var avatar = null;
 	var tag = null;
 	var comment = null;
 	var reply = null;
-				
+
 	var insertRowIndex = 0;
 	if (typeof insertAfter != "undefined") insertRowIndex = insertAfter;
 
@@ -142,7 +142,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, insertA
 	var divContainerEnd = "</div>";
 	row.innerHTML = divContainerBegin;
 	*/
-	
+
 	cellImages = row.insertCell(0);
 	cellText = row.insertCell(1);
 
@@ -159,12 +159,12 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, insertA
 	} else {
 		showReply = false;
 	}
-	
+
 	divAvatar = "<div class=\"avatar avatar_" + avatarIndex + "\"></div>";
 
 	//	only facilitators need to see the tag
 	var divTag = null;
-	if ((window.role === 'facilitator') || (window.role === 'owner')) {
+	if ((window.role === 'facilitator') || (window.role === 'co-facilitator')) {
 		if (isTag) {
 			divTag = "<div class=\"tag tag_set\" id=\"" + tagId + "\" onclick=\"javascript:window.tagOnClick('" + tagId + "')\" />" + "</div>";
 		} else {
@@ -173,7 +173,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, insertA
 	} else {
 		divTag = "<div id=\"" + tagId + "\" />";
 	}
-	cellImages.innerHTML =	divAvatar + 
+	cellImages.innerHTML =	divAvatar +
 							divTag;
 
 	var divComment = null;
@@ -188,7 +188,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, insertA
 		comment = commentJSON.text;
 		showEllipsis = false;
 	}
-	
+
 	/*
 	if ((showReply) && (showEllipsis) {
 		divReply = "<div class=\"reply reply_set\" onclick=\"javascript:window.replyOnClick('" + tagId + "', '" + userId + "', '" + colour + "')\"/>" + "</div>";
@@ -203,13 +203,13 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, insertA
 		}
 	}
 	*/
-	
+
 	if (showReply) {
 		divReply = "<div class=\"reply reply_set\" onclick=\"javascript:window.replyOnClick('" + tagId + "', '" + userId + "', '" + colour + "')\" />" + "</div>";
 	} else {
 		divReply = "<div class=\"reply \" />" + "</div>";
 	}
-	
+
 	if (showEllipsis) {
 		divEllipsis = "<div class=\"ellipsis ellipsis_set\" onclick=\"javascript:window.messageOnClick('" + encodeURI(message) + "')\" />" + "</div>";
 	} else {
@@ -222,8 +222,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, insertA
 
 	cellText.innerHTML =	divName +
 							divDate +
-							divComment + 
+							divComment +
 							divEllipsis +
 							divReply;
 }
-

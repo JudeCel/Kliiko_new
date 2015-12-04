@@ -17,7 +17,7 @@ var onUpdatechat = function(userId, topicId, data) {
 							id: data.id,
 							tag: 0
 						}
-						
+
 						if (!isEmpty(data.mode)) {
 							if (!isEmpty(data.mode.messageId)) {
 								json.replyId = data.mode.messageId;
@@ -26,7 +26,7 @@ var onUpdatechat = function(userId, topicId, data) {
 								json.emotion = data.emotion;
 							}
 						}
-						
+
 						//	lets update the chat history area
 						if (isEmpty(data.animate)) data.animate = false;
 
@@ -43,7 +43,7 @@ var onUpdatechat = function(userId, topicId, data) {
 						if (billboardMode) {
 							avatar.say(data, now);
 							window.lastBillboard.message = data.input;
-							if ((window.role === 'facilitator') || (window.role === 'owner')) {
+							if ((window.role === 'facilitator') || (window.role === 'co-facilitator')) {
 								chatHistory.addChat(avatarJSON, json, ndx, data.animate);
 							}
 						} else {

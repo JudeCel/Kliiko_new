@@ -15,7 +15,7 @@ module.exports = (Sequelize, DataTypes) => {
     // account_id: {type: DataTypes.INTEGER, allowNull: false},
     sessionId: {type: DataTypes.INTEGER, allowNull: false, references: { model: Sequelize.Session, key: 'id' } },
     role: {type: DataTypes.ENUM, allowNull: false,
-      values: ["admin", "owner", "observer", "participant"]
+      values: ["admin", "facilitator", "observer", "participant"]
   }
   },{
     timestamps: true,

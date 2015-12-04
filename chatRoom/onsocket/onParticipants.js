@@ -174,7 +174,7 @@ var initMainMenu = function(role) {
 
 	switch(role) {
 		case 'facilitator':
-		case 'owner': {
+		case 'accountManager': {
 			list = [
 				menu.uploadVideo,
 				menu.uploadAudio,
@@ -301,7 +301,7 @@ var initMainMenu = function(role) {
 		name: string,			//	{required}	users name
 		fullName: string,
 		userId,
-		role: string,			//	{default: 'participant'}	'facilitator' | 'owner' | 'participant'
+		role: string,			//	{default: 'participant'}	'facilitator' | 'co-facilitator' | 'participant'
 		colour: int,			//	colour of the participant
 		online: boolean,
 		avatar_info: string		//	"head:face:hair:top:accessory:desk", i.e., 0:4:8:9:10:11 (see users table)
@@ -314,6 +314,7 @@ var onParticipants = function(data) {
 	if (isEmpty(data)) return;
 
 	window.participants = JSON.parse(data);
+	console.log(window.participants);
 
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	//	lets login our user
@@ -346,7 +347,7 @@ var onParticipants = function(data) {
 				currentParticipant.colour = (255 * 65536);
 			}
 			break;
-			case 'owner': {
+			case 'accountManager': {
 				currentParticipant.colour = 6710886;
 			}
 			break;

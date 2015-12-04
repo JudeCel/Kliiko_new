@@ -4,7 +4,7 @@ var view = namespace('sf.ifs.View');
 	json = {
 		userId,							//	avatars Id
 		name: string,					//	avatars nickname
-		role: string,					//	facilitator | owner | observer | 
+		role: string,					//	facilitator | co-facilitator | observer |
 		title: string,					//	tooltip
 		fullName: string,				//	avatars full name
 		avatarInfo: string,				//	holds the DNA of the avatar
@@ -12,7 +12,7 @@ var view = namespace('sf.ifs.View');
 		y: int,							//	top position of the avatar
 		radius: int,					//	used to determine the size of the head
 		labelStyle: string,				//	normal | always | never
-		orientationHorizontal: string,	//	left | right 
+		orientationHorizontal: string,	//	left | right
 		orientationVertical: string,	//	top | bottom
 		colour: string,					//	base colour
 		thisMain: pointer,				//	pointer to the "this" structure in topic.html
@@ -21,13 +21,13 @@ var view = namespace('sf.ifs.View');
 */
 view.Avatar = function(json) {
 	this.json = extend(json);	//	make a copy of this avatar
-	
+
 	this.json.x = this.json.x - this.json.radius;
 	this.json.y = this.json.y - (2 * this.json.radius);
-	
+
 	switch(this.json.role) {
 		case 'facilitator':
-		case 'owner': {
+		case 'co-facilitator': {
 			this.json.colour = avatarColours[8];
 			this.bubble = this.createBubble(this.json);
 		}
@@ -35,9 +35,9 @@ view.Avatar = function(json) {
 			this.bubble = null;
 		break;
 	}
-	
+
 	this.emotion = 'offline';
-	
+
 	if (isEmpty(this.json.labelStyle)) this.json.labelStyle = 'offline';
 
 	this.avatar = null;
@@ -64,9 +64,9 @@ view.Avatar = function(json) {
 		paper: this.json.paper
 	}
 	this.manifestation = new sf.ifs.View.AvatarRenderer(avatarJson);
-	
+
 	//this.bubble = new sf.ifs.View.Bubble(jsonBubble);
-	
+
 	// var jsonEmotion = {
 	// 	emotion: "offline",
 	// 	x: this.json.x + this.json.radius,
@@ -76,7 +76,7 @@ view.Avatar = function(json) {
 	// 	strokeColour: colourToHex(darkenColour(this.json.colour)),
 	// 	paper: this.json.paper
 	// }
-	
+
 	//this.emotion = new sf.ifs.View.Emotions(jsonEmotion);
 	this.lablel = null;	//	this is used to display the avatars name
 };
@@ -93,10 +93,10 @@ view.Avatar.prototype.createBubble = function(json) {
 	return new sf.ifs.View.Bubble({
 		radius:		5,
 		avatar:		this,
-    	colour:		json.colour,
+    colour:		json.colour,
 		fontSize:	10,
 		thisMain:	json.thisMain,
-    	paper:		json.paper
+    paper:		json.paper
     });
 }
 
@@ -105,7 +105,7 @@ view.Avatar.prototype.draw = function() {
 	// if (this.avatar) {
 	// 	if (this.avatar[0]) this.avatar.remove();
 	// }
-	
+
 	//this.avatar = this.json.paper.path(this.getPath()).attr({fill: colourToGradientLighter(this.json.colour), "stroke-opacity": 0});
 	this.manifestation.draw();
 
@@ -123,7 +123,7 @@ view.Avatar.prototype.say = function(data, date) {
 	if (!this.bubble) {
 		this.bubble = this.createBubble(this.json);
 	}
-	
+
 	this.bubble.setText(data, date);
 	this.draw();
 
@@ -133,7 +133,7 @@ view.Avatar.prototype.say = function(data, date) {
 // 	var d = (this.json.radius * 2);
 // 	var r = (this.json.radius / 2);
 // 	var rr = (this.json.radius * .75);
-		
+
 // 	result = getRoundedTrapazoidToPath(this.json.paper, this.json.x, (this.json.y + r), (this.json.radius * 1.5), d, d, r);
 // 	result = result + getCircleToPath((this.json.x + this.json.radius), this.json.y, rr);
 
@@ -207,4 +207,3 @@ view.Avatar.prototype.setEmotionAttribute = function(attribute) {
 	// 	this.emotion.draw();
 	// }
 };
-

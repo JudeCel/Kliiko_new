@@ -15,7 +15,7 @@ view.Bubble = function(json) {
 	this.json = json;
 	this.x = 0;
 	this.y = 0;
-	
+
 	this.avatarbox = null;
 	this.bubbleEvent = null;
 
@@ -24,7 +24,7 @@ view.Bubble = function(json) {
 
 	//	other globals
 	this.bubble = this.json.paper.set();
-	
+
 	this.bubbleObject = null;
 	this.textObject = null;
 	this.backObject = null;
@@ -33,13 +33,13 @@ view.Bubble = function(json) {
 	this.replyObject = null;
 	this.linkObject = null;
 	this.closeReplyLinkObject = null;
-	
+
 	this.chatHistory = new Array();
-	
+
 	this.chatHistoryIndex = -1;
-	
+
 	this.minimised = false;
-	
+
 	this.data = null;
 };
 
@@ -72,29 +72,29 @@ view.Bubble.prototype.draw = function(json) {
 
 	var scale = "s0.6";
 	var margin = 20;
-	
+
 	var tag = "bubble";
-	
+
 	switch (this.json.avatar.json.role) {
 		case 'facilitator':
 			tag = "?";
 		break;
-	}	
-	
+	}
+
 	if (typeof json === "undefined") {
 		this.minimised = false;
 		json = {
 			minimise: false
 		}
 	};
-	
+
 	if (typeof json.minimise === "undefined") {
 		this.minimised = false;
 		json.minimise = false;
 	} else {
 		this.minimised = json.minimise;
 	}
-	
+
 	if (typeof json.replyLink === "undefined") json.replyLink = false;
 
 	//	make sure we remove any old objects first
@@ -106,7 +106,7 @@ view.Bubble.prototype.draw = function(json) {
 			} catch (e) {}
 		}
 	}
-	
+
 	//	lets display our text
 	if ((this.chatHistory.length > 0) || (json.minimise) || (json.replyLink)) {
 		var text = "";
@@ -114,19 +114,19 @@ view.Bubble.prototype.draw = function(json) {
 		if (this.json.avatar.json.role === "facilitator") {
 			colour = hexToColour("#68524b");
 		}
-		
+
 		var sayObject = this.chatHistory[this.chatHistoryIndex];
 
 		if (json.replyLink) {
 			colour = json.colour;
 			sayObject = json.chatHistory;
 		}
-		
+
 		if (typeof sayObject.data != "undefined") {
 			this.data = sayObject.data;
-			
+
 			if (typeof this.data === "object") {
-				if (this.json.avatar.json.role === "facilitator") {
+				if (this.json.avatar.json.role == "facilitator") {
 					//var billboardText = document.getElementById("billboardText");
 					//billboardText.innerHTML = this.data.input;
 					//CKEDITOR.instances['billboardEditor'].setData(this.data.input);
@@ -135,21 +135,21 @@ view.Bubble.prototype.draw = function(json) {
 				}
 			}
 		}
-		
+
 		if (json.minimise) text = "";
-		
+
 		if (text != null) {
 			//	if we have some text, then lets create our speech bubble
 			if (this.json.avatar.json.role === "facilitator") {
 				this.bubbleObject = this.json.paper.path(this.getPath({x: 0, y: 0, width: 190, height: 164})).attr({fill: "#f8d2d7", stroke: "#ef909d", 'stroke-width': 1});
-			} else { 
+			} else {
 				this.bubbleObject = this.json.paper.path(this.getPath(textBBox)).attr({fill: colourToHex(colour), stroke: colourToHex(colour), 'stroke-width': 1});
 			}
 
 			//	hover i
-			
+
 			this.bubbleObject.data("this", this);
-			
+
 			this.bubble.push(
 				this.bubbleObject		//	0
 				//this.textObject			//	1
@@ -177,7 +177,7 @@ view.Bubble.prototype.setText = function(data, dateTime) {
 		}
 		var dateAsArray = dateTimeAsArray[0].split("-");
 		var timeAsArray = dateTimeAsArray[1].split(":");
-	
+
 		var newDate = new Date(Number(dateAsArray[0]), Number(dateAsArray[1]) - 1, Number(dateAsArray[2]), Number(timeAsArray[0]), Number(timeAsArray[1]), Number(timeAsArray[2]));
 		date = newDate.format("ddd HH:MM dd/m");
 	}
@@ -188,14 +188,14 @@ view.Bubble.prototype.setText = function(data, dateTime) {
 view.Bubble.prototype.getPath = function(textBBox) {
 	var offsetX = this.json.radius;
 	var offsetY = this.json.radius;
-	
-	
+
+
 	var width  = textBBox.width + (this.json.radius * 2);
 	var height = textBBox.height + (this.json.radius * 2);
-	
+
 	var primaryLocation = "left",
 		secondaryLocation = "middle";
-	
+
 	//this.y = this.avatarbox.y + offsetY - (height - (this.json.radius * 2));
 	//this.y = (this.avatarbox.y + (this.avatarbox.height / 2)) - (width / 2);
 
@@ -213,7 +213,7 @@ view.Bubble.prototype.getPath = function(textBBox) {
 			secondaryLocation = "middle";
 		}
 		break;
-		case 'owner': {
+		case 'co-facilitator': {
 			this.x = leftX;
 			primaryLocation = "right";
 			secondaryLocation = "middle";
@@ -230,7 +230,7 @@ view.Bubble.prototype.getPath = function(textBBox) {
 				secondaryLocation = "middle";
 			}
 		}
-	}	
+	}
 
 	var bubbleJSON = {
 		x: this.x,
@@ -241,7 +241,7 @@ view.Bubble.prototype.getPath = function(textBBox) {
 		primaryLocation: primaryLocation,
 		secondaryLocation: secondaryLocation
 	}
-	
+
 	return getSpeechBubblePath(bubbleJSON);
 };
 
@@ -253,7 +253,7 @@ view.Bubble.prototype.destroy = function() {
 
 		if (this.bubble[0]) {this.bubble.remove();}
 	}
-	
+
 };
 
 view.Bubble.prototype.setPosition = function(x, y) {

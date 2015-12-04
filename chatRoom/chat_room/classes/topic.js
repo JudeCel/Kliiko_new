@@ -26,7 +26,7 @@ view.Topic = function(json) {
 			switch(this.json.participants[ndx].role) {
 				case 'observer':
 				case 'facilitator':
-				case 'owner':
+				case 'co-facilitator':
 				break;
 				default: {	//	basically, a participant
 					numberOfActualParticipants = numberOfActualParticipants + 1;
@@ -103,7 +103,7 @@ view.Topic = function(json) {
 		avatarJSON.name = this.json.participants[ndx].name;
 		avatarJSON.fullName = this.json.participants[ndx].fullName;
 		avatarJSON.avatarInfo = this.json.participants[ndx].avatar_info;
-        avatarJSON.colour = colourToHex(Number(this.json.participants[ndx].colour));
+    avatarJSON.colour = colourToHex(Number(this.json.participants[ndx].colour));
 		avatarJSON.role = this.json.participants[ndx].role;
 		avatarJSON.orientationHorizontal = "right";
 		if (avatarJSON.x <= cx) avatarJSON.orientationHorizontal = "left";
@@ -114,8 +114,9 @@ view.Topic = function(json) {
 
 		//	do role specific processing
 		switch(avatarJSON.role) {
+			case 'co-facilitator':
 			case 'facilitator': {
-				if ((window.role === 'facilitator') || (window.role === 'owner')) {
+				if ((window.role == 'facilitator') || (window.role == 'co-facilitator')) {
 					/*
                     avatarJSON.title = "Click to post a message to the billboard";
 					avatarJSON.clickEvent = {
@@ -144,13 +145,12 @@ view.Topic = function(json) {
 				avatarJSON.colour = 6710886;
 			}
 			break;
-			case 'owner':
 			case 'observer': {
 				showAvatar = false;
 			}
 			break;
 			default: {	//	basically, a participant
-				if ((window.role === 'facilitator') || (window.role === 'owner')) {
+				if ((window.role == 'facilitator') || (window.role == 'co-facilitator')) {
 					avatarJSON.title = "Click to send a private mail to " + this.json.participants[ndx].fullName;
 					avatarJSON.clickEvent = {
 						type: "email",
@@ -195,13 +195,13 @@ view.Topic = function(json) {
 	for (var ndx = (this.avatar.length - 1); ndx > -1; ndx--) {
 		switch (this.avatar[ndx].json.role) {
 			case 'facilitator':
-			case 'owner':
+			case 'co-facilitator':
 				this.avatar[ndx].say("", null);
-			break;
+				break;
 			case 'observer':
-			break;
+				break;
 			default: {
-		        this.avatar[ndx].draw();
+		    this.avatar[ndx].draw();
 			}
 		}
 	}
@@ -229,7 +229,7 @@ view.Topic.prototype.getAvatarByName = function(name) {
 
 view.Topic.prototype.getAvatarByUserId = function(id) {
 	for (var ndx = 0; ndx < this.avatar.length; ndx++) {
-		if (this.avatar[ndx].getUserId() === id) {
+		if (this.avatar[ndx].getUserId() == id) {
 			return this.avatar[ndx];
 		}
 	}
@@ -261,7 +261,7 @@ view.Topic.prototype.getAvatarIndexByName = function(name) {
 	var result = null;
 
 	for (var ndx = 0, pl = this.json.participants.length; ndx < pl; ndx++) {
-		if (name === this.json.participants[ndx].name) {
+		if (name == this.json.participants[ndx].name) {
 			result = ndx;
 			break;
 		}
@@ -277,7 +277,7 @@ view.Topic.prototype.getAvatarIndexByUserId = function(userId) {
     var result = null;
 
     for (var ndx = 0, pl = this.json.participants.length; ndx < pl; ndx++) {
-        if (userId === this.json.participants[ndx].userId) {
+        if (userId == this.json.participants[ndx].userId) {
             result = ndx;
             break;
         }
@@ -298,13 +298,13 @@ view.Topic.prototype.say = function(name, data) {
 	}
 
 	for (var ndx = 0, pl = this.json.participants.length; ndx < pl; ndx++) {
-		if (avatarJSON.name === this.json.participants[ndx].name) {
+		if (avatarJSON.name == this.json.participants[ndx].name) {
 			//	first we update the chat history area...
 			window.chatHistory.addChat(avatarJSON, data, ndx);
 
-			if (avatarJSON.role === "facilitator") {
+			if (avatarJSON.role == "facilitator") {
 				if (!isEmpty(data.mode)) {
-					if (data.mode.type === "billboard") {
+					if (data.mode.type == "billboard") {
 						avatar.say(data, data.date);
 					}
 				}
