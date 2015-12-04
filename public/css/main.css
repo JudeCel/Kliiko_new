@@ -20,6 +20,11 @@
   .btn-dashboard-menu:hover {
     color: #3DB0D9;
     border-color: #3DB0D9; }
+  .btn-dashboard-menu span {
+    display: inline-block;
+    width: calc(100% - 19px); }
+  .btn-dashboard-menu img {
+    margin-bottom: 3px; }
 
 .btn-header-dropdown, .btn-header-green, .btn-header-red {
   margin-left: 10px;
