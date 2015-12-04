@@ -1,29 +1,29 @@
 'use strict';
 
 var Invite = require('./../models').Invite;
+var AccountUser = require('./../models').AccountUser;
 var uuid = require('node-uuid');
 
-function createInvite(params, callback) {
+function createInvite(accountUser, role, callback) {
   let token = uuid.v1();
   var expireDate = new Date();
   expireDate.setDate(expireDate.getDate() + 5);
 
   Invite.create({
-    userId: params.id,
-    accountId: params.accountId,
+    accountUserId: accountUser.id,
     token: token,
     sentAt: new Date(),
-    expireAt: expireDate
+    expireAt: expireDate,
+    role: role
   }).then(function (result) {
-    console.log(result);
-    // if(result[0] > 0) {
-    //   callback(null, token);
-    // } else {
-    //   callback(null, null);
-    // }
-  })
-  .catch(function (error) {
+    Invite.find({ include: [ AccountUser ], where: { token: token } }).done(function(result) {
+      callback(null, result);
+    });
+  }).catch(function (error) {
     callback(error);
   });
+}
 
+module.exports = {
+  createInvite: createInvite
 }

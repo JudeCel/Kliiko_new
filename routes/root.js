@@ -10,10 +10,11 @@ var subdomains = require('../lib/subdomains');
 var config = require('config');
 var mailers = require('../mailers');
 var session = require('../middleware/session');
+var inviteMiddleware = require('../middleware/invite');
 var constants = require('../util/constants')
 
 router.use(function (req, res, next) {
-    if (req.path == '/logout') {
+    if (req.path == '/logout' || req.path.indexOf('invite') > -1) {
         return next();
     }
     if (req.user && (req.path.indexOf('dashboard') == -1)) {
@@ -204,5 +205,7 @@ router.route('/resetpassword/:token')
             });
         });
     });
+
+router.route('/invite/:type/:token').get(inviteMiddleware.get);
 
 module.exports = router;

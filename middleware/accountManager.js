@@ -1,7 +1,7 @@
 'use strict';
 var accountManager = require('../services/accountManager');
 var User = require('./../models').User;
-var inviteMailer = require('../mailers').Invite;
+var inviteMailer = require('../mailers/invite');
 
 function views_path(action) {
   return 'dashboard/' + action;
@@ -18,19 +18,15 @@ function manageGet(req, res) {
 };
 
 function managePost(req, res) {
-  accountManager.createOrUpdateManager(req, function(error, created) {
-    console.log(error);
+  accountManager.createOrUpdateManager(req, function(error, created, accountUser) {
     if(error) {
       res.render(views_path('accountManager/manage'), accountManager.simpleParams(error, 'Something went wrong', req.body, req));
     }
     else {
-      if(created) {
-        inviteMailer.sendInviteNewUserToAccount(req.user);
-      }
-      else {
-        console.log(inviteMailer);
-        inviteMailer.sendInviteNewUserToAccount(req.user);
-      }
+
+      inviteMailer.sendInviteNewUserToAccount(accountUser, 'facilitator', function(error) {
+        console.log(error);
+      });
       res.redirect('../accountmanager');
     }
   });

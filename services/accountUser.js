@@ -14,9 +14,9 @@ function create(account, user, callback) {
     });
 }
 
-function createWithRole(account, user, role, callback) {
-    user.addAccount(account, { role: role, owner: false, status: 'invited' }).then(function(result) {
-      return callback(null, user);
+function createNotOwner(account, user, callback) {
+    user.addAccount(account, { role: 'accountManager', owner: false, status: 'invited' }).then(function(result) {
+      return callback(null, account.AccountUser);
     }).catch(AccountUser.sequelize.ValidationError, function(err) {
       return callback(err);
     }).catch(function(err) {
@@ -26,5 +26,5 @@ function createWithRole(account, user, role, callback) {
 
 module.exports = {
   create: create,
-  createWithRole: createWithRole
+  createNotOwner: createNotOwner
 }

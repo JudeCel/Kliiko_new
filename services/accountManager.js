@@ -35,7 +35,7 @@ function createOrUpdateManager(req, callback) {
     where: { email: params.email }
   }).done(function(foundUser) {
     if(foundUser) {
-      createAccountUser(user, foundUser, callback);
+      createAccountUser(user.id, foundUser, false, callback);
     }
     else {
       params.password = 'qwerty123';
@@ -45,7 +45,7 @@ function createOrUpdateManager(req, callback) {
           callback(error);
         }
         else {
-          createAccountUser(user, newUser, callback);
+          createAccountUser(user.id, newUser, true, callback);
         }
       });
     }
@@ -79,15 +79,15 @@ function simpleParams(error, message, account, req) {
 }
 
 //Helpers
-function createAccountUser(user, foundUser, callback) {
-  User.find({ where: { id: user.id } }).done(function(currentUser) {
-    foundUser.getAccounts().then(function(accounts) {
-      accountUserService.createWithRole(accounts[0], currentUser, 'participant', function(error, user) {
+function createAccountUser(id, foundUser, created, callback) {
+  User.find({ where: { id: id } }).done(function(currentUser) {
+    foundUser.getOwnerAccount().then(function(accounts) {
+      accountUserService.createNotOwner(accounts[0], currentUser, function(error, user) {
         if(error) {
           callback(error);
         }
         else {
-          callback(null, true);
+          callback(null, created, user);
         }
       });
     });
