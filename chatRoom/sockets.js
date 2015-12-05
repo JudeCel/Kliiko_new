@@ -105,11 +105,11 @@ module.exports.listen = function (server) {
       if (replyUserId == null || message_id == null) return;
 
       //	lets process our reply
-      var keys = Object.keys(io.sockets.sockets);
+      var keys = Object.keys(io.sockets);
       var found = false;
       var updateDB = false;
       for (var ndxSocket = 0, nk = keys.length; ndxSocket < nk; ndxSocket++) {
-        var currentSocket = io.sockets.sockets[keys[ndxSocket]];
+        var currentSocket = io.sockets[keys[ndxSocket]];
         if (currentSocket.userId == replyUserId) {
           if (currentSocket.topicId != socket.topicId) {
             updateDB = true;
