@@ -84,7 +84,7 @@ describe('Change Password', function() {
       user: testUser.dataValues
     }
     changePassword.save(attrs, function(errors, message, user){
-      assert.equal(message, 'Password successfully changed.');
+      assert.equal(message, changePassword.successMessage);
       done();
     });
   });
