@@ -22,9 +22,15 @@ module.exports = (Sequelize, DataTypes) => {
         }
 
         if (!!val) {
-          User.findOne({attributes: ['email'], where: { email: val } }).then(function (user) {
+          User.findOne({
+            attributes: ['email', 'id'],
+            where: {
+              email: val,
+              id: { $ne: this.id }
+            }
+          }).then(function (user) {
             if(user){
-              return next('already taken');
+              next('already taken');
             }else{
               next();
             }
