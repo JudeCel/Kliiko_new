@@ -13,6 +13,7 @@ module.exports = (Sequelize, DataTypes) => {
     paranoid: true,
     classMethods: {
       associate: function(models) {
+        Vote.belongsToMany(models.User, { through: models.VotesBy, foreignKey: 'userId' });
         Vote.belongsTo(models.Event, {foreignKey: 'eventId'});
       }
     }

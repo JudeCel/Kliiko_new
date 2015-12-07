@@ -21,7 +21,6 @@ module.exports.run = function (req, resCb, errCb) {
 								 [ models.sequelize.col('Session.name'), 'sessionName']],
 		include: [models.Session]})
 	.then(function(topics) {
-		console.log(topics[0]);
 		resCb.send(topics);
 	}).catch(function(err) {
 		errCb(webFaultHelper.getFault(err));

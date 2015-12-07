@@ -7,7 +7,6 @@ module.exports = (Sequelize, DataTypes) => {
     userId: { type: DataTypes.INTEGER, allowNull: true},
     topicId: { type: DataTypes.INTEGER, allowNull: true},
     voteId: { type: DataTypes.INTEGER, allowNull: true},
-    count: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
   },
   {
   // indexes: [],

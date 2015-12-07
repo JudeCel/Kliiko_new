@@ -28,7 +28,7 @@ describe('User', () => {
         }).catch(function(error) {
           assert.equal(error, undefined);
           done(error);
-        })
+        });
     });
   });
 

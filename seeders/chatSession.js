@@ -9,30 +9,33 @@ var BrandProjectPreference = models.BrandProjectPreference;
 var Topic = models.Topic;
 var async = require('async');
 
-var userAttrs = {
+var userlist = [{
   accountName: "chatUser",
-  firstName: "First",
+  firstName: "First user",
   lastName: "Last",
   password: "qwerty123",
   gender: "male",
   email: "chatUser@insider.com",
   confirmedAt: new Date()
-}
+},{
+  accountName: "dainisl",
+  firstName: "Dainis",
+  lastName: "Lapins",
+  password: "qwerty123",
+  gender: "male",
+  email: "dainisl@insider.com",
+  confirmedAt: new Date()
+}]
 
 let createNewChatFunctionList = [
-  function (cb) {
-    UserService.create(userAttrs, function(errors, user) {
-      cb(errors, user)
-    });
-  },
-  createSession,
+  (cb) => {createSession(cb)},
   crateBrandProject,
-  addedSessionMember,
   addBrandProjectPreferences,
-  createTopic
+  createTopic,
+  addSessionMembers
 ]
 
-function createSession(user, callback) {
+function createSession(callback) {
   let startTime = new Date();
 
   let sessionAttrs = {
@@ -46,7 +49,7 @@ function createSession(user, callback) {
 
   Session.create(sessionAttrs).then(function(result) {
     console.log("Build session is done!");
-    callback(null, user, result);
+    callback(null, result);
   }).catch(Session.sequelize.ValidationError, function(err) {
     console.log(err);
     callback(err);
@@ -56,7 +59,7 @@ function createSession(user, callback) {
   });
 }
 
-function crateBrandProject(user, session, callback) {
+function crateBrandProject(session, callback) {
   let brandProjectAttrs = {
     name: "cool brand project",
     session_replay_date: new Date().setHours(new Date().getHours() + 2000),
@@ -66,7 +69,7 @@ function crateBrandProject(user, session, callback) {
 
   session.createBrandProject(brandProjectAttrs).then(function(result) {
     console.log("brandProject is done!");
-    callback(null, user, session, result);
+    callback(null, session, result);
   }).catch(BrandProject.sequelize.ValidationError, function(err) {
     console.log(err);
     callback(err);
@@ -76,40 +79,62 @@ function crateBrandProject(user, session, callback) {
   });
 };
 
-function addedSessionMember(user, session, brandProject, callback) {
+
+function addBrandProjectPreferences(session, brandProject, callback) {
+  let attrs = {
+    sessionId: session.id,
+    brand_project_id: brandProject.id
+  };
+
+  BrandProjectPreference.create(attrs)
+  .then(function (_result) {
+    callback(null, session, brandProject);
+  })
+  .catch(function (error) {
+    callback(error);
+  });
+}
+
+function createTopic(session, brandProject, callback) {
+  session.createTopic({ name: "Cool Topic" })
+  .then(function (_result) {
+    callback(null, session, brandProject);
+  })
+  .catch(function (error) {
+    callback(error);
+  });
+}
+
+function addSessionMembers(session, callback) {
   console.log("added Session Member");
+  async.parallel([
+    (cb) =>  {
+      UserService.create(userlist[0], function(errors, user) {
+        if(errors) {return cb(errors)};
+        addSessionMember(user, session, cb);
+      })
+    },
+    (cb) => {
+      UserService.create(userlist[1], function(errors, user) {
+        if(errors) {return cb(errors)};
+        addSessionMember(user, session, cb);
+      });
+    }
+  ],
+    function(err, results) {
+      callback(err, results);
+  });
+}
+
+function addSessionMember(user, session, callback) {
+
   let params = { role: "facilitator",
                  userId: user.id,
                  username: "cool user",
                  avatar_info: "0:4:3:1:4:3" }
   session.createSessionMember(params)
-  .then(function (_result) {
-    callback(null, user, session, brandProject);
-  })
-  .catch(function (error) {
-    callback(error);
-  });
-}
-
-function addBrandProjectPreferences(user, session, brandProject, callback) {
-  let attrs = {
-    sessionId: session.id,
-    brand_project_id: brandProject.id
-  }
-
-  BrandProjectPreference.create(attrs)
-  .then(function (_result) {
-    callback(null, user, session, brandProject);
-  })
-  .catch(function (error) {
-    callback(error);
-  });
-}
-
-function createTopic(user, session, brandProject, callback) {
-  session.createTopic({ name: "Cool Topic" })
-  .then(function (_result) {
-    callback(null, user, session, brandProject);
+  .then(function (result) {
+    callback(null, result );
   })
   .catch(function (error) {
     callback(error);
