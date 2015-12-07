@@ -10,12 +10,9 @@ module.exports = (Sequelize, DataTypes) => {
     colour: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 6710886 },
     online: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     avatar_info: { type: DataTypes.STRING, allowNull: false, defaultValue: '0:3:0:0:0:0' },
-
-    // TODO: need implemented account also
-    // account_id: {type: DataTypes.INTEGER, allowNull: false},
     sessionId: {type: DataTypes.INTEGER, allowNull: false, references: { model: Sequelize.Session, key: 'id' } },
     role: {type: DataTypes.ENUM, allowNull: false,
-      values: ["admin", "facilitator", "observer", "participant"]
+      values: ["facilitator", "observer", "participant"]
   }
   },{
     timestamps: true,
@@ -24,7 +21,6 @@ module.exports = (Sequelize, DataTypes) => {
       associate: function(models) {
         SessionMember.belongsTo(models.Session, {foreignKey: 'sessionId'});
         SessionMember.belongsTo(models.User, {foreignKey: 'userId'});
-        // SessionMember.belongsTo(models.Account, {foreignKey: 'account_id'});
       }
     }
   }
