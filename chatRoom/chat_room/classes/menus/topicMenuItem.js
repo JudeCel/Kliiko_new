@@ -20,7 +20,7 @@ var view = namespace('sf.ifs.View');
 		paper:				pointer,		//	pointer to the canvas we are drawing on
 		topic: {
 			id:				int,
-			session_name:	string,			//	name of the session
+			sessionName:	string,			//	name of the session
 			name:			string,			//	name of the topic
 			status:			string,			//	"Active" | "Closed"
 			active:	boolean,			//	true | false

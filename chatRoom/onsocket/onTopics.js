@@ -45,7 +45,7 @@ var onTopics = function(data) {
 	}
 
 	this.sessionLabel = paperTopic.text((this.x - 90), 22, 'Session:').attr(labelAttrLabelText);
-	this.headerLabel = paperTopic.text((this.x - 5), 21, thisMain.topics[0].session_name).attr(headerAttrLabelText);
+	this.headerLabel = paperTopic.text((this.x - 5), 21, thisMain.topics[0].sessionName).attr(headerAttrLabelText);
 	this.topicLabel = paperTopic.text((this.x - 70), 53, 'Topic:').attr(labelAttrLabelText);
 
 	var headerLabelBBox = this.headerLabel.getBBox();

@@ -26,7 +26,7 @@ view.Reportbox.prototype.setReportbox = function(dataAsJson){
 
 	for (var ndx = 0, ntl = this.topicList.length; ndx < ntl; ndx++) {
 		this.topicList[ndx].brand_project_name = this.topicList[ndx].brand_project_name.replace(/[^A-Za-z0-9 ]/g,'');
-		this.topicList[ndx].session_name = this.topicList[ndx].session_name.replace(/[^A-Za-z0-9 ]/g,'');
+		this.topicList[ndx].sessionName = this.topicList[ndx].sessionName.replace(/[^A-Za-z0-9 ]/g,'');
 		this.topicList[ndx].name = this.topicList[ndx].name.replace(/[^A-Za-z0-9 ]/g,'');
 	}
 }
@@ -116,7 +116,7 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 	for(var ndx = 0; ndx < this.lines; ndx++) {
 		if (!brandProject) {
 			brandProject = this.topicList[ndx].brand_project_name;
-			sessionName = this.topicList[ndx].session_name;
+			sessionName = this.topicList[ndx].sessionName;
 		}
 		var dataString = JSON.stringify(dataAsJson[ndx]);
 		dataString = dataString.replace(/"/g,"\'");
