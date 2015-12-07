@@ -1,6 +1,7 @@
 "use strict";
 var usersService  = require('./users');
 var mailers = require('../mailers');
+var successMessage = 'Password was changed successfully';
 
 function save(req, callback){
   let errors = {message: ""};
@@ -26,12 +27,12 @@ function save(req, callback){
     if (err) {
       return callback(err);
     }
-    message = 'Password was changed successfully'
     mailers.users.sendPasswordChangedSuccess(params);
-    callback(null, message, req.user);
+    callback(null, successMessage, req.user);
   });
 }
 
 module.exports = {
-  save: save
+  save: save,
+  successMessage: successMessage
 }

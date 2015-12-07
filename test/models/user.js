@@ -27,7 +27,7 @@ describe('User', () => {
           done();
         }).catch(function(error) {
           assert.equal(error, undefined);
-          done();
+          done(error);
         })
     });
   });
@@ -41,13 +41,29 @@ describe('User', () => {
       email: "dainis@gmail.com",
       gender: "male"
     }
+    var testUser = null;
+    let firstName = 'newName';
+    let email = 'dainis@gmail.com';
     beforeEach((done) => {
       models.sequelize.sync({ force: true }).then(() => {
         User.build(attrs).save()
           .then(function(user) {
+            testUser = user;
             done();
           });
       });
+    });
+
+    it('can update from instance with existing record!', (done) =>  {
+      testUser.update({firstName: firstName, email: email})
+        .then(function(user) {
+          assert.equal(user.firstName, firstName);
+          assert.equal(user.email, email);
+          done();
+        })
+        .catch(function(error) {
+          done(error);
+        });
     });
 
     it('return unique validation error', (done) =>  {
@@ -61,6 +77,7 @@ describe('User', () => {
           done();
         });
     });
+
   });
 
   describe('requiredEmail validation',  ()=>  {
