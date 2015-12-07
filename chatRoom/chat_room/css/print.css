@@ -1,0 +1,51 @@
+﻿/* 
+Title:	Centaur design styles for print media
+Author: 	info@centaur-design.com
+*/
+
+body {
+	margin: .6in;
+	font-family: Verdana, sans-serif;
+	font-size: 12pt;
+	}
+
+h1, h2, h3 {
+	font-family: "Trebuchet MS", Verdana, sans-serif;
+	}
+#title h2 {
+	color: gray;
+	font-size: 90%;
+	font-weight: normal;
+	margin-bottom: 1.5em;
+	}
+
+#nav, #theme, #sidebar, hr {
+	display: none;
+	}
+	
+a:link, a:visited {
+	color: gray;
+	}	
+
+/* print URLs after link text */
+#content .entry p a:link:after, #content .entry p a:visited:after {
+	content: " (" attr(href) ") ";
+	}
+	
+/* This is the print stylesheet to hide the Flash headlines from the browser... regular browser text headlines will now print as normal */
+
+.sIFR-flash, .sIFR-flash object, .sIFR-flash embed {
+	display: none !important;
+	height: 0;
+	width: 0;
+	position: absolute;
+	overflow: hidden;
+}
+
+span.sIFR-alternate {
+	visibility: visible !important;
+	display: block !important;
+	position: static !important;
+	left: auto !important;
+	top: auto !important;
+}

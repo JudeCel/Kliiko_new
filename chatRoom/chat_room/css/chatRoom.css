@@ -1,0 +1,26 @@
+#expandBillboard {
+    background-image:url('/chat_room/resources/images/icon_whiteboard_expand.png');
+    width: 36px;
+    height: 36px;
+    display: none;
+	z-index: 1;
+	position: absolute;
+	left: 304px;
+	top: 79px;
+	margin: 0;
+}
+
+#billboard {
+	position: absolute;
+	left: 140px;
+	top: 100px;
+	width: 180px;
+	height: 160px;
+	overflow: auto;
+}
+
+#billboardText {
+	line-height: 130%;
+	font-size: 14px;
+	color: #68524b;
+}
