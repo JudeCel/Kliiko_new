@@ -14,10 +14,22 @@
   margin-left: 36px;
   margin-top: 30px;
   line-height: 36px;
+  cursor: pointer;
 
   &.active {
     color: white;
     background: $blue;
+  }
+  
+  &.btn-green {
+    color: $green;
+    border-color: $green;
+    background: white;
+  }
+
+  &.btn-short {
+    min-width: 0 !important;
+    max-width: 100px;
   }
 }
 

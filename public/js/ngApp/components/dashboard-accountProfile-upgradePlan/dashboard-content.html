@@ -1,13 +1,160 @@
-<h1>Upgrade Plan</h1>
-<code>! Your free trial will expire in 3 days </code> <br>
+<section id="upgrade-plan-content" ng-controller="UpgradePlanController as up">
+    <h1>Upgrade Plan</h1>
+    <p class="warning"><img src="icons/ic_attention.png" class="ic"> Your free trial will expire in 3 days </p> <br>
 
-<span class="step-number done">1</span>
-<span class="step-number done">2</span>
-<span class="step-number active">3</span>
-<span class="step-number">4</span>
-<span class="step-number">5</span>
-<br>
-<h2>Our plans come with all there included extras:</h2>
-bla-bla-bla
-<br>
-<h2>Choose a plan</h2>
+    <div class="row">
+        <div class=" col-md-12">
+            <div id="steps-row" style="margin: 0 auto">
+                <div class="step-container">
+                   <span class="step-number" ng-class="{'active': up.currentStep === 1, 'done':up.currentStep > 1}">1</span>
+                   <span class="step-name" ng-class="{'active': up.currentStep === 1, 'done':up.currentStep > 1}">Select Plan Upgrade</span>
+                </div>
+                <div class="step-container">
+                    <span class="step-number" ng-class="{'active': up.currentStep === 2, 'done':up.currentStep > 2}">2</span>
+                    <span class="step-name" ng-class="{'active': up.currentStep === 2, 'done':up.currentStep > 2}">Check Details</span>
+                </div>
+                <div class="step-container">
+                    <span class="step-number" ng-class="{'active': up.currentStep === 3, 'done':up.currentStep > 3}">3</span>
+                    <span class="step-name" ng-class="{'active': up.currentStep === 3, 'done':up.currentStep > 3}">Payment Options</span>
+                </div>
+                <div class="step-container">
+                    <span class="step-number" ng-class="{'active': up.currentStep === 4, 'done':up.currentStep > 4}">4</span>
+                    <span class="step-name" ng-class="{'active': up.currentStep === 4, 'done':up.currentStep > 4}">Confirmation</span>
+                </div>
+                <div class="step-container">
+                    <span class="step-number" ng-class="{'active': up.currentStep === 5, 'done':up.currentStep > 5}">5</span>
+                    <span class="step-name" ng-class="{'active': up.currentStep === 5, 'done':up.currentStep > 5}">Submitted</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <h2>Our plans come with all there included extras:</h2>
+
+    <div class="row benefits">
+        <div class="col-md-6">
+            <p>Recruiter: build a new instant contact list with a quick customised survey</p>
+            <p>Your Brand logo & custom colours</p>
+            <p>Video and text hep menu</p>
+            <p>Video and text hep menu</p>
+            <p>Discussion Guide Tips</p>
+            <p>Whiteboard functionality</p>
+            <p>Multimedia management and storage</p>
+        </div>
+        <div class="col-md-6">
+            <p>Import a database and manage interaction with your Contact List</p>
+            <p>Reporting functions</p>
+            <p>Available on tablet and mobile platforms</p>
+            <p>Custom email invitation & reminder messages</p>
+            <p>Unlimited Topics</p>
+            <p>Secure applications (SSL)</p>
+        </div>
+    </div>
+
+    <h2>Choose a plan</h2>
+
+    <!-- pricing tables -->
+    <section class="container plans-table">
+        <div class="row">
+            <!-- single plan -->
+            <div class="col-sm-4 col-xs-12">
+                <div class="list-group">
+                    <h4 class="list-group-item-heading yellow-header-bg">Single Plan</h4>
+                    <div class="price-label yellow-bg">
+                        <h5 class="outline"><sup>$US</sup>180</h5>
+                        <p>12 Month to use</p>
+                    </div>
+                    <p class="list-group-item-text yellow-light-bg"><b>1</b> Session</p>
+                    <p class="list-group-item-text yellow-light-bg">Up to <b>8 Participants</b> per sessions</p>
+                    <p class="list-group-item-text yellow-light-bg">Up to <b>15 Observers</b> per sessions</p>
+                    <p class="list-group-item-text yellow-light-bg">Up to <b>35 Paid SMS</b> reminders tp Participants<sup>*</sup></p>
+                    <p class="list-group-item-text yellow-light-bg"><b>Unlimited</b> Contact List members allowed</p>
+                    <div class="list-group-item-text buttons-area">
+                        <div class="btn-dashboard-plans pull-right learn" ng-click="up.openModal('single')">Learn More </div>
+                        <div class="btn-dashboard-plans pull-right want btn-brown" ng-click="up.upgradeToPlan('single')">I Want This Plan</div>
+                    </div>
+
+                </div>
+            </div><!--/single plan-->
+
+            <!-- Monthly plan -->
+            <div class="col-sm-4 col-xs-12">
+                <div class="list-group">
+                    <h4 class="list-group-item-heading green-header-bg">Monthly Plan</h4>
+                    <div class="price-label green-bg">
+                        <h5 class="outline"><sup>$US</sup>50</h5>
+                        <p>Get 1 month free is you have not used your free trial</p>
+                    </div>
+                    <p class="list-group-item-text green-light-bg"><b>UNLIMITED</b> Session</p>
+                    <p class="list-group-item-text green-light-bg">Up to <b>8 Participants</b> per sessions</p>
+                    <p class="list-group-item-text green-light-bg">Up to <b>15 Observers</b> per sessions</p>
+                    <p class="list-group-item-text green-light-bg">Up to <b>35 Paid SMS</b> reminders tp Participants<sup>*</sup></p>
+                    <p class="list-group-item-text green-light-bg"><b>Unlimited</b> Contact List members allowed</p>
+                    <div class="list-group-item-text buttons-area">
+                        <div class="btn-dashboard-plans pull-right learn" ng-click="up.openModal('monthly')">Learn More </div>
+                        <div class="btn-dashboard-plans pull-right want btn-green" ng-click="up.upgradeToPlan('monthly')">I Want This Plan</div>
+                    </div>
+
+                </div>
+            </div><!--/Monthly plan-->
+
+            <!-- Yearly plan -->
+            <div class="col-sm-4 col-xs-12">
+                <div class="list-group">
+                    <h4 class="list-group-item-heading blue-header-bg">Annual Plan</h4>
+
+                    <div class="price-label blue-bg">
+                        <img id="best-value-badge" src="images/pricing-plans/best-value-badge.png" alt="">
+                        <h5 class="outline"><sup>$US</sup>550</h5>
+                        <p>Save $50 a year, compared to monthly plan</p>
+                    </div>
+                    <p class="list-group-item-text blue-light-bg"><b>UNLIMITED</b> Session</p>
+                    <p class="list-group-item-text blue-light-bg">Up to <b>8 Participants</b> per sessions</p>
+                    <p class="list-group-item-text blue-light-bg">Up to <b>15 Observers</b> per sessions</p>
+                    <p class="list-group-item-text blue-light-bg">Up to <b>35 Paid SMS</b> reminders tp Participants<sup>*</sup></p>
+                    <p class="list-group-item-text blue-light-bg"><b>Unlimited</b> Contact List members allowed</p>
+                    <div class="list-group-item-text buttons-area">
+                        <div class="btn-dashboard-plans pull-right learn" ng-click="up.openModal('annual')">Learn More </div>
+                        <div class="btn-dashboard-plans pull-right want btn-blue" ng-click="up.upgradeToPlan('annual')">I Want This Plan</div>
+                    </div>
+
+                </div>
+            </div><!--/ Yearly plan-->
+
+        </div><!--/row-->
+    </section><!--/pricing tables .container.plans-table -->
+
+    <div id="disclaimer">
+        <p>
+            <b>Please Note:</b> Depending on the nature of your project, you may also need to provide appropriate Incentive-Gifts to your group-Session Participants
+        </p>
+        <p>
+            *Your credit card will be charged for any additional SMS.
+        </p>
+
+    </div>
+
+
+<!------------------------------->
+    <!-- Modal -->
+    <div class='modal fade' id='plansModal' role='dialog'>
+        <div class='modal-dialog changePasswordModal' style="width: 800px">
+            <div class='modal-content border-green border-radius-none'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                    <h1 class='modal-title text-center'>Learn More about the {{up.currentPlan.capitalize()}} Plan</h1>
+                </div>
+                <div class='modal-body'>
+
+                    <ng-include src="up.currentPlanModalContentTpl"></ng-include>
+                </div>
+                <div class='modal-footer'>
+                    <div type='button' class='pull-left btn-dashboard-plans go-back-btn' data-dismiss='modal'>Go Back</div>
+                    <div type='submit' class='pull-right btn-dashboard-plans i-want-btn' ng-click="up.upgradeToPlan(up.currentPlan)">I Want This Plan</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

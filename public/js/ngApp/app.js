@@ -6,8 +6,11 @@
             //common modules
             'ngRoute',
             'ngResource',
+            'ngMaterial',
+            'ui.bootstrap',
             'ui.router',
-            'debModule'
+            'debModule',
+            'domServices'
         ])
         .config(appConfigs)
         .run(appRun)
@@ -31,33 +34,23 @@
     function appRun($stateParams,  dbg,   $rootScope, $state) {
         dbg.log('#appRun started ');
 
+        String.prototype.capitalize = function() {
+            return this.charAt(0).toUpperCase() + this.slice(1);
+        };
+
         $rootScope.appGlobals = {};
 
     }
 
-    AppController.$inject = ['$rootScope', 'dbg'];
-    function AppController($rootScope, dbg) {
+    AppController.$inject = ['$rootScope', 'dbg', '$scope', '$mdDialog', '$mdMedia'];
+    function AppController($rootScope, dbg, $scope, $mdDialog, $mdMedia) {
         var vm = this;
 
-        dbg.log2('#AppController started ')
+        dbg.log2('#AppController started ');
 
     }
 
 
-//
-//////////
-//
-//    function cleanAll() {
-//        localStorage.clear();
-//        sessionStorage.clear();
-//
-//        var domain = domain || document.domain;
-//        var path = path || "/";
-//        document.cookie = name + "=; expires=" + +new Date + "; domain=" + domain + "; path=" + path;
-//
-//    }
-//
-//
 })();
 
 
