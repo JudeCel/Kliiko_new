@@ -12,7 +12,7 @@ var createUserVotes =  ifData.repositories.createUserVotes;
 
 module.exports.validate = function (req, next) {
     var err = joi.validate(req.params, {
-        event_id: joi.number().required(),
+        eventId: joi.number().required(),
         updating_userId: joi.number().required()
     });
 
@@ -24,19 +24,19 @@ module.exports.validate = function (req, next) {
 module.exports.run = function (req, res, mainCb) {
 	var topicId = 0;
 
-        getEvent(req.params.event_id)
+        getEvent(req.params.eventId)
             .then(function (event) {
 			if (!event) return;
 			topicId = event.topicId;
-			getUserVotes(req.params.updating_userId, event.topicId, req.params.event_id)
+			getUserVotes(req.params.updating_userId, event.topicId, req.params.eventId)
 				.then(function (userVotes) {
 					if (userVotes && userVotes.length > 0) return "no votes";
-                        return getVotes(req.params.event_id);
+                        return getVotes(req.params.eventId);
 				})
 				.then (function (votes) {
 					if (!votes || votes.length == 0) {
 						return createVote({
-							event_id: req.params.event_id,
+							eventId: req.params.eventId,
 							count: 1
 						})
 					}
@@ -51,14 +51,14 @@ module.exports.run = function (req, res, mainCb) {
 				})
 				.done( function()
                 {
-                    var tmp= getVotes(req.params.event_id);
+                    var tmp= getVotes(req.params.eventId);
                     tmp.then (function (votes) {
                         if (votes) {
                             createUserVotes({
                                 vote_id: votes.id,
                                 userId: req.params.updating_userId,
                                 topicId: topicId,
-                                event_id: req.params.event_id
+                                eventId: req.params.eventId
                             })
                             return votes.count;
                         }

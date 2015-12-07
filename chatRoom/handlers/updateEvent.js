@@ -10,7 +10,7 @@ module.exports.validate = function (req, resCb) {
         id: joi.number().required(),
         userId: joi.number().optional(),
         topicId: joi.number().required(),
-        reply_id: joi.number().optional(),
+        replyId: joi.number().optional(),
         cmd: joi.string().optional(),
         tag: joi.number().required(),
         uid: joi.string().optional(),

@@ -6,7 +6,7 @@ function enqueryVote(socket, voteID, topicID, userID, isfacilitator) {
 
 	var req = expressValidatorStub({
 		params: {
-			reply_id: voteID
+			replyId: voteID
 		}
 	});
 

@@ -22,7 +22,7 @@ build.Whiteboard = function() {
 		id: int,
 		topicId: int,
 		userId: int,
-		reply_id: int,
+		replyId: int,
 		cmd: string,
 		tag: int,
 		event: {						//	encodedURI JSON string

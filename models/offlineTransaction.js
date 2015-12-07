@@ -8,7 +8,7 @@ module.exports = (Sequelize, DataTypes) => {
     topicId:	{ type: DataTypes.INTEGER, allowNull: false},
     replyUserId:	{ type: DataTypes.INTEGER, allowNull: true},
     message_id:	{ type: DataTypes.INTEGER, allowNull: true},
-    event_id: { type: DataTypes.INTEGER, allowNull: true},
+    eventId: { type: DataTypes.INTEGER, allowNull: true},
     count: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
   },
    {

@@ -42,7 +42,7 @@ build.ChatHistory.prototype.init = function() {
 		id: int,
 		topicId: int,
 		userId: int,
-		reply_id: int,
+		replyId: int,
 		cmd: string,
 		thumbs_up,
 		tag: int,						//	used to determine if a chat has been tagged, 0 no, 1 yes
@@ -127,7 +127,7 @@ build.ChatHistory.prototype.processChatHistory = function(data) {
 		if (!isEmpty(event.object.mode)) {
 			switch(event.object.mode.type) {
 				case 'reply': {
-					eventInfo.replyId = data[ndx].reply_id;
+					eventInfo.replyId = data[ndx].replyId;
 					eventInfo.replyUserId = event.object.mode.replyTo;
 					eventInfo.replyDate = new Date(data[ndx].timestamp * 1000);
 				}

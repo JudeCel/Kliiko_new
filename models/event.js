@@ -5,7 +5,7 @@ module.exports = (Sequelize, DataTypes) => {
     id:	 { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     userId:	{type: DataTypes.INTEGER, allowNull: false},
     topicId:	{type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
-    reply_id:	{type: DataTypes.INTEGER, allowNull: true},
+    replyId:	{type: DataTypes.INTEGER, allowNull: true},
     cmd:	{type: DataTypes.STRING, allowNull: true},
     tag:	{type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
     uid:	{type: DataTypes.STRING, allowNull: true},
@@ -20,7 +20,7 @@ module.exports = (Sequelize, DataTypes) => {
       paranoid: true,
       classMethods: {
         associate: function(models) {
-          Event.hasMany(models.Vote, {foreignKey: 'event_id'})
+          Event.hasMany(models.Vote, {foreignKey: 'eventId'})
         }
       }
     }

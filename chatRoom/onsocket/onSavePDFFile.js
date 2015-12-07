@@ -70,7 +70,7 @@ var generatePDF = function(sortedData,fileName,type){
 		var chatEvent=decodeURI(sortedData[ndx].event);
 		var eventAsJson=JSON.parse(chatEvent);
 
-		if(sortedData[ndx].reply_id != null){
+		if(sortedData[ndx].replyId != null){
 			doc.text(ReplyX, currentY, sortedData[ndx].name_first+"  "+sortedData[ndx].name_last+"  "+eventAsJson.object.date);
 			doc.text(ReplyX, currentY+lineWidth, eventAsJson.object.input);
 		}else{
@@ -127,8 +127,8 @@ var sortResult = function(dataAsJson){
 	var transData = null;
 	for(var ndx=1; ndx<dataAsJson.length; ndx++){
 		for(var nndx=dataAsJson.length-1; nndx>=ndx; nndx--){
-			if(dataAsJson[nndx].reply_id!=null && dataAsJson[nndx].reply_id < dataAsJson[nndx-1].id){
-				if(dataAsJson[nndx-1].reply_id==null || dataAsJson[nndx].reply_id <dataAsJson[nndx-1].reply_id){
+			if(dataAsJson[nndx].replyId!=null && dataAsJson[nndx].replyId < dataAsJson[nndx-1].id){
+				if(dataAsJson[nndx-1].replyId==null || dataAsJson[nndx].replyId <dataAsJson[nndx-1].replyId){
 					transData = dataAsJson[nndx];
 					dataAsJson[nndx] = dataAsJson[nndx-1];
 					dataAsJson[nndx-1] = transData;

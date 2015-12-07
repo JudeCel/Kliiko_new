@@ -23,7 +23,7 @@ module.exports.run = function (req, resCb, errCb) {
 
   Event.findAll({ where: {topicId: topicId, cmd: 'chat'},
     include: [models.Vote],
-    order: [['createdAt', 'DESC']] })
+    order: [['createdAt', 'ASC']] })
   .then(function(result) {
     let collection  = _.map(result, function(n) {
       let data = n.dataValues;

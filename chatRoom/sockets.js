@@ -231,7 +231,7 @@ module.exports.listen = function (server) {
 
       var req = expressValidatorStub({
         params: {
-          event_id: data.id
+          eventId: data.id
         }
       });
 
@@ -267,7 +267,7 @@ module.exports.listen = function (server) {
 
       var req = expressValidatorStub({
         params: {
-          event_id: data.id
+          eventId: data.id
         }
       });
 
@@ -303,7 +303,7 @@ module.exports.listen = function (server) {
 
       var req = expressValidatorStub({
         params: {
-          event_id: data.id
+          eventId: data.id
         }
       });
 
@@ -329,7 +329,7 @@ module.exports.listen = function (server) {
 
       var req = expressValidatorStub({
         params: {
-          event_id: data.id
+          eventId: data.id
         }
       });
 
@@ -441,14 +441,14 @@ module.exports.listen = function (server) {
       });
     });
 
-    socket.on('thumbs_up', function (event_id, row_id) {
+    socket.on('thumbs_up', function (eventId, row_id) {
       console.log("thumbs_up");
 
-      if (event_id == null) return;
+      if (eventId == null) return;
 
       var req = expressValidatorStub({
         params: {
-          event_id: event_id,
+          eventId: eventId,
           updating_userId: socket.userId
         }
       });
@@ -460,7 +460,7 @@ module.exports.listen = function (server) {
       var res = {
         send: function (result) {
           if (!result) return;
-          io.emit('updatethumbsup', event_id, result);
+          io.emit('updatethumbsup', eventId, result);
         }
       };
 

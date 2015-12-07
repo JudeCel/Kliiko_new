@@ -25,7 +25,7 @@ module.exports = function(topicId, userId, command, capturedEvent, encode) {
 			cmd: command,
 			tag: customEventParams.tag,
 			event: customEventParams.event,
-			reply_id: customEventParams.replyId
+			replyId: customEventParams.replyId
 		}
 	});
 

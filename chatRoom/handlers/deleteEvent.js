@@ -6,11 +6,11 @@ var models = require("./../../models");
 var Event = models.Event;
 
 var validate = function (req, resCb) {
-    if (!req.params.event_id && !req.params.uid)
+    if (!req.params.eventId && !req.params.uid)
         return resCb("At least one parameter is required");
 
     var err = joi.validate(req.params, {
-        event_id: joi.number().optional(),
+        eventId: joi.number().optional(),
         uid: joi.string().optional()
     });
 

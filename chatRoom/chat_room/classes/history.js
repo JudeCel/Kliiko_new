@@ -63,7 +63,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, insertA
 	}
 
 	window.replyOnClick = function(tag_id, userId, colour) {
-		//alert("" + event_id + " : " + userId);
+		//alert("" + eventId + " : " + userId);
 		window.chat.setMode("reply", {
 			replyTo: parseInt(userId),
 			messageId: parseInt(tag_id),

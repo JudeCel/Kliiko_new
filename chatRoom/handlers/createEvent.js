@@ -16,7 +16,7 @@ module.exports.validate = function (req, resCb) {
     cmd: joi.string().optional(),
     event: joi.string().optional(),
     uid: joi.string().optional(),
-    reply_id: joi.number().optional()
+    replyId: joi.number().optional()
   });
 
   if (err.error){
