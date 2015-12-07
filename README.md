@@ -60,9 +60,10 @@ In the project we use ORM [Sequelize](http://docs.sequelizejs.com/en/latest/)
 Also we use code-first migrations [Sequelize Migrations ](http://docs.sequelizejs.com/en/latest/docs/migrations/)
 
 To restart DB, delete and recreate all tables based on the models, run this command from root directory of the project:
-``` node lib/tasks/db_reset.js ```
+``` node lib/tasks/dbReset.js ```
 
-To run user seeds run this command: ``` node seeders/users.js ```
+To run seeds for user run this command: ``` node seeders/users.js ```
+To run seeds for chat session run this command: ``` node seeders/chatSesion.js ```
 
 Default user credentials email ``` admin@insider.com ``` or ``` user@insider.com ``` and password ``` qwerty123 ```
 
