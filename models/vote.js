@@ -6,17 +6,17 @@ module.exports = (Sequelize, DataTypes) => {
     eventId: { type: DataTypes.INTEGER, allowNull: true},
     count: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
   },
-   {
-      // indexes: [],
-      timestamps: false,
-      tableName: 'votes',
-      paranoid: true,
-      classMethods: {
-        associate: function(models) {
-          Vote.belongsTo(models.Event, {foreignKey: 'eventId'});
-        }
+  {
+  // indexes: [],
+    timestamps: true,
+    tableName: 'votes',
+    paranoid: true,
+    classMethods: {
+      associate: function(models) {
+        Vote.belongsTo(models.Event, {foreignKey: 'eventId'});
       }
     }
-);
+  });
+
   return Vote;
 };
