@@ -1,0 +1,286 @@
+/* -- Adjusment -- */
+.clr { clear: both; }
+.fr { float: right!important; }
+.fl { float: left!important; }
+.ar { text-align: right!important; }
+.al { text-align: left!important; }
+.ac { text-align: center!important; }
+ul.basic {
+	padding-left: 20px;
+	list-style-type: disc;
+}
+ol.basic {
+	padding-left: 20px;
+	list-style-type: decimal;
+}
+.mb0 { margin-bottom:0!important;}
+.mb10 { margin-bottom:10px!important;}
+.mb40 { margin-bottom:40px!important;}
+
+.mr0 { margin-right:0!important;}
+
+/* -- common -- */
+
+#header h1 {
+	margin:16px 18px;
+}
+#header #nav {
+	background:url(../images/bg_nav.gif) left top no-repeat;
+	width:966px;
+	margin-bottom:20px;
+	padding:0 17px;
+	line-height:40px;
+	font-weight:bold;
+}
+#header #nav ul {
+	width:750px;
+	float:left;
+}
+#header #nav li {
+	margin-right:25px;
+	float:left;
+}
+#header #nav p {
+	width:100px;
+	float:right;
+	text-align:right;
+}
+#header #nav a {
+	color:#fff;
+}
+#header p.name {
+	width:141px;
+	margin-right:9px;
+	font-weight:bold;
+	float:left;
+}
+#header .subNav {
+	width:850px;
+	margin-bottom:10px;
+	float:left;
+}
+#header .subNav h2 {
+	margin-bottom:10px;
+	font-size:20px;
+}
+#header .subNav li {
+	background:#808080;
+	padding:10px;
+	margin-right:4px;
+	font-size:10px;
+	float:left;
+	font-weight:bold;
+}
+#header .subNav li a {
+	display:block;
+	color:#fff;
+}
+#header .subNav li.on,
+#header .subNav li:hover {
+	background:#e51937;
+}
+
+/* -- main -- */
+#main {
+	background:url(../images/bg_main.gif) center bottom no-repeat;
+	text-align:center;
+}
+#main .box_left {
+	width:141px;
+	margin-right:9px;
+	float:left;
+}
+#main .box_left ul {
+	border-bottom:2px #e51937 solid;
+	padding-top:10px;
+	font-weight:bold;
+	min-height:315px;
+}
+#main .box_left ul li {
+	margin-bottom:10px;
+}
+#main .box_left ul.icon {
+	border:none;
+	margin-bottom:10px;
+	min-height:30px;
+}
+#main .box_left ul.icon li {
+	margin-right:10px;
+	display:inline;
+}
+#main .box_left ul.icon li img {
+	vertical-align:middle;
+}
+#main .box_centre {
+	border-top:2px #e51937 solid;
+	width:696px;
+	margin-right:9px;
+	padding:2px;
+	float:left;
+}
+#main .box_right {
+	width:141px;
+	float:left;
+}
+#main .box_right ul {
+	padding-top:10px;
+}
+#main .box_right ul li {
+	margin-bottom:10px;
+}
+#main h3 {
+	background:url(../images/bg_side.gif) left top no-repeat;
+	font-size:20px;
+	font-weight:bold;
+	line-height:40px;
+	color:#fff;
+}
+#controller {
+	width:700px;
+	margin:0 auto;
+	padding:10px 0;
+}
+#controller p {
+	height:14px;
+	float:left;
+	margin-right:5px;
+	padding-top:5px;
+}
+#controller p.line {
+	height:26px;
+	margin-right:0;
+	padding-top:0;
+	float:right;
+}
+
+.gallery {
+	width:1000px;
+	position:relative;
+	margin-bottom:20px;
+}
+.gallery .hero {
+	width:700px;
+	margin:0 auto;
+}
+.gallery .arrow {
+	width:1000px;
+	position:absolute;
+	left:0;
+	top:150px;
+}
+.gallery .arrow .arrow_l {
+	width:37px;
+	float:left;
+	display:block;
+}
+.gallery .arrow .arrow_r {
+	width:37px;
+	float:right;
+	display:block;
+}
+#current {
+	background:url(../images/bg_nav.gif) left top no-repeat;
+	width:1000px;
+	margin-bottom:50px;
+}
+#current h3 {
+	padding:8px 15px;
+	margin-bottom:20px;
+	color:#fff;
+	font-size:20px;
+}
+#current table {
+	border-left:2px #fff solid;
+	width:100%;
+}
+#current table td,
+#current table th {
+	border-right:2px #fff solid;
+	border-bottom:2px #fff solid;
+	text-align:center;
+	padding:10px;
+	font-weight:bold;
+	vertical-align:middle;
+}
+#current table th {
+	background:#808080;
+	color:#fff;
+}
+#current table th.w30 {
+	width:10px;
+}
+#current table td {
+	background:#ccc;
+}
+#current table tr.light td {
+	background:#e6e6e6;
+}
+
+
+/* -- box_btm -- */
+#box_btm {
+	background:url(../images/bg_btmbox02.gif) left bottom no-repeat;
+	width:1000px;
+	margin-bottom:50px;
+}
+#box_btm .box_btm_in {
+	background:url(../images/bg_btmbox01.gif) left top no-repeat;
+	padding:10px;
+}
+#box_btm .box_btm_in .photo {
+	width:100px;
+	margin-right:10px;
+	float:left;
+}
+#box_btm .box_btm_in .message {
+	width:724px;
+	margin-right:10px;
+	float:left;
+}
+#box_btm .box_btm_in .message textarea {
+	border:2px #ccc solid;
+	width:720px;
+	height:92px;
+}
+#box_btm .box_btm_in .send {
+	width:130px;
+	float:right;
+}
+#box_btm .box_btm_in .send select {
+	margin-bottom:30px;
+}
+#box_btm .box_btm_in .send input.btn {
+	border:none;
+	width:130px;
+	height:50px;
+}
+
+/* -- login -- */
+#login {
+	position:absolute;
+	width:534px;
+	height:360px;
+	top:50%;
+	left:50%;
+	margin-left:-262px;
+	margin-top:-180px;
+	text-align:center;
+}
+#login h1 {
+	margin-bottom:50px;
+}
+#login input {
+	width:216px;
+	height:26px;
+	border:2px #ccc solid;
+	font-weight:bold;
+	padding-left:10px;
+	margin:0 auto 13px;
+	display:block;
+}
+#login input.btn {
+	border:none;
+	width:130px;
+	height:40px;
+	margin-top:20px;
+}

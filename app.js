@@ -1,4 +1,5 @@
 "use strict";
+
 var express = require('express');
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
@@ -28,6 +29,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser(config.get("cookieSecret")));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/chat_room', express.static(__dirname + '/chatRoom/chat_room'));
+app.use('/onsocket', express.static(__dirname + '/chatRoom/onsocket'));
+app.use('/bootstrap', express.static(__dirname + '/chatRoom/bootstrap'));
+app.use('/chatRoom', express.static(__dirname + '/chatRoom/public'));
+
 app.use(session({
   store: new RedisStore(config.get("redisSession")),
   secret: config.get("sessionSecret"),
@@ -43,10 +49,11 @@ app.use(flash());
 
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
+var chat = require('./routes/chat');
 
 app.use('/', routes);
 app.use('/dashboard', currentUser.assign, dashboard);
-
+app.use('/chat', currentUser.assign, chat);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

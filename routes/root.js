@@ -17,11 +17,12 @@ router.use(function (req, res, next) {
     if (req.path == '/logout' || req.path.indexOf('invite') > -1) {
         return next();
     }
-    if (req.user && (req.path.indexOf('dashboard') == -1)) {
-        res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
-    } else {
+    // TODO: need include chat also!
+    // if (req.user && (req.path.indexOf('dashboard') == -1)) {
+    //     res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
+    // } else {
         next();
-    }
+    // }
 });
 
 /* GET root page. */

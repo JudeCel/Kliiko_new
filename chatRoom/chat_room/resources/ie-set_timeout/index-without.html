@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Internet Explorer setTimeout</title>
+		<style type="text/css">
+			body { padding: 50px; } 
+			a { text-decoration: none; }
+			a:hover { text-decoration: underline; }
+		</style>
+	</head>
+
+	<body>
+		
+<script type="text/javascript">
+
+	window.onload = function() {
+		
+		document.getElementById('user_agent').innerHTML = navigator.appVersion;
+
+		setTimeout(function(arg1, arg2, arg3) { 
+
+			document.getElementById('output').innerHTML = 'Argument 1 is: ' + arg1 + '<br/>Argument 2 is: ' + arg2 + '<br/>Argument 3 is: ' + arg3; 
+
+		}, 1000, 'Hello', 'World', '!!!');
+		
+	}
+	
+</script>
+
+	<h2>ie-set_timeout.js</h2>
+
+	<p><a href="index.html">With the Script</a> &nbsp; | &nbsp; <a href="index-without.html">[ Without the Script ]</a></p>
+
+	<pre id="debug"></pre>
+
+	<h3/>User Agent:</h3>
+	
+	<code id="user_agent"></code>
+
+	<h3>JavaScript Code:</h3>
+	
+	<pre style="white-space: pre-wrap;">setTimeout(function(arg1, arg2, arg3) {
+
+	document.getElementById('output').innerHTML = 'Argument 1 is: ' + arg1 + '&lt;br/>Argument 2 is: ' + arg2 + '&lt;br/>Argument 3 is: ' + arg3; 
+
+}, 1000, 'Hello', 'World', '!!!');</pre>
+	
+	<h3>Output:</h3>
+	
+	<pre id="output"></pre>
+	
+	</body>
+</html>
