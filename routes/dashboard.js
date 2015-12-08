@@ -26,11 +26,11 @@ router.get('/', policy.authorized(['admin', 'accountManager']) , function(req, r
 });
 
 router.get('/landing', function(req, res) {
-  res.render(views_path('landing'), { title: 'Landing page' });
+  res.render(views_path('landing'), { title: 'Landing page' , appData: appData});
 });
 
 router.get('/upgradeplans', function(req, res) {
-  res.render(views_path('upgradePlans'), { title: 'Upgrade Plans' });
+  res.render(views_path('upgradePlans'), { title: 'Upgrade Plans', appData: appData });
 });
 
 router.post('/changepassword', function(req, res) {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="KliikoApp" ng-controller="AppController as app">
 <head>
     <meta charset="utf-8">
     <title><%= title %></title>
@@ -21,12 +21,6 @@
 
     <% include headerIncludes %>
 
-    <script>
-        (function(global){
-            global.appData = <%- JSON.stringify(appData) %>
-        })(this);
-
-    </script>
 
 </head>
 <body>

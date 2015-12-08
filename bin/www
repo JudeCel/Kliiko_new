@@ -20,6 +20,8 @@ var port = normalizePort(process.env.PORT || config.get("server")['port']);
 var environment = process.env.NODE_ENV;
 app.set('port', port);
 
+
+
 switch (environment) {
   case 'build':
     console.log('** BUILD **');
@@ -53,20 +55,8 @@ models.sequelize.sync().then(function () {
   server.listen(port, config.get("server")['domain']);
   server.on('error', onError);
   server.on('listening', onListening);
-
-  initRestApiRouts();
-
 });
 
-function initRestApiRouts() {
-
-  //var restApiPath = appSettings.restApiPath;
-  var restApiPath = './api/';
-  fs.readdirSync('./restAPI').forEach(function(filename) {
-    console.log(filename);
-    if (~filename.indexOf('.js')) require('../restAPI/' + filename)(app, restApiPath);
-  });
-}
 
 /**
  * Normalize a port into a number, string, or false.

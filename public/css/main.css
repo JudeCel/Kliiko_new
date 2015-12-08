@@ -8,6 +8,8 @@
   height: 36px;
   margin-left: 36px;
   margin-top: 30px;
+  line-height: 36px;
+  cursor: pointer;
   padding-top: 4px;
   padding-left: 15px;
   vertical-align: middle;
@@ -17,6 +19,16 @@
   color: #4DC0E9;
   line-height: 26px;
   text-align: left; }
+  .btn-dashboard-menu.active {
+    color: white;
+    background: #4DC0E9; }
+  .btn-dashboard-menu.btn-green {
+    color: #2F9F69;
+    border-color: #2F9F69;
+    background: white; }
+  .btn-dashboard-menu.btn-short {
+    min-width: 0 !important;
+    max-width: 100px; }
   .btn-dashboard-menu:hover {
     color: #3DB0D9;
     border-color: #3DB0D9; }
@@ -353,6 +365,17 @@ footer {
 .btn-white {
   background-color: white; }
 
+/* centered columns styles */
+.row-centered {
+  text-align: center; }
+
+.col-centered {
+  display: inline-block;
+  float: none;
+  /* reset the text-align */
+  text-align: left;
+  argin: 0 auto !important; }
+
 .dashboard-header .my-details-container {
   height: 20px;
   margin-left: 10px; }
@@ -548,3 +571,204 @@ footer {
   border-bottom: 55px solid transparent;
   border-left: 110px solid #F0e935;
   border-right: none; }
+
+#dashboard #back-nav-btn {
+  margin-bottom: -75px; }
+
+#dashboard img.ic {
+  margin-top: -4px; }
+
+#dashboard p.warning {
+  color: #E51D39;
+  font-size: .6em; }
+
+#upgrade-plan-content h2 {
+  margin: 45px;
+  font-size: .8em;
+  font-weight: bolder; }
+
+#upgrade-plan-content #steps-row {
+  display: block;
+  width: 405px;
+  width: 600px;
+  margin: 0 auto; }
+  #upgrade-plan-content #steps-row .step-container {
+    display: block;
+    margin: 10px;
+    float: left;
+    width: 100px;
+    font-size: .5em; }
+  #upgrade-plan-content #steps-row span.step-number {
+    display: block;
+    float: left;
+    width: 61px;
+    margin: 0 20px 5px 20px;
+    padding: 9px;
+    color: white;
+    font-size: 2em;
+    text-align: center;
+    background: #ddd; }
+    #upgrade-plan-content #steps-row span.step-number.active {
+      color: white;
+      background: #4DC0E9; }
+    #upgrade-plan-content #steps-row span.step-number.done {
+      background: rgba(88, 188, 227, 0.65); }
+  #upgrade-plan-content #steps-row span.step-name {
+    color: #ddd; }
+    #upgrade-plan-content #steps-row span.step-name.active, #upgrade-plan-content #steps-row span.step-name.done {
+      color: #58595b; }
+
+#upgrade-plan-content .benefits {
+  margin-left: 5%; }
+  #upgrade-plan-content .benefits p {
+    margin: 0 0 -10px 0;
+    padding: 10px 100px 10px 30px;
+    font-size: 1.9rem;
+    text-align: left;
+    border-left: 3px solid #2F9F69; }
+    #upgrade-plan-content .benefits p::before {
+      content: url("./../icons/ic_tick.png");
+      display: block;
+      margin-left: -70px;
+      margin-top: 5px;
+      position: absolute; }
+
+#upgrade-plan-content .plans-table .list-group {
+  border: none;
+  box-shadow: none;
+  -webkit-box-shadow: none; }
+
+#upgrade-plan-content .plans-table #best-value-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  z-index: 100; }
+
+#upgrade-plan-content .plans-table h4 {
+  max-width: 90%;
+  margin: 0 auto;
+  margin-bottom: 5px;
+  padding: 6px;
+  font-size: 3.3rem;
+  font-weight: bold;
+  font-style: italic; }
+
+#upgrade-plan-content .plans-table .price-label {
+  display: block;
+  position: relative;
+  padding-top: 40px;
+  height: 190px; }
+  #upgrade-plan-content .plans-table .price-label h5 {
+    font-size: 6rem;
+    font-weight: 900;
+    color: white; }
+  #upgrade-plan-content .plans-table .price-label .outline {
+    color: white;
+    text-shadow: 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b; }
+  #upgrade-plan-content .plans-table .price-label p {
+    font-size: 1.5rem; }
+
+#upgrade-plan-content .plans-table .list-group-item-text {
+  margin: 4px auto;
+  padding: 10px;
+  width: 90%;
+  font-size: 2.1rem; }
+
+#upgrade-plan-content .plans-table .yellow-bg {
+  background: #F0E935; }
+
+#upgrade-plan-content .plans-table .yellow-light-bg {
+  background: #FDFAD7; }
+
+#upgrade-plan-content .plans-table .yellow-header-bg {
+  background: #F8F49B; }
+
+#upgrade-plan-content .plans-table .green-bg {
+  background: #4CB648; }
+
+#upgrade-plan-content .plans-table .green-light-bg {
+  background: #DBF1DC; }
+
+#upgrade-plan-content .plans-table .green-header-bg {
+  background: #A5DAA4; }
+
+#upgrade-plan-content .plans-table .blue-bg {
+  background: #4CC0E9; }
+
+#upgrade-plan-content .plans-table .blue-light-bg {
+  background: #DBF1FC; }
+
+#upgrade-plan-content .plans-table .blue-header-bg {
+  background: #A5DFF3; }
+
+#upgrade-plan-content .btn-dashboard-plans {
+  display: block;
+  height: 50px;
+  margin: 5px 0;
+  padding: 9px 20px;
+  font-size: 2.3rem;
+  border: solid 3px #58595b;
+  cursor: pointer; }
+
+#upgrade-plan-content .buttons-area {
+  margin-top: 18px !important;
+  padding: 0 !important; }
+
+#upgrade-plan-content .btn-brown {
+  color: #979137;
+  border-color: #979137; }
+
+#upgrade-plan-content .btn-green {
+  color: #4CB344;
+  border-color: #4CB344; }
+
+#upgrade-plan-content .btn-blue {
+  color: #65C8EE;
+  border-color: #65C8EE; }
+
+#upgrade-plan-content .learn {
+  width: 160px; }
+
+#upgrade-plan-content .want {
+  width: 200px; }
+
+#upgrade-plan-content .modal-footer {
+  font-size: 2rem; }
+  #upgrade-plan-content .modal-footer .go-back-btn {
+    color: #58595b;
+    border-color: #58595b; }
+  #upgrade-plan-content .modal-footer .i-want-btn {
+    color: #58595b;
+    border-color: #F0E935;
+    width: 200px; }
+
+#upgrade-plan-content #plansModal {
+  top: -85px; }
+  #upgrade-plan-content #plansModal h1 {
+    padding: 15px;
+    font-size: 3.3rem;
+    font-weight: 100; }
+  #upgrade-plan-content #plansModal p {
+    font-size: 2rem;
+    color: #58595b; }
+  #upgrade-plan-content #plansModal .panel {
+    border-radius: 0px;
+    color: #58595b; }
+  #upgrade-plan-content #plansModal .panel-title {
+    font-size: 2rem;
+    text-align: left;
+    color: #58595b; }
+  #upgrade-plan-content #plansModal .panel-heading {
+    border: none;
+    background: #F6F8F7; }
+    #upgrade-plan-content #plansModal .panel-heading:hover {
+      background: #F8F49B; }
+  #upgrade-plan-content #plansModal .panel-body p {
+    font-size: 1.9rem;
+    text-align: left;
+    color: #58595b; }
+
+#upgrade-plan-content #disclaimer {
+  margin-top: 60px;
+  color: #58595b;
+  font-size: 1.5rem; }
