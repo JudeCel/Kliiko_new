@@ -51,8 +51,4 @@ router.get('/uploadBanner/:page', policy.authorized(['admin']), uploadBanner.des
 router.get('/accountDatabase', policy.authorized(['admin']), accountDatabase.get);
 router.get('/accountDatabaseExportCsv', policy.authorized(['admin']), accountDatabase.exportCsv);
 
-// router.get('/accountDatabase', function(req, res) {
-//   res.render(views_path('accountDatabase'), { title: 'Account Database' });
-// });
-
 module.exports = router;

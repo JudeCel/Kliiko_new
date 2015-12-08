@@ -3,7 +3,7 @@ var Account  = require('./../../models').Account;
 var User  = require('./../../models').User;
 
 function findAllaccounts(callback) {
-  Account.findAll({include: [User]})
+  Account.findAll({order: 'name ASC', include: [User]})
   .then(function (result) {
     callback(result);
   });
