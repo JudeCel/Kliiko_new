@@ -22,6 +22,13 @@
 
     <% include headerIncludes %>
 
+    <script>
+        (function(global){
+            global.appData = <%- JSON.stringify(appData) %>
+        })(this);
+
+    </script>
+
 </head>
 <body>
   <div class='dashboard-header'>
