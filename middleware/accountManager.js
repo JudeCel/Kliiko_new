@@ -8,8 +8,8 @@ function views_path(action) {
 };
 
 function index(req, res) {
-  accountManager.findUserManagers(req.user, function(error, accounts) {
-    res.render(views_path('accountManager'), { title: 'Account Managers', accounts: accounts, message: req.flash('message')[0] });
+  accountManager.findUserManagers(req.user, function(error, users) {
+    res.render(views_path('accountManager'), { title: 'Account Managers', users: users, message: req.flash('message')[0] });
   });
 };
 
@@ -18,16 +18,23 @@ function manageGet(req, res) {
 };
 
 function managePost(req, res) {
-  accountManager.createOrUpdateManager(req, function(error, created, accountUser) {
+  accountManager.createOrUpdateManager(req, function(error, params) {
     if(error) {
       res.render(views_path('accountManager/manage'), accountManager.simpleParams(error, 'Something went wrong', req.body, req));
     }
     else {
-
-      inviteMailer.sendInviteNewUserToAccount(accountUser, 'facilitator', function(error) {
-        console.log(error);
-      });
-      res.redirect('../accountmanager');
+      console.log(params);
+      if(params.created) {
+        inviteMailer.sendInviteNewUserToAccount({ userId: params.userId, accountId: params.accountId, role: 'accountManager' }, function(error) {
+          console.log(error);
+        });
+      }
+      else {
+        inviteMailer.sendInviteNewUserToAccount({ userId: params.userId, accountId: params.accountId, role: 'accountManager' }, function(error) {
+          console.log(error);
+        });
+      }
+      // res.redirect('../accountmanager');
     }
   });
 };

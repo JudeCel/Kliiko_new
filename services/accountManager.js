@@ -4,25 +4,49 @@ var models = require('./../models');
 var AccountUser = models.AccountUser;
 var User = models.User;
 var Account = models.Account;
+var Invite = models.Invite;
 var userService = require('./../services/users');
 var accountUserService = require('./../services/accountUser');
+var async = require('async');
 var _ = require('lodash');
 
 //Exports
 function findUserManagers(user, callback) {
-  AccountUser.findAll({
-    include: [ User ],
-    where: {
-      accountId: user.accountId,
-      userId: { $ne: user.id }
+  async.parallel([
+    function(cb) {
+      User.findAll({
+        include: [{
+          model: Account,
+          where: { id: user.accountOwnerId }
+        }],
+        where: { id: { $ne: user.id } }
+      }).then(function(users) {
+        cb(null, users);
+      }).catch(function(err) {
+        cb(err);
+      });
+    },
+    function(cb) {
+      User.findAll({
+        include: [{
+          model: Invite,
+          where: { accountId: user.accountOwnerId, role: 'accountManager' }
+        }],
+        where: { id: { $ne: user.id } }
+      }).then(function(users) {
+        cb(null, users);
+      }).catch(function(err) {
+        cb(err);
+      });
     }
-  }).done(function(result) {
-    if(result) {
-      callback(null, result);
+  ], function(err, results) {
+    if(err) {
+      console.log(err);
+      callback(err);
     }
     else {
-      callback(true);
-    };
+      callback(null, _.union(results[0], results[1]));
+    }
   });
 }
 
@@ -35,17 +59,19 @@ function createOrUpdateManager(req, callback) {
     where: { email: params.email }
   }).done(function(foundUser) {
     if(foundUser) {
-      createAccountUser(user.id, foundUser, false, callback);
+      callback(null, { created: false, userId: foundUser.id, accountId: user.accountId });
+      // createAccountUser(user.id, foundUser, false, callback);
     }
     else {
       params.password = 'qwerty123';
-      params.accountName = 'guskis';
+      params.accountName = 'guskis123';
       userService.create(params, function(error, newUser) {
         if(error) {
           callback(error);
         }
         else {
-          createAccountUser(user.id, newUser, true, callback);
+          callback(null, { created: true, userId: newUser.id, accountId: user.accountId });
+          // createAccountUser(user.id, newUser, true, callback);
         }
       });
     }

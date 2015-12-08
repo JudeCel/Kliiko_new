@@ -73,11 +73,13 @@ module.exports = (Sequelize, DataTypes) => {
     city: {type: DataTypes.STRING, allowNull: true },
     postCode: {type: DataTypes.STRING, allowNull: true },
     companyName: {type: DataTypes.STRING, allowNull: true },
-    landlineNumber: {type: DataTypes.STRING, allowNull: true }
+    landlineNumber: {type: DataTypes.STRING, allowNull: true },
+    status: { type: DataTypes.ENUM, allowNull: false, values: ['invited', 'declined', 'accepted'], defaultValue: 'accepted' }
   },{
       classMethods: {
         associate: function(models) {
           User.hasMany(models.SocialProfile, {foreignKey: 'userId'});
+          User.hasMany(models.Invite, { foreignKey: 'userId' });
           User.belongsToMany(models.Account, { through: models.AccountUser, foreignKey: 'accountId' });
           User.belongsToMany(models.Account, { through: { model: models.AccountUser, scope: { owner: true }},
             foreignKey: 'accountId',  as: 'OwnerAccount'}

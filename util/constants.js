@@ -1,5 +1,6 @@
-"use strict";
+'use strict';
 
 module.exports = {
-  emailRegExp: /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
+  emailRegExp: /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i,
+  systemRoles: ['admin', 'accountManager', 'facilitator', 'observer', 'participant']
 }

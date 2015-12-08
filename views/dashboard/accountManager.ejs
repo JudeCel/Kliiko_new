@@ -34,15 +34,15 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <% for(var i=0; i < accounts.length; i++) { %>
+                  <% for(var i=0; i < users.length; i++) { %>
                     <tr>
-                      <td><%= accounts[i].User.firstName %></td>
-                      <td><%= accounts[i].User.lastName %></td>
-                      <td><%= accounts[i].User.gender %></td>
-                      <td><%= accounts[i].User.email %></td>
-                      <td><%= accounts[i].User.mobile %></td>
-                      <td><%= accounts[i].status %></td>
-                      <td><a href="accountmanager/remove/<%= accounts[i].id %>">Remove</a></td>
+                      <td><%= users[i].firstName %></td>
+                      <td><%= users[i].lastName %></td>
+                      <td><%= users[i].gender %></td>
+                      <td><%= users[i].email %></td>
+                      <td><%= users[i].mobile %></td>
+                      <td><%= users[i].status %></td>
+                      <td><a href="accountmanager/remove/<%= users[i].id %>">Remove</a></td>
                     </tr>
                   <% } %>
                 </tbody>
