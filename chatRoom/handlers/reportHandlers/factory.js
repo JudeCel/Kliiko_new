@@ -1,4 +1,4 @@
-var mtypes = require('if-common').mtypes;
+var mtypes = require('../helpers/mtypes');
 var getSessionStaffUserIds = require('../getSessionStaffUserIds.js');
 var config = require('../../config/config.json');
 var FS_PATH = config.paths.fsPath + config.paths.chatRoomPath;

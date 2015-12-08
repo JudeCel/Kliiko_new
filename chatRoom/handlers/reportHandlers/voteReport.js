@@ -1,4 +1,4 @@
-var mtypes = require('if-common').mtypes;
+var mtypes = require('../helpers/mtypes');
 var getReportData_Voting = require('../getReportData_Voting.js');
 var config = require('../../config/config.json');
 var FS_PATH = config.paths.fsPath + config.paths.chatRoomPath;
