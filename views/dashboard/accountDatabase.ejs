@@ -1,0 +1,73 @@
+<% include _header %>
+
+<main class='main-first-page' ng-controller='DashboardCtrl'>
+  <div class='container'>
+
+    <% include _navTabs %>
+
+    <div class='dashboard-container border-blue box-shadow'>
+      <div class='row'>
+        <div class='col-xs-12 col-sm-12 col-md-12'>
+          <%# include _buttons %>
+        </div>
+        <div class='col-xs-12 col-sm-12 col-md-12'>
+          <div class='row'>
+            <div class='dashboard-container'>
+              <h2 class="center-block">
+                Account Database
+                <a class="btn border-yellow pull-right" href="/dashboard/accountDatabaseExportCsv">
+                  Exprot to CSV 
+                </a> 
+              </h2>
+              <div id="signup" class="tab-pane fade in active">
+
+              <table class="table table-hover"> 
+                <thead> 
+                  <tr> 
+                    <th>Account Name</th> 
+                    <th>Users</th> 
+                  </tr> 
+                </thead> 
+                <tbody> 
+                  <% accounts.forEach(function(account) { %>
+                    <tr> 
+                      <td><%= account.name %></td>
+                      <td>
+                        <% account.Users.forEach(function(user) { %>
+                          <p>
+                            Full Name: <%= user.firstName %> <%= user.lastName %>
+                            <br>
+                            <a class="btn border-yellow" href="">
+                              Deactivate
+                            </a> 
+                          </p>
+                          <p>Date of Sign-up: <%= user.createdAt %></p>
+                          <p>E-mail: <%= user.email %></p>
+                          <p>Postal Address: <%= user.postaAddress %></p>
+                          <p>Ciry: <%= user.city %></p>
+                          <p>Postcode: <%= user.postcode %></p>
+                          <p>Country: <%= user.country %></p>
+                          <p>Company: <%= user.companyName %></p>
+                          <p>Mobile: <%= user.mobileNumber %></p>
+                          <p># Sessions purchased: TODO need fuctionality for this</p>
+                          <p>Tipe permission: TODO need fuctionality for this</p>
+                          <p># Active Sessions: TODO need fuctionality for this</p>
+                          <p>Comments: TODO need fuctionality for this</p>
+                          <hr>
+                        <%  }); %>
+                      </td>
+                    </tr> 
+                  <%  }); %>
+                </tbody> 
+              </table>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<% include ../footer %>

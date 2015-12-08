@@ -5,6 +5,7 @@ var subdomains = require('../lib/subdomains.js');
 var changePassword = require('../services/changePassword');
 var policy = require('../middleware/policy.js');
 var uploadBanner = require('../middleware/uploadBanner.js');
+var accountDatabase = require('../middleware/accountDatabase.js');
 
 function views_path(action) {
   let views_name_space = 'dashboard/';
@@ -27,11 +28,11 @@ router.get('/landing', function(req, res) {
   res.render(views_path('landing'), { title: 'Landing page' });
 });
 
-router.get('/upgradeplans', function(req, res) {
+router.get('/upgradePlans', function(req, res) {
   res.render(views_path('upgradePlans'), { title: 'Upgrade Plans' });
 });
 
-router.post('/changepassword', function(req, res) {
+router.post('/changePassword', function(req, res) {
   changePassword.save(req, function(errors, message, user){
     res.type('json');
     if (errors) {
@@ -42,8 +43,16 @@ router.post('/changepassword', function(req, res) {
   });
 });
 
-router.get('/uploadbanner', policy.authorized(['admin']), uploadBanner.get);
-router.post('/uploadbanner', policy.authorized(['admin']), uploadBanner.uploadFields, uploadBanner.post);
-router.get('/uploadbanner/:page', policy.authorized(['admin']), uploadBanner.destroy);
+router.get('/uploadBanner', policy.authorized(['admin']), uploadBanner.get);
+router.post('/uploadBanner', policy.authorized(['admin']), uploadBanner.uploadFields, uploadBanner.post);
+router.get('/uploadBanner/:page', policy.authorized(['admin']), uploadBanner.destroy);
+
+
+router.get('/accountDatabase', policy.authorized(['admin']), accountDatabase.get);
+router.get('/accountDatabaseExportCsv', policy.authorized(['admin']), accountDatabase.exportCsv);
+
+// router.get('/accountDatabase', function(req, res) {
+//   res.render(views_path('accountDatabase'), { title: 'Account Database' });
+// });
 
 module.exports = router;
