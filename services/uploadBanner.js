@@ -94,7 +94,13 @@ function destroy(page, callback) {
 function uploadFields() {
   let storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, 'public/banners')
+      let path = 'public/banners';
+      fs.stat(path, function (err, stats) {
+        if(!stats) {
+          fs.mkdir(path);
+        }
+        cb(null, path);
+      });
     },
     filename: function (req, file, cb) {
       let re = /(?:\.([^.]+))?$/;

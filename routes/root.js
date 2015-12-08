@@ -10,21 +10,23 @@ var subdomains = require('../lib/subdomains');
 var config = require('config');
 var mailers = require('../mailers');
 var session = require('../middleware/session');
+var constants = require('../util/constants')
 
 router.use(function (req, res, next) {
     if (req.path == '/logout') {
         return next();
     }
-    if (req.user && (req.path.indexOf('dashboard') == -1)) {
-        res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
-    } else {
+    // TODO: need include chat also!
+    // if (req.user && (req.path.indexOf('dashboard') == -1)) {
+    //     res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
+    // } else {
         next();
-    }
+    // }
 });
 
 /* GET root page. */
 router.get('/', function (req, res, next) {
-    res.render('login', {title: 'Login', error: ""});
+    res.render('login', {title: 'Login', error: "", message: ''});
 });
 
 router.get('/registration', function (req, res, next) {
@@ -51,7 +53,7 @@ router.post('/registration', function (req, res, next) {
           tplData.success = 'Email confirmation sent to ' + email;
         }
       });
-      res.render('login', {title: 'Login', error: "Please, Confirm Your Email"});
+      res.render('login', {title: 'Login', error: "Please confirm Your Email", message: '' });
     };
   });
 });
@@ -59,14 +61,18 @@ router.post('/registration', function (req, res, next) {
 router.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
     if (err || !user) {
-      return  res.render('login', {title: 'Login', error: "Wrong email or password or email is not confirmed"})
+      return  res.render('login', {title: 'Login', error: "Wrong email or password or email is not confirmed", message: ''})
     }
     req.login(user, function(err) {
       if (err) { return next(err); }
       session.rememberMe(req, function(err, result) {
         if (err) { throw err}
         if (result) {
-          return res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
+          if (req.user.signInCount === 1) {
+            return res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard/landing'));
+          } else {
+            return res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
+          }
         }
       });
     });
@@ -75,26 +81,9 @@ router.post('/login', function(req, res, next) {
 
 
 router.get('/login', function (req, res, next) {
-    res.render('login', {title: 'Login', error: ""});
+    res.render('login', { title: 'Login', error: '', message: req.flash('message')[0] });
 });
 
-
-// Disable by customer
-// router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
-// router.get('/auth/facebook/callback',
-//   passport.authenticate('facebook', {failureRedirect: '/login' }),
-//   function(req, res) {
-//     res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
-//   }
-// );
-//
-// router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
-// router.get('/auth/google/callback',
-//   passport.authenticate('google', {failureRedirect: '/login' }),
-//   function(req, res) {
-//     res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
-//   }
-// );
 router.route('/emailConfirmation/:token')
   .get(function (req, res, next) {
 
@@ -109,10 +98,12 @@ router.route('/emailConfirmation/:token')
       if (err || !user) {
         tplData.user = false;
         tplData.errors.password = "Token expired";
+        tplData.message = '';
         res.render('/login', tplData);
       }else{
         emailConfirmation.getEmailConfirmationByToken(user, function (err, user) {
           if (err) {
+            tplData.message = '';
             tplData.errors.password = "Something is wrong with email confirmation";
             res.render('/login', tplData);
           }else{
@@ -145,13 +136,12 @@ router.route('/forgotpassword')
         let email = req.body.email;
 
         if (!email) {
-            tplData.error = 'Please fill e-mail fields';
+            tplData.error = 'Please fill e-mail field';
             res.render('forgotPassword', tplData);
             return;
         }
 
-        let regexp = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-        if (!regexp.test(email)) {
+        if (!constants.emailRegExp.test(email)) {
             tplData.error = 'Invalid e-mail format';
             res.render('forgotPassword', tplData);
             return;
@@ -161,7 +151,7 @@ router.route('/forgotpassword')
             if (err) {
                 tplData.error = err.message;
             } else {
-                tplData.success = 'Account recovery email sent to ' + email;
+                tplData.success = true;
             }
             res.render('forgotPassword', tplData);
         });
@@ -210,6 +200,7 @@ router.route('/resetpassword/:token')
                 return;
             }
             mailers.users.sendResetPasswordSuccess({email: user.get('email')}, function (err, data) {
+                req.flash('message', 'Password was changed successfully');
                 res.redirect("/login");
             });
         });

@@ -1,11 +1,11 @@
 # Kliiko
-Tested on: Express version 4.2.* LTS, NPM version 3.3.*
+Tested on: Node.js version 4.2.x LTS, NPM version 3.3.x
 
 ## Dependencies
 
-Node.js >= 4.2.2
+Node.js >= 4.2.x
 
-Express 4.2.x
+Express 4.1.x
 
 NPM 3.3.x
 
@@ -41,12 +41,17 @@ If needed use specific subdomain name for users then ``` 127.0.0.1 acountName.fo
 
 1) you must have admin permissions
 
-2) go to ``` C:\Windows\System32\drivers\etc ```
+2) go to `C:\Windows\System32\drivers\etc`
 
-3) change hosts file (  127.0.0.1       insider.focus.com
-                        127.0.0.1       www.insider.focus.com   )
+3) add next lines to `hosts` file      
+    127.0.0.1     insider.focus.com      
+    127.0.0.1     www.insider.focus.com      
+    127.0.0.1     user.focus.com      
+    127.0.0.1     www.user.focus.com      
 
 4) remove localhost
+
+Also you required to have Python 2.7.x and Visual Studio as C compiler.
 
 ## Database migrations and ORM
 
@@ -55,9 +60,10 @@ In the project we use ORM [Sequelize](http://docs.sequelizejs.com/en/latest/)
 Also we use code-first migrations [Sequelize Migrations ](http://docs.sequelizejs.com/en/latest/docs/migrations/)
 
 To restart DB, delete and recreate all tables based on the models, run this command from root directory of the project:
-``` node lib/tasks/db_reset.js ```
+``` node lib/tasks/dbReset.js ```
 
-To run user seeds run this command: ``` node seeders/users.js ```
+To run seeds for user run this command: ``` node seeders/users.js ```
+To run seeds for chat session run this command: ``` node seeders/chatSesion.js ```
 
 Default user credentials email ``` admin@insider.com ``` or ``` user@insider.com ``` and password ``` qwerty123 ```
 
@@ -84,3 +90,9 @@ Install mocha ```  npm install mocha -g ```
  or
 
  ``` npm test ```
+
+### Debugging
+
+ 1) Run Gulp with --debug argument ```gulp --debug ```
+
+ 2) Open Chrome or Opera and go to http://127.0.0.1:8085/?ws=127.0.0.1:8085&port=5858

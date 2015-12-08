@@ -21,9 +21,9 @@ var gulp = require('gulp'),
 	concat = require('gulp-concat'),
 	useref = require('gulp-useref'),
 	minifyHtml = require('gulp-minify-html'),
+	nodeInspector = require('gulp-node-inspector'),
+	args = require('yargs').argv,
 	port = process.env.PORT || config.defaultPort;
-
-
 
 gulp.task('help', taskListing);
 gulp.task('default', ['help']);
@@ -124,9 +124,23 @@ gulp.task('inject', ['bootstrap', 'sass', 'templatecache'], function () {
 		.pipe(gulp.dest(config.layout))
 
 });
-gulp.task('serve-dev', ['inject'], function () {
+
+gulp.task('inspect', function () {
+	var debugPort = 5858;
+	var webPort = 8085;
+    
+    gulp.src([]).pipe(nodeInspector({
+        debugPort: debugPort,
+        webHost: '0.0.0.0',
+        webPort: webPort,
+        preload: false
+    }));
+});
+
+gulp.task('serve-dev', (args.debug) ? ['inject', 'inspect'] : ['inject'], function () {
 	var isDev = true;
 	var nodeOptions = {
+		nodeArgs: [],
 		script: config.nodeServer,
 		delayTime: 0,
 		env: {
@@ -135,6 +149,12 @@ gulp.task('serve-dev', ['inject'], function () {
 		},
 		watch: [config.server]
 	};
+
+	// Debug using node inspect
+	if (args.debug) {
+        nodeOptions.nodeArgs.push('--debug');
+    }
+
 	return nodemon(nodeOptions)
 		.on('restart', ['vet'], function (ev) {
 			log("*** nodemon restarted");
@@ -168,7 +188,7 @@ function startBrowserSync() {
 		log('File' + event.path.replace(srcPattern, '') + ' ' + event.type);
 	}
 
-	log('Starting browser-sync on port' + port);
+	log('Starting browser-sync on port ' + port);
 
 	gulp.watch([config.sass], ['bootstrap'])
 		.on('change', function (event) {

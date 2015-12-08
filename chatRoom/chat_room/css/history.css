@@ -1,0 +1,139 @@
+/*******************************************************************************/
+.avatar_0 {
+	background-image: url('http://chat.insiderfocus.com/IFS/production/resources/images/avatar0.png');
+}
+
+.avatar_1 {
+	background-image: url('http://chat.insiderfocus.com/IFS/production/resources/images/avatar1.png');
+}
+
+.avatar_2 {
+	background-image: url('http://chat.insiderfocus.com/IFS/production/resources/images/avatar2.png');
+}
+
+.avatar_3 {
+	background-image: url('http://chat.insiderfocus.com/IFS/production/resources/images/avatar3.png');
+}
+
+.avatar_4 {
+	background-image: url('http://chat.insiderfocus.com/IFS/production/resources/images/avatar4.png');
+}
+
+.avatar_5 {
+	background-image: url('http://chat.insiderfocus.com/IFS/production/resources/images/avatar5.png');
+}
+
+.avatar_6 {
+	background-image: url('http://chat.insiderfocus.com/IFS/production/resources/images/avatar6.png');
+}
+
+.avatar_7 {
+	background-image: url('http://chat.insiderfocus.com/IFS/production/resources/images/avatar7.png');
+}
+
+.avatar_8 {
+	background-image: url('http://chat.insiderfocus.com/IFS/production/resources/images/avatar8.png');
+}
+
+.avatar {
+	width: 35px;
+	height: 35px;
+	background-size: 35px 35px;
+	background-repeat:no-repeat;
+}
+
+.tag_set {
+	background-image:url('http://chat.insiderfocus.com/IFS/production/resources/images/tag_set.png');
+}
+
+.tag_unset {
+	background-image:url('http://chat.insiderfocus.com/IFS/production/resources/images/tag_unset.png');
+}
+
+.tag_set:hover {
+	background-image:url('http://chat.insiderfocus.com/IFS/production/resources/images/tag_set_hover.png');
+}
+
+.tag_unset:hover {
+	background-image:url('http://chat.insiderfocus.com/IFS/production/resources/images/tag_unset_hover.png');
+}
+
+.tag {
+	position: relative;
+	left: 6px;
+	top: 0px;
+	width: 24px;
+	height: 24px;
+	background-size: 24px 24px;
+	background-repeat:no-repeat;
+}
+
+.comment_facilitator {
+	background-color: #f9d2d8;
+}
+
+.comment {
+	position: relative;
+	top: -17px;
+	font-size: 10px;
+	padding: 5px;
+	width: 220px;
+}
+
+.ellipsis_set {
+	background-image:url('http://chat.insiderfocus.com/IFS/production/resources/images/ellipsis.png');
+}
+
+.ellipsis_set:hover {
+	background-image:url('http://chat.insiderfocus.com/IFS/production/resources/images/ellipsis_hover.png');
+}
+
+.ellipsis {
+	position: relative;
+	left: 190px;
+	top: -17px;
+	width: 16px;
+	height: 16px;
+	title: "More";
+}
+
+.reply_set {
+	background-image:url('http://chat.insiderfocus.com/IFS/production/resources/images/reply.png');
+}
+
+.reply_set:hover {
+	background-image:url('http://chat.insiderfocus.com/IFS/production/resources/images/reply_hover.png');
+}
+
+.reply {
+	position: relative;
+	left: 215px;
+	top: -33px;
+	width: 16px;
+	height: 16px;
+	title: "Reply";
+}
+
+.name {
+	position: relative;
+	left: 0px;
+	top: 0px;
+	width: 230px;
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 13px;
+	color: #fff;
+	padding: 2px;
+}
+
+.date {
+	position: relative;
+	left: 91px;
+	top: -17px;
+	width: 120px;
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 13px;
+	color: #fff;
+	padding: 2px;
+}
+
+

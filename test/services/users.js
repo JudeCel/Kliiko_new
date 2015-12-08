@@ -10,7 +10,8 @@ var validAttrs = {
   firstName: "Dainis",
   lastName: "Lapins",
   password: "cool_password",
-  email: "dainis@gmail.com"
+  email: "dainis@gmail.com",
+  gender: "male"
 }
 
 describe('User Repo', () => {
@@ -52,7 +53,9 @@ describe('User Repo', () => {
         accountName: "DainisL",
         firstName: "Dainis",
         password: "cool",
-        email: "dainis_gmail.com"
+        email: "dainis_gmail.com",
+        gender: "male"
+
       }
 
       UserRepo.createUser(attrs, function(err, user) {

@@ -8,13 +8,19 @@ var uuid = require('node-uuid');
 var async = require('async');
 
 function create(params, callback) {
+  let err = {};
+
+  if (params.termsAndConditions === "false") {
+    err.termsAndConditions = "You must agree to the terms and conditions before register."
+    return callback(err);
+  }
+
   validateForCreate(params, function (error, params) {
     if (error) {
       return callback(error, params)
     } else {
       createUser(params, function (error, result) {
         if (error) {
-
             return callback(error);
         } else {
             return callback(null, result);
@@ -120,7 +126,10 @@ function prepareParams(req, errors) {
     email: '',
     mobile: '',
     password: '',
+    landlineNumber: '',
+    gender: '',
     tipsAndUpdate: 'on',
+    termsAndConditions: 'false',
     errors: (errors || {})
   }, req.body);
 }
@@ -147,7 +156,11 @@ function getUserByToken(token, callback) {
     attributes: ['id', 'resetPasswordSentAt', 'email', 'resetPasswordToken']
   })
     .then(function (result) {
+      if (result) {
         return callback(null, result);
+      } else {
+        return callback({message: "Password already changed."});
+      }
     })
     .catch(function (err) {
         callback(err);

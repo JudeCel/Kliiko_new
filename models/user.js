@@ -1,5 +1,6 @@
 "use strict";
 var bcrypt = require('bcrypt');
+var constants = require('../util/constants')
 
 module.exports = (Sequelize, DataTypes) => {
   var User = Sequelize.define('User', {
@@ -7,21 +8,29 @@ module.exports = (Sequelize, DataTypes) => {
     firstName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} } },
     lastName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} } },
     requiredEmail: { type: DataTypes.VIRTUAL, defaultValue: true },
+    gender: {type: DataTypes.ENUM, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} }, values: ["male", "female"] },
+    mobileNumber: {type: DataTypes.STRING, allowNull: true },
+    landlineNumber: {type: DataTypes.STRING, allowNull: true },
+    companyName: {type: DataTypes.STRING, allowNull: true },
     email: {type: DataTypes.STRING, allowNull: true,
     validate:{
       validateEmail: function(val, next) {
         if (this.requiredEmail) {
-          let re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-
-          if (!(re.test(val))) {
+          if (!(constants.emailRegExp.test(val))) {
             return next("Invalid e-mail format");
           }
         }
 
         if (!!val) {
-          User.findOne({attributes: ['email'], where: { email: val } }).then(function (user) {
+          User.findOne({
+            attributes: ['email', 'id'],
+            where: {
+              email: val,
+              id: { $ne: this.id }
+            }
+          }).then(function (user) {
             if(user){
-              return next('already taken');
+              next('already taken');
             }else{
               next();
             }
@@ -56,20 +65,21 @@ module.exports = (Sequelize, DataTypes) => {
     confirmedAt: {type : DataTypes.DATE, allowNull: true},
     currentSignInIp: {type : DataTypes.STRING, allowNull: true},
     promoCode: {type: DataTypes.INTEGER, allowNull: true},
+    signInCount: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
     mobile: {type: DataTypes.STRING, allowNull: true},
     tipsAndUpdate: {type: DataTypes.ENUM, values: ['off', 'on'], allowNull: false, defaultValue: 'on'},
   },{
       classMethods: {
         associate: function(models) {
-          User.hasMany(models.SocialProfile, {foreignKey: 'userId'});
-          User.belongsToMany(models.Account, { through: models.AccountUser, foreignKey: 'accountId' });
-          User.belongsToMany(models.Account, { through: { model: models.AccountUser, scope: { owner: true }},
-            foreignKey: 'accountId',  as: 'OwnerAccount'}
+          User.hasMany(models.SocialProfile, { foreignKey: 'userId'});
+          User.hasMany(models.SessionMember, { foreignKey: 'userId'});
+          User.belongsToMany(models.Vote, { through: {model: models.VotesBy}, foreignKey: 'voteId' });
+          User.belongsToMany(models.Account, { through: { model: models.AccountUser} });
+          User.belongsToMany(models.Account, { through: { model: models.AccountUser, scope: { owner: true }},  as: 'OwnerAccount'}
           );
         }
       }
     }
 );
-
   return User;
 };

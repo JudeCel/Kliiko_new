@@ -16,6 +16,7 @@ describe('Change Password', function() {
       lastName: "Blīgzna",
       password: "multipassword",
       email: "bligzna.lauris@gmail.com",
+      gender: "male"
     }
     models.sequelize.sync({ force: true }).then(() => {
       User.build(attrs).save()
@@ -83,7 +84,7 @@ describe('Change Password', function() {
       user: testUser.dataValues
     }
     changePassword.save(attrs, function(errors, message, user){
-      assert.equal(message, 'Password successfully change.');
+      assert.equal(message, changePassword.successMessage);
       done();
     });
   });
