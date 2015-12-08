@@ -9,6 +9,7 @@ var userService = require('./../services/users');
 var accountUserService = require('./../services/accountUser');
 var async = require('async');
 var _ = require('lodash');
+var crypto = require('crypto');
 
 //Exports
 function findUserManagers(user, callback) {
@@ -59,19 +60,21 @@ function createOrUpdateManager(req, callback) {
     where: { email: params.email }
   }).done(function(foundUser) {
     if(foundUser) {
-      callback(null, { created: false, userId: foundUser.id, accountId: user.accountId });
-      // createAccountUser(user.id, foundUser, false, callback);
+      callback(null, { created: false, userId: foundUser.id, accountId: user.accountOwnerId });
     }
     else {
-      params.password = 'qwerty123';
-      params.accountName = 'guskis123';
+      let token = crypto.randomBytes(16).toString('hex');
+      params.password = token;
+      params.accountName = token;
+      params.status = 'invited';
+      params.confirmedAt = new Date();
+
       userService.create(params, function(error, newUser) {
         if(error) {
           callback(error);
         }
         else {
-          callback(null, { created: true, userId: newUser.id, accountId: user.accountId });
-          // createAccountUser(user.id, newUser, true, callback);
+          callback(null, { created: true, userId: newUser.id, accountId: user.accountOwnerId });
         }
       });
     }
@@ -79,25 +82,42 @@ function createOrUpdateManager(req, callback) {
 }
 
 function remove(req, callback) {
-  let user = req.user,
-      accountUserId = req.params.id;
+  let currentUser = req.user,
+      userId = req.params.id,
+      type = req.params.type;
 
-  AccountUser.find({
-    where: {
-      id: accountUserId,
-      accountId: user.accountId,
-      userId: { $ne: user.id }
-    }
-  }).done(function(result) {
-    if(result) {
-      result.destroy().then(function() {
-        callback(null, 'Successfully removed account from Account List');
-      });
-    }
-    else {
-      callback('Account not found or your are not owner');
-    }
-  });
+  if(type === 'invite') {
+    console.log(currentUser);
+    Invite.find({ where: { userId: userId, accountId: currentUser.accountOwnerId }, include: [ User ] }).done(function(result) {
+      if(result) {
+        result.User.destroy().done(function() {
+          Invite.destroy({ where: { userId: userId, accountId: currentUser.accountOwnerId } }).done(function() {
+            callback(null, 'Successfully removed Invite');
+          });
+        })
+      }
+      else {
+        callback('Invite not found or your are not owner');
+      }
+    });
+  }
+  else if(type === 'account') {
+    AccountUser.find({
+      where: {
+        id: id,
+        userId: currentUser.id
+      }
+    }).done(function(result) {
+      if(result) {
+        result.destroy().done(function() {
+          callback(null, 'Successfully removed account from Account List');
+        });
+      }
+      else {
+        callback('Account not found or your are not owner');
+      }
+    });
+  }
 }
 
 function simpleParams(error, message, account, req) {

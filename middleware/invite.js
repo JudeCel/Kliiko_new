@@ -1,4 +1,5 @@
 'use strict';
+
 var inviteService = require('../services/invite');
 
 function views_path(action) {
@@ -10,30 +11,49 @@ function get(req, res) {
   inviteService.findInvite(req.params.token, function(error, result) {
     if(error) {
       console.log(error);
-      res.render(pageTypes('notFound'), { title: 'Invite not found', error: error });
+      res.render(pageTypes('notFound'), simpleParams('Invite not found', {}, error));
     }
     else {
-      res.render(pageTypes(req.params.type), { title: 'Accept Invite', invite: result, error: '' });
+      res.render(pageTypes(req.params.type), simpleParams('Invite', result));
     }
   });
 };
 
 function post(req, res) {
+  console.log(req.body);
   console.log(req.params);
   inviteService.findInvite(req.params.token, function(error, result) {
     if(error) {
       console.log(error);
-      res.render(pageTypes('notFound'), { title: 'Invite not found', error: error });
+      return res.render(pageTypes('notFound'), simpleParams('Invite not found', {}, error));
     }
     else {
-      acceptInvite(result);
-      // res.render(pageTypes(req.params.type), { title: 'Accept Invite', invite: result, error: '' });
+      if(req.params.type == 'accept') {
+        inviteService.acceptInvite(result, req.body, function(error, message) {
+          if(error) {
+            res.render(pageTypes(req.params.type), simpleParams('Invite', result, error));
+          }
+          else {
+            req.flash('message', message);
+            res.redirect('/login');
+          }
+        });
+      }
+      else if(req.params.type == 'decline'){
+        inviteService.declineInvite(result, function(error, message) {
+          // console.log(error);
+          // console.log(message);
+          if(error) {
+            res.render(pageTypes(req.params.type), simpleParams('Invite', result, error));
+          }
+          else {
+            req.flash('message', message);
+            res.redirect('/login');
+          }
+        });
+      }
     }
   });
-};
-
-function acceptInvite(invite, callback) {
-  console.log(invite.AccountUser);
 };
 
 function pageTypes(type) {
@@ -44,6 +64,10 @@ function pageTypes(type) {
 
   return pages[type] || views_path('notFound');
 };
+
+function simpleParams(title, invite, error, message) {
+  return { title: title, invite: invite, error: error, message: message || '' };
+}
 
 module.exports = {
   get: get,

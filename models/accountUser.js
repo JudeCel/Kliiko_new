@@ -8,8 +8,7 @@ module.exports = (Sequelize, DataTypes) => {
     AccountId: {type: DataTypes.INTEGER, allowNull: false},
     UserId: {type: DataTypes.INTEGER, allowNull: false},
     owner: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false},
-    role: { type: DataTypes.ENUM, allowNull: false,
-    values: constants.systemRoles }
+    role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles }
   },{
       classMethods: {
         associate: function(models) {

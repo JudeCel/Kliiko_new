@@ -1,0 +1,21 @@
+<% include ../header %>
+
+<div class="login-container center-block">
+  <div class="tab-content border-yellow text-font-family">
+    <div id="login" class="tab-pane fade in active">
+      <h1 class="text-center text-gray-dark">Decline Invite</h1>
+      <h5 class="text-center text-gray-dark">
+        To decline invite you must press the button.
+      </h5>
+      <div class="error-column has-error text-center" id="warning-email-password"><%= error %></div>
+      <div>
+        <form class="non-resubmitable" method="post" action="/invite/decline/<%= invite.token %>" novalidate>
+          <button id='inviteButtonDecline' type="submit" class="btn submit-btn-size border-yellow text-brown-light background-transp">Decline</button>
+          <a href="/invite/accept/<%= invite.token %>" id='inviteButtonGoAccept' class="btn submit-btn-size border-yellow text-brown-light background-transp pull-right">Go to accept</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% include ../footer %>

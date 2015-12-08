@@ -83,7 +83,7 @@ module.exports = (Sequelize, DataTypes) => {
           User.belongsToMany(models.Vote, { through: {model: models.VotesBy}, foreignKey: 'voteId' });
           User.belongsToMany(models.Account, { through: { model: models.AccountUser} });
           User.belongsToMany(models.Account, { through: { model: models.AccountUser, scope: { owner: true }},  as: 'OwnerAccount'});
-          User.hasMany(models.Invite, { foreignKey: 'userId' });
+          // User.hasMany(models.Invite);
         }
       }
     }

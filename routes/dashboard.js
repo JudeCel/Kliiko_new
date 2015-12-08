@@ -50,6 +50,6 @@ router.get('/uploadbanner/:page', policy.authorized(['admin']), uploadBanner.des
 router.get('/accountmanager', policy.authorized(['accountManager']), accountManager.index);
 router.get('/accountmanager/manage', policy.authorized(['accountManager']), accountManager.manageGet);
 router.post('/accountmanager/manage', policy.authorized(['accountManager']), accountManager.managePost);
-router.get('/accountmanager/remove/:id', policy.authorized(['accountManager']), accountManager.destroy);
+router.get('/accountmanager/remove/:type/:id', policy.authorized(['accountManager']), accountManager.destroy);
 
 module.exports = router;

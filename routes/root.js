@@ -207,7 +207,7 @@ router.route('/resetpassword/:token')
         });
     });
 
-router.route('/invite/:type/:token').get(inviteMiddleware.get);
 router.route('/invite/:type/:token').post(inviteMiddleware.post);
+router.route('/invite/:type/:token').get(inviteMiddleware.get);
 
 module.exports = router;

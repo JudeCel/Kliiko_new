@@ -2,7 +2,7 @@
 
 var models  = require('./../../models');
 var userService  = require('./../../services/users');
-var accountUserService  = require('./../../services/accountUser');
+var inviteService  = require('./../../services/invite');
 var assert = require('chai');
 
 describe('Account user service', function() {
@@ -19,7 +19,7 @@ describe('Account user service', function() {
       email: "bligzna.lauris@gmail.com",
       gender: "male"
     }
-    models.sequelize.sync({ force: true }).then(() => {
+    models.sequelize.sync({ force: true }).done(() => {
       userService.create(attrs, function(error, user) {
         testUser1 = user;
 
@@ -37,19 +37,16 @@ describe('Account user service', function() {
   });
 
   after(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
+    models.sequelize.sync({ force: true }).done(() => {
       done();
     });
   });
 
   it('#createNotOwner', function (done) {
-    accountUserService.createNotOwner(testAccount, testUser1, function(error, user) {
-      console.log(error);
-      testUser1.getAccounts().then(function(result) {
-        console.log(result);
-        // assert.include(result, user);
-        done();
-      });
-    });
+    inviteService.declineInvite({ UserId: testUser1.id }, function(err, message) {
+      console.log(err);
+      console.log(message);
+      done();
+    })
   });
 });

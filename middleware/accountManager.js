@@ -20,21 +20,20 @@ function manageGet(req, res) {
 function managePost(req, res) {
   accountManager.createOrUpdateManager(req, function(error, params) {
     if(error) {
+      console.log(error);
       res.render(views_path('accountManager/manage'), accountManager.simpleParams(error, 'Something went wrong', req.body, req));
     }
     else {
       console.log(params);
       if(params.created) {
         inviteMailer.sendInviteNewUserToAccount({ userId: params.userId, accountId: params.accountId, role: 'accountManager' }, function(error) {
-          console.log(error);
         });
       }
       else {
         inviteMailer.sendInviteNewUserToAccount({ userId: params.userId, accountId: params.accountId, role: 'accountManager' }, function(error) {
-          console.log(error);
         });
       }
-      // res.redirect('../accountmanager');
+      res.redirect('../accountmanager');
     }
   });
 };
@@ -48,7 +47,7 @@ function destroy(req, res) {
       req.flash('message', message);
     }
 
-    res.redirect('../../accountmanager');
+    res.redirect('/dashboard/accountmanager');
   });
 };
 
