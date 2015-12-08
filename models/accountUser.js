@@ -3,8 +3,8 @@
 module.exports = (Sequelize, DataTypes) => {
   var AccountUser = Sequelize.define('AccountUser', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    accountId: {type: DataTypes.INTEGER, allowNull: false},
-    userId: {type: DataTypes.INTEGER, allowNull: false},
+    AccountId: {type: DataTypes.INTEGER, allowNull: false},
+    UserId: {type: DataTypes.INTEGER, allowNull: false},
     owner: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false},
     role: {type: DataTypes.ENUM, allowNull: false,
       values: ["admin", "accountManager", "facilitator", "observer", "participant"],
@@ -12,8 +12,8 @@ module.exports = (Sequelize, DataTypes) => {
   },{
       classMethods: {
         associate: function(models) {
-          AccountUser.belongsTo(models.User, {foreignKey: 'userId'});
-          AccountUser.belongsTo(models.Account, {foreignKey: 'accountId'});
+          AccountUser.belongsTo(models.User);
+          AccountUser.belongsTo(models.Account);
         }
       }
     }
