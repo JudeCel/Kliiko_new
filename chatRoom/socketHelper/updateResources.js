@@ -1,4 +1,4 @@
-var mtypes = require('if-common').mtypes;
+var mtypes = require('../helpers/mtypes');
 var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 
 function updateResources(topicId, userId, content, type, Cb) {

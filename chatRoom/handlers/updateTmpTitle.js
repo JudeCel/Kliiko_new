@@ -3,7 +3,7 @@ var deleteUserTmpResources = require('if-data').repositories.deleteUserTmpResour
 var createResource = require('if-data').repositories.createResource;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
-var mtypes = require('if-common').mtypes;
+var mtypes = require('../helpers/mtypes');
 var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js');
 
 var validate = function (req, resCb) {
