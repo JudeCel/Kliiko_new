@@ -1,5 +1,4 @@
 "use strict";
-var getLastSharedResources = require('if-data').repositories.getLastSharedResources;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
 var models = require("./../../models");
