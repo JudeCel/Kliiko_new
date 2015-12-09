@@ -1,14 +1,16 @@
 'use strict';
+var subdomains = require('../lib/subdomains.js');
 var accountDatabase = require('../services/admin/accountDatabase');
-var params = accountDatabase.simpleParams({}, '');
+var params = accountDatabase.simpleParams({ message: null, error: null }, '');
 
 function views_path(action) {
   return 'dashboard/' + action;
 };
 
 function get(req, res) {
-  accountDatabase.findAllaccounts(function (result) {
+  accountDatabase.findAllAccounts(function (result) {
     params['accounts'] = result;
+    params['message'] = req.flash('message')[0]
     res.render(views_path('accountDatabase'), params);
   });
 };
@@ -44,7 +46,40 @@ function exportCsv(req, res) {
   res.render(views_path('accountDatabase'), params);
 };
 
+function updateComment(req, res) {
+
+  let userId = req.body.userId;
+  let comment = req.body.comment; 
+
+  accountDatabase.editComment(userId, comment, function(error, result){
+    if (error) {
+      params['error'] = error;
+      res.render(views_path('accountDatabase'), params);
+    } else {
+      req.flash('message', "Comment successfully updated.");
+      res.redirect("/dashboard/accountDatabase");
+    };
+  });
+};
+
+function reactivateOrDeactivate(req, res) {
+  let userId = req.body.userId;
+  let accountId = req.body.accountId; 
+
+  accountDatabase.reactivateOrDeactivate(userId, accountId, function(error, result){
+    if (error) {
+      params['error'] = error;
+      res.render(views_path('accountDatabase'), params);
+    } else {
+      req.flash('message', "Comment successfully updated.");
+      res.redirect("/dashboard/accountDatabase");
+    };
+  });
+};
+
 module.exports = {
   get: get,
-  exportCsv: exportCsv
+  exportCsv: exportCsv,
+  updateComment: updateComment,
+  reactivateOrDeactivate: reactivateOrDeactivate
 }

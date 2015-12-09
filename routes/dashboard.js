@@ -47,8 +47,11 @@ router.get('/uploadBanner', policy.authorized(['admin']), uploadBanner.get);
 router.post('/uploadBanner', policy.authorized(['admin']), uploadBanner.uploadFields, uploadBanner.post);
 router.get('/uploadBanner/:page', policy.authorized(['admin']), uploadBanner.destroy);
 
-
+// Account Database
 router.get('/accountDatabase', policy.authorized(['admin']), accountDatabase.get);
-router.get('/accountDatabaseExportCsv', policy.authorized(['admin']), accountDatabase.exportCsv);
+router.get('/exportCsv', policy.authorized(['admin']), accountDatabase.exportCsv);
+router.post('/updateComment', policy.authorized(['admin']), accountDatabase.updateComment);
+router.post('/reactivateOrDeactivate', policy.authorized(['admin']), accountDatabase.reactivateOrDeactivate);
+// End
 
 module.exports = router;
