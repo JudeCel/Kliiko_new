@@ -1,4 +1,5 @@
 {
+  "mode": "development",
   "server":{
     "port": 7203,
     "baseDomain": ".focus.com",

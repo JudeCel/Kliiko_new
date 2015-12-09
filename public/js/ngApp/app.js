@@ -9,6 +9,7 @@
             'ngMaterial',
             'ui.bootstrap',
             'ui.router',
+            'globalSettings',
             'debModule',
             'domServices'
         ])
@@ -19,7 +20,6 @@
 //
     appConfigs.$inject = ['dbgProvider',  '$routeProvider', '$locationProvider', '$rootScopeProvider'];
     function appConfigs(dbgProvider, $routeProvider, $locationProvider, $rootScopeProvider) {
-
         //$rootScopeProvider.digestTtl(20);
 
         // use the HTML5 History API
@@ -30,8 +30,8 @@
 
     }
 
-    appRun.$inject = ['$stateParams',  'dbg',  '$rootScope', '$state'];
-    function appRun($stateParams,  dbg,   $rootScope, $state) {
+    appRun.$inject = ['$stateParams',  'dbg',  '$rootScope', '$state', 'globalSettings'];
+    function appRun($stateParams,  dbg,   $rootScope, $state, globalSettings) {
         dbg.log('#appRun started ');
 
         String.prototype.capitalize = function() {

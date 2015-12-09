@@ -1,12 +1,14 @@
 'use strict';
 let config = require('config');
 let fs = require('fs');
+let _ = require('lodash');
 
 let output = {};
 
 output.version = getAppVersion();
+output.mode = config.get('mode');
 output.settings = config.get('webAppSettings');
-
+output.settings = _.extend( config.get('webAppSettings'), config.get('server'));
 
 module.exports = output;
 

@@ -34,7 +34,7 @@ app.use('/onsocket', express.static(__dirname + '/chatRoom/onsocket'));
 app.use('/bootstrap', express.static(__dirname + '/chatRoom/bootstrap'));
 app.use('/chatRoom', express.static(__dirname + '/chatRoom/public'));
 
-initRestApiRouts();
+
 
 
 app.use(session({
@@ -58,6 +58,9 @@ app.use('/', routes);
 app.use('/dashboard', currentUser.assign, dashboard);
 app.use('/chat', currentUser.assign, chat);
 // catch 404 and forward to error handler
+
+initRestApiRouts();
+
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;

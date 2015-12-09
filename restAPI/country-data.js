@@ -1,17 +1,37 @@
+var countryData  = require('country-data');
+
+
 module.exports = function(app,restUrl) {
     var restUrl = restUrl+'/country-data';
 
-
     /**
-     * Share link for file
+     * GET all countries data
      */
-    app.get(restUrl, function (req, res) {
+    app.get(restUrl,/* cors(),*/ function (req, res) {
+        req.user ? proceed() : notAuthExit(res);
 
-        console.log(req.user);
+        function proceed() {
+            res.send(countryData.countries);
+        }
 
-        res.send('country-data');
     });
 
+    /**
+     * GET all currencies data
+     */
+    app.get(restUrl+'/currencies', function (req, res) {
+        req.user ? proceed() : notAuthExit(res);
+
+        function proceed() {
+            res.send(countryData.currencies);
+        }
+
+    });
+
+    //Common not authorized message
+    function notAuthExit(res) {
+        res.status(403).send('not authorized');
+    }
 
 
 };

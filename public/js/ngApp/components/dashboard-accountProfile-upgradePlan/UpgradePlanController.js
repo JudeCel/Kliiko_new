@@ -5,8 +5,8 @@
     module('KliikoApp').
     controller('UpgradePlanController', UpgradePlanController);
 
-    UpgradePlanController.$inject = ['dbg', 'domServices', '$state'];
-    function UpgradePlanController(dbg, domServices, $state) {
+    UpgradePlanController.$inject = ['dbg', 'domServices', '$state', 'upgradePlanServices'];
+    function UpgradePlanController(dbg, domServices, $state, upgradePlanServices) {
         dbg.log2('#UpgradePlanController  started');
         var vm = this;
 
@@ -35,7 +35,14 @@
          * @param plan {string}
          */
         function upgradeToPlan(plan) {
+
             dbg.log('#UpgradePlanController > Upgrade to plan >', plan);
+
+            dbg.log2('#UpgradePlanController > getAllCountriesList > call');
+            upgradePlanServices.getAllCountriesList().then(function(res) {
+                dbg.log2('#UpgradePlanController > getAllCountriesList > res ', res);
+
+            });
         }
 
     }
