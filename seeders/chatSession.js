@@ -111,13 +111,13 @@ function addSessionMembers(session, callback) {
     (cb) =>  {
       UserService.create(userlist[0], function(errors, user) {
         if(errors) {return cb(errors)};
-        addSessionMember(user, session, cb);
+        addSessionMember(user, session,'facilitator', 'Cool first user', cb);
       })
     },
     (cb) => {
       UserService.create(userlist[1], function(errors, user) {
         if(errors) {return cb(errors)};
-        addSessionMember(user, session, cb);
+        addSessionMember(user, session, 'participant','Cool second user', cb);
       });
     }
   ],
@@ -126,11 +126,11 @@ function addSessionMembers(session, callback) {
   });
 }
 
-function addSessionMember(user, session, callback) {
+function addSessionMember(user, session, role, name, callback) {
 
-  let params = { role: "facilitator",
+  let params = { role: role,
                  userId: user.id,
-                 username: "cool user",
+                 username: name,
                  avatar_info: "0:4:3:1:4:3" }
   session.createSessionMember(params)
   .then(function (result) {
