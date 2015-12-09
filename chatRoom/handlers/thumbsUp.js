@@ -12,10 +12,13 @@ var webFaultHelper = require('../helpers/webFaultHelper.js');
 var models = require("./../../models");
 var Event = models.Event;
 var Vote = models.Vote;
+var User = models.User;
+
 
 module.exports.validate = function (req, next) {
     var err = joi.validate(req.params, {
         eventId: joi.number().required(),
+        topicId: joi.number().required(),
         updating_userId: joi.number().required()
     });
 
@@ -29,73 +32,28 @@ module.exports.validate = function (req, next) {
 module.exports.run = function (req, res, mainCb) {
   Vote.findOrCreate({where: {eventId: req.params.eventId}})
     .spread(function(vote, created) {
-      User.find({where: { id: req.params.updating_userId } }).then(function(user) {
-        user.addVote(vote, {
-          topicId: req.params.topicId,
-          eventId: req.params.eventId,
-        }).then(function(_result) {
-          result.increment('number').then(function(vote) {
-            res.send(vote.defaultValue);
-          });
-        }).catch(function(err) {
-          mainCb(webFaultHelper.getFault(err));
-        });
+      User.find({where: { id: req.params.updating_userId }}).done(function(user) {
+        user.getVotes({where: {id: vote.id }}).done(function(votes) {
+          if (_.isEmpty(votes)) {
+            user.addVote(vote, {
+              TopicId: req.params.topicId,
+              EventId: req.params.eventId,
+            }).done(function(_result) {
+              vote.increment('count').done(function(result) {
+                res.send(result.count + 1);
+              });
+            });
+          }else{
+            user.removeVote(vote).done(function(_result) {
+              vote.decrement('count').done(function(result) {
+                res.send(result.count - 1);
+              });
+            });
+          }
+        })
       });
     }
   ).catch(function(err) {
     mainCb(webFaultHelper.getFault(err));
   });
-
-
-
-
-  // var topicId = 0;
-  //
-  //       getEvent(req.params.eventId)
-  //           .then(function (event) {
-	// 		if (!event) return;
-	// 		topicId = event.topicId;
-	// 		getUserVotes(req.params.updating_userId, event.topicId, req.params.eventId)
-	// 			.then(function (userVotes) {
-	// 				if (userVotes && userVotes.length > 0) return "no votes";
-  //                       return getVotes(req.params.eventId);
-	// 			})
-	// 			.then (function (votes) {
-	// 				if (!votes || votes.length == 0) {
-	// 					return createVote({
-	// 						eventId: req.params.eventId,
-	// 						count: 1
-	// 					})
-	// 				}
-  //                   else if (votes=="no votes")
-  //                       return;
-	// 				else {
-	// 					return updateVote({
-	// 						id: votes.id,
-	// 						count: votes.count + 1
-	// 					});
-	// 				}
-	// 			})
-	// 			.done( function()
-  //               {
-  //                   var tmp= getVotes(req.params.eventId);
-  //                   tmp.then (function (votes) {
-  //                       if (votes) {
-  //                           createUserVotes({
-  //                               vote_id: votes.id,
-  //                               userId: req.params.updating_userId,
-  //                               topicId: topicId,
-  //                               eventId: req.params.eventId
-  //                           })
-  //                           return votes.count;
-  //                       }
-  //                       return 0;
-  //                   }).done(function (votesCount) {
-  //                       res.send(votesCount);
-	// 			    }, mainCb);
-  //               });
-	// 	})
-		/*.done(function (votesCount) {
-			res.send(); //serves no purpose whatsoever!
-		}, mainCb);*/
 };

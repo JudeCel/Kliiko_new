@@ -441,7 +441,7 @@ module.exports.listen = function (server) {
       });
     });
 
-    socket.on('thumbs_up', function (eventId, row_id) {
+    socket.on('thumbs_up', function (eventId, row_id, topicId) {
       console.log("thumbs_up");
 
       if (eventId == null) return;
@@ -449,6 +449,7 @@ module.exports.listen = function (server) {
       var req = expressValidatorStub({
         params: {
           eventId: eventId,
+          topicId: topicId,
           updating_userId: socket.userId
         }
       });
@@ -459,7 +460,6 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          if (!result) return;
           io.emit('updatethumbsup', eventId, result);
         }
       };

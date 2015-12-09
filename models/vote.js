@@ -3,7 +3,6 @@
 module.exports = (Sequelize, DataTypes) => {
   var Vote = Sequelize.define('Vote', {
     id:	 { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    eventId: { type: DataTypes.INTEGER, allowNull: true},
     count: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
   },
   {
@@ -13,7 +12,7 @@ module.exports = (Sequelize, DataTypes) => {
     paranoid: true,
     classMethods: {
       associate: function(models) {
-        Vote.belongsToMany(models.User, { through: models.VotesBy, foreignKey: 'userId' });
+        Vote.belongsToMany(models.User, { through: models.VotesBy});
         Vote.belongsTo(models.Event, {foreignKey: 'eventId'});
       }
     }
