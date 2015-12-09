@@ -1,6 +1,5 @@
 "use strict";
 var assert = require("chai").assert;
-var expect = require("chai").expect;
 var sessionMember = require('./../../middleware/sessionMember.js');
 var UserServices  = require('./../../services/users');
 var models  = require('./../../models');
@@ -63,7 +62,7 @@ describe('Middleware Session Member', () => {
   describe('failed ', () => {
     it('Access Denied', (done) =>  {
       req.params.id = (session.id + session.id);
-      
+
       let res = { locals: {}, status: (argument) => { return { send: (test) => {
         assert.equal(test, sessionMember.accessDeniedMessage);
         done();
