@@ -15,7 +15,6 @@ module.exports.listen = function (server) {
 
   var socketHelper = require('./socketHelper');
 
-  io.set('log level', 3);
   io = io.of('/chat');
 
   var userids = [];
@@ -583,7 +582,7 @@ module.exports.listen = function (server) {
       var req = expressValidatorStub({
         params: {
           topicId: socket.topicId,
-          resource_type: mtypes.resourceType[type],
+          resource_type: type,
           userId: socket.userId
         }
       });
@@ -594,7 +593,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.connected[socket.id].emit('resources', JSON.stringify(result, null), type);
+          socket.emit('resources', JSON.stringify(result, null), type);
         }
       };
 
