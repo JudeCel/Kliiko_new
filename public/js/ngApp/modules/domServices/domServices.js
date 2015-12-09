@@ -13,13 +13,16 @@
 
         return domServicesPublicMethods;
 
+        /**
+         * Open or close selected @modalId modal window
+         * @param modalId {string}
+         * @param [close] {boolean}
+         */
         function handleModalActions(modalId, close) {
-            var show = true;
-            if (close) show = false;
-
-            $('#'+modalId).modal({show:show});
+            close
+                ? jQuery('#'+modalId).modal('hide')
+                : jQuery('#'+modalId).modal('show');
         }
-
 
     }
 

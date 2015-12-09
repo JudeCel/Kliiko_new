@@ -7,7 +7,7 @@ module.exports = function(app,restUrl) {
     /**
      * GET all countries data
      */
-    app.get(restUrl,/* cors(),*/ function (req, res) {
+    app.get(restUrl, function (req, res) {
         req.user ? proceed() : notAuthExit(res);
 
         function proceed() {

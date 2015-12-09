@@ -772,3 +772,63 @@ footer {
   margin-top: 60px;
   color: #58595b;
   font-size: 1.5rem; }
+
+#upgrade-plan-content .ng-custom-select .ncs-select {
+  position: relative;
+  color: #58595b;
+  font-size: 1.5rem;
+  text-align: left; }
+  #upgrade-plan-content .ng-custom-select .ncs-select .ncs-input-field {
+    display: block;
+    padding: 9px;
+    background: #ddd; }
+  #upgrade-plan-content .ng-custom-select .ncs-select .ncs-arrow-bnt {
+    position: absolute;
+    top: 13px;
+    right: 2rem;
+    cursor: pointer; }
+  #upgrade-plan-content .ng-custom-select .ncs-select .ncs-content {
+    position: absolute;
+    z-index: 3000;
+    margin-top: -3px;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: scroll;
+    border: 3px solid #ddd;
+    background: white; }
+    #upgrade-plan-content .ng-custom-select .ncs-select .ncs-content .ncs-content-item {
+      padding: 3px 10px;
+      cursor: pointer; }
+      #upgrade-plan-content .ng-custom-select .ncs-select .ncs-content .ncs-content-item:hover {
+        background: #F0E935; }
+
+#upgrade-plan-content .ng-custom-select .ncs-click-anywhere {
+  display: block;
+  position: absolute;
+  width: 200vw;
+  height: 200vh;
+  background: black;
+  top: -100vh;
+  left: -100vw; }
+
+#upgrade-plan-content #countryAndCurrencySelect .modal-body {
+  padding: 36px; }
+
+#upgrade-plan-content #countryAndCurrencySelect #country-select {
+  width: 75%;
+  float: left; }
+
+#upgrade-plan-content #countryAndCurrencySelect #currency-select {
+  width: 21%;
+  float: left; }
+
+#upgrade-plan-content #countryAndCurrencySelect .modal-header, #upgrade-plan-content #countryAndCurrencySelect .modal-footer {
+  border: none; }
+
+#upgrade-plan-content #countryAndCurrencySelect .modal-footer {
+  padding: 0; }
+
+#upgrade-plan-content #countryAndCurrencySelect .ok-btn {
+  margin-top: 20px;
+  color: #E51D39;
+  border-color: #E51D39; }

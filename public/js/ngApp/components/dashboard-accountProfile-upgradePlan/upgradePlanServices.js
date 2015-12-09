@@ -41,7 +41,25 @@
 
         }
 
-        function getAllCurrenciesList() {}
+        function getAllCurrenciesList() {
+            var deferred = $q.defer();
+
+            if (cache.allCurrencies) {
+                deferred.resolve(cache.allCurrencies);
+                dbg.log2('#upgradePlanServices > getAllCurrenciesList > return cached value');
+                return deferred.promise;
+            }
+
+            dbg.log2('#upgradePlanServices > getAllCurrenciesList > make rest call');
+            upgradePlanRestApi.getAllCurrencies.get({}, function(res) {
+                dbg.log2('#upgradePlanServices > getAllCurrenciesList > rest call responds');
+                deferred.resolve(res);
+                cache.allCurrencies = res;
+            });
+
+            return deferred.promise;
+
+        }
     }
 
 })();

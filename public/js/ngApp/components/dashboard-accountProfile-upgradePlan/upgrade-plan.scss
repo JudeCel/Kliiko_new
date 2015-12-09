@@ -228,8 +228,95 @@
     margin-top: 60px;
     color: $grey;
     font-size: 1.5rem;
+  }
+
+
+  .ng-custom-select {
+
+
+    .ncs-select {
+      position: relative;
+      color: $grey;
+      font-size: 1.5rem;
+      text-align: left;
+
+      .ncs-input-field {
+        display: block;
+        padding: 9px;
+
+        background: $lightGray;
+      }
+
+      .ncs-arrow-bnt {
+        position: absolute;
+        top:13px; right: 2rem;
+        cursor: pointer;
+      }
+
+      .ncs-content {
+        position: absolute;
+        z-index: 3000;
+        margin-top: -3px;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: scroll;
+        border: 3px solid $lightGray;
+        background: white;
+
+        .ncs-content-item {
+          padding: 3px 10px;
+          cursor: pointer;
+
+          &:hover {
+            background: $yellow;
+          }
+        }
+      }
+    }
+
+    .ncs-click-anywhere {
+      display: block;
+      position: absolute;
+      width: 200vw;
+      height: 200vh;
+      background: black;
+
+      top:-100vh; left: -100vw;
+    }
+
+
+
 
   }
+
+
+
+  #countryAndCurrencySelect {
+
+    .modal-body {padding: 36px;}
+
+    #country-select {
+      width: 75%;
+      float: left;
+    }
+
+    #currency-select {
+      width: 21%;
+      float: left;
+    }
+
+    .modal-header, .modal-footer { border:none; }
+    .modal-footer {
+      padding: 0
+    }
+
+    .ok-btn {
+      margin-top: 20px;
+      color: $red;
+      border-color: $red;
+    }
+  }
+
 }
 
 

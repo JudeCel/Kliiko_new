@@ -48,6 +48,8 @@
 
         dbg.log2('#AppController started ');
 
+        vm.clickAnywhere = {}
+
     }
 
 

@@ -72,7 +72,7 @@
                     <p class="list-group-item-text yellow-light-bg">Up to <b>35 Paid SMS</b> reminders tp Participants<sup>*</sup></p>
                     <p class="list-group-item-text yellow-light-bg"><b>Unlimited</b> Contact List members allowed</p>
                     <div class="list-group-item-text buttons-area">
-                        <div class="btn-dashboard-plans pull-right learn" ng-click="up.openModal('single')">Learn More </div>
+                        <div class="btn-dashboard-plans pull-right learn" ng-click="up.openPlanDetailsModal('single')">Learn More </div>
                         <div class="btn-dashboard-plans pull-right want btn-brown" ng-click="up.upgradeToPlan('single')">I Want This Plan</div>
                     </div>
 
@@ -93,7 +93,7 @@
                     <p class="list-group-item-text green-light-bg">Up to <b>35 Paid SMS</b> reminders tp Participants<sup>*</sup></p>
                     <p class="list-group-item-text green-light-bg"><b>Unlimited</b> Contact List members allowed</p>
                     <div class="list-group-item-text buttons-area">
-                        <div class="btn-dashboard-plans pull-right learn" ng-click="up.openModal('monthly')">Learn More </div>
+                        <div class="btn-dashboard-plans pull-right learn" ng-click="up.openPlanDetailsModal('monthly')">Learn More </div>
                         <div class="btn-dashboard-plans pull-right want btn-green" ng-click="up.upgradeToPlan('monthly')">I Want This Plan</div>
                     </div>
 
@@ -116,7 +116,7 @@
                     <p class="list-group-item-text blue-light-bg">Up to <b>35 Paid SMS</b> reminders tp Participants<sup>*</sup></p>
                     <p class="list-group-item-text blue-light-bg"><b>Unlimited</b> Contact List members allowed</p>
                     <div class="list-group-item-text buttons-area">
-                        <div class="btn-dashboard-plans pull-right learn" ng-click="up.openModal('annual')">Learn More </div>
+                        <div class="btn-dashboard-plans pull-right learn" ng-click="up.openPlanDetailsModal('annual')">Learn More </div>
                         <div class="btn-dashboard-plans pull-right want btn-blue" ng-click="up.upgradeToPlan('annual')">I Want This Plan</div>
                     </div>
 
@@ -137,8 +137,8 @@
     </div>
 
 
-<!------------------------------->
-    <!-- Modal -->
+<!----------- MODALS ---------------------->
+    <!-- plansModal -->
     <div class='modal fade' id='plansModal' role='dialog'>
         <div class='modal-dialog changePasswordModal' style="width: 800px">
             <div class='modal-content border-green border-radius-none'>
@@ -154,6 +154,64 @@
                     <div type='button' class='pull-left btn-dashboard-plans go-back-btn' data-dismiss='modal'>Go Back</div>
                     <div type='submit' class='pull-right btn-dashboard-plans i-want-btn' ng-click="up.upgradeToPlan(up.currentPlan)">I Want This Plan</div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- countryAndCurrencySelect -->
+    <div class='modal fade' id='countryAndCurrencySelect' role='dialog'>
+        <div class='modal-dialog' style="width: 800px">
+            <div class='modal-content border-red border-radius-none'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                    <h1 class='modal-title text-center'>Choose a location and currency</h1>
+                </div>
+
+                <div class='modal-body'>
+                    <div id="country-select" class="ng-custom-select">
+                        <div class="ncs-select">
+                            <div class="ncs-input-field" ng-click="up.ncsCountrySelect = !up.ncsCountrySelect"> {{ up.selectedCountry.name }} </div>
+                            <div class="ncs-arrow-bnt" ng-click="up.ncsCountrySelect = !up.ncsCountrySelect"><i class="pull-right glyphicon glyphicon-chevron-down"></i></div>
+                            <div class="ncs-content" ng-show="up.ncsCountrySelect">
+                                <div class="ncs-content-item"
+                                     ng-repeat="country in up.countries"
+                                     ng-click="up.ncsCountrySelect = !up.ncsCountrySelect; up.selectedCountry=country"> {{country.name}}</div>
+
+                            </div>
+                        </div>
+                        <!--<div class="ncs-click-anywhere"></div>-->
+                    </div>
+                    <div id="currency-select" class="ng-custom-select pull-right">
+                        <div class="ncs-select">
+                            <div class="ncs-input-field" ng-click="up.ncsCurrencySelect = !up.ncsCurrencySelect">
+                                <div class="row">
+                                    <div class="col-md-1"><small>{{up.selectedCurrency.symbol}}</small></div>
+                                    <div class="col-md-9">{{up.selectedCurrency.code}}</div>
+                                </div>
+                            </div>
+                            <div class="ncs-arrow-bnt" ng-click="up.ncsCurrencySelect = !up.ncsCurrencySelect"><i class="pull-right glyphicon glyphicon-chevron-down"></i></div>
+                            <div class="ncs-content" ng-show="up.ncsCurrencySelect">
+                                <div class="ncs-content-item"
+                                     ng-repeat="currency in up.currencies"
+                                     ng-click="up.ncsCurrencySelect = !up.ncsCurrencySelect; up.selectedCurrency=currency">
+                                    <div class="row">
+                                        <div class="col-md-1"><small>{{currency.symbol}}</small></div>
+                                        <div class="col-md-9">{{currency.code}}</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <!--<div class="ncs-click-anywhere"></div>-->
+                    </div>
+
+                    <div class='modal-footer'>
+                        <div type='submit' class='pull-right btn-dashboard-plans border-red ok-btn' ng-click="up.applyCountryAndCurrency()">Ok</div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
