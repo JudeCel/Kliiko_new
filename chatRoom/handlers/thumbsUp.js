@@ -40,13 +40,13 @@ module.exports.run = function (req, res, mainCb) {
               EventId: req.params.eventId,
             }).done(function(_result) {
               vote.increment('count').done(function(result) {
-                res.send(result.count + 1);
+                res.send(result.count);
               });
             });
           }else{
             user.removeVote(vote).done(function(_result) {
               vote.decrement('count').done(function(result) {
-                res.send(result.count - 1);
+                res.send(result.count);
               });
             });
           }

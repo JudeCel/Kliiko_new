@@ -4,9 +4,9 @@ var User  = models.User;
 var accessDeniedMessage = 'Access Denied!!'
 
 function hasAccess(req, res, next) {
-  User.find({where: {id: req.user.id},
+  User.find({where: {id: req.user.id}, attributes: ['id'],
     include: [
-      {model: models.SessionMember, where: {id: req.params.id}}
+      {model: models.SessionMember, where: {sessionId: req.params.id}, attributes: []}
     ]}).done(function(result) {
       if (result) {
         next();

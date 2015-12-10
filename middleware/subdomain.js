@@ -1,5 +1,6 @@
 "use strict";
 var models  = require('./../models');
+var Sequelize = models.sequelize;
 var config = require('config');
 var policy = require('./policy');
 var Account  = models.Account;
@@ -21,7 +22,8 @@ function comparedWithBaseDomainName(subdomain) {
 
 function getAccauntWithRoles(user, subdomain, callback) {
   models.User.find({attributes: ['id'], where: {id: user.id}}).then(function(user){
-    user.getAccounts({where: { name: subdomain },
+    user.getAccounts({where: {
+      $and: [ Sequelize.where(Sequelize.fn('lower', Sequelize.col('name')), Sequelize.fn('lower', subdomain))] },
       include: [ { model: models.AccountUser, attributes: ["role"] }]}
     ).then(function(accounts) {
       if (accounts[0]) {
