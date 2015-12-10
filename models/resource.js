@@ -6,8 +6,9 @@ module.exports = (Sequelize, DataTypes) => {
     topicId:	{ type: DataTypes.INTEGER, allowNull: true },
     userId: { type: DataTypes.INTEGER, allowNull: true },
     thumb_URL: { type: DataTypes.TEXT, allowNull: true },
-    URL:	{ type: DataTypes.TEXT, allowNull: false },
+    URL:	{ type: DataTypes.TEXT, allowNull: true },
     HTML:	{ type: DataTypes.TEXT, allowNull: true },
+    JSON:	{ type: DataTypes.JSON, allowNull: true, defaultValue: {} },
     resource_type: {type: DataTypes.ENUM, allowNull: false,
       values: [ 'participant', 'facilitator', 'co-facilitator',
                 'observer', 'image', 'video', 'audio', 'report',
@@ -16,6 +17,7 @@ module.exports = (Sequelize, DataTypes) => {
     }
     //
   },{
+      timestamps: true,
       classMethods: {
         associate: function(models) {
           Resource.belongsTo(models.Topic, {foreignKey: 'topicId'});

@@ -21,7 +21,7 @@ module.exports = (Sequelize, DataTypes) => {
           OfflineTransaction.belongsTo(models.User, {foreignKey: 'userId'});
           OfflineTransaction.belongsTo(models.Topic, {foreignKey: 'topicId'});
           OfflineTransaction.belongsTo(models.Session, {foreignKey: 'sessionId'});
-          // OfflineTransaction.belongsTo(models.ReplyUser, {foreignKey: 'replyUserId'});
+          OfflineTransaction.belongsTo(models.User, {foreignKey: 'replyUserId'});
           // OfflineTransaction.belongsTo(models.Message, {foreignKey: 'message_id'});
         }
       }
