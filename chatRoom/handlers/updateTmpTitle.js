@@ -1,9 +1,6 @@
 "use strict";
-// var deleteUserTmpResources = require('if-data').repositories.deleteUserTmpResources;
-// var createResource = require('if-data').repositories.createResource;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
-// var mtypes = require('../helpers/mtypes');
 var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 var models = require("./../../models");
 var Resource = models.Resource;
@@ -15,8 +12,9 @@ var validate = function (req, resCb) {
         JSON: joi.object().required(),
         URL: joi.string().required()
     });
-    if (err.error)
-        return resCb(webFaultHelper.getValidationFault(err.error));
+    if (err.error){
+      return resCb(webFaultHelper.getValidationFault(err.error));
+    }
 
     resCb();
 };
@@ -24,7 +22,7 @@ module.exports.validate = validate;
 
 var run = function (req, resCb, errCb) {
   Resource.destroy({where: {resource_type: 'tmp', userId: req.params.userId }})
-    .then(function (_) {
+    .then(function () {
       Resource.create({
           topicId: req.params.topicId,
           userId: req.params.userId,
