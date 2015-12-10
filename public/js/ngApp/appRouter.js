@@ -21,9 +21,11 @@
                 url: "",
                 onEnter: ['$state', '$stateParams','dbg' ,'$location', '$rootScope' ,function($state, $stateParams,dbg, $location, $rootScope) {
                   dbg.rs('dashboard');
-                    //setTimeout(function() {
-                    //    $state.go('dashboard.accountProfile');
-                    //}, 200);
+
+                    // make account profile default view on dashboard
+                    setTimeout(function() {
+                        if ($state.current.name == 'dashboard') $state.go('dashboard.accountProfile');
+                    }, 10);
                 }],
                 views: {
                     'dashboard@': { templateUrl: prePath+"dashboard/dashboard.html" },

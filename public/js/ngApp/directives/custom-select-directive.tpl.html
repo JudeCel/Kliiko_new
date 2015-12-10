@@ -1,0 +1,16 @@
+<div class="ng-custom-select">
+    <div class="ncs-select">
+        <div class="ncs-input-field" ng-click="toggle = !toggle">
+            {{ up.selectedCountry.name }} {{ hi }}
+        </div>
+        <div class="ncs-arrow-bnt" ng-click="toggle = !toggle"><i
+                class="pull-right glyphicon glyphicon-chevron-down"></i></div>
+        <div class="ncs-content" ng-show="toggle">
+
+            <div ng-transclude class="ncs-content-item"></div>
+
+        </div>
+    </div>
+
+</div>
+

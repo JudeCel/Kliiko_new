@@ -5,15 +5,15 @@
     module('KliikoApp').
     controller('UpgradePlanController', UpgradePlanController);
 
-    UpgradePlanController.$inject = ['dbg', 'domServices', '$state', 'upgradePlanServices', '$scope'];
-    function UpgradePlanController(dbg, domServices, $state, upgradePlanServices, $scope) {
+    UpgradePlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams','upgradePlanServices', '$scope', '$rootScope'];
+    function UpgradePlanController(dbg, domServices, $state,$stateParams, upgradePlanServices, $scope, $rootScope) {
         dbg.log2('#UpgradePlanController  started');
         var vm = this;
 
         var modalTplPath = 'js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/';
 
-
-        vm.currentStep = 1;
+        $stateParams.planUpgradeStep = 1;
+        vm.currentStep = $stateParams.planUpgradeStep;
         vm.$state = $state;
         vm.modContentBlock = {};
 
@@ -71,12 +71,19 @@
             });
 
 
-
-
         }
 
         function applyCountryAndCurrency() {
-            console.log(vm.selectedCountry, vm.selectedCurrency);
+            dbg.log2('UpgradePlanController > Country and currency are selected > ', vm.selectedCountry, vm.selectedCurrency)
+
+            domServices.modal('countryAndCurrencySelect', 'close');
+            goToStep(2);
+
+        }
+
+        function goToStep(step) {
+            $stateParams.planUpgradeStep = vm.currentStep = step;
+
         }
 
     }
