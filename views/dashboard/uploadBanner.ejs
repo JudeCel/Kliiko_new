@@ -16,8 +16,9 @@
             <div class='dashboard-container'>
               <h2 class="center-block">Upload Banners</h2>
               <div id="signup" class="tab-pane fade in active">
-                <span><%= message || error.message %></span>
-                <form method='post' action='/dashboard/uploadbanner' enctype='multipart/form-data'>
+                <span><%= message %></span>
+                <span class="has-error"><%= error.error %></span>
+                <form method='post' action='/dashboard/uploadbanner' enctype='multipart/form-data' class='upload-banner'>
                   <div class="form-group">
                     <label for="profile">Account profile</label>
                     <span class="has-error"><%= error.profile %></span>
@@ -25,9 +26,14 @@
                       <div class="col-xs-12 col-sm-12 col-md-12">
                         <img src='../<%= banners.profile %>'>
                       </div>
-                      <a href="uploadbanner/profile" class="btn cancel">Remove</a>
+                      <br/>
+                      <div>
+                        <a href="uploadbanner/profile" class="btn cancel">Remove</a>
+                    <% } else { %>
+                      <div>
                     <% } %>
-                    <input type='file' name='profile' class='center-block'/>
+                      <input type='file' name='profile'/>
+                    </div>
                   </div>
                   <div class="form-group">
                     <label for="sessions">Chat sessions</label>
@@ -36,9 +42,13 @@
                       <div class="col-xs-12 col-sm-12 col-md-12">
                         <img src='../<%= banners.sessions %>'>
                       </div>
-                      <a href="uploadbanner/sessions" class="btn cancel">Remove</a>
+                      <div>
+                        <a href="uploadbanner/sessions" class="btn cancel">Remove</a>
+                    <% } else { %>
+                      <div>
                     <% } %>
-                    <input type='file' name='sessions' class='center-block'/>
+                      <input type='file' name='sessions'/>
+                    </div>
                   </div>
                   <div class="form-group">
                     <label for="resources">Resources</label>
@@ -47,9 +57,13 @@
                       <div class="col-xs-12 col-sm-12 col-md-12">
                         <img src='../<%= banners.resources %>'>
                       </div>
-                      <a href="uploadbanner/resources" class="btn cancel">Remove</a>
+                      <div>
+                        <a href="uploadbanner/resources" class="btn cancel">Remove</a>
+                    <% } else { %>
+                      <div>
                     <% } %>
-                    <input type='file' name='resources' class='center-block'/>
+                      <input type='file' name='resources'/>
+                    </div>
                   </div>
                   <div class="check center-block">
                     <input type="submit" value="Save" class="btn login" ></input>

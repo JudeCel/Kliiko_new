@@ -548,3 +548,6 @@ footer {
   border-bottom: 55px solid transparent;
   border-left: 110px solid #F0e935;
   border-right: none; }
+
+.upload-banner input[type="file"] {
+  display: inline; }
