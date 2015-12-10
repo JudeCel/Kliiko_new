@@ -34,7 +34,6 @@ function exportCsv(req, res) {
       params['accounts'] = result;
       res.render(views_path('accountDatabase'), params);
     });
-
   });
 };
 
