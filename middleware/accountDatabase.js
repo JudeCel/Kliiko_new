@@ -1,4 +1,5 @@
 'use strict';
+var json2csv = require('json2csv');
 var subdomains = require('../lib/subdomains.js');
 var accountDatabase = require('../services/admin/accountDatabase');
 var params = accountDatabase.simpleParams({ message: null, error: null }, '');
@@ -15,39 +16,29 @@ function get(req, res) {
   });
 };
 
-
-var json2csv = require('json2csv');
-var json = [
-  {
-    "car": "Audi",
-    "price": 40000,
-    "color": "blue"
-  }, {
-    "car": "BMW",
-    "price": 35000,
-    "color": "black"
-  }, {
-    "car": "Porsche",
-    "price": 60000,
-    "color": "green"
-  }
-];
-
 function exportCsv(req, res) {
-  let accounts = null;
+  let csvHeader = ['Account Name', 'Account Manager', 'Date of Sign-up', 
+                   'E-mail', 'Postal Address', 'City', 'State', 'Postcode', 
+                   'Country', 'Mobile', '# Sessions purchased', 'Tips permission',
+                   '# Active Sessions', 'Comment']
 
-  json2csv({ data: json, fields: ['car', 'price', 'color'] }, function(err, csv) {
-    if (err) console.log(err);
-    res.set('Content-Disposition', 'attachment; filename="account-database.csv"');
-    res.set('Content-Type', 'application/octet-stream');
-    res.send(csv);
+  accountDatabase.getCsvJson(function (err, result) {
+    json2csv({ data: result, fields: csvHeader }, function(err, csv) {
+      if (err) console.log(err);
+      res.set('Content-Disposition', 'attachment; filename="account-database.csv"');
+      res.set('Content-Type', 'application/octet-stream');
+      res.send(csv);
+    });
+
+    accountDatabase.findAllAccounts(function (result) {
+      params['accounts'] = result;
+      res.render(views_path('accountDatabase'), params);
+    });
+
   });
-
-  res.render(views_path('accountDatabase'), params);
 };
 
 function updateComment(req, res) {
-
   let userId = req.body.userId;
   let comment = req.body.comment; 
 
