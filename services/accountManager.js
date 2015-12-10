@@ -6,13 +6,14 @@ var User = models.User;
 var Account = models.Account;
 var Invite = models.Invite;
 var userService = require('./../services/users');
+var inviteService = require('./../services/invite');
 var accountUserService = require('./../services/accountUser');
 var async = require('async');
 var _ = require('lodash');
 var crypto = require('crypto');
 
 //Exports
-function findUserManagers(user, callback) {
+function findAccountManagers(user, callback) {
   async.parallel([
     function(cb) {
       User.findAll({
@@ -50,7 +51,7 @@ function findUserManagers(user, callback) {
   });
 }
 
-function createOrUpdateManager(req, callback) {
+function createOrFindUser(req, callback) {
   let user = req.user,
       params = prepareParams(req);
 
@@ -59,7 +60,7 @@ function createOrUpdateManager(req, callback) {
     where: { email: params.email }
   }).done(function(foundUser) {
     if(foundUser) {
-      callback(null, { created: false, userId: foundUser.id, accountId: user.accountOwnerId });
+      callback(null, inviteParams(false, foundUser.id, user.accountOwnerId, 'existing'));
     }
     else {
       let token = crypto.randomBytes(16).toString('hex');
@@ -73,38 +74,40 @@ function createOrUpdateManager(req, callback) {
           callback(error);
         }
         else {
-          callback(null, { created: true, userId: newUser.id, accountId: user.accountOwnerId });
+          callback(null, inviteParams(true, newUser.id, user.accountOwnerId, 'new'));
         }
       });
     }
   });
 }
 
-function remove(req, callback) {
+function removeInviteOrAccountUser(req, callback) {
   let currentUser = req.user,
       userId = req.params.id,
       type = req.params.type;
 
-  if(type === 'invite') {
-    console.log(currentUser);
-    Invite.find({ where: { userId: userId, accountId: currentUser.accountOwnerId }, include: [ User ] }).done(function(result) {
-      if(result) {
-        result.User.destroy().done(function() {
-          Invite.destroy({ where: { userId: userId, accountId: currentUser.accountOwnerId } }).done(function() {
-            callback(null, 'Successfully removed Invite');
-          });
-        })
+  if(type == 'invite') {
+    Invite.find({
+      where: {
+        userId: userId,
+        accountId: currentUser.accountOwnerId
       }
-      else {
-        callback('Invite not found or your are not owner');
-      }
+    }).done(function(invite) {
+      inviteService.removeInvite(invite, function(err) {
+        if(err){
+          callback(err);
+        }
+        else {
+          callback(null, 'Successfully removed Invite');
+        }
+      });
     });
   }
-  else if(type === 'account') {
+  else if(type == 'account') {
     AccountUser.find({
       where: {
-        id: id,
-        userId: currentUser.id
+        UserId: userId,
+        AccountId: currentUser.accountOwnerId
       }
     }).done(function(result) {
       if(result) {
@@ -119,24 +122,13 @@ function remove(req, callback) {
   }
 }
 
-function simpleParams(error, message, account, req) {
+function simpleParams(error, message, account) {
   return { title: 'Manage Account Managers', error: error || {}, message: message, account: account };
 }
 
 //Helpers
-function createAccountUser(id, foundUser, created, callback) {
-  User.find({ where: { id: id } }).done(function(currentUser) {
-    foundUser.getOwnerAccount().then(function(accounts) {
-      accountUserService.createNotOwner(accounts[0], currentUser, function(error, user) {
-        if(error) {
-          callback(error);
-        }
-        else {
-          callback(null, created, user);
-        }
-      });
-    });
-  });
+function inviteParams(created, invitedUserId, accountId, type) {
+  return { created: created, userId: invitedUserId, accountId: accountId, userType: type, role: 'accountManager' }
 }
 
 function prepareParams(req, errors) {
@@ -144,8 +136,8 @@ function prepareParams(req, errors) {
 }
 
 module.exports = {
-  findUserManagers: findUserManagers,
-  createOrUpdateManager: createOrUpdateManager,
-  remove: remove,
+  findAccountManagers: findAccountManagers,
+  createOrFindUser: createOrFindUser,
+  removeInviteOrAccountUser: removeInviteOrAccountUser,
   simpleParams: simpleParams
 }

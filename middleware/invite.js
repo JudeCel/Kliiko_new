@@ -7,51 +7,35 @@ function views_path(action) {
 };
 
 function get(req, res) {
-  console.log(req.params);
-  inviteService.findInvite(req.params.token, function(error, result) {
+  inviteService.findInvite(req.params.token, function(error, invite) {
     if(error) {
-      console.log(error);
       res.render(pageTypes('notFound'), simpleParams('Invite not found', {}, error));
     }
     else {
-      res.render(pageTypes(req.params.type), simpleParams('Invite', result));
+      res.render(pageTypes(req.params.type), simpleParams('Invite', invite));
     }
   });
 };
 
 function post(req, res) {
-  console.log(req.body);
-  console.log(req.params);
-  inviteService.findInvite(req.params.token, function(error, result) {
+  inviteService.findInvite(req.params.token, function(error, invite) {
+    console.log("1 =================");
+    console.log(error);
     if(error) {
-      console.log(error);
-      return res.render(pageTypes('notFound'), simpleParams('Invite not found', {}, error));
+      res.render(pageTypes('notFound'), simpleParams('Invite not found', {}, error));
     }
     else {
-      if(req.params.type == 'accept') {
-        inviteService.acceptInvite(result, req.body, function(error, message) {
-          if(error) {
-            res.render(pageTypes(req.params.type), simpleParams('Invite', result, error));
-          }
-          else {
-            req.flash('message', message);
-            res.redirect('/login');
-          }
-        });
-      }
-      else if(req.params.type == 'decline'){
-        inviteService.declineInvite(result, function(error, message) {
-          // console.log(error);
-          // console.log(message);
-          if(error) {
-            res.render(pageTypes(req.params.type), simpleParams('Invite', result, error));
-          }
-          else {
-            req.flash('message', message);
-            res.redirect('/login');
-          }
-        });
-      }
+      inviteService.manageInvite(req.params.type, invite, req.body, function(error, message) {
+        console.log("2 =================");
+        console.log(error);
+        if(error) {
+          res.render(pageTypes(req.params.type), simpleParams('Invite', invite, error));
+        }
+        else {
+          req.flash('message', message);
+          res.redirect('/login');
+        }
+      });
     }
   });
 };

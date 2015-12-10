@@ -10,13 +10,14 @@ module.exports = (Sequelize, DataTypes) => {
     expireAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
-    userId: { type: DataTypes.INTEGER, allowNull: false }
+    userId: { type: DataTypes.INTEGER, allowNull: false },
+    userType: { type: DataTypes.ENUM, allowNull: false, values: ['existing', 'new'], defaultValue: 'existing' },
     // sessionId: { type: DataTypes.INTEGER, allowNull: true },
   }, {
     classMethods: {
       associate: function(models) {
-        Invite.belongsTo(models.User, { foreignKey: 'userId' });
-        Invite.belongsTo(models.Account, { foreignKey: 'accountId' });
+        Invite.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'cascade' });
+        Invite.belongsTo(models.Account, { foreignKey: 'accountId', onDelete: 'cascade' });
       }
     }
   });
