@@ -1,16 +1,18 @@
 "use strict";
-var deleteUserTmpResources = require('if-data').repositories.deleteUserTmpResources;
-var createResource = require('if-data').repositories.createResource;
+// var deleteUserTmpResources = require('if-data').repositories.deleteUserTmpResources;
+// var createResource = require('if-data').repositories.createResource;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
-var mtypes = require('../helpers/mtypes');
-var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js');
+// var mtypes = require('../helpers/mtypes');
+var expressValidatorStub = require('../helpers/expressValidatorStub.js');
+var models = require("./../../models");
+var Resource = models.Resource;
 
 var validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        topicId: joi.number().nullOk().optional(),
-        userId: joi.number().nullOk().optional(),
-        JSON: joi.types.Object().required(),
+        topicId: joi.number().optional(),
+        userId: joi.number().optional(),
+        JSON: joi.object().required(),
         URL: joi.string().required()
     });
     if (err.error)
@@ -21,21 +23,22 @@ var validate = function (req, resCb) {
 module.exports.validate = validate;
 
 var run = function (req, resCb, errCb) {
-    deleteUserTmpResources(req.params)
-        .then(function () {
-            return createResource({
-                topicId: req.params.topicId,
-                userId: req.params.userId,
-                URL: req.params.URL,
-                type_id: mtypes.resourceType.tmp,
-                JSON: encodeURI(JSON.stringify(req.params.JSON, null))
-            });
-        })
-        .done(function (data) {
-            resCb.send(data);
-        }, function (err) {
-            errCb(webFaultHelper.getFault(err));
-        });
+  Resource.destroy({where: {resource_type: 'tmp', userId: req.params.userId }})
+    .then(function (_) {
+      Resource.create({
+          topicId: req.params.topicId,
+          userId: req.params.userId,
+          URL: req.params.URL,
+          resource_type: 'tmp',
+          JSON: encodeURI(JSON.stringify(req.params.JSON, null))
+      }).catch(function (err) {
+          errCb(webFaultHelper.getFault(err));
+      });
+    }).then(function (data) {
+        resCb.send(data);
+    }).catch(function (err) {
+        errCb(webFaultHelper.getFault(err));
+    });
 };
 module.exports.run = run;
 
