@@ -25,31 +25,19 @@ function editComment(userId, comment, callback){
 };
 
 function reactivateOrDeactivate(userId, AccountId, callback){
-  AccountUser.find({where: {userId: userId, AccountId: AccountId}}).done(function (result) {
+  AccountUser.find({where: {UserId: userId, AccountId: AccountId}}).done(function (result) {
     if (result) { 
-      if (result.active === true) {
-        result.update({
-          active: false
-        })
-        .then(function (result) {
-          return callback(null, result);
-        })
-        .catch(function (err) {
-          callback(err);
-        });
-      }else{
-        result.update({
-          active: true
-        })
-        .then(function (result) {
-          return callback(null, result);
-        })
-        .catch(function (err) {
-          callback(err);
-        });
-      };
+      result.update({
+        active: !result.active
+      })
+      .then(function (result) {
+        return callback(null, result);
+      })
+      .catch(function (err) {
+        callback(err);
+      });
     } else {
-      callback("Something went wrong."); //TODO: add more user friendlt message!
+      callback("Something went wrong."); //MAYBE: add more user friendli message if account user is not found!
     };
   });
 };
