@@ -42,7 +42,6 @@ function findUserManagers(user, callback) {
     }
   ], function(err, results) {
     if(err) {
-      console.log(err);
       callback(err);
     }
     else {

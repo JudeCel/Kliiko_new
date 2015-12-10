@@ -9,14 +9,14 @@ module.exports = (Sequelize, DataTypes) => {
     sentAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
     expireAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles },
-    AccountId: { type: DataTypes.INTEGER, allowNull: false, unique: {args: true, msg: "already taken"} },
-    UserId: { type: DataTypes.INTEGER, allowNull: false, unique: {args: true, msg: "already taken"} }
+    accountId: { type: DataTypes.INTEGER, allowNull: false },
+    userId: { type: DataTypes.INTEGER, allowNull: false }
     // sessionId: { type: DataTypes.INTEGER, allowNull: true },
   }, {
     classMethods: {
       associate: function(models) {
-        Invite.belongsTo(models.User);
-        Invite.belongsTo(models.Account);
+        Invite.belongsTo(models.User, { foreignKey: 'userId' });
+        Invite.belongsTo(models.Account, { foreignKey: 'accountId' });
       }
     }
   });

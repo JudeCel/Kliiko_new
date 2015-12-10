@@ -14,8 +14,8 @@ function createInvite(params, callback) {
   expireDate.setDate(expireDate.getDate() + 5);
 
   Invite.create({
-    UserId: params.userId,
-    AccountId: params.accountId,
+    userId: params.userId,
+    accountId: params.accountId,
     token: token,
     sentAt: new Date(),
     expireAt: expireDate,
@@ -43,11 +43,12 @@ function findInvite(token, callback) {
 }
 
 function declineInvite(invite, callback) {
-  User.find({ where: { id: invite.UserId } }).then(function(user) {
+  User.find({ where: { id: invite.userId } }).then(function(user) {
     user.getOwnerAccount({ include: [ AccountUser ] }).then(function(accounts) {
-      // accounts[0].AccountUser.destroy();
+      accounts[0].AccountUser.destroy();
       accounts[0].destroy();
       user.destroy();
+      invite.destroy();
       callback(null, 'Successfully declined invite');
     }).catch(function(err) {
       callback(err);
@@ -55,17 +56,12 @@ function declineInvite(invite, callback) {
   }).catch(function(err) {
     callback(err);
   });
-  // AccountUser.destroy({ include: [ User, Account ], where: { UserId: invite.UserId } }).done(function() {
-  //   callback(null, 'Successfully declined invite');
-  // }).catch(function(err) {
-  //   callback(err);
-  // });
 }
 
 function acceptInvite(invite, params, callback) {
   async.parallel([
     function(cb) {
-      User.find({ where: { id: invite.UserId } }).then(function(result) {
+      User.find({ where: { id: invite.userId } }).then(function(result) {
         if(result) {
           result.getOwnerAccount().then(function(accounts) {
             accounts[0].update({ name: params.accountName }).done(function(result) {
@@ -86,7 +82,7 @@ function acceptInvite(invite, params, callback) {
       });
     },
     function(cb) {
-      User.update({ password: params.password, status: 'accepted' }, { where: { id: invite.UserId } }).then(function(result) {
+      User.update({ password: params.password, status: 'accepted' }, { where: { id: invite.userId } }).then(function(result) {
         if(result) {
           cb(null, result);
         }
