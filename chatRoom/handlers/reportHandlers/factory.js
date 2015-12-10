@@ -1,4 +1,4 @@
-var mtypes = require('../helpers/mtypes');
+var mtypes = require('./../../helpers/mtypes');
 var getSessionStaffUserIds = require('../getSessionStaffUserIds.js');
 var config = require('../../config/config.json');
 var FS_PATH = config.paths.fsPath + config.paths.chatRoomPath;
@@ -54,25 +54,25 @@ module.exports = function (params, resCb, nextCb) {
     }
 
     getSessionStaffUserIds.execute({
-        type_id: mtypes.userType.facilitator
+        type: 'facilitator'
     }, getSessionStaffUserIdsCb, nextCb);
 }
 
 function getReportHandler(type) {
     switch (type) {
-        case mtypes.reportType.chat:
-        case mtypes.reportType.chat_stars:
+        case 'chat':
+        case 'chat_stars':
             return require("./chatHistoryReport.js");
             break;
 
-        case mtypes.reportType.whiteboard:
+        case 'whiteboard':
             return require("./whiteboardReport.js");
 
-        case mtypes.reportType.vote:
+        case 'vote':
             return require("./voteReport.js");
             break;
 
-        case mtypes.reportType.stats:
+        case 'stats':
             return require("./statsReport.js");
 
         default:

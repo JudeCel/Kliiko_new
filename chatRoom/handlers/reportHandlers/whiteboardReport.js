@@ -32,7 +32,7 @@ module.exports.getReportRowObjects = function (data, nextCb) {
         var rowObject = {
             isFirst: i == 0,
             isLast: i == data.length - 1,
-            name: rowData.name_first,
+            name: rowData.firstName,
             userId: rowData.userId,
             fsPath: FS_PATH,
             tag: rowData.tag,
