@@ -27,7 +27,7 @@ module.exports.run = function (req, resCb, errCb) {
   .then(function(result) {
     let collection  = _.map(result, function(n) {
       let data = n.dataValues;
-      data.thumbs_up = n.Votes.length;
+      data.thumbs_up = _.sum(n.Votes, function(vote) { return vote.count });
       return data;
     });
 

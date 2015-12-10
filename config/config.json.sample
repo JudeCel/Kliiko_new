@@ -4,21 +4,21 @@
     "password": "toor",
     "database": "kliiko_development",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "postgres"
   },
   "staging": {
     "username": "root",
     "password": "toor",
     "database": "kliiko_development",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "postgres"
   },
   "test": {
     "username": "root",
     "password": "toor",
     "database": "kliiko_test",
     "host": "127.0.0.1",
-    "dialect": "mysql",
+    "dialect": "postgres",
     "logging": false
   },
   "production": {
@@ -26,6 +26,6 @@
     "password": "toor",
     "database": "kliiko_production",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "postgres"
   }
 }
