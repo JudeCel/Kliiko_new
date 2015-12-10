@@ -6,7 +6,7 @@ var joi = require('joi');
 
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
-        type_id: joi.number().required(),
+        resource_type: joi.string().required(),
         url: joi.string().optional(),
         topicId: joi.number().optional(),
         userId: joi.number().optional(),

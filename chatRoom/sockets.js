@@ -15,7 +15,6 @@ module.exports.listen = function (server) {
 
   var socketHelper = require('./socketHelper');
 
-  io.set('log level', 3);
   io = io.of('/chat');
 
   var userids = [];
@@ -34,7 +33,7 @@ module.exports.listen = function (server) {
       });
 
       var resCb = function (result) {
-        io.emit('config_info', config, result.dataValues);
+        io.connected[socket.id].emit('config_info', config, result.dataValues);
       };
 
       var nextCb = function (err) {
@@ -162,7 +161,7 @@ module.exports.listen = function (server) {
       var resCb = function (result) {
         if (!result) return;
         var resultStr = JSON.stringify(result);
-        io.emit('offlinetransactions', resultStr);
+        io.connected[socket.id].emit('offlinetransactions', resultStr);
       };
 
       var nextCb = function (err) {
@@ -368,7 +367,7 @@ module.exports.listen = function (server) {
       var res = {
         send: function (result) {
           var resultStr = JSON.stringify(result);
-          io.emit('showreportbox', resultStr);
+          io.connected[socket.id].emit('showreportbox', resultStr);
         }
       };
 
@@ -402,7 +401,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.emit('participants', JSON.stringify(result, null));
+          io.connected[socket.id].emit('participants', JSON.stringify(result, null));
         }
       };
 
@@ -430,7 +429,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.emit('topics', JSON.stringify(result, null));
+          io.connected[socket.id].emit('topics', JSON.stringify(result, null));
         }
       };
 
@@ -441,7 +440,7 @@ module.exports.listen = function (server) {
       });
     });
 
-    socket.on('thumbs_up', function (eventId, row_id) {
+    socket.on('thumbs_up', function (eventId, row_id, topicId) {
       console.log("thumbs_up");
 
       if (eventId == null) return;
@@ -449,6 +448,7 @@ module.exports.listen = function (server) {
       var req = expressValidatorStub({
         params: {
           eventId: eventId,
+          topicId: topicId,
           updating_userId: socket.userId
         }
       });
@@ -459,7 +459,6 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          if (!result) return;
           io.emit('updatethumbsup', eventId, result);
         }
       };
@@ -487,7 +486,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.emit('chats', JSON.stringify(result, null));
+          io.connected[socket.id].emit('chats', JSON.stringify(result, null));
         }
       };
 
@@ -538,7 +537,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.emit('objects', JSON.stringify(result, null));
+          io.connected[socket.id].emit('objects', JSON.stringify(result, null));
         }
       };
 
@@ -565,7 +564,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.emit('savepdffile', JSON.stringify(result, null));
+          io.connected[socket.id].emit('savepdffile', JSON.stringify(result, null));
         }
       };
 
@@ -583,7 +582,7 @@ module.exports.listen = function (server) {
       var req = expressValidatorStub({
         params: {
           topicId: socket.topicId,
-          resource_type: mtypes.resourceType[type],
+          resource_type: type,
           userId: socket.userId
         }
       });
@@ -594,7 +593,7 @@ module.exports.listen = function (server) {
 
       var res = {
         send: function (result) {
-          io.emit('resources', JSON.stringify(result, null), type);
+          socket.emit('resources', JSON.stringify(result, null), type);
         }
       };
 
@@ -736,7 +735,7 @@ module.exports.listen = function (server) {
     var resCb = function (result) {
       if (!result.vote) return;
       var resultStr = JSON.stringify(result.vote);
-      io.emit('showvoteedit', resultStr);
+      io.connected[socket.id].emit('showvoteedit', resultStr);
     };
 
     var nextCb = function (err) {
@@ -764,7 +763,7 @@ module.exports.listen = function (server) {
     var resCb = function (result) {
       if (!result.vote) return;
       var resultStr = JSON.stringify(result.vote);
-      io.emit('showvoteedit', resultStr);
+      io.connected[socket.id].emit('showvoteedit', resultStr);
     };
 
     var nextCb = function (err) {
@@ -868,9 +867,9 @@ module.exports.listen = function (server) {
           getCollageEvents(topicId, function (result) {
             var resultAsString = JSON.stringify(result, null);
             if (json.content == "none")
-            io.emit('updatedconsole', socket.topicId, consoleState, resultAsString);
+              io.emit('updatedconsole', socket.topicId, consoleState, resultAsString);
             else
-            io.emit('updatedconsole', socket.topicId, consoleState, resultAsString);
+              io.connected[socket.id].emit('updatedconsole', socket.topicId, consoleState, resultAsString);
           });
           break;
 
@@ -947,8 +946,9 @@ module.exports.listen = function (server) {
           if (json.updateEvent) {
             json.updateEvent = false; //make sure we dont do this again
             io.emit('updatedconsole', socket.topicId, consoleState, json);
-          } else
-          io.emit('updatedconsole', socket.topicId, consoleState, json);
+          } else{
+            io.connected[socket.id].emit('updatedconsole', socket.topicId, consoleState, json);
+          }
         })
         break;
       }
@@ -973,7 +973,7 @@ module.exports.listen = function (server) {
     socket.topicId = topicId;
     globalVars.topicId = topicId;
 
-    io.emit('topicset', !initialTopicSet);
+    io.connected[socket.id].emit('topicset', !initialTopicSet);
 
     if (typeof socket.userId != "undefined") {
       //	reply to the sender
@@ -1034,7 +1034,7 @@ module.exports.listen = function (server) {
       switch (conflict) {
         case "drop existing":
         //	disconnect the other socket as we should only have one user at a time...
-        var keys = Object.keys(io.sockets.sockets);
+        var keys = Object.keys(io.sockets);
         for (var ndxSocket = 0, nk = keys.length; ndxSocket < nk; ndxSocket++) {
           var currentSocket = io.sockets.sockets[keys[ndxSocket]];
           if (currentSocket.userId == userId) {
@@ -1045,12 +1045,12 @@ module.exports.listen = function (server) {
         }
         break;
         case "drop current":
-        //	disconnect this socket as we should only have one user on at a time...
-        io.emit('alreadyconnected');
-        io.disconnect();
+          //	disconnect this socket as we should only have one user on at a time...
+          io.connected[socket.id].emit('alreadyconnected');
+          io.connected[socket.id].disconnect();
 
-        return;
-        break;
+          return;
+          break;
       }
 
     }
@@ -1073,7 +1073,6 @@ module.exports.listen = function (server) {
 
   socket.on('updateemotions', function (userId, topicId, data) {
     console.log("updateemotions");
-
 
     io.emit('updatedemotions', userId, topicId, data);
   });
@@ -1127,7 +1126,7 @@ module.exports.listen = function (server) {
 
     var resCb = function (result) {
       if (!result) return;
-      io.emit('submitform', formID);
+      io.connected[socket.id].emit('submitform', formID);
     };
 
     var nextCb = function (err) {
@@ -1156,7 +1155,7 @@ module.exports.listen = function (server) {
     var resCb = function (result) {
       if (!result) return;
       var jsonData = JSON.stringify(result, null);
-      io.emit('lastsharedresources', jsonData);
+      io.connected[socket.id].emit('lastsharedresources', jsonData);
     };
 
     var nextCb = function (err) {
@@ -1184,7 +1183,7 @@ module.exports.listen = function (server) {
     var resCb = function (result) {
       if (!result) return;
       var jsonData = JSON.stringify(result, null);
-      io.emit('brandprojectinfo', jsonData);
+      io.connected[socket.id].emit('brandprojectinfo', jsonData);
     };
 
     var nextCb = function (err) {
@@ -1214,7 +1213,7 @@ module.exports.listen = function (server) {
     var resCb = function (result) {
       if (!result) return;
       var jsonData = JSON.stringify(result, null);
-      io.emit('userinfo', jsonData);
+      io.connected[socket.id].emit('userinfo', jsonData);
     };
 
     var nextCb = function (err) {
@@ -1265,7 +1264,7 @@ module.exports.listen = function (server) {
     var resCb = function (result) {
       if (!result) return;
       //io.emit('avatarinfo', config, result);
-      io.emit('avatarinfo', result[0]);
+      io.connected[socket.id].emit('avatarinfo', result[0]);
     };
 
     var nextCb = function (err) {
@@ -1328,7 +1327,7 @@ module.exports.listen = function (server) {
   socket.on('report', function (json) {
 
     var resCb = function (pdfLinks) {
-      io.emit('savedreport', JSON.stringify(pdfLinks, null));
+      io.connected[socket.id].emit('savedreport', JSON.stringify(pdfLinks, null));
     };
 
     var nextCb = function (err) {
