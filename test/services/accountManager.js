@@ -11,6 +11,7 @@ var inviteService = require('./../../services/invite');
 var accountManagerService = require('./../../services/accountManager');
 
 var assert = require('chai').assert;
+var async = require('async');
 
 var testUser = null, testAccount = null;
 
@@ -42,7 +43,38 @@ describe('SERVICE - AccountManager', function() {
     });
   });
 
-  function requestObject() {
+  function countTables(invite, account, user, accountUser) {
+    return [
+      function(cb) {
+        Invite.count().then(function(c) {
+          assert.equal(c, invite);
+          cb();
+        });
+      },
+      function(cb) {
+        Account.count().then(function(c) {
+          assert.equal(c, account);
+          cb();
+        });
+      },
+      function(cb) {
+        User.count().then(function(c) {
+          assert.equal(c, user);
+          cb();
+        });
+      },
+      function(cb) {
+        AccountUser.count().then(function(c) {
+          assert.equal(c, accountUser);
+          cb();
+        });
+      }
+    ];
+  }
+
+  function requestObject(params) {
+    let newParams = params || {};
+
     return {
       user: {
         id: testUser.id,
@@ -53,6 +85,10 @@ describe('SERVICE - AccountManager', function() {
         lastName: 'LastName',
         gender: 'male',
         email: 'some@email.com'
+      },
+      params: {
+        id: newParams.id,
+        type: newParams.type
       }
     };
   }
@@ -108,7 +144,7 @@ describe('SERVICE - AccountManager', function() {
     });
   });
 
-  describe.only('#findAccountManagers', function() {
+  describe('#findAccountManagers', function() {
     it('should find accepted user', function (done) {
       let req = requestObject();
       accountManagerService.createOrFindUser(req, function(error, params) {
@@ -128,6 +164,39 @@ describe('SERVICE - AccountManager', function() {
                 done(error);
               }
 
+              async.parallel(countTables(0, 2, 2, 3), function(error, result) {
+                if(error) {
+                  done(error);
+                }
+                accountManagerService.findAccountManagers(req.user, function(error, userArray) {
+                  assert.equal(userArray[0].id, user.id);
+                  done();
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+
+    it('should find invited user', function (done) {
+      let req = requestObject();
+      accountManagerService.createOrFindUser(req, function(error, params) {
+        if(error) {
+          done(error);
+        }
+
+        User.find({ where: { email: req.body.email } }).then(function(user) {
+          inviteService.createInvite(params, false, function(error, invite) {
+            if(error) {
+              done(error);
+            }
+
+            async.parallel(countTables(1, 2, 2, 2), function(error, result) {
+              if(error) {
+                done(error);
+              }
+
               accountManagerService.findAccountManagers(req.user, function(error, userArray) {
                 assert.equal(userArray[0].id, user.id);
                 done();
@@ -136,6 +205,92 @@ describe('SERVICE - AccountManager', function() {
           });
         });
       });
+    });
+  });
+
+  describe('#removeInviteOrAccountUser', function() {
+    it('should remove invite from list', function (done) {
+      let req = requestObject();
+      accountManagerService.createOrFindUser(req, function(error, params) {
+        if(error) {
+          done(error);
+        }
+
+        User.find({ where: { email: req.body.email } }).then(function(user) {
+          inviteService.createInvite(params, false, function(error, invite) {
+            if(error) {
+              done(error);
+            }
+
+            async.parallel(countTables(1, 2, 2, 2), function(error, result) {
+              if(error) {
+                done(error);
+              }
+
+              req = requestObject({ id: user.id, type: 'invite' });
+              accountManagerService.removeInviteOrAccountUser(req, function(error, message) {
+                assert.equal(error, null);
+                assert.equal(message, 'Successfully removed Invite');
+
+                async.parallel(countTables(0, 1, 1, 1), function(error, result) {
+                  if(error) {
+                    done(error);
+                  }
+                  done();
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+
+    it('should remove account from list', function (done) {
+      let req = requestObject();
+      accountManagerService.createOrFindUser(req, function(error, params) {
+        if(error) {
+          done(error);
+        }
+
+        User.find({ where: { email: req.body.email } }).then(function(user) {
+          inviteService.createInvite(params, false, function(error, invite) {
+            if(error) {
+              done(error);
+            }
+
+            let userParams = { accountName: 'newname', password: 'newpassword' };
+            inviteService.acceptInviteNew(invite, userParams, function(error, message) {
+              if(error) {
+                done(error);
+              }
+
+              async.parallel(countTables(0, 2, 2, 3), function(error, result) {
+                if(error) {
+                  done(error);
+                }
+
+                req = requestObject({ id: user.id, type: 'account' });
+                accountManagerService.removeInviteOrAccountUser(req, function(error, message) {
+                  assert.equal(error, null);
+                  assert.equal(message, 'Successfully removed account from Account List');
+
+                  async.parallel(countTables(0, 2, 2, 2), function(error, result) {
+                    done(error);
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
+  describe('#simpleParams', function() {
+    it('should return params', function (done) {
+      let params = { title: 'Manage Account Managers', error: { message: 'some error' }, message: 'some message', account: { id: 3 } };
+      assert.deepEqual(accountManagerService.simpleParams({ message: 'some error' }, 'some message', { id: 3 }), params);
+      done();
     });
   });
 

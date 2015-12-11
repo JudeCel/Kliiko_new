@@ -95,12 +95,7 @@ function removeInviteOrAccountUser(req, callback) {
       }
     }).then(function(invite) {
       inviteService.removeInvite(invite, function(err) {
-        if(err){
-          callback(err);
-        }
-        else {
-          callback(null, 'Successfully removed Invite');
-        }
+        callback(err, 'Successfully removed Invite');
       });
     });
   }
