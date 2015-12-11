@@ -5,14 +5,45 @@ var AccountUser = models.AccountUser;
 var User = models.User;
 var Account = models.Account;
 var Invite = models.Invite;
+
 var userService = require('./../services/users');
 var inviteService = require('./../services/invite');
-var accountUserService = require('./../services/accountUser');
+
 var async = require('async');
 var _ = require('lodash');
 var crypto = require('crypto');
 
 //Exports
+function createOrFindUser(req, callback) {
+  let user = req.user,
+      params = prepareParams(req);
+
+  User.find({
+    include: [ Account ],
+    where: { email: params.email }
+  }).then(function(foundUser) {
+    if(foundUser) {
+      callback(null, inviteParams(foundUser.id, user.accountOwnerId, 'existing'));
+    }
+    else {
+      let token = crypto.randomBytes(16).toString('hex');
+      params.password = token;
+      params.accountName = token;
+      params.status = 'invited';
+      params.confirmedAt = new Date();
+
+      userService.create(params, function(error, newUser) {
+        if(error) {
+          callback(error);
+        }
+        else {
+          callback(null, inviteParams(newUser.id, user.accountOwnerId, 'new'));
+        }
+      });
+    }
+  });
+}
+
 function findAccountManagers(user, callback) {
   async.parallel([
     function(cb) {
@@ -51,36 +82,6 @@ function findAccountManagers(user, callback) {
   });
 }
 
-function createOrFindUser(req, callback) {
-  let user = req.user,
-      params = prepareParams(req);
-
-  User.find({
-    include: [ Account ],
-    where: { email: params.email }
-  }).done(function(foundUser) {
-    if(foundUser) {
-      callback(null, inviteParams(false, foundUser.id, user.accountOwnerId, 'existing'));
-    }
-    else {
-      let token = crypto.randomBytes(16).toString('hex');
-      params.password = token;
-      params.accountName = token;
-      params.status = 'invited';
-      params.confirmedAt = new Date();
-
-      userService.create(params, function(error, newUser) {
-        if(error) {
-          callback(error);
-        }
-        else {
-          callback(null, inviteParams(true, newUser.id, user.accountOwnerId, 'new'));
-        }
-      });
-    }
-  });
-}
-
 function removeInviteOrAccountUser(req, callback) {
   let currentUser = req.user,
       userId = req.params.id,
@@ -92,7 +93,7 @@ function removeInviteOrAccountUser(req, callback) {
         userId: userId,
         accountId: currentUser.accountOwnerId
       }
-    }).done(function(invite) {
+    }).then(function(invite) {
       inviteService.removeInvite(invite, function(err) {
         if(err){
           callback(err);
@@ -109,9 +110,9 @@ function removeInviteOrAccountUser(req, callback) {
         UserId: userId,
         AccountId: currentUser.accountOwnerId
       }
-    }).done(function(result) {
+    }).then(function(result) {
       if(result) {
-        result.destroy().done(function() {
+        result.destroy().then(function() {
           callback(null, 'Successfully removed account from Account List');
         });
       }
@@ -127,8 +128,8 @@ function simpleParams(error, message, account) {
 }
 
 //Helpers
-function inviteParams(created, invitedUserId, accountId, type) {
-  return { created: created, userId: invitedUserId, accountId: accountId, userType: type, role: 'accountManager' }
+function inviteParams(invitedUserId, accountId, type) {
+  return { userId: invitedUserId, accountId: accountId, userType: type, role: 'accountManager' }
 }
 
 function prepareParams(req, errors) {
@@ -136,8 +137,8 @@ function prepareParams(req, errors) {
 }
 
 module.exports = {
-  findAccountManagers: findAccountManagers,
   createOrFindUser: createOrFindUser,
+  findAccountManagers: findAccountManagers,
   removeInviteOrAccountUser: removeInviteOrAccountUser,
   simpleParams: simpleParams
 }

@@ -259,8 +259,8 @@ describe('SERVICE - Invite', function() {
             done(error);
           }
 
-          let params = { accountName: 'newname', password: 'newpassword' };
-          inviteService.acceptInviteNew(invite, params, function(error, message) {
+          let userParams = { accountName: 'newname', password: 'newpassword' };
+          inviteService.acceptInviteNew(invite, userParams, function(error, message) {
             if(error) {
               done(error);
             }
