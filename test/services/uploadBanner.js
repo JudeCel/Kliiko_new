@@ -2,9 +2,12 @@
 var models = require('./../../models');
 var TemplateBanner = models.TemplateBanner;
 var uploadBanner = require('./../../services/uploadBanner');
-var assert = require('assert');
+var assert = require('chai').assert;
 var fs = require('fs-extra');
+var async = require('async');
+var ncp = require('ncp').ncp;
 
+var newPath = 'test/fixtures/uploadBanner/test';
 describe('Upload banner', function() {
   function defaultFile(params) {
     let json = {};
@@ -13,9 +16,9 @@ describe('Upload banner', function() {
       originalname: params.originalname || 'profile_test.png',
       encoding: params.encoding || '7bit',
       mimetype: params.mimetype || 'image/png',
-      destination: params.destination || 'test/fixtures/uploadBanner',
+      destination: params.destination || 'test/fixtures/uploadBanner/test',
       filename: params.filename || 'success.png',
-      path: params.path || 'test/fixtures/uploadBanner/success.png',
+      path: params.path || 'test/fixtures/uploadBanner/test/success.png',
       size: params.size || 9993
     } ];
     return json;
@@ -27,43 +30,42 @@ describe('Upload banner', function() {
     });
   });
 
-  after((done) => {
-    models.sequelize.sync({force: true}).done((error, result) => {
-      done();
+  beforeEach((done) => {
+    fs.stat(newPath, function (err, stats) {
+      if(!stats) {
+        fs.mkdir(newPath, function() {
+          ncp('test/fixtures/uploadBanner/orig', newPath, function(err) {
+            done(err);
+          });
+        });
+      }
+      else {
+        ncp('test/fixtures/uploadBanner/orig', newPath, function(err) {
+          done(err);
+        });
+      }
     });
   });
 
-  beforeEach((done) => {
-    fs.copySync('test/fixtures/uploadBanner/failureOrig.jpg', 'test/fixtures/uploadBanner/failure.jpg');
-    fs.copySync('test/fixtures/uploadBanner/successOrig.png', 'test/fixtures/uploadBanner/success.png');
-    done();
-  });
-
   afterEach((done) => {
-    fs.stat('test/fixtures/uploadBanner/failure.jpg', function (err, stat) {
-      if(stat) {
-        fs.unlink('test/fixtures/uploadBanner/failure.jpg');
+    fs.stat(newPath, function (err, stats) {
+      if(stats) {
+        fs.remove(newPath, function (err) {
+          done(err);
+        });
       }
-    })
-    fs.stat('test/fixtures/uploadBanner/success.png', function (err, stat) {
-      if(stat) {
-        fs.unlink('test/fixtures/uploadBanner/success.png');
+      else {
+        done();
       }
-    })
-    fs.stat('test/fixtures/uploadBanner/profile_test.png', function (err, stat) {
-      if(stat) {
-        fs.unlink('test/fixtures/uploadBanner/profile_test.png');
-      }
-    })
-
-    done();
+    });
   });
+
 
   describe('#write', function() {
     describe('sad path', function() {
       it('has no file', function (done) {
         uploadBanner.write({}, function (error, message) {
-          assert.equal(error, 'No files selected or not an image');
+          assert.equal(error, 'No files selected');
           done();
         });
       });
@@ -78,9 +80,17 @@ describe('Upload banner', function() {
         });
 
         it('wrong dimension', function (done) {
-          let json = defaultFile({ path: 'test/fixtures/uploadBanner/failure.jpg', filename: 'failure.jpg' });
+          let json = defaultFile({ path: 'test/fixtures/uploadBanner/test/failure.jpg', filename: 'failure.jpg' });
           uploadBanner.write(json, function (error, message) {
             assert.equal(error['profile'], 'File size is out of range. Allowed size is 768x200px.');
+            done();
+          });
+        });
+
+        it('wrong filetype', function (done) {
+          let json = defaultFile({ path: 'test/fixtures/uploadBanner/test/failure.rb', filename: 'failure.rb' });
+          uploadBanner.write(json, function (error, message) {
+            assert.equal(error['profile'], 'Only image files are allowed -  gif, png, jpg, jpeg, bmp.');
             done();
           });
         });
@@ -90,12 +100,13 @@ describe('Upload banner', function() {
     describe('happy path', function() {
       it('will succeed', function (done) {
         let json = defaultFile({});
-        uploadBanner.write(json, function (error, message, array) {
+        uploadBanner.write(json, function (error, message) {
+          if(error) {
+            done(error);
+          }
+
           assert.equal(error, null);
-          assert.equal(message, 'Successfully uploaded banner');
-          assert.equal(array[0]['page'], 'profile');
-          assert.equal(array[0]['filepath'], 'banners/profile_test.png');
-          fs.unlink('test/fixtures/uploadBanner/profile_test.png');
+          assert.equal(message, 'Successfully uploaded banner.');
           TemplateBanner.count().then(function(c) {
             assert.equal(c, 1);
             done();
@@ -108,11 +119,9 @@ describe('Upload banner', function() {
   describe('#destroy', function() {
     it('will succeed', function (done) {
       let json = defaultFile({});
-      uploadBanner.write(json, function (error, message, array) {
+      uploadBanner.write(json, function (error, message) {
         assert.equal(error, null);
-        assert.equal(message, 'Successfully uploaded banner');
-        assert.equal(array[0]['page'], 'profile');
-        assert.equal(array[0]['filepath'], 'banners/profile_test.png');
+        assert.equal(message, 'Successfully uploaded banner.');
         TemplateBanner.count().then(function(c) {
           assert.equal(c, 1);
         });
@@ -130,11 +139,9 @@ describe('Upload banner', function() {
   describe('#profilePage', function() {
     it('will succeed', function (done) {
       let json = defaultFile({});
-      uploadBanner.write(json, function (error, message, array) {
+      uploadBanner.write(json, function (error, message) {
         assert.equal(error, null);
-        assert.equal(message, 'Successfully uploaded banner');
-        assert.equal(array[0]['page'], 'profile');
-        assert.equal(array[0]['filepath'], 'banners/profile_test.png');
+        assert.equal(message, 'Successfully uploaded banner.');
 
         uploadBanner.profilePage(function (error, result) {
           assert.equal(error, null);
@@ -149,7 +156,8 @@ describe('Upload banner', function() {
   describe('#simpleParams', function() {
     it('will succeed', function (done) {
       let params = uploadBanner.simpleParams('some error', 'some message');
-      assert.deepEqual(params, { title: 'Upload banner', error: { message: 'some error' }, message: 'some message', banners: {} });
+      let result = { title: 'Upload banner', error: { message: 'some error' }, message: 'some message', banners: {} };
+      assert.deepEqual(params, result);
       done();
     });
   });
