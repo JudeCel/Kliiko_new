@@ -26,11 +26,11 @@ describe('Upload banner', function() {
     fs.stat(filePath, function(err, stat) {
       if(stat) {
         fs.unlink(filePath, function() {
-          callback(null, true);
+          callback();
         });
       }
       else {
-        callback(null, false);
+        callback();
       }
     });
   }
@@ -60,13 +60,8 @@ describe('Upload banner', function() {
       'test/fixtures/uploadBanner/failure.rb',
       'test/fixtures/uploadBanner/success.png',
       'test/fixtures/uploadBanner/profile_test.png'
-    ], removeFileIfExists, function(err, result) {
-      if(err) {
-        done(err);
-      }
-      else {
-        done();
-      }
+    ], removeFileIfExists, function() {
+      done();
     });
   });
 
@@ -166,7 +161,8 @@ describe('Upload banner', function() {
   describe('#simpleParams', function() {
     it('will succeed', function (done) {
       let params = uploadBanner.simpleParams('some error', 'some message');
-      assert.deepEqual(params, { title: 'Upload banner', error: { error: 'some error' }, message: 'some message', banners: {} });
+      let result = { title: 'Upload banner', error: { message: 'some error' }, message: 'some message', banners: {} };
+      assert.deepEqual(params, result);
       done();
     });
   });

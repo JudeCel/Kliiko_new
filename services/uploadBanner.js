@@ -61,7 +61,7 @@ function write(files, callback) {
         callback(null, 'Successfully uploaded banner.');
       }
       else {
-        errors.error = 'Something went wrong with some of the banners.';
+        errors.message = 'Something went wrong with some of the banners.';
         callback(errors);
       }
     }
@@ -128,7 +128,7 @@ function findAllBanners(callback) {
 
 function simpleParams(error, message) {
   if(typeof error == 'string') {
-    error = { error: error };
+    error = { message: error };
   }
 
   return { title: 'Upload banner', error: error, message: message, banners: {} };
@@ -166,8 +166,7 @@ function createOrUpdate(params, callback) {
 function validate(type, file, callback) {
   let error = {};
 
-  if(file.size > VALIDATIONS.maxSize * MEGABYTE)
-  {
+  if(file.size > (VALIDATIONS.maxSize * MEGABYTE)) {
     error[type] = 'This file is too big. Allowed size is ' + VALIDATIONS.maxSize + 'MB.';
     return callback(error);
   }
@@ -177,15 +176,13 @@ function validate(type, file, callback) {
       error[type] = 'Only image files are allowed - ' + allowedImageTypes() + '.';
       return callback(error);
     }
+
+    if((dimensions.width > VALIDATIONS.maxWidth) || (dimensions.height > VALIDATIONS.maxHeight)) {
+      error[type] = 'File size is out of range. Allowed size is ' + VALIDATIONS.maxWidth + 'x' + VALIDATIONS.maxHeight + 'px.';
+      callback(error);
+    }
     else {
-      if(dimensions.width > VALIDATIONS.maxWidth || dimensions.height > VALIDATIONS.maxHeight)
-      {
-        error[type] = 'File size is out of range. Allowed size is ' + VALIDATIONS.maxWidth + 'x' + VALIDATIONS.maxHeight + 'px.';
-        return callback(error);
-      }
-      else {
-        return callback(null);
-      }
+      callback(null);
     }
   });
 }
@@ -221,12 +218,7 @@ function eachFile(file, filename, callback) {
     else {
       fs.rename(file.path, newFilePath(file));
       createOrUpdate({ page: filename, filepath: 'banners/' + file.originalname }, function(error, result) {
-        if(error) {
-          callback(error);
-        }
-        else {
-          callback(null, result);
-        }
+        callback(error, result);
       });
     }
   });
