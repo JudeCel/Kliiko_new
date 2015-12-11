@@ -11,16 +11,20 @@ function findAllAccounts(callback) {
 }
 
 function editComment(userId, comment, callback){
-  User.update({
-    comment: comment
-  }, {
-    where: {id: userId}
-  })
-  .then(function (result) {
-    return callback(null, result);
-  })
-  .catch(function (err) {
-    callback(err);
+  User.find({where: {id: userId}}).done(function (result) {
+    if (result) {
+      result.update({
+        comment: comment
+      })
+      .then(function (result) {
+        return callback(null, result);
+      })
+      .catch(function (err) {
+        callback(err);
+      });
+    } else {
+      callback("Something went wrong."); //MAYBE: add more user friendli message if account user is not found!
+    };
   });
 };
 
