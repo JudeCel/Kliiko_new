@@ -21,7 +21,7 @@ router.use(function (req, res, next) {
 }, uploadBanner.getProfileBanner);
 
 router.get('/', policy.authorized(['admin', 'accountManager']) , function(req, res, next) {
-  res.render(views_path('index'), { title: 'My Dashboard', user: req.user });
+  res.render(views_path('index'), { title: 'My Dashboard', user: req.user, message: req.flash('message')[0] });
 });
 
 router.get('/landing', function(req, res) {

@@ -6,30 +6,26 @@ function views_path(action) {
   return 'invite/' + action;
 };
 
-function get(req, res) {
+function index(req, res) {
   inviteService.findInvite(req.params.token, function(error, invite) {
     if(error) {
-      res.render(pageTypes('notFound'), simpleParams('Invite not found', {}, error));
+      res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
     }
     else {
-      res.render(pageTypes(req.params.type), simpleParams('Invite', invite));
+      res.render(views_path('index'), simpleParams('Invite', invite));
     }
   });
-};
+}
 
-function post(req, res) {
+function decline(req, res) {
   inviteService.findInvite(req.params.token, function(error, invite) {
-    console.log("1 =================");
-    console.log(error);
     if(error) {
-      res.render(pageTypes('notFound'), simpleParams('Invite not found', {}, error));
+      res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
     }
     else {
-      inviteService.manageInvite(req.params.type, invite, req.body, function(error, message) {
-        console.log("2 =================");
-        console.log(error);
+      inviteService.declineInvite(invite, function(error, message) {
         if(error) {
-          res.render(pageTypes(req.params.type), simpleParams('Invite', invite, error));
+          res.render(views_path('index'), simpleParams('Invite', invite, error));
         }
         else {
           req.flash('message', message);
@@ -38,22 +34,63 @@ function post(req, res) {
       });
     }
   });
-};
+}
 
-function pageTypes(type) {
-  let pages = {
-    accept: views_path('accept'),
-    decline: views_path('decline')
-  };
+function acceptGet(req, res) {
+  inviteService.findInvite(req.params.token, function(error, invite) {
+    if(error) {
+      res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
+    }
+    else {
+      if(invite.userType == 'existing') {
+        inviteService.acceptInviteExisting(invite, function(error, message) {
+          if(error) {
+            res.render(views_path('index'), simpleParams('Invite', invite, error));
+          }
+          else {
+            req.flash('message', message);
+            res.redirect('/login');
+          }
+        });
+      }
+      else {
+        res.render(views_path('accept'), simpleParams('Accept Invite', invite));
+      }
+    }
+  });
+}
 
-  return pages[type] || views_path('notFound');
-};
+function acceptPost(req, res) {
+  inviteService.findInvite(req.params.token, function(error, invite) {
+    if(error) {
+      res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
+    }
+    else {
+      if(invite.userType == 'new') {
+        inviteService.acceptInviteNew(invite, req.body, function(error, message) {
+          if(error) {
+            res.render(views_path('accept'), simpleParams('Invite', invite, error));
+          }
+          else {
+            req.flash('message', message);
+            res.redirect('/login');
+          }
+        });
+      }
+      else {
+        res.render(views_path('notFound'), simpleParams('Invite not found', invite));
+      }
+    }
+  });
+}
 
 function simpleParams(title, invite, error, message) {
   return { title: title, invite: invite, error: error, message: message || '' };
 }
 
 module.exports = {
-  get: get,
-  post: post
+  index: index,
+  decline: decline,
+  acceptGet: acceptGet,
+  acceptPost: acceptPost
 }

@@ -5,12 +5,11 @@
     <div id="login" class="tab-pane fade in active">
       <h1 class="text-center text-gray-dark">Accept Invite</h1>
 
-      <%if(invite.userType == "new") { %>
       <h5 class="text-center text-gray-dark">
         To accept invite you must provide password and account name.
       </h5>
       <div class="error-column has-error text-center" id="warning-email-password"><%= error %></div>
-      <form class="non-resubmitable" method="post" action="/invite/accept/<%= invite.token %>" novalidate>
+      <form class="non-resubmitable" method="post" action="/invite/<%= invite.token %>/accept" novalidate>
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
@@ -40,17 +39,8 @@
               </table>
             </div>
           </div>
-      <% } else { %>
-      <h5 class="text-center text-gray-dark">
-        To accept invite you must press the button.
-      </h5>
-      <div class="error-column has-error text-center" id="warning-email-password"><%= error %></div>
-      <div>
-      <form method="post" action="/invite/accept/<%= invite.token %>">
-        <div>
-      <% } %>
-          <button type="submit" value="Submit" class="btn submit-btn-size border-yellow text-brown-light background-transp">Accept</button>
-          <a href="/invite/decline/<%= invite.token %>" class="btn submit-btn-size border-yellow text-brown-light background-transp pull-right">Go to decline</a>
+          <a href="/invite/<%= invite.token %>/decline" class="btn submit-btn-size border-yellow text-brown-light background-transp">Decline</a>
+          <button type="submit" value="Submit" class="btn submit-btn-size border-yellow text-brown-light background-transp pull-right">Accept</button>
         </div>
       </form>
     </div>

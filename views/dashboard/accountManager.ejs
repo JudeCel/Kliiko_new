@@ -45,7 +45,6 @@
                       <td><%= users[i].mobile %></td>
                       <td><%= users[i].status %></td>
                       <% if(users[i].Invites) { %>
-                        <%= console.log(users[i].Invites[0]) %>
                         <td><a href="accountmanager/remove/invite/<%= users[i].id %>">Remove</a></td>
                       <% } else if(users[i].Accounts) { %>
                         <td><a href="accountmanager/remove/account/<%= users[i].id %>">Remove</a></td>

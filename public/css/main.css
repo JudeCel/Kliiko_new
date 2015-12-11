@@ -272,6 +272,9 @@ footer {
 .background-red {
   background-color: #E51D39 !important; }
 
+.background-blue {
+  background-color: #4DC0E9 !important; }
+
 /* Typography */
 .text-login-page {
   font-size: 16px; }

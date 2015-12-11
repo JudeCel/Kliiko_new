@@ -25,15 +25,10 @@ function createInvite(params, sendEmail, callback) {
     role: params.role,
     userType: params.userType
   }).then(function(result) {
-    Invite.find({ include: [ User, Account ], where: { token: token } }).done(function(invite) {
+    Invite.find({ include: [ User, Account ], where: { token: token } }).then(function(invite) {
       if(sendEmail) {
         sendEmailToUser(invite, function(err) {
-          if(err) {
-            callback(err);
-          }
-          else {
-            callback(null, invite);
-          }
+          callback(err, invite);
         });
       }
       else {
@@ -49,19 +44,30 @@ function removeInvite(invite, callback) {
   if(invite.userType == 'new') {
     User.find({ where: { id: invite.userId } }).then(function(user) {
       user.getOwnerAccount({ include: [ AccountUser ] }).then(function(accounts) {
-        accounts[0].AccountUser.destroy();
-        accounts[0].destroy();
-        user.destroy();
-        callback(null);
-      }).catch(function(err) {
-        callback(err);
-      })
-    }).catch(function(err) {
-      callback(err);
+        async.parallel([
+          function(cb) {
+            accounts[0].AccountUser.destroy().then(function() {
+              cb();
+            });
+          },
+          function(cb) {
+            accounts[0].destroy().then(function() {
+              cb();
+            });
+          },
+          function(cb) {
+            user.destroy().then(function() {
+              cb();
+            });
+          }
+        ], function (err, result) {
+          callback(err);
+        });
+      });
     });
   }
   else {
-    Invite.destroy({ where: { userId: invite.userId, accountId: invite.accountId } }).done(function() {
+    Invite.destroy({ where: { userId: invite.userId, accountId: invite.accountId } }).then(function() {
       callback(null);
     }).catch(function(err) {
       callback(err);
@@ -77,76 +83,44 @@ function findInvite(token, callback) {
     else {
       callback('Not found');
     }
-  }).catch(function(error) {
-    callback(error);
   });
-}
-
-function manageInvite(userChoice, invite, params, callback) {
-  if(userChoice == 'accept') {
-    acceptInvite(invite, params, function(error, message) {
-      if(error) {
-        callback(error);
-      }
-      else {
-        callback(null, message);
-      }
-    });
-  }
-  else if(userChoice == 'decline') {
-    declineInvite(invite, function(error, message) {
-      if(error) {
-        callback(error);
-      }
-      else {
-        callback(null, message);
-      }
-    });
-  }
 }
 
 function declineInvite(invite, callback) {
   removeInvite(invite, function(err) {
-    if(err) {
-      callback(err);
+    callback(err, 'Successfully declined invite');
+  });
+}
+
+function acceptInviteExisting(invite, callback) {
+  updateUser({ status: 'accepted' }, invite, function(error) {
+    if(error) {
+      callback(error);
     }
     else {
-      callback(null, 'Successfully declined invite');
+      createAccountUserFromInvite(invite, function(error, message) {
+        callback(error, message);
+      });
     }
   });
 }
 
-function acceptInvite(invite, params, callback) {
-  console.log(invite);
-  if(invite.userType == 'new') {
-    createAccountAndUser(invite, params, function(error) {
-      if(error) {
-        callback(error);
-      }
-      else {
-        createAccountUserFromInvite(invite, function(error, message) {
-          callback(null, message);
-        });
-      }
-    });
-  }
-  else {
-    updateUser({ status: 'accepted' }, invite, function(error) {
-      if(error) {
-        callback(error);
-      }
-      else {
-        createAccountUserFromInvite(invite, function(error, message) {
-          callback(null, message);
-        });
-      }
-    });
-  }
-};
+function acceptInviteNew(invite, params, callback) {
+  createAccountAndUser(invite, params, function(error) {
+    if(error) {
+      callback(error);
+    }
+    else {
+      createAccountUserFromInvite(invite, function(error, message) {
+        callback(null, message);
+      });
+    }
+  });
+}
 
 //Helpers
 function createAccountUserFromInvite(invite, callback) {
-  invite.User.addAccount(invite.Account, { role: invite.role, owner: false }).done(function(result) {
+  invite.User.addAccount(invite.Account, { role: invite.role, owner: false }).then(function(result) {
     if(result) {
       invite.destroy().then(function() {
         callback(null, 'Successfully accepted invite');
@@ -160,29 +134,34 @@ function createAccountUserFromInvite(invite, callback) {
 
 function updateUser(params, invite, callback) {
   User.update(params, { where: { id: invite.userId } }).then(function(result) {
-    cb(null);
+    callback(null);
   }).catch(function(err) {
-    cb(err);
+    callback(err);
   });
 }
 
 function updateAccount(accountName, invite, callback) {
-  // Needs fix
-  Account.update({ name: accountName }, {
-    where: { owner: true },
+  Account.find({
     include: [{
       model: AccountUser,
-      where: { UserId: invite.userId }
+      where: { UserId: invite.userId, owner: true }
     }]
-  }).done(function(result) {
-    callback(null);
+  }).then(function(account) {
+    if(account) {
+      account.update({ name: accountName }).then(function(result) {
+        callback(null);
+      });
+    }
+    else {
+      callback('Account not found');
+    }
   }).catch(function(error) {
     callback(error);
   });
 }
 
 function createAccountAndUser(invite, params, callback) {
-  updateAccount(params.accountName, function(error) {
+  updateAccount(params.accountName, invite, function(error) {
     if(error) {
       callback(error);
     }
@@ -221,7 +200,7 @@ module.exports = {
   createInvite: createInvite,
   removeInvite: removeInvite,
   findInvite: findInvite,
-  manageInvite: manageInvite,
-  declineInvite: declineInvite,
-  acceptInvite: acceptInvite
+  acceptInviteExisting: acceptInviteExisting,
+  acceptInviteNew: acceptInviteNew,
+  declineInvite: declineInvite
 }

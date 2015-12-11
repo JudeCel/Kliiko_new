@@ -8,11 +8,10 @@ var transporter = helpers.createTransport();
 
 function sendInviteNewUserToAccount(invite, callback) {
   let links = {
-    accept: helpers.getUrl(invite.token, '/invite/accept/'),
-    decline: helpers.getUrl(invite.token, '/invite/decline/')
+    url: helpers.getUrl(invite.token, '/invite/')
   };
 
-  helpers.renderMailTemplate('invite/inviteNewUserToAccount', links, function(error, html){
+  helpers.renderMailTemplate('invite/inviteAccountUser', links, function(error, html){
     if(error) {
       return callback(error);
     }

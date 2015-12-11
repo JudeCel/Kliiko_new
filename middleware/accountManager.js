@@ -20,7 +20,6 @@ function manageGet(req, res) {
 function managePost(req, res) {
   accountManager.createOrFindUser(req, function(error, params) {
     if(error) {
-      console.log(error);
       res.render(views_path('accountManager/manage'), accountManager.simpleParams(error, 'Something went wrong', req.body));
     }
     else {
