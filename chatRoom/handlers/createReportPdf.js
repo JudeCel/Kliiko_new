@@ -208,7 +208,7 @@
 //            var rowObject = {
 //                isFirst: i == 0,
 //                isLast: i == data.length - 1,
-//                name: data[i].name_first,
+//                name: data[i].firstName,
 //                userId: data[i].userId,
 //                fsPath: FS_PATH
 //            };

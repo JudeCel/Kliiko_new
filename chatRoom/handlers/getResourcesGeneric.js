@@ -8,7 +8,7 @@ var expressValidatorStub = require('../helpers/expressValidatorStub.js');
 var validate = function (req, resCb) {
     var err = joi.validate(req.params, {
         id: joi.number(),
-        type_id: joi.number(),
+        resource_type: joi.string(),
         topicId: joi.number(),
         userId: joi.number()
     });

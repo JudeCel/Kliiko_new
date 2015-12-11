@@ -55,7 +55,7 @@ view.AvatarChooser = function (json, port, domain) {
 		} else {
 			this.data.me.manifestation.colour = "#888888";
 		}
-		this.data.me.manifestation.name = data.name_first;
+		this.data.me.manifestation.name = data.firstName;
 
 		this.data.me.manifestation.head = attributes[0];
 		this.data.me.manifestation.face = attributes[1];
