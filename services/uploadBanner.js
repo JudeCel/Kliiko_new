@@ -35,8 +35,8 @@ function profilePage(callback) {
 }
 
 function write(files, callback) {
-  if(Object.keys(files).length == 0) {
-    return callback('No files selected or not an image');
+  if(_.isEmpty(files)) {
+    return callback('No files selected');
   }
 
   let errors = {},
@@ -107,11 +107,8 @@ function uploadFields() {
       cb(null, file.fieldname + '_temp' + extension);
     }
   })
-  let fileFilter = function (req, file, cb) {
-    cb(null, isValidFileType(file.mimetype)); // filters file type
-  }
 
-  let upload = multer({ storage: storage, limits: { fieldSize: VALIDATIONS.maxSize * MEGABYTE }, fileFilter: fileFilter });
+  let upload = multer({ storage: storage, limits: { fieldSize: VALIDATIONS.maxSize * MEGABYTE } });
 
   return upload.fields([
     { name: 'profile', maxCount: 1 },
@@ -167,25 +164,25 @@ function createOrUpdate(params, callback) {
 function validate(type, file, callback) {
   let error = {};
 
-  if(file.size > (VALIDATIONS.maxSize * MEGABYTE)) {
-    error[type] = 'This file is too big. Allowed size is ' + VALIDATIONS.maxSize + 'MB.';
-    return callback(error);
-  }
-
   sizeOf(file.path, function(err, dimensions) {
-    if(err) {
+    if(err || !isValidFileType(file.mimetype)) {
       error[type] = 'Only image files are allowed - ' + allowedImageTypes() + '.';
       return callback(error);
     }
 
     if((dimensions.width > VALIDATIONS.maxWidth) || (dimensions.height > VALIDATIONS.maxHeight)) {
       error[type] = 'File size is out of range. Allowed size is ' + VALIDATIONS.maxWidth + 'x' + VALIDATIONS.maxHeight + 'px.';
-      callback(error);
+      return callback(error);
     }
     else {
-      callback(null);
+      return callback(null);
     }
   });
+
+  if(file.size > (VALIDATIONS.maxSize * MEGABYTE)) {
+    error[type] = 'This file is too big. Allowed size is ' + VALIDATIONS.maxSize + 'MB.';
+    return callback(error);
+  }
 }
 
 function mapJson(array) {
@@ -213,13 +210,21 @@ function allowedImageTypes() {
 function eachFile(file, filename, callback) {
   validate(filename, file, function(err) {
     if(err) {
-      fs.unlink(file.path);
+      fs.stat(file.path, function (err, stat) {
+        if(stat) {
+          fs.unlink(file.path);
+        }
+      });
       callback(err);
     }
     else {
-      fs.rename(file.path, newFilePath(file));
-      createOrUpdate({ page: filename, filepath: 'banners/' + file.originalname }, function(error, result) {
-        callback(error, result);
+      fs.stat(file.path, function (err, stat) {
+        if(stat) {
+          fs.rename(file.path, newFilePath(file));
+        }
+        createOrUpdate({ page: filename, filepath: 'banners/' + file.originalname }, function(error, result) {
+          callback(error, result);
+        });
       });
     }
   });
