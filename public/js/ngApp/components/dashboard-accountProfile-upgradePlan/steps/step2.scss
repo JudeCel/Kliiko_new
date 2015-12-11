@@ -1,4 +1,7 @@
 #step-2  {
+
+  font-size: 2rem;
+
   .panel-title {
     font-size: 2rem;
     text-align: left;
@@ -33,5 +36,21 @@
       text-align: left;
       color: $grey;
     }
+  }
+
+  td {
+    padding: 8px 0;
+  }
+
+  input#duration-input,
+  select#duration-input{
+    padding:2px;
+    float: left;
+    width: 55px;
+  }
+
+  input#promocod-input {
+    @extend #duration-input;
+    width: 230px;
   }
 }

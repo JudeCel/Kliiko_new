@@ -15,7 +15,7 @@
         $stateParams.planUpgradeStep = 1;
         vm.currentStep = $stateParams.planUpgradeStep;
         vm.$state = $state;
-        vm.modContentBlock = {};
+        vm.modContentBlock = {selectedPlanDetails:true};
 
         vm.openPlanDetailsModal = openPlanDetailsModal;
         vm.upgradeToPlan = upgradeToPlan;

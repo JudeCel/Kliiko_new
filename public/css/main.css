@@ -837,28 +837,34 @@ footer {
   color: #E51D39;
   border-color: #E51D39; }
 
-#upgrade-plan-content #step-2 .panel-title {
-  font-size: 2rem;
-  text-align: left;
-  color: #58595b; }
-
-#upgrade-plan-content #step-2 a.accordion-toggle {
-  text-decoration: none; }
-  #upgrade-plan-content #step-2 a.accordion-toggle:hover {
+#upgrade-plan-content #step-2 {
+  font-size: 2rem; }
+  #upgrade-plan-content #step-2 .panel-title {
+    font-size: 2rem;
+    text-align: left;
+    color: #58595b; }
+  #upgrade-plan-content #step-2 a.accordion-toggle {
     text-decoration: none; }
-
-#upgrade-plan-content #step-2 .panel-heading {
-  border: none; }
-  #upgrade-plan-content #step-2 .panel-heading:hover {
-    color: #2F9F69;
-    background: #A5DAA4; }
-
-#upgrade-plan-content #step-2 .panel-label {
-  font-size: 2rem;
-  text-align: left;
-  color: #58595b; }
-
-#upgrade-plan-content #step-2 .panel-body p {
-  font-size: 1.9rem;
-  text-align: left;
-  color: #58595b; }
+    #upgrade-plan-content #step-2 a.accordion-toggle:hover {
+      text-decoration: none; }
+  #upgrade-plan-content #step-2 .panel-heading {
+    border: none; }
+    #upgrade-plan-content #step-2 .panel-heading:hover {
+      color: #2F9F69;
+      background: #A5DAA4; }
+  #upgrade-plan-content #step-2 .panel-label {
+    font-size: 2rem;
+    text-align: left;
+    color: #58595b; }
+  #upgrade-plan-content #step-2 .panel-body p {
+    font-size: 1.9rem;
+    text-align: left;
+    color: #58595b; }
+  #upgrade-plan-content #step-2 td {
+    padding: 8px 0; }
+  #upgrade-plan-content #step-2 input#duration-input, #upgrade-plan-content #step-2 input#promocod-input {
+    float: left;
+    width: 55px;
+    padding: 0 6px; }
+  #upgrade-plan-content #step-2 input#promocod-input {
+    width: 230px; }

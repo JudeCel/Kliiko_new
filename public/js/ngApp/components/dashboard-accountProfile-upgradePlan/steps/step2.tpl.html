@@ -25,13 +25,33 @@
                             <tbody>
                             <tr>
                                 <th scope="row">{{up.selectedPlanName}}</th>
-                                <td>{{up.selectedCurrency.code}} {{up.plans[up.selectedPlanName].price * up.selectedCurrency.rate}}</td>
-                                <td><input type="number" ng-model="up.upgradeDuration" ng-value="1" min="1"></td>
-                                <td><input type="text"></td>
-                                <td>{{(up.plans[up.selectedPlanName].price * up.upgradeDuration * up.selectedCurrency.rate )|| (up.plans[up.selectedPlanName].price * up.selectedCurrency.rate)}} </td>
+                                <td>{{ (up.plans[up.selectedPlanName].price * up.selectedCurrency.rate) | currency : up.selectedCurrency.symbol : 2}}</td>
+                                <!--<td><input id="duration-input" type="number" ng-model="up.upgradeDuration" ng-value="1" min="1" size="3"></td>-->
+                                <td>
+                                    <select name="" id="duration-input" ng-model="up.upgradeDuration" >
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+
+                                    </select>
+                                </td>
+                                <td><input id="promocod-input" type="text" ng-model="up.promocode"></td>
+                                <td>
+                                    {{(up.plans[up.selectedPlanName].price * up.upgradeDuration * up.selectedCurrency.rate )|| (up.plans[up.selectedPlanName].price * up.selectedCurrency.rate) | currency : up.selectedCurrency.symbol : 2 }}
+                                </td>
                             </tr>
 
                             </tbody>
+
                         </table>
                     </span>
                 </span>
