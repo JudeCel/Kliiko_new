@@ -7,6 +7,9 @@ module.exports = (Sequelize, DataTypes) => {
       validate: { notEmpty: {args: true, msg: "can't be empty"},is: ["^[a-zA-Z0-9]+$",'i'] }
     }
   },{
+      indexes: [
+        { name: 'unique_name', unique: true, fields: [Sequelize.fn('lower', Sequelize.col('name'))] }
+      ],
       classMethods: {
         associate: function(models) {
           Account.hasMany(models.AccountUser);

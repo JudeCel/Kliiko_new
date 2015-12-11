@@ -684,7 +684,7 @@ module.exports.listen = function (server) {
   });
 
   function resourceAppendedCallback(userId, json) {
-    var foundUser = _.find(io.sockets.clients(), function (client) {
+    var foundUser = _.find(io.connected, function (client) {
       return client.userId == userId;
     });
 
@@ -701,7 +701,6 @@ module.exports.listen = function (server) {
   });
 
   socket.on('addvote', function (json) {
-    console.log("addvote");
 
     socketHelper.updateResources(socket.topicId, socket.userId, json, "vote", resourceAppendedCallback);
   });

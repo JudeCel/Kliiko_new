@@ -662,7 +662,7 @@ this.handleConsoleImage = function () {
     '			<input type="file" id="IDUploadCollageHidden" name="uploadedfile" onchange="window.checkImageFileExtension(this, \'formUploadCollage\', \'IDUploadImageTitle\', \'IDUploadImageText\')" style="font-size: 50px;">' +
     '		</span>' +
     '	</div>' +
-    '	<iframe id="iFrameUploadCollage" name="iFrameUploadCollage" src="' + window.URL_PATH + window.SERVER_PATH + 'html/iFrame.html" style="visibility: hidden; display: none;">' +
+    '	<iframe id="iFrameUploadCollage" name="iFrameUploadCollage" src="/chat/iFrame" style="visibility: hidden; display: none;">' +
     '	</iframe>' +
     '</form>';
 

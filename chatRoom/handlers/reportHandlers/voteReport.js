@@ -37,7 +37,7 @@ module.exports.getReportRowObjects = function (data, nextCb) {
         var rowObject = {
             fsPath: FS_PATH,
             userId: rowData.userId,
-            name: rowData.name_first,
+            name: rowData.firstName,
 
             date: new Date(rowData.created),
             isFirst: i == 0,

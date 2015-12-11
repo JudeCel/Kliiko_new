@@ -367,6 +367,15 @@ footer {
 .dashboard-header .text-size-dashboard {
   font-size: 13px; }
 
+/*  These stules are needed so the subDomain and currentAccount.fullName would be in the same line  */
+.current-domain-name {
+  font-style: italic;
+  margin-top: 13px; }
+
+.nav-button-top-margin {
+  margin-top: 3px; }
+
+/*  END  */
 #login .submit-btn-size {
   height: 45px; }
 
