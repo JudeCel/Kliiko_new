@@ -1,4 +1,5 @@
 'use strict';
+var mailers = require('../../mailers');
 var Account  = require('./../../models').Account;
 var User  = require('./../../models').User;
 var AccountUser  = require('./../../models').AccountUser;
@@ -29,12 +30,13 @@ function editComment(userId, comment, callback){
 };
 
 function reactivateOrDeactivate(userId, AccountId, callback){
-  AccountUser.find({where: {UserId: userId, AccountId: AccountId}}).done(function (result) {
+  AccountUser.find({where: {UserId: userId, AccountId: AccountId}, include: [User, Account]}).done(function (result) {
     if (result) { 
       result.update({
         active: !result.active
       })
       .then(function (result) {
+        mailers.users.sendReactivateOrDeactivate(result);
         return callback(null, result);
       })
       .catch(function (err) {
@@ -57,7 +59,7 @@ function getCsvJson(callback) {
   let data = [];  // new array
   let account = null;
   let user = null;
-  let i, ii;
+  let i, ii; // local variable for loops below.
 
   Account.findAll({order: 'name ASC', include: [User] })
   .then(function (result) {
