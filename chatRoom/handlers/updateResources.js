@@ -6,7 +6,7 @@ var webFaultHelper = require('../helpers/webFaultHelper.js');
 module.exports.validate = function (req, resCb) {
     var err = joi.validate(req.params, {
         id: joi.number().required(),
-        type_id: joi.number().optional(),
+        resource_type: joi.string().optional(),
         url: joi.string().optional()
     });
 
@@ -19,7 +19,7 @@ module.exports.validate = function (req, resCb) {
 module.exports.run = function (req, resCb, errCb) {
     var fields = {
         id: req.params.id,
-        type_id: req.params.type_id,
+        resource_type: req.params.resource_type,
         url: req.params.url
     };
     updateResources(fields)

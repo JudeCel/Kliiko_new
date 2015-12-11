@@ -12,7 +12,7 @@ var audioMenuAddHandler = function() {
 				'			<input type="file" id="IDUploadAudioHidden" name="uploadedfile" onchange="window.checkAudioFileExtension(this, \'formUploadAudio\', \'IDUploadAudioTitle\', \'IDUploadAudioText\')" style="font-size: 50px;">' +
 				'		</span>' +
 				'	</div>' +
-				'	<iframe id="iFrameUploadAudio" name="iFrameUploadAudio" src="' + window.URL_PATH + window.SERVER_PATH + 'html/iFrame.html" style="visibility: hidden; display: none;">' +
+				'	<iframe id="iFrameUploadAudio" name="iFrameUploadAudio" src="/chat/iFrame" style="visibility: hidden; display: none;">' +
 				'	</iframe>' +
 				'</form>';
 
@@ -20,7 +20,7 @@ var audioMenuAddHandler = function() {
 		formID: "formUploadAudio",
 		titleID: "IDUploadAudioTitle",
 		textID: "IDUploadAudioText"				//	used to pass the filename through
-	}			
+	}
 
 	window.dashboard.toFront();
 	window.dashboard.setBrowseForAudioResource(html, json);

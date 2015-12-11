@@ -1,4 +1,4 @@
-var mtypes = require('./../helpers/mtypes');
+var mtypes = require('./../../helpers/mtypes');
 var getReportData_ChatHistory = require('../getReportData_ChatHistory.js');
 var config = require('../../config/config.json');
 var FS_PATH = config.paths.fsPath + config.paths.chatRoomPath;
@@ -6,9 +6,9 @@ var S = require('string');
 
 function getPrefix(params) {
     switch (params.report.type) {
-        case mtypes.reportType.chat:
+        case 'chat':
             return "Chat History - ";
-        case mtypes.reportType.chat_stars:
+        case 'chat_stars':
             return "Chat History (Stars only) - ";
     }
 }
@@ -26,9 +26,9 @@ module.exports.getReportData = function (params, resCb, nextCb) {
     };
 
     if (!params.includeFacilitator)
-        req.sessionStaffTypeToExclude = mtypes.userType.facilitator;
+        req.sessionStaffTypeToExclude = 'facilitator';
 
-    if (params.report.type == mtypes.reportType.chat_stars)
+    if (params.report.type == 'chat_stars')
         req.starsOnly = true;
 
     getReportData_ChatHistory.execute(req, resCb, nextCb);
@@ -43,7 +43,7 @@ module.exports.getReportRowObjects = function (data, nextCb) {
             isLast: i == data.length - 1,
             isReply: false,
             isTagged: rowData.tag === 1,
-            name: rowData.name_first,
+            name: rowData.firstName,
             userId: rowData.userId,
             fsPath: FS_PATH
         };

@@ -71,10 +71,10 @@ var generatePDF = function(sortedData,fileName,type){
 		var eventAsJson=JSON.parse(chatEvent);
 
 		if(sortedData[ndx].replyId != null){
-			doc.text(ReplyX, currentY, sortedData[ndx].name_first+"  "+sortedData[ndx].name_last+"  "+eventAsJson.object.date);
+			doc.text(ReplyX, currentY, sortedData[ndx].firstName+"  "+sortedData[ndx].lastName+"  "+eventAsJson.object.date);
 			doc.text(ReplyX, currentY+lineWidth, eventAsJson.object.input);
 		}else{
-			doc.text(normalX, currentY, sortedData[ndx].name_first+"  "+sortedData[ndx].name_last+"  "+eventAsJson.object.date);
+			doc.text(normalX, currentY, sortedData[ndx].firstName+"  "+sortedData[ndx].lastName+"  "+eventAsJson.object.date);
 			doc.text(normalX, currentY+lineWidth, eventAsJson.object.input);
 		}
 		currentY += lineWidth*3;

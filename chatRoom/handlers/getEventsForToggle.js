@@ -1,30 +1,27 @@
 "use strict";
-var getEventsForToggle = require('if-data').repositories.getEventsForToggle;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
 var models = require("./../../models");
+var Event = models.Event;
 
 module.exports.validate = function (req, resCb) {
-    var err = joi.validate(req.params, {
-        topicId: joi.number().required()
-    });
+  var err = joi.validate(req.params, {
+    topicId: joi.number().required()
+  });
 
-    if (err.error)
-        return resCb(webFaultHelper.getValidationFault(err.error));
+  if (err.error){
+    return resCb(webFaultHelper.getValidationFault(err.error));
+  }
 
-    resCb();
+  resCb();
 };
 
 module.exports.run = function (req, resCb, errCb) {
-  let sql =  "SELECT event \
-        FROM events \
-        WHERE id = (SELECT MAX(id) FROM events WHERE tag = 32 AND topicId = ? AND deletedAt IS NULL)";
-
-    models.sequelize.query(sql,
-    { replacements: [req.params.topicId],
-      type: models.sequelize.QueryTypes.SELECT } ).then(function(event) {
-        resCb.send(event);
-      }).catch(function(err) {
-        errCb(webFaultHelper.getFault(err));
-      });
-};
+  Event.find({where: {topicId: req.params.topicId, tag: 32},
+    order: [['id', 'DESC']] }).then(function(event) {
+      resCb.send(event || []);
+    }).catch(function(err) {
+      console.log(err);
+      errCb(webFaultHelper.getFault(err));
+    });
+  };

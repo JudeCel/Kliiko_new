@@ -1,14 +1,7 @@
 "use strict";
 var _ = require('lodash');
-// var ifData = require('if-data'), db = ifData.db;
 var joi = require('joi');
 var webFaultHelper = require('../helpers/webFaultHelper.js');
-// var getEvent = ifData.repositories.getEvent;
-// var getUserVotes = ifData.repositories.getUserVotes;
-// var getVotes = ifData.repositories.getVotes;
-// var createVote = ifData.repositories.createVote;
-// var updateVote = ifData.repositories.updateVote;
-// var createUserVotes =  ifData.repositories.createUserVotes;
 var models = require("./../../models");
 var Event = models.Event;
 var Vote = models.Vote;

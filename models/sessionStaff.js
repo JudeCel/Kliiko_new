@@ -6,6 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
     userId: { type: DataTypes.INTEGER, allowNull: false},
     topicId:	{type: DataTypes.INTEGER, allowNull: false},
     comments:	{type: DataTypes.TEXT, allowNull: true},
+    type:	{type: DataTypes.STRING, allowNull: true},
     active:	{type: DataTypes.BOOLEAN, allowNull: false}
 
   },
@@ -16,6 +17,7 @@ module.exports = (Sequelize, DataTypes) => {
       paranoid: true,
       classMethods: {
         associate: function(models) {
+          SessionStaff.belongsTo(models.Session, { foreignKey: 'sessionId' });
         }
       }
     }

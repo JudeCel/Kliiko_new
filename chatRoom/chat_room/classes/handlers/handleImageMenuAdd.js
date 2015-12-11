@@ -12,15 +12,15 @@ var imageMenuAddHandler = function() {
 				'			<input type="file" id="IDUploadImageHidden" name="uploadedfile" onchange="window.checkImageFileExtension(this, \'formUploadImage\', \'IDUploadImageTitle\', \'IDUploadImageText\')" style="font-size: 50px;">' +
 				'		</span>' +
 				'	</div>' +
-				'	<iframe id="iFrameUploadImage" name="iFrameUploadImage" src="' + window.URL_PATH + window.SERVER_PATH + 'html/iFrame.html" style="visibility: hidden; display: none;">' +
+				'	<iframe id="iFrameUploadImage" name="iFrameUploadImage" src="/chat/iFrame" style="visibility: hidden; display: none;">' +
 				'	</iframe>' +
 				'</form>';
-				
+
 	var json = {
 		formID: "formUploadImage",
 		titleID: "IDUploadImageTitle",
 		textID: "IDUploadImageText"				//	used to pass the filename through
-	}			
+	}
 
 	window.dashboard.toFront();
 	window.dashboard.setBrowseForImageResource(html, json);
