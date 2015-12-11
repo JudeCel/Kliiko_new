@@ -1,28 +1,32 @@
 "use strict";
-var getSessionStaffUserIds = require('if-data').repositories.getSessionStaffUserIds;
+// var getSessionStaffUserIds = require('if-data').repositories.getSessionStaffUserIds;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
-var expressValidatorStub = require('../tests/testHelpers/expressValidatorStub.js');
+var expressValidatorStub = require('../helpers/expressValidatorStub.js');
+var models = require("./../../models");
+var SessionStaff = models.SessionStaff;
 
 var validate = function (req, next) {
     var err = joi.validate(req.params, {
-        type_id: joi.number(),
+        type: joi.string(),
         sessionId: joi.number()
     });
-    if (err.error)
-        return next(webFaultHelper.getValidationFault(err.error));
+    if (err.error){
+      return next(webFaultHelper.getValidationFault(err.error));
+    }
 
     next();
 };
 module.exports.validate = validate
 
 var run = function (req, resCb, errCb) {
-    getSessionStaffUserIds(req.params)
-        .done(function (data) {
-            resCb.send(data);
-        }, function (err) {
-            errCb(webFaultHelper.getFault(err));
-        });
+  SessionStaff.findAll({where: req.params, distinct: true})
+  .then(function (data) {
+       resCb.send(data);
+   }).catch(function(err) {
+     console.log(err);
+     errCb(webFaultHelper.getFault(err));
+   });
 };
 
 module.exports.run = run;

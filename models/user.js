@@ -73,7 +73,7 @@ module.exports = (Sequelize, DataTypes) => {
         associate: function(models) {
           User.hasMany(models.SocialProfile, { foreignKey: 'userId'});
           User.hasMany(models.SessionMember, { foreignKey: 'userId'});
-          User.belongsToMany(models.Vote, { through: {model: models.VotesBy}, foreignKey: 'voteId' });
+          User.belongsToMany(models.Vote, { through: models.VotesBy });
           User.belongsToMany(models.Account, { through: { model: models.AccountUser} });
           User.belongsToMany(models.Account, { through: { model: models.AccountUser, scope: { owner: true }},  as: 'OwnerAccount'}
           );

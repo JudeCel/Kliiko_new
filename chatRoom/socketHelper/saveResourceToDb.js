@@ -5,14 +5,14 @@ function saveResourceToDb(json, resCb, nextCb) {
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //	this bit of code is interesting,
     //	1)	We will first get all the resources currently uploaded by looking
-    //		looking at the resources table where the type_id is 99.
+    //		looking at the resources table where the resource_type is tmp.
     //	2)	With those rows from the resources table, we will look for the
     //		json.filename.
     //	3)	Once we have a match, we can get the userId
     //	4)	The userId allows us to get the connection so we can send
     //		information back to our client.
     var req = {
-        type_id: mtypes.resourceType.tmp
+        resource_type: 'tmp'
     };
 
     getResourcesGeneric.execute(req, handleAllTempResources, nextCb);
@@ -44,7 +44,7 @@ function saveResourceToDb(json, resCb, nextCb) {
 
             if (resultJSON.text.toLowerCase() === json.matchName.toLowerCase()) {
                 var req = {
-                    type_id: mtypes.resourceType.tmp
+                    resource_type: 'tmp'
                 };
 
                 req.userId = json.userId = resource.userId;

@@ -26,7 +26,7 @@ view.Reportbox.prototype.setReportbox = function(dataAsJson){
 
 	for (var ndx = 0, ntl = this.topicList.length; ndx < ntl; ndx++) {
 		this.topicList[ndx].brand_project_name = this.topicList[ndx].brand_project_name.replace(/[^A-Za-z0-9 ]/g,'');
-		this.topicList[ndx].sessionName = this.topicList[ndx].sessionName.replace(/[^A-Za-z0-9 ]/g,'');
+		this.topicList[ndx].sessionName = this.topicList[ndx].session_name.replace(/[^A-Za-z0-9 ]/g,'');
 		this.topicList[ndx].name = this.topicList[ndx].name.replace(/[^A-Za-z0-9 ]/g,'');
 	}
 }
@@ -48,13 +48,13 @@ view.Reportbox.prototype.setFormat = function(value) {
 view.Reportbox.prototype.generateReport = function(json) {
 	json.type = window.reportbox.getFormat();
 	json.includeFacilitator = window.reportbox.includeFacilitator;
-	
+
 	socket.emit('report', json);
 
 	setTimeout(function() {
 		window.dashboard.toBack();
 	}, 0);
-	
+
 	setTimeout(function() {
 		window.dashboard.showMessage({
 			message: {
@@ -141,8 +141,8 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 		'	}' +
 		'}';
 
-		this.html +=	'		<td style="width: 100px;">' + 
-						'			<img src="' + window.URL_PATH + window.CHAT_ROOM_PATH + 'resources/images/' + this.type + '.png" onClick="view.Reportbox.prototype.generateReport(' + json + ')" width="20" height="20" alt="Generate Chat Room History Report";>' + 
+		this.html +=	'		<td style="width: 100px;">' +
+						'			<img src="' + window.URL_PATH + window.CHAT_ROOM_PATH + 'resources/images/' + this.type + '.png" onClick="view.Reportbox.prototype.generateReport(' + json + ')" width="20" height="20" alt="Generate Chat Room History Report";>' +
 						'		</td>';
 
 		//	column three - chat history - stars
@@ -158,8 +158,8 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 		'	}' +
 		'}';
 
-		this.html += 	'		<td style="width: 100px;">' + 
-						'			<img src="' + window.URL_PATH + window.CHAT_ROOM_PATH + 'resources/images/' + this.type + '.png" onClick="view.Reportbox.prototype.generateReport(' + json + ')" width="20" height="20" alt="Generate Chat Room History Report";>' + 
+		this.html += 	'		<td style="width: 100px;">' +
+						'			<img src="' + window.URL_PATH + window.CHAT_ROOM_PATH + 'resources/images/' + this.type + '.png" onClick="view.Reportbox.prototype.generateReport(' + json + ')" width="20" height="20" alt="Generate Chat Room History Report";>' +
 						'		</td>';
 
 		//	column four - whiteboard
@@ -181,8 +181,8 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 			img = '		<img src="' + window.URL_PATH + window.CHAT_ROOM_PATH + 'resources/images/' + this.type + '.png" onClick="view.Reportbox.prototype.generateReport(' + json + ')" width="20" height="20" alt="Generate Chat Room History Report";>';
 		}
 
-		this.html +=	'		<td style="width: 100px;">' + 
-						img + 
+		this.html +=	'		<td style="width: 100px;">' +
+						img +
 						'		</td>';
 
 		//	column five - votes
@@ -198,8 +198,8 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 		'	}' +
 		'}';
 
-		this.html +=	'		<td style="width: 100px;">' + 
-						'			<img src="' + window.URL_PATH + window.CHAT_ROOM_PATH + 'resources/images/' + this.type + '.png" onClick="view.Reportbox.prototype.generateReport(' + json + ')" width="20" height="20" alt="Generate Chat Room History Report";>' + 
+		this.html +=	'		<td style="width: 100px;">' +
+						'			<img src="' + window.URL_PATH + window.CHAT_ROOM_PATH + 'resources/images/' + this.type + '.png" onClick="view.Reportbox.prototype.generateReport(' + json + ')" width="20" height="20" alt="Generate Chat Room History Report";>' +
 						'		</td>';
 
 		this.html +=	'	</tr>';
@@ -243,8 +243,8 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 				 '	}' +
 				 '}';
 
-	this.html += '				<td style="width: 100px;">' + 
-				 '					<img src="' + window.URL_PATH + window.CHAT_ROOM_PATH + 'resources/images/' + this.type + '.png" onClick="view.Reportbox.prototype.generateReport(' + json + ')" width="20" height="20" alt="Generate Stats Report";>' + 
+	this.html += '				<td style="width: 100px;">' +
+				 '					<img src="' + window.URL_PATH + window.CHAT_ROOM_PATH + 'resources/images/' + this.type + '.png" onClick="view.Reportbox.prototype.generateReport(' + json + ')" width="20" height="20" alt="Generate Stats Report";>' +
 				 '				</td>' +
 				 '				<td style="width: 110px;"></td>' +
 				 '				<td style="width: 110px;"></td>' +
@@ -252,14 +252,14 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 				 '			</tr>' +
 				 '		</table>' +
 				 '	</div>' +
-				 '	<label style="position: absolute; left: 70px; top: 390px; font-size:16px; color: #fff;">PDF</label>' + 
-				 '	<label style="position: absolute; left: 170px; top: 390px; font-size:16px; color: #fff;">CSV</label>' + 
-				 '	<label style="position: absolute; left: 270px; top: 390px; font-size:16px; color: #fff;">TXT</label>' + 
+				 '	<label style="position: absolute; left: 70px; top: 390px; font-size:16px; color: #fff;">PDF</label>' +
+				 '	<label style="position: absolute; left: 170px; top: 390px; font-size:16px; color: #fff;">CSV</label>' +
+				 '	<label style="position: absolute; left: 270px; top: 390px; font-size:16px; color: #fff;">TXT</label>' +
 				 '  <input style="position: absolute; left: 50px; top: 390px;" type="radio" name="formatGroup" value="PDF" onchange="reportFormat(this)" ' + checkedPDF + '></input>' +
 				 '  <input style="position: absolute; left: 150px; top: 390px;" type="radio" name="formatGroup" value="CSV" onchange="reportFormat(this)" ' + checkedCSV + '></input>' +
 				 '  <input style="position: absolute; left: 250px; top: 390px;" type="radio" name="formatGroup" value="TXT" onchange="reportFormat(this)" ' + checkedTXT + '></input>' +
 				 '	<label style="position: absolute; left: 480px; top: 405px; font-size:24px;" onclick="view.Reportbox.prototype.toBack()">' + this.json.button + '</label>' +
-				 '	<label style="position: absolute; left: 70px; top: 420px; width: 500px; font-size:16px; color: #fff;">Include Facilitator Interaction</label>' + 
+				 '	<label style="position: absolute; left: 70px; top: 420px; width: 500px; font-size:16px; color: #fff;">Include Facilitator Interaction</label>' +
 				 '  <input style="position: absolute; left: 50px; top: 420px;" type="checkbox" name="cbIncludeFacilitator" value="IF" onchange="reportIncludeFacilitator(this)" ' + checkedIncludeFacilitator + '></input>' +
 				 '</div>';
 }
@@ -318,7 +318,7 @@ view.Reportbox.prototype.draw = function() {
 
 	if(this.messageBorder){
 		if(this.messageBorder[0]) this.messageBorder.remove();
-	}	
+	}
 	//this.messageBorder = paperReportboxHTML.path(getRoundedRectToPath(50, 80, 500, 40 + this.lines*30, 5));
 	this.messageBorder = paperReportboxHTML.path(getRoundedRectToPath(50, 80, 543, 300, 5));
 	this.messageBorder.attr({fill: "#304064", stroke: "#043a6b", "stroke-width": 2, "stroke-opacity": 1, opacity: 0.8});
@@ -369,7 +369,7 @@ view.Reportbox.prototype.close = function() {
 		thisMain:	window,
 		paper:		paperReportbox
 	}
-	
+
 	var close = new sf.ifs.View.Icon(iconJSON);
 	close.draw();
 
@@ -398,5 +398,3 @@ function reportFormat(element) {
 function reportIncludeFacilitator(element) {
 	window.reportbox.includeFacilitator = element.checked;
 }
-
-

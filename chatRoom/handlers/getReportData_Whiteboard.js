@@ -1,6 +1,4 @@
 "use strict";
-// var ifData = require('if-data')
-// var getReportWhiteboard = ifData.repositories.getReportWhiteboard;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
 var _ = require('lodash');

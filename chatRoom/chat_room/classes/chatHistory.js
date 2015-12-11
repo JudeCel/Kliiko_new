@@ -171,7 +171,7 @@ view.History.prototype.addChat = function(avatarJSON, data, avatarIndex, animate
 
 	window.thumbsUpOnClick = function(data_id, row_id) {
 		if (window.role != 'observer') {
-			window.socket.emit('thumbs_up', data_id, row_id);
+			window.socket.emit('thumbs_up', data_id, row_id, window.topicID);
 		}
 	};
 
