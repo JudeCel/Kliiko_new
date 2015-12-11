@@ -4,6 +4,7 @@ var fs = require('fs');
 var sizeOf = require('image-size');
 var multer = require('multer');
 var async = require('async');
+var _ = require('lodash');
 var TemplateBanner = require('./../models').TemplateBanner;
 
 const MEGABYTE = 1024*1024;
@@ -57,7 +58,7 @@ function write(files, callback) {
       callback(err);
     }
     else {
-      if(Object.keys(errors).length == 0) {
+      if(_.isEmpty(errors)) {
         callback(null, 'Successfully uploaded banner.');
       }
       else {
