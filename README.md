@@ -9,7 +9,7 @@ Express 4.1.x
 
 NPM 3.3.x
 
-MySQL 5.7
+PostgreSQL 9.4.5
 
 Redis 3.0.5
 

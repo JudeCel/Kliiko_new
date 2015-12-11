@@ -1,13 +1,16 @@
 "use strict";
-var createSessionStaff = require('if-data').repositories.createSessionStaff;
+// var createSessionStaff = require('if-data').repositories.createSessionStaff;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
+
+var models = require("./../../models");
+var SessionStaff = models.SessionStaff;
 
 module.exports.validate = function (req, resCb) {
 	var err = joi.validate(req.params, {
         userId: joi.number().required(),
         sessionId: joi.number().required(),
-        type_id: joi.number().required(),
+        type: joi.string().required(),
         active: joi.number().required()
     });
 
@@ -18,10 +21,11 @@ module.exports.validate = function (req, resCb) {
 };
 
 module.exports.run = function (req, resCb, errCb) {
-	createSessionStaff(req.params)
-		.done(function (newSessionStaff) {
-            resCb.send(newSessionStaff);
-		}, function(err) {
-            errCb(webFaultHelper.getFault(err));
-		});
+	SessionStaff.create(req.params)
+	.then(function (data) {
+       resCb.send(data);
+   }).catch(function(err) {
+     console.log(err);
+     errCb(webFaultHelper.getFault(err));
+   });
 };
