@@ -862,9 +862,10 @@ footer {
     color: #58595b; }
   #upgrade-plan-content #step-2 td {
     padding: 8px 0; }
-  #upgrade-plan-content #step-2 input#duration-input, #upgrade-plan-content #step-2 input#promocod-input {
+  #upgrade-plan-content #step-2 input#duration-input, #upgrade-plan-content #step-2 input#promocod-input,
+  #upgrade-plan-content #step-2 select#duration-input {
+    padding: 2px;
     float: left;
-    width: 55px;
-    padding: 0 6px; }
+    width: 55px; }
   #upgrade-plan-content #step-2 input#promocod-input {
     width: 230px; }
