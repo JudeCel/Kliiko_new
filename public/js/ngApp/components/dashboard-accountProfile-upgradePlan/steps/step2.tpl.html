@@ -1,0 +1,56 @@
+<section id="step-2">
+
+    <uib-accordion close-others="false">
+        <uib-accordion-group is-open="up.modContentBlock.selectedPlanDetails">
+            <uib-accordion-heading>
+                <div class="panel-label">
+                    Your Selected Plan Details<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': up.modContentBlock.selectedPlanDetails, 'glyphicon-chevron-right': !up.modContentBlock.selectedPlanDetails}"></i>
+                </div>
+            </uib-accordion-heading>
+            <p>
+
+
+                <span class="row">
+                    <span class="col-md-12">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Plan</th>
+                                <th>Price</th>
+                                <th>Duration</th>
+                                <th>Promotional Code</th>
+                                <th>Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row">{{up.selectedPlanName}}</th>
+                                <td>{{up.selectedCurrency.code}} {{up.plans[up.selectedPlanName].price * up.selectedCurrency.rate}}</td>
+                                <td><input type="number" ng-model="up.upgradeDuration" ng-value="1" min="1"></td>
+                                <td><input type="text"></td>
+                                <td>{{(up.plans[up.selectedPlanName].price * up.upgradeDuration * up.selectedCurrency.rate )|| (up.plans[up.selectedPlanName].price * up.selectedCurrency.rate)}} </td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </span>
+                </span>
+
+            </p>
+        </uib-accordion-group>
+
+
+        <uib-accordion-group is-open="up.modContentBlock.contactDetails">
+            <uib-accordion-heading>
+                <div class="panel-label">
+                    Your Contact Details <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': up.modContentBlock.contactDetails, 'glyphicon-chevron-right': !up.modContentBlock.contactDetails}"></i>
+                </div>
+            </uib-accordion-heading>
+            <p>
+                You can build and facilitate the Chat Session yourself, using our Contextual help and handy tips - we've made it fast and easy.  You can also delegate someone else to do it for you.
+            </p>
+        </uib-accordion-group>
+    </uib-accordion>
+
+</section>
+

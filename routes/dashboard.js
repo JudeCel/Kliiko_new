@@ -5,6 +5,8 @@ var subdomains = require('../lib/subdomains.js');
 var changePassword = require('../services/changePassword');
 var policy = require('../middleware/policy.js');
 var uploadBanner = require('../middleware/uploadBanner.js');
+var appData = require('../services/webAppData');
+
 
 function views_path(action) {
   let views_name_space = 'dashboard/';
@@ -20,15 +22,15 @@ router.use(function (req, res, next) {
 }, uploadBanner.getProfileBanner);
 
 router.get('/', policy.authorized(['admin', 'accountManager']) , function(req, res, next) {
-  res.render(views_path('index'), { title: 'My Dashboard', user: req.user });
+  res.render(views_path('index'), { title: 'My Dashboard', user: req.user, appData: appData });
 });
 
 router.get('/landing', function(req, res) {
-  res.render(views_path('landing'), { title: 'Landing page' });
+  res.render(views_path('landing'), { title: 'Landing page' , appData: appData});
 });
 
 router.get('/upgradeplans', function(req, res) {
-  res.render(views_path('upgradePlans'), { title: 'Upgrade Plans' });
+  res.render(views_path('upgradePlans'), { title: 'Upgrade Plans', appData: appData });
 });
 
 router.post('/changepassword', function(req, res) {
