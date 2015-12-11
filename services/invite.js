@@ -44,25 +44,17 @@ function removeInvite(invite, callback) {
   if(invite.userType == 'new') {
     User.find({ where: { id: invite.userId } }).then(function(user) {
       user.getOwnerAccount({ include: [ AccountUser ] }).then(function(accounts) {
-        async.parallel([
-          function(cb) {
-            accounts[0].AccountUser.destroy().then(function() {
-              cb();
-            });
-          },
-          function(cb) {
-            accounts[0].destroy().then(function() {
-              cb();
-            });
-          },
-          function(cb) {
+        accounts[0].AccountUser.destroy().then(function() {
+          accounts[0].destroy().then(function() {
             user.destroy().then(function() {
-              cb();
+              callback(null);
             });
-          }
-        ], function (err, result) {
+          });
+        }).catch(function(err) {
           callback(err);
         });
+      }).catch(function(err) {
+        callback(err);
       });
     });
   }
@@ -81,7 +73,7 @@ function findInvite(token, callback) {
       callback(null, result);
     }
     else {
-      callback('Not found');
+      callback('Invite not found');
     }
   });
 }
@@ -112,7 +104,7 @@ function acceptInviteNew(invite, params, callback) {
     }
     else {
       createAccountUserFromInvite(invite, function(error, message) {
-        callback(null, message);
+        callback(error, message);
       });
     }
   });
@@ -128,6 +120,19 @@ function createAccountUserFromInvite(invite, callback) {
     }
     else {
       callback("Can't add account");
+    }
+  });
+}
+
+function createAccountAndUser(invite, params, callback) {
+  updateAccount(params.accountName, invite, function(error) {
+    if(error) {
+      callback(error);
+    }
+    else {
+      updateUser({ password: params.password, status: 'accepted' }, invite, function(error) {
+        callback(error);
+      });
     }
   });
 }
@@ -157,19 +162,6 @@ function updateAccount(accountName, invite, callback) {
     }
   }).catch(function(error) {
     callback(error);
-  });
-}
-
-function createAccountAndUser(invite, params, callback) {
-  updateAccount(params.accountName, invite, function(error) {
-    if(error) {
-      callback(error);
-    }
-    else {
-      updateUser({ password: params.password, status: 'accepted' }, invite, function(error) {
-        callback(error);
-      });
-    }
   });
 }
 
