@@ -1,6 +1,9 @@
 .remove-link-line > a {
   text-decoration: none; }
 
+.btn-md {
+  height: 45px; }
+
 .btn-dashboard-menu {
   background-color: inherit;
   width: 13%;
@@ -64,13 +67,88 @@
   border-radius: 0px;
   background-color: inherit; }
 
+/* Radio buttons custom design */
+label.radio-button input[type="radio"] {
+  position: absolute;
+  left: -999999px; }
+
+label.radio-button input[type="radio"]:focus + span:after {
+  border-color: #66afe9;
+  outline: 0;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }
+
+label.radio-button input[type="radio"] + span {
+  position: relative;
+  padding-right: 35px;
+  margin-right: 20px; }
+  label.radio-button input[type="radio"] + span:after {
+    content: "";
+    position: absolute;
+    top: -7px;
+    right: -13px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    background: none;
+    background-image: none;
+    height: 34px;
+    width: 34px;
+    -webkit-transition: background-image 0.9s ease;
+    transition: background-image 0.9s ease; }
+
+label.radio-button input[type="radio"]:checked + span:after {
+  background: #ccc; }
+
 .changePasswordModal {
   width: 20%;
   padding-top: 100px; }
 
 .contactDetailsModal {
-  width: 80%;
-  padding-top: 100px; }
+  width: 50%;
+  padding-top: 100px;
+  /* RADIO BUTTON */
+  /* CHECKBOX */ }
+  .contactDetailsModal .table td {
+    padding-left: 2px;
+    padding-right: 5px;
+    border: 1px solid #f00;
+    margin-left: -25px;
+    max-width: 215px; }
+    .contactDetailsModal .table td:first-of-type {
+      padding-right: 15px;
+      white-space: nowrap; }
+    .contactDetailsModal .table td.error-column {
+      padding: 0;
+      padding-top: 3px;
+      padding-bottom: 3px;
+      height: 17px; }
+  .contactDetailsModal .form-control {
+    border-width: 2px;
+    height: 40px;
+    border-radius: 0; }
+  .contactDetailsModal .modal-header {
+    border-bottom: none;
+    padding-bottom: 0; }
+  .contactDetailsModal .modal-body {
+    padding-top: 0; }
+  .contactDetailsModal input[type="radio"]:checked + span:after {
+    background: #E51D39 !important;
+    border: 2px solid #E51D39 !important; }
+  .contactDetailsModal input[class=checkbox-login] {
+    display: none; }
+  .contactDetailsModal input[class=checkbox-login] + label {
+    background: url("/icons/checkbox-out.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    margin-top: 0px;
+    margin-left: 0;
+    margin-bottom: -5px;
+    background-size: contain; }
+  .contactDetailsModal input[class=checkbox-login]:checked + label {
+    background: url("/icons/checkbox-in.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    background-size: contain;
+    margin-top: 1px; }
 
 #nav-tabs-main {
   text-align: center;
@@ -460,86 +538,70 @@ footer {
 .login-container #login .table-v-content-middle td {
   vertical-align: middle; }
 
-#signup {
-  /* Radio buttons custom design */ }
-  #signup .has-error {
-    color: #f00;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 370px;
-    display: inline-block; }
-  #signup .btn-radius-padding-left {
-    padding-left: 25px !important; }
-  #signup .btn-radius-text {
-    font-size: 16px !important;
-    padding-right: 30px; }
-  #signup .singup-btn-size {
-    height: 45px; }
-  #signup .form-control {
-    border-width: 2px;
-    height: 40px;
-    border-radius: 0; }
-  #signup .checkbox-signup {
-    display: inline-block;
-    vertical-align: top;
-    margin-top: 8px;
-    padding-left: 9px;
-    font-size: 13px; }
-  #signup input[class=checkbox-login] {
-    display: none; }
-  #signup input[class=checkbox-login] + label {
-    background: url("/icons/login_checkbox.jpeg") no-repeat;
-    height: 22px;
-    width: 22px;
-    margin-top: 1px;
-    margin-left: 0;
-    margin-bottom: 0;
-    background-size: contain; }
-  #signup input[class=checkbox-login]:checked + label {
-    background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
-    height: 22px;
-    width: 22px;
-    background-size: contain;
-    margin-top: 1px; }
-  #signup label.radio-button input[type="radio"] {
-    position: absolute;
-    left: -999999px; }
-  #signup label.radio-button input[type="radio"]:focus + span:after {
-    border-color: #66afe9;
-    outline: 0;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }
-  #signup label.radio-button input[type="radio"] + span {
-    position: relative; }
-    #signup label.radio-button input[type="radio"] + span:after {
-      content: "";
-      position: absolute;
-      top: -7px;
-      right: -13px;
-      border: 2px solid #ccc;
-      border-radius: 50%;
-      background: none;
-      background-image: none;
-      height: 34px;
-      width: 34px;
-      -webkit-transition: background-image 0.9s ease;
-      transition: background-image 0.9s ease; }
-  #signup label.radio-button input[type="radio"]:checked + span:after {
-    background: #ccc; }
-  #signup .table td {
-    padding-left: 2px;
-    padding-right: 5px;
-    border: 1px solid #f00;
-    margin-left: -25px; }
-    #signup .table td:first-of-type {
-      padding-right: 15px;
-      white-space: nowrap; }
-    #signup .table td.error-column {
-      padding: 0;
-      padding-top: 3px;
-      padding-bottom: 3px;
-      height: 17px; }
-  #signup .table-v-content-middle td {
-    vertical-align: middle; }
+#signup .has-error {
+  color: #f00;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 370px;
+  display: inline-block; }
+
+#signup .btn-radius-padding-left {
+  padding-left: 25px !important; }
+
+#signup .btn-radius-text {
+  font-size: 16px !important;
+  padding-right: 30px; }
+
+#signup .singup-btn-size {
+  height: 45px; }
+
+#signup .form-control {
+  border-width: 2px;
+  height: 40px;
+  border-radius: 0; }
+
+#signup .checkbox-signup {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 8px;
+  padding-left: 9px;
+  font-size: 13px; }
+
+#signup input[class=checkbox-login] {
+  display: none; }
+
+#signup input[class=checkbox-login] + label {
+  background: url("/icons/login_checkbox.jpeg") no-repeat;
+  height: 22px;
+  width: 22px;
+  margin-top: 1px;
+  margin-left: 0;
+  margin-bottom: 0;
+  background-size: contain; }
+
+#signup input[class=checkbox-login]:checked + label {
+  background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
+  height: 22px;
+  width: 22px;
+  background-size: contain;
+  margin-top: 1px; }
+
+#signup .table td {
+  padding-left: 2px;
+  padding-right: 5px;
+  border: 1px solid #f00;
+  margin-left: -25px; }
+  #signup .table td:first-of-type {
+    padding-right: 15px;
+    white-space: nowrap; }
+  #signup .table td.error-column {
+    padding: 0;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    height: 17px; }
+
+#signup .table-v-content-middle td {
+  vertical-align: middle; }
 
 .main-welcome .welcome {
   width: 40%;
