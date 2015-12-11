@@ -4,6 +4,7 @@ var fs = require('fs');
 var sizeOf = require('image-size');
 var multer = require('multer');
 var async = require('async');
+var _ = require('lodash');
 var TemplateBanner = require('./../models').TemplateBanner;
 
 const MEGABYTE = 1024*1024;
@@ -38,35 +39,32 @@ function write(files, callback) {
     return callback('No files selected or not an image');
   }
 
-  let size = Object.keys(files).length,
-      array = [];
+  let errors = {},
+      results = {};
 
-  async.forEachOf(files, function (value, filename, callback) {
-    let file = value[0],
-        errors = validate(filename, file);
-
-    if(errors) {
-      fs.unlink(file.path);
-      callback(errors);
-    }
-    else {
-      fs.rename(file.path, newFilePath(file));
-      createOrUpdate({ page: filename, filepath: 'banners/' + file.originalname }, function (error, result) {
-        if(error) {
-          callback(error);
-        }
-        else {
-          array.push(result);
-          callback();
-        }
-      });
-    }
-  }, function (err) {
+  async.forEachOf(files, function (value, filename, cb) {
+    let file = value[0];
+    eachFile(file, filename, function(err, result) {
+      if(err) {
+        errors[filename] = err[filename];
+      }
+      else {
+        results[filename] = result;
+      }
+      cb();
+    });
+  }, function(err) {
     if(err) {
       callback(err);
     }
-    else if(array.length == size) {
-      callback(null, 'Successfully uploaded banner', array);
+    else {
+      if(_.isEmpty(errors)) {
+        callback(null, 'Successfully uploaded banner.');
+      }
+      else {
+        errors.message = 'Something went wrong with some of the banners.';
+        callback(errors);
+      }
     }
   });
 }
@@ -110,7 +108,7 @@ function uploadFields() {
     }
   })
   let fileFilter = function (req, file, cb) {
-    cb(null, !(VALIDATIONS.fileTypes.indexOf(file.mimetype) == -1)); // filters file type
+    cb(null, isValidFileType(file.mimetype)); // filters file type
   }
 
   let upload = multer({ storage: storage, limits: { fieldSize: VALIDATIONS.maxSize * MEGABYTE }, fileFilter: fileFilter });
@@ -166,21 +164,28 @@ function createOrUpdate(params, callback) {
   });
 }
 
-function validate(type, file) {
+function validate(type, file, callback) {
   let error = {};
 
-  if(file.size > VALIDATIONS.maxSize * MEGABYTE)
-  {
+  if(file.size > (VALIDATIONS.maxSize * MEGABYTE)) {
     error[type] = 'This file is too big. Allowed size is ' + VALIDATIONS.maxSize + 'MB.';
-    return error;
+    return callback(error);
   }
 
-  let image_size = sizeOf(file.path);
-  if(image_size.width > VALIDATIONS.maxWidth || image_size.height > VALIDATIONS.maxHeight)
-  {
-    error[type] = 'File size is out of range. Allowed size is ' + VALIDATIONS.maxWidth + 'x' + VALIDATIONS.maxHeight + 'px.';
-    return error;
-  }
+  sizeOf(file.path, function(err, dimensions) {
+    if(err) {
+      error[type] = 'Only image files are allowed - ' + allowedImageTypes() + '.';
+      return callback(error);
+    }
+
+    if((dimensions.width > VALIDATIONS.maxWidth) || (dimensions.height > VALIDATIONS.maxHeight)) {
+      error[type] = 'File size is out of range. Allowed size is ' + VALIDATIONS.maxWidth + 'x' + VALIDATIONS.maxHeight + 'px.';
+      callback(error);
+    }
+    else {
+      callback(null);
+    }
+  });
 }
 
 function mapJson(array) {
@@ -191,6 +196,33 @@ function mapJson(array) {
   };
 
   return json;
+}
+
+function isValidFileType(type) {
+  return (VALIDATIONS.fileTypes.indexOf(type) > -1);
+}
+
+function allowedImageTypes() {
+  let array = [];
+  for(let i=0; i < VALIDATIONS.fileTypes.length; i++) {
+   array[i] = VALIDATIONS.fileTypes[i].replace(/image\//g, ' ');
+  }
+  return array;
+}
+
+function eachFile(file, filename, callback) {
+  validate(filename, file, function(err) {
+    if(err) {
+      fs.unlink(file.path);
+      callback(err);
+    }
+    else {
+      fs.rename(file.path, newFilePath(file));
+      createOrUpdate({ page: filename, filepath: 'banners/' + file.originalname }, function(error, result) {
+        callback(error, result);
+      });
+    }
+  });
 }
 
 module.exports = {
