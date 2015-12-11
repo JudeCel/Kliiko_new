@@ -201,6 +201,13 @@
       border-radius: 0px;
       color: $grey;
     }
+
+    a.accordion-toggle {
+      text-decoration: none;
+
+      &:hover { text-decoration: none }
+    }
+
     .panel-title {
       font-size: 2rem;
       text-align: left;
@@ -285,8 +292,6 @@
     }
 
 
-
-
   }
 
 
@@ -316,6 +321,9 @@
       border-color: $red;
     }
   }
+
+
+  @import "./steps/step2";
 
 }
 

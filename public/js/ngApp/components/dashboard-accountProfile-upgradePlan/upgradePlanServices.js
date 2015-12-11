@@ -6,8 +6,9 @@
     function upgradePlanServices($q,globalSettings, $resource, dbg) {
 
         var upgradePlanRestApi = {
-            getAllCountries: $resource(globalSettings.restUrl+'/country-data', {}, {post: {method: 'POST'} }),
-            getAllCurrencies: $resource(globalSettings.restUrl+'/country-data/currencies', {}, {post: {method: 'POST'} })
+            getAllCountries: $resource(globalSettings.restUrl+'/country-and-currency-data/countries', {}, {post: {method: 'POST'} }),
+            getAllCurrencies: $resource(globalSettings.restUrl+'/country-and-currency-data/currencies', {}, {post: {method: 'POST'} }),
+            getPlans: $resource(globalSettings.restUrl+'/plans', {}, {post: {method: 'POST'} })
         };
 
         var cache = {};
@@ -15,9 +16,7 @@
 
         upServices.getAllCountriesList = getAllCountriesList;
         upServices.getAllCurrenciesList = getAllCurrenciesList;
-
-
-
+        upServices.getPlans = getPlans;
 
         return upServices;
 
@@ -55,6 +54,26 @@
                 dbg.log2('#upgradePlanServices > getAllCurrenciesList > rest call responds');
                 deferred.resolve(res);
                 cache.allCurrencies = res;
+            });
+
+            return deferred.promise;
+
+        }
+
+        function getPlans() {
+            var deferred = $q.defer();
+
+            if (cache.allCurrencies) {
+                deferred.resolve(cache.getPlans);
+                dbg.log2('#upgradePlanServices > getPlans > return cached value');
+                return deferred.promise;
+            }
+
+            dbg.log2('#upgradePlanServices > getPlans > make rest call');
+            upgradePlanRestApi.getPlans.get({}, function(res) {
+                dbg.log2('#upgradePlanServices > getPlans > rest call responds');
+                deferred.resolve(res);
+                cache.getPlans = res;
             });
 
             return deferred.promise;

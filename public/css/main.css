@@ -754,6 +754,10 @@ footer {
   #upgrade-plan-content #plansModal .panel {
     border-radius: 0px;
     color: #58595b; }
+  #upgrade-plan-content #plansModal a.accordion-toggle {
+    text-decoration: none; }
+    #upgrade-plan-content #plansModal a.accordion-toggle:hover {
+      text-decoration: none; }
   #upgrade-plan-content #plansModal .panel-title {
     font-size: 2rem;
     text-align: left;
@@ -832,3 +836,29 @@ footer {
   margin-top: 20px;
   color: #E51D39;
   border-color: #E51D39; }
+
+#upgrade-plan-content #step-2 .panel-title {
+  font-size: 2rem;
+  text-align: left;
+  color: #58595b; }
+
+#upgrade-plan-content #step-2 a.accordion-toggle {
+  text-decoration: none; }
+  #upgrade-plan-content #step-2 a.accordion-toggle:hover {
+    text-decoration: none; }
+
+#upgrade-plan-content #step-2 .panel-heading {
+  border: none; }
+  #upgrade-plan-content #step-2 .panel-heading:hover {
+    color: #2F9F69;
+    background: #A5DAA4; }
+
+#upgrade-plan-content #step-2 .panel-label {
+  font-size: 2rem;
+  text-align: left;
+  color: #58595b; }
+
+#upgrade-plan-content #step-2 .panel-body p {
+  font-size: 1.9rem;
+  text-align: left;
+  color: #58595b; }

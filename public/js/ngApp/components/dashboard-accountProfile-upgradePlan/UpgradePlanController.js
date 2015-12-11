@@ -21,6 +21,23 @@
         vm.upgradeToPlan = upgradeToPlan;
         vm.applyCountryAndCurrency = applyCountryAndCurrency;
 
+        init();
+
+        function init() {
+            upgradePlanServices.getPlans().then(function(res) { vm.plans = res });
+            upgradePlanServices.getAllCountriesList().then(function(res) {
+                dbg.log2('#UpgradePlanController > getAllCountriesList > res ', res);
+                vm.countries = res.all;
+
+                // then go and get currencies
+                dbg.log2('#UpgradePlanController > getAllCurrenciesList > call');
+                upgradePlanServices.getAllCurrenciesList().then(function(res) {
+                    vm.currencies = res;
+                    dbg.log2('#UpgradePlanController > getAllCurrenciesList > res ', res);
+                });
+
+            });
+        }
 
         /**
          * Open plan upgrade modal with particular plan information
@@ -40,6 +57,8 @@
         function upgradeToPlan(plan) {
             dbg.log('#UpgradePlanController > Upgrade to plan >', plan);
 
+            vm.selectedPlanName = plan;
+
             domServices.modal('plansModal', 'close');
 
 
@@ -55,9 +74,7 @@
                 dbg.log2('#UpgradePlanController > getAllCurrenciesList > call');
                 upgradePlanServices.getAllCurrenciesList().then(function(res) {
                     //remove 'all' array and show only popular
-                    var tmp = res;
-                    delete tmp.all;
-                    vm.currencies = tmp;
+                    vm.currencies = res;
                     vm.selectedCurrency = vm.currencies[vm.selectedCountry.currencies[0]];
 
                     dbg.log2('#UpgradePlanController > getAllCurrenciesList > res ', res);

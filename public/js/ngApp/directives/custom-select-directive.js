@@ -29,3 +29,10 @@ function customSelectDirective() {
     }
 
 }
+
+
+//<div custom-select-directive selectedValue="up.selectedCountry">
+//    <div class="ncs-content-item"
+//ng-repeat="country in up.countries"
+//ng-click="up.ncsCountrySelect = !up.ncsCountrySelect; up.selectedCountry=country"> {{country.name}}</div>
+//</div>

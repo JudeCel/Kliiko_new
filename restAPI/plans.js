@@ -1,17 +1,28 @@
-var countryData  = require('country-data');
+/**
+ * Work with plans
+ * GET /plans
+ *
+ * @type {exports|module.exports}
+ */
+
+var plans = {
+    'single': {price: 180 },
+    'monthly': {price: 50 },
+    'annual': {price: 550 }
+};
 
 
 module.exports = function(app,restUrl) {
-    var restUrl = restUrl+'/country-data';
+    var restUrl = restUrl+'/plans';
 
     /**
-     * GET all countries data
+     * GET all plans data
      */
     app.get(restUrl, function (req, res) {
         req.user ? proceed() : notAuthExit(res);
 
         function proceed() {
-            res.send(countryData.countries);
+            res.send(plans);
         }
 
     });

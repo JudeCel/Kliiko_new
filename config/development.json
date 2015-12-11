@@ -29,5 +29,6 @@
   "facebookCallbackURL": "http://insider.focus.com:3000/auth/facebook/callback",
   "googleClientID": "423827252082-4ha7t8h1o0j1r2edfkcn15jkmsn57tp3.apps.googleusercontent.com",
   "googleClientSecret": "hpT37ABiJ3rxxIDw96idBuBP",
-  "googleCallbackURL": "http://insider.focus.com:3000/auth/google/callback"
+  "googleCallbackURL": "http://insider.focus.com:3000/auth/google/callback",
+  "openexchangeratesAppId": "fc9b3ecd71274202a9f7935766e449a1"
 }
