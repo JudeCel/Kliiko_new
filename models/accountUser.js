@@ -6,7 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
     owner: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false},
     role: {type: DataTypes.ENUM, allowNull: false,
       values: ["admin", "accountManager", "facilitator", "observer", "participant"],
-  }
+    }
   },{
       classMethods: {
         associate: function(models) {
