@@ -12,6 +12,7 @@ module.exports = (Sequelize, DataTypes) => {
     mobileNumber: {type: DataTypes.STRING, allowNull: true },
     landlineNumber: {type: DataTypes.STRING, allowNull: true },
     companyName: {type: DataTypes.STRING, allowNull: true },
+    comment: {type: DataTypes.TEXT, allowNull: true },
     email: {type: DataTypes.STRING, allowNull: true,
       validate:{
       validateEmail: function(val, next) {

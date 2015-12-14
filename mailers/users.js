@@ -7,6 +7,29 @@ var users = exports;
 var mailFrom = helpers.mailFrom();
 var transporter = helpers.createTransport();
 
+users.sendReactivateOrDeactivate = function(params, callback){
+  let reactivatedorDeactivated = null;
+  let account = { name: params.Account.name, active: params.active }
+  helpers.renderMailTemplate('reactivateOrDeactivate', account, function(err, html){
+    if (err) {
+      return callback(err);
+    }
+
+    if (params.active) {
+      reactivatedorDeactivated = "Reactivated";
+    }else{
+      reactivatedorDeactivated = "Deactivated";
+    }
+
+    transporter.sendMail({
+      from: mailFrom,
+      to: params.User.email,
+      subject: reactivatedorDeactivated,
+      html: html
+    }, callback);
+  });
+};
+
 users.sendResetPasswordToken = function(params, callback) {
   let resetPasswordPath = '/resetpassword/';
   let link = { url: helpers.getUrl(params.token, resetPasswordPath)};
