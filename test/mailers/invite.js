@@ -7,7 +7,7 @@ describe('MAILERS - Invite ', () => {
   describe('sendInviteAccountManager ', () => {
     let email = 'testeEmail@gmail.com';
     let token = '56b429319232ba613b76749988de4555';
-    let params = { User: { email: email }, token: token };
+    let params = { email: email, token: token };
 
     it('content', (done) =>  {
       inviteMailers.sendInviteAccountManager(params, function(error, result) {

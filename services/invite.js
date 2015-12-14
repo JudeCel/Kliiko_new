@@ -13,7 +13,7 @@ const EXPIRE_AFTER_DAYS = 5;
 
 function createInvite(params, sendEmail, callback) {
   let token = uuid.v1();
-  var expireDate = new Date();
+  let expireDate = new Date();
   expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
 
   Invite.create({
@@ -27,7 +27,8 @@ function createInvite(params, sendEmail, callback) {
   }).then(function(result) {
     Invite.find({ include: [ User, Account ], where: { token: token } }).then(function(invite) {
       if(sendEmail) {
-        inviteMailer.sendInviteAccountManager(invite, function(error) {
+        let inviteParams = { token: invite.token, email: invite.User.email };
+        inviteMailer.sendInviteAccountManager(inviteParams, function(error) {
           callback(error, invite);
         });
       }
@@ -47,7 +48,7 @@ function removeInvite(invite, callback) {
         accounts[0].AccountUser.destroy().then(function() {
           accounts[0].destroy().then(function() {
             user.destroy().then(function() {
-              callback(null);
+              callback(null, true);
             });
           });
         }).catch(function(err) {
@@ -60,7 +61,7 @@ function removeInvite(invite, callback) {
   }
   else {
     Invite.destroy({ where: { userId: invite.userId, accountId: invite.accountId } }).then(function() {
-      callback(null);
+      callback(null, true);
     }).catch(function(err) {
       callback(err);
     });
@@ -139,7 +140,7 @@ function createAccountAndUser(invite, params, callback) {
 
 function updateUser(params, invite, callback) {
   User.update(params, { where: { id: invite.userId } }).then(function(result) {
-    callback(null);
+    callback(null, true);
   }).catch(function(err) {
     callback(err);
   });
@@ -154,7 +155,7 @@ function updateAccount(accountName, invite, callback) {
   }).then(function(account) {
     if(account) {
       account.update({ name: accountName }).then(function(result) {
-        callback(null);
+        callback(null, true);
       });
     }
     else {

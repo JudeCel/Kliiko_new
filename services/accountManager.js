@@ -62,34 +62,38 @@ function removeInviteOrAccountUser(req, callback) {
       userId = req.params.id,
       type = req.params.type;
 
-  if(type == 'invite') {
-    Invite.find({
-      where: {
-        userId: userId,
-        accountId: currentUser.accountOwnerId
-      }
-    }).then(function(invite) {
-      inviteService.removeInvite(invite, function(err) {
-        callback(err, 'Successfully removed Invite');
-      });
-    });
-  }
-  else if(type == 'account') {
-    AccountUser.find({
-      where: {
-        UserId: userId,
-        AccountId: currentUser.accountOwnerId
-      }
-    }).then(function(result) {
-      if(result) {
-        result.destroy().then(function() {
-          callback(null, 'Successfully removed account from Account List');
+  switch(type) {
+    case 'invite': {
+      Invite.find({
+        where: {
+          userId: userId,
+          accountId: currentUser.accountOwnerId
+        }
+      }).then(function(invite) {
+        inviteService.removeInvite(invite, function(err) {
+          callback(err, 'Successfully removed Invite');
         });
-      }
-      else {
-        callback('Account not found or your are not owner');
-      }
-    });
+      });
+      break;
+    }
+    case 'account': {
+      AccountUser.find({
+        where: {
+          UserId: userId,
+          AccountId: currentUser.accountOwnerId
+        }
+      }).then(function(result) {
+        if(result) {
+          result.destroy().then(function() {
+            callback(null, 'Successfully removed account from Account List');
+          });
+        }
+        else {
+          callback('Account not found or your are not owner');
+        }
+      });
+      break;
+    }
   }
 };
 

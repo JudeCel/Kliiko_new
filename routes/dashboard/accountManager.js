@@ -5,32 +5,33 @@ var inviteService = require('../../services/invite');
 var _ = require('lodash');
 
 function views_path(action) {
-  return 'dashboard/' + action;
+  return 'dashboard/accountManager/' + action;
 };
 
 function index(req, res, next) {
   accountManagerService.findAccountManagers(req.user, function(error, users) {
-    res.render(views_path('accountManager'), { title: 'Account Managers', users: users, message: req.flash('message')[0] });
+    res.render(views_path('index'), { title: 'Account Managers', users: users, message: req.flash('message')[0] });
   });
 };
 
 function manage(req, res, next) {
-  res.render(views_path('accountManager/manage'), simpleParams({}, {}, ''));
+  res.render(views_path('manage'), simpleParams({}, {}, ''));
 };
 
 function create(req, res, next) {
   accountManagerService.createOrFindUser(req, function(error, params) {
     if(error) {
-      return res.render(views_path('accountManager/manage'), simpleParams(req.body, error));
+      return res.render(views_path('manage'), simpleParams(req.body, error));
     }
 
-    inviteService.createInvite(params, true, function(error, invite) {
+    let sendEmail = true;
+    inviteService.createInvite(params, sendEmail, function(error, invite) {
       if(error) {
-        res.render(views_path('accountManager/manage'), simpleParams(req.body, error));
+        res.render(views_path('manage'), simpleParams(req.body, error));
       }
       else {
         req.flash('message', 'Successfully sent invite.');
-        res.redirect('../accountmanager');
+        res.redirect('../accountManager');
       }
     });
   });

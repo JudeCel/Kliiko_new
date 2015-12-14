@@ -41,19 +41,23 @@ function acceptGet(req, res, next) {
       return res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
     }
 
-    if(invite.userType == 'existing') {
-      inviteService.acceptInviteExisting(invite, function(error, message) {
-        if(error) {
-          res.render(views_path('index'), simpleParams('Invite', invite, error));
-        }
-        else {
-          req.flash('message', message);
-          res.redirect('/login');
-        }
-      });
-    }
-    else {
-      res.render(views_path('accept'), simpleParams('Accept Invite', invite));
+    switch(invite.userType) {
+      case 'existing': {
+        inviteService.acceptInviteExisting(invite, function(error, message) {
+          if(error) {
+            res.render(views_path('index'), simpleParams('Invite', invite, error));
+          }
+          else {
+            req.flash('message', message);
+            res.redirect('/login');
+          }
+        });
+        break;
+      }
+      case 'new': {
+        res.render(views_path('accept'), simpleParams('Accept Invite', invite));
+        break;
+      }
     }
   });
 };
@@ -64,19 +68,23 @@ function acceptPost(req, res, next) {
       return res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
     }
 
-    if(invite.userType == 'new') {
-      inviteService.acceptInviteNew(invite, req.body, function(error, message) {
-        if(error) {
-          res.render(views_path('accept'), simpleParams('Invite', invite, error));
-        }
-        else {
-          req.flash('message', message);
-          res.redirect('/login');
-        }
-      });
-    }
-    else {
-      res.render(views_path('notFound'), simpleParams('Invite not found', invite));
+    switch(invite.userType) {
+      case 'existing': {
+        res.render(views_path('notFound'), simpleParams('Invite not found', invite));
+        break;
+      }
+      case 'new': {
+        inviteService.acceptInviteNew(invite, req.body, function(error, message) {
+          if(error) {
+            res.render(views_path('accept'), simpleParams('Invite', invite, error));
+          }
+          else {
+            req.flash('message', message);
+            res.redirect('/login');
+          }
+        });
+        break;
+      }
     }
   });
 };
