@@ -85,7 +85,6 @@ function simpleParams(title, invite, error, message) {
   return { title: title, invite: invite, error: error, message: message || '' };
 };
 
-// module.exports = router;
 module.exports = {
   index: index,
   decline: decline,
