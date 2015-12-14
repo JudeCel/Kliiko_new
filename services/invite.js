@@ -27,8 +27,8 @@ function createInvite(params, sendEmail, callback) {
   }).then(function(result) {
     Invite.find({ include: [ User, Account ], where: { token: token } }).then(function(invite) {
       if(sendEmail) {
-        sendEmailToUser(invite, function(err) {
-          callback(err, invite);
+        inviteMailer.sendInviteAccountManager(invite, function(error) {
+          callback(error, invite);
         });
       }
       else {
@@ -38,7 +38,7 @@ function createInvite(params, sendEmail, callback) {
   }).catch(function(error) {
     callback(error);
   });
-}
+};
 
 function removeInvite(invite, callback) {
   if(invite.userType == 'new') {
@@ -65,7 +65,7 @@ function removeInvite(invite, callback) {
       callback(err);
     });
   }
-}
+};
 
 function findInvite(token, callback) {
   Invite.find({ include: [ User, Account ], where: { token: token } }).then(function(result) {
@@ -76,13 +76,13 @@ function findInvite(token, callback) {
       callback('Invite not found');
     }
   });
-}
+};
 
 function declineInvite(invite, callback) {
   removeInvite(invite, function(err) {
     callback(err, 'Successfully declined invite');
   });
-}
+};
 
 function acceptInviteExisting(invite, callback) {
   updateUser({ status: 'accepted' }, invite, function(error) {
@@ -95,7 +95,7 @@ function acceptInviteExisting(invite, callback) {
       });
     }
   });
-}
+};
 
 function acceptInviteNew(invite, params, callback) {
   createAccountAndUser(invite, params, function(error) {
@@ -108,7 +108,7 @@ function acceptInviteNew(invite, params, callback) {
       });
     }
   });
-}
+};
 
 //Helpers
 function createAccountUserFromInvite(invite, callback) {
@@ -122,7 +122,7 @@ function createAccountUserFromInvite(invite, callback) {
       callback("Can't add account");
     }
   });
-}
+};
 
 function createAccountAndUser(invite, params, callback) {
   updateAccount(params.accountName, invite, function(error) {
@@ -135,7 +135,7 @@ function createAccountAndUser(invite, params, callback) {
       });
     }
   });
-}
+};
 
 function updateUser(params, invite, callback) {
   User.update(params, { where: { id: invite.userId } }).then(function(result) {
@@ -143,7 +143,7 @@ function updateUser(params, invite, callback) {
   }).catch(function(err) {
     callback(err);
   });
-}
+};
 
 function updateAccount(accountName, invite, callback) {
   Account.find({
@@ -163,30 +163,7 @@ function updateAccount(accountName, invite, callback) {
   }).catch(function(error) {
     callback(error);
   });
-}
-
-function sendEmailToUser(invite, callback) {
-  if(invite.userType == 'existing') {
-    inviteMailer.sendInviteNewUserToAccount(invite, function(error) {
-      if(error) {
-        callback(error)
-      }
-      else {
-        callback(null);
-      }
-    });
-  }
-  else {
-    inviteMailer.sendInviteNewUserToAccount(invite, function(error) {
-      if(error) {
-        callback(error)
-      }
-      else {
-        callback(null);
-      }
-    });
-  }
-}
+};
 
 module.exports = {
   createInvite: createInvite,
@@ -195,4 +172,4 @@ module.exports = {
   acceptInviteExisting: acceptInviteExisting,
   acceptInviteNew: acceptInviteNew,
   declineInvite: declineInvite
-}
+};

@@ -6,7 +6,7 @@ var helpers = require('./helpers');
 var mailFrom = helpers.mailFrom();
 var transporter = helpers.createTransport();
 
-function sendInviteNewUserToAccount(invite, callback) {
+function sendInviteAccountManager(invite, callback) {
   let links = {
     url: helpers.getUrl(invite.token, '/invite/')
   };
@@ -26,5 +26,5 @@ function sendInviteNewUserToAccount(invite, callback) {
 };
 
 module.exports = {
-  sendInviteNewUserToAccount: sendInviteNewUserToAccount
+  sendInviteAccountManager: sendInviteAccountManager
 };

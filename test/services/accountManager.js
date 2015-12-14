@@ -285,13 +285,4 @@ describe('SERVICE - AccountManager', function() {
       });
     });
   });
-
-  describe('#simpleParams', function() {
-    it('should return params', function (done) {
-      let params = { title: 'Manage Account Managers', error: { message: 'some error' }, message: 'some message', account: { id: 3 } };
-      assert.deepEqual(accountManagerService.simpleParams({ message: 'some error' }, 'some message', { id: 3 }), params);
-      done();
-    });
-  });
-
 });

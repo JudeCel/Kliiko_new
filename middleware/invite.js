@@ -20,10 +20,29 @@ function index(req, res) {
 function decline(req, res) {
   inviteService.findInvite(req.params.token, function(error, invite) {
     if(error) {
-      res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
+      return res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
     }
-    else {
-      inviteService.declineInvite(invite, function(error, message) {
+
+    inviteService.declineInvite(invite, function(error, message) {
+      if(error) {
+        res.render(views_path('index'), simpleParams('Invite', invite, error));
+      }
+      else {
+        req.flash('message', message);
+        res.redirect('/login');
+      }
+    });
+  });
+}
+
+function acceptGet(req, res) {
+  inviteService.findInvite(req.params.token, function(error, invite) {
+    if(error) {
+      return res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
+    }
+
+    if(invite.userType == 'existing') {
+      inviteService.acceptInviteExisting(invite, function(error, message) {
         if(error) {
           res.render(views_path('index'), simpleParams('Invite', invite, error));
         }
@@ -33,29 +52,8 @@ function decline(req, res) {
         }
       });
     }
-  });
-}
-
-function acceptGet(req, res) {
-  inviteService.findInvite(req.params.token, function(error, invite) {
-    if(error) {
-      res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
-    }
     else {
-      if(invite.userType == 'existing') {
-        inviteService.acceptInviteExisting(invite, function(error, message) {
-          if(error) {
-            res.render(views_path('index'), simpleParams('Invite', invite, error));
-          }
-          else {
-            req.flash('message', message);
-            res.redirect('/login');
-          }
-        });
-      }
-      else {
-        res.render(views_path('accept'), simpleParams('Accept Invite', invite));
-      }
+      res.render(views_path('accept'), simpleParams('Accept Invite', invite));
     }
   });
 }
@@ -63,23 +61,22 @@ function acceptGet(req, res) {
 function acceptPost(req, res) {
   inviteService.findInvite(req.params.token, function(error, invite) {
     if(error) {
-      res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
+      return res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
+    }
+
+    if(invite.userType == 'new') {
+      inviteService.acceptInviteNew(invite, req.body, function(error, message) {
+        if(error) {
+          res.render(views_path('accept'), simpleParams('Invite', invite, error));
+        }
+        else {
+          req.flash('message', message);
+          res.redirect('/login');
+        }
+      });
     }
     else {
-      if(invite.userType == 'new') {
-        inviteService.acceptInviteNew(invite, req.body, function(error, message) {
-          if(error) {
-            res.render(views_path('accept'), simpleParams('Invite', invite, error));
-          }
-          else {
-            req.flash('message', message);
-            res.redirect('/login');
-          }
-        });
-      }
-      else {
-        res.render(views_path('notFound'), simpleParams('Invite not found', invite));
-      }
+      res.render(views_path('notFound'), simpleParams('Invite not found', invite));
     }
   });
 }
