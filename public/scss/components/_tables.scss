@@ -18,6 +18,9 @@
 
 .table-accountManager > tbody {
   background-color: $light-grey;
+  .accountManagerEditRemove {
+    min-width: 15%;
+  }
 }
 
 .table-accountManager > thead > tr > th,
@@ -25,4 +28,7 @@
   padding-top: 16px;
   padding-bottom: 16px;
   border: 0;
+  @media (min-width: 768px) {
+    padding-left: 32px;
+  };
 }

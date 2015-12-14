@@ -134,12 +134,18 @@
 
 .table-accountManager > tbody {
   background-color: #E8EAED; }
+  .table-accountManager > tbody .accountManagerEditRemove {
+    min-width: 15%; }
 
 .table-accountManager > thead > tr > th,
 .table-accountManager > tbody > tr > td {
   padding-top: 16px;
   padding-bottom: 16px;
   border: 0; }
+  @media (min-width: 768px) {
+    .table-accountManager > thead > tr > th,
+    .table-accountManager > tbody > tr > td {
+      padding-left: 32px; } }
 
 @font-face {
   font-family: SourceSansPro-Black;

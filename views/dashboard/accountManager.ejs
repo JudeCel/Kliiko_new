@@ -19,9 +19,8 @@
         </div>
         <div class='col-md-3'>
           <div class='row text-center'>
-            <a href='accountmanager/manage' class='btn btn-addNewAccountManager'>
-              Add New Account Manager
-            </a>
+            <!-- <a href='#' class='btn btn-addNewAccountManager' data-toggle='modal' data-target='#addAccountManager'>Add New Account Manager</a> -->
+            <a href='accountmanager/manage' class="btn btn-addNewAccountManager">Add New Account Manager</a>
           </div>
         </div>
         <div class='col-xs-12 col-sm-12 col-md-12'>
@@ -47,11 +46,14 @@
                     <td><%= users[i].email %></td>
                     <td><%= users[i].mobile %></td>
                     <td><%= users[i].status %></td>
+                    <td class="text-right accountManagerEditRemove">
+                      <img src="/icons/accountManager_edit.png" alt="" />
                     <% if(users[i].Invites) { %>
-                      <td><a href="accountmanager/remove/invite/<%= users[i].id %>">Remove</a></td>
+                      <a href="accountmanager/remove/invite/<%= users[i].id %>"><img src="/icons/accountManager_remove.png" alt="" /></a>
                     <% } else if(users[i].Accounts) { %>
-                      <td><a href="accountmanager/remove/account/<%= users[i].id %>">Remove</a></td>
+                      <a href="accountmanager/remove/account/<%= users[i].id %>"><img src="/icons/accountManager_remove.png" alt="" /></a>
                     <% } %>
+                    </td>
                   </tr>
                 <% } %>
               </tbody>
@@ -62,5 +64,5 @@
     </div>
   </div>
 </main>
-
+<% include _addAccountManager %>
 <% include ../footer %>

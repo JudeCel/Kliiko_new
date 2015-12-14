@@ -1,0 +1,212 @@
+<div class='modal fade' id='addAccountManager' role='dialog'>
+  <div class='modal-dialog contactDetailsModal'>
+    <div class='modal-content border-red border-radius-none'>
+      <div class='modal-header'>
+        <button type='button' class='close' data-dismiss='modal'>&times;</button>
+        <h2 class='modal-title text-center'>Contact Details</h2>
+      </div>
+      <div class='modal-body'>
+          <form method="post" action="/dashboard/accountManager/manage" id="addAccountManagerForm">
+            <div class="form-group">
+              <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
+                <tr>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  <div class="text-red-dark"> * <i>Required</i> </div>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label class="text-no-bold text-login-page" for="firstName">First name</label>
+                  </td>
+                  <td>
+                    <input type="text" value="" class="form-control" name="firstName" id="first_name" placeholder="First name">
+                  </td>
+                  <td  class="text-red-dark">
+                      *
+                  </td>
+                  <td>
+                    <label class="text-no-bold text-login-page" for="firstName">
+                      Postal
+                      <br>
+                      Address
+                    </label>
+                  </td>
+                  <td>
+                    <input type="text" value="" class="form-control" name="firstName" id="first_name" placeholder="Postal Address">
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td class="error-column">
+                    <span class="has-error"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label class="text-no-bold text-login-page" for="lastName">Last name</label>
+                  </td>
+                  <td>
+                    <input type="text" value="" class="form-control" name="lastName" id="last_name" placeholder="Last name">
+                  </td>
+                  <td  class="text-red-dark">
+                    *
+                  </td>
+                  <td>
+                      <label class="text-no-bold text-login-page" for="lastName">City</label>
+                  </td>
+                  <td>
+                    <input type="text" value="" class="form-control" name="lastName" id="last_name" placeholder="City">
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td class="error-column">
+                    <span class="has-error"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label class="text-no-bold text-login-page" for="email">Email</label>
+                  </td>
+                  <td>
+                    <input type="email" value="" class="form-control" name="email" id="email" placeholder="Email">
+                  </td>
+                  <td  class="text-red-dark">
+                    *
+                  </td>
+                  <td>
+                    <label class="text-no-bold text-login-page" for="email">State</label>
+                  </td>
+                  <td>
+                    <input type="email" value="" class="form-control" name="email" id="email" placeholder="State">
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td class="error-column">
+                    <span class="has-error"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label class="text-no-bold text-login-page" for="gender">Gender</label>
+                  </td>
+                  <td>
+                    <label for="gender_male" class="radio-button">
+
+                      <%  var gender = "male"
+                      if(gender === "male"){ %>
+                         <input type="radio" name="gender" value="male" id="gender_male" checked>
+                      <% } else{ %>
+                         <input type="radio" name="gender" value="male" id="gender_male">
+                      <% } %>
+                      <span class="checkbox-signup btn-radius-text">Male</span>
+                    </label>
+
+                    <label for="gender_female" class="radio-button">
+
+                      <% var gender = "male"
+                       if(gender === "female"){ %>
+                         <input type="radio" name="gender" value="female" id="gender_female" checked>
+                      <% } else{ %>
+                         <input type="radio" name="gender" value="female" id="gender_female">
+                      <% } %>
+                      <span class="checkbox-signup btn-radius-text btn-radius-padding-left">Female</span>
+                    </label>
+                  </td>
+                  <td  class="text-red-dark">
+                    *
+                  </td>
+                  <td>
+                    <label class="text-no-bold text-login-page" for="email">Postcode</label>
+                  </td>
+                  <td>
+                    <input type="tel" value="" class="form-control" id="mobile" name="mobile" placeholder="Postcode">
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td class="error-column">
+                    <span class="has-error"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label class="text-no-bold text-login-page" for="mobile">
+                      Mobile
+                      <br>
+                      Number
+                    </label>
+                  </td>
+                  <td>
+                    <input type="tel" value="" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number">
+                  </td>
+                  <td  class="text-red-dark">
+                    *
+                  </td>
+                  <td>
+                    <label class="text-no-bold text-login-page" for="email">Country</label>
+                  </td>
+                  <td>
+                    <input type="tel" value="" class="form-control" id="mobile" name="mobile" placeholder="Country">
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td class="error-column">
+                    <span class="has-error"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label class="text-no-bold text-login-page" for="LandlineNumber">
+                      Landline
+                      <br>
+                      Number
+                    </label>
+                  </td>
+                  <td>
+                    <input type="text" value="" class="form-control" name="landlineNumber" id="landline_number" placeholder="LandlineNumber">
+                  </td>
+                  <td  class="text-red-dark">
+                    *
+                  </td>
+                  <td>
+                    <label class="text-no-bold text-login-page" for="LandlineNumber">
+                      Company
+                      <br>
+                      Name
+                    </label>
+                  </td>
+                  <td>
+                    <input type="text" value="" class="form-control" name="landlineNumber" id="landline_number" placeholder="Company Name">
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td class="error-column">
+                    <span class="has-error"></span>
+                  </td>
+                </tr>
+              </table>
+              <div class="row">
+                <div class="col-md-12">
+                  <button type='button' class="btn border-red text-red-dark border-radius-none background-transp pull-right btn-md" data-dismiss='modal'>Close</button>
+                  <button type='button' class="btn border-red text-red-dark border-radius-none background-transp pull-right btn-md" id='addAccountManagerButton'>Invite</button>
+                </div>
+              </div>
+            </div>
+          </form>
+
+      </div>
+    </div>
+  </div>
+</div>
