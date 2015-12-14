@@ -75,7 +75,8 @@ module.exports = (Sequelize, DataTypes) => {
     promoCode: {type: DataTypes.INTEGER, allowNull: true},
     signInCount: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
     mobile: {type: DataTypes.STRING, allowNull: true},
-    tipsAndUpdate: {type: DataTypes.ENUM, values: ['off', 'on'], allowNull: false, defaultValue: 'on'},
+    //tipsAndUpdate: {type: DataTypes.ENUM, values: ['off', 'on'], allowNull: false, defaultValue: 'on'},
+    tipsAndUpdate: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false},
   },{
       classMethods: {
         associate: function(models) {

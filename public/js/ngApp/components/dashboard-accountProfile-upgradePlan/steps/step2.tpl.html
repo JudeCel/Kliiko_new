@@ -61,7 +61,7 @@
                     Your Contact Details <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': up.modContentBlock.contactDetails, 'glyphicon-chevron-right': !up.modContentBlock.contactDetails}"></i>
                 </div>
             </uib-accordion-heading>
-            <form ng-submit="up.updateUserData(up.userData)">
+            <form ng-submit="up.updateUserData(up.userData, userDetailsForm)" name="userDetailsForm">
                 <div class="form-group">
                     <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
                         <tr>
@@ -243,7 +243,11 @@
                     </table>
                     <div class="row">
                         <div class="col-md-12">
-                            <button type="submit" class="btn border-red text-red-dark border-radius-none background-transp pull-right btn-md">Update</button>
+                            <button type="submit"
+                                    class="btn border-red text-red-dark border-radius-none background-transp pull-right btn-md"
+                                    ng-show="!userDetailsForm.$pristine">
+                                <span>{{up.updateBtn}}</span>
+                            </button>
                             <div class="check">
                                 <input ng-model="up.userData.tipsAndUpdate" type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate" value='receive-updates'/>
                                 <label for="tipsAndUpdate"></label>
@@ -252,8 +256,6 @@
                         </div>
                     </div>
                 </div>
-
-
             </form>
         </uib-accordion-group>
     </uib-accordion>

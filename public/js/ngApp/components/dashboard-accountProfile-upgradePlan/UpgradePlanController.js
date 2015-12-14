@@ -16,6 +16,7 @@
         vm.currentStep = $stateParams.planUpgradeStep;
         vm.$state = $state;
         vm.modContentBlock = {selectedPlanDetails:true};
+        vm.updateBtn = 'Update';
 
         vm.openPlanDetailsModal = openPlanDetailsModal;
         vm.upgradeToPlan = upgradeToPlan;
@@ -115,8 +116,18 @@
             });
         }
 
-        function updateUserData(data) {
-            user.updateUserData(data);
+        function updateUserData(data, form) {
+
+            //vm.updateBtn = 'Updating...';
+            user.updateUserData(data).then(function(res) {
+                vm.updateBtn = 'Updated';
+                setTimeout(function() {
+                    form.$setPristine();
+                    form.$setUntouched();
+                }, 2000);
+
+
+            });
         }
 
     }

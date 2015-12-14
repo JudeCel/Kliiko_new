@@ -48,9 +48,16 @@
          * @param data {object} - user form object
          */
         function updateUserData(data) {
-            return usersRestApi.user.post(data, function(res) {
+            var deferred = $q.defer();
+
+            usersRestApi.user.post(data, function(res) {
                 if (!res.error) user = res;
+                deferred.resolve();
             });
+
+
+            return deferred.promise;
+
         }
     }
 
