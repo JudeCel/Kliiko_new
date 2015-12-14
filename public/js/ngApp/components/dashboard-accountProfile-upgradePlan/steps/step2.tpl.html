@@ -57,262 +57,204 @@
 
         <uib-accordion-group is-open="up.modContentBlock.contactDetails">
             <uib-accordion-heading>
-                <div class="panel-label">
+                <div class="panel-label" ng-click="up.getUserData(up.modContentBlock.contactDetails)">
                     Your Contact Details <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': up.modContentBlock.contactDetails, 'glyphicon-chevron-right': !up.modContentBlock.contactDetails}"></i>
                 </div>
             </uib-accordion-heading>
-            <p>
-            <form method="post" action="/dashboard/contactdetails">
+            <form ng-submit="up.updateUserData(up.userData)">
                 <div class="form-group">
                     <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
-
                         <tr>
                             <td>
-                                <label class="text-no-bold text-login-page" for="firstName">First name</label>
                             </td>
                             <td>
-                                <input type="text" value="" class="form-control" name="firstName" id="first_name" placeholder="First name">
                             </td>
                             <td>
-                                *
+                                <div class="text-red-dark"> * <i>Required</i> </div>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
                             </td>
                         </tr>
-
+                        <tr>
+                            <td>
+                                <label class="text-no-bold text-login-page" for="first-name_step2">First name</label>
+                            </td>
+                            <td>
+                                <input id="first-name_step2" ng-model="up.userData.firstName" type="text" value="" class="form-control" name="first-name_step2"  placeholder="First name">
+                            </td>
+                            <td  class="text-red-dark">
+                                *
+                            </td>
+                            <td>
+                                <label class="text-no-bold text-login-page" for="postal-adress_step2">
+                                    Postal
+                                    <br>
+                                    Address
+                                </label>
+                            </td>
+                            <td>
+                                <input type="text" ng-model="up.userData.postalAdress" value="" class="form-control" name="postal-adress_step2" id="postal-adress_step2" placeholder="Postal Address">
+                            </td>
+                        </tr>
                         <tr>
                             <td></td>
                             <td class="error-column">
                                 <span class="has-error"></span>
                             </td>
                         </tr>
-
                         <tr>
                             <td>
-                                <label class="text-no-bold text-login-page" for="lastName">Last name</label>
+                                <label class="text-no-bold text-login-page" for="last-name_step2">Last name</label>
                             </td>
                             <td>
-                                <input type="text" value="" class="form-control" name="lastName" id="last_name" placeholder="Last name">
+                                <input type="text" ng-model="up.userData.lastName" value="" class="form-control" name="last-name_step2" id="last-name_step2" placeholder="Last name">
                             </td>
-                            <td>
+                            <td  class="text-red-dark">
                                 *
                             </td>
+                            <td>
+                                <label class="text-no-bold text-login-page" for="city_step2">City</label>
+                            </td>
+                            <td>
+                                <input type="text" ng-model="up.userData.city" value="" class="form-control" name="city_step2" id="city_step2" placeholder="City">
+                            </td>
                         </tr>
-
                         <tr>
                             <td></td>
                             <td class="error-column">
                                 <span class="has-error"></span>
                             </td>
                         </tr>
-
                         <tr>
                             <td>
-                                <label class="text-no-bold text-login-page" for="email">Email</label>
+                                <label class="text-no-bold text-login-page" for="email_step2">Email</label>
                             </td>
                             <td>
-                                <input type="email" value="" class="form-control" name="email" id="email" placeholder="Email">
+                                <input type="email" ng-model="up.userData.email" value="" class="form-control" name="email_step2" id="email_step2" placeholder="Email">
                             </td>
-                            <td>
+                            <td  class="text-red-dark">
                                 *
                             </td>
+                            <td>
+                                <label class="text-no-bold text-login-page" for="state_step2">State</label>
+                            </td>
+                            <td>
+                                <input type="text" ng-model="up.userData.state" value="" class="form-control" name="state_step2" id="state_step2" placeholder="State">
+                            </td>
                         </tr>
-
                         <tr>
                             <td></td>
                             <td class="error-column">
                                 <span class="has-error"></span>
                             </td>
                         </tr>
-
                         <tr>
                             <td>
-                                <label class="text-no-bold text-login-page" for="gender">Gender</label>
+                                <label class="text-no-bold text-login-page" for--="gender_step2">Gender</label>
                             </td>
                             <td>
-                                <div class="checkbox-inline">
-                                    <input type="checkbox" name="gender" id="gender" value='male'/>
-                                    <label for="male"></label>
-                                    <span class="checkbox-signup" id="male">Male</span>
-                                </div>
-                                <div class="checkbox-inline">
-                                    <input type="checkbox" name="gender" id="gender" value='female'/>
-                                    <label for="female"></label>
-                                    <span class="checkbox-signup" id="female">Female</span>
-                                </div>
+                                <label for="gender_male_step2" class="radio-button">
+                                    <input type="radio" ng-model="up.userData.gender" name="gender_step2" value="male" id="gender_male_step2" ng-class="{checked:up.userData.gender == 'male'}">
+
+                                    <span class="checkbox-signup btn-radius-text">Male</span>
+                                </label>
+
+                                <label for="gender_female_step2" class="radio-button">
+                                    <input type="radio" ng-model="up.userData.gender"  name="gender_step2" value="female" id="gender_female_step2" ng-class="{checked:up.userData.gender == 'female'}">
+                                    <span class="checkbox-signup btn-radius-text btn-radius-padding-left">Female</span>
+                                </label>
                             </td>
-                            <td>
+                            <td  class="text-red-dark">
                                 *
                             </td>
+                            <td>
+                                <label class="text-no-bold text-login-page" for="postcode_step2">Postcode</label>
+                            </td>
+                            <td>
+                                <input type="tel" ng-model="up.userData.postcode" value="" class="form-control" id="postcode_step2" name="postcode_step2" placeholder="Postcode">
+                            </td>
                         </tr>
-
                         <tr>
                             <td></td>
                             <td class="error-column">
                                 <span class="has-error"></span>
                             </td>
                         </tr>
-
                         <tr>
                             <td>
-                                <label class="text-no-bold text-login-page" for="mobile">
+                                <label class="text-no-bold text-login-page" for="mobile_step2">
                                     Mobile
                                     <br>
                                     Number
                                 </label>
                             </td>
                             <td>
-                                <input type="tel" value="" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number">
+                                <input type="tel" ng-model="up.userData.mobile" value="" class="form-control" id="mobile_step2" name="mobile_step2" placeholder="Mobile Number">
+                            </td>
+                            <td  class="text-red-dark">
+                                *
+                            </td>
+                            <td>
+                                <label class="text-no-bold text-login-page" for="country_step2">Country</label>
+                            </td>
+                            <td>
+                                <input ng-model="up.userData.country" value="" class="form-control" id="country_step2" name="country_step2" placeholder="Country">
                             </td>
                         </tr>
-
+                        <tr>
+                            <td></td>
+                            <td class="error-column">
+                                <span class="has-error"></span>
+                            </td>
+                        </tr>
                         <tr>
                             <td>
-                                <label class="text-no-bold text-login-page" for="landlineNumber">
+                                <label class="text-no-bold text-login-page" for="landline-number_step2">
                                     Landline
                                     <br>
                                     Number
                                 </label>
                             </td>
                             <td>
-                                <input type="text" value="" class="form-control" name="landlineNumber" id="landline_number" placeholder="Landline Number">
+                                <input type="text" ng-model="up.userData.landlineNumber" value="" class="form-control" name="landline-number_step2" id="landline-number_step2" placeholder="LandlineNumber">
                             </td>
-                        </tr>
-
-                    </table>
-                </div>
-
-                <!-- ###################################################################################### -->
-                =================================================================================================================================================
-                <!-- ###################################################################################### -->
-
-                <div class="form-group">
-                    <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
-
-                        <tr>
-                            <td>
-                                <label class="text-no-bold text-login-page" for="firstName">First name</label>
-                            </td>
-                            <td>
-                                <input type="text" value="" class="form-control" name="firstName" id="first_name" placeholder="First name">
-                            </td>
-                            <td>
+                            <td  class="text-red-dark">
                                 *
                             </td>
-                        </tr>
-
-                        <tr>
-                            <td></td>
-                            <td class="error-column">
-                                <span class="has-error"></span>
-                            </td>
-                        </tr>
-
-                        <tr>
                             <td>
-                                <label class="text-no-bold text-login-page" for="lastName">Last name</label>
-                            </td>
-                            <td>
-                                <input type="text" value="" class="form-control" name="lastName" id="last_name" placeholder="Last name">
-                            </td>
-                            <td>
-                                *
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td></td>
-                            <td class="error-column">
-                                <span class="has-error"></span>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <label class="text-no-bold text-login-page" for="email">Email</label>
-                            </td>
-                            <td>
-                                <input type="email" value="" class="form-control" name="email" id="email" placeholder="Email">
-                            </td>
-                            <td>
-                                *
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td></td>
-                            <td class="error-column">
-                                <span class="has-error"></span>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <label class="text-no-bold text-login-page" for="gender">Gender</label>
-                            </td>
-                            <td>
-                                <div class="checkbox-inline">
-                                    <input type="checkbox" name="gender" id="gender" value='male'/>
-                                    <label for="male"></label>
-                                    <span class="checkbox-signup" id="male">Male</span>
-                                </div>
-                                <div class="checkbox-inline">
-                                    <input type="checkbox" name="gender" id="gender" value='female'/>
-                                    <label for="female"></label>
-                                    <span class="checkbox-signup" id="female">Female</span>
-                                </div>
-                            </td>
-                            <td>
-                                *
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td></td>
-                            <td class="error-column">
-                                <span class="has-error"></span>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <label class="text-no-bold text-login-page" for="mobile">
-                                    Mobile
+                                <label class="text-no-bold text-login-page" for="copany-name_step2">
+                                    Company
                                     <br>
-                                    Number
+                                    Name
                                 </label>
                             </td>
                             <td>
-                                <input type="tel" value="" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number">
+                                <input type="text" ng-model="up.userData.companyName" value="" class="form-control" name="copany-name_step2" id="copany-name_step2" placeholder="Company Name">
                             </td>
                         </tr>
-
                         <tr>
-                            <td>
-                                <label class="text-no-bold text-login-page" for="landlineNumber">
-                                    Landline
-                                    <br>
-                                    Number
-                                </label>
-                            </td>
-                            <td>
-                                <input type="text" value="" class="form-control" name="landlineNumber" id="landline_number" placeholder="Landline Number">
+                            <td></td>
+                            <td class="error-column">
+                                <span class="has-error"></span>
                             </td>
                         </tr>
-
                     </table>
-
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn border-red text-red-dark border-radius-none background-transp pull-right btn-md">Update</button>
+                            <div class="check">
+                                <input ng-model="up.userData.tipsAndUpdate" type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate" value='receive-updates'/>
+                                <label for="tipsAndUpdate"></label>
+                                <span class="checkbox-signup" id="tipsAndUpdate_step2">Yes send me the Kliiko Newsletter which includes tips and updates.</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!--             <div class="form-group center-block">
-                              <div class="check center-block">
-                                <input type="submit" value="Save" class="btn login"></input>
-                              </div>
-                              <div class="check center-block">
-                                <a href="#cancel" class="btn cancel">Cancel</a>
-                              </div>
-                            </div> -->
 
             </form>
-            </p>
         </uib-accordion-group>
     </uib-accordion>
 

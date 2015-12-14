@@ -13,7 +13,7 @@ module.exports = (Sequelize, DataTypes) => {
     landlineNumber: {type: DataTypes.STRING, allowNull: true },
     companyName: {type: DataTypes.STRING, allowNull: true },
     email: {type: DataTypes.STRING, allowNull: true,
-    validate:{
+      validate:{
       validateEmail: function(val, next) {
         if (this.requiredEmail) {
           if (!(constants.emailRegExp.test(val))) {
@@ -40,6 +40,13 @@ module.exports = (Sequelize, DataTypes) => {
         }
       }
     }},
+
+    postalAdress: {type: DataTypes.STRING, allowNull: true },
+    city: {type: DataTypes.STRING, allowNull: true },
+    state: {type: DataTypes.STRING, allowNull: true },
+    postcode: {type: DataTypes.STRING, allowNull: true },
+    country: {type: DataTypes.STRING, allowNull: true },
+
     encryptedPassword:  {type : DataTypes.STRING, allowNull: false, validate: { notEmpty: true}},
     password: {
       type: DataTypes.VIRTUAL,
