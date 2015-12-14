@@ -6,7 +6,7 @@ var changePassword = require('../../services/changePassword');
 var policy = require('../../middleware/policy.js');
 var uploadBannerRoutes = require('./uploadBanner.js');
 var accountManagerRoutes = require('./accountManager.js');
-var accountDatabase = require('../middleware/accountDatabase.js');
+var accountDatabase = require('../../middleware/accountDatabase.js');
 
 function views_path(action) {
   let views_name_space = 'dashboard/';

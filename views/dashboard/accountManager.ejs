@@ -11,49 +11,51 @@
         <div class='col-xs-12 col-sm-12 col-md-12'>
           <% include _buttons %>
         </div>
-        <div class='col-xs-12 col-sm-12 col-md-12'>
-          <h3 class='text-center'>Account Managers</h3>
-          <span><%= message %></span>
-          <a href='accountmanager/manage'>
-            <button type='button' class='btn-simple border-blue text-blue-dark'>Add New Account Manager</button>
-          </a>
+        <div class='col-md-3'></div>
+        <div class='col-xs-12 col-sm-12 col-md-6'>
+          <div class='row'>
+            <h2 class='text-center'>Account Managers</h2>
+          </div>
+        </div>
+        <div class='col-md-3'>
+          <div class='row text-center'>
+            <a href='accountmanager/manage' class='btn btn-addNewAccountManager'>
+              Add New Account Manager
+            </a>
+          </div>
         </div>
         <div class='col-xs-12 col-sm-12 col-md-12'>
-          <div class='row'>
-            <div class='dashboard-container'>
-              <table class='table'>
-                <thead>
+          <div class='dashboard-container'>
+            <table class='table table-responsive table-accountManager'>
+              <thead>
+                <tr>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Gender</th>
+                  <th>Email</th>
+                  <th>Mobile</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% for(var i=0; i < users.length; i++) { %>
                   <tr>
-                    <th>ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Gender</th>
-                    <th>Email</th>
-                    <th>Mobile</th>
-                    <th>Status</th>
-                    <th></th>
+                    <td><%= users[i].firstName %></td>
+                    <td><%= users[i].lastName %></td>
+                    <td><%= users[i].gender %></td>
+                    <td><%= users[i].email %></td>
+                    <td><%= users[i].mobile %></td>
+                    <td><%= users[i].status %></td>
+                    <% if(users[i].Invites) { %>
+                      <td><a href="accountmanager/remove/invite/<%= users[i].id %>">Remove</a></td>
+                    <% } else if(users[i].Accounts) { %>
+                      <td><a href="accountmanager/remove/account/<%= users[i].id %>">Remove</a></td>
+                    <% } %>
                   </tr>
-                </thead>
-                <tbody>
-                  <% for(var i=0; i < users.length; i++) { %>
-                    <tr>
-                      <td><%= users[i].id %></td>
-                      <td><%= users[i].firstName %></td>
-                      <td><%= users[i].lastName %></td>
-                      <td><%= users[i].gender %></td>
-                      <td><%= users[i].email %></td>
-                      <td><%= users[i].mobile %></td>
-                      <td><%= users[i].status %></td>
-                      <% if(users[i].Invites) { %>
-                        <td><a href="accountmanager/remove/invite/<%= users[i].id %>">Remove</a></td>
-                      <% } else if(users[i].Accounts) { %>
-                        <td><a href="accountmanager/remove/account/<%= users[i].id %>">Remove</a></td>
-                      <% } %>
-                    </tr>
-                  <% } %>
-                </tbody>
-              </table>
-            </div>
+                <% } %>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
