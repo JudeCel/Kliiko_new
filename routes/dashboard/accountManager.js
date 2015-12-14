@@ -29,7 +29,7 @@ function create(req, res, next) {
         res.render(views_path('accountManager/manage'), simpleParams(req.body, error));
       }
       else {
-        // Needs message
+        req.flash('message', 'Successfully sent invite.');
         res.redirect('../accountmanager');
       }
     });
