@@ -1,24 +1,24 @@
 'use strict';
 
-var accountManagerService = require('../services/accountManager');
-var inviteService = require('../services/invite');
+var accountManagerService = require('../../services/accountManager');
+var inviteService = require('../../services/invite');
 var _ = require('lodash');
 
 function views_path(action) {
   return 'dashboard/' + action;
 };
 
-function index(req, res) {
+function index(req, res, next) {
   accountManagerService.findAccountManagers(req.user, function(error, users) {
     res.render(views_path('accountManager'), { title: 'Account Managers', users: users, message: req.flash('message')[0] });
   });
 };
 
-function manageGet(req, res) {
+function manage(req, res, next) {
   res.render(views_path('accountManager/manage'), simpleParams({}, {}, ''));
 };
 
-function managePost(req, res) {
+function create(req, res, next) {
   accountManagerService.createOrFindUser(req, function(error, params) {
     if(error) {
       return res.render(views_path('accountManager/manage'), simpleParams(req.body, error));
@@ -29,13 +29,14 @@ function managePost(req, res) {
         res.render(views_path('accountManager/manage'), simpleParams(req.body, error));
       }
       else {
+        // Needs message
         res.redirect('../accountmanager');
       }
     });
   });
 };
 
-function destroy(req, res) {
+function destroy(req, res, next) {
   accountManagerService.removeInviteOrAccountUser(req, function(error, message) {
     req.flash('message', error || message);
     res.redirect('/dashboard/accountmanager');
@@ -52,7 +53,7 @@ function simpleParams(account, error, message) {
 
 module.exports = {
   index: index,
-  manageGet: manageGet,
-  managePost: managePost,
+  manage: manage,
+  create: create,
   destroy: destroy
-}
+};

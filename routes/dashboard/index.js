@@ -1,11 +1,11 @@
 "use strict";
 var express = require('express');
 var router = express.Router();
-var subdomains = require('../lib/subdomains.js');
-var changePassword = require('../services/changePassword');
-var policy = require('../middleware/policy.js');
-var uploadBanner = require('../middleware/uploadBanner.js');
-var accountManager = require('../middleware/accountManager.js');
+var subdomains = require('../../lib/subdomains.js');
+var changePassword = require('../../services/changePassword');
+var policy = require('../../middleware/policy.js');
+var uploadBanner = require('../../middleware/uploadBanner.js');
+var accountManagerRoutes = require('./accountManager.js');
 
 function views_path(action) {
   let views_name_space = 'dashboard/';
@@ -47,9 +47,9 @@ router.get('/uploadbanner', policy.authorized(['admin']), uploadBanner.get);
 router.post('/uploadbanner', policy.authorized(['admin']), uploadBanner.uploadFields, uploadBanner.post);
 router.get('/uploadbanner/:page', policy.authorized(['admin']), uploadBanner.destroy);
 
-router.get('/accountmanager', policy.authorized(['accountManager']), accountManager.index);
-router.get('/accountmanager/manage', policy.authorized(['accountManager']), accountManager.manageGet);
-router.post('/accountmanager/manage', policy.authorized(['accountManager']), accountManager.managePost);
-router.get('/accountmanager/remove/:type/:id', policy.authorized(['accountManager']), accountManager.destroy);
+router.get('/accountmanager', policy.authorized(['accountManager']), accountManagerRoutes.index);
+router.get('/accountmanager/manage', policy.authorized(['accountManager']), accountManagerRoutes.manage);
+router.post('/accountmanager/manage', policy.authorized(['accountManager']), accountManagerRoutes.create);
+router.get('/accountmanager/remove/:type/:id', policy.authorized(['accountManager']), accountManagerRoutes.destroy);
 
 module.exports = router;

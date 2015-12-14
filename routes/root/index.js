@@ -2,16 +2,16 @@
 var express = require('express');
 var async = require('async');
 var router = express.Router();
-var usersRepo = require('./../services/users');
-var resetPassword = require('./../services/resetPassword');
-var emailConfirmation = require('./../services/emailConfirmation');
+var usersRepo = require('../../services/users');
+var resetPassword = require('../../services/resetPassword');
+var emailConfirmation = require('../../services/emailConfirmation');
 var passport = require('passport');
-var subdomains = require('../lib/subdomains');
+var subdomains = require('../../lib/subdomains');
 var config = require('config');
-var mailers = require('../mailers');
-var session = require('../middleware/session');
-var inviteMiddleware = require('../middleware/invite');
-var constants = require('../util/constants')
+var mailers = require('../../mailers');
+var session = require('../../middleware/session');
+var inviteRoutes = require('./invite.js');
+var constants = require('../../util/constants');
 
 router.use(function (req, res, next) {
     if (req.path == '/logout' || req.path.indexOf('invite') > -1) {
@@ -207,9 +207,10 @@ router.route('/resetpassword/:token')
         });
     });
 
-router.route('/invite/:token').get(inviteMiddleware.index);
-router.route('/invite/:token/decline').get(inviteMiddleware.decline);
-router.route('/invite/:token/accept').get(inviteMiddleware.acceptGet);
-router.route('/invite/:token/accept').post(inviteMiddleware.acceptPost);
+
+router.route('/invite/:token').get(inviteRoutes.index);
+router.route('/invite/:token/decline').get(inviteRoutes.decline);
+router.route('/invite/:token/accept').get(inviteRoutes.acceptGet);
+router.route('/invite/:token/accept').post(inviteRoutes.acceptPost);
 
 module.exports = router;

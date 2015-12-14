@@ -1,12 +1,12 @@
 'use strict';
 
-var inviteService = require('../services/invite');
+var inviteService = require('../../services/invite');
 
 function views_path(action) {
   return 'invite/' + action;
 };
 
-function index(req, res) {
+function index(req, res, next) {
   inviteService.findInvite(req.params.token, function(error, invite) {
     if(error) {
       res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
@@ -15,9 +15,9 @@ function index(req, res) {
       res.render(views_path('index'), simpleParams('Invite', invite));
     }
   });
-}
+};
 
-function decline(req, res) {
+function decline(req, res, next) {
   inviteService.findInvite(req.params.token, function(error, invite) {
     if(error) {
       return res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
@@ -33,9 +33,9 @@ function decline(req, res) {
       }
     });
   });
-}
+};
 
-function acceptGet(req, res) {
+function acceptGet(req, res, next) {
   inviteService.findInvite(req.params.token, function(error, invite) {
     if(error) {
       return res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
@@ -56,9 +56,9 @@ function acceptGet(req, res) {
       res.render(views_path('accept'), simpleParams('Accept Invite', invite));
     }
   });
-}
+};
 
-function acceptPost(req, res) {
+function acceptPost(req, res, next) {
   inviteService.findInvite(req.params.token, function(error, invite) {
     if(error) {
       return res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
@@ -79,15 +79,16 @@ function acceptPost(req, res) {
       res.render(views_path('notFound'), simpleParams('Invite not found', invite));
     }
   });
-}
+};
 
 function simpleParams(title, invite, error, message) {
   return { title: title, invite: invite, error: error, message: message || '' };
-}
+};
 
+// module.exports = router;
 module.exports = {
   index: index,
   decline: decline,
   acceptGet: acceptGet,
   acceptPost: acceptPost
-}
+};
