@@ -6,7 +6,7 @@ var account  = require('./../../models').Account;
 var accountUser  = require('./../../models').accountUser;
 var assert = require('assert');
 
-describe('Change Password', function() {
+describe('Account database', function() {
 
   var testUser = null;
   var testAccount = null;

@@ -77,6 +77,8 @@ function getCsvJson(callback) {
           "State": "",
           "Postcode": "",
           "Country": "",
+          "Company": "",
+          "Gender": user.gender,
           "Mobile": "",
           "# Sessions purchased": "",
           "Tips permission": "",

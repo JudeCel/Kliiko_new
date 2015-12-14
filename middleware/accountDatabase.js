@@ -18,8 +18,8 @@ function get(req, res) {
 
 function exportCsv(req, res) {
   let csvHeader = ['Account Name', 'Account Manager', 'Date of Sign-up', 
-                   'E-mail', 'Postal Address', 'City', 'State', 'Postcode', 
-                   'Country', 'Mobile', '# Sessions purchased', 'Tips permission',
+                   'E-mail', 'Postal', 'City', 'State', 'Postcode', 
+                   'Country', 'Company', 'Gender', 'Mobile', '# Sessions purchased', 'Tips permission',
                    '# Active Sessions', 'Comment']
 
   accountDatabase.getCsvJson(function (err, result) {
