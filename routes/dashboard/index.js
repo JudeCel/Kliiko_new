@@ -6,6 +6,7 @@ var changePassword = require('../../services/changePassword');
 var policy = require('../../middleware/policy.js');
 var uploadBannerRoutes = require('./uploadBanner.js');
 var accountManagerRoutes = require('./accountManager.js');
+var accountDatabase = require('../middleware/accountDatabase.js');
 
 function views_path(action) {
   let views_name_space = 'dashboard/';
@@ -28,11 +29,11 @@ router.get('/landing', function(req, res) {
   res.render(views_path('landing'), { title: 'Landing page' });
 });
 
-router.get('/upgradeplans', function(req, res) {
+router.get('/upgradePlans', function(req, res) {
   res.render(views_path('upgradePlans'), { title: 'Upgrade Plans' });
 });
 
-router.post('/changepassword', function(req, res) {
+router.post('/changePassword', function(req, res) {
   changePassword.save(req, function(errors, message, user){
     res.type('json');
     if (errors) {
@@ -51,5 +52,10 @@ router.get('/accountmanager', policy.authorized(['accountManager']), accountMana
 router.get('/accountmanager/manage', policy.authorized(['accountManager']), accountManagerRoutes.manage);
 router.post('/accountmanager/manage', policy.authorized(['accountManager']), accountManagerRoutes.create);
 router.get('/accountmanager/remove/:type/:id', policy.authorized(['accountManager']), accountManagerRoutes.destroy);
+
+router.get('/accountDatabase', policy.authorized(['admin']), accountDatabase.get);
+router.get('/exportCsv', policy.authorized(['admin']), accountDatabase.exportCsv);
+router.post('/updateComment', policy.authorized(['admin']), accountDatabase.updateComment);
+router.post('/reactivateOrDeactivate', policy.authorized(['admin']), accountDatabase.reactivateOrDeactivate);
 
 module.exports = router;
