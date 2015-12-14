@@ -1,5 +1,6 @@
 /**
  * User
+ * GET - fetch user data
  * POST /update
  *
  */
@@ -52,6 +53,9 @@ module.exports = function(app,restUrl) {
 
     });
 
+    /**
+     * POST will update user details
+     */
     app.post(restUrl, function (req, res) {
         req.user ? proceed() : notAuthExit(res);
 
@@ -62,12 +66,6 @@ module.exports = function(app,restUrl) {
                     }
                 })
                 .then(function (result) {
-                    //for (var i = 0, len = userDetailsFields.length; i < len ; i++) {
-                    //    if (req.body.params.indexOf(userDetailsFields[i]) > -1 ) {
-                    //        console.log();
-                    //        User.update({userDetailsFields[i]: req.body.params[userDetailsFields[i]]});
-                    //    }
-                    //}
                     result.update(req.body);
                     res.send(req.body);
                 })

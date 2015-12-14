@@ -1,6 +1,9 @@
 .remove-link-line > a {
   text-decoration: none; }
 
+.btn-md {
+  height: 45px; }
+
 .btn-dashboard-menu {
   background-color: inherit;
   width: 13%;
@@ -8,6 +11,8 @@
   height: 36px;
   margin-left: 36px;
   margin-top: 30px;
+  line-height: 36px;
+  cursor: pointer;
   padding-top: 4px;
   padding-left: 15px;
   vertical-align: middle;
@@ -17,6 +22,16 @@
   color: #4DC0E9;
   line-height: 26px;
   text-align: left; }
+  .btn-dashboard-menu.active {
+    color: white;
+    background: #4DC0E9; }
+  .btn-dashboard-menu.btn-green {
+    color: #2F9F69;
+    border-color: #2F9F69;
+    background: white; }
+  .btn-dashboard-menu.btn-short {
+    min-width: 0 !important;
+    max-width: 100px; }
   .btn-dashboard-menu:hover {
     color: #3DB0D9;
     border-color: #3DB0D9; }
@@ -52,12 +67,91 @@
   border-radius: 0px;
   background-color: inherit; }
 
+/* Radio buttons custom design */
+label.radio-button input[type="radio"] {
+  position: absolute;
+  left: -999999px; }
+
+label.radio-button input[type="radio"]:focus + span:after {
+  border-color: #66afe9;
+  outline: 0;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }
+
+label.radio-button input[type="radio"] + span {
+  position: relative;
+  padding-right: 35px;
+  margin-right: 20px; }
+  label.radio-button input[type="radio"] + span:after {
+    content: "";
+    position: absolute;
+    top: -7px;
+    right: -13px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    background: none;
+    background-image: none;
+    height: 34px;
+    width: 34px;
+    -webkit-transition: background-image 0.9s ease;
+    transition: background-image 0.9s ease; }
+
+label.radio-button input[type="radio"]:checked + span:after {
+  background: #ccc; }
+
 .changePasswordModal {
   width: 20%;
   padding-top: 100px; }
 
 .contactDetailsModal {
-  width: 80%;
+  width: 60%;
+  padding-top: 100px;
+  /* RADIO BUTTON */
+  /* CHECKBOX */ }
+  .contactDetailsModal .table td {
+    padding-left: 2px;
+    padding-right: 5px;
+    border: 1px solid #f00;
+    margin-left: -25px;
+    max-width: 215px; }
+    .contactDetailsModal .table td:first-of-type {
+      padding-right: 15px;
+      white-space: nowrap; }
+    .contactDetailsModal .table td.error-column {
+      padding: 0;
+      padding-top: 3px;
+      padding-bottom: 3px;
+      height: 17px; }
+  .contactDetailsModal .form-control {
+    border-width: 2px;
+    height: 40px;
+    border-radius: 0; }
+  .contactDetailsModal .modal-header {
+    border-bottom: none;
+    padding-bottom: 0; }
+  .contactDetailsModal .modal-body {
+    padding-top: 0; }
+  .contactDetailsModal input[type="radio"]:checked + span:after {
+    background: #E51D39 !important;
+    border: 2px solid #E51D39 !important; }
+  .contactDetailsModal input[class=checkbox-login] {
+    display: none; }
+  .contactDetailsModal input[class=checkbox-login] + label {
+    background: url("/icons/checkbox-out.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    margin-top: 0px;
+    margin-left: 0;
+    margin-bottom: -5px;
+    background-size: contain; }
+  .contactDetailsModal input[class=checkbox-login]:checked + label {
+    background: url("/icons/checkbox-in.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    background-size: contain;
+    margin-top: 1px; }
+
+.accountDatabaseCommentModal {
+  width: 20%;
   padding-top: 100px; }
 
 #nav-tabs-main {
@@ -241,7 +335,7 @@ html {
   min-height: 100%; }
 
 footer {
-  position: absolute;
+  position: relative;
   left: 0;
   bottom: 0;
   height: 50px;
@@ -353,6 +447,17 @@ footer {
 .btn-white {
   background-color: white; }
 
+/* centered columns styles */
+.row-centered {
+  text-align: center; }
+
+.col-centered {
+  display: inline-block;
+  float: none;
+  /* reset the text-align */
+  text-align: left;
+  argin: 0 auto !important; }
+
 .dashboard-header .my-details-container {
   height: 20px;
   margin-left: 10px; }
@@ -440,86 +545,70 @@ footer {
 .login-container #login .table-v-content-middle td {
   vertical-align: middle; }
 
-#signup {
-  /* Radio buttons custom design */ }
-  #signup .has-error {
-    color: #f00;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 370px;
-    display: inline-block; }
-  #signup .btn-radius-padding-left {
-    padding-left: 25px !important; }
-  #signup .btn-radius-text {
-    font-size: 16px !important;
-    padding-right: 30px; }
-  #signup .singup-btn-size {
-    height: 45px; }
-  #signup .form-control {
-    border-width: 2px;
-    height: 40px;
-    border-radius: 0; }
-  #signup .checkbox-signup {
-    display: inline-block;
-    vertical-align: top;
-    margin-top: 8px;
-    padding-left: 9px;
-    font-size: 13px; }
-  #signup input[class=checkbox-login] {
-    display: none; }
-  #signup input[class=checkbox-login] + label {
-    background: url("/icons/login_checkbox.jpeg") no-repeat;
-    height: 22px;
-    width: 22px;
-    margin-top: 1px;
-    margin-left: 0;
-    margin-bottom: 0;
-    background-size: contain; }
-  #signup input[class=checkbox-login]:checked + label {
-    background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
-    height: 22px;
-    width: 22px;
-    background-size: contain;
-    margin-top: 1px; }
-  #signup label.radio-button input[type="radio"] {
-    position: absolute;
-    left: -999999px; }
-  #signup label.radio-button input[type="radio"]:focus + span:after {
-    border-color: #66afe9;
-    outline: 0;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }
-  #signup label.radio-button input[type="radio"] + span {
-    position: relative; }
-    #signup label.radio-button input[type="radio"] + span:after {
-      content: "";
-      position: absolute;
-      top: -7px;
-      right: -13px;
-      border: 2px solid #ccc;
-      border-radius: 50%;
-      background: none;
-      background-image: none;
-      height: 34px;
-      width: 34px;
-      -webkit-transition: background-image 0.9s ease;
-      transition: background-image 0.9s ease; }
-  #signup label.radio-button input[type="radio"]:checked + span:after {
-    background: #ccc; }
-  #signup .table td {
-    padding-left: 2px;
-    padding-right: 5px;
-    border: 1px solid #f00;
-    margin-left: -25px; }
-    #signup .table td:first-of-type {
-      padding-right: 15px;
-      white-space: nowrap; }
-    #signup .table td.error-column {
-      padding: 0;
-      padding-top: 3px;
-      padding-bottom: 3px;
-      height: 17px; }
-  #signup .table-v-content-middle td {
-    vertical-align: middle; }
+#signup .has-error {
+  color: #f00;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 370px;
+  display: inline-block; }
+
+#signup .btn-radius-padding-left {
+  padding-left: 25px !important; }
+
+#signup .btn-radius-text {
+  font-size: 16px !important;
+  padding-right: 30px; }
+
+#signup .singup-btn-size {
+  height: 45px; }
+
+#signup .form-control {
+  border-width: 2px;
+  height: 40px;
+  border-radius: 0; }
+
+#signup .checkbox-signup {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 8px;
+  padding-left: 9px;
+  font-size: 13px; }
+
+#signup input[class=checkbox-login] {
+  display: none; }
+
+#signup input[class=checkbox-login] + label {
+  background: url("/icons/login_checkbox.jpeg") no-repeat;
+  height: 22px;
+  width: 22px;
+  margin-top: 1px;
+  margin-left: 0;
+  margin-bottom: 0;
+  background-size: contain; }
+
+#signup input[class=checkbox-login]:checked + label {
+  background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
+  height: 22px;
+  width: 22px;
+  background-size: contain;
+  margin-top: 1px; }
+
+#signup .table td {
+  padding-left: 2px;
+  padding-right: 5px;
+  border: 1px solid #f00;
+  margin-left: -25px; }
+  #signup .table td:first-of-type {
+    padding-right: 15px;
+    white-space: nowrap; }
+  #signup .table td.error-column {
+    padding: 0;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    height: 17px; }
+
+#signup .table-v-content-middle td {
+  vertical-align: middle; }
 
 .main-welcome .welcome {
   width: 40%;
@@ -563,3 +652,301 @@ footer {
 
 .upload-banner input[type="file"] {
   display: inline; }
+
+#dashboard #back-nav-btn {
+  margin-bottom: -75px; }
+
+#dashboard img.ic {
+  margin-top: -4px; }
+
+#dashboard p.warning {
+  color: #E51D39;
+  font-size: .6em; }
+
+#upgrade-plan-content h2 {
+  margin: 45px;
+  font-size: .8em;
+  font-weight: bolder; }
+
+#upgrade-plan-content #steps-row {
+  display: block;
+  width: 405px;
+  width: 600px;
+  margin: 0 auto; }
+  #upgrade-plan-content #steps-row .step-container {
+    display: block;
+    margin: 10px;
+    float: left;
+    width: 100px;
+    font-size: .5em; }
+  #upgrade-plan-content #steps-row span.step-number {
+    display: block;
+    float: left;
+    width: 61px;
+    margin: 0 20px 5px 20px;
+    padding: 9px;
+    color: white;
+    font-size: 2em;
+    text-align: center;
+    background: #ddd; }
+    #upgrade-plan-content #steps-row span.step-number.active {
+      color: white;
+      background: #4DC0E9; }
+    #upgrade-plan-content #steps-row span.step-number.done {
+      background: rgba(88, 188, 227, 0.65); }
+  #upgrade-plan-content #steps-row span.step-name {
+    color: #ddd; }
+    #upgrade-plan-content #steps-row span.step-name.active, #upgrade-plan-content #steps-row span.step-name.done {
+      color: #58595b; }
+
+#upgrade-plan-content .benefits {
+  margin-left: 5%; }
+  #upgrade-plan-content .benefits p {
+    margin: 0 0 -10px 0;
+    padding: 10px 100px 10px 30px;
+    font-size: 1.9rem;
+    text-align: left;
+    border-left: 3px solid #2F9F69; }
+    #upgrade-plan-content .benefits p::before {
+      content: url("./../icons/ic_tick.png");
+      display: block;
+      margin-left: -70px;
+      margin-top: 5px;
+      position: absolute; }
+
+#upgrade-plan-content .plans-table .list-group {
+  border: none;
+  box-shadow: none;
+  -webkit-box-shadow: none; }
+
+#upgrade-plan-content .plans-table #best-value-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  z-index: 100; }
+
+#upgrade-plan-content .plans-table h4 {
+  max-width: 90%;
+  margin: 0 auto;
+  margin-bottom: 5px;
+  padding: 6px;
+  font-size: 3.3rem;
+  font-weight: bold;
+  font-style: italic; }
+
+#upgrade-plan-content .plans-table .price-label {
+  display: block;
+  position: relative;
+  padding-top: 40px;
+  height: 190px; }
+  #upgrade-plan-content .plans-table .price-label h5 {
+    font-size: 6rem;
+    font-weight: 900;
+    color: white; }
+  #upgrade-plan-content .plans-table .price-label .outline {
+    color: white;
+    text-shadow: 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b; }
+  #upgrade-plan-content .plans-table .price-label p {
+    font-size: 1.5rem; }
+
+#upgrade-plan-content .plans-table .list-group-item-text {
+  margin: 4px auto;
+  padding: 10px;
+  width: 90%;
+  font-size: 2.1rem; }
+
+#upgrade-plan-content .plans-table .yellow-bg {
+  background: #F0E935; }
+
+#upgrade-plan-content .plans-table .yellow-light-bg {
+  background: #FDFAD7; }
+
+#upgrade-plan-content .plans-table .yellow-header-bg {
+  background: #F8F49B; }
+
+#upgrade-plan-content .plans-table .green-bg {
+  background: #4CB648; }
+
+#upgrade-plan-content .plans-table .green-light-bg {
+  background: #DBF1DC; }
+
+#upgrade-plan-content .plans-table .green-header-bg {
+  background: #A5DAA4; }
+
+#upgrade-plan-content .plans-table .blue-bg {
+  background: #4CC0E9; }
+
+#upgrade-plan-content .plans-table .blue-light-bg {
+  background: #DBF1FC; }
+
+#upgrade-plan-content .plans-table .blue-header-bg {
+  background: #A5DFF3; }
+
+#upgrade-plan-content .btn-dashboard-plans {
+  display: block;
+  height: 50px;
+  margin: 5px 0;
+  padding: 9px 20px;
+  font-size: 2.3rem;
+  border: solid 3px #58595b;
+  cursor: pointer; }
+
+#upgrade-plan-content .buttons-area {
+  margin-top: 18px !important;
+  padding: 0 !important; }
+
+#upgrade-plan-content .btn-brown {
+  color: #979137;
+  border-color: #979137; }
+
+#upgrade-plan-content .btn-green {
+  color: #4CB344;
+  border-color: #4CB344; }
+
+#upgrade-plan-content .btn-blue {
+  color: #65C8EE;
+  border-color: #65C8EE; }
+
+#upgrade-plan-content .learn {
+  width: 160px; }
+
+#upgrade-plan-content .want {
+  width: 200px; }
+
+#upgrade-plan-content .modal-footer {
+  font-size: 2rem; }
+  #upgrade-plan-content .modal-footer .go-back-btn {
+    color: #58595b;
+    border-color: #58595b; }
+  #upgrade-plan-content .modal-footer .i-want-btn {
+    color: #58595b;
+    border-color: #F0E935;
+    width: 200px; }
+
+#upgrade-plan-content #plansModal {
+  top: -85px; }
+  #upgrade-plan-content #plansModal h1 {
+    padding: 15px;
+    font-size: 3.3rem;
+    font-weight: 100; }
+  #upgrade-plan-content #plansModal p {
+    font-size: 2rem;
+    color: #58595b; }
+  #upgrade-plan-content #plansModal .panel {
+    border-radius: 0px;
+    color: #58595b; }
+  #upgrade-plan-content #plansModal a.accordion-toggle {
+    text-decoration: none; }
+    #upgrade-plan-content #plansModal a.accordion-toggle:hover {
+      text-decoration: none; }
+  #upgrade-plan-content #plansModal .panel-title {
+    font-size: 2rem;
+    text-align: left;
+    color: #58595b; }
+  #upgrade-plan-content #plansModal .panel-heading {
+    border: none;
+    background: #F6F8F7; }
+    #upgrade-plan-content #plansModal .panel-heading:hover {
+      background: #F8F49B; }
+  #upgrade-plan-content #plansModal .panel-body p {
+    font-size: 1.9rem;
+    text-align: left;
+    color: #58595b; }
+
+#upgrade-plan-content #disclaimer {
+  margin-top: 60px;
+  color: #58595b;
+  font-size: 1.5rem; }
+
+#upgrade-plan-content .ng-custom-select .ncs-select {
+  position: relative;
+  color: #58595b;
+  font-size: 1.5rem;
+  text-align: left; }
+  #upgrade-plan-content .ng-custom-select .ncs-select .ncs-input-field {
+    display: block;
+    padding: 9px;
+    background: #ddd; }
+  #upgrade-plan-content .ng-custom-select .ncs-select .ncs-arrow-bnt {
+    position: absolute;
+    top: 13px;
+    right: 2rem;
+    cursor: pointer; }
+  #upgrade-plan-content .ng-custom-select .ncs-select .ncs-content {
+    position: absolute;
+    z-index: 3000;
+    margin-top: -3px;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: scroll;
+    border: 3px solid #ddd;
+    background: white; }
+    #upgrade-plan-content .ng-custom-select .ncs-select .ncs-content .ncs-content-item {
+      padding: 3px 10px;
+      cursor: pointer; }
+      #upgrade-plan-content .ng-custom-select .ncs-select .ncs-content .ncs-content-item:hover {
+        background: #F0E935; }
+
+#upgrade-plan-content .ng-custom-select .ncs-click-anywhere {
+  display: block;
+  position: absolute;
+  width: 200vw;
+  height: 200vh;
+  background: black;
+  top: -100vh;
+  left: -100vw; }
+
+#upgrade-plan-content #countryAndCurrencySelect .modal-body {
+  padding: 36px; }
+
+#upgrade-plan-content #countryAndCurrencySelect #country-select {
+  width: 75%;
+  float: left; }
+
+#upgrade-plan-content #countryAndCurrencySelect #currency-select {
+  width: 21%;
+  float: left; }
+
+#upgrade-plan-content #countryAndCurrencySelect .modal-header, #upgrade-plan-content #countryAndCurrencySelect .modal-footer {
+  border: none; }
+
+#upgrade-plan-content #countryAndCurrencySelect .modal-footer {
+  padding: 0; }
+
+#upgrade-plan-content #countryAndCurrencySelect .ok-btn {
+  margin-top: 20px;
+  color: #E51D39;
+  border-color: #E51D39; }
+
+#upgrade-plan-content #step-2 {
+  font-size: 2rem; }
+  #upgrade-plan-content #step-2 .panel-title {
+    font-size: 2rem;
+    text-align: left;
+    color: #58595b; }
+  #upgrade-plan-content #step-2 a.accordion-toggle {
+    text-decoration: none; }
+    #upgrade-plan-content #step-2 a.accordion-toggle:hover {
+      text-decoration: none; }
+  #upgrade-plan-content #step-2 .panel-heading {
+    border: none; }
+    #upgrade-plan-content #step-2 .panel-heading:hover {
+      color: #2F9F69;
+      background: #A5DAA4; }
+  #upgrade-plan-content #step-2 .panel-label {
+    font-size: 2rem;
+    text-align: left;
+    color: #58595b; }
+  #upgrade-plan-content #step-2 .panel-body p {
+    font-size: 1.9rem;
+    text-align: left;
+    color: #58595b; }
+  #upgrade-plan-content #step-2 td {
+    padding: 8px 0; }
+  #upgrade-plan-content #step-2 input#duration-input, #upgrade-plan-content #step-2 input#promocod-input,
+  #upgrade-plan-content #step-2 select#duration-input {
+    padding: 2px;
+    float: left;
+    width: 55px; }
+  #upgrade-plan-content #step-2 input#promocod-input {
+    width: 230px; }

@@ -110,8 +110,11 @@
 
         function getUserData(collapsed) {
             if (collapsed || (vm.userData && vm.userData.updatedAt) ) return;
-            vm.userData = user.getUserData();
+            user.getUserData().then(function(res) {
+                vm.userData = res;
+            });
         }
+
         function updateUserData(data) {
             user.updateUserData(data);
         }

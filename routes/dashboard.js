@@ -31,8 +31,8 @@ router.get('/landing', function(req, res) {
 });
 
 router.get('/upgradeplans', function(req, res) {
-  res.render(views_path('upgradePlans'), { title: 'Upgrade Plans', appData: appData });
-
+  res.render(views_path('upgradePlans'), {title: 'Upgrade Plans', appData: appData});
+});
 
 router.post('/changePassword', function(req, res) {
   changePassword.save(req, function(errors, message, user){
