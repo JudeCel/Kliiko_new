@@ -31,19 +31,21 @@ describe('Upload banner', function() {
   });
 
   beforeEach((done) => {
-    fs.stat(newPath, function (err, stats) {
-      if(!stats) {
-        fs.mkdir(newPath, function() {
+    models.sequelize.sync({force: true}).done((error, result) => {
+      fs.stat(newPath, function (err, stats) {
+        if(!stats) {
+          fs.mkdir(newPath, function() {
+            ncp('test/fixtures/uploadBanner/orig', newPath, function(err) {
+              done(err);
+            });
+          });
+        }
+        else {
           ncp('test/fixtures/uploadBanner/orig', newPath, function(err) {
             done(err);
           });
-        });
-      }
-      else {
-        ncp('test/fixtures/uploadBanner/orig', newPath, function(err) {
-          done(err);
-        });
-      }
+        }
+      });
     });
   });
 
