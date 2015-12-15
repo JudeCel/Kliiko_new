@@ -5,19 +5,28 @@ var crypto = require('crypto');
 function list(callback){
  promotionCode.findAll({order: 'name ASC'})
   .then(function (result) {
-    callback(result);
+    callback(null, result);
+  });
+};
+
+function create(params, callback){
+  generateCode(function(result) {
+    params['code'] = result;
+  });
+  
+  promotionCode.create(params).then(function(result) {
+    callback(null, result);
+  }).catch(promotionCode.sequelize.ValidationError, function(err) {
+    callback(err);
+  }).catch(function(err) {
+    callback(err);
   });
 };
 
 function edit(params, callback){
-	params['promotionCode'] = generateCode;
-
-	promotionCode.find({where: {id: id}}).done(function (result) {
+	promotionCode.find({where: {id: params.id}}).done(function (result) {
     if (result) {
-      result.update({
-        params
-      })
-      .then(function (result) {
+      result.update(params).then(function (result) {
         return callback(null, result);
       })
       .catch(function (err) {
@@ -46,5 +55,13 @@ function destroy(id, callback){
 
 function generateCode(callback){
 	let token = crypto.randomBytes(10).toString('hex');
-	callback(null, token)
+	callback(token)
 };
+
+
+module.exports = {
+  create: create,
+  list: list,
+  edit: edit,
+  destroy: destroy
+}
