@@ -13,9 +13,10 @@ var _ = require('lodash');
 module.exports.io = function () {
   return io;
 }
+
 module.exports.addRoutes = function (app) {
   let chatRoute = require('./routes/chat');
-  
+
   app.use('/chat_room', express.static(__dirname + '/chat_room'));
   app.use('/onsocket', express.static(__dirname + '/onsocket'));
   app.use('/bootstrap', express.static(__dirname + '/bootstrap'));

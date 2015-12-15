@@ -20,11 +20,15 @@ let views_name_space = "chat/"
 }
 
 router.use(function (req, res, next) {
+  console.log("=========================");
   next();
 });
 
 router.get('/iFrame', function(req, res, next) {
   res.render(views_path('iFrame'));
+});
+router.get('/help', function(req, res, next) {
+  res.render(views_path('help'));
 });
 
 router.get('/:id' , sessionMember.hasAccess, function(req, res, next) {
