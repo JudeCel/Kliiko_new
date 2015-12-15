@@ -1,14 +1,10 @@
 .remove-link-line > a {
   text-decoration: none; }
 
-<<<<<<< HEAD
-.btn-dashboard-menu, .btn-addNewAccountManager {
-=======
 .btn-md {
   height: 45px; }
 
-.btn-dashboard-menu {
->>>>>>> 4690aed73b417478f6aea0728f8bee48a86d131c
+.btn-dashboard-menu, .btn-addNewAccountManager {
   background-color: inherit;
   width: 13%;
   min-width: 180px;
@@ -27,21 +23,17 @@
   color: #4DC0E9;
   line-height: 26px;
   text-align: left; }
-<<<<<<< HEAD
-  .btn-dashboard-menu:hover, .btn-addNewAccountManager:hover {
-=======
-  .btn-dashboard-menu.active {
+  .btn-dashboard-menu.active, .active.btn-addNewAccountManager {
     color: white;
     background: #4DC0E9; }
-  .btn-dashboard-menu.btn-green {
+  .btn-dashboard-menu.btn-green, .btn-green.btn-addNewAccountManager {
     color: #2F9F69;
     border-color: #2F9F69;
     background: white; }
-  .btn-dashboard-menu.btn-short {
+  .btn-dashboard-menu.btn-short, .btn-short.btn-addNewAccountManager {
     min-width: 0 !important;
     max-width: 100px; }
-  .btn-dashboard-menu:hover {
->>>>>>> 4690aed73b417478f6aea0728f8bee48a86d131c
+  .btn-dashboard-menu:hover, .btn-addNewAccountManager:hover {
     color: #3DB0D9;
     border-color: #3DB0D9; }
   .btn-dashboard-menu span, .btn-addNewAccountManager span {
@@ -168,10 +160,6 @@ label.radio-button input[type="radio"]:checked + span:after {
     width: 22px;
     background-size: contain;
     margin-top: 1px; }
-
-.accountDatabaseCommentModal {
-  width: 20%;
-  padding-top: 100px; }
 
 .accountDatabaseCommentModal {
   width: 20%;
