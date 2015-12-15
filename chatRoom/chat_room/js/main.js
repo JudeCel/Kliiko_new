@@ -650,7 +650,7 @@ this.handleConsoleImage = function () {
       window.dashboard.toBack();		//	time to hide the dashboard
     });
   } else {
-    var html = '<form id="formUploadCollage" method="post" action="/uploadcollage" enctype="multipart/form-data" target="iFrameUploadCollage">' +
+    var html = '<form id="formUploadCollage" method="post" action="/chat/uploadcollage" enctype="multipart/form-data" target="iFrameUploadCollage">' +
     '	<div style="position:relative; left:0px; top:0px; width:0px; height: 0px;">' +
     '		<div style="position:absolute; left:80px; top:300px; width:200px; height: 40px; filter:alpha(opacity=1.0); opacity:1.0; overflow:hidden; cursor:hand;">' +
     '			<input id="IDUploadImageTitle" placeholder="Enter a title here" title="Enter a title here" onkeypress="return window.handleDashboardTitleKeyPress(event, this);" style="font-size: 24px;">' +
@@ -710,7 +710,7 @@ this.handleConsoleVote = function () {
   var consoleDocument = topic.getConsole().consoleDocumentVote;
   var consoleDocumentId = topic.getConsole().consoleDocumentVoteId;
 
-  if (role === "facilitator" || role === "observer") {
+  if (role == "facilitator" || role == "observer") {
     socket.emit('enqueryvote', consoleDocumentId, true);
   } else {
     socket.emit('enqueryvote', consoleDocumentId, false);
@@ -1025,7 +1025,7 @@ socket.on('topicLoaded', function (data) {
 
 socket.on('updatedconsole', function (topicId, consoleState, json) {
   if (!isEmpty(window.topic)) {
-    if (topicId === window.topicID) {
+    if (topicId == window.topicID) {
       window.topic.getConsole().updateConsole(consoleState, json);
     }
   }

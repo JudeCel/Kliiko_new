@@ -1,5 +1,5 @@
 var audioMenuAddHandler = function() {
-	var html =	'<form id="formUploadAudio" method="post" action="/uploadaudio" enctype="multipart/form-data" target="iFrameUploadAudio">' +
+	var html =	'<form id="formUploadAudio" method="post" action="/chat/uploadaudio" enctype="multipart/form-data" target="iFrameUploadAudio">' +
 				'	<div style="position:relative; left:0px; top:0px; width:0px; height: 0px;">' +
 				'		<div style="position:absolute; left:80px; top:300px; width:200px; height: 40px; filter:alpha(opacity=1.0); opacity:1.0; overflow:hidden; cursor:hand;">' +
 				//'			<input id="IDUploadAudioTitle" placeholder="Enter a title here" title="Enter a title here" onkeypress="return window.handleDashboardTitleKeyPress(event, this);" style="font-size: 24px;">' +
