@@ -4,7 +4,7 @@ var router = express.Router();
 var sessionMember = require('../middleware/sessionMember.js');
 
 function views_path(action) {
-let views_name_space = "chat/"
+let views_name_space = "chat/";
   return views_name_space + action
 }
 

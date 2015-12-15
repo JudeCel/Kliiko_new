@@ -66,6 +66,17 @@
 
             })
 
+            .state('dashboard.accountProfile.bannerUpload', {
+                url: "/banner-upload",
+                views: {
+                    'accountProfileContent': { templateUrl: prePath+"dashboard-accountProfile-bannerUpload/dashboard-content.html" }
+                },
+                onEnter:['dbg', function( dbg) {
+                    dbg.rs('dashboard.accountProfile.bannerUpload is on');
+                }]
+
+            })
+
             ///////////////////////// Resources
             .state('dashboard.resources', {
                 url: "/resources",

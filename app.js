@@ -60,6 +60,7 @@ app.use('/chat', currentUser.assign, chat);
 // catch 404 and forward to error handler
 
 initRestApiRouts();
+//app.use(config.get('webAppSettings').restApiUrl, currentUser.assign, api)
 
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
