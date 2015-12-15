@@ -42,7 +42,7 @@ function destroy(id, callback){
 	promotionCode.find({where: {id: id}}).done(function (result) {
 		if (result) {
 			result.destroy().then(function (result) {
-        callback(null, result);
+        callback(null, "Promotion code deleted successfully.");
       })
       .catch(function (err) {
         callback(err);
