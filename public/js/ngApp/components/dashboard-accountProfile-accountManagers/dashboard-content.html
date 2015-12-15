@@ -1,1 +1,54 @@
-<h1>Account Managers</h1>
+<section id='account-manager-content' ng-controller='AccountManagerController as am'>
+  <div class='col-md-3'></div>
+  <div class='col-xs-12 col-sm-12 col-md-6'>
+    <h2 class='text-center'>Account Managers</h2>
+    <!-- <h4 class='text-center background-blue'><%= message %></h4> -->
+  </div>
+  <div class='col-md-3'>
+    <div class='text-center'>
+      <a href='' class='btn btn-addNewAccountManager' data-toggle='modal' data-target='#addAccountManager'>Add New Account Manager</a>
+    </div>
+  </div>
+
+  <div class='row'>
+    <div class='col-xs-12 col-sm-12 col-md-12'>
+      <div class='row'>
+        <div class='dashboard-container'>
+          <table class='table table-responsive table-accountManager'>
+            <thead>
+              <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Gender</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat='user in users'>
+                <td>{{ users.firstName }}</td>
+                <td>{{ users.lastName }}</td>
+                <td>{{ users.gender }}</td>
+                <td>{{ users.email }}</td>
+                <td>{{ users.mobile }}</td>
+                <td>{{ users.status }}</td>
+                <td class='text-right accountManagerEditRemove'>
+                  <img src='/icons/accountManager_edit.png' alt='' />
+                <% if(users[i].Invites) { %>
+                  <a href='accountmanager/remove/invite/<%= users[i].id %>'><img src='/icons/accountManager_remove.png' alt='' /></a>
+                <% } else if(users[i].Accounts) { %>
+                  <a href='accountmanager/remove/account/<%= users[i].id %>'><img src='/icons/accountManager_remove.png' alt='' /></a>
+                <% } %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div ng-include="'js/ngApp/components/dashboard-accountProfile-accountManagers/modal.html'"></div>
+</section>

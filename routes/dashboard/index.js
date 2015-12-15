@@ -7,6 +7,7 @@ var policy = require('../../middleware/policy.js');
 var uploadBannerRoutes = require('./uploadBanner.js');
 var accountManagerRoutes = require('./accountManager.js');
 var accountDatabase = require('../../middleware/accountDatabase.js');
+var appData = require('../../services/webAppData');
 
 function views_path(action) {
   let views_name_space = 'dashboard/';
@@ -14,6 +15,7 @@ function views_path(action) {
 }
 
 router.use(function (req, res, next) {
+  res.locals.appData = appData;
   if (req.user) {
     next();
   } else {
@@ -22,15 +24,15 @@ router.use(function (req, res, next) {
 }, uploadBannerRoutes.getProfileBanner);
 
 router.get('/', policy.authorized(['admin', 'accountManager']) , function(req, res, next) {
-  res.render(views_path('index'), { title: 'My Dashboard', user: req.user, message: req.flash('message')[0], appData: appData });
+  res.render(views_path('index'), { title: 'My Dashboard', user: req.user, message: req.flash('message')[0] });
 });
 
 router.get('/landing', function(req, res) {
-  res.render(views_path('landing'), { title: 'Landing page' , appData: appData});
+  res.render(views_path('landing'), { title: 'Landing page' });
 });
 
 router.get('/upgradeplans', function(req, res) {
-  res.render(views_path('upgradePlans'), {title: 'Upgrade Plans', appData: appData});
+  res.render(views_path('upgradePlans'), { title: 'Upgrade Plans' });
 });
 
 router.post('/changePassword', function(req, res) {
