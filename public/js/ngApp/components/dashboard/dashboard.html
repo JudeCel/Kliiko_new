@@ -11,7 +11,8 @@
                     <div class="btn-dashboard-menu" ui-sref-active="active" ui-sref="dashboard.accountProfile.accountManagers"><span>Account Managers</span><img src='/icons/account_manager_green_flat.png' alt='' /></div>
                 </div>
             </div>
-
+        </div>
+   </div>
     <!--<div class='col-xs-12 col-sm-12 col-md-12'>-->
         <!--<div class='text-center remove-link-line'>-->
             <!--&lt;!&ndash; dashboard menu buttons&ndash;&gt;-->
@@ -28,7 +29,9 @@
 
     <!--</div>-->
 
-    <div id="back-nav-btn" class='col-md-3 btn-dashboard-menu btn-green btn-short'
+    <!-- <div id="back-nav-btn" class='col-md-3 btn-dashboard-menu btn-green btn-short' -->
+
+    <div id="back-nav-btn" class='col-md-3 btn-dashboard-menu btn-green btn-short-'
          ng-hide="dashboard.$state.current.name === 'dashboard.accountProfile' || dashboard.$state.current.name === 'dashboard' "
          ui-sref--="dashboard.accountProfile" ng-click="dashboard.handleBackBtn()"
         >
