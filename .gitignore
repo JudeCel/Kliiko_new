@@ -5,3 +5,4 @@
 /config/config.json
 /build/*
 /npm-debug.log
+/.tmp/templates.js
