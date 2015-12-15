@@ -24,8 +24,7 @@ function create(req, res, next) {
       return res.render(views_path('manage'), simpleParams(req.body, error));
     }
 
-    let sendEmail = true;
-    inviteService.createInvite(params, sendEmail, function(error, invite) {
+    inviteService.createInvite(params, function(error, invite) {
       if(error) {
         res.render(views_path('manage'), simpleParams(req.body, error));
       }
@@ -45,7 +44,10 @@ function destroy(req, res, next) {
 };
 
 function simpleParams(account, error, message) {
-  if(!_.isEmpty(error)) {
+  if(typeof error == 'string') {
+    error = { message: error };
+  }
+  else if(!_.isEmpty(error)) {
     error.message = 'Something went wrong';
   }
 

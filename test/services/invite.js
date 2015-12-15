@@ -95,7 +95,7 @@ describe('SERVICE - Invite', function() {
   describe('#createInvite', function() {
     describe('sad path', function() {
       it('should fail without params', function (done) {
-        inviteService.createInvite({}, false, function(error, invite) {
+        inviteService.createInvite({}, function(error, invite) {
           assert.equal(error.name, 'SequelizeValidationError');
           assert.equal(invite, null);
           done();
@@ -106,7 +106,7 @@ describe('SERVICE - Invite', function() {
     describe('happy path', function() {
       it('should succeed and return invite', function (done) {
         let params = validParams();
-        inviteService.createInvite(params, false, function(error, invite) {
+        inviteService.createInvite(params, function(error, invite) {
           assert.equal(error, null);
           assert.equal(invite.userId, params.userId);
           assert.equal(invite.accountId, params.accountId);
@@ -129,7 +129,7 @@ describe('SERVICE - Invite', function() {
     describe('existing user', function() {
       it('should succeed on removing invite', function (done) {
         let params = validParams('existing');
-        inviteService.createInvite(params, false, function(error, invite) {
+        inviteService.createInvite(params, function(error, invite) {
           assert.equal(error, null);
 
           async.parallel(countTables(1, 2, 2, 2), function(error, result) {
@@ -154,7 +154,7 @@ describe('SERVICE - Invite', function() {
     describe('new user', function() {
       it('should succeed on removing invite', function (done) {
         let params = validParams();
-        inviteService.createInvite(params, false, function(error, invite) {
+        inviteService.createInvite(params, function(error, invite) {
           assert.equal(error, null);
           async.parallel(countTables(1, 2, 2, 2), function(error, result) {
             if(error) {
@@ -179,7 +179,7 @@ describe('SERVICE - Invite', function() {
   describe('#findInvite', function() {
     it('should succeed on finding invite', function (done) {
       let params = validParams();
-      inviteService.createInvite(params, false, function(error, invite) {
+      inviteService.createInvite(params, function(error, invite) {
         assert.equal(error, null);
         inviteService.findInvite(invite.token, function(error, result) {
           assert.equal(error, null);
@@ -191,7 +191,7 @@ describe('SERVICE - Invite', function() {
 
     it('should fail on finding invite', function (done) {
       let params = validParams();
-      inviteService.createInvite(params, false, function(error, invite) {
+      inviteService.createInvite(params, function(error, invite) {
         assert.equal(error, null);
         inviteService.findInvite('some token', function(error, result) {
           assert.equal(error, 'Invite not found');
@@ -205,7 +205,7 @@ describe('SERVICE - Invite', function() {
   describe('#declineInvite', function() {
     it('should succeed on declining invite', function (done) {
       let params = validParams();
-      inviteService.createInvite(params, false, function(error, invite) {
+      inviteService.createInvite(params, function(error, invite) {
         assert.equal(error, null);
         inviteService.declineInvite(invite, function(error, message) {
           assert.equal(error, null);
@@ -219,7 +219,7 @@ describe('SERVICE - Invite', function() {
   describe('#acceptInviteExisting', function() {
     it('should succeed on accepting invite', function (done) {
       let params = validParams();
-      inviteService.createInvite(params, false, function(error, invite) {
+      inviteService.createInvite(params, function(error, invite) {
         assert.equal(error, null);
         assert.equal(invite.User.status, 'invited');
 
@@ -249,7 +249,7 @@ describe('SERVICE - Invite', function() {
   describe('#acceptInviteNew', function() {
     it('should succeed on accepting invite', function (done) {
       let params = validParams();
-      inviteService.createInvite(params, false, function(error, invite) {
+      inviteService.createInvite(params, function(error, invite) {
         assert.equal(error, null);
         assert.equal(invite.User.status, 'invited');
         let oldPassword = invite.User.encryptedPassword;

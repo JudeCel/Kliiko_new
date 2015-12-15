@@ -153,7 +153,7 @@ describe('SERVICE - AccountManager', function() {
         }
 
         User.find({ where: { email: req.body.email } }).then(function(user) {
-          inviteService.createInvite(params, false, function(error, invite) {
+          inviteService.createInvite(params, function(error, invite) {
             if(error) {
               done(error);
             }
@@ -187,7 +187,7 @@ describe('SERVICE - AccountManager', function() {
         }
 
         User.find({ where: { email: req.body.email } }).then(function(user) {
-          inviteService.createInvite(params, false, function(error, invite) {
+          inviteService.createInvite(params, function(error, invite) {
             if(error) {
               done(error);
             }
@@ -217,7 +217,7 @@ describe('SERVICE - AccountManager', function() {
         }
 
         User.find({ where: { email: req.body.email } }).then(function(user) {
-          inviteService.createInvite(params, false, function(error, invite) {
+          inviteService.createInvite(params, function(error, invite) {
             if(error) {
               done(error);
             }
@@ -253,7 +253,7 @@ describe('SERVICE - AccountManager', function() {
         }
 
         User.find({ where: { email: req.body.email } }).then(function(user) {
-          inviteService.createInvite(params, false, function(error, invite) {
+          inviteService.createInvite(params, function(error, invite) {
             if(error) {
               done(error);
             }

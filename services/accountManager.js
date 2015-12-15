@@ -18,24 +18,25 @@ function createOrFindUser(req, callback) {
   let user = req.user,
       params = prepareParams(req);
 
-  User.find({
-    include: [ Account ],
-    where: { email: params.email }
-  }).then(function(foundUser) {
-    if(foundUser) {
-      callback(null, inviteParams(foundUser.id, user.accountOwnerId, 'existing'));
+  preValidate(user, params, function(error) {
+    if(error) {
+      return callback(error);
     }
-    else {
-      let token = crypto.randomBytes(16).toString('hex');
-      params.password = token;
-      params.accountName = token;
-      params.status = 'invited';
-      params.confirmedAt = new Date();
 
-      userService.create(params, function(error, newUser) {
-        callback(error, inviteParams(newUser.id, user.accountOwnerId, 'new'));
-      });
-    }
+    User.find({
+      include: [ Account ],
+      where: { email: params.email }
+    }).then(function(foundUser) {
+      if(foundUser) {
+        callback(null, inviteParams(foundUser.id, user.accountOwnerId, 'existing'));
+      }
+      else {
+        adjustParamsForNewUser(params);
+        userService.create(params, function(error, newUser) {
+          callback(error, inviteParams(newUser.id, user.accountOwnerId, 'new'));
+        });
+      }
+    });
   });
 };
 
@@ -98,6 +99,37 @@ function removeInviteOrAccountUser(req, callback) {
 };
 
 //Helpers
+function preValidate(user, params, callback) {
+  if(user.email == params.email) {
+    return callback({ email: 'You are trying to invite yourself.' });
+  }
+
+  AccountUser.findAll({
+    include: [{
+      model: User,
+      where: { email: params.email }
+    }],
+    where: { AccountId: user.accountOwnerId }
+  }).then(function(accountUsers) {
+    if(_.isEmpty(accountUsers)) {
+      callback(null, true);
+    }
+    else {
+      callback({ email: 'This account has already accepted invite.' });
+    }
+  }).catch(function(err) {
+    callback(err);
+  });
+};
+
+function adjustParamsForNewUser(params) {
+  params.password = crypto.randomBytes(16).toString('hex');
+  params.accountName = crypto.randomBytes(16).toString('hex');
+  params.status = 'invited';
+  params.confirmedAt = new Date();
+  return params;
+}
+
 function findUsers(userId, model, where, cb) {
   User.findAll({
     include: [{
