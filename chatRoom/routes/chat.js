@@ -4,7 +4,6 @@ var router = express.Router();
 var sessionMember = require('./../../middleware/sessionMember.js');
 
 function uploadResourceCallback(userId, json) {
-  console.log(json);
   var foundUser = _.find(io.sockets, function (client) {
     return client.userId == userId;
   });
@@ -20,7 +19,6 @@ let views_name_space = "chat/"
 }
 
 router.use(function (req, res, next) {
-  console.log("=========================");
   next();
 });
 
