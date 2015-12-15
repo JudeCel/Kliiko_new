@@ -3,7 +3,7 @@
 
     angular
         .module('KliikoApp', [
-            //common modules
+            // common modules
             'ngRoute',
             'ngResource',
             'ngMaterial',
@@ -11,7 +11,10 @@
             'ui.router',
             'globalSettings',
             'debModule',
-            'domServices'
+            'domServices',
+
+            // app modules
+            'KliikoApp.user'
         ])
         .config(appConfigs)
         .run(appRun)

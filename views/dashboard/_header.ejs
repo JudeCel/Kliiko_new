@@ -25,15 +25,15 @@
 </head>
 <body>
   <div class='dashboard-header'>
-    <div class='col-xs-2 col-sm-2 col-md-2'>
+    <div class='col-xs-2 col-sm-2 col-md-2 logo-min-width'>
       <div class='row'>
         <a href='/'><img src='../icons/Kliiko_logo_lines.png'></a>
       </div>
     </div>
-    <div class='col-xs-4 col-sm-4 col-md-4 current-domain-name'>
+    <div class='col-xs-1 col-sm-1 col-md-1 current-domain-name'>
       <%= currentDomain.name %>
     </div>
-    <div class='col-xs-12 col-sm-12 col-md-6 btn-group remove-link-line nav-button-top-margin' role='group'>
+    <div class='col-xs-12 col-sm-12 col-md-6 btn-group remove-link-line nav-button-top-margin' style="float: right;" role='group'>
       Welcome, <%= currentUser.firstName %>!
       <a href='/dashboard/landing'>
         <button class='btn-header-green' type='button'>
@@ -62,7 +62,11 @@
         <li class='text-right text-size-dashboard'><a href=''>Payment Details<img class="my-details-container" src='/icons/payment_green.png' alt='' /></a></li>
         <%if(hasAccess(["admin"], currentDomain.roles)) { %>
           <li role="separator" class="divider"></li>
-          <li class='text-right text-size-dashboard'><a href='/dashboard/uploadbanner'>Upload Banner<img class="my-details-container" src='/icons/ic_tab_sessions_active.png' alt='' /></a></li>
+          <li class='text-right text-size-dashboard'><a href='/dashboard/uploadBanner'>Upload Banner<img class="my-details-container" src='/icons/ic_tab_sessions_active.png' alt='' /></a></li>
+        <% } %>
+        <%if(hasAccess(["admin"], currentDomain.roles)) { %>
+          <li role="separator" class="divider"></li>
+          <li class='text-right text-size-dashboard'><a href='/dashboard/accountDatabase'>Account Database<img class="my-details-container" src='' alt='' /></a></li>
         <% } %>
         <li role="separator" class="divider"></li>
         <li class='text-right text-size-dashboard'><a href='/logout'>Logout<img class="my-details-container" src='/icons/logout_yellow.png' alt='' /></a></li>

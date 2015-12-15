@@ -67,7 +67,6 @@ module.exports = function(app,restUrl) {
      */
     function prepareCurrenciesOutput(allCurrencies, rates) {
         for (var currency in allCurrencies) {
-            console.log(rates[currency]);
             if (rates[currency]) {
                 allCurrencies[currency].rate = rates[currency]
             }

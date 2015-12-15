@@ -4,7 +4,7 @@
 }
 
 .contactDetailsModal {
-  width: 50%;
+  width: 60%;
   padding-top: 100px;
    .table td {
     padding-left: 2px;
@@ -65,4 +65,9 @@ input[class=checkbox-login]:checked + label {
   background-size: contain;
   margin-top: 1px;
 }
+}
+
+.accountDatabaseCommentModal {
+  width: 20%;
+  padding-top: 100px;
 }

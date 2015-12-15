@@ -91,6 +91,9 @@ app.use(function(err, req, res, next) {
   });
 });
 
+// Moment for DateTime formating
+app.locals.moment = require('moment');
+
 module.exports = app;
 
 
@@ -99,10 +102,8 @@ module.exports = app;
  */
 function initRestApiRouts() {
   var restApiPath = config.get('webAppSettings').restApiUrl;
-  console.log(restApiPath);
 
   fs.readdirSync('./restAPI').forEach(function(filename) {
-    console.log(filename);
     if (~filename.indexOf('.js')) require('./restAPI/' + filename)(app, restApiPath);
   });
 }

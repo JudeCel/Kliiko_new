@@ -5,8 +5,8 @@
     module('KliikoApp').
     controller('UpgradePlanController', UpgradePlanController);
 
-    UpgradePlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams','upgradePlanServices', '$scope', '$rootScope'];
-    function UpgradePlanController(dbg, domServices, $state,$stateParams, upgradePlanServices, $scope, $rootScope) {
+    UpgradePlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams','upgradePlanServices', '$scope', '$rootScope', 'user'];
+    function UpgradePlanController(dbg, domServices, $state,$stateParams, upgradePlanServices, $scope, $rootScope, user) {
         dbg.log2('#UpgradePlanController  started');
         var vm = this;
 
@@ -15,21 +15,27 @@
         $stateParams.planUpgradeStep = 1;
         vm.currentStep = $stateParams.planUpgradeStep;
         vm.$state = $state;
-        vm.modContentBlock = {};
+        vm.modContentBlock = {selectedPlanDetails:true};
+        vm.updateBtn = 'Update';
 
         vm.openPlanDetailsModal = openPlanDetailsModal;
         vm.upgradeToPlan = upgradeToPlan;
         vm.applyCountryAndCurrency = applyCountryAndCurrency;
+        vm.getUserData = getUserData;
+        vm.updateUserData = updateUserData;
 
         init();
 
         function init() {
+            // get all plans details
             upgradePlanServices.getPlans().then(function(res) { vm.plans = res });
+
+            // get countries and currencies with exchange rates
             upgradePlanServices.getAllCountriesList().then(function(res) {
                 dbg.log2('#UpgradePlanController > getAllCountriesList > res ', res);
                 vm.countries = res.all;
 
-                // then go and get currencies
+                // then go and get currencies and exchange rates
                 dbg.log2('#UpgradePlanController > getAllCurrenciesList > call');
                 upgradePlanServices.getAllCurrenciesList().then(function(res) {
                     vm.currencies = res;
@@ -101,6 +107,27 @@
         function goToStep(step) {
             $stateParams.planUpgradeStep = vm.currentStep = step;
 
+        }
+
+        function getUserData(collapsed) {
+            if (collapsed || (vm.userData && vm.userData.updatedAt) ) return;
+            user.getUserData().then(function(res) {
+                vm.userData = res;
+            });
+        }
+
+        function updateUserData(data, form) {
+
+            //vm.updateBtn = 'Updating...';
+            user.updateUserData(data).then(function(res) {
+                vm.updateBtn = 'Updated';
+                setTimeout(function() {
+                    form.$setPristine();
+                    form.$setUntouched();
+                }, 2000);
+
+
+            });
         }
 
     }
