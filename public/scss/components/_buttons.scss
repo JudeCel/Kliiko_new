@@ -41,12 +41,12 @@
   text-align: left;
 
   &:hover{
-    color: $blueHover;
-    border-color: $blueHover;
+    color: $w;
+    background-color: $blue;
   }
   span {
     display: inline-block;
-    width: calc(100% - 19px);
+    width: calc(100% - 30px);
   }
   img {
     margin-bottom: 3px;
