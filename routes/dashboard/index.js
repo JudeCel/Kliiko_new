@@ -22,15 +22,15 @@ router.use(function (req, res, next) {
 }, uploadBannerRoutes.getProfileBanner);
 
 router.get('/', policy.authorized(['admin', 'accountManager']) , function(req, res, next) {
-  res.render(views_path('index'), { title: 'My Dashboard', user: req.user, message: req.flash('message')[0] });
+  res.render(views_path('index'), { title: 'My Dashboard', user: req.user, message: req.flash('message')[0], appData: appData });
 });
 
 router.get('/landing', function(req, res) {
-  res.render(views_path('landing'), { title: 'Landing page' });
+  res.render(views_path('landing'), { title: 'Landing page' , appData: appData});
 });
 
-router.get('/upgradePlans', function(req, res) {
-  res.render(views_path('upgradePlans'), { title: 'Upgrade Plans' });
+router.get('/upgradeplans', function(req, res) {
+  res.render(views_path('upgradePlans'), {title: 'Upgrade Plans', appData: appData});
 });
 
 router.post('/changePassword', function(req, res) {

@@ -19,8 +19,9 @@ passport.use(new LocalStrategy({
         done("Wrong email or password");
       }else{
         result.getOwnerAccount().then(function(accounts) {
-          result.increment('signInCount')
-          done(null, userParams(result, accounts[0]));
+          result.increment('signInCount').done(function(result) {
+            done(null, userParams(result, accounts[0]));
+          })
         });
       }
     });

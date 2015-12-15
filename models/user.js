@@ -1,6 +1,6 @@
 "use strict";
 var bcrypt = require('bcrypt');
-var constants = require('../util/constants')
+var constants = require('../util/constants');
 
 module.exports = (Sequelize, DataTypes) => {
   var User = Sequelize.define('User', {
@@ -14,7 +14,7 @@ module.exports = (Sequelize, DataTypes) => {
     companyName: {type: DataTypes.STRING, allowNull: true },
     comment: {type: DataTypes.TEXT, allowNull: true },
     email: {type: DataTypes.STRING, allowNull: true,
-    validate:{
+      validate:{
       validateEmail: function(val, next) {
         if (this.requiredEmail) {
           if (!(constants.emailRegExp.test(val))) {
@@ -68,10 +68,12 @@ module.exports = (Sequelize, DataTypes) => {
     promoCode: {type: DataTypes.INTEGER, allowNull: true},
     signInCount: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
     mobile: {type: DataTypes.STRING, allowNull: true},
-    tipsAndUpdate: {type: DataTypes.ENUM, values: ['off', 'on'], allowNull: false, defaultValue: 'on'},
-    gender: {type: DataTypes.ENUM, values: ['male', 'female'], allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} } },
+    //tipsAndUpdate: {type: DataTypes.ENUM, values: ['off', 'on'], allowNull: false, defaultValue: 'on'},
+    tipsAndUpdate: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false},
     postalAdress: {type: DataTypes.STRING, allowNull: true },
     city: {type: DataTypes.STRING, allowNull: true },
+    state: {type: DataTypes.STRING, allowNull: true },
+    country: {type: DataTypes.STRING, allowNull: true },
     postCode: {type: DataTypes.STRING, allowNull: true },
     companyName: {type: DataTypes.STRING, allowNull: true },
     landlineNumber: {type: DataTypes.STRING, allowNull: true },

@@ -1,4 +1,5 @@
 {
+  "mode": "staging",
   "server":{
     "port": 3000,
     "baseDomain": ".kliiko.diatomdemo.com",

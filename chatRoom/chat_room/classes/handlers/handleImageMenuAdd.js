@@ -1,5 +1,5 @@
 var imageMenuAddHandler = function() {
-	var html =	'<form id="formUploadImage" method="post" action="/uploadimage" enctype="multipart/form-data" target="iFrameUploadImage">' +
+	var html =	'<form id="formUploadImage" method="post" action="/chat/uploadimage" enctype="multipart/form-data" target="iFrameUploadImage">' +
 				'	<div style="position:relative; left:0px; top:0px; width:0px; height: 0px;">' +
 				'		<div style="position:absolute; left:80px; top:300px; width:200px; height: 40px; filter:alpha(opacity=1.0); opacity:1.0; overflow:hidden; cursor:hand;">' +
 				//'			<input id="IDUploadImageTitle" placeholder="Enter a title here" title="Enter a title here" onkeypress="return window.handleDashboardTitleKeyPress(event, this);" style="font-size: 24px;">' +
