@@ -76,13 +76,13 @@ html {
 }
 
 footer {
-  position: absolute;
+  position: relative;
   left: 0;
   bottom: 0;
   height: 50px;
   width: 100%;
   text-align: center;
-  a{
+  a {
     color: #58595B;
     line-height: 50px;
     font-size: 14px;
@@ -223,4 +223,18 @@ color: #737373;
 
 .btn-white{
   background-color: white;
+}
+
+
+/* centered columns styles */
+.row-centered {
+  text-align:center;
+}
+.col-centered {
+  display:inline-block;
+  float:none;
+
+  /* reset the text-align */
+  text-align:left;
+  argin: 0 auto !important;
 }
