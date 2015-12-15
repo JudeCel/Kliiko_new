@@ -1,0 +1,31 @@
+<% include _header %>
+
+<main class='main-first-page' ng-controller='DashboardCtrl'>
+  <div class='container'>
+
+    <%# include _navTabs %>
+
+    <div class='dashboard-container border-blue box-shadow'>
+      <div class='row'>
+        <div class='col-xs-12 col-sm-12 col-md-12'>
+          <% include _buttons %>
+        </div>
+        <div class='col-xs-12 col-sm-12 col-md-12'>
+          <div class='row'>
+            <div class='dashboard-container'>
+              <h2 class="center-block">
+                Promotion Codes
+              </h2>
+              <h4><%#= message %></h4>
+              <div id="signup" class="tab-pane fade in active">
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<% include ../footer %>

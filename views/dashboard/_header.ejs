@@ -68,6 +68,12 @@
           <li role="separator" class="divider"></li>
           <li class='text-right text-size-dashboard'><a href='/dashboard/accountDatabase'>Account Database<img class="my-details-container" src='' alt='' /></a></li>
         <% } %>
+
+        <%if(hasAccess(["admin"], currentDomain.roles)) { %>
+          <li role="separator" class="divider"></li>
+          <li class='text-right text-size-dashboard'><a href='/dashboard/promotionCode'>Promotion Codes<img class="my-details-container" src='' alt='' /></a></li>
+        <% } %>
+
         <li role="separator" class="divider"></li>
         <li class='text-right text-size-dashboard'><a href='/logout'>Logout<img class="my-details-container" src='/icons/logout_yellow.png' alt='' /></a></li>
       </ul>

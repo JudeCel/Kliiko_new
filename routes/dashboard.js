@@ -6,6 +6,7 @@ var changePassword = require('../services/changePassword');
 var policy = require('../middleware/policy.js');
 var uploadBanner = require('../middleware/uploadBanner.js');
 var accountDatabase = require('../middleware/accountDatabase.js');
+var promotionCode = require('../middleware/promotionCode.js');
 var appData = require('../services/webAppData');
 
 
@@ -54,6 +55,10 @@ router.get('/accountDatabase', policy.authorized(['admin']), accountDatabase.get
 router.get('/exportCsv', policy.authorized(['admin']), accountDatabase.exportCsv);
 router.post('/updateComment', policy.authorized(['admin']), accountDatabase.updateComment);
 router.post('/reactivateOrDeactivate', policy.authorized(['admin']), accountDatabase.reactivateOrDeactivate);
+// End
+
+// promotionCode
+router.get('/promotionCode', policy.authorized(['admin']), promotionCode.list);
 // End
 
 module.exports = router;
