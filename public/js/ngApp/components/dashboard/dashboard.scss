@@ -1,0 +1,19 @@
+#dashboard {
+
+  #back-nav-btn {
+    margin-bottom: -75px;
+  }
+
+
+
+  img.ic {
+    margin-top: -4px;
+  }
+
+  p {
+    &.warning {
+      color: $red;
+      font-size: .6em;
+    }
+  }
+}

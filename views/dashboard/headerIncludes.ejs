@@ -1,0 +1,49 @@
+<!-- vendors-->
+<script src="/js/vendors/jQuery/jquery-2.1.4.min.js"></script>
+<script src="/js/vendors/angular/1.4.8/angular.js"></script>
+<script src="/js/vendors/moment/moment.js"></script>
+
+<script src="/js/vendors/bootstrap/bootstrap.js"></script>
+<script src="/js/vendors/bootstrap/bootstrap-show-password.js"></script>
+
+<!-- pre ngApp -->
+<script src="/js/vendors/angular/1.4.8/angular-resource.js"></script>
+<script src="/js/vendors/angular/1.4.8/angular-route.js"></script>
+
+<script src="/js/vendors/angular/1.4.8/angular-animate.js"></script>
+<script src="/js/vendors/angular/1.4.8/angular-aria.js"></script>
+<script src="/js/vendors/ui-router/angular-ui-router.js"></script>
+
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/angular/bower-material/master/angular-material.css">
+<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc4/angular-material.min.js"></script>
+<script src="/js/vendors/ui-bootstrap/ui-bootstrap-tpls-0.14.3.min.js"></script>
+
+<script src="/js/ngApp/modules/debModule/debModule.es5.js"></script>
+<script src="/js/ngApp/modules/domServices/domServices.js"></script>
+
+
+<!-- ngApp -->
+<script src="/js/ngApp/app.js"></script>
+<script src="/js/ngApp/settings/appGlobalSettings.js"></script>
+<script src="/js/ngApp/appRouter.js"></script>
+
+<script src="/js/ngApp/directives/custom-select-directive.js"></script>
+
+<script src="/js/ngApp/modules/user/user.js"></script>
+
+
+
+<script src="/js/ngApp/components/dashboard/DashboardController.js"></script>
+<script src="/js/ngApp/components/dashboard-accountProfile-upgradePlan/UpgradePlanController.js"></script>
+<script src="/js/ngApp/components/dashboard-accountProfile-upgradePlan/upgradePlanServices.js"></script>
+
+<!-- ngApp: modules -->
+
+
+<script>
+	(function(global){
+		global.appData = <%- JSON.stringify(appData) %>
+	})(this);
+</script>
+
+
