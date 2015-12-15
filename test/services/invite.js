@@ -106,20 +106,15 @@ describe('SERVICE - Invite', function() {
     describe('happy path', function() {
       it('should succeed and return invite', function (done) {
         let params = validParams();
-        inviteService.createInvite(params, function(error, invite) {
+        inviteService.createInvite(params, function(error, invite, result) {
           assert.equal(error, null);
           assert.equal(invite.userId, params.userId);
           assert.equal(invite.accountId, params.accountId);
           assert.equal(invite.role, params.role);
           assert.equal(invite.userType, params.userType);
+          assert.include(result.data.html, 'You have been requested to join Kliiko.');
+          assert.include(result.data.html, 'Click link for invite:');
           done();
-        });
-      });
-
-      it('should succeed, send email and return invite', function (done) {
-        let params = validParams();
-        inviteService.createInvite(params, true, function(error, invite) {
-          done('not finished');
         });
       });
     });
@@ -207,8 +202,9 @@ describe('SERVICE - Invite', function() {
       let params = validParams();
       inviteService.createInvite(params, function(error, invite) {
         assert.equal(error, null);
-        inviteService.declineInvite(invite, function(error, message) {
+        inviteService.declineInvite(invite.token, function(error, result, message) {
           assert.equal(error, null);
+          assert.equal(invite.id, result.id);
           assert.equal(message, 'Successfully declined invite');
           done();
         });
@@ -218,7 +214,7 @@ describe('SERVICE - Invite', function() {
 
   describe('#acceptInviteExisting', function() {
     it('should succeed on accepting invite', function (done) {
-      let params = validParams();
+      let params = validParams('existing');
       inviteService.createInvite(params, function(error, invite) {
         assert.equal(error, null);
         assert.equal(invite.User.status, 'invited');
@@ -228,11 +224,12 @@ describe('SERVICE - Invite', function() {
             done(error);
           }
 
-          inviteService.acceptInviteExisting(invite, function(error, message) {
+          inviteService.acceptInviteExisting(invite.token, function(error, result, message) {
             if(error) {
               done(error);
             }
 
+            assert.equal(invite.id, result.id);
             invite.User.reload().then(function(user) {
               assert.equal(user.status, 'accepted');
 
@@ -260,7 +257,7 @@ describe('SERVICE - Invite', function() {
           }
 
           let userParams = { accountName: 'newname', password: 'newpassword' };
-          inviteService.acceptInviteNew(invite, userParams, function(error, message) {
+          inviteService.acceptInviteNew(invite.token, userParams, function(error, message) {
             if(error) {
               done(error);
             }

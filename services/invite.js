@@ -38,27 +38,15 @@ function createInvite(params, callback) {
 
 function removeInvite(invite, callback) {
   if(invite.userType == 'new') {
-    User.find({ where: { id: invite.userId } }).then(function(user) {
-      user.getOwnerAccount({ include: [ AccountUser ] }).then(function(accounts) {
-        accounts[0].AccountUser.destroy().then(function() {
-          accounts[0].destroy().then(function() {
-            user.destroy().then(function() {
-              callback(null, true);
-            });
-          });
-        }).catch(function(err) {
-          callback(err);
-        });
-      }).catch(function(err) {
-        callback(err);
-      });
+    removeAllAssociatedData(invite, function(error) {
+      callback(error);
     });
   }
   else {
     Invite.destroy({ where: { userId: invite.userId, accountId: invite.accountId } }).then(function() {
       callback(null, true);
-    }).catch(function(err) {
-      callback(err);
+    }).catch(function(error) {
+      callback(error);
     });
   }
 };
@@ -74,39 +62,116 @@ function findInvite(token, callback) {
   });
 };
 
-function declineInvite(invite, callback) {
-  removeInvite(invite, function(err) {
-    callback(err, 'Successfully declined invite');
-  });
-};
-
-function acceptInviteExisting(invite, callback) {
-  updateUser({ status: 'accepted' }, invite, function(error) {
+function declineInvite(token, callback) {
+  findInvite(token, function(error, invite) {
     if(error) {
       callback(error);
     }
     else {
-      createAccountUserFromInvite(invite, function(error, message) {
-        callback(error, message);
+      removeInvite(invite, function(error) {
+        callback(error, invite, 'Successfully declined invite');
       });
     }
+  })
+};
+
+function acceptInviteExisting(token, callback) {
+  findInvite(token, function(error, invite) {
+    if(error) {
+      return callback(error);
+    }
+    else if(invite.userType == 'new') {
+      return callback(null, invite);
+    }
+
+    updateUser({ status: 'accepted' }, invite, function(error) {
+      if(error) {
+        callback(error);
+      }
+      else {
+        createAccountUserFromInvite(invite, function(error, message) {
+          callback(error, invite, message);
+        });
+      }
+    });
   });
 };
 
-function acceptInviteNew(invite, params, callback) {
-  createAccountAndUser(invite, params, function(error) {
+function acceptInviteNew(token, params, callback) {
+  findInvite(token, function(error, invite) {
     if(error) {
-      callback(error);
+      return callback(error);
     }
-    else {
-      createAccountUserFromInvite(invite, function(error, message) {
-        callback(error, message);
-      });
+    else if(invite.userType == 'existing') {
+      return callback(true);
     }
+
+    createAccountAndUser(invite, params, function(error) {
+      if(error) {
+        callback(error);
+      }
+      else {
+        createAccountUserFromInvite(invite, function(error, message) {
+          callback(error, invite, message);
+        });
+      }
+    });
   });
 };
 
 //Helpers
+function removeAllAssociatedData(invite, callback) {
+  async.waterfall([
+    function(cb) {
+      User.find({ where: { id: invite.userId } }).then(function(user) {
+        if(user) {
+          cb(null, user);
+        }
+        else {
+          cb('Not found user');
+        }
+      }).catch(function(error) {
+        cb(error);
+      });
+    },
+    function(user, cb) {
+      user.getOwnerAccount({ include: [ AccountUser ] }).then(function(accounts) {
+        if(accounts[0]) {
+          cb(null, user, accounts[0]);
+        }
+        else {
+          cb('Not found account');
+        }
+      }).catch(function(error) {
+        cb(error);
+      });
+    },
+    function(user, account, cb) {
+      account.AccountUser.destroy().then(function() {
+        cb(null, user, account);
+      }).catch(function(error) {
+        cb(error);
+      });
+    },
+    function(user, account, cb) {
+      account.destroy().then(function() {
+        cb(null, user);
+      }).catch(function(error) {
+        cb(error);
+      });
+    },
+    function(user, cb) {
+      user.destroy().then(function() {
+        cb(null, true);
+      }).catch(function(error) {
+        cb(error);
+      });
+    }
+  ], function(error, result) {
+    callback(error);
+  });
+}
+
 function createAccountUserFromInvite(invite, callback) {
   invite.User.addAccount(invite.Account, { role: invite.role, owner: false }).then(function(result) {
     if(result) {

@@ -8,89 +8,53 @@ function views_path(action) {
 
 function index(req, res, next) {
   inviteService.findInvite(req.params.token, function(error, invite) {
-    if(error) {
-      res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
-    }
-    else {
-      res.render(views_path('index'), simpleParams('Invite', invite));
-    }
+    res.render(views_path('index'), simpleParams('Invite', invite, error));
   });
 };
 
 function decline(req, res, next) {
-  inviteService.findInvite(req.params.token, function(error, invite) {
+  inviteService.declineInvite(req.params.token, function(error, invite, message) {
     if(error) {
-      return res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
+      res.render(views_path('index'), simpleParams('Invite', invite, error));
     }
-
-    inviteService.declineInvite(invite, function(error, message) {
-      if(error) {
-        res.render(views_path('index'), simpleParams('Invite', invite, error));
-      }
-      else {
-        req.flash('message', message);
-        res.redirect('/login');
-      }
-    });
+    else {
+      req.flash('message', message);
+      res.redirect('/login');
+    }
   });
 };
 
 function acceptGet(req, res, next) {
-  inviteService.findInvite(req.params.token, function(error, invite) {
+  inviteService.acceptInviteExisting(req.params.token, function(error, invite, message) {
     if(error) {
-      return res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
+      res.render(views_path('index'), simpleParams('Invite', invite, error));
     }
-
-    switch(invite.userType) {
-      case 'existing': {
-        inviteService.acceptInviteExisting(invite, function(error, message) {
-          if(error) {
-            res.render(views_path('index'), simpleParams('Invite', invite, error));
-          }
-          else {
-            req.flash('message', message);
-            res.redirect('/login');
-          }
-        });
-        break;
-      }
-      case 'new': {
+    else {
+      if(invite.userType == 'new') {
         res.render(views_path('accept'), simpleParams('Accept Invite', invite));
-        break;
+      }
+      else {
+        req.flash('message', message);
+        res.redirect('/login');
       }
     }
   });
 };
 
 function acceptPost(req, res, next) {
-  inviteService.findInvite(req.params.token, function(error, invite) {
+  inviteService.acceptInviteNew(req.params.token, req.body, function(error, invite, message) {
     if(error) {
-      return res.render(views_path('notFound'), simpleParams('Invite not found', {}, error));
+      res.render(views_path('accept'), simpleParams('Invite', invite, error));
     }
-
-    switch(invite.userType) {
-      case 'existing': {
-        res.render(views_path('notFound'), simpleParams('Invite not found', invite));
-        break;
-      }
-      case 'new': {
-        inviteService.acceptInviteNew(invite, req.body, function(error, message) {
-          if(error) {
-            res.render(views_path('accept'), simpleParams('Invite', invite, error));
-          }
-          else {
-            req.flash('message', message);
-            res.redirect('/login');
-          }
-        });
-        break;
-      }
+    else {
+      req.flash('message', message);
+      res.redirect('/login');
     }
   });
 };
 
 function simpleParams(title, invite, error, message) {
-  return { title: title, invite: invite, error: error, message: message || '' };
+  return { title: title, invite: invite || {}, error: error, message: message || '' };
 };
 
 module.exports = {
