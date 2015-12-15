@@ -1,7 +1,7 @@
 "use strict";
 var express = require('express');
 var router = express.Router();
-var sessionMember = require('../middleware/sessionMember.js');
+var sessionMember = require('./../../middleware/sessionMember.js');
 
 function uploadResourceCallback(userId, json) {
   console.log(json);
