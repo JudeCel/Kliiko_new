@@ -146,7 +146,7 @@ describe('SERVICE - AccountManager', function() {
       });
     });
 
-    describe.only('sad path', function() {
+    describe('sad path', function() {
       it('should fail because of inviting himself', function (done) {
         let req = requestObject();
         req.user.email = 'some@email.com';
