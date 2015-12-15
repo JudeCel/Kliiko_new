@@ -78,7 +78,8 @@ describe('SERVICE - AccountManager', function() {
     return {
       user: {
         id: testUser.id,
-        accountOwnerId: testAccount.id
+        accountOwnerId: testAccount.id,
+        email: 'someother@email.com'
       },
       body: {
         firstName: 'FirstName',
@@ -94,51 +95,76 @@ describe('SERVICE - AccountManager', function() {
   }
 
   describe('#createOrFindUser', function() {
-    it('should find existing user', function (done) {
-      let req = requestObject();
-      req.body.email = 'lilu.tanya@gmail.com';
+    describe('happy path', function() {
+      it('should find existing user', function (done) {
+        let req = requestObject();
+        req.body.email = 'lilu.tanya@gmail.com';
 
-      accountManagerService.createOrFindUser(req, function(error, params) {
-        if(error) {
-          done(error);
-        }
+        accountManagerService.createOrFindUser(req, function(error, params) {
+          if(error) {
+            done(error);
+          }
 
-        let returnParams = {
-          userId: testUser.id,
-          accountId: testAccount.id,
-          userType: 'existing',
-          role: 'accountManager'
-        };
+          let returnParams = {
+            userId: testUser.id,
+            accountId: testAccount.id,
+            userType: 'existing',
+            role: 'accountManager'
+          };
 
-        assert.equal(error, null);
-        assert.deepEqual(params, returnParams);
-        done();
+          assert.equal(error, null);
+          assert.deepEqual(params, returnParams);
+          done();
+        });
+      });
+
+      it('should create new user', function (done) {
+        let req = requestObject();
+        accountManagerService.createOrFindUser(req, function(error, params) {
+          if(error) {
+            done(error);
+          }
+
+          User.find({ where: { email: req.body.email } }).then(function(user) {
+            if(user) {
+              let returnParams = {
+                userId: user.id,
+                accountId: testAccount.id,
+                userType: 'new',
+                role: 'accountManager'
+              };
+
+              assert.equal(error, null);
+              assert.deepEqual(params, returnParams);
+              done();
+            }
+            else {
+              done('User not found');
+            }
+          });
+        });
       });
     });
 
-    it('should create new user', function (done) {
-      let req = requestObject();
-      accountManagerService.createOrFindUser(req, function(error, params) {
-        if(error) {
-          done(error);
-        }
+    describe.only('sad path', function() {
+      it('should fail because of inviting himself', function (done) {
+        let req = requestObject();
+        req.user.email = 'some@email.com';
 
-        User.find({ where: { email: req.body.email } }).then(function(user) {
-          if(user) {
-            let returnParams = {
-              userId: user.id,
-              accountId: testAccount.id,
-              userType: 'new',
-              role: 'accountManager'
-            };
+        accountManagerService.createOrFindUser(req, function(error, params) {
+          assert.deepEqual(error, { email: 'You are trying to invite yourself.' });
+          done();
+        });
+      });
 
-            assert.equal(error, null);
-            assert.deepEqual(params, returnParams);
-            done();
-          }
-          else {
-            done('User not found');
-          }
+      it('should fail because of already accepted', function (done) {
+        let req = requestObject();
+        req.user.id = 0;
+        req.body.email = 'lilu.tanya@gmail.com';
+
+        accountManagerService.createOrFindUser(req, function(error, params) {
+          assert.deepEqual(error, { email: 'This account has already accepted invite.' });
+          done();
         });
       });
     });
@@ -159,7 +185,7 @@ describe('SERVICE - AccountManager', function() {
             }
 
             let userParams = { accountName: 'newname', password: 'newpassword' };
-            inviteService.acceptInviteNew(invite, userParams, function(error, message) {
+            inviteService.acceptInviteNew(invite.token, userParams, function(error, message) {
               if(error) {
                 done(error);
               }
@@ -259,7 +285,7 @@ describe('SERVICE - AccountManager', function() {
             }
 
             let userParams = { accountName: 'newname', password: 'newpassword' };
-            inviteService.acceptInviteNew(invite, userParams, function(error, message) {
+            inviteService.acceptInviteNew(invite.token, userParams, function(error, message) {
               if(error) {
                 done(error);
               }

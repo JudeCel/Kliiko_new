@@ -109,7 +109,10 @@ function preValidate(user, params, callback) {
       model: User,
       where: { email: params.email }
     }],
-    where: { AccountId: user.accountOwnerId }
+    where: {
+      UserId: { $ne: user.id },
+      AccountId: user.accountOwnerId
+    }
   }).then(function(accountUsers) {
     if(_.isEmpty(accountUsers)) {
       callback(null, true);
@@ -117,8 +120,8 @@ function preValidate(user, params, callback) {
     else {
       callback({ email: 'This account has already accepted invite.' });
     }
-  }).catch(function(err) {
-    callback(err);
+  }).catch(function(error) {
+    callback(error);
   });
 };
 
@@ -139,8 +142,8 @@ function findUsers(userId, model, where, cb) {
     where: { id: { $ne: userId } }
   }).then(function(users) {
     cb(null, users);
-  }).catch(function(err) {
-    cb(err);
+  }).catch(function(error) {
+    cb(error);
   });
 }
 
