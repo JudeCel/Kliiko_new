@@ -99,6 +99,13 @@ label.radio-button input[type="radio"] + span {
 label.radio-button input[type="radio"]:checked + span:after {
   background: #ccc; }
 
+img.ic-flipX {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  -webkit-filter: FlipH;
+          filter: FlipH;
+  -ms-filter: "FlipH"; }
+
 .changePasswordModal {
   width: 20%;
   padding-top: 100px; }

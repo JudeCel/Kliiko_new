@@ -18,11 +18,14 @@
         vm.modContentBlock = {selectedPlanDetails:true};
         vm.updateBtn = 'Update';
 
+        vm.stepsClassIsActive = stepsClassIsActive;
+        vm.stepsClassIsDone = stepsClassIsDone;
         vm.openPlanDetailsModal = openPlanDetailsModal;
         vm.upgradeToPlan = upgradeToPlan;
         vm.applyCountryAndCurrency = applyCountryAndCurrency;
         vm.getUserData = getUserData;
         vm.updateUserData = updateUserData;
+        vm.goToStep = goToStep;
 
         init();
 
@@ -44,6 +47,15 @@
 
             });
         }
+
+        /**
+         * Helpers for ng-class
+         * @param step {int || char}
+         * @returns {boolean}
+         */
+        function stepsClassIsActive(step) { return (vm.currentStep == step); }
+        function stepsClassIsDone(step) {  return (vm.currentStep > step); }
+
 
         /**
          * Open plan upgrade modal with particular plan information
@@ -105,8 +117,26 @@
         }
 
         function goToStep(step) {
+            if (!angular.isNumber(step)) {
+                if (step === 'back') step = vm.currentStep - 1;
+                if (step === 'next') step = vm.currentStep + 1;
+            }
+
+            var valid = validateStep(step);
+
+            if (!valid) return;
+
             $stateParams.planUpgradeStep = vm.currentStep = step;
 
+        }
+        function validateStep(step) {
+            if (step === 3) return validateStep2();
+
+            return true;
+
+            function validateStep2() {
+                return false;
+            }
         }
 
         function getUserData(collapsed) {
