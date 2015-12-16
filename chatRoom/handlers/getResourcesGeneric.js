@@ -1,6 +1,4 @@
 "use strict";
-// var ifData = require('if-data');
-// var getResourcesGeneric = ifData.repositories.getResourcesGeneric;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
 var expressValidatorStub = require('../helpers/expressValidatorStub.js');
@@ -25,7 +23,6 @@ module.exports.validate = validate;
 var run = function (req, resCb, nextCb) {
   Resource.findAll({where: req.params})
   .then(function (data) {
-    console.log(data);
     resCb.send(data);
   }).catch(function (err) {
     errCb(webFaultHelper.getFault(err));
