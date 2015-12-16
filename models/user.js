@@ -54,6 +54,10 @@ module.exports = (Sequelize, DataTypes) => {
     mobile: {type: DataTypes.STRING, allowNull: true},
     tipsAndUpdate: {type: DataTypes.ENUM, values: ['off', 'on'], allowNull: false, defaultValue: 'on'},
   },{
+      indexes: [{
+        unique: true,
+        fields: ['email']
+      }],
       classMethods: {
         associate: function(models) {
           User.hasMany(models.SocialProfile, { foreignKey: 'userId'});
