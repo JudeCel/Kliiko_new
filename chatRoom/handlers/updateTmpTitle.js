@@ -18,27 +18,35 @@ var validate = function (req, resCb) {
 
     resCb();
 };
-module.exports.validate = validate;
 
 var run = function (req, resCb, errCb) {
-  Resource.destroy({where: {resource_type: 'tmp', userId: req.params.userId }})
+  Resource.destroy({where: {resourceType: 'tmp', userId: req.params.userId }})
     .then(function () {
-      Resource.create({
-          topicId: req.params.topicId,
-          userId: req.params.userId,
-          URL: req.params.URL,
-          resource_type: 'tmp',
-          JSON: encodeURI(JSON.stringify(req.params.JSON, null))
-      }).catch(function (err) {
+      createResurce(req.params, function(err, reult) {
+        if (err) {
           errCb(webFaultHelper.getFault(err));
+        }else{
+          resCb.send(reult);
+        }
       });
-    }).then(function (data) {
-        resCb.send(data);
     }).catch(function (err) {
-        errCb(webFaultHelper.getFault(err));
+      errCb(webFaultHelper.getFault(err));
     });
 };
-module.exports.run = run;
+
+function createResurce(params, callback) {
+  Resource.create({
+    topicId: params.topicId,
+    userId: params.userId,
+    URL: params.URL,
+    resourceType: 'tmp',
+    JSON: encodeURI(JSON.stringify(params.JSON, null))
+  }).then(function (data) {
+    callback(null, data.dataValues);
+  }).catch(function (err) {
+    callback(err);
+  });
+}
 
 module.exports.execute = function (params, resCb, nextCb) {
     var req = expressValidatorStub({
@@ -52,3 +60,6 @@ module.exports.execute = function (params, resCb, nextCb) {
         run(req, res, nextCb);
     });
 }
+
+module.exports.validate = validate;
+module.exports.run = run;

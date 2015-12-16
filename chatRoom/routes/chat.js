@@ -2,6 +2,7 @@
 var express = require('express');
 var router = express.Router();
 var sessionMember = require('./../../middleware/sessionMember.js');
+var socketHelper = require("../socketHelper");
 
 function uploadResourceCallback(userId, json) {
   var foundUser = _.find(io.sockets, function (client) {
