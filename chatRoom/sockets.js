@@ -598,7 +598,7 @@ module.exports.listen = function (server) {
       var req = expressValidatorStub({
         params: {
           topicId: socket.topicId,
-          resource_type: type,
+          resourceType: type,
           userId: socket.userId
         }
       });
