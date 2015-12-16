@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- Meta -->
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+		<!-- Bootstrap -->
+    	<link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    	<link href="/bootstrap/css/docs.css" rel="stylesheet" media="screen">
+    	<link href="/bootstrap/css/pygments-manni.css" rel="stylesheet" media="screen">
+
+	    <!-------------------------------------------->
+	    <!--    include frameworks                  -->
+	    <!-------------------------------------------->
+		<script src="/socket.io/socket.io.js"></script>
+
+	    <!-------------------------------------------->
+	    <!--    include utility scripts             -->
+	    <!-------------------------------------------->
+	    <script type="text/javascript" src="/chat_room/js/utilities.js"></script>
+
+	    <!-------------------------------------------->
+	    <!--    jQuery                              -->
+	    <!-------------------------------------------->
+		<script type="text/javascript" src="/chat_room/resources/jquery/jquery-2.0.0.min.js"></script>
+
+	    <!-------------------------------------------->
+	    <!--    include 3rd party resources         -->
+	    <!-------------------------------------------->
+	    <script type="text/javascript" src="/chat_room/resources/gistfile1.js"></script>
+
+	    <!-------------------------------------------->
+	    <!--    include bootstrap scripts           -->
+	    <!-------------------------------------------->
+		<script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+
+	    <script type="text/javascript">
+			function updateHelpContent(ndxMenu, ndxMenuItem) {
+				var header = "<h3>" + help.menus[ndxMenu].items[ndxMenuItem].name + "</h3>";
+				var div = document.getElementById("helpContent");
+				switch(help.menus[ndxMenu].items[ndxMenuItem].type) {
+					case 'html':
+						div.innerHTML = header + help.menus[ndxMenu].items[ndxMenuItem].content;
+					break;
+					case 'website':
+						div.innerHTML = header + "<iframe width=\"720\" height=\"540\" frameborder=\"0\" src=\"" + help.menus[ndxMenu].items[ndxMenuItem].content + "\"></iframe>";
+					break;
+					case 'video':
+						div.innerHTML = header + help.menus[ndxMenu].items[ndxMenuItem].content;
+					break;
+					case 'audio':
+						div.innerHTML = header + help.menus[ndxMenu].items[ndxMenuItem].content;
+					break;
+					case 'pdf':
+						var html = "<object width=\"720\" height=\"540\" data=\"/help/" + help.menus[ndxMenu].items[ndxMenuItem].content + ".pdf\" type=\"applicaton/pdf\" >";
+						html += "<p>It appears you don't have a PDF plugin for this browser.</p>";
+						html += "<a href=\"/help/" + help.menus[ndxMenu].items[ndxMenuItem].content + ".pdf\">Click here to download the PDF file.</a>";
+						html += "</object>";
+						div.innerHTML = header + html;
+					break;
+				}
+			}
+	    </script>
+
+	    <title>Insider Focus Help</title>
+
+	    <!-------------------------------------------->
+		<!-- Main									-->
+	    <!-------------------------------------------->
+	    <script type="text/javascript" src="/chat_room/js/help.js"></script>
+
+	    <script type="text/javascript">
+	    	//	lets start the help system now
+	    	$('#navbar').affix();
+	    	config("insider.focus.com", "7203", "live");
+
+
+	    </script>
+	</head>
+	<body data-spy="scroll" data-target=".bs-sidebar">
+		<div id="helpMain">
+		</div>
+	</body>
+</html>

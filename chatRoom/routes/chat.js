@@ -1,10 +1,9 @@
 "use strict";
 var express = require('express');
 var router = express.Router();
-var sessionMember = require('../middleware/sessionMember.js');
+var sessionMember = require('./../../middleware/sessionMember.js');
 
 function uploadResourceCallback(userId, json) {
-  console.log(json);
   var foundUser = _.find(io.sockets, function (client) {
     return client.userId == userId;
   });
@@ -25,6 +24,9 @@ router.use(function (req, res, next) {
 
 router.get('/iFrame', function(req, res, next) {
   res.render(views_path('iFrame'));
+});
+router.get('/help', function(req, res, next) {
+  res.render(views_path('help'));
 });
 
 router.get('/:id' , sessionMember.hasAccess, function(req, res, next) {

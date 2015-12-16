@@ -15,6 +15,7 @@ var currentUser = require('./middleware/currentUser');
 var flash = require('connect-flash');
 var app = express();
 var fs = require('fs');
+var socketsServer = require('./chatRoom/sockets');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,14 +29,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser(config.get("cookieSecret")));
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/chat_room', express.static(__dirname + '/chatRoom/chat_room'));
-app.use('/onsocket', express.static(__dirname + '/chatRoom/onsocket'));
-app.use('/bootstrap', express.static(__dirname + '/chatRoom/bootstrap'));
-app.use('/chatRoom', express.static(__dirname + '/chatRoom/public'));
-
-
-
 
 app.use(session({
   store: new RedisStore(config.get("redisSession")),
@@ -52,11 +45,12 @@ app.use(flash());
 
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
-var chat = require('./routes/chat');
 
 app.use('/', routes);
 app.use('/dashboard', currentUser.assign, dashboard);
-app.use('/chat', currentUser.assign, chat);
+
+// Added socket.io routes
+app = socketsServer.addRoutes(app);
 // catch 404 and forward to error handler
 
 initRestApiRouts();

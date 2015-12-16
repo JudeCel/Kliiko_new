@@ -322,7 +322,7 @@ var onParticipants = function(data) {
 	for (var ndx = 0, pl = window.participants.length; ndx < pl; ndx++) {
 		if (!isEmpty(window.participants[ndx])) {
 			if (!isEmpty(window.participants[ndx].name)) {
-				if (window.participants[ndx].name === window.username) {
+				if (window.participants[ndx].name == window.username) {
 					currentParticipant = window.participants[ndx];
 
 					break;
@@ -412,7 +412,7 @@ var onParticipants = function(data) {
     */
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	//	[J] Chat
-	if (window.role === "observer") {
+	if (window.role == "observer") {
 		//	lets hide the chat DIV
 		var chatDiv = document.getElementById("chat");
 		chatDiv.style.display = "none";

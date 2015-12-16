@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- Bootstrap -->
+    	<link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+
+    	<script>
+			function startIFS() {
+				var port = document.getElementById("port").value;
+				var user_id = document.getElementById("user_id").value;
+				var session_id = document.getElementById("session_id").value;
+
+				var url ="http://localhost:" + port + "/?id=" + user_id + "&sid=" + session_id;
+
+				console.log(url);
+
+				window.open(url);
+			}
+		</script>
+	</head>
+	<body>
+		<div class="container well">
+			<h1>IFS Testing Area</h1>
+
+			<h3>Start IFS.<h3>
+
+			<div class="control-group info">
+				<label>Port:</label><input id="port"  type="text" value="1138"></input></BR>
+				<label>User ID:</label><input id="user_id"  type="text" value="280"></input></BR>
+				<label>Session ID:</label><input id="session_id"  type="text" value="122"></input>
+			</div>
+			</BR>
+			<button class="btn btn-primary" onclick="startIFS();">Start IFS Chatroom</button>
+		</div>
+	</body>
+</html>

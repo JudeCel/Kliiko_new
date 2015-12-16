@@ -6,7 +6,7 @@ var onUsername = function(data) {
 	//	make sure only the requestor gets the username...
 	var json = JSON.parse(data);
 
-	if (json.length === 0) {
+	if (json.length == 0) {
         var dashboard = window.getDashboard();
         dashboard.showMessage({
 			message: {
@@ -29,7 +29,7 @@ var onUsername = function(data) {
 
 	if (typeof json[0].username != "undefined") {
 		thisMain.username = json[0].username;
-	
+
 		//	make sure we update the username on the server
 		socket.emit('setusername', thisMain.username);
 
