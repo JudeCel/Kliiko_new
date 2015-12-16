@@ -19,7 +19,8 @@ module.exports.validate = function (req, resCb) {
 };
 
 module.exports.run = function (req, resCb, errCb) {
-  Resource.findAll({where: req.params}).then(function(result) {
+  Resource.findAll({where: req.params})
+  .then(function(result) {
     resCb.send(result)
   }).catch(function(err) {
     console.log(err);

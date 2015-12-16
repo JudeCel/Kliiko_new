@@ -25,7 +25,6 @@ module.exports.run = function (req, resCb, errCb) {
 	.then(function (data) {
        resCb.send(data);
    }).catch(function(err) {
-     console.log(err);
      errCb(webFaultHelper.getFault(err));
    });
 };

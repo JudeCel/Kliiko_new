@@ -1,10 +1,12 @@
 "use strict";
 var express = require('express');
 var router = express.Router();
+var _ = require('lodash');
 var sessionMember = require('./../../middleware/sessionMember.js');
 var socketHelper = require("../socketHelper");
 
 function uploadResourceCallback(userId, json) {
+  var io = require("../sockets.js").io();
   var foundUser = _.find(io.sockets, function (client) {
     return client.userId == userId;
   });
