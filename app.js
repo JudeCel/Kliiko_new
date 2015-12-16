@@ -95,7 +95,7 @@ module.exports = app;
  * Go through the restAPI folder, search and apply all routing rules
  */
 function initRestApiRouts() {
-  var restApiPath = config.get('webAppSettings').restApiUrl;
+  var restApiPath = config.get('webAppSettings.restApiUrl');
 
   fs.readdirSync('./restAPI').forEach(function(filename) {
     if (~filename.indexOf('.js')) require('./restAPI/' + filename)(app, restApiPath);
