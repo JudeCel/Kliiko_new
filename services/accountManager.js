@@ -131,7 +131,6 @@ function adjustParamsForNewUser(params) {
   params.password = crypto.randomBytes(16).toString('hex');
   params.accountName = crypto.randomBytes(16).toString('hex');
   params.confirmedAt = new Date();
-  params.email = params.email ? params.email : '';
   return params;
 }
 

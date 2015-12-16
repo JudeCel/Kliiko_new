@@ -159,7 +159,7 @@ describe('SERVICE - AccountManager', function() {
 
       it('should fail because of already accepted', function (done) {
         let req = requestObject();
-        req.user.id = 0;
+        req.user.id = testUser.id + 99;
         req.body.email = 'lilu.tanya@gmail.com';
 
         accountManagerService.createOrFindUser(req, function(error, params) {

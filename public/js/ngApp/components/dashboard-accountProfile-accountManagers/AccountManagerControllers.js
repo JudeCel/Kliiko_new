@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('KliikoApp').filter('findIfUserPresent', function(){
+  angular.module('KliikoApp').filter('findUserPosition', function(){
     return function(user, users) {
       for(var index in users) {
         if(users[index].id == user.id) {
@@ -68,7 +68,7 @@
 
     $rootScope.$watch('addedNewAccountManager', function(data) {
       if($rootScope.addedNewAccountManager) {
-        if($filter('findIfUserPresent')(data.user, $scope.users) == -1) {
+        if($filter('findUserPosition')(data.user, $scope.users) == -1) {
           $scope.users.push(data.user);
         }
 
@@ -107,7 +107,7 @@
     $scope.submitForm = function() {
       if($scope.sendingData) return;
 
-      $scope.sendingData = true
+      $scope.sendingData = true;
       dbg.log2('#AccountManagerModalController > submitForm', $scope.user);
       AccountManagerServices.sendAccountManagerData($scope.user).then(function(res) {
         $scope.sendingData = false;
