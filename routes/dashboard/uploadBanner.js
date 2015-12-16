@@ -1,12 +1,13 @@
 'use strict';
-var uploadBanner = require('../services/uploadBanner');
+
+var uploadBannerService = require('../../services/uploadBanner');
 
 function views_path(action) {
   return 'dashboard/' + action;
 };
 
 function getProfileBanner(req, res, next) {
-  uploadBanner.profilePage(function (error, result) {
+  uploadBannerService.profilePage(function (error, result) {
     if(result) {
       res.locals.bannerPath = '../' + result.dataValues.filepath;
     }
@@ -18,17 +19,17 @@ function getProfileBanner(req, res, next) {
 };
 
 function get(req, res) {
-  uploadBanner.findAllBanners(function (result) {
-    let params = uploadBanner.simpleParams({}, '');
+  uploadBannerService.findAllBanners(function (result) {
+    let params = uploadBannerService.simpleParams({}, '');
     params['banners'] = result;
     res.render(views_path('uploadBanner'), params);
   });
 };
 
 function post(req, res) {
-  uploadBanner.write(req.files, function(error, message) {
-    uploadBanner.findAllBanners(function (result) {
-      let params = uploadBanner.simpleParams(error || {}, message);
+  uploadBannerService.write(req.files, function(error, message) {
+    uploadBannerService.findAllBanners(function (result) {
+      let params = uploadBannerService.simpleParams(error || {}, message);
       params['banners'] = result;
       if(result.profile) {
         res.locals.bannerPath = '../' + result.profile;
@@ -39,7 +40,7 @@ function post(req, res) {
 };
 
 function destroy(req, res) {
-  uploadBanner.destroy(req.params.page, function(error, message) {
+  uploadBannerService.destroy(req.params.page, function(error, message) {
     res.redirect('../uploadbanner');
   });
 };
@@ -49,5 +50,5 @@ module.exports = {
   get: get,
   post: post,
   destroy: destroy,
-  uploadFields: uploadBanner.uploadFields()
+  uploadFields: uploadBannerService.uploadFields()
 }
