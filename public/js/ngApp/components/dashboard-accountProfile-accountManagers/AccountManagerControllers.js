@@ -37,14 +37,7 @@
     };
 
     $scope.removeAccountOrInvite = function(type, user) {
-      if(type == 'invite') {
-        var id = $scope.findLastInviteUserId(user);
-      }
-      else {
-        var id = user.Account.id;
-      }
-
-      AccountManagerServices.removeAccountManager({ type: type, id: id }).then(function(res) {
+      AccountManagerServices.removeAccountManager({ type: type, id: user.id }).then(function(res) {
         dbg.log2('#AccountManagerController > removeAccountOrInvite > res ', res);
         if(res.error) {
           setError($scope, res.error);
@@ -55,10 +48,6 @@
           $scope.users.splice(index, 1);
         }
       });
-    };
-
-    $scope.findLastInviteUserId = function(user) {
-      return user.Invites[user.Invites.length-1].userId;
     };
 
     function setMessage(scope, message) {
