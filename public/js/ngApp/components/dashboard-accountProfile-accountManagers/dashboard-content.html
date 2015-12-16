@@ -1,53 +1,53 @@
 <section id='account-manager-content' ng-controller='AccountManagerController'>
-  <div class='col-md-3'></div>
-  <div class='col-xs-12 col-sm-12 col-md-6'>
-    <h2 class='text-center'>Account Managers</h2>
-    <h4 class='text-center has-error text-red-dark'>{{ error }}</h4>
-    <h4 class='text-center'>{{ message }}</h4>
-  </div>
-  <div class='col-md-3'>
-    <div class='text-center'>
-      <div class='btn btn-addNewAccountManager' ng-click='openModal()'>Add New Account Manager</div>
+  <div class='col-md-12'>
+    <div class='dashboard-container'>
+      <div class='row'>
+        <div class='col-md-3'></div>
+        <div class='col-md-6'>
+          <h2 class='text-center'>Account Managers</h2>
+          <h4 class='text-center has-error text-red-dark'>{{ error }}</h4>
+          <h4 class='text-center'>{{ message }}</h4>
+        </div>
+        <div class='col-md-3 text-right'>
+          <div class='btn btn-addNewAccountManager' ng-click='openModal()'>Add New Account Manager</div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class='row'>
-    <div class='col-xs-12 col-sm-12 col-md-12'>
-      <div class='row'>
-        <div class='dashboard-container'>
-          <table class='table table-responsive table-accountManager'>
-            <thead>
-              <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Gender</th>
-                <th>Email</th>
-                <th>Mobile</th>
-                <th>Status</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat='user in users'>
-                <td>{{ user.firstName }}</td>
-                <td>{{ user.lastName }}</td>
-                <td>{{ user.gender }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.mobile }}</td>
-                <td>
-                  <div ng-if='user.Invites'>Invited</div>
-                  <div ng-if='user.Accounts'>Accepted</div>
-                </td>
-                <td class='text-right accountManagerEditRemove'>
-                  <img src='/icons/accountManager_edit.png' alt='' />
-                  <img src='/icons/accountManager_remove.png' alt='' ng-click='removeAccountOrInvite("invite", user)' ng-if='user.Invites' />
-                  <img src='/icons/accountManager_remove.png' alt='' ng-click='removeAccountOrInvite("account", user)' ng-if='user.Accounts' />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+  <div class='col-md-12'>
+    <div class='dashboard-container'>
+      <table class='table table-responsive table-accountManager'>
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Gender</th>
+            <th>Email</th>
+            <th>Mobile</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat='user in users'>
+            <td>{{ user.firstName }}</td>
+            <td>{{ user.lastName }}</td>
+            <td>{{ user.gender }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.mobile }}</td>
+            <td>
+              <div ng-if='user.Invites'>Invited</div>
+              <div ng-if='user.Accounts'>Accepted</div>
+            </td>
+            <td class='text-right accountManagerEditRemove'>
+              <img src='/icons/accountManager_edit.png' alt='' />
+              <img src='/icons/accountManager_remove.png' alt='' ng-click='removeAccountOrInvite("invite", user)' ng-if='user.Invites' />
+              <img src='/icons/accountManager_remove.png' alt='' ng-click='removeAccountOrInvite("account", user)' ng-if='user.Accounts' />
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>
