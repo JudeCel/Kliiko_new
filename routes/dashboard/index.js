@@ -5,7 +5,6 @@ var subdomains = require('../../lib/subdomains.js');
 var changePassword = require('../../services/changePassword');
 var policy = require('../../middleware/policy.js');
 var uploadBannerRoutes = require('./uploadBanner.js');
-var accountManagerRoutes = require('./accountManager.js');
 var accountDatabase = require('../../middleware/accountDatabase.js');
 var appData = require('../../services/webAppData');
 
@@ -49,11 +48,6 @@ router.post('/changePassword', function(req, res) {
 router.get('/uploadbanner', policy.authorized(['admin']), uploadBannerRoutes.get);
 router.post('/uploadbanner', policy.authorized(['admin']), uploadBannerRoutes.uploadFields, uploadBannerRoutes.post);
 router.get('/uploadbanner/:page', policy.authorized(['admin']), uploadBannerRoutes.destroy);
-
-router.get('/accountmanager', policy.authorized(['accountManager']), accountManagerRoutes.index);
-router.get('/accountmanager/manage', policy.authorized(['accountManager']), accountManagerRoutes.manage);
-router.post('/accountmanager/manage', policy.authorized(['accountManager']), accountManagerRoutes.create);
-router.get('/accountmanager/remove/:type/:id', policy.authorized(['accountManager']), accountManagerRoutes.destroy);
 
 router.get('/accountDatabase', policy.authorized(['admin']), accountDatabase.get);
 router.get('/exportCsv', policy.authorized(['admin']), accountDatabase.exportCsv);
