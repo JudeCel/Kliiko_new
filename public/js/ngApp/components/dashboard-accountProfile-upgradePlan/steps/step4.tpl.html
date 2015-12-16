@@ -1,0 +1,100 @@
+<section id="step-3">
+    <div class="row">
+        <div class="col-md-6">
+
+            <div class="row">
+                <div class="col-md-12 caption">
+                    Order Summary
+                </div>
+                <div class="table-content">
+                    <div class="row table-header" >
+                        <div class="col-sm-5 col-md-5">Plan</div>
+                        <div class="col-sm-3 col-md-3">Duration</div>
+                        <div class="col-sm-4 col-md-4">Total</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5 col-md-5">{{up.selectedPlanName}}</div>
+                        <div class="col-sm-3 col-md-3">{{up.upgradeDuration || 1}}</div>
+                        <div class="col-sm-4 col-md-4">{{up.finalPrice | currency : up.selectedCurrency.symbol : 2}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5 col-md-5">1 Free month</div>
+                        <div class="col-sm-3 col-md-3">1</div>
+                        <div class="col-sm-4 col-md-4">{{ 0 | currency : up.selectedCurrency.symbol : 2}}</div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-5 col-md-5 total">Order Total</div>
+                        <div class="col-sm-3 col-md-3">{{up.upgradeDuration + 1}}</div>
+                        <div class="col-sm-4 col-md-4">{{up.finalPrice | currency : up.selectedCurrency.symbol : 2}}</div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12 table-header">
+                    Payment Method
+                </div>
+                <div class="row detail-content">
+                    <div class="col-md-6" ng-show="up.paymentDetails.payPal.selected">PAYPAL</div>
+                    <div class="col-md-6" ng-show="up.paymentDetails.creditCard.selected">Credit Card</div>
+                    <div class="col-md-6 pull-left text-right">{{up.finalPrice | currency : up.selectedCurrency.symbol : 2}}</div>
+                </div>
+                <div class="col-md-12 table-header">
+                    Contact Info
+                </div>
+                <div class="col-md-4">{{up.userData.firstName}} {{up.userData.lastName}}</div>
+                <div class="col-md-4">{{up.userData.email}}</div>
+                <div class="col-md-4">{{up.userData.mobile}}</div>
+
+            </div>
+
+            <hr class="more-y-margin">
+
+            <section id="payPal-details" ng-show="up.paymentDetails.payPal.selected">
+                <div class="row" >
+                    <div class="col-md-1">
+                        <div class="check">
+                            <input ng-model="up.paymentDetails.payPal.tos" type="checkbox" class="checkbox-btn btn-green" name="termsAndConditions" id="termsAndConditionsPP">
+                            <label for="termsAndConditionsPP"></label>
+                        </div>
+
+                    </div>
+                    <div class="col-md-11">
+                        <p>Click here to confirm you have read the <a href="terms">Terms and Conditions</a></p>
+                        <p>Your PayPal account will be debited upon confirmation. You plan will automatically renew, you can disable under Billing & Plan Details.</p>
+                    </div>
+                </div>
+            </section>
+
+
+
+            <section id="creditCard-details" ng-show="up.paymentDetails.creditCard.selected">
+                <div class="col-md-12 table-header">
+                    Check out with Credit Card
+                </div>
+                <div class="row" >
+                    <div class="col-md-1">
+                        <div class="check">
+                            <input ng-model="up.paymentDetails.creditCard.tos" type="checkbox" class="checkbox-btn btn-green" name="termsAndConditions" id="termsAndConditionsCC">
+                            <label for="termsAndConditionsCC"></label>
+                        </div>
+
+                    </div>
+                    <div class="col-md-11">
+                        <p>Click here to confirm you have read the <a href="terms">Terms and Conditions</a></p>
+                        <p>
+                            Your credit card account will be debited upon confirmation. Your plan will automatically renew, you can disable under Billing & Plan Details.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+
+
+        </div>
+    </div>
+</section>

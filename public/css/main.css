@@ -99,6 +99,17 @@ label.radio-button input[type="radio"] + span {
 label.radio-button input[type="radio"]:checked + span:after {
   background: #ccc; }
 
+.btn-standart {
+  display: initial;
+  padding: 9px;
+  border: 3px solid lightgrey;
+  cursor: pointer; }
+  .btn-standart.btn-red {
+    color: #E51D39;
+    border-color: #E51D39 !important; }
+  .btn-standart.btn-text-middle {
+    font-size: 80%; }
+
 img.ic-flipX {
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
@@ -958,3 +969,104 @@ footer {
     width: 55px; }
   #upgrade-plan-content #step-2 input#promocod-input {
     width: 230px; }
+
+#upgrade-plan-content #step-3,
+#upgrade-plan-content #step-4 {
+  margin-top: 50px;
+  font-size: 2rem;
+  text-align: left;
+  /* CHECKBOX */ }
+  #upgrade-plan-content #step-3 .row,
+  #upgrade-plan-content #step-4 .row {
+    margin: 8px 0; }
+  #upgrade-plan-content #step-3 .caption,
+  #upgrade-plan-content #step-4 .caption {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    color: white;
+    background: #4DC0E9; }
+  #upgrade-plan-content #step-3 .table-content,
+  #upgrade-plan-content #step-4 .table-content {
+    padding: 73px 5px 5px 17px;
+    border: 1px solid lightgrey;
+    border-top: none;
+    border-radius: 8px; }
+    #upgrade-plan-content #step-3 .table-content .total,
+    #upgrade-plan-content #step-4 .table-content .total {
+      color: #E51D39; }
+  #upgrade-plan-content #step-3 .table-header,
+  #upgrade-plan-content #step-4 .table-header {
+    margin-bottom: 12px;
+    font-size: 1.6rem;
+    color: #4DC0E9; }
+  #upgrade-plan-content #step-3 hr,
+  #upgrade-plan-content #step-4 hr {
+    margin: 5px;
+    border: 1px solid lightgrey; }
+  #upgrade-plan-content #step-3 hr.more-y-margin,
+  #upgrade-plan-content #step-4 hr.more-y-margin {
+    margin: 20px 0; }
+  #upgrade-plan-content #step-3 .checkout-row,
+  #upgrade-plan-content #step-4 .checkout-row {
+    margin-top: 20px;
+    margin-bottom: 15px; }
+  #upgrade-plan-content #step-3 #credit-cart-details-form label,
+  #upgrade-plan-content #step-4 #credit-cart-details-form label {
+    font-size: 1.5rem;
+    font-weight: 100; }
+  #upgrade-plan-content #step-3 #credit-cart-details-form input,
+  #upgrade-plan-content #step-4 #credit-cart-details-form input {
+    border-radius: 0px;
+    padding: 30px;
+    font-size: 2.3rem; }
+  #upgrade-plan-content #step-3 input#termsAndConditionsCC,
+  #upgrade-plan-content #step-3 input#termsAndConditionsPP,
+  #upgrade-plan-content #step-4 input#termsAndConditionsCC,
+  #upgrade-plan-content #step-4 input#termsAndConditionsPP {
+    display: none; }
+  #upgrade-plan-content #step-3 input#termsAndConditionsCC + label,
+  #upgrade-plan-content #step-3 input#termsAndConditionsPP + label,
+  #upgrade-plan-content #step-4 input#termsAndConditionsCC + label,
+  #upgrade-plan-content #step-4 input#termsAndConditionsPP + label {
+    max-width: none;
+    background: url("/icons/login_checkbox.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    margin-top: 0;
+    margin-left: 0;
+    margin-bottom: -5px;
+    background-size: contain; }
+  #upgrade-plan-content #step-3 input#termsAndConditionsCC:checked + label,
+  #upgrade-plan-content #step-3 input#termsAndConditionsPP:checked + label,
+  #upgrade-plan-content #step-4 input#termsAndConditionsCC:checked + label,
+  #upgrade-plan-content #step-4 input#termsAndConditionsPP:checked + label {
+    background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    background-size: contain;
+    margin-top: 1px; }
+  #upgrade-plan-content #step-3 .form-group.exp,
+  #upgrade-plan-content #step-4 .form-group.exp {
+    float: left;
+    margin-right: 37px; }
+  #upgrade-plan-content #step-3 select#credit-card-number-expDate,
+  #upgrade-plan-content #step-3 select#credit-card-number-expYear,
+  #upgrade-plan-content #step-3 input#credit-card-number-cvv,
+  #upgrade-plan-content #step-4 select#credit-card-number-expDate,
+  #upgrade-plan-content #step-4 select#credit-card-number-expYear,
+  #upgrade-plan-content #step-4 input#credit-card-number-cvv {
+    width: 110px;
+    border-radius: 0;
+    height: 55px;
+    font-size: 2.3rem; }
+  #upgrade-plan-content #step-3 input#credit-card-number-cvv,
+  #upgrade-plan-content #step-4 input#credit-card-number-cvv {
+    padding: 25px; }
+  #upgrade-plan-content #step-3 .detail-content,
+  #upgrade-plan-content #step-4 .detail-content {
+    font-size: 1.9rem; }
+
+#upgrade-plan-content #step-5 {
+  margin-top: 55px;
+  margin-bottom: 100px; }

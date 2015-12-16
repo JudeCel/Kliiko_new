@@ -39,9 +39,30 @@
     <ng-include src="'js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/step'+up.currentStep+'.tpl.html'"></ng-include>
 
 
-    <div class="row">
-        <div class="col-md-2 btn-dashboard-plans btn-md btn-green" ng-click="up.goToStep('back')"><img class="ic" src="icons/back_green.png"  alt="Go Back"> Back</div>
-        <div class="col-md-2 btn-dashboard-plans btn-md pull-right btn-blue" ng-click="up.goToStep('next')">Next <img class="ic ic-flipX" src="icons/back_blue.png" alt="Go Next Step"></div>
+    <div class="row" ng-hide="up.stepsClassIsActive(1)">
+
+        <div class="col-md-2 btn-dashboard-plans btn-md btn-green" ng-click="up.goToStep('back')"
+            ng-hide="up.stepsClassIsActive(5)">
+            <img class="ic" src="icons/back_green.png"  alt="Go Back"> Back
+        </div>
+
+        <div class="col-md-2 btn-dashboard-plans btn-md pull-right btn-blue" ng-click="up.goToStep('next')"
+            ng-hide="up.stepsClassIsActive(4) || up.stepsClassIsActive(5)">
+            Next <img class="ic ic-flipX" src="icons/back_blue.png" alt="Go Next Step">
+        </div>
+
+        <div class="col-md-5 btn-dashboard-plans btn-md btn-green" ui-sref="dashboard.accountProfile"
+             ng-show="up.stepsClassIsActive(5)">
+            Back to account profile
+        </div>
+        <div class="col-md-3 btn-dashboard-plans btn-md pull-right btn-standart btn-red" ng-click="up.goToStep('submit')"
+             ng-show="up.stepsClassIsActive(4)">
+            Submit My Order
+        </div>
+        <div class="col-md-3 btn-dashboard-plans btn-md pull-right btn-standart btn-red" ui-sref="dashboard"
+             ng-show="up.stepsClassIsActive(5)">
+            Build new session
+        </div>
     </div>
 <!----------- MODALS ---------------------->
     <section>

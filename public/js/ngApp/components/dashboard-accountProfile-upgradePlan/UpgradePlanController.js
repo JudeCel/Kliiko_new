@@ -11,19 +11,37 @@
         var vm = this;
 
         var modalTplPath = 'js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/';
+        var selectedPaymentMethod;
 
+        // set first step for 5 steps checkout process
         $stateParams.planUpgradeStep = 1;
         vm.currentStep = $stateParams.planUpgradeStep;
         vm.$state = $state;
         vm.modContentBlock = {selectedPlanDetails:true};
         vm.updateBtn = 'Update';
+        vm.upgradeDuration = 1;
+
+        vm.paymentDetails = {
+            payPal: {
+                selected: false,
+                tos: false,
+            },
+            creditCard: {
+                number: null,
+                selected: false,
+                tos: false,
+                numberChanged:cardNumberChanged
+            },
+
+            changePaymentMethodTo: changePaymentMethodTo
+        };
 
         vm.stepsClassIsActive = stepsClassIsActive;
         vm.stepsClassIsDone = stepsClassIsDone;
         vm.openPlanDetailsModal = openPlanDetailsModal;
         vm.upgradeToPlan = upgradeToPlan;
         vm.applyCountryAndCurrency = applyCountryAndCurrency;
-        vm.getUserData = getUserData;
+        //vm.getUserData = getUserData;
         vm.updateUserData = updateUserData;
         vm.goToStep = goToStep;
 
@@ -45,6 +63,10 @@
                     dbg.log2('#UpgradePlanController > getAllCurrenciesList > res ', res);
                 });
 
+            });
+
+            user.getUserData().then(function(res) {
+                vm.userData = res;
             });
         }
 
@@ -120,6 +142,7 @@
             if (!angular.isNumber(step)) {
                 if (step === 'back') step = vm.currentStep - 1;
                 if (step === 'next') step = vm.currentStep + 1;
+                if (step === 'submit') { step = 5; submitUpgrade() }
             }
 
             var valid = validateStep(step);
@@ -135,15 +158,9 @@
             return true;
 
             function validateStep2() {
-                return false;
+                // temporary solution
+                return true;
             }
-        }
-
-        function getUserData(collapsed) {
-            if (collapsed || (vm.userData && vm.userData.updatedAt) ) return;
-            user.getUserData().then(function(res) {
-                vm.userData = res;
-            });
         }
 
         function updateUserData(data, form) {
@@ -158,6 +175,50 @@
 
 
             });
+        }
+
+        function changePaymentMethodTo(type) {
+            if (type === 'payPal') {
+                vm.paymentDetails.payPal.selected = true;
+                vm.paymentDetails.payPal.tos = false;
+                vm.paymentDetails.creditCard.selected = false;
+            } else {
+                vm.paymentDetails.creditCard.selected = true;
+                vm.paymentDetails.creditCard.tos = false;
+                vm.paymentDetails.payPal.selected = false;
+            }
+
+            selectedPaymentMethod = type;
+        }
+
+        function cardNumberChanged() {
+            vm.paymentDetails.creditCard.number = upgradePlanServices.formatCreditCardNumber(vm.paymentDetails.creditCard.number);
+        }
+
+        function submitUpgrade() {
+            var planObject = {
+                plan: vm.plans[vm.selectedPlanName],
+                duration: vm.upgradeDuration
+            };
+
+            var paymentObject = {
+                paymentMethod: selectedPaymentMethod,
+                promocode: vm.promocode,
+                currency: vm.selectedCurrency.code,
+                totalPrice: vm.finalPrice
+            };
+
+            if (vm.paymentDetails.creditCard.selected) {
+                paymentObject.creditcardDetails = {
+                    cardHolderName: vm.paymentDetails.creditCard.holderName,
+                    cardNumber: vm.paymentDetails.creditCard.number.replace(/\D/g,''),
+                    expDate: vm.paymentDetails.creditCard.expDate,
+                    expYear: vm.paymentDetails.creditCard.expYear,
+                    cvv: vm.paymentDetails.creditCard.cvv
+                }
+            }
+
+            upgradePlanServices.submitUpgrade(planObject, paymentObject)
         }
 
     }

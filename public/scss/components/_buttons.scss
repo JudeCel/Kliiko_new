@@ -134,3 +134,24 @@ label.radio-button {
   }
   }
 }
+
+
+.btn-standart {
+  display: initial;
+  padding: 9px;
+  border: 3px solid lightgrey;
+  cursor: pointer;
+
+  &.btn-red {
+    color: $red;
+    border-color: $red !important;
+  }
+
+  &.btn-text-middle {
+    font-size: 80%;
+  }
+}
+
+//////
+
+
