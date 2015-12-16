@@ -87,7 +87,7 @@ describe('SERVICE - AccountManager', function() {
         gender: 'male',
         email: 'some@email.com'
       },
-      params: {
+      query: {
         id: newParams.id,
         type: newParams.type
       }

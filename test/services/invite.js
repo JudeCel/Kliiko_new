@@ -178,7 +178,7 @@ describe('SERVICE - Invite', function() {
         assert.equal(error, null);
         inviteService.findInvite(invite.token, function(error, result) {
           assert.equal(error, null);
-          assert.deepEqual(invite, result);
+          assert.equal(invite.id, result.id);
           done();
         });
       });
@@ -217,7 +217,6 @@ describe('SERVICE - Invite', function() {
       let params = validParams('existing');
       inviteService.createInvite(params, function(error, invite) {
         assert.equal(error, null);
-        assert.equal(invite.User.status, 'invited');
 
         async.parallel(countTables(1, 2, 2, 2), function(error, result) {
           if(error) {
@@ -231,7 +230,6 @@ describe('SERVICE - Invite', function() {
 
             assert.equal(invite.id, result.id);
             invite.User.reload().then(function(user) {
-              assert.equal(user.status, 'accepted');
 
               async.parallel(countTables(0, 2, 2, 3), function(error, result) {
                 done(error);
@@ -248,7 +246,6 @@ describe('SERVICE - Invite', function() {
       let params = validParams();
       inviteService.createInvite(params, function(error, invite) {
         assert.equal(error, null);
-        assert.equal(invite.User.status, 'invited');
         let oldPassword = invite.User.encryptedPassword;
 
         async.parallel(countTables(1, 2, 2, 2), function(error, result) {
@@ -263,7 +260,6 @@ describe('SERVICE - Invite', function() {
             }
 
             invite.User.reload().then(function(user) {
-              assert.equal(user.status, 'accepted');
               assert.notEqual(user.encryptedPassword, oldPassword);
 
               user.getOwnerAccount().then(function(accounts) {
