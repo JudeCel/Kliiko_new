@@ -7,37 +7,15 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     firstName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} } },
     lastName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} } },
-    requiredEmail: { type: DataTypes.VIRTUAL, defaultValue: true },
     gender: {type: DataTypes.ENUM, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} }, values: ["male", "female"] },
     comment: {type: DataTypes.TEXT, allowNull: true },
-    email: {type: DataTypes.STRING, allowNull: true,
-      validate:{
-      validateEmail: function(val, next) {
-        if (this.requiredEmail) {
-          if (!(constants.emailRegExp.test(val))) {
-            return next("Invalid e-mail format");
-          }
-        }
-
-        if (!!val) {
-          User.findOne({
-            attributes: ['email', 'id'],
-            where: {
-              email: val,
-              id: { $ne: this.id }
-            }
-          }).then(function (user) {
-            if(user){
-              next('already taken');
-            }else{
-              next();
-            }
-          });
-        }else{
-          next();
-        }
+    email: {type: DataTypes.STRING, allowNull: false, unique: {msg: "already taken"},
+      validate: {
+        notEmpty: {args: true, msg: "can't be empty"},
+        is: {args: constants.emailRegExp, msg: "Invalid e-mail format" }
       }
-    }},
+    },
+
     encryptedPassword:  {type : DataTypes.STRING, allowNull: false, validate: { notEmpty: true}},
     password: {
       type: DataTypes.VIRTUAL,
@@ -64,8 +42,7 @@ module.exports = (Sequelize, DataTypes) => {
     currentSignInIp: {type : DataTypes.STRING, allowNull: true},
     promoCode: {type: DataTypes.INTEGER, allowNull: true},
     signInCount: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
-    //tipsAndUpdate: {type: DataTypes.ENUM, values: ['off', 'on'], allowNull: false, defaultValue: 'on'},
-    tipsAndUpdate: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false},
+    tipsAndUpdate: {type: DataTypes.ENUM, values: ['off', 'on'], allowNull: false, defaultValue: 'on'},
 
     postalAddress: {type: DataTypes.STRING, allowNull: true },
     city: {type: DataTypes.STRING, allowNull: true },
@@ -76,6 +53,10 @@ module.exports = (Sequelize, DataTypes) => {
     landlineNumber: {type: DataTypes.STRING, allowNull: true },
     mobile: {type: DataTypes.STRING, allowNull: true }
   },{
+      indexes: [{
+        unique: true,
+        fields: ['email']
+      }],
       classMethods: {
         associate: function(models) {
           User.hasMany(models.SocialProfile, { foreignKey: 'userId'});
