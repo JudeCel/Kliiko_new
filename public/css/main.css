@@ -165,6 +165,10 @@ label.radio-button input[type="radio"]:checked + span:after {
   width: 20%;
   padding-top: 100px; }
 
+.accountManagerModal {
+  width: 70%;
+  padding-top: 100px; }
+
 #nav-tabs-main {
   text-align: center;
   border: 0px; }

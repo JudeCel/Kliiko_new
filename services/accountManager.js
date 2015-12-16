@@ -8,10 +8,12 @@ var Invite = models.Invite;
 
 var userService = require('./../services/users');
 var inviteService = require('./../services/invite');
+var constants = require('../util/constants');
 
 var async = require('async');
 var _ = require('lodash');
 var crypto = require('crypto');
+
 
 //Exports
 function createOrFindUser(req, callback) {
@@ -43,10 +45,10 @@ function createOrFindUser(req, callback) {
 function findAccountManagers(user, callback) {
   async.parallel([
     function(cb) {
-      findUsers(user.id, Account, { id: user.accountOwnerId }, cb);
+      findUsers(user.id, Account, { id: user.accountOwnerId }, [ 'id' ], cb);
     },
     function(cb) {
-      findUsers(user.id, Invite, { accountId: user.accountOwnerId, role: 'accountManager' }, cb);
+      findUsers(user.id, Invite, { accountId: user.accountOwnerId, role: 'accountManager' }, [ 'id', 'userId' ], cb);
     }
   ], function(err, results) {
     if(err) {
@@ -60,8 +62,8 @@ function findAccountManagers(user, callback) {
 
 function removeInviteOrAccountUser(req, callback) {
   let currentUser = req.user,
-      userId = req.params.id,
-      type = req.params.type;
+      userId = req.query.id,
+      type = req.query.type;
 
   switch(type) {
     case 'invite': {
@@ -128,18 +130,20 @@ function preValidate(user, params, callback) {
 function adjustParamsForNewUser(params) {
   params.password = crypto.randomBytes(16).toString('hex');
   params.accountName = crypto.randomBytes(16).toString('hex');
-  params.status = 'invited';
   params.confirmedAt = new Date();
+  params.email = params.email ? params.email : '';
   return params;
 }
 
-function findUsers(userId, model, where, cb) {
+function findUsers(userId, model, where, attributes, cb) {
   User.findAll({
     include: [{
       model: model,
-      where: where
+      where: where,
+      attributes: attributes
     }],
-    where: { id: { $ne: userId } }
+    where: { id: { $ne: userId } },
+    attributes: constants.safeUserParams
   }).then(function(users) {
     cb(null, users);
   }).catch(function(error) {
@@ -152,7 +156,7 @@ function inviteParams(invitedUserId, accountId, type) {
 };
 
 function prepareParams(req) {
-  return _.pick(req.body, ['firstName', 'lastName', 'gender', 'email', 'mobile', 'postalAddress', 'city', 'postCode', 'companyName', 'landlineNumber']);
+  return _.pick(req.body, ['firstName', 'lastName', 'gender', 'email', 'mobileNumber', 'postalAddress', 'city', 'postCode', 'companyName', 'landlineNumber']);
 };
 
 module.exports = {

@@ -4,7 +4,7 @@ var router = express.Router();
 var subdomains = require('../lib/subdomains.js');
 var changePassword = require('../services/changePassword');
 var policy = require('../middleware/policy.js');
-var uploadBanner = require('../middleware/uploadBanner.js');
+var uploadBanner = require('./dashboard/uploadBanner.js');
 var accountDatabase = require('../middleware/accountDatabase.js');
 var appData = require('../services/webAppData');
 

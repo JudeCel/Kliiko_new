@@ -9,9 +9,6 @@ module.exports = (Sequelize, DataTypes) => {
     lastName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} } },
     requiredEmail: { type: DataTypes.VIRTUAL, defaultValue: true },
     gender: {type: DataTypes.ENUM, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} }, values: ["male", "female"] },
-    mobileNumber: {type: DataTypes.STRING, allowNull: true },
-    landlineNumber: {type: DataTypes.STRING, allowNull: true },
-    companyName: {type: DataTypes.STRING, allowNull: true },
     comment: {type: DataTypes.TEXT, allowNull: true },
     email: {type: DataTypes.STRING, allowNull: true,
       validate:{
@@ -67,17 +64,17 @@ module.exports = (Sequelize, DataTypes) => {
     currentSignInIp: {type : DataTypes.STRING, allowNull: true},
     promoCode: {type: DataTypes.INTEGER, allowNull: true},
     signInCount: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
-    mobile: {type: DataTypes.STRING, allowNull: true},
     //tipsAndUpdate: {type: DataTypes.ENUM, values: ['off', 'on'], allowNull: false, defaultValue: 'on'},
     tipsAndUpdate: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false},
-    postalAdress: {type: DataTypes.STRING, allowNull: true },
+
+    postalAddress: {type: DataTypes.STRING, allowNull: true },
     city: {type: DataTypes.STRING, allowNull: true },
     state: {type: DataTypes.STRING, allowNull: true },
     country: {type: DataTypes.STRING, allowNull: true },
     postCode: {type: DataTypes.STRING, allowNull: true },
     companyName: {type: DataTypes.STRING, allowNull: true },
     landlineNumber: {type: DataTypes.STRING, allowNull: true },
-    status: { type: DataTypes.ENUM, allowNull: false, values: ['invited', 'declined', 'accepted'], defaultValue: 'accepted' }
+    mobile: {type: DataTypes.STRING, allowNull: true }
   },{
       classMethods: {
         associate: function(models) {

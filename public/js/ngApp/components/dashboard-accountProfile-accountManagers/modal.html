@@ -1,199 +1,115 @@
-<div class='modal fade' id='addAccountManager' role='dialog'>
-  <div class='modal-dialog contactDetailsModal'>
-    <div class='modal-content border-red border-radius-none'>
-      <div class='modal-header'>
-        <button type='button' class='close' data-dismiss='modal'>&times;</button>
-        <h2 class='modal-title text-center'>Add new AccountManager</h2>
+<div class='modal-header'>
+  <button type='button' class='close' ng-click='closeModal()'>&times;</button>
+  <h2 class='modal-title text-center'>Add new AccountManager</h2>
+</div>
+<div class='modal-body text-gray-medium'>
+  <form class='form-horizontal' role='form'>
+    <div class='col-md-6'>
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First name<span class='text-red-dark'>*</span></label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.firstName }}</span>
+          <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='user.firstName'>
+        </div>
       </div>
-      <div class='modal-body'>
-          <form method="post" action="/dashboard/accountManager/manage" id="addAccountManagerForm">
-            <div class="form-group">
-              <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
-                <tr>
-                  <td>
-                  </td>
-                  <td>
-                  </td>
-                  <td>
-                  <div class="text-red-dark"> * <i>Required</i> </div>
-                  </td>
-                  <td>
-                  </td>
-                  <td>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="firstName">First name</label>
-                  </td>
-                  <td>
-                    <input type="text" value="" class="form-control" name="firstName" id="firstName" placeholder="First name" ng-model="am.user.firstName">
-                  </td>
-                  <td  class="text-red-dark">
-                      *
-                  </td>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="postalAddress">
-                      Postal
-                      <br>
-                      Address
-                    </label>
-                  </td>
-                  <td>
-                    <input type="text" value="" class="form-control" name="postalAddress" id="postalAddress" placeholder="Postal Address" ng-model="am.user.postalAddress">
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                    <span class="has-error"></span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="lastName">Last name</label>
-                  </td>
-                  <td>
-                    <input type="text" value="" class="form-control" name="lastName" id="lastName" placeholder="Last name" ng-model="am.user.lastName">
-                  </td>
-                  <td  class="text-red-dark">
-                    *
-                  </td>
-                  <td>
-                      <label class="text-no-bold text-login-page" for="city">City</label>
-                  </td>
-                  <td>
-                    <input type="text" value="" class="form-control" name="city" id="city" placeholder="City" ng-model="am.user.city">
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                    <span class="has-error"></span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="email">Email</label>
-                  </td>
-                  <td>
-                    <input type="text" value="" class="form-control" name="email" id="email" placeholder="Email" ng-model="am.user.email">
-                  </td>
-                  <td  class="text-red-dark">
-                    *
-                  </td>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="state">State</label>
-                  </td>
-                  <td>
-                    <input type="text" value="" class="form-control" name="state" id="state" placeholder="State" ng-model="am.user.state">
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                    <span class="has-error"></span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="gender">Gender</label>
-                  </td>
-                  <td>
 
-                    <label for="gender_male" class="">
-                       <input type="radio" name="gender_" value="male" id="gender_male" checked ng-model="am.user.gender">
-                      <span class="checkbox-signup btn-radius-text">Male</span>
-                    </label>
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='lastName'>Last name<span class='text-red-dark'>*</span></label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.lastName }}</span>
+          <input type='text' class='form-control' id='lastName' placeholder='Last name' ng-model='user.lastName'>
+        </div>
+      </div>
 
-                    <label for="gender_female" class="">
-                       <input type="radio" name="gender_" value="female" id="gender_female" ng-model="am.user.gender">
-                      <span class="checkbox-signup btn-radius-text btn-radius-padding-left">Female</span>
-                    </label>
-                  </td>
-                  <td  class="text-red-dark">
-                    *
-                  </td>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="postCode">Postcode</label>
-                  </td>
-                  <td>
-                    <input type="text" value="" class="form-control" id="postCode" name="postCode" placeholder="Postcode" ng-model="am.user.postCode">
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                    <span class="has-error"></span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="mobile">
-                      Mobile
-                      <br>
-                      Number
-                    </label>
-                  </td>
-                  <td>
-                    <input type="text" value="" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number" ng-model="am.user.mobile">
-                  </td>
-                  <td  class="text-red-dark">
-                  </td>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="country">Country</label>
-                  </td>
-                  <td>
-                    <input type="text" value="" class="form-control" id="country" name="country" placeholder="Country" ng-model="am.user.country">
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                    <span class="has-error"></span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="landlineNumber">
-                      Landline
-                      <br>
-                      Number
-                    </label>
-                  </td>
-                  <td>
-                    <input type="text" value="" class="form-control" name="landlineNumber" id="landlineNumber" placeholder="LandlineNumber" ng-model="am.user.landlineNumber">
-                  </td>
-                  <td  class="text-red-dark">
-                  </td>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="companyName">
-                      Company
-                      <br>
-                      Name
-                    </label>
-                  </td>
-                  <td>
-                    <input type="text" value="" class="form-control" name="companyName" id="companyName" placeholder="Company Name" ng-model="am.user.companyName">
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                    <span class="has-error"></span>
-                  </td>
-                </tr>
-              </table>
-              <div class="row">
-                <div class="col-md-12">
-                  <button type='button' class="btn border-red text-red-dark border-radius-none background-transp pull-right btn-md" data-dismiss='modal'>Close</button>
-                  <button ng-click="am.submitForm()" type='button' class="btn border-red text-red-dark border-radius-none background-transp pull-right btn-md" id='addAccountManagerButton'>Invite</button>
-                </div>
-              </div>
-            </div>
-          </form>
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='email'>Email<span class='text-red-dark'>*</span></label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.email }}</span>
+          <input type='email' class='form-control' id='email' placeholder='Email' ng-model='user.email'>
+        </div>
+      </div>
 
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='gender'>Gender<span class='text-red-dark'>*</span></label>
+        <div class='col-md-8'>
+          <div class='has-error text-red-dark'>{{ errors.gender }}</div>
+          <label class='radio-inline'><input type='radio' value='male' name='radio_gender' ng-model='user.gender'>Male</label>
+          <label class='radio-inline'><input type='radio' value='female' name='radio_gender' ng-model='user.gender'>Female</label>
+        </div>
+      </div>
+
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.mobile }}</span>
+          <input type='text' class='form-control' id='mobile' placeholder='Mobile number' ng-model='user.mobile'>
+        </div>
+      </div>
+
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.landlineNumber }}</span>
+          <input type='text' class='form-control' id='landlineNumber' placeholder='Landline number' ng-model='user.landlineNumber'>
+        </div>
       </div>
     </div>
-  </div>
+
+    <div class='col-md-6'>
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='postalAddress'>Postal address</label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.postalAddress }}</span>
+          <input type='text' class='form-control' id='postalAddress' placeholder='Postal address' ng-model='user.postalAddress'>
+        </div>
+      </div>
+
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='city'>City</label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.city }}</span>
+          <input type='text' class='form-control' id='city' placeholder='City' ng-model='user.city'>
+        </div>
+      </div>
+
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='state'>State</label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.state }}</span>
+          <input type='text' class='form-control' id='state' placeholder='State' ng-model='user.state'>
+        </div>
+      </div>
+
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='postCode'>Postcode</label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.postCode }}</span>
+          <input type='text' class='form-control' id='postCode' placeholder='Postcode' ng-model='user.postCode'>
+        </div>
+      </div>
+
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='country'>Country</label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.country }}</span>
+          <input type='text' class='form-control' id='country' placeholder='Country' ng-model='user.country'>
+        </div>
+      </div>
+
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='companyName'>Company name</label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.companyName }}</span>
+          <input type='text' class='form-control' id='companyName' placeholder='Company name' ng-model='user.companyName'>
+        </div>
+      </div>
+    </div>
+
+    <div class='row'>
+      <div class='col-md-12'>
+        <button ng-click='closeModal()' type='button' class='btn border-red text-red-dark border-radius-none background-transp pull-right btn-md'>Close</button>
+        <button ng-click='submitForm()' type='button' class='btn border-red text-red-dark border-radius-none background-transp pull-right btn-md'>Invite</button>
+      </div>
+    </div>
+  </form>
 </div>

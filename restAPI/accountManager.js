@@ -33,9 +33,24 @@ module.exports = function(app, restUrl) {
             res.send({ error: error });
           }
           else {
-            res.send({ invite: invite });
+            res.send({ invite: invite, message: 'Successfully sent invite.' });
           }
         });
+      });
+    };
+  });
+
+  app.get(restUrl + '/remove', function (req, res) {
+    req.user ? proceed() : notAuthExit(res);
+
+    function proceed() {
+      accountManagerService.removeInviteOrAccountUser(req, function(error, message) {
+        if(error) {
+          res.send({ error: error });
+        }
+        else {
+          res.send({ message: message });
+        }
       });
     };
   });

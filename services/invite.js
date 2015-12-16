@@ -6,6 +6,7 @@ var User = models.User;
 var Account = models.Account;
 var AccountUser = models.AccountUser;
 var inviteMailer = require('../mailers/invite');
+var constants = require('../util/constants');
 var uuid = require('node-uuid');
 var async = require('async');
 
@@ -25,7 +26,7 @@ function createInvite(params, callback) {
     role: params.role,
     userType: params.userType
   }).then(function(result) {
-    Invite.find({ include: [ User, Account ], where: { token: token } }).then(function(invite) {
+    Invite.find({ include: [ { model: User, attributes: constants.safeUserParams }, Account ], where: { token: token } }).then(function(invite) {
       let inviteParams = { token: invite.token, email: invite.User.email };
       inviteMailer.sendInviteAccountManager(inviteParams, function(error, data) {
         callback(error, invite, data);
@@ -84,15 +85,8 @@ function acceptInviteExisting(token, callback) {
       return callback(null, invite);
     }
 
-    updateUser({ status: 'accepted' }, invite, function(error) {
-      if(error) {
-        callback(error);
-      }
-      else {
-        createAccountUserFromInvite(invite, function(error, message) {
-          callback(error, invite, message);
-        });
-      }
+    createAccountUserFromInvite(invite, function(error, message) {
+      callback(error, invite, message);
     });
   });
 };
@@ -191,7 +185,7 @@ function createAccountAndUser(invite, params, callback) {
       callback(error);
     }
     else {
-      updateUser({ password: params.password, status: 'accepted' }, invite, function(error) {
+      updateUser({ password: params.password }, invite, function(error) {
         callback(error);
       });
     }
