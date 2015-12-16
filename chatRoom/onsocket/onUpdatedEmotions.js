@@ -1,7 +1,7 @@
 var onUpdatedemotions = function(userId, topicId, data) {
-	if (topicId === window.topicID) {
+	if (topicId == window.topicID) {
 		if (userId != window.userID) {
-			if (window.avatars === null) {
+			if (window.avatars == null) {
 				window.avatars = window.topic.getAvatars();
 			}
 			// console.log(":onUpdateemotions");
@@ -15,7 +15,7 @@ var onUpdatedemotions = function(userId, topicId, data) {
 					emotion = data[name];
 
 				for (ndx = 0, la = window.avatars.length; ndx < la; ndx++) {
-					if (window.avatars[ndx].json.name === name) {
+					if (window.avatars[ndx].json.name == name) {
 						//	don't update if offline
 						if (window.avatars[ndx].emotion != "offline") {
 							window.avatars[ndx].setEmotion(emotion);
@@ -25,7 +25,7 @@ var onUpdatedemotions = function(userId, topicId, data) {
 						break;
 					}
 				}
-			}			
+			}
 		}
 	}
 };

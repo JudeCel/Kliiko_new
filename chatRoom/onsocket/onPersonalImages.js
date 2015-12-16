@@ -1,7 +1,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 var participantsDetails = function(topicId, participants, id, userId) {
 	for (var ndx = 0, np = participants.length; ndx < np; ndx++) {
-		if (participants[ndx].userId === userId) {
+		if (participants[ndx].userId == userId) {
 			return {
 				id: id,
 				number: ndx,
@@ -10,7 +10,7 @@ var participantsDetails = function(topicId, participants, id, userId) {
 			};
 		}
 	}
-	
+
 	return null;
 };
 
@@ -20,7 +20,7 @@ var updateCorkboard = function(personalImage, participantsDetailsJSON) {
 		canvasHeight = window.whiteboardLarge.height,
 		canvasPersonalImageWidth = (canvasWidth / 4),
 		canvasPersonalImageHeight = (canvasHeight / 2);
-		
+
 	var x = ((participantsDetailsJSON.number % 4) * canvasPersonalImageWidth),
 		y = (((participantsDetailsJSON.number < 4) ? 0 : 1) * canvasPersonalImageHeight);
 
@@ -38,14 +38,14 @@ var updateCorkboard = function(personalImage, participantsDetailsJSON) {
 */
 var onPersonalimages = function(userId, topicId, json) {
 	if (isEmpty(json)) return;
-	if (typeof json === "object") return;
-	
+	if (typeof json == "object") return;
+
 	var json = JSON.parse(json);
-	
+
 	var participantsDetailsJSON = null;
 	for (var ndx = 0, nj = json.length; ndx < nj; ndx++) {
 		participantsDetailsJSON = participantsDetails(topicId, window.participants, json[ndx].id, json[ndx].userId);
-		
+
 		//	lets draw our image for this participant
 		if (!isEmpty(participantsDetailsJSON)) {
 			updateCorkboard(json[ndx], participantsDetailsJSON);

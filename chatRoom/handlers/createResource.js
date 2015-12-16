@@ -1,6 +1,5 @@
 "use strict";
 var _ = require("lodash");
-// var createResource = require("if-data").repositories.createResource;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
 var models = require("./../../models");
@@ -9,7 +8,7 @@ var Resource = models.Resource;
 
 module.exports.validate = function (req, resCb) {
   var err = joi.validate(req.params, {
-    resource_type: joi.string().required(),
+    resourceType: joi.string().required(),
     url: joi.string().optional(),
     topicId: joi.number().optional(),
     userId: joi.number().optional(),

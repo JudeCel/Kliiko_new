@@ -1,8 +1,12 @@
+"use strict";
 var mtypes = require('./helpers/mtypes');
 var socketio = require('socket.io');
+var express = require('express');
 var config = require('simpler-config').load(require('./config/config.json')); // need replace with orginal config
 var conflict = 'drop current';
 var expressValidatorStub = require('./helpers/expressValidatorStub.js');
+var currentUser = require('../middleware/currentUser');
+
 var io;
 var _ = require('lodash');
 
@@ -10,12 +14,24 @@ module.exports.io = function () {
   return io;
 }
 
+module.exports.addRoutes = function (app) {
+  let chatRoute = require('./routes/chat');
+
+  app.use('/chat_room', express.static(__dirname + '/chat_room'));
+  app.use('/onsocket', express.static(__dirname + '/onsocket'));
+  app.use('/bootstrap', express.static(__dirname + '/bootstrap'));
+  app.use('/chatRoom', express.static(__dirname + '/public'));
+
+  app.use('/chat', currentUser.assign, chatRoute);
+  return app
+}
+
 module.exports.listen = function (server) {
   io = require('socket.io')(server);
+  io = io.of('/chat');
 
   var socketHelper = require('./socketHelper');
 
-  io = io.of('/chat');
 
   var userids = [];
   var nameList = new Array();
@@ -582,7 +598,7 @@ module.exports.listen = function (server) {
       var req = expressValidatorStub({
         params: {
           topicId: socket.topicId,
-          resource_type: type,
+          resourceType: type,
           userId: socket.userId
         }
       });

@@ -21,7 +21,6 @@ module.exports.run = function (req, resCb, errCb) {
     order: [['id', 'DESC']] }).then(function(event) {
       resCb.send(event || []);
     }).catch(function(err) {
-      console.log(err);
       errCb(webFaultHelper.getFault(err));
     });
   };

@@ -6,7 +6,7 @@ var onBrandprojectinfo = function (data) {
         json = JSON.parse(data);
     }
 
-    if (json.length === 0) {
+    if (json.length == 0) {
         var dashboard = window.getDashboard();
         dashboard.showMessage({
             message: {

@@ -1,4 +1,4 @@
-var mtypes = require("../helpers/mtypes");
+// var mtypes = require("../helpers/mtypes");
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var uploadResourceCallback = require('./saveResourceToDb.js');
 var fs = require('fs');
@@ -15,16 +15,17 @@ function saveResourceToDisk(params) {
     var res = params.res;
 
     var err = joi.validate(params, {
-        req: joi.types.Object().required(),
-        res: joi.types.Object().required(),
-        resCb: joi.types.Function().required(),
+        req: joi.object().required(),
+        res: joi.object().required(),
+        resCb: joi.func().required(),
         width: joi.number().optional(),
         height: joi.number().optional(),
         type: joi.string().optional()
     });
 
-    if (err.error)
-        throw webFaultHelper.getValidationFault(err.error);
+    if (err.error){
+      throw webFaultHelper.getValidationFault(err.error);
+    }
 
     var contentType = req.headers['content-type'];
 
@@ -51,7 +52,7 @@ function saveResourceToDisk(params) {
         //	we should also remove any apostropes
         json.filename = dataHelper.clearFileNameExtraSymbols(json.filename);
         var filename = dataHelper.getResourceFileName(json.filename);
-        var path = config.paths.fsPath + config.paths.chatRoomPath + 'uploads/' + filename;
+        var path = config.paths.fsPath + "/" + 'public/uploads/' + filename;
 
         fs.writeFile(path, json.body, 'binary', function (err) {
             if (err) {
