@@ -3,7 +3,8 @@ var express = require('express');
 var router = express.Router();
 var userRoutes = require("./user");
 var planRoutes = require("./plans");
-var countryAndCurrency = require("./country-and-currency-data")
+var countryAndCurrency = require("./country-and-currency-data");
+var upgrade = require("./upgrade");
 
 router.use(function (req, res, next) {
   if (req.user) {
@@ -23,5 +24,6 @@ router.post('/user', userRoutes.userPost);
 router.get('/plans', planRoutes.plansGet);
 router.get('/currencies', countryAndCurrency.currencies);
 router.get('/countries', countryAndCurrency.countries);
+router.post('/upgrade', upgrade.upgradePost);
 
 module.exports = router;

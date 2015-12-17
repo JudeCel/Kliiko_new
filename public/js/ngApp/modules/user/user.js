@@ -40,7 +40,6 @@
 
             return deferred.promise;
 
-            return
         }
 
         /**

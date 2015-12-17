@@ -21,8 +21,8 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <th scope="row">{{up.selectedPlanName}}</th>
-                                <td>{{ (up.plans[up.selectedPlanName].price * up.selectedCurrency.rate) | currency : up.selectedCurrency.symbol : 2}}</td>
+                                <td scope="row">{{up.plans[up.selectedPlanName].name}}</td>
+                                <td>{{ up.plans[up.selectedPlanName].price | currency : 'US$' : 2}}</td>
                                 <!--<td><input id="duration-input" type="number" ng-model="up.upgradeDuration" ng-value="1" min="1" size="3"></td>-->
                                 <td>
                                     <select name="" id="duration-input" ng-model="up.upgradeDuration" >
@@ -43,7 +43,7 @@
                                 </td>
                                 <td><input id="promocod-input" type="text" ng-model="up.promocode"></td>
                                 <td>
-                                    {{up.finalPrice = (up.plans[up.selectedPlanName].price * up.upgradeDuration * up.selectedCurrency.rate )|| (up.plans[up.selectedPlanName].price * up.selectedCurrency.rate) | currency : up.selectedCurrency.symbol : 2 }}
+                                    {{up.finalPrice = (up.plans[up.selectedPlanName].price * up.upgradeDuration  )|| (up.plans[up.selectedPlanName].price ) | currency : 'US$' : 2 }}
                                 </td>
                             </tr>
 

@@ -81,31 +81,29 @@
                         </div>
                         <div class="form-group">
                             <label for="credit-card-number-input">Card number</label>
-                            <input type="text" class="form-control" ng-model="up.paymentDetails.creditCard.number" ng-change="up.paymentDetails.creditCard.numberChanged()" id="credit-card-number-input">
+                            <input type="text" class="form-control" ng-model="up.paymentDetails.creditCard.number" ng-change="up.paymentDetails.creditCard.numberChanged()" id="credit-card-number-input" placeholder="type 4 to use test card number">
                         </div>
 
                         <div class="form-group exp">
                             <label for="credit-card-number-input">Expiry Date</label>
-                            <select type="text" class="form-control" ng-model="up.paymentDetails.creditCard.expDate"  id="credit-card-number-expDate">
-                                <option ng-repeat="day in ::up.expDates.days" value="{{day}}">{{day}}</option>
+                            <select id="credit-card-number-expDate" type="text" class="form-control" ng-model="up.paymentDetails.creditCard.expMonth">
+                                <option ng-repeat="month in ::up.expDates.months" value="{{month}}">{{month}}</option>
                             </select>
                         </div>
 
                         <div class="form-group exp">
                             <label for="credit-card-number-input">&nbsp;</label>
-                            <select type="text" class="form-control" ng-model="up.paymentDetails.creditCard.expYear"  id="credit-card-number-expYear">
+                            <select id="credit-card-number-expYear" type="text" class="form-control" ng-model="up.paymentDetails.creditCard.expYear">
                                 <option ng-repeat="year in ::up.expDates.years" value="{{year}}">{{year}}</option>
                             </select>
                         </div>
 
                         <div class="form-group exp">
                             <label for="credit-card-number-input">Card Code (CVV)</label>
-                            <input type="password" maxlength="3"  class="form-control" ng-model="up.paymentDetails.creditCard.cvv"  id="credit-card-number-cvv">
+                            <input id="credit-card-number-cvv" type="password" class="form-control" ng-model="up.paymentDetails.creditCard.cvv" ng-change="up.cvvValidate()" maxlength="3">
                         </div>
-
-
-
                     </form>
+
                 </div>
                 <div class="row" >
                     <div class="col-md-1">
