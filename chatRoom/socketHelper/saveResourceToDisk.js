@@ -56,7 +56,6 @@ function saveResourceToDisk(params) {
 
         fs.writeFile(path, json.body, 'binary', function (err) {
             if (err) {
-              throw err
             } else {
                 /*
                  the file saved nicely...
@@ -112,7 +111,6 @@ function saveResourceToDisk(params) {
                                  height: params.height
                              }, function (err, stdout, stderr) {
                                  if (err) {
-                                   throw err
                                      //	TODO: deal with error
                                      console.log("Imagemagick: wasn't able to resize");
                                  } //throw err;
