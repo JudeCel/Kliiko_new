@@ -60,11 +60,11 @@
       return deferred.promise;
     };
 
-    function updatePromoCode(promoId, data) {
+    function updatePromoCode(data) {
       var deferred = $q.defer();
 
-      dbg.log2('#PromotionCodeServices > updatePromoCode > make rest call', promoId);
-      promotionCodeRestApi.promotionCode.update({ id: promoId }, data, function(res) {
+      dbg.log2('#PromotionCodeServices > updatePromoCode > make rest call', data);
+      promotionCodeRestApi.promotionCode.update({ id: data.id }, data, function(res) {
         dbg.log2('#PromotionCodeServices > updatePromoCode > rest call responds');
         deferred.resolve(res);
       });

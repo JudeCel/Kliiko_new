@@ -2,6 +2,7 @@
 
 var express = require('express');
 var router = express.Router();
+var policy = require('../../middleware/policy.js');
 
 var userRoutes = require('./user');
 var planRoutes = require('./plans');
@@ -28,13 +29,13 @@ router.get('/plans', planRoutes.plansGet);
 router.get('/currencies', countryAndCurrency.currencies);
 router.get('/countries', countryAndCurrency.countries);
 
-router.get('/accountManager', accountManager.get);
-router.post('/accountManager', accountManager.post);
-router.delete('/accountManager', accountManager.remove);
+router.get('/accountManager', policy.authorized(['accountManager']), accountManager.get);
+router.post('/accountManager', policy.authorized(['accountManager']), accountManager.post);
+router.delete('/accountManager', policy.authorized(['accountManager']), accountManager.remove);
 
-router.get('/promotionCode', promotionCode.get);
-router.post('/promotionCode', promotionCode.create);
-router.delete('/promotionCode/:id', promotionCode.remove);
-router.put('/promotionCode/:id', promotionCode.update);
+router.get('/promotionCode', policy.authorized(['admin']), promotionCode.get);
+router.post('/promotionCode', policy.authorized(['admin']), promotionCode.create);
+router.delete('/promotionCode/:id', policy.authorized(['admin']), promotionCode.remove);
+router.put('/promotionCode/:id', policy.authorized(['admin']), promotionCode.update);
 
 module.exports = router;

@@ -35,8 +35,7 @@ function remove(req, res, next) {
 };
 
 function update(req, res, next) {
-  promotionCodeService.updatePromoCode(req.params.id, req.body, function(error, promo) {
-    console.log(error, promo);
+  promotionCodeService.updatePromoCode(req.body, function(error, promo) {
     if(error) {
       res.send({ error: error });
     }

@@ -4,17 +4,30 @@ var PromotionCode  = require('./../../models').PromotionCode;
 var crypto = require('crypto');
 var _ = require('lodash');
 
+var validAttributes = [
+  'name',
+  'startDate',
+  'endDate',
+  'discountType',
+  'discountValue',
+  'minimalOrder'
+];
+
 function findAllPromoCodes(callback) {
-  PromotionCode.findAll({ order: 'name ASC' }).then(function(promoCodes) {
+  PromotionCode.findAll({
+    order: 'name ASC',
+    attributes: validAttributesForView()
+  }).then(function(promoCodes) {
     callback(null, promoCodes);
   });
 };
 
 function createPromoCode(params, callback) {
-  params.code = generateCode();
+  let validatedParams = validateParams(params);
+  validatedParams.code = generateCode();
 
-  PromotionCode.create(params).then(function(result) {
-    callback(null, result);
+  PromotionCode.create(validatedParams).then(function(result) {
+    callback(null, validateParams(result, validAttributesForView()));
   }).catch(PromotionCode.sequelize.ValidationError, function(error) {
     callback(prepareErrors(error));
   }).catch(function(error) {
@@ -22,35 +35,33 @@ function createPromoCode(params, callback) {
   });
 };
 
-function updatePromoCode(id, params, callback) {
-  PromotionCode.find({ where: { id: id } }).then(function (result) {
-    if(result) {
-      result.update(params).then(function(updated) {
-        callback(null, updated);
-      }).catch(PromotionCode.sequelize.ValidationError, function(error) {
-        callback(prepareErrors(error));
-      }).catch(function(error) {
-        callback(error);
-      });
+function updatePromoCode(params, callback) {
+  PromotionCode.update(validateParams(params), { where: { id: params.id }, returning: true }).then(function(result) {
+    if(result[0] == 0) {
+      callback('There is no promotion code with id: ' + params.id);
     }
     else {
-      callback('There is no promotion code with id: ' + params.id);
-    };
+      callback(null, validateParams(result[1][0], validAttributesForView()));
+    }
+  }).catch(PromotionCode.sequelize.ValidationError, function(error) {
+    callback(prepareErrors(error));
+  }).catch(function(error) {
+    callback(error);
   });
 };
 
 function removePromoCode(id, callback) {
-  PromotionCode.find({ where: { id: id } }).then(function(result) {
-    if(result) {
-      result.destroy().then(function(result) {
-        callback(null);
-      }).catch(function(error) {
-        callback(error);
-      });
+  PromotionCode.destroy({ where: { id: id } }).then(function(result) {
+    if(result == 0) {
+      callback('There is no promotion code with id: ' + id);
     }
     else {
-      callback('There is no promotion code with id: ' + id);
-    };
+      callback(null);
+    }
+  }).catch(PromotionCode.sequelize.ValidationError, function(error) {
+    callback(prepareErrors(error));
+  }).catch(function(error) {
+    callback(error);
   });
 };
 
@@ -61,9 +72,20 @@ function generateCode() {
 function prepareErrors(err) {
   let errors = ({});
   _.map(err.errors, function (n) {
-    errors[n.path] = _.startCase(n.path) + ": " + n.message.replace(n.path, '');
+    errors[n.path] = _.startCase(n.path) + ":" + n.message.replace(n.path, '');
   });
   return errors;
+};
+
+function validAttributesForView() {
+  let array = validAttributes.slice();
+  array.push('id');
+  array.push('code');
+  return array;
+};
+
+function validateParams(params, attrs) {
+  return _.pick(params, attrs || validAttributes);
 };
 
 

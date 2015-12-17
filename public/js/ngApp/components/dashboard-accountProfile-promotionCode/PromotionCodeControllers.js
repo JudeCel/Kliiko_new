@@ -142,7 +142,7 @@
     };
 
     $scope.minDate = new Date();
-    $scope.maxDate = new Date(2020, 5, 22);
+    $scope.maxDate = new Date(new Date($scope.minDate).setYear($scope.minDate.getFullYear() + 5));
     $scope.format = dateFormat;
 
     $scope.status = {
@@ -160,7 +160,7 @@
       $scope.sendingData = true;
       if($scope.editablePromo) {
         dbg.log2('#PromotionCodeModalController > edit > submitForm', $scope.promo);
-        PromotionCodeServices.updatePromoCode($scope.promo.id, $scope.promo).then(function(res) {
+        PromotionCodeServices.updatePromoCode($scope.promo).then(function(res) {
           $scope.sendingData = false;
           if(res.error) {
             $scope.errors = res.error;
@@ -191,7 +191,7 @@
     };
 
     $scope.$watch('promo.discountType', function(data) {
-      $scope.selectedOptionValue = data == 'value';
+      $scope.selectedOptionValue = (data == 'value');
     });
 
     $scope.closeModal = function() {

@@ -1,5 +1,6 @@
-"use strict";
-var assert = require('assert');
+'use strict';
+
+var assert = require('chai').assert;
 var models  = require('./../../models');
 var promotionCode  = require('./../../services/admin/promotionCode');
 
@@ -32,7 +33,7 @@ describe('SERVICE - PromotionCode', function() {
     });
   });
 
-  it.only('returns list of all promotion codes', function (done) {
+  it('returns list of all promotion codes', function (done) {
     promotionCode.findAllPromoCodes(function(error, results) {
       assert.equal(error, null);
       assert.equal(results[0].name, validAttrs.name);
@@ -44,22 +45,22 @@ describe('SERVICE - PromotionCode', function() {
     });
   });
 
-  describe('Edit', function() {
+  describe('#updatePromoCode', function() {
     it('Happy path', function (done) {
       let validEditAttrs = {
         id: testPromotionCode.id,
         name: "Updated some promo.",
         startDate: startDate,
-        endDate: Date(startDate.setDate(startDate.getDate() + 100)),
+        endDate: new Date(startDate.setDate(startDate.getDate() + 100)),
         discountType: "percentage",
         discountValue: 25
       };
 
-      promotionCode.editPromoCode(validEditAttrs, function(error, result) {
+      promotionCode.updatePromoCode(validEditAttrs, function(error, result) {
         assert.equal(error, null);
         assert.equal(result.name, validEditAttrs.name);
-        assert.equal(result.startDate, validEditAttrs.startDate);
-        assert.equal(result.endDate, validEditAttrs.endDate);
+        assert.deepEqual(result.startDate, validEditAttrs.startDate);
+        assert.deepEqual(result.endDate, validEditAttrs.endDate);
         assert.equal(result.discountType, validEditAttrs.discountType);
         assert.equal(result.discountValue, validEditAttrs.discountValue);
         done();
@@ -76,9 +77,13 @@ describe('SERVICE - PromotionCode', function() {
         discountValue: null
       }
 
-      promotionCode.editPromoCode(invalidEditAttrs, function(error, result) {
+      promotionCode.updatePromoCode(invalidEditAttrs, function(error, result) {
+        let someErrors = { name: 'Name: cannot be null',
+          discountValue: 'Discount Value: cannot be null'
+        };
+
         assert.equal(result, null);
-        assert.equal(error.name, 'SequelizeValidationError');
+        assert.deepEqual(error, someErrors);
         done();
       });
     });
@@ -86,22 +91,23 @@ describe('SERVICE - PromotionCode', function() {
     it("can't find record to update", function (done) {
       let invalidId = testPromotionCode.id + 1;
 
-      promotionCode.editPromoCode({ id: invalidId }, function(errors, result) {
+      promotionCode.updatePromoCode({ id: invalidId }, function(error, result) {
         assert.equal(result, null);
-        assert.equal(errors, 'There is no promotion code with id: 2');
+        assert.equal(error, 'There is no promotion code with id: ' + invalidId);
         done();
       });
     });
   });
 
-  describe('Create', function() {
+  describe('#createPromoCode', function() {
     it('Happy path', function (done) {
       let validCreateAttrs = {
         name: 'Test some create of promo.',
         startDate: startDate,
         endDate: endDate,
         discountType: 'value',
-        discountValue: 100
+        discountValue: 100,
+        minimalOrder: 100
       }
 
       promotionCode.createPromoCode(validCreateAttrs, function(error, result) {
@@ -126,17 +132,16 @@ describe('SERVICE - PromotionCode', function() {
 
       promotionCode.createPromoCode(invalidCreateAttrs, function(error, result) {
         assert.equal(result, null);
-        assert.equal(error.name, 'SequelizeValidationError');
+        assert.deepEqual(error, { discountValue: 'Discount Value: cannot be null' });
         done();
       });
     });
   });
 
-  describe('Delete', function() {
+  describe('#removePromoCode', function() {
     it('Happy path', function (done) {
-      promotionCode.removePromoCode(testPromotionCode.id, function(error, result) {
+      promotionCode.removePromoCode(testPromotionCode.id, function(error) {
         assert.equal(error, null);
-        assert.equal(result, 'Promotion code deleted successfully.');
         done();
       });
     });
