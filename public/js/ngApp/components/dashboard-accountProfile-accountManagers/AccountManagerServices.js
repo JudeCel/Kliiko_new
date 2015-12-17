@@ -1,11 +1,11 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('AccountManagerServices', AccountManagerServices);
-  AccountManagerServices.$inject = ['$q', 'globalSettings', '$resource', 'dbg'];
+  AccountManagerServices.$inject = ['$q', '$resource', 'dbg'];
 
-  function AccountManagerServices($q, globalSettings, $resource, dbg) {
+  function AccountManagerServices($q, $resource, dbg) {
     var accountManagerRestApi = {
-      accountManager: $resource(globalSettings.restUrl + '/accountManager', {}, { post: { method: 'POST' } }),
+      accountManager: $resource('/api/accountManager', {}, { post: { method: 'POST' } }),
     };
 
     var cache = {};
