@@ -6,8 +6,8 @@
     function upgradePlanServices($q,globalSettings, $resource, dbg) {
 
         var upgradePlanRestApi = {
-            getAllCountries: $resource(globalSettings.restUrl+'/country-and-currency-data/countries', {}, {post: {method: 'POST'} }),
-            getAllCurrencies: $resource(globalSettings.restUrl+'/country-and-currency-data/currencies', {}, {post: {method: 'POST'} }),
+            getAllCountries: $resource(globalSettings.restUrl+'/countries', {}, {post: {method: 'POST'} }),
+            getAllCurrencies: $resource(globalSettings.restUrl+'/currencies', {}, {post: {method: 'POST'} }),
             getPlans: $resource(globalSettings.restUrl+'/plans', {}, {post: {method: 'POST'} })
         };
 

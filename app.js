@@ -45,15 +45,15 @@ app.use(flash());
 
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
+var api = require('./routes/api');
 
 app.use('/', routes);
 app.use('/dashboard', currentUser.assign, dashboard);
+app.use('/api', currentUser.assign, api);
 
 // Added socket.io routes
 app = socketsServer.addRoutes(app);
 // catch 404 and forward to error handler
-
-initRestApiRouts();
 
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
@@ -89,15 +89,3 @@ app.use(function(err, req, res, next) {
 app.locals.moment = require('moment');
 
 module.exports = app;
-
-
-/**
- * Go through the restAPI folder, search and apply all routing rules
- */
-function initRestApiRouts() {
-  var restApiPath = config.get('webAppSettings.restApiUrl');
-
-  fs.readdirSync('./restAPI').forEach(function(filename) {
-    if (~filename.indexOf('.js')) require('./restAPI/' + filename)(app, restApiPath);
-  });
-}
