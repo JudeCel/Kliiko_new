@@ -14,7 +14,7 @@ var userDetailsFields = [
     'gender',
     'mobile',
     'landlineNumber',
-    'postalAdress',
+    'postalAddress',
     'city',
     'state',
     'postcode',
