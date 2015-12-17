@@ -13,9 +13,9 @@
   });
 
   angular.module('KliikoApp').controller('AccountManagerController', AccountManagerController);
-  AccountManagerController.$inject = ['dbg', 'AccountManagerServices', '$modal', '$scope', '$rootScope', '$filter', '$timeout'];
+  AccountManagerController.$inject = ['dbg', 'AccountManagerServices', '$modal', '$scope', '$rootScope', '$filter', '$timeout', 'angularConfirm'];
 
-  function AccountManagerController(dbg, AccountManagerServices, $modal, $scope, $rootScope, $filter, $timeout) {
+  function AccountManagerController(dbg, AccountManagerServices, $modal, $scope, $rootScope, $filter, $timeout, angularConfirm) {
     dbg.log2('#AccountManagerController started');
 
     $scope.users = {};
@@ -37,16 +37,18 @@
     };
 
     $scope.removeAccountOrInvite = function(type, user) {
-      AccountManagerServices.removeAccountManager({ type: type, id: user.id }).then(function(res) {
-        dbg.log2('#AccountManagerController > removeAccountOrInvite > res ', res);
-        if(res.error) {
-          setError($scope, res.error);
-        }
-        else {
-          setMessage($scope, res.message);
-          var index = $scope.users.indexOf(user);
-          $scope.users.splice(index, 1);
-        }
+      angularConfirm('Are you sure?').then(function(response) {
+        AccountManagerServices.removeAccountManager({ type: type, id: user.id }).then(function(res) {
+          dbg.log2('#AccountManagerController > removeAccountOrInvite > res ', res);
+          if(res.error) {
+            setError($scope, res.error);
+          }
+          else {
+            setMessage($scope, res.message);
+            var index = $scope.users.indexOf(user);
+            $scope.users.splice(index, 1);
+          }
+        });
       });
     };
 

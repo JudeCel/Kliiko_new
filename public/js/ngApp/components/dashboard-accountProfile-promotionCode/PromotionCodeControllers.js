@@ -2,9 +2,9 @@
   'use strict';
 
   angular.module('KliikoApp').controller('PromotionCodeController', PromotionCodeController);
-  PromotionCodeController.$inject = ['dbg', 'PromotionCodeServices', '$modal', '$scope', '$rootScope', '$filter', '$timeout'];
+  PromotionCodeController.$inject = ['dbg', 'PromotionCodeServices', '$modal', '$scope', '$rootScope', '$filter', '$timeout', 'angularConfirm'];
 
-  function PromotionCodeController(dbg, PromotionCodeServices, $modal, $scope, $rootScope, $filter, $timeout) {
+  function PromotionCodeController(dbg, PromotionCodeServices, $modal, $scope, $rootScope, $filter, $timeout, angularConfirm) {
     dbg.log2('#PromotionCodeController started');
 
     $scope.promos = {};
@@ -39,16 +39,18 @@
     };
 
     $scope.removePromoCode = function(promo) {
-      PromotionCodeServices.removePromoCode(promo.id).then(function(res) {
-        dbg.log2('#PromotionCodeController > removePromoCode > res ', res);
-        if(res.error) {
-          setError($scope, res.error);
-        }
-        else {
-          setMessage($scope, res.message);
-          var index = $scope.promos.indexOf(promo);
-          $scope.promos.splice(index, 1);
-        }
+      angularConfirm('Are you sure?').then(function(response) {
+        PromotionCodeServices.removePromoCode(promo.id).then(function(res) {
+          dbg.log2('#PromotionCodeController > removePromoCode > res ', res);
+          if(res.error) {
+            setError($scope, res.error);
+          }
+          else {
+            setMessage($scope, res.message);
+            var index = $scope.promos.indexOf(promo);
+            $scope.promos.splice(index, 1);
+          }
+        });
       });
     };
 

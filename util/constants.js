@@ -18,6 +18,6 @@ module.exports = {
     'country',
     'companyName'
   ],
-  promotionCodeTypes: ['value', 'percentage'],
+  promotionCodeTypes: ['percentage', 'value'],
   dateFormat: 'MM-dd-yyyy'
 }
