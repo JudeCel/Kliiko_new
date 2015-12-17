@@ -109,7 +109,7 @@
 
       $scope.sendingData = true;
       dbg.log2('#AccountManagerModalController > submitForm', $scope.user);
-      AccountManagerServices.sendAccountManagerData($scope.user).then(function(res) {
+      AccountManagerServices.createAccountManager($scope.user).then(function(res) {
         $scope.sendingData = false;
         if(res.error) {
           $scope.errors = res.error;
