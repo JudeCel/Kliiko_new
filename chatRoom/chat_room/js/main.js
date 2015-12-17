@@ -1079,7 +1079,7 @@ socket.on('connect_failed', function () {
 /*
 config = config.json
 */
-function main(config) {
+function main(config, ioUrl) {
   var sessionID = window.sessionID;
   var userID = window.userID;
 
@@ -1095,8 +1095,7 @@ function main(config) {
   ADMIN_PATH = config.paths.adminPath;
   CHAT_ROOM_PATH = config.paths.chatRoomPath;
 
-  // socket = io.connect("http://" + domain + ':' + port, {
-  socket = io.connect('insider.focus.com:7203/chat', {
+  socket = io.connect(ioUrl, {
     'reconnect': true,
     'reconnection delay': 500,
     'max reconnection attempts': 10

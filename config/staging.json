@@ -4,6 +4,7 @@
     "port": 3000,
     "baseDomain": ".kliiko.diatomdemo.com",
     "domain": "insider.kliiko.diatomdemo.com",
+    "chatUrl": "/chat",
     "baseSubdomain": "insider"
   },
   "redisSession": {

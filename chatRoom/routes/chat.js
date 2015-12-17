@@ -4,6 +4,13 @@ var router = express.Router();
 var _ = require('lodash');
 var sessionMember = require('./../../middleware/sessionMember.js');
 var socketHelper = require("../socketHelper");
+var config = require('config');
+
+
+function ioUrl() {
+  let serverConf = config.get('server')
+  return serverConf.domain + ":" + serverConf.port + serverConf.chatUrl
+}
 
 function uploadResourceCallback(userId, json) {
   var io = require("../sockets.js").io();
@@ -33,7 +40,7 @@ router.get('/help', function(req, res, next) {
 });
 
 router.get('/:id' , sessionMember.hasAccess, function(req, res, next) {
-  res.render(views_path('topic'), { title: 'chat', user: req.user, id: req.params.id });
+  res.render(views_path('topic'), { title: 'chat', user: req.user, id: req.params.id, ioUrl: ioUrl() });
 });
 
 
