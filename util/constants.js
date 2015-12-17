@@ -14,7 +14,7 @@ module.exports = {
     'postalAddress',
     'city',
     'state',
-    'postCode',
+    'postcode',
     'country',
     'companyName'
   ]
