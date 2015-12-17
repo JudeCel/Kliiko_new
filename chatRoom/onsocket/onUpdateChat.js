@@ -4,11 +4,11 @@ var onUpdatechat = function(userId, topicId, data) {
 			avatarJSON = avatar.json;
 	}
 
-	if (topicID === topicId) {
+	if (topicID == topicId) {
 		if (!isEmpty(chatHistory)) {
 			if (!isEmpty(topic)) {
 				for (var ndx = 0, pl = participants.length; ndx < pl; ndx++) {
-					if (avatarJSON.name === participants[ndx].name) {
+					if (avatarJSON.name == participants[ndx].name) {
 						var now = new Date();
 						var json = {
 							input: data.input,
@@ -31,9 +31,9 @@ var onUpdatechat = function(userId, topicId, data) {
 						if (isEmpty(data.animate)) data.animate = false;
 
 						var billboardMode = false;
-						if (avatarJSON.role === "facilitator") {
+						if (avatarJSON.role == "facilitator") {
 							if (typeof data.mode != "undefined") {
-								if (data.mode.type === "billboard") {
+								if (data.mode.type == "billboard") {
 									billboardMode = true;
 								}
 							}
@@ -43,7 +43,7 @@ var onUpdatechat = function(userId, topicId, data) {
 						if (billboardMode) {
 							avatar.say(data, now);
 							window.lastBillboard.message = data.input;
-							if ((window.role === 'facilitator') || (window.role === 'co-facilitator')) {
+							if ((window.role == 'facilitator') || (window.role == 'co-facilitator')) {
 								chatHistory.addChat(avatarJSON, json, ndx, data.animate);
 							}
 						} else {
@@ -71,7 +71,7 @@ var onUpdatechat = function(userId, topicId, data) {
 
 		if (!isEmpty(data.mode)) {
 			if (!isEmpty(data.mode.replyTo)) {
-				if (data.mode.replyTo === window.userID) {
+				if (data.mode.replyTo == window.userID) {
 					isReply = true;
 				}
 			}

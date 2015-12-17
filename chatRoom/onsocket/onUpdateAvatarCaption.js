@@ -9,7 +9,7 @@ var onUpdateavatarcaption = function(userId, sessionId, nameList) {
 	if (!isEmpty(window.avatars)) {
 		for (var ndxAvatars = 0, la = window.avatars.length; ndxAvatars < la; ndxAvatars++) {
 			for (var ndxNameList = 0, ln = nameList.length; ndxNameList < ln; ndxNameList++) {
-				if (window.avatars[ndxAvatars].json.userId === nameList[ndxNameList].id) {
+				if (window.avatars[ndxAvatars].json.userId == nameList[ndxNameList].id) {
 					window.avatars[ndxAvatars].setCaption(nameList[ndxNameList].caption);
 					window.avatars[ndxAvatars].draw();
 

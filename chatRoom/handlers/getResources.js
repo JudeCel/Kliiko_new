@@ -8,7 +8,7 @@ var Resource = models.Resource;
 
 module.exports.validate = function (req, resCb) {
   var err = joi.validate(req.params, {
-    resource_type: joi.string().required(),
+    resourceType: joi.string().required(),
     topicId: joi.number().required(),
     userId: joi.number().required()
   });
@@ -19,9 +19,11 @@ module.exports.validate = function (req, resCb) {
 };
 
 module.exports.run = function (req, resCb, errCb) {
-  Resource.findAll({where: req.params}).then(function(result) {
+  Resource.findAll({where: req.params})
+  .then(function(result) {
     resCb.send(result)
   }).catch(function(err) {
+    console.log(err);
     errCb(webFaultHelper.getFault(err));
   });
 };

@@ -6,7 +6,7 @@ function updateResources(topicId, userId, content, type, Cb) {
         params: {
             topicId: topicId,
             userId: userId,
-            resource_type: type
+            resourceType: type
         }
     });
 

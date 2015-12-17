@@ -1,31 +1,32 @@
 "use strict";
-// var ifData = require('if-data');
-// var getResourcesGeneric = ifData.repositories.getResourcesGeneric;
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var joi = require('joi');
 var expressValidatorStub = require('../helpers/expressValidatorStub.js');
+var models = require("./../../models");
+var Resource = models.Resource;
 
 var validate = function (req, resCb) {
     var err = joi.validate(req.params, {
         id: joi.number(),
-        resource_type: joi.string(),
+        resourceType: joi.string(),
         topicId: joi.number(),
         userId: joi.number()
     });
-    if (err.error)
-        return resCb(webFaultHelper.getValidationFault(err.error));
+    if (err.error){
+      return resCb(webFaultHelper.getValidationFault(err.error));
+    }
 
     resCb();
 };
 module.exports.validate = validate;
 
 var run = function (req, resCb, nextCb) {
-    getResourcesGeneric(req.params)
-        .done(function (data) {
-            resCb.send(data);
-        }, function (err) {
-            nextCb(webFaultHelper.getFault(err));
-        });
+  Resource.findAll({where: req.params})
+  .then(function (data) {
+    resCb.send(data);
+  }).catch(function (err) {
+    errCb(webFaultHelper.getFault(err));
+  });
 };
 module.exports.run = run;
 

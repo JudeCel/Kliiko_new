@@ -9,7 +9,7 @@ module.exports = (Sequelize, DataTypes) => {
     URL:	{ type: DataTypes.TEXT, allowNull: true },
     HTML:	{ type: DataTypes.TEXT, allowNull: true },
     JSON:	{ type: DataTypes.JSON, allowNull: true, defaultValue: {} },
-    resource_type: {type: DataTypes.ENUM, allowNull: false,
+    resourceType: {type: DataTypes.ENUM, allowNull: false,
       values: [ 'participant', 'facilitator', 'co-facilitator',
                 'observer', 'image', 'video', 'audio', 'report',
                 'vote', 'collage', 'tmp'

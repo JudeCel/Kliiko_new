@@ -1,5 +1,5 @@
 var onUpdateRedo = function(user_name, topicId, data) {
-	if (topicID === topicId) {
+	if (topicID == topicId) {
 		dataAsJSON = JSON.parse(data);
 		if(dataAsJSON.length>0){
 			var	dataDecoded = decodeURI(dataAsJSON[0].event);

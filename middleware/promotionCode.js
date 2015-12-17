@@ -9,7 +9,7 @@ function views_path(action) {
 
 function list(req, res) {
   promotionCode.list(function (result) {
-    res.render(views_path('promotionCode'));
+    res.render(views_path('promotionCode'), { title: "Some Title" });
   });
 };
 

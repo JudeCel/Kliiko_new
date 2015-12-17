@@ -8,13 +8,14 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
-var flash = require('connect-flash');
 var bodyParser = require('body-parser');
 var passport = require('./middleware/passport');
 var subdomain = require('./middleware/subdomain');
 var currentUser = require('./middleware/currentUser');
+var flash = require('connect-flash');
 var app = express();
 var fs = require('fs');
+var socketsServer = require('./chatRoom/sockets');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,14 +29,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser(config.get("cookieSecret")));
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/chat_room', express.static(__dirname + '/chatRoom/chat_room'));
-app.use('/onsocket', express.static(__dirname + '/chatRoom/onsocket'));
-app.use('/bootstrap', express.static(__dirname + '/chatRoom/bootstrap'));
-app.use('/chatRoom', express.static(__dirname + '/chatRoom/public'));
-
-
-
 
 app.use(session({
   store: new RedisStore(config.get("redisSession")),
@@ -52,11 +45,12 @@ app.use(flash());
 
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
-var chat = require('./routes/chat');
 
 app.use('/', routes);
 app.use('/dashboard', currentUser.assign, dashboard);
-app.use('/chat', currentUser.assign, chat);
+
+// Added socket.io routes
+app = socketsServer.addRoutes(app);
 // catch 404 and forward to error handler
 
 initRestApiRouts();
@@ -101,7 +95,7 @@ module.exports = app;
  * Go through the restAPI folder, search and apply all routing rules
  */
 function initRestApiRouts() {
-  var restApiPath = config.get('webAppSettings').restApiUrl;
+  var restApiPath = config.get('webAppSettings.restApiUrl');
 
   fs.readdirSync('./restAPI').forEach(function(filename) {
     if (~filename.indexOf('.js')) require('./restAPI/' + filename)(app, restApiPath);

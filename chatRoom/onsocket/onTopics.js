@@ -11,7 +11,7 @@ var onTopics = function(data) {
 
 	this.x = 132;
 
-	if (thisMain.topics.length === 0) return;	//	if we have no topics, no point hanging around...
+	if (thisMain.topics.length == 0) return;	//	if we have no topics, no point hanging around...
 
 	var height = (thisMain.topics.length * 42) + 10;
 	window.paperTopicMenu = new Raphael("topicMenu", 202, height);
@@ -162,7 +162,7 @@ var onTopics = function(data) {
 			}
             //moving from onParticipants.js
             var expandBillboard = document.getElementById("expandBillboard");
-            if(window.role === "facilitator" && window.topicID != null){
+            if(window.role == "facilitator" && window.topicID != null){
                 expandBillboard.style.display = "block";
             } else{
                 expandBillboard.style.display = "none";
@@ -199,7 +199,7 @@ onTopicsUpdateTopic = function(json) {
 	var count = 0,
 		countReplies = 0;
 
-	if (window.userID === json.userID) {
+	if (window.userID == json.userID) {
 		window.topicLabel[1].attr({text: json.label});
 		labelBBox = topicLabel[1].getBBox();
 
@@ -218,7 +218,7 @@ onTopicsUpdateTopic = function(json) {
 
 	for (var ndx = 0, lt = window.topics.length; ndx < lt; ndx++) {
 		if (!isEmpty(window.topicChatCounter['topic_' + window.topics[ndx].id])) {
-			if (window.topicID === window.topics[ndx].id) {
+			if (window.topicID == window.topics[ndx].id) {
 				window.topicChatCounter['topic_' + window.topics[ndx].id].count = 0;	//	lets reset this
 				while (window.topicChatCounter['topic_' + window.topics[ndx].id].ids.length > 0) {
 					currentID = window.topicChatCounter['topic_' + window.topics[ndx].id].ids.pop();
@@ -236,7 +236,7 @@ onTopicsUpdateTopic = function(json) {
 
 		if (!isEmpty(window.topicRepliesCounter['topic_' + window.topics[ndx].id])) {
 			//	is the current topic this one?
-			if (window.topicID === window.topics[ndx].id) {
+			if (window.topicID == window.topics[ndx].id) {
 				window.topicRepliesCounter['topic_' + window.topics[ndx].id].count = 0;	//	lets reset this
 				while (window.topicRepliesCounter['topic_' + window.topics[ndx].id].ids.length > 0) {
 					currentID = window.topicRepliesCounter['topic_' + window.topics[ndx].id].ids.pop();
@@ -301,12 +301,12 @@ onTopicsUpdateTopic = function(json) {
 	if (json.topicID > -1) {
 		if (window.topicID > -1) {
 			//	No?, well, lets find it (if we can)
-			if (json.activeTopic === true) {
+			if (json.activeTopic == true) {
 				if (!isEmpty(window.topics)) {
 					for (topicNdx = 0, lt = window.topics.length; topicNdx < lt; topicNdx++) {
 						if (window.topics[topicNdx].active == true) {
 							json.topicID = window.topics[topicNdx].id;
-							if (window.userID === json.userID) {
+							if (window.userID == json.userID) {
 								window.topicID = json.topicID;
 							}
 						}
@@ -315,7 +315,7 @@ onTopicsUpdateTopic = function(json) {
 			}
 		} else {
 			//	not sure if we'd ever get here, but here it is anyway...
-			if (window.userID === json.userID) {
+			if (window.userID == json.userID) {
 				window.topicID = json.topicID;
 			}
 		}
@@ -325,16 +325,16 @@ onTopicsUpdateTopic = function(json) {
 
 	//	OK, json.topicID is now set, lets see if this is infact the active topic
 	for (topicNdx = 0, lt = window.topics.length; topicNdx < lt; topicNdx++) {
-		if (window.topics[topicNdx].id === json.topicID) {
-			json.activeTopic = (window.topics[topicNdx].active === true);
+		if (window.topics[topicNdx].id == json.topicID) {
+			json.activeTopic = (window.topics[topicNdx].active == true);
 
 			break;
 		}
 	}
 
 	//	lets set the colour of our current topic
-	if (window.userID === json.userID) {
-		if (json.activeTopic === true) {
+	if (window.userID == json.userID) {
+		if (json.activeTopic == true) {
 			window.topicLabel[1].attr({fill: TEXT_COLOUR});
 		} else {
 			window.topicLabel[1].attr({fill: "black"});
@@ -344,7 +344,7 @@ onTopicsUpdateTopic = function(json) {
 	//	maybe now we have a topicID
 	if (!isEmpty(window.topicID)) {
 		if (!isEmpty(window.userID)) {
-			if (window.userID === json.userID) {
+			if (window.userID == json.userID) {
 				//	lets clear out replies we "should" have read by now
 				socket.emit('delete_offline_transactions', json.topicID, window.userID);
 

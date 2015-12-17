@@ -6,3 +6,4 @@
 /build/*
 /npm-debug.log
 /.tmp/templates.js
+/chatRoom/public/uploads/

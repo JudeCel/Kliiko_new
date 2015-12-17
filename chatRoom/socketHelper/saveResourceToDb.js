@@ -1,18 +1,17 @@
-var mtypes = require("../helpers/mtypes");
 var getResourcesGeneric = require('../handlers/getResourcesGeneric.js');
 
 function saveResourceToDb(json, resCb, nextCb) {
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //	this bit of code is interesting,
     //	1)	We will first get all the resources currently uploaded by looking
-    //		looking at the resources table where the resource_type is tmp.
+    //		looking at the resources table where the resourceType is tmp.
     //	2)	With those rows from the resources table, we will look for the
     //		json.filename.
     //	3)	Once we have a match, we can get the userId
     //	4)	The userId allows us to get the connection so we can send
     //		information back to our client.
     var req = {
-        resource_type: 'tmp'
+        resourceType: 'tmp'
     };
 
     getResourcesGeneric.execute(req, handleAllTempResources, nextCb);
@@ -44,14 +43,14 @@ function saveResourceToDb(json, resCb, nextCb) {
 
             if (resultJSON.text.toLowerCase() === json.matchName.toLowerCase()) {
                 var req = {
-                    resource_type: 'tmp'
+                    resourceType: 'tmp'
                 };
 
                 req.userId = json.userId = resource.userId;
                 req.topicId = json.topicId = resource.topicId;
 
                 getResourcesGeneric.execute(req, function (result) {
-                    var socketHelper = require('../socketHelper.js');
+                    var socketHelper = require('./index.js');
                     if (result && result.length) {
                         var resultJson = null;
                         try {

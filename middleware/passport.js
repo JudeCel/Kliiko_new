@@ -70,12 +70,15 @@ passport.deserializeUser(function(userObject, done) {
 });
 
 function userParams(user, account) {
-  return { id: user.id, email: user.email,
-           subdomain: account.name, role:
-           account.AccountUser.role,
-           firstName: user.firstName,
-           signInCount: user.signInCount
-          };
+  return {
+    id: user.id,
+    email: user.email,
+    subdomain: account.name,
+    role: account.AccountUser.role,
+    firstName: user.firstName,
+    signInCount: user.signInCount,
+    accountOwnerId: account.id
+  };
 }
 
 module.exports = passport;

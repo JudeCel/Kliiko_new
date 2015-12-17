@@ -4,16 +4,14 @@
 .btn-md {
   height: 45px; }
 
-.btn-dashboard-menu {
+.btn-dashboard-menu, .btn-addNewAccountManager {
   background-color: inherit;
   width: 13%;
   min-width: 180px;
   height: 36px;
   margin-left: 36px;
   margin-top: 30px;
-  line-height: 36px;
   cursor: pointer;
-  font-size: 2rem;
   padding-top: 4px;
   padding-left: 15px;
   vertical-align: middle;
@@ -23,24 +21,29 @@
   color: #4DC0E9;
   line-height: 26px;
   text-align: left; }
-  .btn-dashboard-menu.active {
-    color: white;
-    background: #4DC0E9; }
-  .btn-dashboard-menu.btn-green {
+  .btn-dashboard-menu.btn-green, .btn-green.btn-addNewAccountManager {
     color: #2F9F69;
     border-color: #2F9F69;
     background: white; }
-  .btn-dashboard-menu.btn-short {
+  .btn-dashboard-menu.btn-short, .btn-short.btn-addNewAccountManager {
     min-width: 0 !important;
     max-width: 100px; }
-  .btn-dashboard-menu:hover {
+  .btn-dashboard-menu:hover, .btn-addNewAccountManager:hover {
     color: #3DB0D9;
     border-color: #3DB0D9; }
-  .btn-dashboard-menu span {
-    display: inline-block;
-    width: calc(100% - 19px); }
-  .btn-dashboard-menu img {
-    margin-bottom: 3px; }
+
+.btn-dashboard-menu.active, .active.btn-addNewAccountManager {
+  color: white;
+  background-color: #4DC0E9; }
+  .btn-dashboard-menu.active img, .active.btn-addNewAccountManager img {
+    padding: 25px 25px 0px 0px;
+    background-size: auto;
+    width: 0px;
+    height: 0px; }
+  .btn-dashboard-menu.active img.upgrade, .active.btn-addNewAccountManager img.upgrade {
+    background-image: url("/icons/upgrade_white.png"); }
+  .btn-dashboard-menu.active img.account-manager, .active.btn-addNewAccountManager img.account-manager {
+    background-image: url("/icons/account_manager_white.png"); }
 
 .btn-header-dropdown, .btn-header-green, .btn-header-red {
   margin-left: 10px;
@@ -60,6 +63,12 @@
 
 .btn-header-red {
   background-color: #E51D39; }
+
+.btn-addNewAccountManager {
+  width: auto;
+  margin: 0;
+  margin-top: 20px;
+  margin-bottom: 20px; }
 
 .btn-simple {
   margin-left: 10px;
@@ -202,6 +211,31 @@ label.radio-button input[type="radio"]:checked + span:after {
 
 .table-no-inside-borders tbody > tr > td {
   border: none !important; }
+
+.table-accountManager {
+  border: 0;
+  border-collapse: separate;
+  border-spacing: 0px 10px;
+  margin-top: -10px; }
+
+.table-accountManager > thead {
+  color: white;
+  background-color: #4DC0E9; }
+
+.table-accountManager > tbody {
+  background-color: #E8EAED; }
+  .table-accountManager > tbody .accountManagerEditRemove {
+    min-width: 15%; }
+
+.table-accountManager > thead > tr > th,
+.table-accountManager > tbody > tr > td {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  border: 0; }
+  @media (min-width: 768px) {
+    .table-accountManager > thead > tr > th,
+    .table-accountManager > tbody > tr > td {
+      padding-left: 32px; } }
 
 @font-face {
   font-family: SourceSansPro-Black;
@@ -362,6 +396,9 @@ footer {
 
 .background-red {
   background-color: #E51D39 !important; }
+
+.background-blue {
+  background-color: #4DC0E9 !important; }
 
 /* Typography */
 .text-login-page {

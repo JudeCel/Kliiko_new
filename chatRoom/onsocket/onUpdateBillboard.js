@@ -3,11 +3,11 @@ var onUpdateBillboard = function(userId, topicId, data) {
 	var avatar = topic.getAvatarByUserId(userId);
 	var avatarJSON = avatar.json;
 
-	if (topicID !== topicId || avatarJSON.role !== "facilitator") return;
+	if (topicID != topicId || avatarJSON.role != "facilitator") return;
 
 	if (!isEmpty(chatHistory)) {
 		for (var ndx = 0, pl = participants.length; ndx < pl; ndx++) {
-			if (avatarJSON.name === participants[ndx].name) {
+			if (avatarJSON.name == participants[ndx].name) {
 				var now = new Date();
 
 				avatar.draw();
