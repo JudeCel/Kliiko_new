@@ -14,7 +14,7 @@ var view = namespace('sf.ifs.View');
 */
 view.VideoMenu = function(json) {
 	this.json = json;
-	
+
 	this.videoMenu = null;
 
 	this.resources = JSON.parse(this.json.data);
@@ -58,18 +58,18 @@ view.VideoMenu.prototype.draw = function() {
 	if (this.videoMenu) {
 		if (this.videoMenu[0] != null) this.videoMenu.remove();
 	}
-	
+
 	this.dashboard.toFront();
-	
+
 	var width = this.json.paper.canvas.clientWidth ? this.json.paper.canvas.clientWidth : this.json.paper.width;
 	var height = (this.json.paper.canvas.clientHeight ? this.json.paper.canvas.clientHeight : this.json.paper.height);	//	leave a space for the playback controller
-	
+
 	var cx = (width / 2),
 		cy = (height / 2);
-		
+
 	var radius = cx;
 	if (cy < cx) radius = cy;
-	
+
 	this.videoMenu = this.json.paper.set();
 
 	//	lets add an "+" (add) button
@@ -84,7 +84,7 @@ view.VideoMenu.prototype.draw = function() {
 		opacity:		0.5,
 		title:			"Add a YouTube Video"
 	};
-	
+
 	var buttonAttrLabelHover = {
 		fill:			buttonLabelColourHover,
 		stroke:			buttonLabelStrokeColour,
@@ -92,12 +92,12 @@ view.VideoMenu.prototype.draw = function() {
 		opacity: 1,
 		title:			"Add a YouTube Video"
 	};
-	
+
 	var buttonAttrLabelText = {
 		'font-size':	16,
 		fill:			'#fff'
 	};
-	
+
 	var onClick = function() {
 		//	firstly, lets make sure we remote the menu
 		this.thisLocal.hide();
@@ -121,18 +121,18 @@ view.VideoMenu.prototype.draw = function() {
 		thisMain:				this.json.thisMain,
 		paper:					this.json.paper		//	pointer to the canvas we are drawing on
 	};
-	
+
 	var background = this.json.paper.path(getRoundedRectToPath(this.json.x, this.json.y, this.json.width, this.json.height, this.json.radius)).attr({
 		fill: MENU_BACKGROUND_COLOUR,
 		"opacity": 0.33,
 		stroke: MENU_BORDER_COLOUR,
 		"stroke-width": 5,
 		"stroke-opacity": 1
-	});	
-	
+	});
+
 	var title = this.json.paper.text(this.json.x + 50, this.json.y + 24, this.json.title);
 	title.attr({'fill': "white", 'font-size': 24, 'text-anchor': 'start'});
-	
+
 	var onCloseClick = function() {
 		thisMain.videoMenu.hide();
 	};
@@ -145,7 +145,7 @@ view.VideoMenu.prototype.draw = function() {
 		thisMain:	this.json.thisMain,
 		paper:		this.json.paper
 	};
-	
+
 	var close = new sf.ifs.View.Icon(iconJSON);
 	close.draw();
 
@@ -168,7 +168,7 @@ view.VideoMenu.prototype.draw = function() {
 	var buttonAdd = null;
 	var buttonJSON = null;
 	for (var ndx = 0, rl = this.resources.length; ndx <rl; ndx++) {
-		var data = decodeURI(this.resources[ndx].jSON);
+		var data = decodeURI(this.resources[ndx].JSON);
 		var videoJSON = JSON.parse(data);
 		var resourceId = this.resources[ndx].id;
 		var title = (!isEmpty(videoJSON.title)) ? videoJSON.title : "untitled";
@@ -184,7 +184,7 @@ view.VideoMenu.prototype.draw = function() {
 			title:				title,
 			hoverHint: 			"Drag Video onto Console",
 			attrTitle: 	{
-				'fill': "#fff", 
+				'fill': "#fff",
 				'font-size': 12
 			},
 			size: {
@@ -209,20 +209,20 @@ view.VideoMenu.prototype.draw = function() {
             menu:               this,
             resourceIndex:      ndx
 		};
-		
-		
+
+
 		buttonAdd = new sf.ifs.View.Button(buttonJSON);
 		buttonAdd.draw();
-		
+
 		this.videoMenu.push(buttonAdd.button);			//	lets keep track of all our resources
-		
+
 		buttonPosition.x = buttonPosition.x + 110;
 		if ((buttonPosition.x + 100) > (this.json.x + this.json.width)) {
 			buttonPosition.x = this.json.x + 20;
 			buttonPosition.y = buttonPosition.y + 86;
 		}
 	}
-	
+
 	if (this.videoMenu.animate) {
 		var animationInit = Raphael.animation({"opacity": 0.75}, 500, function() {});
 		if (!this.videoMenu.removed) this.videoMenu.animate(animationInit.delay(0));
@@ -233,7 +233,7 @@ view.VideoMenu.prototype.draw = function() {
 		this.target.remove();
 		this.target = null;
 	}
-	this.targetRect = this.json.paper.rect(targetRect.x, targetRect.y, targetRect.width, targetRect.height).attr({stroke: "#8080ff", "stroke-width": 2, "stroke-dasharray": "-", "fill-opacity": 0.25});	
+	this.targetRect = this.json.paper.rect(targetRect.x, targetRect.y, targetRect.width, targetRect.height).attr({stroke: "#8080ff", "stroke-width": 2, "stroke-dasharray": "-", "fill-opacity": 0.25});
 	this.videoMenu.push(this.targetRect);
 };
 
@@ -243,7 +243,7 @@ view.VideoMenu.prototype.hide = function() {
 		"opacity": 0.5,
 		"stroke-opacity": 1
 	});
-	
+
 	//	make sure our animation callback and see the main area
 	if (this.videoMenu.animate) {
 		this.videoMenu.data("this", this);
@@ -252,7 +252,7 @@ view.VideoMenu.prototype.hide = function() {
 			me = this.data("this");
 			me.json.thisMain.videoMenuCleanup();
 		});
-		
+
 		if (!this.videoMenu.removed) this.videoMenu.animate(animationHide.delay(0));
 	}
 };
@@ -263,7 +263,7 @@ view.VideoMenu.prototype.destroy = function() {
 		currentElement = this.videoMenu.splice(0, 1);
 		currentElement.remove();
 	}
-	
+
 	this.videoMenu = null;
 };
 
@@ -275,10 +275,10 @@ view.VideoMenu.prototype.show = function() {
 		//"stroke-width": 2,
 		"stroke-opacity": 1
 	});
-	
+
 	if (this.videoMenu.animate) {
 		var animationShow = Raphael.animation({"opacity": 0.75}, 500);
-	
+
 		if (!this.videoMenu.removed) this.videoMenu.animate(animationShow.delay(0));
 	}
 };
@@ -291,7 +291,7 @@ view.VideoMenu.prototype.hide = function() {
 		"opacity": 0.5,
 		"stroke-opacity": 1
 	});
-	
+
 	//	make sure our animation callback and see the main area
 	if (this.videoMenu.animate) {
 		this.videoMenu.data("this", this);
@@ -299,7 +299,7 @@ view.VideoMenu.prototype.hide = function() {
 		var animationHide = Raphael.animation({"opacity": 0}, 500, function() {
 			videoMenuCleanup();
 		});
-		
+
 		if (!this.videoMenu.removed) this.videoMenu.animate(animationHide.delay(0));
 	}
 };
@@ -310,7 +310,6 @@ view.VideoMenu.prototype.destroy = function() {
 		buttonElement = this.videoMenu.splice(0, 1);
 		buttonElement.remove();
 	}
-	
+
 	this.videoMenu = null;
 };
-
