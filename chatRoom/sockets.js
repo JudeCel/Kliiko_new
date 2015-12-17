@@ -20,7 +20,7 @@ module.exports.addRoutes = function (app) {
   app.use('/chat_room', express.static(__dirname + '/chat_room'));
   app.use('/onsocket', express.static(__dirname + '/onsocket'));
   app.use('/bootstrap', express.static(__dirname + '/bootstrap'));
-  app.use('/chatRoom', express.static(__dirname + '/public'));
+  app.use('/chat_room', express.static(__dirname + '/public'));
 
   app.use('/chat', currentUser.assign, chatRoute);
   return app

@@ -72,7 +72,7 @@ var onBrandprojectinfo = function (data) {
 
             $('#logo-div').prepend('<img src=' + imgURL + ' />')
         } else {
-            imgURL = "/chatRoom/images/logoDefaultInsiderfocus.jpg";
+            imgURL = "/chat_room/images/logoDefaultInsiderfocus.jpg";
                 $('#logo-div').prepend('<img src=' + imgURL + ' />')
         }
         socket.emit('getuserinfo', window.userID, window.sessionID, window.brandProjectInfo.id);
