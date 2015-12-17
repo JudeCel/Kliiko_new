@@ -1,67 +1,63 @@
 'use strict';
-var promotionCode  = require('./../../models').promotionCode;
+var PromotionCode  = require('./../../models').PromotionCode;
 var crypto = require('crypto');
 
-function list(callback){
- promotionCode.findAll({order: 'name ASC'})
-  .then(function (result) {
-    callback(null, result);
+function findAllPromoCodes(callback) {
+  PromotionCode.findAll({ order: 'name ASC' }).then(function(promoCodes) {
+    callback(null, promoCodes);
   });
 };
 
-function create(params, callback){
-  generateCode(function(result) {
-    params['code'] = result;
-  });
-  
-  promotionCode.create(params).then(function(result) {
-    callback(null, result);
-  }).catch(promotionCode.sequelize.ValidationError, function(err) {
-    callback(err);
-  }).catch(function(err) {
-    callback(err);
+function createPromoCode(params, callback) {
+  params.code = generateCode();
+
+  PromotionCode.create(params).then(function(promoCode) {
+    callback(null, promoCode);
+  }).catch(PromotionCode.sequelize.ValidationError, function(error) {
+    callback(error);
+  }).catch(function(error) {
+    callback(error);
   });
 };
 
-function edit(params, callback){
-	promotionCode.find({where: {id: params.id}}).done(function (result) {
-    if (result) {
-      result.update(params).then(function (result) {
-        return callback(null, result);
-      })
-      .catch(function (err) {
-        callback(err);
+function editPromoCode(params, callback) {
+  PromotionCode.find({ where: { id: params.id } }).then(function (result) {
+    if(result) {
+      result.update(params).then(function(updated) {
+        callback(null, updated);
+      }).catch(function(error) {
+        callback(error);
       });
-    } else {
-      callback("There is no promotion code with id: " + params.id);
+    }
+    else {
+      callback('There is no promotion code with id: ' + params.id);
     };
   });
 };
 
-function destroy(id, callback){
-	promotionCode.find({where: {id: id}}).done(function (result) {
-		if (result) {
-			result.destroy().then(function (result) {
-        callback(null, "Promotion code deleted successfully.");
-      })
-      .catch(function (err) {
-        callback(err);
+function destroyPromoCode(id, callback) {
+  PromotionCode.find({ where: { id: id } }).then(function(result) {
+    if(result) {
+      result.destroy().then(function(result) {
+        callback(null, 'Promotion code deleted successfully.');
+      }).catch(function(error) {
+        callback(error);
       });
-		} else {
-      callback("There is no promotion code with id: " + id);
+    }
+    else {
+      callback('There is no promotion code with id: ' + id);
     };
-	});
+  });
 };
 
-function generateCode(callback){
-	let token = crypto.randomBytes(10).toString('hex');
-	callback(token)
+function generateCode() {
+  return crypto.randomBytes(10).toString('hex');
 };
 
 
 module.exports = {
-  create: create,
-  list: list,
-  edit: edit,
-  destroy: destroy
-}
+  findAllPromoCodes: findAllPromoCodes,
+  createPromoCode: createPromoCode,
+  editPromoCode: editPromoCode,
+  destroyPromoCode: destroyPromoCode
+};
