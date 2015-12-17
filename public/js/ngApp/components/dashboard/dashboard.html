@@ -1,20 +1,3 @@
-<section id="dashboard" class='row' ng-controller="DashboardController as dashboard">
-
-    <div id="back-nav-btn" class='col-md-3 btn-dashboard-menu btn-green btn-short-'
-         ng-hide="dashboard.$state.current.name === 'dashboard.accountProfile' || dashboard.$state.current.name === 'dashboard' "
-         ui-sref--="dashboard.accountProfile" ng-click="dashboard.handleBackBtn()">
-       <img src="icons/ic_back_green.png" class="ic"> Back
-    </div>
-
-    <div ui-view="dashboardContent"></div>
-
-    <!--<div class="row row-centered">-->
-        <!--<div class='col-md-offset-1 col-md-10 сol-centered dashboard-index text-center'>-->
-
-           <!---->
-
-        <!--</div>-->
-
-        <!--<a href='/dashboard/accountDatabase'>Account Database<img class="my-details-container" src='' alt='' /></a>-->
-    <!--</div>-->
+<section id="dashboard" ng-controller="DashboardController as dashboard">
+  <div ui-view="dashboardContent"></div>
 </section>

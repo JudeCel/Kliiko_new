@@ -11,14 +11,7 @@
   height: 36px;
   margin-left: 36px;
   margin-top: 30px;
-  line-height: 36px;
   cursor: pointer;
-  font-size: 2rem;
-
-  &.active {
-    color: white;
-    background: $blue;
-  }
 
   &.btn-green {
     color: $green;
@@ -41,17 +34,32 @@
   text-align: left;
 
   &:hover{
-    color: $w;
-    background-color: $blue;
-  }
-  span {
-    display: inline-block;
-    width: calc(100% - 30px);
-  }
-  img {
-    margin-bottom: 3px;
+    color: $blueHover;
+    border-color: $blueHover;
   }
 }
+
+
+.btn-dashboard-menu.active {
+  color: white;
+  background-color: $blue;
+
+  img {
+    padding: 25px 25px 0px 0px;
+    background-size: auto;
+    width: 0px;
+    height: 0px;
+  }
+
+  img.upgrade {
+    background-image: url('/icons/upgrade_white.png');
+  }
+
+  img.account-manager {
+    background-image: url('/icons/account_manager_white.png');
+  }
+}
+
 
 .btn-header-dropdown {
   margin-left: 10px;
@@ -75,6 +83,14 @@
 .btn-header-red {
   @extend .btn-header-dropdown;
   background-color: $red;
+}
+
+.btn-addNewAccountManager {
+  @extend .btn-dashboard-menu;
+  width: auto;
+  margin: 0;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .btn-simple {
