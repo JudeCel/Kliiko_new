@@ -4,27 +4,27 @@
   }
 }
 
-.table-accountManager {
+.table-dashboardElements {
   border: 0;
   border-collapse: separate;
   border-spacing: 0px 10px;
   margin-top: -10px;
 }
 
-.table-accountManager > thead {
+.table-dashboardElements > thead {
   color: white;
   background-color: $blue;
 }
 
-.table-accountManager > tbody {
+.table-dashboardElements > tbody {
   background-color: $light-grey;
-  .accountManagerEditRemove {
+  .dashboardElementsEditRemove {
     min-width: 15%;
   }
 }
 
-.table-accountManager > thead > tr > th,
-.table-accountManager > tbody > tr > td {
+.table-dashboardElements > thead > tr > th,
+.table-dashboardElements > tbody > tr > td {
   padding-top: 16px;
   padding-bottom: 16px;
   border: 0;

@@ -1,10 +1,10 @@
 (function () {
   'use strict';
 
-  angular.module('KliikoApp').filter('findUserPosition', function(){
-    return function(user, users) {
-      for(var index in users) {
-        if(users[index].id == user.id) {
+  angular.module('KliikoApp').filter('findPositionById', function(){
+    return function(element, array) {
+      for(var index in array) {
+        if(array[index].id == element.id) {
           return index;
         }
       }
@@ -68,7 +68,7 @@
 
     $rootScope.$watch('addedNewAccountManager', function(data) {
       if($rootScope.addedNewAccountManager) {
-        if($filter('findUserPosition')(data.user, $scope.users) == -1) {
+        if($filter('findPositionById')(data.user, $scope.users) == -1) {
           $scope.users.push(data.user);
         }
 

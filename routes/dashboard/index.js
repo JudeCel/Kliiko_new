@@ -6,7 +6,6 @@ var changePassword = require('../../services/changePassword');
 var policy = require('../../middleware/policy.js');
 var uploadBannerRoutes = require('./uploadBanner.js');
 var accountDatabase = require('../../middleware/accountDatabase.js');
-var promotionCode = require('../../middleware/promotionCode.js');
 var appData = require('../../services/webAppData');
 
 function views_path(action) {
@@ -57,8 +56,5 @@ router.post('/updateComment', policy.authorized(['admin']), accountDatabase.upda
 router.post('/reactivateOrDeactivate', policy.authorized(['admin']), accountDatabase.reactivateOrDeactivate);
 // End
 
-// promotionCode
-router.get('/promotionCode', policy.authorized(['admin']), promotionCode.list);
-// End
 
 module.exports = router;

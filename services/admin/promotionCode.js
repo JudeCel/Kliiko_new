@@ -1,6 +1,8 @@
 'use strict';
+
 var PromotionCode  = require('./../../models').PromotionCode;
 var crypto = require('crypto');
+var _ = require('lodash');
 
 function findAllPromoCodes(callback) {
   PromotionCode.findAll({ order: 'name ASC' }).then(function(promoCodes) {
@@ -11,20 +13,22 @@ function findAllPromoCodes(callback) {
 function createPromoCode(params, callback) {
   params.code = generateCode();
 
-  PromotionCode.create(params).then(function(promoCode) {
-    callback(null, promoCode);
+  PromotionCode.create(params).then(function(result) {
+    callback(null, result);
   }).catch(PromotionCode.sequelize.ValidationError, function(error) {
-    callback(error);
+    callback(prepareErrors(error));
   }).catch(function(error) {
     callback(error);
   });
 };
 
-function editPromoCode(params, callback) {
-  PromotionCode.find({ where: { id: params.id } }).then(function (result) {
+function updatePromoCode(id, params, callback) {
+  PromotionCode.find({ where: { id: id } }).then(function (result) {
     if(result) {
       result.update(params).then(function(updated) {
         callback(null, updated);
+      }).catch(PromotionCode.sequelize.ValidationError, function(error) {
+        callback(prepareErrors(error));
       }).catch(function(error) {
         callback(error);
       });
@@ -35,11 +39,11 @@ function editPromoCode(params, callback) {
   });
 };
 
-function destroyPromoCode(id, callback) {
+function removePromoCode(id, callback) {
   PromotionCode.find({ where: { id: id } }).then(function(result) {
     if(result) {
       result.destroy().then(function(result) {
-        callback(null, 'Promotion code deleted successfully.');
+        callback(null);
       }).catch(function(error) {
         callback(error);
       });
@@ -54,10 +58,18 @@ function generateCode() {
   return crypto.randomBytes(10).toString('hex');
 };
 
+function prepareErrors(err) {
+  let errors = ({});
+  _.map(err.errors, function (n) {
+    errors[n.path] = _.startCase(n.path) + ": " + n.message.replace(n.path, '');
+  });
+  return errors;
+};
+
 
 module.exports = {
   findAllPromoCodes: findAllPromoCodes,
   createPromoCode: createPromoCode,
-  editPromoCode: editPromoCode,
-  destroyPromoCode: destroyPromoCode
+  updatePromoCode: updatePromoCode,
+  removePromoCode: removePromoCode
 };

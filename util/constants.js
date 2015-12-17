@@ -17,5 +17,7 @@ module.exports = {
     'postcode',
     'country',
     'companyName'
-  ]
+  ],
+  promotionCodeTypes: ['value', 'percentage'],
+  dateFormat: 'MM-dd-yyyy'
 }

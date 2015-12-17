@@ -12,8 +12,9 @@ describe('SERVICE - PromotionCode', function() {
     name: 'Test some promo.',
     startDate: startDate,
     endDate: endDate,
-    discounType: 'value',
-    discountValue: 100
+    discountType: 'value',
+    discountValue: 100,
+    minimalOrder: 100
   };
 
    beforeEach(function(done) {
@@ -31,13 +32,13 @@ describe('SERVICE - PromotionCode', function() {
     });
   });
 
-  it('returns list of all promotion codes', function (done) {
+  it.only('returns list of all promotion codes', function (done) {
     promotionCode.findAllPromoCodes(function(error, results) {
       assert.equal(error, null);
       assert.equal(results[0].name, validAttrs.name);
       assert.deepEqual(results[0].startDate, validAttrs.startDate);
       assert.deepEqual(results[0].endDate, validAttrs.endDate);
-      assert.equal(results[0].discounType, validAttrs.discounType);
+      assert.equal(results[0].discountType, validAttrs.discountType);
       assert.equal(results[0].discountValue, validAttrs.discountValue);
       done();
     });
@@ -50,7 +51,7 @@ describe('SERVICE - PromotionCode', function() {
         name: "Updated some promo.",
         startDate: startDate,
         endDate: Date(startDate.setDate(startDate.getDate() + 100)),
-        discounType: "percentage",
+        discountType: "percentage",
         discountValue: 25
       };
 
@@ -59,7 +60,7 @@ describe('SERVICE - PromotionCode', function() {
         assert.equal(result.name, validEditAttrs.name);
         assert.equal(result.startDate, validEditAttrs.startDate);
         assert.equal(result.endDate, validEditAttrs.endDate);
-        assert.equal(result.discounType, validEditAttrs.discounType);
+        assert.equal(result.discountType, validEditAttrs.discountType);
         assert.equal(result.discountValue, validEditAttrs.discountValue);
         done();
       });
@@ -71,7 +72,7 @@ describe('SERVICE - PromotionCode', function() {
         name: null,
         startDate: startDate,
         endDate: Date(startDate.setDate(startDate.getDate() + 100)),
-        discounType: 'percentage',
+        discountType: 'percentage',
         discountValue: null
       }
 
@@ -99,7 +100,7 @@ describe('SERVICE - PromotionCode', function() {
         name: 'Test some create of promo.',
         startDate: startDate,
         endDate: endDate,
-        discounType: 'value',
+        discountType: 'value',
         discountValue: 100
       }
 
@@ -108,7 +109,7 @@ describe('SERVICE - PromotionCode', function() {
         assert.equal(result.name, validCreateAttrs.name);
         assert.deepEqual(result.startDate, validCreateAttrs.startDate);
         assert.deepEqual(result.endDate, validCreateAttrs.endDate);
-        assert.equal(result.discounType, validCreateAttrs.discounType);
+        assert.equal(result.discountType, validCreateAttrs.discountType);
         assert.equal(result.discountValue, validCreateAttrs.discountValue);
         done();
       });
@@ -119,7 +120,7 @@ describe('SERVICE - PromotionCode', function() {
         name: 'Test some create of promo.',
         startDate: startDate,
         endDate: endDate,
-        discounType: 'gurkis',
+        discountType: 'gurkis',
         discountValue: null
       }
 
@@ -133,7 +134,7 @@ describe('SERVICE - PromotionCode', function() {
 
   describe('Delete', function() {
     it('Happy path', function (done) {
-      promotionCode.destroyPromoCode(testPromotionCode.id, function(error, result) {
+      promotionCode.removePromoCode(testPromotionCode.id, function(error, result) {
         assert.equal(error, null);
         assert.equal(result, 'Promotion code deleted successfully.');
         done();
@@ -143,7 +144,7 @@ describe('SERVICE - PromotionCode', function() {
     it('Sad path', function (done) {
       let invalidId = testPromotionCode.id +1;
 
-      promotionCode.destroyPromoCode(invalidId, function(error, result) {
+      promotionCode.removePromoCode(invalidId, function(error, result) {
         assert.equal(result, null);
         assert.equal(error, 'There is no promotion code with id: ' + invalidId);
         done();

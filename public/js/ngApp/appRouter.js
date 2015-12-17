@@ -66,6 +66,17 @@
 
             })
 
+            .state('dashboard.accountProfile.promotionCode', {
+                url: '/promotion-code',
+                views: {
+                    'accountProfileContent': { templateUrl: prePath+"dashboard-accountProfile-promotionCode/dashboard-content.html" }
+                },
+                onEnter:['dbg', function( dbg) {
+                    dbg.rs('dashboard.accountProfile.promotionCode is on');
+                }]
+
+            })
+
             ///////////////////////// Resources
             .state('dashboard.resources', {
                 url: "/resources",
@@ -137,4 +148,3 @@
     }]);
 
 })();
-

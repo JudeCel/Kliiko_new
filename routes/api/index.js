@@ -7,6 +7,7 @@ var userRoutes = require('./user');
 var planRoutes = require('./plans');
 var countryAndCurrency = require('./country-and-currency-data');
 var accountManager = require('./accountManager');
+var promotionCode = require('./promotionCode');
 
 router.use(function (req, res, next) {
   if (req.user) {
@@ -30,5 +31,10 @@ router.get('/countries', countryAndCurrency.countries);
 router.get('/accountManager', accountManager.get);
 router.post('/accountManager', accountManager.post);
 router.delete('/accountManager', accountManager.remove);
+
+router.get('/promotionCode', promotionCode.get);
+router.post('/promotionCode', promotionCode.create);
+router.delete('/promotionCode/:id', promotionCode.remove);
+router.put('/promotionCode/:id', promotionCode.update);
 
 module.exports = router;

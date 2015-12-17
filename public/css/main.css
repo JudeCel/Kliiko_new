@@ -4,7 +4,7 @@
 .btn-md {
   height: 45px; }
 
-.btn-dashboard-menu, .btn-addNewAccountManager {
+.btn-dashboard-menu, .btn-addNewElement {
   background-color: inherit;
   width: 13%;
   min-width: 180px;
@@ -21,28 +21,28 @@
   color: #4DC0E9;
   line-height: 26px;
   text-align: left; }
-  .btn-dashboard-menu.btn-green, .btn-green.btn-addNewAccountManager {
+  .btn-dashboard-menu.btn-green, .btn-green.btn-addNewElement {
     color: #2F9F69;
     border-color: #2F9F69;
     background: white; }
-  .btn-dashboard-menu.btn-short, .btn-short.btn-addNewAccountManager {
+  .btn-dashboard-menu.btn-short, .btn-short.btn-addNewElement {
     min-width: 0 !important;
     max-width: 100px; }
-  .btn-dashboard-menu:hover, .btn-addNewAccountManager:hover {
+  .btn-dashboard-menu:hover, .btn-addNewElement:hover {
     color: #3DB0D9;
     border-color: #3DB0D9; }
 
-.btn-dashboard-menu.active, .active.btn-addNewAccountManager {
+.btn-dashboard-menu.active, .active.btn-addNewElement {
   color: white;
   background-color: #4DC0E9; }
-  .btn-dashboard-menu.active img, .active.btn-addNewAccountManager img {
+  .btn-dashboard-menu.active img, .active.btn-addNewElement img {
     padding: 25px 25px 0px 0px;
     background-size: auto;
     width: 0px;
     height: 0px; }
-  .btn-dashboard-menu.active img.upgrade, .active.btn-addNewAccountManager img.upgrade {
+  .btn-dashboard-menu.active img.upgrade, .active.btn-addNewElement img.upgrade {
     background-image: url("/icons/upgrade_white.png"); }
-  .btn-dashboard-menu.active img.account-manager, .active.btn-addNewAccountManager img.account-manager {
+  .btn-dashboard-menu.active img.account-manager, .active.btn-addNewElement img.account-manager {
     background-image: url("/icons/account_manager_white.png"); }
 
 .btn-header-dropdown, .btn-header-green, .btn-header-red {
@@ -64,7 +64,7 @@
 .btn-header-red {
   background-color: #E51D39; }
 
-.btn-addNewAccountManager {
+.btn-addNewElement {
   width: auto;
   margin: 0;
   margin-top: 20px;
@@ -211,29 +211,29 @@ label.radio-button input[type="radio"]:checked + span:after {
 .table-no-inside-borders tbody > tr > td {
   border: none !important; }
 
-.table-accountManager {
+.table-dashboardElements {
   border: 0;
   border-collapse: separate;
   border-spacing: 0px 10px;
   margin-top: -10px; }
 
-.table-accountManager > thead {
+.table-dashboardElements > thead {
   color: white;
   background-color: #4DC0E9; }
 
-.table-accountManager > tbody {
+.table-dashboardElements > tbody {
   background-color: #E8EAED; }
-  .table-accountManager > tbody .accountManagerEditRemove {
+  .table-dashboardElements > tbody .dashboardElementsEditRemove {
     min-width: 15%; }
 
-.table-accountManager > thead > tr > th,
-.table-accountManager > tbody > tr > td {
+.table-dashboardElements > thead > tr > th,
+.table-dashboardElements > tbody > tr > td {
   padding-top: 16px;
   padding-bottom: 16px;
   border: 0; }
   @media (min-width: 768px) {
-    .table-accountManager > thead > tr > th,
-    .table-accountManager > tbody > tr > td {
+    .table-dashboardElements > thead > tr > th,
+    .table-dashboardElements > tbody > tr > td {
       padding-left: 32px; } }
 
 @font-face {
