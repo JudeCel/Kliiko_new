@@ -64,16 +64,6 @@
           <li role="separator" class="divider"></li>
           <li class='text-right text-size-dashboard'><a href='/dashboard/uploadBanner'>Upload Banner<img class="my-details-container" src='/icons/ic_tab_sessions_active.png' alt='' /></a></li>
         <% } %>
-        <%if(hasAccess(["admin"], currentDomain.roles)) { %>
-          <li role="separator" class="divider"></li>
-          <li class='text-right text-size-dashboard' ui-sref='dashboard.accountProfile.accountDatabase'><a href=''>Account Database<img class="my-details-container" src='' alt='' /></a></li>
-        <% } %>
-
-        <%if(hasAccess(["admin"], currentDomain.roles)) { %>
-          <li role="separator" class="divider"></li>
-          <li class='text-right text-size-dashboard' ui-sref='dashboard.accountProfile.promotionCode'><a href=''>Promotion Codes<img class="my-details-container" src='' alt='' /></a></li>
-        <% } %>
-
         <li role="separator" class="divider"></li>
         <li class='text-right text-size-dashboard'><a href='/logout'>Logout<img class="my-details-container" src='/icons/logout_yellow.png' alt='' /></a></li>
       </ul>
