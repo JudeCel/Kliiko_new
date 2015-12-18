@@ -37,7 +37,7 @@ function updateAccountUser(params, callback) {
       accountUser.getAccount({ include: [{ model: User, attributes: constants.safeUserParams }, AccountUser ] }).then(function(account) {
         if(params.hasOwnProperty('active')) {
           accountUser.getUser().then(function(user) {
-            mailers.users.sendReactivateOrDeactivate({ email: user.email, name: account.name, active: account.active });
+            mailers.users.sendReactivateOrDeactivate({ email: user.email, name: account.name, active: accountUser.active });
           });
         }
         callback(null, account);
