@@ -33,5 +33,22 @@
   "facebookCallbackURL": "http://insider.kliiko.diatomdemo.com:3000/auth/facebook/callback",
   "googleClientID": "423827252082-ou6mol0l1jadrdu5it990m8vgulqglj8.apps.googleusercontent.com",
   "googleClientSecret": "8u0EG1SJjU7GahIuMRz3gYne",
-  "googleCallbackURL": "http://insider.kliiko.diatomdemo.com:3000/auth/google/callback"
+  "googleCallbackURL": "http://insider.kliiko.diatomdemo.com:3000/auth/google/callback",
+  "chatConf":{
+    "mode": "live",
+    "conflict": "drop existing",
+    "copyright": "2011 - 2015 ThirdWaveMedia Pty. Ltd.",
+    "port": "3000",
+    "domain": "insider.kliiko.diatomdemo.com",
+    "paths": {
+      "fsPath": "/var/lib/jenkins/jobs/Kliiko/workspace/chatRoom",
+      "urlPath": "http://insider.kliiko.diatomdemo.com:3000/",
+      "serverPath": "server/",
+      "configPath": "config/",
+      "adminPath": "admin/",
+      "chatRoomPath": "chat_room/",
+          "convertPath": "/usr/bin/convert",
+          "identifyPath": "/usr/bin/identify"
+    }
+  }
 }

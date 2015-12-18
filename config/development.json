@@ -34,5 +34,22 @@
   "googleClientID": "423827252082-4ha7t8h1o0j1r2edfkcn15jkmsn57tp3.apps.googleusercontent.com",
   "googleClientSecret": "hpT37ABiJ3rxxIDw96idBuBP",
   "googleCallbackURL": "http://insider.focus.com:3000/auth/google/callback",
-  "openexchangeratesAppId": "fc9b3ecd71274202a9f7935766e449a1"
+  "openexchangeratesAppId": "fc9b3ecd71274202a9f7935766e449a1",
+  "chatConf":{
+  	"mode": "live",
+  	"conflict": "drop existing",
+  	"copyright": "2011 - 2014 ThirdWaveMedia Pty. Ltd.",
+  	"port": "7203",
+  	"domain": "insider.focus.com",
+  	"paths": {
+  		"fsPath": "/home/dainisl/code/Kliiko/chatRoom",
+  		"urlPath": "http://insider.focus.com:7203/",
+  		"serverPath": "server/",
+  		"configPath": "config/",
+  		"adminPath": "admin/",
+  		"chatRoomPath": "chat_room/",
+          "convertPath": "/usr/bin/convert",
+          "identifyPath": "/usr/bin/identify"
+  	}
+  }
 }

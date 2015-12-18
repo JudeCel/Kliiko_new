@@ -14,11 +14,11 @@ var view = namespace('sf.ifs.View');
 */
 view.ImageMenu = function(json) {
 	this.json = json;
-	
+
 	this.imageMenu = null;
-	
+
 	this.resources = JSON.parse(this.json.data);
-	
+
 	this.dashboard = new sf.ifs.View.Dashboard();
 };
 
@@ -27,18 +27,18 @@ view.ImageMenu.prototype.draw = function() {
 	if (this.imageMenu) {
 		if (this.imageMenu[0] != null) this.imageMenu.remove();
 	}
-	
+
 	this.dashboard.toFront();
-	
+
 	var width = this.json.paper.canvas.clientWidth ? this.json.paper.canvas.clientWidth : this.json.paper.width;
 	var height = (this.json.paper.canvas.clientHeight ? this.json.paper.canvas.clientHeight : this.json.paper.height);	//	leave a space for the playback controller
-	
+
 	var cx = (width / 2),
 		cy = (height / 2);
-		
+
 	var radius = cx;
 	if (cy < cx) radius = cy;
-	
+
 	this.imageMenu = this.json.paper.set();
 
 	//	lets add an "+" (add) button
@@ -53,7 +53,7 @@ view.ImageMenu.prototype.draw = function() {
 		opacity:		0.5,
 		title:			"Add an Image"
 	};
-	
+
 	var buttonAttrLabelHover = {
 		fill:			buttonLabelColourHover,
 		stroke:			buttonLabelStrokeColour,
@@ -61,16 +61,16 @@ view.ImageMenu.prototype.draw = function() {
 		opacity: 1,
 		title:			"Add an Image"
 	};
-	
+
 	var buttonAttrLabelText = {
 		'font-size':	16,
 		fill:			'#fff'
 	};
-	
+
 	var onClick = function() {
 		//	firstly, lets make sure we remove the menu
 		this.thisLocal.hide();
-		
+
 		imageMenuAddHandler();
 	};
 
@@ -90,7 +90,7 @@ view.ImageMenu.prototype.draw = function() {
 		thisMain:				this.json.thisMain,
 		paper:					this.json.paper		//	pointer to the canvas we are drawing on
 	};
-	
+
 	var background = this.json.paper.path(getRoundedRectToPath(this.json.x, this.json.y, this.json.width, this.json.height, this.json.radius)).attr({
 		fill: MENU_BACKGROUND_COLOUR,
 		"opacity": 0.33,
@@ -98,10 +98,10 @@ view.ImageMenu.prototype.draw = function() {
 		"stroke-width": 5,
 		"stroke-opacity": 1
 	});
-	
+
 	var title = this.json.paper.text(this.json.x + 50, this.json.y + 24, this.json.title);
 	title.attr({'fill': "white", 'font-size': 24, 'text-anchor': 'start'});
-	
+
 	var onCloseClick = function() {
 		thisMain.imageMenu.hide();
 	};
@@ -114,7 +114,7 @@ view.ImageMenu.prototype.draw = function() {
 		thisMain:	this.json.thisMain,
 		paper:		this.json.paper
 	};
-	
+
 	var close = new sf.ifs.View.Icon(iconJSON);
 	close.draw();
 
@@ -133,16 +133,16 @@ view.ImageMenu.prototype.draw = function() {
 		x: this.json.x + 10,
 		y: this.json.y + 70
 	};
-	
+
 	var buttonAdd = null;
 	var buttonJSON = null;
 	var imageJSON = null;
 	var data = null;
 	var id = null;
 
-	
+
 	for (var ndx = 0, rl = this.resources.length; ndx < rl; ndx++) {
-		data = decodeURI(this.resources[ndx].jSON);
+		data = decodeURI(this.resources[ndx].JSON);
 		resourceId = this.resources[ndx].id;
 		imageJSON = JSON.parse(data);
 		var title = (!isEmpty(imageJSON.title)) ? imageJSON.title : imageJSON.name;
@@ -154,10 +154,10 @@ view.ImageMenu.prototype.draw = function() {
 			radius:				1,
 			type:				"image",
 			label:				window.URL_PATH + window.CHAT_ROOM_PATH + "uploads/" + imageJSON.name,
-			title:				title, 
+			title:				title,
 			hoverHint: 			"Drag Image onto Whiteboard",
 			attrTitle: 	{
-				'fill': "#fff", 
+				'fill': "#fff",
 				'font-size': 12
 			},
 			actualSize: {
@@ -187,11 +187,11 @@ view.ImageMenu.prototype.draw = function() {
             menu:               this,
             resourceIndex:      ndx
         };
-		
-		
+
+
 		buttonAdd = new sf.ifs.View.Button(buttonJSON);
 		buttonAdd.draw();
-		
+
 		this.imageMenu.push(buttonAdd.button);			//	lets keep track of all our resources
 
 		buttonPosition.x = buttonPosition.x + 110;
@@ -213,7 +213,7 @@ view.ImageMenu.prototype.draw = function() {
 		this.target.remove();
 		this.target = null;
 	}
-	this.targetRect = this.json.paper.rect(targetRect.x, targetRect.y, targetRect.width, targetRect.height).attr({stroke: "#8080ff", "stroke-width": 2, "stroke-dasharray": "-", "fill-opacity": 0.25});	
+	this.targetRect = this.json.paper.rect(targetRect.x, targetRect.y, targetRect.width, targetRect.height).attr({stroke: "#8080ff", "stroke-width": 2, "stroke-dasharray": "-", "fill-opacity": 0.25});
 	this.imageMenu.push(this.targetRect);
 };
 
@@ -223,23 +223,23 @@ view.ImageMenu.prototype.show = function() {
 		"opacity": 0.0,
 		"stroke-opacity": 1
 	});
-	
+
 	if (this.imageMenu.animate) {
 		var animationShow = Raphael.animation({"opacity": 0.75}, 500);
-	
+
 		if (!this.imageMenu.removed) this.imageMenu.animate(animationShow.delay(0));
 	}
 };
 
 view.ImageMenu.prototype.hide = function() {
 	this.dashboard.toBack();
-	
+
 	this.imageMenu.attr({
 		fill: "black",
 		"opacity": 0.5,
 		"stroke-opacity": 1
 	});
-	
+
 	//	make sure our animation callback and see the main area
 	this.imageMenu.data("this", this);
 
@@ -247,7 +247,7 @@ view.ImageMenu.prototype.hide = function() {
 		var animationHide = Raphael.animation({"opacity": 0}, 500, function() {
 			imageMenuCleanup();
 		});
-	
+
 		if (!this.imageMenu.removed) this.imageMenu.animate(animationHide.delay(0));
 	}
 };
@@ -259,7 +259,6 @@ view.ImageMenu.prototype.destroy = function() {
 		buttonElement = this.imageMenu.splice(0, 1);
 		buttonElement.remove();
 	}
-	
+
 	this.imageMenu = null;
 };
-

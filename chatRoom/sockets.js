@@ -2,7 +2,7 @@
 var mtypes = require('./helpers/mtypes');
 var socketio = require('socket.io');
 var express = require('express');
-var config = require('simpler-config').load(require('./config/config.json')); // need replace with orginal config
+var config = require('config'); // need replace with orginal config
 var conflict = 'drop current';
 var expressValidatorStub = require('./helpers/expressValidatorStub.js');
 var currentUser = require('../middleware/currentUser');
@@ -20,7 +20,7 @@ module.exports.addRoutes = function (app) {
   app.use('/chat_room', express.static(__dirname + '/chat_room'));
   app.use('/onsocket', express.static(__dirname + '/onsocket'));
   app.use('/bootstrap', express.static(__dirname + '/bootstrap'));
-  app.use('/chatRoom', express.static(__dirname + '/public'));
+  app.use('/chat_room', express.static(__dirname + '/public'));
 
   app.use('/chat', currentUser.assign, chatRoute);
   return app
@@ -49,7 +49,7 @@ module.exports.listen = function (server) {
       });
 
       var resCb = function (result) {
-        io.connected[socket.id].emit('config_info', config, result.dataValues);
+        io.connected[socket.id].emit('config_info', config.get('chatConf'), result.dataValues);
       };
 
       var nextCb = function (err) {
