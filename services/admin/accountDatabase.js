@@ -21,6 +21,33 @@ function findAllAccounts(callback) {
   });
 };
 
+function updateAccountUser(params, callback) {
+  AccountUser.update(validateParams(params), {
+    where: {
+      UserId: params.userId,
+      AccountId: params.accountId
+    },
+    returning: true
+  }).then(function(result) {
+    if(result[0] == 0) {
+      callback('There is no AccountUser with userId: ' + params.userId + ' and accountId: ' + params.accountId);
+    }
+    else {
+      let accountUser = result[1][0];
+      accountUser.getAccount({ include: [{ model: User, attributes: constants.safeUserParams }, AccountUser ] }).then(function(account) {
+        if(params.hasOwnProperty('active')) {
+          accountUser.getUser().then(function(user) {
+            mailers.users.sendReactivateOrDeactivate({ email: user.email, name: account.name, active: account.active });
+          });
+        }
+        callback(null, account);
+      });
+    }
+  }).catch(function(error) {
+    callback(prepareErrors(error));
+  });
+};
+
 function csvData(callback) {
   findAllAccounts(function(error, accounts) {
     if(error) {
@@ -57,48 +84,6 @@ function csvData(callback) {
   });
 };
 
-function updateAccountUser(params, callback) {
-  AccountUser.update(validateParams(params), {
-    where: {
-      UserId: params.userId,
-      AccountId: params.accountId
-    },
-    returning: true
-  }).then(function(result) {
-    if(result[0] == 0) {
-      callback('There is no AccountUser with userId: ' + params.userId + 'and accountId: ' + params.accountId);
-    }
-    else {
-      let accountUser = result[1][0];
-      accountUser.getAccount({ include: [{ model: User, attributes: constants.safeUserParams }, AccountUser ] }).then(function(account) {
-        if(params.hasOwnProperty('active')) {
-          accountUser.getUser().then(function(user) {
-            mailers.users.sendReactivateOrDeactivate({ email: user.email, name: account.name, active: account.active });
-          });
-        }
-        callback(null, account);
-      });
-    }
-  }).catch(function(error) {
-    callback(prepareErrors(error));
-  });
-};
-
-function findAccountUser(account, user) {
-  for(let auId in account.AccountUsers) {
-    let accountUser = account.AccountUsers[auId];
-    if(accountUser.UserId == user.id) {
-      return accountUser;
-    }
-  }
-
-  return {};
-};
-
-function validateParams(params, attrs) {
-  return _.pick(params, attrs || validAttributes);
-};
-
 function csvHeader() {
   return [
     'Account Name',
@@ -118,6 +103,21 @@ function csvHeader() {
     'Active Sessions',
     'Comment'
   ];
+};
+
+function findAccountUser(account, user) {
+  for(let auId in account.AccountUsers) {
+    let accountUser = account.AccountUsers[auId];
+    if(accountUser.UserId == user.id) {
+      return accountUser;
+    }
+  }
+
+  return {};
+};
+
+function validateParams(params, attrs) {
+  return _.pick(params, attrs || validAttributes);
 };
 
 function prepareErrors(err) {
