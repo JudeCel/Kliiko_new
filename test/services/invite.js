@@ -96,7 +96,13 @@ describe('SERVICE - Invite', function() {
     describe('sad path', function() {
       it('should fail without params', function (done) {
         inviteService.createInvite({}, function(error, invite) {
-          assert.equal(error.name, 'SequelizeValidationError');
+          let errorParams = { role: 'Role: cannot be null',
+            accountId: 'Account Id: cannot be null',
+            userId: 'User Id: cannot be null',
+            userType: 'User Type: cannot be null'
+          };
+
+          assert.deepEqual(error, errorParams);
           assert.equal(invite, null);
           done();
         });

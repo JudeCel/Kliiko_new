@@ -6,9 +6,11 @@ var User = models.User;
 var Account = models.Account;
 var AccountUser = models.AccountUser;
 var inviteMailer = require('../mailers/invite');
+var accountService = require('../services/account');
 var constants = require('../util/constants');
 var uuid = require('node-uuid');
 var async = require('async');
+var _ = require('lodash');
 
 const EXPIRE_AFTER_DAYS = 5;
 
@@ -33,7 +35,7 @@ function createInvite(params, callback) {
       });
     });
   }).catch(function(error) {
-    callback(error);
+    callback(prepareErrors(error));
   });
 };
 
@@ -47,7 +49,7 @@ function removeInvite(invite, callback) {
     Invite.destroy({ where: { userId: invite.userId, accountId: invite.accountId } }).then(function() {
       callback(null, true);
     }).catch(function(error) {
-      callback(error);
+      callback(prepareErrors(error));
     });
   }
 };
@@ -102,7 +104,7 @@ function acceptInviteNew(token, params, callback) {
 
     createAccountAndUser(invite, params, function(error) {
       if(error) {
-        callback(error);
+        callback(error, invite);
       }
       else {
         createAccountUserFromInvite(invite, function(error, message) {
@@ -125,7 +127,7 @@ function removeAllAssociatedData(invite, callback) {
           cb('Not found user');
         }
       }).catch(function(error) {
-        cb(error);
+        cb(prepareErrors(error));
       });
     },
     function(user, cb) {
@@ -137,28 +139,28 @@ function removeAllAssociatedData(invite, callback) {
           cb('Not found account');
         }
       }).catch(function(error) {
-        cb(error);
+        cb(prepareErrors(error));
       });
     },
     function(user, account, cb) {
       account.AccountUser.destroy().then(function() {
         cb(null, user, account);
       }).catch(function(error) {
-        cb(error);
+        cb(prepareErrors(error));
       });
     },
     function(user, account, cb) {
       account.destroy().then(function() {
         cb(null, user);
       }).catch(function(error) {
-        cb(error);
+        cb(prepareErrors(error));
       });
     },
     function(user, cb) {
       user.destroy().then(function() {
         cb(null, true);
       }).catch(function(error) {
-        cb(error);
+        cb(prepareErrors(error));
       });
     }
   ], function(error, result) {
@@ -180,7 +182,7 @@ function createAccountUserFromInvite(invite, callback) {
 };
 
 function createAccountAndUser(invite, params, callback) {
-  updateAccount(params.accountName, invite, function(error) {
+  updateAccount(params, invite, function(error) {
     if(error) {
       callback(error);
     }
@@ -195,12 +197,12 @@ function createAccountAndUser(invite, params, callback) {
 function updateUser(params, invite, callback) {
   User.update(params, { where: { id: invite.userId } }).then(function(result) {
     callback(null, true);
-  }).catch(function(err) {
-    callback(err);
+  }).catch(function(error) {
+    callback(prepareErrors(error));
   });
 };
 
-function updateAccount(accountName, invite, callback) {
+function updateAccount(params, invite, callback) {
   Account.find({
     include: [{
       model: AccountUser,
@@ -208,16 +210,24 @@ function updateAccount(accountName, invite, callback) {
     }]
   }).then(function(account) {
     if(account) {
-      account.update({ name: accountName }).then(function(result) {
-        callback(null, true);
+      accountService.updateInstance(account, params, function(error) {
+        callback(error);
       });
     }
     else {
       callback('Account not found');
     }
   }).catch(function(error) {
-    callback(error);
+    callback(prepareErrors(error));
   });
+};
+
+function prepareErrors(err) {
+  let errors = ({});
+  _.map(err.errors, function (n) {
+    errors[n.path] = _.startCase(n.path) + ':' + n.message.replace(n.path, '');
+  });
+  return errors;
 };
 
 module.exports = {

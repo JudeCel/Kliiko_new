@@ -8,7 +8,7 @@
       <h5 class="text-center text-gray-dark">
         To accept invite you must provide password and account name.
       </h5>
-      <div class="error-column has-error text-center" id="warning-email-password"><%= error %></div>
+      <span class="error-column has-error text-center" id="warning-email-password"><%= error.name %><%= error.password %></span>
       <form class="non-resubmitable" method="post" action="/invite/<%= invite.token %>/accept" novalidate>
         <div class="container-fluid">
           <div class="row">
