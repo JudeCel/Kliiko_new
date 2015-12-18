@@ -1,10 +1,10 @@
 (function () {
   'use strict';
 
-  angular.module('KliikoApp').filter('findUserPosition', function(){
-    return function(user, users) {
-      for(var index in users) {
-        if(users[index].id == user.id) {
+  angular.module('KliikoApp').filter('findPositionById', function(){
+    return function(element, array) {
+      for(var index in array) {
+        if(array[index].id == element.id) {
           return index;
         }
       }
@@ -13,9 +13,9 @@
   });
 
   angular.module('KliikoApp').controller('AccountManagerController', AccountManagerController);
-  AccountManagerController.$inject = ['dbg', 'AccountManagerServices', '$modal', '$scope', '$rootScope', '$filter', '$timeout'];
+  AccountManagerController.$inject = ['dbg', 'AccountManagerServices', '$modal', '$scope', '$rootScope', '$filter', '$timeout', 'angularConfirm'];
 
-  function AccountManagerController(dbg, AccountManagerServices, $modal, $scope, $rootScope, $filter, $timeout) {
+  function AccountManagerController(dbg, AccountManagerServices, $modal, $scope, $rootScope, $filter, $timeout, angularConfirm) {
     dbg.log2('#AccountManagerController started');
 
     $scope.users = {};
@@ -37,16 +37,18 @@
     };
 
     $scope.removeAccountOrInvite = function(type, user) {
-      AccountManagerServices.removeAccountManager({ type: type, id: user.id }).then(function(res) {
-        dbg.log2('#AccountManagerController > removeAccountOrInvite > res ', res);
-        if(res.error) {
-          setError($scope, res.error);
-        }
-        else {
-          setMessage($scope, res.message);
-          var index = $scope.users.indexOf(user);
-          $scope.users.splice(index, 1);
-        }
+      angularConfirm('Are you sure you want to remove Account Manager?').then(function(response) {
+        AccountManagerServices.removeAccountManager({ type: type, id: user.id }).then(function(res) {
+          dbg.log2('#AccountManagerController > removeAccountOrInvite > res ', res);
+          if(res.error) {
+            setError($scope, res.error);
+          }
+          else {
+            setMessage($scope, res.message);
+            var index = $scope.users.indexOf(user);
+            $scope.users.splice(index, 1);
+          }
+        });
       });
     };
 
@@ -68,7 +70,7 @@
 
     $rootScope.$watch('addedNewAccountManager', function(data) {
       if($rootScope.addedNewAccountManager) {
-        if($filter('findUserPosition')(data.user, $scope.users) == -1) {
+        if($filter('findPositionById')(data.user, $scope.users) == -1) {
           $scope.users.push(data.user);
         }
 

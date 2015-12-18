@@ -79,7 +79,7 @@ describe('Account database', function() {
     done();
   });
 
-  it('add comment to user', function (done) { 
+  it('add comment to user returns error', function (done) { 
     let invalidTestUserId = testUser.id + 1
     let comment = "Test comment!!!"
 
