@@ -9,7 +9,7 @@ var transporter = helpers.createTransport();
 
 users.sendReactivateOrDeactivate = function(params, callback){
   let reactivatedorDeactivated = null;
-  let account = { name: params.Account.name, active: params.active }
+  let account = { name: params.name, active: params.active }
   helpers.renderMailTemplate('reactivateOrDeactivate', account, function(err, html){
     if (err) {
       return callback(err);
@@ -23,7 +23,7 @@ users.sendReactivateOrDeactivate = function(params, callback){
 
     transporter.sendMail({
       from: mailFrom,
-      to: params.User.email,
+      to: params.email,
       subject: reactivatedorDeactivated,
       html: html
     }, callback);

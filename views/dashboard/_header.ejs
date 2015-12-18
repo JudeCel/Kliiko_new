@@ -66,7 +66,7 @@
         <% } %>
         <%if(hasAccess(["admin"], currentDomain.roles)) { %>
           <li role="separator" class="divider"></li>
-          <li class='text-right text-size-dashboard'><a href='/dashboard/accountDatabase'>Account Database<img class="my-details-container" src='' alt='' /></a></li>
+          <li class='text-right text-size-dashboard' ui-sref='dashboard.accountProfile.accountDatabase'><a href=''>Account Database<img class="my-details-container" src='' alt='' /></a></li>
         <% } %>
 
         <%if(hasAccess(["admin"], currentDomain.roles)) { %>

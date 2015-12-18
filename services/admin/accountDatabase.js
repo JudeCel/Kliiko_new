@@ -1,101 +1,136 @@
 'use strict';
 var mailers = require('../../mailers');
-var Account  = require('./../../models').Account;
-var User  = require('./../../models').User;
-var AccountUser  = require('./../../models').AccountUser;
+var Account = require('./../../models').Account;
+var User = require('./../../models').User;
+var AccountUser = require('./../../models').AccountUser;
+var constants = require('../../util/constants');
+var _ = require('lodash');
+
+var validAttributes = [
+  'comment',
+  'active'
+];
 
 function findAllAccounts(callback) {
-  Account.findAll({order: 'name ASC', include: [User, AccountUser]})
-  .then(function (result) {
-    callback(result);
-  });
-}
-
-function editComment(userId, comment, callback){
-  User.find({where: {id: userId}}).done(function (result) {
-    if (result) {
-      result.update({
-        comment: comment
-      })
-      .then(function (result) {
-        return callback(null, result);
-      })
-      .catch(function (err) {
-        callback(err);
-      });
-    } else {
-      callback("Something went wrong."); //MAYBE: add more user friendli message if account user is not found!
-    };
+  Account.findAll({
+    include: [{ model: User, attributes: constants.safeUserParams }, AccountUser]
+  }).then(function(accounts) {
+    callback(null, accounts);
+  }).catch(function(error) {
+    callback(prepareErrors(error));
   });
 };
 
-function reactivateOrDeactivate(userId, AccountId, callback){
-  AccountUser.find({where: {UserId: userId, AccountId: AccountId}, include: [User, Account]}).done(function (result) {
-    if (result) { 
-      result.update({
-        active: !result.active
-      })
-      .then(function (result) {
-        mailers.users.sendReactivateOrDeactivate(result);
-        return callback(null, result);
-      })
-      .catch(function (err) {
-        callback(err);
-      });
-    } else {
-      callback("Something went wrong."); //MAYBE: add more user friendli message if account user is not found!
-    };
-  });
-};
-
-function simpleParams(error, message) {
-  if(typeof error == 'string') {
-    error = { message: error };
-  }
-  return { title: 'Account Database', error: error, message: message, accounts: {} };
-}
-
-function getCsvJson(callback) {
-  let data = [];  // new array
-  let account = null;
-  let user = null;
-  let i, ii; // local variable for loops below.
-
-  Account.findAll({order: 'name ASC', include: [User] })
-  .then(function (result) {
-    for(i = 0 ; i < result.length ; i++) {
-      account = result[i];
-      for(ii = 0 ; ii < account.Users.length ; ii++) {
-        user = account.Users[ii];
-        data.push({
-          "Account Name": account.name,
-          "Account Manager": user.firstName + " " + user.lastName,
-          "Date of Sign-up": user.createdAt,
-          "E-mail": user.email,
-          "Postal Address": "",
-          "City": "",
-          "State": "",
-          "Postcode": "",
-          "Country": "",
-          "Company": "",
-          "Gender": user.gender,
-          "Mobile": "",
-          "# Sessions purchased": "",
-          "Tips permission": "",
-          "# Active Sessions": "",
-          "Comment": user.comment
-        });  // add a new object
-      }
+function csvData(callback) {
+  findAllAccounts(function(error, accounts) {
+    if(error) {
+      callback(error);
     }
-
-    callback(null, data);
+    else {
+      let data = [];
+      for(let accId in accounts) {
+        let account = accounts[accId];
+        for(let useId in account.Users) {
+          let user = account.Users[useId];
+          data.push({
+            'Account Name': account.name || '',
+            'Account Manager': user.firstName + ' ' + user.lastName || '',
+            'Registered': user.createdAt || '',
+            'E-mail': user.email || '',
+            'Address': user.postalAddress || '',
+            'City': user.city || '',
+            'Postcode': user.postcode || '',
+            'Country': user.country || '',
+            'Company': user.companyName || '',
+            'Gender': user.gender || '',
+            'Mobile': user.mobile || '',
+            'Landline': user.landlineNumber || '',
+            'Sessions purchased': '',
+            'Tipe permission': '',
+            'Active Sessions': '',
+            'Comment': findAccountUser(account, user).comment || ''
+          });
+        };
+      };
+      callback(null, data);
+    }
   });
+};
+
+function updateAccountUser(params, callback) {
+  AccountUser.update(validateParams(params), {
+    where: {
+      UserId: params.userId,
+      AccountId: params.accountId
+    },
+    returning: true
+  }).then(function(result) {
+    if(result[0] == 0) {
+      callback('There is no AccountUser with userId: ' + params.userId + 'and accountId: ' + params.accountId);
+    }
+    else {
+      let accountUser = result[1][0];
+      accountUser.getAccount({ include: [{ model: User, attributes: constants.safeUserParams }, AccountUser ] }).then(function(account) {
+        if(params.hasOwnProperty('active')) {
+          accountUser.getUser().then(function(user) {
+            mailers.users.sendReactivateOrDeactivate({ email: user.email, name: account.name, active: account.active });
+          });
+        }
+        callback(null, account);
+      });
+    }
+  }).catch(function(error) {
+    callback(prepareErrors(error));
+  });
+};
+
+function findAccountUser(account, user) {
+  for(let auId in account.AccountUsers) {
+    let accountUser = account.AccountUsers[auId];
+    if(accountUser.UserId == user.id) {
+      return accountUser;
+    }
+  }
+
+  return {};
+};
+
+function validateParams(params, attrs) {
+  return _.pick(params, attrs || validAttributes);
+};
+
+function csvHeader() {
+  return [
+    'Account Name',
+    'Account Manager',
+    'Registered',
+    'E-mail',
+    'Address',
+    'City',
+    'Postcode',
+    'Country',
+    'Company',
+    'Gender',
+    'Mobile',
+    'Landline',
+    'Sessions purchased',
+    'Tipe permission',
+    'Active Sessions',
+    'Comment'
+  ];
+};
+
+function prepareErrors(err) {
+  let errors = ({});
+  _.map(err.errors, function (n) {
+    errors[n.path] = _.startCase(n.path) + ":" + n.message.replace(n.path, '');
+  });
+  return errors;
 };
 
 module.exports = {
   findAllAccounts: findAllAccounts,
-  simpleParams: simpleParams,
-  editComment: editComment,
-  reactivateOrDeactivate: reactivateOrDeactivate,
-  getCsvJson: getCsvJson
-}
+  updateAccountUser: updateAccountUser,
+  csvData: csvData,
+  csvHeader: csvHeader
+};

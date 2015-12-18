@@ -77,6 +77,17 @@
 
             })
 
+            .state('dashboard.accountProfile.accountDatabase', {
+                url: '/account-database',
+                views: {
+                    'accountProfileContent': { templateUrl: prePath+"dashboard-accountProfile-accountDatabase/dashboard-content.html" }
+                },
+                onEnter:['dbg', function( dbg) {
+                    dbg.rs('dashboard.accountProfile.accountDatabase is on');
+                }]
+
+            })
+
             ///////////////////////// Resources
             .state('dashboard.resources', {
                 url: "/resources",

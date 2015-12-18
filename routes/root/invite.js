@@ -8,6 +8,7 @@ function views_path(action) {
 
 function index(req, res, next) {
   inviteService.findInvite(req.params.token, function(error, invite) {
+    console.log(simpleParams('Invite', invite, error));
     res.render(views_path('index'), simpleParams('Invite', invite, error));
   });
 };

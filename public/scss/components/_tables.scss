@@ -25,10 +25,12 @@
 
 .table-dashboardElements > thead > tr > th,
 .table-dashboardElements > tbody > tr > td {
+  vertical-align: middle;
   padding-top: 16px;
   padding-bottom: 16px;
   border: 0;
-  @media (min-width: 768px) {
-    padding-left: 32px;
-  };
+}
+
+.table-dashboardElements > tbody > tr > td {
+  word-break: break-all;
 }
