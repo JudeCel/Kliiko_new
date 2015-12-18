@@ -39,7 +39,7 @@
     };
 
     $scope.removePromoCode = function(promo) {
-      angularConfirm('Are you sure?').then(function(response) {
+      angularConfirm('Are you sure you want to remove Promotion Code?').then(function(response) {
         PromotionCodeServices.removePromoCode(promo.id).then(function(res) {
           dbg.log2('#PromotionCodeController > removePromoCode > res ', res);
           if(res.error) {

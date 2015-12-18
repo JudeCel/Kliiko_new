@@ -37,7 +37,7 @@
     };
 
     $scope.removeAccountOrInvite = function(type, user) {
-      angularConfirm('Are you sure?').then(function(response) {
+      angularConfirm('Are you sure you want to remove Account Manager?').then(function(response) {
         AccountManagerServices.removeAccountManager({ type: type, id: user.id }).then(function(res) {
           dbg.log2('#AccountManagerController > removeAccountOrInvite > res ', res);
           if(res.error) {

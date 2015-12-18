@@ -45,6 +45,14 @@ describe('SERVICE - PromotionCode', function() {
     });
   });
 
+  it('should fail on unique validations', function (done) {
+    promotionCode.createPromoCode(validAttrs, function(error, result) {
+      assert.equal(result, null);
+      assert.deepEqual(error, { name: 'Name: already taken' });
+      done();
+    });
+  });
+
   describe('#updatePromoCode', function() {
     it('Happy path', function (done) {
       let validEditAttrs = {

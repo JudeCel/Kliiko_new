@@ -19,6 +19,8 @@ function findAllPromoCodes(callback) {
     attributes: validAttributesForView()
   }).then(function(promoCodes) {
     callback(null, promoCodes);
+  }).catch(function(error) {
+    callback(error);
   });
 };
 
