@@ -50,7 +50,8 @@
             var deferred = $q.defer();
 
             usersRestApi.user.post(data, function(res) {
-                if (!res.error) user = res;
+                if (res.error) { deferred.reject(res.error); return deferred.promise; }
+                user = res;
                 deferred.resolve();
             });
 

@@ -5,8 +5,8 @@
   module('KliikoApp').
   controller('UpgradePlanController', UpgradePlanController);
 
-  UpgradePlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams', 'upgradePlanServices', '$scope', '$rootScope', 'user'];
-  function UpgradePlanController(dbg, domServices, $state, $stateParams, upgradePlanServices, $scope, $rootScope, user) {
+  UpgradePlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams', 'upgradePlanServices', '$scope', '$rootScope', 'user', 'globalSettings'];
+  function UpgradePlanController(dbg, domServices, $state, $stateParams, upgradePlanServices, $scope, $rootScope, user, globalSettings) {
     dbg.log2('#UpgradePlanController  started');
     var vm = this;
 
@@ -131,10 +131,16 @@
 
       function validateStep2() {
         // temporary solution
+        jQuery.getScript(globalSettings.thirdyPartServices.stripe.stripeJsUrl, function() {
+          dbg.log2('stripe loaded')
+        });
         return true;
       }
 
       function validateStep3() {
+        // todo: temporary muted
+        return false;
+
         if (vm.paymentDetails.creditCard.number == '4' && appData.mode === 'development') vm.paymentDetails.creditCard.number = '4242424242424242';
         upgradePlanServices.creditCard.createToken(vm.paymentDetails.creditCard)
       }
