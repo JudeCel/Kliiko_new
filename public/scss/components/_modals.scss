@@ -24,47 +24,48 @@
         height: 17px;
       }
   }
-   .form-control {
+  input.form-control {
     border-width: 2px;
     height: 40px;
     border-radius: 0;
-}
-.modal-header {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-.modal-body {
-  padding-top: 0;
-}
-/* RADIO BUTTON */
-input[type="radio"]:checked + span{
-  &:after{
-    background: $red !important;
-    border:2px solid $red !important;
   }
-}
+  .modal-header {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .modal-body {
+    padding-top: 0;
+  }
+  /* RADIO BUTTON */
+  input[type="radio"]:checked + span{
+    &:after{
+      background: $red !important;
+      border:2px solid $red !important;
+    }
+  }
 
 /* CHECKBOX */
-input[class=checkbox-login] {
-  display: none; }
+  input[class=checkbox-login] {
+    display: none;
+  }
 
-input[class=checkbox-login] + label {
-  background: url("/icons/checkbox-out.jpeg") no-repeat;
-  height: 22px;
-  width: 22px;
-  margin-top: 0px;
-  margin-left: 0;
-  margin-bottom: -5px;
-  background-size: contain;
-}
+  input[class=checkbox-login] + label {
+    background: url("/icons/checkbox-out.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    margin-top: 0px;
+    margin-left: 0;
+    margin-bottom: -5px;
+    background-size: contain;
+  }
 
-input[class=checkbox-login]:checked + label {
-  background: url("/icons/checkbox-in.jpeg") no-repeat;
-  height: 22px;
-  width: 22px;
-  background-size: contain;
-  margin-top: 1px;
-}
+  input[class=checkbox-login]:checked + label {
+    background: url("/icons/checkbox-in.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    background-size: contain;
+    margin-top: 1px;
+  }
 }
 
 .accountDatabaseCommentModal {

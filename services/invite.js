@@ -172,7 +172,7 @@ function createAccountUserFromInvite(invite, callback) {
   invite.User.addAccount(invite.Account, { role: invite.role, owner: false }).then(function(result) {
     if(result) {
       invite.destroy().then(function() {
-        callback(null, 'Successfully accepted invite');
+        callback(null, 'You have successfully accepted Invite. Please login using your invite e-mail and password.');
       });
     }
     else {

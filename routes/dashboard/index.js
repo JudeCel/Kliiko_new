@@ -5,7 +5,7 @@ var subdomains = require('../../lib/subdomains.js');
 var changePassword = require('../../services/changePassword');
 var policy = require('../../middleware/policy.js');
 var uploadBannerRoutes = require('./uploadBanner.js');
-var accountDatabase = require('../../middleware/accountDatabase.js');
+var accountDatabaseRoutes = require('./accountDatabase.js');
 var appData = require('../../services/webAppData');
 
 function views_path(action) {
@@ -49,12 +49,7 @@ router.get('/uploadbanner', policy.authorized(['admin']), uploadBannerRoutes.get
 router.post('/uploadbanner', policy.authorized(['admin']), uploadBannerRoutes.uploadFields, uploadBannerRoutes.post);
 router.get('/uploadbanner/:page', policy.authorized(['admin']), uploadBannerRoutes.destroy);
 
-// Account Database
-router.get('/accountDatabase', policy.authorized(['admin']), accountDatabase.get);
-router.get('/exportCsv', policy.authorized(['admin']), accountDatabase.exportCsv);
-router.post('/updateComment', policy.authorized(['admin']), accountDatabase.updateComment);
-router.post('/reactivateOrDeactivate', policy.authorized(['admin']), accountDatabase.reactivateOrDeactivate);
-// End
+router.get('/accountDatabase/exportCsv', policy.authorized(['admin']), accountDatabaseRoutes.exportCsv);
 
 
 module.exports = router;
