@@ -1,10 +1,15 @@
-"use strict";
+'use strict';
+
 var express = require('express');
 var router = express.Router();
-var userRoutes = require("./user");
-var planRoutes = require("./plans");
-var countryAndCurrency = require("./country-and-currency-data");
-var upgrade = require("./upgrade");
+var policy = require('../../middleware/policy.js');
+
+var userRoutes = require('./user');
+var planRoutes = require('./plans');
+var countryAndCurrency = require('./country-and-currency-data');
+var accountManager = require('./accountManager');
+var promotionCode = require('./promotionCode');
+var accountDatabase = require('./accountDatabase');
 
 router.use(function (req, res, next) {
   if (req.user) {
@@ -24,6 +29,17 @@ router.post('/user', userRoutes.userPost);
 router.get('/plans', planRoutes.plansGet);
 router.get('/currencies', countryAndCurrency.currencies);
 router.get('/countries', countryAndCurrency.countries);
-router.post('/upgrade', upgrade.upgradePost);
+
+router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
+router.post('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.post);
+router.delete('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.remove);
+
+router.get('/promotionCode', policy.authorized(['admin']), promotionCode.get);
+router.post('/promotionCode', policy.authorized(['admin']), promotionCode.create);
+router.delete('/promotionCode/:id', policy.authorized(['admin']), promotionCode.remove);
+router.put('/promotionCode/:id', policy.authorized(['admin']), promotionCode.update);
+
+router.get('/accountDatabase', policy.authorized(['admin']), accountDatabase.get);
+router.put('/accountDatabase/:id', policy.authorized(['admin']), accountDatabase.update);
 
 module.exports = router;

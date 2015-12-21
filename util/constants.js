@@ -14,8 +14,10 @@ module.exports = {
     'postalAddress',
     'city',
     'state',
-    'postCode',
+    'postcode',
     'country',
     'companyName'
-  ]
+  ],
+  promotionCodeTypes: ['percentage', 'value'],
+  dateFormat: 'MM-dd-yyyy'
 }

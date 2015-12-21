@@ -1,0 +1,70 @@
+<div class='modal-header'>
+  <button type='button' class='close' ng-click='closeModal()'>&times;</button>
+  <h2 class='modal-title text-center'>Promotion Code</h2>
+</div>
+<div class='modal-body text-gray-medium'>
+  <form class='form-horizontal' role='form'>
+    <div class='col-md-8'>
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='name'>Name<span class='text-red-dark'>*</span></label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.name }}</span>
+          <input type='text' class='form-control' id='name' placeholder='Name' ng-model='promo.name'>
+        </div>
+      </div>
+
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='startDate'>Start date<span class='text-red-dark'>*</span></label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.startDate }}</span>
+          <input type='text' class='form-control' ng-model='promo.startDate' ng-click='openCalendar("startDate", $event)'
+            uib-datepicker-popup='{{format}}' is-open='status.startDate' min-date='minDate' max-date='maxDate' datepicker-options='dateOptions' close-text='Close' />
+        </div>
+      </div>
+
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='endDate'>End date<span class='text-red-dark'>*</span></label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.endDate }}</span>
+          <input type='text' class='form-control' ng-model='promo.endDate'  ng-click='openCalendar("endDate", $event)'
+            uib-datepicker-popup='{{format}}' is-open='status.endDate' min-date='minDate' max-date='maxDate' datepicker-options='dateOptions' close-text='Close' />
+        </div>
+      </div>
+
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='discountType'>Discount type<span class='text-red-dark'>*</span></label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.discountType }}</span>
+          <select class='form-control' id='discountType' ng-model='promo.discountType'>
+            <option ng-repeat='dType in discountTypes' ng-selected='shouldBeSelected(dType, promo.discountType)' value="{{ dType }}">{{dType}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div ng-if='selectedOptionValue'>
+        <div class='form-group'>
+          <label class='control-label col-md-4 text-no-bold text-login-page' for='minimalOrder'>Minimal order<span class='text-red-dark'>*</span></label>
+          <div class='col-md-8'>
+            <span class='has-error text-red-dark'>{{ errors.minimalOrder }}</span>
+            <input type='number' class='form-control' id='minimalOrder' placeholder='Minimal order' ng-model='promo.minimalOrder'>
+          </div>
+        </div>
+      </div>
+
+      <div class='form-group'>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='discountValue'>Discount value<span class='text-red-dark'>*</span></label>
+        <div class='col-md-8'>
+          <span class='has-error text-red-dark'>{{ errors.discountValue }}</span>
+          <input type='number' class='form-control' id='discountValue' placeholder='Discount value' ng-model='promo.discountValue'>
+        </div>
+      </div>
+    </div>
+
+    <div class='row'>
+      <div class='col-md-12'>
+        <button ng-click='closeModal()' type='button' class='btn border-red text-red-dark border-radius-none background-transp pull-right btn-md'>Close</button>
+        <button ng-click='submitForm()' type='button' class='btn border-red text-red-dark border-radius-none background-transp pull-right btn-md'>Save</button>
+      </div>
+    </div>
+  </form>
+</div>

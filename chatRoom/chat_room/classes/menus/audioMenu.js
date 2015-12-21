@@ -14,9 +14,9 @@ var view = namespace('sf.ifs.View');
 */
 view.AudioMenu = function(json) {
 	this.json = json;
-	
+
 	this.audioMenu = null;
-	
+
 	this.resources = JSON.parse(this.json.data);
 
 	this.dashboard = new sf.ifs.View.Dashboard();
@@ -27,18 +27,18 @@ view.AudioMenu.prototype.draw = function() {
 	if (this.audioMenu) {
 		if (this.audioMenu[0] != null) this.audioMenu.remove();
 	}
-	
+
 	this.dashboard.toFront();
 
 	var width = this.json.paper.canvas.clientWidth ? this.json.paper.canvas.clientWidth : this.json.paper.width;
 	var height = (this.json.paper.canvas.clientHeight ? this.json.paper.canvas.clientHeight : this.json.paper.height);	//	leave a space for the playback controller
-	
+
 	var cx = (width / 2),
 		cy = (height / 2);
-		
+
 	var radius = cx;
 	if (cy < cx) radius = cy;
-	
+
 	this.audioMenu = this.json.paper.set();
 
 	//	lets add an "+" (add) button
@@ -53,7 +53,7 @@ view.AudioMenu.prototype.draw = function() {
 		opacity:		0.5,
 		title:			"Add an Audio"
 	};
-	
+
 	var buttonAttrLabelHover = {
 		fill:			buttonLabelColourHover,
 		stroke:			buttonLabelStrokeColour,
@@ -61,12 +61,12 @@ view.AudioMenu.prototype.draw = function() {
 		opacity: 1,
 		title:			"Add an Audio"
 	};
-	
+
 	var buttonAttrLabelText = {
 		'font-size':	16,
 		fill:			'#fff'
 	};
-	
+
 	thisMain.checkFileExtension = function() {
 		var filePath = document.getElementById('uploadedfile').value.toLowerCase();
 
@@ -77,7 +77,7 @@ view.AudioMenu.prototype.draw = function() {
 
 		validExtensions[0] = 'mp3';
 		validExtensions[1] = 'wav';
-    
+
 
 		for(var i = 0; i < validExtensions.length; i++) {
 		    if(ext == validExtensions[i])
@@ -85,16 +85,16 @@ view.AudioMenu.prototype.draw = function() {
 		}
 
 		alert('The file extension ' + ext.toUpperCase() + ' is not allowed for Audio files.  We only accept the followin file types: mp3 and wav');
-		
+
 		document.getElementById('uploadedfile').value = null;
-		
+
 		return false;
 	};
-	
+
 	var onClick = function() {
 		//	firstly, lets make sure we remote the menu
 		this.thisLocal.hide();
-		
+
 		audioMenuAddHandler();
 	};
 
@@ -114,7 +114,7 @@ view.AudioMenu.prototype.draw = function() {
 		thisMain:				this.json.thisMain,
 		paper:					this.json.paper		//	pointer to the canvas we are drawing on
 	};
-	
+
 	var background = this.json.paper.path(getRoundedRectToPath(this.json.x, this.json.y, this.json.width, this.json.height, this.json.radius)).attr({
 		fill: MENU_BACKGROUND_COLOUR,
 		"opacity": 0.33,
@@ -122,10 +122,10 @@ view.AudioMenu.prototype.draw = function() {
 		"stroke-width": 5,
 		"stroke-opacity": 1
 	});
-	
+
 	var title = this.json.paper.text(this.json.x + 50, this.json.y + 24, this.json.title);
 	title.attr({'fill': "white", 'font-size': 24, 'text-anchor': 'start'});
-	
+
 	var onCloseClick = function() {
 		thisMain.audioMenu.hide();
 	};
@@ -138,7 +138,7 @@ view.AudioMenu.prototype.draw = function() {
 		thisMain:	this.json.thisMain,
 		paper:		this.json.paper
 	};
-	
+
 	var close = new sf.ifs.View.Icon(iconJSON);
 	close.draw();
 
@@ -157,14 +157,14 @@ view.AudioMenu.prototype.draw = function() {
 		x: this.json.x + 20,
 		y: this.json.y + 60
 	};
-	
+
 	var buttonAdd = null;
 	var buttonJSON = null;
 	var audioJSON = null;
 	var data = null;
-	
+
 	for (var ndx = 0, rl = this.resources.length; ndx < rl; ndx++) {
-		data = decodeURI(this.resources[ndx].jSON);
+		data = decodeURI(this.resources[ndx].JSON);
 		resourceId = this.resources[ndx].id;
 		audioJSON = JSON.parse(data);
 		var title = (!isEmpty(audioJSON.title)) ? audioJSON.title : audioJSON.name;
@@ -176,10 +176,10 @@ view.AudioMenu.prototype.draw = function() {
 			radius:				1,
 			type:				"audio",
 			label:				window.URL_PATH + window.CHAT_ROOM_PATH + "uploads/" + audioJSON.name,
-			title:				title, 
+			title:				title,
 			hoverHint: 			"Drag Audio onto Console",
 			attrTitle: 	{
-				'fill': "#fff", 
+				'fill': "#fff",
 				'font-size': 12
 			},
 			size: {
@@ -214,13 +214,13 @@ view.AudioMenu.prototype.draw = function() {
             menu:               this,
             resourceIndex:      ndx
 		};
-		
-		
+
+
 		buttonAdd = new sf.ifs.View.Button(buttonJSON);
 		buttonAdd.draw();
-		
+
 		this.audioMenu.push(buttonAdd.button);			//	lets keep track of all our resources
-		
+
 		buttonPosition.x = buttonPosition.x + 110;
 		if ((buttonPosition.x + 100) > (this.json.x + this.json.width)) {
 			buttonPosition.x = this.json.x + 20;
@@ -230,7 +230,7 @@ view.AudioMenu.prototype.draw = function() {
 
 
 	//	lets show our menu
-	if (this.audioMenu.animate) {		
+	if (this.audioMenu.animate) {
 		var animationInit = Raphael.animation({"opacity": 0.75}, 500, function() {});
 		if (!this.audioMenu.removed) this.audioMenu.animate(animationInit.delay(0));
 	}
@@ -240,7 +240,7 @@ view.AudioMenu.prototype.draw = function() {
 		this.target.remove();
 		this.target = null;
 	}
-	this.targetRect = this.json.paper.rect(targetRect.x, targetRect.y, targetRect.width, targetRect.height).attr({stroke: "#8080ff", "stroke-width": 2, "stroke-dasharray": "-", "fill-opacity": 0.25});	
+	this.targetRect = this.json.paper.rect(targetRect.x, targetRect.y, targetRect.width, targetRect.height).attr({stroke: "#8080ff", "stroke-width": 2, "stroke-dasharray": "-", "fill-opacity": 0.25});
 	this.audioMenu.push(this.targetRect);
 };
 
@@ -252,9 +252,9 @@ view.AudioMenu.prototype.show = function() {
 		//"stroke-width": 2,
 		"stroke-opacity": 1
 	});
-	
-	
-	if (this.audioMenu.animate) {		
+
+
+	if (this.audioMenu.animate) {
 		var animationShow = Raphael.animation({"opacity": 0.75}, 500);
 		if (!this.audioMenu.removed) this.audioMenu.animate(animationShow.delay(0));
 	}
@@ -268,16 +268,16 @@ view.AudioMenu.prototype.hide = function() {
 		"opacity": 0.5,
 		"stroke-opacity": 1
 	});
-	
 
-	if (this.audioMenu.animate) {		
+
+	if (this.audioMenu.animate) {
 		//	make sure our animation callback and see the main area
 		this.audioMenu.data("this", this);
 
 		var animationHide = Raphael.animation({"opacity": 0}, 500, function() {
 			audioMenuCleanup();
 		});
-		
+
 		if (!this.audioMenu.removed) this.audioMenu.animate(animationHide.delay(0));
 	}
 };
@@ -288,6 +288,6 @@ view.AudioMenu.prototype.destroy = function() {
 		buttonElement = this.audioMenu.splice(0, 1);
 		buttonElement.remove();
 	}
-	
+
 	this.audioMenu = null;
 };

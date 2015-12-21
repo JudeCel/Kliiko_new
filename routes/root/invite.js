@@ -54,7 +54,7 @@ function acceptPost(req, res, next) {
 };
 
 function simpleParams(title, invite, error, message) {
-  return { title: title, invite: invite || {}, error: error, message: message || '' };
+  return { title: title, invite: invite || {}, error: error || {}, message: message || '' };
 };
 
 module.exports = {

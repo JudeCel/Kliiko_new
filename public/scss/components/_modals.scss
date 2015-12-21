@@ -24,29 +24,30 @@
         height: 17px;
       }
   }
-   .form-control {
+  input.form-control {
     border-width: 2px;
     height: 40px;
     border-radius: 0;
-}
-.modal-header {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-.modal-body {
-  padding-top: 0;
-}
-/* RADIO BUTTON */
-input[type="radio"]:checked + span{
-  &:after{
-    background: $red !important;
-    border:2px solid $red !important;
   }
-}
+  .modal-header {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .modal-body {
+    padding-top: 0;
+  }
+  /* RADIO BUTTON */
+  input[type="radio"]:checked + span{
+    &:after{
+      background: $red !important;
+      border:2px solid $red !important;
+    }
+  }
 
-  /* CHECKBOX */
+/* CHECKBOX */
   input[class=checkbox-login] {
-    display: none; }
+    display: none;
+  }
 
   input[class=checkbox-login] + label {
     background: url("/icons/checkbox-out.jpeg") no-repeat;
@@ -65,7 +66,6 @@ input[type="radio"]:checked + span{
     background-size: contain;
     margin-top: 1px;
   }
-
 }
 
 .accountDatabaseCommentModal {

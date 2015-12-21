@@ -66,13 +66,24 @@
 
             })
 
-            .state('dashboard.accountProfile.bannerUpload', {
-                url: "/banner-upload",
+            .state('dashboard.accountProfile.promotionCode', {
+                url: '/promotion-code',
                 views: {
-                    'accountProfileContent': { templateUrl: prePath+"dashboard-accountProfile-bannerUpload/dashboard-content.html" }
+                    'accountProfileContent': { templateUrl: prePath+"dashboard-accountProfile-promotionCode/dashboard-content.html" }
                 },
                 onEnter:['dbg', function( dbg) {
-                    dbg.rs('dashboard.accountProfile.bannerUpload is on');
+                    dbg.rs('dashboard.accountProfile.promotionCode is on');
+                }]
+
+            })
+
+            .state('dashboard.accountProfile.accountDatabase', {
+                url: '/account-database',
+                views: {
+                    'accountProfileContent': { templateUrl: prePath+"dashboard-accountProfile-accountDatabase/dashboard-content.html" }
+                },
+                onEnter:['dbg', function( dbg) {
+                    dbg.rs('dashboard.accountProfile.accountDatabase is on');
                 }]
 
             })
@@ -148,4 +159,3 @@
     }]);
 
 })();
-

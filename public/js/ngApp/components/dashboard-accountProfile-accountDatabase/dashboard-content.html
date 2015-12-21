@@ -1,0 +1,70 @@
+<section id='account-database-content' ng-controller='AccountDatabaseController'>
+  <div class='col-md-12'>
+    <div class='dashboard-container'>
+      <div class='row'>
+        <div class='col-md-3'></div>
+        <div class='col-md-6'>
+          <h2 class='text-center'>Account Database</h2>
+          <h4 class='text-center has-error text-red-dark'>{{ error }}</h4>
+          <h4 class='text-center'>{{ message }}</h4>
+        </div>
+        <div class='col-md-3 text-right'>
+          <a class='btn btn-addNewElement' href="/dashboard/accountDatabase/exportCsv">Export to CSV</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class='col-md-12'>
+    <div class='dashboard-container'>
+      <table class='table table-dashboardElements'>
+        <thead>
+          <tr>
+            <th>Account Name</th>
+            <th>Account Manager</th>
+            <th>Registered</th>
+            <th>E-mail</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>Postcode</th>
+            <th>Country</th>
+            <th>Company</th>
+            <th>Gender</th>
+            <th>Mobile</th>
+            <th>Landline</th>
+            <th>Sessions purchased</th>
+            <th>Tipe permission</th>
+            <th>Active Sessions</th>
+            <th>Comment</th>
+          </tr>
+        </thead>
+        <tbody ng-repeat='account in accounts'>
+          <tr ng-repeat='user in account.Users'>
+            <td>{{ $index == 0 ? account.name : "" }}</td>
+            <td>
+              <img ng-src="{{ chooseIconForUser(account, user) }}" alt='' ng-click='changeAccountStatus(account, user)' />
+              {{ user.firstName }} {{ user.lastName }}
+            </td>
+            <td>{{ user.createdAt | date: dateFormat }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.postalAddress }}</td>
+            <td>{{ user.city }}</td>
+            <td>{{ user.postcode }}</td>
+            <td>{{ user.country }}</td>
+            <td>{{ user.companyName }}</td>
+            <td>{{ user.gender }}</td>
+            <td>{{ user.mobile }}</td>
+            <td>{{ user.landlineNumber }}</td>
+            <td>*</td>
+            <td>*</td>
+            <td>*</td>
+            <td ng-click='editComment(account, user)'>
+              <img src='/icons/add_new_list_blue.png' alt='' />
+              {{ findRightAccountUser(account, user).comment }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

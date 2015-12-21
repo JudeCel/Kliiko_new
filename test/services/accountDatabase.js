@@ -1,13 +1,12 @@
-"use strict";
-var models  = require('./../../models');
-var usersServices  = require('./../../services/users');
-var accountDatabase  = require('./../../services/admin/accountDatabase');
-var account  = require('./../../models').Account;
-var accountUser  = require('./../../models').accountUser;
-var assert = require('assert');
+'use strict';
 
-describe('Account database', function() {
+var models = require('./../../models');
+var usersServices = require('./../../services/users');
+var accountDatabaseService = require('./../../services/admin/accountDatabase');
+var Account = require('./../../models').Account;
+var assert = require('chai').assert;
 
+describe('SERVICE - AccountDatabase', function() {
   var testUser = null;
   var testAccount = null;
 
@@ -24,10 +23,8 @@ describe('Account database', function() {
     models.sequelize.sync({ force: true }).then(() => {
       usersServices.create(attrs, function(errors, user) {
         testUser = user;
-
-        account.findAll({where: {name: attrs.accountName}})
-        .then(function (result) {
-          testAccount = result[0];
+        user.getOwnerAccount().then(function(accounts) {
+          testAccount = accounts[0];
           done();
         });
       });
@@ -40,63 +37,102 @@ describe('Account database', function() {
     });
   });
 
-  it('Reactivates/Deactives user', function (done) { 
-    accountDatabase.reactivateOrDeactivate(testUser.id, testAccount.id, function(error, result){
+  function csvData() {
+    return {
+      'Account Name': 'BLauris',
+      'Account Manager': 'Lauris Blīgzna',
+      Registered: '',
+      'E-mail': 'bligzna.lauris@gmail.com',
+      Address: '',
+      City: '',
+      Postcode: '',
+      Country: '',
+      Company: '',
+      Gender: 'male',
+      Mobile: '',
+      Landline: '',
+      'Sessions purchased': '',
+      'Tipe permission': '',
+      'Active Sessions': '',
+      Comment: ''
+    };
+  };
+
+  function csvHeader() {
+    return [
+      'Account Name',
+      'Account Manager',
+      'Registered',
+      'E-mail',
+      'Address',
+      'City',
+      'Postcode',
+      'Country',
+      'Company',
+      'Gender',
+      'Mobile',
+      'Landline',
+      'Sessions purchased',
+      'Tipe permission',
+      'Active Sessions',
+      'Comment'
+    ];
+  };
+
+  it('Reactivates/Deactives user', function (done) {
+    let params = { userId: testUser.id, accountId: testAccount.id, active: false };
+    accountDatabaseService.updateAccountUser(params, function(error, account) {
       assert.equal(error, null);
-      assert.equal(result.active, false);
-      accountDatabase.reactivateOrDeactivate(testUser.id, testAccount.id, function(error, result){
+      assert.equal(account.AccountUsers[0].active, false);
+
+      params.active = true;
+      accountDatabaseService.updateAccountUser(params, function(error, account) {
         assert.equal(error, null);
-        assert.equal(result.active, true);
+        assert.equal(account.AccountUsers[0].active, true);
+        done();
       });
     });
-    done();
   });
 
-   it('Returns error on Reactivates/Deactives user', function (done) { 
-    let invalidTestUserId = testUser.id + 1
-    let invalidTestAccountId = testAccount.id + 1
+  it('Returns error on Reactivates/Deactives user', function (done) {
+    let params = { userId: testUser.id + 1, accountId: testAccount.id + 1, active: false };
 
-    accountDatabase.reactivateOrDeactivate(invalidTestUserId.id, invalidTestAccountId.id, function(error, result){
-      assert.equal(result, null);
-      assert.equal(error, "Something went wrong.");
+    accountDatabaseService.updateAccountUser(params, function(error, account) {
+      assert.equal(account, null);
+      assert.equal(error, 'There is no AccountUser with userId: ' + params.userId + ' and accountId: ' + params.accountId);
+      done();
     });
-    done();
   });
 
-  it('add comment to user', function (done) { 
-    assert.equal(testUser.comment, null);
+  it('add comment to user', function (done) {
+    let comment = 'Test comment!!!';
+    let updatedComment = 'Yeah, I just made an update to my comment';
+    let params = { userId: testUser.id, accountId: testAccount.id, comment: comment };
 
-    let comment = "Test comment!!!"
-    let updatedComment = "Yeah, I just made an update to my comment"
-    accountDatabase.editComment(testUser.id, comment, function(error, result){
+    accountDatabaseService.updateAccountUser(params, function(error, account) {
       assert.equal(error, null);
-      assert.equal(result.comment, comment);
-      accountDatabase.editComment(testUser.id, updatedComment, function(error, result){
+      assert.equal(account.AccountUsers[0].comment, comment);
+
+      params.comment = updatedComment;
+      accountDatabaseService.updateAccountUser(params, function(error, account) {
         assert.equal(error, null);
-        assert.equal(result.comment, updatedComment);
+        assert.equal(account.AccountUsers[0].comment, updatedComment);
+        done();
       });
     });
-    done();
   });
 
-  it('add comment to user', function (done) { 
-    let invalidTestUserId = testUser.id + 1
-    let comment = "Test comment!!!"
-
-    accountDatabase.editComment(invalidTestUserId.id, comment, function(error, result){
-      assert.equal(result, null);
-      assert.equal(error, "Something went wrong.");
+  it('#csvData', function (done) {
+    accountDatabaseService.csvData(function(error, data) {
+      assert.equal(error, null);
+      assert.deepEqual(data[0], csvData());
+      done();
     });
-    done();
   });
 
-  it('returns prepared data for csv export', function (done) {
-    accountDatabase.getCsvJson(function (err, result) {
-      assert.equal(err, null); 
-      assert.equal(result[0]["Account Name"], attrs.accountName); 
-      assert.equal(result[0]["Account Manager"], attrs.firstName + " " + attrs.lastName); 
-      assert.equal(result[0]["email"], attrs.accountName); 
-    });
+  it('#csvHeader', function (done) {
+    let data = accountDatabaseService.csvHeader();
+    assert.deepEqual(data, csvHeader());
     done();
   });
 });
