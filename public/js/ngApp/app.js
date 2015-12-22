@@ -6,14 +6,15 @@
       // common modules
       'ngRoute',
       'ngResource',
+      'ngProgress',
       'ngMaterial',
       'ui.bootstrap',
       'ui.router',
       'globalSettings',
       'debModule',
       'domServices',
+      'messenger',
       'CreditCard',
-
 
       // app modules
       'KliikoApp.user'
@@ -43,11 +44,16 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', '$scope', '$mdDialog', '$mdMedia'];
-  function AppController($rootScope, dbg, $scope, $mdDialog, $mdMedia) {
+  AppController.$inject = ['$rootScope', 'dbg', 'ngProgressFactory'];
+  function AppController($rootScope, dbg, ngProgressFactory) {
     var vm = this;
 
+    vm.progressbar = ngProgressFactory.createInstance();
+    vm.progressbar.start();
+
     dbg.log2('#AppController started ');
+
+    vm.progressbar.complete();
 
   }
 

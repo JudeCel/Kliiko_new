@@ -1,6 +1,6 @@
 .remove-link-line > a {
   text-decoration: none; }
- 
+
 .btn-md {
   height: 45px; }
 
@@ -1107,3 +1107,27 @@ footer {
 #upgrade-plan-content #step-5 {
   margin-top: 55px;
   margin-bottom: 100px; }
+
+#messenger-area {
+  position: absolute;
+  right: 0;
+  margin: 33px;
+  text-align: left;
+  z-index: 99999999; }
+
+.message {
+  margin: 4px;
+  padding: 10px;
+  font-size: 2rem;
+  color: white;
+  border: 2px solid grey;
+  background-color: rgba(0, 0, 0, 0.86);
+  box-shadow: 1px 1px 19px gray; }
+  .message.ok {
+    border-color: green;
+    color: green;
+    background: rgba(255, 255, 255, 0.95); }
+  .message.error {
+    border-color: #E51D39;
+    color: #E51D39;
+    background: rgba(255, 255, 255, 0.95); }

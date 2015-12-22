@@ -28,7 +28,7 @@
                     <label class="text-no-bold text-login-page" for="firstName">First name</label>
                   </td>
                   <td>
-                    <input  id="first_name" ng-model="cdm.userData.firstName" type="text" value="" class="form-control" name="firstName" placeholder="First name">
+                    <input  id="first_name" ng-model="cdm.userData.firstName" type="text" value="" class="form-control" name="firstName" placeholder="First name" required="true">
                   </td>
                   <td  class="text-red-dark">
                       *
@@ -55,7 +55,7 @@
                     <label class="text-no-bold text-login-page" for="lastName">Last name</label>
                   </td>
                   <td>
-                    <input ng-model="cdm.userData.lastName" type="text" value="" class="form-control" name="lastName" id="last_name" placeholder="Last name">
+                    <input ng-model="cdm.userData.lastName" type="text" value="" class="form-control" name="lastName" id="last_name" placeholder="Last name" required="true">
                   </td>
                   <td  class="text-red-dark">
                     *
@@ -78,7 +78,7 @@
                     <label class="text-no-bold text-login-page" for="email">Email</label>
                   </td>
                   <td>
-                    <input ng-model="cdm.userData.email" type="email" value="" class="form-control" name="email" id="email" placeholder="Email">
+                    <input ng-model="cdm.userData.email" type="email" value="" class="form-control" name="email" id="email" placeholder="Email" required="true">
                   </td>
                   <td  class="text-red-dark">
                     *
@@ -116,7 +116,7 @@
                     </label>
                   </td>
                   <td  class="text-red-dark">
-                    *
+                   <!-- *-->
                   </td>
                   <td>
                     <label class="text-no-bold text-login-page" for="email">Postcode</label>
@@ -140,7 +140,7 @@
                     </label>
                   </td>
                   <td>
-                    <input ng-model="cdm.userData.mobile" type="tel" value="" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number">
+                    <input ng-model="cdm.userData.mobile" type="tel" value="" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number" required="true">
                   </td>
                   <td  class="text-red-dark">
                     *
@@ -170,7 +170,7 @@
                     <input ng-model="cdm.userData.landlineNumber" type="text" value="" class="form-control" name="landline_number" id="landline_number" placeholder="LandlineNumber">
                   </td>
                   <td  class="text-red-dark">
-                    *
+                    <!--*-->
                   </td>
                   <td>
                     <label class="text-no-bold text-login-page" for="copmany-name">
@@ -195,7 +195,7 @@
                   <span class="pull-right">
                     <button type="button" ng-show="cdm.userDetailsForm.$dirty" ng-click="cdm.cancel()" class="btn border-red text-red-dark border-radius-none background-transp pull-right- btn-md">Cancel</button>&nbsp;&nbsp;
                   <button type="submit" ng-show="cdm.userDetailsForm.$dirty" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Update</button>
-                  <button type="submit" ng-show="cdm.userDetailsForm.$pristine" ng-click="cdm.cancel()" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Done</button>
+                  <button type="button" ng-show="cdm.userDetailsForm.$pristine" ng-click="cdm.cancel()" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Done</button>
                   </span>
                   <div class="check">
                     <input ng-model="cdm.userData.tipsAndUpdate" type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate"/>

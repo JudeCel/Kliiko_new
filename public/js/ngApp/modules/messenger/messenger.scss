@@ -1,0 +1,32 @@
+
+#messenger-area {
+  //display: block;
+  position: absolute;
+  right: 0;
+  margin: 33px;
+  text-align: left;
+  z-index: 99999999;
+  //pointer-events: none;
+}
+.message {
+  margin: 4px;
+  padding: 10px;
+  font-size: 2rem;
+  color: white;
+
+  border: 2px solid grey;
+  background-color: rgba(0, 0, 0, 0.86);
+  box-shadow: 1px 1px 19px gray;
+
+  &.ok {
+    border-color: green;
+    color: green;
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  &.error {
+    border-color: $red;
+    color: $red;
+    background: rgba(255, 255, 255, 0.95);
+  }
+}
