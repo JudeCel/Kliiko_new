@@ -44,15 +44,13 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'ngProgressFactory'];
-  function AppController($rootScope, dbg, ngProgressFactory) {
+  AppController.$inject = ['$rootScope', 'dbg', 'ngProgressFactory', 'user','$q'];
+  function AppController($rootScope, dbg, ngProgressFactory, user, $q) {
     var vm = this;
 
     vm.progressbar = ngProgressFactory.createInstance();
     vm.progressbar.start();
-
     dbg.log2('#AppController started ');
-
     vm.progressbar.complete();
 
   }

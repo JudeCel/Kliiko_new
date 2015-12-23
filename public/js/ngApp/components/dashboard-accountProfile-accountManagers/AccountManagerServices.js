@@ -1,9 +1,9 @@
 (function () {
   'use strict';
-  angular.module('KliikoApp').factory('AccountManagerServices', AccountManagerServices);
-  AccountManagerServices.$inject = ['$q', '$resource', 'dbg'];
+  angular.module('KliikoApp').factory('accountManagerServices', accountManagerServices);
+  accountManagerServices.$inject = ['$q', '$resource', 'dbg'];
 
-  function AccountManagerServices($q, $resource, dbg) {
+  function accountManagerServices($q, $resource, dbg) {
     var accountManagerRestApi = {
       accountManager: $resource('/api/accountManager', {}, { post: { method: 'POST' } }),
     };

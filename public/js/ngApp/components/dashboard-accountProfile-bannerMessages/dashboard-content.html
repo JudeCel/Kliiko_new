@@ -1,0 +1,92 @@
+<section ng-controller="BannerMessagesController as bmc">
+    <div class='col-xs-12 col-sm-12 col-md-12'>
+        <div class='row'>
+            <div class='dashboard-container'>
+                <h2 class="center-block">Upload Banners</h2>
+                <div id="signup" class="tab-pane fade in active">
+
+                    <!-------->
+                    <form action="">
+                        <div class="form-group">
+                            <!--<span><%= message %></span>-->
+                            <!--<span class="has-error"><%= error.message %></span>-->
+                            <label for="account-profile-banner">Account profile</label>
+                        </div> <!--/.form-group-->
+
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <img src='../<%= banners.profile %>'>
+                        </div>
+                        <div>
+                            <a href="uploadbanner/profile" class="btn cancel">Remove</a>
+                            <div>
+                                <input id="account-profile-banner" type='file' name='account-profile-banner'/>
+                            </div>
+                        </div>
+
+                    </form>
+
+                    <!-------->
+
+
+
+
+                    <form method='post' action--='/dashboard/uploadbanner' enctype='multipart/form-data' class='upload-banner'>
+                        <div class="form-group">
+                            <label for="profile">Account profile</label>
+                            <span class="has-error"><%= error.profile %></span>
+                            <%if(banners.profile) { %>
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <img src='../<%= banners.profile %>'>
+                            </div>
+                            <br/>
+                            <div>
+                                <a href="uploadbanner/profile" class="btn cancel">Remove</a>
+                                <% } else { %>
+                                <div>
+                                    <% } %>
+                                    <input type='file' name='profile'/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="sessions">Chat sessions</label>
+                                <span class="has-error"><%= error.sessions %></span>
+                                <%if(banners.sessions) { %>
+                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <img src='../<%= banners.sessions %>'>
+                                </div>
+                                <div>
+                                    <a href="uploadbanner/sessions" class="btn cancel">Remove</a>
+                                    <% } else { %>
+                                    <div>
+                                        <% } %>
+                                        <input type='file' name='sessions'/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="resources">Resources</label>
+                                    <span class="has-error"><%= error.resources %></span>
+                                    <%if(banners.resources) { %>
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <img src='../<%= banners.resources %>'>
+                                    </div>
+                                    <div>
+                                        <a href="uploadbanner/resources" class="btn cancel">Remove</a>
+                                        <% } else { %>
+                                        <div>
+                                            <% } %>
+                                            <input type='file' name='resources'/>
+                                        </div>
+                                    </div>
+                                    <div class="check center-block">
+                                        <input type="submit" value="Save" class="btn login" ></input>
+                                    </div>
+                                    <div class="check center-block">
+                                        <a href="#cancel" class="btn cancel">Cancel</a>
+                                    </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
