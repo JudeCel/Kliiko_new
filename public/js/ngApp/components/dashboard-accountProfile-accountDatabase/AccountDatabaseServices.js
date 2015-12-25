@@ -1,11 +1,11 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('AccountDatabaseServices', AccountDatabaseServices);
-  AccountDatabaseServices.$inject = ['$q', '$resource', 'dbg'];
+  AccountDatabaseServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
 
-  function AccountDatabaseServices($q, $resource, dbg) {
+  function AccountDatabaseServices(globalSettings, $q, $resource, dbg) {
     var accountDatabaseRestApi = {
-      accountDatabase: $resource('/api/accountDatabase/:id', null, { update: { method: 'PUT' } })
+      accountDatabase: $resource(globalSettings.restUrl +'/accountDatabase/:id', null, { update: { method: 'PUT' } })
     };
 
     var cache = {};

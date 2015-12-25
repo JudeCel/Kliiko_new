@@ -1,5 +1,6 @@
 'use strict';
-
+var multiparty = require('connect-multiparty');
+var multipartyMiddleware = multiparty();
 var express = require('express');
 var router = express.Router();
 var policy = require('../../middleware/policy.js');
@@ -38,7 +39,10 @@ router.put('/promotionCode/:id', policy.authorized(['admin']), promotionCode.upd
 router.get('/accountDatabase', policy.authorized(['admin']), accountDatabase.get);
 router.put('/accountDatabase/:id', policy.authorized(['admin']), accountDatabase.update);
 
-router.get('/banners', banners.banners);
+router.get('/banners', banners.banners_Get);
+router.post('/banners', multipartyMiddleware, banners.banners_Post);
+router.post('/banners/:bannerType', multipartyMiddleware, banners.banners_bannerType_Post);
+router.delete('/banners/:bannerType', multipartyMiddleware, banners.banners_Delete);
 
 // Common Rules
 router.use(function (req, res, next) {

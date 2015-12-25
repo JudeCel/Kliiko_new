@@ -1,11 +1,26 @@
 'use strict';
 
+var q = require('q');
+var mv = require('mv');
 var fs = require('fs');
 var sizeOf = require('image-size');
 var multer = require('multer');
 var async = require('async');
 var _ = require('lodash');
 var TemplateBanner = require('./../models').TemplateBanner;
+
+
+module.exports = {
+  profilePage: profilePage,
+  write: write,
+  destroy: destroy,
+  findAllBanners: findAllBanners,
+  uploadFields: uploadFields,
+  simpleParams: simpleParams,
+  saveLink: saveLink
+};
+
+
 
 const MEGABYTE = 1024*1024;
 const VALIDATIONS = {
@@ -34,7 +49,8 @@ function profilePage(callback) {
   });
 }
 
-function write(files, callback) {
+// DEPRECATED WRITE
+function write_DEPRECATED(files, callback) {
   if(_.isEmpty(files)) {
     return callback('No files selected');
   }
@@ -69,7 +85,93 @@ function write(files, callback) {
   });
 }
 
-function destroy(page, callback) {
+
+
+// angular adjusted
+function write(file, bannerType) {
+  var deferred = q.defer();
+
+  var filename = parseFileName(file.name);
+
+
+  validate(filename.fullName, file, function(err) {
+    if (err) {
+      fs.stat(file.path, function (err, stat) {
+        if(stat) {
+          fs.unlink(file.path);
+        }
+      });
+      deferred.reject(err);
+      return deferred.promise;
+    }
+    else {
+
+      var fileNameToSave = bannerType+'.'+filename.extension;
+
+      fs.stat(file.path, function (err, stat) {
+        if(stat) {
+          mv(file.path, 'public/banners/'+fileNameToSave, function(error) {
+          });
+        }
+
+        createOrUpdate({ page: bannerType, filepath: 'banners/'+fileNameToSave }, function(error, result) {
+          if (error) {
+            deferred.reject(error);
+            return deferred.promise;
+          }
+          //callback(error, result);
+          deferred.resolve(result);
+        });
+
+        return deferred.promise;
+
+      });
+    }
+  });
+
+  return deferred.promise;
+
+
+
+
+  if(_.isEmpty(files)) {
+    return callback('No files selected');
+  }
+
+  let errors = {},
+    results = {};
+
+  async.forEachOf(files, function (value, filename, cb) {
+    let fileData = value;
+    eachFile(fileData, fileData.filename, function(err, result) {
+      if(err) {
+        errors[filename] = err[filename];
+      }
+      else {
+        results[filename] = result;
+      }
+      cb();
+    });
+  }, function(err) {
+    if(err) {
+      callback(err);
+    }
+    else {
+      if(_.isEmpty(errors)) {
+        callback(null, 'Successfully uploaded banner.');
+      }
+      else {
+        errors.message = 'Something went wrong with some of the banners.';
+        callback(errors);
+      }
+    }
+  });
+}
+
+
+
+
+function destroy_DEPRECATED(page, callback) {
   TemplateBanner.find({
     where: { page: page }
   })
@@ -89,6 +191,31 @@ function destroy(page, callback) {
   });
 }
 
+function destroy(page) {
+  var deferred = q.defer();
+
+
+  TemplateBanner.find({
+      where: { page: page }
+    })
+    .then(function (result) {
+      let path = 'public/' + result.dataValues.filepath;
+      fs.stat(path, function (err, stats) {
+        if(stats) {
+          fs.unlink(path);
+        }
+      });
+      result.destroy().then(function (resp) {
+        deferred.resolve(resp);
+      });
+    })
+    .catch(function (err) {
+      deferred.reject(err);
+    });
+
+  return deferred.promise;
+}
+
 function uploadFields() {
   let storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -106,7 +233,7 @@ function uploadFields() {
       file.originalname = file.fieldname + extension;
       cb(null, file.fieldname + '_temp' + extension);
     }
-  })
+  });
 
   let upload = multer({ storage: storage, limits: { fieldSize: VALIDATIONS.maxSize * MEGABYTE } });
 
@@ -130,6 +257,25 @@ function simpleParams(error, message) {
   }
 
   return { title: 'Upload banner', error: error, message: message, banners: {} };
+}
+
+function saveLink(page, link) {
+  var deferred = q.defer();
+
+  TemplateBanner.find({
+    where: { page: page }
+  }).then(function(result) {
+    result.update( { link: link } )
+      .then(function (_result) {
+        deferred.resolve(_result);
+      })
+      .catch(function (error) {
+        deferred.reject(error);
+      });
+  }).catch(function (error) {
+    deferred.reject(error);
+  });
+  return deferred.promise;
 }
 
 //Helpers
@@ -161,7 +307,7 @@ function createOrUpdate(params, callback) {
   });
 }
 
-function validate(type, file, callback) {
+function validate_DEPRECATED(type, file, callback) {
   let error = {};
 
   sizeOf(file.path, function(err, dimensions) {
@@ -185,12 +331,83 @@ function validate(type, file, callback) {
   }
 }
 
+function validate(type, file, callback) {
+  let error = {};
+
+  sizeOf(file.path, function(err, dimensions) {
+    if(err || !isValidFileType(file.type)) {
+      error[type] = 'Only image files are allowed - ' + allowedImageTypes() + '.';
+      return callback(error);
+    }
+
+    if((dimensions.width > VALIDATIONS.maxWidth) || (dimensions.height > VALIDATIONS.maxHeight)) {
+      error[type] = 'File size is out of range. Allowed size is ' + VALIDATIONS.maxWidth + 'x' + VALIDATIONS.maxHeight + 'px.';
+      return callback(error);
+    }
+    else {
+      return callback(null);
+    }
+  });
+
+  if(file.size > (VALIDATIONS.maxSize * MEGABYTE)) {
+    error[type] = 'This file is too big. Allowed size is ' + VALIDATIONS.maxSize + 'MB.';
+    return callback(error);
+  }
+}
+
+/**
+ * Brake file name to name and extension parts
+ * @param fileName {string}
+ * @returns {{extension: string, name: string, fullName: string}}
+ */
+function parseFileName(fileName) {
+  let fileNameArr = fileName.split('.');
+
+  var output = {
+    extension: getFileExtension(fileNameArr),
+    name: getFileName(fileNameArr),
+    fullName: fileName
+  };
+
+  return output;
+
+  /**
+   * Will return file extension
+   *  Example:
+   *    return 'png' from '[image-name,this,png]'
+   *    return 'jpg' as default from '[image]'
+   *
+   * @param fileNameArr {array}
+   * @returns {string}
+   */
+  function getFileExtension(fileNameArr) {
+    let defaultExtension = 'jpg';
+    if (fileNameArr.length === 1 ) return defaultExtension;
+    return fileNameArr[ fileNameArr.length - 1];
+  }
+
+  /**
+   * Return everything but not extension
+   * @param fileNameArr [array]
+   * @returns {string}
+   */
+  function getFileName(fileNameArr) {
+    let tmp = fileNameArr;
+    tmp.splice(tmp.length -1 ,1);
+    return tmp.join('.');
+  }
+}
+
+
+
+
+
 function mapJson(array) {
   let json = {};
   for(let index in array) {
     let entry = array[index];
-    json[entry.dataValues.page] = entry.dataValues.filepath;
-  };
+    json[entry.dataValues.page] = entry.dataValues;
+  }
 
   return json;
 }
@@ -230,11 +447,3 @@ function eachFile(file, filename, callback) {
   });
 }
 
-module.exports = {
-  profilePage: profilePage,
-  write: write,
-  destroy: destroy,
-  findAllBanners: findAllBanners,
-  uploadFields: uploadFields,
-  simpleParams: simpleParams
-}

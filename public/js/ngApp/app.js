@@ -5,6 +5,7 @@
     .module('KliikoApp', [
       // common modules
       'ngRoute',
+      'oc.lazyLoad',
       'ngResource',
       'ngProgress',
       'ngMaterial',

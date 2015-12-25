@@ -112,12 +112,20 @@ label.radio-button input[type="radio"]:checked + span:after {
   display: initial;
   padding: 9px;
   border: 3px solid lightgrey;
-  cursor: pointer; }
+  cursor: pointer;
+  background: white; }
   .btn-standart.btn-red {
     color: #E51D39;
     border-color: #E51D39 !important; }
+  .btn-standart.btn-blue {
+    color: #4DC0E9;
+    border-color: #4DC0E9 !important; }
   .btn-standart.btn-text-middle {
     font-size: 80%; }
+  .btn-standart.btn-x {
+    padding: 1px 6px !important; }
+  .btn-standart.btn-glyphonic {
+    padding: 3px 4px 1px 4px; }
 
 img.ic-flipX {
   -webkit-transform: scaleX(-1);
@@ -1109,8 +1117,9 @@ footer {
   margin-bottom: 100px; }
 
 #messenger-area {
-  position: absolute;
-  right: 0;
+  position: fixed;
+  top: 3%;
+  right: 3%;
   margin: 33px;
   text-align: left;
   z-index: 99999999; }
@@ -1131,3 +1140,50 @@ footer {
     border-color: #E51D39;
     color: #E51D39;
     background: rgba(255, 255, 255, 0.95); }
+
+#banner-messages .banner-row {
+  margin: 35px 0;
+  padding-top: 35px;
+  border-top: 2px solid #4DC0E9; }
+
+#banner-messages .banners-section img {
+  width: 90%;
+  border: 1px solid lightgrey; }
+
+#banner-messages .banner-management-btns {
+  position: absolute;
+  top: 0;
+  right: 0; }
+
+#banner-messages .button {
+  -moz-appearance: button;
+  /* Firefox */
+  -webkit-appearance: button;
+  /* Safari and Chrome */
+  padding: 10px;
+  margin: 10px;
+  width: 70px; }
+
+#banner-messages .drop-box {
+  background: #F8F8F8;
+  border: 3px dashed #DDD;
+  width: 300px;
+  height: 65px;
+  text-align: center;
+  padding-top: 20px;
+  margin: 0px; }
+
+#banner-messages .dragover {
+  border: 5px dashed blue; }
+
+.banner-link-menu {
+  width: 500px;
+  height: 80px;
+  padding: 10px;
+  overflow: hidden; }
+
+.banner-link-label {
+  color: #4DC0E9 !important; }
+
+.banner-link-input {
+  border-color: #4DC0E9 !important; }

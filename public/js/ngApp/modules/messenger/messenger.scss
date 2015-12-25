@@ -1,8 +1,9 @@
 
 #messenger-area {
   //display: block;
-  position: absolute;
-  right: 0;
+  position: fixed;
+  top: 3%;
+  right: 3%;
   margin: 33px;
   text-align: left;
   z-index: 99999999;

@@ -83,11 +83,25 @@
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-bannerMessages/dashboard-content.html"}
         },
         resolve: {
-          checkPermission: ['$q', '$timeout', 'user', 'dbg', function($q, $timeout, user, dbg) {
+          checkPermission: ['$q', '$timeout', 'user', 'dbg', '$ocLazyLoad', 'ngProgressFactory', function($q, $timeout, user, dbg, $ocLazyLoad, ngProgressFactory) {
             var deferred = $q.defer();
 
             user.canAccess('bannerMessages').then(
-              function(res) { deferred.resolve(); },
+              function(res) {
+                var progressbar = ngProgressFactory.createInstance();
+                progressbar.start();
+
+                // as this module is rare in use, we might want to laze load all it dependencies
+                var path = 'js/ngApp/components/dashboard-accountProfile-bannerMessages/';
+                $ocLazyLoad.load([
+                  path+'BannerMessagesController.js',
+                  path+'bannerMessagesServices.js',
+                  '/js/vendors/ng-file-upload/ng-file-upload.js'
+                ]).then(function() {
+                  progressbar.stop();
+                  deferred.resolve();
+                });
+              },
               function(err) { dbg.warn(err); }
 
             );

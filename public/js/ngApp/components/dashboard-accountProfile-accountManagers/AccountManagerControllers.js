@@ -22,7 +22,7 @@
     init();
 
     function init() {
-      AccountManagerServices.getAllManagersList().then(function(res) {
+      accountManagerServices.getAllManagersList().then(function(res) {
         $scope.users = res.users;
         dbg.log2('#AccountManagerController > getAllManagersList > res ', res.users);
       });
@@ -130,5 +130,5 @@
       $scope.errors = {};
       $uibModalInstance.dismiss('cancel');
     };
-  };
+  }
 })();
