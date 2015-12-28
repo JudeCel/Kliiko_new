@@ -5,8 +5,8 @@
     module('KliikoApp').
     controller('BannerMessagesController', BannerMessagesController);
 
-  BannerMessagesController.$inject = ['dbg', 'bannerMessagesService', 'ngProgressFactory', '$mdDialog', 'messenger'];
-  function BannerMessagesController(dbg, bannerMessagesService, ngProgressFactory, $mdDialog, messenger) {
+  BannerMessagesController.$inject = ['dbg', 'bannerMessagesService', 'ngProgressFactory', '$rootScope', 'messenger'];
+  function BannerMessagesController(dbg, bannerMessagesService, ngProgressFactory, $rootScope, messenger) {
     dbg.log2('#BannerMessagesController controller started');
     var vm = this;
 
@@ -51,7 +51,7 @@
     function remove(bannerType) {
       var progressbar = ngProgressFactory.createInstance();
       progressbar.start();
-      vm[bannerType+'Banner'].filepath = null;
+      vm[bannerType+'Banner'] = null;
 
       bannerMessagesService.remove(bannerType).then(
         function(res) {
@@ -84,7 +84,6 @@
       InitProgressbar.start();
 
       bannerMessagesService.getAllBanners().then(function(res) {
-
         for (var key in res) {
           vm[key+'Banner'] = res[key];
         }

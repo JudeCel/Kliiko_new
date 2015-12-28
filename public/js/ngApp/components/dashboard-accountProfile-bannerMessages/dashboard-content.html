@@ -16,6 +16,7 @@
     </div>
 
     <div class='col-md-offset-2 col-md-8'>
+
         <div class="row banner-row">
             <div class="col-md-2 text-right">
                 <h3>Profile</h3>
@@ -29,7 +30,9 @@
                         <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
                     </div>
                     <div ng-show="bmc.profileBanner.filepath">
-                        <a href="{{ bmc.profileBanner.link}}" target="_blank"><img  src="{{ bmc.profileBanner.filepath}}" title="{{ bmc.profileBanner.link }}"></a>
+                        <img  ng-show="!bmc.profileBanner.link || !bmc.profileBanner.link.length" src="{{ bmc.profileBanner.filepath}}" title="{{ bmc.profileBanner.link }}">
+                        <a ng-show="bmc.profileBanner.link" href="{{bmc.profileBanner.link}}" target="_blank"><img  src="{{ bmc.profileBanner.filepath}}" title="{{ bmc.profileBanner.link }}"></a>
+
                         <div class="banner-management-btns">
                             <button class="btn-standart btn-blue btn-glyphonic" ng-click="bmc.remove('profile')"
                                     data-toggle="tooltip" data-placement="bottom" title="Remove banner">
@@ -56,11 +59,10 @@
                         </div>
 
                     </div >
-
-                </section>
+                </section><!--/class="banners-section"-->
             </div>
-            <!--<div class="col-md-1">×</div>-->
-        </div>
+        </div> <!-- / class="row banner-row" Profile -->
+
         <div class="row banner-row">
             <div class="col-md-2 text-right">
                 <h3>Sessions</h3>
@@ -74,7 +76,9 @@
                         <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
                     </div>
                     <div ng-show="bmc.sessionsBanner.filepath">
-                        <a href="{{ bmc.sessionsBanner.link}}" target="_blank"><img  src="{{ bmc.sessionsBanner.filepath}}" title="{{ bmc.sessionsBanner.link}}"></a>
+                        <img  ng-show="!bmc.sessionsBanner.link || !bmc.sessionsBanner.link.length" src="{{ bmc.sessionsBanner.filepath}}" title="{{ bmc.sessionsBanner.link}}">
+                        <a ng-show="bmc.sessionsBanner.link" href="{{bmc.sessionsBanner.link}}" target="_blank"><img  src="{{ bmc.sessionsBanner.filepath}}" title="{{ bmc.sessionsBanner.link}}"></a>
+
                         <div class="banner-management-btns">
                             <button class="btn-standart btn-blue btn-glyphonic" ng-click="bmc.remove('sessions')"
                                     data-toggle="tooltip" data-placement="bottom" title="Remove banner">
@@ -100,11 +104,10 @@
                             </md-menu>
                         </div>
                     </div >
-
-                </section>
+                </section> <!--/class="banners-section"-->
             </div>
-            <!--<div class="col-md-1">×</div>-->
-        </div>
+        </div> <!-- / class="row banner-row" Sessions -->
+
         <div class="row banner-row">
             <div class="col-md-2 text-right">
                 <h3>Resources</h3>
@@ -118,7 +121,9 @@
                         <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
                     </div>
                     <div ng-show="bmc.resourcesBanner.filepath">
-                        <a href="{{ bmc.resourcesBanner.link}}" target="_blank"><img  src="{{ bmc.resourcesBanner.filepath}}" title="{{ bmc.resourcesBanner.link}}"></a>
+                        <img  ng-show="!bmc.resourcesBanner.link || !bmc.resourcesBanner.link.length" src="{{bmc.resourcesBanner.filepath}}" title="{{ bmc.resourcesBanner.link}}"></a>
+                        <a ng-show="bmc.resourcesBanner.link" href="{{bmc.resourcesBanner.link}}" target="_blank"><img  src="{{bmc.resourcesBanner.filepath}}" title="{{ bmc.resourcesBanner.link}}"></a>
+
                         <div class="banner-management-btns">
                             <button class="btn-standart btn-blue btn-glyphonic" ng-click="bmc.remove('resources')"
                                     data-toggle="tooltip" data-placement="bottom" title="Remove banner">
@@ -144,11 +149,9 @@
                             </md-menu>
                         </div>
                     </div >
-
-                </section>
+                </section><!--/class="banners-section"-->
             </div>
-            <!--<div class="col-md-1">×</div>-->
-        </div>
+        </div> <!-- / class="row banner-row" Resources -->
     </div>
 
 
