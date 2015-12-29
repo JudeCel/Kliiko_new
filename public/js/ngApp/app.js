@@ -18,7 +18,8 @@
       'CreditCard',
 
       // app modules
-      'KliikoApp.user'
+      'KliikoApp.user',
+      'KliikoApp.banners'
     ])
     .config(appConfigs)
     .run(appRun)
@@ -49,13 +50,12 @@
   function AppController($rootScope, dbg, ngProgressFactory, user, $q) {
     var vm = this;
 
-    vm.progressbar = ngProgressFactory.createInstance();
-    vm.progressbar.start();
+    var progressbar = ngProgressFactory.createInstance();
+    progressbar.start();
     dbg.log2('#AppController started ');
-    vm.progressbar.complete();
+    progressbar.complete();
 
   }
-
 
 })();
 

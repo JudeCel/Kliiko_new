@@ -1,9 +1,9 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('bannerMessagesService', bannerMessagesService);
-  bannerMessagesService.$inject = ['globalSettings', '$q', '$resource', 'dbg', 'Upload', '$timeout'];
+  bannerMessagesService.$inject = ['globalSettings', '$q', '$resource', 'dbg', 'Upload', '$rootScope'];
 
-  function bannerMessagesService(globalSettings, $q, $resource, dbg, Upload, $timeout) {
+  function bannerMessagesService(globalSettings, $q, $resource, dbg, Upload, $rootScope) {
     var bannerMessagesRestApi = {
       banners: $resource(globalSettings.restUrl +'/banners/:bannerType', {bannerType: '@bannerType'})
     };
@@ -14,8 +14,13 @@
     bServices.upload = upload;
     bServices.remove = remove;
     bServices.saveLink = saveLink;
+    bServices.setMainBannerForPage = setMainBannerForPage;
+
+
 
     return bServices;
+
+
 
     /**
      * Fetch all banners
@@ -42,7 +47,16 @@
           data: {bannerType:bannerType, file: file}
         }).then(
           function(res) {
+            if (res.data && res.data.error) {
+              dbg.log2('#bannerMessagesService > upload > error ', res.data.error);
+              deferred.reject(res.data.error);
+              return deferred.promise;
+            }
+
             dbg.log2('#bannerMessagesService > upload > success ', res);
+
+            $rootScope.$emit('updateBannerMessage', {bannerData: res});
+
             deferred.resolve();
           },
           function(err) {
@@ -76,6 +90,10 @@
       });
 
       return deferred.promise;
+    }
+
+    function setMainBannerForPage(bannerType) {
+      console.warn(222, bannerType)
     }
   }
 })();

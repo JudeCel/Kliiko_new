@@ -332,16 +332,18 @@ function validate_DEPRECATED(type, file, callback) {
 }
 
 function validate(type, file, callback) {
-  let error = {};
+  let error = [];
 
   sizeOf(file.path, function(err, dimensions) {
     if(err || !isValidFileType(file.type)) {
-      error[type] = 'Only image files are allowed - ' + allowedImageTypes() + '.';
+      let errorMessage  = 'Only image files are allowed - ' + allowedImageTypes() + '.';
+      error.push({errorMessage:errorMessage});
       return callback(error);
     }
 
     if((dimensions.width > VALIDATIONS.maxWidth) || (dimensions.height > VALIDATIONS.maxHeight)) {
-      error[type] = 'File size is out of range. Allowed size is ' + VALIDATIONS.maxWidth + 'x' + VALIDATIONS.maxHeight + 'px.';
+      let errorMessage  ='File size is out of range. Allowed size is ' + VALIDATIONS.maxWidth + 'x' + VALIDATIONS.maxHeight + 'px.';
+      error.push({errorMessage:errorMessage});
       return callback(error);
     }
     else {
@@ -350,7 +352,8 @@ function validate(type, file, callback) {
   });
 
   if(file.size > (VALIDATIONS.maxSize * MEGABYTE)) {
-    error[type] = 'This file is too big. Allowed size is ' + VALIDATIONS.maxSize + 'MB.';
+    let errorMessage = 'This file is too big. Allowed size is ' + VALIDATIONS.maxSize + 'MB.';
+    error.push({errorMessage:errorMessage});
     return callback(error);
   }
 }

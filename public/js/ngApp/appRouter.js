@@ -38,10 +38,10 @@
         views: {
           'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-accountProfile/dashboard-content.html"}
         },
-        onEnter: ['dbg', function (dbg) {
+        onEnter: ['dbg', '$rootScope', 'banners', function (dbg, $rootScope, banners) {
           dbg.rs('dashboard.accountProfile is on');
+          banners.setMainBannerForPage('profile');
         }]
-
       })
 
       .state('dashboard.accountProfile.upgradePlan', {
@@ -83,7 +83,7 @@
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-bannerMessages/dashboard-content.html"}
         },
         resolve: {
-          checkPermission: ['$q', '$timeout', 'user', 'dbg', '$ocLazyLoad', 'ngProgressFactory', function($q, $timeout, user, dbg, $ocLazyLoad, ngProgressFactory) {
+          checkPermission: ['$q', '$timeout', 'user', 'dbg', 'ngProgressFactory', 'banners',function($q, $timeout, user, dbg, ngProgressFactory, banners) {
             var deferred = $q.defer();
 
             user.canAccess('bannerMessages').then(
@@ -91,17 +91,11 @@
                 var progressbar = ngProgressFactory.createInstance();
                 progressbar.start();
 
-                // as this module is rare in use, we might want to laze load all it dependencies
-                var path = 'js/ngApp/components/dashboard-accountProfile-bannerMessages/';
-                $ocLazyLoad.load([
-                  path+'BannerMessagesController.js',
-                  path+'bannerMessagesServices.js',
-                  '/js/vendors/ng-file-upload/ng-file-upload.js'
-                ]).then(function() {
-                  progressbar.stop();
-                  deferred.resolve();
-                });
+                // load rarely needed module: ng-file-upload
+                banners.initUpload().then(function() { progressbar.complete(); deferred.resolve(); });
+
               },
+
               function(err) { dbg.warn(err); }
 
             );
@@ -128,15 +122,22 @@
       ///////////////////////// Resources
       .state('dashboard.resources', {
         url: "/resources",
-        onEnter: ['$state', '$stateParams', 'dbg', '$location', '$rootScope', function ($state, $stateParams, dbg, $location, $rootScope) {
+        onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location, banners) {
           dbg.rs('resources');
+
+          $stateParams.bannerType = 'resources';
+          console.warn($stateParams);
+
+          banners.setMainBannerForPage('resources');
+
           //make account profile default view on dashboard
           setTimeout(function () {
             if ($state.current.name == 'dashboard.resources') $state.go('dashboard.resources.gallery');
           }, 10);
+
         }],
         views: {
-          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-resources/resources.html"},
+          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-resources/resources.html"}
         }
 
       })

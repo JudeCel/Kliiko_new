@@ -262,6 +262,13 @@ img.ic-flipX {
 .table-dashboardElements > tbody > tr > td {
   word-break: break-all; }
 
+.error-area {
+  margin-top: 25px;
+  padding: 17px;
+  border: 2px solid #E51D39; }
+  .error-area > p {
+    margin-bottom: 10px; }
+
 @font-face {
   font-family: SourceSansPro-Black;
   src: url(/fonts/SourceSansPro-Black.otf); }

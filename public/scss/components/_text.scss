@@ -1,1 +1,9 @@
+.error-area {
+  margin-top: 25px;
+  padding: 17px;
+  border: 2px solid $red;
 
+  > p {
+    margin-bottom: 10px;
+  }
+}
