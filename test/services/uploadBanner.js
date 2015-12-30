@@ -6,6 +6,7 @@ var assert = require('chai').assert;
 var fs = require('fs-extra');
 var async = require('async');
 var ncp = require('ncp').ncp;
+var should = require("should"), Q = require("q"), sinon = require('sinon');
 
 var newPath = 'test/fixtures/uploadBanner/test';
 describe('Upload banner', function() {
@@ -22,6 +23,25 @@ describe('Upload banner', function() {
       size: params.size || 9993
     } ];
     return json;
+  }
+
+  function defaultFile2(params) {
+    //var params = params || {};
+    return {
+      page: 'profile',
+      name: 'profile_test.png',
+      filepath:  'test/fixtures/uploadBanner/test/success.png',
+      link:  null,
+
+      fieldname: 'profile',
+      originalname: 'profile_test.png',
+      encoding: '7bit',
+      mimetype:  'image/png',
+      destination: 'test/fixtures/uploadBanner/test',
+      filename: 'success.png',
+      path: 'test/fixtures/uploadBanner/test/success.png',
+      size:  9993
+    };
   }
 
   before((done) => {
@@ -63,10 +83,10 @@ describe('Upload banner', function() {
   });
 
 
-  describe('#write', function() {
+  /*describe('#write', function() {
     describe('sad path', function() {
       it('has no file', function (done) {
-        uploadBanner.write({}, function (error, message) {
+        uploadBanner.write_DEPRECATED({}, function (error, message) {
           assert.equal(error, 'No files selected');
           done();
         });
@@ -75,7 +95,7 @@ describe('Upload banner', function() {
       describe('at validations', function() {
         it('wrong file size', function (done) {
           let json = defaultFile({ size: 600000000 });
-          uploadBanner.write(json, function (error, message) {
+          uploadBanner.write_DEPRECATED(json, function (error, message) {
             assert.equal(error['profile'], 'This file is too big. Allowed size is 5MB.');
             done();
           });
@@ -83,7 +103,7 @@ describe('Upload banner', function() {
 
         it('wrong dimension', function (done) {
           let json = defaultFile({ path: 'test/fixtures/uploadBanner/test/failure.jpg', filename: 'failure.jpg' });
-          uploadBanner.write(json, function (error, message) {
+          uploadBanner.write_DEPRECATED(json, function (error, message) {
             assert.equal(error['profile'], 'File size is out of range. Allowed size is 768x200px.');
             done();
           });
@@ -91,7 +111,7 @@ describe('Upload banner', function() {
 
         it('wrong filetype', function (done) {
           let json = defaultFile({ path: 'test/fixtures/uploadBanner/test/failure.rb', filename: 'failure.rb' });
-          uploadBanner.write(json, function (error, message) {
+          uploadBanner.write_DEPRECATED(json, function (error, message) {
             assert.equal(error['profile'], 'Only image files are allowed -  gif, png, jpg, jpeg, bmp.');
             done();
           });
@@ -102,7 +122,7 @@ describe('Upload banner', function() {
     describe('happy path', function() {
       it('will succeed', function (done) {
         let json = defaultFile({});
-        uploadBanner.write(json, function (error, message) {
+        uploadBanner.write_DEPRECATED(json, function (error, message) {
           if(error) {
             done(error);
           }
@@ -121,7 +141,7 @@ describe('Upload banner', function() {
   describe('#destroy', function() {
     it('will succeed', function (done) {
       let json = defaultFile({});
-      uploadBanner.write(json, function (error, message) {
+      uploadBanner.write_DEPRECATED(json, function (error, message) {
         assert.equal(error, null);
         assert.equal(message, 'Successfully uploaded banner.');
         TemplateBanner.count().then(function(c) {
@@ -141,7 +161,7 @@ describe('Upload banner', function() {
   describe('#profilePage', function() {
     it('will succeed', function (done) {
       let json = defaultFile({});
-      uploadBanner.write(json, function (error, message) {
+      uploadBanner.write_DEPRECATED(json, function (error, message) {
         assert.equal(error, null);
         assert.equal(message, 'Successfully uploaded banner.');
 
@@ -162,17 +182,18 @@ describe('Upload banner', function() {
       assert.deepEqual(params, result);
       done();
     });
-  });
+  });*/
+
 
   describe('#findAllBanners', function() {
-    it('will succeed', function (done) {
-      let json = defaultFile({});
-      uploadBanner.write(json, function (error, message, array) {
-        uploadBanner.findAllBanners(function (result) {
-          assert.deepEqual(result, { profile: 'banners/profile_test.png' });
-          done();
-        });
-      });
+    let json = defaultFile2();
+
+    it('should be a promise', function (done) {
+      var promise = uploadBanner.write(json, json.page);
+      if (promise.should.have.property("then") && promise.should.have.property("fail") ) done();
     });
+
+
+
   });
 });

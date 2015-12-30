@@ -61,6 +61,8 @@
     "gulp-util": "^3.0.7",
     "jshint-stylish": "^2.0.1",
     "mocha": "^2.3.3",
+    "should": "^8.0.2",
+    "sinon": "^1.17.2",
     "supertest": "^1.1.0",
     "wiredep": "^2.2.2",
     "yargs": "^3.29.0"

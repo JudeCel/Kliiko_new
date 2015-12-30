@@ -119,7 +119,6 @@ function write(file, bannerType) {
             deferred.reject(error);
             return deferred.promise;
           }
-          //callback(error, result);
           deferred.resolve(result);
         });
 
