@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="/css/animate/animate.css">
+
 <!-- vendors-->
 <script src="/js/vendors/jQuery/jquery-2.1.4.min.js"></script>
 <script src="/js/vendors/angular/1.4.8/angular.js"></script>
@@ -14,16 +16,27 @@
 <script src="/js/vendors/angular/1.4.8/angular-aria.js"></script>
 <script src="/js/vendors/ui-router/angular-ui-router.js"></script>
 
-<link rel="stylesheet" href="https://gitcdn.xyz/repo/angular/bower-material/master/angular-material.css">
-<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc4/angular-material.min.js"></script>
+<script src="/js/vendors/ocLazyLoad/ocLazyLoad.js"></script>
+
+<!--<script src="/js/vendors/ng-file-upload/ng-file-upload.js"></script>-->
+
+<script src="/js/vendors/ngProgress/ngprogress.js"></script>
+<link rel="stylesheet" href="/js/vendors/ngProgress/ngProgress.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.0.1/angular-material.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.0.1/angular-material.js"></script>
 <script src="/js/vendors/ui-bootstrap/ui-bootstrap-tpls-0.14.3.min.js"></script>
 
 <script src="/js/ngApp/modules/debModule/debModule.es5.js"></script>
 <script src="/js/ngApp/modules/domServices/domServices.js"></script>
+<script src="/js/ngApp/modules/messenger/messenger.js"></script>
+<script src="/js/ngApp/modules/creditCard/CreditCard.js"></script>
+<script src="/js/ngApp/modules/banners/banners.js"></script>
 
 
 <!-- ngApp -->
 <script src="/js/ngApp/app.js"></script>
+
 <script src="/js/ngApp/settings/appGlobalSettings.js"></script>
 <script src="/js/ngApp/appRouter.js"></script>
 
@@ -32,21 +45,33 @@
 <script src="/js/ngApp/factories/confirmFactory.js"></script>
 
 <script src="/js/ngApp/modules/user/user.js"></script>
+<script src="/js/ngApp/modules/banners/banners.js"></script>
 
 
+
+<script src="/js/ngApp/components/contactDetailsModal/ContactDetailsModalController.js"></script>
 
 <script src="/js/ngApp/components/dashboard/DashboardController.js"></script>
+
+<script src="/js/ngApp/components/dashboard-accountProfile-bannerMessages/BannerMessagesController.js"></script>
+<!--<script src="/js/ngApp/components/dashboard-accountProfile-bannerMessages/bannerMessagesServices.js"></script>-->
+
+<script src="/js/ngApp/components/mainBanner/MainBannerController.js"></script>
+
+<script src="/js/ngApp/components/dashboard-accountProfile/AccountProfileController.js"></script>
 <script src="/js/ngApp/components/dashboard-accountProfile-upgradePlan/UpgradePlanController.js"></script>
 <script src="/js/ngApp/components/dashboard-accountProfile-upgradePlan/upgradePlanServices.js"></script>
 
 <script src="/js/ngApp/components/dashboard-accountProfile-accountManagers/AccountManagerControllers.js"></script>
-<script src="/js/ngApp/components/dashboard-accountProfile-accountManagers/AccountManagerServices.js"></script>
+<script src="/js/ngApp/components/dashboard-accountProfile-accountManagers/accountManagerServices.js"></script>
 
 <script src="/js/ngApp/components/dashboard-accountProfile-promotionCode/PromotionCodeControllers.js"></script>
-<script src="/js/ngApp/components/dashboard-accountProfile-promotionCode/PromotionCodeServices.js"></script>
+<script src="/js/ngApp/components/dashboard-accountProfile-promotionCode/promotionCodeServices.js"></script>
 
 <script src="/js/ngApp/components/dashboard-accountProfile-accountDatabase/AccountDatabaseControllers.js"></script>
-<script src="/js/ngApp/components/dashboard-accountProfile-accountDatabase/AccountDatabaseServices.js"></script>
+<script src="/js/ngApp/components/dashboard-accountProfile-accountDatabase/accountDatabaseServices.js"></script
+
+
 
 <!-- ngApp: modules -->
 

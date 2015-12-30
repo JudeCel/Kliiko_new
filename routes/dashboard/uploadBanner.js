@@ -24,7 +24,7 @@ function get(req, res) {
     params['banners'] = result;
     res.render(views_path('uploadBanner'), params);
   });
-};
+}
 
 function post(req, res) {
   uploadBannerService.write(req.files, function(error, message) {
@@ -37,13 +37,13 @@ function post(req, res) {
       res.render(views_path('uploadBanner'), params);
     });
   });
-};
+}
 
 function destroy(req, res) {
   uploadBannerService.destroy(req.params.page, function(error, message) {
     res.redirect('../uploadbanner');
   });
-};
+}
 
 module.exports = {
   getProfileBanner: getProfileBanner,
@@ -51,4 +51,4 @@ module.exports = {
   post: post,
   destroy: destroy,
   uploadFields: uploadBannerService.uploadFields()
-}
+};

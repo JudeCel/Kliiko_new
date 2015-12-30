@@ -1,0 +1,168 @@
+<section id="banner-messages" ng-controller="BannerMessagesController as bmc">
+
+
+    <br><br>
+    <div class='col-md-12'>
+        <div class='dashboard-container'>
+            <div class='row'>
+                <div class='col-md-3'></div>
+                <div class='col-md-6'>
+                    <h2 class='text-center'>Upload Banners</h2>
+                    <div ng-show=" bmc.error.length" class="error-area has-error text-red-dark">
+                        <p ng-repeat="err in ::bmc.error">{{err}}</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class='col-md-offset-2 col-md-8'>
+
+        <div class="row banner-row">
+            <div class="col-md-2 text-right">
+                <h3>Profile</h3>
+            </div>
+            <div class="col-md-9">
+                <section class="banners-section">
+                    <div ng-hide="bmc.profileBanner.filepath">
+                        <div ngf-drop ngf-select ng-model="bmc.profileBanner.file" ng-change="bmc.upload(bmc.profileBanner.file, 'profile')" class="drop-box"
+                             ngf-drag-over-class="'dragover'"  accept="image/*"
+                             ngf-pattern="'image/*'">Drop images here or click to upload</div>
+                        <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
+                    </div>
+                    <div ng-show="bmc.profileBanner.filepath">
+                        <img  ng-show="!bmc.profileBanner.link || !bmc.profileBanner.link.length" src="{{ bmc.profileBanner.filepath}}" title="{{ bmc.profileBanner.link }}">
+                        <a ng-show="bmc.profileBanner.link" href="{{bmc.profileBanner.link}}" target="_blank"><img  src="{{ bmc.profileBanner.filepath}}" title="{{ bmc.profileBanner.link }}"></a>
+
+                        <div class="banner-management-btns">
+                            <button class="btn-standart btn-blue btn-glyphonic" ng-click="bmc.remove('profile')"
+                                    data-toggle="tooltip" data-placement="bottom" title="Remove banner">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </button>
+
+                            <md-menu>
+                                <button class=" btn-standart btn-blue btn-glyphonic" ng-click="$mdOpenMenu(ev)"
+                                        data-toggle="tooltip" data-placement="bottom" title="Edit banners link">
+                                    <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                                </button>
+                                <md-menu-content class="banner-link-menu">
+                                    <md-input-container>
+                                        <form ng-submit="bmc.saveLink('profile')">
+                                            <label class="banner-link-label">Banner Link</label>
+                                            <input class="banner-link-input" ng-model="bmc.profileBanner.link"
+                                                   ng-model-options='{ debounce: 1000 }'
+                                                   ng-change--="bmc.saveLink('profile2')">
+                                        </form>
+                                    </md-input-container>
+
+                                </md-menu-content>
+                            </md-menu>
+                        </div>
+
+                    </div >
+                </section><!--/class="banners-section"-->
+            </div>
+        </div> <!-- / class="row banner-row" Profile -->
+
+        <div class="row banner-row">
+            <div class="col-md-2 text-right">
+                <h3>Sessions</h3>
+            </div>
+            <div class="col-md-9">
+                <section class="banners-section">
+                    <div ng-hide="bmc.sessionsBanner.filepath">
+                        <div ngf-drop ngf-select ng-model="bmc.sessionsBanner.file" ng-change="bmc.upload(bmc.sessionsBanner.file, 'sessions')" class="drop-box"
+                             ngf-drag-over-class="'dragover'"  accept="image/*"
+                             ngf-pattern="'image/*'">Drop images here or click to upload</div>
+                        <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
+                    </div>
+                    <div ng-show="bmc.sessionsBanner.filepath">
+                        <img  ng-show="!bmc.sessionsBanner.link || !bmc.sessionsBanner.link.length" src="{{ bmc.sessionsBanner.filepath}}" title="{{ bmc.sessionsBanner.link}}">
+                        <a ng-show="bmc.sessionsBanner.link" href="{{bmc.sessionsBanner.link}}" target="_blank"><img  src="{{ bmc.sessionsBanner.filepath}}" title="{{ bmc.sessionsBanner.link}}"></a>
+
+                        <div class="banner-management-btns">
+                            <button class="btn-standart btn-blue btn-glyphonic" ng-click="bmc.remove('sessions')"
+                                    data-toggle="tooltip" data-placement="bottom" title="Remove banner">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </button>
+
+                            <md-menu>
+                                <button class=" btn-standart btn-blue btn-glyphonic" ng-click="$mdOpenMenu(ev)"
+                                        data-toggle="tooltip" data-placement="bottom" title="Edit banners link">
+                                    <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                                </button>
+                                <md-menu-content class="banner-link-menu">
+                                    <md-input-container>
+                                        <form ng-submit="bmc.saveLink('sessions')">
+                                            <label class="banner-link-label">Banner Link</label>
+                                            <input class="banner-link-input" ng-model="bmc.sessionsBanner.link"
+                                                   ng-model-options='{ debounce: 1000 }'
+                                                   ng-change--="bmc.saveLink('sessions')">
+                                        </form>
+                                    </md-input-container>
+
+                                </md-menu-content>
+                            </md-menu>
+                        </div>
+                    </div >
+                </section> <!--/class="banners-section"-->
+            </div>
+        </div> <!-- / class="row banner-row" Sessions -->
+
+        <div class="row banner-row">
+            <div class="col-md-2 text-right">
+                <h3>Resources</h3>
+            </div>
+            <div class="col-md-9">
+                <section class="banners-section">
+                    <div ng-hide="bmc.resourcesBanner.filepath">
+                        <div ngf-drop ngf-select ng-model="bmc.resourcesBanner.file" ng-change="bmc.upload(bmc.resourcesBanner.file, 'resources')" class="drop-box"
+                             ngf-drag-over-class="'dragover'"  accept="image/*"
+                             ngf-pattern="'image/*'">Drop images here or click to upload</div>
+                        <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
+                    </div>
+                    <div ng-show="bmc.resourcesBanner.filepath">
+                        <img  ng-show="!bmc.resourcesBanner.link || !bmc.resourcesBanner.link.length" src="{{bmc.resourcesBanner.filepath}}" title="{{ bmc.resourcesBanner.link}}"></a>
+                        <a ng-show="bmc.resourcesBanner.link" href="{{bmc.resourcesBanner.link}}" target="_blank"><img  src="{{bmc.resourcesBanner.filepath}}" title="{{ bmc.resourcesBanner.link}}"></a>
+
+                        <div class="banner-management-btns">
+                            <button class="btn-standart btn-blue btn-glyphonic" ng-click="bmc.remove('resources')"
+                                    data-toggle="tooltip" data-placement="bottom" title="Remove banner">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </button>
+
+                            <md-menu>
+                                <button class=" btn-standart btn-blue btn-glyphonic" ng-click="$mdOpenMenu(ev)"
+                                        data-toggle="tooltip" data-placement="bottom" title="Edit banners link">
+                                    <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                                </button>
+                                <md-menu-content class="banner-link-menu">
+                                    <md-input-container>
+                                        <form ng-submit="bmc.saveLink('resources')">
+                                            <label class="banner-link-label">Banner Link</label>
+                                            <input class="banner-link-input" ng-model="bmc.resourcesBanner.link"
+                                                   ng-model-options='{ debounce: 1000 }'
+                                                   ng-change--="bmc.saveLink('resources')">
+                                        </form>
+                                    </md-input-container>
+
+                                </md-menu-content>
+                            </md-menu>
+                        </div>
+                    </div >
+                </section><!--/class="banners-section"-->
+            </div>
+        </div> <!-- / class="row banner-row" Resources -->
+    </div>
+
+
+
+    <!--////////////////////////////////////////////-->
+
+
+
+    <hr>
+    <!--//////////////////////////////////////-->
+
+</section>

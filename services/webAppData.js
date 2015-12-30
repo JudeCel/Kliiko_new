@@ -22,5 +22,4 @@ function getAppVersion() {
     let description = packageJson.description;
 
     return version + ' - ' + description;
-
 }
