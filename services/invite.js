@@ -150,6 +150,13 @@ function removeAllAssociatedDataOnNewUser(invite, callback) {
       });
     },
     function(user, cb) {
+      Account.destroy({ where: { id: invite.accountId } }).then(function() {
+        cb(null, user);
+      }).catch(function(error) {
+        cb(prepareErrors(error));
+      });
+    },
+    function(user, cb) {
       AccountUser.destroy({ where: { UserId: user.id, AccountId: invite.accountId } }).then(function() {
         cb(null, user);
       }).catch(function(error) {

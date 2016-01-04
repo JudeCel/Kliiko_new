@@ -235,39 +235,6 @@ describe('SERVICE - AccountManager', function() {
   });
 
   describe('#findAndRemoveAccountUser', function() {
-    it('should remove invite from list', function (done) {
-      let req = requestObject();
-      accountManagerService.createOrFindUser(req, function(error, params) {
-        if(error) {
-          done(error);
-        }
-
-        User.find({ where: { email: req.body.email } }).then(function(user) {
-          inviteService.createInvite(params, function(error, invite) {
-            if(error) {
-              done(error);
-            }
-
-            async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 1 }), function(error, result) {
-              if(error) {
-                done(error);
-              }
-
-              req = requestObject({ id: user.id, type: 'invite' });
-              accountManagerService.findAndRemoveAccountUser(req, function(error, message) {
-                assert.equal(error, null);
-                assert.equal(message, 'Successfully removed Invite');
-
-                async.parallel(countTables({ invite: 0, account: 1, user: 1, accountUser: 1 }), function(error, result) {
-                  done(error);
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-
     it('should remove account from list', function (done) {
       let req = requestObject();
       accountManagerService.createOrFindUser(req, function(error, params) {
