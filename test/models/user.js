@@ -22,7 +22,7 @@ describe('User', () => {
       }
       User.create(attrs)
         .then(function(user) {
-          assert.equal(user.tipsAndUpdate, true);
+          assert.equal(user.tipsAndUpdate, false);
           assert.equal(user.encryptedPassword.length, encryptedPasswordLength);
           done();
         }).catch(function(error) {
