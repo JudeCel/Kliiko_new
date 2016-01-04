@@ -66,7 +66,7 @@ var initMainMenu = function(role) {
 				socket.emit('getreporttopics', window.sessionID, window.userID);
 				break;
 			case 'help':
-				window.open('http://' + window.domain + ':' + window.port + '/help?r=' + role[0], '_blank');
+				window.open('http://' + window.domain + ':' + window.port + '/chat/help?r=' + role[0], '_blank');
 			break;
 			case 'backward':
 				window.history.go(-1);
