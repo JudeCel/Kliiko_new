@@ -19,5 +19,6 @@ module.exports = {
     'companyName'
   ],
   promotionCodeTypes: ['percentage', 'value'],
+  galleryUploadTypes: ['image', 'brandLogo', 'audio', 'youtubeLink', 'pdf'],
   dateFormat: 'MM-dd-yyyy'
 }
