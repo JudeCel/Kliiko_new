@@ -41,7 +41,7 @@ module.exports = (Sequelize, DataTypes) => {
     currentSignInIp: {type : DataTypes.STRING, allowNull: true},
     promoCode: {type: DataTypes.INTEGER, allowNull: true},
     signInCount: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
-    tipsAndUpdate: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false},
+    tipsAndUpdate: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true},
 
     postalAddress: {type: DataTypes.STRING, allowNull: true },
     city: {type: DataTypes.STRING, allowNull: true },
