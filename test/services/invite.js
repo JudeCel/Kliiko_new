@@ -53,33 +53,33 @@ describe('SERVICE - Invite', function() {
       userId: testUser2.id,
       accountId: testAccount.id,
       role: 'accountManager',
-      userType: userType || 'new'
+      userType: userType ? userType : 'new'
     };
   };
 
-  function countTables(invite, account, user, accountUser) {
+  function countTables(params) {
     return [
       function(cb) {
         Invite.count().then(function(c) {
-          assert.equal(c, invite);
+          assert.equal(c, params.invite);
           cb();
         });
       },
       function(cb) {
         Account.count().then(function(c) {
-          assert.equal(c, account);
+          assert.equal(c, params.account);
           cb();
         });
       },
       function(cb) {
         User.count().then(function(c) {
-          assert.equal(c, user);
+          assert.equal(c, params.user);
           cb();
         });
       },
       function(cb) {
         AccountUser.count().then(function(c) {
-          assert.equal(c, accountUser);
+          assert.equal(c, params.accountUser);
           cb();
         });
       }
@@ -133,7 +133,7 @@ describe('SERVICE - Invite', function() {
         inviteService.createInvite(params, function(error, invite) {
           assert.equal(error, null);
 
-          async.parallel(countTables(1, 2, 2, 2), function(error, result) {
+          async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 2 }), function(error, result) {
             if(error) {
               done(error);
             }
@@ -143,7 +143,7 @@ describe('SERVICE - Invite', function() {
                 done(error);
               }
 
-              async.parallel(countTables(0, 2, 2, 2), function(error, result) {
+              async.parallel(countTables({ invite: 0, account: 2, user: 2, accountUser: 2 }), function(error, result) {
                 done(error);
               });
             });
@@ -157,7 +157,7 @@ describe('SERVICE - Invite', function() {
         let params = validParams();
         inviteService.createInvite(params, function(error, invite) {
           assert.equal(error, null);
-          async.parallel(countTables(1, 2, 2, 2), function(error, result) {
+          async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 2 }), function(error, result) {
             if(error) {
               done(error);
             }
@@ -167,7 +167,7 @@ describe('SERVICE - Invite', function() {
                 done(error);
               }
 
-              async.parallel(countTables(0, 1, 1, 1), function(error, result) {
+              async.parallel(countTables({ invite: 0, account: 1, user: 1, accountUser: 1 }), function(error, result) {
                 done(error);
               });
             });
@@ -224,7 +224,7 @@ describe('SERVICE - Invite', function() {
       inviteService.createInvite(params, function(error, invite) {
         assert.equal(error, null);
 
-        async.parallel(countTables(1, 2, 2, 2), function(error, result) {
+        async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 2 }), function(error, result) {
           if(error) {
             done(error);
           }
@@ -237,7 +237,7 @@ describe('SERVICE - Invite', function() {
             assert.equal(invite.id, result.id);
             invite.User.reload().then(function(user) {
 
-              async.parallel(countTables(0, 2, 2, 3), function(error, result) {
+              async.parallel(countTables({ invite: 0, account: 2, user: 2, accountUser: 3 }), function(error, result) {
                 done(error);
               });
             });
@@ -254,7 +254,7 @@ describe('SERVICE - Invite', function() {
         assert.equal(error, null);
         let oldPassword = invite.User.encryptedPassword;
 
-        async.parallel(countTables(1, 2, 2, 2), function(error, result) {
+        async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 2 }), function(error, result) {
           if(error) {
             done(error);
           }
@@ -269,8 +269,8 @@ describe('SERVICE - Invite', function() {
               assert.notEqual(user.encryptedPassword, oldPassword);
 
               user.getOwnerAccount().then(function(accounts) {
-                assert.equal(accounts[0].name, 'newname');
-                async.parallel(countTables(0, 2, 2, 3), function(error, result) {
+                assert.equal(accounts[0].name, 'DainisL');
+                async.parallel(countTables({ invite: 0, account: 2, user: 2, accountUser: 3 }), function(error, result) {
                   done(error);
                 });
               });
