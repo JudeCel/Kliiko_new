@@ -29,20 +29,26 @@ function createInvite(params, callback) {
     userType: params.userType
   }).then(function(result) {
     Invite.find({ include: [ { model: User, attributes: constants.safeUserParams }, Account ], where: { token: token } }).then(function(invite) {
-      /*
-        fot the Account parameter using hardcoded "Kliiko" string. 
-        ToDo replace with corresponding user account name
-      */
-      let inviteParams = { token: invite.token, email: invite.User.email, firstName: invite.User.firstName, lastName: invite.User.lastName, accountName: "Kliiko"};
-      inviteMailer.sendInviteAccountManager(inviteParams, function(error, data) {
-        callback(error, invite, data);
-      });
+      if (invite.userType === "existing") {
+        AccountUser.find({include:[{model: Account}], where: {UserId: invite.userId}}).then(function(invitedAccount) {            
+            sendInvite(invitedAccount.Account.name, invite, callback);
+        });
+      } else {
+        sendInvite("Kliiko", invite, callback);
+      }
     });
   }).catch(function(error) {
     callback(prepareErrors(error));
   });
 };
 
+function sendInvite(accountName, invite, callback) {
+  let inviteParams = { token: invite.token, email: invite.User.email, firstName: invite.User.firstName, lastName: invite.User.lastName, accountName: accountName};
+  inviteMailer.sendInviteAccountManager(inviteParams, function(error, data) {
+    callback(error, invite, data);
+  });
+}
+      
 function removeInvite(invite, callback) {
   if(invite.userType == 'new') {
     removeAllAssociatedData(invite, function(error) {
