@@ -20,7 +20,7 @@ function createOrFindUser(req, callback) {
 
   preValidate(user, params, function(error) {
     if(error) {
-      return callback(error);
+      return callback(prepareErrors(error));
     }
 
     User.find({
@@ -35,7 +35,7 @@ function createOrFindUser(req, callback) {
         User.create(params).then(function(newUser) {
           callback(null, inviteParams(newUser.id, user.accountOwnerId, 'new'));
         }).catch(function(error) {
-          callback(error);
+          callback(prepareErrors(error));
         });
       }
     });
@@ -105,7 +105,7 @@ function preValidate(user, params, callback) {
       callback({ email: 'This account has already accepted invite.' });
     }
   }).catch(function(error) {
-    callback(error);
+    callback(prepareErrors(error));
   });
 };
 
@@ -126,7 +126,7 @@ function findUsers(model, where, attributes, cb) {
   }).then(function(users) {
     cb(null, users);
   }).catch(function(error) {
-    cb(error);
+    cb(prepareErrors(error));
   });
 }
 
@@ -136,6 +136,18 @@ function inviteParams(invitedUserId, accountId, type) {
 
 function prepareParams(req) {
   return _.pick(req.body, ['firstName', 'lastName', 'gender', 'email', 'mobile', 'postalAddress', 'city', 'state', 'postcode', 'companyName', 'landlineNumber']);
+};
+
+function prepareErrors(err) {
+  let errors = ({});
+  _.map(err.errors, function (n) {
+    let message = n.message.replace(n.path, '');
+    if(message == " cannot be null") {
+      message = " cannot be empty";
+    }
+    errors[n.path] = _.startCase(n.path) + ':' + message;
+  });
+  return errors;
 };
 
 module.exports = {
