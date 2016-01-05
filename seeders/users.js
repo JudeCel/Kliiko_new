@@ -16,8 +16,7 @@ function createAdmin(callback) {
     password: "qwerty123",
     email: "admin@insider.com",
     gender: "male",
-    confirmedAt: new Date(),
-    signInCount: 1
+    confirmedAt: new Date()
   }
 
   UserService.create(adminAttrs, function(errors, user) {
@@ -46,8 +45,7 @@ function crateAccountManager(callback) {
     password: "qwerty123",
     email: "user@insider.com",
     gender: "male",
-    confirmedAt: new Date(),
-    signInCount: 1
+    confirmedAt: new Date()
   }
   UserService.create(userAttrs, function(errors, user) {
     callback(errors, user);

@@ -167,7 +167,7 @@ describe('SERVICE - Invite', function() {
                 done(error);
               }
 
-              async.parallel(countTables({ invite: 0, account: 1, user: 1, accountUser: 1 }), function(error, result) {
+              async.parallel(countTables({ invite: 0, account: 2, user: 1, accountUser: 1 }), function(error, result) {
                 done(error);
               });
             });

@@ -121,7 +121,7 @@ function acceptInviteNew(token, params, callback) {
       return callback(true);
     }
 
-    createAccountAndUser(invite, params, function(error) {
+    updateUser({ password: params.password }, invite, function(error) {
       if(error) {
         callback(error, invite);
       }
@@ -145,13 +145,6 @@ function removeAllAssociatedDataOnNewUser(invite, callback) {
         else {
           cb('Not found user');
         }
-      }).catch(function(error) {
-        cb(prepareErrors(error));
-      });
-    },
-    function(user, cb) {
-      Account.destroy({ where: { id: invite.accountId } }).then(function() {
-        cb(null, user);
       }).catch(function(error) {
         cb(prepareErrors(error));
       });
@@ -185,12 +178,6 @@ function createAccountUserFromInvite(invite, callback) {
     else {
       callback("Can't add account");
     }
-  });
-};
-
-function createAccountAndUser(invite, params, callback) {
-  updateUser({ password: params.password }, invite, function(error) {
-    callback(error);
   });
 };
 

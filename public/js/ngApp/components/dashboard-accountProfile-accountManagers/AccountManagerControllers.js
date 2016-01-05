@@ -36,10 +36,26 @@
       });
     };
 
-    $scope.removeAccountOrInvite = function(type, user) {
+    $scope.removeAccountUser = function(user) {
       angularConfirm('Are you sure you want to remove Account Manager?').then(function(response) {
-        accountManagerServices.removeAccountManager({ type: type, id: user.id }).then(function(res) {
-          dbg.log2('#AccountManagerController > removeAccountOrInvite > res ', res);
+        accountManagerServices.removeAccountUser({ id: user.id }).then(function(res) {
+          dbg.log2('#AccountManagerController > removeAccountUser > res ', res);
+          if(res.error) {
+            setError($scope, res.error);
+          }
+          else {
+            setMessage($scope, res.message);
+            var index = $scope.users.indexOf(user);
+            $scope.users.splice(index, 1);
+          }
+        });
+      });
+    };
+
+    $scope.removeInvite = function(user) {
+      angularConfirm('Are you sure you want to remove Invite?').then(function(response) {
+        accountManagerServices.removeInvite({ id: user.id }).then(function(res) {
+          dbg.log2('#AccountManagerController > removeInvite > res ', res);
           if(res.error) {
             setError($scope, res.error);
           }

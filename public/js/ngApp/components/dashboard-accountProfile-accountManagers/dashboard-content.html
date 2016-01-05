@@ -42,8 +42,8 @@
             </td>
             <td class='text-right dashboardElementsEditRemove'>
               <img src='/icons/dashboardElement_edit.png' alt='' />
-              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeAccountOrInvite("invite", user)' ng-if='user.Invites' />
-              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeAccountOrInvite("accountUser", user)' ng-if='user.AccountUsers' />
+              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeInvite(user)' ng-if='user.Invites' />
+              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeAccountUser(user)' ng-if='user.AccountUsers' />
             </td>
           </tr>
         </tbody>
