@@ -29,7 +29,11 @@ function createInvite(params, callback) {
     userType: params.userType
   }).then(function(result) {
     Invite.find({ include: [ { model: User, attributes: constants.safeUserParams }, Account ], where: { token: token } }).then(function(invite) {
-      let inviteParams = { token: invite.token, email: invite.User.email };
+      /*
+        fot the Account parameter using hardcoded "Kliiko" string. 
+        ToDo replace with corresponding user account name
+      */
+      let inviteParams = { token: invite.token, email: invite.User.email, firstName: invite.User.firstName, lastName: invite.User.lastName, accountName: "Kliiko"};
       inviteMailer.sendInviteAccountManager(inviteParams, function(error, data) {
         callback(error, invite, data);
       });

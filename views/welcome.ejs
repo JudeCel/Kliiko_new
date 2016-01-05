@@ -2,9 +2,8 @@
 
 <script src="/js/vendors/jQuery/jquery-2.1.4.min.js"></script>
 <script src="/js/vendors/bootstrap/bootstrap.js"></script>
-<script src="/js/vendors/angular/1.4.8/angular.js"></script>
 
-<div class="login-container center-block text-font-family" ng-app="">
+<div class="login-container center-block text-font-family">
     <ul class="nav nav-tabs">
       <li><a class="background-yellow text-white text-shadow-gray btn login-kliiko-tab" style="visibility:hidden">Login to Kliiko</a></li>
       <li class="active"><a class="background-green text-white text-center login-signup-tab" data-toggle="tab">Get a Kliiko Account</a>
@@ -16,40 +15,41 @@
         <p class="text-center">Your Kliiko Account has beem successfully created. Check your emails for confirmation.</p>
         
         <p class="text-center">There's just one more step. You need to choose a pricing plan below.</p>
-        <!-- table -->
-        
-        <!-- TODO: id of table is set just to get images for checkboxes. Will be changed to right resources-->
-        <table class="table table-no-inside-borders text-left text-gray-dark table-v-content-middle" id="signup">
-            <tr>
-                <td class="text-center">
-                    <input type="checkbox" class="checkbox-login" name="rememberMe"id="freeTrial"/>
-                    <label for="freeTrial"></label>
-                    Free Trial
-                </td>
-                
-                <td class="text-center">
-                    <input type="checkbox" class="checkbox-login" name="rememberMe"id="paidPlan"/>
-                    <label for="paidPlan">
-                    </label>
-                    Paid Plan
-                </td>
-            </tr>
-            <tr>
-                <td class="text-center"><button class="btn border-brown text-brown-light border-radius-none background-transp login-btn-size" data-toggle="modal" data-target="#upgradePlanModal">Learn More</button></td>
-                <td class="text-center"><button class="btn border-brown text-brown-light border-radius-none background-transp login-btn-size" data-toggle="modal" data-target="#upgradePlanModal">Learn More</button></td>
-            </tr>
-            
-        </table>
+        <form method="get" action='/login'>
+        <div class="col-md-12">
+            <!-- table -->
+            <table class="table table-no-inside-borders text-left text-gray-dark table-v-content-middle" id="login">
+                <tr class="text-center">
+                    <td>
+                        <input type="radio" class="checkbox-blue" name="rememberMe" id="freeTrial" checked/>
+                        <label for="freeTrial"></label>
+                        Free Trial
+                    </td>
+                    
+                    <td>
+                        <input type="radio" class="checkbox-login" name="rememberMe" id="paidPlan"/>
+                        <label for="paidPlan">
+                        </label>
+                        Paid Plan
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center"><button type="button" class="btn border-brown text-brown-light border-radius-none background-transp login-btn-size" data-toggle="modal" data-target="#upgradePlanModal">Learn More</button></td>
+                    <td class="text-center"><button type="button" class="btn border-brown text-brown-light border-radius-none background-transp login-btn-size" data-toggle="modal" data-target="#upgradePlanModal">Learn More</button></td>
+                </tr>
+            </table>
+            <!-- end table -->
+        </div>
                
         <div class="row">
             <div class="col-md-11 form-group">
-                <a class="btn border-green text-green-dark border-radius-none background-transp pull-right login-btn-size" href="/login">Next</a>
+                <!--<a class="btn border-green text-green-dark border-radius-none background-transp pull-right login-btn-size" href="/dashboard/landing">Next</a>-->
+                <button type="submit" class="btn border-green text-green-dark border-radius-none background-transp pull-right login-btn-size">Next</a>
             </div>
         </div>
-        <!-- end table -->
+        <form>
     </div>
-    
-    
+        
     
     <!-- popup -->
     <div class="modal fade" id="upgradePlanModal" tabindex="-1"  aria-labelledby="myModalLabel">
@@ -57,14 +57,14 @@
             
             <div class="modal-content">
                 <div class='modal-header'>
-                    <button class="btn border-green text-green-dark border-radius-none background-transp pull-left login-btn-size"  data-dismiss='modal'>Back</button>
+                    <div class="btn border-green text-green-dark border-radius-none background-transp pull-left back_button"  data-dismiss='modal'> <img src="icons/back_green.png"/>  Back</div>
                     <h3 class='modal-title text-center'>Learn More About Paid Plans</h3>
                 </div>
             
                 <div class="row row-centered">
                     <div class='col-md-offset-1 col-md-10 сol-centered dashboard-index text-center'>
                         <div class="row" id="upgrade-plan-content">
-                            <ng-include src="'/js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/step1.tpl.html'"></ng-include>                    
+                            <% include welcomeScreenPlans %>                    
                         <div>
                     </div>
                 </div>
