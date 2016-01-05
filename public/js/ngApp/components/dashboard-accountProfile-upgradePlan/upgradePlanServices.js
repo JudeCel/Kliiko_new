@@ -2,19 +2,21 @@
   'use strict';
   angular.module('KliikoApp').factory('upgradePlanServices', upgradePlanServices);
 
-  upgradePlanServices.$inject = ['$q', 'globalSettings', '$resource', 'dbg', 'CreditCard'];
-  function upgradePlanServices($q, globalSettings, $resource, dbg, CreditCard) {
+  upgradePlanServices.$inject = ['$q', 'globalSettings', '$resource', 'dbg', '$ocLazyLoad', '$injector'];
+  function upgradePlanServices($q, globalSettings, $resource, dbg, $ocLazyLoad, $injector) {
+    var cache = {};
+    var upServices = {};
+    var creditCard, chargebee;
 
     var upgradePlanRestApi = {
       getAllCountries: $resource(globalSettings.restUrl + '/countries', {}, {post: {method: 'POST'}}),
       getAllCurrencies: $resource(globalSettings.restUrl + '/currencies', {}, {post: {method: 'POST'}}),
       getPlans: $resource(globalSettings.restUrl + '/plans', {}, {post: {method: 'POST'}}),
-      upgrade: $resource(globalSettings.restUrl + '/upgrade', {}, {post: {method: 'POST'}})
+      upgrade: $resource(globalSettings.restUrl + '/upgrade', {}, {post: {method: 'POST'}}),
+      chargebee: $resource(globalSettings.restUrl + globalSettings.paymentModules.chargebee.apiEndPoint, {}, {post: {method: 'POST'}})
     };
 
-    var cache = {};
-    var upServices = {};
-    var creditCard;
+
 
     upServices.getAllCountriesList = getAllCountriesList;
     upServices.getAllCurrenciesList = getAllCurrenciesList;
@@ -23,6 +25,8 @@
     upServices.submitUpgrade = submitUpgrade;
     upServices.getYearsArray = getYearsArray;
     upServices.getMonthsArray = getMonthsArray;
+    upServices.initPaymentModule = initPaymentModule;
+
 
     upServices.creditCard = {
       init: initCreditCardServices,
@@ -122,8 +126,6 @@
       return ccInput;
     }
 
-
-
     function  getYearsArray() {
       var currentYear = parseInt(moment().format('YYYY'));
       var output = [currentYear];
@@ -183,13 +185,48 @@
      * @param planDetails
      * @param paymentDetails
      */
-    function submitUpgrade(planDetails, paymentDetails) {
-      dbg.log2('upgradePlanServices > submitUpgrade > payment details submitted to back end ',planDetails, paymentDetails);
+    function submitUpgrade(planDetails, paymentDetails, userData) {
+      var deferred = $q.defer();
 
-      upgradePlanRestApi.upgrade.post({planDetails: planDetails, paymentDetails: paymentDetails})
+      dbg.log2('upgradePlanServices > submitUpgrade > payment details submitted to back end ', planDetails, paymentDetails);
+
+
+
+      if (paymentDetails.paymentMethod === 'chargebee') {
+
+
+
+        upgradePlanRestApi.chargebee.post({}, {
+          planDetails: planDetails,
+          paymentDetails: paymentDetails,
+          userData:userData,
+          pages: {
+            redirect_url: window.location.href+'?step=5',
+            cancel_url: window.location.href,
+          }
+        },  function(res) {
+            if (res.error) {
+              deferred.reject(res.error);
+            } else {
+              deferred.resolve(res);
+            }
+        });
+
+      }
+
+      return deferred.promise;
+
+    }
+
+    function initPaymentModule() {
+      $ocLazyLoad.load('/js/ngApp/modules/chargebee/chargebee.js').then(function() {
+        chargebee = $injector.get('chargebee');
+        dbg.log2('#UpgradePlanController > validateStep2 > chargebee is ready to use');
+      });
     }
   }
 
 })();
+
 
 

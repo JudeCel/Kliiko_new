@@ -45,7 +45,7 @@ module.exports = function () {
         browserReloadDelay: 0,
         css: clientApp + 'css/',
 
-        defaultPort: 7203,
+        defaultPort: 8080,
         nodeServer: './bin/www'
     };
 

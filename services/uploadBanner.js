@@ -130,41 +130,6 @@ function write(file, bannerType) {
 
   return deferred.promise;
 
-
-
-
-  if(_.isEmpty(files)) {
-    return callback('No files selected');
-  }
-
-  let errors = {},
-    results = {};
-
-  async.forEachOf(files, function (value, filename, cb) {
-    let fileData = value;
-    eachFile(fileData, fileData.filename, function(err, result) {
-      if(err) {
-        errors[filename] = err[filename];
-      }
-      else {
-        results[filename] = result;
-      }
-      cb();
-    });
-  }, function(err) {
-    if(err) {
-      callback(err);
-    }
-    else {
-      if(_.isEmpty(errors)) {
-        callback(null, 'Successfully uploaded banner.');
-      }
-      else {
-        errors.message = 'Something went wrong with some of the banners.';
-        callback(errors);
-      }
-    }
-  });
 }
 
 
