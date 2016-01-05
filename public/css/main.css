@@ -108,6 +108,32 @@ label.radio-button input[type="radio"] + span {
 label.radio-button input[type="radio"]:checked + span:after {
   background: #ccc; }
 
+.btn-standart {
+  display: initial;
+  padding: 9px;
+  border: 3px solid lightgrey;
+  cursor: pointer;
+  background: white; }
+  .btn-standart.btn-red {
+    color: #E51D39;
+    border-color: #E51D39 !important; }
+  .btn-standart.btn-blue {
+    color: #4DC0E9;
+    border-color: #4DC0E9 !important; }
+  .btn-standart.btn-text-middle {
+    font-size: 80%; }
+  .btn-standart.btn-x {
+    padding: 1px 6px !important; }
+  .btn-standart.btn-glyphonic {
+    padding: 3px 4px 1px 4px; }
+
+img.ic-flipX {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  -webkit-filter: FlipH;
+          filter: FlipH;
+  -ms-filter: "FlipH"; }
+
 .changePasswordModal {
   width: 20%;
   padding-top: 100px; }
@@ -235,6 +261,13 @@ label.radio-button input[type="radio"]:checked + span:after {
 
 .table-dashboardElements > tbody > tr > td {
   word-break: break-all; }
+
+.error-area {
+  margin-top: 25px;
+  padding: 17px;
+  border: 2px solid #E51D39; }
+  .error-area > p {
+    margin-bottom: 10px; }
 
 @font-face {
   font-family: SourceSansPro-Black;
@@ -999,7 +1032,8 @@ input[class=checkbox-blue]:checked + label {
     text-align: left;
     color: #58595b; }
   #upgrade-plan-content #step-2 td {
-    padding: 8px 0; }
+    padding: 8px 0;
+    text-align: left; }
   #upgrade-plan-content #step-2 input#duration-input, #upgrade-plan-content #step-2 input#promocod-input,
   #upgrade-plan-content #step-2 select#duration-input {
     padding: 2px;
@@ -1007,3 +1041,176 @@ input[class=checkbox-blue]:checked + label {
     width: 55px; }
   #upgrade-plan-content #step-2 input#promocod-input {
     width: 230px; }
+
+#upgrade-plan-content #step-3,
+#upgrade-plan-content #step-4 {
+  margin-top: 50px;
+  font-size: 2rem;
+  text-align: left;
+  /* CHECKBOX */ }
+  #upgrade-plan-content #step-3 .row,
+  #upgrade-plan-content #step-4 .row {
+    margin: 8px 0; }
+  #upgrade-plan-content #step-3 .caption,
+  #upgrade-plan-content #step-4 .caption {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    color: white;
+    background: #4DC0E9; }
+  #upgrade-plan-content #step-3 .table-content,
+  #upgrade-plan-content #step-4 .table-content {
+    padding: 73px 5px 5px 17px;
+    border: 1px solid lightgrey;
+    border-top: none;
+    border-radius: 8px; }
+    #upgrade-plan-content #step-3 .table-content .total,
+    #upgrade-plan-content #step-4 .table-content .total {
+      color: #E51D39; }
+  #upgrade-plan-content #step-3 .table-header,
+  #upgrade-plan-content #step-4 .table-header {
+    margin-bottom: 12px;
+    font-size: 1.6rem;
+    color: #4DC0E9; }
+  #upgrade-plan-content #step-3 hr,
+  #upgrade-plan-content #step-4 hr {
+    margin: 5px;
+    border: 1px solid lightgrey; }
+  #upgrade-plan-content #step-3 hr.more-y-margin,
+  #upgrade-plan-content #step-4 hr.more-y-margin {
+    margin: 20px 0; }
+  #upgrade-plan-content #step-3 .checkout-row,
+  #upgrade-plan-content #step-4 .checkout-row {
+    margin-top: 20px;
+    margin-bottom: 15px; }
+  #upgrade-plan-content #step-3 #credit-cart-details-form label,
+  #upgrade-plan-content #step-4 #credit-cart-details-form label {
+    font-size: 1.5rem;
+    font-weight: 100; }
+  #upgrade-plan-content #step-3 #credit-cart-details-form input,
+  #upgrade-plan-content #step-4 #credit-cart-details-form input {
+    border-radius: 0px;
+    padding: 30px;
+    font-size: 2.3rem; }
+  #upgrade-plan-content #step-3 input#termsAndConditionsCC,
+  #upgrade-plan-content #step-3 input#termsAndConditionsPP,
+  #upgrade-plan-content #step-4 input#termsAndConditionsCC,
+  #upgrade-plan-content #step-4 input#termsAndConditionsPP {
+    display: none; }
+  #upgrade-plan-content #step-3 input#termsAndConditionsCC + label,
+  #upgrade-plan-content #step-3 input#termsAndConditionsPP + label,
+  #upgrade-plan-content #step-4 input#termsAndConditionsCC + label,
+  #upgrade-plan-content #step-4 input#termsAndConditionsPP + label {
+    max-width: none;
+    background: url("/icons/login_checkbox.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    margin-top: 0;
+    margin-left: 0;
+    margin-bottom: -5px;
+    background-size: contain; }
+  #upgrade-plan-content #step-3 input#termsAndConditionsCC:checked + label,
+  #upgrade-plan-content #step-3 input#termsAndConditionsPP:checked + label,
+  #upgrade-plan-content #step-4 input#termsAndConditionsCC:checked + label,
+  #upgrade-plan-content #step-4 input#termsAndConditionsPP:checked + label {
+    background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    background-size: contain;
+    margin-top: 1px; }
+  #upgrade-plan-content #step-3 .form-group.exp,
+  #upgrade-plan-content #step-4 .form-group.exp {
+    float: left;
+    margin-right: 37px; }
+  #upgrade-plan-content #step-3 select#credit-card-number-expDate,
+  #upgrade-plan-content #step-3 select#credit-card-number-expYear,
+  #upgrade-plan-content #step-3 input#credit-card-number-cvv,
+  #upgrade-plan-content #step-4 select#credit-card-number-expDate,
+  #upgrade-plan-content #step-4 select#credit-card-number-expYear,
+  #upgrade-plan-content #step-4 input#credit-card-number-cvv {
+    width: 110px;
+    border-radius: 0;
+    height: 55px;
+    font-size: 2.3rem; }
+  #upgrade-plan-content #step-3 input#credit-card-number-cvv,
+  #upgrade-plan-content #step-4 input#credit-card-number-cvv {
+    padding: 25px; }
+  #upgrade-plan-content #step-3 .detail-content,
+  #upgrade-plan-content #step-4 .detail-content {
+    font-size: 1.9rem; }
+
+#upgrade-plan-content #step-5 {
+  margin-top: 55px;
+  margin-bottom: 100px; }
+
+#messenger-area {
+  position: fixed;
+  top: 3%;
+  right: 3%;
+  margin: 33px;
+  text-align: left;
+  z-index: 99999999; }
+
+.message {
+  margin: 4px;
+  padding: 10px;
+  font-size: 2rem;
+  color: white;
+  border: 2px solid grey;
+  background-color: rgba(0, 0, 0, 0.86);
+  box-shadow: 1px 1px 19px gray; }
+  .message.ok {
+    border-color: green;
+    color: green;
+    background: rgba(255, 255, 255, 0.95); }
+  .message.error {
+    border-color: #E51D39;
+    color: #E51D39;
+    background: rgba(255, 255, 255, 0.95); }
+
+#banner-messages .banner-row {
+  margin: 35px 0;
+  padding-top: 35px;
+  border-top: 2px solid #4DC0E9; }
+
+#banner-messages .banners-section img {
+  width: 90%;
+  border: 1px solid lightgrey; }
+
+#banner-messages .banner-management-btns {
+  position: absolute;
+  top: 0;
+  right: 0; }
+
+#banner-messages .button {
+  -moz-appearance: button;
+  /* Firefox */
+  -webkit-appearance: button;
+  /* Safari and Chrome */
+  padding: 10px;
+  margin: 10px;
+  width: 70px; }
+
+#banner-messages .drop-box {
+  background: #F8F8F8;
+  border: 3px dashed #DDD;
+  width: 300px;
+  height: 65px;
+  text-align: center;
+  padding-top: 20px;
+  margin: 0px; }
+
+#banner-messages .dragover {
+  border: 5px dashed blue; }
+
+.banner-link-menu {
+  width: 500px;
+  height: 80px;
+  padding: 10px;
+  overflow: hidden; }
+
+.banner-link-label {
+  color: #4DC0E9 !important; }
+
+.banner-link-input {
+  border-color: #4DC0E9 !important; }

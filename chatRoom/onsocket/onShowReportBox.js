@@ -3,5 +3,5 @@ var onShowReportBox = function(result) {
 
 	window.reportbox.setReportbox(dataAsJson);
 
-	socket.emit('getreport', window.sessionID, window.userID);
+	socket.emit('getreport', window.sessionId, window.userID);
 };

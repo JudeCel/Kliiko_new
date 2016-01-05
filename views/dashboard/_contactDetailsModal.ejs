@@ -1,12 +1,13 @@
-<div class='modal fade' id='contactDetailsModal' role='dialog'>
+<div class='modal fade' id='contactDetailsModal' role='dialog' ng-controller="ContactDetailsModalController as cdm">
   <div class='modal-dialog contactDetailsModal'>
     <div class='modal-content border-red border-radius-none'>
       <div class='modal-header'>
         <button type='button' class='close' data-dismiss='modal'>&times;</button>
         <h2 class='modal-title text-center'>Contact Details</h2>
       </div>
+
       <div class='modal-body'>
-          <form method="post" action="/dashboard/contactdetails">
+          <form method="post" ng-submit="cdm.updateUserData(cdm.userData, cdm.userDetailsForm)" name="cdm.userDetailsForm">
             <div class="form-group">
               <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
                 <tr>
@@ -27,7 +28,7 @@
                     <label class="text-no-bold text-login-page" for="firstName">First name</label>
                   </td>
                   <td>
-                    <input type="text" value="" class="form-control" name="firstName" id="first_name" placeholder="First name">
+                    <input  id="first_name" ng-model="cdm.userData.firstName" type="text" value="" class="form-control" name="firstName" placeholder="First name" required="true">
                   </td>
                   <td  class="text-red-dark">
                       *
@@ -40,7 +41,7 @@
                     </label>
                   </td>
                   <td>
-                    <input type="text" value="" class="form-control" name="firstName" id="first_name" placeholder="Postal Address">
+                    <input type="text" ng-model="cdm.userData.postalAddress" class="form-control" name="postalAddress" id="postal-address" placeholder="Postal Address">
                   </td>
                 </tr>
                 <tr>
@@ -54,7 +55,7 @@
                     <label class="text-no-bold text-login-page" for="lastName">Last name</label>
                   </td>
                   <td>
-                    <input type="text" value="" class="form-control" name="lastName" id="last_name" placeholder="Last name">
+                    <input ng-model="cdm.userData.lastName" type="text" value="" class="form-control" name="lastName" id="last_name" placeholder="Last name" required="true">
                   </td>
                   <td  class="text-red-dark">
                     *
@@ -63,7 +64,7 @@
                       <label class="text-no-bold text-login-page" for="lastName">City</label>
                   </td>
                   <td>
-                    <input type="text" value="" class="form-control" name="lastName" id="last_name" placeholder="City">
+                    <input ng-model="cdm.userData.city" type="text" value="" class="form-control" name="lastName" id="last_name" placeholder="City">
                   </td>
                 </tr>
                 <tr>
@@ -77,7 +78,7 @@
                     <label class="text-no-bold text-login-page" for="email">Email</label>
                   </td>
                   <td>
-                    <input type="email" value="" class="form-control" name="email" id="email" placeholder="Email">
+                    <input ng-model="cdm.userData.email" type="email" value="" class="form-control" name="email" id="email" placeholder="Email" required="true">
                   </td>
                   <td  class="text-red-dark">
                     *
@@ -86,7 +87,7 @@
                     <label class="text-no-bold text-login-page" for="email">State</label>
                   </td>
                   <td>
-                    <input type="email" value="" class="form-control" name="email" id="email" placeholder="State">
+                    <input ng-model="cdm.userData.state" type="text" value="" class="form-control" name="state" id="state" placeholder="State">
                   </td>
                 </tr>
                 <tr>
@@ -100,36 +101,28 @@
                     <label class="text-no-bold text-login-page" for="gender">Gender</label>
                   </td>
                   <td>
-                    <label for="gender_male" class="radio-button">
+                    <label for="gender_male_step2" class="radio-button">
+                      <input type="radio" ng-model="cdm.userData.gender" name="gender_step2" value="male" id="gender_male_step2" ng-class="{checked:cdm.userData.gender == 'male'}">
 
-                      <%  var gender = "male"
-                      if(gender === "male"){ %>
-                         <input type="radio" name="gender" value="male" id="gender_male" checked>
-                      <% } else{ %>
-                         <input type="radio" name="gender" value="male" id="gender_male">
-                      <% } %>
                       <span class="checkbox-signup btn-radius-text">Male</span>
                     </label>
 
-                    <label for="gender_female" class="radio-button">
-
-                      <% var gender = "male"
-                       if(gender === "female"){ %>
-                         <input type="radio" name="gender" value="female" id="gender_female" checked>
-                      <% } else{ %>
-                         <input type="radio" name="gender" value="female" id="gender_female">
-                      <% } %>
+                    <label for="gender_female_step2" class="radio-button">
+                      <input type="radio" ng-model="cdm.userData.gender"  name="gender_step2" value="female" id="gender_female_step2" ng-class="{checked:cdm.userData.gender == 'female'}">
                       <span class="checkbox-signup btn-radius-text btn-radius-padding-left">Female</span>
+                    </label>
+
+
                     </label>
                   </td>
                   <td  class="text-red-dark">
-                    *
+                   <!-- *-->
                   </td>
                   <td>
                     <label class="text-no-bold text-login-page" for="email">Postcode</label>
                   </td>
                   <td>
-                    <input type="tel" value="" class="form-control" id="mobile" name="mobile" placeholder="Postcode">
+                    <input ng-model="cdm.userData.postcode" type="text" value="" class="form-control" id="postcode" name="postcode" placeholder="Postcode">
                   </td>
                 </tr>
                 <tr>
@@ -147,16 +140,16 @@
                     </label>
                   </td>
                   <td>
-                    <input type="tel" value="" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number">
+                    <input ng-model="cdm.userData.mobile" type="tel" value="" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number" required="true">
                   </td>
                   <td  class="text-red-dark">
                     *
                   </td>
                   <td>
-                    <label class="text-no-bold text-login-page" for="email">Country</label>
+                    <label class="text-no-bold text-login-page" for="country">Country</label>
                   </td>
                   <td>
-                    <input type="tel" value="" class="form-control" id="mobile" name="mobile" placeholder="Country">
+                    <input ng-model="cdm.userData.country" type="text" value="" class="form-control" id="country" name="country" placeholder="Country">
                   </td>
                 </tr>
                 <tr>
@@ -167,27 +160,27 @@
                 </tr>
                 <tr>
                   <td>
-                    <label class="text-no-bold text-login-page" for="LandlineNumber">
+                    <label class="text-no-bold text-login-page" for="landline_number">
                       Landline
                       <br>
                       Number
                     </label>
                   </td>
                   <td>
-                    <input type="text" value="" class="form-control" name="landlineNumber" id="landline_number" placeholder="LandlineNumber">
+                    <input ng-model="cdm.userData.landlineNumber" type="text" value="" class="form-control" name="landline_number" id="landline_number" placeholder="LandlineNumber">
                   </td>
                   <td  class="text-red-dark">
-                    *
+                    <!--*-->
                   </td>
                   <td>
-                    <label class="text-no-bold text-login-page" for="LandlineNumber">
+                    <label class="text-no-bold text-login-page" for="copmany-name">
                       Company
                       <br>
                       Name
                     </label>
                   </td>
                   <td>
-                    <input type="text" value="" class="form-control" name="landlineNumber" id="landline_number" placeholder="Company Name">
+                    <input ng-model="cdm.userData.companyName" type="text" value="" class="form-control" name="company-name" id="company-name" placeholder="Company Name">
                   </td>
                 </tr>
                 <tr>
@@ -199,24 +192,19 @@
               </table>
               <div class="row">
                 <div class="col-md-12">
-                  <button type="submit" class="btn border-red text-red-dark border-radius-none background-transp pull-right btn-md">Done</button>
+                  <span class="pull-right">
+                    <button type="button" ng-show="cdm.userDetailsForm.$dirty" ng-click="cdm.cancel()" class="btn border-red text-red-dark border-radius-none background-transp pull-right- btn-md">Cancel</button>&nbsp;&nbsp;
+                  <button type="submit" ng-show="cdm.userDetailsForm.$dirty" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Update</button>
+                  <button type="button" ng-show="cdm.userDetailsForm.$pristine" ng-click="cdm.cancel()" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Done</button>
+                  </span>
                   <div class="check">
-                    <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate" value='receive-updates'/>
+                    <input ng-model="cdm.userData.tipsAndUpdate" type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate"/>
                     <label for="tipsAndUpdate"></label>
-                    <span class="checkbox-signup" id="tipsAndUpdate">Yes send me the Kliiko Newsletter which includes tips and updates.</span>
+                    <span  class="checkbox-signup" id="tipsAndUpdate">Yes send me the Kliiko Newsletter which includes tips and updates.</span>
                   </div>
                 </div>
               </div>
             </div>
-<!--             <div class="form-group center-block">
-              <div class="check center-block">
-                <input type="submit" value="Save" class="btn login"></input>
-              </div>
-              <div class="check center-block">
-                <a href="#cancel" class="btn cancel">Cancel</a>
-              </div>
-            </div> -->
-
           </form>
 
       </div>

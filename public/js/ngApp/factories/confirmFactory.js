@@ -12,4 +12,4 @@ function angularConfirm($window, $q) {
     return(defer.promise);
   }
   return(confirm);
-};
+}

@@ -1080,7 +1080,7 @@ socket.on('connect_failed', function () {
 config = config.json
 */
 function main(config, ioUrl) {
-  var sessionID = window.sessionID;
+  var sessionId = window.sessionId;
   var userID = window.userID;
 
   //	lets process config
@@ -1112,7 +1112,7 @@ function main(config, ioUrl) {
       location.reload();
     }
   });
-  socket.emit('getbrandprojectinfo', sessionID);
+  socket.emit('getbrandprojectinfo', sessionId);
 }
 
 window.onresize = function () {

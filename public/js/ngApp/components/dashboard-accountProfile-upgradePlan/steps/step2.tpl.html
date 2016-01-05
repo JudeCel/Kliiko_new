@@ -21,12 +21,12 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <th scope="row">{{up.selectedPlanName}}</th>
-                                <td>{{ (up.plans[up.selectedPlanName].price * up.selectedCurrency.rate) | currency : up.selectedCurrency.symbol : 2}}</td>
+                                <td scope="row">{{up.plans[up.selectedPlanName].name}}</td>
+                                <td>{{ up.plans[up.selectedPlanName].price | currency : 'US$' : 2}}</td>
                                 <!--<td><input id="duration-input" type="number" ng-model="up.upgradeDuration" ng-value="1" min="1" size="3"></td>-->
                                 <td>
                                     <select name="" id="duration-input" ng-model="up.upgradeDuration" >
-                                        <option value="1">1</option>
+                                        <option value="1" ng-selected="true">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
@@ -43,7 +43,7 @@
                                 </td>
                                 <td><input id="promocod-input" type="text" ng-model="up.promocode"></td>
                                 <td>
-                                    {{(up.plans[up.selectedPlanName].price * up.upgradeDuration * up.selectedCurrency.rate )|| (up.plans[up.selectedPlanName].price * up.selectedCurrency.rate) | currency : up.selectedCurrency.symbol : 2 }}
+                                    {{up.finalPrice = (up.plans[up.selectedPlanName].price * up.upgradeDuration  )|| (up.plans[up.selectedPlanName].price ) | currency : 'US$' : 2 }}
                                 </td>
                             </tr>
 
@@ -57,7 +57,7 @@
 
         <uib-accordion-group is-open="up.modContentBlock.contactDetails">
             <uib-accordion-heading>
-                <div class="panel-label" ng-click="up.getUserData(up.modContentBlock.contactDetails)">
+                <div class="panel-label">
                     Your Contact Details <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': up.modContentBlock.contactDetails, 'glyphicon-chevron-right': !up.modContentBlock.contactDetails}"></i>
                 </div>
             </uib-accordion-heading>
@@ -88,14 +88,14 @@
                                 *
                             </td>
                             <td>
-                                <label class="text-no-bold text-login-page" for="postal-adress_step2">
+                                <label class="text-no-bold text-login-page" for="postal-address_step2">
                                     Postal
                                     <br>
                                     Address
                                 </label>
                             </td>
                             <td>
-                                <input type="text" ng-model="up.userData.postalAddress" value="" class="form-control" name="postal-adress_step2" id="postal-adress_step2" placeholder="Postal Address">
+                                <input type="text" ng-model="up.userData.postalAddress" value="" class="form-control" name="postal-address_step2" id="postal-address_step2" placeholder="Postal Address">
                             </td>
                         </tr>
                         <tr>

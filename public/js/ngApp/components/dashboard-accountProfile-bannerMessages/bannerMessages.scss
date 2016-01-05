@@ -1,0 +1,61 @@
+#banner-messages {
+
+  $margin: 35px;
+
+  .banner-row {
+    margin: $margin 0;
+    padding-top: $margin;
+    border-top: 2px solid $blue;
+  }
+
+  .banners-section {
+    img {
+      width: 90%;
+      border: 1px solid lightgrey;
+    }
+
+  }
+
+  .banner-management-btns {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .button {
+    -moz-appearance: button;
+    /* Firefox */
+    -webkit-appearance: button;
+    /* Safari and Chrome */
+    padding: 10px;
+    margin: 10px;
+    width: 70px;
+  }
+  .drop-box {
+    background: #F8F8F8;
+    border: 3px dashed #DDD;
+    width: 300px;
+    height: 65px;
+    text-align: center;
+    padding-top: 20px;
+    margin: 0px;
+  }
+  .dragover {
+    border: 5px dashed blue;
+  }
+  
+
+}
+
+.banner-link-menu {
+  width: 500px;
+  height: 80px;
+  padding: 10px;
+  overflow: hidden;
+}
+.banner-link-label {
+  color: $blue !important;
+}
+.banner-link-input {
+  border-color: $blue !important;
+}

@@ -7,7 +7,7 @@
 var onUpdateavatarinfo = function(sessionId, userId, data) {
 	//	this should be done for all sessions, not just a particular topic
 	if (isEmpty(sessionId)) return;
-	if (sessionId != window.sessionID) return;	//	is this the correct topic?
+	if (sessionId != window.sessionId) return;	//	is this the correct topic?
 
 	if (isEmpty(window.topic)) return;
 

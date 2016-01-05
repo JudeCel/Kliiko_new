@@ -1,3 +1,4 @@
+<section ng-controller="AccountProfileController as apc">
 <div class='col-xs-12 col-sm-12 col-md-12'>
   <div class='text-center remove-link-line'>
     <div ui-sref-active='active' ui-sref='dashboard.accountProfile.upgradePlan' class='btn btn-dashboard-menu'>
@@ -19,6 +20,11 @@
       <span class='pull-left'>Promotion Codes</span>
       <img ui-sref-active='active' class='promotion-code pull-right' src='/icons/upgrade_blue.png' alt='' />
     </div>
+
+    <div ng-if="apc.bannerMessageIsAccessible" ui-sref-active='active' ui-sref='dashboard.accountProfile.bannerMessages' class='btn btn-dashboard-menu'>
+      <span class='pull-left'>Banner Messages</span>
+      <img ui-sref-active='active' class='promotion-code pull-right' src='/icons/gallery_blue.png' alt='' />
+    </div>
   </div>
 </div>
 
@@ -29,3 +35,8 @@
     Here you can manage your Account Profile by upgrading your Plan and adding Account Managers.
   </div>
 </div>
+
+
+</section>
+
+

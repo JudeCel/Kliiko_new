@@ -29,8 +29,21 @@ function post(req, res, next) {
   });
 };
 
-function remove(req, res, next) {
-  accountManagerService.removeInviteOrAccountUser(req, function(error, message) {
+function removeInvite(req, res, next) {
+  var params = { userId: req.query.id, accountId: req.user.accountOwnerId };
+
+  inviteService.findAndRemoveInvite(params, function(error, message) {
+    if(error) {
+      res.send({ error: error });
+    }
+    else {
+      res.send({ message: message });
+    }
+  });
+};
+
+function removeAccountUser(req, res, next) {
+  accountManagerService.findAndRemoveAccountUser(req, function(error, message) {
     if(error) {
       res.send({ error: error });
     }
@@ -43,5 +56,6 @@ function remove(req, res, next) {
 module.exports = {
   get: get,
   post: post,
-  remove: remove
+  removeInvite: removeInvite,
+  removeAccountUser: removeAccountUser
 };

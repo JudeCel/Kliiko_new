@@ -1,5 +1,8 @@
-<div class='page-banner'>
-  <%if(bannerPath) { %>
-      <img src='<%= bannerPath %>' alt="" class="center-block" />
-  <% } %>
+<div class='page-banner' ng-controller="MainBannerController as pageBanner">
+    <div ng-if="pageBanner.banner && pageBanner.banner.filepath">
+        <img ng-show="!pageBanner.banner.link" class="center-block" ng-src="{{pageBanner.banner.filepath}}" alt="">
+        <a ng-show="pageBanner.banner.link" href="{{pageBanner.banner.filepath}}" title="{{pageBanner.banner.link}}" target="_blank">
+            <img class="center-block" ng-src="{{pageBanner.banner.filepath}}" alt="">
+        </a>
+    </div>
 </div>

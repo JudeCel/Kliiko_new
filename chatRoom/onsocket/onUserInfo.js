@@ -27,7 +27,7 @@ var onUserinfo = function(data) {
 		socket.emit('setusername', thisMain.username);
 
 		//	lets make sure we have our participants list and topics
-		socket.emit('getparticipants', window.sessionID);
-		//socket.emit('gettopics', window.sessionID); //moved in onParticipants.js, waiting for initialization window.topic
+		socket.emit('getparticipants', window.sessionId);
+		//socket.emit('gettopics', window.sessionId); //moved in onParticipants.js, waiting for initialization window.topic
 	}
 };

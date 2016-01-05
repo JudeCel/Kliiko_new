@@ -31,7 +31,7 @@ function acceptGet(req, res, next) {
     }
     else {
       if(invite.userType == 'new') {
-        res.render(views_path('accept'), simpleParams('Accept Invite', invite));
+        res.render(views_path('index'), simpleParams('Accept Invite', invite));
       }
       else {
         req.flash('message', message);
@@ -44,7 +44,7 @@ function acceptGet(req, res, next) {
 function acceptPost(req, res, next) {
   inviteService.acceptInviteNew(req.params.token, req.body, function(error, invite, message) {
     if(error) {
-      res.render(views_path('accept'), simpleParams('Invite', invite, error));
+      res.render(views_path('index'), simpleParams('Invite', invite, error));
     }
     else {
       req.flash('message', message);

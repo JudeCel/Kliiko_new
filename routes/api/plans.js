@@ -6,9 +6,21 @@
  */
 
 var plans = {
-    'single': {price: 180 },
-    'monthly': {price: 50 },
-    'annual': {price: 550 }
+  'single': {
+    id: 1,
+    name: 'Single Plan',
+    price: 180
+  },
+  'monthly': {
+    id: 2,
+    name: 'Monthly Plan',
+    price: 50
+  },
+  'annual': {
+    id: 3,
+    name: 'Annual Plan',
+    price: 550
+  }
 };
 
 function plansGet(req, res, next) {
@@ -16,5 +28,5 @@ function plansGet(req, res, next) {
 }
 
 module.exports = {
-  plansGet: plansGet,
-}
+  plansGet: plansGet
+};

@@ -1,0 +1,129 @@
+<section id="step-3">
+    <div class="row">
+        <div class="col-md-6">
+
+            <div class="row">
+                <div class="col-md-12 caption">
+                    Order Summary
+                </div>
+                <div class="table-content">
+                    <div class="row table-header" >
+                        <div class="col-sm-5 col-md-5">Plan</div>
+                        <div class="col-sm-3 col-md-3">Duration</div>
+                        <div class="col-sm-4 col-md-4">Total</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5 col-md-5">{{up.selectedPlanName}}</div>
+                        <div class="col-sm-3 col-md-3">{{up.upgradeDuration || 1}}</div>
+                        <div class="col-sm-4 col-md-4">{{up.finalPrice | currency : up.selectedCurrency.symbol : 2}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5 col-md-5">1 Free month</div>
+                        <div class="col-sm-3 col-md-3">1</div>
+                        <div class="col-sm-4 col-md-4">{{ 0 | currency : up.selectedCurrency.symbol : 2}}</div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-5 col-md-5 total">Order Total</div>
+                        <div class="col-sm-3 col-md-3">{{up.upgradeDuration + 1}}</div>
+                        <div class="col-sm-4 col-md-4">{{up.finalPrice | currency : up.selectedCurrency.symbol : 2}}</div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12 table-header">
+                    New Payment Method
+                </div>
+                <div class="col-md-12 checkout-row">
+                    <div class="btn-standart btn-red btn-text-middle" ng-click="up.paymentDetails.changePaymentMethodTo('payPal')" ng-hide="up.paymentDetails.payPal.selected">Checkout with PayPal</div>
+                    &nbsp;&nbsp;&nbsp;
+                    <div class="btn-standart btn-green btn-text-middle" ng-click="up.paymentDetails.changePaymentMethodTo('creditCard')" ng-hide="up.paymentDetails.creditCard.selected">Checkout with Credit Card</div>
+                </div>
+
+            </div>
+
+            <hr class="more-y-margin">
+
+            <section id="payPal-details" ng-show="up.paymentDetails.payPal.selected">
+                <div class="col-md-12 table-header">
+                    Check out with PayPal
+                </div>
+                <div class="row" >
+                    <div class="col-md-1">
+                        <div class="check">
+                            <input ng-model="up.paymentDetails.payPal.tos" type="checkbox" class="checkbox-btn btn-green" name="termsAndConditions" id="termsAndConditionsPP">
+                            <label for="termsAndConditionsPP"></label>
+                        </div>
+
+                    </div>
+                    <div class="col-md-11">
+                        <p>Click here to confirm you have read the <a href="terms">Terms and Conditions</a></p>
+                        <p>Your PayPal account will be debited upon confirmation. You plan will automatically renew, you can disable under Billing & Plan Details.</p>
+                    </div>
+                </div>
+            </section>
+
+
+
+            <section id="creditCard-details" ng-show="up.paymentDetails.creditCard.selected">
+                <div class="col-md-12 table-header">
+                    Check out with Credit Card
+                </div>
+                <div class="row">
+                    <form id="credit-cart-details-form">
+                        <div class="form-group">
+                            <label for="card-holder-name-input">Name on card</label>
+                            <input id="card-holder-name-input" ng-model="up.creditCardDetails.holderName" type="text" class="form-control" >
+                        </div>
+                        <div class="form-group">
+                            <label for="credit-card-number-input">Card number</label>
+                            <input type="text" class="form-control" ng-model="up.paymentDetails.creditCard.number" ng-change="up.paymentDetails.creditCard.numberChanged()" id="credit-card-number-input" placeholder="type 4 to use test card number">
+                        </div>
+
+                        <div class="form-group exp">
+                            <label for="credit-card-number-input">Expiry Date</label>
+                            <select id="credit-card-number-expDate" type="text" class="form-control" ng-model="up.paymentDetails.creditCard.expMonth">
+                                <option ng-repeat="month in ::up.expDates.months" value="{{month}}">{{month}}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group exp">
+                            <label for="credit-card-number-input">&nbsp;</label>
+                            <select id="credit-card-number-expYear" type="text" class="form-control" ng-model="up.paymentDetails.creditCard.expYear">
+                                <option ng-repeat="year in ::up.expDates.years" value="{{year}}">{{year}}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group exp">
+                            <label for="credit-card-number-input">Card Code (CVV)</label>
+                            <input id="credit-card-number-cvv" type="password" class="form-control" ng-model="up.paymentDetails.creditCard.cvv" ng-change="up.cvvValidate()" maxlength="3">
+                        </div>
+                    </form>
+
+                </div>
+                <div class="row" >
+                    <div class="col-md-1">
+                        <div class="check">
+                            <input ng-model="up.paymentDetails.creditCard.tos" type="checkbox" class="checkbox-btn btn-green" name="termsAndConditions" id="termsAndConditionsCC">
+                            <label for="termsAndConditionsCC"></label>
+                        </div>
+
+                    </div>
+                    <div class="col-md-11">
+                        <p>Click here to confirm you have read the <a href="terms">Terms and Conditions</a></p>
+                        <p>
+                            Your credit card account will be debited upon confirmation. Your plan will automatically renew, you can disable under Billing & Plan Details.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+
+
+        </div>
+    </div>
+</section>

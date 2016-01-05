@@ -11,7 +11,7 @@ describe('User', () => {
       });
     });
 
-    it('set encrypte password', (done) =>  {
+    it('success', (done) =>  {
       let attrs = {
         accountName: "DainisL",
         firstName: "Dainis",
@@ -20,9 +20,9 @@ describe('User', () => {
         email: "dainis@gmail.com",
         gender: "male"
       }
-      User.build(attrs).save()
+      User.create(attrs)
         .then(function(user) {
-          assert.equal(user.tipsAndUpdate, 'on');
+          assert.equal(user.tipsAndUpdate, true);
           assert.equal(user.encryptedPassword.length, encryptedPasswordLength);
           done();
         }).catch(function(error) {
