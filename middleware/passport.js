@@ -18,7 +18,7 @@ passport.use(new LocalStrategy({
       if (failed) {
         done("Wrong email or password");
       }else{
-        result.getOwnerAccount().then(function(accounts) {
+        result.getAccounts().then(function(accounts) {
           result.increment('signInCount').done(function(result) {
             done(null, userParams(result, accounts[0]));
           })
@@ -60,7 +60,7 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(userObject, done) {
   models.User.find({attributes: ['email', 'id', 'firstName', 'signInCount'], where: {id: userObject.id}}).done(function(result){
     if (result) {
-      result.getOwnerAccount().then(function(accounts) {
+      result.getAccounts().then(function(accounts) {
         done(null, userParams(result, accounts[0]));
       });
     }else{
