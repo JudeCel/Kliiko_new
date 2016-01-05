@@ -2,8 +2,6 @@
 let config = require('config');
 let chargebee = require("chargebee");
 
-
-
 module.exports = {
   chargebeePost: chargebeePost
 };
