@@ -548,7 +548,7 @@ BUTTON_BORDER_COLOUR = '#ffc973';
 <script type="text/javascript">
 //	lets start the help system now
 window.onload = function () {
-  window.sessionID = '<%= id %>'
+  window.sessionId = '<%= id %>'
   window.userID = '<%= currentUser.id %>'
   window.ioUrl = '<%= ioUrl %>'
 
@@ -587,7 +587,7 @@ window.onload = function () {
     });
   });
 
-  socketConfig.emit("config_get_info", sessionID);
+  socketConfig.emit("config_get_info", sessionId);
 };
 </script>
 </body>

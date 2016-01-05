@@ -46,7 +46,7 @@ var initMainMenu = function(role) {
 			case 'vote':
 			case 'image': {
 				try {
-					socket.emit('getresources', thisMain.sessionID, id, true);
+					socket.emit('getresources', thisMain.sessionId, id, true);
 				} catch (e) {
 				}
 			}
@@ -63,7 +63,7 @@ var initMainMenu = function(role) {
 			}
 			break;
 			case 'reports':
-				socket.emit('getreporttopics', window.sessionID, window.userID);
+				socket.emit('getreporttopics', window.sessionId, window.userID);
 				break;
 			case 'help':
 				window.open('http://' + window.domain + ':' + window.port + '/chat/help?r=' + role[0], '_blank');
@@ -446,7 +446,7 @@ var onParticipants = function(data) {
 
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	//	lets add ourselves now
-	socket.emit('adduser', window.sessionID, currentParticipant.userId, currentParticipant.name);
+	socket.emit('adduser', window.sessionId, currentParticipant.userId, currentParticipant.name);
 
 	var backgroundWidth = paperBackground.canvas.clientWidth ? paperBackground.canvas.clientWidth : paperBackground.width,
 		backgroundHeight = paperBackground.canvas.clientHeight ? paperBackground.canvas.clientHeight : paperBackground.height,
@@ -582,5 +582,5 @@ var onParticipants = function(data) {
 		paper: paperTopic
 	}
 	window.topic = new sf.ifs.View.Topic(json);
-  socket.emit('gettopics', window.sessionID); //moved from onUserInfo
+  socket.emit('gettopics', window.sessionId); //moved from onUserInfo
 };

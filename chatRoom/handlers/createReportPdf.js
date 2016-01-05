@@ -13,7 +13,7 @@
 //    var err = joi.validate(req.params, {
 //        report: joi.types.Object().required(),
 //        type: joi.string().required(),
-//        sessionID: joi.number(),
+//        sessionId: joi.number(),
 //        topicID: joi.number(),
 //        userID: joi.number(),
 //	    includeFacilitator: joi.types.Boolean()
@@ -104,7 +104,7 @@
 //                urlPath: URL_PATH
 //            },
 //            ifs: {
-//                sessionId: req.params.sessionID,
+//                sessionId: req.params.sessionId,
 //                session: req.params.report.session,
 //                topicId: req.params.topicID,
 //                topic: req.params.report.topic
@@ -187,7 +187,7 @@
 //            case "stats":
 //                var cmdReq = expressValidatorStub({
 //                    params: {
-//                        sessionId: req.params.sessionID
+//                        sessionId: req.params.sessionId
 //                    }
 //                });
 //
@@ -294,7 +294,7 @@
 //                case 'stats':
 //                    rowObject.count = rowData.count_userId;
 //                    rowObject.topicId = rowData.topicId;
-//                    rowObject.topic_name = rowData.topic_name;
+//                    rowObject.topicName = rowData.topicName;
 //
 //                    switch (json.type.toLowerCase()) {
 //                        case 'csv':

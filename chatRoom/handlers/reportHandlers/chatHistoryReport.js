@@ -1,6 +1,6 @@
 var mtypes = require('./../../helpers/mtypes');
 var getReportData_ChatHistory = require('../getReportData_ChatHistory.js');
-var config = require('../../config/config.json');
+var config = require('config').get("chatConf");
 var FS_PATH = config.paths.fsPath + config.paths.chatRoomPath;
 var S = require('string');
 
