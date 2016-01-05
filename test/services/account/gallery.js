@@ -4,7 +4,7 @@ var user  = models.User;
 var account  = models.Account;
 var usersServices  = require('./../../../services/users');
 var gallery  = require('./../../../services/account/gallery');
-var assert = require('assert');
+var assert = require('chai').assert;
 
 describe('Gallery', function() {
   var testUser = null;
@@ -37,17 +37,57 @@ describe('Gallery', function() {
     });
   });
 
-  it('finds all account gallery records', function (done) {
-    gallery.findAllRecords(testAccount.id).then(
-      function(res) {
-        console.log(res);
-        done();
-      },
-      function(err) {
-        console.log(err);
-        done();
+  // it('finds all account gallery records', function (done) {
+  //   gallery.findAllRecords(testAccount.id).then(
+  //     function(res) {
+  //       assert.deepEqual(res, []);
+  //       done();
+  //     },
+  //     function(err) {
+  //       assert.equal(res, null);
+  //       done();
+  //     }
+  //   );
+  // });
+
+  describe('upload validations', function() {
+    function defaultFile(params) {
+      let json = {};
+      json = {
+        originalname: params.originalname || 'profile_test.png',
+        encoding: params.encoding || '7bit',
+        mimetype: params.mimetype || 'image/png',
+        destination: params.destination || 'test/fixtures/uploadGallery/test',
+        filename: params.filename || 'success.png',
+        path: params.path || 'test/fixtures/uploadBanner/test/success.png',
+        size: params.size || 10000
+      };
+      return json;
+    }
+
+    it('trying to upload to big file', function (done) {
+      let file = defaultFile({});
+      let params = {
+        uploadType: "image", 
+        file
       }
-    )
+
+      // console.log(params);
+      done();
+
+      gallery.uploadNew(params).then(
+        function(res) {
+          assert.deepEqual(res, null);
+          done();
+        },
+        function(err) {
+          console.log(err);
+          // assert.equal(res, null);
+          done();
+        }
+      );
+    });
+
   });
 
 });
