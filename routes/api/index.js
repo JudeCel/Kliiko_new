@@ -12,6 +12,7 @@ var accountManager = require('./accountManager');
 var promotionCode = require('./promotionCode');
 var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
+var survey = require('./survey');
 
 
 module.exports = router;
@@ -44,6 +45,8 @@ router.post('/banners', multipartyMiddleware, banners.banners_Post);
 router.post('/banners/:bannerType', multipartyMiddleware, banners.banners_bannerType_Post);
 router.delete('/banners/:bannerType', multipartyMiddleware, banners.banners_Delete);
 
+router.get('/survey', survey.get);
+
 // Common Rules
 router.use(function (req, res, next) {
   if (req.user) {
@@ -57,7 +60,3 @@ router.use(function (req, res, next) {
 function notAuthExit(res) {
   res.status(403).send('not authorized');
 }
-
-
-
-

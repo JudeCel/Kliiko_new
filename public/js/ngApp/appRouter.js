@@ -162,13 +162,23 @@
         }]
 
       })
-      .state('dashboard.resources.contactList.recruiter', {
-        url: '/recruiter',
+      .state('dashboard.resources.contactList.survey', {
+        url: '/survey',
         views: {
-          'resourcesContent': { templateUrl: prePath + 'dashboard-resources-contactList-recruiter/dashboard-content.html' }
+          'resourcesContent': { templateUrl: prePath + 'dashboard-resources-contactList-survey/index.html' }
         },
         onEnter: ['dbg', function (dbg) {
-          dbg.rs('dashboard.resources.contactList.recruiter is on');
+          dbg.rs('dashboard.resources.contactList.survey is on');
+        }]
+
+      })
+      .state('dashboard.resources.contactList.survey.create', {
+        url: '/survey/create',
+        views: {
+          'resourcesContent': { templateUrl: prePath + 'dashboard-resources-contactList-survey/create.html' }
+        },
+        onEnter: ['dbg', function (dbg) {
+          dbg.rs('dashboard.resources.contactList.survey.create is on');
         }]
 
       })
