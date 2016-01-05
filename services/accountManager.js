@@ -20,7 +20,7 @@ function createOrFindUser(req, callback) {
 
   preValidate(user, params, function(error) {
     if(error) {
-      return callback(prepareErrors(error));
+      return callback(error);
     }
 
     User.find({
