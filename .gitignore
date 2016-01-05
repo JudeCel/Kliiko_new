@@ -6,3 +6,9 @@
 /build/*
 /npm-debug.log
 /.tmp/templates.js
+
+.vscode/settings.json
+
+config/config.json.sample copy
+
+config/config.json.sample
