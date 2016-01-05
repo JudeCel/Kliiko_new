@@ -70,7 +70,7 @@
 
 
       // after payment callback url case
-      if ($stateParams.step && $stateParams.step == 5)  goToStep(5);
+      if ($stateParams.step && $stateParams.step == 5)  { goToStep(5); }
     }
 
     /**
@@ -136,8 +136,8 @@
 
     /**
      * Validate and process steps data
-     * @param step
-     * @returns {*}
+     * @param step {number}
+     * @returns {boolean}
      */
     function validateStep(step) {
       if (step === 3) return validateStep2();
@@ -156,9 +156,6 @@
           domServices.shakeClass('terms-attention');
           return false;
         }
-
-        //if (vm.paymentDetails.creditCard.number == '4' && appData.mode === 'development') vm.paymentDetails.creditCard.number = '4242424242424242';
-        //upgradePlanServices.creditCard.createToken(vm.paymentDetails.creditCard)
         return true;
       }
     }
@@ -175,22 +172,14 @@
           form.$setUntouched();
         }, 2000);
 
-
       });
     }
 
     function changePaymentMethodTo(type) {
-      vm.paymentDetails.payPal.selected = false;
-      vm.paymentDetails.payPal.tos = false;
       vm.paymentDetails.creditCard.selected = false;
       vm.paymentDetails.creditCard.tos = false;
-      vm.paymentDetails.chargebee.selected = false;
-      vm.paymentDetails.chargebee.tos = false;
 
-      if (type === 'payPal') vm.paymentDetails.payPal.selected = true;
-      if (type === 'creditCard') { vm.paymentDetails.creditCard.selected = true; upgradePlanServices.creditCard.init(); }
       if (type === 'chargebee') vm.paymentDetails.chargebee.selected = true;
-
 
       selectedPaymentMethod = type;
 
@@ -199,15 +188,6 @@
         vm.cantMoveNextStep = !value;
       });
 
-    }
-
-    function cardNumberChanged() {
-      vm.paymentDetails.creditCard.number = upgradePlanServices.formatCreditCardNumber(vm.paymentDetails.creditCard.number);
-    }
-
-    // allow only digits
-    function cvvValidate() {
-      vm.paymentDetails.creditCard.cvv = vm.paymentDetails.creditCard.cvv.replace(/\D/g, '');
     }
 
     function handleUserDataChangeClick() {

@@ -1,21 +1,21 @@
 "use strict";
-var config = require('config');
-var chargebee = require("chargebee");
+let config = require('config');
+let chargebee = require("chargebee");
 
 
 
 module.exports = {
-  chargebee_Post: chargebee_Post
+  chargebeePost: chargebeePost
 };
 
-var chargebeeConfigs = config.get('chargebee');
+let chargebeeConfigs = config.get('chargebee');
 
 chargebee.configure({
   site : chargebeeConfigs.site,
   api_key : chargebeeConfigs.api_key
 });
 
-function chargebee_Post(req, res, next) {
+function chargebeePost(req, res, next) {
 
   if (!req.body.userData) { res.send('no userData specified');  return; }
   if (!req.body.planDetails) { res.send('no planDetails specified');  return; }
@@ -54,42 +54,6 @@ function chargebee_Post(req, res, next) {
       res.send(result);
     }
   });
-
-  //////////
-  return;
-
-  chargebee.hosted_page.checkout_new({
-    plan_id : "plan1",
-    customer : {
-      email : userData.email,
-      first_name : userData.firstName,
-      last_name : userData.lastName,
-      phone : userData.mobile
-    },
-    billing_address : {
-      first_name : userData.firstName,
-      last_name : userData.lastName,
-      line1 : userData.postalAddress,
-      city : userData.city,
-      state : userData.state,
-      zip : userData.postcode,
-      country : userData.country
-    }
-  }).request(function(error,result){
-    if(error){
-      //handle error
-      console.log(error);
-      res.send(error);
-    }else{
-      console.log(result);
-      res.send(result);
-      var subscription = result.subscription;
-      var customer = result.customer;
-      var card = result.card;
-      var invoice = result.invoice;
-    }
-  });
-
 
 }
 

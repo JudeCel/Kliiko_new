@@ -14,9 +14,6 @@
     init();
 
     function init() {
-      var userData = user.getUserData();
-      console.log(888, userData);
-
       user.canAccess('bannerMessages').
         then(
           function(res) { vm.bannerMessageIsAccessible = true; },

@@ -38,8 +38,6 @@
   function appRun($stateParams, dbg, $rootScope, $state, globalSettings) {
     dbg.log('#appRun started ');
 
-    //socketIO.init();
-
     String.prototype.capitalize = function () {
       return this.charAt(0).toUpperCase() + this.slice(1);
     };
