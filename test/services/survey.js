@@ -3,32 +3,20 @@
 var models = require('./../../models');
 var Survey = models.Survey;
 
-var surveyServices  = require('./../../services/survey');
-var usersServices  = require('./../../services/users');
+var surveyServices = require('./../../services/survey');
+var userFixture = require('./../fixtures/user');
 var assert = require('chai').assert;
 
 describe('SERVICE - Survey', function() {
-  var testUser = null;
-  var testAccount = null;
+  var testUser, testAccount;
 
   beforeEach(function(done) {
-    var attrs = {
-      accountName: "BLauris",
-      firstName: "Lauris",
-      lastName: "Blīgzna",
-      password: "multipassword",
-      email: "bligzna.lauris@gmail.com",
-      gender: "male"
-    }
-
-    models.sequelize.sync({ force: true }).then(() => {
-      usersServices.create(attrs, function(errors, user) {
-        testUser = user;
-        user.getOwnerAccount().then(function(accounts) {
-          testAccount = accounts[0];
-          done();
-        });
-      });
+    userFixture.createUserAndOwnerAccount().then(function(result) {
+      testUser = result.user;
+      testAccount = result.account;
+      done();
+    }, function(error) {
+      done(error);
     });
   });
 
@@ -38,15 +26,13 @@ describe('SERVICE - Survey', function() {
     });
   });
 
-  it('finds all account gallery records', function (done) {
-    surveyServices.findAllSurveys({ accountOwnerId: testAccount.id }).then(
-      function(res) {
-        assert.deepEqual(res, []);
+  it('finds all surveys', function (done) {
+    surveyServices.findAllSurveys({ accountOwnerId: testAccount.id })
+    .then(function(surveys) {
+        assert.deepEqual(surveys, []);
         done();
-      },
-      function(err) {
-        console.log(err);
-        done();
+      }, function(error) {
+        done(error);
       }
     );
   });
