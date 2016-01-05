@@ -7,7 +7,7 @@
     var accountManagerRestApi = {
       accountManager: $resource(globalSettings.restUrl +'/accountManager', {}, { post: { method: 'POST' } }),
       removeAccountUser: $resource(globalSettings.restUrl +'/accountManager/accountUser', {}, { post: { method: 'POST' } }),
-      removeInvite: $resource(globalSettings.restUrl +'/accountManager/invite', {}, { post: { method: 'POST' } })
+      removeInvite: $resource(globalSettings.restUrl +'/invite', {}, { post: { method: 'POST' } })
     };
 
     var upServices = {};
