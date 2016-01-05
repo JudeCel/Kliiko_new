@@ -34,7 +34,7 @@ var onUsername = function(data) {
 		socket.emit('setusername', thisMain.username);
 
 		//	lets make sure we have our participants list and topics
-		socket.emit('getparticipants', sessionID);
-		socket.emit('gettopics', sessionID);
+		socket.emit('getparticipants', sessionId);
+		socket.emit('gettopics', sessionId);
 	}
 };

@@ -112,6 +112,7 @@
     "serve-favicon": "~2.3.0",
     "simpler-config": "0.0.4",
     "socket.io": "^1.3.7",
+    "string": "^1.8.1",
     "unirest": "^0.4.2"
   }
 }

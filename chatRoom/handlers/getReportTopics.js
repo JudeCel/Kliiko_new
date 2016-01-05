@@ -15,7 +15,7 @@ module.exports.validate = function (req, resCb) {
 };
 
 module.exports.run = function (req, resCb, errCb) {
-  var	sql = 'SELECT t.id AS topic_id, t.name, s.name AS session_name, \
+  var	sql = 'SELECT t.id AS topicId, t.name, s.name AS session_name, \
     bp.id AS brand_project_id, bp.name AS brand_project_name, \
     "ss"."userId" AS "facilitator_id" \
     FROM "Sessions" AS s \

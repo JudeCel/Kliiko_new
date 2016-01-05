@@ -548,8 +548,8 @@
 <script type="text/javascript">
     //	lets start the help system now
     window.onload = function () {
-        var sessionID = getUrlVar("sid");
-        sessionID = sessionID.replace(/[A-Za-z$-/]/g, "");
+        var sessionId = getUrlVar("sid");
+        sessionId = sessionId.replace(/[A-Za-z$-/]/g, "");
 
         var socketConfig = io.connect('localhost', {
             port: 7777,
@@ -587,7 +587,7 @@
         });
 
         //	step 1, get the config info
-        socketConfig.emit("config_get_info", sessionID);
+        socketConfig.emit("config_get_info", sessionId);
     };
 </script>
 </body>
