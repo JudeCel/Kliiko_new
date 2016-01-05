@@ -162,6 +162,16 @@
         }]
 
       })
+      .state('dashboard.resources.contactList.recruiter', {
+        url: '/recruiter',
+        views: {
+          'resourcesContent': { templateUrl: prePath + 'dashboard-resources-contactList-recruiter/dashboard-content.html' }
+        },
+        onEnter: ['dbg', function (dbg) {
+          dbg.rs('dashboard.resources.contactList.recruiter is on');
+        }]
+
+      })
       .state('dashboard.resources.topics', {
         url: "/topics",
         views: {
