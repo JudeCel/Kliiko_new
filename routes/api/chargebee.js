@@ -24,7 +24,7 @@ function chargebeePost(req, res, next) {
   var userData = req.body.userData;
   chargebee.hosted_page.checkout_new({
     subscription : {
-      plan_id : "plan1",
+      plan_id : "plan2",
       plan_quantity: req.body.planDetails.duration,
       coupon: req.body.paymentDetails.promocode
     },
