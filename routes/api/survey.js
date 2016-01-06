@@ -7,17 +7,33 @@ function get(req, res, next) {
   );
 };
 
+function remove(req, res, next) {
+  surveyService.removeSurvey(req.query.id, req.user).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+};
+
+function update(req, res, next) {
+  surveyService.updateSurvey(req.body, req.user).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+};
+
 function getResponses(res) {
   return {
     onError: function(error) {
       res.send({ error: error });
     },
-    onSuccess: function(surveys) {
-      res.send({ surveys: surveys });
+    onSuccess: function(data) {
+      res.send({ data: data });
     }
   };
 }
 
 module.exports = {
-  get: get
+  get: get,
+  remove: remove,
+  update: update
 };

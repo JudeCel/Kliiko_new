@@ -23,17 +23,21 @@
             <th>Name</th>
             <th>Date Confirmed</th>
             <th>URL Link</th>
-            <th>Status</th>
-            <th></th>
+            <th>Closed</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr ng-repeat='survey in sc.surveys'>
             <td>{{ survey.name }}</td>
-            <td>{{ survey.createdAt }}</td>
-            <td>{{ survey.url }}</td>
+            <td>{{ survey.confirmedAt }}</td>
+            <td><a href='{{ survey.url }}'>{{ survey.url }}</a></td>
             <td>{{ survey.closed }}</td>
-            <td></td>
+            <td class='text-right dashboardElementsEditRemove'>
+              <img ng-src='{{ sc.statusIcon(survey) }}' alt='' ng-click='sc.changeStatus(survey)' />
+              <img src='/icons/dashboardElement_edit.png' alt='' />
+              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='sc.removeSurvey(survey)' />
+            </td>
           </tr>
         </tbody>
       </table>

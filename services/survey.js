@@ -24,15 +24,17 @@ const validCreateParams = [
 function findSurvey(id) {
   let deferred = q.defer();
 
-  Survey.find({ where: { id: id }, include: [ SurveyQuestion ] }).then(function(survey) {
+  Survey.find({ where: { id: id } }).then(function(survey) {
     if(survey) {
       deferred.resolve(survey);
     }
     else {
       deferred.reject('Survey not found');
     }
-  }).catch(function(error) {
+  }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
   });
 
   return deferred.promise;
@@ -43,8 +45,10 @@ function findAllSurveys(user) {
 
   Survey.findAll({ where: { accountId: user.accountOwnerId } }).then(function(surveys) {
     deferred.resolve(surveys);
-  }).catch(function(error) {
+  }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
   });
 
   return deferred.promise;
@@ -58,19 +62,22 @@ function createSurveyWithQuestions(params) {
     survey.update({ url: validUrl(survey) }).then(function(survey) {
       deferred.resolve(survey);
     });
-  }).catch(function(error) {
+  }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
   });
 
   return deferred.promise;
 };
 
-function updateSurvey(params) {
+function updateSurvey(params, user) {
   let deferred = q.defer();
   let validParams = validateParams(params, validUpdateParams);
 
+  console.log(params);
   Survey.update(validParams, {
-    where: { id: params.id },
+    where: { id: params.id, accountId: user.accountOwnerId },
     include: [ SurveyQuestion ],
     returning: true
   }).then(function(result) {
@@ -81,8 +88,29 @@ function updateSurvey(params) {
       let survey = result[1][0];
       deferred.resolve(survey);
     }
-  }).catch(function(error) {
+  }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+};
+
+function removeSurvey(id, user) {
+  let deferred = q.defer();
+
+  Survey.destroy({ where: { id: id, accountId: user.accountOwnerId } }).then(function(result) {
+    if(result > 0) {
+      deferred.resolve('Successfully removed survey');
+    }
+    else {
+      deferred.reject('Survey not found');
+    }
+  }).catch(Survey.sequelize.ValidationError, function(error) {
+    deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
   });
 
   return deferred.promise;
@@ -90,7 +118,7 @@ function updateSurvey(params) {
 
 // Helpers
 function validUrl(survey) {
-  return 'http://' + config.get('server')['domain'] + ':' + config.get('server')['port'] + 'resources/survey/' + survey.id;
+  return 'http://' + config.get('server')['domain'] + ':' + config.get('server')['port'] + '/resources/survey/' + survey.id;
 };
 
 function validateParams(params, attributes) {
@@ -109,5 +137,6 @@ module.exports = {
   findSurvey: findSurvey,
   findAllSurveys: findAllSurveys,
   createSurveyWithQuestions: createSurveyWithQuestions,
-  updateSurvey: updateSurvey
+  updateSurvey: updateSurvey,
+  removeSurvey: removeSurvey
 };

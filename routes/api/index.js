@@ -49,7 +49,10 @@ router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelet
 
 router.get('/chargebee', multipartyMiddleware, chargebee.chargebeePost);
 router.post('/chargebee', multipartyMiddleware, chargebee.chargebeePost);
+
 router.get('/survey', survey.get);
+router.delete('/survey', survey.remove);
+router.put('/survey', survey.update);
 
 // Common Rules
 router.use(function (req, res, next) {
