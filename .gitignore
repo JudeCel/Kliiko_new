@@ -9,7 +9,3 @@
 /.tmp/templates.js
 
 .vscode/settings.json
-
-config/config.json.sample copy
-
-config/config.json.sample
