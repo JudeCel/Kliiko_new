@@ -43,11 +43,11 @@
     "mode": "live",
     "conflict": "drop existing",
     "copyright": "2011 - 2015 ThirdWaveMedia Pty. Ltd.",
-    "port": "3000",
+    "port": "8080",
     "domain": "insider.kliiko.diatomdemo.com",
     "paths": {
       "fsPath": "/var/lib/jenkins/jobs/Kliiko/workspace/chatRoom",
-      "urlPath": "http://insider.kliiko.diatomdemo.com:3000/",
+      "urlPath": "http://insider.kliiko.diatomdemo.com:8080/",
       "serverPath": "server/",
       "configPath": "config/",
       "adminPath": "admin/",

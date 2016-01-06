@@ -44,11 +44,11 @@
   	"mode": "live",
   	"conflict": "drop existing",
   	"copyright": "2011 - 2014 ThirdWaveMedia Pty. Ltd.",
-  	"port": "7203",
+  	"port": "8080",
   	"domain": "insider.focus.com",
   	"paths": {
   		"fsPath": "/home/dainisl/code/Kliiko/chatRoom",
-  		"urlPath": "http://insider.focus.com:7203/",
+  		"urlPath": "http://insider.focus.com:8080/",
   		"serverPath": "server/",
   		"configPath": "config/",
   		"adminPath": "admin/",
