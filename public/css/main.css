@@ -244,7 +244,8 @@ img.ic-flipX {
   border: 0;
   border-collapse: separate;
   border-spacing: 0px 10px;
-  margin-top: -10px; }
+  margin-top: -10px;
+  margin-bottom: 0px; }
 
 .table-dashboardElements > thead {
   color: white;
@@ -261,9 +262,6 @@ img.ic-flipX {
   padding-top: 16px;
   padding-bottom: 16px;
   border: 0; }
-
-.table-dashboardElements > tbody > tr > td {
-  word-break: break-all; }
 
 .error-area {
   margin-top: 25px;
@@ -530,6 +528,13 @@ footer {
   /* reset the text-align */
   text-align: left;
   argin: 0 auto !important; }
+
+.dashboard-container.horizontal-scroll {
+  overflow-x: scroll;
+  white-space: nowrap; }
+
+.fixed-bottom-margin {
+  margin-bottom: 100px; }
 
 .dashboard-header .my-details-container {
   height: 20px;
