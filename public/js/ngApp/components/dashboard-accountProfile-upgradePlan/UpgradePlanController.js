@@ -5,8 +5,8 @@
   module('KliikoApp').
   controller('UpgradePlanController', UpgradePlanController);
 
-  UpgradePlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams', 'upgradePlanServices', 'user', 'ngProgressFactory', '$scope', '$sce'];
-  function UpgradePlanController(dbg, domServices, $state, $stateParams, upgradePlanServices, user, ngProgressFactory, $scope, $sce) {
+  UpgradePlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams', 'upgradePlanServices', 'user', 'ngProgressFactory', '$scope', 'messenger'];
+  function UpgradePlanController(dbg, domServices, $state, $stateParams, upgradePlanServices, user, ngProgressFactory, $scope, messenger) {
     dbg.log2('#UpgradePlanController  started');
     var vm = this;
 
@@ -212,6 +212,8 @@
           progressbar.complete();
           goToStep(5);
           domServices.hideFader();
+
+          messenger.error('Submitting Failed');
 
           vm.cantMoveNextStep = true;
           vm.paymentSubmitSuccess = null;
