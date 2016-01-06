@@ -151,11 +151,54 @@ describe('SERVICE - Survey', function() {
 
   describe('#updateSurvey', function() {
     describe('happy path', function() {
-      
+      it('should update survey', function (done) {
+        let params = surveyParams();
+
+        surveyServices.createSurveyWithQuestions(params).then(function(survey) {
+          assert.equal(survey.closed, false);
+
+          let updateParams = { id: survey.id, closed: true };
+          surveyServices.updateSurvey(updateParams).then(function(updatedSurvey) {
+            assert.equal(updatedSurvey.id, survey.id);
+            assert.equal(updatedSurvey.closed, true);
+            done();
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
     });
 
     describe('sad path', function() {
+      it('should fail finding survey', function (done) {
+        let params = surveyParams();
 
+        surveyServices.createSurveyWithQuestions(params).then(function(survey) {
+          let updateParams = { id: survey.id + 1, closed: true };
+          surveyServices.updateSurvey(updateParams).then(function(updatedSurvey) {
+            done('Should not get here!');
+          }, function(error) {
+            assert.equal(error, 'Survey not found');
+            done();
+          });
+        });
+      });
+
+      it('should fail updating not valid values', function (done) {
+        let params = surveyParams();
+
+        surveyServices.createSurveyWithQuestions(params).then(function(survey) {
+          let updateParams = { id: survey.id, accountId: testAccount.id + 1 };
+          surveyServices.updateSurvey(updateParams).then(function(updatedSurvey) {
+            assert.equal(updatedSurvey.id, survey.id);
+            assert.equal(updatedSurvey.accountId, survey.accountId);
+            assert.notEqual(updatedSurvey.accountId, testAccount.id + 1);
+            done();
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
     });
   });
 
