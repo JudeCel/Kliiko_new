@@ -30,10 +30,13 @@ function createInvite(params, callback) {
     userType: params.userType
   }).then(function(result) {
     Invite.find({ include: [ { model: User, attributes: constants.safeUserParams }, Account ], where: { token: token } }).then(function(invite) {
-      let inviteParams = { token: invite.token, email: invite.User.email };
-      inviteMailer.sendInviteAccountManager(inviteParams, function(error, data) {
-        callback(error, invite, data);
-      });
+      if (invite.userType === "existing") {
+        AccountUser.find({include:[{model: Account}], where: {UserId: invite.userId}}).then(function(invitedAccount) {            
+            sendInvite(invitedAccount.Account.name, invite, callback);
+        });
+      } else {
+        sendInvite("Kliiko", invite, callback);
+      }
     });
   }).catch(function(error) {
     if(error.name == 'SequelizeUniqueConstraintError') {
@@ -44,6 +47,13 @@ function createInvite(params, callback) {
     }
   });
 };
+
+function sendInvite(accountName, invite, callback) {
+  let inviteParams = { token: invite.token, email: invite.User.email, firstName: invite.User.firstName, lastName: invite.User.lastName, accountName: accountName};
+  inviteMailer.sendInviteAccountManager(inviteParams, function(error, data) {
+    callback(error, invite, data);
+  });
+}
 
 function findAndRemoveInvite(params, callback) {
   Invite.find({ where: params }).then(function(invite) {

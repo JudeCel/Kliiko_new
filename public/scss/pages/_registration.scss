@@ -77,6 +77,28 @@
       vertical-align: middle;
     }
   }
-
-
 }
+
+/*Blue checkbox could be outside registration/login scope*/
+input[class=checkbox-blue] {
+    display: none; 
+}
+
+input[class=checkbox-blue] + label {
+background: url("/icons/checkbox_blue.jpg") no-repeat;
+height: 22px;
+width: 22px;
+margin-top: 1px;
+margin-left: 0;
+margin-bottom: 0;
+background-size: contain;
+}
+
+input[class=checkbox-blue]:checked + label {
+background: url("/icons/checkbox_blue_chk.jpg") no-repeat;
+height: 22px;
+width: 22px;
+background-size: contain;
+margin-top: 1px;
+}
+
