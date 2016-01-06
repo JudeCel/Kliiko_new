@@ -62,8 +62,8 @@ module.exports = {
             includeFacilitator: joi.boolean().optional()
         });
 
-        if (err)
-            throw err;
+        if (err.error){ throw err };
+
 
         err = joi.validate(json.report, {
             saveAs: joi.string().required(),
@@ -73,8 +73,8 @@ module.exports = {
             type: joi.string().required()
         });
 
-        if (err)
-            throw err;
+        if (err.error){ throw err };
+
 
         err = joi.validate(json.ifs, {
             sessionId: joi.number().required(),
@@ -83,8 +83,8 @@ module.exports = {
             topic: joi.string().optional()
         });
 
-        if (err)
-            throw err;
+        if (err.error){ throw err };
+
 
         //globals
         this.fsPath = json.report.fsPath;
@@ -126,6 +126,7 @@ module.exports = {
             });
             this.report.previousY = this.report.y;
             this.report.layout = json.page.layout;
+            console.log(json.report.fsPath);
             this.report.font(json.report.fsPath + 'fonts/Arial.ttf');
             switch (json.report.type) {
                 case mtypes.reportType.whiteboard:
@@ -266,8 +267,8 @@ module.exports = {
             }
         });
 
-        if (err)
-            throw err;
+        if (err.error){ throw err };
+
 
         /*-----------------------------------------+
          | [E]             [D]         +----------+|
@@ -840,8 +841,8 @@ module.exports = {
             emotion: joi.string().optional()
         });
 
-        if (err)
-            throw err;
+        if (err.error){ throw err };
+
 
         var isDescription = json.userId == 0;
         json.params = _.defaults(_.clone(json || {}), {
@@ -1355,8 +1356,8 @@ module.exports = {
             isFirst: joi.boolean().optional()
         });
 
-        if (err)
-            throw err;
+        if (err.error){ throw err };
+
 
         json = _.defaults(_.clone(json || {}), {
             isFirst: false,
