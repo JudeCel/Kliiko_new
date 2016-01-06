@@ -45,6 +45,7 @@
         </div>
 
         <div class="col-md-2 btn-dashboard-plans btn-md pull-right btn-blue" ng-click="up.goToStep('next')"
+             ng-class="{'btn-forbidden': up.cantMoveNextStep}"
             ng-hide="up.stepsClassIsActive(4) || up.stepsClassIsActive(5)">
             Next <img class="ic ic-flipX" src="icons/back_blue.png" alt="Go Next Step">
         </div>
@@ -58,7 +59,7 @@
             Submit My Order
         </div>
         <div class="col-md-3 btn-dashboard-plans btn-md pull-right btn-standart btn-red" ui-sref="dashboard"
-             ng-show="up.stepsClassIsActive(5)">
+             ng-show="up.stepsClassIsActive(5) && !up.cantMoveNextStep">
             Build new session
         </div>
     </div>
@@ -141,6 +142,9 @@
                 </div>
             </div>
         </div>
+
+
+
     </section>
 
         </div>

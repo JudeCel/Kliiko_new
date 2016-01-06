@@ -1,7 +1,7 @@
 {
   "mode": "staging",
   "server":{
-    "port": 3000,
+    "port": 8080,
     "baseDomain": ".kliiko.diatomdemo.com",
     "domain": "insider.kliiko.diatomdemo.com",
     "chatUrl": "/chat",
@@ -24,7 +24,12 @@
     }
   },
   "webAppSettings": {
-    "restApiUrl": "/api"
+    "restApiUrl": "/api",
+    "paymentModules": {
+      "chargebee": {
+        "apiEndPoint": "/chargebee"
+      }
+    }
   },
   "sessionSecret": "c4be0a2cc8658004a3f2417e62281f65e995ac7c564e39e727d764a62d69e836",
   "cookieSecret": "ee9b7f3df25f0759a0876762da2b721cdeba47b1f5df4003807c6383c581f409",
@@ -38,11 +43,11 @@
     "mode": "live",
     "conflict": "drop existing",
     "copyright": "2011 - 2015 ThirdWaveMedia Pty. Ltd.",
-    "port": "3000",
+    "port": "8080",
     "domain": "insider.kliiko.diatomdemo.com",
     "paths": {
       "fsPath": "/var/lib/jenkins/jobs/Kliiko/workspace/chatRoom",
-      "urlPath": "http://insider.kliiko.diatomdemo.com:3000/",
+      "urlPath": "http://insider.kliiko.diatomdemo.com:8080/",
       "serverPath": "server/",
       "configPath": "config/",
       "adminPath": "admin/",
@@ -50,5 +55,9 @@
           "convertPath": "/usr/bin/convert",
           "identifyPath": "/usr/bin/identify"
     }
+  },
+  "chargebee": {
+    "site" : "kliikotst-test",
+    "api_key" : "test_M84JneCGcdmd5Zp8jpDqLtH9twyR9EWUr"
   }
 }
