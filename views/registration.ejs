@@ -150,7 +150,14 @@
                       <input type="tel" value="<%= mobile %>" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number">
                     </td>
                   </tr>
-
+                  
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                      <div class="has-error"><%= errors.mobile %></div>
+                    </td>
+                  </tr>
+                  
                   <tr>
                     <td>
                       <label class="text-no-bold text-login-page" for="landlineNumber">

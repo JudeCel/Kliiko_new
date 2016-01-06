@@ -8,10 +8,10 @@ module.exports = (Sequelize, DataTypes) => {
     firstName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} } },
     lastName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} } },
     gender: {type: DataTypes.ENUM, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} }, values: ["male", "female"] },
-    email: {type: DataTypes.STRING, allowNull: false, unique: {msg: "already taken"},
+    email: {type: DataTypes.STRING, allowNull: false, unique: {args: true, msg: "This e-mail address already exists. Please try another."},
       validate: {
         notEmpty: {args: true, msg: "can't be empty"},
-        is: {args: constants.emailRegExp, msg: "Invalid e-mail format" }
+        is: {args: constants.emailRegExp, msg: "Not a valid email address format. Please re-enter." },
       }
     },
 
@@ -50,7 +50,11 @@ module.exports = (Sequelize, DataTypes) => {
     postcode: {type: DataTypes.STRING, allowNull: true },
     companyName: {type: DataTypes.STRING, allowNull: true },
     landlineNumber: {type: DataTypes.STRING, allowNull: true },
-    mobile: {type: DataTypes.STRING, allowNull: true }
+    mobile: {type: DataTypes.STRING, allowNull: true,
+      validate: {
+        is: {args:["^[0-9]+$",'i'], msg: "Please re-enter in international format: Country Code & drop the first 0 e.g. +61-098-765 becomes 6198765"}
+      }         
+    }
   },{
       indexes: [{
         unique: true,

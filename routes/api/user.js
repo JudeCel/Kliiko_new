@@ -38,8 +38,11 @@ function userPost(req, res, next) {
       id: req.user.id
     }
   }).then(function (result) {
-    result.update(req.body);
-    res.send(req.body);
+    result.update(req.body).then(function(updateResult) {
+      res.send(req.body);
+    }).catch(function(updateError) {
+      res.send({error:updateError});
+    });
   }).catch(function (err) {
     res.send({error:err});
   });

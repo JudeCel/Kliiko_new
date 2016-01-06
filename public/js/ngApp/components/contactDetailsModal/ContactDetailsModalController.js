@@ -9,7 +9,8 @@
   function ContactDetailsModalController(dbg,  user, domServices, ngProgressFactory, messenger) {
     dbg.log2('#ContactDetailsModalController  started');
     var vm = this;
-
+    
+    vm.errors = {};
     vm.updateUserData = updateUserData;
     vm.cancel = cancel;
 
@@ -33,17 +34,26 @@
     }
 
 
-    function updateUserData(data, form) {
-
+    function updateUserData(data, form) {      
       user.updateUserData(data, form).then(function (res) {
         vm.updateBtn = 'Updated';
-
         messenger.ok('Saved!');
 
         form.$setPristine();
         form.$setUntouched();
-
-      });
+      }, function(err) {
+        processErrors(err);
+      });      
+    }
+    
+    function processErrors(err) {
+      vm.errors = {};
+      if (!err)
+        return;
+      var errors = err.errors;
+      for (var e in errors) {
+          vm.errors[errors[e].path] = errors[e].message;
+      }
     }
 
     function cancel(){

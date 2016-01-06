@@ -185,6 +185,12 @@ img.ic-flipX {
     width: 22px;
     background-size: contain;
     margin-top: 1px; }
+  .contactDetailsModal .has-error {
+    color: #f00;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 475px;
+    display: inline-block; }
 
 .accountDatabaseCommentModal {
   width: 20%;

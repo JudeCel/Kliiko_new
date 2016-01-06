@@ -93,7 +93,7 @@
                 <tr>
                   <td></td>
                   <td class="error-column">
-                    <span class="has-error"></span>
+                    <span class="has-error">{{cdm.errors.email}}</span>
                   </td>
                 </tr>
                 <tr>
@@ -140,7 +140,7 @@
                     </label>
                   </td>
                   <td>
-                    <input ng-model="cdm.userData.mobile" type="tel" value="" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number" required="true">
+                    <input ng-model="cdm.userData.mobile" type="tel" value="" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number">
                   </td>
                   <td  class="text-red-dark">
                     *
@@ -155,7 +155,7 @@
                 <tr>
                   <td></td>
                   <td class="error-column">
-                    <span class="has-error"></span>
+                    <span class="has-error">{{cdm.errors.mobile}}</span>
                   </td>
                 </tr>
                 <tr>
