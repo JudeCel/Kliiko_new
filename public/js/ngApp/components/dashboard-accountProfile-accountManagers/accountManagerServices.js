@@ -5,31 +5,26 @@
 
   function accountManagerServices(globalSettings, $q, $resource, dbg) {
     var accountManagerRestApi = {
-      accountManager: $resource(globalSettings.restUrl +'/accountManager', {}, { post: { method: 'POST' } })
+      accountManager: $resource(globalSettings.restUrl +'/accountManager', {}, { post: { method: 'POST' } }),
+      removeAccountUser: $resource(globalSettings.restUrl +'/accountManager/accountUser', {}, { post: { method: 'POST' } }),
+      removeInvite: $resource(globalSettings.restUrl +'/invite', {}, { post: { method: 'POST' } })
     };
 
-    var cache = {};
     var upServices = {};
 
     upServices.getAllManagersList = getAllManagersList;
     upServices.createAccountManager = createAccountManager;
-    upServices.removeAccountManager = removeAccountManager;
+    upServices.removeInvite = removeInvite;
+    upServices.removeAccountUser = removeAccountUser;
     return upServices;
 
     function getAllManagersList() {
       var deferred = $q.defer();
 
-      if(cache.allManagers) {
-        deferred.resolve(cache.allManagers);
-        dbg.log2('#AccountManagerServices > getAllManagersList > return cached value');
-        return deferred.promise;
-      }
-
       dbg.log2('#AccountManagerServices > getAllManagersList > make rest call');
       accountManagerRestApi.accountManager.get({}, function(res) {
         dbg.log2('#AccountManagerServices > getAllManagersList > rest call responds');
         deferred.resolve(res);
-        cache.allManagers = res;
       });
 
       return deferred.promise;
@@ -47,12 +42,24 @@
       return deferred.promise;
     };
 
-    function removeAccountManager(data) {
+    function removeInvite(data) {
       var deferred = $q.defer();
 
-      dbg.log2('#AccountManagerServices > removeAccountManager > make rest call', data);
-      accountManagerRestApi.accountManager.delete(data, function(res) {
-        dbg.log2('#AccountManagerServices > removeAccountManager > rest call responds');
+      dbg.log2('#AccountManagerServices > removeInvite > make rest call', data);
+      accountManagerRestApi.removeInvite.delete(data, function(res) {
+        dbg.log2('#AccountManagerServices > removeInvite > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    };
+
+    function removeAccountUser(data) {
+      var deferred = $q.defer();
+
+      dbg.log2('#AccountManagerServices > removeAccountUser > make rest call', data);
+      accountManagerRestApi.removeAccountUser.delete(data, function(res) {
+        dbg.log2('#AccountManagerServices > removeAccountUser > rest call responds');
         deferred.resolve(res);
       });
 

@@ -1,6 +1,6 @@
 var mtypes = require('./../../helpers/mtypes');
 var getSessionStaffUserIds = require('../getSessionStaffUserIds.js');
-var config = require('../../config/config.json');
+var config = require('config').get("chatConf");
 var FS_PATH = config.paths.fsPath + config.paths.chatRoomPath;
 var URL_PATH = config.paths.urlPath + config.paths.chatRoomPath;
 
@@ -9,8 +9,8 @@ module.exports = function (params, resCb, nextCb) {
         try {
             var reportHandler = getReportHandler(params.report.type);
             var reportInfo = reportHandler.getReportInfo(params);
-            var report = require('if-reports');
-
+            var report = require('./../../lib/reports');
+            console.log(sessionStaffIds);
             report.init({
                 type: params.type,
                 includeFacilitator: params.includeFacilitator,
@@ -23,7 +23,7 @@ module.exports = function (params, resCb, nextCb) {
                     type: params.report.type
                 },
                 ifs: {
-                    sessionId: params.sessionID,
+                    sessionId: params.sessionId,
                     session: params.report.session,
                     topicId: params.topicID,
                     topic: params.report.topic

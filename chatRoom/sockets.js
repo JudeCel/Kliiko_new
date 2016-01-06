@@ -365,14 +365,14 @@ module.exports.listen = function (server) {
       });
     });
 
-    socket.on('getreporttopics', function (sessionID, userID) {
+    socket.on('getreporttopics', function (sessionId, userID) {
       console.log('getreporttopics');
 
-      if (sessionID == null || userID == null) return;
+      if (sessionId == null || userID == null) return;
 
       var req = expressValidatorStub({
         params: {
-          sessionId: sessionID
+          sessionId: sessionId
         }
       });
 
@@ -564,13 +564,13 @@ module.exports.listen = function (server) {
       });
     });
 
-    socket.on('getreport', function (sessionID, userID) {
+    socket.on('getreport', function (sessionId, userID) {
       console.log("getreport");
 
 
       var req = expressValidatorStub({
         params: {
-          sessionId: sessionID
+          sessionId: sessionId
         }
       });
 

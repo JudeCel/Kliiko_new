@@ -23,7 +23,7 @@ module.exports.run = function (req, resCb, errCb) {
     "e"."tag",\
     "e"."userId",\
     t.id AS topicId,\
-    t.name AS topic_name,\
+    t.name AS topicName,\
     (SELECT "firstName" FROM "Users" WHERE "Users"."id" = "e"."userId"),\
     "e"."createdAt",\
     "e"."event"\

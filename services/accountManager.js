@@ -6,14 +6,12 @@ var User = models.User;
 var Account = models.Account;
 var Invite = models.Invite;
 
-var userService = require('./../services/users');
 var inviteService = require('./../services/invite');
 var constants = require('../util/constants');
 
 var async = require('async');
 var _ = require('lodash');
 var crypto = require('crypto');
-
 
 //Exports
 function createOrFindUser(req, callback) {
@@ -34,8 +32,10 @@ function createOrFindUser(req, callback) {
       }
       else {
         adjustParamsForNewUser(params);
-        userService.create(params, function(error, newUser) {
-          callback(error, inviteParams(newUser.id, user.accountOwnerId, 'new'));
+        User.create(params).then(function(newUser) {
+          callback(null, inviteParams(newUser.id, user.accountOwnerId, 'new'));
+        }).catch(function(error) {
+          callback(prepareErrors(error));
         });
       }
     });
@@ -45,10 +45,10 @@ function createOrFindUser(req, callback) {
 function findAccountManagers(user, callback) {
   async.parallel([
     function(cb) {
-      findUsers(user.id, Account, { id: user.accountOwnerId }, [ 'id' ], cb);
+      findUsers(AccountUser, { owner: false, AccountId: user.accountOwnerId }, [ 'id', 'UserId', 'AccountId' ], cb);
     },
     function(cb) {
-      findUsers(user.id, Invite, { accountId: user.accountOwnerId, role: 'accountManager' }, [ 'id', 'userId' ], cb);
+      findUsers(Invite, { accountId: user.accountOwnerId, role: 'accountManager' }, [ 'id', 'userId' ], cb);
     }
   ], function(err, results) {
     if(err) {
@@ -60,44 +60,26 @@ function findAccountManagers(user, callback) {
   });
 };
 
-function removeInviteOrAccountUser(req, callback) {
+function findAndRemoveAccountUser(req, callback) {
   let currentUser = req.user,
-      userId = req.query.id,
-      type = req.query.type;
+      userId = req.query.id;
 
-  switch(type) {
-    case 'invite': {
-      Invite.find({
-        where: {
-          userId: userId,
-          accountId: currentUser.accountOwnerId
-        }
-      }).then(function(invite) {
-        inviteService.removeInvite(invite, function(err) {
-          callback(err, 'Successfully removed Invite');
-        });
-      });
-      break;
+  AccountUser.find({
+    where: {
+      UserId: userId,
+      AccountId: currentUser.accountOwnerId,
+      owner: false
     }
-    case 'account': {
-      AccountUser.find({
-        where: {
-          UserId: userId,
-          AccountId: currentUser.accountOwnerId
-        }
-      }).then(function(result) {
-        if(result) {
-          result.destroy().then(function() {
-            callback(null, 'Successfully removed account from Account List');
-          });
-        }
-        else {
-          callback('Account not found or your are not owner');
-        }
+  }).then(function(result) {
+    if(result) {
+      result.destroy().then(function() {
+        callback(null, 'Successfully removed account from Account List');
       });
-      break;
     }
-  }
+    else {
+      callback('Account not found or you are not an owner');
+    }
+  });
 };
 
 //Helpers
@@ -123,30 +105,28 @@ function preValidate(user, params, callback) {
       callback({ email: 'This account has already accepted invite.' });
     }
   }).catch(function(error) {
-    callback(error);
+    callback(prepareErrors(error));
   });
 };
 
 function adjustParamsForNewUser(params) {
   params.password = crypto.randomBytes(16).toString('hex');
-  params.accountName = crypto.randomBytes(16).toString('hex');
   params.confirmedAt = new Date();
   return params;
 }
 
-function findUsers(userId, model, where, attributes, cb) {
+function findUsers(model, where, attributes, cb) {
   User.findAll({
     include: [{
       model: model,
       where: where,
       attributes: attributes
     }],
-    where: { id: { $ne: userId } },
     attributes: constants.safeUserParams
   }).then(function(users) {
     cb(null, users);
   }).catch(function(error) {
-    cb(error);
+    cb(prepareErrors(error));
   });
 }
 
@@ -158,8 +138,20 @@ function prepareParams(req) {
   return _.pick(req.body, ['firstName', 'lastName', 'gender', 'email', 'mobile', 'postalAddress', 'city', 'state', 'postcode', 'companyName', 'landlineNumber']);
 };
 
+function prepareErrors(err) {
+  let errors = ({});
+  _.map(err.errors, function (n) {
+    let message = n.message.replace(n.path, '');
+    if(message == " cannot be null") {
+      message = " cannot be empty";
+    }
+    errors[n.path] = _.startCase(n.path) + ':' + message;
+  });
+  return errors;
+};
+
 module.exports = {
   createOrFindUser: createOrFindUser,
   findAccountManagers: findAccountManagers,
-  removeInviteOrAccountUser: removeInviteOrAccountUser
+  findAndRemoveAccountUser: findAndRemoveAccountUser
 };

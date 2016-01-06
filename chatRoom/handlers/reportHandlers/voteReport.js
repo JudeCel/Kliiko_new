@@ -1,6 +1,6 @@
-var mtypes = require('../helpers/mtypes');
+var mtypes = require('./../../helpers/mtypes');
 var getReportData_Voting = require('../getReportData_Voting.js');
-var config = require('../../config/config.json');
+var config = require('config').get("chatConf");
 var FS_PATH = config.paths.fsPath + config.paths.chatRoomPath;
 
 module.exports.getReportInfo = function (params) {

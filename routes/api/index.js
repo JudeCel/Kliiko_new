@@ -30,7 +30,8 @@ router.get('/countries', countryAndCurrency.countries);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
 router.post('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.post);
-router.delete('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.remove);
+router.delete('/accountManager/accountUser', policy.authorized(['accountManager', 'admin']), accountManager.removeAccountUser);
+router.delete('/invite', policy.authorized(['accountManager', 'admin']), accountManager.removeInvite);
 
 router.get('/promotionCode', policy.authorized(['admin']), promotionCode.get);
 router.post('/promotionCode', policy.authorized(['admin']), promotionCode.create);
@@ -61,7 +62,3 @@ router.use(function (req, res, next) {
 function notAuthExit(res) {
   res.status(403).send('not authorized');
 }
-
-
-
-
