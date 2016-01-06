@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <div class='col-md-12'>
+  <div class='col-md-12 fixed-bottom-margin'>
     <div class='dashboard-container'>
       <table class='table table-responsive table-dashboardElements'>
         <thead>
@@ -30,9 +30,9 @@
         <tbody>
           <tr ng-repeat='survey in sc.surveys'>
             <td>{{ survey.name }}</td>
-            <td>{{ survey.confirmetAt }}</td>
+            <td>{{ survey.createdAt }}</td>
             <td>{{ survey.url }}</td>
-            <td>{{ survey.status }}</td>
+            <td>{{ survey.closed }}</td>
             <td></td>
           </tr>
         </tbody>

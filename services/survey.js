@@ -15,14 +15,12 @@ const validUpdateParams = [
 ];
 
 const validCreateParams = [
+  'name',
   'accountId',
+  'SurveyQuestions'
 ];
 
 // Exports
-function makeValidUrl(survey) {
-  return 'http://' + config.get('server')['domain'] + ':' + config.get('server')['port'] + 'resources/survey' + survey.id;
-}
-
 function findSurvey(id) {
   let deferred = q.defer();
 
@@ -38,7 +36,7 @@ function findSurvey(id) {
   });
 
   return deferred.promise;
-}
+};
 
 function findAllSurveys(user) {
   let deferred = q.defer();
@@ -56,8 +54,10 @@ function createSurveyWithQuestions(params) {
   let deferred = q.defer();
   let validParams = validateParams(params, validCreateParams);
 
-  Survey.create(params, { include: [ SurveyQuestion ]}).then(function(survey) {
-    deferred.resolve(survey);
+  Survey.create(validParams, { include: [ SurveyQuestion ]}).then(function(survey) {
+    survey.update({ url: validUrl(survey) }).then(function(survey) {
+      deferred.resolve(survey);
+    });
   }).catch(function(error) {
     deferred.reject(prepareErrors(error));
   });
@@ -86,9 +86,13 @@ function updateSurvey(params) {
   });
 
   return deferred.promise;
-}
+};
 
 // Helpers
+function validUrl(survey) {
+  return 'http://' + config.get('server')['domain'] + ':' + config.get('server')['port'] + 'resources/survey/' + survey.id;
+};
+
 function validateParams(params, attributes) {
   return _.pick(params, attributes);
 };
@@ -102,7 +106,6 @@ function prepareErrors(err) {
 };
 
 module.exports = {
-  makeValidUrl: makeValidUrl,
   findSurvey: findSurvey,
   findAllSurveys: findAllSurveys,
   createSurveyWithQuestions: createSurveyWithQuestions,

@@ -14,7 +14,7 @@
 
     function init() {
       surveyServices.getAllSurveys().then(function(res) {
-        $scope.surveys = res.surveys;
+        vm.surveys = res.surveys;
         dbg.log2('#SurveyController > getAllSurveys > res ', res.surveys);
       });
     };

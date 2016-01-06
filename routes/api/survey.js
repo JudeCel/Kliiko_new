@@ -2,8 +2,8 @@ var surveyService = require('../../services/survey');
 
 function get(req, res, next) {
   surveyService.findAllSurveys(req.user).then(
-    getResponses(res).onError,
-    getResponses(res).onSuccess
+    getResponses(res).onSuccess,
+    getResponses(res).onError
   );
 };
 
