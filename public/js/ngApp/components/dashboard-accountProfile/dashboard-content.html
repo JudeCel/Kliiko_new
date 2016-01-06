@@ -1,27 +1,27 @@
 <section ng-controller="AccountProfileController as apc">
 <div class='col-xs-12 col-sm-12 col-md-12'>
   <div class='text-center remove-link-line'>
-    <div ui-sref-active='active' ui-sref='dashboard.accountProfile.upgradePlan' class='btn btn-dashboard-menu'>
+    <div ui-sref-active='active' ui-sref='dashboard.accountProfile.upgradePlan' class='btn btn-dashboard-menu' ng-show="app.user.isAccountManager">
       <span class='pull-left'>Upgrade Plan</span>
       <img ui-sref-active='active' class='upgrade pull-right' src='/icons/upgrade_blue.png' alt='' />
     </div>
 
-    <div ui-sref-active='active' ui-sref='dashboard.accountProfile.accountManagers' class='btn btn-dashboard-menu'>
+    <div ui-sref-active='active' ui-sref='dashboard.accountProfile.accountManagers' class='btn btn-dashboard-menu' ng-show="app.user.isAccountManager">
       <span class='pull-left'>Account Managers</span>
       <img ui-sref-active='active' class='account-manager pull-right' src='/icons/account_manager_blue.png' alt='' />
     </div>
 
-    <div ui-sref-active='active' ui-sref='dashboard.accountProfile.accountDatabase' class='btn btn-dashboard-menu'>
+    <div ui-sref-active='active' ui-sref='dashboard.accountProfile.accountDatabase' class='btn btn-dashboard-menu' ng-show="app.user.isAdmin">
       <span class='pull-left'>Account Database</span>
       <img ui-sref-active='active' class='account-database pull-right' src='/icons/upgrade_blue.png' alt='' />
     </div>
 
-    <div ui-sref-active='active' ui-sref='dashboard.accountProfile.promotionCode' class='btn btn-dashboard-menu'>
+    <div ui-sref-active='active' ui-sref='dashboard.accountProfile.promotionCode' class='btn btn-dashboard-menu' ng-show="app.user.isAdmin">
       <span class='pull-left'>Promotion Codes</span>
       <img ui-sref-active='active' class='promotion-code pull-right' src='/icons/upgrade_blue.png' alt='' />
     </div>
 
-    <div ng-if="apc.bannerMessageIsAccessible" ui-sref-active='active' ui-sref='dashboard.accountProfile.bannerMessages' class='btn btn-dashboard-menu'>
+    <div ng-if="apc.bannerMessageIsAccessible" ui-sref-active='active' ui-sref='dashboard.accountProfile.bannerMessages' ng-show="app.user.isAdmin" class='btn btn-dashboard-menu'>
       <span class='pull-left'>Upload Banner</span>
       <img ui-sref-active='active' class='promotion-code pull-right' src='/icons/gallery_blue.png' alt='' />
     </div>

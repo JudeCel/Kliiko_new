@@ -28,21 +28,10 @@
     };
 
     vm.paymentDetails = {
-      payPal: {
-        selected: false,
-        tos: false
-      },
-      creditCard: {
-        number: null,
-        selected: false,
-        tos: false,
-        numberChanged: cardNumberChanged
-      },
       chargebee: {
         selected: false,
         tos: false
       },
-
       changePaymentMethodTo: changePaymentMethodTo
     };
 
@@ -52,7 +41,6 @@
     vm.upgradeToPlan = upgradeToPlan;
     vm.updateUserData = updateUserData;
     vm.goToStep = goToStep;
-    vm.cvvValidate = cvvValidate;
     vm.handleUserDataChangeClick = handleUserDataChangeClick;
 
     init();
