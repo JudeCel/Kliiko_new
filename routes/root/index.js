@@ -67,7 +67,7 @@ router.post('/registration', function (req, res, next) {
 router.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
     if (err || !user) {
-      return  res.render('login', {title: 'Login', error: "Wrong email or password or email is not confirmed", message: ''})
+      return  res.render('login', {title: 'Login', error: err, message: ''})
     }
     req.login(user, function(err) {
       if (err) { return next(err); }

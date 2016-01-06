@@ -13,9 +13,9 @@
   });
 
   angular.module('KliikoApp').controller('AccountDatabaseController', AccountDatabaseController);
-  AccountDatabaseController.$inject = ['dbg', 'AccountDatabaseServices', '$modal', '$scope', '$rootScope', '$filter', '$timeout', 'angularConfirm'];
+  AccountDatabaseController.$inject = ['dbg', 'AccountDatabaseServices', '$modal', '$scope', '$rootScope', '$filter', 'angularConfirm', 'messenger'];
 
-  function AccountDatabaseController(dbg, AccountDatabaseServices, $modal, $scope, $rootScope, $filter, $timeout, angularConfirm) {
+  function AccountDatabaseController(dbg, AccountDatabaseServices, $modal, $scope, $rootScope, $filter, angularConfirm, messenger) {
     dbg.log2('#AccountDatabaseController started');
 
     $scope.accounts = {};
@@ -53,14 +53,15 @@
       AccountDatabaseServices.updateAccountUser(params).then(function(res) {
         $scope.changeAccountStatusSending = false;
         if(res.error) {
-          setError($scope, res.error);
+          messenger.error(res.error);
         }
         else {
           var index = $filter('findPositionById')(res.account, $scope.accounts);
           if(index > -1) {
             $scope.accounts.splice(index, 1, res.account);
           }
-          setMessage($scope, res.message);
+          var message = 'Account has been ' + (accountUser.active ? 'deactivated' : 'activated');
+          messenger.ok(message);
         }
       });
     };
@@ -85,22 +86,6 @@
       }
     };
 
-    function setMessage(scope, message) {
-      if(message) {
-        scope.error = null;
-      }
-
-      scope.message = message;
-    };
-
-    function setError(scope, error) {
-      if(error) {
-        scope.message = null;
-      }
-
-      scope.error = error;
-    };
-
     $rootScope.$watch('changedUserComment', function(data) {
       if($rootScope.changedUserComment) {
         var index = $filter('findPositionById')(data.account, $scope.accounts);
@@ -108,24 +93,8 @@
           $scope.accounts.splice(index, 1, data.account);
         }
 
-        setMessage($scope, data.message);
+        messenger.ok(data.message);
         $rootScope.changedUserComment = null;
-      }
-    });
-
-    $scope.$watch('message', function(data) {
-      if($scope.message) {
-        $timeout(function() {
-          setMessage($scope, null);
-        }, 2000);
-      }
-    });
-
-    $scope.$watch('error', function(data) {
-      if($scope.error) {
-        $timeout(function() {
-          setError($scope, null);
-        }, 2000);
       }
     });
   };
