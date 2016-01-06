@@ -2,7 +2,7 @@ var mtypes = require('./../../helpers/mtypes');
 var getSessionStaffUserIds = require('../getSessionStaffUserIds.js');
 var config = require('config').get("chatConf");
 var FS_PATH = config.paths.fsPath + "/" + config.paths.chatRoomPath;
-var URL_PATH = config.paths.urlPath + "/" + config.paths.chatRoomPath;
+var URL_PATH = config.paths.urlPath + config.paths.chatRoomPath;
 
 module.exports = function (params, resCb, nextCb) {
     var getSessionStaffUserIdsCb = function (sessionStaffIds) {
