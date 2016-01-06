@@ -39,16 +39,33 @@
                     Payment Method
                 </div>
                 <div class="row detail-content">
-                    <div class="col-md-6" ng-show="up.paymentDetails.payPal.selected">PAYPAL</div>
-                    <div class="col-md-6" ng-show="up.paymentDetails.creditCard.selected">Credit Card</div>
+                    <!--<div class="col-md-6" ng-show="up.paymentDetails.payPal.selected">PAYPAL</div>-->
+                    <!--<div class="col-md-6" ng-show="up.paymentDetails.creditCard.selected">Credit Card</div>-->
+                    <div class="col-md-6" ng-show="up.paymentDetails.chargebee.selected">Chargebee</div>
                     <div class="col-md-6 pull-left text-right">{{up.finalPrice | currency : up.selectedCurrency.symbol : 2}}</div>
                 </div>
-                <div class="col-md-12 table-header">
-                    Contact Info
+                <div class="col-md-12 table-header margin-top-2rem">
+                    Contact Info <small class="change-link" ng-click="up.handleUserDataChangeClick()">(change)</small>
                 </div>
-                <div class="col-md-4">{{up.userData.firstName}} {{up.userData.lastName}}</div>
-                <div class="col-md-4">{{up.userData.email}}</div>
-                <div class="col-md-4">{{up.userData.mobile}}</div>
+                <dl>
+                    <div class="col-md-12"><dt>First Name:</dt> <dd>{{up.userData.firstName}}</dd></div>
+                    <div class="col-md-12"><dt>Last Name:</dt> <dd>{{up.userData.lastName}}</dd></div>
+                    <div class="col-md-12"><dt>Email:</dt> <dd>{{up.userData.email}}</dd></div>
+                    <div class="col-md-12"><dt>Mobile:</dt> <dd>{{up.userData.mobile || '(none)'}}</dd></div>
+                    <div class="col-md-12"><dt>Land Line:</dt><dd>{{up.userData.landlineNumber || '(none)'}}</dd></div>
+                </dl>
+
+                <div class="col-md-12 table-header margin-top-2rem">
+                    Billing Address <small class="change-link" ng-click="up.handleUserDataChangeClick()">(change)</small>
+                </div>
+                <dl>
+                    <div class="col-md-12"><dt>Address Line:</dt> <dd>{{up.userData.postalAddress || '(none)'}}</dd></div>
+                    <div class="col-md-12"><dt>City:</dt> <dd>{{up.userData.city || '(none)'}}</dd></div>
+                    <div class="col-md-12"><dt>State:</dt> <dd>{{up.userData.state || '(none)'}}</dd></div>
+                    <div class="col-md-12"><dt>Zip:</dt> <dd>{{up.userData.postcode || '(none)'}}</dd></div>
+                    <div class="col-md-12"><dt>Country:</dt><dd>{{up.userData.country || '(none)'}}</dd></div>
+                </dl>
+
 
             </div>
 
@@ -92,6 +109,7 @@
                     </div>
                 </div>
             </section>
+
 
 
 

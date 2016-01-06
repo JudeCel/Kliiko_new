@@ -8,6 +8,7 @@
 "use strict";
 
 var User = require('./../../models').User;
+var _ = require('lodash');
 
 module.exports = {
   userGet: userGet,
@@ -46,13 +47,17 @@ function userPost(req, res, next) {
 }
 
 function userGet(req, res, next) {
+  var role = res.locals.currentDomain.roles;
+
   User.find({
     where: {
-      id: req.user.id
+      id: req.user.id,
     },
-    attributes: userDetailsFields
+    attributes: userDetailsFields,
+    raw: true,
   }).then(function (result) {
-    res.send(result);
+      result.role = role;
+      res.send(result);
   }).catch(function (err) {
     res.send({error: err});
   });
