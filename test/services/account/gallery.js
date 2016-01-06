@@ -37,18 +37,18 @@ describe('Gallery', function() {
     });
   });
 
-  // it('finds all account gallery records', function (done) {
-  //   gallery.findAllRecords(testAccount.id).then(
-  //     function(res) {
-  //       assert.deepEqual(res, []);
-  //       done();
-  //     },
-  //     function(err) {
-  //       assert.equal(res, null);
-  //       done();
-  //     }
-  //   );
-  // });
+  it('finds all account gallery records', function (done) {
+    gallery.findAllRecords(testAccount.id).then(
+      function(res) {
+        assert.deepEqual(res, []);
+        done();
+      },
+      function(err) {
+        assert.equal(res, null);
+        done();
+      }
+    );
+  });
 
   describe('upload validations', function() {
     function defaultFile(params) {
@@ -60,20 +60,111 @@ describe('Gallery', function() {
         destination: params.destination || 'test/fixtures/uploadGallery/test',
         filename: params.filename || 'success.png',
         path: params.path || 'test/fixtures/uploadBanner/test/success.png',
-        size: params.size || 10000
+        size: params.size || 3000000
       };
       return json;
     }
 
-    it('trying to upload to big file', function (done) {
-      let file = defaultFile({});
-      let params = {
-        uploadType: "image", 
-        file
-      }
+    // it('trying to upload to big file', function (done) {
+    //   let file = defaultFile({ size: 600000000 });
+    //   let params = {
+    //     uploadType: "image", 
+    //     file
+    //   }
 
-      // console.log(params);
-      done();
+    //   gallery.uploadNew(params).then(
+    //     function(res) {
+    //       assert.deepEqual(res, null);
+    //       done();
+    //     },
+    //     function(err) {
+    //       assert.equal(err[0].errorMessage, 'This file is too big. Allowed size is 5MB.');
+    //       done();
+    //     }
+    //   );
+    // });
+
+    // it('trying to upload invalid image file', function (done) {
+    //   let file = defaultFile({ mimetype: "image/gif" });
+    //   let params = {
+    //     uploadType: "image", 
+    //     file
+    //   }
+
+    //   gallery.uploadNew(params).then(
+    //     function(res) {
+    //       assert.deepEqual(res, null);
+    //       done();
+    //     },
+    //     function(err) {
+    //       assert.equal(err[0].errorMessage, 'Only file extensions for image file are allowed - png, jpg, jpeg, bmp.');
+    //       done();
+    //     }
+    //   );
+    // });
+
+    // it('trying to upload invalid brand logo file', function (done) {
+    //   let file = defaultFile({ mimetype: "image/tiff" });
+    //   let params = {
+    //     uploadType: "brandLogo", 
+    //     file
+    //   }
+
+    //   gallery.uploadNew(params).then(
+    //     function(res) {
+    //       assert.deepEqual(res, null);
+    //       done();
+    //     },
+    //     function(err) {
+    //       assert.equal(err[0].errorMessage, 'Only file extensions for brand logo file are allowed - png, jpg, jpeg, bmp.');
+    //       done();
+    //     }
+    //   );
+    // });
+
+    // it('trying to upload invalid image file', function (done) {
+    //   let file = defaultFile({ mimetype: "audio/wav" });
+    //   let params = {
+    //     uploadType: "audio", 
+    //     file
+    //   }
+
+    //   gallery.uploadNew(params).then(
+    //     function(res) {
+    //       assert.deepEqual(res, null);
+    //       done();
+    //     },
+    //     function(err) {
+    //       assert.equal(err[0].errorMessage, 'Only file extensions for audio file are allowed - mp3.');
+    //       done();
+    //     }
+    //   );
+    // });
+
+    // it('trying to upload invalid text file', function (done) {
+    //   let file = defaultFile({ mimetype: "application/csv" });
+    //   let params = {
+    //     uploadType: "text", 
+    //     file
+    //   }
+
+    //   gallery.uploadNew(params).then(
+    //     function(res) {
+    //       assert.deepEqual(res, null);
+    //       done();
+    //     },
+    //     function(err) {
+    //       assert.equal(err[0].errorMessage, 'Only file extensions for text file are allowed - pdf.');
+    //       done();
+    //     }
+    //   );
+    // });
+
+    it.only('trying to save invalid youtube URL', function (done) {
+      let params = {
+        uploadType: "youtubeLink", 
+        url: "www.google.lv"
+      }
 
       gallery.uploadNew(params).then(
         function(res) {
@@ -81,8 +172,7 @@ describe('Gallery', function() {
           done();
         },
         function(err) {
-          console.log(err);
-          // assert.equal(res, null);
+          assert.equal(err[0].errorMessage, "Video URL you provided is invalid or the video doesn't exist. Please double check your video URL.");
           done();
         }
       );

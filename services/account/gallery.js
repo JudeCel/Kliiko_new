@@ -8,6 +8,10 @@ var multer = require('multer');
 var async = require('async');
 var _ = require('lodash');
 
+var YouTube = require('youtube-node');
+var youTube = new YouTube();
+youTube.setKey('AIzaSyDLJ5ZXrc3j2rRyqyjA2-BGHLEX7pDhC0E');
+
 var account = require('./../../models').Account;
 var gallery = require('./../../models').Gallery;
 
@@ -16,25 +20,20 @@ module.exports = {
   uploadNew: uploadNew
 };
 
-// ['image', 'brandLogo', 'audio', 'youtubeLink', 'pdf']
-
 const MEGABYTE = 1024*1024;
 const VALIDATIONS = {
   maxSize: 5, // 5mb
   imageFileTypes: [
-    'image/gif',
     'image/png',
     'image/jpg',
     'image/jpeg',
     'image/bmp'
   ],
-  brandLogoFileTypes: [
-    'image/png',
-    'image/jpg',
-    'image/jpeg'
-  ],
   audioFileTypes: [
-    'MP3', 'WAV', 'AAC', 'OGG', 'WMA', 'AIFF', 'FLAC', 'ALAC', 'WMA'
+    'audio/mp3'
+  ],
+  textFileTypes: [
+    'application/pdf'
   ]
 };
 
@@ -56,141 +55,95 @@ function findAllRecords(account_id){
 
 function uploadNew(params){
   let deferred = q.defer();
-  let file = params.file;
+  let file = params.file || null;
   let uploadType = params.uploadType;
-  // let filename = parseFileName(file.name);
+  let youtubeUrl = params.url || null;
 
-  validate(file, uploadType, function(err) {
+  validate(uploadType, file, youtubeUrl, function(err) {
     if (err) {
+      // console.log(err);
       deferred.reject(err);
     }else{
-
+      // deferred.resolve("NOIS");
+      // return deferred.promise;
     }
 
-    return deferred.promise;
   });
+  return deferred.promise;
+}
 
-  function validate(type, file, callback) {
-    let errors = [];
+function validate(type, file, url, callback) {
+  let errors = [];
 
-    if(file.size > (VALIDATIONS.maxSize * MEGABYTE)) {
-      let errorMessage = 'This file is too big. Allowed size is ' + VALIDATIONS.maxSize + 'MB.';
+  if (type === "youtubeLink") {
+    if (!youtubeVideoExists(url)) {
+      let errorMessage = "Video URL you provided is invalid or the video doesn't exist. Please double check your video URL.";
       errors.push({errorMessage:errorMessage});
       return callback(errors);
     }
   }
 
-  // validate(filename.fullName, file, function(err) {
-  //   if (err) {
-  //     fs.stat(file.path, function (err, stat) {
-  //       if(stat) {
-  //         fs.unlink(file.path);
-  //       }
-  //     });
-  //     deferred.reject(err);
-  //     return deferred.promise;
-  //   }
-  //   else {
-
-  //     let fileNameToSave = bannerType+'.'+filename.extension;
-
-  //     fs.stat(file.path, function (err, stat) {
-  //       if(stat) {
-  //         mv(file.path, 'public/banners/'+fileNameToSave, function(error) {
-  //         });
-  //       }
-
-  //       createOrUpdate({ page: bannerType, filepath: 'banners/'+fileNameToSave }, function(error, result) {
-  //         if (error) {
-  //           deferred.reject(error);
-  //           return deferred.promise;
-  //         }
-  //         deferred.resolve(result);
-  //       });
-
-  //       return deferred.promise;
-
-  //     });
-  //   }
-  // });
-
-  // return deferred.promise;
-
-  // if(_.isEmpty(files)) {
-  //   return callback('No files selected');
-  // }
-
-  // let errors = {},
-  // results = {};
-
-  // async.forEachOf(files, function (value, filename, cb) {
-  //   let fileData = value;
-  //   eachFile(fileData, fileData.filename, function(err, result) {
-  //     if(err) {
-  //       errors[filename] = err[filename];
-  //     }
-  //     else {
-  //       results[filename] = result;
-  //     }
-  //     cb();
-  //   });
-  // }, function(err) {
-  //   if(err) {
-  //     callback(err);
-  //   }
-  //   else {
-  //     if(_.isEmpty(errors)) {
-  //       callback(null, 'Successfully uploaded file.');
-  //     }
-  //     else {
-  //       errors.message = 'Something went wrong with the file.';
-  //       callback(errors);
-  //     }
-  //   }
-  // });
-}
-
-/**
- * Brake file name to name and extension parts
- * @param fileName {string}
- * @returns {{extension: string, name: string, fullName: string}}
- */
-function parseFileName(fileName) {
-  let fileNameArr = fileName.split('.');
-
-  var output = {
-    extension: getFileExtension(fileNameArr),
-    name: getFileName(fileNameArr),
-    fullName: fileName
-  };
-
-  return output;
-
-  /**
-   * Will return file extension
-   *  Example:
-   *    return 'png' from '[image-name,this,png]'
-   *    return 'jpg' as default from '[image]'
-   *
-   * @param fileNameArr {array}
-   * @returns {string}
-   */
-  function getFileExtension(fileNameArr) {
-    let defaultExtension = 'jpg';
-    if (fileNameArr.length === 1 ) return defaultExtension;
-    return fileNameArr[ fileNameArr.length - 1];
+  if(file.size > (VALIDATIONS.maxSize * MEGABYTE)) {
+    let errorMessage = 'This file is too big. Allowed size is ' + VALIDATIONS.maxSize + 'MB.';
+    errors.push({errorMessage:errorMessage});
+    return callback(errors);
   }
 
-  /**
-   * Return everything but not extension
-   * @param fileNameArr [array]
-   * @returns {string}
-   */
-  function getFileName(fileNameArr) {
-    let tmp = fileNameArr;
-    tmp.splice(tmp.length -1 ,1);
-    return tmp.join('.');
+  if(!isValidFileType(file.mimetype)) {
+    let errorMessage = 'Only file extensions for ' + type.replace(/([A-Z])/g, ' $1').toLowerCase() + ' file are allowed -' + allowedTypes(type) + '.';
+    errors.push({errorMessage:errorMessage});
+    return callback(errors);
   }
 }
 
+function isValidFileType(type) {
+  if(type === 'image' || type === 'brandLogo'){
+    return VALIDATIONS.imageFileTypes.indexOf(type) > -1
+  }
+
+  if(type === 'audio'){
+    return VALIDATIONS.audioFileTypes.indexOf(type) > -1
+  }
+
+  if(type === 'text'){
+    return VALIDATIONS.textFileTypes.indexOf(type) > -1
+  }
+}
+
+function allowedTypes(type) {
+  let array = [];
+
+  if(type === 'image' || type === 'brandLogo'){
+    for(let i=0; i < VALIDATIONS.imageFileTypes.length; i++) {
+     array[i] = VALIDATIONS.imageFileTypes[i].replace(/image\//g, ' ');
+    }
+  }
+
+  if(type === 'audio'){
+    for(let i=0; i < VALIDATIONS.audioFileTypes.length; i++) {
+     array[i] = VALIDATIONS.audioFileTypes[i].replace(/audio\//g, ' ');
+    }
+  }
+
+  if(type === 'text'){
+    for(let i=0; i < VALIDATIONS.textFileTypes.length; i++) {
+     array[i] = VALIDATIONS.textFileTypes[i].replace(/application\//g, ' ');
+    }
+  }
+
+  return array;
+}
+
+function youtubeVideoExists(url){
+  youTube.getById('0f9PGBQlPbI', function(error, result) {
+    if (error) {
+      return false;
+    }
+    else {
+      let response = JSON.stringify(result, null, 2)
+      console.log(response);
+    }
+  });
+  return false
+}
 
