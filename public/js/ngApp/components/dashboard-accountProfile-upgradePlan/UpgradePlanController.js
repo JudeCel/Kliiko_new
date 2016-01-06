@@ -42,15 +42,21 @@
     init();
 
     function init() {
-      // get all plans details
-      upgradePlanServices.getPlans().then(function (res) {
-        vm.plans = res
-      });
 
-      // get all data for current user
-      user.getUserData().then(function (res) {
-        vm.userData = res;
-      });
+      upgradePlanServices.init().then(fetchInitData);
+
+      function fetchInitData() {
+        // get all plans details
+        upgradePlanServices.getPlans().then(function (res) {
+          vm.plans = res
+        });
+
+        // get all data for current user
+        user.getUserData().then(function (res) {
+          vm.userData = res;
+        });
+      }
+
 
 
       // after payment callback url case
@@ -130,7 +136,6 @@
       return true;
 
       function validateStep2() {
-        upgradePlanServices.initPaymentModule();
         vm.cantMoveNextStep = true;
         return true;
       }
@@ -145,8 +150,6 @@
     }
 
     function updateUserData(data, form) {
-
-      //vm.updateBtn = 'Updating...';
       user.updateUserData(data).then(function (res) {
         vm.updateBtn = 'Updated';
 
@@ -186,8 +189,8 @@
       progressbar.start();
 
       var planObject = {
-        plan: vm.plans[vm.selectedPlanName],
-        duration: vm.upgradeDuration
+       // plan: vm.plans[vm.selectedPlanName],
+       // duration: vm.upgradeDuration
       };
 
       var paymentObject = {

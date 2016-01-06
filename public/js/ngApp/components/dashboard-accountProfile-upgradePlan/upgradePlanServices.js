@@ -6,26 +6,32 @@
   function upgradePlanServices($q, globalSettings, $resource, dbg, $ocLazyLoad, $injector) {
     var cache = {};
     var upServices = {};
-    var creditCard, chargebee;
+    var chargebee;
 
     var upgradePlanRestApi = {
       getAllCountries: $resource(globalSettings.restUrl + '/countries', {}, {post: {method: 'POST'}}),
       getAllCurrencies: $resource(globalSettings.restUrl + '/currencies', {}, {post: {method: 'POST'}}),
-      getPlans: $resource(globalSettings.restUrl + '/plans', {}, {post: {method: 'POST'}}),
-      upgrade: $resource(globalSettings.restUrl + '/upgrade', {}, {post: {method: 'POST'}}),
-      chargebee: $resource(globalSettings.restUrl + globalSettings.paymentModules.chargebee.apiEndPoint, {}, {post: {method: 'POST'}})
+      //getPlans: $resource(globalSettings.restUrl + '/plans', {}, {post: {method: 'POST'}}),
     };
 
-
-
+    upServices.init = init;
     upServices.getPlans = getPlans;
     upServices.submitUpgrade = submitUpgrade;
-    upServices.initPaymentModule = initPaymentModule;
-
-
 
     return upServices;
 
+    function init() {
+      var deferred = $q.defer();
+
+      if (chargebee) { deferred.resolve(); return deferred.promise;}
+
+      $ocLazyLoad.load('/js/ngApp/modules/chargebee/chargebee.js').then(function() {
+        deferred.resolve();
+        chargebee = $injector.get('chargebee');
+        dbg.log2('#UpgradePlanController > init > chargebee is ready to use');
+      });
+      return deferred.promise;
+    }
 
 
 
@@ -38,12 +44,18 @@
         return deferred.promise;
       }
 
-      dbg.log2('#upgradePlanServices > getPlans > make rest call');
-      upgradePlanRestApi.getPlans.get({}, function (res) {
-        dbg.log2('#upgradePlanServices > getPlans > rest call responds');
-        deferred.resolve(res);
-        cache.getPlans = res;
-      });
+      dbg.log2('#upgradePlanServices > getPlans > call chargebee');
+      chargebee.getPlans().then(
+        function(res) { deferred.resolve(res) },
+        function(err) {deferred.reject(err) }
+      );
+
+
+      //upgradePlanRestApi.getPlans.get({}, function (res) {
+      //  dbg.log2('#upgradePlanServices > getPlans > rest call responds');
+      //  deferred.resolve(res);
+      //  cache.getPlans = res;
+      //});
 
       return deferred.promise;
 
@@ -70,12 +82,6 @@
 
     }
 
-    function initPaymentModule() {
-      $ocLazyLoad.load('/js/ngApp/modules/chargebee/chargebee.js').then(function() {
-        chargebee = $injector.get('chargebee');
-        dbg.log2('#UpgradePlanController > validateStep2 > chargebee is ready to use');
-      });
-    }
   }
 
 })();

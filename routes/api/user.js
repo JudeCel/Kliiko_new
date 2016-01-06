@@ -18,6 +18,7 @@ module.exports = {
 
 
 var userDetailsFields = [
+    'id',
     'firstName',
     'lastName',
     'email',

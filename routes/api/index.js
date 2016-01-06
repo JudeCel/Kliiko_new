@@ -46,8 +46,8 @@ router.post('/banners', multipartyMiddleware, banners.bannersPost);
 router.post('/banners/:bannerType', multipartyMiddleware, banners.bannersBannerTypePost);
 router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelete);
 
-router.get('/chargebee', multipartyMiddleware, chargebee.chargebeePost);
-router.post('/chargebee', multipartyMiddleware, chargebee.chargebeePost);
+router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
+router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);
 
 // Common Rules
 router.use(function (req, res, next) {

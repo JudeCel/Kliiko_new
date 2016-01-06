@@ -1,60 +1,41 @@
 "use strict";
-let config = require('config');
-let chargebee = require("chargebee");
+let q = require('q');
+let chargebeeModule = require('./../../modules/chargebee/chargebeeModule');
+
 
 module.exports = {
-  chargebeePost: chargebeePost
+  chargebeePlansGet: chargebeePlansGet,
+  chargebeeSubscriptionPost: chargebeeSubscriptionPost
 };
 
-let chargebeeConfigs = config.get('chargebee');
 
-chargebee.configure({
-  site : chargebeeConfigs.site,
-  api_key : chargebeeConfigs.api_key
-});
+function chargebeePlansGet(req, res, next) {
+  chargebeeModule.getPlans().then(function(response) {
+    res.send(response);
+  });
+}
+
+
+
 
 //https://apidocs.chargebee.com/docs/api/hosted_pages#checkout_new_subscription
-function chargebeePost(req, res, next) {
-
+function chargebeeSubscriptionPost(req, res, next) {
   if (!req.body.userData) { res.send('no userData specified');  return; }
   if (!req.body.planDetails) { res.send('no planDetails specified');  return; }
-  if (!req.body.planDetails) { res.send('no planDetails specified');  return; }
+  if (!req.body.paymentDetails) { res.send('no paymentDetails specified');  return; }
   if (!req.body.pages) { res.send('no pages specified');  return; }
+  if (!req.body.passThruContent) { res.send('no passThruContent specified');  return; }
 
-  var userData = req.body.userData;
-  chargebee.hosted_page.checkout_new({
-    subscription : {
-      plan_id : "plan2",
-      plan_quantity: req.body.planDetails.duration,
-      coupon: req.body.paymentDetails.promocode
-    },
-    customer : {
-      email : userData.email,
-      first_name : userData.firstName,
-      last_name : userData.lastName,
-      phone : userData.mobile,
-      company : userData.companyName
-    },
-    billing_address : {
-      first_name : userData.firstName,
-      last_name : userData.lastName,
-      line1 : userData.postalAddress,
-      city : userData.city,
-      state : userData.state,
-      zip : userData.postcode,
-      country : userData.country
-    },
-    redirect_url: req.body.pages.redirect_url,
-    cancel_url: req.body.pages.cancel_url
+  let userData = req.body.userData;
+  let planDetails = req.body.planDetails;
+  let paymentDetails = req.body.paymentDetails;
+  let pages = req.body.pages;
+  let passThruContent = req.body.passThruContent;
 
-  }).request(function(error,result){
-    if (error) {
-      //handle error
-      res.send({error:error});
-    } else {
-      res.send(result);
-    }
-  });
+  chargebeeModule.prepareHostedPage(userData, planDetails, paymentDetails, pages, passThruContent).then(
+    function(response) { res.send(response) },
+    function(error) { res.send({error:error}) }
+  );
 
 }
 
