@@ -22,10 +22,6 @@
     vm.modContentBlock = {selectedPlanDetails: true};
     vm.updateBtn = 'Update';
     vm.upgradeDuration = 1;
-    vm.expDates = {
-      years: upgradePlanServices.getYearsArray(),
-      months: upgradePlanServices.getMonthsArray()
-    };
 
     vm.paymentDetails = {
       chargebee: {
@@ -164,9 +160,6 @@
     }
 
     function changePaymentMethodTo(type) {
-      vm.paymentDetails.creditCard.selected = false;
-      vm.paymentDetails.creditCard.tos = false;
-
       if (type === 'chargebee') vm.paymentDetails.chargebee.selected = true;
 
       selectedPaymentMethod = type;
@@ -203,16 +196,6 @@
         currency: 'USD',
         totalPrice: vm.finalPrice
       };
-
-      if (vm.paymentDetails.creditCard.selected) {
-        paymentObject.creditcardDetails = {
-          cardHolderName: vm.paymentDetails.creditCard.holderName,
-          cardNumber: vm.paymentDetails.creditCard.number.replace(/\D/g, ''),
-          expDate: vm.paymentDetails.creditCard.expDate,
-          expYear: vm.paymentDetails.creditCard.expYear,
-          cvv: vm.paymentDetails.creditCard.cvv
-        }
-      }
 
       if (vm.paymentDetails.chargebee.selected) {
         domServices.showFader();

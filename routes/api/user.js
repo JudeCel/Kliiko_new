@@ -58,8 +58,6 @@ function userGet(req, res, next) {
   }).then(function (result) {
       result.role = role;
       res.send(result);
-      console.log(result);
-
   }).catch(function (err) {
     res.send({error: err});
   });

@@ -13,6 +13,7 @@ chargebee.configure({
   api_key : chargebeeConfigs.api_key
 });
 
+//https://apidocs.chargebee.com/docs/api/hosted_pages#checkout_new_subscription
 function chargebeePost(req, res, next) {
 
   if (!req.body.userData) { res.send('no userData specified');  return; }
@@ -23,7 +24,9 @@ function chargebeePost(req, res, next) {
   var userData = req.body.userData;
   chargebee.hosted_page.checkout_new({
     subscription : {
-      plan_id : "plan1"
+      plan_id : "plan1",
+      plan_quantity: req.body.planDetails.duration,
+      coupon: req.body.paymentDetails.promocode
     },
     customer : {
       email : userData.email,
@@ -42,7 +45,7 @@ function chargebeePost(req, res, next) {
       country : userData.country
     },
     redirect_url: req.body.pages.redirect_url,
-    cancel_url: req.body.pages.cancel_url,
+    cancel_url: req.body.pages.cancel_url
 
   }).request(function(error,result){
     if (error) {
