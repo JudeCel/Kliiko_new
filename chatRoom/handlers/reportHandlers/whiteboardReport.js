@@ -96,7 +96,7 @@ var clearArea = function (report, coordinates) {
             strokeWidth: 1,
             type: "rectangle-fill"
         },
-        fsPath: "c:/insiderFocus/ifs/chat_room",
+        fsPath: config.paths.fsPath,
         isFirst: false,
         isLast: true,
         name: "",

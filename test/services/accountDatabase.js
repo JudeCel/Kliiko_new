@@ -52,7 +52,7 @@ describe('SERVICE - AccountDatabase', function() {
       Mobile: '',
       Landline: '',
       'Sessions purchased': '',
-      'Tipe permission': '',
+      'Type permission': '',
       'Active Sessions': '',
       Comment: ''
     };
@@ -73,7 +73,7 @@ describe('SERVICE - AccountDatabase', function() {
       'Mobile',
       'Landline',
       'Sessions purchased',
-      'Tipe permission',
+      'Type permission',
       'Active Sessions',
       'Comment'
     ];

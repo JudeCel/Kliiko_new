@@ -13,7 +13,7 @@ module.exports = (Sequelize, DataTypes) => {
   },
    {
       // indexes: [],
-      timestamps: false,
+      timestamps: true,
       tableName: 'session_staff',
       paranoid: true,
       classMethods: {
