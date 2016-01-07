@@ -5,9 +5,10 @@ var Invite = models.Invite;
 var User = models.User;
 var Account = models.Account;
 var AccountUser = models.AccountUser;
+
 var inviteMailer = require('../mailers/invite');
-var accountService = require('../services/account');
 var constants = require('../util/constants');
+
 var uuid = require('node-uuid');
 var async = require('async');
 var _ = require('lodash');
@@ -29,19 +30,48 @@ function createInvite(params, callback) {
     userType: params.userType
   }).then(function(result) {
     Invite.find({ include: [ { model: User, attributes: constants.safeUserParams }, Account ], where: { token: token } }).then(function(invite) {
-      let inviteParams = { token: invite.token, email: invite.User.email };
-      inviteMailer.sendInviteAccountManager(inviteParams, function(error, data) {
-        callback(error, invite, data);
-      });
+      sendInvite(invite, callback);
     });
   }).catch(function(error) {
-    callback(prepareErrors(error));
+    if(error.name == 'SequelizeUniqueConstraintError') {
+      callback({ email: 'User has already been invited' })
+    }
+    else {
+      callback(prepareErrors(error));
+    }
   });
 };
 
+function sendInvite(invite, callback) {
+  let inviteParams = {
+    token: invite.token,
+    email: invite.User.email,
+    firstName: invite.User.firstName,
+    lastName: invite.User.lastName,
+    accountName: invite.Account.name
+  };
+
+  inviteMailer.sendInviteAccountManager(inviteParams, function(error, data) {
+    callback(error, invite, data);
+  });
+}
+
+function findAndRemoveInvite(params, callback) {
+  Invite.find({ where: params }).then(function(invite) {
+    if(invite) {
+      removeInvite(invite, function(err) {
+        callback(err, 'Successfully removed Invite');
+      });
+    }
+    else {
+      callback('Invite not found');
+    }
+  });
+}
+
 function removeInvite(invite, callback) {
   if(invite.userType == 'new') {
-    removeAllAssociatedData(invite, function(error) {
+    removeAllAssociatedDataOnNewUser(invite, function(error) {
       callback(error);
     });
   }
@@ -102,7 +132,7 @@ function acceptInviteNew(token, params, callback) {
       return callback(true);
     }
 
-    createAccountAndUser(invite, params, function(error) {
+    updateUser({ password: params.password }, invite, function(error) {
       if(error) {
         callback(error, invite);
       }
@@ -116,7 +146,7 @@ function acceptInviteNew(token, params, callback) {
 };
 
 //Helpers
-function removeAllAssociatedData(invite, callback) {
+function removeAllAssociatedDataOnNewUser(invite, callback) {
   async.waterfall([
     function(cb) {
       User.find({ where: { id: invite.userId } }).then(function(user) {
@@ -131,26 +161,7 @@ function removeAllAssociatedData(invite, callback) {
       });
     },
     function(user, cb) {
-      user.getOwnerAccount({ include: [ AccountUser ] }).then(function(accounts) {
-        if(accounts[0]) {
-          cb(null, user, accounts[0]);
-        }
-        else {
-          cb('Not found account');
-        }
-      }).catch(function(error) {
-        cb(prepareErrors(error));
-      });
-    },
-    function(user, account, cb) {
-      account.AccountUser.destroy().then(function() {
-        cb(null, user, account);
-      }).catch(function(error) {
-        cb(prepareErrors(error));
-      });
-    },
-    function(user, account, cb) {
-      account.destroy().then(function() {
+      AccountUser.destroy({ where: { UserId: user.id, AccountId: invite.accountId } }).then(function() {
         cb(null, user);
       }).catch(function(error) {
         cb(prepareErrors(error));
@@ -181,42 +192,9 @@ function createAccountUserFromInvite(invite, callback) {
   });
 };
 
-function createAccountAndUser(invite, params, callback) {
-  updateAccount(params, invite, function(error) {
-    if(error) {
-      callback(error);
-    }
-    else {
-      updateUser({ password: params.password }, invite, function(error) {
-        callback(error);
-      });
-    }
-  });
-};
-
 function updateUser(params, invite, callback) {
   User.update(params, { where: { id: invite.userId } }).then(function(result) {
     callback(null, true);
-  }).catch(function(error) {
-    callback(prepareErrors(error));
-  });
-};
-
-function updateAccount(params, invite, callback) {
-  Account.find({
-    include: [{
-      model: AccountUser,
-      where: { UserId: invite.userId, owner: true }
-    }]
-  }).then(function(account) {
-    if(account) {
-      accountService.updateInstance(account, params, function(error) {
-        callback(error);
-      });
-    }
-    else {
-      callback('Account not found');
-    }
   }).catch(function(error) {
     callback(prepareErrors(error));
   });
@@ -232,6 +210,7 @@ function prepareErrors(err) {
 
 module.exports = {
   createInvite: createInvite,
+  findAndRemoveInvite: findAndRemoveInvite,
   removeInvite: removeInvite,
   findInvite: findInvite,
   acceptInviteExisting: acceptInviteExisting,

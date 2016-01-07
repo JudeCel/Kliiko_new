@@ -18,11 +18,11 @@ var onFileuploadcomplete = function(json) {
 
 	switch (json.type) {
 		case 'image': {
-			socket.emit('getresources', window.sessionID, json.type, true);
+			socket.emit('getresources', window.sessionId, json.type, true);
 		}
 			break;
 		case 'audio': {
-			socket.emit('getresources', window.sessionID, json.type, true);
+			socket.emit('getresources', window.sessionId, json.type, true);
 		}
 			break;
 		case 'collage': {

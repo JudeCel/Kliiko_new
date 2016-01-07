@@ -43,29 +43,29 @@ describe('SERVICE - AccountManager', function() {
     });
   });
 
-  function countTables(invite, account, user, accountUser) {
+  function countTables(params) {
     return [
       function(cb) {
         Invite.count().then(function(c) {
-          assert.equal(c, invite);
+          assert.equal(c, params.invite);
           cb();
         });
       },
       function(cb) {
         Account.count().then(function(c) {
-          assert.equal(c, account);
+          assert.equal(c, params.account);
           cb();
         });
       },
       function(cb) {
         User.count().then(function(c) {
-          assert.equal(c, user);
+          assert.equal(c, params.user);
           cb();
         });
       },
       function(cb) {
         AccountUser.count().then(function(c) {
-          assert.equal(c, accountUser);
+          assert.equal(c, params.accountUser);
           cb();
         });
       }
@@ -190,7 +190,7 @@ describe('SERVICE - AccountManager', function() {
                 done(error);
               }
 
-              async.parallel(countTables(0, 2, 2, 3), function(error, result) {
+              async.parallel(countTables({ invite: 0, account: 1, user: 2, accountUser: 2 }), function(error, result) {
                 if(error) {
                   done(error);
                 }
@@ -218,7 +218,7 @@ describe('SERVICE - AccountManager', function() {
               done(error);
             }
 
-            async.parallel(countTables(1, 2, 2, 2), function(error, result) {
+            async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 1 }), function(error, result) {
               if(error) {
                 done(error);
               }
@@ -234,43 +234,7 @@ describe('SERVICE - AccountManager', function() {
     });
   });
 
-  describe('#removeInviteOrAccountUser', function() {
-    it('should remove invite from list', function (done) {
-      let req = requestObject();
-      accountManagerService.createOrFindUser(req, function(error, params) {
-        if(error) {
-          done(error);
-        }
-
-        User.find({ where: { email: req.body.email } }).then(function(user) {
-          inviteService.createInvite(params, function(error, invite) {
-            if(error) {
-              done(error);
-            }
-
-            async.parallel(countTables(1, 2, 2, 2), function(error, result) {
-              if(error) {
-                done(error);
-              }
-
-              req = requestObject({ id: user.id, type: 'invite' });
-              accountManagerService.removeInviteOrAccountUser(req, function(error, message) {
-                assert.equal(error, null);
-                assert.equal(message, 'Successfully removed Invite');
-
-                async.parallel(countTables(0, 1, 1, 1), function(error, result) {
-                  if(error) {
-                    done(error);
-                  }
-                  done();
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-
+  describe('#findAndRemoveAccountUser', function() {
     it('should remove account from list', function (done) {
       let req = requestObject();
       accountManagerService.createOrFindUser(req, function(error, params) {
@@ -290,17 +254,17 @@ describe('SERVICE - AccountManager', function() {
                 done(error);
               }
 
-              async.parallel(countTables(0, 2, 2, 3), function(error, result) {
+              async.parallel(countTables({ invite: 0, account: 1, user: 2, accountUser: 2 }), function(error, result) {
                 if(error) {
                   done(error);
                 }
 
                 req = requestObject({ id: user.id, type: 'account' });
-                accountManagerService.removeInviteOrAccountUser(req, function(error, message) {
+                accountManagerService.findAndRemoveAccountUser(req, function(error, message) {
                   assert.equal(error, null);
                   assert.equal(message, 'Successfully removed account from Account List');
 
-                  async.parallel(countTables(0, 2, 2, 2), function(error, result) {
+                  async.parallel(countTables({ invite: 0, account: 1, user: 2, accountUser: 1 }), function(error, result) {
                     done(error);
                   });
                 });

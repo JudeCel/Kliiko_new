@@ -8,7 +8,10 @@ var transporter = helpers.createTransport();
 
 function sendInviteAccountManager(inviteParams, callback) {
   let links = {
-    url: helpers.getUrl(inviteParams.token, '/invite/')
+    url: helpers.getUrl(inviteParams.token, '/invite/'),
+    firstName: inviteParams.firstName,
+    lastName: inviteParams.lastName,
+    accountName: inviteParams.accountName
   };
 
   helpers.renderMailTemplate('invite/inviteAccountUser', links, function(error, html){
@@ -20,7 +23,12 @@ function sendInviteAccountManager(inviteParams, callback) {
       from: mailFrom,
       to: inviteParams.email,
       subject: 'Insider Focus - Join account',
-      html: html
+      html: html,
+      attachments: [{
+        filename: 'header.png',
+        path: 'public/images/mail/system_header.png',
+        cid: 'systemHeader@kliiko'
+      }]
     }, callback);
   });
 };

@@ -1,7 +1,7 @@
 {
   "mode": "development",
   "server":{
-    "port": 7203,
+    "port": 8080,
     "baseDomain": ".focus.com",
     "domain": "insider.focus.com",
     "chatUrl": "/chat",
@@ -24,7 +24,12 @@
     }
   },
   "webAppSettings": {
-    "restApiUrl": "/api"
+    "restApiUrl": "/api",
+    "paymentModules": {
+      "chargebee": {
+        "apiEndPoint": "/chargebee"
+      }
+    }
   },
   "sessionSecret": "c4be0a2cc8658004a3f2417e62281f65e995ac7c564e39e727d764a62d69e836",
   "cookieSecret": "ee9b7f3df25f0759a0876762da2b721cdeba47b1f5df4003807c6383c581f409",
@@ -39,11 +44,11 @@
   	"mode": "live",
   	"conflict": "drop existing",
   	"copyright": "2011 - 2014 ThirdWaveMedia Pty. Ltd.",
-  	"port": "7203",
+  	"port": "8080",
   	"domain": "insider.focus.com",
   	"paths": {
   		"fsPath": "/home/dainisl/code/Kliiko/chatRoom",
-  		"urlPath": "http://insider.focus.com:7203/",
+  		"urlPath": "http://insider.focus.com:8080/",
   		"serverPath": "server/",
   		"configPath": "config/",
   		"adminPath": "admin/",
@@ -51,5 +56,9 @@
           "convertPath": "/usr/bin/convert",
           "identifyPath": "/usr/bin/identify"
   	}
+  },
+  "chargebee": {
+    "site" : "kliikotst-test",
+    "api_key" : "test_M84JneCGcdmd5Zp8jpDqLtH9twyR9EWUr"
   }
 }

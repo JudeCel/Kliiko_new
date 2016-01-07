@@ -75,7 +75,7 @@ var onBrandprojectinfo = function (data) {
             imgURL = "/chat_room/images/logoDefaultInsiderfocus.jpg";
                 $('#logo-div').prepend('<img src=' + imgURL + ' />')
         }
-        socket.emit('getuserinfo', window.userID, window.sessionID, window.brandProjectInfo.id);
-        socket.emit('get_offline_transactions', window.sessionID, window.userID);
+        socket.emit('getuserinfo', window.userID, window.sessionId, window.brandProjectInfo.id);
+        socket.emit('get_offline_transactions', window.sessionId, window.userID);
     }
 };

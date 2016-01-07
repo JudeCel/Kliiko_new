@@ -1,7 +1,7 @@
 var mtypes = require('./../../helpers/mtypes');
 var getReportData_ChatHistory = require('../getReportData_ChatHistory.js');
-var config = require('../../config/config.json');
-var FS_PATH = config.paths.fsPath + config.paths.chatRoomPath;
+var config = require('config').get("chatConf");
+var FS_PATH = config.paths.fsPath + "/" +config.paths.chatRoomPath;
 var S = require('string');
 
 function getPrefix(params) {

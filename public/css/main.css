@@ -127,6 +127,9 @@ label.radio-button input[type="radio"]:checked + span:after {
   .btn-standart.btn-glyphonic {
     padding: 3px 4px 1px 4px; }
 
+.btn-forbidden {
+  cursor: not-allowed !important; }
+
 img.ic-flipX {
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
@@ -138,40 +141,40 @@ img.ic-flipX {
   width: 20%;
   padding-top: 100px; }
 
-.contactDetailsModal {
+.contactDetailsModal, .accountDatabaseCommentModal {
   width: 60%;
   padding-top: 100px;
   /* RADIO BUTTON */
   /* CHECKBOX */ }
-  .contactDetailsModal .table td {
+  .contactDetailsModal .table td, .accountDatabaseCommentModal .table td {
     padding-left: 2px;
     padding-right: 5px;
     border: 1px solid #f00;
     margin-left: -25px;
     max-width: 215px; }
-    .contactDetailsModal .table td:first-of-type {
+    .contactDetailsModal .table td:first-of-type, .accountDatabaseCommentModal .table td:first-of-type {
       padding-right: 15px;
       white-space: nowrap; }
-    .contactDetailsModal .table td.error-column {
+    .contactDetailsModal .table td.error-column, .accountDatabaseCommentModal .table td.error-column {
       padding: 0;
       padding-top: 3px;
       padding-bottom: 3px;
       height: 17px; }
-  .contactDetailsModal input.form-control {
+  .contactDetailsModal input.form-control, .accountDatabaseCommentModal input.form-control {
     border-width: 2px;
     height: 40px;
     border-radius: 0; }
-  .contactDetailsModal .modal-header {
+  .contactDetailsModal .modal-header, .accountDatabaseCommentModal .modal-header {
     border-bottom: none;
     padding-bottom: 0; }
-  .contactDetailsModal .modal-body {
+  .contactDetailsModal .modal-body, .accountDatabaseCommentModal .modal-body {
     padding-top: 0; }
-  .contactDetailsModal input[type="radio"]:checked + span:after {
+  .contactDetailsModal input[type="radio"]:checked + span:after, .accountDatabaseCommentModal input[type="radio"]:checked + span:after {
     background: #E51D39 !important;
     border: 2px solid #E51D39 !important; }
-  .contactDetailsModal input[class=checkbox-login] {
+  .contactDetailsModal input[class=checkbox-login], .accountDatabaseCommentModal input[class=checkbox-login] {
     display: none; }
-  .contactDetailsModal input[class=checkbox-login] + label {
+  .contactDetailsModal input[class=checkbox-login] + label, .accountDatabaseCommentModal input[class=checkbox-login] + label {
     background: url("/icons/checkbox-out.jpeg") no-repeat;
     height: 22px;
     width: 22px;
@@ -179,7 +182,7 @@ img.ic-flipX {
     margin-left: 0;
     margin-bottom: -5px;
     background-size: contain; }
-  .contactDetailsModal input[class=checkbox-login]:checked + label {
+  .contactDetailsModal input[class=checkbox-login]:checked + label, .accountDatabaseCommentModal input[class=checkbox-login]:checked + label {
     background: url("/icons/checkbox-in.jpeg") no-repeat;
     height: 22px;
     width: 22px;
@@ -187,8 +190,12 @@ img.ic-flipX {
     margin-top: 1px; }
 
 .accountDatabaseCommentModal {
-  width: 20%;
+  width: 400px;
   padding-top: 100px; }
+
+@media (max-width: 768px) {
+  .accountDatabaseCommentModal {
+    width: auto; } }
 
 #nav-tabs-main {
   text-align: center;
@@ -241,7 +248,8 @@ img.ic-flipX {
   border: 0;
   border-collapse: separate;
   border-spacing: 0px 10px;
-  margin-top: -10px; }
+  margin-top: -10px;
+  margin-bottom: 0px; }
 
 .table-dashboardElements > thead {
   color: white;
@@ -258,9 +266,6 @@ img.ic-flipX {
   padding-top: 16px;
   padding-bottom: 16px;
   border: 0; }
-
-.table-dashboardElements > tbody > tr > td {
-  word-break: break-all; }
 
 .error-area {
   margin-top: 25px;
@@ -528,6 +533,13 @@ footer {
   text-align: left;
   argin: 0 auto !important; }
 
+.dashboard-container.horizontal-scroll {
+  overflow-x: scroll;
+  white-space: nowrap; }
+
+.fixed-bottom-margin {
+  margin-bottom: 100px; }
+
 .dashboard-header .my-details-container {
   height: 20px;
   margin-left: 10px; }
@@ -679,6 +691,26 @@ footer {
 
 #signup .table-v-content-middle td {
   vertical-align: middle; }
+
+/*Blue checkbox could be outside registration/login scope*/
+input[class=checkbox-blue] {
+  display: none; }
+
+input[class=checkbox-blue] + label {
+  background: url("/icons/checkbox_blue.jpg") no-repeat;
+  height: 22px;
+  width: 22px;
+  margin-top: 1px;
+  margin-left: 0;
+  margin-bottom: 0;
+  background-size: contain; }
+
+input[class=checkbox-blue]:checked + label {
+  background: url("/icons/checkbox_blue_chk.jpg") no-repeat;
+  height: 22px;
+  width: 22px;
+  background-size: contain;
+  margin-top: 1px; }
 
 .main-welcome .welcome {
   width: 40%;
@@ -1118,10 +1150,29 @@ footer {
   #upgrade-plan-content #step-3 .detail-content,
   #upgrade-plan-content #step-4 .detail-content {
     font-size: 1.9rem; }
+  #upgrade-plan-content #step-3 dt,
+  #upgrade-plan-content #step-4 dt {
+    float: left;
+    margin-top: 4px;
+    margin-right: 1rem;
+    font-size: 1.6rem;
+    font-weight: 100; }
+  #upgrade-plan-content #step-3 small.change-link,
+  #upgrade-plan-content #step-4 small.change-link {
+    float: right;
+    color: #58595b;
+    cursor: pointer; }
+    #upgrade-plan-content #step-3 small.change-link:hover,
+    #upgrade-plan-content #step-4 small.change-link:hover {
+      color: #4DC0E9; }
 
 #upgrade-plan-content #step-5 {
   margin-top: 55px;
   margin-bottom: 100px; }
+  #upgrade-plan-content #step-5 iframe#paymentModal-iframe {
+    margin-top: 20px;
+    width: 80vh;
+    height: 90vw; }
 
 #messenger-area {
   position: fixed;
@@ -1194,3 +1245,6 @@ footer {
 
 .banner-link-input {
   border-color: #4DC0E9 !important; }
+
+.margin-top-2rem {
+  margin-top: 2rem; }

@@ -12,6 +12,7 @@ var accountManager = require('./accountManager');
 var promotionCode = require('./promotionCode');
 var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
+var chargebee = require('./chargebee');
 
 
 module.exports = router;
@@ -19,6 +20,7 @@ module.exports = router;
 // Main Routes
 router.get('/user', userRoutes.userGet);
 router.post('/user', userRoutes.userPost);
+router.put('/user', userRoutes.changePassword);
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
 
 router.get('/plans', planRoutes.plansGet);
@@ -29,7 +31,8 @@ router.get('/countries', countryAndCurrency.countries);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
 router.post('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.post);
-router.delete('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.remove);
+router.delete('/accountManager/accountUser', policy.authorized(['accountManager', 'admin']), accountManager.removeAccountUser);
+router.delete('/invite', policy.authorized(['accountManager', 'admin']), accountManager.removeInvite);
 
 router.get('/promotionCode', policy.authorized(['admin']), promotionCode.get);
 router.post('/promotionCode', policy.authorized(['admin']), promotionCode.create);
@@ -39,10 +42,13 @@ router.put('/promotionCode/:id', policy.authorized(['admin']), promotionCode.upd
 router.get('/accountDatabase', policy.authorized(['admin']), accountDatabase.get);
 router.put('/accountDatabase/:id', policy.authorized(['admin']), accountDatabase.update);
 
-router.get('/banners', banners.banners_Get);
-router.post('/banners', multipartyMiddleware, banners.banners_Post);
-router.post('/banners/:bannerType', multipartyMiddleware, banners.banners_bannerType_Post);
-router.delete('/banners/:bannerType', multipartyMiddleware, banners.banners_Delete);
+router.get('/banners', banners.bannersGet);
+router.post('/banners', multipartyMiddleware, banners.bannersPost);
+router.post('/banners/:bannerType', multipartyMiddleware, banners.bannersBannerTypePost);
+router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelete);
+
+router.get('/chargebee', multipartyMiddleware, chargebee.chargebeePost);
+router.post('/chargebee', multipartyMiddleware, chargebee.chargebeePost);
 
 // Common Rules
 router.use(function (req, res, next) {
@@ -57,7 +63,3 @@ router.use(function (req, res, next) {
 function notAuthExit(res) {
   res.status(403).send('not authorized');
 }
-
-
-
-

@@ -8,7 +8,6 @@
       accountDatabase: $resource(globalSettings.restUrl +'/accountDatabase/:id', null, { update: { method: 'PUT' } })
     };
 
-    var cache = {};
     var upServices = {};
 
     upServices.getAccountDatabases = getAccountDatabases;
@@ -18,17 +17,10 @@
     function getAccountDatabases() {
       var deferred = $q.defer();
 
-      if(cache.allManagers) {
-        deferred.resolve(cache.allManagers);
-        dbg.log2('#AccountDatabaseServices > getAccountDatabases > return cached value');
-        return deferred.promise;
-      }
-
       dbg.log2('#AccountDatabaseServices > getAccountDatabases > make rest call');
       accountDatabaseRestApi.accountDatabase.get({}, function(res) {
         dbg.log2('#AccountDatabaseServices > getAccountDatabases > rest call responds');
         deferred.resolve(res);
-        cache.allManagers = res;
       });
 
       return deferred.promise;

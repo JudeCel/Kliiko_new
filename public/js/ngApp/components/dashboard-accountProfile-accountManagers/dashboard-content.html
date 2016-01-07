@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <div class='col-md-12'>
+  <div class='col-md-12 fixed-bottom-margin'>
     <div class='dashboard-container'>
       <table class='table table-responsive table-dashboardElements'>
         <thead>
@@ -38,12 +38,12 @@
             <td>{{ user.mobile }}</td>
             <td>
               <div ng-if='user.Invites'>Invited</div>
-              <div ng-if='user.Accounts'>Accepted</div>
+              <div ng-if='user.AccountUsers'>Accepted</div>
             </td>
             <td class='text-right dashboardElementsEditRemove'>
               <img src='/icons/dashboardElement_edit.png' alt='' />
-              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeAccountOrInvite("invite", user)' ng-if='user.Invites' />
-              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeAccountOrInvite("account", user)' ng-if='user.Accounts' />
+              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeInvite(user)' ng-if='user.Invites' />
+              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeAccountUser(user)' ng-if='user.AccountUsers' />
             </td>
           </tr>
         </tbody>
