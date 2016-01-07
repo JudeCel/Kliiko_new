@@ -109,4 +109,23 @@
     font-size: 1.9rem;
   }
 
+
+  dt {
+    float: left;
+    margin-top: 4px;
+    margin-right: 1rem;
+    font-size: 1.6rem;
+    font-weight: 100;
+  }
+
+  small.change-link {
+    float: right;
+    color: $grey;
+    cursor: pointer;
+    
+    &:hover {
+      color: $blue;
+    }
+  }
+
 }

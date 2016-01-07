@@ -241,3 +241,12 @@ color: #737373;
   text-align:left;
   argin: 0 auto !important;
 }
+
+.dashboard-container.horizontal-scroll {
+  overflow-x: scroll;
+  white-space: nowrap;
+}
+
+.fixed-bottom-margin {
+  margin-bottom: 100px;
+}

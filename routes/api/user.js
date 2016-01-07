@@ -8,11 +8,14 @@
 "use strict";
 
 var User = require('./../../models').User;
+var changePasswordService = require('../../services/changePassword');
+var _ = require('lodash');
 
 module.exports = {
   userGet: userGet,
   userPost: userPost,
-  userCanAccessPost:userCanAccessPost
+  userCanAccessPost:userCanAccessPost,
+  changePassword:changePassword
 };
 
 
@@ -49,15 +52,29 @@ function userPost(req, res, next) {
 }
 
 function userGet(req, res, next) {
+  var role = res.locals.currentDomain.roles;
+
   User.find({
     where: {
-      id: req.user.id
+      id: req.user.id,
     },
-    attributes: userDetailsFields
+    attributes: userDetailsFields,
+    raw: true,
   }).then(function (result) {
-    res.send(result);
+      result.role = role;
+      res.send(result);
   }).catch(function (err) {
     res.send({error: err});
+  });
+}
+
+function changePassword(req, res, next) {
+  changePasswordService.save(req, function(errors, message, user){
+    if (errors) {
+      res.send({ error: errors.message, message: message });
+    }else{
+      res.send({ message: message });
+    }
   });
 }
 

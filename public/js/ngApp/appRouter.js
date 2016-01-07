@@ -45,7 +45,7 @@
       })
 
       .state('dashboard.accountProfile.upgradePlan', {
-        url: "/upgrade-plan",
+        url: "/upgrade-plan?step",
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-upgradePlan/dashboard-content.html"}
         },

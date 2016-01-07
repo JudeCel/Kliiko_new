@@ -1,7 +1,7 @@
 var onSavePDFFile = function(result) {
 	var dataAsJson = JSON.parse(result);
 
-	//sort conversation content to correct sequence 
+	//sort conversation content to correct sequence
 	//(mainly put reply content after the original content it reply to)
 	var processedData = sortResult(dataAsJson);
 	processedData = processEvent(processedData);
@@ -30,7 +30,7 @@ var filterResult = function(processedData){
 			if(processedData[i].topicId == list[ii].topicId)
 				break;
 		}
-
+		ii--
 		var count = filteredData[ii].length;
 		filteredData[ii][count]=processedData[i];
 	}
@@ -138,4 +138,3 @@ var sortResult = function(dataAsJson){
 	}
 	return dataAsJson;
 };
-	

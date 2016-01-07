@@ -77,6 +77,13 @@
 }
 
 .accountDatabaseCommentModal {
-  width: 20%;
+  @extend .contactDetailsModal;
+  width: 400px;
   padding-top: 100px;
+}
+
+@media (max-width: 768px) {
+  .accountDatabaseCommentModal {
+    width: auto;
+  }
 }
