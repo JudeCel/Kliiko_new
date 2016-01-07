@@ -73,7 +73,7 @@ describe('User', () => {
           done();
         })
         .catch(function(error) {
-          assert.equal(error.errors[0].message, 'already taken');
+          assert.equal(error.errors[0].message, 'This e-mail address already exists. Please try another.');
           done();
         });
     });
