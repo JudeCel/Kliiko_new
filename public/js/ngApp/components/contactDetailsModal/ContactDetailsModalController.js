@@ -38,7 +38,7 @@
       user.updateUserData(data, form).then(function (res) {
         vm.updateBtn = 'Updated';
 
-        messenger.ok('Saved!');
+        messenger.ok('Contact details updated successfully.');
         cancel();
       });
     }
