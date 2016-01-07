@@ -16,7 +16,7 @@ passport.use(new LocalStrategy({
   function (username, password, done) {
     usersService.comparePassword(username, password, function(failed, result) {
       if (failed) {
-        done('Wrong email or password or email is not confirmed');
+        done('Sorry, your Email and Password do not match. Please try again.');
       }else{
         result.getAccounts({ include: [ models.AccountUser ] }).then(function(accounts) {
           let account = accounts[0];
