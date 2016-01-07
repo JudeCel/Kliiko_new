@@ -39,10 +39,7 @@
         vm.updateBtn = 'Updated';
 
         messenger.ok('Saved!');
-
-        form.$setPristine();
-        form.$setUntouched();
-
+        cancel();
       });
     }
 
