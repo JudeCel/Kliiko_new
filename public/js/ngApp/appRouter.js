@@ -165,20 +165,10 @@
       .state('dashboard.resources.contactList.survey', {
         url: '/survey',
         views: {
-          'resourcesContent': { templateUrl: prePath + 'dashboard-resources-contactList-survey/index.html' }
+          'resourcesContent': { templateUrl: prePath + 'dashboard-resources-contactList-survey/dashboard-content.html' }
         },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.contactList.survey is on');
-        }]
-
-      })
-      .state('dashboard.resources.contactList.survey.create', {
-        url: '/survey/create',
-        views: {
-          'resourcesContent': { templateUrl: prePath + 'dashboard-resources-contactList-survey/create.html' }
-        },
-        onEnter: ['dbg', function (dbg) {
-          dbg.rs('dashboard.resources.contactList.survey.create is on');
         }]
 
       })

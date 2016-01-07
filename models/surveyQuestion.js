@@ -6,6 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
     surveyId: { type: DataTypes.INTEGER, allowNull: false },
     name: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
     question: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
+    order: { type: DataTypes.INTEGER, allowNull: false },
     answers: { type: DataTypes.JSONB, allowNull: false }
   }, {
     timestamps: true,

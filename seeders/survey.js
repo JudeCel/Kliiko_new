@@ -10,14 +10,15 @@ function surveyParams() {
   return {
     name: 'Sample survey',
     SurveyQuestions: [
-      surveyQuestionParams('first'),
-      surveyQuestionParams('second')
+      surveyQuestionParams(1),
+      surveyQuestionParams(2)
     ]
   };
 }
 
 function surveyQuestionParams(random) {
   return {
+    order: random,
     name: 'Some default name ' + random,
     question: 'What a default question ' + random,
     answers: JSON.stringify({
