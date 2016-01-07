@@ -41,7 +41,7 @@ describe('SERVICE - AccountDatabase', function() {
     return {
       'Account Name': 'BLauris',
       'Account Manager': 'Lauris Blīgzna',
-      Registered: '',
+      Registered: testUser.createdAt,
       'E-mail': 'bligzna.lauris@gmail.com',
       Address: '',
       City: '',
