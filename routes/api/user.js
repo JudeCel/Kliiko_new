@@ -8,12 +8,14 @@
 "use strict";
 
 var User = require('./../../models').User;
+var changePasswordService = require('../../services/changePassword');
 var _ = require('lodash');
 
 module.exports = {
   userGet: userGet,
   userPost: userPost,
-  userCanAccessPost:userCanAccessPost
+  userCanAccessPost:userCanAccessPost,
+  changePassword:changePassword
 };
 
 
@@ -60,6 +62,16 @@ function userGet(req, res, next) {
       res.send(result);
   }).catch(function (err) {
     res.send({error: err});
+  });
+}
+
+function changePassword(req, res, next) {
+  changePasswordService.save(req, function(errors, message, user){
+    if (errors) {
+      res.send({ error: errors.message, message: message });
+    }else{
+      res.send({ message: message });
+    }
   });
 }
 
