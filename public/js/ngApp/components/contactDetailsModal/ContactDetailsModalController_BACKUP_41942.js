@@ -27,7 +27,7 @@
         });
         vm.userDetailsForm.$setPristine();
         vm.userDetailsForm.$setUntouched();
-        vm.errors = {};
+
 
       });
 
@@ -35,13 +35,14 @@
 
 
     function updateUserData(data, form) {
-      vm.errors = {};
+      vm.errors = {}; 
       user.updateUserData(data, form).then(function (res) {
         vm.updateBtn = 'Updated';
+<<<<<<< HEAD
+        messenger.ok('Saved!');
+
         form.$setPristine();
         form.$setUntouched();
-        messenger.ok('Contact details updated successfully.');
-        //cancel();
       }, function(err) {
         processErrors(err);
       });      
@@ -54,6 +55,12 @@
       for (var e in errors) {
           vm.errors[errors[e].path] = errors[e].message;
       }
+=======
+
+        messenger.ok('Contact details updated successfully.');
+        cancel();
+      });
+>>>>>>> master
     }
 
     function cancel(){

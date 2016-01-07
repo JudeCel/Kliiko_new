@@ -27,7 +27,7 @@
         });
         vm.userDetailsForm.$setPristine();
         vm.userDetailsForm.$setUntouched();
-        vm.errors = {};
+
 
       });
 
@@ -35,13 +35,13 @@
 
 
     function updateUserData(data, form) {
-      vm.errors = {};
+      vm.errors = {}; 
       user.updateUserData(data, form).then(function (res) {
         vm.updateBtn = 'Updated';
+        messenger.ok('Saved!');
+
         form.$setPristine();
         form.$setUntouched();
-        messenger.ok('Contact details updated successfully.');
-        //cancel();
       }, function(err) {
         processErrors(err);
       });      

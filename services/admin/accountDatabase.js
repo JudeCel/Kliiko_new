@@ -73,7 +73,7 @@ function csvData(callback) {
             'Mobile': user.mobile || '',
             'Landline': user.landlineNumber || '',
             'Sessions purchased': '',
-            'Tipe permission': '',
+            'Type permission': '',
             'Active Sessions': '',
             'Comment': findAccountUser(account, user).comment || ''
           });
@@ -99,7 +99,7 @@ function csvHeader() {
     'Mobile',
     'Landline',
     'Sessions purchased',
-    'Tipe permission',
+    'Type permission',
     'Active Sessions',
     'Comment'
   ];
