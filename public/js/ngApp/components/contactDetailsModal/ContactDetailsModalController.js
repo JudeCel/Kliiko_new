@@ -34,7 +34,8 @@
     }
 
 
-    function updateUserData(data, form) {      
+    function updateUserData(data, form) {
+      vm.errors = {}; 
       user.updateUserData(data, form).then(function (res) {
         vm.updateBtn = 'Updated';
         messenger.ok('Saved!');
@@ -47,7 +48,6 @@
     }
     
     function processErrors(err) {
-      vm.errors = {};
       if (!err)
         return;
       var errors = err.errors;
