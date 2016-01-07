@@ -39,6 +39,22 @@ router.get('/welcome', function (req, res, next) {
     res.render('welcome', usersRepo.prepareParams(req));
 });
 
+router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
+router.get('/auth/facebook/callback',
+  passport.authenticate('facebook', {failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
+  }
+);
+
+router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+router.get('/auth/google/callback',
+  passport.authenticate('google', {failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
+  }
+);
+
 router.post('/registration', function (req, res, next) {
   usersRepo.create(usersRepo.prepareParams(req), function (error, result) {
     if (error) {
