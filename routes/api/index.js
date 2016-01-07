@@ -20,6 +20,7 @@ module.exports = router;
 // Main Routes
 router.get('/user', userRoutes.userGet);
 router.post('/user', userRoutes.userPost);
+router.put('/user', userRoutes.changePassword);
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
 
 router.get('/plans', planRoutes.plansGet);
