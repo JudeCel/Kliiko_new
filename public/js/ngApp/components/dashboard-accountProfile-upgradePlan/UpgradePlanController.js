@@ -1,9 +1,8 @@
 (function () {
   'use strict';
 
-  angular.
-  module('KliikoApp').
-  controller('UpgradePlanController', UpgradePlanController);
+  angular.module('KliikoApp').
+    controller('UpgradePlanController', UpgradePlanController);
 
   UpgradePlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams', 'upgradePlanServices', 'user', 'ngProgressFactory', '$scope', 'messenger'];
   function UpgradePlanController(dbg, domServices, $state, $stateParams, upgradePlanServices, user, ngProgressFactory, $scope, messenger) {
@@ -76,7 +75,7 @@
 
 
       // after payment callback url case
-      if ($stateParams.step && $stateParams.step == 5)  { goToStep(5); }
+      if ($stateParams.step && $stateParams.step == 5)  { goToStep(5) }
     }
 
     /**
@@ -126,7 +125,7 @@
     function goToStep(step) {
       if (!angular.isNumber(step)) {
         if (step === 'back') { step = vm.currentStep - 1; vm.cantMoveNextStep = false; }
-        if (step === 'next') step = vm.currentStep + 1;
+        if (step === 'next') { step = vm.currentStep + 1 }
         if (step === 'submit') {
           //step = 5;
           submitUpgrade();
@@ -148,8 +147,8 @@
      * @returns {boolean}
      */
     function validateStep(step) {
-      if (step === 3) return validateStep2();
-      if (step === 4) return validateStep3();
+      if (step === 3) { return validateStep2() }
+      if (step === 4) { return validateStep3() }
 
       return true;
 

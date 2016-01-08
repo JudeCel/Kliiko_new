@@ -22,7 +22,7 @@
                             <tbody>
                             <tr>
                                 <td scope="row">{{up.selectedPlan.name}}</td>
-                                <td>{{ (up.selectedPlan.price/100) | currency : 'US$' : 2}}</td>
+                                <td>{{up.selectedPlan.price| price}}</td>
                                 <td>
                                     <select name="" id="duration-input" ng-model="up.upgradeDuration" ng-change="up.updateFinalPrice()">
                                         <option value="1" ng-selected="true">1</option>
@@ -42,7 +42,7 @@
                                 </td>
                                 <td><input id="promocod-input" type="text" ng-model="up.promocode" ng-class="{'error':up.incorrectPromocode}"></td>
                                 <td>
-                                    {{up.finalPrice/100 | currency : 'US$' : 2 }}
+                                    {{up.finalPrice| price }}
                                 </td>
                             </tr>
 

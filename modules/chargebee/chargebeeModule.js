@@ -28,7 +28,7 @@ function getPlans() {
     getPlanById('plan2'),
     getPlanById('plan3')
   ]).then(function(respond) {
-    var plans = {
+    let plans = {
       plan1: respond[0].plan,
       plan2: respond[1].plan,
       plan3: respond[2].plan

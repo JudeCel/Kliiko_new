@@ -31,7 +31,7 @@
                 <div class="list-group">
                     <h4 class="list-group-item-heading yellow-header-bg">{{up.plans.plan1.name}}</h4>
                     <div class="price-label yellow-bg">
-                        <h5 class="outline"><sup>$US</sup>{{up.plans.plan1.price/100}}</h5>
+                        <h5 class="outline"><sup>$US</sup>{{up.plans.plan1.price | price:'':0}}</h5>
                         <p>12 Month to use</p>
                     </div>
                     <p class="list-group-item-text yellow-light-bg"><b>1</b> Session to use over 12 month</p>
@@ -52,7 +52,7 @@
                 <div class="list-group">
                     <h4 class="list-group-item-heading green-header-bg">{{up.plans.plan2.name}}</h4>
                     <div class="price-label green-bg">
-                        <h5 class="outline"><sup>$US</sup>{{up.plans.plan2.price/100}}</h5>
+                        <h5 class="outline"><sup>$US</sup>{{up.plans.plan2.price | price:'':0}}</h5>
                         <p>Get 1 month free is you have not used your free trial</p>
                     </div>
                     <p class="list-group-item-text green-light-bg"><b>10</b> Session to use over 12 month</p>
@@ -75,7 +75,7 @@
 
                     <div class="price-label blue-bg">
                         <img id="best-value-badge" src="images/pricing-plans/best-value-badge.png" alt="">
-                        <h5 class="outline"><sup>$US</sup>{{up.plans.plan3.price/100}}</h5>
+                        <h5 class="outline"><sup>$US</sup>{{up.plans.plan3.price | price:'':0}}</h5>
                         <p>Save $50 a year, compared to monthly plan</p>
                     </div>
                     <p class="list-group-item-text blue-light-bg"><b>UNLIMITED</b> Session to use over 12 month</p>
