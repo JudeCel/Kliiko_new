@@ -1070,6 +1070,9 @@ input[class=checkbox-blue]:checked + label {
     width: 55px; }
   #upgrade-plan-content #step-2 input#promocod-input {
     width: 230px; }
+    #upgrade-plan-content #step-2 input#promocod-input.error {
+      margin-top: -1px;
+      border: 3px solid #E51D39; }
 
 #upgrade-plan-content #step-3,
 #upgrade-plan-content #step-4 {

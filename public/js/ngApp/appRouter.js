@@ -49,6 +49,14 @@
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-upgradePlan/dashboard-content.html"}
         },
+        resolve: {
+          loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/js/ngApp/filters/num.js',
+              '/js/ngApp/filters/price.js'
+            ]);
+          }]
+        },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.accountProfile.upgradePlan is on');
         }]
