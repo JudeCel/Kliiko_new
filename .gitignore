@@ -7,3 +7,5 @@
 /build/*
 /npm-debug.log
 /.tmp/templates.js
+
+.vscode/settings.json

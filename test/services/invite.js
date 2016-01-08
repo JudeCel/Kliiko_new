@@ -118,8 +118,8 @@ describe('SERVICE - Invite', function() {
           assert.equal(invite.accountId, params.accountId);
           assert.equal(invite.role, params.role);
           assert.equal(invite.userType, params.userType);
-          assert.include(result.data.html, 'You have been requested to join Kliiko.');
-          assert.include(result.data.html, 'Click link for invite:');
+          assert.include(result.data.html, 'Hello! And welcome to Klzii');
+          assert.include(result.data.html, 'You can login anytime with your');
           done();
         });
       });

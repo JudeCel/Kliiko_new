@@ -41,7 +41,7 @@ describe('SERVICE - AccountDatabase', function() {
     return {
       'Account Name': 'BLauris',
       'Account Manager': 'Lauris Blīgzna',
-      Registered: '',
+      Registered: testUser.createdAt,
       'E-mail': 'bligzna.lauris@gmail.com',
       Address: '',
       City: '',
@@ -52,7 +52,7 @@ describe('SERVICE - AccountDatabase', function() {
       Mobile: '',
       Landline: '',
       'Sessions purchased': '',
-      'Tipe permission': '',
+      'Type permission': '',
       'Active Sessions': '',
       Comment: ''
     };
@@ -73,7 +73,7 @@ describe('SERVICE - AccountDatabase', function() {
       'Mobile',
       'Landline',
       'Sessions purchased',
-      'Tipe permission',
+      'Type permission',
       'Active Sessions',
       'Comment'
     ];

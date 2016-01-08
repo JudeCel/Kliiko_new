@@ -10,7 +10,7 @@
 
     var usersRestApi = {
       userCanAccess: $resource(globalSettings.restUrl + '/user/canAccess', {}, {post: {method: 'POST'}}),
-      user: $resource(globalSettings.restUrl + '/user', {}, {post: {method: 'POST'}}),
+      user: $resource(globalSettings.restUrl + '/user', {}, {post: {method: 'POST'}, changePassword: {method: 'PUT'}}),
 
     };
 
@@ -18,6 +18,7 @@
 
     UserService.getUserData = getUserData;
     UserService.updateUserData = updateUserData;
+    UserService.changeUserPassword = changeUserPassword;
     UserService.canAccess = canAccess;
 
     return UserService;
@@ -89,6 +90,15 @@
 
       return deferred.promise;
 
+    }
+
+    function changeUserPassword(data){
+      var deferred = $q.defer();
+
+      usersRestApi.user.changePassword(data, function (res) {
+        deferred.resolve(res);
+      });
+      return deferred.promise;
     }
 
     function canAccess(section) {

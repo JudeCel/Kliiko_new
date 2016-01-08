@@ -8,7 +8,7 @@ var models = require("./../../models");
 var validate = function (req, next) {
     var err = joi.validate(req.params, {
         topicId: joi.number().required(),
-        sessionStaffTypeToExclude: joi.number(), //will be excluded events, belonged to user, which has appropriate Session Staff role in a Topic
+        sessionStaffTypeToExclude: joi.string(), //will be excluded events, belonged to user, which has appropriate Session Staff role in a Topic
         starsOnly: joi.boolean() //will be included only events w/ tag = 1. by turning this flag on the mode "Stars Only" is enabled
     });
     if (err.error){
@@ -20,37 +20,49 @@ var validate = function (req, next) {
 module.exports.validate = validate;
 
 var run = function (req, resCb, errCb) {
-  let sql = "SELECT id, userId, firstName, topicId, replyId, cmd, tag, n.event from \
+  let params =  req.params;
+
+  let sql = 'SELECT id, "userId", "firstName", "topicId", "replyId", cmd, tag, n.event from \
           \
-      (SELECT e.id, e.userId, u.firstName, e.topicId, e.replyId, e.cmd, e.tag, e.event, grp.t as grp_t, grp.id as grp_id \
-          FROM events AS e INNER JOIN users u ON \
-      e.userId = u.id \
+      (SELECT e.id, e."userId", u."firstName", e."topicId", e."replyId", e.cmd, e.tag, e.event, grp.t as grp_t, grp.id as grp_id \
+          FROM events AS e INNER JOIN "Users" u ON \
+      e."userId" = u.id \
       INNER JOIN topics t ON \
-      e.topicId = t.id \
-      INNER JOIN sessions s ON \
-      t.session_id = s.id \
-      INNER JOIN (SELECT sub_e.id, sub_e.replyId, sub_e.created, IF(sub_e.replyId IS NULL, sub_e.id, sub_e.replyId) AS t \
+      e."topicId" = t.id \
+      INNER JOIN "Sessions" s ON \
+      t."sessionId" = s.id \
+      INNER JOIN (SELECT sub_e.id, sub_e."replyId", sub_e."createdAt",\
+        CASE \
+ 	        WHEN sub_e."replyId" IS NULL THEN sub_e.id\
+	      ELSE sub_e."replyId"\
+	      END AS t\
       FROM events sub_e GROUP BY t, sub_e.id) grp \
       ON e.id = grp.id \
       WHERE t.id = ? \
-      AND e.deleted IS NULL \
-      AND e.cmd = 'chat'";
+      AND e."deletedAt" IS NULL \
+      AND e.cmd = \'chat\'';
 
-      if (params.starsOnly)
-          sql += " AND e.tag = 1 ";
-      if (params.sessionStaffTypeToExclude)
-          sql += " AND u.id NOT IN (SELECT DISTINCT userId FROM session_staff WHERE deleted IS NULL AND type_id = " + params.sessionStaffTypeToExclude + ")";
+      if (params.starsOnly){
+        sql += " AND e.tag = 1 "
+      };
 
-      //sql += " ORDER BY grp.t, grp.id ASC";
-      sql += "\
+      if (params.sessionStaffTypeToExclude){
+        sql += "AND u.id NOT IN (SELECT DISTINCT \"userId\" FROM session_staff WHERE \"deletedAt\" IS NULL AND type = ' + params.sessionStaffTypeToExclude + ')";
+      }
+
+      console.log(sql);
+
+      //sql += ORDER BY grp.t, grp.id ASC';
+      sql += '\
       UNION \
       \
-      SELECT 0 as id, 0 as userId, 'Description' as firstName, t.id as topicId, null as replyId, 'chat' as cmd, 0 as tag, t.description as event, grp.t as grp_t, grp.id as grp_id \
+      SELECT 0 as id, 0 as "userId", \'Description\' as "firstName", t.id as "topicId", null as "replyId", \'chat\' as cmd, 0 as tag, \
+      t.description as event, grp.t as grp_t, grp.id as grp_id \
       FROM topics t INNER JOIN (SELECT 0 as t, 0 as id ) grp ON grp.id=0 \
       where t.id = ? \
       )	n \
       \
-      ORDER BY grp_t, grp_id ASC";
+      ORDER BY grp_t, grp_id ASC';
 
 
   models.sequelize.query(sql,

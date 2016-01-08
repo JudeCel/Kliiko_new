@@ -2,7 +2,6 @@
 var express = require('express');
 var router = express.Router();
 var subdomains = require('../../lib/subdomains.js');
-var changePassword = require('../../services/changePassword');
 var policy = require('../../middleware/policy.js');
 var uploadBannerRoutes = require('./uploadBanner.js');
 var accountDatabaseRoutes = require('./accountDatabase.js');
@@ -32,17 +31,6 @@ router.get('/landing', function(req, res) {
 
 router.get('/upgradeplans', function(req, res) {
   res.render(views_path('upgradePlans'), { title: 'Upgrade Plans' });
-});
-
-router.post('/changePassword', function(req, res) {
-  changePassword.save(req, function(errors, message, user){
-    res.type('json');
-    if (errors) {
-      res.status(500).send({ error: errors.message, message: message });
-    }else{
-      res.status(200).send({ message: message });
-    }
-  });
 });
 
 router.get('/uploadbanner', policy.authorized(['admin']), uploadBannerRoutes.get);

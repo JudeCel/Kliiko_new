@@ -13,7 +13,7 @@ var validAttributes = [
 
 function findAllAccounts(callback) {
   Account.findAll({
-    include: [{ model: User, attributes: constants.safeUserParams }, AccountUser]
+    include: [{ model: User, attributes: userAttributes() }, AccountUser]
   }).then(function(accounts) {
     callback(null, accounts);
   }).catch(function(error) {
@@ -34,7 +34,7 @@ function updateAccountUser(params, callback) {
     }
     else {
       let accountUser = result[1][0];
-      accountUser.getAccount({ include: [{ model: User, attributes: constants.safeUserParams }, AccountUser ] }).then(function(account) {
+      accountUser.getAccount({ include: [{ model: User, attributes: userAttributes() }, AccountUser ] }).then(function(account) {
         if(params.hasOwnProperty('active')) {
           accountUser.getUser().then(function(user) {
             mailers.users.sendReactivateOrDeactivate({ email: user.email, name: account.name, active: accountUser.active });
@@ -73,7 +73,7 @@ function csvData(callback) {
             'Mobile': user.mobile || '',
             'Landline': user.landlineNumber || '',
             'Sessions purchased': '',
-            'Tipe permission': '',
+            'Type permission': '',
             'Active Sessions': '',
             'Comment': findAccountUser(account, user).comment || ''
           });
@@ -99,7 +99,7 @@ function csvHeader() {
     'Mobile',
     'Landline',
     'Sessions purchased',
-    'Tipe permission',
+    'Type permission',
     'Active Sessions',
     'Comment'
   ];
@@ -115,6 +115,12 @@ function findAccountUser(account, user) {
 
   return {};
 };
+
+function userAttributes() {
+  let attributes = constants.safeUserParams;
+  attributes.push('createdAt');
+  return attributes;
+}
 
 function validateParams(params, attrs) {
   return _.pick(params, attrs || validAttributes);
