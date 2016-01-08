@@ -44,13 +44,6 @@
         function(err) { deferred.reject(err) }
       );
 
-
-      //upgradePlanRestApi.getPlans.get({}, function (res) {
-      //  dbg.log2('#upgradePlanServices > getPlans > rest call responds');
-      //  deferred.resolve(res);
-      //  cache.getPlans = res;
-      //});
-
       return deferred.promise;
 
     }
