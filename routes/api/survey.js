@@ -14,6 +14,16 @@ function remove(req, res, next) {
   );
 };
 
+function create(req, res, next) {
+  var params = req.body;
+  params.accountId = req.user.accountOwnerId;
+
+  surveyService.createSurveyWithQuestions(params).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+};
+
 function update(req, res, next) {
   surveyService.updateSurvey(req.body, req.user).then(
     getResponses(res).onSuccess,
@@ -35,5 +45,6 @@ function getResponses(res) {
 module.exports = {
   get: get,
   remove: remove,
+  create: create,
   update: update
 };

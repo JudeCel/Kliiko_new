@@ -17,44 +17,85 @@
     vm.validateQuestion = validateQuestion;
     vm.questionChange = questionChange;
     vm.submitCreate = submitCreate;
+    vm.initQuestion = initQuestion;
+    vm.canChangeAnswers = canChangeAnswers;
+    vm.changeAnswers = changeAnswers;
+    vm.defaultArray = defaultArray;
+
+    vm.answerSortOptions = {
+      onSort: function(evt) {
+        console.log(evt);
+        evt.models.forEach(function(val, index, array) {
+          val.order = index;
+        });
+      }
+    }
 
     vm.createTemp = { survey: { SurveyQuestions: {} } };
-    vm.create = { survey: { SurveyQuestions: {} } };
+    vm.create = { survey: { SurveyQuestions: [] } };
     vm.currentPage = 'create';
-    vm.answers = Array.apply(null, Array(2)).map(function(cv, index) { return index });
+    vm.answers = Array.apply(null, Array(5)).map(function(cv, index) { return index });
 
     vm.defaultQuestions = [
       {
         order: 0,
         name: 'First Choice',
-        input: true
+        input: true,
+        minAnswers: 2,
+        maxAnswers: 5
       },
       {
         order: 1,
         name: 'Second Choice',
-        input: true
+        input: true,
+        minAnswers: 2,
+        maxAnswers: 5
       },
       {
         order: 2,
         name: 'Advice',
-        textArea: true
+        textArea: true,
+        minAnswers: 1,
+        maxAnswers: 1
       },
       {
         order: 3,
         name: 'Like-Dislike',
         input: true,
-        audioVideo: true
+        audioVideo: true,
+        minAnswers: 2,
+        maxAnswers: 5
       },
       {
         order: 4,
         name: 'Importance',
         input: true,
-        audioVideo: true
+        audioVideo: true,
+        minAnswers: 2,
+        maxAnswers: 5
       },
       {
         order: 5,
         name: 'Most Important',
-        input: true
+        input: true,
+        minAnswers: 2,
+        maxAnswers: 5
+      },
+      {
+        order: 6,
+        name: 'Interest',
+        hardcodedName: true,
+        checkbox: true,
+        minAnswers: 1,
+        maxAnswers: 1
+      },
+      {
+        order: 7,
+        name: 'Prize Draw',
+        hardcodedName: true,
+        checkbox: true,
+        minAnswers: 1,
+        maxAnswers: 1
       }
     ];
 
@@ -114,7 +155,7 @@
       }
     };
 
-    function validateSurvey(error) {
+    function validateSurvey() {
       var survey = vm.createTemp.survey;
       if(!survey.errors) {
         survey.errors = {};
@@ -169,15 +210,19 @@
           delete sq.errors.question;
         }
 
-        if(Object.keys(sq.answers).length < 2) {
+        var answers = Object.keys(sq.answers).length;
+        if(answers < sq.minAnswers) {
           sq.errors.answer = 'Not enougth answers';
+        }
+        else if(answers > sq.maxAnswers){
+          sq.errors.answer = 'Too many answers';
         }
         else {
           delete sq.errors.answer;
           sq.errors.answers = {};
           for(var key in sq.answers) {
             var answer = sq.answers[key];
-            if(answer.length == 0 || answer.length > 20) {
+            if(answer.name.length == 0 || answer.name.length > 20) {
               sq.errors.answers[key] = 'Too short/long';
             }
           };
@@ -194,33 +239,80 @@
 
     function changeCreateObject(order, status, sq) {
       if(status) {
-        var object = {};
-        object[order] = sq;
-        angular.merge(vm.create.survey.SurveyQuestions, object);
+        sq.order = order;
+        vm.create.survey.SurveyQuestions.push(sq);
         sq.active = status;
       }
       else {
         sq.active = status;
-        delete vm.create.survey.SurveyQuestions[order];
+        var index = vm.create.survey.SurveyQuestions.indexOf(sq);
+        vm.create.survey.SurveyQuestions.splice(index, 1);
       }
-    }
+    };
 
     function questionChange(order, currentQuestion) {
       if(currentQuestion.active) {
         changeCreateObject(order, false, currentQuestion);
       }
-    }
+    };
 
     function submitCreate() {
-      var error = {};
-      if(validateSurvey(error)) {
-        console.log("Wiiiiiiiiiiii it works");
+      if(validateSurvey()) {
+        surveyServices.createSurvey(vm.create.survey).then(function(res) {
+          dbg.log2('#SurveyController > submitCreate > res ', res);
+          console.log(res);
+          if(res.error) {
+            messenger.error(res.error);
+          }
+          else {
+            messenger.ok(res.data.message);
+          }
+        });
       }
       else {
         if(!vm.createTemp.survey.errors.submitError) {
           vm.createTemp.survey.errors.submitError = 'There were some errors';
         }
       }
+    };
+
+    function initQuestion(object) {
+      if(!vm.createTemp.survey.SurveyQuestions[object.order]) {
+        vm.createTemp.survey.SurveyQuestions[object.order] = {};
+      }
+
+      var question = vm.createTemp.survey.SurveyQuestions[object.order];
+      question.minAnswers = object.minAnswers;
+      question.maxAnswers = object.maxAnswers;
+      if(object.hardcodedName) {
+        question.name = object.name;
+      }
+
+      return question;
+    };
+
+    function canChangeAnswers(value, question) {
+      if(value > 0) {
+        return (question.answers.length < question.maxAnswers);
+      }
+      else {
+        return (question.answers.length > question.minAnswers);
+      }
+    };
+
+    function changeAnswers(value, question, index) {
+      changeCreateObject(question.order, false, question);
+      if(value > 0) {
+        console.log(question);
+        question.answers.push({ order: question.answers.length });
+      }
+      else {
+        question.answers.splice(index, 1);
+      }
+    };
+
+    function defaultArray(size) {
+      return Array.apply(null, Array(size)).map(function(cv, index) { return { order: index } });
     }
   };
 })();

@@ -15,6 +15,7 @@
       'debModule',
       'domServices',
       'messenger',
+      'ng-sortable',
       //'CreditCard',
 
       // app modules
@@ -59,4 +60,3 @@
   }
 
 })();
-

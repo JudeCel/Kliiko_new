@@ -1,39 +1,51 @@
 <h4>Survey Template</h4>
 {{ sc.create }}
-<div class='col-md-12 text-right'>
-  <div class='btn btn-addNewElement' ng-click='sc.submitCreate()'>Submit</div>
-  <span class='has-error text-red-dark'>{{ sc.createTemp.survey.errors.submitError }}</span>
+
+<div class='row'>
+  <div class='col-md-12 text-right'>
+    <div class='btn btn-addNewElement' ng-click='sc.submitCreate()'>Submit</div>
+    <span class='has-error text-red-dark'>{{ sc.createTemp.survey.errors.submitError }}</span>
+  </div>
 </div>
 
 <div class='row'>
-  <div class='col-sm-12'>
-    <div class='col-sm-12'>
-      <hr class='border-brown' />
-      <h4><strong>Add brand logo</strong></h4>
-    </div>
+  <div class='col-md-12'>
+    <hr class='border-brown' />
+    <h4><strong>Introduction</strong></h4>
+  </div>
+</div>
 
-    <!-- missing gallery -->
+<!-- missing gallery -->
 
-    <div class='form-group row col-sm-12'>
-      <div class='col-sm-2'>
-        <label class='control-label' for='name'>Name</label>
-      </div>
+<div class='form-horizontal'>
+  <div class='form-group'>
+    <label class='col-sm-2 control-label' for='name'>Name</label>
 
-      <div class='col-sm-6'>
-        <span class='has-error text-red-dark'>{{ sc.createTemp.survey.errors.name }}</span>
+    <div class='col-sm-6'>
+      <div class='input-group'>
         <input type='text' class='form-control' id='name' placeholder='Name' ng-string ng-model='sc.createTemp.survey.name'>
+        <span class='input-group-addon'>@</span>
       </div>
+
+      <span class='has-error'>
+        <span class='help-block'>{{ sc.createTemp.survey.errors.name }}</span>
+      </span>
     </div>
+  </div>
 
-    <div class='form-group row col-sm-12'>
-      <div class='col-sm-12'>
-        <label class='control-label' for='description'>Introduction</label>
+  <div class='form-group'>
+    <!-- <label class='col-sm-2 control-label' for='description'>Introduction</label> -->
+
+    <div class='col-sm-8'>
+      <div class='input-group'>
+        <textarea class='form-control' id='description' placeholder='Introduction'
+          ng-string ng-model='sc.createTemp.survey.description' ng-maxlength='500' rows='5'></textarea>
+        <span class='input-group-addon'>@</span>
       </div>
 
-      <div class='col-sm-8'>
-        <span class='has-error text-red-dark'>{{ sc.createTemp.survey.errors.description }}</span>
-        <textarea class='form-control' id='description' placeholder='Introduction' ng-string ng-model='sc.createTemp.survey.description' ng-maxlength='500' rows='5'></textarea>
-      </div>
+      <span class='has-error'>
+        <span class='help-block'>{{ sc.createTemp.survey.errors.description }}</span>
+      </span>
     </div>
   </div>
 </div>

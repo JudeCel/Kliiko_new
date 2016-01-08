@@ -1,0 +1,35 @@
+<div ng-sortable='sc.answerSortOptions'>
+  <span class='col-sm-12 has-error'>
+    <span class='help-block'>{{ question.errors.answer }}</span>
+  </span>
+
+  <div class='form-group' ng-repeat='answer in question.answers track by $index'>
+    <div class='col-xs-2 col-sm-1'>
+      <input type='checkbox' class='custom-checkbox' disabled>
+      <label class='control-label custom-checkbox-label pull-right' for='answer_{{ object.order }}_{{ answer.order }}'></label>
+    </div>
+
+    <div class='col-xs-10 col-sm-7'>
+      <div class='input-group'>
+        <input type='text' class='form-control' id='answer_{{object.order}}_{{ answer.order }}' placeholder='Answer'
+          ng-init='answer.type="checkbox"' ng-string ng-change='sc.questionChange(object.order, question)' ng-model='answer.name'>
+
+        <span class='input-group-addon' ng-if='!sc.canChangeAnswers(-1, question)'>@</span>
+        <span class='input-group-addon' ng-if='sc.canChangeAnswers(-1, question)'>
+          <span class='glyphicon glyphicon-remove' ng-click='sc.changeAnswers(-1, question, $index)'></span>
+        </span>
+      </div>
+
+      <span class='has-error'>
+        <span class='help-block'>{{ question.errors.answers[answer.order] }}</span>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class='col-sm-12'>
+  <div class='col-sm-2'></div>
+  <div class='col-sm-2'>
+    <img src='/icons/add_new_list_blue.png' ng-if='sc.canChangeAnswers(1, question)' ng-click='sc.changeAnswers(1, question)' />
+  </div>
+</div>

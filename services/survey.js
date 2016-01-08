@@ -58,7 +58,9 @@ function createSurveyWithQuestions(params) {
   let deferred = q.defer();
   let validParams = validateParams(params, validCreateParams);
 
-  Survey.create(validParams, { include: [ SurveyQuestion ]}).then(function(survey) {
+  models.sequelize.transaction(function (t) {
+    return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t });
+  }).then(function(survey) {
     survey.update({ url: validUrl(survey) }).then(function(survey) {
       deferred.resolve(survey);
     });
@@ -75,11 +77,13 @@ function updateSurvey(params, user) {
   let deferred = q.defer();
   let validParams = validateParams(params, validUpdateParams);
 
-  console.log(params);
-  Survey.update(validParams, {
-    where: { id: params.id, accountId: user.accountOwnerId },
-    include: [ SurveyQuestion ],
-    returning: true
+  models.sequelize.transaction(function (t) {
+    return Survey.update(validParams, {
+      where: { id: params.id, accountId: user.accountOwnerId },
+      include: [ SurveyQuestion ],
+      returning: true,
+      transaction: t
+    });
   }).then(function(result) {
     if(result[0] == 0) {
       deferred.reject('Survey not found');

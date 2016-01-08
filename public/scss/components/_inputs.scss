@@ -1,0 +1,22 @@
+input.custom-checkbox {
+  display: none;
+}
+
+.custom-checkbox-label {
+  background: url('/icons/login_checkbox.jpeg') no-repeat;
+  height: 30px;
+  width: 30px;
+  background-size: contain;
+  cursor: pointer;
+}
+
+input:checked.custom-checkbox + .custom-checkbox-label {
+  @extend .custom-checkbox-label;
+  background: url('/icons/login_checkbox_chk.jpeg') no-repeat;
+}
+
+input:disabled.custom-checkbox + .custom-checkbox-label {
+  @extend .custom-checkbox-label;
+  background: url('/icons/login_checkbox_chk.jpeg') no-repeat;
+  cursor: not-allowed;
+}

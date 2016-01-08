@@ -1,37 +1,11 @@
-<div ng-if='object.input'>
-  <div class='col-sm-12'>
-    <span class='has-error text-red-dark'>{{ sc.createTemp.survey.SurveyQuestions[object.order].errors.answer }}</span>
-  </div>
-
-  <div class='row col-sm-12' ng-repeat='ii in sc.answers track by $index'>
-    <br ng-if='$index > 0'/>
-    <div class='col-sm-2'>
-      <label class='control-label' for='answer_{{object.order}}_{{ii}}'>Answer {{ ii }}</label>
-    </div>
-
-    <div class='col-sm-6'>
-      <span class='has-error text-red-dark'>{{ sc.createTemp.survey.SurveyQuestions[object.order].errors.answers[ii] }}</span>
-      <input type='text' class='form-control' id='answer_{{object.order}}_{{ii}}' placeholder='Answer' ng-string ng-change='sc.questionChange(object.order, questions[object.order])' ng-model='sc.createTemp.survey.SurveyQuestions[object.order].answers[ii]'>
-    </div>
-  </div>
+<div class='form-horizontal' ng-if='object.input' ng-init='question.answers=sc.defaultArray(object.minAnswers)'>
+  <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers/input.html'"></ng-include>
 </div>
 
-<div class='row col-sm-12' ng-if='object.textArea'>
-  <div class='col-sm-8'>
-    <br />
-    <span class='has-error text-red-dark'>{{ sc.createTemp.survey.SurveyQuestions[object.order].errors.answers[0] }}</span>
-    <textarea class='form-control' id='answers_{{object.order}}_0' placeholder='Answer' ng-string ng-change='sc.questionChange(object.order, questions[object.order])' ng-model='sc.createTemp.survey.SurveyQuestions[object.order].answers[0]' ng-maxlength='500' rows='5' disabled></textarea>
-  </div>
+<div class='form-horizontal' ng-if='object.textArea' ng-init='question.answers=sc.defaultArray(object.minAnswers)'>
+  <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers/textarea.html'"></ng-include>
 </div>
 
-<div class='row col-sm-12' ng-if='object.audioVideo'>
-  <br />
-  <div class='col-sm-2'>
-    <label class='control-label' for='audioVideo_{{object.order}}'>Audio/Video</label>
-  </div>
-
-  <div class='col-sm-6'>
-    <span class='has-error text-red-dark'>{{ sc.createTemp.survey.SurveyQuestions[object.order].errors.audioVideo }}</span>
-    <input type='text' class='form-control' id='audioVideo_{{object.order}}' placeholder='Audio/Video' ng-string ng-change='sc.questionChange(object.order, questions[object.order])' ng-model='sc.createTemp.survey.SurveyQuestions[object.order].audioVideo'>
-  </div>
+<div class='form-horizontal' ng-if='object.checkbox' ng-init='question.answers=sc.defaultArray(object.minAnswers)'>
+  <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers/checkbox.html'"></ng-include>
 </div>

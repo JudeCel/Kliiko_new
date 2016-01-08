@@ -53,6 +53,7 @@ router.post('/chargebee', multipartyMiddleware, chargebee.chargebeePost);
 
 router.get('/survey', survey.get);
 router.delete('/survey', survey.remove);
+router.post('/survey', survey.create);
 router.put('/survey', survey.update);
 
 // Common Rules

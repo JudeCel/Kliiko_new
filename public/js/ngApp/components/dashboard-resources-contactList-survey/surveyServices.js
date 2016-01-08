@@ -13,6 +13,7 @@
     upServices.getAllSurveys = getAllSurveys;
     upServices.removeSurvey = removeSurvey;
     upServices.changeStatus = changeStatus;
+    upServices.createSurvey = createSurvey;
     return upServices;
 
     function getAllSurveys() {
@@ -45,6 +46,18 @@
       dbg.log2('#surveyServices > changeStatus > make rest call');
       surveyRestApi.survey.update(data, function(res) {
         dbg.log2('#surveyServices > changeStatus > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    };
+
+    function createSurvey(data) {
+      var deferred = $q.defer();
+
+      dbg.log2('#surveyServices > createSurvey > make rest call');
+      surveyRestApi.survey.save(data, function(res) {
+        dbg.log2('#surveyServices > createSurvey > rest call responds');
         deferred.resolve(res);
       });
 

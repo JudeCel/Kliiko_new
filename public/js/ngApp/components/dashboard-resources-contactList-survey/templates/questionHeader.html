@@ -1,0 +1,10 @@
+<hr class='border-brown' />
+<div class='row'>
+  <div class='col-xs-3'>
+    <h4><strong>Question #{{ object.order + 1 }}</strong></h4>
+  </div>
+
+  <div class='col-xs-9'>
+    <img class='pull-right' ng-click='sc.validateQuestion(object.order, question)' ng-src='{{ sc.chooseValidIcon(question.active) }}' alt='' />
+  </div>
+</div>

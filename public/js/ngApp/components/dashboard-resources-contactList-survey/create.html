@@ -1,44 +1,24 @@
-<div class='col-md-12'>
-  <div class='dashboard-container'>
-    <div class='row'>
-      <div class='col-md-3'></div>
-      <div class='col-md-6'>
-        <h2 class='text-center'>Create Survey</h2>
-      </div>
-      <div class='col-md-3 text-right'>
-        <div class='btn btn-addNewElement' ng-click="sc.currentPage = 'index'">Back</div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class='col-md-12 fixed-bottom-margin'>
   <div class='dashboard-container'>
-    <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/survey.html'"></ng-include>
 
-    <div class='row' ng-repeat='object in sc.defaultQuestions.slice(0, 2) track by $index' ng-init='questions=sc.createTemp.survey.SurveyQuestions'>
-      <div class='col-sm-12'>
-        <div class='col-sm-12'>
-          <hr class='border-brown' />
-        </div>
-
-        <div class='form-group'>
-          <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
-          <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
-        </div>
-      </div>
+    <div class='col-md-3'></div>
+    <div class='col-md-6'>
+      <h2 class='text-center'>Create Survey</h2>
+    </div>
+    <div class='col-md-3 text-right'>
+      <div class='btn btn-addNewElement' ng-click="sc.currentPage = 'index'">Back</div>
     </div>
 
-    <div class='row' ng-repeat='object in sc.defaultQuestions.slice(2, 3) track by $index' ng-init='questions=sc.createTemp.survey.SurveyQuestions'>
-      <div class='col-sm-12'>
-        <div class='col-sm-12'>
-          <hr class='border-brown' />
-        </div>
+    <div class='col-xs-12'>
+      <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/survey.html'"></ng-include>
+    </div>
 
-        <div class='form-group'>
-          <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
-          <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
-        </div>
+    <div class='col-xs-12' ng-repeat='object in sc.defaultQuestions.slice(0, 3) track by $index' ng-init='questions = sc.createTemp.survey.SurveyQuestions'>
+      <div ng-init='question = sc.initQuestion(object, questions[object.order])'>
+        <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
+
+        <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
+        <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
       </div>
     </div>
 
@@ -46,8 +26,8 @@
       <hr class='border-brown' />
       <h4><strong>Advanced recruiter</strong></h4>
     </div>
-    <div class='row' ng-repeat='object in sc.defaultQuestions.slice(3, 6) track by $index' ng-init='questions=sc.createTemp.survey.SurveyQuestions'>
-      <div class='col-sm-12'>
+    <div class='col-xs-12' ng-repeat='object in sc.defaultQuestions.slice(3, 6) track by $index' ng-init='questions = sc.createTemp.survey.SurveyQuestions'>
+      <div ng-init='question = sc.initQuestion(object, questions[object.order])'>
         <uib-accordion close-others='false'>
           <uib-accordion-group is-open='object.open'>
             <uib-accordion-heading>
@@ -55,12 +35,23 @@
                 {{ object.name }}<i class='pull-right glyphicon' ng-class="{'glyphicon-chevron-down': object.open, 'glyphicon-chevron-right': !object.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class='form-group'>
-              <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
-              <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
-            </div>
+
+            <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
+
+            <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
+            <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
           </uib-accordion-group>
         </uib-accordion>
+      </div>
+    </div>
+
+
+    <div class='col-xs-12' ng-repeat='object in sc.defaultQuestions.slice(6, 8) track by $index' ng-init='questions = sc.createTemp.survey.SurveyQuestions'>
+      <div ng-init='question = sc.initQuestion(object, questions[object.order])'>
+        <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
+
+        <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
+        <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
       </div>
     </div>
 
