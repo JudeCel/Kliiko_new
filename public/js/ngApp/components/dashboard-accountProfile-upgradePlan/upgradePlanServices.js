@@ -8,15 +8,11 @@
     var upServices = {};
     var chargebee;
 
-    var upgradePlanRestApi = {
-      getAllCountries: $resource(globalSettings.restUrl + '/countries', {}, {post: {method: 'POST'}}),
-      getAllCurrencies: $resource(globalSettings.restUrl + '/currencies', {}, {post: {method: 'POST'}}),
-      //getPlans: $resource(globalSettings.restUrl + '/plans', {}, {post: {method: 'POST'}}),
-    };
-
     upServices.init = init;
     upServices.getPlans = getPlans;
     upServices.submitUpgrade = submitUpgrade;
+    upServices.validatePromocode = validatePromocode;
+    upServices.calculateDiscount = calculateDiscount;
 
     return upServices;
 
@@ -33,8 +29,6 @@
       return deferred.promise;
     }
 
-
-
     function getPlans() {
       var deferred = $q.defer();
 
@@ -47,7 +41,7 @@
       dbg.log2('#upgradePlanServices > getPlans > call chargebee');
       chargebee.getPlans().then(
         function(res) { deferred.resolve(res) },
-        function(err) {deferred.reject(err) }
+        function(err) { deferred.reject(err) }
       );
 
 
@@ -60,8 +54,6 @@
       return deferred.promise;
 
     }
-
-
 
     /**
      * Submit Payment
@@ -80,6 +72,45 @@
 
       return deferred.promise;
 
+    }
+
+    function validatePromocode(promocode) {
+      var deferred = $q.defer();
+
+      chargebee.validateCoupon(promocode).then(
+        function(res) {
+          cache.promocode = res;
+          deferred.resolve(res);
+        },
+        function(err) { deferred.reject(err) }
+      );
+
+      return deferred.promise;
+    }
+
+    /**
+     * Calculate discount in usd, based on coupon
+     * example of coupon object:
+     * {"id":"tst3","name":"-50%","invoice_name":"-50%","discount_type":"percentage","discount_percentage":50,"duration_type":"forever","status":"active","apply_discount_on":"not_applicable","apply_on":"invoice_amount","plan_constraint":"not_applicable","addon_constraint":"not_applicable","created_at":1452232599,"object":"coupon","redemptions":0}
+     * @param total {number}
+     * @returns {number}
+     */
+    function calculateDiscount(total) {
+      if (!total || !cache.promocode) return;
+
+      var output = total;
+
+      if (cache.promocode.discount_type.indexOf('fixed') > -1) {
+        //calculate fixed discount
+        var amount = cache.promocode.discount_amount;
+        output = amount;
+      } else {
+        //calculate percentage
+        var amount = cache.promocode.discount_percentage;
+        output = output * (amount/100);
+      }
+
+      return output;
     }
 
   }

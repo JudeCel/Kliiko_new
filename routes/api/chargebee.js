@@ -2,23 +2,27 @@
 let q = require('q');
 let chargebeeModule = require('./../../modules/chargebee/chargebeeModule');
 
+let cache = {};
 
 module.exports = {
   chargebeePlansGet: chargebeePlansGet,
-  chargebeeSubscriptionPost: chargebeeSubscriptionPost
+  chargebeeSubscriptionPost: chargebeeSubscriptionPost,
+  chargebeeCouponGet: chargebeeCouponGet
 };
 
 
 function chargebeePlansGet(req, res, next) {
-  chargebeeModule.getPlans().then(function(response) {
-    res.send(response);
-  });
+  chargebeeModule.getPlans().then(
+    function(response) { res.send(response)},
+    function(error) { res.send({error:error})}
+  );
+
 }
 
 
-
-
-//https://apidocs.chargebee.com/docs/api/hosted_pages#checkout_new_subscription
+/**
+ * https://apidocs.chargebee.com/docs/api/hosted_pages#checkout_new_subscription
+ */
 function chargebeeSubscriptionPost(req, res, next) {
   if (!req.body.userData) { res.send('no userData specified');  return; }
   if (!req.body.planDetails) { res.send('no planDetails specified');  return; }
@@ -37,5 +41,24 @@ function chargebeeSubscriptionPost(req, res, next) {
     function(error) { res.send({error:error}) }
   );
 
+}
+
+
+/**
+ * GET all coupons
+ * https://apidocs.chargebee.com/docs/api/coupons
+ * https://apidocs.chargebee.com/docs/api/coupon_codes
+ * @param req
+ * @param res
+ */
+function chargebeeCouponGet(req, res) {
+  if (!req.query.coupon) {
+    res.send({error:'coupon query params is missed'});
+    return;
+  }
+  chargebeeModule.getCoupon(req.query.coupon).then(
+    function(response) { res.send(response)},
+    function(error) { res.send({error:error})}
+  );
 }
 

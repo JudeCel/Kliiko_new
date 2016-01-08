@@ -13,7 +13,18 @@ function chargebeeHostedPageSuccessGet(req, res, next) {
     return;
   }
   chargebeeModule.getHostedPageData(req.query.id).then(
-    function(respose) { res.send(respose) },
+    function(respose) {
+      // sample json response:
+      // https://apidocs.chargebee.com/docs/api/hosted_pages#retrieve_a_hosted_page
+
+
+      let hostedPageData = respose.hosted_page;
+      let redirectPage = JSON.parse(hostedPageData.pass_thru_content).successAppUrl;
+      let userId = JSON.parse(hostedPageData.pass_thru_content).userId;
+
+      res.redirect(redirectPage);
+      //res.send(respose)
+    },
     function(error) { res.send({error:error}) }
   );
 

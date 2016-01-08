@@ -11,7 +11,7 @@
     var vm = this;
 
     var modalTplPath = 'js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/';
-    var selectedPaymentMethod;
+    var selectedPaymentMethod, step2IsValid;
 
     // set first step for 5 steps checkout process
     $stateParams.planUpgradeStep = 1;
@@ -22,6 +22,10 @@
     vm.modContentBlock = {selectedPlanDetails: true};
     vm.updateBtn = 'Update';
     vm.upgradeDuration = 1;
+    vm.finalPrice = 0 ;
+
+    vm.incorrectPromocode = null;
+    vm.promocodeData = null;
 
     vm.paymentDetails = {
       chargebee: {
@@ -38,6 +42,8 @@
     vm.updateUserData = updateUserData;
     vm.goToStep = goToStep;
     vm.handleUserDataChangeClick = handleUserDataChangeClick;
+    vm.updateFinalPrice = updateFinalPrice;
+    vm.handleTosCheck = handleTosCheck;
 
     init();
 
@@ -47,12 +53,22 @@
 
       function fetchInitData() {
         // get all plans details
+        var progressbarForPlans = ngProgressFactory.createInstance();
+        progressbarForPlans.start();
         upgradePlanServices.getPlans().then(function (res) {
+          dbg.log2('#UpgradePlanController > fetchInitData > plans fetched');
+          progressbarForPlans.complete();
+
           vm.plans = res
         });
 
         // get all data for current user
+        var progressbarForUserData = ngProgressFactory.createInstance();
+        progressbarForUserData.start();
         user.getUserData().then(function (res) {
+          dbg.log2('#UpgradePlanController > fetchInitData > userData fetched');
+          progressbarForUserData.complete();
+
           vm.userData = res;
         });
       }
@@ -82,8 +98,8 @@
      * @param plan {string}
      */
     function openPlanDetailsModal(plan) {
-      vm.currentPlan = plan;
-      vm.currentPlanModalContentTpl = modalTplPath + vm.currentPlan + '-plan.tpl.html';
+      vm.currentPlan = vm.plans[plan];
+      vm.currentPlanModalContentTpl = modalTplPath + vm.currentPlan.id + '.tpl.html';
 
       domServices.modal('plansModal');
     }
@@ -95,9 +111,11 @@
     function upgradeToPlan(plan) {
       dbg.log('#UpgradePlanController > Upgrade to plan >', plan);
 
-      vm.selectedPlanName = plan;
+      vm.selectedPlan = vm.plans[plan];
+      vm.finalPrice = vm.selectedPlan.price;
 
       domServices.modal('plansModal', 'close');
+
 
       goToStep(2);
 
@@ -107,7 +125,7 @@
 
     function goToStep(step) {
       if (!angular.isNumber(step)) {
-        if (step === 'back') step = vm.currentStep - 1;
+        if (step === 'back') { step = vm.currentStep - 1; vm.cantMoveNextStep = false; }
         if (step === 'next') step = vm.currentStep + 1;
         if (step === 'submit') {
           //step = 5;
@@ -136,8 +154,29 @@
       return true;
 
       function validateStep2() {
-        vm.cantMoveNextStep = true;
-        return true;
+        if (step2IsValid) {
+          vm.cantMoveNextStep = true;
+          return true;
+        }
+        if (!vm.promocode || !vm.promocode.length) {
+          vm.cantMoveNextStep = true;
+          return true;
+        }
+
+        upgradePlanServices.validatePromocode(vm.promocode).then(
+          function(res) {
+            vm.incorrectPromocode = null;
+            step2IsValid =  true; goToStep(3);
+            vm.promocodeData = res;
+            calculateDiscount();
+          },
+          function(err) {
+            messenger.error('Incorrect Promotional Code');
+            vm.incorrectPromocode = true;
+            return false;
+          }
+        );
+
       }
 
       function validateStep3() {
@@ -181,6 +220,20 @@
       });
     }
 
+    function updateFinalPrice() {
+      vm.finalPrice = vm.selectedPlan.price  * vm.upgradeDuration;
+      vm.orderTotal = vm.finalPrice;
+    }
+
+
+    function calculateDiscount() {
+      vm.discount = upgradePlanServices.calculateDiscount(vm.finalPrice);
+      vm.orderTotal = vm.finalPrice - vm.discount;
+    }
+
+    function handleTosCheck() {
+      vm.cantMoveNextStep = !vm.paymentDetails.chargebee.tos;
+    }
 
     function submitUpgrade() {
       dbg.log2('#UpgradePlanControllerAppController > submitUpgrade ');
@@ -189,8 +242,8 @@
       progressbar.start();
 
       var planObject = {
-       // plan: vm.plans[vm.selectedPlanName],
-       // duration: vm.upgradeDuration
+        plan: vm.selectedPlan,
+        duration: vm.upgradeDuration
       };
 
       var paymentObject = {
@@ -206,11 +259,11 @@
 
       upgradePlanServices.submitUpgrade(planObject, paymentObject, vm.userData).then(
         function(res) {
-          dbg.log2('#UpgradePlanControllerAppController > submitUpgrade > success, ', res);
+          dbg.log2('#UpgradePlanControllerAppController > submitUpgrade > success ');
           window.location = res.hosted_page.url;
         },
         function(err) {
-          dbg.log2('#UpgradePlanControllerAppController > submitUpgrade > error, ', err);
+          dbg.log2('#UpgradePlanControllerAppController > submitUpgrade > error ', err);
 
           progressbar.complete();
           goToStep(5);

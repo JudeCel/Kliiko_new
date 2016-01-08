@@ -8,9 +8,9 @@ let q = require('q');
 module.exports = {
   getPlans: getPlans,
   prepareHostedPage: prepareHostedPage,
-  getHostedPageData: getHostedPageData
+  getHostedPageData: getHostedPageData,
+  getCoupon: getCoupon
 };
-
 
 let chargebeeConfigs = config.get('chargebee');
 
@@ -65,7 +65,7 @@ function prepareHostedPage(userData, planDetails, paymentDetails, pages, passThr
 
   chargebee.hosted_page.checkout_new({
     subscription : {
-      plan_id : "plan2",
+      plan_id : planDetails.plan.id,
       plan_quantity: planDetails.duration,
       coupon: paymentDetails.promocode
     },
@@ -93,7 +93,6 @@ function prepareHostedPage(userData, planDetails, paymentDetails, pages, passThr
     if (error) {
       //handle error
       deferred.reject(error);
-      res.send({error:error});
     } else {
       deferred.resolve(result);
     }
@@ -120,5 +119,20 @@ function getHostedPageData(pageId) {
 
   return deferred.promise;
 
+}
+
+function getCoupon(couponId) {
+  let deferred = q.defer();
+
+  chargebee.coupon.retrieve(couponId).request(
+    function(error, result){
+      if (error){
+        deferred.reject(error);
+      } else {
+        deferred.resolve(result.coupon);
+      }
+    });
+
+  return deferred.promise;
 }
 
