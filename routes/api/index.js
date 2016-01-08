@@ -6,8 +6,6 @@ var router = express.Router();
 var policy = require('../../middleware/policy.js');
 
 var userRoutes = require('./user');
-var planRoutes = require('./plans');
-var countryAndCurrency = require('./country-and-currency-data');
 var accountManager = require('./accountManager');
 var promotionCode = require('./promotionCode');
 var accountDatabase = require('./accountDatabase');
@@ -22,12 +20,6 @@ router.get('/user', userRoutes.userGet);
 router.post('/user', userRoutes.userPost);
 router.put('/user', userRoutes.changePassword);
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
-
-router.get('/plans', planRoutes.plansGet);
-
-router.get('/currencies', countryAndCurrency.currencies);
-
-router.get('/countries', countryAndCurrency.countries);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
 router.post('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.post);
@@ -47,8 +39,9 @@ router.post('/banners', multipartyMiddleware, banners.bannersPost);
 router.post('/banners/:bannerType', multipartyMiddleware, banners.bannersBannerTypePost);
 router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelete);
 
-router.get('/chargebee', multipartyMiddleware, chargebee.chargebeePost);
-router.post('/chargebee', multipartyMiddleware, chargebee.chargebeePost);
+router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
+router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);
+router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
 
 // Common Rules
 router.use(function (req, res, next) {
