@@ -1,65 +1,18 @@
 <section id="step-3">
     <div class="row">
         <div class="col-md-6">
-
-            <div class="row">
-                <div class="col-md-12 caption">
-                    Order Summary
-                </div>
-                <div class="table-content">
-                    <div class="row table-header" >
-                        <div class="col-sm-5 col-md-5">Plan</div>
-                        <div class="col-sm-3 col-md-3">Duration</div>
-                        <div class="col-sm-4 col-md-4">Total</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-5 col-md-5">{{up.selectedPlanName}}</div>
-                        <div class="col-sm-3 col-md-3">{{up.upgradeDuration || 1}}</div>
-                        <div class="col-sm-4 col-md-4">{{up.finalPrice | currency : up.selectedCurrency.symbol : 2}}</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-5 col-md-5">1 Free month</div>
-                        <div class="col-sm-3 col-md-3">1</div>
-                        <div class="col-sm-4 col-md-4">{{ 0 | currency : up.selectedCurrency.symbol : 2}}</div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-5 col-md-5 total">Order Total</div>
-                        <div class="col-sm-3 col-md-3">{{up.upgradeDuration + 1}}</div>
-                        <div class="col-sm-4 col-md-4">{{up.finalPrice | currency : up.selectedCurrency.symbol : 2}}</div>
-                    </div>
-                </div>
-            </div>
-
-
+            <ng-include src="'js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/orderSummary.tpl.html'"></ng-include>
         </div>
         <div class="col-md-6">
-            <div class="row" ng-hide="up.paymentDetails.chargebee.selected">
-                <div class="col-md-12 table-header">
-                    New Payment Method
-                </div>
-                <div class="col-md-12 checkout-row">
-                    <div class="btn-standart btn-red btn-text-middle" ng-click="up.paymentDetails.changePaymentMethodTo('chargebee')" ng-hide="up.paymentDetails.chargebee.selected">Checkout with Chargebee</div>
-                </div>
-
-            </div>
-
-            <hr class="more-y-margin">
-
-            <section id="chargebee-details" ng-show="up.paymentDetails.chargebee.selected">
+            <section id="chargebee-details">
                 <div class="col-md-12 table-header">
                     Check out with Chargebee
-                </div>
-                <div class="row">
-                    Here is some Chargebee confidence related text
-                    <br><br>
-
                 </div>
 
                 <div class="row" >
                     <div class="col-md-1 terms-attention">
                         <div class="check">
-                            <input ng-model="up.paymentDetails.chargebee.tos" type="checkbox" class="checkbox-btn btn-green" name="termsAndConditions" id="termsAndConditionsCC">
+                            <input ng-model="up.paymentDetails.chargebee.tos" ng-change="up.handleTosCheck()" type="checkbox" class="checkbox-btn btn-green" name="termsAndConditions" id="termsAndConditionsCC">
                             <label for="termsAndConditionsCC"></label>
                         </div>
                     </div>
