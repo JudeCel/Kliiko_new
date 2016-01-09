@@ -11,7 +11,7 @@ function validate(params, callback) {
 
 function create(params, user, callback) {
   Account.create({name: params.accountName}).then(function(result) {
-    callback(null, result, user);
+    callback(null, params, result, user);
   }).catch(Account.sequelize.ValidationError, function(err) {
     callback(prepareErrors(err));
   }).catch(function(err) {
