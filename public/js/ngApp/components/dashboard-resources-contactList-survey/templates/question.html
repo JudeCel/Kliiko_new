@@ -18,19 +18,19 @@
 
 <div class='form-horizontal' ng-if='object.hardcodedName'>
   <div class='form-group'>
-    <label class='col-xs-2 control-label' for='questionName_{{object.order}}'>{{ object.name }}</label>
+    <label class='col-md-2 control-label' for='questionName_{{object.order}}' style='text-align:left;'>{{ object.name }}</label>
   </div>
 </div>
 
 <div class='form-horizontal'>
   <div class='form-group'>
     <div class='col-sm-8'>
-      <textarea class='form-control' id='questionAnswer_{{object.order}}' placeholder='Question'
-        ng-string ng-change='sc.questionChange(object.order, question)' ng-model='question.question' ng-maxlength='500' rows='5'></textarea>
-
       <span class='has-error'>
         <span class='help-block'>{{ question.errors.question }}</span>
       </span>
+
+      <textarea class='form-control' id='questionAnswer_{{object.order}}' placeholder='Question'
+        ng-string ng-change='sc.questionChange(object.order, question)' ng-model='question.question' ng-maxlength='500' rows='5'></textarea>
     </div>
   </div>
 </div>

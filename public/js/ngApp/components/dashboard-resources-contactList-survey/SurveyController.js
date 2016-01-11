@@ -21,6 +21,8 @@
     vm.canChangeAnswers = canChangeAnswers;
     vm.changeAnswers = changeAnswers;
     vm.defaultArray = defaultArray;
+    vm.changePage = changePage;
+    vm.addContactDetail = addContactDetail;
 
     vm.answerSortOptions = {
       onUpdate: function(evt) {
@@ -30,9 +32,71 @@
       }
     }
 
-    vm.createTemp = { survey: { SurveyQuestions: {} } };
-    vm.create = { survey: { SurveyQuestions: [] } };
-    vm.currentPage = 'create';
+    vm.contactDetails = [
+      {
+        name: 'First Name',
+        input: true
+      },
+      {
+        name: 'Last Name',
+        input: true
+      },
+      {
+        name: 'Gender',
+        select: true,
+        options: ['Male', 'Female']
+      },
+      {
+        name: 'Email',
+        input: true
+      },
+      {
+        name: 'Mobile',
+        input: true
+      },
+      {
+        name: 'Landline',
+        input: true,
+        canDisable: true,
+        disabled: true
+      },
+      {
+        name: 'Postal address',
+        input: true,
+        canDisable: true,
+        disabled: true
+      },
+      {
+        name: 'City',
+        input: true,
+        canDisable: true,
+        disabled: true
+      },
+      {
+        name: 'State',
+        input: true,
+        canDisable: true,
+        disabled: true
+      },
+      {
+        name: 'Postcode',
+        input: true,
+        canDisable: true,
+        disabled: true
+      },
+      {
+        name: 'Country',
+        input: true,
+        canDisable: true,
+        disabled: true
+      },
+      {
+        name: 'Company Name',
+        input: true,
+        canDisable: true,
+        disabled: true
+      },
+    ];
 
     vm.defaultQuestions = [
       {
@@ -94,10 +158,25 @@
         checkbox: true,
         minAnswers: 1,
         maxAnswers: 1
+      },
+      {
+        order: 8,
+        name: 'Contact details',
+        hardcodedName: true,
+        contact: true,
+        minAnswers: 1,
+        maxAnswers: 1
+      },
+      {
+        order: 9,
+        name: 'Thanks',
+        hardcodedName: true,
+        disableAnswers: true,
+        textArea: true
       }
     ];
 
-    init();
+    changePage('index');
 
     function init() {
       surveyServices.getAllSurveys().then(function(res) {
@@ -175,7 +254,7 @@
         vm.create.survey.description = survey.description;
       }
 
-      if(Object.keys(vm.create.survey.SurveyQuestions).length < 2) {
+      if(vm.create.survey.SurveyQuestions.length < 2) {
         survey.errors.submitError = 'Not enougth questions';
       }
       else {
@@ -208,24 +287,37 @@
           delete sq.errors.question;
         }
 
-        var answers = Object.keys(sq.answers).length;
-        if(answers < sq.minAnswers) {
-          sq.errors.answer = 'Not enougth answers';
-        }
-        else if(answers > sq.maxAnswers){
-          sq.errors.answer = 'Too many answers';
-        }
-        else {
-          delete sq.errors.answer;
-          sq.errors.answers = {};
-          for(var key in sq.answers) {
-            var answer = sq.answers[key];
-            if(answer.name.length == 0 || answer.name.length > 20) {
-              sq.errors.answers[key] = 'Too short/long';
+        if(sq.answers) {
+          var answers = Object.keys(sq.answers).length;
+          if(answers < sq.minAnswers) {
+            sq.errors.answer = 'Not enougth answers';
+          }
+          else if(answers > sq.maxAnswers){
+            sq.errors.answer = 'Too many answers';
+          }
+          else {
+            delete sq.errors.answer;
+            sq.errors.answers = {};
+            for(var key in sq.answers) {
+              var answer = sq.answers[key];
+              if(answer.name.length == 0 || answer.name.length > 20) {
+                sq.errors.answers[key] = 'Too short/long';
+              }
+            };
+            if(Object.keys(sq.errors.answers).length == 0) {
+              delete sq.errors.answers;
+              if(sq.contact) {
+                console.log(sq.answers);
+                var contactDetails = [];
+                for(var key in vm.contactDetails) {
+                  var cd = vm.contactDetails[key];
+                  if(!cd.disabled) {
+                    contactDetails.push(cd);
+                  }
+                };
+                sq.answers[0].contact = contactDetails;
+              }
             }
-          };
-          if(Object.keys(sq.errors.answers).length == 0) {
-            delete sq.errors.answers;
           }
         }
 
@@ -258,12 +350,12 @@
       if(validateSurvey()) {
         surveyServices.createSurvey(vm.create.survey).then(function(res) {
           dbg.log2('#SurveyController > submitCreate > res ', res);
-          console.log(res);
           if(res.error) {
             messenger.error(res.error);
           }
           else {
-            messenger.ok(res.data.message);
+            changePage('index');
+            messenger.ok(res.data.message || 'Successfully creted survey');
           }
         });
       }
@@ -282,6 +374,7 @@
       var question = vm.createTemp.survey.SurveyQuestions[object.order];
       question.minAnswers = object.minAnswers;
       question.maxAnswers = object.maxAnswers;
+      question.contact = object.contact;
       if(object.hardcodedName) {
         question.name = object.name;
       }
@@ -311,6 +404,23 @@
 
     function defaultArray(size) {
       return Array.apply(null, Array(size)).map(function(cv, index) { return { order: index } });
-    }
+    };
+
+    function changePage(page) {
+      if(page == 'index') {
+        init();
+      }
+      if(page == 'create') {
+        vm.createTemp = { survey: { SurveyQuestions: [] } };
+        vm.create = { survey: { SurveyQuestions: [] } };
+      }
+
+      vm.currentPage = page;
+    };
+
+    function addContactDetail(cd, order, sq) {
+      cd.disabled = !cd.disabled;
+      changeCreateObject(order, false, sq);
+    };
   };
 })();

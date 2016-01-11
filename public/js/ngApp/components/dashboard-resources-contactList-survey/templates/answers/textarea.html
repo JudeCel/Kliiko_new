@@ -7,15 +7,15 @@
 <div ng-sortable='sc.answerSortOptions'>
   <div class='form-group' ng-repeat='answer in question.answers track by $index'>
     <div class='col-sm-8'>
+      <span class='has-error'>
+        <span class='help-block'>{{ question.errors.answers[answer.order] }}</span>
+      </span>
       <textarea class='form-control' id='answers_{{object.order}}_{{ answer.order }}' placeholder='Answer' rows='5' disabled
         ng-init='answer.type="textArea"' ng-string ng-change='sc.questionChange(object.order, question)' ng-model='answer.name' ng-maxlength='500'>
       </textarea>
 
       <span class='glyphicon glyphicon-remove' ng-if='sc.canChangeAnswers(-1, question)' ng-click='sc.changeAnswers(-1, question, $index)'></span>
 
-      <span class='has-error'>
-        <span class='help-block'>{{ question.errors.answers[answer.order] }}</span>
-      </span>
     </div>
   </div>
 </div>

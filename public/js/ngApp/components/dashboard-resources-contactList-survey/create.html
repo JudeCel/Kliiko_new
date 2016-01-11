@@ -5,7 +5,7 @@
       <h2 class='text-center'>Create Survey</h2>
     </div>
     <div class='col-md-3 text-right'>
-      <button class='btn btn-addNewElement' ng-click="sc.currentPage = 'index'">Back</button>
+      <button class='btn btn-addNewElement' ng-click="sc.changePage('index')">Back</button>
     </div>
 
     <div class='col-sm-12'>
@@ -45,13 +45,24 @@
     </div>
 
 
-    <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(6, 8) track by $index' ng-init='questions = sc.createTemp.survey.SurveyQuestions'>
+    <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(6, 10) track by $index' ng-init='questions = sc.createTemp.survey.SurveyQuestions'>
       <div ng-init='question = sc.initQuestion(object, questions[object.order])'>
         <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
 
         <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
-        <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
+        <ng-include ng-if='!object.disableAnswers' src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
       </div>
+    </div>
+
+    <div class='col-sm-12'>
+      <hr class='border-brown' />
+
+      <button class='btn btn-addNewElement' ng-click=''>Preview</button>
+      <button class='btn btn-addNewElement' ng-click='sc.submitCreate()'>Submit</button>
+
+      <span class='has-error'>
+        <span class='help-block'>{{ sc.createTemp.survey.errors.submitError }}</span>
+      </span>
     </div>
 
   </div>

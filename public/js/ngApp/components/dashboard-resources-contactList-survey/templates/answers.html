@@ -9,3 +9,7 @@
 <div class='form-horizontal' ng-if='object.checkbox' ng-init='question.answers=sc.defaultArray(object.minAnswers)'>
   <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers/checkbox.html'"></ng-include>
 </div>
+
+<div class='form-horizontal' ng-if='object.contact' ng-init='question.answers=sc.defaultArray(object.minAnswers)'>
+  <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers/contact.html'"></ng-include>
+</div>
