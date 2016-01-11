@@ -16,12 +16,18 @@ passport.use(new LocalStrategy({
   function (username, password, done) {
     usersService.comparePassword(username, password, function(failed, result) {
       if (failed) {
-        done("Wrong email or password");
+        done('Wrong email or password or email is not confirmed');
       }else{
-        result.getOwnerAccount().then(function(accounts) {
-          result.increment('signInCount').done(function(result) {
-            done(null, userParams(result, accounts[0]));
-          })
+        result.getAccounts({ include: [ models.AccountUser ] }).then(function(accounts) {
+          let account = accounts[0];
+          if(account.AccountUser.active) {
+            result.increment('signInCount').done(function(result) {
+              done(null, userParams(result, account));
+            });
+          }
+          else {
+            done('Sorry, your account has been deactivated. Please get in touch with the administration');
+          }
         });
       }
     });
@@ -60,7 +66,7 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(userObject, done) {
   models.User.find({attributes: ['email', 'id', 'firstName', 'signInCount'], where: {id: userObject.id}}).done(function(result){
     if (result) {
-      result.getOwnerAccount().then(function(accounts) {
+      result.getAccounts().then(function(accounts) {
         done(null, userParams(result, accounts[0]));
       });
     }else{

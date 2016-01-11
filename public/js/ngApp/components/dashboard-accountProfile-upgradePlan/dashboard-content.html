@@ -2,67 +2,84 @@
     <div class="row row-centered">
         <div class='col-md-offset-1 col-md-10 сol-centered dashboard-index text-center'>
 
+            <h1>Upgrade Plan</h1>
+            <p class="warning"><img src="icons/ic_attention.png" class="ic"> Your free trial will expire in 3 days </p>
+            <br>
 
-    <h1>Upgrade Plan</h1>
-    <p class="warning"><img src="icons/ic_attention.png" class="ic"> Your free trial will expire in 3 days </p> <br>
+            <div class="row">
+                <div class=" col-md-12">
+                    <div id="steps-row" style="margin: 0 auto">
+                        <div class="step-container">
+                            <span class="step-number"
+                                  ng-class="{'active': up.stepsClassIsActive(1), 'done':up.stepsClassIsDone(1)}">1</span>
+                            <span class="step-name"
+                                  ng-class="{'active': up.stepsClassIsActive(1), 'done':up.stepsClassIsDone(1)}">Select Plan Upgrade</span>
+                        </div>
+                        <div class="step-container">
+                            <span class="step-number"
+                                  ng-class="{'active': up.stepsClassIsActive(2), 'done':up.stepsClassIsDone(2)}">2</span>
+                            <span class="step-name"
+                                  ng-class="{'active': up.stepsClassIsActive(2), 'done':up.stepsClassIsDone(2)}">Check Details</span>
+                        </div>
+                        <div class="step-container">
+                            <span class="step-number"
+                                  ng-class="{'active': up.stepsClassIsActive(3), 'done':up.stepsClassIsDone(3)}">3</span>
+                            <span class="step-name"
+                                  ng-class="{'active': up.stepsClassIsActive(3), 'done':up.stepsClassIsDone(3)}">Payment Options</span>
+                        </div>
+                        <div class="step-container">
+                            <span class="step-number"
+                                  ng-class="{'active': up.stepsClassIsActive(4), 'done':up.stepsClassIsDone(4)}">4</span>
+                            <span class="step-name"
+                                  ng-class="{'active': up.stepsClassIsActive(4), 'done':up.stepsClassIsDone(4)}">Confirmation</span>
+                        </div>
+                        <div class="step-container">
+                            <span class="step-number"
+                                  ng-class="{'active': up.stepsClassIsActive(5), 'done':up.stepsClassIsDone(5)}">5</span>
+                            <span class="step-name"
+                                  ng-class="{'active': up.stepsClassIsActive(5), 'done':up.stepsClassIsDone(5)}">Submitted</span>
+                        </div>
+                    </div>
+                </div>
 
-    <div class="row">
-        <div class=" col-md-12">
-            <div id="steps-row" style="margin: 0 auto">
-                <div class="step-container">
-                    <span class="step-number" ng-class="{'active': up.stepsClassIsActive(1), 'done':up.stepsClassIsDone(1)}">1</span>
-                    <span class="step-name" ng-class="{'active': up.stepsClassIsActive(1), 'done':up.stepsClassIsDone(1)}">Select Plan Upgrade</span>
+            </div>
+
+            <ng-include ng-show="up.plans"  src="'js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/step'+up.currentStep+'.tpl.html'"></ng-include>
+
+
+            <div class="row" ng-hide="up.stepsClassIsActive(1)">
+
+                <div class="col-md-2 btn-dashboard-plans btn-md btn-green" ng-click="up.goToStep('back')"
+                     ng-hide="up.stepsClassIsActive(5)">
+                    <img class="ic" src="icons/back_green.png" alt="Go Back"> Back
                 </div>
-                <div class="step-container">
-                    <span class="step-number" ng-class="{'active': up.stepsClassIsActive(2), 'done':up.stepsClassIsDone(2)}">2</span>
-                    <span class="step-name" ng-class="{'active': up.stepsClassIsActive(2), 'done':up.stepsClassIsDone(2)}">Check Details</span>
+
+                <div class="col-md-2 btn-dashboard-plans btn-md pull-right btn-blue" ng-click="up.goToStep('next')"
+                     ng-class="{'btn-forbidden': up.cantMoveNextStep}"
+                     ng-hide="up.stepsClassIsActive(4) || up.stepsClassIsActive(5)">
+                    Next <img class="ic ic-flipX" src="icons/back_blue.png" alt="Go Next Step">
                 </div>
-                <div class="step-container">
-                    <span class="step-number" ng-class="{'active': up.stepsClassIsActive(3), 'done':up.stepsClassIsDone(3)}">3</span>
-                    <span class="step-name" ng-class="{'active': up.stepsClassIsActive(3), 'done':up.stepsClassIsDone(3)}">Payment Options</span>
+
+                <div class="col-md-5 btn-dashboard-plans btn-md btn-green" ui-sref="dashboard.accountProfile"
+                     ng-show="up.stepsClassIsActive(5)">
+                    Back to account profile
                 </div>
-                <div class="step-container">
-                    <span class="step-number" ng-class="{'active': up.stepsClassIsActive(4), 'done':up.stepsClassIsDone(4)}">4</span>
-                    <span class="step-name" ng-class="{'active': up.stepsClassIsActive(4), 'done':up.stepsClassIsDone(4)}">Confirmation</span>
+                <div class="col-md-4 btn-dashboard-plans btn-md pull-right btn-standart btn-red"
+                     ng-click="up.goToStep('submit')"
+                     ng-show="up.stepsClassIsActive(4)">
+                    Submit My Order
                 </div>
-                <div class="step-container">
-                    <span class="step-number" ng-class="{'active': up.stepsClassIsActive(5), 'done':up.stepsClassIsDone(5)}">5</span>
-                    <span class="step-name" ng-class="{'active': up.stepsClassIsActive(5), 'done':up.stepsClassIsDone(5)}">Submitted</span>
+                <div class="col-md-3 btn-dashboard-plans btn-md pull-right btn-standart btn-red" ui-sref="dashboard"
+                     ng-show="up.stepsClassIsActive(5) && !up.cantMoveNextStep">
+                    Build new session
                 </div>
             </div>
+
         </div>
 
     </div>
 
-    <ng-include src="'js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/step'+up.currentStep+'.tpl.html'"></ng-include>
-
-
-    <div class="row" ng-hide="up.stepsClassIsActive(1)">
-
-        <div class="col-md-2 btn-dashboard-plans btn-md btn-green" ng-click="up.goToStep('back')"
-            ng-hide="up.stepsClassIsActive(5)">
-            <img class="ic" src="icons/back_green.png"  alt="Go Back"> Back
-        </div>
-
-        <div class="col-md-2 btn-dashboard-plans btn-md pull-right btn-blue" ng-click="up.goToStep('next')"
-            ng-hide="up.stepsClassIsActive(4) || up.stepsClassIsActive(5)">
-            Next <img class="ic ic-flipX" src="icons/back_blue.png" alt="Go Next Step">
-        </div>
-
-        <div class="col-md-5 btn-dashboard-plans btn-md btn-green" ui-sref="dashboard.accountProfile"
-             ng-show="up.stepsClassIsActive(5)">
-            Back to account profile
-        </div>
-        <div class="col-md-3 btn-dashboard-plans btn-md pull-right btn-standart btn-red" ng-click="up.goToStep('submit')"
-             ng-show="up.stepsClassIsActive(4)">
-            Submit My Order
-        </div>
-        <div class="col-md-3 btn-dashboard-plans btn-md pull-right btn-standart btn-red" ui-sref="dashboard"
-             ng-show="up.stepsClassIsActive(5)">
-            Build new session
-        </div>
-    </div>
-<!----------- MODALS ---------------------->
+    <!----------- MODALS ---------------------->
     <section>
         <!-- plansModal -->
         <div class='modal fade' id='plansModal' role='dialog'>
@@ -70,80 +87,26 @@
                 <div class='modal-content border-green border-radius-none'>
                     <div class='modal-header'>
                         <button type='button' class='close' data-dismiss='modal'>&times;</button>
-                        <h1 class='modal-title text-center'>Learn More about the {{up.currentPlan.capitalize()}} Plan</h1>
+                        <h1 class='modal-title text-center'>Learn More about the {{up.currentPlan.name}}</h1>
                     </div>
                     <div class='modal-body'>
 
                         <ng-include src="up.currentPlanModalContentTpl"></ng-include>
                     </div>
                     <div class='modal-footer'>
-                        <div type='button' class='pull-left btn-dashboard-plans go-back-btn' data-dismiss='modal'>Go Back</div>
-                        <div type='submit' class='pull-right btn-dashboard-plans i-want-btn' ng-click="up.upgradeToPlan(up.currentPlan)">I Want This Plan</div>
+                        <div type='button' class='pull-left btn-dashboard-plans go-back-btn' data-dismiss='modal'>Go
+                            Back
+                        </div>
+                        <div type='submit' class='pull-right btn-dashboard-plans i-want-btn'
+                             ng-click="up.upgradeToPlan(up.currentPlan.id)">I Want This Plan
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
 
-
-        <!-- countryAndCurrencySelect -->
-        <div class='modal fade' id='countryAndCurrencySelect' role='dialog'>
-            <div class='modal-dialog' style="width: 800px">
-                <div class='modal-content border-red border-radius-none'>
-                    <div class='modal-header'>
-                        <button type='button' class='close' data-dismiss='modal'>&times;</button>
-                        <h1 class='modal-title text-center'>Choose a location and currency</h1>
-                    </div>
-
-                    <div class='modal-body'>
-                        <div id="country-select" class="ng-custom-select">
-                            <div class="ncs-select">
-                                <div class="ncs-input-field" ng-click="up.ncsCountrySelect = !up.ncsCountrySelect"> {{ up.selectedCountry.name }} </div>
-                                <div class="ncs-arrow-bnt" ng-click="up.ncsCountrySelect = !up.ncsCountrySelect"><i class="pull-right glyphicon glyphicon-chevron-down"></i></div>
-                                <div class="ncs-content" ng-show="up.ncsCountrySelect">
-                                    <div class="ncs-content-item"
-                                         ng-repeat="country in ::up.countries"
-                                         ng-click="up.ncsCountrySelect = !up.ncsCountrySelect; up.selectedCountry=country"> {{country.name}}</div>
-
-                                </div>
-                            </div>
-                            <!--<div class="ncs-click-anywhere"></div>-->
-                        </div>
-                        <div id="currency-select" class="ng-custom-select pull-right">
-                            <div class="ncs-select">
-                                <div class="ncs-input-field" ng-click="up.ncsCurrencySelect = !up.ncsCurrencySelect">
-                                    <div class="row">
-                                        <div class="col-md-1"><small>{{up.selectedCurrency.symbol}}</small></div>
-                                        <div class="col-md-9">{{up.selectedCurrency.code}}</div>
-                                    </div>
-                                </div>
-                                <div class="ncs-arrow-bnt" ng-click="up.ncsCurrencySelect = !up.ncsCurrencySelect"><i class="pull-right glyphicon glyphicon-chevron-down"></i></div>
-                                <div class="ncs-content" ng-show="up.ncsCurrencySelect">
-                                    <div class="ncs-content-item"
-                                         ng-repeat="currency in ::up.currencies"
-                                         ng-click="up.ncsCurrencySelect = !up.ncsCurrencySelect; up.selectedCurrency=currency">
-                                        <div class="row">
-                                            <div class="col-md-1"><small>{{currency.symbol}}</small></div>
-                                            <div class="col-md-9">{{currency.code}}</div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <!--<div class="ncs-click-anywhere"></div>-->
-                        </div>
-
-                        <div class='modal-footer'>
-                            <div type='submit' class='pull-right btn-dashboard-plans border-red ok-btn' ng-click="up.applyCountryAndCurrency()">Ok</div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
     </section>
 
-        </div>
 
-    </div>
 </section>

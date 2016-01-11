@@ -21,11 +21,10 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td scope="row">{{up.plans[up.selectedPlanName].name}}</td>
-                                <td>{{ up.plans[up.selectedPlanName].price | currency : 'US$' : 2}}</td>
-                                <!--<td><input id="duration-input" type="number" ng-model="up.upgradeDuration" ng-value="1" min="1" size="3"></td>-->
+                                <td scope="row">{{up.selectedPlan.name}}</td>
+                                <td>{{up.selectedPlan.price| price}}</td>
                                 <td>
-                                    <select name="" id="duration-input" ng-model="up.upgradeDuration" >
+                                    <select name="" id="duration-input" ng-model="up.upgradeDuration" ng-change="up.updateFinalPrice()">
                                         <option value="1" ng-selected="true">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
@@ -41,9 +40,9 @@
 
                                     </select>
                                 </td>
-                                <td><input id="promocod-input" type="text" ng-model="up.promocode"></td>
+                                <td><input id="promocod-input" type="text" ng-model="up.promocode" ng-class="{'error':up.incorrectPromocode}"></td>
                                 <td>
-                                    {{up.finalPrice = (up.plans[up.selectedPlanName].price * up.upgradeDuration  )|| (up.plans[up.selectedPlanName].price ) | currency : 'US$' : 2 }}
+                                    {{up.finalPrice| price }}
                                 </td>
                             </tr>
 

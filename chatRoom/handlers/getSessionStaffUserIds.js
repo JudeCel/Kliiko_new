@@ -20,7 +20,10 @@ var validate = function (req, next) {
 module.exports.validate = validate
 
 var run = function (req, resCb, errCb) {
-  SessionStaff.findAll({where: req.params, distinct: true})
+  console.log("+++++++++++++++");
+  console.log(req.params);
+  console.log("+++++++++++++++");
+  SessionStaff.findAll({where: {type: req.params.type}, distinct: true})
   .then(function (data) {
        resCb.send(data);
    }).catch(function(err) {

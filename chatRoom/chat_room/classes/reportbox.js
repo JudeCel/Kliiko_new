@@ -130,7 +130,7 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 
 		//	column two - chat history - all
 		json = '{' +
-		'	sessionID: ' + window.sessionID + ', ' +
+		'	sessionId: ' + window.sessionId + ', ' +
 		'	userID: ' + window.userID + ', ' +
 		'	topicID: ' + this.topicList[ndx].topicId + ', ' +
 		'	report: {' +
@@ -147,7 +147,7 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 
 		//	column three - chat history - stars
 		json = '{' +
-		'	sessionID: ' + window.sessionID + ', ' +
+		'	sessionId: ' + window.sessionId + ', ' +
 		'	userID: ' + window.userID + ', ' +
 		'	topicID: ' + this.topicList[ndx].topicId + ', ' +
 		'	report: {' +
@@ -164,7 +164,7 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 
 		//	column four - whiteboard
 		json = '{' +
-		'	sessionID: ' + window.sessionID + ', ' +
+		'	sessionId: ' + window.sessionId + ', ' +
 		'	userID: ' + window.userID + ', ' +
 		'	topicID: ' + this.topicList[ndx].topicId + ', ' +
 		'	report: {' +
@@ -187,7 +187,7 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 
 		//	column five - votes
 		json = '{' +
-		'	sessionID: ' + window.sessionID + ', ' +
+		'	sessionId: ' + window.sessionId + ', ' +
 		'	userID: ' + window.userID + ', ' +
 		'	topicID: ' + this.topicList[ndx].topicId + ', ' +
 		'	report: {' +
@@ -233,7 +233,7 @@ view.Reportbox.prototype.setReportValue = function(dataAsJson) {
 
 				//	chat room statistics
 				json = '{' +
-				 '	sessionID: ' + window.sessionID + ', ' +
+				 '	sessionId: ' + window.sessionId + ', ' +
 				 '	userID: ' + window.userID + ', ' +
 				 '	topicID: 0, ' +
 				 '	report: {' +
@@ -391,7 +391,7 @@ function reportFormat(element) {
 	//	lets redraw the report-box with the new format now...
 	if (!isEmpty(window.reportbox)) {
 		window.reportbox.setFormat(json.type);
-		socket.emit('getreport', window.sessionID, window.userID);
+		socket.emit('getreport', window.sessionId, window.userID);
 	}
 }
 

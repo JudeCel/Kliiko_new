@@ -3,19 +3,19 @@
 var bannersService = require('./../../services/uploadBanner');
 
 module.exports = {
-  banners_Get: banners_Get,
-  banners_Post: banners_Post,
-  banners_Delete: banners_Delete,
-  banners_bannerType_Post: banners_bannerType_Post
+  bannersGet: bannersGet,
+  bannersPost: bannersPost,
+  bannersDelete: bannersDelete,
+  bannersBannerTypePost: bannersBannerTypePost
 };
 
-function banners_Get(req, res, next) {
+function bannersGet(req, res, next) {
   bannersService.findAllBanners(function(result) {
     res.send(result);
   });
 }
 
-function banners_Post(req, res, next) {
+function bannersPost(req, res, next) {
   let file = req.files.file;
   let bannerType = req.body.bannerType;
 
@@ -29,7 +29,7 @@ function banners_Post(req, res, next) {
 
 }
 
-function banners_Delete(req, res, next) {
+function bannersDelete(req, res, next) {
   var bannerType = req.params.bannerType;
 
   bannersService.destroy(bannerType).then(
@@ -38,7 +38,7 @@ function banners_Delete(req, res, next) {
   );
 }
 
-function banners_bannerType_Post(req, res, next) {
+function bannersBannerTypePost(req, res, next) {
   let bannerType = req.params.bannerType;
   let link = req.body.link;
 

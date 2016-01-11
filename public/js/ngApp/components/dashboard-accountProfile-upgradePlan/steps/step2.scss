@@ -53,5 +53,10 @@
   input#promocod-input {
     @extend #duration-input;
     width: 230px;
+
+    &.error {
+      margin-top: -1px;
+      border: 3px solid $red;
+    }
   }
 }

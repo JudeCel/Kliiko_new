@@ -26,12 +26,17 @@ router.use(function (req, res, next) {
 });
 
 /* GET root page. */
+
 router.get('/', function (req, res, next) {
     res.render('login', {title: 'Login', error: "", message: ''});
 });
 
 router.get('/registration', function (req, res, next) {
     res.render('registration', usersRepo.prepareParams(req));
+});
+
+router.get('/welcome', function (req, res, next) {
+    res.render('welcome', usersRepo.prepareParams(req));
 });
 
 router.post('/registration', function (req, res, next) {
@@ -54,7 +59,7 @@ router.post('/registration', function (req, res, next) {
           tplData.success = 'Email confirmation sent to ' + email;
         }
       });
-      res.render('login', {title: 'Login', error: "Please confirm Your Email", message: '' });
+      res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' });
     };
   });
 });
@@ -62,7 +67,7 @@ router.post('/registration', function (req, res, next) {
 router.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
     if (err || !user) {
-      return  res.render('login', {title: 'Login', error: "Wrong email or password or email is not confirmed", message: ''})
+      return  res.render('login', {title: 'Login', error: err, message: ''})
     }
     req.login(user, function(err) {
       if (err) { return next(err); }
@@ -79,7 +84,6 @@ router.post('/login', function(req, res, next) {
     });
   })(req, res, next);
 });
-
 
 router.get('/login', function (req, res, next) {
     res.render('login', { title: 'Login', error: '', message: req.flash('message')[0] });

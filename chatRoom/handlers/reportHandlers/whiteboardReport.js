@@ -1,6 +1,6 @@
 var mtypes = require('./../../helpers/mtypes');
 var getReportData_Whiteboard = require('../getReportData_Whiteboard.js');
-var config = require('../../config/config.json');
+var config = require('config').get("chatConf");
 var FS_PATH = config.paths.fsPath + config.paths.chatRoomPath;
 
 module.exports.getReportInfo = function (params) {
@@ -96,7 +96,7 @@ var clearArea = function (report, coordinates) {
             strokeWidth: 1,
             type: "rectangle-fill"
         },
-        fsPath: "c:/insiderFocus/ifs/chat_room",
+        fsPath: config.paths.fsPath,
         isFirst: false,
         isLast: true,
         name: "",

@@ -1,6 +1,6 @@
 var onUpdateavatarcaption = function(userId, sessionId, nameList) {
 	//	this should be done for all sessions, not just a particular topic
-	if (sessionId != window.sessionID) return;	//	is this the correct topic?
+	if (sessionId != window.sessionId) return;	//	is this the correct topic?
 
 	if (isEmpty(nameList)) return;	//	really need something here...
 

@@ -19,8 +19,10 @@ var validate = function (req, next) {
 module.exports.validate = validate;
 
 var run = function (req, resCb, errCb) {
-  Event.findAll({where: {topicId: req.params.topicId, cmd: ['object', 'shareresource'] }})
-    .then(function (events) {
+  Event.findAll({where: {topicId: req.params.topicId, cmd: ['object', 'shareresource'] },
+    include: [{model: models.User, attribute: ["firstName"]}],
+    attributes: ["id", "userId", "tag", "cmd", "event", [models.sequelize.col('User.firstName'), 'firstName']]
+    }).then(function (events) {
       let collection  = _.map(events, function(n) {
         let data = n.dataValues;
         return data;

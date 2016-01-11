@@ -77,7 +77,7 @@ Run commands in terminal:
 
 3) RUN GULP   ``` gulp ```
 
-4) Open browser: ``` http://insider.focus.com:3000/ ```
+4) Open browser: ``` http://insider.focus.com:8080/ ```
 
 
 ### Tests

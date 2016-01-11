@@ -1336,7 +1336,7 @@ view.Dashboard.prototype.setAvatarChooser = function(html) {
 
 	var json = {
 		userId: window.userID,
-		sessionId: window.sessionID,
+		sessionId: window.sessionId,
 		radius: 15,
 		injectInto: 'dashboard-avatarChooser'
 	}

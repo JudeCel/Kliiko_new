@@ -46,10 +46,13 @@ app.use(flash());
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
 var api = require('./routes/api');
+var webhooks = require('./routes/webhooks');
 
 app.use('/', routes);
 app.use('/dashboard', currentUser.assign, dashboard);
 app.use('/api', currentUser.assign, api);
+app.use('/webhooks', currentUser.assign, webhooks);
+
 
 // Added socket.io routes
 app = socketsServer.addRoutes(app);

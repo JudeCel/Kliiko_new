@@ -1,7 +1,7 @@
-var mtypes = require('../helpers/mtypes');
+var mtypes = require('./../../helpers/mtypes');
 var getReportData_Statistics = require('../getReportData_Statistics.js');
-var config = require('../../config/config.json');
-var FS_PATH = config.paths.fsPath + config.paths.chatRoomPath;
+var config = require('config').get("chatConf");
+var FS_PATH = config.paths.fsPath + "/" + config.paths.chatRoomPath;
 
 module.exports.getReportInfo = function (params) {
     return {
@@ -12,7 +12,7 @@ module.exports.getReportInfo = function (params) {
 
 module.exports.getReportData = function (params, resCb, nextCb) {
     var req = {
-        sessionId: params.sessionID
+        sessionId: params.sessionId
     };
 
     getReportData_Statistics.execute(req, resCb, nextCb);
@@ -37,9 +37,9 @@ module.exports.getReportRowObjects = function (data, nextCb) {
             name: rowData.firstName,
             userId: rowData.userId,
             fsPath: FS_PATH,
-            count: rowData.count_userId,
+            count: rowData.countUserId,
             topicId: rowData.topicId,
-            topic_name: rowData.topic_name
+            topicName: rowData.topicName
         };
 
         result.push(rowObject);

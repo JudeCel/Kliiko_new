@@ -329,6 +329,14 @@
   #step-5 {
     margin-top: 55px;
     margin-bottom: 100px;
+
+    iframe#paymentModal-iframe {
+      margin-top: 20px;
+
+      width: 80vh;
+      height: 90vw;
+    }
+
   }
 
 }

@@ -15,7 +15,7 @@
       'debModule',
       'domServices',
       'messenger',
-      'CreditCard',
+      //'CreditCard',
 
       // app modules
       'KliikoApp.user',
@@ -47,15 +47,17 @@
   }
 
   AppController.$inject = ['$rootScope', 'dbg', 'ngProgressFactory', 'user','$q'];
-  function AppController($rootScope, dbg, ngProgressFactory, user, $q) {
+  function AppController($rootScope, dbg, ngProgressFactory, user, $q ) {
     var vm = this;
-
     var progressbar = ngProgressFactory.createInstance();
     progressbar.start();
     dbg.log2('#AppController started ');
     progressbar.complete();
 
+    user.getUserData().then(function(res) { vm.user = res });
+
   }
+
 
 })();
 

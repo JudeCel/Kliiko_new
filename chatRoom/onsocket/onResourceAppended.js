@@ -6,7 +6,7 @@ var onResourceAppended = function(json){
 
         case 'vote':
         case 'video': {
-            socket.emit('getresources', window.sessionID, json.type, true);
+            socket.emit('getresources', window.sessionId, json.type, true);
         }
             break;
 
