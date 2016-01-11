@@ -33,12 +33,15 @@
         return deferred.promise;
 
       }
+
+
       dbg.log2('#KliikoApp.user > get all user details > will return value from server');
       usersRestApi.user.get({}, function (res) {
         dbg.log2('#KliikoApp.user > get all user details > server respond >', res);
 
         //cache this data
         user = new User(res);
+
         deferred.resolve(user);
       });
 
@@ -53,6 +56,7 @@
         }
 
         fetchRoles();
+        checkPlans();
 
         /**
          * Make user.isAdmin = true if user.roles array contain 'admin'
@@ -67,6 +71,19 @@
           }
         }
 
+        function checkPlans() {
+          if (self.subscriptions && self.subscriptions.planId) {
+            var legalPlans = (
+              self.subscriptions.planId === 'plan1' ||
+              self.subscriptions.planId === 'plan1' ||
+              self.subscriptions.planId === 'plan3'
+            );
+            if (!legalPlans) dbg.error('#KliikoApp.user > planId is not recognized! \n' +
+              'Should be one of the following: "plan1", "plan2" or "plan3". \n' +
+              'Recieved: ', self.subscriptions.planId);
+          }
+          if (self.subscriptions && self.subscriptions.planId === 'plan3') self.onMaximumPlan = true;
+        }
 
       }
     }

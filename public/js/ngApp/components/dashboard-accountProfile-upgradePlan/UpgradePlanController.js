@@ -34,6 +34,8 @@
       changePaymentMethodTo: changePaymentMethodTo
     };
 
+    vm.showWarning = showWarning;
+    vm.canUpgradeTo = canUpgradeTo;
     vm.stepsClassIsActive = stepsClassIsActive;
     vm.stepsClassIsDone = stepsClassIsDone;
     vm.openPlanDetailsModal = openPlanDetailsModal;
@@ -72,10 +74,37 @@
         });
       }
 
-
-
       // after payment callback url case
       if ($stateParams.step && $stateParams.step == 5)  { goToStep(5) }
+    }
+
+    function showWarning() {
+      if (vm.userData && vm.userData.subscriptions && vm.userData.subscriptions.status === 'in_trial') {
+        var trialEndDate = moment(vm.userData.subscriptions.trialEnd);
+        vm.trialExpireInDays =  Math.round( moment.duration(trialEndDate.diff()).asDays() );
+        return true;
+      }
+      return false;
+    }
+
+
+    /**
+     * Hide downgrade options
+     * @param planNumber {'plan1' || 'plan2'}
+     * @returns {boolean}
+     */
+    function canUpgradeTo(planNumber) {
+      if (!vm.userData || !vm.userData.subscriptions) return true;
+
+      if (planNumber === 'plan1') {
+        if (vm.userData.subscriptions.planId == 'plan1' || vm.userData.subscriptions.planId == 'plan2' ) return false;
+      }
+
+      if (planNumber === 'plan2') {
+        if ( vm.userData.subscriptions.planId == 'plan2' ) return false;
+      }
+
+      return true
     }
 
     /**

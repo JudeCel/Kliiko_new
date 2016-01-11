@@ -41,7 +41,10 @@ router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelet
 
 router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
 router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);
+router.get('/chargebee/subscriptions', multipartyMiddleware, chargebee.chargebeeSubscriptionGet);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
+
+router.get('/chargebee/tst', multipartyMiddleware, chargebee.tstGet);
 
 // Common Rules
 router.use(function (req, res, next) {

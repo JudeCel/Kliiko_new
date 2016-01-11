@@ -7,7 +7,13 @@ let cache = {};
 module.exports = {
   chargebeePlansGet: chargebeePlansGet,
   chargebeeSubscriptionPost: chargebeeSubscriptionPost,
-  chargebeeCouponGet: chargebeeCouponGet
+  chargebeeSubscriptionGet: chargebeeSubscriptionGet,
+  chargebeeCouponGet: chargebeeCouponGet,
+  tstGet: function(req, res) {
+    chargebeeModule.tstGet().then(function(response) {
+      res.send(response)
+    })
+  }
 };
 
 
@@ -39,6 +45,20 @@ function chargebeeSubscriptionPost(req, res, next) {
   chargebeeModule.prepareHostedPage(userData, planDetails, paymentDetails, pages, passThruContent).then(
     function(response) { res.send(response) },
     function(error) { res.send({error:error}) }
+  );
+
+}
+
+
+/**
+ * Return all subscriptions in array for current user
+ * @param req
+ * @param res
+ */
+function chargebeeSubscriptionGet(req, res) {
+  chargebeeModule.getSubscriptions( req.user.id ).then(
+    function(response) { res.send(response)},
+    function(error) { res.send({error:error})}
   );
 
 }

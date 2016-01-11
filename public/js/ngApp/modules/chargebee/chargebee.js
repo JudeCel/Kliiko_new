@@ -48,13 +48,13 @@
         paymentDetails: paymentDetails,
         userData:userData,
         pages: {
-          redirect_url: window.location.origin+'/webhooks/chargebeeHostedPageSuccess',
+          redirect_url: window.location.origin+'/webhooks/chargebee/hostedPageSuccess',
           cancel_url: window.location.href
         },
-        passThruContent: JSON.stringify({
+        passThruContent: {
           userId: userData.id,
           successAppUrl: window.location.href+'?step=5'
-        })
+        }
       },  function(res) {
         if (res.error) {
           deferred.reject(res.error);

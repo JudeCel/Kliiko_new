@@ -7,9 +7,11 @@
 
 "use strict";
 
-var User = require('./../../models').User;
-var changePasswordService = require('../../services/changePassword');
-var _ = require('lodash');
+let User = require('./../../models').User;
+let changePasswordService = require('../../services/changePassword');
+let _ = require('lodash');
+let chargebeeModule = require('./../../modules/chargebee/chargebeeModule');
+let q = require('q');
 
 module.exports = {
   userGet: userGet,
@@ -49,21 +51,47 @@ function userPost(req, res, next) {
   });
 }
 
+/**
+ * Get All current user data, that can be required by app at the start
+ */
 function userGet(req, res, next) {
-  var role = res.locals.currentDomain.roles;
+  let role = res.locals.currentDomain.roles;
+  let userId = req.user.id;
 
-  User.find({
-    where: {
-      id: req.user.id,
-    },
-    attributes: userDetailsFields,
-    raw: true,
-  }).then(function (result) {
-      result.role = role;
-      res.send(result);
-  }).catch(function (err) {
-    res.send({error: err});
+  q.all([
+    getUserBasicData(),
+    getUserSubscriptionsData()
+  ]).then(function(response) {
+    let user = response[0];
+    user.subscriptions = response[1][0];
+    res.send(user);
   });
+
+
+
+  function getUserBasicData() {
+    let deferred = q.defer();
+
+    User.find({
+      where: {
+        id: userId,
+      },
+      attributes: userDetailsFields,
+      raw: true,
+    }).then(function(result) {
+      result.role = role;
+      deferred.resolve(result);
+    }).catch(function (err) {
+      deferred.reject({error: err});
+    });
+    return deferred.promise;
+  }
+
+  function getUserSubscriptionsData() {
+    return chargebeeModule.getSubscriptions(userId);
+  }
+
+
 }
 
 function changePassword(req, res, next) {

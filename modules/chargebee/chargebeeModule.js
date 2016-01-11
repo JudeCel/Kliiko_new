@@ -3,13 +3,18 @@
 let config = require('config');
 let chargebee = require("chargebee");
 let q = require('q');
-
+let models =  require('./../../models');
+let User = models.User;
+let moment = require('moment');
 
 module.exports = {
   getPlans: getPlans,
   prepareHostedPage: prepareHostedPage,
-  getHostedPageData: getHostedPageData,
-  getCoupon: getCoupon
+  createSubscription: createSubscription,
+  getSubscriptions:getSubscriptions,
+  //getHostedPageData: getHostedPageData,
+  getCoupon: getCoupon,
+  tstGet: tstGet
 };
 
 let chargebeeConfigs = config.get('chargebee');
@@ -59,6 +64,15 @@ function getPlans() {
 
 }
 
+/**
+ * Prepare url for hosted page, so front end can use it to redirect
+ * @param userData {object}
+ * @param planDetails {object}
+ * @param paymentDetails {object}
+ * @param pages {object}
+ * @param passThruContent {object}
+ * @returns {*|promise}
+ */
 function prepareHostedPage(userData, planDetails, paymentDetails, pages, passThruContent) {
   let deferred = q.defer();
 
@@ -87,7 +101,7 @@ function prepareHostedPage(userData, planDetails, paymentDetails, pages, passThr
     },
     redirect_url: pages.redirect_url,
     cancel_url: pages.cancel_url,
-    pass_thru_content: passThruContent
+    pass_thru_content: JSON.stringify(passThruContent)
 
   }).request(function(error,result){
     if (error) {
@@ -100,6 +114,98 @@ function prepareHostedPage(userData, planDetails, paymentDetails, pages, passThr
 
   return deferred.promise;
 }
+
+/**
+ * Fetch data about given hosted page and then save it user model.
+ * User Id will be returned within hosted page data.
+ * In successful case should return redirect url (also comes within hosted page data)
+ * @param hostedPageId {string}
+ * @returns {promise|string}
+ */
+function createSubscription(hostedPageId) {
+  let deferred = q.defer();
+
+  if (!hostedPageId) { deferred.reject('hostedPageId is not provided!'); return deferred.promise;}
+
+  // Fetch data about given hosted
+  getHostedPageData(hostedPageId).then(
+    function(res) {
+      // res example: https://apidocs.chargebee.com/docs/api/hosted_pages#retrieve_a_hosted_page
+      let hostedPageData = res.hosted_page;
+      let subsData = hostedPageData.content.subscription;
+      let customerData = hostedPageData.content.customer;
+      let cardData = hostedPageData.content.card;
+
+      let redirectPage = JSON.parse(hostedPageData.pass_thru_content).successAppUrl;
+      let userId = JSON.parse(hostedPageData.pass_thru_content).userId;
+
+      // save to given user
+      User.find({
+        where: {id: userId}
+      }).
+      then(
+        function(resultUser) {
+          resultUser.createSubscription({
+            planId: subsData.plan_id,
+            subscriptionId: subsData.id,
+            planQuantity: subsData.plan_quantity,
+            status: subsData.status,
+            trialStart: moment.unix(subsData.trial_start).format(),
+            trialEnd: moment.unix(subsData.trial_end).format(),
+            subscribtionCreatedAt:moment.unix(subsData.created_at).format(),
+            startedAt: moment.unix(subsData.started_at).format(),
+            createdFromIp: subsData.created_from_ip,
+            hasScheduledChanges: subsData.has_scheduled_changes,
+            dueInvoicesCount: subsData.due_invoices_count,
+            customerData: customerData,
+            cardData: cardData
+          }).
+          then(function(dbRes) { deferred.resolve(redirectPage)  }).
+          catch(function(dbErr) { deferred.reject(dbErr); return deferred.promise });
+        },
+        function(userErr) {
+          deferred.reject(userErr);
+          return deferred.promise;
+        }
+      );
+
+
+
+    },
+    function(err) { deferred.reject(userErr); return deferred.promise;}
+  );
+
+  return deferred.promise;
+}
+
+
+/**
+ * Return users subscriptions
+ * @param userId
+ * @returns {*}
+ */
+function getSubscriptions(userId, all) {
+  let deferred = q.defer();
+
+  User.find({
+    where: {id: userId},
+  }).
+    then(function(resultUser) {
+      resultUser.getSubscriptions().
+        then(function(subsRes) {
+          deferred.resolve(subsRes);
+        }).
+        catch(function(userErr) {
+         deferred.reject(userErr);
+        });
+    }).
+    catch(function(findErr) {
+      deferred.reject(findErr);
+    });
+
+  return deferred.promise;
+}
+
 
 /**
  * Retrieve hosted page info
@@ -136,3 +242,37 @@ function getCoupon(couponId) {
   return deferred.promise;
 }
 
+/// ev_IG5ryj8PZBSV3Ki1y
+function tstGet() {
+  let deferred = q.defer();
+
+  //chargebee.event.list({
+  //  limit : 100,
+  //  start_time : 1349029800,
+  //  end_time : 2147483647
+  //}).request(function(error,result){
+  //  if(error){
+  //    //handle error
+  //    console.log(error);
+  //    deferred.resolve(result)
+  //  }else{
+  //    deferred.resolve(result)
+  //    //for(var i = 0; i < result.list.length;i++){
+  //    //  deferred.resolve(result)
+  //    //}
+  //  }
+  //});
+
+  chargebee.event.retrieve("ev_1sjs9j9PZCXjBeUQe").request(
+    function(error,result){
+      if(error){
+        //handle error
+        deferred.resolve(result)
+      }else{
+        deferred.resolve(result)
+      }
+    });
+
+
+  return deferred.promise;
+}

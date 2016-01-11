@@ -3,7 +3,7 @@
         <div class='col-md-offset-1 col-md-10 сol-centered dashboard-index text-center'>
 
             <h1>Upgrade Plan</h1>
-            <p class="warning"><img src="icons/ic_attention.png" class="ic"> Your free trial will expire in 3 days </p>
+            <p class="warning" ng-if="up.showWarning()"><img src="icons/ic_attention.png" class="ic"> Your free trial will expire in {{up.trialExpireInDays}} day<span ng-if="up.trialExpireInDays > 1">s</span> </p>
             <br>
 
             <div class="row">
