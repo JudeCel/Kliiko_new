@@ -105,7 +105,7 @@ function createTopic(session, brandProject, callback) {
   });
 }
 
-function addSessionMembers(session, callback) {
+function addSessionMembers(erorr, session, callback) {
   console.log("added Session Member");
   async.parallel([
     (cb) =>  {

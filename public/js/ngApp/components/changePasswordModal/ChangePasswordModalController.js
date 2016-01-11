@@ -18,7 +18,7 @@
       user.changeUserPassword(data, form).then(function (res) {
         vm.passwordData = {};
         if(res.error){
-          let errors = prepareError(res.error);
+          var errors = prepareError(res.error);
           messenger.error(errors);
         }else{
           cancel();
@@ -31,7 +31,7 @@
       domServices.modal('changePasswordModal', 'close');
     }
 
-    function prepareError(err){ 
+    function prepareError(err){
       if(err.includes("Validation error:")){
         return err.replace("Validation error: ","")
       }else{

@@ -18,6 +18,11 @@ passport.use(new LocalStrategy({
       if (failed) {
         done('Sorry, your Email and Password do not match. Please try again.');
       }else{
+        if (!result.confirmedAt) {
+            done('Your account has not been confirmed, please check your e-mail and follow the link.');
+            return;
+        }
+        
         result.getAccounts({ include: [ models.AccountUser ] }).then(function(accounts) {
           let account = accounts[0];
           if(account.AccountUser.active) {

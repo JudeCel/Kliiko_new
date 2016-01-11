@@ -1,0 +1,33 @@
+<div class="row">
+    <div class="col-md-12 caption">
+        Order Summary
+    </div>
+    <div class="table-content">
+        <div class="row table-header" >
+            <div class="col-sm-5 col-md-5">Plan</div>
+            <div class="col-sm-3 col-md-3">Duration</div>
+            <div class="col-sm-4 col-md-4">Total</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-5 col-md-5">{{up.selectedPlan.name}}</div>
+            <div class="col-sm-3 col-md-3">{{up.upgradeDuration || 1}}</div>
+            <div class="col-sm-4 col-md-4">{{up.finalPrice | price}}</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-5 col-md-5">1 Free month</div>
+            <div class="col-sm-3 col-md-3">1</div>
+            <div class="col-sm-4 col-md-4">$US0</div>
+        </div>
+        <div class="row" ng-show="up.promocodeData">
+            <div class="col-sm-5 col-md-5"><small>{{ up.promocodeData.name}}</small></div>
+            <div class="col-sm-3 col-md-3"></div>
+            <div class="col-sm-4 col-md-4"> <small>({{ up.discount | price }})</small></div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-sm-5 col-md-5 total">Order Total</div>
+            <div class="col-sm-3 col-md-3">{{( up.upgradeDuration | num) + 1}}</div>
+            <div class="col-sm-4 col-md-4">{{up.orderTotal | price}}</div>
+        </div>
+    </div>
+</div>

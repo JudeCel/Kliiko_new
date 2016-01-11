@@ -8,7 +8,7 @@ var models = require("./../../models");
 var validate = function (req, next) {
     var err = joi.validate(req.params, {
         topicId: joi.number().required(),
-        sessionStaffTypeToExclude: joi.number(), //will be excluded events, belonged to user, which has appropriate Session Staff role in a Topic
+        sessionStaffTypeToExclude: joi.string(), //will be excluded events, belonged to user, which has appropriate Session Staff role in a Topic
         starsOnly: joi.boolean() //will be included only events w/ tag = 1. by turning this flag on the mode "Stars Only" is enabled
     });
     if (err.error){
@@ -42,10 +42,15 @@ var run = function (req, resCb, errCb) {
       AND e."deletedAt" IS NULL \
       AND e.cmd = \'chat\'';
 
-      if (params.starsOnly)
-          sql += " AND e.tag = 1 ";
-      if (params.sessionStaffTypeToExclude)
-          sql += ' AND u.id NOT IN (SELECT DISTINCT "userId" FROM session_staff WHERE "deletedAt" IS NULL AND type_id = ' + params.sessionStaffTypeToExclude + ')';
+      if (params.starsOnly){
+        sql += " AND e.tag = 1 "
+      };
+
+      if (params.sessionStaffTypeToExclude){
+        sql += "AND u.id NOT IN (SELECT DISTINCT \"userId\" FROM session_staff WHERE \"deletedAt\" IS NULL AND type = ' + params.sessionStaffTypeToExclude + ')";
+      }
+
+      console.log(sql);
 
       //sql += ORDER BY grp.t, grp.id ASC';
       sql += '\
