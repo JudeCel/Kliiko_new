@@ -1,32 +1,35 @@
 "use strict";
 var q = require('q');
+function google(profile, attrs) {
+  attrs.firstName = profile.name.familyName;
+  attrs.lastName = profile.name.givenName;
+  attrs.email = profile.emails[0].value;
+  attrs.socialProfile = { provider: profile.provider, id: profile.id }
+}
+function facebook(profile, attrs) {
+  attrs.firstName = profile._json.first_name;
+  attrs.lastName = profile._json.last_name;
+  attrs.socialProfile = { provider: profile.provider, id: profile.id }
+  if (profile._json.email) {
+    attrs.email = profile._json.email;
+  }
+}
 
 function assignProfileData(profile, userAttrs) {
   let deferred = q.defer();
-  let error = null;
-  switch(profile.provider){
-    case 'google':
-      userAttrs.firstName = profile.name.familyName;
-      userAttrs.lastName = profile.name.givenName;
-      userAttrs.email = profile.emails[0].value;
-      userAttrs.socialProfile = { provider: profile.provider, id: profile.id }
-      break;
-    case 'facebook':
-      userAttrs.firstName = profile._json.first_name;
-      userAttrs.lastName = profile._json.last_name;
-      userAttrs.socialProfile = { provider: profile.provider, id: profile.id }
-      if (profile._json.email) {
-        userAttrs.email = profile._json.email;
-      }
-      break;
-    default:
-      error = new Error("Social profile provider not found " + profile.provider);
-  }
-  if (error) {
-    deferred.reject(error);
-  }else {
+  let providers = {
+    google: google,
+    facebook: facebook
+  };
+  let provider = providers[profile.provider];
+
+  if (provider) {
+    provider(profile, userAttrs);
     deferred.resolve(userAttrs);
+  }else{
+    deferred.reject(new Error("Social profile provider not found " + profile.provider));
   }
+
   return deferred.promise;
 }
 
