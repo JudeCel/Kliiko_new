@@ -49,6 +49,20 @@ describe('User Service', () => {
       });
     });
 
+    describe('Ceate with social profile',  () => {
+      it('Succsess', (done) =>  {
+        validAttrs.socialProfile = { require: true, provider: 'facebook', id: '918975494859219' }
+        UserService.create(validAttrs, function(errors, user, _lastActionResult) {
+          assert.equal(errors, null);
+          assert.equal(user.firstName, validAttrs.firstName);
+          assert.equal(user.getSocialProfiles().done(function(profiles) {
+            assert.equal(profiles[0].provider, validAttrs.socialProfile.provider);
+            done();
+          }));
+        });
+      });
+    });
+
 
     describe("Fails", () => {
       it('email wrong format', function(done){
