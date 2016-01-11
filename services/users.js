@@ -3,6 +3,7 @@ var User = require('./../models').User;
 var _ = require('lodash');
 var accountService = require('./account');
 var accountUserService = require('./accountUser');
+var socialProfileService = require('./socialProfile');
 var bcrypt = require('bcrypt');
 var uuid = require('node-uuid');
 var async = require('async');
@@ -44,16 +45,16 @@ function create(params, callback) {
   });
 };
 
-function update(req, callback) {
+function update(req, callback){
   User.update(req.body, {
-      where: {id: req.user.id}
-    })
-    .then(function (result) {
-      return callback(null, result);
-    })
-    .catch(function (err) {
-      callback(err);
-    });
+    where: {id: req.user.id}
+  })
+  .then(function (result) {
+    return callback(null, result);
+  })
+  .catch(function (err) {
+    callback(err);
+  });
 }
 
 function prepareErrors(err) {
@@ -77,11 +78,15 @@ function createUser(params, callback) {
       });
     },
     accountService.create,
-    accountUserService.create
+    accountUserService.create,
   ]
 
-  async.waterfall(createNewUserFunctionList, function (error, result) {
-    return callback(error, result);
+  if (params.socialProfile) {
+    createNewUserFunctionList.push(socialProfileService.create);
+  }
+
+  async.waterfall(createNewUserFunctionList, function (error, user, lastActionResult) {
+    return callback(error, user, lastActionResult);
   });
 }
 
@@ -92,14 +97,15 @@ function validateForCreate(params, callback) {
         cb(errors, params);
       });
     },
-    accountService.validate
+    accountService.validate,
   ]
 
+  if (params.socialProfile) {
+    validateNewUserFunctionList.push(socialProfileService.validate);
+  }
+
   async.waterfall(validateNewUserFunctionList, function (error, params) {
-    if (error) {
-      return callback(prepareErrors(error), params)
-    }
-    ;
+    if (error) { return callback(prepareErrors(error), params) };
     callback(null, params);
   });
 }
@@ -119,8 +125,7 @@ function comparePassword(email, password, callback) {
       });
     } else {
       callback(true, null);
-    }
-    ;
+    };
   });
 };
 
@@ -129,21 +134,21 @@ function setEmailConfirmationToken(email, callback) {
   let token = uuid.v1();
 
   User.update({
-      confirmationToken: token,
-      confirmationSentAt: new Date()
-    }, {
-      where: {email: email}
-    })
-    .then(function (result) {
-      if (result[0] > 0) {
-        return callback(null, token);
-      } else {
-        callback(null, null);
-      }
-    })
-    .catch(function (err) {
-      callback(true, null);
-    });
+    confirmationToken: token,
+    confirmationSentAt: new Date()
+  }, {
+    where: {email: email}
+  })
+  .then(function (result) {
+    if (result[0] > 0) {
+      return callback(null, token);
+    } else {
+      callback(null, null);
+    }
+  })
+  .catch(function (err) {
+    callback(true, null);
+  });
 
 }
 
@@ -161,57 +166,58 @@ function prepareParams(req, errors) {
     gender: '',
     tipsAndUpdate: 'on',
     termsAndConditions: 'false',
-    errors: (errors || {})
+    errors: (errors || {}),
+    socialProfile: null
   }, req.body);
 }
 
 function changePassword(id, password, callback) {
   User.update({
-      password: password
-    }, {
-      where: {id: id}
-    })
-    .then(function (result) {
-      return callback(null, result);
-    })
-    .catch(function (err) {
-      callback(err);
-    });
+    password: password
+  }, {
+    where: {id: id}
+  })
+  .then(function (result) {
+    return callback(null, result);
+  })
+  .catch(function (err) {
+    callback(err);
+  });
 }
 
 function getUserByToken(token, callback) {
   User.find({
-      where: {
-        resetPasswordToken: token
-      },
-      attributes: ['id', 'resetPasswordSentAt', 'email', 'resetPasswordToken']
-    })
-    .then(function (result) {
-      if (result) {
-        return callback(null, result);
-      } else {
-        return callback({message: "Password already changed."});
-      }
-    })
-    .catch(function (err) {
-      callback(err);
-    });
+    where: {
+      resetPasswordToken: token
+    },
+    attributes: ['id', 'resetPasswordSentAt', 'email', 'resetPasswordToken']
+  })
+  .then(function (result) {
+    if (result) {
+      return callback(null, result);
+    } else {
+      return callback({message: "Password already changed."});
+    }
+  })
+  .catch(function (err) {
+    callback(err);
+  });
 }
 
 function resetPassword(token, password, callback) {
   User.update({
-      resetPasswordToken: null,
-      resetPasswordSentAt: null,
-      password: password
-    }, {
-      where: {resetPasswordToken: token}
-    })
-    .then(function (result) {
-      return callback(null, result);
-    })
-    .catch(function (err) {
-      callback(err);
-    });
+    resetPasswordToken: null,
+    resetPasswordSentAt: null,
+    password: password
+  }, {
+    where: {resetPasswordToken: token}
+  })
+  .then(function (result) {
+    return callback(null, result);
+  })
+  .catch(function (err) {
+    callback(err);
+  });
 }
 
 function setResetToken(email, callback) {
@@ -219,23 +225,22 @@ function setResetToken(email, callback) {
   var token = uuid.v1();
 
   User.update({
-      resetPasswordToken: token,
-      resetPasswordSentAt: new Date()
-    }, {
-      where: {email: email}
-    })
-    .then(function (result) {
-      if (result[0] > 0) {
-        return callback(null, token);
-      } else {
-        callback(null, null);
-      }
-    })
-    .catch(function (err) {
-      callback(true, null);
-    });
+    resetPasswordToken: token,
+    resetPasswordSentAt: new Date()
+  }, {
+    where: {email: email}
+  })
+  .then(function (result) {
+    if (result[0] > 0) {
+      return callback(null, token);
+    } else {
+      callback(null, null);
+    }
+  })
+  .catch(function (err) {
+    callback(true, null);
+  });
 
 }
-
 
 

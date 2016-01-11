@@ -15,6 +15,10 @@
           <div class="row">
             <div class="col-md-12">
               <form method="post" action="/registration">
+                <% if(socialProfile){ %>
+                 <input type="hidden" name="socialProfile[provider]" value="<%=socialProfile.provider%>">
+                 <input type="hidden" name="socialProfile[id]" value="<%=socialProfile.id%>">
+                <% } %>
                 <p class="pull-right text-red-dark"> * <i>Required</i> </p>
                 <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
                   <tr>
