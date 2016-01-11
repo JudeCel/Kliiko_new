@@ -33,7 +33,6 @@ passport.use(new FacebookStrategy({
   },
   function(req, accessToken, refreshToken, profile, done) {
     socialProfileRepo.find(profile.provider, profile.id, function(err, result) {
-      if (err) { throw err}
       if (result) {
         prepareUserData(result.User, profile, done);
       }else{
@@ -52,7 +51,6 @@ passport.use(new GoogleStrategy({
 
     process.nextTick(function() {
       socialProfileRepo.find(profile.provider, profile.id, function(err, result) {
-        if (err) { throw err}
         if (result) {
           prepareUserData(result.User, profile, done);
         }else{

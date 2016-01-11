@@ -47,7 +47,7 @@ router.get('/auth/facebook/callback', function(req, res, next) {
   passport.authenticate('facebook', function(err, user, info) {
     if (user) {
       req.login(user, function(err) {
-      middlewareFilters.landingPage(req, res, next);
+        middlewareFilters.landingPage(req, res, next);
       })
     }else{
       res.locals = usersRepo.prepareParams(req);
