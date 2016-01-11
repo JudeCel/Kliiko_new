@@ -1,27 +1,21 @@
 <h4>Survey Template</h4>
 {{ sc.create }}
 
-<div class='row'>
-  <div class='col-md-12 text-right'>
-    <div class='btn btn-addNewElement' ng-click='sc.submitCreate()'>Submit</div>
-    <span class='has-error text-red-dark'>{{ sc.createTemp.survey.errors.submitError }}</span>
-  </div>
+<div class='text-right'>
+  <button class='btn btn-addNewElement' ng-click='sc.submitCreate()'>Submit</button>
+  <span class='has-error text-red-dark'>{{ sc.createTemp.survey.errors.submitError }}</span>
 </div>
 
-<div class='row'>
-  <div class='col-md-12'>
-    <hr class='border-brown' />
-    <h4><strong>Introduction</strong></h4>
-  </div>
-</div>
+<hr class='border-brown' />
+<h4><strong>Introduction</strong></h4>
 
 <!-- missing gallery -->
 
 <div class='form-horizontal'>
   <div class='form-group'>
-    <label class='col-sm-2 control-label' for='name'>Name</label>
+    <label class='col-xs-2 control-label' for='name'>Name</label>
 
-    <div class='col-sm-6'>
+    <div class='col-xs-10 col-sm-6'>
       <div class='input-group'>
         <input type='text' class='form-control' id='name' placeholder='Name' ng-string ng-model='sc.createTemp.survey.name'>
         <span class='input-group-addon'>@</span>
@@ -37,11 +31,8 @@
     <!-- <label class='col-sm-2 control-label' for='description'>Introduction</label> -->
 
     <div class='col-sm-8'>
-      <div class='input-group'>
-        <textarea class='form-control' id='description' placeholder='Introduction'
-          ng-string ng-model='sc.createTemp.survey.description' ng-maxlength='500' rows='5'></textarea>
-        <span class='input-group-addon'>@</span>
-      </div>
+      <textarea class='form-control' id='description' placeholder='Introduction'
+        ng-string ng-model='sc.createTemp.survey.description' ng-maxlength='500' rows='5'></textarea>
 
       <span class='has-error'>
         <span class='help-block'>{{ sc.createTemp.survey.errors.description }}</span>

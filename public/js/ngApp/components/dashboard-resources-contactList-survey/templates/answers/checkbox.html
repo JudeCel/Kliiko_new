@@ -1,8 +1,10 @@
-<div ng-sortable='sc.answerSortOptions'>
-  <span class='col-sm-12 has-error'>
+<div class='row'>
+  <div class='col-sm-12 has-error'>
     <span class='help-block'>{{ question.errors.answer }}</span>
-  </span>
+  </div>
+</div>
 
+<div ng-sortable='sc.answerSortOptions'>
   <div class='form-group' ng-repeat='answer in question.answers track by $index'>
     <div class='col-xs-2 col-sm-1'>
       <input type='checkbox' class='custom-checkbox' disabled>
@@ -28,8 +30,7 @@
 </div>
 
 <div class='col-sm-12'>
-  <div class='col-sm-2'></div>
-  <div class='col-sm-2'>
+  <div class='col-sm-offset-2'>
     <img src='/icons/add_new_list_blue.png' ng-if='sc.canChangeAnswers(1, question)' ng-click='sc.changeAnswers(1, question)' />
   </div>
 </div>

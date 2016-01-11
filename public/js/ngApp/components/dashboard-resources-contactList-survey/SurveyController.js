@@ -23,8 +23,7 @@
     vm.defaultArray = defaultArray;
 
     vm.answerSortOptions = {
-      onSort: function(evt) {
-        console.log(evt);
+      onUpdate: function(evt) {
         evt.models.forEach(function(val, index, array) {
           val.order = index;
         });
@@ -34,7 +33,6 @@
     vm.createTemp = { survey: { SurveyQuestions: {} } };
     vm.create = { survey: { SurveyQuestions: [] } };
     vm.currentPage = 'create';
-    vm.answers = Array.apply(null, Array(5)).map(function(cv, index) { return index });
 
     vm.defaultQuestions = [
       {

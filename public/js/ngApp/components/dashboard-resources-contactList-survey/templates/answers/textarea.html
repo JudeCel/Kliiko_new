@@ -1,20 +1,17 @@
-<div ng-sortable='sc.answerSortOptions'>
-  <span class='col-sm-12 has-error'>
+<div class='row'>
+  <div class='col-sm-12 has-error'>
     <span class='help-block'>{{ question.errors.answer }}</span>
-  </span>
+  </div>
+</div>
 
+<div ng-sortable='sc.answerSortOptions'>
   <div class='form-group' ng-repeat='answer in question.answers track by $index'>
     <div class='col-sm-8'>
-      <div class='input-group'>
-        <textarea class='form-control' id='answers_{{object.order}}_{{ answer.order }}' placeholder='Answer' rows='5' disabled
-          ng-init='answer.type="textArea"' ng-string ng-change='sc.questionChange(object.order, question)' ng-model='answer.name' ng-maxlength='500'>
-        </textarea>
+      <textarea class='form-control' id='answers_{{object.order}}_{{ answer.order }}' placeholder='Answer' rows='5' disabled
+        ng-init='answer.type="textArea"' ng-string ng-change='sc.questionChange(object.order, question)' ng-model='answer.name' ng-maxlength='500'>
+      </textarea>
 
-        <span class='input-group-addon' ng-if='!sc.canChangeAnswers(-1, question)'>@</span>
-        <span class='input-group-addon' ng-if='sc.canChangeAnswers(-1, question)'>
-          <span class='glyphicon glyphicon-remove' ng-click='sc.changeAnswers(-1, question, $index)'></span>
-        </span>
-      </div>
+      <span class='glyphicon glyphicon-remove' ng-if='sc.canChangeAnswers(-1, question)' ng-click='sc.changeAnswers(-1, question, $index)'></span>
 
       <span class='has-error'>
         <span class='help-block'>{{ question.errors.answers[answer.order] }}</span>
@@ -24,8 +21,7 @@
 </div>
 
 <div class='col-sm-12'>
-  <div class='col-sm-2'></div>
-  <div class='col-sm-2'>
+  <div class='col-sm-offset-2'>
     <img src='/icons/add_new_list_blue.png' ng-if='sc.canChangeAnswers(1, question)' ng-click='sc.changeAnswers(1, question)' />
   </div>
 </div>

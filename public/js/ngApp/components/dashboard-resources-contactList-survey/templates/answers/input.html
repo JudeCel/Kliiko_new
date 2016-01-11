@@ -1,15 +1,16 @@
-<div ng-sortable='sc.answerSortOptions'>
-  <span class='col-sm-12 has-error'>
+<div class='row'>
+  <div class='col-sm-12 has-error'>
     <span class='help-block'>{{ question.errors.answer }}</span>
-  </span>
+  </div>
+</div>
 
-  {{question.answers}}
+<div ng-sortable='sc.answerSortOptions'>
   <div class='form-group' ng-repeat='answer in question.answers track by $index'>
-    <label class='col-sm-2 control-label' for='answer_{{ object.order }}_{{ answer.order }}'>
+    <label class='col-xs-2 control-label' for='answer_{{ object.order }}_{{ answer.order }}'>
       Answer {{ answer.order }}
     </label>
 
-    <div class='col-sm-6'>
+    <div class='col-xs-10 col-sm-6'>
       <div class='input-group'>
         <input type='text' class='form-control' id='answer_{{ object.order }}_{{ answer.order }}' placeholder='Answer'
           ng-init='answer.type="input"' ng-string ng-change='sc.questionChange(object.order, question)' ng-model='answer.name'>
@@ -28,8 +29,7 @@
 </div>
 
 <div class='col-sm-12'>
-  <div class='col-sm-2'></div>
-  <div class='col-sm-2'>
+  <div class='col-sm-offset-2'>
     <img src='/icons/add_new_list_blue.png' ng-if='sc.canChangeAnswers(1, question)' ng-click='sc.changeAnswers(1, question)' />
   </div>
 </div>
