@@ -42,7 +42,9 @@ passport.use(new FacebookStrategy({
     profileFields: ['id', 'displayName','emails', 'name']
   },
   function(req, accessToken, refreshToken, profile, done) {
-    socialProfileRepo.findOrCreateUser(profile, done);
+    socialProfileRepo.find(profile.provider, profile.id, function(err, result) {
+      done(err, result, profile);
+    });
   }
 ));
 
@@ -54,7 +56,9 @@ passport.use(new GoogleStrategy({
   function(token, refreshToken, profile, done) {
 
     process.nextTick(function() {
-      socialProfileRepo.findOrCreateUser(profile, done);
+      socialProfileRepo.find(profile.provider, profile.id, function(err, result) {
+        done(err, result, profile);
+      });
     });
   }
 ));

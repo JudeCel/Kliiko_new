@@ -31,27 +31,6 @@ function find(provider, id, callback) {
     });
 }
 
-function mapData(params, userAttrs, callback) {
-  let error = null;
-  switch(params.provider){
-    case 'google':
-      userAttrs.firstName = params.name.familyName;
-      userAttrs.lastName = params.name.givenName;
-      userAttrs.email = params.emails[0].value;
-      break;
-    case 'facebook':
-      userAttrs.firstName = params._json.first_name;
-      userAttrs.lastName = params._json.last_name;
-      if (params._json.email) {
-        userAttrs.email = params._json.email;
-      }
-      break;
-    default:
-      error = new Error("Social profile provider not found " + params.provider);
-  }
-  return callback(error, userAttrs);
-}
-
 function create(user, params, callback) {
   let socialProfileParams = {}
   socialProfileParams['providerUserId'] = params.socialProfile.id
@@ -70,5 +49,5 @@ function create(user, params, callback) {
 module.exports = {
   validate: validate,
   create: create,
-  mapData: mapData
+  find: find
 }

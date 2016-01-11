@@ -153,7 +153,7 @@ function prepareParams(req, errors) {
     tipsAndUpdate: 'on',
     termsAndConditions: 'false',
     errors: (errors || {}),
-    socialProfile: { require: false, provider: null, id: null }
+    socialProfile: null
   }, req.body);
 }
 

@@ -10,6 +10,7 @@ var subdomains = require('../../lib/subdomains');
 var config = require('config');
 var mailers = require('../../mailers');
 var session = require('../../middleware/session');
+var socialProfileMiddleware = require('../../middleware/socialProfile');
 var inviteRoutes = require('./invite.js');
 var constants = require('../../util/constants');
 
@@ -32,28 +33,46 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/registration', function (req, res, next) {
-    res.render('registration', usersRepo.prepareParams(req));
+  res.render('registration', usersRepo.prepareParams(req));
 });
 
 router.get('/welcome', function (req, res, next) {
-    res.render('welcome', usersRepo.prepareParams(req));
+  res.render('welcome', usersRepo.prepareParams(req));
 });
 
 router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
-router.get('/auth/facebook/callback',
-  passport.authenticate('facebook', {failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
-  }
-);
+
+router.get('/auth/facebook/callback', function(req, res, next) {
+  passport.authenticate('facebook', function(err, user, info) {
+    if (user) {
+      res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
+    }else{
+      res.locals = usersRepo.prepareParams(req);
+
+      socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
+        res.render("registration");
+      }, function(err) {
+        next(err)
+      })
+    }
+  })(req, res, next);
+});
 
 router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
-router.get('/auth/google/callback',
-  passport.authenticate('google', {failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
-  }
-);
+router.get('/auth/google/callback', function(req, res, next) {
+  passport.authenticate('google', function(err, user, info) {
+    if (user) {
+      res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
+    }else{
+      res.locals = usersRepo.prepareParams(req);
+      socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
+        res.render("registration");
+      }, function(err) {
+        next(err)
+      });
+    }
+  })(req, res, next);
+});
 
 router.post('/registration', function (req, res, next) {
   usersRepo.create(usersRepo.prepareParams(req), function (error, result) {
