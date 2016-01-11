@@ -18,17 +18,7 @@ passport.use(new LocalStrategy({
       if (failed) {
         done('Wrong email or password or email is not confirmed');
       }else{
-        result.getAccounts({ include: [ models.AccountUser ] }).then(function(accounts) {
-          let account = accounts[0];
-          if(account.AccountUser.active) {
-            result.increment('signInCount').done(function(result) {
-              done(null, userParams(result, account));
-            });
-          }
-          else {
-            done('Sorry, your account has been deactivated. Please get in touch with the administration');
-          }
-        });
+        prepareUserData(result, null, done);
       }
     });
   }
@@ -43,7 +33,12 @@ passport.use(new FacebookStrategy({
   },
   function(req, accessToken, refreshToken, profile, done) {
     socialProfileRepo.find(profile.provider, profile.id, function(err, result) {
-      done(err, result, profile);
+      if (err) { throw err}
+      if (result) {
+        prepareUserData(result.User, profile, done);
+      }else{
+        done(err, null, profile);
+      }
     });
   }
 ));
@@ -57,7 +52,12 @@ passport.use(new GoogleStrategy({
 
     process.nextTick(function() {
       socialProfileRepo.find(profile.provider, profile.id, function(err, result) {
-        done(err, result, profile);
+        if (err) { throw err}
+        if (result) {
+          prepareUserData(result.User, profile, done);
+        }else{
+          done(err, null, profile);
+        }
       });
     });
   }
@@ -89,6 +89,20 @@ function userParams(user, account) {
     signInCount: user.signInCount,
     accountOwnerId: account.id
   };
+}
+
+function prepareUserData(user, profile, callback){
+  user.getAccounts({ include: [ models.AccountUser ] }).then(function(accounts) {
+    let account = accounts[0];
+    if(account.AccountUser.active) {
+      user.increment('signInCount').done(function(result) {
+        callback(null, userParams(result, account));
+      });
+    }
+    else {
+      callback('Sorry, your account has been deactivated. Please get in touch with the administration');
+    }
+  });
 }
 
 module.exports = passport;

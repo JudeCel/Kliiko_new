@@ -45,14 +45,19 @@ router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email
 router.get('/auth/facebook/callback', function(req, res, next) {
   passport.authenticate('facebook', function(err, user, info) {
     if (user) {
-      res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
+      req.login(user, function(err) {
+        if (req.user.signInCount == 1) {
+          return res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard/landing'));
+        } else {
+          return res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
+        }
+      })
     }else{
       res.locals = usersRepo.prepareParams(req);
-
       socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
         res.render("registration");
       }, function(err) {
-        next(err)
+        next(err);
       })
     }
   })(req, res, next);
@@ -62,7 +67,13 @@ router.get('/auth/google', passport.authenticate('google', { scope : ['profile',
 router.get('/auth/google/callback', function(req, res, next) {
   passport.authenticate('google', function(err, user, info) {
     if (user) {
-      res.redirect(subdomains.url(req, req.user.accountName, '/dashboard'));
+      req.login(user, function(err) {
+        if (req.user.signInCount == 1) {
+          return res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard/landing'));
+        } else {
+          return res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
+        }
+      })
     }else{
       res.locals = usersRepo.prepareParams(req);
       socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
