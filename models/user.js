@@ -52,7 +52,7 @@ module.exports = (Sequelize, DataTypes) => {
     landlineNumber: {type: DataTypes.STRING, allowNull: true },
     mobile: {type: DataTypes.STRING, allowNull: true,
       validate: {
-        is: {args:["^[0-9]+$",'i'], msg: "Please re-enter in international format: Country Code & drop the first 0 e.g. +61-098-765 becomes 6198765"}
+        is: {args: constants.mobileRegExp, msg: "Please re-enter in international format: Country Code & drop the first 0 e.g. +61-098-765 becomes 6198765"}
       }         
     }
   },{

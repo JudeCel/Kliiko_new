@@ -41,15 +41,16 @@
         form.$setPristine();
         form.$setUntouched();
         messenger.ok('Contact details updated successfully.');
-        //cancel();
       }, function(err) {
         processErrors(err);
       });      
     }
     
     function processErrors(err) {
-      if (!err)
+      if (!err) {
         return;
+      }
+      
       var errors = err.errors;
       for (var e in errors) {
           vm.errors[errors[e].path] = errors[e].message;

@@ -70,7 +70,6 @@ router.post('/login', function(req, res, next) {
       return  res.render('login', {title: 'Login', error: err, message: ''});
     }
     req.login(user, function(err) {
-      //if (err) { return next(err); }
       if (err) { 
         return next(err);
       }

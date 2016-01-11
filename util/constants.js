@@ -19,5 +19,7 @@ module.exports = {
     'companyName'
   ],
   promotionCodeTypes: ['percentage', 'value'],
-  dateFormat: 'MM-dd-yyyy'
+  dateFormat: 'MM-dd-yyyy',
+  mobileRegExp: ["^[0-9]+$",'i'],
+  accountNameRegExp: ["^[a-zA-Z0-9]+$",'i']
 }
