@@ -31,6 +31,13 @@ function update(req, res, next) {
   );
 };
 
+function copy(req, res, next) {
+  surveyService.copySurvey(req.body).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+};
+
 function getResponses(res) {
   return {
     onError: function(error) {
@@ -46,5 +53,6 @@ module.exports = {
   get: get,
   remove: remove,
   create: create,
-  update: update
+  update: update,
+  copy: copy
 };

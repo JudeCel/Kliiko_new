@@ -23,6 +23,7 @@
     vm.defaultArray = defaultArray;
     vm.changePage = changePage;
     vm.addContactDetail = addContactDetail;
+    vm.copySurvey = copySurvey;
 
     vm.answerSortOptions = {
       onUpdate: function(evt) {
@@ -355,7 +356,7 @@
           }
           else {
             changePage('index');
-            messenger.ok(res.data.message || 'Successfully creted survey');
+            messenger.ok(res.data.message || 'Successfully created survey');
           }
         });
       }
@@ -421,6 +422,19 @@
     function addContactDetail(cd, order, sq) {
       cd.disabled = !cd.disabled;
       changeCreateObject(order, false, sq);
+    };
+
+    function copySurvey(survey) {
+      surveyServices.copySurvey({ id: survey.id }).then(function(res) {
+        dbg.log2('#SurveyController > copySurvey > res ', res);
+        if(res.error) {
+          messenger.error(res.error);
+        }
+        else {
+          changePage('index');
+          messenger.ok(res.data.message);
+        }
+      });
     };
   };
 })();

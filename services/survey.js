@@ -120,6 +120,37 @@ function removeSurvey(id, user) {
   return deferred.promise;
 };
 
+// Untested
+function copySurvey(params) {
+  let deferred = q.defer();
+
+  Survey.find({
+    where: { id: params.id },
+    attributes: ['accountId', 'name'],
+    include: [{
+      model: SurveyQuestion,
+      attributes: ['name', 'question', 'order', 'answers']
+    }]
+  }).then(function(survey) {
+    if(survey) {
+      createSurveyWithQuestions(survey).then(function(copy) {
+        deferred.resolve(copy);
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }
+    else {
+      deferred.reject('Survey not found');
+    }
+  }).catch(Survey.sequelize.ValidationError, function(error) {
+    deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+};
+
 // Helpers
 function validUrl(survey) {
   return 'http://' + config.get('server')['domain'] + ':' + config.get('server')['port'] + '/resources/survey/' + survey.id;
@@ -142,5 +173,6 @@ module.exports = {
   findAllSurveys: findAllSurveys,
   createSurveyWithQuestions: createSurveyWithQuestions,
   updateSurvey: updateSurvey,
-  removeSurvey: removeSurvey
+  removeSurvey: removeSurvey,
+  copySurvey: copySurvey
 };

@@ -48,6 +48,7 @@ router.get('/survey', survey.get);
 router.delete('/survey', survey.remove);
 router.post('/survey', survey.create);
 router.put('/survey', survey.update);
+router.put('/survey/copy', survey.copy);
 
 // Common Rules
 router.use(function (req, res, next) {

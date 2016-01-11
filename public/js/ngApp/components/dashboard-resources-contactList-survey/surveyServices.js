@@ -5,7 +5,8 @@
 
   function surveyServices(globalSettings, $q, $resource, dbg) {
     var surveyRestApi = {
-      survey: $resource(globalSettings.restUrl + '/survey', null, { update: { method: 'PUT' } })
+      survey: $resource(globalSettings.restUrl + '/survey', null, { update: { method: 'PUT' } }),
+      copySurvey: $resource(globalSettings.restUrl + '/survey/copy', null, { copy: { method: 'PUT' } })
     };
 
     var upServices = {};
@@ -14,6 +15,7 @@
     upServices.removeSurvey = removeSurvey;
     upServices.changeStatus = changeStatus;
     upServices.createSurvey = createSurvey;
+    upServices.copySurvey = copySurvey;
     return upServices;
 
     function getAllSurveys() {
@@ -58,6 +60,18 @@
       dbg.log2('#surveyServices > createSurvey > make rest call');
       surveyRestApi.survey.save(data, function(res) {
         dbg.log2('#surveyServices > createSurvey > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    };
+
+    function copySurvey(data) {
+      var deferred = $q.defer();
+
+      dbg.log2('#surveyServices > copySurvey > make rest call');
+      surveyRestApi.copySurvey.copy(data, function(res) {
+        dbg.log2('#surveyServices > copySurvey > rest call responds');
         deferred.resolve(res);
       });
 
