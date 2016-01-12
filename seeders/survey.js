@@ -9,9 +9,10 @@ var async = require('async');
 function surveyParams() {
   return {
     name: 'Sample survey',
+    description: 'Sample description',
     SurveyQuestions: [
-      surveyQuestionParams(1),
-      surveyQuestionParams(2)
+      surveyQuestionParams(0),
+      surveyQuestionParams(1)
     ]
   };
 }
@@ -21,12 +22,28 @@ function surveyQuestionParams(random) {
     order: random,
     name: 'Some default name ' + random,
     question: 'What a default question ' + random,
-    answers: JSON.stringify({
-      0: '0 answer ' + random,
-      1: '1 answer ' + random,
-      2: '2 answer ' + random,
-      3: '3 answer ' + random
-    })
+    answers: [
+      {
+        order: 0,
+        type: 'input',
+        name: '0 answer ' + random
+      },
+      {
+        order: 1,
+        type: 'input',
+        name: '1 answer ' + random
+      },
+      {
+        order: 2,
+        type: 'input',
+        name: '2 answer ' + random
+      },
+      {
+        order: 3,
+        type: 'input',
+        name: '3 answer ' + random
+      }
+    ]
   };
 }
 

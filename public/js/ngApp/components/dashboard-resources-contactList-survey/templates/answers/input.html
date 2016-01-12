@@ -4,6 +4,7 @@
   </div>
 </div>
 
+{{ question }}
 <div ng-sortable='sc.answerSortOptions'>
   <div class='form-group' ng-repeat='answer in question.answers track by $index'>
     <label class='col-xs-2 control-label' for='answer_{{ object.order }}_{{ answer.order }}'>

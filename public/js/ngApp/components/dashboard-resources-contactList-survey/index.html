@@ -32,8 +32,8 @@
           <td>{{ survey.closed }}</td>
           <td class='text-right dashboardElementsEditRemove'>
             <img ng-src='{{ sc.statusIcon(survey) }}' alt='' ng-click='sc.changeStatus(survey)' />
-            <img src='/icons/dashboardElement_edit.png' alt='' />
             <img src='/icons/resources_grey.png' alt='' ng-click='sc.copySurvey(survey)' />
+            <img src='/icons/dashboardElement_edit.png' alt='' ng-click='sc.changePage("edit", survey)' />
             <img src='/icons/dashboardElement_remove.png' alt='' ng-click='sc.removeSurvey(survey)' />
           </td>
         </tr>

@@ -1,5 +1,5 @@
 <h4>Survey Template</h4>
-{{ sc.create }}
+{{ sc.manage }}
 
 <hr class='border-brown' />
 <h4><strong>Introduction</strong></h4>
@@ -12,12 +12,12 @@
 
     <div class='col-xs-10 col-sm-6'>
       <div class='input-group'>
-        <input type='text' class='form-control' id='name' placeholder='Name' ng-string ng-model='sc.createTemp.survey.name'>
+        <input type='text' class='form-control' id='name' placeholder='Name' ng-string ng-model='sc.manageTemp.survey.name'>
         <span class='input-group-addon'>@</span>
       </div>
 
       <span class='has-error'>
-        <span class='help-block'>{{ sc.createTemp.survey.errors.name }}</span>
+        <span class='help-block'>{{ sc.manageTemp.survey.errors.name }}</span>
       </span>
     </div>
   </div>
@@ -27,10 +27,10 @@
 
     <div class='col-sm-8'>
       <textarea class='form-control' id='description' placeholder='Introduction'
-        ng-string ng-model='sc.createTemp.survey.description' ng-maxlength='500' rows='5'></textarea>
+        ng-string ng-model='sc.manageTemp.survey.description' ng-maxlength='500' rows='5'></textarea>
 
       <span class='has-error'>
-        <span class='help-block'>{{ sc.createTemp.survey.errors.description }}</span>
+        <span class='help-block'>{{ sc.manageTemp.survey.errors.description }}</span>
       </span>
     </div>
   </div>

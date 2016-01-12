@@ -10,20 +10,26 @@
     var vm = this;
     vm.surveys = {};
 
+    // Uses services
     vm.removeSurvey = removeSurvey;
     vm.changeStatus = changeStatus;
+    vm.copySurvey = copySurvey;
+    vm.finishManage = finishManage;
+
+    // Inits
+    vm.initQuestion = initQuestion;
+    vm.initAnswers = initAnswers;
+
+    // Helpers
     vm.statusIcon = statusIcon;
     vm.chooseValidIcon = chooseValidIcon;
     vm.validateQuestion = validateQuestion;
     vm.questionChange = questionChange;
-    vm.submitCreate = submitCreate;
-    vm.initQuestion = initQuestion;
     vm.canChangeAnswers = canChangeAnswers;
     vm.changeAnswers = changeAnswers;
     vm.defaultArray = defaultArray;
     vm.changePage = changePage;
     vm.addContactDetail = addContactDetail;
-    vm.copySurvey = copySurvey;
 
     vm.answerSortOptions = {
       onUpdate: function(evt) {
@@ -203,7 +209,7 @@
     };
 
     function changeStatus(survey) {
-      surveyServices.changeStatus({ id: survey.id, closed: !survey.closed }).then(function(res) {
+      surveyServices.updateSurvey({ id: survey.id, closed: !survey.closed }).then(function(res) {
         dbg.log2('#SurveyController > changeStatus > res ', res);
         if(res.error) {
           messenger.error(res.error);
@@ -211,6 +217,49 @@
         else {
           survey.closed = !survey.closed;
           messenger.ok("Survey has been successfully " + (survey.closed ? 'closed' : 'opened'));
+        }
+      });
+    };
+
+    function finishManage() {
+      if(validateSurvey()) {
+        if(vm.currentPage.type == 'create') {
+          finishCreate();
+        }
+        else {
+          vm.manage.survey.id = vm.manageTemp.survey.id;
+          finishEdit();
+        }
+      }
+      else {
+        if(!vm.manageTemp.survey.errors.submitError) {
+          vm.manageTemp.survey.errors.submitError = 'There were some errors';
+        }
+      }
+    };
+
+    function finishCreate() {
+      surveyServices.createSurvey(vm.manage.survey).then(function(res) {
+        dbg.log2('#SurveyController > finishCreate > res ', res);
+        if(res.error) {
+          messenger.error(res.error);
+        }
+        else {
+          changePage('index');
+          messenger.ok(res.data.message || 'Successfully created survey');
+        }
+      });
+    };
+
+    function finishEdit() {
+      surveyServices.updateSurvey(vm.manage.survey).then(function(res) {
+        dbg.log2('#SurveyController > finishEdit > res ', res);
+        if(res.error) {
+          messenger.error(res.error);
+        }
+        else {
+          changePage('index');
+          messenger.ok(res.data.message || 'Successfully updated survey');
         }
       });
     };
@@ -234,7 +283,7 @@
     };
 
     function validateSurvey() {
-      var survey = vm.createTemp.survey;
+      var survey = vm.manageTemp.survey;
       if(!survey.errors) {
         survey.errors = {};
       }
@@ -244,7 +293,7 @@
       }
       else {
         delete survey.errors.name;
-        vm.create.survey.name = survey.name;
+        vm.manage.survey.name = survey.name;
       }
 
       if(survey.description.length == 0) {
@@ -252,10 +301,10 @@
       }
       else {
         delete survey.errors.description;
-        vm.create.survey.description = survey.description;
+        vm.manage.survey.description = survey.description;
       }
 
-      if(vm.create.survey.SurveyQuestions.length < 2) {
+      if(vm.manage.survey.SurveyQuestions.length < 2) {
         survey.errors.submitError = 'Not enougth questions';
       }
       else {
@@ -308,7 +357,6 @@
             if(Object.keys(sq.errors.answers).length == 0) {
               delete sq.errors.answers;
               if(sq.contact) {
-                console.log(sq.answers);
                 var contactDetails = [];
                 for(var key in vm.contactDetails) {
                   var cd = vm.contactDetails[key];
@@ -331,13 +379,13 @@
     function changeCreateObject(order, status, sq) {
       if(status) {
         sq.order = order;
-        vm.create.survey.SurveyQuestions.push(sq);
+        vm.manage.survey.SurveyQuestions.push(sq);
         sq.active = status;
       }
       else {
         sq.active = status;
-        var index = vm.create.survey.SurveyQuestions.indexOf(sq);
-        vm.create.survey.SurveyQuestions.splice(index, 1);
+        var index = vm.manage.survey.SurveyQuestions.indexOf(sq);
+        vm.manage.survey.SurveyQuestions.splice(index, 1);
       }
     };
 
@@ -347,32 +395,12 @@
       }
     };
 
-    function submitCreate() {
-      if(validateSurvey()) {
-        surveyServices.createSurvey(vm.create.survey).then(function(res) {
-          dbg.log2('#SurveyController > submitCreate > res ', res);
-          if(res.error) {
-            messenger.error(res.error);
-          }
-          else {
-            changePage('index');
-            messenger.ok(res.data.message || 'Successfully created survey');
-          }
-        });
-      }
-      else {
-        if(!vm.createTemp.survey.errors.submitError) {
-          vm.createTemp.survey.errors.submitError = 'There were some errors';
-        }
-      }
-    };
-
     function initQuestion(object) {
-      if(!vm.createTemp.survey.SurveyQuestions[object.order]) {
-        vm.createTemp.survey.SurveyQuestions[object.order] = {};
+      if(!vm.manageTemp.survey.SurveyQuestions[object.order]) {
+        vm.manageTemp.survey.SurveyQuestions[object.order] = {};
       }
 
-      var question = vm.createTemp.survey.SurveyQuestions[object.order];
+      var question = vm.manageTemp.survey.SurveyQuestions[object.order];
       question.minAnswers = object.minAnswers;
       question.maxAnswers = object.maxAnswers;
       question.contact = object.contact;
@@ -382,6 +410,17 @@
 
       return question;
     };
+
+    function initAnswers(object, question) {
+      if(question.answers) {
+        question.active =  true;
+        vm.manage.survey.SurveyQuestions[object.order] = question;
+        return question.answers;
+      }
+      else {
+        return defaultArray(object.minAnswers);
+      }
+    }
 
     function canChangeAnswers(value, question) {
       if(value > 0) {
@@ -395,7 +434,6 @@
     function changeAnswers(value, question, index) {
       changeCreateObject(question.order, false, question);
       if(value > 0) {
-        console.log(question);
         question.answers.push({ order: question.answers.length });
       }
       else {
@@ -407,16 +445,23 @@
       return Array.apply(null, Array(size)).map(function(cv, index) { return { order: index } });
     };
 
-    function changePage(page) {
-      if(page == 'index') {
-        init();
+    function changePage(page, survey) {
+      switch(page) {
+        case 'index':
+          init();
+          vm.currentPage = { page: page };
+          break;
+        case 'create':
+          vm.manageTemp = { survey: { SurveyQuestions: [] } };
+          vm.manage = { survey: { SurveyQuestions: [] } };
+          vm.currentPage = { page: 'manage', type: page };
+          break;
+        case 'edit':
+          vm.manageTemp = { survey: survey };
+          vm.manage = { survey: { SurveyQuestions: [] } };
+          vm.currentPage = { page: 'manage', type: page };
+          break;
       }
-      if(page == 'create') {
-        vm.createTemp = { survey: { SurveyQuestions: [] } };
-        vm.create = { survey: { SurveyQuestions: [] } };
-      }
-
-      vm.currentPage = page;
     };
 
     function addContactDetail(cd, order, sq) {
@@ -431,8 +476,8 @@
           messenger.error(res.error);
         }
         else {
-          changePage('index');
-          messenger.ok(res.data.message);
+          // changePage('index');
+          messenger.ok(res.message || 'Survey copied successfully');
         }
       });
     };

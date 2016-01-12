@@ -10,14 +10,31 @@ var config = require('config');
 var _ = require('lodash');
 var q = require('q');
 
-const validUpdateParams = [
-  'closed'
+const validManageParams = [
+  'accountId',
+  'name',
+  'closed',
+  'description',
+  'SurveyQuestions'
 ];
 
-const validCreateParams = [
-  'name',
+const returnParamsSurvey = [
+  'id',
   'accountId',
-  'SurveyQuestions'
+  'name',
+  'description',
+  'closed',
+  'confirmedAt',
+  'url'
+];
+
+const returnParamsQuestions = [
+  'id',
+  'surveyId',
+  'name',
+  'question',
+  'order',
+  'answers'
 ];
 
 // Exports
@@ -43,7 +60,18 @@ function findSurvey(id) {
 function findAllSurveys(user) {
   let deferred = q.defer();
 
-  Survey.findAll({ where: { accountId: user.accountOwnerId } }).then(function(surveys) {
+  Survey.findAll({
+    where: { accountId: user.accountOwnerId },
+    attributes: returnParamsSurvey,
+    order: [
+      ['id', 'asc'],
+      [SurveyQuestion, 'order', 'ASC']
+    ],
+    include: [{
+      model: SurveyQuestion,
+      attributes: returnParamsQuestions
+    }]
+  }).then(function(surveys) {
     deferred.resolve(surveys);
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
@@ -56,7 +84,7 @@ function findAllSurveys(user) {
 
 function createSurveyWithQuestions(params) {
   let deferred = q.defer();
-  let validParams = validateParams(params, validCreateParams);
+  let validParams = validateParams(params, validManageParams);
 
   models.sequelize.transaction(function (t) {
     return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t });
@@ -75,7 +103,7 @@ function createSurveyWithQuestions(params) {
 
 function updateSurvey(params, user) {
   let deferred = q.defer();
-  let validParams = validateParams(params, validUpdateParams);
+  let validParams = validateParams(params, validManageParams);
 
   models.sequelize.transaction(function (t) {
     return Survey.update(validParams, {
@@ -83,15 +111,31 @@ function updateSurvey(params, user) {
       include: [ SurveyQuestion ],
       returning: true,
       transaction: t
+    }).then(function(result) {
+      if(result[0] == 0) {
+        throw 'Survey not found';
+      }
+      else {
+        let survey = result[1][0];
+        return SurveyQuestion.destroy({
+          where: {
+            surveyId: survey.id,
+            id: { $notIn: getIds(validParams.SurveyQuestions) }
+          },
+          transaction: t
+        }).then(function() {
+          return bulkUpdateQuestions(validParams.SurveyQuestions, t).then(function() {
+            t.commit();
+            return survey;
+          }, function() {
+            t.rollback();
+            return survey;
+          });
+        });
+      }
     });
-  }).then(function(result) {
-    if(result[0] == 0) {
-      deferred.reject('Survey not found');
-    }
-    else {
-      let survey = result[1][0];
-      deferred.resolve(survey);
-    }
+  }).then(function(survey) {
+    deferred.resolve(survey);
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
   }).catch(function(error) {
@@ -99,6 +143,38 @@ function updateSurvey(params, user) {
   });
 
   return deferred.promise;
+};
+
+function bulkUpdateQuestions(questions, t) {
+  let deferred = q.defer();
+
+  questions.forEach(function(question, index, array) {
+    SurveyQuestion.update(question, {
+      where: {
+        surveyId: question.surveyId,
+        id: question.id
+      },
+      transaction: t
+    }).then(function(results) {
+      if(index == array.length - 1) {
+        deferred.resolve(true);
+      }
+    }).catch(Survey.sequelize.ValidationError, function(error) {
+      deferred.reject(prepareErrors(error));
+    }).catch(function(error) {
+      deferred.reject(error);
+    });
+  });
+
+  return deferred.promise;
+}
+
+function getIds(questions) {
+  let ids = [];
+  questions.forEach(function(question, index, array) {
+    ids.push(question.id);
+  });
+  return ids;
 };
 
 function removeSurvey(id, user) {
