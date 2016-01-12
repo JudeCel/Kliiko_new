@@ -189,7 +189,7 @@ module.exports = {
     isUserFacilitator: function (userId) {
         var result = false;
         for (var ndxFacilitatorList = 0, lr = this.facilitatorList.length; ndxFacilitatorList < lr; ndxFacilitatorList++) {
-            if (this.facilitatorList[ndxFacilitatorList].userId === userId) {
+            if (this.facilitatorList[ndxFacilitatorList].userId == userId) {
                 result = true;
 
                 break;	//	lets get out of here
@@ -828,6 +828,8 @@ module.exports = {
     },
 
     addChatHistoryPDF: function (json) {
+      console.log("addChatHistoryPDF++++++++++++++++++++++++++++++++");
+      console.log(json);
         var err = joi.validate(json, {
             fsPath: joi.string().required(),
             userId: joi.number().required(),
