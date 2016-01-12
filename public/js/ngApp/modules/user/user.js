@@ -56,7 +56,7 @@
         }
 
         fetchRoles();
-        checkPlans();
+        checkPlansAndTrials();
 
         /**
          * Make user.isAdmin = true if user.roles array contain 'admin'
@@ -71,8 +71,10 @@
           }
         }
 
-        function checkPlans() {
-          if (self.subscriptions && self.subscriptions.planId) {
+        function checkPlansAndTrials() {
+          if (!self.subscriptions)  return;
+
+          if (self.subscriptions.planId) {
             var legalPlans = (
               self.subscriptions.planId === 'plan1' ||
               self.subscriptions.planId === 'plan1' ||
@@ -82,7 +84,14 @@
               'Should be one of the following: "plan1", "plan2" or "plan3". \n' +
               'Recieved: ', self.subscriptions.planId);
           }
-          if (self.subscriptions && self.subscriptions.planId === 'plan3') self.onMaximumPlan = true;
+
+          if (self.subscriptions.planId === 'plan3') self.onMaximumPlan = true;
+
+          if (self.subscriptions.status === 'in_trial') {
+            var trialEndDate = moment(self.subscriptions.trialEnd);
+            self.trial ={daysLeft: Math.round( moment.duration(trialEndDate.diff()).asDays() ) };
+          }
+
         }
 
       }

@@ -34,7 +34,6 @@
       changePaymentMethodTo: changePaymentMethodTo
     };
 
-    vm.showWarning = showWarning;
     vm.canUpgradeTo = canUpgradeTo;
     vm.stepsClassIsActive = stepsClassIsActive;
     vm.stepsClassIsDone = stepsClassIsDone;
@@ -77,16 +76,6 @@
       // after payment callback url case
       if ($stateParams.step && $stateParams.step == 5)  { goToStep(5) }
     }
-
-    function showWarning() {
-      if (vm.userData && vm.userData.subscriptions && vm.userData.subscriptions.status === 'in_trial') {
-        var trialEndDate = moment(vm.userData.subscriptions.trialEnd);
-        vm.trialExpireInDays =  Math.round( moment.duration(trialEndDate.diff()).asDays() );
-        return true;
-      }
-      return false;
-    }
-
 
     /**
      * Hide downgrade options

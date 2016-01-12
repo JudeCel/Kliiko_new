@@ -762,8 +762,9 @@ input[class=checkbox-blue]:checked + label {
   margin-top: -4px; }
 
 #dashboard p.warning {
+  margin-top: 8px;
   color: #E51D39;
-  font-size: .6em; }
+  font-size: 1.6rem; }
 
 #upgrade-plan-content h2 {
   margin: 45px;
