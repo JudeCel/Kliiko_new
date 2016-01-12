@@ -35,19 +35,6 @@ function chargebeeHostedPageSuccessGet(req, res, next) {
 
 function tstPost(req, res) {
 
-
-  //User.find({
-  //    where: {id: 2}
-  //  }).
-  //then(function(resultUser) {
-  //  resultUser.getSubscriptions().then(function(subsRes) {
-  //    res.send(subsRes)
-  //}).
-  //catch( function(err) {
-  //  res.send(err)
-  //});
-
-
   User.find({
     where: {id: 2}
   }).then(function(resultUser) {
@@ -80,7 +67,5 @@ function tstPost(req, res) {
 
 
   });
-
-
 
 }

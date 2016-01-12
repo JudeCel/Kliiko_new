@@ -74,10 +74,10 @@ function userGet(req, res, next) {
 
     User.find({
       where: {
-        id: userId,
+        id: userId
       },
       attributes: userDetailsFields,
-      raw: true,
+      raw: true
     }).then(function(result) {
       result.role = role;
       deferred.resolve(result);

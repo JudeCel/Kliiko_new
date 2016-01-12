@@ -116,7 +116,7 @@ function prepareHostedPage(userData, planDetails, paymentDetails, pages, passThr
 }
 
 /**
- * Fetch data about given hosted page and then save it user model.
+ * Fetch data about given hosted page and then save it for given user.
  * User Id will be returned within hosted page data.
  * In successful case should return redirect url (also comes within hosted page data)
  * @param hostedPageId {string}
@@ -188,7 +188,7 @@ function getSubscriptions(userId, all) {
   let deferred = q.defer();
 
   User.find({
-    where: {id: userId},
+    where: {id: userId}
   }).
     then(function(resultUser) {
       resultUser.getSubscriptions().
@@ -242,37 +242,10 @@ function getCoupon(couponId) {
   return deferred.promise;
 }
 
-/// ev_IG5ryj8PZBSV3Ki1y
 function tstGet() {
   let deferred = q.defer();
 
-  //chargebee.event.list({
-  //  limit : 100,
-  //  start_time : 1349029800,
-  //  end_time : 2147483647
-  //}).request(function(error,result){
-  //  if(error){
-  //    //handle error
-  //    console.log(error);
-  //    deferred.resolve(result)
-  //  }else{
-  //    deferred.resolve(result)
-  //    //for(var i = 0; i < result.list.length;i++){
-  //    //  deferred.resolve(result)
-  //    //}
-  //  }
-  //});
-
-  chargebee.event.retrieve("ev_1sjs9j9PZCXjBeUQe").request(
-    function(error,result){
-      if(error){
-        //handle error
-        deferred.resolve(result)
-      }else{
-        deferred.resolve(result)
-      }
-    });
-
+  deferred.resolve('clear me later');
 
   return deferred.promise;
 }
