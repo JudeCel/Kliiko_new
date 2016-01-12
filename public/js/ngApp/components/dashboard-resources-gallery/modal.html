@@ -1,0 +1,32 @@
+<div class='dashboard-container'>
+  <div class='modal-header'>
+    <button type='button' class='close' ng-click='closeModal()'>&times;</button>
+    <h2 class='modal-title text-center'>New {{ uploadTypeForTitle }} resource.</h2>
+  </div>
+  <div class='modal-body text-gray-medium'>
+    <form class='form-horizontal' role='form'>
+    
+      <input type="hidden" name="uploadType" value="{{uploadType}}">
+
+      <div class="form-group">
+        <label for="resource">File</label>
+        <input type="file" name="resource" accept="file_extension|audio/*|video/*|image/*|media_type">
+      </div>
+            
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <div class='row'>
+            <div class='col-xs-6'>
+              <button ng-click='submitForm()' type='button' class='btn border-red text-red-dark border-radius-none background-transp pull-left btn-md'>Save</button>
+            </div>
+            <div class='col-xs-6'>
+              <button ng-click='closeModal()' type='button' class='btn border-red text-red-dark border-radius-none background-transp pull-right btn-md'>Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>

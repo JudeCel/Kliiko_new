@@ -34,6 +34,11 @@ const VALIDATIONS = {
   ],
   textFileTypes: [
     'application/pdf'
+  ],
+  videoFileTypes: [
+    'video/ogg',
+    'video/webm',
+    'video/mp4'
   ]
 };
 
@@ -61,23 +66,40 @@ function uploadNew(params){
 
   validate(uploadType, file, youtubeUrl, function(err) {
     if (err) {
-      // console.log(err);
       deferred.reject(err);
     }else{
-      // deferred.resolve("NOIS");
-      // return deferred.promise;
-    }
+      var fileNameToSave = bannerType+'.'+filename.extension;
 
+      fs.stat(file.path, function (err, stat) {
+        if(stat) {
+          mv(file.path, 'public/gallery/'+fileNameToSave, function(error) {
+          });
+        }
+
+        // createOrUpdate({ page: bannerType, filepath: 'banners/'+fileNameToSave }, function(error, result) {
+        //   if (error) {
+        //     deferred.reject(error);
+        //     return deferred.promise;
+        //   }
+        //   deferred.resolve(result);
+        // });
+
+      deferred.resolve("NOIS");
+      });
+    }
   });
+
   return deferred.promise;
 }
+
+// function create()
 
 function validate(type, file, url, callback) {
   let errors = [];
 
-  if (type === "youtubeLink") {
-    if (!youtubeVideoExists(url)) {
-      let errorMessage = "Video URL you provided is invalid or the video doesn't exist. Please double check your video URL.";
+  if (type === "video" && url !== null) {
+    if (!isYoutubeVideo(url)) {
+      let errorMessage = "Video URL you provided is invalid, please double check your video it.";
       errors.push({errorMessage:errorMessage});
       return callback(errors);
     }
@@ -89,25 +111,33 @@ function validate(type, file, url, callback) {
     return callback(errors);
   }
 
-  if(!isValidFileType(file.mimetype)) {
+  if(!isValidFileType(file.mimetype, type)) {
     let errorMessage = 'Only file extensions for ' + type.replace(/([A-Z])/g, ' $1').toLowerCase() + ' file are allowed -' + allowedTypes(type) + '.';
     errors.push({errorMessage:errorMessage});
     return callback(errors);
   }
+
+  return callback(null);
 }
 
-function isValidFileType(type) {
+function isValidFileType(mimetype, type) {
+
   if(type === 'image' || type === 'brandLogo'){
-    return VALIDATIONS.imageFileTypes.indexOf(type) > -1
+    return VALIDATIONS.imageFileTypes.indexOf(mimetype) > -1
   }
 
   if(type === 'audio'){
-    return VALIDATIONS.audioFileTypes.indexOf(type) > -1
+    return VALIDATIONS.audioFileTypes.indexOf(mimetype) > -1
   }
 
   if(type === 'text'){
-    return VALIDATIONS.textFileTypes.indexOf(type) > -1
+    return VALIDATIONS.textFileTypes.indexOf(mimetype) > -1
   }
+
+  if(type === 'video'){
+    return VALIDATIONS.videoFileTypes.indexOf(mimetype) > -1
+  }
+
 }
 
 function allowedTypes(type) {
@@ -131,19 +161,22 @@ function allowedTypes(type) {
     }
   }
 
+  if(type === 'video'){
+    for(let i=0; i < VALIDATIONS.videoFileTypes.length; i++) {
+     array[i] = VALIDATIONS.videoFileTypes[i].replace(/video\//g, ' ');
+    }
+  }
+
   return array;
 }
 
-function youtubeVideoExists(url){
-  youTube.getById('0f9PGBQlPbI', function(error, result) {
-    if (error) {
-      return false;
-    }
-    else {
-      let response = JSON.stringify(result, null, 2)
-      console.log(response);
-    }
-  });
-  return false
+function isYoutubeVideo(url){
+  let regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  let match = url.match(regExp);
+  if (match && match[2].length == 11) {
+    return true
+  } else {
+    return false
+  }
 }
 

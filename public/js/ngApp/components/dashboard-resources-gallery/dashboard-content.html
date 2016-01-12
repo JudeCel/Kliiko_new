@@ -3,44 +3,87 @@
   <div class="gallery">
   	<div class="gallery-header"> 
 	  	<div class='col-md-12'>
-	  		<button class="pull-right" ng-click="show=!show">Change view</button>
-	  	</div>
-	  	<div class='col-md-12'>
-		  	<!-- <input class="pull-left" type="checkbox" name="vehicle" value="Bike"> Select All -->
-		  	<a class="pull-left" href="#"> Download </a>
-		  	<a class="pull-left" href="#"> Delete </a>
+        <button class='pull-right btn' type='button' id='uploadResourceDropdown' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' style="margin-left: 10px;">
+          <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
+          Add New
+        </button>
 
-		  	<a class="pull-right" href="#">All(0)</a>
-		  	<a class="pull-right" href="#">Images(0)</a>
-		  	<a class="pull-right" href="#">Brand Logos(0)</a>
-		  	<a class="pull-right" href="#">Audio(0)</a>
-		  	<a class="pull-right" href="#">Youtube(0)</a>
-		  	<a class="pull-right" href="#">PDF's(0)</a>
+	  		<button class="pull-right btn" type='button' ng-click="show=!show" ng-class="{hidden:show,chaldean:!show}">
+          <span class='glyphicon glyphicon-th' aria-hidden='true'></span>   
+        </button>
+
+        <button class="pull-right btn" type='button' ng-click="show=!show" ng-class="{hidden:!show,chaldean:show}">
+          <span class='glyphicon glyphicon-th-list' aria-hidden='true'></span>   
+        </button>
+
+        <ul class='pull-right dropdown-menu header-dropdown-ul' aria-labelledby='uploadResourceDropdown'>
+          <li class='text-right text-size-dashboard'>
+            <a ng-click="uploadResourceForm('image')" data-toggle='modal' style="cursor:pointer;">
+              Upload Image
+            </a>
+          </li>
+
+          <li class='text-right text-size-dashboard'>
+            <a ng-click="uploadResourceForm('brandLogo')" data-toggle='modal' style="cursor:pointer;">
+              Upload Brand Logo
+            </a>
+          </li>
+
+          <li class='text-right text-size-dashboard'>
+            <a ng-click="uploadResourceForm('audio')" data-toggle='modal' style="cursor:pointer;">
+              Upload Audio
+            </a>
+          </li>
+
+          <li class='text-right text-size-dashboard'>
+            <a ng-click="uploadResourceForm('pdf')" data-toggle='modal' style="cursor:pointer;">
+              Upload PDF
+            </a>
+          </li>
+
+          <li class='text-right text-size-dashboard'>
+            <a ng-click="uploadResourceForm('youtubeUrl')" data-toggle='modal' style="cursor:pointer;">
+              Save Youtube URL
+            </a>
+          </li>
+
+        </ul>
+	  	</div>
+
+      <br>
+      <br>
+
+	  	<div class='col-md-12'>
+		  	<a class="pull-left" href="#"> Download </a>
+		  	<a class="pull-left" href="#" style="margin-left: 10px;"> Delete </a>
+
+		  	<a class="pull-right" href="#" style="margin-left: 10px;">All(0)</a>
+		  	<a class="pull-right" href="#" style="margin-left: 10px;">Images(0)</a>
+		  	<a class="pull-right" href="#" style="margin-left: 10px;">Brand Logos(0)</a>
+		  	<a class="pull-right" href="#" style="margin-left: 10px;">Audio(0)</a>
+		  	<a class="pull-right" href="#" style="margin-left: 10px;">Youtube(0)</a>
+		  	<a class="pull-right" href="#" style="margin-left: 10px;">PDF's(0)</a>
   		</div>
   	</div>
 
+    <br>
+    <br>
+    <br>
+
 	  <div class="gallery-body col-md-12" ng-class="{hidden:!show,chaldean:show}">
-      <table class='table table-dashboardElements'>
-        <thead>
-          <tr>
-            <!-- <th>Select all</th> -->
-          </tr>
-        </thead>
-        <tbody ng-repeat='account in accounts'>
-          <tr ng-repeat='user in account.Users'>
-            <td> ascasac</td>
-            <td> ascasac</td>
-            <td> ascasac</td>
-            <td> ascasac</td>
-          </tr>
-        </tbody>
-      </table>
+      Pupadi
 	  </div>
 	  
 	  <div class="gallery-body col-md-12" ng-class="{hidden:show,chaldean:!show}">
-	  	<div style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
-	  	<div style="width: 250px; height: 250px; border: solid 1px; display:inline-block; margin: 0 24px;"></div>
-	  	<div style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
+      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
+      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
+      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
+      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
+      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
+      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
+      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
+      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
+	  	<div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
 	  </div> 
 	</div>
 
