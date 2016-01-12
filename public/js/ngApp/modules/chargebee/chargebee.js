@@ -6,7 +6,7 @@
   chargebeeFactory.$inject = ['$q','globalSettings', '$resource', 'dbg'];
   function chargebeeFactory($q, globalSettings, $resource, dbg)  {
     var chargebeeApi = {
-      newOrder: $resource(globalSettings.restUrl + globalSettings.paymentModules.chargebee.apiEndPoint+'/subscription', {}, {post: {method: 'POST'}}),
+      subscription: $resource(globalSettings.restUrl + globalSettings.paymentModules.chargebee.apiEndPoint+'/subscription', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       plans: $resource(globalSettings.restUrl + globalSettings.paymentModules.chargebee.apiEndPoint+'/plans', {}, {post: {method: 'POST'}}),
       coupon: $resource(globalSettings.restUrl + globalSettings.paymentModules.chargebee.apiEndPoint+'/coupon', {}, {post: {method: 'POST'}})
     };
@@ -15,7 +15,9 @@
     var chargebeeFactoryPublicMethods = {};
 
     chargebeeFactoryPublicMethods.getPlans = getPlans;
-    chargebeeFactoryPublicMethods.submitNewOrder = submitNewOrder;
+    chargebeeFactoryPublicMethods.submitNewSubscription = submitNewSubscription;
+    chargebeeFactoryPublicMethods.updateSubscription = updateSubscription;
+
     chargebeeFactoryPublicMethods.validateCoupon = validateCoupon;
 
     return chargebeeFactoryPublicMethods;
@@ -40,10 +42,10 @@
      * @param userData {object}
      * @returns {promise}
      */
-    function submitNewOrder(planDetails, paymentDetails, userData) {
+    function submitNewSubscription(planDetails, paymentDetails, userData) {
       var deferred = $q.defer();
 
-      chargebeeApi.newOrder.post({}, {
+      chargebeeApi.subscription.post({}, {
         planDetails: planDetails,
         paymentDetails: paymentDetails,
         userData:userData,
@@ -67,6 +69,33 @@
 
     }
 
+    /**
+     * Upgrade existing subscription (prorate)
+     * https://apidocs.chargebee.com/docs/api/subscriptions#update_a_subscription
+     * @param planDetails
+     * @param paymentDetails
+     * @param userData
+     */
+    function updateSubscription(planDetails, paymentDetails, userData) {
+      var deferred = $q.defer();
+
+
+      var deferred = $q.defer();
+
+      chargebeeApi.subscription.put({}, {
+        planDetails: planDetails,
+        paymentDetails: paymentDetails,
+        userData:userData,
+      },  function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
+        }
+      });
+
+      return deferred.promise;
+    }
 
     function validateCoupon(coupon) {
       var deferred = $q.defer();

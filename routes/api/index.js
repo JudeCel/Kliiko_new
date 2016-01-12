@@ -41,6 +41,7 @@ router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelet
 
 router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
 router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);
+router.put('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPut);
 router.get('/chargebee/subscriptions', multipartyMiddleware, chargebee.chargebeeSubscriptionGet);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
 

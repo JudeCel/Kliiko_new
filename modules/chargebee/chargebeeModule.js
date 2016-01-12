@@ -5,6 +5,7 @@ let chargebee = require("chargebee");
 let q = require('q');
 let models =  require('./../../models');
 let User = models.User;
+let Subscription = models.Subscription;
 let moment = require('moment');
 
 module.exports = {
@@ -12,6 +13,7 @@ module.exports = {
   prepareHostedPage: prepareHostedPage,
   createSubscription: createSubscription,
   getSubscriptions:getSubscriptions,
+  upgradeSubscription:upgradeSubscription,
   //getHostedPageData: getHostedPageData,
   getCoupon: getCoupon,
   tstGet: tstGet
@@ -206,6 +208,58 @@ function getSubscriptions(userId, all) {
   return deferred.promise;
 }
 
+/**
+ * Upgrade and prorate subscription
+ * @param subscriptionId
+ * @param userData
+ * @param planData
+ * @returns {*}
+ */
+function upgradeSubscription(subscriptionId, userData, planData) {
+  let deferred = q.defer();
+
+  chargebee.subscription.update(subscriptionId, {
+    plan_id : planData.plan.id,
+    billing_address : {
+      first_name : userData.firstName,
+      last_name : userData.lastName,
+      line1 : userData.postalAddress,
+      city : userData.city,
+      state : userData.state,
+      zip : userData.postcode,
+      country : userData.country
+    }
+  }).request(function(error, result){
+    if (error) {deferred.reject(error); return deferred.promise;}
+
+    var subsData = result.subscription;
+
+    Subscription.update({
+      planId: subsData.plan_id,
+      subscriptionId: subsData.id,
+      planQuantity: subsData.plan_quantity,
+      status: subsData.status,
+      trialStart: moment.unix(subsData.trial_start).format(),
+      trialEnd: moment.unix(subsData.trial_end).format(),
+      subscribtionCreatedAt:moment.unix(subsData.created_at).format(),
+      startedAt: moment.unix(subsData.started_at).format(),
+      createdFromIp: subsData.created_from_ip,
+      hasScheduledChanges: subsData.has_scheduled_changes,
+      dueInvoicesCount: subsData.due_invoices_count,
+      customerData: result.customer,
+
+
+      }, {where: {subscriptionId:subscriptionId}}
+    ).then(function(res) {
+
+      deferred.resolve(result);
+
+    });
+
+  });
+  return deferred.promise;
+}
+
 
 /**
  * Retrieve hosted page info
@@ -244,8 +298,14 @@ function getCoupon(couponId) {
 
 function tstGet() {
   let deferred = q.defer();
+  let subscriptionId = '1pCzCGoPZZrrfi3HB';
 
-  deferred.resolve('clear me later');
+  Subscription.update({
+    planId: 'NewName'
+  }, {where: {subscriptionId:subscriptionId}}
+  ).then(function(res) {
+    deferred.resolve(res)
+  });
 
   return deferred.promise;
 }

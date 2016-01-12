@@ -270,23 +270,29 @@
         totalPrice: vm.finalPrice
       };
 
-      if (vm.paymentDetails.chargebee.selected) {
-        domServices.showFader();
-      }
+      domServices.showFader();
 
       upgradePlanServices.submitUpgrade(planObject, paymentObject, vm.userData).then(
         function(res) {
           dbg.log2('#UpgradePlanControllerAppController > submitUpgrade > success ');
-          window.location = res.hosted_page.url;
+
+          // case of new subscription. go to prepared hosted page;
+          if (res.hosted_page)  window.location = res.hosted_page.url;
+
+          progressbar.complete();
+          goToStep(5);
+          domServices.hideFader();
+          vm.paymentSubmitSuccess = true;
+
         },
         function(err) {
-          dbg.log2('#UpgradePlanControllerAppController > submitUpgrade > error ', err);
+          dbg.log2('#UpgradePlanControllerAppController > submitUpgrade > error: ', err);
 
           progressbar.complete();
           goToStep(5);
           domServices.hideFader();
 
-          messenger.error('Submitting Failed');
+          messenger.error('Submitting Failed: '+ err);
 
           vm.cantMoveNextStep = true;
           vm.paymentSubmitSuccess = null;

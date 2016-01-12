@@ -23,11 +23,16 @@
 
     return UserService;
 
-    function getUserData() {
+    /**
+     * Get users data from db or from cache
+     * @param [forceUpdate] {boolean} - ignore cache
+     * @returns {*}
+     */
+    function getUserData(forceUpdate) {
       dbg.log2('#KliikoApp.user > get all user details');
       var deferred = $q.defer();
 
-      if (user && user.id) {
+      if (user && user.id && !forceUpdate) {
         dbg.log2('#KliikoApp.user > get all user details > return cached value');
         deferred.resolve(user);
         return deferred.promise;
