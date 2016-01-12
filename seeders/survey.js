@@ -19,28 +19,25 @@ function surveyParams() {
 
 function surveyQuestionParams(random) {
   return {
+    type: 'radio',
     order: random,
     name: 'Some default name ' + random,
     question: 'What a default question ' + random,
     answers: [
       {
         order: 0,
-        type: 'input',
         name: '0 answer ' + random
       },
       {
         order: 1,
-        type: 'input',
         name: '1 answer ' + random
       },
       {
         order: 2,
-        type: 'input',
         name: '2 answer ' + random
       },
       {
         order: 3,
-        type: 'input',
         name: '3 answer ' + random
       }
     ]

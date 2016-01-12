@@ -4,7 +4,7 @@
   </div>
 </div>
 
-<div ng-sortable='sc.answerSortOptions'>
+<div ng-sortable='sc.answerSortOptions' ng-init='question.type = "checkbox"'>
   <div class='form-group' ng-repeat='answer in question.answers track by $index'>
     <div class='col-xs-2 col-sm-1'>
       <input type='checkbox' class='custom-checkbox' disabled>
@@ -14,7 +14,7 @@
     <div class='col-xs-10 col-sm-7'>
       <div class='input-group'>
         <input type='text' class='form-control' id='answer_{{object.order}}_{{ answer.order }}' placeholder='Answer'
-          ng-init='answer.type="checkbox"' ng-string ng-change='sc.questionChange(object.order, question)' ng-model='answer.name'>
+          ng-string ng-change='sc.questionChange(object.order, question)' ng-model='answer.name'>
 
         <span class='input-group-addon' ng-if='!sc.canChangeAnswers(-1, question)'>@</span>
         <span class='input-group-addon' ng-if='sc.canChangeAnswers(-1, question)'>

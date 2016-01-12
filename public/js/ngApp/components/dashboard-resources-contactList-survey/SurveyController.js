@@ -350,7 +350,7 @@
             sq.errors.answers = {};
             for(var key in sq.answers) {
               var answer = sq.answers[key];
-              if(answer.name.length == 0 || answer.name.length > 20) {
+              if(sq.type == 'radio' && answer.name.length == 0 || answer.name.length > 20) {
                 sq.errors.answers[key] = 'Too short/long';
               }
             };
@@ -396,8 +396,8 @@
     };
 
     function initQuestion(object) {
-      if(!vm.manageTemp.survey.SurveyQuestions[object.order]) {
-        vm.manageTemp.survey.SurveyQuestions[object.order] = {};
+      if(!vm.manageTemp.survey.SurveyQuestions[object.order] || object.order != vm.manageTemp.survey.SurveyQuestions[object.order].order) {
+        vm.manageTemp.survey.SurveyQuestions.splice(object.order, 0, {});
       }
 
       var question = vm.manageTemp.survey.SurveyQuestions[object.order];
@@ -461,6 +461,8 @@
           vm.manage = { survey: { SurveyQuestions: [] } };
           vm.currentPage = { page: 'manage', type: page };
           break;
+        default:
+          vm.currentPage = { page: page };
       }
     };
 

@@ -1,0 +1,49 @@
+{{ sc.manage.survey }}
+<div class='col-sm-12'>
+  <h2><strong>Survey Template Preview</strong></h2>
+  <hr class='border-brown' />
+</div>
+
+<div class='col-sm-12'>
+  <h4><strong>{{ sc.manage.survey.name }}</strong></h4>
+  <h4><strong>Introduction</strong></h4>
+  {{ sc.manage.survey.description }}
+</div>
+
+<div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(0, 10) track by $index' ng-init='questions = sc.manage.survey.SurveyQuestions'>
+  <div ng-init='question = questions[object.order]'>
+    <div ng-if='question'>
+      <div ng-if='question.type == "radio"'>
+        <h4><strong>{{ question.name }}</strong></h4>
+        {{ question.question }}
+        <ul>
+          <li ng-repeat='answer in question.answers'>
+            <label>
+              <input type='radio' ng-value='answer.order'>
+              {{ answer.name }}
+            </label>
+          </li>
+        </ul>
+      </div>
+
+      <div ng-if='question.type == "textarea"'>
+        <h4><strong>{{ question.name }}</strong></h4>
+        {{ question.question }}
+        <div ng-repeat='answer in question.answers'>
+          <textarea placeholder='Answer' rows='5'></textarea>
+        </div>
+      </div>
+
+      <div ng-if='question.type == "checkbox"'>
+        <h4><strong>{{ question.name }}</strong></h4>
+        {{ question.question }}
+        <div ng-repeat='answer in question.answers'>
+          <input type='checkbox' class='custom-checkbox'>
+          <label class='control-label custom-checkbox-label pull-right'></label>
+          {{ answer.name }}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

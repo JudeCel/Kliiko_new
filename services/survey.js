@@ -101,6 +101,7 @@ function createSurveyWithQuestions(params) {
   return deferred.promise;
 };
 
+// Needs updated test
 function updateSurvey(params, user) {
   let deferred = q.defer();
   let validParams = validateParams(params, validManageParams);
@@ -124,7 +125,7 @@ function updateSurvey(params, user) {
           },
           transaction: t
         }).then(function() {
-          return bulkUpdateQuestions(validParams.SurveyQuestions, t).then(function() {
+          return bulkUpdateQuestions(survey.id, validParams.SurveyQuestions, t).then(function() {
             t.commit();
             return survey;
           }, function() {
@@ -143,38 +144,6 @@ function updateSurvey(params, user) {
   });
 
   return deferred.promise;
-};
-
-function bulkUpdateQuestions(questions, t) {
-  let deferred = q.defer();
-
-  questions.forEach(function(question, index, array) {
-    SurveyQuestion.update(question, {
-      where: {
-        surveyId: question.surveyId,
-        id: question.id
-      },
-      transaction: t
-    }).then(function(results) {
-      if(index == array.length - 1) {
-        deferred.resolve(true);
-      }
-    }).catch(Survey.sequelize.ValidationError, function(error) {
-      deferred.reject(prepareErrors(error));
-    }).catch(function(error) {
-      deferred.reject(error);
-    });
-  });
-
-  return deferred.promise;
-}
-
-function getIds(questions) {
-  let ids = [];
-  questions.forEach(function(question, index, array) {
-    ids.push(question.id);
-  });
-  return ids;
 };
 
 function removeSurvey(id, user) {
@@ -228,11 +197,59 @@ function copySurvey(params) {
 };
 
 // Helpers
+function bulkUpdateQuestions(surveyId, questions, t) {
+  let deferred = q.defer();
+
+  questions.forEach(function(question, index, array) {
+    if(question.id && question.surveyId) {
+      SurveyQuestion.update(question, {
+        where: {
+          surveyId: question.surveyId,
+          id: question.id
+        },
+        transaction: t
+      }).then(function(results) {
+        if(index == array.length - 1) {
+          deferred.resolve(true);
+        }
+      }).catch(Survey.sequelize.ValidationError, function(error) {
+        deferred.reject(prepareErrors(error));
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
+    }
+    else {
+      question.surveyId = surveyId;
+      SurveyQuestion.create(question).then(function() {
+        deferred.resolve(true);
+      }).catch(Survey.sequelize.ValidationError, function(error) {
+        deferred.reject(prepareErrors(error));
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
+    }
+  });
+
+  return deferred.promise;
+}
+
+function getIds(questions) {
+  let ids = [];
+  questions.forEach(function(question, index, array) {
+    ids.push(question.id);
+  });
+  return ids;
+};
+
 function validUrl(survey) {
   return 'http://' + config.get('server')['domain'] + ':' + config.get('server')['port'] + '/resources/survey/' + survey.id;
 };
 
 function validateParams(params, attributes) {
+  params.SurveyQuestions = _.remove(params.SurveyQuestions, function(n) {
+    return _.isObject(n);
+  });
+
   return _.pick(params, attributes);
 };
 

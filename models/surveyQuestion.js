@@ -7,6 +7,8 @@ module.exports = (Sequelize, DataTypes) => {
     name: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
     question: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
     order: { type: DataTypes.INTEGER, allowNull: false },
+    type: { type: DataTypes.ENUM, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } },
+      values: ['radio', 'textarea', 'checkbox', 'input'] },
     answers: { type: DataTypes.JSONB, allowNull: false }
   }, {
     timestamps: true,
