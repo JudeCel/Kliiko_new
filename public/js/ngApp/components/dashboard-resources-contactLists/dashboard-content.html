@@ -1,0 +1,16 @@
+<section id="contact-lists" ng-controller="ContactListController as clc">
+  {{clc.lists | json}}
+  <div class='col-md-12'>
+      <div class='dashboard-container'>
+          <div class='row'>
+              <div class='col-md-3'></div>
+              <div class='col-md-6'>
+                  <h2 class='text-center'>Contict Lists</h2>
+                  <div ng-show=" clc.error.length" class="error-area has-error text-red-dark">
+                      <p ng-repeat="err in clc.error">{{err}}</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>

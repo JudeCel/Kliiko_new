@@ -165,6 +165,12 @@
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-contactLists/dashboard-content.html"}
         },
+        resolve: {
+          loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/js/ngApp/modules/contactList/contactList.js',
+            ]);
+          }]},
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.contactLists is on');
         }]

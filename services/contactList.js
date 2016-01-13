@@ -15,6 +15,19 @@ function allByAccount(accountId) {
     return deferred.promise;
 }
 
+function create(params, accountId) {
+  var deferred = q.defer();
+  params.accountId = accountId;
+
+  ContactList.create(params).then(function(result) {
+    deferred.resolve(result);
+  }, function(err) {
+    deferred.reject(err);
+  })
+  return deferred.promise;
+}
+
 module.exports = {
+  create: create,
   allByAccount: allByAccount
 }

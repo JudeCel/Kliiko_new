@@ -1,21 +1,25 @@
 (function () {
   'use strict';
 
-  angular.module('contactList', []).factory('contactList', contactListFactory);
+  angular.module('contactList', []).factory('contactListServices', contactListFactory);
 
   contactListFactory.$inject = ['$q','globalSettings', '$resource', 'dbg'];
   function contactListFactory($q, globalSettings, $resource, dbg)  {
+    var publicServices = {};
+
     var contactListApi = {
-      newOrder: $resource(globalSettings.restUrl +  'contactLists', {}, {post: {method: 'POST'}}),
-      plans: $resource(globalSettings.restUrl + globalSettings.paymentModules.chargebee.apiEndPoint+'/plans', {}, {post: {method: 'POST'}}),
-      coupon: $resource(globalSettings.restUrl + globalSettings.paymentModules.chargebee.apiEndPoint+'/coupon', {}, {post: {method: 'POST'}})
+      index: $resource(globalSettings.restUrl +  '/contactLists', {}),
+      create: $resource(globalSettings.restUrl +  '/contactLists', {}, {post: {method: 'POST'}}),
     };
 
+    publicServices.getContactLists = getContactLists;
 
-    function getPlans() {
+    return publicServices;
+
+    function getContactLists() {
       var deferred = $q.defer();
 
-      contactListApi.lists.get(function(res) {
+      contactListApi.index.query(function(res) {
         deferred.resolve(res);
       });
       return deferred.promise;
