@@ -160,13 +160,13 @@
         }]
 
       })
-      .state('dashboard.resources.contactList', {
-        url: "/contact-list",
+      .state('dashboard.resources.contactLists', {
+        url: "/contact-lists",
         views: {
-          'resourcesContent': {templateUrl: prePath + "dashboard-resources-contactList/dashboard-content.html"}
+          'resourcesContent': {templateUrl: prePath + "dashboard-resources-contactLists/dashboard-content.html"}
         },
         onEnter: ['dbg', function (dbg) {
-          dbg.rs('dashboard.resources.contactList is on');
+          dbg.rs('dashboard.resources.contactLists is on');
         }]
 
       })

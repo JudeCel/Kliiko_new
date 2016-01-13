@@ -15,10 +15,10 @@ module.exports = (Sequelize, DataTypes) => {
           Account.hasMany(models.AccountUser);
           Account.belongsToMany(models.User, { through: { model: models.AccountUser} } );
           Account.hasMany(models.Invite, { foreignKey: 'accountId' });
+          Account.hasMany(models.ContactList, { foreignKey: 'accountId' });
         }
       }
     }
 );
-
   return Account;
 };
