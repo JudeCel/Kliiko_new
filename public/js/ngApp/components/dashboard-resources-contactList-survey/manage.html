@@ -9,15 +9,15 @@
     </div>
 
     <div class='col-sm-12'>
-      <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/survey.html'"></ng-include>
+      <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/survey.html'"></ng-include>
     </div>
 
     <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(0, 3) track by $index' ng-init='questions = sc.manageTemp.survey.SurveyQuestions'>
       <div ng-init='question = sc.initQuestion(object, questions[object.order])'>
-        <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
+        <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
 
-        <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
-        <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
+        <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
+        <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
       </div>
     </div>
 
@@ -35,10 +35,10 @@
               </div>
             </uib-accordion-heading>
 
-            <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
+            <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
 
-            <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
-            <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
+            <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
+            <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
           </uib-accordion-group>
         </uib-accordion>
       </div>
@@ -47,10 +47,10 @@
 
     <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(6, 10) track by $index' ng-init='questions = sc.manageTemp.survey.SurveyQuestions'>
       <div ng-init='question = sc.initQuestion(object, questions[object.order])'>
-        <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
+        <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
 
-        <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
-        <ng-include ng-if='!object.disableAnswers' src="'js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
+        <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
+        <ng-include ng-if='!object.disableAnswers' src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
       </div>
     </div>
 
@@ -65,6 +65,6 @@
       </span>
     </div>
 
-    <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/previewModal.html'"></ng-include>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/previewModal.html'"></ng-include>
   </div>
 </div>

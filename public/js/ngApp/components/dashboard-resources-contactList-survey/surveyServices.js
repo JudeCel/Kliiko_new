@@ -1,11 +1,13 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('surveyServices', surveyServices);
+  angular.module('KliikoApp.Root').factory('surveyServices', surveyServices);
   surveyServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
 
   function surveyServices(globalSettings, $q, $resource, dbg) {
     var surveyRestApi = $resource(globalSettings.restUrl + '/survey/:path', null, {
       update: { method: 'PUT' },
+      find: { method: 'PUT', params: { path: 'find' } },
       status: { method: 'PUT', params: { path: 'status' } },
       copy: { method: 'PUT', params: { path: 'copy' } }
     });
@@ -13,6 +15,7 @@
     var upServices = {};
 
     upServices.getAllSurveys = getAllSurveys;
+    upServices.findSurvey = findSurvey;
     upServices.removeSurvey = removeSurvey;
     upServices.changeStatus = changeStatus;
     upServices.updateSurvey = updateSurvey;
@@ -26,6 +29,18 @@
       dbg.log2('#surveyServices > getAllSurveys > make rest call');
       surveyRestApi.get({}, function(res) {
         dbg.log2('#surveyServices > getAllSurveys > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    };
+
+    function findSurvey(data) {
+      var deferred = $q.defer();
+
+      dbg.log2('#surveyServices > findSurvey > make rest call');
+      surveyRestApi.find(data, function(res) {
+        dbg.log2('#surveyServices > findSurvey > rest call responds');
         deferred.resolve(res);
       });
 

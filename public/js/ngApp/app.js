@@ -1,27 +1,35 @@
 (function () {
   'use strict';
 
-  angular
-    .module('KliikoApp', [
-      // common modules
-      'ngRoute',
-      'oc.lazyLoad',
-      'ngResource',
-      'ngProgress',
-      'ngMaterial',
-      'ui.bootstrap',
-      'ui.router',
-      'globalSettings',
-      'debModule',
-      'domServices',
-      'messenger',
-      'ng-sortable',
-      //'CreditCard',
+  var includes = [
+    // common modules
+    'ngRoute',
+    'oc.lazyLoad',
+    'ngResource',
+    'ngProgress',
+    'ngMaterial',
+    'ui.bootstrap',
+    'ui.router',
+    'globalSettings',
+    'debModule',
+    'domServices',
+    'messenger',
+    'ng-sortable',
+    //'CreditCard',
 
-      // app modules
-      'KliikoApp.user',
-      'KliikoApp.banners'
-    ])
+    // app modules
+    'KliikoApp.user',
+    'KliikoApp.banners'
+  ];
+
+  angular
+    .module('KliikoApp', includes)
+    .config(appConfigs)
+    .run(appRun)
+    .controller('AppController', AppController);
+
+  angular
+    .module('KliikoApp.Root', includes)
     .config(appConfigs)
     .run(appRun)
     .controller('AppController', AppController);

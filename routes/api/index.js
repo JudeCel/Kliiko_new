@@ -50,6 +50,7 @@ router.post('/survey', survey.create);
 router.put('/survey', survey.update);
 router.put('/survey/copy', survey.copy);
 router.put('/survey/status', survey.status);
+router.put('/survey/find', survey.find);
 
 // Common Rules
 router.use(function (req, res, next) {

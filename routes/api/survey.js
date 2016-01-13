@@ -7,6 +7,13 @@ function get(req, res, next) {
   );
 };
 
+function find(req, res, next) {
+  surveyService.findSurvey(req.body.id).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+};
+
 function remove(req, res, next) {
   surveyService.removeSurvey(req.query.id, req.user).then(
     getResponses(res).onSuccess,
@@ -58,6 +65,7 @@ function getResponses(res) {
 
 module.exports = {
   get: get,
+  find: find,
   remove: remove,
   create: create,
   update: update,

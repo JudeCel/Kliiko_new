@@ -44,7 +44,11 @@ function findSurvey(id) {
 
   Survey.find({
     where: { id: id },
-    include: [ SurveyQuestion ],
+    attributes: returnParamsSurvey,
+    include: [{
+      model: SurveyQuestion,
+      attributes: returnParamsQuestions
+    }],
     order: [
       [SurveyQuestion, 'order', 'ASC']
     ]
