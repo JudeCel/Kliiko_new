@@ -2,16 +2,16 @@
 var _ = require('lodash');
 
 var ContactListUser = class ContactListUser {
-  constructor(defaultFilels, customFilels, data) {
-    this.defaultFilels = defaultFilels;
-    this.customFilels = customFilels;
+  constructor(defaultFields, customFields, data) {
+    this.defaultFields = defaultFields;
+    this.customFields = customFields;
     this.data = data;
     this.mapFilels();
   }
 
   mapFilels() {
-    this.assignValues(this.defaultFilels);
-    this.assignValues(this.customFilels);
+    this.assignValues(this.defaultFields);
+    this.assignValues(this.customFields);
   }
 
   assignValues(fieldsList){
@@ -21,7 +21,7 @@ var ContactListUser = class ContactListUser {
   }
 
   findValueInData(value){
-    return (this.data.User[value] || this.data.customFilels[value])
+    return (this.data.User[value] || this.data.customFields[value]);
   }
 }
 
