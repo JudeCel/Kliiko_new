@@ -34,10 +34,12 @@ describe('Middleware subdomain', () => {
     });
 
     it('assign currentDomain to res locaCallback', (done) =>  {
-      subdomain(req, res, function() {
-        assert.deepEqual(res.locals.currentDomain, { name: validAttrs.accountName, roles: ["accountManager"] });
-        done();
-      });
+      models.Account.findAll().then(function(result) {
+        subdomain(req, res, function() {
+          assert.deepEqual(res.locals.currentDomain, { id: result[0].id, name: validAttrs.accountName, roles: ["accountManager"] });
+          done();
+        });
+      })
     });
 
     describe('hasAccess ', () => {
