@@ -6,15 +6,15 @@ var ContactListUser = class ContactListUser {
     this.defaultFilels = defaultFilels;
     this.customFilels = customFilels;
     this.data = data;
-    this.sortData();
+    this.mapFilels();
   }
 
-  sortData() {
-    this.mapFilels(this.defaultFilels);
-    this.mapFilels(this.customFilels);
+  mapFilels() {
+    this.assignValues(this.defaultFilels);
+    this.assignValues(this.customFilels);
   }
 
-  mapFilels(fieldsList){
+  assignValues(fieldsList){
     _.map(fieldsList, (e) => {
       this[e] = this.findValueInData(e);
     })
