@@ -4,6 +4,7 @@
 /static/uploads/*
 /.idea/*
 /config/config.json
+/config/development.json
 /build/*
 /npm-debug.log
 /.tmp/templates.js
