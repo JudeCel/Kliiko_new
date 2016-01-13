@@ -82,12 +82,12 @@
           if (self.subscriptions.planId) {
             var legalPlans = (
               self.subscriptions.planId === 'plan1' ||
-              self.subscriptions.planId === 'plan1' ||
+              self.subscriptions.planId === 'plan2' ||
               self.subscriptions.planId === 'plan3'
             );
             if (!legalPlans) dbg.error('#KliikoApp.user > planId is not recognized! \n' +
               'Should be one of the following: "plan1", "plan2" or "plan3". \n' +
-              'Recieved: ', self.subscriptions.planId);
+              'Recieved: "'+self.subscriptions.planId+'"');
           }
 
           if (self.subscriptions.planId === 'plan3') self.onMaximumPlan = true;

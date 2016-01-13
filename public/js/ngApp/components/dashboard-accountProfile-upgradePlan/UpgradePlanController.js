@@ -4,8 +4,8 @@
   angular.module('KliikoApp').
     controller('UpgradePlanController', UpgradePlanController);
 
-  UpgradePlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams', 'upgradePlanServices', 'user', 'ngProgressFactory', '$scope', 'messenger'];
-  function UpgradePlanController(dbg, domServices, $state, $stateParams, upgradePlanServices, user, ngProgressFactory, $scope, messenger) {
+  UpgradePlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams', 'upgradePlanServices', 'user', 'ngProgressFactory', '$scope', 'messenger',  '$rootScope'];
+  function UpgradePlanController(dbg, domServices, $state, $stateParams, upgradePlanServices, user, ngProgressFactory, $scope, messenger, $rootScope) {
     dbg.log2('#UpgradePlanController  started');
     var vm = this;
 
@@ -276,13 +276,21 @@
         function(res) {
           dbg.log2('#UpgradePlanControllerAppController > submitUpgrade > success ');
 
-          // case of new subscription. go to prepared hosted page;
-          if (res.hosted_page)  window.location = res.hosted_page.url;
 
-          progressbar.complete();
-          goToStep(5);
-          domServices.hideFader();
-          vm.paymentSubmitSuccess = true;
+          if (res.hosted_page)  {
+            // case of new subscription. go to prepared hosted page;
+            window.location = res.hosted_page.url;
+            return;
+          } else {
+            // case when subscription is aupdated
+            $rootScope.$emit('app.updateUser');
+            progressbar.complete();
+            goToStep(5);
+            domServices.hideFader();
+            vm.paymentSubmitSuccess = true;
+          }
+
+
 
         },
         function(err) {
