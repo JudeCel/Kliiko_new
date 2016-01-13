@@ -29,7 +29,7 @@ function getAccauntWithRoles(user, subdomain, callback) {
       let account = accounts[0];
 
       if (account) {
-        let result = {id: account.id, name: subdomain, roles: [account.AccountUser.role]}
+        let result = { id: account.id, name: subdomain, roles: [account.AccountUser.role] }
         callback(null, result)
       }else {
         callback(true)
