@@ -5,15 +5,29 @@
     module('KliikoApp').
     controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['dbg', '$modal', '$scope', '$rootScope', '$filter', 'angularConfirm', 'messenger'];
-  function GalleryController(dbg, $modal, $scope, $rootScope, $filter, angularConfirm, messenger){
+  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', '$scope', '$rootScope', '$filter', 'angularConfirm', 'messenger'];
+  function GalleryController(dbg, GalleryServices, $modal, $scope, $rootScope, $filter, angularConfirm, messenger){
     dbg.log2('#GalleryController  started');
     var vm = this;
 
     initList();
 
     function initList() {
-      // TDODO get the record list
+      GalleryServices.getResources().then(function(res) {
+
+      });
+    }
+
+    $scope.downloadResources = function(){
+      GalleryServices.downloadResources().then(function(res) {
+
+      });
+    }
+
+    $scope.deleteResources = function(){
+      GalleryServices.deleteResources().then(function(res) {
+
+      });
     }
 
     $scope.uploadResourceForm = function(uploadType) {
@@ -31,17 +45,34 @@
   }
 
   angular.module('KliikoApp').controller('UploadResourceModalController', UploadResourceModalController);
-  UploadResourceModalController.$inject = ['dbg', '$scope', '$uibModalInstance', '$rootScope', 'data'];
+  UploadResourceModalController.$inject = ['dbg', '$scope', '$uibModalInstance', '$rootScope', 'data', '$ocLazyLoad', '$injector'];
 
-  function UploadResourceModalController(dbg, $scope, $uibModalInstance, $rootScope, data) {
+  function UploadResourceModalController(dbg, $scope, $uibModalInstance, $rootScope, data, $ocLazyLoad, $injector) {
     dbg.log2('#UploadResourceModalController started');
 
     $scope.uploadType = data.uploadType;
+    $scope.resource = {uploadType: $scope.uploadType};
+
     $scope.uploadTypeForTitle = uploadTypeForTitle();
     $scope.errors = {};
     $scope.sendingData = false;
 
+    // $ocLazyLoad.load(['/js/vendors/ng-file-upload/ng-file-upload.js']).then(function() {
+    //    Upload = $injector.get('Upload');
+       
+    //  });
+
+    $scope.fileUpload = function(file){
+      var file = $scope.resource.file;
+      console.log($scope.resource.file)
+      console.log(file)
+
+    }
+
     $scope.submitForm = function() {
+      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+      console.log($scope.resource);
+      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
       // if($scope.sendingData) return;
 
       // var params = { accountId: $scope.accountId, userId: $scope.userId, comment: $scope.comment };

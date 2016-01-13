@@ -11,6 +11,7 @@ var promotionCode = require('./promotionCode');
 var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
 var chargebee = require('./chargebee');
+var gallery = require('./gallery');
 
 
 module.exports = router;
@@ -42,6 +43,10 @@ router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelet
 router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
 router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
+
+router.get('/gallery', gallery.getResources);
+router.get('/gallery/download', gallery.downloadResources);
+router.delete('/gallery', gallery.deleteResources);
 
 // Common Rules
 router.use(function (req, res, next) {

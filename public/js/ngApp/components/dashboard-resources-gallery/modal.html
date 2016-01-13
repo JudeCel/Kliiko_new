@@ -5,15 +5,15 @@
   </div>
   <div class='modal-body text-gray-medium'>
     <form class='form-horizontal' role='form'>
-    
-      <input type="hidden" name="uploadType" value="{{uploadType}}">
 
       <div class="form-group">
         <label for="resource">File</label>
-        <input type="file" name="resource" accept="file_extension|audio/*|video/*|image/*|media_type">
-      </div>
-            
-
+<!--         <div ngf-drop ngf-select ng-model="resource.file" ng-change="resource.fileUpload(resource.file)" class="drop-box"
+             ngf-drag-over-class="'dragover'"  accept="image/*"
+             ngf-pattern="'image/*'">Drop images here or click to upload</div>
+        <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
+             -->
+        <input type="file" ng-model="resource.file" ng-change="fileUpload(resource.file)" />
       <div class='row'>
         <div class='col-md-12'>
           <div class='row'>
