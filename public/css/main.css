@@ -141,40 +141,40 @@ img.ic-flipX {
   width: 20%;
   padding-top: 100px; }
 
-.contactDetailsModal, .accountDatabaseCommentModal {
+.contactDetailsModal, .accountDatabaseCommentModal, .surveyPreviewModal {
   width: 60%;
   padding-top: 100px;
   /* RADIO BUTTON */
   /* CHECKBOX */ }
-  .contactDetailsModal .table td, .accountDatabaseCommentModal .table td {
+  .contactDetailsModal .table td, .accountDatabaseCommentModal .table td, .surveyPreviewModal .table td {
     padding-left: 2px;
     padding-right: 5px;
     border: 1px solid #f00;
     margin-left: -25px;
     max-width: 215px; }
-    .contactDetailsModal .table td:first-of-type, .accountDatabaseCommentModal .table td:first-of-type {
+    .contactDetailsModal .table td:first-of-type, .accountDatabaseCommentModal .table td:first-of-type, .surveyPreviewModal .table td:first-of-type {
       padding-right: 15px;
       white-space: nowrap; }
-    .contactDetailsModal .table td.error-column, .accountDatabaseCommentModal .table td.error-column {
+    .contactDetailsModal .table td.error-column, .accountDatabaseCommentModal .table td.error-column, .surveyPreviewModal .table td.error-column {
       padding: 0;
       padding-top: 3px;
       padding-bottom: 3px;
       height: 17px; }
-  .contactDetailsModal input.form-control, .accountDatabaseCommentModal input.form-control {
+  .contactDetailsModal input.form-control, .accountDatabaseCommentModal input.form-control, .surveyPreviewModal input.form-control {
     border-width: 2px;
     height: 40px;
     border-radius: 0; }
-  .contactDetailsModal .modal-header, .accountDatabaseCommentModal .modal-header {
+  .contactDetailsModal .modal-header, .accountDatabaseCommentModal .modal-header, .surveyPreviewModal .modal-header {
     border-bottom: none;
     padding-bottom: 0; }
-  .contactDetailsModal .modal-body, .accountDatabaseCommentModal .modal-body {
+  .contactDetailsModal .modal-body, .accountDatabaseCommentModal .modal-body, .surveyPreviewModal .modal-body {
     padding-top: 0; }
-  .contactDetailsModal input[type="radio"]:checked + span:after, .accountDatabaseCommentModal input[type="radio"]:checked + span:after {
+  .contactDetailsModal input[type="radio"]:checked + span:after, .accountDatabaseCommentModal input[type="radio"]:checked + span:after, .surveyPreviewModal input[type="radio"]:checked + span:after {
     background: #E51D39 !important;
     border: 2px solid #E51D39 !important; }
-  .contactDetailsModal input[class=checkbox-login], .accountDatabaseCommentModal input[class=checkbox-login] {
+  .contactDetailsModal input[class=checkbox-login], .accountDatabaseCommentModal input[class=checkbox-login], .surveyPreviewModal input[class=checkbox-login] {
     display: none; }
-  .contactDetailsModal input[class=checkbox-login] + label, .accountDatabaseCommentModal input[class=checkbox-login] + label {
+  .contactDetailsModal input[class=checkbox-login] + label, .accountDatabaseCommentModal input[class=checkbox-login] + label, .surveyPreviewModal input[class=checkbox-login] + label {
     background: url("/icons/checkbox-out.jpeg") no-repeat;
     height: 22px;
     width: 22px;
@@ -182,7 +182,7 @@ img.ic-flipX {
     margin-left: 0;
     margin-bottom: -5px;
     background-size: contain; }
-  .contactDetailsModal input[class=checkbox-login]:checked + label, .accountDatabaseCommentModal input[class=checkbox-login]:checked + label {
+  .contactDetailsModal input[class=checkbox-login]:checked + label, .accountDatabaseCommentModal input[class=checkbox-login]:checked + label, .surveyPreviewModal input[class=checkbox-login]:checked + label {
     background: url("/icons/checkbox-in.jpeg") no-repeat;
     height: 22px;
     width: 22px;
@@ -193,8 +193,14 @@ img.ic-flipX {
   width: 400px;
   padding-top: 100px; }
 
+.surveyPreviewModal {
+  width: 800px;
+  padding-bottom: 100px;
+  padding-top: 100px; }
+
 @media (max-width: 768px) {
-  .accountDatabaseCommentModal {
+  .accountDatabaseCommentModal,
+  .surveyPreviewModal {
     width: auto; } }
 
 #nav-tabs-main {
@@ -279,9 +285,10 @@ input.custom-checkbox {
 
 .custom-checkbox-label, input:checked.custom-checkbox + .custom-checkbox-label, input:disabled.custom-checkbox + .custom-checkbox-label {
   background: url("/icons/login_checkbox.jpeg") no-repeat;
-  height: 30px;
-  width: 30px;
-  background-size: contain;
+  height: 22px;
+  width: 22px;
+  background-size: contain !important;
+  margin-bottom: 0px;
   cursor: pointer; }
 
 input:checked.custom-checkbox + .custom-checkbox-label {

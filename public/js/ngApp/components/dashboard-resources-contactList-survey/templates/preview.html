@@ -1,0 +1,54 @@
+<div ng-init='sc.createPages()'>
+  <div ng-if='sc.previewPagesInfo.current == 0'>
+    <h4><strong>{{ sc.manageTemp.survey.name || sc.manage.survey.name }}</strong></h4>
+    <h4><strong>Introduction</strong></h4>
+    {{ sc.manageTemp.survey.description || sc.manage.survey.description }}
+  </div>
+</div>
+
+<div class='form-group' ng-repeat='_object in sc.previewPages track by $index' ng-if='sc.previewPagesInfo.current == $index'>
+  <div ng-repeat='object in sc.previewPages[$index]' ng-init='question = sc.manage.survey.SurveyQuestions[object.order]'>
+    <div ng-if='question'>
+      <hr class='border-brown' />
+      <h4><strong>{{ question.name }}</strong></h4>
+      {{ question.question }}
+
+      <div ng-if='question.type == "radio"' ng-repeat='answer in question.answers'>
+        <label>
+          <input type='radio' name='radios_{{ question.order }}' id='previewRadio_{{ answer.order }}' ng-value='answer.order'>
+          {{ answer.name }}
+        </label>
+      </div>
+
+      <div ng-if='question.type == "textarea"' ng-repeat='answer in question.answers'>
+        <textarea class='form-control' placeholder='Answer' rows='5'></textarea>
+      </div>
+
+      <div ng-if='question.type == "checkbox"' ng-repeat='answer in question.answers'>
+        <input type='checkbox' class='custom-checkbox' ng-model='sc.checkboxPreview[question.order]'>
+        <label class='custom-checkbox-label' ng-click='sc.checkboxPreview[question.order] = !sc.checkboxPreview[question.order]'></label>
+        <span class='custom-checkbox-text'>{{ answer.name }}</span>
+
+        <div class='row' ng-if='answer.contact' ng-repeat='contact in answer.contact'>
+          <label class='col-xs-2 control-label' for='contact_{{ contact.name }}'>{{ contact.name }}</label>
+
+          <div class='col-xs-10'>
+            <input type='text' class='form-control' id='contact_{{ contact.name }}' placeholder='{{ contact.name }}'>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class='row'>
+  <div class='col-sm-3 text-left'>
+    <span ng-if='sc.previewPagesInfo.current > 0' ng-click='sc.previewPagesInfo.current = sc.previewPagesInfo.current - 1'>Back</span>
+  </div>
+  <div class='col-sm-6 text-center'>
+    {{ sc.previewPagesInfo.current + 1 }} of {{ sc.previewPagesInfo.total + 1 }}
+  </div>
+  <div class='col-sm-3 text-right'>
+    <span ng-if='sc.previewPagesInfo.current < sc.previewPagesInfo.total' ng-click='sc.previewPagesInfo.current = sc.previewPagesInfo.current + 1'>Next</span>
+  </div>
+</div>

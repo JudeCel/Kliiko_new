@@ -4,9 +4,10 @@ input.custom-checkbox {
 
 .custom-checkbox-label {
   background: url('/icons/login_checkbox.jpeg') no-repeat;
-  height: 30px;
-  width: 30px;
-  background-size: contain;
+  height: 22px;
+  width: 22px;
+  background-size: contain !important;
+  margin-bottom: 0px;
   cursor: pointer;
 }
 

@@ -57,7 +57,7 @@
     <div class='col-sm-12'>
       <hr class='border-brown' />
 
-      <button class='btn btn-addNewElement' ng-click='sc.changePage("preview")'>Preview</button>
+      <button class='btn btn-addNewElement' data-toggle='modal' data-target='#previewModal'>Preview</button>
       <button class='btn btn-addNewElement' ng-click='sc.finishManage()'>Finish</button>
 
       <span class='has-error'>
@@ -65,5 +65,6 @@
       </span>
     </div>
 
+    <ng-include src="'js/ngApp/components/dashboard-resources-contactList-survey/previewModal.html'"></ng-include>
   </div>
 </div>

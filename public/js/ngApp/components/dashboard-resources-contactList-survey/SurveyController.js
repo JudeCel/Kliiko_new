@@ -30,6 +30,7 @@
     vm.defaultArray = defaultArray;
     vm.changePage = changePage;
     vm.addContactDetail = addContactDetail;
+    vm.createPages = createPages;
 
     vm.answerSortOptions = {
       onUpdate: function(evt) {
@@ -482,6 +483,25 @@
           messenger.ok(res.message || 'Survey copied successfully');
         }
       });
+    };
+
+    function createPages() {
+      var page = 0, perPage = 3;
+      vm.previewPages = {};
+      vm.previewPagesInfo = { current: 0 };
+      for(var i in vm.defaultQuestions) {
+        var num = parseInt(i) + 1;
+        if(!vm.previewPages[page]) {
+          vm.previewPages[page] = [];
+        }
+
+        vm.previewPages[page].push(vm.defaultQuestions[i]);
+        if((num % perPage) == 0) {
+          page++;
+          perPage = (page < 2) ? 3 : 100;
+        }
+      }
+      vm.previewPagesInfo.total = Object.keys(vm.previewPages).length - 1;
     };
   };
 })();
