@@ -6,7 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
     accountId: { type: DataTypes.INTEGER, allowNull: false },
     name: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
     description: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
-    closed: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    closed: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
     confirmedAt: { type: DataTypes.DATE, allowNull: true, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
     url: { type: DataTypes.STRING, allowNull: true }
   }, {

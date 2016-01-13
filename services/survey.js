@@ -32,6 +32,7 @@ const returnParamsQuestions = [
   'id',
   'surveyId',
   'name',
+  'type',
   'question',
   'order',
   'answers'
@@ -92,6 +93,30 @@ function createSurveyWithQuestions(params) {
     survey.update({ url: validUrl(survey) }).then(function(survey) {
       deferred.resolve(survey);
     });
+  }).catch(Survey.sequelize.ValidationError, function(error) {
+    deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+};
+
+// Untested
+function changeStatus(params, user) {
+  let deferred = q.defer();
+
+  Survey.update({ closed: params.closed }, {
+    where: { id: params.id, accountId: user.accountOwnerId },
+    returning: true
+  }).then(function(result) {
+    if(result[0] == 0) {
+      deferred.reject('Survey not found');
+    }
+    else {
+      let survey = result[1][0];
+      deferred.resolve(survey);
+    }
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
   }).catch(function(error) {
@@ -171,10 +196,10 @@ function copySurvey(params) {
 
   Survey.find({
     where: { id: params.id },
-    attributes: ['accountId', 'name'],
+    attributes: ['accountId', 'name', 'description'],
     include: [{
       model: SurveyQuestion,
-      attributes: ['name', 'question', 'order', 'answers']
+      attributes: ['name', 'question', 'order', 'answers', 'type']
     }]
   }).then(function(survey) {
     if(survey) {
@@ -265,6 +290,7 @@ module.exports = {
   findSurvey: findSurvey,
   findAllSurveys: findAllSurveys,
   createSurveyWithQuestions: createSurveyWithQuestions,
+  changeStatus: changeStatus,
   updateSurvey: updateSurvey,
   removeSurvey: removeSurvey,
   copySurvey: copySurvey

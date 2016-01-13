@@ -210,7 +210,7 @@
     };
 
     function changeStatus(survey) {
-      surveyServices.updateSurvey({ id: survey.id, closed: !survey.closed }).then(function(res) {
+      surveyServices.changeStatus({ id: survey.id, closed: !survey.closed }).then(function(res) {
         dbg.log2('#SurveyController > changeStatus > res ', res);
         if(res.error) {
           messenger.error(res.error);
@@ -261,6 +261,19 @@
         else {
           changePage('index');
           messenger.ok(res.data.message || 'Successfully updated survey');
+        }
+      });
+    };
+
+    function copySurvey(survey) {
+      surveyServices.copySurvey({ id: survey.id }).then(function(res) {
+        dbg.log2('#SurveyController > copySurvey > res ', res);
+        if(res.error) {
+          messenger.error(res.error);
+        }
+        else {
+          // changePage('index');
+          messenger.ok(res.message || 'Survey copied successfully');
         }
       });
     };
@@ -351,7 +364,7 @@
             sq.errors.answers = {};
             for(var key in sq.answers) {
               var answer = sq.answers[key];
-              if(sq.type == 'radio' && answer.name.length == 0 || answer.name.length > 20) {
+              if((sq.type == 'radio' || sq.type == 'checkbox') && (answer.name.length == 0 || answer.name.length > 20)) {
                 sq.errors.answers[key] = 'Too short/long';
               }
             };
@@ -470,19 +483,6 @@
     function addContactDetail(cd, order, sq) {
       cd.disabled = !cd.disabled;
       changeCreateObject(order, false, sq);
-    };
-
-    function copySurvey(survey) {
-      surveyServices.copySurvey({ id: survey.id }).then(function(res) {
-        dbg.log2('#SurveyController > copySurvey > res ', res);
-        if(res.error) {
-          messenger.error(res.error);
-        }
-        else {
-          // changePage('index');
-          messenger.ok(res.message || 'Survey copied successfully');
-        }
-      });
     };
 
     function createPages() {

@@ -31,6 +31,13 @@ function update(req, res, next) {
   );
 };
 
+function status(req, res, next) {
+  surveyService.changeStatus(req.body, req.user).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+};
+
 function copy(req, res, next) {
   surveyService.copySurvey(req.body).then(
     getResponses(res).onSuccess,
@@ -54,5 +61,6 @@ module.exports = {
   remove: remove,
   create: create,
   update: update,
+  status: status,
   copy: copy
 };
