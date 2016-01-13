@@ -42,7 +42,13 @@ const returnParamsQuestions = [
 function findSurvey(id) {
   let deferred = q.defer();
 
-  Survey.find({ where: { id: id } }).then(function(survey) {
+  Survey.find({
+    where: { id: id },
+    include: [ SurveyQuestion ],
+    order: [
+      [SurveyQuestion, 'order', 'ASC']
+    ]
+  }).then(function(survey) {
     if(survey) {
       deferred.resolve(survey);
     }
@@ -102,7 +108,6 @@ function createSurveyWithQuestions(params) {
   return deferred.promise;
 };
 
-// Untested
 function changeStatus(params, user) {
   let deferred = q.defer();
 
@@ -126,7 +131,6 @@ function changeStatus(params, user) {
   return deferred.promise;
 };
 
-// Needs updated test
 function updateSurvey(params, user) {
   let deferred = q.defer();
   let validParams = validateParams(params, validManageParams);
@@ -190,7 +194,6 @@ function removeSurvey(id, user) {
   return deferred.promise;
 };
 
-// Untested
 function copySurvey(params) {
   let deferred = q.defer();
 
