@@ -87,4 +87,35 @@
 	  </div> 
 	</div>
 
+
+
+    <!-- plansModal -->
+    <div class='modal fade' id='uploadTST' role='dialog'>
+        <div class='modal-dialog changePasswordModal' style="width: 800px">
+            <div class='modal-content border-green border-radius-none'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                    <h1 class='modal-title text-center'>Learn More about the {{up.currentPlan.name}}</h1>
+                </div>
+                <div class='modal-body'>
+
+                    <div>
+                        <div ngf-drop ngf-select ng-model="fileTst" ng-change="uploadTst( 'profile')" class="drop-box"
+                             ngf-drag-over-class="'dragover'"  accept="image/*"
+                             ngf-pattern="'image/*'">Drop images here or click to upload</div>
+                        <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
+                    </div>
+
+
+
+                </div>
+                <div class='modal-footer'>
+                    <div type='button' class='pull-left btn-dashboard-plans go-back-btn' data-dismiss='modal'>Go
+                        Back
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>

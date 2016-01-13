@@ -5,10 +5,19 @@
     module('KliikoApp').
     controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', '$scope', '$rootScope', '$filter', 'angularConfirm', 'messenger'];
-  function GalleryController(dbg, GalleryServices, $modal, $scope, $rootScope, $filter, angularConfirm, messenger){
+  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', '$scope', 'domServices', '$ocLazyLoad','$injector', 'angularConfirm', 'messenger'];
+  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, $ocLazyLoad,$injector,  angularConfirm, messenger){
     dbg.log2('#GalleryController  started');
     var vm = this;
+
+
+    $ocLazyLoad.load(['/js/vendors/ng-file-upload/ng-file-upload.js']).then(function() {
+      var Upload = $injector.get('Upload');
+
+    });
+    $scope.uploadTst = function() {
+      dbg.yell($scope.fileTst)
+    }
 
     initList();
 
@@ -31,16 +40,17 @@
     }
 
     $scope.uploadResourceForm = function(uploadType) {
-      $scope.modalInstance = $modal.open({
-        templateUrl: 'js/ngApp/components/dashboard-resources-gallery/modal.html',
-        windowTemplateUrl: 'js/ngApp/components/dashboard-resources-gallery/window.html',
-        controller: UploadResourceModalController,
-        resolve: {
-          data: function() {
-            return { uploadType: uploadType };
-          }
-        }
-      });
+      domServices.modal('uploadTST')
+      //$scope.modalInstance = $modal.open({
+      //  templateUrl: 'js/ngApp/components/dashboard-resources-gallery/modal.html',
+      //  windowTemplateUrl: 'js/ngApp/components/dashboard-resources-gallery/window.html',
+      //  controller: UploadResourceModalController,
+      //  resolve: {
+      //    data: function() {
+      //      return { uploadType: uploadType };
+      //    }
+      //  }
+      //});
     };
   }
 
@@ -57,10 +67,7 @@
     $scope.errors = {};
     $scope.sendingData = false;
 
-    // $ocLazyLoad.load(['/js/vendors/ng-file-upload/ng-file-upload.js']).then(function() {
-    //    Upload = $injector.get('Upload');
-       
-    //  });
+
 
     $scope.fileUpload = function(file){
       var file = $scope.resource.file;
