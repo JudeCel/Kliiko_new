@@ -11,10 +11,6 @@
     var vm = this;
 
 
-    $ocLazyLoad.load(['/js/vendors/ng-file-upload/ng-file-upload.js']).then(function() {
-      var Upload = $injector.get('Upload');
-
-    });
     $scope.uploadTst = function() {
       dbg.yell($scope.fileTst)
     }
