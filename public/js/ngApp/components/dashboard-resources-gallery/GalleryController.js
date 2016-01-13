@@ -10,7 +10,6 @@
     dbg.log2('#GalleryController  started');
     var vm = this;
 
-
     $scope.uploadTst = function() {
       dbg.yell($scope.fileTst)
     }
@@ -36,6 +35,9 @@
     }
 
     $scope.uploadResourceForm = function(uploadType) {
+      $scope.uploadType = uploadType;
+      $scope.uploadTypeForTitle = uploadTypeForTitle(uploadType);
+
       domServices.modal('uploadTST')
       //$scope.modalInstance = $modal.open({
       //  templateUrl: 'js/ngApp/components/dashboard-resources-gallery/modal.html',
@@ -48,68 +50,24 @@
       //  }
       //});
     };
-  }
-
-  angular.module('KliikoApp').controller('UploadResourceModalController', UploadResourceModalController);
-  UploadResourceModalController.$inject = ['dbg', '$scope', '$uibModalInstance', '$rootScope', 'data', '$ocLazyLoad', '$injector'];
-
-  function UploadResourceModalController(dbg, $scope, $uibModalInstance, $rootScope, data, $ocLazyLoad, $injector) {
-    dbg.log2('#UploadResourceModalController started');
-
-    $scope.uploadType = data.uploadType;
-    $scope.resource = {uploadType: $scope.uploadType};
-
-    $scope.uploadTypeForTitle = uploadTypeForTitle();
-    $scope.errors = {};
-    $scope.sendingData = false;
-
-
-
-    $scope.fileUpload = function(file){
-      var file = $scope.resource.file;
-      console.log($scope.resource.file)
-      console.log(file)
-
-    }
 
     $scope.submitForm = function() {
-      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-      console.log($scope.resource);
-      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-      // if($scope.sendingData) return;
+      $scope.params = {uploadType: $scope.uploadType, file: $scope.fileTst}
+      dbg.yell($scope.params)
 
-      // var params = { accountId: $scope.accountId, userId: $scope.userId, comment: $scope.comment };
-      // $scope.sendingData = true;
-      // dbg.log2('#UploadResourceModalController > submitForm', params);
-
-      // AccountDatabaseServices.updateAccountUser(params).then(function(res) {
-      //   $scope.sendingData = false;
-      //   if(res.error) {
-      //     $scope.errors = res.error;
-      //   }
-      //   else {
-      //     $rootScope.changedUserComment = { account: res.account, message: res.message };
-      //     $uibModalInstance.dismiss('cancel');
-      //   }
-      // });
     };
 
-    function uploadTypeForTitle() {
-      if($scope.uploadType === "brandLogo"){
+    function uploadTypeForTitle(uploadType) {
+      if(uploadType === "brandLogo"){
         return "brand logo";
       }
 
-      if($scope.uploadType === "youtubeUrl"){
+      if(uploadType === "youtubeUrl"){
         return "youtube";
       }
 
-      return $scope.uploadType;
+      return uploadType;
     }
-
-    $scope.closeModal = function() {
-      $scope.errors = {};
-      $uibModalInstance.dismiss('cancel');
-    };
-  };
+  }
 
 })();
