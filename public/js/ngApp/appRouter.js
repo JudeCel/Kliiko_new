@@ -177,7 +177,10 @@
         },
         resolve: {
           loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
-            return $ocLazyLoad.load(['/js/ngApp/components/dashboard-resources-topics/TopicsController.js']);
+            return $ocLazyLoad.load([
+              '/js/ngApp/components/dashboard-resources-topics/TopicsController.js',
+              '/js/ngApp/components/dashboard-resources-topics/topicsServices.js'
+            ]);
           }]
         },
         onEnter: ['dbg', function (dbg) {
