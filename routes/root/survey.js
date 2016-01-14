@@ -5,7 +5,7 @@ function views_path(action) {
 };
 
 function index(req, res, next) {
-  res.render(views_path('index'), { title: 'Survey' });
+  res.render(views_path('index'), { title: 'Survey', surveyId: req.params.id });
 };
 
 module.exports = {

@@ -1,52 +1,54 @@
-<!-- <div ng-if='sc.previewPagesInfo.current == 0'>
-  <h4><strong>{{ sc.manageTemp.survey.name || sc.manage.survey.name }}</strong></h4>
-  <h4><strong>Introduction</strong></h4>
-  {{ sc.manageTemp.survey.description || sc.manage.survey.description }}
-</div> -->
+<p class='lead survey-title'>{{ sc.manageTemp.survey.name || sc.manage.survey.name }}
+  <span class='help-block'>
+    <small>{{ sc.manageTemp.survey.description || sc.manage.survey.description }}</small>
+  </span>
+</p>
+<hr />
 
-<div class='form-group' ng-repeat='_object in sc.previewPages track by $index' ng-if='sc.previewPagesInfo.current == $index'>
-  <div ng-repeat='object in sc.previewPages[$index]' ng-init='question = sc.manage.survey.SurveyQuestions[object.order]'>
-    <div ng-if='question'>
-      <hr class='border-brown' />
-      <h4><strong>{{ question.name }}</strong></h4>
-      {{ question.question }}
+<div ng-repeat='question in sc.listQuestions() track by question.order' ng-init='sq = sc.surveySelect.SurveyQuestions[question.id] = {}'>
+  <div class='panel no-border-radius' ng-class='sc.pickValidClass(sq.error, "panel")'>
+    <div class='panel-heading no-border-radius'>
+      <h3 class='panel-title'><small>{{ question.name }}</small><span class='panel-title help-block'>{{ question.question }}</span></h3>
+    </div>
+
+    <div class='panel-body no-border-radius'>
+      <span class='has-error'>
+        <span class='help-block'>{{ sq.error }}</span>
+      </span>
 
       <div ng-if='question.type == "radio"' ng-repeat='answer in question.answers'>
-        <label>
-          <input type='radio' name='radios_{{ question.order }}' id='previewRadio_{{ answer.order }}' ng-value='answer.order'>
-          {{ answer.name }}
-        </label>
+        <div class='radio radio-sm survey-input' ng-class='sc.pickValidClass(sq.error, "radio")'>
+          <input type='radio' name='radio_{{ question.order }}' id='radio_{{ question.order }}_{{ answer.order }}'
+          ng-value='answer.order' ng-model='sq.answer' ng-change='sc.onChange(sq)'>
+
+          <label for='radio_{{ question.order }}_{{ answer.order }}'>{{ answer.name }}</label>
+        </div>
       </div>
 
       <div ng-if='question.type == "textarea"' ng-repeat='answer in question.answers'>
-        <textarea class='form-control' placeholder='Answer' rows='5'></textarea>
+        <textarea class='form-control no-border-radius' ng-class='sc.pickValidClass(sq.error, "panel")' placeholder='Answer' rows='5'
+          ng-model='sq.answer' ng-change='sc.onChange(sq)'></textarea>
       </div>
 
       <div ng-if='question.type == "checkbox"' ng-repeat='answer in question.answers'>
-        <input type='checkbox' class='custom-checkbox' ng-model='sc.checkboxPreview[question.order]'>
-        <label class='custom-checkbox-label' ng-click='sc.checkboxPreview[question.order] = !sc.checkboxPreview[question.order]'></label>
-        <span class='custom-checkbox-text'>{{ answer.name }}</span>
+        <div class='form-group col-sm-12'>
+          <div class='col-sm-12 checkbox checkbox-sm survey-input' ng-class='sc.pickValidClass(sq.error, "checkbox")'>
+            <input class='styled' id='checkbox_{{ question.order }}_{{ answer.order }}' type='checkbox'
+              ng-model='sq.answer' ng-init='sq.answer = false' ng-change='sc.onChange(sq)'>
 
-        <div class='row' ng-if='answer.contact' ng-repeat='contact in answer.contact'>
-          <label class='col-xs-2 control-label' for='contact_{{ contact.name }}'>{{ contact.name }}</label>
+            <label for='checkbox_{{ question.order }}_{{ answer.order }}'>{{ answer.name }}</label>
+          </div>
+        </div>
+
+        <div class='form-group' ng-if='answer.contact' ng-repeat='contact in answer.contact'>
+          <label class='col-xs-2 control-label' for='contact_{{ contact.model }}'>{{ contact.name }}</label>
 
           <div class='col-xs-10'>
-            <input type='text' class='form-control' id='contact_{{ contact.name }}' placeholder='{{ contact.name }}'>
+            <input type='text' class='form-control panel-success no-border-radius' id='contact_{{ contact.model}}' placeholder='{{ contact.name }}'
+              ng-model='sq.contact[contact.model]' ng-disabled='!sq.answer'>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-
-<div class='row' ng-init='sc.createPages()'>
-  <div class='col-sm-3 text-left'>
-    <span ng-if='sc.previewPagesInfo.current > 0' ng-click='sc.previewPagesInfo.current = sc.previewPagesInfo.current - 1'>Back</span>
-  </div>
-  <div class='col-sm-6 text-center'>
-    {{ sc.previewPagesInfo.current + 1 }} of {{ sc.previewPagesInfo.total + 1 }}
-  </div>
-  <div class='col-sm-3 text-right'>
-    <span ng-if='sc.previewPagesInfo.current < sc.previewPagesInfo.total' ng-click='sc.previewPagesInfo.current = sc.previewPagesInfo.current + 1'>Next</span>
   </div>
 </div>

@@ -52,6 +52,13 @@ function copy(req, res, next) {
   );
 };
 
+function answer(req, res, next) {
+  surveyService.answerSurvey(req.body).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+};
+
 function getResponses(res) {
   return {
     onError: function(error) {
@@ -70,5 +77,6 @@ module.exports = {
   create: create,
   update: update,
   status: status,
-  copy: copy
+  copy: copy,
+  answer: answer
 };

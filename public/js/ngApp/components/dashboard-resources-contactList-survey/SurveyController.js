@@ -30,7 +30,8 @@
     vm.defaultArray = defaultArray;
     vm.changePage = changePage;
     vm.addContactDetail = addContactDetail;
-    vm.createPages = createPages;
+    vm.listQuestions = listQuestions;
+    vm.pickValidClass = pickValidClass;
 
     vm.answerSortOptions = {
       onUpdate: function(evt) {
@@ -42,63 +43,80 @@
 
     vm.contactDetails = [
       {
+        model: 'firstName',
         name: 'First Name',
         input: true
       },
       {
+        model: 'lastName',
         name: 'Last Name',
         input: true
       },
       {
+        model: 'gender',
         name: 'Gender',
         select: true,
         options: ['Male', 'Female']
       },
       {
+        model: 'age',
+        name: 'Age',
+        input: true
+      },
+      {
+        model: 'email',
         name: 'Email',
         input: true
       },
       {
+        model: 'mobile',
         name: 'Mobile',
         input: true
       },
       {
+        model: 'landlineNumber',
         name: 'Landline',
         input: true,
         canDisable: true,
         disabled: true
       },
       {
+        model: 'postalAddress',
         name: 'Postal address',
         input: true,
         canDisable: true,
         disabled: true
       },
       {
+        model: 'city',
         name: 'City',
         input: true,
         canDisable: true,
         disabled: true
       },
       {
+        model: 'state',
         name: 'State',
         input: true,
         canDisable: true,
         disabled: true
       },
       {
+        model: 'postcode',
         name: 'Postcode',
         input: true,
         canDisable: true,
         disabled: true
       },
       {
+        model: 'country',
         name: 'Country',
         input: true,
         canDisable: true,
         disabled: true
       },
       {
+        model: 'companyName',
         name: 'Company Name',
         input: true,
         canDisable: true,
@@ -485,23 +503,19 @@
       changeCreateObject(order, false, sq);
     };
 
-    function createPages() {
-      var page = 0, perPage = 3;
-      vm.previewPages = {};
-      vm.previewPagesInfo = { current: 0 };
-      for(var i in vm.defaultQuestions) {
-        var num = parseInt(i) + 1;
-        if(!vm.previewPages[page]) {
-          vm.previewPages[page] = [];
-        }
-
-        vm.previewPages[page].push(vm.defaultQuestions[i]);
-        if((num % perPage) == 0) {
-          page++;
-          perPage = (page < 2) ? 3 : 100;
+    function listQuestions() {
+      if(!vm.previewList) {
+        vm.previewList = [];
+        for(var i = 0; i < vm.manage.survey.SurveyQuestions.length; i++) {
+          vm.manage.survey.SurveyQuestions[i] && vm.previewList.push(vm.manage.survey.SurveyQuestions[i]);
         }
       }
-      vm.previewPagesInfo.total = Object.keys(vm.previewPages).length - 1;
+
+      return vm.previewList;
+    };
+
+    function pickValidClass(error, className) {
+      return className + (error ? '-danger' : '-success');
     };
   };
 })();

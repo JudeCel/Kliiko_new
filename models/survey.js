@@ -14,7 +14,7 @@ module.exports = (Sequelize, DataTypes) => {
     classMethods: {
       associate: function(models) {
         Survey.hasMany(models.SurveyQuestion, { onDelete: 'cascade', foreignKey: 'surveyId' });
-        Survey.hasMany(models.SurveyAnswer);
+        Survey.hasMany(models.SurveyAnswer, { onDelete: 'cascade', foreignKey: 'surveyId' });
         Survey.belongsTo(models.Account, { foreignKey: 'accountId' });
       }
     }

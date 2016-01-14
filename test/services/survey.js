@@ -2,6 +2,8 @@
 
 var models = require('./../../models');
 var Survey = models.Survey;
+var SurveyQuestion = models.SurveyQuestion;
+var SurveyAnswer = models.SurveyAnswer;
 
 var surveyServices = require('./../../services/survey');
 var userFixture = require('./../fixtures/user');
@@ -26,6 +28,15 @@ describe('SERVICE - Survey', function() {
     });
   });
 
+  function surveyAnswerParams(questions) {
+    let params = { SurveyQuestions: {} };
+    questions.forEach(function(question, index, array) {
+      params.SurveyQuestions[question.id] = { answer: index };
+    });
+
+    return params;
+  }
+
   function surveyParams() {
     return {
       name: 'Survey name',
@@ -36,7 +47,7 @@ describe('SERVICE - Survey', function() {
         surveyQuestionParams(1)
       ]
     };
-  }
+  };
 
   function surveyQuestionParams(random) {
     return {
@@ -63,7 +74,7 @@ describe('SERVICE - Survey', function() {
         }
       ]
     };
-  }
+  };
 
   describe('#createSurveyWithQuestions', function() {
     describe('happy path', function() {
@@ -406,6 +417,32 @@ describe('SERVICE - Survey', function() {
             Survey.count().then(function(c) {
               assert.equal(c, 1);
               done();
+            });
+          });
+        });
+      });
+    });
+  });
+
+  describe('#answerSurvey', function() {
+    describe('happy path', function() {
+      it('should succeed on answering questions', function (done) {
+        let params = surveyParams();
+
+        surveyServices.createSurveyWithQuestions(params).then(function(survey) {
+          SurveyQuestion.findAll().then(function(questions) {
+            let answerParams = surveyAnswerParams(questions);
+            answerParams.surveyId = survey.id;
+
+            surveyServices.answerSurvey(answerParams).then(function(result) {
+              assert.equal(result, 'Successfully completed survey!');
+
+              SurveyAnswer.count().then(function(c) {
+                assert.equal(c, 2);
+                done();
+              });
+            }, function(error) {
+              done(error);
             });
           });
         });

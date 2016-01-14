@@ -2,42 +2,83 @@
   'use strict';
 
   angular.module('KliikoApp.Root').controller('SurveyClientController', SurveyClientController);
-  SurveyClientController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$scope'];
+  SurveyClientController.$inject = ['dbg', 'surveyServices', 'messenger', '$routeParams'];
 
-  function SurveyClientController(dbg, surveyServices, angularConfirm, messenger, $scope) {
+  function SurveyClientController(dbg, surveyServices, messenger, $routeParams) {
     dbg.log2('#SurveyClientController started');
 
     var vm = this;
     vm.manage = { survey: { SurveyQuestions: [] } };
 
-    init();
+    vm.listQuestions = listQuestions;
+    vm.pickValidClass = pickValidClass;
+    vm.submitSurvey = submitSurvey;
+    vm.onChange = onChange;
+    vm.init = init;
 
-    function init() {
-      surveyServices.findSurvey({ id: 1 }).then(function(res) {
-        vm.manage.survey = res.data;
-        createPages();
-        dbg.log2('#SurveyClientController > findSurvey > res ', res.data);
+    function init(surveyId) {
+      surveyServices.findSurvey({ id: surveyId }).then(function(res) {
+        dbg.log2('#SurveyClientController > findSurvey > res ', res);
+        if(res.error) {
+          vm.message = res.error;
+        }
+        else {
+          vm.manage.survey = res.data;
+        }
       });
     };
 
-    function createPages() {
-      var page = 0, perPage = 3;
-      vm.previewPages = {};
-      vm.previewPagesInfo = { current: 0 };
-      for(var i in vm.manage.survey.SurveyQuestions) {
-        var num = parseInt(i) + 1;
-        if(!vm.previewPages[page]) {
-          vm.previewPages[page] = [];
-        }
+    function submitSurvey() {
+      if(validateAnswers()) {
+        vm.surveySelect.error = 'There are some unfilled questions.';
+      }
+      else {
+        delete vm.surveySelect.error;
+        vm.surveySelect.surveyId = vm.manage.survey.id;
 
-        vm.previewPages[page].push(vm.manage.survey.SurveyQuestions[num - 1]);
-        if((num % perPage) == 0) {
-          page++;
-          perPage = (page < 2) ? 3 : 100;
+        surveyServices.answerSurvey(vm.surveySelect).then(function(res) {
+          dbg.log2('#SurveyClientController > answerSurvey > res ', res);
+
+          if(res.error) {
+            messenger.error(res.error);
+          }
+          else {
+            vm.message = res.data;
+          }
+        });
+      }
+    }
+
+    function listQuestions() {
+      return vm.manage.survey.SurveyQuestions;
+    };
+
+    function validateAnswers() {
+      var questions = vm.surveySelect.SurveyQuestions;
+      var errors = 0;
+
+      for(var i in questions) {
+        var question = questions[i];
+        if(!question.hasOwnProperty("answer")) {
+          question.error = 'Please fill this answer!';
+          errors++;
+        }
+        else {
+          delete question.error;
         }
       }
 
-      vm.previewPagesInfo.total = Object.keys(vm.previewPages).length - 1;
+      return (errors > 0);
     };
+
+    function pickValidClass(error, className) {
+      return className + (error ? '-danger' : '-success');
+    };
+
+    function onChange(question) {
+      if(question.error) {
+        delete question.error;
+      }
+    }
   };
 })();

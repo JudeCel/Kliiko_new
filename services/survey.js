@@ -3,6 +3,7 @@
 var models = require('./../models');
 var Survey = models.Survey;
 var SurveyQuestion = models.SurveyQuestion;
+var SurveyAnswer = models.SurveyAnswer;
 
 var config = require('config');
 // var constants = require('../util/constants');
@@ -228,7 +229,37 @@ function copySurvey(params) {
   return deferred.promise;
 };
 
+function answerSurvey(params) {
+  let deferred = q.defer();
+  let validParams = validAnswerParams(params);
+
+  SurveyAnswer.bulkCreate(validParams).then(function() {
+    deferred.resolve('Successfully completed survey!');
+  }).catch(SurveyAnswer.sequelize.ValidationError, function(error) {
+    deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+};
+
 // Helpers
+function validAnswerParams(params) {
+  let questions = [];
+  for(let i in params.SurveyQuestions) {
+    let answer = params.SurveyQuestions[i].answer;
+    let question = { answer: {} };
+    question.surveyId = params.surveyId;
+    question.surveyQuestionId = parseInt(i);
+    question.answer.type = typeof answer;
+    question.answer.value = answer;
+    questions.push(question);
+  }
+
+  return questions;
+}
+
 function bulkUpdateQuestions(surveyId, questions, t) {
   let deferred = q.defer();
 
@@ -244,7 +275,7 @@ function bulkUpdateQuestions(surveyId, questions, t) {
         if(index == array.length - 1) {
           deferred.resolve(true);
         }
-      }).catch(Survey.sequelize.ValidationError, function(error) {
+      }).catch(SurveyQuestion.sequelize.ValidationError, function(error) {
         deferred.reject(prepareErrors(error));
       }).catch(function(error) {
         deferred.reject(error);
@@ -254,7 +285,7 @@ function bulkUpdateQuestions(surveyId, questions, t) {
       question.surveyId = surveyId;
       SurveyQuestion.create(question).then(function() {
         deferred.resolve(true);
-      }).catch(Survey.sequelize.ValidationError, function(error) {
+      }).catch(SurveyQuestion.sequelize.ValidationError, function(error) {
         deferred.reject(prepareErrors(error));
       }).catch(function(error) {
         deferred.reject(error);
@@ -274,7 +305,7 @@ function getIds(questions) {
 };
 
 function validUrl(survey) {
-  return 'http://' + config.get('server')['domain'] + ':' + config.get('server')['port'] + '/resources/survey/' + survey.id;
+  return 'http://' + config.get('server')['domain'] + ':' + config.get('server')['port'] + '/survey/' + survey.id;
 };
 
 function validateParams(params, attributes) {
@@ -300,5 +331,6 @@ module.exports = {
   changeStatus: changeStatus,
   updateSurvey: updateSurvey,
   removeSurvey: removeSurvey,
-  copySurvey: copySurvey
+  copySurvey: copySurvey,
+  answerSurvey: answerSurvey
 };
