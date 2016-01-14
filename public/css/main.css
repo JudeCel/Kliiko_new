@@ -124,10 +124,10 @@ label.radio-button input[type="radio"]:checked + span:after {
   .btn-standart.btn-blue {
     color: #4DC0E9;
     border-color: #4DC0E9 !important; }
-  .btn-standart.btn-blue {
+  .btn-standart.btn-green {
     color: #2F9F69;
     border-color: #2F9F69 !important; }
-    .btn-standart.btn-blue:hover {
+    .btn-standart.btn-green:hover {
       color: white;
       border-color: #2F9F69 !important;
       background: #2F9F69; }
@@ -1260,6 +1260,9 @@ input[class=checkbox-blue]:checked + label {
 .banner-link-input {
   border-color: #4DC0E9 !important; }
 
+#resources-topics #no-topics-in-list {
+  text-align: center; }
+
 #resources-topics .topic-list-item {
   position: relative; }
 
@@ -1286,5 +1289,20 @@ input[class=checkbox-blue]:checked + label {
   top: 10px;
   right: 2%; }
 
+#resources-topics .panel-body {
+  background: white;
+  border: 3px solid #ddd;
+  border-top: none; }
+  #resources-topics .panel-body div.row {
+    padding: 10px;
+    cursor: pointer; }
+    #resources-topics .panel-body div.row:hover {
+      background: rgba(174, 239, 137, 0.5); }
+  #resources-topics .panel-body:hover {
+    border-color: rgba(174, 239, 137, 0.5); }
+
 .margin-top-2rem {
   margin-top: 2rem; }
+
+.margin-top-3rem {
+  margin-top: 3rem; }

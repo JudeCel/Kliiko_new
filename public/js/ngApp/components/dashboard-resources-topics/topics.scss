@@ -1,5 +1,9 @@
 #resources-topics {
 
+
+  #no-topics-in-list { text-align: center; }
+
+
   .topic-list-item { position: relative; }
 
   .panel {
@@ -26,5 +30,23 @@
     position: absolute;
     top: 10px;
     right: 2%;
+  }
+
+  .panel-body {
+    background: white;
+    border: 3px solid $lightGray;
+    border-top: none;
+
+    div.row {
+      padding: 10px;
+      cursor: pointer;
+
+      &:hover {
+        background: $lightGreen;
+      }
+    }
+
+    &:hover { border-color: $lightGreen }
+
   }
 }

@@ -1,6 +1,6 @@
 <section id='resources-topics' ng-controller='TopicsController as topics'>
     <div class='col-md-12'>
-        <div class='dashboard-container'>
+        <div class='dashboard-container margin-top-3rem'>
             <div class='row'>
                 <div class='col-md-3'></div>
                 <div class='col-md-6'>
@@ -8,15 +8,27 @@
                     <h4 class='text-center has-error text-red-dark'>{{ topics.error }}</h4>
                     <h4 class='text-center'>{{ topics.message }}</h4>
                 </div>
-                <div class='col-md-3 text-right'>
-                    <a class='btn btn-addNewElement' href="/dashboard/accountDatabase/exportCsv">Export to CSV</a>
+                <div class='col-md-3 text-right' ng-hide="!topics.list.length">
+                    <div class="btn-standart btn-green" ng-click="topics.createNew()">
+                        Create New Topic &nbsp;<img src="icons/add_new_list_green.png" alt="">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class='col-md-12 fixed-bottom-margin'>
+    <div class='col-md-12 fixed-bottom-margin margin-top-2rem'>
         <div class='dashboard-container'>
+
+            <div id="no-topics-in-list" class="row" ng-show="!topics.list.length">
+                <div class="col-md-12"><h4>You don't have any topics. Add one.</h4></div>
+                <div class="col-md-12 margin-top-2rem">
+                    <div class="btn-standart btn-green" ng-click="topics.createNew()">
+                        Create New Topic &nbsp;<img src="icons/add_new_list_green.png" alt="">
+                    </div>
+                </div>
+
+            </div>
 
             <div id="topics-list">
 
@@ -29,9 +41,9 @@
                                     <!--<img class="pull-right ic" src="/icons/dashboardElement_remove.png" alt=""> <img class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="">-->
                                 </div>
                             </uib-accordion-heading>
-                            <p ng-repeat="s in t.sessions">
-                                {{ s.name }}
-                            </p>
+                            <div ng-repeat="s in t.sessions" class="row">
+                                <div class="col-md-10">{{ s.name }}</div> <div class="col-md-2">{{s.status}}</div>
+                            </div>
                         </uib-accordion-group>
                     </uib-accordion>
                     <div class="control-block">
@@ -45,4 +57,37 @@
 
         </div>
     </div>
+
+
+
+
+    <!--------- Modals --------->
+
+    <section>
+        <!-- plansModal -->
+        <div class='modal fade' id='createNewTopic' role='dialog'>
+            <div class='modal-dialog changePasswordModal' style="width: 800px">
+                <div class='modal-content border-green border-radius-none'>
+                    <div class='modal-header'>
+                        <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                        <h1 class='modal-title text-center'>Create New Topic</h1>
+                    </div>
+                    <div class='modal-body'>
+
+                        here is content for new topic creation
+                    </div>
+                    <div class='modal-footer'>
+                        <div type='button' class='pull-left btn-dashboard-plans go-back-btn' data-dismiss='modal'>Go
+                            Back
+                        </div>
+                        <div type='submit' class='pull-right btn-dashboard-plans i-want-btn'
+                             ng-click--="topic.upgradeToPlan(up.currentPlan.id)">Ok
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
 </section>
