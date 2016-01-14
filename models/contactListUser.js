@@ -6,7 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
     userId: { type: DataTypes.INTEGER, allowNull: false },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
     contactListId: {type: DataTypes.INTEGER, allowNull: false},
-    customFields: { type: DataTypes.JSONB, allowNull: false, defaultValue: {} }
+    customFields: { type: DataTypes.JSONB, allowNull: false, defaultValue: {} } // {name: value}
   },{ indexes: [
         { unique: true,
           fields: ['userId', 'contactListId', 'accountId']
@@ -15,6 +15,7 @@ module.exports = (Sequelize, DataTypes) => {
       classMethods: {
         associate: function(models) {
           ContactListUser.belongsTo(models.User, {foreignKey: 'userId'});
+          ContactListUser.belongsTo(models.Account, {foreignKey: 'accountId'});
           ContactListUser.belongsTo(models.ContactListUser, {foreignKey: 'contactListId'});
         }
       }
