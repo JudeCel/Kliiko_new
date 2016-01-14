@@ -19,5 +19,6 @@ module.exports = {
     'companyName'
   ],
   promotionCodeTypes: ['percentage', 'value'],
-  dateFormat: 'MM-dd-yyyy'
+  dateFormat: 'MM-dd-yyyy',
+  contactListDefaultFields: ["firstName", "lastName", "gender","email"]
 }

@@ -1,5 +1,6 @@
 "use strict";
 var Account  = require('./../models').Account;
+var contactListService  = require('./contactList');
 var _ = require('lodash');
 
 function validate(params, callback) {
@@ -11,7 +12,11 @@ function validate(params, callback) {
 
 function create(params, user, callback) {
   Account.create({name: params.accountName}).then(function(result) {
-    callback(null, params, result, user);
+    contactListService.createDefaultLists(result.id).then(function(_result) {
+      callback(null, params, result, user);
+    }, function(error) {
+      callback(prepareErrors(error));
+    });
   }).catch(Account.sequelize.ValidationError, function(err) {
     callback(prepareErrors(err));
   }).catch(function(err) {

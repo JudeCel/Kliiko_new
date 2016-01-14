@@ -4,9 +4,14 @@ module.exports = (Sequelize, DataTypes) => {
   var ContactListUser = Sequelize.define('ContactListUser', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     userId: { type: DataTypes.INTEGER, allowNull: false },
+    accountId: { type: DataTypes.INTEGER, allowNull: false },
     contactListId: {type: DataTypes.INTEGER, allowNull: false},
     customFields: { type: DataTypes.JSONB, allowNull: false, defaultValue: {} }
-  },{
+  },{ indexes: [
+        { unique: true,
+          fields: ['userId', 'contactListId', 'accountId']
+        }
+      ],
       classMethods: {
         associate: function(models) {
           ContactListUser.belongsTo(models.User, {foreignKey: 'userId'});
