@@ -5,7 +5,7 @@
 
   function GalleryServices(globalSettings, $q, $resource, dbg) {
     var galleryRestApi = {
-      gallery: $resource(globalSettings.restUrl +'/gallery'),
+      gallery: $resource(globalSettings.restUrl +'/gallery', {}, { post: { method: 'POST' } }),
       download: $resource(globalSettings.restUrl +'/gallery/download')
     };
 
@@ -14,6 +14,7 @@
     upServices.getResources = getResources;
     upServices.downloadResources = downloadResources;
     upServices.deleteResources = deleteResources;
+    upServices.uploadResource = uploadResource;
     return upServices;
 
     function getResources() {
@@ -45,6 +46,19 @@
 
       dbg.log2('#GalleryServices > deleteGalleryResources > make rest call');
       galleryRestApi.gallery.delete({}, function(res) {
+        dbg.log2('#GalleryServices > deleteGalleryResources > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    };
+
+    function uploadResource(params) {
+      var deferred = $q.defer();
+      // console.log("------------------------   ngService    ----------------------------");
+      // console.log(params);
+      dbg.log2('#GalleryServices > deleteGalleryResources > make rest call');
+      galleryRestApi.gallery.save(params, function(res) {
         dbg.log2('#GalleryServices > deleteGalleryResources > rest call responds');
         deferred.resolve(res);
       });

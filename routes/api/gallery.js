@@ -4,9 +4,19 @@ var galleryService = require('./../../services/account/gallery');
 
 module.exports = {
   getResources: getResources,
+  postResources: postResources,
   downloadResources: downloadResources,
   deleteResources: deleteResources
 };
+
+function postResources(req, res, next) {
+  console.log("------------------------   postResources API   ----------------------------");
+  console.log(req.body);
+
+  // galleryService.uploadResource(function(result) {
+  //   res.send(result);
+  // });
+}
 
 function getResources(req, res, next) {
   galleryService.getResources(function(result) {

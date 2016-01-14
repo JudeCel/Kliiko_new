@@ -99,11 +99,12 @@
         </div>
         <div class='modal-body'>
 
-          <div ngf-drop ngf-select ng-model="fileTst" ng-change="uploadTst( 'profile')" class="drop-box"
+          <div ngf-drop ngf-select ng-model="fileTst" ng-change="uploadTst('profile')" class="drop-box"
                ngf-drag-over-class="'dragover'"  accept="image/*"
                ngf-pattern="'image/*'">Drop images here or click to upload</div>
           <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
 
+          a {{ fileTst.name }} b
         </div>
         <div class='modal-footer'>
           <div type='button' class='pull-left btn-dashboard-plans go-back-btn' data-dismiss='modal'>Cancel</div>

@@ -12,6 +12,7 @@
 
     $scope.uploadTst = function() {
       dbg.yell($scope.fileTst)
+      
     }
 
     initList();
@@ -39,22 +40,16 @@
       $scope.uploadTypeForTitle = uploadTypeForTitle(uploadType);
 
       domServices.modal('uploadTST')
-      //$scope.modalInstance = $modal.open({
-      //  templateUrl: 'js/ngApp/components/dashboard-resources-gallery/modal.html',
-      //  windowTemplateUrl: 'js/ngApp/components/dashboard-resources-gallery/window.html',
-      //  controller: UploadResourceModalController,
-      //  resolve: {
-      //    data: function() {
-      //      return { uploadType: uploadType };
-      //    }
-      //  }
-      //});
     };
 
     $scope.submitForm = function() {
+      dbg.yell($scope.fileTst)
+
       $scope.params = {uploadType: $scope.uploadType, file: $scope.fileTst}
       dbg.yell($scope.params)
+      GalleryServices.uploadResource($scope.params).then(function(res) {
 
+      });
     };
 
     function uploadTypeForTitle(uploadType) {
