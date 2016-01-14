@@ -25,6 +25,10 @@
     color: #2F9F69;
     border-color: #2F9F69;
     background: white; }
+    .btn-dashboard-menu.btn-green:hover, .btn-green.btn-addNewElement:hover, .btn-dashboard-menu.btn-green.active, .btn-green.active.btn-addNewElement {
+      color: white;
+      border-color: #2F9F69;
+      background: #2F9F69; }
   .btn-dashboard-menu.btn-short, .btn-short.btn-addNewElement {
     min-width: 0 !important;
     max-width: 100px; }
@@ -120,6 +124,13 @@ label.radio-button input[type="radio"]:checked + span:after {
   .btn-standart.btn-blue {
     color: #4DC0E9;
     border-color: #4DC0E9 !important; }
+  .btn-standart.btn-blue {
+    color: #2F9F69;
+    border-color: #2F9F69 !important; }
+    .btn-standart.btn-blue:hover {
+      color: white;
+      border-color: #2F9F69 !important;
+      background: #2F9F69; }
   .btn-standart.btn-text-middle {
     font-size: 80%; }
   .btn-standart.btn-x {

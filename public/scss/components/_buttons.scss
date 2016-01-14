@@ -17,6 +17,12 @@
     color: $green;
     border-color: $green;
     background: white;
+
+    &:hover, &.active {
+      color: white;
+      border-color: $green;
+      background: $green;
+    }
   }
 
   &.btn-short {
@@ -167,6 +173,17 @@ label.radio-button {
   &.btn-blue {
     color: $blue;
     border-color: $blue !important;
+  }
+
+  &.btn-blue {
+    color: $green;
+    border-color: $green !important;
+
+    &:hover {
+      color: white;
+      border-color: $green !important;
+      background: $green;
+    }
   }
 
   &.btn-text-middle {
