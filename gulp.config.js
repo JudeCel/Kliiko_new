@@ -10,6 +10,8 @@ module.exports = function () {
         config: 'config/**/*.*',
         dns: 'insider.focus.com:',
         migrations: 'migrations/**/*.*',
+        middleware: 'middleware/**/*.*',
+        services: 'services/**/*.*',
         models: "models/**/*.*",
         repositories: 'repositories/**/*.*',
         routes: 'routes/**/*.*',
@@ -21,6 +23,7 @@ module.exports = function () {
         fonts: './bower_components/font-awesome/fonts/**',
         images: client + 'images/**/*.*',
         htmlTemplates: clientApp + '**/*.html',
+        jsFiles: clientApp + '**/*.js',
         index: views + 'layout.ejs' ,
         clientApp: [clientApp + 'scss/**/*.scss', clientApp + 'js/ngApp/**/*.scss'],
         layout: views,
@@ -52,4 +55,3 @@ module.exports = function () {
 
     return config;
 };
-
