@@ -1260,5 +1260,31 @@ input[class=checkbox-blue]:checked + label {
 .banner-link-input {
   border-color: #4DC0E9 !important; }
 
+#resources-topics .topic-list-item {
+  position: relative; }
+
+#resources-topics .panel {
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  background: #ddd; }
+  #resources-topics .panel:hover {
+    background: rgba(174, 239, 137, 0.5); }
+
+#resources-topics .panel-label {
+  padding: 3px; }
+
+#resources-topics .ic {
+  margin: 3px;
+  cursor: pointer; }
+
+#resources-topics .panel-heading {
+  background: none; }
+
+#resources-topics .control-block {
+  position: absolute;
+  top: 10px;
+  right: 2%; }
+
 .margin-top-2rem {
   margin-top: 2rem; }
