@@ -55,11 +55,10 @@
 
     function uploadResource(params) {
       var deferred = $q.defer();
-      // console.log("------------------------   ngService    ----------------------------");
-      // console.log(params);
-      dbg.log2('#GalleryServices > deleteGalleryResources > make rest call');
+      
+      dbg.log2('#GalleryServices > uploadGalleryResources > make rest call');
       galleryRestApi.gallery.save(params, function(res) {
-        dbg.log2('#GalleryServices > deleteGalleryResources > rest call responds');
+        dbg.log2('#GalleryServices > uploadGalleryResources > rest call responds');
         deferred.resolve(res);
       });
 

@@ -10,11 +10,13 @@ var _ = require('lodash');
 
 var account = require('./../../models').Account;
 var gallery = require('./../../models').Resource;
+var updateTmpTitle = require('../../chatRoom/handlers/updateTmpTitle.js');
 
 module.exports = {
   getResources: getResources,
   downloadResources: downloadResources,
-  deleteResources: deleteResources
+  deleteResources: deleteResources,
+  uploadResource: uploadResource
 };
 
 // const MEGABYTE = 1024*1024;
@@ -84,43 +86,30 @@ function downloadResources(ids){
   return deferred.promise;
 }
 
-function uploadNew(params){
+function uploadResource(data){
   let deferred = q.defer();
 
-  console.log("1111111111111111111111111111111111111111111111111111111111111111111");
-  console.log("                          Upload                              ");
-  console.log("1111111111111111111111111111111111111111111111111111111111111111111");
+  let req = {
+              params: {
+                // userId: null,
+                // topicId: null,
+                URL: "url",
+                JSON: {
+                  title: "ddd",
+                  text: "dddd"
+                }
+              }
+           };
 
-  // let file = params.file || null;
-  // let uploadType = params.uploadType;
-  // let youtubeUrl = params.url || null;
-
-  // validate(uploadType, file, youtubeUrl, function(err) {
-  //   if (err) {
-  //     deferred.reject(err);
-  //   }else{
-  //     var fileNameToSave = bannerType+'.'+filename.extension;
-
-  //     fs.stat(file.path, function (err, stat) {
-  //       if(stat) {
-  //         mv(file.path, 'public/gallery/'+fileNameToSave, function(error) {
-  //         });
-  //       }
-
-  //       // createOrUpdate({ page: bannerType, filepath: 'banners/'+fileNameToSave }, function(error, result) {
-  //       //   if (error) {
-  //       //     deferred.reject(error);
-  //       //     return deferred.promise;
-  //       //   }
-  //       //   deferred.resolve(result);
-  //       // });
-
-  //     deferred.resolve("NOIS");
-  //     });
-  //   }
-  // });
-
-  // return deferred.promise;
+  updateTmpTitle.validate(req, function (err) {
+    if( err ){
+      deferred.reject(err);
+    }else{
+      deferred.resolve("NOIS");
+    };
+  });
+  console.log(deferred.promise)
+  return deferred.promise;
 }
 
 // function create()

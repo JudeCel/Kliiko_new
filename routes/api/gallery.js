@@ -1,5 +1,6 @@
 'use strict';
 
+var multer  = require('multer')
 var galleryService = require('./../../services/account/gallery');
 
 module.exports = {
@@ -10,12 +11,9 @@ module.exports = {
 };
 
 function postResources(req, res, next) {
-  console.log("------------------------   postResources API   ----------------------------");
-  console.log(req.body);
-
-  // galleryService.uploadResource(function(result) {
-  //   res.send(result);
-  // });
+  galleryService.uploadResource(req.body, function(result) {
+    res.send(result);
+  });
 }
 
 function getResources(req, res, next) {

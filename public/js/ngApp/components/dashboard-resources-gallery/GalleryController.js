@@ -45,10 +45,18 @@
     $scope.submitForm = function() {
       dbg.yell($scope.fileTst)
 
-      $scope.params = {uploadType: $scope.uploadType, file: $scope.fileTst}
-      dbg.yell($scope.params)
-      GalleryServices.uploadResource($scope.params).then(function(res) {
+      $scope.params = { uploadType: $scope.uploadType, 
+                        file: {
+                          name: $scope.fileTst.name,
+                          size: $scope.fileTst.size,
+                          type: $scope.fileTst.type
+                        }
+                      }
 
+      GalleryServices.uploadResource($scope.params).then(function(res) {
+        console.log("***************************************************")
+        console.log(res)
+        console.log("***************************************************")
       });
     };
 
