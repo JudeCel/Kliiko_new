@@ -6,7 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
     userId: { type: DataTypes.INTEGER, allowNull: false },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
     contactListId: {type: DataTypes.INTEGER, allowNull: false},
-    customFields: { type: DataTypes.JSONB, allowNull: false, defaultValue: {} } // {name: value}
+    customFields: { type: DataTypes.JSONB, allowNull: false, defaultValue: {} }
   },{ indexes: [
         { unique: true,
           fields: ['userId', 'contactListId', 'accountId']

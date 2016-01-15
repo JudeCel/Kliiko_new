@@ -45,6 +45,7 @@ router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebee
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
 // contact List
 router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
+router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
 
 
 // Common Rules

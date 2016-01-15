@@ -38,6 +38,7 @@ function prepareData(lists) {
       defaultFields: list.defaultFields,
       defaultFields: list.customFields,
       name: list.name,
+      membersCount: list.ContactListUsers.length,
       members: _.map(list.ContactListUsers, (listUser) => {
         return new ContactListUser(list.defaultFields, list.customFields, listUser);
       })
@@ -45,6 +46,7 @@ function prepareData(lists) {
   })
   return collection;
 }
+
 function create(params) {
   var deferred = q.defer();
   ContactList.create(params).then(function(result) {
