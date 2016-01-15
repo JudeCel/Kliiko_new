@@ -1255,5 +1255,26 @@ input[class=checkbox-blue]:checked + label {
 .banner-link-input {
   border-color: #4DC0E9 !important; }
 
+#email-template-editor h2 {
+  margin: 45px;
+  font-size: .8em;
+  font-weight: bolder; }
+
+#email-template-editor p {
+  margin: 0 0 -10px 0;
+  padding: 10px 100px 10px 30px;
+  font-size: 1.9rem;
+  text-align: left; }
+
+#email-template-editor div {
+  margin: 0 0 -10px 0;
+  font-size: 1.5rem;
+  text-align: left; }
+
+#email-template-editor a {
+  margin: 0 0 -10px 0;
+  font-size: 1.5rem;
+  text-align: left; }
+
 .margin-top-2rem {
   margin-top: 2rem; }

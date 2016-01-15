@@ -1,1 +1,29 @@
-emailTemplates
+<section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec">
+    <div class="row" style="width:100%; height:100%;">   
+        <div class="col-md-4 navbar navbar-default" role="navigation">
+            <ul class="nav navbar-nav">
+              <li ng-repeat="(key, t) in ec.emailTemplates" class="pull-left"><a class="pull-left" ng-click="ec.startEditingTemplate(key)">{{t.name}}</a></li>
+            </ul>            
+        </div>
+
+        <div class="col-md-8">
+            <form class = "form pull-left form-horizontal col-md-8" style="width:100%" role = "search">          
+                <label for="templateName" class="text-no-bold text-login-page control-label pull-left">Template Name:</label>
+                <input id="templateName" type = "text" class = "col-md-3" ng-model="ec.currentTemplate.name"> <div>{{ec.currentTemplate["MailTemplate.name"]}}</div>
+                <hr>
+                <label for="templateSubject" class="text-no-bold text-login-page control-label pull-left">Subject:</label> <input id="templateSubject" type = "text" class = "form-control" placeholder = "subject" ng-model="ec.currentTemplate.subject">
+                <br>
+                <label for="templateContent" class="text-no-bold text-login-page control-label pull-left">Content:</label><br><textarea style="width:95%;height:70%;" id="templateContent"></textarea>
+            </form>
+            <br>
+            <table>
+                <tr></tr>
+                <tr>
+                    <td><button type = "submit" class = "btn btn-default pull-left">Preview</button></td>
+                    <td><button type = "submit" class = "btn btn-default pull-left">Reset</button></td>
+                    <td><button type = "submit" class = "btn btn-default pull-right" ng-click="ec.modifyAndSave()">Modify & Save Copy</button></td> 
+                </tr>
+            </table>
+        </div>
+    </div>
+</section>
