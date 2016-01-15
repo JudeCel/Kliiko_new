@@ -2,7 +2,15 @@
 
 var q = require('q');
 var models = require('./../models');
+var User = require('./../models').User;
+var uuid = require('node-uuid');
 var ContactListUser = models.ContactListUser;
+
+module.exports = {
+  findByContactList: findByContactList,
+  find: find,
+  create: create
+}
 
 function findByContactList(contactListId) {
     var deferred = q.defer();
@@ -26,12 +34,34 @@ function find(id) {
 
 function create(params) {
   var deferred = q.defer();
-  ContactListUser.create(params).then(function(result) {
-    deferred.resolve(result);
-  }, function(err) {
-    deferred.reject(err);
-  })
+  User.findOrCreate({
+    where: { email: params.defaultFields.email },
+    defaults: params.defaultFields}).then(function(user) {
+      let newUser = user[0];
+      newUser.updateAttributes(params.defaultFields).then(function(result) {
+        ContactListUser.create({
+          customFields: params.customFields,
+          accountId: params.accountId,
+          userId: result.id,
+          contactListId: params.contactListId
+        }).then(function(contactLU) {
+          deferred.resolve(contactLU);
+        },function(err) {
+          deferred.reject(err);
+        })
+      },function(err) {
+        deferred.reject(err);
+      })
+    },function(err) {
+      deferred.reject(err);
+    })
   return deferred.promise;
+}
+
+
+function newUserParams(params) {
+  params.password = uuid.v1();
+  return params
 }
 
 function update(params) {
@@ -42,10 +72,4 @@ function update(params) {
     deferred.reject(err);
   })
   return deferred.promise;
-}
-
-module.exports = {
-  findByContactList: findByContactList,
-  find: find
-  create: create
 }

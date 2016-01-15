@@ -4,7 +4,6 @@ var User = models.User;
 var SocialProfile  = require('./../models').SocialProfile;
 var async = require('async');
 var _ = require('lodash');
-var bcrypt = require('bcrypt');
 
 
 function validate(params, callback) {
