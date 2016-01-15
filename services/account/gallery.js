@@ -8,8 +8,9 @@ var multer = require('multer');
 var async = require('async');
 var _ = require('lodash');
 
-var account = require('./../../models').Account;
-var gallery = require('./../../models').Resource;
+var models = require('./../../models')
+var account = models.Account;
+var Resource = models.Resource;
 var updateTmpTitle = require('../../chatRoom/handlers/updateTmpTitle.js');
 
 module.exports = {
@@ -41,25 +42,31 @@ module.exports = {
 //   ]
 // };
 
-function getResources(account_id){
+function getResources(accountName){
   let deferred = q.defer();
+  let accountId = 3;
 
-  console.log("1111111111111111111111111111111111111111111111111111111111111111111");
-  console.log(account_id);
-  console.log("                          get all resources                        ");
-  console.log("1111111111111111111111111111111111111111111111111111111111111111111");
-
-  // gallery.findAll({
-  //     where: { accountId: account_id }
-  //   })
-  //   .then(function (result) {
-  //     deferred.resolve(result);
-  //   })
-  //   .catch(function (err) {
-  //     deferred.reject(err);
-  //   });
-
-  deferred.resolve("NOIS");
+  Resource.findAll({
+    include: [{
+        model: models.User, 
+        include: [{
+          model: models.Account,
+          where: { id: accountId }
+        }]
+      }],
+      attributes: ['id', 'userId', 'thumb_URL', 'URL', 'HTML', 'JSON', 'resourceType']
+    })
+    .then(function (results) {
+      results.forEach(function(resource, index, array) {
+        delete resource.dataValues.User;
+        resource.JSON = JSON.parse(decodeURI(resource.JSON));
+      });
+      console.log(results);
+      deferred.resolve(results);
+    })
+    .catch(function (err) {
+      deferred.reject(err);
+    });
   return deferred.promise;
 }
 
@@ -70,7 +77,6 @@ function deleteResources(ids){
   console.log("                          Mass delete                              ");
   console.log("1111111111111111111111111111111111111111111111111111111111111111111");
 
-    deferred.resolve("NOIS");
   return deferred.promise;
 }
 
@@ -82,7 +88,6 @@ function downloadResources(ids){
   console.log("                          Mass download                            ");
   console.log("1111111111111111111111111111111111111111111111111111111111111111111");
 
-    deferred.resolve("NOIS");
   return deferred.promise;
 }
 
@@ -91,12 +96,12 @@ function uploadResource(data){
 
   let req = {
               params: {
-                // userId: null,
+                userId: data.userId,
                 // topicId: null,
                 URL: "url",
                 JSON: {
-                  title: "ddd",
-                  text: "dddd"
+                  title: data.title,
+                  text: data.text
                 }
               }
            };
@@ -105,10 +110,10 @@ function uploadResource(data){
     if( err ){
       deferred.reject(err);
     }else{
-      deferred.resolve("NOIS");
+      deferred.resolve(null);
     };
   });
-  console.log(deferred.promise)
+
   return deferred.promise;
 }
 

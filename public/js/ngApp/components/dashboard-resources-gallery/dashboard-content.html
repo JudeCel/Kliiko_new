@@ -1,18 +1,18 @@
 <section style="font-size: 16px;" id='GalleryController' ng-controller='GalleryController'>
 
   <div class="gallery">
-  	<div class="gallery-header"> 
-	  	<div class='col-md-12'>
+    <div class="gallery-header"> 
+      <div class='col-md-12'>
         <button class='pull-right btn' type='button' id='uploadResourceDropdown' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' style="margin-left: 10px;">
           <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
           Add New
         </button>
 
-	  		<button class="pull-right btn" type='button' ng-click="show=!show" ng-class="{hidden:show,chaldean:!show}">
+        <button class="pull-right btn" type='button' ng-click="show=!show" ng-class="{hidden:!show,chaldean:show}">
           <span class='glyphicon glyphicon-th' aria-hidden='true'></span>   
         </button>
 
-        <button class="pull-right btn" type='button' ng-click="show=!show" ng-class="{hidden:!show,chaldean:show}">
+        <button class="pull-right btn" type='button' ng-click="show=!show" ng-class="{hidden:show,chaldean:!show}">
           <span class='glyphicon glyphicon-th-list' aria-hidden='true'></span>   
         </button>
 
@@ -48,17 +48,17 @@
           </li>
 
         </ul>
-	  	</div>
+      </div>
 
       <br>
       <br>
 
-	  	<div class='col-md-12'>
+      <div class='col-md-12'>
 		  	<a class="pull-left" style="cursor:pointer;" ng-click='downloadResources()'> Download </a>
 		  	<a class="pull-left" style="margin-left: 10px; cursor:pointer;" ng-click='deleteResources()'> Delete </a>
 
-		  	<a class="pull-right" href="#" style="margin-left: 10px;">All(0)</a>
-		  	<a class="pull-right" href="#" style="margin-left: 10px;">Images(0)</a>
+		  	<a class="pull-right" href="#" style="margin-left: 10px;">All({{totalResourceCount}})</a>
+		  	<a class="pull-right" href="#" style="margin-left: 10px;" ng-click="orderByMe('name')">Images(0)</a>
 		  	<a class="pull-right" href="#" style="margin-left: 10px;">Brand Logos(0)</a>
 		  	<a class="pull-right" href="#" style="margin-left: 10px;">Audio(0)</a>
 		  	<a class="pull-right" href="#" style="margin-left: 10px;">Youtube(0)</a>
@@ -70,28 +70,77 @@
     <br>
     <br>
 
+    <!-- Table view -->
 	  <div class="gallery-body col-md-12" ng-class="{hidden:!show,chaldean:show}">
-      Pupadi
+      <table class="table table-hover"> 
+        <thead> 
+          <tr> 
+            <th>#</th> 
+            <th>User ID</th> 
+            <th>Resource Name</th> 
+            <th>Thumbnail</th> 
+          </tr> 
+        </thead> 
+        <tbody ng-repeat="resource in resources"> 
+          <tr> 
+            <td>
+              <p class="pull-left">{{resource.id}}</p>
+            </td>
+            <td>
+              <p class="pull-left">{{resource.userId}}</p>
+            </td> 
+            <td>
+              <p class="pull-left">{{resource.JSON.matchName}}</p>
+            </td> 
+            <td ng-if="resource.JSON.type == 'video'">
+              <p class="pull-left"><img src="/chat_room/resources/images/youtubeThumb.png" alt="youtube" width="100" height="56"></p>
+            </td> 
+            <td ng-if="resource.JSON.type == 'image'">
+              <p class="pull-left"><img src="/chat_room/uploads/{{resource.JSON.name}}" alt="{{resource.JSON.matchName}}" width="100" height="56"></p>
+            </td> 
+            <td ng-if="resource.JSON.type == 'audio'">
+              <p class="pull-left"><img src="/chat_room/resources/images/audioThumb.png" alt="audio" width="100" height="56"></p>
+            </td> 
+          </tr> 
+        </tbody> 
+      </table>
 	  </div>
 	  
-	  <div class="gallery-body col-md-12" ng-class="{hidden:show,chaldean:!show}">
-      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
-      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
-      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
-      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
-      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
-      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
-      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
-      <div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
-	  	<div class="pull-left" style="width: 250px; height: 250px; border: solid 1px; display:inline-block;"></div>
-	  </div> 
-	</div>
+    <!-- Block view -->
+	  <div ng-class="{hidden:show,chaldean:!show}" ng-repeat="resource in resources">
+      <div class="col-xs-6 col-md-4">  
+        <div class="panel panel-default">
+          <div class="panel-heading">{{resource.JSON.title}}</div>
+          <div class="panel-body">
+            ID: {{resource.id}}
+            <br>
+            User id: {{resource.userId}}
+            <br>
 
+            <div ng-if="resource.JSON.type == 'video'">
+              <img src="/chat_room/resources/images/youtubeThumb.png" alt="youtube" width="200" height="112">
+            </div> 
 
+            <div ng-if="resource.JSON.type == 'image'">
+              {{resource.JSON.matchName}}:
+              <br>
+              <img src="/chat_room/uploads/{{resource.JSON.name}}" alt="{{resource.JSON.matchName}}" width="200" height="112">
+            </div>  
+
+            <div ng-if="resource.JSON.type == 'audio'">
+              {{resource.JSON.matchName}}:
+              <br>
+              <img src="/chat_room/resources/images/audioThumb.png" alt="audio" width="200" height="112">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> 
+  </div>
 
   <!-- resourceModal -->
   <div class='modal fade' id='uploadTST' role='dialog'>
-    <div class='modal-dialog changePasswordModal' style="width: 800px">
+    <div class='modal-dialog changePasswordModal' style="width: 400px">
       <div class='modal-content border-green border-radius-none'>
         <div class='modal-header'>
           <button type='button' class='close' data-dismiss='modal'>&times;</button>
@@ -99,16 +148,23 @@
         </div>
         <div class='modal-body'>
 
-          <div ngf-drop ngf-select ng-model="fileTst" ng-change="uploadTst('profile')" class="drop-box"
-               ngf-drag-over-class="'dragover'"  accept="image/*"
-               ngf-pattern="'image/*'">Drop images here or click to upload</div>
-          <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
+            <div class="form-group">
+              <label for="title">Title</label>
+              <input ng-model="newResource.title" type="text" class="form-control center-block" name="title" id="title" placeholder="Title">
+            </div>
 
-          a {{ fileTst.name }} b
+            <div class="form-group">
+              <label for="fileTst">File</label>
+              <div ngf-drop ngf-select ng-model="fileTst" ng-change="uploadTst('profile')" class="drop-box"
+                 ngf-drag-over-class="'dragover'"  accept="image/*"
+                 ngf-pattern="'image/*'">Drop images here or click to upload</div>
+              <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
+              {{ newResource.fileTst.name }}
+            </div>    
         </div>
         <div class='modal-footer'>
           <div type='button' class='pull-left btn-dashboard-plans go-back-btn' data-dismiss='modal'>Cancel</div>
-          <div type='button' class='pull-right btn-dashboard-plans btn' ng-click="submitForm()">Save</div>
+          <div type='button' class='pull-right btn-dashboard-plans btn' ng-click="submitForm(newResource)">Save</div>
         </div>
       </div>
     </div>

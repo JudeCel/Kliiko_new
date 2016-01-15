@@ -8,18 +8,18 @@
   GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', '$scope', 'domServices', '$ocLazyLoad','$injector', 'angularConfirm', 'messenger'];
   function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, $ocLazyLoad,$injector,  angularConfirm, messenger){
     dbg.log2('#GalleryController  started');
-    var vm = this;
+    initList();
+
+    $scope.newResource = {};
 
     $scope.uploadTst = function() {
       dbg.yell($scope.fileTst)
-      
     }
-
-    initList();
 
     function initList() {
       GalleryServices.getResources().then(function(res) {
-
+        $scope.resources = res.data;
+        $scope.totalResourceCount = $scope.resources.length;
       });
     }
 
@@ -36,27 +36,22 @@
     }
 
     $scope.uploadResourceForm = function(uploadType) {
-      $scope.uploadType = uploadType;
+      $scope.newResource.type = uploadType;
       $scope.uploadTypeForTitle = uploadTypeForTitle(uploadType);
 
       domServices.modal('uploadTST')
     };
 
-    $scope.submitForm = function() {
-      dbg.yell($scope.fileTst)
+    $scope.submitForm = function(newResource) {
 
-      $scope.params = { uploadType: $scope.uploadType, 
-                        file: {
-                          name: $scope.fileTst.name,
-                          size: $scope.fileTst.size,
-                          type: $scope.fileTst.type
-                        }
-                      }
+      $scope.newResource.file = {
+        name: $scope.fileTst.name,
+        size: $scope.fileTst.size,
+        type: $scope.fileTst.type
+      }
 
-      GalleryServices.uploadResource($scope.params).then(function(res) {
-        console.log("***************************************************")
-        console.log(res)
-        console.log("***************************************************")
+      GalleryServices.uploadResource(newResource).then(function(res) {
+        dbg.yell(res)
       });
     };
 

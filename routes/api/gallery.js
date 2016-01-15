@@ -11,14 +11,15 @@ module.exports = {
 };
 
 function postResources(req, res, next) {
-  galleryService.uploadResource(req.body, function(result) {
+  req.body.userId = req.user.id;
+  galleryService.uploadResource(req.body).then(function(result) {
     res.send(result);
   });
 }
 
 function getResources(req, res, next) {
-  galleryService.getResources(function(result) {
-    res.send(result);
+  galleryService.getResources(res.locals.currentDomain.name).then(function(result) {
+    res.send(({ data: result }));
   });
 }
 
