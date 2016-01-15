@@ -59,9 +59,27 @@
 
       for(var i in questions) {
         var question = questions[i];
-        if(!question.hasOwnProperty("answer")) {
+        if(!question.hasOwnProperty("answer") ||
+          (typeof question.answer == 'string' && question.answer.length < 1)) {
           question.error = 'Please fill this answer!';
           errors++;
+        }
+        else if(question.contact) {
+          for(var j in vm.contactList) {
+            var field = vm.contactList[j];
+
+            if(field.answer.length < 1) {
+              if(!question.error) {
+                question.error = 'Please fill contact details';
+              }
+
+              field.error = 'Please fill this answer!';
+              errors++;
+            }
+            else {
+              delete field.error;
+            }
+          }
         }
         else {
           delete question.error;
@@ -75,10 +93,24 @@
       return className + (error ? '-danger' : '-success');
     };
 
-    function onChange(question) {
+    function onChange(question, contactList) {
       if(question.error) {
         delete question.error;
       }
-    }
+
+      if(contactList) {
+        question.contact = question.answer;
+        if(!question.answer) {
+          removeContactErrors();
+        }
+      }
+    };
+
+    function removeContactErrors() {
+      for(var i in vm.contactList) {
+        var contact = vm.contactList[i];
+        delete contact.error;
+      }
+    };
   };
 })();

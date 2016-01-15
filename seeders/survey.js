@@ -76,7 +76,16 @@ var sampleSurvey = {
         {
           "name":"No problemo, amigo",
           "order":0,
-          "contact":[ { "name":"First Name", "input":true }, { "name":"Last Name", "input":true }, { "name":"Gender", "select":true, "options":[ "Male", "Female" ] }, { "name":"Email", "input":true }, { "name":"Mobile", "input":true }, { "name":"Postal address", "input":true, }, { "name":"Country", "input":true, } ]
+          "contact":[
+            { "model": "firstName", "name":"First Name", "input":true },
+            { "model": "lastName", "name":"Last Name", "input":true },
+            { "model": "gender", "name":"Gender", "select":true, "options":[ "Male", "Female" ] },
+            { "model": "age", "name":"Age", "input":true },
+            { "model": "email", "name":"Email", "input":true },
+            { "model": "mobile", "name":"Mobile", "input":true },
+            { "model": "postalAddress", "name":"Postal address", "input":true, },
+            { "model": "country", "name":"Country", "input":true, }
+          ]
         }
       ]
     }
