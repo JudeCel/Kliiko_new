@@ -41,7 +41,7 @@
         </div>
 
         <div class='form-group' ng-if='answer.contact' ng-repeat='contact in answer.contact'>
-          <div class='col-xs-12'>
+          <div class='col-xs-offset-2 col-xs-10'>
             <span class='has-error'>
               <span class='help-block'>{{ sc.contactList[contact.model].error }}</span>
             </span>
@@ -49,8 +49,8 @@
           <label class='col-xs-2 control-label' for='contact_{{ contact.model }}'>{{ contact.name }}</label>
 
           <div class='col-xs-10'>
-            <input type='text' class='form-control no-border-radius' ng-class='sc.pickValidClass(sc.contactList[contact.model].error, "panel")' id='contact_{{ contact.model}}' placeholder='{{ contact.name }}'
-              ng-model='sc.contactList[contact.model].answer' ng-init='sc.contactList[contact.model].answer = ""' ng-disabled='!sq.answer'>
+            <input type='text' class='form-control no-border-radius' id='contact_{{ contact.model}}' placeholder='{{ contact.name }}'
+               ng-class='sc.pickValidClass(sc.contactList[contact.model].error, "panel")' ng-model='sc.contactList[contact.model].answer' ng-init='sc.contactList[contact.model].answer = ""' ng-disabled='!sq.answer'>
           </div>
         </div>
       </div>
