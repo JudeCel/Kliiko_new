@@ -17,7 +17,7 @@ var ContactListUser = class ContactListUser {
   assignValues(fieldsList){
     _.map(fieldsList, (e) => {
       this[e] = this.findValueInData(e);
-    })
+    });
   }
 
   findValueInData(value){

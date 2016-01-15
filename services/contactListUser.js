@@ -34,6 +34,16 @@ function create(params) {
   return deferred.promise;
 }
 
+function update(params) {
+  var deferred = q.defer();
+  ContactListUser.update(params).then(function(result) {
+    deferred.resolve(result);
+  }, function(err) {
+    deferred.reject(err);
+  })
+  return deferred.promise;
+}
+
 module.exports = {
   findByContactList: findByContactList,
   find: find

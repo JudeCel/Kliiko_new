@@ -12,6 +12,7 @@ var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
 var chargebee = require('./chargebee');
 var contactList = require('./contactList');
+var contactListUser = require('./contactListUser');
 
 
 module.exports = router;
@@ -46,6 +47,9 @@ router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponG
 // contact List
 router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
 router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
+// contact List User
+router.post('/contactListUser', policy.authorized(['accountManager', 'admin']), contactListUser.create);
+router.post('/contactListsUser/:id', policy.authorized(['accountManager', 'admin']), contactListUser.update);
 
 
 // Common Rules

@@ -1,0 +1,44 @@
+'use strict';
+var contactListUserService = require('../../services/contactListUser');
+
+module.exports = {
+  create: create,
+  update: update
+};
+
+// Create Params example
+// {  defaultFildes: Object/optional =>  { firstName: "name" },
+//    customFields: Object/optional =>  { customFieldsName: "someValue"}
+//    userId: INTEGER/required => 1,
+//    contactListId: INTEGER/required => 1
+//  }
+//
+function create(req, res, next) {
+  let params = req.body
+  params.accountId = res.locals.currentDomain.id
+
+  contactListUserService.create(params).then(function(resul) {
+    res.send(resul);
+  }, function(err) {
+    res.send({ error: err });
+  })
+}
+
+// Create Params example
+// {  defaultFildes: Object/optional =>  { firstName: "name" },
+//    customFields: Object/optional =>  { customFieldsName: "someValue"}
+//    userId: INTEGER/required => 1,
+//    contactListId: INTEGER/required => 1
+//  }
+//
+
+function update(req, res, next) {
+  let params = req.body
+  params.accountId = res.locals.currentDomain.id
+
+  contactListUserService.update(params).then(function(resul) {
+    res.send(resul);
+  }, function(err) {
+    res.send({ error: err });
+  })
+}
