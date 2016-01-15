@@ -1,21 +1,11 @@
-<div class='row'>
-  <div class='col-sm-12 has-error'>
-    <span class='help-block'>{{ question.errors.answer }}</span>
-  </div>
-</div>
-
 <div ng-sortable='sc.answerSortOptions' ng-init='question.type = "textarea"'>
   <div class='form-group' ng-repeat='answer in question.answers track by $index'>
     <div class='col-sm-8'>
-      <span class='has-error'>
-        <span class='help-block'>{{ question.errors.answers[answer.order] }}</span>
-      </span>
       <textarea class='form-control' id='answers_{{object.order}}_{{ answer.order }}' placeholder='Answer' rows='5' disabled
-        ng-string ng-change='sc.questionChange(object.order, question)' ng-model='answer.name' ng-maxlength='500'>
+        ng-model='answer.name'>
       </textarea>
 
       <span class='glyphicon glyphicon-remove' ng-if='sc.canChangeAnswers(-1, question)' ng-click='sc.changeAnswers(-1, question, $index)'></span>
-
     </div>
   </div>
 </div>

@@ -7,8 +7,9 @@ var surveyServices = require('./../services/survey');
 var async = require('async');
 
 var sampleSurvey = {
-  "name":"This is sample survey!",
+  "name":"This is survey!",
   "description":"Welcome to the sample survey, please fill all answers.",
+  "thanks": "Thank you for participating in this survey!",
   "closed":false,
   "SurveyQuestions":[
     {

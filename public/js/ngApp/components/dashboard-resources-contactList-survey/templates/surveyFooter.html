@@ -4,11 +4,15 @@
 <div class='form-horizontal'>
   <div class='form-group'>
     <div class='col-sm-8'>
-      <span class='has-error'>
-        <span class='help-block'>{{ sc.manageTemp.survey.errors.thanks }}</span>
-      </span>
+      <div class='has-error' ng-messages='sc.manageForm.thanks.$error'>
+        <div ng-repeat='error in sc.validationErrors'>
+          <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+        </div>
+      </div>
 
-      <textarea class='form-control' id='thanks' placeholder='Thanks' rows='5' ng-string ng-model='sc.manageTemp.survey.thanks' ng-maxlength='500'></textarea>
+      <textarea class='form-control' id='thanks' placeholder='Thanks' rows='5' name='thanks'
+        ng-model='sc.survey.thanks' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='sc.submitedForm'>
+      </textarea>
     </div>
   </div>
 </div>

@@ -16,6 +16,7 @@ const validManageParams = [
   'name',
   'closed',
   'description',
+  'thanks',
   'SurveyQuestions'
 ];
 
@@ -24,6 +25,7 @@ const returnParamsSurvey = [
   'accountId',
   'name',
   'description',
+  'thanks',
   'closed',
   'confirmedAt',
   'url'

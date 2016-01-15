@@ -1,74 +1,84 @@
 <div class='col-md-12 fixed-bottom-margin'>
   <div class='dashboard-container'>
 
-    <div class='col-md-offset-3 col-md-6'>
-      <h2 class='text-center'>Manage Survey</h2>
-    </div>
-    <div class='col-md-3 text-right'>
-      <button class='btn btn-addNewElement' ng-click="sc.changePage('index')">Back</button>
-    </div>
+    <form name='sc.manageForm' novalidate>
+      <fieldset ng-disabled='sc.submitingForm'>
+        <div class='col-md-offset-3 col-md-6'>
+          <h2 class='text-center'>Manage Survey</h2>
+        </div>
+        <div class='col-md-3 text-right'>
+          <button class='btn btn-addNewElement' ng-click="sc.changePage('index')">Back</button>
+        </div>
 
-    <div class='col-sm-12'>
-      <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/surveyHeader.html'"></ng-include>
-    </div>
+        <div class='col-sm-12'>
+          <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/surveyHeader.html'"></ng-include>
+        </div>
 
-    <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(0, 3) track by $index' ng-init='questions = sc.manageTemp.survey.SurveyQuestions'>
-      <div ng-init='question = sc.initQuestion(object, questions[object.order])'>
-        <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
+        <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(0, 3) track by $index'>
+          <div ng-init='question = sc.initQuestion(object, sc.survey.SurveyQuestions[object.order])'>
+            <ng-form name='{{ object.order }}'>
+              <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
 
-        <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
-        <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
-      </div>
-    </div>
+              <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
+              <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
+            </ng-form>
+          </div>
+        </div>
 
-    <div class='col-sm-12'>
-      <hr class='border-brown' />
-      <h4><strong>Advanced recruiter</strong></h4>
-    </div>
-    <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(3, 6) track by $index' ng-init='questions = sc.manageTemp.survey.SurveyQuestions'>
-      <div ng-init='question = sc.initQuestion(object, questions[object.order])'>
-        <uib-accordion close-others='false'>
-          <uib-accordion-group is-open='object.open'>
-            <uib-accordion-heading>
-              <div>
-                {{ object.name }}<i class='pull-right glyphicon' ng-class="{'glyphicon-chevron-down': object.open, 'glyphicon-chevron-right': !object.open}"></i>
-              </div>
-            </uib-accordion-heading>
+        <div class='col-sm-12'>
+          <hr class='border-brown' />
+          <h4><strong>Advanced recruiter</strong></h4>
+        </div>
+        <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(3, 6) track by $index'>
+          <div ng-init='question = sc.initQuestion(object, sc.survey.SurveyQuestions[object.order])'>
+            <uib-accordion close-others='false'>
+              <uib-accordion-group is-open='object.open'>
+                <uib-accordion-heading>
+                  <div>
+                    {{ object.name }}<i class='pull-right glyphicon' ng-class="{'glyphicon-chevron-down': object.open, 'glyphicon-chevron-right': !object.open}"></i>
+                  </div>
+                </uib-accordion-heading>
 
-            <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
+                <ng-form name='{{ object.order }}'>
+                  <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
 
-            <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
-            <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
-          </uib-accordion-group>
-        </uib-accordion>
-      </div>
-    </div>
+                  <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
+                  <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
+                </ng-form>
+              </uib-accordion-group>
+            </uib-accordion>
+          </div>
+        </div>
 
 
-    <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(6, 10) track by $index' ng-init='questions = sc.manageTemp.survey.SurveyQuestions'>
-      <div ng-init='question = sc.initQuestion(object, questions[object.order])'>
-        <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
+        <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(6, 10) track by $index'>
+          <div ng-init='question = sc.initQuestion(object, sc.survey.SurveyQuestions[object.order])'>
+            <ng-form name='{{ object.order }}'>
+              <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/questionHeader.html'"></ng-include>
 
-        <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
-        <ng-include ng-if='!object.disableAnswers' src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
-      </div>
-    </div>
+              <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
+              <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
+            </ng-form>
+          </div>
+        </div>
 
-    <div class='col-sm-12'>
-      <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/surveyFooter.html'"></ng-include>
-    </div>
+        <div class='col-sm-12'>
+          <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/surveyFooter.html'"></ng-include>
+        </div>
 
-    <div class='col-sm-12'>
-      <hr class='border-brown' />
+        <div class='col-sm-12'>
+          <hr class='border-brown' />
 
-      <button class='btn btn-addNewElement' ng-click='sc.previewList = null' data-toggle='modal' data-target='#previewModal'>Preview</button>
-      <button class='btn btn-addNewElement' ng-click='sc.finishManage()'>Finish</button>
+          <button class='btn btn-addNewElement' ng-click='sc.previewList = null' data-toggle='modal' data-target='#previewModal'>Preview</button>
+          <button class='btn btn-addNewElement' ng-click='sc.finishManage()'>Finish</button>
 
-      <span class='has-error'>
-        <span class='help-block'>{{ sc.manageTemp.survey.errors.submitError }}</span>
-      </span>
-    </div>
+          <span class='has-error'>
+            <span class='help-block'>{{ sc.submitError }}</span>
+          </span>
+        </div>
 
-    <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/previewModal.html'"></ng-include>
+        <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/previewModal.html'"></ng-include>
+      </fieldset>
+    </form>
   </div>
 </div>

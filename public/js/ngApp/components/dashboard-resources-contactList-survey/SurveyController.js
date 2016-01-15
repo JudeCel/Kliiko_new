@@ -2,9 +2,9 @@
   'use strict';
 
   angular.module('KliikoApp').controller('SurveyController', SurveyController);
-  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$scope'];
+  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', 'ngProgressFactory'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $scope) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, ngProgressFactory) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
@@ -23,15 +23,13 @@
     // Helpers
     vm.statusIcon = statusIcon;
     vm.chooseValidIcon = chooseValidIcon;
-    vm.validateQuestion = validateQuestion;
-    vm.questionChange = questionChange;
     vm.canChangeAnswers = canChangeAnswers;
     vm.changeAnswers = changeAnswers;
     vm.defaultArray = defaultArray;
     vm.changePage = changePage;
     vm.addContactDetail = addContactDetail;
-    vm.listQuestions = listQuestions;
     vm.pickValidClass = pickValidClass;
+    vm.changeQuestions = changeQuestions;
 
     vm.answerSortOptions = {
       onUpdate: function(evt) {
@@ -40,6 +38,31 @@
         });
       }
     }
+
+    vm.minsMaxs = {
+      input: {
+        min: 1,
+        max: 20
+      },
+      textarea: {
+        min: 1,
+        max: 500
+      }
+    }
+    vm.validationErrors = [
+      {
+        type: 'required',
+        message: 'Please fill this field!',
+      },
+      {
+        type: 'minlength',
+        message: 'Field is too short!',
+      },
+      {
+        type: 'maxlength',
+        message: 'Field is too long!',
+      }
+    ];
 
     vm.contactDetails = [
       {
@@ -193,19 +216,16 @@
         minAnswers: 1,
         maxAnswers: 1
       }
-      // {
-      //   order: 9,
-      //   name: 'Thanks',
-      //   hardcodedName: true,
-      //   disableAnswers: true,
-      //   textArea: true
-      // }
     ];
 
     changePage('index');
 
     function init() {
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+
       surveyServices.getAllSurveys().then(function(res) {
+        progressbar.complete();
         vm.surveys = res.data;
         dbg.log2('#SurveyController > getAllSurveys > res ', res.data);
       });
@@ -213,8 +233,13 @@
 
     function removeSurvey(survey) {
       angularConfirm('Are you sure you want to remove Survey?').then(function(response) {
+        var progressbar = ngProgressFactory.createInstance();
+        progressbar.start();
+
         surveyServices.removeSurvey({ id: survey.id }).then(function(res) {
           dbg.log2('#SurveyController > removeSurvey > res ', res);
+          progressbar.complete();
+
           if(res.error) {
             messenger.error(res.error);
           }
@@ -228,8 +253,13 @@
     };
 
     function changeStatus(survey) {
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+
       surveyServices.changeStatus({ id: survey.id, closed: !survey.closed }).then(function(res) {
         dbg.log2('#SurveyController > changeStatus > res ', res);
+        progressbar.complete();
+
         if(res.error) {
           messenger.error(res.error);
         }
@@ -241,25 +271,40 @@
     };
 
     function finishManage() {
-      if(validateSurvey()) {
-        if(vm.currentPage.type == 'create') {
-          finishCreate();
+      vm.submitedForm = true;
+      vm.submitingForm = true;
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+
+      $timeout(function() {
+        if(vm.manageForm.$valid) {
+          if(vm.survey.SurveyQuestions.length < 2) {
+            vm.submitError = 'Not enougth questions';
+          }
+          else {
+            delete vm.submitError;
+            if(vm.currentPage.type == 'create') {
+              finishCreate();
+            }
+            else {
+              vm.survey.id = vm.survey.id;
+              finishEdit();
+            }
+          }
         }
         else {
-          vm.manage.survey.id = vm.manageTemp.survey.id;
-          finishEdit();
+          vm.submitError = 'There are some errors';
         }
-      }
-      else {
-        if(!vm.manageTemp.survey.errors.submitError) {
-          vm.manageTemp.survey.errors.submitError = 'There were some errors';
-        }
-      }
+
+        progressbar.complete();
+        vm.submitingForm = false;
+      }, 1000);
     };
 
     function finishCreate() {
-      surveyServices.createSurvey(vm.manage.survey).then(function(res) {
+      surveyServices.createSurvey(vm.survey).then(function(res) {
         dbg.log2('#SurveyController > finishCreate > res ', res);
+
         if(res.error) {
           messenger.error(res.error);
         }
@@ -271,8 +316,9 @@
     };
 
     function finishEdit() {
-      surveyServices.updateSurvey(vm.manage.survey).then(function(res) {
+      surveyServices.updateSurvey(vm.survey).then(function(res) {
         dbg.log2('#SurveyController > finishEdit > res ', res);
+
         if(res.error) {
           messenger.error(res.error);
         }
@@ -284,8 +330,13 @@
     };
 
     function copySurvey(survey) {
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+
       surveyServices.copySurvey({ id: survey.id }).then(function(res) {
         dbg.log2('#SurveyController > copySurvey > res ', res);
+        progressbar.complete();
+
         if(res.error) {
           messenger.error(res.error);
         }
@@ -294,6 +345,18 @@
           messenger.ok(res.message || 'Survey copied successfully');
         }
       });
+    };
+
+    function changeQuestions(question, order) {
+      question.active = !question.active;
+
+      if(question.active) {
+        question.order = order;
+        vm.survey.SurveyQuestions[order] = question;
+      }
+      else {
+        delete vm.survey.SurveyQuestions[order];
+      }
     };
 
     function statusIcon(survey) {
@@ -314,136 +377,12 @@
       }
     };
 
-    function validateSurvey() {
-      var survey = vm.manageTemp.survey;
-      if(!survey.errors) {
-        survey.errors = {};
-      }
-
-      if(survey.name.length == 0) {
-        survey.errors.name = 'Too short';
-      }
-      else {
-        delete survey.errors.name;
-        vm.manage.survey.name = survey.name;
-      }
-
-      if(survey.description.length == 0) {
-        survey.errors.description = 'Too short';
-      }
-      else {
-        delete survey.errors.description;
-        vm.manage.survey.description = survey.description;
-      }
-
-      if(survey.thanks.length == 0) {
-        survey.errors.thanks = 'Too short';
-      }
-      else {
-        delete survey.errors.thanks;
-        vm.manage.survey.thanks = survey.thanks;
-      }
-
-      if(vm.manage.survey.SurveyQuestions.length < 2) {
-        survey.errors.submitError = 'Not enougth questions';
-      }
-      else {
-        delete survey.errors.submitError;
-      }
-
-      return (Object.keys(survey.errors).length == 0);
-    }
-
-    function validateQuestion(order, sq) {
-      if(!sq.errors) {
-        sq.errors = {};
-      }
-
-      if(sq.active) {
-        changeCreateObject(order, false, sq);
-      }
-      else {
-        if(sq.name.length == 0) {
-          sq.errors.name = 'Too short';
-        }
-        else {
-          delete sq.errors.name;
-        }
-
-        if(sq.question.length == 0) {
-          sq.errors.question = 'Too short';
-        }
-        else {
-          delete sq.errors.question;
-        }
-
-        if(sq.answers) {
-          var answers = Object.keys(sq.answers).length;
-          if(answers < sq.minAnswers) {
-            sq.errors.answer = 'Not enougth answers';
-          }
-          else if(answers > sq.maxAnswers){
-            sq.errors.answer = 'Too many answers';
-          }
-          else {
-            delete sq.errors.answer;
-            sq.errors.answers = {};
-            for(var key in sq.answers) {
-              var answer = sq.answers[key];
-              if((sq.type == 'radio' || sq.type == 'checkbox') && (answer.name.length == 0 || answer.name.length > 20)) {
-                sq.errors.answers[key] = 'Too short/long';
-              }
-            };
-            if(Object.keys(sq.errors.answers).length == 0) {
-              delete sq.errors.answers;
-              if(sq.contact) {
-                var contactDetails = [];
-                for(var key in vm.contactDetails) {
-                  var cd = vm.contactDetails[key];
-                  if(!cd.disabled) {
-                    contactDetails.push(cd);
-                  }
-                };
-                sq.answers[0].contact = contactDetails;
-              }
-            }
-          }
-        }
-
-        if(Object.keys(sq.errors).length == 0) {
-          changeCreateObject(order, true, sq);
-        }
-      }
-    };
-
-    function changeCreateObject(order, status, sq) {
-      if(status) {
-        sq.order = order;
-        vm.manage.survey.SurveyQuestions.push(sq);
-        sq.active = status;
-      }
-      else {
-        sq.active = status;
-        var index = vm.manage.survey.SurveyQuestions.indexOf(sq);
-        vm.manage.survey.SurveyQuestions.splice(index, 1);
-      }
-    };
-
-    function questionChange(order, currentQuestion) {
-      if(currentQuestion.active) {
-        changeCreateObject(order, false, currentQuestion);
-      }
-    };
-
-    function initQuestion(object) {
-      if(!vm.manageTemp.survey.SurveyQuestions[object.order] || object.order != vm.manageTemp.survey.SurveyQuestions[object.order].order) {
-        vm.manageTemp.survey.SurveyQuestions.splice(object.order, 0, {});
-      }
-
-      var question = vm.manageTemp.survey.SurveyQuestions[object.order];
+    function initQuestion(object, sq) {
+      var question = sq || {};
       question.minAnswers = object.minAnswers;
       question.maxAnswers = object.maxAnswers;
       question.contact = object.contact;
+
       if(object.hardcodedName) {
         question.name = object.name;
       }
@@ -454,13 +393,12 @@
     function initAnswers(object, question) {
       if(question.answers) {
         question.active =  true;
-        vm.manage.survey.SurveyQuestions[object.order] = question;
         return question.answers;
       }
       else {
         return defaultArray(object.minAnswers);
       }
-    }
+    };
 
     function canChangeAnswers(value, question) {
       if(value > 0) {
@@ -472,7 +410,6 @@
     };
 
     function changeAnswers(value, question, index) {
-      changeCreateObject(question.order, false, question);
       if(value > 0) {
         question.answers.push({ order: question.answers.length });
       }
@@ -486,44 +423,23 @@
     };
 
     function changePage(page, survey) {
-      switch(page) {
-        case 'index':
-          init();
-          vm.currentPage = { page: page };
-          break;
-        case 'create':
-          vm.manageTemp = { survey: { SurveyQuestions: [] } };
-          vm.manage = { survey: { SurveyQuestions: [] } };
-          vm.currentPage = { page: 'manage', type: page };
-          break;
-        case 'edit':
-          vm.manageTemp = { survey: survey };
-          vm.manage = { survey: { SurveyQuestions: [] } };
-          vm.currentPage = { page: 'manage', type: page };
-          break;
-        default:
-          vm.currentPage = { page: page };
+      vm.submitedForm = false;
+      if(page == 'index') {
+        init();
+        vm.currentPage = { page: page };
+      }
+      else {
+        vm.survey = survey || { SurveyQuestions: {} };
+        vm.currentPage = { page: 'manage', type: page };
       }
     };
 
     function addContactDetail(cd, order, sq) {
       cd.disabled = !cd.disabled;
-      changeCreateObject(order, false, sq);
-    };
-
-    function listQuestions() {
-      if(!vm.previewList) {
-        vm.previewList = [];
-        for(var i = 0; i < vm.manage.survey.SurveyQuestions.length; i++) {
-          vm.manage.survey.SurveyQuestions[i] && vm.previewList.push(vm.manage.survey.SurveyQuestions[i]);
-        }
-      }
-
-      return vm.previewList;
     };
 
     function pickValidClass(error, className) {
-      return className + (error ? '-danger' : '-success');
+      return className + (error && Object.keys(error).length > 0 ? '-danger' : '-success');
     };
   };
 })();

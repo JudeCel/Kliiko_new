@@ -6,29 +6,33 @@
 
 <div class='form-horizontal'>
   <div class='form-group'>
-    <label class='col-xs-2 control-label' for='name'>Name</label>
+    <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.manageForm.surveyName.$error'>
+      <div ng-repeat='error in sc.validationErrors'>
+        <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+      </div>
+    </div>
 
+    <label class='col-xs-2 control-label' for='surveyName'>Name</label>
     <div class='col-xs-10 col-sm-6'>
       <div class='input-group'>
-        <input type='text' class='form-control' id='name' placeholder='Name' ng-string ng-model='sc.manageTemp.survey.name'>
+        <input type='text' class='form-control' id='surveyName' placeholder='Name' name='surveyName'
+          ng-model='sc.survey.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='sc.submitedForm'>
         <span class='input-group-addon'>@</span>
       </div>
-
-      <span class='has-error'>
-        <span class='help-block'>{{ sc.manageTemp.survey.errors.name }}</span>
-      </span>
     </div>
   </div>
 
   <div class='form-group'>
     <div class='col-sm-8'>
-      <span class='has-error'>
-        <span class='help-block'>{{ sc.manageTemp.survey.errors.description }}</span>
-      </span>
+      <div class='has-error' ng-messages='sc.manageForm.description.$error'>
+        <div ng-repeat='error in sc.validationErrors'>
+          <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+        </div>
+      </div>
 
-      <textarea class='form-control' id='description' placeholder='Introduction'
-        ng-string ng-model='sc.manageTemp.survey.description' ng-maxlength='500' rows='5'></textarea>
-
+      <textarea class='form-control' id='description' placeholder='Introduction' name='description' rows='5'
+        ng-model='sc.survey.description' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='sc.submitedForm'>
+      </textarea>
     </div>
   </div>
 </div>
