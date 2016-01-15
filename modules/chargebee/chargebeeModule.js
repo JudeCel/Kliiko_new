@@ -6,7 +6,7 @@ let q = require('q');
 let models =  require('./../../models');
 let User = models.User;
 let Subscription = models.Subscription;
-let moment = require('moment');
+//let moment = require('moment');
 
 module.exports = {
   getPlans: getPlans,
@@ -147,21 +147,29 @@ function createSubscription(hostedPageId) {
       }).
       then(
         function(resultUser) {
-          resultUser.createSubscription({
+
+          let subsParams = {
             planId: subsData.plan_id,
             subscriptionId: subsData.id,
             planQuantity: subsData.plan_quantity,
             status: subsData.status,
-            trialStart: moment.unix(subsData.trial_start).format(),
-            trialEnd: moment.unix(subsData.trial_end).format(),
-            subscribtionCreatedAt:moment.unix(subsData.created_at).format(),
-            startedAt: moment.unix(subsData.started_at).format(),
+            subscribtionCreatedAt: new Date( subsData.created_at * 1000 ).getTime(),
+            startedAt: new Date( subsData.started_at * 1000 ).getTime(),
             createdFromIp: subsData.created_from_ip,
             hasScheduledChanges: subsData.has_scheduled_changes,
             dueInvoicesCount: subsData.due_invoices_count,
             customerData: customerData,
             cardData: cardData
-          }).
+          };
+
+          if (subsData.trial_start && subsData.trial_end ) {
+            subsParams.trialStart = new Date( subsData.trial_start * 1000 ).getTime();
+            subsParams.trialEnd = new Date( subsData.trial_end * 1000 ).getTime();
+          }
+
+
+
+          resultUser.createSubscription(subsParams).
           then(function(dbRes) { deferred.resolve(redirectPage)  }).
           catch(function(dbErr) { deferred.reject(dbErr); return deferred.promise });
         },
@@ -232,24 +240,29 @@ function upgradeSubscription(subscriptionId, userData, planData) {
   }).request(function(error, result){
     if (error) {deferred.reject(error); return deferred.promise;}
 
-    var subsData = result.subscription;
+    let subsData = result.subscription;
 
-    Subscription.update({
+    let subsParams = {
       planId: subsData.plan_id,
       subscriptionId: subsData.id,
       planQuantity: subsData.plan_quantity,
       status: subsData.status,
-      trialStart: moment.unix(subsData.trial_start).format(),
-      trialEnd: moment.unix(subsData.trial_end).format(),
-      subscribtionCreatedAt:moment.unix(subsData.created_at).format(),
-      startedAt: moment.unix(subsData.started_at).format(),
+      trialStart: new Date( subsData.trial_start * 1000 ).getTime(),
+      trialEnd: new Date( subsData.trial_end * 1000 ).getTime(),
+      subscribtionCreatedAt: new Date( subsData.created_at * 1000 ).getTime(),
+      startedAt: new Date( subsData.started_at * 1000 ).getTime(),
       createdFromIp: subsData.created_from_ip,
       hasScheduledChanges: subsData.has_scheduled_changes,
       dueInvoicesCount: subsData.due_invoices_count,
-      customerData: result.customer,
+      customerData: result.customer
+    };
 
+    if ( subsData.trial_start && subsData.trial_end ) {
+      subsParams.trialStart = new Date( subsData.trial_start * 1000 ).getTime();
+      subsParams.trialEnd = new Date( subsData.trial_end * 1000 ).getTime();
+    }
 
-      }, {where: {subscriptionId:subscriptionId}}
+    Subscription.update(subsParams, {where: {subscriptionId:subscriptionId}}
     ).then(function(res) {
 
       deferred.resolve(result);

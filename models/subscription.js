@@ -13,7 +13,7 @@ module.exports = (Sequelize, DataTypes) => {
       trialStart: {type: DataTypes.DATE, allowNull: true},
       trialEnd: {type: DataTypes.DATE, allowNull: true},
       subscribtionCreatedAt: {type: DataTypes.DATE, allowNull: false},
-      startedAt: {type: DataTypes.DATE, allowNull: true},
+      startedAt: {type: DataTypes.DATE, allowNull: false},
       createdFromIp: {type: DataTypes.STRING, allowNull: false},
       hasScheduledChanges: {type: DataTypes.BOOLEAN, allowNull: false},
       dueInvoicesCount:  { type: DataTypes.INTEGER, allowNull: false},
