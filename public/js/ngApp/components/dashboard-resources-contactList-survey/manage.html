@@ -9,7 +9,7 @@
     </div>
 
     <div class='col-sm-12'>
-      <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/survey.html'"></ng-include>
+      <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/surveyHeader.html'"></ng-include>
     </div>
 
     <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(0, 3) track by $index' ng-init='questions = sc.manageTemp.survey.SurveyQuestions'>
@@ -52,6 +52,10 @@
         <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/question.html'"></ng-include>
         <ng-include ng-if='!object.disableAnswers' src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/answers.html'"></ng-include>
       </div>
+    </div>
+
+    <div class='col-sm-12'>
+      <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/surveyFooter.html'"></ng-include>
     </div>
 
     <div class='col-sm-12'>

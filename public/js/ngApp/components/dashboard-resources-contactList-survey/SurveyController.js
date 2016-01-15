@@ -192,14 +192,14 @@
         contact: true,
         minAnswers: 1,
         maxAnswers: 1
-      },
-      {
-        order: 9,
-        name: 'Thanks',
-        hardcodedName: true,
-        disableAnswers: true,
-        textArea: true
       }
+      // {
+      //   order: 9,
+      //   name: 'Thanks',
+      //   hardcodedName: true,
+      //   disableAnswers: true,
+      //   textArea: true
+      // }
     ];
 
     changePage('index');
@@ -334,6 +334,14 @@
       else {
         delete survey.errors.description;
         vm.manage.survey.description = survey.description;
+      }
+
+      if(survey.thanks.length == 0) {
+        survey.errors.thanks = 'Too short';
+      }
+      else {
+        delete survey.errors.thanks;
+        vm.manage.survey.thanks = survey.thanks;
       }
 
       if(vm.manage.survey.SurveyQuestions.length < 2) {

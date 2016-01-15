@@ -21,15 +21,14 @@
   </div>
 
   <div class='form-group'>
-    <!-- <label class='col-sm-2 control-label' for='description'>Introduction</label> -->
-
     <div class='col-sm-8'>
-      <textarea class='form-control' id='description' placeholder='Introduction'
-        ng-string ng-model='sc.manageTemp.survey.description' ng-maxlength='500' rows='5'></textarea>
-
       <span class='has-error'>
         <span class='help-block'>{{ sc.manageTemp.survey.errors.description }}</span>
       </span>
+
+      <textarea class='form-control' id='description' placeholder='Introduction'
+        ng-string ng-model='sc.manageTemp.survey.description' ng-maxlength='500' rows='5'></textarea>
+
     </div>
   </div>
 </div>

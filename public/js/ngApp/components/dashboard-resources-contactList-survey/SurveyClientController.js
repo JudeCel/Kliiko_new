@@ -2,18 +2,41 @@
   'use strict';
 
   angular.module('KliikoApp.Root').controller('SurveyClientController', SurveyClientController);
-  SurveyClientController.$inject = ['dbg', 'surveyServices', 'messenger', '$routeParams'];
+  SurveyClientController.$inject = ['dbg', 'surveyServices', 'messenger', '$timeout'];
 
-  function SurveyClientController(dbg, surveyServices, messenger, $routeParams) {
+  function SurveyClientController(dbg, surveyServices, messenger, $timeout) {
     dbg.log2('#SurveyClientController started');
 
     var vm = this;
     vm.manage = { survey: { SurveyQuestions: [] } };
+    vm.minsMaxs = {
+      input: {
+        min: 1,
+        max: 20
+      },
+      textarea: {
+        min: 1,
+        max: 500
+      }
+    }
+    vm.validationErrors = [
+      {
+        type: 'required',
+        message: 'Please fill this answer!',
+      },
+      {
+        type: 'minlength',
+        message: 'Answer is too short!',
+      },
+      {
+        type: 'maxlength',
+        message: 'Answer is too long!',
+      }
+    ];
 
     vm.listQuestions = listQuestions;
     vm.pickValidClass = pickValidClass;
     vm.submitSurvey = submitSurvey;
-    vm.onChange = onChange;
     vm.init = init;
 
     function init(surveyId) {
@@ -29,88 +52,36 @@
     };
 
     function submitSurvey() {
-      if(validateAnswers()) {
-        vm.surveySelect.error = 'There are some unfilled questions.';
-      }
-      else {
-        delete vm.surveySelect.error;
-        vm.surveySelect.surveyId = vm.manage.survey.id;
+      vm.submitedSurvey = true;
+      $timeout(function() {
+        if(vm.submitForm.$valid) {
+          delete vm.surveySelect.error;
+          vm.surveySelect.surveyId = vm.manage.survey.id;
 
-        surveyServices.answerSurvey(vm.surveySelect).then(function(res) {
-          dbg.log2('#SurveyClientController > answerSurvey > res ', res);
+          surveyServices.answerSurvey(vm.surveySelect).then(function(res) {
+            dbg.log2('#SurveyClientController > answerSurvey > res ', res);
 
-          if(res.error) {
-            messenger.error(res.error);
-          }
-          else {
-            vm.message = res.data;
-          }
-        });
-      }
-    }
+            console.log(res);
+            if(res.error) {
+              messenger.error(res.error);
+            }
+            else {
+              vm.message = res.data;
+            }
+          });
+        }
+        else {
+          vm.surveySelect.error = 'There are some unfilled answers!';
+        }
+      }, 1000);
+    };
 
     function listQuestions() {
       return vm.manage.survey.SurveyQuestions;
     };
 
-    function validateAnswers() {
-      var questions = vm.surveySelect.SurveyQuestions;
-      var errors = 0;
-
-      for(var i in questions) {
-        var question = questions[i];
-        if(!question.hasOwnProperty("answer") ||
-          (typeof question.answer == 'string' && question.answer.length < 1)) {
-          question.error = 'Please fill this answer!';
-          errors++;
-        }
-        else if(question.contact) {
-          for(var j in vm.contactList) {
-            var field = vm.contactList[j];
-
-            if(field.answer.length < 1) {
-              if(!question.error) {
-                question.error = 'Please fill contact details!';
-              }
-
-              field.error = 'Please fill this answer!';
-              errors++;
-            }
-            else {
-              delete field.error;
-            }
-          }
-        }
-        else {
-          delete question.error;
-        }
-      }
-
-      return (errors > 0);
-    };
-
     function pickValidClass(error, className) {
-      return className + (error ? '-danger' : '-success');
-    };
-
-    function onChange(question, contactList) {
-      if(question.error) {
-        delete question.error;
-      }
-
-      if(contactList) {
-        question.contact = question.answer;
-        if(!question.answer) {
-          removeContactErrors();
-        }
-      }
-    };
-
-    function removeContactErrors() {
-      for(var i in vm.contactList) {
-        var contact = vm.contactList[i];
-        delete contact.error;
-      }
+      return className + (error && Object.keys(error).length > 0 ? '-danger' : '-success');
     };
   };
 })();

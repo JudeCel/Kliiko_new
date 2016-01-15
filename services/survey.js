@@ -55,7 +55,12 @@ function findSurvey(id) {
     ]
   }).then(function(survey) {
     if(survey) {
-      deferred.resolve(survey);
+      if(survey.closed) {
+        deferred.reject('Survey closed, please contact admin!');
+      }
+      else {
+        deferred.resolve(survey);
+      }
     }
     else {
       deferred.reject('Survey not found');
