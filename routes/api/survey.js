@@ -2,52 +2,49 @@ var constants = require('../../util/constants');
 var surveyService = require('../../services/survey');
 
 function get(req, res, next) {
-  surveyService.findAllSurveys(req.user).then(
+  surveyService.findAllSurveys(res.locals.currentDomain).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function find(req, res, next) {
-  surveyService.findSurvey(req.body.id).then(
+  surveyService.findSurvey(req.body).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function remove(req, res, next) {
-  surveyService.removeSurvey(req.query.id, req.user).then(
+  surveyService.removeSurvey(req.query, res.locals.currentDomain).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function create(req, res, next) {
-  var params = req.body;
-  params.accountId = req.user.accountOwnerId;
-
-  surveyService.createSurveyWithQuestions(params).then(
+  surveyService.createSurveyWithQuestions(req.body, res.locals.currentDomain).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function update(req, res, next) {
-  surveyService.updateSurvey(req.body, req.user).then(
+  surveyService.updateSurvey(req.body, res.locals.currentDomain).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function status(req, res, next) {
-  surveyService.changeStatus(req.body, req.user).then(
+  surveyService.changeStatus(req.body, res.locals.currentDomain).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function copy(req, res, next) {
-  surveyService.copySurvey(req.body).then(
+  surveyService.copySurvey(req.body, res.locals.currentDomain).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
@@ -61,7 +58,7 @@ function answer(req, res, next) {
 };
 
 function confirm(req, res, next) {
-  surveyService.confirmSurvey(req.body, req.user).then(
+  surveyService.confirmSurvey(req.body, res.locals.currentDomain).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
