@@ -62,7 +62,7 @@ function prepareErrors(err) {
   let errors = ({})
   _.map(err.errors, function (n) {
     if (!errors[n.path]) {
-      errors[n.path] = _.startCase(n.path) + ": " + n.message;
+      errors[n.path] =  n.message;
     }
   });
   return errors
@@ -255,5 +255,3 @@ function setResetToken(email, callback) {
   });
 
 }
-
-
