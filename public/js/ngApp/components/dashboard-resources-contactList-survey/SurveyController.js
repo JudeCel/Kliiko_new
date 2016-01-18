@@ -420,13 +420,27 @@
       }
     };
 
-    function initContacts(object, question) {
-      if(question.answers) {
-        question.active =  true;
-        return question.answers;
-      }
-      else {
-        return defaultArray(object.minAnswers);
+    function initContacts(answer) {
+      if(!vm.currentContacts) {
+        if(!answer.contact) {
+          answer.contact = {};
+          for(var i in vm.contactDetails) {
+            var contact = vm.contactDetails[i];
+            if(!contact.disabled) {
+              answer.contact[contact.model] = contact;
+            }
+          }
+
+          initContacts(answer);
+        }
+        else {
+          vm.currentContacts = {};
+
+          for(var i in answer.contacts) {
+            var contact = answer.contacts[i];
+            vm.currentContacts[contact.model] = contact.name;
+          }
+        }
       }
     };
 
@@ -459,13 +473,30 @@
         vm.currentPage = { page: page };
       }
       else {
+        if(survey && survey.SurveyQuestions instanceof Array) {
+          var object = {};
+          for(var i in survey.SurveyQuestions) {
+            var question = survey.SurveyQuestions[i];
+            object[question.order] = question;
+          }
+          survey.SurveyQuestions = object;
+        }
+
         vm.survey = survey || { SurveyQuestions: {} };
         vm.currentPage = { page: 'manage', type: page };
       }
     };
 
-    function addContactDetail(cd, order, sq) {
+    function addContactDetail(cd, answer) {
       cd.disabled = !cd.disabled;
+      if(!cd.disabled) {
+        vm.currentContacts[cd.model] = cd.name;
+        answer.contact[cd.model] = cd;
+      }
+      else {
+        delete vm.currentContacts[cd.model];
+        delete answer.contact[cd.model];
+      }
     };
 
     function pickValidClass(error, className) {

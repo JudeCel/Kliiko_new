@@ -1,4 +1,4 @@
-<div class='form-horizontal'>
+<div class='form-horizontal' ng-init='sc.initContacts(question.answers[0])'>
   <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/answers/checkbox.html'"></ng-include>
 </div>
 
@@ -10,11 +10,12 @@
 
     <div class='col-xs-10 col-sm-7'>
       <div class='input-group' ng-if='cd.input'>
-        <input type='text' class='form-control' id='{{ cd.name }}' placeholder='' ng-disabled='cd.disabled'>
+        <input type='text' class='form-control' id='{{ cd.name }}' placeholder='' ng-disabled='sc.currentContacts[cd.model] ? false : cd.disabled'>
 
         <span class='input-group-addon' ng-if='!cd.canDisable'>@</span>
-        <span class='input-group-addon' ng-if='cd.canDisable'>
-          <span class='glyphicon' ng-class="{'glyphicon-remove': cd.disabled, 'glyphicon-ok': !cd.disabled}" ng-click='sc.addContactDetail(cd, object.order, question)'></span>
+        <span class='input-group-addon' ng-if='cd.canDisable && sc.survey.confirmedAt'>@</span>
+        <span class='input-group-addon' ng-if='cd.canDisable && !sc.survey.confirmedAt'>
+          <span class='glyphicon' ng-class="{'glyphicon-remove': cd.disabled, 'glyphicon-ok': !cd.disabled}" ng-click='sc.addContactDetail(cd, question.answers[0])'></span>
         </span>
       </div>
 
