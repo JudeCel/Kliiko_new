@@ -1,3 +1,4 @@
+var constants = require('../../util/constants');
 var surveyService = require('../../services/survey');
 
 function get(req, res, next) {
@@ -72,7 +73,7 @@ function getResponses(res) {
       res.send({ error: error });
     },
     onSuccess: function(data) {
-      res.send({ data: data });
+      res.send({ data: data, dateFormat: constants.dateFormat });
     }
   };
 }

@@ -100,14 +100,14 @@
       },
       {
         model: 'landlineNumber',
-        name: 'Landline',
+        name: 'Landline Number',
         input: true,
         canDisable: true,
         disabled: true
       },
       {
         model: 'postalAddress',
-        name: 'Postal address',
+        name: 'Postal Address',
         input: true,
         canDisable: true,
         disabled: true
@@ -229,6 +229,7 @@
       surveyServices.getAllSurveys().then(function(res) {
         progressbar.complete();
         vm.surveys = res.data;
+        vm.dateFormat = res.dateFormat;
         dbg.log2('#SurveyController > getAllSurveys > res ', res.data);
       });
     };
@@ -401,7 +402,7 @@
       var question = sq || {};
       question.minAnswers = object.minAnswers;
       question.maxAnswers = object.maxAnswers;
-      question.contact = object.contact;
+      question.contactDetails = object.contactDetails;
 
       if(object.hardcodedName) {
         question.name = object.name;
@@ -422,12 +423,12 @@
 
     function initContacts(answer) {
       if(!vm.currentContacts) {
-        if(!answer.contact) {
-          answer.contact = {};
+        if(!answer.contactDetails) {
+          answer.contactDetails = {};
           for(var i in vm.contactDetails) {
             var contact = vm.contactDetails[i];
             if(!contact.disabled) {
-              answer.contact[contact.model] = contact;
+              answer.contactDetails[contact.model] = contact;
             }
           }
 
@@ -436,8 +437,8 @@
         else {
           vm.currentContacts = {};
 
-          for(var i in answer.contacts) {
-            var contact = answer.contacts[i];
+          for(var i in answer.contactDetails) {
+            var contact = answer.contactDetails[i];
             vm.currentContacts[contact.model] = contact.name;
           }
         }
@@ -491,11 +492,11 @@
       cd.disabled = !cd.disabled;
       if(!cd.disabled) {
         vm.currentContacts[cd.model] = cd.name;
-        answer.contact[cd.model] = cd;
+        answer.contactDetails[cd.model] = cd;
       }
       else {
         delete vm.currentContacts[cd.model];
-        delete answer.contact[cd.model];
+        delete answer.contactDetails[cd.model];
       }
     };
 

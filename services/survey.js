@@ -6,10 +6,10 @@ var SurveyQuestion = models.SurveyQuestion;
 var SurveyAnswer = models.SurveyAnswer;
 
 var config = require('config');
-// var constants = require('../util/constants');
 // var async = require('async');
 var _ = require('lodash');
 var q = require('q');
+var changeCase = require('change-case');
 
 const validManageParams = [
   'accountId',
@@ -315,8 +315,8 @@ function createCsvHeader(questions) {
   let array = [];
   questions.forEach(function(question) {
     array.push(question.name);
-    if(question.answers[0].contact) {
-      question.answers[0].contact.forEach(function(contact) {
+    if(question.answers[0].contactDetails) {
+      question.answers[0].contactDetails.forEach(function(contact) {
         array.push(contact.name);
       });
     }
@@ -347,6 +347,11 @@ function createCsvData(header, survey) {
           break;
         case 'boolean':
           object[header[index]] = answer.value ? 'Yes' : 'No';
+          if(answer.contactDetails) {
+            _.map(answer.contactDetails, function(value, key) {
+              object[changeCase.titleCase(key)] = value;
+            });
+          }
           break;
       }
     });
@@ -360,12 +365,16 @@ function createCsvData(header, survey) {
 function validAnswerParams(params) {
   let surveyAnswer = { surveyId: params.surveyId, answers: {} };
   for(let i in params.SurveyQuestions) {
-    let answer = params.SurveyQuestions[i].answer;
+    let question = params.SurveyQuestions[i];
     if(!surveyAnswer.answers[i]) {
       surveyAnswer.answers[i] = {};
     }
-    surveyAnswer.answers[i].type = typeof answer;
-    surveyAnswer.answers[i].value = answer;
+
+    surveyAnswer.answers[i].type = typeof question.answer;
+    surveyAnswer.answers[i].value = question.answer;
+    if(question.answer && question.contactDetails) {
+      surveyAnswer.answers[i].contactDetails = question.contactDetails;
+    }
   }
 
   return surveyAnswer;

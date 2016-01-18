@@ -27,7 +27,7 @@
       <tbody>
         <tr ng-repeat='survey in sc.surveys'>
           <td>{{ survey.name }}</td>
-          <td>{{ survey.confirmedAt || 'unconfirmed' }}</td>
+          <td>{{ survey.confirmedAt | date:sc.dateFormat || 'unconfirmed' }}</td>
           <td><a href='{{ survey.url }}'>{{ survey.url }}</a></td>
           <td>{{ survey.closed }}</td>
           <td class='text-right dashboardElementsEditRemove'>
