@@ -31,18 +31,18 @@ function find(provider, id, callback) {
     });
 }
 
-function create(user, params, callback) {
+function create(user, params, t, callback) {
   let socialProfileParams = {}
   socialProfileParams['providerUserId'] = params.socialProfile.id
   socialProfileParams['provider'] = params.socialProfile.provider
   socialProfileParams['userId'] = user.id
 
-  SocialProfile.create(socialProfileParams).then(function(result) {
-    callback(null, user, result);
+  SocialProfile.create(socialProfileParams, { transaction: t } ).then(function(result) {
+    callback(null, user, result, t);
   }).catch(User.sequelize.ValidationError, function(err) {
-    callback(err, null);
+    callback(err, null, null, t);
   }).catch(function(err) {
-    callback(err, null);
+    callback(err, null, null, t);
   });
 }
 
