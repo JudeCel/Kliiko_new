@@ -214,7 +214,7 @@ function copySurvey(params) {
 
   Survey.find({
     where: { id: params.id },
-    attributes: ['accountId', 'name', 'description'],
+    attributes: ['accountId', 'name', 'description', 'thanks'],
     include: [{
       model: SurveyQuestion,
       attributes: ['name', 'question', 'order', 'answers', 'type']
@@ -243,7 +243,7 @@ function answerSurvey(params) {
   let deferred = q.defer();
   let validParams = validAnswerParams(params);
 
-  SurveyAnswer.bulkCreate(validParams).then(function() {
+  SurveyAnswer.create(validParams).then(function() {
     deferred.resolve('Successfully completed survey!');
   }).catch(SurveyAnswer.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
@@ -278,20 +278,97 @@ function confirmSurvey(params, user) {
   return deferred.promise;
 };
 
+//Untested
+function exportSurvey(params, user) {
+  let deferred = q.defer();
+
+  Survey.find({
+    where: { id: params.id },
+    attributes: ['id'],
+    include: [{
+      model: SurveyQuestion,
+      attributes: returnParamsQuestions
+    }, SurveyAnswer],
+    order: [
+      [SurveyQuestion, 'order', 'ASC']
+    ]
+  }).then(function(survey) {
+    if(survey) {
+      let header = createCsvHeader(survey.SurveyQuestions);
+      let data = createCsvData(header, survey);
+      deferred.resolve({ header: header, data: data });
+    }
+    else {
+      deferred.reject('Survey not found');
+    }
+  }).catch(Survey.sequelize.ValidationError, function(error) {
+    deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+};
+
 // Helpers
+function createCsvHeader(questions) {
+  let array = [];
+  questions.forEach(function(question) {
+    array.push(question.name);
+    if(question.answers[0].contact) {
+      question.answers[0].contact.forEach(function(contact) {
+        array.push(contact.name);
+      });
+    }
+  });
+
+  return array;
+};
+
+function createCsvData(header, survey) {
+  let array = [];
+
+  survey.SurveyAnswers.forEach(function(surveyAnswer) {
+    let object = {};
+
+    survey.SurveyQuestions.forEach(function(question, index) {
+      let answer = surveyAnswer.answers[question.id];
+
+      switch(answer.type) {
+        case 'number':
+          question.answers.forEach(function(questionAnswer) {
+            if(questionAnswer.order == answer.value) {
+              object[header[index]] = questionAnswer.name;
+            }
+          });
+          break;
+        case 'string':
+          object[header[index]] = answer.value;
+          break;
+        case 'boolean':
+          object[header[index]] = answer.value ? 'Yes' : 'No';
+          break;
+      }
+    });
+
+    array.push(object);
+  });
+
+  return array;
+};
+
 function validAnswerParams(params) {
-  let questions = [];
+  let surveyAnswer = { surveyId: params.surveyId, answers: {} };
   for(let i in params.SurveyQuestions) {
     let answer = params.SurveyQuestions[i].answer;
-    let question = { answer: {} };
-    question.surveyId = params.surveyId;
-    question.surveyQuestionId = parseInt(i);
-    question.answer.type = typeof answer;
-    question.answer.value = answer;
-    questions.push(question);
+    if(!surveyAnswer.answers[i]) {
+      surveyAnswer.answers[i] = {};
+    }
+    surveyAnswer.answers[i].type = typeof answer;
+    surveyAnswer.answers[i].value = answer;
   }
 
-  return questions;
+  return surveyAnswer;
 }
 
 function bulkUpdateQuestions(surveyId, questions, t) {
@@ -375,5 +452,6 @@ module.exports = {
   removeSurvey: removeSurvey,
   copySurvey: copySurvey,
   answerSurvey: answerSurvey,
-  confirmSurvey: confirmSurvey
+  confirmSurvey: confirmSurvey,
+  exportSurvey: exportSurvey
 };

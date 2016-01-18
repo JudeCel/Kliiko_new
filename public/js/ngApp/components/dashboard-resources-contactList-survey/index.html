@@ -31,6 +31,7 @@
           <td><a href='{{ survey.url }}'>{{ survey.url }}</a></td>
           <td>{{ survey.closed }}</td>
           <td class='text-right dashboardElementsEditRemove'>
+            <a href='/resources/survey/export/{{ survey.id }}' ng-if='survey.confirmedAt'><img src='/icons/brand_colour_grey.png' alt='' /></a>
             <img src='/icons/calendar_grey.png' alt='' ng-click='sc.confirmSurvey(survey)' ng-if='!survey.confirmedAt' />
             <img ng-src='{{ sc.statusIcon(survey) }}' alt='' ng-click='sc.changeStatus(survey)' />
             <img src='/icons/resources_grey.png' alt='' ng-click='sc.copySurvey(survey)' />
