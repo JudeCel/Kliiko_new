@@ -10,7 +10,8 @@
       find: { method: 'PUT', params: { path: 'find' } },
       status: { method: 'PUT', params: { path: 'status' } },
       copy: { method: 'PUT', params: { path: 'copy' } },
-      answer: { method: 'PUT', params: { path: 'answer' } }
+      answer: { method: 'PUT', params: { path: 'answer' } },
+      confirm: { method: 'PUT', params: { path: 'confirm' } }
     });
 
     var upServices = {};
@@ -23,6 +24,7 @@
     upServices.createSurvey = createSurvey;
     upServices.copySurvey = copySurvey;
     upServices.answerSurvey = answerSurvey;
+    upServices.confirmSurvey = confirmSurvey;
     return upServices;
 
     function getAllSurveys() {
@@ -115,6 +117,18 @@
       dbg.log2('#surveyServices > answerSurvey > make rest call');
       surveyRestApi.answer(data, function(res) {
         dbg.log2('#surveyServices > answerSurvey > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    };
+
+    function confirmSurvey(data) {
+      var deferred = $q.defer();
+
+      dbg.log2('#surveyServices > confirmSurvey > make rest call');
+      surveyRestApi.confirm(data, function(res) {
+        dbg.log2('#surveyServices > confirmSurvey > rest call responds');
         deferred.resolve(res);
       });
 

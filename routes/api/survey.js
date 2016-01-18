@@ -59,6 +59,13 @@ function answer(req, res, next) {
   );
 };
 
+function confirm(req, res, next) {
+  surveyService.confirmSurvey(req.body, req.user).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+};
+
 function getResponses(res) {
   return {
     onError: function(error) {
@@ -78,5 +85,6 @@ module.exports = {
   update: update,
   status: status,
   copy: copy,
-  answer: answer
+  answer: answer,
+  confirm: confirm
 };

@@ -251,6 +251,30 @@ function answerSurvey(params) {
   return deferred.promise;
 };
 
+//Untested
+function confirmSurvey(params, user) {
+  let deferred = q.defer();
+
+  Survey.update({ confirmedAt: params.confirmedAt }, {
+    where: { id: params.id, accountId: user.accountOwnerId },
+    returning: true
+  }).then(function(result) {
+    if(result[0] == 0) {
+      deferred.reject('Survey not found');
+    }
+    else {
+      let survey = result[1][0];
+      deferred.resolve(survey);
+    }
+  }).catch(Survey.sequelize.ValidationError, function(error) {
+    deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+};
+
 // Helpers
 function validAnswerParams(params) {
   let questions = [];
@@ -316,6 +340,14 @@ function validUrl(survey) {
 };
 
 function validateParams(params, attributes) {
+  if(_.isObject(params.SurveyQuestions)) {
+    let array = [];
+    _.map(params.SurveyQuestions, function(n) {
+      array.push(n);
+    });
+    params.SurveyQuestions = array;
+  }
+
   params.SurveyQuestions = _.remove(params.SurveyQuestions, function(n) {
     return _.isObject(n);
   });
@@ -339,5 +371,6 @@ module.exports = {
   updateSurvey: updateSurvey,
   removeSurvey: removeSurvey,
   copySurvey: copySurvey,
-  answerSurvey: answerSurvey
+  answerSurvey: answerSurvey,
+  confirmSurvey: confirmSurvey
 };

@@ -15,10 +15,12 @@
     vm.changeStatus = changeStatus;
     vm.copySurvey = copySurvey;
     vm.finishManage = finishManage;
+    vm.confirmSurvey = confirmSurvey;
 
     // Inits
     vm.initQuestion = initQuestion;
     vm.initAnswers = initAnswers;
+    vm.initContacts = initContacts;
 
     // Helpers
     vm.statusIcon = statusIcon;
@@ -347,6 +349,24 @@
       });
     };
 
+    function confirmSurvey(survey) {
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+
+      surveyServices.confirmSurvey({ id: survey.id, confirmedAt: new Date() }).then(function(res) {
+        dbg.log2('#SurveyController > confirmSurvey > res ', res);
+        progressbar.complete();
+
+        if(res.error) {
+          messenger.error(res.error);
+        }
+        else {
+          // changePage('index');
+          messenger.ok(res.message || 'Survey confirmed successfully');
+        }
+      });
+    };
+
     function changeQuestions(question, order) {
       question.active = !question.active;
 
@@ -391,6 +411,16 @@
     };
 
     function initAnswers(object, question) {
+      if(question.answers) {
+        question.active =  true;
+        return question.answers;
+      }
+      else {
+        return defaultArray(object.minAnswers);
+      }
+    };
+
+    function initContacts(object, question) {
       if(question.answers) {
         question.active =  true;
         return question.answers;

@@ -5,6 +5,6 @@
   </div>
 
   <div class='col-xs-9'>
-    <img class='pull-right' ng-click='sc.changeQuestions(question, object.order)' ng-src='{{ sc.chooseValidIcon(question.active) }}' alt='' />
+    <img class='pull-right' ng-click='sc.changeQuestions(question, object.order)' ng-src='{{ sc.chooseValidIcon(question.active) }}' ng-if='!sc.survey.confirmedAt' />
   </div>
 </div>
