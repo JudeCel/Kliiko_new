@@ -11,6 +11,8 @@ var promotionCode = require('./promotionCode');
 var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
 var chargebee = require('./chargebee');
+let topics = require('./topics');
+let topic = require('./topic');
 var contactList = require('./contactList');
 var contactListUser = require('./contactListUser');
 
@@ -18,9 +20,11 @@ var contactListUser = require('./contactListUser');
 module.exports = router;
 
 // Main Routes
-router.get('/user', userRoutes.userGet);
-router.post('/user', userRoutes.userPost);
-router.put('/user', userRoutes.changePassword);
+router.route('/user').
+  get( userRoutes.userGet).
+  post(userRoutes.userPost).
+  put(userRoutes.changePassword);
+
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
@@ -51,6 +55,14 @@ router.post('/contactLists', policy.authorized(['accountManager', 'admin']), con
 router.post('/contactListUser', policy.authorized(['accountManager', 'admin']), contactListUser.create);
 router.post('/contactListsUser/:id', policy.authorized(['accountManager', 'admin']), contactListUser.update);
 
+
+router.get('/topics', multipartyMiddleware, topics.get);
+router.post('/topic', multipartyMiddleware, topic.post);
+
+router.route('/topic/:id').
+  post(multipartyMiddleware, topic.copyTopicById).
+  put(multipartyMiddleware, topic.updateTopicById).
+  delete(multipartyMiddleware, topic.deleteById);
 
 // Common Rules
 router.use(function (req, res, next) {

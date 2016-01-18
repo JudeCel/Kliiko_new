@@ -25,6 +25,10 @@
     color: #2F9F69;
     border-color: #2F9F69;
     background: white; }
+    .btn-dashboard-menu.btn-green:hover, .btn-green.btn-addNewElement:hover, .btn-dashboard-menu.btn-green.active, .btn-green.active.btn-addNewElement {
+      color: white;
+      border-color: #2F9F69;
+      background: #2F9F69; }
   .btn-dashboard-menu.btn-short, .btn-short.btn-addNewElement {
     min-width: 0 !important;
     max-width: 100px; }
@@ -120,6 +124,13 @@ label.radio-button input[type="radio"]:checked + span:after {
   .btn-standart.btn-blue {
     color: #4DC0E9;
     border-color: #4DC0E9 !important; }
+  .btn-standart.btn-green {
+    color: #2F9F69;
+    border-color: #2F9F69 !important; }
+    .btn-standart.btn-green:hover {
+      color: white;
+      border-color: #2F9F69 !important;
+      background: #2F9F69; }
   .btn-standart.btn-text-middle {
     font-size: 80%; }
   .btn-standart.btn-x {
@@ -1249,5 +1260,79 @@ input[class=checkbox-blue]:checked + label {
 .banner-link-input {
   border-color: #4DC0E9 !important; }
 
+#resources-topics #no-topics-in-list {
+  text-align: center; }
+
+#resources-topics .topic-list-item {
+  position: relative; }
+
+#resources-topics .panel {
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  background: #ddd; }
+  #resources-topics .panel:hover {
+    background: rgba(174, 239, 137, 0.5); }
+
+#resources-topics .panel-label {
+  padding: 3px; }
+  #resources-topics .panel-label span.inline-editor-help {
+    font-size: 1.4rem;
+    font-style: italic; }
+
+#resources-topics .ic {
+  margin: 3px;
+  cursor: pointer; }
+
+#resources-topics .panel-heading {
+  background: none; }
+
+#resources-topics .control-block {
+  position: absolute;
+  top: 10px;
+  right: 2%; }
+  #resources-topics .control-block > img {
+    position: relative;
+    z-index: 10;
+    background: #ddd; }
+  #resources-topics .control-block .edit-block {
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+    top: -4px;
+    right: -3px;
+    padding: 2px 10px;
+    background: gray; }
+    #resources-topics .control-block .edit-block img {
+      cursor: pointer;
+      opacity: 0.8; }
+      #resources-topics .control-block .edit-block img:hover {
+        opacity: 1; }
+
+#resources-topics .panel-body {
+  background: white;
+  border: 3px solid #ddd;
+  border-top: none; }
+  #resources-topics .panel-body div.row {
+    padding: 10px;
+    cursor: pointer; }
+    #resources-topics .panel-body div.row:hover {
+      background: rgba(174, 239, 137, 0.5); }
+  #resources-topics .panel-body:hover {
+    border-color: rgba(174, 239, 137, 0.5); }
+
+#resources-topics #new-topic-input {
+  width: 200px;
+  padding: 9px;
+  font-size: 2.1rem; }
+
+#resources-topics #new-topic-input-help {
+  margin: 6px 0 0 -85px;
+  color: grey;
+  font-style: italic; }
+
 .margin-top-2rem {
   margin-top: 2rem; }
+
+.margin-top-3rem {
+  margin-top: 3rem; }
