@@ -60,6 +60,9 @@ function findSurvey(id) {
       if(survey.closed) {
         deferred.reject('Survey closed, please contact admin!');
       }
+      else if(!survey.confirmedAt) {
+        deferred.reject('Survey not confirmed, please contact admin!');
+      }
       else {
         deferred.resolve(survey);
       }
