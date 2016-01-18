@@ -45,6 +45,9 @@ router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email
 
 router.get('/auth/facebook/callback', function(req, res, next) {
   passport.authenticate('facebook', function(err, user, info) {
+    if (err) {
+      return res.render('login', { title: 'Login', error: err.message, message: "" });
+    }
     if (user) {
       req.login(user, function(err) {
         middlewareFilters.landingPage(req, res, next);
@@ -63,7 +66,9 @@ router.get('/auth/facebook/callback', function(req, res, next) {
 router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
 router.get('/auth/google/callback', function(req, res, next) {
   passport.authenticate('google', function(err, user, info) {
-    console.log(err);
+    if (err) {
+      return res.render('login', { title: 'Login', error: err.message, message: "" });
+    }
     if (user) {
       req.login(user, function(err) {
         middlewareFilters.landingPage(req, res, next);

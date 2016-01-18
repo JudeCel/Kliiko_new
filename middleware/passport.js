@@ -7,7 +7,7 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var config = require('config');
 var models  = require('./../models');
 var usersService = require('./../services/users.js');
-var socialProfileRepo = require('./../services/socialProfile.js');
+var socialProfileService = require('./../services/socialProfile.js');
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
@@ -32,7 +32,7 @@ passport.use(new FacebookStrategy({
     profileFields: ['id', 'displayName','emails', 'name']
   },
   function(req, accessToken, refreshToken, profile, done) {
-    socialProfileRepo.find(profile.provider, profile.id, function(err, result) {
+    socialProfileService.findByConfirmedUser(profile.provider, profile.id, function(err, result) {
       if (result) {
         prepareUserData(result.User, profile, done);
       }else{
@@ -50,7 +50,7 @@ passport.use(new GoogleStrategy({
   function(token, refreshToken, profile, done) {
 
     process.nextTick(function() {
-      socialProfileRepo.find(profile.provider, profile.id, function(err, result) {
+      socialProfileService.findByConfirmedUser(profile.provider, profile.id, function(err, result) {
         if (result) {
           prepareUserData(result.User, profile, done);
         }else{

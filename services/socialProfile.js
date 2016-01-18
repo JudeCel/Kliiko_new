@@ -5,7 +5,14 @@ var SocialProfile  = require('./../models').SocialProfile;
 var async = require('async');
 var _ = require('lodash');
 var bcrypt = require('bcrypt');
+var needConfirmatinMessage = { message: "Please confirm Your Email" }
 
+module.exports = {
+  validate: validate,
+  create: create,
+  find: find,
+  findByConfirmedUser: findByConfirmedUser
+}
 
 function validate(params, callback) {
   let provider = params.socialProfile.provider;
@@ -31,6 +38,20 @@ function find(provider, id, callback) {
     });
 }
 
+function findByConfirmedUser(provider, id, callback) {
+  find(provider, id, function(err, result) {
+    if (result) {
+      if (result.User.confirmedAt) {
+        callback(null, result);
+      }else {
+        callback(needConfirmatinMessage, null);
+      }
+    }else {
+      callback(err, null);
+    }
+  })
+}
+
 function create(user, params, t, callback) {
   let socialProfileParams = {}
   socialProfileParams['providerUserId'] = params.socialProfile.id
@@ -44,10 +65,4 @@ function create(user, params, t, callback) {
   }).catch(function(err) {
     callback(err, null, null, t);
   });
-}
-
-module.exports = {
-  validate: validate,
-  create: create,
-  find: find
 }
