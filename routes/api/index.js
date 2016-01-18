@@ -44,9 +44,13 @@ router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet
 router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
 
-router.post('/gallery', gallery.postResources);
+
+// router.post('/gallery', gallery.postResources);
+router.post('/gallery', multipartyMiddleware, gallery.postResources);
+
 router.get('/gallery', gallery.getResources);
 router.get('/gallery/download', gallery.downloadResources);
+router.get('/gallery/validate', gallery.validateResourceData);
 router.delete('/gallery', gallery.deleteResources);
 
 // Common Rules

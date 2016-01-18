@@ -17,7 +17,8 @@ module.exports = {
   getResources: getResources,
   downloadResources: downloadResources,
   deleteResources: deleteResources,
-  uploadResource: uploadResource
+  uploadResource: uploadResource,
+  validate: validate
 };
 
 // const MEGABYTE = 1024*1024;
@@ -61,7 +62,6 @@ function getResources(accountName){
         delete resource.dataValues.User;
         resource.JSON = JSON.parse(decodeURI(resource.JSON));
       });
-      console.log(results);
       deferred.resolve(results);
     })
     .catch(function (err) {
@@ -91,7 +91,7 @@ function downloadResources(ids){
   return deferred.promise;
 }
 
-function uploadResource(data){
+function validate(data) {
   let deferred = q.defer();
 
   let req = {
@@ -115,6 +115,16 @@ function uploadResource(data){
   });
 
   return deferred.promise;
+}
+
+function uploadResource(data){
+  console.log(data)
+  console.log("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+
+}
+
+function saveToDatabase(){
+
 }
 
 // function create()

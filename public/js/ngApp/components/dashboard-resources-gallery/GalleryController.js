@@ -5,12 +5,13 @@
     module('KliikoApp').
     controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', '$scope', 'domServices', '$ocLazyLoad','$injector', 'angularConfirm', 'messenger'];
-  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, $ocLazyLoad,$injector,  angularConfirm, messenger){
+  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', '$scope', 'domServices', '$ocLazyLoad','$injector', 'angularConfirm', 'messenger', 'Upload'];
+  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, $ocLazyLoad,$injector,  angularConfirm, messenger, Upload){
     dbg.log2('#GalleryController  started');
     initList();
 
     $scope.newResource = {};
+    $scope.dataForValidation = {};
 
     $scope.uploadTst = function() {
       dbg.yell($scope.fileTst)
@@ -42,16 +43,30 @@
       domServices.modal('uploadTST')
     };
 
-    $scope.submitForm = function(newResource) {
+    $scope.submitForm = function(data) {
 
-      $scope.newResource.file = {
+      $scope.dataForValidation = $scope.newResource;
+      $scope.dataForValidation.file = {
         name: $scope.fileTst.name,
         size: $scope.fileTst.size,
         type: $scope.fileTst.type
       }
 
-      GalleryServices.uploadResource(newResource).then(function(res) {
-        dbg.yell(res)
+      console.log($scope.dataForValidation);
+      GalleryServices.validateData($scope.dataForValidation).then(function(res) {
+        if(res.error){
+          messenger.error(res.error.name);
+        }else{
+          console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+          console.log($scope.fileTst);
+          GalleryServices.uploadResource($scope.fileTst).then(function(res) {
+            if(res.errors){
+              messenger.error(res.errors);
+            }else{
+              messenger.error("Successfully uploaded a new resource.");
+            }
+          });
+        };
       });
     };
 
@@ -59,11 +74,9 @@
       if(uploadType === "brandLogo"){
         return "brand logo";
       }
-
       if(uploadType === "youtubeUrl"){
         return "youtube";
       }
-
       return uploadType;
     }
   }

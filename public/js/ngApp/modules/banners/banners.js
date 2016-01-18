@@ -68,9 +68,6 @@
 
       if (file && !file.$error) {
         bannersCache = null;
-        console.log("%%%%%%%%%%%%%% Banner File %%%%%%%%%%%%%%%%%%%%%%%%%%");
-        console.log(file);
-        console.log("%%%%%%%%%%%%%% Banner File %%%%%%%%%%%%%%%%%%%%%%%%%%");
         Upload.upload({
           url: globalSettings.restUrl+'/banners',
           method: 'POST',
