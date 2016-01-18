@@ -34,7 +34,11 @@
     vm.init = function () {
       vm.emailTemplates = vm.emailTemplates.concat(vm.constantEmailTemplates);
       $('#templateContent').wysiwyg({
-        autoGrow:false, controls:"bold,italic,|,undo,redo"
+        rmUnusedControls: true,
+        controls: {
+          bold: { visible : true },
+          italic: { visible : true }
+        }
       });
       $('#templateContent').wysiwyg("setContent", "");
       refreshTemplateList(function() {
@@ -46,7 +50,6 @@
     
     vm.startEditingTemplate = function(templateIndex) {        
       mailTemplate.getMailTemplate(vm.emailTemplates[templateIndex]).then(function (res) {
-        //dbg.log2('#EmailTemplateEditorController > getMailTemplate > response:', res);
         if (res.error) {return;}
         
         vm.currentTemplate = jQuery.extend(true, {}, res.template);
@@ -56,18 +59,37 @@
     }
     
     vm.modifyAndSave = function() {
-        vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
-        mailTemplate.saveMailTemplates(vm.currentTemplate).then(function (res) {
-          dbg.log2('#EmailTemplateEditorController > saveMailTemplates > response:', res); 
-          if (!res.error) {
-            refreshTemplateList(function() {
-              var index = getIndexOfMailTemplateWithId(res.templates.id);
-              if (index != -1) {
-                vm.startEditingTemplate(index);
-              }
-            });
-          }                  
+      vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
+      mailTemplate.saveMailTemplates(vm.currentTemplate).then(function (res) {
+        if (!res.error) {
+          refreshTemplateList(function() {
+            var index = getIndexOfMailTemplateWithId(res.templates.id);
+            if (index != -1) {
+            vm.startEditingTemplate(index);
+            }
+          });
+        }                  
+      });
+    }
+    
+    vm.deleteTemplate = function(template, key, event) {
+      if(event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+      
+      var nextSelection = -1;
+      if (key == vm.currentTemplate.index) {
+        nextSelection = vm.currentTemplate.index - 1;    
+      }
+      
+      mailTemplate.deleteMailTemplate(template).then(function (res) {
+        refreshTemplateList(function(res) {
+          if (nextSelection != -1) {
+            vm.startEditingTemplate(nextSelection);
+          }
         });
+      });
     }
     
     function getIndexOfMailTemplateWithId(id) {
@@ -80,7 +102,6 @@
     
     function refreshTemplateList(callback) {
         mailTemplate.getAllMailTemplates().then(function (res) {
-        //dbg.log2('#EmailTemplateEditorController > getAllMailTemplates > templates fetched:', res);
         vm.emailTemplates = res.templates.sort(function(a, b){return a.id-b.id});;
         
         if (vm.emailTemplates && vm.emailTemplates.length && vm.currentTemplate == -1) {

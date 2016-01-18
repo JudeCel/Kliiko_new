@@ -4,6 +4,8 @@ var MailTemplateService = require('./../services/mailTemplate');
 var async = require('async');
 var fs = require('fs');
 
+var num = 0;
+
 var templateFiles = [
     {
        fileName: 'InvitationSeries_FirstInvite.html',
@@ -59,10 +61,33 @@ function createTestMailTemplate(fileInfo, callback) {
 
 function createMailTemplate() {
   //Todo setup filling templates with async waterfall  
-  createTestMailTemplate(templateFiles[0], function(error, _result) {
+ /* createTestMailTemplate(templateFiles[0], function(error, _result) {
     createTestMailTemplate(templateFiles[1], function(error, _result) {
     });  
   });
+  */
+  async.waterfall([
+    (cb) => {addTemplate(cb)},
+    addTemplate,
+    addTemplate,
+    addTemplate,
+    addTemplate,
+    addTemplate,
+    addTemplate,
+    addTemplate     
+  ]);
+}
+
+function addTemplate(callback) {       
+  createTestMailTemplate(templateFiles[num], function(error, _result) {
+    if (num < 7) {
+      num++;
+      callback(null);
+    } else {
+      process.exit();
+    }    
+    
+  })
 }
 
 function readContents(fileName, callback) {

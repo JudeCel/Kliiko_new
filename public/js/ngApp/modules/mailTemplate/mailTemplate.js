@@ -9,13 +9,15 @@
     var mailRestApi = {
       mailTemplates: $resource(globalSettings.restUrl + '/mailTemplates', {}, {get: {method: 'GET'}}),
       mailTemplate: $resource(globalSettings.restUrl + '/mailTemplate', {}, {post: {method: 'POST'}}),
-      saveMailTemplate: $resource(globalSettings.restUrl + '/mailTemplates/save', {}, {post: {method: 'POST'}})
+      saveMailTemplate: $resource(globalSettings.restUrl + '/mailTemplates/save', {}, {post: {method: 'POST'}}),
+      deleteMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate', {}, {post: {method: 'POST'}})
     };
 
     var MailTemplateService = {};
     MailTemplateService.getAllMailTemplates = getAllMailTemplates;
     MailTemplateService.saveMailTemplates = saveMailTemplate;
     MailTemplateService.getMailTemplate = getMailTemplate;
+    MailTemplateService.deleteMailTemplate = deleteMailTemplate;
     return MailTemplateService;
 
     function getAllMailTemplates() {
@@ -49,6 +51,18 @@
       });
       return deferred.promise;
     }
+    
+    function deleteMailTemplate(mTemplate) {
+      dbg.log2('#KliikoApp.mailTemplate > delete mail template', mTemplate);
+      var deferred = $q.defer();
+
+      mailRestApi.deleteMailTemplate.delete({mailTemplateId:mTemplate.id}, function (res) {
+        dbg.log2('#KliikoApp.mailTemplate > delete mail template> server respond >', res);
+        deferred.resolve(res);
+      });
+      return deferred.promise;
+    }
+    
   }
 })();
 

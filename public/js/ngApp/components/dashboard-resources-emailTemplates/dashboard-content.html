@@ -1,29 +1,42 @@
 <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec">
-    <div class="row" style="width:100%; height:100%;">   
-        <div class="col-md-4 navbar navbar-default" role="navigation">
-            <ul class="nav navbar-nav">
-              <li ng-repeat="(key, t) in ec.emailTemplates" class="pull-left"><a class="pull-left" ng-click="ec.startEditingTemplate(key)">{{t.name}}</a></li>
-            </ul>            
+    <div class="row" style="width:100%; height:100%;">
+        <div class="list-group col-md-3">
+            <a ng-repeat="(key, t) in ec.emailTemplates" class="list-group-item mail-template-list-item" ng-class="{'list-group-item-info': key == ec.currentTemplate.index}" ng-click="ec.startEditingTemplate(key)"> 
+                <span class="input-group" ng-hide="t.UserId">{{t["MailTemplate.name"]}}</span>
+                <div class="input-group" ng-hide="!t.UserId">
+                    <input type="text" class="form-control" aria-describedby="basic-addon2" ng-model="t.name">
+                    <span class="input-group-addon" id="basic-addon2">{{t["MailTemplate.name"]}}</span>
+                    
+                    <span class="input-group-btn">
+                        <button class="btn glyphicon glyphicon-trash" type="button" ng-click="ec.deleteTemplate(t, key, $event);"></button>                           
+                    </span>
+                </div>
+            </a>
         </div>
 
-        <div class="col-md-8">
-            <form class = "form pull-left form-horizontal col-md-8" style="width:100%" role = "search">          
-                <label for="templateName" class="text-no-bold text-login-page control-label pull-left">Template Name:</label>
-                <input id="templateName" type = "text" class = "col-md-3" ng-model="ec.currentTemplate.name"> <div>{{ec.currentTemplate["MailTemplate.name"]}}</div>
-                <hr>
-                <label for="templateSubject" class="text-no-bold text-login-page control-label pull-left">Subject:</label> <input id="templateSubject" type = "text" class = "form-control" placeholder = "subject" ng-model="ec.currentTemplate.subject">
+        <div class="col-md-8 mail-template-details panel panel-default">
+          <div class="panel-body">
+                <div class="input-group">
+                  <span class="input-group-addon">Template Name:</span>
+                  <input type="text" class="form-control" aria-describedby="basic-addon2" ng-model="ec.currentTemplate.name">
+                  <span class="input-group-addon" id="basic-addon2">{{ec.currentTemplate["MailTemplate.name"]}}</span>
+                </div>
                 <br>
-                <label for="templateContent" class="text-no-bold text-login-page control-label pull-left">Content:</label><br><textarea style="width:95%;height:70%;" id="templateContent"></textarea>
-            </form>
+                <div class="input-group">
+                  <span class="input-group-addon">Subject:</span>
+                  <input type="text" class="form-control" aria-describedby="basic-addon2" ng-model="ec.currentTemplate.subject">
+                </div>
+                <br>
+               
+                <span>Content:</span>
+                <textarea id="templateContent"></textarea>
             <br>
-            <table>
-                <tr></tr>
-                <tr>
-                    <td><button type = "submit" class = "btn btn-default pull-left">Preview</button></td>
-                    <td><button type = "submit" class = "btn btn-default pull-left">Reset</button></td>
-                    <td><button type = "submit" class = "btn btn-default pull-right" ng-click="ec.modifyAndSave()">Modify & Save Copy</button></td> 
-                </tr>
-            </table>
+            
+            <button type = "submit" class = "btn btn-link pull-left">Preview</button>
+            <button type = "submit" class = "btn btn-danger pull-left">Reset</button>
+            <button type = "submit" class = "btn btn-success pull-right" ng-click="ec.modifyAndSave()">Modify & Save Copy</button> 
+            
         </div>
+      </div>
     </div>
 </section>

@@ -16,13 +16,15 @@ var templateFields = [
     'name',
     'subject',
     'content',
-    'MailTemplateId'
+    'MailTemplateId',
+    'UserId'
 ];
 
 var templateFieldsForList = [
     'id',
     'name',
-    'MailTemplateId'
+    'MailTemplateId',
+    'UserId'
 ];
 
 function validate(params, callback) {
@@ -120,15 +122,16 @@ function copyBaseTemplates(callback) {
   });
 }
 
-function saveMailTemplate(template, callback) {
+function saveMailTemplate(template, userId, callback) {
   if (!template) {
       return callback("e-mail template not provided", null);
   }
   
   var id = template.id;
   delete template["id"];
-  console.log("saving new data:", template);
-  if (id == template["MailTemplate.id"]) {
+  //a template wasn't created by user - an orinal
+  if (!template["UserId"]) {
+    template.UserId = userId;
     create(template, function(error, result) {
         callback(error, result);  
     });
@@ -139,6 +142,22 @@ function saveMailTemplate(template, callback) {
   }
 }
 
+function deleteMailTemplate(template, callback) {
+  if (!template) {
+      return callback("e-mail template not provided");
+  }
+  
+  var id = template;
+  if (!id) {
+      return callback("e-mail template id not provided");
+  }
+  MailTemplate.destroy({ where: { id: id, $not: [{id: null}] } }).then(function() {
+    callback(null, {});
+  }).catch(function(error) {
+    callback(error);
+  }); 
+}
+
 module.exports = {
   validate: validate,
   create: create,
@@ -147,5 +166,6 @@ module.exports = {
   getMailTemplate: getMailTemplate,
   saveMailTemplate: saveMailTemplate,
   createBaseMailTemplate: createBaseMailTemplate,
-  copyBaseTemplates: copyBaseTemplates
+  copyBaseTemplates: copyBaseTemplates,
+  deleteMailTemplate: deleteMailTemplate
 }

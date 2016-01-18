@@ -7,7 +7,8 @@ module.exports = {
   mailTemplatesGet: mailTemplatesGet,
   mailTemplatePost: mailTemplatePost,
   allMailTemplatesGet: allMailTemplatesGet,
-  saveMailTemplatePost: saveMailTemplatePost
+  saveMailTemplatePost: saveMailTemplatePost,
+  deleteMailTemplate: deleteMailTemplate
 };
 
 var templateFields = [
@@ -46,7 +47,13 @@ function mailTemplatePost(req, res, next) {
 
 
 function saveMailTemplatePost(req, res, next) {
-  MailTemplateService.saveMailTemplate(req.body.mailTemplate, function(error, result) {
+  MailTemplateService.saveMailTemplate(req.body.mailTemplate, req.user.id,function(error, result) {
     res.send({error: error, templates: result});
+  });
+}
+
+function deleteMailTemplate(req, res, next) {
+  MailTemplateService.deleteMailTemplate(req.query.mailTemplateId, function(error, result) {
+    res.send({error: error});
   });
 }
