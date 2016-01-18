@@ -1131,7 +1131,8 @@ input[class=checkbox-blue]:checked + label {
   max-width: 768px;
   font-family: SourceSansPro-Regular; }
 
-.survey-title {
+.survey-header,
+.survey-footer {
   margin-top: 10px;
   color: #58595B;
   font-size: 30px;
@@ -1140,7 +1141,7 @@ input[class=checkbox-blue]:checked + label {
 .survey-input {
   margin-bottom: 10px !important; }
 
-.survey-title + hr {
+.survey-header + hr {
   border: 1px solid #D6E9C6; }
 
 #dashboard #back-nav-btn {

@@ -12,7 +12,8 @@
   font-family: SourceSansPro-Regular;
 }
 
-.survey-title {
+.survey-header,
+.survey-footer {
   margin-top: 10px;
   color: $font-color;
   font-size: 30px;
@@ -23,6 +24,6 @@
   margin-bottom: 10px !important;
 }
 
-.survey-title + hr {
+.survey-header + hr {
   border: 1px solid #D6E9C6;
 }
