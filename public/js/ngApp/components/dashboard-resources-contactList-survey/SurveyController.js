@@ -344,7 +344,7 @@
           messenger.error(res.error);
         }
         else {
-          // changePage('index');
+          vm.surveys.push(res.data);
           messenger.ok(res.message || 'Survey copied successfully');
         }
       });
@@ -354,7 +354,8 @@
       var progressbar = ngProgressFactory.createInstance();
       progressbar.start();
 
-      surveyServices.confirmSurvey({ id: survey.id, confirmedAt: new Date() }).then(function(res) {
+      var date = new Date();
+      surveyServices.confirmSurvey({ id: survey.id, confirmedAt: date }).then(function(res) {
         dbg.log2('#SurveyController > confirmSurvey > res ', res);
         progressbar.complete();
 
@@ -362,7 +363,7 @@
           messenger.error(res.error);
         }
         else {
-          // changePage('index');
+          survey.confirmedAt = date;
           messenger.ok(res.message || 'Survey confirmed successfully');
         }
       });
