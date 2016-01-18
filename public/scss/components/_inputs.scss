@@ -1,3 +1,9 @@
+// List grabing handle
+.list-handle {
+  cursor: move;
+  cursor: -webkit-grabbing;
+}
+
 // Checkbox
 input.custom-checkbox {
   display: none;

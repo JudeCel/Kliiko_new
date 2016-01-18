@@ -34,6 +34,7 @@
     vm.changeQuestions = changeQuestions;
 
     vm.answerSortOptions = {
+      handle: '.list-handle',
       onUpdate: function(evt) {
         evt.models.forEach(function(val, index, array) {
           val.order = index;

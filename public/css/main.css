@@ -249,6 +249,10 @@ img.ic-flipX {
   .error-area > p {
     margin-bottom: 10px; }
 
+.list-handle {
+  cursor: move;
+  cursor: -webkit-grabbing; }
+
 input.custom-checkbox {
   display: none; }
 
