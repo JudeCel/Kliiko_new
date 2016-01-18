@@ -9,7 +9,8 @@ var ContactListUser = models.ContactListUser;
 module.exports = {
   findByContactList: findByContactList,
   find: find,
-  create: create
+  create: create,
+  destroy: destroy
 }
 
 function findByContactList(contactListId) {
@@ -20,6 +21,16 @@ function findByContactList(contactListId) {
       deferred.reject(err);
     })
     return deferred.promise;
+}
+
+function destroy(ids, accountId) {
+  var deferred = q.defer();
+  ContactListUser.destroy({where: { id: ids, accountId: accountId}}).then(function(result) {
+    deferred.resolve(result);
+  }, function(err) {
+    deferred.reject(err);
+  })
+  return deferred.promise;
 }
 
 function find(id) {
