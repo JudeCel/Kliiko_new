@@ -169,6 +169,7 @@
           loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
             return $ocLazyLoad.load([
               '/js/ngApp/modules/contactList/contactList.js',
+              '/js/ngApp/modules/contactList/contactList.js',
             ]);
           }]},
         onEnter: ['dbg', function (dbg) {
