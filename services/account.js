@@ -9,13 +9,13 @@ function validate(params, callback) {
   });
 }
 
-function create(params, user, callback) {
-  Account.create({name: params.accountName}).then(function(result) {
-    callback(null, params, result, user);
+function create(params, user, t, callback) {
+  Account.create({name: params.accountName}, { transaction: t } ).then(function(result) {
+    callback(null, params, result, user, t);
   }).catch(Account.sequelize.ValidationError, function(err) {
-    callback(prepareErrors(err));
+    callback(err, null, null, null, t);
   }).catch(function(err) {
-    callback(prepareErrors(err));
+    callback(err, null, null, null, t);
   });
 }
 
@@ -30,7 +30,9 @@ function updateInstance(account, params, callback) {
 function prepareErrors(err) {
   let errors = ({});
   _.map(err.errors, function (n) {
-    errors[n.path] = _.startCase(n.path) + ':' + n.message.replace(n.path, '');
+    if (!errors[n.path]) {
+      errors[n.path] = n.message;
+    }
   });
   return errors;
 };

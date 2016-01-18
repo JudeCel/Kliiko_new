@@ -66,6 +66,7 @@ router.get('/auth/facebook/callback', function(req, res, next) {
 router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
 router.get('/auth/google/callback', function(req, res, next) {
   passport.authenticate('google', function(err, user, info) {
+    console.log(err);
     if (user) {
       req.login(user, function(err) {
         middlewareFilters.landingPage(req, res, next);

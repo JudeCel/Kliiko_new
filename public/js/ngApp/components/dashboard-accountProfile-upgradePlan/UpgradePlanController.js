@@ -4,8 +4,8 @@
   angular.module('KliikoApp').
     controller('UpgradePlanController', UpgradePlanController);
 
-  UpgradePlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams', 'upgradePlanServices', 'user', 'ngProgressFactory', '$scope', 'messenger'];
-  function UpgradePlanController(dbg, domServices, $state, $stateParams, upgradePlanServices, user, ngProgressFactory, $scope, messenger) {
+  UpgradePlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams', 'upgradePlanServices', 'user', 'ngProgressFactory', '$scope', 'messenger',  '$rootScope'];
+  function UpgradePlanController(dbg, domServices, $state, $stateParams, upgradePlanServices, user, ngProgressFactory, $scope, messenger, $rootScope) {
     dbg.log2('#UpgradePlanController  started');
     var vm = this;
 
@@ -34,6 +34,7 @@
       changePaymentMethodTo: changePaymentMethodTo
     };
 
+    vm.canUpgradeTo = canUpgradeTo;
     vm.stepsClassIsActive = stepsClassIsActive;
     vm.stepsClassIsDone = stepsClassIsDone;
     vm.openPlanDetailsModal = openPlanDetailsModal;
@@ -72,10 +73,27 @@
         });
       }
 
-
-
       // after payment callback url case
       if ($stateParams.step && $stateParams.step == 5)  { goToStep(5) }
+    }
+
+    /**
+     * Hide downgrade options
+     * @param planNumber {'plan1' || 'plan2'}
+     * @returns {boolean}
+     */
+    function canUpgradeTo(planNumber) {
+      if (!vm.userData || !vm.userData.subscriptions) return true;
+
+      if (planNumber === 'plan1') {
+        if (vm.userData.subscriptions.planId == 'plan1' || vm.userData.subscriptions.planId == 'plan2' ) return false;
+      }
+
+      if (planNumber === 'plan2') {
+        if ( vm.userData.subscriptions.planId == 'plan2' ) return false;
+      }
+
+      return true
     }
 
     /**
@@ -252,23 +270,37 @@
         totalPrice: vm.finalPrice
       };
 
-      if (vm.paymentDetails.chargebee.selected) {
-        domServices.showFader();
-      }
+      domServices.showFader();
 
       upgradePlanServices.submitUpgrade(planObject, paymentObject, vm.userData).then(
         function(res) {
           dbg.log2('#UpgradePlanControllerAppController > submitUpgrade > success ');
-          window.location = res.hosted_page.url;
+
+
+          if (res.hosted_page)  {
+            // case of new subscription. go to prepared hosted page;
+            window.location = res.hosted_page.url;
+            return;
+          } else {
+            // case when subscription is aupdated
+            $rootScope.$emit('app.updateUser');
+            progressbar.complete();
+            goToStep(5);
+            domServices.hideFader();
+            vm.paymentSubmitSuccess = true;
+          }
+
+
+
         },
         function(err) {
-          dbg.log2('#UpgradePlanControllerAppController > submitUpgrade > error ', err);
+          dbg.log2('#UpgradePlanControllerAppController > submitUpgrade > error: ', err);
 
           progressbar.complete();
           goToStep(5);
           domServices.hideFader();
 
-          messenger.error('Submitting Failed');
+          messenger.error('Submitting Failed: '+ err);
 
           vm.cantMoveNextStep = true;
           vm.paymentSubmitSuccess = null;

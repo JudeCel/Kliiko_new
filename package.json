@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha test"
+    "test": "mocha test",
+    "rst": "node /lib/tasks/dbReset"
   },
   "engineStrict": true,
   "engine": {
