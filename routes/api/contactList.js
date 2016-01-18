@@ -3,7 +3,8 @@ var contactListService = require('../../services/contactList');
 
 module.exports = {
   index: index,
-  create: create
+  create: create,
+  destroy: destroy
 };
 
 function index(req, res, next) {
@@ -33,4 +34,18 @@ function create(req, res, next) {
   }, function(err) {
     res.send({ error: err });
   })
+
+  // Create Params example
+  // {
+  //    id: INTEGER/required => 1
+  //  }
+  //
+  function destroy(req, res, next) {
+    let accaountId = res.locals.currentDomain.id
+    contactListService.destroy(req.body.id, accaountId).then(function(lists) {
+      res.send(lists);
+    },function(err) {
+      res.send({ error: err });
+    });
+  }
 }

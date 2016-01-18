@@ -32,6 +32,7 @@ describe('Services -> ContactList', () => {
     describe("succsess", function() {
       let TestUser = null;
       let TestAccount = null;
+
       beforeEach((done)=> {
         UserService.create(validAttrs, function(errors, user) {
           user.getOwnerAccount().then(function(results) {
@@ -70,6 +71,29 @@ describe('Services -> ContactList', () => {
           done(err);
         });
       });
+
+      it("destroy", (done) => {
+        let attrs = {
+          accountId: TestAccount.id,
+          name: "customList",
+          customFields: ["one", "two", "three"]
+         }
+
+        ContactListService.create(attrs).then(function(contactList) {
+          ContactListService.destroy(contactList.id, TestAccount.id).then(function(result) {
+            TestAccount.getContactLists().then(function(CLResults) {
+              assert.equal(CLResults.length, 3);
+              done();
+            }, function(err) {
+              done(err);
+            })
+          },function(err) {
+            done(err);
+          })
+        }, function(err) {
+          done(err);
+        });
+      })
     });
 
     describe("failed", function() {

@@ -8,6 +8,23 @@ var ContactList = models.ContactList;
 var _ = require('lodash');
 
 
+module.exports = {
+  create: create,
+  allByAccount: allByAccount,
+  destroy: destroy,
+  createDefaultLists: createDefaultLists
+}
+
+function destroy(contacListId, accoutId) {
+  var deferred = q.defer();
+  ContactList.destroy({where: {id: contacListId, accountId: accoutId, editable: true} }).then(function(result) {
+    deferred.resolve(prepareData(result));
+  }, function(err) {
+    deferred.reject(err);
+  })
+  return deferred.promise;
+}
+
 function allByAccount(accountId) {
     var deferred = q.defer();
     ContactList.findAll({where: { accountId: accountId },
@@ -20,7 +37,6 @@ function allByAccount(accountId) {
         ]}]
       }]
     }).then(function(results) {
-      console.log(results);
       deferred.resolve(prepareData(results));
     }, function(err) {
       console.log(err);
@@ -69,10 +85,4 @@ function createDefaultLists(accoutId) {
     deferred.reject(err);
   })
   return deferred.promise;
-}
-
-module.exports = {
-  create: create,
-  allByAccount: allByAccount,
-  createDefaultLists
 }
