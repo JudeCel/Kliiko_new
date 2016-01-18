@@ -66,6 +66,7 @@ module.exports = (Sequelize, DataTypes) => {
           User.hasMany(models.Event, { foreignKey: 'userId'});
           User.belongsToMany(models.Account, { through: { model: models.AccountUser, scope: { owner: true }},  as: 'OwnerAccount'});
           User.hasMany(models.Invite, { foreignKey: 'userId' });
+          User.hasMany(models.Subscription);
         }
       }
     }

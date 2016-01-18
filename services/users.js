@@ -8,6 +8,20 @@ var bcrypt = require('bcrypt');
 var uuid = require('node-uuid');
 var async = require('async');
 
+module.exports = {
+  create: create,
+  user: User,
+  createUser: createUser,
+  comparePassword: comparePassword,
+  prepareParams: prepareParams,
+  resetPassword: resetPassword,
+  setResetToken: setResetToken,
+  getUserByToken: getUserByToken,
+  changePassword: changePassword,
+  update: update
+};
+
+
 function create(params, callback) {
   let err = {};
 
@@ -229,15 +243,4 @@ function setResetToken(email, callback) {
 
 }
 
-module.exports = {
-  create: create,
-  user: User,
-  createUser: createUser,
-  comparePassword: comparePassword,
-  prepareParams: prepareParams,
-  resetPassword: resetPassword,
-  setResetToken: setResetToken,
-  getUserByToken: getUserByToken,
-  changePassword: changePassword,
-  update: update
-};
+
