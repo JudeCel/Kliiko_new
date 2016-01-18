@@ -3,7 +3,8 @@ var contactListUserService = require('../../services/contactListUser');
 
 module.exports = {
   create: create,
-  update: update
+  update: update,
+  // destroy: destroy
 };
 
 // Create Params example
@@ -24,7 +25,17 @@ function create(req, res, next) {
   })
 }
 
-// Create Params example
+// function destroy(req, res, next) {
+//   let ids = req.body.ids
+//   let accountId = res.locals.currentDomain.id
+//   contactListUserService.destroy(ids, accountId).then(function (result) {
+//     res.send(resul);
+//   },function(err) {
+//     res.send({ error: err });
+//   });
+// }
+
+// Update Params example
 // {  defaultFildes: Object/optional =>  { firstName: "name" },
 //    customFields: Object/optional =>  { customFieldsName: "someValue"}
 //    userId: INTEGER/required => 1,
