@@ -1,7 +1,62 @@
-<section id="contact-lists" ng-controller="ContactListController as clc">
-  <div class="contactListMenu" >
-    <div class="list" ng-repeat= "list in clc.lists">
-      {{list.name}} ({{list.membersCount}})
+<!--<section id="contact-lists" ng-controller="ContactListController as clc">-->
+  <!--<div class="contactListMenu" >-->
+    <!--<div class="list" ng-repeat= "list in clc.lists">-->
+      <!--{{list.name}} ({{list.membersCount}})-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</section>-->
+
+<section id='dashboard-contact-lists' ng-controller="ContactListController as clc">
+  <div class='col-md-12'>
+    <div class='dashboard-container'>
+      <div class='row'>
+        <div class='col-md-3'></div>
+        <div class='col-md-6'>
+          <h2 class='text-center'>Contact Lists</h2>
+          <h4 class='text-center has-error text-red-dark'>{{ clc.error }}</h4>
+          <h4 class='text-center'>{{ clc.message }}</h4>
+        </div>
+        <div class='col-md-3 text-right'>
+          <div class='btn btn-addNewElement' ng-click=''>Add New Account Manager</div>
+          <div class='btn btn-addNewElement' ng-click=''>Add New Account Manager</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class='col-md-12 fixed-bottom-margin'>
+    <div class='dashboard-container'>
+      <table class='table table-responsive table-dashboardElements'>
+        <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Gender</th>
+          <th>Email</th>
+          <th>Mobile</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat='user in users'>
+          <td>{{ user.firstName }}</td>
+          <td>{{ user.lastName }}</td>
+          <td>{{ user.gender }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.mobile }}</td>
+          <td>
+            <div ng-if='user.Invites'>Invited</div>
+            <div ng-if='user.AccountUsers'>Accepted</div>
+          </td>
+          <td class='text-right dashboardElementsEditRemove'>
+            <img src='/icons/dashboardElement_edit.png' alt='' />
+            <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeInvite(user)' ng-if='user.Invites' />
+            <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeAccountUser(user)' ng-if='user.AccountUsers' />
+          </td>
+        </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>

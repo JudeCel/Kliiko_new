@@ -160,6 +160,7 @@
         }]
 
       })
+
       .state('dashboard.resources.contactLists', {
         url: "/contact-lists",
         views: {
@@ -168,8 +169,9 @@
         resolve: {
           loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
             return $ocLazyLoad.load([
+              '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
               '/js/ngApp/modules/contactList/contactList.js',
-              '/js/ngApp/modules/contactList/contactList.js',
+              //'/js/ngApp/modules/contactList/contactList.js',
             ]);
           }]},
         onEnter: ['dbg', function (dbg) {
