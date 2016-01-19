@@ -33,7 +33,7 @@
         progressbar.complete();
 
         if(res.error) {
-          vm.message = res.error;
+          vm.message = prepareError(res.error);
         }
         else {
           vm.survey = res.data;
@@ -56,7 +56,7 @@
             dbg.log2('#SurveyClientController > answerSurvey > res ', res);
 
             if(res.error) {
-              messenger.error(res.error);
+              messenger.error(prepareError(res.error));
             }
             else {
               vm.message = res.data;
@@ -74,6 +74,20 @@
 
     function pickValidClass(error, className) {
       return className + (error && Object.keys(error).length > 0 ? '-danger' : '-success');
+    };
+
+    function prepareError(errors) {
+      if(typeof errors == 'string') {
+        return errors;
+      }
+      else {
+        var string = '';
+        for(var i in errors) {
+          var error = errors[i];
+          string += (error + '<br>');
+        }
+        return string;
+      }
     };
   };
 })();
