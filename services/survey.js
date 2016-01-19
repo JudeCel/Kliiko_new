@@ -367,22 +367,13 @@ function createCsvData(header, survey) {
 
       switch(answer.type) {
         case 'number':
-          question.answers.forEach(function(questionAnswer) {
-            if(questionAnswer.order == answer.value) {
-              object[header[index]] = questionAnswer.name;
-            }
-          });
+          assignNumber(index, header, object, question, answer);
           break;
         case 'string':
           object[header[index]] = answer.value;
           break;
         case 'boolean':
-          object[header[index]] = answer.value ? 'Yes' : 'No';
-          if(answer.contactDetails) {
-            _.map(answer.contactDetails, function(value, key) {
-              object[_.startCase(key)] = value;
-            });
-          }
+          assignBoolean(index, header, object, question, answer);
           break;
       }
     });
@@ -391,6 +382,23 @@ function createCsvData(header, survey) {
   });
 
   return array;
+};
+
+function assignNumber(index, header, object, question, answer) {
+  question.answers.forEach(function(questionAnswer) {
+    if(questionAnswer.order == answer.value) {
+      object[header[index]] = questionAnswer.name;
+    }
+  });
+};
+
+function assignBoolean(index, header, object, question, answer) {
+  object[header[index]] = answer.value ? 'Yes' : 'No';
+  if(answer.contactDetails) {
+    _.map(answer.contactDetails, function(value, key) {
+      object[_.startCase(key)] = value;
+    });
+  }
 };
 
 function validAnswerParams(params) {

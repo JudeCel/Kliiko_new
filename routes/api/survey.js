@@ -9,7 +9,7 @@ function get(req, res, next) {
 };
 
 function find(req, res, next) {
-  surveyService.findSurvey(req.body).then(
+  surveyService.findSurvey(req.query).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );

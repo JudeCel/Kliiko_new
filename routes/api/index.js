@@ -53,7 +53,7 @@ router.post('/survey', survey.create);
 router.put('/survey', survey.update);
 router.post('/survey/copy', survey.copy);
 router.put('/survey/status', survey.status);
-router.put('/survey/find', survey.find);
+router.get('/survey/find', survey.find);
 router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', survey.confirm);
 router.get('/survey/constants', survey.getConstants);

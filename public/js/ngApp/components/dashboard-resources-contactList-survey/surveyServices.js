@@ -7,7 +7,7 @@
   function surveyServices(globalSettings, $q, $resource, dbg) {
     var surveyRestApi = $resource(globalSettings.restUrl + '/survey/:path', null, {
       update: { method: 'PUT' },
-      find: { method: 'PUT', params: { path: 'find' } },
+      find: { method: 'GET', params: { path: 'find' } },
       status: { method: 'PUT', params: { path: 'status' } },
       copy: { method: 'POST', params: { path: 'copy' } },
       answer: { method: 'POST', params: { path: 'answer' } },
