@@ -49,7 +49,6 @@ describe('Services -> ContactListUser', () => {
       it("create to existing user base", (done) => {
           let attrs = {
             accountId: TestAccount.id,
-            userId: TestUser.id,
             contactListId: TestContactList.id,
             defaultFields: {
               firstName: "DainisNew",
@@ -77,7 +76,6 @@ describe('Services -> ContactListUser', () => {
       it("create completely new", (done) => {
           let attrs = {
             accountId: TestAccount.id,
-            userId: TestUser.id,
             contactListId: TestContactList.id,
             defaultFields: {
               firstName: "DainisNew",
@@ -97,6 +95,33 @@ describe('Services -> ContactListUser', () => {
               assert.equal(user.email, attrs.defaultFields.email);
               done();
             });
+          });
+        }, function(err) {
+          done(err);
+        });
+      });
+
+      it("destroy ", (done) => {
+          let attrs = {
+            accountId: TestAccount.id,
+            contactListId: TestContactList.id,
+            defaultFields: {
+              firstName: "DainisNew",
+              lastName: "LapinsNew",
+              password: "cool_password",
+              email: "dainis186@gmail.com",
+              gender: "male"
+            },
+            customFields: { one: "1", two:" 2", three:" 3" }
+           }
+        ContactListUserService.create(attrs).then(function(contactListUser) {
+          contactListUser.destroy([contactListUser.id], TestAccount.id).then(function() {
+            TestContactList.getContactListUsers().then(function(result) {
+              assert.lengthOf(result, 0)
+              done()
+            }, function(err) {
+              done(err)
+            })
           });
         }, function(err) {
           done(err);

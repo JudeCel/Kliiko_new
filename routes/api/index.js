@@ -47,6 +47,8 @@ router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelet
 
 router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
 router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);
+router.put('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPut);
+router.get('/chargebee/subscriptions', multipartyMiddleware, chargebee.chargebeeSubscriptionGet);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
 
 // contact List
@@ -65,6 +67,8 @@ router.route('/topic/:id').
   post(multipartyMiddleware, topic.copyTopicById).
   put(multipartyMiddleware, topic.updateTopicById).
   delete(multipartyMiddleware, topic.deleteById);
+
+router.get('/chargebee/tst', multipartyMiddleware, chargebee.tstGet);
 
 // Common Rules
 router.use(function (req, res, next) {

@@ -1,5 +1,5 @@
 "use strict";
-var assert = require('assert');
+var assert = require("chai").assert;
 var models  = require('./../../models');
 var User  = models.User;
 var Account  = models.Account;
@@ -40,6 +40,9 @@ describe('User Service', () => {
     describe('Ceate Account',  () => {
       it('Succsess', (done) =>  {
         UserService.create(validAttrs, function(errors, result) {
+          if (errors) {
+            return done(errors);
+          }
           result.getOwnerAccount().done(function(results) {
             assert.equal(results.length, 1);
             assert.equal(results[0].name, validAttrs.accountName);
@@ -55,10 +58,10 @@ describe('User Service', () => {
         UserService.create(validAttrs, function(errors, user, _lastActionResult) {
           assert.equal(errors, null);
           assert.equal(user.firstName, validAttrs.firstName);
-          assert.equal(user.getSocialProfiles().done(function(profiles) {
+          user.getSocialProfiles().done(function(profiles) {
             assert.equal(profiles[0].provider, validAttrs.socialProfile.provider);
             done();
-          }));
+          });
         });
       });
     });
@@ -76,7 +79,7 @@ describe('User Service', () => {
         }
 
         UserService.createUser(attrs, function(err, user) {
-          assert.equal(err.errors.length, 3)
+          assert.isObject(err)
           done();
         });
       });
@@ -92,7 +95,7 @@ describe('User Service', () => {
         }
 
         UserService.createUser(attrs, function(err, user) {
-          assert.equal(err.errors.length, 1)
+          assert.isObject(err)
           done();
         });
       });

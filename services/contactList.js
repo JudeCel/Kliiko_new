@@ -8,6 +8,23 @@ var ContactList = models.ContactList;
 var _ = require('lodash');
 
 
+module.exports = {
+  create: create,
+  allByAccount: allByAccount,
+  destroy: destroy,
+  createDefaultLists: createDefaultLists
+}
+
+function destroy(contacListId, accoutId) {
+  var deferred = q.defer();
+  ContactList.destroy({where: {id: contacListId, accountId: accoutId, editable: true} }).then(function(result) {
+    deferred.resolve(prepareData(result));
+  }, function(err) {
+    deferred.reject(err);
+  })
+  return deferred.promise;
+}
+
 function allByAccount(accountId) {
     var deferred = q.defer();
     ContactList.findAll({where: { accountId: accountId },
@@ -20,7 +37,6 @@ function allByAccount(accountId) {
         ]}]
       }]
     }).then(function(results) {
-      console.log(results);
       deferred.resolve(prepareData(results));
     }, function(err) {
       console.log(err);
@@ -57,22 +73,16 @@ function create(params) {
   return deferred.promise;
 }
 
-function createDefaultLists(accoutId) {
+function createDefaultLists(accoutId, t) {
   var deferred = q.defer();
   ContactList.bulkCreate([
     { name: 'Account Managers', accountId: accoutId, editable: false },
     { name: 'Facilitators', accountId: accoutId, editable: false },
     { name: 'Observers', accountId: accoutId, editable: false }
-  ]).done(function(results) {
-    deferred.resolve(results);
+  ], { transaction: t }).done(function(results) {
+    deferred.resolve({results: results, transaction: t});
   }, function(err) {
-    deferred.reject(err);
+    deferred.reject({error: err, transaction: t});
   })
   return deferred.promise;
-}
-
-module.exports = {
-  create: create,
-  allByAccount: allByAccount,
-  createDefaultLists
 }

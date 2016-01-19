@@ -1,5 +1,6 @@
 "use strict";
-var User = require('./../models').User;
+var models = require('./../models');
+var User = models.User;
 var _ = require('lodash');
 var accountService = require('./account');
 var accountUserService = require('./accountUser');
@@ -7,6 +8,20 @@ var socialProfileService = require('./socialProfile');
 var bcrypt = require('bcrypt');
 var uuid = require('node-uuid');
 var async = require('async');
+
+module.exports = {
+  create: create,
+  user: User,
+  createUser: createUser,
+  comparePassword: comparePassword,
+  prepareParams: prepareParams,
+  resetPassword: resetPassword,
+  setResetToken: setResetToken,
+  getUserByToken: getUserByToken,
+  changePassword: changePassword,
+  update: update
+};
+
 
 function create(params, callback) {
   let err = {};
@@ -18,7 +33,7 @@ function create(params, callback) {
 
   validateForCreate(params, function (error, params) {
     if (error) {
-      return callback(error, params)
+      callback(error, params)
     } else {
       createUser(params, function (error, result) {
         if (error) {
@@ -46,21 +61,24 @@ function update(req, callback){
 function prepareErrors(err) {
   let errors = ({})
   _.map(err.errors, function (n) {
-    errors[n.path] = _.startCase(n.path) + ": " + n.message;
+    if (!errors[n.path]) {
+      errors[n.path] =  n.message;
+    }
   });
   return errors
 };
 
 function createUser(params, callback) {
-  // TODO: Need added transaction
   let createNewUserFunctionList = [
     function (cb) {
-      User.create(params).then(function (result) {
-        cb(null, params, result);
-      }).catch(User.sequelize.ValidationError, function (err) {
-        cb(err);
-      }).catch(function (err) {
-        cb(err);
+      models.sequelize.transaction().then(function(t) {
+        User.create(params, { transaction: t } ).then(function (result) {
+          cb(null, params, result, t);
+        }).catch(User.sequelize.ValidationError, function (err) {
+          cb(err, null, null, t);
+        }).catch(function (err) {
+          cb(err, null, null, t);
+        });
       });
     },
     accountService.create,
@@ -71,8 +89,17 @@ function createUser(params, callback) {
     createNewUserFunctionList.push(socialProfileService.create);
   }
 
-  async.waterfall(createNewUserFunctionList, function (error, user, lastActionResult) {
-    return callback(error, user, lastActionResult);
+  async.waterfall(createNewUserFunctionList, function (error, user, lastActionResult, t, t2) {
+    let transaction = t2 || t
+      if (error) {
+        transaction.rollback().then(function functionName() {
+          callback(prepareErrors(error), user, lastActionResult);
+        });
+      }else{
+        transaction.commit().then(function() {
+          callback(null, user, lastActionResult);
+        });
+      }
   });
 }
 
@@ -228,16 +255,3 @@ function setResetToken(email, callback) {
   });
 
 }
-
-module.exports = {
-  create: create,
-  user: User,
-  createUser: createUser,
-  comparePassword: comparePassword,
-  prepareParams: prepareParams,
-  resetPassword: resetPassword,
-  setResetToken: setResetToken,
-  getUserByToken: getUserByToken,
-  changePassword: changePassword,
-  update: update
-};
