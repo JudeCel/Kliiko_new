@@ -9,15 +9,17 @@
     var mailRestApi = {
       mailTemplates: $resource(globalSettings.restUrl + '/mailTemplates', {}, {get: {method: 'GET'}}),
       mailTemplate: $resource(globalSettings.restUrl + '/mailTemplate', {}, {post: {method: 'POST'}}),
-      saveMailTemplate: $resource(globalSettings.restUrl + '/mailTemplates/save', {}, {post: {method: 'POST'}}),
-      deleteMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate', {}, {post: {method: 'POST'}})
+      saveMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate/save', {}, {post: {method: 'POST'}}),
+      deleteMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate', {}, {post: {method: 'POST'}}),
+      resetMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate/reset', {}, {post: {method: 'POST'}})
     };
 
     var MailTemplateService = {};
     MailTemplateService.getAllMailTemplates = getAllMailTemplates;
-    MailTemplateService.saveMailTemplates = saveMailTemplate;
+    MailTemplateService.saveMailTemplate = saveMailTemplate;
     MailTemplateService.getMailTemplate = getMailTemplate;
     MailTemplateService.deleteMailTemplate = deleteMailTemplate;
+    MailTemplateService.resetMailTemplate = resetMailTemplate;
     return MailTemplateService;
 
     function getAllMailTemplates() {
@@ -41,11 +43,11 @@
       return deferred.promise;
     }
     
-    function saveMailTemplate(mTemplate) {
+    function saveMailTemplate(mTemplate, createCopy) {
       dbg.log2('#KliikoApp.mailTemplate > save mail template', mTemplate);
       var deferred = $q.defer();
 
-      mailRestApi.saveMailTemplate.post({mailTemplate:mTemplate}, function (res) {
+      mailRestApi.saveMailTemplate.post({mailTemplate:mTemplate, copy: createCopy}, function (res) {
         dbg.log2('#KliikoApp.mailTemplate > save mail template> server respond >', res);
         deferred.resolve(res);
       });
@@ -62,6 +64,18 @@
       });
       return deferred.promise;
     }
+    
+    function resetMailTemplate(mTemplate) {
+      dbg.log2('#KliikoApp.mailTemplate > reset mail template', mTemplate);
+      var deferred = $q.defer();
+
+      mailRestApi.resetMailTemplate.post({mailTemplateId:mTemplate.id}, function (res) {
+        dbg.log2('#KliikoApp.mailTemplate > reset mail template> server respond >', res);
+        deferred.resolve(res);
+      });
+      return deferred.promise;
+    }
+    
     
   }
 })();

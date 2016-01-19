@@ -1,11 +1,11 @@
 <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec">
     <div class="row" style="width:100%; height:100%;">
-        <div class="list-group col-md-3">
+        <div class="list-group col-md-3 mail-template-list">
             <a ng-repeat="(key, t) in ec.emailTemplates" class="list-group-item mail-template-list-item" ng-class="{'list-group-item-info': key == ec.currentTemplate.index}" ng-click="ec.startEditingTemplate(key)"> 
-                <span class="input-group" ng-hide="t.UserId">{{t["MailTemplate.name"]}}</span>
-                <div class="input-group" ng-hide="!t.UserId">
-                    <input type="text" class="form-control" aria-describedby="basic-addon2" ng-model="t.name">
-                    <span class="input-group-addon" id="basic-addon2">{{t["MailTemplate.name"]}}</span>
+                <span class="input-group input-group-sm" ng-hide="t.UserId">{{t["MailTemplate.name"]}}</span>
+                <div class="input-group input-group-sm" ng-hide="!t.UserId">
+                    <input type="text" class="form-control mail-list-input" aria-describedby="basic-addon3" ng-model="t.name">
+                    <span class="input-group-addon" id="basic-addon3" style="width:10px;">{{t["MailTemplate.name"] | limitTo: 7}}{{t["MailTemplate.name"].length > 7 ? '...' : ''}}</span>
                     
                     <span class="input-group-btn">
                         <button class="btn glyphicon glyphicon-trash" type="button" ng-click="ec.deleteTemplate(t, key, $event);"></button>                           
@@ -33,8 +33,9 @@
             <br>
             
             <button type = "submit" class = "btn btn-link pull-left">Preview</button>
-            <button type = "submit" class = "btn btn-danger pull-left">Reset</button>
+            <button type = "submit" class = "btn btn-danger pull-left" ng-click="ec.resetMailTemplate()">Reset</button>
             <button type = "submit" class = "btn btn-success pull-right" ng-click="ec.modifyAndSave()">Modify & Save Copy</button> 
+            <button type = "submit" class = "btn btn-success pull-right" ng-click="ec.modifyAndSave(true)">Create Copy</button> 
             
         </div>
       </div>

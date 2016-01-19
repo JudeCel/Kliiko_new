@@ -1278,6 +1278,9 @@ input[class=checkbox-blue]:checked + label {
     height: 50px; }
   #email-template-editor .mail-template-details {
     width: 700px; }
+  #email-template-editor .mail-template-list {
+    max-height: 650px;
+    overflow-y: scroll; }
 
 .margin-top-2rem {
   margin-top: 2rem; }

@@ -88,6 +88,22 @@ function getMailTemplate(req, callback) {
   });
 }
 
+//get mail template with all fields base table and id from copy table
+function getMailTemplateForReset(req, callback) {
+  MailTemplate.find({
+    include: [{ model: MailTemplateOriginal, attributes: originalTemplateFields}],
+    where: {
+      id: req.id,
+    },
+    attributes: templateFieldsForList,
+    raw: true,
+  }).then(function (result) {
+    callback(null, result);
+  }).catch(function (err) {
+    callback(err, null);
+  });
+}
+
 function getAllMailTemplates(req, callback) {
   MailTemplate.findAll({
       include: [{ model: MailTemplateOriginal, attributes: ['id', 'name']}],
@@ -122,15 +138,14 @@ function copyBaseTemplates(callback) {
   });
 }
 
-function saveMailTemplate(template, userId, callback) {
+function saveMailTemplate(template, createCopy, userId, callback) {
   if (!template) {
       return callback("e-mail template not provided", null);
   }
-  
   var id = template.id;
   delete template["id"];
   //a template wasn't created by user - an orinal
-  if (!template["UserId"]) {
+  if (!template["UserId"] || createCopy) {
     template.UserId = userId;
     create(template, function(error, result) {
         callback(error, result);  
@@ -140,6 +155,26 @@ function saveMailTemplate(template, userId, callback) {
       callback(error, result);  
     });
   }
+}
+
+function resetMailTemplate(templateId, callback) {
+  if (!templateId) {
+      return callback("e-mail template not provided", null);
+  }
+  
+  getMailTemplateForReset({id: templateId}, function(err, result) {
+    if (result) {
+      //is template created by user - not base version
+      if (!result.UserId) {
+        //is base version
+        callback("you cannot reset template base version", null);      
+      } else {
+        update(templateId, {name: result["MailTemplate.name"], subject: result["MailTemplate.subject"], content: result["MailTemplate.content"]}, function(error, result) {
+           callback(error, result);  
+        });
+      }
+    }
+  });
 }
 
 function deleteMailTemplate(template, callback) {
@@ -167,5 +202,6 @@ module.exports = {
   saveMailTemplate: saveMailTemplate,
   createBaseMailTemplate: createBaseMailTemplate,
   copyBaseTemplates: copyBaseTemplates,
-  deleteMailTemplate: deleteMailTemplate
+  deleteMailTemplate: deleteMailTemplate,
+  resetMailTemplate: resetMailTemplate
 }

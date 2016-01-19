@@ -33,6 +33,11 @@
     .mail-template-details {
          width: 700px;
     }
+    
+    .mail-template-list {
+        max-height: 650px;
+        overflow-y: scroll;
+    }
 }
 
 

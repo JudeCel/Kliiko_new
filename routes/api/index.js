@@ -46,7 +46,8 @@ router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponG
 router.get('/mailTemplates', mailTemplates.allMailTemplatesGet);
 router.post('/mailTemplate', mailTemplates.mailTemplatePost);
 router.delete('/mailTemplate', mailTemplates.deleteMailTemplate);
-router.post('/mailTemplates/save', mailTemplates.saveMailTemplatePost);
+router.post('/mailTemplate/save', mailTemplates.saveMailTemplatePost);
+router.post('/mailTemplate/reset', mailTemplates.resetMailTemplatePost);
 
 // Common Rules
 router.use(function (req, res, next) {

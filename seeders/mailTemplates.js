@@ -60,12 +60,6 @@ function createTestMailTemplate(fileInfo, callback) {
 }
 
 function createMailTemplate() {
-  //Todo setup filling templates with async waterfall  
- /* createTestMailTemplate(templateFiles[0], function(error, _result) {
-    createTestMailTemplate(templateFiles[1], function(error, _result) {
-    });  
-  });
-  */
   async.waterfall([
     (cb) => {addTemplate(cb)},
     addTemplate,
