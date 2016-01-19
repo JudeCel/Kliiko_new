@@ -46,7 +46,7 @@ describe('Social Profile Service', () => {
       beforeEach((done) => {
         models.sequelize.sync({force: true}).done((error, result) => {
           UserService.create(validAttrs, function(errors, user) {
-            SocialProfileService.create(user, validAttrs, (err, socProfile)=>{
+            SocialProfileService.create(user, validAttrs, null, (err, socProfile) =>{
               done();
             });
           });

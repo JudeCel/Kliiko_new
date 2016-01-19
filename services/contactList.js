@@ -73,16 +73,16 @@ function create(params) {
   return deferred.promise;
 }
 
-function createDefaultLists(accoutId) {
+function createDefaultLists(accoutId, t) {
   var deferred = q.defer();
   ContactList.bulkCreate([
     { name: 'Account Managers', accountId: accoutId, editable: false },
     { name: 'Facilitators', accountId: accoutId, editable: false },
     { name: 'Observers', accountId: accoutId, editable: false }
-  ]).done(function(results) {
-    deferred.resolve(results);
+  ], { transaction: t }).done(function(results) {
+    deferred.resolve({results: results, transaction: t});
   }, function(err) {
-    deferred.reject(err);
+    deferred.reject({error: err, transaction: t});
   })
   return deferred.promise;
 }

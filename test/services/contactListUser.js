@@ -49,7 +49,6 @@ describe('Services -> ContactListUser', () => {
       it("create to existing user base", (done) => {
           let attrs = {
             accountId: TestAccount.id,
-            userId: TestUser.id,
             contactListId: TestContactList.id,
             defaultFields: {
               firstName: "DainisNew",
@@ -77,7 +76,6 @@ describe('Services -> ContactListUser', () => {
       it("create completely new", (done) => {
           let attrs = {
             accountId: TestAccount.id,
-            userId: TestUser.id,
             contactListId: TestContactList.id,
             defaultFields: {
               firstName: "DainisNew",
@@ -106,7 +104,6 @@ describe('Services -> ContactListUser', () => {
       it("destroy ", (done) => {
           let attrs = {
             accountId: TestAccount.id,
-            userId: TestUser.id,
             contactListId: TestContactList.id,
             defaultFields: {
               firstName: "DainisNew",

@@ -10,7 +10,6 @@ module.exports = {
 // Create Params example
 // {  defaultFildes: Object/optional =>  { firstName: "name" },
 //    customFields: Object/optional =>  { customFieldsName: "someValue"}
-//    userId: INTEGER/required => 1,
 //    contactListId: INTEGER/required => 1
 //  }
 //
@@ -45,7 +44,6 @@ function destroy(req, res, next) {
 // Update Params example
 // {  defaultFildes: Object/optional =>  { firstName: "name" },
 //    customFields: Object/optional =>  { customFieldsName: "someValue"}
-//    userId: INTEGER/required => 1,
 //    contactListId: INTEGER/required => 1
 //  }
 //

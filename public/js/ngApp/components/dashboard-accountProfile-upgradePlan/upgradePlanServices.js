@@ -50,20 +50,50 @@
 
     /**
      * Submit Payment
-     * @param planDetails
-     * @param paymentDetails
+     * @param planDetails {object}
+     * @param paymentDetails {object}
+     * @param userData {object}
      */
     function submitUpgrade(planDetails, paymentDetails, userData) {
       var deferred = $q.defer();
 
-      dbg.log2('upgradePlanServices > submitUpgrade > payment details submitted to back end ', planDetails, paymentDetails);
+      dbg.log2('upgradePlanServices > submitUpgrade > payment details submitted to chargebee module ', planDetails, paymentDetails);
 
-      chargebee.submitNewOrder(planDetails, paymentDetails, userData).then(
-        function(res) {deferred.resolve(res)},
-        function(err) {deferred.reject(err)}
-      );
+      if (userData.subscriptions && userData.subscriptions.subscriptionId) {
+        // upgrade and prorate plan
+        var valid = validateUpgrading();
+
+        if (!valid) { deferred.reject('Are you cheating?'); return deferred.promise; }
+
+        chargebee.updateSubscription(planDetails, paymentDetails, userData).then(
+          function(res) {deferred.resolve(res)},
+          function(err) {deferred.reject(err)}
+        );
+      } else {
+        // new order
+        chargebee.submitNewSubscription(planDetails, paymentDetails, userData).then(
+          function(res) {deferred.resolve(res)},
+          function(err) {deferred.reject(err)}
+        );
+      }
+
+
 
       return deferred.promise;
+
+      /**
+       * Downgrading is not allowed.
+       * Every desired plan should be grater, then current
+       * @returns {boolean}
+       */
+      function validateUpgrading() {
+        var desiredPlan = planDetails.plan.id.replace(/\D/g,'');
+        var currentPlan = userData.subscriptions.planId.replace(/\D/g,'');
+
+        if (desiredPlan <= currentPlan) return false;
+
+        return true;
+      }
 
     }
 

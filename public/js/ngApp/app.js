@@ -54,7 +54,14 @@
     dbg.log2('#AppController started ');
     progressbar.complete();
 
-    user.getUserData().then(function(res) { vm.user = res });
+    $rootScope.$on('app.updateUser', init);
+
+    init();
+
+    function init() {
+      user.getUserData(true).then(function(res) { vm.user = res });
+    }
+
 
   }
 

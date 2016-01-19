@@ -26,8 +26,10 @@
     <!-- pricing tables -->
     <section class="container plans-table">
         <div class="row">
-            <!-- single plan -->
-            <div class="col-sm-4 col-xs-12">
+
+            <!-- plan1 -->
+            <div class="col-sm-4 col-xs-12 plan-block">
+                <div class="included-plan-fader" ng-hide="up.canUpgradeTo('plan1')"><div class="label">INCLUDED</div></div>
                 <div class="list-group">
                     <h4 class="list-group-item-heading yellow-header-bg">{{up.plans.plan1.name}}</h4>
                     <div class="price-label yellow-bg">
@@ -45,10 +47,11 @@
                     </div>
 
                 </div>
-            </div><!--/single plan-->
+            </div><!-- /plan1 -->
 
-            <!-- Monthly plan -->
-            <div class="col-sm-4 col-xs-12">
+            <!-- plan2 -->
+            <div class="col-sm-4 col-xs-12 plan-block">
+                <div class="included-plan-fader" ng-hide="up.canUpgradeTo('plan2')"><div class="label">INCLUDED</div></div>
                 <div class="list-group">
                     <h4 class="list-group-item-heading green-header-bg">{{up.plans.plan2.name}}</h4>
                     <div class="price-label green-bg">
@@ -66,10 +69,10 @@
                     </div>
 
                 </div>
-            </div><!--/Monthly plan-->
+            </div><!--/ plan2 -->
 
-            <!-- Yearly plan -->
-            <div class="col-sm-4 col-xs-12">
+            <!-- plan3 -->
+            <div class="col-sm-4 col-xs-12 plan-block">
                 <div class="list-group">
                     <h4 class="list-group-item-heading blue-header-bg">{{up.plans.plan3.name}}</h4>
 
@@ -90,7 +93,7 @@
                     </div>
 
                 </div>
-            </div><!--/ Yearly plan-->
+            </div><!--/ plan3 -->
 
         </div><!--/row-->
     </section><!--/pricing tables .container.plans-table -->

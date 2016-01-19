@@ -43,6 +43,8 @@ router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelet
 
 router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
 router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);
+router.put('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPut);
+router.get('/chargebee/subscriptions', multipartyMiddleware, chargebee.chargebeeSubscriptionGet);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
 // contact List
 router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
@@ -51,6 +53,8 @@ router.post('/contactLists', policy.authorized(['accountManager', 'admin']), con
 router.post('/contactListUser', policy.authorized(['accountManager', 'admin']), contactListUser.create);
 router.post('/contactListsUser/:id', policy.authorized(['accountManager', 'admin']), contactListUser.update);
 
+
+router.get('/chargebee/tst', multipartyMiddleware, chargebee.tstGet);
 
 // Common Rules
 router.use(function (req, res, next) {
