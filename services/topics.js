@@ -11,7 +11,8 @@ module.exports = {
   create: create,
   destroy: destroy,
   joninSession: joninSession,
-  removeSession: removeSession
+  removeSession: removeSession,
+  MESSAGES: MESSAGES
 };
 
 function getAll(accountId) {
@@ -24,31 +25,11 @@ function getAll(accountId) {
   return deferred.promise;
 }
 
-function joninSession(id, sessionId) {
+function joninSession(ids, sessionId) {
   let deferred = q.defer();
-  Topic.find({where: { id: id}}).then(function(topic) {
-    Session.find({where: { id: sessionId } }).then(function(session) {
-      topic.addSession([session]).then(function(result) {
-        deferred.resolve(true);
-      }, function(err) {
-        console.log(err);
-        deferred.reject(err);
-      })
-    }, function(err) {
-      deferred.reject(err);
-    })
-  }, function(err) {
-    deferred.reject(err);
-  })
-  return deferred.promise;
-}
-
-function removeSession(topicId, sessionId) {
-  let deferred = q.defer();
-
-  Topic.find({where: { id: topicId}}).then(function(topic) {
-    Session.find({where: {id: sessionId} }).then(function(session) {
-      topic.removeSession(session).then(function(result) {
+  Session.find({where: { id: sessionId } }).then(function(session) {
+    Topic.findAll({where: {id: ids}}).then(function(results) {
+      session.addTopics(results).then(function(result) {
         deferred.resolve(result);
       }, function(err) {
         deferred.reject(err);
@@ -58,7 +39,27 @@ function removeSession(topicId, sessionId) {
     })
   }, function(err) {
     deferred.reject(err);
-  })
+  });
+
+  return deferred.promise;
+}
+
+function removeSession(ids, sessionId) {
+  let deferred = q.defer();
+  Session.find({where: { id: sessionId } }).then(function(session) {
+    Topic.findAll({where: {id: ids}}).then(function(results) {
+      session.removeTopics(results).then(function(result) {
+        deferred.resolve(result);
+      }, function(err) {
+        deferred.reject(err);
+      })
+    }, function(err) {
+      deferred.reject(err);
+    })
+  }, function(err) {
+    deferred.reject(err);
+  });
+
   return deferred.promise;
 }
 
@@ -66,13 +67,12 @@ function destroy(id) {
   let deferred = q.defer();
   Topic.find({where: { id: id }, include: [{model: models.Session }]}).then(function(topic) {
     if (_.isEmpty(topic.Sessions)) {
-      Topic.destroy({where: { id: topicId}}).then(function(result) {
-        console.log();
+      Topic.destroy({where: { id: id } }).then(function(result) {
         deferred.resolve(result)
       },function(err) {
         deferred.reject(err);
       })
-    }else{
+    } else {
       deferred.reject(MESSAGES.error.isRelaitedSession);
     }
   })

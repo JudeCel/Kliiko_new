@@ -17,12 +17,12 @@ function createSession() {
     status_id: 1,
     colours_used: '["3","6","5"]'
   }
-Session.create(sessionAttrs).then(function(session) {
-  deferred.resolve(session);
-}, function(err) {
-  deferred.reject(err);
-})
-  return deferred.promise;
+  Session.create(sessionAttrs).then(function(session) {
+    deferred.resolve(session);
+  }, function(err) {
+    deferred.reject(err);
+  })
+    return deferred.promise;
 }
 
 
@@ -57,7 +57,7 @@ describe('Topic Service', function() {
     });
   });
 
-  it.skip('create', function (done) {
+  it('create', function (done) {
     let attrs = {
       accountId: testAccount.id,
       name: "cool topic name"
@@ -71,7 +71,7 @@ describe('Topic Service', function() {
 
   describe("with Session", function() {
     var testSession = null;
-    before(function(done) {
+    beforeEach(function(done) {
       createSession().then(function(session) {
         testSession = session;
         done();
@@ -87,8 +87,7 @@ describe('Topic Service', function() {
       }
 
       topicService.create(attrs).then(function(topic){
-        console.log(testSession.id);
-        topicService.joninSession(topic.id, testSession.id).then(function(result) {
+        topicService.joninSession([topic.id], testSession.id).then(function(result) {
           topic.getSessions().then(function(resuts) {
             assert.lengthOf(resuts, 1)
             done();
@@ -103,16 +102,16 @@ describe('Topic Service', function() {
       });
     })
 
-    it.skip("removSession", function(done) {
+    it("removSession", function(done) {
       let attrs = {
         accountId: testAccount.id,
         name: "without session"
       }
 
       topicService.create(attrs).then(function(topic){
-        topicService.joninSession(topic.id, testSession.id).then(function(_) {
-          topicService.removeSession(testSession.id).then(function(result) {
-            assert.equal(result, 0)
+        topicService.joninSession([topic.id], testSession.id).then(function(_) {
+          topicService.removeSession([testSession.id], testSession.id).then(function(result) {
+            assert.equal(result, 1)
             done()
           }, function(err) {
             done(err)
@@ -125,20 +124,19 @@ describe('Topic Service', function() {
       });
     })
 
-    it.skip("destroy", function(done) {
+    it("destroy", function(done) {
       let attrs = {
         accountId: testAccount.id,
         name: "without session"
       }
 
       topicService.create(attrs).then(function(topic){
-        topicService.joninSession(topic.id, testSession.id).then(function(_) {
+        topicService.joninSession([topic.id], testSession.id).then(function(_) {
           topicService.destroy(topic.id).then(function(result) {
-            // assert.equal(result, 0)
-            console.log(result);
-            done()
+            done("can't get here");
           }, function(err) {
-            done(err)
+            assert.equal(err, topicService.MESSAGES.error.isRelaitedSession)
+            done();
           })
         }, function(err) {
           done(err)
@@ -150,7 +148,7 @@ describe('Topic Service', function() {
   })
 
 
-  describe.skip("destroy", function () {
+  describe("destroy", function () {
     it("no relaited with session", function(done) {
       let attrs = {
         accountId: testAccount.id,
