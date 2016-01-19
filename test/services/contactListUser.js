@@ -90,7 +90,7 @@ describe('Services -> ContactListUser', () => {
           contactListUser.getAccount().then(function(result) {
             assert.equal(result.id, TestAccount.id);
             contactListUser.getUser().then(function(user) {
-              assert.equal(user.id, 2);
+              assert.notEqual(user.id, TestUser.id);
               assert.equal(user.firstName, attrs.defaultFields.firstName);
               assert.equal(user.email, attrs.defaultFields.email);
               done();
@@ -115,7 +115,7 @@ describe('Services -> ContactListUser', () => {
             customFields: { one: "1", two:" 2", three:" 3" }
            }
         ContactListUserService.create(attrs).then(function(contactListUser) {
-          contactListUser.destroy([contactListUser.id], TestAccount.id).then(function() {
+          ContactListUserService.destroy([contactListUser.id], TestAccount.id).then(function() {
             TestContactList.getContactListUsers().then(function(result) {
               assert.lengthOf(result, 0)
               done()
@@ -123,6 +123,30 @@ describe('Services -> ContactListUser', () => {
               done(err)
             })
           });
+        }, function(err) {
+          done(err);
+        });
+      });
+
+      it("updatePositions ", (done) => {
+          let attrs = {
+            accountId: TestAccount.id,
+            contactListId: TestContactList.id,
+            defaultFields: {
+              firstName: "DainisNew",
+              lastName: "LapinsNew",
+              password: "cool_password",
+              email: "dainis186@gmail.com",
+              gender: "male"
+            }
+          }
+        ContactListUserService.create(attrs).then(function(contactListUser) {
+          ContactListUserService.updatePositions([{id: contactListUser.id, position: 3}]).then(function(result) {
+            assert.lengthOf(result, 1)
+            done()
+          }, function(err) {
+            done(err)
+          })
         }, function(err) {
           done(err);
         });

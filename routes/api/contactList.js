@@ -4,12 +4,12 @@ var contactListService = require('../../services/contactList');
 module.exports = {
   index: index,
   create: create,
-  destroy: destroy
+  destroy: destroy,
+  update: update
 };
 
 function index(req, res, next) {
   let accaountId = res.locals.currentDomain.id;
-
   contactListService.allByAccount(accaountId).then(function(lists) {
     res.send(lists);
   },function(err) {
@@ -18,9 +18,7 @@ function index(req, res, next) {
 };
 
 // Create Params example
-// {  defaultFildes: ARRAY/optional =>  [ firstName ]
-//    customFields: ARRAY/optional =>  [ someCustomFieldsName ],
-//    contactListId: INTEGER/required => 1,
+// {  customFields: ARRAY/optional =>  [ someCustomFieldsName ],
 //    name: STRING/required => "someName",
 //    editable: BOOLEAN/optional => true Default value true in DB
 //  }
@@ -31,6 +29,23 @@ function create(req, res, next) {
   params.accaountId = res.locals.currentDomain.id;
 
   contactListService.create(params).then(function(resul) {
+    res.send(resul);
+  }, function(err) {
+    res.send({ error: err });
+  })
+}
+
+// Create Params example
+// {  customFields: ARRAY/optional =>  [ someCustomFieldsName ],
+//    visibleFields: ARRAY/optional =>  [ someCustomFieldsNames and/or defaultFildesNames ],
+//    name: STRING/optional => "someName",
+//  }
+//
+function update(req, res, next) {
+  let params = req.body;
+  params.accaountId = res.locals.currentDomain.id;
+
+  contactListService.update(params).then(function(resul) {
     res.send(resul);
   }, function(err) {
     res.send({ error: err });

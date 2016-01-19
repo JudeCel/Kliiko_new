@@ -6,6 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
     userId: { type: DataTypes.INTEGER, allowNull: false },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
     contactListId: {type: DataTypes.INTEGER, allowNull: false},
+    position: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
     customFields: { type: DataTypes.JSONB, allowNull: false, defaultValue: {} }
   },{ indexes: [
         { unique: true,
