@@ -328,7 +328,6 @@ function exportSurvey(params, account) {
   return deferred.promise;
 };
 
-// Untested
 function constantsSurvey() {
   let deferred = q.defer();
 

@@ -5,6 +5,7 @@ var Survey = models.Survey;
 var SurveyQuestion = models.SurveyQuestion;
 var SurveyAnswer = models.SurveyAnswer;
 
+var surveyConstants = require('../../util/surveyConstants');
 var surveyServices = require('./../../services/survey');
 var userFixture = require('./../fixtures/user');
 var assert = require('chai').assert;
@@ -84,7 +85,7 @@ describe('SERVICE - Survey', function() {
 
   describe('#createSurveyWithQuestions', function() {
     describe('happy path', function() {
-      it.only('should succeed on creating survey with questions', function (done) {
+      it('should succeed on creating survey with questions', function (done) {
         let params = surveyParams();
 
         surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
@@ -616,6 +617,19 @@ describe('SERVICE - Survey', function() {
             assert.equal(error, surveyServices.messages.notFound);
             done();
           });
+        });
+      });
+    });
+  });
+
+  describe('#constantsSurvey', function() {
+    describe('happy path', function() {
+      it('should succeed returning default values', function (done) {
+        surveyServices.constantsSurvey().then(function(result) {
+          assert.deepEqual(result.data, surveyConstants);
+          done();
+        }, function(error) {
+          done(error);
         });
       });
     });
