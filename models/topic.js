@@ -19,7 +19,7 @@ module.exports = (Sequelize, DataTypes) => {
       paranoid: true,
       classMethods: {
         associate: function(models) {
-          Topic.belongsToMany(models.Session, { through: { model: models.SessionTopics} } );
+          Topic.belongsToMany(models.Session, { through: { model: models.SessionTopics } } );
         }
       }
     }

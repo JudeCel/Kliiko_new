@@ -12,14 +12,17 @@ var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
 var chargebee = require('./chargebee');
 let topics = require('./topics');
+let topic = require('./topic');
 
 
 module.exports = router;
 
 // Main Routes
-router.get('/user', userRoutes.userGet);
-router.post('/user', userRoutes.userPost);
-router.put('/user', userRoutes.changePassword);
+router.route('/user').
+  get( userRoutes.userGet).
+  post(userRoutes.userPost).
+  put(userRoutes.changePassword);
+
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
@@ -45,7 +48,12 @@ router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebee
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
 
 router.get('/topics', multipartyMiddleware, topics.get);
-//router.get('/topic/', multipartyMiddleware, topics.chargebeeCouponGet);
+router.post('/topic', multipartyMiddleware, topic.post);
+
+router.route('/topic/:id').
+  post(multipartyMiddleware, topic.copyTopicById).
+  put(multipartyMiddleware, topic.updateTopicById).
+  delete(multipartyMiddleware, topic.deleteById);
 
 // Common Rules
 router.use(function (req, res, next) {
