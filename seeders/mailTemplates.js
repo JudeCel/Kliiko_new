@@ -49,7 +49,7 @@ var templateFiles = [
 function createMailTemplateFromFile(fileInfo, callback) {
   readContents(fileInfo.fileName , function(err, data) {
     if (err) {
-      console.log("failed read  HTML:", fileInfo.fileName, "; error:", err);
+      console.log("failed to read HTML:", fileInfo.fileName, "; error:", err);
       return callback(err, null);
     }
     
