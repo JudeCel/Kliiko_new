@@ -46,7 +46,7 @@ function crateAccountManager(callback) {
     email: "user@insider.com",
     gender: "male",
     confirmedAt: new Date()
-  }
+  };
   UserService.create(userAttrs, function(errors, user) {
     callback(errors, user);
   });
@@ -61,6 +61,6 @@ function createUser() {
     console.log("Done!!");
     process.exit();
   });
-};
+}
 
 createUser();

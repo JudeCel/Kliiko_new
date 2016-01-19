@@ -78,6 +78,35 @@
 
 
   .plans-table {
+    .plan-block {
+      display: block;
+    }
+
+    .included-plan-fader {
+      display: block;
+      position: absolute;
+      z-index: 2000;
+      width: 100%;
+      height: 100%;
+      background: white;
+      opacity: .8;
+
+      > .label {
+        position: absolute;
+        top:320px;
+        left: 0;
+        color: $green;
+        font-size: calc(100vw/30);
+        font-weight: bold;
+
+        -webkit-transform: rotate(-15deg);
+        -moz-transform: rotate(-15deg);
+        -ms-transform: rotate(-15deg);
+        -o-transform: rotate(-15deg);
+        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+
+      }
+    }
 
     .list-group {
       border: none;

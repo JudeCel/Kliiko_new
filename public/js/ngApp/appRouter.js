@@ -134,7 +134,6 @@
           dbg.rs('resources');
 
           $stateParams.bannerType = 'resources';
-          console.warn($stateParams);
 
           banners.setMainBannerForPage('resources');
 
