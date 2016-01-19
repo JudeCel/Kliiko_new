@@ -26,7 +26,7 @@ app.set('view options', { layout: 'layout.ejs' });
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser(config.get("cookieSecret")));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -46,10 +46,12 @@ app.use(flash());
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
 var api = require('./routes/api');
+var webhooks = require('./routes/webhooks');
 
 app.use('/', routes);
 app.use('/dashboard', currentUser.assign, dashboard);
 app.use('/api', currentUser.assign, api);
+app.use('/webhooks', currentUser.assign, webhooks);
 
 
 // Added socket.io routes

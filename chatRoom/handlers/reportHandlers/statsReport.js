@@ -1,7 +1,7 @@
 var mtypes = require('./../../helpers/mtypes');
 var getReportData_Statistics = require('../getReportData_Statistics.js');
 var config = require('config').get("chatConf");
-var FS_PATH = config.paths.fsPath + config.paths.chatRoomPath;
+var FS_PATH = config.paths.fsPath + "/" + config.paths.chatRoomPath;
 
 module.exports.getReportInfo = function (params) {
     return {
@@ -37,7 +37,7 @@ module.exports.getReportRowObjects = function (data, nextCb) {
             name: rowData.firstName,
             userId: rowData.userId,
             fsPath: FS_PATH,
-            count: rowData.count_userId,
+            count: rowData.countUserId,
             topicId: rowData.topicId,
             topicName: rowData.topicName
         };
