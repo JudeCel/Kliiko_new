@@ -17,7 +17,7 @@ const MESSAGES = {
   removed: 'Successfully removed survey!',
   completed: 'Successfully completed survey!',
   noConstants: 'No constants found!',
-  created:'Successfully created survey!',
+  created: 'Successfully created survey!',
   updated: 'Successfully updated survey!',
   closed: 'Survey has been successfully closed!',
   opened: 'Survey has been successfully opened!',
