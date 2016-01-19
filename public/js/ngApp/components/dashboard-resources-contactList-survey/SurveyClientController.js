@@ -18,6 +18,7 @@
 
     function initConstants() {
       surveyServices.getConstants().then(function(res) {
+        vm.unfilled = res.data.validationErrors.unfilled;
         vm.validationErrors = res.data.validationErrors.answer;
         vm.minsMaxs = res.data.minsMaxs;
       });
@@ -63,7 +64,7 @@
           });
         }
         else {
-          vm.surveySelect.error = 'There are some unfilled answers!';
+          vm.surveySelect.error = vm.unfilled;
         }
 
         vm.submitingSurvey = false;

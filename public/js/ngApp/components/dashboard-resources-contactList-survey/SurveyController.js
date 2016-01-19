@@ -319,6 +319,8 @@
           survey.SurveyQuestions = object;
         }
 
+        vm.submitError = {};
+        vm.currentContacts = {};
         vm.survey = survey || { SurveyQuestions: {} };
         vm.currentPage = { page: 'manage', type: page };
       }

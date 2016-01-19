@@ -14,6 +14,7 @@ module.exports = {
   },
   validationErrors: {
     default: 'There are some errors',
+    unfilled: 'There are some unfilled answers!',
     minQuestions: 'Not enough questions, needs atleast ',
     field: [
       {
