@@ -59,7 +59,7 @@
               messenger.error(prepareError(res.error));
             }
             else {
-              vm.message = res.data;
+              vm.message = res.message;
             }
           });
         }

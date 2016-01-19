@@ -4,7 +4,6 @@ var models = require('../models');
 var AccountUser = models.AccountUser;
 
 var surveyServices = require('./../services/survey');
-var async = require('async');
 
 var sampleSurvey = {
   "name":"This is survey!",
@@ -93,12 +92,11 @@ var sampleSurvey = {
   ]
 };
 
-AccountUser.find({ where: { role: 'accountManager' } }).then(function(accountUser) {
-  if(accountUser) {
+Account.find({ where: { name: 'user' } }).then(function(account) {
+  if(account) {
     let params = sampleSurvey;
-    params.accountId = accountUser.AccountId;
 
-    surveyServices.createSurveyWithQuestions(params).then(function(survey) {
+    surveyServices.createSurveyWithQuestions(params, account).then(function(survey) {
       console.log('Survey created!');
       process.exit();
     }, function(error) {
@@ -108,7 +106,7 @@ AccountUser.find({ where: { role: 'accountManager' } }).then(function(accountUse
     });
   }
   else {
-    console.log('AccountManager not found!');
+    console.log('Account not found!');
     process.exit();
   }
 })
