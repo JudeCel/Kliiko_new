@@ -21,8 +21,21 @@
       contactListServices.getContactLists().then(function (result) {
         vm.lists = result;
 
-        if (vm.lists.length) vm.activeListIndex = 0;
+        if (vm.lists.length) {
+          // select first element
+          vm.activeListIndex = 0;
+
+          prepareListControls();
+        }
       });
+
+      function prepareListControls() {
+        for (var i = 0, len = vm.lists.length; i < len ; i++) {
+          vm.lists[i].listControls = {
+            checked: false
+          }
+        }
+      }
     }
 
     function listItemClickHandle(item, index){

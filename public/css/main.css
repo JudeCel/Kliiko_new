@@ -141,6 +141,27 @@ label.radio-button input[type="radio"]:checked + span:after {
 .btn-forbidden {
   cursor: not-allowed !important; }
 
+/* CHECKBOX */
+input.kliiko-checkbox {
+  display: none; }
+
+input.kliiko-checkbox + label {
+  max-width: none;
+  background: url("/icons/login_checkbox.jpeg") no-repeat;
+  height: 22px;
+  width: 22px;
+  margin-top: 0;
+  margin-left: 0;
+  margin-bottom: -5px;
+  background-size: contain; }
+
+input.kliiko-checkbox:checked + label {
+  background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
+  height: 22px;
+  width: 22px;
+  background-size: contain;
+  margin-top: 1px; }
+
 img.ic-flipX {
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
