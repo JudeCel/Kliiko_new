@@ -47,7 +47,7 @@
   	"port": "8080",
   	"domain": "insider.focus.com",
   	"paths": {
-  		"fsPath": "/home/dainisl/code/Kliiko/chatRoom",
+  		"fsPath": "/home/lauris/code/Kliiko/chatRoom",
   		"urlPath": "http://insider.focus.com:8080/",
   		"serverPath": "server/",
   		"configPath": "config/",
