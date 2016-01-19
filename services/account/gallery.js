@@ -15,7 +15,7 @@ var models = require('./../../models')
 var account = models.Account;
 var Resource = models.Resource;
 var updateTmpTitle = require('../../chatRoom/handlers/updateTmpTitle.js');
-var uploadNewResource = require('../../chatRoom/socketHelper/saveResourceToDisk.js');
+var uploadNewResource = require('../../chatRoom/socketHelper/saveResourceToDb.js');
 
 module.exports = {
   getResources: getResources,
@@ -122,14 +122,20 @@ function validate(data) {
 }
 
 function uploadResource(req, res){
-  let deferred = q.defer();
-  let params = {req: req, res: res};
-
-    uploadNewResource.saveResourceToDisk(params, function (result) {
-      console.log("66666666666666666666666666666666666666666666666666666666666");
-      console.log(result);
-
-    });
+  // let deferred = q.defer();
+  let params = {
+    req: req, 
+    res: res,
+    width: 950,
+    height: 460,
+    type: 'image',
+    resCb: function(userId, Json) {
+      console.log(userId)
+    }
+  };
+  console.log("uploadResource");
+  // console.log(params)
+  uploadNewResource.saveResourceToDisk(params);
   // });
   
   // return deferred.promise;

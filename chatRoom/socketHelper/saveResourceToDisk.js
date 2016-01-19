@@ -11,6 +11,7 @@ im.convert.path = config.paths.convertPath;
 im.identify.path = config.paths.identifyPath;
 
 function saveResourceToDisk(params) {
+    console.log("----------------------------------------------------------------------------")
     var req = params.req;
     var res = params.res;
 

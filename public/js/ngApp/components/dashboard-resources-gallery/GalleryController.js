@@ -14,7 +14,7 @@
     $scope.dataForValidation = {};
 
     $scope.uploadTst = function() {
-      dbg.yell($scope.fileTst)
+      dbg.yell($scope.newResource.fileTst)
     }
 
     function initList() {
@@ -43,26 +43,33 @@
       domServices.modal('uploadTST')
     };
 
-    $scope.submitForm = function(data) {
+    $scope.submitForm = function(newResource) {
 
-      $scope.dataForValidation = $scope.newResource;
-      $scope.dataForValidation.file = {
-        name: $scope.fileTst.name,
-        size: $scope.fileTst.size,
-        type: $scope.fileTst.type
-      }
+      // $scope.dataForValidation = $scope.newResource;
+      // $scope.dataForValidation.file = {
+      //   name: $scope.fileTst.name,
+      //   size: $scope.fileTst.size,
+      //   type: $scope.fileTst.type
+      // }
 
-      console.log($scope.dataForValidation);
-      GalleryServices.validateData($scope.dataForValidation).then(function(res) {
-        if(res.error){
-          messenger.error(res.error.name);
-        }else{
+      // console.log($scope.dataForValidation);
+      // GalleryServices.validateData($scope.dataForValidation).then(function(res) {
+      //   if(res.error){
+      //     messenger.error(res.error.name);
+      //   }else{
           var deferred = $q.defer();
-
-          Upload.upload({
+          console.log(newResource);
+          // Upload.upload({
+          //   url: globalSettings.restUrl+'/gallery',
+          //   method: 'POST',
+          //   data: {file: newResource.fileTst, title: newResource.title, type: $scope.newResource.type},
+          //   resumeChunkSize: '10KB'
+          Upload.http({
             url: globalSettings.restUrl+'/gallery',
-            method: 'POST',
-            data: {file: $scope.fileTst}
+            headers : {
+              'Content-Type': newResource.fileTst.type
+            },
+            data: newResource.fileTst
           }).then(
             function(res) {
               if (res.data && res.data.error) {
@@ -93,8 +100,8 @@
           //     messenger.error("Successfully uploaded a new resource.");
           //   }
           // });
-        };
-      });
+      //   };
+      // });
     };
 
     function uploadTypeForTitle(uploadType) {

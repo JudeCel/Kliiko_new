@@ -11,9 +11,7 @@ module.exports = {
   validateResourceData: validateResourceData
 };
 
-function postResources(req, res, next) {
-  let file = req.files.file;
-    
+function postResources(req, res, next) {    
   galleryService.uploadResource(req, res).then(function(result) {
     res.send(result);
   }, function(err) {
