@@ -12,15 +12,12 @@ module.exports = {
 };
 
 function postResources(req, res, next) {
-  // let file = req.files.file;
-
-  console.log("api file --------------------------------------");
-  console.log(req.files);
-  console.log("api file --------------------------------------");
-
-  req.body.userId = req.user.id;
-  galleryService.uploadResource(req.body).then(function(result) {
+  let file = req.files.file;
+    
+  galleryService.uploadResource(req, res).then(function(result) {
     res.send(result);
+  }, function(err) {
+    res.send(({ error: err.message }));
   });
 }
 

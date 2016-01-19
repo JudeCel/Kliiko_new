@@ -7,11 +7,15 @@ var sizeOf = require('image-size');
 var multer = require('multer');
 var async = require('async');
 var _ = require('lodash');
+var querystring = require('querystring');
+var request = require('request');
+
 
 var models = require('./../../models')
 var account = models.Account;
 var Resource = models.Resource;
 var updateTmpTitle = require('../../chatRoom/handlers/updateTmpTitle.js');
+var uploadNewResource = require('../../chatRoom/socketHelper/saveResourceToDisk.js');
 
 module.exports = {
   getResources: getResources,
@@ -117,9 +121,18 @@ function validate(data) {
   return deferred.promise;
 }
 
-function uploadResource(data){
-  console.log(data)
-  console.log("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+function uploadResource(req, res){
+  let deferred = q.defer();
+  let params = {req: req, res: res};
+
+    uploadNewResource.saveResourceToDisk(params, function (result) {
+      console.log("66666666666666666666666666666666666666666666666666666666666");
+      console.log(result);
+
+    });
+  // });
+  
+  // return deferred.promise;
 
 }
 
@@ -215,3 +228,40 @@ function saveToDatabase(){
 //   }
 // }
 
+function parseFileName(fileName) {
+  let fileNameArr = fileName.split('.');
+
+  var output = {
+    extension: getFileExtension(fileNameArr),
+    name: getFileName(fileNameArr),
+    fullName: fileName
+  };
+
+  return output;
+
+  /**
+   * Will return file extension
+   *  Example:
+   *    return 'png' from '[image-name,this,png]'
+   *    return 'jpg' as default from '[image]'
+   *
+   * @param fileNameArr {array}
+   * @returns {string}
+   */
+  function getFileExtension(fileNameArr) {
+    let defaultExtension = 'jpg';
+    if (fileNameArr.length === 1 ) return defaultExtension;
+    return fileNameArr[ fileNameArr.length - 1];
+  }
+
+  /**
+   * Return everything but not extension
+   * @param fileNameArr [array]
+   * @returns {string}
+   */
+  function getFileName(fileNameArr) {
+    let tmp = fileNameArr;
+    tmp.splice(tmp.length -1 ,1);
+    return tmp.join('.');
+  }
+}

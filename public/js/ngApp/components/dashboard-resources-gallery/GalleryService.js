@@ -1,9 +1,9 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('GalleryServices', GalleryServices);
-  GalleryServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
+  GalleryServices.$inject = ['globalSettings', '$q', '$resource', 'dbg', 'Upload'];
 
-  function GalleryServices(globalSettings, $q, $resource, dbg) {
+  function GalleryServices(globalSettings, $q, $resource, dbg, Upload) {
     var galleryRestApi = {
       gallery: $resource(globalSettings.restUrl +'/gallery', {}, { post: { method: 'POST' } }),
       download: $resource(globalSettings.restUrl +'/gallery/download'),
@@ -56,15 +56,7 @@
     };
 
     function uploadResource(params) {
-      var deferred = $q.defer();
-      
-      dbg.log2('#GalleryServices > uploadGalleryResources > make rest call');
-      galleryRestApi.gallery.save(params, function(res) {
-        dbg.log2('#GalleryServices > uploadGalleryResources > rest call responds');
-        deferred.resolve(res);
-      });
-
-      return deferred.promise;
+      //TODO
     };
 
     function validateData(data){

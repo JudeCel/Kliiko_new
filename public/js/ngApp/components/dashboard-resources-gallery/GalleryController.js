@@ -5,8 +5,8 @@
     module('KliikoApp').
     controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', '$scope', 'domServices', '$ocLazyLoad','$injector', 'angularConfirm', 'messenger', 'Upload'];
-  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, $ocLazyLoad,$injector,  angularConfirm, messenger, Upload){
+  GalleryController.$inject = ['dbg', '$q', 'GalleryServices', '$modal', '$scope', 'domServices', '$ocLazyLoad','$injector', 'angularConfirm', 'messenger', 'Upload', 'globalSettings'];
+  function GalleryController(dbg, $q, GalleryServices, $modal, $scope, domServices, $ocLazyLoad,$injector,  angularConfirm, messenger, Upload, globalSettings){
     dbg.log2('#GalleryController  started');
     initList();
 
@@ -57,15 +57,42 @@
         if(res.error){
           messenger.error(res.error.name);
         }else{
-          console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-          console.log($scope.fileTst);
-          GalleryServices.uploadResource($scope.fileTst).then(function(res) {
-            if(res.errors){
-              messenger.error(res.errors);
-            }else{
-              messenger.error("Successfully uploaded a new resource.");
-            }
-          });
+          var deferred = $q.defer();
+
+          Upload.upload({
+            url: globalSettings.restUrl+'/gallery',
+            method: 'POST',
+            data: {file: $scope.fileTst}
+          }).then(
+            function(res) {
+              if (res.data && res.data.error) {
+                dbg.log2('#bannerMessagesService > upload > error ', res.data.error);
+                deferred.reject(res.data.error);
+                return deferred.promise;
+              }
+
+              dbg.log2('#bannerMessagesService > upload > success ', res);
+              console.warn(currentBannerType)
+              if (currentBannerType) setMainBannerForPage(currentBannerType);
+
+              deferred.resolve();
+            },
+            function(err) {
+              dbg.log2('#bannerMessagesService > upload > error ', err);
+              deferred.reject( {status:err.status, statusText: err.statusText})
+            },
+            function(evt) {}
+          );
+
+          return deferred.promise;
+
+          // GalleryServices.uploadResource($scope.fileTst).then(function(res) {
+          //   if(res.errors){
+          //     messenger.error(res.errors);
+          //   }else{
+          //     messenger.error("Successfully uploaded a new resource.");
+          //   }
+          // });
         };
       });
     };
