@@ -15,7 +15,7 @@
 
     <div class='col-xs-7'>
       <div class='input-group'>
-        <input type='text' class='form-control' id='answer_{{object.order}}_{{ answer.order }}' placeholder='Answer' name='{{ answer.order }}'
+        <input type='text' class='form-control' id='answer-{{object.order}}-{{ answer.order }}' placeholder='Answer' name='{{ answer.order }}'
         ng-model='answer.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='question.active'>
 
         <span class='input-group-addon list-handle' ng-if='!sc.canChangeAnswers(-1, question)'>@</span>

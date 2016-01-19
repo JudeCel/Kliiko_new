@@ -64,13 +64,20 @@ function confirm(req, res, next) {
   );
 };
 
+function getConstants(req, res, next) {
+  surveyService.constantsSurvey().then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+};
+
 function getResponses(res) {
   return {
     onError: function(error) {
       res.send({ error: error });
     },
-    onSuccess: function(data) {
-      res.send({ data: data, dateFormat: constants.dateFormat });
+    onSuccess: function(result) {
+      res.send({ data: result.data, message: result.message, dateFormat: constants.dateFormat });
     }
   };
 }
@@ -84,5 +91,6 @@ module.exports = {
   status: status,
   copy: copy,
   answer: answer,
-  confirm: confirm
+  confirm: confirm,
+  getConstants: getConstants
 };

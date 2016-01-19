@@ -43,186 +43,19 @@
       }
     }
 
-    vm.minsMaxs = {
-      input: {
-        min: 1,
-        max: 20
-      },
-      textarea: {
-        min: 1,
-        max: 500
-      }
-    }
-    vm.validationErrors = [
-      {
-        type: 'required',
-        message: 'Please fill this field!',
-      },
-      {
-        type: 'minlength',
-        message: 'Field is too short!',
-      },
-      {
-        type: 'maxlength',
-        message: 'Field is too long!',
-      }
-    ];
-
-    vm.contactDetails = [
-      {
-        model: 'firstName',
-        name: 'First Name',
-        input: true
-      },
-      {
-        model: 'lastName',
-        name: 'Last Name',
-        input: true
-      },
-      {
-        model: 'gender',
-        name: 'Gender',
-        select: true,
-        options: ['Male', 'Female']
-      },
-      {
-        model: 'age',
-        name: 'Age',
-        input: true
-      },
-      {
-        model: 'email',
-        name: 'Email',
-        input: true
-      },
-      {
-        model: 'mobile',
-        name: 'Mobile',
-        input: true
-      },
-      {
-        model: 'landlineNumber',
-        name: 'Landline Number',
-        input: true,
-        canDisable: true,
-        disabled: true
-      },
-      {
-        model: 'postalAddress',
-        name: 'Postal Address',
-        input: true,
-        canDisable: true,
-        disabled: true
-      },
-      {
-        model: 'city',
-        name: 'City',
-        input: true,
-        canDisable: true,
-        disabled: true
-      },
-      {
-        model: 'state',
-        name: 'State',
-        input: true,
-        canDisable: true,
-        disabled: true
-      },
-      {
-        model: 'postcode',
-        name: 'Postcode',
-        input: true,
-        canDisable: true,
-        disabled: true
-      },
-      {
-        model: 'country',
-        name: 'Country',
-        input: true,
-        canDisable: true,
-        disabled: true
-      },
-      {
-        model: 'companyName',
-        name: 'Company Name',
-        input: true,
-        canDisable: true,
-        disabled: true
-      },
-    ];
-
-    vm.defaultQuestions = [
-      {
-        order: 0,
-        name: 'First Choice',
-        input: true,
-        minAnswers: 2,
-        maxAnswers: 5
-      },
-      {
-        order: 1,
-        name: 'Second Choice',
-        input: true,
-        minAnswers: 2,
-        maxAnswers: 5
-      },
-      {
-        order: 2,
-        name: 'Advice',
-        textArea: true,
-        minAnswers: 1,
-        maxAnswers: 1
-      },
-      {
-        order: 3,
-        name: 'Like-Dislike',
-        input: true,
-        audioVideo: true,
-        minAnswers: 2,
-        maxAnswers: 5
-      },
-      {
-        order: 4,
-        name: 'Importance',
-        input: true,
-        audioVideo: true,
-        minAnswers: 2,
-        maxAnswers: 5
-      },
-      {
-        order: 5,
-        name: 'Most Important',
-        input: true,
-        minAnswers: 2,
-        maxAnswers: 5
-      },
-      {
-        order: 6,
-        name: 'Interest',
-        hardcodedName: true,
-        checkbox: true,
-        minAnswers: 1,
-        maxAnswers: 1
-      },
-      {
-        order: 7,
-        name: 'Prize Draw',
-        hardcodedName: true,
-        checkbox: true,
-        minAnswers: 1,
-        maxAnswers: 1
-      },
-      {
-        order: 8,
-        name: 'Contact details',
-        hardcodedName: true,
-        contact: true,
-        minAnswers: 1,
-        maxAnswers: 1
-      }
-    ];
-
+    initConstants();
     changePage('index');
+
+    function initConstants() {
+      surveyServices.getConstants().then(function(res) {
+        vm.defaultQuestions = res.data.defaultQuestions;
+        vm.contactDetails = res.data.contactDetails;
+        vm.constantErrors = res.data.validationErrors;
+        vm.validationErrors = vm.constantErrors.field;
+        vm.minsMaxs = res.data.minsMaxs;
+        vm.minQuestions = res.data.minQuestions;
+      });
+    };
 
     function init() {
       var progressbar = ngProgressFactory.createInstance();
@@ -246,10 +79,10 @@
           progressbar.complete();
 
           if(res.error) {
-            messenger.error(res.error);
+            messenger.error(prepareError(res.error));
           }
           else {
-            messenger.ok(res.data);
+            messenger.ok(res.message);
             var index = vm.surveys.indexOf(survey);
             vm.surveys.splice(index, 1);
           }
@@ -266,11 +99,11 @@
         progressbar.complete();
 
         if(res.error) {
-          messenger.error(res.error);
+          messenger.error(prepareError(res.error));
         }
         else {
           survey.closed = !survey.closed;
-          messenger.ok("Survey has been successfully " + (survey.closed ? 'closed' : 'opened'));
+          messenger.ok(res.message);
         }
       });
     };
@@ -283,8 +116,8 @@
 
       $timeout(function() {
         if(vm.manageForm.$valid) {
-          if(vm.survey.SurveyQuestions.length < 2) {
-            vm.submitError = 'Not enougth questions';
+          if(Object.keys(vm.survey.SurveyQuestions).length < vm.minQuestions) {
+            vm.submitError = vm.constantErrors.minQuestions;
           }
           else {
             delete vm.submitError;
@@ -298,7 +131,7 @@
           }
         }
         else {
-          vm.submitError = 'There are some errors';
+          vm.submitError = vm.constantErrors.default;
         }
 
         progressbar.complete();
@@ -311,11 +144,11 @@
         dbg.log2('#SurveyController > finishCreate > res ', res);
 
         if(res.error) {
-          messenger.error(res.error);
+          messenger.error(prepareError(res.error));
         }
         else {
           changePage('index');
-          messenger.ok(res.data.message || 'Successfully created survey');
+          messenger.ok(res.message);
         }
       });
     };
@@ -325,11 +158,11 @@
         dbg.log2('#SurveyController > finishEdit > res ', res);
 
         if(res.error) {
-          messenger.error(res.error);
+          messenger.error(prepareError(res.error));
         }
         else {
           changePage('index');
-          messenger.ok(res.data.message || 'Successfully updated survey');
+          messenger.ok(res.message);
         }
       });
     };
@@ -343,11 +176,11 @@
         progressbar.complete();
 
         if(res.error) {
-          messenger.error(res.error);
+          messenger.error(prepareError(res.error));
         }
         else {
           vm.surveys.push(res.data);
-          messenger.ok(res.message || 'Survey copied successfully');
+          messenger.ok(res.message);
         }
       });
     };
@@ -362,11 +195,11 @@
         progressbar.complete();
 
         if(res.error) {
-          messenger.error(res.error);
+          messenger.error(prepareError(res.error));
         }
         else {
           survey.confirmedAt = date;
-          messenger.ok(res.message || 'Survey confirmed successfully');
+          messenger.ok(res.message);
         }
       });
     };
@@ -427,23 +260,23 @@
     function initContacts(answer) {
       if(!vm.currentContacts) {
         if(!answer.contactDetails) {
-          answer.contactDetails = {};
-          for(var i in vm.contactDetails) {
-            var contact = vm.contactDetails[i];
-            if(!contact.disabled) {
-              answer.contactDetails[contact.model] = contact;
-            }
-          }
-
-          initContacts(answer);
+          seedContactDetails(answer);
         }
-        else {
-          vm.currentContacts = {};
 
-          for(var i in answer.contactDetails) {
-            var contact = answer.contactDetails[i];
-            vm.currentContacts[contact.model] = contact.name;
-          }
+        vm.currentContacts = {};
+        for(var i in answer.contactDetails) {
+          var contact = answer.contactDetails[i];
+          vm.currentContacts[contact.model] = contact.name;
+        }
+      }
+    };
+
+    function seedContactDetails(answer) {
+      answer.contactDetails = {};
+      for(var i in vm.contactDetails) {
+        var contact = vm.contactDetails[i];
+        if(!contact.disabled) {
+          answer.contactDetails[contact.model] = contact;
         }
       }
     };
@@ -509,6 +342,20 @@
 
     function contactDetailDisabled(cd) {
       return (vm.currentContacts[cd.model] ? false : cd.disabled);
-    }
+    };
+
+    function prepareError(errors) {
+      if(typeof errors == 'string') {
+        return errors;
+      }
+      else {
+        var string = '';
+        for(var i in errors) {
+          var error = errors[i];
+          string += (error + '<br>');
+        }
+        return string;
+      }
+    };
   };
 })();

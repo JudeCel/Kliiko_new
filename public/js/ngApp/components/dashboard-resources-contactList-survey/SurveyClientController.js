@@ -9,35 +9,19 @@
 
     var vm = this;
     vm.survey = { SurveyQuestions: {} };
-    vm.minsMaxs = {
-      input: {
-        min: 1,
-        max: 20
-      },
-      textarea: {
-        min: 1,
-        max: 500
-      }
-    };
-
-    vm.validationErrors = [
-      {
-        type: 'required',
-        message: 'Please fill this answer!',
-      },
-      {
-        type: 'minlength',
-        message: 'Answer is too short!',
-      },
-      {
-        type: 'maxlength',
-        message: 'Answer is too long!',
-      }
-    ];
 
     vm.pickValidClass = pickValidClass;
     vm.submitSurvey = submitSurvey;
     vm.init = init;
+
+    initConstants();
+
+    function initConstants() {
+      surveyServices.getConstants().then(function(res) {
+        vm.validationErrors = res.data.validationErrors.answer;
+        vm.minsMaxs = res.data.minsMaxs;
+      });
+    };
 
     function init(surveyId) {
       var progressbar = ngProgressFactory.createInstance();

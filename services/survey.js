@@ -5,41 +5,60 @@ var Survey = models.Survey;
 var SurveyQuestion = models.SurveyQuestion;
 var SurveyAnswer = models.SurveyAnswer;
 
-var config = require('config');
-var _ = require('lodash');
 var q = require('q');
-var changeCase = require('change-case');
+var _ = require('lodash');
+var config = require('config');
+var surveyConstants = require('../util/surveyConstants');
 
-const validManageParams = [
-  'accountId',
-  'confirmedAt',
-  'name',
-  'closed',
-  'description',
-  'thanks',
-  'SurveyQuestions'
-];
+const MESSAGES = {
+  notFound: 'Survey not found!',
+  closed: 'Survey closed, please contact admin!',
+  notConfirmed: 'Survey not confirmed, please contact admin!',
+  removed: 'Successfully removed survey!',
+  completed: 'Successfully completed survey!',
+  noConstants: 'No constants found!',
+  created:'Successfully created survey!',
+  updated: 'Successfully updated survey!',
+  closed: 'Survey has been successfully closed!',
+  opened: 'Survey has been successfully opened!',
+  copied: 'Survey copied successfully!',
+  confirmed: 'Survey confirmed successfully!'
+};
 
-const returnParamsSurvey = [
-  'id',
-  'accountId',
-  'name',
-  'description',
-  'thanks',
-  'closed',
-  'confirmedAt',
-  'url'
-];
+const VALID_ATTRIBUTES = {
+  manage: [
+    'accountId',
+    'confirmedAt',
+    'name',
+    'closed',
+    'description',
+    'thanks',
+    'SurveyQuestions'
+  ],
+  survey: [
+    'id',
+    'accountId',
+    'name',
+    'description',
+    'thanks',
+    'closed',
+    'confirmedAt',
+    'url'
+  ],
+  question: [
+    'id',
+    'surveyId',
+    'name',
+    'type',
+    'question',
+    'order',
+    'answers'
+  ]
+}
 
-const returnParamsQuestions = [
-  'id',
-  'surveyId',
-  'name',
-  'type',
-  'question',
-  'order',
-  'answers'
-];
+function simpleParams(data, message) {
+  return { data: data, message: message };
+};
 
 // Exports
 function findAllSurveys(account) {
@@ -47,17 +66,17 @@ function findAllSurveys(account) {
 
   Survey.findAll({
     where: { accountId: account.id },
-    attributes: returnParamsSurvey,
+    attributes: VALID_ATTRIBUTES.survey,
     order: [
       ['id', 'asc'],
       [SurveyQuestion, 'order', 'ASC']
     ],
     include: [{
       model: SurveyQuestion,
-      attributes: returnParamsQuestions
+      attributes: VALID_ATTRIBUTES.question
     }]
   }).then(function(surveys) {
-    deferred.resolve(surveys);
+    deferred.resolve(simpleParams(surveys));
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
   }).catch(function(error) {
@@ -72,10 +91,10 @@ function findSurvey(params) {
 
   Survey.find({
     where: { id: params.id },
-    attributes: returnParamsSurvey,
+    attributes: VALID_ATTRIBUTES.survey,
     include: [{
       model: SurveyQuestion,
-      attributes: returnParamsQuestions
+      attributes: VALID_ATTRIBUTES.question
     }],
     order: [
       [SurveyQuestion, 'order', 'ASC']
@@ -83,17 +102,17 @@ function findSurvey(params) {
   }).then(function(survey) {
     if(survey) {
       if(survey.closed) {
-        deferred.reject('Survey closed, please contact admin!');
+        deferred.reject(MESSAGES.closed);
       }
       else if(!survey.confirmedAt) {
-        deferred.reject('Survey not confirmed, please contact admin!');
+        deferred.reject(MESSAGES.notConfirmed);
       }
       else {
-        deferred.resolve(survey);
+        deferred.resolve(simpleParams(survey));
       }
     }
     else {
-      deferred.reject('Survey not found');
+      deferred.reject(MESSAGES.notFound);
     }
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
@@ -109,10 +128,10 @@ function removeSurvey(params, account) {
 
   Survey.destroy({ where: { id: params.id, accountId: account.id } }).then(function(result) {
     if(result > 0) {
-      deferred.resolve('Successfully removed survey');
+      deferred.resolve(simpleParams(null, MESSAGES.removed));
     }
     else {
-      deferred.reject('Survey not found');
+      deferred.reject(MESSAGES.notFound);
     }
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
@@ -123,15 +142,16 @@ function removeSurvey(params, account) {
   return deferred.promise;
 };
 
-function createSurveyWithQuestions(params) {
+function createSurveyWithQuestions(params, account) {
   let deferred = q.defer();
-  let validParams = validateParams(params, validManageParams);
+  let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
+  validParams.accountId = account.id;
 
   models.sequelize.transaction(function (t) {
     return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t });
   }).then(function(survey) {
     survey.update({ url: validUrl(survey) }).then(function(survey) {
-      deferred.resolve(survey);
+      deferred.resolve(simpleParams(survey, MESSAGES.created));
     });
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
@@ -144,7 +164,7 @@ function createSurveyWithQuestions(params) {
 
 function updateSurvey(params, account) {
   let deferred = q.defer();
-  let validParams = validateParams(params, validManageParams);
+  let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
 
   models.sequelize.transaction(function (t) {
     return Survey.update(validParams, {
@@ -154,7 +174,7 @@ function updateSurvey(params, account) {
       transaction: t
     }).then(function(result) {
       if(result[0] == 0) {
-        throw 'Survey not found';
+        throw MESSAGES.notFound;
       }
       else {
         let survey = result[1][0];
@@ -176,7 +196,7 @@ function updateSurvey(params, account) {
       }
     });
   }).then(function(survey) {
-    deferred.resolve(survey);
+    deferred.resolve(simpleParams(survey, MESSAGES.updated));
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
   }).catch(function(error) {
@@ -194,11 +214,11 @@ function changeStatus(params, account) {
     returning: true
   }).then(function(result) {
     if(result[0] == 0) {
-      deferred.reject('Survey not found');
+      deferred.reject(MESSAGES.notFound);
     }
     else {
       let survey = result[1][0];
-      deferred.resolve(survey);
+      deferred.resolve(simpleParams(survey, survey.closed ? MESSAGES.closed : MESSAGES.opened));
     }
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
@@ -221,14 +241,14 @@ function copySurvey(params, account) {
     }]
   }).then(function(survey) {
     if(survey) {
-      createSurveyWithQuestions(survey).then(function(copy) {
-        deferred.resolve(copy);
+      createSurveyWithQuestions(survey, account).then(function(result) {
+        deferred.resolve(simpleParams(result.data, MESSAGES.copied));
       }, function(error) {
         deferred.reject(error);
       });
     }
     else {
-      deferred.reject('Survey not found');
+      deferred.reject(MESSAGES.notFound);
     }
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
@@ -244,7 +264,7 @@ function answerSurvey(params) {
   let validParams = validAnswerParams(params);
 
   SurveyAnswer.create(validParams).then(function() {
-    deferred.resolve('Successfully completed survey!');
+    deferred.resolve(simpleParams(null, MESSAGES.completed));
   }).catch(SurveyAnswer.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
   }).catch(function(error) {
@@ -262,11 +282,11 @@ function confirmSurvey(params, account) {
     returning: true
   }).then(function(result) {
     if(result[0] == 0) {
-      deferred.reject('Survey not found');
+      deferred.reject(MESSAGES.notFound);
     }
     else {
       let survey = result[1][0];
-      deferred.resolve(survey);
+      deferred.resolve(simpleParams(survey, MESSAGES.confirmed));
     }
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
@@ -285,7 +305,7 @@ function exportSurvey(params, account) {
     attributes: ['id'],
     include: [{
       model: SurveyQuestion,
-      attributes: returnParamsQuestions
+      attributes: VALID_ATTRIBUTES.question
     }, SurveyAnswer],
     order: [
       [SurveyQuestion, 'order', 'ASC']
@@ -294,16 +314,30 @@ function exportSurvey(params, account) {
     if(survey) {
       let header = createCsvHeader(survey.SurveyQuestions);
       let data = createCsvData(header, survey);
-      deferred.resolve({ header: header, data: data });
+      deferred.resolve(simpleParams({ header: header, data: data }));
     }
     else {
-      deferred.reject('Survey not found');
+      deferred.reject(MESSAGES.notFound);
     }
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
   }).catch(function(error) {
     deferred.reject(error);
   });
+
+  return deferred.promise;
+};
+
+// Untested
+function constantsSurvey() {
+  let deferred = q.defer();
+
+  if(surveyConstants) {
+    deferred.resolve(simpleParams(surveyConstants));
+  }
+  else {
+    deferred.reject(MESSAGES.noConstants);
+  }
 
   return deferred.promise;
 };
@@ -347,7 +381,7 @@ function createCsvData(header, survey) {
           object[header[index]] = answer.value ? 'Yes' : 'No';
           if(answer.contactDetails) {
             _.map(answer.contactDetails, function(value, key) {
-              object[changeCase.titleCase(key)] = value;
+              object[_.startCase(key)] = value;
             });
           }
           break;
@@ -445,12 +479,17 @@ function validateParams(params, attributes) {
 function prepareErrors(err) {
   let errors = ({});
   _.map(err.errors, function (n) {
-    errors[n.path] = _.startCase(n.path) + ':' + n.message.replace(n.path, '');
+    let message = n.message.replace(n.path, '');
+    if(message == ' cannot be null') {
+      message = ' cannot be empty';
+    }
+    errors[n.path] = _.startCase(n.path) + ':' + message;
   });
   return errors;
 };
 
 module.exports = {
+  messages: MESSAGES,
   findAllSurveys: findAllSurveys,
   findSurvey: findSurvey,
   removeSurvey: removeSurvey,
@@ -460,5 +499,6 @@ module.exports = {
   copySurvey: copySurvey,
   answerSurvey: answerSurvey,
   confirmSurvey: confirmSurvey,
-  exportSurvey: exportSurvey
+  exportSurvey: exportSurvey,
+  constantsSurvey: constantsSurvey
 };

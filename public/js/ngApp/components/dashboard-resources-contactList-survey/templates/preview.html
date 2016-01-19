@@ -24,10 +24,10 @@
             <div ng-if='question.type == "radio"' ng-repeat='answer in question.answers'>
               <div class='radio radio-sm survey-input' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order].$error, "radio")'>
 
-                <input type='radio' id='radio_{{ question.order }}_{{ answer.order }}' name='{{ question.order }}'
+                <input type='radio' id='radio-{{ question.order }}-{{ answer.order }}' name='{{ question.order }}'
                   ng-value='answer.order' ng-model='sq.answer' ng-required='sc.submitedSurvey && !sq.answer'>
 
-                <label for='radio_{{ question.order }}_{{ answer.order }}'>{{ answer.name }}</label>
+                <label for='radio-{{ question.order }}-{{ answer.order }}'>{{ answer.name }}</label>
               </div>
             </div>
 
@@ -41,10 +41,10 @@
             <div ng-if='question.type == "checkbox"' ng-repeat='answer in question.answers'>
               <div class='form-group col-sm-12'>
                 <div class='col-sm-12 checkbox checkbox-sm survey-input' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order].$error, "checkbox")'>
-                  <input class='styled' id='checkbox_{{ question.order }}_{{ answer.order }}' type='checkbox' name='{{ question.order }}'
+                  <input class='styled' id='checkbox-{{ question.order }}-{{ answer.order }}' type='checkbox' name='{{ question.order }}'
                     ng-model='sq.answer' ng-init='sq.answer = false' ng-required='sq.answer && sc.submitedSurvey'>
 
-                  <label for='checkbox_{{ question.order }}_{{ answer.order }}'>{{ answer.name }}</label>
+                  <label for='checkbox-{{ question.order }}-{{ answer.order }}'>{{ answer.name }}</label>
                 </div>
               </div>
 
@@ -57,16 +57,16 @@
                     </div>
                   </div>
 
-                  <label class='col-xs-2 control-label' for='contact_{{ contact.model }}'>{{ contact.name }}</label>
+                  <label class='col-xs-2 control-label' for='contact-{{ contact.model }}'>{{ contact.name }}</label>
                   <div class='col-xs-10' ng-if='contact.input'>
-                    <input type='text' class='form-control no-border-radius' id='contact_{{ contact.model }}' placeholder='{{ contact.name }}'
+                    <input type='text' class='form-control no-border-radius' id='contact-{{ contact.model }}' placeholder='{{ contact.name }}'
                       name='{{ contact.model }}' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
                       ng-model='sq.contactDetails[contact.model]' ng-disabled='!sq.answer' ng-required='sq.answer && sc.submitedSurvey'
                       ng-minlength='1' ng-maxlength='20'>
                   </div>
 
                   <div class='col-xs-10' ng-if='contact.select'>
-                    <select class='form-control no-border-radius' id='contact_{{ contact.model }}' name='{{ contact.model }}'
+                    <select class='form-control no-border-radius' id='contact-{{ contact.model }}' name='{{ contact.model }}'
                       ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
                       ng-model='sq.contactDetails[contact.model]' ng-required='sq.answer && sc.submitedSurvey' ng-disabled='!sq.answer'>
                       <option ng-repeat='option in contact.options' value='{{ option }}'>

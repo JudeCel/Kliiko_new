@@ -9,13 +9,15 @@
       update: { method: 'PUT' },
       find: { method: 'PUT', params: { path: 'find' } },
       status: { method: 'PUT', params: { path: 'status' } },
-      copy: { method: 'PUT', params: { path: 'copy' } },
-      answer: { method: 'PUT', params: { path: 'answer' } },
-      confirm: { method: 'PUT', params: { path: 'confirm' } }
+      copy: { method: 'POST', params: { path: 'copy' } },
+      answer: { method: 'POST', params: { path: 'answer' } },
+      confirm: { method: 'PUT', params: { path: 'confirm' } },
+      constants: { method: 'GET', params: { path: 'constants' } }
     });
 
     var upServices = {};
 
+    upServices.getConstants = getConstants;
     upServices.getAllSurveys = getAllSurveys;
     upServices.findSurvey = findSurvey;
     upServices.removeSurvey = removeSurvey;
@@ -26,6 +28,18 @@
     upServices.answerSurvey = answerSurvey;
     upServices.confirmSurvey = confirmSurvey;
     return upServices;
+
+    function getConstants() {
+      var deferred = $q.defer();
+
+      dbg.log2('#surveyServices > getConstants > make rest call');
+      surveyRestApi.constants({}, function(res) {
+        dbg.log2('#surveyServices > getConstants > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    };
 
     function getAllSurveys() {
       var deferred = $q.defer();

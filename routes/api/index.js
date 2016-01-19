@@ -51,11 +51,12 @@ router.get('/survey', survey.get);
 router.delete('/survey', survey.remove);
 router.post('/survey', survey.create);
 router.put('/survey', survey.update);
-router.put('/survey/copy', survey.copy);
+router.post('/survey/copy', survey.copy);
 router.put('/survey/status', survey.status);
 router.put('/survey/find', survey.find);
-router.put('/survey/answer', survey.answer);
+router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', survey.confirm);
+router.get('/survey/constants', survey.getConstants);
 
 // Common Rules
 router.use(function (req, res, next) {
