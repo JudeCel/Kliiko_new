@@ -17,8 +17,7 @@
           <h4 class='text-center'>{{ clc.message }}</h4>
         </div>
         <div class='col-md-3 text-right'>
-          <div class='btn btn-addNewElement' ng-click=''>Add New Account Manager</div>
-          <div class='btn btn-addNewElement' ng-click=''>Add New Account Manager</div>
+          <div class='btn btn-addNewElement' ng-click='clc.addContactManual()'>Add contacts (manual)</div>
         </div>
       </div>
     </div>
@@ -26,37 +25,188 @@
 
   <div class='col-md-12 fixed-bottom-margin'>
     <div class='dashboard-container'>
-      <table class='table table-responsive table-dashboardElements'>
-        <thead>
-        <tr>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Gender</th>
-          <th>Email</th>
-          <th>Mobile</th>
-          <th>Status</th>
-          <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat='user in users'>
-          <td>{{ user.firstName }}</td>
-          <td>{{ user.lastName }}</td>
-          <td>{{ user.gender }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.mobile }}</td>
-          <td>
-            <div ng-if='user.Invites'>Invited</div>
-            <div ng-if='user.AccountUsers'>Accepted</div>
-          </td>
-          <td class='text-right dashboardElementsEditRemove'>
-            <img src='/icons/dashboardElement_edit.png' alt='' />
-            <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeInvite(user)' ng-if='user.Invites' />
-            <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeAccountUser(user)' ng-if='user.AccountUsers' />
-          </td>
-        </tr>
-        </tbody>
-      </table>
+
+      <div class="row">
+        <div id="contact-lists-left-column" class="col-md-2">
+
+          <div class="header">
+            Contact Lists
+          </div>
+
+          <div class="item3"  ng-class="{'active':clc.activeListIndex == $index}" ng-click="clc.listItemClickHandle(item, $index)"
+               ng-repeat="item in clc.lists">
+            {{ item.name }}  <span ng-if="item.membersCount">&nbsp;({{ item.membersCount }})</span> <i class="glyphicon glyphicon-chevron-right"></i>
+          </div>
+
+
+        </div>
+
+        <div id="contact-lists-right-column" class="col-md-10">
+          <table class='table table-responsive table-dashboardElements'>
+            <thead>
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Mobile</th>
+              <th>Gender</th>
+              <th>Щ-</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat--='user in users'>
+              <td>[]</td>
+              <td> NAME {{ user.name }}</td>
+              <td> email {{ user.email }}</td>
+              <td> mobile {{ user.mobile }}</td>
+              <td> gender {{ user.gender }}</td>
+              <td class='dashboardElementsEditRemove'>
+                <img src='/icons/dashboardElement_edit.png' alt='' />
+                <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeInvite(user)' />
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+
+
     </div>
   </div>
+
+  <!----------- MODALS ---------------------->
+  <section>
+    <!-- add contact manually -->
+    <div id="contactList-addContactManual" class="modal fade"  role="dialog">
+      <div class="modal-dialog contactDetailsModal" style="width: 800px">
+        <div class="modal-content border-green border-radius-none">
+          <div class='modal-header'>
+            <button type='button' class='close' data-dismiss="modal">&times;</button>
+            <h2 class='modal-title text-center'>Add new Account Manager</h2>
+          </div>
+          <div class='modal-body text-gray-medium'>
+            <form class='form-horizontal' role='form'>
+              <div class='col-md-6'>
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First name<span class='text-red-dark'>*</span></label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ clc.errors.firstName }}</span>
+                    <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='clc.newContact.firstName'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='lastName'>Last name<span class='text-red-dark'>*</span></label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ clc.errors.lastName }}</span>
+                    <input type='text' class='form-control' id='lastName' placeholder='Last name' ng-model='clc.newContact.lastName'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='email'>Email<span class='text-red-dark'>*</span></label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ clc.errors.email }}</span>
+                    <input type='email' class='form-control' id='email' placeholder='Email' ng-model='clc.newContact.email'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page'>Gender<span class='text-red-dark'>*</span></label>
+                  <div class='col-md-8'>
+                    <div class='has-error text-red-dark'>{{ clc.errors.gender }}</div>
+                    <label class='radio-inline'><input type='radio' value='male' name='radio_gender' ng-model='clc.newContact.gender'>Male</label>
+                    <label class='radio-inline'><input type='radio' value='female' name='radio_gender' ng-model='clc.newContact.gender'>Female</label>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ clc.errors.mobile }}</span>
+                    <input type='text' class='form-control' id='mobile' placeholder='Mobile number' ng-model='clc.newContact.mobile'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ clc.errors.landlineNumber }}</span>
+                    <input type='text' class='form-control' id='landlineNumber' placeholder='Landline number' ng-model='clc.newContact.landlineNumber'>
+                  </div>
+                </div>
+              </div>
+
+              <div class='col-md-6'>
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='postalAddress'>Postal address</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ clc.errors.postalAddress }}</span>
+                    <input type='text' class='form-control' id='postalAddress' placeholder='Postal address' ng-model='clc.newContact.postalAddress'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='city'>City</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ clc.errors.city }}</span>
+                    <input type='text' class='form-control' id='city' placeholder='City' ng-model='clc.newContact.city'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='state'>State</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ clc.errors.state }}</span>
+                    <input type='text' class='form-control' id='state' placeholder='State' ng-model='clc.newContact.state'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='postcode'>Postcode</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ clc.errors.postcode }}</span>
+                    <input type='text' class='form-control' id='postcode' placeholder='Postcode' ng-model='clc.newContact.postcode'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='country'>Country</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ clc.errors.country }}</span>
+                    <input type='text' class='form-control' id='country' placeholder='Country' ng-model='clc.newContact.country'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='companyName'>Company name</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ clc.errors.companyName }}</span>
+                    <input type='text' class='form-control' id='companyName' placeholder='Company name' ng-model='clc.newContact.companyName'>
+                  </div>
+                </div>
+              </div>
+
+              <div class='row'>
+                <div class='col-md-12'>
+
+                  <div class='btn-standart btn-red pull-left' data-dismiss="modal">Cancel</div>
+                  <div ng-click='clc.createContact()' class='btn-standart btn-green pull-right'>Create</div>
+
+                </div>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+  </section>
+
+
+
 </section>

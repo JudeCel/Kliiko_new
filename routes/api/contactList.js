@@ -7,7 +7,8 @@ module.exports = {
 };
 
 function index(req, res, next) {
-  let accaountId = res.locals.currentDomain.id
+  let accaountId = res.locals.currentDomain.id;
+
   contactListService.allByAccount(accaountId).then(function(lists) {
     res.send(lists);
   },function(err) {
@@ -25,8 +26,8 @@ function index(req, res, next) {
 //
 
 function create(req, res, next) {
-  let params = req.body
-  params.accaountId = res.locals.currentDomain.id
+  let params = req.body;
+  params.accaountId = res.locals.currentDomain.id;
 
   contactListService.create(params).then(function(resul) {
     res.send(resul);

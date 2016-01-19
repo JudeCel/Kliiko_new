@@ -48,12 +48,14 @@ router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelet
 router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
 router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
+
 // contact List
 router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
 router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
+
 // contact List User
 router.post('/contactListUser', policy.authorized(['accountManager', 'admin']), contactListUser.create);
-router.post('/contactListsUser/:id', policy.authorized(['accountManager', 'admin']), contactListUser.update);
+router.put('/contactListsUser/:id', policy.authorized(['accountManager', 'admin']), contactListUser.update);
 
 
 router.get('/topics', multipartyMiddleware, topics.get);

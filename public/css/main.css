@@ -171,6 +171,8 @@ img.ic-flipX {
       padding-top: 3px;
       padding-bottom: 3px;
       height: 17px; }
+  .contactDetailsModal h2, .accountDatabaseCommentModal h2 {
+    margin: 16px; }
   .contactDetailsModal input.form-control, .accountDatabaseCommentModal input.form-control {
     border-width: 2px;
     height: 40px;
@@ -763,9 +765,6 @@ input[class=checkbox-blue]:checked + label {
   border-left: 110px solid #F0e935;
   border-right: none; }
 
-.upload-banner input[type="file"] {
-  display: inline; }
-
 #dashboard #back-nav-btn {
   margin-bottom: -75px; }
 
@@ -1330,6 +1329,42 @@ input[class=checkbox-blue]:checked + label {
   margin: 6px 0 0 -85px;
   color: grey;
   font-style: italic; }
+
+#dashboard-contact-lists thead {
+  background: #2F9F69; }
+
+#dashboard-contact-lists #contact-lists-left-column {
+  padding: 0;
+  border: 3px solid #2F9F69; }
+  #dashboard-contact-lists #contact-lists-left-column .header {
+    color: white;
+    font-weight: bold;
+    background: #2F9F69;
+    padding: 16px; }
+  #dashboard-contact-lists #contact-lists-left-column .item3 {
+    cursor: pointer;
+    display: block;
+    padding: 16px;
+    margin-top: 2px;
+    background: #EEEEEE; }
+    #dashboard-contact-lists #contact-lists-left-column .item3 > .glyphicon {
+      visibility: hidden;
+      float: right;
+      margin-top: -3px;
+      color: #2F9F69;
+      font-size: 2rem;
+      font-weight: 100; }
+    #dashboard-contact-lists #contact-lists-left-column .item3:hover {
+      background: rgba(174, 239, 137, 0.5); }
+    #dashboard-contact-lists #contact-lists-left-column .item3:focus {
+      outline: none !important; }
+    #dashboard-contact-lists #contact-lists-left-column .item3.active {
+      background: rgba(174, 239, 137, 0.5); }
+      #dashboard-contact-lists #contact-lists-left-column .item3.active > .glyphicon {
+        visibility: visible; }
+
+#dashboard-contact-lists .modal-title {
+  margin-bottom: 40px; }
 
 .margin-top-2rem {
   margin-top: 2rem; }

@@ -1,0 +1,49 @@
+#dashboard-contact-lists {
+
+  thead { background: $green; }
+
+  #contact-lists-left-column {
+    padding: 0;
+    border: 3px solid $green;
+
+    .header {
+      color: white;
+      font-weight: bold;
+      background: $green;
+      padding: 16px;
+    }
+
+    .item3 {
+      cursor: pointer;
+      display: block;
+      padding: 16px;
+      margin-top: 2px;
+      background: #EEEEEE;
+
+      > .glyphicon {
+        visibility: hidden;
+        float: right;
+        margin-top: -3px;
+        color: $green;
+        font-size: 2rem;
+        font-weight: 100;
+      }
+
+      &:hover { background: $lightGreen }
+
+      &:focus { outline: none !important; }
+
+      &.active {
+
+        background: $lightGreen;
+
+
+        > .glyphicon {visibility: visible}
+      }
+    }
+  }
+
+  .modal-title {
+    margin-bottom: 40px;
+  }
+}

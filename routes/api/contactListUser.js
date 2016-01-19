@@ -14,15 +14,16 @@ module.exports = {
 //  }
 //
 function create(req, res, next) {
-  let params = req.body
-  params.accountId = res.locals.currentDomain.id
+  let params = req.body;
+  params.accountId = res.locals.currentDomain.id;
 
-  contactListUserService.create(params).then(function(resul) {
-    res.send(resul);
+  contactListUserService.create(params).then(function(result) {
+    res.send(result);
   }, function(err) {
     res.send({ error: err });
   })
 }
+
 
 // Create Params example
 // {  defaultFildes: Object/optional =>  { firstName: "name" },
@@ -33,8 +34,8 @@ function create(req, res, next) {
 //
 
 function update(req, res, next) {
-  let params = req.body
-  params.accountId = res.locals.currentDomain.id
+  let params = req.body;
+  params.accountId = res.locals.currentDomain.id;
 
   contactListUserService.update(params).then(function(resul) {
     res.send(resul);

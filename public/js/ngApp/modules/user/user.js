@@ -71,6 +71,7 @@
       }
     }
 
+
     /**
      * Update and save in db and memory cache all user data
      * @param data {object} - user form object
