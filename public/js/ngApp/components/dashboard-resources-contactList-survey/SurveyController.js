@@ -32,6 +32,7 @@
     vm.addContactDetail = addContactDetail;
     vm.pickValidClass = pickValidClass;
     vm.changeQuestions = changeQuestions;
+    vm.contactDetailDisabled = contactDetailDisabled;
 
     vm.answerSortOptions = {
       handle: '.list-handle',
@@ -491,7 +492,7 @@
     };
 
     function addContactDetail(cd, answer) {
-      cd.disabled = !cd.disabled;
+      cd.disabled = vm.currentContacts[cd.model] ? true : false;
       if(!cd.disabled) {
         vm.currentContacts[cd.model] = cd.name;
         answer.contactDetails[cd.model] = cd;
@@ -505,5 +506,9 @@
     function pickValidClass(error, className) {
       return className + (error && Object.keys(error).length > 0 ? '-danger' : '-success');
     };
+
+    function contactDetailDisabled(cd) {
+      return (vm.currentContacts[cd.model] ? false : cd.disabled);
+    }
   };
 })();
