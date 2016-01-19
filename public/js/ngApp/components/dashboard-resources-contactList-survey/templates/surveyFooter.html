@@ -1,18 +1,20 @@
-<hr class='survey-hr' />
-<h4><strong>Thanks</strong></h4>
+<div class='panel panel-default no-border-radius'>
+  <div class='panel-heading'><strong>Thanks</strong></div>
+  <div class='panel-body'>
+    <div class='form-horizontal'>
+      <div class='form-group'>
+        <div class='col-md-8'>
+          <div class='has-error' ng-messages='sc.manageForm.thanks.$error'>
+            <div ng-repeat='error in sc.validationErrors'>
+              <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+            </div>
+          </div>
 
-<div class='form-horizontal'>
-  <div class='form-group'>
-    <div class='col-sm-8'>
-      <div class='has-error' ng-messages='sc.manageForm.thanks.$error'>
-        <div ng-repeat='error in sc.validationErrors'>
-          <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+          <textarea class='form-control' id='thanks' placeholder='Thanks' rows='5' name='thanks'
+            ng-model='sc.survey.thanks' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='sc.submitedForm'>
+          </textarea>
         </div>
       </div>
-
-      <textarea class='form-control' id='thanks' placeholder='Thanks' rows='5' name='thanks'
-        ng-model='sc.survey.thanks' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='sc.submitedForm'>
-      </textarea>
     </div>
   </div>
 </div>

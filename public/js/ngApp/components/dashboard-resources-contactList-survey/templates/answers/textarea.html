@@ -1,6 +1,6 @@
 <div ng-sortable='sc.answerSortOptions' ng-init='question.type = "textarea"'>
   <div class='form-group' ng-repeat='answer in question.answers track by $index'>
-    <div class='col-sm-8'>
+    <div class='col-md-8'>
       <textarea class='form-control' id='answers-{{object.order}}-{{ answer.order }}' placeholder='Answer' rows='5' disabled
         ng-model='answer.name'>
       </textarea>

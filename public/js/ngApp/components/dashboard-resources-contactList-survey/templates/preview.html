@@ -49,30 +49,31 @@
               </div>
 
               <ng-form name='{{ question.order }}' ng-if='answer.contactDetails'>
-                <div class='form-group' ng-repeat='contact in answer.contactDetails'>
-
-                  <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.submitForm.answers[question.order][contact.model].$error'>
-                    <div ng-repeat='error in sc.validationErrors'>
-                      <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+                <div ng-repeat='contact in answer.contactDetails | toArray track by $index'>
+                  <div class='form-group' ng-if='contact'>
+                    <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.submitForm.answers[question.order][contact.model].$error'>
+                      <div ng-repeat='error in sc.validationErrors'>
+                        <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+                      </div>
                     </div>
-                  </div>
 
-                  <label class='col-xs-2 control-label' for='contact-{{ contact.model }}'>{{ contact.name }}</label>
-                  <div class='col-xs-10' ng-if='contact.input'>
-                    <input type='text' class='form-control no-border-radius' id='contact-{{ contact.model }}' placeholder='{{ contact.name }}'
-                      name='{{ contact.model }}' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
-                      ng-model='sq.contactDetails[contact.model]' ng-disabled='!sq.answer' ng-required='sq.answer && sc.submitedSurvey'
-                      ng-minlength='1' ng-maxlength='20'>
-                  </div>
+                    <label class='col-xs-2 control-label' for='contact-{{ contact.model }}'>{{ contact.name }}</label>
+                    <div class='col-xs-10' ng-if='contact.input'>
+                      <input type='text' class='form-control no-border-radius' id='contact-{{ contact.model }}' placeholder='{{ contact.name }}'
+                        name='{{ contact.model }}' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
+                        ng-model='sq.contactDetails[contact.model]' ng-disabled='!sq.answer' ng-required='sq.answer && sc.submitedSurvey'
+                        ng-minlength='1' ng-maxlength='20'>
+                    </div>
 
-                  <div class='col-xs-10' ng-if='contact.select'>
-                    <select class='form-control no-border-radius' id='contact-{{ contact.model }}' name='{{ contact.model }}'
-                      ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
-                      ng-model='sq.contactDetails[contact.model]' ng-required='sq.answer && sc.submitedSurvey' ng-disabled='!sq.answer'>
-                      <option ng-repeat='option in contact.options' value='{{ option }}'>
-                        {{ option }}
-                      </option>
-                    </select>
+                    <div class='col-xs-10' ng-if='contact.select'>
+                      <select class='form-control no-border-radius' id='contact-{{ contact.model }}' name='{{ contact.model }}'
+                        ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
+                        ng-model='sq.contactDetails[contact.model]' ng-required='sq.answer && sc.submitedSurvey' ng-disabled='!sq.answer'>
+                        <option ng-repeat='option in contact.options' value='{{ option }}'>
+                          {{ option }}
+                        </option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </ng-form>

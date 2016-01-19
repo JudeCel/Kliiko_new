@@ -6,11 +6,11 @@
       </div>
     </div>
 
-    <label class='col-xs-2 control-label list-handle' for='answer-{{ object.order }}-{{ answer.order }}'>
-      Answer {{ answer.order }}
+    <label class='col-xs-2 control-label list-handle'>
+      <span ng-if='answer.order == 0'>Answers</span>
     </label>
 
-    <div class='col-xs-10 col-sm-6'>
+    <div class='col-xs-10 col-md-6'>
       <div class='input-group'>
         <input type='text' class='form-control' id='answer-{{ object.order }}-{{ answer.order }}' placeholder='Answer' name='{{ answer.order }}'
           ng-model='answer.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='question.active'>

@@ -49,82 +49,95 @@ module.exports = {
     {
       model: 'firstName',
       name: 'First Name',
-      input: true
+      input: true,
+      order: 0
     },
     {
       model: 'lastName',
       name: 'Last Name',
-      input: true
+      input: true,
+      order: 1
     },
     {
       model: 'gender',
       name: 'Gender',
       select: true,
-      options: ['Male', 'Female']
+      options: ['Male', 'Female'],
+      order: 2
     },
     {
       model: 'age',
       name: 'Age',
-      input: true
+      input: true,
+      order: 3
     },
     {
       model: 'email',
       name: 'Email',
-      input: true
+      input: true,
+      order: 4
     },
     {
       model: 'mobile',
       name: 'Mobile',
-      input: true
+      input: true,
+      order: 5
     },
     {
       model: 'landlineNumber',
       name: 'Landline Number',
       input: true,
       canDisable: true,
-      disabled: true
+      disabled: true,
+      order: 6
     },
     {
       model: 'postalAddress',
       name: 'Postal Address',
       input: true,
       canDisable: true,
-      disabled: true
+      disabled: true,
+      order: 7
     },
     {
       model: 'city',
       name: 'City',
       input: true,
       canDisable: true,
-      disabled: true
+      disabled: true,
+      order: 8
     },
     {
       model: 'state',
       name: 'State',
       input: true,
       canDisable: true,
-      disabled: true
+      disabled: true,
+      order: 9
     },
     {
       model: 'postcode',
       name: 'Postcode',
       input: true,
       canDisable: true,
-      disabled: true
+      disabled: true,
+      order: 10
     },
     {
       model: 'country',
       name: 'Country',
       input: true,
       canDisable: true,
-      disabled: true
+      disabled: true,
+      order: 11
     },
     {
       model: 'companyName',
       name: 'Company Name',
       input: true,
       canDisable: true,
-      disabled: true
+      disabled: true,
+      order: 12
     },
   ],
   defaultQuestions: [

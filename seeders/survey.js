@@ -1,7 +1,7 @@
 'use strict';
 
 var models = require('../models');
-var AccountUser = models.AccountUser;
+var Account = models.Account;
 
 var surveyServices = require('./../services/survey');
 
@@ -77,14 +77,14 @@ var sampleSurvey = {
           "name":"No problemo, amigo",
           "order":0,
           "contactDetails":[
-            { "model": "firstName", "name":"First Name", "input":true },
-            { "model": "lastName", "name":"Last Name", "input":true },
-            { "model": "gender", "name":"Gender", "select":true, "options":[ "Male", "Female" ] },
-            { "model": "age", "name":"Age", "input":true },
-            { "model": "email", "name":"Email", "input":true },
-            { "model": "mobile", "name":"Mobile", "input":true },
-            { "model": "postalAddress", "name":"Postal Address", "input":true, },
-            { "model": "country", "name":"Country", "input":true, }
+            { order: 0, "model": "firstName", "name":"First Name", "input":true },
+            { order: 1, "model": "lastName", "name":"Last Name", "input":true },
+            { order: 2, "model": "gender", "name":"Gender", "select":true, "options":[ "Male", "Female" ] },
+            { order: 3, "model": "age", "name":"Age", "input":true },
+            { order: 4, "model": "email", "name":"Email", "input":true },
+            { order: 5, "model": "mobile", "name":"Mobile", "input":true },
+            { order: 6, "model": "postalAddress", "name":"Postal Address", "input":true, },
+            { order: 7, "model": "country", "name":"Country", "input":true, }
           ]
         }
       ]

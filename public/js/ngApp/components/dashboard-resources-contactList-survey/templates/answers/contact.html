@@ -4,11 +4,11 @@
 
 <div class='form-horizontal' ng-init='question.type = "input"'>
   <div class='form-group' ng-repeat='cd in sc.contactDetails track by $index'>
-    <label class='col-xs-2 col-sm-1 control-label' for='{{ cd.name }}'>
+    <label class='col-xs-2 control-label' for='{{ cd.name }}'>
       {{ cd.name }}
     </label>
 
-    <div class='col-xs-10 col-sm-7'>
+    <div class='col-xs-10 col-md-6'>
       <div class='input-group' ng-if='cd.input'>
         <input type='text' class='form-control' id='{{ cd.name }}' placeholder='' ng-disabled='sc.contactDetailDisabled(cd)'>
 

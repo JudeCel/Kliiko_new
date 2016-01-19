@@ -24,7 +24,6 @@
 
     // Helpers
     vm.statusIcon = statusIcon;
-    vm.chooseValidIcon = chooseValidIcon;
     vm.canChangeAnswers = canChangeAnswers;
     vm.changeAnswers = changeAnswers;
     vm.defaultArray = defaultArray;
@@ -117,7 +116,7 @@
       $timeout(function() {
         if(vm.manageForm.$valid) {
           if(Object.keys(vm.survey.SurveyQuestions).length < vm.minQuestions) {
-            vm.submitError = vm.constantErrors.minQuestions;
+            vm.submitError = vm.constantErrors.minQuestions + vm.minQuestions;
           }
           else {
             delete vm.submitError;
@@ -225,15 +224,6 @@
       }
     };
 
-    function chooseValidIcon(status) {
-      if(status) {
-        return '/icons/ic_tick.png';
-      }
-      else {
-        return '/icons/ic_cross.png';
-      }
-    };
-
     function initQuestion(object, sq) {
       var question = sq || {};
       question.minAnswers = object.minAnswers;
@@ -319,8 +309,8 @@
           survey.SurveyQuestions = object;
         }
 
-        vm.submitError = {};
-        vm.currentContacts = {};
+        vm.submitError = null;
+        vm.currentContacts = null;
         vm.survey = survey || { SurveyQuestions: {} };
         vm.currentPage = { page: 'manage', type: page };
       }

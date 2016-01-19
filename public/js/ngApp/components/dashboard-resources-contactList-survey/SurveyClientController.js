@@ -1,6 +1,19 @@
 (function () {
   'use strict';
 
+  angular.module('KliikoApp').filter('toArray', filter);
+  angular.module('KliikoApp.Root').filter('toArray', filter);
+
+  function filter() {
+    return function(obj) {
+      var result = [];
+      angular.forEach(obj, function(val, key) {
+        result[val.order] = val;
+      });
+      return result;
+    };
+  }
+
   angular.module('KliikoApp.Root').controller('SurveyClientController', SurveyClientController);
   SurveyClientController.$inject = ['dbg', 'surveyServices', 'messenger', '$timeout', 'ngProgressFactory'];
 
