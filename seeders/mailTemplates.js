@@ -3,7 +3,8 @@
 var MailTemplateService = require('./../services/mailTemplate');
 var async = require('async');
 var fs = require('fs');
-
+var Minimize = require('minimize');
+var minimize = new Minimize();
 var num = 0;
 
 var templateFiles = [
@@ -45,17 +46,31 @@ var templateFiles = [
      
 ];
 
-function createTestMailTemplate(fileInfo, callback) {
-  readContents(fileInfo.fileName , function(error, data) {   
-    let mailTemplateAttrs = {
-      name: fileInfo.name,
-      subject: fileInfo.subject,
-      content: data
+function createMailTemplateFromFile(fileInfo, callback) {
+  readContents(fileInfo.fileName , function(err, data) {
+    if (err) {
+      console.log("failed read  HTML:", fileInfo.fileName, "; error:", err);
+      return callback(err, null);
     }
     
-    MailTemplateService.createBaseMailTemplate(mailTemplateAttrs, function(err, mailTemplate) {
-        callback(err, mailTemplate); 
-    });
+    if (data) {
+      //if got data from file, minimize it
+      minimize.parse(data, function (error, minifiedData) {
+        if (error) {
+          console.log("failed to compile HTML:", err);
+          return callback(err, null);
+        }
+        let mailTemplateAttrs = {
+          name: fileInfo.name,
+          subject: fileInfo.subject,
+          content: minifiedData
+        };
+        
+        MailTemplateService.createBaseMailTemplate(mailTemplateAttrs, function(err, mailTemplate) {
+            callback(err, mailTemplate); 
+        });
+      });
+    }    
   });
 }
 
@@ -73,14 +88,13 @@ function createMailTemplate() {
 }
 
 function addTemplate(callback) {       
-  createTestMailTemplate(templateFiles[num], function(error, _result) {
+  createMailTemplateFromFile(templateFiles[num], function(error, _result) {
     if (num < 7) {
       num++;
       callback(null);
     } else {
       process.exit();
-    }    
-    
+    }
   })
 }
 
