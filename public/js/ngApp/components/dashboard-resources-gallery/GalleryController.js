@@ -12,6 +12,34 @@
 
     $scope.newResource = {};
     $scope.dataForValidation = {};
+    $scope.idsForAction = [];
+    $scope.action = "";
+
+    $scope.resourcesSelected = function(id) {
+      $scope.idsForAction.push(id);
+    }
+
+    $scope.actionDelete = function(){
+      $scope.action = "delete";
+    }
+
+    $scope.actionDownload = function(){
+      $scope.action = "download";
+    }
+
+    $scope.submitIdsForMassAction = function() {
+      if($scope.action === "delete"){
+        GalleryServices.deleteResources({id: $scope.idsForAction}).then(function(res) {
+          
+        });
+      }
+
+      if($scope.action === "download"){
+        GalleryServices.downloadResources($scope.idsForAction).then(function(res) {
+
+        });
+      }
+    }
 
     $scope.uploadTst = function() {
       dbg.yell($scope.newResource.fileTst)

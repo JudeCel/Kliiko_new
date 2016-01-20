@@ -36,14 +36,16 @@ function getResources(req, res, next) {
 }
 
 function downloadResources(req, res, next) {
-  galleryService.downloadResources(function(result) {
+  galleryService.downloadResources(req.body, function(result) {
     res.send(result);
   });
 }
 
 function deleteResources(req, res, next) {
-  galleryService.deleteResources(function(result) {
+  galleryService.deleteResources(req.query).then(function(result) {
     res.send(result);
+  }, function(err) {
+    res.send(({ error: err.message }));
   });
 }
 

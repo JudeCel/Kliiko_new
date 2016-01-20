@@ -50,92 +50,102 @@
         </ul>
       </div>
 
-      <br>
-      <br>
 
-      <div class='col-md-12'>
-		  	<a class="pull-left" style="cursor:pointer;" ng-click='downloadResources()'> Download </a>
-		  	<a class="pull-left" style="margin-left: 10px; cursor:pointer;" ng-click='deleteResources()'> Delete </a>
-
-		  	<a class="pull-right" href="#" style="margin-left: 10px;">All({{totalResourceCount}})</a>
-		  	<a class="pull-right" href="#" style="margin-left: 10px;" ng-click="orderByMe('name')">Images(0)</a>
-		  	<a class="pull-right" href="#" style="margin-left: 10px;">Brand Logos(0)</a>
-		  	<a class="pull-right" href="#" style="margin-left: 10px;">Audio(0)</a>
-		  	<a class="pull-right" href="#" style="margin-left: 10px;">Youtube(0)</a>
-		  	<a class="pull-right" href="#" style="margin-left: 10px;">PDF's(0)</a>
-  		</div>
-  	</div>
+    </div>
 
     <br>
     <br>
     <br>
 
     <!-- Table view -->
-	  <div class="gallery-body col-md-12" ng-class="{hidden:!show,chaldean:show}">
-      <table class="table table-hover"> 
-        <thead> 
-          <tr> 
-            <th>#</th> 
-            <th>User ID</th> 
-            <th>Resource Name</th> 
-            <th>Thumbnail</th> 
-          </tr> 
-        </thead> 
-        <tbody ng-repeat="resource in resources"> 
-          <tr> 
-            <td>
-              <p class="pull-left">{{resource.id}}</p>
-            </td>
-            <td>
-              <p class="pull-left">{{resource.userId}}</p>
-            </td> 
-            <td>
-              <p class="pull-left">{{resource.JSON.matchName}}</p>
-            </td> 
-            <td ng-if="resource.JSON.type == 'video'">
-              <p class="pull-left"><img src="/chat_room/resources/images/youtubeThumb.png" alt="youtube" width="100" height="56"></p>
-            </td> 
-            <td ng-if="resource.JSON.type == 'image'">
-              <p class="pull-left"><img src="/chat_room/uploads/{{resource.JSON.name}}" alt="{{resource.JSON.matchName}}" width="100" height="56"></p>
-            </td> 
-            <td ng-if="resource.JSON.type == 'audio'">
-              <p class="pull-left"><img src="/chat_room/resources/images/audioThumb.png" alt="audio" width="100" height="56"></p>
-            </td> 
-          </tr> 
-        </tbody> 
-      </table>
-	  </div>
-	  
-    <!-- Block view -->
-	  <div ng-class="{hidden:show,chaldean:!show}" ng-repeat="resource in resources">
-      <div class="col-xs-6 col-md-4">  
-        <div class="panel panel-default">
-          <div class="panel-heading">{{resource.JSON.title}}</div>
-          <div class="panel-body">
-            ID: {{resource.id}}
-            <br>
-            User id: {{resource.userId}}
-            <br>
+    <div>
+      {{idsForAction}}
+      {{action}}
+      <div ng-repeat="resource in resources">
+        {{resourc}}
+      </div> 
+    </div>
+    <form ng-submit="submitIdsForMassAction(action)">
+      <div class='col-md-12'>
+        <input type='submit' class='pull-left btn-dashboard-plans btn' value="Delete" ng-click="actionDelete('delete')">
+        <input type='submit' class='pull-left btn-dashboard-plans btn' value="Download" ng-click="actionDownload('download')">
 
-            <div ng-if="resource.JSON.type == 'video'">
-              <img src="/chat_room/resources/images/youtubeThumb.png" alt="youtube" width="200" height="112">
-            </div> 
-
-            <div ng-if="resource.JSON.type == 'image'">
-              {{resource.JSON.matchName}}:
+        <a class="pull-right" href="#" style="margin-left: 10px;">All({{totalResourceCount}})</a>
+        <a class="pull-right" href="#" style="margin-left: 10px;" ng-click="orderByMe('name')">Images(0)</a>
+        <a class="pull-right" href="#" style="margin-left: 10px;">Brand Logos(0)</a>
+        <a class="pull-right" href="#" style="margin-left: 10px;">Audio(0)</a>
+        <a class="pull-right" href="#" style="margin-left: 10px;">Youtube(0)</a>
+        <a class="pull-right" href="#" style="margin-left: 10px;">PDF's(0)</a>
+      </div>
+      <br>
+      <br>
+      <div class="gallery-body col-md-12" ng-class="{hidden:!show,chaldean:show}">
+        <table class="table table-hover"> 
+          <thead> 
+            <tr> 
+              <th>#</th> 
+              <th>User ID</th> 
+              <th>Resource Name</th> 
+              <th>Thumbnail</th> 
+            </tr> 
+          </thead> 
+          <tbody ng-repeat="resource in resources"> 
+            <tr> 
+              <td>
+                <p class="pull-left">{{resource.id}}</p>
+              </td>
+              <td>
+                <p class="pull-left">{{resource.userId}}</p>
+              </td> 
+              <td>
+                <p class="pull-left">{{resource.JSON.matchName}}</p>
+              </td> 
+              <td ng-if="resource.JSON.type == 'video'">
+                <p class="pull-left"><img src="/chat_room/resources/images/youtubeThumb.png" alt="youtube" width="100" height="56"></p>
+              </td> 
+              <td ng-if="resource.JSON.type == 'image'">
+                <p class="pull-left"><img src="/chat_room/uploads/{{resource.JSON.name}}" alt="{{resource.JSON.matchName}}" width="100" height="56"></p>
+              </td> 
+              <td ng-if="resource.JSON.type == 'audio'">
+                <p class="pull-left"><img src="/chat_room/resources/images/audioThumb.png" alt="audio" width="100" height="56"></p>
+              </td> 
+            </tr> 
+          </tbody> 
+        </table>
+      </div>
+      
+      <!-- Block view -->
+      <div ng-class="{hidden:show,chaldean:!show}" ng-repeat="resource in resources">
+        <div class="col-xs-6 col-md-4">  
+          <div class="panel panel-default">
+            <div class="panel-heading">{{resource.JSON.title}}</div>
+            <div class="panel-body">
+              ID: {{resource.id}}
+              <input type="checkbox" value="{{resource.id}}" ng-click="resourcesSelected(resource.id)"/>
               <br>
-              <img src="/chat_room/uploads/{{resource.JSON.name}}" alt="{{resource.JSON.matchName}}" width="200" height="112">
-            </div>  
-
-            <div ng-if="resource.JSON.type == 'audio'">
-              {{resource.JSON.matchName}}:
+              User id: {{resource.userId}}
               <br>
-              <img src="/chat_room/resources/images/audioThumb.png" alt="audio" width="200" height="112">
+
+              <div ng-if="resource.JSON.type == 'video'">
+                <img src="/chat_room/resources/images/youtubeThumb.png" alt="youtube" width="200" height="112">
+              </div> 
+
+              <div ng-if="resource.JSON.type == 'image'">
+                {{resource.JSON.matchName}}:
+                <br>
+                <img src="/chat_room/uploads/{{resource.JSON.name}}" alt="{{resource.JSON.matchName}}" width="200" height="112">
+              </div>  
+
+              <div ng-if="resource.JSON.type == 'audio'">
+                {{resource.JSON.matchName}}:
+                <br>
+                <img src="/chat_room/resources/images/audioThumb.png" alt="audio" width="200" height="112">
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div> 
+      </div> 
+    </form>
   </div>
 
   <!-- resourceModal -->
@@ -146,7 +156,7 @@
           <button type='button' class='close' data-dismiss='modal'>&times;</button>
           <h2 class='modal-title text-center'>New {{ uploadTypeForTitle }} resource.</h2>
         </div>
-        <form ng-submit="submitForm(newResource)" enctype="multipart/form-data" id="formUploadImage">
+        <form ng-submit="submitForm(newResource)">
           <div class='modal-body'>
             <div class="form-group">
               <label for="title">Title</label>

@@ -33,7 +33,7 @@
 
     function downloadResources(ids) {
       var deferred = $q.defer();
-
+      
       dbg.log2('#GalleryServices > downloadGalleryResources > make rest call');
       galleryRestApi.download.get(ids, function(res) {
         dbg.log2('#GalleryServices > downloadGalleryResources > rest call responds');
@@ -47,7 +47,7 @@
       var deferred = $q.defer();
 
       dbg.log2('#GalleryServices > deleteGalleryResources > make rest call');
-      galleryRestApi.gallery.delete({}, function(res) {
+      galleryRestApi.gallery.delete(ids, function(res) {
         dbg.log2('#GalleryServices > deleteGalleryResources > rest call responds');
         deferred.resolve(res);
       });
