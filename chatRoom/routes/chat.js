@@ -55,10 +55,9 @@ router.post('/uploadimage', fileUploader(), function (req, res) {
   });
 });
 
-router.post('/uploadcollage', function (req, res) {
+router.post('/uploadcollage', fileUploader(), function (req, res) {
   socketHelper.uploadResource({
-      req: req,
-      res: res,
+      file: req.file,
       width: 250,
       height: 250,
       type: 'collage',
@@ -66,10 +65,9 @@ router.post('/uploadcollage', function (req, res) {
   });
 });
 
-router.post('/uploadaudio', function (req, res) {
+router.post('/uploadaudio', fileUploader(), function (req, res) {
   socketHelper.uploadResource({
-      req: req,
-      res: res,
+      file: req.file,
       type: 'audio',
       resCb: uploadResourceCallback
   });
