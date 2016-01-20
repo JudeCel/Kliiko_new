@@ -5,7 +5,7 @@ var fs = require('fs');
 
 const MEGABYTE = 1024*1024;
 const VALIDATIONS = {
-  maxSize: 5, // 5mb
+  maxSize: 2, // 2mb
   maxWidth: 768,
   maxHeight: 200,
   fileTypes: [
@@ -31,12 +31,12 @@ module.exports = function upload(options) {
     },
     filename: function (req, file, cb) {
       let re = /(?:\.([^.]+))?$/;
+      let name = file.originalname.split(".")[0]
       let extension = '.' + re.exec(file.originalname)[1];
-      file.originalname = file.fieldname + extension;
-      cb(null, file.fieldname + extension);
+      cb(null, name + (new Date().getTime()) + extension);
     }
   });
 
-  let upload =  multer({ storage: storage });
+  let upload =  multer({ storage: storage, limits: { fieldSize: VALIDATIONS.maxSize * MEGABYTE } });
   return upload.single('uploadedfile')
 }

@@ -41,8 +41,6 @@ function saveResourceToDb(json, resCb, nextCb) {
             else
                 continue;
 
-            console.log(json.matchName.toLowerCase());
-            console.log(resultJSON.text.toLowerCase());
             if (resultJSON.text){
                 var req = {
                     resourceType: 'tmp'
