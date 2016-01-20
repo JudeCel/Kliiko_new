@@ -51,6 +51,7 @@
     }
 
     function createContact() {
+
       var currentListId = vm.lists[vm.activeListIndex].id;
 
       var valid = validate();
@@ -76,11 +77,16 @@
       return;
 
       function validate() {
-        if (!vm.newContact.firstName || !vm.newContact.firstName.length) vm.modalErrors.firstName = 'First Name cannot be blank';
-        if (!vm.newContact.lastName || !vm.newContact.lastName.length) vm.modalErrors.lastName = 'Last Name cannot be blank';
-        if (!vm.newContact.email || !vm.newContact.email.length) vm.modalErrors.email = 'Email cannot be blank';
-        if (!vm.newContact.gender || !vm.newContact.gender.length) vm.modalErrors.gender = 'Gender should be selected';
+        vm.modalErrors = {};
+        var valid = true;
+        if (!vm.newContact.firstName || !vm.newContact.firstName.length) { vm.modalErrors.firstName = 'First Name cannot be blank'; valid = false; }
+        if (!vm.newContact.lastName || !vm.newContact.lastName.length) { vm.modalErrors.lastName = 'Last Name cannot be blank';valid = false; }
+        if (!vm.newContact.email || !vm.newContact.email.length) {vm.modalErrors.email = 'Email cannot be blank';valid = false; }
+        if (!vm.newContact.gender || !vm.newContact.gender.length) {vm.modalErrors.gender = 'Gender should be selected';valid = false; }
+
+        return valid;
       }
+
     }
 
     function addNewList() {
