@@ -1164,10 +1164,7 @@ input[class=checkbox-blue]:checked + label {
 
 hr.survey-hr {
   border: 0;
-  height: 1px;
-  background: #333;
-  background-image: -webkit-linear-gradient(left, #ccc, #333, #ccc);
-  background-image: linear-gradient(to right, #ccc, #333, #ccc); }
+  margin-bottom: 60px; }
 
 #dashboard #back-nav-btn {
   margin-bottom: -75px; }

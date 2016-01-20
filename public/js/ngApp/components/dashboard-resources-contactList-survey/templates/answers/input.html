@@ -1,4 +1,6 @@
 <div ng-sortable='sc.answerSortOptions' ng-init='question.type = "radio"'>
+  <hr class='survey-hr' />
+
   <div class='form-group' ng-repeat='answer in question.answers track by $index'>
     <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.manageForm[object.order].answers[answer.order].$error'>
       <div ng-repeat='error in sc.validationErrors'>
