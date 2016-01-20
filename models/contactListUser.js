@@ -9,7 +9,7 @@ module.exports = (Sequelize, DataTypes) => {
     position: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
     customFields: { type: DataTypes.JSONB, allowNull: false, defaultValue: {} }
   },{ indexes: [
-        { unique: true,
+        { unique: {args: true, msg: "Email has already been taken"},
           fields: ['userId', 'contactListId', 'accountId']
         }
       ],
