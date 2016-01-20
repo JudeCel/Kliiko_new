@@ -34,10 +34,11 @@ function create(req, res, next) {
 //
 
 function destroy(req, res, next) {
-  let ids = req.body.ids
-  let accountId = res.locals.currentDomain.id
+
+  let ids = req.body.ids;
+  let accountId = res.locals.currentDomain.id;
   contactListUserService.destroy(ids, accountId).then(function (result) {
-    res.send(resul);
+    res.send({success:true, total: result});
   },function(err) {
     res.send({ error: err });
   });

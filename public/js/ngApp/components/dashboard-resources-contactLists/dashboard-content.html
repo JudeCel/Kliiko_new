@@ -27,9 +27,9 @@
               Contact Lists
             </div>
 
-            <div class="item3"  ng-class="{'active':clc.activeListIndex == $index}" ng-click="clc.listItemClickHandle(item, $index)"
+            <div class="item"  ng-class="{'active':clc.activeListIndex == $index}" ng-click="clc.listItemClickHandle(item, $index)"
                  ng-repeat="item in clc.lists">
-              {{ item.name }}  <span ng-if="item.membersCount">&nbsp;({{ item.membersCount }})</span> <i class="glyphicon glyphicon-chevron-right"></i>
+              {{ item.name }}  <span ng-if="item.membersCount">&nbsp;({{ item.membersCount }})</span> <i class="glyphicon glyphicon-chevron-right pull-right"></i>
             </div>
           </div>
 
@@ -65,56 +65,22 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat--='user in users'>
+            <tr ng-repeat='member in clc.selectedListMembers'>
               <td>
                 <div class="check">
                   <input id="termsAndConditionsCC" class="kliiko-checkbox" ng-model="up.paymentDetails.chargebee.tos" ng-change--="up.handleTosCheck()" type="checkbox" class="checkbox-btn btn-green ng-pristine ng-untouched ng-valid"  aria-checked="false" aria-invalid="false">
                   <label for="termsAndConditionsCC" class="kliiko-checkbox"></label>
                 </div>
               </td>
-              <td> NAME {{ user.name }}</td>
-              <td> email {{ user.email }}</td>
-              <td> mobile {{ user.mobile }}</td>
-              <td> gender {{ user.gender }}</td>
+              <td> {{ member.firstName }} {{ member.lastName }} {{ member.id }}</td>
+              <td> {{ member.email }}</td>
+              <td> {{ member.mobile }}</td>
+              <td> {{ member.gender }}</td>
               <td class='table-item-edit-group'>
                 <img src='/icons/dashboardElement_edit.png' alt='' />
-                <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeInvite(user)' />
+                <img src='/icons/dashboardElement_remove.png' alt='' ng-click='clc.removeContacts([member.id])' />
               </td>
             </tr>
-
-
-
-            <!-------------------------->
-
-            <tr ng-repeat--='user in users'>
-              <td>[]</td>
-              <td> NAME1 {{ user.name }}</td>
-              <td> email2 {{ user.email }}</td>
-              <td> mobile3 {{ user.mobile }}</td>
-              <td> gender4 {{ user.gender }}</td>
-              <td class='dashboardElementsEditRemove'>
-                <img src='/icons/dashboardElement_edit.png' alt='' />
-                <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeInvite(user)' />
-              </td>
-            </tr>
-            <tr ng-repeat--='user in users'>
-              <td>[]</td>
-              <td> NAME2 {{ user.name }}</td>
-              <td> email3 {{ user.email }}</td>
-              <td> mobile4 {{ user.mobile }}</td>
-              <td> gender5 {{ user.gender }}</td>
-              <td class='dashboardElementsEditRemove'>
-                <img src='/icons/dashboardElement_edit.png' alt='' />
-                <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeInvite(user)' />
-              </td>
-            </tr>
-
-            <!-------------------------->
-
-
-
-
-
 
             </tbody>
           </table>
