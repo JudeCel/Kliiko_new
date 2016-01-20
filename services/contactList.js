@@ -6,6 +6,7 @@ var dataWrappers = require('./../models/dataWrappers');
 var ContactListUser = dataWrappers.ContactListUser;
 var ContactList = models.ContactList;
 var _ = require('lodash');
+var constants = require('../util/constants');
 
 
 module.exports = {
@@ -28,13 +29,11 @@ function destroy(contacListId, accoutId) {
 function allByAccount(accountId) {
     var deferred = q.defer();
     ContactList.findAll({where: { accountId: accountId },
-      attributes: ['id', 'name', 'defaultFields', 'customFields'],
+      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields'],
       include: [{
         model: models.ContactListUser, attributes: ['id', 'customFields'],
-        include: [{model: models.User, attributes: [
-          'firstName','lastName', 'gender', 'email','city', 'state','country',
-          'postcode','companyName','landlineNumber','mobile'
-        ]}]
+        include: [{model: models.User, attributes: constants.contactListDefaultFields }],
+        order: ['position']
       }]
     }).then(function(results) {
       deferred.resolve(prepareData(results));

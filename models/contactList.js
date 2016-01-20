@@ -10,6 +10,9 @@ module.exports = (Sequelize, DataTypes) => {
     defaultFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false,
       defaultValue: constants.contactListDefaultFields
     },
+    visibleFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false,
+      defaultValue: constants.contactListDefaultFields
+    },
     customFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false, defaultValue: [] }
   },{ indexes: [
         { unique: true,

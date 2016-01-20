@@ -4,23 +4,47 @@ var q = require('q');
 var models = require('./../models');
 var User = require('./../models').User;
 var uuid = require('node-uuid');
+var async = require('async');
 var ContactListUser = models.ContactListUser;
 
 module.exports = {
   findByContactList: findByContactList,
   find: find,
   create: create,
-  destroy: destroy
+  destroy: destroy,
+  updatePositions: updatePositions
 }
 
 function findByContactList(contactListId) {
     var deferred = q.defer();
-    ContactListUser.findAll({where: { contactListId: contactListId }}).then(function(results) {
+    ContactListUser.findAll({where: { contactListId: contactListId }, order: ['position']}).then(function(results) {
       deferred.resolve(results);
     }, function(err) {
       deferred.reject(err);
     })
     return deferred.promise;
+}
+
+
+// params = [{id: 1, position: 3}, ...]
+function updatePositions(params) {
+  var deferred = q.defer();
+    async.map(params, update, function(err, result) {
+      if (err) {
+        deferred.reject(err);
+      }else{
+        deferred.resolve(result);
+      }
+    })
+
+  function update(attrs, cb) {
+    ContactListUser.update({position: attrs.position }, {where: {id: attrs.id}}).then(function(result) {
+      cb(null,result);
+    }, function(err) {
+      cb(err);
+    })
+  }
+  return deferred.promise;
 }
 
 function destroy(ids, accountId) {
@@ -51,7 +75,7 @@ function create(params) {
       let newUser = user[0];
       newUser.updateAttributes(params.defaultFields).then(function(result) {
         ContactListUser.create({
-          customFields: params.customFields,
+          customFields: params.customFields || { },
           accountId: params.accountId,
           userId: result.id,
           contactListId: params.contactListId
