@@ -5,6 +5,8 @@ var _ = require('lodash');
 var sessionMember = require('./../../middleware/sessionMember.js');
 var socketHelper = require("../socketHelper");
 var config = require('config');
+var fileUploader = require('./../../middleware/fileUploader.js');
+
 
 
 function ioUrl() {
@@ -43,11 +45,9 @@ router.get('/:id' , sessionMember.hasAccess, function(req, res, next) {
   res.render(views_path('topic'), { title: 'chat', user: req.user, id: req.params.id, ioUrl: ioUrl() });
 });
 
-
-router.post('/uploadimage', function (req, res) {
+router.post('/uploadimage', fileUploader(), function (req, res) {
   socketHelper.uploadResource({
-      req: req,
-      res: res,
+      file: req.file,
       width: 950,
       height: 460,
       type: 'image',
