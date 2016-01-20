@@ -7,6 +7,7 @@ describe('Data Wrappers -> ContactListUser', () => {
     let defaultValue = ['firstName', 'lastName'];
     let customFields = ['mobile'];
     let data = {
+      id: 2,
       customFields: { mobile: "1234556" },
       User: {
         firstName: "Dainis",
@@ -25,6 +26,7 @@ describe('Data Wrappers -> ContactListUser', () => {
       assert.equal(instance.firstName, data.User.firstName);
       assert.equal(instance.lastName, data.User.lastName);
       assert.equal(instance.mobile, data.customFields.mobile);
+      assert.equal(instance.id, data.id);
     });
   });
 });
