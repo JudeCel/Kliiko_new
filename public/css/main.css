@@ -159,8 +159,7 @@ input.kliiko-checkbox:checked + label {
   background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
   height: 22px;
   width: 22px;
-  background-size: contain;
-  margin-top: 1px; }
+  background-size: contain; }
 
 img.ic-flipX {
   -webkit-transform: scaleX(-1);
@@ -793,8 +792,9 @@ input[class=checkbox-blue]:checked + label {
   margin-top: -4px; }
 
 #dashboard p.warning {
+  margin-top: 8px;
   color: #E51D39;
-  font-size: .6em; }
+  font-size: 1.6rem; }
 
 #upgrade-plan-content h2 {
   margin: 45px;
@@ -846,6 +846,30 @@ input[class=checkbox-blue]:checked + label {
       margin-left: -70px;
       margin-top: 5px;
       position: absolute; }
+
+#upgrade-plan-content .plans-table .plan-block {
+  display: block; }
+
+#upgrade-plan-content .plans-table .included-plan-fader {
+  display: block;
+  position: absolute;
+  z-index: 2000;
+  width: 100%;
+  height: 100%;
+  background: white;
+  opacity: .8; }
+  #upgrade-plan-content .plans-table .included-plan-fader > .label {
+    position: absolute;
+    top: 320px;
+    left: 0;
+    color: #2F9F69;
+    font-size: calc(100vw/30);
+    font-weight: bold;
+    -webkit-transform: rotate(-15deg);
+    -moz-transform: rotate(-15deg);
+    -ms-transform: rotate(-15deg);
+    -o-transform: rotate(-15deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); }
 
 #upgrade-plan-content .plans-table .list-group {
   border: none;
@@ -1354,38 +1378,77 @@ input[class=checkbox-blue]:checked + label {
 #dashboard-contact-lists thead {
   background: #2F9F69; }
 
-#dashboard-contact-lists #contact-lists-left-column {
+#dashboard-contact-lists #contact-lists-left-column #list-of-contacts {
+  margin-top: 32px;
   padding: 0;
   border: 3px solid #2F9F69; }
-  #dashboard-contact-lists #contact-lists-left-column .header {
+  #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .header {
     color: white;
     font-weight: bold;
     background: #2F9F69;
     padding: 16px; }
-  #dashboard-contact-lists #contact-lists-left-column .item3 {
+  #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item3 {
     cursor: pointer;
     display: block;
     padding: 16px;
     margin-top: 2px;
     background: #EEEEEE; }
-    #dashboard-contact-lists #contact-lists-left-column .item3 > .glyphicon {
+    #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item3 > .glyphicon {
       visibility: hidden;
       float: right;
       margin-top: -3px;
       color: #2F9F69;
       font-size: 2rem;
       font-weight: 100; }
-    #dashboard-contact-lists #contact-lists-left-column .item3:hover {
+    #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item3:hover {
       background: rgba(174, 239, 137, 0.5); }
-    #dashboard-contact-lists #contact-lists-left-column .item3:focus {
+    #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item3:focus {
       outline: none !important; }
-    #dashboard-contact-lists #contact-lists-left-column .item3.active {
+    #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item3.active {
       background: rgba(174, 239, 137, 0.5); }
-      #dashboard-contact-lists #contact-lists-left-column .item3.active > .glyphicon {
+      #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item3.active > .glyphicon {
         visibility: visible; }
+
+#dashboard-contact-lists #contact-lists-left-column #under-list-of-contacts-btns {
+  margin-top: 5px; }
+  #dashboard-contact-lists #contact-lists-left-column #under-list-of-contacts-btns .btn-standart {
+    display: block;
+    margin-top: 10px;
+    width: 160px; }
+
+#dashboard-contact-lists #contact-lists-right-column #list-mass-actions {
+  outline: none; }
+  #dashboard-contact-lists #contact-lists-right-column #list-mass-actions .check {
+    float: left;
+    margin-left: 10px;
+    margin-right: 20px; }
 
 #dashboard-contact-lists .modal-title {
   margin-bottom: 40px; }
+
+#dashboard-contact-lists #contactList-addNewListModal .modals-btn {
+  margin-top: 30px; }
+
+#dashboard-contact-lists #contactList-addNewListModal #new-list-name-input {
+  margin: 60px;
+  width: 60%;
+  padding: 9px;
+  font-size: 2rem; }
+
+#dashboard-contact-lists #contactList-addNewListModal #new-list-name-help-text {
+  width: 70%;
+  margin: 0 auto;
+  margin-bottom: 30px; }
+  #dashboard-contact-lists #contactList-addNewListModal #new-list-name-help-text p {
+    font-size: 1.6rem; }
+
+#dashboard-contact-lists #contactList-addNewListModal #new-list-custom-fields {
+  margin: 20px; }
+
+#dashboard-contact-lists #contactList-addNewListModal input.custom-fields {
+  margin: 6px;
+  width: 90%;
+  padding: 10px; }
 
 .margin-top-2rem {
   margin-top: 2rem; }

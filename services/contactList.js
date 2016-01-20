@@ -3,7 +3,7 @@
 var q = require('q');
 var models = require('./../models');
 var dataWrappers = require('./../models/dataWrappers');
-var ContactListUser = dataWrappers.ContactListUser
+var ContactListUser = dataWrappers.ContactListUser;
 var ContactList = models.ContactList;
 var _ = require('lodash');
 
@@ -13,7 +13,7 @@ module.exports = {
   allByAccount: allByAccount,
   destroy: destroy,
   createDefaultLists: createDefaultLists
-}
+};
 
 function destroy(contacListId, accoutId) {
   var deferred = q.defer();
@@ -41,7 +41,7 @@ function allByAccount(accountId) {
     }, function(err) {
       console.log(err);
       deferred.reject(err);
-    })
+    });
     return deferred.promise;
 }
 
@@ -52,7 +52,7 @@ function prepareData(lists) {
     collection.push( {
       id: list.id,
       defaultFields: list.defaultFields,
-      defaultFields: list.customFields,
+      customFields: list.customFields,
       name: list.name,
       membersCount: list.ContactListUsers.length,
       members: _.map(list.ContactListUsers, (listUser) => {
@@ -69,7 +69,7 @@ function create(params) {
     deferred.resolve(result);
   }, function(err) {
     deferred.reject(err);
-  })
+  });
   return deferred.promise;
 }
 

@@ -27,11 +27,14 @@ function index(req, res, next) {
 //
 
 function create(req, res, next) {
-  let params = req.body;
-  params.accaountId = res.locals.currentDomain.id;
+  if (!req.body.name) {  res.send({ error: 'Body param @name {string} is required' }); return }
+  if (!req.body.customFields) {  res.send({ error: 'Body param @customFields {array} is required' }); return }
 
-  contactListService.create(params).then(function(resul) {
-    res.send(resul);
+  let params = req.body;
+  params.accountId = res.locals.currentDomain.id;
+
+  contactListService.create(params).then(function(result) {
+    res.send(result);
   }, function(err) {
     res.send({ error: err });
   })

@@ -3,47 +3,113 @@
   thead { background: $green; }
 
   #contact-lists-left-column {
-    padding: 0;
-    border: 3px solid $green;
 
-    .header {
-      color: white;
-      font-weight: bold;
-      background: $green;
-      padding: 16px;
-    }
+    #list-of-contacts {
+      margin-top: 32px;
+      padding: 0;
+      border: 3px solid $green;
 
-    .item3 {
-      cursor: pointer;
-      display: block;
-      padding: 16px;
-      margin-top: 2px;
-      background: #EEEEEE;
-
-      > .glyphicon {
-        visibility: hidden;
-        float: right;
-        margin-top: -3px;
-        color: $green;
-        font-size: 2rem;
-        font-weight: 100;
+      .header {
+        color: white;
+        font-weight: bold;
+        background: $green;
+        padding: 16px;
       }
 
-      &:hover { background: $lightGreen }
+      .item3 {
+        cursor: pointer;
+        display: block;
+        padding: 16px;
+        margin-top: 2px;
+        background: #EEEEEE;
 
-      &:focus { outline: none !important; }
+        > .glyphicon {
+          visibility: hidden;
+          float: right;
+          margin-top: -3px;
+          color: $green;
+          font-size: 2rem;
+          font-weight: 100;
+        }
 
-      &.active {
+        &:hover { background: $lightGreen }
 
-        background: $lightGreen;
+        &:focus { outline: none !important; }
+
+        &.active {
+
+          background: $lightGreen;
 
 
-        > .glyphicon {visibility: visible}
+          > .glyphicon {visibility: visible}
+        }
+      }
+
+    }
+
+    #under-list-of-contacts-btns {
+      margin-top: 5px;
+      .btn-standart {
+        display: block;
+        margin-top: 10px;
+        width: 160px;
+      }
+    }
+
+  }
+
+  #contact-lists-right-column {
+    #list-mass-actions {
+      outline: none;
+      .check {
+        float: left;
+        margin-left: 10px;
+        margin-right: 20px;
       }
     }
   }
+
 
   .modal-title {
     margin-bottom: 40px;
   }
+  #contactList-addNewListModal {
+
+    .modals-btn {
+      margin-top: 30px;
+    }
+
+    #new-list-name-input {
+      margin: 60px;
+      width: 60%;
+      padding: 9px;
+      font-size: 2rem;
+    }
+
+    #new-list-name-help-text {
+      width: 70%;
+      margin: 0 auto;
+      margin-bottom: 30px;
+
+
+      p {
+        font-size: 1.6rem;
+
+      }
+    }
+
+    #new-list-custom-fields {
+      margin: 20px;
+    }
+
+
+    input.custom-fields {
+      margin: 6px;
+      width:90%;
+      padding: 10px;
+    }
+
+  }
+
+
 }
