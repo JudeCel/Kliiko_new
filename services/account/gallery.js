@@ -7,17 +7,22 @@ var sizeOf = require('image-size');
 var multer = require('multer');
 var async = require('async');
 var _ = require('lodash');
+var querystring = require('querystring');
+var request = require('request');
+
 
 var models = require('./../../models')
 var account = models.Account;
 var Resource = models.Resource;
 var updateTmpTitle = require('../../chatRoom/handlers/updateTmpTitle.js');
+var uploadNewResource = require('../../chatRoom/socketHelper/saveResourceToDb.js');
 
 module.exports = {
   getResources: getResources,
   downloadResources: downloadResources,
   deleteResources: deleteResources,
-  uploadResource: uploadResource
+  uploadResource: uploadResource,
+  validate: validate
 };
 
 // const MEGABYTE = 1024*1024;
@@ -61,7 +66,6 @@ function getResources(accountName){
         delete resource.dataValues.User;
         resource.JSON = JSON.parse(decodeURI(resource.JSON));
       });
-      console.log(results);
       deferred.resolve(results);
     })
     .catch(function (err) {
@@ -91,7 +95,7 @@ function downloadResources(ids){
   return deferred.promise;
 }
 
-function uploadResource(data){
+function validate(data) {
   let deferred = q.defer();
 
   let req = {
@@ -115,6 +119,31 @@ function uploadResource(data){
   });
 
   return deferred.promise;
+}
+
+function uploadResource(req, res){
+  // let deferred = q.defer();
+  let params = {
+    req: req, 
+    res: res,
+    width: 950,
+    height: 460,
+    type: 'image',
+    resCb: function(userId, Json) {
+      console.log(userId)
+    }
+  };
+  console.log("uploadResource");
+  // console.log(params)
+  uploadNewResource.saveResourceToDisk(params);
+  // });
+  
+  // return deferred.promise;
+
+}
+
+function saveToDatabase(){
+
 }
 
 // function create()
@@ -205,3 +234,40 @@ function uploadResource(data){
 //   }
 // }
 
+function parseFileName(fileName) {
+  let fileNameArr = fileName.split('.');
+
+  var output = {
+    extension: getFileExtension(fileNameArr),
+    name: getFileName(fileNameArr),
+    fullName: fileName
+  };
+
+  return output;
+
+  /**
+   * Will return file extension
+   *  Example:
+   *    return 'png' from '[image-name,this,png]'
+   *    return 'jpg' as default from '[image]'
+   *
+   * @param fileNameArr {array}
+   * @returns {string}
+   */
+  function getFileExtension(fileNameArr) {
+    let defaultExtension = 'jpg';
+    if (fileNameArr.length === 1 ) return defaultExtension;
+    return fileNameArr[ fileNameArr.length - 1];
+  }
+
+  /**
+   * Return everything but not extension
+   * @param fileNameArr [array]
+   * @returns {string}
+   */
+  function getFileName(fileNameArr) {
+    let tmp = fileNameArr;
+    tmp.splice(tmp.length -1 ,1);
+    return tmp.join('.');
+  }
+}

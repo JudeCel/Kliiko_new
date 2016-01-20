@@ -5,15 +5,16 @@
     module('KliikoApp').
     controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', '$scope', 'domServices', '$ocLazyLoad','$injector', 'angularConfirm', 'messenger'];
-  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, $ocLazyLoad,$injector,  angularConfirm, messenger){
+  GalleryController.$inject = ['dbg', '$q', 'GalleryServices', '$modal', '$scope', 'domServices', '$ocLazyLoad','$injector', 'angularConfirm', 'messenger', 'Upload', 'globalSettings'];
+  function GalleryController(dbg, $q, GalleryServices, $modal, $scope, domServices, $ocLazyLoad,$injector,  angularConfirm, messenger, Upload, globalSettings){
     dbg.log2('#GalleryController  started');
     initList();
 
     $scope.newResource = {};
+    $scope.dataForValidation = {};
 
     $scope.uploadTst = function() {
-      dbg.yell($scope.fileTst)
+      dbg.yell($scope.newResource.fileTst)
     }
 
     function initList() {
@@ -44,26 +45,72 @@
 
     $scope.submitForm = function(newResource) {
 
-      $scope.newResource.file = {
-        name: $scope.fileTst.name,
-        size: $scope.fileTst.size,
-        type: $scope.fileTst.type
-      }
+      // $scope.dataForValidation = $scope.newResource;
+      // $scope.dataForValidation.file = {
+      //   name: $scope.fileTst.name,
+      //   size: $scope.fileTst.size,
+      //   type: $scope.fileTst.type
+      // }
 
-      GalleryServices.uploadResource(newResource).then(function(res) {
-        dbg.yell(res)
-      });
+      // console.log($scope.dataForValidation);
+      // GalleryServices.validateData($scope.dataForValidation).then(function(res) {
+      //   if(res.error){
+      //     messenger.error(res.error.name);
+      //   }else{
+          var deferred = $q.defer();
+          console.log(newResource);
+          // Upload.upload({
+          //   url: globalSettings.restUrl+'/gallery',
+          //   method: 'POST',
+          //   data: {file: newResource.fileTst, title: newResource.title, type: $scope.newResource.type},
+          //   resumeChunkSize: '10KB'
+          Upload.http({
+            url: globalSettings.restUrl+'/gallery',
+            headers : {
+              'Content-Type': newResource.fileTst.type
+            },
+            data: newResource.fileTst
+          }).then(
+            function(res) {
+              if (res.data && res.data.error) {
+                dbg.log2('#bannerMessagesService > upload > error ', res.data.error);
+                deferred.reject(res.data.error);
+                return deferred.promise;
+              }
+
+              dbg.log2('#bannerMessagesService > upload > success ', res);
+              console.warn(currentBannerType)
+              if (currentBannerType) setMainBannerForPage(currentBannerType);
+
+              deferred.resolve();
+            },
+            function(err) {
+              dbg.log2('#bannerMessagesService > upload > error ', err);
+              deferred.reject( {status:err.status, statusText: err.statusText})
+            },
+            function(evt) {}
+          );
+
+          return deferred.promise;
+
+          // GalleryServices.uploadResource($scope.fileTst).then(function(res) {
+          //   if(res.errors){
+          //     messenger.error(res.errors);
+          //   }else{
+          //     messenger.error("Successfully uploaded a new resource.");
+          //   }
+          // });
+      //   };
+      // });
     };
 
     function uploadTypeForTitle(uploadType) {
       if(uploadType === "brandLogo"){
         return "brand logo";
       }
-
       if(uploadType === "youtubeUrl"){
         return "youtube";
       }
-
       return uploadType;
     }
   }

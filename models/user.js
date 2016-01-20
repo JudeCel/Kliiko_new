@@ -5,12 +5,12 @@ var constants = require('../util/constants');
 module.exports = (Sequelize, DataTypes) => {
   var User = Sequelize.define('User', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    firstName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} } },
-    lastName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} } },
-    gender: {type: DataTypes.ENUM, allowNull: false, validate: { notEmpty: {args: true, msg: "can't be empty"} }, values: ["male", "female"] },
-    email: {type: DataTypes.STRING, allowNull: false, unique: {msg: "already taken"},
+    firstName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "First Name can't be empty"} } },
+    lastName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "Last Name can't be empty"} } },
+    gender: {type: DataTypes.ENUM, allowNull: false, validate: { notEmpty: {args: true, msg: "Gender can't be empty"} }, values: ["male", "female"] },
+    email: {type: DataTypes.STRING, allowNull: false, unique: {msg: "Email has already been taken"},
       validate: {
-        notEmpty: {args: true, msg: "can't be empty"},
+        notEmpty: {args: true, msg: "Email can't be empty"},
         is: {args: constants.emailRegExp, msg: "Invalid e-mail format" }
       }
     },
@@ -66,6 +66,7 @@ module.exports = (Sequelize, DataTypes) => {
           User.hasMany(models.Event, { foreignKey: 'userId'});
           User.belongsToMany(models.Account, { through: { model: models.AccountUser, scope: { owner: true }},  as: 'OwnerAccount'});
           User.hasMany(models.Invite, { foreignKey: 'userId' });
+          User.hasMany(models.Subscription);
         }
       }
     }

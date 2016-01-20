@@ -7,13 +7,25 @@ module.exports = {
   getResources: getResources,
   postResources: postResources,
   downloadResources: downloadResources,
-  deleteResources: deleteResources
+  deleteResources: deleteResources,
+  validateResourceData: validateResourceData
 };
 
-function postResources(req, res, next) {
-  req.body.userId = req.user.id;
-  galleryService.uploadResource(req.body).then(function(result) {
+function postResources(req, res, next) {    
+  galleryService.uploadResource(req, res).then(function(result) {
     res.send(result);
+  }, function(err) {
+    res.send(({ error: err.message }));
+  });
+}
+
+function validateResourceData(req, res, next){ // This is to validate data, via CHAT bussiness logic
+  req.body.userId = req.user.id;
+
+  galleryService.validate(req.body).then(function(result) {
+    res.send(({ data: result }));
+  }, function(err) {
+    res.send(({ error: err.message }));
   });
 }
 
@@ -34,3 +46,4 @@ function deleteResources(req, res, next) {
     res.send(result);
   });
 }
+

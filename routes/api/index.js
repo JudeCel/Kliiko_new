@@ -42,12 +42,18 @@ router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelet
 
 router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
 router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);
+router.put('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPut);
+router.get('/chargebee/subscriptions', multipartyMiddleware, chargebee.chargebeeSubscriptionGet);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
 
-router.post('/gallery', gallery.postResources);
+router.post('/gallery', multipartyMiddleware, gallery.postResources);
 router.get('/gallery', gallery.getResources);
 router.get('/gallery/download', gallery.downloadResources);
+router.get('/gallery/validate', gallery.validateResourceData);
 router.delete('/gallery', gallery.deleteResources);
+
+router.get('/chargebee/tst', multipartyMiddleware, chargebee.tstGet);
+
 
 // Common Rules
 router.use(function (req, res, next) {
