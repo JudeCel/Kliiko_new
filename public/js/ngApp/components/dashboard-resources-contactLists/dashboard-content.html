@@ -68,8 +68,8 @@
             <tr ng-repeat='member in clc.selectedListMembers'>
               <td>
                 <div class="check">
-                  <input id="termsAndConditionsCC" class="kliiko-checkbox" ng-model="up.paymentDetails.chargebee.tos" ng-change--="up.handleTosCheck()" type="checkbox" class="checkbox-btn btn-green ng-pristine ng-untouched ng-valid"  aria-checked="false" aria-invalid="false">
-                  <label for="termsAndConditionsCC" class="kliiko-checkbox"></label>
+                  <input id="memberSelectet{{ $index }}" class="kliiko-checkbox" ng-model="member.selected" ng-change="member.selected = !member.selected" type="checkbox" class="checkbox-btn btn-green ng-pristine ng-untouched ng-valid">
+                  <label for="memberSelectet{{ $index }}" class="kliiko-checkbox"></label>
                 </div>
               </td>
               <td> {{ member.firstName }} {{ member.lastName }} {{ member.id }}</td>

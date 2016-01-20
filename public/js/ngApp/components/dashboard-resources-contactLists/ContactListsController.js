@@ -69,7 +69,7 @@
           messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
           vm.newContact = {};
           newContact.id = res.id;
-
+          vm.lists[vm.activeListIndex].membersCount++;
           vm.selectedListMembers.push(newContact);
 
         },
@@ -111,11 +111,26 @@
           }
 
           var message;
-          //res.total > 1
-          messenger.ok('Removed');
+          (res.total > 1)
+            ? message = res.total+' users has been removed'
+            : message = 'User removed';
 
-          //vm.selectedListMembers.push(newContact);
-          // listMembers--;
+          messenger.ok(message);
+
+          // remove this user(s) from view
+          var index = [];
+          for (var i = 0, len = ids.length; i < len ; i++) {
+
+            for (var j = 0, len = vm.selectedListMembers.length; j < len ; j++) {
+              if (vm.selectedListMembers[j].id == ids[i] ) index.push(j);
+            }
+
+          }
+          for (var i = 0, len = index.length; i < len ; i++) {
+            vm.selectedListMembers.splice( index[i], 1 );
+          }
+
+          vm.lists[vm.activeListIndex].membersCount--;
 
         },
         function(err) {
