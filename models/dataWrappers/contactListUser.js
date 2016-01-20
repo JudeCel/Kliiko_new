@@ -3,10 +3,11 @@ var _ = require('lodash');
 
 var ContactListUser = class ContactListUser {
   constructor(defaultFields, customFields, data) {
-    this.defaultFields = defaultFields;
+    this.defaultFields = defaultFields
     this.customFields = customFields;
     this.data = data;
     this.mapFields();
+    this.assignId()
   }
 
   mapFields() {
@@ -14,6 +15,9 @@ var ContactListUser = class ContactListUser {
     this.assignValues(this.customFields);
   }
 
+  assignId(){
+    this.id = this.data.id;
+  }
   assignValues(fieldsList){
     _.map(fieldsList, (e) => {
       this[e] = this.findValueInData(e);
