@@ -768,8 +768,9 @@ input[class=checkbox-blue]:checked + label {
   margin-top: -4px; }
 
 #dashboard p.warning {
+  margin-top: 8px;
   color: #E51D39;
-  font-size: .6em; }
+  font-size: 1.6rem; }
 
 #upgrade-plan-content h2 {
   margin: 45px;
@@ -821,6 +822,30 @@ input[class=checkbox-blue]:checked + label {
       margin-left: -70px;
       margin-top: 5px;
       position: absolute; }
+
+#upgrade-plan-content .plans-table .plan-block {
+  display: block; }
+
+#upgrade-plan-content .plans-table .included-plan-fader {
+  display: block;
+  position: absolute;
+  z-index: 2000;
+  width: 100%;
+  height: 100%;
+  background: white;
+  opacity: .8; }
+  #upgrade-plan-content .plans-table .included-plan-fader > .label {
+    position: absolute;
+    top: 320px;
+    left: 0;
+    color: #2F9F69;
+    font-size: calc(100vw/30);
+    font-weight: bold;
+    -webkit-transform: rotate(-15deg);
+    -moz-transform: rotate(-15deg);
+    -ms-transform: rotate(-15deg);
+    -o-transform: rotate(-15deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); }
 
 #upgrade-plan-content .plans-table .list-group {
   border: none;
@@ -1284,3 +1309,6 @@ input[class=checkbox-blue]:checked + label {
 
 .margin-top-2rem {
   margin-top: 2rem; }
+
+.fade-disabled {
+  opacity: .45 !important; }

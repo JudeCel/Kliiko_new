@@ -7,7 +7,7 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var config = require('config');
 var models  = require('./../models');
 var usersService = require('./../services/users.js');
-var socialProfileRepo = require('./../services/socialProfile.js');
+var socialProfileService = require('./../services/socialProfile.js');
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
@@ -18,6 +18,8 @@ passport.use(new LocalStrategy({
       if (failed) {
         done('Sorry, your Email and Password do not match. Please try again.');
       }else{
+/* 
+        //To do, add not confirmed validation
         if (!result.confirmedAt) {
             done('Your account has not been confirmed, please check your e-mail and follow the link.');
             return;
@@ -34,6 +36,8 @@ passport.use(new LocalStrategy({
             done('Sorry, your account has been deactivated. Please get in touch with the administration');
           }
         });
+*/
+        prepareUserData(result, null, done);
       }
     });
   }
@@ -47,7 +51,13 @@ passport.use(new FacebookStrategy({
     profileFields: ['id', 'displayName','emails', 'name']
   },
   function(req, accessToken, refreshToken, profile, done) {
-    socialProfileRepo.findOrCreateUser(profile, done);
+    socialProfileService.findByConfirmedUser(profile.provider, profile.id, function(err, result) {
+      if (result) {
+        prepareUserData(result.User, profile, done);
+      }else{
+        done(err, null, profile);
+      }
+    });
   }
 ));
 
@@ -59,7 +69,13 @@ passport.use(new GoogleStrategy({
   function(token, refreshToken, profile, done) {
 
     process.nextTick(function() {
-      socialProfileRepo.findOrCreateUser(profile, done);
+      socialProfileService.findByConfirmedUser(profile.provider, profile.id, function(err, result) {
+        if (result) {
+          prepareUserData(result.User, profile, done);
+        }else{
+          done(err, null, profile);
+        }
+      });
     });
   }
 ));
@@ -90,6 +106,20 @@ function userParams(user, account) {
     signInCount: user.signInCount,
     accountOwnerId: account.id
   };
+}
+
+function prepareUserData(user, profile, callback){
+  user.getAccounts({ include: [ models.AccountUser ] }).then(function(accounts) {
+    let account = accounts[0];
+    if(account.AccountUser.active) {
+      user.increment('signInCount').done(function(result) {
+        callback(null, userParams(result, account));
+      });
+    }
+    else {
+      callback('Sorry, your account has been deactivated. Please get in touch with the administration');
+    }
+  });
 }
 
 module.exports = passport;

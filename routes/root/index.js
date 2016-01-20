@@ -10,6 +10,8 @@ var subdomains = require('../../lib/subdomains');
 var config = require('config');
 var mailers = require('../../mailers');
 var session = require('../../middleware/session');
+var middlewareFilters = require('../../middleware/filters');
+var socialProfileMiddleware = require('../../middleware/socialProfile');
 var inviteRoutes = require('./invite.js');
 var constants = require('../../util/constants');
 
@@ -32,11 +34,54 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/registration', function (req, res, next) {
-    res.render('registration', usersRepo.prepareParams(req));
+  res.render('registration', usersRepo.prepareParams(req));
 });
 
 router.get('/welcome', function (req, res, next) {
-    res.render('welcome', usersRepo.prepareParams(req));
+  res.render('welcome', usersRepo.prepareParams(req));
+});
+
+router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
+
+router.get('/auth/facebook/callback', function(req, res, next) {
+  passport.authenticate('facebook', function(err, user, info) {
+    if (err) {
+      return res.render('login', { title: 'Login', error: err.message, message: "" });
+    }
+    if (user) {
+      req.login(user, function(err) {
+        middlewareFilters.landingPage(req, res, next);
+      })
+    }else{
+      res.locals = usersRepo.prepareParams(req);
+      socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
+        res.render("registration");
+      }, function(err) {
+        next(err);
+      })
+    }
+  })(req, res, next);
+});
+
+router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+router.get('/auth/google/callback', function(req, res, next) {
+  passport.authenticate('google', function(err, user, info) {
+    if (err) {
+      return res.render('login', { title: 'Login', error: err.message, message: "" });
+    }
+    if (user) {
+      req.login(user, function(err) {
+        middlewareFilters.landingPage(req, res, next);
+      })
+    }else{
+      res.locals = usersRepo.prepareParams(req);
+      socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
+        res.render("registration");
+      }, function(err) {
+        next(err)
+      });
+    }
+  })(req, res, next);
 });
 
 router.post('/registration', function (req, res, next) {
@@ -76,11 +121,7 @@ router.post('/login', function(req, res, next) {
       session.rememberMe(req, function(err, result) {
         if (err) { throw err}
         if (result) {
-          if (req.user.signInCount == 1) {
-            return res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard/landing'));
-          } else {
-            return res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
-          }
+          middlewareFilters.landingPage(req, res, next);
         }
       });
     });

@@ -4,8 +4,8 @@ var constants = require('../util/constants');
 module.exports = (Sequelize, DataTypes) => {
   var Account = Sequelize.define('Account', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, allowNull: false, unique: {args: true, msg: "Sorry, that Name is already taken. Please try another."},
-      validate: { notEmpty: {args: true, msg: "can't be empty"}, is: constants.accountNameRegExp}
+    name: {type: DataTypes.STRING, allowNull: false, unique: {args: true, msg: "Account name has already been taken"},
+      validate: { notEmpty: {args: true, msg: "Account name can't be empty"},is: constants.accountNameRegExp }
     }
   },{
       indexes: [

@@ -39,15 +39,19 @@ router.post('/banners', multipartyMiddleware, banners.bannersPost);
 router.post('/banners/:bannerType', multipartyMiddleware, banners.bannersBannerTypePost);
 router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelete);
 
-router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
-router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);
-router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
-
 router.get('/mailTemplates', mailTemplates.allMailTemplatesGet);
 router.post('/mailTemplate', mailTemplates.mailTemplatePost);
 router.delete('/mailTemplate', mailTemplates.deleteMailTemplate);
 router.post('/mailTemplate/save', mailTemplates.saveMailTemplatePost);
 router.post('/mailTemplate/reset', mailTemplates.resetMailTemplatePost);
+
+router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
+router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);
+router.put('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPut);
+router.get('/chargebee/subscriptions', multipartyMiddleware, chargebee.chargebeeSubscriptionGet);
+router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
+
+router.get('/chargebee/tst', multipartyMiddleware, chargebee.tstGet);
 
 // Common Rules
 router.use(function (req, res, next) {

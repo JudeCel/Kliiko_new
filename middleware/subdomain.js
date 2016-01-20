@@ -7,7 +7,7 @@ var Account  = models.Account;
 var _ = require('lodash');
 
 function assignCurrentDomain(result, res, next) {
-  res.locals.currentDomain = { name: result.name, roles: result.roles };
+  res.locals.currentDomain = { id: result.id, name: result.name, roles: result.roles };
   res.locals.hasAccess = policy.hasAccess;
   next();
 }
@@ -26,8 +26,9 @@ function getAccauntWithRoles(user, subdomain, callback) {
       $and: [ Sequelize.where(Sequelize.fn('lower', Sequelize.col('name')), Sequelize.fn('lower', subdomain))] },
       include: [ { model: models.AccountUser, attributes: ["role"] }]}
     ).then(function(accounts) {
-      if (accounts[0]) {
-        let result = {name: subdomain, roles: [accounts[0].AccountUser.role]}
+      let account = accounts[0];
+      if (account) {
+        let result = { id: account.id, name: subdomain, roles: [account.AccountUser.role] }
         callback(null, result)
       }else {
         callback(true)

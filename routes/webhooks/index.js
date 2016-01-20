@@ -6,7 +6,11 @@ let chargebee = require('./chargebee');
 module.exports = router;
 
 // Main Routes
-router.get('/chargebeeHostedPageSuccess', chargebee.chargebeeHostedPageSuccessGet);
+router.get('/chargebee/hostedPageSuccess', chargebee.chargebeeHostedPageSuccessGet);
+
+//router.post('/chargebee/subscription_changed', chargebee.subscriptionChangedPost);
+
+router.get('/chargebee/tst', chargebee.tstPost);
 
 
 // Common Rules
