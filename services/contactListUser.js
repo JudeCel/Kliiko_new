@@ -71,7 +71,7 @@ function create(params) {
   var deferred = q.defer();
   User.findOrCreate({
     where: { email: params.defaultFields.email },
-    defaults: params.defaultFields}).then(function(user) {
+    defaults: newUserParams(params.defaultFields)}).then(function(user) {
       let newUser = user[0];
       newUser.updateAttributes(params.defaultFields).then(function(result) {
         ContactListUser.create({
