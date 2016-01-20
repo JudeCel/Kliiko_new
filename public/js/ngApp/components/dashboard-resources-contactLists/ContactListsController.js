@@ -9,6 +9,7 @@
 
     vm.lists = [];
     vm.activeListIndex = null;
+    vm.selectedListMembers = [];
     vm.newContact = {};
     vm.newList = {};
     vm.modalErrors = {};
@@ -16,6 +17,7 @@
     vm.listItemClickHandle = listItemClickHandle;
     vm.addContactManual = addContactManual;
     vm.createContact = createContact;
+    vm.removeContacts = removeContacts;
     vm.addNewList = addNewList;
     vm.submitNewList = submitNewList;
 
@@ -28,6 +30,7 @@
         if (vm.lists.length) {
           // select first element
           vm.activeListIndex = 0;
+          vm.selectedListMembers = vm.lists[vm.activeListIndex].members;
 
           prepareListControls();
         }
@@ -52,15 +55,23 @@
 
     function createContact() {
 
-      var currentListId = vm.lists[vm.activeListIndex].id;
+      var currentList = vm.lists[vm.activeListIndex];
 
       var valid = validate();
 
       if (!valid) return;
 
-      contactListServices.createUser(vm.newContact, currentListId).then(
+      contactListServices.createUser(vm.newContact, currentList.id).then(
         function(res) {
+          var newContact = vm.newContact;
+
           domServices.modal('contactList-addContactManual', 'close');
+          messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
+          vm.newContact = {};
+          newContact.id = res.id;
+
+          vm.selectedListMembers.push(newContact);
+
         },
         function(err) {
           if (err.errors) {
@@ -72,9 +83,9 @@
 
         }
       );
-      vm.newContact = {};
 
-      return;
+
+
 
       function validate() {
         vm.modalErrors = {};
@@ -87,6 +98,31 @@
         return valid;
       }
 
+    }
+
+    function removeContacts(ids) {
+      console.log(ids);
+      contactListServices.deleteUser(ids).then(
+        function(res) {
+
+          if (!res.total) {
+            messenger.error('No users was removed');
+            return
+          }
+
+          var message;
+          //res.total > 1
+          messenger.ok('Removed');
+
+          //vm.selectedListMembers.push(newContact);
+          // listMembers--;
+
+        },
+        function(err) {
+          messenger.error(err);
+
+        }
+      );
     }
 
     function addNewList() {

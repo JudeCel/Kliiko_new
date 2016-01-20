@@ -1387,26 +1387,27 @@ input[class=checkbox-blue]:checked + label {
     font-weight: bold;
     background: #2F9F69;
     padding: 16px; }
-  #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item3 {
+  #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item {
     cursor: pointer;
     display: block;
     padding: 16px;
     margin-top: 2px;
+    font-size: 1.3rem;
     background: #EEEEEE; }
-    #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item3 > .glyphicon {
+    #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item > .glyphicon {
       visibility: hidden;
       float: right;
       margin-top: -3px;
       color: #2F9F69;
       font-size: 2rem;
       font-weight: 100; }
-    #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item3:hover {
+    #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item:hover {
       background: rgba(174, 239, 137, 0.5); }
-    #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item3:focus {
+    #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item:focus {
       outline: none !important; }
-    #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item3.active {
+    #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item.active {
       background: rgba(174, 239, 137, 0.5); }
-      #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item3.active > .glyphicon {
+      #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item.active > .glyphicon {
         visibility: visible; }
 
 #dashboard-contact-lists #contact-lists-left-column #under-list-of-contacts-btns {

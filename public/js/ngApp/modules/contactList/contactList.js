@@ -9,22 +9,20 @@
 
     var contactListApi = {
       contactLists: $resource(globalSettings.restUrl +  '/contactLists', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsUsersToRemove: $resource(globalSettings.restUrl +  '/contactListsUsersToRemove', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       contactListUser: $resource(globalSettings.restUrl +  '/contactListUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
     };
 
-    //init();
 
     var publicServices = {};
 
     publicServices.getContactLists = getContactLists;
     publicServices.createUser = createUser;
     publicServices.submitNewList = submitNewList;
+    publicServices.deleteUser = deleteUser;
 
     return publicServices;
 
-    //function init() {
-    //  user.getUserData().then(function(res) { currentUser = res; });
-    //}
 
     function getContactLists() {
       var deferred = $q.defer();
@@ -55,8 +53,7 @@
 
       var params = {
         defaultFields: userObj,
-        contactListId: contactListId,
-        //userId: currentUser.id
+        contactListId: contactListId
       };
 
       dbg.log2('#contactListServices > createUser > call to api');
@@ -66,7 +63,6 @@
           deferred.reject(res.error);
           return deferred.promise;
         }
-        alert(2);
         dbg.log1('#contactListServices > createUser > success '); dbg.log2(res);
 
         deferred.resolve(res);
@@ -74,6 +70,24 @@
 
       return deferred.promise;
 
+    }
+
+    function deleteUser(ids) {
+      var deferred = $q.defer();
+
+      dbg.log2('#contactListServices > deleteUser > call to api');
+      contactListApi.contactListsUsersToRemove.post({},{ids:ids},function(res) {
+        if (res.error) {
+          dbg.log1('#contactListServices > deleteUser > error: ', res.error);
+          deferred.reject(res.error);
+          return deferred.promise;
+        }
+        dbg.log1('#contactListServices > deleteUser > success '); dbg.log2(res);
+
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
     }
 
     function submitNewList(listObj) {

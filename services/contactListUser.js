@@ -21,7 +21,7 @@ function findByContactList(contactListId) {
       deferred.resolve(results);
     }, function(err) {
       deferred.reject(err);
-    })
+    });
     return deferred.promise;
 }
 
@@ -48,12 +48,12 @@ function updatePositions(params) {
 }
 
 function destroy(ids, accountId) {
-  var deferred = q.defer();
+  let deferred = q.defer();
   ContactListUser.destroy({where: { id: ids, accountId: accountId}}).then(function(result) {
     deferred.resolve(result);
   }, function(err) {
     deferred.reject(err);
-  })
+  });
   return deferred.promise;
 }
 

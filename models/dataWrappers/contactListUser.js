@@ -6,10 +6,10 @@ var ContactListUser = class ContactListUser {
     this.defaultFields = defaultFields;
     this.customFields = customFields;
     this.data = data;
-    this.mapFilels();
+    this.mapFields();
   }
 
-  mapFilels() {
+  mapFields() {
     this.assignValues(this.defaultFields);
     this.assignValues(this.customFields);
   }
