@@ -74,6 +74,16 @@
       visibility: hidden;
     }
 
+    th {
+      &:hover {
+        span.th-name {  text-decoration: underline; }
+      }
+
+      .glyphicon {
+        font-size: 1rem;
+      }
+    }
+
     tr.member-row {
       &:hover {
         background: $lightGreen;

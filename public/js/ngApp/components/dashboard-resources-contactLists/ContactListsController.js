@@ -14,8 +14,10 @@
     vm.newList = {};
     vm.modalErrors = {};
     vm.allSelected = false;
+    vm.tableSort = {by: null, reverse: false};
 
     vm.listItemClickHandle = listItemClickHandle;
+    vm.changeTableSortingFilter = changeTableSortingFilter;
     vm.addContactManual = addContactManual;
     vm.createContact = createContact;
     vm.selectAll = selectAll;
@@ -24,6 +26,7 @@
     vm.addNewList = addNewList;
     vm.submitNewList = submitNewList;
     vm.removeList = removeList;
+
 
 
     init();
@@ -36,7 +39,7 @@
         vm.lists = result;
 
         if (vm.lists.length) {
-          // select first element
+          // show first list content
           vm.activeListIndex = 0;
           vm.selectedListMembers = vm.lists[vm.activeListIndex].members;
 
@@ -66,6 +69,11 @@
       vm.selectedListMembers = vm.lists[vm.activeListIndex].members;
 
       prepareSelectedListMembersControls();
+    }
+
+    function changeTableSortingFilter(type) {
+      vm.tableSort.by =  type;
+      vm.tableSort.reverse = !vm.tableSort.reverse;
     }
 
     function addContactManual() {    domServices.modal('contactList-addContactManual');  }

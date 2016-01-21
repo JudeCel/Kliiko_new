@@ -1427,6 +1427,12 @@ input[class=checkbox-blue]:checked + label {
 #dashboard-contact-lists #contact-lists-right-column .table-item-edit-group {
   visibility: hidden; }
 
+#dashboard-contact-lists #contact-lists-right-column th:hover span.th-name {
+  text-decoration: underline; }
+
+#dashboard-contact-lists #contact-lists-right-column th .glyphicon {
+  font-size: 1rem; }
+
 #dashboard-contact-lists #contact-lists-right-column tr.member-row:hover {
   background: rgba(174, 239, 137, 0.5); }
   #dashboard-contact-lists #contact-lists-right-column tr.member-row:hover .table-item-edit-group {
