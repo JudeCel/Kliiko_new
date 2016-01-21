@@ -1,7 +1,7 @@
 "use strict";
 
-var MailTemplate  = require('./../models').MailTemplateCopy;
-var MailTemplateOriginal  = require('./../models').MailTemplate;
+var MailTemplate  = require('./../models').MailTemplate;
+var MailTemplateOriginal  = require('./../models').MailTemplateBase;
 var _ = require('lodash');
 
 var originalTemplateFields = [
@@ -16,14 +16,14 @@ var templateFields = [
     'name',
     'subject',
     'content',
-    'MailTemplateId',
+    'MailTemplateBaseId',
     'UserId'
 ];
 
 var templateFieldsForList = [
     'id',
     'name',
-    'MailTemplateId',
+    'MailTemplateBaseId',
     'UserId'
 ];
 
@@ -125,7 +125,7 @@ function copyBaseTemplates(callback) {
       raw: true
   }).then(function(result) {
     for (var i = 0; i < result.length; i++) {
-        result[i].MailTemplateId = result[i].id;
+        result[i].MailTemplateBaseId = result[i].id;
         delete result[i]["id"];
     }
     MailTemplate.bulkCreate(result).done(function(res) {

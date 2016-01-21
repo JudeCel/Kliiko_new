@@ -1,6 +1,6 @@
 "use strict";
 
-var MailTemplateCopy  = require('./../models').MailTemplateCopy;
+var MailTemplateCopy  = require('./../models').MailTemplate;
 var _ = require('lodash');
 
 var templateFields = [
