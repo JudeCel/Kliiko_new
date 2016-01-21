@@ -8,7 +8,7 @@
     var currentUser;
 
     var contactListApi = {
-      contactLists: $resource(globalSettings.restUrl +  '/contactLists', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactLists: $resource(globalSettings.restUrl +  '/contactLists/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       contactListsUsersToRemove: $resource(globalSettings.restUrl +  '/contactListsUsersToRemove', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       contactListUser: $resource(globalSettings.restUrl +  '/contactListUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
     };
@@ -20,6 +20,7 @@
     publicServices.createUser = createUser;
     publicServices.submitNewList = submitNewList;
     publicServices.deleteUser = deleteUser;
+    publicServices.deleteList = deleteList;
 
     return publicServices;
 
@@ -105,6 +106,17 @@
       });
       return deferred.promise;
 
+    }
+
+    function deleteList(listId) {
+      var deferred = $q.defer();
+      contactListApi.contactLists.delete({id:listId}, {},function(res) {
+        if (res.error) {   deferred.reject(res.error);  return deferred.promise;   }
+
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
     }
   }
 })();
