@@ -2,7 +2,7 @@
   'use strict';
 
   angular.module('KliikoApp').config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
-    var prePath = 'js/ngApp/components/';
+    var prePath = '/js/ngApp/components/';
 
     // For any unmatched url, redirect to /home
     $urlRouterProvider.otherwise("/");
@@ -175,6 +175,16 @@
           }]},
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.contactLists is on');
+        }]
+
+      })
+      .state('dashboard.resources.contactLists.survey', {
+        url: '/survey',
+        views: {
+          'resourcesContent': { templateUrl: prePath + 'dashboard-resources-contactLists-survey/dashboard-content.html' }
+        },
+        onEnter: ['dbg', function (dbg) {
+          dbg.rs('dashboard.resources.contactLists.survey is on');
         }]
 
       })

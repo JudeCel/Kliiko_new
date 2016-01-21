@@ -77,8 +77,16 @@
   padding-top: 100px;
 }
 
+.surveyPreviewModal {
+  @extend .contactDetailsModal;
+  width: 800px;
+  padding-bottom: 100px;
+  padding-top: 100px;
+}
+
 @media (max-width: 768px) {
-  .accountDatabaseCommentModal {
+  .accountDatabaseCommentModal,
+  .surveyPreviewModal {
     width: auto;
   }
 }
