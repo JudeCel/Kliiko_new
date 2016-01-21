@@ -1,4 +1,5 @@
 angular.module('KliikoApp').factory('angularConfirm', angularConfirm);
+angular.module('KliikoApp.Root').factory('angularConfirm', angularConfirm);
 angularConfirm.$inject = ['$window', '$q'];
 
 function angularConfirm($window, $q) {
