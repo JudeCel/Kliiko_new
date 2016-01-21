@@ -10,6 +10,7 @@ var accountManager = require('./accountManager');
 var promotionCode = require('./promotionCode');
 var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
+var survey = require('./survey');
 var chargebee = require('./chargebee');
 
 
@@ -44,8 +45,18 @@ router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebee
 router.put('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPut);
 router.get('/chargebee/subscriptions', multipartyMiddleware, chargebee.chargebeeSubscriptionGet);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
-
 router.get('/chargebee/tst', multipartyMiddleware, chargebee.tstGet);
+
+router.get('/survey', survey.get);
+router.delete('/survey', survey.remove);
+router.post('/survey', survey.create);
+router.put('/survey', survey.update);
+router.post('/survey/copy', survey.copy);
+router.put('/survey/status', survey.status);
+router.get('/survey/find', survey.find);
+router.post('/survey/answer', survey.answer);
+router.put('/survey/confirm', survey.confirm);
+router.get('/survey/constants', survey.getConstants);
 
 // Common Rules
 router.use(function (req, res, next) {

@@ -13,9 +13,12 @@ var session = require('../../middleware/session');
 var middlewareFilters = require('../../middleware/filters');
 var socialProfileMiddleware = require('../../middleware/socialProfile');
 var inviteRoutes = require('./invite.js');
+var surveyRoutes = require('./survey.js');
 var constants = require('../../util/constants');
+var appData = require('../../services/webAppData');
 
 router.use(function (req, res, next) {
+  res.locals.appData = appData;
     if (req.path == '/logout' || req.path.indexOf('invite') > -1) {
         return next();
     }
@@ -257,5 +260,7 @@ router.route('/invite/:token').get(inviteRoutes.index);
 router.route('/invite/:token/decline').get(inviteRoutes.decline);
 router.route('/invite/:token/accept').get(inviteRoutes.acceptGet);
 router.route('/invite/:token/accept').post(inviteRoutes.acceptPost);
+
+router.route('/survey/:id').get(surveyRoutes.index);
 
 module.exports = router;
