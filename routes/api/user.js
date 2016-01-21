@@ -32,7 +32,7 @@ var userDetailsFields = [
     'postalAddress',
     'city',
     'state',
-    'postcode',
+    'postCode',
     'country',
     'companyName',
     'tipsAndUpdate'
@@ -125,4 +125,3 @@ function userCanAccessPost(req, res, next) {
     res.send({error: 'Access Denied'});
   }
 }
-

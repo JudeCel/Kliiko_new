@@ -14,14 +14,14 @@ module.exports = {
     'postalAddress',
     'city',
     'state',
-    'postcode',
+    'postCode',
     'country',
     'companyName'
   ],
   promotionCodeTypes: ['percentage', 'value'],
   dateFormat: 'MM-dd-yyyy',
   contactListDefaultFields: ["firstName", "lastName", "gender", "email", "city",
-                              "state", "country", "postcode", "companyName",
+                              "state", "country", "postCode", "companyName",
                               "landlineNumber", "mobile"
                             ]
 };

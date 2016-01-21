@@ -23,7 +23,7 @@ function destroy(contacListId, accoutId) {
     deferred.resolve(prepareData(result));
   }, function(err) {
     deferred.reject(err);
-  });
+  })
   return deferred.promise;
 }
 
@@ -87,41 +87,68 @@ function createDefaultLists(accoutId, t) {
   return deferred.promise;
 }
 
-function parseFile(filePath) {
+function parseFile(id, filePath) {
   let deferred = q.defer();
-  let object = { valid: [], invalid: [] };
+  ContactList.find({ where: { id: id } }).then(function(contactList) {
+    if(contactList) {
+      let object = { valid: [], invalid: [] };
 
-  csv.fromPath(filePath, {
-    headers: true
-  }).transform(function(data) {
-    return data;
-  }).validate(function(data, next) {
-    validateRow(data).then(function() {
-      next(null, true);
-    }, function(error) {
-      data.validationErrors = error;
-      next(null, false);
-    });
-  }).on('data', function(data) {
-    object.valid.push(data);
-  }).on('data-invalid', function(data) {
-    object.invalid.push(data);
-  }).on('error', function(error) {
-    deferred.reject(error);
-  }).on('end', function() {
-    deferred.resolve(object);
+      csv.fromPath(filePath, {
+        headers: true
+      }).transform(function(data) {
+        _.map(data, function(value, key) {
+          delete data[key];
+          data[_.camelCase(key)] = value;
+        });
+
+        return data;
+      }).validate(function(data, next) {
+        validateRow(contactList.defaultFields, contactList.customFields, data).then(function() {
+          next(null, true);
+        }, function(error) {
+          data.validationErrors = error;
+          next(null, false);
+        });
+      }).on('data', function(data) {
+        object.valid.push(data);
+      }).on('data-invalid', function(data) {
+        object.invalid.push(data);
+      }).on('error', function(error) {
+        deferred.reject(error);
+      }).on('end', function() {
+        deferred.resolve(object);
+      });
+    }
+    else {
+      deferred.reject('ContactList not found!');
+    }
   });
 
   return deferred.promise;
 };
 
-function validateRow(row) {
+function validateRow(defaults, customs, row) {
   let deferred = q.defer();
   let error = {};
 
-  _.map(row, function(value, key) {
-    if(value.length == 0) {
-      error[key] = 'No data';
+  _.map(defaults, function(key) {
+    let rowData = row[key];
+
+    if(!rowData) {
+      error[key] = 'Not found';
+    }
+    else {
+      if(rowData.length == 0) {
+        error[key] = 'No data';
+      }
+    }
+  });
+
+  _.map(customs, function(key) {
+    let rowData = row[key];
+
+    if(!rowData) {
+      error[key] = 'Not found';
     }
   });
 
