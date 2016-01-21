@@ -8,7 +8,11 @@ module.exports = (Sequelize, DataTypes) => {
     contactListId: {type: DataTypes.INTEGER, allowNull: false},
     position: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
     customFields: { type: DataTypes.JSONB, allowNull: false, defaultValue: {} }
-  },{
+  },{ indexes: [
+        { unique: {args: true, msg: "Email has already been taken"},
+          fields: ['userId', 'contactListId', 'accountId']
+        }
+      ],
       classMethods: {
         associate: function(models) {
           ContactListUser.belongsTo(models.User, {foreignKey: 'userId'});
