@@ -31,8 +31,8 @@ function saveResourceToDb(json, resCb, nextCb) {
                 resultJSON = JSON.parse(decodeURI(resource.JSON), null);
             }
             catch (ex) {
+              console.log(ex);
             }
-
             if (!resultJSON)
                 continue;
 
@@ -41,7 +41,7 @@ function saveResourceToDb(json, resCb, nextCb) {
             else
                 continue;
 
-            if (resultJSON.text.toLowerCase() === json.matchName.toLowerCase()) {
+            if (resultJSON.text){
                 var req = {
                     resourceType: 'tmp'
                 };
@@ -57,11 +57,11 @@ function saveResourceToDb(json, resCb, nextCb) {
                             resultJson = JSON.parse(decodeURI(result[0].JSON), null);
                         }
                         catch (ex) {
+                          console.log(ex);
                         }
 
                         if (resultJson) {
                             json.title = resultJson.title;	//	lets add our label
-
 
                             if(isAlreadyUpdateResources == false){
                                 isAlreadyUpdateResources = true;
@@ -75,7 +75,7 @@ function saveResourceToDb(json, resCb, nextCb) {
                             }
                         }
                         else
-                        resCb(resource.userId, json);
+                          resCb(resource.userId, json);
                     }
                 }, nextCb)
             }
