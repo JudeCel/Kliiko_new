@@ -127,4 +127,24 @@ describe('Services -> ContactList', () => {
       });
     });
   });
+
+  describe('#parseFile', function() {
+    var testFile = 'test/fixtures/contactList/list_valid.csv';
+
+    describe.only('happy path', function() {
+      it('should succeed', function(done) {
+        ContactListService.parseFile(testFile).then(function(result) {
+          assert.deepEqual(result.invalid, []);
+          done();
+        }, function(error) {
+          done(error);
+        });
+      });
+    });
+
+    describe('sad path', function() {
+
+    });
+  });
+
 });

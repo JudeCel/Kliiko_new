@@ -7,17 +7,18 @@ var ContactListUser = dataWrappers.ContactListUser;
 var ContactList = models.ContactList;
 var _ = require('lodash');
 var constants = require('../util/constants');
-
+var csv = require('fast-csv');
 
 module.exports = {
   create: create,
   allByAccount: allByAccount,
   destroy: destroy,
-  createDefaultLists: createDefaultLists
+  createDefaultLists: createDefaultLists,
+  parseFile: parseFile
 };
 
 function destroy(contacListId, accoutId) {
-  var deferred = q.defer();
+  let deferred = q.defer();
   ContactList.destroy({where: {id: contacListId, accountId: accoutId, editable: true} }).then(function(result) {
     deferred.resolve(prepareData(result));
   }, function(err) {
@@ -27,7 +28,7 @@ function destroy(contacListId, accoutId) {
 }
 
 function allByAccount(accountId) {
-    var deferred = q.defer();
+    let deferred = q.defer();
     ContactList.findAll({where: { accountId: accountId },
       attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields'],
       include: [{
@@ -63,7 +64,7 @@ function prepareData(lists) {
 }
 
 function create(params) {
-  var deferred = q.defer();
+  let deferred = q.defer();
   ContactList.create(params).then(function(result) {
     deferred.resolve(result);
   }, function(err) {
@@ -73,7 +74,7 @@ function create(params) {
 }
 
 function createDefaultLists(accoutId, t) {
-  var deferred = q.defer();
+  let deferred = q.defer();
   ContactList.bulkCreate([
     { name: 'Account Managers', accountId: accoutId, editable: false },
     { name: 'Facilitators', accountId: accoutId, editable: false },
@@ -85,3 +86,51 @@ function createDefaultLists(accoutId, t) {
   })
   return deferred.promise;
 }
+
+function parseFile(filePath) {
+  let deferred = q.defer();
+  let object = { valid: [], invalid: [] };
+
+  csv.fromPath(filePath, {
+    headers: true
+  }).transform(function(data) {
+    return data;
+  }).validate(function(data, next) {
+    validateRow(data).then(function() {
+      next(null, true);
+    }, function(error) {
+      data.validationErrors = error;
+      next(null, false);
+    });
+  }).on('data', function(data) {
+    object.valid.push(data);
+  }).on('data-invalid', function(data) {
+    object.invalid.push(data);
+  }).on('error', function(error) {
+    deferred.reject(error);
+  }).on('end', function() {
+    deferred.resolve(object);
+  });
+
+  return deferred.promise;
+};
+
+function validateRow(row) {
+  let deferred = q.defer();
+  let error = {};
+
+  _.map(row, function(value, key) {
+    if(value.length == 0) {
+      error[key] = 'No data';
+    }
+  });
+
+  if(_.size(error) > 0) {
+    deferred.reject(error);
+  }
+  else {
+    deferred.resolve(true);
+  }
+
+  return deferred.promise;
+};
