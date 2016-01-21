@@ -54,6 +54,7 @@ router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponG
 // contact List
 router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
 router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
+router.delete('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.destroy);
 
 // contact List User
 router.post('/contactListUser', policy.authorized(['accountManager', 'admin']), contactListUser.create);

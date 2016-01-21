@@ -1424,6 +1424,25 @@ input[class=checkbox-blue]:checked + label {
     margin-left: 10px;
     margin-right: 20px; }
 
+#dashboard-contact-lists #contact-lists-right-column .table-item-edit-group {
+  visibility: hidden; }
+
+#dashboard-contact-lists #contact-lists-right-column tr.member-row:hover {
+  background: rgba(174, 239, 137, 0.5); }
+  #dashboard-contact-lists #contact-lists-right-column tr.member-row:hover .table-item-edit-group {
+    visibility: visible; }
+
+#dashboard-contact-lists #contact-lists-right-column tr.member-row.selected {
+  background: rgba(174, 239, 137, 0.5); }
+
+#dashboard-contact-lists #contact-lists-right-column tr.member-row .kliiko-checkbox {
+  margin-left: 4px; }
+
+#dashboard-contact-lists #contact-lists-right-column #no-contacts-in-list {
+  width: 450px;
+  margin-top: 74px;
+  margin-left: 18%; }
+
 #dashboard-contact-lists .modal-title {
   margin-bottom: 40px; }
 

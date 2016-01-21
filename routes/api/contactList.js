@@ -61,9 +61,11 @@ function update(req, res, next) {
 //  }
 //
 function destroy(req, res, next) {
-  let accaountId = res.locals.currentDomain.id
-  contactListService.destroy(req.body.id, accaountId).then(function(lists) {
-    res.send(lists);
+  if (!req.params.id) { res.send('query param @id is missed'); return }
+
+  let accaountId = res.locals.currentDomain.id;
+  contactListService.destroy(req.params.id, accaountId).then(function(lists) {
+    res.send({success: true, lists: lists});
   },function(err) {
     res.send({ error: err });
   });

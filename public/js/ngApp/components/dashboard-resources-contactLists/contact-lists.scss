@@ -62,6 +62,7 @@
   #contact-lists-right-column {
     #list-mass-actions {
       outline: none;
+
       .check {
         float: left;
         margin-left: 10px;
@@ -70,7 +71,29 @@
     }
 
     .table-item-edit-group {
+      visibility: hidden;
+    }
 
+    tr.member-row {
+      &:hover {
+        background: $lightGreen;
+
+        .table-item-edit-group {
+          visibility: visible;
+        }
+      }
+
+      &.selected { background: $lightGreen; }
+
+      .kliiko-checkbox {
+        margin-left: 4px;
+      }
+    }
+
+    #no-contacts-in-list {
+      width: 450px;
+      margin-top: 74px;
+      margin-left: 18%;
     }
   }
 

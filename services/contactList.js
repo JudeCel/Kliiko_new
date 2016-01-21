@@ -23,7 +23,7 @@ function destroy(contacListId, accoutId) {
     deferred.resolve(prepareData(result));
   }, function(err) {
     deferred.reject(err);
-  })
+  });
   return deferred.promise;
 }
 

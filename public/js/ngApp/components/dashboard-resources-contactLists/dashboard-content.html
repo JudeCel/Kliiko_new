@@ -1,4 +1,3 @@
-
 <section id='dashboard-contact-lists' ng-controller="ContactListController as clc">
   <div class='col-md-12'>
     <div class='dashboard-container'>
@@ -10,7 +9,7 @@
           <h4 class='text-center'>{{ clc.message }}</h4>
         </div>
         <div class='col-md-3 text-right'>
-          <div class='btn btn-addNewElement' ng-click='clc.addContactManual()'>Add contacts (manual)</div>
+          <div class='btn btn-addNewElement btn-green' ng-click='clc.addContactManual()'>Add contacts (manual)</div>
         </div>
       </div>
     </div>
@@ -27,9 +26,9 @@
               Contact Lists
             </div>
 
-            <div class="item"  ng-class="{'active':clc.activeListIndex == $index}" ng-click="clc.listItemClickHandle(item, $index)"
+            <div class="item"  ng-class="{'active':clc.activeListIndex == $index}" ng-click="clc.listItemClickHandle($index)"
                  ng-repeat="item in clc.lists">
-              {{ item.name }}  <span ng-if="item.membersCount">&nbsp;({{ item.membersCount }})</span> <i class="glyphicon glyphicon-chevron-right pull-right"></i>
+              <span class="item-name">{{ item.name }}</span>  <span ng-if="item.membersCount">&nbsp;({{ item.membersCount }})</span> <i class="glyphicon glyphicon-chevron-right pull-right"></i>
             </div>
           </div>
 
@@ -43,17 +42,18 @@
         </div>
 
         <div id="contact-lists-right-column" class="col-md-10">
-          <div id="list-mass-actions">
+          <div id="list-mass-actions" ng-hide="!clc.selectedListMembers.length">
             <div class="check">
-              <input id="dashboard-contact-lists-selectAll-mass-action" class="kliiko-checkbox" ng-model--="" ng-change--="up.handleTosCheck()" type="checkbox" class="checkbox-btn btn-green ng-pristine ng-untouched ng-valid"  aria-checked="false" aria-invalid="false">
-              <label for="dashboard-contact-lists-selectAll-mass-action"></label> Select all
+              <input id="dashboard-contact-lists-selectAll-mass-action"  class="kliiko-checkbox checkbox-btn btn-green" ng-model="vm.allSelected"  type="checkbox" >
+              <label for="dashboard-contact-lists-selectAll-mass-action" ng-click="clc.selectAll()"></label> Select all
             </div>
-            <div class="check">
-              <img src='/icons/dashboardElement_remove.png' alt='' height="22px" ng-click='removeInvite(user)' />
+            <div class="check" >
+              <img src='/icons/dashboardElement_remove.png' alt='' height="22px" ng-click='clc.massDelete()' />
               Delete
             </div>
           </div>
-          <table class='table table-responsive table-dashboardElements'>
+
+          <table class='table table-responsive table-dashboardElements' ng-hide="!clc.selectedListMembers.length">
             <thead>
             <tr>
               <th></th>
@@ -61,33 +61,41 @@
               <th>Email</th>
               <th>Mobile</th>
               <th>Gender</th>
-              <th>Щ-</th>
+              <th><img  src="/icons/grid.png" ></th>
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat='member in clc.selectedListMembers'>
+            <tr class="member-row" ng-repeat='member in clc.selectedListMembers' ng-class="{'selected':member._selected}">
               <td>
                 <div class="check">
-                  <input id="memberSelectet{{ $index }}" class="kliiko-checkbox" ng-model="member.selected" ng-change="member.selected = !member.selected" type="checkbox" class="checkbox-btn btn-green ng-pristine ng-untouched ng-valid">
-                  <label for="memberSelectet{{ $index }}" class="kliiko-checkbox"></label>
+                  <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-model="member._selected" ng-click="member.selected = !member.selected" type="checkbox" >
+                  <label for="memberSelectet{{ $index }}" class="kliiko-checkbox" ></label>
                 </div>
               </td>
-              <td> {{ member.firstName }} {{ member.lastName }} {{ member.id }}</td>
+              <td> {{ member.firstName }} {{ member.lastName }}</td>
               <td> {{ member.email }}</td>
               <td> {{ member.mobile }}</td>
               <td> {{ member.gender }}</td>
-              <td class='table-item-edit-group'>
-                <img src='/icons/dashboardElement_edit.png' alt='' />
-                <img src='/icons/dashboardElement_remove.png' alt='' ng-click='clc.removeContacts([member.id])' />
+              <td >
+                <span class='table-item-edit-group'>
+                  <img src='/icons/dashboardElement_edit.png' alt='' />
+                  <img src='/icons/dashboardElement_remove.png' alt='' ng-click='clc.removeContacts(member.id)' />
+                </span>
               </td>
             </tr>
 
             </tbody>
           </table>
+
+          <div id="no-contacts-in-list" class="text-center" ng-show="!clc.selectedListMembers.length">
+            <h3>There is no contacts in this list yet</h3>
+            <div class='btn btn-addNewElement btn-green' ng-click='clc.addContactManual()'>Add contacts (manual)</div> &nbsp; or &nbsp;
+            <div class="btn-standart btn-red" ng-click="clc.removeList()">Remove this List</div>
+
+
+          </div>
         </div>
       </div>
-
-
 
 
     </div>
