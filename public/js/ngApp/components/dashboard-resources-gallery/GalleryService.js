@@ -15,31 +15,27 @@
     upServices.getResources = getResources;
     upServices.downloadResources = downloadResources;
     upServices.deleteResources = deleteResources;
-    upServices.uploadResource = uploadResource;
-    upServices.validateData = validateData;
+    upServices.uploadResourceFile = uploadResourceFile;
+    upServices.createResource = createResource;
     return upServices;
 
     function getResources() {
       var deferred = $q.defer();
-
       dbg.log2('#GalleryServices > getResources > make rest call');
       galleryRestApi.gallery.get({}, function(res) {
         dbg.log2('#GalleryServices > getResources > rest call responds');
         deferred.resolve(res);
       });
-
       return deferred.promise;
     };
 
     function downloadResources(ids) {
       var deferred = $q.defer();
-      
       dbg.log2('#GalleryServices > downloadGalleryResources > make rest call');
       galleryRestApi.download.get(ids, function(res) {
         dbg.log2('#GalleryServices > downloadGalleryResources > rest call responds');
         deferred.resolve(res);
       });
-
       return deferred.promise;
     };
 
@@ -55,21 +51,23 @@
       return deferred.promise;
     };
 
-    function uploadResource(params) {
-      //TODO
-    };
+    function createResource(params) {
 
-    function validateData(data){
       var deferred = $q.defer();
-      
-      dbg.log2('#GalleryServices > validatesGalleryResources > make rest call');
-      galleryRestApi.validate.get(data, function(res) {
-        dbg.log2('#GalleryServices > validatesGalleryResources > rest call responds');
+
+      dbg.log2('#GalleryServices > createGalleryResources > make rest call');
+      galleryRestApi.gallery.post(params, function(res) {
+        dbg.log2('#GalleryServices > createGalleryResources > rest call responds');
         deferred.resolve(res);
       });
 
       return deferred.promise;
     }
+
+    function uploadResourceFile(params) {
+      //TODO
+    };
+
 
   };
 })();

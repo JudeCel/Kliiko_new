@@ -1,28 +1,17 @@
 'use strict';
 
 var q = require('q');
-var mv = require('mv');
-var fs = require('fs');
-var sizeOf = require('image-size');
-var multer = require('multer');
-var async = require('async');
-var _ = require('lodash');
-var querystring = require('querystring');
-var request = require('request');
-
-
 var models = require('./../../models')
 var account = models.Account;
 var Resource = models.Resource;
+var expressValidatorStub = require('../../chatRoom/helpers/expressValidatorStub.js');
 var updateTmpTitle = require('../../chatRoom/handlers/updateTmpTitle.js');
-var uploadNewResource = require('../../chatRoom/socketHelper/saveResourceToDb.js');
 
 module.exports = {
   getResources: getResources,
   downloadResources: downloadResources,
   deleteResources: deleteResources,
-  uploadResource: uploadResource,
-  validate: validate
+  uploadResource: uploadResource
 };
 
 function getResources(accountName){
@@ -69,39 +58,64 @@ function deleteResources(ids){
 function downloadResources(ids){
   let deferred = q.defer();
 
-  console.log("1111111111111111111111111111111111111111111111111111111111111111111");
-  console.log(ids);
-  console.log("1111111111111111111111111111111111111111111111111111111111111111111");
 
   return deferred.promise;
 }
 
-function validate(data) {
-  let deferred = q.defer();
+function uploadResource(data){
+  console.log("settmptitle");
 
-  let req = {
-              params: {
-                userId: data.userId,
-                // topicId: null,
-                URL: "url",
-                JSON: {
-                  title: data.title,
-                  text: data.text
-                }
-              }
-           };
+  let content = {
+    title: data.title,
+    text: data.text
+  };
 
-  updateTmpTitle.validate(req, function (err) {
-    if( err ){
-      deferred.reject(err);
-    }else{
-      deferred.resolve(null);
-    };
+  let req = expressValidatorStub({
+    params: {
+      userId: data.userId,
+      // topicId: data.topicId,
+      URL: "url",
+      JSON: content
+    }
   });
 
-  return deferred.promise;
+  console.log(req);
+
+  var resCb = function (result) {
+    if (!result) return;
+    io.connected[socket.id].emit('submitform', formID);
+  };
+
+  var nextCb = function (err) {
+    // TBD
+  };
+  
+  updateTmpTitle.validate(req, function (err) {
+    if (err){
+
+    }else{
+      updateTmpTitle.run(req, res, nextCb);
+    }
+  });
+
+  // // let deferred = q.defer();
+
+  // let params = {
+  //   file: req.files,
+  //   width: 950,
+  //   height: 460,
+  //   type: 'image',
+  //   resCb: function(userId, Json) {
+  //     console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+  //     console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+  //   }
+  // };
+
+  // uploadNewResource.saveResourceToDisk(params);
+
+  // // return deferred.promise;
 }
 
-function uploadResource(req, res){
+function uploadResourceCallback(userId, json) {
 
 }

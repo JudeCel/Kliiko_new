@@ -1138,7 +1138,10 @@ module.exports.listen = function (server) {
         JSON: content
       }
     });
+    console.log(req)
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 
+      console.log(formID)
     var resCb = function (result) {
       if (!result) return;
       io.connected[socket.id].emit('submitform', formID);
@@ -1149,6 +1152,7 @@ module.exports.listen = function (server) {
     };
 
     var res = { send: resCb };
+
 
     var updateTmpTitle = require('./handlers/updateTmpTitle.js');
     updateTmpTitle.validate(req, function (err) {

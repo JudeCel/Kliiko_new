@@ -11,6 +11,7 @@ im.convert.path = config.paths.convertPath;
 im.identify.path = config.paths.identifyPath;
 
 function saveResourceToDisk(params) {
+
     let err = joi.validate(params, {
         file: joi.object().required(),
         resCb: joi.func().required(),
@@ -26,11 +27,9 @@ function saveResourceToDisk(params) {
     let json = {
       filename: params.file.filename,
     };
-
-
         var filename = json.filename
         var path = params.file.path
-
+        
         fs.readFile(path, function (err) {
             if (err) {
             } else {

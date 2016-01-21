@@ -5,7 +5,7 @@
     module('KliikoApp').
     controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['dbg', '$q', 'GalleryServices', '$modal', '$scope', 'domServices','$injector', 'messenger', 'Upload'];
+  GalleryController.$inject = ['dbg', '$q', 'GalleryServices', '$modal', '$scope', 'domServices','$injector', 'messenger', 'Upload', 'globalSettings'];
   function GalleryController(dbg, $q, GalleryServices, $modal, $scope, domServices,$injector, messenger, Upload, globalSettings){
     dbg.log2('#GalleryController  started');
     initList();
@@ -88,64 +88,33 @@
     };
 
     $scope.submitForm = function(newResource) {
+      let deferred = $q.defer();
+      let resourceParams = {
+        // topicId: topicId,
+        userId: null,
+        title: newResource.title,
+        type: newResource.type,
+        text: $scope.newResource.fileTst.name
+      };
+      // console.log(GalleryServices.createResource);
+      GalleryServices.createResource(resourceParams).then(function(res) {
+        
+      })
 
-      // $scope.dataForValidation = $scope.newResource;
-      // $scope.dataForValidation.file = {
-      //   name: $scope.fileTst.name,
-      //   size: $scope.fileTst.size,
-      //   type: $scope.fileTst.type
-      // }
+      //   Upload.upload({
+      //     url: globalSettings.restUrl+'/gallery',
+      //     method: 'POST',
+      //     data: {uploadedfile: newResource.fileTst}
+      //   }).then(
+      //     function(res) {
 
-      // console.log($scope.dataForValidation);
-      // GalleryServices.validateData($scope.dataForValidation).then(function(res) {
-      //   if(res.error){
-      //     messenger.error(res.error.name);
-      //   }else{
-          var deferred = $q.defer();
-          console.log(newResource);
-          // Upload.upload({
-          //   url: globalSettings.restUrl+'/gallery',
-          //   method: 'POST',
-          //   data: {file: newResource.fileTst, title: newResource.title, type: $scope.newResource.type},
-          //   resumeChunkSize: '10KB'
-          Upload.http({
-            url: globalSettings.restUrl+'/gallery',
-            headers : {
-              'Content-Type': newResource.fileTst.type
-            },
-            data: newResource.fileTst
-          }).then(
-            function(res) {
-              if (res.data && res.data.error) {
-                dbg.log2('#bannerMessagesService > upload > error ', res.data.error);
-                deferred.reject(res.data.error);
-                return deferred.promise;
-              }
-
-              dbg.log2('#bannerMessagesService > upload > success ', res);
-              console.warn(currentBannerType)
-              if (currentBannerType) setMainBannerForPage(currentBannerType);
-
-              deferred.resolve();
-            },
-            function(err) {
-              dbg.log2('#bannerMessagesService > upload > error ', err);
-              deferred.reject( {status:err.status, statusText: err.statusText})
-            },
-            function(evt) {}
-          );
-
-          return deferred.promise;
-
-          // GalleryServices.uploadResource($scope.fileTst).then(function(res) {
-          //   if(res.errors){
-          //     messenger.error(res.errors);
-          //   }else{
-          //     messenger.error("Successfully uploaded a new resource.");
-          //   }
-          // });
-      //   };
-      // });
+      //       deferred.resolve();
+      //     },
+      //     function(err) {
+      //       deferred.reject( {status:err.status, statusText: err.statusText})
+      //     }
+      //   );
+      // return deferred.promise;
     };
 
     function uploadTypeForTitle(uploadType) {

@@ -20,6 +20,7 @@ function uploadResourceCallback(userId, json) {
     return client.userId == userId;
   });
 
+
   if (foundUser) {
     foundUser.emit("fileuploadcomplete", json);
   }
