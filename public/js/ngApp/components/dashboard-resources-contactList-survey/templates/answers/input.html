@@ -17,9 +17,9 @@
         <input type='text' class='form-control' id='answer-{{ object.order }}-{{ answer.order }}' placeholder='Answer' name='{{ answer.order }}'
           ng-model='answer.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='question.active'>
 
-        <span class='input-group-addon list-handle' ng-if='!sc.canChangeAnswers(-1, question)'>@</span>
-        <span class='input-group-addon list-handle' ng-if='sc.canChangeAnswers(-1, question)'>
-          <span class='glyphicon glyphicon-remove' ng-click='sc.changeAnswers(-1, question, $index)'></span>
+        <span class='input-group-addon list-handle' ng-if='!sc.canChangeAnswers("remove", question)'>@</span>
+        <span class='input-group-addon list-handle' ng-if='sc.canChangeAnswers("remove", question)'>
+          <span class='glyphicon glyphicon-remove' ng-click='sc.changeAnswers("remove", question, $index)'></span>
         </span>
       </div>
     </div>
@@ -28,6 +28,6 @@
 
 <div class='col-sm-12'>
   <div class='col-sm-offset-2' ng-if='!sc.survey.confirmedAt'>
-    <img src='/icons/add_new_list_blue.png' ng-if='sc.canChangeAnswers(1, question)' ng-click='sc.changeAnswers(1, question)' />
+    <img src='/icons/add_new_list_blue.png' ng-if='sc.canChangeAnswers("add", question)' ng-click='sc.changeAnswers("add", question)' />
   </div>
 </div>

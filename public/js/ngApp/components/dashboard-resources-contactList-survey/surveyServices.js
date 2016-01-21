@@ -27,6 +27,8 @@
     upServices.copySurvey = copySurvey;
     upServices.answerSurvey = answerSurvey;
     upServices.confirmSurvey = confirmSurvey;
+    upServices.pickValidClass = pickValidClass;
+    upServices.prepareError = prepareError;
     return upServices;
 
     function getConstants() {
@@ -147,6 +149,24 @@
       });
 
       return deferred.promise;
+    };
+
+    function pickValidClass(error, className) {
+      return className + (error && Object.keys(error).length > 0 ? '-danger' : '-success');
+    };
+
+    function prepareError(errors) {
+      if(typeof errors == 'string') {
+        return errors;
+      }
+      else {
+        var string = '';
+        for(var i in errors) {
+          var error = errors[i];
+          string += (error + '<br>');
+        }
+        return string;
+      }
     };
   };
 })();

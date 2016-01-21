@@ -29,7 +29,7 @@
     vm.defaultArray = defaultArray;
     vm.changePage = changePage;
     vm.addContactDetail = addContactDetail;
-    vm.pickValidClass = pickValidClass;
+    vm.pickValidClass = surveyServices.pickValidClass;
     vm.changeQuestions = changeQuestions;
     vm.contactDetailDisabled = contactDetailDisabled;
 
@@ -78,7 +78,7 @@
           progressbar.complete();
 
           if(res.error) {
-            messenger.error(prepareError(res.error));
+            messenger.error(surveyServices.prepareError(res.error));
           }
           else {
             messenger.ok(res.message);
@@ -98,7 +98,7 @@
         progressbar.complete();
 
         if(res.error) {
-          messenger.error(prepareError(res.error));
+          messenger.error(surveyServices.prepareError(res.error));
         }
         else {
           survey.closed = !survey.closed;
@@ -143,7 +143,7 @@
         dbg.log2('#SurveyController > finishCreate > res ', res);
 
         if(res.error) {
-          messenger.error(prepareError(res.error));
+          messenger.error(surveyServices.prepareError(res.error));
         }
         else {
           changePage('index');
@@ -157,7 +157,7 @@
         dbg.log2('#SurveyController > finishEdit > res ', res);
 
         if(res.error) {
-          messenger.error(prepareError(res.error));
+          messenger.error(surveyServices.prepareError(res.error));
         }
         else {
           changePage('index');
@@ -175,7 +175,7 @@
         progressbar.complete();
 
         if(res.error) {
-          messenger.error(prepareError(res.error));
+          messenger.error(surveyServices.prepareError(res.error));
         }
         else {
           vm.surveys.push(res.data);
@@ -194,7 +194,7 @@
         progressbar.complete();
 
         if(res.error) {
-          messenger.error(prepareError(res.error));
+          messenger.error(surveyServices.prepareError(res.error));
         }
         else {
           survey.confirmedAt = date;
@@ -272,7 +272,7 @@
     };
 
     function canChangeAnswers(value, question) {
-      if(value > 0) {
+      if(value == 'add') {
         return (question.answers.length < question.maxAnswers);
       }
       else {
@@ -281,7 +281,7 @@
     };
 
     function changeAnswers(value, question, index) {
-      if(value > 0) {
+      if(value == 'add') {
         question.answers.push({ order: question.answers.length });
       }
       else {
@@ -328,26 +328,8 @@
       }
     };
 
-    function pickValidClass(error, className) {
-      return className + (error && Object.keys(error).length > 0 ? '-danger' : '-success');
-    };
-
     function contactDetailDisabled(cd) {
       return (vm.currentContacts[cd.model] ? false : cd.disabled);
-    };
-
-    function prepareError(errors) {
-      if(typeof errors == 'string') {
-        return errors;
-      }
-      else {
-        var string = '';
-        for(var i in errors) {
-          var error = errors[i];
-          string += (error + '<br>');
-        }
-        return string;
-      }
     };
   };
 })();
