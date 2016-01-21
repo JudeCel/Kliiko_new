@@ -2,12 +2,11 @@
 var multer = require('multer');
 var config = require('config').get('chatConf');
 var fs = require('fs');
+var _ = require("lodash");
 
 const MEGABYTE = 1024*1024;
 const VALIDATIONS = {
   maxSize: 2, // 2mb
-  maxWidth: 768,
-  maxHeight: 200,
   fileTypes: [
     'image/gif',
     'image/png',
@@ -30,6 +29,13 @@ module.exports = function upload(options) {
         }
         cb(null, path);
       });
+    },
+    fileFilter: function (req, file, cb) {
+      if (_.includes(VALIDATIONS.fileTypes, req.headers['content-type'])) {
+        cb(null, true);
+      }else {
+        cb(new Error(req.headers['content-type'] +' are not allowed'));
+      }
     },
     filename: function (req, file, cb) {
       let re = /(?:\.([^.]+))?$/;
