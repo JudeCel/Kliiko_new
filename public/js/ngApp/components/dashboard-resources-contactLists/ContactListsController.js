@@ -28,6 +28,9 @@
 
     init();
 
+    /**
+     * Fetch lists and show first list details
+     */
     function init() {
       contactListServices.getContactLists().then(function (result) {
         vm.lists = result;
@@ -43,6 +46,9 @@
     }
 
 
+    /**
+     * Add "controls" to members items
+     */
     function prepareSelectedListMembersControls() {
       if (!vm.selectedListMembers) return;
 
@@ -62,12 +68,12 @@
       prepareSelectedListMembersControls();
     }
 
-    function addContactManual() {
-      domServices.modal('contactList-addContactManual');
-    }
+    function addContactManual() {    domServices.modal('contactList-addContactManual');  }
 
+    /**
+     * create a contact for currently active list
+     */
     function createContact() {
-
       var currentList = vm.lists[vm.activeListIndex];
 
       var valid = validate();
@@ -117,6 +123,9 @@
 
     }
 
+    /**
+     * Toggle selection for all items in contacts list
+     */
     function selectAll() {
       vm.allSelected = !vm.allSelected;
       for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
@@ -166,6 +175,9 @@
       );
     }
 
+    /**
+     * Delete all contacts that are selected in current list
+     */
     function massDelete() {
       var ids = [];
       for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
@@ -175,10 +187,11 @@
       removeContacts(ids);
     }
 
-    function addNewList() {
-      domServices.modal('contactList-addNewListModal');
-    }
+    function addNewList() {  domServices.modal('contactList-addNewListModal'); }
 
+    /**
+     * Add new contacts List
+     */
     function submitNewList() {
       if (!vm.newList.name) {
         dbg.log2('#ContactListController > submitNewList > error > list name is empty');
@@ -202,6 +215,9 @@
       );
     }
 
+    /**
+     * Remove current contact list
+     */
     function removeList() {
       var confirmed = confirm('Are you sure?');
       if (!confirmed) return;
