@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "test": "mocha test",
-    "rst": "node /lib/tasks/dbReset"
+    "reset": "node ./lib/tasks/dbReset && node ./seeders/users"
   },
   "engineStrict": true,
   "engine": {
