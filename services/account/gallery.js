@@ -6,6 +6,7 @@ var account = models.Account;
 var Resource = models.Resource;
 var expressValidatorStub = require('../../chatRoom/helpers/expressValidatorStub.js');
 var updateTmpTitle = require('../../chatRoom/handlers/updateTmpTitle.js');
+var deleteResource = require('../../chatRoom/handlers/deleteResource.js');
 
 module.exports = {
   getResources: getResources,
@@ -41,19 +42,6 @@ function getResources(accountName){
   return deferred.promise;
 }
 
-function deleteResources(ids){
-  let deferred = q.defer();
-
-  Resource.destroy({ where: ids})
-    .then(function(result) {
-      deferred.resolve(ids);
-    }
-  ).catch(function(err) {
-    deferred.reject(err);
-  });
-
-  return deferred.promise;
-}
 
 function downloadResources(ids){
   let deferred = q.defer();
@@ -62,60 +50,58 @@ function downloadResources(ids){
   return deferred.promise;
 }
 
-function uploadResource(data){
-  console.log("settmptitle");
+function deleteResources(ids){
+  let deferred = q.defer();
 
-  let content = {
-    title: data.title,
-    text: data.text
+  let req = expressValidatorStub({
+    params: ids
+  });
+
+  var nextCb = function (err) {
+    deferred.reject(err);
   };
+
+  var res = {
+    send: function (result) {
+      deferred.resolve(result);
+    }
+  };
+
+  deleteResource.run(req, res, nextCb);
+  
+  return deferred.promise;
+}
+
+function uploadResource(data){
+  let deferred = q.defer();
 
   let req = expressValidatorStub({
     params: {
-      userId: data.userId,
-      // topicId: data.topicId,
+      userId: data.user.id,
+      topicId: 1, //THIS NEEDS to be changed
       URL: "url",
-      JSON: content
+      JSON: {
+        title: data.body.title,
+        text: data.body.text
+      }
     }
   });
 
-  console.log(req);
-
-  var resCb = function (result) {
-    if (!result) return;
-    io.connected[socket.id].emit('submitform', formID);
+  var errorCallback = function (err) {
+    deferred.reject(err);
   };
 
-  var nextCb = function (err) {
-    // TBD
-  };
+  let successCallback = { send: function(result) {
+    deferred.resolve(result);
+  }}
   
   updateTmpTitle.validate(req, function (err) {
     if (err){
-
+      return errorCallback(err);
     }else{
-      updateTmpTitle.run(req, res, nextCb);
+      updateTmpTitle.run(req, successCallback, errorCallback);
     }
   });
 
-  // // let deferred = q.defer();
-
-  // let params = {
-  //   file: req.files,
-  //   width: 950,
-  //   height: 460,
-  //   type: 'image',
-  //   resCb: function(userId, Json) {
-  //     console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-  //     console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-  //   }
-  // };
-
-  // uploadNewResource.saveResourceToDisk(params);
-
-  // // return deferred.promise;
-}
-
-function uploadResourceCallback(userId, json) {
-
+  return deferred.promise;
 }

@@ -20,11 +20,9 @@ var validate = function (req, resCb) {
 };
 
 var run = function (req, resCb, errCb) {
-          console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
   Resource.destroy({where: {resourceType: 'tmp', userId: req.params.userId }})
     .then(function () {
-      console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-      console.log(req.params)
       createResurce(req.params, function(err, reult) {
         if (err) {
           errCb(webFaultHelper.getFault(err));

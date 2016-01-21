@@ -49,7 +49,8 @@ router.get('/chargebee/subscriptions', multipartyMiddleware, chargebee.chargebee
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
 
 
-router.post('/gallery', fileUploader(), gallery.postResources);
+router.post('/gallery', gallery.postResources);
+router.post('/gallery/uploadFile', fileUploader(), gallery.uploadResource);
 router.get('/gallery', gallery.getResources);
 router.get('/gallery/download', gallery.downloadResources);
 router.delete('/gallery', gallery.deleteResources);

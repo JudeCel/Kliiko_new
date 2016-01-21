@@ -1,13 +1,15 @@
 'use strict';
 
-var multer  = require('multer')
+var multer  = require('multer');
 var galleryService = require('./../../services/account/gallery');
+var socketHelper = require("../../chatRoom/socketHelper");
 
 module.exports = {
   getResources: getResources,
   postResources: postResources,
   downloadResources: downloadResources,
-  deleteResources: deleteResources
+  deleteResources: deleteResources,
+  uploadResource: uploadResource
 };
 
 function postResources(req, res, next) {    
@@ -38,3 +40,14 @@ function deleteResources(req, res, next) {
   });
 }
 
+function uploadResource(req, res, next) {
+  socketHelper.uploadResource({
+    file: req.file,
+    width: 950,
+    height: 460,
+    type: req.body.type,
+    resCb: function(userId, json) {
+      res.send(json);
+    }
+  });
+}

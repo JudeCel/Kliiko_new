@@ -5,12 +5,20 @@
     module('KliikoApp').
     controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['dbg', '$q', 'GalleryServices', '$modal', '$scope', 'domServices','$injector', 'messenger', 'Upload', 'globalSettings'];
+  GalleryController.$inject = ['dbg', '$q', 'GalleryServices', '$modal', 
+                               '$scope', 'domServices','$injector', 'messenger', 
+                               'Upload', 'globalSettings'];
+
   function GalleryController(dbg, $q, GalleryServices, $modal, $scope, domServices,$injector, messenger, Upload, globalSettings){
     dbg.log2('#GalleryController  started');
     initList();
 
-    // $scope.viewStyle = $cookies.get('viewStyle');
+    function initList() {
+      GalleryServices.getResources().then(function(res) {
+        $scope.resources = res.data;
+        $scope.totalResourceCount = $scope.resources.length;
+      });
+    }
 
     $scope.newResource = {};
     $scope.dataForValidation = {};
@@ -19,11 +27,15 @@
 
     $scope.setView = function(style) {
       // $cookies.put('viewStyle', style);
-      // dbg.yell($sessionStorage.SessionMessage)
+      dbg.yell(style)
     }
 
     $scope.resourcesSelected = function(id) {
-      $scope.idsForAction.push(id);
+      if($scope.idsForAction.indexOf(id) == -1){
+        $scope.idsForAction.push(id);
+      }else if($scope.idsForAction.indexOf(id) !== -1){
+        $scope.idsForAction.splice($scope.idsForAction.indexOf(id), 1);
+      }
     }
 
     $scope.actionDelete = function(){
@@ -36,36 +48,38 @@
 
     $scope.submitIdsForMassAction = function() {
       if($scope.action === "delete"){
-        GalleryServices.deleteResources({id: $scope.idsForAction}).then(function(res) {
-          if(res.error){
-            // TODO
-          }else{
-            $scope.idsForAction = [];
-            initList()
-          }
-        });
+        $scope.deleteResources($scope.idsForAction);
       }
 
       if($scope.action === "download"){
-        GalleryServices.downloadResources({id: $scope.idsForAction}).then(function(res) {
+        $scope.downloadResources($scope.idsForAction);
+      }
+    }
+
+    $scope.deleteResources = function(id) {
+      GalleryServices.deleteResources({resource_id: id}).then(function(res) {
+        if(res.error){
+          // TODO
+        }else{
+          $scope.idsForAction = [];
+          initList()
+          messenger.ok("Your selected resource(s) was successfully deleted.");
+        }
+      });
+    }
+
+    $scope.downloadResources = function(id) {
+       GalleryServices.downloadResources({id: id}).then(function(res) {
           if(res.error){
             // TODO
           }else{
             $scope.idsForAction = [];
           }
         });
-      }
     }
 
     $scope.uploadTst = function() {
-      dbg.yell($scope.newResource.fileTst)
-    }
-
-    function initList() {
-      GalleryServices.getResources().then(function(res) {
-        $scope.resources = res.data;
-        $scope.totalResourceCount = $scope.resources.length;
-      });
+      
     }
 
     $scope.downloadResources = function(){
@@ -74,21 +88,14 @@
       });
     }
 
-    $scope.deleteResources = function(){
-      GalleryServices.deleteResources().then(function(res) {
-
-      });
-    }
-
     $scope.uploadResourceForm = function(uploadType) {
       $scope.newResource.type = uploadType;
       $scope.uploadTypeForTitle = uploadTypeForTitle(uploadType);
 
-      domServices.modal('uploadTST')
+      domServices.modal('uploadTST');
     };
 
     $scope.submitForm = function(newResource) {
-      let deferred = $q.defer();
       let resourceParams = {
         // topicId: topicId,
         userId: null,
@@ -96,25 +103,29 @@
         type: newResource.type,
         text: $scope.newResource.fileTst.name
       };
-      // console.log(GalleryServices.createResource);
+
       GalleryServices.createResource(resourceParams).then(function(res) {
-        
+        if(res.error){
+        }else{
+          Upload.upload({
+            url: globalSettings.restUrl+'/gallery/uploadFile',
+            method: 'POST',
+            data: {uploadedfile: newResource.fileTst, type: resourceParams.type}
+          }).then(
+            function(res) {
+              initList();
+              $scope.newResource = {};
+              cancel();
+              messenger.ok("Resource was successfully created.");
+            },
+
+            function(err) {
+            
+            }
+          );
+        }
       })
 
-      //   Upload.upload({
-      //     url: globalSettings.restUrl+'/gallery',
-      //     method: 'POST',
-      //     data: {uploadedfile: newResource.fileTst}
-      //   }).then(
-      //     function(res) {
-
-      //       deferred.resolve();
-      //     },
-      //     function(err) {
-      //       deferred.reject( {status:err.status, statusText: err.statusText})
-      //     }
-      //   );
-      // return deferred.promise;
     };
 
     function uploadTypeForTitle(uploadType) {
@@ -126,6 +137,47 @@
       }
       return uploadType;
     }
-  }
 
+    function cancel(){
+      domServices.modal('uploadTST', 'close');
+    }
+   
+    $scope.selectedText = 'Select All';
+    $scope.isAll = false;
+    $scope.selectAllResources = function() {
+      console.log($scope.selectedText);
+      console.log($scope.isAll);
+      console.log("THIS IS WORKING");
+      if($scope.isAll === false) {
+        angular.forEach($scope.resources, function(resource){
+          resource.checked = true;
+          $scope.idsForAction.push(resource.id);
+        });
+      
+        $scope.isAll = true;  
+        $scope.selectedText = 'Deselect All';
+
+      } else {
+        angular.forEach($scope.resources, function(resource){
+          resource.checked = false;
+        });
+
+        $scope.idsForAction = [];
+        $scope.isAll = false; 
+        $scope.selectedText = 'Select All';
+      }
+    };
+
+    $scope.setView =function(type) {
+      
+    }
+
+    // $scope.filters = { };    
+    // $scope.links = [
+    //     {name: 'Audio', type: 'audio'},
+    //     {name: 'Images', type: 'image'},
+    //     {name: 'Youtube', type: 'video'}
+    // ];
+
+  }
 })();

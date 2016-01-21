@@ -1138,10 +1138,7 @@ module.exports.listen = function (server) {
         JSON: content
       }
     });
-    console.log(req)
-    console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 
-      console.log(formID)
     var resCb = function (result) {
       if (!result) return;
       io.connected[socket.id].emit('submitform', formID);

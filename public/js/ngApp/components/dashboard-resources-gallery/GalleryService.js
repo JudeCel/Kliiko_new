@@ -6,6 +6,7 @@
   function GalleryServices(globalSettings, $q, $resource, dbg, Upload) {
     var galleryRestApi = {
       gallery: $resource(globalSettings.restUrl +'/gallery', {}, { post: { method: 'POST' } }),
+      uploadFile: $resource(globalSettings.restUrl +'/gallery/uploadFile', {}, { post: { method: 'POST' } }),
       download: $resource(globalSettings.restUrl +'/gallery/download'),
       validate: $resource(globalSettings.restUrl +'/gallery/validate')
     };
@@ -15,7 +16,6 @@
     upServices.getResources = getResources;
     upServices.downloadResources = downloadResources;
     upServices.deleteResources = deleteResources;
-    upServices.uploadResourceFile = uploadResourceFile;
     upServices.createResource = createResource;
     return upServices;
 
@@ -63,11 +63,6 @@
 
       return deferred.promise;
     }
-
-    function uploadResourceFile(params) {
-      //TODO
-    };
-
 
   };
 })();
