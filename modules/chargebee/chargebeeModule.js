@@ -98,7 +98,7 @@ function prepareHostedPage(userData, planDetails, paymentDetails, pages, passThr
       line1 : userData.postalAddress,
       city : userData.city,
       state : userData.state,
-      zip : userData.postcode,
+      zip : userData.postCode,
       country : userData.country
     },
     redirect_url: pages.redirect_url,
@@ -234,7 +234,7 @@ function upgradeSubscription(subscriptionId, userData, planData) {
       line1 : userData.postalAddress,
       city : userData.city,
       state : userData.state,
-      zip : userData.postcode,
+      zip : userData.postCode,
       country : userData.country
     }
   }).request(function(error, result){

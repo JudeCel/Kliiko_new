@@ -4,6 +4,7 @@ var models  = require('./../../models');
 var ContactListService  = require('./../../services/contactList');
 var UserService  = require('./../../services/users');
 var constants = require('./../../util/constants');
+var userFixture = require('./../fixtures/user');
 
 describe('Services -> ContactList', () => {
   describe('create',  () => {
@@ -127,4 +128,65 @@ describe('Services -> ContactList', () => {
       });
     });
   });
+
+  describe('#parseFile', function() {
+    var testUser, testAccount;
+    var testFile = 'test/fixtures/contactList/list_valid.csv';
+
+    beforeEach(function(done) {
+      userFixture.createUserAndOwnerAccount().then(function(result) {
+        testUser = result.user;
+        testAccount = result.account;
+        done();
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    afterEach(function(done) {
+      models.sequelize.sync({ force: true }).then(() => {
+        done();
+      });
+    });
+
+    describe('happy path', function() {
+      it('should succeed', function(done) {
+        let attrs = {
+          accountId: testAccount.id,
+          name: 'cool list',
+          customFields: ['one', 'two', 'three']
+        }
+
+        ContactListService.create(attrs).then(function(contactList) {
+          ContactListService.parseFile(contactList.id, testFile).then(function(result) {
+            assert.deepEqual(result.invalid, []);
+            assert.equal(result.valid[0].firstName, 'user');
+            assert.equal(result.valid[0].lastName, 'insider user');
+            assert.equal(result.valid[0].gender, 'male');
+            assert.equal(result.valid[0].email, 'user@insider.com');
+            assert.equal(result.valid[0].mobile, '3124421424');
+            assert.equal(result.valid[0].landlineNumber, '312756661424');
+            assert.equal(result.valid[0].postalAddress, 'Super street 2- 7');
+            assert.equal(result.valid[0].city, 'Riga');
+            assert.equal(result.valid[0].state, 'LA');
+            assert.equal(result.valid[0].postCode, 'se6 2by');
+            assert.equal(result.valid[0].country, 'USA');
+            assert.equal(result.valid[0].companyName, 'Diatom Ltd.');
+            assert.equal(result.valid[0].age, 18);
+            assert.equal(result.valid[0].one, 1);
+            assert.equal(result.valid[0].two, 2);
+            assert.equal(result.valid[0].three, 3);
+            done();
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+
+    describe('sad path', function() {
+
+    });
+  });
+
 });

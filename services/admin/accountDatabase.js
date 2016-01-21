@@ -66,7 +66,7 @@ function csvData(callback) {
             'E-mail': user.email || '',
             'Address': user.postalAddress || '',
             'City': user.city || '',
-            'Postcode': user.postcode || '',
+            'Postcode': user.postCode || '',
             'Country': user.country || '',
             'Company': user.companyName || '',
             'Gender': user.gender || '',

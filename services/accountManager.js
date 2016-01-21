@@ -135,7 +135,7 @@ function inviteParams(invitedUserId, accountId, type) {
 };
 
 function prepareParams(req) {
-  return _.pick(req.body, ['firstName', 'lastName', 'gender', 'email', 'mobile', 'postalAddress', 'city', 'state', 'postcode', 'companyName', 'landlineNumber']);
+  return _.pick(req.body, ['firstName', 'lastName', 'gender', 'email', 'mobile', 'postalAddress', 'city', 'state', 'postCode', 'companyName', 'landlineNumber']);
 };
 
 function prepareErrors(err) {

@@ -34,7 +34,7 @@
 
           <div id="under-list-of-contacts-btns">
             <div class="btn-standart btn-green" ng-click="clc.addNewList()">Add new list <img src="/icons/add_new_list_green.png" class="pull-right"></div>
-            <div class="btn-standart btn-blue">Recruiter <img src="/icons/recruiter_blue.png" class="pull-right"></div>
+            <div class="btn-standart btn-blue" ui-sref='dashboard.resources.contactLists.survey'>Recruiter <img src="/icons/recruiter_blue.png" class="pull-right"></div>
           </div>
 
 
@@ -206,10 +206,10 @@
                 </div>
 
                 <div class='form-group'>
-                  <label class='control-label col-md-4 text-no-bold text-login-page' for='postcode'>Postcode</label>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='postCode'>Postcode</label>
                   <div class='col-md-8'>
-                    <span class='has-error text-red-dark'>{{ clc.modalErrors.postcode }}</span>
-                    <input type='text' class='form-control' id='postcode' placeholder='Postcode' ng-model='clc.newContact.postcode'>
+                    <span class='has-error text-red-dark'>{{ clc.modalErrors.postCode }}</span>
+                    <input type='text' class='form-control' id='postCode' placeholder='Postcode' ng-model='clc.newContact.postCode'>
                   </div>
                 </div>
 

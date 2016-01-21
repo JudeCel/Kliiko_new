@@ -87,6 +87,7 @@
     "ejs": "^2.3.4",
     "express": "^4.13.3",
     "express-session": "^1.11.3",
+    "fast-csv": "^1.0.0",
     "forever-monitor": "^1.7.0",
     "fs-extra": "^0.26.2",
     "gulp-less": "^3.0.3",
