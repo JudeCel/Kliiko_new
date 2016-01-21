@@ -28,12 +28,12 @@ function createOrFindUser(req, callback) {
       where: { email: params.email }
     }).then(function(foundUser) {
       if(foundUser) {
-        callback(null, inviteParams(foundUser.id, user.accountOwnerId, 'existing'));
+        callback(null, inviteParams(foundUser.id, user.ownerAccountId, 'existing'));
       }
       else {
         adjustParamsForNewUser(params);
         User.create(params).then(function(newUser) {
-          callback(null, inviteParams(newUser.id, user.accountOwnerId, 'new'));
+          callback(null, inviteParams(newUser.id, user.ownerAccountId, 'new'));
         }).catch(function(error) {
           callback(prepareErrors(error));
         });
@@ -45,10 +45,10 @@ function createOrFindUser(req, callback) {
 function findAccountManagers(user, callback) {
   async.parallel([
     function(cb) {
-      findUsers(AccountUser, { owner: false, AccountId: user.accountOwnerId }, [ 'id', 'UserId', 'AccountId' ], cb);
+      findUsers(AccountUser, { owner: false, AccountId: user.ownerAccountId }, [ 'id', 'UserId', 'AccountId' ], cb);
     },
     function(cb) {
-      findUsers(Invite, { accountId: user.accountOwnerId, role: 'accountManager' }, [ 'id', 'userId' ], cb);
+      findUsers(Invite, { accountId: user.ownerAccountId, role: 'accountManager' }, [ 'id', 'userId' ], cb);
     }
   ], function(err, results) {
     if(err) {
@@ -67,7 +67,7 @@ function findAndRemoveAccountUser(req, callback) {
   AccountUser.find({
     where: {
       UserId: userId,
-      AccountId: currentUser.accountOwnerId,
+      AccountId: currentUser.ownerAccountId,
       owner: false
     }
   }).then(function(result) {
@@ -95,7 +95,7 @@ function preValidate(user, params, callback) {
     }],
     where: {
       UserId: { $ne: user.id },
-      AccountId: user.accountOwnerId
+      AccountId: user.ownerAccountId
     }
   }).then(function(accountUsers) {
     if(_.isEmpty(accountUsers)) {
