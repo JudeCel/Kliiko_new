@@ -36,7 +36,7 @@ function getResources(req, res, next) {
 }
 
 function downloadResources(req, res, next) {
-  galleryService.downloadResources(req.body, function(result) {
+  galleryService.downloadResources(req.query, function(result) {
     res.send(result);
   });
 }

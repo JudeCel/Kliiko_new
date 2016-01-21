@@ -5,15 +5,22 @@
     module('KliikoApp').
     controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['dbg', '$q', 'GalleryServices', '$modal', '$scope', 'domServices', '$ocLazyLoad','$injector', 'angularConfirm', 'messenger', 'Upload', 'globalSettings'];
-  function GalleryController(dbg, $q, GalleryServices, $modal, $scope, domServices, $ocLazyLoad,$injector,  angularConfirm, messenger, Upload, globalSettings){
+  GalleryController.$inject = ['dbg', '$q', 'GalleryServices', '$modal', '$scope', 'domServices','$injector', 'messenger', 'Upload'];
+  function GalleryController(dbg, $q, GalleryServices, $modal, $scope, domServices,$injector, messenger, Upload, globalSettings){
     dbg.log2('#GalleryController  started');
     initList();
+
+    // $scope.viewStyle = $cookies.get('viewStyle');
 
     $scope.newResource = {};
     $scope.dataForValidation = {};
     $scope.idsForAction = [];
     $scope.action = "";
+
+    $scope.setView = function(style) {
+      // $cookies.put('viewStyle', style);
+      // dbg.yell($sessionStorage.SessionMessage)
+    }
 
     $scope.resourcesSelected = function(id) {
       $scope.idsForAction.push(id);
@@ -30,13 +37,22 @@
     $scope.submitIdsForMassAction = function() {
       if($scope.action === "delete"){
         GalleryServices.deleteResources({id: $scope.idsForAction}).then(function(res) {
-          
+          if(res.error){
+            // TODO
+          }else{
+            $scope.idsForAction = [];
+            initList()
+          }
         });
       }
 
       if($scope.action === "download"){
-        GalleryServices.downloadResources($scope.idsForAction).then(function(res) {
-
+        GalleryServices.downloadResources({id: $scope.idsForAction}).then(function(res) {
+          if(res.error){
+            // TODO
+          }else{
+            $scope.idsForAction = [];
+          }
         });
       }
     }

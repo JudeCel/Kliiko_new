@@ -8,11 +8,11 @@
           Add New
         </button>
 
-        <button class="pull-right btn" type='button' ng-click="show=!show" ng-class="{hidden:!show,chaldean:show}">
+        <button class="pull-right btn" type='button' ng-click="show=!show; setView('thumbView')" ng-class="{hidden:!show,chaldean:show}">
           <span class='glyphicon glyphicon-th' aria-hidden='true'></span>   
         </button>
 
-        <button class="pull-right btn" type='button' ng-click="show=!show" ng-class="{hidden:show,chaldean:!show}">
+        <button class="pull-right btn" type='button' ng-click="show=!show; setView('listView')" ng-class="{hidden:show,chaldean:!show}">
           <span class='glyphicon glyphicon-th-list' aria-hidden='true'></span>   
         </button>
 

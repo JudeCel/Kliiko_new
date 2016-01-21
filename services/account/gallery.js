@@ -63,15 +63,15 @@ function deleteResources(ids){
     deferred.reject(err);
   });
 
-  console.log("1111111111111111111111111111111111111111111111111111111111111111111");
-  console.log(deferred.promise);
-  console.log("1111111111111111111111111111111111111111111111111111111111111111111");
   return deferred.promise;
 }
 
 function downloadResources(ids){
   let deferred = q.defer();
 
+  console.log("1111111111111111111111111111111111111111111111111111111111111111111");
+  console.log(ids);
+  console.log("1111111111111111111111111111111111111111111111111111111111111111111");
 
   return deferred.promise;
 }
