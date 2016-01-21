@@ -44,6 +44,7 @@ router.post('/mailTemplate', mailTemplates.mailTemplatePost);
 router.delete('/mailTemplate', mailTemplates.deleteMailTemplate);
 router.post('/mailTemplate/save', mailTemplates.saveMailTemplatePost);
 router.post('/mailTemplate/reset', mailTemplates.resetMailTemplatePost);
+router.post('/mailTemplate/preview', mailTemplates.previewMailTemplatePost);
 
 router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
 router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);

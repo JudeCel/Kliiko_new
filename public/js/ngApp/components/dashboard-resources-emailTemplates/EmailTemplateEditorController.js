@@ -3,9 +3,9 @@
   
   angular.module('KliikoApp').controller('EmailTemplateEditorController', EmailTemplateEditorController);
 
-  EmailTemplateEditorController.$inject = ['dbg', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'user'];
+  EmailTemplateEditorController.$inject = ['dbg', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate'];
   
-  //necessary to bypass email viewers restrictions
+  //necessary to bypass email editors restrictions
   jQuery.browser = {};
     (function () {
         jQuery.browser.msie = false;
@@ -16,7 +16,7 @@
         }
     })();
   
-  function EmailTemplateEditorController(dbg, domServices, $state, $stateParams, $scope, mailTemplate, user) {
+  function EmailTemplateEditorController(dbg, domServices, $state, $stateParams, $scope, mailTemplate) {
     dbg.log2('#EmailTemplateEditorController started');
     var vm = this;
     vm.currentTemplate = {index: 0};
@@ -32,10 +32,24 @@
           justifyLeft: { visible : true },
           justifyCenter: { visible : true },
           justifyRight: { visible : true },
-          justifyFull: { visible : true }
+          justifyFull: { visible : true },
+          insertImage: { visible : true }
         }
       });
-            
+      
+      $('#templateContent').wysiwyg("addControl", "youtubeLink", {
+        icon: "/icons/header button icons/addYoutubeVideo.png",
+        visible: true,
+        callbackArguments: [],
+        tooltip: 'Add YouTube link',
+        exec: function() {
+            //Todo: add dialog box for getting actual link
+            var link = "https://www.youtube.com/";
+            var linkHTML = '<a href="' + link + '" target="_blank" style="display:block;text-decoration:none;color:#000;"><img src="/icons/header button icons/tour_video.png"></img> </a>';
+            $('#templateContent').wysiwyg("insertHtml", linkHTML);
+        }
+      });
+          
       $('#templateContent').wysiwyg("setContent", "");
       refreshTemplateList(function() {
         if (vm.emailTemplates && vm.emailTemplates.length) {
@@ -47,8 +61,7 @@
     vm.startEditingTemplate = function(templateIndex) {  
       mailTemplate.getMailTemplate(vm.emailTemplates[templateIndex]).then(function (res) {
         if (res.error) {return;}
-        
-        //vm.currentTemplate = jQuery.extend(true, {}, res.template);
+
         vm.currentTemplate = vm.emailTemplates[templateIndex];
         vm.currentTemplate.content = res.template.content;
         vm.currentTemplate.index = templateIndex;
@@ -58,13 +71,7 @@
     }
     
     vm.modifyAndSave = function(createCopy) {
-      vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent'); 
-      /*
-      //test selecting text to remove formatting for predefined words
-      $('#templateContent').wysiwyg('selectAll');
-      console.log("selected_", $('#templateContent').wysiwyg('getSelection'));
-      return;
-      */
+      vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
       mailTemplate.saveMailTemplate(vm.currentTemplate, createCopy).then(function (res) {
         if (!res.error) {
           refreshTemplateList(function() {
@@ -105,7 +112,19 @@
           });
         }                  
       });
-    } 
+    }
+    
+    vm.previewMailTemplate = function() {
+      vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
+      var contentFrame = $("#contentFrame").contents().find('html');
+      domServices.modal('previewMailTemplateModal');
+      mailTemplate.previewMailTemplate(vm.currentTemplate).then(function(res) {
+        if (!res.error) {
+          contentFrame.html(res.template.content);
+          $("#mailTemplatePreviewSubject").html(res.template.subject);
+        } 
+      });
+    }
     
     function getIndexOfMailTemplateWithId(id) {
       for (var i = 0; i < vm.emailTemplates.length; i++) {
@@ -129,6 +148,6 @@
       });
     }
     
-    vm.init();
+    vm.init();            
   }
 })();

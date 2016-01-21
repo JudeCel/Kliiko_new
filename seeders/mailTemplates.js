@@ -11,37 +11,37 @@ var templateFiles = [
     {
        fileName: 'InvitationSeries_FirstInvite.html',
        name: "First Invitation",
-       subject: "Exclusive Invitation to <SessionName> Online Chat Group"
+       subject: "Invitation to {Session Name}"
      },
      {
        fileName: 'InvitationSeries_CloseSession.html',
-       name: "CloseSession",
-       subject: "InvitationSeries CloseSession subject"
-     },//
+       name: "Close Session",
+       subject: "Close {Session Name} session"
+     },
      {
        fileName: 'InvitationSeries_Confirmation.html',
        name: "Confirmation",
-       subject: "InvitationSeries CloseSession subject"
+       subject: "Invitation confirmed"
      },
      {
        fileName: 'InvitationSeries_Generic.html',
        name: "Generic",
-       subject: "InvitationSeries CloseSession subject"
+       subject: "Invitation"
      },
      {
        fileName: 'InvitationSeries_NotAtAll.html',
-       name: "NotAtAll",
-       subject: "InvitationSeries CloseSession subject"
+       name: "Not At All",
+       subject: "Not At All"
      },
      {
        fileName: 'InvitationSeries_NotThisTime.html',
-       name: "NotThisTime",
-       subject: "InvitationSeries CloseSession subject"
+       name: "Not This Time",
+       subject: "Not this time"
      },
      {
        fileName: 'SystemEmail_AccountManagerConfirmation.html',
-       name: "AccountManagerConfirmation",
-       subject: "InvitationSeries CloseSession subject"
+       name: "Account Manager Confirmation",
+       subject: "Account Manager Confirmation"
      }
      
 ];

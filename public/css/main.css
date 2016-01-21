@@ -1293,7 +1293,6 @@ input[class=checkbox-blue]:checked + label {
     font-size: 1.9rem;
     text-align: left; }
   #email-template-editor div {
-    margin: 0 0 -10px 0;
     font-size: 1.5rem;
     text-align: left; }
   #email-template-editor #templateContent {
