@@ -3,7 +3,7 @@
 <div class='dashboard-container' ng-controller='SurveyClientController as sc' ng-init="sc.init(<%= surveyId %>)">
   <div class='form-horizontal survey-container'>
     <div ng-if='!sc.message'>
-      <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/preview.html'"></ng-include>
+      <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/preview.html'"></ng-include>
 
       <div class='text-center'>
         <button type='button' class='btn no-border-radius' ng-class='sc.pickValidClass(sc.submitForm.$error, "btn")' ng-click='sc.submitSurvey()'>
