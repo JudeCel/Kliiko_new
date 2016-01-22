@@ -87,7 +87,7 @@
 .btn-standart {
   display: initial;
   padding: 9px;
-  border: 3px solid lightgrey;
+  border: 2px solid lightgrey;
   cursor: pointer;
   background: white; }
   .btn-standart.btn-red {
@@ -1775,6 +1775,9 @@ hr.survey-hr {
   color: grey;
   font-style: italic; }
 
+#dashboard-contact-lists h2 {
+  margin: 30px; }
+
 #dashboard-contact-lists thead {
   background: #2F9F69; }
 
@@ -1828,7 +1831,7 @@ hr.survey-hr {
   outline: none; }
   #dashboard-contact-lists #contact-lists-right-column #list-mass-actions .check {
     float: left;
-    margin-left: 10px;
+    margin-top: 11px;
     margin-right: 20px; }
 
 #dashboard-contact-lists #contact-lists-right-column .table-item-edit-group {

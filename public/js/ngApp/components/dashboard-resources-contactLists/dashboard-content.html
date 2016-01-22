@@ -8,9 +8,9 @@
           <h4 class='text-center has-error text-red-dark'>{{ clc.error }}</h4>
           <h4 class='text-center'>{{ clc.message }}</h4>
         </div>
-        <div class='col-md-3 text-right'>
-          <div class='btn btn-addNewElement btn-green' ng-click='clc.addContactManual()' ng-hide="!clc.selectedListMembers.length">Add contacts (manual)</div>
-        </div>
+        <!--<div class='col-md-3 text-right'>-->
+          <!--<div class='btn btn-addNewElement btn-green' ng-click='clc.addContactManual()' ng-hide="!clc.selectedListMembers.length">Add contacts (manual)</div>-->
+        <!--</div>-->
       </div>
     </div>
   </div>
@@ -40,15 +40,21 @@
         </div>
 
         <div id="contact-lists-right-column" class="col-md-10">
-          <div id="list-mass-actions" ng-hide="!clc.selectedListMembers.length">
-            <div class="check">
-              <input id="dashboard-contact-lists-selectAll-mass-action"  class="kliiko-checkbox checkbox-btn btn-green" ng-model="vm.allSelected"  type="checkbox" >
-              <label for="dashboard-contact-lists-selectAll-mass-action" ng-click="clc.selectAll()"></label> Select all
-            </div>
-            <div class="check" >
-              <img src='/icons/dashboardElement_remove.png' alt='' height="22px" ng-click='clc.massDelete()' />
-              Delete
-            </div>
+          <div id="list-mass-actions" ng-class="row" ng-hide="!clc.selectedListMembers.length">
+            <span class="col-md-6">
+              <div class="check" ng-click="clc.selectAll()">
+                <input id="dashboard-contact-lists-selectAll-mass-action"  class="kliiko-checkbox checkbox-btn btn-green" ng-model="vm.allSelected"  type="checkbox" >
+                <label for="dashboard-contact-lists-selectAll-mass-action" ></label> Select all
+              </div>
+              <div class="check" ng-click="clc.massDelete()">
+                <img src='/icons/dashboardElement_remove.png' alt='' height="22px" />
+                Delete
+              </div>
+            </span>
+            <div class='btn-standart btn-green col-md-3' ng-click='clc.editCustomFields()' ng-hide="!clc.selectedListMembers.length">Edit Custom Fields</div>
+            &nbsp; &nbsp;
+            <div class='btn-standart btn-green col-md-2 pull-right' ng-click='clc.addContactManual()' ng-hide="!clc.selectedListMembers.length">Add Contacts</div>
+
           </div>
 
           <table class='table table-responsive table-dashboardElements' ng-hide="!clc.selectedListMembers.length">
@@ -103,7 +109,7 @@
 
           <div id="no-contacts-in-list" class="text-center" ng-show="!clc.selectedListMembers.length">
             <h3>There is no contacts in this list yet</h3>
-            <div class='btn btn-addNewElement btn-green' ng-click='clc.addContactManual()'>Add contacts (manual)</div>
+            <div class='btn btn-standart btn-green' ng-click='clc.addContactManual()'>Add contacts (manual)</div>
             <span ng-show="clc.lists[clc.activeListIndex].editable">
               &nbsp; or &nbsp;
               <div class="btn-standart btn-red" ng-click="clc.removeList()">Remove this List</div>
@@ -281,14 +287,14 @@
         <div class="modal-content border-green border-radius-none">
           <div class='modal-header'>
             <button type='button' class='close' data-dismiss="modal">&times;</button>
-            <h2 class='modal-title text-center'>Add New List</h2>
+            <h2 class='modal-title text-center'>{{clc.listModalTitle}}</h2>
           </div>
+
+
           <div class='modal-body text-gray-medium'>
-
-
             <uib-tabset justified="true">
-              <uib-tab heading="Name Contact List">
-                <form ng-submit="clc.submitNewList">
+              <uib-tab heading="Contact List Name" active="clc.modalTab1">
+                <form ng-submit="clc.submitNewList()">
                   <div class="row text-center">
                     <input id="new-list-name-input" ng-model="clc.newList.name" type="text">
                     <div id="new-list-name-help-text">
@@ -300,15 +306,16 @@
                     <div class='col-md-12'>
 
                       <div class='btn-standart btn-red pull-left modals-btn' data-dismiss="modal">Cancel</div>
-                      <div class='btn-standart btn-green pull-right modals-btn' ng-click="clc.submitNewList()">Add</div>
+                      <div class='btn-standart btn-green pull-right modals-btn' ng-show="!clc.listUpdate" ng-click="clc.submitNewList()">Add</div>
+                      <div class='btn-standart btn-green pull-right modals-btn' ng-show="clc.listUpdate"  ng-click="clc.submitNewList()">Update</div>
 
                     </div>
                   </div>
                 </form>
 
               </uib-tab>
-              <uib-tab heading="Add Custom Fields">
-                <form id="new-list-custom-fields" ng-submit="clc.submitNewList">
+              <uib-tab heading="Custom Fields" active="clc.modalTab2">
+                <form id="new-list-custom-fields" ng-submit="clc.submitNewList()">
                   <div  class="row">
                     <br>
                     <div class="error-message text-center col-md-12" ng-show="clc.newListErrorMessage"><code>{{clc.newListErrorMessage}} </code></div>
@@ -339,7 +346,8 @@
                     <div class='col-md-12'>
 
                       <div class='btn-standart btn-red pull-left modals-btn' data-dismiss="modal">Cancel</div>
-                      <div class='btn-standart btn-green pull-right modals-btn' ng-click="clc.submitNewList()" >Add</div>
+                      <div class='btn-standart btn-green pull-right modals-btn' ng-show="!clc.listUpdate" ng-click="clc.submitNewList()">Add</div>
+                      <div class='btn-standart btn-green pull-right modals-btn' ng-show="clc.listUpdate"  ng-click="clc.submitNewList()">Update</div>
 
                     </div>
                   </div>

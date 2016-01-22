@@ -11,6 +11,7 @@ var csv = require('fast-csv');
 
 module.exports = {
   create: create,
+  update: update,
   allByAccount: allByAccount,
   destroy: destroy,
   createDefaultLists: createDefaultLists,
@@ -74,6 +75,16 @@ function create(params) {
   return deferred.promise;
 }
 
+function update(params) {
+  let deferred = q.defer();
+  ContactList.update(params,  {where: {id: params.id} }).then(function(result) {
+    deferred.resolve(result);
+  }, function(err) {
+    deferred.reject(err);
+  });
+  return deferred.promise;
+}
+
 function createDefaultLists(accoutId, t) {
   let deferred = q.defer();
   ContactList.bulkCreate([
@@ -84,7 +95,7 @@ function createDefaultLists(accoutId, t) {
     deferred.resolve({results: results, transaction: t});
   }, function(err) {
     deferred.reject({error: err, transaction: t});
-  })
+  });
   return deferred.promise;
 }
 

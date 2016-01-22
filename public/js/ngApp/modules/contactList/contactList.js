@@ -17,6 +17,7 @@
     publicServices.getContactLists = getContactLists;
     publicServices.createUser = createUser;
     publicServices.submitNewList = submitNewList;
+    publicServices.updateList = updateList;
     publicServices.deleteUser = deleteUser;
     publicServices.deleteList = deleteList;
 
@@ -78,6 +79,11 @@
 
     }
 
+    /**
+     * Delete one ore more users by given id
+     * @param ids {array} - array of numbers
+     * @returns {*|promise}
+     */
     function deleteUser(ids) {
       var deferred = $q.defer();
 
@@ -96,6 +102,11 @@
       return deferred.promise;
     }
 
+    /**
+     * Create New contacts list
+     * @param listObj {object}
+     * @returns {*|promise}
+     */
     function submitNewList(listObj) {
       var deferred = $q.defer();
 
@@ -113,6 +124,31 @@
       });
       return deferred.promise;
 
+    }
+
+
+    /**
+     * update existing contacts list
+     * @param listId {number} - list id
+     * @param listObj {object} -  list object
+     * @returns {*}
+     */
+    function updateList(listId, listObj) {
+      var deferred = $q.defer();
+
+      var customFields = [];
+
+      // where 13 is maximum custom field allowed (12)
+      for (var i = 1; i < 13 ; i++) {
+        if (listObj['customField'+i] && listObj['customField'+i].length) customFields.push(listObj['customField'+i]);
+      }
+
+      contactListApi.contactLists.put({id:listId}, {name:listObj.name, customFields: customFields}, function(res) {
+        if (res.error) { deferred.reject(res.error); return deferred.promise; }
+
+        deferred.resolve(res);
+      });
+      return deferred.promise;
     }
 
     function deleteList(listId) {

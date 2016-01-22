@@ -45,11 +45,14 @@ function create(req, res, next) {
 //  }
 //
 function update(req, res, next) {
+  if (!req.params.id) { res.send('query param @id is missed'); return }
+
   let params = req.body;
+  params.id = req.params.id;
   params.accaountId = res.locals.currentDomain.id;
 
-  contactListService.update(params).then(function(resul) {
-    res.send(resul);
+  contactListService.update(params).then(function(result) {
+    res.send({success: true, itemsUpdatedAmount:result});
   }, function(err) {
     res.send({ error: err });
   })
