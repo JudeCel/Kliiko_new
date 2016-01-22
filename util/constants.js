@@ -21,18 +21,8 @@ module.exports = {
   ],
   safeUserParams: [
     'id',
-    'firstName',
-    'lastName',
-    'email',
-    'gender',
-    'mobile',
-    'landlineNumber',
-    'postalAddress',
-    'city',
-    'state',
-    'postcode',
-    'country',
-    'companyName'
+    'email'
+
   ],
   promotionCodeTypes: ['percentage', 'value'],
   dateFormat: 'MM-dd-yyyy'

@@ -19,7 +19,7 @@ function createOrFindUser(req, res, callback) {
   let params = prepareParams(req);
   let currentDomain = res.locals.currentDomain;
 
-  preValidate(user, currentDomain, params, function(error) {
+  preValidate(user, currentDomain.id, params, function(error) {
     if(error) {
       return callback(error);
     }
@@ -43,7 +43,7 @@ function createOrFindUser(req, res, callback) {
   });
 };
 
-function findAccountManagers(currentDomain, currentDomain, callback) {
+function findAccountManagers(currentDomain, callback) {
   async.parallel([
     function(cb) {
       findUsers(AccountUser, { owner: false, AccountId: currentDomain.id }, [ 'id', 'UserId', 'AccountId' ], cb);
@@ -84,7 +84,7 @@ function findAndRemoveAccountUser(req, callback) {
 };
 
 //Helpers
-function preValidate(user, currentDomain, params, callback) {
+function preValidate(user, currentDomainID, params, callback) {
   if(user.email == params.email) {
     return callback({ email: 'You are trying to invite yourself.' });
   }
@@ -96,7 +96,7 @@ function preValidate(user, currentDomain, params, callback) {
     }],
     where: {
       UserId: { $ne: user.id },
-      AccountId: currentDomain.id
+      AccountId: currentDomainId
     }
   }).then(function(accountUsers) {
     if(_.isEmpty(accountUsers)) {
