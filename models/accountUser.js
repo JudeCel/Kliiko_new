@@ -31,6 +31,7 @@ module.exports = (Sequelize, DataTypes) => {
         associate: function(models) {
           AccountUser.belongsTo(models.User);
           AccountUser.belongsTo(models.Account);
+          AccountUser.hasMany(models.Invite, { foreignKey: 'accountUserId' });
         }
       }
     }

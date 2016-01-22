@@ -21,6 +21,7 @@ function createInvite(params, callback) {
   expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
 
   Invite.create({
+    accountUserId: params.accountUserId,
     userId: params.userId,
     accountId: params.accountId,
     token: token,
@@ -29,10 +30,11 @@ function createInvite(params, callback) {
     role: params.role,
     userType: params.userType
   }).then(function(result) {
-    Invite.find({ include: [ { model: User, attributes: constants.safeUserParams }, Account ], where: { token: token } }).then(function(invite) {
+    Invite.find({ include: [ { model: AccountUser, attributes: constants.safeAccountUserParams }, Account ], where: { token: token } }).then(function(invite) {
       sendInvite(invite, callback);
     });
   }).catch(function(error) {
+    console.log(error);
     if(error.name == 'SequelizeUniqueConstraintError') {
       callback({ email: 'User has already been invited' })
     }
@@ -45,7 +47,7 @@ function createInvite(params, callback) {
 function sendInvite(invite, callback) {
   let inviteParams = {
     token: invite.token,
-    email: invite.User.email,
+    email: invite.AccountUser.email,
     firstName: invite.AccountUser.firstName,
     lastName: invite.AccountUser.lastName,
     accountName: invite.Account.name
@@ -76,7 +78,7 @@ function removeInvite(invite, callback) {
     });
   }
   else {
-    Invite.destroy({ where: { userId: invite.userId, accountId: invite.accountId } }).then(function() {
+    Invite.destroy({ where: { userId: invite.accountUserId, accountId: invite.accountId } }).then(function() {
       callback(null, true);
     }).catch(function(error) {
       callback(prepareErrors(error));
@@ -85,7 +87,7 @@ function removeInvite(invite, callback) {
 };
 
 function findInvite(token, callback) {
-  Invite.find({ include: [ User, Account, AccountUser ], where: { token: token } }).then(function(result) {
+  Invite.find({ include: [Account, AccountUser, User], where: { token: token } }).then(function(result) {
     if(result) {
       callback(null, result);
     }
@@ -117,7 +119,7 @@ function acceptInviteExisting(token, callback) {
       return callback(null, invite);
     }
 
-    createAccountUserFromInvite(invite, function(error, message) {
+    createUserFromInvite(invite, function(error, message) {
       callback(error, invite, message);
     });
   });
@@ -132,12 +134,12 @@ function acceptInviteNew(token, params, callback) {
       return callback(true);
     }
 
-    updateUser({ password: params.password }, invite, function(error) {
+    createUser({ password: params.password }, invite, function(error, user) {
       if(error) {
         callback(error, invite);
       }
       else {
-        createAccountUserFromInvite(invite, function(error, message) {
+        createUserFromInvite(invite, user, function(error, message) {
           callback(error, invite, message);
         });
       }
@@ -149,9 +151,9 @@ function acceptInviteNew(token, params, callback) {
 function removeAllAssociatedDataOnNewUser(invite, callback) {
   async.waterfall([
     function(cb) {
-      User.find({ where: { id: invite.userId } }).then(function(user) {
-        if(user) {
-          cb(null, user);
+      AccountUser.find({ where: { id: invite.accountUserId } }).then(function(accountUser) {
+        if(accountUser) {
+          cb(null, accountUser);
         }
         else {
           cb('Not found user');
@@ -160,15 +162,8 @@ function removeAllAssociatedDataOnNewUser(invite, callback) {
         cb(prepareErrors(error));
       });
     },
-    function(user, cb) {
-      AccountUser.destroy({ where: { UserId: user.id, AccountId: invite.accountId } }).then(function() {
-        cb(null, user);
-      }).catch(function(error) {
-        cb(prepareErrors(error));
-      });
-    },
-    function(user, cb) {
-      user.destroy().then(function() {
+    function(accountUser, cb) {
+      accountUser.destroy().then(function() {
         cb(null, true);
       }).catch(function(error) {
         cb(prepareErrors(error));
@@ -179,22 +174,29 @@ function removeAllAssociatedDataOnNewUser(invite, callback) {
   });
 }
 
-function createAccountUserFromInvite(invite, callback) {
-  invite.User.addAccount(invite.Account, { role: invite.role, owner: false }).then(function(result) {
-    if(result) {
-      invite.destroy().then(function() {
-        callback(null, 'You have successfully accepted Invite. Please login using your invite e-mail and password.');
-      });
-    }
-    else {
-      callback("Can't add account");
-    }
-  });
+function createUserFromInvite(invite, user, callback) {
+  // console.log(user);
+
+ user.addAccountUser(invite.AccountUser).then(function(result) {
+   if(result) {
+     invite.destroy().then(function() {
+       callback(null, 'You have successfully accepted Invite. Please login using your invite e-mail and password.');
+     });
+   }
+   else {
+     callback("Can't add account");
+   }
+ }, function(err) {
+   console.log(err);
+ });
 };
 
-function updateUser(params, invite, callback) {
-  User.update(params, { where: { id: invite.userId } }).then(function(result) {
-    callback(null, true);
+function createUser(params, invite, callback) {
+  params.email = invite.AccountUser.email;
+  params.confirmedAt = new Date();
+
+  User.create(params).then(function(result) {
+    callback(null, result);
   }).catch(function(error) {
     callback(prepareErrors(error));
   });

@@ -14,7 +14,7 @@ var _ = require('lodash');
 var crypto = require('crypto');
 
 //Exports
-function createOrFindUser(req, res, callback) {
+function createOrFindAccountUser(req, res, callback) {
   let user = req.user;
   let params = prepareParams(req);
   let currentDomain = res.locals.currentDomain;
@@ -25,31 +25,49 @@ function createOrFindUser(req, res, callback) {
     }
 
     User.find({
-      include: [ Account ],
       where: { email: params.email }
-    }).then(function(foundUser) {
-      if(foundUser) {
-        callback(null, inviteParams(foundUser.id, user.ownerAccountId, 'existing'));
-      }
-      else {
-        adjustParamsForNewUser(params);
-        User.create(params).then(function(newUser) {
-          callback(null, inviteParams(newUser.id, user.ownerAccountId, 'new'));
-        }).catch(function(error) {
-          callback(prepareErrors(error));
+    }).then(function(user) {
+      if(user) {
+        user.getAccounts({where: {id: currentDomain.id}}).then(function (results) {
+          console.log(results);
+          if (_.isEmpty(results)) {
+            createAccountUser(params, user.id, "existing", currentDomain.id, callback);
+          }else{
+            callback('This account has already accepted invite.');
+          }
+        })
+      } else {
+        User.create(userParams(params.email)).then(function(user) {
+          createAccountUser(params, user.id, "new", currentDomain.id, callback);
+        }, function(err) {
+          callback(prepareErrors(err));
         });
       }
     });
   });
 };
 
-function findAccountManagers(currentDomain, callback) {
+function createAccountUser(params, userId, type, accountId, cb) {
+  adjustParamsForNewAccountUser(params, userId);
+  AccountUser.create(params).then(function(newAccountUser){
+    cb(null, inviteParams(newAccountUser.id, accountId, userId, type));
+  }).catch(function(error) {
+    cb(prepareErrors(error));
+  });
+}
+
+function userParams(email) {
+  return {email: email, password: crypto.randomBytes(16).toString('hex')};
+}
+
+
+function findAccountManagers(currentDomainId, callback) {
   async.parallel([
     function(cb) {
-      findUsers(AccountUser, { owner: false, AccountId: currentDomain.id }, [ 'id', 'UserId', 'AccountId' ], cb);
+      findUsers(User, { owner: false, AccountId: currentDomainId}, [ 'id', 'UserId', 'AccountId' ], cb);
     },
     function(cb) {
-      findUsers(Invite, { accountId: currentDomain.id, role: 'accountManager' }, [ 'id', 'userId' ], cb);
+      findUsers(Invite, { AccountId: currentDomainId, role: 'accountManager' }, [ 'id', 'UserId' ], cb);
     }
   ], function(err, results) {
     if(err) {
@@ -84,7 +102,7 @@ function findAndRemoveAccountUser(req, callback) {
 };
 
 //Helpers
-function preValidate(user, currentDomainID, params, callback) {
+function preValidate(user, currentDomainId, params, callback) {
   if(user.email == params.email) {
     return callback({ email: 'You are trying to invite yourself.' });
   }
@@ -110,29 +128,30 @@ function preValidate(user, currentDomainID, params, callback) {
   });
 };
 
-function adjustParamsForNewUser(params) {
-  params.password = crypto.randomBytes(16).toString('hex');
-  params.confirmedAt = new Date();
+function adjustParamsForNewAccountUser(params, userId) {
+  params.role = 'accountManager';
+  params.UserId = userId
   return params;
 }
 
+// return all Account managers invaited and accepted
 function findUsers(model, where, attributes, cb) {
-  User.findAll({
+  AccountUser.findAll({
+    where: where,
     include: [{
-      model: model,
-      where: where,
-      attributes: attributes
+      model: model
     }],
-    attributes: constants.safeUserParams
-  }).then(function(users) {
-    cb(null, users);
+    attributes: attributes
+  }).then(function(accountUser) {
+    cb(null, accountUser);
   }).catch(function(error) {
+    console.log(error);
     cb(prepareErrors(error));
   });
 }
 
-function inviteParams(invitedUserId, accountId, type) {
-  return { userId: invitedUserId, accountId: accountId, userType: type, role: 'accountManager' };
+function inviteParams(accountUserId, accountId, userId, type) {
+  return { userId: userId, accountUserId: accountUserId, accountId: accountId, userType: type, role: 'accountManager' };
 };
 
 function prepareParams(req) {
@@ -152,7 +171,7 @@ function prepareErrors(err) {
 };
 
 module.exports = {
-  createOrFindUser: createOrFindUser,
+  createOrFindAccountUser: createOrFindAccountUser,
   findAccountManagers: findAccountManagers,
   findAndRemoveAccountUser: findAndRemoveAccountUser
 };

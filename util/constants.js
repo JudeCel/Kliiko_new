@@ -9,6 +9,7 @@ module.exports = {
     'lastName',
     'gender',
     'active',
+    'email',
     'postalAddress',
     'city',
     'state',
