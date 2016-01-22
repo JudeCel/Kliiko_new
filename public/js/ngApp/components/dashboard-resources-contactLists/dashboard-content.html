@@ -9,7 +9,7 @@
           <h4 class='text-center'>{{ clc.message }}</h4>
         </div>
         <div class='col-md-3 text-right'>
-          <div class='btn btn-addNewElement btn-green' ng-click='clc.addContactManual()'>Add contacts (manual)</div>
+          <div class='btn btn-addNewElement btn-green' ng-click='clc.addContactManual()' ng-hide="!clc.selectedListMembers.length">Add contacts (manual)</div>
         </div>
       </div>
     </div>
