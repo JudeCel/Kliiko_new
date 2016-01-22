@@ -51,6 +51,7 @@ function prepareData(lists) {
   _.map(lists, (list)=> {
     collection.push( {
       id: list.id,
+      editable: list.editable,
       defaultFields: list.defaultFields,
       customFields: list.customFields,
       name: list.name,
