@@ -2,6 +2,7 @@
 var assert = require('chai').assert;
 var models  = require('./../../models');
 var ContactListService  = require('./../../services/contactList');
+var ContactListUserService  = require('./../../services/contactListUser');
 var UserService  = require('./../../services/users');
 var constants = require('./../../util/constants');
 var userFixture = require('./../fixtures/user');
@@ -131,7 +132,16 @@ describe('Services -> ContactList', () => {
 
   describe('#parseFile', function() {
     var testUser, testAccount;
-    var testFile = 'test/fixtures/contactList/list_valid.csv';
+    var testFileValid = 'test/fixtures/contactList/list_valid.xls';
+    var testFileInvalid = 'test/fixtures/contactList/list_invalid.xls';
+
+    function defaultParams() {
+      return {
+        accountId: testAccount.id,
+        name: 'cool list',
+        customFields: ['one', 'two', 'three']
+      };
+    }
 
     beforeEach(function(done) {
       userFixture.createUserAndOwnerAccount().then(function(result) {
@@ -151,14 +161,8 @@ describe('Services -> ContactList', () => {
 
     describe('happy path', function() {
       it('should succeed', function(done) {
-        let attrs = {
-          accountId: testAccount.id,
-          name: 'cool list',
-          customFields: ['one', 'two', 'three']
-        }
-
-        ContactListService.create(attrs).then(function(contactList) {
-          ContactListService.parseFile(contactList.id, testFile).then(function(result) {
+        ContactListService.create(defaultParams()).then(function(contactList) {
+          ContactListService.parseFile(contactList.id, testFileValid).then(function(result) {
             assert.deepEqual(result.invalid, []);
             assert.equal(result.valid[0].firstName, 'user');
             assert.equal(result.valid[0].lastName, 'insider user');
@@ -185,7 +189,94 @@ describe('Services -> ContactList', () => {
     });
 
     describe('sad path', function() {
+      it('should fail fully', function(done) {
+        ContactListService.create(defaultParams()).then(function(contactList) {
+          ContactListService.parseFile(contactList.id, testFileInvalid).then(function(result) {
+            assert.equal(result.valid.length, 0);
+            assert.equal(result.invalid.length, 3);
+            done();
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
 
+      it('should fail because default field - companyName is not found', function(done) {
+        ContactListService.create(defaultParams()).then(function(contactList) {
+          ContactListService.parseFile(contactList.id, testFileInvalid).then(function(result) {
+            assert.equal(result.invalid[0].validationErrors.companyName, 'Not found');
+            assert.equal(result.invalid[1].validationErrors.companyName, 'Not found');
+            assert.equal(result.invalid[2].validationErrors.companyName, 'Not found');
+            done();
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+
+      it('should fail because custom field - three is not found', function(done) {
+        ContactListService.create(defaultParams()).then(function(contactList) {
+          ContactListService.parseFile(contactList.id, testFileInvalid).then(function(result) {
+            assert.equal(result.invalid[0].validationErrors.three, 'Not found');
+            assert.equal(result.invalid[1].validationErrors.three, 'Not found');
+            assert.equal(result.invalid[2].validationErrors.three, 'Not found');
+            done();
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+
+      it('should fail because of missing data', function(done) {
+        ContactListService.create(defaultParams()).then(function(contactList) {
+          ContactListService.parseFile(contactList.id, testFileInvalid).then(function(result) {
+            assert.equal(result.invalid[0].validationErrors.country, 'No data');
+            done();
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+
+      it('should fail because of email already in use', function(done) {
+        ContactListService.create(defaultParams()).then(function(contactList) {
+          let attrs = {
+            userId: testUser.id,
+            accountId: testAccount.id,
+            contactListId: contactList.id,
+            defaultFields: {
+              firstName: "DainisNew",
+              lastName: "LapinsNew",
+              password: "cool_password",
+              email: "bligzna.lauris@gmail.com",
+              gender: "male"
+            },
+            customFields: { one: "1", two:" 2", three:" 3" }
+          }
+
+          ContactListUserService.create(attrs).then(function(contactListUser) {
+            ContactListService.parseFile(contactList.id, testFileInvalid).then(function(result) {
+              assert.equal(result.invalid[2].validationErrors.email, 'Email already taken');
+              done();
+            }, function(error) {
+              done(error);
+            });
+          });
+        });
+      });
+
+      it('should fail, but not raise error on empty custom field - two', function(done) {
+        ContactListService.create(defaultParams()).then(function(contactList) {
+          ContactListService.parseFile(contactList.id, testFileInvalid).then(function(result) {
+            assert.equal(result.invalid[0].two, 2);
+            assert.equal(result.invalid[1].two, 3);
+            assert.equal(result.invalid[2].two, '');
+            done();
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
     });
   });
 

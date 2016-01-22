@@ -6,8 +6,11 @@ var dataWrappers = require('./../models/dataWrappers');
 var ContactListUser = dataWrappers.ContactListUser;
 var ContactList = models.ContactList;
 var _ = require('lodash');
+var async = require('async');
 var constants = require('../util/constants');
+
 var csv = require('fast-csv');
+var xlsx = require('xlsx');
 
 module.exports = {
   create: create,
@@ -101,34 +104,29 @@ function createDefaultLists(accoutId, t) {
 
 function parseFile(id, filePath) {
   let deferred = q.defer();
+
   ContactList.find({ where: { id: id } }).then(function(contactList) {
     if(contactList) {
-      let object = { valid: [], invalid: [] };
-
-      csv.fromPath(filePath, {
-        headers: true
-      }).transform(function(data) {
-        _.map(data, function(value, key) {
-          delete data[key];
-          data[_.camelCase(key)] = value;
+      models.User.findAll({
+        attributes: ['email'],
+        include: [{
+          model: models.ContactListUser,
+          where: {
+            contactListId: contactList.id,
+            accountId: contactList.accountId
+          }
+        }]
+      }).then(function(results) {
+        let emails = _.map(results, function(value) {
+          return value.email;
         });
 
-        return data;
-      }).validate(function(data, next) {
-        validateRow(contactList.defaultFields, contactList.customFields, data).then(function() {
-          next(null, true);
-        }, function(error) {
-          data.validationErrors = error;
-          next(null, false);
-        });
-      }).on('data', function(data) {
-        object.valid.push(data);
-      }).on('data-invalid', function(data) {
-        object.invalid.push(data);
-      }).on('error', function(error) {
+        // parseCsv(emails, deferred, contactList, filePath);
+        parseXls(emails, deferred, contactList, filePath);
+      }).catch(models.User.sequelize.ValidationError, function(error) {
         deferred.reject(error);
-      }).on('end', function() {
-        deferred.resolve(object);
+      }).catch(function(error) {
+        deferred.reject(error);
       });
     }
     else {
@@ -136,30 +134,101 @@ function parseFile(id, filePath) {
     }
   });
 
+
   return deferred.promise;
 };
 
-function validateRow(defaults, customs, row) {
+function parseXls(emails, deferred, contactList, filePath) {
+  let object = { valid: [], invalid: [] };
+  let workbook = xlsx.readFile(filePath);
+
+  async.forEach(workbook.SheetNames, function(sheetName, callback) {
+    let worksheet = workbook.Sheets[sheetName];
+    let json = xlsx.utils.sheet_to_json(worksheet, { raw: true, header: 1 });
+
+    let header = _.map(json[0], function(value, key) {
+      let head = json[0][key];
+      return _.camelCase(head ? head : 'emptyHeader');
+    });
+    json.splice(0, 1);
+
+    async.forEach(json, function(array, cb) {
+      let data = {};
+      _.map(header, function(value, index) {
+        data[value] = array[index] || '';
+      })
+
+      validateRow(emails, contactList, data).then(function() {
+        object.valid.push(data);
+        cb();
+      }, function(error) {
+        data.validationErrors = error;
+        object.invalid.push(data);
+        cb();
+      });
+    }, function() {
+      callback();
+    });
+  }, function() {
+    deferred.resolve(object);
+  });
+};
+
+function parseCsv(emails, deferred, contactList, filePath) {
+  let object = { valid: [], invalid: [] };
+
+  csv.fromPath(filePath, {
+    headers: true
+  }).transform(function(data) {
+    _.map(data, function(value, key) {
+      delete data[key];
+      data[_.camelCase(key)] = value;
+    });
+
+    return data;
+  }).validate(function(data, next) {
+    validateRow(emails, contactList, data).then(function() {
+      next(null, true);
+    }, function(error) {
+      data.validationErrors = error;
+      next(null, false);
+    });
+  }).on('data', function(data) {
+    object.valid.push(data);
+  }).on('data-invalid', function(data) {
+    object.invalid.push(data);
+  }).on('error', function(error) {
+    deferred.reject(error);
+  }).on('end', function() {
+    deferred.resolve(object);
+  });
+}
+
+function validateRow(emails, contactList, row) {
   let deferred = q.defer();
   let error = {};
 
-  _.map(defaults, function(key) {
+  _.map(contactList.defaultFields, function(key) {
     let rowData = row[key];
 
-    if(!rowData) {
+    if(!row.hasOwnProperty(key)) {
       error[key] = 'Not found';
     }
     else {
       if(rowData.length == 0) {
         error[key] = 'No data';
       }
+
+      if(key == 'email' && _.includes(emails, rowData)) {
+        error[key] = 'Email already taken';
+      }
     }
   });
 
-  _.map(customs, function(key) {
+  _.map(contactList.customFields, function(key) {
     let rowData = row[key];
 
-    if(!rowData) {
+    if(!row.hasOwnProperty(key)) {
       error[key] = 'Not found';
     }
   });
