@@ -9,7 +9,7 @@
           <h4 class='text-center'>{{ clc.message }}</h4>
         </div>
         <div class='col-md-3 text-right'>
-          <div class='btn btn-addNewElement btn-green' ng-click='clc.addContactManual()'>Add contacts (manual)</div>
+          <div class='btn btn-addNewElement btn-green' ng-click='clc.addContactManual()' ng-hide="!clc.selectedListMembers.length">Add contacts (manual)</div>
         </div>
       </div>
     </div>
@@ -28,7 +28,7 @@
 
             <div class="item"  ng-class="{'active':clc.activeListIndex == $index}" ng-click="clc.listItemClickHandle($index)"
                  ng-repeat="item in clc.lists ">
-              <div class="item-name">{{ item.name }} <code>{{ item.id }}</code> <span ng-show="item.membersCount">&nbsp;({{ item.membersCount }})</span></div>  <div class="item-selection-mark"><i class="glyphicon glyphicon-chevron-right pull-right"></i></div>
+              <div class="item-name">{{ item.name }} <span ng-show="item.membersCount">&nbsp;({{ item.membersCount }})</span></div>  <div class="item-selection-mark"><i class="glyphicon glyphicon-chevron-right pull-right"></i></div>
             </div>
           </div>
 
@@ -37,12 +37,7 @@
             <div class="btn-standart btn-blue" ui-sref='dashboard.resources.survey'>Recruiter <img src="/icons/recruiter_blue.png" class="pull-right"></div>
           </div>
 
-
-
         </div>
-        aa {{ clc.selectedListMembers.length }} bb {{ clc.lists[clc.activeListIndex].membersCount }}<br>
-        <pre>{{ clc.lists[clc.activeListIndex] | json }}</pre>
-
 
         <div id="contact-lists-right-column" class="col-md-10">
           <div id="list-mass-actions" ng-hide="!clc.selectedListMembers.length">
@@ -109,9 +104,9 @@
           <div id="no-contacts-in-list" class="text-center" ng-show="!clc.selectedListMembers.length">
             <h3>There is no contacts in this list yet</h3>
             <div class='btn btn-addNewElement btn-green' ng-click='clc.addContactManual()'>Add contacts (manual)</div>
-            <span ng-show--="clc.lists[clc.activeListIndex].editable">
+            <span ng-show="clc.lists[clc.activeListIndex].editable">
               &nbsp; or &nbsp;
-              <div class="btn-standart btn-red" ngng-click="clc.removeList()">Remove this List</div>
+              <div class="btn-standart btn-red" ng-click="clc.removeList()">Remove this List</div>
             </span>
 
 
@@ -237,11 +232,11 @@
               </div>
               <br>
 
-              <section ng-show="clc.listCustomFields && clc.listCustomFields.length">
+              <section ng-hide="!clc.listCustomFields || !clc.listCustomFields.length">
                 <hr>
                 <div class='col-md-6'>
 
-                  <div class='form-group' ng-repeat="cf in clc.listCustomFields" ng-show="$index < (clc.listCustomFields.length / 2)">
+                  <div class='form-group' ng-repeat="cf in clc.listCustomFields track by $index" ng-show="$index < (clc.listCustomFields.length / 2)">
                     <label class='control-label col-md-4 text-no-bold text-login-page' for='cf-{{ cf }}'>{{cf}}</label>
                     <div class='col-md-8'>
                       <span class='has-error text-red-dark'>{{ clc.modalErrors.country }}</span>
@@ -251,7 +246,7 @@
                 </div>
 
                 <div class='col-md-6'>
-                  <div class='form-group' ng-repeat="cf in clc.listCustomFields" ng-show="$index >= (clc.listCustomFields.length / 2)">
+                  <div class='form-group' ng-repeat="cf in clc.listCustomFields track by $index" ng-show="$index >= (clc.listCustomFields.length / 2)">
                     <label class='control-label col-md-4 text-no-bold text-login-page' for='cf-{{ cf }}'>{{cf}}</label>
                     <div class='col-md-8'>
                       <span class='has-error text-red-dark'>{{ clc.modalErrors.country }}</span>
@@ -315,22 +310,25 @@
               <uib-tab heading="Add Custom Fields">
                 <form id="new-list-custom-fields" ng-submit="clc.submitNewList">
                   <div  class="row">
+                    <br>
+                    <div class="error-message text-center col-md-12" ng-show="clc.newListErrorMessage"><code>{{clc.newListErrorMessage}} </code></div>
+                    <br><br>
                     <div class="col-md-6 ">
-                      <input class="custom-fields" type="text" ng-model="clc.newList.customField1" placeholder="Custom Field Name 1">
-                      <input class="custom-fields" type="text" ng-model="clc.newList.customField2" placeholder="Custom Field Name 2">
-                      <input class="custom-fields" type="text" ng-model="clc.newList.customField3" placeholder="Custom Field Name 3">
-                      <input class="custom-fields" type="text" ng-model="clc.newList.customField4" placeholder="Custom Field Name 4">
-                      <input class="custom-fields" type="text" ng-model="clc.newList.customField5" placeholder="Custom Field Name 5">
-                      <input class="custom-fields" type="text" ng-model="clc.newList.customField6" placeholder="Custom Field Name 6">
+                      <input class="custom-fields" type="text" ng-model="clc.newList.customField1" placeholder="Custom Field Name 1" ng-change="clc.checkCustomFields(1)" ng-class="{error: clc.newListError[1]}">
+                      <input class="custom-fields" type="text" ng-model="clc.newList.customField2" placeholder="Custom Field Name 2" ng-change="clc.checkCustomFields(2)" ng-class="{error: clc.newListError[2]}">
+                      <input class="custom-fields" type="text" ng-model="clc.newList.customField3" placeholder="Custom Field Name 3" ng-change="clc.checkCustomFields(3)" ng-class="{error: clc.newListError[3]}">
+                      <input class="custom-fields" type="text" ng-model="clc.newList.customField4" placeholder="Custom Field Name 4" ng-change="clc.checkCustomFields(5)" ng-class="{error: clc.newListError[4]}">
+                      <input class="custom-fields" type="text" ng-model="clc.newList.customField5" placeholder="Custom Field Name 5" ng-change="clc.checkCustomFields(4)" ng-class="{error: clc.newListError[5]}">
+                      <input class="custom-fields" type="text" ng-model="clc.newList.customField6" placeholder="Custom Field Name 6" ng-change="clc.checkCustomFields(6)" ng-class="{error: clc.newListError[6]}">
                     </div>
 
                     <div class="col-md-6 ">
-                      <input class="custom-fields" type="text" ng-model="clc.newList.customField7" placeholder="Custom Field Name 7">
-                      <input class="custom-fields" type="text" ng-model="clc.newList.customField8" placeholder="Custom Field Name 8">
-                      <input class="custom-fields" type="text" ng-model="clc.newList.customField9" placeholder="Custom Field Name 9">
-                      <input class="custom-fields" type="text" ng-model="clc.newList.customField10" placeholder="Custom Field Name 10">
-                      <input class="custom-fields" type="text" ng-model="clc.newList.customField11" placeholder="Custom Field Name 11">
-                      <input class="custom-fields" type="text" ng-model="clc.newList.customField12" placeholder="Custom Field Name 12">
+                      <input class="custom-fields" type="text" ng-model="clc.newList.customField7" placeholder="Custom Field Name 7" ng-change="clc.checkCustomFields(7)" ng-class="{error: clc.newListError[7]}">
+                      <input class="custom-fields" type="text" ng-model="clc.newList.customField8" placeholder="Custom Field Name 8" ng-change="clc.checkCustomFields(8)" ng-class="{error: clc.newListError[8]}">
+                      <input class="custom-fields" type="text" ng-model="clc.newList.customField9" placeholder="Custom Field Name 9" ng-change="clc.checkCustomFields(9)" ng-class="{error: clc.newListError[9]}">
+                      <input class="custom-fields" type="text" ng-model="clc.newList.customField10" placeholder="Custom Field Name 10" ng-change="clc.checkCustomFields(10)" ng-class="{error: clc.newListError[10]}">
+                      <input class="custom-fields" type="text" ng-model="clc.newList.customField11" placeholder="Custom Field Name 11" ng-change="clc.checkCustomFields(11)" ng-class="{error: clc.newListError[11]}">
+                      <input class="custom-fields" type="text" ng-model="clc.newList.customField12" placeholder="Custom Field Name 12" ng-change="clc.checkCustomFields(12)" ng-class="{error: clc.newListError[12]}">
 
                     </div>
                   </div>

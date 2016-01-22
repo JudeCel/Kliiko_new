@@ -25,7 +25,7 @@
 
     /**
      * Get users data from db or from cache
-     * @param [forceUpdate] {boolean} - ignore cache
+     * @param [forceUpdate] {boolean} - ignore cache and update the cache with fresh values
      * @returns {*}
      */
     function getUserData(forceUpdate) {
