@@ -25,6 +25,7 @@
     vm.removeContacts = removeContacts;
     vm.massDelete = massDelete;
     vm.addNewList = addNewList;
+    vm.checkCustomFields = checkCustomFields;
     vm.submitNewList = submitNewList;
     vm.removeList = removeList;
 
@@ -57,10 +58,10 @@
      * Add "controls" to members items
      */
     function prepareSelectedList() {
-      if (!vm.selectedListMembers) return;
-
-      for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
-        if (!vm.selectedListMembers[i].selected) vm.selectedListMembers[i].selected = false;
+      if (vm.selectedListMembers) {
+        for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
+          if (!vm.selectedListMembers[i].selected) vm.selectedListMembers[i].selected = false;
+        }
       }
 
       if (vm.lists[vm.activeListIndex].customFields) vm.listCustomFields = vm.lists[vm.activeListIndex].customFields;
@@ -103,7 +104,10 @@
           messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
           vm.newContact = {customFields:{}};
           newContact.id = res.id;
+
+          if (!vm.lists[vm.activeListIndex].membersCount) vm.lists[vm.activeListIndex].membersCount = 0 ;
           vm.lists[vm.activeListIndex].membersCount++;
+
           if (!vm.selectedListMembers) vm.selectedListMembers = [];
           vm.selectedListMembers.push(newContact);
           prepareSelectedList();
@@ -202,6 +206,25 @@
     }
 
     function addNewList() {  domServices.modal('contactList-addNewListModal'); }
+
+
+    function checkCustomFields(number) {
+      var value = vm.newList['customField'+number];
+
+      vm. newListErrorMessage = null;
+      vm.newListError = {};
+
+
+      var allFields = angular.copy(vm.newList);
+      delete allFields['customField'+number];
+
+      for (var key in allFields) {
+        if (allFields[key] == value) {
+          vm.newListError[number] = true;
+          vm. newListErrorMessage = 'Name should be unique'
+        }
+      }
+    }
 
     /**
      * Add new contacts List

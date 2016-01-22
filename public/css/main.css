@@ -1883,6 +1883,10 @@ hr.survey-hr {
   width: 90%;
   padding: 10px; }
 
+#dashboard-contact-lists #contactList-addNewListModal input.custom-fields.error {
+  border: 1px solid #E51D39;
+  outline-color: #E51D39; }
+
 .margin-top-2rem {
   margin-top: 2rem; }
 
