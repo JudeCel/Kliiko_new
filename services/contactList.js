@@ -30,7 +30,7 @@ function destroy(contacListId, accoutId) {
 function allByAccount(accountId) {
     let deferred = q.defer();
     ContactList.findAll({where: { accountId: accountId },
-      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields'],
+      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable'],
       include: [{
         model: models.ContactListUser, attributes: ['id', 'customFields'],
         include: [{model: models.User, attributes: constants.contactListDefaultFields }],
@@ -51,6 +51,7 @@ function prepareData(lists) {
   _.map(lists, (list)=> {
     collection.push( {
       id: list.id,
+      editable: list.editable,
       defaultFields: list.defaultFields,
       customFields: list.customFields,
       name: list.name,
