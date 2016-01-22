@@ -47,9 +47,9 @@ function create(params, callback) {
   MailTemplate.create(params).then(function(result) {
     callback(null, result);
   }).catch(MailTemplate.sequelize.ValidationError, function(err) {
-    callback(prepareErrors(err), null);
+    callback(err, null);
   }).catch(function(err) {
-    callback(prepareErrors(err), null);
+    callback(err, null);
   });
 }
 
@@ -77,7 +77,7 @@ function getMailTemplate(req, callback) {
   MailTemplate.find({
     include: [{ model: MailTemplateOriginal, attributes: ['id', 'name']}],
     where: {
-      id: req.id,
+      id: req.id
     },
     attributes: templateFields,
     raw: true,
@@ -177,12 +177,7 @@ function resetMailTemplate(templateId, callback) {
   });
 }
 
-function deleteMailTemplate(template, callback) {
-  if (!template) {
-      return callback("e-mail template not provided");
-  }
-  
-  var id = template;
+function deleteMailTemplate(id, callback) {
   if (!id) {
       return callback("e-mail template id not provided");
   }

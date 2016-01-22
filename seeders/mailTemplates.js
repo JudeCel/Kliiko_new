@@ -11,17 +11,20 @@ var templateFiles = [
     {
        fileName: 'InvitationSeries_FirstInvite.html',
        name: "First Invitation",
-       subject: "Invitation to {Session Name}"
+       subject: "Invitation to {Session Name}",
+       category: 1
      },
      {
        fileName: 'InvitationSeries_CloseSession.html',
        name: "Close Session",
-       subject: "Close {Session Name} session"
+       subject: "Close {Session Name} session",
+       category: 1
      },
      {
        fileName: 'InvitationSeries_Confirmation.html',
        name: "Confirmation",
-       subject: "Invitation confirmed"
+       subject: "Invitation confirmed",
+       category: 1
      },
      {
        fileName: 'InvitationSeries_Generic.html',
@@ -42,8 +45,7 @@ var templateFiles = [
        fileName: 'SystemEmail_AccountManagerConfirmation.html',
        name: "Account Manager Confirmation",
        subject: "Account Manager Confirmation"
-     }
-     
+     }     
 ];
 
 function createMailTemplateFromFile(fileInfo, callback) {
@@ -67,7 +69,7 @@ function createMailTemplateFromFile(fileInfo, callback) {
         };
         
         MailTemplateService.createBaseMailTemplate(mailTemplateAttrs, function(err, mailTemplate) {
-            callback(err, mailTemplate); 
+          callback(err, mailTemplate); 
         });
       });
     }    

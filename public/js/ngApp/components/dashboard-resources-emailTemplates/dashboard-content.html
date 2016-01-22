@@ -20,17 +20,20 @@
                 <div class="input-group">
                     <span class="input-group-addon">Template Name:</span>
                     <input type="text" class="form-control" aria-describedby="basic-addon2" ng-model="ec.currentTemplate.name">
-                    <span class="input-group-addon" id="basic-addon2">{{ec.currentTemplate["MailTemplate.name"]}}</span>
+                    <span class="input-group-addon" id="basic-addon2">{{ec.currentTemplate["MailTemplateBase.name"]}}</span>
                 </div>
+                <div class="has-error text-center">{{ec.currentTemplate.error.name}}</div>
                 <br>
                 <div class="input-group">
                     <span class="input-group-addon">Subject:</span>
                     <input type="text" class="form-control" aria-describedby="basic-addon2" ng-model="ec.currentTemplate.subject">
                 </div>
+                <div class="has-error text-center">{{ec.currentTemplate.error.subject}}</div>
                 <br>
 
                 <span>Content:</span>
                 <textarea id="templateContent"></textarea>
+                <div class="has-error text-center">{{ec.currentTemplate.error.content}}</div>
                 <br>
 
                 <button type="submit" class="btn btn-link pull-left" ng-click="ec.previewMailTemplate()">Preview</button>
@@ -59,6 +62,54 @@
         </div>
     </div>
 
+    <!-- Insert Youtube Link-->
+    <div class='modal fade' id='insertYoutubeLink' role='dialog'>
+        <div class='modal-dialog'>
+            <div class='modal-content border-green border-radius-none'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                    <h1 class='modal-title text-center'>Add YouTube video link</h1>
+                </div>
+                <div class='modal-body'>
+                    <div class='tab-pane fade in active'>
+                        <form>
+                            <div class="form-group">
+                                <label for="linkInput">Video URL</label>
+                                <input ng-model="ec.youtubeLink" type="url" class="form-control center-block" placeholder="https://www.youtube.com/">
+                            </div>
 
+                            <div class='modal-footer'>
+                                <span class="pull-right">
+                                    <button type="button" ng-click="ec.cancelYoutubeLinkInput()" class="btn border-red text-red-dark border-radius-none background-transp pull-right- btn-md">Cancel</button>&nbsp;&nbsp;
+                                    <button type="button" ng-click="ec.submitYoutubeLinkInput()" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Done</button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Insert Youtube Link-->
+    <div class='modal fade' id='confirmDialog' role='dialog'>
+        <div class='modal-dialog'>
+            <div class='modal-content border-green border-radius-none'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                    <h1 class='modal-title text-center'>Delete template: {{ec.templateToDelete.template.name}}</h1>
+                </div>
+
+                <div class='modal-footer'>
+                    <form>
+                        <div>
+                            <span class="pull-right">
+                                    <button type="button" ng-click="ec.cancelTemplateDelete()" class="btn border-red text-red-dark border-radius-none background-transp pull-right- btn-md">Cancel</button>&nbsp;&nbsp;
+                                    <button type="button" ng-click="ec.approveTemplateDelete()" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Yes</button>
+                                </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 </section>

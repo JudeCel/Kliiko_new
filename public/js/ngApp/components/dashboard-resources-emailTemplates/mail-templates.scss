@@ -37,6 +37,14 @@
         max-height: 650px;
         overflow-y: scroll;
     }
+    
+    .has-error {
+        color: #f00;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 370px;
+        display: inline-block; 
+    }
 }
 
 

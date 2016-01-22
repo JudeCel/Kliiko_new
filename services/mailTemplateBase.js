@@ -57,6 +57,8 @@ function getMailTemplate(req, callback) {
     raw: true,
   }).then(function (result) {
     callback(null, result);
+  }).catch(MailTemplateCopy.sequelize.ValidationError, function(err) {
+    callback(err, null);
   }).catch(function (err) {
     callback(err, null);
   });
