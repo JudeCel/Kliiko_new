@@ -184,8 +184,8 @@
       }
     }
 
-    $scope.deleteResources = function(id) {
-      GalleryServices.deleteResources({resource_id: id}).then(function(res) {
+    $scope.deleteResources = function(ids) {
+      GalleryServices.deleteResources({resource_id: ids}).then(function(res) {
         if(res.error){
           // TODO
         }else{
@@ -196,9 +196,14 @@
       });
     }
 
-    $scope.downloadResources = function(id) {
-      //TODO
-    }
+    $scope.downloadResources = function(ids) {
+      GalleryServices.downloadResources({resource_id: ids}).then(function(res) {
+        if(res.error){
 
+        }else{
+          dbg.yell(res);
+        }
+      })
+    }
   }
 })();

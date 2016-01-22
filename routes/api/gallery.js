@@ -28,8 +28,10 @@ function getResources(req, res, next) {
 }
 
 function downloadResources(req, res, next) {
-  galleryService.downloadResources(req.query, function(result) {
+  galleryService.downloadResources(req.query).then(function(result) {
     res.send(result);
+  }, function(err) {
+    res.send(({ error: err.message }));
   });
 }
 
@@ -41,7 +43,7 @@ function deleteResources(req, res, next) {
   });
 }
 
-function uploadResource(req, res, next) {
+function uploadResource(req, res, next) { // This should not stay here. Move to service!
   socketHelper.uploadResource({
     file: req.file,
     width: 950,

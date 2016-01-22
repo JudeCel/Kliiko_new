@@ -8,8 +8,7 @@
       gallery: $resource(globalSettings.restUrl +'/gallery', {}, { post: { method: 'POST' } }),
       uploadFile: $resource(globalSettings.restUrl +'/gallery/uploadFile', {}, { post: { method: 'POST' } }),
       saveYoutubeUrl: $resource(globalSettings.restUrl +'/gallery/saveYoutubeUrl', {}, { post: { method: 'POST' } }),
-      download: $resource(globalSettings.restUrl +'/gallery/download'),
-      validate: $resource(globalSettings.restUrl +'/gallery/validate')
+      download: $resource(globalSettings.restUrl +'/gallery/download')
     };
 
     var upServices = {};

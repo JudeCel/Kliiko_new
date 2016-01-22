@@ -1,5 +1,8 @@
 'use strict';
 
+var fs = require("fs");
+var zip = require("node-native-zip");
+// var Zip = require("adm-zip");
 var q = require('q');
 var models = require('./../../models')
 var account = models.Account;
@@ -8,7 +11,6 @@ var expressValidatorStub = require('../../chatRoom/helpers/expressValidatorStub.
 var updateTmpTitle = require('../../chatRoom/handlers/updateTmpTitle.js');
 var deleteResource = require('../../chatRoom/handlers/deleteResource.js');
 var socketHelper = require("../../chatRoom/socketHelper");
-// var utilities = require("../../chatRoom/chat_room/js/utilities.js")
 
 module.exports = {
   getResources: getResources,
@@ -31,24 +33,58 @@ function getResources(accountName){
         }]
       }],
       attributes: ['id', 'userId', 'thumb_URL', 'URL', 'HTML', 'JSON', 'resourceType']
-    })
-    .then(function (results) {
-      results.forEach(function(resource, index, array) {
-        delete resource.dataValues.User;
-        resource.JSON = JSON.parse(decodeURI(resource.JSON));
-      });
-      deferred.resolve(results);
-    })
-    .catch(function (err) {
-      deferred.reject(err);
+  })
+  .then(function (results) {
+    results.forEach(function(resource, index, array) {
+      delete resource.dataValues.User;
+      resource.JSON = JSON.parse(decodeURI(resource.JSON));
     });
+    deferred.resolve(results);
+  })
+  .catch(function (err) {
+    deferred.reject(err);
+  });
   return deferred.promise;
 }
 
 
-function downloadResources(ids){
+function downloadResources(data){
   let deferred = q.defer();
 
+  Resource.findAll({
+    id: data.resource_id,
+    attributes: ['id', 'JSON', 'resourceType']
+  })
+  .then(function (results) {
+    let uniqueIdentifier = Math.round(+new Date()/1000);
+    let archive = new zip();
+    let files = [];
+
+    results.forEach(function(resource, index, array) {
+      resource.JSON = JSON.parse(decodeURI(resource.JSON));
+      if(['audio', 'image', 'pdf'].indexOf(resource.resourceType) > -1){
+        files.push({
+          name: resource.JSON.name,
+          path: "/home/lauris/code/Kliiko/chatRoom/public/uploads/" + resource.JSON.name
+        })
+      }
+    });
+
+    archive.addFiles(files, function (err) {
+      if (err) return console.log("err while adding files", err);
+
+      let buff = archive.toBuffer();
+      let fileName = "resources_" + uniqueIdentifier + ".zip";
+
+      fs.writeFile("/home/lauris/code/Kliiko/chatRoom/public/uploads/" + fileName, buff, function () {
+        deferred.resolve({fileName: fileName});
+      });
+    });
+
+  })
+  .catch(function (err) {
+    deferred.reject(err);
+  });
 
   return deferred.promise;
 }
