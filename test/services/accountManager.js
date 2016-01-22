@@ -143,8 +143,6 @@ describe('SERVICE - AccountManager', function() {
               };
 
               assert.equal(error, null);
-              console.log(params);
-              console.log(returnParams);
               assert.deepEqual(params, returnParams);
               done();
             }
@@ -211,8 +209,7 @@ describe('SERVICE - AccountManager', function() {
                   done(error);
                 }
                 accountManagerService.findAccountManagers(testAccount.id, function(error, userArray) {
-                  console.log(userArray);
-                  assert.equal(userArray[0].id, accountUser.id);
+                  assert.equal(userArray[0].AccountId, testAccount.id);
                   done();
                 });
               });
@@ -226,7 +223,7 @@ describe('SERVICE - AccountManager', function() {
 
       let req = requestObject();
       let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
-
+      // req.body.email = 'lilu2.tanya@gmail.com';
       accountManagerService.createOrFindAccountUser(req, res, function(error, params) {
         if(error) {
           done(error);
@@ -238,13 +235,13 @@ describe('SERVICE - AccountManager', function() {
               done(error);
             }
 
-            async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 1 }), function(error, result) {
+            async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 2 }), function(error, result) {
               if(error) {
                 done(error);
               }
 
-              accountManagerService.findAccountManagers(req.user, function(error, userArray) {
-                assert.equal(userArray[0].id, user.id);
+              accountManagerService.findAccountManagers(testAccount.id, function(error, userArray) {
+                assert.equal(userArray[0].AccountId, testAccount.id);
                 done();
               });
             });
@@ -265,7 +262,6 @@ describe('SERVICE - AccountManager', function() {
         if(error) {
           done(error);
         }
-
         User.find({ where: { email: req.body.email } }).then(function(user) {
           inviteService.createInvite(params, function(error, invite) {
             if(error) {
@@ -283,8 +279,7 @@ describe('SERVICE - AccountManager', function() {
                   done(error);
                 }
 
-                req = requestObject({ id: user.id, type: 'account' });
-                accountManagerService.findAndRemoveAccountUser(req, function(error, message) {
+                accountManagerService.findAndRemoveAccountUser(user.id, testAccount.id, function(error, message) {
                   assert.equal(error, null);
                   assert.equal(message, 'Successfully removed account from Account List');
 

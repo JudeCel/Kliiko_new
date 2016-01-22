@@ -29,7 +29,6 @@ function createOrFindAccountUser(req, res, callback) {
     }).then(function(user) {
       if(user) {
         user.getAccounts({where: {id: currentDomain.id}}).then(function (results) {
-          console.log(results);
           if (_.isEmpty(results)) {
             createAccountUser(params, user.id, "existing", currentDomain.id, callback);
           }else{
@@ -48,7 +47,7 @@ function createOrFindAccountUser(req, res, callback) {
 };
 
 function createAccountUser(params, userId, type, accountId, cb) {
-  adjustParamsForNewAccountUser(params, userId);
+  adjustParamsForNewAccountUser(params, userId, accountId);
   AccountUser.create(params).then(function(newAccountUser){
     cb(null, inviteParams(newAccountUser.id, accountId, userId, type));
   }).catch(function(error) {
@@ -62,31 +61,37 @@ function userParams(email) {
 
 
 function findAccountManagers(currentDomainId, callback) {
-  async.parallel([
-    function(cb) {
-      findUsers(User, { owner: false, AccountId: currentDomainId}, [ 'id', 'UserId', 'AccountId' ], cb);
-    },
-    function(cb) {
-      findUsers(Invite, { AccountId: currentDomainId, role: 'accountManager' }, [ 'id', 'UserId' ], cb);
-    }
-  ], function(err, results) {
-    if(err) {
-      callback(err);
-    }
-    else {
-      callback(null, _.union(results[0], results[1]));
-    }
-  });
+  AccountUser.findAll({where: {AccountId:  currentDomainId,
+    role: 'accountManager'}}).then(function(results) {
+      callback(null, results)
+  })
+  // async.parallel([
+  //   function(cb) {
+  //     findUsers(User, { owner: false, AccountId: currentDomainId}, [ 'id', 'UserId', 'AccountId' ], cb);
+  //   },
+  //   function(cb) {
+  //     findUsers(Invite, { AccountId: currentDomainId, role: 'accountManager' }, [ 'id', 'UserId' ], cb);
+  //   }
+  // ], function(err, results) {
+  //   if(err) {
+  //     callback(err);
+  //   }
+  //   else {
+  //     callback(null, _.union(results[0], results[1]));
+  //   }
+  // });
 };
 
-function findAndRemoveAccountUser(req, callback) {
-  let currentUser = req.user,
-      userId = req.query.id;
-
+function findAndRemoveAccountUser(userId, accountId, callback) {
+  // AccountUser.findAll().then(function (r) {
+  //   console.log(userId);
+  //   console.log(accountId);
+  //   console.log(r);
+  // })
   AccountUser.find({
     where: {
       UserId: userId,
-      AccountId: currentUser.ownerAccountId,
+      AccountId: accountId,
       owner: false
     }
   }).then(function(result) {
@@ -128,9 +133,10 @@ function preValidate(user, currentDomainId, params, callback) {
   });
 };
 
-function adjustParamsForNewAccountUser(params, userId) {
+function adjustParamsForNewAccountUser(params, userId, accountId) {
   params.role = 'accountManager';
-  params.UserId = userId
+  params.AccountId = accountId;
+  params.UserId = userId;
   return params;
 }
 

@@ -119,8 +119,8 @@ function acceptInviteExisting(token, callback) {
       return callback(null, invite);
     }
 
-    createUserFromInvite(invite, function(error, message) {
-      callback(error, invite, message);
+    inviteDestroy(invite, function(error, message) {
+      callback(error, null, message);
     });
   });
 };
@@ -134,18 +134,27 @@ function acceptInviteNew(token, params, callback) {
       return callback(true);
     }
 
-    createUser({ password: params.password }, invite, function(error, user) {
+    updateUser({ password: params.password }, invite, function(error, user) {
       if(error) {
         callback(error, invite);
       }
       else {
-        createUserFromInvite(invite, user, function(error, message) {
-          callback(error, invite, message);
+        inviteDestroy(invite, function(error, message) {
+          callback(error, null, message);
         });
-      }
+      };
     });
   });
 };
+
+function updateUser(params, invite, callback) {
+ User.update(params, { where: { id: invite.userId } }).then(function(result) {
+   callback(null, true);
+ }).catch(function(error) {
+   callback(prepareErrors(error));
+ });
+};
+
 
 //Helpers
 function removeAllAssociatedDataOnNewUser(invite, callback) {
@@ -174,20 +183,9 @@ function removeAllAssociatedDataOnNewUser(invite, callback) {
   });
 }
 
-function createUserFromInvite(invite, user, callback) {
-  // console.log(user);
-
- user.addAccountUser(invite.AccountUser).then(function(result) {
-   if(result) {
-     invite.destroy().then(function() {
-       callback(null, 'You have successfully accepted Invite. Please login using your invite e-mail and password.');
-     });
-   }
-   else {
-     callback("Can't add account");
-   }
- }, function(err) {
-   console.log(err);
+function inviteDestroy(invite, callback) {
+ invite.destroy().then(function() {
+   callback(null, 'You have successfully accepted Invite. Please login using your invite e-mail and password.');
  });
 };
 
