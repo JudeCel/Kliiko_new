@@ -14,11 +14,12 @@ var _ = require('lodash');
 var crypto = require('crypto');
 
 //Exports
-function createOrFindUser(req, callback) {
-  let user = req.user,
-      params = prepareParams(req);
+function createOrFindUser(req, res, callback) {
+  let user = req.user;
+  let params = prepareParams(req);
+  let currentDomain = res.locals.currentDomain;
 
-  preValidate(user, params, function(error) {
+  preValidate(user, currentDomain, params, function(error) {
     if(error) {
       return callback(error);
     }
@@ -42,13 +43,13 @@ function createOrFindUser(req, callback) {
   });
 };
 
-function findAccountManagers(user, callback) {
+function findAccountManagers(currentDomain, currentDomain, callback) {
   async.parallel([
     function(cb) {
-      findUsers(AccountUser, { owner: false, AccountId: user.ownerAccountId }, [ 'id', 'UserId', 'AccountId' ], cb);
+      findUsers(AccountUser, { owner: false, AccountId: currentDomain.id }, [ 'id', 'UserId', 'AccountId' ], cb);
     },
     function(cb) {
-      findUsers(Invite, { accountId: user.ownerAccountId, role: 'accountManager' }, [ 'id', 'userId' ], cb);
+      findUsers(Invite, { accountId: currentDomain.id, role: 'accountManager' }, [ 'id', 'userId' ], cb);
     }
   ], function(err, results) {
     if(err) {
@@ -83,7 +84,7 @@ function findAndRemoveAccountUser(req, callback) {
 };
 
 //Helpers
-function preValidate(user, params, callback) {
+function preValidate(user, currentDomain, params, callback) {
   if(user.email == params.email) {
     return callback({ email: 'You are trying to invite yourself.' });
   }
@@ -95,7 +96,7 @@ function preValidate(user, params, callback) {
     }],
     where: {
       UserId: { $ne: user.id },
-      AccountId: user.ownerAccountId
+      AccountId: currentDomain.id
     }
   }).then(function(accountUsers) {
     if(_.isEmpty(accountUsers)) {

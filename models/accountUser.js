@@ -19,7 +19,13 @@ module.exports = (Sequelize, DataTypes) => {
     companyName: {type: DataTypes.STRING, allowNull: true },
     landlineNumber: {type: DataTypes.STRING, allowNull: true },
     mobile: {type: DataTypes.STRING, allowNull: true },
-    comment: { type: DataTypes.TEXT, allowNull: true }
+    comment: { type: DataTypes.TEXT, allowNull: true },
+    email: {type: DataTypes.STRING, allowNull: false, unique: {msg: "Email has already been taken"},
+      validate: {
+        notEmpty: {args: true, msg: "Email can't be empty"},
+        is: {args: constants.emailRegExp, msg: "Invalid e-mail format" }
+      }
+    },
   }, {
       classMethods: {
         associate: function(models) {

@@ -46,8 +46,8 @@ function sendInvite(invite, callback) {
   let inviteParams = {
     token: invite.token,
     email: invite.User.email,
-    firstName: invite.User.firstName,
-    lastName: invite.User.lastName,
+    firstName: invite.AccountUser.firstName,
+    lastName: invite.AccountUser.lastName,
     accountName: invite.Account.name
   };
 
@@ -85,7 +85,7 @@ function removeInvite(invite, callback) {
 };
 
 function findInvite(token, callback) {
-  Invite.find({ include: [ User, Account ], where: { token: token } }).then(function(result) {
+  Invite.find({ include: [ User, Account, AccountUser ], where: { token: token } }).then(function(result) {
     if(result) {
       callback(null, result);
     }

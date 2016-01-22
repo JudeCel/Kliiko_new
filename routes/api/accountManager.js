@@ -2,7 +2,7 @@ var accountManagerService = require('../../services/accountManager');
 var inviteService = require('../../services/invite');
 
 function get(req, res, next) {
-  accountManagerService.findAccountManagers(req.user, function(error, users) {
+  accountManagerService.findAccountManagers(res.locals.currentDomain, function(error, users) {
     if(error) {
       res.send({ error: error });
     }
@@ -13,7 +13,7 @@ function get(req, res, next) {
 };
 
 function post(req, res, next) {
-  accountManagerService.createOrFindUser(req, function(error, params) {
+  accountManagerService.createOrFindUser(req, res, function(error, params) {
     if(error) {
       return res.send({ error: error });
     }
@@ -30,7 +30,7 @@ function post(req, res, next) {
 };
 
 function removeInvite(req, res, next) {
-  var params = { userId: req.query.id, accountId: req.user.accountOwnerId };
+  var params = { userId: req.query.id, accountId: res.locals.currentDomain.id };
 
   inviteService.findAndRemoveInvite(params, function(error, message) {
     if(error) {
