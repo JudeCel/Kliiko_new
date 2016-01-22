@@ -148,13 +148,11 @@
                         ng-click="deleteResources(resource.id)">
                   Delete
                 </button>
-                
-                <button download="resource.JSON.matchName" 
-                        ng-href="{{ fileUrl() }}"
-                        class='pull-right btn-dashboard-plans btn' 
-                        ng-click="downloadResources(resource.id)">
+                <a download="{{resource.JSON.matchName}}" 
+                   class='pull-right btn-dashboard-plans btn' 
+                   href="{{'/chat_room/uploads/' + resource.JSON.name}}">
                   Download
-                </button>
+                </a>
               </div>
             </div>
             <ul class="list-group">
@@ -198,15 +196,21 @@
         </div>
         <form ng-submit="submitForm(newResource)">
           <div class='modal-body'>
+
             <div class="form-group">
               <label for="title">Title</label>
               <input ng-model="newResource.title" type="text" class="form-control center-block" name="title" id="title" placeholder="Title">
             </div>
 
-            <div class="form-group">
+            <div ng-if="newResource.type == 'youtubeUrl'" class="form-group">
+              <label for="youtubeUrl">Youtube Url</label>
+              <input ng-model="newResource.youtubeUrl" type="text" class="form-control center-block" name="youtubeUrl" id="youtubeUrl" placeholder="Youtube URL">
+            </div>
+
+            <div ng-if="newResource.type !== 'youtubeUrl'" class="form-group">
               <label for="fileTst">File</label>
               <div ngf-drop ngf-select ng-model="newResource.fileTst" ng-change="uploadTst()" class="drop-box"
-                ngf-drag-over-class="'dragover'">
+                ngf-drag-over-class="'dragover'" >
                 Drop images here or click to upload</div>
               <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
               {{ newResource.fileTst.name }}

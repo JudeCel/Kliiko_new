@@ -7,12 +7,15 @@ var Resource = models.Resource;
 var expressValidatorStub = require('../../chatRoom/helpers/expressValidatorStub.js');
 var updateTmpTitle = require('../../chatRoom/handlers/updateTmpTitle.js');
 var deleteResource = require('../../chatRoom/handlers/deleteResource.js');
+var socketHelper = require("../../chatRoom/socketHelper");
+// var utilities = require("../../chatRoom/chat_room/js/utilities.js")
 
 module.exports = {
   getResources: getResources,
   downloadResources: downloadResources,
   deleteResources: deleteResources,
-  uploadResource: uploadResource
+  uploadResource: uploadResource,
+  saveYoutubeData: saveYoutubeData
 };
 
 function getResources(accountName){
@@ -69,6 +72,49 @@ function deleteResources(ids){
 
   deleteResource.run(req, res, nextCb);
   
+  return deferred.promise;
+}
+
+// I was not able to include this from utilities.js
+function processYouTubeData(youtubeData) {
+    var preFix = '<iframe width="420" height="315" src="http://www.youtube.com/embed/';
+    var subFix = '" frameborder="0" allowfullscreen></iframe>';
+
+    var position = -1;
+
+    if (youtubeData.search("<iframe") != -1) {
+        return youtubeData;
+    } else if (youtubeData.search("youtube.com/watch?") != -1) {
+        position = youtubeData.search("v=") + 2;
+        return preFix + youtubeData.substr(position) + subFix;
+    } else if (youtubeData.search("youtu.be/") != -1) {
+        position = youtubeData.search("youtu.be/") + 9;
+        return preFix + youtubeData.substr(position) + subFix;
+    }
+    return null;
+}
+
+function saveYoutubeData(data) {
+  let deferred = q.defer();
+  let youTubeLink = processYouTubeData(data.body.text);
+
+  if(youTubeLink == null){
+    deferred.reject("You have input an invalid youTube link!/n Please re-enter.");
+  }
+
+  let resourceAppendedCallback = function (userId, json) {
+    console.log(userId)
+    deferred.resolve(json);
+  };
+
+  let topicId = 1;
+  let json = {
+    title: data.body.title,
+    message: youTubeLink
+  };
+
+  socketHelper.updateResources(topicId, data.user.id, json, "video", resourceAppendedCallback);
+
   return deferred.promise;
 }
 

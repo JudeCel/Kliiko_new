@@ -9,7 +9,8 @@ module.exports = {
   postResources: postResources,
   downloadResources: downloadResources,
   deleteResources: deleteResources,
-  uploadResource: uploadResource
+  uploadResource: uploadResource,
+  saveYoutubeResource: saveYoutubeResource
 };
 
 function postResources(req, res, next) {    
@@ -50,4 +51,12 @@ function uploadResource(req, res, next) {
       res.send(json);
     }
   });
+}
+
+function saveYoutubeResource(req, res, next) {
+  galleryService.saveYoutubeData(req).then(function(result) {
+    res.send(result);
+  }, function(err) {
+    res.send(({ error: err.message }));
+  })
 }

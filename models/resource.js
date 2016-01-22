@@ -12,7 +12,7 @@ module.exports = (Sequelize, DataTypes) => {
     resourceType: {type: DataTypes.ENUM, allowNull: false,
       values: [ 'participant', 'facilitator', 'co-facilitator',
                 'observer', 'image', 'video', 'audio', 'report',
-                'vote', 'collage', 'tmp'
+                'vote', 'collage', 'tmp', 'pdf'
               ]
     }
     //

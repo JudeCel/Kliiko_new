@@ -7,9 +7,9 @@
 
   GalleryController.$inject = ['dbg', '$q', 'GalleryServices', '$modal', 
                                '$scope', 'domServices','$injector', 'messenger', 
-                               'Upload', 'globalSettings'];
+                               'Upload', 'globalSettings', '$http'];
 
-  function GalleryController(dbg, $q, GalleryServices, $modal, $scope, domServices,$injector, messenger, Upload, globalSettings){
+  function GalleryController(dbg, $q, GalleryServices, $modal, $scope, domServices,$injector, messenger, Upload, globalSettings, $http){
     dbg.log2('#GalleryController  started');
     initList();
 
@@ -38,54 +38,8 @@
       }
     }
 
-    $scope.actionDelete = function(){
-      $scope.action = "delete";
-    }
-
-    $scope.actionDownload = function(){
-      $scope.action = "download";
-    }
-
-    $scope.submitIdsForMassAction = function() {
-      if($scope.action === "delete"){
-        $scope.deleteResources($scope.idsForAction);
-      }
-
-      if($scope.action === "download"){
-        $scope.downloadResources($scope.idsForAction);
-      }
-    }
-
-    $scope.deleteResources = function(id) {
-      GalleryServices.deleteResources({resource_id: id}).then(function(res) {
-        if(res.error){
-          // TODO
-        }else{
-          $scope.idsForAction = [];
-          initList()
-          messenger.ok("Your selected resource(s) was successfully deleted.");
-        }
-      });
-    }
-
-    $scope.downloadResources = function(id) {
-       GalleryServices.downloadResources({id: id}).then(function(res) {
-          if(res.error){
-            // TODO
-          }else{
-            $scope.idsForAction = [];
-          }
-        });
-    }
-
     $scope.uploadTst = function() {
       
-    }
-
-    $scope.downloadResources = function(){
-      GalleryServices.downloadResources().then(function(res) {
-
-      });
     }
 
     $scope.uploadResourceForm = function(uploadType) {
@@ -96,36 +50,56 @@
     };
 
     $scope.submitForm = function(newResource) {
-      let resourceParams = {
-        // topicId: topicId,
-        userId: null,
-        title: newResource.title,
-        type: newResource.type,
-        text: $scope.newResource.fileTst.name
-      };
+      dbg.yell(newResource)
+      if(newResource.type == "youtubeUrl"){
+        let resourceParams = {
+          // topicId: topicId,
+          userId: null,
+          title: newResource.title,
+          text: newResource.youtubeUrl
+        };
+        
+        GalleryServices.saveYoutubeUrl(resourceParams).then(function(res) {
+          if(res.error){
 
-      GalleryServices.createResource(resourceParams).then(function(res) {
-        if(res.error){
-        }else{
-          Upload.upload({
-            url: globalSettings.restUrl+'/gallery/uploadFile',
-            method: 'POST',
-            data: {uploadedfile: newResource.fileTst, type: resourceParams.type}
-          }).then(
-            function(res) {
-              initList();
-              $scope.newResource = {};
-              cancel();
-              messenger.ok("Resource was successfully created.");
-            },
+          }else{
+            initList();
+            $scope.newResource = {};
+            cancel();
+            messenger.ok("Resource was successfully created.");
+          }
+        })
+      }else{
+        let resourceParams = {
+          // topicId: topicId,
+          userId: null,
+          title: newResource.title,
+          type: newResource.type,
+          text: $scope.newResource.fileTst.name
+        };
 
-            function(err) {
-            
-            }
-          );
-        }
-      })
+        GalleryServices.createResource(resourceParams).then(function(res) {
+          if(res.error){
+          }else{
+            Upload.upload({
+              url: globalSettings.restUrl+'/gallery/uploadFile',
+              method: 'POST',
+              data: {uploadedfile: newResource.fileTst, type: resourceParams.type}
+            }).then(
+              function(res) {
+                initList();
+                $scope.newResource = {};
+                cancel();
+                messenger.ok("Resource was successfully created.");
+              },
 
+              function(err) {
+              
+              }
+            );
+          }
+        })
+      }
     };
 
     function uploadTypeForTitle(uploadType) {
@@ -178,6 +152,53 @@
     //     {name: 'Images', type: 'image'},
     //     {name: 'Youtube', type: 'video'}
     // ];
+
+    $scope.downloadFile = function(resource) {
+      dbg.yell(resource)
+      $http.get(globalSettings.restUrl +'/chat_room/uploads/' + resource.JSON.name, {responseType:'blob'})
+      .then(function(results){
+          var data = results.data; 
+          var blob = new Blob(
+              [data],
+              {type: resource.JSON.type + "/" + resource.JSON.format}
+          );
+          saveAs(blob, resource.JSON.name);
+      });
+    }
+
+    $scope.actionDelete = function(){
+      $scope.action = "delete";
+    }
+
+    $scope.actionDownload = function(){
+      $scope.action = "download";
+    }
+
+    $scope.submitIdsForMassAction = function() {
+      if($scope.action === "delete"){
+        $scope.deleteResources($scope.idsForAction);
+      }
+
+      if($scope.action === "download"){
+        $scope.downloadResources($scope.idsForAction);
+      }
+    }
+
+    $scope.deleteResources = function(id) {
+      GalleryServices.deleteResources({resource_id: id}).then(function(res) {
+        if(res.error){
+          // TODO
+        }else{
+          $scope.idsForAction = [];
+          initList()
+          messenger.ok("Your selected resource(s) was successfully deleted.");
+        }
+      });
+    }
+
+    $scope.downloadResources = function(id) {
+      //TODO
+    }
 
   }
 })();

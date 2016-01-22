@@ -7,6 +7,7 @@
     var galleryRestApi = {
       gallery: $resource(globalSettings.restUrl +'/gallery', {}, { post: { method: 'POST' } }),
       uploadFile: $resource(globalSettings.restUrl +'/gallery/uploadFile', {}, { post: { method: 'POST' } }),
+      saveYoutubeUrl: $resource(globalSettings.restUrl +'/gallery/saveYoutubeUrl', {}, { post: { method: 'POST' } }),
       download: $resource(globalSettings.restUrl +'/gallery/download'),
       validate: $resource(globalSettings.restUrl +'/gallery/validate')
     };
@@ -17,6 +18,7 @@
     upServices.downloadResources = downloadResources;
     upServices.deleteResources = deleteResources;
     upServices.createResource = createResource;
+    upServices.saveYoutubeUrl = saveYoutubeUrl;
     return upServices;
 
     function getResources() {
@@ -52,12 +54,23 @@
     };
 
     function createResource(params) {
-
       var deferred = $q.defer();
 
       dbg.log2('#GalleryServices > createGalleryResources > make rest call');
       galleryRestApi.gallery.post(params, function(res) {
         dbg.log2('#GalleryServices > createGalleryResources > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
+
+    function saveYoutubeUrl(params) {
+      var deferred = $q.defer();
+
+      dbg.log2('#GalleryServices > saveYoutubeUrlResources > make rest call');
+      galleryRestApi.saveYoutubeUrl.post(params, function(res) {
+        dbg.log2('#GalleryServices > saveYoutubeUrlResources > rest call responds');
         deferred.resolve(res);
       });
 
