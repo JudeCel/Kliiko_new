@@ -49,9 +49,15 @@
     function createUser(userObj, contactListId) {
       var deferred = $q.defer();
 
+      var defaultFields, customFields;
+
+      customFields = userObj.customFields;
+      delete userObj.customFields;
+      defaultFields = userObj;
 
       var params = {
-        defaultFields: userObj,
+        defaultFields: defaultFields,
+        customFields: customFields,
         contactListId: contactListId
       };
 

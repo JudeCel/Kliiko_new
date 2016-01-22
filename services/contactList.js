@@ -23,14 +23,14 @@ function destroy(contacListId, accoutId) {
     deferred.resolve(prepareData(result));
   }, function(err) {
     deferred.reject(err);
-  })
+  });
   return deferred.promise;
 }
 
 function allByAccount(accountId) {
     let deferred = q.defer();
     ContactList.findAll({where: { accountId: accountId },
-      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields'],
+      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable'],
       include: [{
         model: models.ContactListUser, attributes: ['id', 'customFields'],
         include: [{model: models.User, attributes: constants.contactListDefaultFields }],

@@ -8,7 +8,7 @@ module.exports = {
 };
 
 // Create Params example
-// {  defaultFildes: Object/optional =>  { firstName: "name" },
+// {  defaultFields: Object/optional =>  { firstName: "name" },
 //    customFields: Object/optional =>  { customFieldsName: "someValue"}
 //    contactListId: INTEGER/required => 1
 //  }

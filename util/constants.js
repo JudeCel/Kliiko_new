@@ -20,8 +20,9 @@ module.exports = {
   ],
   promotionCodeTypes: ['percentage', 'value'],
   dateFormat: 'MM-dd-yyyy',
-  contactListDefaultFields: ["firstName", "lastName", "gender", "email", "city",
-                              "state", "country", "postCode", "companyName",
-                              "landlineNumber", "mobile"
-                            ]
+  contactListDefaultFields: [
+    "firstName", "lastName", "gender", "email", "city",
+    "state", "country", "postCode", "companyName",
+     "landlineNumber", "mobile"
+  ]
 };

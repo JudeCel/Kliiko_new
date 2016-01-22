@@ -178,7 +178,7 @@
         }]
 
       })
-      .state('dashboard.resources.contactLists.survey', {
+      .state('dashboard.resources.survey', {
         url: '/survey',
         views: {
           'resourcesContent': { templateUrl: prePath + 'dashboard-resources-contactLists-survey/dashboard-content.html' }

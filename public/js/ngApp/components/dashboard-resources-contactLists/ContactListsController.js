@@ -2,19 +2,20 @@
   'use strict';
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices','contactListServices', 'dbg', 'messenger', '$timeout', '$scope'];
-  function ContactListController(domServices, contactListServices, dbg, messenger, $timeout, $scope) {
+  ContactListController.$inject = ['domServices','contactListServices', 'dbg', 'messenger', '$filter', '$scope'];
+  function ContactListController(domServices, contactListServices, dbg, messenger, $filter, $scope) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
     vm.lists = [];
     vm.activeListIndex = null;
     vm.selectedListMembers = [];
-    vm.newContact = {};
+    vm.newContact = {customFields:{}};
     vm.newList = {};
     vm.modalErrors = {};
     vm.allSelected = false;
     vm.tableSort = {by: null, reverse: false};
+    vm.listCustomFields = [];
 
     vm.listItemClickHandle = listItemClickHandle;
     vm.changeTableSortingFilter = changeTableSortingFilter;
@@ -36,14 +37,17 @@
      */
     function init() {
       contactListServices.getContactLists().then(function (result) {
-        vm.lists = result;
+        vm.lists = $filter('orderBy')(result, 'id');
+
+
 
         if (vm.lists.length) {
           // show first list content
           vm.activeListIndex = 0;
           vm.selectedListMembers = vm.lists[vm.activeListIndex].members;
 
-          prepareSelectedListMembersControls();
+
+          prepareSelectedList();
         }
       });
     }
@@ -52,12 +56,14 @@
     /**
      * Add "controls" to members items
      */
-    function prepareSelectedListMembersControls() {
+    function prepareSelectedList() {
       if (!vm.selectedListMembers) return;
 
       for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
         if (!vm.selectedListMembers[i].selected) vm.selectedListMembers[i].selected = false;
       }
+
+      if (vm.lists[vm.activeListIndex].customFields) vm.listCustomFields = vm.lists[vm.activeListIndex].customFields;
     }
 
     /**
@@ -68,7 +74,7 @@
       vm.activeListIndex = index;
       vm.selectedListMembers = vm.lists[vm.activeListIndex].members;
 
-      prepareSelectedListMembersControls();
+      prepareSelectedList();
     }
 
     function changeTableSortingFilter(type) {
@@ -84,6 +90,7 @@
     function createContact() {
       var currentList = vm.lists[vm.activeListIndex];
 
+
       var valid = validate();
 
       if (!valid) return;
@@ -94,12 +101,12 @@
 
           domServices.modal('contactList-addContactManual', 'close');
           messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
-          vm.newContact = {};
+          vm.newContact = {customFields:{}};
           newContact.id = res.id;
           vm.lists[vm.activeListIndex].membersCount++;
           if (!vm.selectedListMembers) vm.selectedListMembers = [];
           vm.selectedListMembers.push(newContact);
-          prepareSelectedListMembersControls();
+          prepareSelectedList();
 
         },
         function(err) {
@@ -115,7 +122,6 @@
 
         }
       );
-
 
 
       function validate() {
@@ -209,11 +215,13 @@
 
       contactListServices.submitNewList(vm.newList).then(
         function(res) {
-          dbg.log('#ContactListController > submitNewList > succes: New List "'+ res.name + '" added');
+          dbg.log('#ContactListController > submitNewList > success: New List "'+ res.name + '" added');
           vm.newList = {};
           vm.lists.push(res);
           domServices.modal('contactList-addNewListModal', 'close');
           messenger.ok('New List "'+ res.name + '" added');
+
+          listItemClickHandle(vm.lists.length -1);
         },
         function(err) {
           dbg.error('#ContactListController > submitNewList > error: ', err);

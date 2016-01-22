@@ -85,8 +85,6 @@ function create(params) {
 
           if(err.name == 'SequelizeUniqueConstraintError') {
             err.errors = [{message: "Email has already been taken", type: "Validation error", path: "email"}];
-            err.errors.push(err);
-
             deferred.reject(err);
           }
           else {

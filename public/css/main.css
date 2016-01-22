@@ -1790,11 +1790,12 @@ hr.survey-hr {
   #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item {
     cursor: pointer;
     display: block;
+    position: relative;
     padding: 16px;
     margin-top: 2px;
     font-size: 1.3rem;
     background: #EEEEEE; }
-    #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item > .glyphicon {
+    #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item .glyphicon {
       visibility: hidden;
       float: right;
       margin-top: -3px;
@@ -1807,8 +1808,14 @@ hr.survey-hr {
       outline: none !important; }
     #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item.active {
       background: rgba(174, 239, 137, 0.5); }
-      #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item.active > .glyphicon {
+      #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item.active .glyphicon {
         visibility: visible; }
+  #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item-name {
+    width: 6vw; }
+  #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item-selection-mark {
+    position: absolute;
+    right: 12px;
+    top: 33%; }
 
 #dashboard-contact-lists #contact-lists-left-column #under-list-of-contacts-btns {
   margin-top: 5px; }

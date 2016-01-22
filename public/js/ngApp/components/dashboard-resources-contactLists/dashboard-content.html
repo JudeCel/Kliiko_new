@@ -27,19 +27,22 @@
             </div>
 
             <div class="item"  ng-class="{'active':clc.activeListIndex == $index}" ng-click="clc.listItemClickHandle($index)"
-                 ng-repeat="item in clc.lists">
-              <span class="item-name">{{ item.name }}</span>  <span ng-if="item.membersCount">&nbsp;({{ item.membersCount }})</span> <i class="glyphicon glyphicon-chevron-right pull-right"></i>
+                 ng-repeat="item in clc.lists ">
+              <div class="item-name">{{ item.name }} <code>{{ item.id }}</code> <span ng-show="item.membersCount">&nbsp;({{ item.membersCount }})</span></div>  <div class="item-selection-mark"><i class="glyphicon glyphicon-chevron-right pull-right"></i></div>
             </div>
           </div>
 
           <div id="under-list-of-contacts-btns">
             <div class="btn-standart btn-green" ng-click="clc.addNewList()">Add new list <img src="/icons/add_new_list_green.png" class="pull-right"></div>
-            <div class="btn-standart btn-blue" ui-sref='dashboard.resources.contactLists.survey'>Recruiter <img src="/icons/recruiter_blue.png" class="pull-right"></div>
+            <div class="btn-standart btn-blue" ui-sref='dashboard.resources.survey'>Recruiter <img src="/icons/recruiter_blue.png" class="pull-right"></div>
           </div>
 
 
 
         </div>
+        aa {{ clc.selectedListMembers.length }} bb {{ clc.lists[clc.activeListIndex].membersCount }}<br>
+        <pre>{{ clc.lists[clc.activeListIndex] | json }}</pre>
+
 
         <div id="contact-lists-right-column" class="col-md-10">
           <div id="list-mass-actions" ng-hide="!clc.selectedListMembers.length">
@@ -105,8 +108,11 @@
 
           <div id="no-contacts-in-list" class="text-center" ng-show="!clc.selectedListMembers.length">
             <h3>There is no contacts in this list yet</h3>
-            <div class='btn btn-addNewElement btn-green' ng-click='clc.addContactManual()'>Add contacts (manual)</div> &nbsp; or &nbsp;
-            <div class="btn-standart btn-red" ng-click="clc.removeList()">Remove this List</div>
+            <div class='btn btn-addNewElement btn-green' ng-click='clc.addContactManual()'>Add contacts (manual)</div>
+            <span ng-show--="clc.lists[clc.activeListIndex].editable">
+              &nbsp; or &nbsp;
+              <div class="btn-standart btn-red" ngng-click="clc.removeList()">Remove this List</div>
+            </span>
 
 
           </div>
@@ -229,6 +235,33 @@
                   </div>
                 </div>
               </div>
+              <br>
+
+              <section ng-show="clc.listCustomFields && clc.listCustomFields.length">
+                <hr>
+                <div class='col-md-6'>
+
+                  <div class='form-group' ng-repeat="cf in clc.listCustomFields" ng-show="$index < (clc.listCustomFields.length / 2)">
+                    <label class='control-label col-md-4 text-no-bold text-login-page' for='cf-{{ cf }}'>{{cf}}</label>
+                    <div class='col-md-8'>
+                      <span class='has-error text-red-dark'>{{ clc.modalErrors.country }}</span>
+                      <input type='text' class='form-control' id='cf-{{ cf }}' placeholder='{{cf}}' ng-model='clc.newContact.customFields[cf]'>
+                    </div>
+                  </div>
+                </div>
+
+                <div class='col-md-6'>
+                  <div class='form-group' ng-repeat="cf in clc.listCustomFields" ng-show="$index >= (clc.listCustomFields.length / 2)">
+                    <label class='control-label col-md-4 text-no-bold text-login-page' for='cf-{{ cf }}'>{{cf}}</label>
+                    <div class='col-md-8'>
+                      <span class='has-error text-red-dark'>{{ clc.modalErrors.country }}</span>
+                      <input type='text' class='form-control' id='cf-{{ cf }}' placeholder='{{cf}}' ng-model='clc.newContact.customFields[cf]'>
+                    </div>
+                  </div>
+                </div>
+
+              </section>
+
 
               <div class='row'>
                 <div class='col-md-12'>
