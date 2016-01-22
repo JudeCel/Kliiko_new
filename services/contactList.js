@@ -7,7 +7,9 @@ var ContactListUser = dataWrappers.ContactListUser;
 var ContactList = models.ContactList;
 var _ = require('lodash');
 var constants = require('../util/constants');
+
 var csv = require('fast-csv');
+var xlsx = require('xlsx');
 
 module.exports = {
   create: create,
@@ -92,33 +94,7 @@ function parseFile(id, filePath) {
   let deferred = q.defer();
   ContactList.find({ where: { id: id } }).then(function(contactList) {
     if(contactList) {
-      let object = { valid: [], invalid: [] };
-
-      csv.fromPath(filePath, {
-        headers: true
-      }).transform(function(data) {
-        _.map(data, function(value, key) {
-          delete data[key];
-          data[_.camelCase(key)] = value;
-        });
-
-        return data;
-      }).validate(function(data, next) {
-        validateRow(contactList.defaultFields, contactList.customFields, data).then(function() {
-          next(null, true);
-        }, function(error) {
-          data.validationErrors = error;
-          next(null, false);
-        });
-      }).on('data', function(data) {
-        object.valid.push(data);
-      }).on('data-invalid', function(data) {
-        object.invalid.push(data);
-      }).on('error', function(error) {
-        deferred.reject(error);
-      }).on('end', function() {
-        deferred.resolve(object);
-      });
+      parseCsv(contactList.id);
     }
     else {
       deferred.reject('ContactList not found!');
@@ -128,22 +104,61 @@ function parseFile(id, filePath) {
   return deferred.promise;
 };
 
+function parseCsv(contactListId) {
+  let object = { valid: [], invalid: [] };
+
+  csv.fromPath(filePath, {
+    headers: true
+  }).transform(function(data) {
+    _.map(data, function(value, key) {
+      delete data[key];
+      data[_.camelCase(key)] = value;
+    });
+
+    return data;
+  }).validate(function(data, next) {
+    validateRow(contactList.defaultFields, contactList.customFields, data).then(function() {
+      next(null, true);
+    }, function(error) {
+      data.validationErrors = error;
+      next(null, false);
+    });
+  }).on('data', function(data) {
+    object.valid.push(data);
+  }).on('data-invalid', function(data) {
+    object.invalid.push(data);
+  }).on('error', function(error) {
+    deferred.reject(error);
+  }).on('end', function() {
+    deferred.resolve(object);
+  });
+}
+
 function validateRow(defaults, customs, row) {
   let deferred = q.defer();
   let error = {};
 
+  let rowData = {};
   _.map(defaults, function(key) {
-    let rowData = row[key];
+    rowData[key] = row[key];
 
-    if(!rowData) {
+    if(!rowData[key]) {
       error[key] = 'Not found';
     }
     else {
-      if(rowData.length == 0) {
+      if(rowData[key].length == 0) {
         error[key] = 'No data';
       }
     }
   });
+
+  models.ContactListUser.User(rowData).valid().then(function(result) {
+    console.log(result);
+  });
+
+  // make default and customs separate
+  // to contactListUser.User(defaults).valid().then()
+  // to contactListUser(accountId: id, customFields: customs).valid()
 
   _.map(customs, function(key) {
     let rowData = row[key];

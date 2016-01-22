@@ -150,7 +150,7 @@ describe('Services -> ContactList', () => {
     });
 
     describe('happy path', function() {
-      it('should succeed', function(done) {
+      it.only('should succeed', function(done) {
         let attrs = {
           accountId: testAccount.id,
           name: 'cool list',
