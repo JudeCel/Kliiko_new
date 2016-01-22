@@ -18,25 +18,6 @@ passport.use(new LocalStrategy({
       if (failed) {
         done('Sorry, your Email and Password do not match. Please try again.');
       }else{
-/* 
-        //To do, add not confirmed validation
-        if (!result.confirmedAt) {
-            done('Your account has not been confirmed, please check your e-mail and follow the link.');
-            return;
-        }
-        
-        result.getAccounts({ include: [ models.AccountUser ] }).then(function(accounts) {
-          let account = accounts[0];
-          if(account.AccountUser.active) {
-            result.increment('signInCount').done(function(result) {
-              done(null, userParams(result, account));
-            });
-          }
-          else {
-            done('Sorry, your account has been deactivated. Please get in touch with the administration');
-          }
-        });
-*/
         prepareUserData(result, null, done);
       }
     });
@@ -109,6 +90,10 @@ function userParams(user, account) {
 }
 
 function prepareUserData(user, profile, callback){
+  if (!user.confirmedAt) {
+    return callback('Your account has not been confirmed, please check your e-mail and follow the link.');
+  }
+  
   user.getAccounts({ include: [ models.AccountUser ] }).then(function(accounts) {
     let account = accounts[0];
     if(account.AccountUser.active) {
