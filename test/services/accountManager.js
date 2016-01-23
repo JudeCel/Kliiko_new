@@ -97,7 +97,7 @@ describe('SERVICE - AccountManager', function() {
     };
   }
 
-  describe('#createOrFindAccountUser', function() {
+  describe('#createOrFindAccountManager', function() {
     let role = 'accountManager';
     describe('happy path', function() {
       it.skip('should find existing user', function (done) {
@@ -105,7 +105,7 @@ describe('SERVICE - AccountManager', function() {
         req.body.email = 'lilu2.tanya@gmail.com';
         let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
 
-        accountManagerService.createOrFindAccountUser(req, res, function(error, params) {
+        accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
           if(error) {
             done(error);
           }
@@ -127,7 +127,7 @@ describe('SERVICE - AccountManager', function() {
         let req = requestObject();
         let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
 
-        accountManagerService.createOrFindAccountUser(req, res, function(error, params) {
+        accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
           if(error) {
             done(error);
           }
@@ -160,7 +160,7 @@ describe('SERVICE - AccountManager', function() {
         req.user.email = 'some@email.com';
         let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
 
-        accountManagerService.createOrFindAccountUser(req, res, function(error, params) {
+        accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
           assert.deepEqual(error, { email: 'You are trying to invite yourself.' });
           done();
         });
@@ -172,7 +172,7 @@ describe('SERVICE - AccountManager', function() {
         req.body.email = 'lilu.tanya@gmail.com';
         let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
 
-        accountManagerService.createOrFindAccountUser(req,res, function(error, params) {
+        accountManagerService.createOrFindAccountManager(req,res, function(error, params) {
           assert.deepEqual(error, { email: 'This account has already accepted invite.' });
           done();
         });
@@ -187,7 +187,7 @@ describe('SERVICE - AccountManager', function() {
       let req = requestObject();
       let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
 
-      accountManagerService.createOrFindAccountUser(req, res, function(error, params) {
+      accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
         if(error) {
           done(error);
         }
@@ -225,7 +225,7 @@ describe('SERVICE - AccountManager', function() {
 
       let req = requestObject();
       let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
-      accountManagerService.createOrFindAccountUser(req, res, function(error, params) {
+      accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
         if(error) {
           done(error);
         }
@@ -261,7 +261,7 @@ describe('SERVICE - AccountManager', function() {
       let req = requestObject();
       let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
 
-      accountManagerService.createOrFindAccountUser(req, res, function(error, params) {
+      accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
         if(error) {
           done(error);
         }

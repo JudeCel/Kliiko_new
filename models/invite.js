@@ -9,8 +9,8 @@ module.exports = (Sequelize, DataTypes) => {
     sentAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
     expireAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles },
-    accountId: { type: DataTypes.INTEGER, allowNull: false, unique: 'compositeAccountUserAndAccountId'},
-    accountUserId: { type: DataTypes.INTEGER, allowNull: true , unique: 'compositeAccountUserAndAccountId'},
+    accountId: { type: DataTypes.INTEGER, allowNull: false, unique: 'compositeaccountUserIdAndaccountId'},
+    accountUserId: { type: DataTypes.INTEGER, allowNull: false , unique: 'compositeaccountUserAndaccountId'},
     userType: { type: DataTypes.ENUM, allowNull: false, values: ['existing', 'new'], defaultValue: 'existing' },
   }, {
     classMethods: {

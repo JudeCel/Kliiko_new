@@ -21,13 +21,18 @@ module.exports = (Sequelize, DataTypes) => {
     landlineNumber: {type: DataTypes.STRING, allowNull: true },
     mobile: {type: DataTypes.STRING, allowNull: true },
     comment: { type: DataTypes.TEXT, allowNull: true },
-    email: {type: DataTypes.STRING, allowNull: false, unique: {msg: "Email has already been taken"},
+    email: {type: DataTypes.STRING, allowNull: false,
       validate: {
         notEmpty: {args: true, msg: "Email can't be empty"},
         is: {args: constants.emailRegExp, msg: "Invalid e-mail format" }
       }
     },
   }, {
+      indexes: [{
+        name: "compositeUserIdAndAccountIdAndEmail",
+        unique: {msg: "Email has already been taken"},
+        fields: ['email', 'UserId', 'AccountId']
+      }],
       classMethods: {
         associate: function(models) {
           AccountUser.belongsTo(models.User);

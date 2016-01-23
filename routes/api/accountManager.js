@@ -13,7 +13,7 @@ function get(req, res, next) {
 };
 
 function post(req, res, next) {
-  accountManagerService.createOrFindAccountUser(req, res, function(error, params) {
+  accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
     if(error) {
       return res.send({ error: error });
     }

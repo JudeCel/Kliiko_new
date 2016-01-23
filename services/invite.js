@@ -30,11 +30,10 @@ function createInvite(params, callback) {
     role: params.role,
     userType: params.userType
   }).then(function(result) {
-    Invite.find({ include: [ { model: AccountUser, attributes: constants.safeAccountUserParams }, Account ], where: { token: token } }).then(function(invite) {
+    Invite.find({ include: [ { model: AccountUser, attributes: constants.safeAccountUserParams }, Account, User ], where: { token: token } }).then(function(invite) {
       sendInvite(invite, callback);
     });
   }).catch(function(error) {
-    console.log(error);
     if(error.name == 'SequelizeUniqueConstraintError') {
       callback({ email: 'User has already been invited' })
     }
@@ -78,7 +77,7 @@ function removeInvite(invite, callback) {
     });
   }
   else {
-    Invite.destroy({ where: { userId: invite.accountUserId, accountId: invite.accountId } }).then(function() {
+    Invite.destroy({ where: { accountUserId: invite.accountUserId, accountId: invite.accountId } }).then(function(res) {
       callback(null, true);
     }).catch(function(error) {
       callback(prepareErrors(error));
@@ -173,9 +172,9 @@ function updateUser(params, invite, callback) {
 function removeAllAssociatedDataOnNewUser(invite, callback) {
   async.waterfall([
     function(cb) {
-      AccountUser.find({ where: { id: invite.accountUserId } }).then(function(accountUser) {
-        if(accountUser) {
-          cb(null, accountUser);
+      User.find({ where: { id: invite.userId } }).then(function(user) {
+        if(user) {
+          cb(null, user);
         }
         else {
           cb('Not found user');
@@ -184,8 +183,8 @@ function removeAllAssociatedDataOnNewUser(invite, callback) {
         cb(prepareErrors(error));
       });
     },
-    function(accountUser, cb) {
-      accountUser.destroy().then(function() {
+    function(user, cb) {
+      user.destroy().then(function() {
         cb(null, true);
       }).catch(function(error) {
         cb(prepareErrors(error));

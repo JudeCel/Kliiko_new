@@ -14,7 +14,7 @@ var _ = require('lodash');
 var crypto = require('crypto');
 
 //Exports
-function createOrFindAccountUser(req, res, callback) {
+function createOrFindAccountManager(req, res, callback) {
   let user = req.user;
   let params = prepareParams(req);
   let currentDomain = res.locals.currentDomain;
@@ -26,18 +26,18 @@ function createOrFindAccountUser(req, res, callback) {
 
     User.find({
       where: { email: params.email }
-    }).then(function(user) {
-      if(user) {
-        user.getAccounts({where: {id: currentDomain.id}}).then(function (results) {
+    }).then(function(existsUser) {
+      if(existsUser) {
+        existsUser.getAccounts({ where: {id: currentDomain.id } }).then(function (results) {
           if (_.isEmpty(results)) {
-            createAccountUser(params, user.id, "existing", currentDomain.id, callback);
+            createAccountUser(params, existsUser.id, "existing", currentDomain.id, callback);
           }else{
             callback('This account has already accepted invite.');
           }
         })
       } else {
-        User.create(userParams(params.email)).then(function(user) {
-          createAccountUser(params, user.id, "new", currentDomain.id, callback);
+        User.create(userParams(params.email)).then(function(newUser) {
+          createAccountUser(params, newUser.id, "new", currentDomain.id, callback);
         }, function(err) {
           callback(prepareErrors(err));
         });
@@ -157,7 +157,7 @@ function prepareErrors(err) {
 };
 
 module.exports = {
-  createOrFindAccountUser: createOrFindAccountUser,
+  createOrFindAccountManager: createOrFindAccountManager,
   findAccountManagers: findAccountManagers,
   findAndRemoveAccountUser: findAndRemoveAccountUser
 };
