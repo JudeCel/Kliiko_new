@@ -59,35 +59,14 @@ function userParams(email) {
   return {email: email, password: crypto.randomBytes(16).toString('hex')};
 }
 
-
 function findAccountManagers(currentDomainId, callback) {
   AccountUser.findAll({where: {AccountId:  currentDomainId,
     role: 'accountManager'}}).then(function(results) {
       callback(null, results)
   })
-  // async.parallel([
-  //   function(cb) {
-  //     findUsers(User, { owner: false, AccountId: currentDomainId}, [ 'id', 'UserId', 'AccountId' ], cb);
-  //   },
-  //   function(cb) {
-  //     findUsers(Invite, { AccountId: currentDomainId, role: 'accountManager' }, [ 'id', 'UserId' ], cb);
-  //   }
-  // ], function(err, results) {
-  //   if(err) {
-  //     callback(err);
-  //   }
-  //   else {
-  //     callback(null, _.union(results[0], results[1]));
-  //   }
-  // });
 };
 
 function findAndRemoveAccountUser(userId, accountId, callback) {
-  // AccountUser.findAll().then(function (r) {
-  //   console.log(userId);
-  //   console.log(accountId);
-  //   console.log(r);
-  // })
   AccountUser.find({
     where: {
       UserId: userId,
@@ -134,6 +113,7 @@ function preValidate(user, currentDomainId, params, callback) {
 };
 
 function adjustParamsForNewAccountUser(params, userId, accountId) {
+  params.status = "invited";
   params.role = 'accountManager';
   params.AccountId = accountId;
   params.UserId = userId;

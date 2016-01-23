@@ -11,6 +11,7 @@ module.exports = (Sequelize, DataTypes) => {
     owner: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles },
+    status: { type: DataTypes.ENUM, allowNull: false, values: ["invited", "active", "inactive"], defaultValue: "active" },
     postalAddress: {type: DataTypes.STRING, allowNull: true },
     city: {type: DataTypes.STRING, allowNull: true },
     state: {type: DataTypes.STRING, allowNull: true },

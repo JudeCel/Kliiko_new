@@ -209,7 +209,9 @@ describe('SERVICE - AccountManager', function() {
                   done(error);
                 }
                 accountManagerService.findAccountManagers(testAccount.id, function(error, userArray) {
-                  assert.equal(userArray[0].AccountId, testAccount.id);
+                  let subject = userArray[0];
+                  assert.equal(subject.status, "active");
+                  assert.equal(subject.AccountId, testAccount.id);
                   done();
                 });
               });
@@ -223,7 +225,6 @@ describe('SERVICE - AccountManager', function() {
 
       let req = requestObject();
       let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
-      // req.body.email = 'lilu2.tanya@gmail.com';
       accountManagerService.createOrFindAccountUser(req, res, function(error, params) {
         if(error) {
           done(error);
@@ -241,7 +242,9 @@ describe('SERVICE - AccountManager', function() {
               }
 
               accountManagerService.findAccountManagers(testAccount.id, function(error, userArray) {
-                assert.equal(userArray[0].AccountId, testAccount.id);
+                let subject = userArray[1];
+                assert.equal(subject.status, "invited");
+                assert.equal(subject.AccountId, testAccount.id);
                 done();
               });
             });

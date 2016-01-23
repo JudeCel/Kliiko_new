@@ -118,9 +118,13 @@ function acceptInviteExisting(token, callback) {
     else if(invite.userType == 'new') {
       return callback(null, invite);
     }
-
-    inviteDestroy(invite, function(error, message) {
-      callback(error, null, message);
+    setAccountUserActive(invite.accountUserId, function(err, result) {
+      if (err) {
+        return callback(err, null, null);
+      }
+      inviteDestroy(invite, function(error, message) {
+        callback(error, null, message);
+      });
     });
   });
 };
@@ -146,13 +150,22 @@ function acceptInviteNew(token, params, callback) {
     });
   });
 };
+function setAccountUserActive(accountUserId, callback) {
+  AccountUser.update({state: "active"}, { where:{ id: accountUserId } }).then(function(result) {
+    callback(null, result);
+  },function(err) {
+    callback(prepareErrors(error))
+  })
+}
 
 function updateUser(params, invite, callback) {
- User.update(params, { where: { id: invite.userId } }).then(function(result) {
-   callback(null, true);
- }).catch(function(error) {
-   callback(prepareErrors(error));
- });
+  setAccountUserActive(invite.accountUserId, function(res, _) {
+    User.update(params, { where: { id: invite.userId } }).then(function(result) {
+      callback(null, true);
+    }).catch(function(error) {
+      callback(prepareErrors(error));
+    });
+  })
 };
 
 
@@ -189,16 +202,16 @@ function inviteDestroy(invite, callback) {
  });
 };
 
-function createUser(params, invite, callback) {
-  params.email = invite.AccountUser.email;
-  params.confirmedAt = new Date();
-
-  User.create(params).then(function(result) {
-    callback(null, result);
-  }).catch(function(error) {
-    callback(prepareErrors(error));
-  });
-};
+// function createUser(params, invite, callback) {
+//   params.email = invite.AccountUser.email;
+//   params.confirmedAt = new Date();
+//
+//   User.create(params).then(function(result) {
+//     callback(null, result);
+//   }).catch(function(error) {
+//     callback(prepareErrors(error));
+//   });
+// };
 
 function prepareErrors(err) {
   let errors = ({});
