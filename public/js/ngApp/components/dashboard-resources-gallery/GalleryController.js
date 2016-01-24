@@ -80,6 +80,7 @@
 
         GalleryServices.createResource(resourceParams).then(function(res) {
           if(res.error){
+            messenger.ok(res.error);
           }else{
             Upload.upload({
               url: globalSettings.restUrl+'/gallery/uploadFile',
@@ -94,7 +95,7 @@
               },
 
               function(err) {
-              
+                
               }
             );
           }
@@ -187,10 +188,10 @@
     $scope.deleteResources = function(ids) {
       GalleryServices.deleteResources({resource_id: ids}).then(function(res) {
         if(res.error){
-          // TODO
+          messenger.ok(res.error);
         }else{
-          $scope.idsForAction = [];
           initList()
+          $scope.idsForAction = [];
           messenger.ok("Your selected resource(s) was successfully deleted.");
         }
       });
@@ -199,9 +200,9 @@
     $scope.downloadResources = function(ids) {
       GalleryServices.downloadResources({resource_id: ids}).then(function(res) {
         if(res.error){
-
+          messenger.ok("Something went wrong, please try again later.");
         }else{
-          dbg.yell(res);
+          window.location.assign('/chat_room/uploads/' + res.fileName);
         }
       })
     }

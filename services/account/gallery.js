@@ -7,6 +7,7 @@ var q = require('q');
 var models = require('./../../models')
 var account = models.Account;
 var Resource = models.Resource;
+var config = require('config');
 var expressValidatorStub = require('../../chatRoom/helpers/expressValidatorStub.js');
 var updateTmpTitle = require('../../chatRoom/handlers/updateTmpTitle.js');
 var deleteResource = require('../../chatRoom/handlers/deleteResource.js');
@@ -62,10 +63,12 @@ function downloadResources(data){
 
     results.forEach(function(resource, index, array) {
       resource.JSON = JSON.parse(decodeURI(resource.JSON));
+
+
       if(['audio', 'image', 'pdf'].indexOf(resource.resourceType) > -1){
         files.push({
           name: resource.JSON.name,
-          path: "/home/lauris/code/Kliiko/chatRoom/public/uploads/" + resource.JSON.name
+          path: config.get("pathToChatFileStorage") + resource.JSON.name
         })
       }
     });
@@ -75,8 +78,7 @@ function downloadResources(data){
 
       let buff = archive.toBuffer();
       let fileName = "resources_" + uniqueIdentifier + ".zip";
-
-      fs.writeFile("/home/lauris/code/Kliiko/chatRoom/public/uploads/" + fileName, buff, function () {
+      fs.writeFile(config.get("pathToChatFileStorage") + fileName, buff, function () {
         deferred.resolve({fileName: fileName});
       });
     });

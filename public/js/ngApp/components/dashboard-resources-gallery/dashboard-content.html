@@ -88,46 +88,44 @@
       <br>
       <br>
       <div class="gallery-body col-md-12" ng-class="{hidden:!show,chaldean:show}">
-        <table class="table table-hover"> 
-          <tbody ng-repeat="resource in resources"> 
-            <tr ng-if="resource.resourceType != 'tmp'"> 
-              <td>
+
+        <table class="table table-responsive table-dashboardElements" ng-repeat="resource in resources" > 
+          <tbody>
+            <tr ng-if="resource.resourceType != 'tmp'" class="ng-scope">
+              <td class="ng-binding">
                 <input class='pull-left' type="checkbox" 
                        value="{{resource.id}}" ng-click="resourcesSelected(resource.id)"
                        ng-checked="resource.checked" ng-model="resource.checked"/>
               </td>
-              <td>
-                <div ng-if="resource.JSON.type == 'video'">
-                  <img src="/chat_room/resources/images/youtubeThumb.png" alt="youtube" width="100" height="61">
-                </div> 
-
-                <div ng-if="resource.JSON.type == 'image'">
-                  <img src="/chat_room/uploads/{{resource.JSON.name}}" alt="{{resource.JSON.matchName}}" width="100" height="61">
-                </div>  
-
-                <div ng-if="resource.JSON.type == 'audio'">
-                  <img src="/chat_room/resources/images/audioThumb.png" alt="audio" width="100" height="61">
-                </div>
-              </td> 
-              <td>
-                <p class="pull-left">{{resource.JSON.matchName}}</p>
-              </td> 
-              <td>
-                <button class='pull-left btn-dashboard-plans btn' 
-                        ng-click="deleteResources(resource.id)">
-                  Delete
-                </button>
+              <td class="ng-binding" ng-if="resource.JSON.type == 'video'">
+                <img src="/chat_room/resources/images/youtubeThumb.png" alt="youtube" width="100" height="61">
               </td>
-              <td> 
-                <button download="resource.JSON.matchName" 
-                        ng-href="{{ fileUrl() }}"
-                        class='pull-right btn-dashboard-plans btn' 
-                        ng-click="downloadResources(resource.id)">
-                  Download
-                </button>
+              <td class="ng-binding" ng-if="resource.JSON.type == 'image'">
+                <img src="/chat_room/uploads/{{resource.JSON.name}}" alt="{{resource.JSON.matchName}}" width="100" height="61">
               </td>
-            </tr> 
-          </tbody> 
+              <td class="ng-binding" ng-if="resource.JSON.type == 'audio'">
+                <img src="/chat_room/resources/images/audioThumb.png" alt="audio" width="100" height="61">
+              </td>
+              <td class="ng-binding">
+                <p class="pull-left">
+                  {{resource.JSON.matchName | limitTo: 20 }} {{resource.JSON.matchName < 20 ? '' : '...'}}
+                  </p>
+              </td>
+              <td class="text-right dashboardElementsEditRemove">
+                {{resource.resourceType}}
+              </td>
+              <td>
+                <img src="/icons/dashboardElement_remove.png" alt="" ng-click="deleteResources(resource.id)" class="pull-right ng-scope" role="button" tabindex="0">
+
+                <a download="{{resource.JSON.matchName}}" 
+                   class='pull-right btn-dashboard-plans btn' 
+                   href="{{'/chat_room/uploads/' + resource.JSON.name}}">
+                  <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>  
+                </a>
+              </td>
+
+            </tr>
+          </tbody>
         </table>
       </div>
       
@@ -163,7 +161,7 @@
             <li class="list-group-item">
               <b>File name:</b> 
               <div ng-if="resource.JSON.type != 'video'">  
-                {{resource.JSON.matchName}}
+                {{resource.JSON.matchName | limitTo: 20 }} {{resource.JSON.matchName < 20 ? '' : '...'}}
               </div>
             </li>
             <li class="list-group-item">
