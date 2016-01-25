@@ -22,9 +22,8 @@ module.exports = {
   saveYoutubeData: saveYoutubeData
 };
 
-function getResources(accountName){
+function getResources(accountId){
   let deferred = q.defer();
-  let accountId = 3;
 
   Resource.findAll({
     include: [{

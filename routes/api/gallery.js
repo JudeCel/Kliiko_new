@@ -22,7 +22,7 @@ function postResources(req, res, next) {
 }
 
 function getResources(req, res, next) {
-  galleryService.getResources(res.locals.currentDomain.name).then(function(result) {
+  galleryService.getResources(res.locals.currentDomain.id).then(function(result) {
     res.send(({ data: result }));
   });
 }
