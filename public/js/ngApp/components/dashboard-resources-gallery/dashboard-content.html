@@ -1,8 +1,65 @@
 <section style="font-size: 16px;" id='GalleryController' ng-controller='GalleryController'>
 
   <div class="gallery col-md-12">
-    <div class="gallery-header"> 
-      <div class='col-md-12'>
+    <div class="dashboard-container">
+      <div class="row">
+        <div class="col-md-4">
+          
+        </div>
+        <div class="col-md-4">
+          <h2 class="text-center">Gallery</h2>
+          <h4 class="text-center has-error text-red-dark ng-binding"></h4>
+          <h4 class="text-center ng-binding"></h4>
+        </div>
+        <div class="col-md-4 text-right">
+          <button class="btn btn-addNewElement btn-green" type='button' ng-click="show=!show; setView('thumbView')" ng-class="{hidden:!show,chaldean:show}">
+            <span class='glyphicon glyphicon-th' aria-hidden='true'></span>   
+          </button>
+
+          <button class="btn btn-addNewElement btn-green" type='button' ng-click="show=!show; setView('listView')" ng-class="{hidden:show,chaldean:!show}">
+            <span class='glyphicon glyphicon-th-list' aria-hidden='true'></span>   
+          </button>
+
+          <button class='btn btn-addNewElement btn-green' type='button' id='uploadResourceDropdown' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' style="margin-left: 10px;">
+            <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
+            Add New Resource
+          </button>
+          <ul class='pull-right dropdown-menu header-dropdown-ul' aria-labelledby='uploadResourceDropdown'>
+            <li class='text-right text-size-dashboard'>
+              <a ng-click="uploadResourceForm('image')" data-toggle='modal' style="cursor:pointer;">
+                Upload Image
+              </a>
+            </li>
+
+            <li class='text-right text-size-dashboard'>
+              <a ng-click="uploadResourceForm('brandLogo')" data-toggle='modal' style="cursor:pointer;">
+                Upload Brand Logo
+              </a>
+            </li>
+
+            <li class='text-right text-size-dashboard'>
+              <a ng-click="uploadResourceForm('audio')" data-toggle='modal' style="cursor:pointer;">
+                Upload Audio
+              </a>
+            </li>
+
+            <li class='text-right text-size-dashboard'>
+              <a ng-click="uploadResourceForm('pdf')" data-toggle='modal' style="cursor:pointer;">
+                Upload PDF
+              </a>
+            </li>
+
+            <li class='text-right text-size-dashboard'>
+              <a ng-click="uploadResourceForm('youtubeUrl')" data-toggle='modal' style="cursor:pointer;">
+                Save Youtube URL
+              </a>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+    </div>
+      <!-- div class='col-md-12'>
         <button class='pull-right btn' type='button' id='uploadResourceDropdown' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' style="margin-left: 10px;">
           <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
           Add New
@@ -16,47 +73,13 @@
           <span class='glyphicon glyphicon-th-list' aria-hidden='true'></span>   
         </button>
 
-        <ul class='pull-right dropdown-menu header-dropdown-ul' aria-labelledby='uploadResourceDropdown'>
-          <li class='text-right text-size-dashboard'>
-            <a ng-click="uploadResourceForm('image')" data-toggle='modal' style="cursor:pointer;">
-              Upload Image
-            </a>
-          </li>
-
-          <li class='text-right text-size-dashboard'>
-            <a ng-click="uploadResourceForm('brandLogo')" data-toggle='modal' style="cursor:pointer;">
-              Upload Brand Logo
-            </a>
-          </li>
-
-          <li class='text-right text-size-dashboard'>
-            <a ng-click="uploadResourceForm('audio')" data-toggle='modal' style="cursor:pointer;">
-              Upload Audio
-            </a>
-          </li>
-
-          <li class='text-right text-size-dashboard'>
-            <a ng-click="uploadResourceForm('pdf')" data-toggle='modal' style="cursor:pointer;">
-              Upload PDF
-            </a>
-          </li>
-
-          <li class='text-right text-size-dashboard'>
-            <a ng-click="uploadResourceForm('youtubeUrl')" data-toggle='modal' style="cursor:pointer;">
-              Save Youtube URL
-            </a>
-          </li>
-
-        </ul>
-      </div>
+        
+      </div> -->
 
 
-    </div>
+  </div>
 
-    <br>
-    <br>
-    <hr>
-
+  <div class="gallery col-md-12">
     <!-- Table view -->
     <form ng-submit="submitIdsForMassAction(action)">
       <div class='col-md-12'>
@@ -129,11 +152,41 @@
         </table>
       </div>
       
-      <!-- Block view -->
+      <!-- Panel view -->
       <div ng-class="{hidden:show,chaldean:!show}" ng-repeat="resource in resources">
         <div class="col-xs-6 col-md-4" ng-if="resource.resourceType != 'tmp'">  
-          <div class="panel panel-success">
-            <div class="panel-heading">
+              <!-- {{ resource.JSON }} -->
+          <div class="panel panel-success border-green">
+            <div class="panel-body">
+              
+              <div ng-bind-html="renderHtml(resource.JSON.message)" ng-if="resource.JSON.type == 'video'"></div>
+              
+              <div  ng-if="resource.JSON.type == 'image'">
+                <img class="img-responsive" src="/chat_room/uploads/{{resource.JSON.name}}" alt="{{resource.JSON.matchName}}">
+              </div>
+            
+              <div ng-if="resource.JSON.type == 'audio'">
+                <img src="/chat_room/resources/images/audioThumb.png" alt="{{resource.JSON.matchName}}">
+              </div>
+
+              <div ng-if="resource.JSON.type == 'pdf'">
+                <img src="/chat_room/resources/images/pdf.png" alt="{{resource.JSON.matchName}}">
+              </div>
+
+            </div>
+
+            <div class="panel-footer">
+              <input class='pull-left col-md-1' type="checkbox" 
+                     value="{{resource.id}}" ng-click="resourcesSelected(resource.id)"
+                     ng-checked="resource.checked" ng-model="resource.checked"/>
+
+              {{ resource.JSON.title }}
+
+              <div class='pull-right col-md-2'>
+                {{ resource.JSON.format }}
+              </div>
+            </div>
+            <!-- <div class="panel-heading">
               {{resource.JSON.title}}
               <input class='pull-left' type="checkbox" 
                      value="{{resource.id}}" ng-click="resourcesSelected(resource.id)"
@@ -178,7 +231,7 @@
               </div>
             </li>
           </ul>
-          </div>
+          </div> -->
         </div>
       </div> 
     </form>

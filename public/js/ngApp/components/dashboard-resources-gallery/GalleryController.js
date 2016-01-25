@@ -7,9 +7,9 @@
 
   GalleryController.$inject = ['dbg', '$q', 'GalleryServices', '$modal', 
                                '$scope', 'domServices', 'messenger', 
-                               'Upload', 'globalSettings'];
+                               'Upload', 'globalSettings', '$sce'];
 
-  function GalleryController(dbg, $q, GalleryServices, $modal, $scope, domServices, messenger, Upload, globalSettings){
+  function GalleryController(dbg, $q, GalleryServices, $modal, $scope, domServices, messenger, Upload, globalSettings, $sce){
     dbg.log2('#GalleryController  started');
     initList();
 
@@ -24,6 +24,11 @@
     $scope.dataForValidation = {};
     $scope.idsForAction = [];
     $scope.action = "";
+
+    $scope.renderHtml = function (htmlCode) {
+      return $sce.trustAsHtml(htmlCode);
+    };
+
 
     $scope.resourcesSelected = function(id) {
       if($scope.idsForAction.indexOf(id) == -1){
