@@ -9,15 +9,15 @@ module.exports = (Sequelize, DataTypes) => {
     sentAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
     expireAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles },
-    accountId: { type: DataTypes.INTEGER, allowNull: false, unique: 'compositeUserAndAccountId'},
-    userId: { type: DataTypes.INTEGER, allowNull: false , unique: 'compositeUserAndAccountId'},
+    accountId: { type: DataTypes.INTEGER, allowNull: false, unique: 'compositeaccountUserIdAndaccountId'},
+    accountUserId: { type: DataTypes.INTEGER, allowNull: false , unique: 'compositeaccountUserAndaccountId'},
     userType: { type: DataTypes.ENUM, allowNull: false, values: ['existing', 'new'], defaultValue: 'existing' },
-    // sessionId: { type: DataTypes.INTEGER, allowNull: true },
   }, {
     classMethods: {
       associate: function(models) {
         Invite.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'cascade' });
         Invite.belongsTo(models.Account, { foreignKey: 'accountId', onDelete: 'cascade' });
+        Invite.belongsTo(models.AccountUser, { foreignKey: 'accountUserId', onDelete: 'cascade' });
       }
     }
   });

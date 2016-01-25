@@ -3,20 +3,27 @@
 module.exports = {
   emailRegExp: /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i,
   systemRoles: ['admin', 'accountManager', 'facilitator', 'observer', 'participant'],
-  safeUserParams: [
+  safeAccountUserParams: [
     'id',
     'firstName',
     'lastName',
-    'email',
     'gender',
-    'mobile',
-    'landlineNumber',
+    'active',
+    'email',
     'postalAddress',
     'city',
     'state',
-    'postcode',
     'country',
-    'companyName'
+    'postcode',
+    'companyName',
+    'landlineNumber',
+    'mobile',
+    'comment'
+  ],
+  safeUserParams: [
+    'id',
+    'email'
+
   ],
   promotionCodeTypes: ['percentage', 'value'],
   dateFormat: 'MM-dd-yyyy'
