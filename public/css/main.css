@@ -7,7 +7,7 @@
 .btn-dashboard-menu, .btn-addNewElement {
   background-color: inherit;
   width: 13%;
-  /*min-width: 180px;*/
+  min-width: 49px;
   height: 36px;
   margin-left: 36px;
   margin-top: 30px;
@@ -1690,3 +1690,16 @@ hr.survey-hr {
 
 .fade-disabled {
   opacity: .45 !important; }
+
+a.green-link{
+  text-decoration: none;
+  font-size: 16px;
+  color: #2D8C5E;
+  margin: 10px 5px;
+  cursor: pointer;
+  float: right;
+}
+
+.select-all-text{
+  margin: 25px 0px;
+}
