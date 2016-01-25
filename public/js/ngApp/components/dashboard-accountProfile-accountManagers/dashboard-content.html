@@ -30,20 +30,19 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat='user in users'>
-            <td>{{ user.firstName }}</td>
-            <td>{{ user.lastName }}</td>
-            <td>{{ user.gender }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.mobile }}</td>
-            <td>
-              <div ng-if='user.Invites'>Invited</div>
-              <div ng-if='user.AccountUsers'>Accepted</div>
-            </td>
+          <tr ng-repeat='accountUser in accountUsers'>
+            <td>{{ accountUser.firstName }}</td>
+            <td>{{ accountUser.lastName }}</td>
+            <td>{{ accountUser.gender }}</td>
+            <td>{{ accountUser.email }}</td>
+            <td>{{ accountUser.mobile }}</td>
+            <td>{{ accountUser.state }}</td>
             <td class='text-right dashboardElementsEditRemove'>
               <img src='/icons/dashboardElement_edit.png' alt='' />
-              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeInvite(user)' ng-if='user.Invites' />
-              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeAccountUser(user)' ng-if='user.AccountUsers' />
+              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeInvite(accountUser)' ng-if='isInvited(accountUser)' />
+              <img src='/icons/dashboardElement_remove.png' alt=''
+              ng-click='removeAccountUser(accountUser)' 
+              ng-if='isAccepted(accountUser) && !isAccountOwner(accountUser)' />
             </td>
           </tr>
         </tbody>

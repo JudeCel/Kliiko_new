@@ -66,10 +66,10 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(userObject, done) {
-  models.User.find({attributes: ['email', 'id', 'firstName', 'signInCount'], where: {id: userObject.id}}).done(function(result){
+  models.User.find({ attributes: ['email', 'id', 'signInCount'], where: { id: userObject.id } }).done(function(result){
     if (result) {
-      result.getAccounts().then(function(accounts) {
-        done(null, userParams(result, accounts[0]));
+      result.getOwnerAccount().then(function(ownerAccounts) {
+        done(null, userParams(result, ownerAccounts[0]));
       });
     }else{
       done("not found", null);
@@ -77,15 +77,13 @@ passport.deserializeUser(function(userObject, done) {
   });
 });
 
-function userParams(user, account) {
+function userParams(user, ownerAccount) {
   return {
     id: user.id,
     email: user.email,
-    subdomain: account.name,
-    role: account.AccountUser.role,
-    firstName: user.firstName,
+    ownerAccountSubdomain: ownerAccount.name,
     signInCount: user.signInCount,
-    accountOwnerId: account.id
+    ownerAccountId: ownerAccount.id
   };
 }
 

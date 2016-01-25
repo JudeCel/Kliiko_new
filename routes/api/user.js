@@ -12,6 +12,7 @@ let changePasswordService = require('../../services/changePassword');
 let _ = require('lodash');
 let chargebeeModule = require('./../../modules/chargebee/chargebeeModule');
 let q = require('q');
+let policy = require('./../../middleware/policy.js')
 
 module.exports = {
   userGet: userGet,
@@ -19,24 +20,6 @@ module.exports = {
   userCanAccessPost:userCanAccessPost,
   changePassword:changePassword
 };
-
-
-var userDetailsFields = [
-    'id',
-    'firstName',
-    'lastName',
-    'email',
-    'gender',
-    'mobile',
-    'landlineNumber',
-    'postalAddress',
-    'city',
-    'state',
-    'postcode',
-    'country',
-    'companyName',
-    'tipsAndUpdate'
-];
 
 function userPost(req, res, next) {
   User.find({
@@ -58,8 +41,9 @@ function userPost(req, res, next) {
  * Get All current user data, that can be required by app at the start
  */
 function userGet(req, res, next) {
-  let role = res.locals.currentDomain.roles;
-  let userId = req.user.id;
+  let currentDomain = res.locals.currentDomain
+  let roles = currentDomain.roles;
+  let reqUser = req.user;
 
   q.all([
     getUserBasicData(),
@@ -70,30 +54,16 @@ function userGet(req, res, next) {
     res.send(user);
   });
 
-
-
   function getUserBasicData() {
     let deferred = q.defer();
-
-    User.find({
-      where: {
-        id: userId
-      },
-      attributes: userDetailsFields,
-      raw: true
-    }).then(function(result) {
-      result.role = role;
-      deferred.resolve(result);
-    }).catch(function (err) {
-      deferred.reject({error: err});
-    });
+    reqUser.roles = roles;
+    deferred.resolve(reqUser);
     return deferred.promise;
   }
 
   function getUserSubscriptionsData() {
-    return chargebeeModule.getSubscriptions(userId);
+    return chargebeeModule.getSubscriptions(reqUser.id);
   }
-
 
 }
 
@@ -108,7 +78,7 @@ function changePassword(req, res, next) {
 }
 
 function userCanAccessPost(req, res, next) {
-  var role = req.user.role;
+  var roles = res.locals.currentDomain.roles;
   var section = req.body.section;
 
   if (section === 'bannerMessages') {handleBannerMessages(); return}
@@ -117,15 +87,18 @@ function userCanAccessPost(req, res, next) {
 
 
   function handleBannerMessages() {
-    if (role === 'user') {
-      res.send({error: `Access Denied for ${role}`});
+    if (policy.authorized(roles)) {
+      res.send({accessPermitted: true, role: roles})
     } else {
-      res.send({accessPermitted: true, role: role})
+      res.send({error: `Access Denied for ${roles}`});
     }
   }
 
   function handleDefault() {
-    res.send({error: 'Access Denied'});
+    if (policy.authorized(roles)) {
+      next();
+    }else {
+      res.send({error: 'Access Denied'});
+    }
   }
 }
-

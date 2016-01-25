@@ -54,18 +54,6 @@ describe('User', () => {
       });
     });
 
-    it('can update from instance with existing record!', (done) =>  {
-      testUser.update({firstName: firstName, email: email})
-        .then(function(user) {
-          assert.equal(user.firstName, firstName);
-          assert.equal(user.email, email);
-          done();
-        })
-        .catch(function(error) {
-          done(error);
-        });
-    });
-
     it('return unique validation error', (done) =>  {
       User.build(attrs).save()
         .then(function(user) {
