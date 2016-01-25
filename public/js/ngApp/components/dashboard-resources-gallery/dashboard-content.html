@@ -100,8 +100,8 @@
               <td class="ng-binding" ng-if="resource.JSON.type == 'video'">
                 <img src="/chat_room/resources/images/youtubeThumb.png" alt="youtube">
               </td>
-              <td class="ng-binding" ng-if="resource.JSON.type == 'image'">
-                <img src="/chat_room/uploads/{{resource.JSON.name}}" alt="{{resource.JSON.matchName}}">
+              <td class="ng-binding" ng-if="resource.JSON.type == 'image' || resource.JSON.type == 'brandLogo'">
+                <img src="/chat_room/uploads/{{resource.JSON.name}}" image-resize image-percent="50" width="100" height="100" class="img-responsive"/>
               </td>
               <td class="ng-binding" ng-if="resource.JSON.type == 'audio'">
                 <img src="/chat_room/resources/images/audioThumb.png" alt="audio">
@@ -138,16 +138,16 @@
               
               <div ng-bind-html="renderHtml(resource.JSON.message)" ng-if="resource.JSON.type == 'video'"></div>
               
-              <div  ng-if="resource.JSON.type == 'image'">
-                <img class="img-responsive" src="/chat_room/uploads/{{resource.JSON.name}}" alt="{{resource.JSON.matchName}}">
+              <div  ng-if="resource.JSON.type == 'image' || resource.JSON.type == 'brandLogo'">
+                <img src="/chat_room/uploads/{{resource.JSON.name}}" image-resize image-percent="50" width="315" height="420" class="img-responsive text-center" />
               </div>
             
               <div ng-if="resource.JSON.type == 'audio'">
-                <img src="/chat_room/resources/images/audioThumb.png" alt="{{resource.JSON.matchName}}">
+                <img src="/chat_room/resources/images/audioThumb.png" alt="{{resource.JSON.matchName}}" image-resize image-percent="50" width="315" height="420" class="img-responsive text-center" >
               </div>
 
               <div ng-if="resource.JSON.type == 'pdf'">
-                <img src="/chat_room/resources/images/pdf.png" alt="{{resource.JSON.matchName}}">
+                <img src="/chat_room/resources/images/pdf.png" alt="{{resource.JSON.matchName}}" class="text-center">
               </div>
 
             </div>
