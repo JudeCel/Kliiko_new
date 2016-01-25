@@ -69,7 +69,6 @@ router.get('/survey/find', survey.find);
 router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', survey.confirm);
 router.get('/survey/constants', survey.getConstants);
->>>>>>> 9343dd48d0245dfcb876669041503ad5c2e34eb4
 
 // Common Rules
 router.use(function (req, res, next) {
