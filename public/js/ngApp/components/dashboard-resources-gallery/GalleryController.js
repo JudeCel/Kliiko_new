@@ -41,51 +41,58 @@
     };
 
     $scope.submitForm = function(newResource) {
-      dbg.yell(newResource)
       if(newResource.type == "youtubeUrl"){
-        var resourceParams = {
-          userId: null,
-          title: newResource.title,
-          text: newResource.youtubeUrl
-        };
-        
-        GalleryServices.saveYoutubeUrl(resourceParams).then(function(res) {
-          if(res.error){
-            messenger.error(res.error);
-          }else{
-            initList();
-            $scope.newResource = {};
-            cancel();
-            messenger.ok("Resource was successfully created.");
-          }
-        })
+        saveYoutube(newResource);
       }else{
-        var resourceParams = {
-          userId: null,
-          title: newResource.title,
-          type: newResource.type,
-          text: $scope.newResource.fileTst.name,
-          file: newResource.fileTst
-        };
-
-        GalleryServices.createResource(resourceParams).then(function(res) {
-          if(res.error){
-            messenger.ok(res.error);
-          }else{
-             GalleryServices.postuploadData(resourceParams).then(function(res) {
-              if(res.error){
-                messenger.error(res.error);
-              }else{
-                initList();
-                $scope.newResource = {};
-                cancel()
-                messenger.ok("Resource was sucessfully created.");
-              }
-            })
-          }
-        })
+        saveResource(newResource);
       }
     };
+
+    function saveYoutube(newResource){
+      var resourceParams = {
+        userId: null,
+        title: newResource.title,
+        text: newResource.youtubeUrl
+      };
+      
+      GalleryServices.saveYoutubeUrl(resourceParams).then(function(res) {
+        if(res.error){
+          messenger.error(res.error);
+        }else{
+          initList();
+          $scope.newResource = {};
+          cancel();
+          messenger.ok("Resource was successfully created.");
+        }
+      })
+    }
+
+    function saveResource(newResource){
+      var resourceParams = {
+        userId: null,
+        title: newResource.title,
+        type: newResource.type,
+        text: $scope.newResource.fileTst.name,
+        file: newResource.fileTst
+      };
+
+      GalleryServices.createResource(resourceParams).then(function(res) {
+        if(res.error){
+          messenger.ok(res.error);
+        }else{
+           GalleryServices.postuploadData(resourceParams).then(function(res) {
+            if(res.error){
+              messenger.error(res.error);
+            }else{
+              initList();
+              $scope.newResource = {};
+              cancel()
+              messenger.ok("Resource was sucessfully created.");
+            }
+          })
+        }
+      })
+    }
 
     function uploadTypeForTitle(uploadType) {
       if(uploadType == "brandLogo"){

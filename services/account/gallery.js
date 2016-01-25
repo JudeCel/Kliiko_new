@@ -147,7 +147,7 @@ function saveYoutubeData(data) {
     deferred.resolve(json);
   };
 
-  let topicId = 1;
+  let topicId = 1; //THIS NEEDS to be changed
   let json = {
     title: data.body.title,
     message: youTubeLink
