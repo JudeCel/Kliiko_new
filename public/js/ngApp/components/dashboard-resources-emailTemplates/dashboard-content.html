@@ -1,5 +1,7 @@
 <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec">
-        <div class="list-group col-md-3 mail-template-list">
+        <div class="list-group col-md-3 mail-template-list panel panel-success">
+            <div class="panel-heading"><strong>Templates</strong></div>
+            
             <a ng-repeat="(key, t) in ec.emailTemplates" class="list-group-item mail-template-list-item" ng-class="{'list-group-item-info': key == ec.currentTemplate.index}"
             ng-click="ec.startEditingTemplate(key)">
                 <span class="input-group input-group-sm" ng-hide="t.UserId">{{t["MailTemplateBase.name"]}}</span>
@@ -54,7 +56,7 @@
                     <h1 class='modal-title' id="mailTemplatePreviewSubject"></h1>
                 </div>
                 <div class='modal-body'>
-                    <iframe id="contentFrame" style="width:700px;height:700px;"></iframe>
+                    <iframe id="contentFrame" class="preview-frame"></iframe>
                 </div>
             </div>
         </div>
