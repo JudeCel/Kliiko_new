@@ -39,8 +39,8 @@
         <div id="contact-lists-right-column" class="col-md-10">
           <div id="list-mass-actions" ng-class="row" ng-hide="!clc.selectedListMembers.length">
             <span class="col-md-6">
-              <div class="check" ng-click="clc.selectAll()">
-                <input id="dashboard-contact-lists-selectAll-mass-action"  class="kliiko-checkbox checkbox-btn btn-green" ng-model="vm.allSelected"  type="checkbox" >
+              <div class="check"   >
+                <input id="dashboard-contact-lists-selectAll-mass-action"  ng-click="clc.selectAll()" class="kliiko-checkbox checkbox-btn btn-green" ng-model="vm.allSelected"  type="checkbox" >
                 <label for="dashboard-contact-lists-selectAll-mass-action" ></label> Select all
               </div>
               <div class="check" ng-click="clc.massDelete()">
