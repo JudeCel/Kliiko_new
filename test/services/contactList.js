@@ -132,8 +132,8 @@ describe('Services -> ContactList', () => {
 
   describe('#parseFile', function() {
     var testUser, testAccount;
-    var testFileValid = 'test/fixtures/contactList/list_valid.xls';
-    var testFileInvalid = 'test/fixtures/contactList/list_invalid.xls';
+    var testFileValid = { xls: 'test/fixtures/contactList/list_valid.xls', csv: 'test/fixtures/contactList/list_valid.csv' };
+    var testFileInvalid = { xls: 'test/fixtures/contactList/list_invalid.xls', csv: 'test/fixtures/contactList/list_invalid.csv' };
 
     function defaultParams() {
       return {
@@ -160,28 +160,42 @@ describe('Services -> ContactList', () => {
     });
 
     describe('happy path', function() {
-      it('should succeed', function(done) {
-        ContactListService.create(defaultParams()).then(function(contactList) {
-          ContactListService.parseFile(contactList.id, testFileValid).then(function(result) {
-            assert.deepEqual(result.invalid, []);
-            assert.equal(result.valid[0].firstName, 'user');
-            assert.equal(result.valid[0].lastName, 'insider user');
-            assert.equal(result.valid[0].gender, 'male');
-            assert.equal(result.valid[0].email, 'user@insider.com');
-            assert.equal(result.valid[0].mobile, '3124421424');
-            assert.equal(result.valid[0].landlineNumber, '312756661424');
-            assert.equal(result.valid[0].postalAddress, 'Super street 2- 7');
-            assert.equal(result.valid[0].city, 'Riga');
-            assert.equal(result.valid[0].state, 'LA');
-            assert.equal(result.valid[0].postCode, 'se6 2by');
-            assert.equal(result.valid[0].country, 'USA');
-            assert.equal(result.valid[0].companyName, 'Diatom Ltd.');
-            assert.equal(result.valid[0].age, 18);
-            assert.equal(result.valid[0].one, 1);
-            assert.equal(result.valid[0].two, 2);
-            assert.equal(result.valid[0].three, 3);
-            done();
-          }, function(error) {
+      describe('should succeed', function() {
+        function successFunction(filePath, callback) {
+          ContactListService.create(defaultParams()).then(function(contactList) {
+            ContactListService.parseFile(contactList.id, filePath).then(function(result) {
+              assert.deepEqual(result.invalid, []);
+              assert.equal(result.valid[0].firstName, 'user');
+              assert.equal(result.valid[0].lastName, 'insider user');
+              assert.equal(result.valid[0].gender, 'male');
+              assert.equal(result.valid[0].email, 'user@insider.com');
+              assert.equal(result.valid[0].mobile, '3124421424');
+              assert.equal(result.valid[0].landlineNumber, '312756661424');
+              assert.equal(result.valid[0].postalAddress, 'Super street 2- 7');
+              assert.equal(result.valid[0].city, 'Riga');
+              assert.equal(result.valid[0].state, 'LA');
+              assert.equal(result.valid[0].postCode, 'se6 2by');
+              assert.equal(result.valid[0].country, 'USA');
+              assert.equal(result.valid[0].companyName, 'Diatom Ltd.');
+              assert.equal(result.valid[0].age, 18);
+              assert.equal(result.valid[0].one, 1);
+              assert.equal(result.valid[0].two, 2);
+              assert.equal(result.valid[0].three, 3);
+              callback(null, true);
+            }, function(error) {
+              callback(error);
+            });
+          });
+        }
+
+        it('#parseCsv', function(done) {
+          successFunction(testFileValid.csv, function(error) {
+            done(error);
+          });
+        });
+
+        it('#parseXls', function(done) {
+          successFunction(testFileValid.xls, function(error) {
             done(error);
           });
         });
@@ -189,95 +203,178 @@ describe('Services -> ContactList', () => {
     });
 
     describe('sad path', function() {
-      it('should fail fully', function(done) {
-        ContactListService.create(defaultParams()).then(function(contactList) {
-          ContactListService.parseFile(contactList.id, testFileInvalid).then(function(result) {
-            assert.equal(result.valid.length, 0);
-            assert.equal(result.invalid.length, 3);
-            done();
-          }, function(error) {
-            done(error);
-          });
-        });
-      });
-
-      it('should fail because default field - companyName is not found', function(done) {
-        ContactListService.create(defaultParams()).then(function(contactList) {
-          ContactListService.parseFile(contactList.id, testFileInvalid).then(function(result) {
-            assert.equal(result.invalid[0].validationErrors.companyName, 'Not found');
-            assert.equal(result.invalid[1].validationErrors.companyName, 'Not found');
-            assert.equal(result.invalid[2].validationErrors.companyName, 'Not found');
-            done();
-          }, function(error) {
-            done(error);
-          });
-        });
-      });
-
-      it('should fail because custom field - three is not found', function(done) {
-        ContactListService.create(defaultParams()).then(function(contactList) {
-          ContactListService.parseFile(contactList.id, testFileInvalid).then(function(result) {
-            assert.equal(result.invalid[0].validationErrors.three, 'Not found');
-            assert.equal(result.invalid[1].validationErrors.three, 'Not found');
-            assert.equal(result.invalid[2].validationErrors.three, 'Not found');
-            done();
-          }, function(error) {
-            done(error);
-          });
-        });
-      });
-
-      it('should fail because of missing data', function(done) {
-        ContactListService.create(defaultParams()).then(function(contactList) {
-          ContactListService.parseFile(contactList.id, testFileInvalid).then(function(result) {
-            assert.equal(result.invalid[0].validationErrors.country, 'No data');
-            done();
-          }, function(error) {
-            done(error);
-          });
-        });
-      });
-
-      it('should fail because of email already in use', function(done) {
-        ContactListService.create(defaultParams()).then(function(contactList) {
-          let attrs = {
-            userId: testUser.id,
-            accountId: testAccount.id,
-            contactListId: contactList.id,
-            defaultFields: {
-              firstName: "DainisNew",
-              lastName: "LapinsNew",
-              password: "cool_password",
-              email: "bligzna.lauris@gmail.com",
-              gender: "male"
-            },
-            customFields: { one: "1", two:" 2", three:" 3" }
-          }
-
-          ContactListUserService.create(attrs).then(function(contactListUser) {
-            ContactListService.parseFile(contactList.id, testFileInvalid).then(function(result) {
-              assert.equal(result.invalid[2].validationErrors.email, 'Email already taken');
-              done();
+      describe('should fail fully', function() {
+        function failureFunction(filePath, callback) {
+          ContactListService.create(defaultParams()).then(function(contactList) {
+            ContactListService.parseFile(contactList.id, filePath).then(function(result) {
+              assert.equal(result.valid.length, 0);
+              assert.equal(result.invalid.length, 3);
+              callback(null, true);
             }, function(error) {
-              done(error);
+              callback(error);
             });
           });
+        }
+
+        it('#parseCsv', function(done) {
+          failureFunction(testFileInvalid.csv, function(error) {
+            done(error);
+          });
+        });
+
+        it('#parseXls', function(done) {
+          failureFunction(testFileInvalid.xls, function(error) {
+            done(error);
+          });
         });
       });
 
-      it('should fail, but not raise error on empty custom field - two', function(done) {
-        ContactListService.create(defaultParams()).then(function(contactList) {
-          ContactListService.parseFile(contactList.id, testFileInvalid).then(function(result) {
-            assert.equal(result.invalid[0].two, 2);
-            assert.equal(result.invalid[1].two, 3);
-            assert.equal(result.invalid[2].two, '');
-            done();
-          }, function(error) {
+      describe('should fail because default field - companyName is not found', function() {
+        function failureFunction(filePath, callback) {
+          ContactListService.create(defaultParams()).then(function(contactList) {
+            ContactListService.parseFile(contactList.id, filePath).then(function(result) {
+              assert.equal(result.invalid[0].validationErrors.companyName, 'Not found');
+              assert.equal(result.invalid[1].validationErrors.companyName, 'Not found');
+              assert.equal(result.invalid[2].validationErrors.companyName, 'Not found');
+              callback(null, true);
+            }, function(error) {
+              callback(error);
+            });
+          });
+        }
+
+        it('#parseCsv', function(done) {
+          failureFunction(testFileInvalid.csv, function(error) {
+            done(error);
+          });
+        });
+
+        it('#parseXls', function(done) {
+          failureFunction(testFileInvalid.xls, function(error) {
+            done(error);
+          });
+        });
+      });
+
+      describe('should fail because custom field - three is not found', function() {
+        function failureFunction(filePath, callback) {
+          ContactListService.create(defaultParams()).then(function(contactList) {
+            ContactListService.parseFile(contactList.id, filePath).then(function(result) {
+              assert.equal(result.invalid[0].validationErrors.three, 'Not found');
+              assert.equal(result.invalid[1].validationErrors.three, 'Not found');
+              assert.equal(result.invalid[2].validationErrors.three, 'Not found');
+              callback(null, true);
+            }, function(error) {
+              callback(error);
+            });
+          });
+        }
+
+        it('#parseCsv', function(done) {
+          failureFunction(testFileInvalid.csv, function(error) {
+            done(error);
+          });
+        });
+
+        it('#parseXls', function(done) {
+          failureFunction(testFileInvalid.xls, function(error) {
+            done(error);
+          });
+        });
+      });
+
+      describe('should fail because of missing data', function() {
+        function failureFunction(filePath, callback) {
+          ContactListService.create(defaultParams()).then(function(contactList) {
+            ContactListService.parseFile(contactList.id, filePath).then(function(result) {
+              assert.equal(result.invalid[0].validationErrors.country, 'No data');
+              callback(null, true);
+            }, function(error) {
+              callback(error);
+            });
+          });
+        }
+
+        it('#parseCsv', function(done) {
+          failureFunction(testFileInvalid.csv, function(error) {
+            done(error);
+          });
+        });
+
+        it('#parseXls', function(done) {
+          failureFunction(testFileInvalid.xls, function(error) {
+            done(error);
+          });
+        });
+      });
+
+      describe('should fail because of email already in use', function() {
+        function failureFunction(filePath, callback) {
+          ContactListService.create(defaultParams()).then(function(contactList) {
+            let attrs = {
+              userId: testUser.id,
+              accountId: testAccount.id,
+              contactListId: contactList.id,
+              defaultFields: {
+                firstName: "DainisNew",
+                lastName: "LapinsNew",
+                password: "cool_password",
+                email: "bligzna.lauris@gmail.com",
+                gender: "male"
+              },
+              customFields: { one: "1", two:" 2", three:" 3" }
+            }
+
+            ContactListUserService.create(attrs).then(function(contactListUser) {
+              ContactListService.parseFile(contactList.id, filePath).then(function(result) {
+                assert.equal(result.invalid[2].validationErrors.email, 'Email already taken');
+                callback(null, true);
+              }, function(error) {
+                callback(error);
+              });
+            });
+          });
+        }
+
+        it('#parseCsv', function(done) {
+          failureFunction(testFileInvalid.csv, function(error) {
+            done(error);
+          });
+        });
+
+        it('#parseXls', function(done) {
+          failureFunction(testFileInvalid.xls, function(error) {
+            done(error);
+          });
+        });
+      });
+
+      describe('should fail, but not raise error on empty custom field - two', function() {
+        function failureFunction(filePath, callback) {
+          ContactListService.create(defaultParams()).then(function(contactList) {
+            ContactListService.parseFile(contactList.id, filePath).then(function(result) {
+              assert.equal(result.invalid[0].two, 2);
+              assert.equal(result.invalid[1].two, 3);
+              assert.equal(result.invalid[2].two, '');
+              callback(null, true);
+            }, function(error) {
+              callback(error);
+            });
+          });
+        }
+
+        it('#parseCsv', function(done) {
+          failureFunction(testFileInvalid.csv, function(error) {
+            done(error);
+          });
+        });
+
+        it('#parseXls', function(done) {
+          failureFunction(testFileInvalid.xls, function(error) {
             done(error);
           });
         });
       });
     });
   });
-
 });

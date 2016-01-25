@@ -11,6 +11,7 @@ var constants = require('../util/constants');
 
 var csv = require('fast-csv');
 var xlsx = require('xlsx');
+var path = require('path');
 
 module.exports = {
   create: create,
@@ -121,8 +122,12 @@ function parseFile(id, filePath) {
           return value.email;
         });
 
-        // parseCsv(emails, deferred, contactList, filePath);
-        parseXls(emails, deferred, contactList, filePath);
+        if(path.extname(filePath) == '.csv') {
+          parseCsv(emails, deferred, contactList, filePath);
+        }
+        else {
+          parseXls(emails, deferred, contactList, filePath);
+        }
       }).catch(models.User.sequelize.ValidationError, function(error) {
         deferred.reject(error);
       }).catch(function(error) {
