@@ -1,6 +1,5 @@
 'use strict';
 
-var multer  = require('multer');
 var galleryService = require('./../../services/account/gallery');
 var socketHelper = require("../../chatRoom/socketHelper");
 
@@ -44,15 +43,11 @@ function deleteResources(req, res, next) {
 }
 
 function uploadResource(req, res, next) { // This should not stay here. Move to service!
-  socketHelper.uploadResource({
-    file: req.file,
-    width: 950,
-    height: 460,
-    type: req.body.type,
-    resCb: function(userId, json) {
-      res.send(json);
-    }
-  });
+  galleryService.uploadResourceFile(req).then(function(result) {
+    res.send(result);
+  }, function(err) {
+    res.send(({ error: err.message }));
+  })
 }
 
 function saveYoutubeResource(req, res, next) {

@@ -1,6 +1,6 @@
 <section style="font-size: 16px;" id='GalleryController' ng-controller='GalleryController'>
 
-  <div class="gallery">
+  <div class="gallery col-md-12">
     <div class="gallery-header"> 
       <div class='col-md-12'>
         <button class='pull-right btn' type='button' id='uploadResourceDropdown' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' style="margin-left: 10px;">
@@ -132,7 +132,7 @@
       <!-- Block view -->
       <div ng-class="{hidden:show,chaldean:!show}" ng-repeat="resource in resources">
         <div class="col-xs-6 col-md-4" ng-if="resource.resourceType != 'tmp'">  
-          <div class="panel panel-default">
+          <div class="panel panel-success">
             <div class="panel-heading">
               {{resource.JSON.title}}
               <input class='pull-left' type="checkbox" 
