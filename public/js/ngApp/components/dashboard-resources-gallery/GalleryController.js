@@ -7,16 +7,16 @@
 
   GalleryController.$inject = ['dbg', '$q', 'GalleryServices', '$modal', 
                                '$scope', 'domServices', 'messenger', 
-                               'Upload', 'globalSettings', '$sce'];
+                               'Upload', 'globalSettings', '$sce', 'filterFilter'];
 
-  function GalleryController(dbg, $q, GalleryServices, $modal, $scope, domServices, messenger, Upload, globalSettings, $sce){
+  function GalleryController(dbg, $q, GalleryServices, $modal, $scope, domServices, messenger, Upload, globalSettings, $sce, filterFilter){
     dbg.log2('#GalleryController  started');
     initList();
+    $scope.filterType = "";
 
     function initList() {
       GalleryServices.getResources().then(function(res) {
         $scope.resources = res.data;
-        $scope.totalResourceCount = $scope.resources.length;
       });
     }
 
@@ -24,11 +24,18 @@
     $scope.dataForValidation = {};
     $scope.idsForAction = [];
     $scope.action = "";
+    
+    $scope.filterBy = function(type) {
+      $scope.filterType = type;
+    }
+
+    $scope.getCount = function(type){
+      return filterFilter( $scope.resources, {resourceType:type}).lenght;
+    }
 
     $scope.renderHtml = function (htmlCode) {
       return $sce.trustAsHtml(htmlCode);
     };
-
 
     $scope.resourcesSelected = function(id) {
       if($scope.idsForAction.indexOf(id) == -1){
@@ -55,7 +62,6 @@
 
     function saveYoutube(newResource){
       var resourceParams = {
-        userId: null,
         title: newResource.title,
         text: newResource.youtubeUrl
       };
@@ -74,7 +80,6 @@
 
     function saveResource(newResource){
       var resourceParams = {
-        userId: null,
         title: newResource.title,
         type: newResource.type,
         text: $scope.newResource.fileTst.name,
