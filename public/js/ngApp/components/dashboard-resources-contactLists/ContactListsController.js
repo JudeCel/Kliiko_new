@@ -46,9 +46,6 @@
     function init() {
       contactListServices.getContactLists().then(function (result) {
         vm.lists = $filter('orderBy')(result, 'id');
-
-
-
         if (vm.lists.length) {
           // show first list content
           vm.activeListIndex = 0;
@@ -67,6 +64,7 @@
     function prepareSelectedList() {
       if (vm.selectedListMembers) {
         for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
+          vm.selectedListMembers[i].customFields = vm.selectedListMembers[i].customFields || [];
           if (!vm.selectedListMembers[i].selected) vm.selectedListMembers[i].selected = false;
         }
       }
@@ -103,6 +101,7 @@
       if (action === 'new') {
         vm.updateExistingUser = null;
         vm.contactModalTitle = 'Add New Contact';
+        vm.newContact = {};
       }
 
       if (action === 'update') {
@@ -119,15 +118,18 @@
      * create a contact for currently active list
      */
     function createContact() {
+
       var currentList = vm.lists[vm.activeListIndex];
 
       var valid = validateContact();
 
       if (!valid) return;
 
+      var newContact = angular.copy(vm.newContact);
+
       contactListServices.createUser(vm.newContact, currentList.id).then(
         function(res) {
-          var newContact = angular.copy(vm.newContact);
+
 
           domServices.modal('contactList-addContactManual', 'close');
           messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
@@ -167,11 +169,9 @@
       var valid = validateContact();
 
       if (!valid) return;
-
+      var newContact = angular.copy(vm.newContact);
       contactListServices.updateUser(vm.newContact, currentList.id).then(
         function(res) {
-          var newContact = angular.copy(vm.newContact);
-
           domServices.modal('contactList-addContactManual', 'close');
           messenger.ok('Contact '+ newContact.firstName + ' successfully updated');
 
@@ -338,10 +338,11 @@
      */
     function submitNewList() {
       if (vm.listUpdate) {
-        console.log(vm.listUpdate);
+        dbg.log2(vm.listUpdate);
         updateIt();
         return
       }
+
       if (!vm.newList.name) {
         dbg.log2('#ContactListController > submitNewList > error > list name is empty');
         messenger.error('List Name can not be blank');
@@ -369,12 +370,23 @@
           function(res) {
             dbg.log('#ContactListController > updateList > success: List "'+ vm.newList.name + '" updated');
 
-            vm.lists[vm.activeListIndex] = angular.copy(vm.newList);
+            // update list name
+            vm.lists[vm.activeListIndex].name = vm.newList.name;
+            delete vm.newList.name;
+
+            // populate list with all new custom fields
+            vm.lists[vm.activeListIndex].customFields = [];
+            for (var key in vm.newList) {
+              vm.lists[vm.activeListIndex].customFields.push(vm.newList[key]);
+            }
 
             vm.newList = {};
 
             domServices.modal('contactList-addNewListModal', 'close');
             messenger.ok('List "'+ vm.lists[vm.activeListIndex].name + '" updated');
+
+            // to update members with new custom fields (if any)
+            prepareSelectedList();
           },
           function(err) {
             dbg.error('#ContactListController > updateList > error: ', err);

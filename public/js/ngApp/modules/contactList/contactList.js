@@ -43,9 +43,31 @@
           return deferred.promise;
         }
         dbg.log1('#contactListServices > getContactLists > success'); dbg.log2(res);
-        deferred.resolve(res);
+
+        var output = angular.copy(res);
+        output = prepareCustomFieldsData(output);
+
+        deferred.resolve(output);
       });
       return deferred.promise;
+
+
+
+      function prepareCustomFieldsData(input) {
+        for (var i = 0, len = input.length; i < len ; i++) {
+          for (var j = 0, len = input[i].members.length; j < len ; j++) {
+
+            if (input[i].members[j].data.customFields) {
+              input[i].members[j].CustomFieldsObject = input[i].members[j].data.customFields;
+            }
+
+          }
+
+        }
+
+        return input;
+
+      }
     }
 
     /**
@@ -126,8 +148,8 @@
 
       var defaultFields, customFields;
 
-      customFields = userObj.customFields;
-      delete userObj.customFields;
+      customFields = userObj.CustomFieldsObject;
+      delete userObj.CustomFieldsObject;
       defaultFields = userObj;
 
       var params = {
@@ -164,8 +186,8 @@
 
       var defaultFields, customFields;
 
-      customFields = userObj.customFields;
-      delete userObj.customFields;
+      customFields = userObj.CustomFieldsObject;
+      delete userObj.CustomFieldsObject;
       defaultFields = userObj;
 
       var params = {

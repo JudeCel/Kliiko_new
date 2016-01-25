@@ -64,7 +64,7 @@ function find(id) {
       deferred.resolve(result);
     }, function(err) {
       deferred.reject(err);
-    })
+    });
     return deferred.promise;
 }
 

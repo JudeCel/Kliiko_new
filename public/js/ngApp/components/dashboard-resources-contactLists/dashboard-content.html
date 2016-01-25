@@ -16,7 +16,6 @@
     <div class='dashboard-container'>
 
       <div class="row">
-
         <div id="contact-lists-left-column" class="col-md-2">
           <div id="list-of-contacts">
             <div class="header">
@@ -96,7 +95,7 @@
               <td >
                 <span class='table-item-edit-group'>
                   <img src='/icons/dashboardElement_edit.png' alt='' ng-click="clc.contactAddEditClickHandle('update', member)"/>
-                  <img src='/icons/dashboardElement_remove.png' alt='' ng-click="clc.removeContacts(member.id)"" />
+                  <img src='/icons/dashboardElement_remove.png' alt='' ng-click="clc.removeContacts(member.id)" />
                 </span>
               </td>
             </tr>
@@ -235,25 +234,28 @@
               </div>
               <br>
 
-              <section ng-hide="!clc.listCustomFields || !clc.listCustomFields.length">
-                <hr>
+              <!--<pre>{{ clc.listCustomFields | json }}</pre>-->
+              <!--<pre>{{ clc.newContact | json }}</pre>-->
+
+              <section ng-hide="!clc.listCustomFields.length">
+                <div class="col-md-12 delimiter"></div>
                 <div class='col-md-6'>
 
-                  <div class='form-group' ng-repeat="cf in clc.listCustomFields track by $index" ng-show="$index < (clc.listCustomFields.length / 2)">
+                  <div class='form-group' ng-repeat="cf  in clc.listCustomFields track by $index" ng-show="$index < ( clc.listCustomFields.length / 2)">
                     <label class='control-label col-md-4 text-no-bold text-login-page' for='cf-{{ cf }}'>{{cf}}</label>
                     <div class='col-md-8'>
                       <span class='has-error text-red-dark'>{{ clc.modalErrors.country }}</span>
-                      <input type='text' class='form-control' id='cf-{{ cf }}' placeholder='{{cf}}' ng-model='clc.newContact.customFields[cf]'>
+                      <input type='text' class='form-control' id='cf-{{ cf }}' placeholder='{{cf}}' ng-model='clc.newContact.CustomFieldsObject[cf]'>
                     </div>
                   </div>
                 </div>
 
                 <div class='col-md-6'>
-                  <div class='form-group' ng-repeat="cf in clc.listCustomFields track by $index" ng-show="$index >= (clc.listCustomFields.length / 2)">
+                  <div class='form-group' ng-repeat="cf in clc.listCustomFields track by $index" ng-show="$index >= ( clc.listCustomFields.length / 2)">
                     <label class='control-label col-md-4 text-no-bold text-login-page' for='cf-{{ cf }}'>{{cf}}</label>
                     <div class='col-md-8'>
                       <span class='has-error text-red-dark'>{{ clc.modalErrors.country }}</span>
-                      <input type='text' class='form-control' id='cf-{{ cf }}' placeholder='{{cf}}' ng-model='clc.newContact.customFields[cf]'>
+                      <input type='text' class='form-control' id='cf-{{ cf }}' placeholder='{{cf}}' ng-model='clc.newContact.CustomFieldsObject[cf]'>
                     </div>
                   </div>
                 </div>
