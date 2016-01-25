@@ -1,5 +1,5 @@
 #email-template-editor {
-    width: 100%;
+    margin-top: 30px;
     height: 450px; 
     h2 {
         margin: 45px;
@@ -21,8 +21,9 @@
     }
     
     #templateContent {
-        width: 650px;
+        width: 100%;
         height: 450px;
+        margin: 0 auto;
     }
     
     .mail-template-list-item {
@@ -30,12 +31,13 @@
     }
     
     .mail-template-details {
-         width: 700px;
+         margin: 0 auto;
     }
     
     .mail-template-list {
         max-height: 650px;
         overflow-y: scroll;
+        margin-left: 50px;
     }
     
     .has-error {
