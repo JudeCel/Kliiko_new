@@ -4,6 +4,7 @@ var fs = require("fs");
 var zip = require("node-native-zip");
 // var Zip = require("adm-zip");
 var q = require('q');
+var config = require('config');
 var models = require('./../../models')
 var account = models.Account;
 var Resource = models.Resource;
