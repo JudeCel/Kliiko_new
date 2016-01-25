@@ -18,6 +18,7 @@
     upServices.deleteResources = deleteResources;
     upServices.createResource = createResource;
     upServices.saveYoutubeUrl = saveYoutubeUrl;
+    upServices.postuploadData = postuploadData;
     return upServices;
 
     function getResources() {
@@ -60,6 +61,22 @@
         dbg.log2('#GalleryServices > createGalleryResources > rest call responds');
         deferred.resolve(res);
       });
+
+      return deferred.promise;
+    }
+
+    function postuploadData(newResource){
+      var deferred = $q.defer();
+
+      Upload.upload({
+        url: globalSettings.restUrl+'/gallery/uploadFile',
+        method: 'POST',
+        data: {uploadedfile: newResource.file, type: newResource.type}
+      }).then(
+        function(res) {
+          deferred.resolve(res);
+        }
+      );
 
       return deferred.promise;
     }

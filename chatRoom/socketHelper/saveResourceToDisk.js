@@ -29,6 +29,7 @@ function saveResourceToDisk(params) {
     };
         var filename = json.filename
         var path = params.file.path
+        var fileFormat = params.file.mimetype.split('/').pop();
         
         fs.readFile(path, function (err) {
             if (err) {
@@ -50,7 +51,7 @@ function saveResourceToDisk(params) {
                                     name: filename,
                                     matchName: json.filename,
                                     type: params.type,
-                                    format: "png",
+                                    format: fileFormat,
                                     width: params.width,
                                     height: params.height,
                                     depth: 1
@@ -68,7 +69,7 @@ function saveResourceToDisk(params) {
                                  name: filename,
                                  matchName: json.filename,
                                  type: params.type,
-                                 format: "png",
+                                 format: fileFormat,
                                  width: params.width,
                                  height: params.height,
                                  depth: 1
@@ -102,7 +103,7 @@ function saveResourceToDisk(params) {
                                                  name: filename,
                                                  matchName: json.filename,
                                                  type: params.type,
-                                                 format: features.format,
+                                                 format: fileFormat,
                                                  width: features.width,
                                                  height: features.height,
                                                  depth: features.depth

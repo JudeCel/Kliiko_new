@@ -2,8 +2,8 @@
 
 var fs = require("fs");
 var zip = require("node-native-zip");
-// var Zip = require("adm-zip");
 var q = require('q');
+var config = require('config');
 var models = require('./../../models')
 var account = models.Account;
 var Resource = models.Resource;
@@ -18,12 +18,12 @@ module.exports = {
   downloadResources: downloadResources,
   deleteResources: deleteResources,
   uploadResource: uploadResource,
-  saveYoutubeData: saveYoutubeData
+  saveYoutubeData: saveYoutubeData,
+  uploadResourceFile: uploadResourceFile
 };
 
-function getResources(accountName){
+function getResources(accountId){
   let deferred = q.defer();
-  let accountId = 3;
 
   Resource.findAll({
     include: [{
@@ -48,6 +48,9 @@ function getResources(accountName){
   return deferred.promise;
 }
 
+function generateFileName() {
+  return "resources_" + Math.round(+new Date()/1000) + ".zip";
+}
 
 function downloadResources(data){
   let deferred = q.defer();
@@ -57,7 +60,6 @@ function downloadResources(data){
     attributes: ['id', 'JSON', 'resourceType']
   })
   .then(function (results) {
-    let uniqueIdentifier = Math.round(+new Date()/1000);
     let archive = new zip();
     let files = [];
 
@@ -77,7 +79,7 @@ function downloadResources(data){
       if (err) return console.log("err while adding files", err);
 
       let buff = archive.toBuffer();
-      let fileName = "resources_" + uniqueIdentifier + ".zip";
+      let fileName = generateFileName();
       fs.writeFile(config.get("pathToChatFileStorage") + fileName, buff, function () {
         deferred.resolve({fileName: fileName});
       });
@@ -145,7 +147,7 @@ function saveYoutubeData(data) {
     deferred.resolve(json);
   };
 
-  let topicId = 1;
+  let topicId = 1; //THIS NEEDS to be changed
   let json = {
     title: data.body.title,
     message: youTubeLink
@@ -187,5 +189,19 @@ function uploadResource(data){
     }
   });
 
+  return deferred.promise;
+}
+
+function uploadResourceFile(req) {
+  let deferred = q.defer();
+  socketHelper.uploadResource({
+    file: req.file,
+    width: 950,
+    height: 460,
+    type: req.body.type,
+    resCb: function(userId, json) {
+      deferred.resolve(json);
+    }
+  });
   return deferred.promise;
 }

@@ -49,7 +49,6 @@ router.put('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeS
 router.get('/chargebee/subscriptions', multipartyMiddleware, chargebee.chargebeeSubscriptionGet);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
 
-
 router.post('/gallery', gallery.postResources);
 router.post('/gallery/uploadFile', fileUploader(), gallery.uploadResource);
 router.post('/gallery/saveYoutubeUrl', gallery.saveYoutubeResource);
