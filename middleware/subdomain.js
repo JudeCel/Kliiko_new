@@ -7,12 +7,12 @@ var Account  = models.Account;
 var _ = require('lodash');
 var constants = require('../util/constants');
 
-function assignCurrentDomain(result, req, res) {
+function assignCurrentDomain(result, res) {
   res.locals.currentDomain = { id: result.id, name: result.name, roles: [result.accountUser.role] };
   res.locals.hasAccess = policy.hasAccess;
 }
 
-function assignCurrentUserInfo(result, req, res) {
+function assignCurrentUserInfo(result, req) {
   _.merge(req.user, _.pick(result.accountUser.dataValues, constants.safeAccountUserParams))
 }
 
@@ -58,8 +58,8 @@ module.exports = function(req, res, next) {
   if (comparedWithBaseDomainName(subdomain)) {
     isDomainAvailableForThisUser(req, subdomain, function(error, result){
       if(result){
-        assignCurrentDomain(result, req, res)
-        assignCurrentUserInfo(result, req, res)
+        assignCurrentDomain(result, res)
+        assignCurrentUserInfo(result, req)
         next();
       }else{
         res.status(404).send('Account not found or you do not have access to this page');
