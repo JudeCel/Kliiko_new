@@ -5,9 +5,6 @@ var constants = require('../util/constants');
 module.exports = (Sequelize, DataTypes) => {
   var User = Sequelize.define('User', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    firstName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "First Name can't be empty"} } },
-    lastName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: {args: true, msg: "Last Name can't be empty"} } },
-    gender: {type: DataTypes.ENUM, allowNull: false, validate: { notEmpty: {args: true, msg: "Gender can't be empty"} }, values: ["male", "female"] },
     email: {type: DataTypes.STRING, allowNull: false, unique: {msg: "Email has already been taken"},
       validate: {
         notEmpty: {args: true, msg: "Email can't be empty"},
@@ -41,16 +38,7 @@ module.exports = (Sequelize, DataTypes) => {
     currentSignInIp: {type : DataTypes.STRING, allowNull: true},
     promoCode: {type: DataTypes.INTEGER, allowNull: true},
     signInCount: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
-    tipsAndUpdate: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true},
-
-    postalAddress: {type: DataTypes.STRING, allowNull: true },
-    city: {type: DataTypes.STRING, allowNull: true },
-    state: {type: DataTypes.STRING, allowNull: true },
-    country: {type: DataTypes.STRING, allowNull: true },
-    postcode: {type: DataTypes.STRING, allowNull: true },
-    companyName: {type: DataTypes.STRING, allowNull: true },
-    landlineNumber: {type: DataTypes.STRING, allowNull: true },
-    mobile: {type: DataTypes.STRING, allowNull: true }
+    tipsAndUpdate: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true}
   },{
       indexes: [{
         unique: true,
@@ -62,7 +50,7 @@ module.exports = (Sequelize, DataTypes) => {
           User.hasMany(models.SessionMember, { foreignKey: 'userId'});
           User.belongsToMany(models.Vote, { through: models.VotesBy });
           User.belongsToMany(models.Account, { through: { model: models.AccountUser} });
-          User.hasMany(models.AccountUser);
+          User.hasMany(models.AccountUser, { onDelete: 'CASCADE' });
           User.hasMany(models.Event, { foreignKey: 'userId'});
           User.belongsToMany(models.Account, { through: { model: models.AccountUser, scope: { owner: true }},  as: 'OwnerAccount'});
           User.hasMany(models.Invite, { foreignKey: 'userId' });
