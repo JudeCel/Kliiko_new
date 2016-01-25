@@ -11,9 +11,10 @@ module.exports = {
   findByContactList: findByContactList,
   find: find,
   create: create,
+  update: update,
   destroy: destroy,
   updatePositions: updatePositions
-}
+};
 
 function findByContactList(contactListId) {
     var deferred = q.defer();
@@ -110,10 +111,13 @@ function newUserParams(params) {
 
 function update(params) {
   var deferred = q.defer();
-  ContactListUser.update(params).then(function(result) {
+
+  ContactListUser.update(params,{
+    where:{id:params.id}
+  }).then(function(result) {
     deferred.resolve(result);
   }, function(err) {
     deferred.reject(err);
-  })
+  });
   return deferred.promise;
 }

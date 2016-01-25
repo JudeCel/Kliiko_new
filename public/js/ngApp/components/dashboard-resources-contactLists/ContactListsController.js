@@ -20,11 +20,15 @@
 
     vm.listItemClickHandle = listItemClickHandle;
     vm.changeTableSortingFilter = changeTableSortingFilter;
-    vm.addContactManual = addContactManual;
+
+    vm.contactAddEditClickHandle = contactAddEditClickHandle;
     vm.createContact = createContact;
-    vm.selectAll = selectAll;
+    vm.updateContact = updateContact;
     vm.removeContacts = removeContacts;
+
+    vm.selectAll = selectAll;
     vm.massDelete = massDelete;
+
     vm.addNewList = addNewList;
     vm.editCustomFields = editCustomFields;
     vm.checkCustomFields = checkCustomFields;
@@ -81,12 +85,35 @@
       prepareSelectedList();
     }
 
+    /**
+     * Sort table row by seleclted filter
+     * @param type {string}
+     */
     function changeTableSortingFilter(type) {
       vm.tableSort.by =  type;
       vm.tableSort.reverse = !vm.tableSort.reverse;
     }
 
-    function addContactManual() {    domServices.modal('contactList-addContactManual');  }
+    /**
+     * Add New or Edit Existing contact
+     * @param action {string}
+     * @param [contactObj] {object} - contact object required for editing case
+     */
+    function contactAddEditClickHandle(action, contactObj) {
+      if (action === 'new') {
+        vm.updateExistingUser = null;
+        vm.contactModalTitle = 'Add New Contact';
+      }
+
+      if (action === 'update') {
+        vm.contactModalTitle = 'Edit Contact';
+        vm.newContact = contactObj;
+        vm.updateExistingUser = true;
+      }
+
+      domServices.modal('contactList-addContactManual');
+    }
+
 
     /**
      * create a contact for currently active list
@@ -94,14 +121,13 @@
     function createContact() {
       var currentList = vm.lists[vm.activeListIndex];
 
-
-      var valid = validate();
+      var valid = validateContact();
 
       if (!valid) return;
 
       contactListServices.createUser(vm.newContact, currentList.id).then(
         function(res) {
-          var newContact = vm.newContact;
+          var newContact = angular.copy(vm.newContact);
 
           domServices.modal('contactList-addContactManual', 'close');
           messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
@@ -129,30 +155,68 @@
 
         }
       );
+    }
 
 
-      function validate() {
-        vm.modalErrors = {};
-        var valid = true;
-        if (!vm.newContact.firstName || !vm.newContact.firstName.length) { vm.modalErrors.firstName = 'First Name cannot be blank'; valid = false; }
-        if (!vm.newContact.lastName || !vm.newContact.lastName.length) { vm.modalErrors.lastName = 'Last Name cannot be blank';valid = false; }
-        if (!vm.newContact.email || !vm.newContact.email.length) {vm.modalErrors.email = 'Email cannot be blank';valid = false; }
-        if (!vm.newContact.gender || !vm.newContact.gender.length) {vm.modalErrors.gender = 'Gender should be selected';valid = false; }
+    /**
+     * Update selected user (vm.newContact)
+     */
+    function updateContact() {
+      var currentList = vm.lists[vm.activeListIndex];
 
-        return valid;
-      }
+      var valid = validateContact();
 
+      if (!valid) return;
+
+      contactListServices.updateUser(vm.newContact, currentList.id).then(
+        function(res) {
+          var newContact = angular.copy(vm.newContact);
+
+          domServices.modal('contactList-addContactManual', 'close');
+          messenger.ok('Contact '+ newContact.firstName + ' successfully updated');
+
+          vm.newContact = {customFields:{}};
+
+          for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
+            if (vm.selectedListMembers[i].id == newContact.id ) {
+              vm.selectedListMembers[i] = newContact;
+              break;
+            }
+          }
+          prepareSelectedList();
+
+        },
+        function(err) {
+          if (err.error) {
+            messenger.error(err.error.message);
+          }
+          if (err.errors) {
+            var e = err.errors;
+            for (var i = 0, len = e.length; i < len ; i++) {
+              vm.modalErrors[ e[i].path ] = e[i].message;
+            }
+          }
+
+        }
+      );
     }
 
     /**
-     * Toggle selection for all items in contacts list
+     * Validate vm.newContact object
+     * @returns {boolean}
      */
-    function selectAll() {
-      vm.allSelected = !vm.allSelected;
-      for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
-        vm.selectedListMembers[i]._selected = vm.allSelected;
-      }
+    function validateContact() {
+      vm.modalErrors = {};
+      var valid = true;
+      if (!vm.newContact.firstName || !vm.newContact.firstName.length) { vm.modalErrors.firstName = 'First Name cannot be blank'; valid = false; }
+      if (!vm.newContact.lastName || !vm.newContact.lastName.length) { vm.modalErrors.lastName = 'Last Name cannot be blank';valid = false; }
+      if (!vm.newContact.email || !vm.newContact.email.length) {vm.modalErrors.email = 'Email cannot be blank';valid = false; }
+      if (!vm.newContact.gender || !vm.newContact.gender.length) {vm.modalErrors.gender = 'Gender should be selected';valid = false; }
+
+      return valid;
     }
+
+
 
     /**
      * Remove contacts from list by given ids
@@ -197,6 +261,16 @@
     }
 
     /**
+     * Toggle selection for all items in contacts list
+     */
+    function selectAll() {
+      vm.allSelected = !vm.allSelected;
+      for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
+        vm.selectedListMembers[i]._selected = vm.allSelected;
+      }
+    }
+
+    /**
      * Delete all contacts that are selected in current list
      */
     function massDelete() {
@@ -210,12 +284,16 @@
       removeContacts(ids);
     }
 
+    /**
+     * Open modal and prepare variables
+     */
     function addNewList() {
       vm.listUpdate = null;
       vm.modalTab1 = true;
       vm.listModalTitle = 'Add New List';
       domServices.modal('contactList-addNewListModal');
     }
+
     function editCustomFields() {
       var list = vm.lists[vm.activeListIndex];
 
@@ -233,6 +311,10 @@
       domServices.modal('contactList-addNewListModal');
     }
 
+    /**
+     * Show warning if there is duplicated custom fields names
+     * @param number {number} - custom field sequence number from 1 to 12
+     */
     function checkCustomFields(number) {
       var value = vm.newList['customField'+number];
 

@@ -1775,14 +1775,14 @@ hr.survey-hr {
   color: grey;
   font-style: italic; }
 
-#dashboard-contact-lists h2 {
-  margin: 30px; }
+#dashboard-contact-lists h2, #dashboard-contact-lists h3 {
+  margin: 45px 30px 30px 30px; }
 
 #dashboard-contact-lists thead {
   background: #2F9F69; }
 
 #dashboard-contact-lists #contact-lists-left-column #list-of-contacts {
-  margin-top: 32px;
+  margin-top: 53px;
   padding: 0;
   border: 3px solid #2F9F69; }
   #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .header {
@@ -1833,6 +1833,8 @@ hr.survey-hr {
     float: left;
     margin-top: 11px;
     margin-right: 20px; }
+  #dashboard-contact-lists #contact-lists-right-column #list-mass-actions .pull-right {
+    margin: 0 10px; }
 
 #dashboard-contact-lists #contact-lists-right-column .table-item-edit-group {
   visibility: hidden; }

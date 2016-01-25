@@ -71,7 +71,7 @@ router.put('/contactLists/:id', policy.authorized(['accountManager', 'admin']), 
 router.delete('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.destroy);
 
 // contact List User
-router.post('/contactListUser', policy.authorized(['accountManager', 'admin']), contactListUser.create);
+router.post('/contactListsUser', policy.authorized(['accountManager', 'admin']), contactListUser.create);
 router.post('/contactListsUsersToRemove', policy.authorized(['accountManager', 'admin']), contactListUser.destroy);
 router.put('/contactListsUser/:id', policy.authorized(['accountManager', 'admin']), contactListUser.update);
 

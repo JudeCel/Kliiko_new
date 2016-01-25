@@ -5,30 +5,38 @@
 
   contactListFactory.$inject = ['$q','globalSettings', '$resource', 'dbg', 'user'];
   function contactListFactory($q, globalSettings, $resource, dbg, user)  {
-    var contactListApi = {
+    var contactListsApi = {
       contactLists: $resource(globalSettings.restUrl +  '/contactLists/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       contactListsUsersToRemove: $resource(globalSettings.restUrl +  '/contactListsUsersToRemove', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      contactListUser: $resource(globalSettings.restUrl +  '/contactListUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsUser: $resource(globalSettings.restUrl +  '/contactListsUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
     };
 
 
     var publicServices = {};
 
     publicServices.getContactLists = getContactLists;
-    publicServices.createUser = createUser;
     publicServices.submitNewList = submitNewList;
     publicServices.updateList = updateList;
-    publicServices.deleteUser = deleteUser;
     publicServices.deleteList = deleteList;
+
+    publicServices.createUser = createUser;
+    publicServices.updateUser = updateUser;
+    publicServices.deleteUser = deleteUser;
+
+
 
     return publicServices;
 
 
+    /**
+     * Fetch all contact lists for this account
+     * @returns {*|promise|array}
+     */
     function getContactLists() {
       var deferred = $q.defer();
 
       dbg.log2('#contactListServices > getContactLists > call to api');
-      contactListApi.contactLists.query(function(res) {
+      contactListsApi.contactLists.query(function(res) {
         if (res.error) {
           dbg.log1('#contactListServices > getContactLists > error: ', res.error);
           deferred.reject(res.error);
@@ -37,68 +45,6 @@
         dbg.log1('#contactListServices > getContactLists > success'); dbg.log2(res);
         deferred.resolve(res);
       });
-      return deferred.promise;
-    }
-
-
-    /**
-     * Create contact list user
-     * @param userObj {object}
-     * @param contactListId {number}
-     * @returns {*|promise}
-     */
-    function createUser(userObj, contactListId) {
-      var deferred = $q.defer();
-
-      var defaultFields, customFields;
-
-      customFields = userObj.customFields;
-      delete userObj.customFields;
-      defaultFields = userObj;
-
-      var params = {
-        defaultFields: defaultFields,
-        customFields: customFields,
-        contactListId: contactListId
-      };
-
-      dbg.log2('#contactListServices > createUser > call to api');
-      contactListApi.contactListUser.post({},params,function(res) {
-        if (res.error) {
-          dbg.log1('#contactListServices > createUser > error: ', res.error);
-          deferred.reject(res.error);
-          return deferred.promise;
-        }
-
-        dbg.log1('#contactListServices > createUser > success '); dbg.log2(res);
-
-        deferred.resolve(res);
-      });
-
-      return deferred.promise;
-
-    }
-
-    /**
-     * Delete one ore more users by given id
-     * @param ids {array} - array of numbers
-     * @returns {*|promise}
-     */
-    function deleteUser(ids) {
-      var deferred = $q.defer();
-
-      dbg.log2('#contactListServices > deleteUser > call to api');
-      contactListApi.contactListsUsersToRemove.post({},{ids:ids},function(res) {
-        if (res.error) {
-          dbg.log1('#contactListServices > deleteUser > error: ', res.error);
-          deferred.reject(res.error);
-          return deferred.promise;
-        }
-        dbg.log1('#contactListServices > deleteUser > success '); dbg.log2(res);
-
-        deferred.resolve(res);
-      });
-
       return deferred.promise;
     }
 
@@ -117,7 +63,7 @@
         if (listObj['customField'+i] && listObj['customField'+i].length) customFields.push(listObj['customField'+i]);
       }
 
-      contactListApi.contactLists.post({}, {name:listObj.name, customFields: customFields}, function(res) {
+      contactListsApi.contactLists.post({}, {name:listObj.name, customFields: customFields}, function(res) {
         if (res.error) { deferred.reject(res.error); return deferred.promise; }
 
         deferred.resolve(res);
@@ -143,7 +89,7 @@
         if (listObj['customField'+i] && listObj['customField'+i].length) customFields.push(listObj['customField'+i]);
       }
 
-      contactListApi.contactLists.put({id:listId}, {name:listObj.name, customFields: customFields}, function(res) {
+      contactListsApi.contactLists.put({id:listId}, {name:listObj.name, customFields: customFields}, function(res) {
         if (res.error) { deferred.reject(res.error); return deferred.promise; }
 
         deferred.resolve(res);
@@ -151,9 +97,14 @@
       return deferred.promise;
     }
 
+    /**
+     * Delete Contact List by Id
+     * @param listId {number}
+     * @returns {*|promise}
+     */
     function deleteList(listId) {
       var deferred = $q.defer();
-      contactListApi.contactLists.delete({id:listId}, {},function(res) {
+      contactListsApi.contactLists.delete({id:listId}, {},function(res) {
         if (res.error) {   deferred.reject(res.error);  return deferred.promise;   }
 
         deferred.resolve(res);
@@ -161,5 +112,111 @@
 
       return deferred.promise;
     }
+
+
+
+    /**
+     * Create contact list user
+     * @param userObj {object}
+     * @param contactListId {number}
+     * @returns {*|promise}
+     */
+    function createUser(userObj, contactListId) {
+      var deferred = $q.defer();
+
+      var defaultFields, customFields;
+
+      customFields = userObj.customFields;
+      delete userObj.customFields;
+      defaultFields = userObj;
+
+      var params = {
+        defaultFields: defaultFields,
+        customFields: customFields,
+        contactListId: contactListId
+      };
+
+      dbg.log2('#contactListServices > createUser > call to api');
+      contactListsApi.contactListsUser.post({},params,function(res) {
+        if (res.error) {
+          dbg.log1('#contactListServices > createUser > error: ', res.error);
+          deferred.reject(res.error);
+          return deferred.promise;
+        }
+
+        dbg.log1('#contactListServices > createUser > success '); dbg.log2(res);
+
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+
+    }
+
+    /**
+     * Update contact list user
+     * @param userObj {object}
+     * @param contactListId {number}
+     * @returns {*|promise}
+     */
+    function updateUser(userObj, contactListId) {
+      var deferred = $q.defer();
+
+      var defaultFields, customFields;
+
+      customFields = userObj.customFields;
+      delete userObj.customFields;
+      defaultFields = userObj;
+
+      var params = {
+        defaultFields: defaultFields,
+        customFields: customFields,
+        contactListId: contactListId
+      };
+
+      dbg.log2('#contactListServices > updateUser > call to api');
+      contactListsApi.contactListsUser.put({id:userObj.id},params,function(res) {
+        if (res.error) {
+          dbg.log1('#contactListServices > updateUser > error: ', res.error);
+          deferred.reject(res.error);
+          return deferred.promise;
+        }
+
+        dbg.log1('#contactListServices > updateUser > success '); dbg.log2(res);
+
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+
+    }
+
+
+
+
+    /**
+     * Delete one ore more users by given id
+     * @param ids {array} - array of numbers
+     * @returns {*|promise}
+     */
+    function deleteUser(ids) {
+      var deferred = $q.defer();
+
+      dbg.log2('#contactListServices > deleteUser > call to api');
+      contactListsApi.contactListsUsersToRemove.post({},{ids:ids},function(res) {
+        if (res.error) {
+          dbg.log1('#contactListServices > deleteUser > error: ', res.error);
+          deferred.reject(res.error);
+          return deferred.promise;
+        }
+        dbg.log1('#contactListServices > deleteUser > success '); dbg.log2(res);
+
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
+
+
   }
 })();
