@@ -63,13 +63,13 @@ function csvData() {
 };
 
 function buldDataList(accounts) {
-  let data = []
+  let data = [];
   _.forEach(accounts, function(account) {
     _.forEach(account.AccountUsers, function(accountUser) {
       data.push(buldCSVRow(account, accountUser));
-    })
+    });
   });
-  return data
+  return data;
 }
 
 function buldCSVRow(account, accountUser) {
@@ -91,7 +91,7 @@ function buldCSVRow(account, accountUser) {
     'Type permission': '',
     'Active Sessions': '',
     'Comment': accountUser.comment || ''
-  }
+  };
 }
 
 function csvHeader() {
@@ -116,11 +116,9 @@ function csvHeader() {
 };
 
 function findAccountUser(account, userId) {
-  console.log(user);
-  let accountUser =  _.find(account.AccountUsers, function(accountUser) {
+  return _.find(account.AccountUsers, function(accountUser) {
     return accountUser.UserId == userId;
   });
-  return accountUser
 };
 
 function userAttributes() {

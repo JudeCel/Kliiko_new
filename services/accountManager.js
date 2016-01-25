@@ -62,7 +62,7 @@ function userParams(email) {
 function findAccountManagers(currentDomainId, callback) {
   AccountUser.findAll({where: {AccountId:  currentDomainId,
     role: 'accountManager'}}).then(function(results) {
-      callback(null, results)
+      callback(null, results);
   })
 };
 

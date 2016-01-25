@@ -53,16 +53,16 @@
     };
 
     $scope.isInvited = function(accountUser) {
-      return accountUser.state == "invited"
-    }
+      return accountUser.state == "invited";
+    };
 
     $scope.isAccepted = function(accountUser) {
-      return accountUser.state == "active"
-    }
+      return accountUser.state == "active";
+    };
 
-    $scope.isOwner = function(accountUser) {
-      return accountUser.owner
-    }
+    $scope.isAccountOwner = function(accountUser) {
+      return accountUser.owner;
+    };
 
     $scope.removeInvite = function(accountUser) {
       angularConfirm('Are you sure you want to remove Invite?').then(function(response) {

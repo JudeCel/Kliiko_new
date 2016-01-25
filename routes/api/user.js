@@ -87,7 +87,7 @@ function userCanAccessPost(req, res, next) {
     if (policy.authorized(roles)) {
       res.send({accessPermitted: true, role: roles})
     } else {
-      res.send({error: `Access Denied for ${roles[0]}`});
+      res.send({error: `Access Denied for ${roles}`});
     }
   }
 

@@ -35,7 +35,7 @@ function createInvite(params, callback) {
     });
   }).catch(function(error) {
     if(error.name == 'SequelizeUniqueConstraintError') {
-      callback({ email: 'User has already been invited' })
+      callback({ email: 'User has already been invited' });
     }
     else {
       callback(prepareErrors(error));
@@ -153,7 +153,7 @@ function setAccountUserActive(accountUserId, callback) {
   AccountUser.update({state: "active"}, { where:{ id: accountUserId } }).then(function(result) {
     callback(null, result);
   },function(err) {
-    callback(prepareErrors(error))
+    callback(prepareErrors(error));
   })
 }
 
@@ -200,17 +200,6 @@ function inviteDestroy(invite, callback) {
    callback(null, 'You have successfully accepted Invite. Please login using your invite e-mail and password.');
  });
 };
-
-// function createUser(params, invite, callback) {
-//   params.email = invite.AccountUser.email;
-//   params.confirmedAt = new Date();
-//
-//   User.create(params).then(function(result) {
-//     callback(null, result);
-//   }).catch(function(error) {
-//     callback(prepareErrors(error));
-//   });
-// };
 
 function prepareErrors(err) {
   let errors = ({});
