@@ -3,6 +3,7 @@
 module.exports = (Sequelize, DataTypes) => {
   var BrandProjectPreference = Sequelize.define('BrandProjectPreference', {
     id:	 { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name:	{ type: DataTypes.STRING, allowNull: false, defaultValue: 'untitled' },
     sessionId: { type: DataTypes.INTEGER, allowNull: false},
     brand_project_id:	{ type: DataTypes.INTEGER, allowNull: false},
     colour_browser_background: { type: DataTypes.STRING, allowNull: false, defaultValue: "#def1f8"},

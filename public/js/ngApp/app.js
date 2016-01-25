@@ -16,6 +16,7 @@
     'messenger',
     'ng-sortable',
     'ngMessages',
+    'colorpicker.module',
     //'CreditCard',
 
     // app modules

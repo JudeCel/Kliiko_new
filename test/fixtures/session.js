@@ -1,7 +1,7 @@
 'use strict';
 
-var UserService = require('./../services/users');
-var models = require('../models');
+var UserService = require('./../../services/users');
+var models = require('../../models');
 var Session = models.Session;
 var BrandProject = models.BrandProject;
 var SessionMember = models.SessionMember;
@@ -10,6 +10,7 @@ var AccountUser = models.AccountUser;
 var BrandProjectPreference = models.BrandProjectPreference;
 var Topic = models.Topic;
 var async = require('async');
+var q = require('q');
 
 var userlist = [{
   accountName: "chatUser",
@@ -47,10 +48,8 @@ function createSession(callback) {
     status_id: 1,
     colours_used: '["3","6","5"]'
   }
-  console.log("Start build session");
 
   Session.create(sessionAttrs).then(function(result) {
-    console.log("Build session is done!");
     callback(null, result);
   }).catch(Session.sequelize.ValidationError, function(err) {
     console.log(err);
@@ -70,7 +69,6 @@ function crateBrandProject(session, callback) {
   }
 
   session.createBrandProject(brandProjectAttrs).then(function(result) {
-    console.log("brandProject is done!");
     callback(null, session, result);
   }).catch(BrandProject.sequelize.ValidationError, function(err) {
     console.log(err);
@@ -109,7 +107,6 @@ function createTopic(session, brandProject, callback) {
 }
 
 function addSessionMembers(erorr, session, callback) {
-  console.log("added Session Member");
   async.parallel([
     (cb) =>  {
       UserService.create(userlist[0], function(errors, user) {
@@ -153,13 +150,28 @@ function addSessionMember(user, session, role, name, callback) {
 }
 
 function createChat() {
+  let deferred = q.defer();
+
   async.waterfall(createNewChatFunctionList, function (error, result) {
-    if (error) {
-      console.log("wee get error:" + error);
+    if(error) {
+      deferred.reject(error);
     }
-    console.log("Done!!");
-    process.exit();
+    else {
+      Session.find({
+        where: { id: result[0].sessionId },
+        include: [{
+          model: Account,
+          include: [models.User]
+        }]
+      }).then(function(session) {
+        deferred.resolve({ session: session, account: session.Account, user: session.Account.Users[0] });
+      });
+    }
   });
+
+  return deferred.promise;
 };
 
-createChat();
+module.exports = {
+  createChat: createChat
+};
