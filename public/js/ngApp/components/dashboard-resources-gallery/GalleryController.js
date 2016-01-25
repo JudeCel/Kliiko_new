@@ -13,11 +13,21 @@
     dbg.log2('#GalleryController  started');
     initList();
     $scope.filterType = "";
+    $scope.viewType = sessionStorage.getItem('viewType');
 
     function initList() {
+      if(sessionStorage.getItem('viewType') == null){
+        sessionStorage.setItem('viewType', 'panel');
+        $scope.viewType = sessionStorage.getItem('viewType');
+      }
       GalleryServices.getResources().then(function(res) {
         $scope.resources = res.data;
       });
+    }
+
+    $scope.setView = function(type) {
+      sessionStorage.setItem('viewType', type);
+      $scope.viewType = sessionStorage.getItem('viewType');
     }
 
     $scope.newResource = {};

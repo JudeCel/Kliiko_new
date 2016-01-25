@@ -1,6 +1,5 @@
 <section style="font-size: 16px;" id='GalleryController' ng-controller='GalleryController'>
   <form ng-submit="submitIdsForMassAction(action)">
-
     <div class="gallery col-md-12">
       <div class="dashboard-container">
         <div class="row">
@@ -29,11 +28,11 @@
           </div>
           
           <div class="col-md-4 text-right">
-            <button class="btn btn-addNewElement btn-green" type='button' ng-click="show=!show; setView('thumbView')" ng-class="{hidden:!show,chaldean:show}">
+            <button class="btn btn-addNewElement btn-green" type='button' ng-click="setView('panel')" ng-if="viewType == 'table'">
               <span class='glyphicon glyphicon-th' aria-hidden='true'></span>   
             </button>
 
-            <button class="btn btn-addNewElement btn-green" type='button' ng-click="show=!show; setView('listView')" ng-class="{hidden:show,chaldean:!show}">
+            <button class="btn btn-addNewElement btn-green" type='button' ng-click="setView('table')" ng-if="viewType == 'panel'">
               <span class='glyphicon glyphicon-th-list' aria-hidden='true'></span>   
             </button>
 
@@ -89,7 +88,7 @@
       </div>
 
     <!-- Table view -->
-      <div class="gallery-body col-md-12" ng-class="{hidden:!show,chaldean:show}">
+      <div class="gallery-body col-md-12" ng-if="viewType == 'table'">
         <table class="table table-responsive table-dashboardElements" ng-repeat="resource in resources" > 
           <tbody>
             <tr ng-if="resource.resourceType != 'tmp'" class="ng-scope">
@@ -132,7 +131,7 @@
       </div>
       
       <!-- Panel view -->
-      <div ng-class="{hidden:show,chaldean:!show}" ng-repeat="resource in resources | filter: { resourceType: filterType }">
+      <div ng-if="viewType == 'panel'" ng-repeat="resource in resources | filter: { resourceType: filterType }">
         <div class="col-xs-6 col-md-4" ng-if="resource.resourceType != 'tmp'">  
           <div class="panel panel-success border-green">
             <div class="panel-body">
