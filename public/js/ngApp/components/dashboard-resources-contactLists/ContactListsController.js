@@ -16,6 +16,7 @@
     vm.allSelected = false;
     vm.tableSort = {by: null, reverse: false};
     vm.listCustomFields = [];
+    vm.listUpdate = null;
 
     vm.listItemClickHandle = listItemClickHandle;
     vm.changeTableSortingFilter = changeTableSortingFilter;
@@ -25,9 +26,11 @@
     vm.removeContacts = removeContacts;
     vm.massDelete = massDelete;
     vm.addNewList = addNewList;
+    vm.editCustomFields = editCustomFields;
     vm.checkCustomFields = checkCustomFields;
     vm.submitNewList = submitNewList;
     vm.removeList = removeList;
+
 
 
 
@@ -202,11 +205,33 @@
         if (vm.selectedListMembers[i]._selected === true) ids.push(vm.selectedListMembers[i].id);
       }
 
+      if (!ids.length) return;
+
       removeContacts(ids);
     }
 
-    function addNewList() {  domServices.modal('contactList-addNewListModal'); }
+    function addNewList() {
+      vm.listUpdate = null;
+      vm.modalTab1 = true;
+      vm.listModalTitle = 'Add New List';
+      domServices.modal('contactList-addNewListModal');
+    }
+    function editCustomFields() {
+      var list = vm.lists[vm.activeListIndex];
 
+      vm.listUpdate = list.id;
+      vm.modalTab2 = true;
+      vm.listModalTitle = 'Edit List And Custom Fields';
+
+      // populate with existing data
+      vm.newList.name = list.name;
+      for (var i = 0, len = list.customFields.length; i < len ; i++) {
+        var I = i+1;
+        vm.newList['customField'+I] = list.customFields[i];
+      }
+
+      domServices.modal('contactList-addNewListModal');
+    }
 
     function checkCustomFields(number) {
       var value = vm.newList['customField'+number];
@@ -227,9 +252,14 @@
     }
 
     /**
-     * Add new contacts List
+     * Add new [or update] contacts List
      */
     function submitNewList() {
+      if (vm.listUpdate) {
+        console.log(vm.listUpdate);
+        updateIt();
+        return
+      }
       if (!vm.newList.name) {
         dbg.log2('#ContactListController > submitNewList > error > list name is empty');
         messenger.error('List Name can not be blank');
@@ -250,8 +280,25 @@
           dbg.error('#ContactListController > submitNewList > error: ', err);
 
         }
-
       );
+
+      function updateIt() {
+        contactListServices.updateList(vm.listUpdate, vm.newList).then(
+          function(res) {
+            dbg.log('#ContactListController > updateList > success: List "'+ vm.newList.name + '" updated');
+
+            vm.lists[vm.activeListIndex] = angular.copy(vm.newList);
+
+            vm.newList = {};
+
+            domServices.modal('contactList-addNewListModal', 'close');
+            messenger.ok('List "'+ vm.lists[vm.activeListIndex].name + '" updated');
+          },
+          function(err) {
+            dbg.error('#ContactListController > updateList > error: ', err);
+          }
+        );
+      }
     }
 
     /**
