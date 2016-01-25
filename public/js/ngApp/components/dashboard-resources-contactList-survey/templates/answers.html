@@ -1,0 +1,17 @@
+<ng-form name='answers'>
+  <div class='form-horizontal' ng-if='object.input' ng-init='question.answers = sc.initAnswers(object, question)'>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/answers/input.html'"></ng-include>
+  </div>
+
+  <div class='form-horizontal' ng-if='object.textArea' ng-init='question.answers = sc.initAnswers(object, question)'>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/answers/textarea.html'"></ng-include>
+  </div>
+
+  <div class='form-horizontal' ng-if='object.checkbox' ng-init='question.answers = sc.initAnswers(object, question)'>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/answers/checkbox.html'"></ng-include>
+  </div>
+
+  <div class='form-horizontal' ng-if='object.contact' ng-init='question.answers = sc.initAnswers(object, question)'>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-contactList-survey/templates/answers/contact.html'"></ng-include>
+  </div>
+</ng-form>

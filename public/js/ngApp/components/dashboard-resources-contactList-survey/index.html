@@ -1,0 +1,45 @@
+<div class='col-md-12'>
+  <div class='dashboard-container'>
+    <div class='row'>
+      <div class='col-md-3'></div>
+      <div class='col-md-6'>
+        <h2 class='text-center'>Survey</h2>
+      </div>
+      <div class='col-md-3 text-right'>
+        <button class='btn btn-addNewElement btn-green' ng-click="sc.changePage('create')">Create New Survey</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class='col-md-12 fixed-bottom-margin'>
+  <div class='dashboard-container'>
+    <table class='table table-responsive table-dashboardElements'>
+      <thead class='background-green'>
+        <tr>
+          <th>Name</th>
+          <th>Date Confirmed</th>
+          <th>URL Link</th>
+          <th>Closed</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat='survey in sc.surveys'>
+          <td>{{ survey.name }}</td>
+          <td>{{ (survey.confirmedAt | date:sc.dateFormat) || 'unconfirmed' }}</td>
+          <td><a href='{{ survey.url }}'>{{ survey.url }}</a></td>
+          <td>{{ survey.closed }}</td>
+          <td class='text-right dashboardElementsEditRemove'>
+            <a href='/resources/survey/export/{{ survey.id }}' ng-if='survey.confirmedAt'><img src='/icons/brand_colour_grey.png' alt='' /></a>
+            <img src='/icons/calendar_grey.png' alt='' ng-click='sc.confirmSurvey(survey)' ng-if='!survey.confirmedAt' />
+            <img ng-src='{{ sc.statusIcon(survey) }}' alt='' ng-click='sc.changeStatus(survey)' />
+            <img src='/icons/resources_grey.png' alt='' ng-click='sc.copySurvey(survey)' />
+            <img src='/icons/dashboardElement_edit.png' alt='' ng-click='sc.changePage("edit", survey)' />
+            <img src='/icons/dashboardElement_remove.png' alt='' ng-click='sc.removeSurvey(survey)' />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

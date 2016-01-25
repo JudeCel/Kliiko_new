@@ -45,11 +45,13 @@ app.use(flash());
 
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
+var resources = require('./routes/resources');
 var api = require('./routes/api');
 var webhooks = require('./routes/webhooks');
 
 app.use('/', routes);
 app.use('/dashboard', currentUser.assign, dashboard);
+app.use('/resources', currentUser.assign, resources);
 app.use('/api', currentUser.assign, api);
 app.use('/webhooks', currentUser.assign, webhooks);
 

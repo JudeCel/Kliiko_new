@@ -32,8 +32,11 @@ describe('User Service', () => {
     it('Succsess', (done) =>  {
       UserService.create(validAttrs, function(errors, user) {
         assert.equal(errors, null);
-        assert.equal(user.firstName, validAttrs.firstName);
-        done();
+        user.getAccountUsers().then(function (results) {
+          let accountUser = results[0]
+          assert.equal(accountUser.firstName, validAttrs.firstName);
+          done();
+        })
       });
     });
 
@@ -57,11 +60,14 @@ describe('User Service', () => {
         validAttrs.socialProfile = { require: true, provider: 'facebook', id: '918975494859219' }
         UserService.create(validAttrs, function(errors, user, _lastActionResult) {
           assert.equal(errors, null);
-          assert.equal(user.firstName, validAttrs.firstName);
-          user.getSocialProfiles().done(function(profiles) {
-            assert.equal(profiles[0].provider, validAttrs.socialProfile.provider);
-            done();
-          });
+          user.getAccountUsers().then(function (results) {
+            let accountUser = results[0]
+            assert.equal(accountUser.firstName, validAttrs.firstName);
+            user.getSocialProfiles().done(function(profiles) {
+              assert.equal(profiles[0].provider, validAttrs.socialProfile.provider);
+              done();
+            });
+          })
         });
       });
     });
