@@ -210,7 +210,7 @@ describe('SERVICE - AccountManager', function() {
                 }
                 accountManagerService.findAccountManagers(testAccount.id, function(error, userArray) {
                   let subject = userArray[0];
-                  assert.equal(subject.status, "active");
+                  assert.equal(subject.state, "active");
                   assert.equal(subject.AccountId, testAccount.id);
                   done();
                 });
@@ -243,7 +243,7 @@ describe('SERVICE - AccountManager', function() {
 
               accountManagerService.findAccountManagers(testAccount.id, function(error, userArray) {
                 let subject = userArray[1];
-                assert.equal(subject.status, "invited");
+                assert.equal(subject.state, "invited");
                 assert.equal(subject.AccountId, testAccount.id);
                 done();
               });
@@ -265,7 +265,7 @@ describe('SERVICE - AccountManager', function() {
         if(error) {
           done(error);
         }
-        User.find({ where: { email: req.body.email } }).then(function(user) {
+        AccountUser.find({ where: { email: req.body.email } }).then(function(accountUser) {
           inviteService.createInvite(params, function(error, invite) {
             if(error) {
               done(error);
@@ -282,7 +282,7 @@ describe('SERVICE - AccountManager', function() {
                   done(error);
                 }
 
-                accountManagerService.findAndRemoveAccountUser(user.id, testAccount.id, function(error, message) {
+                accountManagerService.findAndRemoveAccountUser(accountUser.id, function(error, message) {
                   assert.equal(error, null);
                   assert.equal(message, 'Successfully removed account from Account List');
 

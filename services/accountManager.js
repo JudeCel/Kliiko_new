@@ -66,11 +66,10 @@ function findAccountManagers(currentDomainId, callback) {
   })
 };
 
-function findAndRemoveAccountUser(userId, accountId, callback) {
+function findAndRemoveAccountUser(id, callback) {
   AccountUser.find({
     where: {
-      UserId: userId,
-      AccountId: accountId,
+      id: id,
       owner: false
     }
   }).then(function(result) {
@@ -113,7 +112,7 @@ function preValidate(user, currentDomainId, params, callback) {
 };
 
 function adjustParamsForNewAccountUser(params, userId, accountId) {
-  params.status = "invited";
+  params.state = "invited";
   params.role = 'accountManager';
   params.AccountId = accountId;
   params.UserId = userId;
@@ -131,7 +130,6 @@ function findUsers(model, where, attributes, cb) {
   }).then(function(accountUser) {
     cb(null, accountUser);
   }).catch(function(error) {
-    console.log(error);
     cb(prepareErrors(error));
   });
 }

@@ -18,13 +18,13 @@
   function AccountManagerController(dbg, accountManagerServices, $modal, $scope, $rootScope, $filter, $timeout, angularConfirm) {
     dbg.log2('#AccountManagerController started');
 
-    $scope.users = {};
+    $scope.accountUsers = {};
     init();
 
     function init() {
       accountManagerServices.getAllManagersList().then(function(res) {
-        $scope.users = res.users;
-        dbg.log2('#AccountManagerController > getAllManagersList > res ', res.users);
+        $scope.accountUsers = res.accountUsers;
+        dbg.log2('#AccountManagerController > getAllManagersList > res ', res.accountUsers);
       });
     };
 
@@ -36,33 +36,45 @@
       });
     };
 
-    $scope.removeAccountUser = function(user) {
+    $scope.removeAccountUser = function(accountUser) {
       angularConfirm('Are you sure you want to remove Account Manager?').then(function(response) {
-        accountManagerServices.removeAccountUser({ id: user.id }).then(function(res) {
+        accountManagerServices.removeAccountUser({ id: accountUser.id }).then(function(res) {
           dbg.log2('#AccountManagerController > removeAccountUser > res ', res);
           if(res.error) {
             setError($scope, res.error);
           }
           else {
             setMessage($scope, res.message);
-            var index = $scope.users.indexOf(user);
-            $scope.users.splice(index, 1);
+            var index = $scope.accountUsers.indexOf(accountUser);
+            $scope.accountUsers.splice(index, 1);
           }
         });
       });
     };
 
-    $scope.removeInvite = function(user) {
+    $scope.isInvited = function(accountUser) {
+      return accountUser.state == "invited"
+    }
+
+    $scope.isAccepted = function(accountUser) {
+      return accountUser.state == "active"
+    }
+
+    $scope.isOwner = function(accountUser) {
+      return accountUser.owner
+    }
+
+    $scope.removeInvite = function(accountUser) {
       angularConfirm('Are you sure you want to remove Invite?').then(function(response) {
-        accountManagerServices.removeInvite({ id: user.id }).then(function(res) {
+        accountManagerServices.removeInvite({ id: accountUser.id }).then(function(res) {
           dbg.log2('#AccountManagerController > removeInvite > res ', res);
           if(res.error) {
             setError($scope, res.error);
           }
           else {
             setMessage($scope, res.message);
-            var index = $scope.users.indexOf(user);
-            $scope.users.splice(index, 1);
+            var index = $scope.accountUsers.indexOf(accountUser);
+            $scope.accountUsers.splice(index, 1);
           }
         });
       });
@@ -86,8 +98,8 @@
 
     $rootScope.$watch('addedNewAccountManager', function(data) {
       if($rootScope.addedNewAccountManager) {
-        if($filter('findPositionById')(data.user, $scope.users) == -1) {
-          $scope.users.push(data.user);
+        if($filter('findPositionById')(data.accountUser, $scope.accountUsers) == -1) {
+          $scope.accountUsers.push(data.accountUser);
         }
 
         setMessage($scope, data.message);
@@ -118,7 +130,7 @@
   function AccountManagerModalController(dbg, $scope, $uibModalInstance, accountManagerServices, $rootScope, ngProgressFactory) {
     dbg.log2('#AccountManagerModalController started');
 
-    $scope.user = {};
+    $scope.accountUser = {};
     $scope.errors = {};
     $scope.sendingData = false;
 
@@ -128,24 +140,23 @@
       $scope.sendingData = true;
       var progressbar = ngProgressFactory.createInstance();
       progressbar.start();
-      dbg.log2('#AccountManagerModalController > submitForm', $scope.user);
-      accountManagerServices.createAccountManager($scope.user).then(function(res) {
+      dbg.log2('#AccountManagerModalController > submitForm', $scope.accountUser);
+      accountManagerServices.createAccountManager($scope.accountUser).then(function(res) {
         $scope.sendingData = false;
         progressbar.complete();
         if(res.error) {
           $scope.errors = res.error;
         }
         else {
-          var user = res.invite.User;
-          user.Invites = [res.invite];
-          $rootScope.addedNewAccountManager = { user: user, message: res.message };
+          var accountUser = res.invite.AccountUser;
+          $rootScope.addedNewAccountManager = { accountUser: accountUser, message: res.message };
           $uibModalInstance.dismiss('cancel');
         }
       });
     };
 
     $scope.closeModal = function() {
-      $scope.user = {};
+      $scope.accountUser = {};
       $scope.errors = {};
       $uibModalInstance.dismiss('cancel');
     };
