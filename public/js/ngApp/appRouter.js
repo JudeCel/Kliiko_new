@@ -199,6 +199,16 @@
         }]
 
       })
+      .state('dashboard.accountProfile.emailTemplates', {
+        url: "/account-profile",
+        views: {
+          'accountProfileContent': {templateUrl: prePath + "dashboard-resources-emailTemplates/dashboard-content.html"}
+        },
+        onEnter: ['dbg', function (dbg) {
+          dbg.rs('dashboard.accountProfile.emailTemplates is on');
+        }]
+
+      })
       .state('dashboard.resources.brandColours', {
         url: "/brand-colours",
         views: {
