@@ -61,6 +61,8 @@ router.get('/survey/constants', survey.getConstants);
 
 router.get('/brandColour', brandColour.get);
 router.delete('/brandColour', brandColour.remove);
+router.post('/brandColour', brandColour.create);
+router.put('/brandColour', brandColour.update);
 router.post('/brandColour/copy', brandColour.copy);
 
 // Common Rules

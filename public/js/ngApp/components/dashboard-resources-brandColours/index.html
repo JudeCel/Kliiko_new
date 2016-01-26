@@ -12,7 +12,7 @@
     </div>
   </div>
 
-  <div class='col-sm-6 col-md-4' ng-repeat='scheme in bcc.schemes'>
+  <div class='col-sm-6 col-md-4 col-lg-3' ng-repeat='scheme in bcc.schemes'>
     <div class='panel panel-default panel-success'>
       <div class='panel-heading'>
         <div class='row'>
@@ -26,9 +26,11 @@
           </div>
         </div>
       </div>
-      <div class='panel-body'>
-        Panel content
+      <div class='panel-body' ng-click='bcc.openModalPreview(scheme)'>
+        <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/preview.html'"></ng-include>
       </div>
     </div>
   </div>
 </div>
+
+<ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/previewModal.html'"></ng-include>

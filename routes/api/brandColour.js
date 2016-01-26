@@ -22,6 +22,20 @@ function copy(req, res, next) {
   );
 };
 
+function create(req, res, next) {
+  brandColourServices.createScheme(req.body, res.locals.currentDomain).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+};
+
+function update(req, res, next) {
+  brandColourServices.updateScheme(req.body, res.locals.currentDomain).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+};
+
 function getResponses(res) {
   return {
     onError: function(error) {
@@ -36,5 +50,7 @@ function getResponses(res) {
 module.exports = {
   get: get,
   remove: remove,
-  copy: copy
+  copy: copy,
+  create: create,
+  update: update
 };

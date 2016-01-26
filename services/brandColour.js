@@ -13,7 +13,8 @@ const MESSAGES = {
   notFound: 'Scheme not found!',
   removed: 'Scheme removed successfully!',
   created: 'Scheme created successfully!',
-  copied: 'Scheme copied successfully!'
+  copied: 'Scheme copied successfully!',
+  updated: 'Scheme updated successfully!'
 };
 
 const VALID_ATTRIBUTES = {
@@ -38,23 +39,6 @@ const VALID_ATTRIBUTES = {
     'colour_button_border'
   ]
 };
-
-const VIEW_ATTRIBUTES = [
-  'colour_browser_background',
-  'colour_background',
-  'colour_border',
-  'colour_whiteboard_background',
-  'colour_whiteboard_border',
-  'colour_whiteboard_icon_background',
-  'colour_whiteboard_icon_border',
-  'colour_menu_background',
-  'colour_menu_border',
-  'colour_icon',
-  'colour_text',
-  'colour_label',
-  'colour_button_background',
-  'colour_button_border'
-];
 
 // Exports
 // Untested
@@ -111,7 +95,10 @@ function findAllSchemes(account) {
 function createScheme(params, account) {
   let deferred = q.defer();
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
+
   delete validParams.id;
+  validParams.sessionId = 1;
+  validParams.brand_project_id = 1;
 
   BrandProjectPreference.create(validParams).then(function(result) {
     deferred.resolve(simpleParams(result, MESSAGES.created));
@@ -123,6 +110,31 @@ function createScheme(params, account) {
 
   return deferred.promise;
 };
+
+// Untested
+function updateScheme(params, account) {
+  let deferred = q.defer();
+  let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
+
+  findScheme(params, account).then(function(schemes) {
+    schemes.data[0].update(validParams, { returning: true }).then(function(scheme) {
+      if(scheme) {
+        deferred.resolve(simpleParams(scheme, MESSAGES.updated));
+      }
+      else {
+        deferred.reject(MESSAGES.notFound);
+      }
+    }).catch(Session.sequelize.ValidationError, function(error) {
+      deferred.reject(prepareErrors(error));
+    }).catch(function(error) {
+      deferred.reject(error);
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
 
 // Untested
 function removeScheme(params, account) {
@@ -163,11 +175,13 @@ function copyScheme(params, account) {
 function manageFields() {
   let array = [];
 
-  _.map(VIEW_ATTRIBUTES, function(attr) {
-    array.push({
-      title: _.startCase(attr.substring('colour_'.length)),
-      model: attr
-    });
+  _.map(VALID_ATTRIBUTES.manage, function(attr) {
+    if(_.includes(attr, 'colour_')) {
+      array.push({
+        title: _.startCase(attr.substring('colour_'.length)),
+        model: attr
+      });
+    }
   });
 
   return array;
@@ -219,6 +233,8 @@ module.exports = {
   messages: MESSAGES,
   manageFields: manageFields,
   findAllSchemes: findAllSchemes,
+  createScheme: createScheme,
+  updateScheme: updateScheme,
   removeScheme: removeScheme,
   copyScheme: copyScheme
 };

@@ -39,15 +39,7 @@ let createNewChatFunctionList = [
 ]
 
 function createSession(callback) {
-  let startTime = new Date();
-
-  let sessionAttrs = {
-    name: "cool session",
-    start_time: startTime,
-    end_time: startTime.setHours(startTime.getHours() + 2000),
-    status_id: 1,
-    colours_used: '["3","6","5"]'
-  }
+  let sessionAttrs = sessionParams();
 
   Session.create(sessionAttrs).then(function(result) {
     callback(null, result);
@@ -61,12 +53,7 @@ function createSession(callback) {
 }
 
 function crateBrandProject(session, callback) {
-  let brandProjectAttrs = {
-    name: "cool brand project",
-    session_replay_date: new Date().setHours(new Date().getHours() + 2000),
-    enable_chatroom_logo: 0,
-    moderator_active: 1
-  }
+  let brandProjectAttrs = brandProjectParams();
 
   session.createBrandProject(brandProjectAttrs).then(function(result) {
     callback(null, session, result);
@@ -81,11 +68,7 @@ function crateBrandProject(session, callback) {
 
 
 function addBrandProjectPreferences(session, brandProject, callback) {
-  let attrs = {
-    name: 'Default scheme',
-    sessionId: session.id,
-    brand_project_id: brandProject.id
-  };
+  let attrs = brandProjectPreferenceParams(session.id, brandProject.id);
 
   BrandProjectPreference.create(attrs)
   .then(function (_result) {
@@ -172,6 +155,37 @@ function createChat() {
   return deferred.promise;
 };
 
+function brandProjectPreferenceParams(sessionId, brandProjectId) {
+  return {
+    name: 'Default scheme',
+    sessionId: sessionId,
+    brand_project_id: brandProjectId
+  };
+}
+
+function brandProjectParams() {
+  return {
+    name: "cool brand project",
+    session_replay_date: new Date().setHours(new Date().getHours() + 2000),
+    enable_chatroom_logo: 0,
+    moderator_active: 1
+  };
+}
+
+function sessionParams() {
+  let startTime = new Date();
+  return {
+    name: "cool session",
+    start_time: startTime,
+    end_time: startTime.setHours(startTime.getHours() + 2000),
+    status_id: 1,
+    colours_used: '["3","6","5"]'
+  };
+}
+
 module.exports = {
-  createChat: createChat
+  createChat: createChat,
+  brandProjectPreferenceParams: brandProjectPreferenceParams,
+  brandProjectParams: brandProjectParams,
+  sessionParams: sessionParams
 };
