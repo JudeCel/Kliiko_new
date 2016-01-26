@@ -2,6 +2,7 @@
 
 var MailTemplate  = require('./../models').MailTemplate;
 var MailTemplateOriginal  = require('./../models').MailTemplateBase;
+var templateMailer = require('../mailers/mailTemplate');
 var _ = require('lodash');
 var ejs = require('ejs');
 
@@ -149,7 +150,7 @@ function saveMailTemplate(template, createCopy, userId, callback) {
   if (!template["UserId"] || createCopy) {
     template.UserId = userId;
     create(template, function(error, result) {
-        callback(error, result);  
+      callback(error, result);  
     });
   } else {
     update(id, template, function(error, result) {
@@ -195,7 +196,6 @@ function composeMailFromTemplate(template, params) {
   try {
     template.content = formatTemplateString(template.content);
     template.subject = formatTemplateString(template.subject);
-    
     template.content = ejs.render(template.content, params);
     template.subject = ejs.render(template.subject, params);
     
@@ -204,6 +204,34 @@ function composeMailFromTemplate(template, params) {
     console.log("error constructing mail template:", error);
     return {error: "Error constructing mail template"};
   }
+}
+
+function sendMailFromTemplate(id, params, callback) {
+  getMailTemplate({id: id}, function(error, result) {
+    if (error) {
+        return callback(error);
+    }
+
+    var mailContent = composeMailFromTemplate(result, params);
+    if (mailContent.error) {
+        return callback(mailContent.error);
+    }
+    templateMailer.sendMailWithTemplate(mailContent, params, callback);
+  });
+}
+
+function sendMailFromTemplateWithCalendarEvent(id, params, callback) {
+  getMailTemplate({id: id}, function(error, result) {
+    if (error) {
+        return callback(error);
+    }
+
+    var mailContent = composeMailFromTemplate(result, params);
+    if (mailContent.error) {
+        return callback(mailContent.error);
+    }
+    templateMailer.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
+  });
 }
 
 //replace all "In Editor" variables with .ejs compatible variables
@@ -246,5 +274,7 @@ module.exports = {
   copyBaseTemplates: copyBaseTemplates,
   deleteMailTemplate: deleteMailTemplate,
   resetMailTemplate: resetMailTemplate,
-  composeMailFromTemplate: composeMailFromTemplate
+  composeMailFromTemplate: composeMailFromTemplate,
+  sendMailFromTemplate: sendMailFromTemplate,
+  sendMailFromTemplateWithCalendarEvent: sendMailFromTemplateWithCalendarEvent
 }
