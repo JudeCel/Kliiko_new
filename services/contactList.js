@@ -92,9 +92,9 @@ function update(params) {
 function createDefaultLists(accoutId, t) {
   let deferred = q.defer();
   ContactList.bulkCreate([
-    { name: 'Account Managers', accountId: accoutId, editable: false },
-    { name: 'Facilitators', accountId: accoutId, editable: false },
-    { name: 'Observers', accountId: accoutId, editable: false }
+    { name: 'Account Managers', accountId: accoutId, editable: false, role: 'accountManager' },
+    { name: 'Facilitators', accountId: accoutId, editable: false, role: 'facilitator'},
+    { name: 'Observers', accountId: accoutId, editable: false, role: 'observer' }
   ], { transaction: t }).done(function(results) {
     deferred.resolve({results: results, transaction: t});
   }, function(err) {

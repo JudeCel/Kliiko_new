@@ -83,7 +83,7 @@ function create(params) {
     }
   ).then(function(accountUser) {
     if (accountUser) {
-      accountUser.addContactLisrUser([contactListUserParams(params, accountUser.id)]).then(function(contactListUser) {
+      accountUser.createContactListUser(contactListUserParams(params, accountUser.id)).then(function(contactListUser) {
         deferred.resolve(contactListUser);
       }, function(err) {
         deferred.reject(err);
@@ -93,11 +93,9 @@ function create(params) {
         ContactListUser.create(contactListUserParams(params, newAccountUser.id)).then(function(contactListUser) {
           deferred.resolve(contactListUser);
         }, function(err) {
-          console.log(err);
           deferred.reject(err);
         })
       }, function(err) {
-        console.log(err);
         deferred.reject(err);
       })
     }
