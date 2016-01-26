@@ -146,7 +146,6 @@ function saveYoutubeData(data) {
   }
 
   let resourceAppendedCallback = function (userId, json) {
-    console.log(userId)
     deferred.resolve(json);
   };
 

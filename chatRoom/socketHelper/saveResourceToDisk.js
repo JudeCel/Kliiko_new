@@ -12,6 +12,19 @@ var async = require('async');
 im.convert.path = config.paths.convertPath;
 im.identify.path = config.paths.identifyPath;
 
+const gallery = {
+  panel: {
+    width: 420, 
+    height: 420, 
+    version: "panel"
+  },
+  table: {
+    width: 84, 
+    height: 84, 
+    version: "table"
+  }
+};
+
 function saveResourceToDisk(params) {
 
     let err = joi.validate(params, {
@@ -30,18 +43,6 @@ function saveResourceToDisk(params) {
       filename: params.file.filename,
     };
 
-    const gallery = {
-            panel: {
-                width: 420, 
-                height: 420, 
-                version: "panel"
-            },
-            table: {
-                width: 84, 
-                height: 84, 
-                version: "table"
-            }
-        };
 
 
     let filename = json.filename;
@@ -150,7 +151,7 @@ function resize(file, width, height, version, callback) {
 
     im.identify(file.path, function(err, features) {
         if(err){
-
+          callback("ERROR: Imagemagick is unable to identify this file type  "+err);
         }else{
             im.resize({
                 srcPath: file.path,
@@ -159,9 +160,9 @@ function resize(file, width, height, version, callback) {
                 height: height
             }, function (err, stdout, stderr) {
                 if(err){
-                    return callback(err);
+                  callback(err);
                 }else{
-                    return callback(null, filename);
+                  callback(null, filename);
                 }
             });
         }
@@ -171,6 +172,5 @@ function resize(file, width, height, version, callback) {
 function getFileType(string) {
     return string.split('/').pop()
 }
-
 
 module.exports = saveResourceToDisk;

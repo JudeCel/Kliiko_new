@@ -923,6 +923,87 @@ footer {
 .no-border-radius {
   border-radius: 0 !important; }
 
+.align-center {
+  display: block;
+  vertical-align: middle;
+  margin-left: auto;
+  margin-right: auto; }
+
+.margin-25-top-bottom {
+  margin: 25px 0; }
+
+.green-background {
+  background-color: #2D8C5E; }
+
+.green-text {
+  color: #2D8C5E; }
+
+.green-text:hover {
+  color: #2D8C5E; }
+
+.responsive-container {
+  position: relative;
+  width: 100%; }
+
+.dummy {
+  padding-top: 100%;
+  /* forces 1:1 aspect ratio */ }
+
+.img-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  /* Align center inline elements */
+  font: 0/0 a; }
+
+.img-container:before {
+  content: ' ';
+  display: inline-block;
+  vertical-align: middle;
+  height: 100%; }
+
+.img-container img {
+  vertical-align: middle;
+  display: inline-block; }
+
+.gallery-list-icon {
+  padding: 10px;
+  font-size: 60px; }
+
+.vertical-align-middle {
+  vertical-align: middle !important; }
+
+.no-margin {
+  margin: 0; }
+
+.margin-top-30 {
+  margin-top: 30px; }
+
+.margin-left-6 {
+  margin-left: 6px !important; }
+
+.margin-right-10 {
+  margin-right: 10px !important; }
+
+.uppercase {
+  text-transform: uppercase !important; }
+
+.icon-200 {
+  margin-top: 25%;
+  margin-left: 20px;
+  font-size: 200px; }
+
+.gallery-table-image-box {
+  display: block;
+  width: 88px;
+  height: 88px; }
+
+.col-width-15-percent {
+  width: 15% !important; }
+
 .dashboard-header .my-details-container {
   height: 20px;
   margin-left: 10px; }
@@ -1690,123 +1771,3 @@ hr.survey-hr {
 
 .fade-disabled {
   opacity: .45 !important; }
-
-a.green-link{
-  text-decoration: none;
-  font-size: 16px;
-  color: #2D8C5E;
-  margin: 10px 5px;
-  cursor: pointer;
-  float: right;
-}
-
-.select-all-text{
-  margin: 25px 0px;
-}
-
-.panel-min-size{
-  display: block;
-  min-height: 351px;
-  min-width: 315px;
-}
-
-.align-center{
-  display: block;
-  vertical-align: middle;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.margin-25-top-bottom{
-  margin: 25px 0;
-}
-
-.green-background{
-  background-color: #2D8C5E; 
-}
-
-.green-text{
-  color: #2D8C5E; 
-}
-
-.green-text:hover{
-  color: #2D8C5E; 
-}
-
-.responsive-container {
-    position: relative;
-    width: 100%;
-}
-
-.dummy {
-  padding-top: 100%; /* forces 1:1 aspect ratio */
-}
-
-.img-container {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-
-  text-align:center; /* Align center inline elements */
-  font: 0/0 a;
-}
-
-.img-container:before {
-  content: ' ';
-  display: inline-block;
-  vertical-align: middle;
-  height: 100%;
-}
-
-.img-container img {
-  vertical-align: middle;
-  display: inline-block;
-}
-
-.gallery-list-icon{
-  padding: 10px;
-  font-size: 60px;
-}
-
-.vertical-align-middle{
-  vertical-align: middle !important;
-}
-
-.no-margin{
-  margin: 0;
-}
-
-.margin-top-30{
-  margin-top: 30px;
-}
-
-.margin-left-6{
-  margin-left: 6px !important;
-}
-
-.margin-right-10{
-  margin-right: 10px !important;
-}
-
-.uppercase{
-  text-transform: uppercase !important;
-}
-
-.icon-200{
-  margin-top: 25%;
-  margin-left: 20px;
-  font-size: 200px;
-}
-
-.gallery-table-image-box{
-  display: block;
-  width: 88px;
-  height: 88px;
-}
-
-.col-width-15-percent{
-  width: 15% !important;
-  /*margin-right: 24px !important;*/
-}

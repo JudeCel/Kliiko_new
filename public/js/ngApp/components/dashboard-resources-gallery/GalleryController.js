@@ -51,7 +51,8 @@
     };
 
     $scope.resourcesSelected = function(id) {
-      if($scope.idsForAction.indexOf(id) == -1){
+      let isSelected = $scope.idsForAction.indexOf(id) == -1;
+      if(isSelected){
         $scope.idsForAction.push(id);
       }else if($scope.idsForAction.indexOf(id) != -1){
         $scope.idsForAction.splice($scope.idsForAction.indexOf(id), 1);
@@ -101,7 +102,7 @@
 
       GalleryServices.createResource(resourceParams).then(function(res) {
         if(res.error){
-          messenger.ok(res.error);
+          messenger.error(res.error);
         }else{
            GalleryServices.postuploadData(resourceParams).then(function(res) {
             if(res.error){
@@ -183,10 +184,11 @@
     $scope.downloadResources = function(ids) {
       GalleryServices.downloadResources({resource_id: ids}).then(function(res) {
         if(res.error){
-          messenger.error("Something went wrong, please try again later.");
+          messenger.error(res.error);
         }else{
           $scope.idsForAction = [];
           window.location.assign('/chat_room/uploads/' + res.fileName);
+          // GalleryServices.deleteZipAfterDownload(res.fileName)
         }
       })
     }
