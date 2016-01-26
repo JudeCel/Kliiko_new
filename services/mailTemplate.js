@@ -30,11 +30,11 @@ var templateFieldsForList = [
 ];
 
 function validate(params, callback) {
-  let attrs = {name: params.accountName}
-  MailTemplate.build(attrs).validate().done(function(errors, _account) {
+  MailTemplate.build(params).validate().done(function(errors, _account) {
     callback(errors, params);
   });
 }
+
 function createBaseMailTemplate(params, callback) {
   MailTemplateOriginal.create(params).then(function(result) {
     callback(null, result);
