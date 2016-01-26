@@ -1703,3 +1703,64 @@ a.green-link{
 .select-all-text{
   margin: 25px 0px;
 }
+
+.panel-min-size{
+  display: block;
+  min-height: 351px;
+  min-width: 315px;
+}
+
+.align-center{
+  display: block;
+  vertical-align: middle;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.margin-25-suds{
+    margin: 25px 0;
+}
+
+.green-background{
+  background-color: #2D8C5E; 
+}
+
+.green-text{
+  color: #2D8C5E; 
+}
+
+.green-text:hover{
+  color: #2D8C5E; 
+}
+
+.responsive-container {
+    position: relative;
+    width: 100%;
+}
+
+.dummy {
+  padding-top: 100%; /* forces 1:1 aspect ratio */
+}
+
+.img-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  text-align:center; /* Align center inline elements */
+  font: 0/0 a;
+}
+
+.img-container:before {
+  content: ' ';
+  display: inline-block;
+  vertical-align: middle;
+  height: 100%;
+}
+
+.img-container img {
+  vertical-align: middle;
+  display: inline-block;
+}

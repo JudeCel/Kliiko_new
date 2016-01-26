@@ -4,13 +4,13 @@
       <div class="dashboard-container">
         <div class="row">
           <div class="col-md-4">
-            <div class="col-md-6" class="select-all-text">
+            <div class="col-md-6" style="margin: 27px 0;">
               <input id="selectall" ng-click="selectAllResources()" name="selectAll" type="checkbox" value="selectAll" />
               <label for="selectAll">Select All</label>
             </div>
             <button type='submit' ng-disabled="idsForAction == 0" 
                     class='btn btn-addNewElement btn-green' 
-                    ng-click="actionDownload('delete')">
+                    ng-click="actionDelete('delete')">
               <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
             </button>
 
@@ -89,8 +89,17 @@
 
     <!-- Table view -->
       <div class="gallery-body col-md-12" ng-if="viewType == 'table'">
-        <table class="table table-responsive table-dashboardElements" ng-repeat="resource in resources" > 
-          <tbody>
+        <table class="table table-responsive table-dashboardElements" > 
+          <thead>
+            <tr class='green-background'>
+              <th>#</th>
+              <th></th>
+              <th>Title</th>
+              <th>Format</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody ng-repeat="resource in resources">
             <tr ng-if="resource.resourceType != 'tmp'" class="ng-scope">
               <td class="ng-binding">
                 <input class='pull-left' type="checkbox" 
@@ -101,15 +110,22 @@
                 <img src="/chat_room/resources/images/youtubeThumb.png" alt="youtube" image-resize image-percent="50" width="100" height="100" class="img-responsive">
               </td>
               <td class="ng-binding" ng-if="resource.JSON.type == 'image' || resource.JSON.type == 'brandLogo'">
-                <img src="/chat_room/uploads/{{resource.JSON.name}}" image-resize image-percent="50" width="100" height="100" class="img-responsive"/>
+                <img src="/chat_room/uploads/{{resource.JSON.tableThumb}}"/>
               </td>
               <td class="ng-binding" ng-if="resource.JSON.type == 'audio'">
                 <img src="/chat_room/resources/images/audioThumb.png" alt="audio" image-resize image-percent="50" width="100" height="100" class="img-responsive">
+              </td>
+              <td class="ng-binding" ng-if="resource.JSON.type == 'pdf'">
+                <img src="/chat_room/uploads/pdf.png" alt="audio" image-resize image-percent="50" width="100" height="100" class="img-responsive">
               </td>
               <td class="ng-binding">
                 <p class="pull-left">
                   {{ resource.JSON.title }}
                   </p>
+              </td>
+              <td>
+                <p>{{ resource.JSON.format }}</p>
+                <a ng-if="resource.JSON.type == 'video'" href="{{ resource.JSON.url }}" target="_blank">{{ resource.JSON.url }}</a>
               </td>
               <td>
                 <button type='submit'
@@ -132,22 +148,35 @@
       
       <!-- Panel view -->
       <div ng-if="viewType == 'panel'" ng-repeat="resource in resources | filter: { resourceType: filterType }">
-        <div class="col-xs-6 col-md-4" ng-if="resource.resourceType != 'tmp'">  
+        <div class="col-xs-2 col-md-4" ng-if="resource.resourceType != 'tmp'">  
           <div class="panel panel-success border-green">
-            <div class="panel-body">
+            <div class="panel-body panel-min-size">
               
               <div ng-bind-html="renderHtml(resource.JSON.message)" ng-if="resource.JSON.type == 'video'"></div>
               
-              <div  ng-if="resource.JSON.type == 'image' || resource.JSON.type == 'brandLogo'">
-                <img src="/chat_room/uploads/{{resource.JSON.name}}" image-resize image-percent="50" width="315" height="420" class="img-responsive text-center" />
+              <div class="responsive-container" ng-if="resource.JSON.type == 'image' || resource.JSON.type == 'brandLogo'">
+                  <div class="dummy"></div>
+
+                  <div class="img-container">
+                      <img src="/chat_room/uploads/{{resource.JSON.panelThumb}}" class="center-block vertical-align"/>
+                  </div>
               </div>
             
-              <div ng-if="resource.JSON.type == 'audio'">
-                <img src="/chat_room/resources/images/audioThumb.png" alt="{{resource.JSON.matchName}}" image-resize image-percent="50" width="315" height="420" class="img-responsive text-center" >
+              <div class="responsive-container" ng-if="resource.JSON.type == 'audio'">
+                <div class="dummy"></div>
+
+                <div class="img-container">
+                  <img src="/chat_room/resources/images/audioThumb.png" alt="{{resource.JSON.matchName}}" image-resize image-percent="50" width="315" height="315" class="img-responsive center-block" >
+                </div>
+                
               </div>
 
-              <div ng-if="resource.JSON.type == 'pdf'">
-                <img src="/chat_room/resources/images/pdf.png" alt="{{resource.JSON.matchName}}" class="text-center" image-resize image-percent="50" width="315" height="420" class="img-responsive text-center" >
+              <div class="responsive-container" ng-if="resource.JSON.type == 'pdf'">
+                <div class="dummy"></div>
+
+                <div class="img-container">
+                  <img src="/chat_room/uploads/pdf.png" alt="{{resource.JSON.matchName}}" image-resize image-percent="50" width="" height="" class="img-responsive center-block" >
+                </div>
               </div>
 
             </div>
@@ -161,6 +190,7 @@
 
               <div class='pull-right col-md-2'>
                 {{ resource.JSON.format }}
+                <a ng-if="resource.JSON.type == 'video'" href="{{ resource.JSON.url }}" target="_blank" class="green-text">link</a>
               </div>
             </div>
         </div>

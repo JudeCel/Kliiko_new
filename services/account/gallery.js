@@ -117,7 +117,7 @@ function deleteResources(ids){
 
 // I was not able to include this from utilities.js
 function processYouTubeData(youtubeData) {
-    var preFix = '<iframe width="420" height="315" src="http://www.youtube.com/embed/';
+    var preFix = '<iframe width="420" height="416" src="http://www.youtube.com/embed/';
     var subFix = '" frameborder="0" allowfullscreen></iframe>';
 
     var position = -1;
@@ -136,6 +136,7 @@ function processYouTubeData(youtubeData) {
 
 function saveYoutubeData(data) {
   let deferred = q.defer();
+  let url = data.body.text;
   let youTubeLink = processYouTubeData(data.body.text);
 
   if(youTubeLink == null){
@@ -150,7 +151,8 @@ function saveYoutubeData(data) {
   let topicId = 1; //THIS NEEDS to be changed
   let json = {
     title: data.body.title,
-    message: youTubeLink
+    message: youTubeLink,
+    url: url
   };
 
   socketHelper.updateResources(topicId, data.user.id, json, "video", resourceAppendedCallback);
@@ -194,6 +196,7 @@ function uploadResource(data){
 
 function uploadResourceFile(req) {
   let deferred = q.defer();
+
   socketHelper.uploadResource({
     file: req.file,
     width: 950,

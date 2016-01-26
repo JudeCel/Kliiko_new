@@ -5,6 +5,8 @@ var fs = require('fs');
 var config = require('config').get('chatConf');
 var im = require('imagemagick');
 var joi = require("joi");
+var _ = require("lodash")
+var async = require('async');
 
 //use PATH for imagemagick instead set
 im.convert.path = config.paths.convertPath;
@@ -27,8 +29,10 @@ function saveResourceToDisk(params) {
     let json = {
       filename: params.file.filename,
     };
-        var filename = json.filename
-        var path = params.file.path
+        var filename = json.filename;
+        var path = params.file.path;
+        var panelThumb = {width: 300, height: 300, version: "panel"}
+        var tableThumb = {width: 150, height: 150, version: "table"}
         var fileFormat = params.file.mimetype.split('/').pop();
         
         fs.readFile(path, function (err) {
@@ -94,23 +98,36 @@ function saveResourceToDisk(params) {
                                      console.log("Imagemagick: wasn't able to resize");
                                  } //throw err;
                                  else {
-                                     im.identify(path, function(err, features) {
-                                         if (err) {
-                                             console.log("ERROR: Imagemagick is unable to identify this file type  "+err);
 
-                                         } else {
-                                             uploadResourceCallback({
-                                                 name: filename,
-                                                 matchName: json.filename,
-                                                 type: params.type,
-                                                 format: fileFormat,
-                                                 width: features.width,
-                                                 height: features.height,
-                                                 depth: features.depth
-                                             }, params.resCb);
+                                     if (err) {
+                                         console.log("ERROR: Imagemagick is unable to identify this file type  "+err);
 
-                                         }
-                                     });
+                                     } else {
+                                        async.parallel({
+                                            panel: function(callback) {
+                                                resize(params.file, panelThumb.width, panelThumb.height, panelThumb.version, callback)
+                                            },
+                                            table: function(callback) {
+                                                resize(params.file, tableThumb.width, tableThumb.height, tableThumb.version, callback)
+                                            }
+                                        }, function(err, results) {
+                                            uploadResourceCallback({
+                                                name: filename,
+                                                matchName: json.filename,
+                                                type: params.type,
+                                                format: fileFormat,
+                                                width: features.width,
+                                                height: features.height,
+                                                depth: features.depth,
+                                                panelThumb: results.panel,
+                                                tableThumb: results.table
+                                            }, params.resCb);
+                                        });
+
+                                       
+
+                                     }
+
                                  }
                              });
                          }
@@ -122,12 +139,33 @@ function saveResourceToDisk(params) {
                         name: filename,
                         matchName: json.filename,
                         type: params.type,
-                        format: "MP3"
+                        format: fileFormat
                     }, params.resCb);
                 }
             }
         });
 
+}
+
+function resize(file, width, height, version, callback) {
+    let filename = version + "_" + file.originalname
+    let saveUrl = file.destination + filename;
+    let returnPath = _.trim(saveUrl);
+
+    im.identify(file.path, function(err, features) {
+        im.resize({
+            srcPath: file.path,
+            dstPath: saveUrl,
+            width: width,
+            height: height
+        }, function (err, stdout, stderr) {
+            if(err){
+                return callback(err);
+            }else{
+                return callback(null, filename);
+            }
+        });
+    });
 }
 
 module.exports = saveResourceToDisk;
