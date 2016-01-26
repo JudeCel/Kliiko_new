@@ -40,7 +40,10 @@
     }
 
     $scope.getCount = function(type){
-      return filterFilter( $scope.resources, {resourceType:type}).length;
+      let filtered = filterFilter( $scope.resources, {resourceType:type});
+      if(filtered){
+        return filtered.length;
+      }
     }
 
     $scope.renderHtml = function (htmlCode) {
