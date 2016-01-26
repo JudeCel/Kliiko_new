@@ -108,7 +108,7 @@ function parseFile(id, filePath) {
 
   ContactList.find({ where: { id: id } }).then(function(contactList) {
     if(contactList) {
-      models.User.findAll({
+      models.AccountUser.findAll({
         attributes: ['email'],
         include: [{
           model: models.ContactListUser,
