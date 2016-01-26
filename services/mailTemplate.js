@@ -3,6 +3,7 @@
 var MailTemplate  = require('./../models').MailTemplate;
 var MailTemplateOriginal  = require('./../models').MailTemplateBase;
 var _ = require('lodash');
+var ejs = require('ejs');
 
 var originalTemplateFields = [
     'id',
@@ -188,6 +189,52 @@ function deleteMailTemplate(id, callback) {
   }); 
 }
 
+//replace templates "In Editor" variables with .ejs compatible variables
+//in HTML content and subject
+function composeMailFromTemplate(template, params) {
+  try {
+    template.content = formatTemplateString(template.content);
+    template.subject = formatTemplateString(template.subject);
+    
+    template.content = ejs.render(template.content, params);
+    template.subject = ejs.render(template.subject, params);
+    
+    return template;
+  } catch (error) {
+    console.log("error constructing mail template:", error);
+    return {error: "Error constructing mail template"};
+  }
+}
+
+//replace all "In Editor" variables with .ejs compatible variables
+function formatTemplateString(str) {
+  str = str.replace(/\{First Name\}/ig, "<%= firstName %>");
+  str = str.replace(/\{Last Name\}/ig, "<%= lastName %>");
+  str = str.replace(/\{Account Name\}/ig, "<%= accountName %>");
+  str = str.replace(/\{Start Date\}/ig, "<%= startDate %>");
+  str = str.replace(/\{Start Time\}/ig, "<%= startTime %>");
+  str = str.replace(/\{End Date\}/ig, "<%= endDate %>");
+  str = str.replace(/\{End Time\}/ig, "<%= endTime %>");
+  str = str.replace(/\{Facilitator First Name\}/ig, "<%= facilitatorFirstName %>");
+  str = str.replace(/\{Facilitator Last Name\}/ig, "<%= facilitatorLastName %>");
+  str = str.replace(/\{Facilitator Email\}/ig, "<%= facilitatorMail %>");
+  str = str.replace(/\{Participant Email\}/ig, "<%= participantMail %>");
+  str = str.replace(/\{Facilitator Mobile\}/ig, "<%= facilitatorMobileNumber %>");
+  str = str.replace(/\{Session Name\}/ig, "<%= sessionName %>");
+  str = str.replace(/\{Incentive\}/ig, "<%= incentive %>"); 
+  str = str.replace(/\{Accept Invitation\}/ig, "<%= acceptInvitationUrl %>");
+  str = str.replace(/\{Invitation Not This Time\}/ig, "<%= invitationNotThisTimeUrl %>");
+  
+  str = str.replace(/\{Invitation At All\}/ig, "<%= invitationNotAtAllUrl %>");
+  str = str.replace(/\{Mail Unsubscribe\}/ig, "<%= unsubscribeMailUrl %>");
+  str = str.replace(/\{Close Session Yes In Future\}/ig, "<%= participateInFutureUrl %>");
+  str = str.replace(/\{Close Session No In Future\}/ig, "<%= dontParticipateInFutureUrl %>");
+  str = str.replace(/\{Confirmation Check In\}/ig, "<%= confirmationCheckInUrl %>");
+  str = str.replace(/\{Account Manager Confirmation Login\}/ig, "<%= accountManagerConfirmationLogInUrl %>");
+  
+  return str;
+}
+
 module.exports = {
   validate: validate,
   create: create,
@@ -198,5 +245,6 @@ module.exports = {
   createBaseMailTemplate: createBaseMailTemplate,
   copyBaseTemplates: copyBaseTemplates,
   deleteMailTemplate: deleteMailTemplate,
-  resetMailTemplate: resetMailTemplate
+  resetMailTemplate: resetMailTemplate,
+  composeMailFromTemplate: composeMailFromTemplate
 }
