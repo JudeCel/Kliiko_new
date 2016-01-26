@@ -29,11 +29,24 @@ function saveResourceToDisk(params) {
     let json = {
       filename: params.file.filename,
     };
-        var filename = json.filename;
-        var path = params.file.path;
-        var panelThumb = {width: 300, height: 300, version: "panel"}
-        var tableThumb = {width: 150, height: 150, version: "table"}
-        var fileFormat = params.file.mimetype.split('/').pop();
+
+    const gallery = {
+            panel: {
+                width: 420, 
+                height: 420, 
+                version: "panel"
+            },
+            table: {
+                width: 84, 
+                height: 84, 
+                version: "table"
+            }
+        };
+
+
+    let filename = json.filename;
+    let path = params.file.path;
+    let fileFormat = getFileType(params.file.mimetype);
         
         fs.readFile(path, function (err) {
             if (err) {
@@ -80,56 +93,13 @@ function saveResourceToDisk(params) {
                              }, params.resCb);
 
                          } else stage2ofWriteFile(features);
-                         function stage2ofWriteFile(features)
-                         {
-                             if(features.width < params.width && features.height < params.height){
-                                 params.width = features.width;
-                                 params.height = features.height;
-                             }
+                         function stage2ofWriteFile(features){
+                            if(features.width < params.width && features.height < params.height){
+                                params.width = features.width;
+                                params.height = features.height;
+                            }
 
-                             im.resize({
-                                 srcPath: path,
-                                 dstPath: path,
-                                 width: params.width,
-                                 height: params.height
-                             }, function (err, stdout, stderr) {
-                                 if (err) {
-                                     // TODO: deal with error
-                                     console.log("Imagemagick: wasn't able to resize");
-                                 } //throw err;
-                                 else {
-
-                                     if (err) {
-                                         console.log("ERROR: Imagemagick is unable to identify this file type  "+err);
-
-                                     } else {
-                                        async.parallel({
-                                            panel: function(callback) {
-                                                resize(params.file, panelThumb.width, panelThumb.height, panelThumb.version, callback)
-                                            },
-                                            table: function(callback) {
-                                                resize(params.file, tableThumb.width, tableThumb.height, tableThumb.version, callback)
-                                            }
-                                        }, function(err, results) {
-                                            uploadResourceCallback({
-                                                name: filename,
-                                                matchName: json.filename,
-                                                type: params.type,
-                                                format: fileFormat,
-                                                width: features.width,
-                                                height: features.height,
-                                                depth: features.depth,
-                                                panelThumb: results.panel,
-                                                tableThumb: results.table
-                                            }, params.resCb);
-                                        });
-
-                                       
-
-                                     }
-
-                                 }
-                             });
+                            resizeToAllSizes(params, gallery, filename, fileFormat, features);
                          }
                      });
 
@@ -147,25 +117,60 @@ function saveResourceToDisk(params) {
 
 }
 
+function resizeToAllSizes(params, gallery, filename, fileFormat, features) {
+    async.parallel({
+        default: function(callback) {
+            resize(params.file, features.width, features.height, "", callback)
+        },
+        panel: function(callback) {
+            resize(params.file, gallery.panel.width, gallery.panel.height, gallery.panel.version, callback)
+        },
+        table: function(callback) {
+            resize(params.file, gallery.table.width, gallery.table.height, gallery.table.version, callback)
+        }
+    }, function(err, results) {
+        uploadResourceCallback({
+            name: filename,
+            matchName: filename,
+            type: params.type,
+            format: fileFormat,
+            width: features.width,
+            height: features.height,
+            depth: features.depth,
+            panelThumb: results.panel,
+            tableThumb: results.table
+        }, params.resCb);
+    });
+}
+
 function resize(file, width, height, version, callback) {
     let filename = version + "_" + file.originalname
     let saveUrl = file.destination + filename;
     let returnPath = _.trim(saveUrl);
 
     im.identify(file.path, function(err, features) {
-        im.resize({
-            srcPath: file.path,
-            dstPath: saveUrl,
-            width: width,
-            height: height
-        }, function (err, stdout, stderr) {
-            if(err){
-                return callback(err);
-            }else{
-                return callback(null, filename);
-            }
-        });
+        if(err){
+
+        }else{
+            im.resize({
+                srcPath: file.path,
+                dstPath: saveUrl,
+                width: width,
+                height: height
+            }, function (err, stdout, stderr) {
+                if(err){
+                    return callback(err);
+                }else{
+                    return callback(null, filename);
+                }
+            });
+        }
     });
 }
+
+function getFileType(string) {
+    return string.split('/').pop()
+}
+
 
 module.exports = saveResourceToDisk;

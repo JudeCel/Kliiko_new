@@ -5,11 +5,11 @@
     module('KliikoApp').
     controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['dbg', '$q', 'GalleryServices', '$modal', 
+  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', 
                                '$scope', 'domServices', 'messenger', 
-                               'Upload', 'globalSettings', '$sce', 'filterFilter'];
+                               'globalSettings', '$sce', 'filterFilter'];
 
-  function GalleryController(dbg, $q, GalleryServices, $modal, $scope, domServices, messenger, Upload, globalSettings, $sce, filterFilter){
+  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, globalSettings, $sce, filterFilter){
     dbg.log2('#GalleryController  started');
     initList();
     $scope.filterType = "";
@@ -53,7 +53,7 @@
     $scope.resourcesSelected = function(id) {
       if($scope.idsForAction.indexOf(id) == -1){
         $scope.idsForAction.push(id);
-      }else if($scope.idsForAction.indexOf(id) !== -1){
+      }else if($scope.idsForAction.indexOf(id) != -1){
         $scope.idsForAction.splice($scope.idsForAction.indexOf(id), 1);
       }
     }
@@ -159,11 +159,11 @@
     }
 
     $scope.submitIdsForMassAction = function() {
-      if($scope.action === "delete"){
+      if($scope.action == "delete"){
         $scope.deleteResources($scope.idsForAction);
       }
 
-      if($scope.action === "download"){
+      if($scope.action == "download"){
         $scope.downloadResources($scope.idsForAction);
       }
     }
@@ -185,6 +185,7 @@
         if(res.error){
           messenger.error("Something went wrong, please try again later.");
         }else{
+          $scope.idsForAction = [];
           window.location.assign('/chat_room/uploads/' + res.fileName);
         }
       })

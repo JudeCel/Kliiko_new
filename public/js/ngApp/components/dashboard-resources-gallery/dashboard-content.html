@@ -1,141 +1,131 @@
 <section id='GalleryController' ng-controller='GalleryController'>
   <form ng-submit="submitIdsForMassAction(action)">
+    <h2 class="text-center margin-top-30">Gallery</h2>
     <div class="gallery col-md-12">
-      <div class="dashboard-container">
-        <div class="row">
-          <div class="col-md-4">
-            <div class="col-md-6 margin-25-top-bottom">
-              <input id="selectall" ng-click="selectAllResources()" name="selectAll" type="checkbox" value="selectAll" />
-              <label for="selectAll">Select All</label>
-            </div>
-            <button type='submit' ng-disabled="idsForAction == 0" 
-                    class='btn btn-addNewElement btn-green' 
-                    ng-click="actionDelete('delete')">
-              <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
-            </button>
+      <div class="gallery col-xs-4 col-sm-2 pull-right">
+        <button class="btn btn-addNewElement btn-green" type='button' ng-click="setView('panel')" ng-if="viewType == 'table'">
+          <span class='glyphicon glyphicon-th' aria-hidden='true'></span>   
+        </button>
 
-            <button type='submit' ng-disabled="idsForAction == 0" 
-                    class='btn btn-addNewElement btn-green' 
-                    ng-click="actionDownload('download')">
-              <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>   
-            </button>
-          </div>
-          
-          <div class="col-md-4">
-            <h2 class="text-center">Gallery</h2>
-            <h4 class="text-center has-error text-red-dark ng-binding"></h4>
-            <h4 class="text-center ng-binding"></h4>
-          </div>
-          
-          <div class="col-md-4 text-right">
-            <button class="btn btn-addNewElement btn-green" type='button' ng-click="setView('panel')" ng-if="viewType == 'table'">
-              <span class='glyphicon glyphicon-th' aria-hidden='true'></span>   
-            </button>
+        <button class="btn btn-addNewElement btn-green" type='button' ng-click="setView('table')" ng-if="viewType == 'panel'">
+          <span class='glyphicon glyphicon-th-list' aria-hidden='true'></span>   
+        </button>
 
-            <button class="btn btn-addNewElement btn-green" type='button' ng-click="setView('table')" ng-if="viewType == 'panel'">
-              <span class='glyphicon glyphicon-th-list' aria-hidden='true'></span>   
-            </button>
+        <button class='btn btn-addNewElement btn-green' type='button' id='uploadResourceDropdown' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+          <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
+          Add New Resource
+        </button>
+        <ul class='dropdown-menu header-dropdown-ul' aria-labelledby='uploadResourceDropdown'>
+          <li class='text-right text-size-dashboard'>
+            <a ng-click="uploadResourceForm('image')" data-toggle='modal' >
+              Upload Image
+            </a>
+          </li>
 
-            <button class='btn btn-addNewElement btn-green' type='button' id='uploadResourceDropdown' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-              <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
-              Add New Resource
-            </button>
-            <ul class='pull-right dropdown-menu header-dropdown-ul' aria-labelledby='uploadResourceDropdown'>
-              <li class='text-right text-size-dashboard'>
-                <a ng-click="uploadResourceForm('image')" data-toggle='modal' >
-                  Upload Image
-                </a>
-              </li>
+          <li class='text-right text-size-dashboard'>
+            <a ng-click="uploadResourceForm('brandLogo')" data-toggle='modal' href=''>
+              Upload Brand Logo
+            </a>
+          </li>
 
-              <li class='text-right text-size-dashboard'>href=''
-                <a ng-click="uploadResourceForm('brandLogo')" data-toggle='modal' >
-                  Upload Brand Logo
-                </a>
-              </li>
+          <li class='text-right text-size-dashboard'>
+            <a ng-click="uploadResourceForm('audio')" data-toggle='modal' href=''>
+              Upload Audio
+            </a>
+          </li>
 
-              <li class='text-right text-size-dashboard'>
-                <a ng-click="uploadResourceForm('audio')" data-toggle='modal' href=''>
-                  Upload Audio
-                </a>
-              </li>
+          <li class='text-right text-size-dashboard'>
+            <a ng-click="uploadResourceForm('pdf')" data-toggle='modal' href=''>
+              Upload PDF
+            </a>
+          </li>
 
-              <li class='text-right text-size-dashboard'>
-                <a ng-click="uploadResourceForm('pdf')" data-toggle='modal' href=''>
-                  Upload PDF
-                </a>
-              </li>
-
-              <li class='text-right text-size-dashboard'>
-                <a ng-click="uploadResourceForm('youtubeUrl')" data-toggle='modal' href=''>
-                  Save Youtube URL
-                </a>
-              </li>
-
-            </ul>
-          </div>
-        </div>
+          <li class='text-right text-size-dashboard'>
+            <a ng-click="uploadResourceForm('youtubeUrl')" data-toggle='modal' href=''>
+              Save Youtube URL
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
 
     <div class="gallery col-md-12">
       <div class='col-md-12 category-selection'>
-        <a class="green-link" ng-click="filterBy('')">All({{getCount("")}})</a>
-        <a class="green-link" ng-click="filterBy('image')">Images({{getCount("image")}})</a>
-        <a class="green-link" ng-click="filterBy('video')">Video({{getCount("video")}})</a>
-        <a class="green-link" ng-click="filterBy('pdf')">PDF({{getCount("pdf")}})</a>
-        <a class="green-link" ng-click="filterBy('audio')">Audio({{getCount("audio")}})</a>
-        <a class="green-link" ng-click="filterBy('brandLogo')">Brand Logo({{getCount("brandLogo")}})</a>
+        <div class='col-md-6'>
+          <input id="selectall" ng-click="selectAllResources()" name="selectAll" type="checkbox" value="selectAll" />
+          <label for="selectAll" class="margin-right-10">Select All</label>
+
+          <button type='submit' ng-disabled="idsForAction == 0" 
+                  class='btn btn-addNewElement btn-green no-margin' 
+                  ng-click="actionDelete('delete')">
+            <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
+          </button>
+
+          <button type='submit' ng-disabled="idsForAction == 0" 
+                  class='btn btn-addNewElement btn-green no-margin' 
+                  ng-click="actionDownload('download')">
+            <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>   
+          </button>
+
+        </div>
+        
+        <div class='col-md-6'>
+          <a class="green-link" ng-click="filterBy('')">All({{getCount("")}})</a>
+          <a class="green-link" ng-click="filterBy('image')">Images({{getCount("image")}})</a>
+          <a class="green-link" ng-click="filterBy('video')">Video({{getCount("video")}})</a>
+          <a class="green-link" ng-click="filterBy('pdf')">PDF({{getCount("pdf")}})</a>
+          <a class="green-link" ng-click="filterBy('audio')">Audio({{getCount("audio")}})</a>
+          <a class="green-link" ng-click="filterBy('brandLogo')">Brand Logo({{getCount("brandLogo")}})</a>
+        </div>
+
       </div>
 
     <!-- Table view -->
       <div class="gallery-body col-md-12" ng-if="viewType == 'table'">
-        <table class="table table-responsive table-dashboardElements" > 
-          <thead>
-            <tr class='green-background'>
-              <th>#</th>
-              <th></th>
-              <th>Title</th>
-              <th>Format</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody ng-repeat="resource in resources">
+        <table class="table table-hover table-responsive" > 
+          <tbody ng-repeat="resource in resources | filter: { resourceType: filterType }">
             <tr ng-if="resource.resourceType != 'tmp'" class="ng-scope">
-              <td class="ng-binding">
-                <input class='pull-left' type="checkbox" 
+              <td class="ng-binding vertical-align-middle ">
+                <input class='margin-left-6' type="checkbox" 
                        value="{{resource.id}}" ng-click="resourcesSelected(resource.id)"
                        ng-checked="resource.checked" ng-model="resource.checked"/>
               </td>
               <td class="ng-binding" ng-if="resource.JSON.type == 'video'">
-                <img src="/chat_room/resources/images/youtubeThumb.png" alt="youtube" image-resize image-percent="50" width="100" height="100" class="img-responsive">
+                <span class='glyphicon glyphicon-facetime-video border-green gallery-list-icon' aria-hidden='true'></span>
               </td>
               <td class="ng-binding" ng-if="resource.JSON.type == 'image' || resource.JSON.type == 'brandLogo'">
-                <img src="/chat_room/uploads/{{resource.JSON.tableThumb}}"/>
+                <div class="gallery-table-image-box border-green">
+                  <div class="responsive-container">
+                    <div class="dummy"></div>
+
+                    <div class="img-container">
+                      <img src="/chat_room/uploads/{{resource.JSON.tableThumb}}"/>
+                    </div>
+                  </div>
+                </div>
               </td>
               <td class="ng-binding" ng-if="resource.JSON.type == 'audio'">
-                <img src="/chat_room/resources/images/audioThumb.png" alt="audio" image-resize image-percent="50" width="100" height="100" class="img-responsive">
+                <span class='glyphicon glyphicon-music border-green gallery-list-icon' aria-hidden='true'></span>
               </td>
               <td class="ng-binding" ng-if="resource.JSON.type == 'pdf'">
-                <img src="/chat_room/uploads/pdf.png" alt="audio" image-resize image-percent="50" width="100" height="100" class="img-responsive">
+                <span class='glyphicon glyphicon-file border-green gallery-list-icon' aria-hidden='true'></span>
               </td>
-              <td class="ng-binding">
-                <p class="pull-left">
-                  {{ resource.JSON.title }}
-                  </p>
+              <td class="ng-binding vertical-align-middle">
+                {{ resource.JSON.title }}
               </td>
-              <td>
-                <p>{{ resource.JSON.format }}</p>
+              <td class="vertical-align-middle">
+                <p class="uppercase">{{ resource.JSON.format }}</p> 
                 <a ng-if="resource.JSON.type == 'video'" href="{{ resource.JSON.url }}" target="_blank">{{ resource.JSON.url }}</a>
               </td>
               <td>
                 <button type='submit'
-                        class='btn btn-addNewElement btn-green' 
+                        class='btn btn-addNewElement btn-green pull-right margin-right-10' 
                         ng-click="deleteResources(resource.id)">
                   <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
                 </button>
 
                 <a type='submit' download="{{resource.JSON.matchName}}"
-                        class='btn btn-addNewElement btn-green' 
+                        class='btn btn-addNewElement btn-green pull-right margin-right-10' 
                         href="{{'/chat_room/uploads/' + resource.JSON.name}}">
                   <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>   
                 </a>
@@ -155,27 +145,26 @@
               <div ng-bind-html="renderHtml(resource.JSON.message)" ng-if="resource.JSON.type == 'video'"></div>
               
               <div class="responsive-container" ng-if="resource.JSON.type == 'image' || resource.JSON.type == 'brandLogo'">
-                  <div class="dummy"></div>
+                <div class="dummy"></div>
 
-                  <div class="img-container">
-                      <img src="/chat_room/uploads/{{resource.JSON.panelThumb}}" class="center-block vertical-align"/>
-                  </div>
+                <div class="img-container">
+                  <img src="/chat_room/uploads/{{resource.JSON.panelThumb}}" class="center-block vertical-align"/>
+                </div>
               </div>
             
               <div class="responsive-container" ng-if="resource.JSON.type == 'audio'">
                 <div class="dummy"></div>
 
                 <div class="img-container">
-                  <img src="/chat_room/resources/images/audioThumb.png" alt="{{resource.JSON.matchName}}" image-resize image-percent="50" width="315" height="315" class="img-responsive center-block" >
+                  <span class='glyphicon glyphicon-music icon-200' aria-hidden='true'></span>
                 </div>
-                
               </div>
 
               <div class="responsive-container" ng-if="resource.JSON.type == 'pdf'">
                 <div class="dummy"></div>
 
                 <div class="img-container">
-                  <img src="/chat_room/uploads/pdf.png" alt="{{resource.JSON.matchName}}" image-resize image-percent="50" width="" height="" class="img-responsive center-block" >
+                  <span class='glyphicon glyphicon-file icon-200' aria-hidden='true'></span>
                 </div>
               </div>
 
@@ -189,8 +178,8 @@
               {{ resource.JSON.title }}
 
               <div class='pull-right col-md-2'>
-                {{ resource.JSON.format }}
-                <a ng-if="resource.JSON.type == 'video'" href="{{ resource.JSON.url }}" target="_blank" class="green-text">link</a>
+                <p ng-if="resource.JSON.type !== 'video'" class="uppercase">{{ resource.JSON.format }}</p> 
+                <a ng-if="resource.JSON.type == 'video'" href="{{ resource.JSON.url }}" target="_blank" class="green-text uppercase">link</a>
               </div>
             </div>
         </div>

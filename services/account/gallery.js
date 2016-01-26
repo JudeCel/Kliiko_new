@@ -27,6 +27,7 @@ function getResources(accountId){
 
   Resource.findAll({
     include: [{
+        // where: {resourceType: "image"},
         model: models.User, 
         include: [{
           model: models.Account,
@@ -54,7 +55,6 @@ function generateFileName() {
 
 function downloadResources(data){
   let deferred = q.defer();
-
   Resource.findAll({
     id: data.resource_id,
     attributes: ['id', 'JSON', 'resourceType']
@@ -76,13 +76,15 @@ function downloadResources(data){
     });
 
     archive.addFiles(files, function (err) {
-      if (err) return console.log("err while adding files", err);
-
-      let buff = archive.toBuffer();
-      let fileName = generateFileName();
-      fs.writeFile(config.get("pathToChatFileStorage") + fileName, buff, function () {
-        deferred.resolve({fileName: fileName});
-      });
+      if(err){
+        return console.log("err while adding files", err);
+      }else{
+        let buff = archive.toBuffer();
+        let fileName = generateFileName();
+        fs.writeFile(config.get("pathToChatFileStorage") + fileName, buff, function () {
+          deferred.resolve({fileName: fileName});
+        });
+      }
     });
 
   })
