@@ -3,13 +3,11 @@
 var q = require('q');
 var _ = require('lodash');
 var models = require('./../models');
-var User = models.User;
 var AccountUser = models.AccountUser;
 var ContactList = models.ContactList;
 var ContactListUser = models.ContactListUser;
 var AccountUserService = require('./../services/accountUser');
-
-var uuid = require('node-uuid');
+var dataWrappers = require('./../models/dataWrappers');
 var async = require('async');
 
 module.exports = {
@@ -23,17 +21,31 @@ module.exports = {
 
 function findByContactList(contactListId) {
     var deferred = q.defer();
-    ContactListUser.findAll({where: { contactListId: contactListId }, order: ['position']}).then(function(results) {
-      deferred.resolve(results);
+    ContactListUser.findAll({
+      order: ['position'],
+      include: [{model: ContactList, where: { id: contactListId} } ]
+    }).then(function(results) {
+
+      let collection = _.map(results, (item) => {
+        collection.push(
+          new ContactListUser(
+            item.ContactList.defaultFields,
+            item.ContactList.customFields,
+            item
+          )
+        );
+      })
+
+      deferred.resolve(collection);
     }, function(err) {
       deferred.reject(err);
     });
     return deferred.promise;
 }
 
-
 // params = [{id: 1, position: 3}, ...]
 function updatePositions(params) {
+  // TODO: Need rewrite to one DB call!!!
   var deferred = q.defer();
     async.map(params, update, function(err, result) {
       if (err) {
@@ -42,7 +54,6 @@ function updatePositions(params) {
         deferred.resolve(result);
       }
     })
-
   function update(attrs, cb) {
     ContactListUser.update({position: attrs.position }, {where: {id: attrs.id}}).then(function(result) {
       cb(null,result);
@@ -65,8 +76,13 @@ function destroy(ids, accountId) {
 
 function find(id) {
     var deferred = q.defer();
-    ContactListUser.find({where: { id: id }}).then(function(result) {
-      deferred.resolve(result);
+    ContactListUser.find({where: { id: id }, include: [ ContactList ]}).then(function(result) {
+      let contactListUser =  new ContactListUser(
+        result.ContactList.defaultFields,
+        result.ContactList.customFields,
+        result
+      );
+      deferred.resolve(contactListUser);
     }, function(err) {
       deferred.reject(err);
     });
