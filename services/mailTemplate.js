@@ -258,7 +258,7 @@ function formatTemplateString(str) {
   str = str.replace(/\{Close Session Yes In Future\}/ig, "<%= participateInFutureUrl %>");
   str = str.replace(/\{Close Session No In Future\}/ig, "<%= dontParticipateInFutureUrl %>");
   str = str.replace(/\{Confirmation Check In\}/ig, "<%= confirmationCheckInUrl %>");
-  str = str.replace(/\{Account Manager Confirmation Login\}/ig, "<%= accountManagerConfirmationLogInUrl %>");
+  str = str.replace(/\{Login\}/ig, "<%= logInUrl %>");
   
   return str;
 }

@@ -90,7 +90,7 @@ function previewMailTemplatePost(req, res, next) {
     participateInFutureUrl: "#/participateInFutureUrl",
     dontParticipateInFutureUrl: "#/dontParticipateInFutureUrl",
     confirmationCheckInUrl: "#/confirmationCheckInUrl",
-    accountManagerConfirmationLogInUrl: "#/accountManagerConfirmationLogInUrl",
+    logInUrl: "#/LogInUrl",
   };
 
   var result = MailTemplateService.composeMailFromTemplate(req.body.mailTemplate, mailPreviewVariables);

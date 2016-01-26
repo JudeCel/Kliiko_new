@@ -11,20 +11,17 @@ var templateFiles = [
     {
        fileName: 'InvitationSeries_FirstInvite.html',
        name: "First Invitation",
-       subject: "Invitation to {Session Name}",
-       category: 1
+       subject: "Invitation to {Session Name}"
      },
      {
        fileName: 'InvitationSeries_CloseSession.html',
        name: "Close Session",
-       subject: "Close {Session Name} session",
-       category: 1
+       subject: "Close {Session Name} session"
      },
      {
        fileName: 'InvitationSeries_Confirmation.html',
        name: "Confirmation",
-       subject: "Invitation confirmed",
-       category: 1
+       subject: "Invitation confirmed"
      },
      {
        fileName: 'InvitationSeries_Generic.html',
@@ -45,7 +42,53 @@ var templateFiles = [
        fileName: 'SystemEmail_AccountManagerConfirmation.html',
        name: "Account Manager Confirmation",
        subject: "Account Manager Confirmation"
-     }     
+     },
+     {
+       fileName: 'SystemEmail_ReactivatedAccount.html',
+       name: "Reactivated Account",
+       subject: "Your Account Has Been Reactivated"
+     },
+     {
+       fileName: 'SystemEmail_DeactivatedAccount.html',
+       name: "Deactivated Account",
+       subject: "Your Account Has Been Deactivated"
+     },
+     {
+       fileName: 'SystemEmail_FacilitatorConfirmation.html',
+       name: "Facilitator Confirmation",
+       subject: "Facilitator Confirmation"
+     },
+     {
+       fileName: 'SystemEmail_ObserverInvitation.html',
+       name: "Observer Invitation",
+       subject: "Observer Invitation"
+     },
+     {
+       fileName: 'SystemEmail_FacilitatorOverQuota.html',
+       name: "Facilitator Over-Quota",
+       subject: "Facilitator Over-Quota"
+     },
+     // Popups
+     {
+       fileName: 'SystemPopup_InvitationAcceptance.html',
+       name: "Invitation Acceptance",
+       subject: "Invitation Acceptance"
+     },
+     {
+       fileName: 'SystemPopup_SessionClosed.html',
+       name: "Session Closed",
+       subject: "Session Closed"
+     },
+     {
+       fileName: 'SystemPopup_SessionFull.html',
+       name: "Session Full",
+       subject: "Session Full"
+     },
+     {
+       fileName: 'SystemPopup_SessionNotOpenYet.html',
+       name: "Session Not Yet Open",
+       subject: "Session Not Yet Open"
+     },
 ];
 
 function createMailTemplateFromFile(fileInfo, callback) {
@@ -85,13 +128,21 @@ function createMailTemplate() {
     addTemplate,
     addTemplate,
     addTemplate,
-    addTemplate     
+    addTemplate,
+    addTemplate,
+    addTemplate,
+    addTemplate,
+    addTemplate,
+    addTemplate,
+    addTemplate,
+    addTemplate,
+    addTemplate
   ]);
 }
 
 function addTemplate(callback) {       
   createMailTemplateFromFile(templateFiles[num], function(error, _result) {
-    if (num < 7) {
+    if (num < templateFiles.length) {
       num++;
       callback(null);
     } else {
