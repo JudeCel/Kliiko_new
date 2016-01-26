@@ -139,7 +139,6 @@ function parseFile(id, filePath) {
     }
   });
 
-
   return deferred.promise;
 };
 
