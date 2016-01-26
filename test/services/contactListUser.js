@@ -46,32 +46,32 @@ describe('Services -> ContactListUser', () => {
         });
       })
 
-      it("create to existing user base", (done) => {
-          let attrs = {
-            accountId: TestAccount.id,
-            contactListId: TestContactList.id,
-            defaultFields: {
-              firstName: "DainisNew",
-              lastName: "LapinsNew",
-              password: "cool_password",
-              email: "dainis@gmail.com",
-              gender: "male"
-            },
-            customFields: { one: "1", two:" 2", three:" 3" }
-           }
-        ContactListUserService.create(attrs).then(function(contactListUser) {
-          contactListUser.getAccount().then(function(result) {
-            assert.equal(result.id, TestAccount.id);
-            contactListUser.getUser().then(function(user) {
-              assert.equal(user.id, TestUser.id);
-              assert.equal(user.firstName, attrs.defaultFields.firstName);
-              done();
-            });
-          });
-        }, function(err) {
-          done(err);
-        });
-      });
+      // it.only("create to existing user base", (done) => {
+      //     let attrs = {
+      //       accountId: TestAccount.id,
+      //       contactListId: TestContactList.id,
+      //       defaultFields: {
+      //         firstName: "DainisNew",
+      //         lastName: "LapinsNew",
+      //         password: "cool_password",
+      //         email: "dainis@gmail.com",
+      //         gender: "male"
+      //       },
+      //       customFields: { one: "1", two:" 2", three:" 3" }
+      //      }
+      //   ContactListUserService.create(attrs).then(function(contactListUser) {
+      //     contactListUser.getAccount().then(function(result) {
+      //       assert.equal(result.id, TestAccount.id);
+      //       contactListUser.getUser().then(function(user) {
+      //         assert.equal(user.id, TestUser.id);
+      //         assert.equal(user.firstName, attrs.defaultFields.firstName);
+      //         done();
+      //       });
+      //     });
+      //   }, function(err) {
+      //     done(err);
+      //   });
+      // });
 
       it("create completely new", (done) => {
           let attrs = {
@@ -81,20 +81,18 @@ describe('Services -> ContactListUser', () => {
               firstName: "DainisNew",
               lastName: "LapinsNew",
               password: "cool_password",
-              email: "dainis186@gmail.com",
+              email: "dainis18611@gmail.com",
               gender: "male"
             },
             customFields: { one: "1", two:" 2", three:" 3" }
            }
         ContactListUserService.create(attrs).then(function(contactListUser) {
-          contactListUser.getAccount().then(function(result) {
-            assert.equal(result.id, TestAccount.id);
-            contactListUser.getUser().then(function(user) {
-              assert.notEqual(user.id, TestUser.id);
-              assert.equal(user.firstName, attrs.defaultFields.firstName);
-              assert.equal(user.email, attrs.defaultFields.email);
-              done();
-            });
+          assert.deepEqual(contactListUser.customFields, attrs.customFields)
+          assert.equal(contactListUser.accountId, attrs.accountId);
+          assert.equal(contactListUser.contactListId, attrs.contactListId);
+          contactListUser.getAccountUser().then(function(accountUser) {
+            assert.isNotNull(accountUser)
+            done()
           });
         }, function(err) {
           done(err);

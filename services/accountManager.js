@@ -14,60 +14,62 @@ var _ = require('lodash');
 var crypto = require('crypto');
 
 //Exports
-function createOrFindUser(req, callback) {
-  let user = req.user,
-      params = prepareParams(req);
+function createOrFindAccountManager(req, res, callback) {
+  let user = req.user;
+  let params = prepareParams(req);
+  let currentDomain = res.locals.currentDomain;
 
-  preValidate(user, params, function(error) {
+  preValidate(user, currentDomain.id, params, function(error) {
     if(error) {
       return callback(error);
     }
 
     User.find({
-      include: [ Account ],
       where: { email: params.email }
-    }).then(function(foundUser) {
-      if(foundUser) {
-        callback(null, inviteParams(foundUser.id, user.accountOwnerId, 'existing'));
-      }
-      else {
-        adjustParamsForNewUser(params);
-        User.create(params).then(function(newUser) {
-          callback(null, inviteParams(newUser.id, user.accountOwnerId, 'new'));
-        }).catch(function(error) {
-          callback(prepareErrors(error));
+    }).then(function(existsUser) {
+      if(existsUser) {
+        existsUser.getAccounts({ where: {id: currentDomain.id } }).then(function (results) {
+          if (_.isEmpty(results)) {
+            createAccountUser(params, existsUser.id, "existing", currentDomain.id, callback);
+          }else{
+            callback('This account has already accepted invite.');
+          }
+        })
+      } else {
+        User.create(userParams(params.email)).then(function(newUser) {
+          createAccountUser(params, newUser.id, "new", currentDomain.id, callback);
+        }, function(err) {
+          callback(prepareErrors(err));
         });
       }
     });
   });
 };
 
-function findAccountManagers(user, callback) {
-  async.parallel([
-    function(cb) {
-      findUsers(AccountUser, { owner: false, AccountId: user.accountOwnerId }, [ 'id', 'UserId', 'AccountId' ], cb);
-    },
-    function(cb) {
-      findUsers(Invite, { accountId: user.accountOwnerId, role: 'accountManager' }, [ 'id', 'userId' ], cb);
-    }
-  ], function(err, results) {
-    if(err) {
-      callback(err);
-    }
-    else {
-      callback(null, _.union(results[0], results[1]));
-    }
+function createAccountUser(params, userId, type, accountId, cb) {
+  adjustParamsForNewAccountUser(params, userId, accountId);
+  AccountUser.create(params).then(function(newAccountUser){
+    cb(null, inviteParams(newAccountUser.id, accountId, userId, type));
+  }).catch(function(error) {
+    cb(prepareErrors(error));
   });
+}
+
+function userParams(email) {
+  return {email: email, password: crypto.randomBytes(16).toString('hex')};
+}
+
+function findAccountManagers(currentDomainId, callback) {
+  AccountUser.findAll({where: {AccountId:  currentDomainId,
+    role: 'accountManager'}}).then(function(results) {
+      callback(null, results);
+  })
 };
 
-function findAndRemoveAccountUser(req, callback) {
-  let currentUser = req.user,
-      userId = req.query.id;
-
+function findAndRemoveAccountUser(id, callback) {
   AccountUser.find({
     where: {
-      UserId: userId,
-      AccountId: currentUser.accountOwnerId,
+      id: id,
       owner: false
     }
   }).then(function(result) {
@@ -83,7 +85,7 @@ function findAndRemoveAccountUser(req, callback) {
 };
 
 //Helpers
-function preValidate(user, params, callback) {
+function preValidate(user, currentDomainId, params, callback) {
   if(user.email == params.email) {
     return callback({ email: 'You are trying to invite yourself.' });
   }
@@ -95,7 +97,7 @@ function preValidate(user, params, callback) {
     }],
     where: {
       UserId: { $ne: user.id },
-      AccountId: user.accountOwnerId
+      AccountId: currentDomainId
     }
   }).then(function(accountUsers) {
     if(_.isEmpty(accountUsers)) {
@@ -109,29 +111,31 @@ function preValidate(user, params, callback) {
   });
 };
 
-function adjustParamsForNewUser(params) {
-  params.password = crypto.randomBytes(16).toString('hex');
-  params.confirmedAt = new Date();
+function adjustParamsForNewAccountUser(params, userId, accountId) {
+  params.state = "invited";
+  params.role = 'accountManager';
+  params.AccountId = accountId;
+  params.UserId = userId;
   return params;
 }
 
+// return all Account managers invaited and accepted
 function findUsers(model, where, attributes, cb) {
-  User.findAll({
+  AccountUser.findAll({
+    where: where,
     include: [{
-      model: model,
-      where: where,
-      attributes: attributes
+      model: model
     }],
-    attributes: constants.safeUserParams
-  }).then(function(users) {
-    cb(null, users);
+    attributes: attributes
+  }).then(function(accountUser) {
+    cb(null, accountUser);
   }).catch(function(error) {
     cb(prepareErrors(error));
   });
 }
 
-function inviteParams(invitedUserId, accountId, type) {
-  return { userId: invitedUserId, accountId: accountId, userType: type, role: 'accountManager' };
+function inviteParams(accountUserId, accountId, userId, type) {
+  return { userId: userId, accountUserId: accountUserId, accountId: accountId, userType: type, role: 'accountManager' };
 };
 
 function prepareParams(req) {
@@ -151,7 +155,7 @@ function prepareErrors(err) {
 };
 
 module.exports = {
-  createOrFindUser: createOrFindUser,
+  createOrFindAccountManager: createOrFindAccountManager,
   findAccountManagers: findAccountManagers,
   findAndRemoveAccountUser: findAndRemoveAccountUser
 };

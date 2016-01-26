@@ -2,18 +2,18 @@ var accountManagerService = require('../../services/accountManager');
 var inviteService = require('../../services/invite');
 
 function get(req, res, next) {
-  accountManagerService.findAccountManagers(req.user, function(error, users) {
+  accountManagerService.findAccountManagers(res.locals.currentDomain.id, function(error, accountUsers) {
     if(error) {
       res.send({ error: error });
     }
     else {
-      res.send({ users: users });
+      res.send({ accountUsers: accountUsers });
     }
   });
 };
 
 function post(req, res, next) {
-  accountManagerService.createOrFindUser(req, function(error, params) {
+  accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
     if(error) {
       return res.send({ error: error });
     }
@@ -30,7 +30,7 @@ function post(req, res, next) {
 };
 
 function removeInvite(req, res, next) {
-  var params = { userId: req.query.id, accountId: req.user.accountOwnerId };
+  var params = { accountUserId: req.query.id, accountId: res.locals.currentDomain.id };
 
   inviteService.findAndRemoveInvite(params, function(error, message) {
     if(error) {
@@ -43,7 +43,7 @@ function removeInvite(req, res, next) {
 };
 
 function removeAccountUser(req, res, next) {
-  accountManagerService.findAndRemoveAccountUser(req, function(error, message) {
+  accountManagerService.findAndRemoveAccountUser(req.query.id, function(error, message) {
     if(error) {
       res.send({ error: error });
     }

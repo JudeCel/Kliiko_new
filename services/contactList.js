@@ -38,7 +38,7 @@ function allByAccount(accountId) {
       attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable'],
       include: [{
         model: models.ContactListUser, attributes: ['id', 'customFields'],
-        include: [{model: models.User, attributes: constants.contactListDefaultFields }],
+        include: [{model: models.AccountUser, attributes: constants.contactListDefaultFields }],
         order: ['position']
       }]
     }).then(function(results) {

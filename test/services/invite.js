@@ -8,10 +8,11 @@ var AccountUser = models.AccountUser;
 
 var userService = require('./../../services/users');
 var inviteService = require('./../../services/invite');
+var accountManagerService = require('./../../services/accountManager');
 var assert = require('chai').assert;
 var async = require('async');
 
-var testUser1 = null, testUser2 = null, testAccount = null;
+var testUser = null, testUser2 = null, testAccount = null, accountUser2 = null;
 
 describe('SERVICE - Invite', function() {
   beforeEach(function(done) {
@@ -31,30 +32,39 @@ describe('SERVICE - Invite', function() {
       password: "cool_password",
       email: "dainis@gmail.com",
       gender: "male",
-      status: "invited"
     }
 
     models.sequelize.sync({ force: true }).then(() => {
-      userService.create(attrs1, function(err, user) {
-        testUser1 = user;
-        user.getOwnerAccount().then(function(accounts) {
+      userService.create(attrs1, function(err, user1) {
+        testUser = user1;
+        user1.getOwnerAccount().then(function(accounts) {
           testAccount = accounts[0];
-          userService.create(attrs2, function(err, user) {
-            testUser2 = user;
-            done();
+          userService.create(attrs2, function(err, user2) {
+            user2.getAccountUsers().then(function (results) {
+              accountUser2 = results[0],
+              testUser2 = user2;
+              done();
+            })
           });
         })
       });
     });
   });
 
-  function validParams(userType) {
+  function requestObject(user, body) {
     return {
-      userId: testUser2.id,
-      accountId: testAccount.id,
-      role: 'accountManager',
-      userType: userType ? userType : 'new'
+      user: { id: user.id, email: user.email },
+      body: body
     };
+  }
+
+  function validParams(user, account, body, cb) {
+    let role = "accountManager"
+    let req = requestObject(user, body)
+    let res = { locals: {currentDomain: { id: account.id, name: account.name, roles: [role] } } }
+    accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
+      cb(error, params);
+    });
   };
 
   function countTables(params) {
@@ -96,12 +106,12 @@ describe('SERVICE - Invite', function() {
     describe('sad path', function() {
       it('should fail without params', function (done) {
         inviteService.createInvite({}, function(error, invite) {
-          let errorParams = { role: 'Role: cannot be null',
+          let errorParams = {
+            role: 'Role: cannot be null',
             accountId: 'Account Id: cannot be null',
-            userId: 'User Id: cannot be null',
+            accountUserId: 'Account User Id: cannot be null',
             userType: 'User Type: cannot be null'
           };
-
           assert.deepEqual(error, errorParams);
           assert.equal(invite, null);
           done();
@@ -111,17 +121,23 @@ describe('SERVICE - Invite', function() {
 
     describe('happy path', function() {
       it('should succeed and return invite', function (done) {
-        let params = validParams();
-        inviteService.createInvite(params, function(error, invite, result) {
-          assert.equal(error, null);
-          assert.equal(invite.userId, params.userId);
-          assert.equal(invite.accountId, params.accountId);
-          assert.equal(invite.role, params.role);
-          assert.equal(invite.userType, params.userType);
-          assert.include(result.data.html, 'Hello! And welcome to Klzii');
-          assert.include(result.data.html, 'You can login anytime with your');
-          done();
-        });
+        let body = {firstName: accountUser2.firstName,
+          lastName: accountUser2.lastName,
+          gender: accountUser2.gender,
+          email: accountUser2.email
+        }
+        validParams(testUser, testAccount, body, function(err, params) {
+          inviteService.createInvite(params, function(error, invite, result) {
+            assert.equal(error, null);
+            assert.equal(invite.userId, params.userId);
+            assert.equal(invite.accountId, params.accountId);
+            assert.equal(invite.role, params.role);
+            assert.equal(invite.userType, params.userType);
+            assert.include(result.data.html, 'Hello! And welcome to Klzii');
+            assert.include(result.data.html, 'You can login anytime with your');
+            done();
+          });
+        })
       });
     });
   });
@@ -129,22 +145,29 @@ describe('SERVICE - Invite', function() {
   describe('#removeInvite', function() {
     describe('existing user', function() {
       it('should succeed on removing invite', function (done) {
-        let params = validParams('existing');
-        inviteService.createInvite(params, function(error, invite) {
-          assert.equal(error, null);
+        let body = {firstName: accountUser2.firstName,
+          lastName: accountUser2.lastName,
+          gender: accountUser2.gender,
+          email: accountUser2.email
+        }
+        validParams(testUser, testAccount, body, function(err, params) {
+          inviteService.createInvite(params, function(error, invite) {
+            assert.equal(error, null);
 
-          async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 2 }), function(error, result) {
-            if(error) {
-              done(error);
-            }
-
-            inviteService.removeInvite(invite, function(error) {
+            async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
               if(error) {
                 done(error);
               }
 
-              async.parallel(countTables({ invite: 0, account: 2, user: 2, accountUser: 2 }), function(error, result) {
-                done(error);
+              inviteService.removeInvite(invite, function(error, result) {
+                assert.isTrue(result);
+                if(error) {
+                  done(error);
+                }
+
+                async.parallel(countTables({ invite: 0, account: 2, user: 2, accountUser: 3 }), function(error, result) {
+                  done(error);
+                });
               });
             });
           });
@@ -154,21 +177,27 @@ describe('SERVICE - Invite', function() {
 
     describe('new user', function() {
       it('should succeed on removing invite', function (done) {
-        let params = validParams();
-        inviteService.createInvite(params, function(error, invite) {
-          assert.equal(error, null);
-          async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 2 }), function(error, result) {
-            if(error) {
-              done(error);
-            }
-
-            inviteService.removeInvite(invite, function(error) {
+        let body = {firstName: "newName",
+          lastName: "newlastName",
+          gender: "male",
+          email: "newuser@gmail.com"
+        }
+        validParams(testUser, testAccount, body, function(err, params) {
+          inviteService.createInvite(params, function(error, invite) {
+            assert.equal(error, null);
+            async.parallel(countTables({ invite: 1, account: 2, user: 3, accountUser: 3 }), function(error, result) {
               if(error) {
                 done(error);
               }
 
-              async.parallel(countTables({ invite: 0, account: 2, user: 1, accountUser: 1 }), function(error, result) {
-                done(error);
+              inviteService.removeInvite(invite, function(error) {
+                if(error) {
+                  done(error);
+                }
+
+                async.parallel(countTables({ invite: 0, account: 2, user: 2, accountUser: 2 }), function(error, result) {
+                  done(error);
+                });
               });
             });
           });
@@ -179,40 +208,48 @@ describe('SERVICE - Invite', function() {
 
   describe('#findInvite', function() {
     it('should succeed on finding invite', function (done) {
-      let params = validParams();
-      inviteService.createInvite(params, function(error, invite) {
-        assert.equal(error, null);
-        inviteService.findInvite(invite.token, function(error, result) {
+      let body = {firstName: "newName",
+        lastName: "newlastName",
+        gender: "male",
+        email: "newuser@gmail.com"
+      }
+      validParams(testUser, testAccount, body, function(err, params) {
+        inviteService.createInvite(params, function(error, invite) {
           assert.equal(error, null);
-          assert.equal(invite.id, result.id);
-          done();
+          inviteService.findInvite(invite.token, function(error, result) {
+            assert.equal(error, null);
+            assert.equal(invite.id, result.id);
+            done();
+          });
         });
       });
     });
 
     it('should fail on finding invite', function (done) {
-      let params = validParams();
-      inviteService.createInvite(params, function(error, invite) {
-        assert.equal(error, null);
-        inviteService.findInvite('some token', function(error, result) {
-          assert.equal(error, 'Invite not found');
-          assert.equal(result, null);
-          done();
-        });
+      inviteService.findInvite('some token', function(error, result) {
+        assert.equal(error, 'Invite not found');
+        assert.equal(result, null);
+        done();
       });
     });
   });
 
   describe('#declineInvite', function() {
     it('should succeed on declining invite', function (done) {
-      let params = validParams();
-      inviteService.createInvite(params, function(error, invite) {
-        assert.equal(error, null);
-        inviteService.declineInvite(invite.token, function(error, result, message) {
+      let body = {firstName: "newName",
+        lastName: "newlastName",
+        gender: "male",
+        email: "newuser@gmail.com"
+      }
+      validParams(testUser, testAccount, body, function(err, params) {
+        inviteService.createInvite(params, function(error, invite) {
           assert.equal(error, null);
-          assert.equal(invite.id, result.id);
-          assert.equal(message, 'Successfully declined invite');
-          done();
+          inviteService.declineInvite(invite.token, function(error, result, message) {
+            assert.equal(error, null);
+            assert.equal(invite.id, result.id);
+            assert.equal(message, 'Successfully declined invite');
+            done();
+          });
         });
       });
     });
@@ -220,23 +257,24 @@ describe('SERVICE - Invite', function() {
 
   describe('#acceptInviteExisting', function() {
     it('should succeed on accepting invite', function (done) {
-      let params = validParams('existing');
-      inviteService.createInvite(params, function(error, invite) {
-        assert.equal(error, null);
+      let body = {firstName: accountUser2.firstName,
+        lastName: accountUser2.lastName,
+        gender: accountUser2.gender,
+        email: accountUser2.email
+      }
+      validParams(testUser, testAccount, body, function(err, params) {
+        inviteService.createInvite(params, function(error, invite) {
+          assert.equal(error, null);
 
-        async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 2 }), function(error, result) {
-          if(error) {
-            done(error);
-          }
-
-          inviteService.acceptInviteExisting(invite.token, function(error, result, message) {
+          async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
             if(error) {
               done(error);
             }
 
-            assert.equal(invite.id, result.id);
-            invite.User.reload().then(function(user) {
-
+            inviteService.acceptInviteExisting(invite.token, function(error, _result, message) {
+              if(error) {
+                done(error);
+              }
               async.parallel(countTables({ invite: 0, account: 2, user: 2, accountUser: 3 }), function(error, result) {
                 done(error);
               });
@@ -249,29 +287,35 @@ describe('SERVICE - Invite', function() {
 
   describe('#acceptInviteNew', function() {
     it('should succeed on accepting invite', function (done) {
-      let params = validParams();
-      inviteService.createInvite(params, function(error, invite) {
-        assert.equal(error, null);
-        let oldPassword = invite.User.encryptedPassword;
+      let body = { firstName: "newName",
+        lastName: "newlastName",
+        gender: "male",
+        email: "newuser@gmail.com"
+      }
+      validParams(testUser, testAccount, body, function(err, params) {
+        inviteService.createInvite(params, function(error, invite) {
+          assert.equal(error, null);
+          let oldPassword = invite.User.encryptedPassword;
 
-        async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 2 }), function(error, result) {
-          if(error) {
-            done(error);
-          }
-
-          let userParams = { accountName: 'newname', password: 'newpassword' };
-          inviteService.acceptInviteNew(invite.token, userParams, function(error, message) {
+          async.parallel(countTables({ invite: 1, account: 2, user: 3, accountUser: 3 }), function(error, result) {
             if(error) {
               done(error);
             }
 
-            invite.User.reload().then(function(user) {
-              assert.notEqual(user.encryptedPassword, oldPassword);
+            let userParams = { accountName: 'newname', password: 'newpassword' };
+            inviteService.acceptInviteNew(invite.token, userParams, function(error, message) {
+              if(error) {
+                done(error);
+              }
 
-              user.getOwnerAccount().then(function(accounts) {
-                assert.equal(accounts[0].name, 'DainisL');
-                async.parallel(countTables({ invite: 0, account: 2, user: 2, accountUser: 3 }), function(error, result) {
-                  done(error);
+              invite.User.reload().then(function(user) {
+                assert.notEqual(user.encryptedPassword, oldPassword);
+
+                user.getAccounts().then(function(accounts) {
+                  assert.equal(accounts[0].name, testAccount.name);
+                  async.parallel(countTables({ invite: 0, account: 2, user: 3, accountUser: 3 }), function(error, result) {
+                    done(error);
+                  });
                 });
               });
             });

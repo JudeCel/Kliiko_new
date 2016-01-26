@@ -7,6 +7,7 @@ module.exports = (Sequelize, DataTypes) => {
     accountId: {type: DataTypes.INTEGER, allowNull: false},
     name: {type: DataTypes.STRING, allowNull: false},
     editable: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true},
+    role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles, defaultValue: 'participant' },
     defaultFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false,
       defaultValue: constants.contactListDefaultFields
     },

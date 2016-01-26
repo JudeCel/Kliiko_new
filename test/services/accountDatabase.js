@@ -5,10 +5,12 @@ var usersServices = require('./../../services/users');
 var accountDatabaseService = require('./../../services/admin/accountDatabase');
 var Account = require('./../../models').Account;
 var assert = require('chai').assert;
+var _ = require('lodash');
 
 describe('SERVICE - AccountDatabase', function() {
   var testUser = null;
   var testAccount = null;
+  var testAccountUser = null;
 
   beforeEach(function(done) {
     var attrs = {
@@ -24,8 +26,12 @@ describe('SERVICE - AccountDatabase', function() {
       usersServices.create(attrs, function(errors, user) {
         testUser = user;
         user.getOwnerAccount().then(function(accounts) {
-          testAccount = accounts[0];
-          done();
+          user.getAccountUsers().then(function(results) {
+            testAccountUser = results[0]
+            testAccount = accounts[0];
+            done();
+
+          })
         });
       });
     });
@@ -41,7 +47,7 @@ describe('SERVICE - AccountDatabase', function() {
     return {
       'Account Name': 'BLauris',
       'Account Manager': 'Lauris Blīgzna',
-      Registered: testUser.createdAt,
+      Registered: testAccountUser.createdAt,
       'E-mail': 'bligzna.lauris@gmail.com',
       Address: '',
       City: '',
@@ -123,10 +129,21 @@ describe('SERVICE - AccountDatabase', function() {
   });
 
   it('#csvData', function (done) {
-    accountDatabaseService.csvData(function(error, data) {
-      assert.equal(error, null);
-      assert.deepEqual(data[0], csvData());
+    accountDatabaseService.csvData().then(function(data) {
+      let csvDataSample = csvData();
+      let dataRow = data[0];
+      assert.isArray(data);
+      // I need to make sure we execute sync  way!!!
+      let _res = _.forEach(csvHeader(), function(val, _k) {
+        try {
+          assert.equal(data[0][val].toString(), csvDataSample[val].toString());
+        } catch (e) {
+          done("CSV field: " + val + " -> " + e)
+        }
+      });
       done();
+    }, function(err) {
+      done(err)
     });
   });
 

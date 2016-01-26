@@ -39,28 +39,28 @@
           </tr>
         </thead>
         <tbody ng-repeat='account in accounts'>
-          <tr ng-repeat='user in account.Users'>
+          <tr ng-repeat='accountUser in account.AccountUsers'>
             <td>{{ $index == 0 ? account.name : "" }}</td>
             <td>
-              <img ng-src="{{ chooseIconForUser(account, user) }}" alt='' ng-click='changeAccountStatus(account, user)' />
-              {{ user.firstName }} {{ user.lastName }}
+              <img ng-src="{{ chooseIconForUser(account, accountUser.User) }}" alt='' ng-click='changeAccountStatus(account,  accountUser.User)' />
+              {{ accountUser.firstName }} {{ accountUser.lastName }}
             </td>
-            <td>{{ user.createdAt | date: dateFormat }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.postalAddress }}</td>
-            <td>{{ user.city }}</td>
-            <td>{{ user.postCode }}</td>
-            <td>{{ user.country }}</td>
-            <td>{{ user.companyName }}</td>
-            <td>{{ user.gender }}</td>
-            <td>{{ user.mobile }}</td>
-            <td>{{ user.landlineNumber }}</td>
+            <td>{{ accountUser.createdAt | date: dateFormat }}</td>
+            <td>{{ accountUser.email }}</td>
+            <td>{{ accountUser.postalAddress }}</td>
+            <td>{{ accountUser.city }}</td>
+            <td>{{ accountUser.postCode }}</td>
+            <td>{{ accountUser.country }}</td>
+            <td>{{ accountUser.companyName }}</td>
+            <td>{{ accountUser.gender }}</td>
+            <td>{{ accountUser.mobile }}</td>
+            <td>{{ accountUser.landlineNumber }}</td>
             <td>*</td>
             <td>*</td>
             <td>*</td>
-            <td ng-click='editComment(account, user)'>
+            <td ng-click='editComment(account, accountUser.User)'>
               <img src='/icons/add_new_list_blue.png' alt='' />
-              {{ findRightAccountUser(account, user).comment }}
+              {{ accountUser.comment }}
             </td>
           </tr>
         </tbody>

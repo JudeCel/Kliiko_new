@@ -25,7 +25,7 @@ var ContactListUser = class ContactListUser {
   }
 
   findValueInData(value){
-    return (this.data.User[value] || this.data.customFields[value]);
+    return (this.data.AccountUser[value] || this.data.customFields[value]);
   }
 }
 

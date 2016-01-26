@@ -3,7 +3,7 @@
 module.exports = {
   emailRegExp: /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i,
   systemRoles: ['admin', 'accountManager', 'facilitator', 'observer', 'participant'],
-  safeUserParams: [
+  safeAccountUserParams: [
     'id',
     'firstName',
     'lastName',
@@ -18,11 +18,16 @@ module.exports = {
     'country',
     'companyName'
   ],
-  promotionCodeTypes: ['percentage', 'value'],
-  dateFormat: 'MM-dd-yyyy',
-  contactListDefaultFields: [
+  safeUserParams: [
+    'id',
+    'email'
+
+  ],
+contactListDefaultFields: [
     "firstName", "lastName", "gender", "email", "city",
     "state", "country", "postCode", "companyName",
      "landlineNumber", "mobile"
-  ]
-};
+  ],
+  promotionCodeTypes: ['percentage', 'value'],
+  dateFormat: 'MM-dd-yyyy'
+}
