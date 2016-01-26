@@ -54,7 +54,7 @@
       let isSelected = $scope.idsForAction.indexOf(id) == -1;
       if(isSelected){
         $scope.idsForAction.push(id);
-      }else if($scope.idsForAction.indexOf(id) != -1){
+      }else{
         $scope.idsForAction.splice($scope.idsForAction.indexOf(id), 1);
       }
     }
