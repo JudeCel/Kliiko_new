@@ -171,7 +171,7 @@ function resetMailTemplate(templateId, callback) {
         //is base version
         callback("you cannot reset template base version", null);      
       } else {
-        update(templateId, {name: result["MailTemplate.name"], subject: result["MailTemplate.subject"], content: result["MailTemplate.content"]}, function(error, result) {
+        update(templateId, {name: result["MailTemplateBase.name"], subject: result["MailTemplateBase.subject"], content: result["MailTemplateBase.content"]}, function(error, result) {
            callback(error, result);  
         });
       }

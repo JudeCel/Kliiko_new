@@ -63,7 +63,7 @@ To restart DB, delete and recreate all tables based on the models, run this comm
 ``` node lib/tasks/dbReset.js ```
 
 To run seeds for user run this command: ``` node seeders/users.js ```
-To run seeds for chat session run this command: ``` node seeders/chatSesion.js ```
+To run seeds for chat session run this command: ``` node seeders/chatSession.js ```
 
 Default user credentials email ``` admin@insider.com ``` or ``` user@insider.com ``` and password ``` qwerty123 ```
 

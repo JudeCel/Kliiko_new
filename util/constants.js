@@ -23,10 +23,10 @@ module.exports = {
   safeUserParams: [
     'id',
     'email'
-
   ],
   promotionCodeTypes: ['percentage', 'value'],
-  dateFormat: 'MM-dd-yyyy',
+  accountNameRegExp: ["^[a-zA-Z0-9]+$",'i'],
   mobileRegExp: ["^[0-9]+$",'i'],
-  accountNameRegExp: ["^[a-zA-Z0-9]+$",'i']
+  galleryUploadTypes: ['image', 'brandLogo', 'audio', 'youtubeLink', 'text'],
+  dateFormat: 'MM-dd-yyyy'
 }

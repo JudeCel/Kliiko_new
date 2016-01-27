@@ -154,6 +154,28 @@
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-gallery/dashboard-content.html"}
         },
+
+        resolve: {
+          checkPermission: ['$q', '$timeout', 'user', 'dbg', 'ngProgressFactory', 'banners',function($q, $timeout, user, dbg, ngProgressFactory, banners) {
+            var deferred = $q.defer();
+
+            user.canAccess('bannerMessages').then(
+              function(res) {
+                var progressbar = ngProgressFactory.createInstance();
+                progressbar.start();
+
+                // load rarely needed module: ng-file-upload
+                banners.initUpload().then(function() { progressbar.complete(); deferred.resolve(); });
+
+              },
+
+              function(err) { dbg.warn(err); }
+
+            );
+            return deferred.promise;
+          }]
+        },
+
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.gallery is on');
         }]
@@ -194,6 +216,14 @@
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-emailTemplates/dashboard-content.html"}
         },
+        resolve: {
+          checkPermission: ['$q', '$timeout', 'ngProgressFactory', 'banners',function($q, $timeout, ngProgressFactory, banners) {
+            var deferred = $q.defer();
+            var progressbar = ngProgressFactory.createInstance();
+            progressbar.start();
+            banners.initUpload().then(function() { progressbar.complete(); deferred.resolve(); });
+          }]
+        },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.emailTemplates is on');
         }]
@@ -203,6 +233,14 @@
         url: "/account-profile",
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-resources-emailTemplates/dashboard-content.html"}
+        },
+        resolve: {
+          checkPermission: ['$q', '$timeout', 'ngProgressFactory', 'banners',function($q, $timeout, ngProgressFactory, banners) {
+            var deferred = $q.defer();
+            var progressbar = ngProgressFactory.createInstance();
+            progressbar.start();
+            banners.initUpload().then(function() { progressbar.complete(); deferred.resolve(); });
+          }]
         },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.accountProfile.emailTemplates is on');
