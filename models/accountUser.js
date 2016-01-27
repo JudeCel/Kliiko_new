@@ -32,7 +32,10 @@ module.exports = (Sequelize, DataTypes) => {
         name: "compositeUserIdAndAccountIdAndEmail",
         unique: {msg: "Email has already been taken"},
         fields: ['email', 'UserId', 'AccountId']
-      }],
+      },
+        { fields: ['email'] },
+        { fields: ['id'] }
+      ],
       classMethods: {
         associate: function(models) {
           AccountUser.belongsTo(models.User);
