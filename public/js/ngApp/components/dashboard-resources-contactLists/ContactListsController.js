@@ -149,6 +149,8 @@
       if (!valid) return;
 
       var newContact = angular.copy(vm.newContact);
+      newContact = new Member(newContact);
+      newContact.updateFields();
 
       contactListServices.createUser(vm.newContact, currentList.id).then(
         function(res) {
@@ -169,7 +171,7 @@
             if (vm.selectedListMembers[i].CustomFieldsObject && vm.lists[vm.activeListIndex].members) {
               vm.selectedListMembers[i].name = vm.selectedListMembers[i].firstName + ' '+ vm.selectedListMembers[i].lastName;
               for( var key in vm.selectedListMembers[i].CustomFieldsObject ) {
-                vm.lists[vm.activeListIndex].members[i][key] = vm.selectedListMembers[i].CustomFieldsObject[key];
+                vm.lists[vm.activeListIndex].Members[i][key] = vm.selectedListMembers[i].CustomFieldsObject[key];
               }
             }
           }
@@ -204,7 +206,6 @@
       newContact.updateFields();
       contactListServices.updateUser(vm.newContact, currentList.id).then(
         function(res) {
-          debugger
           for (var i = 0, len = vm.lists[vm.activeListIndex].length; i < len ; i++) {
             if (vm.lists[vm.activeListIndex].Members[i].id == newContact.id ) {
               vm.lists[vm.activeListIndex].Members[i] = newContact;

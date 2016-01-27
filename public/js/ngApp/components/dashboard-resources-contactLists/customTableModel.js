@@ -8,15 +8,15 @@
 
   CustomTableModel.$inject = ['$q'];
   function CustomTableModel($q)  {
-    var TableModel;
+    var TM;
 
-    TableModel = TableModelInit;
-    TableModel.prototype.availableTables = availableTables;
-    TableModel.prototype.tablesToShow = tablesToShow;
-    TableModel.prototype.toggleTableToShow = toggleTableToShow;
+    TM = TableModel;
+    TM.prototype.availableTables = availableTables;
+    TM.prototype.tablesToShow = tablesToShow;
+    TM.prototype.toggleTableToShow = toggleTableToShow;
 
 
-    return TableModel;
+    return TM;
 
 
     /**
@@ -25,7 +25,7 @@
      *    params.predefinedTables {array} || predefinedTables - will set default table to show;
      * @constructor
      */
-    function TableModelInit(params) {
+    function TableModel(params) {
       var params = params || {};
       //get all properties
       var self = this;
@@ -33,7 +33,7 @@
         if (params.hasOwnProperty(p)) self[p] = params[p];
       }
 
-      var predefinedTables = ['name', 'email', 'mobile', 'gender'];
+      var predefinedTables = ['Name', 'email', 'mobile', 'gender'];
 
       self.availableTablesArray = [];
       if (!self.predefinedTables) self.predefinedTables = predefinedTables;
