@@ -41,7 +41,6 @@ const VALID_ATTRIBUTES = {
 };
 
 // Exports
-// Untested
 function findScheme(params, account) {
   let deferred = q.defer();
 
@@ -53,10 +52,10 @@ function findScheme(params, account) {
       model: BrandProjectPreference,
       where: { id: params.id }
     }]
-  }).then(function(sessions) {
-    if(sessions) {
-      let schemes = filterSchemesFromSessions(sessions);
-      deferred.resolve(simpleParams(schemes));
+  }).then(function(session) {
+    if(session) {
+      let schemes = filterSchemesFromSessions([session]);
+      deferred.resolve(simpleParams(schemes[0]));
     }
     else {
       deferred.reject(MESSAGES.notFound);
@@ -70,7 +69,6 @@ function findScheme(params, account) {
   return deferred.promise;
 };
 
-// Partly tested
 function findAllSchemes(account) {
   let deferred = q.defer();
 
@@ -91,12 +89,11 @@ function findAllSchemes(account) {
   return deferred.promise;
 };
 
-// Broken and untested
+// Broken and untested, needs right IDs and maybe account
 function createScheme(params, account) {
   let deferred = q.defer();
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
 
-  delete validParams.id;
   validParams.sessionId = 1;
   validParams.brand_project_id = 1;
 
@@ -111,20 +108,14 @@ function createScheme(params, account) {
   return deferred.promise;
 };
 
-// Untested
 function updateScheme(params, account) {
   let deferred = q.defer();
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
 
-  findScheme(params, account).then(function(schemes) {
-    schemes.data[0].update(validParams, { returning: true }).then(function(scheme) {
-      if(scheme) {
-        deferred.resolve(simpleParams(scheme, MESSAGES.updated));
-      }
-      else {
-        deferred.reject(MESSAGES.notFound);
-      }
-    }).catch(Session.sequelize.ValidationError, function(error) {
+  findScheme(params, account).then(function(result) {
+    result.data.update(validParams, { returning: true }).then(function(scheme) {
+      deferred.resolve(simpleParams(scheme, MESSAGES.updated));
+    }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
       deferred.reject(prepareErrors(error));
     }).catch(function(error) {
       deferred.reject(error);
@@ -136,12 +127,11 @@ function updateScheme(params, account) {
   return deferred.promise;
 }
 
-// Untested
 function removeScheme(params, account) {
   let deferred = q.defer();
 
-  findScheme(params, account).then(function(schemes) {
-    schemes.data[0].destroy().then(function(result) {
+  findScheme(params, account).then(function(result) {
+    result.data.destroy().then(function() {
       deferred.resolve(simpleParams(null, MESSAGES.removed));
     }).catch(Session.sequelize.ValidationError, function(error) {
       deferred.reject(prepareErrors(error));
@@ -155,12 +145,13 @@ function removeScheme(params, account) {
   return deferred.promise;
 };
 
-// Untested
 function copyScheme(params, account) {
   let deferred = q.defer();
 
-  findScheme(params, account).then(function(schemes) {
-    createScheme(schemes.data[0], account).then(function(result) {
+  findScheme(params, account).then(function(result) {
+    delete result.data.dataValues.id;
+
+    createScheme(result.data.dataValues, account).then(function(result) {
       deferred.resolve(simpleParams(result.data, MESSAGES.copied));
     }, function(error) {
       deferred.reject(error);
@@ -206,6 +197,7 @@ function validateParams(params, attributes) {
 
 function filterSchemesFromSessions(sessions) {
   let array = [];
+
   _.map(sessions, function(session) {
     array = _.concat(array, session.BrandProjectPreferences);
   });
@@ -232,6 +224,7 @@ function prepareErrors(err) {
 module.exports = {
   messages: MESSAGES,
   manageFields: manageFields,
+  findScheme: findScheme,
   findAllSchemes: findAllSchemes,
   createScheme: createScheme,
   updateScheme: updateScheme,

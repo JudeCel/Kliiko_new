@@ -145,9 +145,9 @@ function createChat() {
         include: [{
           model: Account,
           include: [models.User]
-        }]
+        }, BrandProjectPreference]
       }).then(function(session) {
-        deferred.resolve({ session: session, account: session.Account, user: session.Account.Users[0] });
+        deferred.resolve({ session: session, account: session.Account, user: session.Account.Users[0], preference: session.BrandProjectPreferences[0] });
       });
     }
   });
