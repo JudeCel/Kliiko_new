@@ -110,7 +110,7 @@
   .btn-standart.btn-glyphonic {
     padding: 3px 4px 1px 4px; }
 
-.btn-forbidden {
+.btn-forbidden, .btn-disabled, .disabled {
   cursor: not-allowed !important; }
 
 /* CHECKBOX */
@@ -1827,39 +1827,37 @@ hr.survey-hr {
     margin-top: 10px;
     width: 160px; }
 
-#dashboard-contact-lists #contact-lists-right-column #list-mass-actions {
-  outline: none; }
-  #dashboard-contact-lists #contact-lists-right-column #list-mass-actions .check {
-    float: left;
-    margin-top: 11px;
-    margin-right: 20px; }
-  #dashboard-contact-lists #contact-lists-right-column #list-mass-actions .pull-right {
-    margin: 0 10px; }
-
-#dashboard-contact-lists #contact-lists-right-column .table-item-edit-group {
-  visibility: hidden; }
-
-#dashboard-contact-lists #contact-lists-right-column th:hover span.th-name {
-  text-decoration: underline; }
-
-#dashboard-contact-lists #contact-lists-right-column th .glyphicon {
-  font-size: 1rem; }
-
-#dashboard-contact-lists #contact-lists-right-column tr.member-row:hover {
-  background: rgba(174, 239, 137, 0.5); }
-  #dashboard-contact-lists #contact-lists-right-column tr.member-row:hover .table-item-edit-group {
-    visibility: visible; }
-
-#dashboard-contact-lists #contact-lists-right-column tr.member-row.selected {
-  background: rgba(174, 239, 137, 0.5); }
-
-#dashboard-contact-lists #contact-lists-right-column tr.member-row .kliiko-checkbox {
-  margin-left: 4px; }
-
-#dashboard-contact-lists #contact-lists-right-column #no-contacts-in-list {
-  width: 450px;
-  margin-top: 74px;
-  margin-left: 18%; }
+#dashboard-contact-lists #contact-lists-right-column {
+  overflow: auto; }
+  #dashboard-contact-lists #contact-lists-right-column #list-mass-actions {
+    outline: none; }
+    #dashboard-contact-lists #contact-lists-right-column #list-mass-actions .check {
+      float: left;
+      margin-top: 11px;
+      margin-right: 20px; }
+    #dashboard-contact-lists #contact-lists-right-column #list-mass-actions .pull-right {
+      margin: 0 10px; }
+  #dashboard-contact-lists #contact-lists-right-column .table-item-edit-group {
+    min-width: 70px;
+    display: block;
+    visibility: hidden; }
+  #dashboard-contact-lists #contact-lists-right-column th:hover span.th-name {
+    text-decoration: underline; }
+  #dashboard-contact-lists #contact-lists-right-column th .glyphicon {
+    font-size: 1rem; }
+  #dashboard-contact-lists #contact-lists-right-column tr.member-row:hover {
+    background: rgba(174, 239, 137, 0.5); }
+    #dashboard-contact-lists #contact-lists-right-column tr.member-row:hover .table-item-edit-group {
+      visibility: visible; }
+  #dashboard-contact-lists #contact-lists-right-column tr.member-row.selected {
+    background: rgba(174, 239, 137, 0.5); }
+  #dashboard-contact-lists #contact-lists-right-column tr.member-row .kliiko-checkbox {
+    margin-left: 4px; }
+  #dashboard-contact-lists #contact-lists-right-column #no-contacts-in-list {
+    width: 450px;
+    height: 500px;
+    margin-top: 74px;
+    margin-left: 18%; }
 
 #dashboard-contact-lists .modal-title {
   margin-bottom: 40px; }
@@ -1895,6 +1893,11 @@ hr.survey-hr {
 #dashboard-contact-lists #contactList-addNewListModal input.custom-fields.error {
   border: 1px solid #E51D39;
   outline-color: #E51D39; }
+
+#dashboard-contact-lists .fields-to-show {
+  margin: 10px 0; }
+  #dashboard-contact-lists .fields-to-show label {
+    margin-right: 10px; }
 
 .margin-top-2rem {
   margin-top: 2rem; }

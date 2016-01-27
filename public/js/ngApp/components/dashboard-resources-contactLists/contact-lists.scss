@@ -76,6 +76,8 @@
   }
 
   #contact-lists-right-column {
+    overflow: auto;
+
     #list-mass-actions {
       outline: none;
 
@@ -92,6 +94,9 @@
     }
 
     .table-item-edit-group {
+      min-width: 70px;
+      display: block;
+
       visibility: hidden;
     }
 
@@ -123,6 +128,7 @@
 
     #no-contacts-in-list {
       width: 450px;
+      height: 500px;
       margin-top: 74px;
       margin-left: 18%;
     }
@@ -180,6 +186,14 @@
       outline-color: $red;
     }
 
+  }
+
+  .fields-to-show {
+    margin: 10px 0;
+
+    label {
+      margin-right: 10px;
+    }
   }
 
 
