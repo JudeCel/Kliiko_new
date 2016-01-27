@@ -123,6 +123,7 @@ function addSessionMember(user, session, role, name, callback) {
                  userId: user.id,
                  username: name,
                  avatar_info: "0:4:3:1:4:3" }
+                 
   session.createSessionMember(params)
   .then(function (result) {
     callback(null, result );
