@@ -13,13 +13,34 @@ module.exports = (Sequelize, DataTypes) => {
       validate: {
         notEmpty: { args: true, msg: "can't be empty" },
         isValueAsDiscountType: function(value) {
-          if(value == 'value' && !this.minimalOrder) {
-            throw new Error(" You haven't provided valid Minimal Order");
+          console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+              console.log(value);
+          if(value == 'value') {
+            if(!this.minimalOrder) {
+              throw new Error("You haven't provided valid Minimal Order");
+            }
+            else if(this.minimalOrder < 0) {
+              throw new Error("Please provide minimal order value greater then 0.");
+            }
+          }
+          else if(value == "percentage"){
+            if(this.discountValue < 0 || this.discountValue > 100){
+              throw new Error("Please provide percentage that's between 0-100.");
+            }
           }
         }
       }
     },
-    discountValue: { type: DataTypes.INTEGER, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
+    discountValue: { type: DataTypes.INTEGER, allowNull: false, 
+      validate: { 
+        notEmpty: { args: true, msg: "can't be empty" }, 
+        isValidNumber: function(value) {
+          if(value < 0){
+            throw new Error("Please provide discount value greater then 0.");
+          }
+        }
+      }
+    },
     minimalOrder: { type: DataTypes.INTEGER, allowNull: true }
   }, {
     indexes: [{
