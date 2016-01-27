@@ -210,7 +210,7 @@ describe('SERVICE - AccountManager', function() {
                 }
                 accountManagerService.findAccountManagers(testAccount.id, function(error, userArray) {
                   let subject = userArray[0];
-                  assert.equal(subject.state, "active");
+                  assert.equal(subject.status, "active");
                   assert.equal(subject.AccountId, testAccount.id);
                   done();
                 });
@@ -243,7 +243,7 @@ describe('SERVICE - AccountManager', function() {
 
               accountManagerService.findAccountManagers(testAccount.id, function(error, userArray) {
                 let subject = userArray[1];
-                assert.equal(subject.state, "invited");
+                assert.equal(subject.status, "invited");
                 assert.equal(subject.AccountId, testAccount.id);
                 done();
               });
