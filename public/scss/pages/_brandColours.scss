@@ -1,0 +1,33 @@
+.brandColours {
+  font-size: 70%;
+  .chatContainer {
+    margin: 10px 0;
+    border: 2px solid;
+    border-radius: 10px;
+  }
+  .chatSeparator {
+    padding: 5px;
+    border-bottom: 2px solid;
+  }
+  .chatTopic {
+    padding: 2px;
+    border: 1px solid;
+  }
+  .chatIcon {
+    font-size: 2.5em;
+  }
+
+  .whiteBoardOuterBox {
+    height: 50%;
+  }
+  .whiteBoardInnerBox {
+    margin: 10px auto 30%;
+  }
+  .whiteBoardIcon {
+    border: 1px solid;
+  }
+  .whiteBoardContainer {
+    padding: 10% 0;
+    border: 2px solid;
+  }
+}

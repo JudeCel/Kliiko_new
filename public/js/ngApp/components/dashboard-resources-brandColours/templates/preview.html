@@ -1,10 +1,10 @@
 {{ previewScheme = scheme || bcc.previewScheme; "" }}
-<div style='font-size: 70%;'>
-  <div class='col-xs-12' style='background-color: {{ previewScheme.colour_browser_background }}'>
+<div class='brandColours'>
+  <div class='col-xs-12' style='background-color: {{ previewScheme.colour_browser_background }};'>
     <div class='row'>
-      <div class='col-xs-10' style='background-color: {{ previewScheme.colour_background }}; margin: 10px 9%; border: 2px solid {{ previewScheme.colour_border }}'>
+      <div class='col-xs-12 chatContainer' style='background-color: {{ previewScheme.colour_background }}; border-color: {{ previewScheme.colour_border }};'>
         <div class='row'>
-          <div class='col-xs-12' style='padding: 5px; border-bottom: 2px solid {{ previewScheme.colour_border }}'>
+          <div class='col-xs-12 chatSeparator' style='border-color: {{ previewScheme.colour_border }};'>
             <div class='row'>
               <div class='col-xs-6'>
                 <div class='row'>
@@ -13,7 +13,7 @@
                   </div>
 
                   <div class='col-xs-7' style='color: {{ previewScheme.colour_text }};'>
-                    Test Session
+                    Session
                   </div>
                 </div>
 
@@ -22,7 +22,7 @@
                     Topic:
                   </div>
                   <div class='col-xs-7'>
-                    <span style='padding: 2px; background-color: {{ previewScheme.colour_menu_background }}; border: 1px solid {{ previewScheme.colour_menu_border }}; color: {{ previewScheme.colour_text }};'>
+                    <span class='chatTopic' style='background-color: {{ previewScheme.colour_menu_background }}; border-color: {{ previewScheme.colour_menu_border }}; color: {{ previewScheme.colour_text }};'>
                       Topic2
                     </span>
                   </div>
@@ -30,26 +30,26 @@
               </div>
 
               <div class='col-xs-6'>
-                <div class='row'>
+                <div class='row chatIcon'>
                   <div class='col-xs-2'>
-                    <span class='glyphicon glyphicon-book' aria-hidden='true' style='font-size: 2.5em; color: {{ previewScheme.colour_icon }};'></span>
+                    <span class='glyphicon glyphicon-book' aria-hidden='true' style='color: {{ previewScheme.colour_icon }};'></span>
                   </div>
                   <div class='col-xs-2'>
-                    <span class='glyphicon glyphicon-question-sign' aria-hidden='true' style='font-size: 2.5em; color: {{ previewScheme.colour_icon }};'></span>
+                    <span class='glyphicon glyphicon-question-sign' aria-hidden='true' style='color: {{ previewScheme.colour_icon }};'></span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class='col-xs-12' style='height:50%;'>
-            <div class='row' style='margin: 10px auto 30%;'>
+          <div class='col-xs-12 whiteBoardOuterBox'>
+            <div class='row whiteBoardInnerBox'>
               <div class='col-xs-offset-6'>
-                <span style='background-color: {{ previewScheme.colour_whiteboard_icon_background }};'>
+                <span class='whiteBoardIcon' style='border-color: {{ previewScheme.colour_whiteboard_icon_border }}; background-color: {{ previewScheme.colour_whiteboard_icon_background }};'>
                   Whiteboard
                 </span>
               </div>
-              <div class='col-xs-offset-6 col-xs-6' style='padding: 10% 0; background-color: {{ previewScheme.colour_whiteboard_background }}; border: 2px solid {{ previewScheme.colour_whiteboard_border }};'>
+              <div class='col-xs-offset-6 col-xs-6 whiteBoardContainer' style='background-color: {{ previewScheme.colour_whiteboard_background }}; border-color: {{ previewScheme.colour_whiteboard_border }};'>
                 <center>This is awesome!</center>
               </div>
             </div>
