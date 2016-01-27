@@ -13,8 +13,6 @@ module.exports = (Sequelize, DataTypes) => {
       validate: {
         notEmpty: { args: true, msg: "can't be empty" },
         isValueAsDiscountType: function(value) {
-          console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-              console.log(value);
           if(value == 'value') {
             if(!this.minimalOrder) {
               throw new Error("You haven't provided valid Minimal Order");
