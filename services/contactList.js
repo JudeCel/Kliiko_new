@@ -38,7 +38,7 @@ function allByAccount(accountId) {
       attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable'],
       include: [{
         model: models.ContactListUser, attributes: ['id', 'customFields'],
-        include: [{model: models.User, attributes: constants.contactListDefaultFields }],
+        include: [{model: models.AccountUser, attributes: constants.contactListDefaultFields }],
         order: ['position']
       }]
     }).then(function(results) {
@@ -92,9 +92,9 @@ function update(params) {
 function createDefaultLists(accoutId, t) {
   let deferred = q.defer();
   ContactList.bulkCreate([
-    { name: 'Account Managers', accountId: accoutId, editable: false },
-    { name: 'Facilitators', accountId: accoutId, editable: false },
-    { name: 'Observers', accountId: accoutId, editable: false }
+    { name: 'Account Managers', accountId: accoutId, editable: false, role: 'accountManager' },
+    { name: 'Facilitators', accountId: accoutId, editable: false, role: 'facilitator'},
+    { name: 'Observers', accountId: accoutId, editable: false, role: 'observer' }
   ], { transaction: t }).done(function(results) {
     deferred.resolve({results: results, transaction: t});
   }, function(err) {
@@ -108,7 +108,7 @@ function parseFile(id, filePath) {
 
   ContactList.find({ where: { id: id } }).then(function(contactList) {
     if(contactList) {
-      models.User.findAll({
+      models.AccountUser.findAll({
         attributes: ['email'],
         include: [{
           model: models.ContactListUser,
@@ -138,7 +138,6 @@ function parseFile(id, filePath) {
       deferred.reject('ContactList not found!');
     }
   });
-
 
   return deferred.promise;
 };

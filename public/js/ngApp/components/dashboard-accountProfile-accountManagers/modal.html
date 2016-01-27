@@ -9,7 +9,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First name<span class='text-red-dark'>*</span></label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.firstName }}</span>
-          <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='user.firstName'>
+          <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='accountUser.firstName'>
         </div>
       </div>
 
@@ -17,7 +17,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='lastName'>Last name<span class='text-red-dark'>*</span></label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.lastName }}</span>
-          <input type='text' class='form-control' id='lastName' placeholder='Last name' ng-model='user.lastName'>
+          <input type='text' class='form-control' id='lastName' placeholder='Last name' ng-model='accountUser.lastName'>
         </div>
       </div>
 
@@ -25,16 +25,16 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='email'>Email<span class='text-red-dark'>*</span></label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.email }}</span>
-          <input type='email' class='form-control' id='email' placeholder='Email' ng-model='user.email'>
+          <input type='email' class='form-control' id='email' placeholder='Email' ng-model='accountUser.email'>
         </div>
       </div>
 
       <div class='form-group'>
-        <label class='control-label col-md-4 text-no-bold text-login-page'>Gender<span class='text-red-dark'>*</span></label>
+        <label class='control-label col-md-4 text-no-bold text-login-page' for='gender'>Gender<span class='text-red-dark'>*</span></label>
         <div class='col-md-8'>
           <div class='has-error text-red-dark'>{{ errors.gender }}</div>
-          <label class='radio-inline'><input type='radio' value='male' name='radio_gender' ng-model='user.gender'>Male</label>
-          <label class='radio-inline'><input type='radio' value='female' name='radio_gender' ng-model='user.gender'>Female</label>
+          <label class='radio-inline'><input type='radio' value='male' name='radio_gender' ng-model='accountUser.gender'>Male</label>
+          <label class='radio-inline'><input type='radio' value='female' name='radio_gender' ng-model='accountUser.gender'>Female</label>
         </div>
       </div>
 
@@ -42,7 +42,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.mobile }}</span>
-          <input type='text' class='form-control' id='mobile' placeholder='Mobile number' ng-model='user.mobile'>
+          <input type='text' class='form-control' id='mobile' placeholder='Mobile number' ng-model='accountUser.mobile'>
         </div>
       </div>
 
@@ -50,7 +50,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.landlineNumber }}</span>
-          <input type='text' class='form-control' id='landlineNumber' placeholder='Landline number' ng-model='user.landlineNumber'>
+          <input type='text' class='form-control' id='landlineNumber' placeholder='Landline number' ng-model='accountUser.landlineNumber'>
         </div>
       </div>
     </div>
@@ -60,7 +60,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='postalAddress'>Postal address</label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.postalAddress }}</span>
-          <input type='text' class='form-control' id='postalAddress' placeholder='Postal address' ng-model='user.postalAddress'>
+          <input type='text' class='form-control' id='postalAddress' placeholder='Postal address' ng-model='accountUser.postalAddress'>
         </div>
       </div>
 
@@ -68,7 +68,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='city'>City</label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.city }}</span>
-          <input type='text' class='form-control' id='city' placeholder='City' ng-model='user.city'>
+          <input type='text' class='form-control' id='city' placeholder='City' ng-model='accountUser.city'>
         </div>
       </div>
 
@@ -76,7 +76,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='state'>State</label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.state }}</span>
-          <input type='text' class='form-control' id='state' placeholder='State' ng-model='user.state'>
+          <input type='text' class='form-control' id='state' placeholder='State' ng-model='accountUser.state'>
         </div>
       </div>
 
@@ -84,7 +84,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='postCode'>Postcode</label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.postCode }}</span>
-          <input type='text' class='form-control' id='postCode' placeholder='Postcode' ng-model='user.postCode'>
+          <input type='text' class='form-control' id='postCode' placeholder='Postcode' ng-model='accountUser.postCode'>
         </div>
       </div>
 
@@ -100,7 +100,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='companyName'>Company name</label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.companyName }}</span>
-          <input type='text' class='form-control' id='companyName' placeholder='Company name' ng-model='user.companyName'>
+          <input type='text' class='form-control' id='companyName' placeholder='Company name' ng-model='accountUser.companyName'>
         </div>
       </div>
     </div>

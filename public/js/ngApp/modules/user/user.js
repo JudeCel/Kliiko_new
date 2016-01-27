@@ -68,10 +68,10 @@
          * the same for all other types of possible roles
          */
         function fetchRoles() {
-          if (!rawData.role || !rawData.role.length) return;
+          if (!rawData.roles || !rawData.roles.length) return;
 
-          for (var i = 0, len = rawData.role.length; i < len ; i++) {
-            var role = 'is'+rawData.role[i].capitalize();
+          for (var i = 0, len = rawData.roles.length; i < len ; i++) {
+            var role = 'is'+ rawData.roles[i].capitalize();
             self[role] = true;
           }
         }
@@ -165,4 +165,3 @@
 
 
 })();
-

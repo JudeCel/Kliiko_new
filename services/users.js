@@ -82,7 +82,7 @@ function createUser(params, callback) {
       });
     },
     accountService.create,
-    accountUserService.create,
+    accountUserService.createAccountManager,
   ]
 
   if (params.socialProfile) {

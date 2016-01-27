@@ -1,11 +1,14 @@
 'use strict';
 
 var q = require('q');
+var _ = require('lodash');
 var models = require('./../models');
-var User = require('./../models').User;
-var uuid = require('node-uuid');
-var async = require('async');
+var AccountUser = models.AccountUser;
+var ContactList = models.ContactList;
 var ContactListUser = models.ContactListUser;
+var AccountUserService = require('./../services/accountUser');
+var dataWrappers = require('./../models/dataWrappers');
+var async = require('async');
 
 module.exports = {
   findByContactList: findByContactList,
@@ -18,17 +21,31 @@ module.exports = {
 
 function findByContactList(contactListId) {
     var deferred = q.defer();
-    ContactListUser.findAll({where: { contactListId: contactListId }, order: ['position']}).then(function(results) {
-      deferred.resolve(results);
+    ContactListUser.findAll({
+      order: ['position'],
+      include: [{model: ContactList, where: { id: contactListId} } ]
+    }).then(function(results) {
+
+      let collection = _.map(results, (item) => {
+        collection.push(
+          new ContactListUser(
+            item.ContactList.defaultFields,
+            item.ContactList.customFields,
+            item
+          )
+        );
+      })
+
+      deferred.resolve(collection);
     }, function(err) {
       deferred.reject(err);
     });
     return deferred.promise;
 }
 
-
 // params = [{id: 1, position: 3}, ...]
 function updatePositions(params) {
+  // TODO: Need rewrite to one DB call!!!
   var deferred = q.defer();
     async.map(params, update, function(err, result) {
       if (err) {
@@ -37,7 +54,6 @@ function updatePositions(params) {
         deferred.resolve(result);
       }
     })
-
   function update(attrs, cb) {
     ContactListUser.update({position: attrs.position }, {where: {id: attrs.id}}).then(function(result) {
       cb(null,result);
@@ -60,8 +76,13 @@ function destroy(ids, accountId) {
 
 function find(id) {
     var deferred = q.defer();
-    ContactListUser.find({where: { id: id }}).then(function(result) {
-      deferred.resolve(result);
+    ContactListUser.find({where: { id: id }, include: [ ContactList ]}).then(function(result) {
+      let contactListUser =  new ContactListUser(
+        result.ContactList.defaultFields,
+        result.ContactList.customFields,
+        result
+      );
+      deferred.resolve(contactListUser);
     }, function(err) {
       deferred.reject(err);
     });
@@ -70,50 +91,64 @@ function find(id) {
 
 function create(params) {
   var deferred = q.defer();
-  User.findOrCreate({
-    where: { email: params.defaultFields.email },
-    defaults: newUserParams(params.defaultFields)}).then(function(user) {
-      let newUser = user[0];
-      newUser.updateAttributes(params.defaultFields).then(function(result) {
-        ContactListUser.create({
-          customFields: params.customFields || { },
-          accountId: params.accountId,
-          userId: result.id,
-          contactListId: params.contactListId
-        }).then(function(contactLU) {
-          deferred.resolve(contactLU);
-        },function(err) {
-
-          if(err.name == 'SequelizeUniqueConstraintError') {
-            err.errors = [{message: "Email has already been taken", type: "Validation error", path: "email"}];
-            deferred.reject(err);
-          }
-          else {
-            deferred.reject(err);
-          }
-
-
-        })
-      },function(err) {
+  AccountUser.find(
+    { where: {
+        email: params.defaultFields.email,
+        AccountId: params.accountId
+      }
+    }
+  ).then(function(accountUser) {
+    if (accountUser) {
+      accountUser.createContactListUser(contactListUserParams(params, accountUser.id)).then(function(contactListUser) {
+        deferred.resolve(contactListUser);
+      }, function(err) {
         deferred.reject(err);
       })
-    },function(err) {
-      deferred.reject(err);
-    });
+    }else{
+      createNewAccountUser(params).then(function(newAccountUser) {
+        ContactListUser.create(contactListUserParams(params, newAccountUser.id)).then(function(contactListUser) {
+          deferred.resolve(contactListUser);
+        }, function(err) {
+          deferred.reject(err);
+        })
+      }, function(err) {
+        deferred.reject(err);
+      })
+    }
+  });
   return deferred.promise;
 }
 
+function createNewAccountUser(params) {
+  var deferred = q.defer();
+  ContactList.find({where: {id: params.contactListId}}).then(function(contactList) {
+    AccountUserService.create(params.defaultFields, params.accountId, contactList.role).then(function(accountUser) {
+      deferred.resolve(accountUser);
+    }, function(err) {
+      if(err.name == 'SequelizeUniqueConstraintError') {
+        err.errors = [{message: "Email has already been taken", type: "Validation error", path: "email"}];
+        deferred.reject(err);
+      }else {
+        deferred.reject(err);
+      }
+    })
+  })
+  return deferred.promise;
+}
 
-function newUserParams(params) {
-  params.password = uuid.v1();
-  return params
+function contactListUserParams(params, accountUserId) {
+  return {
+    accountUserId: accountUserId,
+    accountId: params.accountId,
+    contactListId: params.contactListId,
+    customFields: params.customFields || {}
+  }
 }
 
 function update(params) {
   var deferred = q.defer();
-
   ContactListUser.update(params,{
-    where:{id:params.id}
+    where:{ id: params.id }
   }).then(function(result) {
     deferred.resolve(result);
   }, function(err) {

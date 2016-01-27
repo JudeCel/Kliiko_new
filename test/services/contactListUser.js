@@ -32,15 +32,19 @@ describe('Services -> ContactListUser', () => {
       let TestUser = null;
       let TestAccount = null;
       let TestContactList = null;
+      let TestAccountUser = null;
 
       beforeEach((done)=> {
         UserService.create(validAttrs, function(errors, user) {
           user.getOwnerAccount().then(function(results) {
             TestAccount = results[0]
             TestUser = user;
-            TestAccount.getContactLists().then(function(CLUResults) {
-              TestContactList = CLUResults[0];
-              done();
+            TestUser.getAccountUsers().then(function(accountUsers) {
+              TestAccountUser = accountUsers[0]
+              TestAccount.getContactLists().then(function(CLUResults) {
+                TestContactList = CLUResults[0];
+                done();
+              });
             })
           });
         });
@@ -60,13 +64,10 @@ describe('Services -> ContactListUser', () => {
             customFields: { one: "1", two:" 2", three:" 3" }
            }
         ContactListUserService.create(attrs).then(function(contactListUser) {
-          contactListUser.getAccount().then(function(result) {
-            assert.equal(result.id, TestAccount.id);
-            contactListUser.getUser().then(function(user) {
-              assert.equal(user.id, TestUser.id);
-              assert.equal(user.firstName, attrs.defaultFields.firstName);
-              done();
-            });
+          contactListUser.getAccountUser().then(function(accountUser) {
+            assert.equal(accountUser.id, TestAccountUser.id)
+            assert.isNotNull(accountUser)
+            done()
           });
         }, function(err) {
           done(err);
@@ -81,20 +82,19 @@ describe('Services -> ContactListUser', () => {
               firstName: "DainisNew",
               lastName: "LapinsNew",
               password: "cool_password",
-              email: "dainis186@gmail.com",
+              email: "dainis18611@gmail.com",
               gender: "male"
             },
             customFields: { one: "1", two:" 2", three:" 3" }
            }
         ContactListUserService.create(attrs).then(function(contactListUser) {
-          contactListUser.getAccount().then(function(result) {
-            assert.equal(result.id, TestAccount.id);
-            contactListUser.getUser().then(function(user) {
-              assert.notEqual(user.id, TestUser.id);
-              assert.equal(user.firstName, attrs.defaultFields.firstName);
-              assert.equal(user.email, attrs.defaultFields.email);
-              done();
-            });
+          assert.deepEqual(contactListUser.customFields, attrs.customFields)
+          assert.equal(contactListUser.accountId, attrs.accountId);
+          assert.equal(contactListUser.contactListId, attrs.contactListId);
+          contactListUser.getAccountUser().then(function(accountUser) {
+            assert.equal(TestContactList.role, accountUser.role);
+            assert.isNotNull(accountUser)
+            done()
           });
         }, function(err) {
           done(err);

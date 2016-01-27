@@ -9,7 +9,7 @@ describe('Data Wrappers -> ContactListUser', () => {
     let data = {
       id: 2,
       customFields: { mobile: "1234556" },
-      User: {
+      AccountUser: {
         firstName: "Dainis",
       }
     }
@@ -23,8 +23,8 @@ describe('Data Wrappers -> ContactListUser', () => {
     });
 
     it("assigne values", () =>{
-      assert.equal(instance.firstName, data.User.firstName);
-      assert.equal(instance.lastName, data.User.lastName);
+      assert.equal(instance.firstName, data.AccountUser.firstName);
+      assert.equal(instance.lastName, data.AccountUser.lastName);
       assert.equal(instance.mobile, data.customFields.mobile);
       assert.equal(instance.id, data.id);
     });
