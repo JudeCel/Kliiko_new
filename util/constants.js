@@ -7,16 +7,19 @@ module.exports = {
     'id',
     'firstName',
     'lastName',
-    'email',
     'gender',
-    'mobile',
-    'landlineNumber',
+    'active',
+    'email',
     'postalAddress',
     'city',
     'state',
-    'postCode',
+    'status',
     'country',
-    'companyName'
+    'postCode',
+    'companyName',
+    'landlineNumber',
+    'mobile',
+    'comment'
   ],
   safeUserParams: [
     'id',
@@ -29,5 +32,6 @@ contactListDefaultFields: [
      "landlineNumber", "mobile"
   ],
   promotionCodeTypes: ['percentage', 'value'],
+  galleryUploadTypes: ['image', 'brandLogo', 'audio', 'youtubeLink', 'text'],
   dateFormat: 'MM-dd-yyyy'
 }

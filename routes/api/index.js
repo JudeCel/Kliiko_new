@@ -1,4 +1,5 @@
 'use strict';
+var fileUploader = require('./../../middleware/fileUploader.js');
 var multiparty = require('connect-multiparty');
 var multipartyMiddleware = multiparty();
 var express = require('express');
@@ -16,16 +17,16 @@ let topics = require('./topics');
 let topic = require('./topic');
 var contactList = require('./contactList');
 var contactListUser = require('./contactListUser');
+var gallery = require('./gallery');
+
 
 
 module.exports = router;
 
 // Main Routes
-router.route('/user').
-  get( userRoutes.userGet).
-  post(userRoutes.userPost).
-  put(userRoutes.changePassword);
-
+router.get('/user', userRoutes.userGet);
+router.post('/user', userRoutes.userPost);
+router.put('/user', userRoutes.changePassword);
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
@@ -51,6 +52,14 @@ router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebee
 router.put('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPut);
 router.get('/chargebee/subscriptions', multipartyMiddleware, chargebee.chargebeeSubscriptionGet);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
+
+router.post('/gallery', gallery.postResources);
+router.post('/gallery/uploadFile', fileUploader(), gallery.uploadResource);
+router.post('/gallery/saveYoutubeUrl', gallery.saveYoutubeResource);
+router.get('/gallery', gallery.getResources);
+router.get('/gallery/download', gallery.downloadResources);
+router.delete('/gallery', gallery.deleteResources);
+
 router.get('/chargebee/tst', multipartyMiddleware, chargebee.tstGet);
 
 router.get('/survey', survey.get);

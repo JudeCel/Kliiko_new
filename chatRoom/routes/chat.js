@@ -19,7 +19,7 @@ function uploadResourceCallback(userId, json) {
   var foundUser = _.find(io.sockets, function (client) {
     return client.userId == userId;
   });
-
+  
   if (foundUser) {
     foundUser.emit("fileuploadcomplete", json);
   }
