@@ -1,6 +1,7 @@
 <section id='GalleryController' ng-controller='GalleryController'>
   <form ng-submit="submitIdsForMassAction(action)">
     <h2 class="text-center margin-top-30">Gallery</h2>
+    {{idsForAction}}
     <div class="gallery col-md-12">
       <div class="gallery col-xs-4 col-sm-2 pull-right">
         <button class="btn btn-addNewElement btn-green" type='button' ng-click="setView('panel')" ng-if="viewType == 'table'">
@@ -51,7 +52,7 @@
 
     <div class="gallery col-md-12">
       <div class='col-md-12 category-selection'>
-        <div class='col-md-6'>
+        <div class='col-md-6 margin-bottom-10'>
           <input id="selectall" ng-click="selectAllResources()" name="selectAll" type="checkbox" value="selectAll" />
           <label for="selectAll" class="margin-right-10">Select All</label>
 
@@ -70,12 +71,12 @@
         </div>
         
         <div class='col-md-6'>
-          <a class="green-link" ng-click="filterBy('')">All({{getCount("")}})</a>
-          <a class="green-link" ng-click="filterBy('image')">Images({{getCount("image")}})</a>
-          <a class="green-link" ng-click="filterBy('video')">Video({{getCount("video")}})</a>
-          <a class="green-link" ng-click="filterBy('pdf')">PDF({{getCount("pdf")}})</a>
-          <a class="green-link" ng-click="filterBy('audio')">Audio({{getCount("audio")}})</a>
-          <a class="green-link" ng-click="filterBy('brandLogo')">Brand Logo({{getCount("brandLogo")}})</a>
+          <a class="pull-right margin-right-10 green-text" ng-click="filterBy('')">All({{getCount("")}})</a>
+          <a class="pull-right margin-right-10 green-text" ng-click="filterBy('image')">Images({{getCount("image")}})</a>
+          <a class="pull-right margin-right-10 green-text" ng-click="filterBy('video')">Video({{getCount("video")}})</a>
+          <a class="pull-right margin-right-10 green-text" ng-click="filterBy('pdf')">PDF({{getCount("pdf")}})</a>
+          <a class="pull-right margin-right-10 green-text" ng-click="filterBy('audio')">Audio({{getCount("audio")}})</a>
+          <a class="pull-right margin-right-10 green-text" ng-click="filterBy('brandLogo')">Brand Logo({{getCount("brandLogo")}})</a>
         </div>
 
       </div>
@@ -118,13 +119,14 @@
                 <a ng-if="resource.JSON.type == 'video'" href="{{ resource.JSON.url }}" target="_blank">{{ resource.JSON.url }}</a>
               </td>
               <td>
+
                 <button type='submit'
                         class='btn btn-addNewElement btn-green pull-right margin-right-10' 
                         ng-click="deleteResources(resource.id)">
                   <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
                 </button>
 
-                <a type='submit' download="{{resource.JSON.matchName}}"
+                <a type='submit' download="{{resource.JSON.matchName}}" ng-if="resource.resourceType !== 'video'"
                         class='btn btn-addNewElement btn-green pull-right margin-right-10' 
                         href="{{'/chat_room/uploads/' + resource.JSON.name}}">
                   <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>   
@@ -176,6 +178,18 @@
                      ng-checked="resource.checked" ng-model="resource.checked"/>
 
               {{ resource.JSON.title }}
+
+              <button type='submit'
+                      class='btn btn-addNewElement btn-green pull-right margin-only-right-10' 
+                      ng-click="deleteResources(resource.id)">
+                <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
+              </button>
+
+              <a type='submit' download="{{resource.JSON.matchName}}" ng-if="resource.resourceType !== 'video'"
+                      class='btn btn-addNewElement btn-green margin-only-right-10 pull-right' 
+                      href="{{'/chat_room/uploads/' + resource.JSON.name}}">
+                <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>   
+              </a>
 
               <div class='pull-right col-md-2'>
                 <p ng-if="resource.JSON.type !== 'video'" class="uppercase">{{ resource.JSON.format }}</p> 

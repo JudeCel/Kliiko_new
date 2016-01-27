@@ -188,7 +188,6 @@
         }else{
           $scope.idsForAction = [];
           window.location.assign('/chat_room/uploads/' + res.fileName);
-          // GalleryServices.deleteZipAfterDownload(res.fileName)
         }
       })
     }
