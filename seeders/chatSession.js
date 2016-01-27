@@ -147,6 +147,7 @@ function createChat() {
       console.log("wee get error:" + error);
     }
     console.log("Done!!");
+    return result;
     process.exit();
   });
 };
