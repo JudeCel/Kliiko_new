@@ -11,7 +11,8 @@ var async = require('async');
 const MESSAGES = {
   removed: 'Session sucessfully deleted.',
   notFound: 'Session not fount.',
-  duplicated: 'Session was successfully duplicated.'
+  duplicated: 'Session was successfully duplicated.',
+  youDontHaveAccess: "You don't have access, to do this action."
 };
 
 
@@ -31,19 +32,24 @@ function getAllSessions(accountId) {
 
 function deleteSession (sessionId, accountId, userId) {
   let deferred = q.defer();
-  validate(accountId, userId)
-  Session.destroy({ where: { id: sessionId} }).then(function(result) {
-    if(result > 0) {
-      deferred.resolve(MESSAGES.removed);
+  validate(accountId, userId, function (error, passed) {
+    if(passed == true){
+      Session.destroy({ where: { id: sessionId} }).then(function(result) {
+        if(result > 0) {
+          deferred.resolve(MESSAGES.removed);
+        }
+        else {
+          deferred.reject(MESSAGES.notFound);
+        }
+      }).catch(Session.sequelize.ValidationError, function(error) {
+        deferred.reject(error);
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
+    }else{
+      deferred.reject(error);
     }
-    else {
-      deferred.reject(MESSAGES.notFound);
-    }
-  }).catch(Session.sequelize.ValidationError, function(error) {
-    deferred.reject(error);
-  }).catch(function(error) {
-    deferred.reject(error);
-  });
+  })
 
   return deferred.promise;
 }
@@ -68,7 +74,7 @@ function copySession(sessionId) {
   return deferred.promise;
 }
 
-function validate(accountId, userId) { 
+function validate(accountId, userId, callback) { 
   async.parallel({
     isAccountManager: function(callback) {
       isAccountManager(accountId, userId, callback);
@@ -79,24 +85,26 @@ function validate(accountId, userId) {
     idAdmin: function(callback) {
       isAdmin(userId, callback);
     }
-  }, function(negative, positive) {
-    console.log(negative);
+  }, function(err, result) {
     console.log("#######################");
-    console.log(positive);
+    console.log(result);
     console.log("#######################");
-    
+    if(result.isAccountManager == true || result.isFacilitator == true || result.isAdmin == true){
+      callback(null, true)
+    }else{
+      callback(MESSAGES.youDontHaveAccess)
+    }
   });
 }
 
 function isAccountManager(accountId, userId, callback) {
-  callback(null, true)
-  // getAllAccountManagerIds(accountId).then(function(ids, ) {
-  //   if (ids.indexOf(userId) > -1) {
-  //     callback(true)
-  //   } else {
-  //     callback(false)     
-  //   }
-  // });
+  getAllAccountManagerIds(accountId, function(ids) {
+    if (ids.indexOf(userId) > -1) {
+      callback(null, true)
+    } else {
+      callback(false)   
+    }
+  });
 }
 
 
