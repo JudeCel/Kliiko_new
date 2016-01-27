@@ -14,7 +14,7 @@ var banners = require('./banners');
 var survey = require('./survey');
 var chargebee = require('./chargebee');
 var gallery = require('./gallery');
-
+var brandColour = require('./brandColour');
 
 
 module.exports = router;
@@ -68,6 +68,12 @@ router.get('/survey/find', survey.find);
 router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', survey.confirm);
 router.get('/survey/constants', survey.getConstants);
+
+router.get('/brandColour', brandColour.get);
+router.delete('/brandColour', brandColour.remove);
+router.post('/brandColour', brandColour.create);
+router.put('/brandColour', brandColour.update);
+router.post('/brandColour/copy', brandColour.copy);
 
 // Common Rules
 router.use(function (req, res, next) {

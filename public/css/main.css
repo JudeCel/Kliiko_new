@@ -1340,6 +1340,30 @@ hr.survey-hr {
 .margin-bottom-10 {
   margin-bottom: 10px; }
 
+.brandColours {
+  font-size: 70%; }
+  .brandColours .chatContainer {
+    margin: 10px 0;
+    border: 2px solid;
+    border-radius: 10px; }
+  .brandColours .chatSeparator {
+    padding: 5px;
+    border-bottom: 2px solid; }
+  .brandColours .chatTopic {
+    padding: 2px;
+    border: 1px solid; }
+  .brandColours .chatIcon {
+    font-size: 2.5em; }
+  .brandColours .whiteBoardOuterBox {
+    height: 50%; }
+  .brandColours .whiteBoardInnerBox {
+    margin: 10px auto 30%; }
+  .brandColours .whiteBoardIcon {
+    border: 1px solid; }
+  .brandColours .whiteBoardContainer {
+    padding: 10% 0;
+    border: 2px solid; }
+
 #dashboard #back-nav-btn {
   margin-bottom: -75px; }
 

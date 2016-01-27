@@ -4,6 +4,7 @@ module.exports = (Sequelize, DataTypes) => {
   var Session = Sequelize.define('Session', {
     id:	 { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     brand_project_id: { type: DataTypes.INTEGER, allowNull: true},
+    accountId: { type: DataTypes.INTEGER, allowNull: true },
     name:	{ type: DataTypes.STRING, allowNull: false, default: 'untitled'},
     start_time:	{ type: DataTypes.DATE, allowNull: false },
     end_time:	{ type: DataTypes.DATE, allowNull: false },
@@ -19,6 +20,7 @@ module.exports = (Sequelize, DataTypes) => {
       classMethods: {
         associate: function(models) {
           Session.belongsTo(models.BrandProject, { foreignKey: 'brand_project_id' });
+          Session.belongsTo(models.Account, { foreignKey: 'accountId' });
           Session.hasMany(models.Topic, { foreignKey: 'sessionId' });
           Session.hasMany(models.BrandProjectPreference, { foreignKey: 'sessionId' });
           Session.hasMany(models.SessionMember, { foreignKey: 'sessionId' });

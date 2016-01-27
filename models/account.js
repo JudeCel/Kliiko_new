@@ -15,6 +15,7 @@ module.exports = (Sequelize, DataTypes) => {
       classMethods: {
         associate: function(models) {
           Account.hasMany(models.AccountUser);
+          Account.hasMany(models.Session, { foreignKey: 'accountId' });
           Account.belongsToMany(models.User, { through: { model: models.AccountUser} } );
           Account.hasMany(models.Invite, { foreignKey: 'accountId' });
         }
