@@ -12,8 +12,10 @@ module.exports = (Sequelize, DataTypes) => {
       defaultValue: constants.contactListDefaultFields
     },
     visibleFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false,
-      defaultValue: constants.contactListDefaultFields,
-      editable: this.editable
+      defaultValue: constants.contactListDefaultFields
+    },
+    participantsFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false,
+      defaultValue: ['inviteCount']
     },
     customFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false, defaultValue: [] }
   },{ indexes: [

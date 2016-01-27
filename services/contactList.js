@@ -31,11 +31,14 @@ function destroy(contacListId, accoutId) {
   });
   return deferred.promise;
 }
+function queryList() {
+
+}
 
 function allByAccount(accountId) {
     let deferred = q.defer();
     ContactList.findAll({where: { accountId: accountId },
-      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable'],
+      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable', 'participantsFields'],
       include: [{
         model: models.ContactListUser, attributes: ['id', 'customFields'],
         include: [{model: models.AccountUser, attributes: constants.contactListDefaultFields }],
@@ -59,10 +62,18 @@ function prepareData(lists) {
       editable: list.editable,
       defaultFields: list.defaultFields,
       customFields: list.customFields,
+      visibleFields: list.visibleFields,
+      participantsFields: list.participantsFields,
       name: list.name,
       membersCount: list.ContactListUsers.length,
       members: _.map(list.ContactListUsers, (listUser) => {
-        return new ContactListUser(list.defaultFields, list.customFields, listUser);
+        return new ContactListUser(
+          list.defaultFields,
+          list.customFields,
+          list.participantsFields,
+          list.visibleFields,
+          listUser
+        );
       })
     })
   })
