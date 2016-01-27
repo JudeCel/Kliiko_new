@@ -1,9 +1,14 @@
 <section>
   <div class='row'>
     <div class='col-md-12'>
-      <h1>GEAT SUCCESS!!!!</h1>
+      <div class='text-center remove-link-line'>
+        <button ui-sref-active='active' ui-sref='dashboard.resources.sessions' class='btn btn-dashboard-menu btn-green'>
+          <span class='pull-left'>Sessions</span>
+          <img ui-sref-active='active' class='gallery pull-right' src='/icons/upgrade_blue.png' alt='' />
+        </button>
+      </div>
     </div>
   </div>
 
-  <div ui-view='sessionsContent' class='row'></div>
+  <div ui-view='resourcesContent' class='row'></div>
 </section>

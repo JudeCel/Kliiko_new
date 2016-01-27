@@ -133,9 +133,9 @@
         onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location) {
           dbg.rs('chatSession');
 
-          $stateParams.bannerType = 'chatSession';
+          $stateParams.bannerType = 'sessions';
 
-          banners.setMainBannerForPage('chatSession');
+          banners.setMainBannerForPage('sessions');
 
           setTimeout(function () {
             if ($state.current.name == 'dashboard.chatSession') $state.go('dashboard.chatSession');
