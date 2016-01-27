@@ -12,6 +12,7 @@
     </div>
   </div>
 
+
   <div class='col-md-12 fixed-bottom-margin'>
     <div class='dashboard-container'>
 
@@ -55,30 +56,16 @@
 
           <table class='table table-responsive table-dashboardElements' ng-hide="!clc.selectedListMembers.length">
             <thead>
-            <tr>
-              <th></th>
-              <th ng-click="clc.changeTableSortingFilter('name')">
-                <span class="th-name">Name</span>
-                <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == 'name' && clc.tableSort.reverse"></i></span>
-                <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == 'name' && !clc.tableSort.reverse"></i></span>
-              </th>
-              <th ng-click="clc.changeTableSortingFilter('email')">
-                <span class="th-name">Email</span>
-                <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == 'email' && clc.tableSort.reverse"></i></span>
-                <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == 'email' && !clc.tableSort.reverse"></i></span>
-              </th>
-              <th ng-click="clc.changeTableSortingFilter('mobile')">
-                <span class="th-name">Mobile</span>
-                <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == 'mobile' && clc.tableSort.reverse"></i></span>
-                <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == 'mobile' && !clc.tableSort.reverse"></i></span>
-              </th>
-              <th ng-click="clc.changeTableSortingFilter('gender')">
-                <span class="th-name">Gender</span>
-                <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == 'gender' && clc.tableSort.reverse"></i></span>
-                <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == 'gender' && !clc.tableSort.reverse"></i></span>
-              </th>
-              <th><img  src="/icons/grid.png" ></th>
-            </tr>
+              <tr>
+                <th></th>
+                <th ng-repeat="rowHeader in clc.lists[clc.activeListIndex].table.tablesToShow()" ng-click="clc.changeTableSortingFilter(rowHeader)">
+                  <span class="th-name">{{rowHeader.capitalize() }}</span>
+                  <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
+                  <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
+                </th>
+
+                <th ng-click="clc.showManageColumnsModal()"><img  src="/icons/grid.png" ></th>
+              </tr>
             </thead>
             <tbody>
             <tr class="member-row" ng-repeat='member in clc.selectedListMembers | orderBy: clc.tableSort.by : clc.tableSort.reverse' ng-class="{'selected':member._selected}">
@@ -88,10 +75,9 @@
                   <label for="memberSelectet{{ $index }}" class="kliiko-checkbox" ></label>
                 </div>
               </td>
-              <td> {{ member.firstName }} {{ member.lastName }}</td>
-              <td> {{ member.email }}</td>
-              <td> {{ member.mobile }}</td>
-              <td> {{ member.gender }}</td>
+
+              <td ng-repeat="tableRow in clc.lists[clc.activeListIndex].table.tablesToShow()"> {{ member[tableRow] || '-' }}</td>
+
               <td >
                 <span class='table-item-edit-group'>
                   <img src='/icons/dashboardElement_edit.png' alt='' ng-click="clc.contactAddEditClickHandle('update', member)"/>
@@ -234,8 +220,6 @@
               </div>
               <br>
 
-              <!--<pre>{{ clc.listCustomFields | json }}</pre>-->
-              <!--<pre>{{ clc.newContact | json }}</pre>-->
 
               <section ng-hide="!clc.listCustomFields.length">
                 <div class="col-md-12 delimiter"></div>
@@ -324,8 +308,8 @@
                       <input class="custom-fields" type="text" ng-model="clc.newList.customField1" placeholder="Custom Field Name 1" ng-change="clc.checkCustomFields(1)" ng-class="{error: clc.newListError[1]}">
                       <input class="custom-fields" type="text" ng-model="clc.newList.customField2" placeholder="Custom Field Name 2" ng-change="clc.checkCustomFields(2)" ng-class="{error: clc.newListError[2]}">
                       <input class="custom-fields" type="text" ng-model="clc.newList.customField3" placeholder="Custom Field Name 3" ng-change="clc.checkCustomFields(3)" ng-class="{error: clc.newListError[3]}">
-                      <input class="custom-fields" type="text" ng-model="clc.newList.customField4" placeholder="Custom Field Name 4" ng-change="clc.checkCustomFields(5)" ng-class="{error: clc.newListError[4]}">
-                      <input class="custom-fields" type="text" ng-model="clc.newList.customField5" placeholder="Custom Field Name 5" ng-change="clc.checkCustomFields(4)" ng-class="{error: clc.newListError[5]}">
+                      <input class="custom-fields" type="text" ng-model="clc.newList.customField4" placeholder="Custom Field Name 4" ng-change="clc.checkCustomFields(4)" ng-class="{error: clc.newListError[4]}">
+                      <input class="custom-fields" type="text" ng-model="clc.newList.customField5" placeholder="Custom Field Name 5" ng-change="clc.checkCustomFields(5)" ng-class="{error: clc.newListError[5]}">
                       <input class="custom-fields" type="text" ng-model="clc.newList.customField6" placeholder="Custom Field Name 6" ng-change="clc.checkCustomFields(6)" ng-class="{error: clc.newListError[6]}">
                     </div>
 
@@ -347,7 +331,7 @@
 
                       <div class='btn-standart btn-red pull-left modals-btn' data-dismiss="modal">Cancel</div>
                       <div class='btn-standart btn-green pull-right modals-btn' ng-show="!clc.listUpdate" ng-click="clc.submitNewList()">Add</div>
-                      <div class='btn-standart btn-green pull-right modals-btn' ng-show="clc.listUpdate"  ng-click="clc.submitNewList()">Update</div>
+                      <div class='btn-standart btn-green pull-right modals-btn' ng-show="clc.listUpdate"  ng-click="clc.submitNewList()" ng-class="{disabled:clc.newListErrorMessage}">Update</div>
 
                     </div>
                   </div>
@@ -356,6 +340,69 @@
             </uib-tabset>
 
 
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Manage columns view -->
+    <div id="contactList-manageColumns" class="modal fade"  role="dialog">
+      <div class="modal-dialog contactDetailsModal" style="width: 800px">
+        <div class="modal-content border-green border-radius-none">
+          <div class='modal-header'>
+            <button type='button' class='close' data-dismiss="modal">&times;</button>
+            <h2 class='modal-title text-center'>Manage Columns in View</h2>
+          </div>
+          <div class='modal-body text-gray-medium'>
+            <form class='form-horizontal' role='form'>
+
+              <!------------------------------------------>
+
+                <uib-accordion close-others="false">
+                  <uib-accordion-group is-open="clc.modContentBlock.generalDetails">
+                    <uib-accordion-heading>
+                      <div class="panel-label">
+                        General Details<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': clc.modContentBlock.generalDetails, 'glyphicon-chevron-right': !clc.modContentBlock.generalDetails}"></i>
+                      </div>
+                    </uib-accordion-heading>
+                    <span class="row">
+                      <span class="col-md-3" ng-repeat="column in  clc.lists[clc.activeListIndex].table.availableTables()">
+                        <div class="check fields-to-show">
+                          <input id="dashboard-contact-lists-selectAll-mass-action{{ $index }}" ng-click="clc.lists[clc.activeListIndex].table.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.selectedTables[column]" type="checkbox" >
+                          <label for="dashboard-contact-lists-selectAll-mass-action{{ $index }}" ></label>{{ column }}
+                        </div>
+
+                      </span>
+                    </span>
+
+                  </uib-accordion-group>
+
+
+                  <uib-accordion-group is-open="clc.modContentBlock.history">
+                    <uib-accordion-heading>
+                      <div class="panel-label">
+                        Participant Invitation History <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': clc.modContentBlock.history, 'glyphicon-chevron-right': !clc.modContentBlock.history}"></i>
+                      </div>
+                    </uib-accordion-heading>
+                    content
+                  </uib-accordion-group>
+                </uib-accordion>
+
+              <!------------------------------------------>
+
+
+
+              <div class='row'>
+                <div class='col-md-12'>
+                  <!--<div class='btn-standart btn-red pull-left' data-dismiss="modal">Cancel</div>-->
+                  <div class='btn-standart btn-green pull-right' data-dismiss="modal">Done</div>
+
+                </div>
+              </div>
+
+            </form>
           </div>
 
         </div>
