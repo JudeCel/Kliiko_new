@@ -153,10 +153,9 @@
 
       contactListServices.createUser(vm.newContact, currentList.id).then(
         function(res) {
-
-
           domServices.modal('contactList-addContactManual', 'close');
           messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
+
           vm.newContact = {customFields:{}};
           newContact.id = res.id;
 
@@ -166,6 +165,15 @@
           if (!vm.selectedListMembers) vm.selectedListMembers = [];
           vm.selectedListMembers.push(newContact);
           prepareSelectedList();
+
+          for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
+            if (vm.selectedListMembers[i].CustomFieldsObject && vm.lists[vm.activeListIndex].members) {
+              vm.selectedListMembers[i].name = vm.selectedListMembers[i].firstName + ' '+ vm.selectedListMembers[i].lastName;
+              for( var key in vm.selectedListMembers[i].CustomFieldsObject ) {
+                vm.lists[vm.activeListIndex].members[i][key] = vm.selectedListMembers[i].CustomFieldsObject[key];
+              }
+            }
+          }
 
         },
         function(err) {
@@ -210,7 +218,7 @@
           prepareSelectedList();
 
           for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
-            if (vm.selectedListMembers[i].CustomFieldsObject) {
+            if (vm.selectedListMembers[i].CustomFieldsObject && vm.lists[vm.activeListIndex].members) {
               for( var key in vm.selectedListMembers[i].CustomFieldsObject ) {
                 vm.lists[vm.activeListIndex].members[i][key] = vm.selectedListMembers[i].CustomFieldsObject[key];
               }
@@ -368,7 +376,6 @@
 
 
       for (var i = 0, len = allFields.length; i < len ; i++) {
-        console.warn(allFields[i] , value, allFields[i] == value)
         if (allFields[i] == value) {
 
           vm.newListError[number] = true;
@@ -412,6 +419,8 @@
           domServices.modal('contactList-addNewListModal', 'close');
           messenger.ok('New List "'+ res.name + '" added');
           listItemClickHandle(vm.lists.length -1);
+
+
         },
         function(err) {
           dbg.error('#ContactListController > submitNewList > error: ', err);
