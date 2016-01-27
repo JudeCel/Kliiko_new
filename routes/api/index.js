@@ -1,4 +1,5 @@
 'use strict';
+var fileUploader = require('./../../middleware/fileUploader.js');
 var multiparty = require('connect-multiparty');
 var multipartyMiddleware = multiparty();
 var express = require('express');
@@ -12,6 +13,7 @@ var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
 var survey = require('./survey');
 var chargebee = require('./chargebee');
+var gallery = require('./gallery');
 var brandColour = require('./brandColour');
 
 
@@ -46,6 +48,14 @@ router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebee
 router.put('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPut);
 router.get('/chargebee/subscriptions', multipartyMiddleware, chargebee.chargebeeSubscriptionGet);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
+
+router.post('/gallery', gallery.postResources);
+router.post('/gallery/uploadFile', fileUploader(), gallery.uploadResource);
+router.post('/gallery/saveYoutubeUrl', gallery.saveYoutubeResource);
+router.get('/gallery', gallery.getResources);
+router.get('/gallery/download', gallery.downloadResources);
+router.delete('/gallery', gallery.deleteResources);
+
 router.get('/chargebee/tst', multipartyMiddleware, chargebee.tstGet);
 
 router.get('/survey', survey.get);

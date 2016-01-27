@@ -13,6 +13,7 @@ module.exports = {
     'postalAddress',
     'city',
     'state',
+    'status',
     'country',
     'postcode',
     'companyName',
@@ -26,5 +27,6 @@ module.exports = {
 
   ],
   promotionCodeTypes: ['percentage', 'value'],
+  galleryUploadTypes: ['image', 'brandLogo', 'audio', 'youtubeLink', 'text'],
   dateFormat: 'MM-dd-yyyy'
 }

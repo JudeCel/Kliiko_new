@@ -99,6 +99,7 @@
     "multer": "^1.1.0",
     "mv": "^2.1.1",
     "ncp": "^2.0.0",
+    "node-native-zip": "^1.1.0",
     "node-uuid": "^1.4.3",
     "nodemailer": "^1.10.0",
     "passport": "^0.3.0",

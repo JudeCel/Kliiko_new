@@ -68,7 +68,6 @@
 
       if (file && !file.$error) {
         bannersCache = null;
-
         Upload.upload({
           url: globalSettings.restUrl+'/banners',
           method: 'POST',

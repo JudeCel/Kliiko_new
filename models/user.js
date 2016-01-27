@@ -40,10 +40,15 @@ module.exports = (Sequelize, DataTypes) => {
     signInCount: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
     tipsAndUpdate: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true}
   },{
-      indexes: [{
-        unique: true,
-        fields: ['email']
-      }],
+      indexes: [
+        {
+          name: "userUniqueEmail",
+          unique: true,
+          fields: ['email']
+        },
+        { fields: ['id'] },
+        { fields: ['email'] }
+      ],
       classMethods: {
         associate: function(models) {
           User.hasMany(models.SocialProfile, { foreignKey: 'userId'});

@@ -8,7 +8,9 @@ module.exports = (Sequelize, DataTypes) => {
     }
   },{
       indexes: [
-        { name: 'unique_name', unique: true, fields: [Sequelize.fn('lower', Sequelize.col('name'))] }
+        { name: 'unique_name', unique: true, fields: [Sequelize.fn('lower', Sequelize.col('name'))] },
+        { fields: [Sequelize.fn('lower', Sequelize.col('name'))] },
+        { fields: ['id'] }
       ],
       classMethods: {
         associate: function(models) {

@@ -53,11 +53,11 @@
     };
 
     $scope.isInvited = function(accountUser) {
-      return accountUser.state == "invited";
+      return accountUser.status == "invited";
     };
 
     $scope.isAccepted = function(accountUser) {
-      return accountUser.state == "active";
+      return accountUser.status == "active";
     };
 
     $scope.isAccountOwner = function(accountUser) {

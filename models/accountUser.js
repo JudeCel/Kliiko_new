@@ -11,7 +11,8 @@ module.exports = (Sequelize, DataTypes) => {
     owner: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles },
-    state: { type: DataTypes.ENUM, allowNull: false, values: ["invited", "active", "inactive"], defaultValue: "active" },
+    status: { type: DataTypes.ENUM, allowNull: false, values: ["invited", "active", "inactive"], defaultValue: "active" },
+    state: {type: DataTypes.STRING, allowNull: true },
     postalAddress: {type: DataTypes.STRING, allowNull: true },
     city: {type: DataTypes.STRING, allowNull: true },
     country: {type: DataTypes.STRING, allowNull: true },
@@ -31,7 +32,10 @@ module.exports = (Sequelize, DataTypes) => {
         name: "compositeUserIdAndAccountIdAndEmail",
         unique: {msg: "Email has already been taken"},
         fields: ['email', 'UserId', 'AccountId']
-      }],
+      },
+        { fields: ['email'] },
+        { fields: ['id'] }
+      ],
       classMethods: {
         associate: function(models) {
           AccountUser.belongsTo(models.User);
