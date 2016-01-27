@@ -1,10 +1,12 @@
 'use strict';
 var mailers = require('../../mailers');
-var Account = require('./../../models').Account;
-var User = require('./../../models').User;
-var AccountUser = require('./../../models').AccountUser;
+var models = require('./../../models');
+var Account = models.Account;
+var User = models.User;
+var AccountUser = models.AccountUser;
 var constants = require('../../util/constants');
 var _ = require('lodash');
+var q = require('q');
 
 var validAttributes = [
   'comment',
@@ -13,11 +15,11 @@ var validAttributes = [
 
 function findAllAccounts(callback) {
   Account.findAll({
-    include: [{ model: User, attributes: userAttributes() }, AccountUser]
+    include: [{ model: AccountUser, include: [ { model: User } ] } ]
   }).then(function(accounts) {
     callback(null, accounts);
-  }).catch(function(error) {
-    callback(prepareErrors(error));
+  }, function(error) {
+      callback(prepareErrors(error));
   });
 };
 
@@ -48,41 +50,49 @@ function updateAccountUser(params, callback) {
   });
 };
 
-function csvData(callback) {
+function csvData() {
+  let deferred = q.defer();
   findAllAccounts(function(error, accounts) {
     if(error) {
-      callback(error);
-    }
-    else {
-      let data = [];
-      for(let accId in accounts) {
-        let account = accounts[accId];
-        for(let useId in account.Users) {
-          let user = account.Users[useId];
-          data.push({
-            'Account Name': account.name || '',
-            'Account Manager': user.firstName + ' ' + user.lastName || '',
-            'Registered': user.createdAt || '',
-            'E-mail': user.email || '',
-            'Address': user.postalAddress || '',
-            'City': user.city || '',
-            'Postcode': user.postcode || '',
-            'Country': user.country || '',
-            'Company': user.companyName || '',
-            'Gender': user.gender || '',
-            'Mobile': user.mobile || '',
-            'Landline': user.landlineNumber || '',
-            'Sessions purchased': '',
-            'Type permission': '',
-            'Active Sessions': '',
-            'Comment': findAccountUser(account, user).comment || ''
-          });
-        };
-      };
-      callback(null, data);
+      deferred.reject(error);
+    }else {
+      deferred.resolve(buldDataList(accounts));
     }
   });
+  return deferred.promise;
 };
+
+function buldDataList(accounts) {
+  let data = [];
+  _.forEach(accounts, function(account) {
+    _.forEach(account.AccountUsers, function(accountUser) {
+      data.push(buldCSVRow(account, accountUser));
+    });
+  });
+  return data;
+}
+
+function buldCSVRow(account, accountUser) {
+
+  return {
+    'Account Name': account.name || '',
+    'Account Manager': accountUser.firstName + ' ' + accountUser.lastName || '',
+    'Registered': accountUser.createdAt || '',
+    'E-mail': accountUser.email || '',
+    'Address': accountUser.postalAddress || '',
+    'City': accountUser.city || '',
+    'Postcode': accountUser.postcode || '',
+    'Country': accountUser.country || '',
+    'Company': accountUser.companyName || '',
+    'Gender': accountUser.gender || '',
+    'Mobile': accountUser.mobile || '',
+    'Landline': accountUser.landlineNumber || '',
+    'Sessions purchased': '',
+    'Type permission': '',
+    'Active Sessions': '',
+    'Comment': accountUser.comment || ''
+  };
+}
 
 function csvHeader() {
   return [
@@ -105,15 +115,10 @@ function csvHeader() {
   ];
 };
 
-function findAccountUser(account, user) {
-  for(let auId in account.AccountUsers) {
-    let accountUser = account.AccountUsers[auId];
-    if(accountUser.UserId == user.id) {
-      return accountUser;
-    }
-  }
-
-  return {};
+function findAccountUser(account, userId) {
+  return _.find(account.AccountUsers, function(accountUser) {
+    return accountUser.UserId == userId;
+  });
 };
 
 function userAttributes() {
