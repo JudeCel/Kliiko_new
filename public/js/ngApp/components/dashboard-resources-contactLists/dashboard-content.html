@@ -13,10 +13,6 @@
   </div>
 
 
-  <!--<pre> {{ clc.lists[0].table.tablesToShow() }} <<>> {{ clc.lists[0].table.availableTables() }}</pre>-->
-  <!--<pre> {{ clc.lists[3].table.tablesToShow() }} <<>> {{ clc.lists[3].table.availableTables() }}</pre>-->
-  <!--<pre> {{ clc.lists[clc.activeListIndex].table.tablesToShow() }} <<>> {{ clc.lists[clc.activeListIndex].table.availableTables() }}</pre>-->
-
   <div class='col-md-12 fixed-bottom-margin'>
     <div class='dashboard-container'>
 
@@ -62,7 +58,6 @@
             <thead>
               <tr>
                 <th></th>
-
                 <th ng-repeat="rowHeader in clc.lists[clc.activeListIndex].table.tablesToShow()" ng-click="clc.changeTableSortingFilter(rowHeader)">
                   <span class="th-name">{{rowHeader.capitalize() }}</span>
                   <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>

@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').factory('contactListsControllerServices', contactListsControllerServicesFactory);
 
-  contactListsControllerServicesFactory.$inject = ['$q', 'dbg', 'contactListServices', '$filter', 'CustomTableModel'];
-  function contactListsControllerServicesFactory($q, dbg, contactListServices, $filter, Table)  {
+  contactListsControllerServicesFactory.$inject = ['$q', 'dbg', 'contactListServices', '$filter', 'CustomTableModel', 'ListMemberModel'];
+  function contactListsControllerServicesFactory($q, dbg, contactListServices, $filter, Table, Member)  {
     var lists = [];
     var activeListIndex,
         selectedListMembers,
@@ -31,8 +31,23 @@
         lists = $filter('orderBy')(result, 'id');
 
         if (lists.length) {
+          for (var i = 0, len = lists.length; i < len ; i++) {
+            if (lists[i].members && lists[i].members.length) {
+              lists[i].Members = [];
+              for (var j = 0, len2 = lists[i].members.length; j < len2 ; j++) {
+                lists[i].Members.push( new Member( lists[i].members[j] ) );
+              }
+
+              if (activeListIndex == i) {
+                selectedListMembers = lists[i].Members;
+              }
+
+            }
+          }
+
           // show members of active list (first one if it is init case)
-          selectedListMembers = lists[activeListIndex].members;
+
+          //selectedListMembers = lists[activeListIndex].members;
 
           // prepare tables with different custom fields for every list we recieved
           for (var i = 0, len = lists.length; i < len ; i++) {
@@ -80,10 +95,11 @@
     }
 
     function getListMembers() {
-      var members = lists[activeListIndex].members;
+      var members = lists[activeListIndex].Members;
 
       if (members && members.length) {
         for (var i = 0, len = members.length; i < len ; i++) {
+
           members[i].customFields = members[i].customFields || [];
           if (!members[i].selected) members[i].selected = false;
 

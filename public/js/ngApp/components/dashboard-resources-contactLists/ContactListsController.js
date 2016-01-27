@@ -2,8 +2,8 @@
   'use strict';
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices','contactListsControllerServices','contactListServices', 'dbg', 'messenger', '$filter', 'CustomTableModel'];
-  function ContactListController(domServices, cls, contactListServices, dbg, messenger, $filter, Table) {
+  ContactListController.$inject = ['domServices','contactListsControllerServices','contactListServices', 'dbg', 'messenger', '$filter', 'ListMemberModel'];
+  function ContactListController(domServices, cls, contactListServices, dbg, messenger, $filter, Member) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
@@ -87,7 +87,6 @@
      * @param index {number} - index in vm.lists array
      */
     function listItemClickHandle(index){
-
       vm.activeListIndex = cls.currentListIndex(index);
       vm.selectedListMembers = cls.getListMembers();
       vm.listCustomFields = cls.getListCustomFields();
@@ -202,12 +201,16 @@
 
       if (!valid) return;
       var newContact = angular.copy(vm.newContact);
+      newContact.updateFields();
       contactListServices.updateUser(vm.newContact, currentList.id).then(
         function(res) {
-          domServices.modal('contactList-addContactManual', 'close');
-          messenger.ok('Contact '+ newContact.firstName + ' successfully updated');
-
-          vm.newContact = {customFields:{}};
+          debugger
+          for (var i = 0, len = vm.lists[vm.activeListIndex].length; i < len ; i++) {
+            if (vm.lists[vm.activeListIndex].Members[i].id == newContact.id ) {
+              vm.lists[vm.activeListIndex].Members[i] = newContact;
+              break;
+            }
+          }
 
           for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
             if (vm.selectedListMembers[i].id == newContact.id ) {
@@ -215,15 +218,22 @@
               break;
             }
           }
-          prepareSelectedList();
 
-          for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
-            if (vm.selectedListMembers[i].CustomFieldsObject && vm.lists[vm.activeListIndex].members) {
-              for( var key in vm.selectedListMembers[i].CustomFieldsObject ) {
-                vm.lists[vm.activeListIndex].members[i][key] = vm.selectedListMembers[i].CustomFieldsObject[key];
-              }
-            }
-          }
+          domServices.modal('contactList-addContactManual', 'close');
+          messenger.ok('Contact '+ newContact.firstName + ' successfully updated');
+
+          vm.newContact = {customFields:{}};
+
+
+          //prepareSelectedList();
+
+          //for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
+          //  if (vm.selectedListMembers[i].CustomFieldsObject && vm.lists[vm.activeListIndex].members) {
+          //    for( var key in vm.selectedListMembers[i].CustomFieldsObject ) {
+          //      vm.lists[vm.activeListIndex].members[i][key] = vm.selectedListMembers[i].CustomFieldsObject[key];
+          //    }
+          //  }
+          //}
 
         },
         function(err) {
