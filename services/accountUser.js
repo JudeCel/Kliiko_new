@@ -38,7 +38,7 @@ function create(params, accountId, role, t) {
 
 function buidAttrs(params, accountId, role) {
   let defaultStruct = {
-    state: 'added',
+    status: 'added',
     active: false,
     role: role,
     AccountId: params.accountId
