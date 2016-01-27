@@ -3,6 +3,8 @@
   .chatContainer {
     margin: 10px 0;
     border: 2px solid;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
     border-radius: 10px;
   }
   .chatSeparator {
@@ -17,17 +19,46 @@
     font-size: 2.5em;
   }
 
-  .whiteBoardOuterBox {
+  .containerOuterBox {
     height: 50%;
   }
-  .whiteBoardInnerBox {
-    margin: 10px auto 30%;
+  .containerInnerBox {
+    margin: 10px auto 10%;
   }
+
   .whiteBoardIcon {
     border: 1px solid;
   }
-  .whiteBoardContainer {
-    padding: 10% 0;
+  .whiteBoardContent {
+    padding: 35% 0;
     border: 2px solid;
+
+    -webkit-border-radius: 10px;
+    -webkit-border-top-left-radius: 0;
+    -moz-border-radius: 10px;
+    -moz-border-radius-topleft: 0;
+    border-radius: 10px;
+    border-top-left-radius: 0;
+  }
+
+  .chatContent {
+    padding: 75% 0;
+    border: 2px solid;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+  }
+
+  .otherContent {
+    padding: 35% 0;
+    border: 2px solid;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+  }
+
+  .sidePadding {
+    padding-left: 2%;
+    padding-right: 2%;
   }
 }

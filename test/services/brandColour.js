@@ -243,8 +243,8 @@ describe('SERVICE - BrandColour', function() {
     describe('happy path', function() {
       it('should succeed on returning fields', function (done) {
         let fields = brandColourServices.manageFields();
-        assert.equal(fields[0].title, 'Browser Background');
-        assert.equal(fields[0].model, 'colour_browser_background');
+        assert.equal(fields.chat[0].title, 'Browser Background');
+        assert.equal(fields.chat[0].model, 'colour_browser_background');
         done();
       });
     });

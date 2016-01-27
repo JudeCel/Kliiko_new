@@ -164,21 +164,33 @@ function copyScheme(params, account) {
 };
 
 function manageFields() {
-  let array = [];
+  let object = { chat: [], whiteboard: [], upload: [] };
 
   _.map(VALID_ATTRIBUTES.manage, function(attr) {
     if(_.includes(attr, 'colour_')) {
-      array.push({
-        title: _.startCase(attr.substring('colour_'.length)),
-        model: attr
-      });
+      if(_.includes(attr, 'whiteboard')) {
+        pushToObjectArray(object, attr, 'whiteboard');
+      }
+      else if(_.includes(attr, 'button')) {
+        pushToObjectArray(object, attr, 'upload');
+      }
+      else {
+        pushToObjectArray(object, attr, 'chat');
+      }
     }
   });
 
-  return array;
+  return object;
 }
 
 // Helpers
+function pushToObjectArray(object, attr, type) {
+  object[type].push({
+    title: _.startCase(attr.substring('colour_'.length)),
+    model: attr
+  });
+}
+
 function validateParams(params, attributes) {
   if(_.isObject(params.SurveyQuestions)) {
     let array = [];

@@ -1354,15 +1354,32 @@ hr.survey-hr {
     border: 1px solid; }
   .brandColours .chatIcon {
     font-size: 2.5em; }
-  .brandColours .whiteBoardOuterBox {
+  .brandColours .containerOuterBox {
     height: 50%; }
-  .brandColours .whiteBoardInnerBox {
-    margin: 10px auto 30%; }
+  .brandColours .containerInnerBox {
+    margin: 10px auto 10%; }
   .brandColours .whiteBoardIcon {
     border: 1px solid; }
-  .brandColours .whiteBoardContainer {
-    padding: 10% 0;
-    border: 2px solid; }
+  .brandColours .whiteBoardContent {
+    padding: 35% 0;
+    border: 2px solid;
+    -webkit-border-radius: 10px;
+    -webkit-border-top-left-radius: 0;
+    -moz-border-radius: 10px;
+    -moz-border-radius-topleft: 0;
+    border-radius: 10px;
+    border-top-left-radius: 0; }
+  .brandColours .chatContent {
+    padding: 75% 0;
+    border: 2px solid;
+    border-radius: 10px; }
+  .brandColours .otherContent {
+    padding: 35% 0;
+    border: 2px solid;
+    border-radius: 10px; }
+  .brandColours .sidePadding {
+    padding-left: 2%;
+    padding-right: 2%; }
 
 #dashboard #back-nav-btn {
   margin-bottom: -75px; }
