@@ -26,7 +26,6 @@ module.exports.run = function (req, resCb, errCb) {
   req.params = _.defaults(_.clone(req.params || {}), {
     url: ""
   });
-
   Resource.create(req.params)
   .then(function (data) {
     resCb.send(data);

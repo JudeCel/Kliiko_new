@@ -14,7 +14,8 @@ const VALIDATIONS = {
     'image/jpeg',
     'image/bmp',
     'audio/mpeg',
-    'audio/mp3'
+    'audio/mp3',
+    'application/pdf'
   ]
 }
 

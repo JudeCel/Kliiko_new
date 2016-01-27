@@ -26,5 +26,6 @@ module.exports = {
 
   ],
   promotionCodeTypes: ['percentage', 'value'],
+  galleryUploadTypes: ['image', 'brandLogo', 'audio', 'youtubeLink', 'text'],
   dateFormat: 'MM-dd-yyyy'
 }

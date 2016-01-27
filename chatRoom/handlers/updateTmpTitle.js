@@ -20,6 +20,7 @@ var validate = function (req, resCb) {
 };
 
 var run = function (req, resCb, errCb) {
+
   Resource.destroy({where: {resourceType: 'tmp', userId: req.params.userId }})
     .then(function () {
       createResurce(req.params, function(err, reult) {
