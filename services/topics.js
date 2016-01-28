@@ -4,11 +4,12 @@ var models = require('./../models');
 var Topic = models.Topic;
 var _ = require('lodash');
 var Session = models.Session;
-const MESSAGES = {error: { isRelaitedSession: "Can't delete topic is related session" } }
+const MESSAGES = {error: { isRelaitedSession: "Can't delete topic is related session" } };
 
 module.exports = {
   getAll: getAll,
   create: create,
+  update: update,
   destroy: destroy,
   joninSession: joninSession,
   removeSession: removeSession,
@@ -21,7 +22,7 @@ function getAll(accountId) {
     deferred.resolve(results);
   },function(err) {
     deferred.reject(err);
-  })
+  });
   return deferred.promise;
 }
 
@@ -75,7 +76,7 @@ function destroy(id) {
     } else {
       deferred.reject(MESSAGES.error.isRelaitedSession);
     }
-  })
+  });
   return deferred.promise;
 }
 
@@ -85,6 +86,16 @@ function create(params) {
     deferred.resolve(topic);
   },function(err) {
     deferred.reject(err);
-  })
+  });
+  return deferred.promise;
+}
+
+function update(params) {
+  let deferred = q.defer();
+  Topic.update(params,{ where:{id: params.id}} ).then(function(topic) {
+    deferred.resolve(topic);
+  },function(err) {
+    deferred.reject(err);
+  });
   return deferred.promise;
 }

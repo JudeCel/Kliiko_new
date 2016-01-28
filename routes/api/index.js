@@ -75,6 +75,8 @@ router.get('/survey/constants', survey.getConstants);
 
 router.get('/topics', multipartyMiddleware, topics.get);
 router.post('/topic', multipartyMiddleware, topic.post);
+router.put('/topic/:id', multipartyMiddleware, topic.updateTopicById);
+router.delete('/topic/:id', multipartyMiddleware, topic.deleteById);
 
 router.route('/topic/:id').
   post(multipartyMiddleware, topic.copyTopicById).
