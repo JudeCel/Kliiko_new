@@ -60,6 +60,7 @@ function deleteSession (sessionId, userId) {
 
 function copySession(sessionId, userId) {
   let deferred = q.defer();
+  
   validate(userId).then(function(passed) {
     if(passed == true){
       Session.find({
@@ -88,8 +89,11 @@ function copySession(sessionId, userId) {
 
 function validate(userId) { 
   let deferred = q.defer();
+  let roles = [];
+  
   findAccountUser(userId).then(function(accountUser) {
-    deferred.resolve(policy.hasAccess(accountUser.role, allowedRoles));
+    roles.push(accountUser.role);
+    deferred.resolve(policy.hasAccess(roles, allowedRoles));
   }, function(error) {
     deferred.reject(error);
   })
@@ -101,7 +105,7 @@ function findAccountUser(userId) {
   let deferred = q.defer();
 
   AccountUser.find({
-    userId: userId
+    where: {UserId: userId}
   }).then(function(result) {
     deferred.resolve(result);
   })

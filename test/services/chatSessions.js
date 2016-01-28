@@ -1,15 +1,18 @@
 'use strict';
 
+var userFixture = require('./../fixtures/user');
+var sessionFixture = require('./../fixtures/session');
 var models = require('./../../models');
 var usersServices = require('./../../services/users');
-var sessionFixture = require('./../fixtures/session');
 var ChatSessions = require('./../../services/chatSessions.js');
 var Account = models.Account;
+var AccountUser = models.AccountUser;
 var assert = require('chai').assert;
 
 
 describe('SERVICE - ChatSessions', function() {
-  var memberUser = null;
+  var participantUserId = null;
+  var userWithAccess = null;
   var testAccount = null;
   var testSession = null;
 
@@ -27,9 +30,26 @@ describe('SERVICE - ChatSessions', function() {
       sessionFixture.createChat().then(function(result) {
         testSession = result.session;
         testAccount = result.account
+        userWithAccess = result.user
+
         usersServices.create(attrs, function(errors, user) {
-          memberUser = user;
-          done();
+
+          AccountUser.update({
+            owner: false,
+            role: "participant"
+          }, {
+            where: {UserId: user.id}
+          }).then(function (result) {
+            AccountUser.find({
+              where: {UserId: user.id}
+            }).then(function(participantAccountUser) {
+              participantUserId = participantAccountUser.UserId;
+              done();
+            })
+          })
+          .catch(function (err) {
+            done(err);
+          });
         });
       });
     });
@@ -53,7 +73,7 @@ describe('SERVICE - ChatSessions', function() {
 
   describe('Copy session', function() {
     it("Happy path", function(done) {
-      ChatSessions.copySession(testSession.id).then(function(result) {
+      ChatSessions.copySession(testSession.id, userWithAccess.id).then(function(result) {
         assert.equal(result.message, "Session was successfully duplicated.")
         assert.equal(result.session.name, testSession.name);
         assert.equal(result.session.brand_project_id, testSession.brand_project_id);
@@ -71,17 +91,20 @@ describe('SERVICE - ChatSessions', function() {
     })
 
     it("Sad path", function(done) {
-      ChatSessions.copySession(testSession.id).then(function(result) {
-        done('Should not get here!');
+              // console.log(participantUserId)
+
+      ChatSessions.copySession(testSession.id, participantUserId).then(function(result) {
+        done("Should not get here!");
       }, function(error) {
-        done("TODO");
+        assert.equal(error, "You don't have access, to do this action.");
+        done()
       })
     })
   })
 
   describe('Delete session', function() {
     it("happy path", function(done) {
-      ChatSessions.deleteSession(testSession.id, user.id).then(function(result) {
+      ChatSessions.deleteSession(testSession.id, userWithAccess.id).then(function(result) {
         assert.equal(result, 'Session sucessfully deleted.')
         done();
       }, function(error) {
@@ -89,11 +112,11 @@ describe('SERVICE - ChatSessions', function() {
       })
     })
 
-    it.only("sad path", function(done) {
-      ChatSessions.deleteSession(testSession.id, memberUser).then(function(result) {
+    it("sad path", function(done) {
+      ChatSessions.deleteSession(testSession.id, participantUserId).then(function(result) {
         done('Should not get here!');
       }, function(error) {
-        console.log(result)
+        assert.equal(error, "You don't have access, to do this action.");
         done();
       })
     })
