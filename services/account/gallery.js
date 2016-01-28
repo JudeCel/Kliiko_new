@@ -70,7 +70,7 @@ function downloadResources(data){
       if(['audio', 'image', 'pdf'].indexOf(resource.resourceType) > -1){
         files.push({
           name: resource.JSON.name,
-          path: config.get("pathToChatFileStorage") + resource.JSON.name
+          path: config.get("chatConf"["paths"]["fsPath"])+ "/public/uploads/" + resource.JSON.name
         })
       }
     });
@@ -81,7 +81,7 @@ function downloadResources(data){
       }else{
         let buff = archive.toBuffer();
         let fileName = generateFileName();
-        fs.writeFile(config.get("pathToChatFileStorage") + fileName, buff, function () {
+        fs.writeFile(config.get("chatConf"["paths"]["fsPath"])+ "/public/uploads/" + fileName, buff, function () {
           deferred.resolve({fileName: fileName});
         });
       }
