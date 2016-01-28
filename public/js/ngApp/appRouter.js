@@ -2,7 +2,7 @@
   'use strict';
 
   angular.module('KliikoApp').config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
-    var prePath = 'js/ngApp/components/';
+    var prePath = '/js/ngApp/components/';
 
     // For any unmatched url, redirect to /home
     $urlRouterProvider.otherwise("/");
@@ -134,7 +134,6 @@
           dbg.rs('resources');
 
           $stateParams.bannerType = 'resources';
-          console.warn($stateParams);
 
           banners.setMainBannerForPage('resources');
 
@@ -155,6 +154,28 @@
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-gallery/dashboard-content.html"}
         },
+
+        resolve: {
+          checkPermission: ['$q', '$timeout', 'user', 'dbg', 'ngProgressFactory', 'banners',function($q, $timeout, user, dbg, ngProgressFactory, banners) {
+            var deferred = $q.defer();
+
+            user.canAccess('bannerMessages').then(
+              function(res) {
+                var progressbar = ngProgressFactory.createInstance();
+                progressbar.start();
+
+                // load rarely needed module: ng-file-upload
+                banners.initUpload().then(function() { progressbar.complete(); deferred.resolve(); });
+
+              },
+
+              function(err) { dbg.warn(err); }
+
+            );
+            return deferred.promise;
+          }]
+        },
+
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.gallery is on');
         }]
@@ -167,6 +188,16 @@
         },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.contactList is on');
+        }]
+
+      })
+      .state('dashboard.resources.contactList.survey', {
+        url: '/survey',
+        views: {
+          'resourcesContent': { templateUrl: prePath + 'dashboard-resources-contactList-survey/dashboard-content.html' }
+        },
+        onEnter: ['dbg', function (dbg) {
+          dbg.rs('dashboard.resources.contactList.survey is on');
         }]
 
       })

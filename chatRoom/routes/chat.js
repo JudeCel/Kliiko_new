@@ -5,6 +5,8 @@ var _ = require('lodash');
 var sessionMember = require('./../../middleware/sessionMember.js');
 var socketHelper = require("../socketHelper");
 var config = require('config');
+var fileUploader = require('./../../middleware/fileUploader.js');
+
 
 
 function ioUrl() {
@@ -17,7 +19,7 @@ function uploadResourceCallback(userId, json) {
   var foundUser = _.find(io.sockets, function (client) {
     return client.userId == userId;
   });
-
+  
   if (foundUser) {
     foundUser.emit("fileuploadcomplete", json);
   }
@@ -43,11 +45,9 @@ router.get('/:id' , sessionMember.hasAccess, function(req, res, next) {
   res.render(views_path('topic'), { title: 'chat', user: req.user, id: req.params.id, ioUrl: ioUrl() });
 });
 
-
-router.post('/uploadimage', function (req, res) {
+router.post('/uploadimage', fileUploader(), function (req, res) {
   socketHelper.uploadResource({
-      req: req,
-      res: res,
+      file: req.file,
       width: 950,
       height: 460,
       type: 'image',
@@ -55,10 +55,9 @@ router.post('/uploadimage', function (req, res) {
   });
 });
 
-router.post('/uploadcollage', function (req, res) {
+router.post('/uploadcollage', fileUploader(), function (req, res) {
   socketHelper.uploadResource({
-      req: req,
-      res: res,
+      file: req.file,
       width: 250,
       height: 250,
       type: 'collage',
@@ -66,10 +65,9 @@ router.post('/uploadcollage', function (req, res) {
   });
 });
 
-router.post('/uploadaudio', function (req, res) {
+router.post('/uploadaudio', fileUploader(), function (req, res) {
   socketHelper.uploadResource({
-      req: req,
-      res: res,
+      file: req.file,
       type: 'audio',
       resCb: uploadResourceCallback
   });

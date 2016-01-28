@@ -1,4 +1,5 @@
 'use strict';
+var fileUploader = require('./../../middleware/fileUploader.js');
 var multiparty = require('connect-multiparty');
 var multipartyMiddleware = multiparty();
 var express = require('express');
@@ -10,9 +11,12 @@ var accountManager = require('./accountManager');
 var promotionCode = require('./promotionCode');
 var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
+var survey = require('./survey');
 var chargebee = require('./chargebee');
 let topics = require('./topics');
 let topic = require('./topic');
+var gallery = require('./gallery');
+
 
 
 module.exports = router;
@@ -45,7 +49,29 @@ router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelet
 
 router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
 router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);
+router.put('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPut);
+router.get('/chargebee/subscriptions', multipartyMiddleware, chargebee.chargebeeSubscriptionGet);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
+
+router.post('/gallery', gallery.postResources);
+router.post('/gallery/uploadFile', fileUploader(), gallery.uploadResource);
+router.post('/gallery/saveYoutubeUrl', gallery.saveYoutubeResource);
+router.get('/gallery', gallery.getResources);
+router.get('/gallery/download', gallery.downloadResources);
+router.delete('/gallery', gallery.deleteResources);
+
+router.get('/chargebee/tst', multipartyMiddleware, chargebee.tstGet);
+
+router.get('/survey', survey.get);
+router.delete('/survey', survey.remove);
+router.post('/survey', survey.create);
+router.put('/survey', survey.update);
+router.post('/survey/copy', survey.copy);
+router.put('/survey/status', survey.status);
+router.get('/survey/find', survey.find);
+router.post('/survey/answer', survey.answer);
+router.put('/survey/confirm', survey.confirm);
+router.get('/survey/constants', survey.getConstants);
 
 router.get('/topics', multipartyMiddleware, topics.get);
 router.post('/topic', multipartyMiddleware, topic.post);

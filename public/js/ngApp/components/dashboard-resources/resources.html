@@ -1,49 +1,34 @@
-<section ng-controller="ResourcesController as rsc">
-    <div class='col-xs-12 col-sm-12 col-md-12'>
-        <div class='text-center remove-link-line'>
-            <div ui-sref-active="active" ui-sref="dashboard.resources.gallery" class='btn btn-dashboard-menu btn-green'>
-                <span class='pull-left'>Gallery</span>
-                <img ui-sref-active='active' class='upgrade pull-right' src='/icons/upgrade_blue.png' alt='' />
-            </div>
+<section>
+  <div class='row'>
+    <div class='col-md-12'>
+      <div class='text-center remove-link-line'>
+        <button ui-sref-active='active' ui-sref='dashboard.resources.gallery' class='btn btn-dashboard-menu btn-green'>
+          <span class='pull-left'>Gallery</span>
+          <img ui-sref-active='active' class='gallery pull-right' src='/icons/upgrade_blue.png' alt='' />
+        </button>
 
-            <div ui-sref-active="active" ui-sref="dashboard.resources.contactList" class='btn btn-dashboard-menu  btn-green' >
-                <span class='pull-left'>Contact List</span>
-                <img ui-sref-active='active' class='account-manager pull-right' src='/icons/account_manager_blue.png' alt='' />
-            </div>
+        <button ui-sref-active='active' ui-sref='dashboard.resources.contactList' class='btn btn-dashboard-menu btn-green'>
+          <span class='pull-left'>Contact List</span>
+          <img ui-sref-active='active' class='contactList pull-right' src='/icons/upgrade_blue.png' alt='' />
+        </button>
 
-            <div ui-sref-active="active" ui-sref="dashboard.resources.topics" class='btn btn-dashboard-menu  btn-green'>
-                <span class='pull-left'>Topics</span>
-                <img ui-sref-active='active' class='account-database pull-right' src='/icons/upgrade_blue.png' alt='' />
-            </div>
+        <button ui-sref-active='active' ui-sref='dashboard.resources.topics' class='btn btn-dashboard-menu btn-green'>
+          <span class='pull-left'>Topics</span>
+          <img ui-sref-active='active' class='topics pull-right' src='/icons/upgrade_blue.png' alt='' />
+        </button>
 
-            <div ui-sref-active="active" ui-sref="dashboard.resources.emailTemplates" class='btn btn-dashboard-menu  btn-green'>
-                <span class='pull-left'>EmailTemplates</span>
-                <img ui-sref-active='active' class='promotion-code pull-right' src='/icons/upgrade_blue.png' alt='' />
-            </div>
+        <button ui-sref-active='active' ui-sref='dashboard.resources.emailTemplates' class='btn btn-dashboard-menu btn-green'>
+          <span class='pull-left'>EmailTemplates</span>
+          <img ui-sref-active='active' class='emailTemplates pull-right' src='/icons/upgrade_blue.png' alt='' />
+        </button>
 
-            <div  ui-sref-active="active" ui-sref="dashboard.resources.brandColours" class='btn btn-dashboard-menu  btn-green'>
-                <span class='pull-left'>Brand Colours</span>
-                <img ui-sref-active='active' class='promotion-code pull-right' src='/icons/gallery_blue.png' alt='' />
-            </div>
-        </div>
+        <button ui-sref-active='active' ui-sref='dashboard.resources.brandColours' class='btn btn-dashboard-menu btn-green'>
+          <span class='pull-left'>Brand Colours</span>
+          <img ui-sref-active='active' class='brandColours pull-right' src='/icons/upgrade_blue.png' alt='' />
+        </button>
+      </div>
     </div>
+  </div>
 
-    <div ui-view="resourcesContent" class='row'>
-        <div class='col-md-3'></div>
-        <div class='col-md-6 dashboard-index text-center'>
-            Here you can manage your Resources.
-        </div>
-    </div>
-
-
-    <!--<div class="row row-centered">-->
-        <!--<div class='col-md-offset-1 col-md-10 сol-centered dashboard-index text-center'>-->
-
-            <!--<div ui-view="resourcesContent"></div>-->
-
-        <!--</div>-->
-
-    <!--</div>-->
-
+  <div ui-view='resourcesContent' class='row'></div>
 </section>
-

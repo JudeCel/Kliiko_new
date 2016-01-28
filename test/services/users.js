@@ -1,5 +1,5 @@
 "use strict";
-var assert = require('assert');
+var assert = require("chai").assert;
 var models  = require('./../../models');
 var User  = models.User;
 var Account  = models.Account;
@@ -32,14 +32,20 @@ describe('User Service', () => {
     it('Succsess', (done) =>  {
       UserService.create(validAttrs, function(errors, user) {
         assert.equal(errors, null);
-        assert.equal(user.firstName, validAttrs.firstName);
-        done();
+        user.getAccountUsers().then(function (results) {
+          let accountUser = results[0]
+          assert.equal(accountUser.firstName, validAttrs.firstName);
+          done();
+        })
       });
     });
 
     describe('Ceate Account',  () => {
       it('Succsess', (done) =>  {
         UserService.create(validAttrs, function(errors, result) {
+          if (errors) {
+            return done(errors);
+          }
           result.getOwnerAccount().done(function(results) {
             assert.equal(results.length, 1);
             assert.equal(results[0].name, validAttrs.accountName);
@@ -54,11 +60,14 @@ describe('User Service', () => {
         validAttrs.socialProfile = { require: true, provider: 'facebook', id: '918975494859219' }
         UserService.create(validAttrs, function(errors, user, _lastActionResult) {
           assert.equal(errors, null);
-          assert.equal(user.firstName, validAttrs.firstName);
-          assert.equal(user.getSocialProfiles().done(function(profiles) {
-            assert.equal(profiles[0].provider, validAttrs.socialProfile.provider);
-            done();
-          }));
+          user.getAccountUsers().then(function (results) {
+            let accountUser = results[0]
+            assert.equal(accountUser.firstName, validAttrs.firstName);
+            user.getSocialProfiles().done(function(profiles) {
+              assert.equal(profiles[0].provider, validAttrs.socialProfile.provider);
+              done();
+            });
+          })
         });
       });
     });
@@ -76,7 +85,7 @@ describe('User Service', () => {
         }
 
         UserService.createUser(attrs, function(err, user) {
-          assert.equal(err.errors.length, 3)
+          assert.isObject(err)
           done();
         });
       });
@@ -92,7 +101,7 @@ describe('User Service', () => {
         }
 
         UserService.createUser(attrs, function(err, user) {
-          assert.equal(err.errors.length, 1)
+          assert.isObject(err)
           done();
         });
       });

@@ -13,9 +13,12 @@ var session = require('../../middleware/session');
 var middlewareFilters = require('../../middleware/filters');
 var socialProfileMiddleware = require('../../middleware/socialProfile');
 var inviteRoutes = require('./invite.js');
+var surveyRoutes = require('./survey.js');
 var constants = require('../../util/constants');
+var appData = require('../../services/webAppData');
 
 router.use(function (req, res, next) {
+  res.locals.appData = appData;
     if (req.path == '/logout' || req.path.indexOf('invite') > -1) {
         return next();
     }
@@ -45,6 +48,9 @@ router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email
 
 router.get('/auth/facebook/callback', function(req, res, next) {
   passport.authenticate('facebook', function(err, user, info) {
+    if (err) {
+      return res.render('login', { title: 'Login', error: err.message, message: "" });
+    }
     if (user) {
       req.login(user, function(err) {
         middlewareFilters.landingPage(req, res, next);
@@ -52,7 +58,7 @@ router.get('/auth/facebook/callback', function(req, res, next) {
     }else{
       res.locals = usersRepo.prepareParams(req);
       socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
-        res.render("registration");
+        res.render("registration", {appData: res.locals, error: {}});
       }, function(err) {
         next(err);
       })
@@ -63,6 +69,9 @@ router.get('/auth/facebook/callback', function(req, res, next) {
 router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
 router.get('/auth/google/callback', function(req, res, next) {
   passport.authenticate('google', function(err, user, info) {
+    if (err) {
+      return res.render('login', { title: 'Login', error: err.message, message: "" });
+    }
     if (user) {
       req.login(user, function(err) {
         middlewareFilters.landingPage(req, res, next);
@@ -70,7 +79,7 @@ router.get('/auth/google/callback', function(req, res, next) {
     }else{
       res.locals = usersRepo.prepareParams(req);
       socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
-        res.render("registration");
+        res.render("registration", { appData: res.locals, error: {} });
       }, function(err) {
         next(err)
       });
@@ -251,5 +260,7 @@ router.route('/invite/:token').get(inviteRoutes.index);
 router.route('/invite/:token/decline').get(inviteRoutes.decline);
 router.route('/invite/:token/accept').get(inviteRoutes.acceptGet);
 router.route('/invite/:token/accept').post(inviteRoutes.acceptPost);
+
+router.route('/survey/:id').get(surveyRoutes.index);
 
 module.exports = router;
