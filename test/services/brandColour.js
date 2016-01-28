@@ -5,6 +5,7 @@ var BrandProjectPreference = models.BrandProjectPreference;
 
 var brandColourServices = require('./../../services/brandColour');
 var sessionFixture = require('./../fixtures/session');
+var brandProjectConstants = require('./../../util/brandProjectConstants');
 var assert = require('chai').assert;
 
 describe('SERVICE - BrandColour', function() {
@@ -34,30 +35,34 @@ describe('SERVICE - BrandColour', function() {
 
   function testScheme(data, params) {
     if(!params) {
-      params = {};
+      params = { colours: brandProjectConstants.preferenceColours({}) };
+    }
+    else if(!params.colours) {
+      params.colours = brandProjectConstants.preferenceColours({});
     }
 
     assert.equal(data.name, params.name || 'Default scheme');
-    assert.equal(data.colour_browser_background, params.colour_browser_background || '#def1f8');
-    assert.equal(data.colour_background, params.colour_background || '#ffffff');
-    assert.equal(data.colour_border, params.colour_border || '#e51937');
-    assert.equal(data.colour_whiteboard_background, params.colour_whiteboard_background || '#e1d8d8');
-    assert.equal(data.colour_whiteboard_border, params.colour_whiteboard_border || '#a4918b');
-    assert.equal(data.colour_whiteboard_icon_background, params.colour_whiteboard_icon_background || '#408D2F');
-    assert.equal(data.colour_whiteboard_icon_border, params.colour_whiteboard_icon_border || '#a4918b');
-    assert.equal(data.colour_menu_background, params.colour_menu_background || '#679fd2');
-    assert.equal(data.colour_menu_border, params.colour_menu_border || '#043a6b');
-    assert.equal(data.colour_icon, params.colour_icon || '#e51937');
-    assert.equal(data.colour_text, params.colour_text || '#e51937');
-    assert.equal(data.colour_label, params.colour_label || '#679fd2');
-    assert.equal(data.colour_button_background, params.colour_button_background || '#a66500');
-    assert.equal(data.colour_button_border, params.colour_button_border || '#ffc973');
+    assert.equal(data.colours.browserBackground, params.colours.browserBackground || '#FFFFFF');
+    assert.equal(data.colours.mainBackground, params.colours.mainBackground || '#FFFFFF');
+    assert.equal(data.colours.mainBorder, params.colours.mainBorder || '#F0E935');
+    assert.equal(data.colours.font, params.colours.font || '#58595B');
+    assert.equal(data.colours.headerButton, params.colours.headerButton || '#4CBFE9');
+    assert.equal(data.colours.consoleButton.active, params.colours.consoleButton.active || '#4CB649');
+    assert.equal(data.colours.participants[1], params.colours.participants[1] || '#4CB649');
+    assert.equal(data.colours.participants[2], params.colours.participants[2] || '#2F9F69');
+    assert.equal(data.colours.participants[3], params.colours.participants[3] || '#9B0E26');
+    assert.equal(data.colours.participants[4], params.colours.participants[4] || '#3F893B');
+    assert.equal(data.colours.participants[5], params.colours.participants[5] || '#7F7426');
+    assert.equal(data.colours.participants[6], params.colours.participants[6] || '#27606D');
+    assert.equal(data.colours.participants[7], params.colours.participants[7] || '#F0E935');
+    assert.equal(data.colours.participants[8], params.colours.participants[8] || '#4CBFE9');
   }
 
   describe('#findScheme', function() {
     describe('happy path', function() {
       it('should succeed on finding scheme', function (done) {
         brandColourServices.findScheme({ id: testData.preference.id }, accountParams()).then(function(result) {
+          assert.equal(result.data.accountId, accountParams().id);
           testScheme(result.data);
           done();
         }, function(error) {
@@ -94,12 +99,11 @@ describe('SERVICE - BrandColour', function() {
   describe('#createScheme', function() {
     describe('happy path', function() {
       it('should succeed on creating scheme', function (done) {
-        let attrs = sessionFixture.brandProjectPreferenceParams(testData.session.id, testData.session.brand_project_id);
         BrandProjectPreference.count().then(function(c) {
           assert.equal(c, 1);
 
-          brandColourServices.createScheme(attrs).then(function(result) {
-            testScheme(result.data);
+          brandColourServices.createScheme({}, accountParams()).then(function(result) {
+            testScheme(result.data, { name: 'untitled' });
             BrandProjectPreference.count().then(function(c) {
               assert.equal(c, 2);
               done();
@@ -110,29 +114,12 @@ describe('SERVICE - BrandColour', function() {
         });
       });
     });
-
-    describe('sad path', function() {
-      it('should fail because of wrong params', function (done) {
-        BrandProjectPreference.count().then(function(c) {
-          assert.equal(c, 1);
-
-          brandColourServices.createScheme({}).then(function(result) {
-            done('Should not get here!');
-          }, function(error) {
-            BrandProjectPreference.count().then(function(c) {
-              assert.equal(c, 1);
-              done(error);
-            });
-          });
-        });
-      });
-    });
   });
 
   describe('#updateScheme', function() {
     describe('happy path', function() {
       it('should succeed on updating scheme', function (done) {
-        let attrs = sessionFixture.brandProjectPreferenceParams(testData.session.id, testData.session.brand_project_id);
+        let attrs = sessionFixture.brandProjectPreferenceParams(accountParams().id);
         attrs.id = testData.preference.id;
         attrs.name = 'Other name';
 
@@ -148,7 +135,7 @@ describe('SERVICE - BrandColour', function() {
 
     describe('sad path', function() {
       it('should fail because not found', function (done) {
-        let attrs = sessionFixture.brandProjectPreferenceParams(testData.session.id, testData.session.brand_project_id);
+        let attrs = sessionFixture.brandProjectPreferenceParams(accountParams().id);
         attrs.id = testData.preference.id + 100;
 
         brandColourServices.updateScheme(attrs, accountParams()).then(function(result) {
@@ -160,14 +147,14 @@ describe('SERVICE - BrandColour', function() {
       });
 
       it('should fail because of wrong params', function (done) {
-        let attrs = sessionFixture.brandProjectPreferenceParams(testData.session.id, testData.session.brand_project_id);
+        let attrs = sessionFixture.brandProjectPreferenceParams(accountParams().id);
         attrs.id = testData.preference.id;
-        attrs.sessionId = null;
+        attrs.accountId = null;
 
         brandColourServices.updateScheme(attrs, accountParams()).then(function(result) {
           done('Should not get here!');
         }, function(error) {
-          assert.equal(error.sessionId, 'Session Id: cannot be empty');
+          assert.equal(error.accountId, 'Account Id: cannot be empty');
           done();
         });
       });
@@ -243,8 +230,8 @@ describe('SERVICE - BrandColour', function() {
     describe('happy path', function() {
       it('should succeed on returning fields', function (done) {
         let fields = brandColourServices.manageFields();
-        assert.equal(fields.chat[0].title, 'Browser Background');
-        assert.equal(fields.chat[0].model, 'colour_browser_background');
+        assert.equal(fields.participantsCount, 8);
+        assert.equal(fields.chatRoom.length, 6);
         done();
       });
     });

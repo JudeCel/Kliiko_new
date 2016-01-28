@@ -2,8 +2,8 @@
 
 var models = require('./../models');
 var Account = models.Account;
-var Session = models.Session;
 var BrandProjectPreference = models.BrandProjectPreference;
+
 var brandProjectConstants = require('../util/brandProjectConstants');
 
 var q = require('q');
@@ -23,7 +23,7 @@ const VALID_ATTRIBUTES = {
     'id',
     'name',
     'accountId',
-    'colors'
+    'colours'
   ]
 };
 
@@ -31,23 +31,14 @@ const VALID_ATTRIBUTES = {
 function findScheme(params, account) {
   let deferred = q.defer();
 
-  Session.find({
-    include: [{
-      model: Account,
-      where: { id: account.id }
-    }, {
-      model: BrandProjectPreference,
-      where: { id: params.id }
-    }]
-  }).then(function(session) {
-    if(session) {
-      let schemes = filterSchemesFromSessions([session]);
-      deferred.resolve(simpleParams(schemes[0]));
+  BrandProjectPreference.find({ where: { id: params.id, accountId: account.id } }).then(function(scheme) {
+    if(scheme) {
+      deferred.resolve(simpleParams(scheme));
     }
     else {
       deferred.reject(MESSAGES.notFound);
     }
-  }).catch(Session.sequelize.ValidationError, function(error) {
+  }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
   }).catch(function(error) {
     deferred.reject(error);
@@ -59,15 +50,9 @@ function findScheme(params, account) {
 function findAllSchemes(account) {
   let deferred = q.defer();
 
-  Session.findAll({
-    include: [{
-      model: Account,
-      where: { id: account.id }
-    }, BrandProjectPreference]
-  }).then(function(sessions) {
-    let schemes = filterSchemesFromSessions(sessions);
+  BrandProjectPreference.findAll({ where: { id: account.id } }).then(function(schemes) {
     deferred.resolve(simpleParams(schemes));
-  }).catch(Session.sequelize.ValidationError, function(error) {
+  }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
   }).catch(function(error) {
     deferred.reject(error);
@@ -76,9 +61,10 @@ function findAllSchemes(account) {
   return deferred.promise;
 };
 
-// Broken and untested, needs right IDs and maybe account
 function createScheme(params, account) {
   let deferred = q.defer();
+
+  params.accountId = account.id;
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
 
   BrandProjectPreference.create(validParams).then(function(result) {
@@ -117,7 +103,7 @@ function removeScheme(params, account) {
   findScheme(params, account).then(function(result) {
     result.data.destroy().then(function() {
       deferred.resolve(simpleParams(null, MESSAGES.removed));
-    }).catch(Session.sequelize.ValidationError, function(error) {
+    }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
       deferred.reject(prepareErrors(error));
     }).catch(function(error) {
       deferred.reject(error);
@@ -148,19 +134,17 @@ function copyScheme(params, account) {
 };
 
 function manageFields() {
-  let object = { chat: [], whiteboard: [], upload: [] };
+  let object = { chatRoom: [] };
 
-  _.map(VALID_ATTRIBUTES.manage, function(attr) {
-    if(_.includes(attr, 'colour_')) {
-      if(_.includes(attr, 'whiteboard')) {
-        pushToObjectArray(object, attr, 'whiteboard');
-      }
-      else if(_.includes(attr, 'button')) {
-        pushToObjectArray(object, attr, 'upload');
-      }
-      else {
-        pushToObjectArray(object, attr, 'chat');
-      }
+  _.map(brandProjectConstants.preferenceColours({}), function(value, key) {
+    if(key != 'participants') {
+      object.chatRoom.push({
+        title: _.startCase(key),
+        model: key
+      });
+    }
+    else {
+      object.participantsCount = _.size(value);
     }
   });
 
@@ -177,20 +161,10 @@ function pushToObjectArray(object, attr, type) {
 
 function validateParams(params, attributes) {
   let newParams = _.pick(params, attributes);
-  newParams.colors = brandProjectConstants.preferenceColours(newParams.colors || {});
+  newParams.colours = brandProjectConstants.preferenceColours(newParams.colours || {});
 
   return newParams;
 };
-
-function filterSchemesFromSessions(sessions) {
-  let array = [];
-
-  _.map(sessions, function(session) {
-    array = _.concat(array, session.BrandProjectPreferences);
-  });
-
-  return _.uniqBy(array, 'id');
-}
 
 function simpleParams(data, message) {
   return { data: data, message: message };
