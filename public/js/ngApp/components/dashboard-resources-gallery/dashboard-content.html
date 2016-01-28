@@ -1,18 +1,19 @@
 <section id='GalleryController' ng-controller='GalleryController'>
   <form ng-submit="submitIdsForMassAction(action)">
     <h2 class="text-center margin-top-30">Gallery</h2>
-    {{idsForAction}}
     <div class="gallery col-md-12">
-      <div class="gallery col-xs-4 col-sm-2 pull-right">
-        <button class="btn btn-addNewElement btn-green" type='button' ng-click="setView('panel')" ng-if="viewType == 'table'">
+      <div class="gallery pull-right margin-right-15">
+        <button class="btn btn-addNewElement btn-green gallery-btn-width" type='button' ng-click="setView('panel')" ng-if="viewType == 'table'">
           <span class='glyphicon glyphicon-th' aria-hidden='true'></span>   
         </button>
 
-        <button class="btn btn-addNewElement btn-green" type='button' ng-click="setView('table')" ng-if="viewType == 'panel'">
+        <button class="btn btn-addNewElement btn-green gallery-btn-width" type='button' ng-click="setView('table')" ng-if="viewType == 'panel'">
           <span class='glyphicon glyphicon-th-list' aria-hidden='true'></span>   
         </button>
 
-        <button class='btn btn-addNewElement btn-green' type='button' id='uploadResourceDropdown' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+        <button class='btn btn-addNewElement btn-green gallery-btn-width' 
+                type='button' id='uploadResourceDropdown' data-toggle='dropdown' 
+                aria-haspopup='true' aria-expanded='false'>
           <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
           Add New Resource
         </button>
@@ -57,21 +58,21 @@
           <label for="selectAll" class="margin-right-10">Select All</label>
 
           <button type='submit' ng-disabled="idsForAction == 0" 
-                  class='btn btn-addNewElement btn-green no-margin' 
+                  class='btn btn-addNewElement btn-green no-margin gallery-btn-width' 
                   ng-click="actionDelete('delete')">
             <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
           </button>
 
           <button type='submit' ng-disabled="idsForAction == 0" 
-                  class='btn btn-addNewElement btn-green no-margin' 
+                  class='btn btn-addNewElement btn-green no-margin gallery-btn-width' 
                   ng-click="actionDownload('download')">
             <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>   
           </button>
 
         </div>
         
-        <div class='col-md-6'>
-          <a class="pull-right margin-right-10 green-text" ng-click="filterBy('')">All({{getCount("")}})</a>
+        <div class='col-md-6 no-padding'>
+          <a class="pull-right green-text" ng-click="filterBy('')">All({{getCount("")}})</a>
           <a class="pull-right margin-right-10 green-text" ng-click="filterBy('image')">Images({{getCount("image")}})</a>
           <a class="pull-right margin-right-10 green-text" ng-click="filterBy('video')">Video({{getCount("video")}})</a>
           <a class="pull-right margin-right-10 green-text" ng-click="filterBy('pdf')">PDF({{getCount("pdf")}})</a>
@@ -121,13 +122,13 @@
               <td>
 
                 <button type='submit'
-                        class='btn btn-addNewElement btn-green pull-right margin-right-10' 
+                        class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' 
                         ng-click="deleteResources(resource.id)">
                   <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
                 </button>
 
                 <a type='submit' download="{{resource.JSON.matchName}}" ng-if="resource.resourceType !== 'video'"
-                        class='btn btn-addNewElement btn-green pull-right margin-right-10' 
+                        class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' 
                         href="{{'/chat_room/uploads/' + resource.JSON.name}}">
                   <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>   
                 </a>
@@ -142,15 +143,18 @@
       <div ng-if="viewType == 'panel'" ng-repeat="resource in resources | filter: { resourceType: filterType }">
         <div class="col-xs-2 col-md-4" ng-if="resource.resourceType != 'tmp'">  
           <div class="panel panel-success border-green">
-            <div class="panel-body panel-min-size">
+            <div class="panel-body">
               
-              <div ng-bind-html="renderHtml(resource.JSON.message)" ng-if="resource.JSON.type == 'video'"></div>
+              <div class="responsive-container" ng-if="resource.JSON.type == 'video'">
+                <div class="embed-responsive embed-responsive-4by3" ng-bind-html="renderHtml(resource.JSON.message)"></div>
+              </div>
+
               
               <div class="responsive-container" ng-if="resource.JSON.type == 'image' || resource.JSON.type == 'brandLogo'">
                 <div class="dummy"></div>
 
                 <div class="img-container">
-                  <img src="/chat_room/uploads/{{resource.JSON.panelThumb}}" class="center-block vertical-align"/>
+                  <img src="/chat_room/uploads/{{resource.JSON.panelThumb}}" class="center-block vertical-align img-responsive"/>
                 </div>
               </div>
             
@@ -177,23 +181,26 @@
                      value="{{resource.id}}" ng-click="resourcesSelected(resource.id)"
                      ng-checked="resource.checked" ng-model="resource.checked"/>
 
-              {{ resource.JSON.title }}
+              {{ resource.JSON.title | limitTo: 10 }}{{resource.JSON.title.length > 10 ? '...' : ''}}
 
               <button type='submit'
-                      class='btn btn-addNewElement btn-green pull-right margin-only-right-10' 
+                      class='btn btn-addNewElement btn-green pull-right margin-only-right-10 gallery-btn-width' 
                       ng-click="deleteResources(resource.id)">
                 <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
               </button>
 
               <a type='submit' download="{{resource.JSON.matchName}}" ng-if="resource.resourceType !== 'video'"
-                      class='btn btn-addNewElement btn-green margin-only-right-10 pull-right' 
+                      class='btn btn-addNewElement btn-green margin-only-right-10 pull-right gallery-btn-width' 
                       href="{{'/chat_room/uploads/' + resource.JSON.name}}">
                 <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>   
               </a>
 
-              <div class='pull-right col-md-2'>
-                <p ng-if="resource.JSON.type !== 'video'" class="uppercase">{{ resource.JSON.format }}</p> 
-                <a ng-if="resource.JSON.type == 'video'" href="{{ resource.JSON.url }}" target="_blank" class="green-text uppercase">link</a>
+              <div class='pull-right'>
+                <p ng-if="resource.JSON.type !== 'video'" class="uppercase margin-right-10">
+                  {{ resource.JSON.format }}
+                </p> 
+                <a ng-if="resource.JSON.type == 'video'" href="{{ resource.JSON.url }}" target="_blank" 
+                   class="btn green-text no-margin negative-top-margin pull-right gallery-btn-width uppercase">link</a>
               </div>
             </div>
         </div>
@@ -214,18 +221,18 @@
 
             <div class="form-group">
               <label for="title">Title</label>
-              <input ng-model="newResource.title" type="text" class="form-control center-block" name="title" id="title" placeholder="Title">
+              <input ng-model="newResource.title" type="text" class="form-control center-block" name="title" id="title" placeholder="Title" required>
             </div>
 
             <div ng-if="newResource.type == 'youtubeUrl'" class="form-group">
               <label for="youtubeUrl">Youtube Url</label>
-              <input ng-model="newResource.youtubeUrl" type="text" class="form-control center-block" name="youtubeUrl" id="youtubeUrl" placeholder="Youtube URL">
+              <input ng-model="newResource.youtubeUrl" type="text" class="form-control center-block" name="youtubeUrl" id="youtubeUrl" placeholder="Youtube URL" required>
             </div>
 
             <div ng-if="newResource.type !== 'youtubeUrl'" class="form-group">
               <label for="fileTst">File</label>
               <div ngf-drop ngf-select ng-model="newResource.fileTst" ng-change="uploadTst()" class="drop-box"
-                ngf-drag-over-class="'dragover'" >
+                ngf-drag-over-class="'dragover'">
                 Drop images here or click to upload</div>
               <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
               {{ newResource.fileTst.name }}
