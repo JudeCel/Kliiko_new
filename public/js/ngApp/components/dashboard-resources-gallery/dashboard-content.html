@@ -235,7 +235,7 @@
                 ngf-drag-over-class="'dragover'">
                 Drop images here or click to upload</div>
               <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
-              {{ newResource.fileTst.name }}
+              {{ newResource.fileTst.name | limitTo: 15 }}{{newResource.fileTst.name.length > 15 ? '...' : ''}}
             </div> 
           </div>
           <div class='modal-footer'>
