@@ -21,19 +21,18 @@ const allowedRoles = ['admin', 'accountManager', 'facilitator']
 function getAllSessions(accountId) {
   let deferred = q.defer();
 
-  Session.find({
+  Session.findAll({
     where: {accountId: accountId}
-  }).then(function(result) {
-    deferred.resolve(result)
-  })
-  .catch(function (err) {
-    deferred.reject(err);
+  }).then(function(sessions) {
+    deferred.resolve(sessions)
+  }).catch(function(error) {
+    deferred.reject(error);
   });
 
   return deferred.promise;
 }
 
-function deleteSession (sessionId, userId) {
+function deleteSession(sessionId, userId) {
   let deferred = q.defer();
   validate(userId).then(function(passed) {
     if(passed == true){

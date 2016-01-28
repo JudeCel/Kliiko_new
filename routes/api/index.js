@@ -76,7 +76,9 @@ router.post('/brandColour', brandColour.create);
 router.put('/brandColour', brandColour.update);
 router.post('/brandColour/copy', brandColour.copy);
 
-router.get('/chatSessions', chatSessions.get);
+router.get('/sessions', chatSessions.get);
+router.delete('/sessions', chatSessions.remove);
+router.post('/sessions/copy', chatSessions.copy);
 
 // Common Rules
 router.use(function (req, res, next) {

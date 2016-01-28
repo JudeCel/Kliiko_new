@@ -1,0 +1,13 @@
+.btn-grey {
+  $thisColor: #9fa99e !important; 
+  color:$thisColor;
+  border-color: $thisColor;
+  background: white !important;
+}
+
+.btn-grey:hover{
+  $thisColor: #989898 !important; 
+  color:$thisColor; 
+  border-color: $thisColor;
+  background: white !important;
+}

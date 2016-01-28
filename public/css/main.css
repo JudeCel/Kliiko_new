@@ -1364,9 +1364,16 @@ hr.survey-hr {
     padding: 10% 0;
     border: 2px solid; }
 
-/*.add-new-margin{
-  margin: 30px 0px 10px 0px !important;
-}*/
+.btn-grey {
+  color: #9fa99e !important;
+  border-color: #9fa99e !important;
+  background: white !important; }
+
+.btn-grey:hover {
+  color: #989898 !important;
+  border-color: #989898 !important;
+  background: white !important; }
+
 #dashboard #back-nav-btn {
   margin-bottom: -75px; }
 

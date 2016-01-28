@@ -15,10 +15,32 @@
 
     function initList() {
       ChatSessionsServices.getChatSessions().then(function(res) {
-        dbg.yell(res)
-        $scope.chatSessions = res.data;
+        $scope.chatSessions = res.results
       });
     }
 
+    $scope.deleteSession = function(session) {
+
+      ChatSessionsServices.deleteSession(session.id).then(function(result) {
+        if(result.error){
+          messenger.error(result.error);
+        }else{
+          var index = $scope.chatSessions.indexOf(session);
+          $scope.chatSessions.splice(index, 1);  
+          messenger.ok(result.message);
+        }
+      })
+    }
+
+    $scope.copySession = function(sessionId) {
+      ChatSessionsServices.copySession(sessionId).then(function(result) {
+        if(result.error){
+          messenger.error(result.error);
+        }else{  
+          $scope.chatSessions.push(result.session);
+          messenger.ok(result.message);
+        }
+      })
+    }
   }
 })();

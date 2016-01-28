@@ -35,49 +35,32 @@
               <th>End date</th> 
               <th>Expiration date</th> 
               <th>Status</th> 
+              <th></th> 
             </tr>
           </thead>
           
-          <tbody>
-            <tr class="active"> 
-              <th>1</th> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-            </tr>
-            <tr class="success"> 
-              <th>1</th> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-            </tr>
-            <tr class="info"> 
-              <th>1</th> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-            </tr>
-            <tr class="warning"> 
-              <th>1</th> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-            </tr>
-            <tr class="danger"> 
-              <th>1</th> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-              <td>Column content</td> 
-              <td>Column content</td> 
+          <tbody ng-repeat="session in chatSessions">
+            <tr>
+              <td>{{session.name}}</td>
+              <td>facilitator goes here</td>
+              <td>{{session.start_time}}</td>
+              <td>{{session.end_time}}</td>
+              <td>{{session.end_time}}</td>
+              <td>status goes here</td>
+              <td>
+                <a href="" class='btn btn-addNewElement btn-green pull-right margin-right-10'>
+                  <span class='glyphicon glyphicon-play'></span>   
+                </a>
+                <a class='btn btn-addNewElement btn-grey pull-right margin-right-10' ng-click="deleteSession(session)">
+                  <span class='glyphicon glyphicon-remove'></span>   
+                </a>
+                <a href="" class='btn btn-addNewElement btn-grey pull-right margin-right-10'>
+                  <span class='glyphicon glyphicon-wrench'></span>   
+                </a>
+                <a href="" class='btn btn-addNewElement btn-grey pull-right margin-right-10' ng-click="copySession(session.id)">
+                  <span class='glyphicon glyphicon-duplicate'></span>   
+                </a>
+              </td>
             </tr>
           </tbody>
 
