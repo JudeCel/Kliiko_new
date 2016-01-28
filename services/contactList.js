@@ -31,17 +31,27 @@ function destroy(contacListId, accoutId) {
   });
   return deferred.promise;
 }
-function queryList() {
-
-}
-
 function allByAccount(accountId) {
+    let selectFields =  constants.contactListDefaultFields
+    // selectFields.push([models.sequelize.fn('COUNT', models.sequelize.col('ContactListUsers.AccountUser.Invites.id')), 'Invites'])
+    console.log(selectFields);
     let deferred = q.defer();
     ContactList.findAll({where: { accountId: accountId },
-      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable', 'participantsFields'],
+      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable', 'participantsFields' ],
+      group: [
+        "ContactList.id",
+        "ContactListUsers.id",
+        "ContactListUsers.AccountUser.id",
+        "ContactListUsers.AccountUser.Invites.id" ],
       include: [{
         model: models.ContactListUser, attributes: ['id', 'customFields'],
-        include: [{model: models.AccountUser, attributes: constants.contactListDefaultFields }],
+        include: [{
+          model: models.AccountUser,
+          attributes: selectFields,
+          include: [{
+            model: models.Invite
+          }]
+        }],
         order: ['position']
       }]
     }).then(function(results) {
@@ -52,7 +62,6 @@ function allByAccount(accountId) {
     });
     return deferred.promise;
 }
-
 
 function prepareData(lists) {
   let collection = [];
@@ -67,6 +76,7 @@ function prepareData(lists) {
       name: list.name,
       membersCount: list.ContactListUsers.length,
       members: _.map(list.ContactListUsers, (listUser) => {
+        console.log(listUser);
         return new ContactListUser(
           list.defaultFields,
           list.customFields,

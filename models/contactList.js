@@ -15,7 +15,9 @@ module.exports = (Sequelize, DataTypes) => {
       defaultValue: constants.contactListDefaultFields
     },
     participantsFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false,
-      defaultValue: ['inviteCount']
+      defaultValue: [
+      'Invites', 'Confirmation', 'NotThisTime', 'NotAtAll', 'NoReply', 'Future',
+      'LastSession', 'Comment']
     },
     customFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false, defaultValue: [] }
   },{ indexes: [
