@@ -130,16 +130,16 @@
       ///////////////////////// Sessions
       .state('dashboard.chatSession', {
         url: "/chatSession",
-        onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location) {
+        onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location, banners) {
           dbg.rs('chatSession');
 
           $stateParams.bannerType = 'sessions';
 
           banners.setMainBannerForPage('sessions');
 
-          setTimeout(function () {
-            if ($state.current.name == 'dashboard.chatSession') $state.go('dashboard.chatSession');
-          }, 10);
+          //setTimeout(function () {
+          //  if ($state.current.name == 'dashboard.chatSession') $state.go('dashboard.chatSession');
+          //}, 10);
 
         }],
         views: {
