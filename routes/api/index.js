@@ -13,7 +13,6 @@ var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
 var survey = require('./survey');
 var chargebee = require('./chargebee');
-let topics = require('./topics');
 let topic = require('./topic');
 var gallery = require('./gallery');
 
@@ -22,10 +21,9 @@ var gallery = require('./gallery');
 module.exports = router;
 
 // Main Routes
-router.route('/user').
-  get( userRoutes.userGet).
-  post(userRoutes.userPost).
-  put(userRoutes.changePassword);
+router.get('/user', userRoutes.userGet);
+router.post('/user',userRoutes.userPost);
+router.put('/user',userRoutes.changePassword);
 
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
 
@@ -73,15 +71,11 @@ router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', survey.confirm);
 router.get('/survey/constants', survey.getConstants);
 
-router.get('/topics', multipartyMiddleware, topics.get);
+router.get('/topics', multipartyMiddleware, topic.get);
 router.post('/topic', multipartyMiddleware, topic.post);
-router.put('/topic/:id', multipartyMiddleware, topic.updateTopicById);
+router.put('/topic/:id',multipartyMiddleware, topic.updateById);
 router.delete('/topic/:id', multipartyMiddleware, topic.deleteById);
 
-router.route('/topic/:id').
-  post(multipartyMiddleware, topic.copyTopicById).
-  put(multipartyMiddleware, topic.updateTopicById).
-  delete(multipartyMiddleware, topic.deleteById);
 
 // Common Rules
 router.use(function (req, res, next) {

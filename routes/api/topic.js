@@ -3,11 +3,20 @@ let q = require('q');
 let topicsService = require('./../../services/topics');
 
 module.exports = {
+  get: getAll,
   post: post,
   deleteById: deleteById,
-  copyTopicById: copyTopicById,
-  updateTopicById: updateTopicById
+  updateById: updateById
 };
+
+function getAll(req, res, next) {
+  let accountId = res.locals.currentDomain.id;
+  topicsService.getAll(accountId).then(
+    function(response) { res.send(response)},
+    function(error) { res.send({error:error})}
+  );
+}
+
 
 
 function post(req, res, next) {
@@ -37,11 +46,7 @@ function deleteById(req, res, next) {
 
 }
 
-function copyTopicById(req, res) {
-  res.send('here we are')
-}
-
-function updateTopicById(req, res) {
+function updateById(req, res) {
   if (!req.params.id) {
     res.send({error: '@id query param is missed'});
     return
