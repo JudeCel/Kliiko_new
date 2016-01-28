@@ -66,6 +66,7 @@ function update(req, res, next) {
 //    id: INTEGER/required => 1
 //  }
 //
+
 function destroy(req, res, next) {
   if (!req.params.id) { res.send('query param @id is missed'); return }
 
@@ -75,4 +76,14 @@ function destroy(req, res, next) {
   },function(err) {
     res.send({ error: err });
   });
+}
+
+function import(req, res, next) {
+  let contactListId = req.params.id;
+  let file = req.file;
+  contactListService.parseFile(contactListId, file.path).then(function(result) {
+    res.send({success: true, result: result});
+  }, function(err) {
+    res.send({ error: err });
+  })
 }

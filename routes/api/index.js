@@ -76,6 +76,7 @@ router.get('/survey/constants', survey.getConstants);
 // contact List
 router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
 router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
+router.post('/contactList/:id/import', policy.authorized(['accountManager', 'admin']), fileUploader(),contactList.import);
 router.put('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.update);
 router.delete('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.destroy);
 

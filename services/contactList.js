@@ -32,7 +32,7 @@ function destroy(contacListId, accoutId) {
   return deferred.promise;
 }
 function allByAccount(accountId) {
-    let selectFields =  constants.contactListDefaultFields
+    let selectFields =  constants.contactListDefaultFields.concat('id')
     // selectFields.push([models.sequelize.fn('COUNT', models.sequelize.col('ContactListUsers.AccountUser.Invites.id')), 'Invites'])
     console.log(selectFields);
     let deferred = q.defer();
@@ -143,11 +143,15 @@ function parseFile(id, filePath) {
           return value.email;
         });
 
-        if(path.extname(filePath) == '.csv') {
-          parseCsv(emails, deferred, contactList, filePath);
-        }
-        else {
-          parseXls(emails, deferred, contactList, filePath);
+        switch (path.extname(filePath)) {
+          case '.csv':
+            parseCsv(emails, deferred, contactList, filePath);
+            break;
+          case '.xls':
+            parseXls(emails, deferred, contactList, filePath);
+            break;
+          default:
+            deferred.reject("Wrong file format: " + path.extname(filePath) + "!");
         }
       }).catch(models.User.sequelize.ValidationError, function(error) {
         deferred.reject(error);
