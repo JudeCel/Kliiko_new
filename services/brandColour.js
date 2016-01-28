@@ -4,6 +4,7 @@ var models = require('./../models');
 var Account = models.Account;
 var Session = models.Session;
 var BrandProjectPreference = models.BrandProjectPreference;
+var brandProjectConstants = require('../util/brandProjectConstants');
 
 var q = require('q');
 var _ = require('lodash');
@@ -21,22 +22,8 @@ const VALID_ATTRIBUTES = {
   manage: [
     'id',
     'name',
-    'sessionId',
-    'brand_project_id',
-    'colour_browser_background',
-    'colour_background',
-    'colour_border',
-    'colour_whiteboard_background',
-    'colour_whiteboard_border',
-    'colour_whiteboard_icon_background',
-    'colour_whiteboard_icon_border',
-    'colour_menu_background',
-    'colour_menu_border',
-    'colour_icon',
-    'colour_text',
-    'colour_label',
-    'colour_button_background',
-    'colour_button_border'
+    'accountId',
+    'colors'
   ]
 };
 
@@ -93,9 +80,6 @@ function findAllSchemes(account) {
 function createScheme(params, account) {
   let deferred = q.defer();
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
-
-  validParams.sessionId = 1;
-  validParams.brand_project_id = 1;
 
   BrandProjectPreference.create(validParams).then(function(result) {
     deferred.resolve(simpleParams(result, MESSAGES.created));
@@ -192,19 +176,10 @@ function pushToObjectArray(object, attr, type) {
 }
 
 function validateParams(params, attributes) {
-  if(_.isObject(params.SurveyQuestions)) {
-    let array = [];
-    _.map(params.SurveyQuestions, function(n) {
-      array.push(n);
-    });
-    params.SurveyQuestions = array;
-  }
+  let newParams = _.pick(params, attributes);
+  newParams.colors = brandProjectConstants.preferenceColours(newParams.colors || {});
 
-  params.SurveyQuestions = _.remove(params.SurveyQuestions, function(n) {
-    return _.isObject(n);
-  });
-
-  return _.pick(params, attributes);
+  return newParams;
 };
 
 function filterSchemesFromSessions(sessions) {

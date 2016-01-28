@@ -33,7 +33,6 @@ var userlist = [{
 let createNewChatFunctionList = [
   (cb) => {createSession(cb)},
   crateBrandProject,
-  addBrandProjectPreferences,
   createTopic,
   addSessionMembers
 ]
@@ -66,19 +65,6 @@ function crateBrandProject(session, callback) {
   });
 };
 
-
-function addBrandProjectPreferences(session, brandProject, callback) {
-  let attrs = brandProjectPreferenceParams(session.id, brandProject.id);
-
-  BrandProjectPreference.create(attrs)
-  .then(function (_result) {
-    callback(null, session, brandProject);
-  })
-  .catch(function (error) {
-    callback(error);
-  });
-}
-
 function createTopic(session, brandProject, callback) {
   session.createTopic({ name: "Cool Topic" })
   .then(function (_result) {
@@ -101,7 +87,14 @@ function addSessionMembers(erorr, session, callback) {
           }]
         }).then(function(account) {
           account.addSession(session);
-          addSessionMember(user, session,'facilitator', 'Cool first user', cb);
+          addBrandProjectPreferences(session, account, function(error) {
+            if(error) {
+              cb(error);
+            }
+            else {
+              addSessionMember(user, session,'facilitator', 'Cool first user', cb);
+            }
+          })
         })
       })
     },
@@ -114,6 +107,17 @@ function addSessionMembers(erorr, session, callback) {
   ],
     function(err, results) {
       callback(err, results);
+  });
+}
+
+function addBrandProjectPreferences(session, account, callback) {
+  let attrs = brandProjectPreferenceParams(account.id);
+
+  BrandProjectPreference.create(attrs).then(function(result) {
+    result.setSession(session);
+    callback(null);
+  }).catch(function (error) {
+    callback(error);
   });
 }
 
@@ -147,7 +151,14 @@ function createChat() {
           include: [models.User]
         }, BrandProjectPreference]
       }).then(function(session) {
-        deferred.resolve({ session: session, account: session.Account, user: session.Account.Users[0], preference: session.BrandProjectPreferences[0] });
+        let returnParams = {
+          session: session,
+          account: session.Account,
+          user: session.Account.Users[0],
+          preference: session.BrandProjectPreference
+        };
+
+        deferred.resolve(returnParams);
       });
     }
   });
@@ -155,11 +166,10 @@ function createChat() {
   return deferred.promise;
 };
 
-function brandProjectPreferenceParams(sessionId, brandProjectId) {
+function brandProjectPreferenceParams(accountId) {
   return {
     name: 'Default scheme',
-    sessionId: sessionId,
-    brand_project_id: brandProjectId
+    accountId: accountId
   };
 }
 
