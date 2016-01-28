@@ -21,14 +21,15 @@ const allowedRoles = ['admin', 'accountManager', 'facilitator']
 function getAllSessions(accountId) {
   let deferred = q.defer();
 
-  Session.findAll({
-    accountId: accountId
+  Session.find({
+    where: {accountId: accountId}
   }).then(function(result) {
     deferred.resolve(result)
   })
   .catch(function (err) {
     deferred.reject(err);
   });
+
   return deferred.promise;
 }
 

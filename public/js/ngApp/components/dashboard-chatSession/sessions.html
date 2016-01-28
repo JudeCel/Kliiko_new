@@ -1,17 +1,88 @@
-<section>
+<section ng-controller='ChatSessionsController'>
   <div class='row'>
     <div class='col-md-12'>
-      <div class='text-center remove-link-line'>
+      <!-- <div class='text-center remove-link-line'>
         <button ui-sref-active='active' ui-sref='dashboard.resources.sessions' class='btn btn-dashboard-menu btn-green'>
           <span class='pull-left'>Sessions</span>
           <img ui-sref-active='active' class='gallery pull-right' src='/icons/upgrade_blue.png' alt='' />
         </button>
-      </div>
+      </div> -->
     </div>
   </div>
 
   <div ui-view='resourcesContent' class='row'>
-    
-    dsfdrfgregrefrefregregreregregrereg
+    <div class='col-md-12'>
+      <div class='col-md-4'>
+      </div>
+      <div class='col-md-4'>
+        <h2 class="text-center margin-top-30">
+          Chate Sessions
+        </h2>
+      </div>
+      <div class='col-md-4'>
+        <a href="" class="pull-right btn btn-addNewElement btn-green">Build new session</a>
+      </div>
+    </div>
+    <div class='col-md-12'>
+      <div class='col-md-12'>
+        <table class="table table-dashboardElements">
+          
+          <thead>
+            <tr class="green-background"> 
+              <th>Name</th> 
+              <th>Facilitator</th> 
+              <th>Start date</th> 
+              <th>End date</th> 
+              <th>Expiration date</th> 
+              <th>Status</th> 
+            </tr>
+          </thead>
+          
+          <tbody>
+            <tr class="active"> 
+              <th>1</th> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+            </tr>
+            <tr class="success"> 
+              <th>1</th> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+            </tr>
+            <tr class="info"> 
+              <th>1</th> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+            </tr>
+            <tr class="warning"> 
+              <th>1</th> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+            </tr>
+            <tr class="danger"> 
+              <th>1</th> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+              <td>Column content</td> 
+            </tr>
+          </tbody>
+
+        </table>
+      </div>  
+    </div>
   </div>
 </section>

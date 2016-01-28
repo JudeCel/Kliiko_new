@@ -1364,6 +1364,9 @@ hr.survey-hr {
     padding: 10% 0;
     border: 2px solid; }
 
+/*.add-new-margin{
+  margin: 30px 0px 10px 0px !important;
+}*/
 #dashboard #back-nav-btn {
   margin-bottom: -75px; }
 

@@ -15,6 +15,7 @@ var survey = require('./survey');
 var chargebee = require('./chargebee');
 var gallery = require('./gallery');
 var brandColour = require('./brandColour');
+var chatSessions = require('./chatSessions');
 
 
 module.exports = router;
@@ -74,6 +75,8 @@ router.delete('/brandColour', brandColour.remove);
 router.post('/brandColour', brandColour.create);
 router.put('/brandColour', brandColour.update);
 router.post('/brandColour/copy', brandColour.copy);
+
+router.get('/chatSessions', chatSessions.get);
 
 // Common Rules
 router.use(function (req, res, next) {
