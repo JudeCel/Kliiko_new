@@ -12,7 +12,6 @@
     </div>
   </div>
 
-
   <div class='col-md-12 fixed-bottom-margin'>
     <div class='dashboard-container'>
 
@@ -49,7 +48,11 @@
               </div>
             </span>
 
-            <div class='btn-standart btn-green pull-right' ng-click="clc.contactAddEditClickHandle('new')" ng-hide="!clc.selectedListMembers.length">Add Contacts</div>
+            <div custom-select-directive data-title="Add Contacts" class="custom-select-directive">
+              <li><a href="#"><i class="icon-remove"></i>Log out</a></li>
+              <li><a href="#"><i class="icon-remove"></i>Log 5out</a></li>
+            </div>
+            <!--<div class='btn-standart btn-green pull-right' ng-click="clc.contactAddEditClickHandle('new')" ng-hide="!clc.selectedListMembers.length">Add Contacts</div>-->
             <div class='btn-standart btn-green pull-right' ng-click='clc.editCustomFields()' ng-hide="!clc.selectedListMembers.length">Edit Custom Fields</div>
 
           </div>

@@ -1,16 +1,136 @@
 <div class="ng-custom-select">
-    <div class="ncs-select">
-        <div class="ncs-input-field" ng-click="toggle = !toggle">
-            {{selectedValue}}
-        </div>
-        <div class="ncs-arrow-bnt" ng-click="toggle = !toggle"><i
-                class="pull-right glyphicon glyphicon-chevron-down"></i></div>
-        <div class="ncs-content" ng-show="toggle">
-
-            <div ng-transclude></div>
-
-        </div>
+    <div id="dd" class="btn-standart btn-green wrapper-dropdown-cd" tabindex="1">{{ title }}
+        <ul class="dropdown" ng-transclude>
+        </ul>
     </div>
-
 </div>
+
+<!----------------->
+<style>
+    .custom-select-directive {
+        display: inline-block;
+    }
+    .wrapper-dropdown-cd {
+        /* Size & position */
+        display: inline-block !important;
+        position: relative;
+        width: 200px;
+        margin: 0 auto;
+        padding: 12px 15px;
+
+        /* Styles */
+        background: #fff;
+        box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+        cursor: pointer;
+        outline: none;
+        transition: all 0.3s ease-out;
+    }
+
+    .wrapper-dropdown-cd:after { /* Little arrow */
+        content: "";
+        width: 0;
+        height: 0;
+        position: absolute;
+        top: 50%;
+        right: 15px;
+        margin-top: -3px;
+        border-width: 6px 6px 0 6px;
+        border-style: solid;
+        border-color: #4cbeff transparent;
+    }
+    .wrapper-dropdown-cd .dropdown {
+        /* Size & position */
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+
+        /* Styles */
+        background: #fff;
+        border: 2px solid rgba(0,0,0,0.2);
+        border-top: none;
+        border-bottom: none;
+        list-style: none;
+        transition: all 0.3s ease-out;
+
+        /* Hiding */
+        max-height: 0;
+        overflow: hidden;
+    }
+
+    .wrapper-dropdown-cd ul.dropdown { z-index: 3000}
+
+    .wrapper-dropdown-cd .dropdown li {
+        /*padding: 0 10px ;*/
+    }
+
+    .wrapper-dropdown-cd .dropdown li a {
+        display: block;
+        text-decoration: none;
+        color: #333;
+        padding: 10px 0;
+        transition: all 0.3s ease-out;
+    }
+
+    .wrapper-dropdown-cd .dropdown li:last-of-type a {
+        border: none;
+    }
+
+    .wrapper-dropdown-cd .dropdown li i {
+        margin-right: 5px;
+        color: inherit;
+        vertical-align: middle;
+    }
+
+    /* Hover state */
+
+    .wrapper-dropdown-cd .dropdown li:hover a {
+        color: #57a9d9;
+    }
+    /* Active state */
+
+    .wrapper-dropdown-cd.active {
+        background: #4cbeff;
+        box-shadow: none;
+        border-bottom: none;
+        color: white;
+    }
+
+    .wrapper-dropdown-cd.active:after {
+        border-color: #2F9F69;
+    }
+
+    .wrapper-dropdown-cd.active .dropdown {
+        border-bottom: 2px solid rgba(0,0,0,0.2);
+        max-height: 400px;
+    }
+</style>
+<script>
+    function DropDown(el) {
+        this.dd = el;
+        this.initEvents();
+    }
+    DropDown.prototype = {
+        initEvents : function() {
+            var obj = this;
+
+            obj.dd.on('click', function(event){
+                $(this).toggleClass('active');
+                event.stopPropagation();
+            });
+        }
+    };
+
+    $(function() {
+
+        var dd = new DropDown( $('#dd') );
+
+        $(document).click(function() {
+            // all dropdowns
+            $('.wrapper-dropdown-cd').removeClass('active');
+        });
+
+    });
+</script>
+
 
