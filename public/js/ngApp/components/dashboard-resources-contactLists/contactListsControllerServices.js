@@ -18,6 +18,7 @@
     publicServices.addNewList = addNewList;
     publicServices.updateList = updateList;
     publicServices.getListCustomFields = getListCustomFields;
+    publicServices.addNewUserToList = addNewUserToList;
 
     return publicServices;
 
@@ -174,6 +175,15 @@
     function getListCustomFields() {
       if (lists[activeListIndex].customFields) return listCustomFields = lists[activeListIndex].customFields;
       return [];
+    }
+
+    function addNewUserToList(listId, newContact) {
+      for (var i = 0, len = lists.length; i < len ; i++) {
+        if (lists[i].id == listId) {
+          if (!lists[i].Members) lists[i].Members = [];
+          lists[i].Members.push(newContact);
+        }
+      }
     }
 
 

@@ -53,18 +53,6 @@
         listItemClickHandle(vm.activeListIndex);
       });
 
-      ///////
-      //contactListServices.getContactLists().then(function (result) {
-      //  vm.lists = $filter('orderBy')(result, 'id');
-      //  if (vm.lists.length) {
-      //    // show first list content
-      //    vm.activeListIndex = 0;
-      //    vm.selectedListMembers = vm.lists[vm.activeListIndex].members;
-      //
-      //
-      //    prepareSelectedList();
-      //  }
-      //});
     }
 
 
@@ -90,9 +78,6 @@
       vm.activeListIndex = cls.currentListIndex(index);
       vm.selectedListMembers = cls.getListMembers();
       vm.listCustomFields = cls.getListCustomFields();
-      //vm.selectedListMembers = vm.lists[vm.activeListIndex].members;
-      //
-      //prepareSelectedList();
     }
 
     /**
@@ -165,7 +150,8 @@
 
           if (!vm.selectedListMembers) vm.selectedListMembers = [];
           vm.selectedListMembers.push(newContact);
-          prepareSelectedList();
+
+          cls.addNewUserToList(currentList.id, newContact);
 
           for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
             if (vm.selectedListMembers[i].CustomFieldsObject && vm.lists[vm.activeListIndex].members) {
@@ -368,13 +354,9 @@
      */
     function checkCustomFields(number) {
       var value = vm.newList['customField'+number];
-
+      debugger
       vm.newListErrorMessage = null;
       vm.newListError = {};
-
-
-      //var allFields = angular.copy(vm.newList);
-      //delete allFields['customField'+number];
 
       var allFields = [];
       var cf = [];
@@ -385,7 +367,6 @@
       allFields = Object.keys(vm.lists[vm.activeListIndex]);
       allFields = allFields.concat(cf, df);
 
-
       for (var i = 0, len = allFields.length; i < len ; i++) {
         if (allFields[i] == value) {
 
@@ -393,14 +374,6 @@
           vm. newListErrorMessage = 'Name should be unique'
         }
       }
-
-
-      //for (var key in allFields) {
-      //  if (allFields[key] == value) {
-      //    vm.newListError[number] = true;
-      //    vm. newListErrorMessage = 'Name should be unique'
-      //  }
-      //}
     }
 
     /**
@@ -539,7 +512,7 @@
             messenger.error('There is an error while removing the list');
             return;
           }
-
+          delete localStorage['tableData'+list.id];
           //delete from view
           vm.lists.splice(vm.activeListIndex, 1);
 

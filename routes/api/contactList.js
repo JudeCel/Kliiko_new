@@ -1,5 +1,6 @@
 'use strict';
 var contactListService = require('../../services/contactList');
+var _ = require('lodash');
 
 module.exports = {
   index: index,
@@ -27,6 +28,8 @@ function index(req, res, next) {
 function create(req, res, next) {
   if (!req.body.name) {  res.send({ error: 'Body param @name {string} is required' }); return }
   if (!req.body.customFields) {  res.send({ error: 'Body param @customFields {array} is required' }); return }
+
+  req.body.customFields = _.uniq(req.body.customFields);
 
   let params = req.body;
   params.accountId = res.locals.currentDomain.id;
