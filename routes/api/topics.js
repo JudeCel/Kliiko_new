@@ -8,7 +8,8 @@ module.exports = {
 
 
 function get(req, res, next) {
-  topicsService.getAllTopic().then(
+  let accountId = res.locals.currentDomain.id;
+  topicsService.getAll(accountId).then(
     function(response) { res.send(response)},
     function(error) { res.send({error:error})}
   );
