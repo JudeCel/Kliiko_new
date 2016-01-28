@@ -188,5 +188,6 @@ module.exports = {
   createChat: createChat,
   brandProjectPreferenceParams: brandProjectPreferenceParams,
   brandProjectParams: brandProjectParams,
-  sessionParams: sessionParams
+  sessionParams: sessionParams,
+  addSessionMember: addSessionMember
 };

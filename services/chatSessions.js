@@ -7,14 +7,16 @@ var User  = models.User;
 var q = require('q');
 var _ = require('lodash');
 var async = require('async');
+var policy = require('./../middleware/policy.js');
 
-const MESSAGES = {
+const messages = {
   removed: 'Session sucessfully deleted.',
   notFound: 'Session not fount.',
   duplicated: 'Session was successfully duplicated.',
   youDontHaveAccess: "You don't have access, to do this action."
 };
 
+const allowedRoles = ['admin', 'accountManager', 'facilitator']
 
 function getAllSessions(accountId) {
   let deferred = q.defer();
@@ -30,16 +32,16 @@ function getAllSessions(accountId) {
   return deferred.promise;
 }
 
-function deleteSession (sessionId, accountId, userId) {
+function deleteSession (sessionId, userId) {
   let deferred = q.defer();
-  validate(accountId, userId, function (error, passed) {
+  validate(userId).then(function(passed) {
     if(passed == true){
       Session.destroy({ where: { id: sessionId} }).then(function(result) {
         if(result > 0) {
-          deferred.resolve(MESSAGES.removed);
+          deferred.resolve(messages.removed);
         }
         else {
-          deferred.reject(MESSAGES.notFound);
+          deferred.reject(messages.notFound);
         }
       }).catch(Session.sequelize.ValidationError, function(error) {
         deferred.reject(error);
@@ -47,88 +49,67 @@ function deleteSession (sessionId, accountId, userId) {
         deferred.reject(error);
       });
     }else{
-      deferred.reject(error);
+      deferred.reject(messages.youDontHaveAccess);
     }
+  }, function(error) {
+    deferred.reject(error);
   })
 
   return deferred.promise;
 }
 
-function copySession(sessionId) {
+function copySession(sessionId, userId) {
+  let deferred = q.defer();
+  validate(userId).then(function(passed) {
+    if(passed == true){
+      Session.find({
+        id: sessionId
+      }).then(function(result) {
+        delete result.dataValues["id"];
+        Session.create(result.dataValues).then(function(dupRresult) {
+          deferred.resolve({session: dupRresult, message: messages.duplicated});
+        })
+        .catch(function (err) {
+          deferred.reject(err);
+        });
+      })
+      .catch(function (err) {
+        deferred.reject(err);
+      });
+    }else{
+      deferred.reject(messages.youDontHaveAccess);
+    }
+  }, function(error) {
+    deferred.reject(error);
+  })
+  
+  return deferred.promise;
+}
+
+function validate(userId) { 
+  let deferred = q.defer();
+  findAccountUser(userId).then(function(accountUser) {
+    deferred.resolve(policy.hasAccess(accountUser.role, allowedRoles));
+  }, function(error) {
+    deferred.reject(error);
+  })
+
+  return deferred.promise;
+}
+
+function findAccountUser(userId) {
   let deferred = q.defer();
 
-  Session.find({
-    id: sessionId
+  AccountUser.find({
+    userId: userId
   }).then(function(result) {
-    delete result.dataValues["id"];
-    Session.create(result.dataValues).then(function(dupRresult) {
-      deferred.resolve({session: dupRresult, message: MESSAGES.duplicated});
-    })
-    .catch(function (err) {
-      deferred.reject(err);
-    });
+    deferred.resolve(result);
   })
-  .catch(function (err) {
-    deferred.reject(err);
-  });
+  .catch(function(error) {
+    deferred.reject(error);
+  })
+
   return deferred.promise;
-}
-
-function validate(accountId, userId, callback) { 
-  async.parallel({
-    isAccountManager: function(callback) {
-      isAccountManager(accountId, userId, callback);
-    },
-    isFacilitator: function(callback) {
-      isFacilitator(userId, callback);
-    },
-    idAdmin: function(callback) {
-      isAdmin(userId, callback);
-    }
-  }, function(err, result) {
-    console.log("#######################");
-    console.log(result);
-    console.log("#######################");
-    if(result.isAccountManager == true || result.isFacilitator == true || result.isAdmin == true){
-      callback(null, true)
-    }else{
-      callback(MESSAGES.youDontHaveAccess)
-    }
-  });
-}
-
-function isAccountManager(accountId, userId, callback) {
-  getAllAccountManagerIds(accountId, function(ids) {
-    if (ids.indexOf(userId) > -1) {
-      callback(null, true)
-    } else {
-      callback(false)   
-    }
-  });
-}
-
-
-function isFacilitator(userId, callback) {
-  callback(null, true)
-}
-
-function isAdmin(userId, callback) {
-  callback(null, true)
-}
-
-function getAllAccountManagerIds(accountId, callback) {
-  AccountUser.findAll({
-    where: {
-      AccountId: accountId, 
-      role: 'accountManager'
-    }
-  }).then(function(accountManagers) {
-    let ids = [];
-    _.forEach(accountManagers, function(accountManager) {
-      ids.push(accountManager.id);
-    });
-    callback(ids);
-  })
 }
 
 module.exports = {

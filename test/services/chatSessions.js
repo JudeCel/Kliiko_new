@@ -9,7 +9,7 @@ var assert = require('chai').assert;
 
 
 describe('SERVICE - ChatSessions', function() {
-  var testUser = null;
+  var memberUser = null;
   var testAccount = null;
   var testSession = null;
 
@@ -27,7 +27,10 @@ describe('SERVICE - ChatSessions', function() {
       sessionFixture.createChat().then(function(result) {
         testSession = result.session;
         testAccount = result.account
-        done();
+        usersServices.create(attrs, function(errors, user) {
+          memberUser = user;
+          done();
+        });
       });
     });
   });
@@ -77,10 +80,8 @@ describe('SERVICE - ChatSessions', function() {
   })
 
   describe('Delete session', function() {
-    it.only("happy path", function(done) {
-      let user = {id: 1}
-
-      ChatSessions.deleteSession(testSession.id, testAccount.id, user.id).then(function(result) {
+    it("happy path", function(done) {
+      ChatSessions.deleteSession(testSession.id, user.id).then(function(result) {
         assert.equal(result, 'Session sucessfully deleted.')
         done();
       }, function(error) {
@@ -88,11 +89,12 @@ describe('SERVICE - ChatSessions', function() {
       })
     })
 
-    it("sad path", function(done) {
-      ChatSessions.deleteSession(testSession.id).then(function(result) {
+    it.only("sad path", function(done) {
+      ChatSessions.deleteSession(testSession.id, memberUser).then(function(result) {
         done('Should not get here!');
       }, function(error) {
-        done("TODO");
+        console.log(result)
+        done();
       })
     })
   })
