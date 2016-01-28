@@ -6,12 +6,13 @@ describe('Data Wrappers -> ContactListUser', () => {
   describe('new',  ()=>  {
     let defaultValue = ['firstName', 'lastName'];
     let visibleFields = ['id', 'lastName'];
-    let participantsFields = ['inviteCount'];
+    let participantsFields = ['Invites'];
     let customFields = ['mobile'];
     let data = {
       id: 2,
       customFields: { mobile: "1234556" },
       AccountUser: {
+        Invites: 4,
         firstName: "Dainis",
       }
     }
@@ -26,7 +27,7 @@ describe('Data Wrappers -> ContactListUser', () => {
 
     it("assigne values", () =>{
       assert.equal(instance.firstName, data.AccountUser.firstName);
-      assert.equal(instance.inviteCount, 4);
+      assert.equal(instance.Invites,  data.AccountUser.Invites);
       assert.equal(instance.lastName, data.AccountUser.lastName);
       assert.equal(instance.mobile, data.customFields.mobile);
       assert.equal(instance.id, data.id);

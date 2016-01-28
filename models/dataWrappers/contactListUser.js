@@ -3,37 +3,31 @@ var _ = require('lodash');
 
 var ContactListUser = class ContactListUser {
   constructor(defaultFields, customFields, participantsFields, visibleFields,  data) {
-    this.defaultFields = defaultFields
-    this.customFields = customFields;
-    this.visibleFields = visibleFields;
-    this.participantsFields = participantsFields;
-    this.data = data;
-    this.mapFields();
-    this.assignId();
-    this.assignParticipantsFields();
+    this.mapFields(defaultFields, customFields, participantsFields, data);
+    this.assignId(data);
   }
 
-  mapFields() {
-    this.assignValues(this.defaultFields);
-    this.assignValues(this.customFields);
+  mapFields(defaultFields, customFields, participantsFields, data) {
+    this.assignValues(defaultFields, data);
+    this.assignValues(customFields, data);
+    this.assignValues(participantsFields, data)
   }
 
-  assignParticipantsFields(){
-    // TODO: Need make iterator This is only example
-    this.inviteCount = 4;
+  assignId(data){
+    this.id = data.id;
   }
-
-  assignId(){
-    this.id = this.data.id;
-  }
-  assignValues(fieldsList){
+  assignValues(fieldsList, data){
     _.map(fieldsList, (e) => {
-      this[e] = this.findValueInData(e);
+      this[e] = this.findValueInData(e, data);
     });
   }
 
-  findValueInData(value){
-    return (this.data.AccountUser[value] || this.data.customFields[value]);
+  findValueInData(value, data){
+    if (data.AccountUser) {
+      return (data.AccountUser[value] || data.customFields[value]);
+    }else {
+      return data.customFields[value]
+    }
   }
 }
 
