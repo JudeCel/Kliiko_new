@@ -24,6 +24,8 @@
     vm.templateToDelete;
     vm.newResource = {};
     
+    var showSystemMail = $stateParams.systemMail;
+    
     vm.init = function () {
       vm.emailTemplates = vm.emailTemplates.concat(vm.constantEmailTemplates);
       $('#templateContent').wysiwyg({
@@ -143,7 +145,7 @@
     }
     
     function refreshTemplateList(callback) {
-      mailTemplate.getAllMailTemplates().then(function (res) {
+      mailTemplate.getAllMailTemplates(showSystemMail).then(function (res) {
         vm.emailTemplates = res.templates.sort(function(a, b){return a.id-b.id});;
         
         if (vm.emailTemplates && vm.emailTemplates.length && vm.currentTemplate == -1) {

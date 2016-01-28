@@ -10,7 +10,8 @@ var originalTemplateFields = [
     'id',
     'name',
     'subject',
-    'content'
+    'content',
+    'systemMessage'
 ];
 
 var templateFields = [
@@ -19,14 +20,16 @@ var templateFields = [
     'subject',
     'content',
     'MailTemplateBaseId',
-    'UserId'
+    'UserId',
+    'systemMessage'
 ];
 
 var templateFieldsForList = [
     'id',
     'name',
     'MailTemplateBaseId',
-    'UserId'
+    'UserId',
+    'systemMessage'
 ];
 
 function validate(params, callback) {
@@ -106,12 +109,25 @@ function getMailTemplateForReset(req, callback) {
   });
 }
 
-function getAllMailTemplates(req, callback) {
+function getAllMailTemplates(req, getSystemMail,callback) {
+  
+  var query = {};  
+  if (req.id) {
+      query['$or'] = [{UserId: req.id}, {UserId: null}];
+  }
+  
+  var include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage']}];
+  
+  if (!getSystemMail) {
+    //getting list that any user can edit
+    query.systemMessage = 0;
+  } 
+  
   MailTemplate.findAll({
-      include: [{ model: MailTemplateOriginal, attributes: ['id', 'name']}],
-      where: {
+      include: include,
+      where: /*{
         $or: [{UserId: req.id}, {UserId: null}]
-      },
+      }*/query,
       attributes: templateFieldsForList,
       raw: true
   }).then(function(result) {

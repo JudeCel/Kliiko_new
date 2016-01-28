@@ -230,7 +230,7 @@
 
       })
       .state('dashboard.accountProfile.emailTemplates', {
-        url: "/account-profile",
+        url: "/account-profile?systemMail",
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-resources-emailTemplates/dashboard-content.html"}
         },

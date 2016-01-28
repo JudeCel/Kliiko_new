@@ -35,7 +35,7 @@ function mailTemplatesGet(req, res, next) {
 }
 
 function allMailTemplatesGet(req, res, next) {
-  MailTemplateService.getAllMailTemplates(req.user, function(error, result) {
+  MailTemplateService.getAllMailTemplates(req.user, req.query.getSystemMail,function(error, result) {
     res.send({error: error, templates: result});
   });
 }

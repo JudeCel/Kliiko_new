@@ -24,11 +24,11 @@
     MailTemplateService.previewMailTemplate = previewMailTemplate;
     return MailTemplateService;
 
-    function getAllMailTemplates() {
+    function getAllMailTemplates(getSystemMail) {
       dbg.log2('#KliikoApp.mailTemplate > get all mail templates for user');
       var deferred = $q.defer();
 
-      mailRestApi.mailTemplates.get({}, function (res) {
+      mailRestApi.mailTemplates.get({getSystemMail:getSystemMail}, function (res) {
         dbg.log2('#KliikoApp.mailTemplate > get all templates> server respond >', res);
         deferred.resolve(res);
       });
