@@ -10,12 +10,23 @@ var ContactListUser = class ContactListUser {
   mapFields(defaultFields, customFields, participantsFields, data) {
     this.assignValues(defaultFields, data);
     this.assignValues(customFields, data);
-    this.assignValues(participantsFields, data)
+    // this.assignValues(participantsFields, data)
+    this.stubParticipantsFields(participantsFields)
+  }
+
+  // TODO: This function is for stub participants history
+  // need change this after session builder invites US
+  stubParticipantsFields(participantsFields) {
+    _.map(participantsFields, (e) =>  {
+      let number =  _.random(0, 15);
+      this[e] = number;
+    });
   }
 
   assignId(data){
     this.id = data.id;
   }
+
   assignValues(fieldsList, data){
     _.map(fieldsList, (e) => {
       this[e] = this.findValueInData(e, data);

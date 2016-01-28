@@ -27,7 +27,7 @@ describe('Data Wrappers -> ContactListUser', () => {
 
     it("assigne values", () =>{
       assert.equal(instance.firstName, data.AccountUser.firstName);
-      assert.equal(instance.Invites,  data.AccountUser.Invites);
+      assert.isNumber(instance.Invites);
       assert.equal(instance.lastName, data.AccountUser.lastName);
       assert.equal(instance.mobile, data.customFields.mobile);
       assert.equal(instance.id, data.id);

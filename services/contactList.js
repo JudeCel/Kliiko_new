@@ -31,25 +31,9 @@ function destroy(contacListId, accoutId) {
   });
   return deferred.promise;
 }
-// function queryChainer(expression) {
-//   switch (expression) {
-//     case 'Invites':
-//     case 'Confirmation':
-//     case 'NotThisTime':
-//     case 'NotAtAll':
-//     case 'NoReply':
-//     case 'Future':
-//     case 'LastSession':
-//     case 'Comment':
-//
-//       break;
-//     default:
-//
-//   }
-// }
 function allByAccount(accountId) {
     let selectFields =  constants.contactListDefaultFields
-    selectFields.push([models.sequelize.fn('COUNT', models.sequelize.col('ContactListUsers.AccountUser.Invites.id')), 'Invites'])
+    // selectFields.push([models.sequelize.fn('COUNT', models.sequelize.col('ContactListUsers.AccountUser.Invites.id')), 'Invites'])
     console.log(selectFields);
     let deferred = q.defer();
     ContactList.findAll({where: { accountId: accountId },
