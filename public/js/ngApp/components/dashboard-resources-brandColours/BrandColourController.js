@@ -19,6 +19,7 @@
 
     vm.schemes = {};
     vm.scheme = {};
+    vm.colorForm = {};
 
     changePage('index');
 
@@ -30,6 +31,7 @@
         progressbar.complete();
         vm.schemes = res.data;
         vm.manageFields = res.manageFields;
+        vm.hexRegex = new RegExp(res.hexRegex);
         dbg.log2('#BrandColourController > getAllSchemes > res ', res.data);
       });
     };
@@ -76,6 +78,7 @@
     function finishManage() {
       var progressbar = ngProgressFactory.createInstance();
       progressbar.start();
+      vm.formSubmitted = true;
 
       if(vm.currentPage.type == 'create') {
         finishCreate(progressbar);
@@ -116,7 +119,8 @@
     };
 
     function initColor(model) {
-      vm.scheme[model] = vm.scheme[model] || '#000000';
+      console.log(model);
+      vm.scheme[model] =vm.scheme[model] || '#000000';
       vm.previewScheme = vm.scheme;
     };
 
@@ -142,27 +146,43 @@
       }
     };
 
-    function colorStyles(hex) {
+    function colorStyles(hex, options) {
       if(!hex) {
         hex = '#000000';
       }
-      return {
+      if(!options) {
+        options = {};
+      }
+
+      var css = {
+        padding: '6px 8%',
+        'font-size': '1em',
         'background-color': hex,
         'color': invertColor(hex),
         'border': '1px solid ' + hex,
         'margin': '0'
       };
+      if(options.padding) {
+        delete css.padding;
+      }
+
+      return css;
     };
 
     function invertColor(hex) {
-      var color = hex;
-      color = color.substring(1);           // remove #
-      color = parseInt(color, 16);          // convert to integer
-      color = 0xFFFFFF ^ color;             // invert three bytes
-      color = color.toString(16);           // convert to hex
-      color = ('000000' + color).slice(-6); // pad with leading zeros
-      color = '#' + color;                  // prepend #
-      return color;
+      if(vm.hexRegex.test(hex)) {
+        var color = hex;
+        color = color.substring(1);           // remove #
+        color = parseInt(color, 16);          // convert to integer
+        color = 0xFFFFFF ^ color;             // invert three bytes
+        color = color.toString(16);           // convert to hex
+        color = ('000000' + color).slice(-6); // pad with leading zeros
+        color = '#' + color;                  // prepend #
+        return color;
+      }
+      else {
+        return '#000000';
+      }
     };
 
   };

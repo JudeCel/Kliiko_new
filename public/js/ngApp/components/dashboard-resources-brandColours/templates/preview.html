@@ -1,86 +1,59 @@
-{{ previewScheme = scheme || bcc.previewScheme; "" }}
+{{ previewScheme = scheme.colours || bcc.previewScheme.colours; "" }}
 <div class='brandColours'>
-  <div class='col-xs-12' style='background-color: {{ previewScheme.colour_browser_background }};'>
+  <div class='col-xs-12' style='background-color: {{ previewScheme.browserBackground }};'>
+    <div class='row' style='border: 1px solid grey; background-color: white;'>
+      <div class='col-xs-6'>
+        <div style='margin: 3%;'>
+          Session Name
+        </div>
+        <div style='margin: 3%;'>
+          Some list
+        </div>
+      </div>
+      <div class='col-xs-6 thumbnailIconsSize'>
+        <span class='pull-right glyphicon glyphicon-check' aria-hidden='true' style='background-color: {{ previewScheme.headerButton }}; margin: 3%; padding: 2%;'>
+        </span>
+        <span class='pull-right glyphicon glyphicon-question-sign' aria-hidden='true' style='background-color: {{ previewScheme.headerButton }}; margin: 3%; padding: 2%;'>
+        </span>
+        <span class='pull-right glyphicon glyphicon-off' aria-hidden='true' style='background-color: {{ previewScheme.headerButton }}; margin: 3%; padding: 2%;'>
+        </span>
+      </div>
+    </div>
+
     <div class='row'>
-      <div class='col-xs-12 chatContainer' style='background-color: {{ previewScheme.colour_background }}; border-color: {{ previewScheme.colour_border }};'>
+      <div class='col-xs-12 chatContainer' style='background-color: {{ previewScheme.mainBackground }}; border-color: {{ previewScheme.mainBorder }};'>
         <div class='row'>
-          <div class='col-xs-12 chatSeparator' style='border-color: {{ previewScheme.colour_border }};'>
-            <div class='row'>
-              <div class='col-xs-6'>
-                <div class='row'>
-                  <div class='col-xs-5 text-right' style='color: {{ previewScheme.colour_label }};'>
-                    Session:
-                  </div>
-
-                  <div class='col-xs-7' style='color: {{ previewScheme.colour_text }};'>
-                    Session
-                  </div>
-                </div>
-
-                <div class='row'>
-                  <div class='col-xs-5 text-right' style='color: {{ previewScheme.colour_label }};'>
-                    Topic:
-                  </div>
-                  <div class='col-xs-7'>
-                    <span class='chatTopic' style='background-color: {{ previewScheme.colour_menu_background }}; border-color: {{ previewScheme.colour_menu_border }}; color: {{ previewScheme.colour_text }};'>
-                      Topic2
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div class='col-xs-6'>
-                <div class='row chatIcon'>
-                  <div class='col-xs-2'>
-                    <span class='glyphicon glyphicon-book' aria-hidden='true' style='color: {{ previewScheme.colour_icon }};'></span>
-                  </div>
-                  <div class='col-xs-2'>
-                    <span class='glyphicon glyphicon-question-sign' aria-hidden='true' style='color: {{ previewScheme.colour_icon }};'></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <div class='col-xs-12'>
             <div class='containerOuterBox'>
               <div class='row containerInnerBox'>
 
-                <div class='col-xs-4 sidePadding'>
+                <div class='col-xs-8'>
                   <div class='row'>
-                    <div class='col-xs-12'>
-                      <span>&nbsp;</span>
+                    <div class='col-xs-6 sidePadding'>
+                      <div class='col-xs-6' ng-class='scheme ? "thumbnailIconsSize" : "previewIconsSize"'>
+                        <span class='glyphicon glyphicon-user' aria-hidden='true' style='color: red'></span>
+                      </div>
+                      <div class='col-xs-6 otherContent' style='background-color: #d97070; border-color: #a4918b;'>
+                        &nbsp;
+                      </div>
+                    </div>
+
+                    <div class='col-xs-6 sidePadding'>
+                      <div class='col-xs-12 whiteBoardContent' style='background-color: #e1d8d8; border-color: #a4918b;'>
+                        &nbsp;
+                      </div>
                     </div>
                   </div>
 
-                  <div class='col-xs-12 otherContent' style='background-color: #d97070; border-color: #a4918b;'>
-                    <center>&nbsp;</center>
+                  <div class='row' ng-class='scheme ? "thumbnailIconsSize" : "previewIconsSize"'>
+                    <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/grid.html'"></ng-include>
                   </div>
                 </div>
 
                 <div class='col-xs-4 sidePadding'>
-                  <div class='row'>
-                    <div class='col-xs-12'>
-                      <span class='whiteBoardIcon' style='border-color: {{ previewScheme.colour_whiteboard_icon_border }}; background-color: {{ previewScheme.colour_whiteboard_icon_background }};'>
-                        Whiteboard
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class='col-xs-12 whiteBoardContent' style='background-color: {{ previewScheme.colour_whiteboard_background }}; border-color: {{ previewScheme.colour_whiteboard_border }};'>
-                    <center>&nbsp;</center>
-                  </div>
-                </div>
-
-                <div class='col-xs-4 sidePadding'>
-                  <div class='row'>
-                    <div class='col-xs-12'>
-                      <span>&nbsp;</span>
-                    </div>
-                  </div>
-
                   <div class='col-xs-12 chatContent' style='background-color: #e1d8d8; border-color: #a4918b;'>
-                    <center>&nbsp;</center>
+                    &nbsp;
                   </div>
                 </div>
 

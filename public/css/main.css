@@ -827,6 +827,13 @@ footer {
 .text-no-bold {
   font-weight: normal !important; }
 
+.no-side-padding {
+  padding-left: 0px;
+  padding-right: 0px; }
+
+.no-border-radius {
+  border-radius: 0 !important; }
+
 .text-font-family {
   font-family: Sofia Pro Condensed; }
 
@@ -919,9 +926,6 @@ footer {
 
 .fixed-bottom-margin {
   margin-bottom: 100px; }
-
-.no-border-radius {
-  border-radius: 0 !important; }
 
 .align-center {
   display: block;
@@ -1344,8 +1348,7 @@ hr.survey-hr {
   font-size: 70%; }
   .brandColours .chatContainer {
     margin: 10px 0;
-    border: 2px solid;
-    border-radius: 10px; }
+    border: 2px solid; }
   .brandColours .chatSeparator {
     padding: 5px;
     border-bottom: 2px solid; }
@@ -1361,25 +1364,40 @@ hr.survey-hr {
   .brandColours .whiteBoardIcon {
     border: 1px solid; }
   .brandColours .whiteBoardContent {
-    padding: 35% 0;
-    border: 2px solid;
-    -webkit-border-radius: 10px;
-    -webkit-border-top-left-radius: 0;
-    -moz-border-radius: 10px;
-    -moz-border-radius-topleft: 0;
-    border-radius: 10px;
-    border-top-left-radius: 0; }
+    padding: 20% 0;
+    border: 2px solid; }
   .brandColours .chatContent {
-    padding: 75% 0;
-    border: 2px solid;
-    border-radius: 10px; }
+    padding: 125% 0;
+    border: 2px solid; }
   .brandColours .otherContent {
-    padding: 35% 0;
-    border: 2px solid;
-    border-radius: 10px; }
+    padding: 20% 0;
+    border: 2px solid; }
   .brandColours .sidePadding {
     padding-left: 2%;
     padding-right: 2%; }
+
+.previewIconsSize {
+  line-height: 1.7;
+  font-size: 6.5em; }
+
+.thumbnailIconsSize {
+  line-height: 1.7;
+  font-size: 4.5em; }
+
+@media (min-width: 768px) {
+  .thumbnailIconsSize {
+    line-height: 4.3;
+    font-size: 1.5em; } }
+
+@media (min-width: 992px) {
+  .thumbnailIconsSize {
+    font-size: 0.9em;
+    line-height: 5; } }
+
+@media (min-width: 1280px) {
+  .thumbnailIconsSize {
+    line-height: 2.5;
+    font-size: 2.5em; } }
 
 #dashboard #back-nav-btn {
   margin-bottom: -75px; }

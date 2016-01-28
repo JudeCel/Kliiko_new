@@ -50,7 +50,7 @@ function findScheme(params, account) {
 function findAllSchemes(account) {
   let deferred = q.defer();
 
-  BrandProjectPreference.findAll({ where: { id: account.id } }).then(function(schemes) {
+  BrandProjectPreference.findAll({ where: { accountId: account.id } }).then(function(schemes) {
     deferred.resolve(simpleParams(schemes));
   }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
@@ -134,17 +134,21 @@ function copyScheme(params, account) {
 };
 
 function manageFields() {
-  let object = { chatRoom: [] };
+  let object = { chatRoom: [], participants: [] };
 
   _.map(brandProjectConstants.preferenceColours({}), function(value, key) {
-    if(key != 'participants') {
+    if(key == 'participants') {
+      _.map(value, function(value, key) {
+        object.participants.push({
+          model: key
+        });
+      });
+    }
+    else {
       object.chatRoom.push({
         title: _.startCase(key),
         model: key
       });
-    }
-    else {
-      object.participantsCount = _.size(value);
     }
   });
 

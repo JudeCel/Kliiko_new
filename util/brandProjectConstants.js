@@ -2,6 +2,7 @@
 var _ = require('lodash');
 
 module.exports = {
+  hexRegex: '^#+([a-fA-F0-9]{6})$',
   preferenceColours: function(colors) {
     return _.assign({
       browserBackground: '#FFFFFF',
@@ -9,9 +10,7 @@ module.exports = {
       mainBorder: '#F0E935',
       font: '#58595B',
       headerButton: '#4CBFE9',
-      consoleButton: {
-        active: '#4CB649'
-      },
+      consoleButtonActive: '#4CB649',
       participants: {
         '1': '#4CB649',
         '2': '#2F9F69',

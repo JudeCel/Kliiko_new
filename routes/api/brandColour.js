@@ -1,4 +1,4 @@
-var constants = require('../../util/constants');
+var brandProjectConstants = require('../../util/brandProjectConstants');
 var brandColourServices = require('../../services/brandColour');
 
 function get(req, res, next) {
@@ -42,7 +42,14 @@ function getResponses(res) {
       res.send({ error: error });
     },
     onSuccess: function(result) {
-      res.send({ data: result.data, message: result.message, manageFields: brandColourServices.manageFields() });
+      var results = {
+        data: result.data,
+        message: result.message,
+        manageFields: brandColourServices.manageFields(),
+        hexRegex: brandProjectConstants.hexRegex
+      };
+
+      res.send(results);
     }
   };
 }
