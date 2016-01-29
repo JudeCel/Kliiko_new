@@ -81,6 +81,11 @@
   margin-right: 10px !important;
 }
 
+.margin-right-15{
+  margin-right: 15px !important;
+}
+
+
 .uppercase{
   text-transform: uppercase !important;
 }
@@ -90,7 +95,6 @@
   margin-left: 20px;
   font-size: 200px;
 }
-
 .gallery-table-image-box{
   display: block;
   width: 88px;
@@ -110,4 +114,20 @@
 
 .margin-bottom-10{
   margin-bottom: 10px;
+}
+
+.gallery-btn-width{
+  min-width: 47px !important;
+}
+
+.negative-top-margin{
+  margin-top: -8px !important;
+}
+
+.no-padding{
+  padding: 0;
+}
+
+.panel-mmin-height{
+  min-height: 302px;
 }
