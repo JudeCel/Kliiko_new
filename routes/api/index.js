@@ -13,6 +13,7 @@ var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
 var survey = require('./survey');
 var chargebee = require('./chargebee');
+let topic = require('./topic');
 var gallery = require('./gallery');
 var brandColour = require('./brandColour');
 var chatSessions = require('./chatSessions');
@@ -22,8 +23,9 @@ module.exports = router;
 
 // Main Routes
 router.get('/user', userRoutes.userGet);
-router.post('/user', userRoutes.userPost);
-router.put('/user', userRoutes.changePassword);
+router.post('/user',userRoutes.userPost);
+router.put('/user',userRoutes.changePassword);
+
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
@@ -75,6 +77,11 @@ router.delete('/brandColour', brandColour.remove);
 router.post('/brandColour', brandColour.create);
 router.put('/brandColour', brandColour.update);
 router.post('/brandColour/copy', brandColour.copy);
+
+router.get('/topics', multipartyMiddleware, topic.get);
+router.post('/topic', multipartyMiddleware, topic.post);
+router.put('/topic/:id',multipartyMiddleware, topic.updateById);
+router.delete('/topic/:id', multipartyMiddleware, topic.deleteById);
 
 router.get('/sessions', chatSessions.get);
 router.delete('/sessions', chatSessions.remove);

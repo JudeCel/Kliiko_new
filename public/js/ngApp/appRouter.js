@@ -227,6 +227,14 @@
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-topics/dashboard-content.html"}
         },
+        resolve: {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/js/ngApp/components/dashboard-resources-topics/TopicsController.js',
+              '/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js'
+            ]);
+          }]
+        },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.topics is on');
         }]

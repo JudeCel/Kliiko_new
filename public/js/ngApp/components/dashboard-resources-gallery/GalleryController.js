@@ -25,6 +25,7 @@
       });
     }
 
+
     $scope.setView = function(type) {
       sessionStorage.setItem('viewType', type);
       $scope.viewType = sessionStorage.getItem('viewType');
@@ -34,6 +35,10 @@
     $scope.dataForValidation = {};
     $scope.idsForAction = [];
     $scope.action = "";
+
+    $scope.clearFormData = function() {
+      $scope.newResource = {};
+    }
     
     $scope.filterBy = function(type) {
       $scope.filterType = type;
@@ -63,6 +68,8 @@
       $scope.newResource.type = uploadType;
       $scope.uploadTypeForTitle = uploadTypeForTitle(uploadType);
 
+      setUploadtype(uploadType);
+
       domServices.modal('uploadTST');
     };
 
@@ -74,6 +81,16 @@
       }
     };
 
+    function setUploadtype(type){ 
+      if(type == 'image' || type == 'brandLogo'){
+        $scope.allowToUpload = "image/gif, image/jpeg, image/jpg, image/png, image/bmp"
+      }else if(type == 'audio'){
+        $scope.allowToUpload = "audio/mpeg, audio/mp3"
+      }else if(type == 'pdf'){
+        $scope.allowToUpload = "application/pdf"
+      }
+    }
+
     function saveYoutube(newResource){
       var resourceParams = {
         title: newResource.title,
@@ -83,11 +100,13 @@
       GalleryServices.saveYoutubeUrl(resourceParams).then(function(res) {
         if(res.error){
           messenger.error(res.error);
+          $scope.submitIsDisabled = false;
         }else{
           initList();
           $scope.newResource = {};
           cancel();
           messenger.ok("Resource was successfully created.");
+          $scope.submitIsDisabled = false;
         }
       })
     }
@@ -100,18 +119,23 @@
         file: newResource.fileTst
       };
 
+      $scope.submitIsDisabled = true;
+
       GalleryServices.createResource(resourceParams).then(function(res) {
         if(res.error){
           messenger.error(res.error);
+          $scope.submitIsDisabled = false;
         }else{
            GalleryServices.postuploadData(resourceParams).then(function(res) {
             if(res.error){
               messenger.error(res.error);
+              $scope.submitIsDisabled = false;
             }else{
               initList();
               $scope.newResource = {};
               cancel()
               messenger.ok("Resource was sucessfully created.");
+              $scope.submitIsDisabled = false;
             }
           })
         }
@@ -190,6 +214,10 @@
           window.location.assign('/chat_room/uploads/' + res.fileName);
         }
       })
+    }
+
+     $scope.disableButton = function() {
+      $scope.submitIsDisabled = true;
     }
   }
 })();
