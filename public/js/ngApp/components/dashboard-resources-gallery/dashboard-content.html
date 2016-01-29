@@ -86,7 +86,7 @@
       <div class="gallery-body col-md-12" ng-if="viewType == 'table'">
         <table class="table table-hover table-responsive" > 
           <tbody ng-repeat="resource in resources | filter: { resourceType: filterType }">
-            <tr ng-if="resource.resourceType != 'tmp'" class="ng-scope">
+            <tr class="ng-scope">
               <td class="ng-binding vertical-align-middle ">
                 <input class='margin-left-6' type="checkbox" 
                        value="{{resource.id}}" ng-click="resourcesSelected(resource.id)"
@@ -141,7 +141,7 @@
       
       <!-- Panel view -->
       <div ng-if="viewType == 'panel'" ng-repeat="resource in resources | filter: { resourceType: filterType }">
-        <div class="col-xs-2 col-md-4" ng-if="resource.resourceType != 'tmp'">  
+        <div class="col-xs-2 col-md-4">  
           <div class="panel panel-success border-green">
             <div class="panel-body">
               
