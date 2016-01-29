@@ -124,7 +124,7 @@
 
     function edit(blockIndex) {
       tempName = vm.list[blockIndex].name;
-      jQuery('#edit-block-'+blockIndex).toggle();
+      toggleEditBlock(blockIndex);
 
       vm.editBlockHelper = blockIndex;
     }

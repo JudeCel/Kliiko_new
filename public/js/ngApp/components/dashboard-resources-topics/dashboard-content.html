@@ -42,7 +42,7 @@
                                             {{t.name}}
                                         </span>
                                         <span ng-if="topics.editBlockHelper == $index">
-                                            <input type="text" ng-model="t.name" maxlength="{{ topics.nameMaxSize}}" ng-blur="topics.saveInline($index, t.name)">
+                                            <input type="text" ng-model="t.name" ng-maxlength="{{ ::topics.nameMaxSize}}" ng-blur="topics.saveInline($index, t.name)">
                                             <span class="inline-editor-help">Characters left: {{ topics.nameMaxSize - t.name.length }}</span>
                                         </span>
                                     </div>
