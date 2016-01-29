@@ -14,14 +14,16 @@ var banners = require('./banners');
 var survey = require('./survey');
 var chargebee = require('./chargebee');
 var mailTemplates = require('./mailTemplate');
+let topic = require('./topic');
 var gallery = require('./gallery');
 
 module.exports = router;
 
 // Main Routes
 router.get('/user', userRoutes.userGet);
-router.post('/user', userRoutes.userPost);
-router.put('/user', userRoutes.changePassword);
+router.post('/user',userRoutes.userPost);
+router.put('/user',userRoutes.changePassword);
+
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
@@ -74,6 +76,12 @@ router.get('/survey/find', survey.find);
 router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', survey.confirm);
 router.get('/survey/constants', survey.getConstants);
+
+router.get('/topics', multipartyMiddleware, topic.get);
+router.post('/topic', multipartyMiddleware, topic.post);
+router.put('/topic/:id',multipartyMiddleware, topic.updateById);
+router.delete('/topic/:id', multipartyMiddleware, topic.deleteById);
+
 
 // Common Rules
 router.use(function (req, res, next) {
