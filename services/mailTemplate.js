@@ -5,32 +5,7 @@ var MailTemplateOriginal  = require('./../models').MailTemplateBase;
 var templateMailer = require('../mailers/mailTemplate');
 var _ = require('lodash');
 var ejs = require('ejs');
-
-var originalTemplateFields = [
-    'id',
-    'name',
-    'subject',
-    'content',
-    'systemMessage'
-];
-
-var templateFields = [
-    'id',
-    'name',
-    'subject',
-    'content',
-    'MailTemplateBaseId',
-    'UserId',
-    'systemMessage'
-];
-
-var templateFieldsForList = [
-    'id',
-    'name',
-    'MailTemplateBaseId',
-    'UserId',
-    'systemMessage'
-];
+var constants = require('../util/constants');
 
 function validate(params, callback) {
   MailTemplate.build(params).validate().done(function(errors, _account) {
@@ -42,9 +17,9 @@ function createBaseMailTemplate(params, callback) {
   MailTemplateOriginal.create(params).then(function(result) {
     callback(null, result);
   }).catch(MailTemplateOriginal.sequelize.ValidationError, function(err) {
-    callback(prepareErrors(err), null);
+    callback(prepareErrors(err));
   }).catch(function(err) {
-    callback(prepareErrors(err), null);
+    callback(prepareErrors(err));
   });
 }
 
@@ -52,9 +27,9 @@ function create(params, callback) {
   MailTemplate.create(params).then(function(result) {
     callback(null, result);
   }).catch(MailTemplate.sequelize.ValidationError, function(err) {
-    callback(err, null);
+    callback(err);
   }).catch(function(err) {
-    callback(err, null);
+    callback(err);
   });
 }
 
@@ -84,23 +59,23 @@ function getMailTemplate(req, callback) {
     where: {
       id: req.id
     },
-    attributes: templateFields,
-    raw: true,
+    attributes: constants.mailTemplateFields,
+    raw: true
   }).then(function (result) {
     callback(null, result);
   }).catch(function (err) {
-    callback(err, null);
+    callback(err);
   });
 }
 
 //get mail template with all fields base table and id from copy table
 function getMailTemplateForReset(req, callback) {
   MailTemplate.find({
-    include: [{ model: MailTemplateOriginal, attributes: originalTemplateFields}],
+    include: [{ model: MailTemplateOriginal, attributes: constants.originalMailTemplateFields}],
     where: {
       id: req.id,
     },
-    attributes: templateFieldsForList,
+    attributes: constants.mailTemplateFieldsForList,
     raw: true,
   }).then(function (result) {
     callback(null, result);
@@ -111,12 +86,12 @@ function getMailTemplateForReset(req, callback) {
 
 function getAllMailTemplates(req, getSystemMail,callback) {
   
-  var query = {};  
+  let query = {};  
   if (req.id) {
       query['$or'] = [{UserId: req.id}, {UserId: null}];
   }
   
-  var include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage']}];
+  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage']}];
   
   if (!getSystemMail) {
     //getting list that any user can edit
@@ -125,11 +100,10 @@ function getAllMailTemplates(req, getSystemMail,callback) {
   
   MailTemplate.findAll({
       include: include,
-      where: /*{
-        $or: [{UserId: req.id}, {UserId: null}]
-      }*/query,
-      attributes: templateFieldsForList,
-      raw: true
+      where: query,
+      attributes: constants.mailTemplateFieldsForList,
+      raw: true,
+      order: "id ASC"
   }).then(function(result) {
       callback(null, result);
   }).catch(function(error) {
@@ -139,7 +113,7 @@ function getAllMailTemplates(req, getSystemMail,callback) {
 
 function copyBaseTemplates(callback) {
   MailTemplateOriginal.findAll({
-      attributes: originalTemplateFields,
+      attributes: constants.originalMailTemplateFields,
       raw: true
   }).then(function(result) {
     for (var i = 0; i < result.length; i++) {
@@ -149,16 +123,16 @@ function copyBaseTemplates(callback) {
     MailTemplate.bulkCreate(result).done(function(res) {
        callback(null, res);
     }, function(err) {
-       callback(err, null);
+       callback(err);
     })
   }).catch(function(error) {
-    callback(error, null);
+    callback(error);
   });
 }
 
 function saveMailTemplate(template, createCopy, userId, callback) {
   if (!template) {
-      return callback("e-mail template not provided", null);
+      return callback("e-mail template not provided");
   }
   var id = template.id;
   delete template["id"];
@@ -177,7 +151,7 @@ function saveMailTemplate(template, createCopy, userId, callback) {
 
 function resetMailTemplate(templateId, callback) {
   if (!templateId) {
-      return callback("e-mail template not provided", null);
+      return callback("e-mail template not provided");
   }
   
   getMailTemplateForReset({id: templateId}, function(err, result) {
@@ -185,7 +159,7 @@ function resetMailTemplate(templateId, callback) {
       //is template created by user - not base version
       if (!result.UserId) {
         //is base version
-        callback("you cannot reset template base version", null);      
+        callback("you cannot reset template base version");      
       } else {
         update(templateId, {name: result["MailTemplateBase.name"], subject: result["MailTemplateBase.subject"], content: result["MailTemplateBase.content"]}, function(error, result) {
            callback(error, result);  
@@ -217,7 +191,6 @@ function composeMailFromTemplate(template, params) {
     
     return template;
   } catch (error) {
-    console.log("error constructing mail template:", error);
     return {error: "Error constructing mail template"};
   }
 }
@@ -279,6 +252,35 @@ function formatTemplateString(str) {
   return str;
 }
 
+function composePreviewMailTemplate(mailTemplate) {
+  let mailPreviewVariables = {
+    firstName: "John",
+    lastName: "Smith",
+    accountName: "peter",
+    startDate: new Date().toLocaleDateString(),
+    startTime: new Date().toLocaleTimeString(),
+    endDate: new Date().toLocaleDateString(),
+    endTime: new Date().toLocaleTimeString(),
+    facilitatorFirstName: "Peter",
+    facilitatorLastName: "Anderson",
+    facilitatorMail: "peter@mail.com",
+    participantMail: "john@mail.com",
+    facilitatorMobileNumber: "29985762",
+    sessionName: "Test Session",
+    incentive: "test incentive",
+    acceptInvitationUrl: "#/acceptInvitationUrl",
+    invitationNotThisTimeUrl: "#/invitationNotThisTimeUrl",
+    invitationNotAtAllUrl: "#/invitationNotAtAllUrl",
+    unsubscribeMailUrl: "#/unsubscribeMailUrl",
+    participateInFutureUrl: "#/participateInFutureUrl",
+    dontParticipateInFutureUrl: "#/dontParticipateInFutureUrl",
+    confirmationCheckInUrl: "#/confirmationCheckInUrl",
+    logInUrl: "#/LogInUrl",
+  };
+  
+  return composeMailFromTemplate(mailTemplate, mailPreviewVariables);
+}
+
 module.exports = {
   validate: validate,
   create: create,
@@ -292,5 +294,6 @@ module.exports = {
   resetMailTemplate: resetMailTemplate,
   composeMailFromTemplate: composeMailFromTemplate,
   sendMailFromTemplate: sendMailFromTemplate,
-  sendMailFromTemplateWithCalendarEvent: sendMailFromTemplateWithCalendarEvent
+  sendMailFromTemplateWithCalendarEvent: sendMailFromTemplateWithCalendarEvent,
+  composePreviewMailTemplate:composePreviewMailTemplate
 }

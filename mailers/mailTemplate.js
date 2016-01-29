@@ -1,6 +1,6 @@
 'use strict';
 
-var config = require('config');
+var config = require('config').get("server");
 var helpers = require('./helpers');
 var mailTemplateService = require('../services/mailTemplate');
 var ical = require('ical-generator');
@@ -9,7 +9,6 @@ var mailFrom = helpers.mailFrom();
 var transporter = helpers.createTransport();
 
 function sendMailWithTemplate(template, mailParams, callback) {  
-  console.log("__t:", template);
   transporter.sendMail({
     from: mailFrom,
     to: mailParams.email,
@@ -19,14 +18,13 @@ function sendMailWithTemplate(template, mailParams, callback) {
 }
 
 function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {  
-    var cal = ical({domain: 'google.com', name: template.name});
-    var event = cal.createEvent({
+    let cal = ical({domain: config.domain, name: template.name});
+    let event = cal.createEvent({
         start: mailParams.start,
         end: mailParams.end,
         timestamp: mailParams.start,
         summary: template.name,
-        organizer: '<insiderfocus.noreply@gmail.com>'
-        //organizer: 'Name Lastname <insiderfocus.noreply@gmail.com>'
+        organizer: mailFrom
     });
     
     /*
@@ -36,7 +34,7 @@ function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {
     ]);
     */
     
-    var calendarData =  cal.toString();
+    let calendarData =  cal.toString();
     
     transporter.sendMail({
       from: mailFrom,

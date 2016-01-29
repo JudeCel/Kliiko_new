@@ -20,7 +20,6 @@
     var vm = this;
     vm.currentTemplate = {index: 0};
     vm.emailTemplates = [];
-    vm.youtubeLink = "";
     vm.templateToDelete;
     vm.newResource = {};
     
@@ -109,7 +108,9 @@
           refreshTemplateList(function() {
             vm.startEditingTemplate(vm.currentTemplate.index);
           });
-        }                  
+        } else {
+          messenger.error(res.error);
+        }
       });
     }
     
@@ -121,7 +122,9 @@
         if (!res.error) {
           contentFrame.html(res.template.content);
           $("#mailTemplatePreviewSubject").html(res.template.subject);
-        } 
+        } else {
+          messenger.error(res.error);
+        }
       });
     }
     
@@ -138,7 +141,7 @@
     
     function getIndexOfMailTemplateWithId(id) {
       for (var i = 0; i < vm.emailTemplates.length; i++) {
-        if (vm.emailTemplates[i].id === id)
+        if (vm.emailTemplates[i].id == id)
             return i;
       }
       return -1;
@@ -146,28 +149,13 @@
     
     function refreshTemplateList(callback) {
       mailTemplate.getAllMailTemplates(showSystemMail).then(function (res) {
-        vm.emailTemplates = res.templates.sort(function(a, b){return a.id-b.id});;
-        
-        if (vm.emailTemplates && vm.emailTemplates.length && vm.currentTemplate == -1) {
+        vm.emailTemplates = res.templates;
+        if (vm.emailTemplates.length && vm.currentTemplate == -1) {
           vm.startEditingTemplate(0);
         }
-        
-        if (callback) {
-          callback();
-        }
+
+        callback();        
       });
-    }
-    
-    vm.cancelYoutubeLinkInput = function() {
-      domServices.modal('insertYoutubeLink', 'close');
-      vm.youtubeLink = "";
-    }
-    
-    vm.submitYoutubeLinkInput = function() {
-      var linkHTML = '<a href="' + vm.youtubeLink + '" target="_blank" style="display:block;text-decoration:none;color:#000;"><img src="/icons/header button icons/tour_video.png"></img> </a>';
-      $('#templateContent').wysiwyg("insertHtml", linkHTML);
-      domServices.modal('insertYoutubeLink', 'close');
-      vm.youtubeLink = "";
     }
     
     vm.cancelTemplateDelete = function() {
@@ -258,6 +246,10 @@
           })
         }
       })
+    }
+    
+    vm.isCurrent = function(key) {
+      return (key == vm.currentTemplate.index); 
     }
     
     vm.init();            

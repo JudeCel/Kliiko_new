@@ -128,4 +128,21 @@
         margin-bottom: 2px;  
         border: none;
     }
+    
+    table {
+      width: 100%;
+    }
+ 
+    tr {
+      height: 40px;
+      vertical-align: top;
+    }
+    
+    .preview-content {
+      width:750px;
+    }
+    
+    .template-detail-name-column {
+      width: 130px;
+    }
 }

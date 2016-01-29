@@ -1984,6 +1984,15 @@ hr.survey-hr {
     background-color: white !important;
     margin-bottom: 2px;
     border: none; }
+  #email-template-editor table {
+    width: 100%; }
+  #email-template-editor tr {
+    height: 40px;
+    vertical-align: top; }
+  #email-template-editor .preview-content {
+    width: 750px; }
+  #email-template-editor .template-detail-name-column {
+    width: 130px; }
 
 #resources-topics #no-topics-in-list {
   text-align: center; }

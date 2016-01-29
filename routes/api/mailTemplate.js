@@ -4,7 +4,6 @@ var MailTemplateService = require('./../../services/mailTemplate');
 var _ = require('lodash');
 
 module.exports = {
-  mailTemplatesGet: mailTemplatesGet,
   mailTemplatePost: mailTemplatePost,
   allMailTemplatesGet: allMailTemplatesGet,
   saveMailTemplatePost: saveMailTemplatePost,
@@ -12,27 +11,6 @@ module.exports = {
   resetMailTemplatePost: resetMailTemplatePost,
   previewMailTemplatePost: previewMailTemplatePost
 };
-
-var templateFields = [
-    'id',
-    'name',
-    'subject',
-    'content',
-];
-
-function mailTemplatesGet(req, res, next) {
-  MailTemplate.find({
-    where: {
-      id: req.mailTemplate.id,
-    },
-    attributes: templateFields,
-    raw: true,
-  }).then(function (result) {
-      res.send(result);
-  }).catch(function (err) {
-    res.send({error: err});
-  });
-}
 
 function allMailTemplatesGet(req, res, next) {
   MailTemplateService.getAllMailTemplates(req.user, req.query.getSystemMail,function(error, result) {
@@ -66,34 +44,9 @@ function resetMailTemplatePost(req, res, next) {
   });
 }
 // accepts template object from client - in case if user tests unsaved HTML
-// use as reference for future use
+// fills template with preset data for preview purposes
 function previewMailTemplatePost(req, res, next) {
-  let mailPreviewVariables = {
-    firstName: "John",
-    lastName: "Smith",
-    accountName: "peter",
-    startDate: new Date().toLocaleDateString(),
-    startTime: new Date().toLocaleTimeString(),
-    endDate: new Date().toLocaleDateString(),
-    endTime: new Date().toLocaleTimeString(),
-    facilitatorFirstName: "Peter",
-    facilitatorLastName: "Anderson",
-    facilitatorMail: "peter@mail.com",
-    participantMail: "john@mail.com",
-    facilitatorMobileNumber: "29985762",
-    sessionName: "Test Session",
-    incentive: "test incentive",
-    acceptInvitationUrl: "#/acceptInvitationUrl",
-    invitationNotThisTimeUrl: "#/invitationNotThisTimeUrl",
-    invitationNotAtAllUrl: "#/invitationNotAtAllUrl",
-    unsubscribeMailUrl: "#/unsubscribeMailUrl",
-    participateInFutureUrl: "#/participateInFutureUrl",
-    dontParticipateInFutureUrl: "#/dontParticipateInFutureUrl",
-    confirmationCheckInUrl: "#/confirmationCheckInUrl",
-    logInUrl: "#/LogInUrl",
-  };
-
-  var result = MailTemplateService.composeMailFromTemplate(req.body.mailTemplate, mailPreviewVariables);
+  var result = MailTemplateService.composePreviewMailTemplate(req.body.mailTemplate);
   if (!result.error) {
     res.send({error: null, template: result});
   } else {

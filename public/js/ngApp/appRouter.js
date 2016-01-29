@@ -227,9 +227,7 @@
         resolve: {
           checkPermission: ['$q', '$timeout', 'ngProgressFactory', 'banners',function($q, $timeout, ngProgressFactory, banners) {
             var deferred = $q.defer();
-            var progressbar = ngProgressFactory.createInstance();
-            progressbar.start();
-            banners.initUpload().then(function() { progressbar.complete(); deferred.resolve(); });
+            banners.initUpload().then(function() { deferred.resolve(); });
           }]
         },
         onEnter: ['dbg', function (dbg) {
@@ -245,9 +243,7 @@
         resolve: {
           checkPermission: ['$q', '$timeout', 'ngProgressFactory', 'banners',function($q, $timeout, ngProgressFactory, banners) {
             var deferred = $q.defer();
-            var progressbar = ngProgressFactory.createInstance();
-            progressbar.start();
-            banners.initUpload().then(function() { progressbar.complete(); deferred.resolve(); });
+            banners.initUpload().then(function() { deferred.resolve(); });
           }]
         },
         onEnter: ['dbg', function (dbg) {
