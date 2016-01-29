@@ -22,6 +22,7 @@
   line-height: 26px;
   text-align: left; }
   .btn-dashboard-menu.btn-green, .btn-green.btn-addNewElement {
+    min-width: 49px;
     color: #2F9F69;
     border-color: #2F9F69;
     background: white; }
@@ -1362,47 +1363,29 @@ hr.survey-hr {
 .brandColours {
   font-size: 70%; }
   .brandColours .chatContainer {
-    margin: 10px 0;
-    border: 2px solid; }
-  .brandColours .chatSeparator {
-    padding: 5px;
-    border-bottom: 2px solid; }
-  .brandColours .chatTopic {
-    padding: 2px;
-    border: 1px solid; }
-  .brandColours .chatIcon {
-    font-size: 2.5em; }
-  .brandColours .containerOuterBox {
-    height: 50%; }
+    margin-top: 3%;
+    border: 2px solid;
+    padding-bottom: 3%;
+    height: 100%; }
+  .brandColours .chatMiddleButtons {
+    color: #ccc;
+    border: 2px solid #ccc;
+    padding: 1%;
+    margin: auto;
+    font-size: 160%; }
+  .brandColours .header {
+    border: 1px solid #ccc;
+    background-color: white; }
+    .brandColours .header .headerButtons {
+      font-size: 2em;
+      color: white;
+      margin: 3% 2%;
+      padding: 2%; }
   .brandColours .containerInnerBox {
     margin: 10px auto 10%; }
-  .brandColours .whiteBoardIcon {
-    border: 1px solid; }
-  .brandColours .whiteBoardContent {
-    padding: 20% 0;
-    border: 2px solid; }
-  .brandColours .chatContent {
-    padding: 125% 0;
-    border: 2px solid; }
-  .brandColours .otherContent {
-    padding: 20% 0;
-    border: 2px solid; }
-  .brandColours .sidePadding {
-    padding-left: 2%;
-    padding-right: 2%; }
-  .brandColours .user-container {
-    display: inline-block;
-    vertical-align: top;
-    text-align: center; }
-    .brandColours .user-container .user-icon {
-      width: 100%;
-      display: inline;
-      padding: 10%;
-      margin-top: 10%; }
-    .brandColours .user-container .user-icon + .img-caption {
-      background-color: red;
-      display: block;
-      padding: 10%; }
+  .brandColours select {
+    border-radius: 0px;
+    border: 1px solid #ccc; }
 
 #dashboard #back-nav-btn {
   margin-bottom: -75px; }

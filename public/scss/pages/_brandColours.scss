@@ -1,69 +1,38 @@
 .brandColours {
   font-size: 70%;
   .chatContainer {
-    margin: 10px 0;
+    margin-top: 3%;
     border: 2px solid;
-  }
-  .chatSeparator {
-    padding: 5px;
-    border-bottom: 2px solid;
-  }
-  .chatTopic {
-    padding: 2px;
-    border: 1px solid;
-  }
-  .chatIcon {
-    font-size: 2.5em;
+    padding-bottom: 3%;
+    height: 100%;
   }
 
-  .containerOuterBox {
-    height: 50%;
+  .chatMiddleButtons {
+    color: #ccc;
+    border: 2px solid #ccc;
+    padding: 1%;
+    margin: auto;
+    font-size: 160%;
   }
+
+  .header {
+    border: 1px solid #ccc;
+    background-color: white;
+
+    .headerButtons {
+      font-size: 2em;
+      color: white;
+      margin: 3% 2%;
+      padding: 2%;
+    }
+  }
+
   .containerInnerBox {
     margin: 10px auto 10%;
   }
 
-  .whiteBoardIcon {
-    border: 1px solid;
+  select {
+    border-radius: 0px;
+    border: 1px solid #ccc;
   }
-  .whiteBoardContent {
-    padding: 20% 0;
-    border: 2px solid;
-  }
-
-  .chatContent {
-    padding: 125% 0;
-    border: 2px solid;
-  }
-
-  .otherContent {
-    padding: 20% 0;
-    border: 2px solid;
-  }
-
-  .sidePadding {
-    padding-left: 2%;
-    padding-right: 2%;
-  }
-
-  .user-container {
-    display: inline-block;
-    vertical-align: top;
-    text-align: center;
-
-    .user-icon {
-      width: 100%;
-      display: inline;
-      padding: 10%;
-      margin-top: 10%;
-    }
-
-    .user-icon + .img-caption {
-      background-color: red;
-      display: block;
-      padding: 10%;
-    }
-  }
-
-
 }

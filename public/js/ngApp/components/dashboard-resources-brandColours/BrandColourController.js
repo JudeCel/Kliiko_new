@@ -119,7 +119,6 @@
     };
 
     function initColor(model) {
-      console.log(model);
       vm.scheme[model] =vm.scheme[model] || '#000000';
       vm.previewScheme = vm.scheme;
     };

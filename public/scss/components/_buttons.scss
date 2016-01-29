@@ -14,6 +14,7 @@
   cursor: pointer;
 
   &.btn-green {
+    min-width: 49px;
     color: $green;
     border-color: $green;
     background: white;
