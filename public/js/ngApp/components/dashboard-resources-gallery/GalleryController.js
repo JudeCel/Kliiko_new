@@ -25,6 +25,7 @@
       });
     }
 
+
     $scope.setView = function(type) {
       sessionStorage.setItem('viewType', type);
       $scope.viewType = sessionStorage.getItem('viewType');
@@ -34,6 +35,10 @@
     $scope.dataForValidation = {};
     $scope.idsForAction = [];
     $scope.action = "";
+
+    $scope.clearFormData = function() {
+      $scope.newResource = {};
+    }
     
     $scope.filterBy = function(type) {
       $scope.filterType = type;
@@ -63,6 +68,8 @@
       $scope.newResource.type = uploadType;
       $scope.uploadTypeForTitle = uploadTypeForTitle(uploadType);
 
+      setUploadtype(uploadType);
+
       domServices.modal('uploadTST');
     };
 
@@ -73,6 +80,16 @@
         saveResource(newResource);
       }
     };
+
+    function setUploadtype(type){ 
+      if(type == 'image' || type == 'brandLogo'){
+        $scope.allowToUpload = "image/gif, image/jpeg, image/jpg, image/png, image/bmp"
+      }else if(type == 'audio'){
+        $scope.allowToUpload = "audio/mpeg, audio/mp3"
+      }else if(type == 'pdf'){
+        $scope.allowToUpload = "application/pdf"
+      }
+    }
 
     function saveYoutube(newResource){
       var resourceParams = {
