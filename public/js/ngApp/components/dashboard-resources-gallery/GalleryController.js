@@ -100,11 +100,13 @@
       GalleryServices.saveYoutubeUrl(resourceParams).then(function(res) {
         if(res.error){
           messenger.error(res.error);
+          $scope.submitIsDisabled = false;
         }else{
           initList();
           $scope.newResource = {};
           cancel();
           messenger.ok("Resource was successfully created.");
+          $scope.submitIsDisabled = false;
         }
       })
     }
@@ -117,18 +119,23 @@
         file: newResource.fileTst
       };
 
+      $scope.submitIsDisabled = true;
+
       GalleryServices.createResource(resourceParams).then(function(res) {
         if(res.error){
           messenger.error(res.error);
+          $scope.submitIsDisabled = false;
         }else{
            GalleryServices.postuploadData(resourceParams).then(function(res) {
             if(res.error){
               messenger.error(res.error);
+              $scope.submitIsDisabled = false;
             }else{
               initList();
               $scope.newResource = {};
               cancel()
               messenger.ok("Resource was sucessfully created.");
+              $scope.submitIsDisabled = false;
             }
           })
         }
@@ -207,6 +214,10 @@
           window.location.assign('/chat_room/uploads/' + res.fileName);
         }
       })
+    }
+
+     $scope.disableButton = function() {
+      $scope.submitIsDisabled = true;
     }
   }
 })();
