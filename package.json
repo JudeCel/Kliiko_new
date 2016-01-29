@@ -24,7 +24,7 @@
   "homepage": "https://github.com/JudeCel/Kliiko#readme",
   "devDependencies": {
     "browser-sync": "^2.9.11",
-    "chai": "^3.3.0",
+    "chai": "^3.5.0",
     "gulp": "*",
     "gulp-angular-templatecache": "^1.8.0",
     "gulp-autoprefixer": "^3.1.0",
