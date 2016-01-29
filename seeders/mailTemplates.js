@@ -15,98 +15,98 @@ var templateFiles = [
     fileName: 'InvitationSeries_FirstInvite.html',
     name: "First Invitation",
     subject: "Invitation to {Session Name}",
-    systemMessage: 0
+    systemMessage: false
   },
   {
     fileName: 'InvitationSeries_CloseSession.html',
     name: "Close Session",
     subject: "Close {Session Name} session",
-    systemMessage: 0
+    systemMessage: false
   },
   {
     fileName: 'InvitationSeries_Confirmation.html',
     name: "Confirmation",
     subject: "Invitation confirmed",
-    systemMessage: 0
+    systemMessage: false
   },
   {
     fileName: 'InvitationSeries_Generic.html',
     name: "Generic",
     subject: "Invitation",
-    systemMessage: 0
+    systemMessage: false
   },
   {
     fileName: 'InvitationSeries_NotAtAll.html',
     name: "Not At All",
     subject: "Not At All",
-    systemMessage: 0
+    systemMessage: false
   },
   {
     fileName: 'InvitationSeries_NotThisTime.html',
     name: "Not This Time",
     subject: "Not this time",
-    systemMessage: 0
+    systemMessage: false
   },
   {
     fileName: 'SystemEmail_AccountManagerConfirmation.html',
     name: "Account Manager Confirmation",
     subject: "Account Manager Confirmation",
-    systemMessage: 0
+    systemMessage: false
   },
   {
     fileName: 'SystemEmail_ReactivatedAccount.html',
     name: "Reactivated Account",
     subject: "Your Account Has Been Reactivated",
-    systemMessage: 1
+    systemMessage: true
   },
   {
     fileName: 'SystemEmail_DeactivatedAccount.html',
     name: "Deactivated Account",
     subject: "Your Account Has Been Deactivated",
-    systemMessage: 1
+    systemMessage: true
   },
   {
     fileName: 'SystemEmail_FacilitatorConfirmation.html',
     name: "Facilitator Confirmation",
     subject: "Facilitator Confirmation",
-    systemMessage: 1
+    systemMessage: true
   },
   {
     fileName: 'SystemEmail_ObserverInvitation.html',
     name: "Observer Invitation",
     subject: "Observer Invitation",
-    systemMessage: 1
+    systemMessage: true
   },
   {
     fileName: 'SystemEmail_FacilitatorOverQuota.html',
     name: "Facilitator Over-Quota",
     subject: "Facilitator Over-Quota",
-    systemMessage: 1
+    systemMessage: true
   },
   // Popups
   {
     fileName: 'SystemPopup_InvitationAcceptance.html',
     name: "Invitation Acceptance",
     subject: "Invitation Acceptance",
-    systemMessage: 1
+    systemMessage: true
   },
   {
     fileName: 'SystemPopup_SessionClosed.html',
     name: "Session Closed",
     subject: "Session Closed",
-    systemMessage: 1
+    systemMessage: true
   },
   {
     fileName: 'SystemPopup_SessionFull.html',
     name: "Session Full",
     subject: "Session Full",
-    systemMessage: 1
+    systemMessage: true
   },
   {
     fileName: 'SystemPopup_SessionNotOpenYet.html',
     name: "Session Not Yet Open",
     subject: "Session Not Yet Open",
-    systemMessage: 1
+    systemMessage: true
   },
 ];
 

@@ -95,8 +95,8 @@ function getAllMailTemplates(req, getSystemMail,callback) {
   
   if (!getSystemMail) {
     //getting list that any user can edit
-    query.systemMessage = 0;
-  } 
+    query.systemMessage = false;
+  }
   
   MailTemplate.findAll({
       include: include,
