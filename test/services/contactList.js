@@ -6,6 +6,7 @@ var ContactListUserService  = require('./../../services/contactListUser');
 var UserService  = require('./../../services/users');
 var constants = require('./../../util/constants');
 var userFixture = require('./../fixtures/user');
+var _ = require('lodash');
 
 describe('Services -> ContactList', () => {
   describe('create',  () => {
@@ -165,6 +166,8 @@ describe('Services -> ContactList', () => {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
               assert.deepEqual(result.invalid, []);
+              assert.ok(_.isEqual(result.contactListFields.defaultFields, contactList.defaultFields));
+              assert.ok(_.isEqual(result.contactListFields.customFields, contactList.customFields));
               assert.equal(result.valid[0].firstName, 'user');
               assert.equal(result.valid[0].lastName, 'insider user');
               assert.equal(result.valid[0].gender, 'male');

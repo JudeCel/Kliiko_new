@@ -168,7 +168,7 @@ function parseFile(id, filePath) {
 };
 
 function parseXls(emails, deferred, contactList, filePath) {
-  let object = { valid: [], invalid: [] };
+  let object = defaultParserObject(contactList);
   let workbook = xlsx.readFile(filePath);
 
   async.forEach(workbook.SheetNames, function(sheetName, callback) {
@@ -177,9 +177,11 @@ function parseXls(emails, deferred, contactList, filePath) {
 
     let header = _.map(json[0], function(value, key) {
       let head = json[0][key];
-      return _.camelCase(head ? head : 'emptyHeader');
+      return _.camelCase(head ? head : '#emptyColumn');
     });
     json.splice(0, 1);
+
+    object.fileFields = fileFieldsArray(object.fileFields, header);
 
     async.forEach(json, function(array, cb) {
       let data = {};
@@ -204,16 +206,23 @@ function parseXls(emails, deferred, contactList, filePath) {
 };
 
 function parseCsv(emails, deferred, contactList, filePath) {
-  let object = { valid: [], invalid: [] };
-
+  let object = defaultParserObject(contactList);
+  let fieldsNeedStored = true;
+  let tempHeaders = [];
+  
   csv.fromPath(filePath, {
     headers: true
   }).transform(function(data) {
     _.map(data, function(value, key) {
       delete data[key];
       data[_.camelCase(key)] = value;
+
+      if (fieldsNeedStored) {
+        tempHeaders.push(_.camelCase(key));
+      }
     });
 
+    fieldsNeedStored = false;
     return data;
   }).validate(function(data, next) {
     validateRow(emails, contactList, data).then(function() {
@@ -229,6 +238,7 @@ function parseCsv(emails, deferred, contactList, filePath) {
   }).on('error', function(error) {
     deferred.reject(error);
   }).on('end', function() {
+    object.fileFields = fileFieldsArray(object.fileFields, tempHeaders);
     deferred.resolve(object);
   });
 }
@@ -271,3 +281,19 @@ function validateRow(emails, contactList, row) {
 
   return deferred.promise;
 };
+
+function fileFieldsArray(fileFields, header) {
+  return _.uniq(_.concat(fileFields, header));
+}
+
+function defaultParserObject(contactList) {
+  return {
+    contactListFields: {
+      defaultFields: contactList.defaultFields,
+      customFields: contactList.customFields
+    },
+    fileFields: [],
+    valid: [],
+    invalid: []
+  };
+}
