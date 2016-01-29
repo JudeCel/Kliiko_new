@@ -4,6 +4,9 @@ var MailTemplateService = require('./../services/mailTemplate');
 var async = require('async');
 var fs = require('fs');
 var Minimize = require('minimize');
+var async = require('async');
+
+
 var minimize = new Minimize();
 var num = 0;
 
@@ -153,7 +156,8 @@ function createMailTemplate() {
     addTemplate,
     addTemplate,
     addTemplate,
-    addTemplate
+    addTemplate,
+    createMailTemplateCopies
   ]);
 }
 
@@ -162,8 +166,6 @@ function addTemplate(callback) {
     if (num < templateFiles.length) {
       num++;
       callback(null);
-    } else {
-      process.exit();
     }
   })
 }
@@ -172,6 +174,23 @@ function readContents(fileName, callback) {
   fs.readFile('./seeders/mailTemplateFiles/' + fileName, 'utf8', function read(err, data) {      
     callback(err, data);    
   });
+}
+
+function copyFromMailTemplates(callback) {
+   MailTemplateService.copyBaseTemplates(function(error, result){
+    callback(error, result);
+  });
+}
+
+function createMailTemplateCopies() { 
+    copyFromMailTemplates(function (error, _result) {
+        if (error) {
+            console.log("create mail template copies error", error);
+        } else {
+            console.log("create mail template copies success", _result);
+        }
+        process.exit();
+    });
 }
 
 createMailTemplate();
