@@ -61,7 +61,7 @@ describe('SERVICE - ChatSessions', function() {
     });
   });
 
-  it.only("Get all account sessions", function(done) {
+  it("Get all account sessions", function(done) {
     ChatSessions.getAllSessions(testAccount.id).then(function(result) {
       assert.equal(result[0].id, testSession.id)
       assert.equal(result[0].name, testSession.name)
