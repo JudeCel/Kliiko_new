@@ -122,7 +122,11 @@
           res.table = new Table({id:res.id});
 
           var availableTables = res.defaultFields.concat( res.customFields );
-          res.table.availableTables(availableTables);
+          var participantsFields = res.participantsFields;
+          var visibleFields = res.participantsFields;
+          res.table.init(res.id, availableTables, visibleFields);
+
+          //res.table.availableTables(availableTables);
 
           deferred.resolve(res);
         },
