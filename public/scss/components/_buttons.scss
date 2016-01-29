@@ -140,6 +140,17 @@
     }
   }
 
+  &.btn-green {
+    color: $green;
+    border-color: $green !important;
+
+    &:hover {
+      color: white;
+      border-color: $green !important;
+      background: $green;
+    }
+  }
+
   &.btn-text-middle {
     font-size: 80%;
   }
@@ -157,3 +168,5 @@
   cursor: not-allowed !important;
 }
 //////
+
+

@@ -13,6 +13,7 @@ var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
 var survey = require('./survey');
 var chargebee = require('./chargebee');
+let topic = require('./topic');
 var gallery = require('./gallery');
 var brandColour = require('./brandColour');
 
@@ -68,6 +69,11 @@ router.get('/survey/find', survey.find);
 router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', survey.confirm);
 router.get('/survey/constants', survey.getConstants);
+
+router.get('/topics', multipartyMiddleware, topic.get);
+router.post('/topic', multipartyMiddleware, topic.post);
+router.put('/topic/:id',multipartyMiddleware, topic.updateById);
+router.delete('/topic/:id', multipartyMiddleware, topic.deleteById);
 
 router.get('/brandColour', brandColour.get);
 router.delete('/brandColour', brandColour.remove);

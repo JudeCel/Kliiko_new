@@ -20,8 +20,8 @@ module.exports = (Sequelize, DataTypes) => {
       paranoid: true,
       classMethods: {
         associate: function(models) {
-          Event.hasMany(models.Vote, {foreignKey: 'eventId'})
-          Event.belongsTo(models.User, {foreignKey: 'userId'})
+          Event.hasMany(models.Vote, {foreignKey: 'eventId'});
+          Event.belongsTo(models.User, {foreignKey: 'userId'});
         }
       }
     }

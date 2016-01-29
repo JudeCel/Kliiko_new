@@ -23,7 +23,7 @@ module.exports = (Sequelize, DataTypes) => {
           Session.belongsTo(models.BrandProject, { foreignKey: 'brand_project_id' });
           Session.belongsTo(models.Account, { foreignKey: 'accountId' });
           Session.belongsTo(models.BrandProjectPreference, { foreignKey: 'brandProjectPreferenceId' });
-          Session.hasMany(models.Topic, { foreignKey: 'sessionId' });
+          Session.belongsToMany(models.Topic, { through: { model: models.SessionTopics} } );
           Session.hasMany(models.SessionMember, { foreignKey: 'sessionId' });
         }
       }
