@@ -13,6 +13,7 @@ module.exports = {
     'postalAddress',
     'city',
     'state',
+    'status',
     'country',
     'postcode',
     'companyName',

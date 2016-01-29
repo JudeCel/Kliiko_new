@@ -112,7 +112,7 @@ function preValidate(user, currentDomainId, params, callback) {
 };
 
 function adjustParamsForNewAccountUser(params, userId, accountId) {
-  params.state = "invited";
+  params.status = "invited";
   params.role = 'accountManager';
   params.AccountId = accountId;
   params.UserId = userId;

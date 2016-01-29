@@ -54,6 +54,6 @@ function saveYoutubeResource(req, res, next) {
   galleryService.saveYoutubeData(req).then(function(result) {
     res.send(result);
   }, function(err) {
-    res.send(({ error: err.message }));
+    res.send({ error: err });
   })
 }

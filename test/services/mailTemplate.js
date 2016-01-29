@@ -8,7 +8,8 @@ describe('Mail Template Service', () => {
     var validAttrs = {
         name: "Test Name",
         subject: "Test Subject",
-        content: "<p>Test Content</p>"
+        content: "<p>Test Content</p>",
+        systemMessage: 1
     };
     
     var invalidAttrsEmptyField = {

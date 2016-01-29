@@ -150,7 +150,7 @@ function acceptInviteNew(token, params, callback) {
   });
 };
 function setAccountUserActive(accountUserId, callback) {
-  AccountUser.update({state: "active"}, { where:{ id: accountUserId } }).then(function(result) {
+  AccountUser.update({status: "active"}, { where:{ id: accountUserId } }).then(function(result) {
     callback(null, result);
   },function(err) {
     callback(prepareErrors(error));

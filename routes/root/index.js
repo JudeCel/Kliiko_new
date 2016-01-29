@@ -58,7 +58,7 @@ router.get('/auth/facebook/callback', function(req, res, next) {
     }else{
       res.locals = usersRepo.prepareParams(req);
       socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
-        res.render("registration");
+        res.render("registration", {appData: res.locals, error: {}});
       }, function(err) {
         next(err);
       })
@@ -79,7 +79,7 @@ router.get('/auth/google/callback', function(req, res, next) {
     }else{
       res.locals = usersRepo.prepareParams(req);
       socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
-        res.render("registration");
+        res.render("registration", { appData: res.locals, error: {} });
       }, function(err) {
         next(err)
       });
