@@ -57,7 +57,7 @@
         for (var i = 0, len = input.length; i < len ; i++) {
           for (var j = 0, len = input[i].members.length; j < len ; j++) {
 
-            if (input[i].members[j].data.customFields) {
+            if (input[i].members[j].customFields) {
               input[i].members[j].CustomFieldsObject = input[i].members[j].data.customFields;
             }
 

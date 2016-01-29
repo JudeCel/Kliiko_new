@@ -7,6 +7,7 @@
     // For any unmatched url, redirect to /home
     $urlRouterProvider.otherwise("/");
 
+
     $stateProvider
       .state('index', {
         abstract: true,

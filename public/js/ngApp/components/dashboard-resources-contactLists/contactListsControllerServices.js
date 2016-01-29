@@ -77,7 +77,7 @@
     function prepareSelectedList() {
       if (selectedListMembers) {
         for (var i = 0, len = selectedListMembers.length; i < len ; i++) {
-          selectedListMembers[i].CustomFieldsObject = selectedListMembers[i].data.customFields || [];
+          selectedListMembers[i].CustomFieldsObject = selectedListMembers[i].customFields || [];
           if (!selectedListMembers[i].selected) selectedListMembers[i].selected = false;
         }
       }
