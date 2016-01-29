@@ -26,8 +26,8 @@ function index(req, res, next) {
 //
 
 function create(req, res, next) {
-  if (!req.body.name) {  res.send({ error: 'Body param @name {string} is required' }); return }
-  if (!req.body.customFields) {  res.send({ error: 'Body param @customFields {array} is required' }); return }
+  paramsValidation(req.body.name, 'Body param @name {string} is required');
+  paramsValidation(req.body.customFields, 'Body param @customFields {array} is required');
 
   req.body.customFields = _.uniq(req.body.customFields);
 
@@ -48,7 +48,7 @@ function create(req, res, next) {
 //  }
 //
 function update(req, res, next) {
-  if (!req.params.id) { res.send('query param @id is missed'); return }
+  paramsValidation(req.params.id, 'query param @id is missed');
 
   let params = req.body;
   params.id = req.params.id;
@@ -68,7 +68,7 @@ function update(req, res, next) {
 //
 
 function destroy(req, res, next) {
-  if (!req.params.id) { res.send('query param @id is missed'); return }
+  paramsValidation(req.params.id, 'query param @id is missed');
 
   let accountId = res.locals.currentDomain.id;
   contactListService.destroy(req.params.id, accountId).then(function(lists) {
@@ -79,6 +79,9 @@ function destroy(req, res, next) {
 }
 
 function import(req, res, next) {
+  paramsValidation(req.file, 'file is missed');
+  paramsValidation(req.params.id, 'query param @id is missed');
+
   let contactListId = req.params.id;
   let file = req.file;
   contactListService.parseFile(contactListId, file.path).then(function(result) {
@@ -86,4 +89,8 @@ function import(req, res, next) {
   }, function(err) {
     res.send({ error: err });
   })
+}
+
+function paramsValidation(value, message) {
+  if (!value) { res.send({ error: message }); return }
 }

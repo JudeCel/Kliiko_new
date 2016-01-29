@@ -16,11 +16,12 @@ module.exports = {
   create: create,
   update: update,
   destroy: destroy,
-  updatePositions: updatePositions
+  updatePositions: updatePositions,
+  bulkCreate: bulkCreate
 };
 
 function findByContactList(contactListId) {
-    var deferred = q.defer();
+    let deferred = q.defer();
     ContactListUser.findAll({
       order: ['position'],
       include: [{model: ContactList, where: { id: contactListId} } ]
@@ -46,7 +47,7 @@ function findByContactList(contactListId) {
 // params = [{id: 1, position: 3}, ...]
 function updatePositions(params) {
   // TODO: Need rewrite to one DB call!!!
-  var deferred = q.defer();
+  let deferred = q.defer();
     async.map(params, update, function(err, result) {
       if (err) {
         deferred.reject(err);
@@ -75,7 +76,7 @@ function destroy(ids, accountId) {
 }
 
 function find(id) {
-    var deferred = q.defer();
+    let deferred = q.defer();
     ContactListUser.find({where: { id: id }, include: [ ContactList ]}).then(function(result) {
       let contactListUser =  new ContactListUser(
         result.ContactList.defaultFields,
@@ -89,8 +90,37 @@ function find(id) {
     return deferred.promise;
 }
 
-function create(params) {
-  var deferred = q.defer();
+function transactionFun(t, accountId) {
+  return function(attrs, callback) {
+    attrs.accountId = accountId;
+    create(attrs, t).then(function(result) {
+      callback(null, result);
+    },function(err) {
+      callback(err);
+    });
+  }
+}
+
+function bulkCreate(list, accountId) {
+  let deferred = q.defer();
+    models.sequelize.transaction().then(function(t) {
+      async.map(list, transactionFun(t, accountId), function(err, results){
+        if (err) {
+          t.rollback().then(function() {
+            deferred.reject(err);
+          });
+        }else {
+          t.commit().then(function() {
+            deferred.resolve(results);
+          });
+        }
+      });
+    })
+  return deferred.promise;
+}
+
+function create(params, transaction) {
+  let deferred = q.defer();
   AccountUser.find(
     { where: {
         email: params.defaultFields.email,
@@ -99,16 +129,17 @@ function create(params) {
     }
   ).then(function(accountUser) {
     if (accountUser) {
-      accountUser.createContactListUser(contactListUserParams(params, accountUser.id)).then(function(contactListUser) {
+      ContactListUser.create(contactListUserParams(params, accountUser.id), {transaction: transaction}).then(function(contactListUser) {
         deferred.resolve(contactListUser);
       }, function(err) {
         deferred.reject(err);
       })
     }else{
-      createNewAccountUser(params).then(function(newAccountUser) {
-        ContactListUser.create(contactListUserParams(params, newAccountUser.id)).then(function(contactListUser) {
+      createNewAccountUser(params, transaction).then(function(newAccountUser) {
+        ContactListUser.create(contactListUserParams(params, newAccountUser.id), {transaction: transaction}).then(function(contactListUser) {
           deferred.resolve(contactListUser);
         }, function(err) {
+          console.log(err);
           deferred.reject(err);
         })
       }, function(err) {
@@ -119,10 +150,10 @@ function create(params) {
   return deferred.promise;
 }
 
-function createNewAccountUser(params) {
-  var deferred = q.defer();
+function createNewAccountUser(params, transaction) {
+  let deferred = q.defer();
   ContactList.find({where: {id: params.contactListId}}).then(function(contactList) {
-    AccountUserService.create(params.defaultFields, params.accountId, contactList.role).then(function(accountUser) {
+    AccountUserService.create(params.defaultFields, params.accountId, contactList.role, transaction).then(function(accountUser) {
       deferred.resolve(accountUser);
     }, function(err) {
       if(err.name == 'SequelizeUniqueConstraintError') {
@@ -146,7 +177,7 @@ function contactListUserParams(params, accountUserId) {
 }
 
 function update(params) {
-  var deferred = q.defer();
+  let deferred = q.defer();
   ContactListUser.update(params,{
     where:{ id: params.id }
   }).then(function(result) {
