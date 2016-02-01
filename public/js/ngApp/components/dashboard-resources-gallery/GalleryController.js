@@ -20,7 +20,7 @@
         sessionStorage.setItem('viewType', 'panel');
         $scope.viewType = sessionStorage.getItem('viewType');
       }
-      GalleryServices.getResources().then(function(res) {
+      GalleryServices.getResources({type: ""}).then(function(res) {
         $scope.resources = res.data;
       });
     }
@@ -112,6 +112,7 @@
     }
 
     function saveResource(newResource){
+      dbg.yell(newResource.type)
       var resourceParams = {
         title: newResource.title,
         type: newResource.type,

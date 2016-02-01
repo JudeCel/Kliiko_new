@@ -21,10 +21,10 @@
     upServices.postuploadData = postuploadData;
     return upServices;
 
-    function getResources() {
+    function getResources(type) {
       var deferred = $q.defer();
       dbg.log2('#GalleryServices > getResources > make rest call');
-      galleryRestApi.get({}, function(res) {
+      galleryRestApi.get(type, function(res) {
         dbg.log2('#GalleryServices > getResources > rest call responds');
         deferred.resolve(res);
       });

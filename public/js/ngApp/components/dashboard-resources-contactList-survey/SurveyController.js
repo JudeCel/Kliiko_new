@@ -10,6 +10,12 @@
     var vm = this;
     vm.surveys = {};
     vm.brandLogos = {};
+    vm.surveyBrandLogo = {};
+    vm.brandLogoFile = {};
+    vm.selecctOptions = {
+      show: true,
+      uploaded: false
+    };
 
     // Uses services
     vm.removeSurvey = removeSurvey;
@@ -35,6 +41,9 @@
     vm.contactDetailDisabled = contactDetailDisabled;
 
     vm.openModal = openModal;
+    vm.selectBrandLogo = selectBrandLogo;
+    vm.removeBrandLogo = removeBrandLogo;
+    vm.uploadBrandLogo = uploadBrandLogo;
 
     vm.answerSortOptions = {
       handle: '.list-handle',
@@ -72,20 +81,77 @@
     };
 
     function openModal(){
-      // progressbar.start();
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
       brandLogosFromGallery();
-      // progressbar.complete();
+      progressbar.complete();
       domServices.modal('getGallery');
     }
 
+    function selectBrandLogo(resource){
+      vm.selecctOptions.show = false;
+      vm.surveyBrandLogo = resource;
+    }
+
+    function removeBrandLogo(){
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+      if(vm.selecctOptions.uploaded){
+        GalleryServices.deleteResources({resource_id: vm.surveyBrandLogo.id}).then(function(res) {
+          if(res.error){
+            messenger.error(res.error);
+            progressbar.complete();
+          }else{
+            vm.selecctOptions.show = true;
+            vm.selecctOptions.uploaded = false;
+            vm.surveyBrandLogo = {};
+            progressbar.complete();
+          }
+        });
+      }else{
+        vm.selecctOptions.show = true;
+        vm.surveyBrandLogo = {};
+        progressbar.complete();
+        
+      }
+    }
+
     function brandLogosFromGallery(){
-      GalleryServices.getResources().then(function(res) {
-        console.log("#######################################");
-        console.log(res.data);
-        console.log("#######################################");
+      GalleryServices.getResources({type: "brandLogo"}).then(function(res) {
         vm.brandLogos = res.data;
       });
     }
+
+    function uploadBrandLogo(){
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+
+      var resourceParams = {
+        title: vm.survey.name,
+        type: "brandLogo",
+        text: vm.brandLogoFile.name,
+        file: vm.brandLogoFile
+      };
+
+      GalleryServices.createResource(resourceParams).then(function(res) {
+        if(res.error){
+          messenger.error(res.error);
+        }else{
+          vm.surveyBrandLogo.id = res.id;
+          vm.selecctOptions.show = false;
+          vm.selecctOptions.uploaded = true;
+          GalleryServices.postuploadData(resourceParams).then(function(res) {
+            if(res.error){
+              messenger.error(res.error);
+            }else{
+              vm.surveyBrandLogo.JSON = res.data;
+              progressbar.complete();
+            }
+          })
+        }
+      })
+    }
+
 
     function removeSurvey(survey) {
       angularConfirm('Are you sure you want to remove Survey?').then(function(response) {
