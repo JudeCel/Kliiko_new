@@ -179,10 +179,12 @@
     }
     
     vm.uploadResourceForm = function(uploadType) {
+      domServices.modal('uploadTemplateResource');
       vm.newResource.type = uploadType;
       vm.uploadTypeForTitle = uploadTypeForTitle(uploadType);
-
-      domServices.modal('uploadTemplateResource');
+      if(!$scope.$$phase) {
+        $scope.$apply();
+      }
     }
     
     function uploadTypeForTitle(uploadType) {

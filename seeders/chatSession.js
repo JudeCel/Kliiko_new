@@ -31,8 +31,7 @@ let createNewChatFunctionList = [
   (cb) => {createSession(cb)},
   crateBrandProject,
   addBrandProjectPreferences,
-  createTopic,
-  addSessionMembers
+  addSessionMembers,
 ]
 
 function createSession(callback) {
@@ -95,29 +94,37 @@ function addBrandProjectPreferences(session, brandProject, callback) {
   });
 }
 
-function createTopic(session, brandProject, callback) {
-  session.createTopic({ name: "Cool Topic" })
-  .then(function (_result) {
-    callback(null, session, brandProject);
-  })
-  .catch(function (error) {
+function createTopic(session, accountId, callback) {
+  session.createTopic({accountId: accountId, name: "Cool Topic" })
+  .then(function (result) {
+    callback(null, result);
+  }, function(error) {
+    console.log(error);
     callback(error);
-  });
+  })
+
 }
 
 function addSessionMembers(erorr, session, callback) {
   console.log("added Session Member");
   async.parallel([
     (cb) =>  {
-      UserService.create(userlist[0], function(errors, user) {
+      UserService.createUser(userlist[0], function(errors, user, params) {
         if(errors) {return cb(errors)};
-        addSessionMember(user, session,'facilitator', 'Cool first user', cb);
+        createTopic(session, params.AccountId, function(err, result) {
+
+          if(errors) {return cb(errors)};
+          addSessionMember(user, session,'facilitator', 'Cool first user', cb);
+        });
       })
     },
     (cb) => {
-      UserService.create(userlist[1], function(errors, user) {
+      UserService.createUser(userlist[1], function(errors, user, params) {
         if(errors) {return cb(errors)};
-        addSessionMember(user, session, 'participant','Cool second user', cb);
+        createTopic(session, params.AccountId, function(err, result) {
+          if(errors) {return cb(errors)};
+          addSessionMember(user, session, 'participant','Cool second user', cb);
+        });
       });
     }
   ],
@@ -129,7 +136,7 @@ function addSessionMembers(erorr, session, callback) {
 function addSessionMember(user, session, role, name, callback) {
 
   let params = { role: role,
-                 userId: user.id,
+                 accountUserId: user.id,
                  username: name,
                  avatar_info: "0:4:3:1:4:3" }
   session.createSessionMember(params)

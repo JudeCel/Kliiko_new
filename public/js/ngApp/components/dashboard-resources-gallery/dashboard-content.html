@@ -141,7 +141,7 @@
       
       <!-- Panel view -->
       <div ng-if="viewType == 'panel'" ng-repeat="resource in resources | filter: { resourceType: filterType }">
-        <div class="col-xs-2 col-md-4">  
+        <div class="col-xs-4 col-md-4">  
           <div class="panel panel-success border-green">
             <div class="panel-body">
               
@@ -213,7 +213,7 @@
     <div class='modal-dialog changePasswordModal' >
       <div class='modal-content border-green border-radius-none'>
         <div class='modal-header'>
-          <button type='button' class='close' data-dismiss='modal'>&times;</button>
+          <button type='button' class='close' data-dismiss='modal' ng-click="clearFormData()">&times;</button>
           <h2 class='modal-title text-center'>New {{ uploadTypeForTitle }} resource.</h2>
         </div>
         <form ng-submit="submitForm(newResource)">
@@ -221,26 +221,26 @@
 
             <div class="form-group">
               <label for="title">Title</label>
-              <input ng-model="newResource.title" type="text" class="form-control center-block" name="title" id="title" placeholder="Title" required>
+              <input ng-model="newResource.title" type="text" class="form-control center-block" name="title" id="title" placeholder="Title">
             </div>
 
             <div ng-if="newResource.type == 'youtubeUrl'" class="form-group">
               <label for="youtubeUrl">Youtube Url</label>
-              <input ng-model="newResource.youtubeUrl" type="text" class="form-control center-block" name="youtubeUrl" id="youtubeUrl" placeholder="Youtube URL" required>
+              <input ng-model="newResource.youtubeUrl" type="text" class="form-control center-block" name="youtubeUrl" id="youtubeUrl" placeholder="Youtube URL">
             </div>
 
             <div ng-if="newResource.type !== 'youtubeUrl'" class="form-group">
               <label for="fileTst">File</label>
               <div ngf-drop ngf-select ng-model="newResource.fileTst" ng-change="uploadTst()" class="drop-box"
-                ngf-drag-over-class="'dragover'">
+                ngf-drag-over-class="'dragover'" accept="{{allowToUpload}}">
                 Drop images here or click to upload</div>
               <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
               {{ newResource.fileTst.name | limitTo: 15 }}{{newResource.fileTst.name.length > 15 ? '...' : ''}}
             </div> 
           </div>
           <div class='modal-footer'>
-            <div type='button' class='pull-left btn-dashboard-plans go-back-btn' data-dismiss='modal'>Cancel</div>
-            <input type='submit' class='pull-right btn-dashboard-plans btn'>
+            <button class="btn btn-addNewElement pull-left no-margin btn-green gallery-btn-width" data-dismiss='modal' ng-click="clearFormData()">Cancel</button>
+            <input type='submit' class='btn btn-addNewElement pull-right no-margin btn-green gallery-btn-width' ng-disabled="submitIsDisabled">
           </div>
         </form>   
       </div>
