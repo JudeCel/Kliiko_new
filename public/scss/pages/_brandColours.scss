@@ -43,6 +43,8 @@
       .form-control:disabled {
         background-color: inherit;
         cursor: pointer;
+        height: 20px;
+        border: 1px solid #ccc;
       }
       .input-group-addon {
         font-size: 1em;
@@ -52,7 +54,12 @@
     }
   }
 
+  .media-bottom {
+    width: 25%;
+  }
+
   .circle-addon {
+    width: 5%;
     border: 0;
     padding: 0;
     padding-right: 5px;

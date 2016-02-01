@@ -1402,12 +1402,17 @@ hr.survey-hr {
         padding-left: 5%; }
       .brandColours .header .input-group .form-control:disabled {
         background-color: inherit;
-        cursor: pointer; }
+        cursor: pointer;
+        height: 20px;
+        border: 1px solid #ccc; }
       .brandColours .header .input-group .input-group-addon {
         font-size: 1em;
         padding: 0px 3px;
         background-color: inherit; }
+  .brandColours .media-bottom {
+    width: 25%; }
   .brandColours .circle-addon {
+    width: 5%;
     border: 0;
     padding: 0;
     padding-right: 5px;
