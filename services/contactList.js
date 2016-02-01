@@ -32,7 +32,7 @@ function destroy(contacListId, accoutId) {
   return deferred.promise;
 }
 function allByAccount(accountId) {
-    let selectFields =  constants.contactListDefaultFields
+    let selectFields =  constants.contactListDefaultFields.concat('id')
     // selectFields.push([models.sequelize.fn('COUNT', models.sequelize.col('ContactListUsers.AccountUser.Invites.id')), 'Invites'])
     console.log(selectFields);
     let deferred = q.defer();
@@ -143,11 +143,15 @@ function parseFile(id, filePath) {
           return value.email;
         });
 
-        if(path.extname(filePath) == '.csv') {
-          parseCsv(emails, deferred, contactList, filePath);
-        }
-        else {
-          parseXls(emails, deferred, contactList, filePath);
+        switch (path.extname(filePath)) {
+          case '.csv':
+            parseCsv(emails, deferred, contactList, filePath);
+            break;
+          case '.xls':
+            parseXls(emails, deferred, contactList, filePath);
+            break;
+          default:
+            deferred.reject("Wrong file format: " + path.extname(filePath) + "!");
         }
       }).catch(models.User.sequelize.ValidationError, function(error) {
         deferred.reject(error);
@@ -164,26 +168,31 @@ function parseFile(id, filePath) {
 };
 
 function parseXls(emails, deferred, contactList, filePath) {
-  let object = { valid: [], invalid: [] };
+  let object = defaultParserObject(contactList);
   let workbook = xlsx.readFile(filePath);
 
   async.forEach(workbook.SheetNames, function(sheetName, callback) {
     let worksheet = workbook.Sheets[sheetName];
-    let json = xlsx.utils.sheet_to_json(worksheet, { raw: true, header: 1 });
+    let json = xlsx.utils.sheet_to_json(worksheet, { raw: true, header: 1, id: true});
 
     let header = _.map(json[0], function(value, key) {
       let head = json[0][key];
-      return _.camelCase(head ? head : 'emptyHeader');
+      return _.camelCase(head ? head : '#emptyColumn');
     });
     json.splice(0, 1);
 
+    object.fileFields = fileFieldsArray(object.fileFields, header);
+
+    let rowNr = 2; // this number represent start row for content
+    let uniqRowListCounter = {};
+
     async.forEach(json, function(array, cb) {
-      let data = {};
+      let data = {rowNr: rowNr};
       _.map(header, function(value, index) {
         data[value] = array[index] || '';
       })
-
-      validateRow(emails, contactList, data).then(function() {
+      ++ rowNr
+      validateRow(emails, contactList, data, uniqRowListCounter).then(function() {
         object.valid.push(data);
         cb();
       }, function(error) {
@@ -192,6 +201,7 @@ function parseXls(emails, deferred, contactList, filePath) {
         cb();
       });
     }, function() {
+      addDublicateEntries(object, uniqRowListCounter)
       callback();
     });
   }, function() {
@@ -200,7 +210,9 @@ function parseXls(emails, deferred, contactList, filePath) {
 };
 
 function parseCsv(emails, deferred, contactList, filePath) {
-  let object = { valid: [], invalid: [] };
+  let object = defaultParserObject(contactList);
+  let fieldsNeedStored = true;
+  let tempHeaders = [];
 
   csv.fromPath(filePath, {
     headers: true
@@ -208,8 +220,13 @@ function parseCsv(emails, deferred, contactList, filePath) {
     _.map(data, function(value, key) {
       delete data[key];
       data[_.camelCase(key)] = value;
+
+      if (fieldsNeedStored) {
+        tempHeaders.push(_.camelCase(key));
+      }
     });
 
+    fieldsNeedStored = false;
     return data;
   }).validate(function(data, next) {
     validateRow(emails, contactList, data).then(function() {
@@ -225,11 +242,12 @@ function parseCsv(emails, deferred, contactList, filePath) {
   }).on('error', function(error) {
     deferred.reject(error);
   }).on('end', function() {
+    object.fileFields = fileFieldsArray(object.fileFields, tempHeaders);
     deferred.resolve(object);
   });
 }
 
-function validateRow(emails, contactList, row) {
+function validateRow(emails, contactList, row, uniqRowListCounter) {
   let deferred = q.defer();
   let error = {};
 
@@ -244,8 +262,12 @@ function validateRow(emails, contactList, row) {
         error[key] = 'No data';
       }
 
-      if(key == 'email' && _.includes(emails, rowData)) {
-        error[key] = 'Email already taken';
+      if(key == 'email') {
+        uniqRowListCounterFun(key, row, uniqRowListCounter)
+
+        if (_.includes(emails, rowData)) {
+          error[key] = 'Email already taken';
+        }
       }
     }
   });
@@ -267,3 +289,37 @@ function validateRow(emails, contactList, row) {
 
   return deferred.promise;
 };
+
+function fileFieldsArray(fileFields, header) {
+  return _.uniq(_.concat(fileFields, header));
+}
+
+function uniqRowListCounterFun(key, row, counterCollection) {
+  if (counterCollection[row[key]]) {
+    counterCollection[row[key]].rows.push(row.rowNr)
+    ++ counterCollection[row[key]].count
+  }else{
+    counterCollection[row[key]] = { rows: [row.rowNr], count: 1 }
+  }
+}
+
+function addDublicateEntries(object, counterCollection) {
+  _.forEach(counterCollection, function(val, key) {
+    if (val.count > 1){
+      object.dublicateEntries.push({email: key, rows: val.rows})
+    }
+  });
+}
+
+function defaultParserObject(contactList) {
+  return {
+    contactListFields: {
+      defaultFields: contactList.defaultFields,
+      customFields: contactList.customFields
+    },
+    dublicateEntries: [],
+    fileFields: [],
+    valid: [],
+    invalid: []
+  };
+}

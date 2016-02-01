@@ -49,6 +49,38 @@ describe('Services -> ContactListUser', () => {
           });
         });
       })
+      describe("bulkCreate", ()=>{
+        it.only("create multiple records", (done) =>  {
+          let list = [{
+            contactListId: TestContactList.id,
+            defaultFields: {
+              firstName: "DainisNew1",
+              lastName: "LapinsNew1",
+              password: "cool_password",
+              email: "dainis1@gmail.com",
+              gender: "male"
+            },
+              customFields: { one: "1", two:" 2", three:" 3" }
+            },{
+              contactListId: TestContactList.id,
+              defaultFields: {
+                firstName: "DainisNew",
+                lastName: "LapinsNew",
+                password: "cool_password",
+                email: "dainis2@gmail.com",
+                gender: "male"
+              },
+              customFields: { one: "3", two:" 3", three:"5" }
+            }];
+
+          ContactListUserService.bulkCreate(list, TestAccount.id).then(function(contactListUsers) {
+            assert.lengthOf(contactListUsers, 2);
+            done();
+          }, function(err) {
+            done(err);
+          });
+        })
+      })
 
       it("create to existing user base", (done) => {
           let attrs = {

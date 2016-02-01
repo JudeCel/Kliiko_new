@@ -29,7 +29,7 @@ module.exports = {
 contactListDefaultFields: [
     "firstName", "lastName", "gender", "email", "city",
     "state", "country", "postCode", "companyName",
-     "landlineNumber", "mobile", "id"
+     "landlineNumber", "mobile"
   ],
   promotionCodeTypes: ['percentage', 'value'],
   galleryUploadTypes: ['image', 'brandLogo', 'audio', 'youtubeLink', 'text'],

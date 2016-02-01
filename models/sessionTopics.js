@@ -1,19 +1,19 @@
 "use strict";
 
 module.exports = (Sequelize, DataTypes) => {
-  var sessionTopics = Sequelize.define('SessionTopics', {
+  var SessionTopics = Sequelize.define('SessionTopics', {
       id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-      sessionId: { type: DataTypes.INTEGER, allowNull: false },
-      topicId: { type: DataTypes.INTEGER, allowNull: false},
     }, {
+      timestamps: true,
+      tableName: 'SessionTopics',
       classMethods: {
         associate: function(models) {
-          sessionTopics.belongsTo(models.Topic, {foreignKey: 'sessionId'});
-          sessionTopics.belongsTo(models.Session, {foreignKey: 'sessionId'});
+          SessionTopics.belongsTo(models.Topic);
+          SessionTopics.belongsTo(models.Session);
         }
       }
     }
   );
 
-  return sessionTopics;
+  return SessionTopics;
 };

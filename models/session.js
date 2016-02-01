@@ -19,7 +19,7 @@ module.exports = (Sequelize, DataTypes) => {
       classMethods: {
         associate: function(models) {
           Session.belongsTo(models.BrandProject, { foreignKey: 'brand_project_id' });
-          Session.hasMany(models.Topic, { foreignKey: 'sessionId' });
+          Session.belongsToMany(models.Topic, { through: { model: models.SessionTopics} } );
           Session.hasMany(models.BrandProjectPreference, { foreignKey: 'sessionId' });
           Session.hasMany(models.SessionMember, { foreignKey: 'sessionId' });
         }

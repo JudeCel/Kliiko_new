@@ -26,8 +26,8 @@ function getResources(accountId){
   let deferred = q.defer();
 
   Resource.findAll({
+    where: {resourceType: {not: "tmp"}},
     include: [{
-        // where: {resourceType: "image"},
         model: models.User, 
         include: [{
           model: models.Account,
@@ -70,7 +70,7 @@ function downloadResources(data){
       if(['audio', 'image', 'pdf'].indexOf(resource.resourceType) > -1){
         files.push({
           name: resource.JSON.name,
-          path: config.get("pathToChatFileStorage") + resource.JSON.name
+          path: config.get("chatConf"["paths"]["fsPath"])+ "/public/uploads/" + resource.JSON.name
         })
       }
     });
@@ -81,7 +81,7 @@ function downloadResources(data){
       }else{
         let buff = archive.toBuffer();
         let fileName = generateFileName();
-        fs.writeFile(config.get("pathToChatFileStorage") + fileName, buff, function () {
+        fs.writeFile(config.get("chatConf"["paths"]["fsPath"])+ "/public/uploads/" + fileName, buff, function () {
           deferred.resolve({fileName: fileName});
         });
       }
@@ -119,21 +119,21 @@ function deleteResources(ids){
 
 // I was not able to include this from utilities.js
 function processYouTubeData(youtubeData) {
-    var preFix = '<iframe width="420" height="416" src="http://www.youtube.com/embed/';
-    var subFix = '" frameborder="0" allowfullscreen></iframe>';
+  var preFix = '<iframe width="420" height="416" src="http://www.youtube.com/embed/';
+  var subFix = '" frameborder="0" allowfullscreen></iframe>';
 
-    var position = -1;
+  var position = -1;
 
-    if (youtubeData.search("<iframe") != -1) {
-        return youtubeData;
-    } else if (youtubeData.search("youtube.com/watch?") != -1) {
-        position = youtubeData.search("v=") + 2;
-        return preFix + youtubeData.substr(position) + subFix;
-    } else if (youtubeData.search("youtu.be/") != -1) {
-        position = youtubeData.search("youtu.be/") + 9;
-        return preFix + youtubeData.substr(position) + subFix;
-    }
-    return null;
+  if (youtubeData.search("<iframe") != -1) {
+    return youtubeData;
+  } else if (youtubeData.search("youtube.com/watch?") != -1) {
+    position = youtubeData.search("v=") + 2;
+    return preFix + youtubeData.substr(position) + subFix;
+  } else if (youtubeData.search("youtu.be/") != -1) {
+    position = youtubeData.search("youtu.be/") + 9;
+    return preFix + youtubeData.substr(position) + subFix;
+  }
+  return null;
 }
 
 function saveYoutubeData(data) {
@@ -143,20 +143,20 @@ function saveYoutubeData(data) {
 
   if(youTubeLink == null){
     deferred.reject("You have input an invalid youTube link!/n Please re-enter.");
+  }else{
+    let resourceAppendedCallback = function (userId, json) {
+      deferred.resolve(json);
+    };
+
+    let topicId = 1; //THIS NEEDS to be changed
+    let json = {
+      title: data.body.title,
+      message: youTubeLink,
+      url: url
+    };
+
+    socketHelper.updateResources(topicId, data.user.id, json, "video", resourceAppendedCallback);
   }
-
-  let resourceAppendedCallback = function (userId, json) {
-    deferred.resolve(json);
-  };
-
-  let topicId = 1; //THIS NEEDS to be changed
-  let json = {
-    title: data.body.title,
-    message: youTubeLink,
-    url: url
-  };
-
-  socketHelper.updateResources(topicId, data.user.id, json, "video", resourceAppendedCallback);
 
   return deferred.promise;
 }

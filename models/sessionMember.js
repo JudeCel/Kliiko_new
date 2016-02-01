@@ -3,7 +3,7 @@
 module.exports = (Sequelize, DataTypes) => {
   var SessionMember = Sequelize.define('SessionMember', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    userId: {type: DataTypes.INTEGER, allowNull: false,
+    accountUserId: {type: DataTypes.INTEGER, allowNull: false,
       references: { model: Sequelize.User, key: 'id' }
     },
     username: { type: DataTypes.STRING, allowNull: false },
@@ -20,7 +20,7 @@ module.exports = (Sequelize, DataTypes) => {
     classMethods: {
       associate: function(models) {
         SessionMember.belongsTo(models.Session, {foreignKey: 'sessionId'});
-        SessionMember.belongsTo(models.User, {foreignKey: 'userId'});
+        SessionMember.belongsTo(models.AccountUser, {foreignKey: 'accountUserId'});
       }
     }
   }

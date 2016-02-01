@@ -12,16 +12,11 @@
     var vm = this;
     var tempName;
 
+    vm.list = [];
 
     vm.nameMaxSize = 15;
     vm.newTopicName = null;
     vm.editBlockHelper = null;
-
-
-
-
-
-    vm.list = [];
 
     vm.createNew = createNewTopic;
     vm.validateNewAndAdd = validateNewAndAdd;
@@ -29,7 +24,6 @@
     vm.toggleEditBlock = toggleEditBlock;
     vm.edit = edit;
     vm.saveInline = saveInline;
-    vm.copy = copy;
 
     init();
 
@@ -130,7 +124,7 @@
 
     function edit(blockIndex) {
       tempName = vm.list[blockIndex].name;
-      jQuery('#edit-block-'+blockIndex).toggle();
+      toggleEditBlock(blockIndex);
 
       vm.editBlockHelper = blockIndex;
     }
@@ -148,14 +142,6 @@
         messenger.error(err);
         dbg.error(err);
       }
-    }
-
-    function copy(blockIndex) {
-      jQuery('#edit-block-'+blockIndex).toggle();
-      var tmp = vm.list[blockIndex];
-
-      validateNewAndAdd(tmp);
-
     }
 
   }

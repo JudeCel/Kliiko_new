@@ -24,6 +24,24 @@ function create(req, res, next) {
   })
 }
 
+// Create Params example
+// list: [{  defaultFields: Object/optional =>  { firstName: "name" },
+//    customFields: Object/optional =>  { customFieldsName: "someValue"}
+//    contactListId: INTEGER/required => 1
+//  }, {....},{....}]
+//
+function createBulk(req, res, next) {
+  if (!params.list) { res.send('query param @list is missed'); return }
+
+  let accountId = res.locals.currentDomain.id;
+
+  contactListUserService.bulkCreate(params.list, accountId).then(function(result) {
+    res.send(result);
+  }, function(err) {
+    res.send({ error: err });
+  })
+}
+
 
 // Create Params example
 

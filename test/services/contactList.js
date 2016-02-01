@@ -6,6 +6,7 @@ var ContactListUserService  = require('./../../services/contactListUser');
 var UserService  = require('./../../services/users');
 var constants = require('./../../util/constants');
 var userFixture = require('./../fixtures/user');
+var _ = require('lodash');
 
 describe('Services -> ContactList', () => {
   describe('create',  () => {
@@ -165,6 +166,8 @@ describe('Services -> ContactList', () => {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
               assert.deepEqual(result.invalid, []);
+              assert.ok(_.isEqual(result.contactListFields.defaultFields, contactList.defaultFields));
+              assert.ok(_.isEqual(result.contactListFields.customFields, contactList.customFields));
               assert.equal(result.valid[0].firstName, 'user');
               assert.equal(result.valid[0].lastName, 'insider user');
               assert.equal(result.valid[0].gender, 'male');
@@ -244,6 +247,33 @@ describe('Services -> ContactList', () => {
         }
 
         it('#parseCsv', function(done) {
+          failureFunction(testFileInvalid.csv, function(error) {
+            done(error);
+          });
+        });
+
+        it('#parseXls', function(done) {
+          failureFunction(testFileInvalid.xls, function(error) {
+            done(error);
+          });
+        });
+      });
+
+      describe('should fail because duplicate email in file', function() {
+        function failureFunction(filePath, callback) {
+          ContactListService.create(defaultParams()).then(function(contactList) {
+            ContactListService.parseFile(contactList.id, filePath).then(function(result) {
+              assert.include(result.dublicateEntries[0].rows, 3);
+              assert.include(result.dublicateEntries[0].rows, 5);
+              assert.equal(result.dublicateEntries[0].email, "chatUser@insider.com");
+              callback(null, true);
+            }, function(error) {
+              callback(error);
+            });
+          });
+        }
+
+        it.only('#parseCsv', function(done) {
           failureFunction(testFileInvalid.csv, function(error) {
             done(error);
           });

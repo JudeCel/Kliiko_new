@@ -13,12 +13,13 @@ var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
 var survey = require('./survey');
 var chargebee = require('./chargebee');
+<<<<<<< Temporary merge branch 1
 let topics = require('./topics');
 let topic = require('./topic');
-var contactList = require('./contactList');
-var contactListUser = require('./contactListUser');
+=======
 var gallery = require('./gallery');
 
+>>>>>>> Temporary merge branch 2
 
 
 module.exports = router;
@@ -53,6 +54,15 @@ router.put('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeS
 router.get('/chargebee/subscriptions', multipartyMiddleware, chargebee.chargebeeSubscriptionGet);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
 
+<<<<<<< Temporary merge branch 1
+router.get('/topics', multipartyMiddleware, topics.get);
+router.post('/topic', multipartyMiddleware, topic.post);
+
+router.route('/topic/:id').
+  post(multipartyMiddleware, topic.copyTopicById).
+  put(multipartyMiddleware, topic.updateTopicById).
+  delete(multipartyMiddleware, topic.deleteById);
+=======
 router.post('/gallery', gallery.postResources);
 router.post('/gallery/uploadFile', fileUploader(), gallery.uploadResource);
 router.post('/gallery/saveYoutubeUrl', gallery.saveYoutubeResource);
@@ -76,6 +86,7 @@ router.get('/survey/constants', survey.getConstants);
 // contact List
 router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
 router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
+router.post('/contactList/:id/import', policy.authorized(['accountManager', 'admin']), fileUploader(),contactList.import);
 router.put('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.update);
 router.delete('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.destroy);
 
@@ -85,13 +96,12 @@ router.post('/contactListsUsersToRemove', policy.authorized(['accountManager', '
 router.put('/contactListsUser/:id', policy.authorized(['accountManager', 'admin']), contactListUser.update);
 
 
-router.get('/topics', multipartyMiddleware, topics.get);
-router.post('/topic', multipartyMiddleware, topic.post);
 
-router.route('/topic/:id').
-  post(multipartyMiddleware, topic.copyTopicById).
-  put(multipartyMiddleware, topic.updateTopicById).
-  delete(multipartyMiddleware, topic.deleteById);
+router.get('/topics', multipartyMiddleware, topic.get);
+router.post('/topic', multipartyMiddleware, topic.post);
+router.put('/topic/:id',multipartyMiddleware, topic.updateById);
+router.delete('/topic/:id', multipartyMiddleware, topic.deleteById);
+
 
 // Common Rules
 router.use(function (req, res, next) {
