@@ -173,7 +173,7 @@ function parseXls(emails, deferred, contactList, filePath) {
 
   async.forEach(workbook.SheetNames, function(sheetName, callback) {
     let worksheet = workbook.Sheets[sheetName];
-    let json = xlsx.utils.sheet_to_json(worksheet, { raw: true, header: 1 });
+    let json = xlsx.utils.sheet_to_json(worksheet, { raw: true, header: 1, id: true});
 
     let header = _.map(json[0], function(value, key) {
       let head = json[0][key];
@@ -183,13 +183,16 @@ function parseXls(emails, deferred, contactList, filePath) {
 
     object.fileFields = fileFieldsArray(object.fileFields, header);
 
+    let rowNr = 2; // this number represent start row for content
+    let uniqRowListCounter = {};
+
     async.forEach(json, function(array, cb) {
-      let data = {};
+      let data = {rowNr: rowNr};
       _.map(header, function(value, index) {
         data[value] = array[index] || '';
       })
-
-      validateRow(emails, contactList, data).then(function() {
+      ++ rowNr
+      validateRow(emails, contactList, data, uniqRowListCounter).then(function() {
         object.valid.push(data);
         cb();
       }, function(error) {
@@ -198,6 +201,7 @@ function parseXls(emails, deferred, contactList, filePath) {
         cb();
       });
     }, function() {
+      console.log(uniqRowListCounter);
       callback();
     });
   }, function() {
@@ -209,7 +213,7 @@ function parseCsv(emails, deferred, contactList, filePath) {
   let object = defaultParserObject(contactList);
   let fieldsNeedStored = true;
   let tempHeaders = [];
-  
+
   csv.fromPath(filePath, {
     headers: true
   }).transform(function(data) {
@@ -243,7 +247,7 @@ function parseCsv(emails, deferred, contactList, filePath) {
   });
 }
 
-function validateRow(emails, contactList, row) {
+function validateRow(emails, contactList, row, uniqRowListCounter) {
   let deferred = q.defer();
   let error = {};
 
@@ -258,8 +262,12 @@ function validateRow(emails, contactList, row) {
         error[key] = 'No data';
       }
 
-      if(key == 'email' && _.includes(emails, rowData)) {
-        error[key] = 'Email already taken';
+      if(key == 'email') {
+        uniqRowListCounterFun(key, row, uniqRowListCounter)
+
+        if (_.includes(emails, rowData)) {
+          error[key] = 'Email already taken';
+        }
       }
     }
   });
@@ -286,12 +294,22 @@ function fileFieldsArray(fileFields, header) {
   return _.uniq(_.concat(fileFields, header));
 }
 
+function uniqRowListCounterFun(key, row, counterCollection) {
+  if (counterCollection[row[key]]) {
+    counterCollection[row[key]].rows.push(row.rowNr)
+    ++ counterCollection[row[key]].count
+  }else{
+    counterCollection[row[key]] = { rows: [row.rowNr], count: 1 }
+  }
+}
+
 function defaultParserObject(contactList) {
   return {
     contactListFields: {
       defaultFields: contactList.defaultFields,
       customFields: contactList.customFields
     },
+    dublicateEntries: [],
     fileFields: [],
     valid: [],
     invalid: []
