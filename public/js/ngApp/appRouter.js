@@ -225,9 +225,10 @@
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-emailTemplates/dashboard-content.html"}
         },
         resolve: {
-          checkPermission: ['$q', '$timeout', 'ngProgressFactory', 'banners',function($q, $timeout, ngProgressFactory, banners) {
-            var deferred = $q.defer();
-            banners.initUpload().then(function() { deferred.resolve(); });
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/js/vendors/ng-file-upload/ng-file-upload.js'
+            ]);
           }]
         },
         onEnter: ['dbg', function (dbg) {
@@ -241,9 +242,10 @@
           'accountProfileContent': {templateUrl: prePath + "dashboard-resources-emailTemplates/dashboard-content.html"}
         },
         resolve: {
-          checkPermission: ['$q', '$timeout', 'ngProgressFactory', 'banners',function($q, $timeout, ngProgressFactory, banners) {
-            var deferred = $q.defer();
-            banners.initUpload().then(function() { deferred.resolve(); });
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/js/vendors/ng-file-upload/ng-file-upload.js'
+            ]);
           }]
         },
         onEnter: ['dbg', function (dbg) {

@@ -89,7 +89,8 @@ function userParams(user, ownerAccount) {
 
 function prepareUserData(user, profile, callback){
   if (!user.confirmedAt) {
-    return callback('Your account has not been confirmed, please check your e-mail and follow the link.');
+    callback('Your account has not been confirmed, please check your e-mail and follow the link.');
+    return;
   }
   
   user.getAccounts({ include: [ models.AccountUser ] }).then(function(accounts) {
