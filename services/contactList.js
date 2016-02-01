@@ -313,7 +313,7 @@ function uniqRowListCounterFun(key, row, counterCollection) {
 function addDublicateEntries(object, counterCollection) {
   _.forEach(counterCollection, function(val, key) {
     if (val.count > 1){
-      object.dublicateEntries.push({email: key, rows: val.rows})
+      object.duplicateEntries.push({email: key, rows: val.rows})
     }
   });
 }
@@ -324,7 +324,7 @@ function defaultParserObject(contactList) {
       defaultFields: contactList.defaultFields,
       customFields: contactList.customFields
     },
-    dublicateEntries: [],
+    duplicateEntries: [],
     fileFields: [],
     valid: [],
     invalid: []

@@ -264,9 +264,9 @@ describe('Services -> ContactList', () => {
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              assert.include(result.dublicateEntries[0].rows, 3);
-              assert.include(result.dublicateEntries[0].rows, 5);
-              assert.equal(result.dublicateEntries[0].email, "chatUser@insider.com");
+              assert.include(result.duplicateEntries[0].rows, 3);
+              assert.include(result.duplicateEntries[0].rows, 5);
+              assert.equal(result.duplicateEntries[0].email, "chatUser@insider.com");
               callback(null, true);
             }, function(error) {
               callback(error);
