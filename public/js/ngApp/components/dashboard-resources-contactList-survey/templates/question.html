@@ -43,11 +43,74 @@
 
     <label class='col-xs-2 control-label' for='audioVideo-{{object.order}}'>Audio/Video</label>
     <div class='col-xs-10 col-md-6'>
-      <div class='input-group'>
-        <input type='text' class='form-control' id='audioVideo-{{object.order}}' placeholder='Audio/Video' name='audioVideo'
-          ng-model='question.audioVideo' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='question.active'>
-        <span class='input-group-addon'>@</span>
-      </div>
+      <button class='btn btn-addNewElement btn-green gallery-btn-width' 
+              type='button' id='uploadResourceDropdown' data-toggle='dropdown' 
+              aria-haspopup='true' aria-expanded='false'>
+        <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
+        Add audio/video
+      </button>
+      <ul class='dropdown-menu header-dropdown-ul' aria-labelledby='uploadResourceDropdown'>
+
+        <li class='text-right text-size-dashboard'>
+          <a ng-click="sc.openQuestionModal('audio')" data-toggle='modal' href=''>
+            Upload Audio
+          </a>
+        </li>
+
+        <li class='text-right text-size-dashboard'>
+          <a ng-click="sc.openQuestionModal('video')" data-toggle='modal' href=''>
+            Upload video
+          </a>
+        </li>
+
+
+        <li class='text-right text-size-dashboard'>
+          <a ng-click="sc.openQuestionModal('youtube')" data-toggle='modal' href=''>
+            Save Youtube URL
+          </a>
+        </li>
+      </ul>
+
+
     </div>
   </div>
 </div>
+
+<!-- resourceModal -->
+  <div class='modal fade' id='questionModal' role='dialog'>
+    <div class='modal-dialog changePasswordModal' >
+      <div class='modal-content border-green border-radius-none'>
+        <div class='modal-header'>
+          <button type='button' class='close' data-dismiss='modal' ng-click="clearFormData()">&times;</button>
+          <h2 class='modal-title text-center'>New {{ sc.uploadTypeForTitle }} resource.</h2>
+        </div>
+        <form ng-submit="submitForm(newResource)">
+          <div class='modal-body'>
+
+            <div class="form-group">
+              <label for="title">Title</label>
+              <input ng-model="newResource.title" type="text" class="form-control center-block" name="title" id="title" placeholder="Title">
+            </div>
+
+            <div ng-if="newResource.type == 'youtubeUrl'" class="form-group">
+              <label for="youtubeUrl">Youtube Url</label>
+              <input ng-model="newResource.youtubeUrl" type="text" class="form-control center-block" name="youtubeUrl" id="youtubeUrl" placeholder="Youtube URL">
+            </div>
+
+            <div ng-if="newResource.type !== 'youtubeUrl'" class="form-group">
+              <label for="fileTst">File</label>
+              <div ngf-drop ngf-select ng-model="newResource.fileTst" ng-change="uploadTst()" class="drop-box"
+                ngf-drag-over-class="'dragover'" accept="{{allowToUpload}}">
+                Drop images here or click to upload</div>
+              <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
+              {{ newResource.fileTst.name | limitTo: 15 }}{{newResource.fileTst.name.length > 15 ? '...' : ''}}
+            </div> 
+          </div>
+          <div class='modal-footer'>
+            <button class="btn btn-addNewElement pull-left no-margin btn-green gallery-btn-width" data-dismiss='modal' ng-click="clearFormData()">Cancel</button>
+            <input type='submit' class='btn btn-addNewElement pull-right no-margin btn-green gallery-btn-width' ng-disabled="submitIsDisabled">
+          </div>
+        </form>   
+      </div>
+    </div>
+  </div>

@@ -12,10 +12,12 @@
     vm.brandLogos = {};
     vm.surveyBrandLogo = {};
     vm.brandLogoFile = {};
+    vm.disableUpload = false;
     vm.selecctOptions = {
       show: true,
       uploaded: false
     };
+    vm.uploadTypeForTitle = "";
 
     // Uses services
     vm.removeSurvey = removeSurvey;
@@ -40,7 +42,8 @@
     vm.changeQuestions = changeQuestions;
     vm.contactDetailDisabled = contactDetailDisabled;
 
-    vm.openModal = openModal;
+    vm.openBrandLogosModal = openBrandLogosModal;
+    vm.openQuestionModal = openQuestionModal;
     vm.selectBrandLogo = selectBrandLogo;
     vm.removeBrandLogo = removeBrandLogo;
     vm.uploadBrandLogo = uploadBrandLogo;
@@ -80,12 +83,16 @@
       });
     };
 
-    function openModal(){
+    function openBrandLogosModal(){
       var progressbar = ngProgressFactory.createInstance();
       progressbar.start();
       brandLogosFromGallery();
       progressbar.complete();
       domServices.modal('getGallery');
+    }
+
+    function openQuestionModal(argument) {
+      domServices.modal('questionModal');
     }
 
     function selectBrandLogo(resource){
@@ -117,12 +124,15 @@
     }
 
     function brandLogosFromGallery(){
-      GalleryServices.getResources({type: "brandLogo"}).then(function(res) {
-        vm.brandLogos = res.data;
-      });
+      $timeout(function() {
+        GalleryServices.getResources({type: "brandLogo"}).then(function(res) {
+          vm.brandLogos = res.data;
+        });
+      }, 1000);
     }
 
     function uploadBrandLogo(){
+      vm.disableUpload = true;
       var progressbar = ngProgressFactory.createInstance();
       progressbar.start();
 
@@ -132,24 +142,27 @@
         text: vm.brandLogoFile.name,
         file: vm.brandLogoFile
       };
-
-      GalleryServices.createResource(resourceParams).then(function(res) {
-        if(res.error){
-          messenger.error(res.error);
-        }else{
-          vm.surveyBrandLogo.id = res.id;
-          vm.selecctOptions.show = false;
-          vm.selecctOptions.uploaded = true;
-          GalleryServices.postuploadData(resourceParams).then(function(res) {
-            if(res.error){
-              messenger.error(res.error);
-            }else{
-              vm.surveyBrandLogo.JSON = res.data;
-              progressbar.complete();
-            }
-          })
-        }
-      })
+      $timeout(function() {
+        GalleryServices.createResource(resourceParams).then(function(res) {
+          if(res.error){
+            messenger.error(res.error);
+          }else{
+            vm.surveyBrandLogo.id = res.id;
+            vm.selecctOptions.show = false;
+            vm.selecctOptions.uploaded = true;
+            vm.survey.resourceId = res.id;
+            GalleryServices.postuploadData(resourceParams).then(function(res) {
+              if(res.error){
+                messenger.error(res.error);
+              }else{
+                vm.surveyBrandLogo.JSON = res.data;
+                progressbar.complete();
+                vm.disableUpload = false;
+              }
+            })
+          }
+        })
+      }, 3000);
     }
 
 

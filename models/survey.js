@@ -4,6 +4,7 @@ module.exports = (Sequelize, DataTypes) => {
   var Survey = Sequelize.define('Survey', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
+    resourceId: { type: DataTypes.INTEGER, allowNull: true },
     name: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
     description: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
     thanks: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
@@ -16,6 +17,7 @@ module.exports = (Sequelize, DataTypes) => {
       associate: function(models) {
         Survey.hasMany(models.SurveyQuestion, { onDelete: 'cascade', foreignKey: 'surveyId' });
         Survey.hasMany(models.SurveyAnswer, { onDelete: 'cascade', foreignKey: 'surveyId' });
+        Survey.hasMany(models.Resource, { foreignKey: 'resourceId' });
         Survey.belongsTo(models.Account, { foreignKey: 'accountId' });
       }
     }
