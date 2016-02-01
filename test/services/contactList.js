@@ -165,6 +165,7 @@ describe('Services -> ContactList', () => {
         function successFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
+
               assert.deepEqual(result.invalid, []);
               assert.ok(_.isEqual(result.contactListFields.defaultFields, contactList.defaultFields));
               assert.ok(_.isEqual(result.contactListFields.customFields, contactList.customFields));
@@ -211,7 +212,7 @@ describe('Services -> ContactList', () => {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
               assert.equal(result.valid.length, 0);
-              assert.equal(result.invalid.length, 3);
+              assert.equal(result.invalid.length, 4);
               callback(null, true);
             }, function(error) {
               callback(error);
@@ -273,7 +274,7 @@ describe('Services -> ContactList', () => {
           });
         }
 
-        it.only('#parseCsv', function(done) {
+        it('#parseCsv', function(done) {
           failureFunction(testFileInvalid.csv, function(error) {
             done(error);
           });
