@@ -5,7 +5,7 @@ module.exports = {
   hexRegex: '^#+([a-fA-F0-9]{6})$',
   preferenceColours: function(colors) {
     return _.assign({
-      browserBackground: '#FFFFFF',
+      browserBackground: '#EFEFEF',
       mainBackground: '#FFFFFF',
       mainBorder: '#F0E935',
       font: '#58595B',

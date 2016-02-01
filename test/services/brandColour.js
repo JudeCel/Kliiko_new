@@ -7,6 +7,7 @@ var brandColourServices = require('./../../services/brandColour');
 var sessionFixture = require('./../fixtures/session');
 var brandProjectConstants = require('./../../util/brandProjectConstants');
 var assert = require('chai').assert;
+var _ = require('lodash');
 
 describe('SERVICE - BrandColour', function() {
   var testData = {};
@@ -42,12 +43,12 @@ describe('SERVICE - BrandColour', function() {
     }
 
     assert.equal(data.name, params.name || 'Default scheme');
-    assert.equal(data.colours.browserBackground, params.colours.browserBackground || '#FFFFFF');
+    assert.equal(data.colours.browserBackground, params.colours.browserBackground || '#EFEFEF');
     assert.equal(data.colours.mainBackground, params.colours.mainBackground || '#FFFFFF');
     assert.equal(data.colours.mainBorder, params.colours.mainBorder || '#F0E935');
     assert.equal(data.colours.font, params.colours.font || '#58595B');
     assert.equal(data.colours.headerButton, params.colours.headerButton || '#4CBFE9');
-    assert.equal(data.colours.consoleButton.active, params.colours.consoleButton.active || '#4CB649');
+    assert.equal(data.colours.consoleButtonActive, params.colours.consoleButtonActive || '#4CB649');
     assert.equal(data.colours.participants[1], params.colours.participants[1] || '#4CB649');
     assert.equal(data.colours.participants[2], params.colours.participants[2] || '#2F9F69');
     assert.equal(data.colours.participants[3], params.colours.participants[3] || '#9B0E26');
@@ -230,7 +231,7 @@ describe('SERVICE - BrandColour', function() {
     describe('happy path', function() {
       it('should succeed on returning fields', function (done) {
         let fields = brandColourServices.manageFields();
-        assert.equal(fields.participantsCount, 8);
+        assert.equal(_.size(fields.participants), 8);
         assert.equal(fields.chatRoom.length, 6);
         done();
       });
