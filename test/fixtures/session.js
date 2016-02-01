@@ -115,10 +115,10 @@ function createTopic(session, brandProject, callback) {
 function addSessionMembers(erorr, session, callback) {
   async.parallel([
     function(cb) {
-      addSessionMember(userData[0].user, session,'facilitator', 'Cool first user', cb);
+      addSessionMember(userData[0].account.AccountUser.id, session,'facilitator', 'Cool first user', cb);
     },
     function(cb) {
-      addSessionMember(userData[1].user, session, 'participant','Cool second user', cb);
+      addSessionMember(userData[1].account.AccountUser.id, session, 'participant','Cool second user', cb);
     }
   ], function(error, results) {
     callback(error, results);
@@ -136,10 +136,10 @@ function addBrandProjectPreferences(session, accountId, callback) {
   });
 }
 
-function addSessionMember(user, session, role, name, callback) {
+function addSessionMember(accountUserId, session, role, name, callback) {
 
   let params = { role: role,
-                 userId: user.id,
+                 accountUserId: accountUserId,
                  username: name,
                  avatar_info: "0:4:3:1:4:3" }
   session.createSessionMember(params).then(function(result) {
