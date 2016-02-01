@@ -66,8 +66,8 @@
             <thead>
               <tr>
                 <th></th>
-                <th ng-repeat="rowHeader in clc.lists.activeList.table.tablesToShow()" ng-click="clc.changeTableSortingFilter(rowHeader)">
-                  <span class="th-name">{{rowHeader.capitalize() }}</span>
+                <th ng-repeat="rowHeader in clc.lists.activeList.visibleFields" ng-click="clc.changeTableSortingFilter(rowHeader)">
+                  <span class="th-name">{{rowHeader}}</span>
                   <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
                   <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
                 </th>
@@ -84,7 +84,7 @@
                 </div>
               </td>
 
-              <td ng-repeat="tableRow in clc.lists[clc.activeListIndex].table.tablesToShow()"> {{ member[tableRow] || '-' }}</td>
+              <td ng-repeat="tableRow in clc.lists.activeList.visibleFields"> {{ member[tableRow] || '-' }}</td>
 
               <td >
                 <span class='table-item-edit-group'>
@@ -229,11 +229,11 @@
               <br>
 
 
-              <section ng-hide="!clc.listCustomFields.length">
+              <section ng-hide="!clc.lists.activeList.customFields.length">
                 <div class="col-md-12 delimiter"></div>
                 <div class='col-md-6'>
 
-                  <div class='form-group' ng-repeat="cf  in clc.listCustomFields track by $index" ng-show="$index < ( clc.listCustomFields.length / 2)">
+                  <div class='form-group' ng-repeat="cf  in clc.lists.activeList.customFields track by $index" ng-show="$index < ( clc.lists.activeList.customFields.length / 2)">
                     <label class='control-label col-md-4 text-no-bold text-login-page' for='cf-{{ cf }}'>{{cf}}</label>
                     <div class='col-md-8'>
                       <span class='has-error text-red-dark'>{{ clc.modalErrors.country }}</span>
@@ -243,7 +243,7 @@
                 </div>
 
                 <div class='col-md-6'>
-                  <div class='form-group' ng-repeat="cf in clc.listCustomFields track by $index" ng-show="$index >= ( clc.listCustomFields.length / 2)">
+                  <div class='form-group' ng-repeat="cf in clc.lists.activeList.customFields track by $index" ng-show="$index >= ( clc.lists.activeList.customFields.length / 2)">
                     <label class='control-label col-md-4 text-no-bold text-login-page' for='cf-{{ cf }}'>{{cf}}</label>
                     <div class='col-md-8'>
                       <span class='has-error text-red-dark'>{{ clc.modalErrors.country }}</span>
@@ -376,9 +376,9 @@
                       </div>
                     </uib-accordion-heading>
                     <span class="row">
-                      <span class="col-md-3" ng-repeat="column in  clc.lists[clc.activeListIndex].table.availableTables()">
+                      <span class="col-md-3" ng-repeat="column in  clc.lists.activeList.availableTables()">
                         <div class="check fields-to-show">
-                          <input id="dashboard-contact-lists-fields-{{ $index }}" ng-click="clc.lists[clc.activeListIndex].table.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.selectedTables[column]" type="checkbox" >
+                          <input id="dashboard-contact-lists-fields-{{ $index }}" ng-click="clc.lists.activeList.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.selectedTables[column]" type="checkbox" >
                           <label for="dashboard-contact-lists-fields-{{ $index }}" ></label>{{ column }}
                         </div>
 
@@ -396,9 +396,9 @@
                     </uib-accordion-heading>
 
                     <span class="row">
-                      <span class="col-md-3" ng-repeat="column in clc.lists[clc.activeListIndex].table.participantsFields">
+                      <span class="col-md-3" ng-repeat="column in clc.lists.activeList.participantsFields">
                         <div class="check fields-to-show">
-                          <input id="dashboard-contact-lists-participants-{{ $index }}" ng-click="clc.lists[clc.activeListIndex].table.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.lists[clc.activeListIndex].table.participantsFields[column]" type="checkbox" >
+                          <input id="dashboard-contact-lists-participants-{{ $index }}" ng-click="clc.lists.activeList.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.lists[clc.activeListIndex].table.participantsFields[column]" type="checkbox" >
                           <label for="dashboard-contact-lists-participants-{{ $index }}" ></label>{{ column }}
                         </div>
 

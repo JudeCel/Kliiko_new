@@ -18,6 +18,10 @@
     ListsModel.prototype.updateActiveItem = updateActiveItem;
     ListsModel.prototype.delete = deleteItem;
 
+    ListsModel.prototype.addNewContact = addNewContact;
+    ListsModel.prototype.updateContact = updateContact;
+    ListsModel.prototype.deleteContact = deleteContact;
+
     return ListsModel;
 
 
@@ -43,7 +47,9 @@
 
     }
 
-
+    /**
+     * Fetch all lists and set first one as active
+     */
     function init() {
       var self = this;
       self.getAll().then(
@@ -113,6 +119,11 @@
 
     }
 
+    /**
+     * Update list item instance ( ListItemModel.update() ) and then update lists model items with this updated instance
+     * @param updateFieldsObj
+     * @returns {*}
+     */
     function updateActiveItem(updateFieldsObj) {
       var deferred = $q.defer();
 
@@ -123,7 +134,6 @@
 
       self.activeList.update(updateFieldsObj).then(
         function (res) {
-          //debugger; //debugger
           // rewrite name
           self.activeList.name = updateFieldsObj.name;
           delete updateFieldsObj.name;
@@ -134,7 +144,6 @@
             self.activeList.customFields.push( updateFieldsObj[key] );
           }
 
-
           // update list with the current item
           self.items[currentIndex] = self.activeList;
           deferred.resolve();
@@ -144,8 +153,6 @@
           deferred.reject(err)
         }
       );
-
-
 
       return deferred.promise;
     }
@@ -180,6 +187,26 @@
 
     }
 
+
+    function addNewContact(newContactObj) {
+      var self = this;
+
+      contactListServices.createUser(newContactObj, self.activeList.id).then(
+        function (res) {
+          debugger; //debugger
+        },
+        function (err) {
+        }
+      );
+
+    }
+
+    function updateContact() {
+
+    }
+    function deleteContact() {
+
+    }
 
 
 

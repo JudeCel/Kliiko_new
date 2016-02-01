@@ -10,6 +10,11 @@
     vm.listIdToEdit = null;
     vm.newList = {};
     vm.lists = new ListsModel();
+    vm.newList = {};
+    vm.modalErrors = {};
+    vm.allSelected = false;
+    vm.tableSort = {by: null, reverse: false};
+    vm.modContentBlock= {generalDetails:true, history: false};
 
     vm.addNewList = addNewList;
     vm.submitNewList = submitNewList;
@@ -17,6 +22,11 @@
     vm.deleteList = deleteList;
     vm.editCustomFields = editCustomFields;
 
+    vm.changeTableSortingFilter = changeTableSortingFilter;
+    vm.showManageColumnsModal = showManageColumnsModal;
+
+    vm.contactAddEditClickHandle = contactAddEditClickHandle;
+    vm.createContact = createContact;
 
     /**
      * Open modal and prepare variables
@@ -30,6 +40,7 @@
     function submitNewList() {
       if (vm.newListErrorMessage) return;
 
+      // if ng-submit fires for add new, while we updating existent
       if (vm.listIdToEdit) {
         updateList();
         return
@@ -41,7 +52,8 @@
         return;
       }
 
-      vm.lists.addNew(vm.newList).then(
+      var parsedList = prepareParsedList(vm.newList);
+      vm.lists.addNew(parsedList).then(
         function(res) {
           vm.newList = {};
 
@@ -68,10 +80,12 @@
         return;
       }
 
-     
+
       var newList = angular.copy(vm.newList);
 
-      vm.lists.updateActiveItem(vm.newList).then(
+      var parsedList = prepareParsedList(vm.newList);
+
+      vm.lists.updateActiveItem(parsedList).then(
         function (res) {
           domServices.modal('contactList-addNewListModal', 'close');
           messenger.ok('List "'+ newList.name + '" updated');
@@ -87,6 +101,20 @@
 
 
 
+    }
+
+    function prepareParsedList(list) {
+      var output = {
+        name: list.name,
+        customFields: []
+      };
+      delete list.name;
+
+      for (var key in list) {
+        output.customFields.push(list[key]);
+      }
+
+      return output
     }
 
     function deleteList(listItem, index) {
@@ -130,6 +158,121 @@
 
     }
 
+    /**
+     * Sort table row by seleclted filter
+     * @param type {string}
+     */
+    function changeTableSortingFilter(type) {
+      vm.tableSort.by =  type;
+      vm.tableSort.reverse = !vm.tableSort.reverse;
+    }
+
+    function showManageColumnsModal() {
+      domServices.modal('contactList-manageColumns');
+      vm.selectedTables = {};
+      var tablesToShowArray = vm.lists.activeList.visibleFields;
+      for (var i = 0, len = tablesToShowArray.length; i < len ; i++) {
+        vm.selectedTables[tablesToShowArray[i]] = true;
+
+      }
+    }
+
+
+    /**
+     * Add New or Edit Existing contact
+     * @param action {string}
+     * @param [contactObj] {object} - contact object required for editing case
+     */
+    function contactAddEditClickHandle(action, contactObj) {
+      if (action === 'new') {
+        vm.updateExistingUser = null;
+        vm.contactModalTitle = 'Add New Contact';
+        vm.newContact = {};
+      }
+
+      if (action === 'update') {
+        vm.contactModalTitle = 'Edit Contact';
+        vm.newContact = contactObj;
+        vm.updateExistingUser = true;
+      }
+
+      domServices.modal('contactList-addContactManual');
+    }
+
+
+
+    /**
+     * create a contact for currently active list
+     */
+    function createContact() {
+
+      var currentList = vm.lists[vm.activeListIndex];
+
+      var valid = validateContact();
+
+      if (!valid) return;
+
+      var newContact = angular.copy(vm.newContact);
+      newContact = new Member(newContact);
+      newContact.updateFields();
+
+      contactListServices.createUser(vm.newContact, currentList.id).then(
+        function(res) {
+          domServices.modal('contactList-addContactManual', 'close');
+          messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
+
+          vm.newContact = {customFields:{}};
+          newContact.id = res.id;
+
+          if (!vm.lists[vm.activeListIndex].membersCount) vm.lists[vm.activeListIndex].membersCount = 0 ;
+          vm.lists[vm.activeListIndex].membersCount++;
+
+          if (!vm.selectedListMembers) vm.selectedListMembers = [];
+          vm.selectedListMembers.push(newContact);
+
+          cls.addNewUserToList(currentList.id, newContact);
+
+          for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
+            if (vm.selectedListMembers[i].CustomFieldsObject && vm.lists[vm.activeListIndex].members) {
+              vm.selectedListMembers[i].name = vm.selectedListMembers[i].firstName + ' '+ vm.selectedListMembers[i].lastName;
+              for( var key in vm.selectedListMembers[i].CustomFieldsObject ) {
+                vm.lists[vm.activeListIndex].Members[i][key] = vm.selectedListMembers[i].CustomFieldsObject[key];
+              }
+            }
+          }
+
+
+
+        },
+        function(err) {
+          if (err.error) {
+            messenger.error(err.error.message);
+          }
+          if (err.errors) {
+            var e = err.errors;
+            for (var i = 0, len = e.length; i < len ; i++) {
+              vm.modalErrors[ e[i].path ] = e[i].message;
+            }
+          }
+
+        }
+      );
+    }
+
+    /**
+     * Validate vm.newContact object
+     * @returns {boolean}
+     */
+    function validateContact() {
+      vm.modalErrors = {};
+      var valid = true;
+      if (!vm.newContact.firstName || !vm.newContact.firstName.length) { vm.modalErrors.firstName = 'First Name cannot be blank'; valid = false; }
+      if (!vm.newContact.lastName || !vm.newContact.lastName.length) { vm.modalErrors.lastName = 'Last Name cannot be blank';valid = false; }
+      if (!vm.newContact.email || !vm.newContact.email.length) {vm.modalErrors.email = 'Email cannot be blank';valid = false; }
+      if (!vm.newContact.gender || !vm.newContact.gender.length) {vm.modalErrors.gender = 'Gender should be selected';valid = false; }
+
+      return valid;
+    }
 
 
   }

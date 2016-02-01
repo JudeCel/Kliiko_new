@@ -11,7 +11,10 @@
     var ListItemModel;
 
     ListItemModel = ListItemModel;
+    ListItemModel.prototype.init = init;
     ListItemModel.prototype.update = update;
+    ListItemModel.prototype.availableTables = availableTables;
+    ListItemModel.prototype.toggleTableToShow = toggleTableToShow;
     return ListItemModel;
 
 
@@ -29,6 +32,20 @@
         if (params.hasOwnProperty(p)) self[p] = params[p];
       }
 
+      self.availableTablesArray = [];
+
+      self.init();
+
+    }
+
+    function init() {
+      var self = this;
+
+      var allAvailableFields = [];
+      allAvailableFields = allAvailableFields.concat(self.defaultFields, self.customFields);
+
+      self.availableTablesArray = allAvailableFields;
+
     }
 
     function update(newItemObject) {
@@ -45,6 +62,39 @@
         }
       );
       return deferred.promise;
+    }
+
+    function availableTables(tablesArray) {
+      var self = this;
+
+      if ( typeof(tablesArray) == 'undefined' ) { return getter() } else { return setter() }
+
+      function getter() {
+        return self.availableTablesArray;
+      }
+
+      function setter() {
+        if ( !angular.isArray(tablesArray) ) {
+          console.warn('Expected array in params', tablesArray);
+          return;
+        }
+
+        return self.availableTablesArray = tablesArray;
+
+      }
+
+
+    }
+
+    function toggleTableToShow(column) {
+      var self = this;
+
+      self.visibleFields.indexOf(column) > -1
+        ? self.visibleFields.splice( self.visibleFields.indexOf(column), 1)
+        : self.visibleFields.push(column);
+
+      self.update(self);
+
     }
 
   }

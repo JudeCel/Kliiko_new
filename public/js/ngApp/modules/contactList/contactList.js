@@ -78,14 +78,12 @@
     function submitNewList(listObj) {
       var deferred = $q.defer();
 
-      var customFields = [];
+      var newListObj = {
+          name: listObj.name,
+          customFields: listObj.customFields
+      };
 
-      // where 13 is maximum custom field allowed (12)
-      for (var i = 1; i < 13 ; i++) {
-        if (listObj['customField'+i] && listObj['customField'+i].length) customFields.push(listObj['customField'+i]);
-      }
-
-      contactListsApi.contactLists.post({}, {name:listObj.name, customFields: customFields}, function(res) {
+      contactListsApi.contactLists.post({}, newListObj , function(res) {
         if (res.error) { deferred.reject(res.error); return deferred.promise; }
 
         deferred.resolve(res);
@@ -104,14 +102,13 @@
     function updateList(listId, listObj) {
       var deferred = $q.defer();
 
-      var customFields = [];
+      var customFields = listObj.customFields;
+      var newObject = angular.copy(listObj);
+      newObject.name = listObj.name;
+      newObject.customFields = customFields;
+      newObject.visibleFields = listObj.visibleFields;
 
-      // where 13 is maximum custom field allowed (12)
-      for (var i = 1; i < 13 ; i++) {
-        if (listObj['customField'+i] && listObj['customField'+i].length) customFields.push(listObj['customField'+i]);
-      }
-
-      contactListsApi.contactLists.put({id:listId}, {name:listObj.name, customFields: customFields}, function(res) {
+      contactListsApi.contactLists.put({id:listId}, newObject , function(res) {
         if (res.error) { deferred.reject(res.error); return deferred.promise; }
 
         deferred.resolve(res);
