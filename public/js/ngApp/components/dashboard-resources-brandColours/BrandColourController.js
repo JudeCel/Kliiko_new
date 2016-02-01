@@ -76,19 +76,27 @@
     };
 
     function finishManage() {
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
       vm.formSubmitted = true;
 
-      if(vm.currentPage.type == 'create') {
-        finishCreate(progressbar);
-      }
-      else {
-        finishEdit(progressbar);
-      }
+      $timeout(function() {
+        if(vm.colorForm.$valid) {
+          if(vm.currentPage.type == 'create') {
+            finishCreate();
+          }
+          else {
+            finishEdit();
+          }
+        }
+        else {
+          vm.submitError = 'There are some unfilled fields';
+        }
+      }, 1000);
     };
 
-    function finishCreate(progressbar) {
+    function finishCreate() {
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+
       brandColourServices.createScheme(vm.scheme).then(function(res) {
         dbg.log2('#BrandColourController > finishCreate > res ', res);
 
@@ -103,7 +111,10 @@
       });
     };
 
-    function finishEdit(progressbar) {
+    function finishEdit() {
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+
       brandColourServices.updateScheme(vm.scheme).then(function(res) {
         dbg.log2('#BrandColourController > finishEdit > res ', res);
 
@@ -134,13 +145,14 @@
     }
 
     function changePage(page, scheme) {
+      vm.formSubmitted = false;
+
       if(page == 'index') {
         init();
         vm.currentPage = { page: page };
       }
       else {
-        vm.previewScheme = scheme || {};
-        vm.scheme = scheme || {};
+        vm.scheme = scheme || { colours: { participants: {} } };
         vm.currentPage = { page: 'manage', type: page };
       }
     };

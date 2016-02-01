@@ -1,5 +1,5 @@
 <div class='row'>
-  <div class='col-xs-offset-6 col-xs-6 has-error' ng-messages='bcc.colorForm[field.model].$error'>
+  <div class='has-error' ng-class='field.title ? "col-xs-offset-6 col-xs-6 col-md-offset-3 col-md-9" : "col-xs-12" ' ng-messages='bcc.colorForm[field.model].$error'>
     <div class='help-block' ng-message='required'>Not valid color</div>
   </div>
 </div>
