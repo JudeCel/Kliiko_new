@@ -13,10 +13,9 @@ var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
 var survey = require('./survey');
 var chargebee = require('./chargebee');
+var mailTemplates = require('./mailTemplate');
 let topic = require('./topic');
 var gallery = require('./gallery');
-
-
 
 module.exports = router;
 
@@ -44,6 +43,13 @@ router.get('/banners', banners.bannersGet);
 router.post('/banners', multipartyMiddleware, banners.bannersPost);
 router.post('/banners/:bannerType', multipartyMiddleware, banners.bannersBannerTypePost);
 router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelete);
+
+router.get('/mailTemplates', mailTemplates.allMailTemplatesGet);
+router.post('/mailTemplate', mailTemplates.mailTemplatePost);
+router.delete('/mailTemplate', mailTemplates.deleteMailTemplate);
+router.post('/mailTemplate/save', mailTemplates.saveMailTemplatePost);
+router.post('/mailTemplate/reset', mailTemplates.resetMailTemplatePost);
+router.post('/mailTemplate/preview', mailTemplates.previewMailTemplatePost);
 
 router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
 router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);

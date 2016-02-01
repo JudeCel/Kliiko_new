@@ -224,8 +224,32 @@
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-emailTemplates/dashboard-content.html"}
         },
+        resolve: {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/js/vendors/ng-file-upload/ng-file-upload.js'
+            ]);
+          }]
+        },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.emailTemplates is on');
+        }]
+
+      })
+      .state('dashboard.accountProfile.emailTemplates', {
+        url: "/account-profile?systemMail",
+        views: {
+          'accountProfileContent': {templateUrl: prePath + "dashboard-resources-emailTemplates/dashboard-content.html"}
+        },
+        resolve: {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/js/vendors/ng-file-upload/ng-file-upload.js'
+            ]);
+          }]
+        },
+        onEnter: ['dbg', function (dbg) {
+          dbg.rs('dashboard.accountProfile.emailTemplates is on');
         }]
 
       })

@@ -24,9 +24,34 @@ module.exports = {
   safeUserParams: [
     'id',
     'email'
-
   ],
+  originalMailTemplateFields: [
+    'id',
+    'name',
+    'subject',
+    'content',
+    'systemMessage'
+  ],
+  mailTemplateFields: [
+    'id',
+    'name',
+    'subject',
+    'content',
+    'MailTemplateBaseId',
+    'UserId',
+    'systemMessage'
+  ],
+  mailTemplateFieldsForList: [
+    'id',
+    'name',
+    'MailTemplateBaseId',
+    'UserId',
+    'systemMessage'
+  ],
+  
   promotionCodeTypes: ['percentage', 'value'],
+  accountNameRegExp: ["^[a-zA-Z0-9]+$",'i'],
+  mobileRegExp: ["^[0-9]+$",'i'],
   galleryUploadTypes: ['image', 'brandLogo', 'audio', 'youtubeLink', 'text'],
   dateFormat: 'MM-dd-yyyy'
 }

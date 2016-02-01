@@ -204,6 +204,7 @@ function uploadResourceFile(req) {
     height: 460,
     type: req.body.type,
     resCb: function(userId, json) {
+        console.log(json);
       deferred.resolve(json);
     }
   });

@@ -16,7 +16,7 @@ passport.use(new LocalStrategy({
   function (username, password, done) {
     usersService.comparePassword(username, password, function(failed, result) {
       if (failed) {
-        done('Wrong email or password or email is not confirmed');
+        done('Sorry, your Email and Password do not match. Please try again.');
       }else{
         prepareUserData(result, null, done);
       }
@@ -88,6 +88,11 @@ function userParams(user, ownerAccount) {
 }
 
 function prepareUserData(user, profile, callback){
+  if (!user.confirmedAt) {
+    callback('Your account has not been confirmed, please check your e-mail and follow the link.');
+    return;
+  }
+  
   user.getAccounts({ include: [ models.AccountUser ] }).then(function(accounts) {
     let account = accounts[0];
     if(account.AccountUser.active) {
