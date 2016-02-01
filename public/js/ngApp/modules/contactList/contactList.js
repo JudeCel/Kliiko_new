@@ -127,7 +127,7 @@
     function deleteList(listId) {
       var deferred = $q.defer();
       contactListsApi.contactLists.delete({id:listId}, {},function(res) {
-        if (res.error) {   deferred.reject(res.error);  return deferred.promise;   }
+        if (res.error) {  deferred.reject(res.error);  return deferred.promise;  }
 
         deferred.resolve(res);
       });

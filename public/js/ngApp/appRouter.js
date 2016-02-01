@@ -193,8 +193,9 @@
             return $ocLazyLoad.load([
               '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
               '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
+              '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
+              '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
               '/js/ngApp/components/dashboard-resources-contactLists/CustomTableModel.js',
-              '/js/ngApp/components/dashboard-resources-contactLists/ListMemberModel.js',
               '/js/ngApp/modules/contactList/contactList.js',
               '/js/ngApp/directives/custom-select-directive.js'
             ]);
