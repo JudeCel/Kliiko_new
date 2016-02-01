@@ -124,18 +124,18 @@ function validateForCreate(params, callback) {
 }
 
 function comparePassword(email, password, callback) {
-  User.find({where: {email: email, confirmedAt: {$ne: null}}}).done(function (result) {
+  User.find({where: {email: email}}).done(function (result) {
     if (result) {
-      bcrypt.compare(password, result.encryptedPassword, function (err, res) {
-        if (err) {
-          return callback(true, null)
-        }
-        if (res == true) {
-          callback(null, result);
-        } else {
-          callback(true, null);
-        }
-      });
+        bcrypt.compare(password, result.encryptedPassword, function (err, res) {
+            if (err) {
+                return callback(true, null)
+            }
+            if (res == true) {
+                callback(null, result);
+            } else {
+                callback(true, null);
+            }
+        });
     } else {
       callback(true, null);
     };

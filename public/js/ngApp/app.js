@@ -21,7 +21,8 @@
 
     // app modules
     'KliikoApp.user',
-    'KliikoApp.banners'
+    'KliikoApp.banners',
+    'KliikoApp.mailTemplate'
   ];
 
   angular

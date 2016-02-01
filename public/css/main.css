@@ -179,6 +179,12 @@ img.ic-flipX {
     width: 22px;
     background-size: contain;
     margin-top: 1px; }
+  .contactDetailsModal .has-error, .accountDatabaseCommentModal .has-error, .surveyPreviewModal .has-error {
+    color: #f00;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 270px;
+    display: inline-block; }
 
 .accountDatabaseCommentModal {
   width: 400px;
@@ -1945,6 +1951,117 @@ hr.survey-hr {
 
 .banner-link-input {
   border-color: #4DC0E9 !important; }
+
+#email-template-editor {
+  margin-top: 50px;
+  height: 450px; }
+  #email-template-editor h2 {
+    margin: 45px;
+    font-size: .8em;
+    font-weight: bolder; }
+  #email-template-editor p {
+    margin: 0 0 -10px 0;
+    padding: 10px 100px 10px 30px;
+    font-size: 1.9rem;
+    text-align: left; }
+  #email-template-editor div {
+    font-size: 1.5rem;
+    text-align: left; }
+  #email-template-editor #templateContent {
+    width: 100%;
+    height: 450px;
+    margin: 0 auto; }
+  #email-template-editor .mail-template-details {
+    margin: 0 auto;
+    margin-left: 15px; }
+  #email-template-editor .mail-template-list {
+    max-height: 650px;
+    overflow-y: scroll;
+    width: 100%;
+    padding: 0; }
+  #email-template-editor .mail-template-list-heading {
+    background-color: #2F9F69;
+    color: white;
+    border: 0px;
+    border-radius: 0px; }
+  #email-template-editor .mail-template-list-section {
+    margin-left: 50px;
+    border: 2px solid #2F9F69;
+    border-radius: 0px;
+    padding: 0;
+    width: 270px; }
+  #email-template-editor .mail-template-input-text {
+    border: none;
+    border-color: transparent;
+    border-style: none; }
+  #email-template-editor .has-error {
+    color: #f00;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 370px;
+    display: inline-block; }
+  #email-template-editor .preview-frame {
+    width: 700px;
+    min-height: 500px; }
+  #email-template-editor .btn-red {
+    background-color: white;
+    border-color: red !important;
+    border-radius: 0px;
+    color: red;
+    border: 2px solid; }
+  #email-template-editor .btn-green {
+    background-color: white;
+    border-color: green !important;
+    border-radius: 0px;
+    color: green;
+    border: 2px solid;
+    margin-left: 5px; }
+  #email-template-editor .btn-lightgreen {
+    background-color: white;
+    border-color: mediumseagreen !important;
+    border-radius: 0px;
+    color: mediumseagreen;
+    border: 2px solid;
+    margin-left: 5px; }
+  #email-template-editor .btn-blue {
+    background-color: white;
+    border-color: cornflowerblue !important;
+    border-radius: 0px;
+    color: cornflowerblue;
+    border: 2px solid;
+    margin-left: 5px; }
+  #email-template-editor .list-group-item.active {
+    background-color: #c0e2d1 !important;
+    border: none; }
+  #email-template-editor .list-group-item {
+    height: 50px;
+    width: 100%;
+    background-image: none;
+    color: gray;
+    background-color: #E8EAED !important;
+    margin-bottom: 2px;
+    border: none; }
+  #email-template-editor .list-group-item-white {
+    height: 50px;
+    width: 100%;
+    background-image: none;
+    color: gray;
+    background-color: white !important;
+    margin-bottom: 2px;
+    border: none; }
+  #email-template-editor table {
+    width: 100%; }
+  #email-template-editor tr {
+    height: 40px;
+    vertical-align: top; }
+  #email-template-editor .preview-content {
+    width: 750px; }
+  #email-template-editor .template-detail-name-column {
+    width: 130px; }
+  #email-template-editor #mail-template-list .form-control.inactive {
+    border: none;
+    box-shadow: none;
+    width: 250px; }
 
 #resources-topics #no-topics-in-list {
   text-align: center; }
