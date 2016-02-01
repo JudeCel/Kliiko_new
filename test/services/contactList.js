@@ -263,27 +263,23 @@ describe('Services -> ContactList', () => {
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              try {
-                assert.equal(result.dublicateEntries[0].rowNr, 4);
-                assert.equal(result.duplicateEntries[0].email, "chatUser@insider.com");
-              } catch (e) {
-                console.log(e);
-                callback(e)
-              }
-              // callback(null, true);
+              assert.include(result.dublicateEntries[0].rows, 3);
+              assert.include(result.dublicateEntries[0].rows, 5);
+              assert.equal(result.dublicateEntries[0].email, "chatUser@insider.com");
+              callback(null, true);
             }, function(error) {
               callback(error);
             });
           });
         }
 
-        it('#parseCsv', function(done) {
+        it.only('#parseCsv', function(done) {
           failureFunction(testFileInvalid.csv, function(error) {
             done(error);
           });
         });
 
-        it.only('#parseXls', function(done) {
+        it('#parseXls', function(done) {
           failureFunction(testFileInvalid.xls, function(error) {
             done(error);
           });

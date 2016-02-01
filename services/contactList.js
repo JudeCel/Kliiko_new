@@ -201,7 +201,7 @@ function parseXls(emails, deferred, contactList, filePath) {
         cb();
       });
     }, function() {
-      console.log(uniqRowListCounter);
+      addDublicateEntries(object, uniqRowListCounter)
       callback();
     });
   }, function() {
@@ -301,6 +301,14 @@ function uniqRowListCounterFun(key, row, counterCollection) {
   }else{
     counterCollection[row[key]] = { rows: [row.rowNr], count: 1 }
   }
+}
+
+function addDublicateEntries(object, counterCollection) {
+  _.forEach(counterCollection, function(val, key) {
+    if (val.count > 1){
+      object.dublicateEntries.push({email: key, rows: val.rows})
+    }
+  });
 }
 
 function defaultParserObject(contactList) {
