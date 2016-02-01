@@ -2,13 +2,14 @@
   'use strict';
 
   angular.module('KliikoApp').controller('SurveyController', SurveyController);
-  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', 'ngProgressFactory'];
+  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', 'ngProgressFactory', '$modal', 'domServices', 'GalleryServices'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, ngProgressFactory) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, ngProgressFactory, $modal, domServices, GalleryServices) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
     vm.surveys = {};
+    vm.brandLogos = {};
 
     // Uses services
     vm.removeSurvey = removeSurvey;
@@ -32,6 +33,8 @@
     vm.pickValidClass = surveyServices.pickValidClass;
     vm.changeQuestions = changeQuestions;
     vm.contactDetailDisabled = contactDetailDisabled;
+
+    vm.openModal = openModal;
 
     vm.answerSortOptions = {
       handle: '.list-handle',
@@ -67,6 +70,22 @@
         dbg.log2('#SurveyController > getAllSurveys > res ', res.data);
       });
     };
+
+    function openModal(){
+      // progressbar.start();
+      brandLogosFromGallery();
+      // progressbar.complete();
+      domServices.modal('getGallery');
+    }
+
+    function brandLogosFromGallery(){
+      GalleryServices.getResources().then(function(res) {
+        console.log("#######################################");
+        console.log(res.data);
+        console.log("#######################################");
+        vm.brandLogos = res.data;
+      });
+    }
 
     function removeSurvey(survey) {
       angularConfirm('Are you sure you want to remove Survey?').then(function(response) {

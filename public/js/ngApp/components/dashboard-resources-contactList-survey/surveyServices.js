@@ -2,9 +2,9 @@
   'use strict';
   angular.module('KliikoApp').factory('surveyServices', surveyServices);
   angular.module('KliikoApp.Root').factory('surveyServices', surveyServices);
-  surveyServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
+  surveyServices.$inject = ['globalSettings', '$q', '$resource', 'dbg', 'Upload'];
 
-  function surveyServices(globalSettings, $q, $resource, dbg) {
+  function surveyServices(globalSettings, $q, $resource, dbg, Upload) {
     var surveyRestApi = $resource(globalSettings.restUrl + '/survey/:path', null, {
       update: { method: 'PUT' },
       find: { method: 'GET', params: { path: 'find' } },
