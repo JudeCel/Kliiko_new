@@ -1,31 +1,14 @@
 {{ previewScheme = scheme.colours || bcc.previewScheme.colours; "" }}
 <div class='brandColours'>
-  <div class='col-xs-12' style='background-color: {{ previewScheme.browserBackground }};'>
-    <div class='row header'>
-      <div class='col-xs-3'>
-        <label style='padding-top: 6%;' class='text-no-bold'>Session</label><br />
-        <select>
-          <option value='name'>Name</option>
-        </select>
-      </div>
+  <div class='row' style='background-color: {{ previewScheme.browserBackground }};'>
+    <div class='col-xs-12 header' ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/header.html'"></div>
 
-      <div class='col-xs-9'>
-        <img class='pull-right' width='40%' src='/icons/Kliiko_RGB_72.png' />
-        <span class='headerButtons pull-right glyphicon glyphicon-check' aria-hidden='true' style='background-color: {{ previewScheme.headerButton }};'>
-        </span>
-        <span class='headerButtons pull-right glyphicon glyphicon-question-sign' aria-hidden='true' style='background-color: {{ previewScheme.headerButton }};'>
-        </span>
-        <span class='headerButtons pull-right glyphicon glyphicon-off' aria-hidden='true' style='background-color: {{ previewScheme.headerButton }};'>
-        </span>
-      </div>
-    </div>
-
-    <div class='row chatContainer' style='background-color: {{ previewScheme.mainBackground }}; border-color: {{ previewScheme.mainBorder }};'>
-      <div class='containerInnerBox'>
-        <div class='col-xs-12' style='height: 25em' ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/svg/svg.html'">
+    <div class='col-xs-12'>
+      <div class='col-xs-12 chatContainer' style='background-color: {{ previewScheme.mainBackground }}; border-color: {{ previewScheme.mainBorder }};'>
+        <div class='containerInnerBox' style='height: 25em' ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/svg/svg.html'">
         </div>
+        <div class='row' ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/footer.html'"></div>
       </div>
     </div>
-
   </div>
 </div>

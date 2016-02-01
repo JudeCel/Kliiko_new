@@ -14,7 +14,6 @@
   cursor: pointer;
 
   &.btn-green {
-    min-width: 49px;
     color: $green;
     border-color: $green;
     background: white;
@@ -98,6 +97,7 @@
 
 .btn-addNewElement {
   @extend .btn-dashboard-menu;
+  min-width: 49px;
   width: auto;
   margin: 0;
   margin-top: 20px;
@@ -168,5 +168,3 @@
   cursor: not-allowed !important;
 }
 //////
-
-

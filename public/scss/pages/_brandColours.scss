@@ -1,7 +1,12 @@
+.manage-preview {
+  padding-top: 1%;
+  padding-bottom: 2%;
+}
+
 .brandColours {
   font-size: 70%;
   .chatContainer {
-    margin-top: 3%;
+    margin-top: 2%;
     border: 2px solid;
     padding-bottom: 3%;
     height: 100%;
@@ -25,14 +30,47 @@
       margin: 3% 2%;
       padding: 2%;
     }
+    label {
+      padding-top: 6%;
+    }
+    .input-group {
+      margin-bottom: 5%;
+      .form-control {
+        font-size: 1em;
+        padding: 0;
+        padding-left: 5%;
+      }
+      .form-control:disabled {
+        background-color: inherit;
+        cursor: pointer;
+      }
+      .input-group-addon {
+        font-size: 1em;
+        padding: 0px 3px;
+        background-color: inherit;
+      }
+    }
   }
 
+  .circle-addon {
+    border: 0;
+    padding: 0;
+    padding-right: 5px;
+    background-color: inherit;
+  }
+
+  .color-input-size {
+    font-size: 0.8em;
+  }
+
+  p {
+    padding: 4%;
+  }
+  p.lime-background {
+    background-color: #CBEDC0;
+    margin-bottom: -5%;
+  }
   .containerInnerBox {
     margin: 10px auto 10%;
-  }
-
-  select {
-    border-radius: 0px;
-    border: 1px solid #ccc;
   }
 }

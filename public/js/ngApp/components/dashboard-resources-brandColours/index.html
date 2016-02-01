@@ -1,34 +1,34 @@
-<div class='col-md-12'>
-  <div class='col-md-12'>
-    <div class='dashboard-container'>
-      <div class='row'>
-        <div class='col-md-offset-3 col-md-6'>
-          <h2 class='text-center'>Brand Colours</h2>
-        </div>
-        <div class='col-md-3 text-right'>
-          <button class='btn btn-addNewElement btn-green' ng-click="bcc.changePage('create')">Create New Scheme</button>
-        </div>
+<div class='col-xs-12'>
+  <div class='dashboard-container'>
+    <div class='row'>
+      <div>
+        <h2 class='text-center'>Brand Colours</h2>
+      </div>
+      <div class='text-right'>
+        <button class='btn btn-addNewElement btn-green' ng-click="bcc.changePage('create')">Create New Scheme</button>
       </div>
     </div>
-  </div>
 
-  <div class='col-sm-6 col-lg-4' ng-repeat='scheme in bcc.schemes'>
-    <div class='panel panel-default panel-success'>
-      <div class='panel-heading'>
-        <div class='row'>
-          <div class='col-xs-6'>
-            <h3 class='panel-title'>{{ scheme.name }}</h3>
+    <div class='row'>
+      <div class='col-sm-6' ng-repeat='scheme in bcc.schemes'>
+        <div class='panel panel-default panel-success'>
+          <div class='panel-heading'>
+            <div class='row'>
+              <div class='col-xs-6'>
+                <h3 class='panel-title'>{{ scheme.name }}</h3>
+              </div>
+              <div class='col-xs-6 text-right dashboardElementsEditRemove'>
+                <img src='/icons/resources_grey.png' alt='' ng-click='bcc.copyScheme(scheme)' />
+                <img src='/icons/dashboardElement_edit.png' alt='' ng-click='bcc.changePage("edit", scheme)' />
+                <img src='/icons/dashboardElement_remove.png' alt='' ng-click='bcc.removeScheme(scheme)' />
+              </div>
+            </div>
           </div>
-          <div class='col-xs-6 text-right dashboardElementsEditRemove'>
-            <img src='/icons/resources_grey.png' alt='' ng-click='bcc.copyScheme(scheme)' />
-            <img src='/icons/dashboardElement_edit.png' alt='' ng-click='bcc.changePage("edit", scheme)' />
-            <img src='/icons/dashboardElement_remove.png' alt='' ng-click='bcc.removeScheme(scheme)' />
+
+          <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='background-color: {{ scheme.colours.browserBackground }};'>
+            <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/preview.html'"></ng-include>
           </div>
         </div>
-      </div>
-
-      <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='background-color: {{ scheme.colours.browserBackground }};'>
-        <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/preview.html'"></ng-include>
       </div>
     </div>
   </div>

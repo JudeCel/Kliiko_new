@@ -22,7 +22,6 @@
   line-height: 26px;
   text-align: left; }
   .btn-dashboard-menu.btn-green, .btn-green.btn-addNewElement {
-    min-width: 49px;
     color: #2F9F69;
     border-color: #2F9F69;
     background: white; }
@@ -73,6 +72,7 @@
   background-color: #E51D39; }
 
 .btn-addNewElement {
+  min-width: 49px;
   width: auto;
   margin: 0;
   margin-top: 20px;
@@ -1367,10 +1367,14 @@ hr.survey-hr {
 .panel-mmin-height {
   min-height: 302px; }
 
+.manage-preview {
+  padding-top: 1%;
+  padding-bottom: 2%; }
+
 .brandColours {
   font-size: 70%; }
   .brandColours .chatContainer {
-    margin-top: 3%;
+    margin-top: 2%;
     border: 2px solid;
     padding-bottom: 3%;
     height: 100%; }
@@ -1388,11 +1392,35 @@ hr.survey-hr {
       color: white;
       margin: 3% 2%;
       padding: 2%; }
+    .brandColours .header label {
+      padding-top: 6%; }
+    .brandColours .header .input-group {
+      margin-bottom: 5%; }
+      .brandColours .header .input-group .form-control {
+        font-size: 1em;
+        padding: 0;
+        padding-left: 5%; }
+      .brandColours .header .input-group .form-control:disabled {
+        background-color: inherit;
+        cursor: pointer; }
+      .brandColours .header .input-group .input-group-addon {
+        font-size: 1em;
+        padding: 0px 3px;
+        background-color: inherit; }
+  .brandColours .circle-addon {
+    border: 0;
+    padding: 0;
+    padding-right: 5px;
+    background-color: inherit; }
+  .brandColours .color-input-size {
+    font-size: 0.8em; }
+  .brandColours p {
+    padding: 4%; }
+  .brandColours p.lime-background {
+    background-color: #CBEDC0;
+    margin-bottom: -5%; }
   .brandColours .containerInnerBox {
     margin: 10px auto 10%; }
-  .brandColours select {
-    border-radius: 0px;
-    border: 1px solid #ccc; }
 
 #dashboard #back-nav-btn {
   margin-bottom: -75px; }
