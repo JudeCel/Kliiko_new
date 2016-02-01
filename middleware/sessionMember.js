@@ -1,10 +1,10 @@
 'use strict';
 var models  = require('./../models');
-var User  = models.User;
+var AccountUser  = models.AccountUser;
 var accessDeniedMessage = 'Access Denied!!'
 
 function hasAccess(req, res, next) {
-  User.find({where: {id: req.user.id}, attributes: ['id'],
+  AccountUser.find({where: {UserId: req.user.id, AccountId: res.locals.currentDomain.id}, attributes: ['id'],
     include: [
       {model: models.SessionMember, where: {sessionId: req.params.id}, attributes: []}
     ]}).done(function(result) {

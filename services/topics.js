@@ -1,61 +1,101 @@
 'use strict';
 let q = require('q');
+var models = require('./../models');
+var Topic = models.Topic;
+var _ = require('lodash');
+var Session = models.Session;
+const MESSAGES = {error: { isRelaitedSession: "Can't delete topic is related session" } };
 
 module.exports = {
-  getAllTopic: getAllTopic,
-  createNewTopic: createNewTopic,
-  deleteTopicById: deleteTopicById,
-  updateTopicById: updateTopicById
+  getAll: getAll,
+  create: create,
+  update: update,
+  destroy: destroy,
+  joninSession: joninSession,
+  removeSession: removeSession,
+  MESSAGES: MESSAGES
 };
 
-function getAllTopic() {
+function getAll(accountId) {
   let deferred = q.defer();
+  Topic.findAll({where: { accountId: accountId }, include: [{ model: models.Session }] }).then(function(results){
+    deferred.resolve(results);
+  },function(err) {
+    deferred.reject(err);
+  });
+  return deferred.promise;
+}
 
-
-  let list = [
-    {name: 'This Is topic name', id: 'topic100500', sessions: [{name:'That is session Name', id: 1, status: 'Closed'},{name:'That is session Name2', id: 2, status: 'Opened'}]},
-    {name: 'This Is topic name2', id: 'topic100501', sessions: [{name:'That is session Name2', id: 2}]},
-    {name: 'This Is topic name3', id: 'topic100502', sessions: [{name:'That is session Name3', id: 3}]},
-    {name: 'This Is topic name8', id: 'topic100503', sessions: [{name:'That is session Name2', id: 2},{name:'That is session Name2', id: 2},{name:'That is session Name4', id: 4}]}
-  ];
-
-  deferred.resolve(list);
+function joninSession(ids, sessionId) {
+  let deferred = q.defer();
+  Session.find({where: { id: sessionId } }).then(function(session) {
+    Topic.findAll({where: {id: ids}}).then(function(results) {
+      session.addTopics(results).then(function(result) {
+        deferred.resolve(result);
+      }, function(err) {
+        deferred.reject(err);
+      })
+    }, function(err) {
+      deferred.reject(err);
+    })
+  }, function(err) {
+    deferred.reject(err);
+  });
 
   return deferred.promise;
 }
 
-function createNewTopic(topicObj) {
+function removeSession(ids, sessionId) {
   let deferred = q.defer();
-
-  let output =  {
-    name: topicObj.name,
-    id: 'topic'+new Date().getTime(),
-    sessions: [
-      {name:'That is session Name', id: 1, status: 'Closed'},{name:'That is session Name2', id: 2, status: 'Opened'}
-    ]
-  };
-  output.sessions = topicObj.sessions || null;
-
-  deferred.resolve(output);
+  Session.find({where: { id: sessionId } }).then(function(session) {
+    Topic.findAll({where: {id: ids}}).then(function(results) {
+      session.removeTopics(results).then(function(result) {
+        deferred.resolve(result);
+      }, function(err) {
+        deferred.reject(err);
+      })
+    }, function(err) {
+      deferred.reject(err);
+    })
+  }, function(err) {
+    deferred.reject(err);
+  });
 
   return deferred.promise;
 }
 
-function deleteTopicById(id) {
+function destroy(id) {
   let deferred = q.defer();
-
-  // dummy output
-  let output =  {deletedTopicIdIs: id};
-  deferred.resolve(output);
-
+  Topic.find({where: { id: id }, include: [{model: models.Session }]}).then(function(topic) {
+    if (_.isEmpty(topic.Sessions)) {
+      Topic.destroy({where: { id: id } }).then(function(result) {
+        deferred.resolve(result)
+      },function(err) {
+        deferred.reject(err);
+      })
+    } else {
+      deferred.reject(MESSAGES.error.isRelaitedSession);
+    }
+  });
   return deferred.promise;
 }
 
-function updateTopicById(topicObj) {
+function create(params) {
   let deferred = q.defer();
+  Topic.create(params).then(function(topic) {
+    deferred.resolve(topic);
+  },function(err) {
+    deferred.reject(err);
+  });
+  return deferred.promise;
+}
 
-  // dummy output
-  deferred.resolve(topicObj);
-
+function update(params) {
+  let deferred = q.defer();
+  Topic.update(params,{ where:{id: params.id}} ).then(function(topic) {
+    deferred.resolve(topic);
+  },function(err) {
+    deferred.reject(err);
+  });
   return deferred.promise;
 }

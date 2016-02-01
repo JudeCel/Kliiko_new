@@ -222,7 +222,6 @@
           loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
             return $ocLazyLoad.load([
               '/js/ngApp/components/dashboard-resources-topics/TopicsController.js',
-              '/js/ngApp/components/dashboard-resources-topics/topicsServices.js',
               '/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js'
             ]);
           }]

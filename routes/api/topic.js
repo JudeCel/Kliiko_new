@@ -3,18 +3,30 @@ let q = require('q');
 let topicsService = require('./../../services/topics');
 
 module.exports = {
+  get: getAll,
   post: post,
   deleteById: deleteById,
-  copyTopicById: copyTopicById,
-  updateTopicById: updateTopicById
+  updateById: updateById
 };
+
+function getAll(req, res, next) {
+  let accountId = res.locals.currentDomain.id;
+  topicsService.getAll(accountId).then(
+    function(response) { res.send(response)},
+    function(error) { res.send({error:error})}
+  );
+}
+
 
 
 function post(req, res, next) {
 
   if (!req.body.topic) { res.send({error: '@topic body param is missed'}); return }
 
-  topicsService.createNewTopic(req.body.topic).then(
+  let params = req.body.topic;
+  params.accountId = res.locals.currentDomain.id;
+
+  topicsService.create(params).then(
     function(response) { res.send({success: true, data:response})},
     function(error) { res.send({error:error})}
   );
@@ -27,24 +39,22 @@ function deleteById(req, res, next) {
     return
   }
 
-  topicsService.deleteTopicById(req.body.topicName).then(
+  topicsService.destroy(req.params.id).then(
     function(response) { res.send({success: true, data:response})},
     function(error) { res.send({error:error})}
   );
 
 }
 
-function copyTopicById(req, res) {
-  res.send('here we are')
-}
-
-function updateTopicById(req, res) {
-  if (!req.body.topic) {
-    res.send({error: '@topic body param is missed'});
+function updateById(req, res) {
+  if (!req.params.id) {
+    res.send({error: '@id query param is missed'});
     return
   }
 
-  topicsService.updateTopicById(req.body.topic).then(
+  let params = req.body.topic;
+
+  topicsService.update(params).then(
     function(response) { res.send({success: true, data:response})},
     function(error) { res.send({error:error})}
   );
