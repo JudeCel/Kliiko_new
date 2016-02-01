@@ -41,6 +41,7 @@ module.exports = (Sequelize, DataTypes) => {
           AccountUser.belongsTo(models.User);
           AccountUser.belongsTo(models.Account);
           AccountUser.hasMany(models.Invite, { foreignKey: 'accountUserId' });
+          AccountUser.hasMany(models.SessionMember, { foreignKey: 'accountUserId' });
         }
       }
     }
