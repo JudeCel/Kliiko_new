@@ -188,7 +188,6 @@
       var tablesToShowArray = vm.lists.activeList.visibleFields;
       for (var i = 0, len = tablesToShowArray.length; i < len ; i++) {
         vm.selectedTables[tablesToShowArray[i]] = true;
-
       }
     }
 

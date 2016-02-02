@@ -395,7 +395,7 @@
                     <span class="row">
                       <span class="col-md-3" ng-repeat="column in clc.lists.activeList.participantsFields">
                         <div class="check fields-to-show">
-                          <input id="dashboard-contact-lists-participants-{{ $index }}" ng-click="clc.lists.activeList.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.lists[clc.activeListIndex].table.participantsFields[column]" type="checkbox" >
+                          <input id="dashboard-contact-lists-participants-{{ $index }}" ng-click="clc.lists.activeList.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.selectedTables[column]" type="checkbox" >
                           <label for="dashboard-contact-lists-participants-{{ $index }}" ></label>{{ column }}
                         </div>
 
