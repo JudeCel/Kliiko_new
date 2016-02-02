@@ -6,8 +6,8 @@
    */
   angular.module('KliikoApp').factory('ListsModel', ListsModel);
 
-  ListsModel.$inject = ['$q', 'contactListServices', 'ListItemModel', '$filter'];
-  function ListsModel($q, contactListServices, ListItemModel, $filter)  {
+  ListsModel.$inject = ['$q', 'contactListServices', 'ListItemModel', '$filter', 'ListItemMemberModel'];
+  function ListsModel($q, contactListServices, ListItemModel, $filter, Member)  {
     var ListsModel;
 
     ListsModel = ListsModel;
@@ -20,7 +20,7 @@
 
     ListsModel.prototype.addNewContact = addNewContact;
     ListsModel.prototype.updateContact = updateContact;
-    ListsModel.prototype.deleteContact = deleteContact;
+    ListsModel.prototype.deleteContacts = deleteContacts;
 
     return ListsModel;
 
@@ -74,12 +74,27 @@
 
       contactListServices.getContactLists().then(
         function(res) {
+          // prepare itmes
           for (var i = 0, len = res.length; i < len ; i++) {
             var resItem = new ListItemModel(res[i]);
 
             self.items.push(resItem);
           }
           self.items = $filter('orderBy')(self.items, 'id');
+
+          //prepare members
+          for (var i = 0, len = self.items.length; i < len ; i++) {
+            if ( self.items[i].members && self.items[i].members.length) {
+              var membersRaw = self.items[i].members;
+              self.items[i].members = [];
+
+              for (var j = 0, lenj = membersRaw.length; j < lenj ; j++) {
+                var newMember = new Member(membersRaw[j], self.items[i].customFields);
+                self.items[i].members.push(newMember);
+              }
+
+            }
+          }
           deferred.resolve();
         },
         function(err) { deferred.reject(err) }
@@ -190,21 +205,87 @@
 
     function addNewContact(newContactObj) {
       var self = this;
+      var deferred = $q.defer();
 
-      contactListServices.createUser(newContactObj, self.activeList.id).then(
+      var newContactObj = newContactObj;
+      var currentListId = self.activeList.id;
+
+      contactListServices.createUser(newContactObj, currentListId).then(
         function (res) {
-          debugger; //debugger
+
+          newContactObj = angular.extend(newContactObj, res);
+
+          newContactObj = new Member(newContactObj);
+
+
+
+          for (var i = 0, len = self.items.length; i < len ; i++) {
+            if (self.items[i].id == currentListId) {
+
+              if (!self.items[i].members) self.items[i].members = [];
+
+              self.items[i].members.push(newContactObj);
+              self.items[i].membersCount++;
+
+              break;
+            }
+          }
+
+
+
+          deferred.resolve(res);
+        },
+        function (err) {
+          deferred.reject(err);
+        }
+      );
+      return deferred.promise;
+    }
+
+    function updateContact(contact) {
+      var deferred = $q.defer();
+
+
+      var self = this;
+
+      contact.update(self.activeList.id).then(
+        function (res) {
+          deferred.resolve();
         },
         function (err) {
         }
       );
-
+      return deferred.promise;
     }
 
-    function updateContact() {
+    function deleteContacts(ids) {
+      var self = this;
 
-    }
-    function deleteContact() {
+      var deferred = $q.defer();
+      var currentListIndex = self.activeListIndex;
+      contactListServices.deleteUser(ids).then(
+        function(res) {
+          // delete corresponding members
+          for (var i = 0, len = ids.length; i < len ; i++) {
+
+            for (var j = 0; j < self.items[currentListIndex].members.length; j++) {
+              if (self.items[currentListIndex].members[j].id == ids[i]) {
+                self.items[currentListIndex].members.splice( j, 1 );
+              }
+            }
+
+          }
+
+          //adjust members counter
+          self.items[currentListIndex].membersCount = self.items[currentListIndex].membersCount - ids.length;
+
+          deferred.resolve(res);
+        },
+        function(err) {
+          deferred.reject(err)
+        }
+      );
+      return deferred.promise;
 
     }
 

@@ -13,21 +13,18 @@ var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
 var survey = require('./survey');
 var chargebee = require('./chargebee');
-<<<<<<< Temporary merge branch 1
-let topics = require('./topics');
 let topic = require('./topic');
-=======
 var gallery = require('./gallery');
 
->>>>>>> Temporary merge branch 2
 
 
 module.exports = router;
 
 // Main Routes
 router.get('/user', userRoutes.userGet);
-router.post('/user', userRoutes.userPost);
-router.put('/user', userRoutes.changePassword);
+router.post('/user',userRoutes.userPost);
+router.put('/user',userRoutes.changePassword);
+
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
@@ -54,15 +51,6 @@ router.put('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeS
 router.get('/chargebee/subscriptions', multipartyMiddleware, chargebee.chargebeeSubscriptionGet);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
 
-<<<<<<< Temporary merge branch 1
-router.get('/topics', multipartyMiddleware, topics.get);
-router.post('/topic', multipartyMiddleware, topic.post);
-
-router.route('/topic/:id').
-  post(multipartyMiddleware, topic.copyTopicById).
-  put(multipartyMiddleware, topic.updateTopicById).
-  delete(multipartyMiddleware, topic.deleteById);
-=======
 router.post('/gallery', gallery.postResources);
 router.post('/gallery/uploadFile', fileUploader(), gallery.uploadResource);
 router.post('/gallery/saveYoutubeUrl', gallery.saveYoutubeResource);
@@ -82,20 +70,6 @@ router.get('/survey/find', survey.find);
 router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', survey.confirm);
 router.get('/survey/constants', survey.getConstants);
-
-// contact List
-router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
-router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
-router.post('/contactList/:id/import', policy.authorized(['accountManager', 'admin']), fileUploader(),contactList.import);
-router.put('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.update);
-router.delete('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.destroy);
-
-// contact List User
-router.post('/contactListsUser', policy.authorized(['accountManager', 'admin']), contactListUser.create);
-router.post('/contactListsUsersToRemove', policy.authorized(['accountManager', 'admin']), contactListUser.destroy);
-router.put('/contactListsUser/:id', policy.authorized(['accountManager', 'admin']), contactListUser.update);
-
-
 
 router.get('/topics', multipartyMiddleware, topic.get);
 router.post('/topic', multipartyMiddleware, topic.post);

@@ -1334,6 +1334,9 @@ hr.survey-hr {
 .margin-right-10 {
   margin-right: 10px !important; }
 
+.margin-right-15 {
+  margin-right: 15px !important; }
+
 .uppercase {
   text-transform: uppercase !important; }
 
@@ -1358,6 +1361,18 @@ hr.survey-hr {
 
 .margin-bottom-10 {
   margin-bottom: 10px; }
+
+.gallery-btn-width {
+  min-width: 47px !important; }
+
+.negative-top-margin {
+  margin-top: -8px !important; }
+
+.no-padding {
+  padding: 0; }
+
+.panel-mmin-height {
+  min-height: 302px; }
 
 #dashboard #back-nav-btn {
   margin-bottom: -75px; }

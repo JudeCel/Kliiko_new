@@ -27,6 +27,8 @@
 
     vm.contactAddEditClickHandle = contactAddEditClickHandle;
     vm.createContact = createContact;
+    vm.updateContact = updateContact;
+    vm.removeContacts = removeContacts;
 
     /**
      * Open modal and prepare variables
@@ -183,7 +185,7 @@
      * @param action {string}
      * @param [contactObj] {object} - contact object required for editing case
      */
-    function contactAddEditClickHandle(action, contactObj) {
+    function contactAddEditClickHandle(action, contactObj, index) {
       if (action === 'new') {
         vm.updateExistingUser = null;
         vm.contactModalTitle = 'Add New Contact';
@@ -191,6 +193,7 @@
       }
 
       if (action === 'update') {
+
         vm.contactModalTitle = 'Edit Contact';
         vm.newContact = contactObj;
         vm.updateExistingUser = true;
@@ -200,51 +203,26 @@
     }
 
 
-
     /**
      * create a contact for currently active list
      */
     function createContact() {
-
-      var currentList = vm.lists[vm.activeListIndex];
+      var currentList = vm.lists.activeList;
 
       var valid = validateContact();
 
       if (!valid) return;
 
       var newContact = angular.copy(vm.newContact);
-      newContact = new Member(newContact);
-      newContact.updateFields();
 
-      contactListServices.createUser(vm.newContact, currentList.id).then(
+      vm.lists.addNewContact(vm.newContact).then(
         function(res) {
+          vm.newContact = {customFields:{}};
+
           domServices.modal('contactList-addContactManual', 'close');
           messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
-
-          vm.newContact = {customFields:{}};
-          newContact.id = res.id;
-
-          if (!vm.lists[vm.activeListIndex].membersCount) vm.lists[vm.activeListIndex].membersCount = 0 ;
-          vm.lists[vm.activeListIndex].membersCount++;
-
-          if (!vm.selectedListMembers) vm.selectedListMembers = [];
-          vm.selectedListMembers.push(newContact);
-
-          cls.addNewUserToList(currentList.id, newContact);
-
-          for (var i = 0, len = vm.selectedListMembers.length; i < len ; i++) {
-            if (vm.selectedListMembers[i].CustomFieldsObject && vm.lists[vm.activeListIndex].members) {
-              vm.selectedListMembers[i].name = vm.selectedListMembers[i].firstName + ' '+ vm.selectedListMembers[i].lastName;
-              for( var key in vm.selectedListMembers[i].CustomFieldsObject ) {
-                vm.lists[vm.activeListIndex].Members[i][key] = vm.selectedListMembers[i].CustomFieldsObject[key];
-              }
-            }
-          }
-
-
-
         },
-        function(err) {
+        function (err) {
           if (err.error) {
             messenger.error(err.error.message);
           }
@@ -254,10 +232,75 @@
               vm.modalErrors[ e[i].path ] = e[i].message;
             }
           }
-
         }
       );
+
+
+
     }
+
+    function updateContact() {
+
+      var newContact = angular.copy(vm.newContact);
+      var currentList = angular.copy(vm.lists.activeList);
+
+      vm.lists.updateContact(vm.newContact).then(
+        function(res) {
+          vm.newContact = {customFields:{}};
+
+          domServices.modal('contactList-addContactManual', 'close');
+          messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
+        },
+        function (err) {
+          if (err.error) {
+            messenger.error(err.error.message);
+          }
+          if (err.errors) {
+            var e = err.errors;
+            for (var i = 0, len = e.length; i < len ; i++) {
+              vm.modalErrors[ e[i].path ] = e[i].message;
+            }
+          }
+        }
+      );
+
+
+      /**/
+
+    }
+
+
+    /**
+     * Remove contacts from list by given ids
+     * @param ids {number | [{numbers}]}
+     */
+    function removeContacts(ids) {
+      if (!ids) return;
+      if (!angular.isArray(ids)) ids = [ids];
+
+      var confirmed = confirm('Are you sure?');
+      if (!confirmed) return;
+
+      vm.lists.deleteContacts(ids).then(
+        function(res) {
+
+          //if (!res.total) {
+          //  messenger.error('No users was removed');
+          //  return
+          //}
+          //
+          //var message;
+          //(res.total > 1)
+          //  ? message = res.total+' users has been removed'
+          //  : message = 'User removed';
+          //
+          //messenger.ok(message);
+
+        },
+        function(err) {  messenger.error(err); }
+      );
+    }
+
 
     /**
      * Validate vm.newContact object
