@@ -50,7 +50,7 @@ describe('Services -> ContactListUser', () => {
         });
       })
       describe("bulkCreate", ()=>{
-        it.only("create multiple records", (done) =>  {
+        it("create multiple records", (done) =>  {
           let list = [{
             contactListId: TestContactList.id,
             defaultFields: {
@@ -184,7 +184,7 @@ describe('Services -> ContactListUser', () => {
         });
       });
 
-      it.only("update ", (done) => {
+      it("update ", (done) => {
           let attrs = {
             accountId: TestAccount.id,
             contactListId: TestContactList.id,
@@ -207,8 +207,7 @@ describe('Services -> ContactListUser', () => {
         ContactListUserService.create(attrs).then(function(contactListUser) {
           updateparams.id = contactListUser.id;
           ContactListUserService.update(updateparams).then(function(result) {
-            assert.equal(result.customFields.one, updateparams.customFields.one)
-            assert.equal(result.customFields.two, attrs.customFields.two)
+              assert.equal(result.firstName, updateparams.defaultFields.firstName)
             done()
           }, function(err) {
             done(err)

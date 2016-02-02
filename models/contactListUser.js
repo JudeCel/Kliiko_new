@@ -21,7 +21,7 @@ module.exports = (Sequelize, DataTypes) => {
           ContactListUser.belongsTo(models.AccountUser, {foreignKey: 'accountUserId'});
           ContactListUser.belongsTo(models.User, {foreignKey: 'userId'});
           ContactListUser.belongsTo(models.Account, {foreignKey: 'accountId'});
-          ContactListUser.belongsTo(models.ContactListUser, {foreignKey: 'contactListId'});
+          ContactListUser.belongsTo(models.ContactList, {foreignKey: 'contactListId'});
         }
       }
     }

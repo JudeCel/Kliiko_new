@@ -63,7 +63,9 @@ function destroy(req, res, next) {
 }
 
 // Update Params example
-// {  defaultFildes: Object/optional =>  { firstName: "name" },
+//
+// {  id: INTEGER/required => 1,
+//    defaultFildes: Object/optional =>  { firstName: "name" },
 //    customFields: Object/optional =>  { customFieldsName: "someValue"}
 //    contactListId: INTEGER/required => 1
 //  }
@@ -74,8 +76,9 @@ function update(req, res, next) {
   let params = req.body;
   params.accountId = res.locals.currentDomain.id;
   params.id = req.params.id;
+  
   contactListUserService.update(params).then(function(result) {
-    res.send({success:true,data:result});
+    res.send({success: true, data: result});
   }, function(err) {
     res.send({ error: err });
   })
