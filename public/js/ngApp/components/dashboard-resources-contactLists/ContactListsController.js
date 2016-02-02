@@ -2,10 +2,12 @@
   'use strict';
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel'];
-  function ContactListController(domServices,  dbg, messenger, ListsModel) {
+  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', 'ngDraggable'];
+  function ContactListController(domServices,  dbg, messenger, ListsModel,  ngDraggable) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
+
+
 
     vm.listIdToEdit = null;
     vm.newList = {};

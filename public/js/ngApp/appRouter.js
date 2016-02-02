@@ -198,7 +198,8 @@
               '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
               '/js/ngApp/components/dashboard-resources-contactLists/CustomTableModel.js',
               '/js/ngApp/modules/contactList/contactList.js',
-              '/js/ngApp/directives/custom-select-directive.js'
+              '/js/ngApp/directives/custom-select-directive.js',
+              '/js/vendors/ngDraggable/ngDraggable.js'
             ]);
           }]},
         onEnter: ['dbg', function (dbg) {

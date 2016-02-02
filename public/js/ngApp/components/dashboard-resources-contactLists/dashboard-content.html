@@ -16,9 +16,6 @@
     <div class='dashboard-container'>
 
 
-      <!--<pre>{{ clc.lists.activeList| json }}</pre>-->
-
-
       <div class="row">
         <div id="contact-lists-left-column" class="col-md-2">
           <div id="list-of-contacts">
@@ -66,7 +63,8 @@
             <thead>
               <tr>
                 <th></th>
-                <th ng-repeat="rowHeader in clc.lists.activeList.visibleFields" ng-click="clc.changeTableSortingFilter(rowHeader)">
+                <th ng-repeat="rowHeader in clc.lists.activeList.visibleFields" ng-click="clc.changeTableSortingFilter(rowHeader)"
+                    ng-drag="true">
                   <span class="th-name">{{rowHeader}}</span>
                   <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
                   <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
