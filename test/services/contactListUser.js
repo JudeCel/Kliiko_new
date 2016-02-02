@@ -118,14 +118,16 @@ describe('Services -> ContactListUser', () => {
             customFields: { one: "1", two:" 2", three:" 3" }
            }
         ContactListUserService.create(attrs).then(function(contactListUser) {
-          assert.deepEqual(contactListUser.customFields, attrs.customFields)
-          assert.equal(contactListUser.accountId, attrs.accountId);
-          assert.equal(contactListUser.contactListId, attrs.contactListId);
-          contactListUser.getAccountUser().then(function(accountUser) {
-            assert.equal(TestContactList.role, accountUser.role);
-            assert.isNotNull(accountUser)
-            done()
-          });
+          models.ContactListUser.find({where: {id: contactListUser.id}}).then(function(contactListUser) {
+            assert.deepEqual(contactListUser.customFields, attrs.customFields)
+            assert.equal(contactListUser.accountId, attrs.accountId);
+            assert.equal(contactListUser.contactListId, attrs.contactListId);
+            contactListUser.getAccountUser().then(function(accountUser) {
+              assert.equal(TestContactList.role, accountUser.role);
+              assert.isNotNull(accountUser)
+              done()
+            });
+          })
         }, function(err) {
           done(err);
         });
