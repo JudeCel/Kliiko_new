@@ -153,7 +153,6 @@
           self.activeList.name = updateFieldsObj.name;
           delete updateFieldsObj.name;
 
-          //debugger; //debugger
           // rewrite custom fields
           self.activeList.customFields = updateFieldsObj.customFields;
           //self.activeList.customFields = [];
@@ -247,12 +246,29 @@
 
     function updateContact(contact) {
       var deferred = $q.defer();
-
-
       var self = this;
 
-      contact.update(self.activeList.id).then(
+      var activeListId = self.activeList.id;
+
+      contact.update(activeListId).then(
         function (res) {
+          
+          var updatedContact = new Member(res.data);
+          var index;
+          for (var i = 0, len = self.items.length; i < len ; i++) {
+            if (self.items[i].id == activeListId) {
+              index = i;
+              break;
+            }
+          }
+
+          for (var i = 0, len = self.items[index].members.length; i < len ; i++) {
+            if (self.items[index].members[i].id == updatedContact.id ) {
+              self.items[index].members[i] = updatedContact;
+              break;
+            }
+          }
+
           deferred.resolve();
         },
         function (err) {

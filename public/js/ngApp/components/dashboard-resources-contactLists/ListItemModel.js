@@ -19,6 +19,7 @@
     ListItemModel.prototype.updateAvailableFields = updateAvailableFields;
 
     ListItemModel.prototype.toggleTableToShow = toggleTableToShow;
+    ListItemModel.prototype.updateTableSortingByDragging = updateTableSortingByDragging;
     return ListItemModel;
 
 
@@ -105,6 +106,18 @@
 
       self.update(self);
 
+    }
+
+    function updateTableSortingByDragging(graggedIndex, droppedIndex) {
+      var self = this;
+
+      var dragged = self.visibleFields[graggedIndex];
+      var dropped = self.visibleFields[droppedIndex];
+
+      self.visibleFields[droppedIndex] = dragged;
+      self.visibleFields[graggedIndex] = dropped;
+
+      self.update(self);
     }
 
   }

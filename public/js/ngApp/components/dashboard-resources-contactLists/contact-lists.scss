@@ -7,6 +7,12 @@
 
 
   thead { background: $green; }
+  .druggable {
+    cursor: ew-resize;
+    .th-name {
+      cursor: pointer !important;
+    }
+  }
 
   #contact-lists-left-column {
 

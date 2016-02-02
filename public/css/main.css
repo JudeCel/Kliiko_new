@@ -1970,6 +1970,11 @@ hr.survey-hr {
 #dashboard-contact-lists thead {
   background: #2F9F69; }
 
+#dashboard-contact-lists .druggable {
+  cursor: ew-resize; }
+  #dashboard-contact-lists .druggable .th-name {
+    cursor: pointer !important; }
+
 #dashboard-contact-lists #contact-lists-left-column #list-of-contacts {
   margin-top: 52px;
   padding: 0;
