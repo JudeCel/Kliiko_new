@@ -375,7 +375,7 @@
                       </div>
                     </uib-accordion-heading>
                     <span class="row">
-                      <span class="col-md-3" ng-repeat="column in  clc.lists.activeList.availableTables()">
+                      <span class="col-md-3" ng-repeat="column in clc.lists.activeList.availableTables() track by $index">
                         <div class="check fields-to-show">
                           <input id="dashboard-contact-lists-fields-{{ $index }}" ng-click="clc.lists.activeList.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.selectedTables[column]" type="checkbox" >
                           <label for="dashboard-contact-lists-fields-{{ $index }}" ></label>{{ column }}

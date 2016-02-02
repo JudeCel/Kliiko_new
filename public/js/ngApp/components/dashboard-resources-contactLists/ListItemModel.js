@@ -14,6 +14,10 @@
     ListItemModel.prototype.init = init;
     ListItemModel.prototype.update = update;
     ListItemModel.prototype.availableTables = availableTables;
+
+    ListItemModel.prototype.updateAvailableTables = updateAvailableFields;
+    ListItemModel.prototype.updateAvailableFields = updateAvailableFields;
+
     ListItemModel.prototype.toggleTableToShow = toggleTableToShow;
     return ListItemModel;
 
@@ -85,6 +89,12 @@
 
 
     }
+
+    function updateAvailableFields() {
+      var self = this;
+      self.init()
+    }
+
 
     function toggleTableToShow(column) {
       var self = this;

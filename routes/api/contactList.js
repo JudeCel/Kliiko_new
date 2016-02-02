@@ -6,7 +6,8 @@ module.exports = {
   index: index,
   create: create,
   destroy: destroy,
-  update: update
+  update: update,
+  import: importFunction
 };
 
 function index(req, res, next) {
@@ -78,7 +79,7 @@ function destroy(req, res, next) {
   });
 }
 
-function import(req, res, next) {
+function importFunction(req, res, next) {
   paramsValidation(req.file, 'file is missed');
   paramsValidation(req.params.id, 'query param @id is missed');
 

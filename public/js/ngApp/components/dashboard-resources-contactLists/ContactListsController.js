@@ -30,6 +30,9 @@
     vm.updateContact = updateContact;
     vm.removeContacts = removeContacts;
 
+    vm.selectAll = selectAll;
+    vm.massDelete = massDelete;
+
     /**
      * Open modal and prepare variables
      */
@@ -113,7 +116,7 @@
       delete list.name;
 
       for (var key in list) {
-        output.customFields.push(list[key]);
+        if (list[key].length) output.customFields.push(list[key]);
       }
 
       return output
@@ -317,6 +320,29 @@
       return valid;
     }
 
+    /**
+     * Toggle selection for all items in contacts list
+     */
+    function selectAll() {
+      vm.allSelected = !vm.allSelected;
+      for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
+        vm.lists.activeList.members[i]._selected = vm.allSelected;
+      }
+    }
+
+    /**
+     * Delete all contacts that are selected in current list
+     */
+    function massDelete() {
+      var ids = [];
+      for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
+        if (vm.lists.activeList.members[i]._selected === true) ids.push(vm.lists.activeList.members[i].id);
+      }
+
+      if (!ids.length) return;
+
+      removeContacts(ids);
+    }
 
   }
 })();

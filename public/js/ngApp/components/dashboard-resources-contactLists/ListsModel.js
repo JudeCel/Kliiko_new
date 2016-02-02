@@ -153,14 +153,17 @@
           self.activeList.name = updateFieldsObj.name;
           delete updateFieldsObj.name;
 
+          //debugger; //debugger
           // rewrite custom fields
-          self.activeList.customFields = [];
-          for (var key in  updateFieldsObj) {
-            self.activeList.customFields.push( updateFieldsObj[key] );
-          }
-
+          self.activeList.customFields = updateFieldsObj.customFields;
+          //self.activeList.customFields = [];
+          //for (var key in  updateFieldsObj) {
+          //  self.activeList.customFields.push( updateFieldsObj[key] );
+          //}
+          self.activeList.updateAvailableFields(updateFieldsObj.customFields);
           // update list with the current item
           self.items[currentIndex] = self.activeList;
+
           deferred.resolve();
 
         },
