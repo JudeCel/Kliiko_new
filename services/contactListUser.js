@@ -139,7 +139,6 @@ function create(params, transaction) {
         ContactListUser.create(contactListUserParams(params, newAccountUser.id), {transaction: transaction}).then(function(contactListUser) {
           deferred.resolve(contactListUser);
         }, function(err) {
-          console.log(err);
           deferred.reject(err);
         })
       }, function(err) {
@@ -178,12 +177,17 @@ function contactListUserParams(params, accountUserId) {
 
 function update(params) {
   let deferred = q.defer();
-  ContactListUser.update(params,{
-    where:{ id: params.id }
-  }).then(function(result) {
-    deferred.resolve(result);
-  }, function(err) {
-    deferred.reject(err);
-  });
+  ContactListUser.find({where: {id: params.id}, include: [AccountUser]}).then(function(contactListUser) {
+    let customFields = _.merge(contactListUser.customFields,  params.customFields)
+    contactListUser.updateAttributes({customFields: customFields}).then(function(result) {
+      contactListUser.AccountUser.updateAttributes(params.defaultFields).then(function(accountUser) {
+        deferred.resolve(result);
+      }, function(err) {
+        deferred.reject(err);
+      })
+    }, function(err) {
+      deferred.reject(err);
+    })
+  })
   return deferred.promise;
 }

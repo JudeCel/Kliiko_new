@@ -183,6 +183,40 @@ describe('Services -> ContactListUser', () => {
           done(err);
         });
       });
+
+      it.only("update ", (done) => {
+          let attrs = {
+            accountId: TestAccount.id,
+            contactListId: TestContactList.id,
+            defaultFields: {
+              firstName: "DainisNew",
+              lastName: "LapinsNew",
+              password: "cool_password",
+              email: "dainis186@gmail.com",
+              gender: "male"
+            },
+            customFields: { one: "1", two:"2", three:"3" }
+          }
+
+        let updateparams = {
+          id: null,
+          customFields: {one: 444},
+          defaultFields: {firstName: "newNameUpdate"}
+        }
+
+        ContactListUserService.create(attrs).then(function(contactListUser) {
+          updateparams.id = contactListUser.id;
+          ContactListUserService.update(updateparams).then(function(result) {
+            assert.equal(result.customFields.one, updateparams.customFields.one)
+            assert.equal(result.customFields.two, attrs.customFields.two)
+            done()
+          }, function(err) {
+            done(err)
+          })
+        }, function(err) {
+          done(err);
+        });
+      });
     });
   });
 });
