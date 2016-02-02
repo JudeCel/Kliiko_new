@@ -97,6 +97,7 @@
 
 .btn-addNewElement {
   @extend .btn-dashboard-menu;
+  min-width: 49px;
   width: auto;
   margin: 0;
   margin-top: 20px;
@@ -167,5 +168,3 @@
   cursor: not-allowed !important;
 }
 //////
-
-

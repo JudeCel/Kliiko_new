@@ -16,14 +16,15 @@ var chargebee = require('./chargebee');
 var mailTemplates = require('./mailTemplate');
 let topic = require('./topic');
 var gallery = require('./gallery');
+var brandColour = require('./brandColour');
+
 
 module.exports = router;
 
 // Main Routes
 router.get('/user', userRoutes.userGet);
-router.post('/user',userRoutes.userPost);
-router.put('/user',userRoutes.changePassword);
-
+router.post('/user', userRoutes.userPost);
+router.put('/user', userRoutes.changePassword);
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
@@ -82,6 +83,11 @@ router.post('/topic', multipartyMiddleware, topic.post);
 router.put('/topic/:id',multipartyMiddleware, topic.updateById);
 router.delete('/topic/:id', multipartyMiddleware, topic.deleteById);
 
+router.get('/brandColour', brandColour.get);
+router.delete('/brandColour', brandColour.remove);
+router.post('/brandColour', brandColour.create);
+router.put('/brandColour', brandColour.update);
+router.post('/brandColour/copy', brandColour.copy);
 
 // Common Rules
 router.use(function (req, res, next) {
