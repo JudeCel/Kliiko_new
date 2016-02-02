@@ -10,7 +10,6 @@ var ContactListUser = class ContactListUser {
   mapFields(defaultFields, customFields, participantsFields, data) {
     this.assignValues(defaultFields, data);
     this.assignValues(customFields, data);
-    // this.assignValues(participantsFields, data)
     this.stubParticipantsFields(participantsFields)
   }
 
