@@ -70,8 +70,21 @@
       var self = this;
 
       var currentListId = listId;
+      var customFields = self.CustomFieldsObject || {};
+      delete self.CustomFieldsObject;
 
-      contactListServices.updateUser(self, currentListId).then(
+      for (var i = 0, len = self.customFields.length; i < len ; i++) {
+        delete self[ self.customFields[i] ];
+      }
+
+      var defaultFields = self;
+
+      var params = {
+        customFields: customFields,
+        defaultFields: defaultFields
+      };
+
+      contactListServices.updateUser(params, currentListId).then(
         function (res) {
           deferred.resolve(res);
           console.warn(res);

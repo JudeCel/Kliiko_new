@@ -180,14 +180,11 @@
      */
     function updateUser(userObj, contactListId) {
       var deferred = $q.defer();
-
-
-
       var params = userObj;
       params.contactListId = contactListId;
 
       dbg.log2('#contactListServices > updateUser > call to api');
-      contactListsApi.contactListsUser.put({id:userObj.id}, params, function(res) {
+      contactListsApi.contactListsUser.put({id:userObj.defaultFields.id}, params, function(res) {
         if (res.error) {
           dbg.log1('#contactListServices > updateUser > error: ', res.error);
           deferred.reject(res.error);
