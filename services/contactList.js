@@ -77,7 +77,6 @@ function prepareData(lists) {
       name: list.name,
       membersCount: list.ContactListUsers.length,
       members: _.map(list.ContactListUsers, (listUser) => {
-        console.log(listUser);
         return new ContactListUser(
           list.defaultFields,
           list.customFields,

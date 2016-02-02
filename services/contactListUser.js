@@ -29,9 +29,11 @@ function findByContactList(contactListId) {
 
       let collection = _.map(results, (item) => {
         collection.push(
-          new ContactListUser(
+          new dataWrappers.ContactListUser(
             item.ContactList.defaultFields,
             item.ContactList.customFields,
+            item.ContactList.participantsFields,
+            item.ContactList.visibleFields,
             item
           )
         );
@@ -78,9 +80,11 @@ function destroy(ids, accountId) {
 function find(id) {
     let deferred = q.defer();
     ContactListUser.find({where: { id: id }, include: [ ContactList ]}).then(function(result) {
-      let contactListUser =  new ContactListUser(
+      let contactListUser =  new dataWrappers.ContactListUser(
         result.ContactList.defaultFields,
         result.ContactList.customFields,
+        result.ContactList.participantsFields,
+        result.ContactList.visibleFields,
         result
       );
       deferred.resolve(contactListUser);
@@ -176,12 +180,20 @@ function contactListUserParams(params, accountUserId) {
 }
 
 function update(params) {
+  console.log(params);
   let deferred = q.defer();
-  ContactListUser.find({where: {id: params.id}, include: [AccountUser]}).then(function(contactListUser) {
+  ContactListUser.find({where: {id: params.id}, include: [AccountUser, ContactList]}).then(function(contactListUser) {
     let customFields = _.merge(contactListUser.customFields,  params.customFields)
     contactListUser.updateAttributes({customFields: customFields}).then(function(result) {
       contactListUser.AccountUser.updateAttributes(params.defaultFields).then(function(accountUser) {
-        deferred.resolve(result);
+        let contactListUserObject =  new dataWrappers.ContactListUser(
+          result.ContactList.defaultFields,
+          result.ContactList.customFields,
+          result.ContactList.participantsFields,
+          result.ContactList.visibleFields,
+          result
+        );
+        deferred.resolve(contactListUserObject);
       }, function(err) {
         deferred.reject(err);
       })

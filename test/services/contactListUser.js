@@ -207,8 +207,7 @@ describe('Services -> ContactListUser', () => {
         ContactListUserService.create(attrs).then(function(contactListUser) {
           updateparams.id = contactListUser.id;
           ContactListUserService.update(updateparams).then(function(result) {
-            assert.equal(result.customFields.one, updateparams.customFields.one)
-            assert.equal(result.customFields.two, attrs.customFields.two)
+              assert.equal(result.firstName, updateparams.defaultFields.firstName)
             done()
           }, function(err) {
             done(err)
