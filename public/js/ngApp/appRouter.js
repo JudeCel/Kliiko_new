@@ -240,15 +240,49 @@
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-emailTemplates/dashboard-content.html"}
         },
+        resolve: {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/js/vendors/ng-file-upload/ng-file-upload.js'
+            ]);
+          }]
+        },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.emailTemplates is on');
         }]
 
       })
+      .state('dashboard.accountProfile.emailTemplates', {
+        url: "/account-profile?systemMail",
+        views: {
+          'accountProfileContent': {templateUrl: prePath + "dashboard-resources-emailTemplates/dashboard-content.html"}
+        },
+        resolve: {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/js/vendors/ng-file-upload/ng-file-upload.js'
+            ]);
+          }]
+        },
+        onEnter: ['dbg', function (dbg) {
+          dbg.rs('dashboard.accountProfile.emailTemplates is on');
+        }]
+
+      })
       .state('dashboard.resources.brandColours', {
-        url: "/brand-colours",
+        url: '/brand-colours',
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-brandColours/dashboard-content.html"}
+        },
+        resolve: {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/css/colorpicker/colorpicker.min.css',
+              '/js/ngApp/directives/bootstrap-colorpicker-module.min.js',
+              '/js/ngApp/components/dashboard-resources-brandColours/BrandColourController.js',
+              '/js/ngApp/components/dashboard-resources-brandColours/brandColourServices.js'
+            ]);
+          }]
         },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.brandColours is on');

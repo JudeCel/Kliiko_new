@@ -6,27 +6,26 @@ var topicService  = require('./../../services/topics');
 var UserService  = require('./../../services/users');
 let q = require('q');
 
-function createSession() {
-  let deferred = q.defer();
-
-  let startTime = new Date();
-  let sessionAttrs = {
-    name: "cool session",
-    start_time: startTime,
-    end_time: startTime.setHours(startTime.getHours() + 2000),
-    status_id: 1,
-    colours_used: '["3","6","5"]'
-  }
-  Session.create(sessionAttrs).then(function(session) {
-    deferred.resolve(session);
-  }, function(err) {
-    deferred.reject(err);
-  })
-    return deferred.promise;
-}
-
-
 describe('Topic Service', function() {
+  function createSession() {
+    let deferred = q.defer();
+
+    let startTime = new Date();
+    let sessionAttrs = {
+      name: "cool session",
+      start_time: startTime,
+      end_time: startTime.setHours(startTime.getHours() + 2000),
+      status_id: 1,
+      colours_used: '["3","6","5"]',
+      accountId: testAccount.id
+    }
+    Session.create(sessionAttrs).then(function(session) {
+      deferred.resolve(session);
+    }, function(err) {
+      deferred.reject(err);
+    })
+    return deferred.promise;
+  }
 
   var testUser = null;
   var testAccount = null;

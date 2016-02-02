@@ -69,6 +69,14 @@
     background-size: contain;
     margin-top: 1px;
   }
+  
+  .has-error{
+    color: #f00;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 270px;
+    display: inline-block;
+    }
 }
 
 .accountDatabaseCommentModal {

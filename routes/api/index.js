@@ -1,5 +1,4 @@
 'use strict';
-'use strict';
 var fileUploader = require('./../../middleware/fileUploader.js');
 var multiparty = require('connect-multiparty');
 var multipartyMiddleware = multiparty();
@@ -14,8 +13,10 @@ var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
 var survey = require('./survey');
 var chargebee = require('./chargebee');
+var mailTemplates = require('./mailTemplate');
 let topic = require('./topic');
 var gallery = require('./gallery');
+var brandColour = require('./brandColour');
 
 let contactList = require('./contactList');
 let contactListUser = require('./contactListUser');
@@ -24,9 +25,8 @@ module.exports = router;
 
 // Main Routes
 router.get('/user', userRoutes.userGet);
-router.post('/user',userRoutes.userPost);
-router.put('/user',userRoutes.changePassword);
-
+router.post('/user', userRoutes.userPost);
+router.put('/user', userRoutes.changePassword);
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
@@ -46,6 +46,13 @@ router.get('/banners', banners.bannersGet);
 router.post('/banners', multipartyMiddleware, banners.bannersPost);
 router.post('/banners/:bannerType', multipartyMiddleware, banners.bannersBannerTypePost);
 router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelete);
+
+router.get('/mailTemplates', mailTemplates.allMailTemplatesGet);
+router.post('/mailTemplate', mailTemplates.mailTemplatePost);
+router.delete('/mailTemplate', mailTemplates.deleteMailTemplate);
+router.post('/mailTemplate/save', mailTemplates.saveMailTemplatePost);
+router.post('/mailTemplate/reset', mailTemplates.resetMailTemplatePost);
+router.post('/mailTemplate/preview', mailTemplates.previewMailTemplatePost);
 
 router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
 router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);
@@ -92,6 +99,11 @@ router.post('/topic', multipartyMiddleware, topic.post);
 router.put('/topic/:id',multipartyMiddleware, topic.updateById);
 router.delete('/topic/:id', multipartyMiddleware, topic.deleteById);
 
+router.get('/brandColour', brandColour.get);
+router.delete('/brandColour', brandColour.remove);
+router.post('/brandColour', brandColour.create);
+router.put('/brandColour', brandColour.update);
+router.post('/brandColour/copy', brandColour.copy);
 
 // Common Rules
 router.use(function (req, res, next) {
