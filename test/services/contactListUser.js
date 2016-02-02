@@ -50,7 +50,7 @@ describe('Services -> ContactListUser', () => {
         });
       })
       describe("bulkCreate", ()=>{
-        it.only("create multiple records", (done) =>  {
+        it("create multiple records", (done) =>  {
           let list = [{
             contactListId: TestContactList.id,
             defaultFields: {
@@ -184,7 +184,7 @@ describe('Services -> ContactListUser', () => {
         });
       });
 
-      it.only("update ", (done) => {
+      it("update ", (done) => {
           let attrs = {
             accountId: TestAccount.id,
             contactListId: TestContactList.id,

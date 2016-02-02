@@ -20,6 +20,16 @@ module.exports = {
   bulkCreate: bulkCreate
 };
 
+function wrappersContactListUser(item, list) {
+  return new dataWrappers.ContactListUser(
+    list.defaultFields,
+    list.customFields,
+    list.participantsFields,
+    list.visibleFields,
+    item
+  )
+}
+
 function findByContactList(contactListId) {
     let deferred = q.defer();
     ContactListUser.findAll({
@@ -29,13 +39,7 @@ function findByContactList(contactListId) {
 
       let collection = _.map(results, (item) => {
         collection.push(
-          new dataWrappers.ContactListUser(
-            item.ContactList.defaultFields,
-            item.ContactList.customFields,
-            item.ContactList.participantsFields,
-            item.ContactList.visibleFields,
-            item
-          )
+          wrappersContactListUser(item, item.ContactList)
         );
       })
 
@@ -80,13 +84,7 @@ function destroy(ids, accountId) {
 function find(id) {
     let deferred = q.defer();
     ContactListUser.find({where: { id: id }, include: [ ContactList ]}).then(function(result) {
-      let contactListUser =  new dataWrappers.ContactListUser(
-        result.ContactList.defaultFields,
-        result.ContactList.customFields,
-        result.ContactList.participantsFields,
-        result.ContactList.visibleFields,
-        result
-      );
+      let contactListUser = wrappersContactListUser(result, result.ContactList);
       deferred.resolve(contactListUser);
     }, function(err) {
       deferred.reject(err);
@@ -180,19 +178,12 @@ function contactListUserParams(params, accountUserId) {
 }
 
 function update(params) {
-  console.log(params);
   let deferred = q.defer();
   ContactListUser.find({where: {id: params.id}, include: [AccountUser, ContactList]}).then(function(contactListUser) {
     let customFields = _.merge(contactListUser.customFields,  params.customFields)
     contactListUser.updateAttributes({customFields: customFields}).then(function(result) {
       contactListUser.AccountUser.updateAttributes(params.defaultFields).then(function(accountUser) {
-        let contactListUserObject =  new dataWrappers.ContactListUser(
-          result.ContactList.defaultFields,
-          result.ContactList.customFields,
-          result.ContactList.participantsFields,
-          result.ContactList.visibleFields,
-          result
-        );
+        let contactListUserObject = wrappersContactListUser(result, result.ContactList);
         deferred.resolve(contactListUserObject);
       }, function(err) {
         deferred.reject(err);
