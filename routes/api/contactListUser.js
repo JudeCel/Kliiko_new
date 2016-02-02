@@ -1,5 +1,6 @@
 'use strict';
 var contactListUserService = require('../../services/contactListUser');
+var validations = require('../helpers/validations');
 
 module.exports = {
   create: create,
@@ -31,8 +32,7 @@ function create(req, res, next) {
 //  }, {....},{....}]
 //
 function createBulk(req, res, next) {
-  if (!params.list) { res.send('query param @list is missed'); return }
-
+  validations.params(req.params.list, 'query param @list is missed');
   let accountId = res.locals.currentDomain.id;
 
   contactListUserService.bulkCreate(params.list, accountId).then(function(result) {
@@ -52,6 +52,7 @@ function createBulk(req, res, next) {
 //
 
 function destroy(req, res, next) {
+  validations.params(res, req.body.ids, 'query param @ids is missed');
 
   let ids = req.body.ids;
   let accountId = res.locals.currentDomain.id;
@@ -71,12 +72,12 @@ function destroy(req, res, next) {
 //  }
 //
 function update(req, res, next) {
-  if (!req.params.id) { res.send('query param @id is missed'); return }
+  validations.params(res, req.params.id, 'query param @id is missed');
 
   let params = req.body;
   params.accountId = res.locals.currentDomain.id;
   params.id = req.params.id;
-  
+
   contactListUserService.update(params).then(function(result) {
     res.send({success: true, data: result});
   }, function(err) {

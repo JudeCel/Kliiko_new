@@ -1,6 +1,7 @@
 'use strict';
 var contactListService = require('../../services/contactList');
 var _ = require('lodash');
+var validations = require('../helpers/validations');
 
 module.exports = {
   index: index,
@@ -27,8 +28,8 @@ function index(req, res, next) {
 //
 
 function create(req, res, next) {
-  paramsValidation(req.body.name, 'Body param @name {string} is required');
-  paramsValidation(req.body.customFields, 'Body param @customFields {array} is required');
+  validations.params(res, req.body.name, 'Body param @name {string} is required');
+  validations.params(res, req.body.customFields, 'Body param @customFields {array} is required');
 
   req.body.customFields = _.uniq(req.body.customFields);
 
@@ -49,7 +50,7 @@ function create(req, res, next) {
 //  }
 //
 function update(req, res, next) {
-  paramsValidation(req.params.id, 'query param @id is missed');
+  validations.params(res, req.params.id, 'query param @id is missed');
 
   let params = req.body;
   params.id = req.params.id;
@@ -69,7 +70,7 @@ function update(req, res, next) {
 //
 
 function destroy(req, res, next) {
-  paramsValidation(req.params.id, 'query param @id is missed');
+  validations.params(res, req.params.id, 'query param @id is missed');
 
   let accountId = res.locals.currentDomain.id;
   contactListService.destroy(req.params.id, accountId).then(function(lists) {
@@ -80,8 +81,8 @@ function destroy(req, res, next) {
 }
 
 function importFunction(req, res, next) {
-  paramsValidation(req.file, 'file is missed');
-  paramsValidation(req.params.id, 'query param @id is missed');
+  validations.params(res, req.file, 'file is missed');
+  validations.params(res, req.params.id, 'query param @id is missed');
 
   let contactListId = req.params.id;
   let file = req.file;
@@ -90,8 +91,4 @@ function importFunction(req, res, next) {
   }, function(err) {
     res.send({ error: err });
   })
-}
-
-function paramsValidation(value, message) {
-  if (!value) { res.send({ error: message }); return }
 }
