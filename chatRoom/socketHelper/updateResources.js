@@ -12,7 +12,7 @@ function updateResources(topicId, userId, content, type, Cb) {
 
     content.type = type;
 
-    if (~['image', 'video', 'vote', 'audio', 'pdf', 'brandLogo'].indexOf(type)){
+    if (~['image', 'video', 'vote', 'audio', 'pdf', 'brandLogo', 'youtubeUrl'].indexOf(type)){
       req.params.JSON = encodeURI(JSON.stringify(content, null));
     }
 

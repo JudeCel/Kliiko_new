@@ -166,7 +166,7 @@ function saveYoutubeData(data) {
       url: url
     };
 
-    socketHelper.updateResources(topicId, data.user.id, json, "video", resourceAppendedCallback);
+    socketHelper.updateResources(topicId, data.user.id, json, "youtube", resourceAppendedCallback);
   }
 
   return deferred.promise;

@@ -24,25 +24,23 @@
       </div>
       <label class='col-xs-2 control-label' for='brandLogo'>Brand Logo</label>
       <div class='form-group'>
-        <img src="/chat_room/uploads/{{sc.surveyBrandLogo.JSON.panelThumb}}" class="img-responsive" ng-show="!sc.selecctOptions.show" style="display: inline-block;"/>
+        <img src="/chat_room/uploads/{{sc.survey.resource.JSON.panelThumb}}" class="img-responsive" ng-show="!sc.surveySelecctOptions.show" style="display: inline-block;"/>
        
-        <div ng-show="!sc.selecctOptions.show" style="display: inline-block;">
+        <div ng-show="!sc.surveySelecctOptions.show" style="display: inline-block;">
           <button type='submit' ng-disabled="idsForAction == 0" 
                   class='btn btn-addNewElement btn-green no-margin gallery-btn-width' 
-                  ng-click="sc.removeBrandLogo()">
+                  ng-click="sc.removeResource(sc.surveyBrandLogo.id)">
             <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
           </button>
         </div>
 
         <div ng-show='!sc.disableUpload'>
-          <div ng-show="sc.selecctOptions.show">
+          <div ng-show="sc.surveySelecctOptions.show">
             <div class='col-xs-4 col-md-4'>
-              <div ngf-drop ngf-select class="drop-box" ng-model="sc.brandLogoFile" ng-change="sc.uploadBrandLogo()" id="brandLogo"
+              <div ngf-drop ngf-select class="drop-box" ng-model="sc.file" ng-change="sc.saveResource('brandLogo')" id="brandLogo"
                    ngf-drag-over-class="'dragover'" accept="image/gif, image/jpeg, image/jpg, image/png, image/bmp">
                 Drop images here or click to upload
               </div>
-
-              {{ sc.survey.introductionFile.name }}
               
               <div ngf-no-file-drop >
                 File Drag/Drop is not supported for this browser
