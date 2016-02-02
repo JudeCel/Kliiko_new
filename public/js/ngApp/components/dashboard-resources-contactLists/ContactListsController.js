@@ -9,6 +9,7 @@
 
 
 
+
     vm.listIdToEdit = null;
     vm.newList = {};
     vm.lists = new ListsModel();
@@ -23,6 +24,8 @@
     vm.updateList = updateList;
     vm.deleteList = deleteList;
     vm.editCustomFields = editCustomFields;
+    vm.updateTableSorting = updateTableSorting;
+
 
     vm.changeTableSortingFilter = changeTableSortingFilter;
     vm.showManageColumnsModal = showManageColumnsModal;
@@ -163,6 +166,11 @@
 
       domServices.modal('contactList-addNewListModal');
 
+    }
+
+    function updateTableSorting(draggedIndex, droppedIndex) {
+      dbg.log2('#ContactListController  > updateTableSorting > draggedIndex, droppedIndex : ',draggedIndex, droppedIndex );
+      vm.lists.activeList.updateTableSortingByDragging(draggedIndex, droppedIndex);
     }
 
     /**
