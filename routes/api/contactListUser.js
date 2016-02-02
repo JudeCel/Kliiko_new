@@ -52,7 +52,8 @@ function createBulk(req, res, next) {
 //
 
 function destroy(req, res, next) {
-
+  if (!req.body.ids) { res.send('Body param @ids [array] is missed'); return }
+  
   let ids = req.body.ids;
   let accountId = res.locals.currentDomain.id;
   contactListUserService.destroy(ids, accountId).then(function (result) {
