@@ -45,7 +45,7 @@
     }
 
     $scope.getCount = function(type){
-      let filtered = filterFilter( $scope.resources, {resourceType:type});
+      var filtered = filterFilter( $scope.resources, {resourceType:type});
       if(filtered){
         return filtered.length;
       }
@@ -56,7 +56,7 @@
     };
 
     $scope.resourcesSelected = function(id) {
-      let isSelected = $scope.idsForAction.indexOf(id) == -1;
+      var isSelected = $scope.idsForAction.indexOf(id) == -1;
       if(isSelected){
         $scope.idsForAction.push(id);
       }else{
