@@ -12,6 +12,7 @@ var constants = require('../util/constants');
 var csv = require('fast-csv');
 var xlsx = require('xlsx');
 var path = require('path');
+const ROW_NR = 2;
 
 module.exports = {
   create: create,
@@ -174,6 +175,7 @@ function parseXls(emails, deferred, contactList, filePath) {
   async.forEach(workbook.SheetNames, function(sheetName, callback) {
     let worksheet = workbook.Sheets[sheetName];
     let json = xlsx.utils.sheet_to_json(worksheet, { raw: true, header: 1, id: true});
+    let rowNr = ROW_NR; // this number represent start row for number
 
     let header = _.map(json[0], function(value, key) {
       let head = json[0][key];
@@ -183,7 +185,6 @@ function parseXls(emails, deferred, contactList, filePath) {
 
     object.fileFields = fileFieldsArray(object.fileFields, header);
 
-    let rowNr = 2; // this number represent start row for content
     let uniqRowListCounter = {};
 
     async.forEach(json, function(array, cb) {
@@ -213,6 +214,8 @@ function parseCsv(emails, deferred, contactList, filePath) {
   let object = defaultParserObject(contactList);
   let fieldsNeedStored = true;
   let tempHeaders = [];
+  let rowNr = ROW_NR; // this number represent start row for number
+  let uniqRowListCounter = {};
 
   csv.fromPath(filePath, {
     headers: true
@@ -227,11 +230,14 @@ function parseCsv(emails, deferred, contactList, filePath) {
     });
 
     fieldsNeedStored = false;
+    data.rowNr = rowNr;
     return data;
   }).validate(function(data, next) {
-    validateRow(emails, contactList, data).then(function() {
+    validateRow(emails, contactList, data, uniqRowListCounter).then(function() {
+      ++ rowNr
       next(null, true);
     }, function(error) {
+      ++ rowNr
       data.validationErrors = error;
       next(null, false);
     });
@@ -243,6 +249,7 @@ function parseCsv(emails, deferred, contactList, filePath) {
     deferred.reject(error);
   }).on('end', function() {
     object.fileFields = fileFieldsArray(object.fileFields, tempHeaders);
+    addDublicateEntries(object, uniqRowListCounter);
     deferred.resolve(object);
   });
 }
@@ -306,7 +313,7 @@ function uniqRowListCounterFun(key, row, counterCollection) {
 function addDublicateEntries(object, counterCollection) {
   _.forEach(counterCollection, function(val, key) {
     if (val.count > 1){
-      object.dublicateEntries.push({email: key, rows: val.rows})
+      object.duplicateEntries.push({email: key, rows: val.rows})
     }
   });
 }
@@ -317,7 +324,7 @@ function defaultParserObject(contactList) {
       defaultFields: contactList.defaultFields,
       customFields: contactList.customFields
     },
-    dublicateEntries: [],
+    duplicateEntries: [],
     fileFields: [],
     valid: [],
     invalid: []
