@@ -30,8 +30,10 @@ function wrappersContactListUser(item, list) {
   );
 }
 
-function buildWrappedResponse(contactListUserId, deferred) {
-  ContactListUser.find({where: {id: contactListUserId }, include: [ ContactList, AccountUser ]}).then(function(result) {
+function buildWrappedResponse(contactListUserId, deferred, transaction) {
+  ContactListUser.find({where: {id: contactListUserId },
+    include: [ ContactList, AccountUser ], transaction: transaction }
+    ).then(function(result) {
     if (result) {
       let newCLU = wrappersContactListUser(result, result.ContactList);
       deferred.resolve(newCLU);
@@ -140,14 +142,14 @@ function create(params, transaction) {
   ).then(function(accountUser) {
     if (accountUser) {
       ContactListUser.create(contactListUserParams(params, accountUser), {transaction: transaction}).then(function(contactListUser) {
-        buildWrappedResponse(contactListUser.id, deferred);
+        buildWrappedResponse(contactListUser.id, deferred, transaction);
       }, function(err) {
         deferred.reject(err);
       })
     }else{
       createNewAccountUser(params, transaction).then(function(newAccountUser) {
         ContactListUser.create(contactListUserParams(params, newAccountUser), {transaction: transaction}).then(function(contactListUser) {
-          buildWrappedResponse(contactListUser.id, deferred);
+          buildWrappedResponse(contactListUser.id, deferred, transaction);
         }, function(err) {
           deferred.reject(err);
         })
