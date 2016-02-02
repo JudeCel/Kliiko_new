@@ -113,27 +113,30 @@
       vm.survey.resource = resource;
     }
 
-    function removeResource(resourceFor, upload, id){
+    function removeResource(id, question, survey){
       var progressbar = ngProgressFactory.createInstance();
       progressbar.start();
-      if(vm.surveySelecctOptions.uploaded){
-        GalleryServices.deleteResources({resource_id: id}).then(function(res) {
-          if(res.error){
-            messenger.error(res.error);
-            progressbar.complete();
-          }else{
+      
+      vm.question = question;
+      vm.survey = survey;
+
+      GalleryServices.deleteResources({resource_id: id}).then(function(res) {
+        if(res.error){
+          messenger.error(res.error);
+          progressbar.complete();
+        }else{
+          if(vm.survey !== ""){
             vm.surveySelecctOptions.show = true;
             vm.surveySelecctOptions.uploaded = false;
-            vm.surveyBrandLogo = {};
-            progressbar.complete();
+            vm.survey.resource = {};
           }
-        });
-      }else{
-        vm.surveySelecctOptions.show = true;
-        vm.surveyBrandLogo = {};
-        progressbar.complete();
-        
-      }
+          if(vm.question !== ""){
+            vm.question.resource = null;
+          }
+          clearform();
+          progressbar.complete();
+        }
+      });
     }
 
     function brandLogosFromGallery(){
@@ -154,6 +157,13 @@
       }
     }
 
+    function clearform(){
+      vm.title = "";
+      vm.file = {};
+      vm.youtubeUrl = "";
+      domServices.modal('questionModal', 'close');
+    }
+
     function uploadFile(resourceType) {
       var progressbar = ngProgressFactory.createInstance();
       progressbar.start();
@@ -165,16 +175,9 @@
         file: vm.file
       };
 
-      console.log("############################################ resourceParams");
-      console.log(resourceParams);
-
-
       $timeout(function() {
         GalleryServices.createResource(resourceParams).then(function(res) {
-          console.log("############################################ create resource");
-          console.log(res);
           if(res.error){
-
             messenger.error(res.error);
           }else{
 
@@ -189,19 +192,10 @@
               vm.question.resource = {};
             }
 
-            
-
             GalleryServices.postuploadData(resourceParams).then(function(res) {
-              console.log("############################################ upload file to resource");
-              console.log(res);
-
               if(res.error){
                 messenger.error(res.error);
               }else{
-
-                console.log("############################################");
-                console.log(resourceType);
-                console.log("############################################");
                 console.log(res.data);
 
                 if(resourceType == "brandLogo"){
@@ -212,6 +206,7 @@
                   vm.question.resourceId = res.id;
                 }
 
+                clearform();
                 progressbar.complete();
                 vm.disableUpload = false;
               }
@@ -238,11 +233,8 @@
           messenger.error(res.error);
           progressbar.complete();
         }else{
-          console.log("############################################");
-          console.log(res);
-          console.log("############################################");
           vm.question.resource.JSON = res;
-          vm.question.resourceId = res;
+          vm.question.resourceId = res.id;
           progressbar.complete();
         }
       })

@@ -29,7 +29,7 @@
         <div ng-show="!sc.surveySelecctOptions.show" style="display: inline-block;">
           <button type='submit' ng-disabled="idsForAction == 0" 
                   class='btn btn-addNewElement btn-green no-margin gallery-btn-width' 
-                  ng-click="sc.removeResource(sc.surveyBrandLogo.id)">
+                  ng-click="sc.removeResource(survey.resourceId, '', survey)">
             <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
           </button>
         </div>
