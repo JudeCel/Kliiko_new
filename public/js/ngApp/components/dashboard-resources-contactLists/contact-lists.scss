@@ -202,5 +202,31 @@
     }
   }
 
+  #new-list-custom-fields-drag-drop {
+    tr {
+      height: 30px;
+    }    
+    .contactList-dropPlaceholderCell {
+      width: 70%;  
+    }
+    
+    .contactList-dropPlaceholder {
+      background: gray;
+      border-width: 1px;
+      border-radius: 5px;
+      width: 100%;
+      height: 30px;
+      margin: 2px;
+    }
+    
+    .contactList-drop-item {
+      background-color: lightgrey;
+      border-width: 1px;
+      border-radius: 5px;
+      width: 100%;
+      height: 30px;
+      margin: 2px;
+    }
+  }
 
 }

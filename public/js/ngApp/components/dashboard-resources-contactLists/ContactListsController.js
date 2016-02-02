@@ -351,6 +351,19 @@
 
       removeContacts(ids);
     }
+    
+    function isValidDropElement(el) {
+      var id = $(el).attr('id');
+      var className = $(el).attr('class');
+      return (id == 'contactList-fieldColumnLeft' || className == 'contactList-dropPlaceholder');
+    }
+    
+    vm.onDragComplete=function(data,evt){
+       console.log("drag success, data:", data);
+    }
+    vm.onDropComplete=function(data,evt){
+        console.log("drop success, data:", data);
+    }
 
   }
 })();
