@@ -27,7 +27,20 @@ function wrappersContactListUser(item, list) {
     list.participantsFields,
     list.visibleFields,
     item
-  )
+  );
+}
+
+function buildWrappedResponse(contactListUserId, deferred) {
+  ContactListUser.find({where: {id: contactListUserId }, include: [ ContactList, AccountUser ]}).then(function(result) {
+    if (result) {
+      let newCLU = wrappersContactListUser(result, result.ContactList);
+      deferred.resolve(newCLU);
+    }else {
+      deferred.reject("Not found");
+    }
+  }, function(err) {
+    deferred.reject(err);
+  });
 }
 
 function findByContactList(contactListId) {
@@ -83,12 +96,7 @@ function destroy(ids, accountId) {
 
 function find(id) {
     let deferred = q.defer();
-    ContactListUser.find({where: { id: id }, include: [ ContactList ]}).then(function(result) {
-      let contactListUser = wrappersContactListUser(result, result.ContactList);
-      deferred.resolve(contactListUser);
-    }, function(err) {
-      deferred.reject(err);
-    });
+    buildWrappedResponse(id, deferred);
     return deferred.promise;
 }
 
@@ -131,15 +139,15 @@ function create(params, transaction) {
     }
   ).then(function(accountUser) {
     if (accountUser) {
-      ContactListUser.create(contactListUserParams(params, accountUser.id), {transaction: transaction}).then(function(contactListUser) {
-        deferred.resolve(contactListUser);
+      ContactListUser.create(contactListUserParams(params, accountUser), {transaction: transaction}).then(function(contactListUser) {
+        buildWrappedResponse(contactListUser.id, deferred);
       }, function(err) {
         deferred.reject(err);
       })
     }else{
       createNewAccountUser(params, transaction).then(function(newAccountUser) {
-        ContactListUser.create(contactListUserParams(params, newAccountUser.id), {transaction: transaction}).then(function(contactListUser) {
-          deferred.resolve(contactListUser);
+        ContactListUser.create(contactListUserParams(params, newAccountUser), {transaction: transaction}).then(function(contactListUser) {
+          buildWrappedResponse(contactListUser.id, deferred);
         }, function(err) {
           deferred.reject(err);
         })
@@ -168,9 +176,10 @@ function createNewAccountUser(params, transaction) {
   return deferred.promise;
 }
 
-function contactListUserParams(params, accountUserId) {
+function contactListUserParams(params, accountUser) {
   return {
-    accountUserId: accountUserId,
+    userId: accountUser.UserId,
+    accountUserId: accountUser.id,
     accountId: params.accountId,
     contactListId: params.contactListId,
     customFields: params.customFields || {}
@@ -183,8 +192,7 @@ function update(params) {
     let customFields = _.merge(contactListUser.customFields,  params.customFields)
     contactListUser.updateAttributes({customFields: customFields}).then(function(result) {
       contactListUser.AccountUser.updateAttributes(params.defaultFields).then(function(accountUser) {
-        let contactListUserObject = wrappersContactListUser(result, result.ContactList);
-        deferred.resolve(contactListUserObject);
+        buildWrappedResponse(contactListUser.id, deferred);
       }, function(err) {
         deferred.reject(err);
       })

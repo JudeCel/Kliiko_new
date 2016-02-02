@@ -3,17 +3,17 @@ var assert = require('chai').assert;
 var models  = require('./../../models');
 var ContactListUserService  = require('./../../services/contactListUser');
 var UserService  = require('./../../services/users');
+var validAttrs = {
+  accountName: "DainisL",
+  firstName: "Dainis",
+  lastName: "Lapins",
+  password: "cool_password",
+  email: "dainis@gmail.com",
+  gender: "male"
+}
 
 describe('Services -> ContactListUser', () => {
   describe('create',  () => {
-    var validAttrs = {
-      accountName: "DainisL",
-      firstName: "Dainis",
-      lastName: "Lapins",
-      password: "cool_password",
-      email: "dainis@gmail.com",
-      gender: "male"
-    }
 
     beforeEach((done) => {
       models.sequelize.sync({force: true}).done((error, result) => {
@@ -96,11 +96,9 @@ describe('Services -> ContactListUser', () => {
             customFields: { one: "1", two:" 2", three:" 3" }
            }
         ContactListUserService.create(attrs).then(function(contactListUser) {
-          contactListUser.getAccountUser().then(function(accountUser) {
-            assert.equal(accountUser.id, TestAccountUser.id)
-            assert.isNotNull(accountUser)
-            done()
-          });
+          assert.equal(contactListUser.firstName, validAttrs.firstName);
+          assert.equal(contactListUser.email, validAttrs.email);
+          done()
         }, function(err) {
           done(err);
         });
