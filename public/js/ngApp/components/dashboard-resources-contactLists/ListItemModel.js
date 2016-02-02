@@ -93,7 +93,7 @@
 
     function updateAvailableFields() {
       var self = this;
-      self.init()
+      self.init();
     }
 
 

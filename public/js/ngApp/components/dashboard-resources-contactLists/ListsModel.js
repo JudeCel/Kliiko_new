@@ -252,7 +252,7 @@
 
       contact.update(activeListId).then(
         function (res) {
-          
+
           var updatedContact = new Member(res.data);
           var index;
           for (var i = 0, len = self.items.length; i < len ; i++) {
