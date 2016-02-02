@@ -7,7 +7,7 @@
 .btn-dashboard-menu, .btn-addNewElement {
   background-color: inherit;
   width: 13%;
-  min-width: 180px;
+  min-width: 49px;
   height: 36px;
   margin-left: 36px;
   margin-top: 30px;
@@ -72,7 +72,6 @@
   background-color: #E51D39; }
 
 .btn-addNewElement {
-  min-width: 49px;
   width: auto;
   margin: 0;
   margin-top: 20px;
@@ -97,6 +96,13 @@
   .btn-standart.btn-blue {
     color: #4DC0E9;
     border-color: #4DC0E9 !important; }
+  .btn-standart.btn-blue {
+    color: #2F9F69;
+    border-color: #2F9F69 !important; }
+    .btn-standart.btn-blue:hover {
+      color: white;
+      border-color: #2F9F69 !important;
+      background: #2F9F69; }
   .btn-standart.btn-green {
     color: #2F9F69;
     border-color: #2F9F69 !important; }
@@ -1385,8 +1391,6 @@ hr.survey-hr {
 .panel-mmin-height {
   min-height: 302px; }
 
-<<<<<<< HEAD
-=======
 .manage-preview {
   padding-top: 1%;
   padding-bottom: 2%; }
@@ -1455,7 +1459,6 @@ hr.survey-hr {
   .brandColours .containerInnerBox {
     margin: 10px auto 10%; }
 
->>>>>>> master
 #dashboard #back-nav-btn {
   margin-bottom: -75px; }
 
@@ -2291,3 +2294,6 @@ hr.survey-hr {
 
 .margin-top-3rem {
   margin-top: 3rem; }
+
+.fade-disabled {
+  opacity: .45 !important; }

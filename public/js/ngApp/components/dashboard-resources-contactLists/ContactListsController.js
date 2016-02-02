@@ -205,6 +205,8 @@
       }
 
       if (action === 'update') {
+        vm.newListError = {};
+        vm.modalErrors = {};
 
         vm.contactModalTitle = 'Edit Contact';
         vm.newContact = contactObj;
@@ -293,17 +295,17 @@
       vm.lists.deleteContacts(ids).then(
         function(res) {
 
-          //if (!res.total) {
-          //  messenger.error('No users was removed');
-          //  return
-          //}
-          //
-          //var message;
-          //(res.total > 1)
-          //  ? message = res.total+' users has been removed'
-          //  : message = 'User removed';
-          //
-          //messenger.ok(message);
+          if (!res.total) {
+            messenger.error('No users was removed');
+            return
+          }
+
+          var message;
+          (res.total > 1)
+            ? message = res.total+' users has been removed'
+            : message = 'User removed';
+
+          messenger.ok(message);
 
         },
         function(err) {  messenger.error(err); }
