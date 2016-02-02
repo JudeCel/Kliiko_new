@@ -7,7 +7,9 @@
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
-
+    vm.onDropComplete = function(a, b) {
+      console.warn(a, b);
+    }
 
     vm.listIdToEdit = null;
     vm.newList = {};
