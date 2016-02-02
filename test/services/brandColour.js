@@ -31,15 +31,15 @@ describe('SERVICE - BrandColour', function() {
   });
 
   function accountParams() {
-    return { id: testData.account.id };
+    return testData.account.id;
   };
 
   function testScheme(data, params) {
     if(!params) {
-      params = { colours: brandProjectConstants.preferenceColours({}) };
+      params = { colours: brandProjectConstants.preferenceColours };
     }
     else if(!params.colours) {
-      params.colours = brandProjectConstants.preferenceColours({});
+      params.colours = brandProjectConstants.preferenceColours;
     }
 
     assert.equal(data.name, params.name || 'Default scheme');
@@ -63,7 +63,7 @@ describe('SERVICE - BrandColour', function() {
     describe('happy path', function() {
       it('should succeed on finding scheme', function (done) {
         brandColourServices.findScheme({ id: testData.preference.id }, accountParams()).then(function(result) {
-          assert.equal(result.data.accountId, accountParams().id);
+          assert.equal(result.data.accountId, accountParams());
           testScheme(result.data);
           done();
         }, function(error) {
@@ -135,7 +135,7 @@ describe('SERVICE - BrandColour', function() {
   describe('#updateScheme', function() {
     describe('happy path', function() {
       it('should succeed on updating scheme', function (done) {
-        let attrs = sessionFixture.brandProjectPreferenceParams(accountParams().id);
+        let attrs = sessionFixture.brandProjectPreferenceParams(accountParams());
         attrs.id = testData.preference.id;
         attrs.name = 'Other name';
 
@@ -151,7 +151,7 @@ describe('SERVICE - BrandColour', function() {
 
     describe('sad path', function() {
       it('should fail because not found', function (done) {
-        let attrs = sessionFixture.brandProjectPreferenceParams(accountParams().id);
+        let attrs = sessionFixture.brandProjectPreferenceParams(accountParams());
         attrs.id = testData.preference.id + 100;
 
         brandColourServices.updateScheme(attrs, accountParams()).then(function(result) {
@@ -163,7 +163,7 @@ describe('SERVICE - BrandColour', function() {
       });
 
       it('should fail because of wrong params', function (done) {
-        let attrs = sessionFixture.brandProjectPreferenceParams(accountParams().id);
+        let attrs = sessionFixture.brandProjectPreferenceParams(accountParams());
         attrs.id = testData.preference.id;
         attrs.accountId = null;
 
@@ -176,15 +176,11 @@ describe('SERVICE - BrandColour', function() {
       });
 
       it('should fail because of colour regex', function (done) {
-        BrandProjectPreference.count().then(function(c) {
-          assert.equal(c, 1);
-
-          brandColourServices.updateScheme({ colours: { browserBackground: 'somerandomstring' } }, accountParams()).then(function(result) {
-            done('Should not get here!');
-          }, function(error) {
-            assert.deepEqual(error, { browserBackground: 'Browser Background: Not valid colour' });
-            done();
-          });
+        brandColourServices.updateScheme({ colours: { browserBackground: 'somerandomstring' } }, accountParams()).then(function(result) {
+          done('Should not get here!');
+        }, function(error) {
+          assert.deepEqual(error, { browserBackground: 'Browser Background: Not valid colour' });
+          done();
         });
       });
     });

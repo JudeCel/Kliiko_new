@@ -20,6 +20,7 @@
     vm.schemes = {};
     vm.scheme = {};
     vm.colorForm = {};
+    vm.defaultColour = '#000000';
 
     changePage('index');
 
@@ -130,7 +131,7 @@
     };
 
     function initColor(model) {
-      vm.scheme[model] = vm.scheme[model] || '#000000';
+      vm.scheme[model] = vm.scheme[model] || vm.defaultColour;
       vm.previewScheme = vm.scheme;
     };
 
@@ -159,7 +160,7 @@
 
     function colorStyles(hex, options) {
       if(!hex) {
-        hex = '#000000';
+        hex = vm.defaultColour;
       }
 
       var css = {
@@ -183,7 +184,7 @@
         return color;
       }
       else {
-        return '#000000';
+        return vm.defaultColour;
       }
     };
 

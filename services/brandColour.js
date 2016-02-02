@@ -1,7 +1,6 @@
 'use strict';
 
 var models = require('./../models');
-var Account = models.Account;
 var BrandProjectPreference = models.BrandProjectPreference;
 
 var brandProjectConstants = require('../util/brandProjectConstants');
@@ -29,10 +28,10 @@ const VALID_ATTRIBUTES = {
 };
 
 // Exports
-function findScheme(params, account) {
+function findScheme(params, accountId) {
   let deferred = q.defer();
 
-  BrandProjectPreference.find({ where: { id: params.id, accountId: account.id } }).then(function(scheme) {
+  BrandProjectPreference.find({ where: { id: params.id, accountId: accountId } }).then(function(scheme) {
     if(scheme) {
       deferred.resolve(simpleParams(scheme));
     }
@@ -48,10 +47,10 @@ function findScheme(params, account) {
   return deferred.promise;
 };
 
-function findAllSchemes(account) {
+function findAllSchemes(accountId) {
   let deferred = q.defer();
 
-  BrandProjectPreference.findAll({ where: { accountId: account.id } }).then(function(schemes) {
+  BrandProjectPreference.findAll({ where: { accountId: accountId } }).then(function(schemes) {
     deferred.resolve(simpleParams(schemes));
   }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
@@ -62,10 +61,10 @@ function findAllSchemes(account) {
   return deferred.promise;
 };
 
-function createScheme(params, account) {
+function createScheme(params, accountId) {
   let deferred = q.defer();
 
-  params.accountId = account.id;
+  params.accountId = accountId;
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
   let errors = {};
   validateColours(validParams.colours, errors);
@@ -86,14 +85,14 @@ function createScheme(params, account) {
   return deferred.promise;
 };
 
-function updateScheme(params, account) {
+function updateScheme(params, accountId) {
   let deferred = q.defer();
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
   let errors = {};
   validateColours(validParams.colours, errors);
 
   if(_.isEmpty(errors)) {
-    findScheme(params, account).then(function(result) {
+    findScheme(params, accountId).then(function(result) {
       result.data.update(validParams, { returning: true }).then(function(scheme) {
         deferred.resolve(simpleParams(scheme, MESSAGES.updated));
       }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
@@ -112,10 +111,10 @@ function updateScheme(params, account) {
   return deferred.promise;
 }
 
-function removeScheme(params, account) {
+function removeScheme(params, accountId) {
   let deferred = q.defer();
 
-  findScheme(params, account).then(function(result) {
+  findScheme(params, accountId).then(function(result) {
     result.data.destroy().then(function() {
       deferred.resolve(simpleParams(null, MESSAGES.removed));
     }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
@@ -130,13 +129,13 @@ function removeScheme(params, account) {
   return deferred.promise;
 };
 
-function copyScheme(params, account) {
+function copyScheme(params, accountId) {
   let deferred = q.defer();
 
-  findScheme(params, account).then(function(result) {
+  findScheme(params, accountId).then(function(result) {
     delete result.data.dataValues.id;
 
-    createScheme(result.data.dataValues, account).then(function(result) {
+    createScheme(result.data.dataValues, accountId).then(function(result) {
       deferred.resolve(simpleParams(result.data, MESSAGES.copied));
     }, function(error) {
       deferred.reject(error);
@@ -151,7 +150,7 @@ function copyScheme(params, account) {
 function manageFields() {
   let object = { chatRoom: [], participants: [] };
 
-  _.map(brandProjectConstants.preferenceColours({}), function(value, key) {
+  _.map(brandProjectConstants.preferenceColours, function(value, key) {
     if(key == 'participants') {
       _.map(value, function(value, key) {
         object.participants.push({
@@ -180,10 +179,15 @@ function pushToObjectArray(object, attr, type) {
 
 function validateParams(params, attributes) {
   let newParams = _.pick(params, attributes);
-  newParams.colours = brandProjectConstants.preferenceColours(newParams.colours || {});
+  newParams.colours = assignDefaultColours(newParams.colours);
 
   return newParams;
 };
+
+function assignDefaultColours(colours) {
+  let constantValues = _.cloneDeep(brandProjectConstants.preferenceColours);
+  return _.assign(constantValues, colours || {});
+}
 
 function validateColours(colours, errors) {
   let regex = new RegExp(brandProjectConstants.hexRegex);

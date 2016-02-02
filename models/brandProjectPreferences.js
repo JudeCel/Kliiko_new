@@ -6,7 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
     id:	 { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name:	{ type: DataTypes.STRING, allowNull: false, defaultValue: 'untitled' },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
-    colours: { type: DataTypes.JSONB, allowNull: false, defaultValue: brandProjectConstants.preferenceColours({}) },
+    colours: { type: DataTypes.JSONB, allowNull: false, defaultValue: brandProjectConstants.preferenceColours },
   }, {
     timestamps: true,
     paranoid: true,

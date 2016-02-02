@@ -4,7 +4,7 @@ module.exports = (Sequelize, DataTypes) => {
   var Session = Sequelize.define('Session', {
     id:	 { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     brand_project_id: { type: DataTypes.INTEGER, allowNull: true},
-    accountId: { type: DataTypes.INTEGER, allowNull: true },
+    accountId: { type: DataTypes.INTEGER, allowNull: false },
     brandProjectPreferenceId: { type: DataTypes.INTEGER, allowNull: true },
     name:	{ type: DataTypes.STRING, allowNull: false, default: 'untitled'},
     start_time:	{ type: DataTypes.DATE, allowNull: false },
