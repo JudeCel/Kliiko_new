@@ -115,6 +115,21 @@ describe('SERVICE - BrandColour', function() {
         });
       });
     });
+
+    describe('sad path', function() {
+      it('should fail because of colour regex', function (done) {
+        BrandProjectPreference.count().then(function(c) {
+          assert.equal(c, 1);
+
+          brandColourServices.createScheme({ colours: { browserBackground: 'somerandomstring' } }, accountParams()).then(function(result) {
+            done('Should not get here!');
+          }, function(error) {
+            assert.deepEqual(error, { browserBackground: 'Browser Background: Not valid colour' });
+            done();
+          });
+        });
+      });
+    });
   });
 
   describe('#updateScheme', function() {
@@ -157,6 +172,19 @@ describe('SERVICE - BrandColour', function() {
         }, function(error) {
           assert.equal(error.accountId, 'Account Id: cannot be empty');
           done();
+        });
+      });
+
+      it('should fail because of colour regex', function (done) {
+        BrandProjectPreference.count().then(function(c) {
+          assert.equal(c, 1);
+
+          brandColourServices.updateScheme({ colours: { browserBackground: 'somerandomstring' } }, accountParams()).then(function(result) {
+            done('Should not get here!');
+          }, function(error) {
+            assert.deepEqual(error, { browserBackground: 'Browser Background: Not valid colour' });
+            done();
+          });
         });
       });
     });

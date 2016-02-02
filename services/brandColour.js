@@ -15,7 +15,8 @@ const MESSAGES = {
   removed: 'Scheme removed successfully!',
   created: 'Scheme created successfully!',
   copied: 'Scheme copied successfully!',
-  updated: 'Scheme updated successfully!'
+  updated: 'Scheme updated successfully!',
+  notValid: 'Not valid colour'
 };
 
 const VALID_ATTRIBUTES = {
@@ -66,14 +67,21 @@ function createScheme(params, account) {
 
   params.accountId = account.id;
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
+  let errors = {};
+  validateColours(validParams.colours, errors);
 
-  BrandProjectPreference.create(validParams).then(function(result) {
-    deferred.resolve(simpleParams(result, MESSAGES.created));
-  }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
-  }).catch(function(error) {
-    deferred.reject(error);
-  });
+  if(_.isEmpty(errors)) {
+    BrandProjectPreference.create(validParams).then(function(result) {
+      deferred.resolve(simpleParams(result, MESSAGES.created));
+    }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
+      deferred.reject(prepareErrors(error));
+    }).catch(function(error) {
+      deferred.reject(error);
+    });
+  }
+  else {
+    deferred.reject(errors);
+  }
 
   return deferred.promise;
 };
@@ -81,18 +89,25 @@ function createScheme(params, account) {
 function updateScheme(params, account) {
   let deferred = q.defer();
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
+  let errors = {};
+  validateColours(validParams.colours, errors);
 
-  findScheme(params, account).then(function(result) {
-    result.data.update(validParams, { returning: true }).then(function(scheme) {
-      deferred.resolve(simpleParams(scheme, MESSAGES.updated));
-    }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
-      deferred.reject(prepareErrors(error));
-    }).catch(function(error) {
+  if(_.isEmpty(errors)) {
+    findScheme(params, account).then(function(result) {
+      result.data.update(validParams, { returning: true }).then(function(scheme) {
+        deferred.resolve(simpleParams(scheme, MESSAGES.updated));
+      }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
+        deferred.reject(prepareErrors(error));
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
+    }, function(error) {
       deferred.reject(error);
     });
-  }, function(error) {
-    deferred.reject(error);
-  });
+  }
+  else {
+    deferred.reject(errors);
+  }
 
   return deferred.promise;
 }
@@ -169,6 +184,24 @@ function validateParams(params, attributes) {
 
   return newParams;
 };
+
+function validateColours(colours, errors) {
+  let regex = new RegExp(brandProjectConstants.hexRegex);
+  _.map(colours, function(value, key) {
+    if(_.isObject(value)) {
+      _.map(value, function(subvalue, subkey) {
+        if(!regex.test(subvalue)) {
+          errors[subkey] = _.startCase(key + subkey) + ': ' + MESSAGES.notValid;
+        }
+      });
+    }
+    else {
+      if(!regex.test(value)) {
+        errors[key] = _.startCase(key) + ': ' + MESSAGES.notValid;
+      }
+    }
+  });
+}
 
 function simpleParams(data, message) {
   return { data: data, message: message };
