@@ -188,7 +188,6 @@
       var tablesToShowArray = vm.lists.activeList.visibleFields;
       for (var i = 0, len = tablesToShowArray.length; i < len ; i++) {
         vm.selectedTables[tablesToShowArray[i]] = true;
-
       }
     }
 
@@ -198,7 +197,7 @@
      * @param action {string}
      * @param [contactObj] {object} - contact object required for editing case
      */
-    function contactAddEditClickHandle(action, contactObj, index) {
+    function contactAddEditClickHandle(action, contactObj) {
       if (action === 'new') {
         vm.updateExistingUser = null;
         vm.contactModalTitle = 'Add New Contact';
@@ -276,9 +275,6 @@
           }
         }
       );
-
-
-      /**/
 
     }
 

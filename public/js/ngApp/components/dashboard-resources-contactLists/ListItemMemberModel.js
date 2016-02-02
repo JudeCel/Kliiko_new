@@ -87,7 +87,6 @@
       contactListServices.updateUser(params, currentListId).then(
         function (res) {
           deferred.resolve(res);
-          console.warn(res);
         },
         function (err) {
           deferred.reject(err);

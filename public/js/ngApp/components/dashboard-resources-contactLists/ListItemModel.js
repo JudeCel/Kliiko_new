@@ -60,7 +60,6 @@
       contactListServices.updateList(self.id, newItemObject).then(
         function (res) {
           deferred.resolve(res);
-          console.warn(res);
         },
         function (err) {
           deferred.reject(err);
@@ -93,7 +92,7 @@
 
     function updateAvailableFields() {
       var self = this;
-      self.init()
+      self.init();
     }
 
 

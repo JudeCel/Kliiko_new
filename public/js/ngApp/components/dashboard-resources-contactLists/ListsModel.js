@@ -27,8 +27,8 @@
 
     /**
      * Init the model
-     * @param params {object} where:
-     *    params.predefinedTables {array} || predefinedTables - will set default table to show;
+     * @param params {object}
+     *    
      * @constructor
      */
     function ListsModel(params) {
@@ -103,12 +103,12 @@
       return deferred.promise;
     }
 
-    function changeActiveList(index) {
+    function changeActiveList(index, force) {
       var self = this;
 
       if ( typeof(index) == 'undefined' || index < 0 ) var index = 0;
 
-      if (self.activeListIndex == index) return;
+      if (self.activeListIndex == index && !force) return;
 
 
       self.activeListIndex = index;
@@ -155,11 +155,9 @@
 
           // rewrite custom fields
           self.activeList.customFields = updateFieldsObj.customFields;
-          //self.activeList.customFields = [];
-          //for (var key in  updateFieldsObj) {
-          //  self.activeList.customFields.push( updateFieldsObj[key] );
-          //}
+
           self.activeList.updateAvailableFields(updateFieldsObj.customFields);
+
           // update list with the current item
           self.items[currentIndex] = self.activeList;
 
@@ -248,15 +246,15 @@
       var deferred = $q.defer();
       var self = this;
 
-      var activeListId = self.activeList.id;
+      var activeList = self.activeList;
 
-      contact.update(activeListId).then(
+      contact.update(activeList.id).then(
         function (res) {
-          
-          var updatedContact = new Member(res.data);
+
+          var updatedContact = new Member(res.data, activeList.customFields);
           var index;
           for (var i = 0, len = self.items.length; i < len ; i++) {
-            if (self.items[i].id == activeListId) {
+            if (self.items[i].id == activeList.id) {
               index = i;
               break;
             }
@@ -269,6 +267,7 @@
             }
           }
 
+          self.changeActiveList(self.activeListIndex, true);
           deferred.resolve();
         },
         function (err) {
