@@ -7,6 +7,7 @@
     // For any unmatched url, redirect to /home
     $urlRouterProvider.otherwise("/");
 
+
     $stateProvider
       .state('index', {
         abstract: true,
@@ -181,23 +182,36 @@
         }]
 
       })
-      .state('dashboard.resources.contactList', {
-        url: "/contact-list",
+
+      .state('dashboard.resources.contactLists', {
+        url: "/contact-lists",
         views: {
-          'resourcesContent': {templateUrl: prePath + "dashboard-resources-contactList/dashboard-content.html"}
+          'resourcesContent': {templateUrl: prePath + "dashboard-resources-contactLists/dashboard-content.html"}
         },
+        resolve: {
+          loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
+              '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
+              '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
+              '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
+              '/js/ngApp/modules/contactList/contactList.js',
+              '/js/ngApp/directives/custom-select-directive.js',
+              '/js/vendors/ngDraggable/ngDraggable.js'
+            ]);
+          }]},
         onEnter: ['dbg', function (dbg) {
-          dbg.rs('dashboard.resources.contactList is on');
+          dbg.rs('dashboard.resources.contactLists is on');
         }]
 
       })
-      .state('dashboard.resources.contactList.survey', {
+      .state('dashboard.resources.survey', {
         url: '/survey',
         views: {
-          'resourcesContent': { templateUrl: prePath + 'dashboard-resources-contactList-survey/dashboard-content.html' }
+          'resourcesContent': { templateUrl: prePath + 'dashboard-resources-contactLists-survey/dashboard-content.html' }
         },
         onEnter: ['dbg', function (dbg) {
-          dbg.rs('dashboard.resources.contactList.survey is on');
+          dbg.rs('dashboard.resources.contactLists.survey is on');
         }]
 
       })

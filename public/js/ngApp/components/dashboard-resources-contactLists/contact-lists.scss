@@ -1,0 +1,206 @@
+#dashboard-contact-lists {
+
+  h2, h3 {
+    margin: 45px 30px 30px 30px;
+  }
+
+
+
+  thead { background: $green; }
+  .druggable {
+    cursor: ew-resize;
+    .th-name {
+      cursor: pointer !important;
+    }
+  }
+
+  #contact-lists-left-column {
+
+    #list-of-contacts {
+      margin-top: 52px;
+      padding: 0;
+      border: 3px solid $green;
+
+      .header {
+        color: white;
+        font-weight: bold;
+        background: $green;
+        padding: 16px;
+      }
+
+      .item {
+        cursor: pointer;
+        display: block;
+        position: relative;
+        padding: 16px;
+        margin-top: 2px;
+        font-size: 1.3rem;
+        background: #EEEEEE;
+
+        .glyphicon {
+          visibility: hidden;
+          float: right;
+          margin-top: -3px;
+          color: $green;
+          font-size: 2rem;
+          font-weight: 100;
+        }
+
+        &:hover { background: $lightGreen }
+
+        &:focus { outline: none !important; }
+
+        &.active {
+
+          background: $lightGreen;
+
+          .glyphicon {visibility: visible}
+        }
+      }
+
+      .item-name {
+        width: 6vw;
+      }
+
+      .item-selection-mark {
+        position: absolute;
+        right: 12px;
+        top: 33%;
+      }
+
+    }
+
+    #under-list-of-contacts-btns {
+      margin-top: 5px;
+      .btn-standart {
+        display: block;
+        margin-top: 10px;
+        width: 160px;
+      }
+    }
+
+  }
+
+  #contact-lists-right-column {
+    overflow: auto;
+
+    #list-mass-actions {
+      outline: none;
+
+      .check {
+        float: left;
+        margin-top: 11px;
+        margin-right: 20px;
+
+      }
+
+      .pull-right {
+        margin: 0 10px;
+      }
+    }
+
+    .table-item-edit-group {
+      min-width: 70px;
+      display: block;
+
+      visibility: hidden;
+    }
+
+    th {
+      &:hover {
+        span.th-name {  text-decoration: underline; }
+      }
+
+      .glyphicon {
+        font-size: 1rem;
+      }
+    }
+
+    tr.member-row {
+      &:hover {
+        background: $lightGreen;
+
+        .table-item-edit-group {
+          visibility: visible;
+        }
+      }
+
+      &.selected { background: $lightGreen; }
+
+      .kliiko-checkbox {
+        margin-left: 4px;
+      }
+    }
+
+    #no-contacts-in-list {
+      width: 450px;
+      height: 500px;
+      margin-top: 74px;
+      margin-left: 18%;
+    }
+  }
+
+
+  .modal-title {
+    margin-bottom: 40px;
+  }
+
+  .delimiter {
+    border-top: 2px solid $green;
+    margin-bottom: 30px;
+  }
+
+  #contactList-addNewListModal {
+
+    .modals-btn {
+      margin-top: 30px;
+    }
+
+    #new-list-name-input {
+      margin: 60px;
+      width: 60%;
+      padding: 9px;
+      font-size: 2rem;
+    }
+
+    #new-list-name-help-text {
+      width: 70%;
+      margin: 0 auto;
+      margin-bottom: 30px;
+
+
+      p {
+        font-size: 1.6rem;
+
+      }
+    }
+
+    #new-list-custom-fields {
+      margin: 20px;
+    }
+
+
+    input.custom-fields {
+      margin: 6px;
+      width:90%;
+      padding: 10px;
+    }
+
+
+    input.custom-fields.error {
+      border: 1px solid $red;
+      outline-color: $red;
+    }
+
+  }
+
+  .fields-to-show {
+    margin: 10px 0;
+
+    label {
+      margin-right: 10px;
+    }
+  }
+
+
+}

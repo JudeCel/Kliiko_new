@@ -1,6 +1,9 @@
 /**
- * @desc spinner directive that can be used anywhere across apps at a company named Acme
- * @example <div acme-shared-spinner></div>
+ * @desc custom select dropdown
+ * @example
+ *  <div custom-select-directive data-title="">
+ *    <li ng-click="yourAction()>Just  do it!</li>
+ *  </div>
  */
 angular
     .module('KliikoApp')
@@ -9,7 +12,7 @@ angular
 function customSelectDirective() {
     var directive = {
         scope: {
-            hi: '@hi'
+            title: '@title'
         },
         link: link,
         restrict: 'EA',
@@ -30,9 +33,3 @@ function customSelectDirective() {
 
 }
 
-
-//<div custom-select-directive selectedValue="up.selectedCountry">
-//    <div class="ncs-content-item"
-//ng-repeat="country in up.countries"
-//ng-click="up.ncsCountrySelect = !up.ncsCountrySelect; up.selectedCountry=country"> {{country.name}}</div>
-//</div>
