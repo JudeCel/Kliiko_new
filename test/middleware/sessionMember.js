@@ -32,6 +32,7 @@ describe('Middleware Session Member', () => {
         user.getAccountUsers().then(function(accaountUsers) {
           req.user.id = user.id
           res.locals.currentDomain.id = accaountUsers[0].id
+          sessionAttrs.accountId = accaountUsers[0].id;
           Session.create(sessionAttrs).then(function(sess) {
             session = sess;
             done();
