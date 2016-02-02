@@ -4,7 +4,7 @@ var brandProjectConstants = require('../util/brandProjectConstants');
 module.exports = (Sequelize, DataTypes) => {
   var BrandProjectPreference = Sequelize.define('BrandProjectPreference', {
     id:	 { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    name:	{ type: DataTypes.STRING, allowNull: false, defaultValue: 'untitled' },
+    name:	{ type: DataTypes.STRING, allowNull: false },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
     colours: { type: DataTypes.JSONB, allowNull: false, defaultValue: brandProjectConstants.preferenceColours },
   }, {

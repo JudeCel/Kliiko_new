@@ -166,7 +166,7 @@
       var css = {
         'background-color': hex,
         'color': invertColor(hex),
-        'border': '1px solid ' + hex
+        'border-color': hex
       };
 
       return css;

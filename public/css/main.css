@@ -1381,6 +1381,7 @@ hr.survey-hr {
   padding: 6px 8%; }
 
 .color-input-addon, .color-input {
+  border: 1px solid;
   font-size: 1em;
   margin: 0px !important; }
 

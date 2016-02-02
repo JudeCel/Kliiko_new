@@ -103,7 +103,7 @@ describe('SERVICE - BrandColour', function() {
         BrandProjectPreference.count().then(function(c) {
           assert.equal(c, 1);
 
-          brandColourServices.createScheme({}, accountParams()).then(function(result) {
+          brandColourServices.createScheme({ name: 'untitled' }, accountParams()).then(function(result) {
             testScheme(result.data, { name: 'untitled' });
             BrandProjectPreference.count().then(function(c) {
               assert.equal(c, 2);
