@@ -258,6 +258,16 @@
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-brandColours/dashboard-content.html"}
         },
+        resolve: {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/css/colorpicker/colorpicker.min.css',
+              '/js/ngApp/directives/bootstrap-colorpicker-module.min.js',
+              '/js/ngApp/components/dashboard-resources-brandColours/BrandColourController.js',
+              '/js/ngApp/components/dashboard-resources-brandColours/brandColourServices.js'
+            ]);
+          }]
+        },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.brandColours is on');
         }]
