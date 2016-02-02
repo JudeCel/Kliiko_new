@@ -1377,6 +1377,13 @@ hr.survey-hr {
   padding-top: 1%;
   padding-bottom: 2%; }
 
+.color-input {
+  padding: 6px 8%; }
+
+.color-input-addon, .color-input {
+  font-size: 1em;
+  margin: 0px !important; }
+
 .brandColours {
   font-size: 70%; }
   .brandColours .chatContainer {
@@ -1423,7 +1430,7 @@ hr.survey-hr {
     padding: 0;
     padding-right: 5px;
     background-color: inherit; }
-  .brandColours .color-input-size {
+  .brandColours .color-input-container {
     font-size: 0.8em; }
   .brandColours p {
     padding: 4%; }

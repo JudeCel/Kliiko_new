@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('KliikoApp').controller('BrandColourController', BrandColourController);
+  angular.module('KliikoApp', ['colorpicker.module']).controller('BrandColourController', BrandColourController);
   BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', 'ngProgressFactory', '$timeout', 'domServices'];
 
   function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, ngProgressFactory, $timeout, domServices) {
@@ -130,7 +130,7 @@
     };
 
     function initColor(model) {
-      vm.scheme[model] =vm.scheme[model] || '#000000';
+      vm.scheme[model] = vm.scheme[model] || '#000000';
       vm.previewScheme = vm.scheme;
     };
 
@@ -161,21 +161,12 @@
       if(!hex) {
         hex = '#000000';
       }
-      if(!options) {
-        options = {};
-      }
 
       var css = {
-        padding: '6px 8%',
-        'font-size': '1em',
         'background-color': hex,
         'color': invertColor(hex),
-        'border': '1px solid ' + hex,
-        'margin': '0'
+        'border': '1px solid ' + hex
       };
-      if(options.padding) {
-        delete css.padding;
-      }
 
       return css;
     };

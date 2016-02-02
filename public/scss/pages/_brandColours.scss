@@ -3,6 +3,16 @@
   padding-bottom: 2%;
 }
 
+.color-input {
+  @extend .color-input-addon;
+  padding: 6px 8%;
+}
+
+.color-input-addon {
+  font-size: 1em;
+  margin: 0px !important;
+}
+
 .brandColours {
   font-size: 70%;
   .chatContainer {
@@ -66,7 +76,7 @@
     background-color: inherit;
   }
 
-  .color-input-size {
+  .color-input-container {
     font-size: 0.8em;
   }
 
