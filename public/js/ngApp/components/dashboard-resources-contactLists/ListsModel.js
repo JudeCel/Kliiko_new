@@ -27,8 +27,8 @@
 
     /**
      * Init the model
-     * @param params {object} where:
-     *    params.predefinedTables {array} || predefinedTables - will set default table to show;
+     * @param params {object}
+     *    
      * @constructor
      */
     function ListsModel(params) {
@@ -155,11 +155,9 @@
 
           // rewrite custom fields
           self.activeList.customFields = updateFieldsObj.customFields;
-          //self.activeList.customFields = [];
-          //for (var key in  updateFieldsObj) {
-          //  self.activeList.customFields.push( updateFieldsObj[key] );
-          //}
+
           self.activeList.updateAvailableFields(updateFieldsObj.customFields);
+
           // update list with the current item
           self.items[currentIndex] = self.activeList;
 

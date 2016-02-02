@@ -197,7 +197,7 @@
      * @param action {string}
      * @param [contactObj] {object} - contact object required for editing case
      */
-    function contactAddEditClickHandle(action, contactObj, index) {
+    function contactAddEditClickHandle(action, contactObj) {
       if (action === 'new') {
         vm.updateExistingUser = null;
         vm.contactModalTitle = 'Add New Contact';
@@ -275,9 +275,6 @@
           }
         }
       );
-
-
-      /**/
 
     }
 
