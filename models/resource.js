@@ -22,6 +22,7 @@ module.exports = (Sequelize, DataTypes) => {
         associate: function(models) {
           Resource.belongsTo(models.Topic, {foreignKey: 'topicId'});
           Resource.belongsTo(models.User, {foreignKey: 'userId'});
+          Resource.hasMany(models.Survey, {foreignKey: 'surveyId'});
         }
       }
     }
