@@ -28,7 +28,7 @@
     /**
      * Init the model
      * @param params {object}
-     *    
+     *
      * @constructor
      */
     function ListsModel(params) {

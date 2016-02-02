@@ -24,7 +24,6 @@
 @import "pages/_login.scss";
 @import "pages/_registration.scss";
 @import "pages/_landing.scss";
-//@import "pages/_uploadBanner.scss";
 @import "pages/_survey.scss";
 @import "pages/_gallery.scss";
 @import "pages/_brandColours.scss";
@@ -41,3 +40,4 @@
 //SHARED
 .margin-top-2rem { margin-top: 2rem;}
 .margin-top-3rem { margin-top: 3rem;}
+.fade-disabled {opacity: .45 !important;}
