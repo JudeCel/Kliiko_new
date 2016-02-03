@@ -241,6 +241,7 @@
         resolve: {
           loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
             return $ocLazyLoad.load([
+              '/js/ngApp/components/dashboard-resources-emailTemplates/EmailTemplateEditorController.js',
               '/js/vendors/ng-file-upload/ng-file-upload.js'
             ]);
           }]
@@ -258,6 +259,7 @@
         resolve: {
           loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
             return $ocLazyLoad.load([
+              '/js/ngApp/components/dashboard-resources-emailTemplates/EmailTemplateEditorController.js',
               '/js/vendors/ng-file-upload/ng-file-upload.js'
             ]);
           }]

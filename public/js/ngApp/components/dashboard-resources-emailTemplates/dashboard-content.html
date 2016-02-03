@@ -103,7 +103,7 @@
       <div class='modal-content border-green border-radius-none'>
         <div class='modal-header'>
           <button type='button' class='close' data-dismiss='modal'>&times;</button>
-          <h2 class='modal-title text-center'>New {{ ec.uploadTypeForTitle }} resource.</h2>
+          <h1 class='modal-title text-center'>New {{ ec.uploadTypeForTitle }} resource.</h1>
         </div>
         <form ng-submit="ec.submitForm(ec.newResource)">
           <div class='modal-body'>
@@ -118,8 +118,8 @@
               <input ng-model="ec.newResource.youtubeUrl" type="text" class="form-control center-block" name="youtubeUrl" id="youtubeUrl"
               placeholder="Youtube URL">
             </div>
-
-            <div ng-if="newResource.type !== 'youtubeUrl'" class="form-group">
+            
+            <div ng-if="ec.newResource.type !== 'youtubeUrl'" class="form-group">
               <label for="fileTst">File</label>
               <div ngf-drop ngf-select ng-model="ec.newResource.fileTst" ng-change="ec.uploadTst()" class="drop-box" ngf-drag-over-class="'dragover'">
                 Drop images here or click to upload</div>

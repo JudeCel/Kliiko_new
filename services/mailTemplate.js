@@ -158,11 +158,11 @@ function resetMailTemplate(templateId, callback) {
     if (result) {
       //is template created by user - not base version
       if (!result.UserId) {
-        //is base version
-        callback("you cannot reset template base version");      
+        //if base version, return data immediately
+        callback(null, result);      
       } else {
         update(templateId, {name: result["MailTemplateBase.name"], subject: result["MailTemplateBase.subject"], content: result["MailTemplateBase.content"]}, function(error, result) {
-           callback(error, result);  
+           callback(error, result);
         });
       }
     }
