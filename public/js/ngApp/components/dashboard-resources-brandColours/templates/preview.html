@@ -1,5 +1,5 @@
 {{ previewScheme = scheme.colours || bcc.previewScheme.colours; "" }}
-<div class='brandColours'>
+<div class='brandColours' style='color: {{ previewScheme.font }};'>
   <div class='row' style='background-color: {{ previewScheme.browserBackground }};'>
     <div class='col-xs-12 header' ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/header.html'"></div>
 
