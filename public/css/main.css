@@ -858,6 +858,11 @@ footer {
   background-color: #4DC0E9 !important; }
 
 /* Typography */
+.text-max-width {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block; }
+
 .text-login-page {
   font-size: 16px; }
 
