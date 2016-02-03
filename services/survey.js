@@ -77,8 +77,7 @@ function findAllSurveys(account) {
     ],   
     include: [
       {
-        model: Resource,
-        // where: {resourceType: {$ne: 'tmp'}}
+        model: Resource
       },
       {
       model: SurveyQuestion,
@@ -91,7 +90,6 @@ function findAllSurveys(account) {
     surveys.forEach(function(survey, index, array) {
       if(survey.Resource !== null){
         survey.Resource.JSON = JSON.parse(decodeURI(survey.Resource.JSON));
-        console.log(survey.Resource);
       }
       survey.SurveyQuestions.forEach(function(question, index, array) {
         if(question.Resource !== null){
@@ -99,7 +97,6 @@ function findAllSurveys(account) {
         }
       });
     });
-    console.log(surveys);
     deferred.resolve(simpleParams(surveys));
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
@@ -189,10 +186,6 @@ function createSurveyWithQuestions(params, account) {
 function updateSurvey(params, account) {
   let deferred = q.defer();
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
-
-  console.log(params);
-  console.log(validParams);
-
   models.sequelize.transaction(function (t) {
     return Survey.update(validParams, {
       where: { id: params.id, accountId: account.id },

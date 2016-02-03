@@ -127,10 +127,10 @@ function deleteResources(ids){
 
 // I was not able to include this from utilities.js
 function processYouTubeData(youtubeData) {
-  var preFix = '<iframe src="http://www.youtube.com/embed/';
-  var subFix = '" frameborder="0" allowfullscreen></iframe>';
+  let preFix = '<iframe src="http://www.youtube.com/embed/';
+  let subFix = '" frameborder="0" allowfullscreen></iframe>';
 
-  var position = -1;
+  let position = -1;
 
   if (youtubeData.search("<iframe") != -1) {
     return youtubeData;
