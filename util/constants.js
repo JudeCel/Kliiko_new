@@ -15,7 +15,7 @@ module.exports = {
     'state',
     'status',
     'country',
-    'postcode',
+    'postCode',
     'companyName',
     'landlineNumber',
     'mobile',
@@ -24,7 +24,13 @@ module.exports = {
   safeUserParams: [
     'id',
     'email'
+
   ],
+contactListDefaultFields: [
+    "firstName", "lastName", "gender", "email", "city",
+    "state", "country", "postCode", "companyName",
+     "landlineNumber", "mobile"
+   ],
   originalMailTemplateFields: [
     'id',
     'name',
@@ -48,7 +54,7 @@ module.exports = {
     'UserId',
     'systemMessage'
   ],
-  
+
   promotionCodeTypes: ['percentage', 'value'],
   accountNameRegExp: ["^[a-zA-Z0-9]+$",'i'],
   mobileRegExp: ["^[0-9]+$",'i'],

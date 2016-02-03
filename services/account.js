@@ -1,6 +1,7 @@
 "use strict";
 var Account  = require('./../models').Account;
 var _ = require('lodash');
+var contactListService  = require('./contactList');
 
 function validate(params, callback) {
   let attrs = {name: params.accountName}
@@ -10,12 +11,16 @@ function validate(params, callback) {
 }
 
 function create(params, user, t, callback) {
-  Account.create({name: params.accountName}, { transaction: t } ).then(function(result) {
-    callback(null, params, result, user, t);
+  Account.create({name: params.accountName}, { transaction: t }).then(function(result) {
+    contactListService.createDefaultLists(result.id, t).then(function(promiss) {
+      callback(null, params, result, user, promiss.transaction);
+    }, function(error, t) {
+      callback(error, null, null, null, t);
+    });
   }).catch(Account.sequelize.ValidationError, function(err) {
     callback(err, null, null, null, t);
   }).catch(function(err) {
-    callback(err, null, null, null, t);
+    callback(err, null, null, null, err.transaction);
   });
 }
 

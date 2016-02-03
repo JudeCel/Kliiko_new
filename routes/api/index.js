@@ -18,6 +18,8 @@ let topic = require('./topic');
 var gallery = require('./gallery');
 var brandColour = require('./brandColour');
 
+let contactList = require('./contactList');
+let contactListUser = require('./contactListUser');
 
 module.exports = router;
 
@@ -77,6 +79,20 @@ router.get('/survey/find', survey.find);
 router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', survey.confirm);
 router.get('/survey/constants', survey.getConstants);
+
+// contact List
+router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
+router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
+router.post('/contactList/:id/import', policy.authorized(['accountManager', 'admin']), fileUploader(),contactList.import);
+router.put('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.update);
+router.delete('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.destroy);
+
+// contact List User
+router.post('/contactListsUser', policy.authorized(['accountManager', 'admin']), contactListUser.create);
+router.post('/contactListsUsersToRemove', policy.authorized(['accountManager', 'admin']), contactListUser.destroy);
+router.put('/contactListsUser/:id', policy.authorized(['accountManager', 'admin']), contactListUser.update);
+
+
 
 router.get('/topics', multipartyMiddleware, topic.get);
 router.post('/topic', multipartyMiddleware, topic.post);

@@ -81,7 +81,7 @@ function buldCSVRow(account, accountUser) {
     'E-mail': accountUser.email || '',
     'Address': accountUser.postalAddress || '',
     'City': accountUser.city || '',
-    'Postcode': accountUser.postcode || '',
+    'Postcode': accountUser.postCode || '',
     'Country': accountUser.country || '',
     'Company': accountUser.companyName || '',
     'Gender': accountUser.gender || '',
