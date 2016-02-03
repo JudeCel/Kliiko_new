@@ -233,4 +233,29 @@
     margin-top: 23px;
   }
 
+  .custom-select-directive {
+    padding: 7px !important;
+    text-align: inherit !important;
+
+    ul.dropdown {
+      left:-2px;
+      width: 200px;
+      border: 2px solid $green;
+      border-top: none;
+
+      li {
+        padding: 0 7px;
+
+        &:hover {
+          color: white;
+          background: $green;
+
+          a {
+            color: white;
+          }
+        }
+      }
+    }
+  }
+
 }

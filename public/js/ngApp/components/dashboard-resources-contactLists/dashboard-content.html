@@ -49,7 +49,7 @@
               </div>
             </span>
 
-            <div custom-select-directive data-title="Add Contacts" class="custom-select-directive">
+            <div custom-select-directive data-title="Add Contacts" data-id="contact-lists-add-button-1" class="custom-select-directive">
               <li ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
               <li><a href=""><i class="icon-remove"></i>Import Excel (not ready)</a></li>
               <li><a href=""><i class="icon-remove"></i>Import CSV (not ready)</a></li>
@@ -63,7 +63,15 @@
 
           <div id="no-contacts-in-list" class="text-center" ng-show="!clc.lists.activeList.members.length">
             <h3>There is no contacts in this list yet</h3>
+
             <div class='btn-standart btn-green' ng-click="clc.contactAddEditClickHandle('new')">Add contacts (manual)</div>
+
+            <div custom-select-directive data-title="Add Contacts" data-id="contact-lists-add-button-2" class="custom-select-directive">
+              <li ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
+              <li><a href=""><i class="icon-remove"></i>Import Excel (not ready)</a></li>
+              <li><a href=""><i class="icon-remove"></i>Import CSV (not ready)</a></li>
+            </div>
+
             <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable">
               &nbsp; or &nbsp;
               <div class="btn-standart btn-red" ng-click="clc.deleteList(clc.lists.activeList, $index)">Remove this List</div>

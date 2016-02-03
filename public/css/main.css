@@ -2314,6 +2314,22 @@ hr.survey-hr {
 #dashboard-contact-lists label.control-label {
   margin-top: 23px; }
 
+#dashboard-contact-lists .custom-select-directive {
+  padding: 7px !important;
+  text-align: inherit !important; }
+  #dashboard-contact-lists .custom-select-directive ul.dropdown {
+    left: -2px;
+    width: 200px;
+    border: 2px solid #2F9F69;
+    border-top: none; }
+    #dashboard-contact-lists .custom-select-directive ul.dropdown li {
+      padding: 0 7px; }
+      #dashboard-contact-lists .custom-select-directive ul.dropdown li:hover {
+        color: white;
+        background: #2F9F69; }
+        #dashboard-contact-lists .custom-select-directive ul.dropdown li:hover a {
+          color: white; }
+
 .margin-top-2rem {
   margin-top: 2rem; }
 
