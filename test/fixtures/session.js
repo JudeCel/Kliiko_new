@@ -1,6 +1,7 @@
 'use strict';
 
 var UserService = require('./../../services/users');
+var SessionMemberService = require('./../../services/sessionMember');
 var models = require('../../models');
 var Session = models.Session;
 var BrandProject = models.BrandProject;
@@ -143,7 +144,11 @@ function addSessionMember(accountUserId, session, role, name, callback) {
                  username: name,
                  avatar_info: "0:4:3:1:4:3" }
   session.createSessionMember(params).then(function(result) {
-    callback(null, result);
+    SessionMemberService.createToken(result.id).then(function() {
+      callback(null, result);
+    },function(error) {
+      callback(error);
+    })
   })
   .catch(function(error) {
     callback(error);

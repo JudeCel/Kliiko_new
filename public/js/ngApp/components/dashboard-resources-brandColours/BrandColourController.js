@@ -15,12 +15,13 @@
     vm.initColor = initColor;
     vm.openModalPreview = openModalPreview;
     vm.closeModelPreview = closeModelPreview;
+    vm.undoCurrentScheme = undoCurrentScheme;
     vm.colorStyles = colorStyles;
 
     vm.schemes = {};
     vm.scheme = {};
     vm.colorForm = {};
-    vm.defaultColour = '#000000';
+    vm.defaultColours = { black: '#000000', white: '#FFFFFF' };
 
     changePage('index');
 
@@ -130,8 +131,13 @@
       });
     };
 
-    function initColor(model) {
-      vm.scheme[model] = vm.scheme[model] || vm.defaultColour;
+    function initColor(model, object) {
+      if(parseInt(model)) {
+        vm.scheme.colours.participants[model] = object[model] || vm.defaultColours.black;
+      }
+      else {
+        vm.scheme.colours[model] = object[model] || vm.defaultColours.white;
+      }
       vm.previewScheme = vm.scheme;
     };
 
@@ -153,14 +159,29 @@
         vm.currentPage = { page: page };
       }
       else {
+        if(page == 'edit') {
+          vm.copyScheme = {};
+          angular.copy(scheme, vm.copyScheme);
+        }
+        else {
+          vm.copyScheme = null;
+        }
+
         vm.scheme = scheme || { colours: { participants: {} } };
         vm.currentPage = { page: 'manage', type: page };
       }
     };
 
+    function undoCurrentScheme() {
+      if(vm.copyScheme) {
+        angular.copy(vm.copyScheme, vm.scheme);
+        vm.previewScheme = vm.scheme;
+      }
+    };
+
     function colorStyles(hex, options) {
       if(!hex) {
-        hex = vm.defaultColour;
+        hex = vm.defaultColours.white;
       }
 
       var css = {
@@ -184,7 +205,7 @@
         return color;
       }
       else {
-        return vm.defaultColour;
+        return vm.defaultColours.black;
       }
     };
 

@@ -191,13 +191,15 @@
         resolve: {
           loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
             return $ocLazyLoad.load([
+              //'/js/vendors/ngDraggable/ngDraggable.js',
+              '/js/ngApp/components/dashboard-resources-contactLists/dragAndDrop.js',
               '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
               '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
               '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
               '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
               '/js/ngApp/modules/contactList/contactList.js',
-              '/js/ngApp/directives/custom-select-directive.js',
-              '/js/vendors/ngDraggable/ngDraggable.js'
+              '/js/ngApp/directives/custom-select-directive.js'
+              
             ]);
           }]},
         onEnter: ['dbg', function (dbg) {
@@ -241,6 +243,7 @@
         resolve: {
           loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
             return $ocLazyLoad.load([
+              '/js/ngApp/components/dashboard-resources-emailTemplates/EmailTemplateEditorController.js',
               '/js/vendors/ng-file-upload/ng-file-upload.js'
             ]);
           }]
@@ -258,6 +261,7 @@
         resolve: {
           loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
             return $ocLazyLoad.load([
+              '/js/ngApp/components/dashboard-resources-emailTemplates/EmailTemplateEditorController.js',
               '/js/vendors/ng-file-upload/ng-file-upload.js'
             ]);
           }]

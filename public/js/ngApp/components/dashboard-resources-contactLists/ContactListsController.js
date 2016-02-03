@@ -2,8 +2,8 @@
   'use strict';
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', 'ngDraggable', '$scope'];
-  function ContactListController(domServices,  dbg, messenger, ListsModel,  ngDraggable, $scope) {
+  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope'];
+  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
@@ -38,6 +38,39 @@
     vm.selectAll = selectAll;
     vm.massDelete = massDelete;
 
+    vm.importedFields = [
+      {
+        name: "Field1", 
+        value: "data"
+      },
+      {
+        name: "Field2", 
+        value: "data"
+      },
+      {
+        name: "Field3", 
+        value: "data"
+      },
+      {
+        name: "Field4", 
+        value: "data"
+      }
+    ];
+        
+    vm.contactListDropItems = [
+      { name: "First Name*" },
+      { name: "Last Name*" },
+      { name: "Gender*" },
+      { name: "Email*" },
+      { name: "Department" },
+      { name: "Username" },
+      { name: "Password" },
+      { name: "Address" },
+      { name: "Zip Code" },
+      { name: "Home Phone" },
+      { name: "Manager" },
+      { name: "City" }
+    ];
     /**
      * Open modal and prepare variables
      */
@@ -52,23 +85,26 @@
       vm.listModalTitle = 'Add New List';
       domServices.modal('contactList-addNewListFieldsModal');
     };
-
-    function isValidDropElement(el) {
-      var id = $(el).attr('id');
-      var className = $(el).attr('class');
-      return (id == 'contactList-fieldColumnLeft' || className.indexOf('contactList-dropPlaceholder') != -1);
-    }
     
-    var onDraggableEvent = function (evt, data) {
-      console.log("end", "onDraggableEvent", data);
-      if (isValidDropElement(data.event.toElement)) {
-       console.log("model of drop area", $(data.event.target) );
+    vm.onDrop = function(model, data){
+      if (data == model.data) {
+        return;
       }
+      data.belongsToList = true;
+      model.data = data;
+    };
+    
+    vm.dropFailureHandler = function($event, $index) {
+      console.log("_____", event, $index);  
     }
     
-    $scope.$on('draggable:end', onDraggableEvent);
-    
-    
+    vm.dropValidate = function(target, data, key) {
+      if (data.data) {
+        return false;
+      }
+      return true;
+    };
+      
     function submitNewList() {
       if (vm.newListErrorMessage) return;
 
