@@ -46,7 +46,10 @@
     }
 
 
-    function createNewTopic() { domServices.modal('createNewTopic') }
+    function createNewTopic() {
+      vm.newTopicName = null;
+      domServices.modal('createNewTopic');
+    }
 
     function validateNewAndAdd(topic) {
       if (!topic && !vm.newTopicName.length) return;
@@ -107,7 +110,7 @@
         vm.list.splice(index, 1);
 
         vm.editBlockHelper = null;
-        
+
         progressbar.complete();
         dbg.log('#TopicsController > deleteTopic > topic has been removed');
         messenger.ok('Topic has been removed');
