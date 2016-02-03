@@ -1997,6 +1997,11 @@ hr.survey-hr {
     margin: 45px;
     font-size: .8em;
     font-weight: bolder; }
+  #email-template-editor h1 {
+    padding-top: 45px;
+    padding-bottom: 15px;
+    font-size: 3.3rem;
+    font-weight: bolder; }
   #email-template-editor p {
     margin: 0 0 -10px 0;
     padding: 10px 100px 10px 30px;
@@ -2100,6 +2105,11 @@ hr.survey-hr {
     border: none;
     box-shadow: none;
     width: 250px; }
+  #email-template-editor #uploadTemplateResource h1 {
+    padding: 0 !important;
+    margin: 15px !important;
+    font-size: 3.3rem;
+    font-weight: bolder; }
 
 #resources-topics #no-topics-in-list {
   text-align: center; }
