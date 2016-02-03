@@ -48,8 +48,11 @@
                                     </div>
                                 </div>
                             </uib-accordion-heading>
-                            <div ng-repeat="s in t.sessions" class="row">
+                            <div ng-show="t.sessions.length" ng-repeat="s in t.sessions" class="row">
                                 <div class="col-md-10">{{ s.name }}</div> <div class="col-md-2">{{s.status}}</div>
+                            </div>
+                            <div ng-show="!t.sessions.length" class="row">
+                                <div class="col-md-10">This topic does not belong to any session</div> <div class="col-md-2"><a href="">Bind to a session</a></div>
                             </div>
                         </uib-accordion-group>
                     </uib-accordion>
