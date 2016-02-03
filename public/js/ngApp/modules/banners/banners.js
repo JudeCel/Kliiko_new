@@ -81,7 +81,6 @@
             }
 
             dbg.log2('#bannerMessagesService > upload > success ', res);
-            console.warn(currentBannerType)
             if (currentBannerType) setMainBannerForPage(currentBannerType);
 
             deferred.resolve();
