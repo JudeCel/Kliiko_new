@@ -126,13 +126,13 @@
         }else{
           console.log(survey);
 
-          if(survey !== ""){
+          if(survey !== null){
             vm.surveySelecctOptions.show = true;
             vm.surveySelecctOptions.uploaded = false;
             survey.Resource = null;
             survey.resourceId = null;
           }
-          if(question !== ""){
+          if(question !== null){
             question.Resource = null;
             question.resourceId = null;
           }

@@ -80,7 +80,7 @@
         </audio> 
 
         <button type='submit'class='btn btn-addNewElement btn-green no-margin gallery-btn-width' 
-                ng-click="sc.removeResource(question.resourceId, question, '')">
+                ng-click="sc.removeResource(question.resourceId, question, null)">
           <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
         </button>
       </div>
@@ -88,7 +88,7 @@
       <div class="responsive-container" ng-if="question.Resource.JSON.type == 'youtubeUrl'">
         <div class="embed-responsive embed-responsive-4by3" ng-bind-html="sc.renderHtml(question.Resource)"></div>
         <button type='submit'class='btn btn-addNewElement btn-green no-margin gallery-btn-width' 
-                ng-click="sc.removeResource(question.resourceId, question, '')">
+                ng-click="sc.removeResource(question.resourceId, question, null)">
           <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
         </button>
       </div>
@@ -99,7 +99,7 @@
           Your browser does not support the video tag.
         </video> 
         <button type='submit'class='btn btn-addNewElement btn-green no-margin gallery-btn-width' 
-                ng-click="sc.removeResource(question.resourceId, question, '')">
+                ng-click="sc.removeResource(question.resourceId, question, null)">
           <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
         </button>
       </div>
