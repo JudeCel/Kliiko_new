@@ -1,20 +1,20 @@
 <div class='row'>
-  <div class='has-error' ng-class='field.title ? "col-xs-offset-6 col-xs-6 col-md-offset-3 col-md-9" : "col-xs-12" ' ng-messages='bcc.colorForm[field.model].$error'>
+  <div class='has-error' ng-class='field.title ? "col-xs-offset-6 col-xs-6 col-md-offset-4 col-md-8" : "col-xs-12" ' ng-messages='bcc.colorForm[field.model].$error'>
     <div class='help-block' ng-message='required'>Not valid color</div>
     <div class='help-block' ng-message='pattern'>Not valid color</div>
   </div>
 </div>
 
 <div class='row color-input-container'>
-  <div class='col-xs-6 col-md-3' ng-if='field.title'>
-    <label class='control-label text-no-bold' for='{{ field.model }}'>{{ field.title }}</label>
+  <div class='col-xs-6 col-md-4' ng-if='field.title'>
+    <label class='control-label text-no-bold label-size' for='{{ field.model }}'>{{ field.title }}</label>
   </div>
 
-  <div ng-class='field.title ? "col-xs-6 col-md-9" : "col-xs-12" '>
+  <div ng-class='field.title ? "col-xs-6 col-md-8" : "col-xs-12" '>
     <div class='form-group'>
       <div class='input-group'>
         <input class='form-control no-border-radius color-input' id='{{ field.model }}' name='{{ field.model }}' colorpicker colorpicker-position='top'
-          ng-required='bcc.formSubmitted' ng-pattern='bcc.hexRegex' ng-init='bcc.initColor(field.model)'
+          ng-required='bcc.formSubmitted' ng-pattern='bcc.hexRegex' ng-init='bcc.initColor(field.model, scheme)'
           ng-model='scheme[field.model]' ng-style='bcc.colorStyles(scheme[field.model])' />
 
         <span class='input-group-addon no-border-radius color-input-addon' ng-style='bcc.colorStyles(scheme[field.model])'>

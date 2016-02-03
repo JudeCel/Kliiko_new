@@ -1408,6 +1408,9 @@ hr.survey-hr {
   font-size: 1em;
   margin: 0px !important; }
 
+.label-size {
+  font-size: 0.8em; }
+
 .brandColours {
   font-size: 70%; }
   .brandColours .chatContainer {
@@ -1455,8 +1458,6 @@ hr.survey-hr {
     padding: 0;
     padding-right: 5px;
     background-color: inherit; }
-  .brandColours .color-input-container {
-    font-size: 0.8em; }
   .brandColours p {
     padding: 4%; }
   .brandColours p.lime-background {
