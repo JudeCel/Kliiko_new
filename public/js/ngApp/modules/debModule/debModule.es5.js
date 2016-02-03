@@ -155,6 +155,10 @@
 
                 var output = parseInput(arguments);
                 var err = new Error(arguments);
+
+                //ie case
+                if (!err.stack) {   console.log('%c%s %c log ', logColors.time, time(), logColors.blue, output);  return }
+
                 var stk = err.stack.split('at');
                 stk = parseStk(stk);
 
@@ -171,6 +175,10 @@
 
                 var output = parseInput(arguments);
                 var err = new Error(arguments);
+
+                //ie case
+                if (!err.stack) {   console.log('%c%s %c log ', logColors.time, time(), logColors.blue, output);  return }
+
                 var stk = err.stack.split('at');
                 stk = parseStk(stk);
 
@@ -187,6 +195,10 @@
 
                 var output = parseInput(arguments);
                 var err = new Error(arguments);
+
+                //ie case
+                if (!err.stack) {   console.log('%c%s %c log ', logColors.time, time(), logColors.blue, output);  return }
+
                 var stk = err.stack.split('at');
                 stk = parseStk(stk);
 
@@ -203,6 +215,10 @@
 
                 var output = parseInput(arguments);
                 var err = new Error(arguments);
+
+                //ie case
+                if (!err.stack) {   console.log('%c%s %c log ', logColors.time, time(), logColors.blue, output);  return }
+
                 var stk = err.stack.split('at');
                 stk = parseStk(stk);
 
@@ -219,6 +235,10 @@
 
                 var output = parseInput(arguments);
                 var err = new Error(arguments);
+
+                //ie case
+                if (!err.stack) {   console.log('%c%s %c log ', logColors.time, time(), logColors.blue, output);  return }
+
                 var stk = err.stack.split('at');
                 stk = parseStk(stk);
 
@@ -235,6 +255,11 @@
 
                 var output = parseInput(arguments);
                 var err = new Error(arguments);
+
+                //ie case
+                if (!err.stack) {   console.log('%c%s %c log ', logColors.time, time(), logColors.blue, output);  return }
+
+
                 var stk = err.stack.split('at');
                 stk = parseStk(stk);
 
