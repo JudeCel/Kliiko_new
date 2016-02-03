@@ -66,7 +66,7 @@
     background-size: contain;
     margin-top: 1px;
   }
-  
+
   .has-error{
     color: #f00;
     overflow: hidden;
@@ -85,6 +85,13 @@
 .surveyPreviewModal {
   @extend .contactDetailsModal;
   width: 800px;
+  padding-bottom: 100px;
+  padding-top: 100px;
+}
+
+.brandColourPreviewModal {
+  @extend .contactDetailsModal;
+  width: 35%;
   padding-bottom: 100px;
   padding-top: 100px;
 }

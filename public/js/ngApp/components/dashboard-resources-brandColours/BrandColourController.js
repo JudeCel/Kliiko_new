@@ -15,6 +15,7 @@
     vm.initColor = initColor;
     vm.openModalPreview = openModalPreview;
     vm.closeModelPreview = closeModelPreview;
+    vm.undoCurrentScheme = undoCurrentScheme;
     vm.colorStyles = colorStyles;
 
     vm.schemes = {};
@@ -153,8 +154,23 @@
         vm.currentPage = { page: page };
       }
       else {
+        if(page == 'edit') {
+          vm.copyScheme = {};
+          angular.copy(scheme, vm.copyScheme);
+        }
+        else {
+          vm.copyScheme = null;
+        }
+
         vm.scheme = scheme || { colours: { participants: {} } };
         vm.currentPage = { page: 'manage', type: page };
+      }
+    };
+
+    function undoCurrentScheme() {
+      if(vm.copyScheme) {
+        angular.copy(vm.copyScheme, vm.scheme);
+        vm.previewScheme = vm.scheme;
       }
     };
 

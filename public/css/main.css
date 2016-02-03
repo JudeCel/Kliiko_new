@@ -132,40 +132,40 @@ img.ic-flipX {
   width: 20%;
   padding-top: 100px; }
 
-.contactDetailsModal, .accountDatabaseCommentModal, .surveyPreviewModal {
+.contactDetailsModal, .accountDatabaseCommentModal, .surveyPreviewModal, .brandColourPreviewModal {
   width: 60%;
   padding-top: 100px;
   /* RADIO BUTTON */
   /* CHECKBOX */ }
-  .contactDetailsModal .table td, .accountDatabaseCommentModal .table td, .surveyPreviewModal .table td {
+  .contactDetailsModal .table td, .accountDatabaseCommentModal .table td, .surveyPreviewModal .table td, .brandColourPreviewModal .table td {
     padding-left: 2px;
     padding-right: 5px;
     border: 1px solid #f00;
     margin-left: -25px;
     max-width: 215px; }
-    .contactDetailsModal .table td:first-of-type, .accountDatabaseCommentModal .table td:first-of-type, .surveyPreviewModal .table td:first-of-type {
+    .contactDetailsModal .table td:first-of-type, .accountDatabaseCommentModal .table td:first-of-type, .surveyPreviewModal .table td:first-of-type, .brandColourPreviewModal .table td:first-of-type {
       padding-right: 15px;
       white-space: nowrap; }
-    .contactDetailsModal .table td.error-column, .accountDatabaseCommentModal .table td.error-column, .surveyPreviewModal .table td.error-column {
+    .contactDetailsModal .table td.error-column, .accountDatabaseCommentModal .table td.error-column, .surveyPreviewModal .table td.error-column, .brandColourPreviewModal .table td.error-column {
       padding: 0;
       padding-top: 3px;
       padding-bottom: 3px;
       height: 17px; }
-  .contactDetailsModal input.form-control, .accountDatabaseCommentModal input.form-control, .surveyPreviewModal input.form-control {
+  .contactDetailsModal input.form-control, .accountDatabaseCommentModal input.form-control, .surveyPreviewModal input.form-control, .brandColourPreviewModal input.form-control {
     border-width: 2px;
     height: 40px;
     border-radius: 0; }
-  .contactDetailsModal .modal-header, .accountDatabaseCommentModal .modal-header, .surveyPreviewModal .modal-header {
+  .contactDetailsModal .modal-header, .accountDatabaseCommentModal .modal-header, .surveyPreviewModal .modal-header, .brandColourPreviewModal .modal-header {
     border-bottom: none;
     padding-bottom: 0; }
-  .contactDetailsModal .modal-body, .accountDatabaseCommentModal .modal-body, .surveyPreviewModal .modal-body {
+  .contactDetailsModal .modal-body, .accountDatabaseCommentModal .modal-body, .surveyPreviewModal .modal-body, .brandColourPreviewModal .modal-body {
     padding-top: 0; }
-  .contactDetailsModal input[type="radio"]:checked + span:after, .accountDatabaseCommentModal input[type="radio"]:checked + span:after, .surveyPreviewModal input[type="radio"]:checked + span:after {
+  .contactDetailsModal input[type="radio"]:checked + span:after, .accountDatabaseCommentModal input[type="radio"]:checked + span:after, .surveyPreviewModal input[type="radio"]:checked + span:after, .brandColourPreviewModal input[type="radio"]:checked + span:after {
     background: #E51D39 !important;
     border: 2px solid #E51D39 !important; }
-  .contactDetailsModal input[class=checkbox-login], .accountDatabaseCommentModal input[class=checkbox-login], .surveyPreviewModal input[class=checkbox-login] {
+  .contactDetailsModal input[class=checkbox-login], .accountDatabaseCommentModal input[class=checkbox-login], .surveyPreviewModal input[class=checkbox-login], .brandColourPreviewModal input[class=checkbox-login] {
     display: none; }
-  .contactDetailsModal input[class=checkbox-login] + label, .accountDatabaseCommentModal input[class=checkbox-login] + label, .surveyPreviewModal input[class=checkbox-login] + label {
+  .contactDetailsModal input[class=checkbox-login] + label, .accountDatabaseCommentModal input[class=checkbox-login] + label, .surveyPreviewModal input[class=checkbox-login] + label, .brandColourPreviewModal input[class=checkbox-login] + label {
     background: url("/icons/checkbox-out.jpeg") no-repeat;
     height: 22px;
     width: 22px;
@@ -173,13 +173,13 @@ img.ic-flipX {
     margin-left: 0;
     margin-bottom: -5px;
     background-size: contain; }
-  .contactDetailsModal input[class=checkbox-login]:checked + label, .accountDatabaseCommentModal input[class=checkbox-login]:checked + label, .surveyPreviewModal input[class=checkbox-login]:checked + label {
+  .contactDetailsModal input[class=checkbox-login]:checked + label, .accountDatabaseCommentModal input[class=checkbox-login]:checked + label, .surveyPreviewModal input[class=checkbox-login]:checked + label, .brandColourPreviewModal input[class=checkbox-login]:checked + label {
     background: url("/icons/checkbox-in.jpeg") no-repeat;
     height: 22px;
     width: 22px;
     background-size: contain;
     margin-top: 1px; }
-  .contactDetailsModal .has-error, .accountDatabaseCommentModal .has-error, .surveyPreviewModal .has-error {
+  .contactDetailsModal .has-error, .accountDatabaseCommentModal .has-error, .surveyPreviewModal .has-error, .brandColourPreviewModal .has-error {
     color: #f00;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -192,6 +192,11 @@ img.ic-flipX {
 
 .surveyPreviewModal {
   width: 800px;
+  padding-bottom: 100px;
+  padding-top: 100px; }
+
+.brandColourPreviewModal {
+  width: 35%;
   padding-bottom: 100px;
   padding-top: 100px; }
 
@@ -1397,14 +1402,15 @@ hr.survey-hr {
     border: 2px solid #ccc;
     padding: 1%;
     margin: auto;
-    font-size: 160%; }
+    font-size: 160%;
+    position: inherit; }
   .brandColours .header {
     border: 1px solid #ccc;
     background-color: white; }
     .brandColours .header .headerButtons {
-      font-size: 2em;
+      font-size: 1.5em;
       color: white;
-      margin: 3% 2%;
+      margin: 5% 1%;
       padding: 2%; }
     .brandColours .header label {
       padding-top: 6%; }
@@ -1417,7 +1423,7 @@ hr.survey-hr {
       .brandColours .header .input-group .form-control:disabled {
         background-color: inherit;
         cursor: pointer;
-        height: 20px;
+        height: 2.5em;
         border: 1px solid #ccc; }
       .brandColours .header .input-group .input-group-addon {
         font-size: 1em;
@@ -1437,7 +1443,7 @@ hr.survey-hr {
     padding: 4%; }
   .brandColours p.lime-background {
     background-color: #CBEDC0;
-    margin-bottom: -5%; }
+    margin: 0; }
   .brandColours .containerInnerBox {
     margin: 10px auto 10%; }
 
