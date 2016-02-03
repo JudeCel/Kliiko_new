@@ -2,8 +2,8 @@
   'use strict';
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', 'ngDraggable'];
-  function ContactListController(domServices,  dbg, messenger, ListsModel,  ngDraggable) {
+  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', 'ngDraggable', '$scope'];
+  function ContactListController(domServices,  dbg, messenger, ListsModel,  ngDraggable, $scope) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
@@ -46,7 +46,30 @@
       vm.listModalTitle = 'Add New List';
       domServices.modal('contactList-addNewListModal');
     }
+    
+    vm.addNewListFieldMapping = function() {
+      vm.listIdToEdit = null;
+      vm.listModalTitle = 'Add New List';
+      domServices.modal('contactList-addNewListFieldsModal');
+    };
 
+    function isValidDropElement(el) {
+      var id = $(el).attr('id');
+      var className = $(el).attr('class');
+      return (id == 'contactList-fieldColumnLeft' || className.indexOf('contactList-dropPlaceholder') != -1);
+    }
+    
+    var onDraggableEvent = function (evt, data) {
+      console.log("end", "onDraggableEvent", data);
+      if (isValidDropElement(data.event.toElement)) {
+       console.log("YAY"); 
+       console.log($(data.event.toElement).scope().parent );
+      }
+    }
+    
+    $scope.$on('draggable:end', onDraggableEvent);
+    
+    
     function submitNewList() {
       if (vm.newListErrorMessage) return;
 
@@ -351,19 +374,6 @@
 
       removeContacts(ids);
     }
-    
-    function isValidDropElement(el) {
-      var id = $(el).attr('id');
-      var className = $(el).attr('class');
-      return (id == 'contactList-fieldColumnLeft' || className == 'contactList-dropPlaceholder');
-    }
-    
-    vm.onDragComplete=function(data,evt){
-       console.log("drag success, data:", data);
-    }
-    vm.onDropComplete=function(data,evt){
-        console.log("drop success, data:", data);
-    }
-
+   
   }
 })();

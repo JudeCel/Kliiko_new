@@ -32,8 +32,8 @@
           <div id="under-list-of-contacts-btns">
             <div class="btn-standart btn-green" ng-click="clc.addNewList()">Add new list <img src="/icons/add_new_list_green.png" class="pull-right"></div>
             <div class="btn-standart btn-blue" ui-sref='dashboard.resources.survey'>Recruiter <img src="/icons/recruiter_blue.png" class="pull-right"></div>
+            <div class="btn-standart btn-green" ng-click="clc.addNewListFieldMapping()">Field Mapping list <img src="/icons/add_new_list_green.png" class="pull-right"></div>
           </div>
-
         </div>
 
         <div id="contact-lists-right-column" class="col-md-10">
@@ -373,13 +373,13 @@
                     <div draggable="true" ondragstart="drag(event)" id="drag3" class="contactList-drop-item">Some field 3<img src="/icons/ic_move.png" class="pull-right"></div>
                     <div draggable="true" ondragstart="drag(event)" id="drag4" class="contactList-drop-item">Some field 4<img src="/icons/ic_move.png" class="pull-right"></div>
                     -->
-                    <div ng-drag="true" ng-drag-data="{t:1}" ng-drag-success="clc.onDragComplete($data,$event)" class="contactList-drop-item">Some field 1<img src="/icons/ic_move.png" class="pull-right"></div>
-                    <div ng-drag="true" ng-drag-data="{t:2}" ng-drag-success="clc.onDragComplete($data,$event)" class="contactList-drop-item">Some field 2<img src="/icons/ic_move.png" class="pull-right"></div>
-                    <div ng-drag="true" ng-drag-data="{t:3}" ng-drag-success="clc.onDragComplete($data,$event)" class="contactList-drop-item">Some field 3<img src="/icons/ic_move.png" class="pull-right"></div>
-                    <div ng-drag="true" ng-drag-data="{t:4}" ng-drag-success="clc.onDragComplete($data,$event)" class="contactList-drop-item">Some field 4<img src="/icons/ic_move.png" class="pull-right"></div>
-                    
+                    <div ng-drag="true" ng-drag-data="{name:'test'}" data-allow-transform="true" class="contactList-drop-item">Some field 1<img src="/icons/ic_move.png" class="pull-right"></div>
+                    <div ng-drag="true" ng-drag-data="{name:'test'}" data-allow-transform="true" class="contactList-drop-item">Some field 2<img src="/icons/ic_move.png" class="pull-right"></div>
+                    <div ng-drag="true" ng-drag-data="{name:'test'}" data-allow-transform="true" class="contactList-drop-item">Some field 3<img src="/icons/ic_move.png" class="pull-right"></div>
+                    <div ng-drag="true" ng-drag-data="{name:'test'}" data-allow-transform="true" class="contactList-drop-item">Some field 4<img src="/icons/ic_move.png" class="pull-right"></div>
+                   
                   </div>
-                  <div id="contactList-fieldColumnRight" class="col-md-6" ondrop="drop(event)">
+                  <div id="contactList-fieldColumnRight" class="col-md-6">
                     <h2>Contact List</h2>
                     <table>
                  <!--     <tr> <td>First Name*</td> <td class="contactList-dropPlaceholderCell"> <div class="contactList-dropPlaceholder" ng-drop="true" ng-drop-success="clc.onDropComplete($data,$event)"/> </div></tr>
@@ -395,7 +395,7 @@
                       <tr> <td>Manager</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
                       <tr> <td>City</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
                       -->
-                      <tr> <td>City</td> <td class="contactList-dropPlaceholderCell"> <div class="contactList-dropPlaceholder" ng-drop="true" ng-drop-success="clc.onDropComplete($data,$event)"/>  </div></tr>
+                      <tr> <td>City</td> <td class="contactList-dropPlaceholderCell"> <div class="contactList-dropPlaceholder" ng-model="City" ng-drop="true" ng-drop-success="clc.onDropComplete($data,$event)"> </div></tr>
                     </table>
                   </div>
                   
