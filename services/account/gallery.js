@@ -106,9 +106,6 @@ function downloadResources(data){
 
 function deleteResources(ids){
   let deferred = q.defer();
-  console.log("############################################");
-  console.log(ids);
-  console.log("############################################");
   let req = expressValidatorStub({
     params: ids
   });
@@ -130,7 +127,7 @@ function deleteResources(ids){
 
 // I was not able to include this from utilities.js
 function processYouTubeData(youtubeData) {
-  var preFix = '<iframe width="420" height="416" src="http://www.youtube.com/embed/';
+  var preFix = '<iframe src="http://www.youtube.com/embed/';
   var subFix = '" frameborder="0" allowfullscreen></iframe>';
 
   var position = -1;
@@ -166,7 +163,7 @@ function saveYoutubeData(data) {
       url: url
     };
 
-    socketHelper.updateResources(topicId, data.user.id, json, "youtube", resourceAppendedCallback);
+    socketHelper.updateResources(topicId, data.user.id, json, "youtubeUrl", resourceAppendedCallback);
   }
 
   return deferred.promise;

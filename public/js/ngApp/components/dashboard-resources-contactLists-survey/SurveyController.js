@@ -110,28 +110,26 @@
     function selectBrandLogo(resource){
       vm.surveySelecctOptions.show = false;
       vm.survey.resourceId = resource.id;
-      vm.survey.resource = resource;
+      vm.survey.Resource = resource;
     }
 
     function removeResource(id, question, survey){
       var progressbar = ngProgressFactory.createInstance();
       progressbar.start();
       
-      vm.question = question;
-      vm.survey = survey;
-
       GalleryServices.deleteResources({resource_id: id}).then(function(res) {
         if(res.error){
           messenger.error(res.error);
           progressbar.complete();
+
         }else{
-          if(vm.survey !== ""){
+          if(survey !== ""){
             vm.surveySelecctOptions.show = true;
             vm.surveySelecctOptions.uploaded = false;
-            vm.survey.resource = {};
+            survey.Resource = null;
           }
-          if(vm.question !== ""){
-            vm.question.resource = null;
+          if(question !== ""){
+            question.Resource = null;
           }
           clearform();
           progressbar.complete();
@@ -182,28 +180,25 @@
           }else{
 
             if(resourceType == "brandLogo"){
-              vm.survey.resourceId = res.id;
-              vm.survey.resource = {};
               vm.surveySelecctOptions.show = false;
               vm.surveySelecctOptions.uploaded = true;
 
             }else{
-              vm.question.resourceId = res.id;
-              vm.question.resource = {};
+              vm.question.Resource = {};
             }
 
             GalleryServices.postuploadData(resourceParams).then(function(res) {
               if(res.error){
                 messenger.error(res.error);
               }else{
-                console.log(res.data);
 
                 if(resourceType == "brandLogo"){
-                  vm.survey.resourceId = res.id;
-                  vm.survey.resource.JSON = res.data;
+                  console.log(res)
+                  vm.survey.resourceId = res.data.id;
+                  vm.survey.Resource = res.data;
                 }else{
-                  vm.question.resource.JSON = res.data;
-                  vm.question.resourceId = res.id;
+                  vm.question.resourceId = res.data.id;
+                  vm.question.Resource = res.data;
                 }
 
                 clearform();
@@ -221,7 +216,7 @@
       progressbar.start();
 
       vm.question.resourceId = null;
-      vm.question.resource = {};
+      vm.question.Resource = {};
 
       var resourceParams = {
         title: vm.title,
@@ -233,7 +228,9 @@
           messenger.error(res.error);
           progressbar.complete();
         }else{
-          vm.question.resource.JSON = res;
+          console.log(res);
+          clearform();
+          vm.question.Resource = res;
           vm.question.resourceId = res.id;
           progressbar.complete();
         }
@@ -329,6 +326,7 @@
     };
 
     function finishEdit() {
+      console.log(vm.survey);
       surveyServices.updateSurvey(vm.survey).then(function(res) {
         dbg.log2('#SurveyController > finishEdit > res ', res);
 

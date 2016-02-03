@@ -65,7 +65,7 @@ describe('Service Session Member', () => {
       })
     });
   });
-  describe.only('failed ', () => {
+  describe('failed ', () => {
     it('return error message not found', (done) =>  {
       let fakeId = 44444;
       SessionMemberService.createToken(44444).then(function (result) {
