@@ -45,7 +45,7 @@ function deleteResources(req, res, next) {
   });
 }
 
-function uploadResource(req, res, next) { // This should not stay here. Move to service!
+function uploadResource(req, res, next) { 
   galleryService.uploadResourceFile(req).then(function(result) {
     res.send(result);
   }, function(err) {

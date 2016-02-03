@@ -20,7 +20,8 @@
 
     // app modules
     'KliikoApp.user',
-    'KliikoApp.banners'
+    'KliikoApp.banners',
+    'KliikoApp.mailTemplate'
   ];
 
   angular
@@ -44,15 +45,23 @@
 
   }
 
-  appRun.$inject = ['$stateParams', 'dbg', '$rootScope', '$state', 'globalSettings'];
-  function appRun($stateParams, dbg, $rootScope, $state, globalSettings) {
+  appRun.$inject = ['$stateParams', 'dbg', '$rootScope', '$state', 'globalSettings', 'ngProgressFactory'];
+  function appRun($stateParams, dbg, $rootScope, $state, globalSettings, ngProgressFactory) {
     dbg.log('#appRun started ');
+    var routerProgressbar;
 
     String.prototype.capitalize = function () {
       return this.charAt(0).toUpperCase() + this.slice(1);
     };
 
     $rootScope.appGlobals = {};
+
+    // show and hide progress bar on state change
+    $rootScope.$on('$stateChangeStart',  function(){
+      routerProgressbar = ngProgressFactory.createInstance();
+      routerProgressbar.start();
+    });
+    $rootScope.$on('$stateChangeSuccess',function(){  routerProgressbar.complete();  });
 
   }
 

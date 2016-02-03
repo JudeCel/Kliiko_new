@@ -26,7 +26,6 @@ const gallery = {
 };
 
 function saveResourceToDisk(params) {
-
   let err = joi.validate(params, {
     file: joi.object().required(),
     resCb: joi.func().required(),
@@ -46,7 +45,6 @@ function saveResourceToDisk(params) {
   let filename = json.filename;
   let path = params.file.path;
   let fileFormat = getFileType(params.file.mimetype);
-        
   fs.readFile(path, function (err) {
     if (err) {
     } else {
@@ -56,7 +54,6 @@ function saveResourceToDisk(params) {
       afterwards, we'll look at the image to see it's dimensions and so on...
       */
       if (params.width && params.height) {
-
         im.identify(path, function(err, features) {
           if (err)
             if(err.arguments!=null){
@@ -94,7 +91,6 @@ function saveResourceToDisk(params) {
               params.width = features.width;
               params.height = features.height;
             }
-
             resizeToAllSizes(params, gallery, filename, fileFormat, features);
           }
         });

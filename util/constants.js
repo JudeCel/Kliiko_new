@@ -15,7 +15,7 @@ module.exports = {
     'state',
     'status',
     'country',
-    'postcode',
+    'postCode',
     'companyName',
     'landlineNumber',
     'mobile',
@@ -26,7 +26,38 @@ module.exports = {
     'email'
 
   ],
+contactListDefaultFields: [
+    "firstName", "lastName", "gender", "email", "city",
+    "state", "country", "postCode", "companyName",
+     "landlineNumber", "mobile"
+   ],
+  originalMailTemplateFields: [
+    'id',
+    'name',
+    'subject',
+    'content',
+    'systemMessage'
+  ],
+  mailTemplateFields: [
+    'id',
+    'name',
+    'subject',
+    'content',
+    'MailTemplateBaseId',
+    'UserId',
+    'systemMessage'
+  ],
+  mailTemplateFieldsForList: [
+    'id',
+    'name',
+    'MailTemplateBaseId',
+    'UserId',
+    'systemMessage'
+  ],
+
   promotionCodeTypes: ['percentage', 'value'],
+  accountNameRegExp: ["^[a-zA-Z0-9]+$",'i'],
+  mobileRegExp: ["^[0-9]+$",'i'],
   galleryUploadTypes: ['image', 'brandLogo', 'audio', 'youtubeLink', 'text'],
   dateFormat: 'MM-dd-yyyy'
 }

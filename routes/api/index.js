@@ -13,18 +13,20 @@ var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
 var survey = require('./survey');
 var chargebee = require('./chargebee');
+var mailTemplates = require('./mailTemplate');
 let topic = require('./topic');
 var gallery = require('./gallery');
+var brandColour = require('./brandColour');
 
-
+let contactList = require('./contactList');
+let contactListUser = require('./contactListUser');
 
 module.exports = router;
 
 // Main Routes
 router.get('/user', userRoutes.userGet);
-router.post('/user',userRoutes.userPost);
-router.put('/user',userRoutes.changePassword);
-
+router.post('/user', userRoutes.userPost);
+router.put('/user', userRoutes.changePassword);
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
@@ -44,6 +46,13 @@ router.get('/banners', banners.bannersGet);
 router.post('/banners', multipartyMiddleware, banners.bannersPost);
 router.post('/banners/:bannerType', multipartyMiddleware, banners.bannersBannerTypePost);
 router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelete);
+
+router.get('/mailTemplates', mailTemplates.allMailTemplatesGet);
+router.post('/mailTemplate', mailTemplates.mailTemplatePost);
+router.delete('/mailTemplate', mailTemplates.deleteMailTemplate);
+router.post('/mailTemplate/save', mailTemplates.saveMailTemplatePost);
+router.post('/mailTemplate/reset', mailTemplates.resetMailTemplatePost);
+router.post('/mailTemplate/preview', mailTemplates.previewMailTemplatePost);
 
 router.get('/chargebee/plans', multipartyMiddleware, chargebee.chargebeePlansGet);
 router.post('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeSubscriptionPost);
@@ -71,11 +80,30 @@ router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', survey.confirm);
 router.get('/survey/constants', survey.getConstants);
 
+// contact List
+router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
+router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
+router.post('/contactList/:id/import', policy.authorized(['accountManager', 'admin']), fileUploader(),contactList.import);
+router.put('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.update);
+router.delete('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.destroy);
+
+// contact List User
+router.post('/contactListsUser', policy.authorized(['accountManager', 'admin']), contactListUser.create);
+router.post('/contactListsUsersToRemove', policy.authorized(['accountManager', 'admin']), contactListUser.destroy);
+router.put('/contactListsUser/:id', policy.authorized(['accountManager', 'admin']), contactListUser.update);
+
+
+
 router.get('/topics', multipartyMiddleware, topic.get);
 router.post('/topic', multipartyMiddleware, topic.post);
 router.put('/topic/:id',multipartyMiddleware, topic.updateById);
 router.delete('/topic/:id', multipartyMiddleware, topic.deleteById);
 
+router.get('/brandColour', brandColour.get);
+router.delete('/brandColour', brandColour.remove);
+router.post('/brandColour', brandColour.create);
+router.put('/brandColour', brandColour.update);
+router.post('/brandColour/copy', brandColour.copy);
 
 // Common Rules
 router.use(function (req, res, next) {

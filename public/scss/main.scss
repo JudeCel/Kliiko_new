@@ -24,16 +24,18 @@
 @import "pages/_login.scss";
 @import "pages/_registration.scss";
 @import "pages/_landing.scss";
-@import "pages/_uploadBanner.scss";
 @import "pages/_survey.scss";
 @import "pages/_gallery.scss";
+@import "pages/_brandColours.scss";
 
 // ngApp
 @import "../js/ngApp/components/dashboard/dashboard";
 @import "../js/ngApp/components/dashboard-accountProfile-upgradePlan/upgrade-plan";
 @import "../js/ngApp/modules/messenger/messenger";
 @import "../js/ngApp/components/dashboard-accountProfile-bannerMessages/bannerMessages";
+@import "../js/ngApp/components/dashboard-resources-emailTemplates/mail-templates";
 @import "../js/ngApp/components/dashboard-resources-topics/topics";
+@import "../js/ngApp/components/dashboard-resources-contactLists/contact-lists";
 
 //SHARED
 .margin-top-2rem { margin-top: 2rem;}

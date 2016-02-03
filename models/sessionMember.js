@@ -6,6 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
     accountUserId: {type: DataTypes.INTEGER, allowNull: false,
       references: { model: Sequelize.User, key: 'id' }
     },
+    token: { type: DataTypes.STRING, allowNull: true, unique: true },
     username: { type: DataTypes.STRING, allowNull: false },
     colour: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 6710886 },
     online: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
@@ -15,6 +16,7 @@ module.exports = (Sequelize, DataTypes) => {
       values: ["facilitator", "observer", "participant"]
   }
   },{
+    indexes: [ { fields: ['token'] } ],
     timestamps: true,
     paranoid: true,
     classMethods: {

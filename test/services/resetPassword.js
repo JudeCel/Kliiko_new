@@ -10,7 +10,7 @@ describe('Reset Password', function() {
 
   var testToken = '123456';
 
-  before(function(done) {
+  beforeEach(function(done) {
     var attrs = {
       accountName: "Lilo",
       firstName: "Lilu",
@@ -29,7 +29,7 @@ describe('Reset Password', function() {
     });
   });
 
-  after(function(done) {
+  afterEach(function(done) {
     models.sequelize.sync({ force: true }).then(() => {
       done();
     });
