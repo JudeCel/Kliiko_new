@@ -13,6 +13,9 @@
   font-size: 1em;
   margin: 0px !important;
 }
+.label-size {
+  font-size: 0.8em;
+}
 
 .brandColours {
   font-size: 70%;
@@ -29,6 +32,7 @@
     padding: 1%;
     margin: auto;
     font-size: 160%;
+    position: inherit;
   }
 
   .header {
@@ -36,9 +40,9 @@
     background-color: white;
 
     .headerButtons {
-      font-size: 2em;
+      font-size: 1.5em;
       color: white;
-      margin: 3% 2%;
+      margin: 5% 1%;
       padding: 2%;
     }
     label {
@@ -54,7 +58,7 @@
       .form-control:disabled {
         background-color: inherit;
         cursor: pointer;
-        height: 20px;
+        height: 2.5em;
         border: 1px solid #ccc;
       }
       .input-group-addon {
@@ -77,16 +81,12 @@
     background-color: inherit;
   }
 
-  .color-input-container {
-    font-size: 0.8em;
-  }
-
   p {
     padding: 4%;
   }
   p.lime-background {
     background-color: #CBEDC0;
-    margin-bottom: -5%;
+    margin: 0;
   }
   .containerInnerBox {
     margin: 10px auto 10%;

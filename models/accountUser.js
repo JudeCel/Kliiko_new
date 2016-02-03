@@ -18,8 +18,24 @@ module.exports = (Sequelize, DataTypes) => {
     country: {type: DataTypes.STRING, allowNull: true },
     postCode: {type: DataTypes.STRING, allowNull: true },
     companyName: {type: DataTypes.STRING, allowNull: true },
-    landlineNumber: {type: DataTypes.STRING, allowNull: true },
-    mobile: {type: DataTypes.STRING, allowNull: true },
+    landlineNumber: {type: DataTypes.STRING, allowNull: true,
+      validate: {
+        validateNumber: function() {
+          if(this.landlineNumber && !constants.phoneRegExp.test(this.landlineNumber)) {
+            throw new Error('Invalid phone number format');
+          }
+        }
+      }
+    },
+    mobile: {type: DataTypes.STRING, allowNull: true,
+      validate: {
+        validateNumber: function() {
+          if(this.mobile && !constants.phoneRegExp.test(this.mobile)) {
+            throw new Error('Invalid phone number format');
+          }
+        }
+      }
+    },
     comment: { type: DataTypes.TEXT, allowNull: true },
     email: {type: DataTypes.STRING, allowNull: false,
       validate: {

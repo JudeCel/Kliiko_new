@@ -4,7 +4,7 @@ module.exports = (Sequelize, DataTypes) => {
   var SessionMember = Sequelize.define('SessionMember', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     accountUserId: {type: DataTypes.INTEGER, allowNull: false,
-      references: { model: Sequelize.User, key: 'id' }
+      references: { model: Sequelize.AccountUser, key: 'id' }
     },
     token: { type: DataTypes.STRING, allowNull: true, unique: true },
     username: { type: DataTypes.STRING, allowNull: false },
