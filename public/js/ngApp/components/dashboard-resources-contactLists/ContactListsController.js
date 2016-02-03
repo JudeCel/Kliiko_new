@@ -62,8 +62,7 @@
     var onDraggableEvent = function (evt, data) {
       console.log("end", "onDraggableEvent", data);
       if (isValidDropElement(data.event.toElement)) {
-       console.log("YAY"); 
-       console.log($(data.event.toElement).scope().parent );
+       console.log("model of drop area", $(data.event.target) );
       }
     }
     

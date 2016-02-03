@@ -1,0 +1,449 @@
+<!----------- MODALS ---------------------->
+<section>
+    <!-- add contact manually -->
+    <div id="contactList-addContactManual" class="modal fade"  role="dialog">
+        <div class="modal-dialog contactDetailsModal" style="width: 800px">
+            <div class="modal-content border-green border-radius-none">
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss="modal">&times;</button>
+                    <h2 class='modal-title text-center'>{{clc.contactModalTitle}}</h2>
+                </div>
+                <div class='modal-body text-gray-medium'>
+                    <form class='form-horizontal' role='form'>
+                        <div class='col-md-6'>
+                            <div class='form-group'>
+                                <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First name<span class='text-red-dark'>*</span></label>
+                                <div class='col-md-8'>
+                                    <span class='has-error text-red-dark'>{{ clc.modalErrors.firstName }}</span>
+                                    <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='clc.newContact.firstName'>
+                                </div>
+                            </div>
+
+                            <div class='form-group'>
+                                <label class='control-label col-md-4 text-no-bold text-login-page' for='lastName'>Last name<span class='text-red-dark'>*</span></label>
+                                <div class='col-md-8'>
+                                    <span class='has-error text-red-dark'>{{ clc.modalErrors.lastName }}</span>
+                                    <input type='text' class='form-control' id='lastName' placeholder='Last name' ng-model='clc.newContact.lastName'>
+                                </div>
+                            </div>
+
+                            <div class='form-group'>
+                                <label class='control-label col-md-4 text-no-bold text-login-page' for='email'>Email<span class='text-red-dark'>*</span></label>
+                                <div class='col-md-8'>
+                                    <span class='has-error text-red-dark'>{{ clc.modalErrors.email }}</span>
+                                    <input type='email' class='form-control' id='email' placeholder='Email' ng-model='clc.newContact.email'>
+                                </div>
+                            </div>
+
+                            <div class='form-group'>
+                                <label class='control-label col-md-4 text-no-bold text-login-page'>Gender<span class='text-red-dark'>*</span></label>
+                                <div class='col-md-8'>
+                                    <div class='has-error text-red-dark'>{{ clc.modalErrors.gender }}</div>
+                                    <label class='radio-inline'><input type='radio' value='male' name='radio_gender' ng-model='clc.newContact.gender'>Male</label>
+                                    <label class='radio-inline'><input type='radio' value='female' name='radio_gender' ng-model='clc.newContact.gender'>Female</label>
+                                </div>
+                            </div>
+
+                            <div class='form-group'>
+                                <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
+                                <div class='col-md-8'>
+                                    <span class='has-error text-red-dark'>{{ clc.modalErrors.mobile }}</span>
+                                    <input type='text' class='form-control' id='mobile' placeholder='Mobile number' ng-model='clc.newContact.mobile'>
+                                </div>
+                            </div>
+
+                            <div class='form-group'>
+                                <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
+                                <div class='col-md-8'>
+                                    <span class='has-error text-red-dark'>{{ clc.modalErrors.landlineNumber }}</span>
+                                    <input type='text' class='form-control' id='landlineNumber' placeholder='Landline number' ng-model='clc.newContact.landlineNumber'>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class='col-md-6'>
+                            <div class='form-group'>
+                                <label class='control-label col-md-4 text-no-bold text-login-page' for='postalAddress'>Postal address</label>
+                                <div class='col-md-8'>
+                                    <span class='has-error text-red-dark'>{{ clc.modalErrors.postalAddress }}</span>
+                                    <input type='text' class='form-control' id='postalAddress' placeholder='Postal address' ng-model='clc.newContact.postalAddress'>
+                                </div>
+                            </div>
+
+                            <div class='form-group'>
+                                <label class='control-label col-md-4 text-no-bold text-login-page' for='city'>City</label>
+                                <div class='col-md-8'>
+                                    <span class='has-error text-red-dark'>{{ clc.modalErrors.city }}</span>
+                                    <input type='text' class='form-control' id='city' placeholder='City' ng-model='clc.newContact.city'>
+                                </div>
+                            </div>
+
+                            <div class='form-group'>
+                                <label class='control-label col-md-4 text-no-bold text-login-page' for='state'>State</label>
+                                <div class='col-md-8'>
+                                    <span class='has-error text-red-dark'>{{ clc.modalErrors.state }}</span>
+                                    <input type='text' class='form-control' id='state' placeholder='State' ng-model='clc.newContact.state'>
+                                </div>
+                            </div>
+
+                            <div class='form-group'>
+                                <label class='control-label col-md-4 text-no-bold text-login-page' for='postCode'>Postcode</label>
+                                <div class='col-md-8'>
+                                    <span class='has-error text-red-dark'>{{ clc.modalErrors.postCode }}</span>
+                                    <input type='text' class='form-control' id='postCode' placeholder='Postcode' ng-model='clc.newContact.postCode'>
+                                </div>
+                            </div>
+
+                            <div class='form-group'>
+                                <label class='control-label col-md-4 text-no-bold text-login-page' for='country'>Country</label>
+                                <div class='col-md-8'>
+                                    <span class='has-error text-red-dark'>{{ clc.modalErrors.country }}</span>
+                                    <input type='text' class='form-control' id='country' placeholder='Country' ng-model='clc.newContact.country'>
+                                </div>
+                            </div>
+
+                            <div class='form-group'>
+                                <label class='control-label col-md-4 text-no-bold text-login-page' for='companyName'>Company name</label>
+                                <div class='col-md-8'>
+                                    <span class='has-error text-red-dark'>{{ clc.modalErrors.companyName }}</span>
+                                    <input type='text' class='form-control' id='companyName' placeholder='Company name' ng-model='clc.newContact.companyName'>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+
+                        <section ng-hide="!clc.lists.activeList.customFields.length">
+                            <div class="col-md-12 delimiter"></div>
+                            <div class='col-md-6'>
+
+                                <div class='form-group' ng-repeat="cf  in clc.lists.activeList.customFields track by $index" ng-show="$index < ( clc.lists.activeList.customFields.length / 2)">
+                                    <label class='control-label col-md-4 text-no-bold text-login-page' for='cf-{{ cf }}'>{{cf}}</label>
+                                    <div class='col-md-8'>
+                                        <span class='has-error text-red-dark'>{{ clc.modalErrors.country }}</span>
+                                        <input type='text' class='form-control' id='cf-{{ cf }}' placeholder='{{cf}}' ng-model='clc.newContact.CustomFieldsObject[cf]'>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class='col-md-6'>
+                                <div class='form-group' ng-repeat="cf in clc.lists.activeList.customFields track by $index" ng-show="$index >= ( clc.lists.activeList.customFields.length / 2)">
+                                    <label class='control-label col-md-4 text-no-bold text-login-page' for='cf-{{ cf }}'>{{cf}}</label>
+                                    <div class='col-md-8'>
+                                        <span class='has-error text-red-dark'>{{ clc.modalErrors.country }}</span>
+                                        <input type='text' class='form-control' id='cf-{{ cf }}' placeholder='{{cf}}' ng-model='clc.newContact.CustomFieldsObject[cf]'>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </section>
+
+
+                        <div class='row'>
+                            <div class='col-md-12'>
+
+                                <div class='btn-standart btn-red pull-left' data-dismiss="modal">Cancel</div>
+                                <div ng-hide="clc.updateExistingUser" ng-click='clc.createContact()' class='btn-standart btn-green pull-right' >Create</div>
+                                <div ng-show="clc.updateExistingUser" ng-click='clc.updateContact()' class='btn-standart btn-green pull-right'>Update</div>
+
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- add new list-->
+    <div id="contactList-addNewListModal" class="modal fade"  role="dialog">
+        <div class="modal-dialog contactDetailsModal" style="width: 800px">
+            <div class="modal-content border-green border-radius-none">
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss="modal">&times;</button>
+                    <h2 class='modal-title text-center'>{{clc.listModalTitle}}</h2>
+                </div>
+
+
+                <div class='modal-body text-gray-medium'>
+                    <uib-tabset justified="true">
+                        <uib-tab heading="Contact List Name" active="clc.modalTab1">
+                            <form ng-submit="clc.submitNewList()">
+                                <div class="row text-center">
+                                    <input id="new-list-name-input" ng-model="clc.newList.name" type="text">
+                                    <div id="new-list-name-help-text">
+                                        <p>You can define up to 16 of your own extra fields to your new List, for a more in-depth profile of your Contacts</p>
+                                        <p>Click on Add Custom Fields to name your fields, which you can also modify at any time later on.</p>
+                                    </div>
+                                </div>
+                                <div class='row'>
+                                    <div class='col-md-12'>
+
+                                        <div class='btn-standart btn-red pull-left modals-btn' data-dismiss="modal">Cancel</div>
+                                        <div class='btn-standart btn-green pull-right modals-btn' ng-show="!clc.listIdToEdit" ng-click="clc.submitNewList()">Add</div>
+                                        <div class='btn-standart btn-green pull-right modals-btn' ng-show="clc.listIdToEdit"  ng-click="clc.updateList()" ng-class="{disabled:clc.newListErrorMessage}">Update</div>
+
+                                    </div>
+                                </div>
+                            </form>
+
+                        </uib-tab>
+                        <uib-tab heading="Custom Fields" active="clc.modalTab2">
+                            <form id="new-list-custom-fields" ng-submit="clc.submitNewList()">
+                                <div  class="row">
+                                    <br>
+                                    <div class="error-message text-center col-md-12" ng-show="clc.newListErrorMessage"><code>{{clc.newListErrorMessage}} </code></div>
+                                    <br><br>
+                                    <div class="col-md-6 ">
+                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField1" placeholder="Custom Field Name 1" ng-change="clc.checkCustomFields(1)" ng-class="{error: clc.newListError[1]}">
+                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField2" placeholder="Custom Field Name 2" ng-change="clc.checkCustomFields(2)" ng-class="{error: clc.newListError[2]}">
+                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField3" placeholder="Custom Field Name 3" ng-change="clc.checkCustomFields(3)" ng-class="{error: clc.newListError[3]}">
+                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField4" placeholder="Custom Field Name 4" ng-change="clc.checkCustomFields(4)" ng-class="{error: clc.newListError[4]}">
+                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField5" placeholder="Custom Field Name 5" ng-change="clc.checkCustomFields(5)" ng-class="{error: clc.newListError[5]}">
+                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField6" placeholder="Custom Field Name 6" ng-change="clc.checkCustomFields(6)" ng-class="{error: clc.newListError[6]}">
+                                    </div>
+
+                                    <div class="col-md-6 ">
+                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField7" placeholder="Custom Field Name 7" ng-change="clc.checkCustomFields(7)" ng-class="{error: clc.newListError[7]}">
+                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField8" placeholder="Custom Field Name 8" ng-change="clc.checkCustomFields(8)" ng-class="{error: clc.newListError[8]}">
+                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField9" placeholder="Custom Field Name 9" ng-change="clc.checkCustomFields(9)" ng-class="{error: clc.newListError[9]}">
+                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField10" placeholder="Custom Field Name 10" ng-change="clc.checkCustomFields(10)" ng-class="{error: clc.newListError[10]}">
+                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField11" placeholder="Custom Field Name 11" ng-change="clc.checkCustomFields(11)" ng-class="{error: clc.newListError[11]}">
+                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField12" placeholder="Custom Field Name 12" ng-change="clc.checkCustomFields(12)" ng-class="{error: clc.newListError[12]}">
+
+                                    </div>
+                                </div>
+
+
+
+                                <div class='row'>
+                                    <div class='col-md-12'>
+
+                                        <div class='btn-standart btn-red pull-left modals-btn' data-dismiss="modal">Cancel</div>
+                                        <div class='btn-standart btn-green pull-right modals-btn' ng-show="!clc.listIdToEdit" ng-click="clc.submitNewList()">Add</div>
+                                        <div class='btn-standart btn-green pull-right modals-btn' ng-show="clc.listIdToEdit"  ng-click="clc.updateList()" ng-class="{disabled:clc.newListErrorMessage}">Update</div>
+
+                                    </div>
+                                </div>
+                            </form>
+                        </uib-tab>
+                    </uib-tabset>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- drag and drop fields-->
+    <div id="contactList-addNewListFieldsModal" class="modal fade" role="dialog">
+        <div class="modal-dialog contactDetailsModal" style="width: 800px">
+            <div class="modal-content border-green border-radius-none">
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss="modal">&times;</button>
+                    <h2 class='modal-title text-center'>{{clc.listModalTitle}}</h2>
+                </div>
+
+                <div class='modal-body text-gray-medium'>
+                    <form id="new-list-custom-fields-drag-drop" ng-submit="clc.submitNewList()">
+                        <div class="row r">
+                            <!-- drag and drop Start-->
+
+                            <h2>Map fields from EXCEL file</h2>
+
+                            <div id="contactList-fieldColumnLeft" class="col-md-6" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                <h2>Excel fields</h2>
+                                <!-- <div draggable="true" ondragstart="drag(event)" id="drag1" class="contactList-drop-item">Some field 1<img src="/icons/ic_move.png" class="pull-right"></div>
+                                 <div draggable="true" ondragstart="drag(event)" id="drag2" class="contactList-drop-item">Some field 2<img src="/icons/ic_move.png" class="pull-right"></div>
+                                 <div draggable="true" ondragstart="drag(event)" id="drag3" class="contactList-drop-item">Some field 3<img src="/icons/ic_move.png" class="pull-right"></div>
+                                 <div draggable="true" ondragstart="drag(event)" id="drag4" class="contactList-drop-item">Some field 4<img src="/icons/ic_move.png" class="pull-right"></div>
+                                 -->
+                                <div ng-drag="true" ng-drag-data="{t:1}" ng-drag-success="clc.onDragComplete($data,$event)" class="contactList-drop-item">Some field 1<img src="/icons/ic_move.png" class="pull-right"></div>
+                                <div ng-drag="true" ng-drag-data="{t:2}" ng-drag-success="clc.onDragComplete($data,$event)" class="contactList-drop-item">Some field 2<img src="/icons/ic_move.png" class="pull-right"></div>
+                                <div ng-drag="true" ng-drag-data="{t:3}" ng-drag-success="clc.onDragComplete($data,$event)" class="contactList-drop-item">Some field 3<img src="/icons/ic_move.png" class="pull-right"></div>
+                                <div ng-drag="true" ng-drag-data="{t:4}" ng-drag-success="clc.onDragComplete($data,$event)" class="contactList-drop-item">Some field 4<img src="/icons/ic_move.png" class="pull-right"></div>
+
+                            </div>
+                            <div id="contactList-fieldColumnRight" class="col-md-6" ondrop="drop(event)">
+                                <h2>Contact List</h2>
+                                <table>
+                                    <!--     <tr> <td>First Name*</td> <td class="contactList-dropPlaceholderCell"> <div class="contactList-dropPlaceholder" ng-drop="true" ng-drop-success="clc.onDropComplete($data,$event)"/> </div></tr>
+                                         <tr> <td>Last Name*</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                                         <tr> <td>Gender*</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                                         <tr> <td>Email*</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                                         <tr> <td>Department</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                                         <tr> <td>Username</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/> </div> </tr>
+                                         <tr> <td>Password</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                                         <tr> <td>Address</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                                         <tr> <td>Zip Code</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                                         <tr> <td>Home Phone</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                                         <tr> <td>Manager</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                                         <tr> <td>City</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                                         -->
+                                    <tr> <td>City</td> <td class="contactList-dropPlaceholderCell"> <div class="contactList-dropPlaceholder" ng-drop="true" ng-drop-success="clc.onDropComplete($data,$event)"/>  </div></tr>
+                            </table>
+                        </div>
+
+                        <!-- drag and drop End -->
+                </div>
+
+
+
+                <div class='row'>
+                    <div class='col-md-12'>
+
+                        <div class='btn-standart btn-red pull-left modals-btn' data-dismiss="modal">Cancel</div>
+                        <div class='btn-standart btn-green pull-right modals-btn' ng-show="!clc.listIdToEdit" ng-click="clc.submitNewList()">Add</div>
+                        <div class='btn-standart btn-green pull-right modals-btn' ng-show="clc.listIdToEdit" ng-click="clc.updateList()" ng-class="{disabled:clc.newListErrorMessage}">Update</div>
+
+                    </div>
+                </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    </div>
+
+    <!-- Manage columns view -->
+    <div id="contactList-manageColumns" class="modal fade"  role="dialog">
+        <div class="modal-dialog contactDetailsModal" style="width: 800px">
+            <div class="modal-content border-green border-radius-none">
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss="modal">&times;</button>
+                    <h2 class='modal-title text-center'>Manage Columns in View</h2>
+                </div>
+                <div class='modal-body text-gray-medium'>
+                    <form class='form-horizontal' role='form'>
+
+                        <!------------------------------------------>
+
+                        <uib-accordion close-others="false">
+                            <uib-accordion-group is-open="clc.modContentBlock.generalDetails">
+                                <uib-accordion-heading>
+                                    <div class="panel-label">
+                                        General Details<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': clc.modContentBlock.generalDetails, 'glyphicon-chevron-right': !clc.modContentBlock.generalDetails}"></i>
+                                    </div>
+                                </uib-accordion-heading>
+                    <span class="row">
+                      <span class="col-md-3" ng-repeat="column in clc.lists.activeList.availableTables() track by $index">
+                        <div class="check fields-to-show">
+                            <input id="dashboard-contact-lists-fields-{{ $index }}" ng-click="clc.lists.activeList.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.selectedTables[column]" type="checkbox" >
+                            <label for="dashboard-contact-lists-fields-{{ $index }}" ></label>{{ column }}
+                        </div>
+
+                      </span>
+                    </span>
+
+                            </uib-accordion-group>
+
+
+                            <uib-accordion-group is-open="clc.modContentBlock.history">
+                                <uib-accordion-heading>
+                                    <div class="panel-label">
+                                        Participant Invitation History <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': clc.modContentBlock.history, 'glyphicon-chevron-right': !clc.modContentBlock.history}"></i>
+                                    </div>
+                                </uib-accordion-heading>
+
+                    <span class="row">
+                      <span class="col-md-3" ng-repeat="column in clc.lists.activeList.participantsFields">
+                        <div class="check fields-to-show">
+                            <input id="dashboard-contact-lists-participants-{{ $index }}" ng-click="clc.lists.activeList.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.selectedTables[column]" type="checkbox" >
+                            <label for="dashboard-contact-lists-participants-{{ $index }}" ></label>{{ column }}
+                        </div>
+
+                      </span>
+                    </span>
+
+                            </uib-accordion-group>
+                        </uib-accordion>
+
+                        <!------------------------------------------>
+
+                        <div class='row'>
+                            <div class='col-md-12'>
+                                <div class='btn-standart btn-green pull-right' data-dismiss="modal">Done</div>
+
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+      <!-- drag and drop fields-->
+    <div id="contactList-addNewListFieldsModal" class="modal fade" role="dialog">
+      <div class="modal-dialog contactDetailsModal" style="width: 800px">
+        <div class="modal-content border-green border-radius-none">
+          <div class='modal-header'>
+            <button type='button' class='close' data-dismiss="modal">&times;</button>
+            <h2 class='modal-title text-center'>{{clc.listModalTitle}}</h2>
+          </div>
+
+          <div class='modal-body text-gray-medium'>
+              <form id="new-list-custom-fields-drag-drop" ng-submit="clc.submitNewList()">
+                <div class="row r">
+                  <!-- drag and drop Start-->
+
+                  <h2>Map fields from EXCEL file</h2>
+
+                  <div id="contactList-fieldColumnLeft" class="col-md-6" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <h2>Excel fields</h2>
+                   <!-- <div draggable="true" ondragstart="drag(event)" id="drag1" class="contactList-drop-item">Some field 1<img src="/icons/ic_move.png" class="pull-right"></div>
+                    <div draggable="true" ondragstart="drag(event)" id="drag2" class="contactList-drop-item">Some field 2<img src="/icons/ic_move.png" class="pull-right"></div>
+                    <div draggable="true" ondragstart="drag(event)" id="drag3" class="contactList-drop-item">Some field 3<img src="/icons/ic_move.png" class="pull-right"></div>
+                    <div draggable="true" ondragstart="drag(event)" id="drag4" class="contactList-drop-item">Some field 4<img src="/icons/ic_move.png" class="pull-right"></div>
+                    -->
+                    <div ng-drag="true" ng-drag-data="{name:'test'}" data-allow-transform="true" class="contactList-drop-item">Some field 1<img src="/icons/ic_move.png" class="pull-right"></div>
+                    <div ng-drag="true" ng-drag-data="{name:'test'}" data-allow-transform="true" class="contactList-drop-item">Some field 2<img src="/icons/ic_move.png" class="pull-right"></div>
+                    <div ng-drag="true" ng-drag-data="{name:'test'}" data-allow-transform="true" class="contactList-drop-item">Some field 3<img src="/icons/ic_move.png" class="pull-right"></div>
+                    <div ng-drag="true" ng-drag-data="{name:'test'}" data-allow-transform="true" class="contactList-drop-item">Some field 4<img src="/icons/ic_move.png" class="pull-right"></div>
+                   
+                  </div>
+                  <div id="contactList-fieldColumnRight" class="col-md-6">
+                    <h2>Contact List</h2>
+                    <table>
+                 <!--     <tr> <td>First Name*</td> <td class="contactList-dropPlaceholderCell"> <div class="contactList-dropPlaceholder" ng-drop="true" ng-drop-success="clc.onDropComplete($data,$event)"/> </div></tr>
+                      <tr> <td>Last Name*</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                      <tr> <td>Gender*</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                      <tr> <td>Email*</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                      <tr> <td>Department</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                      <tr> <td>Username</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/> </div> </tr>
+                      <tr> <td>Password</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                      <tr> <td>Address</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                      <tr> <td>Zip Code</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                      <tr> <td>Home Phone</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                      <tr> <td>Manager</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                      <tr> <td>City</td> <td> <div class="contactList-dropPlaceholder" ondragover="clc.allowDrop(event)"/>  </div></tr>
+                      -->
+                      <tr> <td>City</td> <td class="contactList-dropPlaceholderCell"> <div class="contactList-dropPlaceholder" ng-model="clc.City" ng-drop="true" ng-drop-success="clc.onDropComplete($data,$event)"> </div></tr>
+                    </table>
+                  </div>
+                  
+                  <!-- drag and drop End -->
+                </div>
+
+
+
+                <div class='row'>
+                  <div class='col-md-12'>
+
+                    <div class='btn-standart btn-red pull-left modals-btn' data-dismiss="modal">Cancel</div>
+                    <div class='btn-standart btn-green pull-right modals-btn' ng-show="!clc.listIdToEdit" ng-click="clc.submitNewList()">Add</div>
+                    <div class='btn-standart btn-green pull-right modals-btn' ng-show="clc.listIdToEdit" ng-click="clc.updateList()" ng-class="{disabled:clc.newListErrorMessage}">Update</div>
+
+                  </div>
+                </div>
+              </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+</section>
