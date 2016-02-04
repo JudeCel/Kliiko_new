@@ -87,9 +87,17 @@ function findAllSurveys(account) {
       }]
     }]
   }).then(function(surveys) {
-    transformSurveys(surveys).then(function(transformedSurveys) {
-      deferred.resolve(simpleParams(transformedSurveys));
-    })
+    surveys.forEach(function(survey, index, array) {
+      if(survey.Resource !== null){
+        survey.Resource.JSON = JSON.parse(decodeURI(survey.Resource.JSON));
+      }
+      survey.SurveyQuestions.forEach(function(question, index, array) {
+        if(question.Resource !== null){
+          question.Resource.JSON = JSON.parse(decodeURI(question.Resource.JSON));
+        }
+      });
+    });
+    deferred.resolve(simpleParams(surveys));
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
   }).catch(function(error) {
@@ -98,24 +106,6 @@ function findAllSurveys(account) {
 
   return deferred.promise;
 };
-
-function transformSurveys(surveys) {
-  let deferred = q.defer();
-
-  surveys.forEach(function(survey, index, array) {
-    if(survey.Resource){
-      survey.Resource.JSON = JSON.parse(decodeURI(survey.Resource.JSON));
-    }
-    survey.SurveyQuestions.forEach(function(question, index, array) {
-      if(question.Resource){
-        question.Resource.JSON = JSON.parse(decodeURI(question.Resource.JSON));
-      }
-    });
-  });
-  deferred.resolve(simpleParams(surveys));
-
-  return deferred.promise;
-}
 
 function findSurvey(params) {
   let deferred = q.defer();
