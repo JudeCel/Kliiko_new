@@ -20,7 +20,7 @@
       </div>
       <label class='col-xs-2 control-label' for='brandLogo'>Survey Logo</label>
       <div class='form-group'>
-        <img ng-src="/chat_room/uploads/{{sc.survey.Resource.JSON.panelThumb}}" class="img-responsive" style="display: inline-block;" ng-if="sc.survey.Resource !== null"/>
+        <img ng-src="{{ sc.getResourceThumbUrl(sc.survey.Resource) }}" class="img-responsive" style="display: inline-block;" ng-if="sc.survey.Resource !== null"/>
         <div ng-if="sc.survey.Resource !== null" style="display: inline-block;">
           <button type='submit' ng-disabled="idsForAction == 0"
                   class='btn btn-addNewElement btn-green no-margin gallery-btn-width'
@@ -68,7 +68,7 @@
                           <div class="dummy"></div>
 
                           <div class="img-container">
-                            <img ng-src="/chat_room/uploads/{{resource.JSON.panelThumb}}" class="center-block vertical-align img-responsive"/>
+                            <img ng-src="{{ sc.getResourceThumbUrl(question.Resource) }}" class="center-block vertical-align img-responsive"/>
                           </div>
                         </div>
 

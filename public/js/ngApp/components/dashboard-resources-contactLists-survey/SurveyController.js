@@ -2,10 +2,10 @@
   'use strict';
 
   angular.module('KliikoApp').controller('SurveyController', SurveyController);
-  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', 'ngProgressFactory', 'domServices',
+  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', 'domServices',
     'GalleryServices', '$sce', '$anchorScroll', '$location', '$window', 'ngDraggable'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, ngProgressFactory, domServices, GalleryServices, $sce, $anchorScroll,
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, domServices, GalleryServices, $sce, $anchorScroll,
     $location, $window, ngDraggable) {
     dbg.log2('#SurveyController started');
 
@@ -68,8 +68,8 @@
     vm.removeResource = removeResource;
     vm.saveResource = saveResource;
     vm.renderHtml = renderHtml;
-    vm.getResourceUrl = getResourceUrl;
-    vm.getFileType = getFileType;
+    vm.getResourceNameUrl = getResourceNameUrl;
+    vm.getResourceThumbUrl = getResourceThumbUrl;
 
     function onDropComplete(index, data, evt) {
       var answer = data.answer;
@@ -99,11 +99,7 @@
     };
 
     function init() {
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
-
       surveyServices.getAllSurveys().then(function(res) {
-        progressbar.complete();
         vm.surveys = res.data;
         vm.dateFormat = res.dateFormat;
         dbg.log2('#SurveyController > getAllSurveys > res ', res.data);
@@ -111,10 +107,7 @@
     };
 
     function openBrandLogosModal(){
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
       brandLogosFromGallery();
-      progressbar.complete();
       domServices.modal('getGallery');
     }
 
@@ -131,14 +124,9 @@
     }
 
     function removeResource(id, question, survey){
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
-
       GalleryServices.deleteResources({resource_id: id}).then(function(res) {
         if(res.error){
           messenger.error(res.error);
-          progressbar.complete();
-
         }else{
           if(survey !== null){
             vm.surveySelecctOptions.show = true;
@@ -151,7 +139,6 @@
             question.resourceId = null;
           }
           clearform();
-          progressbar.complete();
         }
       });
     }
@@ -180,9 +167,6 @@
     }
 
     function uploadFile(resourceType) {
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
-
       var resourceParams = {
         title: vm.title,
         type: resourceType,
@@ -218,7 +202,6 @@
               }
 
               clearform();
-              progressbar.complete();
               vm.disableUpload = false;
             }
           })
@@ -228,9 +211,6 @@
     }
 
     function saveYoutubeUrl() {
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
-
       vm.question.resourceId = null;
       vm.question.Resource = null;
 
@@ -242,22 +222,20 @@
       GalleryServices.saveYoutubeUrl(resourceParams).then(function(res) {
         if(res.error){
           messenger.error(res.error);
-          progressbar.complete();
         }else{
           clearform();
           vm.question.Resource = res;
           vm.question.resourceId = res.id;
-          progressbar.complete();
         }
       })
     }
 
-    function getResourceUrl(resource){
+    function getResourceNameUrl(resource){
       return "/chat_room/uploads/" + resource.JSON.name;
     }
 
-    function getFileType(resource){
-      return resource.JSON.type + "/" + resource.JSON.format;
+    function getResourceThumbUrl(resource){
+      return "/chat_room/uploads/" + resource.JSON.panelThumb;
     }
 
     function renderHtml(resource) {
@@ -266,12 +244,8 @@
 
     function removeSurvey(survey) {
       angularConfirm('Are you sure you want to remove Survey?').then(function(response) {
-        var progressbar = ngProgressFactory.createInstance();
-        progressbar.start();
-
         surveyServices.removeSurvey({ id: survey.id }).then(function(res) {
           dbg.log2('#SurveyController > removeSurvey > res ', res);
-          progressbar.complete();
 
           if(res.error) {
             messenger.error(surveyServices.prepareError(res.error));
@@ -286,12 +260,8 @@
     };
 
     function changeStatus(survey) {
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
-
       surveyServices.changeStatus({ id: survey.id, closed: !survey.closed }).then(function(res) {
         dbg.log2('#SurveyController > changeStatus > res ', res);
-        progressbar.complete();
 
         if(res.error) {
           messenger.error(surveyServices.prepareError(res.error));
@@ -306,8 +276,6 @@
     function finishManage() {
       vm.submitedForm = true;
       vm.submitingForm = true;
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
 
       $timeout(function() {
         if(vm.manageForm.$valid) {
@@ -328,7 +296,7 @@
         else {
           vm.submitError = vm.constantErrors.default;
           $timeout(function() {
-            var form = angular.element(document.getElementById('manageForm'));
+            var form = angular.element('#manageForm');
             var elem = form.find('.ng-invalid:first');
             var panel = elem.parents('.panel:first');
 
@@ -340,7 +308,6 @@
           });
         }
 
-        progressbar.complete();
         vm.submitingForm = false;
       }, 1000);
     };
@@ -374,12 +341,8 @@
     };
 
     function copySurvey(survey) {
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
-
       surveyServices.copySurvey({ id: survey.id }).then(function(res) {
         dbg.log2('#SurveyController > copySurvey > res ', res);
-        progressbar.complete();
 
         if(res.error) {
           messenger.error(surveyServices.prepareError(res.error));
@@ -392,13 +355,9 @@
     };
 
     function confirmSurvey(survey) {
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
-
       var date = new Date();
       surveyServices.confirmSurvey({ id: survey.id, confirmedAt: date }).then(function(res) {
         dbg.log2('#SurveyController > confirmSurvey > res ', res);
-        progressbar.complete();
 
         if(res.error) {
           messenger.error(surveyServices.prepareError(res.error));
