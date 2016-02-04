@@ -8,11 +8,8 @@
 
     <label class='col-xs-2 control-label' for='questionName-{{object.order}}'>Name</label>
     <div class='col-xs-10 col-md-6'>
-      <div class='input-group'>
-        <input type='text' class='form-control' id='questionName-{{object.order}}' placeholder='Name' name='name'
-          ng-model='question.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='question.active'>
-        <span class='input-group-addon'>@</span>
-      </div>
+      <input type='text' class='form-control' id='questionName-{{object.order}}' placeholder='Name' name='name'
+        ng-model='question.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='question.active'>
     </div>
   </div>
 </div>

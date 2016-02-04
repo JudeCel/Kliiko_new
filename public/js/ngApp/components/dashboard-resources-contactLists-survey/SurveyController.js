@@ -3,9 +3,9 @@
 
   angular.module('KliikoApp').controller('SurveyController', SurveyController);
   SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', 'ngProgressFactory', 'domServices',
-    'GalleryServices', '$sce', '$anchorScroll', '$location', '$window'];
+    'GalleryServices', '$sce', '$anchorScroll', '$location', '$window', 'ngDraggable'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, ngProgressFactory, domServices, GalleryServices, $sce, $anchorScroll, $location, $window) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, ngProgressFactory, domServices, GalleryServices, $sce, $anchorScroll, $location, $window, ngDraggable) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
@@ -59,6 +59,7 @@
     vm.pickValidClass = surveyServices.pickValidClass;
     vm.changeQuestions = changeQuestions;
     vm.contactDetailDisabled = contactDetailDisabled;
+    vm.onDropComplete = onDropComplete;
 
     vm.openBrandLogosModal = openBrandLogosModal;
     vm.openQuestionModal = openQuestionModal;
@@ -72,10 +73,31 @@
     vm.answerSortOptions = {
       handle: '.list-handle',
       onUpdate: function(evt) {
+        angular.forEach(vm.survey.SurveyQuestions, function(sq) {
+          var answersArray = [];
+          angular.forEach(sq.answers, function(answer) {
+            if(answer) answersArray.push(answer);
+          });
+          sq.answers = answersArray;
+        });
+
         evt.models.forEach(function(val, index, array) {
-          val.order = index;
+          if(val) val.order = index;
         });
       }
+    }
+
+    function onDropComplete(index, data, evt) {
+      var answer = data.answer;
+      var question = vm.survey.SurveyQuestions[data.questionOrder].answers;
+      answer.order = index;
+
+      var otherObj = question[index];
+      var otherIndex = question.indexOf(answer);
+      otherObj.order = otherIndex;
+
+      question[index] = answer;
+      question[otherIndex] = otherObj;
     }
 
     initConstants();
@@ -477,6 +499,9 @@
     };
 
     function canChangeAnswers(value, question) {
+      if(vm.survey.confirmedAt)
+        return false;
+
       if(value == 'add') {
         return (question.answers.length < question.maxAnswers);
       }
@@ -486,6 +511,9 @@
     };
 
     function changeAnswers(value, question, index) {
+      if(vm.survey.confirmedAt)
+        return false;
+
       if(value == 'add') {
         question.answers.push({ order: question.answers.length });
       }
