@@ -1,3 +1,8 @@
+<div>
+  <center>
+    <img src="/chat_room/uploads/{{sc.survey.Resource.JSON.panelThumb}}" class="img-responsive" ng-if="sc.survey.Resource !== null"/>
+  </center>
+</div>
 <p class='lead survey-header'>{{ sc.survey.name }}
   <span class='help-block'>
     <small>{{ sc.survey.description }}</small>
@@ -79,6 +84,30 @@
               </ng-form>
             </div>
           </div>
+
+          <div ng-show="question.Resource">
+            <div class="col-xs-offset-3">
+              <div ng-if="question.Resource.JSON.type == 'audio'">
+                <audio width="100%" controls>
+                  <source ng-src='{{"/chat_room/uploads/" + question.Resource.JSON.name}}' ng-type='{{question.Resource.JSON.type + "/" + question.Resource.JSON.format}}'>
+                  Your browser does not support the audio element.
+                </audio> 
+              </div>
+
+              <div class="responsive-container" ng-if="question.Resource.JSON.type == 'youtubeUrl'">
+                <div width="50%" class="embed-responsive embed-responsive-4by3" ng-bind-html="sc.renderHtml(question.Resource)"></div>
+              </div>
+
+              <div class="responsive-container" ng-if="question.Resource.JSON.type == 'video'">
+                 <video width="50%" controls>
+                  <source ng-src='{{"/chat_room/uploads/" + question.Resource.JSON.name}}' ng-type='{{question.Resource.JSON.type + "/" + question.Resource.JSON.format}}'>
+                  Your browser does not support the video tag.
+                </video> 
+              </div>
+            </div>
+          </div>
+
+
         </div>
       </div>
     </ng-form>

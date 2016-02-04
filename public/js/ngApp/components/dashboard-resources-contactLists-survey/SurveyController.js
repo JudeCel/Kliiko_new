@@ -2,13 +2,30 @@
   'use strict';
 
   angular.module('KliikoApp').controller('SurveyController', SurveyController);
-  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', 'ngProgressFactory'];
+  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', 'ngProgressFactory', 'domServices', 'GalleryServices', '$sce'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, ngProgressFactory) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, ngProgressFactory, domServices, GalleryServices, $sce) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
     vm.surveys = {};
+    vm.brandLogos = {};
+    vm.questionResource = {};
+    vm.question = {showUpload: true};
+    vm.disableUpload = false;
+    vm.surveySelecctOptions = {
+      show: true,
+      uploaded: false
+    };
+
+    // Resource files
+    vm.title = "";
+    vm.file = {};
+    vm.youtubeUrl = "";
+    vm.introductionFile = {};
+    vm.likeDislike = {};
+    vm.importance = {};
+    vm.surveyBrandLogo = {};
 
     // Uses services
     vm.removeSurvey = removeSurvey;
@@ -32,6 +49,15 @@
     vm.pickValidClass = surveyServices.pickValidClass;
     vm.changeQuestions = changeQuestions;
     vm.contactDetailDisabled = contactDetailDisabled;
+
+    vm.openBrandLogosModal = openBrandLogosModal;
+    vm.openQuestionModal = openQuestionModal;
+    vm.selectBrandLogo = selectBrandLogo;
+    vm.removeResource = removeResource;
+    vm.saveResource = saveResource;
+    vm.renderHtml = renderHtml;
+    vm.getResourceUrl = getResourceUrl;
+    vm.getFileType = getFileType;
 
     vm.answerSortOptions = {
       handle: '.list-handle',
@@ -66,6 +92,162 @@
         vm.dateFormat = res.dateFormat;
         dbg.log2('#SurveyController > getAllSurveys > res ', res.data);
       });
+    };
+
+    function openBrandLogosModal(){
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+      brandLogosFromGallery();
+      progressbar.complete();
+      domServices.modal('getGallery');
+    }
+
+    function openQuestionModal(type, question) {
+      vm.questionResource.type = type;
+      vm.question = question;
+      domServices.modal('questionModal');
+    }
+
+    function selectBrandLogo(resource){
+      vm.surveySelecctOptions.show = false;
+      vm.survey.resourceId = resource.id;
+      vm.survey.Resource = resource;
+    }
+
+    function removeResource(id, question, survey){
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+      
+      GalleryServices.deleteResources({resource_id: id}).then(function(res) {
+        if(res.error){
+          messenger.error(res.error);
+          progressbar.complete();
+
+        }else{
+          console.log(survey);
+
+          if(survey !== null){
+            vm.surveySelecctOptions.show = true;
+            vm.surveySelecctOptions.uploaded = false;
+            survey.Resource = null;
+            survey.resourceId = null;
+          }
+          if(question !== null){
+            question.Resource = null;
+            question.resourceId = null;
+          }
+          clearform();
+          progressbar.complete();
+        }
+      });
+    }
+
+    function brandLogosFromGallery(){
+      GalleryServices.getResources({type: "brandLogo"}).then(function(res) {
+        vm.brandLogos = res.data;
+      });
+    }
+
+    function saveResource(resourceType){
+      vm.disableUpload = true;
+
+      if(resourceType == "youtube"){
+        saveYoutubeUrl(resourceType);
+      }else{
+        uploadFile(resourceType);
+      }
+    }
+
+    function clearform(){
+      vm.title = "";
+      vm.file = {};
+      vm.youtubeUrl = "";
+      domServices.modal('questionModal', 'close');
+    }
+
+    function uploadFile(resourceType) {
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+
+      var resourceParams = {
+        title: vm.title,
+        type: resourceType,
+        text: vm.file.name,
+        file: vm.file
+      };
+
+
+      GalleryServices.createResource(resourceParams).then(function(res) {
+        if(res.error){
+          messenger.error(res.error);
+        }else{
+
+          if(resourceType == "brandLogo"){
+            vm.surveySelecctOptions.show = false;
+            vm.surveySelecctOptions.uploaded = true;
+
+          }else{
+            vm.question.Resource = {};
+          }
+
+          GalleryServices.postuploadData(resourceParams).then(function(res) {
+            if(res.error){
+              messenger.error(res.error);
+            }else{
+
+              if(resourceType == "brandLogo"){
+                vm.survey.resourceId = res.data.id;
+                vm.survey.Resource = res.data;
+              }else{
+                vm.question.resourceId = res.data.id;
+                vm.question.Resource = res.data;
+              }
+
+              clearform();
+              progressbar.complete();
+              vm.disableUpload = false;
+            }
+          })
+        }
+      })
+
+    }
+
+    function saveYoutubeUrl() {
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+
+      vm.question.resourceId = null;
+      vm.question.Resource = null;
+
+      var resourceParams = {
+        title: vm.title,
+        text: vm.youtubeUrl
+      };
+      
+      GalleryServices.saveYoutubeUrl(resourceParams).then(function(res) {
+        if(res.error){
+          messenger.error(res.error);
+          progressbar.complete();
+        }else{
+          clearform();
+          vm.question.Resource = res;
+          vm.question.resourceId = res.id;
+          progressbar.complete();
+        }
+      })
+    }
+
+    function getResourceUrl(resource){
+      return "/chat_room/uploads/" + resource.JSON.name;
+    }
+
+    function getFileType(resource){
+      return resource.JSON.type + "/" + resource.JSON.format;
+    }
+
+    function renderHtml(resource) {
+      return $sce.trustAsHtml(resource.JSON.message);
     };
 
     function removeSurvey(survey) {

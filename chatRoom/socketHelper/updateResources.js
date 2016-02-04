@@ -12,10 +12,9 @@ function updateResources(topicId, userId, content, type, Cb) {
 
     content.type = type;
 
-    if (~['image', 'video', 'vote', 'audio', 'pdf', 'brandLogo'].indexOf(type)){
+    if (~['image', 'video', 'vote', 'audio', 'pdf', 'brandLogo', 'youtubeUrl'].indexOf(type)){
       req.params.JSON = encodeURI(JSON.stringify(content, null));
     }
-
     var nextCb = function (err) {
         // TBD
         if(Cb) {
@@ -25,7 +24,8 @@ function updateResources(topicId, userId, content, type, Cb) {
 
     var res = { send: function (data) {
         if(Cb){
-          Cb(userId, content);
+          data.JSON = JSON.parse(decodeURI(data.JSON));
+          Cb(userId, data);
         }
       }
     };

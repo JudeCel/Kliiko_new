@@ -22,11 +22,20 @@ module.exports = {
   uploadResourceFile: uploadResourceFile
 };
 
-function getResources(accountId){
+const allTypes = ['image', 'video', 'audio', 'pdf', 'brandLogo'];
+
+function getResources(accountId, type){
   let deferred = q.defer();
+  let types = "";
+
+  if(type == ""){  
+    types = allTypes;
+  }else{
+    types = type;
+  }
 
   Resource.findAll({
-    where: {resourceType: {not: "tmp"}},
+    where: {resourceType: types},
     include: [{
         model: models.User, 
         include: [{
@@ -70,7 +79,7 @@ function downloadResources(data){
       if(['audio', 'image', 'pdf'].indexOf(resource.resourceType) > -1){
         files.push({
           name: resource.JSON.name,
-          path: config.get("chatConf"["paths"]["fsPath"])+ "/public/uploads/" + resource.JSON.name
+          path: config.get("chatUploadDir") + resource.JSON.name
         })
       }
     });
@@ -81,7 +90,7 @@ function downloadResources(data){
       }else{
         let buff = archive.toBuffer();
         let fileName = generateFileName();
-        fs.writeFile(config.get("chatConf"["paths"]["fsPath"])+ "/public/uploads/" + fileName, buff, function () {
+        fs.writeFile(config.get("chatUploadDir"), buff, function () {
           deferred.resolve({fileName: fileName});
         });
       }
@@ -97,7 +106,6 @@ function downloadResources(data){
 
 function deleteResources(ids){
   let deferred = q.defer();
-
   let req = expressValidatorStub({
     params: ids
   });
@@ -119,10 +127,10 @@ function deleteResources(ids){
 
 // I was not able to include this from utilities.js
 function processYouTubeData(youtubeData) {
-  var preFix = '<iframe width="420" height="416" src="http://www.youtube.com/embed/';
-  var subFix = '" frameborder="0" allowfullscreen></iframe>';
+  let preFix = '<iframe src="http://www.youtube.com/embed/';
+  let subFix = '" frameborder="0" allowfullscreen></iframe>';
 
-  var position = -1;
+  let position = -1;
 
   if (youtubeData.search("<iframe") != -1) {
     return youtubeData;
@@ -155,7 +163,7 @@ function saveYoutubeData(data) {
       url: url
     };
 
-    socketHelper.updateResources(topicId, data.user.id, json, "video", resourceAppendedCallback);
+    socketHelper.updateResources(topicId, data.user.id, json, "youtubeUrl", resourceAppendedCallback);
   }
 
   return deferred.promise;

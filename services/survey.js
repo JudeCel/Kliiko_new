@@ -2,6 +2,7 @@
 
 var models = require('./../models');
 var Survey = models.Survey;
+var Resource = models.Resource;
 var SurveyQuestion = models.SurveyQuestion;
 var SurveyAnswer = models.SurveyAnswer;
 
@@ -28,6 +29,7 @@ const MESSAGES = {
 const VALID_ATTRIBUTES = {
   manage: [
     'accountId',
+    'resourceId',
     'confirmedAt',
     'name',
     'closed',
@@ -38,6 +40,7 @@ const VALID_ATTRIBUTES = {
   survey: [
     'id',
     'accountId',
+    'resourceId',
     'name',
     'description',
     'thanks',
@@ -48,6 +51,7 @@ const VALID_ATTRIBUTES = {
   question: [
     'id',
     'surveyId',
+    'resourceId',
     'name',
     'type',
     'question',
@@ -70,12 +74,29 @@ function findAllSurveys(account) {
     order: [
       ['id', 'asc'],
       [SurveyQuestion, 'order', 'ASC']
-    ],
-    include: [{
+    ],   
+    include: [
+      {
+        model: Resource
+      },
+      {
       model: SurveyQuestion,
-      attributes: VALID_ATTRIBUTES.question
+      attributes: VALID_ATTRIBUTES.question,
+      include: [{
+        model: Resource
+      }]
     }]
   }).then(function(surveys) {
+    surveys.forEach(function(survey, index, array) {
+      if(survey.Resource !== null){
+        survey.Resource.JSON = JSON.parse(decodeURI(survey.Resource.JSON));
+      }
+      survey.SurveyQuestions.forEach(function(question, index, array) {
+        if(question.Resource !== null){
+          question.Resource.JSON = JSON.parse(decodeURI(question.Resource.JSON));
+        }
+      });
+    });
     deferred.resolve(simpleParams(surveys));
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
@@ -165,7 +186,6 @@ function createSurveyWithQuestions(params, account) {
 function updateSurvey(params, account) {
   let deferred = q.defer();
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
-
   models.sequelize.transaction(function (t) {
     return Survey.update(validParams, {
       where: { id: params.id, accountId: account.id },

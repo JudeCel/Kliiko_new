@@ -21,7 +21,10 @@ function postResources(req, res, next) {
 }
 
 function getResources(req, res, next) {
-  galleryService.getResources(res.locals.currentDomain.id).then(function(result) {
+  let accountId = res.locals.currentDomain.id;
+  let resourceType = req.query.type;
+
+  galleryService.getResources(accountId, resourceType).then(function(result) {
     res.send(({ data: result }));
   });
 }

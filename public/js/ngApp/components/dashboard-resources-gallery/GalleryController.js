@@ -20,7 +20,7 @@
         sessionStorage.setItem('viewType', 'panel');
         $scope.viewType = sessionStorage.getItem('viewType');
       }
-      GalleryServices.getResources().then(function(res) {
+      GalleryServices.getResources({type: ""}).then(function(res) {
         $scope.resources = res.data;
       });
     }
@@ -45,7 +45,7 @@
     }
 
     $scope.getCount = function(type){
-      let filtered = filterFilter( $scope.resources, {resourceType:type});
+      var filtered = filterFilter( $scope.resources, {resourceType:type});
       if(filtered){
         return filtered.length;
       }
@@ -56,7 +56,7 @@
     };
 
     $scope.resourcesSelected = function(id) {
-      let isSelected = $scope.idsForAction.indexOf(id) == -1;
+      var isSelected = $scope.idsForAction.indexOf(id) == -1;
       if(isSelected){
         $scope.idsForAction.push(id);
       }else{
@@ -112,6 +112,7 @@
     }
 
     function saveResource(newResource){
+      dbg.yell(newResource.type)
       var resourceParams = {
         title: newResource.title,
         type: newResource.type,
