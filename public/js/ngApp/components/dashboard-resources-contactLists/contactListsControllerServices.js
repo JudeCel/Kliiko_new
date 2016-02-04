@@ -21,7 +21,7 @@
         data: {uploadedfile: file}
       }).then(function (resp) {
         //console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
-        deferred.resolve();
+        deferred.resolve(resp);
       }, function (resp) {
         console.log('Error status: ' + resp.status);
       }, function (evt) {

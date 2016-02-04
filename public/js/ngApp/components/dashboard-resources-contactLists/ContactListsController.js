@@ -18,39 +18,10 @@
     vm.importData = { excel:false, csv:false, fileToImport: null};
     vm.basePath = '/js/ngApp/components/dashboard-resources-contactLists/';
     
-    vm.importedFields = [
-      {
-        name: "Field1", 
-        data: "data"
-      },
-      {
-        name: "Field2", 
-        data: "data"
-      },
-      {
-        name: "Field3", 
-        data: "data"
-      },
-      {
-        name: "Field4", 
-        data: "data"
-      }
-    ];
-
-    vm.contactListDropItems = [
-      { name: "First Name*" },
-      { name: "Last Name*" },
-      { name: "Gender*" },
-      { name: "Email*" },
-      { name: "Department" },
-      { name: "Username" },
-      { name: "Password" },
-      { name: "Address" },
-      { name: "Zip Code" },
-      { name: "Home Phone" },
-      { name: "Manager" },
-      { name: "City" }
-    ];
+    vm.importedFields = [];
+    vm.contactListDropItems = [];
+    vm.validContactList = [];
+    vm.contactListToAdd = [];
 
     vm.addNewList = addNewList;
     vm.submitNewList = submitNewList;
@@ -88,7 +59,11 @@
     };
     
     vm.onFieldMapDrop = function(dataSource, dataTarget) {
-      dataTarget.data = dataSource;    
+      if (dataSource.field) {
+        dataTarget.field = dataSource.field;
+      } else {
+        dataTarget.field = dataSource;
+      }    
     };
           
     function submitNewList() {
@@ -410,11 +385,50 @@
 
       contactListsControllerServices.uploadImportFile(vm.importData.file, vm.lists.activeList.id).then(
         function (res) {
+          processImportData(res);
         },
         function (err) {
         }
       );
-
+    }
+    
+    function processImportData(res) {
+      //fields for left column in mapping
+      vm.importedFields = res.data.result.fileFields;
+      vm.validContactList = res.data.result.valid;
+      
+      //fill values for right column
+      var array = [];
+      var len = res.data.result.contactListFields.defaultFields.length;
+      for (var i = 0; i < len; i++) {
+        array[i] = { name: res.data.result.contactListFields.defaultFields[i] }
+      }
+      //fields for right column in mapping
+      vm.contactListDropItems = array;
+      domServices.modal('contactList-addContactManual', 'close');
+      vm.addNewListFieldMapping();
+      
+      if (!vm.validContactList.length) {
+        messenger.error('Imported contact list is empty');
+      }
+    }
+    
+    //assigns contact info to mapped fields
+    vm.mappingFieldsContinue = function() {
+      var userList = [];
+      for (var j = 0; j < vm.validContactList.length; j++ ) {
+        var user = {};
+        for (var i = 0; i < vm.contactListDropItems.length; i++) {
+          if (vm.contactListDropItems[i].field) {
+            user[vm.contactListDropItems[i].name] = vm.validContactList[j][vm.contactListDropItems[i].field];
+          }
+        }//for
+        userList.push(user);
+      }//for
+      vm.contactListToAdd = userList;
+      
+      console.log(vm.contactListToAdd);
+      domServices.modal('contactList-addNewListFieldsPreviewModal');      
     }
 
   }
