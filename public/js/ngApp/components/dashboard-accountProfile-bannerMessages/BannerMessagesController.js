@@ -28,14 +28,11 @@
      * @param bannerType {string} - types can be found in models/templateBanners -> page
      */
     function upload(fileModel, bannerType) {
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
 
       banners.upload(fileModel, bannerType).then(
         function(res) {
           dbg.log1('#BannerMessagesController > upload > success ', res);
           init();
-          progressbar.complete();
         },
         function(err) {
           dbg.log1('#BannerMessagesController > upload > error ', err);
@@ -48,7 +45,6 @@
 
           messenger.error('Upload Fails: \n '+ msg);
           init();
-          progressbar.complete();
         }
       );
     }
@@ -81,7 +77,6 @@
     }
 
     function saveLink(bannerType) {
-      console.log( vm[bannerType+'Banner'].link );
       banners.saveLink(bannerType, vm[bannerType+'Banner'].link).then(
         function(res) {  messenger.ok('Link saved') },
         function(err) {  messenger.error('Link not saved') }
