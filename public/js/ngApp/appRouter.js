@@ -191,8 +191,7 @@
         resolve: {
           loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
             return $ocLazyLoad.load([
-              //'/js/vendors/ngDraggable/ngDraggable.js',
-              '/js/ngApp/components/dashboard-resources-contactLists/dragAndDrop.js',
+              '/js/vendors/ngDraggable/ngDraggable.js',
               '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
               '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
               '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',

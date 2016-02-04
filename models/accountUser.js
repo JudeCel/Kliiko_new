@@ -20,12 +20,20 @@ module.exports = (Sequelize, DataTypes) => {
     companyName: {type: DataTypes.STRING, allowNull: true },
     landlineNumber: {type: DataTypes.STRING, allowNull: true,
       validate: {
-        is: { args: constants.phoneRegExp, msg: ' Invalid phone number format' }
+        validateNumber: function() {
+          if(this.landlineNumber && !constants.phoneRegExp.test(this.landlineNumber)) {
+            throw new Error('Invalid phone number format');
+          }
+        }
       }
     },
     mobile: {type: DataTypes.STRING, allowNull: true,
       validate: {
-        is: { args: constants.phoneRegExp, msg: ' Invalid phone number format' }
+        validateNumber: function() {
+          if(this.mobile && !constants.phoneRegExp.test(this.mobile)) {
+            throw new Error('Invalid phone number format');
+          }
+        }
       }
     },
     comment: { type: DataTypes.TEXT, allowNull: true },

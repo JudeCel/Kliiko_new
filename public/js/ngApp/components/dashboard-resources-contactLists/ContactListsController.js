@@ -2,7 +2,7 @@
   'use strict';
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope'];
+  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable'];
   function ContactListController(domServices,  dbg, messenger, ListsModel, $scope) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
@@ -18,6 +18,41 @@
     vm.allSelected = false;
     vm.tableSort = {by: null, reverse: false};
     vm.modContentBlock= {generalDetails:true, history: false};
+    vm.basePath = '/js/ngApp/components/dashboard-resources-contactLists/';
+    
+    vm.importedFields = [
+      {
+        name: "Field1", 
+        data: "data"
+      },
+      {
+        name: "Field2", 
+        data: "data"
+      },
+      {
+        name: "Field3", 
+        data: "data"
+      },
+      {
+        name: "Field4", 
+        data: "data"
+      }
+    ];
+        
+    vm.contactListDropItems = [
+      { name: "First Name*" },
+      { name: "Last Name*" },
+      { name: "Gender*" },
+      { name: "Email*" },
+      { name: "Department" },
+      { name: "Username" },
+      { name: "Password" },
+      { name: "Address" },
+      { name: "Zip Code" },
+      { name: "Home Phone" },
+      { name: "Manager" },
+      { name: "City" }
+    ];
 
     vm.addNewList = addNewList;
     vm.submitNewList = submitNewList;
@@ -38,39 +73,7 @@
     vm.selectAll = selectAll;
     vm.massDelete = massDelete;
 
-    vm.importedFields = [
-      {
-        name: "Field1", 
-        value: "data"
-      },
-      {
-        name: "Field2", 
-        value: "data"
-      },
-      {
-        name: "Field3", 
-        value: "data"
-      },
-      {
-        name: "Field4", 
-        value: "data"
-      }
-    ];
-        
-    vm.contactListDropItems = [
-      { name: "First Name*" },
-      { name: "Last Name*" },
-      { name: "Gender*" },
-      { name: "Email*" },
-      { name: "Department" },
-      { name: "Username" },
-      { name: "Password" },
-      { name: "Address" },
-      { name: "Zip Code" },
-      { name: "Home Phone" },
-      { name: "Manager" },
-      { name: "City" }
-    ];
+    
     /**
      * Open modal and prepare variables
      */
@@ -86,25 +89,10 @@
       domServices.modal('contactList-addNewListFieldsModal');
     };
     
-    vm.onDrop = function(model, data){
-      if (data == model.data) {
-        return;
-      }
-      data.belongsToList = true;
-      model.data = data;
+    vm.onFieldMapDrop = function(dataSource, dataTarget) {
+      dataTarget.data = dataSource;    
     };
-    
-    vm.dropFailureHandler = function($event, $index) {
-      console.log("_____", event, $index);  
-    }
-    
-    vm.dropValidate = function(target, data, key) {
-      if (data.data) {
-        return false;
-      }
-      return true;
-    };
-      
+          
     function submitNewList() {
       if (vm.newListErrorMessage) return;
 
@@ -260,6 +248,14 @@
         vm.updateExistingUser = null;
         vm.contactModalTitle = 'Add New Contact';
         vm.newContact = {};
+        vm.modalErrors = {};
+      }
+
+      if (action === 'excel') {
+        vm.updateExistingUser = null;
+        vm.contactModalTitle = 'Add New Contacts From Excel';
+        vm.newContact = {excel:true};
+        vm.modalErrors = {};
       }
 
       if (action === 'update') {
