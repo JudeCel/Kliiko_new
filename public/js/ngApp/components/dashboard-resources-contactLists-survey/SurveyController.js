@@ -3,9 +3,9 @@
 
   angular.module('KliikoApp').controller('SurveyController', SurveyController);
   SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', 'ngProgressFactory', 'domServices',
-    'GalleryServices', '$sce', '$anchorScroll', '$location'];
+    'GalleryServices', '$sce', '$anchorScroll', '$location', '$window'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, ngProgressFactory, domServices, GalleryServices, $sce, $anchorScroll, $location) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, ngProgressFactory, domServices, GalleryServices, $sce, $anchorScroll, $location, $window) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
@@ -27,6 +27,14 @@
     vm.likeDislike = {};
     vm.importance = {};
     vm.surveyBrandLogo = {};
+    vm.popOverMessages = {
+      remove: 'Remove survey',
+      edit: 'Edit survey',
+      copy: 'Copy survey',
+      status: 'Change status',
+      confirm: 'Confirm survey',
+      export: 'Export survey'
+    };
 
     // Uses services
     vm.removeSurvey = removeSurvey;
@@ -34,6 +42,7 @@
     vm.copySurvey = copySurvey;
     vm.finishManage = finishManage;
     vm.confirmSurvey = confirmSurvey;
+    vm.exportSurvey = exportSurvey;
 
     // Inits
     vm.initQuestion = initQuestion;
@@ -393,6 +402,10 @@
           messenger.ok(res.message);
         }
       });
+    };
+
+    function exportSurvey(surveyId) {
+      $window.location.href = '/resources/survey/export/' + surveyId;
     };
 
     function changeQuestions(question, order) {
