@@ -2,8 +2,8 @@
   'use strict';
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', 'ngDraggable'];
-  function ContactListController(domServices,  dbg, messenger, ListsModel,  ngDraggable) {
+  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope'];
+  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
@@ -39,6 +39,39 @@
     vm.selectAll = selectAll;
     vm.massDelete = massDelete;
 
+    vm.importedFields = [
+      {
+        name: "Field1", 
+        value: "data"
+      },
+      {
+        name: "Field2", 
+        value: "data"
+      },
+      {
+        name: "Field3", 
+        value: "data"
+      },
+      {
+        name: "Field4", 
+        value: "data"
+      }
+    ];
+        
+    vm.contactListDropItems = [
+      { name: "First Name*" },
+      { name: "Last Name*" },
+      { name: "Gender*" },
+      { name: "Email*" },
+      { name: "Department" },
+      { name: "Username" },
+      { name: "Password" },
+      { name: "Address" },
+      { name: "Zip Code" },
+      { name: "Home Phone" },
+      { name: "Manager" },
+      { name: "City" }
+    ];
     /**
      * Open modal and prepare variables
      */
@@ -47,7 +80,32 @@
       vm.listModalTitle = 'Add New List';
       domServices.modal('contactList-addNewListModal');
     }
-
+    
+    vm.addNewListFieldMapping = function() {
+      vm.listIdToEdit = null;
+      vm.listModalTitle = 'Add New List';
+      domServices.modal('contactList-addNewListFieldsModal');
+    };
+    
+    vm.onDrop = function(model, data){
+      if (data == model.data) {
+        return;
+      }
+      data.belongsToList = true;
+      model.data = data;
+    };
+    
+    vm.dropFailureHandler = function($event, $index) {
+      console.log("_____", event, $index);  
+    }
+    
+    vm.dropValidate = function(target, data, key) {
+      if (data.data) {
+        return false;
+      }
+      return true;
+    };
+      
     function submitNewList() {
       if (vm.newListErrorMessage) return;
 
@@ -360,19 +418,6 @@
 
       removeContacts(ids);
     }
-    
-    function isValidDropElement(el) {
-      var id = $(el).attr('id');
-      var className = $(el).attr('class');
-      return (id == 'contactList-fieldColumnLeft' || className == 'contactList-dropPlaceholder');
-    }
-    
-    vm.onDragComplete=function(data,evt){
-       console.log("drag success, data:", data);
-    }
-    vm.onDropComplete=function(data,evt){
-        console.log("drop success, data:", data);
-    }
-
+   
   }
 })();
