@@ -103,6 +103,11 @@
       return deferred.promise;
     }
 
+    /**
+     * Update active lis with new list by given index in lists array
+     * @param index {number} list index in lists array
+     * @param [force] {boolean} - rewrite current
+     */
     function changeActiveList(index, force) {
       var self = this;
 
@@ -115,6 +120,11 @@
       self.activeList = self.items[index];
     }
 
+    /**
+     * Add new List item object to lists array and save on remote
+     * @param newListItemObj {object}
+     * @returns {promise | {newList} }
+     */
     function addNewListItem(newListItemObj) {
       var deferred = $q.defer();
       var self = this;
@@ -136,7 +146,7 @@
 
     /**
      * Update list item instance ( ListItemModel.update() ) and then update lists model items with this updated instance
-     * @param updateFieldsObj
+     * @param updateFieldsObj {object}
      * @returns {*}
      */
     function updateActiveItem(updateFieldsObj) {
@@ -172,6 +182,12 @@
       return deferred.promise;
     }
 
+    /**
+     * Delete given list item and save state on remote
+     * @param item {object}
+     * @param [index] - index of @item in array (speed up faction with  bypassing for loop)
+     * @returns {*|promise}
+     */
     function deleteItem(item, index) {
       var deferred = $q.defer();
       var self = this;
@@ -276,6 +292,12 @@
       return deferred.promise;
     }
 
+    /**
+     * Delete contact by ids
+     * and adjust members amount counter
+     * @param ids {array}
+     * @returns {*|promise}
+     */
     function deleteContacts(ids) {
       var self = this;
 

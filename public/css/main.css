@@ -2374,8 +2374,23 @@ hr.survey-hr {
 #dashboard-contact-lists #contact-lists-add-button-1 {
   padding: 8px !important; }
 
-#dashboard-contact-lists #modals-excel-import .icon-div {
-  text-align: center; }
+#dashboard-contact-lists #modals-excel-import #modals-excel-import-icon {
+  margin-bottom: 50px; }
+
+#dashboard-contact-lists #modals-excel-import .drop-box {
+  background: #F8F8F8;
+  border: 3px dashed #DDD;
+  width: 300px;
+  height: 65px;
+  text-align: center;
+  padding-top: 20px;
+  margin: 0 auto; }
+
+#dashboard-contact-lists #modals-excel-import .dragover {
+  border: 5px dashed blue; }
+
+#dashboard-contact-lists #modals-excel-import .modal-control-buttons {
+  margin-top: 30px; }
 
 .margin-top-2rem {
   margin-top: 2rem; }

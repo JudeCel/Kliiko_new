@@ -2,13 +2,10 @@
   'use strict';
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable'];
-  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope) {
+  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'contactListsControllerServices', 'ngDraggable'];
+  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, contactListsControllerServices, ngDraggable) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
-
-
-
 
     vm.listIdToEdit = null;
     vm.newList = {};
@@ -18,6 +15,7 @@
     vm.allSelected = false;
     vm.tableSort = {by: null, reverse: false};
     vm.modContentBlock= {generalDetails:true, history: false};
+    vm.importData = { excel:false, csv:false, fileToImport: null};
     vm.basePath = '/js/ngApp/components/dashboard-resources-contactLists/';
     
     vm.importedFields = [
@@ -38,7 +36,7 @@
         data: "data"
       }
     ];
-        
+
     vm.contactListDropItems = [
       { name: "First Name*" },
       { name: "Last Name*" },
@@ -61,7 +59,6 @@
     vm.editCustomFields = editCustomFields;
     vm.updateTableSorting = updateTableSorting;
 
-
     vm.changeTableSortingFilter = changeTableSortingFilter;
     vm.showManageColumnsModal = showManageColumnsModal;
 
@@ -73,7 +70,8 @@
     vm.selectAll = selectAll;
     vm.massDelete = massDelete;
 
-    
+    vm.startImport = startImport;
+
     /**
      * Open modal and prepare variables
      */
@@ -254,7 +252,8 @@
       if (action === 'excel') {
         vm.updateExistingUser = null;
         vm.contactModalTitle = 'Add New Contacts From Excel';
-        vm.newContact = {excel:true};
+        vm.importData = { excel:true, fileToImport: null};
+        vm.newContact = {};
         vm.modalErrors = {};
       }
 
@@ -405,6 +404,18 @@
 
       removeContacts(ids);
     }
-   
+
+    function startImport() {
+      if (!vm.importData.file) return;
+
+      contactListsControllerServices.uploadImportFile(vm.importData.file, vm.lists.activeList.id).then(
+        function (res) {
+        },
+        function (err) {
+        }
+      );
+
+    }
+
   }
 })();
