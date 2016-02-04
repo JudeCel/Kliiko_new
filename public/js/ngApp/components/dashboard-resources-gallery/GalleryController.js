@@ -7,13 +7,21 @@
 
   GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', 
                                '$scope', 'domServices', 'messenger', 
-                               'globalSettings', '$sce', 'filterFilter'];
+                               'globalSettings', '$sce', 'filterFilter', '$timeout'];
 
-  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, globalSettings, $sce, filterFilter){
+  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, globalSettings, $sce, filterFilter, $timeout){
     dbg.log2('#GalleryController  started');
     initList();
     $scope.filterType = "";
     $scope.viewType = sessionStorage.getItem('viewType');
+    $scope.uploads = [
+      { fileType: "image", uploadText: "Upload Image", filterText: "Images"},
+      { fileType: "brandLogo", uploadText: "Upload Brand Logo", filterText: "Brand Logos"},
+      { fileType: "audio", uploadText: "Upload Audio", filterText: "Audios"},
+      { fileType: "pdf", uploadText: "Upload PDF", filterText: "PDF's"},
+      { fileType: "video", uploadText: "Upload Video", filterText: "Videos"},
+      { fileType: "youtubeUrl", uploadText: "Save youtube URL", filterText: "Youtube URL's"},
+    ]
 
     function initList() {
       if(sessionStorage.getItem('viewType') == null){
@@ -67,9 +75,7 @@
     $scope.uploadResourceForm = function(uploadType) {
       $scope.newResource.type = uploadType;
       $scope.uploadTypeForTitle = uploadTypeForTitle(uploadType);
-
       setUploadtype(uploadType);
-
       domServices.modal('uploadTST');
     };
 
@@ -88,6 +94,8 @@
         $scope.allowToUpload = "audio/mpeg, audio/mp3"
       }else if(type == 'pdf'){
         $scope.allowToUpload = "application/pdf"
+      }else if('video'){
+        $scope.allowToUpload = "video/oog, video/mp4"
       }
     }
 
@@ -100,19 +108,16 @@
       GalleryServices.saveYoutubeUrl(resourceParams).then(function(res) {
         if(res.error){
           messenger.error(res.error);
-          $scope.submitIsDisabled = false;
         }else{
-          initList();
-          $scope.newResource = {};
-          cancel();
-          messenger.ok("Resource was successfully created.");
-          $scope.submitIsDisabled = false;
+          console.log(res);
+          $scope.resources.push(res);
+          cancel()
+          messenger.ok("Resource was sucessfully created.");
         }
       })
     }
 
     function saveResource(newResource){
-      dbg.yell(newResource.type)
       var resourceParams = {
         title: newResource.title,
         type: newResource.type,
@@ -132,8 +137,7 @@
               messenger.error(res.error);
               $scope.submitIsDisabled = false;
             }else{
-              initList();
-              $scope.newResource = {};
+              $scope.resources.push(res.data);
               cancel()
               messenger.ok("Resource was sucessfully created.");
               $scope.submitIsDisabled = false;
@@ -154,6 +158,7 @@
     }
 
     function cancel(){
+      $scope.newResource = {};
       domServices.modal('uploadTST', 'close');
     }
    
@@ -199,7 +204,8 @@
         if(res.error){
           messenger.error(res.error);
         }else{
-          initList()
+          $scope.selectAllResources();
+          initList();
           $scope.idsForAction = [];
           messenger.ok("Your selected resource(s) was successfully deleted.");
         }
@@ -211,14 +217,33 @@
         if(res.error){
           messenger.error(res.error);
         }else{
+          $scope.selectAllResources();
           $scope.idsForAction = [];
           window.location.assign('/chat_room/uploads/' + res.fileName);
+          deleteGeneratedZip(res.fileName);
         }
       })
     }
 
-     $scope.disableButton = function() {
+    function deleteGeneratedZip(name){
+      $timeout(function() {
+        GalleryServices.deleteZipFile({fileName: name}).then(function(res) {
+          if(res.error){
+            console.log(res.error);
+          }else{
+            console.log(res.message);
+          }
+        })
+      }, 10000);
+    }
+
+    $scope.disableButton = function() {
       $scope.submitIsDisabled = true;
     }
+
+    $scope.checkType = function(first, second) {
+      return first == second;
+    }
+
   }
 })();
