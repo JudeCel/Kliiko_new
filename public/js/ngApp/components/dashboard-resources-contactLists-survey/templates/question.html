@@ -43,8 +43,8 @@
 
     <label class='col-xs-2 control-label' for='audioVideo-{{object.order}}'>Audio/Video</label>
     <div class='col-xs-10 col-md-6' ng-show="question.Resource == null">
-      <button class='btn btn-addNewElement btn-green gallery-btn-width' 
-              type='button' id='uploadResourceDropdown' data-toggle='dropdown' 
+      <button class='btn btn-addNewElement btn-green gallery-btn-width'
+              type='button' id='uploadResourceDropdown' data-toggle='dropdown'
               aria-haspopup='true' aria-expanded='false'>
         <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
         Add audio/video
@@ -72,37 +72,22 @@
       </ul>
     </div>
 
-    <div class='col-xs-10 col-md-6' ng-show="question.Resource !== null">
-      <div ng-if="question.Resource.JSON.type == 'audio'">
-        <audio width="100%" controls>
-         <source ng-src='{{"/chat_room/uploads/" + question.Resource.JSON.name}}' ng-type='{{question.Resource.JSON.type + "/" + question.Resource.JSON.format}}'>
-          Your browser does not support the audio element.
-        </audio> 
-
-        <button type='submit'class='btn btn-addNewElement btn-green no-margin gallery-btn-width' 
-                ng-click="sc.removeResource(question.resourceId, question, null)">
-          <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
-        </button>
+    <div class='col-xs-10 col-md-6' ng-if='question.Resource'>
+      <div class='responsive-container' ng-if="question.Resource.JSON.type == 'audio'">
+        <audio width='100%' controls data-ng-src='{{ "/chat_room/uploads/" + question.Resource.JSON.name }}'></audio>
       </div>
 
-      <div class="responsive-container" ng-if="question.Resource.JSON.type == 'youtubeUrl'">
+      <div class='responsive-container' ng-if="question.Resource.JSON.type == 'youtubeUrl'">
         <div class="embed-responsive embed-responsive-4by3" ng-bind-html="sc.renderHtml(question.Resource)"></div>
-        <button type='submit'class='btn btn-addNewElement btn-green no-margin gallery-btn-width' 
-                ng-click="sc.removeResource(question.resourceId, question, null)">
-          <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
-        </button>
       </div>
 
-      <div class="responsive-container" ng-if="question.Resource.JSON.type == 'video'">
-         <video width="100%" controls>
-          <source ng-src='{{"/chat_room/uploads/" + question.Resource.JSON.name}}' ng-type='{{question.Resource.JSON.type + "/" + question.Resource.JSON.format}}'>
-          Your browser does not support the video tag.
-        </video> 
-        <button type='submit'class='btn btn-addNewElement btn-green no-margin gallery-btn-width' 
-                ng-click="sc.removeResource(question.resourceId, question, null)">
-          <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
-        </button>
+      <div class='responsive-container' ng-if="question.Resource.JSON.type == 'video'">
+        <video width='100%' controls data-ng-src='{{ "/chat_room/uploads/" + question.Resource.JSON.name }}'></video>
       </div>
+
+      <button type='submit'class='btn btn-addNewElement btn-green no-margin gallery-btn-width' ng-click='sc.removeResource(question.resourceId, question)'>
+        <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+      </button>
     </div>
   </div>
 </div>
@@ -136,7 +121,7 @@
                 <div ngf-drop ngf-select ng-model="sc.file" class="drop-box" ngf-drag-over-class="'dragover'">
                   Drop images here or click to upload
                 </div>
-                
+
                 <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
                 <div class="row">
                   <div class="col-xs-10">
@@ -145,7 +130,7 @@
                     </p>
                   </div>
                 </div>
-              </div> 
+              </div>
             </div>
 
             <div class='modal-footer'>
@@ -155,7 +140,7 @@
             </div>
 
           </ng-form>
-        </form>   
+        </form>
 
       </div>
     </div>

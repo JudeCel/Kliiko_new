@@ -2,9 +2,10 @@
   'use strict';
 
   angular.module('KliikoApp').controller('SurveyController', SurveyController);
-  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', 'ngProgressFactory', 'domServices', 'GalleryServices', '$sce'];
+  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', 'ngProgressFactory', 'domServices',
+    'GalleryServices', '$sce', '$anchorScroll', '$location'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, ngProgressFactory, domServices, GalleryServices, $sce) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, ngProgressFactory, domServices, GalleryServices, $sce, $anchorScroll, $location) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
@@ -117,15 +118,13 @@
     function removeResource(id, question, survey){
       var progressbar = ngProgressFactory.createInstance();
       progressbar.start();
-      
+
       GalleryServices.deleteResources({resource_id: id}).then(function(res) {
         if(res.error){
           messenger.error(res.error);
           progressbar.complete();
 
         }else{
-          console.log(survey);
-
           if(survey !== null){
             vm.surveySelecctOptions.show = true;
             vm.surveySelecctOptions.uploaded = false;
@@ -224,7 +223,7 @@
         title: vm.title,
         text: vm.youtubeUrl
       };
-      
+
       GalleryServices.saveYoutubeUrl(resourceParams).then(function(res) {
         if(res.error){
           messenger.error(res.error);
@@ -313,6 +312,17 @@
         }
         else {
           vm.submitError = vm.constantErrors.default;
+          $timeout(function() {
+            var form = angular.element(document.getElementById('manageForm'));
+            var elem = form.find('.ng-invalid:first');
+            var panel = elem.parents('.panel:first');
+
+            var panelParent = panel.scope().$parent;
+            if(panelParent.hasOwnProperty('accordion')) {
+              panelParent.object.open = true;
+            }
+            moveBrowserTo(panel[0].id);
+          });
         }
 
         progressbar.complete();
@@ -495,8 +505,16 @@
         vm.currentContacts = null;
         vm.survey = survey || { SurveyQuestions: {} };
         vm.currentPage = { page: 'manage', type: page };
+        moveBrowserTo('');
       }
     };
+
+    function moveBrowserTo(elementId) {
+      $timeout(function () {
+        $location.hash(elementId);
+        $anchorScroll();
+      });
+    }
 
     function addContactDetail(cd, answer) {
       cd.disabled = vm.currentContacts[cd.model] ? true : false;
