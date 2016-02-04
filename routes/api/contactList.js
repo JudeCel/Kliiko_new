@@ -89,6 +89,7 @@ function importFunction(req, res, next) {
   let file = req.file;
   contactListService.parseFile(contactListId, file.path).then(function(result) {
     res.send({success: true, result: result});
+    //todo @dainis remove the file, that created in public/uploads
   }, function(err) {
     res.send({ error: err });
   })
