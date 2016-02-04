@@ -5,7 +5,8 @@
   SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', 'ngProgressFactory', 'domServices',
     'GalleryServices', '$sce', '$anchorScroll', '$location', '$window', 'ngDraggable'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, ngProgressFactory, domServices, GalleryServices, $sce, $anchorScroll, $location, $window, ngDraggable) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, ngProgressFactory, domServices, GalleryServices, $sce, $anchorScroll,
+    $location, $window, ngDraggable) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
@@ -69,23 +70,6 @@
     vm.renderHtml = renderHtml;
     vm.getResourceUrl = getResourceUrl;
     vm.getFileType = getFileType;
-
-    vm.answerSortOptions = {
-      handle: '.list-handle',
-      onUpdate: function(evt) {
-        angular.forEach(vm.survey.SurveyQuestions, function(sq) {
-          var answersArray = [];
-          angular.forEach(sq.answers, function(answer) {
-            if(answer) answersArray.push(answer);
-          });
-          sq.answers = answersArray;
-        });
-
-        evt.models.forEach(function(val, index, array) {
-          if(val) val.order = index;
-        });
-      }
-    }
 
     function onDropComplete(index, data, evt) {
       var answer = data.answer;
