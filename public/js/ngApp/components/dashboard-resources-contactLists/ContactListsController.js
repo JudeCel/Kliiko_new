@@ -2,13 +2,10 @@
   'use strict';
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope'];
-  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope) {
+  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'contactListsControllerServices'];
+  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, contactListsControllerServices) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
-
-
-
 
     vm.listIdToEdit = null;
     vm.newList = {};
@@ -18,46 +15,28 @@
     vm.allSelected = false;
     vm.tableSort = {by: null, reverse: false};
     vm.modContentBlock= {generalDetails:true, history: false};
+    vm.importData = { excel:false, csv:false, fileToImport: null};
     vm.basePath = '/js/ngApp/components/dashboard-resources-contactLists/';
-
-    vm.addNewList = addNewList;
-    vm.submitNewList = submitNewList;
-    vm.updateList = updateList;
-    vm.deleteList = deleteList;
-    vm.editCustomFields = editCustomFields;
-    vm.updateTableSorting = updateTableSorting;
-
-
-    vm.changeTableSortingFilter = changeTableSortingFilter;
-    vm.showManageColumnsModal = showManageColumnsModal;
-
-    vm.contactAddEditClickHandle = contactAddEditClickHandle;
-    vm.createContact = createContact;
-    vm.updateContact = updateContact;
-    vm.removeContacts = removeContacts;
-
-    vm.selectAll = selectAll;
-    vm.massDelete = massDelete;
 
     vm.importedFields = [
       {
-        name: "Field1", 
+        name: "Field1",
         value: "data"
       },
       {
-        name: "Field2", 
+        name: "Field2",
         value: "data"
       },
       {
-        name: "Field3", 
+        name: "Field3",
         value: "data"
       },
       {
-        name: "Field4", 
+        name: "Field4",
         value: "data"
       }
     ];
-        
+
     vm.contactListDropItems = [
       { name: "First Name*" },
       { name: "Last Name*" },
@@ -72,6 +51,28 @@
       { name: "Manager" },
       { name: "City" }
     ];
+
+    vm.addNewList = addNewList;
+    vm.submitNewList = submitNewList;
+    vm.updateList = updateList;
+    vm.deleteList = deleteList;
+    vm.editCustomFields = editCustomFields;
+    vm.updateTableSorting = updateTableSorting;
+
+    vm.changeTableSortingFilter = changeTableSortingFilter;
+    vm.showManageColumnsModal = showManageColumnsModal;
+
+    vm.contactAddEditClickHandle = contactAddEditClickHandle;
+    vm.createContact = createContact;
+    vm.updateContact = updateContact;
+    vm.removeContacts = removeContacts;
+
+    vm.selectAll = selectAll;
+    vm.massDelete = massDelete;
+
+    vm.startImport = startImport;
+
+
     /**
      * Open modal and prepare variables
      */
@@ -267,7 +268,8 @@
       if (action === 'excel') {
         vm.updateExistingUser = null;
         vm.contactModalTitle = 'Add New Contacts From Excel';
-        vm.newContact = {excel:true};
+        vm.importData = { excel:true, fileToImport: null};
+        vm.newContact = {};
         vm.modalErrors = {};
       }
 
@@ -418,6 +420,18 @@
 
       removeContacts(ids);
     }
-   
+
+    function startImport() {
+      if (!vm.importData.file) return;
+
+      contactListsControllerServices.uploadImportFile(vm.importData.file, vm.lists.activeList.id).then(
+        function (res) {
+        },
+        function (err) {
+        }
+      );
+
+    }
+
   }
 })();

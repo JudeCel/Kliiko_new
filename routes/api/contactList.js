@@ -81,6 +81,7 @@ function destroy(req, res, next) {
 }
 
 function importFunction(req, res, next) {
+
   validations.params(res, req.file, 'file is missed');
   validations.params(res, req.params.id, 'query param @id is missed');
 
