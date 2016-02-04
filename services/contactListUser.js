@@ -127,7 +127,7 @@ function bulkCreate(list, accountId) {
           });
         }
       });
-    })
+    });
   return deferred.promise;
 }
 
