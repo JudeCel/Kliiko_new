@@ -17,10 +17,10 @@ const VALIDATIONS = {
     'audio/mp3',
     'application/pdf'
   ]
-}
+};
 
 module.exports = function upload(options) {
-  options = options || {}
+  options = options || {};
   let storage = multer.diskStorage({
     destination: destination(options),
     fileFilter: fileFilter,
@@ -29,7 +29,7 @@ module.exports = function upload(options) {
 
   let upload =  multer({ storage: storage, limits: { fieldSize: VALIDATIONS.maxSize * MEGABYTE } });
   return upload.single('uploadedfile');
-}
+};
 
 function fileFilter(req, file, cb) {
   if (_.includes(VALIDATIONS.fileTypes, req.headers['content-type'])) {
