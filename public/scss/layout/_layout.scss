@@ -112,6 +112,10 @@ background-color: $blue !important;
 }
 
 /* Typography */
+.text-break-all {
+  -ms-word-break: break-all;
+  word-break: break-all;
+}
 .text-max-width {
   overflow: hidden;
   text-overflow: ellipsis;
