@@ -18,6 +18,7 @@
     vm.allSelected = false;
     vm.tableSort = {by: null, reverse: false};
     vm.modContentBlock= {generalDetails:true, history: false};
+    vm.basePath = '/js/ngApp/components/dashboard-resources-contactLists/';
 
     vm.addNewList = addNewList;
     vm.submitNewList = submitNewList;
@@ -202,6 +203,14 @@
         vm.updateExistingUser = null;
         vm.contactModalTitle = 'Add New Contact';
         vm.newContact = {};
+        vm.modalErrors = {};
+      }
+
+      if (action === 'excel') {
+        vm.updateExistingUser = null;
+        vm.contactModalTitle = 'Add New Contacts From Excel';
+        vm.newContact = {excel:true};
+        vm.modalErrors = {};
       }
 
       if (action === 'update') {

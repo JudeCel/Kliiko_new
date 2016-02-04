@@ -234,14 +234,24 @@
   }
 
   .custom-select-directive {
-    padding: 7px !important;
-    text-align: inherit !important;
+
+    $thisWidth: 150px;
+
+     .dd-directive {
+      padding: 7px 20px !important;
+      text-align: left !important;
+    }
+
+    .wrapper-dropdown-cd {
+      width: $thisWidth;
+    }
 
     ul.dropdown {
       left:-2px;
-      width: 200px;
+      width: $thisWidth;
       border: 2px solid $green;
       border-top: none;
+      z-index:300 !important;
 
       li {
         padding: 0 7px;
@@ -257,5 +267,11 @@
       }
     }
   }
+  #contact-lists-add-button-1 {
+    padding: 8px !important;
+  }
+
+
+  @import "particles/modals-excel-import";
 
 }
