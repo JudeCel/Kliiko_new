@@ -168,7 +168,7 @@
               </button>
 
               <a type='submit' download="{{resource.JSON.matchName}}" ng-if="!checkType(resource.JSON.type, 'youtubeUrl')" class='btn btn-addNewElement btn-green margin-only-right-10 pull-right gallery-btn-width' 
-                 href="{{'/chat_room/uploads/' + resource.JSON.name}}">
+                 href='{{getResourceNameUrl(resource)}}'>
                 <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>   
               </a>
 
@@ -186,7 +186,7 @@
   </form>
 
   <!-- resourceModal -->
-  <div class='modal fade' id='uploadTST' role='dialog'>
+  <div class='modal fade' id='uploadResource' role='dialog'>
     <div class='modal-dialog changePasswordModal' >
       <div class='modal-content border-green border-radius-none'>
         <div class='modal-header'>

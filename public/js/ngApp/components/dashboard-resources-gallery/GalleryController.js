@@ -24,7 +24,7 @@
     ]
 
     function initList() {
-      if(sessionStorage.getItem('viewType') == null){
+      if(!sessionStorage.getItem('viewType')){
         sessionStorage.setItem('viewType', 'panel');
         $scope.viewType = sessionStorage.getItem('viewType');
       }
@@ -76,7 +76,7 @@
       $scope.newResource.type = uploadType;
       $scope.uploadTypeForTitle = uploadTypeForTitle(uploadType);
       setUploadtype(uploadType);
-      domServices.modal('uploadTST');
+      domServices.modal('uploadResource');
     };
 
     $scope.submitForm = function(newResource) {
@@ -158,7 +158,7 @@
 
     function cancel(){
       $scope.newResource = {};
-      domServices.modal('uploadTST', 'close');
+      domServices.modal('uploadResource', 'close');
     }
    
     $scope.isAll = false;

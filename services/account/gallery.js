@@ -86,7 +86,7 @@ function downloadResources(data){
   })
   .then(function (results) {
     selectFilesForZip(results).then(function(files) {
-      pushFilesTiZip(files).then(function(fileName) {
+      pushFilesToZip(files).then(function(fileName) {
         deferred.resolve({fileName: fileName});
       }, function(err) {
         deferred.reject({error: err});
@@ -118,7 +118,7 @@ function selectFilesForZip(results){
   return deferred.promise;
 }
 
-function pushFilesTiZip(files) {
+function pushFilesToZip(files) {
   let deferred = q.defer();
   let archive = new zip();
 
