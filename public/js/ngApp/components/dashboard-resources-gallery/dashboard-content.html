@@ -18,9 +18,7 @@
           <span class='glyphicon glyphicon-th-list' aria-hidden='true'></span>   
         </button>
 
-        <button class='btn btn-addNewElement btn-green gallery-btn-width' 
-                type='button' id='uploadResourceDropdown' data-toggle='dropdown' 
-                aria-haspopup='true' aria-expanded='false'>
+        <button class='btn btn-addNewElement btn-green gallery-btn-width' type='button' id='uploadResourceDropdown' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
           <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
           Add New Resource
         </button>
@@ -40,14 +38,10 @@
         <div class='col-md-6 margin-bottom-10'>
           <input id="selectall" ng-click="selectAllResources()" name="selectAll" type="checkbox" value="selectAll" ng-checked="isAll"/>
           <label for="selectAll" class="margin-right-10">Select All</label>
-          <button type='submit' ng-disabled="idsForAction == 0" 
-                  class='btn btn-addNewElement btn-green no-margin gallery-btn-width' 
-                  ng-click="actionDelete('delete')">
+          <button type='submit' ng-disabled="idsForAction == 0" class='btn btn-addNewElement btn-green no-margin gallery-btn-width' ng-click="actionDelete('delete')">
             <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
           </button>
-          <button type='submit' ng-disabled="idsForAction == 0" 
-                  class='btn btn-addNewElement btn-green no-margin gallery-btn-width' 
-                  ng-click="actionDownload('download')">
+          <button type='submit' ng-disabled="idsForAction == 0" class='btn btn-addNewElement btn-green no-margin gallery-btn-width' ng-click="actionDownload('download')">
             <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>   
           </button>
         </div>
@@ -65,9 +59,7 @@
           <tbody ng-repeat="resource in resources | filter: { resourceType: filterType }">
             <tr class="ng-scope">
               <td class="ng-binding vertical-align-middle ">
-                <input class='margin-left-6' type="checkbox" 
-                       value="{{resource.id}}" ng-click="resourcesSelected(resource.id)"
-                       ng-checked="resource.checked" ng-model="resource.checked"/>
+                <input class='margin-left-6' type="checkbox" value="{{resource.id}}" ng-click="resourcesSelected(resource.id)" ng-checked="resource.checked" ng-model="resource.checked"/>
               </td>
               <td class="ng-binding" ng-if="checkType(resource.JSON.type, 'video') || checkType(resource.JSON.type, 'youtubeUrl')">
                 <span class='glyphicon glyphicon-facetime-video border-green gallery-list-icon' aria-hidden='true'></span>
@@ -78,7 +70,7 @@
                     <div class="dummy"></div>
 
                     <div class="img-container">
-                      <img ng-src="/chat_room/uploads/{{resource.JSON.tableThumb}}"/>
+                      <img ng-src='{{getResourceThumbUrl(resource)}}'/>
                     </div>
                   </div>
                 </div>
@@ -104,15 +96,12 @@
               </td>
               <td>
 
-                <button type='submit'
-                        class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' 
-                        ng-click="deleteResources(resource.id)">
+                <button type='submit' class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' ng-click="deleteResources(resource.id)">
                   <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
                 </button>
 
-                <a type='submit' download="{{resource.JSON.matchName}}" ng-if="!checkType(resource.JSON.type, 'youtubeUrl')"
-                        class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' 
-                        href="{{ + resource.JSON.name}}">
+                <a type='submit' download="{{resource.JSON.matchName}}" ng-if="!checkType(resource.JSON.type, 'youtubeUrl')" class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' 
+                   href="{{ + resource.JSON.name}}">
                   <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>   
                 </a>
               </td>
@@ -128,7 +117,7 @@
           <div class="panel panel-success border-green">
             <div class="panel-body">
               
-              <div class="responsive-container" ng-if="checkType(resource.JSON.type, 'youtubeUrl')" style="margin: 53px 0px 52px 0px">
+              <div class="responsive-container center-youtube-video" ng-if="checkType(resource.JSON.type, 'youtubeUrl')">
                 <div class="embed-responsive embed-responsive-4by3" ng-bind-html="renderHtml(resource.JSON.message)"></div>
               </div>
 
@@ -137,7 +126,7 @@
                 <div class="dummy"></div>
 
                 <div class="img-container">
-                  <img ng-src="/chat_room/uploads/{{resource.JSON.panelThumb}}" class="center-block vertical-align img-responsive"/>
+                  <img ng-src='{{getResourceNameUrl(resource)}}' class="center-block vertical-align img-responsive"/>
                 </div>
               </div>
             
@@ -174,15 +163,12 @@
 
               {{ resource.JSON.title | limitTo: 10 }}{{resource.JSON.title.length > 10 ? '...' : ''}}
 
-              <button type='submit'
-                      class='btn btn-addNewElement btn-green pull-right margin-only-right-10 gallery-btn-width' 
-                      ng-click="deleteResources(resource.id)">
+              <button type='submit' class='btn btn-addNewElement btn-green pull-right margin-only-right-10 gallery-btn-width' ng-click="deleteResources(resource.id)">
                 <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
               </button>
 
-              <a type='submit' download="{{resource.JSON.matchName}}" ng-if="!checkType(resource.JSON.type, 'youtubeUrl')"
-                      class='btn btn-addNewElement btn-green margin-only-right-10 pull-right gallery-btn-width' 
-                      href="{{'/chat_room/uploads/' + resource.JSON.name}}">
+              <a type='submit' download="{{resource.JSON.matchName}}" ng-if="!checkType(resource.JSON.type, 'youtubeUrl')" class='btn btn-addNewElement btn-green margin-only-right-10 pull-right gallery-btn-width' 
+                 href="{{'/chat_room/uploads/' + resource.JSON.name}}">
                 <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>   
               </a>
 

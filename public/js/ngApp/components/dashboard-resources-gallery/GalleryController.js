@@ -245,5 +245,13 @@
       return first == second;
     }
 
+    $scope.getResourceNameUrl = function(resource){
+      return "/chat_room/uploads/" + resource.JSON.name;
+    }
+
+    $scope.getResourceThumbUrl = function(resource){
+      return "/chat_room/uploads/" + resource.JSON.tableThumb;
+    }
+
   }
 })();
