@@ -81,7 +81,7 @@ function deleteZipFile(params) {
 function downloadResources(data){
   let deferred = q.defer();
   Resource.findAll({
-    id: data.resource_id,
+    where: {id: data.resource_id },
     attributes: ['id', 'JSON', 'resourceType']
   })
   .then(function (results) {
