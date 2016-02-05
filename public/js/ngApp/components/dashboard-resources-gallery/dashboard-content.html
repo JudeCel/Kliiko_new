@@ -117,8 +117,11 @@
           <div class="panel panel-success border-green">
             <div class="panel-body">
               
-              <div class="responsive-container center-youtube-video" ng-if="checkType(resource.JSON.type, 'youtubeUrl')">
-                <div class="embed-responsive embed-responsive-4by3" ng-bind-html="renderHtml(resource.JSON.message)"></div>
+              <div class="responsive-container" ng-if="checkType(resource.JSON.type, 'youtubeUrl')">
+                  <div class="dummy"></div>
+                  <div class="embed-responsive-youtube">
+                    <div class="embed-responsive embed-responsive-4by3" ng-bind-html="renderHtml(resource.JSON.message)"></div>
+                  </div>
               </div>
 
               
