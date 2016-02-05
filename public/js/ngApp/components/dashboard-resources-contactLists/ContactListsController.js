@@ -384,6 +384,16 @@
       );
     }
     
+    
+    function prepareListForMapping(list) {
+      var len = list.length;
+      var array = [];
+      for (var i = 0; i < len; i++) {
+        array[i] = { name: list[i] }
+      }
+      return array;
+    }
+    
     function processImportData(res) {
       //fields for left column in mapping
       vm.importedFields = res.data.result.fileFields;
@@ -391,14 +401,17 @@
       
       //fill values for right column
       var array = [];
-      var list = vm.lists.activeList.availableTables();
+      //var list = vm.lists.activeList.availableTables();
+      var list = res.data.result.contactListFields.defaultFields;
       var len = list.length;
       
       for (var i = 0; i < len; i++) {
         array[i] = { name: list[i] }
       }
       //fields for right column in mapping
-      vm.contactListDropItems = array;
+      vm.contactListDropItems.defaultFields = prepareListForMapping(res.data.result.contactListFields.defaultFields);
+      vm.contactListDropItems.customFields = prepareListForMapping(res.data.result.contactListFields.customFields);
+      
       domServices.modal('contactList-addContactManual', 'close');
       vm.addNewListFieldMapping();
       
@@ -421,16 +434,15 @@
       var userList = [];
       for (var j = 0; j < vm.validContactList.length; j++ ) {
         var user = {};
-        for (var i = 0; i < vm.contactListDropItems.length; i++) {
-          if (vm.contactListDropItems[i].field) {
-            user[vm.contactListDropItems[i].name] = vm.validContactList[j][vm.contactListDropItems[i].field];
+        for (var i = 0; i < vm.contactListDropItems.customFields.length; i++) {
+          if (vm.contactListDropItems.customFields[i].field) {
+            user[vm.contactListDropItems.customFields[i].name] = vm.validContactList[j][vm.contactListDropItems.customFields[i].field];
           }
         }//for
         userList.push(user);
       }//for
       vm.contactListToAdd = userList;
       
-      console.log(vm.contactListToAdd);
       domServices.modal('contactList-addNewListFieldsPreviewModal');      
     }
     

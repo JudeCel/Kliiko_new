@@ -39,9 +39,13 @@
   "googleClientID": "101229485448-ghjvvk9ctatrbrle6ac05oevk5ea2ac7.apps.googleusercontent.com",
   "googleClientSecret": "jGmLwpE-aCJSb0kACO1wDawC",
   "googleCallbackURL": "http://insider.kliiko.diatomdemo.com:8080/auth/google/callback",
+<<<<<<< HEAD
 
   "fileUploadPath": "public/uploads",
 
+=======
+  "chatUploadDir": "/var/lib/jenkins/jobs/Kliiko Demo/workspace/chatRoom/public/uploads/",
+>>>>>>> master
   "chatConf":{
     "mode": "live",
     "conflict": "drop existing",
@@ -49,7 +53,7 @@
     "port": "8080",
     "domain": "insider.kliiko.diatomdemo.com",
     "paths": {
-      "fsPath": "/var/lib/jenkins/jobs/Kliiko/workspace/chatRoom",
+      "fsPath": "/var/lib/jenkins/jobs/Kliiko Demo/workspace/chatRoom",
       "urlPath": "http://insider.kliiko.diatomdemo.com:8080/",
       "serverPath": "server/",
       "configPath": "config/",

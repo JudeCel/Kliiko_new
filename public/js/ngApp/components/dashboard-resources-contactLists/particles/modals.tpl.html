@@ -127,16 +127,19 @@
                           </div>
                           <div id="contactList-fieldColumnRight" class="col-md-6 panel panel-default">
                             <h3>Contact List</h3>
-                            <!--<p class='pull-right'>Required fields*</p>-->  
-                            <table>
-                              <tr ng-repeat="cl in clc.contactListDropItems track by $index"  ng-drop="true" ng-drop-success="clc.onFieldMapDrop($data, cl)"> 
+                            <!-- Template for table below -->
+                            <script type="text/ng-template" id="fieldTemplate.html">                               
                                 <td>{{cl.name}}</td> 
                                 <td class="contactList-dropPlaceholderCell">
                                   <div class="contactList-dropPlaceholder">                                                                
                                     <div ng-show="cl.field" class="contactList-drop-item" ng-drag="true" ng-drag-data="cl">{{cl.field}} <img src="/icons/ic_move.png" class="pull-right"> <button  ng-click="clc.clearDoppedItem(cl)" type='button' class='close'>&times;</button></div>
                                   </div>
                                 </td>
-                              </tr>
+                            </script>
+                            
+                            <table>
+                              <tr ng-repeat="cl in clc.contactListDropItems.defaultFields track by $index"  ng-drop="true" ng-drop-success="clc.onFieldMapDrop($data, cl)" ng-include="'fieldTemplate.html'">
+                              <tr ng-repeat="cl in clc.contactListDropItems.customFields track by $index"  ng-drop="true" ng-drop-success="clc.onFieldMapDrop($data, cl)" ng-include="'fieldTemplate.html'">
                             </table>
                             
                         </div>
