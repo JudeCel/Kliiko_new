@@ -161,11 +161,9 @@
 
     }
 
-    function editCustomFields() {
+    function prepareCustomFields() {
       vm.listIdToEdit = vm.lists.activeList.id;
       vm.newList = {};
-
-      vm.modalTab2 = true;
       vm.listModalTitle = 'Edit List And Custom Fields';
 
       // populate with existing data
@@ -174,9 +172,12 @@
         var I = i+1;
         vm.newList['customField'+I] = vm.lists.activeList.customFields[i];
       }
-
+    }
+    
+    function editCustomFields() {
+      vm.modalTab2 = true;
+      prepareCustomFields();
       domServices.modal('contactList-addNewListModal');
-
     }
 
     function updateTableSorting(draggedIndex, droppedIndex) {
@@ -410,9 +411,12 @@
       }
       //fields for right column in mapping
       vm.contactListDropItems.defaultFields = prepareListForMapping(res.data.result.contactListFields.defaultFields);
-      vm.contactListDropItems.customFields = prepareListForMapping(res.data.result.contactListFields.customFields);
+      //vm.contactListDropItems.customFields = prepareListForMapping(res.data.result.contactListFields.customFields);
+      vm.contactListDropItems.customFields = prepareListForMapping(vm.lists.activeList.customFields);
+      vm.modalTab1 = true;
       
       domServices.modal('contactList-addContactManual', 'close');
+      prepareCustomFields();
       vm.addNewListFieldMapping();
       
       if (!vm.validContactList.length) {
@@ -439,6 +443,12 @@
             user[vm.contactListDropItems.customFields[i].name] = vm.validContactList[j][vm.contactListDropItems.customFields[i].field];
           }
         }//for
+        
+        for (var i = 0; i < vm.contactListDropItems.defaultFields.length; i++) {
+          if (vm.contactListDropItems.defaultFields[i].field) {
+            user[vm.contactListDropItems.defaultFields[i].name] = vm.validContactList[j][vm.contactListDropItems.defaultFields[i].field];
+          }
+        }//for
         userList.push(user);
       }//for
       vm.contactListToAdd = userList;
@@ -448,6 +458,30 @@
     
     vm.clearDoppedItem = function(item) {
       item.field = null;
+    }
+    
+    vm.updateCustomFieldList = function() {
+      if (vm.newListErrorMessage) return;
+      if (!vm.newList.name) {
+        dbg.log2('#ContactListController > updateList > error > list name is empty');
+        messenger.error('List Name can not be blank');
+        return;
+      }
+      var newList = angular.copy(vm.newList);
+      var parsedList = prepareParsedList(vm.newList);
+      vm.lists.updateActiveItem(parsedList).then(
+        function (res) {
+          messenger.ok('List "'+ newList.name + '" updated');
+          prepareCustomFields();
+          
+          console.log(vm.lists.activeList.customFields);
+          vm.contactListDropItems.customFields = prepareListForMapping(vm.lists.activeList.customFields);
+        },
+        function (err) {
+          messenger.error('Could not update new list: '+ err);
+          dbg.error('#ContactListController > updateList > error: ', err);
+        }
+      );
     }
 
   }

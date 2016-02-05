@@ -57,32 +57,6 @@
                         <uib-tab heading="Custom Fields" active="clc.modalTab2">
                             <form id="new-list-custom-fields" ng-submit="clc.submitNewList()">
                               <ng-include src="clc.basePath+'particles/modals-custom-fields.tpl.html'"></ng-include>
-                              <!--  <div  class="row">
-                                    <br>
-                                    <div class="error-message text-center col-md-12" ng-show="clc.newListErrorMessage"><code>{{clc.newListErrorMessage}} </code></div>
-                                    <br><br>
-                                    <div class="col-md-6 ">
-                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField1" placeholder="Custom Field Name 1" ng-change="clc.checkCustomFields(1)" ng-class="{error: clc.newListError[1]}">
-                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField2" placeholder="Custom Field Name 2" ng-change="clc.checkCustomFields(2)" ng-class="{error: clc.newListError[2]}">
-                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField3" placeholder="Custom Field Name 3" ng-change="clc.checkCustomFields(3)" ng-class="{error: clc.newListError[3]}">
-                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField4" placeholder="Custom Field Name 4" ng-change="clc.checkCustomFields(4)" ng-class="{error: clc.newListError[4]}">
-                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField5" placeholder="Custom Field Name 5" ng-change="clc.checkCustomFields(5)" ng-class="{error: clc.newListError[5]}">
-                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField6" placeholder="Custom Field Name 6" ng-change="clc.checkCustomFields(6)" ng-class="{error: clc.newListError[6]}">
-                                    </div>
-
-                                    <div class="col-md-6 ">
-                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField7" placeholder="Custom Field Name 7" ng-change="clc.checkCustomFields(7)" ng-class="{error: clc.newListError[7]}">
-                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField8" placeholder="Custom Field Name 8" ng-change="clc.checkCustomFields(8)" ng-class="{error: clc.newListError[8]}">
-                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField9" placeholder="Custom Field Name 9" ng-change="clc.checkCustomFields(9)" ng-class="{error: clc.newListError[9]}">
-                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField10" placeholder="Custom Field Name 10" ng-change="clc.checkCustomFields(10)" ng-class="{error: clc.newListError[10]}">
-                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField11" placeholder="Custom Field Name 11" ng-change="clc.checkCustomFields(11)" ng-class="{error: clc.newListError[11]}">
-                                        <input class="custom-fields" type="text" ng-model="clc.newList.customField12" placeholder="Custom Field Name 12" ng-change="clc.checkCustomFields(12)" ng-class="{error: clc.newListError[12]}">
-
-                                    </div>
-                                </div>
-                              -->
-
-
                                 <div class='row'>
                                     <div class='col-md-12'>
 
@@ -114,7 +88,7 @@
                 
                   <div class='modal-body text-gray-medium'>
                     <uib-tabset justified="true">
-                      <uib-tab heading="Field Mapping" active="true">
+                      <uib-tab heading="Field Mapping" active="clc.modalTab1">
                       <form id="new-list-custom-fields-drag-drop" ng-submit="clc.submitNewList()">
                         <div class="row r">
                           <div id="contactList-fieldColumnLeft" class="col-md-5 panel panel-default">
@@ -154,9 +128,12 @@
                     </form>
                     </uib-tab >
                   
-                 <uib-tab heading="Custom Fields" active="true">
-                   <ng-include src="clc.basePath+'particles/modals-custom-fields.tpl.html'"></ng-include>
-                 </uib-tab>
+                  <uib-tab heading="Custom Fields" active="clc.modalTab2">
+                    <div class='row contactList-customfields'>
+                      <ng-include src="clc.basePath+'particles/modals-custom-fields.tpl.html'"></ng-include>
+                      <div class='btn-standart btn-green pull-right modals-btn' ng-click="clc.updateCustomFieldList()" ng-class="{disabled:clc.newListErrorMessage}">Update</div>
+                    </div>
+                  </uib-tab>
               </uib-tabset>     
           </div>
         </div>
