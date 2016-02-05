@@ -13,7 +13,7 @@ var surveyConstants = require('../util/surveyConstants');
 
 const MESSAGES = {
   notFound: 'Survey not found!',
-  closed: 'Survey closed, please contact admin!',
+  alreadyClosed: 'Survey closed, please contact admin!',
   notConfirmed: 'Survey not confirmed, please contact admin!',
   removed: 'Successfully removed survey!',
   completed: 'Successfully completed survey!',
@@ -74,7 +74,7 @@ function findAllSurveys(account) {
     order: [
       ['id', 'asc'],
       [SurveyQuestion, 'order', 'ASC']
-    ],   
+    ],
     include: [
       {
         model: Resource
@@ -123,7 +123,7 @@ function findSurvey(params) {
   }).then(function(survey) {
     if(survey) {
       if(survey.closed) {
-        deferred.reject(MESSAGES.closed);
+        deferred.reject(MESSAGES.alreadyClosed);
       }
       else if(!survey.confirmedAt) {
         deferred.reject(MESSAGES.notConfirmed);
