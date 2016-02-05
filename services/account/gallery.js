@@ -190,8 +190,6 @@ function saveYoutubeData(data) {
     deferred.reject("You have input an invalid youTube link! Please re-enter.");
   }else{
     let resourceAppendedCallback = function (userId, json) {
-    console.log(userId);
-      
       deferred.resolve(json);
     };
 
@@ -251,7 +249,6 @@ function uploadResourceFile(req) {
     height: 460,
     type: req.body.type,
     resCb: function(userId, json) {
-        console.log(json);
       deferred.resolve(json);
     }
   });

@@ -200,12 +200,6 @@ img.ic-flipX {
     width: 22px;
     background-size: contain;
     margin-top: 1px; }
-  .contactDetailsModal .has-error, .accountDatabaseCommentModal .has-error, .surveyPreviewModal .has-error, .brandColourPreviewModal .has-error {
-    color: #f00;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 270px;
-    display: inline-block; }
 
 .accountDatabaseCommentModal {
   width: 400px;
@@ -1404,6 +1398,12 @@ hr.survey-hr {
 
 .panel-mmin-height {
   min-height: 302px; }
+
+.center-youtube-video {
+  margin: 53px 0px 52px 0px; }
+
+.fill-panel-footer {
+  padding-bottom: 30px; }
 
 .manage-preview {
   padding-top: 1%;

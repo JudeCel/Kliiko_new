@@ -109,7 +109,6 @@
         if(res.error){
           messenger.error(res.error);
         }else{
-          console.log(res);
           $scope.resources.push(res);
           cancel()
           messenger.ok("Resource was sucessfully created.");
@@ -252,6 +251,5 @@
     $scope.getResourceThumbUrl = function(resource){
       return "/chat_room/uploads/" + resource.JSON.tableThumb;
     }
-
   }
 })();
