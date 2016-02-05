@@ -20,12 +20,12 @@
         method: 'POST',
         data: {uploadedfile: file}
       }).then(function (resp) {
-        //console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
         deferred.resolve(resp);
       }, function (resp) {
         console.log('Error status: ' + resp.status);
       }, function (evt) {
-        var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+        // progrss case
+
       });
 
       return deferred.promise;

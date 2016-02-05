@@ -1,35 +1,37 @@
-<table class='table table-responsive table-dashboardElements' ng-hide="!clc.lists.activeList.members.length">
-    <thead>
-    <tr>
-        <th></th>
-        <th ng-repeat="rowHeader in clc.lists.activeList.visibleFields" ng-click="clc.changeTableSortingFilter(rowHeader)"
-            ng-drag="true" ng-drag-data="$index" class="druggable">
-            <span class="th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader}}</span>
-            <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
-            <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
-        </th>
+<section id="dashboard-contact-lists-main-table">
+    <table class='table table-responsive table-dashboardElements' ng-hide="!clc.lists.activeList.members.length">
+        <thead>
+        <tr>
+            <th></th>
+            <th ng-repeat="rowHeader in clc.lists.activeList.visibleFields" ng-click="clc.changeTableSortingFilter(rowHeader)"
+                ng-drag="true" ng-drag-data="$index" class="druggable">
+                <span class="th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader}}</span>
+                <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
+                <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
+            </th>
 
-        <th ng-click="clc.showManageColumnsModal()"><img  src="/icons/grid.png" ></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr class="member-row" ng-repeat='member in clc.lists.activeList.members | orderBy: clc.tableSort.by : clc.tableSort.reverse' ng-class="{'selected':member._selected}">
-        <td>
-            <div class="check">
-                <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-model="member._selected" ng-click="member.selected = !member.selected" type="checkbox" >
-                <label for="memberSelectet{{ $index }}" class="kliiko-checkbox" ></label>
-            </div>
-        </td>
+            <th ng-click="clc.showManageColumnsModal()"><img  src="/icons/grid.png" ></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="member-row" ng-repeat='member in clc.lists.activeList.members | orderBy: clc.tableSort.by : clc.tableSort.reverse' ng-class="{'selected':member._selected}">
+            <td>
+                <div class="check">
+                    <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-model="member._selected" ng-click="member.selected = !member.selected" type="checkbox" >
+                    <label for="memberSelectet{{ $index }}" class="kliiko-checkbox" ></label>
+                </div>
+            </td>
 
-        <td ng-repeat="tableRow in clc.lists.activeList.visibleFields"> {{ member[tableRow] || '-' }}</td>
+            <td ng-repeat="tableRow in clc.lists.activeList.visibleFields"> {{ member[tableRow] || '-' }}</td>
 
-        <td >
+            <td >
                 <span class='table-item-edit-group'>
                   <img src='/icons/dashboardElement_edit.png' alt='' ng-click="clc.contactAddEditClickHandle('update', member)"/>
                   <img src='/icons/dashboardElement_remove.png' alt='' ng-click="clc.removeContacts(member.id)" />
                 </span>
-        </td>
-    </tr>
+            </td>
+        </tr>
 
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</section>

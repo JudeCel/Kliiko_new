@@ -17,7 +17,8 @@
     vm.modContentBlock= {generalDetails:true, history: false};
     vm.importData = { excel:false, csv:false, fileToImport: null};
     vm.basePath = '/js/ngApp/components/dashboard-resources-contactLists/';
-    
+    vm.importErrorMessage = null;
+
     vm.importedFields = [];
     vm.contactListDropItems = [];
     vm.validContactList = [];
@@ -210,29 +211,35 @@
      * @param [contactObj] {object} - contact object required for editing case
      */
     function contactAddEditClickHandle(action, contactObj) {
+      vm.importData = null;
+      vm.importErrorMessage = null;
+      vm.newContact = {};
+      vm.modalErrors = {};
+
       if (action === 'new') {
         vm.updateExistingUser = null;
         vm.contactModalTitle = 'Add New Contact';
-        vm.newContact = {};
-        vm.modalErrors = {};
+      }
+
+      if (action === 'update') {
+        vm.contactModalTitle = 'Edit Contact';
+        vm.newContact = contactObj;
+        vm.updateExistingUser = true;
       }
 
       if (action === 'excel') {
         vm.updateExistingUser = null;
         vm.contactModalTitle = 'Add New Contacts From Excel';
-        vm.importData = { excel:true, fileToImport: null};
-        vm.newContact = {};
-        vm.modalErrors = {};
+        vm.importData = { excel:true, csv: false, fileToImport: null};
       }
 
-      if (action === 'update') {
-        vm.newListError = {};
-        vm.modalErrors = {};
+      if (action === 'csv') {
+        vm.updateExistingUser = null;
+        vm.contactModalTitle = 'Add New Contacts From CSV';
+        vm.importData = { excel:false, csv: true, fileToImport: null};
 
-        vm.contactModalTitle = 'Edit Contact';
-        vm.newContact = contactObj;
-        vm.updateExistingUser = true;
       }
+
 
       domServices.modal('contactList-addContactManual');
     }
@@ -269,8 +276,6 @@
           }
         }
       );
-
-
 
     }
 
@@ -376,16 +381,23 @@
     function startImport() {
       if (!vm.importData.file) return;
 
-      contactListsControllerServices.uploadImportFile(vm.importData.file, vm.lists.activeList.id).then(
-        function (res) {
+      vm.lists.activeList.parseImportFile(vm.importData.file).then(
+        function(res) {
+          res.valid ? alert('show preview') : alert('show map');
+          //alert('show preview')
+          domServices.modal('contactList-importSteps');
           processImportData(res);
         },
-        function (err) {
+        function(err) {
+          messenger.error('Import Failed');
+          vm.importErrorMessage = 'This file media type is not recognized or it is corrupted. Please, choose another file.'
         }
       );
+
+
+
     }
-    
-    
+       
     function prepareListForMapping(list) {
       var len = list.length;
       var array = [];
@@ -397,21 +409,20 @@
     
     function processImportData(res) {
       //fields for left column in mapping
-      vm.importedFields = res.data.result.fileFields;
-      vm.validContactList = res.data.result.valid.concat(res.data.result.invalid);
+      vm.importedFields = res.data.fileFields;
+      vm.validContactList = res.data.valid.concat(res.data.invalid);
       
       //fill values for right column
       var array = [];
-      //var list = vm.lists.activeList.availableTables();
-      var list = res.data.result.contactListFields.defaultFields;
+      var list = res.data.contactListFields.defaultFields;
       var len = list.length;
       
       for (var i = 0; i < len; i++) {
         array[i] = { name: list[i] }
+
       }
       //fields for right column in mapping
-      vm.contactListDropItems.defaultFields = prepareListForMapping(res.data.result.contactListFields.defaultFields);
-      //vm.contactListDropItems.customFields = prepareListForMapping(res.data.result.contactListFields.customFields);
+      vm.contactListDropItems.defaultFields = prepareListForMapping(res.data.contactListFields.defaultFields);
       vm.contactListDropItems.customFields = prepareListForMapping(vm.lists.activeList.customFields);
       vm.modalTab1 = true;
       

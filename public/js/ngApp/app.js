@@ -15,7 +15,6 @@
     'domServices',
     'messenger',
     'ngMessages',
-    //'CreditCard',
 
     // app modules
     'KliikoApp.user',
@@ -35,6 +34,9 @@
         },
 
         'response': function(response) {
+          if (response.status == 404) {
+            alert('that is all falks');
+          }
           $rootScope.progressbarComplete();
           return response;
         },
