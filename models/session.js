@@ -5,6 +5,7 @@ module.exports = (Sequelize, DataTypes) => {
     id:	 { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     brand_project_id: { type: DataTypes.INTEGER, allowNull: true},
     accountId: { type: DataTypes.INTEGER, allowNull: false },
+    facilitatorId: { type: DataTypes.INTEGER, allowNull: false },
     brandProjectPreferenceId: { type: DataTypes.INTEGER, allowNull: true },
     name:	{ type: DataTypes.STRING, allowNull: false, default: 'untitled'},
     start_time:	{ type: DataTypes.DATE, allowNull: false },
@@ -22,6 +23,7 @@ module.exports = (Sequelize, DataTypes) => {
         associate: function(models) {
           Session.belongsTo(models.BrandProject, { foreignKey: 'brand_project_id' });
           Session.belongsTo(models.Account, { foreignKey: 'accountId' });
+          Session.belongsTo(models.AccountUser, { foreignKey: 'facilitatorId', as: 'Facilitator', scope: { role: 'facilitator' } });
           Session.belongsTo(models.BrandProjectPreference, { foreignKey: 'brandProjectPreferenceId' });
           Session.belongsToMany(models.Topic, { through: { model: models.SessionTopics} } );
           Session.hasMany(models.SessionMember, { foreignKey: 'sessionId' });

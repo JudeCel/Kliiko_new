@@ -1,4 +1,6 @@
 'use strict';
+
+var constants = require('../../util/constants');
 var sessionServices = require('./../../services/session');
 
 function get(req, res, next) {
@@ -31,6 +33,7 @@ function getResponses(res) {
       var results = {
         data: result.data,
         message: result.message,
+        dateFormat: constants.dateFormat
       };
 
       res.send(results);

@@ -11,11 +11,14 @@
     vm.removeSession = removeSession;
     vm.copySession = copySession;
 
+    vm.showStatus = showStatus;
+
     initList();
 
     function initList() {
       chatSessionsServices.findAllSessions().then(function(res) {
         vm.sessions = res.data;
+        vm.dateFormat = res.dateFormat;
         dbg.log2('#ChatSessionsController > getChatSessions > res ', res.data);
       });
     }
@@ -45,6 +48,24 @@
           vm.sessions.push(res.data);
         }
       });
+    }
+
+    function showStatus(session) {
+      if(session.active) {
+        var date = new Date();
+        if(date > new Date(session.end_time)) {
+          return 'Expired';
+        }
+        else if(date < new Date(session.start_time)) {
+          return 'Pending';
+        }
+        else {
+          return 'Open';
+        }
+      }
+      else {
+        return 'Closed';
+      }
     }
   }
 })();

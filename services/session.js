@@ -2,6 +2,7 @@
 
 var models = require('./../models');
 var Session  = models.Session;
+var AccountUser  = models.AccountUser;
 
 var q = require('q');
 var _ = require('lodash');
@@ -19,7 +20,16 @@ const MESSAGES = {
 function findSession(sessionId, accountId) {
   let deferred = q.defer();
 
-  Session.find({ where: { id: sessionId, accountId: accountId } }).then(function(session) {
+  Session.find({
+    where: {
+      id: sessionId,
+      accountId: accountId
+    },
+    include: [{
+      model: AccountUser,
+      as: 'Facilitator'
+    }]
+  }).then(function(session) {
     if(session) {
       deferred.resolve(simpleParams(session));
     }
@@ -38,7 +48,15 @@ function findSession(sessionId, accountId) {
 function findAllSessions(accountId) {
   let deferred = q.defer();
 
-  Session.findAll({ where: { accountId: accountId } }).then(function(sessions) {
+  Session.findAll({
+    where: {
+      accountId: accountId
+    },
+    include: [{
+      model: AccountUser,
+      as: 'Facilitator'
+    }]
+  }).then(function(sessions) {
     deferred.resolve(simpleParams(sessions));
   }).catch(Session.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));

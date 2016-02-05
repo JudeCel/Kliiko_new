@@ -78,7 +78,8 @@ function createUser(data, callback) {
 }
 
 function createSession(callback) {
-  Session.create(sessionParams(userData[0].account.id)).then(function(result) {
+  let params = sessionParams(userData[0].account.id, userData[1].account.AccountUser.id);
+  Session.create(params).then(function(result) {
     addBrandProjectPreferences(result, userData[0].account.id, function(error) {
       callback(error, result);
     });
@@ -201,9 +202,10 @@ function brandProjectParams() {
   };
 }
 
-function sessionParams(accountId) {
+function sessionParams(accountId, facilitatorId) {
   let startTime = new Date();
   return {
+    facilitatorId: facilitatorId,
     accountId: accountId,
     name: "cool session",
     start_time: startTime,
