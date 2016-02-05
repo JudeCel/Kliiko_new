@@ -57,7 +57,12 @@ function createAccountUser(params, userId, type, accountId, cb) {
 }
 
 function addToContactList(accountUser, callback) {
-  models.ContactList.find({where: {role: accountUser.role }}).then(function(contactList) {
+  models.ContactList.find({
+    where: {
+      role: accountUser.role,
+      accountId: accountUser.AccountId
+    }
+  }).then(function(contactList) {
     let params = {
       userId: accountUser.UserId,
       accountUserId: accountUser.id,
