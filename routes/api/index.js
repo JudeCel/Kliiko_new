@@ -17,7 +17,7 @@ var mailTemplates = require('./mailTemplate');
 let topic = require('./topic');
 var gallery = require('./gallery');
 var brandColour = require('./brandColour');
-var chatSessions = require('./chatSessions');
+var session = require('./session');
 
 let contactList = require('./contactList');
 let contactListUser = require('./contactListUser');
@@ -94,8 +94,6 @@ router.post('/contactListsUser', policy.authorized(['accountManager', 'admin']),
 router.post('/contactListsUsersToRemove', policy.authorized(['accountManager', 'admin']), contactListUser.destroy);
 router.put('/contactListsUser/:id', policy.authorized(['accountManager', 'admin']), contactListUser.update);
 
-
-
 router.get('/topics', multipartyMiddleware, topic.get);
 router.post('/topic', multipartyMiddleware, topic.post);
 router.put('/topic/:id',multipartyMiddleware, topic.updateById);
@@ -107,9 +105,9 @@ router.post('/brandColour', brandColour.create);
 router.put('/brandColour', brandColour.update);
 router.post('/brandColour/copy', brandColour.copy);
 
-router.get('/sessions', chatSessions.get);
-router.delete('/sessions', chatSessions.remove);
-router.post('/sessions/copy', chatSessions.copy);
+router.get('/session', session.get);
+router.delete('/session', session.remove);
+router.post('/session/copy', session.copy);
 
 // Common Rules
 router.use(function (req, res, next) {

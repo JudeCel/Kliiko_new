@@ -129,22 +129,22 @@
       })
 
       ///////////////////////// Sessions
-      .state('dashboard.chatSession', {
-        url: "/chatSession",
+      .state('dashboard.chatSessions', {
+        url: '/chatSessions',
         onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location, banners) {
-          dbg.rs('chatSession');
+          dbg.rs('chatSessions');
 
           $stateParams.bannerType = 'sessions';
 
           banners.setMainBannerForPage('sessions');
 
-          //setTimeout(function () {
-          //  if ($state.current.name == 'dashboard.chatSession') $state.go('dashboard.chatSession');
-          //}, 10);
+          setTimeout(function () {
+           if ($state.current.name == 'dashboard.chatSessions') $state.go('dashboard.chatSessions');
+          }, 10);
 
         }],
         views: {
-          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-chatSession/sessions.html"}
+          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-chatSessions/dashboard-content.html"}
         }
 
       })

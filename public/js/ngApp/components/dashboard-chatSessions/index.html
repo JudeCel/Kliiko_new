@@ -1,0 +1,43 @@
+<div class='col-xs-12'>
+  <div class='dashboard-container'>
+    <div class='row'>
+      <div>
+        <h2 class='text-center'>Chat Sessions</h2>
+      </div>
+      <div class='text-right'>
+        <button class='btn btn-addNewElement btn-green'>Build New Session</button>
+      </div>
+    </div>
+
+    <div class='row'>
+      <table class='table table-dashboardElements'>
+        <thead>
+          <tr class='green-background'>
+            <th>Name</th>
+            <th>Facilitator</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Expiration Date</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody ng-repeat='session in csc.sessions'>
+          <tr>
+            <td>{{ session.name }}</td>
+            <td>facilitator goes here</td>
+            <td>{{ session.start_time }}</td>
+            <td>{{ session.end_time }}</td>
+            <td>{{ session.end_time }}</td>
+            <td>status goes here</td>
+            <td>
+              <img src='/icons/resources_grey.png' alt='' ng-click='csc.copySession(session)' />
+              <img src='/icons/dashboardElement_edit.png' alt='' />
+              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='csc.removeSession(session)' />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
