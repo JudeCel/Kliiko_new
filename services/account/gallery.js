@@ -19,10 +19,12 @@ module.exports = {
   deleteResources: deleteResources,
   uploadResource: uploadResource,
   saveYoutubeData: saveYoutubeData,
-  uploadResourceFile: uploadResourceFile
+  uploadResourceFile: uploadResourceFile,
+  deleteZipFile: deleteZipFile
 };
 
-const allTypes = ['image', 'video', 'audio', 'pdf', 'brandLogo'];
+const allTypes = ['image', 'video', 'youtubeUrl', 'audio', 'pdf', 'brandLogo'];
+const allowedTypesForZip = ['audio', 'image', 'pdf', 'video', 'brandLogo'];
 
 function getResources(accountId, type){
   let deferred = q.defer();
@@ -62,6 +64,20 @@ function generateFileName() {
   return "resources_" + Math.round(+new Date()/1000) + ".zip";
 }
 
+function deleteZipFile(params) {
+  let deferred = q.defer();
+
+  fs.unlink(config.get("chatUploadDir") + params.fileName,  function(err) {
+    if(err){
+      deferred.reject({error: "was not able to delete"});
+    }else{
+      deferred.resolve({message: params.fileName});
+    }
+  });
+
+  return deferred.promise;
+}
+
 function downloadResources(data){
   let deferred = q.defer();
   Resource.findAll({
@@ -69,38 +85,59 @@ function downloadResources(data){
     attributes: ['id', 'JSON', 'resourceType']
   })
   .then(function (results) {
-    let archive = new zip();
-    let files = [];
-
-    results.forEach(function(resource, index, array) {
-      resource.JSON = JSON.parse(decodeURI(resource.JSON));
-
-
-      if(['audio', 'image', 'pdf'].indexOf(resource.resourceType) > -1){
-        files.push({
-          name: resource.JSON.name,
-          path: config.get("chatUploadDir") + resource.JSON.name
-        })
-      }
-    });
-
-    archive.addFiles(files, function (err) {
-      if(err){
-        return console.log("err while adding files", err);
-      }else{
-        let buff = archive.toBuffer();
-        let fileName = generateFileName();
-        fs.writeFile(config.get("chatUploadDir"), buff, function () {
-          deferred.resolve({fileName: fileName});
-        });
-      }
-    });
-
+    selectFilesForZip(results).then(function(files) {
+      pushFilesToZip(files).then(function(fileName) {
+        deferred.resolve({fileName: fileName});
+      }, function(err) {
+        deferred.reject({error: err});
+      })
+    })
   })
   .catch(function (err) {
     deferred.reject(err);
   });
 
+  return deferred.promise;
+}
+
+function selectFilesForZip(results){
+  let deferred = q.defer();
+  let files = [];
+
+  results.forEach(function(resource, index, array) {
+    resource.JSON = JSON.parse(decodeURI(resource.JSON));
+    if(allowedTypesForZip.indexOf(resource.resourceType) > -1){
+      files.push({
+        name: resource.JSON.name,
+        path: config.get("chatUploadDir") + resource.JSON.name
+      })
+    }
+    deferred.resolve(files);
+  });
+
+  return deferred.promise;
+}
+
+function pushFilesToZip(files) {
+  let deferred = q.defer();
+  let archive = new zip();
+
+  archive.addFiles(files, function (err) {
+    if(err){
+      deferred.reject("Something went wrong. Please try again latter.");
+    }else{
+      let buff = archive.toBuffer();
+      let fileName = generateFileName();
+      fs.writeFile(config.get("chatUploadDir") + fileName, buff, function (err) {
+        if(err){
+          deferred.reject(err);
+        }else{
+          deferred.resolve(fileName);
+        }
+      });
+    }
+  });
+  
   return deferred.promise;
 }
 
@@ -150,7 +187,7 @@ function saveYoutubeData(data) {
   let youTubeLink = processYouTubeData(data.body.text);
 
   if(youTubeLink == null){
-    deferred.reject("You have input an invalid youTube link!/n Please re-enter.");
+    deferred.reject("You have input an invalid youTube link! Please re-enter.");
   }else{
     let resourceAppendedCallback = function (userId, json) {
       deferred.resolve(json);
@@ -212,7 +249,6 @@ function uploadResourceFile(req) {
     height: 460,
     type: req.body.type,
     resCb: function(userId, json) {
-        console.log(json);
       deferred.resolve(json);
     }
   });
