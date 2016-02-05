@@ -23,6 +23,7 @@ module.exports = (Sequelize, DataTypes) => {
       associate: function(models) {
         SessionMember.belongsTo(models.Session, {foreignKey: 'sessionId'});
         SessionMember.belongsTo(models.AccountUser, {foreignKey: 'accountUserId'});
+        SessionMember.hasMany(models.Event, {foreignKey: 'sessionMemberId'} );
       }
     }
   }
