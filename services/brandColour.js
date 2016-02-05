@@ -1,9 +1,9 @@
 'use strict';
 
 var models = require('./../models');
-var Account = models.Account;
-var Session = models.Session;
 var BrandProjectPreference = models.BrandProjectPreference;
+
+var brandProjectConstants = require('../util/brandProjectConstants');
 
 var q = require('q');
 var _ = require('lodash');
@@ -14,91 +14,30 @@ const MESSAGES = {
   removed: 'Scheme removed successfully!',
   created: 'Scheme created successfully!',
   copied: 'Scheme copied successfully!',
-  updated: 'Scheme updated successfully!'
+  updated: 'Scheme updated successfully!',
+  notValid: 'Not valid colour'
 };
 
 const VALID_ATTRIBUTES = {
   manage: [
     'id',
     'name',
-    'sessionId',
-    'brand_project_id',
-    'colour_browser_background',
-    'colour_background',
-    'colour_border',
-    'colour_whiteboard_background',
-    'colour_whiteboard_border',
-    'colour_whiteboard_icon_background',
-    'colour_whiteboard_icon_border',
-    'colour_menu_background',
-    'colour_menu_border',
-    'colour_icon',
-    'colour_text',
-    'colour_label',
-    'colour_button_background',
-    'colour_button_border'
+    'accountId',
+    'colours'
   ]
 };
 
 // Exports
-function findScheme(params, account) {
+function findScheme(params, accountId) {
   let deferred = q.defer();
 
-  Session.find({
-    include: [{
-      model: Account,
-      where: { id: account.id }
-    }, {
-      model: BrandProjectPreference,
-      where: { id: params.id }
-    }]
-  }).then(function(session) {
-    if(session) {
-      let schemes = filterSchemesFromSessions([session]);
-      deferred.resolve(simpleParams(schemes[0]));
+  BrandProjectPreference.find({ where: { id: params.id, accountId: accountId } }).then(function(scheme) {
+    if(scheme) {
+      deferred.resolve(simpleParams(scheme));
     }
     else {
       deferred.reject(MESSAGES.notFound);
     }
-  }).catch(Session.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
-  }).catch(function(error) {
-    deferred.reject(error);
-  });
-
-  return deferred.promise;
-};
-
-function findAllSchemes(account) {
-  let deferred = q.defer();
-
-  Session.findAll({
-    include: [{
-      model: Account,
-      where: { id: account.id }
-    }, BrandProjectPreference]
-  }).then(function(sessions) {
-    let schemes = filterSchemesFromSessions(sessions);
-    deferred.resolve(simpleParams(schemes));
-  }).catch(Session.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
-  }).catch(function(error) {
-    deferred.reject(error);
-  });
-
-  return deferred.promise;
-};
-
-// Broken and untested, needs right IDs and maybe account
-function createScheme(params, account) {
-  let deferred = q.defer();
-  let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
-
-  validParams.sessionId = 1;
-  validParams.brand_project_id = 1;
-
-  BrandProjectPreference.create(validParams).then(function(result) {
-    deferred.resolve(simpleParams(result, MESSAGES.created));
   }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
   }).catch(function(error) {
@@ -108,13 +47,76 @@ function createScheme(params, account) {
   return deferred.promise;
 };
 
-function updateScheme(params, account) {
+function findAllSchemes(accountId) {
+  let deferred = q.defer();
+
+  BrandProjectPreference.findAll({ where: { accountId: accountId } }).then(function(schemes) {
+    deferred.resolve(simpleParams(schemes));
+  }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
+    deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+};
+
+function createScheme(params, accountId) {
+  let deferred = q.defer();
+
+  params.accountId = accountId;
+  let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
+  let errors = {};
+  validateColours(validParams.colours, errors);
+
+  if(_.isEmpty(errors)) {
+    BrandProjectPreference.create(validParams).then(function(result) {
+      deferred.resolve(simpleParams(result, MESSAGES.created));
+    }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
+      deferred.reject(prepareErrors(error));
+    }).catch(function(error) {
+      deferred.reject(error);
+    });
+  }
+  else {
+    deferred.reject(errors);
+  }
+
+  return deferred.promise;
+};
+
+function updateScheme(params, accountId) {
   let deferred = q.defer();
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
+  let errors = {};
+  validateColours(validParams.colours, errors);
 
-  findScheme(params, account).then(function(result) {
-    result.data.update(validParams, { returning: true }).then(function(scheme) {
-      deferred.resolve(simpleParams(scheme, MESSAGES.updated));
+  if(_.isEmpty(errors)) {
+    findScheme(params, accountId).then(function(result) {
+      result.data.update(validParams, { returning: true }).then(function(scheme) {
+        deferred.resolve(simpleParams(scheme, MESSAGES.updated));
+      }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
+        deferred.reject(prepareErrors(error));
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }
+  else {
+    deferred.reject(errors);
+  }
+
+  return deferred.promise;
+}
+
+function removeScheme(params, accountId) {
+  let deferred = q.defer();
+
+  findScheme(params, accountId).then(function(result) {
+    result.data.destroy().then(function() {
+      deferred.resolve(simpleParams(null, MESSAGES.removed));
     }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
       deferred.reject(prepareErrors(error));
     }).catch(function(error) {
@@ -125,33 +127,15 @@ function updateScheme(params, account) {
   });
 
   return deferred.promise;
-}
-
-function removeScheme(params, account) {
-  let deferred = q.defer();
-
-  findScheme(params, account).then(function(result) {
-    result.data.destroy().then(function() {
-      deferred.resolve(simpleParams(null, MESSAGES.removed));
-    }).catch(Session.sequelize.ValidationError, function(error) {
-      deferred.reject(prepareErrors(error));
-    }).catch(function(error) {
-      deferred.reject(error);
-    });
-  }, function(error) {
-    deferred.reject(error);
-  });
-
-  return deferred.promise;
 };
 
-function copyScheme(params, account) {
+function copyScheme(params, accountId) {
   let deferred = q.defer();
 
-  findScheme(params, account).then(function(result) {
+  findScheme(params, accountId).then(function(result) {
     delete result.data.dataValues.id;
 
-    createScheme(result.data.dataValues, account).then(function(result) {
+    createScheme(result.data.dataValues, accountId).then(function(result) {
       deferred.resolve(simpleParams(result.data, MESSAGES.copied));
     }, function(error) {
       deferred.reject(error);
@@ -164,45 +148,63 @@ function copyScheme(params, account) {
 };
 
 function manageFields() {
-  let array = [];
+  let object = { chatRoom: [], participants: [] };
 
-  _.map(VALID_ATTRIBUTES.manage, function(attr) {
-    if(_.includes(attr, 'colour_')) {
-      array.push({
-        title: _.startCase(attr.substring('colour_'.length)),
-        model: attr
+  _.map(brandProjectConstants.preferenceColours, function(value, key) {
+    if(key == 'participants') {
+      _.map(value, function(value, key) {
+        object.participants.push({
+          model: key
+        });
+      });
+    }
+    else {
+      object.chatRoom.push({
+        title: _.startCase(key),
+        model: key
       });
     }
   });
 
-  return array;
+  return object;
 }
 
 // Helpers
-function validateParams(params, attributes) {
-  if(_.isObject(params.SurveyQuestions)) {
-    let array = [];
-    _.map(params.SurveyQuestions, function(n) {
-      array.push(n);
-    });
-    params.SurveyQuestions = array;
-  }
-
-  params.SurveyQuestions = _.remove(params.SurveyQuestions, function(n) {
-    return _.isObject(n);
+function pushToObjectArray(object, attr, type) {
+  object[type].push({
+    title: _.startCase(attr.substring('colour_'.length)),
+    model: attr
   });
+}
 
-  return _.pick(params, attributes);
+function validateParams(params, attributes) {
+  let newParams = _.pick(params, attributes);
+  newParams.colours = assignDefaultColours(newParams.colours);
+
+  return newParams;
 };
 
-function filterSchemesFromSessions(sessions) {
-  let array = [];
+function assignDefaultColours(colours) {
+  let constantValues = _.cloneDeep(brandProjectConstants.preferenceColours);
+  return _.assign(constantValues, colours || {});
+}
 
-  _.map(sessions, function(session) {
-    array = _.concat(array, session.BrandProjectPreferences);
+function validateColours(colours, errors) {
+  let regex = new RegExp(brandProjectConstants.hexRegex);
+  _.map(colours, function(value, key) {
+    if(_.isObject(value)) {
+      _.map(value, function(subvalue, subkey) {
+        if(!regex.test(subvalue)) {
+          errors[subkey] = _.startCase(key + subkey) + ': ' + MESSAGES.notValid;
+        }
+      });
+    }
+    else {
+      if(!regex.test(value)) {
+        errors[key] = _.startCase(key) + ': ' + MESSAGES.notValid;
+      }
+    }
   });
-
-  return _.uniqBy(array, 'id');
 }
 
 function simpleParams(data, message) {

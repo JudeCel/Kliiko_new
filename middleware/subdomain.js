@@ -31,6 +31,7 @@ function getAccauntWithRoles(user, subdomain, callback) {
       include: [ { model: models.AccountUser }], limit: 1 }
     ).then(function(accounts) {
       let account = accounts[0];
+
       if (account) {
         let result = { id: account.id, name: subdomain, accountUser: account.AccountUser }
         callback(null, result)

@@ -1,60 +1,13 @@
-{{ previewScheme = scheme || bcc.previewScheme; "" }}
-<div class='brandColours'>
-  <div class='col-xs-12' style='background-color: {{ previewScheme.colour_browser_background }};'>
-    <div class='row'>
-      <div class='col-xs-12 chatContainer' style='background-color: {{ previewScheme.colour_background }}; border-color: {{ previewScheme.colour_border }};'>
-        <div class='row'>
-          <div class='col-xs-12 chatSeparator' style='border-color: {{ previewScheme.colour_border }};'>
-            <div class='row'>
-              <div class='col-xs-6'>
-                <div class='row'>
-                  <div class='col-xs-5 text-right' style='color: {{ previewScheme.colour_label }};'>
-                    Session:
-                  </div>
+{{ previewScheme = scheme.colours || bcc.previewScheme.colours; "" }}
+<div class='brandColours' style='color: {{ previewScheme.font }};'>
+  <div class='row' style='background-color: {{ previewScheme.browserBackground }};'>
+    <div class='col-xs-12 header' ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/header.html'"></div>
 
-                  <div class='col-xs-7' style='color: {{ previewScheme.colour_text }};'>
-                    Session
-                  </div>
-                </div>
-
-                <div class='row'>
-                  <div class='col-xs-5 text-right' style='color: {{ previewScheme.colour_label }};'>
-                    Topic:
-                  </div>
-                  <div class='col-xs-7'>
-                    <span class='chatTopic' style='background-color: {{ previewScheme.colour_menu_background }}; border-color: {{ previewScheme.colour_menu_border }}; color: {{ previewScheme.colour_text }};'>
-                      Topic2
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div class='col-xs-6'>
-                <div class='row chatIcon'>
-                  <div class='col-xs-2'>
-                    <span class='glyphicon glyphicon-book' aria-hidden='true' style='color: {{ previewScheme.colour_icon }};'></span>
-                  </div>
-                  <div class='col-xs-2'>
-                    <span class='glyphicon glyphicon-question-sign' aria-hidden='true' style='color: {{ previewScheme.colour_icon }};'></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class='col-xs-12 whiteBoardOuterBox'>
-            <div class='row whiteBoardInnerBox'>
-              <div class='col-xs-offset-6'>
-                <span class='whiteBoardIcon' style='border-color: {{ previewScheme.colour_whiteboard_icon_border }}; background-color: {{ previewScheme.colour_whiteboard_icon_background }};'>
-                  Whiteboard
-                </span>
-              </div>
-              <div class='col-xs-offset-6 col-xs-6 whiteBoardContainer' style='background-color: {{ previewScheme.colour_whiteboard_background }}; border-color: {{ previewScheme.colour_whiteboard_border }};'>
-                <center>This is awesome!</center>
-              </div>
-            </div>
-          </div>
+    <div class='col-xs-12'>
+      <div class='col-xs-12 chatContainer' style='background-color: {{ previewScheme.mainBackground }}; border-color: {{ previewScheme.mainBorder }};'>
+        <div class='containerInnerBox' style='height: 25em' ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/svg/svg.html'">
         </div>
+        <div class='row' ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/footer.html'"></div>
       </div>
     </div>
   </div>

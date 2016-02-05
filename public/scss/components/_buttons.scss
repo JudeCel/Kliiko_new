@@ -7,7 +7,7 @@
 .btn-dashboard-menu {
   background-color: inherit;
   width: 13%;
-  min-width: 180px;
+  min-width: 49px;
   height: 36px;
   margin-left: 36px;
   margin-top: 30px;
@@ -114,7 +114,7 @@
 .btn-standart {
   display: initial;
   padding: 9px;
-  border: 3px solid lightgrey;
+  border: 2px solid lightgrey;
   cursor: pointer;
   background: white;
 
@@ -163,9 +163,32 @@
   }
 }
 
-.btn-forbidden {
+.btn-forbidden, .btn-disabled, .disabled {
   cursor: not-allowed !important;
 }
 //////
 
+//checkbox
+/* CHECKBOX */
+input.kliiko-checkbox {
+  display: none;
+}
 
+input.kliiko-checkbox + label {
+  max-width: none;
+  background: url("/icons/login_checkbox.jpeg") no-repeat;
+  height: 22px;
+  width: 22px;
+  margin-top: 0;
+  margin-left: 0;
+  margin-bottom: -5px;
+  background-size: contain;
+}
+
+input.kliiko-checkbox:checked + label{
+  background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
+  height: 22px;
+  width: 22px;
+  background-size: contain;
+  //margin-top: 1px;
+}

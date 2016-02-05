@@ -82,7 +82,7 @@ function createUser(params, callback) {
       });
     },
     accountService.create,
-    accountUserService.create,
+    accountUserService.createAccountManager,
   ]
 
   if (params.socialProfile) {
@@ -92,7 +92,7 @@ function createUser(params, callback) {
   async.waterfall(createNewUserFunctionList, function (error, user, lastActionResult, t, t2) {
     let transaction = t2 || t
       if (error) {
-        transaction.rollback().then(function functionName() {
+        transaction.rollback().then(function() {
           callback(prepareErrors(error), user, lastActionResult);
         });
       }else{
@@ -124,18 +124,18 @@ function validateForCreate(params, callback) {
 }
 
 function comparePassword(email, password, callback) {
-  User.find({where: {email: email, confirmedAt: {$ne: null}}}).done(function (result) {
+  User.find({where: {email: email}}).done(function (result) {
     if (result) {
-      bcrypt.compare(password, result.encryptedPassword, function (err, res) {
-        if (err) {
-          return callback(true, null)
-        }
-        if (res == true) {
-          callback(null, result);
-        } else {
-          callback(true, null);
-        }
-      });
+        bcrypt.compare(password, result.encryptedPassword, function (err, res) {
+            if (err) {
+                return callback(true, null)
+            }
+            if (res == true) {
+                callback(null, result);
+            } else {
+                callback(true, null);
+            }
+        });
     } else {
       callback(true, null);
     };

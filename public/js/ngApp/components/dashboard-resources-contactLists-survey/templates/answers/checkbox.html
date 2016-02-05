@@ -1,0 +1,38 @@
+<div ng-init='question.type = "checkbox"'>
+  <hr class='survey-hr' />
+
+  <div class='form-group' ng-repeat='answer in question.answers track by $index' ng-drop='true' ng-drop-success='sc.onDropComplete($index, $data, $event)'>
+    <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.manageForm[object.order].answers[answer.order].$error'>
+      <div ng-repeat='error in sc.validationErrors'>
+        <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+      </div>
+    </div>
+
+    <div class='col-xs-2 checkbox checkbox-success checkbox-inline survey-input'>
+      <div class='col-xs-offset-10 col-xs-2'>
+        <input type='checkbox' placeholder='Answer' checked disabled>
+        <label></label>
+      </div>
+    </div>
+
+    <div class='col-xs-10 col-md-6'>
+      <div class='input-group' ng-drag='true' ng-drag-data='{ answer: answer, questionOrder: question.order }'>
+        <input ng-cancel-drag type='text' class='form-control' id='answer-{{object.order}}-{{ answer.order }}' placeholder='Answer' name='{{ answer.order }}'
+        ng-model='answer.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='question.active'>
+
+        <span class='input-group-addon' ng-if='!sc.canChangeAnswers("remove", question)' ng-click>
+          <span class='glyphicon glyphicon-resize-vertical' ng-click></span>
+        </span>
+        <span class='input-group-addon' ng-if='sc.canChangeAnswers("remove", question)'>
+          <span class='glyphicon glyphicon-remove' ng-click='sc.changeAnswers("remove", question, $index)'></span>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class='col-sm-12'>
+  <div class='col-sm-offset-2' ng-if='!sc.survey.confirmedAt'>
+    <img src='/icons/add_new_list_blue.png' ng-if='sc.canChangeAnswers("add", question)' ng-click='sc.changeAnswers("add", question)' />
+  </div>
+</div>

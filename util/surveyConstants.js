@@ -116,7 +116,7 @@ module.exports = {
       order: 9
     },
     {
-      model: 'postcode',
+      model: 'postCode',
       name: 'Postcode',
       input: true,
       canDisable: true,

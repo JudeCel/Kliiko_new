@@ -1,6 +1,7 @@
 'use strict';
 
 var UserService = require('./../../services/users');
+var SessionMemberService = require('./../../services/sessionMember');
 var models = require('../../models');
 var Session = models.Session;
 var BrandProject = models.BrandProject;
@@ -12,6 +13,7 @@ var Topic = models.Topic;
 var async = require('async');
 var q = require('q');
 
+var userData = { };
 var userlist = [{
   accountName: "chatUser",
   firstName: "First user",
@@ -31,56 +33,78 @@ var userlist = [{
 }]
 
 let createNewChatFunctionList = [
-  (cb) => {createSession(cb)},
+  function(callback) { createUsers(callback) },
+  createSession,
   crateBrandProject,
-  addBrandProjectPreferences,
   createTopic,
   addSessionMembers
 ]
 
-function createSession(callback) {
-  let sessionAttrs = sessionParams();
-
-  Session.create(sessionAttrs).then(function(result) {
-    callback(null, result);
-  }).catch(Session.sequelize.ValidationError, function(err) {
-    console.log(err);
-    callback(err);
-  }).catch(function(err) {
-    console.log(err);
-    callback(err);
-  });
-}
-
-function crateBrandProject(session, callback) {
-  let brandProjectAttrs = brandProjectParams();
-
-  session.createBrandProject(brandProjectAttrs).then(function(result) {
-    callback(null, session, result);
-  }).catch(BrandProject.sequelize.ValidationError, function(err) {
-    console.log(err);
-    callback(err);
-  }).catch(function(err) {
-    console.log(err);
-    callback(err);
-  });
-};
-
-
-function addBrandProjectPreferences(session, brandProject, callback) {
-  let attrs = brandProjectPreferenceParams(session.id, brandProject.id);
-
-  BrandProjectPreference.create(attrs)
-  .then(function (_result) {
-    callback(null, session, brandProject);
-  })
-  .catch(function (error) {
+function createUsers(callback) {
+  async.parallel([
+    function(cb) {
+      createUser(userlist[0], function(error, results) {
+        userData[0] = results;
+        cb(error);
+      });
+    },
+    function(cb) {
+      createUser(userlist[1], function(error, results) {
+        userData[1] = results;
+        cb(error);
+      });
+    }
+  ], function(error) {
     callback(error);
   });
 }
 
+function createUser(data, callback) {
+  UserService.create(data, function(error, user) {
+    if(error) {
+      callback(error);
+    }
+    else {
+      user.getOwnerAccount().then(function(accounts) {
+        let params = {
+          user: user,
+          account: accounts[0]
+        }
+
+        callback(null, params);
+      });
+    }
+  });
+}
+
+function createSession(callback) {
+  Session.create(sessionParams(userData[0].account.id)).then(function(result) {
+    addBrandProjectPreferences(result, userData[0].account.id, function(error) {
+      callback(error, result);
+    });
+  }).catch(Session.sequelize.ValidationError, function(error) {
+    console.log(error);
+    callback(error);
+  }).catch(function(error) {
+    console.log(error);
+    callback(error);
+  });
+}
+
+function crateBrandProject(session, callback) {
+  session.createBrandProject(brandProjectParams()).then(function(result) {
+    callback(null, session, result);
+  }).catch(BrandProject.sequelize.ValidationError, function(error) {
+    console.log(error);
+    callback(error);
+  }).catch(function(error) {
+    console.log(error);
+    callback(error);
+  });
+};
+
 function createTopic(session, brandProject, callback) {
-  session.createTopic({ name: "Cool Topic" })
+  session.createTopic({ accountId: userData[0].account.id, name: "Cool Topic" })
   .then(function (_result) {
     callback(null, session, brandProject);
   })
@@ -91,44 +115,45 @@ function createTopic(session, brandProject, callback) {
 
 function addSessionMembers(erorr, session, callback) {
   async.parallel([
-    (cb) =>  {
-      UserService.create(userlist[0], function(errors, user) {
-        if(errors) {return cb(errors)};
-        Account.find({
-          include: [{
-            model: AccountUser,
-            where: { UserId: user.id }
-          }]
-        }).then(function(account) {
-          account.addSession(session);
-          addSessionMember(user, session,'facilitator', 'Cool first user', cb);
-        })
-      })
+    function(cb) {
+      addSessionMember(userData[0].account.AccountUser.id, session,'facilitator', 'Cool first user', cb);
     },
-    (cb) => {
-      UserService.create(userlist[1], function(errors, user) {
-        if(errors) {return cb(errors)};
-        addSessionMember(user, session, 'participant','Cool second user', cb);
-      });
+    function(cb) {
+      addSessionMember(userData[1].account.AccountUser.id, session, 'participant','Cool second user', cb);
     }
-  ],
-    function(err, results) {
-      callback(err, results);
+  ], function(error, results) {
+    callback(error, results);
   });
 }
 
-function addSessionMember(user, session, role, name, callback) {
+function addBrandProjectPreferences(session, accountId, callback) {
+  let attrs = brandProjectPreferenceParams(accountId);
+
+  BrandProjectPreference.create(attrs).then(function(result) {
+    result.setSession(session);
+    callback(null);
+  }).catch(function (error) {
+    callback(error);
+  });
+}
+
+function addSessionMember(accountUserId, session, role, name, callback) {
 
   let params = { role: role,
-                 userId: user.id,
+                 accountUserId: accountUserId,
                  username: name,
                  avatar_info: "0:4:3:1:4:3" }
-                 
-  session.createSessionMember(params)
-  .then(function (result) {
-    callback(null, result );
+  session.createSessionMember(params).then(function(result) {
+    console.log("++++++++++++++++Session member ++++++++++++++++");
+    console.log("User Name " + result.username);
+    console.log("++++++++++++++++ TOKEN ++++++++++++++++");
+    SessionMemberService.createToken(result.id).then(function() {
+      callback(null, result);
+    },function(error) {
+      callback(error);
+    })
   })
-  .catch(function (error) {
+  .catch(function(error) {
     callback(error);
   });
 }
@@ -148,7 +173,14 @@ function createChat() {
           include: [models.User]
         }, BrandProjectPreference]
       }).then(function(session) {
-        deferred.resolve({ session: session, account: session.Account, user: session.Account.Users[0], preference: session.BrandProjectPreferences[0] });
+        let returnParams = {
+          session: session,
+          account: session.Account,
+          user: session.Account.Users[0],
+          preference: session.BrandProjectPreference
+        };
+
+        deferred.resolve(returnParams);
       });
     }
   });
@@ -156,11 +188,10 @@ function createChat() {
   return deferred.promise;
 };
 
-function brandProjectPreferenceParams(sessionId, brandProjectId) {
+function brandProjectPreferenceParams(accountId) {
   return {
     name: 'Default scheme',
-    sessionId: sessionId,
-    brand_project_id: brandProjectId
+    accountId: accountId
   };
 }
 
@@ -173,9 +204,10 @@ function brandProjectParams() {
   };
 }
 
-function sessionParams() {
+function sessionParams(accountId) {
   let startTime = new Date();
   return {
+    accountId: accountId,
     name: "cool session",
     start_time: startTime,
     end_time: startTime.setHours(startTime.getHours() + 2000),
@@ -188,6 +220,5 @@ module.exports = {
   createChat: createChat,
   brandProjectPreferenceParams: brandProjectPreferenceParams,
   brandProjectParams: brandProjectParams,
-  sessionParams: sessionParams,
-  addSessionMember: addSessionMember
+  sessionParams: sessionParams
 };

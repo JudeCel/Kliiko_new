@@ -1,0 +1,119 @@
+<h4>Survey Template</h4>
+<hr class='survey-hr' />
+
+<div id='panel-introduction' class='panel panel-default no-border-radius'>
+  <div class='panel-heading'><strong>Introduction</strong></div>
+  <div class='panel-body'>
+    <div class='form-horizontal'>
+      <div class='form-group'>
+        <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.manageForm.surveyName.$error'>
+          <div ng-repeat='error in sc.validationErrors'>
+            <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+          </div>
+        </div>
+
+        <label class='col-xs-2 control-label' for='surveyName'>Name</label>
+        <div class='col-xs-10 col-md-6'>
+          <input type='text' class='form-control' id='surveyName' placeholder='Name' name='surveyName'
+            ng-model='sc.survey.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='sc.submitedForm'>
+        </div>
+      </div>
+      <label class='col-xs-2 control-label' for='brandLogo'>Survey Logo</label>
+      <div class='form-group'>
+        <img ng-src="{{ sc.getResourceThumbUrl(sc.survey.Resource) }}" class="img-responsive" style="display: inline-block;" ng-if="sc.survey.Resource !== null"/>
+        <div ng-if="sc.survey.Resource !== null" style="display: inline-block;">
+          <button type='submit' ng-disabled="idsForAction == 0"
+                  class='btn btn-addNewElement btn-green no-margin gallery-btn-width'
+                  ng-click="sc.removeResource(sc.survey.resourceId, null, sc.survey)">
+            <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+          </button>
+        </div>
+
+        <div ng-show='!sc.disableUpload'>
+          <div ng-if="sc.survey.Resource == null">
+            <div class='col-xs-4 col-md-4'>
+              <div ngf-drop ngf-select class="drop-box" ng-model="sc.file" ng-change="sc.saveResource('brandLogo')" id="brandLogo"
+                   ngf-drag-over-class="'dragover'" accept="image/gif, image/jpeg, image/jpg, image/png, image/bmp">
+                Drop images here or click to upload
+              </div>
+
+              <div ngf-no-file-drop >
+                File Drag/Drop is not supported for this browser
+              </div>
+            </div>
+
+            <a ng-click="sc.openBrandLogosModal()" class='btn btn-addNewElement btn-green no-margin gallery-btn-width'>
+              Select from gallery.
+            </a>
+          </div>
+
+
+        </div>
+
+        <div class='modal fade' id='getGallery' role='dialog'>
+          <div class='modal-dialog' style="width:1000px;">
+            <div class='modal-content border-green border-radius-none'>
+              <div class='modal-header'>
+                <button type='button' class='close' data-dismiss='modal' ng-click="clearFormData()">&times;</button>
+                <h2 class='modal-title text-center'>Select resource from gallery.</h2>
+              </div>
+              <div class='modal-body'>
+
+                <div ng-repeat="resource in sc.brandLogos">
+                  <div class="col-xs-4 col-md-4">
+                    <div class="panel panel-success border-green">
+                      <div class="panel-body">
+
+                        <div class="responsive-container">
+                          <div class="dummy"></div>
+
+                          <div class="img-container">
+                            <img ng-src="{{ sc.getResourceThumbUrl(question.Resource) }}" class="center-block vertical-align img-responsive"/>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      <div class="panel-footer">
+                        <div class="row">
+                          <div class="col-xs-10">
+                            <p class="text-max-width">
+                              {{ sc.file.name }}
+                            </p>
+                          </div>
+                        </div>
+                        <button class="btn btn-addNewElement pull-rigth no-margin btn-green gallery-btn-width"
+                                data-dismiss='modal'
+                                style="margin-top: -8px; float: right;"
+                                ng-click="sc.selectBrandLogo(resource)">
+                          Select
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class='modal-footer'>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class='form-group'>
+        <div class='col-md-8'>
+          <div class='has-error' ng-messages='sc.manageForm.description.$error'>
+            <div ng-repeat='error in sc.validationErrors'>
+              <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+            </div>
+          </div>
+
+          <textarea class='form-control' id='description' placeholder='Introduction' name='description' rows='5'
+            ng-model='sc.survey.description' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='sc.submitedForm'>
+          </textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

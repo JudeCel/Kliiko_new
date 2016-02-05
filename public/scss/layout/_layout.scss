@@ -112,7 +112,15 @@ background-color: $blue !important;
 }
 
 /* Typography */
-
+.text-break-all {
+  -ms-word-break: break-all;
+  word-break: break-all;
+}
+.text-max-width {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
 .text-login-page {
   font-size: 16px;
 }
@@ -121,6 +129,13 @@ background-color: $blue !important;
 }
 .text-no-bold {
   font-weight: normal !important;
+}
+.no-side-padding {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.no-border-radius {
+  border-radius: 0 !important;
 }
 .text-font-family {
 font-family: Sofia Pro Condensed;
@@ -251,10 +266,6 @@ color: #737373;
   margin-bottom: 100px;
 }
 
-.no-border-radius {
-  border-radius: 0 !important;
-}
-
 .align-center{
   display: block;
   vertical-align: middle;
@@ -267,15 +278,15 @@ color: #737373;
 }
 
 .green-background{
-  background-color: #2D8C5E; 
+  background-color: #2D8C5E;
 }
 
 .green-text{
-  color: #2D8C5E; 
+  color: #2D8C5E;
 }
 
 .green-text:hover{
-  color: #2D8C5E; 
+  color: #2D8C5E;
 }
 
 .responsive-container {

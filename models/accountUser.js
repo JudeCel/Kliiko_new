@@ -11,15 +11,31 @@ module.exports = (Sequelize, DataTypes) => {
     owner: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles },
-    status: { type: DataTypes.ENUM, allowNull: false, values: ["invited", "active", "inactive"], defaultValue: "active" },
+    status: { type: DataTypes.ENUM, allowNull: false, values: ['invited', 'active', 'inactive', 'added'], defaultValue: 'active' },
     state: {type: DataTypes.STRING, allowNull: true },
     postalAddress: {type: DataTypes.STRING, allowNull: true },
     city: {type: DataTypes.STRING, allowNull: true },
     country: {type: DataTypes.STRING, allowNull: true },
-    postcode: {type: DataTypes.STRING, allowNull: true },
+    postCode: {type: DataTypes.STRING, allowNull: true },
     companyName: {type: DataTypes.STRING, allowNull: true },
-    landlineNumber: {type: DataTypes.STRING, allowNull: true },
-    mobile: {type: DataTypes.STRING, allowNull: true },
+    landlineNumber: {type: DataTypes.STRING, allowNull: true,
+      validate: {
+        validateNumber: function() {
+          if(this.landlineNumber && !constants.phoneRegExp.test(this.landlineNumber)) {
+            throw new Error('Invalid phone number format');
+          }
+        }
+      }
+    },
+    mobile: {type: DataTypes.STRING, allowNull: true,
+      validate: {
+        validateNumber: function() {
+          if(this.mobile && !constants.phoneRegExp.test(this.mobile)) {
+            throw new Error('Invalid phone number format');
+          }
+        }
+      }
+    },
     comment: { type: DataTypes.TEXT, allowNull: true },
     email: {type: DataTypes.STRING, allowNull: false,
       validate: {
@@ -41,6 +57,8 @@ module.exports = (Sequelize, DataTypes) => {
           AccountUser.belongsTo(models.User);
           AccountUser.belongsTo(models.Account);
           AccountUser.hasMany(models.Invite, { foreignKey: 'accountUserId' });
+          AccountUser.hasMany(models.ContactListUser, { foreignKey: 'accountUserId' });
+          AccountUser.hasMany(models.SessionMember, { foreignKey: 'accountUserId' });
         }
       }
     }

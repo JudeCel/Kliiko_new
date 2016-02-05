@@ -7,6 +7,7 @@
     var galleryRestApi = $resource(globalSettings.restUrl + '/gallery/:path', null, {
       uploadFile: { method: 'POST', params: { path: 'uploadFile' } },
       saveYoutubeUrl: { method: 'POST', params: { path: 'saveYoutubeUrl' } },
+      deleteZipFile: { method: 'POST', params: { path: 'deleteZipFile' } },
       download: { method: 'GET', params: { path: 'download' } },
       zip: { method: 'DELETE', params: { path: 'zip' } }
     });
@@ -19,12 +20,13 @@
     upServices.createResource = createResource;
     upServices.saveYoutubeUrl = saveYoutubeUrl;
     upServices.postuploadData = postuploadData;
+    upServices.deleteZipFile = deleteZipFile;
     return upServices;
 
-    function getResources() {
+    function getResources(type) {
       var deferred = $q.defer();
       dbg.log2('#GalleryServices > getResources > make rest call');
-      galleryRestApi.get({}, function(res) {
+      galleryRestApi.get(type, function(res) {
         dbg.log2('#GalleryServices > getResources > rest call responds');
         deferred.resolve(res);
       });
@@ -87,6 +89,18 @@
       dbg.log2('#GalleryServices > saveYoutubeUrlResources > make rest call');
       galleryRestApi.saveYoutubeUrl(params, function(res) {
         dbg.log2('#GalleryServices > saveYoutubeUrlResources > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
+
+    function deleteZipFile(params) {
+      var deferred = $q.defer();
+
+      dbg.log2('#GalleryServices > deleteZipFile > make rest call');
+      galleryRestApi.deleteZipFile(params, function(res) {
+        dbg.log2('#GalleryServices > deleteZipFile > rest call responds');
         deferred.resolve(res);
       });
 

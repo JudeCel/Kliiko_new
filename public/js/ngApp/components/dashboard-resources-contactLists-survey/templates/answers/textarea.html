@@ -1,0 +1,19 @@
+<div ng-init='question.type = "textarea"'>
+  <hr class='survey-hr' />
+
+  <div class='form-group' ng-repeat='answer in question.answers track by $index' ng-drop='true' ng-drop-success='sc.onDropComplete($index, $data, $event)'>
+    <div class='col-md-8' ng-drag='true' ng-drag-data='{ answer: answer, questionOrder: question.order }'>
+      <textarea ng-cancel-drag class='form-control' id='answers-{{object.order}}-{{ answer.order }}' placeholder='Answer' rows='5' disabled
+        ng-model='answer.name'>
+      </textarea>
+
+      <span class='glyphicon glyphicon-remove' ng-if='sc.canChangeAnswers("remove", question)' ng-click='sc.changeAnswers("remove", question, $index)'></span>
+    </div>
+  </div>
+</div>
+
+<div class='col-sm-12'>
+  <div class='col-sm-offset-2' ng-if='!sc.survey.confirmedAt'>
+    <img src='/icons/add_new_list_blue.png' ng-if='sc.canChangeAnswers("add", question)' ng-click='sc.changeAnswers("add", question)' />
+  </div>
+</div>

@@ -3,9 +3,10 @@
 module.exports = (Sequelize, DataTypes) => {
   var SessionMember = Sequelize.define('SessionMember', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    userId: {type: DataTypes.INTEGER, allowNull: false,
-      references: { model: Sequelize.User, key: 'id' }
+    accountUserId: {type: DataTypes.INTEGER, allowNull: false,
+      references: { model: Sequelize.AccountUser, key: 'id' }
     },
+    token: { type: DataTypes.STRING, allowNull: true, unique: true },
     username: { type: DataTypes.STRING, allowNull: false },
     colour: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 6710886 },
     online: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
@@ -15,12 +16,14 @@ module.exports = (Sequelize, DataTypes) => {
       values: ["facilitator", "observer", "participant"]
   }
   },{
+    indexes: [ { fields: ['token'] } ],
     timestamps: true,
     paranoid: true,
     classMethods: {
       associate: function(models) {
         SessionMember.belongsTo(models.Session, {foreignKey: 'sessionId'});
-        SessionMember.belongsTo(models.User, {foreignKey: 'userId'});
+        SessionMember.belongsTo(models.AccountUser, {foreignKey: 'accountUserId'});
+        SessionMember.hasMany(models.Event, {foreignKey: 'sessionMemberId'} );
       }
     }
   }

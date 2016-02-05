@@ -24,15 +24,19 @@ var sessionAttrs = {
 describe('Middleware Session Member', () => {
   var session = null
   let req = { user: {id: null}, params: {id: null} }
-  let res = { locals: {} };
+  let res = { locals: { currentDomain: {id: null} } };
 
   beforeEach((done) => {
     models.sequelize.sync({force: true}).done((error, result) => {
       UserServices.create(validAttrs, function(errors, user) {
-        req.user.id = user.id
-        Session.create(sessionAttrs).then(function(sess) {
-          session = sess;
-          done();
+        user.getAccountUsers().then(function(accaountUsers) {
+          req.user.id = user.id
+          res.locals.currentDomain.id = accaountUsers[0].id
+          sessionAttrs.accountId = accaountUsers[0].id;
+          Session.create(sessionAttrs).then(function(sess) {
+            session = sess;
+            done();
+          });
         });
       });
     });
@@ -43,7 +47,7 @@ describe('Middleware Session Member', () => {
       req.params.id = session.id
       let params = {
         role: 'facilitator',
-        userId: req.user.id,
+        accountUserId: res.locals.currentDomain.id,
         username: "name",
         avatar_info: "0:4:3:1:4:3"
       }
@@ -62,8 +66,7 @@ describe('Middleware Session Member', () => {
   describe('failed ', () => {
     it('Access Denied', (done) =>  {
       req.params.id = (session.id + session.id);
-
-      let res = { locals: {}, status: (argument) => { return { send: (test) => {
+      let res = { locals: { currentDomain: {id: null} }, status: (argument) => { return { send: (test) => {
         assert.equal(test, sessionMember.accessDeniedMessage);
         done();
       } } } };
