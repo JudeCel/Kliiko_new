@@ -213,6 +213,7 @@
         resolve: {
           loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
             return $ocLazyLoad.load([
+              '/js/vendors/ngDraggable/ngDraggable.js',
               '/js/vendors/ng-file-upload/ng-file-upload.js'
             ]);
           }]
