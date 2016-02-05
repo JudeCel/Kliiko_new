@@ -33,7 +33,6 @@
       });
     }
 
-
     $scope.setView = function(type) {
       sessionStorage.setItem('viewType', type);
       $scope.viewType = sessionStorage.getItem('viewType');
@@ -225,7 +224,7 @@
     }
 
     function deleteGeneratedZip(name){
-      $timeout(function() {
+      $timeout(function() { // move this to some kind cron task in backend, so the file is not imediatly deleted.
         GalleryServices.deleteZipFile({fileName: name}).then(function(res) {
           if(res.error){
             console.log(res.error);
@@ -233,7 +232,7 @@
             console.log(res.message);
           }
         })
-      }, 10000);
+      }, 10000); 
     }
 
     $scope.disableButton = function() {
