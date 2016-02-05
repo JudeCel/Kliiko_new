@@ -9,7 +9,8 @@ module.exports = {
   downloadResources: downloadResources,
   deleteResources: deleteResources,
   uploadResource: uploadResource,
-  saveYoutubeResource: saveYoutubeResource
+  saveYoutubeResource: saveYoutubeResource,
+  deleteZipFile: deleteZipFile
 };
 
 function postResources(req, res, next) {    
@@ -33,7 +34,7 @@ function downloadResources(req, res, next) {
   galleryService.downloadResources(req.query).then(function(result) {
     res.send(result);
   }, function(err) {
-    res.send(({ error: err.message }));
+    res.send(({ error: err }));
   });
 }
 
@@ -58,5 +59,13 @@ function saveYoutubeResource(req, res, next) {
     res.send(result);
   }, function(err) {
     res.send({ error: err });
+  })
+}
+
+function deleteZipFile(req, res, next) {
+  galleryService.deleteZipFile(req.body).then(function(result) {
+    res.send(result);
+  }, function(error) {
+    res.send(error);
   })
 }
