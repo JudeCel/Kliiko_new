@@ -16,7 +16,6 @@
     'messenger',
     'ng-sortable',
     'ngMessages',
-    //'CreditCard',
 
     // app modules
     'KliikoApp.user',

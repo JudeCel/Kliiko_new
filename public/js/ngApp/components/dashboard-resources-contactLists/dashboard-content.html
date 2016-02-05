@@ -54,7 +54,7 @@
             <div custom-select-directive data-title="Add Contacts" data-id="contact-lists-add-button-1" class="custom-select-directive pull-right">
               <li ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
               <li ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
-              <li><a href=""><i class="icon-remove"></i>Import CSV</a></li>
+              <li ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
             </div>
 
           </div>
@@ -68,7 +68,7 @@
             <div custom-select-directive data-title="Add Contacts" data-id="contact-lists-add-button-2" class="custom-select-directive">
               <li ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
               <li ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
-              <li><a href=""><i class="icon-remove"></i>Import CSV</a></li>
+              <li ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
             </div>
 
             <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable">

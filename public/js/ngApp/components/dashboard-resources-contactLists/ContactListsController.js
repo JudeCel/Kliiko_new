@@ -245,27 +245,29 @@
       if (action === 'new') {
         vm.updateExistingUser = null;
         vm.contactModalTitle = 'Add New Contact';
-        vm.newContact = {};
-        vm.modalErrors = {};
-      }
-
-      if (action === 'excel') {
-        vm.updateExistingUser = null;
-        vm.contactModalTitle = 'Add New Contacts From Excel';
-        vm.importData = { excel:true, fileToImport: null};
-        vm.newContact = {};
-        vm.modalErrors = {};
       }
 
       if (action === 'update') {
-        vm.newListError = {};
-        vm.modalErrors = {};
-
         vm.contactModalTitle = 'Edit Contact';
         vm.newContact = contactObj;
         vm.updateExistingUser = true;
       }
 
+      if (action === 'excel') {
+        vm.updateExistingUser = null;
+        vm.contactModalTitle = 'Add New Contacts From Excel';
+        vm.importData = { excel:true, csv: false, fileToImport: null};
+      }
+
+      if (action === 'csv') {
+        vm.updateExistingUser = null;
+        vm.contactModalTitle = 'Add New Contacts From Excel';
+        vm.importData = { excel:false, csv: true, fileToImport: null};
+
+      }
+
+      vm.newContact = {};
+      vm.modalErrors = {};
       domServices.modal('contactList-addContactManual');
     }
 
