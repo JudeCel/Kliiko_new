@@ -56,7 +56,8 @@
                         </uib-tab>
                         <uib-tab heading="Custom Fields" active="clc.modalTab2">
                             <form id="new-list-custom-fields" ng-submit="clc.submitNewList()">
-                                <div  class="row">
+                              <ng-include src="clc.basePath+'particles/modals-custom-fields.tpl.html'"></ng-include>
+                              <!--  <div  class="row">
                                     <br>
                                     <div class="error-message text-center col-md-12" ng-show="clc.newListErrorMessage"><code>{{clc.newListErrorMessage}} </code></div>
                                     <br><br>
@@ -79,7 +80,7 @@
 
                                     </div>
                                 </div>
-
+                              -->
 
 
                                 <div class='row'>
@@ -110,44 +111,53 @@
                     <button type='button' class='close' data-dismiss="modal">&times;</button>
                     <h2 class='modal-title text-center'>Map fields from EXCEL file</h2>
                 </div>
+                
+                  <div class='modal-body text-gray-medium'>
+                    <uib-tabset justified="true">
+                      <uib-tab heading="Field Mapping" active="true">
+                      <form id="new-list-custom-fields-drag-drop" ng-submit="clc.submitNewList()">
+                        <div class="row r">
+                          <div id="contactList-fieldColumnLeft" class="col-md-5 panel panel-default">
+                            <h3>Excel fields</h3>
+                            <table>
+                              <tr ng-repeat="f in clc.importedFields track by $index">
+                                <td> <div class="contactList-drop-item" ng-drag="true" ng-drag-data="f">{{f}} <img src="/icons/ic_move.png" class="pull-right"></div> </td>
+                              </tr>
+                            </table>                               
+                          </div>
+                          <div id="contactList-fieldColumnRight" class="col-md-6 panel panel-default">
+                            <h3>Contact List</h3>
+                            <!--<p class='pull-right'>Required fields*</p>-->  
+                            <table>
+                              <tr ng-repeat="cl in clc.contactListDropItems track by $index"  ng-drop="true" ng-drop-success="clc.onFieldMapDrop($data, cl)"> 
+                                <td>{{cl.name}}</td> 
+                                <td class="contactList-dropPlaceholderCell">
+                                  <div class="contactList-dropPlaceholder">                                                                
+                                    <div ng-show="cl.field" class="contactList-drop-item" ng-drag="true" ng-drag-data="cl">{{cl.field}} <img src="/icons/ic_move.png" class="pull-right"> <button  ng-click="clc.clearDoppedItem(cl)" type='button' class='close'>&times;</button></div>
+                                  </div>
+                                </td>
+                              </tr>
+                            </table>
+                            
+                        </div>
 
-                <div class='modal-body text-gray-medium'>
-                  <form id="new-list-custom-fields-drag-drop" ng-submit="clc.submitNewList()">
-                    <div class="row r">
-                      <div id="contactList-fieldColumnLeft" class="col-md-5 panel panel-default">
-                        <h3>Excel fields</h3>
-                        <table>
-                          <tr ng-repeat="f in clc.importedFields track by $index">
-                            <td> <div class="contactList-drop-item" ng-drag="true" ng-drag-data="f">{{f}} <img src="/icons/ic_move.png" class="pull-right"></div> </td>
-                          </tr>
-                        </table>                               
+                        <div class='row'>
+                          <div class='col-md-12'>
+                            <div class='btn-standart btn-red pull-left modals-btn' data-dismiss="modal">Cancel</div>
+                            <div class='btn-standart btn-green pull-right modals-btn' ng-click="clc.mappingFieldsContinue()">Continue</div>
+                          </div>
+                        </div>
                       </div>
-                      <div id="contactList-fieldColumnRight" class="col-md-6 panel panel-default">
-                        <h3>Contact List</h3>
-                        <!--<p class='pull-right'>Required fields*</p>-->  
-                        <table>
-                          <tr ng-repeat="cl in clc.contactListDropItems track by $index"  ng-drop="true" ng-drop-success="clc.onFieldMapDrop($data, cl)"> 
-                            <td>{{cl.name}}</td> 
-                            <td class="contactList-dropPlaceholderCell">
-                              <div class="contactList-dropPlaceholder">                                                                
-                                <div ng-show="cl.field" class="contactList-drop-item" ng-drag="true" ng-drag-data="cl">{{cl.field}} <img src="/icons/ic_move.png" class="pull-right"></div>
-                              </div>
-                            </td>
-                          </tr>
-                        </table>
-                      </div>
-                    </div>
-
-                    <div class='row'>
-                      <div class='col-md-12'>
-                        <div class='btn-standart btn-red pull-left modals-btn' data-dismiss="modal">Cancel</div>
-                        <div class='btn-standart btn-green pull-right modals-btn' ng-click="clc.mappingFieldsContinue()">Continue</div>
-                      </div>
-                    </div>
-                </form>
-            </div>
+                    </form>
+                    </uib-tab >
+                  
+                 <uib-tab heading="Custom Fields" active="true">
+                   <ng-include src="clc.basePath+'particles/modals-custom-fields.tpl.html'"></ng-include>
+                 </uib-tab>
+              </uib-tabset>     
+          </div>
         </div>
-    </div>
+      </div>
     </div>
     
     <!-- Temporary contactList to add view -->
@@ -172,7 +182,7 @@
                             <td>{{cl.state}}</td>
                             <td>{{cl.country}}</td>
                             <td>{{cl.postCode}}</td> 
-                            <td>{{cl.companyName}}</td>
+                            <td>{{cl.companyName || cl.validationErrors.companyName}}</td>
                             <td>{{cl.landlineNumber}}</td>
                             <td>{{cl.mobile}}</td>
                           </tr>

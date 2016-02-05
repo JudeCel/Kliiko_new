@@ -57,15 +57,7 @@
       vm.listModalTitle = 'Add New List';
       domServices.modal('contactList-addNewListFieldsModal');
     };
-    
-    vm.onFieldMapDrop = function(dataSource, dataTarget) {
-      if (dataSource.field) {
-        dataTarget.field = dataSource.field;
-      } else {
-        dataTarget.field = dataSource;
-      }    
-    };
-          
+              
     function submitNewList() {
       if (vm.newListErrorMessage) return;
 
@@ -395,13 +387,15 @@
     function processImportData(res) {
       //fields for left column in mapping
       vm.importedFields = res.data.result.fileFields;
-      vm.validContactList = res.data.result.valid;
+      vm.validContactList = res.data.result.valid.concat(res.data.result.invalid);
       
       //fill values for right column
       var array = [];
-      var len = res.data.result.contactListFields.defaultFields.length;
+      var list = vm.lists.activeList.availableTables();
+      var len = list.length;
+      
       for (var i = 0; i < len; i++) {
-        array[i] = { name: res.data.result.contactListFields.defaultFields[i] }
+        array[i] = { name: list[i] }
       }
       //fields for right column in mapping
       vm.contactListDropItems = array;
@@ -413,6 +407,15 @@
       }
     }
     
+    // Drag and drop fields section
+    vm.onFieldMapDrop = function(dataSource, dataTarget) {
+      if (dataSource.field) {
+        dataTarget.field = dataSource.field;
+        dataSource.field = null;
+      } else {
+        dataTarget.field = dataSource;
+      }    
+    };
     //assigns contact info to mapped fields
     vm.mappingFieldsContinue = function() {
       var userList = [];
@@ -429,6 +432,10 @@
       
       console.log(vm.contactListToAdd);
       domServices.modal('contactList-addNewListFieldsPreviewModal');      
+    }
+    
+    vm.clearDoppedItem = function(item) {
+      item.field = null;
     }
 
   }
