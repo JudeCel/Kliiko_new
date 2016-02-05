@@ -17,7 +17,8 @@
     vm.modContentBlock= {generalDetails:true, history: false};
     vm.importData = { excel:false, csv:false, fileToImport: null};
     vm.basePath = '/js/ngApp/components/dashboard-resources-contactLists/';
-    
+    vm.importErrorMessage = null;
+
     vm.importedFields = [];
     vm.contactListDropItems = [];
     vm.validContactList = [];
@@ -217,6 +218,11 @@
      * @param [contactObj] {object} - contact object required for editing case
      */
     function contactAddEditClickHandle(action, contactObj) {
+      vm.importData = null;
+      vm.importErrorMessage = null;
+      vm.newContact = {};
+      vm.modalErrors = {};
+
       if (action === 'new') {
         vm.updateExistingUser = null;
         vm.contactModalTitle = 'Add New Contact';
@@ -236,13 +242,12 @@
 
       if (action === 'csv') {
         vm.updateExistingUser = null;
-        vm.contactModalTitle = 'Add New Contacts From Excel';
+        vm.contactModalTitle = 'Add New Contacts From CSV';
         vm.importData = { excel:false, csv: true, fileToImport: null};
 
       }
 
-      vm.newContact = {};
-      vm.modalErrors = {};
+
       domServices.modal('contactList-addContactManual');
     }
 
@@ -278,8 +283,6 @@
           }
         }
       );
-
-
 
     }
 
@@ -385,25 +388,33 @@
     function startImport() {
       if (!vm.importData.file) return;
 
-      contactListsControllerServices.uploadImportFile(vm.importData.file, vm.lists.activeList.id).then(
-        function (res) {
-          processImportData(res);
+      vm.lists.activeList.parseImportFile(vm.importData.file).then(
+        function(res) {
+          res.valid ? alert('show preview') : alert('show map');
+          //alert('show preview')
+          domServices.modal('contactList-importSteps');
+          processImportData(res.data);
         },
-        function (err) {
+        function(err) {
+          messenger.error('Import Failed');
+          vm.importErrorMessage = 'This file media type is not recognized or it is corrupted. Please, choose another file.'
         }
       );
+
+
+
     }
     
-    function processImportData(res) {
+    function processImportData(data) {
       //fields for left column in mapping
-      vm.importedFields = res.data.result.fileFields;
-      vm.validContactList = res.data.result.valid;
+      vm.importedFields = data.fileFields;
+      vm.validContactList = data.valid;
       
       //fill values for right column
       var array = [];
-      var len = res.data.result.contactListFields.defaultFields.length;
+      var len = data.contactListFields.defaultFields.length;
       for (var i = 0; i < len; i++) {
-        array[i] = { name: res.data.result.contactListFields.defaultFields[i] }
+        array[i] = { name: data.contactListFields.defaultFields[i] }
       }
       //fields for right column in mapping
       vm.contactListDropItems = array;

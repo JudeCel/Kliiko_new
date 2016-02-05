@@ -91,6 +91,7 @@ function importFunction(req, res, next) {
     res.send({success: true, result: result});
     //todo @dainis remove the file, that created in public/uploads
   }, function(err) {
-    res.send({ error: err });
+    res.status(415)
+    res.send({error:err});
   })
 }

@@ -6,8 +6,8 @@
    */
   angular.module('KliikoApp').factory('ListItemModel', ListItemModel);
 
-  ListItemModel.$inject = ['$q', 'contactListServices'];
-  function ListItemModel($q, contactListServices)  {
+  ListItemModel.$inject = ['$q', 'contactListServices', 'Upload', 'globalSettings'];
+  function ListItemModel($q, contactListServices, Upload, globalSettings)  {
     var ListItemModel;
 
     ListItemModel = ListItemModel;
@@ -20,6 +20,9 @@
 
     ListItemModel.prototype.toggleTableToShow = toggleTableToShow;
     ListItemModel.prototype.updateTableSortingByDragging = updateTableSortingByDragging;
+
+    ListItemModel.prototype.parseImportFile = parseImportFile;
+
     return ListItemModel;
 
 
@@ -117,6 +120,37 @@
       self.visibleFields[graggedIndex] = dropped;
 
       self.update(self);
+    }
+
+    /**
+     * Parse and validate given import file (excel, csv) on back end
+     * @param file {File}
+     * @returns {*|promise}
+     */
+    function parseImportFile(file) {
+      var self = this;
+
+      var deferred = $q.defer();
+
+      Upload.upload({
+        url: globalSettings.restUrl+'/contactLists/'+self.id+'/import',
+        method: 'POST',
+        data: {uploadedfile: file}
+      }).then(function (res) {
+
+        if (res.data && !res.data.result.invalid.length) {
+          deferred.resolve({valid: true, data: res.data.result});
+        } else {
+          deferred.resolve({valid: false, data: res.data.result});
+
+        }
+
+      }, function (err) {
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
+
     }
 
   }

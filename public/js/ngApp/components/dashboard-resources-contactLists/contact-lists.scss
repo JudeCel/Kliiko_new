@@ -81,8 +81,17 @@
 
   }
 
-  #contact-lists-right-column {
+
+  #dashboard-contact-lists-main-table {
+    position: relative;
+    top: 11px;
+    width: 100%;
     overflow: auto;
+  }
+
+  #contact-lists-right-column {
+
+    overflow: inherit;
 
     #list-mass-actions {
       outline: none;
@@ -98,6 +107,8 @@
         margin: 0 10px;
       }
     }
+
+
 
     .table-item-edit-group {
       min-width: 70px;
@@ -289,6 +300,6 @@
   }
 
 
-  @import "particles/modals-excel-import";
+  @import "particles/modals-excel-csv-import";
 
 }

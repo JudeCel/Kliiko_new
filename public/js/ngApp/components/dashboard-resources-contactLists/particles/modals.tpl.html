@@ -12,7 +12,7 @@
 
                 <div class='modal-body text-gray-medium'>
                     <ng-include ng-hide="clc.importData.excel || clc.importData.csv" src="clc.basePath+'particles/modals-contact-table.tpl.html'"></ng-include>
-                    <ng-include ng-show="clc.importData.excel" src="clc.basePath+'particles/modals-excel-import.tpl.html'"></ng-include>
+                    <ng-include ng-show="clc.importData.excel || clc.importData.csv" src="clc.basePath+'particles/modals-excel-csv-import.tpl.html'"></ng-include>
 
                 </div>
 
@@ -191,6 +191,75 @@
                 <div class='modal-header'>
                     <button type='button' class='close' data-dismiss="modal">&times;</button>
                     <h2 class='modal-title text-center'>Manage Columns in View</h2>
+                </div>
+                <div class='modal-body text-gray-medium'>
+                    <form class='form-horizontal' role='form'>
+
+                        <!------------------------------------------>
+
+                        <uib-accordion close-others="false">
+                            <uib-accordion-group is-open="clc.modContentBlock.generalDetails">
+                                <uib-accordion-heading>
+                                    <div class="panel-label">
+                                        General Details<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': clc.modContentBlock.generalDetails, 'glyphicon-chevron-right': !clc.modContentBlock.generalDetails}"></i>
+                                    </div>
+                                </uib-accordion-heading>
+                    <span class="row">
+                      <span class="col-md-3" ng-repeat="column in clc.lists.activeList.availableTables() track by $index">
+                        <div class="check fields-to-show">
+                            <input id="dashboard-contact-lists-fields-{{ $index }}" ng-click="clc.lists.activeList.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.selectedTables[column]" type="checkbox" >
+                            <label for="dashboard-contact-lists-fields-{{ $index }}" ></label>{{ column }}
+                        </div>
+
+                      </span>
+                    </span>
+
+                            </uib-accordion-group>
+
+
+                            <uib-accordion-group is-open="clc.modContentBlock.history">
+                                <uib-accordion-heading>
+                                    <div class="panel-label">
+                                        Participant Invitation History <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': clc.modContentBlock.history, 'glyphicon-chevron-right': !clc.modContentBlock.history}"></i>
+                                    </div>
+                                </uib-accordion-heading>
+
+                    <span class="row">
+                      <span class="col-md-3" ng-repeat="column in clc.lists.activeList.participantsFields">
+                        <div class="check fields-to-show">
+                            <input id="dashboard-contact-lists-participants-{{ $index }}" ng-click="clc.lists.activeList.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.selectedTables[column]" type="checkbox" >
+                            <label for="dashboard-contact-lists-participants-{{ $index }}" ></label>{{ column }}
+                        </div>
+
+                      </span>
+                    </span>
+
+                            </uib-accordion-group>
+                        </uib-accordion>
+
+                        <!------------------------------------------>
+
+                        <div class='row'>
+                            <div class='col-md-12'>
+                                <div class='btn-standart btn-green pull-right' data-dismiss="modal">Done</div>
+
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- contactList-importSteps -->
+    <div id="contactList-importSteps" class="modal fade"  role="dialog">
+        <div class="modal-dialog contactDetailsModal" style="width: 800px">
+            <div class="modal-content border-green border-radius-none">
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss="modal">&times;</button>
+                    <h2 class='modal-title text-center'>Import Contacts</h2>
                 </div>
                 <div class='modal-body text-gray-medium'>
                     <form class='form-horizontal' role='form'>
