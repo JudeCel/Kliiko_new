@@ -3,7 +3,7 @@
         <thead>
         <tr>
             <th></th>
-            <th ng-repeat="rowHeader in clc.lists.activeList.visibleFields" ng-click="clc.changeTableSortingFilter(rowHeader)"
+            <th ng-repeat="rowHeader in clc.lists.activeList.visibleFields track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)"
                 ng-drag="true" ng-drag-data="$index" class="druggable">
                 <span class="th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader}}</span>
                 <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
@@ -22,7 +22,7 @@
                 </div>
             </td>
 
-            <td ng-repeat="tableRow in clc.lists.activeList.visibleFields"> {{ member[tableRow] || '-' }}</td>
+            <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index"> {{ member[tableRow] || '-' }}</td>
 
             <td >
                 <span class='table-item-edit-group'>

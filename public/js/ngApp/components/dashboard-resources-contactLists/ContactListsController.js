@@ -43,6 +43,7 @@
     vm.massDelete = massDelete;
 
     vm.startImport = startImport;
+    vm.additionalMappingFieldname = "";
 
     vm.clearImportErrors = clearImportErrors;
     vm.reUpload = reUpload;
@@ -391,6 +392,7 @@
       vm.lists.activeList.parseImportFile(vm.importData.file).then(
         function(res) {
           domServices.modal('contactList-addContactManual','close');
+          processImportData(res);
          if (res.valid) {
 
            vm.lists.activeList.generateImportPreview(res.data.valid);
@@ -399,7 +401,7 @@
            domServices.modal('modals-import-preview');
 
          } else  {
-           processImportData(res);
+           vm.addNewListFieldMapping();
           }
 
         },
@@ -439,14 +441,28 @@
       //fields for right column in mapping
       vm.contactListDropItems.defaultFields = prepareListForMapping(res.data.contactListFields.defaultFields);
       vm.contactListDropItems.customFields = prepareListForMapping(vm.lists.activeList.customFields);
+      
+      
+      
       vm.modalTab1 = true;
       
       domServices.modal('contactList-addContactManual', 'close');
       prepareCustomFields();
-      vm.addNewListFieldMapping();
       
-      if (!vm.validContactList.length) {
-        messenger.error('Imported contact list is empty');
+      
+      
+      for (var j = 0; j < vm.importedFields.length; j++) {
+        for (var i = 0; i < vm.contactListDropItems.defaultFields.length; i++) {
+          if (vm.contactListDropItems.defaultFields[i].name == vm.importedFields[j]) {
+            vm.contactListDropItems.defaultFields[i].field = vm.importedFields[j];
+          }
+        }
+        
+        for (i = 0; i < vm.contactListDropItems.customFields.length; i++) {
+          if (vm.contactListDropItems.customFields[i].name == vm.importedFields[j]) {
+            vm.contactListDropItems.customFields[i].field = vm.importedFields[j];
+          }
+        }
       }
     }
     
@@ -479,7 +495,10 @@
       }//for
       vm.contactListToAdd = userList;
       
-      domServices.modal('contactList-addNewListFieldsPreviewModal');      
+      vm.lists.activeList.generateImportPreview(userList);
+      vm.importPreviewArray = vm.lists.activeList.importPreviewArray;
+      domServices.modal('contactList-addNewListFieldsModal', 'close');
+      domServices.modal('modals-import-preview');
     }
     
     vm.clearDoppedItem = function(item) {
@@ -495,12 +514,14 @@
       }
       var newList = angular.copy(vm.newList);
       var parsedList = prepareParsedList(vm.newList);
+      updateActiveCustomList(newList, parsedList);
+    }
+    
+    function updateActiveCustomList(newList, parsedList) {
       vm.lists.updateActiveItem(parsedList).then(
         function (res) {
           messenger.ok('List "'+ newList.name + '" updated');
           prepareCustomFields();
-          
-          console.log(vm.lists.activeList.customFields);
           vm.contactListDropItems.customFields = prepareListForMapping(vm.lists.activeList.customFields);
         },
         function (err) {
@@ -518,7 +539,17 @@
       alert('reupload');
     }
     function reMap() {
-      alert('re map');
+      domServices.modal('modals-import-preview', 'close');
+      prepareCustomFields();
+      vm.addNewListFieldMapping();
+    }
+    
+    vm.addCustomField = function() {
+      var newList = angular.copy(vm.newList);
+      var parsedList = prepareParsedList(vm.newList);
+      parsedList.customFields.push(vm.additionalMappingFieldname);
+      vm.additionalMappingFieldname = "";
+      updateActiveCustomList(newList, parsedList);
     }
     function addImportedContacts() {
 
