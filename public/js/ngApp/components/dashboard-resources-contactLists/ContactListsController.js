@@ -43,6 +43,7 @@
     vm.massDelete = massDelete;
 
     vm.startImport = startImport;
+    vm.additionalMappingFieldname = "";
 
     /**
      * Open modal and prepare variables
@@ -480,12 +481,14 @@
       }
       var newList = angular.copy(vm.newList);
       var parsedList = prepareParsedList(vm.newList);
+      updateActiveCustomList(newList, parsedList);
+    }
+    
+    function updateActiveCustomList(newList, parsedList) {
       vm.lists.updateActiveItem(parsedList).then(
         function (res) {
           messenger.ok('List "'+ newList.name + '" updated');
           prepareCustomFields();
-          
-          console.log(vm.lists.activeList.customFields);
           vm.contactListDropItems.customFields = prepareListForMapping(vm.lists.activeList.customFields);
         },
         function (err) {
@@ -493,6 +496,14 @@
           dbg.error('#ContactListController > updateList > error: ', err);
         }
       );
+    }
+    
+    vm.addCustomField = function() {
+      var newList = angular.copy(vm.newList);
+      var parsedList = prepareParsedList(vm.newList);
+      parsedList.customFields.push(vm.additionalMappingFieldname);
+      vm.additionalMappingFieldname = "";
+      updateActiveCustomList(newList, parsedList);
     }
 
   }
