@@ -2,6 +2,7 @@
 
 var models = require('./../models');
 var Survey = models.Survey;
+var Resource = models.Resource;
 var SurveyQuestion = models.SurveyQuestion;
 var SurveyAnswer = models.SurveyAnswer;
 
@@ -12,7 +13,7 @@ var surveyConstants = require('../util/surveyConstants');
 
 const MESSAGES = {
   notFound: 'Survey not found!',
-  closed: 'Survey closed, please contact admin!',
+  alreadyClosed: 'Survey closed, please contact admin!',
   notConfirmed: 'Survey not confirmed, please contact admin!',
   removed: 'Successfully removed survey!',
   completed: 'Successfully completed survey!',
@@ -28,6 +29,7 @@ const MESSAGES = {
 const VALID_ATTRIBUTES = {
   manage: [
     'accountId',
+    'resourceId',
     'confirmedAt',
     'name',
     'closed',
@@ -38,6 +40,7 @@ const VALID_ATTRIBUTES = {
   survey: [
     'id',
     'accountId',
+    'resourceId',
     'name',
     'description',
     'thanks',
@@ -48,6 +51,7 @@ const VALID_ATTRIBUTES = {
   question: [
     'id',
     'surveyId',
+    'resourceId',
     'name',
     'type',
     'question',
@@ -71,11 +75,28 @@ function findAllSurveys(account) {
       ['id', 'asc'],
       [SurveyQuestion, 'order', 'ASC']
     ],
-    include: [{
+    include: [
+      {
+        model: Resource
+      },
+      {
       model: SurveyQuestion,
-      attributes: VALID_ATTRIBUTES.question
+      attributes: VALID_ATTRIBUTES.question,
+      include: [{
+        model: Resource
+      }]
     }]
   }).then(function(surveys) {
+    surveys.forEach(function(survey, index, array) {
+      if(survey.Resource !== null){
+        survey.Resource.JSON = JSON.parse(decodeURI(survey.Resource.JSON));
+      }
+      survey.SurveyQuestions.forEach(function(question, index, array) {
+        if(question.Resource !== null){
+          question.Resource.JSON = JSON.parse(decodeURI(question.Resource.JSON));
+        }
+      });
+    });
     deferred.resolve(simpleParams(surveys));
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
@@ -102,7 +123,7 @@ function findSurvey(params) {
   }).then(function(survey) {
     if(survey) {
       if(survey.closed) {
-        deferred.reject(MESSAGES.closed);
+        deferred.reject(MESSAGES.alreadyClosed);
       }
       else if(!survey.confirmedAt) {
         deferred.reject(MESSAGES.notConfirmed);
@@ -165,7 +186,6 @@ function createSurveyWithQuestions(params, account) {
 function updateSurvey(params, account) {
   let deferred = q.defer();
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
-
   models.sequelize.transaction(function (t) {
     return Survey.update(validParams, {
       where: { id: params.id, accountId: account.id },

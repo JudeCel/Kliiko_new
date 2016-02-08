@@ -14,7 +14,6 @@
     'debModule',
     'domServices',
     'messenger',
-    'ng-sortable',
     'ngMessages',
 
     // app modules

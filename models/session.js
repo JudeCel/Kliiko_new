@@ -10,7 +10,7 @@ module.exports = (Sequelize, DataTypes) => {
     start_time:	{ type: DataTypes.DATE, allowNull: false },
     end_time:	{ type: DataTypes.DATE, allowNull: false },
     incentive_details: { type: DataTypes.TEXT, allowNull: true },
-    status_id:	{ type: DataTypes.INTEGER, allowNull: false},
+    active:	{type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true},
     activeId:{ type: DataTypes.INTEGER, allowNull: true},
     colours_used: { type: DataTypes.TEXT, allowNull: true }
   },

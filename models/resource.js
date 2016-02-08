@@ -12,7 +12,7 @@ module.exports = (Sequelize, DataTypes) => {
     resourceType: {type: DataTypes.ENUM, allowNull: false,
       values: [ 'participant', 'facilitator', 'co-facilitator',
                 'observer', 'image', 'video', 'audio', 'report',
-                'vote', 'collage', 'tmp', 'pdf', 'brandLogo'
+                'vote', 'collage', 'tmp', 'pdf', 'brandLogo', 'youtubeUrl'
               ]
     }
     //
@@ -22,6 +22,8 @@ module.exports = (Sequelize, DataTypes) => {
         associate: function(models) {
           Resource.belongsTo(models.Topic, {foreignKey: 'topicId'});
           Resource.belongsTo(models.User, {foreignKey: 'userId'});
+          Resource.hasMany(models.Survey, {foreignKey: 'surveyId'});
+          Resource.hasMany(models.Survey, {foreignKey: 'surveyQuestionId'});
         }
       }
     }

@@ -200,12 +200,6 @@ img.ic-flipX {
     width: 22px;
     background-size: contain;
     margin-top: 1px; }
-  .contactDetailsModal .has-error, .accountDatabaseCommentModal .has-error, .surveyPreviewModal .has-error, .brandColourPreviewModal .has-error {
-    color: #f00;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 270px;
-    display: inline-block; }
 
 .accountDatabaseCommentModal {
   width: 400px;
@@ -858,6 +852,10 @@ footer {
   background-color: #4DC0E9 !important; }
 
 /* Typography */
+.text-break-all {
+  -ms-word-break: break-all;
+  word-break: break-all; }
+
 .text-max-width {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1400,6 +1398,9 @@ hr.survey-hr {
 
 .panel-mmin-height {
   min-height: 302px; }
+
+.center-youtube-video {
+  margin: 53px 0px 52px 0px; }
 
 .manage-preview {
   padding-top: 1%;
@@ -2239,14 +2240,8 @@ hr.survey-hr {
     margin-top: 10px;
     width: 160px; }
 
-#dashboard-contact-lists #dashboard-contact-lists-main-table {
-  position: relative;
-  top: 11px;
-  width: 100%;
-  overflow: auto; }
-
 #dashboard-contact-lists #contact-lists-right-column {
-  overflow: inherit; }
+  overflow: auto; }
   #dashboard-contact-lists #contact-lists-right-column #list-mass-actions {
     outline: none; }
     #dashboard-contact-lists #contact-lists-right-column #list-mass-actions .check {
@@ -2380,10 +2375,10 @@ hr.survey-hr {
 #dashboard-contact-lists #contact-lists-add-button-1 {
   padding: 8px !important; }
 
-#dashboard-contact-lists #modals-excel-csv-import #modals-excel-csv-import-icon {
+#dashboard-contact-lists #modals-excel-import #modals-excel-import-icon {
   margin-bottom: 50px; }
 
-#dashboard-contact-lists #modals-excel-csv-import .drop-box {
+#dashboard-contact-lists #modals-excel-import .drop-box {
   background: #F8F8F8;
   border: 3px dashed #DDD;
   width: 300px;
@@ -2392,10 +2387,10 @@ hr.survey-hr {
   padding-top: 20px;
   margin: 0 auto; }
 
-#dashboard-contact-lists #modals-excel-csv-import .dragover {
+#dashboard-contact-lists #modals-excel-import .dragover {
   border: 5px dashed blue; }
 
-#dashboard-contact-lists #modals-excel-csv-import .modal-control-buttons {
+#dashboard-contact-lists #modals-excel-import .modal-control-buttons {
   margin-top: 30px; }
 
 .margin-top-2rem {

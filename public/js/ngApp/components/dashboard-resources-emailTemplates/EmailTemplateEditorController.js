@@ -216,7 +216,7 @@
         if(res.error) {
           messenger.error(res.error);
         } else {
-          var linkHTML = '<a href="' + res.url + '" target="_blank" style="display:block;text-decoration:none;color:#000;;"><img src="/icons/header button icons/tour_video.png"></img> </a>';
+          var linkHTML = '<a href="' + res.url + '" target="_blank" style="display:block;text-decoration:none;color:#000;;"><img src="/icons/header button icons/videoLink.png"></img> </a>';
           $('#templateContent').wysiwyg("insertHtml", linkHTML);
           vm.newResource = {};
           cancel();
@@ -240,7 +240,7 @@
             if(res.error) {
               messenger.error(res.error);
             } else {
-              var linkHTML = '<img src="/chat_room/uploads/' + res.data.name + '" style="max-width:600px;"></img>';
+              var linkHTML = '<img src="/chat_room/uploads/' + res.data.JSON.name + '" style="max-width:600px;"></img>';
               $('#templateContent').wysiwyg("insertHtml", linkHTML);
               vm.newResource = {};
               cancel()

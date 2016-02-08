@@ -1,7 +1,7 @@
 <div class='col-md-12 fixed-bottom-margin'>
   <div class='dashboard-container'>
 
-    <form name='sc.manageForm' novalidate>
+    <form id='manageForm' name='sc.manageForm' novalidate>
       <fieldset ng-disabled='sc.submitingForm'>
         <div class='col-md-offset-3 col-md-6'>
           <h2 class='text-center'>Manage Survey</h2>
@@ -16,19 +16,19 @@
 
         <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(0, 3) track by $index'>
           <div ng-init='question = sc.initQuestion(object, sc.survey.SurveyQuestions[object.order])'>
-            <ng-form name='{{ object.order }}'>
-              <div class='panel panel-default no-border-radius'>
-                <div class='panel-heading' ng-if='!object.hardcodedName'><strong>Question #{{ object.order + 1 }}</strong></h4></div>
-                <div class='panel-heading' ng-if='object.hardcodedName'><strong>{{ object.name }}</strong></h4></div>
-                <div class='panel-body'>
+            <div id='panel-{{ object.order }}' class='panel panel-default no-border-radius'>
+              <div class='panel-heading' ng-if='!object.hardcodedName'><strong>Question #{{ object.order + 1 }}</strong></h4></div>
+              <div class='panel-heading' ng-if='object.hardcodedName'><strong>{{ object.name }}</strong></h4></div>
+              <div class='panel-body'>
+                <ng-form name='{{ object.order }}'>
                   <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/question.html'"></ng-include>
                   <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/answers.html'"></ng-include>
-                </div>
-                <div class='panel-footer' ng-if='!sc.survey.confirmedAt'>
-                  <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/questionFooter.html'"></ng-include>
-                </div>
+                </ng-form>
               </div>
-            </ng-form>
+              <div class='panel-footer' ng-if='!sc.survey.confirmedAt'>
+                <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/questionFooter.html'"></ng-include>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -39,7 +39,7 @@
         <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(3, 6) track by $index'>
           <div ng-init='question = sc.initQuestion(object, sc.survey.SurveyQuestions[object.order])'>
             <uib-accordion close-others='false'>
-              <uib-accordion-group is-open='object.open' class='no-border-radius'>
+              <uib-accordion-group is-open='object.open' id='panel-{{ object.order }}' class='no-border-radius'>
                 <uib-accordion-heading>
                   <div>
                     <strong>{{ object.name }}</strong>
@@ -65,7 +65,7 @@
         <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(6, 10) track by $index'>
           <div ng-init='question = sc.initQuestion(object, sc.survey.SurveyQuestions[object.order])'>
             <ng-form name='{{ object.order }}'>
-              <div class='panel panel-default no-border-radius'>
+              <div id='panel-{{ object.order }}' class='panel panel-default no-border-radius'>
                 <div class='panel-heading' ng-if='!object.hardcodedName'><strong>Question #{{ object.order + 1 }}</strong></h4></div>
                 <div class='panel-heading' ng-if='object.hardcodedName'><strong>{{ object.name }}</strong></h4></div>
                 <div class='panel-body'>
@@ -95,7 +95,7 @@
           </span>
         </div>
 
-        <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey-survey/previewModal.html'"></ng-include>
+        <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/previewModal.html'"></ng-include>
       </fieldset>
     </form>
   </div>

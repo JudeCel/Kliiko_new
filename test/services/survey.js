@@ -193,7 +193,7 @@ describe('SERVICE - Survey', function() {
           surveyServices.findSurvey({ id: survey.id }, accountParams()).then(function(result) {
             done('Should not get here!');
           }, function(error) {
-            assert.equal(error, surveyServices.messages.closed);
+            assert.equal(error, surveyServices.messages.alreadyClosed);
             done();
           });
         });
