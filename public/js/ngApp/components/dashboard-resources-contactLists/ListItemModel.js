@@ -6,8 +6,8 @@
    */
   angular.module('KliikoApp').factory('ListItemModel', ListItemModel);
 
-  ListItemModel.$inject = ['$q', 'contactListServices', 'Upload', 'globalSettings'];
-  function ListItemModel($q, contactListServices, Upload, globalSettings)  {
+  ListItemModel.$inject = ['$q', 'dbg','contactListServices', 'Upload', 'globalSettings', 'ListItemMemberModel'];
+  function ListItemModel($q, dbg, contactListServices, Upload, globalSettings, Member)  {
     var ListItemModel;
 
     ListItemModel = ListItemModel;
@@ -22,6 +22,7 @@
     ListItemModel.prototype.updateTableSortingByDragging = updateTableSortingByDragging;
 
     ListItemModel.prototype.parseImportFile = parseImportFile;
+    ListItemModel.prototype.generateImportPreview = generateImportPreview;
 
     return ListItemModel;
 
@@ -150,6 +151,24 @@
       });
 
       return deferred.promise;
+
+    }
+
+    function generateImportPreview(contactsArray) {
+      var self = this;
+
+      if (!angular.isArray(contactsArray)) {
+        dbg.error('#ListItemModel > generateImportPreview > input params expected to be an array ', contactsArray );
+        return;
+      }
+
+      self.importPreviewArray = [];
+      for (var i = 0, len = contactsArray.length; i < len ; i++) {
+        var newContact = new Member(contactsArray[i]);
+        self.importPreviewArray.push(newContact);
+      }
+
+      //debugger; //debugger
 
     }
 

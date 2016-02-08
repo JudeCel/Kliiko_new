@@ -11,6 +11,7 @@
     <section class="banners-section text-center">
         <div>
             <div ngf-drop ngf-select ng-model="clc.importData.file" class="drop-box"
+                 ng-change="clc.clearImportErrors()"
                  ngf-drag-over-class="'dragover'"
                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                  ngf-pattern="'.xls,.xlsx,.xlsm,.csv'">Drop file here or click to upload</div>

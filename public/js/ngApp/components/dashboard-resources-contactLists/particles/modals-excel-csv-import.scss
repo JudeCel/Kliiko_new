@@ -23,3 +23,29 @@
   }
 
 }
+
+#modals-import-preview {
+  h3 {
+    margin: 0 0 20px 0;
+  }
+
+  .modal-dialog.contactDetailsModal {
+    width: 80%;
+  }
+
+  #contact-details-import-preview-table {
+    width: 100%;
+    overflow: auto;
+
+
+    table {
+      border-spacing: 0px;
+      margin-bottom: 35px;
+    }
+    td {
+      padding-left: 10px;
+      border: none;
+
+    }
+  }
+}
