@@ -2,11 +2,14 @@
 
 var models = require('./../models');
 var Session  = models.Session;
+var SessionMember  = models.SessionMember;
 var AccountUser  = models.AccountUser;
 
 var q = require('q');
 var _ = require('lodash');
 var async = require('async');
+
+var sessionMemberServices = require('./../services/sessionMember');
 
 const MESSAGES = {
   notFound: 'Session not found',
@@ -17,7 +20,7 @@ const MESSAGES = {
 // const allowedRoles = ['admin', 'accountManager', 'facilitator']
 
 // Exports
-function findSession(sessionId, accountId) {
+function findSessionWithRole(sessionId, accountId, role) {
   let deferred = q.defer();
 
   Session.find({
@@ -26,8 +29,10 @@ function findSession(sessionId, accountId) {
       accountId: accountId
     },
     include: [{
-      model: AccountUser,
-      as: 'Facilitator'
+      model: SessionMember,
+      where: {
+        role: role
+      }
     }]
   }).then(function(session) {
     if(session) {
@@ -45,7 +50,7 @@ function findSession(sessionId, accountId) {
   return deferred.promise;
 };
 
-function findAllSessions(accountId) {
+function findAllSessionsWithRole(accountId, role) {
   let deferred = q.defer();
 
   Session.findAll({
@@ -53,8 +58,10 @@ function findAllSessions(accountId) {
       accountId: accountId
     },
     include: [{
-      model: AccountUser,
-      as: 'Facilitator'
+      model: SessionMember,
+      where: {
+        role: role
+      }
     }]
   }).then(function(sessions) {
     deferred.resolve(simpleParams(sessions));
@@ -70,7 +77,7 @@ function findAllSessions(accountId) {
 function removeSession(sessionId, accountId) {
   let deferred = q.defer();
 
-  findSession(sessionId, accountId).then(function(result) {
+  findSessionWithRole(sessionId, accountId, 'facilitator').then(function(result) {
     result.data.destroy().then(function() {
       deferred.resolve(simpleParams(null, MESSAGES.removed));
     }).catch(Session.sequelize.ValidationError, function(error) {
@@ -88,11 +95,20 @@ function removeSession(sessionId, accountId) {
 function copySession(sessionId, accountId) {
   let deferred = q.defer();
 
-  findSession(sessionId, accountId).then(function(result) {
+  findSessionWithRole(sessionId, accountId, 'facilitator').then(function(result) {
     delete result.data.dataValues.id;
 
     Session.create(result.data.dataValues).then(function(session) {
-      deferred.resolve(simpleParams(session, MESSAGES.copied));
+      let facilitator = result.data.SessionMembers[0].dataValues;
+      delete facilitator.id;
+      delete facilitator.token;
+      delete facilitator.sessionId;
+
+      copySessionMember(session, facilitator).then(function(copy) {
+        deferred.resolve(simpleParams(copy, MESSAGES.copied));
+      }, function(error) {
+        deferred.reject(error);
+      })
     }).catch(Session.sequelize.ValidationError, function(error) {
       deferred.reject(prepareErrors(error));
     }).catch(function(error) {
@@ -106,6 +122,28 @@ function copySession(sessionId, accountId) {
 };
 
 // Helpers
+function copySessionMember(session, facilitator) {
+  let deferred = q.defer();
+
+  session.createSessionMember(facilitator).then(function(result) {
+    sessionMemberServices.createToken(result.id).then(function() {
+      findSessionWithRole(session.id, session.accountId, 'facilitator').then(function(result) {
+        deferred.resolve(result.data);
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }, function(error) {
+      deferred.reject(prepareErrors(error));
+    });
+  }).catch(Session.sequelize.ValidationError, function(error) {
+    deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
 function simpleParams(data, message) {
   return { data: data, message: message };
 };
@@ -124,8 +162,8 @@ function prepareErrors(err) {
 
 module.exports = {
   messages: MESSAGES,
-  findSession: findSession,
-  findAllSessions: findAllSessions,
+  findSessionWithRole: findSessionWithRole,
+  findAllSessionsWithRole: findAllSessionsWithRole,
   copySession: copySession,
   removeSession: removeSession
 }

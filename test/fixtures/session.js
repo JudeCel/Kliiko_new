@@ -55,7 +55,15 @@ function createUsers(callback) {
       });
     }
   ], function(error) {
-    callback(error);
+    let params = userlist[1];
+    params.AccountId = userData[0].account.id;
+    params.UserId = userData[1].user.id;
+
+    AccountUser.create(params).then(function(result) {
+      callback();
+    }, function(error) {
+      callback(error);
+    });
   });
 }
 

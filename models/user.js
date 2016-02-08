@@ -16,9 +16,9 @@ module.exports = (Sequelize, DataTypes) => {
     password: {
       type: DataTypes.VIRTUAL,
       set: function(val) {
-        this.setDataValue('password', val);
         if (val) {
           this.setDataValue('encryptedPassword', bcrypt.hashSync(val, 10))
+          this.setDataValue('password', null);
         };
       },
       validate: {

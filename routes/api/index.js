@@ -5,6 +5,7 @@ var multipartyMiddleware = multiparty();
 var express = require('express');
 var router = express.Router();
 var policy = require('../../middleware/policy.js');
+var sessionMemberMiddleware = require('./../../middleware/sessionMember');
 
 var userRoutes = require('./user');
 var accountManager = require('./accountManager');
@@ -106,8 +107,8 @@ router.put('/brandColour', brandColour.update);
 router.post('/brandColour/copy', brandColour.copy);
 
 router.get('/session', session.get);
-router.delete('/session', session.remove);
-router.post('/session/copy', session.copy);
+router.delete('/session', session.remove, policy.authorized(['accountManager', 'admin']), sessionMemberMiddleware.hasAccess(['facilitator']));
+router.post('/session/copy', session.copy, policy.authorized(['accountManager', 'admin']), sessionMemberMiddleware.hasAccess(['facilitator']));
 
 // Common Rules
 router.use(function (req, res, next) {

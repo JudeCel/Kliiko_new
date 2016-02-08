@@ -11,7 +11,9 @@
     vm.removeSession = removeSession;
     vm.copySession = copySession;
 
+    vm.rowClass = rowClass;
     vm.showStatus = showStatus;
+    vm.subscriptionEndDate = subscriptionEndDate;
 
     initList();
 
@@ -21,7 +23,7 @@
         vm.dateFormat = res.dateFormat;
         dbg.log2('#ChatSessionsController > getChatSessions > res ', res.data);
       });
-    }
+    };
 
     function removeSession(session) {
       angularConfirm('Are you sure you want to remove Session?').then(function(response) {
@@ -36,7 +38,7 @@
           }
         });
       });
-    }
+    };
 
     function copySession(session) {
       chatSessionsServices.copySession({ sessionId: session.id }).then(function(res) {
@@ -48,12 +50,26 @@
           vm.sessions.push(res.data);
         }
       });
-    }
+    };
 
-    function showStatus(session) {
+    function rowClass(session, user) {
+      var string = showStatus(session, user).toLowerCase();
+      return 'session-' + string;
+    };
+
+    function subscriptionEndDate(user) {
+      if(user && user.subscriptions) {
+        return new Date(user.subscriptions.trialEnd);
+      }
+      else {
+        return 'not found';
+      }
+    };
+
+    function showStatus(session, user) {
       if(session.active) {
         var date = new Date();
-        if(date > new Date(session.end_time)) {
+        if(date > subscriptionEndDate(user)) {
           return 'Expired';
         }
         else if(date < new Date(session.start_time)) {
@@ -67,5 +83,5 @@
         return 'Closed';
       }
     }
-  }
+  };
 })();

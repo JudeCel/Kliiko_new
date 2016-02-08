@@ -22,23 +22,20 @@
             <th></th>
           </tr>
         </thead>
-        <tbody ng-repeat='session in csc.sessions'>
-          <tr>
-            <td>
-              {{ session.Facilitator || "nullllllllllll" }}
-
-            </td>
+        <tbody>
+          <tr class='{{ csc.rowClass(session) }}' ng-repeat='session in csc.sessions'>
             <td>{{ session.name }}</td>
-            <td>facilitator goes here</td>
+            <td>{{ session.SessionMembers[0].username }}</td>
             <td>{{ session.start_time | date:sc.dateFormat }}</td>
             <td>{{ session.end_time | date:sc.dateFormat }}</td>
-            <td>{{ session.end_time | date:sc.dateFormat }}</td>
-            <td>{{ csc.showStatus(session) }}</td>
-            <td>
+            <td>{{ csc.subscriptionEndDate(app.user) | date:sc.dateFormat }}</td>
+            <td>{{ csc.showStatus(session, app.user) }}</td>
+            <td class='text-right dashboardElementsEditRemove'>
+              <span class='glyphicon glyphicon-star' aria-hidden='true'></span>
               <img src='/icons/resources_grey.png' alt='' ng-click='csc.copySession(session)' />
               <img src='/icons/dashboardElement_edit.png' alt='' />
               <img src='/icons/dashboardElement_remove.png' alt='' ng-click='csc.removeSession(session)' />
-              <span class='glyphicon glyphicon-play' aria-hidden='true' ng-if=''></span>
+              <span class='glyphicon glyphicon-play' aria-hidden='true'></span>
             </td>
           </tr>
         </tbody>
