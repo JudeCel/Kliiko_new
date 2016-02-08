@@ -399,6 +399,11 @@
            domServices.modal('modals-import-preview');
 
          } else  {
+           /* preview temporary data 
+           vm.lists.activeList.generateImportPreview(res.data.invalid);
+           vm.importPreviewArray = vm.lists.activeList.importPreviewArray;
+           domServices.modal('modals-import-preview');
+           */
            processImportData(res);
           }
           //alert('show preview')
@@ -481,7 +486,10 @@
       }//for
       vm.contactListToAdd = userList;
       
-      domServices.modal('contactList-addNewListFieldsPreviewModal');      
+      vm.lists.activeList.generateImportPreview(userList);
+      vm.importPreviewArray = vm.lists.activeList.importPreviewArray;
+      domServices.modal('modals-import-preview');
+      //domServices.modal('contactList-addNewListFieldsPreviewModal');      
     }
     
     vm.clearDoppedItem = function(item) {
@@ -522,7 +530,9 @@
       alert('reupload');
     }
     function reMap() {
-      alert('re map');
+      //alert('re map');
+      prepareCustomFields();
+      vm.addNewListFieldMapping();
     }
     
     vm.addCustomField = function() {
