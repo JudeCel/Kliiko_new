@@ -8,7 +8,8 @@ module.exports = {
   create: create,
   destroy: destroy,
   update: update,
-  import: importFunction
+  parseImportFile: parseImportFile,
+  importContacts: importContacts
 };
 
 function index(req, res, next) {
@@ -80,7 +81,7 @@ function destroy(req, res, next) {
   });
 }
 
-function importFunction(req, res, next) {
+function parseImportFile(req, res, next) {
 
   validations.params(res, req.file, 'file is missed');
   validations.params(res, req.params.id, 'query param @id is missed');
@@ -94,4 +95,12 @@ function importFunction(req, res, next) {
     res.status(415)
     res.send({error:err});
   })
+}
+
+function importContacts(req, res, next) {
+  validations.params(res, req.params.id, 'query param @id is missed');
+  validations.body(res, req.body.contactsArray, 'contactsArray is missed');
+
+  res.send('ok')
+
 }

@@ -24,6 +24,17 @@
 
 }
 
+
+#contactList-addNewListFieldsModal {
+  .contactList-drop-item {
+    &:hover {
+      cursor: -webkit-grab; 
+      cursor: hand;
+      background: $lightGreen;
+    }
+  }
+}
+
 #modals-import-preview {
   h3 {
     margin: 0 0 20px 0;

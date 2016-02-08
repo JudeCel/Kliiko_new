@@ -50,6 +50,8 @@
     vm.reMap = reMap;
     vm.addImportedContacts = addImportedContacts;
 
+    vm.mappingFieldsContinue = mappingFieldsContinue;
+
 
 
     /**
@@ -389,18 +391,18 @@
     function startImport() {
       if (!vm.importData.file) return;
 
-      vm.lists.activeList.parseImportFile(vm.importData.file).then(
+      vm.lists.parseImportFile(vm.importData.file).then(
         function(res) {
           domServices.modal('contactList-addContactManual','close');
-          processImportData(res);
+         // processImportData(res);
          if (res.valid) {
 
-           vm.lists.activeList.generateImportPreview(res.data.valid);
-           vm.importPreviewArray = vm.lists.activeList.importPreviewArray;
+           vm.lists.generateImportPreview(res.data.valid);
 
            domServices.modal('modals-import-preview');
 
          } else  {
+           processImportData(res);
            vm.addNewListFieldMapping();
           }
 
@@ -476,7 +478,7 @@
       }    
     };
     //assigns contact info to mapped fields
-    vm.mappingFieldsContinue = function() {
+    function mappingFieldsContinue() {
       var userList = [];
       for (var j = 0; j < vm.validContactList.length; j++ ) {
         var user = {};
@@ -495,15 +497,15 @@
       }//for
       vm.contactListToAdd = userList;
       
-      vm.lists.activeList.generateImportPreview(userList);
-      vm.importPreviewArray = vm.lists.activeList.importPreviewArray;
+      vm.lists.generateImportPreview(userList);
+      //vm.importPreviewArray = vm.lists.activeList.importPreviewArray;
       domServices.modal('contactList-addNewListFieldsModal', 'close');
       domServices.modal('modals-import-preview');
     }
     
     vm.clearDoppedItem = function(item) {
       item.field = null;
-    }
+    };
     
     vm.updateCustomFieldList = function() {
       if (vm.newListErrorMessage) return;
@@ -515,7 +517,7 @@
       var newList = angular.copy(vm.newList);
       var parsedList = prepareParsedList(vm.newList);
       updateActiveCustomList(newList, parsedList);
-    }
+    };
     
     function updateActiveCustomList(newList, parsedList) {
       vm.lists.updateActiveItem(parsedList).then(
@@ -529,14 +531,22 @@
           dbg.error('#ContactListController > updateList > error: ', err);
         }
       );
-    };
+    }
 
 
     function clearImportErrors() {
       vm.importErrorMessage = null;
     }
     function reUpload() {
-      alert('reupload');
+      domServices.modal('modals-import-preview','close');
+      // timeout is to wait fade effects
+      setTimeout(function() {
+        var type;
+        if (vm.importData.excel) type = 'excel';
+        if (vm.importData.csv) type = 'csv';
+        contactAddEditClickHandle(type);
+      }, 800);
+      clearImportErrors();
     }
     function reMap() {
       domServices.modal('modals-import-preview', 'close');
@@ -550,26 +560,18 @@
       parsedList.customFields.push(vm.additionalMappingFieldname);
       vm.additionalMappingFieldname = "";
       updateActiveCustomList(newList, parsedList);
-    }
+    };
     function addImportedContacts() {
 
-      vm.lists.activeList.addImportedContacts().then(
+      vm.lists.addImportedContacts().then(
         function(res) {
           domServices.modal('modals-import-preview', 'close');
-
 
           messenger.ok('New contacts has been imported to list '+ vm.lists.activeList.name);
         },
         function (err) {
-          //if (err.error) {
-          //  messenger.error(err.error.message);
-          //}
-          //if (err.errors) {
-          //  var e = err.errors;
-          //  for (var i = 0, len = e.length; i < len ; i++) {
-          //    vm.modalErrors[ e[i].path ] = e[i].message;
-          //  }
-          //}
+          messenger.error(err);
+
         }
       );
     }

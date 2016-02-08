@@ -22,6 +22,10 @@
     ListsModel.prototype.updateContact = updateContact;
     ListsModel.prototype.deleteContacts = deleteContacts;
 
+    ListsModel.prototype.parseImportFile = parseImportFile;
+    ListsModel.prototype.generateImportPreview = generateImportPreview;
+    ListsModel.prototype.addImportedContacts = addImportedContacts;
+
     return ListsModel;
 
 
@@ -233,8 +237,6 @@
 
           newContactObj = new Member(newContactObj);
 
-
-
           for (var i = 0, len = self.items.length; i < len ; i++) {
             if (self.items[i].id == currentListId) {
 
@@ -246,8 +248,6 @@
               break;
             }
           }
-
-
 
           deferred.resolve(res);
         },
@@ -292,6 +292,7 @@
       return deferred.promise;
     }
 
+
     /**
      * Delete contact by ids
      * and adjust members amount counter
@@ -327,6 +328,80 @@
       );
       return deferred.promise;
 
+    }
+
+
+    /**
+     * Parse and validate given import file (excel, csv) on back end
+     * @param file {File}
+     * @returns {*|promise}
+     */
+    function parseImportFile(file) {
+      var self = this;
+
+      var deferred = $q.defer();
+
+      contactListServices.parseImportFile(file, self.activeList.id).then(function (res) {
+
+        if (res.data && !res.data.result.invalid.length) {
+          deferred.resolve({valid: true, data: res.data.result});
+        } else {
+          deferred.resolve({valid: false, data: res.data.result});
+
+        }
+
+      }, function (err) {
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
+
+    }
+
+    function generateImportPreview(contactsArray) {
+      var self = this;
+
+      if (!angular.isArray(contactsArray)) {
+        dbg.error('#ListItemModel > generateImportPreview > input params expected to be an array ', contactsArray );
+        return;
+      }
+
+      self.importPreviewArray = [];
+      for (var i = 0, len = contactsArray.length; i < len ; i++) {
+        var newContact = new Member(contactsArray[i]);
+        self.importPreviewArray.push(newContact);
+      }
+
+    }
+
+    function addImportedContacts() {
+      var self = this;
+      var deferred = $q.defer();
+
+      contactListServices.addImportedContacts(self.importPreviewArray, self.activeList.id).then(
+        function (res) {
+
+          for (var i = 0, len = self.items.length; i < len ; i++) {
+            if (self.items[i].id == self.activeList.id) {
+
+              if (!self.items[i].members) self.items[i].members = [];
+
+              self.items[i].members = self.items[i].members.concat(self.importPreviewArray);
+              self.items[i].membersCount = + self.items[i].membersCount + self.importPreviewArray.length;
+
+              self.importPreviewArray = null;
+              self.changeActiveList(self.activeListIndex, 'force');
+              break;
+            }
+          }
+
+          deferred.resolve(res);
+        },
+        function (err) {
+          deferred.reject(err);
+        }
+      );
+      return deferred.promise;
     }
 
 

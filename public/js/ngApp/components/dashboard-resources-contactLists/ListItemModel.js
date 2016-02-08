@@ -21,9 +21,7 @@
     ListItemModel.prototype.toggleTableToShow = toggleTableToShow;
     ListItemModel.prototype.updateTableSortingByDragging = updateTableSortingByDragging;
 
-    ListItemModel.prototype.parseImportFile = parseImportFile;
-    ListItemModel.prototype.generateImportPreview = generateImportPreview;
-    ListItemModel.prototype.addImportedContacts = addImportedContacts;
+
 
     return ListItemModel;
 
@@ -124,58 +122,6 @@
       self.update(self);
     }
 
-    /**
-     * Parse and validate given import file (excel, csv) on back end
-     * @param file {File}
-     * @returns {*|promise}
-     */
-    function parseImportFile(file) {
-      var self = this;
-
-      var deferred = $q.defer();
-
-      Upload.upload({
-        url: globalSettings.restUrl+'/contactLists/'+self.id+'/import',
-        method: 'POST',
-        data: {uploadedfile: file}
-      }).then(function (res) {
-
-        if (res.data && !res.data.result.invalid.length) {
-          deferred.resolve({valid: true, data: res.data.result});
-        } else {
-          deferred.resolve({valid: false, data: res.data.result});
-
-        }
-
-      }, function (err) {
-        deferred.reject(err);
-      });
-
-      return deferred.promise;
-
-    }
-
-    function generateImportPreview(contactsArray) {
-      var self = this;
-
-      if (!angular.isArray(contactsArray)) {
-        dbg.error('#ListItemModel > generateImportPreview > input params expected to be an array ', contactsArray );
-        return;
-      }
-
-      self.importPreviewArray = [];
-      for (var i = 0, len = contactsArray.length; i < len ; i++) {
-        var newContact = new Member(contactsArray[i]);
-        self.importPreviewArray.push(newContact);
-      }
-
-    }
-
-    function addImportedContacts() {
-      var deferred = $q.defer();
-      deferred.resolve();
-      return deferred.promise;
-    }
 
   }
 })();
