@@ -2240,8 +2240,14 @@ hr.survey-hr {
     margin-top: 10px;
     width: 160px; }
 
-#dashboard-contact-lists #contact-lists-right-column {
+#dashboard-contact-lists #dashboard-contact-lists-main-table {
+  position: relative;
+  top: 11px;
+  width: 100%;
   overflow: auto; }
+
+#dashboard-contact-lists #contact-lists-right-column {
+  overflow: inherit; }
   #dashboard-contact-lists #contact-lists-right-column #list-mass-actions {
     outline: none; }
     #dashboard-contact-lists #contact-lists-right-column #list-mass-actions .check {
@@ -2348,6 +2354,14 @@ hr.survey-hr {
 #dashboard-contact-lists #contactList-addNewListFieldsModal h3 {
   margin: 5px !important; }
 
+#dashboard-contact-lists #contactList-addNewListFieldsModal .contactList-customfields {
+  margin: 20px; }
+
+#dashboard-contact-lists #contactList-addNewListFieldsModal input.custom-fields {
+  margin: 6px;
+  width: 90%;
+  padding: 10px; }
+
 #dashboard-contact-lists label.control-label {
   margin-top: 23px; }
 
@@ -2375,10 +2389,10 @@ hr.survey-hr {
 #dashboard-contact-lists #contact-lists-add-button-1 {
   padding: 8px !important; }
 
-#dashboard-contact-lists #modals-excel-import #modals-excel-import-icon {
+#dashboard-contact-lists #modals-excel-csv-import #modals-excel-csv-import-icon {
   margin-bottom: 50px; }
 
-#dashboard-contact-lists #modals-excel-import .drop-box {
+#dashboard-contact-lists #modals-excel-csv-import .drop-box {
   background: #F8F8F8;
   border: 3px dashed #DDD;
   width: 300px;
@@ -2387,11 +2401,27 @@ hr.survey-hr {
   padding-top: 20px;
   margin: 0 auto; }
 
-#dashboard-contact-lists #modals-excel-import .dragover {
+#dashboard-contact-lists #modals-excel-csv-import .dragover {
   border: 5px dashed blue; }
 
-#dashboard-contact-lists #modals-excel-import .modal-control-buttons {
+#dashboard-contact-lists #modals-excel-csv-import .modal-control-buttons {
   margin-top: 30px; }
+
+#dashboard-contact-lists #modals-import-preview h3 {
+  margin: 0 0 20px 0; }
+
+#dashboard-contact-lists #modals-import-preview .modal-dialog.contactDetailsModal, #dashboard-contact-lists #modals-import-preview .modal-dialog.accountDatabaseCommentModal, #dashboard-contact-lists #modals-import-preview .modal-dialog.surveyPreviewModal, #dashboard-contact-lists #modals-import-preview .modal-dialog.brandColourPreviewModal {
+  width: 80%; }
+
+#dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table {
+  width: 100%;
+  overflow: auto; }
+  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table table {
+    border-spacing: 0px;
+    margin-bottom: 35px; }
+  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table td {
+    padding-left: 10px;
+    border: none; }
 
 .margin-top-2rem {
   margin-top: 2rem; }

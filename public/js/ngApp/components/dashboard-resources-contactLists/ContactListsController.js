@@ -44,6 +44,12 @@
 
     vm.startImport = startImport;
 
+    vm.clearImportErrors = clearImportErrors;
+    vm.reUpload = reUpload;
+    vm.reMap = reMap;
+
+
+
     /**
      * Open modal and prepare variables
      */
@@ -383,10 +389,20 @@
 
       vm.lists.activeList.parseImportFile(vm.importData.file).then(
         function(res) {
-          res.valid ? alert('show preview') : alert('show map');
+          domServices.modal('contactList-addContactManual','close');
+         if (res.valid) {
+
+           vm.lists.activeList.generateImportPreview(res.data.valid);
+           vm.importPreviewArray = vm.lists.activeList.importPreviewArray;
+
+           domServices.modal('modals-import-preview');
+
+         } else  {
+           processImportData(res);
+          }
           //alert('show preview')
-          domServices.modal('contactList-importSteps');
-          processImportData(res);
+          //domServices.modal('contactList-importSteps');
+
         },
         function(err) {
           messenger.error('Import Failed');
@@ -493,6 +509,17 @@
           dbg.error('#ContactListController > updateList > error: ', err);
         }
       );
+    };
+
+
+    function clearImportErrors() {
+      vm.importErrorMessage = null;
+    }
+    function reUpload() {
+      alert('reupload');
+    }
+    function reMap() {
+      alert('re map');
     }
 
   }
