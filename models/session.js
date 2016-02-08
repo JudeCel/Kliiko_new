@@ -10,9 +10,13 @@ module.exports = (Sequelize, DataTypes) => {
     start_time:	{ type: DataTypes.DATE, allowNull: false },
     end_time:	{ type: DataTypes.DATE, allowNull: false },
     incentive_details: { type: DataTypes.TEXT, allowNull: true },
-    active:	{type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true},
     activeId:{ type: DataTypes.INTEGER, allowNull: true},
-    colours_used: { type: DataTypes.TEXT, allowNull: true }
+    colours_used: { type: DataTypes.TEXT, allowNull: true },
+
+    resourceId: { type: DataTypes.INTEGER, allowNull: true },
+    active: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true},
+    allStepsDone:	{type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false},
+    step: { type: DataTypes.ENUM, allowNull: false, values: ['setUp', 'facilitatiorAndTopics', 'manageSessionEmails', 'manageSessionParticipants', 'inviteSessionObservers'] }
   },
    {
       // indexes: [],
@@ -23,6 +27,7 @@ module.exports = (Sequelize, DataTypes) => {
           Session.belongsTo(models.BrandProject, { foreignKey: 'brand_project_id' });
           Session.belongsTo(models.Account, { foreignKey: 'accountId' });
           Session.belongsTo(models.BrandProjectPreference, { foreignKey: 'brandProjectPreferenceId' });
+          Session.belongsTo(models.Resource, { foreignKey: 'resourceId' });
           Session.belongsToMany(models.Topic, { through: { model: models.SessionTopics} } );
           Session.hasMany(models.SessionMember, { foreignKey: 'sessionId' });
         }
