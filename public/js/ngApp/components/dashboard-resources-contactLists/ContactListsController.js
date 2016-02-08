@@ -47,6 +47,7 @@
     vm.clearImportErrors = clearImportErrors;
     vm.reUpload = reUpload;
     vm.reMap = reMap;
+    vm.addImportedContacts = addImportedContacts;
 
 
 
@@ -400,8 +401,6 @@
          } else  {
            processImportData(res);
           }
-          //alert('show preview')
-          //domServices.modal('contactList-importSteps');
 
         },
         function(err) {
@@ -520,6 +519,28 @@
     }
     function reMap() {
       alert('re map');
+    }
+    function addImportedContacts() {
+
+      vm.lists.activeList.addImportedContacts().then(
+        function(res) {
+          domServices.modal('modals-import-preview', 'close');
+
+
+          messenger.ok('New contacts has been imported to list '+ vm.lists.activeList.name);
+        },
+        function (err) {
+          //if (err.error) {
+          //  messenger.error(err.error.message);
+          //}
+          //if (err.errors) {
+          //  var e = err.errors;
+          //  for (var i = 0, len = e.length; i < len ; i++) {
+          //    vm.modalErrors[ e[i].path ] = e[i].message;
+          //  }
+          //}
+        }
+      );
     }
 
   }

@@ -23,6 +23,7 @@
 
     ListItemModel.prototype.parseImportFile = parseImportFile;
     ListItemModel.prototype.generateImportPreview = generateImportPreview;
+    ListItemModel.prototype.addImportedContacts = addImportedContacts;
 
     return ListItemModel;
 
@@ -168,8 +169,12 @@
         self.importPreviewArray.push(newContact);
       }
 
-      //debugger; //debugger
+    }
 
+    function addImportedContacts() {
+      var deferred = $q.defer();
+      deferred.resolve();
+      return deferred.promise;
     }
 
   }
