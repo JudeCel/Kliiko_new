@@ -17,8 +17,6 @@ const MESSAGES = {
   copied: 'Session sucessfully copied'
 };
 
-// const allowedRoles = ['admin', 'accountManager', 'facilitator']
-
 // Exports
 function findSessionWithRole(sessionId, accountId, role) {
   let deferred = q.defer();

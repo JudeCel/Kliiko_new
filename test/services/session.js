@@ -33,10 +33,10 @@ describe('SERVICE - Session', function() {
     return testData.account.id;
   };
 
-  describe('#findSession', function() {
+  describe('#findSessionWithRole', function() {
     describe('happy path', function() {
       it('should succeed on finding session', function (done) {
-        sessionServices.findSession(testData.session.id, testData.account.id).then(function(result) {
+        sessionServices.findSessionWithRole(testData.session.id, testData.account.id, 'facilitator').then(function(result) {
           assert.equal(result.data.accountId, testData.account.id);
           done();
         }, function(error) {
@@ -47,7 +47,7 @@ describe('SERVICE - Session', function() {
 
     describe('sad path', function() {
       it('should fail on finding session', function (done) {
-        sessionServices.findSession(testData.session.id + 100, testData.account.id).then(function(result) {
+        sessionServices.findSessionWithRole(testData.session.id + 100, testData.account.id, 'facilitator').then(function(result) {
           done('Should not get here!');
         }, function(error) {
           assert.equal(error, sessionServices.messages.notFound);
@@ -57,10 +57,10 @@ describe('SERVICE - Session', function() {
     });
   });
 
-  describe('#findAllSessions', function() {
+  describe('#findAllSessionsWithRole', function() {
     describe('happy path', function() {
       it('should succeed on finding all sessions', function (done) {
-        sessionServices.findAllSessions(testData.account.id).then(function(result) {
+        sessionServices.findAllSessionsWithRole(testData.account.id, 'facilitator').then(function(result) {
           assert.equal(result.data[0].accountId, testData.account.id);
           done();
         }, function(error) {

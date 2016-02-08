@@ -41,7 +41,7 @@ describe('MIDDLEWARE - Session Member', function() {
     });
   });
 
-  describe.only('sad path ', function() {
+  describe('sad path ', function() {
     function setFailVariables(done) {
       res.status = function() {
         return {
