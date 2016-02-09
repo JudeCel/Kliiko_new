@@ -200,7 +200,8 @@
               '/js/ngApp/modules/contactList/contactList.js',
               '/js/ngApp/directives/custom-select-directive.js',
               '/js/vendors/ng-file-upload/ng-file-upload.js',
-              '/js/ngApp/filters/num.js'
+              '/js/ngApp/filters/num.js',
+              '/js/ngApp/filters/human2Camel.js'
 
             ]);
           }]},

@@ -2247,6 +2247,17 @@ hr.survey-hr {
   width: 100%;
   overflow: auto; }
 
+#dashboard-contact-lists table {
+  table-layout: auto; }
+
+#dashboard-contact-lists th.th-header {
+  position: relative;
+  margin-right: 0; }
+
+#dashboard-contact-lists th, #dashboard-contact-lists td {
+  overflow: hidden;
+  min-width: 60px; }
+
 #dashboard-contact-lists #contact-lists-right-column {
   overflow: inherit; }
   #dashboard-contact-lists #contact-lists-right-column #list-mass-actions {
@@ -2261,6 +2272,17 @@ hr.survey-hr {
     min-width: 70px;
     display: block;
     visibility: hidden; }
+  #dashboard-contact-lists #contact-lists-right-column span.sorting-order-arrow {
+    position: absolute;
+    top: 26px;
+    left: 0px;
+    margin-left: 3px;
+    margin-right: 3px; }
+  #dashboard-contact-lists #contact-lists-right-column td.selection-column {
+    width: 30px; }
+  #dashboard-contact-lists #contact-lists-right-column th span.th-name {
+    left: 9px;
+    position: relative; }
   #dashboard-contact-lists #contact-lists-right-column th:hover span.th-name {
     text-decoration: underline; }
   #dashboard-contact-lists #contact-lists-right-column th .glyphicon {

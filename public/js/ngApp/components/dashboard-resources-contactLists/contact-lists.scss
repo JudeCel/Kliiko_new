@@ -90,6 +90,23 @@
     overflow: auto;
   }
 
+  ///////////
+
+  table{
+    table-layout: auto;
+  }
+
+  th.th-header {
+    position: relative;
+    margin-right: 0;
+  }
+  th, td {
+    overflow: hidden;
+    min-width: 60px;
+  }
+
+  ////////
+
   #contact-lists-right-column {
 
     overflow: inherit;
@@ -118,10 +135,29 @@
       visibility: hidden;
     }
 
+
+    span.sorting-order-arrow {
+      position: absolute;
+      top: 26px;
+      left: 0px;
+      margin-left: 3px;
+      margin-right: 3px;
+    }
+
+    td.selection-column {
+      width: 30px;
+    }
+
     th {
+      span.th-name {
+        left: 9px;
+        position: relative;
+      }
+
       &:hover {
         span.th-name {  text-decoration: underline; }
       }
+
 
       .glyphicon {
         font-size: 1rem;
