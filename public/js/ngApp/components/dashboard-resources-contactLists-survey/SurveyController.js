@@ -10,7 +10,7 @@
     dbg.log2('#SurveyController started');
 
     var vm = this;
-    vm.surveys = {};
+    vm.surveys = {Resource: null};
     vm.brandLogos = {};
     vm.questionResource = {};
     vm.question = {showUpload: true};
@@ -72,7 +72,7 @@
     vm.getResourceThumbUrl = getResourceThumbUrl;
     vm.setUploadtype = setUploadtype;
     vm.resourceTitle = resourceTitle;
-    
+
     function onDropComplete(index, data, evt) {
       var answer = data.answer;
       var question = vm.survey.SurveyQuestions[data.questionOrder].answers;
