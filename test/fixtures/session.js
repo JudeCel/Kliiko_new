@@ -60,6 +60,7 @@ function createUsers(callback) {
     params.UserId = userData[1].user.id;
 
     AccountUser.create(params).then(function(result) {
+      userData[1].account.AccountUser = result;
       callback();
     }, function(error) {
       callback(error);
@@ -125,10 +126,10 @@ function createTopic(session, brandProject, callback) {
 function addSessionMembers(erorr, session, callback) {
   async.parallel([
     function(cb) {
-      addSessionMember(userData[0].account.AccountUser.id, session,'facilitator', 'Cool first user', cb);
+      addSessionMember(userData[0].account.AccountUser.id, session, 'participant', 'Participant - AccountOwner', cb);
     },
     function(cb) {
-      addSessionMember(userData[1].account.AccountUser.id, session, 'participant','Cool second user', cb);
+      addSessionMember(userData[1].account.AccountUser.id, session, 'facilitator', 'Facilitator - AccountManager', cb);
     }
   ], function(error, results) {
     callback(error, results);

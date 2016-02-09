@@ -2,9 +2,9 @@
   'use strict';
 
   angular.module('KliikoApp').controller('ChatSessionsController', ChatSessionsController);
-  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'messenger', 'angularConfirm'];
+  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'messenger', 'angularConfirm', '$window'];
 
-  function ChatSessionsController(dbg, chatSessionsServices, messenger, angularConfirm){
+  function ChatSessionsController(dbg, chatSessionsServices, messenger, angularConfirm, $window){
     dbg.log2('#ChatSessionsController started');
 
     var vm = this;
@@ -14,6 +14,9 @@
     vm.rowClass = rowClass;
     vm.showStatus = showStatus;
     vm.subscriptionEndDate = subscriptionEndDate;
+    vm.goToChat = goToChat;
+    vm.hasAccess = hasAccess;
+    vm.isExpired = isExpired;
 
     initList();
 
@@ -21,13 +24,15 @@
       chatSessionsServices.findAllSessions().then(function(res) {
         vm.sessions = res.data;
         vm.dateFormat = res.dateFormat;
+        vm.chatRoomUrl = res.chatRoomUrl;
+        vm.sessionListManageRoles = res.sessionListManageRoles;
         dbg.log2('#ChatSessionsController > getChatSessions > res ', res.data);
       });
     };
 
     function removeSession(session) {
       angularConfirm('Are you sure you want to remove Session?').then(function(response) {
-        chatSessionsServices.removeSession({ sessionId: session.id }).then(function(res) {
+        chatSessionsServices.removeSession({ id: session.id }).then(function(res) {
           if(res.error) {
             messenger.error(chatSessionsServices.prepareError(res.error));
           }
@@ -41,7 +46,7 @@
     };
 
     function copySession(session) {
-      chatSessionsServices.copySession({ sessionId: session.id }).then(function(res) {
+      chatSessionsServices.copySession({ id: session.id }).then(function(res) {
         if(res.error) {
           messenger.error(chatSessionsServices.prepareError(res.error));
         }
@@ -57,6 +62,12 @@
       return 'session-' + string;
     };
 
+    function goToChat(session, user) {
+      if(!isExpired(user)) {
+        $window.location.href = vm.chatRoomUrl + session.id;
+      }
+    };
+
     function subscriptionEndDate(user) {
       if(user && user.subscriptions) {
         return new Date(user.subscriptions.trialEnd);
@@ -66,10 +77,31 @@
       }
     };
 
+    function hasAccess(sessionId, accountUser) {
+      var found = vm.sessionListManageRoles.accountUser.indexOf(accountUser.role);
+      if(found > -1) {
+        return true;
+      }
+      else {
+        for(var i in accountUser.SessionMembers) {
+          var member = accountUser.SessionMembers[i];
+          if(member.sessionId == sessionId) {
+            found = vm.sessionListManageRoles.sessionMember.indexOf(member.role);
+            return (found > -1);
+          }
+        }
+      }
+    };
+
+    function isExpired(user, date) {
+      date = date || new Date();
+      return (date > subscriptionEndDate(user));
+    }
+
     function showStatus(session, user) {
       if(session.active) {
         var date = new Date();
-        if(date > subscriptionEndDate(user)) {
+        if(isExpired(user, date)) {
           return 'Expired';
         }
         else if(date < new Date(session.start_time)) {

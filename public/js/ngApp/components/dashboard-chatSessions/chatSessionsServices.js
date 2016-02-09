@@ -4,14 +4,17 @@
   chatSessionsServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
 
   function chatSessionsServices(globalSettings, $q, $resource, dbg) {
-    var chatSessionApi = $resource(globalSettings.restUrl + '/session/:path', null, {
-      copy: { method: 'POST', params: { path: 'copy' } }
+    var chatSessionApi = $resource(globalSettings.restUrl + '/session/:path/:id', null, {
+      get: { method: 'get', params: { path: 'get', id: 'all' } },
+      copy: { method: 'post', params: { path: 'copy', id: '@id' } },
+      remove: { method: 'delete', params: { path: 'remove', id: '@id' } }
     });
 
     var csServices = {};
     csServices.findAllSessions = findAllSessions;
     csServices.removeSession = removeSession;
     csServices.copySession = copySession;
+    csServices.prepareError = prepareError;
     return csServices;
 
     function findAllSessions() {
@@ -30,7 +33,7 @@
       var deferred = $q.defer();
 
       dbg.log2('#ChatSessions > removeSession > make rest call');
-      chatSessionApi.delete(data, function(res) {
+      chatSessionApi.remove(data, function(res) {
         dbg.log2('#ChatSessions > removeSession > rest call responds');
         deferred.resolve(res);
       });
@@ -49,5 +52,19 @@
 
       return deferred.promise;
     }
+
+    function prepareError(errors) {
+      if(typeof errors == 'string') {
+        return errors;
+      }
+      else {
+        var string = '';
+        for(var i in errors) {
+          var error = errors[i];
+          string += (error + '<br>');
+        }
+        return string;
+      }
+    };
   };
 })();

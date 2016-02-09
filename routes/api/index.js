@@ -8,6 +8,7 @@ var policy = require('../../middleware/policy.js');
 var sessionMemberMiddleware = require('./../../middleware/sessionMember');
 
 var userRoutes = require('./user');
+var accountUser = require('./accountUser');
 var accountManager = require('./accountManager');
 var promotionCode = require('./promotionCode');
 var accountDatabase = require('./accountDatabase');
@@ -25,11 +26,26 @@ let contactListUser = require('./contactListUser');
 
 module.exports = router;
 
+// Common Rules
+router.use(function (req, res, next) {
+  if (req.user) {
+    next();
+  } else {
+    notAuthExit(res);
+  }
+});
+
+//Common not authorized message
+function notAuthExit(res) {
+  res.status(403).send('not authorized');
+}
+
 // Main Routes
 router.get('/user', userRoutes.userGet);
 router.post('/user', userRoutes.userPost);
 router.put('/user', userRoutes.changePassword);
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
+router.get('/accountUser', accountUser.get);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
 router.post('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.post);
@@ -106,20 +122,6 @@ router.post('/brandColour', brandColour.create);
 router.put('/brandColour', brandColour.update);
 router.post('/brandColour/copy', brandColour.copy);
 
-router.get('/session', session.get);
-router.delete('/session', session.remove, policy.authorized(['accountManager', 'admin']), sessionMemberMiddleware.hasAccess(['facilitator']));
-router.post('/session/copy', session.copy, policy.authorized(['accountManager', 'admin']), sessionMemberMiddleware.hasAccess(['facilitator']));
-
-// Common Rules
-router.use(function (req, res, next) {
-  if (req.user) {
-    next();
-  } else {
-    notAuthExit(res);
-  }
-});
-
-//Common not authorized message
-function notAuthExit(res) {
-  res.status(403).send('not authorized');
-}
+router.get('/session/get/all', session.get);
+router.delete('/session/remove/:id', sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin']), session.remove);
+router.post('/session/copy/:id', sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin']), session.copy);

@@ -9,7 +9,8 @@
       </div>
     </div>
 
-    <div class='row'>
+    <div class='row fixed-bottom-margin'>
+      {{ app.accountUser }}
       <table class='table table-dashboardElements'>
         <thead>
           <tr class='green-background'>
@@ -31,11 +32,11 @@
             <td>{{ csc.subscriptionEndDate(app.user) | date:sc.dateFormat }}</td>
             <td>{{ csc.showStatus(session, app.user) }}</td>
             <td class='text-right dashboardElementsEditRemove'>
-              <span class='glyphicon glyphicon-star' aria-hidden='true'></span>
-              <img src='/icons/resources_grey.png' alt='' ng-click='csc.copySession(session)' />
-              <img src='/icons/dashboardElement_edit.png' alt='' />
-              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='csc.removeSession(session)' />
-              <span class='glyphicon glyphicon-play' aria-hidden='true'></span>
+              <span class='glyphicon glyphicon-star' aria-hidden='true' ng-if='csc.hasAccess(session.id, app.accountUser)'></span>
+              <img src='/icons/resources_grey.png' alt='' ng-click='csc.copySession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
+              <img src='/icons/dashboardElement_edit.png' alt='' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
+              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='csc.removeSession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
+              <span class='glyphicon glyphicon-play' aria-hidden='true' ng-click='csc.goToChat(session, app.user)' ng-if='!csc.isExpired(app.user)'></span>
             </td>
           </tr>
         </tbody>

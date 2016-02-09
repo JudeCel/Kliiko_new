@@ -8,6 +8,7 @@ var AccountUser  = models.AccountUser;
 var q = require('q');
 var _ = require('lodash');
 var async = require('async');
+var config = require('config');
 
 var sessionMemberServices = require('./../services/sessionMember');
 
@@ -18,6 +19,7 @@ const MESSAGES = {
 };
 
 // Exports
+// Needs rework
 function findSessionWithRole(sessionId, accountId, role) {
   let deferred = q.defer();
 
@@ -48,6 +50,7 @@ function findSessionWithRole(sessionId, accountId, role) {
   return deferred.promise;
 };
 
+// Needs rework
 function findAllSessionsWithRole(accountId, role) {
   let deferred = q.defer();
 
@@ -119,6 +122,11 @@ function copySession(sessionId, accountId) {
   return deferred.promise;
 };
 
+// Untested
+function chatRoomUrl(currentDomain) {
+  return 'http://' + currentDomain + config.get('server')['baseDomain'] + ':' + config.get('server')['port'] + '/chat/';
+}
+
 // Helpers
 function copySessionMember(session, facilitator) {
   let deferred = q.defer();
@@ -160,6 +168,7 @@ function prepareErrors(err) {
 
 module.exports = {
   messages: MESSAGES,
+  chatRoomUrl: chatRoomUrl,
   findSessionWithRole: findSessionWithRole,
   findAllSessionsWithRole: findAllSessionsWithRole,
   copySession: copySession,

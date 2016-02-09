@@ -54,7 +54,10 @@ module.exports = {
     'UserId',
     'systemMessage'
   ],
-
+  sessionListManageRoles: {
+    accountUser: ['accountManager', 'admin'],
+    sessionMember: ['facilitator'],
+  },
   promotionCodeTypes: ['percentage', 'value'],
   accountNameRegExp: ["^[a-zA-Z0-9]+$",'i'],
   mobileRegExp: ["^[0-9]+$",'i'],
