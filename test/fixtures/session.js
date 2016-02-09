@@ -178,9 +178,10 @@ function createChat() {
         include: [{
           model: Account,
           include: [models.User]
-        }, BrandProjectPreference]
+        }, BrandProjectPreference, SessionMember]
       }).then(function(session) {
         let returnParams = {
+          sessionMembers: session.SessionMembers,
           session: session,
           account: session.Account,
           user: session.Account.Users[0],

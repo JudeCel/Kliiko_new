@@ -16,7 +16,7 @@ function hasAccess(memberRoles, accountRoles) {
     if (!res.locals.currentDomain) { throw new Error('currentDomain is not defined in the response locals') }
     let roles = res.locals.currentDomain.roles;
 
-    if(checkRoles(roles, accountRoles)) {
+    if(checkRoles(roles, accountRoles || [])) {
       next();
     }
     else {

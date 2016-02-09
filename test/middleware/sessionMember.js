@@ -1,28 +1,35 @@
 'use strict';
 
 var assert = require('chai').assert;
+var _ = require('lodash');
 
 var sessionMemberMiddleware = require('./../../middleware/sessionMember');
 var sessionFixture = require('./../fixtures/session');
-var models  = require('./../../models');
+var models = require('./../../models');
 
 describe('MIDDLEWARE - Session Member', function() {
   let req, res;
 
-  function setVariables(user, session, account) {
+  function setVariables(userId, sessionId, accountId) {
     req = {
-      user: { id: user.id },
-      params: { id: session.id }
+      user: { id: userId },
+      params: { id: sessionId }
     }
     res = {
-      locals: { currentDomain: { id: account.id } }
+      locals: { currentDomain: { id: accountId } }
     }
   }
 
   beforeEach(function(done) {
     sessionFixture.createChat().then(function(result) {
-      setVariables(result.user, result.session, result.account);
-      done();
+      _.map(result.sessionMembers, function(member) {
+        if(member.role == 'facilitator') {
+          models.AccountUser.find({ where: { id: member.accountUserId } }).then(function(accountUser) {
+            setVariables(accountUser.UserId, result.session.id, accountUser.AccountId);
+            done();
+          });
+        }
+      });
     }, function(error) {
       done(error);
     });
@@ -79,7 +86,7 @@ describe('MIDDLEWARE - Session Member', function() {
 
     it('should fail because dont have the role', function(done)  {
       setFailVariables(done);
-      sessionMemberMiddleware.hasAccess(['participant'])(req, res, shouldNotGetHere(done));
+      sessionMemberMiddleware.hasAccess(['observer'])(req, res, shouldNotGetHere(done));
     });
   });
 });
