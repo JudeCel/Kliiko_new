@@ -122,6 +122,6 @@ router.post('/brandColour', brandColour.create);
 router.put('/brandColour', brandColour.update);
 router.post('/brandColour/copy', brandColour.copy);
 
-router.get('/session/get/all', session.get);
+router.get('/session/get/all', sessionMemberMiddleware.hasAccess(['facilitator', 'observer', 'participant'], ['accountManager', 'admin']), session.get);
 router.delete('/session/remove/:id', sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin']), session.remove);
 router.post('/session/copy/:id', sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin']), session.copy);
