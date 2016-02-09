@@ -280,7 +280,7 @@
 
     $scope.resourceTitle = function(text){
       if(text.length < 1){
-        return "There was not title provided.";
+        return "No title.";
       }else if(text.length > 10){
         return text.substring(10, length)+'...';
       }else{
