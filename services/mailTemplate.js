@@ -73,15 +73,36 @@ function prepareErrors(err) {
 };
 
 function getMailTemplate(req, callback) {
+  let query = {};
+  query['$or'] = [{id: req.id}, {id: req.or}];
   MailTemplate.find({
     include: [{ model: MailTemplateOriginal, attributes: ['id', 'name']}],
-    where: {
-      id: req.id
-    },
+    where: query,
     attributes: constants.mailTemplateFields,
     raw: true
   }).then(function (result) {
     callback(null, result);
+  }).catch(function (err) {
+    callback(err);
+  });
+}
+
+/**
+ * Get active global mail template by category name
+ * @param category constant from ``` mailTemplateType.firstInvitation ```
+ * @returns {error, resultMailTemplate}
+ */
+function getActiveMailTemplate(category, callback) {
+  //getting mail template original version by category name
+  MailTemplateOriginal.find({
+    where: {
+      category: category
+    },
+    attributes: constants.originalMailTemplateFields,
+    raw: true
+  }).then(function (result) {
+    //get reference to active mail template copy
+    getMailTemplate({id: result.mailTemplateActive, or: result.id}, callback);
   }).catch(function (err) {
     callback(err);
   });

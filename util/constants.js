@@ -32,7 +32,7 @@ module.exports = {
     "landlineNumber", "mobile"
   ],
   originalMailTemplateFields: [
-    'id', 'name', 'subject', 'content', 'systemMessage', 'category' 
+    'id', 'name', 'subject', 'content', 'systemMessage', 'category', 'mailTemplateActive'
   ],
   mailTemplateFields: [
     'id', 'name', 'subject', 'content',
