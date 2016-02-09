@@ -52,7 +52,7 @@
 
 
     <button type="submit" class="btn btn-green pull-right" ng-click="ec.modifyAndSave()">Modify & Save Copy</button>
-    <button type="submit" class="btn btn-lightgreen pull-right" ng-click="ec.modifyAndSave(true)">Create Copy</button>
+    <button type="submit" class="btn btn-lightgreen pull-right" ng-click="ec.modifyAndSave(true)" ng-hide="ec.currentTemplate.systemMessage">Create Copy</button>
     <button type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
 
 

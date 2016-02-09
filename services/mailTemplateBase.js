@@ -1,6 +1,6 @@
 "use strict";
 
-var MailTemplateCopy  = require('./../models').MailTemplate;
+var MailTemplateCopy  = require('./../models').MailTemplateBase;
 var _ = require('lodash');
 
 var templateFields = [
@@ -30,10 +30,10 @@ function create(params, callback) {
 
 function update(id, parameters, callback){
     MailTemplateCopy.update(parameters, {
-        where: {id: id}
+      where: {id: id}
     })
     .then(function (result) {
-        return callback(null, result);
+      return callback(null, result);
     })
     .catch(function (err) {
         callback(err);

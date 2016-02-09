@@ -13,98 +13,98 @@ var num = 0;
 var templateFiles = [
   {
     fileName: 'InvitationSeries_FirstInvite.html',
-    name: "First Invitation",
+    name: MailTemplateService.mailTemplateType.firstInvitation,
     subject: "Invitation to {Session Name}",
     systemMessage: false
   },
   {
     fileName: 'InvitationSeries_CloseSession.html',
-    name: "Close Session",
+    name: MailTemplateService.mailTemplateType.closeSession,
     subject: "Close {Session Name} session",
     systemMessage: false
   },
   {
     fileName: 'InvitationSeries_Confirmation.html',
-    name: "Confirmation",
+    name: MailTemplateService.mailTemplateType.confirmation,
     subject: "Invitation confirmed",
     systemMessage: false
   },
   {
     fileName: 'InvitationSeries_Generic.html',
-    name: "Generic",
+    name: MailTemplateService.mailTemplateType.generic,
     subject: "Invitation",
     systemMessage: false
   },
   {
     fileName: 'InvitationSeries_NotAtAll.html',
-    name: "Not At All",
+    name: MailTemplateService.mailTemplateType.notAtAll,
     subject: "Not At All",
     systemMessage: false
   },
   {
     fileName: 'InvitationSeries_NotThisTime.html',
-    name: "Not This Time",
+    name: MailTemplateService.mailTemplateType.notThisTime,
     subject: "Not this time",
     systemMessage: false
   },
   {
     fileName: 'SystemEmail_AccountManagerConfirmation.html',
-    name: "Account Manager Confirmation",
+    name: MailTemplateService.mailTemplateType.accountManagerConfirmation,
     subject: "Account Manager Confirmation",
     systemMessage: false
   },
   {
     fileName: 'SystemEmail_ReactivatedAccount.html',
-    name: "Reactivated Account",
+    name: MailTemplateService.mailTemplateType.reactivatedAccount,
     subject: "Your Account Has Been Reactivated",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_DeactivatedAccount.html',
-    name: "Deactivated Account",
+    name: MailTemplateService.mailTemplateType.deactivatedAccount,
     subject: "Your Account Has Been Deactivated",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_FacilitatorConfirmation.html',
-    name: "Facilitator Confirmation",
+    name: MailTemplateService.mailTemplateType.facilitatorConfirmation,
     subject: "Facilitator Confirmation",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_ObserverInvitation.html',
-    name: "Observer Invitation",
+    name: MailTemplateService.mailTemplateType.observerInvitation,
     subject: "Observer Invitation",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_FacilitatorOverQuota.html',
-    name: "Facilitator Over-Quota",
+    name: MailTemplateService.mailTemplateType.facilitatorOverQuota,
     subject: "Facilitator Over-Quota",
     systemMessage: true
   },
   // Popups
   {
     fileName: 'SystemPopup_InvitationAcceptance.html',
-    name: "Invitation Acceptance",
+    name: MailTemplateService.mailTemplateType.invitationAcceptance,
     subject: "Invitation Acceptance",
     systemMessage: true
   },
   {
     fileName: 'SystemPopup_SessionClosed.html',
-    name: "Session Closed",
+    name: MailTemplateService.mailTemplateType.sessionClosed,
     subject: "Session Closed",
     systemMessage: true
   },
   {
     fileName: 'SystemPopup_SessionFull.html',
-    name: "Session Full",
+    name: MailTemplateService.mailTemplateType.sessionFull,
     subject: "Session Full",
     systemMessage: true
   },
   {
     fileName: 'SystemPopup_SessionNotOpenYet.html',
-    name: "Session Not Yet Open",
+    name: MailTemplateService.mailTemplateType.sessionNotYetOpen,
     subject: "Session Not Yet Open",
     systemMessage: true
   },
@@ -126,7 +126,8 @@ function createMailTemplateFromFile(fileInfo, callback) {
           name: fileInfo.name,
           subject: fileInfo.subject,
           content: minifiedData,
-          systemMessage: fileInfo.systemMessage
+          systemMessage: fileInfo.systemMessage,
+          category: fileInfo.name
         };
 
         MailTemplateService.createBaseMailTemplate(mailTemplateAttrs, function (err, mailTemplate) {

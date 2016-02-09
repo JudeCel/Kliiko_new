@@ -32,27 +32,14 @@ module.exports = {
     "landlineNumber", "mobile"
   ],
   originalMailTemplateFields: [
-    'id',
-    'name',
-    'subject',
-    'content',
-    'systemMessage'
+    'id', 'name', 'subject', 'content', 'systemMessage', 'category' 
   ],
   mailTemplateFields: [
-    'id',
-    'name',
-    'subject',
-    'content',
-    'MailTemplateBaseId',
-    'UserId',
-    'systemMessage'
+    'id', 'name', 'subject', 'content',
+    'MailTemplateBaseId', 'UserId', 'systemMessage'
   ],
   mailTemplateFieldsForList: [
-    'id',
-    'name',
-    'MailTemplateBaseId',
-    'UserId',
-    'systemMessage'
+    'id', 'name', 'MailTemplateBaseId', 'UserId', 'systemMessage'
   ],
 
   promotionCodeTypes: ['percentage', 'value'],

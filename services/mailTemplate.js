@@ -7,6 +7,25 @@ var _ = require('lodash');
 var ejs = require('ejs');
 var constants = require('../util/constants');
 
+var mailTemplateType = {
+  firstInvitation : "First Invitation",
+  closeSession : "Close Session",
+  confirmation : "Confirmation",
+  generic : "Generic",
+  notAtAll : "Not At All",
+  notThisTime : "Not This Time",
+  accountManagerConfirmation : "Account Manager Confirmation",
+  reactivatedAccount : "Reactivated Account",
+  deactivatedAccount : "Deactivated Account",
+  facilitatorConfirmation : "Facilitator Confirmation",
+  observerInvitation : "Observer Invitation",
+  facilitatorOverQuota : "Facilitator Over-Quota",
+  invitationAcceptance : "Invitation Acceptance",
+  sessionClosed : "Session Closed",
+  sessionFull : "Session Full",
+  sessionNotYetOpen : "Session Not Yet Open"
+};
+
 function validate(params, callback) {
   MailTemplate.build(params).validate().done(function(errors, _account) {
     callback(errors, params);
@@ -91,7 +110,7 @@ function getAllMailTemplates(req, getSystemMail,callback) {
       query['$or'] = [{UserId: req.id}, {UserId: null}];
   }
   
-  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage']}];
+  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category']}];
   
   if (!getSystemMail) {
     //getting list that any user can edit
@@ -130,21 +149,46 @@ function copyBaseTemplates(callback) {
   });
 }
 
+function setMailTemplateDefault (id, templateCopyId, callback) {
+  var params = {
+    mailTemplateActive: templateCopyId
+  }
+  console.log("_", id, "; tId", templateCopyId);
+  MailTemplateOriginal.update(params, {
+      where: {id: id}
+    })
+  .then(function (result) {
+    return callback(null, result);
+  })
+  .catch(function (err) {
+    callback(err);
+  });
+}
+
 function saveMailTemplate(template, createCopy, userId, callback) {
   if (!template) {
       return callback("e-mail template not provided");
   }
   var id = template.id;
   delete template["id"];
-  //a template wasn't created by user - an orinal
-  if (!template["UserId"] || createCopy) {
-    template.UserId = userId;
+
+  if (!template["systemMessage"] && (!template["UserId"] || createCopy)) {
+    if (!template["systemMessage"])
+      template.UserId = userId;
     create(template, function(error, result) {
-      callback(error, result);  
+      if (!error) {
+        setMailTemplateDefault(result.MailTemplateBaseId, result.id, callback);
+      } else {
+        callback(error);
+      }  
     });
   } else {
     update(id, template, function(error, result) {
-      callback(error, result);  
+      if (!error) {
+        setMailTemplateDefault(template.MailTemplateBaseId, id, callback);
+      } else {
+        callback(error);
+      }  
     });
   }
 }
@@ -156,15 +200,11 @@ function resetMailTemplate(templateId, callback) {
   
   getMailTemplateForReset({id: templateId}, function(err, result) {
     if (result) {
-      //is template created by user - not base version
-      if (!result.UserId) {
-        //if base version, return data immediately
-        callback(null, result);      
-      } else {
-        update(templateId, {name: result["MailTemplateBase.name"], subject: result["MailTemplateBase.subject"], content: result["MailTemplateBase.content"]}, function(error, result) {
-           callback(error, result);
-        });
-      }
+      update(templateId, {name: result["MailTemplateBase.name"], subject: result["MailTemplateBase.subject"], content: result["MailTemplateBase.content"]}, function(error, result) {
+          callback(error, result);
+      });
+    } else {
+      callback(err);
     }
   });
 }
@@ -295,5 +335,6 @@ module.exports = {
   composeMailFromTemplate: composeMailFromTemplate,
   sendMailFromTemplate: sendMailFromTemplate,
   sendMailFromTemplateWithCalendarEvent: sendMailFromTemplateWithCalendarEvent,
-  composePreviewMailTemplate:composePreviewMailTemplate
+  composePreviewMailTemplate: composePreviewMailTemplate,
+  mailTemplateType: mailTemplateType
 }
