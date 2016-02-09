@@ -277,5 +277,16 @@
     $scope.getResourceThumbUrl = function(resource){
       return "/chat_room/uploads/" + resource.JSON.tableThumb;
     }
+
+    $scope.resourceTitle = function(text){
+      if(text.length < 1){
+        return "There was not title provided.";
+      }else if(text.length > 10){
+        return text.substring(10, length)+'...';
+      }else{
+        return text;
+      }
+    }
+    
   }
 })();

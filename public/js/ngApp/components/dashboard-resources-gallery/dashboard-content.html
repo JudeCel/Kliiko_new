@@ -164,7 +164,7 @@
                      value="{{resource.id}}" ng-click="resourcesSelected(resource.id)"
                      ng-checked="resource.checked" ng-model="resource.checked"/>
 
-              {{ resource.JSON.title | limitTo: 10 }}{{resource.JSON.title.length > 10 ? '...' : ''}}
+              {{ resourceTitle(resource.JSON.title) }}
 
               <button type='submit' class='btn btn-addNewElement btn-green pull-right margin-only-right-10 gallery-btn-width' ng-click="deleteResources(resource.id)">
                 <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
