@@ -23,7 +23,7 @@
           Add New Resource
         </button>
 
-        <ul class='dropdown-menu header-dropdown-ul' aria-labelledby='uploadResourceDropdown' >
+        <ul class='dropdown-menu gallery-dropdown-margin' aria-labelledby='uploadResourceDropdown' >
           <li class='text-right text-size-dashboard' ng-repeat="upload in uploads">
             <a ng-click="uploadResourceForm(upload.fileType)" data-toggle='modal' >
               {{upload.uploadText}}
@@ -164,7 +164,7 @@
                      value="{{resource.id}}" ng-click="resourcesSelected(resource.id)"
                      ng-checked="resource.checked" ng-model="resource.checked"/>
 
-              {{ resource.JSON.title | limitTo: 10 }}{{resource.JSON.title.length > 10 ? '...' : ''}}
+              {{ resourceTitle(resource.JSON.title) }}
 
               <button type='submit' class='btn btn-addNewElement btn-green pull-right margin-only-right-10 gallery-btn-width' ng-click="deleteResources(resource.id)">
                 <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   

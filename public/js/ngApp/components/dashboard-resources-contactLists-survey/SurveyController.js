@@ -10,7 +10,7 @@
     dbg.log2('#SurveyController started');
 
     var vm = this;
-    vm.surveys = {};
+    vm.surveys = {Resource: null};
     vm.brandLogos = {};
     vm.questionResource = {};
     vm.question = {showUpload: true};
@@ -70,6 +70,8 @@
     vm.renderHtml = renderHtml;
     vm.getResourceNameUrl = getResourceNameUrl;
     vm.getResourceThumbUrl = getResourceThumbUrl;
+    vm.setUploadtype = setUploadtype;
+    vm.resourceTitle = resourceTitle;
 
     function onDropComplete(index, data, evt) {
       var answer = data.answer;
@@ -128,13 +130,13 @@
         if(res.error){
           messenger.error(res.error);
         }else{
-          if(survey !== null){
+          if(survey){
             vm.surveySelecctOptions.show = true;
             vm.surveySelecctOptions.uploaded = false;
             survey.Resource = null;
             survey.resourceId = null;
           }
-          if(question !== null){
+          if(question){
             question.Resource = null;
             question.resourceId = null;
           }
@@ -164,6 +166,24 @@
       vm.file = {};
       vm.youtubeUrl = "";
       domServices.modal('questionModal', 'close');
+    }
+
+    function setUploadtype(type){ 
+      if(type == 'audio'){
+        return "audio/mpeg, audio/mp3"
+      }else if('video'){
+        return "video/oog, video/mp4"
+      }
+    }
+
+    function resourceTitle(text){
+      if(text.length < 1){
+        return "No title.";
+      }else if(text.length > 10){
+        return text.substring(10, length)+'...';
+      }else{
+        return text;
+      }
     }
 
     function uploadFile(resourceType) {

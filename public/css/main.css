@@ -1295,6 +1295,9 @@ hr.survey-hr {
   border: 0;
   margin-bottom: 60px; }
 
+.survey-dropdown-margin {
+  margin-left: 6px; }
+
 .col-width-15-percent {
   width: 15% !important; }
 
@@ -1424,6 +1427,10 @@ hr.survey-hr {
 .img-max-height-width {
   max-height: 100%;
   max-width: 100%; }
+
+.gallery-dropdown-margin {
+  margin-top: -15px;
+  margin-right: 26px; }
 
 .manage-preview {
   padding-top: 1%;
