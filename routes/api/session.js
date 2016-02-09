@@ -4,7 +4,7 @@ var constants = require('../../util/constants');
 var sessionServices = require('./../../services/session');
 
 function get(req, res, next) {
-  sessionServices.findAllSessionsWithRole(res.locals.currentDomain.id, 'facilitator').then(
+  sessionServices.findAllSessions(req.user.id, res.locals.currentDomain.id).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );

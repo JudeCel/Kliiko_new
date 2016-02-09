@@ -1,5 +1,6 @@
 'use strict';
 
+var policy = require('./../middleware/policy');
 var models = require('./../models');
 var Session  = models.Session;
 var SessionMember  = models.SessionMember;
@@ -19,24 +20,26 @@ const MESSAGES = {
 };
 
 // Exports
-// Needs rework
-function findSessionWithRole(sessionId, accountId, role) {
+function findSession(sessionId, accountId) {
   let deferred = q.defer();
 
   Session.find({
+    attributes: ['id'],
     where: {
       id: sessionId,
       accountId: accountId
     },
     include: [{
       model: SessionMember,
-      where: {
-        role: role
-      }
+      where: { role: 'facilitator' }
     }]
   }).then(function(session) {
     if(session) {
-      deferred.resolve(simpleParams(session));
+      findSessionsWithCondition(session.id).then(function(sessions) {
+        deferred.resolve(sessions);
+      }, function(error) {
+        deferred.reject(error);
+      });
     }
     else {
       deferred.reject(MESSAGES.notFound);
@@ -50,27 +53,23 @@ function findSessionWithRole(sessionId, accountId, role) {
   return deferred.promise;
 };
 
-// Needs rework
-function findAllSessionsWithRole(accountId, role) {
+function findAllSessions(userId, accountId) {
   let deferred = q.defer();
 
-  Session.findAll({
-    where: {
-      accountId: accountId
-    },
-    include: [{
-      model: SessionMember,
-      where: {
-        role: role
-      }
-    }]
-  }).then(function(sessions) {
-    deferred.resolve(simpleParams(sessions));
-  }).catch(Session.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
-  }).catch(function(error) {
-    deferred.reject(error);
-  });
+  if(policy.authorized(['accountManager', 'admin'])) {
+    findAllSessionsAsManager(accountId).then(function(sessions) {
+      deferred.resolve(sessions);
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }
+  else {
+    findAllSessionsAsMember(userId, accountId).then(function(sessions) {
+      deferred.resolve(sessions);
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }
 
   return deferred.promise;
 };
@@ -78,7 +77,7 @@ function findAllSessionsWithRole(accountId, role) {
 function removeSession(sessionId, accountId) {
   let deferred = q.defer();
 
-  findSessionWithRole(sessionId, accountId, 'facilitator').then(function(result) {
+  findSession(sessionId, accountId).then(function(result) {
     result.data.destroy().then(function() {
       deferred.resolve(simpleParams(null, MESSAGES.removed));
     }).catch(Session.sequelize.ValidationError, function(error) {
@@ -96,7 +95,7 @@ function removeSession(sessionId, accountId) {
 function copySession(sessionId, accountId) {
   let deferred = q.defer();
 
-  findSessionWithRole(sessionId, accountId, 'facilitator').then(function(result) {
+  findSession(sessionId, accountId).then(function(result) {
     delete result.data.dataValues.id;
 
     Session.create(result.data.dataValues).then(function(session) {
@@ -128,12 +127,110 @@ function chatRoomUrl(currentDomain) {
 }
 
 // Helpers
+function findAllSessionsAsManager(accountId) {
+  let deferred = q.defer();
+
+  Session.findAll({
+    where: {
+      accountId: accountId
+    },
+    include: [{
+      model: SessionMember,
+      where: { role: 'facilitator' }
+    }]
+  }).then(function(sessions) {
+    deferred.resolve(simpleParams(sessions));
+  }).catch(Session.sequelize.ValidationError, function(error) {
+    deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+};
+
+function findAllSessionsAsMember(userId, accountId) {
+  let deferred = q.defer();
+
+  Session.findAll({
+    attributes: ['id'],
+    where: {
+      accountId: accountId
+    },
+    include: [{
+      model: SessionMember,
+      include: [{
+        model: AccountUser,
+        where: {
+          UserId: userId,
+          AccountId: accountId
+        }
+      }]
+    }]
+  }).then(function(sessions) {
+    let sessionIds = _.map(sessions, 'id');
+    findSessionsWithCondition(ids).then(function(sessions) {
+      deferred.resolve(sessions);
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }).catch(Session.sequelize.ValidationError, function(error) {
+    deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+};
+
+function findSessionsWithCondition(ids) {
+  let deferred = q.defer();
+
+  if(_.isArray(ids)) {
+    Session.findAll({
+      where: { id: { $in: sessionIds } },
+      include: [{
+        model: SessionMember,
+        where: { role: 'facilitator' }
+      }]
+    }).then(function(sessions) {
+      deferred.resolve(simpleParams(sessions));
+    }).catch(Session.sequelize.ValidationError, function(error) {
+      deferred.reject(prepareErrors(error));
+    }).catch(function(error) {
+      deferred.reject(error);
+    });
+  }
+  else {
+    Session.find({
+      where: { id: ids },
+      include: [{
+        model: SessionMember,
+        where: { role: 'facilitator' }
+      }]
+    }).then(function(session) {
+      if(session) {
+        deferred.resolve(simpleParams(session));
+      }
+      else {
+        deferred.reject(MESSAGES.notFound);
+      }
+    }).catch(Session.sequelize.ValidationError, function(error) {
+      deferred.reject(prepareErrors(error));
+    }).catch(function(error) {
+      deferred.reject(error);
+    });
+  }
+
+  return deferred.promise;
+};
+
 function copySessionMember(session, facilitator) {
   let deferred = q.defer();
 
   session.createSessionMember(facilitator).then(function(result) {
     sessionMemberServices.createToken(result.id).then(function() {
-      findSessionWithRole(session.id, session.accountId, 'facilitator').then(function(result) {
+      findSession(session.id, session.accountId).then(function(result) {
         deferred.resolve(result.data);
       }, function(error) {
         deferred.reject(error);
@@ -169,8 +266,8 @@ function prepareErrors(err) {
 module.exports = {
   messages: MESSAGES,
   chatRoomUrl: chatRoomUrl,
-  findSessionWithRole: findSessionWithRole,
-  findAllSessionsWithRole: findAllSessionsWithRole,
+  findSession: findSession,
+  findAllSessions: findAllSessions,
   copySession: copySession,
   removeSession: removeSession
 }
