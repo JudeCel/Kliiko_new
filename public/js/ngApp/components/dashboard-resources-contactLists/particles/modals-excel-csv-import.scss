@@ -26,13 +26,82 @@
 
 
 #contactList-addNewListFieldsModal {
+  table {
+    width: 100%;
+    height: 400px;
+  }
+  tr {
+    height: 39px;
+  }
+
+  max-height: calc(100vh - 10px);
+  overflow-y: auto;
+
+  //.contactList-dropPlaceholderCell {
+  //  width: 70%;
+  //}
+
+  .contactList-dropPlaceholder {
+    background: rgba(211,211,211,.3);
+    border-width: 1px;
+    width: 100%;
+    height: 30px;
+  }
+
+  .ic-move {
+    margin: -2px 5px 0 0;
+  }
+
   .contactList-drop-item {
+    border-radius: 0;
+    padding: 7px;
+
+    background-color: $lightGreen;
+    border-width: 1px;
+    width: 100%;
+
     &:hover {
-      cursor: -webkit-grab; 
+      cursor: -webkit-grab;
       cursor: hand;
-      background: $lightGreen;
+      color: white;
+      font-weight: bold;
+      background: $green;
     }
   }
+
+  .panel-default {
+    box-shadow: none;
+    border: none;
+  }
+  #contactList-fieldColumnLeft {
+    margin: 5px;
+    padding: 25px;
+    z-index: 501;
+  }
+
+  #contactList-fieldColumnRight {
+    z-index: 500;
+    margin: 5px;
+    padding: 25px;
+    //border-left: 1px solid lightgrey;
+    border-radius: 0px;
+
+  }
+
+  h3 {
+    margin: 5px !important;
+  }
+
+  .contactList-customfields {
+    margin: 20px;
+  }
+
+  input.custom-fields {
+    margin: 6px;
+    width:90%;
+    padding: 10px;
+  }
+
 }
 
 #modals-import-preview {

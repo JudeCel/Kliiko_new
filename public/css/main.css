@@ -2318,46 +2318,6 @@ hr.survey-hr {
   #dashboard-contact-lists .fields-to-show label {
     margin-right: 10px; }
 
-#dashboard-contact-lists #contactList-addNewListFieldsModal {
-  max-height: calc(100vh - 10px);
-  overflow-y: auto; }
-  #dashboard-contact-lists #contactList-addNewListFieldsModal table {
-    width: 100%;
-    height: 400px; }
-  #dashboard-contact-lists #contactList-addNewListFieldsModal tr {
-    height: 36px; }
-  #dashboard-contact-lists #contactList-addNewListFieldsModal .contactList-dropPlaceholderCell {
-    width: 70%; }
-  #dashboard-contact-lists #contactList-addNewListFieldsModal .contactList-dropPlaceholder {
-    background: darkgrey;
-    border-width: 1px;
-    border-radius: 5px;
-    width: 100%;
-    height: 30px; }
-  #dashboard-contact-lists #contactList-addNewListFieldsModal .contactList-drop-item {
-    background-color: lightgrey;
-    border-width: 1px;
-    border-radius: 5px;
-    width: 100%;
-    height: 30px;
-    padding-left: 5px; }
-  #dashboard-contact-lists #contactList-addNewListFieldsModal #contactList-fieldColumnLeft {
-    margin: 5px;
-    padding: 5px;
-    z-index: 501; }
-  #dashboard-contact-lists #contactList-addNewListFieldsModal #contactList-fieldColumnRight {
-    margin: 5px;
-    padding: 5px;
-    z-index: 500; }
-  #dashboard-contact-lists #contactList-addNewListFieldsModal h3 {
-    margin: 5px !important; }
-  #dashboard-contact-lists #contactList-addNewListFieldsModal .contactList-customfields {
-    margin: 20px; }
-  #dashboard-contact-lists #contactList-addNewListFieldsModal input.custom-fields {
-    margin: 6px;
-    width: 90%;
-    padding: 10px; }
-
 #dashboard-contact-lists label.control-label {
   margin-top: 23px; }
 
@@ -2403,10 +2363,53 @@ hr.survey-hr {
 #dashboard-contact-lists #modals-excel-csv-import .modal-control-buttons {
   margin-top: 30px; }
 
-#dashboard-contact-lists #contactList-addNewListFieldsModal .contactList-drop-item:hover {
-  cursor: -webkit-grab;
-  cursor: hand;
-  background: rgba(174, 239, 137, 0.5); }
+#dashboard-contact-lists #contactList-addNewListFieldsModal {
+  max-height: calc(100vh - 10px);
+  overflow-y: auto; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal table {
+    width: 100%;
+    height: 400px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal tr {
+    height: 39px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal .contactList-dropPlaceholder {
+    background: rgba(211, 211, 211, 0.3);
+    border-width: 1px;
+    width: 100%;
+    height: 30px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal .ic-move {
+    margin: -2px 5px 0 0; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal .contactList-drop-item {
+    border-radius: 0;
+    padding: 7px;
+    background-color: rgba(174, 239, 137, 0.5);
+    border-width: 1px;
+    width: 100%; }
+    #dashboard-contact-lists #contactList-addNewListFieldsModal .contactList-drop-item:hover {
+      cursor: -webkit-grab;
+      cursor: hand;
+      color: white;
+      font-weight: bold;
+      background: #2F9F69; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal .panel-default {
+    box-shadow: none;
+    border: none; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal #contactList-fieldColumnLeft {
+    margin: 5px;
+    padding: 25px;
+    z-index: 501; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal #contactList-fieldColumnRight {
+    z-index: 500;
+    margin: 5px;
+    padding: 25px;
+    border-radius: 0px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal h3 {
+    margin: 5px !important; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal .contactList-customfields {
+    margin: 20px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal input.custom-fields {
+    margin: 6px;
+    width: 90%;
+    padding: 10px; }
 
 #dashboard-contact-lists #modals-import-preview h3 {
   margin: 0 0 20px 0; }

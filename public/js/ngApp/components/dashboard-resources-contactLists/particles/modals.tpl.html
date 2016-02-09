@@ -91,16 +91,21 @@
                       <uib-tab heading="Field Mapping" active="clc.modalTab1">
                       <form id="new-list-custom-fields-drag-drop">
                         <div class="row r">
-                          <div id="contactList-fieldColumnLeft" class="col-md-5 panel panel-default">
+                          <div id="contactList-fieldColumnLeft" class="col-md-4 panel panel-default">
                             <h3>File fields</h3>
                             <div>
                               <table>
                                 <tr ng-repeat="f in clc.importedFields track by $index">
-                                  <td> <div class="contactList-drop-item" ng-drag="true" ng-drag-data="f">{{f}} <img src="/icons/ic_move.png" class="pull-right"></div> </td>
+                                  <td>
+                                      <div class="contactList-drop-item" ng-drag="true" ng-drag-data="f">{{f}}
+                                         <img src="/icons/ic_move.png" class="pull-left ic-move">
+                                      </div>
+                                  </td>
                                 </tr>
                               </table>
                             </div>                               
                           </div>
+                          <div class="col-md-1"></div>
                           <div id="contactList-fieldColumnRight" class="col-md-6 panel panel-default">
                             <h3>Contact List</h3>
                             <!-- Template for table below -->
@@ -108,7 +113,10 @@
                                 <td>{{cl.name}}</td> 
                                 <td class="contactList-dropPlaceholderCell">
                                   <div class="contactList-dropPlaceholder">                                                                
-                                    <div ng-show="cl.field" class="contactList-drop-item" ng-drag="true" ng-drag-data="cl">{{cl.field}} <img src="/icons/ic_move.png" class="pull-right"> <button  ng-click="clc.clearDoppedItem(cl)" type='button' class='close'>&times;</button></div>
+                                    <div ng-show="cl.field" class="contactList-drop-item" ng-drag="true" ng-drag-data="cl">{{cl.field}}
+                                        <img src="/icons/ic_move.png" class="pull-left ic-move">
+                                        <button  ng-click="clc.clearDoppedItem(cl)" type='button' class='close'>&times;</button>
+                                    </div>
                                   </div>
                                 </td>
                             </script>
