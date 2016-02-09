@@ -2318,9 +2318,6 @@ hr.survey-hr {
   #dashboard-contact-lists .fields-to-show label {
     margin-right: 10px; }
 
-#dashboard-contact-lists label.control-label {
-  margin-top: 23px; }
-
 #dashboard-contact-lists .custom-select-directive .dd-directive {
   padding: 7px 20px !important;
   text-align: left !important; }
