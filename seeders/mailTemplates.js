@@ -86,7 +86,19 @@ var templateFiles = [
   {
     fileName: 'SystemEmail_ResetPasswordSuccess.html',
     name: MailTemplateService.mailTemplateType.passwordResetSuccess,
-    subject: "Insider Focus - Change password Success",
+    subject: "Insider Focus - Reset password success",
+    systemMessage: true
+  },
+  {
+    fileName: 'SystemEmail_ChangePasswordSuccess.html',
+    name: MailTemplateService.mailTemplateType.passwordChangeSuccess,
+    subject: "Insider Focus - Change password success",
+    systemMessage: true
+  },
+  {
+    fileName: 'SystemEmail_ResetPasswordRequest.html',
+    name: MailTemplateService.mailTemplateType.passwordResetRequest,
+    subject: "Insider Focus - Reset password",
     systemMessage: true
   },
   // Popups
@@ -147,6 +159,9 @@ function createMailTemplateFromFile(fileInfo, callback) {
 function createMailTemplate() {
   async.waterfall([
     (cb) => { addTemplate(cb) },
+    addTemplate,
+    addTemplate,
+    addTemplate,
     addTemplate,
     addTemplate,
     addTemplate,

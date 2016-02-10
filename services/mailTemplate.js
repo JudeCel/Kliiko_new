@@ -24,7 +24,9 @@ var mailTemplateType = {
   sessionClosed : "Session Closed",
   sessionFull : "Session Full",
   sessionNotYetOpen : "Session Not Yet Open",
-  passwordResetSuccess: "Reset password Success"
+  passwordResetSuccess: "Reset Password Success",
+  passwordResetRequest: "Reset Password Request",
+  passwordChangeSuccess: "Change Password Success"
 };
 
 function validate(params, callback) {
@@ -326,6 +328,7 @@ function formatTemplateString(str) {
   str = str.replace(/\{Close Session No In Future\}/ig, "<%= dontParticipateInFutureUrl %>");
   str = str.replace(/\{Confirmation Check In\}/ig, "<%= confirmationCheckInUrl %>");
   str = str.replace(/\{Login\}/ig, "<%= logInUrl %>");
+  str = str.replace(/\{Reset Password URL\}/ig, "<%= resetPasswordUrl %>");
   
   return str;
 }
@@ -354,6 +357,7 @@ function composePreviewMailTemplate(mailTemplate) {
     dontParticipateInFutureUrl: "#/dontParticipateInFutureUrl",
     confirmationCheckInUrl: "#/confirmationCheckInUrl",
     logInUrl: "#/LogInUrl",
+    resetPasswordUrl: "#/resetPasswordUrl"
   };
   
   return composeMailFromTemplate(mailTemplate, mailPreviewVariables);
