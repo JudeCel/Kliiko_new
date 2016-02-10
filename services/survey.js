@@ -7,6 +7,7 @@ var SurveyQuestion = models.SurveyQuestion;
 var SurveyAnswer = models.SurveyAnswer;
 var Resource = models.Resource;
 var ContactList = models.ContactList;
+var contactListUserServices = require('./../services/contactListUser');
 
 var async = require('async');
 var q = require('q');
@@ -172,24 +173,38 @@ function removeSurvey(params, account) {
   return deferred.promise;
 };
 
-function createOrFindContactList(accountId, fields, t) {
-  return ContactList.find({
+function createOrUpdateContactList(accountId, fields, t) {
+  let deferred = q.defer();
+
+  ContactList.find({
     where: {
       name: 'Survey',
       accountId: accountId
     }
   }).then(function(contactList) {
     if(contactList) {
+      fillCustomFields(fields, contactList);
+      contactList.customFields = _.uniq(contactList.customFields);
 
+      contactList.save().then(function(contactList) {
+        deferred.resolve(contactList);
+      }).catch(ContactList.sequelize.ValidationError, function(error) {
+        deferred.reject(prepareErrors(error));
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
     }
     else {
-      ContactList.create({
+      contactList = ContactList.build({
         name: 'Survey',
         accountId: accountId,
         editable: false,
-        defaultFields: fields
-      }).then(function(contactList) {
+      }, { transaction: t });
 
+      fillCustomFields(fields, contactList);
+
+      contactList.save().then(function(contactList) {
+        deferred.resolve(contactList);
       }).catch(ContactList.sequelize.ValidationError, function(error) {
         deferred.reject(prepareErrors(error));
       }).catch(function(error) {
@@ -200,6 +215,16 @@ function createOrFindContactList(accountId, fields, t) {
     deferred.reject(prepareErrors(error));
   }).catch(function(error) {
     deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function fillCustomFields(fields, contactList) {
+  _.map(fields, function(value) {
+    if(!_.includes(contactList.defaultFields, value)) {
+      contactList.customFields.push(value);
+    }
   });
 }
 
@@ -224,7 +249,12 @@ function createSurveyWithQuestions(params, account) {
   models.sequelize.transaction(function (t) {
     return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t }).then(function(survey) {
       let fields = getContactListFields(survey.SurveyQuestions);
-      return createOrFindContactList(survey.accountId, fields, t);
+
+      return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
+        return survey;
+      }, function(error) {
+        throw error;
+      });
     });
   }).then(function(survey) {
     survey.update({ url: validUrl(survey) }).then(function(survey) {
@@ -448,7 +478,31 @@ function answerSurvey(params) {
   let deferred = q.defer();
   let validParams = validAnswerParams(params);
 
-  SurveyAnswer.create(validParams).then(function() {
+  models.sequelize.transaction(function (t) {
+    return Survey.find({ where: { id: validParams.surveyId }, include: [SurveyQuestion] }).then(function(survey) {
+      return SurveyAnswer.create(validParams, { transaction: t }).then(function() {
+        let fields = getContactListFields(survey.SurveyQuestions);
+
+        return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
+          if(!_.isEmpty(fields)) {
+            let clParams = findContactListAnswers(contactList, validParams.answers);
+            clParams.contactListId = contactList.id;
+
+            return contactListUserServices.bulkCreate([clParams], survey.accountId).then(function(result) {
+              return survey;
+            }, function(error) {
+              throw error;
+            });
+          }
+          else {
+            return survey;
+          }
+        }, function(error) {
+          throw error;
+        });
+      });
+    })
+  }).then(function(survey) {
     deferred.resolve(simpleParams(null, MESSAGES.completed));
   }).catch(SurveyAnswer.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
@@ -458,6 +512,34 @@ function answerSurvey(params) {
 
   return deferred.promise;
 };
+
+function findContactListAnswers(contactList, answers) {
+  let values;
+  _.map(answers, function(object, key) {
+    if(object.contactDetails) {
+      values = object.contactDetails;
+    }
+  });
+
+  let params = { customFields:[], defaultFields:[] };
+  let object = {};
+  _.map(contactList.customFields, function(field) {
+    if(values[field]) {
+      object[field] = values[field];
+    }
+  });
+  params.customFields = object;
+
+  object = {};
+  _.map(contactList.defaultFields, function(field) {
+    if(values[field]) {
+      object[field] = values[field];
+    }
+  });
+  params.defaultFields = object;
+
+  return params;
+}
 
 function confirmSurvey(params, account) {
   let deferred = q.defer();
