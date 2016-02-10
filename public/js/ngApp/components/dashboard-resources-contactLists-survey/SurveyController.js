@@ -22,7 +22,7 @@
 
     // Resource files
     vm.title = "";
-    vm.file = {};
+    vm.file = null;
     vm.youtubeUrl = "";
     vm.introductionFile = {};
     vm.likeDislike = {};
@@ -157,7 +157,11 @@
       if(resourceType == "youtube"){
         saveYoutubeUrl(resourceType);
       }else{
-        uploadFile(resourceType);
+        if(vm.file){
+          uploadFile(resourceType);
+        }else{
+          messenger.error("Please select a file.");
+        }
       }
     }
 

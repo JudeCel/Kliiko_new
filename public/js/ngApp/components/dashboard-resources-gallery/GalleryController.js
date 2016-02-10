@@ -121,39 +121,42 @@
     }
 
     function saveResource(newResource){
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
+      if(newResource.fileTst){
+        var progressbar = ngProgressFactory.createInstance();
+        progressbar.start();
 
-      var resourceParams = {
-        title: newResource.title,
-        type: newResource.type,
-        text: $scope.newResource.fileTst.name,
-        file: newResource.fileTst
-      };
+        var resourceParams = {
+          title: newResource.title,
+          type: newResource.type,
+          text: $scope.newResource.fileTst.name,
+          file: newResource.fileTst
+        };
 
-      $scope.submitIsDisabled = true;
-
-      GalleryServices.createResource(resourceParams).then(function(res) {
-        if(res.error){
-          messenger.error(res.error);
-          $scope.submitIsDisabled = false;
-          progressbar.complete();
-        }else{
-           GalleryServices.postuploadData(resourceParams).then(function(res) {
-            if(res.error){
-              messenger.error(res.error);
-              $scope.submitIsDisabled = false;
-              progressbar.complete();
-            }else{
-              $scope.resources.push(res.data);
-              cancel()
-              messenger.ok("Resource was sucessfully created.");
-              $scope.submitIsDisabled = false;
-              progressbar.complete();
-            }
-          })
-        }
-      })
+        $scope.submitIsDisabled = true;
+        GalleryServices.createResource(resourceParams).then(function(res) {
+          if(res.error){
+            messenger.error(res.error);
+            $scope.submitIsDisabled = false;
+            progressbar.complete();
+          }else{
+             GalleryServices.postuploadData(resourceParams).then(function(res) {
+              if(res.error){
+                messenger.error(res.error);
+                $scope.submitIsDisabled = false;
+                progressbar.complete();
+              }else{
+                $scope.resources.push(res.data);
+                cancel()
+                messenger.ok("Resource was sucessfully created.");
+                $scope.submitIsDisabled = false;
+                progressbar.complete();
+              }
+            })
+          }
+        })
+      }else{
+        messenger.error("Please select a file.");
+      }
     }
 
     function uploadTypeForTitle(uploadType) {
