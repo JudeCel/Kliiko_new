@@ -97,12 +97,12 @@
     color: #4DC0E9;
     border-color: #4DC0E9 !important; }
   .btn-standart.btn-blue {
-    color: #2F9F69;
-    border-color: #2F9F69 !important; }
+    color: #4DC0E9;
+    border-color: #4DC0E9 !important; }
     .btn-standart.btn-blue:hover {
       color: white;
-      border-color: #2F9F69 !important;
-      background: #2F9F69; }
+      border-color: #4DC0E9 !important;
+      background: #4DC0E9; }
   .btn-standart.btn-green {
     color: #2F9F69;
     border-color: #2F9F69 !important; }
@@ -2391,6 +2391,8 @@ hr.survey-hr {
     height: 400px; }
   #dashboard-contact-lists #contactList-addNewListFieldsModal tr {
     height: 39px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal .modal-footer {
+    border-top: none; }
   #dashboard-contact-lists #contactList-addNewListFieldsModal .contactList-dropPlaceholder {
     background: rgba(211, 211, 211, 0.3);
     border-width: 1px;
@@ -2430,6 +2432,14 @@ hr.survey-hr {
     margin: 6px;
     width: 90%;
     padding: 10px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal input#additionalMappingFieldname {
+    margin-top: 7px;
+    width: 97%;
+    border-color: #4DC0E9; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal #additionalMappingFieldnameBtn {
+    margin-top: 5px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal #remap-footer-btns {
+    margin-top: 40px; }
 
 #dashboard-contact-lists #modals-import-preview h3 {
   margin: 0 0 20px 0; }

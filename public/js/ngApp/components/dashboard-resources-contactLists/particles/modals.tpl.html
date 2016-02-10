@@ -125,9 +125,11 @@
                                 <tr ng-repeat="cl in clc.contactListDropItems.customFields track by $index"  ng-drop="true" ng-drop-success="clc.onFieldMapDrop($data, cl)" ng-include="'fieldTemplate.html'">
                               </table>
                               <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" id="additionalMappingFieldname" ng-model="clc.additionalMappingFieldname">
+                                <input id="additionalMappingFieldname" type="text" class="form-control"  ng-model="clc.additionalMappingFieldname" placeholder="Add Custom Field">
                                 <span class="input-group-btn">
-                                  <button class="btn btn-default glyphicon glyphicon-plus" type="button" ng-click="clc.addCustomField();" aria-describedby="additionalMappingFieldname"></button>  
+                                  <button id="additionalMappingFieldnameBtn" class="btn btn-standart btn-blue" type="button" ng-click="clc.addCustomField();" aria-describedby="additionalMappingFieldname">
+                                      +
+                                  </button>
                                 </span>                         
                               </div>
                            </div>
@@ -135,7 +137,7 @@
                         </div>
 
                         <div class='row modal-footer'>
-                          <div class='col-md-12'>
+                          <div id="remap-footer-btns" class='col-md-12'>
                               <div class="pull-left">
                                   <div class='btn-standart btn-red  modals-btn' data-dismiss="modal">Cancel</div>
                                   <div class='btn-standart btn-green'  ng-click='clc.reUpload()'>Re-Upload File</div>

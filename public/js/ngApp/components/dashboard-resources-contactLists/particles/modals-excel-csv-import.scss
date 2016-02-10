@@ -37,9 +37,9 @@
   max-height: calc(100vh - 10px);
   overflow-y: auto;
 
-  //.contactList-dropPlaceholderCell {
-  //  width: 70%;
-  //}
+  .modal-footer {
+    border-top: none;
+  }
 
   .contactList-dropPlaceholder {
     background: rgba(211,211,211,.3);
@@ -51,6 +51,7 @@
   .ic-move {
     margin: -2px 5px 0 0;
   }
+
 
   .contactList-drop-item {
     border-radius: 0;
@@ -101,6 +102,22 @@
     width:90%;
     padding: 10px;
   }
+
+
+
+
+  input#additionalMappingFieldname {
+    margin-top: 7px;
+    width: 97%;
+    border-color: $blue;
+  }
+  #additionalMappingFieldnameBtn {
+    margin-top: 5px;
+  }
+  #remap-footer-btns {
+    margin-top: 40px;
+  }
+
 
 }
 
