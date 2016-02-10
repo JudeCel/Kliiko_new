@@ -10,21 +10,37 @@ var mailFrom = helpers.mailFrom();
 var transporter = helpers.createTransport();
 
 users.sendReactivateOrDeactivate = function(params, callback){
-  let account = { name: params.name, active: params.active }
-  helpers.renderMailTemplate('reactivateOrDeactivate', account, function(err, html){
-    if(err) {
-      return callback(err);
+  let templateType = !params.active ? mailTemplateService.mailTemplateType.deactivatedAccount : mailTemplateService.mailTemplateType.reactivatedAccount;
+  mailTemplateService.getActiveMailTemplate(templateType, function(error, result) {
+    //if failed to find mail template from DB, use old version
+    let fields = { name: params.name, active: params.active,  firstName: params.firstName, lastName: params.lastName, logInUrl: "http://"+config.get("server").domain}
+    if (error) {
+      helpers.renderMailTemplate('reactivateOrDeactivate', fields, function(err, html){
+        if(err) {
+          return callback(err);
+        }
+
+        let reactivatedorDeactivated = params.active ? 'Reactivated' : 'Deactivated';
+        transporter.sendMail({
+          from: mailFrom,
+          to: params.email,
+          subject: reactivatedorDeactivated,
+          html: html
+        }, callback);
+      });
+    } else {
+      // found template in db
+      fields.accountName = fields.name;      
+      var mailContent = mailTemplateService.composeMailFromTemplate(result, fields);
+      //caller of users.sendReactivateOrDeactivate doesn't specify callback
+      if (mailContent.error) {
+        if (callback) {
+          callback(mailContent.error);
+        }
+      }
+      mailTemplate.sendMailWithTemplate(mailContent, params, callback); 
     }
-
-    let reactivatedorDeactivated = params.active ? 'Reactivated' : 'Deactivated';
-
-    transporter.sendMail({
-      from: mailFrom,
-      to: params.email,
-      subject: reactivatedorDeactivated,
-      html: html
-    }, callback);
-  });
+  }); 
 };
 
 users.sendResetPasswordToken = function(params, callback) {
@@ -32,6 +48,7 @@ users.sendResetPasswordToken = function(params, callback) {
   mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.passwordResetRequest, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
+      let link = { url: helpers.getUrl(params.token, resetPasswordPath)};
       helpers.renderMailTemplate('resetPasswordToken', link, function(err, html){
         if (err) {
           return callback(err);

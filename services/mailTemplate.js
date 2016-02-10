@@ -193,7 +193,6 @@ function setMailTemplateDefault (id, templateCopyId, callback) {
   var params = {
     mailTemplateActive: templateCopyId
   }
-  console.log("_", id, "; tId", templateCopyId);
   MailTemplateOriginal.update(params, {
       where: {id: id}
     })

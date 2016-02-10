@@ -30,7 +30,8 @@ function acceptGet(req, res, next) {
       res.render(views_path('index'), simpleParams('Invite', invite, error));
     }
     else {
-      if(invite.userType == 'new') {
+      //added check if invite exists to avoid runtime error
+      if(invite && invite.userType == 'new') {
         res.render(views_path('index'), simpleParams('Accept Invite', invite));
       }
       else {
