@@ -62,11 +62,12 @@
             <thead>
               <tr>
                 <th></th>
-                <th ng-repeat="rowHeader in clc.lists.activeList.visibleFields" ng-click="clc.changeTableSortingFilter(rowHeader)"
-                    ng-drag="true" ng-drag-data="$index" class="druggable">
-                  <span class="th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader}}</span>
-                  <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
-                  <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
+                <th class="th-header druggable" ng-repeat="rowHeader in clc.lists.activeList.visibleFields track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)"
+                    ng-drag="true" ng-drag-data="$index">
+                  <span class="sorting-order-arrow"><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
+                  <span class="sorting-order-arrow"><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
+                  <span class="th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader | human2Camel : true}}</span>
+
                 </th>
 
                 <th ng-click="clc.showManageColumnsModal()"><img  src="/icons/grid.png" ></th>
@@ -284,7 +285,7 @@
               <uib-tab heading="Contact List Name" active="clc.modalTab1">
                 <form ng-submit="clc.submitNewList()">
                   <div class="row text-center">
-                    <input id="new-list-name-input" ng-model="clc.newList.name" type="text">
+                    <input id="new-list-name-input" ng-model="clc.newList.name" type="text" ng-disabled="!clc.lists.activeList.editable">
                     <div id="new-list-name-help-text">
                       <p>You can define up to 16 of your own extra fields to your new List, for a more in-depth profile of your Contacts</p>
                       <p>Click on Add Custom Fields to name your fields, which you can also modify at any time later on.</p>

@@ -2226,7 +2226,8 @@ hr.survey-hr {
       #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item.active .glyphicon {
         visibility: visible; }
   #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item-name {
-    width: 6vw; }
+    width: 6vw;
+    word-wrap: break-word; }
   #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item-selection-mark {
     position: absolute;
     right: 12px;
@@ -2238,6 +2239,17 @@ hr.survey-hr {
     display: block;
     margin-top: 10px;
     width: 160px; }
+
+#dashboard-contact-lists table {
+  table-layout: auto; }
+
+#dashboard-contact-lists th.th-header {
+  position: relative;
+  margin-right: 0; }
+
+#dashboard-contact-lists th, #dashboard-contact-lists td {
+  overflow: hidden;
+  min-width: 60px; }
 
 #dashboard-contact-lists #contact-lists-right-column {
   overflow: auto; }
@@ -2253,6 +2265,17 @@ hr.survey-hr {
     min-width: 70px;
     display: block;
     visibility: hidden; }
+  #dashboard-contact-lists #contact-lists-right-column span.sorting-order-arrow {
+    position: absolute;
+    top: 26px;
+    left: 0px;
+    margin-left: 3px;
+    margin-right: 3px; }
+  #dashboard-contact-lists #contact-lists-right-column td.selection-column {
+    width: 30px; }
+  #dashboard-contact-lists #contact-lists-right-column th span.th-name {
+    left: 9px;
+    position: relative; }
   #dashboard-contact-lists #contact-lists-right-column th:hover span.th-name {
     text-decoration: underline; }
   #dashboard-contact-lists #contact-lists-right-column th .glyphicon {
