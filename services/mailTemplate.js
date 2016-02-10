@@ -23,7 +23,8 @@ var mailTemplateType = {
   invitationAcceptance : "Invitation Acceptance",
   sessionClosed : "Session Closed",
   sessionFull : "Session Full",
-  sessionNotYetOpen : "Session Not Yet Open"
+  sessionNotYetOpen : "Session Not Yet Open",
+  passwordResetSuccess: "Reset password Success"
 };
 
 function validate(params, callback) {
@@ -73,11 +74,9 @@ function prepareErrors(err) {
 };
 
 function getMailTemplate(req, callback) {
-  let query = {};
-  query['$or'] = [{id: req.id}, {id: req.or}];
   MailTemplate.find({
     include: [{ model: MailTemplateOriginal, attributes: ['id', 'name']}],
-    where: query,
+    where: {id: req.id},
     attributes: constants.mailTemplateFields,
     raw: true
   }).then(function (result) {
@@ -87,10 +86,21 @@ function getMailTemplate(req, callback) {
   });
 }
 
+function getBaseMailTemplate(req, callback) {
+  MailTemplateOriginal.find({
+    where: {id: req.id},
+    attributes: constants.mailTemplateFields,
+    raw: true
+  }).then(function (result) {
+      callback(null, result);
+  }).catch(function (err) {
+    callback(err);
+  });
+}
 /**
  * Get active global mail template by category name
  * @param category constant from ``` mailTemplateType.firstInvitation ```
- * @returns {error, resultMailTemplate}
+ * @returns {error, resultMailTemplate} result mail template will be either a copy or original version
  */
 function getActiveMailTemplate(category, callback) {
   //getting mail template original version by category name
@@ -102,7 +112,14 @@ function getActiveMailTemplate(category, callback) {
     raw: true
   }).then(function (result) {
     //get reference to active mail template copy
-    getMailTemplate({id: result.mailTemplateActive, or: result.id}, callback);
+    getMailTemplate({id: result.mailTemplateActive, or: result.id}, function(err, template) {
+      if (!template) {
+        callback(null, result);
+      } else {
+        //returning mail from default table instead
+        callback(null, template);
+      }
+    });
   }).catch(function (err) {
     callback(err);
   });
@@ -357,5 +374,6 @@ module.exports = {
   sendMailFromTemplate: sendMailFromTemplate,
   sendMailFromTemplateWithCalendarEvent: sendMailFromTemplateWithCalendarEvent,
   composePreviewMailTemplate: composePreviewMailTemplate,
-  mailTemplateType: mailTemplateType
+  mailTemplateType: mailTemplateType,
+  getActiveMailTemplate: getActiveMailTemplate
 }

@@ -83,6 +83,12 @@ var templateFiles = [
     subject: "Facilitator Over-Quota",
     systemMessage: true
   },
+  {
+    fileName: 'SystemEmail_ResetPasswordSuccess.html',
+    name: MailTemplateService.mailTemplateType.passwordResetSuccess,
+    subject: "Insider Focus - Change password Success",
+    systemMessage: true
+  },
   // Popups
   {
     fileName: 'SystemPopup_InvitationAcceptance.html',
@@ -107,7 +113,7 @@ var templateFiles = [
     name: MailTemplateService.mailTemplateType.sessionNotYetOpen,
     subject: "Session Not Yet Open",
     systemMessage: true
-  },
+  }  
 ];
 
 function createMailTemplateFromFile(fileInfo, callback) {

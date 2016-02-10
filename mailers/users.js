@@ -3,6 +3,8 @@
 var config = require('config');
 var helpers = require('./helpers');
 var users = exports;
+var mailTemplate = require('./mailTemplate');
+var mailTemplateService = require('../services/mailTemplate');
 
 var mailFrom = helpers.mailFrom();
 var transporter = helpers.createTransport();
@@ -78,18 +80,30 @@ users.sendEmailConfirmationSuccess = function(params, callback) {
 };
 
 users.sendPasswordChangedSuccess = function(params, callback) {
-  helpers.renderMailTemplate('changePasswordSuccess', {}, function(err, html){
-    if (err) {
-      return callback(err);
-    }
+  mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.passwordResetSuccess, function(error, result) {
+    //if failed to find mail template from DB, use old version
+    if (error) {
+      helpers.renderMailTemplate('changePasswordSuccess', {}, function(err, html){
+        if (err) {
+          return callback(err);
+        }
 
-    transporter.sendMail({
-      from: mailFrom,
-      to: params.email,
-      subject: 'Insider Focus - Change password Success',
-      html: html
-    }, callback);
+        transporter.sendMail({
+          from: mailFrom,
+          to: params.email,
+          subject: 'Insider Focus - Change password Success',
+          html: html
+        }, callback);
+      });
+    } else {
+      // found template in db
+      mailTemplate.sendMailWithTemplate(result, params, callback); 
+    }
   });
+  
+  mailTemplate.sendMailWithTemplate();
+  
+  
 };
 users.sendResetPasswordSuccess = function(params, callback) {
   helpers.renderMailTemplate('resetPasswordSuccess', {}, function(err, html){
