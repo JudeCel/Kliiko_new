@@ -167,7 +167,7 @@
 
     function clearform(){
       vm.title = "";
-      vm.file = {};
+      vm.file = null;
       vm.youtubeUrl = "";
       domServices.modal('questionModal', 'close');
     }

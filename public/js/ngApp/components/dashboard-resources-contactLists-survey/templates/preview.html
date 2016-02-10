@@ -90,14 +90,14 @@
               <div class='responsive-container' ng-if="question.Resource.JSON.type == 'audio'">
                 <audio width="100%" controls  data-ng-src='{{ sc.getResourceNameUrl(question.Resource) }}'></audio>
               </div>
+            </div>
 
-              <div class='responsive-container' ng-if="question.Resource.JSON.type == 'youtubeUrl'">
-                <div width="50%" class="embed-responsive embed-responsive-4by3" ng-bind-html="sc.renderHtml(question.Resource)"></div>
-              </div>
+            <div class='responsive-container' ng-if="question.Resource.JSON.type == 'youtubeUrl'">
+              <div class="embed-responsive embed-responsive-4by3" ng-bind-html="sc.renderHtml(question.Resource)"></div>
+            </div>
 
-              <div class='responsive-container' ng-if="question.Resource.JSON.type == 'video'">
-                <video width="50%" controls data-ng-src='{{ sc.getResourceNameUrl(question.Resource) }}'></video>
-              </div>
+            <div class='responsive-container' ng-if="question.Resource.JSON.type == 'video'">
+              <video width="100%" controls data-ng-src='{{ sc.getResourceNameUrl(question.Resource) }}'></video>
             </div>
           </div>
 

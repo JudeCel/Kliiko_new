@@ -137,6 +137,16 @@ function findSurvey(params) {
         deferred.reject(MESSAGES.notConfirmed);
       }
       else {
+        if(survey.Resource){
+          survey.Resource.JSON = JSON.parse(decodeURI(survey.Resource.JSON));
+        }
+
+        survey.SurveyQuestions.forEach(function(question, index, array) {
+          if(question.Resource){
+            question.Resource.JSON = JSON.parse(decodeURI(question.Resource.JSON));
+          }
+        });
+        
         deferred.resolve(simpleParams(survey));
       }
     }
