@@ -6,6 +6,7 @@ var Resource = models.Resource;
 var SurveyQuestion = models.SurveyQuestion;
 var SurveyAnswer = models.SurveyAnswer;
 var Resource = models.Resource;
+var ContactList = models.ContactList;
 
 var async = require('async');
 var q = require('q');
@@ -171,13 +172,60 @@ function removeSurvey(params, account) {
   return deferred.promise;
 };
 
+function createOrFindContactList(accountId, fields, t) {
+  return ContactList.find({
+    where: {
+      name: 'Survey',
+      accountId: accountId
+    }
+  }).then(function(contactList) {
+    if(contactList) {
+
+    }
+    else {
+      ContactList.create({
+        name: 'Survey',
+        accountId: accountId,
+        editable: false,
+        defaultFields: fields
+      }).then(function(contactList) {
+
+      }).catch(ContactList.sequelize.ValidationError, function(error) {
+        deferred.reject(prepareErrors(error));
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
+    }
+  }).catch(ContactList.sequelize.ValidationError, function(error) {
+    deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+}
+
+function getContactListFields(questions) {
+  let array = [];
+  _.map(questions, function(question) {
+    _.map(question.answers, function(answer) {
+      if(answer.contactDetails) {
+        array = _.map(answer.contactDetails, 'model');
+      }
+    });
+  });
+
+  return array;
+}
+
 function createSurveyWithQuestions(params, account) {
   let deferred = q.defer();
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
   validParams.accountId = account.id;
 
   models.sequelize.transaction(function (t) {
-    return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t });
+    return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t }).then(function(survey) {
+      let fields = getContactListFields(survey.SurveyQuestions);
+      return createOrFindContactList(survey.accountId, fields, t);
+    });
   }).then(function(survey) {
     survey.update({ url: validUrl(survey) }).then(function(survey) {
       deferred.resolve(simpleParams(survey, MESSAGES.created));
@@ -275,7 +323,7 @@ function copySurvey(params, account) {
     if(survey) {
 
       createSurveyWithQuestions(survey, account).then(function(result) {
-        
+
         async.parallel({
           survey: function(callback) {
             copySurveyResources(result.data, callback)
