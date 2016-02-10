@@ -63,6 +63,7 @@ router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponG
 router.post('/gallery', gallery.postResources);
 router.post('/gallery/uploadFile', fileUploader(), gallery.uploadResource);
 router.post('/gallery/saveYoutubeUrl', gallery.saveYoutubeResource);
+router.post('/gallery/deleteZipFile', gallery.deleteZipFile);
 router.get('/gallery', gallery.getResources);
 router.get('/gallery/download', gallery.downloadResources);
 router.delete('/gallery', gallery.deleteResources);

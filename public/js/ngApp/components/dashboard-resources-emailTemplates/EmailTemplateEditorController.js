@@ -3,7 +3,7 @@
   
   angular.module('KliikoApp').controller('EmailTemplateEditorController', EmailTemplateEditorController);
 
-  EmailTemplateEditorController.$inject = ['dbg', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger'];
+  EmailTemplateEditorController.$inject = ['dbg', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', 'ngProgressFactory'];
   //necessary to bypass email editors restrictions
   jQuery.browser = {};
     (function () {
@@ -15,7 +15,7 @@
         }
     })();
   
-  function EmailTemplateEditorController(dbg, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger) {
+  function EmailTemplateEditorController(dbg, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, ngProgressFactory) {
     dbg.log2('#EmailTemplateEditorController started');
     var vm = this;
     vm.currentTemplate = {index: 0};
@@ -86,6 +86,7 @@
               vm.startEditingTemplate(index);
             }
           });
+          messenger.ok("Template was sucessfully saved.");
         } else {
           processErrors(res.error);
         }                  
@@ -216,7 +217,7 @@
         if(res.error) {
           messenger.error(res.error);
         } else {
-          var linkHTML = '<a href="' + res.url + '" target="_blank" style="display:block;text-decoration:none;color:#000;;"><img src="/icons/header button icons/tour_video.png"></img> </a>';
+          var linkHTML = '<a href="' + res.JSON.url + '" target="_blank" style="display:block;text-decoration:none;color:#000;"><img src="/icons/header button icons/videoLink.png"></img> </a>';
           $('#templateContent').wysiwyg("insertHtml", linkHTML);
           vm.newResource = {};
           cancel();
@@ -231,19 +232,23 @@
         text: vm.newResource.fileTst.name,
         file: newResource.fileTst
       };
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
 
       GalleryServices.createResource(resourceParams).then(function(res) {
         if(res.error){
           messenger.error(res.error);
+          progressbar.complete();
         } else {
           GalleryServices.postuploadData(resourceParams).then(function(res) {
+            progressbar.complete();
             if(res.error) {
               messenger.error(res.error);
             } else {
-              var linkHTML = '<img src="/chat_room/uploads/' + res.data.name + '" style="max-width:600px;"></img>';
+              var linkHTML = '<img src="/chat_room/uploads/' + res.data.JSON.name + '" style="max-width:600px;"></img>';
               $('#templateContent').wysiwyg("insertHtml", linkHTML);
               vm.newResource = {};
-              cancel()
+              cancel();
             }
           })
         }

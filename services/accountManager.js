@@ -4,10 +4,6 @@ var models = require('./../models');
 var AccountUser = models.AccountUser;
 var User = models.User;
 var Account = models.Account;
-var Invite = models.Invite;
-
-var inviteService = require('./../services/invite');
-var constants = require('../util/constants');
 
 var async = require('async');
 var _ = require('lodash');
@@ -23,7 +19,6 @@ function createOrFindAccountManager(req, res, callback) {
     if(error) {
       return callback(error);
     }
-
     User.find({
       where: { email: params.email }
     }).then(function(existsUser) {
@@ -49,10 +44,37 @@ function createOrFindAccountManager(req, res, callback) {
 function createAccountUser(params, userId, type, accountId, cb) {
   adjustParamsForNewAccountUser(params, userId, accountId);
   AccountUser.create(params).then(function(newAccountUser){
-    cb(null, inviteParams(newAccountUser.id, accountId, userId, type));
+    addToContactList(newAccountUser, function(error) {
+      if (error) {
+        cb(prepareErrors(error));
+      }else {
+        cb(null, inviteParams(newAccountUser.id, accountId, userId, type));
+      }
+    })
   }).catch(function(error) {
     cb(prepareErrors(error));
   });
+}
+
+function addToContactList(accountUser, callback) {
+  models.ContactList.find({
+    where: {
+      role: accountUser.role,
+      accountId: accountUser.AccountId
+    }
+  }).then(function(contactList) {
+    let params = {
+      userId: accountUser.UserId,
+      accountUserId: accountUser.id,
+      accountId: accountUser.AccountId,
+      contactListId: contactList.id
+    }
+    models.ContactListUser.create(params).then(function() {
+      callback(null);
+    },function(err) {
+      callback(err);
+    })
+  })
 }
 
 function userParams(email) {

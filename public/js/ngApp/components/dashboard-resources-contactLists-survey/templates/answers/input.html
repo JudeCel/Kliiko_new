@@ -1,24 +1,27 @@
-<div ng-sortable='sc.answerSortOptions' ng-init='question.type = "radio"'>
+<div ng-init='question.type = "radio"'>
   <hr class='survey-hr' />
 
-  <div class='form-group' ng-repeat='answer in question.answers track by $index'>
+  <div class='form-group' ng-repeat='answer in question.answers track by $index' ng-drop='true' ng-drop-success='sc.onDropComplete($index, $data, $event)'>
     <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.manageForm[object.order].answers[answer.order].$error'>
       <div ng-repeat='error in sc.validationErrors'>
         <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
       </div>
     </div>
 
-    <label class='col-xs-2 control-label list-handle'>
+    <label class='col-xs-2 control-label'>
       <span ng-if='answer.order == 0'>Answers</span>
     </label>
 
     <div class='col-xs-10 col-md-6'>
-      <div class='input-group'>
-        <input type='text' class='form-control' id='answer-{{ object.order }}-{{ answer.order }}' placeholder='Answer' name='{{ answer.order }}'
+      <div class='input-group' ng-drag='true' ng-drag-data='{ answer: answer, questionOrder: question.order }'>
+        <span class='input-group-addon'>
+          <span class='glyphicon glyphicon-resize-vertical'></span>
+        </span>
+
+        <input ng-cancel-drag type='text' class='form-control' id='answer-{{ object.order }}-{{ answer.order }}' placeholder='Answer' name='{{ answer.order }}'
           ng-model='answer.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='question.active'>
 
-        <span class='input-group-addon list-handle' ng-if='!sc.canChangeAnswers("remove", question)'>@</span>
-        <span class='input-group-addon list-handle' ng-if='sc.canChangeAnswers("remove", question)'>
+        <span class='input-group-addon' ng-if='sc.canChangeAnswers("remove", question)'>
           <span class='glyphicon glyphicon-remove' ng-click='sc.changeAnswers("remove", question, $index)'></span>
         </span>
       </div>

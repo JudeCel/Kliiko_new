@@ -28,15 +28,19 @@
         <tr ng-repeat='survey in sc.surveys'>
           <td>{{ survey.name }}</td>
           <td>{{ (survey.confirmedAt | date:sc.dateFormat) || 'unconfirmed' }}</td>
-          <td><a href='{{ survey.url }}'>{{ survey.url }}</a></td>
+          <td><a href='{{ survey.url }}' target="_blanks">{{ survey.url }}</a></td>
           <td>{{ survey.closed }}</td>
           <td class='text-right dashboardElementsEditRemove'>
-            <a href='/resources/survey/export/{{ survey.id }}' ng-if='survey.confirmedAt'><img src='/icons/brand_colour_grey.png' alt='' /></a>
-            <img src='/icons/calendar_grey.png' alt='' ng-click='sc.confirmSurvey(survey)' ng-if='!survey.confirmedAt' />
-            <img ng-src='{{ sc.statusIcon(survey) }}' alt='' ng-click='sc.changeStatus(survey)' />
-            <img src='/icons/resources_grey.png' alt='' ng-click='sc.copySurvey(survey)' />
-            <img src='/icons/dashboardElement_edit.png' alt='' ng-click='sc.changePage("edit", survey)' />
-            <img src='/icons/dashboardElement_remove.png' alt='' ng-click='sc.removeSurvey(survey)' />
+            <img src='/icons/brand_colour_grey.png' ng-click='sc.exportSurvey(survey.id)' ng-if='survey.confirmedAt'
+              data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.export }}' />
+
+            <img src='/icons/calendar_grey.png' ng-click='sc.confirmSurvey(survey)' ng-if='!survey.confirmedAt'
+              data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.confirm }}' />
+
+            <img ng-src='{{ sc.statusIcon(survey) }}' ng-click='sc.changeStatus(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.status }}' />
+            <img src='/icons/resources_grey.png' ng-click='sc.copySurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.copy }}' />
+            <img src='/icons/dashboardElement_edit.png' ng-click='sc.changePage("edit", survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.edit }}' />
+            <img src='/icons/dashboardElement_remove.png' ng-click='sc.removeSurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.remove }}' />
           </td>
         </tr>
       </tbody>

@@ -8,11 +8,8 @@
 
     <label class='col-xs-2 control-label' for='questionName-{{object.order}}'>Name</label>
     <div class='col-xs-10 col-md-6'>
-      <div class='input-group'>
-        <input type='text' class='form-control' id='questionName-{{object.order}}' placeholder='Name' name='name'
-          ng-model='question.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='question.active'>
-        <span class='input-group-addon'>@</span>
-      </div>
+      <input type='text' class='form-control' id='questionName-{{object.order}}' placeholder='Name' name='name'
+        ng-model='question.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='question.active'>
     </div>
   </div>
 </div>
@@ -33,7 +30,7 @@
   </div>
 </div>
 
-<!-- <div class='form-horizontal' ng-if='object.audioVideo'>
+<div class='form-horizontal' ng-if='object.audioVideo'>
   <div class='form-group'>
     <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.manageForm[object.order].audioVideo.$error'>
       <div ng-repeat='error in sc.validationErrors'>
@@ -42,12 +39,107 @@
     </div>
 
     <label class='col-xs-2 control-label' for='audioVideo-{{object.order}}'>Audio/Video</label>
-    <div class='col-xs-10 col-md-6'>
-      <div class='input-group'>
-        <input type='text' class='form-control' id='audioVideo-{{object.order}}' placeholder='Audio/Video' name='audioVideo'
-          ng-model='question.audioVideo' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='question.active'>
-        <span class='input-group-addon'>@</span>
+    <div class='col-xs-10 col-md-6' ng-show="question.Resource == null">
+      
+      <button class='btn btn-addNewElement btn-green gallery-btn-width no-margin'
+              type='button' id='uploadResourceDropdown' data-toggle='dropdown'
+              aria-haspopup='true' aria-expanded='false'>
+        <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
+        Add audio/video
+      </button>
+
+      <ul class='dropdown-menu survey-dropdown-margin' aria-labelledby='uploadResourceDropdown'>
+        <li class='text-right text-size-dashboard'>
+          <a ng-click="sc.openQuestionModal('audio', question)" data-toggle='modal' href=''>
+            Upload Audio
+          </a>
+        </li>
+
+        <li class='text-right text-size-dashboard'>
+          <a ng-click="sc.openQuestionModal('video', question)" data-toggle='modal' href=''>
+            Upload video
+          </a>
+        </li>
+
+
+        <li class='text-right text-size-dashboard'>
+          <a ng-click="sc.openQuestionModal('youtube', question)" data-toggle='modal' href=''>
+            Save Youtube URL
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class='col-xs-10 col-md-6' ng-if='question.Resource'>
+      <div class='responsive-container' ng-if="question.Resource.JSON.type == 'audio'">
+        <audio width='100%' controls data-ng-src='{{ sc.getResourceNameUrl(question.Resource) }}'></audio>
+      </div>
+
+      <div class='responsive-container' ng-if="question.Resource.JSON.type == 'youtubeUrl'">
+        <div class="embed-responsive embed-responsive-4by3" ng-bind-html="sc.renderHtml(question.Resource)"></div>
+      </div>
+
+      <div class='responsive-container' ng-if="question.Resource.JSON.type == 'video'">
+        <video width='100%' controls data-ng-src='{{ sc.getResourceNameUrl(question.Resource) }}'></video>
+      </div>
+
+      <button type='submit' class='btn btn-addNewElement btn-green no-margin gallery-btn-width' ng-click='sc.removeResource(question.resourceId, question, null)'>
+        <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+  <!-- resourceModal -->
+  <div class='modal fade' id='questionModal' role='dialog'>
+    <div class='modal-dialog changePasswordModal' >
+      <div class='modal-content border-green border-radius-none'>
+
+        <div class='modal-header'>
+          <button type='button' class='close' data-dismiss='modal'>&times;</button>
+          <h2 class='modal-title text-center'>New {{ sc.questionResource.type }} resource.</h2>
+        </div>
+
+        <form name=".selectedQuestion.Resource " novalidate>
+          <ng-form name="resource">
+            <div class='modal-body'>
+
+              <div class="form-group">
+                <label for="title">Title</label>
+                <input ng-model="sc.title" type="text" class="form-control center-block" name="title" id="title" placeholder="Title">
+              </div>
+
+              <div ng-if="sc.questionResource.type == 'youtube'" class="form-group">
+                <label for="youtube">Youtube Url</label>
+                <input ng-model="sc.youtubeUrl" type="text" class="form-control center-block" name="youtube" id="youtube" placeholder="Youtube URL">
+              </div>
+
+              <div ng-if="sc.questionResource.type !== 'youtube'" class="form-group">setUploadtype
+                <label for="file">File</label>
+                <div ngf-drop ngf-select ng-model="sc.file" class="drop-box" ngf-drag-over-class="'dragover'"  accept="{{sc.setUploadtype(sc.questionResource.type)}}">
+                  Drop images here or click to upload
+                </div>
+
+                <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
+                <div class="row">
+                  <div class="col-xs-10">
+                    <p class="text-max-width">
+                      {{ sc.file.name }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class='modal-footer'>
+              <button class='btn no-border-radius' ng-click='sc.saveResource(sc.questionResource.type)'>
+                submit
+              </button>
+            </div>
+
+          </ng-form>
+        </form>
+
       </div>
     </div>
   </div>
-</div> -->
