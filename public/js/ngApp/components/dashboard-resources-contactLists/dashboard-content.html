@@ -23,7 +23,7 @@
               Contact Lists
             </div>
 
-            <div class="item"  ng-class="{'active':clc.lists.activeListIndex == $index}" ng-click="clc.lists.changeActiveList($index)"
+            <div class="item"  ng-class="{'active':clc.lists.activeListIndex == $index}" ng-click="clc.changeActiveList($index)"
                  ng-repeat="item in clc.lists.items ">
               <div class="item-name">{{ item.name }} <span ng-show="item.membersCount">&nbsp;({{ item.membersCount }})</span></div>  <div class="item-selection-mark"><i class="glyphicon glyphicon-chevron-right pull-right"></i></div>
             </div>
@@ -39,7 +39,7 @@
           <div id="list-mass-actions" ng-class="row" ng-hide="!clc.lists.activeList.members.length">
             <span class="col-md-5">
               <div class="check">
-                <input id="dashboard-contact-lists-selectAll-mass-action"  ng-click="clc.selectAll()" class="kliiko-checkbox checkbox-btn btn-green" ng-model="vm.allSelected"  type="checkbox" >
+                <input id="dashboard-contact-lists-selectAll-mass-action"  ng-click="clc.selectAll()" class="kliiko-checkbox checkbox-btn btn-green" ng-model--="clc.allSelected"  type="checkbox" ng-checked="clc.allSelected">
                 <label for="dashboard-contact-lists-selectAll-mass-action" ></label> Select all
               </div>
               <div class="check" ng-click="clc.massDelete()">
