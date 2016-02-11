@@ -6,7 +6,7 @@ var _ = require("lodash");
 
 const MEGABYTE = 1024*1024;
 const VALIDATIONS = {
-  maxSize: 2, // 2mb
+  maxSize: 5, // 2mb
   fileTypes: [
     'image/gif',
     'image/png',
@@ -27,7 +27,7 @@ module.exports = function upload(options) {
     filename: filename
   });
 
-  let upload =  multer({ storage: storage, limits: { fieldSize: VALIDATIONS.maxSize * MEGABYTE } });
+  let upload =  multer({ storage: storage, limits: { fileSize: (VALIDATIONS.maxSize * MEGABYTE) } });
   return upload.single('uploadedfile');
 };
 

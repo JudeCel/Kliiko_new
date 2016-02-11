@@ -1,6 +1,7 @@
 'use strict';
 
 var models = require('./../models');
+var filters = require('./../models/filters');
 var Survey = models.Survey;
 var Resource = models.Resource;
 var SurveyQuestion = models.SurveyQuestion;
@@ -103,7 +104,7 @@ function findAllSurveys(account) {
     });
     deferred.resolve(simpleParams(surveys));
   }).catch(Survey.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
+    deferred.reject(filters.errors(error));
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -148,7 +149,7 @@ function findSurvey(params) {
             question.Resource.JSON = JSON.parse(decodeURI(question.Resource.JSON));
           }
         });
-        
+
         deferred.resolve(simpleParams(survey));
       }
     }
@@ -156,7 +157,7 @@ function findSurvey(params) {
       deferred.reject(MESSAGES.notFound);
     }
   }).catch(Survey.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
+    deferred.reject(filters.errors(error));
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -175,7 +176,7 @@ function removeSurvey(params, account) {
       deferred.reject(MESSAGES.notFound);
     }
   }).catch(Survey.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
+    deferred.reject(filters.errors(error));
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -199,7 +200,7 @@ function createOrUpdateContactList(accountId, fields, t) {
       contactList.save().then(function(contactList) {
         deferred.resolve(contactList);
       }).catch(ContactList.sequelize.ValidationError, function(error) {
-        deferred.reject(prepareErrors(error));
+        deferred.reject(filters.errors(error));
       }).catch(function(error) {
         deferred.reject(error);
       });
@@ -216,13 +217,13 @@ function createOrUpdateContactList(accountId, fields, t) {
       contactList.save().then(function(contactList) {
         deferred.resolve(contactList);
       }).catch(ContactList.sequelize.ValidationError, function(error) {
-        deferred.reject(prepareErrors(error));
+        deferred.reject(filters.errors(error));
       }).catch(function(error) {
         deferred.reject(error);
       });
     }
   }).catch(ContactList.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
+    deferred.reject(filters.errors(error));
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -271,7 +272,7 @@ function createSurveyWithQuestions(params, account) {
       deferred.resolve(simpleParams(survey, MESSAGES.created));
     });
   }).catch(Survey.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
+    deferred.reject(filters.errors(error));
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -282,6 +283,7 @@ function createSurveyWithQuestions(params, account) {
 function updateSurvey(params, account) {
   let deferred = q.defer();
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
+
   models.sequelize.transaction(function (t) {
     return Survey.update(validParams, {
       where: { id: params.id, accountId: account.id },
@@ -314,7 +316,7 @@ function updateSurvey(params, account) {
   }).then(function(survey) {
     deferred.resolve(simpleParams(survey, MESSAGES.updated));
   }).catch(Survey.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
+    deferred.reject(filters.errors(error));
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -337,7 +339,7 @@ function changeStatus(params, account) {
       deferred.resolve(simpleParams(survey, survey.closed ? MESSAGES.closed : MESSAGES.opened));
     }
   }).catch(Survey.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
+    deferred.reject(filters.errors(error));
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -385,7 +387,7 @@ function copySurvey(params, account) {
       deferred.reject(MESSAGES.notFound);
     }
   }).catch(Survey.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
+    deferred.reject(filters.errors(error));
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -515,7 +517,7 @@ function answerSurvey(params) {
   }).then(function(survey) {
     deferred.resolve(simpleParams(null, MESSAGES.completed));
   }).catch(SurveyAnswer.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
+    deferred.reject(filters.errors(error));
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -566,7 +568,7 @@ function confirmSurvey(params, account) {
       deferred.resolve(simpleParams(survey, MESSAGES.confirmed));
     }
   }).catch(Survey.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
+    deferred.reject(filters.errors(error));
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -597,7 +599,7 @@ function exportSurvey(params, account) {
       deferred.reject(MESSAGES.notFound);
     }
   }).catch(Survey.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
+    deferred.reject(filters.errors(error));
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -712,7 +714,7 @@ function bulkUpdateQuestions(surveyId, questions, t) {
           deferred.resolve(true);
         }
       }).catch(SurveyQuestion.sequelize.ValidationError, function(error) {
-        deferred.reject(prepareErrors(error));
+        deferred.reject(filters.errors(error));
       }).catch(function(error) {
         deferred.reject(error);
       });
@@ -722,7 +724,7 @@ function bulkUpdateQuestions(surveyId, questions, t) {
       SurveyQuestion.create(question).then(function() {
         deferred.resolve(true);
       }).catch(SurveyQuestion.sequelize.ValidationError, function(error) {
-        deferred.reject(prepareErrors(error));
+        deferred.reject(filters.errors(error));
       }).catch(function(error) {
         deferred.reject(error);
       });
@@ -758,18 +760,6 @@ function validateParams(params, attributes) {
   });
 
   return _.pick(params, attributes);
-};
-
-function prepareErrors(err) {
-  let errors = ({});
-  _.map(err.errors, function (n) {
-    let message = n.message.replace(n.path, '');
-    if(message == ' cannot be null') {
-      message = ' cannot be empty';
-    }
-    errors[n.path] = _.startCase(n.path) + ':' + message;
-  });
-  return errors;
 };
 
 module.exports = {

@@ -14,7 +14,7 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
-              <form method="post" action="/registration">
+              <form method="post" action="/registration" novalidate>
                 <% if(socialProfile){ %>
                  <input type="hidden" name="socialProfile[provider]" value="<%=socialProfile.provider%>">
                  <input type="hidden" name="socialProfile[id]" value="<%=socialProfile.id%>">
@@ -154,14 +154,14 @@
                       <input type="tel" value="<%= mobile %>" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number">
                     </td>
                   </tr>
-                  
+
                   <tr>
                     <td></td>
                     <td class="error-column">
                       <div class="has-error"><%= errors.mobile %></div>
                     </td>
                   </tr>
-                  
+
                   <tr>
                     <td>
                       <label class="text-no-bold text-login-page" for="landlineNumber">
@@ -172,6 +172,13 @@
                     </td>
                     <td>
                       <input type="text" value="<%= landlineNumber %>" class="form-control" name="landlineNumber" id="landline_number" placeholder="Landline Number">
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                      <div class="has-error"><%= errors.landlineNumber %></div>
                     </td>
                   </tr>
 

@@ -2,6 +2,7 @@
 
 var MailTemplate  = require('./../models').MailTemplate;
 var MailTemplateOriginal  = require('./../models').MailTemplateBase;
+var filters = require('./../models/filters');
 var templateMailer = require('../mailers/mailTemplate');
 var _ = require('lodash');
 var ejs = require('ejs');
@@ -17,9 +18,9 @@ function createBaseMailTemplate(params, callback) {
   MailTemplateOriginal.create(params).then(function(result) {
     callback(null, result);
   }).catch(MailTemplateOriginal.sequelize.ValidationError, function(err) {
-    callback(prepareErrors(err));
+    callback(filters.errors(err));
   }).catch(function(err) {
-    callback(prepareErrors(err));
+    callback(filters.errors(err));
   });
 }
 
@@ -44,14 +45,6 @@ function update(id, parameters, callback){
         callback(err);
     });
 }
-
-function prepareErrors(err) {
-  let errors = ({});
-  _.map(err.errors, function (n) {
-    errors[n.path] = _.startCase(n.path) + ':' + n.message.replace(n.path, '');
-  });
-  return errors;
-};
 
 function getMailTemplate(req, callback) {
   MailTemplate.find({
@@ -85,19 +78,19 @@ function getMailTemplateForReset(req, callback) {
 }
 
 function getAllMailTemplates(req, getSystemMail,callback) {
-  
-  let query = {};  
+
+  let query = {};
   if (req.id) {
       query['$or'] = [{UserId: req.id}, {UserId: null}];
   }
-  
+
   let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage']}];
-  
+
   if (!getSystemMail) {
     //getting list that any user can edit
     query.systemMessage = false;
   }
-  
+
   MailTemplate.findAll({
       include: include,
       where: query,
@@ -140,11 +133,11 @@ function saveMailTemplate(template, createCopy, userId, callback) {
   if (!template["UserId"] || createCopy) {
     template.UserId = userId;
     create(template, function(error, result) {
-      callback(error, result);  
+      callback(error, result);
     });
   } else {
     update(id, template, function(error, result) {
-      callback(error, result);  
+      callback(error, result);
     });
   }
 }
@@ -153,13 +146,13 @@ function resetMailTemplate(templateId, callback) {
   if (!templateId) {
       return callback("e-mail template not provided");
   }
-  
+
   getMailTemplateForReset({id: templateId}, function(err, result) {
     if (result) {
       //is template created by user - not base version
       if (!result.UserId) {
         //if base version, return data immediately
-        callback(null, result);      
+        callback(null, result);
       } else {
         update(templateId, {name: result["MailTemplateBase.name"], subject: result["MailTemplateBase.subject"], content: result["MailTemplateBase.content"]}, function(error, result) {
            callback(error, result);
@@ -177,7 +170,7 @@ function deleteMailTemplate(id, callback) {
     callback(null, {});
   }).catch(function(error) {
     callback(error);
-  }); 
+  });
 }
 
 //replace templates "In Editor" variables with .ejs compatible variables
@@ -188,7 +181,7 @@ function composeMailFromTemplate(template, params) {
     template.subject = formatTemplateString(template.subject);
     template.content = ejs.render(template.content, params);
     template.subject = ejs.render(template.subject, params);
-    
+
     return template;
   } catch (error) {
     return {error: "Error constructing mail template"};
@@ -238,17 +231,17 @@ function formatTemplateString(str) {
   str = str.replace(/\{Participant Email\}/ig, "<%= participantMail %>");
   str = str.replace(/\{Facilitator Mobile\}/ig, "<%= facilitatorMobileNumber %>");
   str = str.replace(/\{Session Name\}/ig, "<%= sessionName %>");
-  str = str.replace(/\{Incentive\}/ig, "<%= incentive %>"); 
+  str = str.replace(/\{Incentive\}/ig, "<%= incentive %>");
   str = str.replace(/\{Accept Invitation\}/ig, "<%= acceptInvitationUrl %>");
   str = str.replace(/\{Invitation Not This Time\}/ig, "<%= invitationNotThisTimeUrl %>");
-  
+
   str = str.replace(/\{Invitation At All\}/ig, "<%= invitationNotAtAllUrl %>");
   str = str.replace(/\{Mail Unsubscribe\}/ig, "<%= unsubscribeMailUrl %>");
   str = str.replace(/\{Close Session Yes In Future\}/ig, "<%= participateInFutureUrl %>");
   str = str.replace(/\{Close Session No In Future\}/ig, "<%= dontParticipateInFutureUrl %>");
   str = str.replace(/\{Confirmation Check In\}/ig, "<%= confirmationCheckInUrl %>");
   str = str.replace(/\{Login\}/ig, "<%= logInUrl %>");
-  
+
   return str;
 }
 
@@ -277,7 +270,7 @@ function composePreviewMailTemplate(mailTemplate) {
     confirmationCheckInUrl: "#/confirmationCheckInUrl",
     logInUrl: "#/LogInUrl",
   };
-  
+
   return composeMailFromTemplate(mailTemplate, mailPreviewVariables);
 }
 

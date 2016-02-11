@@ -1,6 +1,7 @@
 'use strict';
 
 var models = require('./../models');
+var filters = require('./../models/filters');
 var AccountUser = models.AccountUser;
 var User = models.User;
 var Account = models.Account;
@@ -33,8 +34,8 @@ function createOrFindAccountManager(req, res, callback) {
       } else {
         User.create(userParams(params.email)).then(function(newUser) {
           createAccountUser(params, newUser.id, "new", currentDomain.id, callback);
-        }, function(err) {
-          callback(prepareErrors(err));
+        }, function(error) {
+          callback(filters.errors(error));
         });
       }
     });
@@ -46,13 +47,13 @@ function createAccountUser(params, userId, type, accountId, cb) {
   AccountUser.create(params).then(function(newAccountUser){
     addToContactList(newAccountUser, function(error) {
       if (error) {
-        cb(prepareErrors(error));
+        cb(filters.errors(error));
       }else {
         cb(null, inviteParams(newAccountUser.id, accountId, userId, type));
       }
     })
   }).catch(function(error) {
-    cb(prepareErrors(error));
+    cb(filters.errors(error));
   });
 }
 
@@ -129,7 +130,7 @@ function preValidate(user, currentDomainId, params, callback) {
       callback({ email: 'This account has already accepted invite.' });
     }
   }).catch(function(error) {
-    callback(prepareErrors(error));
+    callback(filters.errors(error));
   });
 };
 
@@ -152,7 +153,7 @@ function findUsers(model, where, attributes, cb) {
   }).then(function(accountUser) {
     cb(null, accountUser);
   }).catch(function(error) {
-    cb(prepareErrors(error));
+    cb(filters.errors(error));
   });
 }
 
@@ -162,18 +163,6 @@ function inviteParams(accountUserId, accountId, userId, type) {
 
 function prepareParams(req) {
   return _.pick(req.body, ['firstName', 'lastName', 'gender', 'email', 'mobile', 'postalAddress', 'city', 'state', 'postCode', 'companyName', 'landlineNumber']);
-};
-
-function prepareErrors(err) {
-  let errors = ({});
-  _.map(err.errors, function (n) {
-    let message = n.message.replace(n.path, '');
-    if(message == " cannot be null") {
-      message = " cannot be empty";
-    }
-    errors[n.path] = _.startCase(n.path) + ':' + message;
-  });
-  return errors;
 };
 
 module.exports = {

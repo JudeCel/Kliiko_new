@@ -3,6 +3,7 @@
 var q = require('q');
 var _ = require('lodash');
 var models = require('./../models');
+var filters = require('./../models/filters');
 var AccountUser = models.AccountUser;
 var ContactList = models.ContactList;
 var ContactListUser = models.ContactListUser;
@@ -155,7 +156,7 @@ function create(params, transaction) {
           deferred.reject(err);
         })
       }, function(err) {
-        deferred.reject(err);
+        deferred.reject(filters.errors(err));
       })
     }
   });
@@ -197,10 +198,10 @@ function update(params) {
       contactListUser.AccountUser.updateAttributes(params.defaultFields).then(function(accountUser) {
         buildWrappedResponse(contactListUser.id, deferred);
       }, function(err) {
-        deferred.reject(err);
+        deferred.reject(filters.errors(err));
       })
     }, function(err) {
-      deferred.reject(err);
+      deferred.reject(filters.errors(err));
     })
   })
   return deferred.promise;
