@@ -4,11 +4,14 @@ var models = require('./../../models');
 var Survey = models.Survey;
 var SurveyQuestion = models.SurveyQuestion;
 var SurveyAnswer = models.SurveyAnswer;
+var ContactList = models.ContactList;
+var ContactListUser = models.ContactListUser;
 
 var surveyConstants = require('../../util/surveyConstants');
 var surveyServices = require('./../../services/survey');
 var userFixture = require('./../fixtures/user');
 var assert = require('chai').assert;
+var _ = require('lodash');
 
 describe('SERVICE - Survey', function() {
   var testUser, testAccount;
@@ -35,8 +38,27 @@ describe('SERVICE - Survey', function() {
 
   function surveyAnswerParams(questions) {
     let params = { SurveyQuestions: {} };
-    questions.forEach(function(question, index, array) {
-      params.SurveyQuestions[question.id] = { answer: index };
+    _.map(questions, function(question) {
+      _.map(question.answers, function(answer) {
+        if(answer.contactDetails) {
+          params.SurveyQuestions[question.id] = {
+            answer: true,
+            contactDetails: {
+              firstName: 'firstName',
+              lastName: 'lastName',
+              gender: 'male',
+              age: 20,
+              email: 'some@email.com',
+              mobile: '+371 2222222',
+              postalAddress: 'postalAddress',
+              country: 'Latvia'
+            }
+          };
+        }
+        else {
+          params.SurveyQuestions[question.id] = { answer: answer.order };
+        }
+      });
     });
 
     return params;
@@ -55,6 +77,31 @@ describe('SERVICE - Survey', function() {
       ]
     };
   };
+
+  function surveyQuestionContactList() {
+    return {
+      "name":"Contact details",
+      "type":"checkbox",
+      "question":"Would you like to share you contact details?",
+      "order":8,
+      "answers":[
+        {
+          "name":"No problemo, amigo",
+          "order":0,
+          "contactDetails":[
+            { order: 0, "model": "firstName", "name":"First Name", "input":true },
+            { order: 1, "model": "lastName", "name":"Last Name", "input":true },
+            { order: 2, "model": "gender", "name":"Gender", "select":true, "options":[ "male", "female" ] },
+            { order: 3, "model": "age", "name":"Age", "input":true },
+            { order: 4, "model": "email", "name":"Email", "input":true },
+            { order: 5, "model": "mobile", "name":"Mobile", "input":true },
+            { order: 6, "model": "postalAddress", "name":"Postal Address", "input":true, },
+            { order: 7, "model": "country", "name":"Country", "input":true, }
+          ]
+        }
+      ]
+    };
+  }
 
   function surveyQuestionParams(random) {
     return {
@@ -86,31 +133,39 @@ describe('SERVICE - Survey', function() {
   describe('#createSurveyWithQuestions', function() {
     describe('happy path', function() {
       it('should succeed on creating survey with questions', function (done) {
-        let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
-          let survey = result.data;
+        ContactList.count().then(function(c) {
+          assert.equal(c, 3);
 
-          assert.equal(result.message, surveyServices.messages.created);
-          assert.equal(survey.name, 'Survey name');
-          assert.equal(survey.description, 'Survey description');
-          assert.equal(survey.thanks, 'Survey thanks');
-          assert.equal(survey.accountId, testAccount.id);
+          let params = surveyParams();
+          surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+            let survey = result.data;
 
-          assert.equal(survey.SurveyQuestions[0].type, params.SurveyQuestions[0].type);
-          assert.equal(survey.SurveyQuestions[0].order, params.SurveyQuestions[0].order);
-          assert.equal(survey.SurveyQuestions[0].name, params.SurveyQuestions[0].name);
-          assert.equal(survey.SurveyQuestions[0].question, params.SurveyQuestions[0].question);
-          assert.deepEqual(survey.SurveyQuestions[0].answers, params.SurveyQuestions[0].answers);
+            assert.equal(result.message, surveyServices.messages.created);
+            assert.equal(survey.name, 'Survey name');
+            assert.equal(survey.description, 'Survey description');
+            assert.equal(survey.thanks, 'Survey thanks');
+            assert.equal(survey.accountId, testAccount.id);
 
-          assert.equal(survey.SurveyQuestions[1].type, params.SurveyQuestions[1].type);
-          assert.equal(survey.SurveyQuestions[1].order, params.SurveyQuestions[1].order);
-          assert.equal(survey.SurveyQuestions[1].name, params.SurveyQuestions[1].name);
-          assert.equal(survey.SurveyQuestions[1].question, params.SurveyQuestions[1].question);
-          assert.deepEqual(survey.SurveyQuestions[1].answers, params.SurveyQuestions[1].answers);
-          done();
-        }, function(error) {
-          done(error);
+            assert.equal(survey.SurveyQuestions[0].type, params.SurveyQuestions[0].type);
+            assert.equal(survey.SurveyQuestions[0].order, params.SurveyQuestions[0].order);
+            assert.equal(survey.SurveyQuestions[0].name, params.SurveyQuestions[0].name);
+            assert.equal(survey.SurveyQuestions[0].question, params.SurveyQuestions[0].question);
+            assert.deepEqual(survey.SurveyQuestions[0].answers, params.SurveyQuestions[0].answers);
+
+            assert.equal(survey.SurveyQuestions[1].type, params.SurveyQuestions[1].type);
+            assert.equal(survey.SurveyQuestions[1].order, params.SurveyQuestions[1].order);
+            assert.equal(survey.SurveyQuestions[1].name, params.SurveyQuestions[1].name);
+            assert.equal(survey.SurveyQuestions[1].question, params.SurveyQuestions[1].question);
+            assert.deepEqual(survey.SurveyQuestions[1].answers, params.SurveyQuestions[1].answers);
+
+            ContactList.count().then(function(c) {
+              assert.equal(c, 4);
+              done();
+            });
+          }, function(error) {
+            done(error);
+          });
         });
       });
     });
@@ -127,7 +182,10 @@ describe('SERVICE - Survey', function() {
           };
 
           assert.deepEqual(error, allErrors);
-          done();
+          ContactList.count().then(function(c) {
+            assert.equal(c, 3);
+            done();
+          });
         });
       });
 
@@ -142,7 +200,11 @@ describe('SERVICE - Survey', function() {
 
           Survey.count().then(function(c) {
             assert.equal(c, 0);
-            done();
+
+            ContactList.count().then(function(c) {
+              assert.equal(c, 3);
+              done();
+            });
           })
         });
       });
@@ -523,10 +585,75 @@ describe('SERVICE - Survey', function() {
 
               SurveyAnswer.count().then(function(c) {
                 assert.equal(c, 1);
-                done();
+
+                ContactListUser.count().then(function(c) {
+                  assert.equal(c, 0);
+                  done();
+                });
               });
             }, function(error) {
               done(error);
+            });
+          });
+        });
+      });
+
+      it('should succeed on answering with contact list', function (done) {
+        let params = surveyParams();
+        params.SurveyQuestions.push(surveyQuestionContactList());
+
+        ContactListUser.count().then(function(c) {
+          assert.equal(c, 0);
+
+          surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+            let survey = result.data;
+
+            SurveyQuestion.findAll().then(function(results) {
+              let answerParams = surveyAnswerParams(results);
+              answerParams.surveyId = survey.id;
+
+              surveyServices.answerSurvey(answerParams).then(function(result) {
+                assert.equal(result.message, surveyServices.messages.completed);
+
+                SurveyAnswer.count().then(function(c) {
+                  assert.equal(c, 1);
+
+                  ContactListUser.count().then(function(c) {
+                    assert.equal(c, 1);
+                    done();
+                  });
+                });
+              }, function(error) {
+                done(error);
+              });
+            });
+          });
+        });
+      });
+    });
+
+    describe('sad path', function() {
+      it('should fail on account user validations', function (done) {
+        let params = surveyParams();
+        params.SurveyQuestions.push(surveyQuestionContactList());
+
+        ContactListUser.count().then(function(c) {
+          assert.equal(c, 0);
+
+          surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+            let survey = result.data;
+
+            SurveyQuestion.findAll().then(function(results) {
+              let answerParams = surveyAnswerParams(results);
+              answerParams.surveyId = survey.id;
+              answerParams.SurveyQuestions[3].contactDetails.email = 'invalidEmail';
+
+              surveyServices.answerSurvey(answerParams).then(function(result) {
+                done('Should not get here!');
+              }, function(error) {
+                assert.deepEqual(error, { email: 'Email:Invalid e-mail format' });
+                done();
+              });
             });
           });
         });
@@ -575,7 +702,7 @@ describe('SERVICE - Survey', function() {
 
   describe('#exportSurvey', function() {
     describe('happy path', function() {
-      it('should succeed on confirming survey', function (done) {
+      it('should succeed on exporting survey', function (done) {
         let params = surveyParams();
         delete params.confirmedAt;
 
@@ -589,8 +716,8 @@ describe('SERVICE - Survey', function() {
               let validResult = {
                 header: [ 'Some default name 0', 'Some default name 1' ],
                 data: [{
-                  'Some default name 0': '0 answer 0',
-                  'Some default name 1': '1 answer 1'
+                  'Some default name 0': '3 answer 0',
+                  'Some default name 1': '3 answer 1'
                 }]
               };
 

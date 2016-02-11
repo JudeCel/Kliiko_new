@@ -5,7 +5,11 @@ var Survey = models.Survey;
 var Resource = models.Resource;
 var SurveyQuestion = models.SurveyQuestion;
 var SurveyAnswer = models.SurveyAnswer;
+var Resource = models.Resource;
+var ContactList = models.ContactList;
+var contactListUserServices = require('./../services/contactListUser');
 
+var async = require('async');
 var q = require('q');
 var _ = require('lodash');
 var config = require('config');
@@ -88,11 +92,11 @@ function findAllSurveys(account) {
     }]
   }).then(function(surveys) {
     surveys.forEach(function(survey, index, array) {
-      if(survey.Resource !== null){
+      if(survey.Resource){
         survey.Resource.JSON = JSON.parse(decodeURI(survey.Resource.JSON));
       }
       survey.SurveyQuestions.forEach(function(question, index, array) {
-        if(question.Resource !== null){
+        if(question.Resource){
           question.Resource.JSON = JSON.parse(decodeURI(question.Resource.JSON));
         }
       });
@@ -113,10 +117,16 @@ function findSurvey(params) {
   Survey.find({
     where: { id: params.id },
     attributes: VALID_ATTRIBUTES.survey,
-    include: [{
-      model: SurveyQuestion,
-      attributes: VALID_ATTRIBUTES.question
-    }],
+    include: [
+      {
+        model: Resource
+      },
+      {
+        model: SurveyQuestion,
+        attributes: VALID_ATTRIBUTES.question,
+        include: [{ model: Resource }]
+      }
+    ],
     order: [
       [SurveyQuestion, 'order', 'ASC']
     ]
@@ -129,6 +139,16 @@ function findSurvey(params) {
         deferred.reject(MESSAGES.notConfirmed);
       }
       else {
+        if(survey.Resource){
+          survey.Resource.JSON = JSON.parse(decodeURI(survey.Resource.JSON));
+        }
+
+        survey.SurveyQuestions.forEach(function(question, index, array) {
+          if(question.Resource){
+            question.Resource.JSON = JSON.parse(decodeURI(question.Resource.JSON));
+          }
+        });
+        
         deferred.resolve(simpleParams(survey));
       }
     }
@@ -163,13 +183,89 @@ function removeSurvey(params, account) {
   return deferred.promise;
 };
 
+function createOrUpdateContactList(accountId, fields, t) {
+  let deferred = q.defer();
+
+  ContactList.find({
+    where: {
+      name: 'Survey',
+      accountId: accountId
+    }
+  }).then(function(contactList) {
+    if(contactList) {
+      fillCustomFields(fields, contactList);
+      contactList.customFields = _.uniq(contactList.customFields);
+
+      contactList.save().then(function(contactList) {
+        deferred.resolve(contactList);
+      }).catch(ContactList.sequelize.ValidationError, function(error) {
+        deferred.reject(prepareErrors(error));
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
+    }
+    else {
+      contactList = ContactList.build({
+        name: 'Survey',
+        accountId: accountId,
+        editable: false,
+      }, { transaction: t });
+
+      fillCustomFields(fields, contactList);
+
+      contactList.save().then(function(contactList) {
+        deferred.resolve(contactList);
+      }).catch(ContactList.sequelize.ValidationError, function(error) {
+        deferred.reject(prepareErrors(error));
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
+    }
+  }).catch(ContactList.sequelize.ValidationError, function(error) {
+    deferred.reject(prepareErrors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function fillCustomFields(fields, contactList) {
+  _.map(fields, function(value) {
+    if(!_.includes(contactList.defaultFields, value)) {
+      contactList.customFields.push(value);
+    }
+  });
+}
+
+function getContactListFields(questions) {
+  let array = [];
+  _.map(questions, function(question) {
+    _.map(question.answers, function(answer) {
+      if(answer.contactDetails) {
+        array = _.map(answer.contactDetails, 'model');
+      }
+    });
+  });
+
+  return array;
+}
+
 function createSurveyWithQuestions(params, account) {
   let deferred = q.defer();
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
   validParams.accountId = account.id;
 
   models.sequelize.transaction(function (t) {
-    return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t });
+    return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t }).then(function(survey) {
+      let fields = getContactListFields(survey.SurveyQuestions);
+
+      return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
+        return survey;
+      }, function(error) {
+        throw error;
+      });
+    });
   }).then(function(survey) {
     survey.update({ url: validUrl(survey) }).then(function(survey) {
       deferred.resolve(simpleParams(survey, MESSAGES.created));
@@ -254,15 +350,33 @@ function copySurvey(params, account) {
 
   Survey.find({
     where: { id: params.id, accountId: account.id },
-    attributes: ['accountId', 'name', 'description', 'thanks'],
-    include: [{
-      model: SurveyQuestion,
-      attributes: ['name', 'question', 'order', 'answers', 'type']
-    }]
+    attributes: ['accountId', 'name', 'description', 'thanks', 'resourceId'],
+    include: [
+      Resource,
+      {
+        model: SurveyQuestion,
+        attributes: ['name', 'question', 'order', 'answers', 'type', 'resourceId'],
+        include: Resource
+      }
+    ]
   }).then(function(survey) {
     if(survey) {
+
       createSurveyWithQuestions(survey, account).then(function(result) {
-        deferred.resolve(simpleParams(result.data, MESSAGES.copied));
+
+        async.parallel({
+          survey: function(callback) {
+            copySurveyResources(result.data, callback)
+          },
+          questions: function(callback) {
+            copyQuestionResources(result.data, callback)
+          }
+        }, function(err, copyed) {
+          findCopyedSurvey(copyed.survey).then(function(result) {
+            deferred.resolve(simpleParams(result, MESSAGES.copied));
+          })
+        });
+
       }, function(error) {
         deferred.reject(error);
       });
@@ -279,11 +393,126 @@ function copySurvey(params, account) {
   return deferred.promise;
 };
 
+function findCopyedSurvey(survey) {
+  let deferred = q.defer();
+
+  Survey.find({
+    where: {id: survey.id},
+    attributes: VALID_ATTRIBUTES.survey,
+    include: [
+      {
+        model: Resource
+      },
+      {
+        model: SurveyQuestion,
+        attributes: VALID_ATTRIBUTES.question,
+        include: [{ model: Resource }]
+      }
+    ],
+    order: [
+      [SurveyQuestion, 'order', 'ASC']
+    ]
+  }).then(function(survey) {
+
+    if(survey.Resource){
+      survey.Resource.JSON = JSON.parse(decodeURI(survey.Resource.JSON));
+    }
+
+    survey.SurveyQuestions.forEach(function(question, index, array) {
+      if(question.Resource){
+        question.Resource.JSON = JSON.parse(decodeURI(question.Resource.JSON));
+      }
+    });
+
+    deferred.resolve(survey);
+  })
+
+  return deferred.promise;
+}
+
+function copySurveyResources(survey, callback) {
+  if(survey.resourceId){
+    createNewResource(survey.resourceId).then(function(result) {
+      Survey.update({resourceId: result.id}, {
+        where: {id: survey.id},
+        returning: true
+      }).then(function(updatedSurvey) {
+        callback(null, updatedSurvey[1][0]);
+      })
+    })
+  }else{
+    callback(null, survey)
+  }
+}
+
+function copyQuestionResources(survey, callback) {
+  let questionsProcessed = 0;
+
+  survey.SurveyQuestions.forEach(function(question) {
+    if(question.resourceId){
+      createNewResource(question.resourceId);
+    }
+
+    questionsProcessed++;
+
+    if(questionsProcessed === survey.SurveyQuestions.length) {
+      callback();
+    }
+  });
+}
+
+function createNewResource(resourceId){
+  let deferred = q.defer();
+
+  Resource.find({
+    where: {id: resourceId},
+    attributes: ['topicId', 'userId', 'thumb_URL', 'URL', 'HTML', 'JSON', 'resourceType']
+  }).then(function(resource) {
+    Resource.create({
+      topicId: resource.topicId,
+      userId: resource.userId,
+      thumb_URL: resource.thumb_URL,
+      URL: resource.URL,
+      HTML: resource.HTML,
+      JSON: resource.JSON,
+      resourceType: resource.resourceType
+    }).then(function(copyedResource) {
+      deferred.resolve(copyedResource);
+    })
+  })
+
+  return deferred.promise;
+}
+
 function answerSurvey(params) {
   let deferred = q.defer();
   let validParams = validAnswerParams(params);
 
-  SurveyAnswer.create(validParams).then(function() {
+  models.sequelize.transaction(function (t) {
+    return Survey.find({ where: { id: validParams.surveyId }, include: [SurveyQuestion] }).then(function(survey) {
+      return SurveyAnswer.create(validParams, { transaction: t }).then(function() {
+        let fields = getContactListFields(survey.SurveyQuestions);
+
+        return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
+          if(!_.isEmpty(fields)) {
+            let clParams = findContactListAnswers(contactList, validParams.answers);
+            clParams.contactListId = contactList.id;
+
+            return contactListUserServices.bulkCreate([clParams], survey.accountId).then(function(result) {
+              return survey;
+            }, function(error) {
+              throw error;
+            });
+          }
+          else {
+            return survey;
+          }
+        }, function(error) {
+          throw error;
+        });
+      });
+    })
+  }).then(function(survey) {
     deferred.resolve(simpleParams(null, MESSAGES.completed));
   }).catch(SurveyAnswer.sequelize.ValidationError, function(error) {
     deferred.reject(prepareErrors(error));
@@ -293,6 +522,34 @@ function answerSurvey(params) {
 
   return deferred.promise;
 };
+
+function findContactListAnswers(contactList, answers) {
+  let values;
+  _.map(answers, function(object, key) {
+    if(object.contactDetails) {
+      values = object.contactDetails;
+    }
+  });
+
+  let params = { customFields:[], defaultFields:[] };
+  let object = {};
+  _.map(contactList.customFields, function(field) {
+    if(values[field]) {
+      object[field] = values[field];
+    }
+  });
+  params.customFields = object;
+
+  object = {};
+  _.map(contactList.defaultFields, function(field) {
+    if(values[field]) {
+      object[field] = values[field];
+    }
+  });
+  params.defaultFields = object;
+
+  return params;
+}
 
 function confirmSurvey(params, account) {
   let deferred = q.defer();
