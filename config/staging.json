@@ -39,13 +39,10 @@
   "googleClientID": "101229485448-ghjvvk9ctatrbrle6ac05oevk5ea2ac7.apps.googleusercontent.com",
   "googleClientSecret": "jGmLwpE-aCJSb0kACO1wDawC",
   "googleCallbackURL": "http://insider.kliiko.diatomdemo.com:8080/auth/google/callback",
-<<<<<<< HEAD
+  "chatUploadDir": "/var/lib/jenkins/jobs/Kliiko Demo/workspace/chatRoom/public/uploads/",
 
   "fileUploadPath": "public/uploads",
 
-=======
-  "chatUploadDir": "/var/lib/jenkins/jobs/Kliiko Demo/workspace/chatRoom/public/uploads/",
->>>>>>> master
   "chatConf":{
     "mode": "live",
     "conflict": "drop existing",
@@ -59,8 +56,8 @@
       "configPath": "config/",
       "adminPath": "admin/",
       "chatRoomPath": "chat_room/",
-          "convertPath": "/usr/bin/convert",
-          "identifyPath": "/usr/bin/identify"
+      "convertPath": "/usr/bin/convert",
+      "identifyPath": "/usr/bin/identify"
     }
   },
   "chargebee": {
