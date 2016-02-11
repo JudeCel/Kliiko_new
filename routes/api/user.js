@@ -6,14 +6,12 @@
  */
 
 "use strict";
-var models = require('./../../models');
-let User = require('./../../models').User;
-let AccountUser = require('./../../models').AccountUser ;
 let changePasswordService = require('../../services/changePassword');
 let _ = require('lodash');
 let chargebeeModule = require('./../../modules/chargebee/chargebeeModule');
 let q = require('q');
 let policy = require('./../../middleware/policy.js')
+let AccountUserService = require('../../services/accountUser');
 
 module.exports = {
   userGet: userGet,
@@ -22,45 +20,13 @@ module.exports = {
   changePassword:changePassword
 };
 
-//updates AccountUsers for userPost method below
-function updateAccountUser(req, transaction, callback) {
-  AccountUser.update(req.body,{
-    where: {
-      UserId: req.user.id
-    },
-    transaction: transaction
-  }).then(function (result) {
-      callback(null, result);
-  }).catch(function (err) {
-    callback(err);
-  });
-}
-
 function userPost(req, res, next) {
-  models.sequelize.transaction().then(function(t) {
-    User.find({
-      where: {
-        id: req.user.id
-      }
-    }).then(function (result) {
-      result.update(req.body, {transaction: t}).then(function(updateResult) {
-        updateAccountUser(req, t, function(err, accountUserResult) { 
-          if (err) {
-            t.rollback().then(function() {
-            res.send({error:err});
-            });
-          } else {
-            t.commit().then(function() {
-              res.send(req.body);
-            });
-          }
-        });
-      }).catch(function(updateError) {
-        res.send({error:updateError});
-      });
-    }).catch(function (err) {
+  AccountUserService.updateWithUserId(req.body, req.user.id, function(err) { 
+    if (err) {
       res.send({error:err});
-    });
+    } else {
+      res.send(req.body);
+    }
   });
 }
 
