@@ -15,9 +15,13 @@
 
                 <!---->
 
-                <section id="contact-details-import-preview-table" ng-show="clc.lists.importPreviewArray.length">
+                <section id="contact-details-import-preview-table" >
                     <h4>Contacts That will be Added</h4>
-                    <table class='table table-responsive table-dashboardElements'>
+                    <div  ng-show="!clc.lists.importPreviewArray.length">
+                        <p><strong>No valid contacts has been found, there is nothing to import. Check errors in tables below</strong></p>
+                        <br>
+                    </div>
+                    <table class='table table-responsive table-dashboardElements' ng-show="clc.lists.importPreviewArray.length">
                         <thead>
                         <tr>
 
@@ -115,7 +119,7 @@
 
                         <div class="pull-right">
 
-                            <div class='btn-standart btn-green' ng-class="{'btn-disabled': !clc.importData.file.name}" ng-click='clc.addImportedContacts()'>Add</div>
+                            <div class='btn-standart btn-green' ng-class="{'btn-disabled': !clc.importData.file.name || !clc.lists.importPreviewArray.length}" ng-click='clc.addImportedContacts()' ng-hide--="!clc.lists.importPreviewArray.length">Add</div>
                         </div>
 
                     </div>

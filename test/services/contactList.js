@@ -260,7 +260,7 @@ describe('Services -> ContactList', () => {
         });
       });
 
-      describe.only('should fail because duplicate email in file', function() {
+      describe('should fail because duplicate email in file', function() {
       var testFileValid = { xls: 'test/fixtures/contactList/list_valid_v2.xls', csv: 'test/fixtures/contactList/list_valid.csv' };
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {

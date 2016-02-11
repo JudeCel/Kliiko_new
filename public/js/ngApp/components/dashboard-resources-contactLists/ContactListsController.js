@@ -399,15 +399,6 @@
           domServices.modal('modals-import-preview');
           processImportData(res);
 
-           //if (res.valid) {
-           //  vm.lists.generateImportPreview(res.data.valid);
-           //  domServices.modal('modals-import-preview');
-           //
-           //} else  {
-           //  processImportData(res);
-           //  vm.addNewListFieldMapping();
-           // }
-
         },
         function(err) {
           messenger.error('Import Failed');
@@ -569,6 +560,8 @@
       updateActiveCustomList(newList, parsedList);
     };
     function addImportedContacts() {
+
+      if (!vm.lists.self.importPreviewArray.length) return;
 
       vm.lists.addImportedContacts().then(
         function(res) {

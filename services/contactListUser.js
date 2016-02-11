@@ -124,7 +124,6 @@ function bulkCreate(list, accountId) {
           });
         }else {
           t.commit().then(function() {
-            console.log(32323232323232, deferred);
             deferred.resolve(results);
           });
         }
