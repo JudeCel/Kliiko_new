@@ -358,13 +358,19 @@
 
     }
 
-    function generateImportPreview(respData, contactsArray) {
+    /**
+     * Fill out 3 arrays, that will be reapeated as table:
+     * valid, invalid , dublicatedFields
+     *
+     * @param respData {object}
+     */
+    function generateImportPreview(respData) {
       var self = this;
 
-      //if (!angular.isArray(contactsArray)) {
-      //  dbg.error('#ListItemModel > generateImportPreview > input params expected to be an array ', contactsArray );
-      //  return;
-      //}
+      if (!angular.isObject(respData)) {
+        dbg.error('#ListItemModel > generateImportPreview > input params expected to be an object ', respData );
+        return;
+      }
 
       self.importPreviewArray = [];
       self.importPreviewInvalidArray = [];

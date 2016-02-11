@@ -482,6 +482,7 @@
 
     //assigns contact info to mapped fields
     function mappingFieldsContinue() {
+      var output = {valid:[], invalid:[], duplicateEntries: []};
       var userList = [];
       for (var j = 0; j < vm.validContactList.length; j++ ) {
         var user = {};
@@ -499,9 +500,11 @@
         userList.push(user);
       }//for
       vm.contactListToAdd = userList;
-      
-      vm.lists.generateImportPreview(userList);
-      //vm.importPreviewArray = vm.lists.activeList.importPreviewArray;
+
+      output.valid = userList;
+
+      vm.lists.generateImportPreview(output);
+
       domServices.modal('contactList-addNewListFieldsModal', 'close');
       domServices.modal('modals-import-preview');
     }

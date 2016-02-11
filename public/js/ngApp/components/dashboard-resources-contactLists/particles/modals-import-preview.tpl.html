@@ -44,7 +44,7 @@
                 </section><!--/class="banners-section"-->
 
                 <section id="contact-details-import-preview-table-with-errors" ng-show="clc.lists.importPreviewInvalidArray.length">
-                    <h4>Contacts With Erros</h4>
+                    <h4>Contacts With Errors (would not be imported)</h4>
                     <table class='table table-responsive table-dashboardElements'>
                         <thead>
                         <tr>
@@ -61,7 +61,12 @@
                         </thead>
                         <tbody>
                         <tr class="member-row" ng-repeat='member in clc.lists.importPreviewInvalidArray | orderBy: clc.tableSort.by : clc.tableSort.reverse' ng-class="{'selected':member._selected}">
-                            <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index">{{ member[tableRow] || '-' }}</td>
+                            <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index">
+                                <code ng-show="member.validationErrors[tableRow]">{{ member.validationErrors[tableRow] }}</code><br>
+                               {{ member[tableRow] || '-' }}
+
+
+                            </td>
                         </tr>
 
                         </tbody>
@@ -72,7 +77,7 @@
                 </section><!--/class="banners-section"-->
 
                 <section id="contact-details-import-preview-table-dublicates" ng-show="clc.lists.importPreviewDublicatesArray.length">
-                    <h4>Contacts With Erros</h4>
+                    <h4>Dublicated Entries (would not be imported)</h4>
                     <table class='table table-responsive table-dashboardElements'>
                         <thead>
                         <tr>
