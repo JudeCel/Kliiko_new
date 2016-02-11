@@ -7,6 +7,10 @@ var sessionTopics = models.sessionTopics;
 var async = require('async');
 var q = require('q');
 
+const ROLES = {
+  facilitator: facilitator
+}
+
 const MESSAGES = {
   setUp: "You have successfully initialized your chat session. Please continue in Step two."
 }
@@ -37,6 +41,8 @@ function setUp(params) {
 }
 
 function facilitatiorAndTopics(params) {
+  let deferred = q.defer();
+
   async.parallel({
     sessionFacilitator: function(callback) {
       addFacilitator(sessionId, accountUserId, callback)
@@ -44,22 +50,65 @@ function facilitatiorAndTopics(params) {
     sessionTopics: function(callback) {
       addTopics(sessionId, topicIds, callback)
     }
-  }, function(err, results) {
-    
+  }, function(errors, results) {
+    if(errors){
+      deferred.reject(errors);
+    }else{
+      deferred.resolve(result);
+    }
   });
+
+  return deferred.promise;
 }
 
 function addFacilitator(sessionId, accountUserId, callback) {
-  let memberIds = [];
+  findSession(sessionId).then(function(session) {
+    addSessionMember.(accountUserId, session, ROLES.facilitator, "NOIS name").then(function(result) {
+      callback(null, result)
+    }, function(error) {
+      callback(error)
+    })
+  }, function(error) {
+    callback(error)
+  })
+}
 
-  SessionMember.create({
-    sessionId: sessionId,
-    accountUserId: accountUserId,
-    role: 'facilitator'
+function findSession(sessionId) {
+  let deferred = q.defer();
+
+  Session.find({
+    where: {id: sessionId}
+  }).then(function(result) {
+    deferred.resolve(result);
+  }).catch(function(error) {
+    deferred.reject(errors);
   })
 
-  callback(null, memberIds);
+  return deferred.promise;
 }
+
+function addSessionMember(accountUserId, session, role, name) {
+  let deferred = q.defer();
+
+  let params = { role: role,
+                 accountUserId: accountUserId,
+                 username: name,
+                 avatar_info: "0:4:3:1:4:3" }
+
+  session.createSessionMember(params).then(function(result) {
+    SessionMemberService.createToken(result.id).then(function() {
+      deferred.resolve(result);
+    },function(error) {
+      deferred.reject(error);
+    })
+  })
+  .catch(function(error) {
+    callback(error);
+  });
+
+  return deferred.promise;
+}
+
 
 function addTopics(sessionId, topicIds, callback) {
   let sessionTopicIds = [];
