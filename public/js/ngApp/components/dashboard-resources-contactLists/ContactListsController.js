@@ -233,16 +233,7 @@
           messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
         },
         function (err) {
-          vm.modalErrors = err
-          // if (err.error) {
-          //   messenger.error(err.error.message);
-          // }
-          // if (err.errors) {
-          //   var e = err.errors;
-          //   for (var i = 0, len = e.length; i < len ; i++) {
-          //     vm.modalErrors[ e[i].path ] = e[i].message;
-          //   }
-          // }
+          vm.modalErrors = err;
         }
       );
 
@@ -263,16 +254,7 @@
           messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
         },
         function (err) {
-          vm.modalErrors = err
-          // if (err.error) {
-          //   messenger.error(err.error.message);
-          // }
-          // if (err.errors) {
-          //   var e = err.errors;
-          //   for (var i = 0, len = e.length; i < len ; i++) {
-          //     vm.modalErrors[ e[i].path ] = e[i].message;
-          //   }
-          // }
+          vm.modalErrors = err;
         }
       );
 
