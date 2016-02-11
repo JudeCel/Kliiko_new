@@ -54,7 +54,7 @@
               <li><a href=""><i class="icon-remove"></i>Import Excel (not ready)</a></li>
               <li><a href=""><i class="icon-remove"></i>Import CSV (not ready)</a></li>
             </div>
-            <div class='btn-standart btn-green pull-right' ng-click='clc.editCustomFields()' ng-hide="!clc.lists.activeList.members.length">Edit Custom Fields</div>
+            <div class='btn-standart btn-green pull-right' ng-click='clc.editCustomFields()' ng-hide="!clc.lists.activeList.editable">Edit Custom Fields</div>
 
           </div>
 
@@ -285,7 +285,7 @@
               <uib-tab heading="Contact List Name" active="clc.modalTab1">
                 <form ng-submit="clc.submitNewList()">
                   <div class="row text-center">
-                    <input id="new-list-name-input" ng-model="clc.newList.name" type="text" ng-disabled="!clc.lists.activeList.editable">
+                    <input id="new-list-name-input" ng-model="clc.newList.name" type="text">
                     <div id="new-list-name-help-text">
                       <p>You can define up to 16 of your own extra fields to your new List, for a more in-depth profile of your Contacts</p>
                       <p>Click on Add Custom Fields to name your fields, which you can also modify at any time later on.</p>
