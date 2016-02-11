@@ -288,7 +288,7 @@
           vm.newContact = {customFields:{}};
 
           domServices.modal('contactList-addContactManual', 'close');
-          messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
+          messenger.ok('Contact '+ newContact.firstName + ' has been updated');
         },
         function (err) {
           vm.modalErrors = err;

@@ -48,7 +48,7 @@
               </div>
             </span>
 
-            <div class='btn-standart btn-green pull-right' ng-click='clc.editCustomFields()' ng-hide="!clc.lists.activeList.members.length">Edit Custom Fields</div>
+            <div class='btn-standart btn-green pull-right' ng-click='clc.editCustomFields()' ng-hide="!clc.lists.activeList.editable">Edit Custom Fields</div>
 
             <div custom-select-directive data-title="Add Contacts" data-id="contact-lists-add-button-1" class="custom-select-directive pull-right">
               <li ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
