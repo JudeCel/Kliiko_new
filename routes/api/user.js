@@ -6,8 +6,9 @@
  */
 
 "use strict";
-
+var models = require('./../../models');
 let User = require('./../../models').User;
+let AccountUser = require('./../../models').AccountUser ;
 let changePasswordService = require('../../services/changePassword');
 let _ = require('lodash');
 let chargebeeModule = require('./../../modules/chargebee/chargebeeModule');
@@ -21,19 +22,45 @@ module.exports = {
   changePassword:changePassword
 };
 
-function userPost(req, res, next) {
-  User.find({
+//updates AccountUsers for userPost method below
+function updateAccountUser(req, transaction, callback) {
+  AccountUser.update(req.body,{
     where: {
-      id: req.user.id
-    }
+      UserId: req.user.id
+    },
+    transaction: transaction
   }).then(function (result) {
-    result.update(req.body).then(function(updateResult) {
-      res.send(req.body);
-    }).catch(function(updateError) {
-      res.send({error:updateError});
-    });
+      callback(null, result);
   }).catch(function (err) {
-    res.send({error:err});
+    callback(err);
+  });
+}
+
+function userPost(req, res, next) {
+  models.sequelize.transaction().then(function(t) {
+    User.find({
+      where: {
+        id: req.user.id
+      }
+    }).then(function (result) {
+      result.update(req.body, {transaction: t}).then(function(updateResult) {
+        updateAccountUser(req, t, function(err, accountUserResult) { 
+          if (err) {
+            t.rollback().then(function() {
+            res.send({error:err});
+            });
+          } else {
+            t.commit().then(function() {
+              res.send(req.body);
+            });
+          }
+        });
+      }).catch(function(updateError) {
+        res.send({error:updateError});
+      });
+    }).catch(function (err) {
+      res.send({error:err});
+    });
   });
 }
 
