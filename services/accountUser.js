@@ -3,6 +3,7 @@
 var models = require('./../models');
 var filters = require('./../models/filters');
 var AccountUser = models.AccountUser;
+var User = models.User;
 var _ = require("lodash");
 var q = require('q');
 
@@ -48,7 +49,50 @@ function buidAttrs(params, accountId, role) {
   return _.merge(params, defaultStruct);
 }
 
+function updateAccountUserWithId(data, userId, transaction, callback) {
+  AccountUser.update(data, {
+    where: {
+      UserId: userId
+    },
+    transaction: transaction
+  }).then(function (result) {
+      callback(null, result);
+  }).catch(function (err) {
+    callback(err);
+  });
+}
+
+function updateWithUserId(data, userId, callback) {
+    models.sequelize.transaction().then(function(t) {
+      User.find({
+        where: {
+          id: userId
+        }
+      }).then(function (result) {
+        result.update(data, {transaction: t}).then(function(updateResult) {
+          updateAccountUserWithId(data, userId, t, function(err, accountUserResult) {
+            if (err) {
+              t.rollback().then(function() {
+              callback(err);
+              });
+            } else {
+              t.commit().then(function() {
+                callback();
+              });
+            }
+          });
+        }).catch(function(updateError) {
+          callback(updateError);
+        });
+      }).catch(function (err) {
+        callback(err);
+      });
+  });
+}
+
+
 module.exports = {
   create: create,
-  createAccountManager: createAccountManager
+  createAccountManager: createAccountManager,
+  updateWithUserId: updateWithUserId
 }

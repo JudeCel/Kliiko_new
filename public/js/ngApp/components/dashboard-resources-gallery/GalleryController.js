@@ -141,6 +141,7 @@
           }else{
              GalleryServices.postuploadData(resourceParams).then(function(res) {
               if(res.error){
+                $scope.newResource.fileTst = null;
                 messenger.error(res.error);
                 $scope.submitIsDisabled = false;
                 progressbar.complete();

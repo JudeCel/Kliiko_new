@@ -39,6 +39,9 @@
   "googlePlusClientSecret": "hpT37ABiJ3rxxIDw96idBuBP",
   "googlePlusCallbackURL": "http://insider.focus.com:5678/auth/google/callback",
   "openexchangeratesAppId": "fc9b3ecd71274202a9f7935766e449a1",
+
+  "fileUploadPath": "public/uploads",
+
   "chargebee": {
     "site" : "kliikotst-test",
     "api_key" : "test_M84JneCGcdmd5Zp8jpDqLtH9twyR9EWUr"

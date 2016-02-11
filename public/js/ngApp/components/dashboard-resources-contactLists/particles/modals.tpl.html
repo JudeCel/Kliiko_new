@@ -1,0 +1,307 @@
+<!----------- MODALS ---------------------->
+
+<section>
+    <!-- add contact manually -->
+    <div id="contactList-addContactManual" class="modal fade"  role="dialog">
+        <div class="modal-dialog contactDetailsModal" style="width: 800px">
+            <div class="modal-content border-green border-radius-none">
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss="modal">&times;</button>
+                    <h2 class='modal-title text-center'>{{clc.contactModalTitle}}</h2>
+                </div>
+
+                <div class='modal-body text-gray-medium'>
+                    <ng-include ng-hide="clc.importData.excel || clc.importData.csv" src="clc.basePath+'particles/modals-contact-table.tpl.html'"></ng-include>
+                    <ng-include ng-show="clc.importData.excel || clc.importData.csv" src="clc.basePath+'particles/modals-excel-csv-import.tpl.html'"></ng-include>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- add new list-->
+    <div id="contactList-addNewListModal" class="modal fade"  role="dialog">
+        <div class="modal-dialog contactDetailsModal" style="width: 800px">
+            <div class="modal-content border-green border-radius-none">
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss="modal">&times;</button>
+                    <h2 class='modal-title text-center'>{{clc.listModalTitle}}</h2>
+                </div>
+
+                <div class='modal-body text-gray-medium'>
+                    <uib-tabset justified="true">
+                        <uib-tab heading="Contact List Name" active="clc.modalTab1">
+                            <form ng-submit="clc.submitNewList()">
+                                <div class="row text-center">
+                                    <input id="new-list-name-input" ng-model="clc.newList.name" type="text">
+                                    <div id="new-list-name-help-text">
+                                        <p>You can define up to 16 of your own extra fields to your new List, for a more in-depth profile of your Contacts</p>
+                                        <p>Click on Add Custom Fields to name your fields, which you can also modify at any time later on.</p>
+                                    </div>
+                                </div>
+                                <div class='row'>
+                                    <div class='col-md-12'>
+
+                                        <div class='btn-standart btn-red pull-left modals-btn' data-dismiss="modal">Cancel</div>
+                                        <div class='btn-standart btn-green pull-right modals-btn' ng-show="!clc.listIdToEdit" ng-click="clc.submitNewList()">Add</div>
+                                        <div class='btn-standart btn-green pull-right modals-btn' ng-show="clc.listIdToEdit"  ng-click="clc.updateList()" ng-class="{disabled:clc.newListErrorMessage}">Update</div>
+
+                                    </div>
+                                </div>
+                            </form>
+
+                        </uib-tab>
+                        <uib-tab heading="Custom Fields" active="clc.modalTab2">
+                            <form id="new-list-custom-fields" ng-submit="clc.submitNewList()">
+                              <ng-include src="clc.basePath+'particles/modals-custom-fields.tpl.html'"></ng-include>
+                                <div class='row'>
+                                    <div class='col-md-12'>
+
+                                        <div class='btn-standart btn-red pull-left modals-btn' data-dismiss="modal">Cancel</div>
+                                        <div class='btn-standart btn-green pull-right modals-btn' ng-show="!clc.listIdToEdit" ng-click="clc.submitNewList()">Add</div>
+                                        <div class='btn-standart btn-green pull-right modals-btn' ng-show="clc.listIdToEdit"  ng-click="clc.updateList()" ng-class="{disabled:clc.newListErrorMessage}">Update</div>
+
+                                    </div>
+                                </div>
+                            </form>
+                        </uib-tab>
+                    </uib-tabset>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- drag and drop fields-->
+    <div id="contactList-addNewListFieldsModal" class="modal fade" role="dialog">
+        <div class="modal-dialog contactDetailsModal">
+            <div class="modal-content border-green border-radius-none">
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss="modal">&times;</button>
+                    <h2 class='modal-title text-center'>Map fields from file</h2>
+                </div>
+                
+                  <div class='modal-body text-gray-medium'>
+                    <uib-tabset justified="true">
+                      <uib-tab heading="Field Mapping" active="clc.modalTab1">
+                      <form id="new-list-custom-fields-drag-drop">
+                        <div class="row r">
+                          <div id="contactList-fieldColumnLeft" class="col-md-4 panel panel-default">
+                            <h3>File fields</h3>
+                            <div>
+                              <table>
+                                <tr ng-repeat="f in clc.importedFields track by $index">
+                                  <td>
+                                      <div class="contactList-drop-item" ng-drag="true" ng-drag-data="f">{{f}}
+                                         <img src="/icons/ic_move.png" class="pull-left ic-move">
+                                      </div>
+                                  </td>
+                                </tr>
+                              </table>
+                            </div>                               
+                          </div>
+                          <div class="col-md-1"></div>
+                          <div id="contactList-fieldColumnRight" class="col-md-6 panel panel-default">
+                            <h3>Contact List</h3>
+                            <!-- Template for table below -->
+                            <script type="text/ng-template" id="fieldTemplate.html">                               
+                                <td>{{cl.name}}</td> 
+                                <td class="contactList-dropPlaceholderCell">
+                                  <div class="contactList-dropPlaceholder">                                                                
+                                    <div ng-show="cl.field" class="contactList-drop-item" ng-drag="true" ng-drag-data="cl">{{cl.field}}
+                                        <img src="/icons/ic_move.png" class="pull-left ic-move">
+                                        <button  ng-click="clc.clearDoppedItem(cl)" type='button' class='close'>&times;</button>
+                                    </div>
+                                  </div>
+                                </td>
+                            </script>
+                            <div>
+                              <table>
+                                <tr ng-repeat="cl in clc.contactListDropItems.defaultFields track by $index"  ng-drop="true" ng-drop-success="clc.onFieldMapDrop($data, cl)" ng-include="'fieldTemplate.html'">
+                                <tr ng-repeat="cl in clc.contactListDropItems.customFields track by $index"  ng-drop="true" ng-drop-success="clc.onFieldMapDrop($data, cl)" ng-include="'fieldTemplate.html'">
+                              </table>
+                              <div class="input-group input-group-sm">
+                                <input id="additionalMappingFieldname" type="text" class="form-control"  ng-model="clc.additionalMappingFieldname" placeholder="Add Custom Field">
+                                <span class="input-group-btn">
+                                  <button id="additionalMappingFieldnameBtn" class="btn btn-standart btn-blue" type="button" ng-click="clc.addCustomField();" aria-describedby="additionalMappingFieldname">
+                                      +
+                                  </button>
+                                </span>                         
+                              </div>
+                           </div>
+                            
+                        </div>
+
+                        <div class='row modal-footer'>
+                          <div id="remap-footer-btns" class='col-md-12'>
+                              <div class="pull-left">
+                                  <div class='btn-standart btn-red  modals-btn' data-dismiss="modal">Cancel</div>
+                                  <div class='btn-standart btn-green'  ng-click='clc.reUpload()'>Re-Upload File</div>
+                              </div>
+                            <div class='btn-standart btn-green pull-right modals-btn' ng-click="clc.mappingFieldsContinue()">Continue</div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                    </uib-tab >
+                  
+                  <uib-tab heading="Custom Fields" active="clc.modalTab2">
+                    <div class='row contactList-customfields'>
+                      <ng-include src="clc.basePath+'particles/modals-custom-fields.tpl.html'"></ng-include>
+                      <div class='btn-standart btn-green pull-right modals-btn' ng-click="clc.updateCustomFieldList()" ng-class="{disabled:clc.newListErrorMessage}">Update</div>
+                    </div>
+                  </uib-tab>
+              </uib-tabset>     
+          </div>
+        </div>
+
+      </div>
+    </div>
+  
+    <!-- Manage columns view -->
+    <div id="contactList-manageColumns" class="modal fade"  role="dialog">
+        <div class="modal-dialog contactDetailsModal" style="width: 800px">
+            <div class="modal-content border-green border-radius-none">
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss="modal">&times;</button>
+                    <h2 class='modal-title text-center'>Manage Columns in View</h2>
+                </div>
+                <div class='modal-body text-gray-medium'>
+                    <form class='form-horizontal' role='form'>
+
+                        <!------------------------------------------>
+
+                        <uib-accordion close-others="false">
+                            <uib-accordion-group is-open="clc.modContentBlock.generalDetails">
+                                <uib-accordion-heading>
+                                    <div class="panel-label">
+                                        General Details<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': clc.modContentBlock.generalDetails, 'glyphicon-chevron-right': !clc.modContentBlock.generalDetails}"></i>
+                                    </div>
+                                </uib-accordion-heading>
+                    <span class="row">
+                      <span class="col-md-3" ng-repeat="column in clc.lists.activeList.availableTables() track by $index">
+                        <div class="check fields-to-show">
+                            <input id="dashboard-contact-lists-fields-{{ $index }}" ng-click="clc.lists.activeList.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.selectedTables[column]" type="checkbox" >
+                            <label for="dashboard-contact-lists-fields-{{ $index }}" ></label>{{ column }}
+                        </div>
+
+                      </span>
+                    </span>
+
+                            </uib-accordion-group>
+
+
+                            <uib-accordion-group is-open="clc.modContentBlock.history">
+                                <uib-accordion-heading>
+                                    <div class="panel-label">
+                                        Participant Invitation History <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': clc.modContentBlock.history, 'glyphicon-chevron-right': !clc.modContentBlock.history}"></i>
+                                    </div>
+                                </uib-accordion-heading>
+
+                    <span class="row">
+                      <span class="col-md-3" ng-repeat="column in clc.lists.activeList.participantsFields">
+                        <div class="check fields-to-show">
+                            <input id="dashboard-contact-lists-participants-{{ $index }}" ng-click="clc.lists.activeList.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.selectedTables[column]" type="checkbox" >
+                            <label for="dashboard-contact-lists-participants-{{ $index }}" ></label>{{ column }}
+                        </div>
+
+                      </span>
+                    </span>
+
+                            </uib-accordion-group>
+                        </uib-accordion>
+
+                        <!------------------------------------------>
+
+                        <div class='row'>
+                            <div class='col-md-12'>
+                                <div class='btn-standart btn-green pull-right' data-dismiss="modal">Done</div>
+
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- contactList-importSteps -->
+    <div id="contactList-importSteps" class="modal fade"  role="dialog">
+        <div class="modal-dialog contactDetailsModal" style="width: 800px">
+            <div class="modal-content border-green border-radius-none">
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss="modal">&times;</button>
+                    <h2 class='modal-title text-center'>Import Contacts</h2>
+                </div>
+                <div class='modal-body text-gray-medium'>
+                    <form class='form-horizontal' role='form'>
+
+                        <!------------------------------------------>
+
+                        <uib-accordion close-others="false">
+                            <uib-accordion-group is-open="clc.modContentBlock.generalDetails">
+                                <uib-accordion-heading>
+                                    <div class="panel-label">
+                                        General Details<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': clc.modContentBlock.generalDetails, 'glyphicon-chevron-right': !clc.modContentBlock.generalDetails}"></i>
+                                    </div>
+                                </uib-accordion-heading>
+                    <span class="row">
+                      <span class="col-md-3" ng-repeat="column in clc.lists.activeList.availableTables() track by $index">
+                        <div class="check fields-to-show">
+                            <input id="dashboard-contact-lists-fields-{{ $index }}" ng-click="clc.lists.activeList.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.selectedTables[column]" type="checkbox" >
+                            <label for="dashboard-contact-lists-fields-{{ $index }}" ></label>{{ column }}
+                        </div>
+
+                      </span>
+                    </span>
+
+                            </uib-accordion-group>
+
+
+                            <uib-accordion-group is-open="clc.modContentBlock.history">
+                                <uib-accordion-heading>
+                                    <div class="panel-label">
+                                        Participant Invitation History <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': clc.modContentBlock.history, 'glyphicon-chevron-right': !clc.modContentBlock.history}"></i>
+                                    </div>
+                                </uib-accordion-heading>
+
+                    <span class="row">
+                      <span class="col-md-3" ng-repeat="column in clc.lists.activeList.participantsFields">
+                        <div class="check fields-to-show">
+                            <input id="dashboard-contact-lists-participants-{{ $index }}" ng-click="clc.lists.activeList.toggleTableToShow(column)" class="kliiko-checkbox checkbox-btn btn-green" ng-model="clc.selectedTables[column]" type="checkbox" >
+                            <label for="dashboard-contact-lists-participants-{{ $index }}" ></label>{{ column }}
+                        </div>
+
+                      </span>
+                    </span>
+
+                            </uib-accordion-group>
+                        </uib-accordion>
+
+                        <!------------------------------------------>
+
+                        <div class='row'>
+                            <div class='col-md-12'>
+                                <div class='btn-standart btn-green pull-right' data-dismiss="modal">Done</div>
+
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- import preview -->
+    <ng-include src="clc.basePath+'particles/modals-import-preview.tpl.html'"></ng-include>
+
+
+</section>
