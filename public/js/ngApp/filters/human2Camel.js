@@ -8,16 +8,16 @@
 
       var output = input;
       reverse
-        ? human2Camel()
-        : camel2Human();
+        ? camel2Human()
+        : human2Camel();
 
-      function camel2Human() {
+      function human2Camel() {
         output = output.replace(/(?:^\w|[A-Z]|\b\w)/g, function(letter, index) {
           return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
         }).replace(/\s+/g, '');
       }
 
-      function human2Camel() {
+      function camel2Human() {
         output = output.
         // insert a space before all caps
         replace(/([A-Z])/g, ' $1').

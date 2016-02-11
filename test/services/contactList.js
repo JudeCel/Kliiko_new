@@ -212,7 +212,7 @@ describe('Services -> ContactList', () => {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
               assert.equal(result.valid.length, 0);
-              assert.equal(result.invalid.length, 4);
+              assert.equal(result.invalid.length, 5);
               callback(null, true);
             }, function(error) {
               callback(error);

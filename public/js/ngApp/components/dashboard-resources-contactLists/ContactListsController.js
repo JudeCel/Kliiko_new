@@ -24,6 +24,7 @@
     vm.validContactList = [];
     vm.contactListToAdd = [];
 
+    vm.changeActiveList = changeActiveList;
     vm.addNewList = addNewList;
     vm.submitNewList = submitNewList;
     vm.updateList = updateList;
@@ -54,6 +55,11 @@
     vm.mappingFieldsContinue = mappingFieldsContinue;
 
 
+    function changeActiveList(index) {
+      selectAll(true);
+      vm.lists.changeActiveList(index);
+      vm.allSelected = false;
+    }
 
     /**
      * Open modal and prepare variables
@@ -332,9 +338,13 @@
 
     /**
      * Toggle selection for all items in contacts list
+     * @param [forceUnselect] {boolean} if true - will not togle, but will turn all off
      */
-    function selectAll() {
-      vm.allSelected = !vm.allSelected;
+    function selectAll(forceUnselect) {
+      forceUnselect
+        ? vm.allSelected = false
+        : vm.allSelected = !vm.allSelected;
+
       for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
         vm.lists.activeList.members[i]._selected = vm.allSelected;
       }
@@ -351,7 +361,9 @@
 
       if (!ids.length) return;
 
+
       removeContacts(ids);
+      selectAll();
     }
 
     function startImport() {
