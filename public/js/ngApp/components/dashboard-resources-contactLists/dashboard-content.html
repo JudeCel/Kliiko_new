@@ -123,7 +123,7 @@
             <h2 class='modal-title text-center'>{{clc.contactModalTitle}}</h2>
           </div>
           <div class='modal-body text-gray-medium'>
-            <form class='form-horizontal' role='form'>
+            <form class='form-horizontal' role='form' novalidate>
               <div class='col-md-6'>
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First name<span class='text-red-dark'>*</span></label>
@@ -145,7 +145,7 @@
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='email'>Email<span class='text-red-dark'>*</span></label>
                   <div class='col-md-8'>
                     <span class='has-error text-red-dark'>{{ clc.modalErrors.email }}</span>
-                    <input type='email' class='form-control' id='email' placeholder='Email' ng-model='clc.newContact.email'>
+                    <input type='text' class='form-control' id='email' placeholder='Email' ng-model='clc.newContact.email'>
                   </div>
                 </div>
 
