@@ -71,7 +71,7 @@
           messenger.ok('New List "'+ res.name + '" added');
 
           vm.lists.changeActiveList(vm.lists.items.length -1);
-
+          vm.newList.name = "";
         },
         function(err) {
           messenger.error('Could not create new list: '+ err);
