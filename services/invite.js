@@ -1,6 +1,7 @@
 'use strict';
 
 var models = require('./../models');
+var filters = require('./../models/filters');
 var Invite = models.Invite;
 var User = models.User;
 var Account = models.Account;
@@ -38,7 +39,7 @@ function createInvite(params, callback) {
       callback({ email: 'User has already been invited' });
     }
     else {
-      callback(prepareErrors(error));
+      callback(filters.errors(error));
     }
   });
 };
@@ -80,7 +81,7 @@ function removeInvite(invite, callback) {
     Invite.destroy({ where: { accountUserId: invite.accountUserId, accountId: invite.accountId } }).then(function(res) {
       callback(null, true);
     }).catch(function(error) {
-      callback(prepareErrors(error));
+      callback(filters.errors(error));
     });
   }
 };
@@ -153,7 +154,7 @@ function setAccountUserActive(accountUserId, callback) {
   AccountUser.update({status: "active"}, { where:{ id: accountUserId } }).then(function(result) {
     callback(null, result);
   },function(err) {
-    callback(prepareErrors(error));
+    callback(filters.errors(error));
   })
 }
 
@@ -162,7 +163,7 @@ function updateUser(params, invite, callback) {
     User.update(params, { where: { id: invite.userId } }).then(function(result) {
       callback(null, true);
     }).catch(function(error) {
-      callback(prepareErrors(error));
+      callback(filters.errors(error));
     });
   })
 };
@@ -180,14 +181,14 @@ function removeAllAssociatedDataOnNewUser(invite, callback) {
           cb('Not found user');
         }
       }).catch(function(error) {
-        cb(prepareErrors(error));
+        cb(filters.errors(error));
       });
     },
     function(user, cb) {
       user.destroy().then(function() {
         cb(null, true);
       }).catch(function(error) {
-        cb(prepareErrors(error));
+        cb(filters.errors(error));
       });
     }
   ], function(error, result) {
@@ -199,14 +200,6 @@ function inviteDestroy(invite, callback) {
  invite.destroy().then(function() {
    callback(null, 'You have successfully accepted Invite. Please login using your invite e-mail and password.');
  });
-};
-
-function prepareErrors(err) {
-  let errors = ({});
-  _.map(err.errors, function (n) {
-    errors[n.path] = _.startCase(n.path) + ':' + n.message.replace(n.path, '');
-  });
-  return errors;
 };
 
 module.exports = {

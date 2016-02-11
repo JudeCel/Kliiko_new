@@ -144,9 +144,6 @@ function addSessionMember(accountUserId, session, role, name, callback) {
                  username: name,
                  avatar_info: "0:4:3:1:4:3" }
   session.createSessionMember(params).then(function(result) {
-    console.log("++++++++++++++++Session member ++++++++++++++++");
-    console.log("User Name " + result.username);
-    console.log("++++++++++++++++ TOKEN ++++++++++++++++");
     SessionMemberService.createToken(result.id).then(function() {
       callback(null, result);
     },function(error) {

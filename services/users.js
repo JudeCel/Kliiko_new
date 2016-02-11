@@ -1,6 +1,7 @@
 "use strict";
 var models = require('./../models');
 var User = models.User;
+var filters = require('./../models/filters');
 var _ = require('lodash');
 var accountService = require('./account');
 var accountUserService = require('./accountUser');
@@ -58,16 +59,6 @@ function update(req, callback){
   });
 }
 
-function prepareErrors(err) {
-  let errors = ({})
-  _.map(err.errors, function (n) {
-    if (!errors[n.path]) {
-      errors[n.path] =  n.message;
-    }
-  });
-  return errors
-};
-
 function createUser(params, callback) {
   let createNewUserFunctionList = [
     function (cb) {
@@ -93,7 +84,7 @@ function createUser(params, callback) {
     let transaction = t2 || t
       if (error) {
         transaction.rollback().then(function() {
-          callback(prepareErrors(error), user, lastActionResult);
+          callback(filters.errors(error), user, lastActionResult);
         });
       }else{
         transaction.commit().then(function() {
@@ -118,7 +109,7 @@ function validateForCreate(params, callback) {
   }
 
   async.waterfall(validateNewUserFunctionList, function (error, params) {
-    if (error) { return callback(prepareErrors(error), params) };
+    if (error) { return callback(filters.errors(error), params) };
     callback(null, params);
   });
 }
