@@ -8,7 +8,7 @@ var async = require('async');
 var q = require('q');
 
 const MESSAGES = {
-  setUp: "You have successfully setted up your chat session."
+  setUp: "You have successfully initialized your chat session. Please continue in Step two."
 }
 
 function setUp(params) {
@@ -38,8 +38,8 @@ function setUp(params) {
 
 function facilitatiorAndTopics(params) {
   async.parallel({
-    sessionMembers: function(callback) {
-      addFacilitators(sessionId, faliclitatorIds, callback)
+    sessionFacilitator: function(callback) {
+      addFacilitator(sessionId, accountUserId, callback)
     },
     sessionTopics: function(callback) {
       addTopics(sessionId, topicIds, callback)
@@ -49,12 +49,14 @@ function facilitatiorAndTopics(params) {
   });
 }
 
-function addFacilitators(sessionId, faliclitatorIds, callback) {
+function addFacilitator(sessionId, accountUserId, callback) {
   let memberIds = [];
 
-  faliclitatorIds.forEach(function(faliclitatorId, index, array) {
-
-  });
+  SessionMember.create({
+    sessionId: sessionId,
+    accountUserId: accountUserId,
+    role: 'facilitator'
+  })
 
   callback(null, memberIds);
 }

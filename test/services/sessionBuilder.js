@@ -55,13 +55,12 @@ describe("Session Builder", function() {
     }
 
     sessionBuilder.setUp(params). then(function(result) {
-      console.log("############# RESULT");
-      console.log(result);
+      assert.equal(result.message, "You have successfully initialized your chat session. Please continue in Step two.");
+      assert.equal(result.session.accountId, testAccount.id);
+      assert.equal(result.session.name, name);
       done();
     }, function(error) {
-      // console.log("############# ERROR");
-      // console.log(error);
-      done();
+      done("should not get here.");
     })
 
   })
