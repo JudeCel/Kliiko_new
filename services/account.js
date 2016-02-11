@@ -1,7 +1,9 @@
-"use strict";
+'use strict';
+
 var Account  = require('./../models').Account;
-var _ = require('lodash');
+var filters = require('./../models/filters');
 var contactListService  = require('./contactList');
+var _ = require('lodash');
 
 function validate(params, callback) {
   let attrs = {name: params.accountName}
@@ -28,19 +30,9 @@ function updateInstance(account, params, callback) {
   account.update({ name: params.accountName }).then(function(result) {
     callback(null, true);
   }).catch(function(error) {
-    callback(prepareErrors(error));
+    callback(filters.errors(error));
   });
 }
-
-function prepareErrors(err) {
-  let errors = ({});
-  _.map(err.errors, function (n) {
-    if (!errors[n.path]) {
-      errors[n.path] = n.message;
-    }
-  });
-  return errors;
-};
 
 module.exports = {
   validate: validate,

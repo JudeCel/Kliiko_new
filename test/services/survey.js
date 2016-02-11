@@ -176,9 +176,9 @@ describe('SERVICE - Survey', function() {
           done('Should not get here!');
         }, function(error) {
           let allErrors = {
-            name: 'Name: cannot be empty',
-            description: 'Description: cannot be empty',
-            thanks: 'Thanks: cannot be empty'
+            name: "Name can't be empty",
+            description: "Description can't be empty",
+            thanks: "Thanks can't be empty"
           };
 
           assert.deepEqual(error, allErrors);
@@ -196,7 +196,7 @@ describe('SERVICE - Survey', function() {
         surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
           done('Should not get here!');
         }, function(error) {
-          assert.deepEqual(error, { name: "Name:can't be empty" });
+          assert.deepEqual(error, { name: "Name can't be empty" });
 
           Survey.count().then(function(c) {
             assert.equal(c, 0);
@@ -475,7 +475,7 @@ describe('SERVICE - Survey', function() {
           surveyServices.updateSurvey(updateParams, accountParams()).then(function(result) {
             done('Should not get here!');
           }, function(error) {
-            assert.deepEqual(error.name, "Name:can't be empty");
+            assert.deepEqual(error.name, "Name can't be empty");
             done();
           });
         });
@@ -651,7 +651,7 @@ describe('SERVICE - Survey', function() {
               surveyServices.answerSurvey(answerParams).then(function(result) {
                 done('Should not get here!');
               }, function(error) {
-                assert.deepEqual(error, { email: 'Email:Invalid e-mail format' });
+                assert.deepEqual(error, { email: 'Invalid e-mail format' });
                 done();
               });
             });
