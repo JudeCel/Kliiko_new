@@ -6,8 +6,8 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, allowNull: false, unique: {args: true, msg: 'Account name has already been taken'},
       validate: {
-        notEmpty: { args: true, msg: "Account name can't be empty" },
-        is: { args: constants.accountNameRegExp, msg: 'Account name has invalid format' }
+        notEmpty: true,
+        is: constants.accountNameRegExp
       }
     }
   },{
