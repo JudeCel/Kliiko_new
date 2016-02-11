@@ -79,7 +79,6 @@
     }
     
     function previewMailTemplate(mTemplate) {
-      //dbg.log2('#KliikoApp.mailTemplate > preview mail template', mTemplate);
       var deferred = $q.defer();
 
       mailRestApi.previewMailTemplate.post({mailTemplate:mTemplate}, function (res) {

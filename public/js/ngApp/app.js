@@ -15,7 +15,6 @@
     'domServices',
     'messenger',
     'ngMessages',
-    //'CreditCard',
 
     // app modules
     'KliikoApp.user',
@@ -25,6 +24,32 @@
 
   angular
     .module('KliikoApp', includes)
+    .factory('myInterceptor', ['$log','$q', '$rootScope', function($log, $q, $rootScope) {
+      // Show progress bar on every request
+
+      var requestInterceptor = {
+        request: function(config) {
+          $rootScope.progressbarStart();
+          return config;
+        },
+
+        'response': function(response) {
+          if (response.status == 404) {
+            alert('that is all folks');
+          }
+          $rootScope.progressbarComplete();
+          return response;
+        },
+
+        // optional method
+        'responseError': function(rejection) {
+          $rootScope.progressbarComplete();
+          return $q.reject(rejection);
+        }
+      };
+
+      return requestInterceptor;
+    }])
     .config(appConfigs)
     .run(appRun)
     .controller('AppController', AppController);
@@ -36,18 +61,20 @@
     .controller('AppController', AppController);
 
 
-  appConfigs.$inject = ['dbgProvider', '$routeProvider', '$locationProvider', '$rootScopeProvider'];
-  function appConfigs(dbgProvider, $routeProvider, $locationProvider, $rootScopeProvider) {
+  appConfigs.$inject = ['dbgProvider', '$routeProvider', '$locationProvider', '$rootScopeProvider', '$httpProvider'];
+  function appConfigs(dbgProvider, $routeProvider, $locationProvider, $rootScopeProvider, $httpProvider) {
     //$rootScopeProvider.digestTtl(20);
     dbgProvider.enable(1);
     dbgProvider.debugLevel('trace');
 
+    $httpProvider.interceptors.push('myInterceptor');
   }
 
   appRun.$inject = ['$stateParams', 'dbg', '$rootScope', '$state', 'globalSettings', 'ngProgressFactory'];
   function appRun($stateParams, dbg, $rootScope, $state, globalSettings, ngProgressFactory) {
     dbg.log('#appRun started ');
     var routerProgressbar;
+    var rootScopeProgress = ngProgressFactory.createInstance();
 
     String.prototype.capitalize = function () {
       return this.charAt(0).toUpperCase() + this.slice(1);
@@ -61,6 +88,13 @@
       routerProgressbar.start();
     });
     $rootScope.$on('$stateChangeSuccess',function(){  routerProgressbar.complete();  });
+
+    $rootScope.progressbarStart = function() {
+      rootScopeProgress.start();
+    };
+    $rootScope.progressbarComplete = function() {
+      rootScopeProgress.complete();
+    }
 
   }
 

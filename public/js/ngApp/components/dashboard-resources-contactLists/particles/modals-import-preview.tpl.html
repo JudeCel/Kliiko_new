@@ -1,0 +1,136 @@
+<div id="modals-import-preview" class="modal fade"  role="dialog">
+    <div class="modal-dialog contactDetailsModal">
+        <div class="modal-content border-green border-radius-none">
+            <div class='modal-header'>
+                <button type='button' class='close' data-dismiss="modal">&times;</button>
+                <h2 class='modal-title text-center'>Import Contacts</h2>
+            </div>
+            <div class='modal-body text-gray-medium'>
+
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <h3>Preview</h3>
+                    </div>
+                </div>
+
+                <!---->
+
+                <section id="contact-details-import-preview-table" >
+                    <h4>Contacts That will be Added</h4>
+                    <div  ng-show="!clc.lists.importPreviewArray.length">
+                        <p><strong>No valid contacts has been found, there is nothing to import. Check errors in tables below</strong></p>
+                        <br>
+                    </div>
+                    <table class='table table-responsive table-dashboardElements' ng-show="clc.lists.importPreviewArray.length">
+                        <thead>
+                        <tr>
+
+                            <th ng-repeat="rowHeader in clc.lists.activeList.visibleFields track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)"
+                                ng-drag="true" ng-drag-data="$index" class="druggable">
+                                <span class="th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader}}</span>
+                                <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
+                                <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
+                            </th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="member-row" ng-repeat='member in clc.lists.importPreviewArray | orderBy: clc.tableSort.by : clc.tableSort.reverse' ng-class="{'selected':member._selected}">
+                            <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index">{{ member[tableRow] || '-' }}</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+
+
+                </section><!--/class="banners-section"-->
+
+                <section id="contact-details-import-preview-table-with-errors" ng-show="clc.lists.importPreviewInvalidArray.length">
+                    <h4>Contacts With Errors (would not be imported)</h4>
+                    <table class='table table-responsive table-dashboardElements'>
+                        <thead>
+                        <tr>
+
+                            <th ng-repeat="rowHeader in clc.lists.activeList.visibleFields track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)"
+                                ng-drag="true" ng-drag-data="$index" class="druggable">
+                                <span class="th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader}}</span>
+                                <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
+                                <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
+                            </th>
+
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="member-row" ng-repeat='member in clc.lists.importPreviewInvalidArray | orderBy: clc.tableSort.by : clc.tableSort.reverse' ng-class="{'selected':member._selected}">
+                            <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index">
+                                <code ng-show="member.validationErrors[tableRow]">{{ member.validationErrors[tableRow] }}</code><br>
+                               {{ member[tableRow] || '-' }}
+
+
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+
+
+                </section><!--/class="banners-section"-->
+
+                <section id="contact-details-import-preview-table-dublicates" ng-show="clc.lists.importPreviewDublicatesArray.length">
+                    <h4>Dublicated Entries (would not be imported)</h4>
+                    <table class='table table-responsive table-dashboardElements'>
+                        <thead>
+                        <tr>
+
+                            <th ng-repeat="rowHeader in clc.lists.activeList.visibleFields track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)"
+                                ng-drag="true" ng-drag-data="$index" class="druggable">
+                                <span class="th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader}}</span>
+                                <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
+                                <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
+                            </th>
+
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="member-row" ng-repeat='member in clc.lists.importPreviewDublicatesArray | orderBy: clc.tableSort.by : clc.tableSort.reverse' ng-class="{'selected':member._selected}">
+                            <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index">{{ member[tableRow] || '-' }}</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+
+
+                </section><!--/class="banners-section"-->
+
+                <!---->
+                <div class='row modal-control-buttons'>
+                    <div class='col-md-12'>
+                        <div class="pull-left">
+                            <div class='btn-standart btn-red' data-dismiss="modal">Cancel</div>
+                            <div class='btn-standart btn-green' ng-click='clc.reUpload()'>Re-Upload File</div>
+                            <div class='btn-standart btn-green' ng-click='clc.reMap()'>Re-Map Fields</div>
+                        </div>
+
+                        <div class="pull-right">
+
+                            <div class='btn-standart btn-green' ng-class="{'btn-disabled': !clc.importData.file.name || !clc.lists.importPreviewArray.length}" ng-click='clc.addImportedContacts()' ng-hide--="!clc.lists.importPreviewArray.length">Add</div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+

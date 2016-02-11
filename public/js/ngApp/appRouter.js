@@ -191,15 +191,18 @@
         resolve: {
           loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
             return $ocLazyLoad.load([
+              '/js/vendors/ngDraggable/ngDraggable.js',
+              '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
               '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
               '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
               '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
               '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
               '/js/ngApp/modules/contactList/contactList.js',
               '/js/ngApp/directives/custom-select-directive.js',
-              '/js/vendors/ngDraggable/ngDraggable.js',
+              '/js/vendors/ng-file-upload/ng-file-upload.js',
               '/js/ngApp/filters/num.js',
               '/js/ngApp/filters/human2Camel.js'
+
             ]);
           }]},
         onEnter: ['dbg', function (dbg) {

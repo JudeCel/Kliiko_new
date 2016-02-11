@@ -3,12 +3,13 @@
 
   angular.module('contactList', []).factory('contactListServices', contactListFactory);
 
-  contactListFactory.$inject = ['$q','globalSettings', '$resource', 'dbg', 'user'];
-  function contactListFactory($q, globalSettings, $resource, dbg, user)  {
+  contactListFactory.$inject = ['$q','globalSettings', '$resource', 'dbg', 'Upload'];
+  function contactListFactory($q, globalSettings, $resource, dbg, Upload)  {
     var contactListsApi = {
       contactLists: $resource(globalSettings.restUrl +  '/contactLists/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       contactListsUsersToRemove: $resource(globalSettings.restUrl +  '/contactListsUsersToRemove', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       contactListsUser: $resource(globalSettings.restUrl +  '/contactListsUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsImport: $resource(globalSettings.restUrl +  '/contactLists/:id/import', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
     };
 
 
@@ -22,6 +23,9 @@
     publicServices.createUser = createUser;
     publicServices.updateUser = updateUser;
     publicServices.deleteUser = deleteUser;
+
+    publicServices.parseImportFile = parseImportFile;
+    publicServices.addImportedContacts = addImportedContacts;
 
 
 
@@ -223,6 +227,56 @@
         deferred.resolve(res);
       });
 
+      return deferred.promise;
+    }
+
+    function parseImportFile(file, listId) {
+      var deferred = $q.defer();
+
+      Upload.upload({
+        url: globalSettings.restUrl+'/contactLists/'+listId+'/import',
+        method: 'POST',
+        data: {uploadedfile: file}
+      }).then(function (res) {
+        deferred.resolve(res);
+
+      }, function (err) {
+        deferred.reject(err);
+      });
+      return deferred.promise;
+    }
+
+    function addImportedContacts(contactsArray, listId) {
+      var deferred = $q.defer();
+
+
+      for (var i = 0, len = contactsArray.length; i < len ; i++) {
+
+      }
+
+      //var params = {
+      //  defaultFields: defaultFields,
+      //  customFields: customFields,
+      //  contactListId: contactListId
+      //};
+      //
+      var params = {
+        contactsArray:contactsArray
+      };
+
+      contactListsApi.contactListsImport.put({id:listId},params,function(res) {
+        if (res.error) {
+          dbg.log1('#contactListServices > createUser > error: ', res.error);
+          deferred.reject(res.error);
+          return deferred.promise;
+        }
+
+        dbg.log1('#contactListServices > createUser > success '); dbg.log2(res);
+
+        deferred.resolve(res);
+      });
+
+      deferred.resolve(contactsArray);
       return deferred.promise;
     }
 
