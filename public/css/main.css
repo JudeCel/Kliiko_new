@@ -2380,7 +2380,7 @@ hr.survey-hr {
 #dashboard-contact-lists #modals-excel-csv-import .dragover {
   border: 5px dashed blue; }
 
-#dashboard-contact-lists #modals-excel-csv-import .modal-control-buttons {
+#dashboard-contact-lists .modal-control-buttons {
   margin-top: 30px; }
 
 #dashboard-contact-lists #contactList-addNewListFieldsModal {
@@ -2440,6 +2440,11 @@ hr.survey-hr {
     margin-top: 5px; }
   #dashboard-contact-lists #contactList-addNewListFieldsModal #remap-footer-btns {
     margin-top: 40px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal .dragging {
+    position: absolute; }
+
+#dashboard-contact-lists .modal {
+  overflow-y: scroll; }
 
 #dashboard-contact-lists #modals-import-preview h3 {
   margin: 0 0 20px 0; }
@@ -2447,13 +2452,19 @@ hr.survey-hr {
 #dashboard-contact-lists #modals-import-preview .modal-dialog.contactDetailsModal, #dashboard-contact-lists #modals-import-preview .modal-dialog.accountDatabaseCommentModal, #dashboard-contact-lists #modals-import-preview .modal-dialog.surveyPreviewModal, #dashboard-contact-lists #modals-import-preview .modal-dialog.brandColourPreviewModal {
   width: 80%; }
 
-#dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table {
+#dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table,
+#dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table-with-errors,
+#dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table-dublicates {
   width: 100%;
-  overflow: auto; }
-  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table table {
+  overflow-y: auto; }
+  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table table,
+  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table-with-errors table,
+  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table-dublicates table {
     border-spacing: 0px;
     margin-bottom: 35px; }
-  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table td {
+  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table td,
+  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table-with-errors td,
+  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table-dublicates td {
     padding-left: 10px;
     border: none; }
 

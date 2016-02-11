@@ -394,17 +394,17 @@
       vm.lists.parseImportFile(vm.importData.file).then(
         function(res) {
           domServices.modal('contactList-addContactManual','close');
-         // processImportData(res);
-         if (res.valid) {
+          vm.lists.generateImportPreview(res.data);
+          domServices.modal('modals-import-preview');
 
-           vm.lists.generateImportPreview(res.data.valid);
-
-           domServices.modal('modals-import-preview');
-
-         } else  {
-           processImportData(res);
-           vm.addNewListFieldMapping();
-          }
+           //if (res.valid) {
+           //  vm.lists.generateImportPreview(res.data.valid);
+           //  domServices.modal('modals-import-preview');
+           //
+           //} else  {
+           //  processImportData(res);
+           //  vm.addNewListFieldMapping();
+           // }
 
         },
         function(err) {
@@ -539,6 +539,7 @@
     }
     function reUpload() {
       domServices.modal('modals-import-preview','close');
+      domServices.modal('contactList-addNewListFieldsModal','close');
       // timeout is to wait fade effects
       setTimeout(function() {
         var type;

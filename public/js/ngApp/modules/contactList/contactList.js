@@ -249,6 +249,17 @@
     function addImportedContacts(contactsArray, listId) {
       var deferred = $q.defer();
 
+
+      for (var i = 0, len = contactsArray.length; i < len ; i++) {
+
+      }
+
+      //var params = {
+      //  defaultFields: defaultFields,
+      //  customFields: customFields,
+      //  contactListId: contactListId
+      //};
+      //
       var params = {
         contactsArray:contactsArray
       };

@@ -87,6 +87,7 @@ function updatePositions(params) {
 }
 
 function destroy(ids, accountId) {
+
   let deferred = q.defer();
   ContactListUser.destroy({where: { id: ids, accountId: accountId}}).then(function(result) {
     deferred.resolve(result);
@@ -116,13 +117,14 @@ function transactionFun(t, accountId) {
 function bulkCreate(list, accountId) {
   let deferred = q.defer();
     models.sequelize.transaction().then(function(t) {
-      async.map(list, transactionFun(t, accountId), function(err, results){
+      async.map(list, transactionFun(t, accountId), function(err, results) {
         if (err) {
           t.rollback().then(function() {
             deferred.reject(err);
           });
         }else {
           t.commit().then(function() {
+            console.log(32323232323232, deferred);
             deferred.resolve(results);
           });
         }

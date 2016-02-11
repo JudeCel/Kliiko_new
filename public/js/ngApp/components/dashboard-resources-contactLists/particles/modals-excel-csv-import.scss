@@ -18,12 +18,14 @@
     border: 5px dashed blue;
   }
 
-  .modal-control-buttons {
-    margin-top: 30px;
-  }
+
+
 
 }
 
+.modal-control-buttons {
+  margin-top: 30px;
+}
 
 #contactList-addNewListFieldsModal {
   table {
@@ -118,9 +120,13 @@
     margin-top: 40px;
   }
 
+  .dragging {
+    position: absolute;
+  }
+
 
 }
-
+.modal { overflow-y: scroll; }
 #modals-import-preview {
   h3 {
     margin: 0 0 20px 0;
@@ -130,9 +136,12 @@
     width: 80%;
   }
 
-  #contact-details-import-preview-table {
+
+  #contact-details-import-preview-table,
+  #contact-details-import-preview-table-with-errors,
+  #contact-details-import-preview-table-dublicates {
     width: 100%;
-    overflow: auto;
+    overflow-y: auto;
 
 
     table {

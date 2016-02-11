@@ -1,5 +1,6 @@
 'use strict';
 var contactListService = require('../../services/contactList');
+var contactListUserService = require('../../services/contactListUser');
 var _ = require('lodash');
 var validations = require('../helpers/validations');
 
@@ -92,7 +93,7 @@ function parseImportFile(req, res, next) {
     res.send({success: true, result: result});
     //todo @dainis remove the file, that created in public/uploads
   }, function(err) {
-    res.status(415)
+    res.status(415);
     res.send({error:err});
   })
 }
@@ -101,6 +102,17 @@ function importContacts(req, res, next) {
   validations.params(res, req.params.id, 'query param @id is missed');
   validations.body(res, req.body.contactsArray, 'contactsArray is missed');
 
-  res.send('ok')
+  let accountId = res.locals.currentDomain.id;
+
+  contactListUserService.bulkCreate(req.body.contactsArray, accountId).then(
+    function(result) {
+      res.send(result);
+    },
+    function (err) {
+      res.send({error: err});
+    }
+  );
+
+
 
 }

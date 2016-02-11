@@ -15,8 +15,8 @@
 
                 <!---->
 
-                <section id="contact-details-import-preview-table">
-
+                <section id="contact-details-import-preview-table" ng-show="clc.lists.importPreviewArray.length">
+                    <h4>Contacts That will be Added</h4>
                     <table class='table table-responsive table-dashboardElements'>
                         <thead>
                         <tr>
@@ -33,6 +33,62 @@
                         </thead>
                         <tbody>
                         <tr class="member-row" ng-repeat='member in clc.lists.importPreviewArray | orderBy: clc.tableSort.by : clc.tableSort.reverse' ng-class="{'selected':member._selected}">
+                            <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index">{{ member[tableRow] || '-' }}</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+
+
+                </section><!--/class="banners-section"-->
+
+                <section id="contact-details-import-preview-table-with-errors" ng-show="clc.lists.importPreviewInvalidArray.length">
+                    <h4>Contacts With Erros</h4>
+                    <table class='table table-responsive table-dashboardElements'>
+                        <thead>
+                        <tr>
+
+                            <th ng-repeat="rowHeader in clc.lists.activeList.visibleFields track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)"
+                                ng-drag="true" ng-drag-data="$index" class="druggable">
+                                <span class="th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader}}</span>
+                                <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
+                                <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
+                            </th>
+
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="member-row" ng-repeat='member in clc.lists.importPreviewInvalidArray | orderBy: clc.tableSort.by : clc.tableSort.reverse' ng-class="{'selected':member._selected}">
+                            <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index">{{ member[tableRow] || '-' }}</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+
+
+                </section><!--/class="banners-section"-->
+
+                <section id="contact-details-import-preview-table-dublicates" ng-show="clc.lists.importPreviewDublicatesArray.length">
+                    <h4>Contacts With Erros</h4>
+                    <table class='table table-responsive table-dashboardElements'>
+                        <thead>
+                        <tr>
+
+                            <th ng-repeat="rowHeader in clc.lists.activeList.visibleFields track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)"
+                                ng-drag="true" ng-drag-data="$index" class="druggable">
+                                <span class="th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader}}</span>
+                                <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
+                                <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
+                            </th>
+
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="member-row" ng-repeat='member in clc.lists.importPreviewDublicatesArray | orderBy: clc.tableSort.by : clc.tableSort.reverse' ng-class="{'selected':member._selected}">
                             <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index">{{ member[tableRow] || '-' }}</td>
                         </tr>
 
@@ -65,6 +121,7 @@
         </div>
     </div>
 </div>
+
 
 
 

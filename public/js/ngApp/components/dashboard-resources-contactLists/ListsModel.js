@@ -358,18 +358,31 @@
 
     }
 
-    function generateImportPreview(contactsArray) {
+    function generateImportPreview(respData, contactsArray) {
       var self = this;
 
-      if (!angular.isArray(contactsArray)) {
-        dbg.error('#ListItemModel > generateImportPreview > input params expected to be an array ', contactsArray );
-        return;
-      }
+      //if (!angular.isArray(contactsArray)) {
+      //  dbg.error('#ListItemModel > generateImportPreview > input params expected to be an array ', contactsArray );
+      //  return;
+      //}
 
       self.importPreviewArray = [];
-      for (var i = 0, len = contactsArray.length; i < len ; i++) {
-        var newContact = new Member(contactsArray[i]);
+      self.importPreviewInvalidArray = [];
+      self.importPreviewDublicatesArray = [];
+
+      for (var i = 0, len = respData.valid.length; i < len ; i++) {
+        var newContact = new Member(respData.valid[i]);
         self.importPreviewArray.push(newContact);
+      }
+
+      for (var i = 0, len = respData.invalid.length; i < len ; i++) {
+        var newContact = new Member(respData.invalid[i]);
+        self.importPreviewInvalidArray.push(newContact);
+      }
+
+      for (var i = 0, len = respData.duplicateEntries.length; i < len ; i++) {
+        var newContact = new Member(respData.duplicateEntries[i]);
+        self.importPreviewDublicatesArray.push(newContact);
       }
 
     }
@@ -377,10 +390,18 @@
     function addImportedContacts() {
       var self = this;
       var deferred = $q.defer();
+      var contactsArray = [];
 
-      contactListServices.addImportedContacts(self.importPreviewArray, self.activeList.id).then(
+      for (var i = 0, len = self.importPreviewArray.length; i < len ; i++) {
+        var defaultFields = getDefaultFields(self.importPreviewArray[i]);
+        var customFields = getCustomFields(self.importPreviewArray[i]);
+
+        contactsArray.push({defaultFields: defaultFields, customFields: customFields,contactListId: self.activeList.id});
+      }
+
+
+      contactListServices.addImportedContacts(contactsArray, self.activeList.id).then(
         function (res) {
-
           for (var i = 0, len = self.items.length; i < len ; i++) {
             if (self.items[i].id == self.activeList.id) {
 
@@ -402,6 +423,25 @@
         }
       );
       return deferred.promise;
+
+
+      function getDefaultFields(contact) {
+        var output = {};
+        for (var i = 0, len = self.activeList.defaultFields.length; i < len ; i++) {
+          output[ self.activeList.defaultFields[i] ] = contact[self.activeList.defaultFields[i] ];
+        }
+        return output
+      }
+
+      function getCustomFields(contact) {
+        var output = {};
+        for (var i = 0, len = self.activeList.customFields.length; i < len ; i++) {
+          output[ self.activeList.customFields[i] ] = contact[self.activeList.customFields[i] ];
+        }
+        return output
+      }
+
+
     }
 
 
