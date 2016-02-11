@@ -15,9 +15,9 @@
   }
 
   angular.module('KliikoApp.Root').controller('SurveyClientController', SurveyClientController);
-  SurveyClientController.$inject = ['dbg', 'surveyServices', 'messenger', '$timeout', 'ngProgressFactory'];
+  SurveyClientController.$inject = ['dbg', 'surveyServices', 'messenger', '$timeout', 'ngProgressFactory', '$sce'];
 
-  function SurveyClientController(dbg, surveyServices, messenger, $timeout, ngProgressFactory) {
+  function SurveyClientController(dbg, surveyServices, messenger, $timeout, ngProgressFactory, $sce) {
     dbg.log2('#SurveyClientController started');
 
     var vm = this;
@@ -26,6 +26,9 @@
     vm.pickValidClass = surveyServices.pickValidClass;
     vm.submitSurvey = submitSurvey;
     vm.init = init;
+    vm.getResourceNameUrl = getResourceNameUrl;
+    vm.getResourceThumbUrl = getResourceThumbUrl;
+    vm.renderHtml = renderHtml;
 
     initConstants();
 
@@ -84,5 +87,18 @@
         progressbar.complete();
       }, 1000);
     };
+
+    function getResourceNameUrl(resource){
+      return "/chat_room/uploads/" + resource.JSON.name;
+    }
+
+    function getResourceThumbUrl(resource){
+      return "/chat_room/uploads/" + resource.JSON.panelThumb;
+    }
+
+    function renderHtml(resource) {
+      return $sce.trustAsHtml(resource.JSON.message);
+    };
+
   };
 })();

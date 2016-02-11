@@ -62,7 +62,7 @@ module.exports = {
       model: 'gender',
       name: 'Gender',
       select: true,
-      options: ['Male', 'Female'],
+      options: ['male', 'female'],
       order: 2
     },
     {

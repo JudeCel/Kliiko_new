@@ -22,7 +22,7 @@ module.exports = (Sequelize, DataTypes) => {
       validate: {
         validateNumber: function() {
           if(this.landlineNumber && !constants.phoneRegExp.test(this.landlineNumber)) {
-            throw new Error('Invalid phone number format');
+            throw new Error(`Invalid phone number format (ex. ${constants.validPhoneFormat})`);
           }
         }
       }
@@ -31,7 +31,7 @@ module.exports = (Sequelize, DataTypes) => {
       validate: {
         validateNumber: function() {
           if(this.mobile && !constants.phoneRegExp.test(this.mobile)) {
-            throw new Error('Invalid phone number format');
+            throw new Error(`Invalid phone number format (ex. ${constants.validPhoneFormat})`);
           }
         }
       }

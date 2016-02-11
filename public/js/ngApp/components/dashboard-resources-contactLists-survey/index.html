@@ -28,7 +28,7 @@
         <tr ng-repeat='survey in sc.surveys'>
           <td>{{ survey.name }}</td>
           <td>{{ (survey.confirmedAt | date:sc.dateFormat) || 'unconfirmed' }}</td>
-          <td><a href='{{ survey.url }}'>{{ survey.url }}</a></td>
+          <td><a href='{{ survey.url }}' target="_blanks">{{ survey.url }}</a></td>
           <td>{{ survey.closed }}</td>
           <td class='text-right dashboardElementsEditRemove'>
             <img src='/icons/brand_colour_grey.png' ng-click='sc.exportSurvey(survey.id)' ng-if='survey.confirmedAt'

@@ -201,12 +201,12 @@
 
             <div class="form-group">
               <label for="title">Title</label>
-              <input ng-model="newResource.title" type="text" class="form-control center-block" name="title" id="title" placeholder="Title">
+              <input ng-model="newResource.title" type="text" class="form-control center-block" name="title" id="title" placeholder="Title" required>
             </div>
 
             <div ng-if="checkType(newResource.type, 'youtubeUrl')" class="form-group">
               <label for="youtubeUrl">Youtube Url</label>
-              <input ng-model="newResource.youtubeUrl" type="text" class="form-control center-block" name="youtubeUrl" id="youtubeUrl" placeholder="Youtube URL">
+              <input ng-model="newResource.youtubeUrl" type="text" class="form-control center-block" name="youtubeUrl" id="youtubeUrl" placeholder="Youtube URL" required>
             </div>
 
             <div ng-if="!checkType(newResource.type, 'youtubeUrl')" class="form-group">

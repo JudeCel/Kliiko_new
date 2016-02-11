@@ -54,7 +54,7 @@
               <li><a href=""><i class="icon-remove"></i>Import Excel (not ready)</a></li>
               <li><a href=""><i class="icon-remove"></i>Import CSV (not ready)</a></li>
             </div>
-            <div class='btn-standart btn-green pull-right' ng-click='clc.editCustomFields()' ng-hide="!clc.lists.activeList.members.length">Edit Custom Fields</div>
+            <div class='btn-standart btn-green pull-right' ng-click='clc.editCustomFields()' ng-hide="!clc.lists.activeList.editable">Edit Custom Fields</div>
 
           </div>
 
@@ -62,11 +62,12 @@
             <thead>
               <tr>
                 <th></th>
-                <th ng-repeat="rowHeader in clc.lists.activeList.visibleFields" ng-click="clc.changeTableSortingFilter(rowHeader)"
-                    ng-drag="true" ng-drag-data="$index" class="druggable">
-                  <span class="th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader}}</span>
-                  <span><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
-                  <span><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
+                <th class="th-header druggable" ng-repeat="rowHeader in clc.lists.activeList.visibleFields track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)"
+                    ng-drag="true" ng-drag-data="$index">
+                  <span class="sorting-order-arrow"><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
+                  <span class="sorting-order-arrow"><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
+                  <span class="th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader | human2Camel : true}}</span>
+
                 </th>
 
                 <th ng-click="clc.showManageColumnsModal()"><img  src="/icons/grid.png" ></th>
@@ -122,7 +123,7 @@
             <h2 class='modal-title text-center'>{{clc.contactModalTitle}}</h2>
           </div>
           <div class='modal-body text-gray-medium'>
-            <form class='form-horizontal' role='form'>
+            <form class='form-horizontal' role='form' novalidate>
               <div class='col-md-6'>
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First name<span class='text-red-dark'>*</span></label>
@@ -144,7 +145,7 @@
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='email'>Email<span class='text-red-dark'>*</span></label>
                   <div class='col-md-8'>
                     <span class='has-error text-red-dark'>{{ clc.modalErrors.email }}</span>
-                    <input type='email' class='form-control' id='email' placeholder='Email' ng-model='clc.newContact.email'>
+                    <input type='text' class='form-control' id='email' placeholder='Email' ng-model='clc.newContact.email'>
                   </div>
                 </div>
 

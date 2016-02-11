@@ -218,7 +218,9 @@
               '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
               '/js/ngApp/modules/contactList/contactList.js',
               '/js/ngApp/directives/custom-select-directive.js',
-              '/js/vendors/ngDraggable/ngDraggable.js'
+              '/js/vendors/ngDraggable/ngDraggable.js',
+              '/js/ngApp/filters/num.js',
+              '/js/ngApp/filters/human2Camel.js'
             ]);
           }]},
         onEnter: ['dbg', function (dbg) {

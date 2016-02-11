@@ -71,7 +71,7 @@
           messenger.ok('New List "'+ res.name + '" added');
 
           vm.lists.changeActiveList(vm.lists.items.length -1);
-
+          vm.newList.name = "";
         },
         function(err) {
           messenger.error('Could not create new list: '+ err);
@@ -223,10 +223,6 @@
     function createContact() {
       var currentList = vm.lists.activeList;
 
-      var valid = validateContact();
-
-      if (!valid) return;
-
       var newContact = angular.copy(vm.newContact);
 
       vm.lists.addNewContact(vm.newContact).then(
@@ -237,15 +233,7 @@
           messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
         },
         function (err) {
-          if (err.error) {
-            messenger.error(err.error.message);
-          }
-          if (err.errors) {
-            var e = err.errors;
-            for (var i = 0, len = e.length; i < len ; i++) {
-              vm.modalErrors[ e[i].path ] = e[i].message;
-            }
-          }
+          vm.modalErrors = err;
         }
       );
 
@@ -266,15 +254,7 @@
           messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
         },
         function (err) {
-          if (err.error) {
-            messenger.error(err.error.message);
-          }
-          if (err.errors) {
-            var e = err.errors;
-            for (var i = 0, len = e.length; i < len ; i++) {
-              vm.modalErrors[ e[i].path ] = e[i].message;
-            }
-          }
+          vm.modalErrors = err;
         }
       );
 
@@ -312,21 +292,6 @@
       );
     }
 
-
-    /**
-     * Validate vm.newContact object
-     * @returns {boolean}
-     */
-    function validateContact() {
-      vm.modalErrors = {};
-      var valid = true;
-      if (!vm.newContact.firstName || !vm.newContact.firstName.length) { vm.modalErrors.firstName = 'First Name cannot be blank'; valid = false; }
-      if (!vm.newContact.lastName || !vm.newContact.lastName.length) { vm.modalErrors.lastName = 'Last Name cannot be blank';valid = false; }
-      if (!vm.newContact.email || !vm.newContact.email.length) {vm.modalErrors.email = 'Email cannot be blank';valid = false; }
-      if (!vm.newContact.gender || !vm.newContact.gender.length) {vm.modalErrors.gender = 'Gender should be selected';valid = false; }
-
-      return valid;
-    }
 
     /**
      * Toggle selection for all items in contacts list
