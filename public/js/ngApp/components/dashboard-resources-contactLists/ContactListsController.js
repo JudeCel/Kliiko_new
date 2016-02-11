@@ -50,6 +50,7 @@
     vm.reMap = reMap;
     vm.addImportedContacts = addImportedContacts;
 
+    vm.onFieldMapDrop = onFieldMapDrop;
     vm.mappingFieldsContinue = mappingFieldsContinue;
 
 
@@ -396,6 +397,7 @@
           domServices.modal('contactList-addContactManual','close');
           vm.lists.generateImportPreview(res.data);
           domServices.modal('modals-import-preview');
+          processImportData(res);
 
            //if (res.valid) {
            //  vm.lists.generateImportPreview(res.data.valid);
@@ -469,14 +471,15 @@
     }
     
     // Drag and drop fields section
-    vm.onFieldMapDrop = function(dataSource, dataTarget) {
+    function onFieldMapDrop(dataSource, dataTarget) {
       if (dataSource.field) {
         dataTarget.field = dataSource.field;
         dataSource.field = null;
       } else {
         dataTarget.field = dataSource;
       }    
-    };
+    }
+
     //assigns contact info to mapped fields
     function mappingFieldsContinue() {
       var userList = [];
