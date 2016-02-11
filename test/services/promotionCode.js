@@ -48,7 +48,7 @@ describe('SERVICE - PromotionCode', function() {
   it('should fail on unique validations', function (done) {
     promotionCode.createPromoCode(validAttrs, function(error, result) {
       assert.equal(result, null);
-      assert.deepEqual(error, { name: 'Name: already taken' });
+      assert.deepEqual(error, { name: 'Name already taken, should be unique' });
       done();
     });
   });
@@ -86,8 +86,8 @@ describe('SERVICE - PromotionCode', function() {
       }
 
       promotionCode.updatePromoCode(invalidEditAttrs, function(error, result) {
-        let someErrors = { name: 'Name: cannot be null',
-          discountValue: 'Discount Value: cannot be null'
+        let someErrors = { name: "Name can't be empty",
+          discountValue: "Discount Value can't be empty"
         };
 
         assert.equal(result, null);
@@ -140,7 +140,7 @@ describe('SERVICE - PromotionCode', function() {
 
       promotionCode.createPromoCode(invalidCreateAttrs, function(error, result) {
         assert.equal(result, null);
-        assert.deepEqual(error, { discountValue: 'Discount Value: cannot be null' });
+        assert.deepEqual(error, { discountValue: "Discount Value can't be empty" });
         done();
       });
     });

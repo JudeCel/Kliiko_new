@@ -1,6 +1,7 @@
 'use strict';
 
 var PromotionCode  = require('./../../models').PromotionCode;
+var filters = require('./../../models/filters');
 var crypto = require('crypto');
 var _ = require('lodash');
 
@@ -31,7 +32,7 @@ function createPromoCode(params, callback) {
   PromotionCode.create(validatedParams).then(function(result) {
     callback(null, validateParams(result, validAttributesForView()));
   }).catch(PromotionCode.sequelize.ValidationError, function(error) {
-    callback(prepareErrors(error));
+    callback(filters.errors(error));
   }).catch(function(error) {
     callback(error);
   });
@@ -46,7 +47,7 @@ function updatePromoCode(params, callback) {
       callback(null, validateParams(result[1][0], validAttributesForView()));
     }
   }).catch(PromotionCode.sequelize.ValidationError, function(error) {
-    callback(prepareErrors(error));
+    callback(filters.errors(error));
   }).catch(function(error) {
     callback(error);
   });
@@ -61,7 +62,7 @@ function removePromoCode(id, callback) {
       callback(null);
     }
   }).catch(PromotionCode.sequelize.ValidationError, function(error) {
-    callback(prepareErrors(error));
+    callback(filters.errors(error));
   }).catch(function(error) {
     callback(error);
   });
@@ -69,14 +70,6 @@ function removePromoCode(id, callback) {
 
 function generateCode() {
   return crypto.randomBytes(10).toString('hex');
-};
-
-function prepareErrors(err) {
-  let errors = ({});
-  _.map(err.errors, function (n) {
-    errors[n.path] = _.startCase(n.path) + ":" + n.message.replace(n.path, '');
-  });
-  return errors;
 };
 
 function validAttributesForView() {

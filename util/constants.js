@@ -2,6 +2,7 @@
 
 module.exports = {
   phoneRegExp: /^\+(?:[0-9] ?){6,14}[0-9]$/,
+  validPhoneFormat: '+1 123456789',
   emailRegExp: /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i,
   systemRoles: ['admin', 'accountManager', 'facilitator', 'observer', 'participant'],
   safeAccountUserParams: [
@@ -57,7 +58,6 @@ module.exports = {
 
   promotionCodeTypes: ['percentage', 'value'],
   accountNameRegExp: ["^[a-zA-Z0-9]+$",'i'],
-  mobileRegExp: ["^[0-9]+$",'i'],
   galleryUploadTypes: ['image', 'brandLogo', 'audio', 'youtubeLink', 'text'],
   dateFormat: 'MM-dd-yyyy'
 }
