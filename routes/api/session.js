@@ -4,7 +4,7 @@ var constants = require('../../util/constants');
 var sessionServices = require('./../../services/session');
 
 function get(req, res, next) {
-  sessionServices.findAllSessions(req.user.id, res.locals.currentDomain.id).then(
+  sessionServices.findAllSessions(req.user.id, res.locals.currentDomain).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
@@ -30,9 +30,9 @@ function getResponses(res) {
       res.send({ error: error });
     },
     onSuccess: function(result) {
-      var results = {
+      let results = {
         sessionListManageRoles: constants.sessionListManageRoles,
-        chatRoomUrl: sessionServices.chatRoomUrl(res.locals.currentDomain.name),
+        chatRoomUrl: sessionServices.chatRoomUrl(),
         data: result.data,
         message: result.message,
         dateFormat: constants.dateFormat

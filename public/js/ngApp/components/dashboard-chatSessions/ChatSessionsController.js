@@ -12,7 +12,6 @@
     vm.copySession = copySession;
 
     vm.rowClass = rowClass;
-    vm.showStatus = showStatus;
     vm.subscriptionEndDate = subscriptionEndDate;
     vm.goToChat = goToChat;
     vm.hasAccess = hasAccess;
@@ -58,8 +57,7 @@
     };
 
     function rowClass(session, user) {
-      var string = showStatus(session, user).toLowerCase();
-      return 'session-' + string;
+      return 'session-' + session.showStatus.toLowerCase();
     };
 
     function goToChat(session, user) {
@@ -96,24 +94,6 @@
     function isExpired(user, date) {
       date = date || new Date();
       return (date > subscriptionEndDate(user));
-    }
-
-    function showStatus(session, user) {
-      if(session.active) {
-        var date = new Date();
-        if(isExpired(user, date)) {
-          return 'Expired';
-        }
-        else if(date < new Date(session.start_time)) {
-          return 'Pending';
-        }
-        else {
-          return 'Open';
-        }
-      }
-      else {
-        return 'Closed';
-      }
     }
   };
 })();

@@ -3,9 +3,22 @@
 var models = require('./../models');
 var filters = require('./../models/filters');
 var AccountUser = models.AccountUser;
+var SessionMember = models.SessionMember;
 var User = models.User;
-var _ = require("lodash");
+var _ = require('lodash');
 var q = require('q');
+
+const VALID_ATTRIBUTES = {
+  accountUser: [
+    'id',
+    'role'
+  ],
+  sessionMember: [
+    'id',
+    'role',
+    'sessionId'
+  ]
+};
 
 function createAccountManager(object, callback) {
   object.errors = object.errors || {};
@@ -90,9 +103,54 @@ function updateWithUserId(data, userId, callback) {
   });
 }
 
+function findWithSessionMembers(userId, accountId) {
+  let deferred = q.defer();
+
+  AccountUser.find({
+    where: {
+      AccountId: accountId,
+      UserId: userId
+    },
+    attributes: VALID_ATTRIBUTES.accountUser
+  }).then(function(accountUser) {
+    if(accountUser) {
+      joinSessionMembers(accountUser.dataValues).then(function() {
+        deferred.resolve(accountUser);
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }
+    else {
+      deferred.reject({ message: 'AccountUser not found' });
+    }
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function joinSessionMembers(accountUser) {
+  let deferred = q.defer();
+
+  SessionMember.findAll({
+    where: {
+      accountUserId: accountUser.id
+    },
+    attributes: VALID_ATTRIBUTES.sessionMember
+  }).then(function(results) {
+    accountUser.SessionMembers = results;
+    deferred.resolve();
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
 
 module.exports = {
   create: create,
   createAccountManager: createAccountManager,
-  updateWithUserId: updateWithUserId
+  updateWithUserId: updateWithUserId,
+  findWithSessionMembers: findWithSessionMembers
 }

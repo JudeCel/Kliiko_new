@@ -29,7 +29,7 @@
             <td>{{ session.start_time | date:sc.dateFormat }}</td>
             <td>{{ session.end_time | date:sc.dateFormat }}</td>
             <td>{{ csc.subscriptionEndDate(app.user) | date:sc.dateFormat }}</td>
-            <td>{{ csc.showStatus(session, app.user) }}</td>
+            <td>{{ session.showStatus }}</td>
             <td class='text-right dashboardElementsEditRemove'>
               <span class='glyphicon glyphicon-star' aria-hidden='true' ng-if='csc.hasAccess(session.id, app.accountUser)'></span>
               <img src='/icons/resources_grey.png' alt='' ng-click='csc.copySession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>

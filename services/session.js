@@ -2,14 +2,13 @@
 
 var policy = require('./../middleware/policy');
 var models = require('./../models');
+var filters = require('./../models/filters');
 var Session  = models.Session;
 var SessionMember  = models.SessionMember;
 var AccountUser  = models.AccountUser;
 
 var q = require('q');
 var _ = require('lodash');
-var async = require('async');
-var config = require('config');
 
 var sessionMemberServices = require('./../services/sessionMember');
 
@@ -35,8 +34,8 @@ function findSession(sessionId, accountId) {
     }]
   }).then(function(session) {
     if(session) {
-      findSessionsWithCondition(session.id).then(function(sessions) {
-        deferred.resolve(sessions);
+      findSessionsWithCondition(session.id, accountId).then(function(data) {
+        deferred.resolve(data);
       }, function(error) {
         deferred.reject(error);
       });
@@ -44,28 +43,26 @@ function findSession(sessionId, accountId) {
     else {
       deferred.reject(MESSAGES.notFound);
     }
-  }).catch(Session.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
   }).catch(function(error) {
-    deferred.reject(error);
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
 };
 
-function findAllSessions(userId, accountId) {
+function findAllSessions(userId, domain) {
   let deferred = q.defer();
 
-  if(policy.authorized(['accountManager', 'admin'])) {
-    findAllSessionsAsManager(accountId).then(function(sessions) {
-      deferred.resolve(sessions);
+  if(policy.hasAccess(domain.roles, ['accountManager', 'admin'])) {
+    findAllSessionsAsManager(domain.id).then(function(data) {
+      deferred.resolve(data);
     }, function(error) {
       deferred.reject(error);
     });
   }
   else {
-    findAllSessionsAsMember(userId, accountId).then(function(sessions) {
-      deferred.resolve(sessions);
+    findAllSessionsAsMember(userId, accountId).then(function(data) {
+      deferred.resolve(data);
     }, function(error) {
       deferred.reject(error);
     });
@@ -80,10 +77,8 @@ function removeSession(sessionId, accountId) {
   findSession(sessionId, accountId).then(function(result) {
     result.data.destroy().then(function() {
       deferred.resolve(simpleParams(null, MESSAGES.removed));
-    }).catch(Session.sequelize.ValidationError, function(error) {
-      deferred.reject(prepareErrors(error));
     }).catch(function(error) {
-      deferred.reject(error);
+      deferred.reject(filters.errors(error));
     });
   }, function(error) {
     deferred.reject(error);
@@ -99,20 +94,23 @@ function copySession(sessionId, accountId) {
     delete result.data.dataValues.id;
 
     Session.create(result.data.dataValues).then(function(session) {
-      let facilitator = result.data.SessionMembers[0].dataValues;
-      delete facilitator.id;
-      delete facilitator.token;
-      delete facilitator.sessionId;
+      let facilitator = findFacilitator(result.data.SessionMembers);
+      if(facilitator) {
+        delete facilitator.id;
+        delete facilitator.token;
+        delete facilitator.sessionId;
 
-      copySessionMember(session, facilitator).then(function(copy) {
-        deferred.resolve(simpleParams(copy, MESSAGES.copied));
-      }, function(error) {
-        deferred.reject(error);
-      })
-    }).catch(Session.sequelize.ValidationError, function(error) {
-      deferred.reject(prepareErrors(error));
+        copySessionMember(session, facilitator).then(function(copy) {
+          deferred.resolve(simpleParams(copy, MESSAGES.copied));
+        }, function(error) {
+          deferred.reject(error);
+        });
+      }
+      else {
+        deferred.resolve(simpleParams(session, MESSAGES.copied));
+      }
     }).catch(function(error) {
-      deferred.reject(error);
+      deferred.reject(filters.errors(error));
     });
   }, function(error) {
     deferred.reject(error);
@@ -121,12 +119,22 @@ function copySession(sessionId, accountId) {
   return deferred.promise;
 };
 
-// Untested
-function chatRoomUrl(currentDomain) {
-  return 'http://' + currentDomain + config.get('server')['baseDomain'] + ':' + config.get('server')['port'] + '/chat/';
+function chatRoomUrl() {
+  return '/chat/';
 }
 
 // Helpers
+function findFacilitator(members) {
+  let facilitator;
+  _.map(members, function(member) {
+    if(member.role == 'facilitator') {
+      return facilitator = member;
+    }
+  });
+
+  return facilitator ? facilitator.dataValues : null;
+}
+
 function findAllSessionsAsManager(accountId) {
   let deferred = q.defer();
 
@@ -139,11 +147,9 @@ function findAllSessionsAsManager(accountId) {
       where: { role: 'facilitator' }
     }]
   }).then(function(sessions) {
-    deferred.resolve(simpleParams(sessions));
-  }).catch(Session.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
+    modifySessions(sessions, accountId, deferred);
   }).catch(function(error) {
-    deferred.reject(error);
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
@@ -169,21 +175,19 @@ function findAllSessionsAsMember(userId, accountId) {
     }]
   }).then(function(sessions) {
     let sessionIds = _.map(sessions, 'id');
-    findSessionsWithCondition(ids).then(function(sessions) {
-      deferred.resolve(sessions);
+    findSessionsWithCondition(ids, accountId).then(function(data) {
+      deferred.resolve(data);
     }, function(error) {
       deferred.reject(error);
     });
-  }).catch(Session.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
   }).catch(function(error) {
-    deferred.reject(error);
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
 };
 
-function findSessionsWithCondition(ids) {
+function findSessionsWithCondition(ids, accountId) {
   let deferred = q.defer();
 
   if(_.isArray(ids)) {
@@ -194,11 +198,9 @@ function findSessionsWithCondition(ids) {
         where: { role: 'facilitator' }
       }]
     }).then(function(sessions) {
-      deferred.resolve(simpleParams(sessions));
-    }).catch(Session.sequelize.ValidationError, function(error) {
-      deferred.reject(prepareErrors(error));
+      modifySessions(sessions, accountId, deferred);
     }).catch(function(error) {
-      deferred.reject(error);
+      deferred.reject(filters.errors(error));
     });
   }
   else {
@@ -210,15 +212,13 @@ function findSessionsWithCondition(ids) {
       }]
     }).then(function(session) {
       if(session) {
-        deferred.resolve(simpleParams(session));
+        modifySessions(session, accountId, deferred);
       }
       else {
         deferred.reject(MESSAGES.notFound);
       }
-    }).catch(Session.sequelize.ValidationError, function(error) {
-      deferred.reject(prepareErrors(error));
     }).catch(function(error) {
-      deferred.reject(error);
+      deferred.reject(filters.errors(error));
     });
   }
 
@@ -236,12 +236,10 @@ function copySessionMember(session, facilitator) {
         deferred.reject(error);
       });
     }, function(error) {
-      deferred.reject(prepareErrors(error));
+      deferred.reject(filters.errors(error));
     });
-  }).catch(Session.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
   }).catch(function(error) {
-    deferred.reject(error);
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
@@ -251,17 +249,55 @@ function simpleParams(data, message) {
   return { data: data, message: message };
 };
 
-function prepareErrors(err) {
-  let errors = ({});
-  _.map(err.errors, function (n) {
-    let message = n.message.replace(n.path, '');
-    if(message == ' cannot be null') {
-      message = ' cannot be empty';
+function findAccountSubscription(accountId) {
+  let deferred = q.defer();
+
+  models.Subscription.find({ where: { AccountId: accountId } }).then(function(subscription) {
+    if(subscription) {
+      deferred.resolve(subscription);
     }
-    errors[n.path] = _.startCase(n.path) + ':' + message;
+    else {
+      deferred.reject('No subscription found');
+    }
+  }).catch(function(error) {
+    deferred.reject(error);
   });
-  return errors;
-};
+
+  return deferred.promise;
+}
+
+function modifySessions(sessions, accountId, deferred) {
+  let array = _.isArray(sessions) ? sessions : [sessions];
+  findAccountSubscription(accountId).then(function(subscription) {
+    _.map(array, function(session) {
+      addShowStatus(session, subscription);
+    });
+    deferred.resolve(simpleParams(sessions));
+  }, function(_error) {
+    _.map(array, function(session) {
+      addShowStatus(session, null);
+    });
+    deferred.resolve(simpleParams(sessions));
+  });
+}
+
+function addShowStatus(session, subscription) {
+  if(session.active) {
+    var date = new Date();
+    if(subscription && date > subscription.trialEnd) {
+      session.dataValues.showStatus = 'Expired';
+    }
+    else if(date < new Date(session.start_time)) {
+      session.dataValues.showStatus = 'Pending';
+    }
+    else {
+      session.dataValues.showStatus = 'Open';
+    }
+  }
+  else {
+    session.dataValues.showStatus = 'Closed';
+  }
+}
 
 module.exports = {
   messages: MESSAGES,

@@ -30,13 +30,13 @@ describe('SERVICE - Session', function() {
   });
 
   function accountParams() {
-    return testData.account.id;
+    return { id: testData.account.id, roles: ['accountManager'] };
   };
 
   describe('#findSession', function() {
     describe('happy path', function() {
       it('should succeed on finding session', function (done) {
-        sessionServices.findSession(testData.session.id, testData.account.id, 'facilitator').then(function(result) {
+        sessionServices.findSession(testData.session.id, testData.account.id).then(function(result) {
           assert.equal(result.data.accountId, testData.account.id);
           done();
         }, function(error) {
@@ -47,7 +47,7 @@ describe('SERVICE - Session', function() {
 
     describe('sad path', function() {
       it('should fail on finding session', function (done) {
-        sessionServices.findSession(testData.session.id + 100, testData.account.id, 'facilitator').then(function(result) {
+        sessionServices.findSession(testData.session.id + 100, testData.account.id).then(function(result) {
           done('Should not get here!');
         }, function(error) {
           assert.equal(error, sessionServices.messages.notFound);
@@ -60,7 +60,7 @@ describe('SERVICE - Session', function() {
   describe('#findAllSessions', function() {
     describe('happy path', function() {
       it('should succeed on finding all sessions', function (done) {
-        sessionServices.findAllSessions(testData.user.id, testData.account.id).then(function(result) {
+        sessionServices.findAllSessions(testData.user.id, accountParams()).then(function(result) {
           assert.equal(result.data[0].accountId, testData.account.id);
           done();
         }, function(error) {
