@@ -239,9 +239,15 @@
       }
 
       if (action === 'update') {
+        vm.contactSnapshot = angular.copy(contactObj);
+
         vm.contactModalTitle = 'Edit Contact';
         vm.newContact = contactObj;
         vm.updateExistingUser = true;
+      }
+
+      if (action == 'cancel') {
+        vm.newContact = vm.contactSnapshot;
       }
 
       if (action === 'excel') {
@@ -288,7 +294,7 @@
 
       var newContact = angular.copy(vm.newContact);
       var currentList = angular.copy(vm.lists.activeList);
-
+      debugger; //debugger
       vm.lists.updateContact(vm.newContact).then(
         function(res) {
           vm.newContact = {customFields:{}};
@@ -297,6 +303,7 @@
           messenger.ok('Contact '+ newContact.firstName + ' has been updated');
         },
         function (err) {
+          debugger; //debugger
           vm.modalErrors = err;
         }
       );
@@ -344,6 +351,8 @@
       forceUnselect
         ? vm.allSelected = false
         : vm.allSelected = !vm.allSelected;
+
+      if (!vm.lists.activeList.members) return;
 
       for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
         vm.lists.activeList.members[i]._selected = vm.allSelected;
