@@ -6,7 +6,7 @@ var _ = require("lodash");
 
 const MEGABYTE = 1024*1024;
 const VALIDATIONS = {
-  maxSize: 2, // 2mb
+  maxSize: 5, // 2mb
   fileTypes: [
     'image/gif',
     'image/png',
@@ -17,19 +17,19 @@ const VALIDATIONS = {
     'audio/mp3',
     'application/pdf'
   ]
-}
+};
 
 module.exports = function upload(options) {
-  options = options || {}
+  options = options || {};
   let storage = multer.diskStorage({
     destination: destination(options),
     fileFilter: fileFilter,
     filename: filename
   });
 
-  let upload =  multer({ storage: storage, limits: { fieldSize: VALIDATIONS.maxSize * MEGABYTE } });
+  let upload =  multer({ storage: storage, limits: { fileSize: (VALIDATIONS.maxSize * MEGABYTE) } });
   return upload.single('uploadedfile');
-}
+};
 
 function fileFilter(req, file, cb) {
   if (_.includes(VALIDATIONS.fileTypes, req.headers['content-type'])) {

@@ -1,6 +1,7 @@
 "use strict";
 
-var MailTemplateCopy  = require('./../models').MailTemplateBase;
+var MailTemplateCopy  = require('./../models').MailTemplate;
+var filters = require('./../models/filters');
 var _ = require('lodash');
 
 var templateFields = [
@@ -22,9 +23,9 @@ function create(params, callback) {
   MailTemplateCopy.create(params).then(function(result) {
     callback(null, result);
   }).catch(MailTemplateCopy.sequelize.ValidationError, function(err) {
-    callback(prepareErrors(err), null);
+    callback(filters.errors(err), null);
   }).catch(function(err) {
-    callback(prepareErrors(err), null);
+    callback(filters.errors(err), null);
   });
 }
 
@@ -39,14 +40,6 @@ function update(id, parameters, callback){
         callback(err);
     });
 }
-
-function prepareErrors(err) {
-  let errors = ({});
-  _.map(err.errors, function (n) {
-    errors[n.path] = _.startCase(n.path) + ':' + n.message.replace(n.path, '');
-  });
-  return errors;
-};
 
 function getMailTemplate(req, callback) {
   MailTemplateCopy.find({

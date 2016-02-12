@@ -1,6 +1,7 @@
 'use strict';
 var mailers = require('../../mailers');
 var models = require('./../../models');
+var filters = require('./../../models/filters');
 var Account = models.Account;
 var User = models.User;
 var AccountUser = models.AccountUser;
@@ -19,7 +20,7 @@ function findAllAccounts(callback) {
   }).then(function(accounts) {
     callback(null, accounts);
   }, function(error) {
-      callback(prepareErrors(error));
+      callback(filters.errors(error));
   });
 };
 
@@ -46,7 +47,7 @@ function updateAccountUser(params, callback) {
       });
     }
   }).catch(function(error) {
-    callback(prepareErrors(error));
+    callback(filters.errors(error));
   });
 };
 
@@ -129,14 +130,6 @@ function userAttributes() {
 
 function validateParams(params, attrs) {
   return _.pick(params, attrs || validAttributes);
-};
-
-function prepareErrors(err) {
-  let errors = ({});
-  _.map(err.errors, function (n) {
-    errors[n.path] = _.startCase(n.path) + ":" + n.message.replace(n.path, '');
-  });
-  return errors;
 };
 
 module.exports = {

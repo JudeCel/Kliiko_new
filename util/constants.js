@@ -1,7 +1,8 @@
 'use strict';
 
 module.exports = {
-  phoneRegExp: /^\+(?:[0-9] ?){6,14}[0-9]$/,
+  phoneRegExp: /^\+?(?:[0-9] ?){6,14}[0-9]$/,
+  validPhoneFormat: '1 123456789',
   emailRegExp: /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i,
   systemRoles: ['admin', 'accountManager', 'facilitator', 'observer', 'participant'],
   safeAccountUserParams: [

@@ -40,14 +40,15 @@
 
     <label class='col-xs-2 control-label' for='audioVideo-{{object.order}}'>Audio/Video</label>
     <div class='col-xs-10 col-md-6' ng-show="question.Resource == null">
-      <button class='btn btn-addNewElement btn-green gallery-btn-width'
+      
+      <button class='btn btn-addNewElement btn-green gallery-btn-width no-margin'
               type='button' id='uploadResourceDropdown' data-toggle='dropdown'
               aria-haspopup='true' aria-expanded='false'>
         <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
         Add audio/video
       </button>
-      <ul class='dropdown-menu header-dropdown-ul' aria-labelledby='uploadResourceDropdown'>
 
+      <ul class='dropdown-menu survey-dropdown-margin' aria-labelledby='uploadResourceDropdown'>
         <li class='text-right text-size-dashboard'>
           <a ng-click="sc.openQuestionModal('audio', question)" data-toggle='modal' href=''>
             Upload Audio
@@ -82,14 +83,14 @@
         <video width='100%' controls data-ng-src='{{ sc.getResourceNameUrl(question.Resource) }}'></video>
       </div>
 
-      <button type='submit' class='btn btn-addNewElement btn-green no-margin gallery-btn-width' ng-click='sc.removeResource(question.resourceId, question)'>
+      <button type='submit' class='btn btn-addNewElement btn-green no-margin gallery-btn-width' ng-click='sc.removeResource(question.resourceId, question, null)'>
         <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
       </button>
     </div>
   </div>
 </div>
 
-<!-- resourceModal -->
+  <!-- resourceModal -->
   <div class='modal fade' id='questionModal' role='dialog'>
     <div class='modal-dialog changePasswordModal' >
       <div class='modal-content border-green border-radius-none'>
@@ -113,9 +114,9 @@
                 <input ng-model="sc.youtubeUrl" type="text" class="form-control center-block" name="youtube" id="youtube" placeholder="Youtube URL">
               </div>
 
-              <div ng-if="sc.questionResource.type !== 'youtube'" class="form-group">
+              <div ng-if="sc.questionResource.type !== 'youtube'" class="form-group">setUploadtype
                 <label for="file">File</label>
-                <div ngf-drop ngf-select ng-model="sc.file" class="drop-box" ngf-drag-over-class="'dragover'">
+                <div ngf-drop ngf-select ng-model="sc.file" class="drop-box" ngf-drag-over-class="'dragover'"  accept="{{sc.setUploadtype(sc.questionResource.type)}}">
                   Drop images here or click to upload
                 </div>
 

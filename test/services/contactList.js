@@ -261,12 +261,15 @@ describe('Services -> ContactList', () => {
       });
 
       describe('should fail because duplicate email in file', function() {
+      var testFileValid = { xls: 'test/fixtures/contactList/list_valid_v2.xls', csv: 'test/fixtures/contactList/list_valid.csv' };
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
               assert.include(result.duplicateEntries[0].rows, 3);
               assert.include(result.duplicateEntries[0].rows, 5);
+              assert.lengthOf(result.duplicateEntries, 2);
               assert.equal(result.duplicateEntries[0].email, "chatUser@insider.com");
+              assert.equal(result.duplicateEntries[1].email, "bligzna.lauris@gmail.com");
               callback(null, true);
             }, function(error) {
               callback(error);
