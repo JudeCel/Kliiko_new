@@ -5,11 +5,11 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
     resourceId: { type: DataTypes.INTEGER, allowNull: true },
-    name: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
-    description: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
-    thanks: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
+    name: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
+    description: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
+    thanks: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     closed: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
-    confirmedAt: { type: DataTypes.DATE, allowNull: true, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
+    confirmedAt: { type: DataTypes.DATE, allowNull: true, validate: { notEmpty: true } },
     url: { type: DataTypes.STRING, allowNull: true }
   }, {
     timestamps: true,
