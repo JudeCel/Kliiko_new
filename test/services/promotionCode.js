@@ -145,7 +145,7 @@ describe('SERVICE - PromotionCode', function() {
       });
     });
 
-    it.only("don't allow negative values", function(done) {
+    it("don't allow negative values", function(done) {
       let invalidAttrs = {
         name: 'Some negative things.',
         startDate: startDate,
