@@ -5,6 +5,7 @@ var multipartyMiddleware = multiparty();
 var express = require('express');
 var router = express.Router();
 var policy = require('../../middleware/policy.js');
+var config = require('config');
 var sessionMemberMiddleware = require('./../../middleware/sessionMember');
 
 var userRoutes = require('./user');
@@ -102,7 +103,8 @@ router.get('/survey/constants', survey.getConstants);
 // contact List
 router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
 router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
-router.post('/contactList/:id/import', policy.authorized(['accountManager', 'admin']), fileUploader(),contactList.import);
+router.post('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']), fileUploader({path:config.get('fileUploadPath')}),contactList.parseImportFile);
+router.put('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']),contactList.importContacts);
 router.put('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.update);
 router.delete('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.destroy);
 

@@ -1,0 +1,154 @@
+#modals-excel-csv-import {
+  #modals-excel-csv-import-icon {
+   margin-bottom: 50px;
+
+  }
+
+
+  .drop-box {
+    background: #F8F8F8;
+    border: 3px dashed #DDD;
+    width: 300px;
+    height: 65px;
+    text-align: center;
+    padding-top: 20px;
+    margin: 0 auto;
+  }
+  .dragover {
+    border: 5px dashed blue;
+  }
+
+}
+
+.modal-control-buttons {
+  margin-top: 30px;
+}
+
+#contactList-addNewListFieldsModal {
+  table {
+    width: 100%;
+    height: 400px;
+  }
+  tr {
+    height: 39px;
+  }
+
+  max-height: calc(100vh - 10px);
+  overflow-y: auto;
+
+  .modal-footer {
+    border-top: none;
+  }
+
+  .contactList-dropPlaceholder {
+    background: rgba(211,211,211,.3);
+    border-width: 1px;
+    width: 100%;
+    height: 30px;
+  }
+
+  .ic-move {
+    margin: -2px 5px 0 0;
+  }
+
+
+  .contactList-drop-item {
+    border-radius: 0;
+    padding: 7px;
+
+    background-color: $lightGreen;
+    border-width: 1px;
+    width: 100%;
+
+    &:hover {
+      cursor: -webkit-grab;
+      cursor: hand;
+      color: white;
+      font-weight: bold;
+      background: $green;
+    }
+  }
+
+  .panel-default {
+    box-shadow: none;
+    border: none;
+  }
+  #contactList-fieldColumnLeft {
+    margin: 5px;
+    padding: 25px;
+    z-index: 501;
+  }
+
+  #contactList-fieldColumnRight {
+    z-index: 500;
+    margin: 5px;
+    padding: 25px;
+    //border-left: 1px solid lightgrey;
+    border-radius: 0px;
+
+  }
+
+  h3 {
+    margin: 5px !important;
+  }
+
+  .contactList-customfields {
+    margin: 20px;
+  }
+
+  input.custom-fields {
+    margin: 6px;
+    width:90%;
+    padding: 10px;
+  }
+
+
+
+
+  input#additionalMappingFieldname {
+    margin-top: 7px;
+    width: 97%;
+    border-color: $blue;
+  }
+  #additionalMappingFieldnameBtn {
+    margin-top: 5px;
+  }
+  #remap-footer-btns {
+    margin-top: 40px;
+  }
+
+  .dragging {
+    position: absolute;
+  }
+
+
+}
+.modal { overflow-y: scroll; }
+#modals-import-preview {
+  h3 {
+    margin: 0 0 20px 0;
+  }
+
+  .modal-dialog.contactDetailsModal {
+    width: 80%;
+  }
+
+
+  #contact-details-import-preview-table,
+  #contact-details-import-preview-table-with-errors,
+  #contact-details-import-preview-table-dublicates {
+    width: 100%;
+    overflow-y: auto;
+
+
+    table {
+      border-spacing: 0px;
+      margin-bottom: 35px;
+    }
+    td {
+      padding-left: 10px;
+      border: none;
+
+    }
+  }
+}

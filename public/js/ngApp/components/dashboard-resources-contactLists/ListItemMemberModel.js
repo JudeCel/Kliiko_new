@@ -13,7 +13,6 @@
     ListItemMemberModel = ListItemMemberModel;
     ListItemMemberModel.prototype.update = update;
 
-
     return ListItemMemberModel;
 
 
