@@ -8,14 +8,14 @@ const MEGABYTE = 1024*1024;
 const VALIDATIONS = {
   maxSize: 5, // 2mb
   fileTypes: [
-    'image/gif',
-    'image/png',
-    'image/jpg',
-    'image/jpeg',
-    'image/bmp',
-    'audio/mpeg',
-    'audio/mp3',
-    'application/pdf'
+    'gif',
+    'png',
+    'jpg',
+    'jpeg',
+    'bmp',
+    'mpeg',
+    'mp3',
+    'pdf'
   ]
 };
 
@@ -23,19 +23,20 @@ module.exports = function upload(options) {
   options = options || {};
   let storage = multer.diskStorage({
     destination: destination(options),
-    fileFilter: fileFilter,
     filename: filename
   });
 
-  let upload =  multer({ storage: storage, limits: { fileSize: (VALIDATIONS.maxSize * MEGABYTE) } });
+  let upload =  multer({ storage: storage, fileFilter: fileFilter, limits: { fileSize: (VALIDATIONS.maxSize * MEGABYTE) } });
   return upload.single('uploadedfile');
 };
 
 function fileFilter(req, file, cb) {
-  if (_.includes(VALIDATIONS.fileTypes, req.headers['content-type'])) {
+  let re = /(?:\.([^.]+))?$/;
+
+  if (_.includes(VALIDATIONS.fileTypes, re.exec(file.originalname)[1])) {
     cb(null, true);
   }else {
-    cb(new Error(req.headers['content-type'] +' are not allowed'));
+    cb(new Error(re.exec(file.originalname)[1] +' are not allowed'));
   }
 }
 
