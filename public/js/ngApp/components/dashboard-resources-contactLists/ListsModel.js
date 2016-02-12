@@ -161,6 +161,9 @@
 
       var updateFieldsObj = updateFieldsObj;
 
+      var visibleFields = checkAndGetVisibleFields(updateFieldsObj.customFields);
+      updateFieldsObj.visibleFields = visibleFields;
+
       self.activeList.update(updateFieldsObj).then(
         function (res) {
           // rewrite name
@@ -169,6 +172,7 @@
 
           // rewrite custom fields
           self.activeList.customFields = updateFieldsObj.customFields;
+          self.activeList.visibleFields = updateFieldsObj.visibleFields;
 
           self.activeList.updateAvailableFields(updateFieldsObj.customFields);
 
@@ -184,6 +188,22 @@
       );
 
       return deferred.promise;
+
+      function checkAndGetVisibleFields(newCustomFieldsArray) {
+        for (var i = 0; i < self.activeList.visibleFields.length;  i++) {
+          var inDefaultFields = ( self.activeList.defaultFields.indexOf(self.activeList.visibleFields[i]) > -1);
+          var inCustomFields = ( newCustomFieldsArray.indexOf(self.activeList.visibleFields[i]) > -1);
+
+          if (!inDefaultFields && !inCustomFields) {
+
+            self.activeList.visibleFields.splice(i, 1);
+
+          }
+        }
+
+        return self.activeList.visibleFields;
+      }
+
     }
 
     /**

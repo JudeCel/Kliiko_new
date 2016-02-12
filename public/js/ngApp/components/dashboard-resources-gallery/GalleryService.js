@@ -77,7 +77,12 @@
       }).then(function(res) {
           deferred.resolve(res);
         }, function(error) {
-          deferred.resolve({error: "The file is to large, you can upload a file that is not larger then 2mb."});
+
+          console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+          console.log(error.data)
+          console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+
+          deferred.resolve({error: error.data});
         });
 
       return deferred.promise;
