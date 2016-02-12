@@ -21,11 +21,11 @@ function hasAccess(memberRoles, accountRoles) {
     }
     else {
       let sessionId;
-      if(req.params.id == 'all') {
-        sessionId = { $ne: null };
+      if(req.params.id) {
+        sessionId = req.params.id;
       }
       else {
-        sessionId = req.params.id;
+        sessionId = { $ne: null };
       }
 
       SessionMember.find({
@@ -43,7 +43,7 @@ function hasAccess(memberRoles, accountRoles) {
           next();
         }
         else {
-          res.status(404).send(accessDeniedMessage);
+          res.status(403).send(accessDeniedMessage);
         }
       });
     }
