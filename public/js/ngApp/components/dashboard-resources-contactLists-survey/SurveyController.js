@@ -410,7 +410,7 @@
     };
 
     function statusIcon(survey) {
-      if(survey.closed) {
+      if(survey && survey.closed) {
         return '/icons/password_red.png';
       }
       else {
