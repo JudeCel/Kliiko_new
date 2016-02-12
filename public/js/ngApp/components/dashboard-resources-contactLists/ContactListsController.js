@@ -536,9 +536,8 @@
       vm.additionalMappingFieldname = "";
       updateActiveCustomList(newList, parsedList);
     };
-    function addImportedContacts() {
 
-      if (!vm.lists.self.importPreviewArray.length) return;
+    function addImportedContacts() {
 
       vm.lists.addImportedContacts().then(
         function(res) {

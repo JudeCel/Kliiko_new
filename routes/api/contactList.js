@@ -106,7 +106,7 @@ function importContacts(req, res, next) {
 
   contactListUserService.bulkCreate(req.body.contactsArray, accountId).then(
     function(result) {
-      res.send(result);
+      res.send({success: true, data:result});
     },
     function (err) {
       res.send({error: err});
