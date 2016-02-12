@@ -37,7 +37,7 @@
             <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
             <div class='col-md-8'>
                 <span class='has-error text-red-dark'>{{ clc.modalErrors.mobile }}</span>
-                <input type='text' class='form-control' id='mobile' placeholder='Mobile number' ng-model='clc.newContact.mobile'>
+                <input type='tel' class='form-control' id='mobile' placeholder='Mobile number' ng-model='clc.newContact.mobile'>
             </div>
         </div>
 
@@ -130,7 +130,7 @@
     <div class='row'>
         <div class='col-md-12'>
 
-            <div class='btn-standart btn-red pull-left' data-dismiss="modal">Cancel</div>
+            <div class='btn-standart btn-red pull-left' ng-click="clc.contactAddEditClickHandle('cancel')" data-dismiss="modal">Cancel</div>
             <div ng-hide="clc.updateExistingUser" ng-click='clc.createContact()' class='btn-standart btn-green pull-right' >Create</div>
             <div ng-show="clc.updateExistingUser" ng-click='clc.updateContact()' class='btn-standart btn-green pull-right'>Update</div>
 

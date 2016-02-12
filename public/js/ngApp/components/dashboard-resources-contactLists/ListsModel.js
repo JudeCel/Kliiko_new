@@ -285,7 +285,7 @@
       var activeList = self.activeList;
 
       contact.update(activeList.id).then(
-        function (res) {
+        function(res) {
 
           var updatedContact = new Member(res.data, activeList.customFields);
           var index;
@@ -304,9 +304,10 @@
           }
 
           self.changeActiveList(self.activeListIndex, true);
-          deferred.resolve();
+          deferred.resolve(res);
         },
         function (err) {
+          deferred.reject(err);
         }
       );
       return deferred.promise;
