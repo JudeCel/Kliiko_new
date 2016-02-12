@@ -294,7 +294,6 @@
 
       var newContact = angular.copy(vm.newContact);
       var currentList = angular.copy(vm.lists.activeList);
-      debugger; //debugger
       vm.lists.updateContact(vm.newContact).then(
         function(res) {
           vm.newContact = {customFields:{}};
@@ -303,7 +302,6 @@
           messenger.ok('Contact '+ newContact.firstName + ' has been updated');
         },
         function (err) {
-          debugger; //debugger
           vm.modalErrors = err;
         }
       );
