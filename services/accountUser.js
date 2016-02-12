@@ -57,7 +57,7 @@ function updateAccountUserWithId(data, userId, transaction, callback) {
   }).then(function (result) {
       callback(null, result);
   }).catch(function (err) {
-    callback(filters.errors(err));
+    callback(err);
   });
 }
 
@@ -72,7 +72,7 @@ function updateWithUserId(data, userId, callback) {
           updateAccountUserWithId(data, userId, t, function(err, accountUserResult) { 
             if (err) {
               t.rollback().then(function() {
-              callback(err);
+              callback(filters.errors(err));
               });
             } else {
               t.commit().then(function() {
@@ -81,10 +81,14 @@ function updateWithUserId(data, userId, callback) {
             }
           });
         }).catch(function(updateError) {
-          callback(updateError);
+          t.rollback().then(function() {
+            callback(filters.errors(updateError));
+          });
         });
       }).catch(function (err) {
-        callback(err);
+        t.rollback().then(function() {
+          callback(filters.errors(err));
+        });
       });
   });
 }
