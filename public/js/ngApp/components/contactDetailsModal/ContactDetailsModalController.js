@@ -33,7 +33,6 @@
 
     }
 
-
     function updateUserData(data, form) {
       vm.errors = {};
       user.updateUserData(data, form).then(function (res) {
@@ -42,19 +41,8 @@
         form.$setUntouched();
         messenger.ok('Contact details updated successfully.');
       }, function(err) {
-        processErrors(err);
+        vm.errors = err;
       });      
-    }
-    
-    function processErrors(err) {
-      if (!err) {
-        return;
-      }
-      
-      var errors = err.errors;
-      for (var e in errors) {
-          vm.errors[errors[e].path] = errors[e].message;
-      }
     }
 
     function cancel(){

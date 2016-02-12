@@ -1,6 +1,7 @@
 'use strict';
 
 let models = require('./../models');
+let filters = require('./../models/filters');
 let AccountUser = models.AccountUser;
 let User = models.User;
 var _ = require("lodash");
@@ -56,7 +57,7 @@ function updateAccountUserWithId(data, userId, transaction, callback) {
   }).then(function (result) {
       callback(null, result);
   }).catch(function (err) {
-    callback(err);
+    callback(filters.errors(err));
   });
 }
 

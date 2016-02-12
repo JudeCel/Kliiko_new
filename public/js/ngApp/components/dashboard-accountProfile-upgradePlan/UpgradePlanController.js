@@ -219,19 +219,8 @@
         }, 2000);
 
       }, function(err) {
-        processErrors(err);
+        vm.errors = err;
       });
-    }
-    
-    function processErrors(err) {
-      if (!err) {
-        return;
-      }
-
-      var errors = err.errors;
-      for (var e in errors) {
-          vm.errors[errors[e].path] = errors[e].message;
-      }
     }
     
     function changePaymentMethodTo(type) {
