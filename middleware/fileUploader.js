@@ -8,14 +8,14 @@ const MEGABYTE = 1024*1024;
 const VALIDATIONS = {
   maxSize: 5, // 2mb
   fileTypes: [
-    'gif',
-    'png',
-    'jpg',
-    'jpeg',
-    'bmp',
-    'mpeg',
-    'mp3',
-    'pdf'
+    "gif",
+    "png",
+    "jpg",
+    "jpeg",
+    "bmp",
+    "mpeg",
+    "mp3",
+    "pdf"
   ]
 };
 
@@ -34,17 +34,18 @@ module.exports = function upload(options) {
       res.send({error: err.message})
       return
     }
-    // Everything went fine
+    next();
   })
   }
 };
 
 function fileFilter(req, file, cb) {
   let extension = getFileExtension(file.originalname)
-  if (_.includes(VALIDATIONS.fileTypes, getFileExtension(extension))) {
+  console.log(extension);
+  if (_.includes(VALIDATIONS.fileTypes, extension)) {
     cb(null, true);
   }else {
-    cb(new Error(extension +' are not allowed'));
+    cb(new Error(extension + ' files are not allowed.'));
   }
 }
 
