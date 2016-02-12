@@ -78,12 +78,6 @@ describe('MIDDLEWARE - Session Member', function() {
       sessionMemberMiddleware.hasAccess(['facilitator'])(req, res, shouldNotGetHere(done));
     });
 
-    it('should fail because no session id', function(done)  {
-      delete req.params.id;
-      setFailVariables(done);
-      sessionMemberMiddleware.hasAccess(['facilitator'])(req, res, shouldNotGetHere(done));
-    });
-
     it('should fail because dont have the role', function(done)  {
       setFailVariables(done);
       sessionMemberMiddleware.hasAccess(['observer'])(req, res, shouldNotGetHere(done));
