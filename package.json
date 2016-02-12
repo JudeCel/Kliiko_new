@@ -102,7 +102,7 @@
     "mv": "^2.1.1",
     "ncp": "^2.0.0",
     "node-native-zip": "^1.1.0",
-    "node-uuid": "^1.4.3",
+    "node-uuid": "^1.4.7",
     "nodemailer": "^1.10.0",
     "passport": "^0.3.0",
     "passport-facebook": "^2.0.0",
@@ -112,12 +112,13 @@
     "pg": "^4.4.3",
     "pg-hstore": "^2.3.2",
     "q": "^1.4.1",
-    "sequelize": "^3.17.1",
+    "sequelize": "^3.19.2",
     "sequelize-cli": "^2.0.0",
     "serve-favicon": "~2.3.0",
     "socket.io": "^1.3.7",
     "string": "^1.8.1",
-    "xlsx": "^0.8.0",
-    "unirest": "^0.4.2"
+    "unirest": "^0.4.2",
+    "uuid": "^2.0.1",
+    "xlsx": "^0.8.0"
   }
 }

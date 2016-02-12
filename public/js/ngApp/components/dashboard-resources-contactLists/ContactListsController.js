@@ -239,9 +239,22 @@
       }
 
       if (action === 'update') {
+        vm.contactSnapshot = angular.copy(contactObj);
+
         vm.contactModalTitle = 'Edit Contact';
         vm.newContact = contactObj;
         vm.updateExistingUser = true;
+      }
+
+      if (action == 'cancel') {
+        for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
+          if (vm.lists.activeList.members[i].id == vm.contactSnapshot.id) {
+            vm.lists.activeList.members[i] = angular.copy(vm.contactSnapshot);
+            vm.contactSnapshot = null;
+            break;
+
+          }
+        }
       }
 
       if (action === 'excel') {
@@ -288,7 +301,6 @@
 
       var newContact = angular.copy(vm.newContact);
       var currentList = angular.copy(vm.lists.activeList);
-
       vm.lists.updateContact(vm.newContact).then(
         function(res) {
           vm.newContact = {customFields:{}};
@@ -344,6 +356,8 @@
       forceUnselect
         ? vm.allSelected = false
         : vm.allSelected = !vm.allSelected;
+
+      if (!vm.lists.activeList.members) return;
 
       for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
         vm.lists.activeList.members[i]._selected = vm.allSelected;

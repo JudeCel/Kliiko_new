@@ -651,7 +651,7 @@ describe('SERVICE - Survey', function() {
               surveyServices.answerSurvey(answerParams).then(function(result) {
                 done('Should not get here!');
               }, function(error) {
-                assert.deepEqual(error, { email: 'Invalid e-mail format' });
+                assert.deepEqual(error, { email: 'Email has invalid format' });
                 done();
               });
             });
