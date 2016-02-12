@@ -1,17 +1,21 @@
 'use strict';
 
 var constants = require('../util/constants');
+var validations = require('./validations');
 
 module.exports = (Sequelize, DataTypes) => {
   var PromotionCode = Sequelize.define('PromotionCode', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    name: { type: DataTypes.STRING, allowNull: false, unique: { msg: ' already taken' }, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
-    code: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
-    startDate: { type: DataTypes.DATE, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
-    endDate: { type: DataTypes.DATE, allowNull: false, validate: { notEmpty: { args: true, msg: "can't be empty" } } },
+    name: { type: DataTypes.STRING, allowNull: false, validate: {
+      notEmpty: true,
+      isUnique: validations.unique(Sequelize, 'PromotionCode', 'name')
+    } },
+    code: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
+    startDate: { type: DataTypes.DATE, allowNull: false, validate: { notEmpty: true } },
+    endDate: { type: DataTypes.DATE, allowNull: false, validate: { notEmpty: true } },
     discountType: { type: DataTypes.ENUM, allowNull: false, values: constants.promotionCodeTypes,
       validate: {
-        notEmpty: { args: true, msg: "can't be empty" },
+        notEmpty: true,
         isValueAsDiscountType: function(value) {
           if(value == 'value') {
             if(!this.minimalOrder) {
@@ -29,9 +33,9 @@ module.exports = (Sequelize, DataTypes) => {
         }
       }
     },
-    discountValue: { type: DataTypes.INTEGER, allowNull: false, 
-      validate: { 
-        notEmpty: { args: true, msg: "can't be empty" }, 
+    discountValue: { type: DataTypes.INTEGER, allowNull: false,
+      validate: {
+        notEmpty: true,
         isValidNumber: function(value) {
           if(value < 0){
             throw new Error("Please provide discount value greater then 0.");

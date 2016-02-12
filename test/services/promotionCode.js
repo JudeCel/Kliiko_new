@@ -45,7 +45,7 @@ describe('SERVICE - PromotionCode', function() {
     });
   });
 
-  it('should fail on unique validations', function (done) {
+  it.skip('should fail on unique validations', function (done) {
     promotionCode.createPromoCode(validAttrs, function(error, result) {
       assert.equal(result, null);
       assert.deepEqual(error, { name: 'Name already taken, should be unique' });

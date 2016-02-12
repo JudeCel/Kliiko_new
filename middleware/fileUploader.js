@@ -45,7 +45,7 @@ function fileFilter(req, file, cb) {
   if (_.includes(VALIDATIONS.fileTypes, extension)) {
     cb(null, true);
   }else {
-    cb(new Error(extension +' are not allowed'));
+    cb(new Error(extension + ' files are not allowed.'));
   }
 }
 

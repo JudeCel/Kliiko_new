@@ -123,7 +123,6 @@
     function saveResource(newResource){
       if(newResource.fileTst){
         var progressbar = ngProgressFactory.createInstance();
-        progressbar.start();
 
         var resourceParams = {
           title: newResource.title,
@@ -137,21 +136,19 @@
           if(res.error){
             messenger.error(res.error);
             $scope.submitIsDisabled = false;
-            progressbar.complete();
           }else{
              GalleryServices.postuploadData(resourceParams).then(function(res) {
               if(res.error){
                 $scope.newResource.fileTst = null;
                 messenger.error(res.error);
                 $scope.submitIsDisabled = false;
-                progressbar.complete();
               }else{
                 $scope.resources.push(res.data);
                 cancel()
                 messenger.ok("Resource was sucessfully created.");
                 $scope.submitIsDisabled = false;
-                progressbar.complete();
               }
+              progressbar.complete();
             })
           }
         })
