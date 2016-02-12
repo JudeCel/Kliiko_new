@@ -27,24 +27,36 @@ module.exports = function upload(options) {
   });
 
   let upload =  multer({ storage: storage, fileFilter: fileFilter, limits: { fileSize: (VALIDATIONS.maxSize * MEGABYTE) } });
-  return upload.single('uploadedfile');
+  return function(req, res, next) {
+    upload.single('uploadedfile')(req, res, function (err) {
+    if (err) {
+      res.status(415);
+      res.send({error: err.message})
+      return
+    }
+    // Everything went fine
+  })
+  }
 };
 
 function fileFilter(req, file, cb) {
-  let re = /(?:\.([^.]+))?$/;
-
-  if (_.includes(VALIDATIONS.fileTypes, re.exec(file.originalname)[1])) {
+  let extension = getFileExtension(file.originalname)
+  if (_.includes(VALIDATIONS.fileTypes, getFileExtension(extension))) {
     cb(null, true);
   }else {
-    cb(new Error(re.exec(file.originalname)[1] +' are not allowed'));
+    cb(new Error(extension +' are not allowed'));
   }
 }
 
 function filename(req, file, cb) {
-  let re = /(?:\.([^.]+))?$/;
   let name = file.originalname.split(".")[0]
-  let extension = '.' + re.exec(file.originalname)[1];
+  let extension = '.' + getFileExtension(file.originalname)
   cb(null, name + (new Date().getTime()) + extension);
+}
+
+function getFileExtension(fileNmae) {
+  let re = /(?:\.([^.]+))?$/;
+  return re.exec(fileNmae)[1];
 }
 
 function destination(options) {

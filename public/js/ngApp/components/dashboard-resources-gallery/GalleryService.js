@@ -77,12 +77,7 @@
       }).then(function(res) {
           deferred.resolve(res);
         }, function(error) {
-
-          console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-          console.log(error.data)
-          console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-
-          deferred.resolve({error: error.data});
+          deferred.resolve({error: error.data.error});
         });
 
       return deferred.promise;
