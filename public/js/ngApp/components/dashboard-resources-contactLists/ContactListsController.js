@@ -247,7 +247,14 @@
       }
 
       if (action == 'cancel') {
-        vm.newContact = vm.contactSnapshot;
+        for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
+          if (vm.lists.activeList.members[i].id == vm.contactSnapshot.id) {
+            vm.lists.activeList.members[i] = angular.copy(vm.contactSnapshot);
+            vm.contactSnapshot = null;
+            break;
+
+          }
+        }
       }
 
       if (action === 'excel') {
