@@ -304,7 +304,6 @@ function updateSurvey(params, account) {
           transaction: t
         }).then(function() {
           return bulkUpdateQuestions(survey.id, validParams.SurveyQuestions, t).then(function() {
-            t.commit();
             return survey;
           }, function() {
             t.rollback();

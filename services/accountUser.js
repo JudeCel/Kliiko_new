@@ -1,19 +1,21 @@
 'use strict';
 
-let models = require('./../models');
-let AccountUser = models.AccountUser;
-let User = models.User;
+var models = require('./../models');
+var filters = require('./../models/filters');
+var AccountUser = models.AccountUser;
+var User = models.User;
 var _ = require("lodash");
 var q = require('q');
 
-function createAccountManager(params, account, user, t, callback) {
-  AccountUser.create(prepareAccountManagerParams(params, account, user), { transaction: t })
-  .then(function(result) {
-    callback(null, user, params, t);
-  }).catch(AccountUser.sequelize.ValidationError, function(err) {
-    callback(err, null, null, t);
-  }).catch(function(err) {
-    callback(err, null, null, t);
+function createAccountManager(object, callback) {
+  object.errors = object.errors || {};
+
+  AccountUser.create(prepareAccountManagerParams(object.params, object.account, object.user), { transaction: object.transaction })
+  .then(function(_result) {
+    callback(null, object);
+  }, function(error) {
+    _.merge(object.errors, filters.errors(error));
+    callback(null, object);
   });
 }
 
@@ -68,7 +70,7 @@ function updateWithUserId(data, userId, callback) {
         }
       }).then(function (result) {
         result.update(data, {transaction: t}).then(function(updateResult) {
-          updateAccountUserWithId(data, userId, t, function(err, accountUserResult) { 
+          updateAccountUserWithId(data, userId, t, function(err, accountUserResult) {
             if (err) {
               t.rollback().then(function() {
               callback(err);
