@@ -45,6 +45,7 @@
     vm.updateFinalPrice = updateFinalPrice;
     vm.handleTosCheck = handleTosCheck;
 
+    vm.errors = {};
     init();
 
     function init() {
@@ -173,13 +174,13 @@
       function validateStep2() {
         if (step2IsValid) {
           vm.cantMoveNextStep = true;
+          handleTosCheck();
           return true;
         }
         if (!vm.promocode || !vm.promocode.length) {
           vm.cantMoveNextStep = true;
           return true;
         }
-
         upgradePlanServices.validatePromocode(vm.promocode).then(
           function(res) {
             vm.incorrectPromocode = null;
@@ -206,18 +207,33 @@
     }
 
     function updateUserData(data, form) {
+      vm.errors = {};
       user.updateUserData(data).then(function (res) {
         vm.updateBtn = 'Updated';
 
         //hide 'updated' button in a while
         setTimeout(function () {
+          vm.updateBtn = 'Update';
           form.$setPristine();
           form.$setUntouched();
         }, 2000);
 
+      }, function(err) {
+        processErrors(err);
       });
     }
+    
+    function processErrors(err) {
+      if (!err) {
+        return;
+      }
 
+      var errors = err.errors;
+      for (var e in errors) {
+          vm.errors[errors[e].path] = errors[e].message;
+      }
+    }
+    
     function changePaymentMethodTo(type) {
       if (type === 'chargebee') vm.paymentDetails.chargebee.selected = true;
 
@@ -250,6 +266,7 @@
 
     function handleTosCheck() {
       vm.cantMoveNextStep = !vm.paymentDetails.chargebee.tos;
+      step2IsValid = vm.paymentDetails.chargebee.tos;
     }
 
     function submitUpgrade() {
