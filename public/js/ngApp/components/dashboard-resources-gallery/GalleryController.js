@@ -137,7 +137,6 @@
           if(res.error){
             messenger.error(res.error);
             $scope.submitIsDisabled = false;
-            progressbar.complete();
           }else{
              GalleryServices.postuploadData(resourceParams).then(function(res) {
               if(res.error){
