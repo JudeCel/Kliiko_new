@@ -4,10 +4,10 @@
   chatSessionsServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
 
   function chatSessionsServices(globalSettings, $q, $resource, dbg) {
-    var chatSessionApi = $resource(globalSettings.restUrl + '/session/:path/:id', null, {
-      get: { method: 'get', params: { path: 'get', id: 'all' } },
-      copy: { method: 'post', params: { path: 'copy', id: '@id' } },
-      remove: { method: 'delete', params: { path: 'remove', id: '@id' } }
+    var chatSessionApi = $resource(globalSettings.restUrl + '/session/:id', null, {
+      get: { method: 'get', params: { id: 'list' } },
+      copy: { method: 'post', params: { id: '@id' } },
+      remove: { method: 'delete', params: { id: '@id' } }
     });
 
     var csServices = {};

@@ -11,6 +11,7 @@ function checkRoles(roles, allowedRoles) {
   return(result.length > 0)
 }
 
+// Checks access for accountuser roles, if doesn't have, checks for session member
 function hasAccess(memberRoles, accountRoles) {
   return function(req, res, next) {
     if (!res.locals.currentDomain) { throw new Error('currentDomain is not defined in the response locals') }

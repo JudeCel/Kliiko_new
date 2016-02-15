@@ -15,14 +15,13 @@ module.exports = (Sequelize, DataTypes) => {
     colours_used: { type: DataTypes.TEXT, allowNull: true }
   }, {
     timestamps: true,
-    paranoid: true,
     classMethods: {
       associate: function(models) {
         Session.belongsTo(models.BrandProject, { foreignKey: 'brand_project_id' });
         Session.belongsTo(models.Account, { foreignKey: 'accountId' });
         Session.belongsTo(models.BrandProjectPreference, { foreignKey: 'brandProjectPreferenceId' });
         Session.belongsToMany(models.Topic, { through: { model: models.SessionTopics} } );
-        Session.hasMany(models.SessionMember, { foreignKey: 'sessionId' });
+        Session.hasMany(models.SessionMember, { foreignKey: 'sessionId', onDelete: 'cascade' });
       }
     }
   });

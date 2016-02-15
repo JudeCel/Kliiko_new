@@ -100,6 +100,7 @@ function copySession(sessionId, accountId) {
         delete facilitator.token;
         delete facilitator.sessionId;
 
+        // Not confirmed.
         copySessionMember(session, facilitator).then(function(copy) {
           deferred.resolve(simpleParams(copy, MESSAGES.copied));
         }, function(error) {

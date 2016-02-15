@@ -107,42 +107,25 @@ function findWithSessionMembers(userId, accountId) {
   let deferred = q.defer();
 
   AccountUser.find({
+    attributes: VALID_ATTRIBUTES.accountUser,
     where: {
       AccountId: accountId,
       UserId: userId
     },
-    attributes: VALID_ATTRIBUTES.accountUser
+    include: [{
+      model: SessionMember,
+      attributes: VALID_ATTRIBUTES.sessionMember,
+      required: false
+    }]
   }).then(function(accountUser) {
     if(accountUser) {
-      joinSessionMembers(accountUser.dataValues).then(function() {
-        deferred.resolve(accountUser);
-      }, function(error) {
-        deferred.reject(error);
-      });
+      deferred.resolve(accountUser);
     }
     else {
       deferred.reject({ message: 'AccountUser not found' });
     }
   }).catch(function(error) {
-    deferred.reject(error);
-  });
-
-  return deferred.promise;
-}
-
-function joinSessionMembers(accountUser) {
-  let deferred = q.defer();
-
-  SessionMember.findAll({
-    where: {
-      accountUserId: accountUser.id
-    },
-    attributes: VALID_ATTRIBUTES.sessionMember
-  }).then(function(results) {
-    accountUser.SessionMembers = results;
-    deferred.resolve();
-  }).catch(function(error) {
-    deferred.reject(error);
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;

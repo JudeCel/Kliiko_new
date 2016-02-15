@@ -60,15 +60,15 @@
       return 'session-' + session.showStatus.toLowerCase();
     };
 
-    function goToChat(session, user) {
-      if(!isExpired(user)) {
+    function goToChat(session) {
+      if(!isExpired(session)) {
         $window.location.href = vm.chatRoomUrl + session.id;
       }
     };
 
     function subscriptionEndDate(user) {
       if(user && user.subscriptions) {
-        return new Date(user.subscriptions.trialEnd);
+        return user.subscriptions.trialEnd;
       }
       else {
         return 'not found';
@@ -91,9 +91,8 @@
       }
     };
 
-    function isExpired(user, date) {
-      date = date || new Date();
-      return (date > subscriptionEndDate(user));
+    function isExpired(session) {
+      return session.showStatus == 'Expired';
     }
   };
 })();
