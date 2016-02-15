@@ -1,6 +1,6 @@
-<div class='col-xs-12'>
+<div class='row'>
   <div class='dashboard-container'>
-    <div class='row'>
+    <div class='col-xs-12'>
       <div>
         <h2 class='text-center'>Chat Sessions</h2>
       </div>
@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <div class='row fixed-bottom-margin'>
+    <div class='col-xs-12 fixed-bottom-margin'>
       <table class='table table-dashboardElements'>
         <thead>
           <tr class='green-background'>
@@ -25,13 +25,13 @@
         <tbody>
           <tr class='{{ csc.rowClass(session) }}' ng-repeat='session in csc.sessions'>
             <td>{{ session.name }}</td>
-            <td>{{ session.SessionMembers[0].username }}</td>
+            <td>{{ session.facilitator.username }}</td>
             <td>{{ session.start_time | date:sc.dateFormat }}</td>
             <td>{{ session.end_time | date:sc.dateFormat }}</td>
             <td>{{ csc.subscriptionEndDate(app.user) | date:sc.dateFormat }}</td>
             <td>{{ session.showStatus }}</td>
             <td class='text-right dashboardElementsEditRemove'>
-              <span class='glyphicon glyphicon-star' aria-hidden='true' ng-if='csc.hasAccess(session.id, app.accountUser)'></span>
+              <span class='glyphicon glyphicon-star' aria-hidden='true' ng-if='csc.hasAccess(session.id, app.accountUser, true)' ng-click='csc.changePage("sessionRating", session)'></span>
               <img src='/icons/resources_grey.png' alt='' ng-click='csc.copySession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
               <img src='/icons/dashboardElement_edit.png' alt='' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
               <img src='/icons/dashboardElement_remove.png' alt='' ng-click='csc.removeSession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
