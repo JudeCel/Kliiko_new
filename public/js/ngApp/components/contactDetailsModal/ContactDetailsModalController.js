@@ -22,8 +22,8 @@
       // update form on every modal opening. will reset after 'cancel'
       jQuery('#contactDetailsModal').on('show.bs.modal', function (event) {
         // get all data for current user
-        user.getUserData().then(function (res) {
-          vm.userData = res;
+        user.getUserData().then(function (res) {     
+          vm.userData = $.extend({}, res);
         });
         vm.userDetailsForm.$setPristine();
         vm.userDetailsForm.$setUntouched();

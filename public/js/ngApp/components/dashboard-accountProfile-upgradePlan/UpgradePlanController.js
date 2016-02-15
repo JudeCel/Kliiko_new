@@ -47,7 +47,11 @@
 
     vm.errors = {};
     init();
-
+    
+    $('#contactDetailsModal').on('hide.bs.modal', function (e) {
+      init();
+    });
+    
     function init() {
 
       upgradePlanServices.init().then(fetchInitData);
@@ -59,7 +63,6 @@
         upgradePlanServices.getPlans().then(function (res) {
           dbg.log2('#UpgradePlanController > fetchInitData > plans fetched');
           progressbarForPlans.complete();
-
           vm.plans = res
         });
 
@@ -69,8 +72,7 @@
         user.getUserData().then(function (res) {
           dbg.log2('#UpgradePlanController > fetchInitData > userData fetched');
           progressbarForUserData.complete();
-
-          vm.userData = res;
+          vm.userData = $.extend({}, res);
         });
       }
 
@@ -237,9 +239,6 @@
 
     function handleUserDataChangeClick() {
       domServices.modal('contactDetailsModal');
-      $('#contactDetailsModal').on('hide.bs.modal', function (e) {
-        init();
-      });
     }
 
     function updateFinalPrice() {
