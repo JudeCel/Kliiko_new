@@ -1,0 +1,45 @@
+<div class='col-xs-12'>
+  <div class='dashboard-container'>
+    <div class='row'>
+      <div>
+        <h2 class='text-center'>Chat Sessions</h2>
+      </div>
+      <div class='text-right'>
+        <button class='btn btn-addNewElement btn-green'>Build New Session</button>
+      </div>
+    </div>
+
+    <div class='row fixed-bottom-margin'>
+      <table class='table table-dashboardElements'>
+        <thead>
+          <tr class='green-background'>
+            <th>Name</th>
+            <th>Facilitator</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Expiration Date</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class='{{ csc.rowClass(session) }}' ng-repeat='session in csc.sessions'>
+            <td>{{ session.name }}</td>
+            <td>{{ session.SessionMembers[0].username }}</td>
+            <td>{{ session.start_time | date:sc.dateFormat }}</td>
+            <td>{{ session.end_time | date:sc.dateFormat }}</td>
+            <td>{{ csc.subscriptionEndDate(app.user) | date:sc.dateFormat }}</td>
+            <td>{{ session.showStatus }}</td>
+            <td class='text-right dashboardElementsEditRemove'>
+              <span class='glyphicon glyphicon-star' aria-hidden='true' ng-if='csc.hasAccess(session.id, app.accountUser)'></span>
+              <img src='/icons/resources_grey.png' alt='' ng-click='csc.copySession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
+              <img src='/icons/dashboardElement_edit.png' alt='' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
+              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='csc.removeSession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
+              <span class='glyphicon glyphicon-play' aria-hidden='true' ng-click='csc.goToChat(session, app.user)' ng-if='!csc.isExpired(session)'></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

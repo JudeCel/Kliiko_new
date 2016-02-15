@@ -19,7 +19,7 @@ function uploadResourceCallback(userId, json) {
   var foundUser = _.find(io.sockets, function (client) {
     return client.userId == userId;
   });
-  
+
   if (foundUser) {
     foundUser.emit("fileuploadcomplete", json);
   }
@@ -41,7 +41,7 @@ router.get('/help', function(req, res, next) {
   res.render(views_path('help'));
 });
 
-router.get('/:id' , sessionMember.hasAccess, function(req, res, next) {
+router.get('/:id' , sessionMember.hasAccess(['participant', 'observer', 'facilitator']), function(req, res, next) {
   res.render(views_path('topic'), { title: 'chat', user: req.user, id: req.params.id, ioUrl: ioUrl() });
 });
 

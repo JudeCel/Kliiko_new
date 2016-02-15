@@ -15,7 +15,10 @@ const VALIDATIONS = {
     "bmp",
     "mpeg",
     "mp3",
-    "pdf"
+    "mp4",
+    "pdf",
+    "csv",
+    "xls"
   ]
 };
 
