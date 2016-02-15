@@ -90,9 +90,9 @@
       }
     };
 
-    function hasAccess(sessionId, accountUser, onlyMember) {
+    function hasAccess(sessionId, accountUser) {
       var found = vm.sessionListManageRoles.accountUser.indexOf(accountUser.role);
-      if(!onlyMember && found > -1) {
+      if(found > -1) {
         return true;
       }
       else {
