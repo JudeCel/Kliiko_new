@@ -32,7 +32,7 @@ function copy(req, res, next) {
 };
 
 function updateRating(req, res, next) {
-  sessionServices.updateSessionMemberRating(req.body).then(
+  sessionServices.updateSessionMemberRating(req.body, req.user.id, res.locals.currentDomain.id).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );

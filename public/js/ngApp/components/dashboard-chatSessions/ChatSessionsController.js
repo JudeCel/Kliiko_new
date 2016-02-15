@@ -19,6 +19,8 @@
     vm.hasAccess = hasAccess;
     vm.isExpired = isExpired;
 
+    vm.originalSession = {};
+
     changePage('index');
 
     function init() {
@@ -64,6 +66,12 @@
       chatSessionsServices.rateSessionMember({ id: sessionMember.id, rating: sessionMember.rating }).then(function(res) {
         if(res.error) {
           messenger.error(chatSessionsServices.prepareError(res.error));
+          for(var i in vm.originalSession.SessionMembers) {
+            var member = vm.originalSession.SessionMembers[i];
+            if(member.id == sessionMember.id) {
+              sessionMember.rating = member.rating;
+            }
+          }
         }
         else {
           calculateSessionRating(vm.session);
@@ -114,6 +122,7 @@
       else if(page == 'sessionRating') {
         calculateSessionRating(session);
         vm.session = session;
+        angular.copy(session, vm.originalSession);
         vm.currentPage = { page: page };
       }
     };

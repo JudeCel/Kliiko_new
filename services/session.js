@@ -21,7 +21,8 @@ const MESSAGES = {
   removed: 'Session sucessfully removed',
   copied: 'Session sucessfully copied',
   sessionMemberNotFound: 'Session Member not found',
-  rated: 'Session Member rated'
+  rated: 'Session Member rated',
+  cantRateSelf: "You can't rate your self"
 };
 
 module.exports = {
@@ -148,22 +149,32 @@ function chatRoomUrl() {
   return '/chat/';
 };
 
-function updateSessionMemberRating(params) {
+function updateSessionMemberRating(params, userId, accountId) {
   let deferred = q.defer();
 
-  SessionMember.update({ rating: params.rating }, {
+  SessionMember.find({
     where: {
       id: params.id
     },
+    include: [{
+      model: AccountUser,
+      where: {
+        UserId: { $ne: userId },
+        AccountId: { $ne: accountId }
+      }
+    }],
     attributes: VALID_ATTRIBUTES.sessionMember,
     returning: true
-  }).then(function(results) {
-    if(results[0] == 0) {
-      deferred.reject(MESSAGES.sessionMemberNotFound);
+  }).then(function(result) {
+    if(result) {
+      result.update({ rating: params.rating }, { returning: true }).then(function(sessionMember) {
+        deferred.resolve(simpleParams(result, MESSAGES.rated));
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
     }
     else {
-      let sessionMember = results[1][0];
-      deferred.resolve(simpleParams(sessionMember, MESSAGES.rated));
+      deferred.reject(MESSAGES.cantRateSelf);
     }
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
@@ -177,7 +188,6 @@ function findFacilitator(members) {
   let facilitator = {};
   _.map(members, function(member, index) {
     if(member.role == 'facilitator') {
-      member.arrayIndex = index;
       return facilitator = member;
     }
   });
@@ -275,8 +285,15 @@ function modifySessions(sessions, accountId) {
       addShowStatus(session, subscription);
       let facilitator = findFacilitator(session.SessionMembers);
       if(facilitator) {
+        let facIndex;
+
         session.dataValues.facilitator = facilitator;
-        session.SessionMembers.splice(facilitator.arrayIndex, 1);
+        _.map(session.SessionMembers, function(member, index) {
+          if(member.id == facilitator.id) {
+            facIndex = index;
+          }
+        });
+        session.SessionMembers.splice(facIndex, 1);
       }
     });
 
