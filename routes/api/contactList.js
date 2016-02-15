@@ -97,6 +97,7 @@ function parseImportFile(req, res, next) {
   }, function(err) {
     res.status(415);
     res.send({error:err});
+    fs.unlink(file.path);
   })
 }
 
