@@ -13,8 +13,8 @@
             <div ngf-drop ngf-select ng-model="clc.importData.file" class="drop-box"
                  ng-change="clc.clearImportErrors()"
                  ngf-drag-over-class="'dragover'"
-                 accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                 ngf-pattern="'.xls,.xlsx,.xlsm,.csv'">Drop file here or click to upload</div>
+                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, .csv"
+                 ngf-pattern="'.xls,.csv'">Drop file here or click to upload</div>
             <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
             <div ng-show="clc.importData.file.name">
                 <br> Selected File: <strong>{{ clc.importData.file.name}}</strong>
