@@ -21,7 +21,7 @@ const MESSAGES = {
   removed: 'Session sucessfully removed',
   copied: 'Session sucessfully copied',
   sessionMemberNotFound: 'Session Member not found',
-  rate: 'Session Member rated'
+  rated: 'Session Member rated'
 };
 
 module.exports = {
