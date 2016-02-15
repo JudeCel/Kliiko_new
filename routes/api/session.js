@@ -3,6 +3,12 @@
 var constants = require('../../util/constants');
 var sessionServices = require('./../../services/session');
 
+module.exports = {
+  get: get,
+  remove: remove,
+  copy: copy
+};
+
 function get(req, res, next) {
   sessionServices.findAllSessions(req.user.id, res.locals.currentDomain).then(
     getResponses(res).onSuccess,
@@ -41,10 +47,4 @@ function getResponses(res) {
       res.send(results);
     }
   };
-};
-
-module.exports = {
-  get: get,
-  remove: remove,
-  copy: copy
 };

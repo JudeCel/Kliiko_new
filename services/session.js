@@ -18,6 +18,15 @@ const MESSAGES = {
   copied: 'Session sucessfully copied'
 };
 
+module.exports = {
+  messages: MESSAGES,
+  chatRoomUrl: chatRoomUrl,
+  findSession: findSession,
+  findAllSessions: findAllSessions,
+  copySession: copySession,
+  removeSession: removeSession
+};
+
 // Exports
 function findSession(sessionId, accountId) {
   let deferred = q.defer();
@@ -298,13 +307,4 @@ function addShowStatus(session, subscription) {
   else {
     session.dataValues.showStatus = 'Closed';
   }
-}
-
-module.exports = {
-  messages: MESSAGES,
-  chatRoomUrl: chatRoomUrl,
-  findSession: findSession,
-  findAllSessions: findAllSessions,
-  copySession: copySession,
-  removeSession: removeSession
 }
