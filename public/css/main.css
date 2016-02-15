@@ -282,6 +282,10 @@ img.ic-flipX {
   background-color: #E8EAED; }
   .table-dashboardElements > tbody .dashboardElementsEditRemove {
     min-width: 15%; }
+  .table-dashboardElements > tbody tr.session-pending {
+    background-color: #E6E6E6; }
+  .table-dashboardElements > tbody tr.session-open {
+    background-color: #D6E9DF; }
 
 .table-dashboardElements > thead > tr > th,
 .table-dashboardElements > tbody > tr > td {

@@ -144,6 +144,24 @@ describe('SERVICE - PromotionCode', function() {
         done();
       });
     });
+
+    it("don't allow negative values", function(done) {
+      let invalidAttrs = {
+        name: 'Some negative things.',
+        startDate: startDate,
+        endDate: endDate,
+        discountType: 'value',
+        discountValue: -100,
+        minimalOrder: -100
+      }
+
+      promotionCode.createPromoCode(invalidAttrs, function(error, result) {
+        assert.equal(result, null);
+        assert.equal(error.discountType, 'Please provide minimal order value greater then 0.');
+        assert.equal(error.discountValue, 'Please provide discount value greater then 0.');
+        done();
+      });
+    })
   });
 
   describe('#removePromoCode', function() {
