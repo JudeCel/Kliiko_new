@@ -6,8 +6,9 @@ module.exports = (Sequelize, DataTypes) => {
     sessionMemberId:	{type: DataTypes.INTEGER, allowNull: false},
     topicId:	{type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
     replyId:	{type: DataTypes.INTEGER, allowNull: true},
-    tag:	{ type: DataTypes.ENUM, allowNull: false, values: ['message'], defaultValue: 'message' },
+    tag:	{ type: DataTypes.ENUM, allowNull: false, values: ['message', 'object'], defaultValue: 'message' },
     uid:	{type: DataTypes.STRING, allowNull: true},
+    cmd:	{type: DataTypes.STRING, allowNull: true},
     event:	{ type: DataTypes.JSONB, allowNull: false, defaultValue: {} },
     thumbs_up:	{type: DataTypes.INTEGER, allowNull: true, defaultValue: 0}
   },

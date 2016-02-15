@@ -1,5 +1,5 @@
 <div class="ng-custom-select">
-    <div id="dd" class="btn-standart btn-green wrapper-dropdown-cd" tabindex="1">{{ title }}
+    <div id="{{id}}" class="dd-directive btn-standart btn-green wrapper-dropdown-cd" tabindex="1">{{ title }}
         <ul class="dropdown" ng-transclude>
         </ul>
     </div>
@@ -51,7 +51,7 @@
         border-top: none;
         border-bottom: none;
         list-style: none;
-        transition: all 0.3s ease-out;
+        transition: height 0.3s ease-out;
 
         /* Hiding */
         max-height: 0;
@@ -60,8 +60,13 @@
 
     .wrapper-dropdown-cd ul.dropdown { z-index: 3000}
 
+    ul.dropdown {
+        padding: 0;
+        border: 3px solid inherit;
+        border-top: none;
+    }
+
     .wrapper-dropdown-cd .dropdown li {
-        /*padding: 0 10px ;*/
     }
 
     .wrapper-dropdown-cd .dropdown li a {
@@ -69,7 +74,7 @@
         text-decoration: none;
         color: #333;
         padding: 10px 0;
-        transition: all 0.3s ease-out;
+        transition: height 0.3s ease-out;
     }
 
     .wrapper-dropdown-cd .dropdown li:last-of-type a {
@@ -105,32 +110,5 @@
         max-height: 400px;
     }
 </style>
-<script>
-    function DropDown(el) {
-        this.dd = el;
-        this.initEvents();
-    }
-    DropDown.prototype = {
-        initEvents : function() {
-            var obj = this;
-
-            obj.dd.on('click', function(event){
-                $(this).toggleClass('active');
-                event.stopPropagation();
-            });
-        }
-    };
-
-    $(function() {
-
-        var dd = new DropDown( $('#dd') );
-
-        $(document).click(function() {
-            // all dropdowns
-            $('.wrapper-dropdown-cd').removeClass('active');
-        });
-
-    });
-</script>
 
 

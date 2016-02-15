@@ -23,7 +23,7 @@
           Add New Resource
         </button>
 
-        <ul class='dropdown-menu header-dropdown-ul' aria-labelledby='uploadResourceDropdown' >
+        <ul class='dropdown-menu gallery-dropdown-margin' aria-labelledby='uploadResourceDropdown' >
           <li class='text-right text-size-dashboard' ng-repeat="upload in uploads">
             <a ng-click="uploadResourceForm(upload.fileType)" data-toggle='modal' >
               {{upload.uploadText}}
@@ -164,7 +164,7 @@
                      value="{{resource.id}}" ng-click="resourcesSelected(resource.id)"
                      ng-checked="resource.checked" ng-model="resource.checked"/>
 
-              {{ resource.JSON.title | limitTo: 10 }}{{resource.JSON.title.length > 10 ? '...' : ''}}
+              {{ resourceTitle(resource.JSON.title) }}
 
               <button type='submit' class='btn btn-addNewElement btn-green pull-right margin-only-right-10 gallery-btn-width' ng-click="deleteResources(resource.id)">
                 <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>   
@@ -195,18 +195,19 @@
         <div class='modal-header'>
           <button type='button' class='close' data-dismiss='modal' ng-click="clearFormData()">&times;</button>
           <h2 class='modal-title text-center'>New {{ uploadTypeForTitle }} resource.</h2>
+          <p class='modal-title text-center'>Maximum file size is 5MB.</p>
         </div>
         <form ng-submit="submitForm(newResource)">
           <div class='modal-body'>
 
             <div class="form-group">
               <label for="title">Title</label>
-              <input ng-model="newResource.title" type="text" class="form-control center-block" name="title" id="title" placeholder="Title">
+              <input ng-model="newResource.title" type="text" class="form-control center-block" name="title" id="title" placeholder="Title" required>
             </div>
 
             <div ng-if="checkType(newResource.type, 'youtubeUrl')" class="form-group">
               <label for="youtubeUrl">Youtube Url</label>
-              <input ng-model="newResource.youtubeUrl" type="text" class="form-control center-block" name="youtubeUrl" id="youtubeUrl" placeholder="Youtube URL">
+              <input ng-model="newResource.youtubeUrl" type="text" class="form-control center-block" name="youtubeUrl" id="youtubeUrl" placeholder="Youtube URL" required>
             </div>
 
             <div ng-if="!checkType(newResource.type, 'youtubeUrl')" class="form-group">

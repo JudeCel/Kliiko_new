@@ -3,6 +3,7 @@
 var q = require('q');
 var _ = require('lodash');
 var models = require('./../models');
+var filters = require('./../models/filters');
 var AccountUser = models.AccountUser;
 var ContactList = models.ContactList;
 var ContactListUser = models.ContactListUser;
@@ -87,6 +88,7 @@ function updatePositions(params) {
 }
 
 function destroy(ids, accountId) {
+
   let deferred = q.defer();
   ContactListUser.destroy({where: { id: ids, accountId: accountId}}).then(function(result) {
     deferred.resolve(result);
@@ -116,7 +118,7 @@ function transactionFun(t, accountId) {
 function bulkCreate(list, accountId) {
   let deferred = q.defer();
     models.sequelize.transaction().then(function(t) {
-      async.map(list, transactionFun(t, accountId), function(err, results){
+      async.map(list, transactionFun(t, accountId), function(err, results) {
         if (err) {
           t.rollback().then(function() {
             deferred.reject(err);
@@ -127,7 +129,7 @@ function bulkCreate(list, accountId) {
           });
         }
       });
-    })
+    });
   return deferred.promise;
 }
 
@@ -154,7 +156,7 @@ function create(params, transaction) {
           deferred.reject(err);
         })
       }, function(err) {
-        deferred.reject(err);
+        deferred.reject(filters.errors(err));
       })
     }
   });
@@ -196,10 +198,10 @@ function update(params) {
       contactListUser.AccountUser.updateAttributes(params.defaultFields).then(function(accountUser) {
         buildWrappedResponse(contactListUser.id, deferred);
       }, function(err) {
-        deferred.reject(err);
+        deferred.reject(filters.errors(err));
       })
     }, function(err) {
-      deferred.reject(err);
+      deferred.reject(filters.errors(err));
     })
   })
   return deferred.promise;

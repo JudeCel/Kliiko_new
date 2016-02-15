@@ -5,8 +5,11 @@ var multipartyMiddleware = multiparty();
 var express = require('express');
 var router = express.Router();
 var policy = require('../../middleware/policy.js');
+var config = require('config');
+var sessionMemberMiddleware = require('./../../middleware/sessionMember');
 
 var userRoutes = require('./user');
+var accountUser = require('./accountUser');
 var accountManager = require('./accountManager');
 var promotionCode = require('./promotionCode');
 var accountDatabase = require('./accountDatabase');
@@ -17,17 +20,33 @@ var mailTemplates = require('./mailTemplate');
 let topic = require('./topic');
 var gallery = require('./gallery');
 var brandColour = require('./brandColour');
+var session = require('./session');
 
 let contactList = require('./contactList');
 let contactListUser = require('./contactListUser');
 
 module.exports = router;
 
+// Common Rules
+router.use(function (req, res, next) {
+  if (req.user) {
+    next();
+  } else {
+    notAuthExit(res);
+  }
+});
+
+//Common not authorized message
+function notAuthExit(res) {
+  res.status(403).send('not authorized');
+}
+
 // Main Routes
 router.get('/user', userRoutes.userGet);
 router.post('/user', userRoutes.userPost);
 router.put('/user', userRoutes.changePassword);
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
+router.get('/accountUser', accountUser.get);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
 router.post('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.post);
@@ -84,7 +103,8 @@ router.get('/survey/constants', survey.getConstants);
 // contact List
 router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
 router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
-router.post('/contactList/:id/import', policy.authorized(['accountManager', 'admin']), fileUploader(),contactList.import);
+router.post('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']), fileUploader({path:config.get('fileUploadPath')}),contactList.parseImportFile);
+router.put('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']),contactList.importContacts);
 router.put('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.update);
 router.delete('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.destroy);
 
@@ -92,8 +112,6 @@ router.delete('/contactLists/:id', policy.authorized(['accountManager', 'admin']
 router.post('/contactListsUser', policy.authorized(['accountManager', 'admin']), contactListUser.create);
 router.post('/contactListsUsersToRemove', policy.authorized(['accountManager', 'admin']), contactListUser.destroy);
 router.put('/contactListsUser/:id', policy.authorized(['accountManager', 'admin']), contactListUser.update);
-
-
 
 router.get('/topics', multipartyMiddleware, topic.get);
 router.post('/topic', multipartyMiddleware, topic.post);
@@ -106,16 +124,6 @@ router.post('/brandColour', brandColour.create);
 router.put('/brandColour', brandColour.update);
 router.post('/brandColour/copy', brandColour.copy);
 
-// Common Rules
-router.use(function (req, res, next) {
-  if (req.user) {
-    next();
-  } else {
-    notAuthExit(res);
-  }
-});
-
-//Common not authorized message
-function notAuthExit(res) {
-  res.status(403).send('not authorized');
-}
+router.get('/session/list', sessionMemberMiddleware.hasAccess(['facilitator', 'observer', 'participant'], ['accountManager', 'admin']), session.get);
+router.delete('/session/:id', policy.authorized(['accountManager', 'admin']), session.remove);
+router.post('/session/:id', policy.authorized(['accountManager', 'admin']), session.copy);

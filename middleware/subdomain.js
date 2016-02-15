@@ -13,7 +13,14 @@ function assignCurrentDomain(result, res) {
 }
 
 function assignCurrentUserInfo(result, req) {
-  _.merge(req.user, _.pick(result.accountUser.dataValues, constants.safeAccountUserParams))
+  _.merge(req.user, _.pick(result.accountUser.dataValues, prepareValidAccountUserParams()));
+}
+
+function prepareValidAccountUserParams() {
+  let safeAccountUserParams = _.cloneDeep(constants.safeAccountUserParams);
+  let index = safeAccountUserParams.indexOf('id');
+  safeAccountUserParams.splice(index, 1);
+  return safeAccountUserParams;
 }
 
 function getSubdomain(req) {

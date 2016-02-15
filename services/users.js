@@ -1,6 +1,7 @@
 "use strict";
 var models = require('./../models');
 var User = models.User;
+var filters = require('./../models/filters');
 var _ = require('lodash');
 var accountService = require('./account');
 var accountUserService = require('./accountUser');
@@ -31,17 +32,11 @@ function create(params, callback) {
     return callback(err);
   }
 
-  validateForCreate(params, function (error, params) {
+  createUser(params, function (error, result) {
     if (error) {
-      callback(error, params)
+      callback(error);
     } else {
-      createUser(params, function (error, result) {
-        if (error) {
-          return callback(error);
-        } else {
-          return callback(null, result);
-        }
-      });
+      callback(null, result);
     }
   });
 };
@@ -58,26 +53,14 @@ function update(req, callback){
   });
 }
 
-function prepareErrors(err) {
-  let errors = ({})
-  _.map(err.errors, function (n) {
-    if (!errors[n.path]) {
-      errors[n.path] =  n.message;
-    }
-  });
-  return errors
-};
-
 function createUser(params, callback) {
   let createNewUserFunctionList = [
     function (cb) {
       models.sequelize.transaction().then(function(t) {
         User.create(params, { transaction: t } ).then(function (result) {
-          cb(null, params, result, t);
-        }).catch(User.sequelize.ValidationError, function (err) {
-          cb(err, null, null, t);
-        }).catch(function (err) {
-          cb(err, null, null, t);
+          cb(null, { params: params, user: result, transaction: t, errors: {} });
+        }, function(error) {
+          cb(null, { params: params, user: {}, transaction: t, errors: filters.errors(error) })
         });
       });
     },
@@ -89,37 +72,17 @@ function createUser(params, callback) {
     createNewUserFunctionList.push(socialProfileService.create);
   }
 
-  async.waterfall(createNewUserFunctionList, function (error, user, lastActionResult, t, t2) {
-    let transaction = t2 || t
-      if (error) {
-        transaction.rollback().then(function() {
-          callback(prepareErrors(error), user, lastActionResult);
-        });
-      }else{
-        transaction.commit().then(function() {
-          callback(null, user, lastActionResult);
-        });
-      }
-  });
-}
-
-function validateForCreate(params, callback) {
-  let validateNewUserFunctionList = [
-    function (cb) {
-      User.build(params).validate().done(function (errors, _user) {
-        cb(errors, params);
+  async.waterfall(createNewUserFunctionList, function(_error, object) {
+    if(_.isEmpty(object.errors)) {
+      object.transaction.commit().then(function() {
+        callback(null, object.user);
       });
-    },
-    accountService.validate,
-  ]
-
-  if (params.socialProfile) {
-    validateNewUserFunctionList.push(socialProfileService.validate);
-  }
-
-  async.waterfall(validateNewUserFunctionList, function (error, params) {
-    if (error) { return callback(prepareErrors(error), params) };
-    callback(null, params);
+    }
+    else {
+      object.transaction.rollback().then(function() {
+        callback(object.errors, object.user);
+      });
+    }
   });
 }
 
