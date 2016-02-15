@@ -18,48 +18,55 @@
 
     // app modules
     'KliikoApp.user',
+    'KliikoApp.accountUser',
     'KliikoApp.banners',
     'KliikoApp.mailTemplate'
   ];
 
   angular
     .module('KliikoApp', includes)
-    .factory('myInterceptor', ['$log','$q', '$rootScope', function($log, $q, $rootScope) {
-      // Show progress bar on every request
+    .factory('myInterceptor', myInterceptor)
 
-      var requestInterceptor = {
-        request: function(config) {
-          $rootScope.progressbarStart();
-          return config;
-        },
 
-        'response': function(response) {
-          if (response.status == 404) {
-            alert('that is all folks');
-          }
-          $rootScope.progressbarComplete();
-          return response;
-        },
 
-        // optional method
-        'responseError': function(rejection) {
-          $rootScope.progressbarComplete();
-          return $q.reject(rejection);
-        }
-      };
-
-      return requestInterceptor;
-    }])
     .config(appConfigs)
     .run(appRun)
     .controller('AppController', AppController);
 
   angular
     .module('KliikoApp.Root', includes)
+    .factory('myInterceptor', myInterceptor)
     .config(appConfigs)
     .run(appRun)
     .controller('AppController', AppController);
 
+  myInterceptor.$injectopr = ['$log','$q', '$rootScope'];
+  function myInterceptor($log, $q, $rootScope) {
+    // Show progress bar on every request
+
+    var requestInterceptor = {
+      request: function(config) {
+        $rootScope.progressbarStart();
+        return config;
+      },
+
+      'response': function(response) {
+        if (response.status == 404) {
+          alert('that is all folks');
+        }
+        $rootScope.progressbarComplete();
+        return response;
+      },
+
+      // optional method
+      'responseError': function(rejection) {
+        $rootScope.progressbarComplete();
+        return $q.reject(rejection);
+      }
+    };
+
+    return requestInterceptor;
+  }
 
   appConfigs.$inject = ['dbgProvider', '$routeProvider', '$locationProvider', '$rootScopeProvider', '$httpProvider'];
   function appConfigs(dbgProvider, $routeProvider, $locationProvider, $rootScopeProvider, $httpProvider) {
@@ -98,8 +105,8 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'ngProgressFactory', 'user','$q'];
-  function AppController($rootScope, dbg, ngProgressFactory, user, $q ) {
+  AppController.$inject = ['$rootScope', 'dbg', 'ngProgressFactory', 'user', '$q', 'accountUser'];
+  function AppController($rootScope, dbg, ngProgressFactory, user, $q, accountUser) {
     var vm = this;
     var progressbar = ngProgressFactory.createInstance();
     progressbar.start();
@@ -112,6 +119,7 @@
 
     function init() {
       user.getUserData(true).then(function(res) { vm.user = res });
+      accountUser.getAccountUserData(true).then(function(res) { vm.accountUser = res });
     }
 
 

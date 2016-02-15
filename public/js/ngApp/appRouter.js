@@ -128,6 +128,27 @@
 
       })
 
+      ///////////////////////// Sessions
+      .state('dashboard.chatSessions', {
+        url: '/chatSessions',
+        onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location, banners) {
+          dbg.rs('chatSessions');
+
+          $stateParams.bannerType = 'sessions';
+
+          banners.setMainBannerForPage('sessions');
+
+          setTimeout(function () {
+           if ($state.current.name == 'dashboard.chatSessions') $state.go('dashboard.chatSessions');
+          }, 10);
+
+        }],
+        views: {
+          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-chatSessions/dashboard-content.html"}
+        }
+
+      })
+
       ///////////////////////// Resources
       .state('dashboard.resources', {
         url: "/resources",

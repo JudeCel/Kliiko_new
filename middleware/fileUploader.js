@@ -8,14 +8,15 @@ const MEGABYTE = 1024*1024;
 const VALIDATIONS = {
   maxSize: 5, // 2mb
   fileTypes: [
-    'image/gif',
-    'image/png',
-    'image/jpg',
-    'image/jpeg',
-    'image/bmp',
-    'audio/mpeg',
-    'audio/mp3',
-    'application/pdf'
+    "gif",
+    "png",
+    "jpg",
+    "jpeg",
+    "bmp",
+    "mpeg",
+    "mp3",
+    "mp4",
+    "pdf"
   ]
 };
 
@@ -23,27 +24,41 @@ module.exports = function upload(options) {
   options = options || {};
   let storage = multer.diskStorage({
     destination: destination(options),
-    fileFilter: fileFilter,
     filename: filename
   });
 
-  let upload =  multer({ storage: storage, limits: { fileSize: (VALIDATIONS.maxSize * MEGABYTE) } });
-  return upload.single('uploadedfile');
+  let upload =  multer({ storage: storage, fileFilter: fileFilter, limits: { fileSize: (VALIDATIONS.maxSize * MEGABYTE) } });
+  return function(req, res, next) {
+    upload.single('uploadedfile')(req, res, function (err) {
+    if (err) {
+      res.status(415);
+      res.send({error: err.message})
+      return
+    }
+    next();
+  })
+  }
 };
 
 function fileFilter(req, file, cb) {
-  if (_.includes(VALIDATIONS.fileTypes, req.headers['content-type'])) {
+  let extension = getFileExtension(file.originalname)
+  console.log(extension);
+  if (_.includes(VALIDATIONS.fileTypes, extension)) {
     cb(null, true);
   }else {
-    cb(new Error(req.headers['content-type'] +' are not allowed'));
+    cb(new Error(extension + ' files are not allowed.'));
   }
 }
 
 function filename(req, file, cb) {
-  let re = /(?:\.([^.]+))?$/;
   let name = file.originalname.split(".")[0]
-  let extension = '.' + re.exec(file.originalname)[1];
+  let extension = '.' + getFileExtension(file.originalname)
   cb(null, name + (new Date().getTime()) + extension);
+}
+
+function getFileExtension(fileNmae) {
+  let re = /(?:\.([^.]+))?$/;
+  return re.exec(fileNmae)[1];
 }
 
 function destination(options) {

@@ -24,6 +24,7 @@
     vm.validContactList = [];
     vm.contactListToAdd = [];
 
+    vm.changeActiveList = changeActiveList;
     vm.addNewList = addNewList;
     vm.submitNewList = submitNewList;
     vm.updateList = updateList;
@@ -54,6 +55,11 @@
     vm.mappingFieldsContinue = mappingFieldsContinue;
 
 
+    function changeActiveList(index) {
+      selectAll(true);
+      vm.lists.changeActiveList(index);
+      vm.allSelected = false;
+    }
 
     /**
      * Open modal and prepare variables
@@ -233,9 +239,22 @@
       }
 
       if (action === 'update') {
+        vm.contactSnapshot = angular.copy(contactObj);
+
         vm.contactModalTitle = 'Edit Contact';
         vm.newContact = contactObj;
         vm.updateExistingUser = true;
+      }
+
+      if (action == 'cancel') {
+        for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
+          if (vm.lists.activeList.members[i].id == vm.contactSnapshot.id) {
+            vm.lists.activeList.members[i] = angular.copy(vm.contactSnapshot);
+            vm.contactSnapshot = null;
+            break;
+
+          }
+        }
       }
 
       if (action === 'excel') {
@@ -282,13 +301,12 @@
 
       var newContact = angular.copy(vm.newContact);
       var currentList = angular.copy(vm.lists.activeList);
-
       vm.lists.updateContact(vm.newContact).then(
         function(res) {
           vm.newContact = {customFields:{}};
 
           domServices.modal('contactList-addContactManual', 'close');
-          messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
+          messenger.ok('Contact '+ newContact.firstName + ' has been updated');
         },
         function (err) {
           vm.modalErrors = err;
@@ -332,9 +350,15 @@
 
     /**
      * Toggle selection for all items in contacts list
+     * @param [forceUnselect] {boolean} if true - will not togle, but will turn all off
      */
-    function selectAll() {
-      vm.allSelected = !vm.allSelected;
+    function selectAll(forceUnselect) {
+      forceUnselect
+        ? vm.allSelected = false
+        : vm.allSelected = !vm.allSelected;
+
+      if (!vm.lists.activeList.members) return;
+
       for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
         vm.lists.activeList.members[i]._selected = vm.allSelected;
       }
@@ -351,7 +375,9 @@
 
       if (!ids.length) return;
 
+
       removeContacts(ids);
+      selectAll();
     }
 
     function startImport() {
@@ -524,9 +550,8 @@
       vm.additionalMappingFieldname = "";
       updateActiveCustomList(newList, parsedList);
     };
-    function addImportedContacts() {
 
-      if (!vm.lists.self.importPreviewArray.length) return;
+    function addImportedContacts() {
 
       vm.lists.addImportedContacts().then(
         function(res) {

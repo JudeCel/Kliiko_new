@@ -22,8 +22,8 @@
       // update form on every modal opening. will reset after 'cancel'
       jQuery('#contactDetailsModal').on('show.bs.modal', function (event) {
         // get all data for current user
-        user.getUserData().then(function (res) {
-          vm.userData = res;
+        user.getUserData().then(function (res) {     
+          vm.userData = $.extend({}, res);
         });
         vm.userDetailsForm.$setPristine();
         vm.userDetailsForm.$setUntouched();
@@ -33,7 +33,6 @@
 
     }
 
-
     function updateUserData(data, form) {
       vm.errors = {};
       user.updateUserData(data, form).then(function (res) {
@@ -42,19 +41,8 @@
         form.$setUntouched();
         messenger.ok('Contact details updated successfully.');
       }, function(err) {
-        processErrors(err);
+        vm.errors = err;
       });      
-    }
-    
-    function processErrors(err) {
-      if (!err) {
-        return;
-      }
-      
-      var errors = err.errors;
-      for (var e in errors) {
-          vm.errors[errors[e].path] = errors[e].message;
-      }
     }
 
     function cancel(){
