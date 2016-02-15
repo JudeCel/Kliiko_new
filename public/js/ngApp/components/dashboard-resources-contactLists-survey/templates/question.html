@@ -114,7 +114,7 @@
                 <input ng-model="sc.youtubeUrl" type="text" class="form-control center-block" name="youtube" id="youtube" placeholder="Youtube URL">
               </div>
 
-              <div ng-if="sc.questionResource.type !== 'youtube'" class="form-group">setUploadtype
+              <div ng-if="sc.questionResource.type !== 'youtube'" class="form-group">
                 <label for="file">File</label>
                 <div ngf-drop ngf-select ng-model="sc.file" class="drop-box" ngf-drag-over-class="'dragover'"  accept="{{sc.setUploadtype(sc.questionResource.type)}}">
                   Drop images here or click to upload
