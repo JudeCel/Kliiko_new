@@ -3,6 +3,8 @@ var contactListService = require('../../services/contactList');
 var contactListUserService = require('../../services/contactListUser');
 var _ = require('lodash');
 var validations = require('../helpers/validations');
+var fs = require('fs');
+
 
 module.exports = {
   index: index,
@@ -91,7 +93,7 @@ function parseImportFile(req, res, next) {
   let file = req.file;
   contactListService.parseFile(contactListId, file.path).then(function(result) {
     res.send({success: true, result: result});
-    //todo @dainis remove the file, that created in public/uploads
+    fs.unlink(file.path);
   }, function(err) {
     res.status(415);
     res.send({error:err});
