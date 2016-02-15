@@ -22,6 +22,14 @@
   .dashboardElementsEditRemove {
     min-width: 15%;
   }
+
+  tr.session-pending {
+    background-color: #E6E6E6;
+  }
+
+  tr.session-open {
+    background-color: #D6E9DF;
+  }
 }
 
 .table-dashboardElements > thead > tr > th,
