@@ -282,6 +282,10 @@ img.ic-flipX {
   background-color: #E8EAED; }
   .table-dashboardElements > tbody .dashboardElementsEditRemove {
     min-width: 15%; }
+  .table-dashboardElements > tbody tr.session-pending {
+    background-color: #E6E6E6; }
+  .table-dashboardElements > tbody tr.session-open {
+    background-color: #D6E9DF; }
 
 .table-dashboardElements > thead > tr > th,
 .table-dashboardElements > tbody > tr > td {
@@ -2211,6 +2215,10 @@ hr.survey-hr {
 
 #dashboard-contact-lists h2, #dashboard-contact-lists h3 {
   margin: 45px 30px 30px 30px; }
+
+#dashboard-contact-lists h4 {
+  margin: 30px 0px;
+  font-weight: bold; }
 
 #dashboard-contact-lists thead {
   background: #2F9F69; }
