@@ -8,70 +8,65 @@ var async = require('async');
 var q = require('q');
 
 const MESSAGES = {
-  setUp: "You have successfully setted up your chat session."
+  setUp: "You have successfully setted up your chat session.",
+  cancel: "Session build successfully canceled",
+  notFound: "Session build not found"
 }
 
-function setUp(params) {
-  let deferred = q.defer();
-
-  Session.create(
-    {
-      accountId: params.accountId,
-      name: params.name,
-      start_time: params.start_time,
-      end_time: params.end_time,
-      resourceId: params.resourceId,
-      brandProjectPreferenceId: params.brandProjectPreferenceId,
-      step: "setUp"
+function sessionBuilderObject(session) {
+  return {
+    sessionBuilder: {
+      steps: stepsDefination(session),
+      currentStep: session.step,
+      id: session.id
     }
-  ).then(function(result) {
-    deferred.resolve({
-      session: result, 
-      message: MESSAGES.setUp
-    })
+  }
+}
+
+
+function stepsDefination(session) {
+  return {
+    setUp: {
+      name: session.name,
+      startTime: session.startTime,
+      endTime: session.endTime,
+      resourceId: session.resourceId,
+      brandProjectPreferenceId:  session.brandProjectPreferenceId
+    },
+    facilitatiorAndTopics:{},
+    manageSessionEmails:{},
+    manageSessionParticipants: {},
+    inviteSessionObservers: {}
+  }
+}
+
+function initializeBuilder(params) {
+  let deferred = q.defer();
+  params.step = 'setUp';
+  Session.create(params).then(function(session) {
+    console.log(sessionBuilderObject(session));
+    deferred.resolve(sessionBuilderObject(session))
   }).catch(function(errors) {
     deferred.reject(errors);
   });
-
   return deferred.promise;
 }
 
-function facilitatiorAndTopics(params) {
-  async.parallel({
-    sessionMembers: function(callback) {
-      addFacilitators(sessionId, faliclitatorIds, callback)
-    },
-    sessionTopics: function(callback) {
-      addTopics(sessionId, topicIds, callback)
+function cancel(id) {
+  let deferred = q.defer();
+  Session.destroy({ where: { id: id } }).then(function(result) {
+    if(result == 0) {
+      deferred.reject({notFound: MESSAGES.notFound})
+    }else{
+      deferred.resolve(MESSAGES.cancel)
     }
-  }, function(err, results) {
-    
-  });
+  },function(error) {
+    deferred.reject(error);
+  })
+  return deferred.promise;
 }
-
-function addFacilitators(sessionId, faliclitatorIds, callback) {
-  let memberIds = [];
-
-  faliclitatorIds.forEach(function(faliclitatorId, index, array) {
-
-  });
-
-  callback(null, memberIds);
-}
-
-function addTopics(sessionId, topicIds, callback) {
-  let sessionTopicIds = [];
-
-  topicIds.forEach(function(topicId, index, array) {
-    
-  });
-
-  callback(null, s);
-}
-
-// Validations
 
 // Exports
 module.exports = {
-  setUp: setUp
+  initializeBuilder: initializeBuilder
 };

@@ -21,6 +21,7 @@ let topic = require('./topic');
 var gallery = require('./gallery');
 var brandColour = require('./brandColour');
 var session = require('./session');
+var sessionBuilder = require('./sessionBuilder');
 
 let contactList = require('./contactList');
 let contactListUser = require('./contactListUser');
@@ -128,3 +129,9 @@ router.get('/session/list', sessionMemberMiddleware.hasAccess(['facilitator', 'o
 router.delete('/session/:id', policy.authorized(['accountManager', 'admin']), session.remove);
 router.post('/session/:id', policy.authorized(['accountManager', 'admin']), session.copy);
 router.post('/sessionMember/rate/:id', sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin']), session.updateRating);
+
+// Session Builder
+router.get('/sessionBuilder/new',  policy.authorized(['accountManager', 'admin']), sessionBuilder.new);
+router.put('/sessionBuilder/:id/',  policy.authorized(['accountManager', 'admin']), sessionBuilder.update);
+router.post('/sessionBuilder/:id/nextStep',  policy.authorized(['accountManager', 'admin']), sessionBuilder.nextStep);
+router.delete('/sessionBuilder/:id/nextStep',  policy.authorized(['accountManager', 'admin']), sessionBuilder.cancel);
