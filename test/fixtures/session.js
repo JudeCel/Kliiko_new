@@ -218,8 +218,8 @@ function sessionParams(accountId, facilitatorId) {
     facilitatorId: facilitatorId,
     accountId: accountId,
     name: "cool session",
-    start_time: startTime,
-    end_time: startTime.setHours(startTime.getHours() + 2000),
+    startTime: startTime,
+    endTime: startTime.setHours(startTime.getHours() + 2000),
     status_id: 1,
     colours_used: '["3","6","5"]'
   };
