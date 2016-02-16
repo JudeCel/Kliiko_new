@@ -127,3 +127,4 @@ router.post('/brandColour/copy', brandColour.copy);
 router.get('/session/list', sessionMemberMiddleware.hasAccess(['facilitator', 'observer', 'participant'], ['accountManager', 'admin']), session.get);
 router.delete('/session/:id', policy.authorized(['accountManager', 'admin']), session.remove);
 router.post('/session/:id', policy.authorized(['accountManager', 'admin']), session.copy);
+router.post('/sessionMember/rate/:id', sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin']), session.updateRating);
