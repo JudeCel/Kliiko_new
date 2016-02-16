@@ -128,6 +128,24 @@
 
       })
 
+      .state('dashboard.accountProfile.sessionRating', {
+        url: '/session-rating',
+        views: {
+          'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-sessionRating/dashboard-content.html"}
+        },
+        resolve: {
+          loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/js/ngApp/components/dashboard-accountProfile-sessionRating/SessionRatingControllers.js',
+            ])
+          }]
+        },
+        onEnter: ['dbg', function (dbg) {
+          dbg.rs('dashboard.accountProfile.sessionRating is on');
+        }]
+
+      })
+
       ///////////////////////// Sessions
       .state('dashboard.chatSessions', {
         url: '/chatSessions',
