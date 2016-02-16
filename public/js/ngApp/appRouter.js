@@ -131,6 +131,14 @@
       ///////////////////////// Sessions
       .state('dashboard.chatSessions', {
         url: '/chatSessions',
+        resolve: {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              //'/js/ngApp/components/dashboard-chatSessions/ChatSessionsController.js',
+              '/js/ngApp/components/dashboard-chatSessions/chatSessionsServices.js',
+            ]);
+          }]
+        },
         onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location, banners) {
           dbg.rs('chatSessions');
 
