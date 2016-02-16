@@ -86,7 +86,7 @@ function prepareData(lists) {
         );
       })
     })
-  })
+  });
   return collection;
 }
 

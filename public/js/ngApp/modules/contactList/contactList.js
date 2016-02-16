@@ -254,12 +254,6 @@
 
       }
 
-      //var params = {
-      //  defaultFields: defaultFields,
-      //  customFields: customFields,
-      //  contactListId: contactListId
-      //};
-      //
       var params = {
         contactsArray:contactsArray
       };
@@ -270,13 +264,11 @@
           deferred.reject(res.error);
           return deferred.promise;
         }
-
         dbg.log1('#contactListServices > createUser > success '); dbg.log2(res);
-
-        deferred.resolve(res);
+        deferred.resolve(contactsArray);
       });
 
-      deferred.resolve(contactsArray);
+
       return deferred.promise;
     }
 

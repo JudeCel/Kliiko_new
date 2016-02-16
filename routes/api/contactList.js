@@ -112,6 +112,10 @@ function importContacts(req, res, next) {
       res.send({success: true, data:result});
     },
     function (err) {
+      if (err.name && err.name === 'SequelizeUniqueConstraintError') {
+        res.send({error: {message:'Some email(s) already taken'}});
+        return;
+      }
       res.send({error: err});
     }
   );
