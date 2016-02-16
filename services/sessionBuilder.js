@@ -48,7 +48,7 @@ function stepsDefination(session) {
 
 function update(params) {
   let deferred = q.defer();
-  Sessiom.find({where: {id: params.id, accountId: params.accountId }}).then(function (session) {
+  Session.find({where: {id: params.id, accountId: params.accountId }}).then(function (session) {
     if (session) {
       session.updateAttributes(params).then(function(updateSesion) {
         deferred.resolve(sessionBuilderObject(updateSesion));
