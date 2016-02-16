@@ -7,12 +7,22 @@ module.exports = {
   new: initializeBuilder,
   update: update,
   nextStep: nextStep,
-  cancel: cancel
+  cancel: cancel,
+  openBuild: openBuild
 };
 
 function initializeBuilder(req, res, next) {
   let params = { accountId: res.locals.currentDomain.id }
   sessionBuilderServices.initializeBuilder(params).then(function(result) {
+    res.send(result);
+  }, function(error) {
+    res.send({error: error});
+  })
+}
+
+function openBuild(req, res, next) {
+  let accountId = res.locals.currentDomain.id;
+  sessionBuilderServices.openBuild(req.params.id, accountId).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});

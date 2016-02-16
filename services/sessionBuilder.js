@@ -13,6 +13,13 @@ const MESSAGES = {
   notFound: "Session build not found"
 }
 
+// Exports
+module.exports = {
+  initializeBuilder: initializeBuilder,
+  openBuild: openBuild,
+  cancel: cancel
+};
+
 function sessionBuilderObject(session) {
   return {
     sessionBuilder: {
@@ -44,11 +51,25 @@ function initializeBuilder(params) {
   let deferred = q.defer();
   params.step = 'setUp';
   Session.create(params).then(function(session) {
-    console.log(sessionBuilderObject(session));
     deferred.resolve(sessionBuilderObject(session))
   }).catch(function(errors) {
     deferred.reject(errors);
   });
+  return deferred.promise;
+}
+
+
+function openBuild(id, accountId) {
+  let deferred = q.defer();
+  Session.find({where: { id: id, accountId: accountId } } ).then(function(session) {
+    if (session) {
+      deferred.resolve(sessionBuilderObject(session))
+    }else {
+      deferred.reject({notFound: MESSAGES.notFound})
+    }
+  }, function(error) {
+    deferred.reject(error);
+  })
   return deferred.promise;
 }
 
@@ -65,8 +86,3 @@ function cancel(id) {
   })
   return deferred.promise;
 }
-
-// Exports
-module.exports = {
-  initializeBuilder: initializeBuilder
-};
