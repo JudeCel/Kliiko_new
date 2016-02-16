@@ -5,7 +5,6 @@
 
   contactListsControllerServicesFactory.$inject = ['globalSettings','$q', 'dbg', 'Upload'];
   function contactListsControllerServicesFactory(globalSettings, $q, dbg, Upload)  {
-
     var publicMethods = {};
 
     publicMethods.uploadImportFile = uploadImportFile;
@@ -14,12 +13,18 @@
 
 
     function uploadImportFile(file, listId) {
+
       var deferred = $q.defer();
       Upload.upload({
         url: globalSettings.restUrl+'/contactLists/'+listId+'/import',
         method: 'POST',
         data: {uploadedfile: file}
       }).then(function (resp) {
+        if (resp.error) {
+          deferred.reject(resp.error);
+          return deferred.promise;
+        }
+
         deferred.resolve(resp);
       }, function (resp) {
         console.log('Error status: ' + resp.status);

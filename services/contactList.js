@@ -86,7 +86,7 @@ function prepareData(lists) {
         );
       })
     })
-  })
+  });
   return collection;
 }
 
@@ -302,7 +302,7 @@ function fileFieldsArray(fileFields, header) {
 
 function uniqRowListCounterFun(key, row, counterCollection) {
   if (counterCollection[row[key]]) {
-    counterCollection[row[key]].rows.push(row.rowNr)
+    counterCollection[row[key]].rows.push(row.rowNr);
     ++ counterCollection[row[key]].count
   }else{
     counterCollection[row[key]] = { rows: [row.rowNr], count: 1 }

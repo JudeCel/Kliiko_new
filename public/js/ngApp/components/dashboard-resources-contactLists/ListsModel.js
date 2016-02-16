@@ -426,7 +426,6 @@
         contactsArray.push({defaultFields: defaultFields, customFields: customFields,contactListId: self.activeList.id});
       }
 
-
       contactListServices.addImportedContacts(contactsArray, self.activeList.id).then(
         function (res) {
           for (var i = 0, len = self.items.length; i < len ; i++) {
@@ -446,7 +445,7 @@
           deferred.resolve(res);
         },
         function (err) {
-          deferred.reject(err);
+          deferred.reject(err.message);
         }
       );
       return deferred.promise;
