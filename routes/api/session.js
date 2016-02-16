@@ -6,7 +6,8 @@ var sessionServices = require('./../../services/session');
 module.exports = {
   get: get,
   remove: remove,
-  copy: copy
+  copy: copy,
+  updateRating: updateRating
 };
 
 function get(req, res, next) {
@@ -30,21 +31,30 @@ function copy(req, res, next) {
   );
 };
 
+function updateRating(req, res, next) {
+  sessionServices.updateSessionMemberRating(req.body, req.user.id, res.locals.currentDomain.id).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+};
+
 function getResponses(res) {
   return {
     onError: function(error) {
       res.send({ error: error });
     },
     onSuccess: function(result) {
-      let results = {
-        sessionListManageRoles: constants.sessionListManageRoles,
-        chatRoomUrl: sessionServices.chatRoomUrl(),
-        data: result.data,
-        message: result.message,
-        dateFormat: constants.dateFormat
-      };
-
-      res.send(results);
+      res.send(prepareParams(result));
     }
   };
 };
+
+function prepareParams(result) {
+  return {
+    sessionListManageRoles: constants.sessionListManageRoles,
+    chatRoomUrl: sessionServices.chatRoomUrl(),
+    data: result.data,
+    message: result.message,
+    dateFormat: constants.dateFormat
+  };
+}

@@ -553,6 +553,8 @@
 
     function addImportedContacts() {
 
+      if (!vm.lists.importPreviewArray.length) return;
+
       vm.lists.addImportedContacts().then(
         function(res) {
           domServices.modal('modals-import-preview', 'close');

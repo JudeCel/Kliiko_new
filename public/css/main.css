@@ -890,6 +890,9 @@ footer {
 .text-font-family-tabs {
   font-family: Source sans pro black; }
 
+.text-vertical-middle {
+  vertical-align: middle; }
+
 /* Text COLOR */
 .text-shadow-gray {
   text-shadow: 0 0 5px #58595b !important; }
@@ -1502,6 +1505,10 @@ hr.survey-hr {
   .brandColours .containerInnerBox {
     margin: 10px auto 10%; }
 
+.session-rating-stars {
+  font-size: 2.5em;
+  padding-top: 2%; }
+
 #dashboard #back-nav-btn {
   margin-bottom: -75px; }
 
@@ -1694,8 +1701,7 @@ hr.survey-hr {
     border-color: #58595b; }
   #upgrade-plan-content .modal-footer .i-want-btn {
     color: #58595b;
-    border-color: #F0E935;
-    width: 200px; }
+    border-color: #F0E935; }
 
 #upgrade-plan-content #plansModal {
   top: -85px; }

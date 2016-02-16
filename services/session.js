@@ -12,10 +12,17 @@ var _ = require('lodash');
 
 var sessionMemberServices = require('./../services/sessionMember');
 
+const VALID_ATTRIBUTES = {
+  sessionMember: ['id', 'role', 'rating', 'sessionId', 'accountUserId', 'username']
+};
+
 const MESSAGES = {
   notFound: 'Session not found',
   removed: 'Session sucessfully removed',
-  copied: 'Session sucessfully copied'
+  copied: 'Session sucessfully copied',
+  sessionMemberNotFound: 'Session Member not found',
+  rated: 'Session Member rated',
+  cantRateSelf: "You can't rate your self"
 };
 
 module.exports = {
@@ -24,7 +31,8 @@ module.exports = {
   findSession: findSession,
   findAllSessions: findAllSessions,
   copySession: copySession,
-  removeSession: removeSession
+  removeSession: removeSession,
+  updateSessionMemberRating: updateSessionMemberRating
 };
 
 // Exports
@@ -32,19 +40,19 @@ function findSession(sessionId, accountId) {
   let deferred = q.defer();
 
   Session.find({
-    attributes: ['id'],
     where: {
       id: sessionId,
       accountId: accountId
     },
     include: [{
       model: SessionMember,
-      where: { role: 'facilitator' }
+      attributes: VALID_ATTRIBUTES.sessionMember,
+      required: false
     }]
   }).then(function(session) {
     if(session) {
-      findSessionsWithCondition(session.id, accountId).then(function(data) {
-        deferred.resolve(data);
+      modifySessions(session, accountId).then(function(result) {
+        deferred.resolve(simpleParams(result));
       }, function(error) {
         deferred.reject(error);
       });
@@ -103,7 +111,7 @@ function copySession(sessionId, accountId) {
     delete result.data.dataValues.id;
 
     Session.create(result.data.dataValues).then(function(session) {
-      let facilitator = findFacilitator(result.data.SessionMembers);
+      let facilitator = result.data.dataValues.facilitator;
       if(facilitator) {
         delete facilitator.id;
         delete facilitator.token;
@@ -111,13 +119,21 @@ function copySession(sessionId, accountId) {
 
         // Not confirmed.
         copySessionMember(session, facilitator).then(function(copy) {
-          deferred.resolve(simpleParams(copy, MESSAGES.copied));
+          modifySessions(copy, accountId).then(function(result) {
+            deferred.resolve(simpleParams(result, MESSAGES.copied));
+          }, function(error) {
+            deferred.reject(error);
+          });
         }, function(error) {
           deferred.reject(error);
         });
       }
       else {
-        deferred.resolve(simpleParams(session, MESSAGES.copied));
+        modifySessions(session, accountId).then(function(result) {
+          deferred.resolve(simpleParams(result, MESSAGES.copied));
+        }, function(error) {
+          deferred.reject(error);
+        });
       }
     }).catch(function(error) {
       deferred.reject(filters.errors(error));
@@ -131,18 +147,52 @@ function copySession(sessionId, accountId) {
 
 function chatRoomUrl() {
   return '/chat/';
-}
+};
+
+function updateSessionMemberRating(params, userId, accountId) {
+  let deferred = q.defer();
+
+  SessionMember.find({
+    where: {
+      id: params.id
+    },
+    include: [{
+      model: AccountUser,
+      where: {
+        UserId: { $ne: userId },
+        AccountId: { $ne: accountId }
+      }
+    }],
+    attributes: VALID_ATTRIBUTES.sessionMember,
+    returning: true
+  }).then(function(result) {
+    if(result) {
+      result.update({ rating: params.rating }, { returning: true }).then(function(sessionMember) {
+        deferred.resolve(simpleParams(result, MESSAGES.rated));
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+    else {
+      deferred.reject(MESSAGES.cantRateSelf);
+    }
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+};
 
 // Helpers
 function findFacilitator(members) {
-  let facilitator;
-  _.map(members, function(member) {
+  let facilitator = {};
+  _.map(members, function(member, index) {
     if(member.role == 'facilitator') {
       return facilitator = member;
     }
   });
 
-  return facilitator ? facilitator.dataValues : null;
+  return facilitator.dataValues;
 }
 
 function findAllSessionsAsManager(accountId) {
@@ -154,10 +204,15 @@ function findAllSessionsAsManager(accountId) {
     },
     include: [{
       model: SessionMember,
-      where: { role: 'facilitator' }
+      attributes: VALID_ATTRIBUTES.sessionMember,
+      required: false
     }]
   }).then(function(sessions) {
-    modifySessions(sessions, accountId, deferred);
+    modifySessions(sessions, accountId).then(function(result) {
+      deferred.resolve(simpleParams(result));
+    }, function(error) {
+      deferred.reject(error);
+    });
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -175,6 +230,7 @@ function findAllSessionsAsMember(userId, accountId) {
     },
     include: [{
       model: SessionMember,
+      attributes: VALID_ATTRIBUTES.sessionMember,
       include: [{
         model: AccountUser,
         where: {
@@ -184,53 +240,14 @@ function findAllSessionsAsMember(userId, accountId) {
       }]
     }]
   }).then(function(sessions) {
-    let sessionIds = _.map(sessions, 'id');
-    findSessionsWithCondition(ids, accountId).then(function(data) {
-      deferred.resolve(data);
+    modifySessions(sessions, accountId).then(function(result) {
+      deferred.resolve(simpleParams(result));
     }, function(error) {
       deferred.reject(error);
     });
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
-
-  return deferred.promise;
-};
-
-function findSessionsWithCondition(ids, accountId) {
-  let deferred = q.defer();
-
-  if(_.isArray(ids)) {
-    Session.findAll({
-      where: { id: { $in: sessionIds } },
-      include: [{
-        model: SessionMember,
-        where: { role: 'facilitator' }
-      }]
-    }).then(function(sessions) {
-      modifySessions(sessions, accountId, deferred);
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
-    });
-  }
-  else {
-    Session.find({
-      where: { id: ids },
-      include: [{
-        model: SessionMember,
-        where: { role: 'facilitator' }
-      }]
-    }).then(function(session) {
-      if(session) {
-        modifySessions(session, accountId, deferred);
-      }
-      else {
-        deferred.reject(MESSAGES.notFound);
-      }
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
-    });
-  }
 
   return deferred.promise;
 };
@@ -259,36 +276,33 @@ function simpleParams(data, message) {
   return { data: data, message: message };
 };
 
-function findAccountSubscription(accountId) {
+function modifySessions(sessions, accountId) {
   let deferred = q.defer();
 
   models.Subscription.find({ where: { AccountId: accountId } }).then(function(subscription) {
-    if(subscription) {
-      deferred.resolve(subscription);
-    }
-    else {
-      deferred.reject('No subscription found');
-    }
+    let array = _.isArray(sessions) ? sessions : [sessions];
+    _.map(array, function(session) {
+      addShowStatus(session, subscription);
+      let facilitator = findFacilitator(session.SessionMembers);
+      if(facilitator) {
+        let facIndex;
+
+        session.dataValues.facilitator = facilitator;
+        _.map(session.SessionMembers, function(member, index) {
+          if(member.id == facilitator.id) {
+            facIndex = index;
+          }
+        });
+        session.SessionMembers.splice(facIndex, 1);
+      }
+    });
+
+    deferred.resolve(sessions);
   }).catch(function(error) {
-    deferred.reject(error);
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
-}
-
-function modifySessions(sessions, accountId, deferred) {
-  let array = _.isArray(sessions) ? sessions : [sessions];
-  findAccountSubscription(accountId).then(function(subscription) {
-    _.map(array, function(session) {
-      addShowStatus(session, subscription);
-    });
-    deferred.resolve(simpleParams(sessions));
-  }, function(_error) {
-    _.map(array, function(session) {
-      addShowStatus(session, null);
-    });
-    deferred.resolve(simpleParams(sessions));
-  });
 }
 
 function addShowStatus(session, subscription) {

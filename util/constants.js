@@ -5,6 +5,7 @@ module.exports = {
   validPhoneFormat: '1 123456789',
   emailRegExp: /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i,
   systemRoles: ['admin', 'accountManager', 'facilitator', 'observer', 'participant'],
+  sessionMemberRoles: ['facilitator', 'observer', 'participant'],
   safeAccountUserParams: [
     'id',
     'firstName',
