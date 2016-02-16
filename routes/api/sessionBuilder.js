@@ -31,15 +31,24 @@ function openBuild(req, res, next) {
 
 function update(req, res, next) {
   params.accountId = res.locals.currentDomain.id;
+  delete params.step // Step only can be updated with next step function
+
   sessionBuilderServices.update(params).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});
   })
 }
-function nextStep(req, res, next) {
 
+function nextStep(req, res, next) {
+  let accountId = res.locals.currentDomain.id;
+  sessionBuilderServices.nextStep(req.params.id, accountId).then(function(result) {
+    res.send(result);
+  }, function(error) {
+    res.send({error: error});
+  })
 }
+
 function cancel(req, res, next) {
   sessionBuilderServices.cancel(req.params.id).then(function(result) {
     res.send(result);

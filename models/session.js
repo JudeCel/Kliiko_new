@@ -13,6 +13,7 @@ module.exports = (Sequelize, DataTypes) => {
     incentive_details: { type: DataTypes.TEXT, allowNull: true  },
     active:	{ type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     colours_used: { type: DataTypes.TEXT, allowNull: true },
+    // The order for step array is important always keep right order!!!
     step: { type: DataTypes.ENUM, allowNull: false,
       values: ['setUp', 'facilitatiorAndTopics', 'manageSessionEmails',
         'manageSessionParticipants', 'inviteSessionObservers', 'done'

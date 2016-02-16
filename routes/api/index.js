@@ -133,6 +133,6 @@ router.post('/sessionMember/rate/:id', sessionMemberMiddleware.hasAccess(['facil
 // Session Builder
 router.get('/sessionBuilder/new',  policy.authorized(['accountManager', 'admin']), sessionBuilder.new);
 router.get('/sessionBuilder/:id/openBuild',  policy.authorized(['accountManager', 'admin']), sessionBuilder.openBuild);
-router.put('/sessionBuilder/:id/',  policy.authorized(['accountManager', 'admin']), sessionBuilder.update);
+router.put('/sessionBuilder/:id',  policy.authorized(['accountManager', 'admin']), sessionBuilder.update);
 router.post('/sessionBuilder/:id/nextStep',  policy.authorized(['accountManager', 'admin']), sessionBuilder.nextStep);
-router.delete('/sessionBuilder/:id/nextStep',  policy.authorized(['accountManager', 'admin']), sessionBuilder.cancel);
+router.delete('/sessionBuilder/:id/cancel',  policy.authorized(['accountManager', 'admin']), sessionBuilder.cancel);
