@@ -165,7 +165,7 @@ describe('Services -> ContactList', () => {
         function successFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-
+              assert.lengthOf(result.valid, 3);
               assert.deepEqual(result.invalid, []);
               assert.ok(_.isEqual(result.contactListFields.defaultFields, contactList.defaultFields));
               assert.ok(_.isEqual(result.contactListFields.customFields, contactList.customFields));
@@ -237,9 +237,9 @@ describe('Services -> ContactList', () => {
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              assert.equal(result.invalid[0].validationErrors.companyName, 'Not found');
-              assert.equal(result.invalid[1].validationErrors.companyName, 'Not found');
-              assert.equal(result.invalid[2].validationErrors.companyName, 'Not found');
+              assert.equal(result.invalid[0].validationErrors.companyName, '');
+              assert.equal(result.invalid[1].validationErrors.companyName, '');
+              assert.equal(result.invalid[2].validationErrors.companyName, '');
               callback(null, true);
             }, function(error) {
               callback(error);
@@ -261,12 +261,12 @@ describe('Services -> ContactList', () => {
       });
 
       describe('should fail because duplicate email in file', function() {
-      var testFileValid = { xls: 'test/fixtures/contactList/list_valid_v2.xls', csv: 'test/fixtures/contactList/list_valid.csv' };
+      var testFileValid = { xls: 'test/fixtures/contactList/list_valid_v2.xls', csv: 'test/fixtures/contactList/list_invalid.csv' };
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
               assert.include(result.duplicateEntries[0].rows, 3);
-              assert.include(result.duplicateEntries[0].rows, 5);
+              assert.include(result.duplicateEntries[0].rows, 6);
               assert.lengthOf(result.duplicateEntries, 2);
               assert.equal(result.duplicateEntries[0].email, "chatUser@insider.com");
               assert.equal(result.duplicateEntries[1].email, "bligzna.lauris@gmail.com");
@@ -294,9 +294,9 @@ describe('Services -> ContactList', () => {
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              assert.equal(result.invalid[0].validationErrors.three, 'Not found');
-              assert.equal(result.invalid[1].validationErrors.three, 'Not found');
-              assert.equal(result.invalid[2].validationErrors.three, 'Not found');
+              assert.equal(result.invalid[0].validationErrors.three, '');
+              assert.equal(result.invalid[1].validationErrors.three, '');
+              assert.equal(result.invalid[2].validationErrors.three, '');
               callback(null, true);
             }, function(error) {
               callback(error);
@@ -321,7 +321,7 @@ describe('Services -> ContactList', () => {
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              assert.equal(result.invalid[0].validationErrors.country, 'No data');
+              assert.equal(result.invalid[0].validationErrors.country, '');
               callback(null, true);
             }, function(error) {
               callback(error);
