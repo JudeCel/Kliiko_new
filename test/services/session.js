@@ -133,4 +133,37 @@ describe('SERVICE - Session', function() {
       });
     });
   });
+
+  describe('#updateSessionMemberRating', function() {
+    describe('happy path', function() {
+      it('should succeed on updating rating', function (done) {
+        sessionServices.findSession(testData.session.id, testData.account.id).then(function(result) {
+          let params = { id: result.data.dataValues.facilitator.id, rating: 4 };
+
+          sessionServices.updateSessionMemberRating(params, testData.account.id, testData.user.id).then(function(result) {
+            assert.equal(result.data.rating, 4);
+            assert.equal(result.message, sessionServices.messages.rated);
+            done();
+          }, function(error) {
+            done(error);
+          });
+        })
+      });
+    });
+
+    describe('sad path', function() {
+      it('should fail because not found', function (done) {
+        sessionServices.findSession(testData.session.id, testData.account.id).then(function(result) {
+          let params = { id: result.data.dataValues.facilitator.id + 100, rating: 4 };
+
+          sessionServices.updateSessionMemberRating(params, testData.account.id, testData.user.id).then(function(result) {
+            done('Should not get here!');
+          }, function(error) {
+            assert.equal(error, sessionServices.messages.sessionMemberNotFound);
+            done();
+          });
+        });
+      });
+    });
+  });
 });

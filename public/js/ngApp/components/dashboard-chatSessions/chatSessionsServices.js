@@ -10,10 +10,15 @@
       remove: { method: 'delete', params: { id: '@id' } }
     });
 
+    var sessionMemberApi = $resource(globalSettings.restUrl + '/sessionMember/:path/:id', null, {
+      rate: { method: 'post', params: { id: '@id', path: 'rate' } }
+    });
+
     var csServices = {};
     csServices.findAllSessions = findAllSessions;
     csServices.removeSession = removeSession;
     csServices.copySession = copySession;
+    csServices.rateSessionMember = rateSessionMember;
     csServices.prepareError = prepareError;
     return csServices;
 
@@ -47,6 +52,17 @@
       dbg.log2('#ChatSessions > copySession > make rest call');
       chatSessionApi.copy(data, function(res) {
         dbg.log2('#ChatSessions > copySession > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
+
+    function rateSessionMember(data) {
+      var deferred = $q.defer();
+      dbg.log2('#ChatSessions > rateSessionMember > make rest call');
+      sessionMemberApi.rate(data, function(res) {
+        dbg.log2('#ChatSessions > rateSessionMember > rest call responds');
         deferred.resolve(res);
       });
 

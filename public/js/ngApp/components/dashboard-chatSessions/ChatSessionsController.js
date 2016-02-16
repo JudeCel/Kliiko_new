@@ -2,24 +2,28 @@
   'use strict';
 
   angular.module('KliikoApp').controller('ChatSessionsController', ChatSessionsController);
-  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'messenger', 'angularConfirm', '$window'];
+  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'messenger', 'angularConfirm', '$window', '$rootScope'];
 
-  function ChatSessionsController(dbg, chatSessionsServices, messenger, angularConfirm, $window){
+  function ChatSessionsController(dbg, chatSessionsServices, messenger, angularConfirm, $window, $rootScope) {
     dbg.log2('#ChatSessionsController started');
 
     var vm = this;
     vm.removeSession = removeSession;
     vm.copySession = copySession;
+    vm.rateSessionMember = rateSessionMember;
 
+    vm.changePage = changePage;
     vm.rowClass = rowClass;
     vm.subscriptionEndDate = subscriptionEndDate;
     vm.goToChat = goToChat;
     vm.hasAccess = hasAccess;
     vm.isExpired = isExpired;
 
-    initList();
+    vm.originalSession = {};
 
-    function initList() {
+    changePage('index');
+
+    function init() {
       chatSessionsServices.findAllSessions().then(function(res) {
         vm.sessions = res.data;
         vm.dateFormat = res.dateFormat;
@@ -39,6 +43,7 @@
             messenger.ok(res.message);
             var index = vm.sessions.indexOf(session);
             vm.sessions.splice(index, 1);
+            $rootScope.$emit('app.updateUser');
           }
         });
       });
@@ -50,8 +55,26 @@
           messenger.error(chatSessionsServices.prepareError(res.error));
         }
         else {
+          $rootScope.$emit('app.updateUser');
           messenger.ok(res.message);
           vm.sessions.push(res.data);
+        }
+      });
+    };
+
+    function rateSessionMember(sessionMember) {
+      chatSessionsServices.rateSessionMember({ id: sessionMember.id, rating: sessionMember.rating }).then(function(res) {
+        if(res.error) {
+          messenger.error(chatSessionsServices.prepareError(res.error));
+          for(var i in vm.originalSession.SessionMembers) {
+            var member = vm.originalSession.SessionMembers[i];
+            if(member.id == sessionMember.id) {
+              sessionMember.rating = member.rating;
+            }
+          }
+        }
+        else {
+          calculateSessionRating(vm.session);
         }
       });
     };
@@ -91,8 +114,28 @@
       }
     };
 
+    function changePage(page, session) {
+      if(page == 'index') {
+        init();
+        vm.currentPage = { page: page };
+      }
+      else if(page == 'sessionRating') {
+        calculateSessionRating(session);
+        vm.session = session;
+        angular.copy(session, vm.originalSession);
+        vm.currentPage = { page: page };
+      }
+    };
+
     function isExpired(session) {
       return session.showStatus == 'Expired';
+    };
+
+    function calculateSessionRating(session) {
+      var rating = session.SessionMembers.reduce(function(sum, member) {
+        return sum + member.rating;
+      }, 0);
+      vm.sessionRating = rating / (session.SessionMembers.length || 1);
     }
   };
 })();
