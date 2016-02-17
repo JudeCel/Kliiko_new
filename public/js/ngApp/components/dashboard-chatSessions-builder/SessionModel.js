@@ -6,12 +6,20 @@
    */
   angular.module('KliikoApp').factory('SessionModel', SessionModel);
 
-  SessionModel.$inject = ['$q'];
-  function SessionModel($q)  {
+  SessionModel.$inject = ['$q', 'globalSettings', '$resource'];
+  function SessionModel($q, globalSettings, $resource)  {
+    var apiPath = globalSettings.restUrl+'/sessionBuilder/';
+    var restApi = {
+      new: $resource(apiPath +'new'),
+      //topic: $resource(globalSettings.restUrl +'/topic/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}})
+    };
+
+
     var SessionModel;
 
     SessionModel = SessionModel;
     SessionModel.prototype.init = init;
+    SessionModel.prototype.createNew = createNew;
     SessionModel.prototype.destroy = destroy;
     SessionModel.prototype.destroy = update;
 
@@ -25,16 +33,16 @@
      * @constructor
      */
     function SessionModel(params) {
-      var params = params || {};
-      //get all properties
       var self = this;
-      for (var p in params) {
-        if (params.hasOwnProperty(p)) self[p] = params[p];
-      }
+
+      var params = params || {};
 
       self.id = null;
 
-
+      //get all properties
+      for (var p in params) {
+        if (params.hasOwnProperty(p)) self[p] = params[p];
+      }
 
       self.init();
 
@@ -43,7 +51,25 @@
     function init() {
       var self = this;
 
+      if (!self.id) self.createNew();
 
+    }
+
+    function createNew() {
+      var self = this;
+
+      var deferred = $q.defer();
+      restApi.new.get({},{},function(res) {
+        if (res.error) { deferred.reject(res.error); return deferred.promise; }
+        var tmp = angular.copy(self);
+        console.warn(tmp);
+        self = angular.merge(self, res.sessionBuilder);
+        console.warn(self);
+
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
     }
 
     function destroy() {
