@@ -1,0 +1,131 @@
+#step-3,
+#step-4 {
+  margin-top: 50px;
+  font-size: 2rem;
+  text-align: left;
+
+  .row {
+    margin: 8px 0;
+  }
+  .caption {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;;
+    color: white;
+    background: $blue;
+  }
+
+  .table-content {
+    padding: 73px 5px 5px 17px;
+    border: 1px solid lightgrey;
+    border-top: none;
+    border-radius: 8px;
+
+    .total {
+      color: $red;
+    }
+  }
+
+  .table-header {
+    margin-bottom: 12px;
+    font-size: 1.6rem;
+    color: $blue;
+
+  }
+
+  hr {
+    margin: 5px;
+    border: 1px solid lightgrey;
+  }
+
+  hr.more-y-margin {
+    margin: 20px 0 ;
+  }
+
+  .checkout-row {
+    margin-top: 20px;
+    margin-bottom: 15px;
+  }
+
+
+  #credit-cart-details-form {
+    label {
+      font-size: 1.5rem;
+      font-weight: 100;
+    }
+
+    input {
+      border-radius: 0px;
+      padding: 30px;
+      font-size: 2.3rem;
+    }
+  }
+
+  /* CHECKBOX */
+  input#termsAndConditionsCC,
+  input#termsAndConditionsPP{
+    display: none;
+  }
+
+  input#termsAndConditionsCC + label,
+  input#termsAndConditionsPP + label {
+    max-width: none;
+    background: url("/icons/login_checkbox.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    margin-top: 0;
+    margin-left: 0;
+    margin-bottom: -5px;
+    background-size: contain;
+  }
+
+  input#termsAndConditionsCC:checked + label,
+  input#termsAndConditionsPP:checked + label{
+    background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    background-size: contain;
+    margin-top: 1px;
+  }
+
+  .form-group.exp {
+    float: left;
+    margin-right: 37px;
+  }
+
+  select#credit-card-number-expDate,
+  select#credit-card-number-expYear,
+  input#credit-card-number-cvv {
+    width: 110px;
+    border-radius: 0;
+    height: 55px;
+    font-size: 2.3rem;
+  }
+  input#credit-card-number-cvv {
+    padding:25px;
+  }
+
+  .detail-content {
+    font-size: 1.9rem;
+  }
+
+
+  dt {
+    float: left;
+    margin-top: 4px;
+    margin-right: 1rem;
+    font-size: 1.6rem;
+    font-weight: 100;
+  }
+
+  small.change-link {
+    float: right;
+    color: $grey;
+    cursor: pointer;
+    
+    &:hover {
+      color: $blue;
+    }
+  }
+
+}

@@ -1,0 +1,29 @@
+<section id="step-3">
+    <div class="row">
+        <div class="col-md-6">
+            <ng-include src="'js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/orderSummary.tpl.html'"></ng-include>
+        </div>
+        <div class="col-md-6">
+            <section id="chargebee-details">
+                <div class="col-md-12 table-header">
+                    Check out with Chargebee
+                </div>
+
+                <div class="row" >
+                    <div class="col-md-1 terms-attention">
+                        <div class="check">
+                            <input ng-model="up.paymentDetails.chargebee.tos" ng-change="up.handleTosCheck()" type="checkbox" class="checkbox-btn btn-green" name="termsAndConditions" id="termsAndConditionsCC">
+                            <label for="termsAndConditionsCC"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-11">
+                        <p class="terms-attention">Click here to confirm you have read the <a href="terms">Terms and Conditions</a></p>
+                        <p>
+                            Your credit card account will be debited upon confirmation. Your plan will automatically renew, you can disable under Billing & Plan Details.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</section>

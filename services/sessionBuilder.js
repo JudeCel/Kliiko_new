@@ -9,7 +9,7 @@ const MESSAGES = {
   setUp: "You have successfully setted up your chat session.",
   cancel: "Session build successfully canceled",
   notFound: "Session build not found"
-}
+};
 
 // Exports
 module.exports = {
@@ -109,7 +109,7 @@ function nextStep(id, accountId) {
 }
 
 function findNextStep(step) {
-  // Allways return step!
+  // Always return step!
   // If current step is the last step then return last step.
   // The order for step array is important always keep right order!!!
   let steps = ['setUp', 'facilitatiorAndTopics', 'manageSessionEmails',

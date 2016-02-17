@@ -2508,6 +2508,420 @@ hr.survey-hr {
     padding-left: 10px;
     border: none; }
 
+#session-builder-content {
+  /*#plansModal {
+    top: -85px;
+    h1 {
+      padding: 15px;
+      font-size: 3.3rem;
+      font-weight: 100;
+    }
+
+    p {
+      font-size: 2rem;
+      color: $grey;
+    }
+
+    .panel {
+      border-radius: 0px;
+      color: $grey;
+    }
+
+    a.accordion-toggle {
+      text-decoration: none;
+
+      &:hover { text-decoration: none }
+    }
+
+    .panel-title {
+      font-size: 2rem;
+      text-align: left;
+      color: $grey;
+    }
+    .panel-heading {
+      border: none;
+      background: #F6F8F7;
+
+      &:hover {
+        background: #F8F49B;
+      }
+    }
+
+    .panel-body {
+      p {
+        font-size: 1.9rem;
+        text-align: left;
+        color: $grey;
+      }
+    }
+  }*/
+  /*#countryAndCurrencySelect {
+
+    .modal-body {padding: 36px;}
+
+    #country-select {
+      width: 75%;
+      float: left;
+    }
+
+    #currency-select {
+      width: 21%;
+      float: left;
+    }
+
+    .modal-header, .modal-footer { border:none; }
+    .modal-footer {
+      padding: 0
+    }
+
+    .ok-btn {
+      margin-top: 20px;
+      color: $red;
+      border-color: $red;
+    }
+  }*/ }
+  #session-builder-content .btn-standart {
+    font-size: 1.2rem; }
+  #session-builder-content #steps-row {
+    display: block;
+    width: 405px;
+    width: 600px;
+    margin: 0 auto; }
+    #session-builder-content #steps-row .step-container {
+      display: block;
+      margin: 10px;
+      float: left;
+      width: 100px;
+      font-size: .5em; }
+    #session-builder-content #steps-row span.step-number {
+      display: block;
+      float: left;
+      width: 61px;
+      margin: 0 20px 5px 20px;
+      padding: 9px;
+      color: white;
+      font-size: 2em;
+      text-align: center;
+      background: #ddd; }
+      #session-builder-content #steps-row span.step-number.active {
+        color: white;
+        background: #4DC0E9; }
+      #session-builder-content #steps-row span.step-number.done {
+        background: rgba(88, 188, 227, 0.65); }
+    #session-builder-content #steps-row span.step-name {
+      color: #ddd; }
+      #session-builder-content #steps-row span.step-name.active, #session-builder-content #steps-row span.step-name.done {
+        color: #58595b; }
+  #session-builder-content .benefits {
+    margin-left: 5%; }
+    #session-builder-content .benefits p {
+      margin: 0 0 -10px 0;
+      padding: 10px 100px 10px 30px;
+      font-size: 1.9rem;
+      text-align: left;
+      border-left: 3px solid #2F9F69; }
+      #session-builder-content .benefits p::before {
+        content: url("./../icons/ic_tick.png");
+        display: block;
+        margin-left: -70px;
+        margin-top: 5px;
+        position: absolute; }
+  #session-builder-content .plans-table .plan-block {
+    display: block; }
+  #session-builder-content .plans-table .included-plan-fader {
+    display: block;
+    position: absolute;
+    z-index: 2000;
+    width: 100%;
+    height: 100%;
+    background: white;
+    opacity: .8; }
+    #session-builder-content .plans-table .included-plan-fader > .label {
+      position: absolute;
+      top: 320px;
+      left: 0;
+      color: #2F9F69;
+      font-size: calc(100vw/30);
+      font-weight: bold;
+      -webkit-transform: rotate(-15deg);
+      -moz-transform: rotate(-15deg);
+      -ms-transform: rotate(-15deg);
+      -o-transform: rotate(-15deg);
+      filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); }
+  #session-builder-content .plans-table .list-group {
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none; }
+  #session-builder-content .plans-table #best-value-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    z-index: 100; }
+  #session-builder-content .plans-table h4 {
+    max-width: 90%;
+    margin: 0 auto;
+    margin-bottom: 5px;
+    padding: 6px;
+    font-size: 3.3rem;
+    font-weight: bold;
+    font-style: italic; }
+  #session-builder-content .plans-table .price-label {
+    display: block;
+    position: relative;
+    padding-top: 40px;
+    height: 190px; }
+    #session-builder-content .plans-table .price-label h5 {
+      font-size: 6rem;
+      font-weight: 900;
+      color: white; }
+    #session-builder-content .plans-table .price-label .outline {
+      color: white;
+      text-shadow: 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b, 0 0 4px #58595b; }
+    #session-builder-content .plans-table .price-label p {
+      font-size: 1.5rem; }
+  #session-builder-content .plans-table .list-group-item-text {
+    margin: 4px auto;
+    padding: 10px;
+    width: 90%;
+    font-size: 2.1rem; }
+  #session-builder-content .plans-table .yellow-bg {
+    background: #F0E935; }
+  #session-builder-content .plans-table .yellow-light-bg {
+    background: #FDFAD7; }
+  #session-builder-content .plans-table .yellow-header-bg {
+    background: #F8F49B; }
+  #session-builder-content .plans-table .green-bg {
+    background: #4CB648; }
+  #session-builder-content .plans-table .green-light-bg {
+    background: #DBF1DC; }
+  #session-builder-content .plans-table .green-header-bg {
+    background: #A5DAA4; }
+  #session-builder-content .plans-table .blue-bg {
+    background: #4CC0E9; }
+  #session-builder-content .plans-table .blue-light-bg {
+    background: #DBF1FC; }
+  #session-builder-content .plans-table .blue-header-bg {
+    background: #A5DFF3; }
+  #session-builder-content .btn-dashboard-plans {
+    display: block;
+    height: 50px;
+    margin: 5px 0;
+    padding: 9px 20px;
+    font-size: 2.3rem;
+    border: solid 3px #58595b;
+    cursor: pointer; }
+  #session-builder-content .buttons-area {
+    margin-top: 18px !important;
+    padding: 0 !important; }
+  #session-builder-content .btn-brown {
+    color: #979137;
+    border-color: #979137; }
+  #session-builder-content .btn-green {
+    color: #4CB344;
+    border-color: #4CB344; }
+  #session-builder-content .btn-blue {
+    color: #65C8EE;
+    border-color: #65C8EE; }
+  #session-builder-content .learn {
+    width: 160px; }
+  #session-builder-content .want {
+    width: 200px; }
+  #session-builder-content .modal-footer {
+    font-size: 2rem; }
+    #session-builder-content .modal-footer .go-back-btn {
+      color: #58595b;
+      border-color: #58595b; }
+    #session-builder-content .modal-footer .i-want-btn {
+      color: #58595b;
+      border-color: #F0E935; }
+  #session-builder-content #disclaimer {
+    margin-top: 60px;
+    color: #58595b;
+    font-size: 1.5rem; }
+  #session-builder-content .ng-custom-select .ncs-select {
+    position: relative;
+    color: #58595b;
+    font-size: 1.5rem;
+    text-align: left; }
+    #session-builder-content .ng-custom-select .ncs-select .ncs-input-field {
+      display: block;
+      padding: 9px;
+      background: #ddd; }
+    #session-builder-content .ng-custom-select .ncs-select .ncs-arrow-bnt {
+      position: absolute;
+      top: 13px;
+      right: 2rem;
+      cursor: pointer; }
+    #session-builder-content .ng-custom-select .ncs-select .ncs-content {
+      position: absolute;
+      z-index: 3000;
+      margin-top: -3px;
+      width: 100%;
+      max-height: 200px;
+      overflow-y: scroll;
+      border: 3px solid #ddd;
+      background: white; }
+      #session-builder-content .ng-custom-select .ncs-select .ncs-content .ncs-content-item {
+        padding: 3px 10px;
+        cursor: pointer; }
+        #session-builder-content .ng-custom-select .ncs-select .ncs-content .ncs-content-item:hover {
+          background: #F0E935; }
+  #session-builder-content .ng-custom-select .ncs-click-anywhere {
+    display: block;
+    position: absolute;
+    width: 200vw;
+    height: 200vh;
+    background: black;
+    top: -100vh;
+    left: -100vw; }
+  #session-builder-content #step-2 {
+    font-size: 2rem; }
+    #session-builder-content #step-2 .panel-title {
+      font-size: 2rem;
+      text-align: left;
+      color: #58595b; }
+    #session-builder-content #step-2 a.accordion-toggle {
+      text-decoration: none; }
+      #session-builder-content #step-2 a.accordion-toggle:hover {
+        text-decoration: none; }
+    #session-builder-content #step-2 .panel-heading {
+      border: none; }
+      #session-builder-content #step-2 .panel-heading:hover {
+        color: #2F9F69;
+        background: #A5DAA4; }
+    #session-builder-content #step-2 .panel-label {
+      font-size: 2rem;
+      text-align: left;
+      color: #58595b; }
+    #session-builder-content #step-2 .panel-body p {
+      font-size: 1.9rem;
+      text-align: left;
+      color: #58595b; }
+    #session-builder-content #step-2 td {
+      padding: 8px 0;
+      text-align: left; }
+    #session-builder-content #step-2 input#duration-input, #session-builder-content #step-2 input#promocod-input,
+    #session-builder-content #step-2 select#duration-input {
+      padding: 2px;
+      float: left;
+      width: 55px; }
+    #session-builder-content #step-2 input#promocod-input {
+      width: 230px; }
+      #session-builder-content #step-2 input#promocod-input.error {
+        margin-top: -1px;
+        border: 3px solid #E51D39; }
+  #session-builder-content #step-3,
+  #session-builder-content #step-4 {
+    margin-top: 50px;
+    font-size: 2rem;
+    text-align: left;
+    /* CHECKBOX */ }
+    #session-builder-content #step-3 .row,
+    #session-builder-content #step-4 .row {
+      margin: 8px 0; }
+    #session-builder-content #step-3 .caption,
+    #session-builder-content #step-4 .caption {
+      display: block;
+      width: 100%;
+      padding: 12px 14px;
+      color: white;
+      background: #4DC0E9; }
+    #session-builder-content #step-3 .table-content,
+    #session-builder-content #step-4 .table-content {
+      padding: 73px 5px 5px 17px;
+      border: 1px solid lightgrey;
+      border-top: none;
+      border-radius: 8px; }
+      #session-builder-content #step-3 .table-content .total,
+      #session-builder-content #step-4 .table-content .total {
+        color: #E51D39; }
+    #session-builder-content #step-3 .table-header,
+    #session-builder-content #step-4 .table-header {
+      margin-bottom: 12px;
+      font-size: 1.6rem;
+      color: #4DC0E9; }
+    #session-builder-content #step-3 hr,
+    #session-builder-content #step-4 hr {
+      margin: 5px;
+      border: 1px solid lightgrey; }
+    #session-builder-content #step-3 hr.more-y-margin,
+    #session-builder-content #step-4 hr.more-y-margin {
+      margin: 20px 0; }
+    #session-builder-content #step-3 .checkout-row,
+    #session-builder-content #step-4 .checkout-row {
+      margin-top: 20px;
+      margin-bottom: 15px; }
+    #session-builder-content #step-3 #credit-cart-details-form label,
+    #session-builder-content #step-4 #credit-cart-details-form label {
+      font-size: 1.5rem;
+      font-weight: 100; }
+    #session-builder-content #step-3 #credit-cart-details-form input,
+    #session-builder-content #step-4 #credit-cart-details-form input {
+      border-radius: 0px;
+      padding: 30px;
+      font-size: 2.3rem; }
+    #session-builder-content #step-3 input#termsAndConditionsCC,
+    #session-builder-content #step-3 input#termsAndConditionsPP,
+    #session-builder-content #step-4 input#termsAndConditionsCC,
+    #session-builder-content #step-4 input#termsAndConditionsPP {
+      display: none; }
+    #session-builder-content #step-3 input#termsAndConditionsCC + label,
+    #session-builder-content #step-3 input#termsAndConditionsPP + label,
+    #session-builder-content #step-4 input#termsAndConditionsCC + label,
+    #session-builder-content #step-4 input#termsAndConditionsPP + label {
+      max-width: none;
+      background: url("/icons/login_checkbox.jpeg") no-repeat;
+      height: 22px;
+      width: 22px;
+      margin-top: 0;
+      margin-left: 0;
+      margin-bottom: -5px;
+      background-size: contain; }
+    #session-builder-content #step-3 input#termsAndConditionsCC:checked + label,
+    #session-builder-content #step-3 input#termsAndConditionsPP:checked + label,
+    #session-builder-content #step-4 input#termsAndConditionsCC:checked + label,
+    #session-builder-content #step-4 input#termsAndConditionsPP:checked + label {
+      background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
+      height: 22px;
+      width: 22px;
+      background-size: contain;
+      margin-top: 1px; }
+    #session-builder-content #step-3 .form-group.exp,
+    #session-builder-content #step-4 .form-group.exp {
+      float: left;
+      margin-right: 37px; }
+    #session-builder-content #step-3 select#credit-card-number-expDate,
+    #session-builder-content #step-3 select#credit-card-number-expYear,
+    #session-builder-content #step-3 input#credit-card-number-cvv,
+    #session-builder-content #step-4 select#credit-card-number-expDate,
+    #session-builder-content #step-4 select#credit-card-number-expYear,
+    #session-builder-content #step-4 input#credit-card-number-cvv {
+      width: 110px;
+      border-radius: 0;
+      height: 55px;
+      font-size: 2.3rem; }
+    #session-builder-content #step-3 input#credit-card-number-cvv,
+    #session-builder-content #step-4 input#credit-card-number-cvv {
+      padding: 25px; }
+    #session-builder-content #step-3 .detail-content,
+    #session-builder-content #step-4 .detail-content {
+      font-size: 1.9rem; }
+    #session-builder-content #step-3 dt,
+    #session-builder-content #step-4 dt {
+      float: left;
+      margin-top: 4px;
+      margin-right: 1rem;
+      font-size: 1.6rem;
+      font-weight: 100; }
+    #session-builder-content #step-3 small.change-link,
+    #session-builder-content #step-4 small.change-link {
+      float: right;
+      color: #58595b;
+      cursor: pointer; }
+      #session-builder-content #step-3 small.change-link:hover,
+      #session-builder-content #step-4 small.change-link:hover {
+        color: #4DC0E9; }
+
 .margin-top-2rem {
   margin-top: 2rem; }
 

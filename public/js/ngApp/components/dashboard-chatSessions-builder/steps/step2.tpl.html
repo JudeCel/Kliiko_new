@@ -1,0 +1,188 @@
+<section id="step-2">
+
+    <uib-accordion close-others="false">
+        <uib-accordion-group is-open="up.modContentBlock.selectedPlanDetails">
+            <uib-accordion-heading>
+                <div class="panel-label">
+                    Your Selected Plan Details<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': up.modContentBlock.selectedPlanDetails, 'glyphicon-chevron-right': !up.modContentBlock.selectedPlanDetails}"></i>
+                </div>
+            </uib-accordion-heading>
+                <span class="row">
+                    <span class="col-md-12">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Plan</th>
+                                <th>Price</th>
+                                <th>Duration</th>
+                                <th>Promotional Code</th>
+                                <th>Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td scope="row">{{up.selectedPlan.name}}</td>
+                                <td>{{up.selectedPlan.price| price}}</td>
+                                <td>
+                                    <select name="" id="duration-input" ng-model="up.upgradeDuration" ng-change="up.updateFinalPrice()">
+                                        <option value="1" ng-selected="true">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+
+                                    </select>
+                                </td>
+                                <td><input id="promocod-input" type="text" ng-model="up.promocode" ng-class="{'error':up.incorrectPromocode}"></td>
+                                <td>
+                                    {{up.finalPrice| price }}
+                                </td>
+                            </tr>
+
+                            </tbody>
+
+                        </table>
+                    </span>
+                </span>
+        </uib-accordion-group>
+
+
+        <uib-accordion-group is-open="up.modContentBlock.contactDetails">
+            <uib-accordion-heading>
+                <div class="panel-label">
+                    Your Contact Details <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': up.modContentBlock.contactDetails, 'glyphicon-chevron-right': !up.modContentBlock.contactDetails}"></i>
+                </div>
+            </uib-accordion-heading>
+            <form ng-submit="up.updateUserData(up.userData, userDetailsForm)" class='form-horizontal' name="userDetailsForm">
+              <div class='row'>
+                <div class='col-xs-12'>
+                  <div class='col-md-6'>
+                    <div class='form-group'>
+                      <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First name<span class='text-red-dark'>*</span></label>
+                      <div class='col-md-8'>
+                        <span class='has-error text-red-dark'>{{ up.errors.firstName }}</span>
+                        <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='up.userData.firstName'>
+                      </div>
+                    </div>
+
+                    <div class='form-group'>
+                      <label class='control-label col-md-4 text-no-bold text-login-page' for='lastName'>Last name<span class='text-red-dark'>*</span></label>
+                      <div class='col-md-8'>
+                        <span class='has-error text-red-dark'>{{ up.errors.lastName }}</span>
+                        <input type='text' class='form-control' id='lastName' placeholder='Last name' ng-model='up.userData.lastName'>
+                      </div>
+                    </div>
+
+                    <div class='form-group'>
+                      <label class='control-label col-md-4 text-no-bold text-login-page' for='email'>Email<span class='text-red-dark'>*</span></label>
+                      <div class='col-md-8'>
+                        <span class='has-error text-red-dark'>{{ up.errors.email }}</span>
+                        <input type='email' class='form-control' id='email' placeholder='Email' ng-model='up.userData.email'>
+                      </div>
+                    </div>
+
+                    <div class='form-group'>
+                      <label class='control-label col-md-4 text-no-bold text-login-page' for='gender'>Gender<span class='text-red-dark'>*</span></label>
+                      <div class='col-md-8'>
+                        <div class='has-error text-red-dark'>{{ up.errors.gender }}</div>
+                        <label class='radio-inline'><input type='radio' value='male' name='radio_gender' ng-model='up.userData.gender'>Male</label>
+                        <label class='radio-inline'><input type='radio' value='female' name='radio_gender' ng-model='up.userData.gender'>Female</label>
+                      </div>
+                    </div>
+
+                    <div class='form-group'>
+                      <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
+                      <div class='col-md-8'>
+                        <span class='has-error text-red-dark'>{{ up.errors.mobile }}</span>
+                        <input type='text' class='form-control' id='mobile' placeholder='Mobile number' ng-model='up.userData.mobile'>
+                      </div>
+                    </div>
+
+                    <div class='form-group'>
+                      <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
+                      <div class='col-md-8'>
+                        <span class='has-error text-red-dark'>{{ up.errors.landlineNumber }}</span>
+                        <input type='text' class='form-control' id='landlineNumber' placeholder='Landline number' ng-model='up.userData.landlineNumber'>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class='col-md-6'>
+                    <div class='form-group'>
+                      <label class='control-label col-md-4 text-no-bold text-login-page' for='postalAddress'>Postal address</label>
+                      <div class='col-md-8'>
+                        <span class='has-error text-red-dark'>{{ up.errors.postalAddress }}</span>
+                        <input type='text' class='form-control' id='postalAddress' placeholder='Postal address' ng-model='up.userData.postalAddress'>
+                      </div>
+                    </div>
+
+                    <div class='form-group'>
+                      <label class='control-label col-md-4 text-no-bold text-login-page' for='city'>City</label>
+                      <div class='col-md-8'>
+                        <span class='has-error text-red-dark'>{{ up.errors.city }}</span>
+                        <input type='text' class='form-control' id='city' placeholder='City' ng-model='up.userData.city'>
+                      </div>
+                    </div>
+
+                    <div class='form-group'>
+                      <label class='control-label col-md-4 text-no-bold text-login-page' for='state'>State</label>
+                      <div class='col-md-8'>
+                        <span class='has-error text-red-dark'>{{ up.errors.state }}</span>
+                        <input type='text' class='form-control' id='state' placeholder='State' ng-model='up.userData.state'>
+                      </div>
+                    </div>
+
+                    <div class='form-group'>
+                      <label class='control-label col-md-4 text-no-bold text-login-page' for='postCode'>Postcode</label>
+                      <div class='col-md-8'>
+                        <span class='has-error text-red-dark'>{{ up.errors.postCode }}</span>
+                        <input type='text' class='form-control' id='postCode' placeholder='Postcode' ng-model='up.userData.postCode'>
+                      </div>
+                    </div>
+
+                    <div class='form-group'>
+                      <label class='control-label col-md-4 text-no-bold text-login-page' for='country'>Country</label>
+                      <div class='col-md-8'>
+                        <span class='has-error text-red-dark'>{{ up.errors.country }}</span>
+                        <input type='text' class='form-control' id='country' placeholder='Country' ng-model='up.userData.country'>
+                      </div>
+                    </div>
+
+                    <div class='form-group'>
+                      <label class='control-label col-md-4 text-no-bold text-login-page' for='companyName'>Company name</label>
+                      <div class='col-md-8'>
+                        <span class='has-error text-red-dark'>{{ up.errors.companyName }}</span>
+                        <input type='text' class='form-control' id='companyName' placeholder='Company name' ng-model='up.userData.companyName'>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+              <!-- copy from details -->
+              <div class="row">
+                  <div class="col-md-12">
+                      <button type="submit"
+                              class="btn border-red text-red-dark border-radius-none background-transp pull-right btn-md"
+                              ng-show="!userDetailsForm.$pristine">
+                          <span>{{up.updateBtn}}</span>
+                      </button>
+                      <div class="check">
+                          <input ng-model="up.userData.tipsAndUpdate" type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate" value='receive-updates'/>
+                          <label for="tipsAndUpdate"></label>
+                          <span class="checkbox-signup" id="tipsAndUpdate_step2">Yes send me the Kliiko Newsletter which includes tips and updates.</span>
+                      </div>
+                  </div>
+              </div>
+            </form>
+        </uib-accordion-group>
+    </uib-accordion>
+
+</section>

@@ -157,6 +157,30 @@
 
       })
 
+      .state('dashboard.chatSessions.builder', {
+        url: '/chatSessions/builder',
+        resolve: {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/js/ngApp/components/dashboard-chatSessions-builder/SessionModel.js',
+              '/js/ngApp/components/dashboard-chatSessions-builder/SessionBuilderController.js'
+            ]);
+          }]
+        },
+        onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location, banners) {
+          dbg.rs('chatSessions builder');
+
+          $stateParams.bannerType = 'sessions';
+
+          banners.setMainBannerForPage('sessions');
+
+        }],
+        views: {
+          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-chatSessions-builder/session-builder-index.html"}
+        }
+
+      })
+
       ///////////////////////// Resources
       .state('dashboard.resources', {
         url: "/resources",
@@ -218,7 +242,7 @@
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-contactLists/dashboard-content.html"}
         },
         resolve: {
-          loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
             return $ocLazyLoad.load([
               '/js/vendors/ngDraggable/ngDraggable.js',
               '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',

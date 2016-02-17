@@ -1,0 +1,16 @@
+<section id="step-5">
+    <div class="row">
+
+        <section ng-show="up.paymentSubmitError">
+            <h1>Submitting Failed!</h1>
+            <div class="error-area">{{ up.paymentSubmitError }}</div>
+        </section>
+
+        <section ng-hide="up.paymentSubmitError">
+            <h1>Thank you, {{ up.userData.firstName }}!</h1>
+            <p>Your order confirmation and invoice have been emailed to you</p>
+        </section>
+
+
+    </div>
+</section>
