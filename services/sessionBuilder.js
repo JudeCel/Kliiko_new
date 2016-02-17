@@ -32,17 +32,18 @@ function sessionBuilderObject(session) {
 
 function stepsDefination(session) {
   return {
-    setUp: {
+    step1: {
+      stepName: "setUp"
       name: session.name,
       startTime: session.startTime,
       endTime: session.endTime,
       resourceId: session.resourceId,
       brandProjectPreferenceId:  session.brandProjectPreferenceId
     },
-    facilitatiorAndTopics:{},
-    manageSessionEmails:{},
-    manageSessionParticipants: {},
-    inviteSessionObservers: {}
+    step2:{ stepName: "facilitatiorAndTopics" },
+    step3:{ stepName: "manageSessionEmails" },
+    step4:{ stepName: "manageSessionParticipants" },
+    step5:{ stepName: "inviteSessionObservers" }
   }
 }
 
