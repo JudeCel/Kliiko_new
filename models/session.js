@@ -17,7 +17,11 @@ module.exports = (Sequelize, DataTypes) => {
     step: { type: DataTypes.ENUM, allowNull: false,
       values: ['setUp', 'facilitatiorAndTopics', 'manageSessionEmails',
         'manageSessionParticipants', 'inviteSessionObservers', 'done'
-      ], defaultValue: 'setUp' }
+      ], defaultValue: 'setUp' },
+
+    status: { type: DataTypes.ENUM, allowNull: false,
+      values: ['build in progress', 'expired', 'pending', 'active'], defaultValue: 'build in progress' },
+
   }, {
     timestamps: true,
     classMethods: {

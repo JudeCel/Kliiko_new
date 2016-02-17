@@ -33,7 +33,7 @@
             <td class='text-right dashboardElementsEditRemove'>
               <span class='glyphicon glyphicon-star' aria-hidden='true' ng-if='csc.hasAccess(session.id, app.accountUser)' ng-click='csc.changePage("sessionRating", session)'></span>
               <img src='/icons/resources_grey.png' alt='' ng-click='csc.copySession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
-              <img src='/icons/dashboardElement_edit.png' alt='' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
+              <img src='/icons/dashboardElement_edit.png' alt='' ng-if='csc.hasAccess(session.id, app.accountUser)' ui-sref="dashboard.chatSessions.builder({id:session.id})"/>
               <img src='/icons/dashboardElement_remove.png' alt='' ng-click='csc.removeSession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
               <span class='glyphicon glyphicon-play' aria-hidden='true' ng-click='csc.goToChat(session, app.user)' ng-if='!csc.isExpired(session)'></span>
             </td>

@@ -9,7 +9,6 @@
 
     var vm = this;
 
-
     vm.basePath = '/js/ngApp/components/dashboard-chatSessions/';
 
 ////////

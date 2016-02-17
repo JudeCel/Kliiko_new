@@ -9,7 +9,8 @@
 
     var vm = this;
 
-    var session = new SessionModel();
+    var sessionId = $stateParams.id || null;
+    var session = new SessionModel(sessionId);
 
     vm.basePath = '/js/ngApp/components/dashboard-chatSessions-builder/';
     //vm.currentStep = $stateParams.currentStep;
@@ -21,7 +22,7 @@
     vm.goToStep = goToStep;
 
     function closeSession() {
-      session.destroy();
+      session.cancel();
     }
 
     function goToStep(step) {

@@ -8,19 +8,16 @@
 
   SessionModel.$inject = ['$q', 'globalSettings', '$resource'];
   function SessionModel($q, globalSettings, $resource)  {
-    var apiPath = globalSettings.restUrl+'/sessionBuilder/';
-    var restApi = {
-      new: $resource(apiPath +'new'),
-      //topic: $resource(globalSettings.restUrl +'/topic/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}})
-    };
-
+    var apiPath = globalSettings.restUrl+'/sessionBuilder/:id';
+    var sessionBuilderRestApi = $resource(apiPath, {id : '@id'}, {post:{method:'POST', put: {method: 'PUT'}}} );
 
     var SessionModel;
 
     SessionModel = SessionModel;
     SessionModel.prototype.init = init;
     SessionModel.prototype.createNew = createNew;
-    SessionModel.prototype.destroy = destroy;
+    SessionModel.prototype.getRemoteData = getRemoteData;
+    SessionModel.prototype.cancel = cancel;
     SessionModel.prototype.destroy = update;
 
     return SessionModel;
@@ -36,13 +33,17 @@
       var self = this;
 
       var params = params || {};
-
       self.id = null;
-
-      //get all properties
-      for (var p in params) {
-        if (params.hasOwnProperty(p)) self[p] = params[p];
+      if (arguments && arguments.length && arguments.length == 1) {
+        self.id = arguments[0];
+      } else {
+        //get all properties
+        for (var p in params) {
+          if (params.hasOwnProperty(p)) self[p] = params[p];
+        }
       }
+
+
 
       self.init();
 
@@ -52,6 +53,7 @@
       var self = this;
 
       if (!self.id) self.createNew();
+      if (self.id) self.getRemoteData();
 
     }
 
@@ -59,21 +61,35 @@
       var self = this;
 
       var deferred = $q.defer();
-      restApi.new.get({},{},function(res) {
+      sessionBuilderRestApi.post({},{},function(res) {
         if (res.error) { deferred.reject(res.error); return deferred.promise; }
-        var tmp = angular.copy(self);
-        console.warn(tmp);
         self = angular.merge(self, res.sessionBuilder);
-        console.warn(self);
-
         deferred.resolve(res);
       });
 
       return deferred.promise;
     }
 
-    function destroy() {
-      console.log('will destroy - todo');
+    function getRemoteData() {
+      var self = this;
+      var deferred = $q.defer();
+      sessionBuilderRestApi.get({id:self.id}, {}, function(res) {
+        self = angular.merge(self, res.sessionBuilder);
+        deferred.resolve();
+      });
+
+      return deferred.promise;
+    }
+
+    function cancel() {
+      var self = this;
+      var deferred = $q.defer();
+      debugger; //debugger
+      sessionBuilderRestApi.delete({id: self.id},{},function(res) {
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
     }
 
     function update() {

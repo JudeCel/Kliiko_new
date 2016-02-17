@@ -33,7 +33,7 @@ function sessionBuilderObject(session) {
 function stepsDefination(session) {
   return {
     step1: {
-      stepName: "setUp"
+      stepName: "setUp",
       name: session.name,
       startTime: session.startTime,
       endTime: session.endTime,

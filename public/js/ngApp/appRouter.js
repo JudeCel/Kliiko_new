@@ -158,7 +158,7 @@
       })
 
       .state('dashboard.chatSessions.builder', {
-        url: '/chatSessions/builder',
+        url: '/chatSessions/builder/:id',
         resolve: {
           loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
             return $ocLazyLoad.load([
@@ -169,7 +169,6 @@
         },
         onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location, banners) {
           dbg.rs('chatSessions builder');
-
           $stateParams.bannerType = 'sessions';
 
           banners.setMainBannerForPage('sessions');
