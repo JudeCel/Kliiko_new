@@ -1,41 +1,28 @@
 (function () {
   'use strict';
-  angular.module('KliikoApp').factory('AccountDatabaseServices', AccountDatabaseServices);
-  AccountDatabaseServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
+  angular.module('KliikoApp').factory('SessionRatingServices', SessionRatingServices);
+  SessionRatingServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
 
-  function AccountDatabaseServices(globalSettings, $q, $resource, dbg) {
-    var accountDatabaseRestApi = {
-      accountDatabase: $resource(globalSettings.restUrl +'/accountDatabase/:id', null, { update: { method: 'PUT' } })
-    };
+  function SessionRatingServices(globalSettings, $q, $resource, dbg) {
+    var sessionListApi = $resource(globalSettings.restUrl + '/session/:id', null, {
+      ratingList: { method: 'get', params: { id: 'ratingList' } }
+    });
 
-    var upServices = {};
+    var csServices = {};
+    csServices.findAllSessions = findAllSessions;
+    return csServices;
 
-    upServices.getAccountDatabases = getAccountDatabases;
-    upServices.updateAccountUser = updateAccountUser;
-    return upServices;
-
-    function getAccountDatabases() {
+    function findAllSessions() {
       var deferred = $q.defer();
 
-      dbg.log2('#AccountDatabaseServices > getAccountDatabases > make rest call');
-      accountDatabaseRestApi.accountDatabase.get({}, function(res) {
-        dbg.log2('#AccountDatabaseServices > getAccountDatabases > rest call responds');
+      dbg.log2('#ChatSessions > findAllSessions > make rest call');
+      sessionListApi.ratingList({}, function(res) {
+        dbg.log2('#ChatSessions > get > rest call responds');
         deferred.resolve(res);
       });
 
       return deferred.promise;
     };
 
-    function updateAccountUser(data) {
-      var deferred = $q.defer();
-
-      dbg.log2('#PromotionCodeServices > updateAccountUser > make rest call', data);
-      accountDatabaseRestApi.accountDatabase.update({ id: data.accountId }, data, function(res) {
-        dbg.log2('#PromotionCodeServices > updateAccountUser > rest call responds');
-        deferred.resolve(res);
-      });
-
-      return deferred.promise;
-    };
   };
 })();

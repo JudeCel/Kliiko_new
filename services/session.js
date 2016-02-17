@@ -6,6 +6,7 @@ var filters = require('./../models/filters');
 var Session  = models.Session;
 var SessionMember  = models.SessionMember;
 var AccountUser  = models.AccountUser;
+var Account  = models.Account;
 
 var q = require('q');
 var _ = require('lodash');
@@ -32,7 +33,8 @@ module.exports = {
   findAllSessions: findAllSessions,
   copySession: copySession,
   removeSession: removeSession,
-  updateSessionMemberRating: updateSessionMemberRating
+  updateSessionMemberRating: updateSessionMemberRating,
+  getAllSessionRatings: getAllSessionRatings
 };
 
 // Exports
@@ -69,7 +71,6 @@ function findSession(sessionId, accountId) {
 
 function findAllSessions(userId, domain) {
   let deferred = q.defer();
-
   if(policy.hasAccess(domain.roles, ['accountManager', 'admin'])) {
     findAllSessionsAsManager(domain.id).then(function(data) {
       deferred.resolve(data);
@@ -85,6 +86,23 @@ function findAllSessions(userId, domain) {
     });
   }
 
+  return deferred.promise;
+};
+
+function getAllSessionRatings() {
+  let deferred = q.defer();
+  Account.findAll({
+    group: ["Sessions.SessionMembers.rating", "Account.name", "Account.id", "Sessions.id", "Sessions.name", "Sessions.SessionMembers.id"],
+    attributes: ['name', 'id'],
+    include: [
+      {model: Session, attributes: ['name', [models.sequelize.fn('sum', models.sequelize.col('Sessions.SessionMembers.id')), 'mrating']],
+        include: [
+          {model: SessionMember, attributes: ['id', 'rating']}]} ]
+  }).then(function(data) {
+    deferred.resolve(simpleParams(data));
+  }, function(error) {
+    deferred.reject(filters.errors(error));
+  });
   return deferred.promise;
 };
 

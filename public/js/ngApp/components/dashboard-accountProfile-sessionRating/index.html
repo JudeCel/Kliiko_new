@@ -1,0 +1,36 @@
+<div class="row">
+<div class='dashboard-container'>
+
+  <div class='col-xs-12 fixed-bottom-margin'>
+
+    <table class='table table-dashboardElements'>
+      <thead>
+        <tr class='green-background'>
+          <th>Account Name</th>
+          <th>Rating</th>
+          <th></th>
+        </tr>
+      </thead>
+    </table>
+
+    <uib-accordion close-others="false" >
+      <uib-accordion-group is-open="sList.open" class='{{ rc.rowClass(session) }}' ng-repeat='acItem in rc.sessions' ng-show="acItem.Sessions.length>0">
+        <uib-accordion-heading>
+            <div class="panel-label class='col-xs-12">
+              <div class="col-md-8">
+                <i class="text-vertical-middle pull-left glyphicon" ng-class="{'glyphicon-chevron-down': acItem.open, 'glyphicon-chevron-right': !acItem.open}"></i>
+                {{ acItem.name }}
+              </div>
+              <uib-rating class='session-rating-stars-small' ng-model='acItem.rating' max='5' aria-labelledby='default-rating'> </uib-rating>
+            </div>
+        </uib-accordion-heading>
+        <div class='row col-xs-offset-1' ng-repeat='sItem in acItem.Sessions'>
+          <label class="col-xs-2 col-md-4">{{ sItem.name }} </label>
+          <uib-rating class='session-rating-stars-small' ng-model='sItem.rating' max='5' aria-labelledby='default-rating'> </uib-rating>
+        </div>
+      </uib-accordion-group>
+    </uib-accordion>
+
+  </div>
+</div>
+</div>

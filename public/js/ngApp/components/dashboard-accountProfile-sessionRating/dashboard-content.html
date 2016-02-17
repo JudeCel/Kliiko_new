@@ -1,4 +1,4 @@
-<section id='account-session-rating-content' ng-controller='SessionRatingController'>
+<section id='account-session-rating-content' ng-controller='SessionRatingController as rc'>
   <div class='col-md-12'>
     <div class='dashboard-container'>
       <div class='row'>
@@ -14,7 +14,7 @@
 
   <div class='col-md-12 fixed-bottom-margin'>
     <div class='dashboard-container horizontal-scroll'>
-
+      <ng-include src="'/js/ngApp/components/dashboard-accountProfile-sessionRating/index.html'"></ng-include>
     </div>
   </div>
 </section>
