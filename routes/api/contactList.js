@@ -41,6 +41,7 @@ function create(req, res, next) {
   params.accountId = res.locals.currentDomain.id;
 
   contactListService.create(params).then(function(result) {
+    res.send(result);
   }, function(err) {
     res.send({ error: err });
   })

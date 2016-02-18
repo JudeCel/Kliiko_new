@@ -140,7 +140,7 @@
           deferred.resolve(newList);
         },
         function (err) {
-          deferred.reject(err);
+          deferred.reject(err.message);
         }
       );
 
