@@ -89,21 +89,25 @@ function findAllSessions(userId, domain) {
   return deferred.promise;
 };
 
+getAllSessionRatings();
 function getAllSessionRatings() {
   let deferred = q.defer();
-  Account.findAll({
-    group: ["Account.name", "Account.id", "Sessions.id", "Sessions.name", "Sessions.SessionMembers.rating", "Sessions.SessionMembers.id"],
+
+Account.findAll({
+    group: ["Account.name", "Account.id", "Sessions.id", "Sessions.name"],
     attributes: ['name', 'id'],
     include: [
       {
-        model: Session, attributes: ['name'],
+        model: Session, attributes: ['name', [models.sequelize.fn('avg', models.sequelize.col('Sessions.SessionMembers.rating')), "rating"]],
         include: [
-          {model: SessionMember, attributes: ['id', 'rating']}]} ]
+          {model: SessionMember, attributes:[]}]
+        }]
   }).then(function(data) {
     deferred.resolve(simpleParams(data));
   }, function(error) {
     deferred.reject(error);
   });
+
   return deferred.promise;
 };
 

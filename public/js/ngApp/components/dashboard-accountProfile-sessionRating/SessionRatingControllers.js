@@ -19,24 +19,16 @@
     function getRatingTotal(data) {
       for (var i = 0; i < data.length; i++) {
         var d = data[i];
-        d.ratingTotal = 0;
+        d.rating = 0.0;
         d.open = false;
         var count = 0;
         for (var j = 0; j < d.Sessions.length; j++) {
           var s = d.Sessions[j];
-          s.ratingTotal = 0;
-          for (var k = 0; k < s.SessionMembers.length; k++) {
-            s.ratingTotal += s.SessionMembers[k].rating;
-          }
-
-          if (s.SessionMembers.length > 0) {
-            s.ratingTotal /= s.SessionMembers.length;
-            d.ratingTotal += s.ratingTotal;
-          }
+          d.rating += s.rating;
         }
 
         if (d.Sessions.length > 0) {
-          d.ratingTotal = d.Sessions.length;
+          d.rating /= d.Sessions.length;
         }
       }
     }
