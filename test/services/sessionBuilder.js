@@ -8,21 +8,18 @@ describe("Session Builder", function() {
   let testUser = null;
   let testAccount = null;
 
-
   beforeEach(function(done) {
     let attrs = {
       accountName: "BLauris",
       firstName: "Lauris",
-      lastName: "Dalas",
+      lastName: "Blīgzna",
       password: "multipassword",
-      email: "lilu.tanya@gmail.com",
+      email: "lauris@gmail.com",
       gender: "male"
     };
 
     models.sequelize.sync({ force: true }).then(() => {
       usersServices.create(attrs, function(errors, user) {
-        // console.log("############# TEST USER");
-        // console.log(user);
         testUser = user;
         user.getOwnerAccount().then(function(accounts) {
           user.getAccountUsers().then(function(results) {
@@ -40,29 +37,88 @@ describe("Session Builder", function() {
     });
   });
 
+  describe("First step", function(done) {
+    let object = null;
+    let name = null
+    let start_time = null;
+    let end_time = null;
 
-  it.only("Creates a new session in step 'setUp'", function(done) {
-    let name = testAccount.name + "_user_" + testUser.id;
-    let start_time = new Date();
-    let end_time = new Date();
-    end_time.setDate(end_time.getDate() + 10);
+    beforeEach(function(done) {
+      let params =  {
+        accountId: testAccount.id
+      }
 
-    let params =  {
-      accountId: testAccount.id,
-      name: name,
-      start_time: start_time,
-      end_time: end_time
-    }
+      sessionBuilder.initializeBuilder(params).then(function(result) {
+        object = result;
+        done();
+      }, function(error) {
+        done(error);
+      })
+    })
 
-    sessionBuilder.setUp(params). then(function(result) {
-      console.log("############# RESULT");
-      console.log(result);
-      done();
-    }, function(error) {
-      // console.log("############# ERROR");
-      // console.log(error);
+    it("initializes new session", function(done) {
+      assert.equal(object.sessionBuilder.currentStep, 'setUp')
+      assert.equal(object.sessionBuilder.steps.step1.stepName, 'setUp')
+      assert.equal(object.sessionBuilder.steps.step1.name, 'untitled')
+      assert.equal(object.sessionBuilder.steps.step2.stepName, 'facilitatiorAndTopics')
+      assert.equal(object.sessionBuilder.steps.step2.facilitator, null)
+      assert.equal(object.sessionBuilder.steps.step2.topics, null)
+      assert.equal(object.sessionBuilder.steps.step3.stepName, 'manageSessionEmails')
+      assert.equal(object.sessionBuilder.steps.step3.incentive_details, null)
+      assert.equal(object.sessionBuilder.steps.step3.emailTemplates, null)
+      assert.equal(object.sessionBuilder.steps.step4.stepName, 'manageSessionParticipants')
+      assert.equal(object.sessionBuilder.steps.step4.participants, null)
+      assert.equal(object.sessionBuilder.steps.step5.stepName, 'inviteSessionObservers')
+      assert.equal(object.sessionBuilder.steps.step5.observers, null)
       done();
     })
+
+    it("happy path", function() {
+      let start_time = new Date();
+      let end_time = new Date();
+      let name = "My first cool session"
+      end_time.setDate(end_time.getDate() + 10);
+
+      let params = {
+        id: object.sessionBuilder.id,
+        accountId: testAccount.id,
+        name: name,
+        start_time: start_time,
+        end_time: end_time
+      }
+
+      sessionBuilder.update(params).then(function(result) {
+        assert.equal(result.sessionBuilder.steps.step1.name, name)
+        assert.equal(result.sessionBuilder.steps.step1.start_time, start_time)
+        assert.equal(result.sessionBuilder.steps.step1.end_time, end_time)
+        done();
+      }, function(errors) {
+        done(errors);
+      })
+    })
+
+    it("sad path", function(done) {
+      let start_time = new Date();
+      let end_time = new Date();
+      start_time.setDate(start_time.getDate() + 10);
+
+      let params = {
+        id: object.sessionBuilder.id,
+        accountId: testAccount.id,
+        start_time: start_time,
+        end_time: end_time
+      }
+
+      sessionBuilder.update(params).then(function(result) {
+        done("should not get here");
+      }, function(errors) {
+        assert.equal(errors.invalidDateRange, "Start date can't be higher then end date.")
+        done();
+      })
+    })
+  })
+
+  describe("Step two", function(done) {
 
   })
 
