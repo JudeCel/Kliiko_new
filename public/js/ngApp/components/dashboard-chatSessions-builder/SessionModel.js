@@ -99,7 +99,9 @@
     }
 
     function updateStep() {
-      
+      var self = this;
+
+      console.log(self);
     }
 
 

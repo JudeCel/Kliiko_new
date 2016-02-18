@@ -21,7 +21,8 @@
                     Enter Date And Time <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.dateAndTime, 'glyphicon-chevron-right': !sbc.accordions.dateAndTime}"></i>
                 </div>
             </uib-accordion-heading>
-            content 2
+            <p><span class="date-time-label">Start</span> <img class="date-time-ico" src="/icons/calendar_green.png" alt=""> <input ng-model="sbc.step1.startDate" ng-blur="sbc.updateStep(1)"  type="date"> <img class="date-time-ico" src="/icons/time_green.png" alt=""> <input ng-model="sbc.step1.startTime" ng-blur="sbc.updateStep(1)" type="time"></p>
+            <p><span class="date-time-label end">End</span><img class="date-time-ico" src="/icons/calendar_green.png" alt=""> <input  ng-model="sbc.step1.endDate"  ng-blur="sbc.updateStep(1)"  type="date"> <img class="date-time-ico" src="/icons/time_green.png" alt=""> <input ng-model="sbc.step1.endTime" ng-blur="sbc.updateStep(1)" type="time"></p>
         </uib-accordion-group>
 
         <uib-accordion-group is-open="sbc.accordions.brandLogo">

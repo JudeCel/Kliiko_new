@@ -2772,6 +2772,15 @@ hr.survey-hr {
       margin: 0 5px;
       padding: 5px;
       border: 2px solid #2F9F69; }
+    #session-builder-content #step-1 span.date-time-label {
+      padding: 0 25px; }
+      #session-builder-content #step-1 span.date-time-label.end {
+        margin-right: 12px; }
+    #session-builder-content #step-1 .date-time-ico {
+      position: relative;
+      top: -2px;
+      padding: 7px;
+      border: 2px solid #2F9F69; }
   #session-builder-content #step-2 {
     font-size: 2rem; }
     #session-builder-content #step-2 .panel-title {

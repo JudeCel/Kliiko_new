@@ -12,7 +12,9 @@
     var sessionId = $stateParams.id || null;
 
     vm.session = new SessionModel(sessionId);
+    //todo @pavel: convert time if it is there already
 
+    vm.step1 = {};
     vm.accordions = {};
     vm.basePath = '/js/ngApp/components/dashboard-chatSessions-builder/';
     //vm.currentStep = $stateParams.currentStep;
@@ -71,8 +73,40 @@
       return (vm.currentStep == step);
     }
 
-    function updateStep() {
+    function updateStep(stepNumber) {
+      if (stepNumber && stepNumber === 1) parseDateAndTime();
       vm.session.updateStep();
+
+      /**
+       * convert date and time inputs to timestamp in session object -> steps -> step1 for start and rnd dates
+       */
+      function parseDateAndTime() {
+        var startDate, startHours, startMinutes, endDate, endHours, endMinutes;
+
+        if (vm.step1.startDate && vm.step1.startTime) {
+          startDate = new Date(vm.step1.startDate);
+          startHours = new Date(vm.step1.startTime).getHours();
+          startMinutes = new Date(vm.step1.startTime).getMinutes();
+
+          startDate.setHours(startHours);
+          startDate.setMinutes(startMinutes);
+
+          vm.session.steps.step1.startTime = startDate;
+        }
+
+        if (vm.step1.startDate && vm.step1.startTime) {
+          endDate = new Date(vm.step1.endDate);
+          endHours = new Date(vm.step1.endTime).getHours();
+          endMinutes = new Date(vm.step1.endTime).getMinutes();
+
+          endDate.setHours(endHours);
+          endDate.setMinutes(endMinutes);
+
+          vm.session.steps.step1.endTime = endDate;
+        }
+
+      }
+
     }
 
   }

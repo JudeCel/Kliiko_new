@@ -377,6 +377,21 @@
       padding: 5px;
       border: 2px solid $green;
     }
+
+    span.date-time-label {
+      padding: 0 25px;
+
+      &.end {
+        margin-right: 12px;
+      }
+    }
+
+    .date-time-ico {
+      position: relative;
+      top: -2px;
+      padding: 7px;
+      border: 2px solid $green;
+    }
   }
 
   @import "./steps/step2";
