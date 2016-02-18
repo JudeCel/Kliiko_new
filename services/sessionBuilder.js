@@ -23,14 +23,14 @@ module.exports = {
 function sessionBuilderObject(session) {
   return {
     sessionBuilder: {
-      steps: stepsDefination(session),
+      steps: stepsDefinition(session),
       currentStep: session.step,
       id: session.id
     }
   }
 }
 
-function stepsDefination(session) {
+function stepsDefinition(session) {
   return {
     step1: {
       stepName: "setUp",

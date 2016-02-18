@@ -58,7 +58,7 @@
 
             </div>
 
-            <ng-include ng-show="sbc.plans"  src="sbc.basePath+'steps/step'+sbc.currentStep+'.tpl.html'"></ng-include>
+            <ng-include  src="sbc.basePath+'steps/step'+sbc.currentStep+'.tpl.html'"></ng-include>
 
 
             <div class="row" ng-hide--="sbc.stepsClassIsActive(1)">
@@ -74,19 +74,6 @@
                     Next step
                 </div>
 
-                <div class="col-md-5 btn-dashboard-plans btn-md btn-green" ui-sref="dashboard.accountProfile"
-                     ng-show="sbc.stepsClassIsActive(5)">
-                    Back to account profile
-                </div>
-                <div class="col-md-4 btn-dashboard-plans btn-md pull-right btn-standart btn-red"
-                     ng-click="sbc.goToStep('submit')"
-                     ng-show="sbc.stepsClassIsActive(4)">
-                    Submit My Order
-                </div>
-                <div class="col-md-3 btn-dashboard-plans btn-md pull-right btn-standart btn-red" ui-sref="dashboard"
-                     ng-show="sbc.stepsClassIsActive(5) && !sbc.cantMoveNextStep">
-                    Build new session
-                </div>
             </div>
 
         </div>
