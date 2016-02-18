@@ -2509,52 +2509,7 @@ hr.survey-hr {
     border: none; }
 
 #session-builder-content {
-  /*#plansModal {
-    top: -85px;
-    h1 {
-      padding: 15px;
-      font-size: 3.3rem;
-      font-weight: 100;
-    }
-
-    p {
-      font-size: 2rem;
-      color: $grey;
-    }
-
-    .panel {
-      border-radius: 0px;
-      color: $grey;
-    }
-
-    a.accordion-toggle {
-      text-decoration: none;
-
-      &:hover { text-decoration: none }
-    }
-
-    .panel-title {
-      font-size: 2rem;
-      text-align: left;
-      color: $grey;
-    }
-    .panel-heading {
-      border: none;
-      background: #F6F8F7;
-
-      &:hover {
-        background: #F8F49B;
-      }
-    }
-
-    .panel-body {
-      p {
-        font-size: 1.9rem;
-        text-align: left;
-        color: $grey;
-      }
-    }
-  }*/
+  top: -85px;
   /*#countryAndCurrencySelect {
 
     .modal-body {padding: 36px;}
@@ -2605,7 +2560,7 @@ hr.survey-hr {
       background: #ddd; }
       #session-builder-content #steps-row span.step-number.active {
         color: white;
-        background: #4DC0E9; }
+        background: #2F9F69; }
       #session-builder-content #steps-row span.step-number.done {
         background: rgba(88, 188, 227, 0.65); }
     #session-builder-content #steps-row span.step-name {
@@ -2734,6 +2689,42 @@ hr.survey-hr {
     #session-builder-content .modal-footer .i-want-btn {
       color: #58595b;
       border-color: #F0E935; }
+  #session-builder-content h1 {
+    padding: 15px;
+    font-size: 3.3rem;
+    font-weight: 100; }
+  #session-builder-content p {
+    font-size: 2rem;
+    color: #58595b; }
+  #session-builder-content .panel {
+    border-radius: 0px;
+    color: #58595b; }
+  #session-builder-content a.accordion-toggle {
+    text-decoration: none; }
+    #session-builder-content a.accordion-toggle:hover {
+      text-decoration: none; }
+  #session-builder-content .panel-heading {
+    border: none;
+    background: #F6F8F7; }
+    #session-builder-content .panel-heading:hover {
+      background: rgba(174, 239, 137, 0.5); }
+      #session-builder-content .panel-heading:hover > .panel-title {
+        color: #2F9F69; }
+    #session-builder-content .panel-heading .panel-title {
+      font-size: 2rem;
+      text-align: left;
+      color: #58595b; }
+  #session-builder-content .panel-value,
+  #session-builder-content span.panel-value {
+    margin: 0 3rem; }
+  #session-builder-content .accordion-heading-helper.active {
+    background: yellow; }
+    #session-builder-content .accordion-heading-helper.active .panel-heading {
+      background: rgba(174, 239, 137, 0.5) !important; }
+  #session-builder-content .panel-body p {
+    font-size: 1.9rem;
+    text-align: left;
+    color: #58595b; }
   #session-builder-content #disclaimer {
     margin-top: 60px;
     color: #58595b;
@@ -2774,6 +2765,13 @@ hr.survey-hr {
     background: black;
     top: -100vh;
     left: -100vw; }
+  #session-builder-content #step-1 {
+    text-align: left;
+    font-size: 2rem; }
+    #session-builder-content #step-1 input {
+      margin: 0 5px;
+      padding: 5px;
+      border: 2px solid #2F9F69; }
   #session-builder-content #step-2 {
     font-size: 2rem; }
     #session-builder-content #step-2 .panel-title {

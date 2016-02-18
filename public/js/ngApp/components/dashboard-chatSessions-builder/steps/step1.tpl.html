@@ -1,3 +1,46 @@
 <section id="step-1" class="animated fadeIn">
-    here we are
+    <h3>Set-Up Chat Session</h3>
+
+    <uib-accordion close-others="false">
+        <uib-accordion-group is-open="sbc.accordions.sessionName">
+            <uib-accordion-heading>
+                <div class="panel-label">
+                    Name Your Chat Session
+                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.sessionName, 'glyphicon-chevron-right': !sbc.accordions.sessionName}"></i>
+                    <span class="panel-value pull-right">{{ sbc.session.steps.step1.name }}</span>
+                </div>
+            </uib-accordion-heading>
+            <label for="sessionBuilder-session-name">Name your session &nbsp; </label>
+            <input id="sessionBuilder-session-name" type="text" ng-model="sbc.session.steps.step1.name" ng-blur="sbc.updateStep();">
+        </uib-accordion-group>
+
+
+        <uib-accordion-group is-open="sbc.accordions.dateAndTime">
+            <uib-accordion-heading>
+                <div class="panel-label">
+                    Enter Date And Time <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.dateAndTime, 'glyphicon-chevron-right': !sbc.accordions.dateAndTime}"></i>
+                </div>
+            </uib-accordion-heading>
+            content 2
+        </uib-accordion-group>
+
+        <uib-accordion-group is-open="sbc.accordions.brandLogo">
+            <uib-accordion-heading>
+                <div class="panel-label">
+                    Select Brand Logo (optional) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.brandLogo, 'glyphicon-chevron-right': !sbc.accordions.brandLogo}"></i>
+                </div>
+            </uib-accordion-heading>
+            content 2
+        </uib-accordion-group>
+
+        <uib-accordion-group is-open="sbc.accordions.colorScheme">
+            <uib-accordion-heading>
+                <div class="panel-label">
+                    Select Colour Scheme (optional) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.colorScheme, 'glyphicon-chevron-right': !sbc.accordions.colorScheme}"></i>
+                </div>
+            </uib-accordion-heading>
+            content 2
+        </uib-accordion-group>
+
+    </uib-accordion>
 </section>

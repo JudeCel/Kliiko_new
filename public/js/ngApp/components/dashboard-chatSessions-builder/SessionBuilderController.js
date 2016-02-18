@@ -10,8 +10,10 @@
     var vm = this;
 
     var sessionId = $stateParams.id || null;
-    var session = new SessionModel(sessionId);
 
+    vm.session = new SessionModel(sessionId);
+
+    vm.accordions = {};
     vm.basePath = '/js/ngApp/components/dashboard-chatSessions-builder/';
     //vm.currentStep = $stateParams.currentStep;
     vm.currentStep = 1;
@@ -19,6 +21,7 @@
 
     vm.closeSession = closeSession;
     vm.stepsClassIsActive = stepsClassIsActive;
+    vm.updateStep = updateStep;
     vm.goToStep = goToStep;
 
     function closeSession() {
@@ -49,49 +52,27 @@
      * @returns {boolean}
      */
     function validateStep(step) {
-      return true
+      return true;
       if (step === 3) { return validateStep2() }
       if (step === 4) { return validateStep3() }
 
       return true;
 
       function validateStep2() {
-        if (step2IsValid) {
-          vm.cantMoveNextStep = true;
-          handleTosCheck();
-          return true;
-        }
-        if (!vm.promocode || !vm.promocode.length) {
-          vm.cantMoveNextStep = true;
-          return true;
-        }
-        upgradePlanServices.validatePromocode(vm.promocode).then(
-          function(res) {
-            vm.incorrectPromocode = null;
-            step2IsValid =  true; goToStep(3);
-            vm.promocodeData = res;
-            calculateDiscount();
-          },
-          function(err) {
-            messenger.error('Incorrect Promotional Code');
-            vm.incorrectPromocode = true;
-            return false;
-          }
-        );
-
+        return true;
       }
 
       function validateStep3() {
-        if (vm.cantMoveNextStep) {
-          domServices.shakeClass('terms-attention');
-          return false;
-        }
         return true;
       }
     }
 
     function stepsClassIsActive(step) {
       return (vm.currentStep == step);
+    }
+
+    function updateStep() {
+      vm.session.updateStep();
     }
 
   }

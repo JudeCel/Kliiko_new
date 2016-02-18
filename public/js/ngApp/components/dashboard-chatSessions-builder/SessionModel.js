@@ -19,6 +19,8 @@
     SessionModel.prototype.getRemoteData = getRemoteData;
     SessionModel.prototype.cancel = cancel;
     SessionModel.prototype.destroy = update;
+    SessionModel.prototype.updateStep = updateStep;
+
 
     return SessionModel;
 
@@ -94,6 +96,10 @@
 
     function update() {
       console.log('will update - todo');
+    }
+
+    function updateStep() {
+      
     }
 
 

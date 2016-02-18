@@ -31,7 +31,7 @@
 
       &.active {
         color: white;
-        background: $blue;
+        background: $green;
       }
 
       &.done {
@@ -211,28 +211,39 @@
 
 
 
-  /*#plansModal {
-    top: -85px;
-    h1 {
-      padding: 15px;
-      font-size: 3.3rem;
-      font-weight: 100;
-    }
+  ///////////////
+  top: -85px;
+  h1 {
+    padding: 15px;
+    font-size: 3.3rem;
+    font-weight: 100;
+  }
 
-    p {
-      font-size: 2rem;
-      color: $grey;
-    }
+  p {
+    font-size: 2rem;
+    color: $grey;
+  }
 
-    .panel {
-      border-radius: 0px;
-      color: $grey;
-    }
+  .panel {
+    border-radius: 0px;
+    color: $grey;
+  }
 
-    a.accordion-toggle {
-      text-decoration: none;
+  a.accordion-toggle {
+    text-decoration: none;
 
-      &:hover { text-decoration: none }
+    &:hover { text-decoration: none }
+  }
+
+
+  .panel-heading {
+    border: none;
+    background: #F6F8F7;
+    &:hover {
+      background: $lightGreen;
+
+      > .panel-title { color: $green; }
+
     }
 
     .panel-title {
@@ -240,23 +251,28 @@
       text-align: left;
       color: $grey;
     }
+  }
+
+  .panel-value,
+   span.panel-value {
+    margin: 0 3rem;
+  }
+
+  .accordion-heading-helper.active {
+    background: yellow;
     .panel-heading {
-      border: none;
-      background: #F6F8F7;
-
-      &:hover {
-        background: #F8F49B;
-      }
+      background: $lightGreen !important;
     }
+  }
 
-    .panel-body {
-      p {
-        font-size: 1.9rem;
-        text-align: left;
-        color: $grey;
-      }
+  .panel-body {
+    p {
+      font-size: 1.9rem;
+      text-align: left;
+      color: $grey;
     }
-  }*/
+  }
+  //////////////
 
   #disclaimer {
     margin-top: 60px;
@@ -349,6 +365,19 @@
     }
   }*/
 
+  #step-1 {
+    text-align: left;
+    font-size:  2rem;
+    label {
+
+    }
+
+    input {
+      margin: 0 5px;
+      padding: 5px;
+      border: 2px solid $green;
+    }
+  }
 
   @import "./steps/step2";
   @import "./steps/step3-4";
