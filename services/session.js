@@ -92,16 +92,17 @@ function findAllSessions(userId, domain) {
 function getAllSessionRatings() {
   let deferred = q.defer();
   Account.findAll({
-    group: ["Sessions.SessionMembers.rating", "Account.name", "Account.id", "Sessions.id", "Sessions.name", "Sessions.SessionMembers.id"],
+    group: ["Account.name", "Account.id", "Sessions.id", "Sessions.name", "Sessions.SessionMembers.rating", "Sessions.SessionMembers.id"],
     attributes: ['name', 'id'],
     include: [
-      {model: Session, attributes: ['name', [models.sequelize.fn('sum', models.sequelize.col('Sessions.SessionMembers.id')), 'mrating']],
+      {
+        model: Session, attributes: ['name'],
         include: [
           {model: SessionMember, attributes: ['id', 'rating']}]} ]
   }).then(function(data) {
     deferred.resolve(simpleParams(data));
   }, function(error) {
-    deferred.reject(filters.errors(error));
+    deferred.reject(error);
   });
   return deferred.promise;
 };
