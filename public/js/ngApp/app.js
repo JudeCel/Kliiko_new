@@ -15,7 +15,8 @@
     'domServices',
     'messenger',
     'ngMessages',
-    'internationalPhoneNumber',
+    // 'internationalPhoneNumber',
+    'ngIntlTelInput',
 
     // app modules
     'KliikoApp.user',
