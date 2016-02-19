@@ -249,7 +249,6 @@
     function addImportedContacts(contactsArray, listId) {
       var deferred = $q.defer();
 
-
       for (var i = 0, len = contactsArray.length; i < len ; i++) {
 
       }
@@ -264,8 +263,10 @@
           deferred.reject(res.error);
           return deferred.promise;
         }
+
         dbg.log1('#contactListServices > createUser > success '); dbg.log2(res);
         deferred.resolve(contactsArray);
+        return deferred.promise;
       });
 
 

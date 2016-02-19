@@ -562,6 +562,7 @@
           messenger.ok('New contacts has been imported to list '+ vm.lists.activeList.name);
         },
         function(err) {
+
           messenger.error(err);
 
         }

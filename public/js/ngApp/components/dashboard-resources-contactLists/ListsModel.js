@@ -444,8 +444,13 @@
 
           deferred.resolve(res);
         },
-        function (err) {
-          deferred.reject(err.message);
+        function(err) {
+          if (err.message) {
+            deferred.reject(err.message);
+          } else {
+            deferred.reject(err);
+          }
+
         }
       );
       return deferred.promise;
