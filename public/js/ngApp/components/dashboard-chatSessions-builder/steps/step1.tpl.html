@@ -44,24 +44,29 @@
 
 
             <section>
-                <div class='row' ng-controller='BrandColourController as bcc'>
-                    <div class='col-sm-6' ng-repeat='scheme in bcc.schemes' ng-show="bcc.schemes.length">
-                        <div class='panel panel-default panel-success'>
-                            <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='background-color: {{ scheme.colours.browserBackground }};'>
-                                <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/preview.html'"></ng-include>
-                            </div>
+                <form action="">
 
-                            <div class='panel-heading'>
-                                <div class='row'>
-                                    <div class='col-xs-10'>
-                                        <h3 class='panel-title text-max-width'>{{ scheme.name }}</h3>
+                    <div class='row' ng-controller='BrandColourController as bcc'>
+                        <div class='col-sm-6' ng-repeat='scheme in bcc.schemes' ng-show="bcc.schemes.length">
+                            <input type="radio">
+                                <div class='panel panel-default panel-success'>
+                                    <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='background-color: {{ scheme.colours.browserBackground }};'>
+                                        <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/preview.html'"></ng-include>
                                     </div>
+
+                                    <div class='panel-heading'>
+                                        <div class='row'>
+                                            <div class='col-xs-10'>
+                                                <h3 class='panel-title text-max-width'>{{ scheme.name }}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
-                            </div>
 
                         </div>
                     </div>
-                </div>
+                </form>
             </section>
 
         </uib-accordion-group>
