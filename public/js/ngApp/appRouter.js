@@ -134,7 +134,7 @@
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-sessionRating/dashboard-content.html"}
         },
         resolve: {
-          loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
             return $ocLazyLoad.load([
               '/js/ngApp/components/dashboard-accountProfile-sessionRating/SessionRatingControllers.js',
               '/js/ngApp/components/dashboard-accountProfile-sessionRating/sessionRatingServices.js'

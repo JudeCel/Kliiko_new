@@ -89,7 +89,6 @@ function findAllSessions(userId, domain) {
   return deferred.promise;
 };
 
-getAllSessionRatings();
 function getAllSessionRatings() {
   let deferred = q.defer();
 
