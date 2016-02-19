@@ -17,6 +17,7 @@ function sendToken(email, callback) {
                 token: token,
                 email: email
             };
+            console.log("__token", token);
             mailers.users.sendResetPasswordToken(params, next);
         }
     ], callback);

@@ -30,7 +30,7 @@ users.sendReactivateOrDeactivate = function(params, callback){
       });
     } else {
       // found template in db
-      fields.accountName = fields.name;      
+      fields.accountName = fields.name;
       var mailContent = mailTemplateService.composeMailFromTemplate(result, fields);
       //caller of users.sendReactivateOrDeactivate doesn't specify callback
       if (mailContent.error) {
@@ -38,13 +38,13 @@ users.sendReactivateOrDeactivate = function(params, callback){
           callback(mailContent.error);
         }
       }
-      mailTemplate.sendMailWithTemplate(mailContent, params, callback); 
+      mailTemplate.sendMailWithTemplate(mailContent, params, callback);
     }
-  }); 
+  });
 };
 
 users.sendResetPasswordToken = function(params, callback) {
-  let resetPasswordPath = '/resetpassword/';  
+  let resetPasswordPath = '/resetpassword/';
   mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.passwordResetRequest, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
@@ -63,7 +63,11 @@ users.sendResetPasswordToken = function(params, callback) {
       });
     } else {
       // found template in db
-      var mailContent = mailTemplateService.composeMailFromTemplate(result, {resetPasswordUrl: helpers.getUrl(params.token, resetPasswordPath)});
+      console.log("____", params);
+      var mailContent = mailTemplateService.composeMailFromTemplate(result, {
+        resetPasswordUrl: helpers.getUrl(params.token, resetPasswordPath),
+        firstName: "test"
+      });
       if (mailContent.error) {
           return callback(mailContent.error);
       }
@@ -124,9 +128,9 @@ users.sendPasswordChangedSuccess = function(params, callback) {
       });
     } else {
       // found template in db
-      mailTemplate.sendMailWithTemplate(result, params, callback); 
+      mailTemplate.sendMailWithTemplate(result, params, callback);
     }
-  });  
+  });
 };
 
 users.sendResetPasswordSuccess = function(params, callback) {
@@ -147,7 +151,16 @@ users.sendResetPasswordSuccess = function(params, callback) {
       });
     } else {
       // found template in db
-      mailTemplate.sendMailWithTemplate(result, params, callback); 
+      let fields = { firstName: params.name };
+      var mailContent = mailTemplateService.composeMailFromTemplate(result, fields);
+      //caller of users.sendReactivateOrDeactivate doesn't specify callback
+      if (mailContent.error) {
+        if (callback) {
+          callback(mailContent.error);
+        }
+      }
+      mailTemplate.sendMailWithTemplate(mailContent, params, callback);
+      //mailTemplate.sendMailWithTemplate(result, params, callback);
     }
-  }); 
+  });
 };
