@@ -9,7 +9,7 @@
   function ContactDetailsModalController(dbg,  user, domServices, ngProgressFactory, messenger) {
     dbg.log2('#ContactDetailsModalController  started');
     var vm = this;
-    
+
     vm.errors = {};
     vm.updateUserData = updateUserData;
     vm.cancel = cancel;
@@ -22,7 +22,7 @@
       // update form on every modal opening. will reset after 'cancel'
       jQuery('#contactDetailsModal').on('show.bs.modal', function (event) {
         // get all data for current user
-        user.getUserData().then(function (res) {     
+        user.getUserData().then(function (res) {
           vm.userData = $.extend({}, res);
         });
         vm.userDetailsForm.$setPristine();
@@ -34,6 +34,11 @@
     }
 
     function updateUserData(data, form) {
+      console.log("@@@@@@@@@@@@@@@@@@@@");
+      console.log(data.mobile);
+      console.log("@@@@@@@@@@@@@@@@@@@@");
+      // console.log(form);
+
       vm.errors = {};
       user.updateUserData(data, form).then(function (res) {
         vm.updateBtn = 'Updated';
@@ -42,7 +47,7 @@
         messenger.ok('Contact details updated successfully.');
       }, function(err) {
         vm.errors = err;
-      });      
+      });
     }
 
     function cancel(){

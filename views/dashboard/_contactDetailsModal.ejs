@@ -48,7 +48,24 @@
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
                   <div class='col-md-8'>
                     <span class='has-error text-red-dark'>{{ cdm.errors.mobile }}</span>
-                    <input type='text' class='form-control' id='mobile' placeholder='Mobile number' ng-model='cdm.userData.mobile'>
+                    {{cdm.userData.mobile}}
+                    <input value="+61"
+                           type="text"
+                           international-phone-number
+                           auto-hide-dial-code="false"
+                           class="form-control"
+                           name="mobile"
+                           id='mobile'
+                           placeholder='Mobile number recommended'
+                           ng-model='cdm.userData.mobile'
+                           required>
+                   <!-- <input type="text"
+                          name="mobile"
+                          required
+                          ng-model="cdm.userData.mobile"
+                          international-phone-number> -->
+                    <!-- <input value="+61" type='text' class='form-control' id='mobile' name="mobile" placeholder='Mobile number' ng-model='cdm.mobile' international-phone-number> -->
+                    <!-- <input type="text" ng-model="cdm.userData.mobile" ng-intl-tel-input data-default-country="au"> -->
                   </div>
                 </div>
 
