@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'messenger', 'SessionModel','$state', '$stateParams'];
-  function SessionBuilderController(dbg, messenger, SessionModel, $state, $stateParams) {
+  SessionBuilderController.$inject = ['dbg', 'messenger', 'SessionModel','$state', '$stateParams', '$ocLazyLoad'];
+  function SessionBuilderController(dbg, messenger, SessionModel, $state, $stateParams, $ocLazyLoad) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -27,7 +27,7 @@
     vm.goToStep = goToStep;
 
     function closeSession() {
-      session.cancel();
+      vm.session.cancel();
     }
 
     function goToStep(step) {

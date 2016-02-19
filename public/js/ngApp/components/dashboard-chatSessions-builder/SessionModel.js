@@ -86,7 +86,6 @@
     function cancel() {
       var self = this;
       var deferred = $q.defer();
-      debugger; //debugger
       sessionBuilderRestApi.delete({id: self.id},{},function(res) {
         deferred.resolve(res);
       });

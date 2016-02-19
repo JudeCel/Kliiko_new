@@ -134,7 +134,7 @@
         resolve: {
           loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
             return $ocLazyLoad.load([
-              //'/js/ngApp/components/dashboard-chatSessions/ChatSessionsController.js',
+              '/js/ngApp/components/dashboard-chatSessions/ChatSessionsController.js',
               '/js/ngApp/components/dashboard-chatSessions/chatSessionsServices.js',
             ]);
           }]
@@ -158,13 +158,23 @@
       })
 
       .state('dashboard.chatSessions.builder', {
-        url: '/chatSessions/builder/:id',
+        url: '/builder/:id',
         resolve: {
-          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
-            return $ocLazyLoad.load([
+          loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
+            var deferred = $q.defer();
+            $ocLazyLoad.load([
               '/js/ngApp/components/dashboard-chatSessions-builder/SessionModel.js',
-              '/js/ngApp/components/dashboard-chatSessions-builder/SessionBuilderController.js'
-            ]);
+              '/js/ngApp/components/dashboard-chatSessions-builder/SessionBuilderController.js',
+
+              '/js/ngApp/components/dashboard-resources-brandColours/brandColourServices.js',
+              '/js/ngApp/components/dashboard-resources-brandColours/BrandColourController.js',
+
+            ]).then(function() {
+              deferred.resolve();
+            });
+
+            return deferred.promise;
+
           }]
         },
         onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location, banners) {

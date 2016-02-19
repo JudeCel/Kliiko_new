@@ -1,11 +1,12 @@
 (function () {
   'use strict';
 
-  angular.module('KliikoApp', ['colorpicker.module']).controller('BrandColourController', BrandColourController);
-  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', 'ngProgressFactory', '$timeout', 'domServices'];
+  angular.module('KliikoApp').controller('BrandColourController', BrandColourController);
 
+  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', 'ngProgressFactory', '$timeout', 'domServices'];
   function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, ngProgressFactory, $timeout, domServices) {
     dbg.log2('#BrandColourController started');
+
 
     var vm = this;
     vm.removeScheme = removeScheme;

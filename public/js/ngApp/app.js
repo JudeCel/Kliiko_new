@@ -15,6 +15,7 @@
     'domServices',
     'messenger',
     'ngMessages',
+    'colorpicker.module',
 
     // app modules
     'KliikoApp.user',
