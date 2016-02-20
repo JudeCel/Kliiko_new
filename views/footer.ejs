@@ -12,5 +12,22 @@
 
   </div>
 
+  <script type="text/javascript">
+    $("#mobile").intlTelInput();
+
+    function getNewCountry() {
+      var phoneCountryData = {
+        iso2: $("#mobile").intlTelInput("getSelectedCountryData").iso2,
+        dialCode: $("#mobile").intlTelInput("getSelectedCountryData").dialCode,
+        countryName: $("#mobile").intlTelInput("getSelectedCountryData").name
+      };
+
+      var json = JSON.stringify(phoneCountryData);
+      document.getElementById('phoneCountryData').setAttribute('value', json);
+      var json_object = eval("("+json+")");
+      document.cookie="countryIso=" + $("#mobile").intlTelInput("getSelectedCountryData").iso2;
+      console.log(json_object);
+    }
+  </script>
   </body>
 </html>

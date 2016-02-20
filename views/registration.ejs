@@ -1,5 +1,6 @@
 <% include header %>
 
+
 <main class="main-first-page-registration">
   <div class="login-container center-block text-font-family">
     <ul class="nav nav-tabs">
@@ -151,16 +152,17 @@
                       </label>
                     </td>
                     <td>
-                      <input type="tel"
-                             international-phone-number
-                             default-country='au'
+                      <input onchange="getNewCountry();"
+                             default-country="au"
+                             type="tel"
                              value="<%= mobile %>"
-                             class="form-control"
                              id="mobile"
                              name="mobile"
                              placeholder="Mobile Number"
-                             autoFormat="true"
-                             autoHideDialCode="false">
+                             initialCountry='au'
+                             class="form-control"
+                             style="width: 100% !important;">
+                      <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="">
                     </td>
                   </tr>
 

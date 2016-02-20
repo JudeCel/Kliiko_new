@@ -5,8 +5,8 @@
     module('KliikoApp').
     controller('ContactDetailsModalController', ContactDetailsModalController);
 
-  ContactDetailsModalController.$inject = ['dbg', 'user','domServices', 'ngProgressFactory', 'messenger', '$sce'];
-  function ContactDetailsModalController(dbg,  user, domServices, ngProgressFactory, messenger, $sce) {
+  ContactDetailsModalController.$inject = ['dbg', 'user','domServices', 'ngProgressFactory', 'messenger'];
+  function ContactDetailsModalController(dbg,  user, domServices, ngProgressFactory, messenger) {
     dbg.log2('#ContactDetailsModalController  started');
     var vm = this;
     init();
