@@ -1,11 +1,11 @@
 /**
  * Follow instructions here to compile this file:
- * https://github.com/googlei18n/libphonenumber/blob/master/javascript/README
+ * https://code.google.com/p/libphonenumber/source/browse/trunk/javascript/README
  *
  * Once setup, to re-compile:
  * 1) Copy the contents of this file into libphonenumber/javascript/i18n/phonenumbers/demo.js
- * 2) ant -f libphonenumber/javascript/build.xml compile-demo
- * 3) Copy libphonenumber/javascript/i18n/phonenumbers/demo-compiled.js to intl-tel-input/lib/libphonenumber/build/utils.js
+ * 2) ant -f ~/src/libphonenumber/javascript/build.xml compile-demo
+ * 3) Copy demo-compiled.js to build/utils.js
  */
 
 // includes
@@ -112,8 +112,7 @@ function formatNumber(val, countryCode, addSuffix, allowExtension, isAllowedKey)
     if (result.charAt(result.length - 1) == " ") {
       result = result.substr(0, result.length - 1);
     }
-    // check if there's a suffix to add (unless there's an ext)
-    if (addSuffix && !val.split(extSuffix)[1]) {
+    if (addSuffix) {
       // hack to get formatting suffix
       var test = formatter.inputDigit('5');
       // again the "+44 " problem... (also affects "+45" apparently)

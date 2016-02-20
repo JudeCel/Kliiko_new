@@ -9,7 +9,7 @@
   <body>
     <h1>International Telephone Input</h1>
     <form>
-      <input id="phone" type="tel">
+      <input id="mobile-number" type="tel">
       <button type="submit">Submit</button>
     </form>
 
@@ -17,22 +17,18 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="build/js/intlTelInput.js"></script>
     <script>
-      $("#phone").intlTelInput({
+      $("#mobile-number").intlTelInput({
         //allowExtensions: true,
         //autoFormat: false,
         //autoHideDialCode: false,
         //autoPlaceholder: false,
         //defaultCountry: "auto",
-        // geoIpLookup: function(callback) {
-        //   $.get('http://ipinfo.io', function() {}, "jsonp").always(function(resp) {
-        //     var countryCode = (resp && resp.country) ? resp.country : "";
-        //     callback(countryCode);
-        //   });
-        // },
+        //ipinfoToken: "yolo",
         //nationalMode: false,
         //numberType: "MOBILE",
         //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
         //preferredCountries: ['cn', 'jp'],
+        //preventInvalidNumbers: true,
         utilsScript: "lib/libphonenumber/build/utils.js"
       });
     </script>

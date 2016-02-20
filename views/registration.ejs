@@ -151,7 +151,16 @@
                       </label>
                     </td>
                     <td>
-                      <input type="tel" value="<%= mobile %>" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number">
+                      <input type="tel"
+                             international-phone-number
+                             default-country='au'
+                             value="<%= mobile %>"
+                             class="form-control"
+                             id="mobile"
+                             name="mobile"
+                             placeholder="Mobile Number"
+                             autoFormat="true"
+                             autoHideDialCode="false">
                     </td>
                   </tr>
 

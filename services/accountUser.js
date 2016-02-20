@@ -63,6 +63,7 @@ function buidAttrs(params, accountId, role) {
 }
 
 function updateAccountUserWithId(data, userId, transaction, callback) {
+
   AccountUser.update(data, {
     where: {
       UserId: userId

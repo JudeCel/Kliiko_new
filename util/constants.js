@@ -22,7 +22,8 @@ module.exports = {
     'companyName',
     'landlineNumber',
     'mobile',
-    'comment'
+    'comment',
+    'phoneCountryData'
   ],
   safeUserParams: [
     'id',

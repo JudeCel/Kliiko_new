@@ -108,12 +108,6 @@ describe("autoFormat option:", function() {
         autoFormat: true,
         nationalMode: false
       });
-
-      jasmine.clock().install();
-    });
-
-    afterEach(function() {
-      jasmine.clock().uninstall();
     });
 
     it("focusing the input adds the dial code and format suffix", function() {
@@ -123,15 +117,13 @@ describe("autoFormat option:", function() {
 
     it("replacing the val with a number (faking a paste event) re-adds the plus", function() {
       input.val("1");
-      input.trigger("paste");
-      jasmine.clock().tick(1);
+      triggerKeyOnInput("CTRL");
       expect(getInputVal()).toEqual("+1 ");
     });
 
     it("replacing the val with an alpha (faking a paste event) re-adds the plus and removes the alpha", function() {
       input.val("a");
-      input.trigger("paste");
-      jasmine.clock().tick(1);
+      triggerKeyOnInput("CTRL");
       expect(getInputVal()).toEqual("+");
     });
 
