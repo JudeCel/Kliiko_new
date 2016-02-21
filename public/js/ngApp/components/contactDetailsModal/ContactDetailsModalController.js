@@ -17,7 +17,7 @@
 
     vm.validatePhone = validatePhone;
 
-    vm.countryIso = sessionStorage.getItem('countryIso2')
+    vm.countryIso = sessionStorage.getItem('countryIso2') || 'au'; 
     vm.dialCode = null;
     vm.countryName = null;
     vm.iso2 = null;
@@ -35,8 +35,6 @@
         vm.userDetailsForm.$setPristine();
         vm.userDetailsForm.$setUntouched();
         vm.errors = {};
-        console.log(vm.userDetailsForm)
-
       });
     }
 

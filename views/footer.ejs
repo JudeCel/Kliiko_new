@@ -26,7 +26,6 @@
       document.getElementById('phoneCountryData').setAttribute('value', json);
       var json_object = eval("("+json+")");
       document.cookie="countryIso=" + $("#mobilePhone").intlTelInput("getSelectedCountryData").iso2;
-      console.log(json_object);
     }
   </script>
   </body>

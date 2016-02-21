@@ -119,7 +119,16 @@
     init();
 
     function init() {
-      user.getUserData(true).then(function(res) { vm.user = res });
+      user.getUserData(true).then(function(res) { 
+        var isoCode = 'au';
+        vm.user = res 
+        if(typeof res.phoneCountryData === 'string'){
+          isoCode = JSON.parse(res.phoneCountryData).iso2;
+        }else{
+          isoCode = res.phoneCountryData.iso2;
+        }
+        sessionStorage.setItem('countryIso2',  isoCode);
+      });
       accountUser.getAccountUserData(true).then(function(res) { vm.accountUser = res });
     }
 
