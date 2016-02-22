@@ -53,9 +53,9 @@ describe('SERVICE - SessionBuilder', function() {
           assert.equal(result.sessionBuilder.steps.step3.incentive_details, null);
           assert.equal(result.sessionBuilder.steps.step3.emailTemplates, null);
           assert.equal(result.sessionBuilder.steps.step4.stepName, 'manageSessionParticipants');
-          assert.equal(result.sessionBuilder.steps.step4.participants, null);
+          assert.deepEqual(result.sessionBuilder.steps.step4.participants, []);
           assert.equal(result.sessionBuilder.steps.step5.stepName, 'inviteSessionObservers');
-          assert.equal(result.sessionBuilder.steps.step5.observers, null);
+          assert.deepEqual(result.sessionBuilder.steps.step5.observers, []);
           done();
         }, function(error) {
           done(error);
@@ -360,6 +360,124 @@ describe('SERVICE - SessionBuilder', function() {
                   done();
                 });
               }
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+  });
+
+  describe('#fourthStep', function(done) {
+    function sessionMemberParams(sessionId) {
+      return {
+        sessionId: sessionId,
+        username: 'Es krucs!',
+        role: 'participant',
+        accountUserId: testAccountUser.id
+      }
+    }
+
+    describe('happy path', function(done) {
+      it('should succeed on moving to next step', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          params.step = 'manageSessionParticipants';
+
+          sessionBuilderServices.update(params).then(function(result) {
+            models.SessionMember.create(sessionMemberParams(params.id)).then(function(member) {
+              sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
+                  assert.equal(session.step, 'inviteSessionObservers');
+                  done();
+                }, function(error) {
+                  done(error);
+                });
+              }, function(error) {
+                done(error);
+              });
+            }, function(error) {
+              done(error);
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+
+    describe('sad path', function(done) {
+      it('should fail because no participants', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          params.step = 'manageSessionParticipants';
+
+          sessionBuilderServices.update(params).then(function(result) {
+            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              assert.equal(error.participants, sessionBuilderServices.messages.errors.fourthStep.participants);
+              done();
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+  });
+
+  describe('#fifthStep', function(done) {
+    function sessionMemberParams(sessionId) {
+      return {
+        sessionId: sessionId,
+        username: 'Es krucs!',
+        role: 'observer',
+        accountUserId: testAccountUser.id
+      }
+    }
+
+    describe('happy path', function(done) {
+      it('should succeed on moving to next step', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          params.step = 'inviteSessionObservers';
+
+          sessionBuilderServices.update(params).then(function(result) {
+            models.SessionMember.create(sessionMemberParams(params.id)).then(function(member) {
+              sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
+                  assert.equal(session.step, 'done');
+                  done();
+                }, function(error) {
+                  done(error);
+                });
+              }, function(error) {
+                done(error);
+              });
+            }, function(error) {
+              done(error);
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+
+    describe('sad path', function(done) {
+      it('should fail because no observers', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          params.step = 'manageSessionParticipants';
+
+          sessionBuilderServices.update(params).then(function(result) {
+            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              assert.equal(error.observers, sessionBuilderServices.messages.errors.fourthStep.observers);
+              done();
             });
           }, function(error) {
             done(error);

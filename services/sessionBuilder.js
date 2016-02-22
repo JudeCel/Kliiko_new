@@ -25,6 +25,12 @@ const MESSAGES = {
     secondStep: {
       facilitator: 'No facilitator provided',
       topics: 'No topics selected'
+    },
+    fourthStep: {
+      participants: 'No participants provided'
+    },
+    fifthStep: {
+      observers: 'No observers provided'
     }
   }
 };
@@ -203,15 +209,36 @@ function stepsDefinition(session) {
   };
 
   object.step2 = { stepName: 'facilitatiorAndTopics' };
-  async.parallel(step2Queries(session, object.step2), function(error, _result) {
-    if(error) {
-      deferred.reject(error);
+  async.parallel([
+    function(cb) {
+      async.parallel(step2Queries(session, object.step2), function(error, _result) {
+        cb(error);
+      });
+    },
+    function(cb) {
+      searchSessionMembers(session.id, 'participant').then(function(members) {
+        object.step4 = {
+          stepName: 'manageSessionParticipants',
+          participants: members
+        };
+        cb();
+      }, function(error) {
+        cb(error);
+      });
+    },
+    function(cb) {
+      searchSessionMembers(session.id, 'observer').then(function(members) {
+        object.step5 = {
+          stepName: 'inviteSessionObservers',
+          observers: members
+        };
+        cb();
+      }, function(error) {
+        cb(error);
+      });
     }
-    else {
-      // async.parallel(step3Queries(session, object), function(error, _result) {
-      // });
-      deferred.resolve(object);
-    }
+  ], function(error, _result) {
+    error ? deferred.reject(error) : deferred.resolve(object);
   });
 
   object.step3 = {
@@ -219,29 +246,25 @@ function stepsDefinition(session) {
     incentive_details: null,
     emailTemplates: null
   };
-  object.step4 = {
-    stepName: "manageSessionParticipants",
-    participants: null
-  };
-  object.step5 = {
-    stepName: "inviteSessionObservers",
-    observers: null
-  };
 
   return deferred.promise;
+}
+
+function searchSessionMembers(sessionId, role) {
+  return models.SessionMember.findAll({
+    where: {
+      sessionId: sessionId,
+      role: role
+    }
+  });
 }
 
 function step2Queries(session, step) {
   return [
     function(cb) {
-      models.SessionMember.find({
-        where: {
-          sessionId: session.id,
-          role: 'facilitator'
-        }
-      }).then(function(member) {
-        if(member) {
-          step.facilitator = member.id;
+      searchSessionMembers(session.id, 'facilitator').then(function(members) {
+        if(!_.isEmpty(members)) {
+          step.facilitator = members[0].id;
         }
         cb();
       }).catch(function(error) {
@@ -287,6 +310,23 @@ function findValidation(step, params) {
   }
   else if(step == 'facilitatiorAndTopics') {
     validateStepTwo(params).then(function() {
+      deferred.resolve();
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }
+  else if(step == 'manageSessionEmails') {
+
+  }
+  else if(step == 'manageSessionParticipants') {
+    validateStepFour(params).then(function() {
+      deferred.resolve();
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }
+  else if(step == 'inviteSessionObservers') {
+    validateStepFive(params).then(function() {
       deferred.resolve();
     }, function(error) {
       deferred.reject(error);
@@ -339,6 +379,46 @@ function validateStepTwo(params) {
 
         _.isEmpty(errors) ? deferred.resolve() : deferred.reject(errors);
       }
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function validateStepFour(params) {
+  let deferred = q.defer();
+
+  findSession(params.id, params.accountId).then(function(session) {
+    searchSessionMembers(session.id, 'participant').then(function(members) {
+      let errors = {};
+      if(_.isEmpty(members)) {
+        errors.participants = MESSAGES.errors.fourthStep.participants;
+      }
+      _.isEmpty(errors) ? deferred.resolve() : deferred.reject(errors);
+    }).catch(function(error) {
+      deferred.reject(error);
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function validateStepFive(params) {
+  let deferred = q.defer();
+
+  findSession(params.id, params.accountId).then(function(session) {
+    searchSessionMembers(session.id, 'observer').then(function(members) {
+      let errors = {};
+      if(_.isEmpty(members)) {
+        errors.observers = MESSAGES.errors.fifthStep.observers;
+      }
+      _.isEmpty(errors) ? deferred.resolve() : deferred.reject(errors);
+    }).catch(function(error) {
+      deferred.reject(error);
     });
   }, function(error) {
     deferred.reject(error);
