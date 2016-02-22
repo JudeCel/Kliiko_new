@@ -249,17 +249,10 @@
     function addImportedContacts(contactsArray, listId) {
       var deferred = $q.defer();
 
-
       for (var i = 0, len = contactsArray.length; i < len ; i++) {
 
       }
 
-      //var params = {
-      //  defaultFields: defaultFields,
-      //  customFields: customFields,
-      //  contactListId: contactListId
-      //};
-      //
       var params = {
         contactsArray:contactsArray
       };
@@ -272,11 +265,11 @@
         }
 
         dbg.log1('#contactListServices > createUser > success '); dbg.log2(res);
-
-        deferred.resolve(res);
+        deferred.resolve(contactsArray);
+        return deferred.promise;
       });
 
-      deferred.resolve(contactsArray);
+
       return deferred.promise;
     }
 

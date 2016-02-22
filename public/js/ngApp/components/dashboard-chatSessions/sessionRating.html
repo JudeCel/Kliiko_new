@@ -1,0 +1,39 @@
+<div class='row'>
+  <div class='dashboard-container'>
+    <div class='col-xs-12'>
+      <div>
+        <h2 class='text-center'>Session Ratings</h2>
+      </div>
+      <div class='text-right'>
+        <button class='btn btn-addNewElement btn-green' ng-click='csc.changePage("index")'>Back</button>
+      </div>
+    </div>
+
+    <div class='col-xs-12 fixed-bottom-margin'>
+      <h3 class='text-center'>{{ csc.session.name }}</h3>
+      <table class='table table-dashboardElements'>
+        <thead>
+          <tr class='green-background'>
+            <th>
+              User Name
+            </th>
+            <th class='pull-right'>
+              <span class='text-vertical-middle'>Session rating:</span>
+              <uib-rating class='session-rating-stars text-vertical-middle' ng-model='csc.sessionRating' max='5' aria-labelledby='default-rating' readonly='true'>
+              </uib-rating>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat='member in csc.session.SessionMembers'>
+            <td>{{ member.username }}</td>
+            <td class='pull-right'>
+              <uib-rating class='session-rating-stars text-vertical-middle' ng-model='member.rating' max='5' aria-labelledby='default-rating' ng-click='csc.rateSessionMember(member)'>
+              </uib-rating>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

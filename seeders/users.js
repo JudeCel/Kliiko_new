@@ -16,6 +16,7 @@ function createAdmin(callback) {
     password: "qwerty123",
     email: "admin@insider.com",
     gender: "male",
+    phoneCountryData: {name: "Australia", iso2: "au", dialCode: "61", priority: 0, areaCodes: null},
     confirmedAt: new Date()
   }
 
@@ -45,6 +46,7 @@ function crateAccountManager(callback) {
     password: "qwerty123",
     email: "user@insider.com",
     gender: "male",
+    phoneCountryData: {name: "Australia", iso2: "au", dialCode: "61", priority: 0, areaCodes: null},
     confirmedAt: new Date()
   };
   UserService.create(userAttrs, function(errors, user) {

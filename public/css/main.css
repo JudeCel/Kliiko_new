@@ -282,6 +282,10 @@ img.ic-flipX {
   background-color: #E8EAED; }
   .table-dashboardElements > tbody .dashboardElementsEditRemove {
     min-width: 15%; }
+  .table-dashboardElements > tbody tr.session-pending {
+    background-color: #E6E6E6; }
+  .table-dashboardElements > tbody tr.session-open {
+    background-color: #D6E9DF; }
 
 .table-dashboardElements > thead > tr > th,
 .table-dashboardElements > tbody > tr > td {
@@ -885,6 +889,9 @@ footer {
 
 .text-font-family-tabs {
   font-family: Source sans pro black; }
+
+.text-vertical-middle {
+  vertical-align: middle; }
 
 /* Text COLOR */
 .text-shadow-gray {
@@ -1491,6 +1498,10 @@ hr.survey-hr {
   .brandColours .containerInnerBox {
     margin: 10px auto 10%; }
 
+.session-rating-stars {
+  font-size: 2.5em;
+  padding-top: 2%; }
+
 #dashboard #back-nav-btn {
   margin-bottom: -75px; }
 
@@ -1683,8 +1694,7 @@ hr.survey-hr {
     border-color: #58595b; }
   #upgrade-plan-content .modal-footer .i-want-btn {
     color: #58595b;
-    border-color: #F0E935;
-    width: 200px; }
+    border-color: #F0E935; }
 
 #upgrade-plan-content #plansModal {
   top: -85px; }
@@ -2204,6 +2214,10 @@ hr.survey-hr {
 
 #dashboard-contact-lists h2, #dashboard-contact-lists h3 {
   margin: 45px 30px 30px 30px; }
+
+#dashboard-contact-lists h4 {
+  margin: 30px 0px;
+  font-weight: bold; }
 
 #dashboard-contact-lists thead {
   background: #2F9F69; }
