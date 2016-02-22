@@ -111,16 +111,14 @@ function transactionFun(t, accountId, errors) {
       callback(null, result);
     }, function(error) {
       errors.reqired = true;
-      assignError(errors, error, attrs);
+      assignErrorWithRowNr(errors, error, attrs);
       callback();
     });
   }
 }
 
-function assignError(errors, error, attrs) {
-  if (error.email) {
-    errors[attrs.rowNr] = error;
-  }
+function assignErrorWithRowNr(errors, error, attrs) {
+  errors[attrs.rowNr] = error;
 }
 
 function bulkCreate(list, accountId) {
@@ -131,7 +129,6 @@ function bulkCreate(list, accountId) {
         if (errors.reqired) {
           t.rollback().then(function() {
             deferred.reject(errors);
-            return;
           });
         }else {
           t.commit().then(function() {
