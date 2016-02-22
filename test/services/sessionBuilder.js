@@ -4,14 +4,16 @@ var assert = require('chai').assert;
 var userFixture = require('./../fixtures/user');
 var models = require('./../../models');
 var sessionBuilderServices = require('./../../services/sessionBuilder');
+var async = require('async');
 
 describe('SERVICE - SessionBuilder', function() {
-  var testUser, testAccount;
+  var testUser, testAccount, testAccountUser;
 
   beforeEach(function(done) {
     userFixture.createUserAndOwnerAccount().then(function(result) {
       testUser = result.user;
       testAccount = result.account;
+      testAccountUser = result.accountUser;
       done();
     }, function(error) {
       done(error);
@@ -46,7 +48,7 @@ describe('SERVICE - SessionBuilder', function() {
           assert.equal(result.sessionBuilder.steps.step1.name, 'untitled');
           assert.equal(result.sessionBuilder.steps.step2.stepName, 'facilitatiorAndTopics');
           assert.equal(result.sessionBuilder.steps.step2.facilitator, null);
-          assert.equal(result.sessionBuilder.steps.step2.topics, null);
+          assert.deepEqual(result.sessionBuilder.steps.step2.topics, []);
           assert.equal(result.sessionBuilder.steps.step3.stepName, 'manageSessionEmails');
           assert.equal(result.sessionBuilder.steps.step3.incentive_details, null);
           assert.equal(result.sessionBuilder.steps.step3.emailTemplates, null);
@@ -139,7 +141,7 @@ describe('SERVICE - SessionBuilder', function() {
           params.name = 'My first cool session';
 
           sessionBuilderServices.update(params).then(function(result) {
-            sessionBuilderServices.nextStep(params.id, params.id, params).then(function(result) {
+            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
               assert.equal(result.sessionBuilder.steps.step1.name, params.name);
               assert.deepEqual(result.sessionBuilder.steps.step1.startTime, params.startTime);
               assert.deepEqual(result.sessionBuilder.steps.step1.endTime, params.endTime);
@@ -159,7 +161,7 @@ describe('SERVICE - SessionBuilder', function() {
 
           sessionBuilderServices.update(params).then(function(result) {
             params.startTime.setDate(params.startTime.getDate() + 10);
-            sessionBuilderServices.nextStep(params.id, params.id, params).then(function(result) {
+            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
               done('Should not get here!');
             }, function(error) {
               assert.equal(error.name, sessionBuilderServices.messages.errors.firstStep.nameRequired);
@@ -173,11 +175,198 @@ describe('SERVICE - SessionBuilder', function() {
   });
 
   describe('#firstStep', function(done) {
+    describe('happy path', function(done) {
+      it('should succeed on moving to next step', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          params.name = 'My first cool session';
 
+          sessionBuilderServices.update(params).then(function(result) {
+            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+              sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
+                assert.equal(session.step, 'facilitatiorAndTopics');
+                done();
+              }, function(error) {
+                done(error);
+              });
+            }, function(error) {
+              done(error);
+            });
+          });
+        });
+      });
+    });
+
+    describe('sad path', function(done) {
+      it('should fail on #update', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          params.startTime.setDate(params.startTime.getDate() + 10);
+
+          sessionBuilderServices.update(params).then(function(result) {
+            done('Should not get here!');
+          }, function(error) {
+            assert.equal(error.startTime, sessionBuilderServices.messages.errors.firstStep.invalidDateRange);
+            done();
+          });
+        });
+      });
+
+      it('should fail on #nextStep', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+
+          sessionBuilderServices.update(params).then(function(result) {
+            params.startTime.setDate(params.startTime.getDate() + 10);
+
+            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              assert.equal(error.name, sessionBuilderServices.messages.errors.firstStep.nameRequired);
+              assert.equal(error.startTime, sessionBuilderServices.messages.errors.firstStep.invalidDateRange);
+              done();
+            });
+          });
+        });
+      });
+    });
   });
 
-  describe("Step two", function(done) {
+  describe('#secondStep', function(done) {
+    function sessionMemberParams(sessionId) {
+      return {
+        sessionId: sessionId,
+        username: 'Es krucs!',
+        role: 'facilitator',
+        accountUserId: testAccountUser.id
+      }
+    }
+    function topicParams(accountId) {
+      return {
+        accountId: accountId,
+        name: 'Krucs!'
+      }
+    }
 
+    function createDependencies(params, skip, callback) {
+      async.parallel([
+        function(cb) {
+          if(skip.facilitator) {
+            cb();
+          }
+          else {
+            models.SessionMember.create(sessionMemberParams(params.id)).then(function(member) {
+              cb();
+            }, function(error) {
+              cb(error);
+            });
+          }
+        },
+        function(cb) {
+          if(skip.topics) {
+            cb();
+          }
+          else {
+            models.Topic.create(topicParams(params.accountId)).then(function(topic) {
+              sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
+                session.addTopics([topic]).then(function() {
+                  cb();
+                }, function(error) {
+                  cb(error);
+                });
+              });
+            }, function(error) {
+              cb(error);
+            });
+          }
+        },
+      ], function(error, _result) {
+        callback(error);
+      });
+    }
+
+    describe('happy path', function(done) {
+      it('should succeed on moving to next step', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          params.step = 'facilitatiorAndTopics';
+
+          sessionBuilderServices.update(params).then(function(result) {
+            createDependencies(params, {}, function(error) {
+              if(error) {
+                done(error);
+              }
+              else {
+                sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                  sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
+                    assert.equal(session.step, 'manageSessionEmails');
+                    done();
+                  }, function(error) {
+                    done(error);
+                  });
+                }, function(error) {
+                  done(error);
+                });
+              }
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+
+    describe('sad path', function(done) {
+      it('should fail because no facilitator', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          params.step = 'facilitatiorAndTopics';
+
+          sessionBuilderServices.update(params).then(function(result) {
+            createDependencies(params, { facilitator: true }, function(error) {
+              if(error) {
+                done(error);
+              }
+              else {
+                sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                  done('Should not get here!');
+                }, function(error) {
+                  assert.equal(error.facilitator, sessionBuilderServices.messages.errors.secondStep.facilitator);
+                  done();
+                });
+              }
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+
+      it('should fail because no topics', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          params.step = 'facilitatiorAndTopics';
+
+          sessionBuilderServices.update(params).then(function(result) {
+            createDependencies(params, { topics: true }, function(error) {
+              if(error) {
+                done(error);
+              }
+              else {
+                sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                  done('Should not get here!');
+                }, function(error) {
+                  assert.equal(error.topics, sessionBuilderServices.messages.errors.secondStep.topics);
+                  done();
+                });
+              }
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
   });
 
 });
