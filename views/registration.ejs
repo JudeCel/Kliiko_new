@@ -15,7 +15,7 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
-              <form method="post" action="/registration" novalidate>
+              <form method="post" action="/registration" novalidate="">
                 <% if(socialProfile){ %>
                  <input type="hidden" name="socialProfile[provider]" value="<%=socialProfile.provider%>">
                  <input type="hidden" name="socialProfile[id]" value="<%=socialProfile.id%>">
@@ -152,14 +152,13 @@
                       </label>
                     </td>
                     <td>
-                      <input onchange="getNewCountry();"
+                      <input onchange="getNewMobileCountry();"
                              default-country="au"
                              type="tel"
                              value="<%= mobile %>"
                              id="mobilePhone"
                              name="mobile"
                              placeholder="Mobile Number"
-                             initialCountry='au'
                              class="form-control">
 
                       <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="">
@@ -169,7 +168,7 @@
                   <tr>
                     <td></td>
                     <td class="error-column">
-                      <div class="has-error"><%= errors.mobile %></div>
+                      <div class="has-error" id="mobilePhoneError"><%= errors.mobile %></div>
                     </td>
                   </tr>
 
@@ -182,14 +181,23 @@
                       </label>
                     </td>
                     <td>
-                      <input type="text" value="<%= landlineNumber %>" class="form-control" name="landlineNumber" id="landline_number" placeholder="Landline Number">
+                      <input onchange="getNewLandlineNumberCountry();"
+                             default-country="au"
+                             type="tel"
+                             value="<%= landlineNumber %>"
+                             id="landline_number"
+                             name="landlineNumber"
+                             placeholder="Landline Number"
+                             class="form-control">
+
+                      <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="">
                     </td>
                   </tr>
 
                   <tr>
                     <td></td>
                     <td class="error-column">
-                      <div class="has-error"><%= errors.landlineNumber %></div>
+                      <div class="has-error" id="landline_number_error"><%= errors.landlineNumber %></div>
                     </td>
                   </tr>
 

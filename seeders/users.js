@@ -16,7 +16,8 @@ function createAdmin(callback) {
     password: "qwerty123",
     email: "admin@insider.com",
     gender: "male",
-    phoneCountryData: {name: "Australia", iso2: "au", dialCode: "61", priority: 0, areaCodes: null},
+    phoneCountryData: {name: "Australia", iso2: "au", dialCode: "61"},
+    landlineNumberCountryData: {name: "Australia", iso2: "au", dialCode: "61"},
     confirmedAt: new Date()
   }
 
