@@ -18,11 +18,53 @@
         <uib-accordion-group is-open="sbc.accordions.dateAndTime">
             <uib-accordion-heading>
                 <div class="panel-label">
-                    Enter Date And Time <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.dateAndTime, 'glyphicon-chevron-right': !sbc.accordions.dateAndTime}"></i>
+                    Enter Date And Time
+                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.dateAndTime, 'glyphicon-chevron-right': !sbc.accordions.dateAndTime}"></i>
+                    <span class="panel-value pull-right">{{ sbc.session.steps.step1.startTime | date : 'short'}} - {{ sbc.session.steps.step1.endTime | date : 'short'}}</span>
                 </div>
             </uib-accordion-heading>
-            <p><span class="date-time-label">Start</span> <img class="date-time-ico" src="/icons/calendar_green.png" alt=""> <input ng-model="sbc.step1.startDate" ng-blur="sbc.updateStep(1)"  type="date"> <img class="date-time-ico" src="/icons/time_green.png" alt=""> <input ng-model="sbc.step1.startTime" ng-blur="sbc.updateStep(1)" type="time"></p>
-            <p><span class="date-time-label end">End</span><img class="date-time-ico" src="/icons/calendar_green.png" alt=""> <input  ng-model="sbc.step1.endDate"  ng-blur="sbc.updateStep(1)"  type="date"> <img class="date-time-ico" src="/icons/time_green.png" alt=""> <input ng-model="sbc.step1.endTime" ng-blur="sbc.updateStep(1)" type="time"></p>
+            <div>
+                <span class="date-time-label">Start</span> <img class="date-time-ico" src="/icons/calendar_green.png" alt="">
+                <input ng-model="sbc.step1.startDate" ng-blur="sbc.updateStep(1)"  type="date">
+
+                <img class="date-time-ico" src="/icons/time_green.png" alt="">
+                <!--<input ng-model="sbc.step1.startTime" ng-blur="sbc.updateStep(1)" type="time">-->
+                <uib-timepicker class="timepicker" ng-model="sbc.mytime" ng-change="sbc.changed()" hour-step="sbc.hstep" minute-step="sbc.mstep" show-meridian="sbc.ismeridian"></uib-timepicker>
+
+            </div>
+            <div>
+                <span class="date-time-label end">End</span><img class="date-time-ico" src="/icons/calendar_green.png" alt="">
+                <input  ng-model="sbc.step1.endDate"  ng-blur="sbc.updateStep(1)"  type="date">
+
+                <img class="date-time-ico" src="/icons/time_green.png" alt="">
+                <div style="background: yellow; width: 300px; height: 50px;"></div>
+                <!--<input ng-model="sbc.step1.endTime" ng-blur="sbc.updateStep(1)" type="time"></p>-->
+                <uib-timepicker class="timepicker" ng-model="sbc.mytime" ng-change="sbc.changed()" hour-step="sbc.hstep" minute-step="sbc.mstep" show-meridian="sbc.ismeridian"></uib-timepicker>
+            </div>
+
+                <!-------------------------->
+
+            <!--<pre class="alert alert-info">Time is: {{sbc.mytime | date:'shortTime' }}</pre>-->
+
+            <!--<div class="row">-->
+                <!--<div class="col-xs-6">-->
+                    <!--Hours step is:-->
+                    <!--<select class="form-control" ng-model="sbc.hstep" ng-options="opt for opt in sbc.options.hstep"></select>-->
+                <!--</div>-->
+                <!--<div class="col-xs-6">-->
+                    <!--Minutes step is:-->
+                    <!--<select class="form-control" ng-model="sbc.mstep" ng-options="opt for opt in sbc.options.mstep"></select>-->
+                <!--</div>-->
+            <!--</div>-->
+
+            <hr>
+
+            <button type="button" class="btn btn-info" ng-click="sbc.toggleMode()">12H / 24H</button>
+            <button type="button" class="btn btn-default" ng-click="sbc.update()">Set to 14:00</button>
+            <button type="button" class="btn btn-danger" ng-click="sbc.clear()">Clear</button>
+
+            <!------------------------->
+
         </uib-accordion-group>
 
         <uib-accordion-group is-open="sbc.accordions.brandLogo">
@@ -38,35 +80,36 @@
             <uib-accordion-heading>
                 <div class="panel-label">
                     Select Colour Scheme (optional) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.colorScheme, 'glyphicon-chevron-right': !sbc.accordions.colorScheme}"></i>
+                    <span class="panel-value pull-right">{{ sbc.colorScheme.name }}</span>
                 </div>
             </uib-accordion-heading>
 
-
-
             <section>
-                <form action="">
-
-                    <div class='row' ng-controller='BrandColourController as bcc'>
-                        <div class='col-sm-6' ng-repeat='scheme in bcc.schemes' ng-show="bcc.schemes.length">
-                            <input type="radio">
-                                <div class='panel panel-default panel-success'>
-                                    <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='background-color: {{ scheme.colours.browserBackground }};'>
-                                        <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/preview.html'"></ng-include>
-                                    </div>
-
-                                    <div class='panel-heading'>
-                                        <div class='row'>
-                                            <div class='col-xs-10'>
-                                                <h3 class='panel-title text-max-width'>{{ scheme.name }}</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-
+                <div class='row' ng-controller='BrandColourController as bcc'>
+                    <div class='col-sm-6' ng-repeat='scheme in bcc.schemes' ng-show="bcc.schemes.length">
+                        <label for="{{ $index }}-scheme">
+                            <div class='panel panel-default panel-success'>
+                                <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='background-color: {{ scheme.colours.browserBackground }};'>
+                                    <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/preview.html'"></ng-include>
                                 </div>
 
-                        </div>
+                                <div class='panel-heading'>
+                                    <div class='row'>
+                                        <div class='col-xs-1'>
+                                            <input id="{{ $index }}-scheme" type="radio" ng-model="sbc.colorScheme" ng-value="scheme" >
+                                        </div>
+                                        <div class='col-xs-10'>
+                                            <h3 class='panel-title text-max-width'>{{ scheme.name }}</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
                     </div>
-                </form>
+                    <div class='col-sm-12'>
+                       <div class="btn-standart btn-red" ng-show="sbc.colorScheme" ng-click="sbc.colorScheme = null">Clean Color Scheme Selection</div>
+                    </div>
+                </div>
             </section>
 
         </uib-accordion-group>

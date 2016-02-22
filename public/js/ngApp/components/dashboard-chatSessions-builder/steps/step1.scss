@@ -1,0 +1,44 @@
+#step-1 {
+  text-align: left;
+  font-size:  2rem;
+  label {
+
+  }
+
+  input {
+    margin: 0 5px;
+    padding: 5px;
+    border: 2px solid $green;
+  }
+
+  span.date-time-label {
+    padding: 0 25px;
+
+    &.end {
+      margin-right: 12px;
+    }
+  }
+
+  .date-time-ico {
+    position: relative;
+    top: -2px;
+    padding: 7px;
+    border: 2px solid $green;
+  }
+
+
+  table.timepicker {
+    float: right;
+
+    span.glyphicon.glyphicon-chevron-up {
+      position: relative;
+      top: 12px;
+    }
+    span.glyphicon.glyphicon-chevron-down {
+      position: relative;
+      top: -6px;
+    }
+
+
+  }
+}

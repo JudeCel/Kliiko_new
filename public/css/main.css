@@ -2765,6 +2765,8 @@ hr.survey-hr {
     background: black;
     top: -100vh;
     left: -100vw; }
+  #session-builder-content a.btn.btn-link {
+    outline: none; }
   #session-builder-content #step-1 {
     text-align: left;
     font-size: 2rem; }
@@ -2781,6 +2783,14 @@ hr.survey-hr {
       top: -2px;
       padding: 7px;
       border: 2px solid #2F9F69; }
+    #session-builder-content #step-1 table.timepicker {
+      float: right; }
+      #session-builder-content #step-1 table.timepicker span.glyphicon.glyphicon-chevron-up {
+        position: relative;
+        top: 12px; }
+      #session-builder-content #step-1 table.timepicker span.glyphicon.glyphicon-chevron-down {
+        position: relative;
+        top: -6px; }
   #session-builder-content #step-2 {
     font-size: 2rem; }
     #session-builder-content #step-2 .panel-title {

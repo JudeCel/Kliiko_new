@@ -45,17 +45,24 @@
         }
       }
 
-
-
-      self.init();
+      //self.init();
 
     }
 
     function init() {
       var self = this;
+      var deferred = $q.defer();
 
-      if (!self.id) self.createNew();
-      if (self.id) self.getRemoteData();
+      if (!self.id) self.createNew().then(resolve);
+      if (self.id) self.getRemoteData().then(resolve);
+
+
+      return deferred.promise;
+
+      function resolve(res) {
+        deferred.resolve(res);
+      }
+
 
     }
 
