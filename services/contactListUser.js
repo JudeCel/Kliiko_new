@@ -119,12 +119,12 @@ function transactionFun(t, accountId, errors) {
 
 function assignError(errors, error, attrs) {
   if (error.email) {
-    errors.email[attrs.defaultFields.email] = error.email;
+    errors[attrs.rowNr] = error;
   }
 }
 
 function bulkCreate(list, accountId) {
-  let errors = {email: {}, reqired: false};
+  let errors = {reqired: false};
   let deferred = q.defer();
     models.sequelize.transaction().then(function(t) {
       async.map(list, transactionFun(t, accountId, errors), function(err, results) {

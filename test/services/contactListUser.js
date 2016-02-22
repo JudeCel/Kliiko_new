@@ -52,6 +52,7 @@ describe('Services -> ContactListUser', () => {
       describe("bulkCreate", ()=>{
         it("create multiple records", (done) =>  {
           let list = [{
+            rowNr: 2,
             contactListId: TestContactList.id,
             defaultFields: {
               firstName: "DainisNew1",
@@ -62,6 +63,7 @@ describe('Services -> ContactListUser', () => {
             },
               customFields: { one: "1", two:" 2", three:" 3" }
             },{
+              rowNr: 2,
               contactListId: TestContactList.id,
               defaultFields: {
                 firstName: "DainisNew",
@@ -85,6 +87,7 @@ describe('Services -> ContactListUser', () => {
           let list = [];
           beforeEach((done) => {
             list = [{
+              rowNr: 2,
               contactListId: TestContactList.id,
               defaultFields: {
                 firstName: "DainisNew1",
@@ -95,6 +98,7 @@ describe('Services -> ContactListUser', () => {
               },
                 customFields: { one: "1", two:" 2", three:" 3" }
               },{
+                rowNr: 4,
                 contactListId: TestContactList.id,
                 defaultFields: {
                   firstName: "DainisNew",
@@ -117,7 +121,7 @@ describe('Services -> ContactListUser', () => {
             ContactListUserService.bulkCreate(list, TestAccount.id).then(function(contactListUsers) {
               done("Not get here");
             }, function(error) {
-              assert.equal(error.email["dainis2@gmail.com"], 'Email has already been taken');
+              assert.equal(error[4].email, 'Email has already been taken');
               done();
             });
           })
