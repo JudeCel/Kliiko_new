@@ -419,6 +419,7 @@
       var deferred = $q.defer();
       var contactsArray = [];
 
+
       for (var i = 0, len = self.importPreviewArray.length; i < len ; i++) {
         var defaultFields = getDefaultFields(self.importPreviewArray[i]);
         var customFields = getCustomFields(self.importPreviewArray[i]);
