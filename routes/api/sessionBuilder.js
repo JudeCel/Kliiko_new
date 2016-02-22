@@ -42,7 +42,7 @@ function update(req, res, next) {
 
 function nextStep(req, res, next) {
   let accountId = res.locals.currentDomain.id;
-  sessionBuilderServices.nextStep(req.params.id, accountId).then(function(result) {
+  sessionBuilderServices.nextStep(req.params.id, accountId, req.params).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});

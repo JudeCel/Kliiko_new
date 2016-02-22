@@ -1,33 +1,20 @@
-"use strict";
-var assert = require('chai').assert;
-var usersServices = require('./../../services/users');
-var models  = require('./../../models');
-var sessionBuilder  = require('./../../services/sessionBuilder');
+'use strict';
 
-describe("Session Builder", function() {
-  let testUser = null;
-  let testAccount = null;
+var assert = require('chai').assert;
+var userFixture = require('./../fixtures/user');
+var models = require('./../../models');
+var sessionBuilderServices = require('./../../services/sessionBuilder');
+
+describe('SERVICE - SessionBuilder', function() {
+  var testUser, testAccount;
 
   beforeEach(function(done) {
-    let attrs = {
-      accountName: "BLauris",
-      firstName: "Lauris",
-      lastName: "Blīgzna",
-      password: "multipassword",
-      email: "lauris@gmail.com",
-      gender: "male"
-    };
-
-    models.sequelize.sync({ force: true }).then(() => {
-      usersServices.create(attrs, function(errors, user) {
-        testUser = user;
-        user.getOwnerAccount().then(function(accounts) {
-          user.getAccountUsers().then(function(results) {
-            testAccount = accounts[0];
-            done();
-          })
-        });
-      });
+    userFixture.createUserAndOwnerAccount().then(function(result) {
+      testUser = result.user;
+      testAccount = result.account;
+      done();
+    }, function(error) {
+      done(error);
     });
   });
 
@@ -37,89 +24,160 @@ describe("Session Builder", function() {
     });
   });
 
-  describe("First step", function(done) {
-    let object = null;
-    let name = null
-    let start_time = null;
-    let end_time = null;
+  function accountParams() {
+    return { accountId: testAccount.id };
+  };
 
-    beforeEach(function(done) {
-      let params =  {
-        accountId: testAccount.id
-      }
+  function sessionParams(data) {
+    return {
+      id: data.sessionBuilder.id,
+      accountId: testAccount.id,
+      startTime: new Date(),
+      endTime: new Date()
+    };
+  };
 
-      sessionBuilder.initializeBuilder(params).then(function(result) {
-        object = result;
-        done();
-      }, function(error) {
-        done(error);
-      })
-    })
+  describe('#initializeBuilder', function(done) {
+    describe('happy path', function(done) {
+      it('should initialize builder', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          assert.equal(result.sessionBuilder.currentStep, 'setUp');
+          assert.equal(result.sessionBuilder.steps.step1.stepName, 'setUp');
+          assert.equal(result.sessionBuilder.steps.step1.name, 'untitled');
+          assert.equal(result.sessionBuilder.steps.step2.stepName, 'facilitatiorAndTopics');
+          assert.equal(result.sessionBuilder.steps.step2.facilitator, null);
+          assert.equal(result.sessionBuilder.steps.step2.topics, null);
+          assert.equal(result.sessionBuilder.steps.step3.stepName, 'manageSessionEmails');
+          assert.equal(result.sessionBuilder.steps.step3.incentive_details, null);
+          assert.equal(result.sessionBuilder.steps.step3.emailTemplates, null);
+          assert.equal(result.sessionBuilder.steps.step4.stepName, 'manageSessionParticipants');
+          assert.equal(result.sessionBuilder.steps.step4.participants, null);
+          assert.equal(result.sessionBuilder.steps.step5.stepName, 'inviteSessionObservers');
+          assert.equal(result.sessionBuilder.steps.step5.observers, null);
+          done();
+        }, function(error) {
+          done(error);
+        });
+      });
+    });
+  });
 
-    it("initializes new session", function(done) {
-      assert.equal(object.sessionBuilder.currentStep, 'setUp')
-      assert.equal(object.sessionBuilder.steps.step1.stepName, 'setUp')
-      assert.equal(object.sessionBuilder.steps.step1.name, 'untitled')
-      assert.equal(object.sessionBuilder.steps.step2.stepName, 'facilitatiorAndTopics')
-      assert.equal(object.sessionBuilder.steps.step2.facilitator, null)
-      assert.equal(object.sessionBuilder.steps.step2.topics, null)
-      assert.equal(object.sessionBuilder.steps.step3.stepName, 'manageSessionEmails')
-      assert.equal(object.sessionBuilder.steps.step3.incentive_details, null)
-      assert.equal(object.sessionBuilder.steps.step3.emailTemplates, null)
-      assert.equal(object.sessionBuilder.steps.step4.stepName, 'manageSessionParticipants')
-      assert.equal(object.sessionBuilder.steps.step4.participants, null)
-      assert.equal(object.sessionBuilder.steps.step5.stepName, 'inviteSessionObservers')
-      assert.equal(object.sessionBuilder.steps.step5.observers, null)
-      done();
-    })
+  describe('#findSession', function(done) {
+    describe('happy path', function(done) {
+      it('should find session', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          sessionBuilderServices.findSession(result.sessionBuilder.id, testAccount.id).then(function(session) {
+            assert.equal(session.id, result.sessionBuilder.id);
+            assert.equal(session.accountId, testAccount.id);
+            done();
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+    });
 
-    it("happy path", function() {
-      let start_time = new Date();
-      let end_time = new Date();
-      let name = "My first cool session"
-      end_time.setDate(end_time.getDate() + 10);
+    describe('sad path', function(done) {
+      it('should fail on finding session', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          sessionBuilderServices.findSession(result.sessionBuilder.id + 100, testAccount.id).then(function(session) {
+            done('Should not get here!');
+          }, function(error) {
+            assert.equal(error, sessionBuilderServices.messages.notFound);
+            done();
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+    });
+  });
 
-      let params = {
-        id: object.sessionBuilder.id,
-        accountId: testAccount.id,
-        name: name,
-        start_time: start_time,
-        end_time: end_time
-      }
+  describe('#update', function(done) {
+    describe('happy path', function(done) {
+      it('should update session', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          params.name = 'My first cool session';
 
-      sessionBuilder.update(params).then(function(result) {
-        assert.equal(result.sessionBuilder.steps.step1.name, name)
-        assert.equal(result.sessionBuilder.steps.step1.start_time, start_time)
-        assert.equal(result.sessionBuilder.steps.step1.end_time, end_time)
-        done();
-      }, function(errors) {
-        done(errors);
-      })
-    })
+          sessionBuilderServices.update(params).then(function(result) {
+            assert.equal(result.sessionBuilder.steps.step1.name, params.name);
+            assert.equal(result.sessionBuilder.steps.step1.startTime, params.startTime);
+            assert.equal(result.sessionBuilder.steps.step1.endTime, params.endTime);
+            done();
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
 
-    it("sad path", function(done) {
-      let start_time = new Date();
-      let end_time = new Date();
-      start_time.setDate(start_time.getDate() + 10);
+    describe('sad path', function(done) {
+      it('should fail on updating session', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          params.startTime.setDate(params.startTime.getDate() + 10);
 
-      let params = {
-        id: object.sessionBuilder.id,
-        accountId: testAccount.id,
-        start_time: start_time,
-        end_time: end_time
-      }
+          sessionBuilderServices.update(params).then(function(result) {
+            done('Should not get here!');
+          }, function(error) {
+            assert.equal(error.startTime, sessionBuilderServices.messages.errors.firstStep.invalidDateRange);
+            done();
+          });
+        });
+      });
+    });
+  });
 
-      sessionBuilder.update(params).then(function(result) {
-        done("should not get here");
-      }, function(errors) {
-        assert.equal(errors.invalidDateRange, "Start date can't be higher then end date.")
-        done();
-      })
-    })
-  })
+  describe('#nextStep', function(done) {
+    describe('happy path', function(done) {
+      it('should go to next step', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          params.name = 'My first cool session';
+
+          sessionBuilderServices.update(params).then(function(result) {
+            sessionBuilderServices.nextStep(params.id, params.id, params).then(function(result) {
+              assert.equal(result.sessionBuilder.steps.step1.name, params.name);
+              assert.deepEqual(result.sessionBuilder.steps.step1.startTime, params.startTime);
+              assert.deepEqual(result.sessionBuilder.steps.step1.endTime, params.endTime);
+              done();
+            }, function(error) {
+              done(error);
+            });
+          });
+        });
+      });
+    });
+
+    describe('sad path', function(done) {
+      it('should fail on moving to next step', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+
+          sessionBuilderServices.update(params).then(function(result) {
+            params.startTime.setDate(params.startTime.getDate() + 10);
+            sessionBuilderServices.nextStep(params.id, params.id, params).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              assert.equal(error.name, sessionBuilderServices.messages.errors.firstStep.nameRequired);
+              assert.equal(error.startTime, sessionBuilderServices.messages.errors.firstStep.invalidDateRange);
+              done();
+            });
+          });
+        });
+      });
+    });
+  });
+
+  describe('#firstStep', function(done) {
+
+  });
 
   describe("Step two", function(done) {
 
-  })
+  });
 
-})
+});

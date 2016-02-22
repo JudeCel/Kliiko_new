@@ -1,9 +1,13 @@
-"use strict";
+'use strict';
+
 var models = require('./../models');
 var filters = require('./../models/filters');
 var Session = models.Session;
 
+var constants = require('./../util/constants');
+
 var async = require('async');
+var _ = require('lodash');
 var q = require('q');
 
 const MESSAGES = {
@@ -13,6 +17,9 @@ const MESSAGES = {
 
   errors: {
     firstStep: {
+      nameRequired: 'Name must be provided',
+      startTimeRequired: 'Start time must be provided',
+      endTimeRequired: 'End time must be provided',
       invalidDateRange: "Start date can't be higher then end date."
     }
   }
@@ -20,12 +27,129 @@ const MESSAGES = {
 
 // Exports
 module.exports = {
+  messages: MESSAGES,
   initializeBuilder: initializeBuilder,
-  openBuild: openBuild,
-  destroy: destroy,
+  findSession: findSession,
   update: update,
-  nextStep: nextStep
+  nextStep: nextStep,
+  openBuild: openBuild,
+  destroy: destroy
 };
+
+function initializeBuilder(params) {
+  let deferred = q.defer();
+
+  params.step = 'setUp';
+  Session.create(params).then(function(session) {
+    deferred.resolve(sessionBuilderObject(session));
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function findSession(id, accountId) {
+  let deferred = q.defer();
+
+  Session.find({
+    where: {
+      id: id,
+      accountId: accountId
+    }
+  }).then(function(session) {
+    if(session) {
+      deferred.resolve(session);
+    }
+    else {
+      deferred.reject(MESSAGES.notFound);
+    }
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function update(params) {
+  let deferred = q.defer();
+
+  findSession(params.id, params.accountId).then(function(session) {
+    session.updateAttributes(params).then(function(updatedSession) {
+      deferred.resolve(sessionBuilderObject(updatedSession));
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function nextStep(id, accountId, params) {
+  let deferred = q.defer();
+
+  findSession(id, accountId).then(function(session) {
+    validate(session, params).then(function() {
+      session.updateAttributes({ step: findNextStep(session.step) }).then(function(updatedSession) {
+        deferred.resolve(sessionBuilderObject(updatedSession));
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+// Untested
+function openBuild(id, accountId) {
+  let deferred = q.defer();
+
+  findSession(id, accountId).then(function(session) {
+    deferred.resolve(sessionBuilderObject(session));
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+// Untested
+function destroy(id, accountId) {
+  let deferred = q.defer();
+
+  findSession(id, accountId).then(function(session) {
+    session.destroy(function(result) {
+      deferred.resolve(MESSAGES.cancel);
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+// Helpers
+function findNextStep(step) {
+  let steps = constants.sessionBuilderSteps;
+  let currentIndex = steps.indexOf(step);
+  let nextStep = steps[++currentIndex];
+
+  if(currentIndex > -1 && nextStep) {
+    return nextStep;
+  }
+  else{
+    return step;
+  }
+}
 
 function sessionBuilderObject(session) {
   return {
@@ -34,7 +158,7 @@ function sessionBuilderObject(session) {
       currentStep: session.step,
       id: session.id
     }
-  }
+  };
 }
 
 function stepsDefinition(session) {
@@ -68,51 +192,14 @@ function stepsDefinition(session) {
   }
 }
 
-function initializeBuilder(params) {
+function validate(session, params) {
   let deferred = q.defer();
-  params.step = 'setUp';
-  Session.create(params).then(function(session) {
-    deferred.resolve(sessionBuilderObject(session))
-  }).catch(function(errors) {
-    deferred.reject(filters.errors(errors));
-  });
-  return deferred.promise;
-}
 
-function update(params) {
-  let deferred = q.defer();
-  validate(params).then(function(result) {
-    Session.find({where: {id: params.id, accountId: params.accountId }}).then(function (session) {
-      if (session) {
-        session.updateAttributes(params).then(function(updateSesion) {
-          deferred.resolve(sessionBuilderObject(updateSesion));
-        }, function(error) {
-          deferred.reject(error);
-        });
-      }else {
-        deferred.reject({notFound: MESSAGES.notFound});
-      }
-    }, function(error) {
-      deferred.reject(error);
-    });
-  }, function(errors) {
-    deferred.reject(errors);
-  })
-
-  return deferred.promise;
-}
-
-function validate(params) {
-  let deferred = q.defer();
-  currentStep(params.id).then(function(result) {
-    findValidation(result.step, params).then(function(result) {
-      deferred.resolve();
-    }, function(errors) {
-      deferred.reject(errors);
-    })
+  findValidation(session.step, params).then(function() {
+    deferred.resolve();
   }, function(error) {
     deferred.reject(error);
-  })
+  });
 
   return deferred.promise;
 }
@@ -120,108 +207,35 @@ function validate(params) {
 function findValidation(step, params) {
   let deferred = q.defer();
 
-  if(step == 'setUp'){
-    validateStepOne(params).then(function(result) {
-      deferred.resolve();
-    }, function(errors) {
-      deferred.reject(errors);
-    })
+  if(step == 'setUp') {
+    let error = validateStepOne(params);
+    error ? deferred.reject(error) : deferred.resolve();
+  }
+  else if(step == 'facilitatiorAndTopics') {
+
   }
 
   return deferred.promise;
 }
 
 function validateStepOne(params) {
-  let deferred = q.defer();
   let errors = {}
 
-  if(params.start_time > params.end_time){
-    errors.invalidDateRange = MESSAGES.errors.firstStep.invalidDateRange
+  if(!params.name) {
+    errors.name = MESSAGES.errors.firstStep.nameRequired;
   }
 
-  if (errors) {
-    deferred.reject(errors);
-  } else {
-    deferred.resolve();
+  if(!params.startTime) {
+    errors.startTime = MESSAGES.errors.firstStep.startTimeRequired;
   }
 
-  return deferred.promise;
-}
-
-function nextStep(id, accountId) {
-  let deferred = q.defer();
-  Session.find({where: {id: id, accountId: accountId }}).then(function (session) {
-    if (session) {
-      session.updateAttributes({step: findNextStep(session.step)}).then(function(updateSesion) {
-        deferred.resolve(sessionBuilderObject(updateSesion));
-      }, function(error) {
-        deferred.reject(error);
-      });
-    }else {
-      deferred.reject({notFound: MESSAGES.notFound});
-    }
-  }, function(error) {
-    deferred.reject(error);
-  });
-
-  return deferred.promise;
-}
-
-function openBuild(id, accountId) {
-  let deferred = q.defer();
-  Session.find({where: { id: id, accountId: accountId } } ).then(function(session) {
-    if (session) {
-      deferred.resolve(sessionBuilderObject(session));
-    }else {
-      deferred.reject({notFound: MESSAGES.notFound});
-    }
-  }, function(error) {
-    deferred.reject(error);
-  });
-  return deferred.promise;
-}
-
-
-function findNextStep(step) {
-  // Always return step!
-  // If current step is the last step then return last step.
-  // The order for step array is important always keep right order!!!
-  let steps = ['setUp', 'facilitatiorAndTopics', 'manageSessionEmails',
-    'manageSessionParticipants', 'inviteSessionObservers', 'done']
-  let currentIndex = steps.indexOf(step);
-  let nextStep = steps[++currentIndex];
-
-  if (currentIndex > -1 && nextStep) {
-    return nextStep;
-  }else{
-    return step;
+  if(!params.endTime) {
+    errors.endTime = MESSAGES.errors.firstStep.endTimeRequired;
   }
-}
 
-function destroy(id) {
-  let deferred = q.defer();
-  Session.destroy({ where: { id: id } }).then(function(result) {
-    if(result == 0) {
-      deferred.reject({notFound: MESSAGES.notFound});
-    }else{
-      deferred.resolve(MESSAGES.cancel);
-    }
-  },function(error) {
-    deferred.reject(error);
-  });
-  return deferred.promise;
-}
+  if(params.startTime > params.endTime) {
+    errors.startTime = MESSAGES.errors.firstStep.invalidDateRange;
+  }
 
-function currentStep(id) {
-  let deferred = q.defer();
-  Session.find({where: { id: id } } ).then(function(session) {
-    if (session) {
-      deferred.resolve(session);
-    }else {
-      deferred.reject({notFound: MESSAGES.notFound});
-    }
-  }, function(error) {
-    deferred.reject(error);
-  });
-  return deferred.promise;
+  return _.isEmpty(errors) ? null : errors;
 }
