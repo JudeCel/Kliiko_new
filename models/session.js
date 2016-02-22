@@ -1,23 +1,30 @@
 'use strict';
+var constants = require('../util/constants');
 
 module.exports = (Sequelize, DataTypes) => {
   var Session = Sequelize.define('Session', {
-    id:	 { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     brand_project_id: { type: DataTypes.INTEGER, allowNull: true },
     accountId: { type: DataTypes.INTEGER, allowNull: false  },
     resourceId: { type: DataTypes.INTEGER, allowNull: true  },
     brandProjectPreferenceId: { type: DataTypes.INTEGER, allowNull: true  },
     name:	{ type: DataTypes.STRING, allowNull: false, defaultValue: 'untitled' },
-    startTime:	{ type: DataTypes.DATE, allowNull: false, defaultValue: Date.now() },
-    endTime:	{ type: DataTypes.DATE, allowNull: false , defaultValue: Date.now() },
+    startTime: { type: DataTypes.DATE, allowNull: false, defaultValue: Date.now(), validate: {
+      isValid: function(value, next) {
+        if(this.startTime > this.endTime) {
+          next("Start date can't be higher then end date.")
+        }
+        else {
+          next();
+        }
+      }
+    } },
+    endTime: { type: DataTypes.DATE, allowNull: false , defaultValue: Date.now() },
     incentive_details: { type: DataTypes.TEXT, allowNull: true  },
     active:	{ type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     colours_used: { type: DataTypes.TEXT, allowNull: true },
-    // The order for step array is important always keep right order!!!
-    step: { type: DataTypes.ENUM, allowNull: false,
-      values: ['setUp', 'facilitatiorAndTopics', 'manageSessionEmails',
-        'manageSessionParticipants', 'inviteSessionObservers', 'done'
-      ], defaultValue: 'setUp' },
+
+    step: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionBuilderSteps, defaultValue: 'setUp' },
 
     status: { type: DataTypes.ENUM, allowNull: false,
       values: ['build in progress', 'expired', 'pending', 'active'], defaultValue: 'build in progress' },
