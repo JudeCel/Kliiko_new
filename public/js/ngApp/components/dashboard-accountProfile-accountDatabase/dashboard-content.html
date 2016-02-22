@@ -42,7 +42,7 @@
           <tr ng-repeat='accountUser in account.AccountUsers'>
             <td>{{ $index == 0 ? account.name : "" }}</td>
             <td>
-              <img ng-src="{{ chooseIconForUser(account, accountUser.User) }}" alt='' ng-click='changeAccountStatus(account,  accountUser.User)' />
+              <img ng-src="{{ chooseIconForUser(account, accountUser) }}" alt='' ng-click='changeAccountStatus(account,  accountUser)' />
               {{ accountUser.firstName }} {{ accountUser.lastName }}
             </td>
             <td>{{ accountUser.createdAt | date: dateFormat }}</td>

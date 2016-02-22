@@ -1,0 +1,140 @@
+<form class='form-horizontal' ng-submit="clc.updateContact()">
+    <div class='col-md-6'>
+        <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First name<span class='text-red-dark'>*</span></label>
+            <div class='col-md-8'>
+                <span class='has-error text-red-dark'>{{ clc.modalErrors.firstName }}</span>
+                <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='clc.newContact.firstName'>
+            </div>
+        </div>
+
+        <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='lastName'>Last name<span class='text-red-dark'>*</span></label>
+            <div class='col-md-8'>
+                <span class='has-error text-red-dark'>{{ clc.modalErrors.lastName }}</span>
+                <input type='text' class='form-control' id='lastName' placeholder='Last name' ng-model='clc.newContact.lastName'>
+            </div>
+        </div>
+
+        <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='email'>Email<span class='text-red-dark'>*</span></label>
+            <div class='col-md-8'>
+                <span class='has-error text-red-dark'>{{ clc.modalErrors.email }}</span>
+                <input type='text' class='form-control' id='email' placeholder='Email' ng-model='clc.newContact.email'>
+            </div>
+        </div>
+
+        <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page'>Gender<span class='text-red-dark'>*</span></label>
+            <div class='col-md-8'>
+                <div class='has-error text-red-dark'>{{ clc.modalErrors.gender }}</div>
+                <label class='radio-inline'><input type='radio' value='male' name='radio_gender' ng-model='clc.newContact.gender'>Male</label>
+                <label class='radio-inline'><input type='radio' value='female' name='radio_gender' ng-model='clc.newContact.gender'>Female</label>
+            </div>
+        </div>
+
+        <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
+            <div class='col-md-8'>
+                <span class='has-error text-red-dark'>{{ clc.modalErrors.mobile }}</span>
+                <input type='tel' class='form-control' id='mobile' placeholder='Mobile number' ng-model='clc.newContact.mobile'>
+            </div>
+        </div>
+
+        <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
+            <div class='col-md-8'>
+                <span class='has-error text-red-dark'>{{ clc.modalErrors.landlineNumber }}</span>
+                <input type='text' class='form-control' id='landlineNumber' placeholder='Landline number' ng-model='clc.newContact.landlineNumber'>
+            </div>
+        </div>
+    </div>
+
+    <div class='col-md-6'>
+        <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='postalAddress'>Postal address</label>
+            <div class='col-md-8'>
+                <span class='has-error text-red-dark'>{{ clc.modalErrors.postalAddress }}</span>
+                <input type='text' class='form-control' id='postalAddress' placeholder='Postal address' ng-model='clc.newContact.postalAddress'>
+            </div>
+        </div>
+
+        <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='city'>City</label>
+            <div class='col-md-8'>
+                <span class='has-error text-red-dark'>{{ clc.modalErrors.city }}</span>
+                <input type='text' class='form-control' id='city' placeholder='City' ng-model='clc.newContact.city'>
+            </div>
+        </div>
+
+        <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='state'>State</label>
+            <div class='col-md-8'>
+                <span class='has-error text-red-dark'>{{ clc.modalErrors.state }}</span>
+                <input type='text' class='form-control' id='state' placeholder='State' ng-model='clc.newContact.state'>
+            </div>
+        </div>
+
+        <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='postCode'>Postcode</label>
+            <div class='col-md-8'>
+                <span class='has-error text-red-dark'>{{ clc.modalErrors.postCode }}</span>
+                <input type='text' class='form-control' id='postCode' placeholder='Postcode' ng-model='clc.newContact.postCode'>
+            </div>
+        </div>
+
+        <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='country'>Country</label>
+            <div class='col-md-8'>
+                <span class='has-error text-red-dark'>{{ clc.modalErrors.country }}</span>
+                <input type='text' class='form-control' id='country' placeholder='Country' ng-model='clc.newContact.country'>
+            </div>
+        </div>
+
+        <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='companyName'>Company name</label>
+            <div class='col-md-8'>
+                <span class='has-error text-red-dark'>{{ clc.modalErrors.companyName }}</span>
+                <input type='text' class='form-control' id='companyName' placeholder='Company name' ng-model='clc.newContact.companyName'>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <section ng-hide="!clc.lists.activeList.customFields.length">
+        <div class="col-md-12 delimiter"></div>
+        <div class='col-md-6'>
+
+            <div class='form-group' ng-repeat="cf  in clc.lists.activeList.customFields track by $index" ng-show="$index < ( clc.lists.activeList.customFields.length / 2)">
+                <label class='control-label col-md-4 text-no-bold text-login-page' for='cf-{{ cf }}'>{{cf}}</label>
+                <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ clc.modalErrors.country }}</span>
+                    <input type='text' class='form-control' id='cf-{{ cf }}' placeholder='{{cf}}' ng-model='clc.newContact.CustomFieldsObject[cf]'>
+                </div>
+            </div>
+        </div>
+
+        <div class='col-md-6'>
+            <div class='form-group' ng-repeat="cf in clc.lists.activeList.customFields track by $index" ng-show="$index >= ( clc.lists.activeList.customFields.length / 2)">
+                <label class='control-label col-md-4 text-no-bold text-login-page' for='cf-{{ cf }}'>{{cf}}</label>
+                <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ clc.modalErrors.country }}</span>
+                    <input type='text' class='form-control' id='cf-{{ cf }}' placeholder='{{cf}}' ng-model='clc.newContact.CustomFieldsObject[cf]'>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+
+    <div class='row'>
+        <div class='col-md-12'>
+
+            <div class='btn-standart btn-red pull-left' ng-click="clc.contactAddEditClickHandle('cancel')" data-dismiss="modal">Cancel</div>
+            <input type="submit" ng-hide="clc.updateExistingUser" ng-click='clc.createContact()' class='btn-standart btn-green pull-right' value="Create">
+            <input type="submit" ng-show="clc.updateExistingUser" ng-click='clc.updateContact()' class='btn-standart btn-green pull-right' value="Update">
+
+        </div>
+    </div>
+
+</form>

@@ -160,11 +160,11 @@
       }
       else {
         if(page == 'edit') {
-          vm.copyScheme = {};
-          angular.copy(scheme, vm.copyScheme);
+          vm.originalScheme = {};
+          angular.copy(scheme, vm.originalScheme);
         }
         else {
-          vm.copyScheme = null;
+          vm.originalScheme = null;
         }
 
         vm.scheme = scheme || { colours: { participants: {} } };
@@ -173,8 +173,8 @@
     };
 
     function undoCurrentScheme() {
-      if(vm.copyScheme) {
-        angular.copy(vm.copyScheme, vm.scheme);
+      if(vm.originalScheme) {
+        angular.copy(vm.originalScheme, vm.scheme);
         vm.previewScheme = vm.scheme;
       }
     };

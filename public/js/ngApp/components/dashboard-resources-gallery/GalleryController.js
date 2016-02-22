@@ -6,10 +6,10 @@
     controller('GalleryController', GalleryController);
 
   GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', 
-                               '$scope', 'domServices', 'messenger', 
-                               'globalSettings', '$sce', 'filterFilter', '$timeout'];
+                               '$scope', 'domServices', 'messenger',
+                               'globalSettings', '$sce', 'filterFilter', '$timeout', 'ngProgressFactory'];
 
-  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, globalSettings, $sce, filterFilter, $timeout){
+  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, globalSettings, $sce, filterFilter, $timeout, ngProgressFactory){
     dbg.log2('#GalleryController  started');
     initList();
     $scope.filterType = "";
@@ -99,6 +99,9 @@
     }
 
     function saveYoutube(newResource){
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+
       var resourceParams = {
         title: newResource.title,
         text: newResource.youtubeUrl
@@ -106,43 +109,52 @@
       
       GalleryServices.saveYoutubeUrl(resourceParams).then(function(res) {
         if(res.error){
+          progressbar.complete();
           messenger.error(res.error);
         }else{
           $scope.resources.push(res);
           cancel()
+          progressbar.complete();
           messenger.ok("Resource was sucessfully created.");
         }
       })
     }
 
     function saveResource(newResource){
-      var resourceParams = {
-        title: newResource.title,
-        type: newResource.type,
-        text: $scope.newResource.fileTst.name,
-        file: newResource.fileTst
-      };
+      if(newResource.fileTst){
+        var progressbar = ngProgressFactory.createInstance();
 
-      $scope.submitIsDisabled = true;
+        var resourceParams = {
+          title: newResource.title,
+          type: newResource.type,
+          text: $scope.newResource.fileTst.name,
+          file: newResource.fileTst
+        };
 
-      GalleryServices.createResource(resourceParams).then(function(res) {
-        if(res.error){
-          messenger.error(res.error);
-          $scope.submitIsDisabled = false;
-        }else{
-           GalleryServices.postuploadData(resourceParams).then(function(res) {
-            if(res.error){
-              messenger.error(res.error);
-              $scope.submitIsDisabled = false;
-            }else{
-              $scope.resources.push(res.data);
-              cancel()
-              messenger.ok("Resource was sucessfully created.");
-              $scope.submitIsDisabled = false;
-            }
-          })
-        }
-      })
+        $scope.submitIsDisabled = true;
+        GalleryServices.createResource(resourceParams).then(function(res) {
+          if(res.error){
+            messenger.error(res.error);
+            $scope.submitIsDisabled = false;
+          }else{
+             GalleryServices.postuploadData(resourceParams).then(function(res) {
+              if(res.error){
+                $scope.newResource.fileTst = null;
+                messenger.error(res.error);
+                $scope.submitIsDisabled = false;
+              }else{
+                $scope.resources.push(res.data);
+                cancel()
+                messenger.ok("Resource was sucessfully created.");
+                $scope.submitIsDisabled = false;
+              }
+              progressbar.complete();
+            })
+          }
+        })
+      }else{
+        messenger.error("Please select a file.");
+      }
     }
 
     function uploadTypeForTitle(uploadType) {
@@ -198,29 +210,45 @@
     }
 
     $scope.deleteResources = function(ids) {
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+
       GalleryServices.deleteResources({resource_id: ids}).then(function(res) {
         if(res.error){
           messenger.error(res.error);
+          progressbar.complete();
         }else{
-          $scope.selectAllResources();
+          unselectIfAllSelected();
           initList();
           $scope.idsForAction = [];
+          progressbar.complete();
           messenger.ok("Your selected resource(s) was successfully deleted.");
         }
       });
     }
 
     $scope.downloadResources = function(ids) {
+      var progressbar = ngProgressFactory.createInstance();
+      progressbar.start();
+
       GalleryServices.downloadResources({resource_id: ids}).then(function(res) {
         if(res.error){
           messenger.error(res.error);
+          progressbar.complete();
         }else{
-          $scope.selectAllResources();
+          unselectIfAllSelected();
           $scope.idsForAction = [];
           window.location.assign('/chat_room/uploads/' + res.fileName);
+          progressbar.complete();
           deleteGeneratedZip(res.fileName);
         }
       })
+    }
+
+    function unselectIfAllSelected() {
+      if($scope.isAll){
+        $scope.selectAllResources();
+      }
     }
 
     function deleteGeneratedZip(name){
@@ -250,5 +278,16 @@
     $scope.getResourceThumbUrl = function(resource){
       return "/chat_room/uploads/" + resource.JSON.tableThumb;
     }
+
+    $scope.resourceTitle = function(text){
+      if(text.length < 1){
+        return "No title.";
+      }else if(text.length > 10){
+        return text.substring(10, length)+'...';
+      }else{
+        return text;
+      }
+    }
+    
   }
 })();

@@ -170,7 +170,7 @@ describe('SERVICE - BrandColour', function() {
         brandColourServices.updateScheme(attrs, accountParams()).then(function(result) {
           done('Should not get here!');
         }, function(error) {
-          assert.equal(error.accountId, 'Account Id: cannot be empty');
+          assert.equal(error.accountId, "Account Id can't be empty");
           done();
         });
       });

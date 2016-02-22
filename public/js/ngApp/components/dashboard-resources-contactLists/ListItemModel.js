@@ -6,8 +6,8 @@
    */
   angular.module('KliikoApp').factory('ListItemModel', ListItemModel);
 
-  ListItemModel.$inject = ['$q', 'contactListServices'];
-  function ListItemModel($q, contactListServices)  {
+  ListItemModel.$inject = ['$q', 'dbg','contactListServices', 'Upload', 'globalSettings', 'ListItemMemberModel'];
+  function ListItemModel($q, dbg, contactListServices, Upload, globalSettings, Member)  {
     var ListItemModel;
 
     ListItemModel = ListItemModel;
@@ -20,6 +20,9 @@
 
     ListItemModel.prototype.toggleTableToShow = toggleTableToShow;
     ListItemModel.prototype.updateTableSortingByDragging = updateTableSortingByDragging;
+
+
+
     return ListItemModel;
 
 
@@ -118,6 +121,7 @@
 
       self.update(self);
     }
+
 
   }
 })();

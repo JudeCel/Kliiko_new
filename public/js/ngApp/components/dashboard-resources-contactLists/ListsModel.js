@@ -22,6 +22,10 @@
     ListsModel.prototype.updateContact = updateContact;
     ListsModel.prototype.deleteContacts = deleteContacts;
 
+    ListsModel.prototype.parseImportFile = parseImportFile;
+    ListsModel.prototype.generateImportPreview = generateImportPreview;
+    ListsModel.prototype.addImportedContacts = addImportedContacts;
+
     return ListsModel;
 
 
@@ -103,6 +107,11 @@
       return deferred.promise;
     }
 
+    /**
+     * Update active lis with new list by given index in lists array
+     * @param index {number} list index in lists array
+     * @param [force] {boolean} - rewrite current
+     */
     function changeActiveList(index, force) {
       var self = this;
 
@@ -115,6 +124,11 @@
       self.activeList = self.items[index];
     }
 
+    /**
+     * Add new List item object to lists array and save on remote
+     * @param newListItemObj {object}
+     * @returns {promise | {newList} }
+     */
     function addNewListItem(newListItemObj) {
       var deferred = $q.defer();
       var self = this;
@@ -126,7 +140,7 @@
           deferred.resolve(newList);
         },
         function (err) {
-          deferred.reject(err);
+          deferred.reject(err.message);
         }
       );
 
@@ -136,7 +150,7 @@
 
     /**
      * Update list item instance ( ListItemModel.update() ) and then update lists model items with this updated instance
-     * @param updateFieldsObj
+     * @param updateFieldsObj {object}
      * @returns {*}
      */
     function updateActiveItem(updateFieldsObj) {
@@ -147,6 +161,9 @@
 
       var updateFieldsObj = updateFieldsObj;
 
+      var visibleFields = checkAndGetVisibleFields(updateFieldsObj.customFields);
+      updateFieldsObj.visibleFields = visibleFields;
+
       self.activeList.update(updateFieldsObj).then(
         function (res) {
           // rewrite name
@@ -155,6 +172,7 @@
 
           // rewrite custom fields
           self.activeList.customFields = updateFieldsObj.customFields;
+          self.activeList.visibleFields = updateFieldsObj.visibleFields;
 
           self.activeList.updateAvailableFields(updateFieldsObj.customFields);
 
@@ -170,8 +188,30 @@
       );
 
       return deferred.promise;
+
+      function checkAndGetVisibleFields(newCustomFieldsArray) {
+        for (var i = 0; i < self.activeList.visibleFields.length;  i++) {
+          var inDefaultFields = ( self.activeList.defaultFields.indexOf(self.activeList.visibleFields[i]) > -1);
+          var inCustomFields = ( newCustomFieldsArray.indexOf(self.activeList.visibleFields[i]) > -1);
+
+          if (!inDefaultFields && !inCustomFields) {
+
+            self.activeList.visibleFields.splice(i, 1);
+
+          }
+        }
+
+        return self.activeList.visibleFields;
+      }
+
     }
 
+    /**
+     * Delete given list item and save state on remote
+     * @param item {object}
+     * @param [index] - index of @item in array (speed up faction with  bypassing for loop)
+     * @returns {*|promise}
+     */
     function deleteItem(item, index) {
       var deferred = $q.defer();
       var self = this;
@@ -217,8 +257,6 @@
 
           newContactObj = new Member(newContactObj);
 
-
-
           for (var i = 0, len = self.items.length; i < len ; i++) {
             if (self.items[i].id == currentListId) {
 
@@ -230,8 +268,6 @@
               break;
             }
           }
-
-
 
           deferred.resolve(res);
         },
@@ -249,7 +285,7 @@
       var activeList = self.activeList;
 
       contact.update(activeList.id).then(
-        function (res) {
+        function(res) {
 
           var updatedContact = new Member(res.data, activeList.customFields);
           var index;
@@ -268,14 +304,22 @@
           }
 
           self.changeActiveList(self.activeListIndex, true);
-          deferred.resolve();
+          deferred.resolve(res);
         },
         function (err) {
+          deferred.reject(err);
         }
       );
       return deferred.promise;
     }
 
+
+    /**
+     * Delete contact by ids
+     * and adjust members amount counter
+     * @param ids {array}
+     * @returns {*|promise}
+     */
     function deleteContacts(ids) {
       var self = this;
 
@@ -304,6 +348,130 @@
         }
       );
       return deferred.promise;
+
+    }
+
+
+    /**
+     * Parse and validate given import file (excel, csv) on back end
+     * @param file {File}
+     * @returns {*|promise}
+     */
+    function parseImportFile(file) {
+      var self = this;
+
+      var deferred = $q.defer();
+
+      contactListServices.parseImportFile(file, self.activeList.id).then(function (res) {
+
+        if (res.data && !res.data.result.invalid.length) {
+          deferred.resolve({valid: true, data: res.data.result});
+        } else {
+          deferred.resolve({valid: false, data: res.data.result});
+
+        }
+
+      }, function (err) {
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
+
+    }
+
+    /**
+     * Fill out 3 arrays, that will be reapeated as table:
+     * valid, invalid , dublicatedFields
+     *
+     * @param respData {object}
+     */
+    function generateImportPreview(respData) {
+      var self = this;
+
+      if (!angular.isObject(respData)) {
+        dbg.error('#ListItemModel > generateImportPreview > input params expected to be an object ', respData );
+        return;
+      }
+
+      self.importPreviewArray = [];
+      self.importPreviewInvalidArray = [];
+      self.importPreviewDublicatesArray = [];
+
+      for (var i = 0, len = respData.valid.length; i < len ; i++) {
+        var newContact = new Member(respData.valid[i]);
+        self.importPreviewArray.push(newContact);
+      }
+
+      for (var i = 0, len = respData.invalid.length; i < len ; i++) {
+        var newContact = new Member(respData.invalid[i]);
+        self.importPreviewInvalidArray.push(newContact);
+      }
+
+      for (var i = 0, len = respData.duplicateEntries.length; i < len ; i++) {
+        var newContact = new Member(respData.duplicateEntries[i]);
+        self.importPreviewDublicatesArray.push(newContact);
+      }
+
+    }
+
+    function addImportedContacts() {
+      var self = this;
+      var deferred = $q.defer();
+      var contactsArray = [];
+
+      for (var i = 0, len = self.importPreviewArray.length; i < len ; i++) {
+        var defaultFields = getDefaultFields(self.importPreviewArray[i]);
+        var customFields = getCustomFields(self.importPreviewArray[i]);
+
+        contactsArray.push({defaultFields: defaultFields, customFields: customFields,contactListId: self.activeList.id});
+      }
+
+      contactListServices.addImportedContacts(contactsArray, self.activeList.id).then(
+        function (res) {
+          for (var i = 0, len = self.items.length; i < len ; i++) {
+            if (self.items[i].id == self.activeList.id) {
+
+              if (!self.items[i].members) self.items[i].members = [];
+
+              self.items[i].members = self.items[i].members.concat(self.importPreviewArray);
+              self.items[i].membersCount = + self.items[i].membersCount + self.importPreviewArray.length;
+
+              self.importPreviewArray = null;
+              self.changeActiveList(self.activeListIndex, 'force');
+              break;
+            }
+          }
+
+          deferred.resolve(res);
+        },
+        function(err) {
+          if (err.message) {
+            deferred.reject(err.message);
+          } else {
+            deferred.reject(err);
+          }
+
+        }
+      );
+      return deferred.promise;
+
+
+      function getDefaultFields(contact) {
+        var output = {};
+        for (var i = 0, len = self.activeList.defaultFields.length; i < len ; i++) {
+          output[ self.activeList.defaultFields[i] ] = contact[self.activeList.defaultFields[i] ];
+        }
+        return output
+      }
+
+      function getCustomFields(contact) {
+        var output = {};
+        for (var i = 0, len = self.activeList.customFields.length; i < len ; i++) {
+          output[ self.activeList.customFields[i] ] = contact[self.activeList.customFields[i] ];
+        }
+        return output
+      }
+
 
     }
 

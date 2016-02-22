@@ -13,7 +13,6 @@
     ListItemMemberModel = ListItemMemberModel;
     ListItemMemberModel.prototype.update = update;
 
-
     return ListItemMemberModel;
 
 
@@ -73,8 +72,7 @@
       var customFields = self.CustomFieldsObject || {};
       delete self.CustomFieldsObject;
 
-      debugger; //debugger
-      for (var i = 0, len = self.customFields.length; i < len ; i++) {
+      for (var i = 0, len = customFields.length; i < len ; i++) {
         delete self[ self.customFields[i] ];
       }
 

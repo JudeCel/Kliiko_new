@@ -1,6 +1,7 @@
 'use strict';
 
 var models = require('./../models');
+var filters = require('./../models/filters');
 var BrandProjectPreference = models.BrandProjectPreference;
 
 var brandProjectConstants = require('../util/brandProjectConstants');
@@ -39,7 +40,7 @@ function findScheme(params, accountId) {
       deferred.reject(MESSAGES.notFound);
     }
   }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
+    deferred.reject(filters.errors(error));
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -53,7 +54,7 @@ function findAllSchemes(accountId) {
   BrandProjectPreference.findAll({ where: { accountId: accountId } }).then(function(schemes) {
     deferred.resolve(simpleParams(schemes));
   }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
-    deferred.reject(prepareErrors(error));
+    deferred.reject(filters.errors(error));
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -73,7 +74,7 @@ function createScheme(params, accountId) {
     BrandProjectPreference.create(validParams).then(function(result) {
       deferred.resolve(simpleParams(result, MESSAGES.created));
     }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
-      deferred.reject(prepareErrors(error));
+      deferred.reject(filters.errors(error));
     }).catch(function(error) {
       deferred.reject(error);
     });
@@ -96,7 +97,7 @@ function updateScheme(params, accountId) {
       result.data.update(validParams, { returning: true }).then(function(scheme) {
         deferred.resolve(simpleParams(scheme, MESSAGES.updated));
       }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
-        deferred.reject(prepareErrors(error));
+        deferred.reject(filters.errors(error));
       }).catch(function(error) {
         deferred.reject(error);
       });
@@ -118,7 +119,7 @@ function removeScheme(params, accountId) {
     result.data.destroy().then(function() {
       deferred.resolve(simpleParams(null, MESSAGES.removed));
     }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
-      deferred.reject(prepareErrors(error));
+      deferred.reject(filters.errors(error));
     }).catch(function(error) {
       deferred.reject(error);
     });
@@ -209,18 +210,6 @@ function validateColours(colours, errors) {
 
 function simpleParams(data, message) {
   return { data: data, message: message };
-};
-
-function prepareErrors(err) {
-  let errors = ({});
-  _.map(err.errors, function (n) {
-    let message = n.message.replace(n.path, '');
-    if(message == ' cannot be null') {
-      message = ' cannot be empty';
-    }
-    errors[n.path] = _.startCase(n.path) + ':' + message;
-  });
-  return errors;
 };
 
 module.exports = {

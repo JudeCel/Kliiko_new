@@ -1,26 +1,25 @@
-"use strict";
+'use strict';
+
 var Account  = require('./../models').Account;
-var _ = require('lodash');
+var filters = require('./../models/filters');
 var contactListService  = require('./contactList');
+var _ = require('lodash');
 
-function validate(params, callback) {
-  let attrs = {name: params.accountName}
-  Account.build(attrs).validate().done(function(errors, _account) {
-    callback(errors, params);
-  });
-}
+function create(object, callback) {
+  object.account = {};
+  object.errors = object.errors || {};
 
-function create(params, user, t, callback) {
-  Account.create({name: params.accountName}, { transaction: t }).then(function(result) {
-    contactListService.createDefaultLists(result.id, t).then(function(promiss) {
-      callback(null, params, result, user, promiss.transaction);
-    }, function(error, t) {
-      callback(error, null, null, null, t);
+  Account.create({ name: object.params.accountName }, { transaction: object.transaction }).then(function(result) {
+    contactListService.createDefaultLists(result.id, object.transaction).then(function(_promise) {
+      object.account = result;
+      callback(null, object);
+    }, function(error) {
+      _.merge(object.errors, filters.errors(error));
+      callback(null, object);
     });
-  }).catch(Account.sequelize.ValidationError, function(err) {
-    callback(err, null, null, null, t);
-  }).catch(function(err) {
-    callback(err, null, null, null, err.transaction);
+  }, function(error) {
+    _.merge(object.errors, filters.errors(error));
+    callback(null, object);
   });
 }
 
@@ -28,22 +27,11 @@ function updateInstance(account, params, callback) {
   account.update({ name: params.accountName }).then(function(result) {
     callback(null, true);
   }).catch(function(error) {
-    callback(prepareErrors(error));
+    callback(filters.errors(error));
   });
 }
 
-function prepareErrors(err) {
-  let errors = ({});
-  _.map(err.errors, function (n) {
-    if (!errors[n.path]) {
-      errors[n.path] = n.message;
-    }
-  });
-  return errors;
-};
-
 module.exports = {
-  validate: validate,
   create: create,
   updateInstance: updateInstance
 }

@@ -1,13 +1,10 @@
 'use strict';
 
 var models = require('./../models');
+var filters = require('./../models/filters');
 var AccountUser = models.AccountUser;
 var User = models.User;
 var Account = models.Account;
-var Invite = models.Invite;
-
-var inviteService = require('./../services/invite');
-var constants = require('../util/constants');
 
 var async = require('async');
 var _ = require('lodash');
@@ -23,7 +20,6 @@ function createOrFindAccountManager(req, res, callback) {
     if(error) {
       return callback(error);
     }
-
     User.find({
       where: { email: params.email }
     }).then(function(existsUser) {
@@ -38,8 +34,8 @@ function createOrFindAccountManager(req, res, callback) {
       } else {
         User.create(userParams(params.email)).then(function(newUser) {
           createAccountUser(params, newUser.id, "new", currentDomain.id, callback);
-        }, function(err) {
-          callback(prepareErrors(err));
+        }, function(error) {
+          callback(filters.errors(error));
         });
       }
     });
@@ -49,10 +45,37 @@ function createOrFindAccountManager(req, res, callback) {
 function createAccountUser(params, userId, type, accountId, cb) {
   adjustParamsForNewAccountUser(params, userId, accountId);
   AccountUser.create(params).then(function(newAccountUser){
-    cb(null, inviteParams(newAccountUser.id, accountId, userId, type));
+    addToContactList(newAccountUser, function(error) {
+      if (error) {
+        cb(filters.errors(error));
+      }else {
+        cb(null, inviteParams(newAccountUser.id, accountId, userId, type));
+      }
+    })
   }).catch(function(error) {
-    cb(prepareErrors(error));
+    cb(filters.errors(error));
   });
+}
+
+function addToContactList(accountUser, callback) {
+  models.ContactList.find({
+    where: {
+      role: accountUser.role,
+      accountId: accountUser.AccountId
+    }
+  }).then(function(contactList) {
+    let params = {
+      userId: accountUser.UserId,
+      accountUserId: accountUser.id,
+      accountId: accountUser.AccountId,
+      contactListId: contactList.id
+    }
+    models.ContactListUser.create(params).then(function() {
+      callback(null);
+    },function(err) {
+      callback(err);
+    })
+  })
 }
 
 function userParams(email) {
@@ -107,7 +130,7 @@ function preValidate(user, currentDomainId, params, callback) {
       callback({ email: 'This account has already accepted invite.' });
     }
   }).catch(function(error) {
-    callback(prepareErrors(error));
+    callback(filters.errors(error));
   });
 };
 
@@ -130,7 +153,7 @@ function findUsers(model, where, attributes, cb) {
   }).then(function(accountUser) {
     cb(null, accountUser);
   }).catch(function(error) {
-    cb(prepareErrors(error));
+    cb(filters.errors(error));
   });
 }
 
@@ -140,18 +163,6 @@ function inviteParams(accountUserId, accountId, userId, type) {
 
 function prepareParams(req) {
   return _.pick(req.body, ['firstName', 'lastName', 'gender', 'email', 'mobile', 'postalAddress', 'city', 'state', 'postCode', 'companyName', 'landlineNumber']);
-};
-
-function prepareErrors(err) {
-  let errors = ({});
-  _.map(err.errors, function (n) {
-    let message = n.message.replace(n.path, '');
-    if(message == " cannot be null") {
-      message = " cannot be empty";
-    }
-    errors[n.path] = _.startCase(n.path) + ':' + message;
-  });
-  return errors;
 };
 
 module.exports = {
