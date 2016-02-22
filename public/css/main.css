@@ -2770,27 +2770,49 @@ hr.survey-hr {
   #session-builder-content #step-1 {
     text-align: left;
     font-size: 2rem; }
+    #session-builder-content #step-1 .data-time-content-wrapper {
+      position: relative;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      height: 44px;
+      margin: 40px 20px; }
     #session-builder-content #step-1 input {
       margin: 0 5px;
       padding: 5px;
       border: 2px solid #2F9F69; }
     #session-builder-content #step-1 span.date-time-label {
+      margin-top: 7px;
       padding: 0 25px; }
       #session-builder-content #step-1 span.date-time-label.end {
-        margin-right: 12px; }
+        margin-right: 9px; }
     #session-builder-content #step-1 .date-time-ico {
       position: relative;
-      top: -2px;
       padding: 7px;
       border: 2px solid #2F9F69; }
-    #session-builder-content #step-1 table.timepicker {
-      float: right; }
-      #session-builder-content #step-1 table.timepicker span.glyphicon.glyphicon-chevron-up {
+      #session-builder-content #step-1 .date-time-ico.time {
+        margin-left: 10px; }
+    #session-builder-content #step-1 table.timepicker-wrapper {
+      position: relative;
+      top: -28px;
+      left: 0px; }
+      #session-builder-content #step-1 table.timepicker-wrapper td input, #session-builder-content #step-1 table.timepicker-wrapper td button {
+        margin-top: -6px;
+        height: 44px;
+        border-radius: 0;
+        border: 2px solid #2F9F69;
+        background-color: white;
+        background-image: none;
+        outline: none; }
+      #session-builder-content #step-1 table.timepicker-wrapper span.glyphicon.glyphicon-chevron-up {
         position: relative;
-        top: 12px; }
-      #session-builder-content #step-1 table.timepicker span.glyphicon.glyphicon-chevron-down {
+        top: 7px; }
+      #session-builder-content #step-1 table.timepicker-wrapper span.glyphicon.glyphicon-chevron-down {
         position: relative;
         top: -6px; }
+    #session-builder-content #step-1 #create-color-scheme-area {
+      padding: 20px; }
   #session-builder-content #step-2 {
     font-size: 2rem; }
     #session-builder-content #step-2 .panel-title {

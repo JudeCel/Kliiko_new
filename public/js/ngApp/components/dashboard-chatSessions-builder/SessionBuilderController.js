@@ -21,6 +21,18 @@
     vm.session = new SessionModel(sessionId);
     vm.session.init().then(function(res) {
 
+
+      vm.dateTime = {
+        hstep:1,
+        mstep: 15,
+
+        options: {
+          hstep: [1, 2, 3],
+          mstep: [1, 5, 10, 15, 25, 30]
+        }
+      };
+
+
       parseDateAndTime('initial');
     });
     //todo @pavel: convert time if it is there already
@@ -126,41 +138,6 @@
           vm.session.steps.step1.endTime = endDate;
         }
       }
-
-
-      ////////////////
-      vm.mytime = new Date();
-
-      vm.hstep = 1;
-      vm.mstep = 15;
-
-      vm.options = {
-        hstep: [1, 2, 3],
-        mstep: [1, 5, 10, 15, 25, 30]
-      };
-
-      vm.ismeridian = true;
-      vm.toggleMode = function() {
-        vm.ismeridian = ! $scope.ismeridian;
-      };
-
-      vm.update = function() {
-        var d = new Date();
-        d.setHours( 14 );
-        d.setMinutes( 0 );
-        vm.mytime = d;
-      };
-
-      vm.changed = function () {
-        console.log('Time changed to: ' + vm.mytime);
-      };
-
-      vm.clear = function() {
-        vm.mytime = null;
-      };
-
-      ///////////////
-
 
 
     }

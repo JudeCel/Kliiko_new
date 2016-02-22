@@ -3,12 +3,13 @@
 
   angular.module('KliikoApp').controller('BrandColourController', BrandColourController);
 
-  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', 'ngProgressFactory', '$timeout', 'domServices'];
-  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, ngProgressFactory, $timeout, domServices) {
+  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', 'ngProgressFactory', '$timeout', 'domServices', '$stateParams'];
+  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, ngProgressFactory, $timeout, domServices, $stateParams) {
     dbg.log2('#BrandColourController started');
 
-
     var vm = this;
+
+
     vm.removeScheme = removeScheme;
     vm.copyScheme = copyScheme;
     vm.finishManage = finishManage;
@@ -36,8 +37,14 @@
         vm.manageFields = res.manageFields;
         vm.hexRegex = new RegExp(res.hexRegex);
         dbg.log2('#BrandColourController > getAllSchemes > res ', res.data);
+
+        // if we want to open create step from the start
+        if ($stateParams.new)  changePage('create');
       });
-    };
+
+
+
+    }
 
     function removeScheme(scheme) {
       angularConfirm('Are you sure you want to remove Scheme?').then(function(response) {

@@ -23,47 +23,25 @@
                     <span class="panel-value pull-right">{{ sbc.session.steps.step1.startTime | date : 'short'}} - {{ sbc.session.steps.step1.endTime | date : 'short'}}</span>
                 </div>
             </uib-accordion-heading>
-            <div>
+            <div class="data-time-content-wrapper" style="display: flex">
                 <span class="date-time-label">Start</span> <img class="date-time-ico" src="/icons/calendar_green.png" alt="">
                 <input ng-model="sbc.step1.startDate" ng-blur="sbc.updateStep(1)"  type="date">
 
-                <img class="date-time-ico" src="/icons/time_green.png" alt="">
+                <img class="date-time-ico time" src="/icons/time_green.png" alt="">
                 <!--<input ng-model="sbc.step1.startTime" ng-blur="sbc.updateStep(1)" type="time">-->
-                <uib-timepicker class="timepicker" ng-model="sbc.mytime" ng-change="sbc.changed()" hour-step="sbc.hstep" minute-step="sbc.mstep" show-meridian="sbc.ismeridian"></uib-timepicker>
+                <uib-timepicker class="timepicker-wrapper" ng-model="sbc.step1.startTime" ng-change="sbc.updateStep(1)" hour-step="sbc.dateTime.hstep" minute-step="sbc.dateTime.mstep" show-meridian="true"></uib-timepicker>
 
             </div>
-            <div>
+            <div class="data-time-content-wrapper">
                 <span class="date-time-label end">End</span><img class="date-time-ico" src="/icons/calendar_green.png" alt="">
                 <input  ng-model="sbc.step1.endDate"  ng-blur="sbc.updateStep(1)"  type="date">
 
-                <img class="date-time-ico" src="/icons/time_green.png" alt="">
-                <div style="background: yellow; width: 300px; height: 50px;"></div>
+                <img class="date-time-ico time" src="/icons/time_green.png" alt="">
+
                 <!--<input ng-model="sbc.step1.endTime" ng-blur="sbc.updateStep(1)" type="time"></p>-->
-                <uib-timepicker class="timepicker" ng-model="sbc.mytime" ng-change="sbc.changed()" hour-step="sbc.hstep" minute-step="sbc.mstep" show-meridian="sbc.ismeridian"></uib-timepicker>
+                <uib-timepicker class="timepicker-wrapper" ng-model="sbc.step1.endTime" ng-change="sbc.updateStep(1)" hour-step="sbc.dateTime.hstep" minute-step="sbc.dateTime.mstep" show-meridian="true"></uib-timepicker>
             </div>
 
-                <!-------------------------->
-
-            <!--<pre class="alert alert-info">Time is: {{sbc.mytime | date:'shortTime' }}</pre>-->
-
-            <!--<div class="row">-->
-                <!--<div class="col-xs-6">-->
-                    <!--Hours step is:-->
-                    <!--<select class="form-control" ng-model="sbc.hstep" ng-options="opt for opt in sbc.options.hstep"></select>-->
-                <!--</div>-->
-                <!--<div class="col-xs-6">-->
-                    <!--Minutes step is:-->
-                    <!--<select class="form-control" ng-model="sbc.mstep" ng-options="opt for opt in sbc.options.mstep"></select>-->
-                <!--</div>-->
-            <!--</div>-->
-
-            <hr>
-
-            <button type="button" class="btn btn-info" ng-click="sbc.toggleMode()">12H / 24H</button>
-            <button type="button" class="btn btn-default" ng-click="sbc.update()">Set to 14:00</button>
-            <button type="button" class="btn btn-danger" ng-click="sbc.clear()">Clear</button>
-
-            <!------------------------->
 
         </uib-accordion-group>
 
@@ -108,6 +86,10 @@
                     </div>
                     <div class='col-sm-12'>
                        <div class="btn-standart btn-red" ng-show="sbc.colorScheme" ng-click="sbc.colorScheme = null">Clean Color Scheme Selection</div>
+                    </div>
+                    <div id="create-color-scheme-area" ng-show="!bcc.schemes.length">
+                        <h4>There is no defined color schemes. </h4>
+                        <div class="btn-standart btn-green" ui-sref="dashboard.resources.brandColours({new:'new'})">Create one</div>
                     </div>
                 </div>
             </section>
