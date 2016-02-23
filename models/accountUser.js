@@ -18,6 +18,8 @@ module.exports = (Sequelize, DataTypes) => {
     country: {type: DataTypes.STRING, allowNull: true },
     postCode: {type: DataTypes.STRING, allowNull: true },
     companyName: {type: DataTypes.STRING, allowNull: true },
+    phoneCountryData:	{ type: DataTypes.JSON, allowNull: false, defaultValue: {name: "Australia", iso2: "au", dialCode: "61"} },
+    landlineNumberCountryData:	{ type: DataTypes.JSON, allowNull: false, defaultValue: {name: "Australia", iso2: "au", dialCode: "61"} },
     landlineNumber: {type: DataTypes.STRING, allowNull: true,
       validate: {
         validateNumber: function() {

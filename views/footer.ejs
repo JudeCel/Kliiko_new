@@ -1,5 +1,5 @@
   <footer id="footer" class="text-center">
-      © Kliiko
+      © Klzii
       |
       <a href="#">Privacy policy</a>
       |
@@ -12,5 +12,33 @@
 
   </div>
 
+  <script type="text/javascript">
+    $("#mobilePhone").intlTelInput();
+    $("#landline_number").intlTelInput();
+
+    function getNewMobileCountry() {
+      var phoneCountryData = {
+        iso2: $("#mobilePhone").intlTelInput("getSelectedCountryData").iso2,
+        dialCode: $("#mobilePhone").intlTelInput("getSelectedCountryData").dialCode,
+        countryName: $("#mobilePhone").intlTelInput("getSelectedCountryData").name
+      };
+
+      var json = JSON.stringify(phoneCountryData);
+      document.getElementById('phoneCountryData').setAttribute('value', json);
+      var json_object = eval("("+json+")");
+    }
+
+    function getNewLandlineNumberCountry() {
+      var landlineNumberCountryData = {
+        iso2: $("#landline_number").intlTelInput("getSelectedCountryData").iso2,
+        dialCode: $("#landline_number").intlTelInput("getSelectedCountryData").dialCode,
+        countryName: $("#landline_number").intlTelInput("getSelectedCountryData").name
+      };
+
+      var json = JSON.stringify(landlineNumberCountryData);
+      document.getElementById('landlineNumberCountryData').setAttribute('value', json);
+      var json_object = eval("("+json+")");
+    }
+  </script>
   </body>
 </html>

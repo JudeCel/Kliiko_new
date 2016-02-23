@@ -104,24 +104,31 @@ function find(id) {
     return deferred.promise;
 }
 
-function transactionFun(t, accountId) {
+function transactionFun(t, accountId, errors) {
   return function(attrs, callback) {
     attrs.accountId = accountId;
     create(attrs, t).then(function(result) {
       callback(null, result);
-    },function(err) {
-      callback(err);
+    }, function(error) {
+      errors.reqired = true;
+      assignErrorWithRowNr(errors, error, attrs);
+      callback();
     });
   }
 }
 
+function assignErrorWithRowNr(errors, error, attrs) {
+  errors[attrs.rowNr] = error;
+}
+
 function bulkCreate(list, accountId) {
+  let errors = {reqired: false};
   let deferred = q.defer();
     models.sequelize.transaction().then(function(t) {
-      async.map(list, transactionFun(t, accountId), function(err, results) {
-        if (err) {
+      async.map(list, transactionFun(t, accountId, errors), function(err, results) {
+        if (errors.reqired) {
           t.rollback().then(function() {
-            deferred.reject(err);
+            deferred.reject(errors);
           });
         }else {
           t.commit().then(function() {
@@ -133,33 +140,65 @@ function bulkCreate(list, accountId) {
   return deferred.promise;
 }
 
+function validateUniqEmail(params, transaction) {
+  let deferred = q.defer();
+  ContactListUser.find(
+    { where: {
+      contactListId: params.contactListId,
+      accountId: params.accountId
+    },
+    include: [{model: AccountUser, where: {
+      email: params.defaultFields.email
+    }}]
+  },{ transaction: transaction }).then(function(result) {
+    if (result) {
+      let message = {errors: [
+        { path: 'email',
+          message: ' must be unique'
+        }
+        ]
+      }
+      deferred.resolve(filters.errors(message));
+    }else {
+      deferred.resolve(false);
+    }
+  })
+  return deferred.promise;
+}
+
 function create(params, transaction) {
   let deferred = q.defer();
-  AccountUser.find(
-    { where: {
-        email: params.defaultFields.email,
-        AccountId: params.accountId
-      }
-    }
-  ).then(function(accountUser) {
-    if (accountUser) {
-      ContactListUser.create(contactListUserParams(params, accountUser), {transaction: transaction}).then(function(contactListUser) {
-        buildWrappedResponse(contactListUser.id, deferred, transaction);
-      }, function(err) {
-        deferred.reject(err);
-      })
+  validateUniqEmail(params).then(function(result) {
+    if (result) {
+      deferred.reject(result)
     }else{
-      createNewAccountUser(params, transaction).then(function(newAccountUser) {
-        ContactListUser.create(contactListUserParams(params, newAccountUser), {transaction: transaction}).then(function(contactListUser) {
+      AccountUser.find(
+        { where: {
+          email: params.defaultFields.email,
+          AccountId: params.accountId
+        }
+      }
+    ).then(function(accountUser) {
+      if (accountUser) {
+        ContactListUser.create(contactListUserParams(params, accountUser), {transaction: transaction}).then(function(contactListUser) {
           buildWrappedResponse(contactListUser.id, deferred, transaction);
         }, function(err) {
           deferred.reject(err);
         })
-      }, function(err) {
-        deferred.reject(filters.errors(err));
-      })
+      }else{
+        createNewAccountUser(params, transaction).then(function(newAccountUser) {
+          ContactListUser.create(contactListUserParams(params, newAccountUser), {transaction: transaction}).then(function(contactListUser) {
+            buildWrappedResponse(contactListUser.id, deferred, transaction);
+          }, function(err) {
+            deferred.reject(err);
+          })
+        }, function(err) {
+          deferred.reject(filters.errors(err));
+        })
+      }
+    });
     }
-  });
+  })
   return deferred.promise;
 }
 

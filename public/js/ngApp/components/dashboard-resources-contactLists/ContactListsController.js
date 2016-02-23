@@ -464,6 +464,7 @@
 
     //assigns contact info to mapped fields
     function mappingFieldsContinue() {
+
       var output = {valid:[], invalid:[], duplicateEntries: []};
       var userList = [];
       for (var j = 0; j < vm.validContactList.length; j++ ) {
@@ -479,6 +480,9 @@
             user[vm.contactListDropItems.defaultFields[i].name] = vm.validContactList[j][vm.contactListDropItems.defaultFields[i].field];
           }
         }//for
+
+        user.rowNr = vm.validContactList[j].rowNr;
+
         userList.push(user);
       }//for
       vm.contactListToAdd = userList;
@@ -562,7 +566,16 @@
           messenger.ok('New contacts has been imported to list '+ vm.lists.activeList.name);
         },
         function(err) {
-          messenger.error(err);
+
+          messenger.error('Import Failed. Check error(s)');
+          for (var key in err) {
+            for (var i = 0, len = vm.lists.importPreviewArray.length; i < len ; i++) {
+              if (vm.lists.importPreviewArray[i].rowNr == key) {
+                vm.lists.importPreviewArray[i].validationErrors = err[key]
+              }
+            }
+          }
+
 
         }
       );

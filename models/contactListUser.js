@@ -3,7 +3,7 @@
 module.exports = (Sequelize, DataTypes) => {
   var ContactListUser = Sequelize.define('ContactListUser', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    accountUserId: { type: DataTypes.INTEGER, allowNull: false, unique: "UniqEmailContactList"},
+    accountUserId: { type: DataTypes.INTEGER, allowNull: false},
     accountId: { type: DataTypes.INTEGER, allowNull: false },
     userId: { type: DataTypes.INTEGER, allowNull: true },
     contactListId: {type: DataTypes.INTEGER, allowNull: false},

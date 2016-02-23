@@ -9,7 +9,7 @@
   SessionModel.$inject = ['$q', 'globalSettings', '$resource'];
   function SessionModel($q, globalSettings, $resource)  {
     var apiPath = globalSettings.restUrl+'/sessionBuilder/:id';
-    var sessionBuilderRestApi = $resource(apiPath, {id : '@id'}, {post:{method:'POST', put: {method: 'PUT'}}} );
+    var sessionBuilderRestApi = $resource(apiPath, {id : '@id'}, { post:{method:'POST'}, put: {method: 'PUT'} } );
 
     var SessionModel;
 
@@ -102,12 +102,27 @@
 
     function update() {
       console.log('will update - todo');
+      var self = this;
+      var deferred = $q.defer();
+      //debugger; //debugger
+      sessionBuilderRestApi.put({id:self.id},{sessionObj:self},function(res) {
+        if (res.error) { deferred.reject(res.error); return deferred.promise; }
+        //self = angular.merge(self, res.sessionBuilder);
+        deferred.resolve(res);
+      });
+
     }
 
     function updateStep() {
+      console.log('will update - todo');
       var self = this;
-
-      console.log(self);
+      var deferred = $q.defer();
+     // debugger; //debugger
+      sessionBuilderRestApi.put({id:self.id},{sessionObj:self},function(res) {
+        if (res.error) { deferred.reject(res.error); return deferred.promise; }
+        //self = angular.merge(self, res.sessionBuilder);
+        deferred.resolve(res);
+      });
     }
 
 

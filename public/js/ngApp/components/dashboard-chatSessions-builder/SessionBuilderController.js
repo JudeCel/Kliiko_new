@@ -58,7 +58,7 @@
         if (step === 'next') { step = vm.currentStep + 1 }
         if (step === 'submit') {
           //step = 5;
-          submitUpgrade();
+          //submitUpgrade();
           return
         }
       }
@@ -67,7 +67,7 @@
 
       if (!valid) return;
 
-      $stateParams.planUpgradeStep = vm.currentStep = step;
+      vm.session.updateStep();
     }
 
     /**
