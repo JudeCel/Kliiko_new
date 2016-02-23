@@ -7,206 +7,127 @@
       </div>
 
       <div class='modal-body'>
-          <form method="post" ng-submit="cdm.updateUserData(cdm.userData, cdm.userDetailsForm)" name="cdm.userDetailsForm">
-            <div class="form-group">
-              <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
-                <tr>
-                  <td>
-                  </td>
-                  <td>
-                  </td>
-                  <td>
-                  <div class="text-red-dark"> * <i>Required</i> </div>
-                  </td>
-                  <td>
-                  </td>
-                  <td>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="firstName">First name</label>
-                  </td>
-                  <td>
-                    <input  id="first_name" ng-model="cdm.userData.firstName" type="text" value="" class="form-control" name="firstName" placeholder="First name">
-                  </td>
-                  <td  class="text-red-dark">
-                      *
-                  </td>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="firstName">
-                      Postal
-                      <br>
-                      Address
-                    </label>
-                  </td>
-                  <td>
-                    <input type="text" ng-model="cdm.userData.postalAddress" class="form-control" name="postalAddress" id="postal-address" placeholder="Postal Address">
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                    <span class="text-red-dark">{{cdm.errors.firstName}}</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="lastName">Last name</label>
-                  </td>
-                  <td>
-                    <input ng-model="cdm.userData.lastName" type="text" value="" class="form-control" name="lastName" id="last_name" placeholder="Last name">
-                  </td>
-                  <td  class="text-red-dark">
-                    *
-                  </td>
-                  <td>
-                      <label class="text-no-bold text-login-page" for="lastName">City</label>
-                  </td>
-                  <td>
-                    <input ng-model="cdm.userData.city" type="text" value="" class="form-control" name="lastName" id="last_name" placeholder="City">
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                    <span class="text-red-dark">{{cdm.errors.lastName}}</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="email">Email</label>
-                  </td>
-                  <td>
-                    <input ng-model="cdm.userData.email" type="email" value="" class="form-control" name="email" id="email" placeholder="Email" required="true">
-                  </td>
-                  <td  class="text-red-dark">
-                    *
-                  </td>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="email">State</label>
-                  </td>
-                  <td>
-                    <input ng-model="cdm.userData.state" type="text" value="" class="form-control" name="state" id="state" placeholder="State">
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                    <span class="text-red-dark">{{cdm.errors.email}}</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="gender">Gender</label>
-                  </td>
-                  <td>
-                    <label for="gender_male_step2" class="radio-button">
-                      <input type="radio" ng-model="cdm.userData.gender" name="gender_step2" value="male" id="gender_male_step2" ng-class="{checked:cdm.userData.gender == 'male'}">
+        <form class='form-horizontal' method='post' ng-submit='cdm.updateUserData(cdm.userData, cdm.userDetailsForm)' name='cdm.userDetailsForm'>
+          <div class='row'>
+            <div class='col-xs-12'>
+              <div class='col-md-6'>
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First name<span class='text-red-dark'>*</span></label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ cdm.errors.firstName }}</span>
+                    <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='cdm.userData.firstName'>
+                  </div>
+                </div>
 
-                      <span class="checkbox-signup btn-radius-text">Male</span>
-                    </label>
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='lastName'>Last name<span class='text-red-dark'>*</span></label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ cdm.errors.lastName }}</span>
+                    <input type='text' class='form-control' id='lastName' placeholder='Last name' ng-model='cdm.userData.lastName'>
+                  </div>
+                </div>
 
-                    <label for="gender_female_step2" class="radio-button">
-                      <input type="radio" ng-model="cdm.userData.gender"  name="gender_step2" value="female" id="gender_female_step2" ng-class="{checked:cdm.userData.gender == 'female'}">
-                      <span class="checkbox-signup btn-radius-text btn-radius-padding-left">Female</span>
-                    </label>
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='email'>Email<span class='text-red-dark'>*</span></label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ cdm.errors.email }}</span>
+                    <input type='email' class='form-control' id='email' placeholder='Email' ng-model='cdm.userData.email'>
+                  </div>
+                </div>
 
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='gender'>Gender<span class='text-red-dark'>*</span></label>
+                  <div class='col-md-8'>
+                    <div class='has-error text-red-dark'>{{ cdm.errors.gender }}</div>
+                    <label class='radio-inline'><input type='radio' value='male' name='radio_gender' ng-model='cdm.userData.gender'>Male</label>
+                    <label class='radio-inline'><input type='radio' value='female' name='radio_gender' ng-model='cdm.userData.gender'>Female</label>
+                  </div>
+                </div>
 
-                    </label>
-                  </td>
-                  <td  class="text-red-dark">
-                   <!-- *-->
-                  </td>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="email">Postcode</label>
-                  </td>
-                  <td>
-                    <input ng-model="cdm.userData.postCode" type="text" value="" class="form-control" id="postCode" name="postCode" placeholder="Postcode">
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                    <span class="has-error"></span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="mobile">
-                      Mobile
-                      <br>
-                      Number
-                    </label>
-                  </td>
-                  <td>
-                    <input ng-model="cdm.userData.mobile" type="tel" value="" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number">
-                  </td>
-                  <td  class="text-red-dark">
-                    *
-                  </td>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="country">Country</label>
-                  </td>
-                  <td>
-                    <input ng-model="cdm.userData.country" type="text" value="" class="form-control" id="country" name="country" placeholder="Country">
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                    <span class="text-red-dark">{{cdm.errors.mobile}}</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="landline_number">
-                      Landline
-                      <br>
-                      Number
-                    </label>
-                  </td>
-                  <td>
-                    <input ng-model="cdm.userData.landlineNumber" type="text" value="" class="form-control" name="landline_number" id="landline_number" placeholder="Landline Number">
-                  </td>
-                  <td  class="text-red-dark">
-                    <!--*-->
-                  </td>
-                  <td>
-                    <label class="text-no-bold text-login-page" for="copmany-name">
-                      Company
-                      <br>
-                      Name
-                    </label>
-                  </td>
-                  <td>
-                    <input ng-model="cdm.userData.companyName" type="text" value="" class="form-control" name="company-name" id="company-name" placeholder="Company Name">
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td class="error-column">
-                    <span class="has-error"></span>
-                  </td>
-                </tr>
-              </table>
-              <div class="row">
-                <div class="col-md-12">
-                  <span class="pull-right">
-                    <button type="button" ng-show="cdm.userDetailsForm.$dirty" ng-click="cdm.cancel()" class="btn border-red text-red-dark border-radius-none background-transp pull-right- btn-md">Cancel</button>&nbsp;&nbsp;
-                  <button type="submit" ng-show="cdm.userDetailsForm.$dirty" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Update</button>
-                  <button type="button" ng-show="cdm.userDetailsForm.$pristine" ng-click="cdm.cancel()" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Done</button>
-                  </span>
-                  <div class="check">
-                    <input ng-model="cdm.userData.tipsAndUpdate" type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate"/>
-                    <label for="tipsAndUpdate"></label>
-                    <span  class="checkbox-signup" id="tipsAndUpdate">Yes send me the Kliiko Newsletter which includes tips and updates.</span>
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ cdm.errors.mobile }}</span>
+                    <input type='text' class='form-control' id='mobile' placeholder='Mobile number' ng-model='cdm.userData.mobile'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ cdm.errors.landlineNumber }}</span>
+                    <input type='text' class='form-control' id='landlineNumber' placeholder='Landline number' ng-model='cdm.userData.landlineNumber'>
                   </div>
                 </div>
               </div>
-            </div>
-          </form>
 
+              <div class='col-md-6'>
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='postalAddress'>Postal address</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ cdm.errors.postalAddress }}</span>
+                    <input type='text' class='form-control' id='postalAddress' placeholder='Postal address' ng-model='cdm.userData.postalAddress'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='city'>City</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ cdm.errors.city }}</span>
+                    <input type='text' class='form-control' id='city' placeholder='City' ng-model='cdm.userData.city'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='state'>State</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ cdm.errors.state }}</span>
+                    <input type='text' class='form-control' id='state' placeholder='State' ng-model='cdm.userData.state'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='postCode'>Postcode</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ cdm.errors.postCode }}</span>
+                    <input type='text' class='form-control' id='postCode' placeholder='Postcode' ng-model='cdm.userData.postCode'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='country'>Country</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ cdm.errors.country }}</span>
+                    <input type='text' class='form-control' id='country' placeholder='Country' ng-model='cdm.userData.country'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='companyName'>Company name</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ cdm.errors.companyName }}</span>
+                    <input type='text' class='form-control' id='companyName' placeholder='Company name' ng-model='cdm.userData.companyName'>
+                  </div>
+                </div>
+              </div>
+
+              <div class='col-md-12'>
+                <span class="pull-right">
+                  <button type="button" ng-show="cdm.userDetailsForm.$dirty" ng-click="cdm.cancel()" class="btn border-red text-red-dark border-radius-none background-transp pull-right- btn-md">Cancel</button>&nbsp;&nbsp;
+                  <button type="submit" ng-show="cdm.userDetailsForm.$dirty" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Update</button>
+                  <button type="button" ng-show="cdm.userDetailsForm.$pristine" ng-click="cdm.cancel()" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Done</button>
+                </span>
+
+                <div class='check'>
+                  <input ng-model='cdm.userData.tipsAndUpdate' type='checkbox' class='checkbox-login' name='tipsAndUpdate' id='tipsAndUpdate'/>
+                  <label class='checkbox-signup text-no-bold' for='tipsAndUpdate'>
+                    Yes send me the Kliiko Newsletter which includes tips and updates.
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>

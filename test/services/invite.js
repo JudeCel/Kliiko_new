@@ -107,10 +107,10 @@ describe('SERVICE - Invite', function() {
       it('should fail without params', function (done) {
         inviteService.createInvite({}, function(error, invite) {
           let errorParams = {
-            role: 'Role: cannot be null',
-            accountId: 'Account Id: cannot be null',
-            accountUserId: 'Account User Id: cannot be null',
-            userType: 'User Type: cannot be null'
+            role: "Role can't be empty",
+            accountId: "Account Id can't be empty",
+            accountUserId: "Account User Id can't be empty",
+            userType: "User Type can't be empty"
           };
           assert.deepEqual(error, errorParams);
           assert.equal(invite, null);

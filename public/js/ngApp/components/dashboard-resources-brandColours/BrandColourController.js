@@ -1,13 +1,15 @@
 (function () {
   'use strict';
 
-  angular.module('KliikoApp', ['colorpicker.module']).controller('BrandColourController', BrandColourController);
-  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', 'ngProgressFactory', '$timeout', 'domServices'];
+  angular.module('KliikoApp').controller('BrandColourController', BrandColourController);
 
-  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, ngProgressFactory, $timeout, domServices) {
+  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', 'ngProgressFactory', '$timeout', 'domServices', '$stateParams', '$state'];
+  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, ngProgressFactory, $timeout, domServices, $stateParams, $state) {
     dbg.log2('#BrandColourController started');
 
     var vm = this;
+
+
     vm.removeScheme = removeScheme;
     vm.copyScheme = copyScheme;
     vm.finishManage = finishManage;
@@ -35,8 +37,14 @@
         vm.manageFields = res.manageFields;
         vm.hexRegex = new RegExp(res.hexRegex);
         dbg.log2('#BrandColourController > getAllSchemes > res ', res.data);
+
+        // if we want to open create step from the start
+        if ($stateParams.new)  changePage('create');
       });
-    };
+
+
+
+    }
 
     function removeScheme(scheme) {
       angularConfirm('Are you sure you want to remove Scheme?').then(function(response) {
@@ -154,17 +162,22 @@
     function changePage(page, scheme) {
       vm.formSubmitted = false;
 
-      if(page == 'index') {
+      if(page == 'indexBack' && $stateParams.backTo) {
+        $state.go($stateParams.backTo);
+        return
+      }
+
+      if(page == 'index' || page == 'indexBack') {
         init();
         vm.currentPage = { page: page };
       }
       else {
         if(page == 'edit') {
-          vm.copyScheme = {};
-          angular.copy(scheme, vm.copyScheme);
+          vm.originalScheme = {};
+          angular.copy(scheme, vm.originalScheme);
         }
         else {
-          vm.copyScheme = null;
+          vm.originalScheme = null;
         }
 
         vm.scheme = scheme || { colours: { participants: {} } };
@@ -173,8 +186,8 @@
     };
 
     function undoCurrentScheme() {
-      if(vm.copyScheme) {
-        angular.copy(vm.copyScheme, vm.scheme);
+      if(vm.originalScheme) {
+        angular.copy(vm.originalScheme, vm.scheme);
         vm.previewScheme = vm.scheme;
       }
     };

@@ -1,18 +1,17 @@
 "use strict";
 var bcrypt = require('bcrypt');
 var constants = require('../util/constants');
+var validations = require('./validations');
 
 module.exports = (Sequelize, DataTypes) => {
   var User = Sequelize.define('User', {
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    email: {type: DataTypes.STRING, allowNull: false, unique: {msg: "Email has already been taken"},
-      validate: {
-        notEmpty: {args: true, msg: "Email can't be empty"},
-        is: {args: constants.emailRegExp, msg: "Invalid e-mail format" }
-      }
-    },
-
-    encryptedPassword:  {type : DataTypes.STRING, allowNull: false, validate: { notEmpty: true}},
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    email: { type: DataTypes.STRING, allowNull: false, validate: {
+      notEmpty: true,
+      is: constants.emailRegExp,
+      isUnique: validations.unique(Sequelize, 'User', 'email')
+    } },
+    encryptedPassword: { type : DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     password: {
       type: DataTypes.VIRTUAL,
       set: function(val) {
@@ -24,7 +23,7 @@ module.exports = (Sequelize, DataTypes) => {
       validate: {
         isLongEnough: function(value) {
           if(value.length < 7) {
-          throw new Error("Make sure your password is longer than 7 characters");
+            throw new Error("Make sure your password is longer than 7 characters");
           }
         }
       }
@@ -52,7 +51,6 @@ module.exports = (Sequelize, DataTypes) => {
       classMethods: {
         associate: function(models) {
           User.hasMany(models.SocialProfile, { foreignKey: 'userId'});
-          User.hasMany(models.SessionMember, { foreignKey: 'userId'});
           User.belongsToMany(models.Vote, { through: models.VotesBy });
           User.belongsToMany(models.Account, { through: { model: models.AccountUser} });
           User.hasMany(models.AccountUser, { onDelete: 'CASCADE' });

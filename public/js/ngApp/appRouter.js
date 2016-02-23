@@ -128,6 +128,68 @@
 
       })
 
+      ///////////////////////// Sessions
+      .state('dashboard.chatSessions', {
+        url: '/chatSessions',
+        resolve: {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/js/ngApp/components/dashboard-chatSessions/ChatSessionsController.js',
+              '/js/ngApp/components/dashboard-chatSessions/chatSessionsServices.js',
+            ]);
+          }]
+        },
+        onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location, banners) {
+          dbg.rs('chatSessions');
+
+          $stateParams.bannerType = 'sessions';
+
+          banners.setMainBannerForPage('sessions');
+
+          setTimeout(function () {
+           if ($state.current.name == 'dashboard.chatSessions') $state.go('dashboard.chatSessions');
+          }, 10);
+
+        }],
+        views: {
+          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-chatSessions/dashboard-content.html"}
+        }
+
+      })
+
+      .state('dashboard.chatSessions.builder', {
+        url: '/builder/:id',
+        resolve: {
+          loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
+            var deferred = $q.defer();
+            $ocLazyLoad.load([
+              '/js/ngApp/components/dashboard-chatSessions-builder/SessionModel.js',
+              '/js/ngApp/components/dashboard-chatSessions-builder/SessionBuilderController.js',
+
+              '/js/ngApp/components/dashboard-resources-brandColours/brandColourServices.js',
+              '/js/ngApp/components/dashboard-resources-brandColours/BrandColourController.js',
+
+            ]).then(function() {
+              deferred.resolve();
+            });
+
+            return deferred.promise;
+
+          }]
+        },
+        onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location, banners) {
+          dbg.rs('chatSessions builder');
+          $stateParams.bannerType = 'sessions';
+
+          banners.setMainBannerForPage('sessions');
+
+        }],
+        views: {
+          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-chatSessions-builder/session-builder-index.html"}
+        }
+
+      })
+
       ///////////////////////// Resources
       .state('dashboard.resources', {
         url: "/resources",
@@ -189,15 +251,20 @@
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-contactLists/dashboard-content.html"}
         },
         resolve: {
-          loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
             return $ocLazyLoad.load([
+              '/js/vendors/ngDraggable/ngDraggable.js',
+              '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
               '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
               '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
               '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
               '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
               '/js/ngApp/modules/contactList/contactList.js',
               '/js/ngApp/directives/custom-select-directive.js',
-              '/js/vendors/ngDraggable/ngDraggable.js'
+              '/js/vendors/ng-file-upload/ng-file-upload.js',
+              '/js/ngApp/filters/num.js',
+              '/js/ngApp/filters/human2Camel.js'
+
             ]);
           }]},
         onEnter: ['dbg', function (dbg) {
@@ -278,7 +345,7 @@
 
       })
       .state('dashboard.resources.brandColours', {
-        url: '/brand-colours',
+        url: '/brand-colours/:new?backTo',
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-brandColours/dashboard-content.html"}
         },

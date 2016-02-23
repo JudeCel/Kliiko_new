@@ -4,6 +4,12 @@
     margin: 45px 30px 30px 30px;
   }
 
+  h4 {
+
+    margin: 30px 0px;
+    font-weight: bold;
+  }
+
 
 
   thead { background: $green; }
@@ -60,6 +66,7 @@
 
       .item-name {
         width: 6vw;
+        word-wrap: break-word;
       }
 
       .item-selection-mark {
@@ -81,8 +88,34 @@
 
   }
 
-  #contact-lists-right-column {
+
+  #dashboard-contact-lists-main-table {
+    position: relative;
+    top: 11px;
+    width: 100%;
     overflow: auto;
+  }
+
+  ///////////
+
+  table{
+    table-layout: auto;
+  }
+
+  th.th-header {
+    position: relative;
+    margin-right: 0;
+  }
+  th, td {
+    overflow: hidden;
+    min-width: 60px; 
+  }
+
+  ////////
+
+  #contact-lists-right-column {
+
+    overflow: inherit;
 
     #list-mass-actions {
       outline: none;
@@ -99,6 +132,8 @@
       }
     }
 
+
+
     .table-item-edit-group {
       min-width: 70px;
       display: block;
@@ -106,10 +141,29 @@
       visibility: hidden;
     }
 
+
+    span.sorting-order-arrow {
+      position: absolute;
+      top: 26px;
+      left: 0px;
+      margin-left: 3px;
+      margin-right: 3px;
+    }
+
+    td.selection-column {
+      width: 30px;
+    }
+
     th {
+      span.th-name {
+        left: 9px;
+        position: relative;
+      }
+
       &:hover {
         span.th-name {  text-decoration: underline; }
       }
+
 
       .glyphicon {
         font-size: 1rem;
@@ -202,5 +256,51 @@
     }
   }
 
+
+
+  label.control-label {
+    //margin-top: 23px;
+  }
+
+  .custom-select-directive {
+
+    $thisWidth: 150px;
+
+     .dd-directive {
+      padding: 7px 20px !important;
+      text-align: left !important;
+    }
+
+    .wrapper-dropdown-cd {
+      width: $thisWidth;
+    }
+
+    ul.dropdown {
+      left:-2px;
+      width: $thisWidth;
+      border: 2px solid $green;
+      border-top: none;
+      z-index:300 !important;
+
+      li {
+        padding: 0 7px;
+
+        &:hover {
+          color: white;
+          background: $green;
+
+          a {
+            color: white;
+          }
+        }
+      }
+    }
+  }
+  #contact-lists-add-button-1 {
+    padding: 8px !important;
+  }
+
+
+  @import "particles/modals-excel-csv-import";
 
 }

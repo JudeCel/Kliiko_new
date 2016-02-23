@@ -1,69 +1,91 @@
-"use strict";
-var assert = require('assert');
-var models  = require('./../../models');
-var SocialProfileService  = require('./../../services/socialProfile');
-var UserService  = require('./../../services/users');
+'use strict';
 
-describe('Social Profile Service', () => {
-  describe('Facebook',  () => {
+var models = require('./../../models');
+var SocialProfile = models.SocialProfile;
+var userServices = require('./../../services/users');
+
+var _ = require('lodash');
+var assert = require('chai').assert;
+
+describe('SERVICE - SocialProfile', function() {
+  describe('Facebook', function() {
     var validAttrs = {
-      accountName: "DainisL",
-      firstName: "Dainis",
-      lastName: "Lapins",
-      password: "cool_password",
-      email: "dainis@gmail.com",
-      gender: "male",
+      accountName: 'DainisL',
+      firstName: 'Dainis',
+      lastName: 'Lapins',
+      password: 'cool_password',
+      email: 'dainis@gmail.com',
+      gender: 'male',
       socialProfile: { provider: 'facebook', id: '918975494859219' }
     }
 
-    beforeEach((done) => {
-      models.sequelize.sync({force: true}).done((error, result) => {
+    beforeEach(function(done) {
+      models.sequelize.sync({ force: true }).done(function(error, result) {
         done();
       });
     });
 
     afterEach(function(done) {
-      models.sequelize.sync({force: true}).done((error, result) => {
+      models.sequelize.sync({ force: true }).done(function(error, result) {
         done();
       });
     });
 
-
-    describe("succsess", function() {
-      it("validate", (done) => {
-        SocialProfileService.validate(validAttrs, (err, result)=>{
-          if (err) {
-            done(err)
-          }else {
-            assert.deepEqual(validAttrs, result);
-            done();
+    describe('happy path', function() {
+      it('should succeed', function(done) {
+        userServices.create(validAttrs, function(error, user) {
+          if(error) {
+            done(error);
+          }
+          else {
+            SocialProfile.find({
+              where: {
+                userId: user.id,
+                provider: validAttrs.socialProfile.provider,
+                providerUserId: validAttrs.socialProfile.id
+              }
+            }).then(function(profile) {
+              if(profile) {
+                done();
+              }
+              else {
+                done('Social Profile not found!');
+              }
+            });
           }
         });
       });
     });
 
-    describe("failed", function() {
-      beforeEach((done) => {
-        models.sequelize.sync({force: true}).done((error, result) => {
-          UserService.create(validAttrs, function(errors, user) {
-            SocialProfileService.create(user, validAttrs, null, (err, socProfile) =>{
-              done();
-            });
+    describe('sad path', function() {
+      beforeEach(function(done) {
+        models.sequelize.sync({ force: true }).done(function(error, result) {
+          userServices.create(validAttrs, function(errors, user) {
+            done();
           });
         });
       });
 
-      it("validate", (done) => {
-        SocialProfileService.validate(validAttrs, (err, result) => {
-          if (err) {
-            assert.equal(err, "Profile already exists!");
-            done()
-          }else {
-            done("Not Get here!!!");
+      it('should fail', function(done) {
+        let params = validAttrs;
+        params.accountName = 'social';
+        params.email = 'social@email.com';
+
+        userServices.create(params, function(error, user) {
+          if(error) {
+            let errorParams = {
+              provider: 'Provider has already been taken',
+              providerUserId: 'Provider User Id has already been taken'
+            }
+
+            assert.deepEqual(error, errorParams);
+            done();
+          }
+          else {
+            done('Should not get here!');
           }
         });
       });
     });
-
   });
 });

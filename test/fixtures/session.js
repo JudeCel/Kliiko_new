@@ -55,7 +55,16 @@ function createUsers(callback) {
       });
     }
   ], function(error) {
-    callback(error);
+    let params = userlist[1];
+    params.AccountId = userData[0].account.id;
+    params.UserId = userData[1].user.id;
+
+    AccountUser.create(params).then(function(result) {
+      userData[1].account.AccountUser = result;
+      callback();
+    }, function(error) {
+      callback(error);
+    });
   });
 }
 
@@ -78,7 +87,8 @@ function createUser(data, callback) {
 }
 
 function createSession(callback) {
-  Session.create(sessionParams(userData[0].account.id)).then(function(result) {
+  let params = sessionParams(userData[0].account.id, userData[1].account.AccountUser.id);
+  Session.create(params).then(function(result) {
     addBrandProjectPreferences(result, userData[0].account.id, function(error) {
       callback(error, result);
     });
@@ -116,10 +126,10 @@ function createTopic(session, brandProject, callback) {
 function addSessionMembers(erorr, session, callback) {
   async.parallel([
     function(cb) {
-      addSessionMember(userData[0].account.AccountUser.id, session,'facilitator', 'Cool first user', cb);
+      addSessionMember(userData[0].account.AccountUser.id, session, 'participant', 'Participant - AccountOwner', cb);
     },
     function(cb) {
-      addSessionMember(userData[1].account.AccountUser.id, session, 'participant','Cool second user', cb);
+      addSessionMember(userData[1].account.AccountUser.id, session, 'facilitator', 'Facilitator - AccountManager', cb);
     }
   ], function(error, results) {
     callback(error, results);
@@ -144,9 +154,6 @@ function addSessionMember(accountUserId, session, role, name, callback) {
                  username: name,
                  avatar_info: "0:4:3:1:4:3" }
   session.createSessionMember(params).then(function(result) {
-    console.log("++++++++++++++++Session member ++++++++++++++++");
-    console.log("User Name " + result.username);
-    console.log("++++++++++++++++ TOKEN ++++++++++++++++");
     SessionMemberService.createToken(result.id).then(function() {
       callback(null, result);
     },function(error) {
@@ -171,9 +178,10 @@ function createChat() {
         include: [{
           model: Account,
           include: [models.User]
-        }, BrandProjectPreference]
+        }, BrandProjectPreference, SessionMember]
       }).then(function(session) {
         let returnParams = {
+          sessionMembers: session.SessionMembers,
           session: session,
           account: session.Account,
           user: session.Account.Users[0],
@@ -204,13 +212,14 @@ function brandProjectParams() {
   };
 }
 
-function sessionParams(accountId) {
+function sessionParams(accountId, facilitatorId) {
   let startTime = new Date();
   return {
+    facilitatorId: facilitatorId,
     accountId: accountId,
     name: "cool session",
-    start_time: startTime,
-    end_time: startTime.setHours(startTime.getHours() + 2000),
+    startTime: startTime,
+    endTime: startTime.setHours(startTime.getHours() + 2000),
     status_id: 1,
     colours_used: '["3","6","5"]'
   };

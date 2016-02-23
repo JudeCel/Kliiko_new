@@ -5,8 +5,8 @@
         <h2 class='text-center'>Manage Brand Colour</h2>
       </div>
       <div class='text-right'>
-        <button class='btn btn-addNewElement btn-green' ng-click='bcc.undoCurrentScheme()' ng-if='bcc.copyScheme'>Undo</button>
-        <button class='btn btn-addNewElement btn-green' ng-click="bcc.changePage('index')">Back</button>
+        <button class='btn btn-addNewElement btn-green' ng-click='bcc.undoCurrentScheme()' ng-if='bcc.originalScheme'>Undo</button>
+        <button class='btn btn-addNewElement btn-green' ng-click="bcc.changePage('indexBack')">Back</button>
         <button class='btn btn-addNewElement btn-green' ng-click='bcc.finishManage()'>Save</button>
       </div>
     </div>

@@ -1,14 +1,18 @@
 'use strict';
 var contactListService = require('../../services/contactList');
+var contactListUserService = require('../../services/contactListUser');
 var _ = require('lodash');
 var validations = require('../helpers/validations');
+var fs = require('fs');
+
 
 module.exports = {
   index: index,
   create: create,
   destroy: destroy,
   update: update,
-  import: importFunction
+  parseImportFile: parseImportFile,
+  importContacts: importContacts
 };
 
 function index(req, res, next) {
@@ -80,7 +84,8 @@ function destroy(req, res, next) {
   });
 }
 
-function importFunction(req, res, next) {
+function parseImportFile(req, res, next) {
+
   validations.params(res, req.file, 'file is missed');
   validations.params(res, req.params.id, 'query param @id is missed');
 
@@ -88,7 +93,34 @@ function importFunction(req, res, next) {
   let file = req.file;
   contactListService.parseFile(contactListId, file.path).then(function(result) {
     res.send({success: true, result: result});
+    fs.unlink(file.path);
   }, function(err) {
-    res.send({ error: err });
+    res.status(415);
+    res.send({error:err});
+    fs.unlink(file.path);
   })
 }
+
+function importContacts(req, res, next) {
+  validations.params(res, req.params.id, 'query param @id is missed');
+  validations.body(res, req.body.contactsArray, 'contactsArray is missed');
+
+  let accountId = res.locals.currentDomain.id;
+
+  contactListUserService.bulkCreate(req.body.contactsArray, accountId).then(
+    function(result) {
+      res.send({success: true, data:result});
+    },
+    function (err) {
+      if (err.name && err.name === 'SequelizeUniqueConstraintError') {
+        res.send({error: {message:'Some email(s) already taken'}});
+        return;
+      }
+      res.send({error: err});
+    }
+  );
+
+
+
+}
+

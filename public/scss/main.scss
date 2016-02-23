@@ -27,6 +27,7 @@
 @import "pages/_survey.scss";
 @import "pages/_gallery.scss";
 @import "pages/_brandColours.scss";
+@import "pages/_sessions.scss";
 
 // ngApp
 @import "../js/ngApp/components/dashboard/dashboard";
@@ -36,6 +37,7 @@
 @import "../js/ngApp/components/dashboard-resources-emailTemplates/mail-templates";
 @import "../js/ngApp/components/dashboard-resources-topics/topics";
 @import "../js/ngApp/components/dashboard-resources-contactLists/contact-lists";
+@import "../js/ngApp/components/dashboard-chatSessions-builder/session-builder";
 
 //SHARED
 .margin-top-2rem { margin-top: 2rem;}

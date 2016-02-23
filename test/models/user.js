@@ -61,7 +61,7 @@ describe('User', () => {
           done();
         })
         .catch(function(error) {
-          assert.equal(error.errors[0].message, 'Email has already been taken');
+          assert.equal(error.errors[0].message, 'Email must be unique');
           done();
         });
     });

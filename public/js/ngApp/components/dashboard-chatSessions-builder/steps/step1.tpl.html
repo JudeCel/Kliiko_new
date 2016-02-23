@@ -1,0 +1,100 @@
+<section id="step-1" class="animated fadeIn">
+    <h3>Set-Up Chat Session</h3>
+
+    <uib-accordion close-others="false">
+        <uib-accordion-group is-open="sbc.accordions.sessionName">
+            <uib-accordion-heading>
+                <div class="panel-label">
+                    Name Your Chat Session
+                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.sessionName, 'glyphicon-chevron-right': !sbc.accordions.sessionName}"></i>
+                    <span class="panel-value pull-right">{{ sbc.session.steps.step1.name }}</span>
+                </div>
+            </uib-accordion-heading>
+            <label for="sessionBuilder-session-name">Name your session &nbsp; </label>
+            <input id="sessionBuilder-session-name" type="text" ng-model="sbc.session.steps.step1.name" ng-blur="sbc.updateStep();">
+        </uib-accordion-group>
+
+
+        <uib-accordion-group is-open="sbc.accordions.dateAndTime">
+            <uib-accordion-heading>
+                <div class="panel-label">
+                    Enter Date And Time
+                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.dateAndTime, 'glyphicon-chevron-right': !sbc.accordions.dateAndTime}"></i>
+                    <span class="panel-value pull-right">{{ sbc.session.steps.step1.startTime | date : 'short'}} - {{ sbc.session.steps.step1.endTime | date : 'short'}}</span>
+                </div>
+            </uib-accordion-heading>
+            <div class="data-time-content-wrapper" style="display: flex">
+                <span class="date-time-label">Start</span> <img class="date-time-ico" src="/icons/calendar_green.png" alt="">
+                <input ng-model="sbc.step1.startDate" ng-blur="sbc.updateStep(1)"  type="date">
+
+                <img class="date-time-ico time" src="/icons/time_green.png" alt="">
+                <!--<input ng-model="sbc.step1.startTime" ng-blur="sbc.updateStep(1)" type="time">-->
+                <uib-timepicker class="timepicker-wrapper" ng-model="sbc.step1.startTime" ng-change="sbc.updateStep(1)" hour-step="sbc.dateTime.hstep" minute-step="sbc.dateTime.mstep" show-meridian="true"></uib-timepicker>
+
+            </div>
+            <div class="data-time-content-wrapper">
+                <span class="date-time-label end">End</span><img class="date-time-ico" src="/icons/calendar_green.png" alt="">
+                <input  ng-model="sbc.step1.endDate"  ng-blur="sbc.updateStep(1)"  type="date">
+
+                <img class="date-time-ico time" src="/icons/time_green.png" alt="">
+
+                <!--<input ng-model="sbc.step1.endTime" ng-blur="sbc.updateStep(1)" type="time"></p>-->
+                <uib-timepicker class="timepicker-wrapper" ng-model="sbc.step1.endTime" ng-change="sbc.updateStep(1)" hour-step="sbc.dateTime.hstep" minute-step="sbc.dateTime.mstep" show-meridian="true"></uib-timepicker>
+            </div>
+
+
+        </uib-accordion-group>
+
+        <uib-accordion-group is-open="sbc.accordions.brandLogo">
+            <uib-accordion-heading>
+                <div class="panel-label">
+                    Select Brand Logo (optional) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.brandLogo, 'glyphicon-chevron-right': !sbc.accordions.brandLogo}"></i>
+                </div>
+            </uib-accordion-heading>
+            content 2
+        </uib-accordion-group>
+
+        <uib-accordion-group is-open="sbc.accordions.colorScheme">
+            <uib-accordion-heading>
+                <div class="panel-label">
+                    Select Colour Scheme (optional) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.colorScheme, 'glyphicon-chevron-right': !sbc.accordions.colorScheme}"></i>
+                    <span class="panel-value pull-right">{{ sbc.colorScheme.name }}</span>
+                </div>
+            </uib-accordion-heading>
+
+            <section>
+                <div class='row' ng-controller='BrandColourController as bcc'>
+                    <div class='col-sm-6' ng-repeat='scheme in bcc.schemes' ng-show="bcc.schemes.length">
+                        <label for="{{ $index }}-scheme">
+                            <div class='panel panel-default panel-success'>
+                                <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='background-color: {{ scheme.colours.browserBackground }};'>
+                                    <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/preview.html'"></ng-include>
+                                </div>
+
+                                <div class='panel-heading'>
+                                    <div class='row'>
+                                        <div class='col-xs-1'>
+                                            <input id="{{ $index }}-scheme" type="radio" ng-model="sbc.colorScheme" ng-value="scheme" >
+                                        </div>
+                                        <div class='col-xs-10'>
+                                            <h3 class='panel-title text-max-width'>{{ scheme.name }}</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class='col-sm-12'>
+                       <div class="btn-standart btn-red" ng-show="sbc.colorScheme" ng-click="sbc.colorScheme = null">Clean Color Scheme Selection</div>
+                    </div>
+                    <div id="create-color-scheme-area" ng-show="!bcc.schemes.length">
+                        <h4>There is no defined color schemes. </h4>
+                        <div class="btn-standart btn-green" ui-sref="dashboard.resources.brandColours({new:'new', backTo:sbc.$state.current.name })">Create one</div> {{ sbc.$state.current.name+'({id:'+sbc.$state.params.id+'})' }}
+                    </div>
+                </div>
+            </section>
+
+        </uib-accordion-group>
+
+    </uib-accordion>
+</section>

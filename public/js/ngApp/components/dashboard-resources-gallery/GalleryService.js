@@ -74,11 +74,11 @@
         url: globalSettings.restUrl+'/gallery/uploadFile',
         method: 'POST',
         data: {uploadedfile: newResource.file, type: newResource.type}
-      }).then(
-        function(res) {
+      }).then(function(res) {
           deferred.resolve(res);
-        }
-      );
+        }, function(error) {
+          deferred.resolve({error: error.data.error});
+        });
 
       return deferred.promise;
     }
