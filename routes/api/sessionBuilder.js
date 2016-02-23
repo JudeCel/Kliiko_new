@@ -50,7 +50,7 @@ function nextStep(req, res, next) {
 }
 
 function cancel(req, res, next) {
-  sessionBuilderServices.cancel(req.params.id).then(function(result) {
+  sessionBuilderServices.destroy(req.params.id).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});

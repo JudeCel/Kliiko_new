@@ -169,6 +169,10 @@
               '/js/ngApp/components/dashboard-resources-brandColours/brandColourServices.js',
               '/js/ngApp/components/dashboard-resources-brandColours/BrandColourController.js',
 
+              '/js/vendors/ng-file-upload/ng-file-upload.js',
+              "/js/ngApp/components/dashboard-resources-gallery/GalleryController.js",
+              "/js/ngApp/components/dashboard-resources-gallery/GalleryService.js"
+
             ]).then(function() {
               deferred.resolve();
             });
@@ -219,6 +223,13 @@
         },
 
         resolve: {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              "/js/ngApp/components/dashboard-resources-gallery/GalleryController.js",
+              "/js/ngApp/components/dashboard-resources-gallery/GalleryService.js"
+            ]);
+          }],
+
           checkPermission: ['$q', '$timeout', 'user', 'dbg', 'ngProgressFactory', 'banners',function($q, $timeout, user, dbg, ngProgressFactory, banners) {
             var deferred = $q.defer();
 

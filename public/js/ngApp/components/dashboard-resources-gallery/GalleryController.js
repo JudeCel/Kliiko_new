@@ -11,6 +11,7 @@
 
   function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, globalSettings, $sce, filterFilter, $timeout, ngProgressFactory){
     dbg.log2('#GalleryController  started');
+
     initList();
     $scope.filterType = "";
     $scope.viewType = sessionStorage.getItem('viewType');
@@ -265,19 +266,19 @@
 
     $scope.disableButton = function() {
       $scope.submitIsDisabled = true;
-    }
+    };
 
     $scope.checkType = function(first, second) {
       return first == second;
-    }
+    };
 
     $scope.getResourceNameUrl = function(resource){
       return "/chat_room/uploads/" + resource.JSON.name;
-    }
+    };
 
     $scope.getResourceThumbUrl = function(resource){
       return "/chat_room/uploads/" + resource.JSON.tableThumb;
-    }
+    };
 
     $scope.resourceTitle = function(text){
       if(text.length < 1){

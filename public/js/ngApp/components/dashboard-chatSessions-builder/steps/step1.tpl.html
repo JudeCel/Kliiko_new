@@ -51,7 +51,54 @@
                     Select Brand Logo (optional) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.brandLogo, 'glyphicon-chevron-right': !sbc.accordions.brandLogo}"></i>
                 </div>
             </uib-accordion-heading>
-            content 2
+            <section id='GalleryController' ng-controller='GalleryController'>
+                <!-- Table view -->
+                <div class="gallery-body col-md-12" ng-if--="checkType(viewType, 'table')">
+                    <table class="table table-hover table-responsive" >
+                        <tbody ng-repeat="resource in resources | filter: { resourceType: 'brandLogo' }">
+                        <tr class="ng-scope">
+                            <td class="ng-binding vertical-align-middle ">
+                                <input class='margin-left-6' type="checkbox" value="{{resource.id}}" ng-click="resourcesSelected(resource.id)" ng-checked="resource.checked" ng-model="resource.checked"/>
+                            </td>
+                            <td class="ng-binding" ng-if="checkType(resource.JSON.type, 'image') || checkType(resource.JSON.type, 'brandLogo')">
+                                <div class="gallery-table-image-box border-green">
+                                    <div class="responsive-container">
+                                        <div class="dummy"></div>
+
+                                        <div class="img-container">
+                                            <img ng-src='{{ getResourceThumbUrl(resource) }}'/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="ng-binding vertical-align-middle">
+                                {{ resource.JSON.title }}
+                            </td>
+
+                            <td class="vertical-align-middle">
+                                <p class="uppercase">{{ resource.JSON.format }}</p>
+                                <a ng-if="!checkType(resource, 'youtubeUrl')" href="{{ resource.JSON.url }}" target="_blank">
+                                    {{ resource.JSON.url | limitTo: 30 }}{{resource.JSON.url.length > 30 ? '...' : ''}}
+                                </a>
+                            </td>
+                            <td>
+
+                                <!--<button type='submit' class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' ng-click="deleteResources(resource.id)">-->
+                                    <!--<span class='glyphicon glyphicon-remove' aria-hidden='true'></span>-->
+                                <!--</button>-->
+
+                                <!--<a type='submit' download="{{resource.JSON.matchName}}" ng-if="!checkType(resource.JSON.type, 'youtubeUrl')" class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width'-->
+                                   <!--href="{{ + resource.JSON.name}}">-->
+                                    <!--<span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>-->
+                                <!--</a>-->
+                            </td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </uib-accordion-group>
 
         <uib-accordion-group is-open="sbc.accordions.colorScheme">
@@ -89,7 +136,7 @@
                     </div>
                     <div id="create-color-scheme-area" ng-show="!bcc.schemes.length">
                         <h4>There is no defined color schemes. </h4>
-                        <div class="btn-standart btn-green" ui-sref="dashboard.resources.brandColours({new:'new', backTo:sbc.$state.current.name })">Create one</div> {{ sbc.$state.current.name+'({id:'+sbc.$state.params.id+'})' }}
+                        <div class="btn-standart btn-green" ui-sref="dashboard.resources.brandColours({new:'new', backTo:sbc.$state.current.name })">Create one</div>
                     </div>
                 </div>
             </section>
