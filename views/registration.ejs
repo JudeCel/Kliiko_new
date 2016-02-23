@@ -1,20 +1,21 @@
 <% include header %>
 
+
 <main class="main-first-page-registration">
   <div class="login-container center-block text-font-family">
     <ul class="nav nav-tabs">
-      <li><a class="background-yellow text-white text-shadow-gray btn login-kliiko-tab" href="/login">Login to Kliiko</a></li>
-      <li class="active"><a class="background-green text-white text-center login-signup-tab" data-toggle="tab" href="#signup">Get a Kliiko Account</a>
+      <li><a class="background-yellow text-white text-shadow-gray btn login-kliiko-tab" href="/login">Login to Klzii</a></li>
+      <li class="active"><a class="background-green text-white text-center login-signup-tab" data-toggle="tab" href="#signup">Get a Klzii Account</a>
       </li>
     </ul>
     <div class="tab-content border-green">
         <div id="signup" class="tab-pane fade in active">
           <h2 class="text-center text-gray-dark">Welcome!</h2>
-          <h5 class="text-center text-gray-light">Sign up to Kliiko and host your own chat session.</h5>
+          <h5 class="text-center text-gray-light">Sign up to Klzii and host your own chat session.</h5>
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
-              <form method="post" action="/registration" novalidate>
+              <form method="post" action="/registration" novalidate="">
                 <% if(socialProfile){ %>
                  <input type="hidden" name="socialProfile[provider]" value="<%=socialProfile.provider%>">
                  <input type="hidden" name="socialProfile[id]" value="<%=socialProfile.id%>">
@@ -151,14 +152,23 @@
                       </label>
                     </td>
                     <td>
-                      <input type="tel" value="<%= mobile %>" class="form-control" id="mobile" name="mobile" placeholder="Mobile Number">
+                      <input onchange="getNewMobileCountry();"
+                             default-country="au"
+                             type="tel"
+                             value="<%= mobile %>"
+                             id="mobilePhone"
+                             name="mobile"
+                             placeholder="Mobile Number"
+                             class="form-control">
+
+                      <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="">
                     </td>
                   </tr>
 
                   <tr>
                     <td></td>
                     <td class="error-column">
-                      <div class="has-error"><%= errors.mobile %></div>
+                      <div class="has-error" id="mobilePhoneError"><%= errors.mobile %></div>
                     </td>
                   </tr>
 
@@ -171,14 +181,23 @@
                       </label>
                     </td>
                     <td>
-                      <input type="text" value="<%= landlineNumber %>" class="form-control" name="landlineNumber" id="landline_number" placeholder="Landline Number">
+                      <input onchange="getNewLandlineNumberCountry();"
+                             default-country="au"
+                             type="tel"
+                             value="<%= landlineNumber %>"
+                             id="landline_number"
+                             name="landlineNumber"
+                             placeholder="Landline Number"
+                             class="form-control">
+
+                      <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="">
                     </td>
                   </tr>
 
                   <tr>
                     <td></td>
                     <td class="error-column">
-                      <div class="has-error"><%= errors.landlineNumber %></div>
+                      <div class="has-error" id="landline_number_error"><%= errors.landlineNumber %></div>
                     </td>
                   </tr>
 
@@ -216,7 +235,7 @@
                   <div class="check">
                     <input type="checkbox" class="checkbox-login" name="tipsAndUpdate" id="tipsAndUpdate" value='on'/>
                     <label for="tipsAndUpdate"></label>
-                    <span class="checkbox-signup" id="tipsAndUpdate">Yes send me the Kliiko Newsletter which includes hints, tips and updates.</span>
+                    <span class="checkbox-signup" id="tipsAndUpdate">Yes send me the Klzii Newsletter which includes hints, tips and updates.</span>
                   </div>
                 </div>
 

@@ -28,6 +28,9 @@
       }
     }
   },
+  "twilioAccountSid": "ACd5942418b7844c79c417f0ff4f693744",
+  "twilioAuthToken": "2f82c47e7e864420e5d4fb09cc2d6836",
+  "twilioSenderNumber": "+12048186622",
   "sessionSecret": "c4be0a2cc8658004a3f2417e62281f65e995ac7c564e39e727d764a62d69e836",
   "cookieSecret": "ee9b7f3df25f0759a0876762da2b721cdeba47b1f5df4003807c6383c581f409",
   "facebookclientID": "895147450520688",
