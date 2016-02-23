@@ -8,7 +8,7 @@ module.exports = (Sequelize, DataTypes) => {
     subject: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     content: {type: DataTypes.TEXT, allowNull: false, validate: { notEmpty: true } },
     systemMessage: {type: DataTypes.BOOLEAN, allowNull: false, validate: { notEmpty: true } },
-    sessionId: { type: DataTypes.INTEGER, allowNull: false, validate: { notEmpty: true } },
+    sessionId: { type: DataTypes.INTEGER, allowNull: true, validate: { notEmpty: true } },
     required: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true}
     }, {
       classMethods: {
