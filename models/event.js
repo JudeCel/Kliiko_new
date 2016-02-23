@@ -10,7 +10,7 @@ module.exports = (Sequelize, DataTypes) => {
     uid:	{type: DataTypes.STRING, allowNull: true},
     cmd:	{type: DataTypes.STRING, allowNull: true},
     event:	{ type: DataTypes.JSONB, allowNull: false, defaultValue: {} },
-    thumbs_up:	{type: DataTypes.INTEGER, allowNull: true, defaultValue: 0}
+    star: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false}
   },
    {
       // indexes: [],

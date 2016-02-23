@@ -25,6 +25,7 @@ module.exports = {
 
 
 function create(params, callback) {
+
   let err = {};
 
   if (params.termsAndConditions === "false") {
@@ -140,6 +141,7 @@ function prepareParams(req, errors) {
     password: '',
     landlineNumber: '',
     gender: '',
+    phoneCountryData: {},
     tipsAndUpdate: 'on',
     termsAndConditions: 'false',
     errors: (errors || {}),

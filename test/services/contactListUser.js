@@ -52,6 +52,7 @@ describe('Services -> ContactListUser', () => {
       describe("bulkCreate", ()=>{
         it("create multiple records", (done) =>  {
           let list = [{
+            rowNr: 2,
             contactListId: TestContactList.id,
             defaultFields: {
               firstName: "DainisNew1",
@@ -62,6 +63,7 @@ describe('Services -> ContactListUser', () => {
             },
               customFields: { one: "1", two:" 2", three:" 3" }
             },{
+              rowNr: 2,
               contactListId: TestContactList.id,
               defaultFields: {
                 firstName: "DainisNew",
@@ -79,6 +81,50 @@ describe('Services -> ContactListUser', () => {
           }, function(err) {
             done(err);
           });
+        });
+
+        describe("failed", function() {
+          let list = [];
+          beforeEach((done) => {
+            list = [{
+              rowNr: 2,
+              contactListId: TestContactList.id,
+              defaultFields: {
+                firstName: "DainisNew1",
+                lastName: "LapinsNew1",
+                password: "cool_password",
+                email: "dainis1@gmail.com",
+                gender: "male"
+              },
+                customFields: { one: "1", two:" 2", three:" 3" }
+              },{
+                rowNr: 4,
+                contactListId: TestContactList.id,
+                defaultFields: {
+                  firstName: "DainisNew",
+                  lastName: "LapinsNew",
+                  password: "cool_password",
+                  email: "dainis2@gmail.com",
+                  gender: "male"
+                },
+                customFields: { one: "3", two:" 3", three:"5" }
+              }];
+              ContactListUserService.bulkCreate(list, TestAccount.id).then(function(contactListUsers) {
+                done();
+              }, function(err) {
+                done(err);
+              });
+          });
+
+          it("return list with errors", function(done) {
+            list[0].defaultFields.email = "dainis99@gmail.com"
+            ContactListUserService.bulkCreate(list, TestAccount.id).then(function(contactListUsers) {
+              done("Not get here");
+            }, function(error) {
+              assert.equal(error[4].email, 'Email has already been taken');
+              done();
+            });
+          })
         })
       })
 
