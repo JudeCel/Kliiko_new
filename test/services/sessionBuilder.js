@@ -51,7 +51,7 @@ describe('SERVICE - SessionBuilder', function() {
           assert.deepEqual(result.sessionBuilder.steps.step2.topics, []);
           assert.equal(result.sessionBuilder.steps.step3.stepName, 'manageSessionEmails');
           assert.equal(result.sessionBuilder.steps.step3.incentive_details, null);
-          assert.equal(result.sessionBuilder.steps.step3.emailTemplates, null);
+          assert.deepEqual(result.sessionBuilder.steps.step3.emailTemplates, []);
           assert.equal(result.sessionBuilder.steps.step4.stepName, 'manageSessionParticipants');
           assert.deepEqual(result.sessionBuilder.steps.step4.participants, []);
           assert.equal(result.sessionBuilder.steps.step5.stepName, 'inviteSessionObservers');
@@ -369,16 +369,31 @@ describe('SERVICE - SessionBuilder', function() {
     });
   });
 
-  describe.only('#thirdStep', function(done) {
-    function sessionMemberParams(sessionId) {
+  describe('#thirdStep', function(done) {
+    function mailTemplateParams(sessionId) {
       return {
-        sessionId: sessionId,
-        username: 'Es krucs!',
-        role: 'participant',
-        accountUserId: testAccountUser.id
+        name: "Test Name",
+        subject: "Test Subject",
+        content: "<p>Test Content</p>",
+        systemMessage: true,
+        sessionId: sessionId
       }
     }
-    
+
+    function multipleTemplates(count, sessionId) {
+      let array = new Array(count);
+      array.fill(
+        function(cb) {
+          models.MailTemplate.create(mailTemplateParams(sessionId)).then(function() {
+            cb();
+          }).catch(function(error) {
+            cb(error);
+          });
+        } 
+      );
+      return array;
+    };
+
     describe('happy path', function(done) {
       it('should succeed on moving to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
@@ -386,7 +401,10 @@ describe('SERVICE - SessionBuilder', function() {
           params.step = 'manageSessionEmails';
 
           sessionBuilderServices.update(params).then(function(result) {
-            models.SessionEmailTemplate.create(sessionMemberParams(params.id)).then(function(member) {
+            async.parallel(multipleTemplates(5, params.id), function(error, _result) {
+              if(error){
+                done(error);
+              }
               sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
                 sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
                   assert.equal(session.step, 'manageSessionParticipants');
@@ -407,25 +425,25 @@ describe('SERVICE - SessionBuilder', function() {
       });
     });
 
-    // describe('sad path', function(done) {
-    //   it('should fail because no email teplates', function(done) {
-    //     sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-    //       let params = sessionParams(result);
-    //       params.step = 'manageSessionParticipants';
+    describe('sad path', function(done) {
+      it('should fail because mail templates less then 5', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          params.step = 'manageSessionEmails';
 
-    //       sessionBuilderServices.update(params).then(function(result) {
-    //         sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-    //           done('Should not get here!');
-    //         }, function(error) {
-    //           assert.equal(error.participants, sessionBuilderServices.messages.errors.fourthStep.participants);
-    //           done();
-    //         });
-    //       }, function(error) {
-    //         done(error);
-    //       });
-    //     });
-    //   });
-    // });
+          sessionBuilderServices.update(params).then(function(result) {
+            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              assert.equal(error.emailTemplates, sessionBuilderServices.messages.errors.thirdStep.emailTemplates + 5);
+              done();
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
   });
 
   describe('#fourthStep', function(done) {
