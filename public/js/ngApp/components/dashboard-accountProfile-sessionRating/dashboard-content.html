@@ -2,8 +2,7 @@
   <div class='col-md-12'>
     <div class='dashboard-container'>
       <div class='row'>
-        <div class='col-md-3'></div>
-        <div class='col-md-6'>
+        <div class='col-md-offset-3 col-md-6'>
           <h2 class='text-center'>Session Rating</h2>
         </div>
       </div>
@@ -11,8 +10,49 @@
   </div>
 
   <div class='col-md-12 fixed-bottom-margin'>
-    <div class='dashboard-container horizontal-scroll'>
-      <ng-include src="'/js/ngApp/components/dashboard-accountProfile-sessionRating/index.html'"></ng-include>
+    <div class='dashboard-container'>
+      <table class='table table-dashboardElements'>
+        <thead>
+          <tr class='green-background'>
+            <th>Account Name</th>
+            <th class='pull-right'>Account Rating</th>
+          </tr>
+        </thead>
+      </table>
+
+      <div ng-repeat='acItem in rc.sessions'>
+        <uib-accordion close-others='false' ng-if='acItem.Sessions.length > 0'>
+          <uib-accordion-group is-open='acItem.open'>
+            <uib-accordion-heading>
+              <div class='row'>
+                <div class='col-xs-6'>
+                  <span class='glyphicon' ng-class="{'glyphicon-chevron-down': acItem.open, 'glyphicon-chevron-right': !acItem.open}">
+                    {{ acItem.name }}
+                  </span>
+                </div>
+                <div class='col-xs-6'>
+                  <span class='pull-right'>
+                    <uib-rating class='session-rating-stars-small' ng-model='acItem.rating' max='5' aria-labelledby='default-rating' readonly='true'></uib-rating>
+                  </span>
+                </div>
+              </div>
+            </uib-accordion-heading>
+
+            <div class='row' ng-repeat='session in acItem.Sessions'>
+              <div class='col-xs-offset-1 col-xs-5'>
+                {{ session.name }}
+              </div>
+
+              <div class='col-xs-6'>
+                <uib-rating class='session-rating-stars-small' ng-model='session.rating' max='5' aria-labelledby='default-rating' readonly='true'></uib-rating>
+              </div>
+              <div class='col-xs-offset-1 col-xs-10'>
+                <hr ng-if='acItem.Sessions.length > 1' />
+              </div>
+            </div>
+          </uib-accordion-group>
+        </uib-accordion>
+      </div>
     </div>
   </div>
 </section>
