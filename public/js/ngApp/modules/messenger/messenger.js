@@ -31,6 +31,8 @@
 
       var type = type || 'default';
 
+      var message = parseMessage(message);
+
       self.id = 'msgId' + new Date().getTime();
       self.tpl = '<div id="'+self.id+'" class="message animated fadeInDown '+ type +'">'+message+'</div>';
       self.flash = function(delay) {
@@ -44,8 +46,21 @@
           self.$el.removeClass('fadeInDown').addClass('fadeOutDown');
           setTimeout(function() { self.$el.detach() }, 2000);
         }, delay);
-      }
+      };
 
+
+      function parseMessage(rawMessage) {
+        var output = '';
+        if ( typeof(rawMessage) === 'string') output = rawMessage;
+        if ( angular.isObject(rawMessage) ) {
+          for (var property in rawMessage) {
+            output += property + ': ' + rawMessage[property]+'<br/> ';
+          }
+        }
+
+
+        return output;
+      }
     };
 
     var messengerPublicMethods = {};

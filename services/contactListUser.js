@@ -104,24 +104,31 @@ function find(id) {
     return deferred.promise;
 }
 
-function transactionFun(t, accountId) {
+function transactionFun(t, accountId, errors) {
   return function(attrs, callback) {
     attrs.accountId = accountId;
     create(attrs, t).then(function(result) {
       callback(null, result);
-    },function(err) {
-      callback(err);
+    }, function(error) {
+      errors.required = true;
+      assignErrorWithRowNr(errors, error, attrs);
+      callback();
     });
   }
 }
 
+function assignErrorWithRowNr(errors, error, attrs) {
+  errors[attrs.rowNr] = error;
+}
+
 function bulkCreate(list, accountId) {
+  let errors = {required: false};
   let deferred = q.defer();
     models.sequelize.transaction().then(function(t) {
-      async.map(list, transactionFun(t, accountId), function(err, results) {
-        if (err) {
+      async.map(list, transactionFun(t, accountId, errors), function(err, results) {
+        if (errors.required) {
           t.rollback().then(function() {
-            deferred.reject(err);
+            deferred.reject(errors);
           });
         }else {
           t.commit().then(function() {

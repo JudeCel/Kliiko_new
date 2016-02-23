@@ -15,6 +15,7 @@
     'domServices',
     'messenger',
     'ngMessages',
+    'internationalPhoneNumber',
 
     // app modules
     'KliikoApp.user',
@@ -118,10 +119,27 @@
     init();
 
     function init() {
-      user.getUserData(true).then(function(res) { vm.user = res });
+      user.getUserData(true).then(function(res) {
+        var phoneIsoCode = 'au';
+        if(typeof res.phoneCountryData === 'string'){
+          phoneIsoCode = JSON.parse(res.phoneCountryData).iso2;
+        }else{
+          phoneIsoCode = res.phoneCountryData.iso2;
+        }
+        sessionStorage.setItem('phoneCountryData',  phoneIsoCode);
+
+        var landlineNumberIsoCode = 'au';
+        if(typeof res.landlineNumberCountryData === 'string'){
+          landlineNumberIsoCode = JSON.parse(res.landlineNumberCountryData).iso2;
+        }else{
+          landlineNumberIsoCode = res.landlineNumberCountryData.iso2;
+        }
+        sessionStorage.setItem('landlineNumberCountryData',  landlineNumberIsoCode);
+
+        vm.user = res;
+      });
       accountUser.getAccountUserData(true).then(function(res) { vm.accountUser = res });
     }
-
 
   }
 

@@ -204,25 +204,31 @@ function updateSessionMemberRating(params, userId, accountId) {
     where: {
       id: params.id
     },
-    include: [{
-      model: AccountUser,
-      where: {
-        UserId: { $ne: userId },
-        AccountId: { $ne: accountId }
-      }
-    }],
     attributes: VALID_ATTRIBUTES.sessionMember,
     returning: true
-  }).then(function(result) {
-    if(result) {
-      result.update({ rating: params.rating }, { returning: true }).then(function(sessionMember) {
-        deferred.resolve(simpleParams(result, MESSAGES.rated));
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
+  }).then(function(member) {
+    if(member) {
+      AccountUser.find({
+        where: {
+          id: member.accountUserId,
+          UserId: userId,
+          AccountId: accountId
+        }
+      }).then(function(accountUser) {
+        if(accountUser) {
+          deferred.reject(MESSAGES.cantRateSelf);
+        }
+        else {
+          member.update({ rating: params.rating }, { returning: true }).then(function(sessionMember) {
+            deferred.resolve(simpleParams(member, MESSAGES.rated));
+          }).catch(function(error) {
+            deferred.reject(filters.errors(error));
+          });
+        }
       });
     }
     else {
-      deferred.reject(MESSAGES.cantRateSelf);
+      deferred.reject(MESSAGES.sessionMemberNotFound);
     }
   }).catch(function(error) {
     deferred.reject(filters.errors(error));

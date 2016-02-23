@@ -5,7 +5,6 @@
         <button type='button' class='close' data-dismiss='modal'>&times;</button>
         <h2 class='modal-title text-center'>Contact Details</h2>
       </div>
-
       <div class='modal-body'>
         <form class='form-horizontal' method='post' ng-submit='cdm.updateUserData(cdm.userData, cdm.userDetailsForm)' name='cdm.userDetailsForm'>
           <div class='row'>
@@ -48,7 +47,7 @@
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
                   <div class='col-md-8'>
                     <span class='has-error text-red-dark'>{{ cdm.errors.mobile }}</span>
-                    <input type='text' class='form-control' id='mobile' placeholder='Mobile number' ng-model='cdm.userData.mobile'>
+                    <input type="text" international-phone-number ng-model='cdm.userData.mobile' default-country='{{cdm.phoneCountryData}}' autoFormat="true" autoHideDialCode="false" id="mobile" class='form-control' placeholder="Mobile number recommended">
                   </div>
                 </div>
 
@@ -56,7 +55,7 @@
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
                   <div class='col-md-8'>
                     <span class='has-error text-red-dark'>{{ cdm.errors.landlineNumber }}</span>
-                    <input type='text' class='form-control' id='landlineNumber' placeholder='Landline number' ng-model='cdm.userData.landlineNumber'>
+                    <input type="text" international-phone-number ng-model='cdm.userData.landlineNumber' default-country='{{cdm.landlineNumberCountryData}}' autoFormat="true" autoHideDialCode="false" id="landlineNumber" class='form-control' placeholder="Landline number">
                   </div>
                 </div>
               </div>
@@ -121,7 +120,7 @@
                 <div class='check'>
                   <input ng-model='cdm.userData.tipsAndUpdate' type='checkbox' class='checkbox-login' name='tipsAndUpdate' id='tipsAndUpdate'/>
                   <label class='checkbox-signup text-no-bold' for='tipsAndUpdate'>
-                    Yes send me the Kliiko Newsletter which includes tips and updates.
+                    Yes send me the Klzii Newsletter which includes tips and updates.
                   </label>
                 </div>
               </div>

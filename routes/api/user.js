@@ -21,7 +21,7 @@ module.exports = {
 };
 
 function userPost(req, res, next) {
-  AccountUserService.updateWithUserId(req.body, req.user.id, function(err) { 
+  AccountUserService.updateWithUserId(req.body, req.user.id, function(err) {
     if (err) {
       res.send({error:err});
     } else {
@@ -37,6 +37,8 @@ function userGet(req, res, next) {
   let currentDomain = res.locals.currentDomain
   let roles = currentDomain.roles;
   let reqUser = req.user;
+  console.log(getUserBasicData())
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
   q.all([
     getUserBasicData(),
@@ -50,6 +52,9 @@ function userGet(req, res, next) {
   function getUserBasicData() {
     let deferred = q.defer();
     reqUser.roles = roles;
+
+
+
     deferred.resolve(reqUser);
     return deferred.promise;
   }
