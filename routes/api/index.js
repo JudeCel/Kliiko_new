@@ -124,7 +124,7 @@ router.post('/brandColour', brandColour.create);
 router.put('/brandColour', brandColour.update);
 router.post('/brandColour/copy', brandColour.copy);
 
-router.get('/session/ratingList',  policy.authorized(['admin']), session.getAllSessionRatings);
+router.get('/session/ratings',  policy.authorized(['admin']), session.getAllSessionRatings);
 router.get('/session/list', sessionMemberMiddleware.hasAccess(['facilitator', 'observer', 'participant'], ['accountManager', 'admin']), session.get);
 router.delete('/session/:id', policy.authorized(['accountManager', 'admin']), session.remove);
 router.post('/session/:id', policy.authorized(['accountManager', 'admin']), session.copy);

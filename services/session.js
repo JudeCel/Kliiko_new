@@ -92,22 +92,48 @@ function findAllSessions(userId, domain) {
 function getAllSessionRatings() {
   let deferred = q.defer();
 
-Account.findAll({
-    group: ["Account.name", "Account.id", "Sessions.id", "Sessions.name"],
-    attributes: ['name', 'id'],
-    include: [
-      {
-        model: Session, attributes: ['name', [models.sequelize.fn('avg', models.sequelize.col('Sessions.SessionMembers.rating')), "rating"]],
-        include: [
-          {model: SessionMember, attributes:[]}]
-        }]
-  }).then(function(data) {
-    deferred.resolve(simpleParams(data));
+  Account.findAll({
+    attributes: ['id', 'name'],
+    include: [{
+      model: Session,
+      attributes: ['id', 'name'],
+      include: [{
+        model: SessionMember,
+        attributes: ['rating']
+      }]
+    }]
+  }).then(function(accounts) {
+    deferred.resolve(simpleParams(prepareAccountRatings(accounts)));
   }, function(error) {
     deferred.reject(error);
   });
 
   return deferred.promise;
+};
+
+function prepareAccountRatings(accounts) {
+  let ratings = [];
+
+  _.map(accounts, function(account) {
+    let object = { name: account.name, sessions: [], rating: 0 };
+
+    _.map(account.Sessions, function(session) {
+      let sObject = { name: session.name, rating: 0 };
+      _.map(session.SessionMembers, function(member) {
+        sObject.rating += member.rating;
+      });
+
+      object.rating += sObject.rating;
+      object.sessions.push(sObject);
+    });
+
+    if(!_.isEmpty(object.sessions)) {
+      object.rating /= object.sessions.length;
+      ratings.push(object);
+    }
+  });
+
+  return ratings;
 };
 
 function removeSession(sessionId, accountId) {

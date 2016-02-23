@@ -20,25 +20,25 @@
         </thead>
       </table>
 
-      <div ng-repeat='acItem in rc.sessions'>
-        <uib-accordion close-others='false' ng-if='acItem.Sessions.length > 0'>
-          <uib-accordion-group is-open='acItem.open'>
+      <div ng-repeat='account in rc.accounts'>
+        <uib-accordion close-others='false'>
+          <uib-accordion-group is-open='account.open'>
             <uib-accordion-heading>
               <div class='row'>
                 <div class='col-xs-6'>
-                  <span class='glyphicon' ng-class="{'glyphicon-chevron-down': acItem.open, 'glyphicon-chevron-right': !acItem.open}">
-                    {{ acItem.name }}
+                  <span class='glyphicon' ng-class="{'glyphicon-chevron-down': account.open, 'glyphicon-chevron-right': !account.open}">
+                    {{ account.name }}
                   </span>
                 </div>
                 <div class='col-xs-6'>
                   <span class='pull-right'>
-                    <uib-rating class='session-rating-stars-small' ng-model='acItem.rating' max='5' aria-labelledby='default-rating' readonly='true'></uib-rating>
+                    <uib-rating class='session-rating-stars-small' ng-model='account.rating' max='5' aria-labelledby='default-rating' readonly='true'></uib-rating>
                   </span>
                 </div>
               </div>
             </uib-accordion-heading>
 
-            <div class='row' ng-repeat='session in acItem.Sessions'>
+            <div class='row' ng-repeat='session in account.sessions'>
               <div class='col-xs-offset-1 col-xs-5'>
                 {{ session.name }}
               </div>

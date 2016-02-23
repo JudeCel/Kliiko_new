@@ -4,9 +4,7 @@
   SessionRatingServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
 
   function SessionRatingServices(globalSettings, $q, $resource, dbg) {
-    var sessionListApi = $resource(globalSettings.restUrl + '/session/:id', null, {
-      ratingList: { method: 'get', params: { id: 'ratingList' } }
-    });
+    var sessionListApi = $resource(globalSettings.restUrl + '/session/ratings', null);
 
     var csServices = {};
     csServices.findAllSessions = findAllSessions;
@@ -16,7 +14,7 @@
       var deferred = $q.defer();
 
       dbg.log2('#ChatSessions > findAllSessions > make rest call');
-      sessionListApi.ratingList({}, function(res) {
+      sessionListApi.get({}, function(res) {
         dbg.log2('#ChatSessions > get > rest call responds');
         deferred.resolve(res);
       });
