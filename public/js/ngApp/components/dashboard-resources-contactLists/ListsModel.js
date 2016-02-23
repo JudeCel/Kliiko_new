@@ -419,11 +419,17 @@
       var deferred = $q.defer();
       var contactsArray = [];
 
+
       for (var i = 0, len = self.importPreviewArray.length; i < len ; i++) {
         var defaultFields = getDefaultFields(self.importPreviewArray[i]);
         var customFields = getCustomFields(self.importPreviewArray[i]);
 
-        contactsArray.push({defaultFields: defaultFields, customFields: customFields,contactListId: self.activeList.id});
+        contactsArray.push({
+          defaultFields: defaultFields,
+          customFields: customFields,
+          contactListId: self.activeList.id,
+          rowNr: self.importPreviewArray[i].rowNr,
+        });
       }
 
       contactListServices.addImportedContacts(contactsArray, self.activeList.id).then(
