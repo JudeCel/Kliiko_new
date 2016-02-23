@@ -69,6 +69,28 @@
 
   }
 
+
+  #GalleryController {
+    .panel {
+      cursor: pointer;
+      padding: 10px;
+      background: #F6F8F7;
+
+      &:hover {
+        background: $lightGreen
+      }
+    }
+    img  {
+      max-width: 100%;
+      padding: 20px;
+      border: 2px solid $green;
+      background: white;
+    }
+
+  }
+
+
+
   #create-color-scheme-area {
     padding: 20px;
   }

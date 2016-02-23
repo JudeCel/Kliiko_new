@@ -1,5 +1,5 @@
 <section id="step-1" class="animated fadeIn">
-    <h3>Set-Up Chat Session</h3>
+    <h3 class="text-center">Set-Up Chat Session</h3>
 
     <uib-accordion close-others="false">
         <uib-accordion-group is-open="sbc.accordions.sessionName">
@@ -28,7 +28,6 @@
                 <input ng-model="sbc.step1.startDate" ng-blur="sbc.updateStep(1)"  type="date">
 
                 <img class="date-time-ico time" src="/icons/time_green.png" alt="">
-                <!--<input ng-model="sbc.step1.startTime" ng-blur="sbc.updateStep(1)" type="time">-->
                 <uib-timepicker class="timepicker-wrapper" ng-model="sbc.step1.startTime" ng-change="sbc.updateStep(1)" hour-step="sbc.dateTime.hstep" minute-step="sbc.dateTime.mstep" show-meridian="true"></uib-timepicker>
 
             </div>
@@ -37,8 +36,6 @@
                 <input  ng-model="sbc.step1.endDate"  ng-blur="sbc.updateStep(1)"  type="date">
 
                 <img class="date-time-ico time" src="/icons/time_green.png" alt="">
-
-                <!--<input ng-model="sbc.step1.endTime" ng-blur="sbc.updateStep(1)" type="time"></p>-->
                 <uib-timepicker class="timepicker-wrapper" ng-model="sbc.step1.endTime" ng-change="sbc.updateStep(1)" hour-step="sbc.dateTime.hstep" minute-step="sbc.dateTime.mstep" show-meridian="true"></uib-timepicker>
             </div>
 
@@ -49,53 +46,33 @@
             <uib-accordion-heading>
                 <div class="panel-label">
                     Select Brand Logo (optional) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.brandLogo, 'glyphicon-chevron-right': !sbc.accordions.brandLogo}"></i>
+                    <span class="panel-value pull-right">{{ sbc.brandLogo.JSON.name }}</span>
                 </div>
             </uib-accordion-heading>
             <section id='GalleryController' ng-controller='GalleryController'>
                 <!-- Table view -->
-                <div class="gallery-body col-md-12" ng-if--="checkType(viewType, 'table')">
+                <div class="gallery-body col-md-12">
                     <table class="table table-hover table-responsive" >
-                        <tbody ng-repeat="resource in resources | filter: { resourceType: 'brandLogo' }">
-                        <tr class="ng-scope">
-                            <td class="ng-binding vertical-align-middle ">
-                                <input class='margin-left-6' type="checkbox" value="{{resource.id}}" ng-click="resourcesSelected(resource.id)" ng-checked="resource.checked" ng-model="resource.checked"/>
-                            </td>
-                            <td class="ng-binding" ng-if="checkType(resource.JSON.type, 'image') || checkType(resource.JSON.type, 'brandLogo')">
-                                <div class="gallery-table-image-box border-green">
-                                    <div class="responsive-container">
-                                        <div class="dummy"></div>
-
-                                        <div class="img-container">
-                                            <img ng-src='{{ getResourceThumbUrl(resource) }}'/>
-                                        </div>
-                                    </div>
+                        <!--------------------->
+                        <div class='col-sm-4' ng-repeat="resource in resources | filter: { resourceType: 'brandLogo' }">
+                            <label for="{{ $index }}-logo">
+                                <div class='panel'>
+                                    <input id="{{ $index }}-logo" type="radio" ng-model="sbc.brandLogo" ng-value="resource" >
+                                    <img calss="source-img" ng-src='{{ getResourceNameUrl(resource) }}'/>
                                 </div>
-                            </td>
+                            </label>
+                        </div>
+                        <div class='col-sm-12'>
+                            <div class="btn-standart btn-red" ng-show="sbc.brandLogo" ng-click="sbc.brandLogo = null">Clean Selection</div>
+                        </div>
 
-                            <td class="ng-binding vertical-align-middle">
-                                {{ resource.JSON.title }}
-                            </td>
 
-                            <td class="vertical-align-middle">
-                                <p class="uppercase">{{ resource.JSON.format }}</p>
-                                <a ng-if="!checkType(resource, 'youtubeUrl')" href="{{ resource.JSON.url }}" target="_blank">
-                                    {{ resource.JSON.url | limitTo: 30 }}{{resource.JSON.url.length > 30 ? '...' : ''}}
-                                </a>
-                            </td>
-                            <td>
 
-                                <!--<button type='submit' class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' ng-click="deleteResources(resource.id)">-->
-                                    <!--<span class='glyphicon glyphicon-remove' aria-hidden='true'></span>-->
-                                <!--</button>-->
+                        <div ng-show="!(resources| filter: { resourceType: 'brandLogo' }).length">
+                            <h4>There is no image resources was uploaded</h4>
+                            <div class="btn-standart btn-green" ui-sref="dashboard.resources.gallery">Add Logo</div>
 
-                                <!--<a type='submit' download="{{resource.JSON.matchName}}" ng-if="!checkType(resource.JSON.type, 'youtubeUrl')" class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width'-->
-                                   <!--href="{{ + resource.JSON.name}}">-->
-                                    <!--<span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>-->
-                                <!--</a>-->
-                            </td>
-
-                        </tr>
-                        </tbody>
+                        </div>
                     </table>
                 </div>
             </section>

@@ -2811,6 +2811,17 @@ hr.survey-hr {
       #session-builder-content #step-1 table.timepicker-wrapper span.glyphicon.glyphicon-chevron-down {
         position: relative;
         top: -6px; }
+    #session-builder-content #step-1 #GalleryController .panel {
+      cursor: pointer;
+      padding: 10px;
+      background: #F6F8F7; }
+      #session-builder-content #step-1 #GalleryController .panel:hover {
+        background: rgba(174, 239, 137, 0.5); }
+    #session-builder-content #step-1 #GalleryController img {
+      max-width: 100%;
+      padding: 20px;
+      border: 2px solid #2F9F69;
+      background: white; }
     #session-builder-content #step-1 #create-color-scheme-area {
       padding: 20px; }
   #session-builder-content #step-2 {
