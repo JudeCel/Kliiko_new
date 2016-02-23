@@ -21,7 +21,7 @@ function save(req, callback){
   let userId = req.user.id;
   let newPassword = req.body.password;
   let message = "";
-  let params = {email: req.user.email};
+  let params = {email: req.user.email, name: req.user.firstName};
 
   usersService.changePassword(userId, newPassword, function(err, data){
     if (err) {

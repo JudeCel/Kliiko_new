@@ -6,14 +6,14 @@
       <a ng-repeat="(key, t) in ec.emailTemplates" class="list-group-item" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : t.UserId}"
       ng-click="ec.startEditingTemplate(key)">
         <div ng-hide="t.UserId">
-          {{t["MailTemplateBase.name"]}} <img src="/icons/ic_arrow_right.png" class="pull-right" ng-hide="!ec.isCurrent(key)">
+          <img src="/icons/ic_arrow_right.png" class="pull-right" ng-hide="!ec.isCurrent(key)"> {{t["MailTemplateBase.name"]}}
         </div>
 
         <div class="input-group input-group-sm" ng-hide="!t.UserId">
           <input type="text" class="form-control mail-list-input" aria-describedby="basic-addon3" ng-model="t.name" ng-class="{'inactive':!ec.isCurrent(key)}" >
           <span class="input-group-addon" id="basic-addon3" ng-hide="!ec.isCurrent(key)">{{t["MailTemplateBase.name"] | limitTo: 7}}{{t["MailTemplateBase.name"].length > 7 ? '...' : ''}}</span>
           <span class="input-group-btn" ng-hide="!ec.isCurrent(key)">
-          <button class="btn glyphicon glyphicon-remove" type="button" ng-click="ec.deleteTemplate(t, key, $event);"></button>                           
+          <button class="btn glyphicon glyphicon-remove" type="button" ng-click="ec.deleteTemplate(t, key, $event);"></button>
           </span>
         </div>
       </a>
@@ -96,7 +96,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- resourceModal -->
   <div class='modal fade' id='uploadTemplateResource' role='dialog'>
     <div class='modal-dialog'>
@@ -118,7 +118,7 @@
               <input ng-model="ec.newResource.youtubeUrl" type="text" class="form-control center-block" name="youtubeUrl" id="youtubeUrl"
               placeholder="Youtube URL">
             </div>
-            
+
             <div ng-if="ec.newResource.type !== 'youtubeUrl'" class="form-group">
               <label for="fileTst">File</label>
               <div ngf-drop ngf-select ng-model="ec.newResource.fileTst" ng-change="ec.uploadTst()" class="drop-box" ngf-drag-over-class="'dragover'">

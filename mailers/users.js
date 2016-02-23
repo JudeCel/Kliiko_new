@@ -63,10 +63,9 @@ users.sendResetPasswordToken = function(params, callback) {
       });
     } else {
       // found template in db
-      console.log("____", params);
       var mailContent = mailTemplateService.composeMailFromTemplate(result, {
         resetPasswordUrl: helpers.getUrl(params.token, resetPasswordPath),
-        firstName: "test"
+        firstName: params.name
       });
       if (mailContent.error) {
           return callback(mailContent.error);
@@ -128,7 +127,15 @@ users.sendPasswordChangedSuccess = function(params, callback) {
       });
     } else {
       // found template in db
-      mailTemplate.sendMailWithTemplate(result, params, callback);
+      let fields = { firstName: params.name };
+      var mailContent = mailTemplateService.composeMailFromTemplate(result, fields);
+      //caller of users.sendReactivateOrDeactivate doesn't specify callback
+      if (mailContent.error) {
+        if (callback) {
+          callback(mailContent.error);
+        }
+      }
+      mailTemplate.sendMailWithTemplate(mailContent, params, callback);
     }
   });
 };
@@ -160,7 +167,6 @@ users.sendResetPasswordSuccess = function(params, callback) {
         }
       }
       mailTemplate.sendMailWithTemplate(mailContent, params, callback);
-      //mailTemplate.sendMailWithTemplate(result, params, callback);
     }
   });
 };
