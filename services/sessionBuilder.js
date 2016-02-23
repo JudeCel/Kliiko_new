@@ -10,6 +10,8 @@ var async = require('async');
 var _ = require('lodash');
 var q = require('q');
 
+const MIN_MAIL_TEMPLATES = 5;
+
 const MESSAGES = {
   setUp: "You have successfully setted up your chat session.",
   cancel: "Session build successfully canceled",
@@ -25,6 +27,9 @@ const MESSAGES = {
     secondStep: {
       facilitator: 'No facilitator provided',
       topics: 'No topics selected'
+    },
+    thirdStep: {
+      emailTemplates: "Not enought mail templates provided, needed "
     },
     fourthStep: {
       participants: 'No participants provided'
@@ -215,6 +220,20 @@ function stepsDefinition(session) {
         cb(error);
       });
     },
+
+    function(cb) {
+      step3Query(session.id).then(function(emailTemplates) {
+        object.step3 = {
+          stepName: 'manageSessionEmails',
+          incentive_details: null,
+          emailTemplates: emailTemplates
+        }
+        cb();
+      }, function(error) {
+        cb(error);
+      })
+    },
+
     function(cb) {
       searchSessionMembers(session.id, 'participant').then(function(members) {
         object.step4 = {
@@ -241,12 +260,6 @@ function stepsDefinition(session) {
     error ? deferred.reject(error) : deferred.resolve(object);
   });
 
-  object.step3 = {
-    stepName: "manageSessionEmails",
-    incentive_details: null,
-    emailTemplates: null
-  };
-
   return deferred.promise;
 }
 
@@ -257,6 +270,17 @@ function searchSessionMembers(sessionId, role) {
       role: role
     }
   });
+}
+
+function countRequiredMailTemplates(mailTemplates) {
+  let count = 0;
+  _.map(mailTemplates, function(mailTemplate) {
+    if(mailTemplate.required) {
+      count++;
+    }
+  });
+
+  return count;
 }
 
 function step2Queries(session, step) {
@@ -289,6 +313,20 @@ function step2Queries(session, step) {
   ];
 }
 
+function step3Query(sessionId) {
+  let deferred = q.defer();
+
+  models.MailTemplate.findAll({
+    where: {sessionId: sessionId}
+  }).then(function(emailTemplates) {
+    deferred.resolve(emailTemplates);
+  }).catch(function(error) {
+    deferred.reject(error);
+  })
+
+  return deferred.promise;
+}
+
 function validate(session, params) {
   let deferred = q.defer();
 
@@ -316,7 +354,11 @@ function findValidation(step, params) {
     });
   }
   else if(step == 'manageSessionEmails') {
-
+    validateStepThree(params).then(function() {
+      deferred.resolve();
+    }, function(error) {
+      deferred.reject(error);
+    });
   }
   else if(step == 'manageSessionParticipants') {
     validateStepFour(params).then(function() {
@@ -383,6 +425,29 @@ function validateStepTwo(params) {
   }, function(error) {
     deferred.reject(error);
   });
+
+  return deferred.promise;
+}
+
+function validateStepThree(params) {
+  let deferred = q.defer();
+
+  findSession(params.id, params.accountId).then(function(session) {
+    models.MailTemplate.findAll({
+      where: {sessionId: session.id}
+    }).then(function(mailTemplates) {
+      let errors = {};
+      let count = countRequiredMailTemplates(mailTemplates);
+
+      if(count < MIN_MAIL_TEMPLATES){
+        errors.emailTemplates = MESSAGES.errors.thirdStep.emailTemplates + MIN_MAIL_TEMPLATES;
+      }
+
+      _.isEmpty(errors) ? deferred.resolve() : deferred.reject(errors);
+    }).catch(function(error) {
+      deferred.reject(error);
+    })
+  })
 
   return deferred.promise;
 }
