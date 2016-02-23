@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('BrandColourController', BrandColourController);
 
-  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', 'ngProgressFactory', '$timeout', 'domServices', '$stateParams'];
-  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, ngProgressFactory, $timeout, domServices, $stateParams) {
+  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', 'ngProgressFactory', '$timeout', 'domServices', '$stateParams', '$state'];
+  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, ngProgressFactory, $timeout, domServices, $stateParams, $state) {
     dbg.log2('#BrandColourController started');
 
     var vm = this;
@@ -162,7 +162,12 @@
     function changePage(page, scheme) {
       vm.formSubmitted = false;
 
-      if(page == 'index') {
+      if(page == 'indexBack' && $stateParams.backTo) {
+        $state.go($stateParams.backTo);
+        return
+      }
+
+      if(page == 'index' || page == 'indexBack') {
         init();
         vm.currentPage = { page: page };
       }

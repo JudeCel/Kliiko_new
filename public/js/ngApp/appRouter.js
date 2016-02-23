@@ -345,7 +345,7 @@
 
       })
       .state('dashboard.resources.brandColours', {
-        url: '/brand-colours/:new',
+        url: '/brand-colours/:new?backTo',
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-brandColours/dashboard-content.html"}
         },

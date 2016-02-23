@@ -89,7 +89,7 @@
                     </div>
                     <div id="create-color-scheme-area" ng-show="!bcc.schemes.length">
                         <h4>There is no defined color schemes. </h4>
-                        <div class="btn-standart btn-green" ui-sref="dashboard.resources.brandColours({new:'new'})">Create one</div>
+                        <div class="btn-standart btn-green" ui-sref="dashboard.resources.brandColours({new:'new', backTo:sbc.$state.current.name })">Create one</div> {{ sbc.$state.current.name+'({id:'+sbc.$state.params.id+'})' }}
                     </div>
                 </div>
             </section>
