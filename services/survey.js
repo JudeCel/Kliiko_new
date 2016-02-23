@@ -498,8 +498,9 @@ function answerSurvey(params) {
           if(!_.isEmpty(fields)) {
             let clParams = findContactListAnswers(contactList, validParams.answers);
             clParams.contactListId = contactList.id;
+            clParams.accountId = survey.accountId;
 
-            return contactListUserServices.bulkCreate([clParams], survey.accountId).then(function(result) {
+            return contactListUserServices.create(clParams).then(function(result) {
               return survey;
             }, function(error) {
               throw error;

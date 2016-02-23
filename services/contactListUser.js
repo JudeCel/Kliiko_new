@@ -110,7 +110,7 @@ function transactionFun(t, accountId, errors) {
     create(attrs, t).then(function(result) {
       callback(null, result);
     }, function(error) {
-      errors.reqired = true;
+      errors.required = true;
       assignErrorWithRowNr(errors, error, attrs);
       callback();
     });
@@ -122,11 +122,11 @@ function assignErrorWithRowNr(errors, error, attrs) {
 }
 
 function bulkCreate(list, accountId) {
-  let errors = {reqired: false};
+  let errors = {required: false};
   let deferred = q.defer();
     models.sequelize.transaction().then(function(t) {
       async.map(list, transactionFun(t, accountId, errors), function(err, results) {
-        if (errors.reqired) {
+        if (errors.required) {
           t.rollback().then(function() {
             deferred.reject(errors);
           });
