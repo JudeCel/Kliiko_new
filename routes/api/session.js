@@ -7,11 +7,19 @@ module.exports = {
   get: get,
   remove: remove,
   copy: copy,
-  updateRating: updateRating
+  updateRating: updateRating,
+  getAllSessionRatings: getAllSessionRatings
 };
 
 function get(req, res, next) {
   sessionServices.findAllSessions(req.user.id, res.locals.currentDomain).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+};
+
+function getAllSessionRatings(req, res, next) {
+  sessionServices.getAllSessionRatings().then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
