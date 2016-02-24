@@ -47,7 +47,7 @@
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
                   <div class='col-md-8'>
                     <span class='has-error text-red-dark'>{{ cdm.errors.mobile }}</span>
-                    <input type="text" international-phone-number ng-model='cdm.userData.mobile' default-country='{{cdm.phoneCountryData}}' autoFormat="true" autoHideDialCode="false" id="mobile" class='form-control'>
+                    <input type="text" international-phone-number ng-model='cdm.userData.mobile' default-country='{{cdm.phoneCountryData}}' autoFormat="true" autoHideDialCode="false" id="mobile" class='form-control' placeholder="Mobile number recommended">
                   </div>
                 </div>
 
@@ -55,7 +55,7 @@
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
                   <div class='col-md-8'>
                     <span class='has-error text-red-dark'>{{ cdm.errors.landlineNumber }}</span>
-                    <input type="text" international-phone-number ng-model='cdm.userData.landlineNumber' default-country='{{cdm.landlineNumberCountryData}}' autoFormat="true" autoHideDialCode="false" id="landlineNumber" class='form-control'>
+                    <input type="text" international-phone-number ng-model='cdm.userData.landlineNumber' default-country='{{cdm.landlineNumberCountryData}}' autoFormat="true" autoHideDialCode="false" id="landlineNumber" class='form-control' placeholder="Landline number">
                   </div>
                 </div>
               </div>
