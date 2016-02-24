@@ -881,6 +881,10 @@ footer {
 .no-border-radius {
   border-radius: 0 !important; }
 
+.no-pointer-events,
+.no-pointer-events [role="button"] {
+  pointer-events: none; }
+
 .text-font-family {
   font-family: Sofia Pro Condensed; }
 
