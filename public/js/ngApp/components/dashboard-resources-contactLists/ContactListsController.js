@@ -56,7 +56,7 @@
     vm.onFieldMapDrop = onFieldMapDrop;
     vm.mappingFieldsContinue = mappingFieldsContinue;
 
-    vm.facilitatorsList = getFacilitatorsList();
+    // vm.facilitatorsList = getFacilitatorsList();
 
     function changeActiveList(index) {
       selectAll(true);
@@ -72,13 +72,13 @@
       vm.listModalTitle = 'Add New List';
       domServices.modal('contactList-addNewListModal');
     }
-    
+
     vm.addNewListFieldMapping = function() {
       vm.listIdToEdit = null;
       vm.listModalTitle = 'Add New List';
       domServices.modal('contactList-addNewListFieldsModal');
     };
-              
+
     function submitNewList() {
       if (vm.newListErrorMessage) return;
 
@@ -194,7 +194,7 @@
         vm.newList['customField'+I] = vm.lists.activeList.customFields[i];
       }
     }
-    
+
     function editCustomFields() {
       vm.modalTab2 = true;
       prepareCustomFields();
@@ -403,7 +403,7 @@
 
 
     }
-       
+
     function prepareListForMapping(list) {
       var len = list.length;
       var array = [];
@@ -412,17 +412,17 @@
       }
       return array;
     }
-    
+
     function processImportData(res) {
       //fields for left column in mapping
       vm.importedFields = res.data.fileFields;
       vm.validContactList = res.data.valid.concat(res.data.invalid);
-      
+
       //fill values for right column
       var array = [];
       var list = res.data.contactListFields.defaultFields;
       var len = list.length;
-      
+
       for (var i = 0; i < len; i++) {
         array[i] = { name: list[i] }
 
@@ -430,23 +430,23 @@
       //fields for right column in mapping
       vm.contactListDropItems.defaultFields = prepareListForMapping(res.data.contactListFields.defaultFields);
       vm.contactListDropItems.customFields = prepareListForMapping(vm.lists.activeList.customFields);
-      
-      
-      
+
+
+
       vm.modalTab1 = true;
-      
+
       domServices.modal('contactList-addContactManual', 'close');
       prepareCustomFields();
-      
-      
-      
+
+
+
       for (var j = 0; j < vm.importedFields.length; j++) {
         for (var i = 0; i < vm.contactListDropItems.defaultFields.length; i++) {
           if (vm.contactListDropItems.defaultFields[i].name == vm.importedFields[j]) {
             vm.contactListDropItems.defaultFields[i].field = vm.importedFields[j];
           }
         }
-        
+
         for (i = 0; i < vm.contactListDropItems.customFields.length; i++) {
           if (vm.contactListDropItems.customFields[i].name == vm.importedFields[j]) {
             vm.contactListDropItems.customFields[i].field = vm.importedFields[j];
@@ -454,7 +454,7 @@
         }
       }
     }
-    
+
     // Drag and drop fields section
     function onFieldMapDrop(dataSource, dataTarget) {
       if (dataSource.field) {
@@ -462,7 +462,7 @@
         dataSource.field = null;
       } else {
         dataTarget.field = dataSource;
-      }    
+      }
     }
 
     //assigns contact info to mapped fields
@@ -477,7 +477,7 @@
             user[vm.contactListDropItems.customFields[i].name] = vm.validContactList[j][vm.contactListDropItems.customFields[i].field];
           }
         }//for
-        
+
         for (var i = 0; i < vm.contactListDropItems.defaultFields.length; i++) {
           if (vm.contactListDropItems.defaultFields[i].field) {
             user[vm.contactListDropItems.defaultFields[i].name] = vm.validContactList[j][vm.contactListDropItems.defaultFields[i].field];
@@ -497,11 +497,11 @@
       domServices.modal('contactList-addNewListFieldsModal', 'close');
       domServices.modal('modals-import-preview');
     }
-    
+
     vm.clearDoppedItem = function(item) {
       item.field = null;
     };
-    
+
     vm.updateCustomFieldList = function() {
       if (vm.newListErrorMessage) return;
       if (!vm.newList.name) {
@@ -513,7 +513,7 @@
       var parsedList = prepareParsedList(vm.newList);
       updateActiveCustomList(newList, parsedList);
     };
-    
+
     function updateActiveCustomList(newList, parsedList) {
       vm.lists.updateActiveItem(parsedList).then(
         function (res) {
@@ -549,7 +549,7 @@
       prepareCustomFields();
       vm.addNewListFieldMapping();
     }
-    
+
     vm.addCustomField = function() {
       var newList = angular.copy(vm.newList);
       var parsedList = prepareParsedList(vm.newList);

@@ -21,6 +21,8 @@
     ListItemModel.prototype.toggleTableToShow = toggleTableToShow;
     ListItemModel.prototype.updateTableSortingByDragging = updateTableSortingByDragging;
 
+    ListItemModel.prototype.copySelectedMembers = copySelectedMembers;
+
 
 
     return ListItemModel;
@@ -122,6 +124,16 @@
       self.update(self);
     }
 
+    function copySelectedMembers(newList) {
+      var self = this;
+      console.log(self);
+      for(var i in self) {
+        var member = self[i];
+        if(member._selected) {
+          newList.push(member);
+        }
+      }
+    }
 
   }
 })();

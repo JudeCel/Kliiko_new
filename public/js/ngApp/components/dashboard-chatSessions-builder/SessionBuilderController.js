@@ -11,6 +11,7 @@
 
     vm.step1 = {};
     vm.accordions = {};
+    vm.participants = [];
     vm.basePath = '/js/ngApp/components/dashboard-chatSessions-builder/';
 
     vm.$state = $state;
@@ -39,7 +40,7 @@
 
 
     //vm.currentStep = $stateParams.currentStep;
-    vm.currentStep = 1;
+    vm.currentStep = 4;
 
 
 
@@ -47,9 +48,14 @@
     vm.stepsClassIsActive = stepsClassIsActive;
     vm.updateStep = updateStep;
     vm.goToStep = goToStep;
+    vm.currentPageToDisplay = currentPageToDisplay;
 
     // step 2
     vm.selectFacilitatorsClickHandle = selectFacilitatorsClickHandle;
+
+    // step 4
+    vm.selectParticipants = selectParticipants;
+    vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
 
     function closeSession() {
       vm.session.cancel();
@@ -105,6 +111,26 @@
       var deferred = $q.defer();
 
       if (step == 2) {
+        $ocLazyLoad.load([
+          '/js/vendors/ngDraggable/ngDraggable.js',
+          '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
+          '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
+          '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
+          '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
+          '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
+          '/js/ngApp/modules/contactList/contactList.js',
+          '/js/ngApp/directives/custom-select-directive.js',
+          '/js/vendors/ng-file-upload/ng-file-upload.js',
+          '/js/ngApp/filters/num.js',
+          '/js/ngApp/filters/human2Camel.js'
+        ]).then(function(res) {
+          deferred.resolve();
+        });
+      }
+      else if(step == 3) {
+        deferred.resolve();
+      }
+      else if(step == 4) {
         $ocLazyLoad.load([
           '/js/vendors/ngDraggable/ngDraggable.js',
           '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
@@ -177,10 +203,31 @@
     }
 
 
+    function currentPageToDisplay() {
+      if(vm.searchingParticipants) {
+        return 'contactLists.html';
+      }
+      else {
+        return `step${vm.currentStep}.tpl.html`;
+      }
+    }
+
     /// step 2
 
     function selectFacilitatorsClickHandle() {
       domServices.modal('sessionBuilderSelectFacilitatorModal');
+    }
+
+    /// step 4
+
+    function selectParticipantsClickHandle() {
+      vm.searchingParticipants = true;
+    }
+
+    function selectParticipants(copyFunction) {
+      console.log(vm.participants);
+      copyFunction(vm.participants);
+      console.log(vm.participants);
     }
 
   }
