@@ -68,10 +68,48 @@ function update(id, parameters, callback){
     });
 }
 
+function getLatestMailTemplate(req, callback) {
+  let accountQuery = {};
+  if (req.accountId) {
+    accountQuery['$or'] = [{AccountId: req.accountId}, {AccountId: null}];
+  } else {
+    accountQuery.AccountId = null;
+  }
+
+  let templateQuery = {
+    '$or': [{id: req.latestId}, {MailTemplateBaseId: req.id}]
+  };
+
+  MailTemplate.findAll({
+    include: [{
+      model: MailTemplateOriginal, attributes: ['id', 'name']
+    }],
+    where: [accountQuery, templateQuery],
+    attributes: constants.mailTemplateFields,
+    raw: true,
+    order: [['updatedAt', 'DESC']],
+    limit: 1
+  }).then(function (result) {
+    if (result && result.length) {
+      callback(null, result[0]);
+    } else {
+      callback({error: "Template not found"});
+    }
+  }).catch(function (err) {
+    callback(err);
+  });
+}
+
+
 function getMailTemplate(req, callback) {
+  let query = {id: req.id};
+  if (req.accountId) {
+    query['$or'] = [{AccountId: req.accountId}, {AccountId: null}];
+  }
+
   MailTemplate.find({
     include: [{ model: MailTemplateOriginal, attributes: ['id', 'name']}],
-    where: {id: req.id},
+    where: query,
     attributes: constants.mailTemplateFields,
     raw: true
   }).then(function (result) {
@@ -95,9 +133,10 @@ function getBaseMailTemplate(req, callback) {
 /**
  * Get active global mail template by category name
  * @param category constant from ``` mailTemplateType.firstInvitation ```
+ * @param accountId id of account who created template or null to get default one
  * @returns {error, resultMailTemplate} result mail template will be either a copy or original version
  */
-function getActiveMailTemplate(category, callback) {
+function getActiveMailTemplate(category, accountId, callback) {
   //getting mail template original version by category name
   MailTemplateOriginal.find({
     where: {
@@ -107,7 +146,7 @@ function getActiveMailTemplate(category, callback) {
     raw: true
   }).then(function (result) {
     //get reference to active mail template copy
-    getMailTemplate({id: result.mailTemplateActive, or: result.id}, function(err, template) {
+    getLatestMailTemplate({id: result.id, latestId: result.mailTemplateActive, accountId: accountId}, function(err, template) {
       if (!template) {
         callback(null, result);
       } else {
@@ -180,7 +219,10 @@ function copyBaseTemplates(callback) {
   });
 }
 
-function setMailTemplateDefault (id, templateCopyId, callback) {
+function setMailTemplateDefault (id, templateCopyId, isAdmin, callback) {
+  if (!isAdmin) {
+    return callback(null, {id: templateCopyId});
+  }
   var params = {
     mailTemplateActive: templateCopyId
   }
@@ -188,26 +230,26 @@ function setMailTemplateDefault (id, templateCopyId, callback) {
       where: {id: id}
     })
   .then(function (result) {
-    return callback(null, result);
+    return callback(null, {id: templateCopyId});
   })
   .catch(function (err) {
     callback(err);
   });
 }
 
-function saveMailTemplate(template, createCopy, accountId, callback) {
+function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
   if (!template) {
-      return callback("e-mail template not provided");
+    return callback("e-mail template not provided");
   }
   var id = template.id;
   delete template["id"];
 
   if (!template["systemMessage"] && (!template["AccountId"] || createCopy)) {
-    if (!template["systemMessage"])
+    if (!template["systemMessage"] && !isAdmin)
       template.AccountId = accountId;
     create(template, function(error, result) {
       if (!error) {
-        setMailTemplateDefault(result.MailTemplateBaseId, result.id, callback);
+        setMailTemplateDefault(result.MailTemplateBaseId, result.id, isAdmin, callback);
       } else {
         callback(error);
       }
@@ -215,7 +257,7 @@ function saveMailTemplate(template, createCopy, accountId, callback) {
   } else {
     update(id, template, function(error, result) {
       if (!error) {
-        setMailTemplateDefault(template.MailTemplateBaseId, id, callback);
+        setMailTemplateDefault(template.MailTemplateBaseId, id, isAdmin, callback);
       } else {
         callback(error);
       }

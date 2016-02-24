@@ -50,7 +50,8 @@ function sendInvite(invite, callback) {
     email: invite.AccountUser.email,
     firstName: invite.AccountUser.firstName,
     lastName: invite.AccountUser.lastName,
-    accountName: invite.Account.name
+    accountName: invite.Account.name,
+    accountId: invite.Account.id
   };
 
   inviteMailer.sendInviteAccountManager(inviteParams, function(error, data) {

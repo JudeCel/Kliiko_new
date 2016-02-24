@@ -22,8 +22,6 @@ function extractImageResources(tepmlateHtml) {
             } else {
               path = path.replace("/chat_room/uploads/", "chatRoom/public/uploads/");
             }
-
-            console.log("___path", path);
             resources.push({filename: name, path: path, cid: name+"@kliiko"});
             attribs.src = "cid:"+name+"@kliiko";
             return {

@@ -10,7 +10,8 @@ var mailFrom = helpers.mailFrom();
 var transporter = helpers.createTransport();
 
 function sendInviteAccountManager(inviteParams, callback) {
-  mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.accountManagerConfirmation, function(error, result) {
+  let accountId = null;
+  mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.accountManagerConfirmation, inviteParams.accountId, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
       let links = {
@@ -45,15 +46,15 @@ function sendInviteAccountManager(inviteParams, callback) {
         lastName: inviteParams.lastName,
         accountName: inviteParams.accountName
       };
-      
+
       var mailContent = mailTemplateService.composeMailFromTemplate(result, params);
       if (mailContent.error) {
           return callback(mailContent.error);
       }
       mailTemplate.sendMailWithTemplate(mailContent, inviteParams, callback);
     }
-  }); 
-  
+  });
+
 };
 
 module.exports = {

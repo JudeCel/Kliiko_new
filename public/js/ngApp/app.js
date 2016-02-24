@@ -121,7 +121,7 @@
     function init() {
       user.getUserData(true).then(function(res) {
         var phoneIsoCode = 'au';
-        if(typeof res.phoneCountryData === 'string'){
+        if(typeof res.phoneCountryData === 'string' && res.phoneCountryData.length){
           phoneIsoCode = JSON.parse(res.phoneCountryData).iso2;
         }else{
           phoneIsoCode = res.phoneCountryData.iso2;

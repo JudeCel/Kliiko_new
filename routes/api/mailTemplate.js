@@ -1,6 +1,7 @@
 "use strict";
 var MailTemplate = require('./../../models').MailTemplate;
 var MailTemplateService = require('./../../services/mailTemplate');
+var policy = require('./../../middleware/policy.js');
 var _ = require('lodash');
 
 module.exports = {
@@ -26,7 +27,8 @@ function mailTemplatePost(req, res, next) {
 }
 
 function saveMailTemplatePost(req, res, next) {
-  MailTemplateService.saveMailTemplate(req.body.mailTemplate, req.body.copy, req.user.ownerAccountId,function(error, result) {
+  let isAdmin = policy.hasAccess(res.locals.currentDomain.roles, ['admin']);
+  MailTemplateService.saveMailTemplate(req.body.mailTemplate, req.body.copy, req.user.ownerAccountId, isAdmin,function(error, result) {
     res.send({error: error, templates: result});
   });
 }

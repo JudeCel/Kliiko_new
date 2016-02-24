@@ -11,7 +11,7 @@ var transporter = helpers.createTransport();
 
 users.sendReactivateOrDeactivate = function(params, callback){
   let templateType = !params.active ? mailTemplateService.mailTemplateType.deactivatedAccount : mailTemplateService.mailTemplateType.reactivatedAccount;
-  mailTemplateService.getActiveMailTemplate(templateType, function(error, result) {
+  mailTemplateService.getActiveMailTemplate(templateType, null, function(error, result) {
     //if failed to find mail template from DB, use old version
     let fields = { name: params.name, active: params.active,  firstName: params.firstName, lastName: params.lastName, logInUrl: "http://"+config.get("server").domain}
     if (error) {
@@ -45,7 +45,7 @@ users.sendReactivateOrDeactivate = function(params, callback){
 
 users.sendResetPasswordToken = function(params, callback) {
   let resetPasswordPath = '/resetpassword/';
-  mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.passwordResetRequest, function(error, result) {
+  mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.passwordResetRequest, null, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
       let link = { url: helpers.getUrl(params.token, resetPasswordPath)};
@@ -110,7 +110,7 @@ users.sendEmailConfirmationSuccess = function(params, callback) {
 };
 
 users.sendPasswordChangedSuccess = function(params, callback) {
-  mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.passwordChangeSuccess, function(error, result) {
+  mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.passwordChangeSuccess, null, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
       helpers.renderMailTemplate('changePasswordSuccess', {}, function(err, html){
@@ -141,7 +141,7 @@ users.sendPasswordChangedSuccess = function(params, callback) {
 };
 
 users.sendResetPasswordSuccess = function(params, callback) {
-  mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.passwordChangeSuccess, function(error, result) {
+  mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.passwordChangeSuccess, null, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
       helpers.renderMailTemplate('resetPasswordSuccess', {}, function(err, html){
