@@ -12,7 +12,7 @@ module.exports = {
 };
 
 function initializeBuilder(req, res, next) {
-  let params = { accountId: res.locals.currentDomain.id }
+  let params = { accountId: res.locals.currentDomain.id };
   sessionBuilderServices.initializeBuilder(params).then(function(result) {
     res.send(result);
   }, function(error) {
@@ -30,10 +30,17 @@ function openBuild(req, res, next) {
 }
 
 function update(req, res, next) {
-  params.accountId = res.locals.currentDomain.id;
-  delete params.step // Step only can be updated with next step function
+  res.send({ok:' tmp'}); return
+  ///////
 
-  sessionBuilderServices.update(params).then(function(result) {
+  if (!req.body.sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
+
+  let sessionObj = req.body.sessionObj;
+
+  sessionObj.accountId = res.locals.currentDomain.id;
+  delete sessionObj.step; // Step only can be updated with next step function
+
+  sessionBuilderServices.update(sessionObj).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});
@@ -41,8 +48,15 @@ function update(req, res, next) {
 }
 
 function nextStep(req, res, next) {
+  res.send({ok:' tmp'}); return
+  ///////
+
+  if (!req.body.sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
+
   let accountId = res.locals.currentDomain.id;
-  sessionBuilderServices.nextStep(req.params.id, accountId, req.params).then(function(result) {
+  let sessionObj = req.body.sessionObj;
+
+  sessionBuilderServices.nextStep(sessionObj.id, accountId, sessionObj).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});
