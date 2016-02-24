@@ -1,7 +1,8 @@
 #step-3,
-#step-4 {
+#step-4,
+#step-5 {
   margin-top: 50px;
-  font-size: 2rem;
+  font-size: 14px;
   text-align: left;
 
   .row {
@@ -122,7 +123,7 @@
     float: right;
     color: $grey;
     cursor: pointer;
-    
+
     &:hover {
       color: $blue;
     }

@@ -12,6 +12,7 @@
     vm.step1 = {};
     vm.accordions = {};
     vm.participants = [];
+    vm.observers = [];
     vm.basePath = '/js/ngApp/components/dashboard-chatSessions-builder/';
 
     vm.$state = $state;
@@ -53,9 +54,10 @@
     // step 2
     vm.selectFacilitatorsClickHandle = selectFacilitatorsClickHandle;
 
-    // step 4
+    // step 4 + 5
     vm.finishSelectingMembers = finishSelectingMembers;
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
+    vm.selectObserversClickHandle = selectObserversClickHandle;
 
     function closeSession() {
       vm.session.cancel();
@@ -147,6 +149,23 @@
           deferred.resolve();
         });
       }
+      else if(step == 5) {
+        $ocLazyLoad.load([
+          '/js/vendors/ngDraggable/ngDraggable.js',
+          '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
+          '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
+          '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
+          '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
+          '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
+          '/js/ngApp/modules/contactList/contactList.js',
+          '/js/ngApp/directives/custom-select-directive.js',
+          '/js/vendors/ng-file-upload/ng-file-upload.js',
+          '/js/ngApp/filters/num.js',
+          '/js/ngApp/filters/human2Camel.js'
+        ]).then(function(res) {
+          deferred.resolve();
+        });
+      }
 
       return deferred.promise;
     }
@@ -204,7 +223,7 @@
 
 
     function currentPageToDisplay() {
-      if(vm.searchingParticipants) {
+      if(vm.searchingParticipants || vm.searchingObservers) {
         return 'contactLists.html';
       }
       else {
@@ -218,17 +237,24 @@
       domServices.modal('sessionBuilderSelectFacilitatorModal');
     }
 
-    /// step 4
+    /// step 4 + 5
 
     function selectParticipantsClickHandle() {
       vm.searchingParticipants = true;
     }
 
+    function selectObserversClickHandle() {
+      vm.searchingObservers = true;
+    }
+
     function finishSelectingMembers(members) {
       if(vm.searchingParticipants) {
         vm.participants = selectMembers(members);
-        console.log(vm.participants);
         vm.searchingParticipants = false;
+      }
+      else if(vm.searchingObservers) {
+        vm.observers = selectMembers(members);
+        vm.searchingObservers = false;
       }
     }
 

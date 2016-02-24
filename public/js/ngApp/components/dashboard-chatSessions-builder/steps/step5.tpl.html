@@ -1,16 +1,34 @@
-<section id="step-5">
-    <div class="row">
+<section id='step-5'>
+  <h3 class='text-center'>Observers</h3>
 
-        <section ng-show="up.paymentSubmitError">
-            <h1>Submitting Failed!</h1>
-            <div class="error-area">{{ up.paymentSubmitError }}</div>
-        </section>
-
-        <section ng-hide="up.paymentSubmitError">
-            <h1>Thank you, {{ up.userData.firstName }}!</h1>
-            <p>Your order confirmation and invoice have been emailed to you</p>
-        </section>
-
-
+  <div class='text-center'>
+    <div class='btn-standart btn-green' ng-click='sbc.selectObserversClickHandle()'>
+      Select Observers From Contact List
     </div>
+  </div>
+
+  <div class='row'>
+    <table class='table table-dashboardElements'>
+      <thead>
+        <tr class='green-background'>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Gender</th>
+          <th>Email</th>
+          <th>Mobile</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat='member in sbc.observers'>
+          <td>{{ member.firstName }}</td>
+          <td>{{ member.lastName }}</td>
+          <td>{{ member.gender }}</td>
+          <td>{{ member.email }}</td>
+          <td>{{ member.mobile }}</td>
+          <td>{{ member.status }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </section>
