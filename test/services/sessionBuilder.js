@@ -155,7 +155,7 @@ describe('SERVICE - SessionBuilder', function() {
     });
 
     describe('sad path', function(done) {
-      it('should fail on moving to next step', function(done) {
+      it('should fail on moving to next step because validation fails', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
 
@@ -167,6 +167,66 @@ describe('SERVICE - SessionBuilder', function() {
               assert.equal(error.name, sessionBuilderServices.messages.errors.firstStep.nameRequired);
               assert.equal(error.startTime, sessionBuilderServices.messages.errors.firstStep.invalidDateRange);
               done();
+            });
+          });
+        });
+      });
+
+      it('should fail on moving to next step because last step', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          params.step = 'done';
+
+          sessionBuilderServices.update(params).then(function(result) {
+            assert.equal(result.sessionBuilder.currentStep, params.step);
+
+            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+              assert.equal(result.sessionBuilder.currentStep, params.step);
+              done();
+            }, function(error) {
+              done(error);
+            });
+          });
+        });
+      });
+    });
+  });
+
+  describe('#prevStep', function(done) {
+    describe('happy path', function(done) {
+      it('should go to previous step', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          params.step = 'manageSessionEmails';
+
+          sessionBuilderServices.update(params).then(function(result) {
+            assert.equal(result.sessionBuilder.currentStep, params.step);
+
+            sessionBuilderServices.prevStep(params.id, params.accountId).then(function(result) {
+              assert.equal(result.sessionBuilder.currentStep, 'facilitatiorAndTopics');
+              done();
+            }, function(error) {
+              done(error);
+            });
+          });
+        });
+      });
+    });
+
+    describe('sad path', function(done) {
+      it('should fail on moving to previous step because first step', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = sessionParams(result);
+          assert.equal(result.sessionBuilder.currentStep, 'setUp');
+
+          sessionBuilderServices.update(params).then(function(result) {
+            assert.equal(result.sessionBuilder.currentStep, 'setUp');
+
+            sessionBuilderServices.prevStep(params.id, params.accountId).then(function(result) {
+              assert.equal(result.sessionBuilder.currentStep, 'setUp');
+              done();
+            }, function(error) {
+              done(error);
             });
           });
         });
@@ -389,7 +449,7 @@ describe('SERVICE - SessionBuilder', function() {
           }).catch(function(error) {
             cb(error);
           });
-        } 
+        }
       );
       return array;
     };
