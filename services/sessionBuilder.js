@@ -47,6 +47,7 @@ module.exports = {
   findSession: findSession,
   update: update,
   nextStep: nextStep,
+  prevStep: prevStep,
   openBuild: openBuild,
   destroy: destroy
 };
@@ -115,7 +116,7 @@ function nextStep(id, accountId, params) {
 
   findSession(id, accountId).then(function(session) {
     validate(session, params).then(function() {
-      session.updateAttributes({ step: findNextStep(session.step) }).then(function(updatedSession) {
+      session.updateAttributes({ step: findNewStep(session.step, false) }).then(function(updatedSession) {
         sessionBuilderObject(updatedSession).then(function(result) {
           deferred.resolve(result);
         }, function(error) {
@@ -126,6 +127,26 @@ function nextStep(id, accountId, params) {
       });
     }, function(error) {
       deferred.reject(error);
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function prevStep(id, accountId) {
+  let deferred = q.defer();
+
+  findSession(id, accountId).then(function(session) {
+    session.updateAttributes({ step: findNewStep(session.step, true) }).then(function(updatedSession) {
+      sessionBuilderObject(updatedSession).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
     });
   }, function(error) {
     deferred.reject(error);
@@ -169,13 +190,20 @@ function destroy(id, accountId) {
 }
 
 // Helpers
-function findNextStep(step) {
+function findNewStep(step, previous) {
   let steps = constants.sessionBuilderSteps;
   let currentIndex = steps.indexOf(step);
-  let nextStep = steps[++currentIndex];
+  let newStep;
 
-  if(currentIndex > -1 && nextStep) {
-    return nextStep;
+  if(previous) {
+    newStep = steps[--currentIndex];
+  }
+  else {
+    newStep = steps[++currentIndex];
+  }
+
+  if(currentIndex > -1 && newStep) {
+    return newStep;
   }
   else{
     return step;
@@ -373,6 +401,9 @@ function findValidation(step, params) {
     }, function(error) {
       deferred.reject(error);
     });
+  }
+  else {
+    deferred.resolve();
   }
 
   return deferred.promise;
