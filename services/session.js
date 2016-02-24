@@ -6,6 +6,7 @@ var filters = require('./../models/filters');
 var Session  = models.Session;
 var SessionMember  = models.SessionMember;
 var AccountUser  = models.AccountUser;
+var Account  = models.Account;
 
 var q = require('q');
 var _ = require('lodash');
@@ -32,7 +33,8 @@ module.exports = {
   findAllSessions: findAllSessions,
   copySession: copySession,
   removeSession: removeSession,
-  updateSessionMemberRating: updateSessionMemberRating
+  updateSessionMemberRating: updateSessionMemberRating,
+  getAllSessionRatings: getAllSessionRatings
 };
 
 // Exports
@@ -69,7 +71,6 @@ function findSession(sessionId, accountId) {
 
 function findAllSessions(userId, domain) {
   let deferred = q.defer();
-
   if(policy.hasAccess(domain.roles, ['accountManager', 'admin'])) {
     findAllSessionsAsManager(domain.id).then(function(data) {
       deferred.resolve(data);
@@ -86,6 +87,53 @@ function findAllSessions(userId, domain) {
   }
 
   return deferred.promise;
+};
+
+function getAllSessionRatings() {
+  let deferred = q.defer();
+
+  Account.findAll({
+    attributes: ['id', 'name'],
+    include: [{
+      model: Session,
+      attributes: ['id', 'name'],
+      include: [{
+        model: SessionMember,
+        attributes: ['rating']
+      }]
+    }]
+  }).then(function(accounts) {
+    deferred.resolve(simpleParams(prepareAccountRatings(accounts)));
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+};
+
+function prepareAccountRatings(accounts) {
+  let ratings = [];
+
+  _.map(accounts, function(account) {
+    let object = { name: account.name, sessions: [], rating: 0 };
+
+    _.map(account.Sessions, function(session) {
+      let sObject = { name: session.name, rating: 0 };
+      _.map(session.SessionMembers, function(member) {
+        sObject.rating += member.rating;
+      });
+
+      object.rating += sObject.rating;
+      object.sessions.push(sObject);
+    });
+
+    if(!_.isEmpty(object.sessions)) {
+      object.rating /= object.sessions.length;
+      ratings.push(object);
+    }
+  });
+
+  return ratings;
 };
 
 function removeSession(sessionId, accountId) {
