@@ -1058,6 +1058,9 @@ footer {
 .col-width-15-percent {
   width: 15% !important; }
 
+.intl-tel-input {
+  width: 100%; }
+
 .dashboard-header .my-details-container {
   height: 20px;
   margin-left: 10px; }
