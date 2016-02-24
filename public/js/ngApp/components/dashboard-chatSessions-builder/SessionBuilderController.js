@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'messenger', 'SessionModel','$state', '$stateParams', '$filter'];
-  function SessionBuilderController(dbg, messenger, SessionModel, $state, $stateParams, $filter) {
+  SessionBuilderController.$inject = ['dbg', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices', '$ocLazyLoad', '$q'];
+  function SessionBuilderController(dbg, messenger, SessionModel, $state, $stateParams, $filter, domServices, $ocLazyLoad, $q) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -22,15 +22,15 @@
     vm.session.init().then(function(res) {
 
 
-      vm.dateTime = {
-        hstep:1,
-        mstep: 15,
+    vm.dateTime = {
+      hstep:1,
+      mstep: 15,
 
-        options: {
-          hstep: [1, 2, 3],
-          mstep: [1, 5, 10, 15, 25, 30]
-        }
-      };
+      options: {
+        hstep: [1, 2, 3],
+        mstep: [1, 5, 10, 15, 25, 30]
+      }
+    };
 
 
       parseDateAndTime('initial');
@@ -47,6 +47,9 @@
     vm.stepsClassIsActive = stepsClassIsActive;
     vm.updateStep = updateStep;
     vm.goToStep = goToStep;
+
+    // step 2
+    vm.selectFacilitatorsClickHandle = selectFacilitatorsClickHandle;
 
     function closeSession() {
       vm.session.cancel();
@@ -67,7 +70,14 @@
 
       if (!valid) return;
 
-      vm.session.updateStep();
+      initStep(step).then(function(res) {
+        vm.session.updateStep();
+
+        $stateParams.planUpgradeStep = vm.currentStep = step;
+      });
+
+
+
     }
 
     /**
@@ -89,6 +99,30 @@
       function validateStep3() {
         return true;
       }
+    }
+
+    function initStep(step) {
+      var deferred = $q.defer();
+
+      if (step == 2) {
+        $ocLazyLoad.load([
+          '/js/vendors/ngDraggable/ngDraggable.js',
+          '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
+          '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
+          '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
+          '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
+          '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
+          '/js/ngApp/modules/contactList/contactList.js',
+          '/js/ngApp/directives/custom-select-directive.js',
+          '/js/vendors/ng-file-upload/ng-file-upload.js',
+          '/js/ngApp/filters/num.js',
+          '/js/ngApp/filters/human2Camel.js'
+        ]).then(function(res) {
+          deferred.resolve();
+        });
+      }
+
+      return deferred.promise;
     }
 
     function stepsClassIsActive(step) {
@@ -140,6 +174,13 @@
       }
 
 
+    }
+
+
+    /// step 2
+
+    function selectFacilitatorsClickHandle() {
+      domServices.modal('sessionBuilderSelectFacilitatorModal');
     }
 
   }

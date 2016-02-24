@@ -1,5 +1,247 @@
 <section id="step-2">
 
+    <section id="step-1" class="animated fadeIn">
+        <h3 class="text-center">Facilitator And Topics</h3>
 
 
+        <div class="text-center">
+            <div class="btn-standart btn-green" ng-click="sbc.selectFacilitatorsClickHandle()">
+                Select Facilitator From Contact List
+            </div>
+        </div>
+
+        <br><br><br>
+
+
+        <uib-accordion close-others="false">
+            <uib-accordion-group is-open="sbc.accordions.sessionName">
+                <uib-accordion-heading>
+                    <div class="panel-label">
+                        Name Your Chat Session
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.sessionName, 'glyphicon-chevron-right': !sbc.accordions.sessionName}"></i>
+                        <span class="panel-value pull-right">{{ sbc.session.steps.step1.name }}</span>
+                    </div>
+                </uib-accordion-heading>
+                <label for="sessionBuilder-session-name">Name your session &nbsp; </label>
+                <input id="sessionBuilder-session-name" type="text" ng-model="sbc.session.steps.step1.name" ng-blur="sbc.updateStep();">
+            </uib-accordion-group>
+
+
+            <uib-accordion-group is-open="sbc.accordions.dateAndTime">
+                <uib-accordion-heading>
+                    <div class="panel-label">
+                        Enter Date And Time
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.dateAndTime, 'glyphicon-chevron-right': !sbc.accordions.dateAndTime}"></i>
+                        <span class="panel-value pull-right">{{ sbc.session.steps.step1.startTime | date : 'short'}} - {{ sbc.session.steps.step1.endTime | date : 'short'}}</span>
+                    </div>
+                </uib-accordion-heading>
+                <div class="data-time-content-wrapper" style="display: flex">
+                    <span class="date-time-label">Start</span> <img class="date-time-ico" src="/icons/calendar_green.png" alt="">
+                    <input ng-model="sbc.step1.startDate" ng-blur="sbc.updateStep(1)"  type="date">
+
+                    <img class="date-time-ico time" src="/icons/time_green.png" alt="">
+                    <uib-timepicker class="timepicker-wrapper" ng-model="sbc.step1.startTime" ng-change="sbc.updateStep(1)" hour-step="sbc.dateTime.hstep" minute-step="sbc.dateTime.mstep" show-meridian="true"></uib-timepicker>
+
+                </div>
+                <div class="data-time-content-wrapper">
+                    <span class="date-time-label end">End</span><img class="date-time-ico" src="/icons/calendar_green.png" alt="">
+                    <input  ng-model="sbc.step1.endDate"  ng-blur="sbc.updateStep(1)"  type="date">
+
+                    <img class="date-time-ico time" src="/icons/time_green.png" alt="">
+                    <uib-timepicker class="timepicker-wrapper" ng-model="sbc.step1.endTime" ng-change="sbc.updateStep(1)" hour-step="sbc.dateTime.hstep" minute-step="sbc.dateTime.mstep" show-meridian="true"></uib-timepicker>
+                </div>
+
+
+            </uib-accordion-group>
+
+            <uib-accordion-group is-open="sbc.accordions.brandLogo">
+                <uib-accordion-heading>
+                    <div class="panel-label">
+                        Select Brand Logo (optional) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.brandLogo, 'glyphicon-chevron-right': !sbc.accordions.brandLogo}"></i>
+                        <span class="panel-value pull-right">{{ sbc.brandLogo.JSON.name }}</span>
+                    </div>
+                </uib-accordion-heading>
+                <section id='GalleryController' ng-controller='GalleryController'>
+                    <!-- Table view -->
+                    <div class="gallery-body col-md-12">
+                        <table class="table table-hover table-responsive" >
+                            <!--------------------->
+                            <div class='col-sm-4' ng-repeat="resource in resources | filter: { resourceType: 'brandLogo' }">
+                                <label for="{{ $index }}-logo">
+                                    <div class='panel'>
+                                        <input id="{{ $index }}-logo" type="radio" ng-model="sbc.brandLogo" ng-value="resource" >
+                                        <img calss="source-img" ng-src='{{ getResourceNameUrl(resource) }}'/>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class='col-sm-12'>
+                                <div class="btn-standart btn-red" ng-show="sbc.brandLogo" ng-click="sbc.brandLogo = null">Clean Selection</div>
+                            </div>
+
+
+
+                            <div ng-show="!(resources| filter: { resourceType: 'brandLogo' }).length">
+                                <h4>There is no image resources was uploaded</h4>
+                                <div class="btn-standart btn-green" ui-sref="dashboard.resources.gallery">Add Logo</div>
+
+                            </div>
+                        </table>
+                    </div>
+                </section>
+            </uib-accordion-group>
+
+            <uib-accordion-group is-open="sbc.accordions.colorScheme">
+                <uib-accordion-heading>
+                    <div class="panel-label">
+                        Select Colour Scheme (optional) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.colorScheme, 'glyphicon-chevron-right': !sbc.accordions.colorScheme}"></i>
+                        <span class="panel-value pull-right">{{ sbc.colorScheme.name }}</span>
+                    </div>
+                </uib-accordion-heading>
+
+                <section>
+                    <div class='row' ng-controller='BrandColourController as bcc'>
+                        <div class='col-sm-6' ng-repeat='scheme in bcc.schemes' ng-show="bcc.schemes.length">
+                            <label for="{{ $index }}-scheme">
+                                <div class='panel panel-default panel-success'>
+                                    <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='background-color: {{ scheme.colours.browserBackground }};'>
+                                        <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/preview.html'"></ng-include>
+                                    </div>
+
+                                    <div class='panel-heading'>
+                                        <div class='row'>
+                                            <div class='col-xs-1'>
+                                                <input id="{{ $index }}-scheme" type="radio" ng-model="sbc.colorScheme" ng-value="scheme" >
+                                            </div>
+                                            <div class='col-xs-10'>
+                                                <h3 class='panel-title text-max-width'>{{ scheme.name }}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        <div class='col-sm-12'>
+                            <div class="btn-standart btn-red" ng-show="sbc.colorScheme" ng-click="sbc.colorScheme = null">Clean Color Scheme Selection</div>
+                        </div>
+                        <div id="create-color-scheme-area" ng-show="!bcc.schemes.length">
+                            <h4>There is no defined color schemes. </h4>
+                            <div class="btn-standart btn-green" ui-sref="dashboard.resources.brandColours({new:'new', backTo:sbc.$state.current.name })">Create one</div>
+                        </div>
+                    </div>
+                </section>
+
+            </uib-accordion-group>
+
+        </uib-accordion>
+    </section>
+
+</section>
+
+
+<!----------- MODALS ---------------------->
+<section>
+    <!-- plansModal -->
+    <div class='modal fade' id='sessionBuilderSelectFacilitatorModal' role='dialog'>
+        <div id='dashboard-contact-lists' ng-controller="ContactListController as clc" class='modal-dialog changePasswordModal' style="width: 90%" >
+            <div class='modal-content border-green border-radius-none'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                    <h1 class='modal-title text-center'>Select facilitator</h1>
+                </div>
+                <div class='modal-body'>
+
+                    <!-------------------->
+
+                    <div class='col-md-12 fixed-bottom-margin'>
+                        <div class='dashboard-container'>
+
+
+                            <div class="row">
+                                <div id="contact-lists-left-column" class="col-md-2">
+                                </div>
+
+                                <div id="contact-lists-right-column" class="col-md-12">
+                                    <div id="list-mass-actions" ng-class="row" ng-hide="!clc.lists.activeList.members.length">
+
+                                    </div>
+
+                                    <!-- TABLE -->
+                                    <code>{{ sbc.selectedFacilitator }}</code>
+                                    <section id="dashboard-contact-lists-main-table">
+                                        <table class='table table-responsive table-dashboardElements' ng-hide="!clc.lists.activeList.members.length">
+                                            <thead>
+                                            <tr>
+                                                <th class="selection-column"></th>
+                                                <th class="th-header druggable" ng-repeat="rowHeader in clc.lists.activeList.visibleFields track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)"
+                                                    ng-drag="true" ng-drag-data="$index">
+                                                    <span class="sorting-order-arrow"><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
+                                                    <span class="sorting-order-arrow"><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
+                                                    <span class="th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader | human2Camel : true}}</span>
+
+                                                </th>
+
+                                                <th ng-click="clc.showManageColumnsModal()"><img  src="/icons/grid.png" ></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr class="member-row" ng-repeat='member in clc.lists.activeList.members | orderBy: clc.tableSort.by : clc.tableSort.reverse' ng-class="{'selected':member._selected}">
+                                                <td class="selection-column">
+                                                    <input type="radio" ng-value="member" ng-model="sbc.selectedFacilitator">
+                                                    <!--<div class="check">-->
+                                                        <!--<input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-model="member._selected" ng-click="member.selected = !member.selected" type="checkbox" >-->
+                                                        <!--<label for="memberSelectet{{ $index }}" class="kliiko-checkbox" ></label>-->
+                                                    <!--</div>-->
+                                                </td>
+
+                                                <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index"> {{ member[tableRow] || '-' }}</td>
+
+                                                <td >
+                                                    <span class='table-item-edit-group'>
+                                                      <img src='/icons/dashboardElement_edit.png' alt='' ng-click="clc.contactAddEditClickHandle('update', member)"/>
+                                                      <!--<img src='/icons/dashboardElement_remove.png' alt='' ng-click="clc.removeContacts(member.id)" />-->
+                                                    </span>
+                                                </td>
+                                            </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </section>
+                                    <!--eof table-->
+
+                                    <div id="no-contacts-in-list" class="text-center" ng-show="!clc.lists.activeList.members.length">
+                                        <h3>There is no contacts in this list yet</h3>
+
+                                        <div custom-select-directive data-title="Add Contacts" data-id="contact-lists-add-button-2" class="custom-select-directive">
+                                            <li ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
+                                            <li ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
+                                            <li ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
+                                        </div>
+
+            <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable">
+              &nbsp; or &nbsp;
+              <div class="btn-standart btn-red" ng-click="clc.deleteList(clc.lists.activeList, $index)">Remove this List</div>
+            </span>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <!-------------------->
+                </div>
+                <div class='modal-footer'>
+                    <div type='button' class='pull-left btn-dashboard-plans go-back-btn' data-dismiss='modal'>Go
+                        Back
+                    </div>
+                    <div type='submit' class='pull-right btn-dashboard-plans i-want-btn'
+                         ng-click="sbc.upgradeToPlan(sbc.currentPlan.id)">I Want This Plan
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>

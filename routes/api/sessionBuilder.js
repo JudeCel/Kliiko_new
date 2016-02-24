@@ -30,8 +30,8 @@ function openBuild(req, res, next) {
 }
 
 function update(req, res, next) {
-  res.send({ok:' tmp'}); return
-  ///////
+  //res.send({ok:' tmp'}); return
+  /////////
 
   if (!req.body.sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
 
@@ -48,8 +48,8 @@ function update(req, res, next) {
 }
 
 function nextStep(req, res, next) {
-  res.send({ok:' tmp'}); return
-  ///////
+  //res.send({ok:' tmp'}); return
+  /////////
 
   if (!req.body.sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
 
