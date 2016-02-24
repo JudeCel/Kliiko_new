@@ -25,9 +25,8 @@ function mailTemplatePost(req, res, next) {
   });
 }
 
-
 function saveMailTemplatePost(req, res, next) {
-  MailTemplateService.saveMailTemplate(req.body.mailTemplate, req.body.copy, req.user.id,function(error, result) {
+  MailTemplateService.saveMailTemplate(req.body.mailTemplate, req.body.copy, req.user.ownerAccountId,function(error, result) {
     res.send({error: error, templates: result});
   });
 }

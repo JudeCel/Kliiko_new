@@ -137,18 +137,16 @@ function getMailTemplateForReset(req, callback) {
 }
 
 function getAllMailTemplates(req, getSystemMail,callback) {
-
   let query = {};
-  if (req.id) {
-      query['$or'] = [{UserId: req.id}, {UserId: null}];
-  }
-  
+
   let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category']}];
-  
+
   if (!getSystemMail) {
     //getting list that any user can edit
     query.systemMessage = false;
+    query['$or'] = [{AccountId: req.ownerAccountId}, {AccountId: null}];
   }
+
 
   MailTemplate.findAll({
       include: include,
@@ -157,7 +155,7 @@ function getAllMailTemplates(req, getSystemMail,callback) {
       raw: true,
       order: "id ASC"
   }).then(function(result) {
-      callback(null, result);
+    callback(null, result);
   }).catch(function(error) {
     callback(error);
   });
@@ -197,22 +195,22 @@ function setMailTemplateDefault (id, templateCopyId, callback) {
   });
 }
 
-function saveMailTemplate(template, createCopy, userId, callback) {
+function saveMailTemplate(template, createCopy, accountId, callback) {
   if (!template) {
       return callback("e-mail template not provided");
   }
   var id = template.id;
   delete template["id"];
 
-  if (!template["systemMessage"] && (!template["UserId"] || createCopy)) {
+  if (!template["systemMessage"] && (!template["AccountId"] || createCopy)) {
     if (!template["systemMessage"])
-      template.UserId = userId;
+      template.AccountId = accountId;
     create(template, function(error, result) {
       if (!error) {
         setMailTemplateDefault(result.MailTemplateBaseId, result.id, callback);
       } else {
         callback(error);
-      }  
+      }
     });
   } else {
     update(id, template, function(error, result) {
@@ -220,7 +218,7 @@ function saveMailTemplate(template, createCopy, userId, callback) {
         setMailTemplateDefault(template.MailTemplateBaseId, id, callback);
       } else {
         callback(error);
-      }  
+      }
     });
   }
 }
@@ -298,7 +296,7 @@ function sendMailFromTemplateWithCalendarEvent(id, params, callback) {
 //replace all "In Editor" variables with .ejs compatible variables
 function formatTemplateString(str) {
   str = str.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
-  
+
   str = str.replace(/\{First Name\}/ig, "<%= firstName %>");
   str = str.replace(/\{Last Name\}/ig, "<%= lastName %>");
   str = str.replace(/\{Account Name\}/ig, "<%= accountName %>");

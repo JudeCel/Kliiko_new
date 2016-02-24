@@ -23,7 +23,8 @@ module.exports = {
     'landlineNumber',
     'mobile',
     'comment',
-    'phoneCountryData'
+    'phoneCountryData',
+    'landlineNumberCountryData'
   ],
   safeUserParams: [
     'id',
@@ -39,10 +40,10 @@ module.exports = {
   ],
   mailTemplateFields: [
     'id', 'name', 'subject', 'content',
-    'MailTemplateBaseId', 'UserId', 'systemMessage'
+    'MailTemplateBaseId', 'AccountId', 'systemMessage'
   ],
   mailTemplateFieldsForList: [
-    'id', 'name', 'MailTemplateBaseId', 'UserId', 'systemMessage'
+    'id', 'name', 'MailTemplateBaseId', 'AccountId', 'systemMessage'
   ],
   sessionListManageRoles: {
     accountUser: ['accountManager', 'admin'],

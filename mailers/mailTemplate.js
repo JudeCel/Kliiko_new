@@ -15,8 +15,15 @@ function extractImageResources(tepmlateHtml) {
       transformTags: {
         'img': function(tagName, attribs) {
             let filename = attribs.src.split('/');
-            let name = filename[filename.length - 1];
-            let path = "public" + attribs.src;
+            let name = escape(filename[filename.length - 1]);
+            let path = attribs.src;
+            if (path.indexOf("/chat_room/upload") == -1) {
+              path = "public" + path;
+            } else {
+              path = path.replace("/chat_room/uploads/", "chatRoom/public/uploads/");
+            }
+
+            console.log("___path", path);
             resources.push({filename: name, path: path, cid: name+"@kliiko"});
             attribs.src = "cid:"+name+"@kliiko";
             return {

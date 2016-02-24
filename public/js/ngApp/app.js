@@ -119,19 +119,27 @@
     init();
 
     function init() {
-      user.getUserData(true).then(function(res) { 
-        var isoCode = 'au';
-        vm.user = res 
+      user.getUserData(true).then(function(res) {
+        var phoneIsoCode = 'au';
         if(typeof res.phoneCountryData === 'string'){
-          isoCode = JSON.parse(res.phoneCountryData).iso2;
+          phoneIsoCode = JSON.parse(res.phoneCountryData).iso2;
         }else{
-          isoCode = res.phoneCountryData.iso2;
+          phoneIsoCode = res.phoneCountryData.iso2;
         }
-        sessionStorage.setItem('countryIso2',  isoCode);
+        sessionStorage.setItem('phoneCountryData',  phoneIsoCode);
+
+        var landlineNumberIsoCode = 'au';
+        if(typeof res.landlineNumberCountryData === 'string'){
+          landlineNumberIsoCode = JSON.parse(res.landlineNumberCountryData).iso2;
+        }else{
+          landlineNumberIsoCode = res.landlineNumberCountryData.iso2;
+        }
+        sessionStorage.setItem('landlineNumberCountryData',  landlineNumberIsoCode);
+
+        vm.user = res;
       });
       accountUser.getAccountUserData(true).then(function(res) { vm.accountUser = res });
     }
-
 
   }
 
