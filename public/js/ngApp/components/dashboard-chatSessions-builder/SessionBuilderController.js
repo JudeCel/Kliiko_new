@@ -54,7 +54,7 @@
     vm.selectFacilitatorsClickHandle = selectFacilitatorsClickHandle;
 
     // step 4
-    vm.selectParticipants = selectParticipants;
+    vm.finishSelectingMembers = finishSelectingMembers;
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
 
     function closeSession() {
@@ -224,10 +224,23 @@
       vm.searchingParticipants = true;
     }
 
-    function selectParticipants(copyFunction) {
-      console.log(vm.participants);
-      copyFunction(vm.participants);
-      console.log(vm.participants);
+    function finishSelectingMembers(members) {
+      if(vm.searchingParticipants) {
+        vm.participants = selectMembers(members);
+        console.log(vm.participants);
+        vm.searchingParticipants = false;
+      }
+    }
+
+    function selectMembers(members) {
+      var selected = [];
+      for(var i in members) {
+        var member = members[i];
+        if(member._selected) {
+          selected.push(member);
+        }
+      }
+      return selected;
     }
 
   }
