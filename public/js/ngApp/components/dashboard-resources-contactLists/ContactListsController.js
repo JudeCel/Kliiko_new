@@ -9,7 +9,7 @@
 
     vm.listIdToEdit = null;
     vm.newList = {};
-    vm.lists = new ListsModel();
+
     vm.newList = {};
     vm.modalErrors = {};
     vm.allSelected = false;
@@ -18,12 +18,14 @@
     vm.importData = { excel:false, csv:false, fileToImport: null};
     vm.basePath = '/js/ngApp/components/dashboard-resources-contactLists/';
     vm.importErrorMessage = null;
+    vm.hideStuff = false;
 
     vm.importedFields = [];
     vm.contactListDropItems = [];
     vm.validContactList = [];
     vm.contactListToAdd = [];
 
+    vm.initLists = initLists;
     vm.changeActiveList = changeActiveList;
     vm.addNewList = addNewList;
     vm.submitNewList = submitNewList;
@@ -64,6 +66,10 @@
       }, 300);
 
     };
+
+    function initLists() {
+      vm.lists = new ListsModel();
+    }
 
     function changeActiveList(index) {
       selectAll(true);

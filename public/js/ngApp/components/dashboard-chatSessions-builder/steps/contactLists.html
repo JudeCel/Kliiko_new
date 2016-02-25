@@ -1,4 +1,4 @@
-<section id='step-4' ng-controller='ContactListController as clc'>
+<section id='step-contactlists' ng-controller='ContactListController as clc' ng-init='clc.hideStuff = true; clc.initLists()'>
   <div class='row'>
     <h3 class='text-center'></h3>
     <div class='btn-standart btn-green' ng-click='sbc.finishSelectingMembers(clc.lists.activeList.members)'>

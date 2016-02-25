@@ -23,6 +23,7 @@
     vm.session = new SessionModel(sessionId);
     vm.session.init().then(function(res) {
 
+    vm.mouseOveringMember = [];
     vm.sessionMemberValidations = {
       facilitator: {
         min: 1,
@@ -73,6 +74,9 @@
     vm.finishSelectingMembers = finishSelectingMembers;
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
     vm.selectObserversClickHandle = selectObserversClickHandle;
+    vm.selectedAllMembers = selectedAllMembers;
+    vm.findSelectedMembers = findSelectedMembers;
+    vm.removeFromList = removeFromList;
 
     function closeSession() {
       vm.session.cancel();
@@ -270,6 +274,49 @@
       vm.searchingObservers = true;
     }
 
+    function currentMemberList() {
+      if(vm.currentStep == 4) {
+        return vm.participants;
+      }
+      else if(vm.currentStep == 5) {
+        return vm.observers;
+      }
+    }
+
+    function currentStepString() {
+      if(vm.currentStep == 4) {
+        return 'step4';
+      }
+      else if(vm.currentStep == 5) {
+        return 'step5';
+      }
+    }
+
+    function selectedAllMembers() {
+      var members = currentMemberList();
+      var stepString = currentStepString();
+
+      for(var i in members) {
+        var member = members[i];
+        member[stepString] = vm.selectedAll;
+      }
+    }
+
+    function findSelectedMembers() {
+      var array = [];
+      var members = currentMemberList();
+      var stepString = currentStepString();
+
+      for(var i in members) {
+        var member = members[i];
+        if(member[stepString]) {
+          array.push(member);
+        }
+      }
+
+      return array;
+    }
+
     function finishSelectingMembers(members) {
       if(vm.searchingParticipants) {
         vm.participants = selectMembers(members);
@@ -279,6 +326,13 @@
         vm.observers = selectMembers(members);
         vm.searchingObservers = false;
       }
+    }
+
+    function removeFromList(member) {
+      // needs removal from DB if invite
+      var members = currentMemberList();
+      var index = members.indexOf(member);
+      members.splice(index, 1);
     }
 
     function selectMembers(members) {

@@ -2858,65 +2858,50 @@ hr.survey-hr {
       padding: 2px;
       float: left;
       width: 55px; }
-  #session-builder-content #step-3,
-  #session-builder-content #step-5 {
+  #session-builder-content #step-3 {
     margin-top: 50px;
     font-size: 14px;
     text-align: left;
     /* CHECKBOX */ }
-    #session-builder-content #step-3 .row,
-    #session-builder-content #step-5 .row {
+    #session-builder-content #step-3 .row {
       margin: 8px 0; }
-    #session-builder-content #step-3 .caption,
-    #session-builder-content #step-5 .caption {
+    #session-builder-content #step-3 .caption {
       display: block;
       width: 100%;
       padding: 12px 14px;
       color: white;
       background: #4DC0E9; }
-    #session-builder-content #step-3 .table-content,
-    #session-builder-content #step-5 .table-content {
+    #session-builder-content #step-3 .table-content {
       padding: 73px 5px 5px 17px;
       border: 1px solid lightgrey;
       border-top: none;
       border-radius: 8px; }
-      #session-builder-content #step-3 .table-content .total,
-      #session-builder-content #step-5 .table-content .total {
+      #session-builder-content #step-3 .table-content .total {
         color: #E51D39; }
-    #session-builder-content #step-3 .table-header,
-    #session-builder-content #step-5 .table-header {
+    #session-builder-content #step-3 .table-header {
       margin-bottom: 12px;
       font-size: 1.6rem;
       color: #4DC0E9; }
-    #session-builder-content #step-3 hr,
-    #session-builder-content #step-5 hr {
+    #session-builder-content #step-3 hr {
       margin: 5px;
       border: 1px solid lightgrey; }
-    #session-builder-content #step-3 hr.more-y-margin,
-    #session-builder-content #step-5 hr.more-y-margin {
+    #session-builder-content #step-3 hr.more-y-margin {
       margin: 20px 0; }
-    #session-builder-content #step-3 .checkout-row,
-    #session-builder-content #step-5 .checkout-row {
+    #session-builder-content #step-3 .checkout-row {
       margin-top: 20px;
       margin-bottom: 15px; }
-    #session-builder-content #step-3 #credit-cart-details-form label,
-    #session-builder-content #step-5 #credit-cart-details-form label {
+    #session-builder-content #step-3 #credit-cart-details-form label {
       font-size: 1.5rem;
       font-weight: 100; }
-    #session-builder-content #step-3 #credit-cart-details-form input,
-    #session-builder-content #step-5 #credit-cart-details-form input {
+    #session-builder-content #step-3 #credit-cart-details-form input {
       border-radius: 0px;
       padding: 30px;
       font-size: 2.3rem; }
     #session-builder-content #step-3 input#termsAndConditionsCC,
-    #session-builder-content #step-3 input#termsAndConditionsPP,
-    #session-builder-content #step-5 input#termsAndConditionsCC,
-    #session-builder-content #step-5 input#termsAndConditionsPP {
+    #session-builder-content #step-3 input#termsAndConditionsPP {
       display: none; }
     #session-builder-content #step-3 input#termsAndConditionsCC + label,
-    #session-builder-content #step-3 input#termsAndConditionsPP + label,
-    #session-builder-content #step-5 input#termsAndConditionsCC + label,
-    #session-builder-content #step-5 input#termsAndConditionsPP + label {
+    #session-builder-content #step-3 input#termsAndConditionsPP + label {
       max-width: none;
       background: url("/icons/login_checkbox.jpeg") no-repeat;
       height: 22px;
@@ -2926,60 +2911,56 @@ hr.survey-hr {
       margin-bottom: -5px;
       background-size: contain; }
     #session-builder-content #step-3 input#termsAndConditionsCC:checked + label,
-    #session-builder-content #step-3 input#termsAndConditionsPP:checked + label,
-    #session-builder-content #step-5 input#termsAndConditionsCC:checked + label,
-    #session-builder-content #step-5 input#termsAndConditionsPP:checked + label {
+    #session-builder-content #step-3 input#termsAndConditionsPP:checked + label {
       background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
       height: 22px;
       width: 22px;
       background-size: contain;
       margin-top: 1px; }
-    #session-builder-content #step-3 .form-group.exp,
-    #session-builder-content #step-5 .form-group.exp {
+    #session-builder-content #step-3 .form-group.exp {
       float: left;
       margin-right: 37px; }
     #session-builder-content #step-3 select#credit-card-number-expDate,
     #session-builder-content #step-3 select#credit-card-number-expYear,
-    #session-builder-content #step-3 input#credit-card-number-cvv,
-    #session-builder-content #step-5 select#credit-card-number-expDate,
-    #session-builder-content #step-5 select#credit-card-number-expYear,
-    #session-builder-content #step-5 input#credit-card-number-cvv {
+    #session-builder-content #step-3 input#credit-card-number-cvv {
       width: 110px;
       border-radius: 0;
       height: 55px;
       font-size: 2.3rem; }
-    #session-builder-content #step-3 input#credit-card-number-cvv,
-    #session-builder-content #step-5 input#credit-card-number-cvv {
+    #session-builder-content #step-3 input#credit-card-number-cvv {
       padding: 25px; }
-    #session-builder-content #step-3 .detail-content,
-    #session-builder-content #step-5 .detail-content {
+    #session-builder-content #step-3 .detail-content {
       font-size: 1.9rem; }
-    #session-builder-content #step-3 dt,
-    #session-builder-content #step-5 dt {
+    #session-builder-content #step-3 dt {
       float: left;
       margin-top: 4px;
       margin-right: 1rem;
       font-size: 1.6rem;
       font-weight: 100; }
-    #session-builder-content #step-3 small.change-link,
-    #session-builder-content #step-5 small.change-link {
+    #session-builder-content #step-3 small.change-link {
       float: right;
       color: #58595b;
       cursor: pointer; }
-      #session-builder-content #step-3 small.change-link:hover,
-      #session-builder-content #step-5 small.change-link:hover {
+      #session-builder-content #step-3 small.change-link:hover {
         color: #4DC0E9; }
-  #session-builder-content #step-4,
-  #session-builder-content #step-5 {
+  #session-builder-content #step-contactlists,
+  #session-builder-content #step-4-participants,
+  #session-builder-content #step-5-observers {
     font-size: 14px; }
-    #session-builder-content #step-4 .btn-standart,
-    #session-builder-content #step-5 .btn-standart {
+    #session-builder-content #step-contactlists .btn-standart,
+    #session-builder-content #step-4-participants .btn-standart,
+    #session-builder-content #step-5-observers .btn-standart {
       display: inline-block;
       margin-top: 10px;
       margin-bottom: 20px; }
-    #session-builder-content #step-4 .dashboard-container,
-    #session-builder-content #step-5 .dashboard-container {
+    #session-builder-content #step-contactlists .dashboard-container,
+    #session-builder-content #step-4-participants .dashboard-container,
+    #session-builder-content #step-5-observers .dashboard-container {
       width: 100%; }
+    #session-builder-content #step-contactlists #no-contacts-in-list,
+    #session-builder-content #step-4-participants #no-contacts-in-list,
+    #session-builder-content #step-5-observers #no-contacts-in-list {
+      height: auto; }
 
 .margin-top-2rem {
   margin-top: 2rem; }
