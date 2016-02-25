@@ -4,12 +4,19 @@ module.exports = function(grunt) {
   var time = (new Date()).getTime();
 
   return {
-    js: {
+    js1: {
+      src: 'src/js/intlTelInput.js.ejs',
+      dest: 'tmp/versioned.js',
+      variables: {
+        version: '<%= package.version %>'
+      }
+    },
+    js2: {
       src: 'src/js/wrapper.js.ejs',
       dest: 'tmp/wrapped.js',
       variables: function() {
         return {
-          plugin: grunt.file.read('src/js/intlTelInput.js'),
+          plugin: grunt.file.read('tmp/versioned.js'),
           data: grunt.file.read('src/js/data.js'),
         }
       }
@@ -36,7 +43,7 @@ module.exports = function(grunt) {
         return {
           time: time,
           title: "Lookup user's country",
-          desc: "Set defaultCountry to 'auto' to perform a JSONP request to ipinfo.io, which returns the user's country based on their IP address.",
+          desc: "Set defaultCountry to 'auto' and pass in a function for geoIpLookup to perform a JSONP request to ipinfo.io, which returns the user's country based on their IP address.",
           stylesheet: "",
           markup: grunt.file.read('examples/partials/simpleInput.html'),
           code: grunt.file.read('examples/js/defaultCountryIp.js'),
@@ -101,6 +108,21 @@ module.exports = function(grunt) {
           markup: grunt.file.read('examples/partials/isValidNumber.html'),
           code: grunt.file.read('examples/js/isValidNumber.js'),
           script: "isValidNumber.js"
+        }
+      }
+    },
+    hiddenInput: {
+      src: 'examples/template.html.ejs',
+      dest: 'examples/gen/hidden-input.html',
+      variables: function() {
+        return {
+          time: time,
+          title: "Submitting the full international number when in nationalMode",
+          desc: "If you're submitting the form using Ajax, simply use getNumber to get the number before sending it. If you're using the standard form POST method, you should use a separate hidden input which you update on submit to send the full international number. Try submitting a valid number below, and then check the 'phone-full' parameter in the URL.",
+          stylesheet: '',
+          markup: grunt.file.read('examples/partials/hiddenInput.html'),
+          code: grunt.file.read('examples/js/hiddenInput.js'),
+          script: "hiddenInput.js"
         }
       }
     }
