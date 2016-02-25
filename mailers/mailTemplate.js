@@ -6,6 +6,7 @@ var helpers = require('./helpers');
 var mailTemplateService = require('../services/mailTemplate');
 var ical = require('ical-generator');
 var sanitizeHtml = require('sanitize-html');
+var _ = require('lodash');
 
 var mailFrom = helpers.mailFrom();
 var transporter = helpers.createTransport();
@@ -16,15 +17,15 @@ function extractImageResources(tepmlateHtml) {
       transformTags: {
         'img': function(tagName, attribs) {
             let filename = attribs.src.split('/');
-            let name = escape(filename[filename.length - 1]);
+            let name = _.camelCase(filename[filename.length - 1]);
             let path = attribs.src;
             if (path.indexOf("/chat_room/upload") == -1) {
               path = "public" + path;
             } else {
               path = path.replace("/chat_room/uploads/", "chatRoom/public/uploads/");
             }
-            resources.push({filename: name, path: path, cid: name+"@attachment"});
-            attribs.src = "cid:"+name+"@attachment";
+            resources.push({filename: name, path: path, cid: name+"@att"});
+            attribs.src = "cid:"+name+"@att";
             return {
                 tagName: tagName,
                 attribs: attribs
