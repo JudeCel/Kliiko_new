@@ -2858,6 +2858,19 @@ hr.survey-hr {
       padding: 2px;
       float: left;
       width: 55px; }
+    #session-builder-content #step-2 .topic-list-item {
+      margin: 4px;
+      padding: 4px;
+      background: #F6F8F7; }
+      #session-builder-content #step-2 .topic-list-item:hover {
+        background: rgba(174, 239, 137, 0.5); }
+    #session-builder-content #step-2 span.edit-block {
+      padding: 1px 10px !important; }
+    #session-builder-content #step-2 .drop-area {
+      padding: 8px;
+      border: 2px dashed #ddd; }
+      #session-builder-content #step-2 .drop-area.drag-enter {
+        background: rgba(174, 239, 137, 0.5); }
   #session-builder-content #step-3,
   #session-builder-content #step-4,
   #session-builder-content #step-5 {

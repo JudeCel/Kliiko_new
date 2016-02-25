@@ -57,5 +57,28 @@
     width: 55px;
   }
 
+  .topic-list-item {
+    margin: 4px;
+    padding: 4px;
+    background: #F6F8F7;
+
+    &:hover {
+      background: $lightGreen;
+    }
+
+  }
+
+  span.edit-block {
+    padding: 1px 10px !important;
+  }
+
+  .drop-area {
+    padding: 8px;
+    border: 2px dashed $lightGray;
+
+    &.drag-enter {
+      background: $lightGreen;
+    }
+  }
 
 }

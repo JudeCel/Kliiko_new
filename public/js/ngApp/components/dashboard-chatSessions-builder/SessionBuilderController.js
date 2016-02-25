@@ -34,6 +34,7 @@
       }
     };
 
+    vm.chatSessionTopicsList = [];
 
       parseDateAndTime('initial');
     });
@@ -41,7 +42,7 @@
 
 
     //vm.currentStep = $stateParams.currentStep;
-    vm.currentStep = 1;
+    vm.currentStep = 1; //todo change this to page fetcherS
 
 
 
@@ -54,6 +55,9 @@
     // step 2
     vm.selectFacilitatorsClickHandle = selectFacilitatorsClickHandle;
     vm.faderHack = faderHack;
+    vm.topicsOnDropComplete = topicsOnDropComplete;
+    vm.removeTopicFromList = removeTopicFromList;
+    vm.reorderTopics = reorderTopics;
 
     // step 4 + 5
     vm.finishSelectingMembers = finishSelectingMembers;
@@ -125,7 +129,10 @@
           '/js/ngApp/directives/custom-select-directive.js',
           '/js/vendors/ng-file-upload/ng-file-upload.js',
           '/js/ngApp/filters/num.js',
-          '/js/ngApp/filters/human2Camel.js'
+          '/js/ngApp/filters/human2Camel.js',
+
+          '/js/ngApp/components/dashboard-resources-topics/TopicsController.js',
+          '/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js'
         ]).then(function(res) {
           deferred.resolve();
         });
@@ -243,6 +250,48 @@
         jQuery('.modal-backdrop.fade.in').hide();
       }, 10);
     }
+
+    function topicsOnDropComplete(data, event) {
+      if (!data) return;
+
+      data.topic_order_id = vm.chatSessionTopicsList.length;
+
+      if (vm.chatSessionTopicsList.length) {
+        for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
+          if (data.id ==  vm.chatSessionTopicsList[i].id ) return;
+        }
+        vm.chatSessionTopicsList.push(data);
+      } else {
+        vm.chatSessionTopicsList.push(data);
+      }
+    }
+
+    function removeTopicFromList(id) {
+      var index;
+      for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
+        if ( id ==  vm.chatSessionTopicsList[i].id ) {
+          index = i;
+          break;
+        }
+      }
+
+      vm.chatSessionTopicsList.splice(index, 1);
+      index = null;
+    }
+
+    function reorderTopics(data, t) {
+      var droppedOrderId = data.topic_order_id;
+      var targetOrderId = t.topic_order_id;
+      console.warn(data.topic_order_id, t.topic_order_id);
+      //debugger; //debugger
+      for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
+        if (data.id == vm.chatSessionTopicsList[i].id) vm.chatSessionTopicsList[i].topic_order_id = targetOrderId;
+        if (t.id == vm.chatSessionTopicsList[i].id) vm.chatSessionTopicsList[i].topic_order_id = droppedOrderId;
+      }
+
+    }
+
+
 
     /// step 4 + 5
 
