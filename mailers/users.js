@@ -79,7 +79,6 @@ users.sendEmailConfirmationToken = function(params, callback) {
   let emailConfirmationPath = '/emailConfirmation/';
   let mailUrl = helpers.getUrl(params.token, emailConfirmationPath);
   mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.registerConfirmationEmail, null, function(error, result) {
-    console.log("__mail error", error);
     //if failed to find mail template from DB, use old version
     if (error) {
       let link = { url: mailUrl };
@@ -101,7 +100,6 @@ users.sendEmailConfirmationToken = function(params, callback) {
       var mailContent = mailTemplateService.composeMailFromTemplate(result, {
         logInUrl: mailUrl
       });
-      console.log("____", mailContent);
       if (mailContent.error) {
           return callback(mailContent.error);
       }
