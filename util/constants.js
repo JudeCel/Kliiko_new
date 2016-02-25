@@ -68,5 +68,6 @@ module.exports = {
   galleryUploadTypes: ['image', 'brandLogo', 'audio', 'youtubeLink', 'text'],
   dateFormat: 'MM-dd-yyyy',
   sessionBuilderSteps: ['setUp', 'facilitatiorAndTopics', 'manageSessionEmails',
-    'manageSessionParticipants', 'inviteSessionObservers', 'done']
+    'manageSessionParticipants', 'inviteSessionObservers', 'done'],
+  inviteStatuses: ['pending', 'confirmed', 'rejected', 'notThisTime', 'notAtAll', 'expired']
 }
