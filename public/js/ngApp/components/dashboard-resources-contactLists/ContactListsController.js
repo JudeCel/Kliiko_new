@@ -24,8 +24,6 @@
     vm.validContactList = [];
     vm.contactListToAdd = [];
 
-
-
     vm.changeActiveList = changeActiveList;
     vm.addNewList = addNewList;
     vm.submitNewList = submitNewList;
@@ -56,7 +54,16 @@
     vm.onFieldMapDrop = onFieldMapDrop;
     vm.mappingFieldsContinue = mappingFieldsContinue;
 
-    // vm.facilitatorsList = getFacilitatorsList();
+    var setted = false;
+    vm.sectListActiveToFacilitators = function() {
+      if (setted) return;
+
+      setted = true;
+      setTimeout(function() {
+        vm.changeActiveList(1)
+      }, 300);
+
+    };
 
     function changeActiveList(index) {
       selectAll(true);
@@ -584,18 +591,6 @@
       );
     }
 
-
-    //function getFacilitatorsList() {
-    //  var fList = new ListsModel();
-    //  var index;
-    //  for (var i = 0, len = fList.items.length; i < len ; i++) {
-    //    if (fList.items[i].name == 'Facilitators') {
-    //      index = i;
-    //    }
-    //  }
-    //
-    //  return fList
-    //}
 
   }
 })();

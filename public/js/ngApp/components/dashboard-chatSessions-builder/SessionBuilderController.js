@@ -41,7 +41,7 @@
 
 
     //vm.currentStep = $stateParams.currentStep;
-    vm.currentStep = 4;
+    vm.currentStep = 1;
 
 
 
@@ -53,6 +53,7 @@
 
     // step 2
     vm.selectFacilitatorsClickHandle = selectFacilitatorsClickHandle;
+    vm.faderHack = faderHack;
 
     // step 4 + 5
     vm.finishSelectingMembers = finishSelectingMembers;
@@ -235,6 +236,12 @@
 
     function selectFacilitatorsClickHandle() {
       domServices.modal('sessionBuilderSelectFacilitatorModal');
+    }
+
+    function faderHack() {
+      setTimeout(function() {
+        jQuery('.modal-backdrop.fade.in').hide();
+      }, 10);
     }
 
     /// step 4 + 5

@@ -1,6 +1,7 @@
 #step-2  {
 
   font-size: 2rem;
+  text-align: left;
 
   .panel-title {
     font-size: 2rem;
@@ -38,6 +39,12 @@
     }
   }
 
+
+  #dashboard-contact-lists-main-table {
+    input[type="radio"] {
+      margin-left: 2rem;
+    }
+  }
   td {
     padding: 8px 0;
     text-align: left;
@@ -50,13 +57,5 @@
     width: 55px;
   }
 
-  input#promocod-input {
-    @extend #duration-input;
-    width: 230px;
 
-    &.error {
-      margin-top: -1px;
-      border: 3px solid $red;
-    }
-  }
 }

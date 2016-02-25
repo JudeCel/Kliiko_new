@@ -2825,7 +2825,8 @@ hr.survey-hr {
     #session-builder-content #step-1 #create-color-scheme-area {
       padding: 20px; }
   #session-builder-content #step-2 {
-    font-size: 2rem; }
+    font-size: 2rem;
+    text-align: left; }
     #session-builder-content #step-2 .panel-title {
       font-size: 2rem;
       text-align: left;
@@ -2847,19 +2848,16 @@ hr.survey-hr {
       font-size: 1.9rem;
       text-align: left;
       color: #58595b; }
+    #session-builder-content #step-2 #dashboard-contact-lists-main-table input[type="radio"] {
+      margin-left: 2rem; }
     #session-builder-content #step-2 td {
       padding: 8px 0;
       text-align: left; }
-    #session-builder-content #step-2 input#duration-input, #session-builder-content #step-2 input#promocod-input,
+    #session-builder-content #step-2 input#duration-input, #session-builder-content #upgrade-plan-content #step-2 input#promocod-input, #upgrade-plan-content #session-builder-content #step-2 input#promocod-input,
     #session-builder-content #step-2 select#duration-input {
       padding: 2px;
       float: left;
       width: 55px; }
-    #session-builder-content #step-2 input#promocod-input {
-      width: 230px; }
-      #session-builder-content #step-2 input#promocod-input.error {
-        margin-top: -1px;
-        border: 3px solid #E51D39; }
   #session-builder-content #step-3,
   #session-builder-content #step-4,
   #session-builder-content #step-5 {
