@@ -101,6 +101,18 @@ var templateFiles = [
     subject: "Insider Focus - Reset password",
     systemMessage: true
   },
+  {
+    fileName: 'SystemEmail_ConfirmationEmail.html',
+    name: MailTemplateService.mailTemplateType.registerConfirmationEmail,
+    subject: "Insider Focus - Confirmation Email",
+    systemMessage: true
+  },
+  {
+    fileName: 'SystemEmail_ConfirmationEmailSuccess.html',
+    name: MailTemplateService.mailTemplateType.registerConfirmationEmailSuccess,
+    subject: "Insider Focus - Email Confirmation Success",
+    systemMessage: true
+  },
   // Popups
   {
     fileName: 'SystemPopup_InvitationAcceptance.html',
@@ -125,7 +137,7 @@ var templateFiles = [
     name: MailTemplateService.mailTemplateType.sessionNotYetOpen,
     subject: "Session Not Yet Open",
     systemMessage: true
-  }  
+  }
 ];
 
 function createMailTemplateFromFile(fileInfo, callback) {
@@ -159,6 +171,8 @@ function createMailTemplateFromFile(fileInfo, callback) {
 function createMailTemplate() {
   async.waterfall([
     (cb) => { addTemplate(cb) },
+    addTemplate,
+    addTemplate,
     addTemplate,
     addTemplate,
     addTemplate,

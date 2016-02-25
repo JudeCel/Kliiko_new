@@ -27,7 +27,9 @@ var mailTemplateType = {
   sessionNotYetOpen : "Session Not Yet Open",
   passwordResetSuccess: "Reset Password Success",
   passwordResetRequest: "Reset Password Request",
-  passwordChangeSuccess: "Change Password Success"
+  passwordChangeSuccess: "Change Password Success",
+  registerConfirmationEmail: "Confirmation Email",
+  registerConfirmationEmailSuccess: "Confirmation Email Success"
 };
 
 function validate(params, callback) {
