@@ -32,7 +32,7 @@
                 </div>
                 <div class='col-xs-6'>
                   <span class='pull-right'>
-                    <uib-rating class='session-rating-stars-small' ng-model='account.rating' max='5' aria-labelledby='default-rating' readonly='true'></uib-rating>
+                    <uib-rating class='session-rating-stars-small no-pointer-events' ng-model='account.rating' max='5' aria-labelledby='default-rating' readonly='true'></uib-rating>
                   </span>
                 </div>
               </div>
@@ -44,7 +44,7 @@
               </div>
 
               <div class='col-xs-6'>
-                <uib-rating class='session-rating-stars-small' ng-model='session.rating' max='5' aria-labelledby='default-rating' readonly='true'></uib-rating>
+                <uib-rating class='session-rating-stars-small no-pointer-events' ng-model='session.rating' max='5' aria-labelledby='default-rating' readonly='true'></uib-rating>
               </div>
               <div class='col-xs-offset-1 col-xs-10'>
                 <hr ng-if='acItem.Sessions.length > 1' />
