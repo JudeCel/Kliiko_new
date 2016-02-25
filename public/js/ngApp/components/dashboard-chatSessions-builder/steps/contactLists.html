@@ -1,9 +1,10 @@
-<div class='row'>
-  <section class='row' id='dashboard-contact-lists' ng-controller="ContactListController as clc">
-    <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists/index.html'"></ng-include>
-
+<section id='step-4' ng-controller='ContactListController as clc'>
+  <div class='row'>
+    <h3 class='text-center'></h3>
     <div class='btn-standart btn-green' ng-click='sbc.finishSelectingMembers(clc.lists.activeList.members)'>
       Select Contacts
     </div>
-  </section>
-</div>
+  </div>
+
+  <ng-include id='dashboard-contact-lists' class='side-margin' src="'/js/ngApp/components/dashboard-resources-contactLists/index.html'"></ng-include>
+</section>

@@ -1,14 +1,15 @@
-<section id='step-5'>
-  <h3 class='text-center'>Observers</h3>
-
-  <div class='text-center'>
-    <div class='btn-standart btn-green' ng-click='sbc.selectObserversClickHandle()'>
-      Select Observers From Contact List
+<section id='step-5-observers'>
+  <div class='row'>
+    <h3 class='text-center'>Observers</h3>
+    <div class='text-center'>
+      <div class='btn-standart btn-green' ng-click='sbc.selectObserversClickHandle()'>
+        Select Observers From Contact List
+      </div>
     </div>
   </div>
 
   <div class='row'>
-    <table class='table table-dashboardElements'>
+    <table class='table table-dashboardElements' ng-if='sbc.observers.length > 0'>
       <thead>
         <tr class='green-background'>
           <th>First Name</th>

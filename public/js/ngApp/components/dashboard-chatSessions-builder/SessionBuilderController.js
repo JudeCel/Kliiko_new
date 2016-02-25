@@ -23,6 +23,20 @@
     vm.session = new SessionModel(sessionId);
     vm.session.init().then(function(res) {
 
+    vm.sessionMemberValidations = {
+      facilitator: {
+        min: 1,
+        max: 1
+      },
+      participant: {
+        min: 8,
+        max: 8
+      },
+      observer: {
+        min: 0,
+        max: 15
+      },
+    }
 
     vm.dateTime = {
       hstep:1,
@@ -79,6 +93,8 @@
 
       if (!valid) return;
 
+      vm.searchingParticipants = false;
+      vm.searchingObservers = false;
       initStep(step).then(function(res) {
         vm.session.updateStep();
 
