@@ -137,7 +137,8 @@
           loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
             return $ocLazyLoad.load([
               '/js/ngApp/components/dashboard-accountProfile-sessionRating/SessionRatingControllers.js',
-              '/js/ngApp/components/dashboard-accountProfile-sessionRating/sessionRatingServices.js'
+              '/js/ngApp/components/dashboard-accountProfile-sessionRating/sessionRatingServices.js',
+              '/js/ngApp/filters/human2Camel.js'
             ])
           }]
         },

@@ -26,9 +26,8 @@
             <uib-accordion-heading>
               <div class='row'>
                 <div class='col-xs-6'>
-                  <span class='glyphicon' ng-class="{'glyphicon-chevron-down': account.open, 'glyphicon-chevron-right': !account.open}">
-                    {{ account.name }}
-                  </span>
+                  <span class='glyphicon' ng-class="{'glyphicon-chevron-down': account.open, 'glyphicon-chevron-right': !account.open}"></span>
+                  {{ account.name | human2Camel : true }}
                 </div>
                 <div class='col-xs-6'>
                   <span class='pull-right'>
