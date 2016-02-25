@@ -3,7 +3,7 @@
     <h3 class="text-center">Facilitator And Topics</h3>
 
     <uib-accordion close-others="false">
-        <uib-accordion-group is-open="sbc.accordions.sessionName">
+        <uib-accordion-group is-open="sbc.accordions.facilitators">
             <uib-accordion-heading>
                 <div class="panel-label">
                    Select Facilitator
@@ -57,7 +57,7 @@
 
                                     <td>
                                             <span class='table-item-edit-group'>
-                                              <img src='/icons/dashboardElement_edit.png' alt='' ng-click="clc.contactAddEditClickHandle('update', member)"/>
+                                              <!--<img src='/icons/dashboardElement_edit.png' alt='' ng-click="clc.contactAddEditClickHandle('update', member)"/>-->
                                                 <!--<img src='/icons/dashboardElement_remove.png' alt='' ng-click="clc.removeContacts(member.id)" />-->
                                             </span>
                                     </td>
@@ -157,6 +157,16 @@
             </div>
 
 
+        </uib-accordion-group>
+
+        <uib-accordion-group is-open="sbc.accordions.topics">
+            <uib-accordion-heading>
+                <div class="panel-label">
+                    Select Topics And Session Topics <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.brandLogo, 'glyphicon-chevron-right': !sbc.accordions.brandLogo}"></i>
+                    <span class="panel-value pull-right">{{ sbc.brandLogo.JSON.name }}</span>
+                </div>
+            </uib-accordion-heading>
+            content
         </uib-accordion-group>
 
     </uib-accordion>
