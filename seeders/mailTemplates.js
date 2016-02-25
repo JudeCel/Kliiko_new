@@ -5,6 +5,7 @@ var async = require('async');
 var fs = require('fs');
 var Minimize = require('minimize');
 var async = require('async');
+var constants = require('../util/constants');
 
 
 var minimize = new Minimize();
@@ -13,128 +14,149 @@ var num = 0;
 var templateFiles = [
   {
     fileName: 'InvitationSeries_FirstInvite.html',
-    name: MailTemplateService.mailTemplateType.firstInvitation,
+    name: constants.mailTemplateType.firstInvitation,
+    type: "firstInvitation",
     subject: "Invitation to {Session Name}",
     systemMessage: false
   },
   {
     fileName: 'InvitationSeries_CloseSession.html',
-    name: MailTemplateService.mailTemplateType.closeSession,
+    name: constants.mailTemplateType.closeSession,
+    type: "closeSession",
     subject: "Close {Session Name} session",
     systemMessage: false
   },
   {
     fileName: 'InvitationSeries_Confirmation.html',
-    name: MailTemplateService.mailTemplateType.confirmation,
+    name: constants.mailTemplateType.confirmation,
+    type: "confirmation",
     subject: "Invitation confirmed",
     systemMessage: false
   },
   {
     fileName: 'InvitationSeries_Generic.html',
-    name: MailTemplateService.mailTemplateType.generic,
+    name: constants.mailTemplateType.generic,
+    type: "generic",
     subject: "Invitation",
     systemMessage: false
   },
   {
     fileName: 'InvitationSeries_NotAtAll.html',
-    name: MailTemplateService.mailTemplateType.notAtAll,
+    name: constants.mailTemplateType.notAtAll,
+    type: "notAtAll",
     subject: "Not At All",
     systemMessage: false
   },
   {
     fileName: 'InvitationSeries_NotThisTime.html',
-    name: MailTemplateService.mailTemplateType.notThisTime,
+    name: constants.mailTemplateType.notThisTime,
+    type: "notThisTime",
     subject: "Not this time",
     systemMessage: false
   },
   {
     fileName: 'SystemEmail_AccountManagerConfirmation.html',
-    name: MailTemplateService.mailTemplateType.accountManagerConfirmation,
+    name: constants.mailTemplateType.accountManagerConfirmation,
+    type: "accountManagerConfirmation",
     subject: "Account Manager Confirmation",
     systemMessage: false
   },
   {
     fileName: 'SystemEmail_ReactivatedAccount.html',
-    name: MailTemplateService.mailTemplateType.reactivatedAccount,
+    name: constants.mailTemplateType.reactivatedAccount,
+    type: "reactivatedAccount",
     subject: "Your Account Has Been Reactivated",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_DeactivatedAccount.html',
-    name: MailTemplateService.mailTemplateType.deactivatedAccount,
+    name: constants.mailTemplateType.deactivatedAccount,
+    type: "deactivatedAccount",
     subject: "Your Account Has Been Deactivated",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_FacilitatorConfirmation.html',
-    name: MailTemplateService.mailTemplateType.facilitatorConfirmation,
+    name: constants.mailTemplateType.facilitatorConfirmation,
+    type: "facilitatorConfirmation",
     subject: "Facilitator Confirmation",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_ObserverInvitation.html',
-    name: MailTemplateService.mailTemplateType.observerInvitation,
+    name: constants.mailTemplateType.observerInvitation,
+    type: "observerInvitation",
     subject: "Observer Invitation",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_FacilitatorOverQuota.html',
-    name: MailTemplateService.mailTemplateType.facilitatorOverQuota,
+    name: constants.mailTemplateType.facilitatorOverQuota,
+    type: "facilitatorOverQuota",
     subject: "Facilitator Over-Quota",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_ResetPasswordSuccess.html',
-    name: MailTemplateService.mailTemplateType.passwordResetSuccess,
-    subject: "Insider Focus - Reset password success",
+    name: constants.mailTemplateType.passwordResetSuccess,
+    type: "passwordResetSuccess",
+    subject: "Reset password success",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_ChangePasswordSuccess.html',
-    name: MailTemplateService.mailTemplateType.passwordChangeSuccess,
-    subject: "Insider Focus - Change password success",
+    name: constants.mailTemplateType.passwordChangeSuccess,
+    type: "passwordChangeSuccess",
+    subject: "Change password success",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_ResetPasswordRequest.html',
-    name: MailTemplateService.mailTemplateType.passwordResetRequest,
-    subject: "Insider Focus - Reset password",
+    name: constants.mailTemplateType.passwordResetRequest,
+    type: "passwordResetRequest",
+    subject: "Reset password",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_ConfirmationEmail.html',
-    name: MailTemplateService.mailTemplateType.registerConfirmationEmail,
-    subject: "Insider Focus - Confirmation Email",
+    name: constants.mailTemplateType.registerConfirmationEmail,
+    type: "registerConfirmationEmail",
+    subject: "Confirmation Email",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_ConfirmationEmailSuccess.html',
-    name: MailTemplateService.mailTemplateType.registerConfirmationEmailSuccess,
-    subject: "Insider Focus - Email Confirmation Success",
+    name: constants.mailTemplateType.registerConfirmationEmailSuccess,
+    type: "registerConfirmationEmailSuccess",
+    subject: "Email Confirmation Success",
     systemMessage: true
   },
   // Popups
   {
     fileName: 'SystemPopup_InvitationAcceptance.html',
-    name: MailTemplateService.mailTemplateType.invitationAcceptance,
+    name: constants.mailTemplateType.invitationAcceptance,
+    type: "invitationAcceptance",
     subject: "Invitation Acceptance",
     systemMessage: true
   },
   {
     fileName: 'SystemPopup_SessionClosed.html',
-    name: MailTemplateService.mailTemplateType.sessionClosed,
+    name: constants.mailTemplateType.sessionClosed,
+    type: "sessionClosed",
     subject: "Session Closed",
     systemMessage: true
   },
   {
     fileName: 'SystemPopup_SessionFull.html',
-    name: MailTemplateService.mailTemplateType.sessionFull,
+    name: constants.mailTemplateType.sessionFull,
+    type: "sessionFull",
     subject: "Session Full",
     systemMessage: true
   },
   {
     fileName: 'SystemPopup_SessionNotOpenYet.html',
-    name: MailTemplateService.mailTemplateType.sessionNotYetOpen,
+    name: constants.mailTemplateType.sessionNotYetOpen,
+    type: "sessionNotYetOpen",
     subject: "Session Not Yet Open",
     systemMessage: true
   }
@@ -157,7 +179,7 @@ function createMailTemplateFromFile(fileInfo, callback) {
           subject: fileInfo.subject,
           content: minifiedData,
           systemMessage: fileInfo.systemMessage,
-          category: fileInfo.name
+          category: fileInfo.type
         };
 
         MailTemplateService.createBaseMailTemplate(mailTemplateAttrs, function (err, mailTemplate) {

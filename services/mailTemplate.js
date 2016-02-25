@@ -8,30 +8,6 @@ var _ = require('lodash');
 var ejs = require('ejs');
 var constants = require('../util/constants');
 
-var mailTemplateType = {
-  firstInvitation : "First Invitation",
-  closeSession : "Close Session",
-  confirmation : "Confirmation",
-  generic : "Generic",
-  notAtAll : "Not At All",
-  notThisTime : "Not This Time",
-  accountManagerConfirmation : "Account Manager Confirmation",
-  reactivatedAccount : "Reactivated Account",
-  deactivatedAccount : "Deactivated Account",
-  facilitatorConfirmation : "Facilitator Confirmation",
-  observerInvitation : "Observer Invitation",
-  facilitatorOverQuota : "Facilitator Over-Quota",
-  invitationAcceptance : "Invitation Acceptance",
-  sessionClosed : "Session Closed",
-  sessionFull : "Session Full",
-  sessionNotYetOpen : "Session Not Yet Open",
-  passwordResetSuccess: "Reset Password Success",
-  passwordResetRequest: "Reset Password Request",
-  passwordChangeSuccess: "Change Password Success",
-  registerConfirmationEmail: "Confirmation Email",
-  registerConfirmationEmailSuccess: "Confirmation Email Success"
-};
-
 function validate(params, callback) {
   MailTemplate.build(params).validate().done(function(errors, _account) {
     callback(errors, params);
@@ -137,8 +113,13 @@ function getBaseMailTemplate(req, callback) {
  * @param category constant from ``` mailTemplateType.firstInvitation ```
  * @param accountId id of account who created template or null to get default one
  * @returns {error, resultMailTemplate} result mail template will be either a copy or original version
+
+  for category reference -> constants.mailTemplateType[]
  */
 function getActiveMailTemplate(category, accountId, callback) {
+  if (!constants.mailTemplateType[category]) {
+    return callback({error: "mail category not found"});
+  }
   //getting mail template original version by category name
   MailTemplateOriginal.find({
     where: {
@@ -239,6 +220,12 @@ function setMailTemplateDefault (id, templateCopyId, isAdmin, callback) {
   });
 }
 
+function prepareAdminTemplate(template) {
+  if (!template["systemMessage"] && !isAdmin) {
+    template.AccountId = accountId;
+  }
+}
+
 function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
   if (!template) {
     return callback("e-mail template not provided");
@@ -247,8 +234,7 @@ function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
   delete template["id"];
 
   if (!template["systemMessage"] && (!template["AccountId"] || createCopy)) {
-    if (!template["systemMessage"] && !isAdmin)
-      template.AccountId = accountId;
+    prepareAdminTemplate(template);
     create(template, function(error, result) {
       if (!error) {
         setMailTemplateDefault(result.MailTemplateBaseId, result.id, isAdmin, callback);
@@ -413,6 +399,5 @@ module.exports = {
   sendMailFromTemplate: sendMailFromTemplate,
   sendMailFromTemplateWithCalendarEvent: sendMailFromTemplateWithCalendarEvent,
   composePreviewMailTemplate: composePreviewMailTemplate,
-  mailTemplateType: mailTemplateType,
   getActiveMailTemplate: getActiveMailTemplate
 }

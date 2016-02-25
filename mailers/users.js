@@ -8,9 +8,10 @@ var mailTemplateService = require('../services/mailTemplate');
 
 var mailFrom = helpers.mailFrom();
 var transporter = helpers.createTransport();
+var constants = require('../util/constants');
 
 users.sendReactivateOrDeactivate = function(params, callback){
-  let templateType = !params.active ? mailTemplateService.mailTemplateType.deactivatedAccount : mailTemplateService.mailTemplateType.reactivatedAccount;
+  let templateType = !params.active ? 'deactivatedAccount' : 'reactivatedAccount';
   mailTemplateService.getActiveMailTemplate(templateType, null, function(error, result) {
     //if failed to find mail template from DB, use old version
     let fields = { name: params.name, active: params.active,  firstName: params.firstName, lastName: params.lastName, logInUrl: "http://"+config.get("server").domain}
@@ -45,7 +46,7 @@ users.sendReactivateOrDeactivate = function(params, callback){
 
 users.sendResetPasswordToken = function(params, callback) {
   let resetPasswordPath = '/resetpassword/';
-  mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.passwordResetRequest, null, function(error, result) {
+  mailTemplateService.getActiveMailTemplate("passwordResetRequest", null, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
       let link = { url: helpers.getUrl(params.token, resetPasswordPath)};
@@ -57,7 +58,7 @@ users.sendResetPasswordToken = function(params, callback) {
         transporter.sendMail({
           from: mailFrom,
           to: params.email,
-          subject: 'Insider Focus - Reset password',
+          subject: config.mail.fromName + ' - Reset password',
           html: html
         }, callback);
       });
@@ -76,9 +77,9 @@ users.sendResetPasswordToken = function(params, callback) {
 };
 
 users.sendEmailConfirmationToken = function(params, callback) {
-  let emailConfirmationPath = '/emailConfirmation/';
+  const emailConfirmationPath = '/emailConfirmation/';
   let mailUrl = helpers.getUrl(params.token, emailConfirmationPath);
-  mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.registerConfirmationEmail, null, function(error, result) {
+  mailTemplateService.getActiveMailTemplate("registerConfirmationEmail", null, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
       let link = { url: mailUrl };
@@ -91,7 +92,7 @@ users.sendEmailConfirmationToken = function(params, callback) {
         transporter.sendMail({
           from: mailFrom,
           to: params.email,
-          subject: 'Insider Focus - Confirmation Email',
+          subject: config.mail.fromName + ' - Confirmation Email',
           html: html
         }, callback);
       });
@@ -109,7 +110,7 @@ users.sendEmailConfirmationToken = function(params, callback) {
 };
 
 users.sendEmailConfirmationSuccess = function(params, callback) {
-  mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.registerConfirmationEmailSuccess, null, function(error, result) {
+  mailTemplateService.getActiveMailTemplate("registerConfirmationEmailSuccess", null, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
       helpers.renderMailTemplate('confirmationEmailSuccess', {}, function(err, html){
@@ -120,7 +121,7 @@ users.sendEmailConfirmationSuccess = function(params, callback) {
         transporter.sendMail({
           from: mailFrom,
           to: params.email,
-          subject: 'Insider Focus - Email Confirmation Success',
+          subject: config.mail.fromName + ' - Email Confirmation Success',
           html: html
         }, callback);
       });
@@ -132,7 +133,7 @@ users.sendEmailConfirmationSuccess = function(params, callback) {
 };
 
 users.sendPasswordChangedSuccess = function(params, callback) {
-  mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.passwordChangeSuccess, null, function(error, result) {
+  mailTemplateService.getActiveMailTemplate("passwordChangeSuccess", null, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
       helpers.renderMailTemplate('changePasswordSuccess', {}, function(err, html){
@@ -143,7 +144,7 @@ users.sendPasswordChangedSuccess = function(params, callback) {
         transporter.sendMail({
           from: mailFrom,
           to: params.email,
-          subject: 'Insider Focus - Change password Success',
+          subject: config.mail.fromName + ' - Change password Success',
           html: html
         }, callback);
       });
@@ -163,7 +164,7 @@ users.sendPasswordChangedSuccess = function(params, callback) {
 };
 
 users.sendResetPasswordSuccess = function(params, callback) {
-  mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.passwordChangeSuccess, null, function(error, result) {
+  mailTemplateService.getActiveMailTemplate("passwordChangeSuccess", null, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
       helpers.renderMailTemplate('resetPasswordSuccess', {}, function(err, html){
@@ -174,7 +175,7 @@ users.sendResetPasswordSuccess = function(params, callback) {
         transporter.sendMail({
           from: mailFrom,
           to: params.email,
-          subject: 'Insider Focus - Change password Success',
+          subject: config.mail.fromName + ' - Change password Success',
           html: html
         }, callback);
       });

@@ -11,7 +11,7 @@ var transporter = helpers.createTransport();
 
 function sendInviteAccountManager(inviteParams, callback) {
   let accountId = null;
-  mailTemplateService.getActiveMailTemplate(mailTemplateService.mailTemplateType.accountManagerConfirmation, inviteParams.accountId, function(error, result) {
+  mailTemplateService.getActiveMailTemplate("accountManagerConfirmation", inviteParams.accountId, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
       let links = {
@@ -29,12 +29,12 @@ function sendInviteAccountManager(inviteParams, callback) {
         transporter.sendMail({
           from: mailFrom,
           to: inviteParams.email,
-          subject: 'Insider Focus - Join account',
+          subject: config.mail.fromName + ' - Join account',
           html: html,
           attachments: [{
             filename: 'header.png',
             path: 'public/images/mail/system_header.png',
-            cid: 'systemHeader@kliiko'
+            cid: 'systemHeader@attachment'
           }]
         }, callback);
       });

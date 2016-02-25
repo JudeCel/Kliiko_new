@@ -1,6 +1,7 @@
 'use strict';
 
-var config = require('config').get("server");
+var config = require('config');
+var configServer = config.get("server");
 var helpers = require('./helpers');
 var mailTemplateService = require('../services/mailTemplate');
 var ical = require('ical-generator');
@@ -22,8 +23,8 @@ function extractImageResources(tepmlateHtml) {
             } else {
               path = path.replace("/chat_room/uploads/", "chatRoom/public/uploads/");
             }
-            resources.push({filename: name, path: path, cid: name+"@kliiko"});
-            attribs.src = "cid:"+name+"@kliiko";
+            resources.push({filename: name, path: path, cid: name+"@attachment"});
+            attribs.src = "cid:"+name+"@attachment";
             return {
                 tagName: tagName,
                 attribs: attribs
@@ -50,7 +51,7 @@ function sendMailWithTemplate(template, mailParams, callback) {
 }
 
 function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {
-    let cal = ical({domain: config.domain, name: template.name});
+    let cal = ical({domain: configServer.domain, name: template.name});
     let event = cal.createEvent({
         start: mailParams.start,
         end: mailParams.end,

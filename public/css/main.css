@@ -97,12 +97,12 @@
     color: #4DC0E9;
     border-color: #4DC0E9 !important; }
   .btn-standart.btn-blue {
-    color: #2F9F69;
-    border-color: #2F9F69 !important; }
+    color: #4DC0E9;
+    border-color: #4DC0E9 !important; }
     .btn-standart.btn-blue:hover {
       color: white;
-      border-color: #2F9F69 !important;
-      background: #2F9F69; }
+      border-color: #4DC0E9 !important;
+      background: #4DC0E9; }
   .btn-standart.btn-green {
     color: #2F9F69;
     border-color: #2F9F69 !important; }
@@ -1298,6 +1298,9 @@ hr.survey-hr {
   border: 0;
   margin-bottom: 60px; }
 
+.survey-dropdown-margin {
+  margin-left: 6px; }
+
 .col-width-15-percent {
   width: 15% !important; }
 
@@ -1427,6 +1430,10 @@ hr.survey-hr {
 .img-max-height-width {
   max-height: 100%;
   max-width: 100%; }
+
+.gallery-dropdown-margin {
+  margin-top: -15px;
+  margin-right: 26px; }
 
 .manage-preview {
   padding-top: 1%;
@@ -2260,7 +2267,8 @@ hr.survey-hr {
       #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item.active .glyphicon {
         visibility: visible; }
   #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item-name {
-    width: 6vw; }
+    width: 6vw;
+    word-wrap: break-word; }
   #dashboard-contact-lists #contact-lists-left-column #list-of-contacts .item-selection-mark {
     position: absolute;
     right: 12px;
@@ -2273,8 +2281,25 @@ hr.survey-hr {
     margin-top: 10px;
     width: 160px; }
 
-#dashboard-contact-lists #contact-lists-right-column {
+#dashboard-contact-lists #dashboard-contact-lists-main-table {
+  position: relative;
+  top: 11px;
+  width: 100%;
   overflow: auto; }
+
+#dashboard-contact-lists table {
+  table-layout: auto; }
+
+#dashboard-contact-lists th.th-header {
+  position: relative;
+  margin-right: 0; }
+
+#dashboard-contact-lists th, #dashboard-contact-lists td {
+  overflow: hidden;
+  min-width: 60px; }
+
+#dashboard-contact-lists #contact-lists-right-column {
+  overflow: inherit; }
   #dashboard-contact-lists #contact-lists-right-column #list-mass-actions {
     outline: none; }
     #dashboard-contact-lists #contact-lists-right-column #list-mass-actions .check {
@@ -2287,6 +2312,17 @@ hr.survey-hr {
     min-width: 70px;
     display: block;
     visibility: hidden; }
+  #dashboard-contact-lists #contact-lists-right-column span.sorting-order-arrow {
+    position: absolute;
+    top: 26px;
+    left: 0px;
+    margin-left: 3px;
+    margin-right: 3px; }
+  #dashboard-contact-lists #contact-lists-right-column td.selection-column {
+    width: 30px; }
+  #dashboard-contact-lists #contact-lists-right-column th span.th-name {
+    left: 9px;
+    position: relative; }
   #dashboard-contact-lists #contact-lists-right-column th:hover span.th-name {
     text-decoration: underline; }
   #dashboard-contact-lists #contact-lists-right-column th .glyphicon {
@@ -2344,6 +2380,133 @@ hr.survey-hr {
   margin: 10px 0; }
   #dashboard-contact-lists .fields-to-show label {
     margin-right: 10px; }
+
+#dashboard-contact-lists .custom-select-directive .dd-directive {
+  padding: 7px 20px !important;
+  text-align: left !important; }
+
+#dashboard-contact-lists .custom-select-directive .wrapper-dropdown-cd {
+  width: 150px; }
+
+#dashboard-contact-lists .custom-select-directive ul.dropdown {
+  left: -2px;
+  width: 150px;
+  border: 2px solid #2F9F69;
+  border-top: none;
+  z-index: 300 !important; }
+  #dashboard-contact-lists .custom-select-directive ul.dropdown li {
+    padding: 0 7px; }
+    #dashboard-contact-lists .custom-select-directive ul.dropdown li:hover {
+      color: white;
+      background: #2F9F69; }
+      #dashboard-contact-lists .custom-select-directive ul.dropdown li:hover a {
+        color: white; }
+
+#dashboard-contact-lists #contact-lists-add-button-1 {
+  padding: 8px !important; }
+
+#dashboard-contact-lists #modals-excel-csv-import #modals-excel-csv-import-icon {
+  margin-bottom: 50px; }
+
+#dashboard-contact-lists #modals-excel-csv-import .drop-box {
+  background: #F8F8F8;
+  border: 3px dashed #DDD;
+  width: 300px;
+  height: 65px;
+  text-align: center;
+  padding-top: 20px;
+  margin: 0 auto; }
+
+#dashboard-contact-lists #modals-excel-csv-import .dragover {
+  border: 5px dashed blue; }
+
+#dashboard-contact-lists .modal-control-buttons {
+  margin-top: 30px; }
+
+#dashboard-contact-lists #contactList-addNewListFieldsModal {
+  max-height: calc(100vh - 10px);
+  overflow-y: auto; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal table {
+    width: 100%;
+    height: 400px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal tr {
+    height: 39px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal .modal-footer {
+    border-top: none; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal .contactList-dropPlaceholder {
+    background: rgba(211, 211, 211, 0.3);
+    border-width: 1px;
+    width: 100%;
+    height: 30px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal .ic-move {
+    margin: -2px 5px 0 0; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal .contactList-drop-item {
+    border-radius: 0;
+    padding: 7px;
+    background-color: rgba(174, 239, 137, 0.5);
+    border-width: 1px;
+    width: 100%; }
+    #dashboard-contact-lists #contactList-addNewListFieldsModal .contactList-drop-item:hover {
+      cursor: -webkit-grab;
+      cursor: hand;
+      color: white;
+      font-weight: bold;
+      background: #2F9F69; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal .panel-default {
+    box-shadow: none;
+    border: none; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal #contactList-fieldColumnLeft {
+    margin: 5px;
+    padding: 25px;
+    z-index: 501; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal #contactList-fieldColumnRight {
+    z-index: 500;
+    margin: 5px;
+    padding: 25px;
+    border-radius: 0px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal h3 {
+    margin: 5px !important; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal .contactList-customfields {
+    margin: 20px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal input.custom-fields {
+    margin: 6px;
+    width: 90%;
+    padding: 10px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal input#additionalMappingFieldname {
+    margin-top: 7px;
+    width: 97%;
+    border-color: #4DC0E9; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal #additionalMappingFieldnameBtn {
+    margin-top: 5px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal #remap-footer-btns {
+    margin-top: 40px; }
+  #dashboard-contact-lists #contactList-addNewListFieldsModal .dragging {
+    position: absolute; }
+
+#dashboard-contact-lists .modal {
+  overflow-y: scroll; }
+
+#dashboard-contact-lists #modals-import-preview h3 {
+  margin: 0 0 20px 0; }
+
+#dashboard-contact-lists #modals-import-preview .modal-dialog.contactDetailsModal, #dashboard-contact-lists #modals-import-preview .modal-dialog.accountDatabaseCommentModal, #dashboard-contact-lists #modals-import-preview .modal-dialog.surveyPreviewModal, #dashboard-contact-lists #modals-import-preview .modal-dialog.brandColourPreviewModal {
+  width: 80%; }
+
+#dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table,
+#dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table-with-errors,
+#dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table-dublicates {
+  width: 100%;
+  overflow-y: auto; }
+  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table table,
+  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table-with-errors table,
+  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table-dublicates table {
+    border-spacing: 0px;
+    margin-bottom: 35px; }
+  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table td,
+  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table-with-errors td,
+  #dashboard-contact-lists #modals-import-preview #contact-details-import-preview-table-dublicates td {
+    padding-left: 10px;
+    border: none; }
 
 .margin-top-2rem {
   margin-top: 2rem; }
