@@ -40,6 +40,7 @@ module.exports = (Sequelize, DataTypes) => {
         Session.belongsTo(models.Resource, { foreignKey: 'resourceId' });
         Session.hasMany(models.SessionMember, {foreignKey: 'sessionId', onDelete: 'cascade'});
         Session.hasMany(models.MailTemplate, {foreignKey: 'sessionId', onDelete: 'cascade'});
+        Session.hasMany(models.Invite, { foreignKey: 'ownerId', scope: { ownerType: 'session' } });
       }
     }
   }

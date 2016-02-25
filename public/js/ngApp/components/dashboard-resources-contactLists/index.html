@@ -1,4 +1,4 @@
-<div class='col-md-12'>
+<div class='col-md-12' ng-if='!clc.hideStuff'>
   <div class='dashboard-container'>
     <div class='row'>
       <div class='col-md-3'></div>
@@ -30,7 +30,7 @@
 
         <div id="under-list-of-contacts-btns">
           <div class="btn-standart btn-green" ng-click="clc.addNewList()">Add new list <img src="/icons/add_new_list_green.png" class="pull-right"></div>
-          <div class="btn-standart btn-blue" ui-sref='dashboard.resources.survey'>Recruiter <img src="/icons/recruiter_blue.png" class="pull-right"></div>
+          <div class="btn-standart btn-blue" ui-sref='dashboard.resources.survey' ng-if='!clc.hideStuff'>Recruiter <img src="/icons/recruiter_blue.png" class="pull-right"></div>
         </div>
       </div>
 

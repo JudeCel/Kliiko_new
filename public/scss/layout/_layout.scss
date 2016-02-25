@@ -137,6 +137,10 @@ background-color: $blue !important;
 .no-border-radius {
   border-radius: 0 !important;
 }
+.no-pointer-events,
+.no-pointer-events [role="button"] {
+  pointer-events: none;
+}
 .text-font-family {
 font-family: Sofia Pro Condensed;
 }
@@ -161,7 +165,7 @@ font-family: Sofia Pro Condensed;
  color: #fff !important;
 }
 .text-yellow-dark {
-  color: $yellow;
+  color: #7f7426;
 }
 .text-red-dark {
   color: $red;
@@ -368,4 +372,8 @@ color: #737373;
 
 .col-width-15-percent{
   width: 15% !important;
+}
+
+.intl-tel-input{
+  width: 100%;
 }

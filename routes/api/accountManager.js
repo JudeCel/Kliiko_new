@@ -18,13 +18,10 @@ function post(req, res, next) {
       return res.send({ error: error });
     }
 
-    inviteService.createInvite(params, function(error, invite) {
-      if(error) {
-        res.send({ error: error });
-      }
-      else {
-        res.send({ invite: invite, message: 'Successfully sent invite.' });
-      }
+    inviteService.createInvite(params).then(function(data) {
+      res.send({ invite: data.invite, message: 'Successfully sent invite.' });
+    }, function(error) {
+      res.send({ error: error });
     });
   });
 };

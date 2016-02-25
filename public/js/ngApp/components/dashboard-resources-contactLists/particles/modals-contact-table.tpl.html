@@ -128,7 +128,7 @@
 
 
     <div class='row'>
-        <div class='col-md-12'>
+        <div class='col-md-12' ng-hide='clc.hideModalStuff'>
 
             <div class='btn-standart btn-red pull-left' ng-click="clc.contactAddEditClickHandle('cancel')" data-dismiss="modal">Cancel</div>
             <input type="submit" ng-hide="clc.updateExistingUser" ng-click='clc.createContact()' class='btn-standart btn-green pull-right' value="Create">
