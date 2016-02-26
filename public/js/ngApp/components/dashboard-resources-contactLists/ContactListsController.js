@@ -10,7 +10,9 @@
     vm.listIdToEdit = null;
     vm.newList = {};
 
-    vm.newList = {};
+    // don't touch! =)
+    vm.lists = new ListsModel();
+
     vm.modalErrors = {};
     vm.allSelected = false;
     vm.tableSort = {by: null, reverse: false};
@@ -25,7 +27,7 @@
     vm.validContactList = [];
     vm.contactListToAdd = [];
 
-    vm.initLists = initLists;
+
     vm.changeActiveList = changeActiveList;
     vm.addNewList = addNewList;
     vm.submitNewList = submitNewList;
@@ -67,9 +69,6 @@
 
     };
 
-    function initLists() {
-      vm.lists = new ListsModel();
-    }
 
     function changeActiveList(index) {
       selectAll(true);
