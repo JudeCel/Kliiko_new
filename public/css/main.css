@@ -881,10 +881,6 @@ footer {
 .no-border-radius {
   border-radius: 0 !important; }
 
-.no-pointer-events,
-.no-pointer-events [role="button"] {
-  pointer-events: none; }
-
 .text-font-family {
   font-family: Sofia Pro Condensed; }
 
@@ -905,7 +901,7 @@ footer {
   color: #fff !important; }
 
 .text-yellow-dark {
-  color: #7f7426; }
+  color: #F0E935; }
 
 .text-red-dark {
   color: #E51D39; }
@@ -1061,9 +1057,6 @@ footer {
 
 .col-width-15-percent {
   width: 15% !important; }
-
-.intl-tel-input {
-  width: 100%; }
 
 .dashboard-header .my-details-container {
   height: 20px;
@@ -1514,10 +1507,6 @@ hr.survey-hr {
 
 .session-rating-stars {
   font-size: 2.5em;
-  padding-top: 2%; }
-
-.session-rating-stars-small {
-  font-size: 1.5em;
   padding-top: 2%; }
 
 #dashboard #back-nav-btn {

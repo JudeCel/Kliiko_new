@@ -7,7 +7,9 @@ module.exports = (Sequelize, DataTypes) => {
     name: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     subject: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     content: {type: DataTypes.TEXT, allowNull: false, validate: { notEmpty: true } },
-    systemMessage: {type: DataTypes.BOOLEAN, allowNull: false, validate: { notEmpty: true }}
+    systemMessage: {type: DataTypes.BOOLEAN, allowNull: false, validate: { notEmpty: true }},
+    category: {type: DataTypes.ENUM, allowNull: false, values: Object.keys(constants.mailTemplateType), validate: { notEmpty: {args: true, msg: "Category can't be empty"} } },
+    mailTemplateActive: { type: DataTypes.INTEGER }
   });
 
   return MailTemplateBase;

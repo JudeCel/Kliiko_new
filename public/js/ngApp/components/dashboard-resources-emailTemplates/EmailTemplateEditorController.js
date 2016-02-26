@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  
+
   angular.module('KliikoApp').controller('EmailTemplateEditorController', EmailTemplateEditorController);
 
   EmailTemplateEditorController.$inject = ['dbg', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', 'ngProgressFactory'];
@@ -14,7 +14,7 @@
             jQuery.browser.version = RegExp.$1;
         }
     })();
-  
+
   function EmailTemplateEditorController(dbg, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, ngProgressFactory) {
     dbg.log2('#EmailTemplateEditorController started');
     var vm = this;
@@ -22,9 +22,9 @@
     vm.emailTemplates = [];
     vm.templateToDelete;
     vm.newResource = {};
-    
+
     var showSystemMail = $stateParams.systemMail;
-    
+
     vm.init = function () {
       vm.emailTemplates = vm.emailTemplates.concat(vm.constantEmailTemplates);
       $('#templateContent').wysiwyg({
@@ -36,7 +36,7 @@
           justifyCenter: { visible : true },
           justifyRight: { visible : true },
           justifyFull: { visible : true },
-          insertImage: { 
+          insertImage: {
             visible : true,
             exec: function() {
               vm.uploadResourceForm('image');
@@ -44,7 +44,7 @@
           }
         }
       });
-      
+
       $('#templateContent').wysiwyg("addControl", "youtubeLinkR", {
         icon: "/icons/header button icons/addYoutubeVideo.png",
         visible: true,
@@ -54,7 +54,7 @@
           vm.uploadResourceForm('youtubeUrl');
         }
       });
-          
+
       $('#templateContent').wysiwyg("setContent", "");
       refreshTemplateList(function() {
         if (vm.emailTemplates && vm.emailTemplates.length) {
@@ -62,8 +62,8 @@
         }
       });
     }
-    
-    vm.startEditingTemplate = function(templateIndex) {  
+
+    vm.startEditingTemplate = function(templateIndex) {
       mailTemplate.getMailTemplate(vm.emailTemplates[templateIndex]).then(function (res) {
         if (res.error) {return;}
 
@@ -74,10 +74,10 @@
         $('#templateContent').wysiwyg('setContent', vm.currentTemplate.content);
       });
     }
-    
+
     vm.modifyAndSave = function(createCopy) {
       vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
-      vm.currentTemplate.error = {}; 
+      vm.currentTemplate.error = {};
       mailTemplate.saveMailTemplate(vm.currentTemplate, createCopy).then(function (res) {
         if (!res.error) {
           refreshTemplateList(function() {
@@ -89,20 +89,20 @@
           messenger.ok("Template was sucessfully saved.");
         } else {
           processErrors(res.error);
-        }                  
+        }
       });
     }
-        
+
     vm.deleteTemplate = function(template, key, event) {
       vm.templateToDelete = {template: template, key: key};
       domServices.modal('confirmDialog');
-      
+
       if(event) {
         event.stopPropagation();
         event.preventDefault();
       }
     }
-    
+
     vm.resetMailTemplate = function() {
       mailTemplate.resetMailTemplate(vm.currentTemplate).then(function (res) {
         if (!res.error) {
@@ -114,7 +114,7 @@
         }
       });
     }
-    
+
     vm.previewMailTemplate = function() {
       vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
       var contentFrame = $("#contentFrame").contents().find('html');
@@ -128,18 +128,18 @@
         }
       });
     }
-    
+
     function processErrors(err) {
       if (!err) {
         return;
       }
-      
+
       var errors = err.errors;
       for (var e in errors) {
           vm.currentTemplate.error[errors[e].path] = errors[e].message;
       }
     }
-    
+
     function getIndexOfMailTemplateWithId(id) {
       for (var i = 0; i < vm.emailTemplates.length; i++) {
         if (vm.emailTemplates[i].id == id)
@@ -147,7 +147,7 @@
       }
       return -1;
     }
-    
+
     function refreshTemplateList(callback) {
       mailTemplate.getAllMailTemplates(showSystemMail).then(function (res) {
         vm.emailTemplates = res.templates;
@@ -155,21 +155,21 @@
           vm.startEditingTemplate(0);
         }
 
-        callback();        
+        callback();
       });
     }
-    
+
     vm.cancelTemplateDelete = function() {
       domServices.modal('confirmDialog', 'close');
     }
-    
+
     vm.approveTemplateDelete = function() {
       domServices.modal('confirmDialog', 'close');
       var nextSelection = -1;
       if (vm.templateToDelete.key == vm.currentTemplate.index) {
-        nextSelection = vm.currentTemplate.index - 1;    
+        nextSelection = vm.currentTemplate.index - 1;
       }
-      
+
       mailTemplate.deleteMailTemplate(vm.templateToDelete.template).then(function (res) {
         refreshTemplateList(function(res) {
           if (nextSelection != -1) {
@@ -178,7 +178,7 @@
         });
       });
     }
-    
+
     vm.uploadResourceForm = function(uploadType) {
       domServices.modal('uploadTemplateResource');
       vm.newResource.type = uploadType;
@@ -187,14 +187,14 @@
         $scope.$apply();
       }
     }
-    
+
     function uploadTypeForTitle(uploadType) {
       if(uploadType == "youtubeUrl"){
         return "youtube";
       }
       return uploadType;
     }
-    
+
     vm.submitForm = function(newResource) {
       if(newResource.type == "youtubeUrl"){
         saveYoutube(newResource);
@@ -202,17 +202,17 @@
         saveResource(newResource);
       }
     };
-    
+
     function cancel() {
       domServices.modal('uploadTemplateResource', 'close');
     }
-    
+
     function saveYoutube(newResource){
       var resourceParams = {
         title: newResource.title,
         text: newResource.youtubeUrl
       };
-      
+
       GalleryServices.saveYoutubeUrl(resourceParams).then(function(res) {
         if(res.error) {
           messenger.error(res.error);
@@ -254,11 +254,11 @@
         }
       })
     }
-    
+
     vm.isCurrent = function(key) {
-      return (key == vm.currentTemplate.index); 
+      return (key == vm.currentTemplate.index);
     }
-    
-    vm.init();            
+
+    vm.init();
   }
 })();

@@ -40,7 +40,7 @@ function updateAccountUser(params, callback) {
       accountUser.getAccount({ include: [{ model: User, attributes: userAttributes() }, AccountUser ] }).then(function(account) {
         if(params.hasOwnProperty('active')) {
           accountUser.getUser().then(function(user) {
-            mailers.users.sendReactivateOrDeactivate({ email: user.email, name: account.name, active: accountUser.active });
+            mailers.users.sendReactivateOrDeactivate({ email: user.email, name: account.name, active: accountUser.active, firstName: accountUser.firstName, lastName: accountUser.lastName });
           });
         }
         callback(null, account);

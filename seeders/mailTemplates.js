@@ -5,6 +5,7 @@ var async = require('async');
 var fs = require('fs');
 var Minimize = require('minimize');
 var async = require('async');
+var constants = require('../util/constants');
 
 
 var minimize = new Minimize();
@@ -13,101 +14,152 @@ var num = 0;
 var templateFiles = [
   {
     fileName: 'InvitationSeries_FirstInvite.html',
-    name: "First Invitation",
+    name: constants.mailTemplateType.firstInvitation,
+    type: "firstInvitation",
     subject: "Invitation to {Session Name}",
     systemMessage: false
   },
   {
     fileName: 'InvitationSeries_CloseSession.html',
-    name: "Close Session",
+    name: constants.mailTemplateType.closeSession,
+    type: "closeSession",
     subject: "Close {Session Name} session",
     systemMessage: false
   },
   {
     fileName: 'InvitationSeries_Confirmation.html',
-    name: "Confirmation",
+    name: constants.mailTemplateType.confirmation,
+    type: "confirmation",
     subject: "Invitation confirmed",
     systemMessage: false
   },
   {
     fileName: 'InvitationSeries_Generic.html',
-    name: "Generic",
+    name: constants.mailTemplateType.generic,
+    type: "generic",
     subject: "Invitation",
     systemMessage: false
   },
   {
     fileName: 'InvitationSeries_NotAtAll.html',
-    name: "Not At All",
+    name: constants.mailTemplateType.notAtAll,
+    type: "notAtAll",
     subject: "Not At All",
     systemMessage: false
   },
   {
     fileName: 'InvitationSeries_NotThisTime.html',
-    name: "Not This Time",
+    name: constants.mailTemplateType.notThisTime,
+    type: "notThisTime",
     subject: "Not this time",
     systemMessage: false
   },
   {
     fileName: 'SystemEmail_AccountManagerConfirmation.html',
-    name: "Account Manager Confirmation",
+    name: constants.mailTemplateType.accountManagerConfirmation,
+    type: "accountManagerConfirmation",
     subject: "Account Manager Confirmation",
     systemMessage: false
   },
   {
     fileName: 'SystemEmail_ReactivatedAccount.html',
-    name: "Reactivated Account",
+    name: constants.mailTemplateType.reactivatedAccount,
+    type: "reactivatedAccount",
     subject: "Your Account Has Been Reactivated",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_DeactivatedAccount.html',
-    name: "Deactivated Account",
+    name: constants.mailTemplateType.deactivatedAccount,
+    type: "deactivatedAccount",
     subject: "Your Account Has Been Deactivated",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_FacilitatorConfirmation.html',
-    name: "Facilitator Confirmation",
+    name: constants.mailTemplateType.facilitatorConfirmation,
+    type: "facilitatorConfirmation",
     subject: "Facilitator Confirmation",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_ObserverInvitation.html',
-    name: "Observer Invitation",
+    name: constants.mailTemplateType.observerInvitation,
+    type: "observerInvitation",
     subject: "Observer Invitation",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_FacilitatorOverQuota.html',
-    name: "Facilitator Over-Quota",
+    name: constants.mailTemplateType.facilitatorOverQuota,
+    type: "facilitatorOverQuota",
     subject: "Facilitator Over-Quota",
+    systemMessage: true
+  },
+  {
+    fileName: 'SystemEmail_ResetPasswordSuccess.html',
+    name: constants.mailTemplateType.passwordResetSuccess,
+    type: "passwordResetSuccess",
+    subject: "Reset password success",
+    systemMessage: true
+  },
+  {
+    fileName: 'SystemEmail_ChangePasswordSuccess.html',
+    name: constants.mailTemplateType.passwordChangeSuccess,
+    type: "passwordChangeSuccess",
+    subject: "Change password success",
+    systemMessage: true
+  },
+  {
+    fileName: 'SystemEmail_ResetPasswordRequest.html',
+    name: constants.mailTemplateType.passwordResetRequest,
+    type: "passwordResetRequest",
+    subject: "Reset password",
+    systemMessage: true
+  },
+  {
+    fileName: 'SystemEmail_ConfirmationEmail.html',
+    name: constants.mailTemplateType.registerConfirmationEmail,
+    type: "registerConfirmationEmail",
+    subject: "Confirmation Email",
+    systemMessage: true
+  },
+  {
+    fileName: 'SystemEmail_ConfirmationEmailSuccess.html',
+    name: constants.mailTemplateType.registerConfirmationEmailSuccess,
+    type: "registerConfirmationEmailSuccess",
+    subject: "Email Confirmation Success",
     systemMessage: true
   },
   // Popups
   {
     fileName: 'SystemPopup_InvitationAcceptance.html',
-    name: "Invitation Acceptance",
+    name: constants.mailTemplateType.invitationAcceptance,
+    type: "invitationAcceptance",
     subject: "Invitation Acceptance",
     systemMessage: true
   },
   {
     fileName: 'SystemPopup_SessionClosed.html',
-    name: "Session Closed",
+    name: constants.mailTemplateType.sessionClosed,
+    type: "sessionClosed",
     subject: "Session Closed",
     systemMessage: true
   },
   {
     fileName: 'SystemPopup_SessionFull.html',
-    name: "Session Full",
+    name: constants.mailTemplateType.sessionFull,
+    type: "sessionFull",
     subject: "Session Full",
     systemMessage: true
   },
   {
     fileName: 'SystemPopup_SessionNotOpenYet.html',
-    name: "Session Not Yet Open",
+    name: constants.mailTemplateType.sessionNotYetOpen,
+    type: "sessionNotYetOpen",
     subject: "Session Not Yet Open",
     systemMessage: true
-  },
+  }
 ];
 
 function createMailTemplateFromFile(fileInfo, callback) {
@@ -126,7 +178,8 @@ function createMailTemplateFromFile(fileInfo, callback) {
           name: fileInfo.name,
           subject: fileInfo.subject,
           content: minifiedData,
-          systemMessage: fileInfo.systemMessage
+          systemMessage: fileInfo.systemMessage,
+          category: fileInfo.type
         };
 
         MailTemplateService.createBaseMailTemplate(mailTemplateAttrs, function (err, mailTemplate) {
@@ -140,6 +193,11 @@ function createMailTemplateFromFile(fileInfo, callback) {
 function createMailTemplate() {
   async.waterfall([
     (cb) => { addTemplate(cb) },
+    addTemplate,
+    addTemplate,
+    addTemplate,
+    addTemplate,
+    addTemplate,
     addTemplate,
     addTemplate,
     addTemplate,
