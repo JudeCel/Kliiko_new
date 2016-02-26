@@ -290,7 +290,7 @@ function composeMailFromTemplate(template, params) {
 
     return template;
   } catch (error) {
-    return {error: "Error constructing mail template"};
+    return {error: error};
   }
 }
 
@@ -337,13 +337,15 @@ function formatTemplateString(str) {
   str = str.replace(/\{Facilitator Last Name\}/ig, "<%= facilitatorLastName %>");
   str = str.replace(/\{Facilitator Email\}/ig, "<%= facilitatorMail %>");
   str = str.replace(/\{Participant Email\}/ig, "<%= participantMail %>");
+  str = str.replace(/\{Participant First Name\}/ig, "<%= participantFirstName %>");
+  str = str.replace(/\{Participant Last Name\}/ig, "<%= participantLastName %>");
   str = str.replace(/\{Facilitator Mobile\}/ig, "<%= facilitatorMobileNumber %>");
   str = str.replace(/\{Session Name\}/ig, "<%= sessionName %>");
   str = str.replace(/\{Incentive\}/ig, "<%= incentive %>");
   str = str.replace(/\{Accept Invitation\}/ig, "<%= acceptInvitationUrl %>");
   str = str.replace(/\{Invitation Not This Time\}/ig, "<%= invitationNotThisTimeUrl %>");
 
-  str = str.replace(/\{Invitation At All\}/ig, "<%= invitationNotAtAllUrl %>");
+  str = str.replace(/\{Invitation Not At All\}/ig, "<%= invitationNotAtAllUrl %>");
   str = str.replace(/\{Mail Unsubscribe\}/ig, "<%= unsubscribeMailUrl %>");
   str = str.replace(/\{Close Session Yes In Future\}/ig, "<%= participateInFutureUrl %>");
   str = str.replace(/\{Close Session No In Future\}/ig, "<%= dontParticipateInFutureUrl %>");
