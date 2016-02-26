@@ -2859,6 +2859,9 @@ hr.survey-hr {
       font-size: 1.9rem;
       text-align: left;
       color: #58595b; }
+    #session-builder-content #step-2 div#no-contacts-in-list {
+      margin-top: 0;
+      height: auto; }
     #session-builder-content #step-2 #dashboard-contact-lists-main-table input[type="radio"] {
       margin-left: 2rem; }
     #session-builder-content #step-2 td {
