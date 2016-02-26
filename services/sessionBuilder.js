@@ -3,8 +3,10 @@
 var models = require('./../models');
 var filters = require('./../models/filters');
 var Session = models.Session;
+var AccountUser = models.AccountUser;
 
 var constants = require('./../util/constants');
+var inviteService = require('./invite');
 
 var async = require('async');
 var _ = require('lodash');
@@ -49,7 +51,9 @@ module.exports = {
   nextStep: nextStep,
   prevStep: prevStep,
   openBuild: openBuild,
-  destroy: destroy
+  destroy: destroy,
+  sendSms: sendSms,
+  inviteMembers: inviteMembers
 };
 
 function initializeBuilder(params) {
@@ -163,6 +167,7 @@ function openBuild(id, accountId) {
     sessionBuilderObject(session).then(function(result) {
       deferred.resolve(result);
     }, function(error) {
+      console.log(error);
       deferred.reject(error);
     });
   }, function(error) {
@@ -184,6 +189,68 @@ function destroy(id, accountId) {
     });
   }, function(error) {
     deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+// Untested
+function sendSms(data) {
+  let deferred = q.defer();
+  let numbers = _.map(data.recievers, 'mobile');
+
+  twilioLib.sendSms(numbers, data.message).then(function(result) {
+    deferred.resolve(result);
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+// Untested
+function inviteMembers(sessionId, data) {
+  let deferred = q.defer();
+
+  inviteParams(sessionId, data).then(function(params) {
+    inviteService.createBulkInvites(params).then(function(invites) {
+      let ids = _.map(invites, 'accountUserId');
+      AccountUser.findAll({ where: { id: { $in: ids } }, include:[models.Invite] }).then(function(accountUsers) {
+        _.map(accountUsers, function(accountUser) {
+          accountUser.dataValues.invite = _.last(accountUser.Invites);
+        });
+
+        deferred.resolve(accountUsers);
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function inviteParams(sessionId, data) {
+  let deferred = q.defer();
+  let ids = _.map(data.members, 'id');
+
+  models.ContactListUser.findAll({ where: { id: { $in: ids } } }).then(function(clUsers) {
+    let params = _.map(clUsers, function(clUser) {
+      return {
+        accountUserId: clUser.accountUserId,
+        sessionId: sessionId,
+        role: data.role,
+        userType: 'existing'
+      }
+    });
+
+    deferred.resolve(params);
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
@@ -248,7 +315,6 @@ function stepsDefinition(session) {
         cb(error);
       });
     },
-
     function(cb) {
       step3Query(session.id).then(function(emailTemplates) {
         object.step3 = {
@@ -261,27 +327,32 @@ function stepsDefinition(session) {
         cb(error);
       })
     },
-
     function(cb) {
-      searchSessionMembers(session.id, 'participant').then(function(members) {
-        object.step4 = {
-          stepName: 'manageSessionParticipants',
-          participants: members
-        };
-        cb();
-      }, function(error) {
-        cb(error);
+      async.waterfall(step4and5Queries(session, 'participant'), function(error, members) {
+        if(error) {
+          cb(error);
+        }
+        else {
+          object.step4 = {
+            stepName: 'manageSessionParticipants',
+            participants: members
+          };
+          cb();
+        }
       });
     },
     function(cb) {
-      searchSessionMembers(session.id, 'observer').then(function(members) {
-        object.step5 = {
-          stepName: 'inviteSessionObservers',
-          observers: members
-        };
-        cb();
-      }, function(error) {
-        cb(error);
+      async.waterfall(step4and5Queries(session, 'observer'), function(error, members) {
+        if(error) {
+          cb(error);
+        }
+        else {
+          object.step5 = {
+            stepName: 'inviteSessionObservers',
+            observers: members
+          };
+          cb();
+        }
       });
     }
   ], function(error, _result) {
@@ -292,11 +363,14 @@ function stepsDefinition(session) {
 }
 
 function searchSessionMembers(sessionId, role) {
-  return models.SessionMember.findAll({
-    where: {
-      sessionId: sessionId,
-      role: role
-    }
+  return AccountUser.findAll({
+    include: [{
+      model: models.SessionMember,
+      where: {
+        sessionId: sessionId,
+        role: role
+      }
+    }]
   });
 }
 
@@ -353,6 +427,44 @@ function step3Query(sessionId) {
   })
 
   return deferred.promise;
+}
+
+function step4and5Queries(session, role) {
+  return [
+    function(cb) {
+      searchSessionMembers(session.id, role).then(function(accountUsers) {
+        _.map(accountUsers, function(accountUser) {
+          accountUser.dataValues.sessionMember = _.last(accountUser.SessionMembers);
+        });
+
+        cb(null, accountUsers);
+      }, function(error) {
+        cb(error);
+      });
+    },
+    function(members, cb) {
+      AccountUser.findAll({
+        include: [{
+          model: models.Invite,
+          where: {
+            ownerId: session.id,
+            ownerType: 'session',
+            role: role,
+            status: { $ne: 'confirmed' }
+          },
+          attributes: ['status']
+        }]
+      }).then(function(accountUsers) {
+        _.map(accountUsers, function(accountUser) {
+          accountUser.dataValues.invite = _.last(accountUser.Invites);
+        });
+
+        cb(null, members.concat(accountUsers));
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+  ];
 }
 
 function validate(session, params) {

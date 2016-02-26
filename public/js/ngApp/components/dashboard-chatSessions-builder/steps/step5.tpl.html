@@ -8,8 +8,8 @@
     </div>
   </div>
 
-  <div ng-if='sbc.observers.length > 0'>
-    <div class='row text-left' ng-controller='ContactListController as clc' ng-init='clc.hideModalStuff = true;'>
+  <div ng-if='sbc.observers.length > 0' ng-controller='ContactListController as clc' ng-init='clc.hideModalStuff = true;'>
+    <div class='row text-left'>
       <table class='table table-dashboardElements'>
         <thead>
           <tr class='green-background'>
@@ -30,7 +30,7 @@
           <tr ng-repeat='member in sbc.observers' ng-mouseover='sbc.mouseOveringMember[$index] = true' ng-mouseleave='sbc.mouseOveringMember[$index] = false'>
             <td>
               <div class='checkbox checkbox-xs checkbox-success'>
-                <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.step5' />
+                <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.step5' ng-disabled='sbc.showCorrectStatus(member)' />
                 <label for='checkbox-{{ $index }}'>{{ member.firstName }}</label>
               </div>
             </td>
@@ -40,10 +40,10 @@
             <td>{{ member.mobile }}</td>
             <td class='col-xs-2'>
               <div ng-if='!sbc.mouseOveringMember[$index]'>
-                {{ member.status }}
+                {{ sbc.showCorrectStatus(member) || "Not invited" }}
               </div>
               <div ng-if='sbc.mouseOveringMember[$index]'>
-                <img src='/icons/dashboardElement_edit.png' ng-click="clc.contactAddEditClickHandle('update', member)" />
+                <img src='/icons/dashboardElement_edit.png' ng-click="clc.contactAddEditClickHandle('update', member)" ng-if='!sbc.showCorrectStatus(member)' />
                 <img src='/icons/dashboardElement_remove.png' ng-click='sbc.removeFromList(member)' />
               </div>
             </td>

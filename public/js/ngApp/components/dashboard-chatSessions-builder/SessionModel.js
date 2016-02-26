@@ -8,8 +8,13 @@
 
   SessionModel.$inject = ['$q', 'globalSettings', '$resource'];
   function SessionModel($q, globalSettings, $resource)  {
-    var apiPath = globalSettings.restUrl+'/sessionBuilder/:id';
-    var sessionBuilderRestApi = $resource(apiPath, {id : '@id'}, { post:{method:'POST'}, put: {method: 'PUT'} } );
+    var apiPath = globalSettings.restUrl+'/sessionBuilder/:id/:path';
+    var sessionBuilderRestApi = $resource(apiPath, { id : '@id' }, {
+      post: { method: 'POST' },
+      put: { method: 'PUT' },
+      sendSms: { method: 'POST', params: { path: 'sendSms' } },
+      inviteMembers: { method: 'POST', params: { path: 'invite' } }
+    });
 
     var SessionModel;
 
@@ -20,6 +25,9 @@
     SessionModel.prototype.cancel = cancel;
     SessionModel.prototype.destroy = update;
     SessionModel.prototype.updateStep = updateStep;
+    SessionModel.prototype.sendSms = sendSms;
+    SessionModel.prototype.inviteParticipants = inviteParticipants;
+    SessionModel.prototype.inviteObservers = inviteObservers;
 
 
     return SessionModel;
@@ -125,8 +133,47 @@
       });
     }
 
+    function sendSms(recievers, message) {
+      var self = this;
+      var deferred = $q.defer();
 
+      sessionBuilderRestApi.sendSms({ id: self.id }, { recievers: recievers, message: message }, function(res) {
+        if(res.error) {
+          deferred.reject(res.error);
+        }
+        else deferred.resolve(res.message);
+      });
 
+      return deferred.promise;
+    }
+
+    function inviteParticipants(members) {
+      var self = this;
+      var deferred = $q.defer();
+
+      sessionBuilderRestApi.inviteMembers({ id: self.id }, { members: members, role: 'participant' }, function(res) {
+        if(res.error) {
+          deferred.reject(res.error);
+        }
+        else deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
+
+    function inviteObservers(members) {
+      var self = this;
+      var deferred = $q.defer();
+
+      sessionBuilderRestApi.inviteMembers({ id: self.id }, { members: members, role: 'observer' }, function(res) {
+        if(res.error) {
+          deferred.reject(res.error);
+        }
+        else deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
 
 
   }

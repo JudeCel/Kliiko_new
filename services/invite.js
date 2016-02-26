@@ -35,6 +35,66 @@ function accountOrSession(params) {
   }
 }
 
+function createBulkInvites(arrayParams) {
+  let deferred = q.defer();
+
+  let token = uuid.v1();
+  let expireDate = new Date();
+  expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
+
+  _.map(arrayParams, function(paramObject) {
+    accountOrSession(paramObject);
+    paramObject.token = token;
+    paramObject.sentAt = new Date();
+    paramObject.expireAt = expireDate;
+  });
+
+  Invite.bulkCreate(arrayParams, {
+    validate: true,
+    returning: true
+  }).then(function(results) {
+    if(results.length > 0) {
+      let ids = _.map(results, 'id');
+
+      Invite.findAll({
+        where: { id: { $in: ids } },
+        include: [{
+          model: AccountUser,
+          attributes:
+          constants.safeAccountUserParams
+        }, Account, User]
+      }).then(function(invites) {
+        async.each(invites, function(invite, callback) {
+          sendInvite(invite).then(function() {
+            callback();
+          }, function(error) {
+            callback(error);
+          });
+        }, function(error) {
+          if(error) {
+            deferred.reject(error);
+          }
+          else {
+            deferred.resolve(results);
+          }
+        });
+      });
+    }
+    else {
+      deferred.reject("None created");
+    }
+  }).catch(function(error) {
+    if(error.name == 'SequelizeUniqueConstraintError') {
+      deferred.reject({ email: 'User has already been invited' });
+    }
+    else {
+      deferred.reject(filters.errors(error));
+    }
+  });
+
+  return deferred.promise;
+}
+
 function createInvite(params) {
   let deferred = q.defer();
 
@@ -83,6 +143,10 @@ function simpleParams(invite, message) {
 }
 
 function sendInvite(invite, deferred) {
+  if(!deferred) {
+    deferred = q.defer();
+  }
+
   let inviteParams = {
     token: invite.token,
     email: invite.AccountUser.email,
@@ -103,6 +167,10 @@ function sendInvite(invite, deferred) {
     });
   }
   else {
+    console.log("------------------------------------");
+    console.log("NEEDS SESSION EMAIL");
+    deferred.resolve();
+    console.log("------------------------------------");
     // inviteMailer.sendInviteAccountManager(inviteParams, function(error, data) {
     //   if(error) {
     //     deferred.reject(error);
@@ -112,6 +180,8 @@ function sendInvite(invite, deferred) {
     //   }
     // });
   }
+
+  return deferred.promise;
 }
 
 function findAndRemoveInvite(params, callback) {
@@ -276,6 +346,7 @@ function removeAllAssociatedDataOnNewUser(invite, callback) {
 
 module.exports = {
   messages: MESSAGES,
+  createBulkInvites: createBulkInvites,
   createInvite: createInvite,
   findAndRemoveInvite: findAndRemoveInvite,
   removeInvite: removeInvite,
