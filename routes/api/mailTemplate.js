@@ -27,8 +27,8 @@ function mailTemplatePost(req, res, next) {
 }
 
 function saveMailTemplatePost(req, res, next) {
-  let isAdmin = policy.hasAccess(res.locals.currentDomain.roles, ['admin']);
-  MailTemplateService.saveMailTemplate(req.body.mailTemplate, req.body.copy, req.user.ownerAccountId, isAdmin,function(error, result) {
+  let shouldOverwrite = policy.hasAccess(res.locals.currentDomain.roles, ['admin']);
+  MailTemplateService.saveMailTemplate(req.body.mailTemplate, req.body.copy, req.user.ownerAccountId, shouldOverwrite,function(error, result) {
     res.send({error: error, templates: result});
   });
 }

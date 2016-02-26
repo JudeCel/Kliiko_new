@@ -220,23 +220,23 @@ function setMailTemplateDefault (id, templateCopyId, isAdmin, callback) {
   });
 }
 
-function prepareAdminTemplate(template, isAdmin, accountId) {
-  if (!template["systemMessage"] && !isAdmin) {
+function prepareAdminTemplate(template, shouldOverwrite, accountId) {
+  if (!template["systemMessage"] && !shouldOverwrite) {
     template.AccountId = accountId;
   }
 }
 
-function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
+function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, callback) {
   if (!template) {
     return callback("e-mail template not provided");
   }
   var id = template.id;
   delete template["id"];
   if (!template["systemMessage"] && (!template["AccountId"] || createCopy)) {
-    prepareAdminTemplate(template, isAdmin, accountId);
+    prepareAdminTemplate(template, shouldOverwrite, accountId);
     create(template, function(error, result) {
       if (!error) {
-        setMailTemplateDefault(result.MailTemplateBaseId, result.id, isAdmin, callback);
+        setMailTemplateDefault(result.MailTemplateBaseId, result.id, shouldOverwrite, callback);
       } else {
         callback(error);
       }
@@ -244,7 +244,7 @@ function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
   } else {
     update(id, template, function(error, result) {
       if (!error) {
-        setMailTemplateDefault(template.MailTemplateBaseId, id, isAdmin, callback);
+        setMailTemplateDefault(template.MailTemplateBaseId, id, shouldOverwrite, callback);
       } else {
         callback(error);
       }
