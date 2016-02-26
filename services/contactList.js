@@ -35,7 +35,6 @@ function destroy(contacListId, accoutId) {
 function allByAccount(accountId) {
     let selectFields =  constants.contactListDefaultFields.concat('id')
     // selectFields.push([models.sequelize.fn('COUNT', models.sequelize.col('ContactListUsers.AccountUser.Invites.id')), 'Invites'])
-    console.log(selectFields);
     let deferred = q.defer();
     ContactList.findAll({where: { accountId: accountId },
       attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable', 'participantsFields' ],
@@ -58,7 +57,6 @@ function allByAccount(accountId) {
     }).then(function(results) {
       deferred.resolve(prepareData(results));
     }, function(err) {
-      console.log(err);
       deferred.reject(err);
     });
     return deferred.promise;

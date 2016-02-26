@@ -46,16 +46,97 @@ function update(id, parameters, callback){
     });
 }
 
+function getLatestMailTemplate(req, callback) {
+  let accountQuery = {};
+  if (req.accountId) {
+    accountQuery['$or'] = [{AccountId: req.accountId}, {AccountId: null}];
+  } else {
+    accountQuery.AccountId = null;
+  }
+
+  let templateQuery = {
+    '$or': [{id: req.latestId}, {MailTemplateBaseId: req.id}]
+  };
+
+  MailTemplate.findAll({
+    include: [{
+      model: MailTemplateOriginal, attributes: ['id', 'name']
+    }],
+    where: [accountQuery, templateQuery],
+    attributes: constants.mailTemplateFields,
+    raw: true,
+    order: [['updatedAt', 'DESC']],
+    limit: 1
+  }).then(function (result) {
+    if (result && result.length) {
+      callback(null, result[0]);
+    } else {
+      callback({error: "Template not found"});
+    }
+  }).catch(function (err) {
+    callback(err);
+  });
+}
+
+
 function getMailTemplate(req, callback) {
+  let query = {id: req.id};
+  if (req.accountId) {
+    query['$or'] = [{AccountId: req.accountId}, {AccountId: null}];
+  }
+
   MailTemplate.find({
     include: [{ model: MailTemplateOriginal, attributes: ['id', 'name']}],
-    where: {
-      id: req.id
-    },
+    where: query,
     attributes: constants.mailTemplateFields,
     raw: true
   }).then(function (result) {
     callback(null, result);
+  }).catch(function (err) {
+    callback(err);
+  });
+}
+
+function getBaseMailTemplate(req, callback) {
+  MailTemplateOriginal.find({
+    where: {id: req.id},
+    attributes: constants.mailTemplateFields,
+    raw: true
+  }).then(function (result) {
+      callback(null, result);
+  }).catch(function (err) {
+    callback(err);
+  });
+}
+/**
+ * Get active global mail template by category name
+ * @param category constant from ``` mailTemplateType.firstInvitation ```
+ * @param accountId id of account who created template or null to get default one
+ * @returns {error, resultMailTemplate} result mail template will be either a copy or original version
+
+  for category reference -> constants.mailTemplateType[]
+ */
+function getActiveMailTemplate(category, accountId, callback) {
+  if (!constants.mailTemplateType[category]) {
+    return callback({error: "mail category not found"});
+  }
+  //getting mail template original version by category name
+  MailTemplateOriginal.find({
+    where: {
+      category: category
+    },
+    attributes: constants.originalMailTemplateFields,
+    raw: true
+  }).then(function (result) {
+    //get reference to active mail template copy
+    getLatestMailTemplate({id: result.id, latestId: result.mailTemplateActive, accountId: accountId}, function(err, template) {
+      if (!template) {
+        callback(null, result);
+      } else {
+        //returning mail from default table instead
+        callback(null, template);
+      }
+    });
   }).catch(function (err) {
     callback(err);
   });
@@ -78,18 +159,16 @@ function getMailTemplateForReset(req, callback) {
 }
 
 function getAllMailTemplates(req, getSystemMail,callback) {
-
   let query = {};
-  if (req.id) {
-      query['$or'] = [{UserId: req.id}, {UserId: null}];
-  }
 
-  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage']}];
+  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category']}];
 
   if (!getSystemMail) {
     //getting list that any user can edit
     query.systemMessage = false;
+    query['$or'] = [{AccountId: req.ownerAccountId}, {AccountId: null}];
   }
+
 
   MailTemplate.findAll({
       include: include,
@@ -98,7 +177,7 @@ function getAllMailTemplates(req, getSystemMail,callback) {
       raw: true,
       order: "id ASC"
   }).then(function(result) {
-      callback(null, result);
+    callback(null, result);
   }).catch(function(error) {
     callback(error);
   });
@@ -123,21 +202,52 @@ function copyBaseTemplates(callback) {
   });
 }
 
-function saveMailTemplate(template, createCopy, userId, callback) {
+function setMailTemplateDefault (id, templateCopyId, isAdmin, callback) {
+  if (!isAdmin) {
+    return callback(null, {id: templateCopyId});
+  }
+  var params = {
+    mailTemplateActive: templateCopyId
+  }
+  MailTemplateOriginal.update(params, {
+      where: {id: id}
+    })
+  .then(function (result) {
+    return callback(null, {id: templateCopyId});
+  })
+  .catch(function (err) {
+    callback(err);
+  });
+}
+
+function prepareAdminTemplate(template, shouldOverwrite, accountId) {
+  if (!template["systemMessage"] && !shouldOverwrite) {
+    template.AccountId = accountId;
+  }
+}
+
+function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, callback) {
   if (!template) {
-      return callback("e-mail template not provided");
+    return callback("e-mail template not provided");
   }
   var id = template.id;
   delete template["id"];
-  //a template wasn't created by user - an orinal
-  if (!template["UserId"] || createCopy) {
-    template.UserId = userId;
+  if (!template["systemMessage"] && (!template["AccountId"] || createCopy)) {
+    prepareAdminTemplate(template, shouldOverwrite, accountId);
     create(template, function(error, result) {
-      callback(error, result);
+      if (!error) {
+        setMailTemplateDefault(result.MailTemplateBaseId, result.id, shouldOverwrite, callback);
+      } else {
+        callback(error);
+      }
     });
   } else {
     update(id, template, function(error, result) {
-      callback(error, result);
+      if (!error) {
+        setMailTemplateDefault(template.MailTemplateBaseId, id, shouldOverwrite, callback);
+      } else {
+        callback(error);
+      }
     });
   }
 }
@@ -149,15 +259,11 @@ function resetMailTemplate(templateId, callback) {
 
   getMailTemplateForReset({id: templateId}, function(err, result) {
     if (result) {
-      //is template created by user - not base version
-      if (!result.UserId) {
-        //if base version, return data immediately
-        callback(null, result);
-      } else {
-        update(templateId, {name: result["MailTemplateBase.name"], subject: result["MailTemplateBase.subject"], content: result["MailTemplateBase.content"]}, function(error, result) {
-           callback(error, result);
-        });
-      }
+      update(templateId, {name: result["MailTemplateBase.name"], subject: result["MailTemplateBase.subject"], content: result["MailTemplateBase.content"]}, function(error, result) {
+          callback(error, result);
+      });
+    } else {
+      callback(err);
     }
   });
 }
@@ -218,6 +324,8 @@ function sendMailFromTemplateWithCalendarEvent(id, params, callback) {
 
 //replace all "In Editor" variables with .ejs compatible variables
 function formatTemplateString(str) {
+  str = str.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
+
   str = str.replace(/\{First Name\}/ig, "<%= firstName %>");
   str = str.replace(/\{Last Name\}/ig, "<%= lastName %>");
   str = str.replace(/\{Account Name\}/ig, "<%= accountName %>");
@@ -241,7 +349,7 @@ function formatTemplateString(str) {
   str = str.replace(/\{Close Session No In Future\}/ig, "<%= dontParticipateInFutureUrl %>");
   str = str.replace(/\{Confirmation Check In\}/ig, "<%= confirmationCheckInUrl %>");
   str = str.replace(/\{Login\}/ig, "<%= logInUrl %>");
-
+  str = str.replace(/\{Reset Password URL\}/ig, "<%= resetPasswordUrl %>");
   return str;
 }
 
@@ -269,6 +377,7 @@ function composePreviewMailTemplate(mailTemplate) {
     dontParticipateInFutureUrl: "#/dontParticipateInFutureUrl",
     confirmationCheckInUrl: "#/confirmationCheckInUrl",
     logInUrl: "#/LogInUrl",
+    resetPasswordUrl: "#/resetPasswordUrl"
   };
 
   return composeMailFromTemplate(mailTemplate, mailPreviewVariables);
@@ -288,5 +397,6 @@ module.exports = {
   composeMailFromTemplate: composeMailFromTemplate,
   sendMailFromTemplate: sendMailFromTemplate,
   sendMailFromTemplateWithCalendarEvent: sendMailFromTemplateWithCalendarEvent,
-  composePreviewMailTemplate:composePreviewMailTemplate
+  composePreviewMailTemplate: composePreviewMailTemplate,
+  getActiveMailTemplate: getActiveMailTemplate
 }

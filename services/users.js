@@ -1,6 +1,7 @@
 "use strict";
 var models = require('./../models');
 var User = models.User;
+var AccountUser = models.AccountUser ;
 var filters = require('./../models/filters');
 var _ = require('lodash');
 var accountService = require('./account');
@@ -201,22 +202,29 @@ function resetPassword(token, password, callback) {
 function setResetToken(email, callback) {
 
   var token = uuid.v1();
-
-  User.update({
-    resetPasswordToken: token,
-    resetPasswordSentAt: new Date()
-  }, {
-    where: {email: email}
-  })
-  .then(function (result) {
-    if (result[0] > 0) {
-      return callback(null, token);
-    } else {
+  User.find({
+    where: {email: email},
+    include: {model: AccountUser, attributes: ['firstName']}
+  }).done(function (foundUser) {
+    if (!foundUser) {
       callback(null, null);
+      return;
     }
-  })
-  .catch(function (err) {
-    callback(true, null);
+    User.update({
+      resetPasswordToken: token,
+      resetPasswordSentAt: new Date()
+    }, {
+      where: {email: email}
+    })
+    .then(function (result) {
+      if (result[0] > 0) {
+        return callback(null, token, foundUser.AccountUsers[0].firstName);
+      } else {
+        callback(null, null);
+      }
+    })
+    .catch(function (err) {
+      callback(true, null);
+    });
   });
-
 }

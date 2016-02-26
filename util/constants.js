@@ -36,28 +36,38 @@ module.exports = {
     "landlineNumber", "mobile"
   ],
   originalMailTemplateFields: [
-    'id',
-    'name',
-    'subject',
-    'content',
-    'systemMessage'
+    'id', 'name', 'subject', 'content', 'systemMessage', 'category', 'mailTemplateActive'
   ],
   mailTemplateFields: [
-    'id',
-    'name',
-    'subject',
-    'content',
-    'MailTemplateBaseId',
-    'UserId',
-    'systemMessage'
+    'id', 'name', 'subject', 'content',
+    'MailTemplateBaseId', 'AccountId', 'systemMessage'
   ],
   mailTemplateFieldsForList: [
-    'id',
-    'name',
-    'MailTemplateBaseId',
-    'UserId',
-    'systemMessage'
+    'id', 'name', 'MailTemplateBaseId', 'AccountId', 'systemMessage'
   ],
+  mailTemplateType : {
+    'firstInvitation' : "First Invitation",
+    'closeSession' : "Close Session",
+    'confirmation' : "Confirmation",
+    'generic' : "Generic",
+    'notAtAll' : "Not At All",
+    'notThisTime' : "Not This Time",
+    'accountManagerConfirmation' : "Account Manager Confirmation",
+    'reactivatedAccount' : "Reactivated Account",
+    'deactivatedAccount' : "Deactivated Account",
+    'facilitatorConfirmation': "Facilitator Confirmation",
+    'observerInvitation' : "Observer Invitation",
+    'facilitatorOverQuota' : "Facilitator Over-Quota",
+    'invitationAcceptance' : "Invitation Acceptance",
+    'sessionClosed' : "Session Closed",
+    'sessionFull' : "Session Full",
+    'sessionNotYetOpen' : "Session Not Yet Open",
+    'passwordResetSuccess': "Reset Password Success",
+    'passwordResetRequest': "Reset Password Request",
+    'passwordChangeSuccess': "Change Password Success",
+    'registerConfirmationEmail': "Confirmation Email",
+    'registerConfirmationEmailSuccess': "Confirmation Email Success"
+  },
   sessionListManageRoles: {
     accountUser: ['accountManager', 'admin'],
     sessionMember: ['facilitator'],
