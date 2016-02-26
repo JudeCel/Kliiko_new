@@ -75,6 +75,7 @@
     vm.reorderTopics = reorderTopics;
 
     // step 4 + 5
+    vm.modalWindowHandler = modalWindowHandler;
     vm.finishSelectingMembers = finishSelectingMembers;
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
     vm.selectObserversClickHandle = selectObserversClickHandle;
@@ -314,6 +315,37 @@
 
 
     /// step 4 + 5
+    function showSmsWindow(data) {
+      if(data.length > 0) {
+        var noMobile = {};
+        for(var i in data) {
+          var member = data[i];
+          if(!member.mobile) {
+            noMobile[member.firstName + ' ' + member.lastName] = ' has no mobile provided';
+          }
+        }
+
+        if(Object.keys(noMobile).length == 0) {
+          vm.sendSmsTo = data;
+          domServices.modal('sessionBuilder-sendSmsModal');
+        }
+        else {
+          messenger.error(noMobile);
+        }
+      }
+      else {
+        messenger.error('No contacts selected');
+      }
+    }
+
+    function modalWindowHandler(modal, data) {
+      if(modal === 'showSms') {
+        showSmsWindow(data);
+      }
+      else if(modal === 'sendSms') {
+
+      }
+    }
 
     function selectParticipantsClickHandle() {
       vm.searchingParticipants = true;
@@ -366,13 +398,15 @@
       return array;
     }
 
-    function finishSelectingMembers(members) {
+    function finishSelectingMembers(activeList) {
       if(vm.searchingParticipants) {
-        vm.participants = selectMembers(members);
+        vm.participants = vm.participants.concat(selectMembers(activeList.id, activeList.members));
+        vm.participants = removeDuplicatesFromArray(vm.participants);
         vm.searchingParticipants = false;
       }
       else if(vm.searchingObservers) {
-        vm.observers = selectMembers(members);
+        vm.observers = vm.observers.concat(selectMembers(activeList.id, activeList.members));
+        vm.observers = removeDuplicatesFromArray(vm.observers);
         vm.searchingObservers = false;
       }
     }
@@ -384,11 +418,26 @@
       members.splice(index, 1);
     }
 
-    function selectMembers(members) {
+
+    function removeDuplicatesFromArray(array) {
+      var object = {}, newArray = [];
+      for(var i = 0; i < array.length; i++) {
+        object[array[i].id] = array[i];
+      }
+
+      for(var i in object) {
+        newArray.push(object[i]);
+      }
+
+      return newArray;
+    }
+
+    function selectMembers(listId, members) {
       var selected = [];
       for(var i in members) {
         var member = members[i];
         if(member._selected) {
+          member.listId = listId;
           selected.push(member);
         }
       }

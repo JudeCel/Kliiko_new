@@ -19,6 +19,7 @@
     vm.basePath = '/js/ngApp/components/dashboard-resources-contactLists/';
     vm.importErrorMessage = null;
     vm.hideStuff = false;
+    vm.hideModalStuff = false;
 
     vm.importedFields = [];
     vm.contactListDropItems = [];
@@ -263,12 +264,14 @@
       }
 
       if (action == 'cancel') {
-        for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
-          if (vm.lists.activeList.members[i].id == vm.contactSnapshot.id) {
-            vm.lists.activeList.members[i] = angular.copy(vm.contactSnapshot);
-            vm.contactSnapshot = null;
-            break;
+        if(vm.lists) {
+          for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
+            if (vm.lists.activeList.members[i].id == vm.contactSnapshot.id) {
+              vm.lists.activeList.members[i] = angular.copy(vm.contactSnapshot);
+              vm.contactSnapshot = null;
+              break;
 
+            }
           }
         }
       }
@@ -314,20 +317,30 @@
     }
 
     function updateContact() {
-
       var newContact = angular.copy(vm.newContact);
-      var currentList = angular.copy(vm.lists.activeList);
-      vm.lists.updateContact(vm.newContact).then(
-        function(res) {
-          vm.newContact = {customFields:{}};
 
+      if(vm.hideModalStuff) {
+        console.log("aaaaaaaaaaaaaaa");
+        newContact.update(newContact.listId).then(function() {
           domServices.modal('contactList-addContactManual', 'close');
-          messenger.ok('Contact '+ newContact.firstName + ' has been updated');
-        },
-        function (err) {
+        }, function(error) {
           vm.modalErrors = err;
-        }
-      );
+        });
+      }
+      else {
+        var currentList = angular.copy(vm.lists.activeList);
+        vm.lists.updateContact(vm.newContact).then(
+          function(res) {
+            vm.newContact = {customFields:{}};
+
+            domServices.modal('contactList-addContactManual', 'close');
+            messenger.ok('Contact '+ newContact.firstName + ' has been updated');
+          },
+          function (err) {
+            vm.modalErrors = err;
+          }
+        );
+      }
 
     }
 
