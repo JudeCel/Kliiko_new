@@ -8,14 +8,15 @@ function sendToken(email, callback) {
         function (next) {
             usersService.setResetToken(email, next);
         },
-        function (token, next) {
+        function (token, userName, next) {
             if (!token) {
                 return next(new Error('E-mail not found'));
             }
 
             let params = {
                 token: token,
-                email: email
+                email: email,
+                name: userName
             };
             mailers.users.sendResetPasswordToken(params, next);
         }

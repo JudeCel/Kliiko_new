@@ -88,7 +88,8 @@ function sendInvite(invite, deferred) {
     email: invite.AccountUser.email,
     firstName: invite.AccountUser.firstName,
     lastName: invite.AccountUser.lastName,
-    accountName: invite.Account.name
+    accountName: invite.Account.name,
+    accountId: invite.Account.id
   };
 
   if(invite.ownerType == 'account') {

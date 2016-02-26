@@ -51,7 +51,6 @@ module.exports = (Sequelize, DataTypes) => {
       classMethods: {
         associate: function(models) {
           User.hasMany(models.SocialProfile, { foreignKey: 'userId'});
-          User.belongsToMany(models.Vote, { through: models.VotesBy });
           User.belongsToMany(models.Account, { through: { model: models.AccountUser} });
           User.hasMany(models.AccountUser, { onDelete: 'CASCADE' });
           User.hasMany(models.Event, { foreignKey: 'userId'});

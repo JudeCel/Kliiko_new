@@ -13,7 +13,8 @@ module.exports = (Sequelize, DataTypes) => {
     }, {
       classMethods: {
         associate: function(models) {
-          MailTemplate.belongsTo(models.User);
+          MailTemplate.belongsTo(models.MailTemplateBase);
+          MailTemplate.belongsTo(models.Account);
           MailTemplate.belongsTo(models.Session, { onDelete: 'cascade', foreignKey: 'sessionId' });
         }
       }

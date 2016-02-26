@@ -2064,7 +2064,8 @@ hr.survey-hr {
     margin: 0 auto; }
   #email-template-editor .mail-template-details {
     margin: 0 auto;
-    margin-left: 15px; }
+    margin-left: 15px;
+    margin-bottom: 15px; }
   #email-template-editor .mail-template-list {
     max-height: 650px;
     overflow-y: scroll;
