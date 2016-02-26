@@ -24,7 +24,7 @@
                 Clear Selection
             </div>
 
-            <div id='dashboard-contact-lists' ng-controller="ContactListController as clc">
+            <div id='dashboard-contact-lists' ng-controller="ContactListController as clc" ng-init="clc.initLists()">
                 {{ clc.sectListActiveToFacilitators() }}
                 <div class="row">
                     <div id="contact-lists-right-column" class="col-md-12">
