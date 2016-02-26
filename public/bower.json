@@ -1,0 +1,22 @@
+{
+  "name": "public",
+  "homepage": "https://github.com/DiatomEnterprises/Kliiko",
+  "authors": [
+    "Lauris Bligzna <bligzna.lauris@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "international-phone-number": "^0.0.16",
+    "ng-intl-tel-input": "^1.4.0"
+  }
+}

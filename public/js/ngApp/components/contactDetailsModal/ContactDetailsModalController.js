@@ -3,7 +3,17 @@
 
   angular.
     module('KliikoApp').
-    controller('ContactDetailsModalController', ContactDetailsModalController);
+    config(function(ipnConfig) {
+      ipnConfig.autoPlaceholder = true;
+      ipnConfig.customPlaceholder = function() {
+        return "Recomended";
+      };
+      ipnConfig.preferredCountries = ['au'];
+      return ipnConfig;
+    });
+  angular.
+    module('KliikoApp').
+    controller('ContactDetailsModalController', ContactDetailsModalController)
 
   ContactDetailsModalController.$inject = ['dbg', 'user','domServices', 'ngProgressFactory', 'messenger'];
   function ContactDetailsModalController(dbg,  user, domServices, ngProgressFactory, messenger) {
@@ -14,7 +24,6 @@
     vm.errors = {};
     vm.updateUserData = updateUserData;
     vm.cancel = cancel;
-
     vm.validatePhone = validatePhone;
 
     vm.phoneCountryData = sessionStorage.getItem('phoneCountryData') || 'au';
@@ -66,16 +75,11 @@
       return vm.landlineNumberCountryData = sessionStorage.getItem('landlineNumberCountryData')
     }
 
-    function validatePhone() {
-      return $("#mobile").intlTelInput("isValidNumber");
-    }
-
-    function validateLandlineNumber() {
-      return $("#landlineNumber").intlTelInput("isValidNumber");
-    }
 
     function updateUserData(data, form) {
-      if(validateNumbers()){
+      console.log(validatePhoneNumber())
+
+      if(validatePhoneNumber() && validateLandlineNumber(data.landlineNumber)){
         getPhoneCountryData();
         getLandlineNumberCountryData();
 
@@ -107,22 +111,33 @@
       }
     }
 
-    function validateNumbers() {
+    function validatePhoneNumber() {
       if(!validatePhone()){
         messenger.error("The mobile number for this country is not valid.");
         return false;
       }
-      if(!validateLandlineNumber()){
+      return true;
+    }
+
+    function validateLandlineNumber(landlineNumber) {
+      if(landlineNumber && !validLandlineNumber()){
         messenger.error("The landline number for this country is not valid.");
         return false;
       }
       return true;
     }
 
+    function validatePhone() {
+      return $("#mobile").intlTelInput("isValidNumber");
+    }
+
+    function validLandlineNumber() {
+      return $("#landlineNumber").intlTelInput("isValidNumber");
+    }
+
     function cancel(){
       domServices.modal('contactDetailsModal', 'close');
     }
-
 
   }
 
