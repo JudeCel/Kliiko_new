@@ -192,6 +192,7 @@ function createMailTemplateFromFile(fileInfo, callback) {
 }
 
 function createMailTemplate() {
+  num = 0;
   async.waterfall([
     (cb) => { addTemplate(cb) },
     addTemplate,

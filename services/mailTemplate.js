@@ -128,7 +128,7 @@ function getActiveMailTemplate(category, accountId, callback) {
     attributes: constants.originalMailTemplateFields,
     raw: true
   }).then(function (result) {
-    //get reference to active mail template copy
+    //get reference to active mail template
     getLatestMailTemplate({id: result.id, latestId: result.mailTemplateActive, accountId: accountId}, function(err, template) {
       if (!template) {
         callback(null, result);
