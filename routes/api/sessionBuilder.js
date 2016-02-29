@@ -12,7 +12,8 @@ module.exports = {
   sendSms: sendSms,
   inviteMembers: inviteMembers,
   removeInvite: removeInvite,
-  removeSessionMember: removeSessionMember
+  removeSessionMember: removeSessionMember,
+  sendGenericEmail: sendGenericEmail
 };
 
 function initializeBuilder(req, res, next) {
@@ -101,6 +102,14 @@ function removeInvite(req, res, next) {
 
 function removeSessionMember(req, res, next) {
   sessionBuilderServices.removeSessionMember(req.params).then(function(message) {
+    res.send({ message: message });
+  }, function(error) {
+    res.send({ error: error });
+  });
+}
+
+function sendGenericEmail(req, res, next) {
+  sessionBuilderServices.sendGenericEmail(req.params.id, req.body).then(function(message) {
     res.send({ message: message });
   }, function(error) {
     res.send({ error: error });

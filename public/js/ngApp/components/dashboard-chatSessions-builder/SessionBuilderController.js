@@ -88,6 +88,7 @@
     vm.selectedAllMembers = selectedAllMembers;
     vm.findSelectedMembers = findSelectedMembers;
     vm.removeFromList = removeFromList;
+    vm.sendGenericEmail = sendGenericEmail;
 
     function closeSession() {
       vm.session.cancel();
@@ -546,6 +547,21 @@
         }
       }
       return selected;
+    }
+
+    function sendGenericEmail() {
+      var data = findSelectedMembers();
+
+      if(data.length > 0) {
+        vm.session.sendGenericEmail(data).then(function(res) {
+          messenger.ok(res.message);
+        }, function(error) {
+          messenger.error(error);
+        });
+      }
+      else {
+        messenger.error('No contacts selected');
+      }
     }
 
   }

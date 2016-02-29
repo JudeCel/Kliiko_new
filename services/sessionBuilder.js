@@ -8,6 +8,7 @@ var AccountUser = models.AccountUser;
 var constants = require('./../util/constants');
 var inviteService = require('./invite');
 var twilioLib = require('./../lib/twilio');
+var mailHelper = require('./../mailers/mailHelper');
 
 var async = require('async');
 var _ = require('lodash');
@@ -23,6 +24,7 @@ const MESSAGES = {
   inviteRemoved: 'Invite removed successfully',
   sessionMemberNotFound: 'Session Member not found',
   sessionMemberRemoved: 'Session Member removed successfully',
+  accountUserNotFound: 'Account User not found',
 
   errors: {
     firstStep: {
@@ -60,7 +62,8 @@ module.exports = {
   sendSms: sendSms,
   inviteMembers: inviteMembers,
   removeInvite: removeInvite,
-  removeSessionMember: removeSessionMember
+  removeSessionMember: removeSessionMember,
+  sendGenericEmail: sendGenericEmail
 };
 
 function initializeBuilder(params) {
@@ -284,6 +287,78 @@ function removeInvite(params) {
     }
     else {
       deferred.reject(MESSAGES.inviteNotFound);
+    }
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function sendGenericEmail(sessionId, data) {
+  let deferred = q.defer();
+
+  models.SessionMember.find({
+    where: {
+      role: 'facilitator'
+    },
+    include: [{
+      model: Session,
+      where: {
+        id: sessionId
+      }
+    }, AccountUser]
+  }).then(function(sessionMember) {
+    if(sessionMember) {
+      let ids = _.map(data.recievers, 'id');
+
+      AccountUser.findAll({
+        include: [{
+          model: models.ContactListUser,
+          where: {
+            id: { $in: ids }
+          }
+        }]
+      }).then(function(accountUsers) {
+        let params = [];
+        let facilitator = sessionMember.AccountUser;
+
+        _.map(accountUsers, function(accountUser) {
+          params.push({
+            accountId: accountUser.accountId,
+            email: accountUser.email,
+            firstName: accountUser.firstName,
+            facilitatorFirstName: facilitator.firstName,
+            facilitatorLastName: facilitator.lastName,
+            facilitatorMail: facilitator.email,
+            facilitatorMobileNumber: facilitator.mobile,
+            unsubscribeMailUrl: 'some unsub url'
+          });
+        });
+
+        async.each(params, function(emailParams, callback) {
+          mailHelper.sendGeneric(emailParams, function(error, result) {
+            if(error) {
+              callback(error);
+            }
+            else {
+              callback(null, result);
+            }
+          });
+        }, function(error) {
+          if(error) {
+            deferred.reject(error);
+          }
+          else {
+            deferred.resolve(`Sent ${accountUsers.length} emails`);
+          }
+        });
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+    else {
+      deferred.reject(MESSAGES.sessionMemberNotFound);
     }
   }).catch(function(error) {
     deferred.reject(filters.errors(error));

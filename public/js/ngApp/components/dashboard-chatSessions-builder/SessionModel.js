@@ -15,7 +15,8 @@
       sendSms: { method: 'POST', params: { path: 'sendSms' } },
       inviteMembers: { method: 'POST', params: { path: 'invite' } },
       removeInvite: { method: 'DELETE', params: { path: 'removeInvite' } },
-      removeSessionMember: { method: 'DELETE', params: { path: 'removeSessionMember' } }
+      removeSessionMember: { method: 'DELETE', params: { path: 'removeSessionMember' } },
+      sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } }
     });
 
     var SessionModel;
@@ -31,6 +32,7 @@
     SessionModel.prototype.inviteParticipants = inviteParticipants;
     SessionModel.prototype.inviteObservers = inviteObservers;
     SessionModel.prototype.removeMember = removeMember;
+    SessionModel.prototype.sendGenericEmail = sendGenericEmail;
 
 
     return SessionModel;
@@ -198,6 +200,20 @@
           else deferred.resolve(res);
         });
       }
+
+      return deferred.promise;
+    }
+
+    function sendGenericEmail(members) {
+      var self = this;
+      var deferred = $q.defer();
+
+      sessionBuilderRestApi.sendGenericEmail({ id: self.id }, { recievers: members }, function(res) {
+        if(res.error) {
+          deferred.reject(res.error);
+        }
+        else deferred.resolve(res);
+      });
 
       return deferred.promise;
     }
