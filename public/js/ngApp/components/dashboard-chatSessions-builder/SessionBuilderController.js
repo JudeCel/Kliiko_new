@@ -71,6 +71,7 @@
 
     // step 2
     vm.selectFacilitatorsClickHandle = selectFacilitatorsClickHandle;
+    vm.facilitatorsSelectHandle = facilitatorsSelectHandle;
     vm.faderHack = faderHack;
     vm.topicsOnDropComplete = topicsOnDropComplete;
     vm.removeTopicFromList = removeTopicFromList;
@@ -273,6 +274,11 @@
       domServices.modal('sessionBuilderSelectFacilitatorModal');
     }
 
+    function facilitatorsSelectHandle(facilitator) {
+      vm.session.steps.step2.facilitator = facilitator;
+      vm.session.update()
+    }
+
     function faderHack() {
       setTimeout(function() {
         jQuery('.modal-backdrop.fade.in').hide();
@@ -304,9 +310,10 @@
         } else {
           vm.chatSessionTopicsList.push(data);
         }
+
+        vm.session.steps.step2.topics = vm.chatSessionTopicsList;
+        vm.session.update();
       }
-
-
 
     }
 
@@ -321,6 +328,8 @@
 
       vm.chatSessionTopicsList.splice(index, 1);
       index = null;
+
+      vm.session.steps.step2.topics = vm.chatSessionTopicsList;
     }
 
     function reorderTopics(data, t) {
@@ -331,6 +340,8 @@
         if (data.id == vm.chatSessionTopicsList[i].id) vm.chatSessionTopicsList[i].topic_order_id = targetOrderId;
         if (t.id == vm.chatSessionTopicsList[i].id) vm.chatSessionTopicsList[i].topic_order_id = droppedOrderId;
       }
+
+      vm.session.steps.step2.topics = vm.chatSessionTopicsList;
 
     }
 

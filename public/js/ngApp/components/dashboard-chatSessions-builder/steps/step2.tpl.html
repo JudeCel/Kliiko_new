@@ -59,7 +59,7 @@
                                         ng-repeat='member in clc.lists.listByType["Facilitators"].members | orderBy: clc.tableSort.by : clc.tableSort.reverse'
                                         ng-class="{'selected':member._selected}">
                                         <td class="selection-column">
-                                            <input type="radio" ng-value="member" ng-model="sbc.selectedFacilitator">
+                                            <input type="radio" ng-value="member" ng-model="sbc.selectedFacilitator" ng-click="sbc.facilitatorsSelectHandle(sbc.selectedFacilitator)">
                                             <!--<div class="check">-->
                                             <!--<input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-model="member._selected" ng-click="member.selected = !member.selected" type="checkbox" >-->
                                             <!--<label for="memberSelectet{{ $index }}" class="kliiko-checkbox" ></label>-->

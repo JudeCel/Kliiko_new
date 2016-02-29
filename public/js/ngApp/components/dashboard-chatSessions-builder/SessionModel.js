@@ -26,7 +26,9 @@
     SessionModel.prototype.createNew = createNew;
     SessionModel.prototype.getRemoteData = getRemoteData;
     SessionModel.prototype.cancel = cancel;
-    SessionModel.prototype.destroy = update;
+    SessionModel.prototype.update = update;
+    //SessionModel.prototype.destroy = update;
+    SessionModel.prototype.destroy = cancel;
     SessionModel.prototype.updateStep = updateStep;
     SessionModel.prototype.sendSms = sendSms;
     SessionModel.prototype.inviteParticipants = inviteParticipants;
