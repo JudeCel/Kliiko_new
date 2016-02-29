@@ -2889,6 +2889,11 @@ hr.survey-hr {
       background: #F6F8F7; }
       #session-builder-content #step-2 .topic-list-item:hover {
         background: rgba(174, 239, 137, 0.5); }
+    #session-builder-content #step-2 img.ico-active-unactive {
+      position: relative;
+      float: right;
+      left: -90px;
+      top: -2px; }
     #session-builder-content #step-2 span.edit-block {
       padding: 1px 10px !important; }
     #session-builder-content #step-2 .drop-area {

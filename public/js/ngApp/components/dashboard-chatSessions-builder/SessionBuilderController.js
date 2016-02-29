@@ -281,23 +281,32 @@
     function topicsOnDropComplete(data, event) {
       if (!data) return;
 
-      data.topic_order_id = vm.chatSessionTopicsList.length;
-
-      if (vm.chatSessionTopicsList.length) {
-        for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
-          if (data.id ==  vm.chatSessionTopicsList[i].id ) return;
-        }
-        vm.chatSessionTopicsList.push(data);
-      } else {
-        vm.chatSessionTopicsList.push(data);
-      }
+      thisAdd(data);
 
       // if there more topics selected, then "drop" them also
       if ( Object.keys(vm.selectedTopics).length ) {
         for (var key in vm.selectedTopics) {
-          topicsOnDropComplete(vm.selectedTopics[key]);
+          thisAdd(vm.selectedTopics[key]);
         }
       }
+
+      function thisAdd(data) {
+        // check if this topic already in selected chat session topics list
+        if (vm.chatSessionTopicsList.length) {
+          for (var i = 0; i < vm.chatSessionTopicsList.length ; i++) {
+            if (data.id ==  vm.chatSessionTopicsList[i].id ) return;
+          }
+
+          data.topic_order_id = vm.chatSessionTopicsList.length;
+
+          vm.chatSessionTopicsList.push(data);
+        } else {
+          vm.chatSessionTopicsList.push(data);
+        }
+      }
+
+
+
     }
 
     function removeTopicFromList(id) {

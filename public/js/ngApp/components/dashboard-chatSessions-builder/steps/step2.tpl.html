@@ -263,8 +263,13 @@
                             <div class="topic-list-item" ng-repeat="t in sbc.chatSessionTopicsList | orderBy:'topic_order_id' "  ng-drag="true" ng-drag-data="t">
                                 <div class="panel-label" ng-drop="true" ng-drop-success="sbc.reorderTopics($data, t)">
                                 <span ng-if="topics.editBlockHelper != $index">
+                                    <img src="icons/ic_move.png">
                                     {{t.name}}
                                 </span>
+
+                                    <img class="ico-active-unactive" ng-show="t.active" src="/icons/unlocked.png" ng-click="t.active = !t.active; t.update()"  alt="Active" title="Active">
+                                    <img class="ico-active-unactive" ng-show="!t.active" src="/icons/locked.png"  ng-click="t.active = !t.active; t.update()" alt="Not Active" title="Not Active">
+
                                 <span ng-if="topics.editBlockHelper == $index">
                                     <input id="topic-input-ts-{{ $index }}" type="text" ng-model="t.name"
                                            maxlength="{{ ::topics.nameMaxSize}}"

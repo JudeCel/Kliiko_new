@@ -70,6 +70,8 @@
     margin-right: 10px;
   }
 
+
+
   input#duration-input,
   select#duration-input{
     padding:2px;
@@ -86,6 +88,13 @@
     &:hover {
       background: $lightGreen;
     }
+
+  }
+
+  img.ico-active-unactive {
+    position: relative;
+    float: right;
+    left: -90px; top: -2px;
 
   }
 
