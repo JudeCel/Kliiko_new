@@ -2868,6 +2868,15 @@ hr.survey-hr {
     #session-builder-content #step-2 td {
       padding: 8px 0;
       text-align: left; }
+    #session-builder-content #step-2 #create-new-btn {
+      margin-left: 20px;
+      margin-top: -8px;
+      margin-bottom: 10px; }
+    #session-builder-content #step-2 .flex {
+      padding-left: 12px; }
+    #session-builder-content #step-2 .check {
+      float: left;
+      margin-right: 10px; }
     #session-builder-content #step-2 input#duration-input, #session-builder-content #upgrade-plan-content #step-2 input#promocod-input, #upgrade-plan-content #session-builder-content #step-2 input#promocod-input,
     #session-builder-content #step-2 select#duration-input {
       padding: 2px;
@@ -2876,6 +2885,7 @@ hr.survey-hr {
     #session-builder-content #step-2 .topic-list-item {
       margin: 4px;
       padding: 4px;
+      cursor: pointer;
       background: #F6F8F7; }
       #session-builder-content #step-2 .topic-list-item:hover {
         background: rgba(174, 239, 137, 0.5); }
@@ -2998,3 +3008,9 @@ hr.survey-hr {
 
 .fade-disabled {
   opacity: .45 !important; }
+
+.flex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex; }

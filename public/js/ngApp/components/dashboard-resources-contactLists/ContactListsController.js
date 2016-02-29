@@ -38,6 +38,7 @@
     vm.changeTableSortingFilter = changeTableSortingFilter;
     vm.showManageColumnsModal = showManageColumnsModal;
 
+    vm.updateOrCreateContact = updateOrCreateContact;
     vm.contactAddEditClickHandle = contactAddEditClickHandle;
     vm.createContact = createContact;
     vm.updateContact = updateContact;
@@ -238,6 +239,14 @@
       }
     }
 
+
+
+
+    function updateOrCreateContact() {
+      vm.updateExistingUser
+        ? updateContact()
+        : createContact();
+    }
 
     /**
      * Add New or Edit Existing contact

@@ -123,13 +123,15 @@
       }
     }
 
-    function toggleEditBlock(blockIndex) {
+    function toggleEditBlock(blockIndex,inputId) {
       jQuery('#edit-block-'+blockIndex).toggle();
+
+      if (inputId) setTimeout(function() { jQuery('#'+inputId).focus(); }, 200);
     }
 
-    function edit(blockIndex) {
+    function edit(blockIndex, inputId) {
       tempName = vm.list[blockIndex].name;
-      toggleEditBlock(blockIndex);
+      toggleEditBlock(blockIndex, inputId);
 
       vm.editBlockHelper = blockIndex;
     }
