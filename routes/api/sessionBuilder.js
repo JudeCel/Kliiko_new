@@ -8,7 +8,9 @@ module.exports = {
   update: update,
   nextStep: nextStep,
   cancel: cancel,
-  openBuild: openBuild
+  openBuild: openBuild,
+  sendSms: sendSms,
+  inviteMembers: inviteMembers,
 };
 
 function initializeBuilder(req, res, next) {
@@ -69,4 +71,20 @@ function cancel(req, res, next) {
   }, function(error) {
     res.send({error: error});
   })
+}
+
+function sendSms(req, res, next) {
+  sessionBuilderServices.sendSms(req.body).then(function(result) {
+    res.send({ message: result });
+  }, function(error) {
+    res.send({ error: error });
+  });
+}
+
+function inviteMembers(req, res, next) {
+  sessionBuilderServices.inviteMembers(req.params.id, req.body).then(function(result) {
+    res.send({ data: result, message: 'Successfully invited contacts' });
+  }, function(error) {
+    res.send({ error: error });
+  });
 }

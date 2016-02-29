@@ -22,34 +22,35 @@
 
     vm.session = new SessionModel(sessionId);
     vm.session.init().then(function(res) {
-
-    vm.mouseOveringMember = [];
-    vm.sessionMemberValidations = {
-      facilitator: {
-        min: 1,
-        max: 1
-      },
-      participant: {
-        min: 8,
-        max: 8
-      },
-      observer: {
-        min: 0,
-        max: 15
-      },
-    }
-
-    vm.dateTime = {
-      hstep:1,
-      mstep: 15,
-
-      options: {
-        hstep: [1, 2, 3],
-        mstep: [1, 5, 10, 15, 25, 30]
+      vm.mouseOveringMember = [];
+      vm.sessionMemberValidations = {
+        facilitator: {
+          min: 1,
+          max: 1
+        },
+        participant: {
+          min: 8,
+          max: 8
+        },
+        observer: {
+          min: 0,
+          max: 15
+        },
       }
-    };
 
-    vm.chatSessionTopicsList = [];
+      vm.dateTime = {
+        hstep:1,
+        mstep: 15,
+
+        options: {
+          hstep: [1, 2, 3],
+          mstep: [1, 5, 10, 15, 25, 30]
+        }
+      };
+
+      vm.participants = vm.session.steps.step4.participants;
+      vm.observers = vm.session.steps.step5.observers;
+      vm.chatSessionTopicsList = [];
 
       parseDateAndTime('initial');
     });
@@ -75,6 +76,9 @@
     vm.reorderTopics = reorderTopics;
 
     // step 4 + 5
+    vm.showCorrectStatus = showCorrectStatus;
+    vm.inviteMembers = inviteMembers;
+    vm.modalWindowHandler = modalWindowHandler;
     vm.finishSelectingMembers = finishSelectingMembers;
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
     vm.selectObserversClickHandle = selectObserversClickHandle;
@@ -314,6 +318,87 @@
 
 
     /// step 4 + 5
+    function showCorrectStatus(member) {
+      if(member.invite) {
+        return member.invite.status;
+      }
+      else if(member.sessionMember) {
+        return 'confirmed';
+      }
+    }
+
+    function inviteMembers() {
+      var data = findSelectedMembers();
+
+      if(data.length > 0) {
+        var promise;
+        if(vm.currentStep == 4) {
+          promise = vm.session.inviteParticipants(data);
+        }
+        else if(vm.currentStep == 5) {
+          promise = vm.session.inviteObservers(data);
+        }
+
+        promise.then(function(res) {
+          for(var i in data) {
+            var member = data[i];
+            removeFromList(member, true);
+          }
+
+          if(vm.currentStep == 4) {
+            vm.participants = vm.participants.concat(res.data);
+          }
+          else if(vm.currentStep == 5) {
+            vm.observers = vm.observers.concat(res.data);
+          }
+
+          messenger.ok(res.message);
+        }, function(error) {
+          messenger.error(error);
+        });
+      }
+      else {
+        messenger.error('No contacts selected');
+      }
+    }
+
+    function showSmsWindow(data) {
+      if(data.length > 0) {
+        var noMobile = {};
+        for(var i in data) {
+          var member = data[i];
+          if(!member.mobile) {
+            noMobile[member.firstName + ' ' + member.lastName] = ' has no mobile provided';
+          }
+        }
+
+        if(Object.keys(noMobile).length == 0) {
+          vm.sendSmsTo = data;
+          vm.sendSmsMessage = null;
+          domServices.modal('sessionBuilder-sendSmsModal');
+        }
+        else {
+          messenger.error(noMobile);
+        }
+      }
+      else {
+        messenger.error('No contacts selected');
+      }
+    }
+
+    function modalWindowHandler(modal, data) {
+      if(modal === 'showSms') {
+        showSmsWindow(data);
+      }
+      else if(modal === 'sendSms') {
+        vm.session.sendSms(vm.sendSmsTo, vm.sendSmsMessage).then(function(message) {
+          domServices.modal('sessionBuilder-sendSmsModal', 'close');
+          messenger.ok(message);
+        }, function(error) {
+          messenger.error(error);
+        });
+      }
+    }
 
     function selectParticipantsClickHandle() {
       vm.searchingParticipants = true;
@@ -347,7 +432,9 @@
 
       for(var i in members) {
         var member = members[i];
-        member[stepString] = vm.selectedAll;
+        if(!showCorrectStatus(member)) {
+           member[stepString] = vm.selectedAll;
+        }
       }
     }
 
@@ -366,29 +453,50 @@
       return array;
     }
 
-    function finishSelectingMembers(members) {
+    function finishSelectingMembers(activeList) {
       if(vm.searchingParticipants) {
-        vm.participants = selectMembers(members);
+        vm.participants = vm.participants.concat(selectMembers(activeList.id, activeList.members));
+        vm.participants = removeDuplicatesFromArray(vm.participants);
         vm.searchingParticipants = false;
       }
       else if(vm.searchingObservers) {
-        vm.observers = selectMembers(members);
+        vm.observers = vm.observers.concat(selectMembers(activeList.id, activeList.members));
+        vm.observers = removeDuplicatesFromArray(vm.observers);
         vm.searchingObservers = false;
       }
     }
 
-    function removeFromList(member) {
+    function removeFromList(member, skipDb) {
       // needs removal from DB if invite
       var members = currentMemberList();
       var index = members.indexOf(member);
       members.splice(index, 1);
     }
 
-    function selectMembers(members) {
+    function removeDuplicatesFromArray(array) {
+      var object = {}, newArray = [];
+      for(var i = 0; i < array.length; i++) {
+        var element = object[array[i].email];
+        var check = element && (element.invite || element.sessionMember);
+
+        if(!check) {
+          object[array[i].email] = array[i];
+        }
+      }
+
+      for(var i in object) {
+        newArray.push(object[i]);
+      }
+
+      return newArray;
+    }
+
+    function selectMembers(listId, members) {
       var selected = [];
       for(var i in members) {
         var member = members[i];
         if(member._selected) {
+          member.listId = listId;
           selected.push(member);
         }
       }
