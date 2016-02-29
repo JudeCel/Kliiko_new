@@ -467,7 +467,23 @@
     }
 
     function removeFromList(member, skipDb) {
-      // needs removal from DB if invite
+      if(skipDb) {
+        removeMemberFromList(member);
+      }
+      else {
+        var confirmed = confirm('Are you sure you want to do this?');
+        if(!confirmed) return;
+
+        vm.session.removeMember(member).then(function(res) {
+          removeMemberFromList(member);
+          messenger.ok(res.message);
+        }, function(error) {
+          messenger.error(error);
+        });
+      }
+    }
+
+    function removeMemberFromList(member) {
       var members = currentMemberList();
       var index = members.indexOf(member);
       members.splice(index, 1);

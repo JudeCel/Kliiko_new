@@ -8,12 +8,14 @@
 
   SessionModel.$inject = ['$q', 'globalSettings', '$resource'];
   function SessionModel($q, globalSettings, $resource)  {
-    var apiPath = globalSettings.restUrl+'/sessionBuilder/:id/:path';
-    var sessionBuilderRestApi = $resource(apiPath, { id : '@id' }, {
+    var apiPath = globalSettings.restUrl+'/sessionBuilder/:id/:path/:otherId';
+    var sessionBuilderRestApi = $resource(apiPath, { id : '@id', otherId: '@otherId' }, {
       post: { method: 'POST' },
       put: { method: 'PUT' },
       sendSms: { method: 'POST', params: { path: 'sendSms' } },
-      inviteMembers: { method: 'POST', params: { path: 'invite' } }
+      inviteMembers: { method: 'POST', params: { path: 'invite' } },
+      removeInvite: { method: 'DELETE', params: { path: 'removeInvite' } },
+      removeSessionMember: { method: 'DELETE', params: { path: 'removeSessionMember' } }
     });
 
     var SessionModel;
@@ -28,6 +30,7 @@
     SessionModel.prototype.sendSms = sendSms;
     SessionModel.prototype.inviteParticipants = inviteParticipants;
     SessionModel.prototype.inviteObservers = inviteObservers;
+    SessionModel.prototype.removeMember = removeMember;
 
 
     return SessionModel;
@@ -171,6 +174,30 @@
         }
         else deferred.resolve(res);
       });
+
+      return deferred.promise;
+    }
+
+    function removeMember(member) {
+      var self = this;
+      var deferred = $q.defer();
+
+      if(member.invite) {
+        sessionBuilderRestApi.removeInvite({ id: self.id, otherId: member.invite.id }, function(res) {
+          if(res.error) {
+            deferred.reject(res.error);
+          }
+          else deferred.resolve(res);
+        });
+      }
+      else {
+        sessionBuilderRestApi.removeSessionMember({ id: self.id, otherId: member.sessionMember.id }, function(res) {
+          if(res.error) {
+            deferred.reject(res.error);
+          }
+          else deferred.resolve(res);
+        });
+      }
 
       return deferred.promise;
     }

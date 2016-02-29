@@ -18,6 +18,10 @@ const MESSAGES = {
   setUp: "You have successfully setted up your chat session.",
   cancel: "Session build successfully canceled",
   notFound: "Session build not found",
+  inviteNotFound: 'Invite not found or is not pending',
+  inviteRemoved: 'Invite removed successfully',
+  sessionMemberNotFound: 'Session Member not found',
+  sessionMemberRemoved: 'Session Member removed successfully',
 
   errors: {
     firstStep: {
@@ -53,7 +57,9 @@ module.exports = {
   openBuild: openBuild,
   destroy: destroy,
   sendSms: sendSms,
-  inviteMembers: inviteMembers
+  inviteMembers: inviteMembers,
+  removeInvite: removeInvite,
+  removeSessionMember: removeSessionMember
 };
 
 function initializeBuilder(params) {
@@ -167,7 +173,6 @@ function openBuild(id, accountId) {
     sessionBuilderObject(session).then(function(result) {
       deferred.resolve(result);
     }, function(error) {
-      console.log(error);
       deferred.reject(error);
     });
   }, function(error) {
@@ -229,6 +234,62 @@ function inviteMembers(sessionId, data) {
     });
   }, function(error) {
     deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+// Untested
+function removeSessionMember(params) {
+  let deferred = q.defer();
+
+  models.SessionMember.find({
+    where: {
+      id: params.sessionMemberId,
+      sessionId: params.id
+    }
+  }).then(function(sessionMember) {
+    if(sessionMember) {
+      sessionMember.destroy().then(function() {
+        deferred.resolve(MESSAGES.sessionMemberRemoved);
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+    else {
+      deferred.reject(MESSAGES.sessionMemberNotFound);
+    }
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+// Untested
+function removeInvite(params) {
+  let deferred = q.defer();
+
+  models.Invite.find({
+    where: {
+      id: params.inviteId,
+      ownerId: params.id,
+      ownerType: 'session',
+      status: 'pending'
+    }
+  }).then(function(invite) {
+    if(invite) {
+      invite.destroy().then(function() {
+        deferred.resolve(MESSAGES.inviteRemoved);
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+    else {
+      deferred.reject(MESSAGES.inviteNotFound);
+    }
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
@@ -452,7 +513,7 @@ function step4and5Queries(session, role) {
             role: role,
             status: { $ne: 'confirmed' }
           },
-          attributes: ['status']
+          attributes: ['id', 'status']
         }]
       }).then(function(accountUsers) {
         _.map(accountUsers, function(accountUser) {
