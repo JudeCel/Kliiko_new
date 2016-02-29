@@ -372,13 +372,18 @@ function inviteParams(sessionId, data) {
   let deferred = q.defer();
   let ids = _.map(data.members, 'id');
 
-  models.ContactListUser.findAll({ where: { id: { $in: ids } } }).then(function(clUsers) {
+  models.ContactListUser.findAll({
+    where: {
+      id: { $in: ids }
+    },
+    include: [models.AccountUser]
+  }).then(function(clUsers) {
     let params = _.map(clUsers, function(clUser) {
       return {
         accountUserId: clUser.accountUserId,
         sessionId: sessionId,
         role: data.role,
-        userType: 'existing'
+        userType: clUser.AccountUser.UserId ? 'existing' : 'new'
       }
     });
 

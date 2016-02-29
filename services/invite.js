@@ -6,10 +6,12 @@ var Invite = models.Invite;
 var User = models.User;
 var Account = models.Account;
 var AccountUser = models.AccountUser;
+var Session = models.Session;
 
 var inviteMailer = require('../mailers/invite');
 var constants = require('../util/constants');
 
+var dateFormat = require('dateformat');
 var uuid = require('node-uuid');
 var async = require('async');
 var _ = require('lodash');
@@ -38,13 +40,12 @@ function accountOrSession(params) {
 function createBulkInvites(arrayParams) {
   let deferred = q.defer();
 
-  let token = uuid.v1();
   let expireDate = new Date();
   expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
 
   _.map(arrayParams, function(paramObject) {
     accountOrSession(paramObject);
-    paramObject.token = token;
+    paramObject.token = uuid.v1();
     paramObject.sentAt = new Date();
     paramObject.expireAt = expireDate;
   });
@@ -55,14 +56,13 @@ function createBulkInvites(arrayParams) {
   }).then(function(results) {
     if(results.length > 0) {
       let ids = _.map(results, 'id');
-
       Invite.findAll({
         where: { id: { $in: ids } },
         include: [{
           model: AccountUser,
           attributes:
           constants.safeAccountUserParams
-        }, Account, User]
+        }, Account, Session, User]
       }).then(function(invites) {
         async.each(invites, function(invite, callback) {
           sendInvite(invite).then(function() {
@@ -78,6 +78,8 @@ function createBulkInvites(arrayParams) {
             deferred.resolve(results);
           }
         });
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
       });
     }
     else {
@@ -119,7 +121,7 @@ function createInvite(params) {
         model: AccountUser,
         attributes:
         constants.safeAccountUserParams
-      }, Account, User],
+      }, Account, Session, User],
       where: {
         token: token
       }
@@ -147,16 +149,16 @@ function sendInvite(invite, deferred) {
     deferred = q.defer();
   }
 
-  let inviteParams = {
-    token: invite.token,
-    email: invite.AccountUser.email,
-    firstName: invite.AccountUser.firstName,
-    lastName: invite.AccountUser.lastName,
-    accountName: invite.Account.name,
-    accountId: invite.Account.id
-  };
-
   if(invite.ownerType == 'account') {
+    let inviteParams = {
+      token: invite.token,
+      email: invite.AccountUser.email,
+      firstName: invite.AccountUser.firstName,
+      lastName: invite.AccountUser.lastName,
+      accountName: invite.Account.name,
+      accountId: invite.Account.id
+    };
+
     inviteMailer.sendInviteAccountManager(inviteParams, function(error, data) {
       if(error) {
         deferred.reject(error);
@@ -167,18 +169,45 @@ function sendInvite(invite, deferred) {
     });
   }
   else {
-    console.log("------------------------------------");
-    console.log("NEEDS SESSION EMAIL");
-    deferred.resolve();
-    console.log("------------------------------------");
-    // inviteMailer.sendInviteAccountManager(inviteParams, function(error, data) {
-    //   if(error) {
-    //     deferred.reject(error);
-    //   }
-    //   else {
-    //     deferred.resolve(simpleParams(invite, data));
-    //   }
-    // });
+    let session = invite.Session;
+    models.SessionMember.find({
+      where: {
+        sessionId: session.id,
+        role: 'facilitator'
+      },
+      include: [AccountUser]
+    }).then(function(sessionMember) {
+      let facilitator = sessionMember.AccountUser;
+      let inviteParams = {
+        role: invite.role,
+        accountId: invite.accountId,
+        token: invite.token,
+        firstName: invite.AccountUser.firstName,
+        email: invite.AccountUser.email,
+        sessionName: session.name,
+        startTime: dateFormat(invite.startDate, 'h:MM:ss'),
+        endTime: dateFormat(invite.endDate, 'h:MM:ss'),
+        startDate: dateFormat(invite.startDate, 'yyyy-mm-dd'),
+        endDate: dateFormat(invite.endDate, 'yyyy-mm-dd'),
+        incentive: 'something incentive',
+        facilitatorFirstName: facilitator.firstName,
+        facilitatorLastName: facilitator.lastName,
+        facilitatorMail: facilitator.email,
+        facilitatorMobileNumber: facilitator.mobile,
+        unsubscribeMailUrl: 'some unsub url'
+      }
+
+      inviteMailer.sendInviteSession(inviteParams, function(error, data) {
+        if(error) {
+          deferred.reject(error);
+        }
+        else {
+          deferred.resolve(simpleParams(invite));
+        }
+      });
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
+    });
   }
 
   return deferred.promise;
