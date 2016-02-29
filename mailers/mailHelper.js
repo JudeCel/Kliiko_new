@@ -1,3 +1,4 @@
+'use strict';
 var mailTemplate = require('./mailTemplate');
 var mailTemplateService = require('../services/mailTemplate');
 
@@ -9,7 +10,7 @@ function sendSessionClose(params, callback) {
     if (error) {
       return callback(error);
     }
-    var mailContent = mailTemplateService.composeMailFromTemplate(result, {
+    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       sessionName: params.sessionName,
       firstName: params.firstName, //receiver name
       incentive: params.incentive,
@@ -35,7 +36,7 @@ function sendFirstInvitation(params, callback) {
     if (error) {
       return callback(error);
     }
-    var mailContent = mailTemplateService.composeMailFromTemplate(result, {
+    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
       sessionName: params.sessionName,
       startTime: params.startTime,
@@ -65,7 +66,7 @@ function sendInviteConfirmation(params, callback) {
     if (error) {
       return callback(error);
     }
-    var mailContent = mailTemplateService.composeMailFromTemplate(result, {
+    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
       startTime: params.startTime,
       startDate: params.startDate,
@@ -91,7 +92,7 @@ function sendInvitationNotThisTime(params, callback) {
     if (error) {
       return callback(error);
     }
-    var mailContent = mailTemplateService.composeMailFromTemplate(result, {
+    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
       facilitatorFirstName: params.facilitatorFirstName,
       facilitatorLastName: params.facilitatorLastName,
@@ -112,7 +113,7 @@ function sendInvitationNotAtAll(params, callback) {
     if (error) {
       return callback(error);
     }
-    var mailContent = mailTemplateService.composeMailFromTemplate(result, {
+    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
       facilitatorFirstName: params.facilitatorFirstName,
       facilitatorLastName: params.facilitatorLastName,
@@ -133,7 +134,7 @@ function sendGeneric(params, callback) {
     if (error) {
       return callback(error);
     }
-    var mailContent = mailTemplateService.composeMailFromTemplate(result, {
+    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
       facilitatorFirstName: params.facilitatorFirstName,
       facilitatorLastName: params.facilitatorLastName,
@@ -154,7 +155,7 @@ function sendFacilitatorEmailConfirmation(params, callback) {
     if (error) {
       return callback(error);
     }
-    var mailContent = mailTemplateService.composeMailFromTemplate(result, {
+    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
       lastName: params.lastName,
       accountName: params.accountName,
@@ -179,7 +180,7 @@ function sendParticipantOverquota(params, callback) {
     if (error) {
       return callback(error);
     }
-    var mailContent = mailTemplateService.composeMailFromTemplate(result, {
+    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
       lastName: params.lastName,
       accountName: params.accountName,
