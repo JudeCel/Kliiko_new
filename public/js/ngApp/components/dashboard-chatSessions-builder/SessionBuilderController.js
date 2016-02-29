@@ -88,6 +88,7 @@
     vm.selectedAllMembers = selectedAllMembers;
     vm.findSelectedMembers = findSelectedMembers;
     vm.removeFromList = removeFromList;
+    vm.sendGenericEmail = sendGenericEmail;
 
     function closeSession() {
       vm.session.cancel();
@@ -505,7 +506,23 @@
     }
 
     function removeFromList(member, skipDb) {
-      // needs removal from DB if invite
+      if(skipDb) {
+        removeMemberFromList(member);
+      }
+      else {
+        var confirmed = confirm('Are you sure you want to do this?');
+        if(!confirmed) return;
+
+        vm.session.removeMember(member).then(function(res) {
+          removeMemberFromList(member);
+          messenger.ok(res.message);
+        }, function(error) {
+          messenger.error(error);
+        });
+      }
+    }
+
+    function removeMemberFromList(member) {
       var members = currentMemberList();
       var index = members.indexOf(member);
       members.splice(index, 1);
@@ -539,6 +556,21 @@
         }
       }
       return selected;
+    }
+
+    function sendGenericEmail() {
+      var data = findSelectedMembers();
+
+      if(data.length > 0) {
+        vm.session.sendGenericEmail(data).then(function(res) {
+          messenger.ok(res.message);
+        }, function(error) {
+          messenger.error(error);
+        });
+      }
+      else {
+        messenger.error('No contacts selected');
+      }
     }
 
   }

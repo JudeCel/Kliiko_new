@@ -11,6 +11,9 @@ module.exports = {
   openBuild: openBuild,
   sendSms: sendSms,
   inviteMembers: inviteMembers,
+  removeInvite: removeInvite,
+  removeSessionMember: removeSessionMember,
+  sendGenericEmail: sendGenericEmail
 };
 
 function initializeBuilder(req, res, next) {
@@ -84,6 +87,30 @@ function sendSms(req, res, next) {
 function inviteMembers(req, res, next) {
   sessionBuilderServices.inviteMembers(req.params.id, req.body).then(function(result) {
     res.send({ data: result, message: 'Successfully invited contacts' });
+  }, function(error) {
+    res.send({ error: error });
+  });
+}
+
+function removeInvite(req, res, next) {
+  sessionBuilderServices.removeInvite(req.params).then(function(message) {
+    res.send({ message: message });
+  }, function(error) {
+    res.send({ error: error });
+  });
+}
+
+function removeSessionMember(req, res, next) {
+  sessionBuilderServices.removeSessionMember(req.params).then(function(message) {
+    res.send({ message: message });
+  }, function(error) {
+    res.send({ error: error });
+  });
+}
+
+function sendGenericEmail(req, res, next) {
+  sessionBuilderServices.sendGenericEmail(req.params.id, req.body).then(function(message) {
+    res.send({ message: message });
   }, function(error) {
     res.send({ error: error });
   });

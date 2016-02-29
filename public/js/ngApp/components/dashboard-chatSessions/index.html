@@ -26,8 +26,8 @@
           <tr class='{{ csc.rowClass(session) }}' ng-repeat='session in csc.sessions'>
             <td>{{ session.name }}</td>
             <td>{{ session.facilitator.username }}</td>
-            <td>{{ session.start_time | date:sc.dateFormat }}</td>
-            <td>{{ session.end_time | date:sc.dateFormat }}</td>
+            <td>{{ session.startTime | date:sc.dateFormat }}</td>
+            <td>{{ session.endTime | date:sc.dateFormat }}</td>
             <td>{{ csc.subscriptionEndDate(app.user) | date:sc.dateFormat }}</td>
             <td>{{ session.showStatus }}</td>
             <td class='text-right dashboardElementsEditRemove'>

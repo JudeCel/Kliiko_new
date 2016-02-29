@@ -139,3 +139,6 @@ router.post('/sessionBuilder/:id',  policy.authorized(['accountManager', 'admin'
 router.delete('/sessionBuilder/:id',  policy.authorized(['accountManager', 'admin']), sessionBuilder.cancel);
 router.post('/sessionBuilder/:id/sendSms',  policy.authorized(['accountManager', 'admin']), sessionBuilder.sendSms);
 router.post('/sessionBuilder/:id/invite',  policy.authorized(['accountManager', 'admin']), sessionBuilder.inviteMembers);
+router.delete('/sessionBuilder/:id/removeInvite/:inviteId',  policy.authorized(['accountManager', 'admin']), sessionBuilder.removeInvite);
+router.delete('/sessionBuilder/:id/removeSessionMember/:sessionMemberId',  policy.authorized(['accountManager', 'admin']), sessionBuilder.removeSessionMember);
+router.post('/sessionBuilder/:id/sendGenericEmail',  policy.authorized(['accountManager', 'admin']), sessionBuilder.sendGenericEmail);
