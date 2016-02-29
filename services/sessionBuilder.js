@@ -7,6 +7,7 @@ var AccountUser = models.AccountUser;
 
 var constants = require('./../util/constants');
 var inviteService = require('./invite');
+var twilioLib = require('./../lib/twilio');
 
 var async = require('async');
 var _ = require('lodash');
@@ -165,7 +166,6 @@ function prevStep(id, accountId) {
   return deferred.promise;
 }
 
-// Untested
 function openBuild(id, accountId) {
   let deferred = q.defer();
 
@@ -199,12 +199,11 @@ function destroy(id, accountId) {
   return deferred.promise;
 }
 
-// Untested
-function sendSms(data) {
+function sendSms(data, provider) {
   let deferred = q.defer();
   let numbers = _.map(data.recievers, 'mobile');
 
-  twilioLib.sendSms(numbers, data.message).then(function(result) {
+  twilioLib.sendSms(numbers, data.message, provider).then(function(result) {
     deferred.resolve(result);
   }, function(error) {
     deferred.reject(error);
@@ -239,7 +238,6 @@ function inviteMembers(sessionId, data) {
   return deferred.promise;
 }
 
-// Untested
 function removeSessionMember(params) {
   let deferred = q.defer();
 
@@ -266,7 +264,6 @@ function removeSessionMember(params) {
   return deferred.promise;
 }
 
-// Untested
 function removeInvite(params) {
   let deferred = q.defer();
 
@@ -295,6 +292,7 @@ function removeInvite(params) {
   return deferred.promise;
 }
 
+// Helpers
 function inviteParams(sessionId, data) {
   let deferred = q.defer();
   let ids = _.map(data.members, 'id');
@@ -317,7 +315,6 @@ function inviteParams(sessionId, data) {
   return deferred.promise;
 }
 
-// Helpers
 function findNewStep(step, previous) {
   let steps = constants.sessionBuilderSteps;
   let currentIndex = steps.indexOf(step);

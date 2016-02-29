@@ -3,7 +3,9 @@
 var assert = require('chai').assert;
 var userFixture = require('./../fixtures/user');
 var models = require('./../../models');
+
 var sessionBuilderServices = require('./../../services/sessionBuilder');
+var config = require('config');
 var async = require('async');
 
 describe('SERVICE - SessionBuilder', function() {
@@ -228,6 +230,209 @@ describe('SERVICE - SessionBuilder', function() {
             }, function(error) {
               done(error);
             });
+          });
+        });
+      });
+    });
+  });
+
+  describe('#openBuild', function(done) {
+    describe('happy path', function(done) {
+      it('should return existing session builder object', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result1) {
+          sessionBuilderServices.openBuild(result1.sessionBuilder.id, testAccount.id).then(function(result2) {
+            assert.equal(result1.sessionBuilder.id, result2.sessionBuilder.id);
+            done();
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+
+    describe('sad path', function(done) {
+      it('should fail on finding session', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result1) {
+          sessionBuilderServices.openBuild(result1.sessionBuilder.id + 100, testAccount.id).then(function(result2) {
+            done('Should not get here');
+          }, function(error) {
+            assert.equal(error, sessionBuilderServices.messages.notFound);
+            done();
+          });
+        });
+      });
+    });
+  });
+
+  describe('#sendSms', function(done) {
+    var mobileNumber = config.get('twilioSenderNumber');
+
+    describe('happy path', function(done) {
+      function provider(params, callback) {
+        callback();
+      };
+
+      it('should send sms to numbers', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = {
+            message: 'random message',
+            recievers: [{
+              mobile: mobileNumber
+            }, {
+              mobile: mobileNumber
+            }]
+          };
+
+          sessionBuilderServices.sendSms(params, provider).then(function(result) {
+            assert.equal(result, 'All messages have been sent');
+            done();
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+
+    describe('sad path', function(done) {
+      function errorProvider(error) {
+        return function(params, callback) {
+          callback({ message: error });
+        };
+      }
+
+      it('should on sending sms because invalid number', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = {
+            message: 'random message',
+            recievers: [{
+              mobile: 'nonNumberMobile'
+            }]
+          };
+
+          let errorMessage = "The 'To' number nonNumberMobile is not a valid phone number.";
+          let provider = errorProvider(errorMessage);
+
+          sessionBuilderServices.sendSms(params, provider).then(function(result) {
+            done('Should not get here!');
+          }, function(error) {
+            assert.equal(error, errorMessage);
+            done();
+          });
+        });
+      });
+    });
+  });
+
+  describe('#removeSessionMember', function(done) {
+    function sessionMemberParams(sessionId) {
+      return {
+        sessionId: sessionId,
+        username: 'Es krucs!',
+        role: 'facilitator',
+        accountUserId: testAccountUser.id
+      }
+    }
+
+    describe('happy path', function(done) {
+      it('should remove session member from session', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+
+            sessionBuilderServices.removeSessionMember({ id: result.sessionBuilder.id, sessionMemberId: member.id }).then(function(result) {
+              assert.equal(result, sessionBuilderServices.messages.sessionMemberRemoved);
+              done();
+            }, function(error) {
+              done(error);
+            });
+          }).catch(function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+
+    describe('sad path', function(done) {
+      it('should fail on finding session member to remove', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+
+            sessionBuilderServices.removeSessionMember({ id: result.sessionBuilder.id + 100, sessionMemberId: member.id }).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              assert.equal(error, sessionBuilderServices.messages.sessionMemberNotFound);
+              done();
+            });
+          }).catch(function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+  });
+
+  describe('#removeInvite', function(done) {
+    function inviteParams(sessionId) {
+      return {
+        token: 'randomtoken',
+        sentAt: new Date(),
+        expireAt: new Date(),
+        role: 'facilitator',
+        ownerId: sessionId,
+        ownerType: 'session',
+        accountUserId: testAccountUser.id
+      }
+    }
+
+    describe('happy path', function(done) {
+      it('should remove session invite', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          models.Invite.create(inviteParams(result.sessionBuilder.id)).then(function(invite) {
+
+            sessionBuilderServices.removeInvite({ id: result.sessionBuilder.id, inviteId: invite.id }).then(function(result) {
+              assert.equal(result, sessionBuilderServices.messages.inviteRemoved);
+              done();
+            }, function(error) {
+              done(error);
+            });
+          }).catch(function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+
+    describe('sad path', function(done) {
+      it('should fail on finding invite because wrong id', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          models.Invite.create(inviteParams(result.sessionBuilder.id)).then(function(invite) {
+
+            sessionBuilderServices.removeInvite({ id: result.sessionBuilder.id + 100, inviteId: invite.id }).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              assert.equal(error, sessionBuilderServices.messages.inviteNotFound);
+              done();
+            });
+          }).catch(function(error) {
+            done(error);
+          });
+        });
+      });
+
+      it('should fail on finding invite because status not pending', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          let params = inviteParams(result.sessionBuilder.id);
+          params.status = 'confirmed';
+
+          models.Invite.create(params).then(function(invite) {
+
+            sessionBuilderServices.removeInvite({ id: result.sessionBuilder.id, inviteId: invite.id }).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              assert.equal(error, sessionBuilderServices.messages.inviteNotFound);
+              done();
+            });
+          }).catch(function(error) {
+            done(error);
           });
         });
       });
