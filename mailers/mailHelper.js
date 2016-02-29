@@ -165,6 +165,7 @@ function sendFacilitatorEmailConfirmation(params, callback) {
       endDate: params.endDate,
       logInUrl: params.logInUrl
     });
+
     if (mailContent.error) {
       return callback(mailContent.error);
     }
@@ -174,7 +175,7 @@ function sendFacilitatorEmailConfirmation(params, callback) {
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendParticipantOverquota(params, callback) {
-  mailTemplateService.getActiveMailTemplate("facilitatorConfirmation", null, function(error, result) {
+  mailTemplateService.getActiveMailTemplate("facilitatorOverQuota", null, function(error, result) {
     if (error) {
       return callback(error);
     }
