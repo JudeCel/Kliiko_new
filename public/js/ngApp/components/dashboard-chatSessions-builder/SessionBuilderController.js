@@ -60,7 +60,8 @@
     //vm.currentStep = $stateParams.currentStep;
     vm.currentStep = 1; //todo change this to page fetcherS
 
-
+    vm.selectedTopics = {};
+    vm.allTopicsSelected = false;
 
     vm.closeSession = closeSession;
     vm.stepsClassIsActive = stepsClassIsActive;
@@ -74,6 +75,8 @@
     vm.topicsOnDropComplete = topicsOnDropComplete;
     vm.removeTopicFromList = removeTopicFromList;
     vm.reorderTopics = reorderTopics;
+    vm.topicSelectClickHandle = topicSelectClickHandle;
+    vm.selectAllTopics = selectAllTopics;
 
     // step 4 + 5
     vm.showCorrectStatus = showCorrectStatus;
@@ -288,6 +291,13 @@
       } else {
         vm.chatSessionTopicsList.push(data);
       }
+
+      // if there more topics selected, then "drop" them also
+      if ( Object.keys(vm.selectedTopics).length ) {
+        for (var key in vm.selectedTopics) {
+          topicsOnDropComplete(vm.selectedTopics[key]);
+        }
+      }
     }
 
     function removeTopicFromList(id) {
@@ -306,8 +316,7 @@
     function reorderTopics(data, t) {
       var droppedOrderId = data.topic_order_id;
       var targetOrderId = t.topic_order_id;
-      console.warn(data.topic_order_id, t.topic_order_id);
-      //debugger; //debugger
+
       for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
         if (data.id == vm.chatSessionTopicsList[i].id) vm.chatSessionTopicsList[i].topic_order_id = targetOrderId;
         if (t.id == vm.chatSessionTopicsList[i].id) vm.chatSessionTopicsList[i].topic_order_id = droppedOrderId;
@@ -315,7 +324,27 @@
 
     }
 
+    function topicSelectClickHandle(topicObj) {
+      if ( vm.selectedTopics.hasOwnProperty(topicObj.id) ) {
+        delete vm.selectedTopics[topicObj.id];
+      } else {
+        vm.selectedTopics[topicObj.id] = topicObj;
+      }
 
+    }
+
+    function selectAllTopics(allTopics) {
+      vm.allTopicsSelected = !vm.allTopicsSelected;
+
+      vm.selectedTopics = {};
+      if (vm.allTopicsSelected) {
+        for (var i = 0, len = allTopics.length; i < len ; i++) {
+          vm.selectedTopics[ allTopics[i].id ] = allTopics[i];
+        }
+      }
+
+
+    }
 
     /// step 4 + 5
     function showCorrectStatus(member) {

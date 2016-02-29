@@ -56,6 +56,20 @@
     text-align: left;
   }
 
+  #create-new-btn {
+    margin-left: 20px;
+    margin-top: -8px;
+    margin-bottom: 10px;
+  }
+
+  .flex {
+    padding-left: 12px;
+  }
+  .check {
+    float: left;
+    margin-right: 10px;
+  }
+
   input#duration-input,
   select#duration-input{
     padding:2px;
@@ -66,6 +80,7 @@
   .topic-list-item {
     margin: 4px;
     padding: 4px;
+    cursor: pointer;
     background: #F6F8F7;
 
     &:hover {
