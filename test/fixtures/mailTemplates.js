@@ -9,10 +9,10 @@ var constants = require('./../../util/constants');
 var q = require('q');
 
 var minimize = new Minimize();
-var num = 0;
+let num = 0;
 let deferred = q.defer();
 
-var templateFiles = [
+let templateFiles = [
   {
     fileName: 'InvitationSeries_FirstInvite.html',
     name: constants.mailTemplateType.firstInvitation,

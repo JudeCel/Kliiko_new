@@ -1,40 +1,28 @@
 "use strict";
 var assert = require("chai").assert;
 var models  = require('./../../models');
-var UserService  = require('./../../services/users');
 var mailHelper = require('./../../mailers/mailHelper');
 var mailFixture = require('./../fixtures/mailTemplates');
+var userFixture = require('./../fixtures/user');
 
-
-var validAttrs = {
-  accountName: "DainisL",
-  firstName: "Dainis",
-  lastName: "Lapins",
-  password: "cool_password",
-  email: "dainis@gmail.com",
-  gender: "male"
-}
-
-var accountId;
+let accountId;
 
 describe('send MailTemplates',  () => {
   before((done) => {
     models.sequelize.sync({force: true}).done((error, result) => {
-      UserService.create(validAttrs, function(errors, result) {
-        if (errors) {
-          return done(errors);
-        }
-        result.getOwnerAccount().done(function(results) {
-          accountId = results[0].id;
-          mailFixture.createMailTemplate().then(function(result) {
-            done();
-          });
+      userFixture.createUserAndOwnerAccount().then(function(result) {
+        accountId = result.account.id;
+        mailFixture.createMailTemplate().then(function(result) {
+          done();
         });
+      }, function(error) {
+        done(error);
       });
     });
   });
 
   describe('#createOrFindAccountManager', function() {
+
     it('Send session slose mail', (done) =>  {
       var params = {
         email: "testMailTo@gmail.com",
