@@ -113,5 +113,12 @@ describe('send MailTemplates',  () => {
       });
     });
 
+    it('Send observer invitation', (done) =>  {
+      mailHelper.sendObserverInvitation(params, function(error){
+        assert.isNull(error);
+        done();
+      });
+    });
+
   });
 });
