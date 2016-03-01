@@ -183,6 +183,8 @@ function sendInvite(invite, deferred) {
         accountId: invite.accountId,
         token: invite.token,
         firstName: invite.AccountUser.firstName,
+        lastName: invite.AccountUser.lastName,
+        accountName: "cant get",
         email: invite.AccountUser.email,
         sessionName: session.name,
         startTime: dateFormat(invite.startDate, 'h:MM:ss'),
