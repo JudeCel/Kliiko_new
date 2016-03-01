@@ -9,7 +9,6 @@
 
     var vm = this;
     vm.accountUsers = {};
-    vm.tabs = {}
 
     vm.initMyDashboard = initMyDashboard;
     vm.changeTab = changeTab;
