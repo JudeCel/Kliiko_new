@@ -97,7 +97,7 @@
 
     function goToStep(step) {
       if (!angular.isNumber(step)) {
-        if (step === 'back') { step = vm.currentStep - 1; vm.cantMoveNextStep = false; }
+        if (step === 'back') {vm.cantMoveNextStep = false;  step = vm.currentStep - 1;  }
         if (step === 'next') { step = vm.currentStep + 1 }
         if (step === 'submit') {
           //step = 5;
@@ -146,6 +146,7 @@
     function initStep(step) {
       var deferred = $q.defer();
 
+      if (step == 1) { deferred.resolve(); }
       if (step == 2) {
         $ocLazyLoad.load([
           '/js/vendors/ngDraggable/ngDraggable.js',
@@ -166,9 +167,7 @@
           deferred.resolve();
         });
       }
-      else if(step == 3) {
-        deferred.resolve();
-      }
+      else if(step == 3) { deferred.resolve(); }
       else if(step == 4) {
         $ocLazyLoad.load([
           '/js/vendors/ngDraggable/ngDraggable.js',

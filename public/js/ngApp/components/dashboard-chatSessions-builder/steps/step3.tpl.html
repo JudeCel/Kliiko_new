@@ -1,3 +1,33 @@
 <section id="step-3">
 
+    <h3 class="text-center">Manage Session Emails</h3>
+
+    <uib-accordion close-others="false">
+        <uib-accordion-group is-open="sbc.accordions.incentive">
+            <uib-accordion-heading>
+                <div class="panel-label">
+                    Participant Incentive
+                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sbc.accordions.incentive, 'glyphicon-chevron-right': !sbc.accordions.incentive}"></i>
+                    <span class="panel-value pull-right">{{ sbc.session.steps.step3.incentive_details }}</span>
+                </div>
+            </uib-accordion-heading>
+            <label for="sessionBuilder-incentive">Enter Participant Incentive &nbsp; </label>
+            <input id="sessionBuilder-incentive" type="text" ng-model="sbc.session.steps.step3.incentive_details" ng-blur="sbc.updateStep();" maxlength="50" placeholder="50 characters max">
+        </uib-accordion-group>
+
+
+        <uib-accordion-group is-open="sbc.accordions.emailTemplates">
+            <uib-accordion-heading>
+                <div class="panel-label">
+                    Email Templates
+                    <i class="pull-right glyphicon"
+                       ng-class="{'glyphicon-chevron-down': sbc.accordions.emailTemplates, 'glyphicon-chevron-right': !sbc.accordions.emailTemplates}"></i>
+                    <span class="panel-value pull-right">{{ sbc.selectedFacilitator.lastName + ' ' + sbc.selectedFacilitator.firstName}}</span>
+                </div>
+            </uib-accordion-heading>
+            content
+        </uib-accordion-group>
+
+    </uib-accordion>
+
 </section>
