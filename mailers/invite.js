@@ -60,12 +60,9 @@ function sendInviteAccountManager(inviteParams, callback) {
 
 function sendInviteSession(inviteParams, callback) {
   if(inviteParams.role == 'observer') {
-    // Needs different email
-    inviteParams.acceptInvitationUrl = helpers.getUrl(inviteParams.token, '/invite/accept/');
-    inviteParams.invitationNotThisTimeUrl = helpers.getUrl(inviteParams.token, '/invite/notThisTime/');
-    inviteParams.invitationNotAtAllUrl = helpers.getUrl(inviteParams.token, '/invite/notAtAll/');
+    inviteParams.logInUrl = helpers.getUrl(inviteParams.token, '/invite/someUrl/');
 
-    mailHelper.sendFirstInvitation(inviteParams, function(error, result) {
+    mailHelper.sendObserverInvitation(inviteParams, function(error, result) {
       callback(error, result);
     });
   }
