@@ -196,6 +196,33 @@ function sendParticipantOverquota(params, callback) {
   });
 };
 
+function sendObserverInvitation(params, callback) {
+  mailTemplateService.getActiveMailTemplate("observerInvitation", null, function(error, result) {
+    if (error) {
+      return callback(error);
+    }
+    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
+      firstName: params.firstName, //receiver name
+      lastName: params.lastName,
+      accountName: params.accountName,//account we invite
+      sessionName: params.sessionName,
+      facilitatorFirstName: params.facilitatorFirstName,
+      facilitatorLastName: params.facilitatorLastName,
+      facilitatorMail: params.facilitatorMail,
+      facilitatorMobileNumber: params.facilitatorMobileNumber,
+      startTime: params.startTime,
+      endTime: params.endTime,
+      startDate: params.startDate,
+      endDate: params.endDate,
+      logInUrl: params.logInUrl
+    });
+    if (mailContent.error) {
+      return callback(mailContent.error);
+    }
+    mailTemplate.sendMailWithTemplate(mailContent, params, callback);
+  });
+};
+
 module.exports = {
   sendSessionClose: sendSessionClose,
   sendFirstInvitation: sendFirstInvitation,
@@ -204,5 +231,6 @@ module.exports = {
   sendInvitationNotAtAll: sendInvitationNotAtAll,
   sendGeneric: sendGeneric,
   sendFacilitatorEmailConfirmation: sendFacilitatorEmailConfirmation,
-  sendParticipantOverquota: sendParticipantOverquota
+  sendParticipantOverquota: sendParticipantOverquota,
+  sendObserverInvitation: sendObserverInvitation
 };
