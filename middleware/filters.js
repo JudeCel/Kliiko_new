@@ -2,10 +2,11 @@
 var subdomains = require('../lib/subdomains');
 
 function landingPage(req, res, next) {
-  if (req.user.signInCount == 1) {
+  if(!req.session.landingPage && req.user.signInCount == 1) {
+    req.session.landingPage = true;
     res.redirect(subdomains.url(req, req.user.ownerAccountSubdomain, '/dashboard/landing'));
   } else {
-    res.redirect(subdomains.url(req, req.user.ownerAccountSubdomain, '/dashboard'));
+    next();
   }
 }
 module.exports = {

@@ -1,0 +1,52 @@
+<% include _header %>
+
+<main class='main-first-page'>
+  <div class='container' ng-controller='DashboardController as dashboard'>
+    <% include _navTabs %>
+
+    <div class='dashboard-container border-blue box-shadow'>
+      <div class='row'>
+        <div class='col-xs-12'>
+          <div class='dashboard-container fixed-bottom-margin'>
+            <div class='row' ng-if="dashboard.currentTab == 'participant'">
+              <h2 class='text-center'>Participating in following sessions({{ dashboard.sessions.length }})</h2>
+              <div class='col-xs-12'>
+                <div class='list-group'>
+                  <a class='list-group-item no-border-radius' ng-repeat='session in dashboard.sessions'>
+                    <span>
+                      {{ session.name }}
+                    </span>
+                    <span class='pull-right'>
+                      <span class='glyphicon glyphicon-play' aria-hidden='true'></span> Go to chatroom
+                    </span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div ng-repeat='au in dashboard.accountUsers'>
+              <div class='row' ng-if="dashboard.currentTab == au.field">
+                <h2 class='text-center'>{{ au.name }} in accounts({{ au.data.length }})</h2>
+                <div class='col-xs-12'>
+                  <div class='list-group'>
+                    <a href='{{ accountUser.dashboardUrl }}' class='list-group-item no-border-radius' ng-repeat='accountUser in au.data'>
+                      <span>
+                        {{ accountUser.Account.name }}
+                      </span>
+                      <span class='pull-right'>
+                        <span class='glyphicon glyphicon-play' aria-hidden='true'></span> Go to account
+                      </span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<% include ../footer %>

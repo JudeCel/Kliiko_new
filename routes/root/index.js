@@ -10,10 +10,10 @@ var subdomains = require('../../lib/subdomains');
 var config = require('config');
 var mailers = require('../../mailers');
 var session = require('../../middleware/session');
-var middlewareFilters = require('../../middleware/filters');
 var socialProfileMiddleware = require('../../middleware/socialProfile');
 var inviteRoutes = require('./invite.js');
 var surveyRoutes = require('./survey.js');
+var myDashboardRoutes = require('./myDashboard.js');
 var constants = require('../../util/constants');
 var appData = require('../../services/webAppData');
 
@@ -53,7 +53,7 @@ router.get('/auth/facebook/callback', function(req, res, next) {
     }
     if (user) {
       req.login(user, function(err) {
-        middlewareFilters.landingPage(req, res, next);
+        res.redirect(subdomains.url(req, 'insider', '/my-dashboard'));
       })
     }else{
       res.locals = usersRepo.prepareParams(req);
@@ -74,7 +74,7 @@ router.get('/auth/google/callback', function(req, res, next) {
     }
     if (user) {
       req.login(user, function(err) {
-        middlewareFilters.landingPage(req, res, next);
+        res.redirect(subdomains.url(req, 'insider', '/my-dashboard'));
       })
     }else{
       res.locals = usersRepo.prepareParams(req);
@@ -118,13 +118,13 @@ router.post('/login', function(req, res, next) {
       return  res.render('login', {title: 'Login', error: err, message: ''});
     }
     req.login(user, function(err) {
-      if (err) { 
+      if (err) {
         return next(err);
       }
       session.rememberMe(req, function(err, result) {
         if (err) { throw err}
         if (result) {
-          middlewareFilters.landingPage(req, res, next);
+          res.redirect(subdomains.url(req, 'insider', '/my-dashboard'));
         }
       });
     });
@@ -264,5 +264,7 @@ router.route('/invite/:token/accept').get(inviteRoutes.acceptGet);
 router.route('/invite/:token/accept').post(inviteRoutes.acceptPost);
 
 router.route('/survey/:id').get(surveyRoutes.index);
+
+router.route('/my-dashboard').get(myDashboardRoutes.index);
 
 module.exports = router;

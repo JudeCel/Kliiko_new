@@ -1,0 +1,11 @@
+<div ng-init='dashboard.initMyDashboard()'>
+  <ul class='nav nav-tabs' id='nav-tabs-main' ng-if='!dashboard.hideTabs'>
+    <li ng-class='dashboard.activeClass("participant")' ng-click='dashboard.changeTab("participant")' ng-if='dashboard.sessions'>
+      <a>Participant<img src='/icons/profile_grey.png'></a>
+    </li>
+
+    <li ng-repeat='au in dashboard.accountUsers' ng-class='dashboard.activeClass(au.field)' ng-click='dashboard.changeTab(au.field)'>
+      <a>{{ au.name }}<img src='/icons/profile_grey.png'></a>
+    </li>
+  </ul>
+</div>
