@@ -26,10 +26,22 @@ function extractImageResources(tepmlateHtml) {
             }
             resources.push({filename: name, path: path, cid: name+"@att"});
             attribs.src = "cid:"+name+"@att";
+
+            attribs.style += " padding: 0 15px 0 15px;";
             return {
                 tagName: tagName,
                 attribs: attribs
             };
+        },
+        'table': function(tagName, attribs) {
+          if (!attribs.style) {
+            attribs.style = "";
+          }
+          attribs.style += "padding: 0 15px 0 15px;";
+          return {
+              tagName: tagName,
+              attribs: attribs
+          };
         }
       },
       allowedTags:false,
