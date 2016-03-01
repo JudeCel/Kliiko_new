@@ -71,10 +71,10 @@ describe('SERVICE - MyDashboard', function() {
     describe('happy path', function() {
       it('should succeed on finding one of each role', function (done) {
         createMultipleAccountUsers(['observer', 'facilitator']).then(function() {
-          myDashboardServices.getAllAccountUsers(testData.user.id).then(function(result) {
-            assert.equal(result.accountManager.length, 1);
-            assert.equal(result.observer.length, 1);
-            assert.equal(result.facilitator.length, 1);
+          myDashboardServices.getAllAccountUsers(testData.user.id, 'http').then(function(result) {
+            assert.equal(result.accountManager.data.length, 1);
+            assert.equal(result.observer.data.length, 1);
+            assert.equal(result.facilitator.data.length, 1);
             done();
           }, function(error) {
             done(error);
@@ -86,9 +86,9 @@ describe('SERVICE - MyDashboard', function() {
 
       it('should succeed on finding one of each except facilitator', function (done) {
         createMultipleAccountUsers(['observer']).then(function() {
-          myDashboardServices.getAllAccountUsers(testData.user.id).then(function(result) {
-            assert.equal(result.accountManager.length, 1);
-            assert.equal(result.observer.length, 1);
+          myDashboardServices.getAllAccountUsers(testData.user.id, 'http').then(function(result) {
+            assert.equal(result.accountManager.data.length, 1);
+            assert.equal(result.observer.data.length, 1);
             assert.equal(result.facilitator, undefined);
             done();
           }, function(error) {
@@ -101,7 +101,7 @@ describe('SERVICE - MyDashboard', function() {
     });
   });
 
-  describe.only('#getAllSessions', function() {
+  describe('#getAllSessions', function() {
     beforeEach(function(done) {
       sessionFixture.createChat().then(function(result) {
         testData = result;
