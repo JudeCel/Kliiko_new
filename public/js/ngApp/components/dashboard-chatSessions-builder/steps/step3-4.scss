@@ -8,4 +8,14 @@
     padding: 5px;
     border: 2px solid #2F9F69;
   }
+
+  @import "./../../dashboard-resources-emailTemplates/mail-templates";
+  .wysiwyg, iframe#templateContent-wysiwyg-iframe {
+    width: 100% !important;
+    height: 500px;
+  }
+
+  iframe#templateContent-wysiwyg-iframe {
+    height: 471px;
+  }
 }

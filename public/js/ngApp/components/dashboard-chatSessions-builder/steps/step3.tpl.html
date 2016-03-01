@@ -25,7 +25,155 @@
                     <span class="panel-value pull-right">{{ sbc.selectedFacilitator.lastName + ' ' + sbc.selectedFacilitator.firstName}}</span>
                 </div>
             </uib-accordion-heading>
-            content
+
+            <!------------------------------>
+            <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec">
+
+
+                <h1 class="text-center">Edit Email Templates</h1>
+                <div class="list-group col-md-3 mail-template-list-section">
+                    <div class="panel-heading mail-template-list-heading"><strong>Email Templates</strong></div>
+                    <div id="mail-template-list" class="mail-template-list">
+                        <a ng-repeat="(key, t) in ec.emailTemplatesForSessionBuilder" class="list-group-item" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : t.AccountId}"
+                           ng-click="ec.startEditingTemplate(key)">
+                            <div ng-hide="t.AccountId">
+                                <img src="/icons/ic_arrow_right.png" class="pull-right" ng-hide="!ec.isCurrent(key)">
+                                {{t["MailTemplateBase.name"]}} <span ng-if="!$last">*</span><span ng-if="$last"> (optional)</span>
+                            </div>
+
+                            <div class="input-group input-group-sm" ng-hide="!t.AccountId">
+                                <input type="text" class="form-control mail-list-input" aria-describedby="basic-addon3" ng-model="t.name" ng-class="{'inactive':!ec.isCurrent(key)}" >
+                                <span class="input-group-addon" id="basic-addon3" ng-hide="!ec.isCurrent(key)">{{t["MailTemplateBase.name"] | limitTo: 7}}{{t["MailTemplateBase.name"].length > 7 ? '...' : ''}}</span>
+                                  <span class="input-group-btn" ng-hide="!ec.isCurrent(key)">
+                                  <button class="btn glyphicon glyphicon-remove" type="button" ng-click="ec.deleteTemplate(t, key, $event);"></button>
+                                  </span>
+                            </div>
+
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-8 mail-template-details">
+                    <table>
+                        <tr>
+                            <td class="template-detail-name-column">Template Name:</td>
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" aria-describedby="basic-addon2" ng-model="ec.currentTemplate.name">
+                                    <span class="input-group-addon" id="basic-addon2">{{ec.currentTemplate["MailTemplateBase.name"]}}</span>
+                                </div>
+                                <div class="has-error text-center">{{ec.currentTemplate.error.name}}</div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Subject:</td>
+                            <td>
+                                <div>
+                                    <input type="text" class="form-control" aria-describedby="basic-addon2" ng-model="ec.currentTemplate.subject">
+                                </div>
+                                <div class="has-error text-center">{{ec.currentTemplate.error.subject}}</div>
+                            </td>
+                        </tr>
+                    </table>
+                    <span>Content:</span>
+                    <textarea id="templateContent"></textarea>
+                    <div class="has-error text-center">{{ec.currentTemplate.error.content}}</div>
+                    <br>
+
+                    <button type="submit" class="btn btn-red pull-left" ng-click="ec.resetMailTemplate()">Reset</button>
+
+
+                    <button type="submit" class="btn btn-green pull-right" ng-click="ec.modifyAndSave()">Modify & Save Copy</button>
+                    <button type="submit" class="btn btn-lightgreen pull-right" ng-click="ec.modifyAndSave(true)" ng-hide="ec.currentTemplate.systemMessage">Create Copy</button>
+                    <button type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
+
+
+                </div>
+
+
+
+                <!-- Modal Preview-->
+                <div class='modal fade' id='previewMailTemplateModal' role='dialog'>
+                    <div class='modal-dialog'>
+                        <div class='modal-content border-green border-radius-none preview-content'>
+                            <div class='modal-header'>
+                                <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                                <h1 class='modal-title' id="mailTemplatePreviewSubject"></h1>
+                            </div>
+                            <div class='modal-body'>
+                                <iframe id="contentFrame" class="preview-frame"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='modal fade' id='confirmDialog' role='dialog'>
+                    <div class='modal-dialog'>
+                        <div class='modal-content border-green border-radius-none'>
+                            <div class='modal-header'>
+                                <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                                <h1 class='modal-title text-center'>Delete template: {{ec.templateToDelete.template.name}}</h1>
+                            </div>
+
+                            <div class='modal-footer'>
+                                <form>
+                                    <div>
+              <span class="pull-right">
+                <button type="button" ng-click="ec.cancelTemplateDelete()" class="btn border-red text-red-dark border-radius-none background-transp pull-right- btn-md">Cancel</button>&nbsp;&nbsp;
+                <button type="button" ng-click="ec.approveTemplateDelete()" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Yes</button>
+              </span>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- resourceModal -->
+                <div class='modal fade' id='uploadTemplateResource' role='dialog'>
+                    <div class='modal-dialog'>
+                        <div class='modal-content border-green border-radius-none'>
+                            <div class='modal-header'>
+                                <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                                <h1 class='modal-title text-center'>New {{ ec.uploadTypeForTitle }} resource.</h1>
+                            </div>
+                            <form ng-submit="ec.submitForm(ec.newResource)">
+                                <div class='modal-body'>
+
+                                    <div class="form-group">
+                                        <label for="title">Title</label>
+                                        <input ng-model="ec.newResource.title" type="text" class="form-control center-block" name="title" id="title" placeholder="Title">
+                                    </div>
+
+                                    <div ng-if="ec.newResource.type == 'youtubeUrl'" class="form-group">
+                                        <label for="youtubeUrl">Youtube Url</label>
+                                        <input ng-model="ec.newResource.youtubeUrl" type="text" class="form-control center-block" name="youtubeUrl" id="youtubeUrl"
+                                               placeholder="Youtube URL">
+                                    </div>
+
+                                    <div ng-if="ec.newResource.type !== 'youtubeUrl'" class="form-group">
+                                        <label for="fileTst">File</label>
+                                        <div ngf-drop ngf-select ng-model="ec.newResource.fileTst" ng-change="ec.uploadTst()" class="drop-box" ngf-drag-over-class="'dragover'">
+                                            Drop images here or click to upload</div>
+                                        <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
+                                        {{ ec.newResource.fileTst.name }}
+                                    </div>
+                                </div>
+                                <div class='modal-footer'>
+                                    <div type='button' class='pull-left btn-dashboard-plans go-back-btn' data-dismiss='modal'>Cancel</div>
+                                    <input type='submit' class='pull-right btn-dashboard-plans btn'>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+            </section>
+            <!------------------------------>
+
+
         </uib-accordion-group>
 
     </uib-accordion>

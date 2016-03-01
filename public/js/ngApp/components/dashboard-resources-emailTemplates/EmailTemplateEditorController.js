@@ -17,6 +17,7 @@
 
   function EmailTemplateEditorController(dbg, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, ngProgressFactory) {
     dbg.log2('#EmailTemplateEditorController started');
+
     var vm = this;
     vm.currentTemplate = {index: 0};
     vm.emailTemplates = [];
@@ -56,16 +57,21 @@
       });
 
       $('#templateContent').wysiwyg("setContent", "");
+
       refreshTemplateList(function() {
         if (vm.emailTemplates && vm.emailTemplates.length) {
           vm.startEditingTemplate(0);
         }
       });
-    }
+
+
+
+
+    };
 
     vm.startEditingTemplate = function(templateIndex) {
       mailTemplate.getMailTemplate(vm.emailTemplates[templateIndex]).then(function (res) {
-        if (res.error) {return;}
+        if (res.error) return;
 
         vm.currentTemplate = vm.emailTemplates[templateIndex];
         vm.currentTemplate.content = res.template.content;
@@ -154,6 +160,16 @@
         if (vm.emailTemplates.length && vm.currentTemplate == -1) {
           vm.startEditingTemplate(0);
         }
+
+        // session builder section
+        var ids = [1,3,6,5,2,4];
+        var tmpArr =[];
+        for (var i = 0, len = ids.length; i < len ; i++) {
+          for (var j = 0, lenJ = res.templates.length; j < len ; j++) {
+            if (ids[i] == res.templates[j].id) tmpArr.push(res.templates[j]);
+          }
+        }
+        vm.emailTemplatesForSessionBuilder = tmpArr;
 
         callback();
       });

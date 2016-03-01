@@ -36,7 +36,7 @@
           min: 0,
           max: 15
         },
-      }
+      };
 
       vm.dateTime = {
         hstep:1,
@@ -167,7 +167,14 @@
           deferred.resolve();
         });
       }
-      else if(step == 3) { deferred.resolve(); }
+      else if(step == 3) {
+        $ocLazyLoad.load([
+          '/js/ngApp/components/dashboard-resources-emailTemplates/EmailTemplateEditorController.js',
+          '/js/vendors/ng-file-upload/ng-file-upload.js'
+        ]).then(function(res) {
+          deferred.resolve();
+        });
+      }
       else if(step == 4) {
         $ocLazyLoad.load([
           '/js/vendors/ngDraggable/ngDraggable.js',
