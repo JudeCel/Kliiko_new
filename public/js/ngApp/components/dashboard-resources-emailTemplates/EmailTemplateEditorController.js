@@ -69,17 +69,30 @@
 
     };
 
-    vm.startEditingTemplate = function(templateIndex) {
-      mailTemplate.getMailTemplate(vm.emailTemplates[templateIndex]).then(function (res) {
-        if (res.error) return;
-
-        vm.currentTemplate = vm.emailTemplates[templateIndex];
+    vm.startEditingTemplate = function(templateIndex, inSession) {
+      function populateTemplate(res) {
         vm.currentTemplate.content = res.template.content;
         vm.currentTemplate.index = templateIndex;
         vm.currentTemplate.subject = res.template.subject;
         $('#templateContent').wysiwyg('setContent', vm.currentTemplate.content);
-      });
-    }
+      }
+
+      if (!inSession) {
+        mailTemplate.getMailTemplate(vm.emailTemplates[templateIndex]).then(function (res) {
+          if (res.error) return;
+          vm.currentTemplate = vm.emailTemplates[templateIndex];
+          populateTemplate(res);
+        });
+      } else {
+        mailTemplate.getMailTemplate(vm.emailTemplatesForSessionBuilder[templateIndex]).then(function (res) {
+          if (res.error) return;
+          vm.currentTemplate = vm.emailTemplatesForSessionBuilder[templateIndex];
+          populateTemplate(res);
+        });
+      }
+
+
+    };
 
     vm.modifyAndSave = function(createCopy) {
       vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
@@ -165,10 +178,11 @@
         var ids = [1,3,6,5,2,4];
         var tmpArr =[];
         for (var i = 0, len = ids.length; i < len ; i++) {
-          for (var j = 0, lenJ = res.templates.length; j < len ; j++) {
-            if (ids[i] == res.templates[j].id) tmpArr.push(res.templates[j]);
+          for (var j = 0, lenJ = res.templates.length; j < lenJ ; j++) {
+            if ( ids[i] == res.templates[j].MailTemplateBaseId ) tmpArr.push(res.templates[j]);
           }
-        }
+        } 
+
         vm.emailTemplatesForSessionBuilder = tmpArr;
 
         callback();

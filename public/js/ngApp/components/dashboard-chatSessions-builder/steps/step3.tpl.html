@@ -34,8 +34,8 @@
                 <div class="list-group col-md-3 mail-template-list-section">
                     <div class="panel-heading mail-template-list-heading"><strong>Email Templates</strong></div>
                     <div id="mail-template-list" class="mail-template-list">
-                        <a ng-repeat="(key, t) in ec.emailTemplatesForSessionBuilder" class="list-group-item" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : t.AccountId}"
-                           ng-click="ec.startEditingTemplate(key)">
+                        <a ng-repeat="(key, t) in ec.emailTemplatesForSessionBuilder track by $index" class="list-group-item" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : t.AccountId}"
+                           ng-click="ec.startEditingTemplate(key, true)">
                             <div ng-hide="t.AccountId">
                                 <img src="/icons/ic_arrow_right.png" class="pull-right" ng-hide="!ec.isCurrent(key)">
                                 {{t["MailTemplateBase.name"]}} <span ng-if="!$last">*</span><span ng-if="$last"> (optional)</span>
@@ -119,10 +119,10 @@
                             <div class='modal-footer'>
                                 <form>
                                     <div>
-              <span class="pull-right">
-                <button type="button" ng-click="ec.cancelTemplateDelete()" class="btn border-red text-red-dark border-radius-none background-transp pull-right- btn-md">Cancel</button>&nbsp;&nbsp;
-                <button type="button" ng-click="ec.approveTemplateDelete()" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Yes</button>
-              </span>
+                                      <span class="pull-right">
+                                        <button type="button" ng-click="ec.cancelTemplateDelete()" class="btn border-red text-red-dark border-radius-none background-transp pull-right- btn-md">Cancel</button>&nbsp;&nbsp;
+                                        <button type="button" ng-click="ec.approveTemplateDelete()" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Yes</button>
+                                      </span>
                                     </div>
                                 </form>
                             </div>
