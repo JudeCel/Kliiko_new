@@ -2,10 +2,12 @@
 
 var models = require('../models');
 var AccountUser = models.AccountUser;
+var Subscription = models.Subscription;
 var subdomains = require('../lib/subdomains');
 
 module.exports = {
   landingPage: landingPage,
+  planSelectPage: planSelectPage,
   myDashboardPage: myDashboardPage
 }
 
@@ -15,6 +17,28 @@ function landingPage(req, res, next) {
     res.redirect(subdomains.url(req, req.user.ownerAccountSubdomain, '/dashboard/landing'));
   } else {
     next();
+  }
+}
+
+function planSelectPage(req, res, next) {
+  if(req.originalUrl == '/dashboard/selectPlan') {
+    next();
+  }
+  else {
+    Subscription.find({
+      where: {
+        accountId: res.locals.currentDomain.id
+      }
+    }).then(function(subscription) {
+      if(subscription) {
+        next();
+      }
+      else {
+        res.redirect(subdomains.url(req, res.locals.currentDomain.name, '/dashboard/selectPlan'));
+      }
+    }, function(error) {
+      res.send({ error: error });
+    });
   }
 }
 

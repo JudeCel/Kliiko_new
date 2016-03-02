@@ -26,7 +26,7 @@ module.exports = (Sequelize, DataTypes) => {
           Account.belongsToMany(models.User, { through: { model: models.AccountUser} } );
           Account.hasMany(models.Invite, { foreignKey: 'accountId' });
           Account.hasMany(models.ContactList, { foreignKey: 'accountId' });
-          Account.hasOne(models.Subscription, { foreignKey: 'AccountId' });
+          Account.hasOne(models.Subscription, { foreignKey: 'accountId' });
         }
       }
     }
