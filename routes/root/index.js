@@ -170,7 +170,7 @@ router.route('/emailConfirmation/:token')
 
 router.get('/logout', function (req, res) {
     req.logout();
-    res.redirect(subdomains.url(req, 'insider', '/'));
+    res.redirect(subdomains.url(req, subdomains.base, '/'));
 });
 
 router.route('/forgotpassword')

@@ -11,7 +11,7 @@ router.use(function (req, res, next) {
   if (req.user) {
     next();
   } else {
-    res.redirect(subdomains.url(req, 'insider', '/'));
+    res.redirect(subdomains.url(req, subdomains.base, '/'));
   }
 });
 

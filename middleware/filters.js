@@ -29,7 +29,7 @@ function myDashboardPage(req, res, next) {
       res.redirect(subdomains.url(req, accountUsers[0].Account.name, '/dashboard'));
     }
     else {
-      res.redirect(subdomains.url(req, 'insider', '/my-dashboard'));
+      res.redirect(subdomains.url(req, subdomains.base, '/my-dashboard'));
     }
   }, function(error) {
     res.send({ error: error });

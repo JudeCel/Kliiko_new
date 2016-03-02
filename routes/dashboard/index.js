@@ -18,7 +18,7 @@ router.use(function (req, res, next) {
   if (req.user) {
     middlewareFilters.landingPage(req, res, next);
   } else {
-    res.redirect(subdomains.url(req, 'insider', '/'));
+    res.redirect(subdomains.url(req, subdomains.base, '/'));
   }
 }, uploadBannerRoutes.getProfileBanner);
 

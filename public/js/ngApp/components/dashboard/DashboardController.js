@@ -31,12 +31,23 @@
             }
           }
           else {
-            vm.currentTab = (vm.accountUsers.accountManager && 'accountManager')
-                         || (vm.accountUsers.observer && 'observer')
-                         || (vm.accountUsers.facilitator && 'facilitator');
+            setInitialTab();
           }
         }
       });
+    }
+
+    function setInitialTab() {
+      // Order based on tabs
+      var array = ['accountManager', 'observer', 'facilitator'];
+
+      for(var i in array) {
+        var role = array[i];
+        if(vm.accountUsers[role]) {
+          vm.currentTab = role;
+          break;
+        }
+      }
     }
 
     function changeTab(tab) {
@@ -47,6 +58,4 @@
       return vm.currentTab == tab ? 'active' : '';
     }
   }
-
-
 })();

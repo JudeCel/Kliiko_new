@@ -10,7 +10,7 @@ function index(req, res, next) {
   if(req.user && !res.locals.currentDomain) {
     res.render(views_path('index'), { title: 'My Dashboard' });
   } else {
-    res.redirect(subdomains.url(req, 'insider', '/'));
+    res.redirect(subdomains.url(req, subdomains.base, '/'));
   }
 };
 
