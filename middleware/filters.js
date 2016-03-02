@@ -4,6 +4,11 @@ var models = require('../models');
 var AccountUser = models.AccountUser;
 var subdomains = require('../lib/subdomains');
 
+module.exports = {
+  landingPage: landingPage,
+  myDashboardPage: myDashboardPage
+}
+
 function landingPage(req, res, next) {
   if(!req.session.landingPage && req.user.signInCount == 1) {
     req.session.landingPage = true;
@@ -26,12 +31,7 @@ function myDashboardPage(req, res, next) {
     else {
       res.redirect(subdomains.url(req, 'insider', '/my-dashboard'));
     }
-  }).catch(function(error) {
+  }, function(error) {
     res.send({ error: error });
   });
-}
-
-module.exports = {
-  landingPage: landingPage,
-  myDashboardPage: myDashboardPage
 }

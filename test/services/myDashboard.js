@@ -1,7 +1,6 @@
 'use strict';
 
 var models = require('./../../models');
-var Account = models.Account;
 var AccountUser = models.AccountUser;
 var SessionMember = models.SessionMember;
 
@@ -9,9 +8,6 @@ var myDashboardServices = require('./../../services/myDashboard');
 var userFixture = require('./../fixtures/user');
 var sessionFixture = require('./../fixtures/session');
 var assert = require('chai').assert;
-var _ = require('lodash');
-var q = require('q');
-var async = require('async');
 
 describe('SERVICE - MyDashboard', function() {
   var testData;
@@ -35,42 +31,9 @@ describe('SERVICE - MyDashboard', function() {
       });
     });
 
-    function createMultipleAccountUsers(roles) {
-      let deferred = q.defer();
-
-      async.each(roles, function(role, callback) {
-        Account.create({ name: role }).then(function(account) {
-          AccountUser.create({
-            UserId: testData.user.id,
-            AccountId: account.id,
-            firstName: testData.accountUser.firstName,
-            lastName: testData.accountUser.lastName,
-            gender: testData.accountUser.gender,
-            email: testData.accountUser.email,
-            role: role
-          }).then(function(accountUser) {
-            callback();
-          }).catch(function(error) {
-            callback(error);
-          });
-        }).catch(function(error) {
-          callback(error);
-        });
-      }, function(error) {
-        if(error) {
-          deferred.reject(error);
-        }
-        else {
-          deferred.resolve();
-        }
-      });
-
-      return deferred.promise;
-    }
-
     describe('happy path', function() {
       it('should succeed on finding one of each role', function (done) {
-        createMultipleAccountUsers(['observer', 'facilitator']).then(function() {
+        userFixture.createMultipleAccountUsers(['observer', 'facilitator'], testData).then(function() {
           myDashboardServices.getAllAccountUsers(testData.user.id, 'http').then(function(result) {
             assert.equal(result.accountManager.data.length, 1);
             assert.equal(result.observer.data.length, 1);
@@ -85,7 +48,7 @@ describe('SERVICE - MyDashboard', function() {
       });
 
       it('should succeed on finding one of each except facilitator', function (done) {
-        createMultipleAccountUsers(['observer']).then(function() {
+        userFixture.createMultipleAccountUsers(['observer'], testData).then(function() {
           myDashboardServices.getAllAccountUsers(testData.user.id, 'http').then(function(result) {
             assert.equal(result.accountManager.data.length, 1);
             assert.equal(result.observer.data.length, 1);
