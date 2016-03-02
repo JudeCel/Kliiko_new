@@ -34,7 +34,8 @@ module.exports = {
   copySession: copySession,
   removeSession: removeSession,
   updateSessionMemberRating: updateSessionMemberRating,
-  getAllSessionRatings: getAllSessionRatings
+  getAllSessionRatings: getAllSessionRatings,
+  addShowStatus: addShowStatus
 };
 
 // Exports

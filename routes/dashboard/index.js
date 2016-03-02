@@ -6,6 +6,7 @@ var policy = require('../../middleware/policy.js');
 var uploadBannerRoutes = require('./uploadBanner.js');
 var accountDatabaseRoutes = require('./accountDatabase.js');
 var appData = require('../../services/webAppData');
+var middlewareFilters = require('../../middleware/filters');
 
 function views_path(action) {
   let views_name_space = 'dashboard/';
@@ -15,9 +16,9 @@ function views_path(action) {
 router.use(function (req, res, next) {
   res.locals.appData = appData;
   if (req.user) {
-    next();
+    middlewareFilters.landingPage(req, res, next);
   } else {
-    res.redirect(subdomains.url(req, 'insider', '/'));
+    res.redirect(subdomains.url(req, subdomains.base, '/'));
   }
 }, uploadBannerRoutes.getProfileBanner);
 

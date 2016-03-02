@@ -76,5 +76,6 @@ module.exports = {
   accountNameRegExp: ["^[a-zA-Z0-9]+$",'i'],
   mobileRegExp: ["^[0-9]+$",'i'],
   galleryUploadTypes: ['image', 'brandLogo', 'audio', 'youtubeLink', 'text'],
-  dateFormat: 'MM-dd-yyyy'
+  dateFormat: 'MM-dd-yyyy',
+  dateFormatWithTime: 'MM-dd-yyyy, HH:mm'
 }
