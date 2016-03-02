@@ -7,7 +7,7 @@
 
             <div class="row">
                 <div class=" col-md-12">
-                    <div id="steps-row" style="margin: 0 auto">
+                    <div id="steps-row">
                         <div class="step-container">
                             <span class="step-number"
                                   ng-class="{'active': up.stepsClassIsActive(1), 'done':up.stepsClassIsDone(1)}">1</span>
@@ -24,17 +24,11 @@
                             <span class="step-number"
                                   ng-class="{'active': up.stepsClassIsActive(3), 'done':up.stepsClassIsDone(3)}">3</span>
                             <span class="step-name"
-                                  ng-class="{'active': up.stepsClassIsActive(3), 'done':up.stepsClassIsDone(3)}">Payment Options</span>
+                                  ng-class="{'active': up.stepsClassIsActive(3), 'done':up.stepsClassIsDone(3)}">Confirmation</span>
                         </div>
                         <div class="step-container">
                             <span class="step-number"
-                                  ng-class="{'active': up.stepsClassIsActive(4), 'done':up.stepsClassIsDone(4)}">4</span>
-                            <span class="step-name"
-                                  ng-class="{'active': up.stepsClassIsActive(4), 'done':up.stepsClassIsDone(4)}">Confirmation</span>
-                        </div>
-                        <div class="step-container">
-                            <span class="step-number"
-                                  ng-class="{'active': up.stepsClassIsActive(5), 'done':up.stepsClassIsDone(5)}">5</span>
+                                  ng-class="{'active': up.stepsClassIsActive(5), 'done':up.stepsClassIsDone(5)}">4</span>
                             <span class="step-name"
                                   ng-class="{'active': up.stepsClassIsActive(5), 'done':up.stepsClassIsDone(5)}">Submitted</span>
                         </div>
@@ -55,19 +49,30 @@
 
                 <div class="col-md-2 btn-dashboard-plans btn-md pull-right btn-blue" ng-click="up.goToStep('next')"
                      ng-class="{'btn-forbidden': up.cantMoveNextStep}"
-                     ng-hide="up.stepsClassIsActive(4) || up.stepsClassIsActive(5)">
+                     ng-hide="up.stepsClassIsActive(3) || up.stepsClassIsActive(5)">
                     Next <img class="ic ic-flipX" src="icons/back_blue.png" alt="Go Next Step">
                 </div>
 
-                <div class="col-md-5 btn-dashboard-plans btn-md btn-green" ui-sref="dashboard.accountProfile"
+                <div class="col-md-5 btn-dashboard-plans btn-md btn-green"
+                     ui-sref="dashboard.accountProfile"
                      ng-show="up.stepsClassIsActive(5)">
                     Back to account profile
                 </div>
-                <div class="col-md-4 btn-dashboard-plans btn-md pull-right btn-standart btn-red"
-                     ng-click="up.goToStep('submit')"
-                     ng-show="up.stepsClassIsActive(4)">
-                    Submit My Order
+
+                <div ng-show="up.stepsClassIsActive(3)">
+                  <div class="check-element animate-show" ng-show="up.todChecked()">
+                    <div class="col-md-4 btn-dashboard-plans btn-md pull-right btn-standart btn-red" ng-click="up.goToStep('submit')">
+                        Submit My Order
+                    </div>
+                  </div>
+
+                  <div class="check-element animate-show" ng-hide="up.todChecked()">
+                    <div class="col-md-4 btn-dashboard-plans btn-md pull-right btn-standart btn-red disabled">
+                      Please read the Terms and Conditions
+                    </div>
+                  </div>
                 </div>
+
                 <div class="col-md-3 btn-dashboard-plans btn-md pull-right btn-standart btn-red" ui-sref="dashboard"
                      ng-show="up.stepsClassIsActive(5) && !up.cantMoveNextStep">
                     Build new session

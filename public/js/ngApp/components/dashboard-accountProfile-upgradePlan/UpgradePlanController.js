@@ -44,14 +44,15 @@
     vm.handleUserDataChangeClick = handleUserDataChangeClick;
     vm.updateFinalPrice = updateFinalPrice;
     vm.handleTosCheck = handleTosCheck;
+    vm.todChecked = todChecked;
 
     vm.errors = {};
     init();
-    
+
     $('#contactDetailsModal').on('hide.bs.modal', function (e) {
       init();
     });
-    
+
     function init() {
 
       upgradePlanServices.init().then(fetchInitData);
@@ -138,10 +139,7 @@
 
 
       goToStep(2);
-
-
     }
-
 
     function goToStep(step) {
       if (!angular.isNumber(step)) {
@@ -224,7 +222,7 @@
         vm.errors = err;
       });
     }
-    
+
     function changePaymentMethodTo(type) {
       if (type === 'chargebee') vm.paymentDetails.chargebee.selected = true;
 
@@ -255,6 +253,14 @@
     function handleTosCheck() {
       vm.cantMoveNextStep = !vm.paymentDetails.chargebee.tos;
       step2IsValid = vm.paymentDetails.chargebee.tos;
+    }
+
+    function todChecked(argument) {
+      if(vm.paymentDetails.chargebee.tos){
+        return true;
+      }else{
+        return false;
+      }
     }
 
     function submitUpgrade() {
