@@ -1,4 +1,7 @@
-"use strict";
+'use strict';
+
+var models = require('../models');
+var AccountUser = models.AccountUser;
 var subdomains = require('../lib/subdomains');
 
 function landingPage(req, res, next) {
@@ -9,6 +12,26 @@ function landingPage(req, res, next) {
     next();
   }
 }
+
+function myDashboardPage(req, res, next) {
+  AccountUser.findAll({
+    where: {
+      UserId: req.user.id
+    },
+    include: [models.Account]
+  }).then(function(accountUsers) {
+    if(accountUsers.length == 1) {
+      res.redirect(subdomains.url(req, accountUsers[0].Account.name, '/dashboard'));
+    }
+    else {
+      res.redirect(subdomains.url(req, 'insider', '/my-dashboard'));
+    }
+  }).catch(function(error) {
+    res.send({ error: error });
+  });
+}
+
 module.exports = {
   landingPage: landingPage,
+  myDashboardPage: myDashboardPage
 }

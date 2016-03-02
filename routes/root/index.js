@@ -10,6 +10,7 @@ var subdomains = require('../../lib/subdomains');
 var config = require('config');
 var mailers = require('../../mailers');
 var session = require('../../middleware/session');
+var middlewareFilters = require('../../middleware/filters');
 var socialProfileMiddleware = require('../../middleware/socialProfile');
 var inviteRoutes = require('./invite.js');
 var surveyRoutes = require('./survey.js');
@@ -53,7 +54,7 @@ router.get('/auth/facebook/callback', function(req, res, next) {
     }
     if (user) {
       req.login(user, function(err) {
-        res.redirect(subdomains.url(req, 'insider', '/my-dashboard'));
+        middlewareFilters.myDashboardPage(req, res, next);
       })
     }else{
       res.locals = usersRepo.prepareParams(req);
@@ -74,7 +75,7 @@ router.get('/auth/google/callback', function(req, res, next) {
     }
     if (user) {
       req.login(user, function(err) {
-        res.redirect(subdomains.url(req, 'insider', '/my-dashboard'));
+        middlewareFilters.myDashboardPage(req, res, next);
       })
     }else{
       res.locals = usersRepo.prepareParams(req);
@@ -124,7 +125,7 @@ router.post('/login', function(req, res, next) {
       session.rememberMe(req, function(err, result) {
         if (err) { throw err}
         if (result) {
-          res.redirect(subdomains.url(req, 'insider', '/my-dashboard'));
+          middlewareFilters.myDashboardPage(req, res, next);
         }
       });
     });
