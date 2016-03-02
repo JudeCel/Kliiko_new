@@ -11,6 +11,7 @@ var q = require('q');
 var _ = require('lodash');
 var async = require('async');
 
+var sessionServices = require('./session.js')
 var subdomains = require('./../lib/subdomains.js');
 
 module.exports = {
@@ -81,9 +82,16 @@ function getAllSessions(userId) {
           UserId: userId
         }
       }]
+    }, {
+      model: Account,
+      attributes: ['name'],
+      include: [{
+        model: models.Subscription,
+        required: false
+      }]
     }]
   }).then(function(sessions) {
-    deferred.resolve(sessions);
+    deferred.resolve(prepareSessions(sessions));
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -92,6 +100,14 @@ function getAllSessions(userId) {
 }
 
 // Helpers
+function prepareSessions(sessions) {
+  _.map(sessions, function(session) {
+    sessionServices.addShowStatus(session, session.Account.Subscription);
+  });
+
+  return sessions;
+}
+
 function prepareAccountUsers(accountUsers, protocol) {
   let object = {
     accountManager: { name: 'Account Manager', field: 'accountManager', data: [] },

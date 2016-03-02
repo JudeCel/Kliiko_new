@@ -23,6 +23,7 @@
           vm.sessions = res.data.sessions;
           vm.accountUsers = res.data.accountUsers;
           vm.systemUrl = res.systemUrl;
+          vm.dateFormat = res.dateFormat;
 
           if(vm.sessions.length > 0) {
             vm.currentTab = 'participant';

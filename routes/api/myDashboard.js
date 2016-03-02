@@ -1,5 +1,6 @@
 'use strict';
 
+var constants = require('../../util/constants');
 var myDashboardServices = require('./../../services/myDashboard');
 
 module.exports = {
@@ -19,7 +20,10 @@ function getResponses(req, res) {
       res.send({ error: error });
     },
     onSuccess: function(result) {
-      res.send({ data: result });
+      res.send({
+        data: result,
+        dateFormat: constants.dateFormatWithTime
+      });
     }
   };
 };
