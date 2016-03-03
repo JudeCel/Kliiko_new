@@ -37,6 +37,7 @@
 
                 <img class="date-time-ico time" src="/icons/time_green.png" alt="">
                 <uib-timepicker class="timepicker-wrapper" ng-model="sbc.step1.endTime" ng-change="sbc.updateStep(1)" hour-step="sbc.dateTime.hstep" minute-step="sbc.dateTime.mstep" show-meridian="true"></uib-timepicker>
+                <code ng-show="sbc.accordions.dateAndTimeError" class="margin020">End Time should be greater then Start Time</code>
             </div>
 
 

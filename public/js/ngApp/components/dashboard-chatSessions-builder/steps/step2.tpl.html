@@ -14,11 +14,7 @@
                     </div>
                 </uib-accordion-heading>
 
-                <!--<div class="text-center">
-                    <div class="btn-standart btn-green" ng-click="sbc.selectFacilitatorsClickHandle()">
-                        Select Facilitator From Contact List &nbsp;<img src="/icons/account_manager_green.png">
-                    </div>
-                </div>-->
+                <ng-include ng-show="sbc.showContactsList" src="'/js/ngApp/components/dashboard-chatSessions-builder/steps/contactLists.html'"></ng-include>
 
                 <div ng-show="sbc.selectedFacilitator" class="btn-standart btn-red"
                      ng-click="sbc.selectedFacilitator = null">
@@ -83,20 +79,12 @@
                             </section>
                             <!--eof table-->
 
-                            <div id="no-contacts-in-list" class="text-center"
-                                 ng-show="!clc.lists.activeList.members.length">
-                                <h3>There is no contacts in this list yet</h3>
+                            <div id="no-contacts-in-list-" ng-show="!clc.lists.activeList.members.length">
+                                    There is no contacts in this list yet
+                                    <div class="btn-standart btn-green margin020" ng-hide="sbc.showContactsList" ng-click="sbc.addFacilitatorsClickHandle()">
+                                        Add Facilitator To Contact List &nbsp;<img src="/icons/account_manager_green.png">
 
-                                <!--<div custom-select-directive data-title="Add Contacts" data-id="contact-lists-add-button-2"-->
-                                <!--class="custom-select-directive">-->
-                                <!--<li ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i-->
-                                <!--class="icon-remove"></i>Manual Input</a></li>-->
-                                <!--<li ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i-->
-                                <!--class="icon-remove"></i>Import Excel</a></li>-->
-                                <!--<li ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i-->
-                                <!--class="icon-remove"></i>Import CSV</a></li>-->
-                                <!--</div>-->
-
+                                    </div>
                             </div>
                         </div>
                     </div>

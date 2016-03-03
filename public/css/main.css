@@ -2794,6 +2794,8 @@ hr.survey-hr {
       margin: 0 5px;
       padding: 5px;
       border: 2px solid #2F9F69; }
+    #session-builder-content #step-1 code {
+      padding: 9px; }
     #session-builder-content #step-1 span.date-time-label {
       margin-top: 7px;
       padding: 0 25px; }
@@ -2909,6 +2911,8 @@ hr.survey-hr {
       margin: 0 5px;
       padding: 5px;
       border: 2px solid #2F9F69; }
+      #session-builder-content #step-3 #sessionBuilder-incentive.has-error {
+        border-color: #E51D39; }
     #session-builder-content #step-3 #email-template-editor {
       margin-top: 50px;
       height: 450px; }
@@ -3059,6 +3063,9 @@ hr.survey-hr {
 
 .margin-top-3rem {
   margin-top: 3rem; }
+
+.margin020 {
+  margin: 0 20px; }
 
 .fade-disabled {
   opacity: .45 !important; }

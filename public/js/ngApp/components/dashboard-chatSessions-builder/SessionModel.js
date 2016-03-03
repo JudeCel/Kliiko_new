@@ -19,6 +19,12 @@
       sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } }
     });
 
+    var chatSessionApi = $resource(globalSettings.restUrl + '/session/:id', null, {
+      get: { method: 'get', params: { id: 'list' } },
+      copy: { method: 'post', params: { id: '@id' } },
+      remove: { method: 'delete', params: { id: '@id' } }
+    });
+
     var SessionModel;
 
     SessionModel = SessionModel;
@@ -60,7 +66,6 @@
         }
       }
 
-      //self.init();
 
     }
 
@@ -70,7 +75,6 @@
 
       if (!self.id) self.createNew().then(resolve);
       if (self.id) self.getRemoteData().then(resolve);
-
 
       return deferred.promise;
 
@@ -99,7 +103,20 @@
       var deferred = $q.defer();
       sessionBuilderRestApi.get({id:self.id}, {}, function(res) {
         self = angular.merge(self, res.sessionBuilder);
-        deferred.resolve();
+
+        // get current session data
+        chatSessionApi.get({}, function(sessionApiRes) {
+          self.chatRoomUrl = sessionApiRes.chatRoomUrl;
+
+          for (var i = 0, len = sessionApiRes.data.length; i < len ; i++) {
+            if (sessionApiRes.data[i].id == self.id) {
+              self.sessionData = sessionApiRes.data[i];
+              break;
+            }
+          }
+          deferred.resolve();
+        });
+
       });
 
       return deferred.promise;
@@ -119,7 +136,7 @@
       console.log('will update - todo');
       var self = this;
       var deferred = $q.defer();
-      //debugger; //debugger
+
       sessionBuilderRestApi.put({id:self.id},{sessionObj:self},function(res) {
         if (res.error) { deferred.reject(res.error); return deferred.promise; }
         //self = angular.merge(self, res.sessionBuilder);
@@ -132,7 +149,7 @@
       console.log('will update - todo');
       var self = this;
       var deferred = $q.defer();
-     // debugger; //debugger
+
       sessionBuilderRestApi.put({id:self.id},{sessionObj:self},function(res) {
         if (res.error) { deferred.reject(res.error); return deferred.promise; }
         //self = angular.merge(self, res.sessionBuilder);

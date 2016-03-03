@@ -63,15 +63,18 @@
 
             <div class="row" ng-hide--="sbc.stepsClassIsActive(1)">
 
-                <div class="col-md-3 btn-dashboard-plans btn-md btn-green" ng-click="sbc.goToStep('back')"
+                <div class="col-md-3 btn-standart btn-green" ng-click="sbc.goToStep('back')"
                      ng-hide="sbc.stepsClassIsActive(1)">
                      Previous step
                 </div>
 
-                <div class="col-md-2 btn-standart pull-right btn-blue" ng-click="sbc.goToStep('next')"
+                <div class="col-md-2 btn-standart pull-right btn-green" ng-click="sbc.goToStep('next')"
                      ng-class="{'btn-forbidden': sbc.cantMoveNextStep}"
                      >
                     Next step
+                </div>
+                <div ng-if="sbc.session.chatRoomUrl" class="col-md-2 btn-standart pull-right btn-blue margin020" ng-click="sbc.goToChat(sbc.session)">
+                    Enter Chat Room
                 </div>
 
             </div>

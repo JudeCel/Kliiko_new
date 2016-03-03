@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices', '$ocLazyLoad', '$q'];
-  function SessionBuilderController(dbg, messenger, SessionModel, $state, $stateParams, $filter, domServices, $ocLazyLoad, $q) {
+  SessionBuilderController.$inject = ['dbg', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices', '$ocLazyLoad', '$q', '$window'];
+  function SessionBuilderController(dbg, messenger, SessionModel, $state, $stateParams, $filter, domServices, $ocLazyLoad, $q, $window) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -67,10 +67,11 @@
     vm.stepsClassIsActive = stepsClassIsActive;
     vm.updateStep = updateStep;
     vm.goToStep = goToStep;
+    vm.goToChat = goToChat;
     vm.currentPageToDisplay = currentPageToDisplay;
 
     // step 2
-    vm.selectFacilitatorsClickHandle = selectFacilitatorsClickHandle;
+    vm.addFacilitatorsClickHandle = addFacilitatorsClickHandle;
     vm.facilitatorsSelectHandle = facilitatorsSelectHandle;
     vm.faderHack = faderHack;
     vm.topicsOnDropComplete = topicsOnDropComplete;
@@ -94,6 +95,7 @@
     function closeSession() {
       vm.session.cancel();
     }
+
 
     function goToStep(step) {
       if (!angular.isNumber(step)) {
@@ -122,24 +124,81 @@
 
     }
 
+    function goToChat(session) {
+      if (session.showStatus && session.showStatus == 'Expired') return;
+
+        $window.location.href = session.chatRoomUrl + session.id;
+
+    }
+
     /**
      * Validate and process steps data
      * @param step {number}
      * @returns {boolean}
      */
     function validateStep(step) {
-      return true;
+      //return true;
+      if (step === 2) { return validateStep1() }
       if (step === 3) { return validateStep2() }
       if (step === 4) { return validateStep3() }
+      if (step === 5) { return validateStep4() }
+      if (step === 6) { return validateStep5() }
 
       return true;
 
+      function validateStep1() {
+        var startTime = new Date(vm.session.steps.step1.startTime).getTime();
+        var endTime = new Date(vm.session.steps.step1.endTime).getTime();
+        vm.accordions.dateAndTimeError = null;
+
+        if (endTime > startTime) {
+          return true;
+        } else {
+          messenger.error('Session End Time should be greater then Start Time');
+          vm.accordions.dateAndTime = true;
+          vm.accordions.dateAndTimeError = true;
+          return false
+        }
+
+
+      }
       function validateStep2() {
-        return true;
+        if (!vm.selectedFacilitator) {
+
+          messenger.error('You should select one facilitator for this session');
+          vm.accordions.facilitators = true;
+
+          return false;
+        }
+
+        if (vm.chatSessionTopicsList.length) {
+          return true;
+        } else {
+          messenger.error('You should select at least one topic for this session');
+          vm.accordions.topics = true;
+
+          return false;
+        }
+
       }
 
       function validateStep3() {
-        return true;
+        if (vm.session.steps.step3.incentive_details) return true;
+        messenger.error('Please, add Participant Incentive');
+        vm.accordions.incentive = 'error';
+        return false;
+      }
+
+      function validateStep4() {
+        if (vm.participants.length) return true;
+        messenger.error('Select at least one participant');
+        return false;
+      }
+
+      function validateStep5() {
+        if (vm.observers.length) return true;
+        messenger.error('Select at least one observer');
+        return false;
       }
     }
 
@@ -219,6 +278,7 @@
 
     function updateStep(stepNumber) {
       if (stepNumber && stepNumber === 1) parseDateAndTime();
+      if (stepNumber && stepNumber === 3 && vm.accordions.incentive) vm.accordions.incentive = true;
       vm.session.updateStep();
 
     }
@@ -235,7 +295,6 @@
 
         vm.step1.endDate = new Date(vm.session.steps.step1.endTime);
         vm.step1.endTime = new Date(vm.session.steps.step1.endTime);
-
 
       } else {
         if (vm.step1.startDate && vm.step1.startTime) {
@@ -259,6 +318,11 @@
 
           vm.session.steps.step1.endTime = endDate;
         }
+
+        (new Date(startDate).getTime() > new Date(endDate).getTime() )
+          ?  vm.accordions.dateAndTimeError = true
+          :  vm.accordions.dateAndTimeError = false;
+
       }
 
 
@@ -266,18 +330,20 @@
 
 
     function currentPageToDisplay() {
-      if(vm.searchingParticipants || vm.searchingObservers) {
+
+      if ( vm.showContactsList || vm.searchingParticipants || vm.searchingObservers ) {
         return 'contactLists.html';
       }
       else {
-        return `step${vm.currentStep}.tpl.html`;
+        return 'step'+vm.currentStep+'.tpl.html';
       }
     }
 
     /// step 2
 
-    function selectFacilitatorsClickHandle() {
-      domServices.modal('sessionBuilderSelectFacilitatorModal');
+    function addFacilitatorsClickHandle() {
+      //domServices.modal('sessionBuilderSelectFacilitatorModal');
+      vm.showContactsList = true;
     }
 
     function facilitatorsSelectHandle(facilitator) {

@@ -181,7 +181,7 @@
           for (var j = 0, lenJ = res.templates.length; j < lenJ ; j++) {
             if ( ids[i] == res.templates[j].MailTemplateBaseId ) tmpArr.push(res.templates[j]);
           }
-        } 
+        }
 
         vm.emailTemplatesForSessionBuilder = tmpArr;
 
