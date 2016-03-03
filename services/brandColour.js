@@ -16,7 +16,8 @@ const MESSAGES = {
   created: 'Scheme created successfully!',
   copied: 'Scheme copied successfully!',
   updated: 'Scheme updated successfully!',
-  notValid: 'Not valid colour'
+  notValid: 'Not valid colour',
+  notFromList: 'Colour is not from the list'
 };
 
 const VALID_ATTRIBUTES = {
@@ -197,6 +198,9 @@ function validateColours(colours, errors) {
       _.map(value, function(subvalue, subkey) {
         if(!regex.test(subvalue)) {
           errors[subkey] = _.startCase(key + subkey) + ': ' + MESSAGES.notValid;
+        }
+        else if(!_.includes(brandProjectConstants.participantColours, subvalue)) {
+          errors[subkey] = _.startCase(key + subkey) + ': ' + MESSAGES.notFromList;
         }
       });
     }
