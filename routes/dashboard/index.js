@@ -17,6 +17,7 @@ function views_path(action) {
 router.use(function (req, res, next) {
   res.locals.appData = appData;
   if (req.user) {
+    // Temporarily disabled.
     // middlewareFilters.landingPage(req, res, next);
     middlewareFilters.planSelectPage(req, res, next);
   } else {

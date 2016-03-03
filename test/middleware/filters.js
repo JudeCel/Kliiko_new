@@ -66,7 +66,7 @@ describe('MIDDLEWARE - Filters', function() {
   describe('#planSelectPage', function() {
     function reqObject(path) {
       return {
-        originalUrl: path,
+        originalUrl: path || 'someUrl',
         user: {
           id: testData.user.id
         },
@@ -88,18 +88,18 @@ describe('MIDDLEWARE - Filters', function() {
 
     describe('happy path', function() {
       it('should succeed on redirecting to select plan page', function(done) {
-        filtersMiddleware.planSelectPage(reqObject('someUrl'), resObject('selectPlan', done));
+        filtersMiddleware.planSelectPage(reqObject(), resObject('selectPlan', done));
       });
 
       it('should succeed on skipping this check because path matches', function(done) {
-        filtersMiddleware.planSelectPage(reqObject('/dashboard/selectPlan'), resObject(testData.account.name), function() {
+        filtersMiddleware.planSelectPage(reqObject('/dashboard/selectPlan'), resObject(), function() {
           done();
         });
       });
 
       it('should succeed on skipping this check because subscription already exists', function(done) {
         Subscription.create({ accountId: testData.account.id, subscriptionId: 'someId', planId: 'free' }).then(function() {
-          filtersMiddleware.planSelectPage(reqObject('someUrl'), resObject(testData.account.name), function() {
+          filtersMiddleware.planSelectPage(reqObject(), resObject(), function() {
             done();
           });
         });
