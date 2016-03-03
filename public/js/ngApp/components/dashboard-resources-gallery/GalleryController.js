@@ -5,7 +5,7 @@
     module('KliikoApp').
     controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', 
+  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal',
                                '$scope', 'domServices', 'messenger',
                                'globalSettings', '$sce', 'filterFilter', '$timeout', 'ngProgressFactory'];
 
@@ -46,7 +46,7 @@
     $scope.clearFormData = function() {
       $scope.newResource = {};
     }
-    
+
     $scope.filterBy = function(type) {
       $scope.filterType = type;
     }
@@ -86,7 +86,7 @@
       }
     };
 
-    function setUploadtype(type){ 
+    function setUploadtype(type){
       if(type == 'image' || type == 'brandLogo'){
         $scope.allowToUpload = "image/gif, image/jpeg, image/jpg, image/png, image/bmp"
       }else if(type == 'audio'){
@@ -106,7 +106,7 @@
         title: newResource.title,
         text: newResource.youtubeUrl
       };
-      
+
       GalleryServices.saveYoutubeUrl(resourceParams).then(function(res) {
         if(res.error){
           progressbar.complete();
@@ -128,7 +128,8 @@
           title: newResource.title,
           type: newResource.type,
           text: $scope.newResource.fileTst.name,
-          file: newResource.fileTst
+          file: newResource.fileTst,
+          private: newResource.private
         };
 
         $scope.submitIsDisabled = true;
@@ -171,7 +172,7 @@
       $scope.newResource = {};
       domServices.modal('uploadResource', 'close');
     }
-   
+
     $scope.isAll = false;
     $scope.selectAllResources = function() {
       if($scope.isAll) {
@@ -180,14 +181,14 @@
         });
 
         $scope.idsForAction = [];
-        $scope.isAll = false; 
+        $scope.isAll = false;
       } else {
         angular.forEach($scope.resources, function(resource){
           resource.checked = true;
           $scope.idsForAction.push(resource.id);
         });
-      
-        $scope.isAll = true;  
+
+        $scope.isAll = true;
       }
     };
 
@@ -260,7 +261,7 @@
             console.log(res.message);
           }
         })
-      }, 10000); 
+      }, 10000);
     }
 
     $scope.disableButton = function() {
@@ -288,6 +289,6 @@
         return text;
       }
     }
-    
+
   }
 })();

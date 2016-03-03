@@ -3,6 +3,7 @@
 var fs = require("fs");
 var zip = require("node-native-zip");
 var q = require('q');
+var _ = require('lodash');
 var config = require('config');
 var models = require('./../../models')
 var account = models.Account;
@@ -26,26 +27,31 @@ module.exports = {
 const allTypes = ['image', 'video', 'youtubeUrl', 'audio', 'pdf', 'brandLogo'];
 const allowedTypesForZip = ['audio', 'image', 'pdf', 'video', 'brandLogo'];
 
-function getResources(accountId, type){
+function getResources(accountId, accountRoles, type){
   let deferred = q.defer();
   let types = "";
 
-  if(type == ""){  
+  if(type == ""){
     types = allTypes;
   }else{
     types = type;
   }
 
+  let where = { resourceType: types };
+  if(!_.includes(accountRoles, 'admin')) {
+    where.private = false;
+  }
+
   Resource.findAll({
-    where: {resourceType: types},
+    where: where,
     include: [{
-        model: models.User, 
-        include: [{
-          model: models.Account,
-          where: { id: accountId }
-        }]
-      }],
-      attributes: ['id', 'userId', 'thumb_URL', 'URL', 'HTML', 'JSON', 'resourceType']
+      model: models.User,
+      include: [{
+        model: models.Account,
+        where: { id: accountId }
+      }]
+    }],
+    attributes: ['id', 'userId', 'thumb_URL', 'URL', 'HTML', 'JSON', 'resourceType']
   })
   .then(function (results) {
     results.forEach(function(resource, index, array) {
@@ -137,7 +143,7 @@ function pushFilesToZip(files) {
       });
     }
   });
-  
+
   return deferred.promise;
 }
 
@@ -158,7 +164,7 @@ function deleteResources(ids){
   };
 
   deleteResource.run(req, res, nextCb);
-  
+
   return deferred.promise;
 }
 
@@ -211,6 +217,7 @@ function uploadResource(data){
 
   let req = expressValidatorStub({
     params: {
+      private: data.body.private,
       userId: data.user.id,
       topicId: 1, //THIS NEEDS to be changed
       URL: "url",
@@ -228,7 +235,7 @@ function uploadResource(data){
   let successCallback = { send: function(result) {
     deferred.resolve(result);
   }}
-  
+
   updateTmpTitle.validate(req, function (err) {
     if (err){
       return errorCallback(err);
@@ -244,6 +251,7 @@ function uploadResourceFile(req) {
   let deferred = q.defer();
 
   socketHelper.uploadResource({
+    private: req.body.private,
     file: req.file,
     width: 950,
     height: 460,

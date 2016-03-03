@@ -10,6 +10,7 @@ var validate = function (req, resCb) {
         id: joi.number(),
         resourceType: joi.string(),
         topicId: joi.number(),
+        private: joi.boolean(),
         userId: joi.number()
     });
     if (err.error){

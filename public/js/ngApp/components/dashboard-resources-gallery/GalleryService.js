@@ -73,7 +73,7 @@
       Upload.upload({
         url: globalSettings.restUrl+'/gallery/uploadFile',
         method: 'POST',
-        data: {uploadedfile: newResource.file, type: newResource.type}
+        data: {uploadedfile: newResource.file, private: newResource.private, type: newResource.type}
       }).then(function(res) {
           deferred.resolve(res);
         }, function(error) {

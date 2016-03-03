@@ -13,7 +13,7 @@ module.exports = {
   deleteZipFile: deleteZipFile
 };
 
-function postResources(req, res, next) {    
+function postResources(req, res, next) {
   galleryService.uploadResource(req, res).then(function(result) {
     res.send(result);
   }, function(err) {
@@ -23,9 +23,10 @@ function postResources(req, res, next) {
 
 function getResources(req, res, next) {
   let accountId = res.locals.currentDomain.id;
+  let accountRoles = res.locals.currentDomain.roles;
   let resourceType = req.query.type;
 
-  galleryService.getResources(accountId, resourceType).then(function(result) {
+  galleryService.getResources(accountId, accountRoles, resourceType).then(function(result) {
     res.send(({ data: result }));
   });
 }
@@ -46,7 +47,7 @@ function deleteResources(req, res, next) {
   });
 }
 
-function uploadResource(req, res, next) { 
+function uploadResource(req, res, next) {
   galleryService.uploadResourceFile(req).then(function(result) {
     res.send(result);
   }, function(err) {
