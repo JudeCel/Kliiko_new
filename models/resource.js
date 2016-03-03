@@ -3,7 +3,7 @@
 module.exports = (Sequelize, DataTypes) => {
   var Resource = Sequelize.define('Resource', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    private: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    private: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
     topicId: { type: DataTypes.INTEGER, allowNull: true },
     userId: { type: DataTypes.INTEGER, allowNull: true },
     thumb_URL: { type: DataTypes.TEXT, allowNull: true },
