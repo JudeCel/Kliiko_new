@@ -5,6 +5,7 @@ var subdomains = require('../../lib/subdomains.js');
 var policy = require('../../middleware/policy.js');
 var uploadBannerRoutes = require('./uploadBanner.js');
 var accountDatabaseRoutes = require('./accountDatabase.js');
+var selectPlanRoutes = require('./selectPlan.js');
 var appData = require('../../services/webAppData');
 var middlewareFilters = require('../../middleware/filters');
 
@@ -16,7 +17,9 @@ function views_path(action) {
 router.use(function (req, res, next) {
   res.locals.appData = appData;
   if (req.user) {
-    middlewareFilters.landingPage(req, res, next);
+    // Temporarily disabled.
+    // middlewareFilters.landingPage(req, res, next);
+    middlewareFilters.planSelectPage(req, res, next);
   } else {
     res.redirect(subdomains.url(req, subdomains.base, '/'));
   }
@@ -29,6 +32,9 @@ router.get('/', policy.authorized(['admin', 'accountManager']) , function(req, r
 router.get('/landing', function(req, res) {
   res.render(views_path('landing'), { title: 'Landing page' });
 });
+
+router.get('/selectPlan', policy.authorized(['accountManager']), selectPlanRoutes.get);
+router.post('/selectPlan', policy.authorized(['accountManager']), selectPlanRoutes.post);
 
 router.get('/upgradeplans', function(req, res) {
   res.render(views_path('upgradePlans'), { title: 'Upgrade Plans' });
