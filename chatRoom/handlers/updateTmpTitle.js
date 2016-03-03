@@ -7,6 +7,7 @@ var Resource = models.Resource;
 
 var validate = function (req, resCb) {
     var err = joi.validate(req.params, {
+        private: joi.boolean().optional(),
         topicId: joi.number().optional(),
         userId: joi.number().optional(),
         JSON: joi.object().required(),
@@ -37,6 +38,7 @@ var run = function (req, resCb, errCb) {
 
 function createResurce(params, callback) {
   Resource.create({
+    private: params.private,
     topicId: params.topicId,
     userId: params.userId,
     URL: params.URL,
