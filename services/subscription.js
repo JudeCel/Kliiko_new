@@ -26,6 +26,7 @@ const MESSAGES = {
 }
 
 module.exports = {
+  messages: MESSAGES,
   findSubscription: findSubscription,
   createSubscription: createSubscription
 }
@@ -42,7 +43,7 @@ function findSubscription(accountId) {
   return deferred.promise;
 }
 
-function createSubscription(accountId, userId) {
+function createSubscription(accountId, userId, provider) {
   let deferred = q.defer();
 
   findSubscription(accountId).then(function(subscription) {
@@ -54,7 +55,7 @@ function createSubscription(accountId, userId) {
     }
   }).then(function(accountUser) {
     if(accountUser) {
-      return chargebeeSubCreate(chargebeeParams(accountUser));
+      return chargebeeSubCreate(chargebeeParams(accountUser), provider);
     }
     else {
       deferred.reject(MESSAGES.notFound.accountUser);
@@ -71,10 +72,14 @@ function createSubscription(accountId, userId) {
 }
 
 // Helpers
-function chargebeeSubCreate(params) {
+function chargebeeSubCreate(params, provider) {
   let deferred = q.defer();
 
-  chargebee.subscription.create(params).request(function(error, result) {
+  if(!provider) {
+    provider = chargebee.subscription.create;
+  }
+
+  provider(params).request(function(error, result) {
     if(error) {
       deferred.reject(error);
     }

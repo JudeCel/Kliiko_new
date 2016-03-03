@@ -5,7 +5,7 @@
     <h1 class='text-gray-dark text-center'>One last thing...</h1>
     <p class='text-center'>There's just one more step. You need to choose a pricing plan below.</p>
 
-    <form method='post' action='/dashboard/selectPlan'>
+    <form method='post' action='/dashboard/selectPlan' ng-submit='selectPlanSubmited = true'>
       <div class='col-md-12'>
         <table class='table table-no-inside-borders text-left text-gray-dark table-v-content-middle' id='login'>
           <tr class='text-center'>
@@ -27,7 +27,7 @@
       <div class='row'>
         <div class='col-xs-offset-1 col-xs-10 form-group'>
           <button type='button' class='btn border-brown text-brown-light border-radius-none background-transp login-btn-size' data-toggle='modal' data-target='#upgradePlanModal'>Learn More</button>
-          <button type='submit' class='btn border-green text-green-dark border-radius-none background-transp pull-right login-btn-size'>Next</button>
+          <button type='submit' ng-disabled='selectPlanSubmited' class='btn border-green text-green-dark border-radius-none background-transp pull-right login-btn-size'>Next</button>
         </div>
       </div>
     </form>
