@@ -48,6 +48,7 @@ function saveResourceToDb(json, resCb, nextCb) {
 
                 req.userId = json.userId = resource.userId;
                 req.topicId = json.topicId = resource.topicId;
+                req.private = json.private = resource.private;
 
                 getResourcesGeneric.execute(req, function (result) {
                     var socketHelper = require('./index.js');
