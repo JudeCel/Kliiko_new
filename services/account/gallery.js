@@ -27,7 +27,7 @@ module.exports = {
 const allTypes = ['image', 'video', 'youtubeUrl', 'audio', 'pdf', 'brandLogo'];
 const allowedTypesForZip = ['audio', 'image', 'pdf', 'video', 'brandLogo'];
 
-function getResources(accountId, accountRoles, type){
+function getResources(accountId, admin, type){
   let deferred = q.defer();
   let types = "";
 
@@ -38,7 +38,7 @@ function getResources(accountId, accountRoles, type){
   }
 
   let where = { resourceType: types };
-  if(!_.includes(accountRoles, 'admin')) {
+  if(!admin) {
     where.private = false;
   }
 

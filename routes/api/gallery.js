@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash');
 var galleryService = require('./../../services/account/gallery');
 var socketHelper = require("../../chatRoom/socketHelper");
 
@@ -23,10 +24,10 @@ function postResources(req, res, next) {
 
 function getResources(req, res, next) {
   let accountId = res.locals.currentDomain.id;
-  let accountRoles = res.locals.currentDomain.roles;
+  let admin = _.includes(res.locals.currentDomain.roles, 'admin');
   let resourceType = req.query.type;
 
-  galleryService.getResources(accountId, accountRoles, resourceType).then(function(result) {
+  galleryService.getResources(accountId, admin, resourceType).then(function(result) {
     res.send(({ data: result }));
   });
 }
