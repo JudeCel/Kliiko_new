@@ -201,6 +201,7 @@ function saveYoutubeData(data) {
 
     let topicId = 1; //THIS NEEDS to be changed
     let json = {
+      private: data.body.private,
       title: data.body.title,
       message: youTubeLink,
       url: url

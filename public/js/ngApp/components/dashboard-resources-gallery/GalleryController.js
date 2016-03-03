@@ -103,6 +103,7 @@
       progressbar.start();
 
       var resourceParams = {
+        private: newResource.private,
         title: newResource.title,
         text: newResource.youtubeUrl
       };
