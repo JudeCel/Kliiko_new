@@ -2,6 +2,8 @@
 
 var constants = require('../../util/constants');
 var sessionBuilderServices = require('./../../services/sessionBuilder');
+let topicsService = require('./../../services/topics');
+let _ = require('lodash');
 
 module.exports = {
   new: initializeBuilder,
@@ -13,7 +15,8 @@ module.exports = {
   inviteMembers: inviteMembers,
   removeInvite: removeInvite,
   removeSessionMember: removeSessionMember,
-  sendGenericEmail: sendGenericEmail
+  sendGenericEmail: sendGenericEmail,
+  addTopics: addTopics
 };
 
 function initializeBuilder(req, res, next) {
@@ -114,4 +117,23 @@ function sendGenericEmail(req, res, next) {
   }, function(error) {
     res.send({ error: error });
   });
+}
+
+function addTopics(req, res, next) {
+  if (!req.body.topicsArray) { res.send({error:'Required body param @topicsArray is missed'}); return};
+
+
+  topicsService.removeAllFromSession(req.params.id).then(function(result) {
+
+    topicsService.updateSessionTopics(req.body.topicsArray, req.params.id).then(function(result2) {
+      res.send(result2);
+    }, function(error) {
+      res.send({ error: error });
+    });
+
+  }, function(error) {
+    res.send({ error: error });
+  });
+
+
 }

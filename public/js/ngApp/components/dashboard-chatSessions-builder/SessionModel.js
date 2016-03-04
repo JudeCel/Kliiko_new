@@ -16,7 +16,8 @@
       inviteMembers: { method: 'POST', params: { path: 'invite' } },
       removeInvite: { method: 'DELETE', params: { path: 'removeInvite' } },
       removeSessionMember: { method: 'DELETE', params: { path: 'removeSessionMember' } },
-      sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } }
+      sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } },
+      addTopics: {method: 'POST', params: {path: 'addTopics'} }
     });
 
     var chatSessionApi = $resource(globalSettings.restUrl + '/session/:id', null, {
@@ -24,6 +25,11 @@
       copy: { method: 'post', params: { id: '@id' } },
       remove: { method: 'delete', params: { id: '@id' } }
     });
+
+    var sessionMemberApi = $resource(globalSettings.restUrl + '/sessionMember', {}, {
+      post: { method: 'POST' }
+    });
+
 
     var SessionModel;
 
@@ -37,6 +43,8 @@
     SessionModel.prototype.destroy = cancel;
     SessionModel.prototype.updateStep = updateStep;
     SessionModel.prototype.sendSms = sendSms;
+    SessionModel.prototype.addMember = addMember;
+    SessionModel.prototype.saveTopics = saveTopics;
     SessionModel.prototype.inviteParticipants = inviteParticipants;
     SessionModel.prototype.inviteObservers = inviteObservers;
     SessionModel.prototype.removeMember = removeMember;
@@ -168,6 +176,36 @@
         else deferred.resolve(res.message);
       });
 
+      return deferred.promise;
+    }
+
+
+    function addMember(member, role) {
+      var self = this;
+
+      var deferred = $q.defer();
+      var params = {
+        sessionId: self.id,
+        accountUserId: member.accountUserId,
+        username: member.firstName + ' '+member.lastName,
+        role: role
+
+      };
+      sessionMemberApi.post({},params,function(res) {
+        deferred.resolve();
+      });
+
+      return deferred.promise;
+    }
+
+    function saveTopics(topicsArray) {
+      var self = this;
+      var deferred = $q.defer();
+
+
+      sessionBuilderRestApi.addTopics({id: self.id}, {topicsArray:topicsArray}, function(res) {
+        deferred.resolve(res);
+      });
       return deferred.promise;
     }
 

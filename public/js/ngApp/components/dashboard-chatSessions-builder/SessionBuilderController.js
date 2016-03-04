@@ -9,6 +9,7 @@
 
     var vm = this;
 
+    var colorSchemeId, brandLogoId;
     vm.step1 = {};
     vm.accordions = {};
     vm.participants = [];
@@ -53,6 +54,7 @@
       vm.chatSessionTopicsList = [];
 
       parseDateAndTime('initial');
+      initStep(1);
     });
     //todo @pavel: convert time if it is there already
 
@@ -91,6 +93,7 @@
     vm.findSelectedMembers = findSelectedMembers;
     vm.removeFromList = removeFromList;
     vm.sendGenericEmail = sendGenericEmail;
+
 
     function closeSession() {
       vm.session.cancel();
@@ -137,14 +140,14 @@
      * @returns {boolean}
      */
     function validateStep(step) {
-      //return true;
+
       if (step === 2) { return validateStep1() }
       if (step === 3) { return validateStep2() }
       if (step === 4) { return validateStep3() }
       if (step === 5) { return validateStep4() }
       if (step === 6) { return validateStep5() }
 
-      return true;
+      return false;
 
       function validateStep1() {
         var startTime = new Date(vm.session.steps.step1.startTime).getTime();
@@ -172,6 +175,8 @@
         }
 
         if (vm.chatSessionTopicsList.length) {
+          vm.session.saveTopics(vm.selectedTopics);
+
           return true;
         } else {
           messenger.error('You should select at least one topic for this session');
@@ -205,7 +210,12 @@
     function initStep(step) {
       var deferred = $q.defer();
 
-      if (step == 1) { deferred.resolve(); }
+      if (step == 1) {
+
+        if (vm.session.steps.step1.brandProjectPreferenceId)  brandLogoId =  vm.session.steps.step1.brandProjectPreferenceId;
+        if (vm.session.steps.step1.resourseId) colorSchemeId = vm.session.steps.step1.brandProjectPreferenceId;
+        deferred.resolve();
+      }
       if (step == 2) {
         $ocLazyLoad.load([
           '/js/vendors/ngDraggable/ngDraggable.js',
@@ -277,8 +287,17 @@
     }
 
     function updateStep(stepNumber) {
-      if (stepNumber && stepNumber === 1) parseDateAndTime();
+      if (stepNumber && stepNumber === 1) {
+        parseDateAndTime();
+
+        if (vm.brandLogo &&  vm.brandLogo.id) vm.session.steps.step1.resourceId = vm.brandLogo.id;
+        if (vm.colorScheme && vm.colorScheme.id) vm.session.steps.step1.brandProjectPreferenceId = vm.colorScheme.id;
+
+      }
+
+
       if (stepNumber && stepNumber === 3 && vm.accordions.incentive) vm.accordions.incentive = true;
+
       vm.session.updateStep();
 
     }
@@ -329,6 +348,7 @@
     }
 
 
+
     function currentPageToDisplay() {
 
       if ( vm.showContactsList || vm.searchingParticipants || vm.searchingObservers ) {
@@ -348,7 +368,15 @@
 
     function facilitatorsSelectHandle(facilitator) {
       vm.session.steps.step2.facilitator = facilitator;
-      vm.session.update()
+      vm.session.addMember(facilitator, 'facilitator').then(
+        function (res) {
+          vm.session.update();
+        },
+        function (err) {
+        }
+      );
+
+
     }
 
     function faderHack() {
@@ -369,6 +397,7 @@
         }
       }
 
+
       function thisAdd(data) {
         // check if this topic already in selected chat session topics list
         if (vm.chatSessionTopicsList.length) {
@@ -376,7 +405,7 @@
             if (data.id ==  vm.chatSessionTopicsList[i].id ) return;
           }
 
-          data.topic_order_id = vm.chatSessionTopicsList.length;
+          data.order = vm.chatSessionTopicsList.length;
 
           vm.chatSessionTopicsList.push(data);
         } else {
@@ -405,12 +434,12 @@
     }
 
     function reorderTopics(data, t) {
-      var droppedOrderId = data.topic_order_id;
-      var targetOrderId = t.topic_order_id;
+      var droppedOrderId = data.order;
+      var targetOrderId = t.order;
 
       for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
-        if (data.id == vm.chatSessionTopicsList[i].id) vm.chatSessionTopicsList[i].topic_order_id = targetOrderId;
-        if (t.id == vm.chatSessionTopicsList[i].id) vm.chatSessionTopicsList[i].topic_order_id = droppedOrderId;
+        if (data.id == vm.chatSessionTopicsList[i].id) vm.chatSessionTopicsList[i].order = targetOrderId;
+        if (t.id == vm.chatSessionTopicsList[i].id) vm.chatSessionTopicsList[i].order = droppedOrderId;
       }
 
       vm.session.steps.step2.topics = vm.chatSessionTopicsList;

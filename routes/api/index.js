@@ -26,6 +26,8 @@ var sessionBuilder = require('./sessionBuilder');
 let contactList = require('./contactList');
 let contactListUser = require('./contactListUser');
 
+let sessionMember = require('./sessionMember');
+
 module.exports = router;
 
 // Common Rules
@@ -129,7 +131,10 @@ router.get('/session/ratings',  policy.authorized(['admin']), session.getAllSess
 router.get('/session/list', sessionMemberMiddleware.hasAccess(['facilitator', 'observer', 'participant'], ['accountManager', 'admin']), session.get);
 router.delete('/session/:id', policy.authorized(['accountManager', 'admin']), session.remove);
 router.post('/session/:id', policy.authorized(['accountManager', 'admin']), session.copy);
+
+// Session Member
 router.post('/sessionMember/rate/:id', sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin']), session.updateRating);
+router.post('/sessionMember', sessionMember.addMember);
 
 // Session Builder
 router.post('/sessionBuilder',  policy.authorized(['accountManager', 'admin']), sessionBuilder.new);
@@ -142,3 +147,4 @@ router.post('/sessionBuilder/:id/invite',  policy.authorized(['accountManager', 
 router.delete('/sessionBuilder/:id/removeInvite/:inviteId',  policy.authorized(['accountManager', 'admin']), sessionBuilder.removeInvite);
 router.delete('/sessionBuilder/:id/removeSessionMember/:sessionMemberId',  policy.authorized(['accountManager', 'admin']), sessionBuilder.removeSessionMember);
 router.post('/sessionBuilder/:id/sendGenericEmail',  policy.authorized(['accountManager', 'admin']), sessionBuilder.sendGenericEmail);
+router.post('/sessionBuilder/:id/addTopics',  policy.authorized(['accountManager', 'admin']), sessionBuilder.addTopics);

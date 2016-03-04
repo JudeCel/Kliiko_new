@@ -11,8 +11,10 @@ module.exports = {
   create: create,
   update: update,
   destroy: destroy,
-  joninSession: joninSession,
-  removeSession: removeSession,
+  updateSessionTopics: updateSessionTopics,
+  joinToSession: joinToSession,
+  removeFromSession: removeFromSession,
+  removeAllFromSession: removeAllFromSession,
   MESSAGES: MESSAGES
 };
 
@@ -26,7 +28,39 @@ function getAll(accountId) {
   return deferred.promise;
 }
 
-function joninSession(ids, sessionId) {
+function updateSessionTopics(topicsArray, sessionId) {
+  let deferred = q.defer();
+
+  let ids = _.map(topicsArray, 'id');
+
+  joinToSession(ids, sessionId).then(
+    function (sessionTopics) {
+      _.map(sessionTopics, function(sessionTopic) {
+
+        _.map(topicsArray, function(topic) {
+          if (topic.id == sessionTopic.TopicId) {
+            sessionTopic.order = topic.order;
+            sessionTopic.active = topic.active;
+
+            sessionTopic.update();
+
+          }
+        });
+      });
+
+      deferred.resolve();
+    },
+    function (err) {
+      deferred.reject(err);
+    }
+  );
+
+  return deferred.promise;
+
+}
+
+
+function joinToSession(ids, sessionId) {
   let deferred = q.defer();
   Session.find({where: { id: sessionId } }).then(function(session) {
     Topic.findAll({where: {id: ids}}).then(function(results) {
@@ -45,7 +79,7 @@ function joninSession(ids, sessionId) {
   return deferred.promise;
 }
 
-function removeSession(ids, sessionId) {
+function removeFromSession(ids, sessionId) {
   let deferred = q.defer();
   Session.find({where: { id: sessionId } }).then(function(session) {
     Topic.findAll({where: {id: ids}}).then(function(results) {
@@ -60,6 +94,40 @@ function removeSession(ids, sessionId) {
   }, function(err) {
     deferred.reject(err);
   });
+
+  return deferred.promise;
+}
+
+function removeAllFromSession(sessionId) {
+  let deferred = q.defer();
+
+  Topic.findAll({
+    include: [{
+      model: models.Session,
+      where: {
+        id: sessionId
+      }
+    }]
+  }).then(
+    function (res) {
+
+      let ids = _.map(res, 'id');
+
+      removeFromSession(ids, sessionId).then(
+        function (res2) {
+          deferred.resolve(res2)
+        },
+        function (err2) {
+          deferred.reject(err2);
+        }
+      );
+
+    },
+    function (err) {
+      deferred.reject(err);
+    }
+  );
+
 
   return deferred.promise;
 }

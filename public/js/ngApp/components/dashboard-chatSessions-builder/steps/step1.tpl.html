@@ -58,7 +58,7 @@
                         <div class='col-sm-4' ng-repeat="resource in resources | filter: { resourceType: 'brandLogo' }">
                             <label for="{{ $index }}-logo">
                                 <div class='panel'>
-                                    <input id="{{ $index }}-logo" type="radio" ng-model="sbc.brandLogo" ng-value="resource" >
+                                    <input id="{{ $index }}-logo" type="radio" ng-model="sbc.brandLogo" ng-value="resource" ng-click="sbc.updateStep(1)">
                                     <img calss="source-img" ng-src='{{ getResourceNameUrl(resource) }}'/>
                                 </div>
                             </label>
@@ -99,7 +99,7 @@
                                 <div class='panel-heading'>
                                     <div class='row'>
                                         <div class='col-xs-1'>
-                                            <input id="{{ $index }}-scheme" type="radio" ng-model="sbc.colorScheme" ng-value="scheme" >
+                                            <input id="{{ $index }}-scheme" type="radio" ng-model="sbc.colorScheme" ng-value="scheme" ng-click="sbc.updateStep(1)">
                                         </div>
                                         <div class='col-xs-10'>
                                             <h3 class='panel-title text-max-width'>{{ scheme.name }}</h3>

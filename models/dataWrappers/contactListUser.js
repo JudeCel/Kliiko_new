@@ -24,6 +24,7 @@ var ContactListUser = class ContactListUser {
 
   assignId(data){
     this.id = data.id;
+    this.accountUserId = data.accountUserId;
   }
 
   assignValues(fieldsList, data){
@@ -39,6 +40,6 @@ var ContactListUser = class ContactListUser {
       return data.customFields[value]
     }
   }
-}
+};
 
 module.exports = ContactListUser;

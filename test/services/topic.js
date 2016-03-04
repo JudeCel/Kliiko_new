@@ -79,14 +79,14 @@ describe('Topic Service', function() {
       })
     })
 
-    it("joninSession", function(done) {
+    it("joinToSession", function(done) {
       let attrs = {
         accountId: testAccount.id,
         name: "without session"
       }
 
       topicService.create(attrs).then(function(topic){
-        topicService.joninSession([topic.id], testSession.id).then(function(result) {
+        topicService.joinToSession([topic.id], testSession.id).then(function(result) {
           topic.getSessions().then(function(resuts) {
             assert.lengthOf(resuts, 1)
             done();
@@ -108,7 +108,7 @@ describe('Topic Service', function() {
       }
 
       topicService.create(attrs).then(function(topic){
-        topicService.joninSession([topic.id], testSession.id).then(function(_) {
+        topicService.joinToSession([topic.id], testSession.id).then(function(_) {
           topicService.removeSession([testSession.id], testSession.id).then(function(result) {
             assert.equal(result, 1)
             done()
@@ -130,7 +130,7 @@ describe('Topic Service', function() {
       }
 
       topicService.create(attrs).then(function(topic){
-        topicService.joninSession([topic.id], testSession.id).then(function(_) {
+        topicService.joinToSession([topic.id], testSession.id).then(function(_) {
           topicService.destroy(topic.id).then(function(result) {
             done("can't get here");
           }, function(err) {

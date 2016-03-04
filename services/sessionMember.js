@@ -40,8 +40,14 @@ function createToken(id) {
   });
 
   return deferred.promise;
-};
+}
 
+/**
+ * bulkCreate
+ * @param params {Array}
+ * @param sessionId {number}
+ * @returns {*|promise}
+ */
 function bulkCreate(params, sessionId) {
   let deferred = q.defer();
 

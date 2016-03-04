@@ -109,7 +109,7 @@ function update(params) {
   let deferred = q.defer();
 
   findSession(params.id, params.accountId).then(function(session) {
-    session.updateAttributes(params).then(function(updatedSession) {
+    session.updateAttributes(params.steps.step1).then(function(updatedSession) {
       sessionBuilderObject(updatedSession).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
@@ -459,7 +459,7 @@ function stepsDefinition(session) {
           stepName: 'manageSessionEmails',
           incentive_details: null,
           emailTemplates: emailTemplates
-        }
+        };
         cb();
       }, function(error) {
         cb(error);
@@ -562,7 +562,7 @@ function step3Query(sessionId) {
     deferred.resolve(emailTemplates);
   }).catch(function(error) {
     deferred.reject(error);
-  })
+  });
 
   return deferred.promise;
 }
@@ -660,7 +660,7 @@ function findValidation(step, params) {
 }
 
 function validateStepOne(params) {
-  let errors = {}
+  let errors = {};
 
   if(!params.name) {
     errors.name = MESSAGES.errors.firstStep.nameRequired;
