@@ -29,7 +29,22 @@ module.exports = {
   messages: MESSAGES,
   findSubscription: findSubscription,
   createPortalSession: createPortalSession,
-  createSubscription: createSubscription
+  createSubscription: createSubscription,
+  getAllPlans: getAllPlans
+}
+
+function getAllPlans() {
+  let deferred = q.defer();
+
+  chargebee.plan.list({}).request(function(error, result){
+    if(error){
+      deferred.reject(error);
+    }else{
+      deferred.resolve(result.list);
+    }
+  });
+
+  return deferred.promise;
 }
 
 function findSubscription(accountId) {
@@ -118,6 +133,7 @@ function updateSubscription(accountId, subscriptionId) {
 
   return deferred.promise;
 }
+
 // Helpers
 function chargebeePortalCreate(params, provider) {
   let deferred = q.defer();
@@ -216,6 +232,6 @@ function chargebeeSubParams(accountUser) {
 
 // Validators
 
-function canSwitchPlan(subscription){
-  // if
+function canSwitchPlan(updateToSub, updateFromSub){
+
 }
