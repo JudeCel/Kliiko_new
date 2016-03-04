@@ -42,10 +42,13 @@ function userGet(req, res, next) {
 
   q.all([
     getUserBasicData(),
+/*
+    //temporarily removed line below as it is failing
     getUserSubscriptionsData()
+*/
   ]).then(function(response) {
     let user = response[0];
-    user.subscriptions = response[1][0];
+    //user.subscriptions = response[1][0];
     res.send(user);
   });
 
