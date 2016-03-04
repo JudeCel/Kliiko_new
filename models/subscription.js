@@ -7,6 +7,7 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
     planId: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
+    customerId: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     subscriptionId: { type: DataTypes.STRING, allowNull: false,
       validate: {
         notEmpty: true,
