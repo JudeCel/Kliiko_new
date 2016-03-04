@@ -30,7 +30,10 @@ describe('SERVICE - Subscription', function() {
     return function() {
       return {
         request: function(callback) {
-          callback(null, { subscription: { id: params.id, plan_id: 'free' } });
+          callback(null, {
+            subscription: { id: params.id, plan_id: 'free' },
+            customer: { id: params.id }
+          });
         }
       }
     }
@@ -93,7 +96,12 @@ describe('SERVICE - Subscription', function() {
         subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: null })).then(function() {
           done('Should not get here!');
         }, function(error) {
-          assert.deepEqual(error, { subscriptionId: "Subscription Id can't be empty" });
+          let returningErrors = {
+            customerId: "Customer Id can't be empty",
+            subscriptionId: "Subscription Id can't be empty"
+          };
+
+          assert.deepEqual(error, returningErrors);
           done();
         });
       });
@@ -133,4 +141,66 @@ describe('SERVICE - Subscription', function() {
     });
   });
 
+  describe('#createPortalSession', function() {
+    describe('happy path', function() {
+      function portalProvider() {
+        return function() {
+          return {
+            request: function(callback) {
+              callback(null, { portal_session: { access_url: 'someOtherUrl' } });
+            }
+          }
+        }
+      }
+
+      it('should succeed on creating portal session', function(done) {
+        subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function(subscription) {
+          subscriptionServices.createPortalSession(testData.account.id, 'callbackUrl', portalProvider()).then(function(redirectUrl) {
+            assert.equal(redirectUrl, 'someOtherUrl');
+            done();
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+
+    describe('sad path', function() {
+      beforeEach(function(done) {
+        subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function() {
+          done();
+        }, function(error) {
+          done(error);
+        });
+      });
+
+      function errorProvider(error) {
+        return function() {
+          return {
+            request: function(callback) {
+              callback({ errors: [{ path: 'error', message: error }] });
+            }
+          }
+        }
+      }
+
+      it('should fail because chargebee raises error', function(done) {
+        subscriptionServices.createPortalSession(testData.account.id, 'callbackUrl', errorProvider('some error')).then(function(redirectUrl) {
+          done('Should not get here!');
+        }, function(error) {
+          assert.deepEqual(error, { error: 'some error' });
+          done();
+        });
+      });
+
+      it('should fail because subscription not found', function(done) {
+        subscriptionServices.createPortalSession(testData.account.id + 100, 'callbackUrl', successProvider({ id: 'SomeUniqueID' })).then(function(redirectUrl) {
+          done('Should not get here!');
+        }, function(error) {
+          assert.equal(error, subscriptionServices.messages.notFound.subscription);
+          done();
+        });
+      });
+    });
+  });
 });
