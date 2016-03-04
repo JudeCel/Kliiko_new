@@ -12,6 +12,7 @@ module.exports.validate = function (req, resCb) {
     url: joi.string().optional(),
     topicId: joi.number().optional(),
     userId: joi.number().optional(),
+    private: joi.boolean().optional(),
     JSON: joi.string().optional()
   });
 

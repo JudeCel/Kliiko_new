@@ -5,6 +5,7 @@ var subdomains = require('../../lib/subdomains.js');
 var policy = require('../../middleware/policy.js');
 var uploadBannerRoutes = require('./uploadBanner.js');
 var accountDatabaseRoutes = require('./accountDatabase.js');
+var paymentDetailsRoutes = require('./paymentDetails.js');
 var selectPlanRoutes = require('./selectPlan.js');
 var appData = require('../../services/webAppData');
 var middlewareFilters = require('../../middleware/filters');
@@ -32,6 +33,8 @@ router.get('/', policy.authorized(['admin', 'accountManager']) , function(req, r
 router.get('/landing', function(req, res) {
   res.render(views_path('landing'), { title: 'Landing page' });
 });
+
+router.get('/paymentDetails', policy.authorized(['accountManager']), paymentDetailsRoutes.get);
 
 router.get('/selectPlan', policy.authorized(['accountManager']), selectPlanRoutes.get);
 router.post('/selectPlan', policy.authorized(['accountManager']), selectPlanRoutes.post);

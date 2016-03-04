@@ -28,6 +28,7 @@ const MESSAGES = {
 module.exports = {
   messages: MESSAGES,
   findSubscription: findSubscription,
+  createPortalSession: createPortalSession,
   createSubscription: createSubscription
 }
 
@@ -37,7 +38,7 @@ function findSubscription(accountId) {
   Subscription.find({ where: { accountId: accountId } }).then(function(subscription) {
     deferred.resolve(subscription);
   }).catch(function(error) {
-    deferred.reject(filters.errors(error));
+    deferred.reject(error);
   });
 
   return deferred.promise;
@@ -55,7 +56,7 @@ function createSubscription(accountId, userId, provider) {
     }
   }).then(function(accountUser) {
     if(accountUser) {
-      return chargebeeSubCreate(chargebeeParams(accountUser), provider);
+      return chargebeeSubCreate(chargebeeSubParams(accountUser), provider);
     }
     else {
       deferred.reject(MESSAGES.notFound.accountUser);
@@ -64,6 +65,25 @@ function createSubscription(accountId, userId, provider) {
     return Subscription.create(subscriptionParams(accountId, chargebeeSub));
   }).then(function(subscription) {
     deferred.resolve(subscription);
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function createPortalSession(accountId, callbackUrl, provider) {
+  let deferred = q.defer();
+
+  findSubscription(accountId).then(function(subscription) {
+    if(subscription) {
+      return chargebeePortalCreate(chargebeePortalParams(subscription, callbackUrl), provider);
+    }
+    else {
+      deferred.reject(MESSAGES.notFound.subscription);
+    }
+  }).then(function(chargebeePortal) {
+    deferred.resolve(chargebeePortal.access_url);
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -98,8 +118,25 @@ function updateSubscription(accountId, subscriptionId) {
 
   return deferred.promise;
 }
-
 // Helpers
+function chargebeePortalCreate(params, provider) {
+  let deferred = q.defer();
+
+  if(!provider) {
+    provider = chargebee.portal_session.create;
+  }
+
+  provider(params).request(function(error, result) {
+    if(error) {
+      deferred.reject(error);
+    }
+    else {
+      deferred.resolve(result.portal_session);
+    }
+  });
+
+  return deferred.promise;
+}
 
 function chargebeeSubUpdate(params, provider) {
   let deferred = q.defer();
@@ -133,7 +170,7 @@ function chargebeeSubCreate(params, provider) {
       deferred.reject(error);
     }
     else {
-      deferred.resolve(result.subscription);
+      deferred.resolve(result);
     }
   });
 
@@ -143,12 +180,20 @@ function chargebeeSubCreate(params, provider) {
 function subscriptionParams(accountId, chargebeeSub) {
   return {
     accountId: accountId,
-    planId: chargebeeSub.plan_id,
-    subscriptionId: chargebeeSub.id
+    planId: chargebeeSub.subscription.plan_id,
+    subscriptionId: chargebeeSub.subscription.id,
+    customerId: chargebeeSub.customer.id
   }
 }
 
-function chargebeeParams(accountUser) {
+function chargebeePortalParams(subscription, callbackUrl) {
+  return {
+    redirect_url: callbackUrl,
+    customer: { id: subscription.customerId }
+  }
+}
+
+function chargebeeSubParams(accountUser) {
   return {
     plan_id: 'Free',
     customer: {

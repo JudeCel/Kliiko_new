@@ -4,6 +4,7 @@ var models = require('../models');
 var AccountUser = models.AccountUser;
 var Subscription = models.Subscription;
 var subdomains = require('../lib/subdomains');
+var _ = require('lodash');
 
 module.exports = {
   landingPage: landingPage,
@@ -24,7 +25,7 @@ function planSelectPage(req, res, next) {
   if(req.originalUrl == '/dashboard/selectPlan') {
     next();
   }
-  else {
+  else if(_.includes(res.locals.currentDomain.roles, 'accountManager')) {
     Subscription.find({
       where: {
         accountId: res.locals.currentDomain.id
@@ -39,6 +40,9 @@ function planSelectPage(req, res, next) {
     }, function(error) {
       res.send({ error: error });
     });
+  }
+  else {
+    next();
   }
 }
 

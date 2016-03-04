@@ -11,23 +11,40 @@ var _ = require('lodash');
 var mailFrom = helpers.mailFrom();
 var transporter = helpers.createTransport();
 
+function preparePathData (attribs, resources) {
+  let extentionArray = attribs.src.split(".");
+  let extension = "";
+  if (extentionArray.length) {
+    extension = extentionArray[extentionArray.length - 1];
+  }
+  let filename = attribs.src.split('/');
+  let name = _.camelCase(filename[filename.length - 1])+"."+extension;
+  let path = attribs.src;
+  if (path.indexOf("/chat_room/upload") == -1) {
+    path = "public" + path;
+  } else {
+    path = path.replace("/chat_room/uploads/", "chatRoom/public/uploads/");
+  }
+  resources.push({filename: name, path: path, cid: name+"@att"});
+  attribs.src = "cid:"+name+"@att";
+
+  attribs.style += " padding: 0 15px 0 15px;";
+
+  return {path: path, name: name};
+}
+
 function extractImageResources(tepmlateHtml) {
   var resources = [];
   return {html: sanitizeHtml(tepmlateHtml, {
       transformTags: {
         'img': function(tagName, attribs) {
-            let filename = attribs.src.split('/');
-            let name = _.camelCase(filename[filename.length - 1]);
-            let path = attribs.src;
-            if (path.indexOf("/chat_room/upload") == -1) {
-              path = "public" + path;
-            } else {
-              path = path.replace("/chat_room/uploads/", "chatRoom/public/uploads/");
-            }
-            resources.push({filename: name, path: path, cid: name+"@att"});
-            attribs.src = "cid:"+name+"@att";
 
-            attribs.style += " padding: 0 15px 0 15px;";
+            /*
+            _.replace(attribs.src, "system_header.png", "system_headerj.jpg");
+            attribs.onerror = "this.src="+ _.replace(config.pathToChatFileStorage+attribs.src, "//", "/");
+            console.log("____", attribs.onerror);
+            */
+            let pData = preparePathData(attribs, resources);
             return {
                 tagName: tagName,
                 attribs: attribs
