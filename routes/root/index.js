@@ -108,7 +108,7 @@ router.post('/registration', function (req, res, next) {
           tplData.success = 'Email confirmation sent to ' + email;
         }
       });
-      res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' });
+      res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: config.applicationName});
     };
   });
 });
