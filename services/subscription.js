@@ -71,7 +71,56 @@ function createSubscription(accountId, userId, provider) {
   return deferred.promise;
 }
 
+function updateSubscription(accountId, subscriptionId) {
+  let deferred = q.defer();
+
+  findSubscription(accountId).then(function(subscription) {
+    if(subscription) {
+      return AccountUser.find({ where: { AccountId: accountId, UserId: userId } });
+    }
+    else {
+      deferred.reject(MESSAGES.notFound.subscription);
+    }
+  }).then(function(accountUser) {
+    if(accountUser) {
+      return chargebeeSubUpdate(chargebeeParams(accountUser), provider);
+    }
+    else {
+      deferred.reject(MESSAGES.notFound.accountUser);
+    }
+  }).then(function(chargebeeSub) {
+    return Subscription.create(subscriptionParams(accountId, chargebeeSub));
+  }).then(function(subscription) {
+    deferred.resolve(subscription);
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
 // Helpers
+
+function chargebeeSubUpdate(params, provider) {
+  let deferred = q.defer();
+
+  if(!provider) {
+    provider = chargebee.plan.update
+  }
+
+
+    provider(params).request(function(error, result) {
+      if(error) {
+        deferred.reject(error);
+      }
+      else {
+        deferred.resolve(result.subscription);
+      }
+    });
+
+    return deferred.promise;
+}
+
 function chargebeeSubCreate(params, provider) {
   let deferred = q.defer();
 
@@ -118,4 +167,10 @@ function chargebeeParams(accountUser) {
       country: accountUser.country
     }
   }
+}
+
+// Validators
+
+function canSwitchPlan(subscription){
+  // if
 }
