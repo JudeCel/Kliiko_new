@@ -771,22 +771,4 @@
 
   }
 
-  angular.module('KliikoApp').filter('participantsFilter', [function () {
-    return function (participants, inviteStatus) {
-      if (!angular.isUndefined(participants) && !angular.isUndefined(inviteStatus) && inviteStatus.length > 0) {
-        var tempMembers = [];
-        angular.forEach(inviteStatus, function (status) {
-          angular.forEach(participants, function (member) {
-            if (angular.equals(member.inviteStatus, status)) {
-              tempMembers.push(member);
-            }
-          });
-        });
-        return tempMembers;
-      } else {
-        return participants;
-      }
-    };
-  }]);
-
 })();
