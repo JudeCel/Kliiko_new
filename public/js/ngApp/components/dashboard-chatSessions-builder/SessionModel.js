@@ -17,7 +17,7 @@
       removeInvite: { method: 'DELETE', params: { path: 'removeInvite' } },
       removeSessionMember: { method: 'DELETE', params: { path: 'removeSessionMember' } },
       sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } },
-      addTopics: {method: 'POST', params: {path: 'addTopics'} },
+      addTopics: {method: 'POST', isArray: true , params: {path: 'addTopics'} },
 
       nextStep: {method: 'POST', params: {path: 'step'} },
       previousStep: {method: 'POST', params: {path: 'step%2Fprevious'} },
@@ -31,7 +31,7 @@
     });
 
     var sessionMemberApi = $resource(globalSettings.restUrl + '/sessionMember', {}, {
-      post: { method: 'POST' }
+      post: { method: 'POST' , isArray: true }
     });
 
 
@@ -44,6 +44,7 @@
     SessionModel.prototype.cancel = cancel;
     SessionModel.prototype.update = update;
     SessionModel.prototype.validateStep = validateStep;
+    SessionModel.prototype.goToNextStep = goToNextStep;
     //SessionModel.prototype.destroy = update;
     SessionModel.prototype.destroy = cancel;
     SessionModel.prototype.updateStep = updateStep;
@@ -160,29 +161,34 @@
 
 
     function validateStep(step) {
-      var self = this;
-
       var deferred = $q.defer();
+      var self = this;
 
       sessionBuilderRestApi.nextStep({id: self.id, otherId: 'next'}, {}, function(res) {
         deferred.resolve(res);
       });
 
-
       return deferred.promise;
     }
 
+    function goToNextStep() {
+
+    }
+
+
     function updateStep() {
-      console.log('will update - todo');
       var self = this;
       var deferred = $q.defer();
 
       sessionBuilderRestApi.put({id:self.id},{sessionObj:self},function(res) {
         if (res.error) { deferred.reject(res.error); return deferred.promise; }
-        //self = angular.merge(self, res.sessionBuilder);
         deferred.resolve(res);
       });
+
+      return deferred.promise;
+
     }
+
 
     function sendSms(recievers, message) {
       var self = this;

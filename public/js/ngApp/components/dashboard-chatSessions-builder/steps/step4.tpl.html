@@ -9,6 +9,14 @@
   </div>
 
   <div ng-if='sbc.participants.length > 0' ng-controller='ContactListController as clc' ng-init='clc.hideModalStuff = true;'>
+    <div class="text-right filter-row">
+      <a href="" ng-class="{active:sbc.participantsFilter == ''}" ng-click="sbc.participantsFilter = ''">All({{sbc.participants.length  }})</a>
+      <a href="" ng-class="{active:sbc.participantsFilter == 'Not Invited'}" ng-click="sbc.participantsFilter = 'Not Invited'">Not Invited({{ (sbc.participants | filter: 'Not Invited' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.participantsFilter == 'Confirmed'}" ng-click="sbc.participantsFilter = 'Confirmed'">Confirmed({{ (sbc.participants | filter: 'Confirmed' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.participantsFilter == 'Not This Time'}" ng-click="sbc.participantsFilter = 'Not This Time'">Not This Time({{ (sbc.participants | filter: 'Not This Time' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.participantsFilter == 'Not At All'}" ng-click="sbc.participantsFilter = 'Not At All'">Not At All({{ (sbc.participants | filter: 'Not At All' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.participantsFilter == 'No Reply'}" ng-click="sbc.participantsFilter = 'No Reply'">No Response({{ (sbc.participants | filter: 'No Reply' : strict).length  }})</a>
+    </div>
     <div class='row text-left'>
       <table class='table table-dashboardElements'>
         <thead>
@@ -27,7 +35,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat='member in sbc.participants' ng-mouseover='sbc.mouseOveringMember[$index] = true' ng-mouseleave='sbc.mouseOveringMember[$index] = false'>
+          <tr ng-repeat="member in sbc.participants | filter: sbc.participantsFilter: strict " ng-mouseover='sbc.mouseOveringMember[$index] = true' ng-mouseleave='sbc.mouseOveringMember[$index] = false'>
+
             <td>
               <div class='checkbox checkbox-xs checkbox-success'>
                 <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.step4' ng-disabled='sbc.showCorrectStatus(member)' />
@@ -40,7 +49,8 @@
             <td>{{ member.mobile }}</td>
             <td class='col-xs-2'>
               <div ng-if='!sbc.mouseOveringMember[$index]'>
-                {{ sbc.showCorrectStatus(member) || "Not invited" }}
+                <!--{{ sbc.showCorrectStatus(member) || "Not invited" }}-->
+                {{ member.inviteStatus }}
               </div>
               <div ng-if='sbc.mouseOveringMember[$index]'>
                 <img src='/icons/session_grey.png' ng-click='sbc.modalWindowHandler("showSms", [member])' />

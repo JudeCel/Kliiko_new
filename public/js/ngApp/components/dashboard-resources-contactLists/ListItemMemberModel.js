@@ -33,6 +33,7 @@
 
 
       prepareCustomFields();
+      getInviteStatus();
 
       /**
        * model should contain
@@ -59,6 +60,19 @@
           }
 
         }
+      }
+
+      function getInviteStatus() {
+        if(self.invite) {
+          self.inviteStatus =  self.invite.status;
+        }
+        else if(self.sessionMember) {
+          self.inviteStatus =  'confirmed';
+        } else {
+          self.inviteStatus = 'Not Invited';
+        }
+
+
       }
 
     }
@@ -94,6 +108,8 @@
       return deferred.promise;
 
     }
+
+
 
 
 

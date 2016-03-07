@@ -1,6 +1,6 @@
 #step-contactlists,
 #step-4-participants,
-#step-5-observers, {
+#step-5-observers {
   font-size: 14px;
   .btn-standart {
     display: inline-block;
@@ -12,5 +12,18 @@
   }
   #no-contacts-in-list {
     height: auto;
+  }
+
+  .filter-row {
+    > a {
+      margin: 1px 4px;
+
+      &.active {
+        font-weight: bold;
+        opacity:.65;
+        text-decoration: none;
+        cursor: default;
+      }
+    }
   }
 }

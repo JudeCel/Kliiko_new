@@ -3080,6 +3080,17 @@ hr.survey-hr {
     #session-builder-content #step-4-participants #no-contacts-in-list,
     #session-builder-content #step-5-observers #no-contacts-in-list {
       height: auto; }
+    #session-builder-content #step-contactlists .filter-row > a,
+    #session-builder-content #step-4-participants .filter-row > a,
+    #session-builder-content #step-5-observers .filter-row > a {
+      margin: 1px 4px; }
+      #session-builder-content #step-contactlists .filter-row > a.active,
+      #session-builder-content #step-4-participants .filter-row > a.active,
+      #session-builder-content #step-5-observers .filter-row > a.active {
+        font-weight: bold;
+        opacity: .65;
+        text-decoration: none;
+        cursor: default; }
 
 .margin-top-2rem {
   margin-top: 2rem; }

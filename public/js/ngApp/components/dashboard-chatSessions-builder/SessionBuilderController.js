@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices', '$ocLazyLoad', '$q', '$window', '$scope'];
-  function SessionBuilderController(dbg, messenger, SessionModel, $state, $stateParams, $filter, domServices, $ocLazyLoad, $q, $window, $scope) {
+  SessionBuilderController.$inject = ['dbg', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices', '$ocLazyLoad', '$q', '$window', 'ngProgressFactory'];
+  function SessionBuilderController(dbg, messenger, SessionModel, $state, $stateParams, $filter, domServices, $ocLazyLoad, $q, $window, ngProgressFactory) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -18,7 +18,7 @@
     vm.observers = [];
     vm.basePath = '/js/ngApp/components/dashboard-chatSessions-builder/';
 
-    vm.today = new Date();
+
 
     vm.$state = $state;
 
@@ -40,9 +40,11 @@
         observer: {
           min: 0,
           max: 15
-        },
+        }
       };
 
+
+      vm.today = new Date();
       vm.dateTime = {
         hstep:1,
         mstep: 15,
@@ -108,8 +110,8 @@
 
     function goToStep(step) {
       if (!angular.isNumber(step)) {
-        if (step === 'back') {vm.cantMoveNextStep = false;  step = vm.currentStep - 1;  }
-        if (step === 'next') { step = vm.currentStep + 1 }
+        if (step === 'back') { vm.cantMoveNextStep = false;  step = vm.currentStep - 1;  }
+        if (step === 'next') handleNextStep();
         if (step === 'submit') {
           //step = 5;
           //submitUpgrade();
@@ -117,9 +119,56 @@
         }
       }
 
+      function handleNextStep() {
+        var routerProgressbar = ngProgressFactory.createInstance();
+        routerProgressbar.start();
+
+        step = vm.currentStep + 1;
+
+        frontEndStepValidation().then(
+          function(res) {
+
+            vm.session.updateStep().then(
+              function(res) {
+
+                vm.session.validateStep().then(
+                  function (res) {
+                    vm.session.goToNextStep();
+                    routerProgressbar.complete();
+                  },
+                  function (err) {
+                    routerProgressbar.complete();
+                    messenger.error(err);
+                  }
+                );
+
+
+              },
+              function (err) {
+                routerProgressbar.complete();
+                messenger.error(err);
+              }
+            );
+
+          },
+          function (err) {
+            routerProgressbar.complete();
+            messenger.error(err);
+          }
+        );
+      }
+
+
       var valid = validateStep(step);
 
       if (!valid) return;
+
+
+      function frontEndStepValidation() {
+        var deferred = $q.defer();
+        deferred.resolve();
+        return deferred.promise;
+      }
 
       vm.session.validateStep(step).then(
         function (res) {
@@ -137,10 +186,6 @@
           messenger.error(err);
         }
       );
-
-
-
-
 
 
     }
@@ -237,7 +282,6 @@
             break;
           }
         }
-
 
         dbg.yell(step)
       }
@@ -725,8 +769,24 @@
     }
 
 
-
-
-
   }
+
+  angular.module('KliikoApp').filter('participantsFilter', [function () {
+    return function (participants, inviteStatus) {
+      if (!angular.isUndefined(participants) && !angular.isUndefined(inviteStatus) && inviteStatus.length > 0) {
+        var tempMembers = [];
+        angular.forEach(inviteStatus, function (status) {
+          angular.forEach(participants, function (member) {
+            if (angular.equals(member.inviteStatus, status)) {
+              tempMembers.push(member);
+            }
+          });
+        });
+        return tempMembers;
+      } else {
+        return participants;
+      }
+    };
+  }]);
+
 })();
