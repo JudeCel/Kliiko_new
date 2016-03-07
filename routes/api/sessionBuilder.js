@@ -39,17 +39,13 @@ function openBuild(req, res, next) {
 }
 
 function update(req, res, next) {
-  //res.send({ok:' tmp'}); return
-  /////////
-
-  if (!req.body.sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
-
   let sessionObj = req.body.sessionObj;
+  if(!sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
 
   sessionObj.accountId = res.locals.currentDomain.id;
-  delete sessionObj.step; // Step only can be updated with next step function
+  delete sessionObj.step;
 
-  sessionBuilderServices.update(sessionObj).then(function(result) {
+  sessionBuilderServices.update(sessionObj.steps.step1).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});
