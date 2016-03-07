@@ -248,7 +248,7 @@
                             <div class="drop-area" ng-drop="true">Drop Selected Topics Here</div>
                             <br>
 
-                            <div class="topic-list-item" ng-repeat="t in sbc.chatSessionTopicsList | orderBy:'topic_order_id' "  ng-drag="true" ng-drag-data="t">
+                            <div class="topic-list-item" ng-repeat="t in sbc.chatSessionTopicsList | orderBy:'order' "  ng-drag="true" ng-drag-data="t">
                                 <div class="panel-label" ng-drop="true" ng-drop-success="sbc.reorderTopics($data, t)">
                                 <span ng-if="topics.editBlockHelper != $index">
                                     <img src="icons/ic_move.png">

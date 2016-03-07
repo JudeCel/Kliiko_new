@@ -10,6 +10,8 @@
     var vm = this;
 
     var colorSchemeId, brandLogoId;
+
+
     vm.step1 = {};
     vm.accordions = {};
     vm.participants = [];
@@ -54,7 +56,9 @@
       vm.chatSessionTopicsList = [];
 
       parseDateAndTime('initial');
-      initStep(1);
+      initStep(null, 'initial');
+
+
     });
     //todo @pavel: convert time if it is there already
 
@@ -115,13 +119,25 @@
 
       if (!valid) return;
 
-      vm.searchingParticipants = false;
-      vm.searchingObservers = false;
-      initStep(step).then(function(res) {
-        vm.session.updateStep();
+      vm.session.validateStep(step).then(
+        function (res) {
 
-        $stateParams.planUpgradeStep = vm.currentStep = step;
-      });
+          vm.searchingParticipants = false;
+          vm.searchingObservers = false;
+          initStep(step).then(function(res) {
+            vm.session.updateStep();
+
+            $stateParams.planUpgradeStep = vm.currentStep = step;
+          });
+
+        },
+        function (err) {
+          messenger.error(err);
+        }
+      );
+
+
+
 
 
 
@@ -140,7 +156,6 @@
      * @returns {boolean}
      */
     function validateStep(step) {
-
       if (step === 2) { return validateStep1() }
       if (step === 3) { return validateStep2() }
       if (step === 4) { return validateStep3() }
@@ -175,6 +190,7 @@
         }
 
         if (vm.chatSessionTopicsList.length) {
+          //todo
           vm.session.saveTopics(vm.selectedTopics);
 
           return true;
@@ -207,8 +223,23 @@
       }
     }
 
-    function initStep(step) {
+    function initStep(step, initial) {
       var deferred = $q.defer();
+
+      if (initial) {
+
+        for (var key in vm.session.steps) {
+          // find number in object values that looks like 'step1', 'step2'...
+          if (vm.session.steps[key].stepName == vm.session.currentStep) {
+            step = parseInt( key.substr(key.length - 1) );
+            break;
+          }
+        }
+
+
+        dbg.yell(step)
+      }
+
 
       if (step == 1) {
 
@@ -233,6 +264,7 @@
           '/js/ngApp/components/dashboard-resources-topics/TopicsController.js',
           '/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js'
         ]).then(function(res) {
+          vm.currentStep = step;
           deferred.resolve();
         });
       }
@@ -241,6 +273,7 @@
           '/js/ngApp/components/dashboard-resources-emailTemplates/EmailTemplateEditorController.js',
           '/js/vendors/ng-file-upload/ng-file-upload.js'
         ]).then(function(res) {
+          vm.currentStep = step;
           deferred.resolve();
         });
       }
@@ -258,6 +291,7 @@
           '/js/ngApp/filters/num.js',
           '/js/ngApp/filters/human2Camel.js'
         ]).then(function(res) {
+          vm.currentStep = step;
           deferred.resolve();
         });
       }
@@ -275,6 +309,7 @@
           '/js/ngApp/filters/num.js',
           '/js/ngApp/filters/human2Camel.js'
         ]).then(function(res) {
+          vm.currentStep = step;
           deferred.resolve();
         });
       }
@@ -405,10 +440,12 @@
             if (data.id ==  vm.chatSessionTopicsList[i].id ) return;
           }
 
-          data.order = vm.chatSessionTopicsList.length;
+          data.order = vm.chatSessionTopicsList.length || 0;
 
           vm.chatSessionTopicsList.push(data);
         } else {
+
+          data.order = vm.chatSessionTopicsList.length || 0;
           vm.chatSessionTopicsList.push(data);
         }
 
@@ -434,8 +471,8 @@
     }
 
     function reorderTopics(data, t) {
-      var droppedOrderId = data.order;
-      var targetOrderId = t.order;
+      var droppedOrderId = data.order || 0;
+      var targetOrderId = t.order || 0;
 
       for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
         if (data.id == vm.chatSessionTopicsList[i].id) vm.chatSessionTopicsList[i].order = targetOrderId;

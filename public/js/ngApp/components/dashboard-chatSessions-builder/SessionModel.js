@@ -17,7 +17,11 @@
       removeInvite: { method: 'DELETE', params: { path: 'removeInvite' } },
       removeSessionMember: { method: 'DELETE', params: { path: 'removeSessionMember' } },
       sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } },
-      addTopics: {method: 'POST', params: {path: 'addTopics'} }
+      addTopics: {method: 'POST', params: {path: 'addTopics'} },
+
+      nextStep: {method: 'POST', params: {path: 'step'} },
+      previousStep: {method: 'POST', params: {path: 'step%2Fprevious'} },
+
     });
 
     var chatSessionApi = $resource(globalSettings.restUrl + '/session/:id', null, {
@@ -39,6 +43,7 @@
     SessionModel.prototype.getRemoteData = getRemoteData;
     SessionModel.prototype.cancel = cancel;
     SessionModel.prototype.update = update;
+    SessionModel.prototype.validateStep = validateStep;
     //SessionModel.prototype.destroy = update;
     SessionModel.prototype.destroy = cancel;
     SessionModel.prototype.updateStep = updateStep;
@@ -153,6 +158,20 @@
 
     }
 
+
+    function validateStep(step) {
+      var self = this;
+
+      var deferred = $q.defer();
+
+      sessionBuilderRestApi.nextStep({id: self.id, otherId: 'next'}, {}, function(res) {
+        deferred.resolve(res);
+      });
+
+
+      return deferred.promise;
+    }
+
     function updateStep() {
       console.log('will update - todo');
       var self = this;
@@ -203,7 +222,7 @@
       var deferred = $q.defer();
 
 
-      sessionBuilderRestApi.addTopics({id: self.id}, {topicsArray:topicsArray}, function(res) {
+      sessionBuilderRestApi.addTopics({id: self.id}, { topicsArray:self.steps.step2.topics }, function(res) {
         deferred.resolve(res);
       });
       return deferred.promise;

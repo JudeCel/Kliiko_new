@@ -125,23 +125,39 @@ function update(params) {
   return deferred.promise;
 }
 
-function nextStep(id, accountId, params) {
+function nextStep(id, accountId) {
   let deferred = q.defer();
 
   findSession(id, accountId).then(function(session) {
-    validate(session, params).then(function() {
-      session.updateAttributes({ step: findNewStep(session.step, false) }).then(function(updatedSession) {
-        sessionBuilderObject(updatedSession).then(function(result) {
-          deferred.resolve(result);
+
+    sessionBuilderObject(session).then(
+      function (sessionObj) {
+
+        let params = findCurrentStep( sessionObj.sessionBuilder.steps, session.step );
+        params.id = id;
+        params.accountId = accountId;
+
+        validate(session, params ).then(function() {
+          session.updateAttributes({ step: findNewStep(session.step, false) }).then(function(updatedSession) {
+            sessionBuilderObject(updatedSession).then(function(result) {
+              deferred.resolve(result);
+            }, function(error) {
+              deferred.reject(error);
+            });
+          }).catch(function(error) {
+            deferred.reject(filters.errors(error));
+          });
         }, function(error) {
           deferred.reject(error);
         });
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
-      });
-    }, function(error) {
-      deferred.reject(error);
-    });
+
+      },
+      function (err) {
+      }
+    );
+
+
+
   }, function(error) {
     deferred.reject(error);
   });
@@ -393,6 +409,17 @@ function inviteParams(sessionId, data) {
   });
 
   return deferred.promise;
+}
+
+
+function findCurrentStep(steps, currentStepName) {
+  var output;
+  _.map(steps, function(step) {
+    if (step.stepName == currentStepName) {output = step; };
+  });
+
+  return output
+
 }
 
 function findNewStep(step, previous) {

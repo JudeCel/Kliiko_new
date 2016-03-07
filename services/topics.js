@@ -48,7 +48,7 @@ function updateSessionTopics(topicsArray, sessionId) {
         });
       });
 
-      deferred.resolve();
+      deferred.resolve(sessionTopics);
     },
     function (err) {
       deferred.reject(err);

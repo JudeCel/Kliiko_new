@@ -9,6 +9,7 @@ module.exports = {
   new: initializeBuilder,
   update: update,
   nextStep: nextStep,
+  prevStep: prevStep,
   cancel: cancel,
   openBuild: openBuild,
   sendSms: sendSms,
@@ -59,16 +60,32 @@ function nextStep(req, res, next) {
   //res.send({ok:' tmp'}); return
   /////////
 
-  if (!req.body.sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
+  //if (!req.body.sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
 
   let accountId = res.locals.currentDomain.id;
-  let sessionObj = req.body.sessionObj;
+  //let sessionObj = req.body.sessionObj;
 
-  sessionBuilderServices.nextStep(sessionObj.id, accountId, sessionObj).then(function(result) {
+  sessionBuilderServices.nextStep(req.params.id, accountId).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});
   })
+}
+
+function prevStep(req, res, next) {
+  res.send({ok:' tmp'}); return
+  ///////
+
+  //if (!req.body.sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
+  //
+  //let accountId = res.locals.currentDomain.id;
+  //let sessionObj = req.body.sessionObj;
+  //
+  //sessionBuilderServices.nextStep(sessionObj.id, accountId, sessionObj).then(function(result) {
+  //  res.send(result);
+  //}, function(error) {
+  //  res.send({error: error});
+  //})
 }
 
 function cancel(req, res, next) {
