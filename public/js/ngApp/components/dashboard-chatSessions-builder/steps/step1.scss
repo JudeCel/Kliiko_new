@@ -31,6 +31,41 @@
     }
   }
 
+  ///// datepicker
+  .md-datepicker-input-container {
+    margin: 0 !important;
+    border: none !important;
+  }
+
+  .md-datepicker-triangle-button.md-icon-button.md-button {
+    background: none;
+  }
+
+  .md-datepicker-button {
+    display: none;
+  }
+  .md-datepicker-input {
+    overflow: hidden;
+    width: 135px;
+    height: 44px;
+  }
+  .md-datepicker-expand-triangle {
+    position: relative;
+    top: 9px;
+    left: 0px;
+  }
+
+  .datepickerdemoBasicUsage {
+    /** Demo styles for mdCalendar. */ }
+  .datepickerdemoBasicUsage {
+    padding-bottom: 200px; }
+  .datepickerdemoBasicUsage .validation-messages {
+    font-size: 11px;
+    color: darkred;
+    margin: 10px 0 0 25px; }
+  //////// eof datepicker
+
+
   .date-time-ico {
     position: relative;
     padding: 7px;

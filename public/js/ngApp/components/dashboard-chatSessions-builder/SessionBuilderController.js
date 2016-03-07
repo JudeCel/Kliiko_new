@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices', '$ocLazyLoad', '$q', '$window'];
-  function SessionBuilderController(dbg, messenger, SessionModel, $state, $stateParams, $filter, domServices, $ocLazyLoad, $q, $window) {
+  SessionBuilderController.$inject = ['dbg', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices', '$ocLazyLoad', '$q', '$window', '$scope'];
+  function SessionBuilderController(dbg, messenger, SessionModel, $state, $stateParams, $filter, domServices, $ocLazyLoad, $q, $window, $scope) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -17,6 +17,8 @@
     vm.participants = [];
     vm.observers = [];
     vm.basePath = '/js/ngApp/components/dashboard-chatSessions-builder/';
+
+    vm.today = new Date();
 
     vm.$state = $state;
 
@@ -721,6 +723,10 @@
         messenger.error('No contacts selected');
       }
     }
+
+
+
+
 
   }
 })();

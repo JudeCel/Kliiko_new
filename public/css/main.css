@@ -2801,6 +2801,29 @@ hr.survey-hr {
       padding: 0 25px; }
       #session-builder-content #step-1 span.date-time-label.end {
         margin-right: 9px; }
+    #session-builder-content #step-1 .md-datepicker-input-container {
+      margin: 0 !important;
+      border: none !important; }
+    #session-builder-content #step-1 .md-datepicker-triangle-button.md-icon-button.md-button {
+      background: none; }
+    #session-builder-content #step-1 .md-datepicker-button {
+      display: none; }
+    #session-builder-content #step-1 .md-datepicker-input {
+      overflow: hidden;
+      width: 135px;
+      height: 44px; }
+    #session-builder-content #step-1 .md-datepicker-expand-triangle {
+      position: relative;
+      top: 9px;
+      left: 0px; }
+    #session-builder-content #step-1 .datepickerdemoBasicUsage {
+      /** Demo styles for mdCalendar. */ }
+    #session-builder-content #step-1 .datepickerdemoBasicUsage {
+      padding-bottom: 200px; }
+    #session-builder-content #step-1 .datepickerdemoBasicUsage .validation-messages {
+      font-size: 11px;
+      color: darkred;
+      margin: 10px 0 0 25px; }
     #session-builder-content #step-1 .date-time-ico {
       position: relative;
       padding: 7px;
