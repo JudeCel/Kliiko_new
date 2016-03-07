@@ -109,7 +109,7 @@ function update(params) {
   let deferred = q.defer();
 
   findSession(params.id, params.accountId).then(function(session) {
-    session.updateAttributes(params.steps.step1).then(function(updatedSession) {
+    session.updateAttributes(params).then(function(updatedSession) {
       sessionBuilderObject(updatedSession).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
@@ -129,35 +129,27 @@ function nextStep(id, accountId) {
   let deferred = q.defer();
 
   findSession(id, accountId).then(function(session) {
+    sessionBuilderObject(session).then(function(sessionObj) {
+      let params = findCurrentStep(sessionObj.sessionBuilder.steps, session.step);
+      params.id = id;
+      params.accountId = accountId;
 
-    sessionBuilderObject(session).then(
-      function (sessionObj) {
-
-        let params = findCurrentStep( sessionObj.sessionBuilder.steps, session.step );
-        params.id = id;
-        params.accountId = accountId;
-
-        validate(session, params ).then(function() {
-          session.updateAttributes({ step: findNewStep(session.step, false) }).then(function(updatedSession) {
-            sessionBuilderObject(updatedSession).then(function(result) {
-              deferred.resolve(result);
-            }, function(error) {
-              deferred.reject(error);
-            });
-          }).catch(function(error) {
-            deferred.reject(filters.errors(error));
+      validate(session, params).then(function() {
+        session.updateAttributes({ step: findNewStep(session.step, false) }).then(function(updatedSession) {
+          sessionBuilderObject(updatedSession).then(function(result) {
+            deferred.resolve(result);
+          }, function(error) {
+            deferred.reject(error);
           });
-        }, function(error) {
-          deferred.reject(error);
+        }).catch(function(error) {
+          deferred.reject(filters.errors(error));
         });
-
-      },
-      function (err) {
-      }
-    );
-
-
-
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }, function(error) {
+      deferred.reject(error);
+    });
   }, function(error) {
     deferred.reject(error);
   });
@@ -413,13 +405,14 @@ function inviteParams(sessionId, data) {
 
 
 function findCurrentStep(steps, currentStepName) {
-  var output;
+  let output;
   _.map(steps, function(step) {
-    if (step.stepName == currentStepName) {output = step; };
+    if(step.stepName == currentStepName) {
+      output = step;
+    }
   });
 
-  return output
-
+  return output || { stepName: 'done' };
 }
 
 function findNewStep(step, previous) {
@@ -565,9 +558,9 @@ function step2Queries(session, step) {
     function(cb) {
       models.Topic.findAll({
         include: [{
-          model: models.Session,
+          model: models.SessionTopics,
           where: {
-            id: session.id
+            SessionId: session.id
           }
         }]
       }).then(function(topics) {

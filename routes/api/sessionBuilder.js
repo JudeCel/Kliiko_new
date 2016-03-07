@@ -39,17 +39,13 @@ function openBuild(req, res, next) {
 }
 
 function update(req, res, next) {
-  //res.send({ok:' tmp'}); return
-  /////////
-
-  if (!req.body.sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
-
   let sessionObj = req.body.sessionObj;
+  if(!sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
 
   sessionObj.accountId = res.locals.currentDomain.id;
-  delete sessionObj.step; // Step only can be updated with next step function
+  delete sessionObj.step;
 
-  sessionBuilderServices.update(sessionObj).then(function(result) {
+  sessionBuilderServices.update(sessionObj.steps.step1).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});
@@ -57,35 +53,23 @@ function update(req, res, next) {
 }
 
 function nextStep(req, res, next) {
-  //res.send({ok:' tmp'}); return
-  /////////
-
-  //if (!req.body.sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
-
   let accountId = res.locals.currentDomain.id;
-  //let sessionObj = req.body.sessionObj;
 
   sessionBuilderServices.nextStep(req.params.id, accountId).then(function(result) {
-    res.send(result);
+    res.send({ data: result });
   }, function(error) {
     res.send({error: error});
   })
 }
 
 function prevStep(req, res, next) {
-  res.send({ok:' tmp'}); return
-  ///////
+  let accountId = res.locals.currentDomain.id;
 
-  //if (!req.body.sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
-  //
-  //let accountId = res.locals.currentDomain.id;
-  //let sessionObj = req.body.sessionObj;
-  //
-  //sessionBuilderServices.nextStep(sessionObj.id, accountId, sessionObj).then(function(result) {
-  //  res.send(result);
-  //}, function(error) {
-  //  res.send({error: error});
-  //})
+  sessionBuilderServices.prevStep(req.params.id, accountId).then(function(result) {
+    res.send({ data: result });
+  }, function(error) {
+    res.send({error: error});
+  });
 }
 
 function cancel(req, res, next) {
@@ -137,20 +121,13 @@ function sendGenericEmail(req, res, next) {
 }
 
 function addTopics(req, res, next) {
-  if (!req.body.topicsArray) { res.send({error:'Required body param @topicsArray is missed'}); return};
+  let topics = req.body.topicsArray;
+  if(!topics) { res.send({error:'Required body param @topicsArray is missed'}); return };
 
 
-  topicsService.removeAllFromSession(req.params.id).then(function(result) {
-
-    topicsService.updateSessionTopics(req.body.topicsArray, req.params.id).then(function(result2) {
-      res.send(result2);
-    }, function(error) {
-      res.send({ error: error });
-    });
-
+  topicsService.removeAllAndAddNew(req.params.id, req.body.topicsArray).then(function(result) {
+    res.send(result);
   }, function(error) {
     res.send({ error: error });
   });
-
-
 }

@@ -15,6 +15,7 @@ module.exports = {
   joinToSession: joinToSession,
   removeFromSession: removeFromSession,
   removeAllFromSession: removeAllFromSession,
+  removeAllAndAddNew: removeAllAndAddNew,
   MESSAGES: MESSAGES
 };
 
@@ -28,37 +29,28 @@ function getAll(accountId) {
   return deferred.promise;
 }
 
-function updateSessionTopics(topicsArray, sessionId) {
+function updateSessionTopics(sessionId, topicsArray) {
   let deferred = q.defer();
 
   let ids = _.map(topicsArray, 'id');
-
-  joinToSession(ids, sessionId).then(
-    function (sessionTopics) {
-      _.map(sessionTopics, function(sessionTopic) {
-
-        _.map(topicsArray, function(topic) {
-          if (topic.id == sessionTopic.TopicId) {
-            sessionTopic.order = topic.order;
-            sessionTopic.active = topic.active;
-
-            sessionTopic.update();
-
-          }
-        });
+  joinToSession(ids, sessionId).then(function(sessionTopics) {
+    _.map(sessionTopics, function(sessionTopic) {
+      _.map(topicsArray, function(topic) {
+        if(topic.id == sessionTopic.TopicId) {
+          sessionTopic.order = topic.order;
+          sessionTopic.active = topic.active;
+          sessionTopic.update();
+        }
       });
+    });
 
-      deferred.resolve(sessionTopics);
-    },
-    function (err) {
-      deferred.reject(err);
-    }
-  );
+    deferred.resolve(sessionTopics);
+  }, function(err) {
+    deferred.reject(err);
+  });
 
   return deferred.promise;
-
 }
-
 
 function joinToSession(ids, sessionId) {
   let deferred = q.defer();
@@ -104,30 +96,34 @@ function removeAllFromSession(sessionId) {
   Topic.findAll({
     include: [{
       model: models.Session,
-      where: {
-        id: sessionId
-      }
+      where: { id: sessionId }
     }]
-  }).then(
-    function (res) {
-
-      let ids = _.map(res, 'id');
-
-      removeFromSession(ids, sessionId).then(
-        function (res2) {
-          deferred.resolve(res2)
-        },
-        function (err2) {
-          deferred.reject(err2);
-        }
-      );
-
-    },
-    function (err) {
+  }).then(function(results) {
+    let ids = _.map(results, 'id');
+    removeFromSession(ids, sessionId).then(function(result) {
+      deferred.resolve(result);
+    }, function(err) {
       deferred.reject(err);
-    }
-  );
+    });
+  }, function(err) {
+    deferred.reject(err);
+  });
 
+  return deferred.promise;
+}
+
+function removeAllAndAddNew(sessionId, topics) {
+  let deferred = q.defer();
+
+  removeAllFromSession(sessionId).then(function() {
+    updateSessionTopics(sessionId, topics).then(function(result) {
+      deferred.resolve(result);
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
 
   return deferred.promise;
 }

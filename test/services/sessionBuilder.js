@@ -157,23 +157,6 @@ describe('SERVICE - SessionBuilder', function() {
     });
 
     describe('sad path', function(done) {
-      it('should fail on moving to next step because validation fails', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = sessionParams(result);
-
-          sessionBuilderServices.update(params).then(function(result) {
-            params.startTime.setDate(params.startTime.getDate() + 10);
-            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-              done('Should not get here!');
-            }, function(error) {
-              assert.equal(error.name, sessionBuilderServices.messages.errors.firstStep.nameRequired);
-              assert.equal(error.startTime, sessionBuilderServices.messages.errors.firstStep.invalidDateRange);
-              done();
-            });
-          });
-        });
-      });
-
       it('should fail on moving to next step because last step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
@@ -476,24 +459,6 @@ describe('SERVICE - SessionBuilder', function() {
           });
         });
       });
-
-      it('should fail on #nextStep', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = sessionParams(result);
-
-          sessionBuilderServices.update(params).then(function(result) {
-            params.startTime.setDate(params.startTime.getDate() + 10);
-
-            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-              done('Should not get here!');
-            }, function(error) {
-              assert.equal(error.name, sessionBuilderServices.messages.errors.firstStep.nameRequired);
-              assert.equal(error.startTime, sessionBuilderServices.messages.errors.firstStep.invalidDateRange);
-              done();
-            });
-          });
-        });
-      });
     });
   });
 
@@ -535,7 +500,9 @@ describe('SERVICE - SessionBuilder', function() {
             models.Topic.create(topicParams(params.accountId)).then(function(topic) {
               sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
                 session.addTopics([topic]).then(function() {
-                  cb();
+                  models.SessionTopics.findAll().then(function(result) {
+                    cb();
+                  })
                 }, function(error) {
                   cb(error);
                 });
