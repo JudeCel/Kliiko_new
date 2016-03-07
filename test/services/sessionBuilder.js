@@ -518,7 +518,7 @@ describe('SERVICE - SessionBuilder', function() {
     }
 
     describe('happy path', function(done) {
-      it.only('should succeed on moving to next step', function(done) {
+      it('should succeed on moving to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
           params.step = 'facilitatiorAndTopics';
