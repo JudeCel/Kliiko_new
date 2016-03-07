@@ -22,6 +22,7 @@ module.exports = (Sequelize, DataTypes) => {
       associate: function(models) {
         Subscription.belongsTo(models.Account, { foreignKey: 'accountId' });
         Subscription.belongsTo(models.SubscriptionPlan, { foreignKey: 'subscriptionPlanId' });
+        Subscription.hasOne(models.SubscriptionPreference, { foreignKey: 'subscriptionId' });
       }
     }
   });

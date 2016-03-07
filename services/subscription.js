@@ -4,6 +4,7 @@ var models = require('./../models');
 var filters = require('./../models/filters');
 var Subscription = models.Subscription;
 var AccountUser = models.AccountUser;
+var SubscriptionPlan = models.SubscriptionPlan;
 
 var q = require('q');
 var _ = require('lodash');
@@ -20,9 +21,16 @@ chargebee.configure({
 const MESSAGES = {
   notFound: {
     subscription: 'No subscription found',
-    accountUser: 'No account user found'
+    accountUser: 'No account user found',
+    subscriptionPlan: 'No plan found'
   },
-  alreadyExists: 'Subscription already exists'
+  validation: {
+    session: "You have to many sessions",
+    survey: "You have to many surveys",
+    contactList: "You have to many contact lists",
+  },
+  alreadyExists: 'Subscription already exists',
+  cantSwitchPlan: "Can't switch plan"
 }
 
 module.exports = {
@@ -30,6 +38,7 @@ module.exports = {
   findSubscription: findSubscription,
   createPortalSession: createPortalSession,
   createSubscription: createSubscription,
+  updateSubscription: updateSubscription,
   getAllPlans: getAllPlans
 }
 
@@ -50,7 +59,7 @@ function getAllPlans() {
 function findSubscription(accountId) {
   let deferred = q.defer();
 
-  Subscription.find({ where: { accountId: accountId } }).then(function(subscription) {
+  Subscription.find({ where: { accountId: accountId }, include: [SubscriptionPlan] }).then(function(subscription) {
     deferred.resolve(subscription);
   }).catch(function(error) {
     deferred.reject(error);
@@ -77,7 +86,23 @@ function createSubscription(accountId, userId, provider) {
       deferred.reject(MESSAGES.notFound.accountUser);
     }
   }).then(function(chargebeeSub) {
-    return Subscription.create(subscriptionParams(accountId, chargebeeSub));
+    return SubscriptionPlan.find({
+      chargebeePlanId: chargebeeSub.subscription.plan_id
+    }).then(function(plan) {
+      if(plan){
+        return models.sequelize.transaction(function (t) {
+          return Subscription.create(subscriptionParams(accountId, chargebeeSub, plan.id), {transaction: t}).then(function(subscription) {
+            return models.SubscriptionPreference.create({subscriptionId: subscription.id}, {transaction: t}).then(function() {
+              return subscription;
+            }, function(error) {
+              throw error;
+            });
+          });
+        });
+      }else{
+        deferred.reject(MESSAGES.notFound.subscriptionPlan);
+      }
+    });
   }).then(function(subscription) {
     deferred.resolve(subscription);
   }).catch(function(error) {
@@ -106,29 +131,44 @@ function createPortalSession(accountId, callbackUrl, provider) {
   return deferred.promise;
 }
 
-function updateSubscription(accountId, subscriptionId) {
+function updateSubscription(accountId, newPlanId, provider) {
   let deferred = q.defer();
 
   findSubscription(accountId).then(function(subscription) {
     if(subscription) {
-      return AccountUser.find({ where: { AccountId: accountId, UserId: userId } });
+      return subscription;
     }
     else {
       deferred.reject(MESSAGES.notFound.subscription);
     }
-  }).then(function(accountUser) {
-    if(accountUser) {
-      return chargebeeSubUpdate(chargebeeParams(accountUser), provider);
-    }
-    else {
-      deferred.reject(MESSAGES.notFound.accountUser);
-    }
-  }).then(function(chargebeeSub) {
-    return Subscription.create(subscriptionParams(accountId, chargebeeSub));
   }).then(function(subscription) {
-    deferred.resolve(subscription);
+    return SubscriptionPlan.find({
+      where: {
+        id: newPlanId
+      }
+    }).then(function(plan) {
+      if(plan){
+        return {subscription: subscription, currentPlan: subscription.SubscriptionPlan, newPlan: plan}
+      }else{
+        deferred.reject(MESSAGES.notFound.subscriptionPlan);
+      }
+    });
+  }).then(function(result) {
+    canSwitchPlan(accountId, result.currentPlan, result.newPlan).then(function() {
+      chargebeeSubUpdate(result.subscription.subscriptionId, {plan_id: result.newPlan.chargebeePlanId}, provider).then(function(updatedSub) {
+        result.subscription.update({planId: updatedSub.plan_id}, {returning: true}).then(function(result) {
+          deferred.resolve(result);
+        }, function(error) {
+          deferred.reject(filters.errors(error));
+        });
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }, function(error) {
+      deferred.reject(error);
+    });
   }).catch(function(error) {
-    deferred.reject(filters.errors(error));
+    deferred.reject(error);
   });
 
   return deferred.promise;
@@ -154,24 +194,23 @@ function chargebeePortalCreate(params, provider) {
   return deferred.promise;
 }
 
-function chargebeeSubUpdate(params, provider) {
+function chargebeeSubUpdate(subscriptionId, params, provider) {
   let deferred = q.defer();
 
   if(!provider) {
-    provider = chargebee.plan.update
+    provider = chargebee.subscription.update;
   }
 
+  provider(subscriptionId, params).request(function(error, result) {
+    if(error) {
+      deferred.reject(error);
+    }
+    else {
+      deferred.resolve(result.subscription);
+    }
+  });
 
-    provider(params).request(function(error, result) {
-      if(error) {
-        deferred.reject(error);
-      }
-      else {
-        deferred.resolve(result.subscription);
-      }
-    });
-
-    return deferred.promise;
+  return deferred.promise;
 }
 
 function chargebeeSubCreate(params, provider) {
@@ -193,12 +232,13 @@ function chargebeeSubCreate(params, provider) {
   return deferred.promise;
 }
 
-function subscriptionParams(accountId, chargebeeSub) {
+function subscriptionParams(accountId, chargebeeSub, subscriptionPlanId) {
   return {
     accountId: accountId,
     planId: chargebeeSub.subscription.plan_id,
     subscriptionId: chargebeeSub.subscription.id,
-    customerId: chargebeeSub.customer.id
+    customerId: chargebeeSub.customer.id,
+    subscriptionPlanId: subscriptionPlanId
   }
 }
 
@@ -232,6 +272,87 @@ function chargebeeSubParams(accountUser) {
 
 // Validators
 
-function canSwitchPlan(updateToSub, updateFromSub){
+function canSwitchPlan(accountId, currentPlan, newPlan){
+  let deferred = q.defer();
 
+  if(currentPlan.priority > newPlan.priority){
+    let functionArray = [
+      validateSessionCount(accountId, newPlan),
+      validateSurveyCount(accountId, newPlan),
+      validateContactListCount(accountId, newPlan)
+    ]
+    async.waterfall(functionArray, function(error, errorMessages) {
+      if(error){
+        deferred.reject(error);
+      }else{
+        if(_.isEmpty(errorMessages)){
+          deferred.resolve();
+        }else{
+          deferred.reject(errorMessages);
+        }
+      }
+    });
+  }else if(currentPlan.priority < newPlan.priority){
+    deferred.resolve();
+  }else{
+    deferred.reject(MESSAGES.cantSwitchPlan);
+  }
+
+  return deferred.promise;
+}
+
+function validateSessionCount(accountId, newPlan) {
+  return function(cb) {
+    models.Session.count({
+      where: {
+        accountId: accountId
+      }
+    }).then(function(c) {
+      if(newPlan.sessionCount < c){
+        cb(null, {session: MESSAGES.validation.session});
+      }else{
+        cb(null, {});
+      }
+    }, function(error) {
+      cb(error);
+    });
+  }
+}
+
+function validateSurveyCount(accountId, newPlan) {
+  return function(errors, cb) {
+    models.Survey.count({
+      where: {
+        accountId: accountId
+      }
+    }).then(function(c) {
+      errors = errors || {};
+      if(newPlan.surveyCount < c){
+        errors.survey = MESSAGES.validation.survey;
+      }
+
+      cb(null, errors);
+    }, function(error) {
+      cb(error);
+    });
+  }
+}
+
+function validateContactListCount(accountId, newPlan) {
+  return function(errors, cb) {
+    models.ContactList.count({
+      where: {
+        accountId: accountId
+      }
+    }).then(function(c) {
+      errors = errors || {};
+      if(newPlan.contactListCount < c){
+        errors.contactList = MESSAGES.validation.contactList;
+      }
+
+      cb(null, errors);
+    }, function(error) {
+      cb(error);
+    });
+  }
 }
