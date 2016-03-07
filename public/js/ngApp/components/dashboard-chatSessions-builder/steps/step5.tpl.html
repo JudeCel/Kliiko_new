@@ -9,6 +9,14 @@
   </div>
 
   <div ng-if='sbc.observers.length > 0' ng-controller='ContactListController as clc' ng-init='clc.hideModalStuff = true;'>
+    <div class="text-right filter-row">
+      <a href="" ng-class="{active:sbc.observersFilter == ''}" ng-click="sbc.observersFilter = ''">All({{sbc.observers.length  }})</a>
+      <a href="" ng-class="{active:sbc.observersFilter == 'Not Invited'}" ng-click="sbc.observersFilter = 'Not Invited'">Not Invited({{ (sbc.observers | filter: 'Not Invited' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.observersFilter == 'Confirmed'}" ng-click="sbc.observersFilter = 'Confirmed'">Confirmed({{ (sbc.observers | filter: 'Confirmed' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.observersFilter == 'Not This Time'}" ng-click="sbc.observersFilter = 'Not This Time'">Not This Time({{ (sbc.observers | filter: 'Not This Time' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.observersFilter == 'Not At All'}" ng-click="sbc.observersFilter = 'Not At All'">Not At All({{ (sbc.observers | filter: 'Not At All' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.observersFilter == 'No Reply'}" ng-click="sbc.observersFilter = 'No Reply'">No Response({{ (sbc.observers | filter: 'No Reply' : strict).length  }})</a>
+    </div>
     <div class='row text-left'>
       <table class='table table-dashboardElements'>
         <thead>
@@ -27,7 +35,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat='member in sbc.observers' ng-mouseover='sbc.mouseOveringMember[$index] = true' ng-mouseleave='sbc.mouseOveringMember[$index] = false'>
+          <tr ng-repeat='member in sbc.observers | filter: sbc.observersFilter: strict' ng-mouseover='sbc.mouseOveringMember[$index] = true' ng-mouseleave='sbc.mouseOveringMember[$index] = false'>
             <td>
               <div class='checkbox checkbox-xs checkbox-success'>
                 <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.step5' ng-disabled='sbc.showCorrectStatus(member)' />
