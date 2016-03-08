@@ -5,13 +5,14 @@ var filters = require('./../models/filters');
 var Subscription = models.Subscription;
 var AccountUser = models.AccountUser;
 var SubscriptionPlan = models.SubscriptionPlan;
+var SubscriptionPreference = models.SubscriptionPreference;
 
 var q = require('q');
 var _ = require('lodash');
 var async = require('async');
 var config = require('config');
 var chargebee = require('chargebee');
-
+var planConstants = require('./../util/planConstants');
 var chargebeeConfigs = config.get('chargebee');
 chargebee.configure({
   site: chargebeeConfigs.site,
@@ -30,7 +31,7 @@ const MESSAGES = {
     contactList: "You have to many contact lists",
   },
   alreadyExists: 'Subscription already exists',
-  cantSwitchPlan: "Can't switch plan"
+  cantSwitchPlan: "Can't switch to current plan"
 }
 
 module.exports = {
@@ -59,7 +60,7 @@ function getAllPlans() {
 function findSubscription(accountId) {
   let deferred = q.defer();
 
-  Subscription.find({ where: { accountId: accountId }, include: [SubscriptionPlan] }).then(function(subscription) {
+  Subscription.find({ where: { accountId: accountId }, include: [SubscriptionPlan, SubscriptionPreference] }).then(function(subscription) {
     deferred.resolve(subscription);
   }).catch(function(error) {
     deferred.reject(error);
@@ -154,12 +155,24 @@ function updateSubscription(accountId, newPlanId, provider) {
       }
     });
   }).then(function(result) {
-    canSwitchPlan(accountId, result.currentPlan, result.newPlan).then(function() {
-      chargebeeSubUpdate(result.subscription.subscriptionId, {plan_id: result.newPlan.chargebeePlanId}, provider).then(function(updatedSub) {
-        result.subscription.update({planId: updatedSub.plan_id}, {returning: true}).then(function(result) {
-          deferred.resolve(result);
-        }, function(error) {
-          deferred.reject(filters.errors(error));
+    return canSwitchPlan(accountId, result.currentPlan, result.newPlan).then(function() {
+      return chargebeeSubUpdate(result.subscription.subscriptionId, {plan_id: result.newPlan.chargebeePlanId}, provider).then(function(updatedSub) {
+        return models.sequelize.transaction(function (t) {
+          return result.subscription.update({planId: updatedSub.plan_id}, {transaction: t, returning: true}).then(function(updatedSub) {
+
+            let params = planConstants[updatedSub.SubscriptionPlan.chargebeePlanId];
+            params.paidSmsCount = params.paidSmsCount + result.newPlan.paidSmsCount;
+
+            return updatedSub.SubscriptionPreference.update({ data: params }, {transaction: t, returning: true}).then(function(preference) {
+              // console.log(preference);
+              // updatedSub.SubscriptionPreference = preference;
+              return updatedSub;
+            }, function(error) {
+              throw error;
+            });
+          }, function(error) {
+            throw error;
+          })
         });
       }, function(error) {
         deferred.reject(error);
@@ -167,6 +180,8 @@ function updateSubscription(accountId, newPlanId, provider) {
     }, function(error) {
       deferred.reject(error);
     });
+  }).then(function(subscription) {
+    deferred.resolve(subscription);
   }).catch(function(error) {
     deferred.reject(error);
   });
