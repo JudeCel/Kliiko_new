@@ -183,14 +183,40 @@ function getAllMailTemplates(req, getSystemMail,callback) {
   });
 };
 
+function copyBaseTemplatesForSession(sessionId, callback) {
+  let templates = ['firstInvitation', 'confirmation', 'notThisTime', 'notAtAll', 'closeSession', 'generic'];
+
+  MailTemplateOriginal.findAll({
+    where: {
+      category: { $in: templates }
+    },
+    attributes: constants.originalMailTemplateFields,
+    raw: true
+  }).then(function(result) {
+    console.log(result);
+    for (var i = 0; i < result.length; i++) {
+      result[i].sessionId = sessionId;
+      result[i].MailTemplateBaseId = result[i].id;
+      delete result[i].id;
+    }
+    MailTemplate.bulkCreate(result).done(function(res) {
+       callback(null, res);
+    }, function(err) {
+       callback(err);
+    })
+  }).catch(function(error) {
+    callback(error);
+  });
+}
+
 function copyBaseTemplates(callback) {
   MailTemplateOriginal.findAll({
-      attributes: constants.originalMailTemplateFields,
-      raw: true
+    attributes: constants.originalMailTemplateFields,
+    raw: true
   }).then(function(result) {
     for (var i = 0; i < result.length; i++) {
-        result[i].MailTemplateBaseId = result[i].id;
-        delete result[i]["id"];
+      result[i].MailTemplateBaseId = result[i].id;
+      delete result[i].id;
     }
     MailTemplate.bulkCreate(result).done(function(res) {
        callback(null, res);
@@ -394,6 +420,7 @@ module.exports = {
   saveMailTemplate: saveMailTemplate,
   createBaseMailTemplate: createBaseMailTemplate,
   copyBaseTemplates: copyBaseTemplates,
+  copyBaseTemplatesForSession: copyBaseTemplatesForSession,
   deleteMailTemplate: deleteMailTemplate,
   resetMailTemplate: resetMailTemplate,
   composeMailFromTemplate: composeMailFromTemplate,

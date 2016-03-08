@@ -42,10 +42,7 @@ function update(req, res, next) {
   let sessionObj = req.body.sessionObj;
   if(!sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
 
-  sessionObj.accountId = res.locals.currentDomain.id;
-  delete sessionObj.step;
-
-  sessionBuilderServices.update(sessionObj.steps.step1).then(function(result) {
+  sessionBuilderServices.update(sessionObj.id, res.locals.currentDomain.id, sessionObj.steps.step1).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});
