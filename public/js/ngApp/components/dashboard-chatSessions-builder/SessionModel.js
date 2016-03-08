@@ -20,7 +20,7 @@
       addTopics: {method: 'POST', isArray: true , params: {path: 'addTopics'} },
 
       nextStep: {method: 'POST', params: {path: 'step'} },
-      previousStep: {method: 'POST', params: {path: 'step%2Fprevious'} },
+      previousStep: {method: 'POST', params: {path: 'step'} },
 
     });
 
@@ -165,7 +165,9 @@
       var self = this;
 
       sessionBuilderRestApi.nextStep({id: self.id, otherId: 'next'}, {}, function(res) {
-        deferred.resolve(res);
+        res.error
+          ? deferred.reject(res.error)
+          : deferred.resolve(res);
       });
 
       return deferred.promise;

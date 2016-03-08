@@ -125,7 +125,7 @@
 
         step = vm.currentStep + 1;
 
-        frontEndStepValidation().then(
+        frontEndStepValidation(step).then(
           function(res) {
 
             vm.session.updateStep().then(
@@ -133,7 +133,13 @@
 
                 vm.session.validateStep().then(
                   function (res) {
-                    vm.session.goToNextStep();
+
+                    vm.searchingParticipants = false;
+                    vm.searchingObservers = false;
+                    initStep(step).then(function(res) {
+                      $stateParams.planUpgradeStep = vm.currentStep = step;
+                    });
+
                     routerProgressbar.complete();
                   },
                   function (err) {
@@ -158,34 +164,22 @@
         );
       }
 
-
-      var valid = validateStep(step);
-
-      if (!valid) return;
-
-
-      function frontEndStepValidation() {
-        var deferred = $q.defer();
-        deferred.resolve();
-        return deferred.promise;
-      }
-
-      vm.session.validateStep(step).then(
-        function (res) {
-
-          vm.searchingParticipants = false;
-          vm.searchingObservers = false;
-          initStep(step).then(function(res) {
-            vm.session.updateStep();
-
-            $stateParams.planUpgradeStep = vm.currentStep = step;
-          });
-
-        },
-        function (err) {
-          messenger.error(err);
-        }
-      );
+      //vm.session.validateStep(step).then(
+      //  function (res) {
+      //
+      //    vm.searchingParticipants = false;
+      //    vm.searchingObservers = false;
+      //    initStep(step).then(function(res) {
+      //      vm.session.updateStep();
+      //
+      //      $stateParams.planUpgradeStep = vm.currentStep = step;
+      //    });
+      //
+      //  },
+      //  function (err) {
+      //    messenger.error(err);
+      //  }
+      //);
 
 
     }
@@ -202,14 +196,16 @@
      * @param step {number}
      * @returns {boolean}
      */
-    function validateStep(step) {
-      if (step === 2) { return validateStep1() }
-      if (step === 3) { return validateStep2() }
-      if (step === 4) { return validateStep3() }
-      if (step === 5) { return validateStep4() }
-      if (step === 6) { return validateStep5() }
+    function frontEndStepValidation(step) {
+      var deferred = $q.defer();
 
-      return false;
+      if (step === 2) { validateStep1() }
+      if (step === 3) { validateStep2() }
+      if (step === 4) { validateStep3() }
+      if (step === 5) { validateStep4() }
+      if (step === 6) { validateStep5() }
+
+      return deferred.promise;
 
       function validateStep1() {
         var startTime = new Date(vm.session.steps.step1.startTime).getTime();
@@ -217,12 +213,15 @@
         vm.accordions.dateAndTimeError = null;
 
         if (endTime > startTime) {
-          return true;
+          deferred.resolve();
+          return deferred.promise;
+
         } else {
           messenger.error('Session End Time should be greater then Start Time');
           vm.accordions.dateAndTime = true;
           vm.accordions.dateAndTimeError = true;
-          return false
+          deferred.reject();
+          return deferred.promise;
         }
 
 
@@ -233,40 +232,53 @@
           messenger.error('You should select one facilitator for this session');
           vm.accordions.facilitators = true;
 
-          return false;
+          deferred.reject();
+          return deferred.promise;
         }
 
         if (vm.chatSessionTopicsList.length) {
           //todo
           vm.session.saveTopics(vm.selectedTopics);
 
-          return true;
+          deferred.resolve();
+          return deferred.promise;
+
         } else {
           messenger.error('You should select at least one topic for this session');
           vm.accordions.topics = true;
 
-          return false;
+          deferred.reject();
+          return deferred.promise;
         }
 
       }
 
       function validateStep3() {
-        if (vm.session.steps.step3.incentive_details) return true;
+        if (vm.session.steps.step3.incentive_details) {
+          deferred.resolve();
+          return deferred.promise;
+        }
         messenger.error('Please, add Participant Incentive');
         vm.accordions.incentive = 'error';
-        return false;
+        deferred.reject();
+        return deferred.promise;
       }
 
       function validateStep4() {
         if (vm.participants.length) return true;
         messenger.error('Select at least one participant');
-        return false;
+        deferred.reject();
+        return deferred.promise;
       }
 
       function validateStep5() {
-        if (vm.observers.length) return true;
+        if (vm.observers.length) {
+          deferred.resolve();
+          return deferred.promise;
+        }
         messenger.error('Select at least one observer');
-        return false;
+        deferred.reject();
+        return deferred.promise;
       }
     }
 
@@ -283,7 +295,6 @@
           }
         }
 
-        dbg.yell(step)
       }
 
 
@@ -292,6 +303,7 @@
         if (vm.session.steps.step1.brandProjectPreferenceId)  brandLogoId =  vm.session.steps.step1.brandProjectPreferenceId;
         if (vm.session.steps.step1.resourseId) colorSchemeId = vm.session.steps.step1.brandProjectPreferenceId;
         deferred.resolve();
+        return deferred.promise;
       }
       if (step == 2) {
         $ocLazyLoad.load([
@@ -312,6 +324,7 @@
         ]).then(function(res) {
           vm.currentStep = step;
           deferred.resolve();
+          return deferred.promise;
         });
       }
       else if(step == 3) {
@@ -321,6 +334,7 @@
         ]).then(function(res) {
           vm.currentStep = step;
           deferred.resolve();
+          return deferred.promise;
         });
       }
       else if(step == 4) {
@@ -339,6 +353,7 @@
         ]).then(function(res) {
           vm.currentStep = step;
           deferred.resolve();
+          return deferred.promise;
         });
       }
       else if(step == 5) {
@@ -357,6 +372,7 @@
         ]).then(function(res) {
           vm.currentStep = step;
           deferred.resolve();
+          return deferred.promise;
         });
       }
 
