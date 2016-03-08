@@ -7,6 +7,7 @@ var AccountUser = models.AccountUser;
 
 var constants = require('./../util/constants');
 var inviteService = require('./invite');
+var mailTemplateService = require('./mailTemplate');
 var twilioLib = require('./../lib/twilio');
 var mailHelper = require('./../mailers/mailHelper');
 
@@ -71,10 +72,17 @@ function initializeBuilder(params) {
 
   params.step = 'setUp';
   Session.create(params).then(function(session) {
-    sessionBuilderObject(session).then(function(result) {
-      deferred.resolve(result);
-    }, function(error) {
-      deferred.reject(error);
+    mailTemplateService.copyBaseTemplatesForSession(session.id, function(error, _result) {
+      if(error) {
+        deferred.reject(error);
+      }
+      else {
+        sessionBuilderObject(session).then(function(result) {
+          deferred.resolve(result);
+        }, function(error) {
+          deferred.reject(error);
+        });
+      }
     });
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
@@ -105,10 +113,10 @@ function findSession(id, accountId) {
   return deferred.promise;
 }
 
-function update(params) {
+function update(sessionId, accountId, params) {
   let deferred = q.defer();
 
-  findSession(params.id, params.accountId).then(function(session) {
+  findSession(sessionId, accountId).then(function(session) {
     session.updateAttributes(params).then(function(updatedSession) {
       sessionBuilderObject(updatedSession).then(function(result) {
         deferred.resolve(result);
