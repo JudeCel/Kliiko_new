@@ -110,13 +110,26 @@
 
     function goToStep(step) {
       if (!angular.isNumber(step)) {
-        if (step === 'back') { vm.cantMoveNextStep = false;  step = vm.currentStep - 1;  }
+        if (step === 'back')  handlePreviouseStep()
         if (step === 'next') handleNextStep();
         if (step === 'submit') {
           //step = 5;
           //submitUpgrade();
           return
         }
+      }
+
+
+      function handlePreviouseStep() {
+        vm.cantMoveNextStep = false;  step = vm.currentStep - 1;
+        initStep(step).then(
+          function (res) {
+            vm.currentStep = step;
+          },
+          function (err) {
+          }
+        );
+
       }
 
       function handleNextStep() {
@@ -238,9 +251,16 @@
 
         if (vm.chatSessionTopicsList.length) {
           //todo
-          vm.session.saveTopics(vm.selectedTopics);
+          vm.session.saveTopics(vm.chatSessionTopicsList).then(
+            function (res) {
+              deferred.resolve();
+            },
+            function (err) {
+            }
+          );
 
-          deferred.resolve();
+
+
           return deferred.promise;
 
         } else {

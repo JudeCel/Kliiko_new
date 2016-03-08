@@ -229,7 +229,6 @@
       var self = this;
       var deferred = $q.defer();
 
-
       sessionBuilderRestApi.addTopics({id: self.id}, { topicsArray:self.steps.step2.topics }, function(res) {
         deferred.resolve(res);
       });

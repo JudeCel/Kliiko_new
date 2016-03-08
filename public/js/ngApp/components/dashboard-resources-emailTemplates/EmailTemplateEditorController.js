@@ -191,7 +191,7 @@
 
     vm.cancelTemplateDelete = function() {
       domServices.modal('confirmDialog', 'close');
-    }
+    };
 
     vm.approveTemplateDelete = function() {
       domServices.modal('confirmDialog', 'close');
