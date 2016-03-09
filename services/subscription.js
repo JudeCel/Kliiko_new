@@ -208,13 +208,13 @@ function updateSubscription(accountId, newPlanId, provider) {
   return deferred.promise;
 }
 
-function cancelSubscription(subscriptionId, eventId, callback) {
+function cancelSubscription(subscriptionId, eventId) {
   let deferred = q.defer();
 
   findSubscriptionByChargebeeId(subscriptionId).then(function(subscription) {
     subscription.update({ active: false, lastWebhookId: eventId }, { returning: true }).then(function(subscription) {
-      disableSubDependencies(subscription.accountId, callback);
-      deferred.resolve(subscription);
+      let promise = disableSubDependencies(subscription.accountId);
+      deferred.resolve({ subscription: subscription, promise: promise });
     }, function(error) {
       deferred.reject(filters.errors(error));
     });
@@ -329,17 +329,24 @@ function parallelFunc(promise) {
   }
 }
 
-function disableSubDependencies(accountId, callback) {
+function disableSubDependencies(accountId) {
+  let deferred = q.defer();
+
   let arrayFunctions = [
     parallelFunc(models.Session.update({ active: false }, { where: { accountId: accountId } })),
     parallelFunc(models.Survey.update({ closed: true }, { where: { accountId: accountId } }))
   ];
 
   async.parallel(arrayFunctions, function(error, _result) {
-    if(callback) {
-      callback(error);
+    if(error) {
+      deferred.reject(error);
+    }
+    else {
+      deferred.resolve();
     }
   });
+
+  return deferred.promise;
 }
 
 // Validators

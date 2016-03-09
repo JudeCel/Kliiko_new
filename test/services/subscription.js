@@ -239,7 +239,7 @@ describe('SERVICE - Subscription', function() {
             }
           }
 
-          it.only('downgrade not possible due to many surveys, sessions and contact lists for account', function(done) {
+          it('downgrade not possible due to many surveys, sessions and contact lists for account', function(done) {
             let functionList = [
               getUltimateSub(testData),
               createTestSurvey(testData),
@@ -368,4 +368,137 @@ describe('SERVICE - Subscription', function() {
       });
     });
   });
+
+  describe('#cancelSubscription', function() {
+    var subId = 'SomeUniqueID';
+    beforeEach(function(done) {
+      subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: subId })).then(function() {
+        done();
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    describe('happy path', function() {
+      function surveyHelper() {
+        return function(cb) {
+          surveyFixture.createSurvey(testData.account.name).then(function() {
+            cb();
+          }, function(error) {
+            cb(error);
+          });
+        }
+      }
+
+      function sessionHelper() {
+        return function(cb) {
+          let params = {
+            accountId: testData.account.id,
+            name: 'some name',
+            start_time: new Date(),
+            end_time: new Date()
+          };
+
+          models.Session.create(params).then(function() {
+            cb();
+          }, function(error) {
+            cb(error);
+          });
+        }
+      }
+
+      beforeEach(function(done) {
+        async.parallel([
+          function(cb) {
+            let functionArray = [surveyHelper(), surveyHelper()];
+            async.waterfall(functionArray, function(error, _result) {
+              cb(error);
+            });
+          },
+          function(cb) {
+            let functionArray = [sessionHelper(), sessionHelper()];
+            async.waterfall(functionArray, function(error, _result) {
+              cb(error);
+            });
+          }
+        ], function(error, _result) {
+          done(error);
+        });
+      });
+
+      it('should succeed on closing subscription and dependencies', function(done) {
+        function surveyPromise() {
+          return models.Survey.count({ where: { accountId: testData.account.id, closed: true } });
+        }
+
+        function sessionPromise() {
+          return models.Survey.count({ where: { accountId: testData.account.id, closed: true } });
+        }
+
+        surveyPromise().then(function(c) {
+          assert.equal(c, 0);
+          return sessionPromise();
+        }).then(function(c) {
+          assert.equal(c, 0);
+          return subscriptionServices.cancelSubscription(subId, 'someEventId');
+        }).then(function(result) {
+          Subscription.find({ where: { subscriptionId: subId } }).then(function(subscription) {
+            assert.equal(subscription.active, false);
+            return result.promise;
+          }).then(function() {
+            return surveyPromise();
+          }).then(function(c) {
+            assert.equal(c, 2);
+            return sessionPromise();
+          }).then(function(c) {
+            assert.equal(c, 2);
+            done();
+          }).catch(function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+    });
+
+    // describe('sad path', function() {
+    //   beforeEach(function(done) {
+    //     subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function() {
+    //       done();
+    //     }, function(error) {
+    //       done(error);
+    //     });
+    //   });
+    //
+    //   function errorProvider(error) {
+    //     return function() {
+    //       return {
+    //         request: function(callback) {
+    //           callback({ errors: [{ path: 'error', message: error }] });
+    //         }
+    //       }
+    //     }
+    //   }
+    //
+    //   it('should fail because chargebee raises error', function(done) {
+    //     subscriptionServices.cancelSubscription(testData.account.id, 'callbackUrl', errorProvider('some error')).then(function(redirectUrl) {
+    //       done('Should not get here!');
+    //     }, function(error) {
+    //       assert.deepEqual(error, { error: 'some error' });
+    //       done();
+    //     });
+    //   });
+    //
+    //   it('should fail because subscription not found', function(done) {
+    //     subscriptionServices.cancelSubscription(testData.account.id + 100, 'callbackUrl', successProvider({ id: 'SomeUniqueID' })).then(function(redirectUrl) {
+    //       done('Should not get here!');
+    //     }, function(error) {
+    //       assert.equal(error, subscriptionServices.messages.notFound.subscription);
+    //       done();
+    //     });
+    //   });
+    // });
+  });
+
 });
