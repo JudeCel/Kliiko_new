@@ -6,13 +6,15 @@ var Subscription = models.Subscription;
 var subscriptionServices = require('./../../services/subscription');
 var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscriptionPlans');
+var surveyFixture = require('./../fixtures/survey');
 
-
+var async = require('async');
 var assert = require('chai').assert;
 var _ = require('lodash');
 
 describe('SERVICE - Subscription', function() {
   var testData;
+  var currentSubPlanId;
 
   beforeEach(function(done) {
     userFixture.createUserAndOwnerAccount().then(function(result) {
@@ -20,6 +22,7 @@ describe('SERVICE - Subscription', function() {
       return subscriptionFixture.createPlans();
     }).then(function(results) {
       testData.subscriptionPlan = _.find(results, ['priority', 4]);
+      testData.lowerPlan = _.find(results, ['priority', 3]);
       done();
     }).catch(function(error) {
       done(error);
@@ -117,7 +120,8 @@ describe('SERVICE - Subscription', function() {
 
   describe('#updateSubscription', function() {
     beforeEach(function(done) {
-      subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function() {
+      subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function(subscription) {
+        currentSubPlanId = subscription.subscriptionPlanId;
         done();
       }, function(error) {
         done(error);
@@ -138,11 +142,15 @@ describe('SERVICE - Subscription', function() {
 
     describe('happy path', function() {
       it('should succeed on updating subscription', function(done) {
+        let smsCount = 650; // sms count that is expected when updating from "free" plan to "unlimited" plan!
+
         subscriptionServices.updateSubscription(testData.account.id, testData.subscriptionPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })).then(function(subscription) {
           assert.isNotNull(subscription);
           assert.isNotNull(subscription.SubscriptionPreference);
           assert.equal(subscription.accountId, testData.account.id);
           assert.equal(subscription.planId, testData.subscriptionPlan.chargebeePlanId);
+          assert.equal(subscription.SubscriptionPreference.data.priority, subscription.SubscriptionPlan.priority);
+          assert.equal(subscription.SubscriptionPreference.data.paidSmsCount, smsCount);
           done();
         }, function(error) {
           done(error);
@@ -150,60 +158,119 @@ describe('SERVICE - Subscription', function() {
       });
     });
 
-    // describe('sad path', function() {
-    //   function errorProvider(error) {
-    //     return function() {
-    //       return {
-    //         request: function(callback) {
-    //           callback({ errors: [{ path: 'error', message: error }] });
-    //         }
-    //       }
-    //     }
-    //   }
-    //
-    //   it('should fail because chargebee raises error', function(done) {
-    //     subscriptionServices.createSubscription(testData.account.id, testData.user.id, errorProvider('some error')).then(function() {
-    //       done('Should not get here!');
-    //     }, function(error) {
-    //       assert.deepEqual(error, { error: 'some error' });
-    //       done();
-    //     });
-    //   });
-    //
-    //   it('should fail because account user not found', function(done) {
-    //     subscriptionServices.createSubscription(testData.account.id + 100, testData.user.id, errorProvider('some error')).then(function() {
-    //       done('Should not get here!');
-    //     }, function(error) {
-    //       assert.equal(error, subscriptionServices.messages.notFound.accountUser);
-    //       done();
-    //     });
-    //   });
-    //
-    //   it('should fail because subscription already exists', function(done) {
-    //     subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function() {
-    //       subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function() {
-    //         done('Should not get here!');
-    //       }, function(error) {
-    //         assert.equal(error, subscriptionServices.messages.alreadyExists);
-    //         done();
-    //       });
-    //     });
-    //   });
-    //
-    //   it('should fail because subscription has invalid params', function(done) {
-    //     subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: null })).then(function() {
-    //       done('Should not get here!');
-    //     }, function(error) {
-    //       let returningErrors = {
-    //         customerId: "Customer Id can't be empty",
-    //         subscriptionId: "Subscription Id can't be empty"
-    //       };
-    //
-    //       assert.deepEqual(error, returningErrors);
-    //       done();
-    //     });
-    //   });
-    // });
+    describe('sad path', function() {
+      function errorProvider(error) {
+        return function() {
+          return {
+            request: function(callback) {
+              callback({ errors: [{ path: 'error', message: error }] });
+            }
+          }
+        }
+      }
+
+      it('plan not found', function(done) {
+        let invalidPlanId = testData.subscriptionPlan.id + 100;
+
+        subscriptionServices.updateSubscription(testData.account.id, invalidPlanId, errorProvider('some error')).then(function() {
+          done('Should not get here!');
+        }, function(error) {
+          assert.deepEqual(error, 'No plan found');
+          done();
+        });
+      });
+
+      it('No subscription found', function(done) {
+        let invalidAccountId = testData.account.id + 100;
+
+        subscriptionServices.updateSubscription(invalidAccountId, testData.subscriptionPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })).then(function(subscription) {
+          done('Should not get here!');
+        }, function(error) {
+          assert.equal(error, "No subscription found");
+          done();
+        });
+      });
+
+      it('cant switch on the same plan as user has already', function(done) {
+        let invalidAccountId = testData.account.id + 100;
+
+        subscriptionServices.updateSubscription(testData.account.id, currentSubPlanId, updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })).then(function(subscription) {
+          done('Should not get here!');
+        }, function(error) {
+          assert.equal(error, "Can't switch to current plan");
+          done();
+        });
+      });
+
+      describe("downgrade", function() {
+        describe("happy path", function() {
+          it('should successfully downgrade plan', function(done) {
+            done();
+          });
+        });
+
+        describe("sad path", function() {
+          function getUltimateSub(testData) {
+            return function(cb) {
+              subscriptionServices.updateSubscription(testData.account.id, testData.subscriptionPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })).then(function(subscription) {
+                cb();
+              }, function(error) {
+                cb(error);
+              });
+            }
+          }
+
+          function createTestSurvey(testData) {
+            return function(cb) {
+              surveyFixture.createSurvey(testData.account.name).then(function() {
+                cb();
+              }, function(error) {
+                cb(error);
+              })
+            }
+          }
+
+          function createSession(testData) {
+            return function(cb) {
+              models.Session.create({
+                accountId: testData.account.id,
+
+              })
+            }
+          }
+
+          it.only('downgrade not possible due to many surveys, sessions and contact lists for account', function(done) {
+            let functionList = [
+              getUltimateSub(testData),
+              createTestSurvey(testData),
+              createTestSurvey(testData),
+              createTestSurvey(testData),
+              // createSession(testData)
+            ]
+
+            async.waterfall(functionList, function (error, result) {
+              if( error ){
+                done(error);
+              } else {
+                console.log("~");
+                console.log(testData.lowerPlan.priority);
+                console.log("~");
+                subscriptionServices.updateSubscription(testData.account.id, testData.lowerPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.lowerPlan.chargebeePlanId })).then(function(subscription) {
+                  done("should not get here");
+                }, function(error) {
+                  console.log(error);
+                  assert.equal(error.survey, 'You have to many surveys');
+                  assert.equal(error.contactList, 'You have to many contact lists');
+                  // assert.equal(error.session, 'You have to many sessions');
+                  done();
+                });
+              }
+            });
+
+          });
+        });
+      });
+    });
   });
 
   describe('#findSubscription', function() {
