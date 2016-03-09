@@ -6,7 +6,7 @@ var Subscription = models.Subscription;
 var subscriptionServices = require('./../../services/subscription');
 var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscriptionPlans');
-var sessionFixture = require('./../fixtures/session');
+var surveyFixture = require('./../fixtures/survey');
 
 var async = require('async');
 var assert = require('chai').assert;
@@ -22,6 +22,7 @@ describe('SERVICE - Subscription', function() {
       return subscriptionFixture.createPlans();
     }).then(function(results) {
       testData.subscriptionPlan = _.find(results, ['priority', 4]);
+      testData.lowerPlan = _.find(results, ['priority', 3]);
       done();
     }).catch(function(error) {
       done(error);
@@ -201,8 +202,6 @@ describe('SERVICE - Subscription', function() {
         });
       });
 
-
-
       describe("downgrade", function() {
         describe("happy path", function() {
           it('should successfully downgrade plan', function(done) {
@@ -211,30 +210,62 @@ describe('SERVICE - Subscription', function() {
         });
 
         describe("sad path", function() {
-
-          beforeEach(function(done) {
-            // async.times(10, function(n, next){
-              sessionFixture.createChat().then(function(result) {
-                done();
+          function getUltimateSub(testData) {
+            return function(cb) {
+              subscriptionServices.updateSubscription(testData.account.id, testData.subscriptionPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })).then(function(subscription) {
+                cb();
               }, function(error) {
-                done(error);
+                cb(error);
               });
-            // }, function(err, sessions) {
-            //   done();
-            // });
-          });
+            }
+          }
 
-          it.only('downgrade not possible due to many sessions for account', function(done) {
-            done();
-          });
+          function createTestSurvey(testData) {
+            return function(cb) {
+              surveyFixture.createSurvey(testData.account.name).then(function() {
+                cb();
+              }, function(error) {
+                cb(error);
+              })
+            }
+          }
 
-          it('downgrade not possible due to many surveys for account', function(done) {
-            done();
+          function createSession(testData) {
+            return function(cb) {
+              models.Session.create({
+                accountId: testData.account.id,
 
-          });
+              })
+            }
+          }
 
-          it('downgrade not possible due to many contact lists for account', function(done) {
-            done();
+          it.only('downgrade not possible due to many surveys, sessions and contact lists for account', function(done) {
+            let functionList = [
+              getUltimateSub(testData),
+              createTestSurvey(testData),
+              createTestSurvey(testData),
+              createTestSurvey(testData),
+              // createSession(testData)
+            ]
+
+            async.waterfall(functionList, function (error, result) {
+              if( error ){
+                done(error);
+              } else {
+                console.log("~");
+                console.log(testData.lowerPlan.priority);
+                console.log("~");
+                subscriptionServices.updateSubscription(testData.account.id, testData.lowerPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.lowerPlan.chargebeePlanId })).then(function(subscription) {
+                  done("should not get here");
+                }, function(error) {
+                  console.log(error);
+                  assert.equal(error.survey, 'You have to many surveys');
+                  assert.equal(error.contactList, 'You have to many contact lists');
+                  // assert.equal(error.session, 'You have to many sessions');
+                  done();
+                });
+              }
+            });
 
           });
         });

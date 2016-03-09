@@ -158,14 +158,13 @@ function updateSubscription(accountId, newPlanId, provider) {
     return canSwitchPlan(accountId, result.currentPlan, result.newPlan).then(function() {
       return chargebeeSubUpdate(result.subscription.subscriptionId, {plan_id: result.newPlan.chargebeePlanId}, provider).then(function(updatedSub) {
         return models.sequelize.transaction(function (t) {
-          return result.subscription.update({planId: updatedSub.plan_id}, {transaction: t, returning: true}).then(function(updatedSub) {
+          return result.subscription.update({planId: updatedSub.plan_id, subscriptionPlanId: result.newPlan.id}, {transaction: t, returning: true}).then(function(updatedSub) {
 
             let params = planConstants[updatedSub.SubscriptionPlan.chargebeePlanId];
             params.paidSmsCount = params.paidSmsCount + result.newPlan.paidSmsCount;
 
             return updatedSub.SubscriptionPreference.update({ data: params }, {transaction: t, returning: true}).then(function(preference) {
-              // console.log(preference);
-              // updatedSub.SubscriptionPreference = preference;
+              updatedSub.SubscriptionPlan = result.newPlan;
               return updatedSub;
             }, function(error) {
               throw error;
@@ -290,6 +289,8 @@ function chargebeeSubParams(accountUser) {
 function canSwitchPlan(accountId, currentPlan, newPlan){
   let deferred = q.defer();
 
+  console.log(currentPlan.priority, newPlan.priority);
+
   if(currentPlan.priority > newPlan.priority){
     let functionArray = [
       validateSessionCount(accountId, newPlan),
@@ -323,6 +324,8 @@ function validateSessionCount(accountId, newPlan) {
         accountId: accountId
       }
     }).then(function(c) {
+      console.log("!!!!!!!!!!!!!!!!   session count");
+      console.log(c);
       if(newPlan.sessionCount < c){
         cb(null, {session: MESSAGES.validation.session});
       }else{
