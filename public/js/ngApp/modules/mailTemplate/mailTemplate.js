@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp.mailTemplate', []).factory('mailTemplate', mailTemplateFactory);
 
-  mailTemplateFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg'];
-  function mailTemplateFactory($q, globalSettings, $resource, dbg) {
+  mailTemplateFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg', '$rootScope'];
+  function mailTemplateFactory($q, globalSettings, $resource, dbg, $rootScope) {
     
     var mailRestApi = {
       mailTemplates: $resource(globalSettings.restUrl + '/mailTemplates', {}, {get: {method: 'GET'}}),
@@ -18,6 +18,7 @@
     var MailTemplateService = {};
     MailTemplateService.getAllMailTemplates = getAllMailTemplates;
     MailTemplateService.saveMailTemplate = saveMailTemplate;
+    MailTemplateService.saveTemplate = saveTemplate;
     MailTemplateService.getMailTemplate = getMailTemplate;
     MailTemplateService.deleteMailTemplate = deleteMailTemplate;
     MailTemplateService.resetMailTemplate = resetMailTemplate;
@@ -55,6 +56,16 @@
       });
       return deferred.promise;
     }
+
+    function saveTemplate(template) {
+      var deferred = $q.defer();
+      console.warn(template);
+      mailRestApi.saveMailTemplate.post({},{mailTemplate:template}, function(res) {
+        $rootScope.$broadcast('updateSessionBuilderEmails', res);
+        deferred.resolve(res);
+      });
+      return deferred.promise;
+    }
     
     function deleteMailTemplate(mTemplate) {
       dbg.log2('#KliikoApp.mailTemplate > delete mail template', mTemplate);
@@ -62,6 +73,7 @@
 
       mailRestApi.deleteMailTemplate.delete({mailTemplateId:mTemplate.id}, function (res) {
         dbg.log2('#KliikoApp.mailTemplate > delete mail template> server respond >', res);
+        $rootScope.$broadcast('updateSessionBuilderEmails', res);
         deferred.resolve(res);
       });
       return deferred.promise;

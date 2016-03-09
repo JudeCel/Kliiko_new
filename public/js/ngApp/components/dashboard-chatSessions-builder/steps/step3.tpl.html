@@ -36,11 +36,11 @@
                 <div class="list-group col-md-3 mail-template-list-section">
                     <div class="panel-heading mail-template-list-heading"><strong>Email Templates</strong></div>
                     <div id="mail-template-list" class="mail-template-list">
-                        <a ng-repeat="(key, t) in ec.emailTemplatesForSessionBuilder track by $index" class="list-group-item" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : t.AccountId}"
-                           ng-click="ec.startEditingTemplate(key, true)">
+                        <a ng-repeat="(key, t) in sbc.sessionEmailTemplates track by $index" class="list-group-item" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : t.AccountId}"
+                           ng-click="ec.startEditingTemplate(key, true, t.id, t)">
                             <div ng-hide="t.AccountId">
                                 <img src="/icons/ic_arrow_right.png" class="pull-right" ng-hide="!ec.isCurrent(key)">
-                                {{t["MailTemplateBase.name"]}} <span ng-if="!$last">*</span><span ng-if="$last"> (optional)</span>
+                                {{ t.name }} <span ng-if="t.name != 'Generic'">*</span><span ng-if="t.name == 'Generic'"> (optional)</span>
                             </div>
 
                             <div class="input-group input-group-sm" ng-hide="!t.AccountId">
@@ -57,16 +57,6 @@
 
                 <div class="col-md-8 mail-template-details">
                     <table>
-                        <tr>
-                            <td class="template-detail-name-column">Template Name:</td>
-                            <td>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" aria-describedby="basic-addon2" ng-model="ec.currentTemplate.name">
-                                    <span class="input-group-addon" id="basic-addon2">{{ec.currentTemplate["MailTemplateBase.name"]}}</span>
-                                </div>
-                                <div class="has-error text-center">{{ec.currentTemplate.error.name}}</div>
-                            </td>
-                        </tr>
 
                         <tr>
                             <td>Subject:</td>
@@ -83,11 +73,7 @@
                     <div class="has-error text-center">{{ec.currentTemplate.error.content}}</div>
                     <br>
 
-                    <button type="submit" class="btn btn-red pull-left" ng-click="ec.resetMailTemplate()">Reset</button>
-
-
-                    <button type="submit" class="btn btn-green pull-right" ng-click="ec.modifyAndSave()">Modify & Save Copy</button>
-                    <button type="submit" class="btn btn-lightgreen pull-right" ng-click="ec.modifyAndSave(true)" ng-hide="ec.currentTemplate.systemMessage">Create Copy</button>
+                    <button type="submit" class="btn btn-green pull-right" ng-click="ec.saveEmailTemplate()">Save</button>
                     <button type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
 
 

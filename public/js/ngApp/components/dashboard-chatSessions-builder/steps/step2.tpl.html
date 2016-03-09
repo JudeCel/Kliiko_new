@@ -27,6 +27,7 @@
                         <div id="contact-lists-right-column" class="col-md-12">
                             <!-- TABLE -->
                             <section id="dashboard-contact-lists-main-table">
+
                                 <table class='table table-responsive table-dashboardElements'
                                        ng-hide="!clc.lists.activeList.members.length" style="font-size: 1.6rem">
                                     <thead>
@@ -52,7 +53,7 @@
                                     </thead>
                                     <tbody>
                                     <tr class="member-row"
-                                        ng-repeat='member in clc.lists.listByType["Facilitators"].members | orderBy: clc.tableSort.by : clc.tableSort.reverse'
+                                        ng-repeat='member in sbc.facilitators = (clc.lists.listByType["Facilitators"].members | orderBy: clc.tableSort.by : clc.tableSort.reverse)'
                                         ng-class="{'selected':member._selected}">
                                         <td class="selection-column">
                                             <input type="radio" ng-value="member" ng-model="sbc.selectedFacilitator" ng-click="sbc.facilitatorsSelectHandle(sbc.selectedFacilitator)">
@@ -312,8 +313,6 @@
                                         topics.newTopicName.length }}
                                     </div>
                                 </div>
-
-
                             </div>
                         </form>
 

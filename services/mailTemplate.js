@@ -8,6 +8,29 @@ var _ = require('lodash');
 var ejs = require('ejs');
 var constants = require('../util/constants');
 
+
+module.exports = {
+  validate: validate,
+  create: create,
+  update: update,
+  getAllMailTemplates: getAllMailTemplates,
+  getMailTemplate: getMailTemplate,
+  saveMailTemplate: saveMailTemplate,
+
+  createBaseMailTemplate: createBaseMailTemplate,
+  copyBaseTemplates: copyBaseTemplates,
+  copyBaseTemplatesForSession: copyBaseTemplatesForSession,
+  deleteMailTemplate: deleteMailTemplate,
+  resetMailTemplate: resetMailTemplate,
+  composeMailFromTemplate: composeMailFromTemplate,
+  sendMailFromTemplate: sendMailFromTemplate,
+  sendMailFromTemplateWithCalendarEvent: sendMailFromTemplateWithCalendarEvent,
+  composePreviewMailTemplate: composePreviewMailTemplate,
+  getActiveMailTemplate: getActiveMailTemplate
+};
+
+
+
 function validate(params, callback) {
   MailTemplate.build(params).validate().done(function(errors, _account) {
     callback(errors, params);
@@ -278,6 +301,7 @@ function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, call
   }
 }
 
+
 function resetMailTemplate(templateId, callback) {
   if (!templateId) {
       return callback("e-mail template not provided");
@@ -411,21 +435,3 @@ function composePreviewMailTemplate(mailTemplate) {
   return composeMailFromTemplate(mailTemplate, mailPreviewVariables);
 }
 
-module.exports = {
-  validate: validate,
-  create: create,
-  update: update,
-  getAllMailTemplates: getAllMailTemplates,
-  getMailTemplate: getMailTemplate,
-  saveMailTemplate: saveMailTemplate,
-  createBaseMailTemplate: createBaseMailTemplate,
-  copyBaseTemplates: copyBaseTemplates,
-  copyBaseTemplatesForSession: copyBaseTemplatesForSession,
-  deleteMailTemplate: deleteMailTemplate,
-  resetMailTemplate: resetMailTemplate,
-  composeMailFromTemplate: composeMailFromTemplate,
-  sendMailFromTemplate: sendMailFromTemplate,
-  sendMailFromTemplateWithCalendarEvent: sendMailFromTemplateWithCalendarEvent,
-  composePreviewMailTemplate: composePreviewMailTemplate,
-  getActiveMailTemplate: getActiveMailTemplate
-}

@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices', '$ocLazyLoad', '$q', '$window', 'ngProgressFactory'];
-  function SessionBuilderController(dbg, messenger, SessionModel, $state, $stateParams, $filter, domServices, $ocLazyLoad, $q, $window, ngProgressFactory) {
+  SessionBuilderController.$inject = ['dbg', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices', '$ocLazyLoad', '$q', '$window', 'ngProgressFactory', '$rootScope'];
+  function SessionBuilderController(dbg, messenger, SessionModel, $state, $stateParams, $filter, domServices, $ocLazyLoad, $q, $window, ngProgressFactory,  $rootScope) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -26,6 +26,7 @@
     var sessionId = $stateParams.id || null;
 
     vm.session = new SessionModel(sessionId);
+
     vm.session.init().then(function(res) {
       vm.mouseOveringMember = [];
       vm.sessionMemberValidations = {
@@ -90,6 +91,9 @@
     vm.topicSelectClickHandle = topicSelectClickHandle;
     vm.selectAllTopics = selectAllTopics;
 
+    // step3
+    vm.saveEmailTemplate = saveEmailTemplate;
+
     // step 4 + 5
     vm.showCorrectStatus = showCorrectStatus;
     vm.inviteMembers = inviteMembers;
@@ -103,6 +107,7 @@
     vm.sendGenericEmail = sendGenericEmail;
 
 
+
     function closeSession() {
       vm.session.cancel();
     }
@@ -110,7 +115,7 @@
 
     function goToStep(step) {
       if (!angular.isNumber(step)) {
-        if (step === 'back')  handlePreviouseStep()
+        if (step === 'back')  handlePreviouseStep();
         if (step === 'next') handleNextStep();
         if (step === 'submit') {
           //step = 5;
@@ -121,7 +126,8 @@
 
 
       function handlePreviouseStep() {
-        vm.cantMoveNextStep = false;  step = vm.currentStep - 1;
+        vm.cantMoveNextStep = false;  step = vm.currentStep = vm.currentStep - 1;
+        vm.session.goPreviouseStep();
         initStep(step).then(
           function (res) {
             vm.currentStep = step;
@@ -136,7 +142,7 @@
         var routerProgressbar = ngProgressFactory.createInstance();
         routerProgressbar.start();
 
-        step = vm.currentStep + 1;
+        step = vm.currentStep;
 
         frontEndStepValidation(step).then(
           function(res) {
@@ -145,19 +151,20 @@
               function(res) {
 
                 vm.session.validateStep().then(
-                  function (res) {
+                  function(res) {
+
 
                     vm.searchingParticipants = false;
                     vm.searchingObservers = false;
-                    initStep(step).then(function(res) {
-                      $stateParams.planUpgradeStep = vm.currentStep = step;
+                    initStep(step+1).then(function(res) {
+                      $stateParams.planUpgradeStep = vm.currentStep = step+1;
                     });
 
                     routerProgressbar.complete();
                   },
-                  function (err) {
+                  function(validateErr) {
                     routerProgressbar.complete();
-                    messenger.error(err);
+                    if (validateErr) messenger.error(validateErr);
                   }
                 );
 
@@ -165,14 +172,14 @@
               },
               function (err) {
                 routerProgressbar.complete();
-                messenger.error(err);
+                if (err) messenger.error(err);
               }
             );
 
           },
           function (err) {
             routerProgressbar.complete();
-            messenger.error(err);
+            if (err) messenger.error(err);
           }
         );
       }
@@ -212,11 +219,11 @@
     function frontEndStepValidation(step) {
       var deferred = $q.defer();
 
-      if (step === 2) { validateStep1() }
-      if (step === 3) { validateStep2() }
-      if (step === 4) { validateStep3() }
-      if (step === 5) { validateStep4() }
-      if (step === 6) { validateStep5() }
+      if (step === 1) { validateStep1() }
+      if (step === 2) { validateStep2() }
+      if (step === 3) { validateStep3() }
+      if (step === 4) { validateStep4() }
+      if (step === 5) { validateStep5() }
 
       return deferred.promise;
 
@@ -317,6 +324,8 @@
 
       }
 
+      showExpiresWarning();
+
 
       if (step == 1) {
 
@@ -343,8 +352,25 @@
           '/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js'
         ]).then(function(res) {
           vm.currentStep = step;
+
+          if (vm.session.steps.step2.facilitator) {
+            //timeout to wait for getting members list data
+            setTimeout(function() {
+              if (!vm.facilitators) return;
+              for (var i = 0, len = vm.facilitators.length; i < len ; i++) {
+                if (vm.facilitators[i].accountUserId == vm.session.steps.step2.facilitator) {
+                  vm.selectedFacilitator = vm.facilitators[i];
+                  break;
+                }
+              }
+            }, 1000);
+          }
+
+          if (vm.session.steps.step2.topics.length) vm.chatSessionTopicsList = vm.session.steps.step2.topics;
+
           deferred.resolve();
           return deferred.promise;
+
         });
       }
       else if(step == 3) {
@@ -353,6 +379,9 @@
           '/js/vendors/ng-file-upload/ng-file-upload.js'
         ]).then(function(res) {
           vm.currentStep = step;
+          vm.sessionEmailTemplates = sortBySpecifiedIds(vm.session.steps.step3.emailTemplates);
+
+          $rootScope.$on('updateSessionBuilderEmails', updateSessionBuilderEmailsHandler);
           deferred.resolve();
           return deferred.promise;
         });
@@ -397,6 +426,31 @@
       }
 
       return deferred.promise;
+
+      function showExpiresWarning() {
+        if (vm.session.sessionData.endTime) {
+          var today = moment(new Date());
+          var expDay = moment(vm.session.sessionData.endDate);
+          var diff = expDay.diff(today, 'days');
+          (diff <= 5)
+            ? vm.expireWarning = {days:diff}
+            : vm.expireWarning = null;
+        }
+      }
+    }
+
+    function sortBySpecifiedIds(allTemplates) {
+      var ids = [1,3,6,5,2,4];
+      var output = [];
+
+      for (var i = 0, len = ids.length; i < len ; i++) {
+        for (var j = 0, lenJ = allTemplates.length; j < lenJ ; j++) {
+          if ( ids[i] == allTemplates[j].MailTemplateBaseId ) output.push(allTemplates[j]);
+        }
+      }
+
+      return output;
+
     }
 
     function stepsClassIsActive(step) {
@@ -586,6 +640,23 @@
 
 
     }
+
+    /// step 3
+    function updateSessionBuilderEmailsHandler(e, attrs) {
+      vm.session.update().then(
+        function (res) {
+          vm.sessionEmailTemplates = sortBySpecifiedIds(res.sessionBuilder.steps.step3.emailTemplates);
+        },
+        function (err) {
+        }
+      );
+
+    }
+
+    function saveEmailTemplate(template) {
+
+    }
+
 
     /// step 4 + 5
     function showCorrectStatus(member) {

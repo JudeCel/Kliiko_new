@@ -44,7 +44,7 @@
     SessionModel.prototype.cancel = cancel;
     SessionModel.prototype.update = update;
     SessionModel.prototype.validateStep = validateStep;
-    SessionModel.prototype.goToNextStep = goToNextStep;
+    SessionModel.prototype.goPreviouseStep = goPreviousStep;
     //SessionModel.prototype.destroy = update;
     SessionModel.prototype.destroy = cancel;
     SessionModel.prototype.updateStep = updateStep;
@@ -147,15 +147,18 @@
     }
 
     function update() {
+      var deferred = $q.defer();
       console.log('will update - todo');
       var self = this;
-      var deferred = $q.defer();
+
 
       sessionBuilderRestApi.put({id:self.id},{sessionObj:self},function(res) {
         if (res.error) { deferred.reject(res.error); return deferred.promise; }
         //self = angular.merge(self, res.sessionBuilder);
         deferred.resolve(res);
       });
+
+      return deferred.promise;
 
     }
 
@@ -173,10 +176,19 @@
       return deferred.promise;
     }
 
-    function goToNextStep() {
 
+    function goPreviousStep() {
+      var self = this;
+      var deferred = $q.defer();
+
+      sessionBuilderRestApi.previousStep({id: self.id, otherId: 'previous'}, {}, function(res) {
+        res.error
+          ? deferred.reject(res.error)
+          : deferred.resolve(res);
+      });
+
+      return deferred.promise;
     }
-
 
     function updateStep() {
       var self = this;
