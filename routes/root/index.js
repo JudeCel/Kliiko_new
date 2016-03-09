@@ -15,6 +15,7 @@ var socialProfileMiddleware = require('../../middleware/socialProfile');
 var inviteRoutes = require('./invite.js');
 var surveyRoutes = require('./survey.js');
 var myDashboardRoutes = require('./myDashboard.js');
+var chargebeeRoutes = require('./chargebee.js');
 var constants = require('../../util/constants');
 var appData = require('../../services/webAppData');
 
@@ -267,5 +268,7 @@ router.route('/invite/:token/accept').post(inviteRoutes.acceptPost);
 router.route('/survey/:id').get(surveyRoutes.index);
 
 router.route('/my-dashboard').get(myDashboardRoutes.index);
+
+router.route('/chargebee/subscription-cancelled').post(chargebeeRoutes.subCancelled);
 
 module.exports = router;

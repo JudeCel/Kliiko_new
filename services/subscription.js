@@ -1,5 +1,7 @@
 'use strict';
 
+require('./../lib/airbrake').handleExceptions();
+
 var models = require('./../models');
 var filters = require('./../models/filters');
 var Subscription = models.Subscription;
@@ -39,6 +41,7 @@ module.exports = {
   createPortalSession: createPortalSession,
   createSubscription: createSubscription,
   updateSubscription: updateSubscription,
+  cancelSubscription: cancelSubscription,
   getAllPlans: getAllPlans
 }
 
@@ -61,6 +64,23 @@ function findSubscription(accountId) {
 
   Subscription.find({ where: { accountId: accountId }, include: [SubscriptionPlan] }).then(function(subscription) {
     deferred.resolve(subscription);
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function findSubscriptionByChargebeeId(subscriptionId) {
+  let deferred = q.defer();
+
+  Subscription.find({ where: { subscriptionId: subscriptionId }, include: [SubscriptionPlan] }).then(function(subscription) {
+    if(subscription) {
+      deferred.resolve(subscription);
+    }
+    else {
+      deferred.reject(MESSAGES.notFound.subscription);
+    }
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -174,6 +194,23 @@ function updateSubscription(accountId, newPlanId, provider) {
   return deferred.promise;
 }
 
+function cancelSubscription(subscriptionId, eventId, callback) {
+  let deferred = q.defer();
+
+  findSubscriptionByChargebeeId(subscriptionId).then(function(subscription) {
+    subscription.update({ active: false, lastWebhookId: eventId }, { returning: true }).then(function(subscription) {
+      disableSubDependencies(subscription.accountId, callback);
+      deferred.resolve(subscription);
+    }, function(error) {
+      deferred.reject(filters.errors(error));
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
 // Helpers
 function chargebeePortalCreate(params, provider) {
   let deferred = q.defer();
@@ -268,6 +305,27 @@ function chargebeeSubParams(accountUser) {
       country: accountUser.country
     }
   }
+}
+
+function parallelFunc(promise) {
+  return function(cb) {
+    promise.then(function() {
+      cb();
+    });
+  }
+}
+
+function disableSubDependencies(accountId, callback) {
+  let arrayFunctions = [
+    parallelFunc(models.Session.update({ active: false }, { where: { accountId: accountId } })),
+    parallelFunc(models.Survey.update({ closed: true }, { where: { accountId: accountId } }))
+  ];
+
+  async.parallel(arrayFunctions, function(error, _result) {
+    if(callback) {
+      callback(error);
+    }
+  });
 }
 
 // Validators

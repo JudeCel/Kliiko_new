@@ -9,12 +9,14 @@ module.exports = (Sequelize, DataTypes) => {
     subscriptionPlanId: { type: DataTypes.INTEGER, allowNull: false },
     planId: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     customerId: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
+    lastWebhookId: { type: DataTypes.STRING, allowNull: true },
     subscriptionId: { type: DataTypes.STRING, allowNull: false,
       validate: {
         notEmpty: true,
         isUnique: validations.unique(Sequelize, 'Subscription', 'subscriptionId')
       }
     },
+    active: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: true }
   }, {
     timestamps: true,
     paranoid: true,
