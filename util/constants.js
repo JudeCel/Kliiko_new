@@ -40,10 +40,10 @@ module.exports = {
   ],
   mailTemplateFields: [
     'id', 'name', 'subject', 'content',
-    'MailTemplateBaseId', 'AccountId', 'systemMessage'
+    'MailTemplateBaseId', 'AccountId', 'systemMessage', 'isCopy'
   ],
   mailTemplateFieldsForList: [
-    'id', 'name', 'MailTemplateBaseId', 'AccountId', 'systemMessage'
+    'id', 'name', 'MailTemplateBaseId', 'AccountId', 'systemMessage', 'isCopy'
   ],
   mailTemplateType : {
     'firstInvitation' : "First Invitation",
