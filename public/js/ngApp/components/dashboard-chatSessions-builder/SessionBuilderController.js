@@ -329,8 +329,36 @@
 
       if (step == 1) {
 
-        if (vm.session.steps.step1.brandProjectPreferenceId)  brandLogoId =  vm.session.steps.step1.brandProjectPreferenceId;
-        if (vm.session.steps.step1.resourseId) colorSchemeId = vm.session.steps.step1.brandProjectPreferenceId;
+        //if (vm.session.steps.step1.resourceId) colorSchemeId = vm.session.steps.step1.brandProjectPreferenceId;
+        // populate logo
+        if (vm.session.steps.step1.resourceId) {
+          setTimeout(function() {
+
+            for (var i = 0, len = vm.logosList.length; i < len ; i++) {
+              if (vm.logosList[i].id == vm.session.steps.step1.resourceId) {
+                vm.brandLogo = vm.logosList[i];
+                break;
+              }
+            }
+          }, 1000);
+
+        }
+
+        // populate color scheme
+        if (vm.session.steps.step1.brandProjectPreferenceId) {
+          setTimeout(function() {
+
+            for (var i = 0, len = vm.colorsList.length; i < len ; i++) {
+              if (vm.colorsList[i].id == vm.session.steps.step1.brandProjectPreferenceId) {
+                vm.colorScheme = vm.colorsList[i];
+                break;
+              }
+            }
+          }, 1000);
+
+        }
+
+
         deferred.resolve();
         return deferred.promise;
       }

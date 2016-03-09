@@ -66,7 +66,7 @@
                 <div class="gallery-body col-md-12">
                     <table class="table table-hover table-responsive" >
                         <!--------------------->
-                        <div class='col-sm-4' ng-repeat="resource in resources | filter: { resourceType: 'brandLogo' }">
+                        <div class='col-sm-4' ng-repeat="resource in sbc.logosList = ( resources | filter: { resourceType: 'brandLogo' } )">
                             <label for="{{ $index }}-logo">
                                 <div class='panel'>
                                     <input id="{{ $index }}-logo" type="radio" ng-model="sbc.brandLogo" ng-value="resource" ng-click="sbc.updateStep(1)">
@@ -100,7 +100,7 @@
 
             <section>
                 <div class='row' ng-controller='BrandColourController as bcc'>
-                    <div class='col-sm-6' ng-repeat='scheme in bcc.schemes' ng-show="bcc.schemes.length">
+                    <div class='col-sm-6' ng-repeat='scheme in sbc.colorsList = bcc.schemes' ng-show="bcc.schemes.length">
                         <label for="{{ $index }}-scheme">
                             <div class='panel panel-default panel-success'>
                                 <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='background-color: {{ scheme.colours.browserBackground }};'>
