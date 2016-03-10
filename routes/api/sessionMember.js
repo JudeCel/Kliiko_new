@@ -3,10 +3,10 @@
 let sessionMemberService = require('./../../services/sessionMember');
 
 module.exports = {
-  addMember: addMember
+  addMembers: addMembers
 };
 
-function addMember(req, res, next) {
+function addMembers(req, res, next) {
   var params = req.body;
 
   if (params.role == 'facilitator') {
@@ -25,7 +25,11 @@ function addMember(req, res, next) {
   }
 
   function createBulk() {
-    sessionMemberService.bulkCreate([params], params.sessionId).then(
+    for (var i = 0, len = params.members.length; i < len ; i++) {
+      params.members[i].sessionId = params.sessionId;
+      params.members[i].role = params.role
+    }
+    sessionMemberService.bulkCreate(params.members, params.sessionId).then(
       function (resp) {
         res.send(resp);
       },

@@ -39,14 +39,25 @@ function openBuild(req, res, next) {
 }
 
 function update(req, res, next) {
+  let params;
   let sessionObj = req.body.sessionObj;
+
   if(!sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
 
-  sessionBuilderServices.update(sessionObj.id, res.locals.currentDomain.id, sessionObj.steps.step1).then(function(result) {
+
+  if (req.body.step3) {
+    params = sessionObj.steps.step3
+  } else {
+    params = sessionObj.steps.step1
+  }
+
+  sessionBuilderServices.update(sessionObj.id, res.locals.currentDomain.id, params).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});
-  })
+  });
+
+
 }
 
 function nextStep(req, res, next) {

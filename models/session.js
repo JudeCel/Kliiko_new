@@ -20,7 +20,7 @@ module.exports = (Sequelize, DataTypes) => {
       }
     } },
     endTime: { type: DataTypes.DATE, allowNull: false , defaultValue: Date.now() },
-    incentive_details: { type: DataTypes.TEXT, allowNull: true  },
+    incentive_details: { type: DataTypes.STRING, allowNull: true  },
     active:	{ type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     colours_used: { type: DataTypes.TEXT, allowNull: true },
 

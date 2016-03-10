@@ -176,11 +176,14 @@
       });
     }
 
-    function saveEmailTemplate() {
+    function saveEmailTemplate(force) {
       selectedTemplate.subject = vm.currentTemplate.subject;
       selectedTemplate.content = vm.currentTemplate.content;
       console.warn(selectedTemplate);
 
+      if (force) {
+        selectedTemplate.content = $('#templateContent').wysiwyg('getContent');
+      }
       mailTemplate.saveTemplate(selectedTemplate).then(function (res) {
         if (!res.error) {
           messenger.ok("Template was successfully saved.");
@@ -258,7 +261,7 @@
       if(!$scope.$$phase) {
         $scope.$apply();
       }
-    }
+    };
 
     function uploadTypeForTitle(uploadType) {
       if(uploadType == "youtubeUrl"){

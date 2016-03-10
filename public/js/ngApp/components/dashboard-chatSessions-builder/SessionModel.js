@@ -41,7 +41,7 @@
     SessionModel.prototype.init = init;
     SessionModel.prototype.createNew = createNew;
     SessionModel.prototype.getRemoteData = getRemoteData;
-    SessionModel.prototype.cancel = cancel;
+    SessionModel.prototype.close = close;
     SessionModel.prototype.update = update;
     SessionModel.prototype.validateStep = validateStep;
     SessionModel.prototype.goPreviouseStep = goPreviousStep;
@@ -49,7 +49,7 @@
     SessionModel.prototype.destroy = cancel;
     SessionModel.prototype.updateStep = updateStep;
     SessionModel.prototype.sendSms = sendSms;
-    SessionModel.prototype.addMember = addMember;
+    SessionModel.prototype.addMembers = addMembers;
     SessionModel.prototype.saveTopics = saveTopics;
     SessionModel.prototype.inviteParticipants = inviteParticipants;
     SessionModel.prototype.inviteObservers = inviteObservers;
@@ -136,7 +136,7 @@
       return deferred.promise;
     }
 
-    function cancel() {
+    function close() {
       var self = this;
       var deferred = $q.defer();
       sessionBuilderRestApi.delete({id: self.id},{},function(res) {
@@ -146,15 +146,17 @@
       return deferred.promise;
     }
 
+
     function update() {
       var deferred = $q.defer();
-      console.log('will update - todo');
       var self = this;
 
+      var step3 = null;
 
-      sessionBuilderRestApi.put({id:self.id},{sessionObj:self},function(res) {
+      if (self.currentStep == 'manageSessionParticipants') step3 = true;
+
+      sessionBuilderRestApi.put({id:self.id},{sessionObj:self, step3:step3},function(res) {
         if (res.error) { deferred.reject(res.error); return deferred.promise; }
-        //self = angular.merge(self, res.sessionBuilder);
         deferred.resolve(res);
       });
 
@@ -190,11 +192,15 @@
       return deferred.promise;
     }
 
-    function updateStep() {
+    function updateStep(stepNumber) {
       var self = this;
       var deferred = $q.defer();
 
-      sessionBuilderRestApi.put({id:self.id},{sessionObj:self},function(res) {
+      var step3 = null;
+
+      if (stepNumber && stepNumber == 3)  step3 = true;
+
+      sessionBuilderRestApi.put({id:self.id},{sessionObj:self,  step3:step3},function(res) {
         if (res.error) { deferred.reject(res.error); return deferred.promise; }
         deferred.resolve(res);
       });
@@ -219,17 +225,24 @@
     }
 
 
-    function addMember(member, role) {
+    function addMembers(members, role) {
       var self = this;
-
       var deferred = $q.defer();
+      if (!angular.isArray(members)) members = [members];
+
       var params = {
         sessionId: self.id,
-        accountUserId: member.accountUserId,
-        username: member.firstName + ' '+member.lastName,
-        role: role
-
+        role: role,
+        members: []
       };
+
+      for (var i = 0, len = members.length; i < len ; i++) {
+        params.members[i] = {
+          accountUserId: members[i].accountUserId,
+          username: members[i].firstName + ' '+ members[i].lastName,
+        };
+      }
+
       sessionMemberApi.post({},params,function(res) {
         deferred.resolve();
       });

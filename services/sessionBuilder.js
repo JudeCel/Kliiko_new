@@ -485,7 +485,7 @@ function stepsDefinition(session) {
       step3Query(session.id).then(function(emailTemplates) {
         object.step3 = {
           stepName: 'manageSessionEmails',
-          incentive_details: null,
+          incentive_details: session.incentive_details,
           emailTemplates: emailTemplates
         };
         cb();

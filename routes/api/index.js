@@ -134,7 +134,7 @@ router.post('/session/:id', policy.authorized(['accountManager', 'admin']), sess
 
 // Session Member
 router.post('/sessionMember/rate/:id', sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin']), session.updateRating);
-router.post('/sessionMember', sessionMember.addMember);
+router.post('/sessionMember', sessionMember.addMembers);
 
 // Session Builder
 router.post('/sessionBuilder',  policy.authorized(['accountManager', 'admin']), sessionBuilder.new);

@@ -109,7 +109,7 @@
 
 
     function closeSession() {
-      vm.session.cancel();
+      vm.session.close();
     }
 
 
@@ -292,7 +292,10 @@
       }
 
       function validateStep4() {
-        if (vm.participants.length) return true;
+        if (vm.participants.length) {
+          deferred.resolve();
+          return deferred.promise;
+        }
         messenger.error('Select at least one participant');
         deferred.reject();
         return deferred.promise;
@@ -328,8 +331,6 @@
 
 
       if (step == 1) {
-
-        //if (vm.session.steps.step1.resourceId) colorSchemeId = vm.session.steps.step1.brandProjectPreferenceId;
         // populate logo
         if (vm.session.steps.step1.resourceId) {
           setTimeout(function() {
@@ -456,9 +457,9 @@
       return deferred.promise;
 
       function showExpiresWarning() {
-        if (vm.session.sessionData.endTime) {
+        if (vm.session.sessionData && vm.session.sessionData.endTime) {
           var today = moment(new Date());
-          var expDay = moment(vm.session.sessionData.endDate);
+          var expDay = moment(vm.session.sessionData.endTime);
           var diff = expDay.diff(today, 'days');
           (diff <= 5)
             ? vm.expireWarning = {days:diff}
@@ -497,7 +498,7 @@
 
       if (stepNumber && stepNumber === 3 && vm.accordions.incentive) vm.accordions.incentive = true;
 
-      vm.session.updateStep();
+      vm.session.updateStep(stepNumber);
 
     }
 
@@ -567,7 +568,7 @@
 
     function facilitatorsSelectHandle(facilitator) {
       vm.session.steps.step2.facilitator = facilitator;
-      vm.session.addMember(facilitator, 'facilitator').then(
+      vm.session.addMembers(facilitator, 'facilitator').then(
         function (res) {
           vm.session.update();
         },
@@ -827,11 +828,29 @@
         vm.participants = vm.participants.concat(selectMembers(activeList.id, activeList.members));
         vm.participants = removeDuplicatesFromArray(vm.participants);
         vm.searchingParticipants = false;
+
+        vm.session.addMembers(vm.participants, 'participant').then(
+          function (res) {
+            vm.session.update();
+          },
+          function (err) {
+          }
+        );
       }
-      else if(vm.searchingObservers) {
+
+      if(vm.searchingObservers) {
         vm.observers = vm.observers.concat(selectMembers(activeList.id, activeList.members));
         vm.observers = removeDuplicatesFromArray(vm.observers);
         vm.searchingObservers = false;
+
+        vm.session.addMembers(vm.observers, 'observer').then(
+          function (res) {
+            vm.session.update();
+          },
+          function (err) {
+          }
+        );
+
       }
     }
 
