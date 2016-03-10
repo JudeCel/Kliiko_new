@@ -181,7 +181,7 @@ function getMailTemplateForReset(req, callback) {
   });
 }
 
-function getAllMailTemplates(req, getSystemMail,callback) {
+function getAllMailTemplates(accountId, getSystemMail,callback) {
   let query = {};
 
   let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category']}];
@@ -189,7 +189,7 @@ function getAllMailTemplates(req, getSystemMail,callback) {
   if (!getSystemMail) {
     //getting list that any user can edit
     query.systemMessage = false;
-    query['$or'] = [{AccountId: req.ownerAccountId}, {AccountId: null}];
+    query['$or'] = [{AccountId: accountId}, {AccountId: null}];
   }
 
 
@@ -449,4 +449,3 @@ function composePreviewMailTemplate(mailTemplate) {
 
   return composeMailFromTemplate(mailTemplate, mailPreviewVariables);
 }
-
