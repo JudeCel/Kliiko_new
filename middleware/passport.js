@@ -73,7 +73,7 @@ passport.deserializeUser(function(userObject, done) {
       });
     }else{
       done("not found", null);
-    };
+    }
   });
 });
 

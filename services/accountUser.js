@@ -57,8 +57,8 @@ function buidAttrs(params, accountId, role) {
     status: 'added',
     active: false,
     role: role,
-    AccountId: params.accountId
-  }
+    AccountId: params.accountId || accountId
+  };
   return _.merge(params, defaultStruct);
 }
 
