@@ -13,9 +13,13 @@
 
 
                 <div class="col-md-3">
-                    <div class="btn-standart btn-red" ui-sref--="dashboard.chatSessions" ng-click="sbc.closeSession()">
+                    <div ng-show="sbc.session.active" class="btn-standart btn-red" ng-click="sbc.closeSession()">
                         Close Chat Session
-                        <img class="ic" src="icons/ic_close_session.png" alt="Go Back">
+                        <img class="ic" src="icons/ic_close_session.png" alt="Close Session">
+                    </div>
+                    <div ng-show="!sbc.session.active" class="btn-standart btn-green" ng-click="sbc.openSession()">
+                        Activate Chat Session
+                        <!--<img class="ic" src="icons/ic_close_session.png" alt="">-->
                     </div>
                 </div>
             </div>

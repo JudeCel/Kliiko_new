@@ -75,6 +75,7 @@
     vm.allTopicsSelected = false;
 
     vm.closeSession = closeSession;
+    vm.openSession = openSession;
     vm.stepsClassIsActive = stepsClassIsActive;
     vm.updateStep = updateStep;
     vm.goToStep = goToStep;
@@ -110,6 +111,10 @@
 
     function closeSession() {
       vm.session.close();
+    }
+
+    function openSession() {
+      vm.session.open();
     }
 
 

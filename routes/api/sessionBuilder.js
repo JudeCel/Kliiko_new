@@ -51,6 +51,8 @@ function update(req, res, next) {
     params = sessionObj.steps.step1
   }
 
+  if (req.body.data) params = req.body.data;
+
   sessionBuilderServices.update(sessionObj.id, res.locals.currentDomain.id, params).then(function(result) {
     res.send(result);
   }, function(error) {

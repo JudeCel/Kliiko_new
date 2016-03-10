@@ -42,11 +42,12 @@
     SessionModel.prototype.createNew = createNew;
     SessionModel.prototype.getRemoteData = getRemoteData;
     SessionModel.prototype.close = close;
+    SessionModel.prototype.open = open;
     SessionModel.prototype.update = update;
     SessionModel.prototype.validateStep = validateStep;
     SessionModel.prototype.goPreviouseStep = goPreviousStep;
     //SessionModel.prototype.destroy = update;
-    SessionModel.prototype.destroy = cancel;
+    SessionModel.prototype.close = close;
     SessionModel.prototype.updateStep = updateStep;
     SessionModel.prototype.sendSms = sendSms;
     SessionModel.prototype.addMembers = addMembers;
@@ -139,15 +140,33 @@
     function close() {
       var self = this;
       var deferred = $q.defer();
-      sessionBuilderRestApi.delete({id: self.id},{},function(res) {
-        deferred.resolve(res);
-      });
+      self.active = false;
+      self.update({active:self.active}).then(
+        function (res) {
+          deferred.resolve(res)
+        },
+        function (err) {
+        }
+      );
+      return deferred.promise;
+    }
 
+    function open() {
+      var self = this;
+      var deferred = $q.defer();
+      self.active = true;
+      self.update({active:self.active}).then(
+        function (res) {
+          deferred.resolve(res)
+        },
+        function (err) {
+        }
+      );
       return deferred.promise;
     }
 
 
-    function update() {
+    function update(data) {
       var deferred = $q.defer();
       var self = this;
 
@@ -155,7 +174,7 @@
 
       if (self.currentStep == 'manageSessionParticipants') step3 = true;
 
-      sessionBuilderRestApi.put({id:self.id},{sessionObj:self, step3:step3},function(res) {
+      sessionBuilderRestApi.put({id:self.id},{sessionObj:self, step3:step3, data:data},function(res) {
         if (res.error) { deferred.reject(res.error); return deferred.promise; }
         deferred.resolve(res);
       });
