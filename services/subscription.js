@@ -39,6 +39,7 @@ const MESSAGES = {
 module.exports = {
   messages: MESSAGES,
   findSubscription: findSubscription,
+  findSubscriptionByChargebeeId: findSubscriptionByChargebeeId,
   createPortalSession: createPortalSession,
   createSubscription: createSubscription,
   updateSubscription: updateSubscription,

@@ -306,6 +306,41 @@ describe('SERVICE - Subscription', function() {
     });
   });
 
+  describe('#findSubscriptionByChargebeeId', function() {
+    var subId = 'SomeUniqueID';
+
+    describe('happy path', function() {
+      beforeEach(function(done) {
+        subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: subId })).then(function() {
+          done();
+        }, function(error) {
+          done(error);
+        });
+      });
+
+      it('should succeed on finding subscription', function(done) {
+        subscriptionServices.findSubscriptionByChargebeeId(subId).then(function(subscription) {
+          assert.isNotNull(subscription);
+          assert.equal(subscription.accountId, testData.account.id);
+          done();
+        }, function(error) {
+          done(error);
+        });
+      });
+    });
+
+    describe('sad path', function() {
+      it('should fail because no subscription for this account', function(done) {
+        subscriptionServices.findSubscriptionByChargebeeId('someNonExistingId').then(function(subscription) {
+          done('Should not get here!');
+        }, function(error) {
+          assert.equal(error, subscriptionServices.messages.notFound.subscription);
+          done();
+        });
+      });
+    });
+  });
+
   describe('#createPortalSession', function() {
     describe('happy path', function() {
       function portalProvider() {
@@ -379,6 +414,14 @@ describe('SERVICE - Subscription', function() {
       });
     });
 
+    function surveyPromise() {
+      return models.Survey.count({ where: { accountId: testData.account.id, closed: true } });
+    }
+
+    function sessionPromise() {
+      return models.Session.count({ where: { accountId: testData.account.id, active: false } });
+    }
+
     describe('happy path', function() {
       function surveyHelper() {
         return function(cb) {
@@ -427,14 +470,6 @@ describe('SERVICE - Subscription', function() {
       });
 
       it('should succeed on closing subscription and dependencies', function(done) {
-        function surveyPromise() {
-          return models.Survey.count({ where: { accountId: testData.account.id, closed: true } });
-        }
-
-        function sessionPromise() {
-          return models.Survey.count({ where: { accountId: testData.account.id, closed: true } });
-        }
-
         surveyPromise().then(function(c) {
           assert.equal(c, 0);
           return sessionPromise();
@@ -462,43 +497,32 @@ describe('SERVICE - Subscription', function() {
       });
     });
 
-    // describe('sad path', function() {
-    //   beforeEach(function(done) {
-    //     subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function() {
-    //       done();
-    //     }, function(error) {
-    //       done(error);
-    //     });
-    //   });
-    //
-    //   function errorProvider(error) {
-    //     return function() {
-    //       return {
-    //         request: function(callback) {
-    //           callback({ errors: [{ path: 'error', message: error }] });
-    //         }
-    //       }
-    //     }
-    //   }
-    //
-    //   it('should fail because chargebee raises error', function(done) {
-    //     subscriptionServices.cancelSubscription(testData.account.id, 'callbackUrl', errorProvider('some error')).then(function(redirectUrl) {
-    //       done('Should not get here!');
-    //     }, function(error) {
-    //       assert.deepEqual(error, { error: 'some error' });
-    //       done();
-    //     });
-    //   });
-    //
-    //   it('should fail because subscription not found', function(done) {
-    //     subscriptionServices.cancelSubscription(testData.account.id + 100, 'callbackUrl', successProvider({ id: 'SomeUniqueID' })).then(function(redirectUrl) {
-    //       done('Should not get here!');
-    //     }, function(error) {
-    //       assert.equal(error, subscriptionServices.messages.notFound.subscription);
-    //       done();
-    //     });
-    //   });
-    // });
+    describe('sad path', function() {
+      it('should fail because cannot find subscription', function(done) {
+        subscriptionServices.cancelSubscription('someNonExistingId', 'someEventId').then(function() {
+          done('Should not get here!');
+        }, function(error) {
+          assert.deepEqual(error, subscriptionServices.messages.notFound.subscription);
+          done();
+        });
+      });
+
+      it('should fail no dependencies', function(done) {
+        subscriptionServices.cancelSubscription(subId, 'someEventId').then(function(result) {
+          return result.promise;
+        }).then(function() {
+          return surveyPromise();
+        }).then(function(c) {
+          assert.equal(c, 0);
+          return sessionPromise();
+        }).then(function(c) {
+          assert.equal(c, 0);
+          done();
+        }).catch(function(error) {
+          done(error);
+        });
+      });
+    });
   });
 
 });
