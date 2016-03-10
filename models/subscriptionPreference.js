@@ -10,7 +10,6 @@ module.exports = (Sequelize, DataTypes) => {
     data: { type: DataTypes.JSONB, allowNull: false, defaultValue: planConstants.Free }
   }, {
     timestamps: true,
-    paranoid: true,
     classMethods: {
       associate: function(models) {
         SubscriptionPreference.belongsTo(models.Subscription, { foreignKey: 'subscriptionId' });

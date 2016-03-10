@@ -269,6 +269,6 @@ router.route('/survey/:id').get(surveyRoutes.index);
 
 router.route('/my-dashboard').get(myDashboardRoutes.index);
 
-router.route('/chargebee/subscription-cancelled').post(chargebeeRoutes.subCancelled);
+router.route('/chargebee/webhooks').post(chargebeeRoutes.endPoint);
 
 module.exports = router;

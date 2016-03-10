@@ -44,11 +44,12 @@ describe('ROUTE - Chargebee Webhooks', function() {
     };
   }
 
-  describe('#subCancelled', function() {
+  describe('#endPoint', function() {
     function reqObject(subId) {
       return {
         body: {
           id: 'someEventId',
+          event_type: 'subscription_cancelled',
           content: {
             subscription: {
               id: subId
@@ -69,13 +70,13 @@ describe('ROUTE - Chargebee Webhooks', function() {
 
     describe('happy path', function() {
       it('should return 200', function(done) {
-        chargebeeRoutes.subCancelled(reqObject('someSubId'), resObject(200, done));
+        chargebeeRoutes.endPoint(reqObject('someSubId'), resObject(200, done));
       });
     });
 
     describe('sad path', function() {
       it('should return 500', function(done) {
-        chargebeeRoutes.subCancelled(reqObject('someOtherSubId'), resObject(500, done));
+        chargebeeRoutes.endPoint(reqObject('someOtherSubId'), resObject(500, done));
       });
     });
   });

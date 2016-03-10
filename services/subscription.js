@@ -44,6 +44,7 @@ module.exports = {
   createSubscription: createSubscription,
   updateSubscription: updateSubscription,
   cancelSubscription: cancelSubscription,
+  recurringSubscription: recurringSubscription,
   getAllPlans: getAllPlans
 }
 
@@ -76,7 +77,7 @@ function findSubscription(accountId) {
 function findSubscriptionByChargebeeId(subscriptionId) {
   let deferred = q.defer();
 
-  Subscription.find({ where: { subscriptionId: subscriptionId }, include: [SubscriptionPlan] }).then(function(subscription) {
+  Subscription.find({ where: { subscriptionId: subscriptionId }, include: [SubscriptionPlan, SubscriptionPreference] }).then(function(subscription) {
     if(subscription) {
       deferred.resolve(subscription);
     }
@@ -114,7 +115,7 @@ function createSubscription(accountId, userId, provider) {
       if(plan){
         return models.sequelize.transaction(function (t) {
           return Subscription.create(subscriptionParams(accountId, chargebeeSub, plan.id), {transaction: t}).then(function(subscription) {
-            return models.SubscriptionPreference.create({subscriptionId: subscription.id}, {transaction: t}).then(function() {
+            return SubscriptionPreference.create({subscriptionId: subscription.id}, {transaction: t}).then(function() {
               return subscription;
             }, function(error) {
               throw error;
@@ -215,6 +216,23 @@ function cancelSubscription(subscriptionId, eventId) {
   findSubscriptionByChargebeeId(subscriptionId).then(function(subscription) {
     subscription.update({ active: false, lastWebhookId: eventId }, { returning: true }).then(function(subscription) {
       let promise = disableSubDependencies(subscription.accountId);
+      deferred.resolve({ subscription: subscription, promise: promise });
+    }, function(error) {
+      deferred.reject(filters.errors(error));
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function recurringSubscription(subscriptionId, eventId) {
+  let deferred = q.defer();
+
+  findSubscriptionByChargebeeId(subscriptionId).then(function(subscription) {
+    subscription.update({ lastWebhookId: eventId }, { returning: true }).then(function(subscription) {
+      let promise = recurringSubDependencies(subscription);
       deferred.resolve({ subscription: subscription, promise: promise });
     }, function(error) {
       deferred.reject(filters.errors(error));
@@ -332,10 +350,12 @@ function parallelFunc(promise) {
 
 function disableSubDependencies(accountId) {
   let deferred = q.defer();
+  let where = { where: { accountId: accountId } };
 
   let arrayFunctions = [
-    parallelFunc(models.Session.update({ active: false }, { where: { accountId: accountId } })),
-    parallelFunc(models.Survey.update({ closed: true }, { where: { accountId: accountId } }))
+    parallelFunc(models.Session.update({ active: false }, where)),
+    parallelFunc(models.Survey.update({ closed: true }, where))
+    // needs contact list
   ];
 
   async.parallel(arrayFunctions, function(error, _result) {
@@ -348,6 +368,31 @@ function disableSubDependencies(accountId) {
   });
 
   return deferred.promise;
+}
+
+function recurringSubDependencies(subscription) {
+  let deferred = q.defer();
+  let plan = subscription.SubscriptionPlan;
+  let preference = subscription.SubscriptionPreference;
+
+  let params = prepareRecurringParams(plan, preference);
+
+  preference.update(params, { returning: true }).then(function(updatedPreference) {
+    subscription.SubscriptionPreference = updatedPreference;
+    deferred.resolve(subscription);
+  }, function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function prepareRecurringParams(plan, preference) {
+  return {
+    data: {
+      paidSmsCount: preference.paidSmsCount + plan.paidSmsCount
+    }
+  }
 }
 
 // Validators
