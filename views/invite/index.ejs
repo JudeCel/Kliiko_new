@@ -49,7 +49,7 @@
               <div class='col-xs-6'>
                 <a href='/invite/<%= invite.token %>/accept' class='btn border-yellow text-brown-light background-transp pull-right'>Accept</a>
               </div>
-              <%if(invite.ownerType == "session") { %>
+              <%if(invite.ownerType != "session") { %>
               <div class='col-xs-6'>
                 <a href='/invite/<%= invite.token %>/decline' class='btn border-yellow text-brown-light background-transp pull-left'>Decline</a>
               </div>

@@ -364,7 +364,7 @@ function sessionAccept(token, password) {
       };
 
       User.create({ email: invite.AccountUser.email, password: password }).then(function(user) {
-        invite.AccountUser.update({ UserId: user.id }).then(function() {
+        invite.AccountUser.update({ UserId: user.id, confirmedAt: new Date() }).then(function() {
           models.SessionMember.create(params).then(function() {
             invite.update({ status: 'confirmed' }).then(function() {
               deferred.resolve(MESSAGES.confirmed);
