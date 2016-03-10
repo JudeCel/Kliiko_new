@@ -264,9 +264,8 @@ router.route('/invite/:token/decline').get(inviteRoutes.decline);
 router.route('/invite/:token/accept').get(inviteRoutes.acceptGet);
 router.route('/invite/:token/accept').post(inviteRoutes.acceptPost);
 
-router.route('/invite/session/accept/:token').get(inviteRoutes.sessionAccept);
-router.route('/invite/session/notThisTime/:token').get(inviteRoutes.sessionNotThisTime);
-router.route('/invite/session/notAtAll/:token').get(inviteRoutes.sessionNotAtAll);
+router.route('/invite/:token/notThisTime').get(inviteRoutes.sessionNotThisTime);
+router.route('/invite/:token/notAtAll').get(inviteRoutes.sessionNotAtAll);
 
 
 router.route('/survey/:id').get(surveyRoutes.index);

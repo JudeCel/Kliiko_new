@@ -43,13 +43,26 @@ function acceptGet(req, res, next) {
 };
 
 function acceptPost(req, res, next) {
-  inviteService.acceptInviteNew(req.params.token, req.body, function(error, invite, message) {
-    if(error) {
-      res.render(views_path('index'), simpleParams('Invite', invite, error));
+  inviteService.findInvite(req.params.token, function(error, invite) {
+    if(invite.ownerType == 'session') {
+      inviteService.sessionAccept(req.params.token, req.body.password).then(function(message) {
+        req.flash('message', message);
+        res.redirect('/login');
+      }, function(error) {
+        req.flash('message', error);
+        res.redirect('/login');
+      });
     }
     else {
-      req.flash('message', message);
-      res.redirect('/login');
+      inviteService.acceptInviteNew(req.params.token, req.body, function(error, invite, message) {
+        if(error) {
+          res.render(views_path('index'), simpleParams('Invite', invite, error));
+        }
+        else {
+          req.flash('message', message);
+          res.redirect('/login');
+        }
+      });
     }
   });
 };
@@ -57,16 +70,6 @@ function acceptPost(req, res, next) {
 function simpleParams(title, invite, error, message) {
   return { title: title, invite: invite || {}, error: error || {}, message: message || '' };
 };
-
-function sessionAccept(req, res, next) {
-  inviteService.sessionAccept(req.params.token).then(function(message) {
-    req.flash('message', message);
-    res.redirect('/login');
-  }, function(error) {
-    req.flash('message', error);
-    res.redirect('/login');
-  });
-}
 
 function sessionNotThisTime(req, res, next) {
   inviteService.declineSessionInvite(req.params.token, 'notThisTime').then(function(message) {

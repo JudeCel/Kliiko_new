@@ -348,7 +348,7 @@ function updateUser(params, invite, callback) {
   })
 };
 
-function sessionAccept(token) {
+function sessionAccept(token, password) {
   let deferred = q.defer();
 
   findInvite(token, function(error, invite) {
@@ -363,9 +363,17 @@ function sessionAccept(token) {
         role: invite.role
       };
 
-      models.SessionMember.create(params).then(function() {
-        invite.update({ status: 'confirmed' }).then(function() {
-          deferred.resolve(MESSAGES.confirmed);
+      User.create({ email: invite.AccountUser.email, password: password }).then(function(user) {
+        invite.AccountUser.update({ UserId: user.id }).then(function() {
+          models.SessionMember.create(params).then(function() {
+            invite.update({ status: 'confirmed' }).then(function() {
+              deferred.resolve(MESSAGES.confirmed);
+            }, function(error) {
+              deferred.reject(filters.errors(error));
+            });
+          }, function(error) {
+            deferred.reject(filters.errors(error));
+          });
         }, function(error) {
           deferred.reject(filters.errors(error));
         });
