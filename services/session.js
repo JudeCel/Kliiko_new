@@ -334,7 +334,7 @@ function simpleParams(data, message) {
 function modifySessions(sessions, accountId) {
   let deferred = q.defer();
 
-  models.Subscription.find({ where: { AccountId: accountId } }).then(function(subscription) {
+  models.Subscription.find({ where: { accountId: accountId } }).then(function(subscription) {
     let array = _.isArray(sessions) ? sessions : [sessions];
     _.map(array, function(session) {
       addShowStatus(session, subscription);

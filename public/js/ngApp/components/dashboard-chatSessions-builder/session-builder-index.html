@@ -11,13 +11,12 @@
                 </div>
                 <div class="col-md-6"><h1>Chat Session Builder</h1></div>
 
-
                 <div class="col-md-3">
-                    <div ng-show="sbc.session.active" class="btn-standart btn-red" ng-click="sbc.closeSession()">
+                    <div ng-hide="sbc.session.active == false" class="btn-standart btn-red" ng-click="sbc.closeSession()">
                         Close Chat Session
                         <img class="ic" src="icons/ic_close_session.png" alt="Close Session">
                     </div>
-                    <div ng-show="!sbc.session.active" class="btn-standart btn-green" ng-click="sbc.openSession()">
+                    <div  ng-show="sbc.session.active == false" class="btn-standart btn-green" ng-click="sbc.openSession()">
                         Activate Chat Session
                         <!--<img class="ic" src="icons/ic_close_session.png" alt="">-->
                     </div>
