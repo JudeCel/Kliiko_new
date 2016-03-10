@@ -134,7 +134,6 @@ function createPortalSession(accountId, callbackUrl, provider) {
 
 function updateSubscription(accountId, newPlanId, provider) {
   let deferred = q.defer();
-
   findSubscription(accountId).then(function(subscription) {
     if(subscription) {
       return subscription;
@@ -289,8 +288,6 @@ function chargebeeSubParams(accountUser) {
 function canSwitchPlan(accountId, currentPlan, newPlan){
   let deferred = q.defer();
 
-  console.log(currentPlan.priority, newPlan.priority);
-
   if(currentPlan.priority > newPlan.priority){
     let functionArray = [
       validateSessionCount(accountId, newPlan),
@@ -324,8 +321,6 @@ function validateSessionCount(accountId, newPlan) {
         accountId: accountId
       }
     }).then(function(c) {
-      console.log("!!!!!!!!!!!!!!!!   session count");
-      console.log(c);
       if(newPlan.sessionCount < c){
         cb(null, {session: MESSAGES.validation.session});
       }else{
@@ -364,7 +359,8 @@ function validateContactListCount(accountId, newPlan) {
       }
     }).then(function(c) {
       errors = errors || {};
-      if(newPlan.contactListCount < c){
+      let defaultListCount = 4; // By default each user has 4 contact lists: Account Managers, Facilitators, Observers and Surveys
+      if(defaultListCount < c){
         errors.contactList = MESSAGES.validation.contactList;
       }
 

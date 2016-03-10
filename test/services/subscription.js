@@ -22,7 +22,7 @@ describe('SERVICE - Subscription', function() {
       return subscriptionFixture.createPlans();
     }).then(function(results) {
       testData.subscriptionPlan = _.find(results, ['priority', 4]);
-      testData.lowerPlan = _.find(results, ['priority', 3]);
+      testData.lowerPlan = _.find(results, ['priority', testData.subscriptionPlan.priority - 1]);
       done();
     }).catch(function(error) {
       done(error);
@@ -149,7 +149,6 @@ describe('SERVICE - Subscription', function() {
           assert.isNotNull(subscription.SubscriptionPreference);
           assert.equal(subscription.accountId, testData.account.id);
           assert.equal(subscription.planId, testData.subscriptionPlan.chargebeePlanId);
-          assert.equal(subscription.SubscriptionPreference.data.priority, subscription.SubscriptionPlan.priority);
           assert.equal(subscription.SubscriptionPreference.data.paidSmsCount, smsCount);
           done();
         }, function(error) {
@@ -205,6 +204,7 @@ describe('SERVICE - Subscription', function() {
       describe("downgrade", function() {
         describe("happy path", function() {
           it('should successfully downgrade plan', function(done) {
+
             done();
           });
         });
@@ -231,37 +231,65 @@ describe('SERVICE - Subscription', function() {
           }
 
           function createSession(testData) {
+            let startTime = new Date();
+            let endTime = startTime.setHours(startTime.getHours() + 2000)
+
             return function(cb) {
               models.Session.create({
                 accountId: testData.account.id,
-
-              })
+                start_time: startTime,
+                end_time: endTime,
+                name: "My cool session"
+              }).then(function() {
+                cb();
+              }).catch(function(error) {
+                cb(error);
+              });
             }
           }
 
-          it.only('downgrade not possible due to many surveys, sessions and contact lists for account', function(done) {
+          function createTestContactList(testData) {
+            return function(cb) {
+              models.ContactList.create({
+                accountId: testData.account.id,
+                name: "My cool Test contact list"
+              }).then(function() {
+                cb();
+              }).catch(function(error) {
+                cb(error);
+              });
+            }
+          }
+
+          it('downgrade not possible due to many surveys, sessions and contact lists for account', function(done) {
             let functionList = [
               getUltimateSub(testData),
               createTestSurvey(testData),
               createTestSurvey(testData),
               createTestSurvey(testData),
-              // createSession(testData)
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createTestContactList(testData)
             ]
 
             async.waterfall(functionList, function (error, result) {
               if( error ){
                 done(error);
               } else {
-                console.log("~");
-                console.log(testData.lowerPlan.priority);
-                console.log("~");
                 subscriptionServices.updateSubscription(testData.account.id, testData.lowerPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.lowerPlan.chargebeePlanId })).then(function(subscription) {
                   done("should not get here");
                 }, function(error) {
-                  console.log(error);
                   assert.equal(error.survey, 'You have to many surveys');
                   assert.equal(error.contactList, 'You have to many contact lists');
-                  // assert.equal(error.session, 'You have to many sessions');
+                  assert.equal(error.session, 'You have to many sessions');
                   done();
                 });
               }
