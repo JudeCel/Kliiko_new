@@ -58,9 +58,42 @@ function simpleParams(title, invite, error, message) {
   return { title: title, invite: invite || {}, error: error || {}, message: message || '' };
 };
 
+function sessionAccept(req, res, next) {
+  inviteService.sessionAccept(req.params.token).then(function(message) {
+    req.flash('message', message);
+    res.redirect('/login');
+  }, function(error) {
+    req.flash('message', error);
+    res.redirect('/login');
+  });
+}
+
+function sessionNotThisTime(req, res, next) {
+  inviteService.declineSessionInvite(req.params.token, 'notThisTime').then(function(message) {
+    req.flash('message', message);
+    res.redirect('/login');
+  }, function(error) {
+    req.flash('message', error);
+    res.redirect('/login');
+  });
+}
+
+function sessionNotAtAll(req, res, next) {
+  inviteService.declineSessionInvite(req.params.token, 'notAtAll').then(function(message) {
+    req.flash('message', message);
+    res.redirect('/login');
+  }, function(error) {
+    req.flash('message', error);
+    res.redirect('/login');
+  });
+}
+
 module.exports = {
   index: index,
   decline: decline,
   acceptGet: acceptGet,
-  acceptPost: acceptPost
+  acceptPost: acceptPost,
+  sessionAccept: sessionAccept,
+  sessionNotThisTime: sessionNotThisTime,
+  sessionNotAtAll: sessionNotAtAll
 };
