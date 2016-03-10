@@ -389,7 +389,7 @@ function recurringSubDependencies(subscription) {
 function prepareRecurringParams(plan, preference) {
   return {
     data: {
-      paidSmsCount: preference.paidSmsCount + plan.paidSmsCount
+      paidSmsCount: preference.data.paidSmsCount + plan.paidSmsCount
     }
   }
 }
