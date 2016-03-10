@@ -268,7 +268,7 @@
         vm.contactSnapshot = angular.copy(contactObj);
 
         vm.contactModalTitle = 'Edit Contact';
-        vm.newContact = contactObj;
+        vm.newContact = angular.copy(contactObj);
         vm.updateExistingUser = true;
       }
 

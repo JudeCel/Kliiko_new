@@ -6,6 +6,7 @@ function updateResources(topicId, userId, content, type, Cb) {
     params: {
       topicId: topicId,
       userId: userId,
+      private: content.private,
       resourceType: type
     }
   });
@@ -22,7 +23,7 @@ function updateResources(topicId, userId, content, type, Cb) {
     }
   };
 
-  var res = { 
+  var res = {
     send: function (data) {
       if(Cb){
         data.JSON = JSON.parse(decodeURI(data.JSON));

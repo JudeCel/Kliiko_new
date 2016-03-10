@@ -19,6 +19,7 @@
     vm.closeModelPreview = closeModelPreview;
     vm.undoCurrentScheme = undoCurrentScheme;
     vm.colorStyles = colorStyles;
+    vm.pickPartipantColours = pickPartipantColours;
 
     vm.schemes = {};
     vm.scheme = {};
@@ -36,6 +37,7 @@
         vm.schemes = res.data;
         vm.manageFields = res.manageFields;
         vm.hexRegex = new RegExp(res.hexRegex);
+        vm.participantColours = res.participantColours;
         dbg.log2('#BrandColourController > getAllSchemes > res ', res.data);
 
         // if we want to open create step from the start
@@ -184,6 +186,21 @@
         vm.currentPage = { page: 'manage', type: page };
       }
     };
+
+    function pickPartipantColours(participantColour) {
+      var colours = [];
+      angular.copy(vm.participantColours, colours);
+      colours.unshift(null);
+      for (var i in vm.scheme.colours.participants) {
+        var colour = vm.scheme.colours.participants[i];
+        if(participantColour != colour) {
+          var index = colours.indexOf(colour);
+          colours.splice(index, 1);
+        }
+      }
+
+      return colours;
+    }
 
     function undoCurrentScheme() {
       if(vm.originalScheme) {

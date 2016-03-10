@@ -40,10 +40,10 @@ module.exports = {
   ],
   mailTemplateFields: [
     'id', 'name', 'subject', 'content',
-    'MailTemplateBaseId', 'AccountId', 'systemMessage'
+    'MailTemplateBaseId', 'AccountId', 'systemMessage', 'isCopy'
   ],
   mailTemplateFieldsForList: [
-    'id', 'name', 'MailTemplateBaseId', 'AccountId', 'systemMessage'
+    'id', 'name', 'MailTemplateBaseId', 'AccountId', 'systemMessage', 'isCopy'
   ],
   mailTemplateType : {
     'firstInvitation' : "First Invitation",
@@ -77,6 +77,7 @@ module.exports = {
   mobileRegExp: ["^[0-9]+$",'i'],
   galleryUploadTypes: ['image', 'brandLogo', 'audio', 'youtubeLink', 'text'],
   dateFormat: 'MM-dd-yyyy',
+  dateFormatWithTime: 'MM-dd-yyyy, HH:mm'
   sessionBuilderSteps: ['setUp', 'facilitatiorAndTopics', 'manageSessionEmails',
     'manageSessionParticipants', 'inviteSessionObservers', 'done'],
   inviteStatuses: ['pending', 'confirmed', 'rejected', 'notThisTime', 'notAtAll', 'expired']

@@ -1,8 +1,18 @@
 'use strict';
 
 var models = require('./../../models');
+var Account = models.Account;
+var AccountUser = models.AccountUser;
+
 var usersServices  = require('./../../services/users');
+
 var q = require('q');
+var async = require('async');
+
+module.exports = {
+  createUserAndOwnerAccount: createUserAndOwnerAccount,
+  createMultipleAccountUsers: createMultipleAccountUsers
+}
 
 function createUserAndOwnerAccount(params) {
   let deferred = q.defer();
@@ -41,6 +51,35 @@ function createUserAndOwnerAccount(params) {
   return deferred.promise;
 }
 
-module.exports = {
-  createUserAndOwnerAccount: createUserAndOwnerAccount
-};
+function createMultipleAccountUsers(roles, testData) {
+  let deferred = q.defer();
+
+  async.each(roles, function(role, callback) {
+    Account.create({ name: role }).then(function(account) {
+      AccountUser.create({
+        UserId: testData.user.id,
+        AccountId: account.id,
+        firstName: testData.accountUser.firstName,
+        lastName: testData.accountUser.lastName,
+        gender: testData.accountUser.gender,
+        email: testData.accountUser.email,
+        role: role
+      }).then(function(accountUser) {
+        callback();
+      }).catch(function(error) {
+        callback(error);
+      });
+    }).catch(function(error) {
+      callback(error);
+    });
+  }, function(error) {
+    if(error) {
+      deferred.reject(error);
+    }
+    else {
+      deferred.resolve();
+    }
+  });
+
+  return deferred.promise;
+}

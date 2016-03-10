@@ -334,6 +334,18 @@
       return (key == vm.currentTemplate.index);
     }
 
+    vm.isEditable = function(item, canOverwrite) {
+      if (!item) {
+        return false;
+      }
+
+      if (canOverwrite) {
+        return (item.AccountId || item.isCopy);
+      }
+
+      return item.AccountId;
+    }
+
     vm.init();
   }
 })();

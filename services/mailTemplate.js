@@ -275,14 +275,29 @@ function prepareAdminTemplate(template, shouldOverwrite, accountId) {
   }
 }
 
+function shouldCreateCopy(template, createCopy, accountId, shouldOverwrite) {
+  var result = false;
+  if (!template["systemMessage"] && (!template["AccountId"])) {
+    result = true;
+
+    if (shouldOverwrite && template["isCopy"]) {
+      result = false;
+    }
+  }
+
+  return (result || createCopy);
+}
+
 function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, callback) {
   if (!template) {
     return callback("e-mail template not provided");
   }
   var id = template.id;
   delete template["id"];
-  if (!template["systemMessage"] && (!template["AccountId"] || createCopy)) {
+
+  if (shouldCreateCopy(template, createCopy, accountId, shouldOverwrite)) {
     prepareAdminTemplate(template, shouldOverwrite, accountId);
+    template.isCopy = true;
     create(template, function(error, result) {
       if (!error) {
         setMailTemplateDefault(result.MailTemplateBaseId, result.id, shouldOverwrite, callback);
