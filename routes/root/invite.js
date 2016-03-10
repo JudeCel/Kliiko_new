@@ -4,13 +4,13 @@ var inviteService = require('../../services/invite');
 
 function views_path(action) {
   return 'invite/' + action;
-};
+}
 
 function index(req, res, next) {
   inviteService.findInvite(req.params.token, function(error, invite) {
     res.render(views_path('index'), simpleParams('Invite', invite, error));
   });
-};
+}
 
 function decline(req, res, next) {
   inviteService.declineInvite(req.params.token, function(error, invite, message) {
@@ -22,7 +22,7 @@ function decline(req, res, next) {
       res.redirect('/login');
     }
   });
-};
+}
 
 function acceptGet(req, res, next) {
   inviteService.acceptInviteExisting(req.params.token, function(error, invite, message) {
