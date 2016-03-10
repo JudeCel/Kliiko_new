@@ -96,7 +96,6 @@ module.exports = {
   decline: decline,
   acceptGet: acceptGet,
   acceptPost: acceptPost,
-  sessionAccept: sessionAccept,
   sessionNotThisTime: sessionNotThisTime,
   sessionNotAtAll: sessionNotAtAll
 };
