@@ -131,6 +131,7 @@
 
 
       function handlePreviouseStep() {
+        debugger; //debugger
         vm.cantMoveNextStep = false;  step = vm.currentStep = vm.currentStep - 1;
         vm.session.goPreviouseStep();
         initStep(step).then(
