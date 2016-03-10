@@ -60,16 +60,16 @@ function sendInviteAccountManager(inviteParams, callback) {
 
 function sendInviteSession(inviteParams, callback) {
   if(inviteParams.role == 'observer') {
-    inviteParams.logInUrl = helpers.getUrl(inviteParams.token, '/invite/someUrl/');
+    inviteParams.logInUrl = helpers.getUrl(inviteParams.token, '/invite/session/accept/');
 
     mailHelper.sendObserverInvitation(inviteParams, function(error, result) {
       callback(error, result);
     });
   }
   else if(inviteParams.role == 'participant') {
-    inviteParams.acceptInvitationUrl = helpers.getUrl(inviteParams.token, '/invite/accept/');
-    inviteParams.invitationNotThisTimeUrl = helpers.getUrl(inviteParams.token, '/invite/notThisTime/');
-    inviteParams.invitationNotAtAllUrl = helpers.getUrl(inviteParams.token, '/invite/notAtAll/');
+    inviteParams.acceptInvitationUrl = helpers.getUrl(inviteParams.token, '/invite/session/accept/');
+    inviteParams.invitationNotThisTimeUrl = helpers.getUrl(inviteParams.token, '/invite/session/notThisTime/');
+    inviteParams.invitationNotAtAllUrl = helpers.getUrl(inviteParams.token, '/invite/session/notAtAll/');
 
     mailHelper.sendFirstInvitation(inviteParams, function(error, result) {
       callback(error, result);

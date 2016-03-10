@@ -260,7 +260,7 @@ function destroyInvite(invite, callback) {
 }
 
 function findInvite(token, callback) {
-  Invite.find({ include: [Account, AccountUser, User], where: { token: token } }).then(function(result) {
+  Invite.find({ include: [Account, AccountUser, User], where: { token: token, status: 'pending' } }).then(function(result) {
     if(result) {
       callback(null, result);
     }
@@ -348,6 +348,55 @@ function updateUser(params, invite, callback) {
   })
 };
 
+function sessionAccept(token) {
+  let deferred = q.defer();
+
+  findInvite(token, function(error, invite) {
+    if(error) {
+      deferred.reject(error);
+    }
+    else {
+      let params = {
+        sessionId: invite.ownerId,
+        accountUserId: invite.accountUserId,
+        username: invite.AccountUser.firstName,
+        role: invite.role
+      };
+
+      models.SessionMember.create(params).then(function() {
+        invite.update({ status: 'confirmed' }).then(function() {
+          deferred.resolve(MESSAGES.confirmed);
+        }, function(error) {
+          deferred.reject(filters.errors(error));
+        });
+      }, function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+  });
+
+  return deferred.promise;
+}
+
+function declineSessionInvite(token, status) {
+  let deferred = q.defer();
+
+  findInvite(token, function(error, invite) {
+    if(error) {
+      deferred.reject(error);
+    }
+    else {
+      invite.update({ status: status }).then(function() {
+        deferred.resolve(MESSAGES.declined);
+      }, function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+  });
+
+  return deferred.promise;
+}
+
 //Helpers
 function removeAllAssociatedDataOnNewUser(invite, callback) {
   async.waterfall([
@@ -384,5 +433,7 @@ module.exports = {
   findInvite: findInvite,
   acceptInviteExisting: acceptInviteExisting,
   acceptInviteNew: acceptInviteNew,
-  declineInvite: declineInvite
+  declineInvite: declineInvite,
+  declineSessionInvite: declineSessionInvite,
+  sessionAccept: sessionAccept
 };

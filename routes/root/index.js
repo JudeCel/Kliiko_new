@@ -118,7 +118,7 @@ router.post('/login', function(req, res, next) {
       return  res.render('login', {title: 'Login', error: err, message: ''});
     }
     req.login(user, function(err) {
-      if (err) { 
+      if (err) {
         return next(err);
       }
       session.rememberMe(req, function(err, result) {
@@ -262,6 +262,11 @@ router.route('/invite/:token').get(inviteRoutes.index);
 router.route('/invite/:token/decline').get(inviteRoutes.decline);
 router.route('/invite/:token/accept').get(inviteRoutes.acceptGet);
 router.route('/invite/:token/accept').post(inviteRoutes.acceptPost);
+
+router.route('/invite/session/accept/:token').get(inviteRoutes.sessionAccept);
+router.route('/invite/session/notThisTime/:token').get(inviteRoutes.sessionNotThisTime);
+router.route('/invite/session/notAtAll/:token').get(inviteRoutes.sessionNotAtAll);
+
 
 router.route('/survey/:id').get(surveyRoutes.index);
 
