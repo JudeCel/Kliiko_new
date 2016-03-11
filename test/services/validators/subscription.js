@@ -42,6 +42,24 @@ describe('SERVICE - VALIDATORS - Subscription', function() {
     });
 
     describe('sad path', function() {
+      it('should fail because no subscription', function(done) {
+        subscriptionValidators.validate(testData.account.id + 100, 'session', 1).then(function() {
+          done('Should not get here!');
+        }).catch(function(error) {
+          assert.equal(error, subscriptionValidators.messages.notFound);
+          done();
+        });
+      });
+
+      it('should fail because invalid dependency', function(done) {
+        subscriptionValidators.validate(testData.account.id, 'randomString', 1).then(function() {
+          done('Should not get here!');
+        }).catch(function(error) {
+          assert.equal(error, subscriptionValidators.messages.notValidDependency);
+          done();
+        });
+      });
+
       it('should fail on validating session count', function(done) {
         let params = {
           accountId: testData.account.id,
