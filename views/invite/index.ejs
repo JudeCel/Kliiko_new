@@ -1,11 +1,16 @@
 <% include ../header %>
-
+<script> function parseInvite() {
+    var token = window.location.pathname.split('/')[2];
+    document.cookie = 'inviteAccepted='+token+'; expires=Fri, 3 Aug 2027 20:47:11 UTC; path=/; domain=.focus.com';
+  }
+</script>
 <div class='login-container center-block'>
   <div class='tab-content border-yellow text-font-family'>
     <div id='login' class='tab-pane fade in active'>
       <%if(Object.keys(invite).length == 0) { %>
         <h1 class='text-center text-gray-dark'>Invite not found</h1>
       <% } else { %>
+        <script>parseInvite();</script>
         <h1 class='text-center text-gray-dark'>Invite</h1>
         <%if(invite.userType == "new") { %>
           <h5 class='text-center text-gray-dark'>

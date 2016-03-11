@@ -10,20 +10,14 @@
     var vm = this;
 
     var colorSchemeId, brandLogoId;
-
+    var sessionId = $stateParams.id || null;
 
     vm.step1 = {};
     vm.accordions = {};
     vm.participants = [];
     vm.observers = [];
     vm.basePath = '/js/ngApp/components/dashboard-chatSessions-builder/';
-
-
-
     vm.$state = $state;
-
-
-    var sessionId = $stateParams.id || null;
 
     vm.session = new SessionModel(sessionId);
 
@@ -65,11 +59,9 @@
 
 
     });
-    //todo @pavel: convert time if it is there already
-
 
     //vm.currentStep = $stateParams.currentStep;
-    vm.currentStep = 1; //todo change this to page fetcherS
+    vm.currentStep = 1;
 
     vm.selectedTopics = {};
     vm.allTopicsSelected = false;
@@ -122,10 +114,10 @@
       if (!angular.isNumber(step)) {
         if (step === 'back')  handlePreviousStep();
         if (step === 'next') handleNextStep();
-        if (step === 'submit') {
-          //step = 5;
-          //submitUpgrade();
-          return
+        if (step === 'finish') {
+          vm.session.update();
+          $state.go('dashboard.chatSessions');
+          messenger.ok('New session is created');
         }
       }
 
@@ -133,12 +125,9 @@
       function handlePreviousStep() {
         vm.cantMoveNextStep = false;  step = vm.currentStep - 1;
         vm.session.goPreviouseStep();
-        initStep(step).then(
-          function (res) {
+        initStep(step).then(function (res) {
             vm.currentStep = step;
-          }
-        );
-
+        });
       }
 
       function handleNextStep() {
@@ -186,24 +175,6 @@
           }
         );
       }
-
-      //vm.session.validateStep(step).then(
-      //  function (res) {
-      //
-      //    vm.searchingParticipants = false;
-      //    vm.searchingObservers = false;
-      //    initStep(step).then(function(res) {
-      //      vm.session.updateStep();
-      //
-      //      $stateParams.planUpgradeStep = vm.currentStep = step;
-      //    });
-      //
-      //  },
-      //  function (err) {
-      //    messenger.error(err);
-      //  }
-      //);
-
 
     }
 
@@ -326,6 +297,8 @@
     function initStep(step, initial) {
       var deferred = $q.defer();
 
+      vm.lastStep = null;
+
       if (initial) {
         for (var key in vm.session.steps) {
           // find number in object values that looks like 'step1', 'step2'...
@@ -424,7 +397,6 @@
           $scope.$watch(angular.bind(vm, function () {
             return vm.sessionEmailTemplates;
           }), function (newVal) {
-            //debugger; //debugger
 
 
             for (var i = 0, len = vm.sessionEmailTemplates.length; i < len ; i++) {
@@ -433,11 +405,9 @@
 
                 for (var j = 0, lenj = vm.sessionEmailTemplates.length; j < lenj ; j++) {
                   if (vm.sessionEmailTemplates[j].name == vm.sessionEmailTemplates[i].name && vm.sessionEmailTemplates[j].AccountId) {
-                    //console.warn(vm.sessionEmailTemplates[i]);
                     vm.sessionEmailTemplates[i].hideIt = true;
                   }
                 }
-
 
               }
             }
@@ -486,6 +456,7 @@
           '/js/ngApp/filters/human2Camel.js'
         ]).then(function(res) {
           vm.currentStep = step;
+          vm.lastStep = true;
           deferred.resolve();
           return deferred.promise;
         });
@@ -867,12 +838,8 @@
         vm.searchingParticipants = false;
 
         vm.session.addMembers(vm.participants, 'participant').then(
-          function (res) {
-            vm.session.update();
-          },
-          function (err) {
-          }
-        );
+          function (res) {vm.session.update();
+        });
       }
 
       if(vm.searchingObservers) {
@@ -880,13 +847,9 @@
         vm.observers = removeDuplicatesFromArray(vm.observers);
         vm.searchingObservers = false;
 
-        vm.session.addMembers(vm.observers, 'observer').then(
-          function (res) {
-            vm.session.update();
-          },
-          function (err) {
-          }
-        );
+        vm.session.addMembers(vm.observers, 'observer').then(function (res) {
+          vm.session.update();
+        });
 
       }
     }
@@ -916,7 +879,7 @@
 
     function removeDuplicatesFromArray(array) {
       var object = {}, newArray = [];
-      for(var i = 0; i < array.length; i++) {
+      for (var i = 0; i < array.length; i++) {
         var element = object[array[i].email];
         var check = element && (element.invite || element.sessionMember);
 
@@ -925,7 +888,7 @@
         }
       }
 
-      for(var i in object) {
+      for (var i in object) {
         newArray.push(object[i]);
       }
 

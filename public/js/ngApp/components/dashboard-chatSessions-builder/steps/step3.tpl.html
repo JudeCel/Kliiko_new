@@ -24,7 +24,6 @@
                     Email Templates
                     <i class="pull-right glyphicon"
                        ng-class="{'glyphicon-chevron-down': sbc.accordions.emailTemplates, 'glyphicon-chevron-right': !sbc.accordions.emailTemplates}"></i>
-                    <!--<span class="panel-value pull-right">{{ sbc.selectedFacilitator.lastName + ' ' + sbc.selectedFacilitator.firstName}}</span>-->
                 </div>
             </uib-accordion-heading>
 
@@ -46,7 +45,6 @@
                             <div class="input-group input-group-sm display-flex" ng-hide="!t.AccountId">
                                 <img src="/icons/ic_tick.png" alt="">
                                 <input type="text" class="form-control mail-list-input dis" aria-describedby="basic-addon3" ng-model="t.name" ng-class="{'inactive':!ec.isCurrent(key)}" disabled="true">
-                                <!--<span class="input-group-addon" id="basic-addon3" ng-hide="!ec.isCurrent(key)">{{t["MailTemplateBase.name"] | limitTo: 7}}{{t["MailTemplateBase.name"].length > 7 ? '...' : ''}}</span>-->
                                 <span class="input-group-btn" ng-hide="!ec.isCurrent(key)">
                                   <button class="btn glyphicon glyphicon-remove" type="button" ng-click="ec.deleteTemplate(t, key, $event);"></button>
                                 </span>

@@ -28,11 +28,12 @@ function acceptGet(req, res, next) {
   inviteService.acceptInviteExisting(req.params.token, function(error, invite, message) {
     if(error) {
       res.render(views_path('index'), simpleParams('Invite', invite, error));
+
     }
     else {
       //added check if invite exists to avoid runtime error
-      if(invite && invite.userType == 'new') {
-        res.render(views_path('index'), simpleParams('Accept Invite', invite));
+      if (invite && invite.userType == 'new') {
+        res.render(views_path('index'), simpleParams('Accept Invite', invite) );
       }
       else {
         req.flash('message', message);
@@ -40,7 +41,7 @@ function acceptGet(req, res, next) {
       }
     }
   });
-};
+}
 
 function acceptPost(req, res, next) {
   inviteService.findInvite(req.params.token, function(error, invite) {

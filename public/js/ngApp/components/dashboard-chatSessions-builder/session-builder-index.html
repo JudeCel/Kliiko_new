@@ -68,7 +68,7 @@
             <ng-include src="sbc.basePath+'steps/'+sbc.currentPageToDisplay()"></ng-include>
 
 
-            <div class="row" ng-hide--="sbc.stepsClassIsActive(1)">
+            <div class="row">
 
                 <div class="col-md-3 btn-standart btn-green" ng-click="sbc.goToStep('back')"
                      ng-hide="sbc.stepsClassIsActive(1)">
@@ -77,8 +77,15 @@
 
                 <div class="col-md-2 btn-standart pull-right btn-green" ng-click="sbc.goToStep('next')"
                      ng-class="{'btn-forbidden': sbc.cantMoveNextStep}"
+                     ng-hide="sbc.lastStep"
                      >
                     Next step
+                </div>
+                <div class="col-md-2 btn-standart pull-right btn-green" ng-click="sbc.goToStep('finish')"
+                     ng-class="{'btn-forbidden': sbc.cantMoveNextStep}"
+                     ng-show="sbc.lastStep"
+                >
+                    Finish with builder
                 </div>
                 <div ng-if="sbc.session.chatRoomUrl" class="col-md-2 btn-standart pull-right btn-blue margin020" ng-click="sbc.goToChat(sbc.session)">
                     Enter Chat Room
@@ -93,7 +100,7 @@
     <!----------- MODALS ---------------------->
     <section>
         <!-- plansModal -->
-        <div class='modal fade' id='plansModal--' role='dialog'>
+        <div class='modal fade'  role='dialog'>
             <div class='modal-dialog changePasswordModal' style="width: 800px">
                 <div class='modal-content border-green border-radius-none'>
                     <div class='modal-header'>

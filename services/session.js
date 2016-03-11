@@ -4,6 +4,7 @@ var policy = require('./../middleware/policy');
 var models = require('./../models');
 var filters = require('./../models/filters');
 var Session  = models.Session;
+var Invite  = models.Invite;
 var SessionMember  = models.SessionMember;
 var AccountUser  = models.AccountUser;
 var Account  = models.Account;
@@ -35,8 +36,18 @@ module.exports = {
   removeSession: removeSession,
   updateSessionMemberRating: updateSessionMemberRating,
   getAllSessionRatings: getAllSessionRatings,
-  addShowStatus: addShowStatus
+  addShowStatus: addShowStatus,
+  getSessionByInvite: getSessionByInvite
 };
+
+function getSessionByInvite(token) {
+  var deferred = q.defer();
+
+  Invite.find({where:{token:token}, include: [Session]}).then(function(resp) {
+    deferred.resolve(resp)
+  });
+  return deferred.promise;
+}
 
 // Exports
 function findSession(sessionId, accountId) {

@@ -49,7 +49,6 @@
             <td>{{ member.mobile }}</td>
             <td class='col-xs-2'>
               <div ng-if='!sbc.mouseOveringMember[$index]'>
-                <!--{{ sbc.showCorrectStatus(member) || "Not invited" }}-->
                 {{ member.inviteStatus }}
               </div>
               <div ng-if='sbc.mouseOveringMember[$index]'>

@@ -57,10 +57,6 @@
                                         ng-class="{'selected':member._selected}">
                                         <td class="selection-column">
                                             <input type="radio" ng-value="member" ng-model="sbc.selectedFacilitator" ng-click="sbc.facilitatorsSelectHandle(sbc.selectedFacilitator)">
-                                            <!--<div class="check">-->
-                                            <!--<input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-model="member._selected" ng-click="member.selected = !member.selected" type="checkbox" >-->
-                                            <!--<label for="memberSelectet{{ $index }}" class="kliiko-checkbox" ></label>-->
-                                            <!--</div>-->
                                         </td>
 
                                         <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index"> {{
@@ -120,8 +116,8 @@
                                                            ng-click="clc.lists.activeList.toggleTableToShow(column)"
                                                            class="kliiko-checkbox checkbox-btn btn-green"
                                                            ng-model="clc.selectedTables[column]" type="checkbox">
-                                                    <label for="dashboard-contact-lists-fields-{{ $index }}"></label>{{
-                                                    column }}
+                                                    <label for="dashboard-contact-lists-fields-{{ $index }}"></label>
+                                                    {{column }}
                                                 </div>
 
                                               </span>
@@ -146,8 +142,8 @@
                                                            ng-click="clc.lists.activeList.toggleTableToShow(column)"
                                                            class="kliiko-checkbox checkbox-btn btn-green"
                                                            ng-model="clc.selectedTables[column]" type="checkbox">
-                                                    <label for="dashboard-contact-lists-participants-{{ $index }}"></label>{{
-                                                    column }}
+                                                    <label for="dashboard-contact-lists-participants-{{ $index }}"></label>
+                                                    {{column }}
                                                 </div>
 
                                               </span>
@@ -192,7 +188,7 @@
                     <div class="col-md-6">
                         <h3 ng-hide="!topics.list.length">Select topic</h3>
                         <br>
-                        <div class='dashboard-container--'>
+                        <div>
                             <div class="flex">
                                 <div class="check">
                                     <input id="select-all-topics"  ng-click="sbc.selectAllTopics(topics.list)" class="kliiko-checkbox checkbox-btn btn-green"  type="checkbox" ng-checked="sbc.allTopicsSelected">
@@ -205,7 +201,6 @@
                             </div>
 
                             <div id="topics-list">
-                                <!--<pre>{{ sbc.selectedTopics | json }}</pre>-->
                                 <div class="topic-list-item" ng-repeat="t in topics.list"
                                      ng-drag="true" ng-drag-data="t" ng-drag-success="sbc.topicsOnDropComplete($data,$event)">
                                     <div class="panel-label">
@@ -309,8 +304,7 @@
                                            ng-model="topics.newTopicName">
                                     <br>
                                     <div id="new-topic-input-help">
-                                        Characters left: {{ topics.nameMaxSize -
-                                        topics.newTopicName.length }}
+                                        Characters left: {{ topics.nameMaxSize - topics.newTopicName.length }}
                                     </div>
                                 </div>
                             </div>

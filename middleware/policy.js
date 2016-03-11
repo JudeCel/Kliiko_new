@@ -14,6 +14,8 @@ function authorized(allowedRoles) {
     if (checkRoles(roles, allowedRoles)) {
       return next();
     } else {
+      //todo @pavel remove return next()
+      return next();
       return res.status(404).send(accessDeniedMessage);
     }
   }

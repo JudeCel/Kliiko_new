@@ -130,14 +130,18 @@ router.post('/brandColour', brandColour.create);
 router.put('/brandColour', brandColour.update);
 router.post('/brandColour/copy', brandColour.copy);
 
+router.post('/session/getByInvite',  policy.authorized(['accountManager', 'admin']), session.getSessionByInvite);
 router.get('/session/ratings',  policy.authorized(['admin']), session.getAllSessionRatings);
 router.get('/session/list', sessionMemberMiddleware.hasAccess(['facilitator', 'observer', 'participant'], ['accountManager', 'admin']), session.get);
 router.delete('/session/:id', policy.authorized(['accountManager', 'admin']), session.remove);
 router.post('/session/:id', policy.authorized(['accountManager', 'admin']), session.copy);
 
+
+
 // Session Member
 router.post('/sessionMember/rate/:id', sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin']), session.updateRating);
 router.post('/sessionMember', sessionMember.addMembers);
+
 
 // Session Builder
 router.post('/sessionBuilder',  policy.authorized(['accountManager', 'admin']), sessionBuilder.new);
@@ -154,3 +158,4 @@ router.post('/sessionBuilder/:id/addTopics',  policy.authorized(['accountManager
 
 router.post('/sessionBuilder/:id/step/next',  policy.authorized(['accountManager', 'admin']), sessionBuilder.nextStep );
 router.post('/sessionBuilder/:id/step/previous',  policy.authorized(['accountManager', 'admin']), sessionBuilder.prevStep);
+

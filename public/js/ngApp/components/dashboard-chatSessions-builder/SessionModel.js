@@ -20,7 +20,7 @@
       addTopics: {method: 'POST', isArray: true , params: {path: 'addTopics'} },
 
       nextStep: {method: 'POST', params: {path: 'step'} },
-      previousStep: {method: 'POST', params: {path: 'step'} },
+      previousStep: {method: 'POST', params: {path: 'step'} }
 
     });
 
@@ -46,8 +46,7 @@
     SessionModel.prototype.update = update;
     SessionModel.prototype.validateStep = validateStep;
     SessionModel.prototype.goPreviouseStep = goPreviousStep;
-    //SessionModel.prototype.destroy = update;
-    SessionModel.prototype.close = close;
+
     SessionModel.prototype.updateStep = updateStep;
     SessionModel.prototype.sendSms = sendSms;
     SessionModel.prototype.addMembers = addMembers;
