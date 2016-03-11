@@ -532,7 +532,7 @@ describe('SERVICE - Survey', function() {
         surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
           let survey = result.data;
 
-          models.SubscriptionPreference.update({ data: { surveyCount: 2 } }, { where: { subscriptionId: testData.subscription.id } }).then(function() {
+          models.SubscriptionPreference.update({ 'data.surveyCount': 2 }, { where: { subscriptionId: testData.subscription.id } }).then(function() {
             surveyServices.copySurvey({ id: survey.id }, accountParams()).then(function(result) {
               assert.notEqual(result.data.id, survey.id);
 

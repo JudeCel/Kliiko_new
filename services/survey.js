@@ -264,8 +264,12 @@ function createSurveyWithQuestions(params, account) {
       return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t }).then(function(survey) {
         let fields = getContactListFields(survey.SurveyQuestions);
 
-        return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
-          return survey;
+        return validators.subscription(survey.accountId, 'contactList', 1).then(function() {
+          return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
+            return survey;
+          }, function(error) {
+            throw error;
+          });
         }, function(error) {
           throw error;
         });
