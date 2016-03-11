@@ -2058,6 +2058,7 @@ hr.survey-hr {
   #email-template-editor .mail-template-list {
     max-height: 650px;
     overflow-y: scroll;
+    overflow-x: hidden;
     width: 100%;
     padding: 0; }
   #email-template-editor .mail-template-list-heading {
