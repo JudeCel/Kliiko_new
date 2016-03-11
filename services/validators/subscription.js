@@ -41,6 +41,7 @@ const DEPENDENCIES = {
 };
 
 module.exports = {
+  messages: MESSAGES,
   validate: validate
 };
 
