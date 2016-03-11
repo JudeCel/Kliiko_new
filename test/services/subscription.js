@@ -442,6 +442,7 @@ describe('SERVICE - Subscription', function() {
       });
     });
 
+    // Should have contact list promise also
     function surveyPromise() {
       return models.Survey.count({ where: { accountId: testData.account.id, closed: true } });
     }
@@ -453,7 +454,14 @@ describe('SERVICE - Subscription', function() {
     describe('happy path', function() {
       function surveyHelper() {
         return function(cb) {
-          surveyFixture.createSurvey(testData.account.name).then(function() {
+          let params = {
+            accountId: testData.account.id,
+            name: 'some name',
+            description: 'some descp',
+            thanks: 'some thanks'
+          };
+
+          models.Survey.create(params).then(function() {
             cb();
           }, function(error) {
             cb(error);
