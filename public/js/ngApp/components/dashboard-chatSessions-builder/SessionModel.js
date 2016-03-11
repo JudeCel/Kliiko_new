@@ -88,8 +88,12 @@
       var self = this;
       var deferred = $q.defer();
 
-      if (!self.id) self.createNew().then(resolve);
-      if (self.id) self.getRemoteData().then(resolve);
+      if (!self.id) self.createNew().then(function(res) {
+        (res.sessionBuilder.id)
+          ? self.getRemoteData().then(resolve)
+          : resolve;
+      });
+
 
       return deferred.promise;
 
@@ -140,7 +144,7 @@
     function close() {
       var self = this;
       var deferred = $q.defer();
-      self.active = false;
+      self.active = self.sessionData.active = false;
       self.update({active:self.active}).then(
         function (res) {
           deferred.resolve(res)
@@ -154,7 +158,7 @@
     function open() {
       var self = this;
       var deferred = $q.defer();
-      self.active = true;
+      self.active = self.sessionData.active = true;
       self.update({active:self.active}).then(
         function (res) {
           deferred.resolve(res)
