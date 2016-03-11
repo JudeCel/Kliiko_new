@@ -412,13 +412,14 @@
 
         });
       }
-      if(step == 3) {
+      if (step == 3) {
         $ocLazyLoad.load([
           '/js/ngApp/components/dashboard-resources-emailTemplates/EmailTemplateEditorController.js',
           '/js/vendors/ng-file-upload/ng-file-upload.js'
         ]).then(function(res) {
           vm.currentStep = step;
           vm.sessionEmailTemplates = sortBySpecifiedIds(vm.session.steps.step3.emailTemplates);
+          vm.templateNamesToHide = {};
 
           $rootScope.$on('updateSessionBuilderEmails', updateSessionBuilderEmailsHandler);
           deferred.resolve();

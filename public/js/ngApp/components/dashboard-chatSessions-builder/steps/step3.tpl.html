@@ -43,7 +43,7 @@
                                 {{ t.name }} <span ng-if="t.name != 'Generic'">*</span><span ng-if="t.name == 'Generic'"> (optional)</span>
                             </div>
 
-                            <div class="input-group input-group-sm" ng-hide="!t.AccountId">
+                            <div class="input-group input-group-sm display-flex" ng-hide="!t.AccountId"><img src="/icons/ic_tick.png" alt="">
                                 <input type="text" class="form-control mail-list-input" aria-describedby="basic-addon3" ng-model="t.name" ng-class="{'inactive':!ec.isCurrent(key)}" >
                                 <span class="input-group-addon" id="basic-addon3" ng-hide="!ec.isCurrent(key)">{{t["MailTemplateBase.name"] | limitTo: 7}}{{t["MailTemplateBase.name"].length > 7 ? '...' : ''}}</span>
                                   <span class="input-group-btn" ng-hide="!ec.isCurrent(key)">

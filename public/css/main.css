@@ -3095,7 +3095,7 @@ hr.survey-hr {
 .fade-disabled {
   opacity: .45 !important; }
 
-.flex {
+.flex, .display-flex {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
