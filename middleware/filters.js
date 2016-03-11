@@ -53,12 +53,15 @@ function myDashboardPage(req, res, next) {
     },
     include: [models.Account]
   }).then(function(accountUsers) {
-    if(accountUsers.length == 1) {
-      res.redirect(subdomains.url(req, accountUsers[0].Account.name, '/dashboard'));
-    }
-    else {
-      res.redirect(subdomains.url(req, subdomains.base, '/my-dashboard'));
-    }
+
+    //todo @pavel: comment next line and uncomment if else block. this is test solution
+    res.redirect(subdomains.url(req, subdomains.base, '/my-dashboard'));
+    //if(accountUsers.length == 1) {
+    //  res.redirect(subdomains.url(req, accountUsers[0].Account.name, '/dashboard'));
+    //}
+    //else {
+    //  res.redirect(subdomains.url(req, subdomains.base, '/my-dashboard'));
+    //}
   }, function(error) {
     res.send({ error: error });
   });

@@ -120,7 +120,7 @@
 
     function goToStep(step) {
       if (!angular.isNumber(step)) {
-        if (step === 'back')  handlePreviouseStep();
+        if (step === 'back')  handlePreviousStep();
         if (step === 'next') handleNextStep();
         if (step === 'submit') {
           //step = 5;
@@ -130,15 +130,12 @@
       }
 
 
-      function handlePreviouseStep() {
-        debugger; //debugger
-        vm.cantMoveNextStep = false;  step = vm.currentStep = vm.currentStep - 1;
+      function handlePreviousStep() {
+        vm.cantMoveNextStep = false;  step = vm.currentStep - 1;
         vm.session.goPreviouseStep();
         initStep(step).then(
           function (res) {
             vm.currentStep = step;
-          },
-          function (err) {
           }
         );
 
@@ -322,7 +319,6 @@
       var deferred = $q.defer();
 
       if (initial) {
-
         for (var key in vm.session.steps) {
           // find number in object values that looks like 'step1', 'step2'...
           if (vm.session.steps[key].stepName == vm.session.currentStep) {
@@ -408,7 +404,7 @@
 
         });
       }
-      else if(step == 3) {
+      if(step == 3) {
         $ocLazyLoad.load([
           '/js/ngApp/components/dashboard-resources-emailTemplates/EmailTemplateEditorController.js',
           '/js/vendors/ng-file-upload/ng-file-upload.js'
@@ -421,7 +417,7 @@
           return deferred.promise;
         });
       }
-      else if(step == 4) {
+      if(step == 4) {
         $ocLazyLoad.load([
           '/js/vendors/ngDraggable/ngDraggable.js',
           '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
@@ -440,7 +436,7 @@
           return deferred.promise;
         });
       }
-      else if(step == 5) {
+      if(step == 5) {
         $ocLazyLoad.load([
           '/js/vendors/ngDraggable/ngDraggable.js',
           '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
