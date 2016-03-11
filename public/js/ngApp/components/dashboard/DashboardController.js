@@ -25,14 +25,14 @@
           vm.systemUrl = res.systemUrl;
           vm.dateFormat = res.dateFormat;
 
-          if(vm.sessions.length > 0) {
+          if(vm.accountUsers) {
+            setInitialTab();
+          }
+          else if(vm.sessions.length > 0) {
             vm.currentTab = 'participant';
-            if(!vm.accountUsers) {
-              vm.hideTabs = true;
-            }
           }
           else {
-            setInitialTab();
+            vm.hideTabs = true;
           }
         }
       });
@@ -40,7 +40,7 @@
 
     function setInitialTab() {
       // Order based on tabs
-      var array = ['accountManager', 'observer', 'facilitator'];
+      var array = ['accountManager', 'facilitator', 'observer'];
 
       for(var i in array) {
         var role = array[i];
