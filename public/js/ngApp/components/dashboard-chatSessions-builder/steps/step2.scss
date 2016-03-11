@@ -89,6 +89,12 @@
       background: $lightGreen;
     }
 
+    .control-block {
+      >.ic {
+        top: -7px;
+      }
+    }
+
   }
 
   img.ico-active-unactive {

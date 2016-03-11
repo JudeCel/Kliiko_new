@@ -2903,6 +2903,8 @@ hr.survey-hr {
       background: #F6F8F7; }
       #session-builder-content #step-2 .topic-list-item:hover {
         background: rgba(174, 239, 137, 0.5); }
+      #session-builder-content #step-2 .topic-list-item .control-block > .ic {
+        top: -7px; }
     #session-builder-content #step-2 img.ico-active-unactive {
       position: relative;
       float: right;

@@ -88,12 +88,9 @@
       var self = this;
       var deferred = $q.defer();
 
-      if (!self.id) self.createNew().then(function(res) {
-        (res.sessionBuilder.id)
-          ? self.getRemoteData().then(resolve)
-          : resolve;
-      });
-
+      (!self.id)
+        ? self.createNew().then(function(res) { self.getRemoteData().then(resolve); })
+        : self.getRemoteData().then(resolve);
 
       return deferred.promise;
 

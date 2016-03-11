@@ -284,13 +284,21 @@
       }
 
       function validateStep3() {
-        if (vm.session.steps.step3.incentive_details) {
-          deferred.resolve();
+        if (!vm.session.steps.step3.incentive_details) {
+          messenger.error('Please, add Participant Incentive');
+          vm.accordions.incentive = 'error';
+          deferred.reject();
           return deferred.promise;
         }
-        messenger.error('Please, add Participant Incentive');
-        vm.accordions.incentive = 'error';
-        deferred.reject();
+
+        if (vm.sessionEmailTemplates.length < 11) {
+          messenger.error('You need to modify all email templates');
+          vm.accordions.emailTemplates = 'error';
+          deferred.reject();
+          return deferred.promise;
+        }
+
+        deferred.resolve();
         return deferred.promise;
       }
 
