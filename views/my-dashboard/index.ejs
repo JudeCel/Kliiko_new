@@ -14,7 +14,6 @@
                 <table class='table table-responsive table-dashboardElements'>
                   <thead>
                     <tr>
-                      <th>Account Name</th>
                       <th>Session Name</th>
                       <th>Start Date</th>
                       <th>End Date</th>
@@ -24,7 +23,6 @@
                   </thead>
                   <tbody>
                     <tr ng-repeat='session in dashboard.sessions'>
-                      <td>{{ session.Account.name }}</td>
                       <td>{{ session.name }}</td>
                       <td>{{ session.start_time | date:dashboard.dateFormat }}</td>
                       <td>{{ session.end_time | date:dashboard.dateFormat }}</td>
