@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices', '$ocLazyLoad', '$q', '$window', 'ngProgressFactory', '$rootScope'];
-  function SessionBuilderController(dbg, messenger, SessionModel, $state, $stateParams, $filter, domServices, $ocLazyLoad, $q, $window, ngProgressFactory,  $rootScope) {
+  SessionBuilderController.$inject = ['dbg', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices', '$ocLazyLoad', '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope'];
+  function SessionBuilderController(dbg, messenger, SessionModel, $state, $stateParams, $filter, domServices, $ocLazyLoad, $q, $window, ngProgressFactory,  $rootScope, $scope) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -420,6 +420,32 @@
           vm.currentStep = step;
           vm.sessionEmailTemplates = sortBySpecifiedIds(vm.session.steps.step3.emailTemplates);
           vm.templateNamesToHide = {};
+
+          $scope.$watch(angular.bind(vm, function () {
+            return vm.sessionEmailTemplates;
+          }), function (newVal) {
+            //debugger; //debugger
+
+
+            for (var i = 0, len = vm.sessionEmailTemplates.length; i < len ; i++) {
+              vm.sessionEmailTemplates[i].hideIt = false;
+              if (!vm.sessionEmailTemplates[i].AccountId) {
+
+                for (var j = 0, lenj = vm.sessionEmailTemplates.length; j < lenj ; j++) {
+                  if (vm.sessionEmailTemplates[j].name == vm.sessionEmailTemplates[i].name && vm.sessionEmailTemplates[j].AccountId) {
+                    //console.warn(vm.sessionEmailTemplates[i]);
+                    vm.sessionEmailTemplates[i].hideIt = true;
+                  }
+                }
+
+
+              }
+            }
+
+            function checkIt(currentListItem) {
+
+            }
+          });
 
           $rootScope.$on('updateSessionBuilderEmails', updateSessionBuilderEmailsHandler);
           deferred.resolve();

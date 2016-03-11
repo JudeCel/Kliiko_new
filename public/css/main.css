@@ -3053,6 +3053,12 @@ hr.survey-hr {
       height: 500px; }
     #session-builder-content #step-3 iframe#templateContent-wysiwyg-iframe {
       height: 471px; }
+    #session-builder-content #step-3 input.dis {
+      width: 75%;
+      cursor: default;
+      border: none;
+      outline: none;
+      background: white !important; }
   #session-builder-content #step-contactlists,
   #session-builder-content #step-4-participants,
   #session-builder-content #step-5-observers {
