@@ -180,9 +180,8 @@
       .state('dashboard.chatSessions.builder', {
         url: '/builder/:id',
         resolve: {
-          loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
-            var deferred = $q.defer();
-            $ocLazyLoad.load([
+          loadDependencies: ['dbg', '$ocLazyLoad', function(dbg, $ocLazyLoad) {
+           return $ocLazyLoad.load([
               '/js/ngApp/components/dashboard-chatSessions-builder/SessionModel.js',
               '/js/ngApp/components/dashboard-chatSessions-builder/SessionBuilderController.js',
 
@@ -193,11 +192,7 @@
               "/js/ngApp/components/dashboard-resources-gallery/GalleryController.js",
               "/js/ngApp/components/dashboard-resources-gallery/GalleryService.js"
 
-            ]).then(function() {
-              deferred.resolve();
-            });
-
-            return deferred.promise;
+            ]);
 
           }]
         },
