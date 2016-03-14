@@ -39,21 +39,21 @@ function openBuild(req, res, next) {
 }
 
 function update(req, res, next) {
-  let params;
-  let sessionObj = req.body.sessionObj;
+  let sessionId = req.params.id;
+  let sessionDataObj = req.body;
 
-  if(!sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
+  // if(!sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
+  //
+  //
+  // if (req.body.step3) {
+  //   params = sessionObj.steps.step3
+  // } else {
+  //   params = sessionObj.steps.step1
+  // }
+  //
+  // if (req.body.data) params = req.body.data;
 
-
-  if (req.body.step3) {
-    params = sessionObj.steps.step3
-  } else {
-    params = sessionObj.steps.step1
-  }
-
-  if (req.body.data) params = req.body.data;
-
-  sessionBuilderServices.update(sessionObj.id, res.locals.currentDomain.id, params).then(function(result) {
+  sessionBuilderServices.update(sessionId, res.locals.currentDomain.id, sessionDataObj).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});

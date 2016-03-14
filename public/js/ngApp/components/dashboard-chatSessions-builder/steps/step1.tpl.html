@@ -11,7 +11,7 @@
                 </div>
             </uib-accordion-heading>
             <label for="sessionBuilder-session-name">Name your session &nbsp; </label>
-            <input id="sessionBuilder-session-name" type="text" ng-model="sbc.session.steps.step1.name" ng-blur="sbc.updateStep();">
+            <input id="sessionBuilder-session-name" type="text" ng-model="sbc.session.steps.step1.name" ng-blur="sbc.updateStep({name:sbc.session.steps.step1.name});">
         </uib-accordion-group>
 
 

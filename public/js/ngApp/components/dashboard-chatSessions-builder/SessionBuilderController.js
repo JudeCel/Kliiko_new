@@ -500,21 +500,26 @@
       return (vm.currentStep == step);
     }
 
-    function updateStep(stepNumber) {
-      if (stepNumber && stepNumber === 1) {
-        parseDateAndTime();
 
-        if (vm.brandLogo &&  vm.brandLogo.id) vm.session.steps.step1.resourceId = vm.brandLogo.id;
-        if (vm.colorScheme && vm.colorScheme.id) vm.session.steps.step1.brandProjectPreferenceId = vm.colorScheme.id;
-
-      }
-
-
-      if (stepNumber && stepNumber === 3 && vm.accordions.incentive) vm.accordions.incentive = true;
-
-      vm.session.updateStep(stepNumber);
-
+    function updateStep(dataObj) {
+      vm.session.updateStep(dataObj);
     }
+
+    // function updateStep(stepNumber) {
+    //   if (stepNumber && stepNumber === 1) {
+    //     parseDateAndTime();
+    //
+    //     if (vm.brandLogo &&  vm.brandLogo.id) vm.session.steps.step1.resourceId = vm.brandLogo.id;
+    //     if (vm.colorScheme && vm.colorScheme.id) vm.session.steps.step1.brandProjectPreferenceId = vm.colorScheme.id;
+    //
+    //   }
+    //
+    //
+    //   if (stepNumber && stepNumber === 3 && vm.accordions.incentive) vm.accordions.incentive = true;
+    //
+    //   vm.session.updateStep(stepNumber);
+    //
+    // }
 
     /**
      * convert date and time inputs to timestamp in session object -> steps -> step1 for start and rnd dates
@@ -629,7 +634,7 @@
         }
 
         vm.session.steps.step2.topics = vm.chatSessionTopicsList;
-        vm.session.update();
+        vm.session.update(field);
       }
 
     }

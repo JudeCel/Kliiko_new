@@ -211,15 +211,15 @@
       return deferred.promise;
     }
 
-    function updateStep(stepNumber) {
+    function updateStep(stepDataObj) {
       var self = this;
       var deferred = $q.defer();
 
-      var step3 = null;
+      // var step3 = null;
+      //
+      // if (stepNumber && stepNumber == 3)  step3 = true;
 
-      if (stepNumber && stepNumber == 3)  step3 = true;
-
-      sessionBuilderRestApi.put({id:self.id},{sessionObj:self,  step3:step3},function(res) {
+      sessionBuilderRestApi.put({id:self.id}, stepDataObj,function(res) {
         if (res.error) { deferred.reject(res.error); return deferred.promise; }
         deferred.resolve(res);
       });
