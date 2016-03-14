@@ -68,7 +68,6 @@
         margin-left: -70px;
         margin-top: 5px;
         position: absolute;
-        // background: url('./../icons/ic_tick.png') no-repeat;
       }
     }
   }
@@ -77,7 +76,7 @@
 
   .plans-table {
     .plan-block {
-      display: block;
+      display: block; 
     }
 
     .included-plan-fader {
@@ -337,33 +336,6 @@
 
   }
 
-
-
-  /*#countryAndCurrencySelect {
-
-    .modal-body {padding: 36px;}
-
-    #country-select {
-      width: 75%;
-      float: left;
-    }
-
-    #currency-select {
-      width: 21%;
-      float: left;
-    }
-
-    .modal-header, .modal-footer { border:none; }
-    .modal-footer {
-      padding: 0
-    }
-
-    .ok-btn {
-      margin-top: 20px;
-      color: $red;
-      border-color: $red;
-    }
-  }*/
 
   a.btn.btn-link {
     outline: none;
