@@ -1,9 +1,8 @@
 'use strict';
 
-require('./../lib/airbrake').handleExceptions();
-
 var models = require('./../models');
 var filters = require('./../models/filters');
+var airbrake = require('./../lib/airbrake').instance;
 var Subscription = models.Subscription;
 var AccountUser = models.AccountUser;
 var SubscriptionPlan = models.SubscriptionPlan;
@@ -343,6 +342,8 @@ function parallelFunc(promise) {
   return function(cb) {
     promise.then(function() {
       cb();
+    }).catch(function(error) {
+      cb(error);
     });
   }
 }
@@ -359,6 +360,7 @@ function disableSubDependencies(accountId) {
 
   async.parallel(arrayFunctions, function(error, _result) {
     if(error) {
+      airbrake.notify(error);
       deferred.reject(error);
     }
     else {
@@ -379,7 +381,8 @@ function recurringSubDependencies(subscription) {
   preference.update(params, { returning: true }).then(function(updatedPreference) {
     subscription.SubscriptionPreference = updatedPreference;
     deferred.resolve(subscription);
-  }, function(error) {
+  }).catch(function(error) {
+    airbrake.notify(error);
     deferred.reject(filters.errors(error));
   });
 
@@ -389,7 +392,7 @@ function recurringSubDependencies(subscription) {
 function prepareRecurringParams(plan, preference) {
   return {
     data: {
-      paidSmsCount: preference.paidSmsCount + plan.paidSmsCount
+      paidSmsCount: preference.data.paidSmsCount + plan.paidSmsCount
     }
   }
 }

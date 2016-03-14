@@ -458,6 +458,7 @@ describe('SERVICE - Subscription', function() {
       });
     });
 
+    // Should have contact list promise also
     function surveyPromise() {
       return models.Survey.count({ where: { accountId: testData.account.id, closed: true } });
     }
@@ -469,7 +470,14 @@ describe('SERVICE - Subscription', function() {
     describe('happy path', function() {
       function surveyHelper() {
         return function(cb) {
-          surveyFixture.createSurvey(testData.account.name).then(function() {
+          let params = {
+            accountId: testData.account.id,
+            name: 'some name',
+            description: 'some descp',
+            thanks: 'some thanks'
+          };
+
+          models.Survey.create(params).then(function() {
             cb();
           }, function(error) {
             cb(error);
@@ -564,6 +572,50 @@ describe('SERVICE - Subscription', function() {
           done();
         }).catch(function(error) {
           done(error);
+        });
+      });
+    });
+  });
+
+  describe('#recurringSubscription', function() {
+    var subId = 'SomeUniqueID';
+    beforeEach(function(done) {
+      subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: subId })).then(function() {
+        done();
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    describe('happy path', function() {
+      it('should succeed on changed subscription preferences', function(done) {
+        subscriptionServices.findSubscriptionByChargebeeId(subId).then(function(subscription) {
+          // currentSms (50) and planSms (50) should be equal,
+          // after recurring preference model value should be currentSms + planSms (100)
+          let currentSms = subscription.SubscriptionPreference.data.paidSmsCount;
+          let planSms = subscription.SubscriptionPlan.paidSmsCount;
+          assert.equal(currentSms, planSms);
+
+          subscriptionServices.recurringSubscription(subId, 'someEventId').then(function(result) {
+            assert.equal(result.subscription.lastWebhookId, 'someEventId');
+            return result.promise;
+          }).then(function(result) {
+            assert.equal(result.SubscriptionPreference.data.paidSmsCount, currentSms + planSms);
+            done();
+          }).catch(function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+
+    describe('sad path', function() {
+      it('should fail because cannot find subscription', function(done) {
+        subscriptionServices.recurringSubscription('someNonExistingId', 'someEventId').then(function() {
+          done('Should not get here!');
+        }, function(error) {
+          assert.deepEqual(error, subscriptionServices.messages.notFound.subscription);
+          done();
         });
       });
     });

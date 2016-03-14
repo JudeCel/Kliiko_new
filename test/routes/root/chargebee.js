@@ -45,11 +45,11 @@ describe('ROUTE - Chargebee Webhooks', function() {
   }
 
   describe('#endPoint', function() {
-    function reqObject(subId) {
+    function reqObject(subId, eventType) {
       return {
         body: {
           id: 'someEventId',
-          event_type: 'subscription_cancelled',
+          event_type: eventType || 'subscription_cancelled',
           content: {
             subscription: {
               id: subId
@@ -71,6 +71,10 @@ describe('ROUTE - Chargebee Webhooks', function() {
     describe('happy path', function() {
       it('should return 200', function(done) {
         chargebeeRoutes.endPoint(reqObject('someSubId'), resObject(200, done));
+      });
+
+      it('should work if random hook comes in', function(done) {
+        chargebeeRoutes.endPoint(reqObject('someSubId', 'randomEventType'), resObject(200, done));
       });
     });
 
