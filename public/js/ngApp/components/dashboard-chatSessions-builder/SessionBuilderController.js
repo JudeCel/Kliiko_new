@@ -406,9 +406,6 @@
               }
             }
 
-            function checkIt(currentListItem) {
-
-            }
           });
 
           $rootScope.$on('updateSessionBuilderEmails', updateSessionBuilderEmailsHandler);
