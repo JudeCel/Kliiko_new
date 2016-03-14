@@ -15,10 +15,6 @@ module.exports = (Sequelize, DataTypes) => {
     status: { type: DataTypes.ENUM, allowNull: false, values: constants.inviteStatuses, defaultValue: 'pending' },
     userType: { type: DataTypes.ENUM, allowNull: false, values: ['existing', 'new'], defaultValue: 'existing' },
   }, {
-    // indexes: [{
-    //   unique: true,
-    //   fields: ['ownerId', 'ownerType', 'accountUserId']
-    // }],
     classMethods: {
       associate: function(models) {
         Invite.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'cascade' });
