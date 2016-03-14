@@ -1,10 +1,9 @@
-<section id="upgrade-plan-content" ng-controller="UpgradePlanController as up">
+<section id="upgrade-plan-content" ng-controller="PlanController as up">
     <div class="row row-centered">
         <div class='col-md-offset-1 col-md-10 сol-centered dashboard-index text-center'>
 
             <h1>Upgrade Plan</h1>
             <br>
-
             <div class="row">
                 <div class=" col-md-12">
                     <div id="steps-row">
@@ -37,7 +36,7 @@
 
             </div>
 
-            <ng-include ng-show="up.plans"  src="'js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/step'+up.currentStep+'.tpl.html'"></ng-include>
+            <ng-include ng-show="up.plans"  src="'js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/step1.tpl.html'"></ng-include>
 
 
             <div class="row" ng-hide="up.stepsClassIsActive(1)">

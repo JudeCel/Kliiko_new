@@ -15,6 +15,8 @@ var promotionCode = require('./promotionCode');
 var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
 var survey = require('./survey');
+var subscription = require('./subscription');
+var smsCredit = require('./smsCredit');
 var mailTemplates = require('./mailTemplate');
 let topic = require('./topic');
 var gallery = require('./gallery');
@@ -93,6 +95,10 @@ router.get('/survey/find', survey.find);
 router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', survey.confirm);
 router.get('/survey/constants', survey.getConstants);
+
+// Subscription
+router.get('/subscriptionPlan', subscription.getPlans);
+router.get('/subscriptionSmsCredits', smsCredit.getList);
 
 // contact List
 router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);

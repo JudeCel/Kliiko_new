@@ -202,23 +202,39 @@ describe('SERVICE - Subscription', function() {
       });
 
       describe("downgrade", function() {
+
+        function getUltimateSub(testData) {
+          return function(cb) {
+            subscriptionServices.updateSubscription(testData.account.id, testData.subscriptionPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })).then(function(subscription) {
+              cb();
+            }, function(error) {
+              cb(error);
+            });
+          }
+        }
+
         describe("happy path", function() {
           it('should successfully downgrade plan', function(done) {
+            let functionList = [
+              getUltimateSub(testData)
+            ]
 
-            done();
+            async.waterfall(functionList, function (error, result) {
+              if( error ){
+                done(error);
+              } else {
+                subscriptionServices.updateSubscription(testData.account.id, testData.lowerPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.lowerPlan.chargebeePlanId })).then(function(subscription) {
+                  assert.equal(subscription.planId, testData.lowerPlan.chargebeePlanId);
+                  done();
+                }, function(error) {
+                  done("should not get here");
+                });
+              }
+            });
           });
         });
 
         describe("sad path", function() {
-          function getUltimateSub(testData) {
-            return function(cb) {
-              subscriptionServices.updateSubscription(testData.account.id, testData.subscriptionPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })).then(function(subscription) {
-                cb();
-              }, function(error) {
-                cb(error);
-              });
-            }
-          }
 
           function createTestSurvey(testData) {
             return function(cb) {
