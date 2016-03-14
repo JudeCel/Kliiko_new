@@ -1,6 +1,15 @@
 "use strict";
 var _ = require('lodash');
-var accessDeniedMessage = 'Access Denied!!!!'
+var accessDeniedMessage = 'Access Denied!!!!';
+
+
+module.exports = {
+  hasAccess: checkRoles,
+  accessDeniedMessage: accessDeniedMessage,
+  authorized: authorized
+};
+
+
 
 function checkRoles(roles, allowedRoles) {
   let result = _.intersection(allowedRoles, roles);
@@ -14,15 +23,8 @@ function authorized(allowedRoles) {
     if (checkRoles(roles, allowedRoles)) {
       return next();
     } else {
-      //todo @pavel remove return next()
-      return next();
       return res.status(404).send(accessDeniedMessage);
     }
   }
 }
 
-module.exports = {
-  hasAccess: checkRoles,
-  accessDeniedMessage: accessDeniedMessage,
-  authorized: authorized
-}
