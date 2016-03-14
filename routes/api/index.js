@@ -21,6 +21,7 @@ let topic = require('./topic');
 var gallery = require('./gallery');
 var brandColour = require('./brandColour');
 var session = require('./session');
+var myDashboard = require('./myDashboard');
 
 let contactList = require('./contactList');
 let contactListUser = require('./contactListUser');
@@ -42,6 +43,8 @@ function notAuthExit(res) {
 }
 
 // Main Routes
+router.get('/myDashboard/data', myDashboard.getAllData);
+
 router.get('/user', userRoutes.userGet);
 router.post('/user', userRoutes.userPost);
 router.put('/user', userRoutes.changePassword);

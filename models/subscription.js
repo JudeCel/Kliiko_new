@@ -1,38 +1,28 @@
-"use strict";
-/**
- * If default value == 0, then it  means UNLIMITED
- */
+'use strict';
+
+var validations = require('./validations');
+
 module.exports = (Sequelize, DataTypes) => {
   var Subscription = Sequelize.define('Subscription', {
-      id:	 { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-
-      subscriptionId: { type: DataTypes.STRING, allowNull: false, unique: true},
-      planId: { type: DataTypes.STRING, allowNull: false},
-      planQuantity: { type: DataTypes.INTEGER, allowNull: false},
-      status:  {type: DataTypes.ENUM, allowNull: false, values: [ 'future', 'in_trial', 'active', 'non_renewing', 'cancelled' ] },
-      trialStart: {type: DataTypes.DATE, allowNull: true},
-      trialEnd: {type: DataTypes.DATE, allowNull: true},
-      subscribtionCreatedAt: {type: DataTypes.DATE, allowNull: false},
-      startedAt: {type: DataTypes.DATE, allowNull: false},
-      createdFromIp: {type: DataTypes.STRING, allowNull: false},
-      hasScheduledChanges: {type: DataTypes.BOOLEAN, allowNull: false},
-      dueInvoicesCount:  { type: DataTypes.INTEGER, allowNull: false},
-      customerData:  { type: DataTypes.JSON, allowNull: false},
-      cardData:  { type: DataTypes.JSON, allowNull: false},
-
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    accountId: { type: DataTypes.INTEGER, allowNull: false },
+    planId: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
+    customerId: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
+    subscriptionId: { type: DataTypes.STRING, allowNull: false,
+      validate: {
+        notEmpty: true,
+        isUnique: validations.unique(Sequelize, 'Subscription', 'subscriptionId')
+      }
     },
-    {
-      timestamps: true,
-      tableName: 'Subscriptions',
-      paranoid: true,
-      classMethods: {
-        associate: function(models) {
-          Subscription.belongsTo(models.User);
-          Subscription.belongsTo(models.Account);
-        }
+  }, {
+    timestamps: true,
+    paranoid: true,
+    classMethods: {
+      associate: function(models) {
+        Subscription.belongsTo(models.Account, { foreignKey: 'accountId' });
       }
     }
-  );
+  });
 
   return Subscription;
 };

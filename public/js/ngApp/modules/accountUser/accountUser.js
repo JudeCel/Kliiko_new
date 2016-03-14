@@ -17,7 +17,7 @@
     function getAccountUserData(forceUpdate) {
       dbg.log2('#KliikoApp.user > get all accountuser details');
       var deferred = $q.defer();
-      
+
       if(accountUser && accountUser.id && !forceUpdate) {
         dbg.log2('#KliikoApp.user > get all accountuser details > return cached value');
         deferred.resolve(accountUser);
@@ -28,10 +28,16 @@
       accountUserRestApi.get({}, function (res) {
         dbg.log2('#KliikoApp.user > get all accountuser details > server respond >', res);
         accountUser = res;
+        fetchRole(accountUser);
         deferred.resolve(accountUser);
       });
 
       return deferred.promise;
+    }
+
+    function fetchRole(accountUser) {
+      var role = 'is'+ accountUser.role.capitalize();
+      accountUser[role] = true;
     }
   }
 })();

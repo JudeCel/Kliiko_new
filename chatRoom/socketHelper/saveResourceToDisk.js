@@ -14,13 +14,13 @@ im.identify.path = config.paths.identifyPath;
 
 const gallery = {
   panel: {
-    width: 420, 
-    height: 420, 
+    width: 420,
+    height: 420,
     version: "panel"
   },
   table: {
-    width: 84, 
-    height: 84, 
+    width: 84,
+    height: 84,
     version: "table"
   }
 };
@@ -29,6 +29,7 @@ function saveResourceToDisk(params) {
   let err = joi.validate(params, {
     file: joi.object().required(),
     resCb: joi.func().required(),
+    private: joi.boolean().optional(),
     width: joi.number().optional(),
     height: joi.number().optional(),
     type: joi.string().optional()
@@ -85,7 +86,7 @@ function saveResourceToDisk(params) {
                 depth: 1
               }, params.resCb);
           } else stage2ofWriteFile(features);
-           
+
           function stage2ofWriteFile(features){
             if(features.width < params.width && features.height < params.height){
               params.width = features.width;

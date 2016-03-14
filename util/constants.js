@@ -40,10 +40,10 @@ module.exports = {
   ],
   mailTemplateFields: [
     'id', 'name', 'subject', 'content',
-    'MailTemplateBaseId', 'AccountId', 'systemMessage'
+    'MailTemplateBaseId', 'AccountId', 'systemMessage', 'isCopy'
   ],
   mailTemplateFieldsForList: [
-    'id', 'name', 'MailTemplateBaseId', 'AccountId', 'systemMessage'
+    'id', 'name', 'MailTemplateBaseId', 'AccountId', 'systemMessage', 'isCopy'
   ],
   mailTemplateType : {
     'firstInvitation' : "First Invitation",
@@ -76,5 +76,6 @@ module.exports = {
   accountNameRegExp: ["^[a-zA-Z0-9]+$",'i'],
   mobileRegExp: ["^[0-9]+$",'i'],
   galleryUploadTypes: ['image', 'brandLogo', 'audio', 'youtubeLink', 'text'],
-  dateFormat: 'MM-dd-yyyy'
+  dateFormat: 'MM-dd-yyyy',
+  dateFormatWithTime: 'MM-dd-yyyy, HH:mm'
 }

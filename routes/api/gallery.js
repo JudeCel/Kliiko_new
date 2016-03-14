@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash');
 var galleryService = require('./../../services/account/gallery');
 var socketHelper = require("../../chatRoom/socketHelper");
 
@@ -13,7 +14,7 @@ module.exports = {
   deleteZipFile: deleteZipFile
 };
 
-function postResources(req, res, next) {    
+function postResources(req, res, next) {
   galleryService.uploadResource(req, res).then(function(result) {
     res.send(result);
   }, function(err) {
@@ -23,9 +24,10 @@ function postResources(req, res, next) {
 
 function getResources(req, res, next) {
   let accountId = res.locals.currentDomain.id;
+  let admin = _.includes(res.locals.currentDomain.roles, 'admin');
   let resourceType = req.query.type;
 
-  galleryService.getResources(accountId, resourceType).then(function(result) {
+  galleryService.getResources(accountId, admin, resourceType).then(function(result) {
     res.send(({ data: result }));
   });
 }
@@ -46,7 +48,7 @@ function deleteResources(req, res, next) {
   });
 }
 
-function uploadResource(req, res, next) { 
+function uploadResource(req, res, next) {
   galleryService.uploadResourceFile(req).then(function(result) {
     res.send(result);
   }, function(err) {
