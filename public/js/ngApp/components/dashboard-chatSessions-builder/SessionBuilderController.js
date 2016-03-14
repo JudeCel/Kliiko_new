@@ -232,12 +232,9 @@
 
         if (vm.chatSessionTopicsList.length) {
           vm.session.saveTopics(vm.chatSessionTopicsList).then(
-            function (res) {
-              deferred.resolve();
-            }
+            function (res) {  deferred.resolve(); },
+            function (err) {  deferred.reject(err); }
           );
-
-
 
           return deferred.promise;
 
