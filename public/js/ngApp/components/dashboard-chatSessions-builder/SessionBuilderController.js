@@ -85,7 +85,6 @@
     vm.selectAllTopics = selectAllTopics;
 
     // step3
-    vm.saveEmailTemplate = saveEmailTemplate;
 
     // step 4 + 5
     vm.showCorrectStatus = showCorrectStatus;
@@ -680,11 +679,6 @@
       );
 
     }
-
-    function saveEmailTemplate(template) {
-
-    }
-
 
     /// step 4 + 5
     function showCorrectStatus(member) {
