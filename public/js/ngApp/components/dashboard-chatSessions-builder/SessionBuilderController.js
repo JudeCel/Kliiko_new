@@ -10,9 +10,11 @@
     var vm = this;
 
     var colorSchemeId, brandLogoId;
+    var intervals = {};
     var sessionId = $stateParams.id || null;
 
     vm.step1 = {};
+
     vm.accordions = {};
     vm.participants = [];
     vm.observers = [];
@@ -255,12 +257,12 @@
           return deferred.promise;
         }
 
-        if (vm.sessionEmailTemplates.length < 11) {
-          messenger.error('You need to modify all email templates');
-          vm.accordions.emailTemplates = 'error';
-          deferred.reject();
-          return deferred.promise;
-        }
+        // if (vm.sessionEmailTemplates.length < 11) {
+        //   messenger.error('You need to modify all email templates');
+        //   vm.accordions.emailTemplates = 'error';
+        //   deferred.reject();
+        //   return deferred.promise;
+        // }
 
         deferred.resolve();
         return deferred.promise;
@@ -309,29 +311,39 @@
       if (step == 1) {
         // populate logo
         if (vm.session.steps.step1.resourceId) {
-          setTimeout(function() {
-
-            for (var i = 0, len = vm.logosList.length; i < len ; i++) {
-              if (vm.logosList[i].id == vm.session.steps.step1.resourceId) {
-                vm.brandLogo = vm.logosList[i];
-                break;
+          intervals.resourceId = setInterval(function() {
+            if (vm.logosList) {
+              for (var i = 0, len = vm.logosList.length; i < len ; i++) {
+                if (vm.logosList[i].id == vm.session.steps.step1.resourceId) {
+                  vm.brandLogo = vm.logosList[i];
+                  break;
+                }
               }
-            }
-          }, 1000);
+              clearInterval(intervals.resourceId);
+              intervals.resourceId = null;
 
+            }
+          }, 100);
         }
 
         // populate color scheme
         if (vm.session.steps.step1.brandProjectPreferenceId) {
-          setTimeout(function() {
 
-            for (var i = 0, len = vm.colorsList.length; i < len ; i++) {
-              if (vm.colorsList[i].id == vm.session.steps.step1.brandProjectPreferenceId) {
-                vm.colorScheme = vm.colorsList[i];
-                break;
+          if (vm.session.steps.step1.resourceId) {
+            intervals.brandProjectPreferenceId = setInterval(function() {
+              if (vm.colorsList) {
+                for (var i = 0, len = vm.colorsList.length; i < len ; i++) {
+                  if (vm.colorsList[i].id == vm.session.steps.step1.brandProjectPreferenceId) {
+                    vm.colorScheme = vm.colorsList[i];
+                    break;
+                  }
+                }
+                clearInterval(intervals.brandProjectPreferenceId);
+                intervals.brandProjectPreferenceId = null;
+
               }
-            }
-          }, 1000);
+            }, 100);
+          }
 
         }
 
@@ -359,16 +371,20 @@
           vm.currentStep = step;
 
           if (vm.session.steps.step2.facilitator) {
-            //timeout to wait for getting members list data
-            setTimeout(function() {
-              if (!vm.facilitators) return;
-              for (var i = 0, len = vm.facilitators.length; i < len ; i++) {
-                if (vm.facilitators[i].accountUserId == vm.session.steps.step2.facilitator) {
-                  vm.selectedFacilitator = vm.facilitators[i];
-                  break;
+            intervals.facilitators = setInterval(function() {
+              if (vm.facilitators) {
+                for (var i = 0, len = vm.facilitators.length; i < len ; i++) {
+                  if (vm.facilitators[i].accountUserId == vm.session.steps.step2.facilitator) {
+                    vm.selectedFacilitator = vm.facilitators[i];
+                    break;
+                  }
                 }
+                clearInterval(intervals.facilitators);
+                intervals.facilitators = null;
+
               }
-            }, 1000);
+            }, 100);
+
           }
 
           if (vm.session.steps.step2.topics.length) vm.chatSessionTopicsList = vm.session.steps.step2.topics;

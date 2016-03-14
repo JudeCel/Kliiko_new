@@ -39,7 +39,7 @@ const MESSAGES = {
       topics: 'No topics selected'
     },
     thirdStep: {
-      emailTemplates: "Not enought mail templates provided, needed "
+      emailTemplates: "Not enough mail templates provided, needed "
     },
     fourthStep: {
       participants: 'No participants provided'
