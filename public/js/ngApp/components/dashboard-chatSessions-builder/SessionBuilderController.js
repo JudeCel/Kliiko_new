@@ -231,12 +231,9 @@
         }
 
         if (vm.chatSessionTopicsList.length) {
-          //todo
           vm.session.saveTopics(vm.chatSessionTopicsList).then(
             function (res) {
               deferred.resolve();
-            },
-            function (err) {
             }
           );
 

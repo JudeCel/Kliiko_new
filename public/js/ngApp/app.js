@@ -156,7 +156,7 @@
             sessionServices = $injector.get('topicsAndSessions');
             sessionServices.getSessionByInvite(inviteToken).then(function(res) {
               console.warn(res);
-            })
+            });
           });
 
         }
