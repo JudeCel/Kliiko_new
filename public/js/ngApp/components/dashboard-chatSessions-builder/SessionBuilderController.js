@@ -193,16 +193,17 @@
      */
     function frontEndStepValidation(step) {
       var deferred = $q.defer();
-
-      if (step === 1) { validateStep1() }
-      if (step === 2) { validateStep2() }
-      if (step === 3) { validateStep3() }
-      if (step === 4) { validateStep4() }
-      if (step === 5) { validateStep5() }
+      deferred.resolve();
+      // if (step === 1) { validateStep1() }
+      // if (step === 2) { validateStep2() }
+      // if (step === 3) { validateStep3() }
+      // if (step === 4) { validateStep4() }
+      // if (step === 5) { validateStep5() }
 
       return deferred.promise;
 
       function validateStep1() {
+
         var startTime = new Date(vm.session.steps.step1.startTime).getTime();
         var endTime = new Date(vm.session.steps.step1.endTime).getTime();
         vm.accordions.dateAndTimeError = null;
@@ -502,7 +503,26 @@
 
 
     function updateStep(dataObj) {
-      vm.session.updateStep(dataObj);
+      if (dataObj == 'startTime') {
+        parseDateAndTime();
+        updateStep({startTime: vm.session.steps.step1.startTime});
+        return;
+      }
+
+      if (dataObj == 'endTime') {
+        parseDateAndTime();
+        updateStep({endTime: vm.session.steps.step1.endTime});
+        return;
+      }
+
+        vm.session.updateStep(dataObj).then(
+        function (res) {
+        },
+        function (err) {
+          messenger.error(err);
+        }
+      );
+
     }
 
     // function updateStep(stepNumber) {
@@ -618,6 +638,8 @@
 
 
       function thisAdd(data) {
+        var topicIds = [];
+
         // check if this topic already in selected chat session topics list
         if (vm.chatSessionTopicsList.length) {
           for (var i = 0; i < vm.chatSessionTopicsList.length ; i++) {
@@ -634,7 +656,12 @@
         }
 
         vm.session.steps.step2.topics = vm.chatSessionTopicsList;
-        vm.session.update(field);
+
+        for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
+          topicIds.push(vm.chatSessionTopicsList[i].id)
+        }
+
+        vm.session.updateStep({topics: topicIds});
       }
 
     }

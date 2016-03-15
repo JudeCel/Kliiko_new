@@ -31,21 +31,22 @@
                 <md-datepicker ng-model="sbc.step1.startDate"
                                md-min-date="::sbc.today"
                                md-max-date="sbc.step1.endDate"
+                               ng-change="sbc.updateStep('startTime')"
                                md-placeholder="Enter date"></md-datepicker>
 
                 <img class="date-time-ico time" src="/icons/time_green.png" alt="">
-                <uib-timepicker class="timepicker-wrapper" ng-model="sbc.step1.startTime" ng-change="sbc.updateStep(1)" hour-step="sbc.dateTime.hstep" minute-step="sbc.dateTime.mstep" show-meridian="true"></uib-timepicker>
+                <uib-timepicker class="timepicker-wrapper" ng-model="sbc.step1.startTime" ng-change="sbc.updateStep('startTime')" hour-step="sbc.dateTime.hstep" minute-step="sbc.dateTime.mstep" show-meridian="true"></uib-timepicker>
 
             </div>
             <div class="data-time-content-wrapper">
                 <span class="date-time-label end">End</span><img class="date-time-ico" src="/icons/calendar_green.png" alt="">
                 <md-datepicker ng-model="sbc.step1.endDate"
                                md-min-date="sbc.step1.startDate"
-                               ng-change="sbc.updateStep(1)"
+                               ng-change="sbc.updateStep('endTime')"
                                md-placeholder="Enter date"></md-datepicker>
 
                 <img class="date-time-ico time" src="/icons/time_green.png" alt="">
-                <uib-timepicker class="timepicker-wrapper" ng-model="sbc.step1.endTime" ng-change="sbc.updateStep(1)" hour-step="sbc.dateTime.hstep" minute-step="sbc.dateTime.mstep" show-meridian="true"></uib-timepicker>
+                <uib-timepicker class="timepicker-wrapper" ng-model="sbc.step1.endTime" ng-change="sbc.updateStep('endTime')" hour-step="sbc.dateTime.hstep" minute-step="sbc.dateTime.mstep" show-meridian="true"></uib-timepicker>
                 <code ng-show="sbc.accordions.dateAndTimeError" class="margin020">End Time should be greater then Start Time</code>
             </div>
 
@@ -67,7 +68,7 @@
                         <div class='col-sm-4' ng-repeat="resource in sbc.logosList = ( resources | filter: { resourceType: 'brandLogo' } )">
                             <label for="{{ $index }}-logo">
                                 <div class='panel'>
-                                    <input id="{{ $index }}-logo" type="radio" ng-model="sbc.brandLogo" ng-value="resource" ng-click="sbc.updateStep(1)">
+                                    <input id="{{ $index }}-logo" type="radio" ng-model="sbc.brandLogo" ng-value="resource" ng-click="sbc.updateStep({resourceId:sbc.brandLogo.id})">
                                     <img calss="source-img" ng-src='{{ getResourceNameUrl(resource) }}'/>
                                 </div>
                             </label>
@@ -108,7 +109,7 @@
                                 <div class='panel-heading'>
                                     <div class='row'>
                                         <div class='col-xs-1'>
-                                            <input id="{{ $index }}-scheme" type="radio" ng-model="sbc.colorScheme" ng-value="scheme" ng-click="sbc.updateStep(1)">
+                                            <input id="{{ $index }}-scheme" type="radio" ng-model="sbc.colorScheme" ng-value="scheme" ng-click="sbc.updateStep({brandProjectPreferenceId:sbc.colorScheme.id})">
                                         </div>
                                         <div class='col-xs-10'>
                                             <h3 class='panel-title text-max-width'>{{ scheme.name }}</h3>
