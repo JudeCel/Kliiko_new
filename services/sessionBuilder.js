@@ -731,7 +731,7 @@ function validateStepThree(params) {
   let deferred = q.defer();
 
   findSession(params.id, params.accountId).then(function(session) {
-    models.MailTemplate.findAll({
+    models.MailTemplate.count({
       where: {
         sessionId: session.id,
         isCopy: true,
