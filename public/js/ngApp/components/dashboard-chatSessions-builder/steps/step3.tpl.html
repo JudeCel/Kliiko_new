@@ -13,7 +13,7 @@
             </uib-accordion-heading>
             <label for="sessionBuilder-incentive">Enter Participant Incentive &nbsp; </label>
             <input id="sessionBuilder-incentive" type="text" ng-model="sbc.session.steps.step3.incentive_details"
-                   ng-blur="sbc.updateStep(3);" ng-class="{'has-error':sbc.accordions.incentive == 'error'}"
+                   ng-blur="sbc.updateStep({'incentive_details':sbc.session.steps.step3.incentive_details});" ng-class="{'has-error':sbc.accordions.incentive == 'error'}"
                    maxlength="50" placeholder="50 characters max">
         </uib-accordion-group>
 
@@ -22,7 +22,7 @@
             <uib-accordion-heading>
                 <div class="panel-label">
                     Email Templates
-                    <i class="pull-right glyphicon"
+                    <i class="pull-right glyphicon" 
                        ng-class="{'glyphicon-chevron-down': sbc.accordions.emailTemplates, 'glyphicon-chevron-right': !sbc.accordions.emailTemplates}"></i>
                 </div>
             </uib-accordion-heading>

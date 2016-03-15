@@ -661,7 +661,7 @@
           topicIds.push(vm.chatSessionTopicsList[i].id)
         }
 
-        vm.session.updateStep({topics: topicIds});
+        vm.session.saveTopics();
       }
 
     }
