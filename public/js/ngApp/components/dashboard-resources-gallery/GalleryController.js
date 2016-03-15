@@ -7,9 +7,9 @@
 
   GalleryController.$inject = ['dbg', 'GalleryServices', '$modal',
                                '$scope', 'domServices', 'messenger',
-                               'globalSettings', '$sce', 'filterFilter', '$timeout', 'ngProgressFactory'];
+                               'globalSettings', '$sce', 'filterFilter', '$timeout', 'ngProgressFactory', '$state', '$stateParams'];
 
-  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, globalSettings, $sce, filterFilter, $timeout, ngProgressFactory){
+  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, globalSettings, $sce, filterFilter, $timeout, ngProgressFactory, $state, $stateParams){
     dbg.log2('#GalleryController  started');
 
     initList();
@@ -22,7 +22,15 @@
       { fileType: "pdf", uploadText: "Upload PDF", filterText: "PDF's"},
       { fileType: "video", uploadText: "Upload Video", filterText: "Videos"},
       { fileType: "youtubeUrl", uploadText: "Save youtube URL", filterText: "Youtube URL's"},
-    ]
+    ];
+
+    if($stateParams.backTo) {
+      $scope.backButton = true;
+      $scope.backButtonClickHandle = function() {
+        $state.go($stateParams.backTo, {id:$stateParams.id});
+      };
+      return
+    }
 
     function initList() {
       if(!sessionStorage.getItem('viewType')){

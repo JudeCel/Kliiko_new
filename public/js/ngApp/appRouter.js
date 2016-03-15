@@ -232,7 +232,7 @@
       })
 
       .state('dashboard.resources.gallery', {
-        url: "/gallery",
+        url: "/gallery?backTo&id",
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-gallery/dashboard-content.html"}
         },
@@ -371,7 +371,7 @@
 
       })
       .state('dashboard.resources.brandColours', {
-        url: '/brand-colours/:new?backTo',
+        url: '/brand-colours/:new?backTo&id',
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-brandColours/dashboard-content.html"}
         },

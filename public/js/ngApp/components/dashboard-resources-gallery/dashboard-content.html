@@ -18,9 +18,13 @@
           <span class='glyphicon glyphicon-th-list' aria-hidden='true'></span>
         </button>
 
+        <button ng-if="backButton" ng-click="backButtonClickHandle()" class='btn btn-addNewElement btn-green gallery-btn-width' type='button'  data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+           Go Back
+        </button>
+
         <button class='btn btn-addNewElement btn-green gallery-btn-width' type='button' id='uploadResourceDropdown' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
           <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
-          Add New Resource
+           Add New Resource
         </button>
 
         <ul class='dropdown-menu gallery-dropdown-margin' aria-labelledby='uploadResourceDropdown' >

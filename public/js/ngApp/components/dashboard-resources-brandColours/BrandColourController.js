@@ -165,7 +165,7 @@
       vm.formSubmitted = false;
 
       if(page == 'indexBack' && $stateParams.backTo) {
-        $state.go($stateParams.backTo);
+        $state.go($stateParams.backTo, {id:$stateParams.id});
         return
       }
 
