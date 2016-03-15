@@ -5,15 +5,18 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     private: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
     topicId: { type: DataTypes.INTEGER, allowNull: true },
-    userId: { type: DataTypes.INTEGER, allowNull: true },
-    thumb_URL: { type: DataTypes.TEXT, allowNull: true },
-    URL: { type: DataTypes.TEXT, allowNull: true },
-    HTML: { type: DataTypes.TEXT, allowNull: true },
-    JSON: { type: DataTypes.JSON, allowNull: true, defaultValue: {} },
-    resourceType: { type: DataTypes.ENUM, allowNull: false,
-      values: [ 'participant', 'facilitator', 'co-facilitator',
-                'observer', 'image', 'video', 'audio', 'report',
-                'vote', 'collage', 'tmp', 'pdf', 'brandLogo', 'youtubeUrl'
+    sessionMemberId: { type: DataTypes.INTEGER, allowNull: true },
+    image: { type: DataTypes.TEXT, allowNull: true },
+    video: { type: DataTypes.TEXT, allowNull: true },
+    file: { type: DataTypes.TEXT, allowNull: true },
+    audio: { type: DataTypes.TEXT, allowNull: true },
+    link: { type: DataTypes.TEXT, allowNull: true },
+    type: { type: DataTypes.ENUM, allowNull: false,
+      values: [ 'video', 'audio', 'image', 'pdf', 'csv', 'link']
+    },
+    scope: { type: DataTypes.ENUM, allowNull: false,
+      values: [ 'participant', 'facilitator', 'co-facilitator', 'observer',
+        'report', 'vote', 'collage', 'brandLogo', 'youtubeUrl'
               ]
     }
   }, {
@@ -21,7 +24,7 @@ module.exports = (Sequelize, DataTypes) => {
     classMethods: {
       associate: function(models) {
         Resource.belongsTo(models.Topic, { foreignKey: 'topicId' });
-        Resource.belongsTo(models.User, { foreignKey: 'userId' });
+        Resource.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId' });
         Resource.hasMany(models.Survey, { foreignKey: 'surveyId' });
         Resource.hasMany(models.Survey, { foreignKey: 'surveyQuestionId' });
       }
