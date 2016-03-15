@@ -39,7 +39,8 @@ let templateFiles = [
     name: constants.mailTemplateType.generic,
     type: "generic",
     subject: "Invitation",
-    systemMessage: false
+    systemMessage: false,
+    requaired: false
   },
   {
     fileName: 'InvitationSeries_NotAtAll.html',

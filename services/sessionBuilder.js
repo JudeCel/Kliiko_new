@@ -540,17 +540,6 @@ function searchSessionMembers(sessionId, role) {
   });
 }
 
-function countRequiredMailTemplates(mailTemplates) {
-  let count = 0;
-  _.map(mailTemplates, function(mailTemplate) {
-    if(mailTemplate.required) {
-      count++;
-    }
-  });
-
-  return count;
-}
-
 function step2Queries(session, step) {
   return [
     function(cb) {
@@ -743,10 +732,13 @@ function validateStepThree(params) {
 
   findSession(params.id, params.accountId).then(function(session) {
     models.MailTemplate.findAll({
-      where: {sessionId: session.id}
-    }).then(function(mailTemplates) {
+      where: {
+        sessionId: session.id,
+        isCopy: true,
+        required: true
+      }
+    }).then(function(count) {
       let errors = {};
-      let count = countRequiredMailTemplates(mailTemplates);
 
       if(count < MIN_MAIL_TEMPLATES){
         errors.emailTemplates = MESSAGES.errors.thirdStep.emailTemplates + MIN_MAIL_TEMPLATES;
