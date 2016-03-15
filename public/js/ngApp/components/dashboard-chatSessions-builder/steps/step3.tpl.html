@@ -36,7 +36,7 @@
                     <div class="panel-heading mail-template-list-heading"><strong>Email Templates</strong></div>
                     <div id="mail-template-list" class="mail-template-list">
                         <a ng-repeat="(key, t) in sbc.sessionEmailTemplates track by $index" class="list-group-item" ng-hide="t.hideIt" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : t.AccountId}"
-                           ng-click="ec.startEditingTemplate(key, true, t.id, t)">
+                           ng-click="ec.startEditingTemplate(key, true, t.id, t); sbc.showEmailsTemplateEditeor = true;">
                             <div ng-hide="t.AccountId">
                                 <img src="/icons/ic_arrow_right.png" class="pull-right" ng-hide="!ec.isCurrent(key)">
                                 {{ t.name }} <span ng-if="t.name != 'Generic'">*</span><span ng-if="t.name == 'Generic'"> (optional)</span>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-8 mail-template-details">
+                <div class="col-md-8 mail-template-details" ng-show="sbc.showEmailsTemplateEditeor">
                     <table>
 
                         <tr>
