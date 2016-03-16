@@ -147,7 +147,7 @@
                 vm.searchingParticipants = false;
                 vm.searchingObservers = false;
                 initStep(step+1).then(function(res) {
-                  $stateParams.planUpgradeStep = vm.currentStep = step+1;
+                  $stateParam.ssessionBuilderStep = vm.currentStep = step+1;
                 });
 
                 routerProgressbar.complete();
@@ -266,13 +266,14 @@
         ]).then(function(res) {
           vm.currentStep = step;
 
-
-
           if (vm.session.steps.step2.topics.length) vm.chatSessionTopicsList = vm.session.steps.step2.topics;
 
           deferred.resolve();
           return deferred.promise;
 
+        },
+        function(err) {
+          deferred.reject(err);
         });
       }
       if (step == 3) {
@@ -307,7 +308,10 @@
           $rootScope.$on('updateSessionBuilderEmails', updateSessionBuilderEmailsHandler);
           deferred.resolve();
           return deferred.promise;
-        });
+        },
+          function(err) {
+            deferred.reject(err);
+          });
       }
       if(step == 4) {
         $ocLazyLoad.load([
@@ -326,7 +330,10 @@
           vm.currentStep = step;
           deferred.resolve();
           return deferred.promise;
-        });
+        },
+          function(err) {
+            deferred.reject(err);
+          });
       }
       if(step == 5) {
         $ocLazyLoad.load([
@@ -346,7 +353,10 @@
           vm.lastStep = true;
           deferred.resolve();
           return deferred.promise;
-        });
+        },
+          function(err) {
+            deferred.reject(err);
+          });
       }
 
       return deferred.promise;
