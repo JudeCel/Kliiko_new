@@ -139,24 +139,13 @@
 
         vm.session.updateStep().then(
           function(res) {
+            vm.searchingParticipants = false;
+            vm.searchingObservers = false;
+            initStep(step+1).then(function(res) {
+              $stateParam.ssessionBuilderStep = vm.currentStep = step+1;
+            });
 
-            vm.session.validateStep().then(
-              function(res) {
-
-
-                vm.searchingParticipants = false;
-                vm.searchingObservers = false;
-                initStep(step+1).then(function(res) {
-                  $stateParam.ssessionBuilderStep = vm.currentStep = step+1;
-                });
-
-                routerProgressbar.complete();
-              },
-              function(validateErr) {
-                routerProgressbar.complete();
-                if (validateErr) messenger.error(validateErr);
-              }
-            );
+            routerProgressbar.complete();
 
 
           },

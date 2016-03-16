@@ -44,7 +44,6 @@
     SessionModel.prototype.close = close;
     SessionModel.prototype.open = open;
     SessionModel.prototype.update = update;
-    SessionModel.prototype.validateStep = validateStep;
     SessionModel.prototype.goPreviouseStep = goPreviousStep;
 
     SessionModel.prototype.updateStep = updateStep;
@@ -181,20 +180,6 @@
 
       return deferred.promise;
 
-    }
-
-
-    function validateStep(step) {
-      var deferred = $q.defer();
-      var self = this;
-
-      sessionBuilderRestApi.nextStep({id: self.id, otherId: 'next'}, {}, function(res) {
-        res.error
-          ? deferred.reject(res.error)
-          : deferred.resolve(res);
-      });
-
-      return deferred.promise;
     }
 
 
