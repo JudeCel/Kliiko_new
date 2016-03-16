@@ -137,37 +137,27 @@
 
         step = vm.currentStep;
 
-        frontEndStepValidation(step).then(
+        vm.session.updateStep().then(
           function(res) {
 
-            vm.session.updateStep().then(
+            vm.session.validateStep().then(
               function(res) {
 
-                vm.session.validateStep().then(
-                  function(res) {
 
+                vm.searchingParticipants = false;
+                vm.searchingObservers = false;
+                initStep(step+1).then(function(res) {
+                  $stateParams.planUpgradeStep = vm.currentStep = step+1;
+                });
 
-                    vm.searchingParticipants = false;
-                    vm.searchingObservers = false;
-                    initStep(step+1).then(function(res) {
-                      $stateParams.planUpgradeStep = vm.currentStep = step+1;
-                    });
-
-                    routerProgressbar.complete();
-                  },
-                  function(validateErr) {
-                    routerProgressbar.complete();
-                    if (validateErr) messenger.error(validateErr);
-                  }
-                );
-
-
-              },
-              function (err) {
                 routerProgressbar.complete();
-                if (err) messenger.error(err);
+              },
+              function(validateErr) {
+                routerProgressbar.complete();
+                if (validateErr) messenger.error(validateErr);
               }
             );
+
 
           },
           function (err) {
@@ -194,100 +184,10 @@
     function frontEndStepValidation(step) {
       var deferred = $q.defer();
       deferred.resolve();
-      // if (step === 1) { validateStep1() }
-      // if (step === 2) { validateStep2() }
-      // if (step === 3) { validateStep3() }
-      // if (step === 4) { validateStep4() }
-      // if (step === 5) { validateStep5() }
 
       return deferred.promise;
 
-      function validateStep1() {
 
-        var startTime = new Date(vm.session.steps.step1.startTime).getTime();
-        var endTime = new Date(vm.session.steps.step1.endTime).getTime();
-        vm.accordions.dateAndTimeError = null;
-
-        if (endTime > startTime) {
-          deferred.resolve();
-          return deferred.promise;
-
-        } else {
-          messenger.error('Session End Time should be greater then Start Time');
-          vm.accordions.dateAndTime = true;
-          vm.accordions.dateAndTimeError = true;
-          deferred.reject();
-          return deferred.promise;
-        }
-
-
-      }
-      function validateStep2() {
-        if (!vm.selectedFacilitator) {
-
-          messenger.error('You should select one facilitator for this session');
-          vm.accordions.facilitators = true;
-
-          deferred.reject();
-          return deferred.promise;
-        }
-
-        if (vm.chatSessionTopicsList.length) {
-          vm.session.saveTopics(vm.chatSessionTopicsList).then(
-            function (res) {  deferred.resolve(); },
-            function (err) {  deferred.reject(err); }
-          );
-
-          return deferred.promise;
-
-        } else {
-          messenger.error('You should select at least one topic for this session');
-          vm.accordions.topics = true;
-
-          deferred.reject();
-          return deferred.promise;
-        }
-
-      }
-
-      function validateStep3() {
-        if (!vm.session.steps.step3.incentive_details) {
-          messenger.error('Please, add Participant Incentive');
-          vm.accordions.incentive = 'error';
-          deferred.reject();
-          return deferred.promise;
-        }
-
-        // if (vm.sessionEmailTemplates.length < 11) {
-        //   messenger.error('You need to modify all email templates');
-        //   vm.accordions.emailTemplates = 'error';
-        //   deferred.reject();
-        //   return deferred.promise;
-        // }
-
-        deferred.resolve();
-        return deferred.promise;
-      }
-
-      function validateStep4() {
-        if (vm.participants.length) {
-          deferred.resolve();
-          return deferred.promise;
-        }
-        messenger.error('Select at least one participant');
-        deferred.reject();
-        return deferred.promise;
-      }
-
-      function validateStep5() {
-        if (vm.observers.length) {
-          deferred.resolve();
-          return deferred.promise;
-        }
-        messenger.error('Select at least one observer');
-        deferred.reject();
-        return deferred.promise;
-      }
     }
 
     function initStep(step, initial) {
