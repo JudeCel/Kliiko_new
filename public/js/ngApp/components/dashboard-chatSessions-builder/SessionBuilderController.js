@@ -310,6 +310,25 @@
 
 
       if (step == 1) {
+        // populate facilitator
+        if (vm.session.steps.step2.facilitator) {
+          intervals.facilitators = setInterval(function() {
+            if (vm.facilitators) {
+              for (var i = 0, len = vm.facilitators.length; i < len ; i++) {
+                if (vm.facilitators[i].accountUserId == vm.session.steps.step2.facilitator) {
+                  vm.selectedFacilitator = vm.facilitators[i];
+                  break;
+                }
+              }
+              clearInterval(intervals.facilitators);
+              intervals.facilitators = null;
+
+            }
+          }, 100);
+
+        }
+
+
         // populate logo
         if (vm.session.steps.step1.resourceId) {
           intervals.resourceId = setInterval(function() {
@@ -354,39 +373,13 @@
       }
       if (step == 2) {
         $ocLazyLoad.load([
-          '/js/vendors/ngDraggable/ngDraggable.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
-          '/js/ngApp/modules/contactList/contactList.js',
-          '/js/ngApp/directives/custom-select-directive.js',
-          '/js/vendors/ng-file-upload/ng-file-upload.js',
-          '/js/ngApp/filters/num.js',
-          '/js/ngApp/filters/human2Camel.js',
 
           '/js/ngApp/components/dashboard-resources-topics/TopicsController.js',
           '/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js'
         ]).then(function(res) {
           vm.currentStep = step;
 
-          if (vm.session.steps.step2.facilitator) {
-            intervals.facilitators = setInterval(function() {
-              if (vm.facilitators) {
-                for (var i = 0, len = vm.facilitators.length; i < len ; i++) {
-                  if (vm.facilitators[i].accountUserId == vm.session.steps.step2.facilitator) {
-                    vm.selectedFacilitator = vm.facilitators[i];
-                    break;
-                  }
-                }
-                clearInterval(intervals.facilitators);
-                intervals.facilitators = null;
 
-              }
-            }, 100);
-
-          }
 
           if (vm.session.steps.step2.topics.length) vm.chatSessionTopicsList = vm.session.steps.step2.topics;
 

@@ -2513,6 +2513,11 @@ hr.survey-hr {
   top: -85px; }
   #session-builder-content .btn-standart {
     font-size: 1.2rem; }
+  #session-builder-content .drop-area {
+    padding: 8px;
+    border: 2px dashed #ddd; }
+    #session-builder-content .drop-area.drag-enter {
+      background: rgba(174, 239, 137, 0.5); }
   #session-builder-content #steps-row {
     display: block;
     width: 405px;
@@ -2887,11 +2892,6 @@ hr.survey-hr {
       top: -2px; }
     #session-builder-content #step-2 span.edit-block {
       padding: 1px 10px !important; }
-    #session-builder-content #step-2 .drop-area {
-      padding: 8px;
-      border: 2px dashed #ddd; }
-      #session-builder-content #step-2 .drop-area.drag-enter {
-        background: rgba(174, 239, 137, 0.5); }
   #session-builder-content #step-3 {
     text-align: left;
     font-size: 2rem; }

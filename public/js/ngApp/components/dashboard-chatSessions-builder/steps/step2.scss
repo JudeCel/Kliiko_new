@@ -108,13 +108,5 @@
     padding: 1px 10px !important;
   }
 
-  .drop-area {
-    padding: 8px;
-    border: 2px dashed $lightGray;
-
-    &.drag-enter {
-      background: $lightGreen;
-    }
-  }
 
 }

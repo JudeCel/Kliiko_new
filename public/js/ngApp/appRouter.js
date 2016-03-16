@@ -185,8 +185,22 @@
               '/js/ngApp/components/dashboard-chatSessions-builder/SessionModel.js',
               '/js/ngApp/components/dashboard-chatSessions-builder/SessionBuilderController.js',
 
+             '/js/vendors/ngDraggable/ngDraggable.js',
+             '/js/vendors/ng-file-upload/ng-file-upload.js',
+
               '/js/ngApp/components/dashboard-resources-brandColours/brandColourServices.js',
               '/js/ngApp/components/dashboard-resources-brandColours/BrandColourController.js',
+
+             '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
+             '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
+             '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
+             '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
+             '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
+             '/js/ngApp/modules/contactList/contactList.js',
+             '/js/ngApp/directives/custom-select-directive.js',
+             '/js/vendors/ng-file-upload/ng-file-upload.js',
+             '/js/ngApp/filters/num.js',
+             '/js/ngApp/filters/human2Camel.js',
 
               '/js/vendors/ng-file-upload/ng-file-upload.js',
               "/js/ngApp/components/dashboard-resources-gallery/GalleryController.js",
