@@ -7,7 +7,8 @@ module.exports = (Sequelize, DataTypes) => {
     name: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     subject: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     content: {type: DataTypes.TEXT, allowNull: false, validate: { notEmpty: true } },
-    systemMessage: {type: DataTypes.BOOLEAN, allowNull: false, validate: { notEmpty: true } }
+    systemMessage: {type: DataTypes.BOOLEAN, allowNull: false, validate: { notEmpty: true } },
+    isCopy: {type: DataTypes.BOOLEAN, allowNull: true}
     }, {
       classMethods: {
         associate: function(models) {

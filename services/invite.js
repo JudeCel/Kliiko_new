@@ -152,7 +152,7 @@ function acceptInviteNew(token, params, callback) {
   });
 };
 function setAccountUserActive(accountUserId, callback) {
-  AccountUser.update({status: "active"}, { where:{ id: accountUserId } }).then(function(result) {
+  AccountUser.update({active: true, status: "active"}, { where:{ id: accountUserId } }).then(function(result) {
     callback(null, result);
   },function(err) {
     callback(filters.errors(error));
@@ -161,6 +161,7 @@ function setAccountUserActive(accountUserId, callback) {
 
 function updateUser(params, invite, callback) {
   setAccountUserActive(invite.accountUserId, function(res, _) {
+    params.confirmedAt = new Date();
     User.update(params, { where: { id: invite.userId } }).then(function(result) {
       callback(null, true);
     }).catch(function(error) {

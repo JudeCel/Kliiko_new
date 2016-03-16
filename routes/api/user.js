@@ -8,6 +8,7 @@
 "use strict";
 let changePasswordService = require('../../services/changePassword');
 let _ = require('lodash');
+let chargebeeModule = require('./../../modules/chargebee/chargebeeModule');
 let q = require('q');
 let policy = require('./../../middleware/policy.js')
 let AccountUserService = require('../../services/accountUser');
@@ -36,12 +37,15 @@ function userGet(req, res, next) {
   let currentDomain = res.locals.currentDomain
   let roles = currentDomain.roles;
   let reqUser = req.user;
+  console.log(getUserBasicData())
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
   q.all([
     getUserBasicData(),
+    getUserSubscriptionsData()
   ]).then(function(response) {
     let user = response[0];
-    user.subscriptions = response[1][0];
+    //user.subscriptions = response[1][0];
     res.send(user);
   });
 
@@ -53,6 +57,10 @@ function userGet(req, res, next) {
 
     deferred.resolve(reqUser);
     return deferred.promise;
+  }
+
+  function getUserSubscriptionsData() {
+    return chargebeeModule.getSubscriptions(reqUser.id);
   }
 
 }

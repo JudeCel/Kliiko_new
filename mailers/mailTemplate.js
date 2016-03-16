@@ -38,12 +38,6 @@ function extractImageResources(tepmlateHtml) {
   return {html: sanitizeHtml(tepmlateHtml, {
       transformTags: {
         'img': function(tagName, attribs) {
-
-            /*
-            _.replace(attribs.src, "system_header.png", "system_headerj.jpg");
-            attribs.onerror = "this.src="+ _.replace(config.pathToChatFileStorage+attribs.src, "//", "/");
-            console.log("____", attribs.onerror);
-            */
             let pData = preparePathData(attribs, resources);
             return {
                 tagName: tagName,
