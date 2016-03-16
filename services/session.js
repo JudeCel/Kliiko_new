@@ -43,10 +43,15 @@ module.exports = {
 function getSessionByInvite(token) {
   var deferred = q.defer();
 
+  if (!token) {
+    deferred.reject('No invite @token has been provided');
+    return deferred.promise;
+  }
+
   Invite.find({where:{token:token}, include: [Session]}).then(function(resp) {
     deferred.resolve(resp)
   });
-  return deferred.promise;
+
 }
 
 // Exports
