@@ -142,9 +142,10 @@
       self.active = self.sessionData.active = false;
       self.update({active:self.active}).then(
         function (res) {
-          deferred.resolve(res)
+          deferred.resolve(res);
         },
         function (err) {
+          deferred.reject(err);
         }
       );
       return deferred.promise;
@@ -159,6 +160,7 @@
           deferred.resolve(res)
         },
         function (err) {
+          deferred.reject(err);
         }
       );
       return deferred.promise;
@@ -175,6 +177,7 @@
 
       sessionBuilderRestApi.put({id:self.id},{sessionObj:self, step3:step3, data:data},function(res) {
         if (res.error) { deferred.reject(res.error); return deferred.promise; }
+
         deferred.resolve(res);
       });
 
