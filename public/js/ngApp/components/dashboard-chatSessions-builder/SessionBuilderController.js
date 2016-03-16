@@ -176,19 +176,6 @@
 
     }
 
-    /**
-     * Validate and process steps data
-     * @param step {number}
-     * @returns {boolean}
-     */
-    function frontEndStepValidation(step) {
-      var deferred = $q.defer();
-      deferred.resolve();
-
-      return deferred.promise;
-
-
-    }
 
     function initStep(step, initial) {
       var deferred = $q.defer();
