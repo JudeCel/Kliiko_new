@@ -200,10 +200,6 @@
       var self = this;
       var deferred = $q.defer();
 
-      // var step3 = null;
-      //
-      // if (stepNumber && stepNumber == 3)  step3 = true;
-
       sessionBuilderRestApi.put({id:self.id}, stepDataObj,function(res) {
         if (res.error) { deferred.reject(res.error); return deferred.promise; }
         deferred.resolve(res);
@@ -248,6 +244,7 @@
       }
 
       sessionMemberApi.post({},params,function(res) {
+        if (res.error) { deferred.reject(err);  return deferred.promise;}
         deferred.resolve();
       });
 
