@@ -1,6 +1,6 @@
 "use strict";
 var _ = require('lodash');
-var accessDeniedMessage = 'Access Denied!!!!';
+var accessDeniedMessage = 'Access Denied!';
 
 
 module.exports = {

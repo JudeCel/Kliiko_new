@@ -9,7 +9,6 @@ module.exports = (Sequelize, DataTypes) => {
     resourceId: { type: DataTypes.INTEGER, allowNull: true  },
     brandProjectPreferenceId: { type: DataTypes.INTEGER, allowNull: true  },
 
-    //name:	{ type: DataTypes.STRING, allowNull: false, defaultValue: 'untitled' },
     name: { type: DataTypes.STRING, allowNull: false,  defaultValue: 'untitled', validate: { notEmpty: true } },
 
     startTime: { type: DataTypes.DATE, allowNull: false, defaultValue: Date.now(), validate: {

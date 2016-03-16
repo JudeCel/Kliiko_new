@@ -716,6 +716,7 @@
           vm.sessionEmailTemplates = sortBySpecifiedIds(res.sessionBuilder.steps.step3.emailTemplates);
         },
         function (err) {
+          messenger.error(err);
         }
       );
 
