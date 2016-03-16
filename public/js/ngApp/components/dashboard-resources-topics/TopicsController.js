@@ -126,6 +126,7 @@
     function toggleEditBlock(blockIndex,inputId) {
       jQuery('#edit-block-'+blockIndex).toggle();
 
+      // timeout is to wait the animation
       if (inputId) setTimeout(function() { jQuery('#'+inputId).focus(); }, 200);
     }
 

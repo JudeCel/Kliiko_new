@@ -63,8 +63,9 @@
       if (setted) return;
 
       setted = true;
+      // timeout is to let all filter do their work 
       setTimeout(function() {
-        vm.changeActiveList(1)
+        vm.changeActiveList(1);
       }, 300);
 
     };
@@ -329,7 +330,6 @@
       var newContact = angular.copy(vm.newContact);
 
       if(vm.hideModalStuff) {
-        console.log("aaaaaaaaaaaaaaa");
         newContact.update(newContact.listId).then(function() {
           domServices.modal('contactList-addContactManual', 'close');
         }, function(error) {
