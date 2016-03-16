@@ -21,9 +21,11 @@
     vm.hasAccess = hasAccess;
     vm.isExpired = isExpired;
 
-    initList();
-/////////
-    function initList() {
+    vm.originalSession = {};
+
+    changePage('index');
+
+    function init() {
       chatSessionsServices.findAllSessions().then(function(res) {
         vm.sessions = res.data;
         vm.dateFormat = res.dateFormat;
@@ -58,7 +60,24 @@
           vm.sessions.push(res.data);
         }
       });
-    }
+    };
+
+    function rateSessionMember(sessionMember) {
+      chatSessionsServices.rateSessionMember({ id: sessionMember.id, rating: sessionMember.rating }).then(function(res) {
+        if(res.error) {
+          messenger.error(chatSessionsServices.prepareError(res.error));
+          for(var i in vm.originalSession.SessionMembers) {
+            var member = vm.originalSession.SessionMembers[i];
+            if(member.id == sessionMember.id) {
+              sessionMember.rating = member.rating;
+            }
+          }
+        }
+        else {
+          calculateSessionRating(vm.session);
+        }
+      });
+    };
 
     function rowClass(session, user) {
       return 'session-' + session.showStatus.toLowerCase();
@@ -93,7 +112,20 @@
           }
         }
       }
-    }
+    };
+
+    function changePage(page, session) {
+      if(page == 'index') {
+        init();
+        vm.currentPage = { page: page };
+      }
+      else if(page == 'sessionRating') {
+        calculateSessionRating(session);
+        vm.session = session;
+        angular.copy(session, vm.originalSession);
+        vm.currentPage = { page: page };
+      }
+    };
 
     function isExpired(session) {
       return session.showStatus == 'Expired';
