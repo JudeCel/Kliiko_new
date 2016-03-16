@@ -62,7 +62,7 @@
 
     });
 
-    //vm.currentStep = $stateParams.currentStep;
+
     vm.currentStep = 1;
 
     vm.selectedTopics = {};
@@ -142,7 +142,7 @@
             vm.searchingParticipants = false;
             vm.searchingObservers = false;
             initStep(step+1).then(function(res) {
-              $stateParam.ssessionBuilderStep = vm.currentStep = step+1;
+              $stateParams.ssessionBuilderStep = vm.currentStep = step+1;
             });
 
             routerProgressbar.complete();
