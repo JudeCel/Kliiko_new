@@ -124,53 +124,6 @@
             </div>
         </div>
 
-        <!-- brand logo modal-->
-        <div class='modal fade' id='getGallery' role='dialog'>
-            <div class='modal-dialog' style="width:1000px;">
-                <div class='modal-content border-green border-radius-none'>
-                    <div class='modal-header'>
-                        <button type='button' class='close' data-dismiss='modal' ng-click="clearFormData()">&times;</button>
-                        <h2 class='modal-title text-center'>Select resource from gallery.</h2>
-                    </div>
-                    <div class='modal-body'>
-
-                        <div ng-repeat="resource in sc.brandLogos">
-                            <div class="col-xs-4 col-md-4">
-                                <div class="panel panel-success border-green">
-                                    <div class="panel-body">
-
-                                        <div class="responsive-container">
-                                            <div class="dummy"></div>
-
-                                            <div class="img-container">
-                                                <img ng-src="{{ sc.getResourceThumbUrl(resource) }}" class="center-block vertical-align img-responsive img-max-height-width"/>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="panel-footer">
-
-                                        {{ sc.resourceTitle(resource.JSON.title) }}
-
-                                        <button class="btn btn-addNewElement pull-rigth no-margin btn-green gallery-btn-width"
-                                                data-dismiss='modal'
-                                                style="margin-top: -8px; float: right;"
-                                                ng-click="sc.selectBrandLogo(resource)">
-                                            Select
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='modal-footer' style="border: none;">
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </section>
 
 </section> <!-- eof  ng-controller='SurveyController as sc'-->
