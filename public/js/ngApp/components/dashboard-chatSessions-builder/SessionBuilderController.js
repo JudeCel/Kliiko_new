@@ -254,7 +254,6 @@
 
         }
 
-
         deferred.resolve();
         return deferred.promise;
       }
@@ -273,6 +272,7 @@
 
         },
         function(err) {
+          messenger.error(err);
           deferred.reject(err);
         });
       }
@@ -310,6 +310,7 @@
           return deferred.promise;
         },
           function(err) {
+            messenger.error(err);
             deferred.reject(err);
           });
       }
@@ -332,6 +333,7 @@
           return deferred.promise;
         },
           function(err) {
+            messenger.error(err);
             deferred.reject(err);
           });
       }
@@ -355,6 +357,7 @@
           return deferred.promise;
         },
           function(err) {
+            messenger.error(err);
             deferred.reject(err);
           });
       }
