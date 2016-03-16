@@ -256,6 +256,8 @@
       var deferred = $q.defer();
 
       sessionBuilderRestApi.addTopics({id: self.id}, { topicsArray:self.steps.step2.topics }, function(res) {
+        if (res.error) { deferred.reject(err);  return deferred.promise;}
+
         deferred.resolve(res);
       });
       return deferred.promise;
@@ -266,10 +268,9 @@
       var deferred = $q.defer();
 
       sessionBuilderRestApi.inviteMembers({ id: self.id }, { members: members, role: 'participant' }, function(res) {
-        if(res.error) {
-          deferred.reject(res.error);
-        }
-        else deferred.resolve(res);
+        if (res.error) { deferred.reject(err);  return deferred.promise;}
+
+        deferred.resolve(res);
       });
 
       return deferred.promise;
@@ -280,10 +281,9 @@
       var deferred = $q.defer();
 
       sessionBuilderRestApi.inviteMembers({ id: self.id }, { members: members, role: 'observer' }, function(res) {
-        if(res.error) {
-          deferred.reject(res.error);
-        }
-        else deferred.resolve(res);
+        if (res.error) { deferred.reject(err);  return deferred.promise;}
+
+        deferred.resolve(res);
       });
 
       return deferred.promise;
