@@ -305,7 +305,6 @@
       }
       if(step == 4) {
         $ocLazyLoad.load([
-          '/js/vendors/ngDraggable/ngDraggable.js',
           '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
           '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
           '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
@@ -328,7 +327,6 @@
       }
       if(step == 5) {
         $ocLazyLoad.load([
-          '/js/vendors/ngDraggable/ngDraggable.js',
           '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
           '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
           '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
@@ -479,6 +477,7 @@
           vm.session.update();
         },
         function (err) {
+          messenger.error(err);
         }
       );
 
@@ -512,12 +511,13 @@
           for (var i = 0; i < vm.chatSessionTopicsList.length ; i++) {
             if (data.id ==  vm.chatSessionTopicsList[i].id ) return;
           }
-
-          data.order = vm.chatSessionTopicsList.length || 0;
-
-          vm.chatSessionTopicsList.push(data);
+          push();
         } else {
+          push();
 
+        }
+
+        function push() {
           data.order = vm.chatSessionTopicsList.length || 0;
           vm.chatSessionTopicsList.push(data);
         }
@@ -528,24 +528,37 @@
           topicIds.push(vm.chatSessionTopicsList[i].id)
         }
 
-        vm.session.saveTopics();
+        vm.session.saveTopics().then(
+          function (res) {
+            dbg.log2('topic added');
+          },
+          function (err) {
+            messenger.error(err);
+          }
+        );
+
       }
 
     }
 
     function removeTopicFromList(id) {
-      var index;
       for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
         if ( id ==  vm.chatSessionTopicsList[i].id ) {
-          index = i;
+          vm.chatSessionTopicsList.splice(i, 1);
           break;
         }
       }
 
-      vm.chatSessionTopicsList.splice(index, 1);
-      index = null;
-
       vm.session.steps.step2.topics = vm.chatSessionTopicsList;
+
+      vm.session.saveTopics().then(
+        function (res) {
+          dbg.log2('topic removed');
+        },
+        function (err) {
+          messenger.error(err);
+        }
+      );
     }
 
     function reorderTopics(data, t) {
