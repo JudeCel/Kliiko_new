@@ -12,10 +12,11 @@ function addMembers(req, res, next) {
   if (params.role == 'facilitator') {
 
     sessionMemberService.removeByRole(params.role, params.sessionId, res.locals.currentDomain.id).then(
-      function (res) {
+      function (resp) {
         createBulk();
       },
       function (err) {
+        res.send({error: err});
       }
     );
 

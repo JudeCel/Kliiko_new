@@ -24,13 +24,6 @@
       { fileType: "youtubeUrl", uploadText: "Save youtube URL", filterText: "Youtube URL's"},
     ];
 
-    if($stateParams.backTo) {
-      $scope.backButton = true;
-      $scope.backButtonClickHandle = function() {
-        $state.go($stateParams.backTo, {id:$stateParams.id});
-      };
-      return
-    }
 
     function initList() {
       if(!sessionStorage.getItem('viewType')){

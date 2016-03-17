@@ -246,7 +246,7 @@
       })
 
       .state('dashboard.resources.gallery', {
-        url: "/gallery?backTo&id",
+        url: "/gallery",
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-gallery/dashboard-content.html"}
         },

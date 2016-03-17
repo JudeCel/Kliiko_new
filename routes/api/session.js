@@ -70,9 +70,12 @@ function prepareParams(result) {
 }
 
 function getSessionByInvite(req, res, next) {
-  if (!req.body.token) { res.send({error:'No invite @token has been provided'}); return; }
-
-  sessionServices.getSessionByInvite(req.body.token).then(function(resp) {
-    res.send(resp.Session);
-  });
+  sessionServices.getSessionByInvite(req.body.token).then(
+    function(resp) {
+     res.send(resp.Session);
+    },
+    function(err) {
+      res.send({ error: err });
+    }
+  );
 }
