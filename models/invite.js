@@ -9,10 +9,16 @@ module.exports = (Sequelize, DataTypes) => {
     sentAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: true } },
     expireAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: true } },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles },
-    accountId: { type: DataTypes.INTEGER, allowNull: false, unique: 'compositeaccountUserIdAndaccountId'},
-    accountUserId: { type: DataTypes.INTEGER, allowNull: false , unique: 'compositeaccountUserAndaccountId'},
+    accountId: { type: DataTypes.INTEGER, allowNull: false},
+    accountUserId: { type: DataTypes.INTEGER, allowNull: false},
     userType: { type: DataTypes.ENUM, allowNull: false, values: ['existing', 'new'], defaultValue: 'existing' },
   }, {
+    indexes: [
+      { name: "UniqInvite",
+        unique: {args: true, message: "User has already been invited."},
+        fields: ['accountUserId', 'accountId']
+      }
+    ],
     classMethods: {
       associate: function(models) {
         Invite.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'cascade' });
