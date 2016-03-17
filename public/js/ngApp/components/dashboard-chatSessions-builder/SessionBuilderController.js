@@ -541,16 +541,12 @@
     }
 
     function removeTopicFromList(id) {
-      var index;
       for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
         if ( id ==  vm.chatSessionTopicsList[i].id ) {
-          index = i;
+          vm.chatSessionTopicsList.splice(i, 1);
           break;
         }
       }
-
-      vm.chatSessionTopicsList.splice(index, 1);
-      index = null;
 
       vm.session.steps.step2.topics = vm.chatSessionTopicsList;
 
