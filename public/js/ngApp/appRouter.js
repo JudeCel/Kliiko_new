@@ -185,6 +185,7 @@
               '/js/ngApp/components/dashboard-chatSessions-builder/SessionModel.js',
               '/js/ngApp/components/dashboard-chatSessions-builder/SessionBuilderController.js',
 
+             '/js/vendors/ngDraggable/ngDraggable.js',
              '/js/vendors/ng-file-upload/ng-file-upload.js',
 
               '/js/ngApp/components/dashboard-resources-brandColours/brandColourServices.js',

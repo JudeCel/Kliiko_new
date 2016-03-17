@@ -305,7 +305,6 @@
       }
       if(step == 4) {
         $ocLazyLoad.load([
-          '/js/vendors/ngDraggable/ngDraggable.js',
           '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
           '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
           '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
@@ -328,7 +327,6 @@
       }
       if(step == 5) {
         $ocLazyLoad.load([
-          '/js/vendors/ngDraggable/ngDraggable.js',
           '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
           '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
           '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
@@ -537,7 +535,7 @@
             messenger.error(err);
           }
         );
-        ;
+
       }
 
     }
@@ -555,6 +553,15 @@
       index = null;
 
       vm.session.steps.step2.topics = vm.chatSessionTopicsList;
+
+      vm.session.saveTopics().then(
+        function (res) {
+          dbg.log2('topic removed');
+        },
+        function (err) {
+          messenger.error(err);
+        }
+      );
     }
 
     function reorderTopics(data, t) {
