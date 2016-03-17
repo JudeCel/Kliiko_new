@@ -9,6 +9,12 @@
 
     Services.getDependencies = getDependencies;
     Services.reorderTopics = reorderTopics;
+    Services.getExpireDays = getExpireDays;
+    Services.findSelectedMembers = findSelectedMembers;
+    Services.currentMemberList = currentMemberList;
+    Services.currentStepString = currentStepString;
+    Services.selectMembers = selectMembers;
+    Services.removeDuplicatesFromArray = removeDuplicatesFromArray;
 
     return Services;
 
@@ -62,6 +68,77 @@
 
       return vmTopics;
 
+    }
+
+    function getExpireDays(endDate) {
+      var today = moment(new Date());
+      var expDay = moment(endDate);
+      var diff = expDay.diff(today, 'days');
+
+      return (diff <= 5) ? {days:diff} : null;
+    }
+
+    function findSelectedMembers(vm) {
+      var array = [];
+      var members = currentMemberList(vm);
+      var stepString = currentStepString(vm);
+
+      for (var i in members) {
+        var member = members[i];
+        if(member[stepString]) {
+          array.push(member);
+        }
+      }
+
+      return array;
+    }
+
+    function currentMemberList(vm) {
+      if(vm.currentStep == 4) {
+        return vm.participants;
+      }
+      else if(vm.currentStep == 5) {
+        return vm.observers;
+      }
+    }
+
+    function currentStepString(vm) {
+      if(vm.currentStep == 4) {
+        return 'step4';
+      }
+      else if(vm.currentStep == 5) {
+        return 'step5';
+      }
+    }
+
+    function selectMembers(listId, members) {
+      var selected = [];
+      for(var i in members) {
+        var member = members[i];
+        if(member._selected) {
+          member.listId = listId;
+          selected.push(member);
+        }
+      }
+      return selected;
+    }
+
+    function removeDuplicatesFromArray(array) {
+      var object = {}, newArray = [];
+      for (var i = 0; i < array.length; i++) {
+        var element = object[array[i].email];
+        var check = element && (element.invite || element.sessionMember);
+
+        if(!check) {
+          object[array[i].email] = array[i];
+        }
+      }
+
+      for (var i in object) {
+        newArray.push(object[i]);
+      }
+
+      return newArray;
     }
 
   }

@@ -300,29 +300,25 @@
 
       function showExpiresWarning() {
         if (vm.session.sessionData && vm.session.sessionData.endTime) {
-          var today = moment(new Date());
-          var expDay = moment(vm.session.sessionData.endTime);
-          var diff = expDay.diff(today, 'days');
-          (diff <= 5)
-            ? vm.expireWarning = {days:diff}
-            : vm.expireWarning = null;
-        }
+          vm.expireWarning = builderServices.getExpireDays(vm.session.sessionData.endTime);
+        } 
+        
       }
     }
 
-    function sortBySpecifiedIds(allTemplates) {
-      var ids = [1,3,6,5,2,4];
-      var output = [];
-
-      for (var i = 0, len = ids.length; i < len ; i++) {
-        for (var j = 0, lenJ = allTemplates.length; j < lenJ ; j++) {
-          if ( ids[i] == allTemplates[j].MailTemplateBaseId ) output.push(allTemplates[j]);
-        }
-      }
-
-      return output;
-
-    }
+    // function sortBySpecifiedIds(allTemplates) {
+    //   var ids = [1,3,6,5,2,4];
+    //   var output = [];
+    //
+    //   for (var i = 0, len = ids.length; i < len ; i++) {
+    //     for (var j = 0, lenJ = allTemplates.length; j < lenJ ; j++) {
+    //       if ( ids[i] == allTemplates[j].MailTemplateBaseId ) output.push(allTemplates[j]);
+    //     }
+    //   }
+    //
+    //   return output;
+    //
+    // }
 
     function stepsClassIsActive(step) {
       return (vm.currentStep == step);
@@ -508,7 +504,7 @@
     }
 
     function reorderTopics(data, t) {
-      vm.chatSessionTopicsList = builderServices.reorderTopics(vm.chatSessionTopicsList,data,t);
+      vm.chatSessionTopicsList = builderServices.reorderTopics(vm.chatSessionTopicsList, data, t);
       
       vm.session.steps.step2.topics = vm.chatSessionTopicsList;
 
@@ -561,7 +557,7 @@
     }
 
     function inviteMembers() {
-      var data = findSelectedMembers();
+     var data = findSelectedMembers();
 
       if(data.length > 0) {
         var promise;
@@ -641,27 +637,27 @@
       vm.searchingObservers = true;
     }
 
-    function currentMemberList() {
-      if(vm.currentStep == 4) {
-        return vm.participants;
-      }
-      else if(vm.currentStep == 5) {
-        return vm.observers;
-      }
-    }
+    // function currentMemberList() {
+    //   if(vm.currentStep == 4) {
+    //     return vm.participants;
+    //   }
+    //   else if(vm.currentStep == 5) {
+    //     return vm.observers;
+    //   }
+    // }
 
-    function currentStepString() {
-      if(vm.currentStep == 4) {
-        return 'step4';
-      }
-      else if(vm.currentStep == 5) {
-        return 'step5';
-      }
-    }
+    // function currentStepString() {
+    //   if(vm.currentStep == 4) {
+    //     return 'step4';
+    //   }
+    //   else if(vm.currentStep == 5) {
+    //     return 'step5';
+    //   }
+    // }
 
     function selectedAllMembers() {
-      var members = currentMemberList();
-      var stepString = currentStepString();
+      var members = builderServices.currentMemberList(vm);
+      var stepString = builderServices.currentStepString(vm);
 
       for(var i in members) {
         var member = members[i];
@@ -672,30 +668,19 @@
     }
 
     function findSelectedMembers() {
-      var array = [];
-      var members = currentMemberList();
-      var stepString = currentStepString();
-
-      for (var i in members) {
-        var member = members[i];
-        if(member[stepString]) {
-          array.push(member);
-        }
-      }
-
-      return array;
+       builderServices.findSelectedMembers(vm);
     }
 
     function finishSelectingMembers(activeList) {
       if (vm.searchingParticipants) {
-        vm.participants = vm.participants.concat(selectMembers(activeList.id, activeList.members));
-        vm.participants = removeDuplicatesFromArray(vm.participants);
+        vm.participants = vm.participants.concat(builderServices.selectMembers(activeList.id, activeList.members));
+        vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
         vm.searchingParticipants = false;
       }
 
       if (vm.searchingObservers) {
-        vm.observers = vm.observers.concat(selectMembers(activeList.id, activeList.members));
-        vm.observers = removeDuplicatesFromArray(vm.observers);
+        vm.observers = vm.observers.concat(builderServices.selectMembers(activeList.id, activeList.members));
+        vm.observers = builderServices.removeDuplicatesFromArray(vm.observers);
         vm.searchingObservers = false;
 
       }
@@ -719,40 +704,40 @@
     }
 
     function removeMemberFromList(member) {
-      var members = currentMemberList();
+      var members = builderServices.currentMemberList(vm);
       var index = members.indexOf(member);
       members.splice(index, 1);
     }
 
-    function removeDuplicatesFromArray(array) {
-      var object = {}, newArray = [];
-      for (var i = 0; i < array.length; i++) {
-        var element = object[array[i].email];
-        var check = element && (element.invite || element.sessionMember);
+    // function removeDuplicatesFromArray(array) {
+    //   var object = {}, newArray = [];
+    //   for (var i = 0; i < array.length; i++) {
+    //     var element = object[array[i].email];
+    //     var check = element && (element.invite || element.sessionMember);
+    //
+    //     if(!check) {
+    //       object[array[i].email] = array[i];
+    //     }
+    //   }
+    //
+    //   for (var i in object) {
+    //     newArray.push(object[i]);
+    //   }
+    //
+    //   return newArray;
+    // }
 
-        if(!check) {
-          object[array[i].email] = array[i];
-        }
-      }
-
-      for (var i in object) {
-        newArray.push(object[i]);
-      }
-
-      return newArray;
-    }
-
-    function selectMembers(listId, members) {
-      var selected = [];
-      for(var i in members) {
-        var member = members[i];
-        if(member._selected) {
-          member.listId = listId;
-          selected.push(member);
-        }
-      }
-      return selected;
-    }
+    // function selectMembers(listId, members) {
+    //   var selected = [];
+    //   for(var i in members) {
+    //     var member = members[i];
+    //     if(member._selected) {
+    //       member.listId = listId;
+    //       selected.push(member);
+    //     }
+    //   }
+    //   return selected;
+    // }
 
     function sendGenericEmail() {
       var data = findSelectedMembers();
