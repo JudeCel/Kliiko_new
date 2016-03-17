@@ -125,16 +125,10 @@
 
       function handlePreviousStep() {
         vm.cantMoveNextStep = false;  step = vm.currentStep - 1;
-        vm.session.goPreviouseStep().then(
-          function (res) {
-            initStep(step).then(function (res) {
-              vm.currentStep = step;
-            });
-          },
-          function (err) {
-            messenger.error(err)
-          }
-        );
+        vm.session.goPreviouseStep();
+        initStep(step).then(function (res) {
+          vm.currentStep = step;
+        });
         
         
       }
@@ -453,7 +447,6 @@
     /// step 2
 
     function addFacilitatorsClickHandle() {
-      //domServices.modal('sessionBuilderSelectFacilitatorModal');
       vm.showContactsList = true;
     }
 
@@ -737,20 +730,12 @@
         vm.participants = vm.participants.concat(selectMembers(activeList.id, activeList.members));
         vm.participants = removeDuplicatesFromArray(vm.participants);
         vm.searchingParticipants = false;
-
-        vm.session.addMembers(vm.participants, 'participant').then(
-          function (res) {vm.session.update();
-        });
       }
 
       if(vm.searchingObservers) {
         vm.observers = vm.observers.concat(selectMembers(activeList.id, activeList.members));
         vm.observers = removeDuplicatesFromArray(vm.observers);
         vm.searchingObservers = false;
-
-        vm.session.addMembers(vm.observers, 'observer').then(function (res) {
-          vm.session.update();
-        });
 
       }
     }
