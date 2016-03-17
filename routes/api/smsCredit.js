@@ -14,3 +14,8 @@ function getPlans(req, res, next) {
     res.send(({ error: err.message }));
   });
 }
+
+
+function getList(req, res, next) {
+  
+}

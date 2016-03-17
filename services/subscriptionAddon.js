@@ -1,6 +1,6 @@
 'use strict';
 
-require('./../lib/airbrake').handleExceptions();
+// require('./../lib/airbrake').handleExceptions();
 
 var models = require('./../models');
 var filters = require('./../models/filters');
@@ -89,7 +89,7 @@ function chargebeeAddonCharge(params) {
       preferenceParams(params.subscriptionId).then(function(dataParams) {
         params.preferenceData = dataParams;
         addSmsCreditsToAccountSubscription(params, addonInvoice).then(function(result) {
-
+          deferred.resolve(result);
         }, function(error) {
           deferred.reject(error);
         })
@@ -117,7 +117,7 @@ function addSmsCreditsToAccountSubscription(params, addonInvoice) {
     },
     returning: true
   }).then(function(result) {
-
+    deferred.resolve(result);
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -127,18 +127,19 @@ function addSmsCreditsToAccountSubscription(params, addonInvoice) {
 
 function preferenceParams(subscriptionId) {
   let deferred = q.defer();
-  let preferenceDataParams = {}
+  let preferenceDataParams = {};
 
-  models.SubscriptionPreference.find({
-    where{
-      subscriptionId: subscriptionId
-    }
-  }).then(function(preference) {
-    preferenceDataParams = preference.data;
-    deferred.resolve(preferenceDataParams);
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
-  });
+  // models.SubscriptionPreference.find({
+  //   where{
+  //     subscriptionId: subscriptionId
+  //   }
+  // }).then(function(preference) {
+  //   preferenceDataParams = preference.data;
+  //   deferred.resolve(preferenceDataParams);
+    deferred.resolve();
+  // }).catch(function(error) {
+  //   deferred.reject(filters.errors(error));
+  // });
 
   return deferred.promise;
 }

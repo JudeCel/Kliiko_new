@@ -91,7 +91,4 @@ app.use(function(err, req, res, next) {
   });
 });
 
-// Moment for DateTime formating
-app.locals.moment = require('moment');
-
 module.exports = app;
