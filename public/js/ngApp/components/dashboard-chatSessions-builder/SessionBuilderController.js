@@ -542,14 +542,8 @@
     }
 
     function reorderTopics(data, t) {
-      var droppedOrderId = data.order || 0;
-      var targetOrderId = t.order || 0;
-
-      for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
-        if (data.id == vm.chatSessionTopicsList[i].id) vm.chatSessionTopicsList[i].order = targetOrderId;
-        if (t.id == vm.chatSessionTopicsList[i].id) vm.chatSessionTopicsList[i].order = droppedOrderId;
-      }
-
+      vm.chatSessionTopicsList = builderServices.reorderTopics(vm.chatSessionTopicsList,data,t);
+      
       vm.session.steps.step2.topics = vm.chatSessionTopicsList;
 
     }
@@ -715,7 +709,7 @@
       var members = currentMemberList();
       var stepString = currentStepString();
 
-      for(var i in members) {
+      for (var i in members) {
         var member = members[i];
         if(member[stepString]) {
           array.push(member);
@@ -726,13 +720,13 @@
     }
 
     function finishSelectingMembers(activeList) {
-      if(vm.searchingParticipants) {
+      if (vm.searchingParticipants) {
         vm.participants = vm.participants.concat(selectMembers(activeList.id, activeList.members));
         vm.participants = removeDuplicatesFromArray(vm.participants);
         vm.searchingParticipants = false;
       }
 
-      if(vm.searchingObservers) {
+      if (vm.searchingObservers) {
         vm.observers = vm.observers.concat(selectMembers(activeList.id, activeList.members));
         vm.observers = removeDuplicatesFromArray(vm.observers);
         vm.searchingObservers = false;
