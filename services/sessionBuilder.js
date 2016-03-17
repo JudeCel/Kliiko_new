@@ -72,7 +72,8 @@ function initializeBuilder(params) {
 
   params.step = 'setUp';
   Session.create(params).then(function(session) {
-    mailTemplateService.copyBaseTemplatesForSession(session.id, function(error, _result) {
+    //copying all mails current account has created
+    mailTemplateService.copyBaseTemplatesForSession(params.accountId, session.id, function(error, _result) {
       if(error) {
         deferred.reject(error);
       }
@@ -482,16 +483,11 @@ function stepsDefinition(session) {
       });
     },
     function(cb) {
-      step3Query(session.id).then(function(emailTemplates) {
-        object.step3 = {
-          stepName: 'manageSessionEmails',
-          incentive_details: session.incentive_details,
-          emailTemplates: emailTemplates
-        };
-        cb();
-      }, function(error) {
-        cb(error);
-      })
+      object.step3 = {
+        stepName: 'manageSessionEmails',
+        incentive_details: session.incentive_details
+      };
+      cb();
     },
     function(cb) {
       async.waterfall(step4and5Queries(session, 'participant'), function(error, members) {

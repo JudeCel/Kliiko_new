@@ -73,6 +73,7 @@ router.post('/banners/:bannerType', multipartyMiddleware, banners.bannersBannerT
 router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelete);
 
 router.get('/mailTemplates', mailTemplates.allMailTemplatesGet);
+router.get('/sessionMailTemplates', mailTemplates.allSessionMailTemplatesGet);
 router.post('/mailTemplate', mailTemplates.mailTemplatePost);
 router.delete('/mailTemplate', mailTemplates.deleteMailTemplate);
 router.post('/mailTemplate/save', mailTemplates.saveMailTemplatePost);
@@ -158,4 +159,3 @@ router.post('/sessionBuilder/:id/addTopics',  policy.authorized(['accountManager
 
 router.post('/sessionBuilder/:id/step/next',  policy.authorized(['accountManager', 'admin']), sessionBuilder.nextStep );
 router.post('/sessionBuilder/:id/step/previous',  policy.authorized(['accountManager', 'admin']), sessionBuilder.prevStep);
-

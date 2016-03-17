@@ -25,21 +25,6 @@
 
     vm.session.init().then(function(res) {
       vm.mouseOveringMember = [];
-      vm.sessionMemberValidations = {
-        facilitator: {
-          min: 1,
-          max: 1
-        },
-        participant: {
-          min: 8,
-          max: 8
-        },
-        observer: {
-          min: 0,
-          max: 15
-        }
-      };
-
 
       vm.today = new Date();
       vm.dateTime = {
@@ -271,28 +256,9 @@
           '/js/vendors/ng-file-upload/ng-file-upload.js'
         ]).then(function(res) {
           vm.currentStep = step;
-          vm.sessionEmailTemplates = sortBySpecifiedIds(vm.session.steps.step3.emailTemplates);
+        //  vm.sessionEmailTemplates = sortBySpecifiedIds(vm.session.steps.step3.emailTemplates);
+          vm.sessionEmailTemplates = vm.session.steps.step3.emailTemplates;
           vm.templateNamesToHide = {};
-
-          $scope.$watch(angular.bind(vm, function () {
-            return vm.sessionEmailTemplates;
-          }), function (newVal) {
-
-
-            for (var i = 0, len = vm.sessionEmailTemplates.length; i < len ; i++) {
-              vm.sessionEmailTemplates[i].hideIt = false;
-              if (!vm.sessionEmailTemplates[i].AccountId) {
-
-                for (var j = 0, lenj = vm.sessionEmailTemplates.length; j < lenj ; j++) {
-                  if (vm.sessionEmailTemplates[j].name == vm.sessionEmailTemplates[i].name && vm.sessionEmailTemplates[j].AccountId) {
-                    vm.sessionEmailTemplates[i].hideIt = true;
-                  }
-                }
-
-              }
-            }
-
-          });
 
           $rootScope.$on('updateSessionBuilderEmails', updateSessionBuilderEmailsHandler);
           deferred.resolve();
@@ -600,7 +566,8 @@
     function updateSessionBuilderEmailsHandler(e, attrs) {
       vm.session.update().then(
         function (res) {
-          vm.sessionEmailTemplates = sortBySpecifiedIds(res.sessionBuilder.steps.step3.emailTemplates);
+          //vm.sessionEmailTemplates = sortBySpecifiedIds(res.sessionBuilder.steps.step3.emailTemplates);
+          vm.sessionEmailTemplates = res.sessionBuilder.steps.step3.emailTemplates;
         },
         function (err) {
           messenger.error(err);

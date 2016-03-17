@@ -25,7 +25,7 @@ function planSelectPage(req, res, next) {
   if(req.originalUrl == '/dashboard/selectPlan') {
     next();
   }
-  else if(_.includes(res.locals.currentDomain.roles, 'accountManager')) {
+  else if(_.includes(res.locals.roles, 'accountManager')) {
     Subscription.find({
       where: {
         accountId: res.locals.currentDomain.id

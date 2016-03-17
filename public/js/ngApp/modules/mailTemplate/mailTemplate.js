@@ -5,9 +5,10 @@
 
   mailTemplateFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg', '$rootScope'];
   function mailTemplateFactory($q, globalSettings, $resource, dbg, $rootScope) {
-    
+
     var mailRestApi = {
       mailTemplates: $resource(globalSettings.restUrl + '/mailTemplates', {}, {get: {method: 'GET'}}),
+      sessionMailTemplates: $resource(globalSettings.restUrl + '/sessionMailTemplates', {}, {get: {method: 'GET'}}),
       mailTemplate: $resource(globalSettings.restUrl + '/mailTemplate', {}, {post: {method: 'POST'}}),
       saveMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate/save', {}, {post: {method: 'POST'}}),
       deleteMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate', {}, {post: {method: 'POST'}}),
@@ -16,6 +17,7 @@
     };
 
     var MailTemplateService = {};
+    MailTemplateService.getAllSessionMailTemplates = getAllSessionMailTemplates;
     MailTemplateService.getAllMailTemplates = getAllMailTemplates;
     MailTemplateService.saveMailTemplate = saveMailTemplate;
     MailTemplateService.saveTemplate = saveTemplate;
@@ -24,6 +26,17 @@
     MailTemplateService.resetMailTemplate = resetMailTemplate;
     MailTemplateService.previewMailTemplate = previewMailTemplate;
     return MailTemplateService;
+
+    function getAllSessionMailTemplates(getSystemMail) {
+      dbg.log2('#KliikoApp.mailTemplate > get all session mail templates for user');
+      var deferred = $q.defer();
+
+      mailRestApi.sessionMailTemplates.get({getSystemMail:getSystemMail}, function (res) {
+        dbg.log2('#KliikoApp.sessionMailTemplate > get all templates> server respond >', res);
+        deferred.resolve(res);
+      });
+      return deferred.promise;
+    }
 
     function getAllMailTemplates(getSystemMail) {
       dbg.log2('#KliikoApp.mailTemplate > get all mail templates for user');
@@ -35,7 +48,7 @@
       });
       return deferred.promise;
     }
-    
+
     function getMailTemplate(req) {
       dbg.log2('#KliikoApp.mailTemplate > get mail template', req);
       var deferred = $q.defer();
@@ -45,7 +58,7 @@
       });
       return deferred.promise;
     }
-    
+
     function saveMailTemplate(mTemplate, createCopy) {
       dbg.log2('#KliikoApp.mailTemplate > save mail template', mTemplate);
       var deferred = $q.defer();
@@ -59,14 +72,13 @@
 
     function saveTemplate(template) {
       var deferred = $q.defer();
-      console.warn(template);
       mailRestApi.saveMailTemplate.post({},{mailTemplate:template}, function(res) {
         $rootScope.$broadcast('updateSessionBuilderEmails', res);
         deferred.resolve(res);
       });
       return deferred.promise;
     }
-    
+
     function deleteMailTemplate(mTemplate) {
       dbg.log2('#KliikoApp.mailTemplate > delete mail template', mTemplate);
       var deferred = $q.defer();
@@ -78,7 +90,7 @@
       });
       return deferred.promise;
     }
-    
+
     function resetMailTemplate(mTemplate) {
       dbg.log2('#KliikoApp.mailTemplate > reset mail template', mTemplate);
       var deferred = $q.defer();
@@ -89,7 +101,7 @@
       });
       return deferred.promise;
     }
-    
+
     function previewMailTemplate(mTemplate) {
       var deferred = $q.defer();
 
@@ -99,7 +111,6 @@
       });
       return deferred.promise;
     }
-    
+
   }
 })();
-

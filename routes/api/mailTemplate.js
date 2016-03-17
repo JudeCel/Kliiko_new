@@ -10,11 +10,18 @@ module.exports = {
   saveMailTemplatePost: saveMailTemplatePost,
   deleteMailTemplate: deleteMailTemplate,
   resetMailTemplatePost: resetMailTemplatePost,
-  previewMailTemplatePost: previewMailTemplatePost
+  previewMailTemplatePost: previewMailTemplatePost,
+  allSessionMailTemplatesGet: allSessionMailTemplatesGet
 };
 
+function allSessionMailTemplatesGet(req, res, next) {
+  MailTemplateService.getAllSessionMailTemplates(res.locals.currentDomain.id, req.query.getSystemMail, false,function(error, result) {
+    res.send({error: error, templates: result});
+  });
+}
+
 function allMailTemplatesGet(req, res, next) {
-  MailTemplateService.getAllMailTemplates(res.locals.currentDomain.id, req.query.getSystemMail,function(error, result) {
+  MailTemplateService.getAllMailTemplates(res.locals.currentDomain.id, req.query.getSystemMail, false, function(error, result) {
     res.send({error: error, templates: result});
   });
 }

@@ -16,6 +16,7 @@ module.exports = {
   getAllMailTemplates: getAllMailTemplates,
   getMailTemplate: getMailTemplate,
   saveMailTemplate: saveMailTemplate,
+  getAllSessionMailTemplates: getAllSessionMailTemplates,
 
   createBaseMailTemplate: createBaseMailTemplate,
   copyBaseTemplates: copyBaseTemplates,
@@ -181,10 +182,19 @@ function getMailTemplateForReset(req, callback) {
   });
 }
 
-function getAllMailTemplates(accountId, getSystemMail,callback) {
+function getAllSessionMailTemplates(accountId, getSystemMail, fullData,callback) {
+  let baseTemplateQuery = {category:{ $in: ["firstInvitation", "confirmation", "notThisTime", "notAtAll", "closeSession", "generic"] }};
+  getAllMailTemplatesWithParameters(accountId, getSystemMail, baseTemplateQuery, fullData, callback);
+}
+
+function getAllMailTemplates(accountId, getSystemMail, fullData, callback) {
+  getAllMailTemplatesWithParameters(accountId, getSystemMail, null, false, callback);
+}
+
+function getAllMailTemplatesWithParameters(accountId, getSystemMail, baseTemplateQuery, fullData, callback) {
   let query = {};
 
-  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category']}];
+  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
 
   if (!getSystemMail) {
     //getting list that any user can edit
@@ -192,11 +202,16 @@ function getAllMailTemplates(accountId, getSystemMail,callback) {
     query['$or'] = [{AccountId: accountId}, {AccountId: null}];
   }
 
-
+  let attributes = [];
+  if (fullData) {
+    attributes = constants.mailTemplateFields;
+  } else {
+    attributes = constants.mailTemplateFieldsForList;
+  }
   MailTemplate.findAll({
       include: include,
       where: query,
-      attributes: constants.mailTemplateFieldsForList,
+      attributes: attributes,
       raw: true,
       order: "id ASC"
   }).then(function(result) {
@@ -206,20 +221,14 @@ function getAllMailTemplates(accountId, getSystemMail,callback) {
   });
 };
 
-function copyBaseTemplatesForSession(sessionId, callback) {
-  let templates = ['firstInvitation', 'confirmation', 'notThisTime', 'notAtAll', 'closeSession', 'generic'];
+function copyBaseTemplatesForSession(accountId, sessionId, callback) {
+  getAllSessionMailTemplates(accountId, false, true, function(error, result) {
+    if (error) {
+      return callback(error);
+    }
 
-  MailTemplateOriginal.findAll({
-    where: {
-      category: { $in: templates }
-    },
-    attributes: constants.originalMailTemplateFields,
-    raw: true
-  }).then(function(result) {
-    console.log(result);
     for (var i = 0; i < result.length; i++) {
       result[i].sessionId = sessionId;
-      result[i].MailTemplateBaseId = result[i].id;
       delete result[i].id;
     }
     MailTemplate.bulkCreate(result).done(function(res) {
@@ -227,8 +236,6 @@ function copyBaseTemplatesForSession(sessionId, callback) {
     }, function(err) {
        callback(err);
     })
-  }).catch(function(error) {
-    callback(error);
   });
 }
 

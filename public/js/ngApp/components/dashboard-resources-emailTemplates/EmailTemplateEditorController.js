@@ -24,9 +24,15 @@
     vm.emailTemplates = [];
     vm.templateToDelete;
     vm.newResource = {};
-
+    vm.properties = {};
     var showSystemMail = $stateParams.systemMail;
 
+    vm.preInit = function(params) {
+      if (params) {
+        vm.properties = params;
+      }
+      vm.init();
+    }
 
     vm.init = function () {
       vm.emailTemplates = vm.emailTemplates.concat(vm.constantEmailTemplates);
@@ -212,26 +218,27 @@
       return -1;
     }
 
+    function preprocessMailTemplateList(res, callback) {
+      vm.emailTemplates = res.templates;
+      if (vm.emailTemplates.length && vm.currentTemplate == -1) {
+        vm.startEditingTemplate(0);
+      }
+
+      // session builder section
+      vm.emailTemplatesForSessionBuilder = vm.emailTemplates;
+      callback();
+    }
+
     function refreshTemplateList(callback) {
-      mailTemplate.getAllMailTemplates(showSystemMail).then(function (res) {
-        vm.emailTemplates = res.templates;
-        if (vm.emailTemplates.length && vm.currentTemplate == -1) {
-          vm.startEditingTemplate(0);
-        }
-
-        // session builder section
-        var ids = [1,3,6,5,2,4];
-        var tmpArr =[];
-        for (var i = 0, len = ids.length; i < len ; i++) {
-          for (var j = 0, lenJ = res.templates.length; j < lenJ ; j++) {
-            if ( ids[i] == res.templates[j].MailTemplateBaseId ) tmpArr.push(res.templates[j]);
-          }
-        }
-
-        vm.emailTemplatesForSessionBuilder = tmpArr;
-
-        callback();
-      });
+      if (vm.properties.sessionBuilder) {
+        mailTemplate.getAllSessionMailTemplates(showSystemMail).then(function (res) {
+          preprocessMailTemplateList(res, callback);
+        });
+      } else {
+        mailTemplate.getAllMailTemplates(showSystemMail).then(function (res) {
+          preprocessMailTemplateList(res, callback);
+        });
+      }
     }
 
     vm.cancelTemplateDelete = function() {
@@ -345,7 +352,5 @@
 
       return item.AccountId;
     }
-
-    vm.init();
   }
 })();
