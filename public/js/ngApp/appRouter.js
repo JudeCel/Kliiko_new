@@ -183,6 +183,7 @@
           loadDependencies: ['dbg', '$ocLazyLoad', function(dbg, $ocLazyLoad) {
            return $ocLazyLoad.load([
               '/js/ngApp/components/dashboard-chatSessions-builder/SessionModel.js',
+              '/js/ngApp/components/dashboard-chatSessions-builder/sessionBuilderControllerServices.js',
               '/js/ngApp/components/dashboard-chatSessions-builder/SessionBuilderController.js',
 
              '/js/vendors/ngDraggable/ngDraggable.js',

@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices', '$ocLazyLoad', '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope'];
-  function SessionBuilderController(dbg, messenger, SessionModel, $state, $stateParams, $filter, domServices, $ocLazyLoad, $q, $window, ngProgressFactory,  $rootScope, $scope) {
+  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices', '$ocLazyLoad', '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope'];
+  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $ocLazyLoad, $q, $window, ngProgressFactory,  $rootScope, $scope) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -125,10 +125,18 @@
 
       function handlePreviousStep() {
         vm.cantMoveNextStep = false;  step = vm.currentStep - 1;
-        vm.session.goPreviouseStep();
-        initStep(step).then(function (res) {
-            vm.currentStep = step;
-        });
+        vm.session.goPreviouseStep().then(
+          function (res) {
+            initStep(step).then(function (res) {
+              vm.currentStep = step;
+            });
+          },
+          function (err) {
+            messenger.error(err)
+          }
+        );
+        
+        
       }
 
       function handleNextStep() {
@@ -141,12 +149,20 @@
           function(res) {
             vm.searchingParticipants = false;
             vm.searchingObservers = false;
-            initStep(step+1).then(function(res) {
-              $stateParams.ssessionBuilderStep = vm.currentStep = step+1;
-            });
 
-            routerProgressbar.complete();
+            vm.session.goNextStep().then(
+              function (res) {
+                initStep(step+1).then(function(res) {
+                  $stateParams.ssessionBuilderStep = vm.currentStep = step+1;
+                });
 
+                routerProgressbar.complete();
+              },
+              function (err) {
+                routerProgressbar.complete();
+                messenger.error(err)
+              }
+            );
 
           },
           function (err) {
@@ -247,11 +263,7 @@
         return deferred.promise;
       }
       if (step == 2) {
-        $ocLazyLoad.load([
-
-          '/js/ngApp/components/dashboard-resources-topics/TopicsController.js',
-          '/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js'
-        ]).then(function(res) {
+        $ocLazyLoad.load( builderServices.getDependencies().step2 ).then(function(res) {
           vm.currentStep = step;
 
           if (vm.session.steps.step2.topics.length) vm.chatSessionTopicsList = vm.session.steps.step2.topics;
@@ -266,10 +278,7 @@
         });
       }
       if (step == 3) {
-        $ocLazyLoad.load([
-          '/js/ngApp/components/dashboard-resources-emailTemplates/EmailTemplateEditorController.js',
-          '/js/vendors/ng-file-upload/ng-file-upload.js'
-        ]).then(function(res) {
+        $ocLazyLoad.load( builderServices.getDependencies().step3 ).then(function(res) {
           vm.currentStep = step;
           vm.sessionEmailTemplates = sortBySpecifiedIds(vm.session.steps.step3.emailTemplates);
           vm.templateNamesToHide = {};
@@ -303,19 +312,8 @@
             deferred.reject(err);
           });
       }
-      if(step == 4) {
-        $ocLazyLoad.load([
-          '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
-          '/js/ngApp/modules/contactList/contactList.js',
-          '/js/ngApp/directives/custom-select-directive.js',
-          '/js/vendors/ng-file-upload/ng-file-upload.js',
-          '/js/ngApp/filters/num.js',
-          '/js/ngApp/filters/human2Camel.js'
-        ]).then(function(res) {
+      if (step == 4) {
+        $ocLazyLoad.load( builderServices.getDependencies().step4 ).then(function(res) {
           vm.currentStep = step;
           deferred.resolve();
           return deferred.promise;
@@ -325,19 +323,8 @@
             deferred.reject(err);
           });
       }
-      if(step == 5) {
-        $ocLazyLoad.load([
-          '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
-          '/js/ngApp/modules/contactList/contactList.js',
-          '/js/ngApp/directives/custom-select-directive.js',
-          '/js/vendors/ng-file-upload/ng-file-upload.js',
-          '/js/ngApp/filters/num.js',
-          '/js/ngApp/filters/human2Camel.js'
-        ]).then(function(res) {
+      if (step == 5) {
+        $ocLazyLoad.load( builderServices.getDependencies().step5 ).then(function(res) {
           vm.currentStep = step;
           vm.lastStep = true;
           deferred.resolve();
