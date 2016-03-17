@@ -479,6 +479,7 @@
           vm.session.update();
         },
         function (err) {
+          messenger.error(err);
         }
       );
 
@@ -528,7 +529,15 @@
           topicIds.push(vm.chatSessionTopicsList[i].id)
         }
 
-        vm.session.saveTopics();
+        vm.session.saveTopics().then(
+          function (res) {
+            dbg.log2('topic added');
+          },
+          function (err) {
+            messenger.error(err);
+          }
+        );
+        ;
       }
 
     }
