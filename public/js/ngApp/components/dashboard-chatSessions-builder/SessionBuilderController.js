@@ -511,12 +511,13 @@
           for (var i = 0; i < vm.chatSessionTopicsList.length ; i++) {
             if (data.id ==  vm.chatSessionTopicsList[i].id ) return;
           }
-
-          data.order = vm.chatSessionTopicsList.length || 0;
-
-          vm.chatSessionTopicsList.push(data);
+          push();
         } else {
+          push();
 
+        }
+
+        function push() {
           data.order = vm.chatSessionTopicsList.length || 0;
           vm.chatSessionTopicsList.push(data);
         }
