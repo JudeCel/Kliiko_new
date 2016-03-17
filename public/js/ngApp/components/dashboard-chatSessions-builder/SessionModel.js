@@ -46,6 +46,9 @@
     SessionModel.prototype.close = close;
     SessionModel.prototype.open = open;
     SessionModel.prototype.update = update;
+
+
+    SessionModel.prototype.goNextStep = goNextStep;
     SessionModel.prototype.goPreviouseStep = goPreviousStep;
 
     SessionModel.prototype.updateStep = updateStep;
@@ -187,6 +190,18 @@
 
     }
 
+    function goNextStep(step) {
+      var deferred = $q.defer();
+      var self = this;
+
+      sessionBuilderRestApi.nextStep({id: self.id, otherId: 'next'}, {}, function(res) {
+        res.error
+          ? deferred.reject(res.error)
+          : deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
 
     function goPreviousStep() {
       var self = this;
