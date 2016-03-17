@@ -21,9 +21,11 @@
 
       nextStep: {method: 'POST', params: {path: 'step'} },
       previousStep: {method: 'POST', params: {path: 'step'} }
-
     });
 
+    var mailRestApi = {
+      mailTemplates: $resource(globalSettings.restUrl + '/sessionMailTemplates', {}, {get: {method: 'GET'}})
+    };
     var chatSessionApi = $resource(globalSettings.restUrl + '/session/:id', null, {
       get: { method: 'get', params: { id: 'list' } },
       copy: { method: 'post', params: { id: '@id' } },
@@ -345,6 +347,17 @@
       return deferred.promise;
     }
 
+    function getAllSessionMailTemplates() {
+      var deferred = $q.defer();
+      mailRestApi.mailTemplates.get({getSystemMail:getSystemMail}, function (res) {
+        if(res.error) {
+          return deferred.reject(res.error);
+        }
+        deferred.resolve(res);
+      });
+      
+      return deferred.promise;
+    }
 
   }
 })();
