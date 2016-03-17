@@ -14,7 +14,9 @@
 ////////
     vm.removeSession = removeSession;
     vm.copySession = copySession;
+    vm.rateSessionMember = rateSessionMember;
 
+    vm.changePage = changePage;
     vm.rowClass = rowClass;
     vm.subscriptionEndDate = subscriptionEndDate;
     vm.goToChat = goToChat;
@@ -129,6 +131,13 @@
 
     function isExpired(session) {
       return session.showStatus == 'Expired';
+    };
+
+    function calculateSessionRating(session) {
+      var rating = session.SessionMembers.reduce(function(sum, member) {
+        return sum + member.rating;
+      }, 0);
+      vm.sessionRating = rating / (session.SessionMembers.length || 1);
     }
   }
 })();
