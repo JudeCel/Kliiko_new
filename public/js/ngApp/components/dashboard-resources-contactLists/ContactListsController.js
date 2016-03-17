@@ -58,20 +58,14 @@
     vm.onFieldMapDrop = onFieldMapDrop;
     vm.mappingFieldsContinue = mappingFieldsContinue;
 
-    var setted = false;
+    //var setted = false;
     vm.sectListActiveToFacilitators = function() {
-      if (setted) return;
-
-      setted = true;
-      // timeout is to let all filter do their work 
-      setTimeout(function() {
-        vm.changeActiveList(1);
-      }, 300);
-
+      vm.changeActiveList(1);
     };
 
     function initLists() {
       vm.lists = new ListsModel();
+      vm.sectListActiveToFacilitators();
     }
 
     function changeActiveList(index) {
@@ -395,7 +389,7 @@
         ? vm.allSelected = false
         : vm.allSelected = !vm.allSelected;
 
-      if (!vm.lists.activeList.members) return;
+      if (!vm.lists.activeList || !vm.lists.activeList.members) return;
 
       for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
         vm.lists.activeList.members[i]._selected = vm.allSelected;
