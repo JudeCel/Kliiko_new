@@ -135,10 +135,8 @@
 
       restApi.sessionByInvite.post({}, {token: token}, function(res) {
         if (res.error) {
-          deferred.reject(res.error);
-          return deferred.promise;
+          return deferred.reject(res.error);
         }
-
         deferred.resolve(res);
       });
 

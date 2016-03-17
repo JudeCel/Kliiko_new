@@ -72,7 +72,7 @@ function prepareParams(result) {
 function getSessionByInvite(req, res, next) {
   sessionServices.getSessionByInvite(req.body.token).then(
     function(resp) {
-     res.send(resp.Session);
+      res.send(resp.Session);
     },
     function(err) {
       res.send({ error: err });

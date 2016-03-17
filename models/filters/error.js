@@ -18,7 +18,7 @@ function filterErrors(errorsObject) {
 
 function parseErrorMessage(error, object) {
   let message = error.message;
-  let path = error.path || error.parent.column;
+  let path = error.path || (error.parent && error.parent.column) || 'unhandled';
   let field = _.startCase(path);
 
   switch(true) {

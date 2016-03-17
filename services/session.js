@@ -40,18 +40,31 @@ module.exports = {
   getSessionByInvite: getSessionByInvite
 };
 
+function isInviteSessionInvalid(resp) {
+  if ( new Date().getTime() < new Date(resp.Session.startTime).getTime() ) return 'Sorry, the '+res.Session.name+' Session is not yet open. Please check the Start Date & Time on your Confirmation email, or contact the Facilitator';
+  if ( res.Session.isFull) return 'Sorry, the available places for the '+res.Session.name+' Session have already been filled. The Facilitator will contact you ASAP';
+  if ( !res.Session.active) return 'Sorry, the '+res.Session.name+' Session is now closed. For any queries, please contact the Facilitator';
+
+  return null;
+}
+
 function getSessionByInvite(token) {
   var deferred = q.defer();
-
   if (!token) {
     deferred.reject('No invite @token has been provided');
-    return deferred.promise;
   }
 
   Invite.find({where:{token:token}, include: [Session]}).then(function(resp) {
-    deferred.resolve(resp)
+    let sessionError = isInviteSessionInvalid(resp);
+    if (sessionError) {
+      return deferred.reject(sessionError);
+    }
+    deferred.resolve(resp);
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
   });
 
+  return deferred.promise;
 }
 
 // Exports

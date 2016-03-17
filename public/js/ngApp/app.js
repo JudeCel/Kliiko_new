@@ -147,19 +147,20 @@
       function checkForInvite() {
         var sessionServices;
         var inviteToken = $cookies.get('inviteAccepted');
-
         if (!inviteToken) return;
-
         $cookies.remove('inviteAccepted');
         $ocLazyLoad.load(['/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js']).then(function() {
           sessionServices = $injector.get('topicsAndSessions');
 
           sessionServices.getSessionByInvite(inviteToken).then(function(res) {
-            if ( new Date().getTime() < new Date(res.startTime).getTime() ) alert('Sorry, the '+res.name+' Session is not yet open. Please check the Start Date & Time on your Confirmation email, or contact the Facilitator');
-            if ( res.isFull)  alert('Sorry, the available places for the '+res.name+' Session have already been filled. The Facilitator will contact you ASAP');
-            if ( !res.active)  alert('Sorry, the '+res.name+' Session is now closed. For any queries, please contact the Facilitator');
+            if (res.error) {
+              alert(res.error);
+            }
+          },
+          function (err) {
+            alert(err);
           });
-          
+
         });
 
 
