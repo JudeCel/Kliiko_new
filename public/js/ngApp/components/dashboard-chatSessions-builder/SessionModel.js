@@ -221,12 +221,13 @@
       var deferred = $q.defer();
 
       sessionBuilderRestApi.put({id:self.id}, stepDataObj,function(res) {
-        if (res.error) { deferred.reject(res.error); return deferred.promise; }
+        if (res.error) {
+          return deferred.reject(res.error);
+        }
         deferred.resolve(res);
       });
 
       return deferred.promise;
-
     }
 
 
@@ -286,11 +287,13 @@
     function inviteParticipants(members) {
       var self = this;
       var deferred = $q.defer();
-
+      
       sessionBuilderRestApi.inviteMembers({ id: self.id }, { members: members, role: 'participant' }, function(res) {
-        if (res.error) { deferred.reject(err);  return deferred.promise;}
-
-        deferred.resolve(res);
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
+        }
       });
 
       return deferred.promise;
@@ -355,7 +358,7 @@
         }
         deferred.resolve(res);
       });
-      
+
       return deferred.promise;
     }
 
