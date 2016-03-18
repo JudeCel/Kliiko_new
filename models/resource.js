@@ -4,8 +4,11 @@ module.exports = (Sequelize, DataTypes) => {
   var Resource = Sequelize.define('Resource', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     private: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
-    topicId: { type: DataTypes.INTEGER, allowNull: true },
+    accountId: { type: DataTypes.INTEGER, allowNull: false },
     sessionMemberId: { type: DataTypes.INTEGER, allowNull: true },
+    accountUserId: { type: DataTypes.INTEGER, allowNull: true },
+
+    topicId: { type: DataTypes.INTEGER, allowNull: true },
     image: { type: DataTypes.TEXT, allowNull: true },
     video: { type: DataTypes.TEXT, allowNull: true },
     file: { type: DataTypes.TEXT, allowNull: true },
@@ -24,6 +27,8 @@ module.exports = (Sequelize, DataTypes) => {
     classMethods: {
       associate: function(models) {
         Resource.belongsTo(models.Topic, { foreignKey: 'topicId' });
+        Resource.belongsTo(models.Account, { foreignKey: 'accountId' });
+        Resource.belongsTo(models.AccountUser, { foreignKey: 'accountUserId' });
         Resource.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId' });
         Resource.hasMany(models.Survey, { foreignKey: 'surveyId' });
         Resource.hasMany(models.Survey, { foreignKey: 'surveyQuestionId' });

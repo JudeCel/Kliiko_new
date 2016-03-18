@@ -96,6 +96,7 @@
     "imagemagick": "github:rsms/node-imagemagick",
     "joi": "^7.1.0",
     "json2csv": "^3.0.1",
+    "jsonwebtoken": "^5.7.0",
     "lodash": "^4.3.0",
     "morgan": "~1.6.1",
     "multer": "^1.1.0",
