@@ -136,7 +136,7 @@ function addTopics(req, res, next) {
 
 
   topicsService.removeAllAndAddNew(req.params.id, req.body.topicsArray).then(function(result) {
-    res.send(result);
+    res.send({succuss:true, data:result});
   }, function(error) {
     res.send({ error: error });
   });

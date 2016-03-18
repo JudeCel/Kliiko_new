@@ -220,8 +220,11 @@
 
               if (resourceType == "brandLogo"){
                 vm.initLogosList();
-                vm.survey.resourceId = res.data.id;
-                vm.survey.Resource = res.data;
+                if (vm.survey) {
+                  vm.survey.resourceId = res.data.id;
+                  vm.survey.Resource = res.data;
+                }
+
               } else {
                 vm.question.resourceId = res.data.id;
                 vm.question.Resource = res.data;

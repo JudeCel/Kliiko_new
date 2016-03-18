@@ -26,6 +26,14 @@
     vm.session.init().then(function(res) {
       vm.mouseOveringMember = [];
 
+      //add session id for newly build one
+      if (!$stateParams.id) {
+        $state.go('dashboard.chatSessions.builder', {id: vm.session.id}, {
+          location: true, inherit: false, notify: false, reload:false
+        });
+      }
+
+
       vm.today = new Date();
       vm.dateTime = builderServices.getTimeSettings();
 
@@ -464,7 +472,7 @@
           topicIds.push(vm.chatSessionTopicsList[i].id)
         }
 
-        vm.session.saveTopics().then(
+        vm.session.saveTopics(vm.chatSessionTopicsList).then(
           function (res) {
             dbg.log2('topic added');
           },
@@ -498,6 +506,7 @@
     }
 
     function reorderTopics(data, t) {
+      
       vm.chatSessionTopicsList = builderServices.reorderTopics(vm.chatSessionTopicsList, data, t);
 
       vm.session.steps.step2.topics = vm.chatSessionTopicsList;

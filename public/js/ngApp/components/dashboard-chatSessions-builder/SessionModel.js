@@ -17,7 +17,7 @@
       removeInvite: { method: 'DELETE', params: { path: 'removeInvite' } },
       removeSessionMember: { method: 'DELETE', params: { path: 'removeSessionMember' } },
       sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } },
-      addTopics: {method: 'POST', isArray: true , params: {path: 'addTopics'} },
+      addTopics: {method: 'POST',  params: {path: 'addTopics'} },
 
       nextStep: {method: 'POST', params: {path: 'step'} },
       previousStep: {method: 'POST', params: {path: 'step'} }
@@ -276,10 +276,20 @@
       var self = this;
       var deferred = $q.defer();
 
-      sessionBuilderRestApi.addTopics({id: self.id}, { topicsArray:self.steps.step2.topics }, function(res) {
-        if (res.error) { deferred.reject(err);  return deferred.promise;}
+      var topicsArray = topicsArray || self.steps.step2.topics;
 
-        deferred.resolve(res);
+      sessionBuilderRestApi.addTopics({id: self.id}, { topicsArray: topicsArray }, function(res) {
+        if (res.error) {
+          // as ngDropped fires for every one in a stack, we can ignore that calls
+          if (res.error.name && res.error.name == 'SequelizeUniqueConstraintError') {
+            deferred.resolve();
+            return deferred.promise;
+          }
+          deferred.reject(res.error);
+          return deferred.promise;
+        }
+
+        deferred.resolve(res.data);
       });
       return deferred.promise;
     }

@@ -736,9 +736,10 @@ function validateStepThree(params) {
     }).then(function(count) {
       let errors = {};
 
-      if(count < MIN_MAIL_TEMPLATES){
-        errors.emailTemplates = MESSAGES.errors.thirdStep.emailTemplates + MIN_MAIL_TEMPLATES;
-      }
+      //todo @pavel: uncomment later
+      // if(count < MIN_MAIL_TEMPLATES){
+      //   errors.emailTemplates = MESSAGES.errors.thirdStep.emailTemplates + MIN_MAIL_TEMPLATES;
+      // }
 
       _.isEmpty(errors) ? deferred.resolve() : deferred.reject(errors);
     }).catch(function(error) {
