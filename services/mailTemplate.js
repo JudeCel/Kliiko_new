@@ -182,17 +182,19 @@ function getMailTemplateForReset(req, callback) {
   });
 }
 
-function getAllSessionMailTemplates(accountId, getSystemMail, fullData,callback) {
+function getAllSessionMailTemplates(accountId, sessionId, getSystemMail, fullData, callback) {
   let baseTemplateQuery = {category:{ $in: ["firstInvitation", "confirmation", "notThisTime", "notAtAll", "closeSession", "generic"] }};
-  getAllMailTemplatesWithParameters(accountId, getSystemMail, baseTemplateQuery, fullData, callback);
+  let templateQuery = {sessionId: sessionId};
+  getAllMailTemplatesWithParameters(accountId, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback);
 }
 
 function getAllMailTemplates(accountId, getSystemMail, fullData, callback) {
-  getAllMailTemplatesWithParameters(accountId, getSystemMail, null, false, callback);
+  let templateQuery = {sessionId: null};
+  getAllMailTemplatesWithParameters(accountId, getSystemMail, null, templateQuery, false, callback);
 }
 
-function getAllMailTemplatesWithParameters(accountId, getSystemMail, baseTemplateQuery, fullData, callback) {
-  let query = {};
+function getAllMailTemplatesWithParameters(accountId, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback) {
+  let query = templateQuery || {};
 
   let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
 
@@ -222,7 +224,7 @@ function getAllMailTemplatesWithParameters(accountId, getSystemMail, baseTemplat
 };
 
 function copyBaseTemplatesForSession(accountId, sessionId, callback) {
-  getAllSessionMailTemplates(accountId, false, true, function(error, result) {
+  getAllSessionMailTemplates(accountId, null, false, true, function(error, result) {
     if (error) {
       return callback(error);
     }
