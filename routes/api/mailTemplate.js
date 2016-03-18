@@ -15,13 +15,13 @@ module.exports = {
 };
 
 function allSessionMailTemplatesGet(req, res, next) {
-  MailTemplateService.getAllSessionMailTemplates(res.locals.currentDomain.id, null, req.query.getSystemMail, false,function(error, result) {
+  MailTemplateService.getAllSessionMailTemplates(res.locals.currentDomain.id, true, null, req.query.getSystemMail, false,function(error, result) {
     res.send({error: error, templates: result});
   });
 }
 
 function allMailTemplatesGet(req, res, next) {
-  MailTemplateService.getAllMailTemplates(res.locals.currentDomain.id, req.query.getSystemMail, false, function(error, result) {
+  MailTemplateService.getAllMailTemplates(res.locals.currentDomain.id, true, req.query.getSystemMail, false, function(error, result) {
     res.send({error: error, templates: result});
   });
 }

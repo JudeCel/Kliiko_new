@@ -131,6 +131,7 @@
 
       vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
       vm.currentTemplate.error = {};
+      template.properties = vm.properties;
       mailTemplate.saveMailTemplate(template, createCopy).then(function (res) {
         if (!res.error) {
           refreshTemplateList(function() {
@@ -185,6 +186,7 @@
     function saveEmailTemplate(force) {
       selectedTemplate.subject = vm.currentTemplate.subject;
       selectedTemplate.content = vm.currentTemplate.content;
+      selectedTemplate.properties = vm.properties;
       console.warn(selectedTemplate);
 
       if (force) {

@@ -537,7 +537,7 @@
       vm.session.update().then(
         function (res) {
           //vm.sessionEmailTemplates = sortBySpecifiedIds(res.sessionBuilder.steps.step3.emailTemplates);
-          vm.sessionEmailTemplates = res.sessionBuilder.steps.step3.emailTemplates;
+          //vm.sessionEmailTemplates = res.sessionBuilder.steps.step3.emailTemplates;
         },
         function (err) {
           messenger.error(err);

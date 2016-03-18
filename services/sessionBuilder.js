@@ -73,18 +73,18 @@ function initializeBuilder(params) {
   params.step = 'setUp';
   Session.create(params).then(function(session) {
     //copying all mails current account has created
-    mailTemplateService.copyBaseTemplatesForSession(params.accountId, session.id, function(error, _result) {
+  /*  mailTemplateService.copyBaseTemplatesForSession(params.accountId, session.id, function(error, _result) {
       if(error) {
         deferred.reject(error);
       }
-      else {
+      else {*/
         sessionBuilderObject(session).then(function(result) {
           deferred.resolve(result);
         }, function(error) {
           deferred.reject(error);
         });
-      }
-    });
+      //}
+    //});
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
