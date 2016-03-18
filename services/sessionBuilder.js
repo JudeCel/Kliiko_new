@@ -546,7 +546,9 @@ function step2Queries(session, step) {
           model: models.SessionTopics,
           where: {
             SessionId: session.id
-          }
+          },
+          //todo get order
+          attributes: ['order']
         }]
       }).then(function(topics) {
         step.topics = topics;

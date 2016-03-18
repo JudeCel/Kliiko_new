@@ -71,16 +71,10 @@
     }
 
     function reorderTopics(vmTopics, data, t) {
-      // debugger; //debugger
+      
       var droppedOrderId = data.order || 0;
       var targetOrderId = t.order || 0;
       
-      // if (droppedOrderId == 0 && targetOrderId == 0) {
-      //   for (var i = 0, len = vmTopics.length; i < len ; i++) {
-      //     if (data.id == vmTopics[i].id) vmTopics[i].order = targetOrderId;
-      //     if (t.id == vmTopics[i].id) vmTopics[i].order = droppedOrderId;
-      //   }
-      // }
 
       for (var i = 0, len = vmTopics.length; i < len ; i++) {
         if (data.id == vmTopics[i].id) vmTopics[i].order = targetOrderId;

@@ -34,13 +34,20 @@ function updateSessionTopics(sessionId, topicsArray) {
 
   let ids = _.map(topicsArray, 'id');
   joinToSession(ids, sessionId).then(function(sessionTopics) {
+    console.log(sessionTopics);
     _.map(sessionTopics, function(sessionTopic) {
       _.map(topicsArray, function(topic) {
-        if(topic.id == sessionTopic.TopicId) {
-          sessionTopic.order = topic.order;
-          sessionTopic.active = topic.active;
-          sessionTopic.update();
+
+        for (var i = 0, len = sessionTopic.length; i < len ; i++) {
+          if (topic.id == sessionTopic[i].TopicId) {
+            sessionTopic[i].order = topic.order;
+            sessionTopic[i].active = topic.active;
+            sessionTopic[i].update(sessionTopic[i]);
+            //todo save this to db
+
+          }
         }
+
       });
     });
 
