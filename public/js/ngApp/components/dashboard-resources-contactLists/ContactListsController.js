@@ -7,8 +7,9 @@
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
+    vm.lists = new ListsModel();
+
     vm.listIdToEdit = null;
-    vm.newList = {};
 
     vm.newList = {};
     vm.modalErrors = {};
@@ -58,20 +59,30 @@
     vm.onFieldMapDrop = onFieldMapDrop;
     vm.mappingFieldsContinue = mappingFieldsContinue;
 
-    var setted = false;
-    vm.sectListActiveToFacilitators = function() {
-      if (setted) return;
+    // required for correct list switching.
+    var isSelected = false;
 
-      setted = true;
-      setTimeout(function() {
-        vm.changeActiveList(1)
-      }, 300);
+
+
+    function initLists(listType) {
+
+      if (listType) {
+        if (listType == 'facilitators') vm.sectListActiveToFacilitators();
+      }
+    }
+
+
+
+    vm.sectListActiveToFacilitators = function() {
+      if (isSelected) return;
+
+      isSelected = true;
+      // timeout is for correct list switching (think about it as of promise)
+      setTimeout(function() {   vm.changeActiveList(1)  }, 300);
 
     };
 
-    function initLists() {
-      vm.lists = new ListsModel();
-    }
+
 
     function changeActiveList(index) {
       selectAll(true);
@@ -329,7 +340,6 @@
       var newContact = angular.copy(vm.newContact);
 
       if(vm.hideModalStuff) {
-        console.log("aaaaaaaaaaaaaaa");
         newContact.update(newContact.listId).then(function() {
           domServices.modal('contactList-addContactManual', 'close');
         }, function(error) {
@@ -395,7 +405,7 @@
         ? vm.allSelected = false
         : vm.allSelected = !vm.allSelected;
 
-      if (!vm.lists.activeList.members) return;
+      if (!vm.lists.activeList || !vm.lists.activeList.members) return;
 
       for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
         vm.lists.activeList.members[i]._selected = vm.allSelected;
