@@ -27,15 +27,7 @@
       vm.mouseOveringMember = [];
 
       vm.today = new Date();
-      vm.dateTime = {
-        hstep:1,
-        mstep: 15,
-
-        options: {
-          hstep: [1, 2, 3],
-          mstep: [1, 5, 10, 15, 25, 30]
-        }
-      };
+      vm.dateTime = builderServices.getTimeSettings();
 
       vm.participants = vm.session.steps.step4.participants;
       vm.observers = vm.session.steps.step5.observers;
@@ -52,6 +44,9 @@
 
     vm.selectedTopics = {};
     vm.allTopicsSelected = false;
+
+    vm.participantsFilterType = {all:true};
+    vm.observersFilterType = {all:true};
 
     vm.closeSession = closeSession;
     vm.openSession = openSession;
@@ -84,6 +79,7 @@
     vm.findSelectedMembers = findSelectedMembers;
     vm.removeFromList = removeFromList;
     vm.sendGenericEmail = sendGenericEmail;
+    vm.setMembersFilter = setMembersFilter;
 
 
 
@@ -155,9 +151,7 @@
 
     function goToChat(session) {
       if (session.showStatus && session.showStatus == 'Expired') return;
-
-        $window.location.href = session.chatRoomUrl + session.id;
-
+      $window.location.href = session.chatRoomUrl + session.id;
     }
 
 
@@ -668,7 +662,7 @@
     }
 
     function findSelectedMembers() {
-       builderServices.findSelectedMembers(vm);
+      return builderServices.findSelectedMembers(vm);
     }
 
     function finishSelectingMembers(activeList) {
@@ -752,6 +746,14 @@
       else {
         messenger.error('No contacts selected');
       }
+    }
+
+    function setMembersFilter(memberType, filterName) {
+      var filter = {};
+      filterName.length
+        ? filter[filterName] = true
+        : filter['all'] = true;
+      vm[memberType+'FilterType'] = filter;
     }
 
 

@@ -7,6 +7,8 @@
 
     var Services = {};
 
+
+    Services.getTimeSettings = getTimeSettings;
     Services.getDependencies = getDependencies;
     Services.reorderTopics = reorderTopics;
     Services.getExpireDays = getExpireDays;
@@ -17,6 +19,18 @@
     Services.removeDuplicatesFromArray = removeDuplicatesFromArray;
 
     return Services;
+
+    function getTimeSettings() {
+      return {
+        hstep:1,
+        mstep: 15,
+
+        options: {
+          hstep: [1, 2, 3],
+          mstep: [1, 5, 10, 15, 25, 30]
+        }
+      }
+    }
 
     function getDependencies() {
       return {

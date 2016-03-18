@@ -10,12 +10,14 @@
 
   <div ng-if='sbc.participants.length > 0' ng-controller='ContactListController as clc' ng-init='clc.hideModalStuff = true;'>
     <div class="text-right filter-row">
-      <a href="" ng-class="{active:sbc.participantsFilter == ''}" ng-click="sbc.participantsFilter = ''">All({{sbc.participants.length  }})</a>
-      <a href="" ng-class="{active:sbc.participantsFilter == 'Not Invited'}" ng-click="sbc.participantsFilter = 'Not Invited'">Not Invited({{ (sbc.participants | filter: 'Not Invited' : strict).length  }})</a>
-      <a href="" ng-class="{active:sbc.participantsFilter == 'Confirmed'}" ng-click="sbc.participantsFilter = 'Confirmed'">Confirmed({{ (sbc.participants | filter: 'Confirmed' : strict).length  }})</a>
-      <a href="" ng-class="{active:sbc.participantsFilter == 'Not This Time'}" ng-click="sbc.participantsFilter = 'Not This Time'">Not This Time({{ (sbc.participants | filter: 'Not This Time' : strict).length  }})</a>
-      <a href="" ng-class="{active:sbc.participantsFilter == 'Not At All'}" ng-click="sbc.participantsFilter = 'Not At All'">Not At All({{ (sbc.participants | filter: 'Not At All' : strict).length  }})</a>
-      <a href="" ng-class="{active:sbc.participantsFilter == 'No Reply'}" ng-click="sbc.participantsFilter = 'No Reply'">No Response({{ (sbc.participants | filter: 'No Reply' : strict).length  }})</a>
+
+      <a href="" ng-class="{active:sbc.participantsFilterType.all}" ng-click="sbc.setMembersFilter('participants', 'all')">All({{sbc.participants.length  }})</a>
+      <a href="" ng-class="{active:sbc.participantsFilterType.notInvited}" ng-click="sbc.setMembersFilter('participants',  'notInvited')">Not Invited({{ (sbc.participants | filter: 'Not Invited' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.participantsFilterType.confirmed}" ng-click="sbc.setMembersFilter('participants', 'confirmed')">Confirmed({{ (sbc.participants | filter: 'Confirmed' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.participantsFilterType.notThisTime}" ng-click="sbc.setMembersFilter('participants',  'notThisTime')">Not This Time({{ (sbc.participants | filter: 'Not This Time' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.participantsFilterType.notAtAll}" ng-click="sbc.setMembersFilter('participants', 'notAtAll')">Not At All({{ (sbc.participants | filter: 'Not At All' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.participantsFilterType.noReply}" ng-click="sbc.setMembersFilter('participants',  'noReply')">No Response({{ (sbc.participants | filter: 'No Reply' : strict).length  }})</a>
+
     </div>
     <div class='row text-left'>
       <table class='table table-dashboardElements'>
