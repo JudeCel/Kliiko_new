@@ -7,8 +7,9 @@
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
+    vm.lists = new ListsModel();
+
     vm.listIdToEdit = null;
-    vm.newList = {};
 
     vm.newList = {};
     vm.modalErrors = {};
@@ -58,15 +59,30 @@
     vm.onFieldMapDrop = onFieldMapDrop;
     vm.mappingFieldsContinue = mappingFieldsContinue;
 
-    //var setted = false;
+    // required for correct list switching.
+    var isSelected = false;
+
+
+
+    function initLists(listType) {
+
+      if (listType) {
+        if (listType == 'facilitators') vm.sectListActiveToFacilitators();
+      }
+    }
+
+
+
     vm.sectListActiveToFacilitators = function() {
-      vm.changeActiveList(1);
+      if (isSelected) return;
+
+      isSelected = true;
+      // timeout is for correct list switching (think about it as of promise)
+      setTimeout(function() {   vm.changeActiveList(1)  }, 300);
+
     };
 
-    function initLists() {
-      vm.lists = new ListsModel();
-      vm.sectListActiveToFacilitators();
-    }
+
 
     function changeActiveList(index) {
       selectAll(true);
