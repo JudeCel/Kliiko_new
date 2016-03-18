@@ -110,8 +110,8 @@
         initStep(step).then(function (res) {
           vm.currentStep = step;
         });
-        
-        
+
+
       }
 
       function handleNextStep() {
@@ -254,7 +254,7 @@
         $ocLazyLoad.load( builderServices.getDependencies().step3 ).then(function(res) {
           vm.currentStep = step;
         //  vm.sessionEmailTemplates = sortBySpecifiedIds(vm.session.steps.step3.emailTemplates);
-          vm.sessionEmailTemplates = vm.session.steps.step3.emailTemplates;
+          //vm.sessionEmailTemplates = vm.session.steps.step3.emailTemplates;
           vm.templateNamesToHide = {};
 
           $rootScope.$on('updateSessionBuilderEmails', updateSessionBuilderEmailsHandler);
@@ -295,8 +295,8 @@
       function showExpiresWarning() {
         if (vm.session.sessionData && vm.session.sessionData.endTime) {
           vm.expireWarning = builderServices.getExpireDays(vm.session.sessionData.endTime);
-        } 
-        
+        }
+
       }
     }
 
@@ -499,7 +499,7 @@
 
     function reorderTopics(data, t) {
       vm.chatSessionTopicsList = builderServices.reorderTopics(vm.chatSessionTopicsList, data, t);
-      
+
       vm.session.steps.step2.topics = vm.chatSessionTopicsList;
 
     }
