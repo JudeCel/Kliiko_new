@@ -131,6 +131,7 @@
 
       vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
       vm.currentTemplate.error = {};
+      template.properties = vm.properties;
       mailTemplate.saveMailTemplate(template, createCopy).then(function (res) {
         if (!res.error) {
           refreshTemplateList(function() {
@@ -185,13 +186,19 @@
     function saveEmailTemplate(force) {
       selectedTemplate.subject = vm.currentTemplate.subject;
       selectedTemplate.content = vm.currentTemplate.content;
-      console.warn(selectedTemplate);
+      selectedTemplate.properties = vm.properties;
 
       if (force) {
         selectedTemplate.content = $('#templateContent').wysiwyg('getContent');
       }
       mailTemplate.saveTemplate(selectedTemplate).then(function (res) {
         if (!res.error) {
+          refreshTemplateList(function() {
+            var index = getIndexOfMailTemplateWithId(res.templates.id);
+            if (index != -1) {
+              vm.startEditingTemplate(index);
+            }
+          });
           messenger.ok("Template was successfully saved.");
         } else {
           processErrors(res.error);
