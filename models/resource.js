@@ -5,9 +5,9 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     private: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
+    name: { type: DataTypes.STRING, allowNull: true },
     sessionMemberId: { type: DataTypes.INTEGER, allowNull: true },
     accountUserId: { type: DataTypes.INTEGER, allowNull: true },
-
     topicId: { type: DataTypes.INTEGER, allowNull: true },
     image: { type: DataTypes.TEXT, allowNull: true },
     video: { type: DataTypes.TEXT, allowNull: true },
