@@ -10,12 +10,14 @@
 
   <div ng-if='sbc.observers.length > 0' ng-controller='ContactListController as clc' ng-init='clc.hideModalStuff = true;'>
     <div class="text-right filter-row">
-      <a href="" ng-class="{active:sbc.observersFilter == ''}" ng-click="sbc.observersFilter = ''">All({{sbc.observers.length  }})</a>
-      <a href="" ng-class="{active:sbc.observersFilter == 'Not Invited'}" ng-click="sbc.observersFilter = 'Not Invited'">Not Invited({{ (sbc.observers | filter: 'Not Invited' : strict).length  }})</a>
-      <a href="" ng-class="{active:sbc.observersFilter == 'Confirmed'}" ng-click="sbc.observersFilter = 'Confirmed'">Confirmed({{ (sbc.observers | filter: 'Confirmed' : strict).length  }})</a>
-      <a href="" ng-class="{active:sbc.observersFilter == 'Not This Time'}" ng-click="sbc.observersFilter = 'Not This Time'">Not This Time({{ (sbc.observers | filter: 'Not This Time' : strict).length  }})</a>
-      <a href="" ng-class="{active:sbc.observersFilter == 'Not At All'}" ng-click="sbc.observersFilter = 'Not At All'">Not At All({{ (sbc.observers | filter: 'Not At All' : strict).length  }})</a>
-      <a href="" ng-class="{active:sbc.observersFilter == 'No Reply'}" ng-click="sbc.observersFilter = 'No Reply'">No Response({{ (sbc.observers | filter: 'No Reply' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.observersFilterType.all}" ng-click="sbc.setMembersFilter('observers', 'all')">All({{sbc.participants.length  }})</a>
+      <a href="" ng-class="{active:sbc.observersFilterType.notInvited}" ng-click="sbc.setMembersFilter('observers',  'notInvited')">Not Invited({{ (sbc.observers | filter: 'Not Invited' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.observersFilterType.confirmed}" ng-click="sbc.setMembersFilter('observers', 'confirmed')">Confirmed({{ (sbc.observers | filter: 'Confirmed' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.observersFilterType.notThisTime}" ng-click="sbc.setMembersFilter('observers',  'notThisTime')">Not This Time({{ (sbc.observers | filter: 'Not This Time' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.observersFilterType.notAtAll}" ng-click="sbc.setMembersFilter('observers', 'notAtAll')">Not At All({{ (sbc.observers | filter: 'Not At All' : strict).length  }})</a>
+      <a href="" ng-class="{active:sbc.observersFilterType.noReply}" ng-click="sbc.setMembersFilter('observers',  'noReply')">No Response({{ (sbc.observers | filter: 'No Reply' : strict).length  }})</a>
+
+
     </div>
     <div class='row text-left'>
       <table class='table table-dashboardElements'>
