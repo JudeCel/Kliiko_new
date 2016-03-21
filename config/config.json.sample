@@ -7,11 +7,7 @@
     "dialect": "postgres"
   },
   "staging": {
-    "username": "root",
-    "password": "toor",
-    "database": "kliiko_development",
-    "host": "127.0.0.1",
-    "dialect": "postgres"
+    "use_env_variable": "DATABASE_URL"
   },
   "test": {
     "username": "root",
@@ -22,10 +18,6 @@
     "logging": false
   },
   "production": {
-    "username": "root",
-    "password": "toor",
-    "database": "kliiko_production",
-    "host": "127.0.0.1",
-    "dialect": "postgres"
+    "use_env_variable": "DATABASE_URL"
   }
 }
