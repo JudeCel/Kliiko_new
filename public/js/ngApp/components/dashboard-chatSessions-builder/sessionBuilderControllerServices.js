@@ -1,9 +1,9 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('sessionBuilderControllerServices', sessionBuilderControllerServices);
-  sessionBuilderControllerServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
+  sessionBuilderControllerServices.$inject = ['globalSettings', '$q', '$resource', 'dbg', 'topicsAndSessions'];
 
-  function sessionBuilderControllerServices(globalSettings, $q, $resource, dbg) {
+  function sessionBuilderControllerServices(globalSettings, $q, $resource, dbg, topicsAndSessions) {
 
     var Services = {};
 
@@ -72,14 +72,20 @@
     }
 
     function reorderTopics(vmTopics, data, t) {
-      
       var droppedOrderId = data.order || 0;
       var targetOrderId = t.order || 0;
       
 
       for (var i = 0, len = vmTopics.length; i < len ; i++) {
-        if (data.id == vmTopics[i].id) vmTopics[i].order = targetOrderId;
-        if (t.id == vmTopics[i].id) vmTopics[i].order = droppedOrderId;
+        if (data.id == vmTopics[i].id) {
+          vmTopics[i].order = targetOrderId;
+          topicsAndSessions.updateTopic(vmTopics[i]);
+        }
+
+        if (t.id == vmTopics[i].id) {
+          vmTopics[i].order = droppedOrderId;
+          topicsAndSessions.updateTopic(vmTopics[i]);
+        }
       }
 
       return vmTopics;

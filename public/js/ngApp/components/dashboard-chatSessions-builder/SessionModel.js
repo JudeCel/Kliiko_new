@@ -55,6 +55,7 @@
     SessionModel.prototype.sendSms = sendSms;
     SessionModel.prototype.addMembers = addMembers;
     SessionModel.prototype.saveTopics = saveTopics;
+    //SessionModel.prototype.updateTopic = updateTopic;
     SessionModel.prototype.inviteParticipants = inviteParticipants;
     SessionModel.prototype.inviteObservers = inviteObservers;
     SessionModel.prototype.removeMember = removeMember;
@@ -294,27 +295,6 @@
       return deferred.promise;
     }
 
-    function updateTopics(topicsArray) {
-      var self = this;
-      var deferred = $q.defer();
-
-      var topicsArray = topicsArray || self.steps.step2.topics;
-
-      sessionBuilderRestApi.addTopics({id: self.id}, { topicsArray: topicsArray }, function(res) {
-        if (res.error) {
-          // as ngDropped fires for every one in a stack, we can ignore that calls
-          if (res.error.name && res.error.name == 'SequelizeUniqueConstraintError') {
-            deferred.resolve();
-            return deferred.promise;
-          }
-          deferred.reject(res.error);
-          return deferred.promise;
-        }
-
-        deferred.resolve(res.data);
-      });
-      return deferred.promise;
-    }
 
     function inviteParticipants(members) {
       var self = this;
