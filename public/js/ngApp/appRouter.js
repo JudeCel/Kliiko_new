@@ -291,32 +291,13 @@
       .state('dashboard.smsCredits', {
         url: "/smsCredits",
         views: {
-          'resourcesContent': {templateUrl: prePath + "dashboard-smsCredits/dashboard-content.htm"}
+          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-smsCredits/dashboard-content.html"}
         },
 
-        resolve: {
-          checkPermission: ['$q', '$timeout', 'dbg', 'ngProgressFactory', 'banners',function($q, $timeout, dbg, ngProgressFactory, banners) {
-            var deferred = $q.defer();
 
-            user.canAccess('bannerMessages').then(
-              function(res) {
-                var progressbar = ngProgressFactory.createInstance();
-                progressbar.start();
-
-                // load rarely needed module: ng-file-upload
-                banners.initUpload().then(function() { progressbar.complete(); deferred.resolve(); });
-
-              },
-
-              function(err) { dbg.warn(err); }
-
-            );
-            return deferred.promise;
-          }]
-        },
 
         onEnter: ['dbg', function (dbg) {
-          dbg.rs('dashboard.resources.gallery is on');
+          dbg.rs('dashboard.smsCredits is on');
         }]
 
       })

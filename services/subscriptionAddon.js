@@ -25,17 +25,19 @@ const MESSAGES = {
 
 module.exports = {
   messages: MESSAGES,
-  getAllAddons: getAllAddons
+  getAllAddons: getAllAddons,
+  chargeAddon: chargeAddon
 }
 
 function getAllAddons() {
+
   let deferred = q.defer();
 
   chargebee.addon.list({}).request(function(error, result){
     if(error){
       deferred.reject(error);
     }else{
-      deferred.resolve(result);
+      deferred.resolve(result.list);
     }
   });
 
@@ -78,10 +80,12 @@ function chargeAddon(params) {
 function chargebeeAddonCharge(params) {
   let deferred = q.defer();
 
+  console.log(params);
+
   chargebee.invoice.charge_addon({
     subscription_id : params.subscriptionId,
     addon_id : params.addonId,
-    addon_quantity : params.addonQuantity
+    addon_quantity : params.addon_quantity
   }).request(function(error,result){
     if(error){
       deferred.reject(error);

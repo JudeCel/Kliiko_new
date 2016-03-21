@@ -4,18 +4,26 @@ var _ = require('lodash');
 var subscriptionAddon = require('./../../services/subscriptionAddon');
 
 module.exports = {
-  getPlans: getPlans
+  get: get,
+  purchase: purchase
 };
 
-function getPlans(req, res, next) {
-  subscriptionAddon.getList().then(function(result) {
+function get(req, res, next) {
+  subscriptionAddon.getAllAddons().then(function(result) {
     res.send({smsCreditList: result});
   }, function(err) {
     res.send(({ error: err.message }));
   });
 }
 
+function purchase(req, res, next) {
 
-function getList(req, res, next) {
-  
+  let params = req.body;
+  params.accountId = res.locals.currentDomain.id;
+
+  subscriptionAddon.chargeAddon(params).then(function(result) {
+    res.send(result);
+  }, function(err) {
+    res.send(({ error: err.message }));
+  });
 }
