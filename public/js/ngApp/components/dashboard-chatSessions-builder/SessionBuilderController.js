@@ -63,10 +63,11 @@
     vm.goToStep = goToStep;
     vm.goToChat = goToChat;
     vm.currentPageToDisplay = currentPageToDisplay;
-
-    // step 2
     vm.addFacilitatorsClickHandle = addFacilitatorsClickHandle;
     vm.facilitatorsSelectHandle = facilitatorsSelectHandle;
+
+    // step 2
+
     vm.faderHack = faderHack;
     vm.topicsOnDropComplete = topicsOnDropComplete;
     vm.removeTopicFromList = removeTopicFromList;
@@ -247,7 +248,7 @@
         $ocLazyLoad.load( builderServices.getDependencies().step2 ).then(function(res) {
           vm.currentStep = step;
 
-          if (vm.session.steps.step2.topics.length) vm.chatSessionTopicsList = vm.session.steps.step2.topics;
+          if (vm.session.steps.step2.topics.length) vm.chatSessionTopicsList = builderServices.parseTopics(vm.session.steps.step2.topics);
 
           deferred.resolve();
           return deferred.promise;
@@ -308,19 +309,7 @@
       }
     }
 
-    // function sortBySpecifiedIds(allTemplates) {
-    //   var ids = [1,3,6,5,2,4];
-    //   var output = [];
-    //
-    //   for (var i = 0, len = ids.length; i < len ; i++) {
-    //     for (var j = 0, lenJ = allTemplates.length; j < lenJ ; j++) {
-    //       if ( ids[i] == allTemplates[j].MailTemplateBaseId ) output.push(allTemplates[j]);
-    //     }
-    //   }
-    //
-    //   return output;
-    //
-    // }
+
 
     function stepsClassIsActive(step) {
       return (vm.currentStep == step);
@@ -640,23 +629,7 @@
       vm.searchingObservers = true;
     }
 
-    // function currentMemberList() {
-    //   if(vm.currentStep == 4) {
-    //     return vm.participants;
-    //   }
-    //   else if(vm.currentStep == 5) {
-    //     return vm.observers;
-    //   }
-    // }
 
-    // function currentStepString() {
-    //   if(vm.currentStep == 4) {
-    //     return 'step4';
-    //   }
-    //   else if(vm.currentStep == 5) {
-    //     return 'step5';
-    //   }
-    // }
 
     function selectedAllMembers() {
       var members = builderServices.currentMemberList(vm);
@@ -712,35 +685,7 @@
       members.splice(index, 1);
     }
 
-    // function removeDuplicatesFromArray(array) {
-    //   var object = {}, newArray = [];
-    //   for (var i = 0; i < array.length; i++) {
-    //     var element = object[array[i].email];
-    //     var check = element && (element.invite || element.sessionMember);
-    //
-    //     if(!check) {
-    //       object[array[i].email] = array[i];
-    //     }
-    //   }
-    //
-    //   for (var i in object) {
-    //     newArray.push(object[i]);
-    //   }
-    //
-    //   return newArray;
-    // }
-
-    // function selectMembers(listId, members) {
-    //   var selected = [];
-    //   for(var i in members) {
-    //     var member = members[i];
-    //     if(member._selected) {
-    //       member.listId = listId;
-    //       selected.push(member);
-    //     }
-    //   }
-    //   return selected;
-    // }
+  
 
     function sendGenericEmail() {
       var data = findSelectedMembers();

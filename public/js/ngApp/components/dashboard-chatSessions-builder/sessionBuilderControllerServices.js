@@ -17,6 +17,7 @@
     Services.currentStepString = currentStepString;
     Services.selectMembers = selectMembers;
     Services.removeDuplicatesFromArray = removeDuplicatesFromArray;
+    Services.parseTopics = parseTopics;
 
     return Services;
 
@@ -154,6 +155,14 @@
       }
 
       return newArray;
+    }
+
+    function parseTopics(topicsArray) {
+      for (var i = 0, len = topicsArray.length; i < len ; i++) {
+        topicsArray[i].order = topicsArray[i].SessionTopics[0].order;
+      }
+
+      return topicsArray;
     }
 
   }
