@@ -28,7 +28,7 @@ function envConfig() {
 }
 
 helpers.mailFrom = function(){
-  return process.env.MAIL_FROM_NAME + " <" + process.env.MAIL_FROM_NAME + ">";
+  return process.env.MAIL_FROM_NAME + " <" + process.env.MAIL_FROM_EMAIL + ">";
 };
 
 helpers.getUrl = function(token, path){
