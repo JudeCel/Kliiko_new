@@ -1,6 +1,5 @@
 "use strict";
 var multer = require('multer');
-var config = require('config').get('chatConf');
 var fs = require('fs');
 var _ = require("lodash");
 
@@ -65,7 +64,7 @@ function getFileExtension(fileNmae) {
 
 function destination(options) {
   return function(req, file, cb) {
-    let path = (options.path || config.paths.fsPath + '/public/uploads/');
+    let path = (options.path || process.env.CHAT_CONF_PATHS_FS_PATH + '/public/uploads/');
     fs.stat(path, function (err, stats) {
       if(!stats) {
         fs.mkdir(path);

@@ -17,16 +17,16 @@ function envConfig() {
       return stubTransport;
       break;
     default:
-      return config.get('mail')['transport'];
+      return process.env.MAIL_TRANSPORT_SERVICE;
   }
 }
 
 helpers.mailFrom = function(){
-  return config.get('mail')['fromName']+" <"+config.get('mail')['fromEmail']+">";
+  return process.env.MAIL_FROM_NAME + " <" + process.env.MAIL_FROM_NAME + ">";
 };
 
 helpers.getUrl = function(token, path){
-  return "http://"+config.get('server')['domain']+":"+config.get('server')['port']+path+token;
+  return "http://" + process.env.SERVER_DOMAIN + ":" + process.env.SERVER_PORT + path + token;
 };
 
 helpers.renderMailTemplate = function(filename, params, callback){
