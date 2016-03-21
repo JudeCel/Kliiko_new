@@ -1063,7 +1063,7 @@ footer {
   width: 15% !important; }
 
 .intl-tel-input {
-  width: 100%; }
+  width: 100% !important; }
 
 .dashboard-header .my-details-container {
   height: 20px;

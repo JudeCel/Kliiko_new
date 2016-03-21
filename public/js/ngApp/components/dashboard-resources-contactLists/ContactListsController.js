@@ -291,37 +291,63 @@
       var currentList = vm.lists.activeList;
 
       var newContact = angular.copy(vm.newContact);
+      if(validatePhoneNumber() && validateLandlineNumber(newContact.landlineNumber)){
+        vm.lists.addNewContact(vm.newContact).then(
+          function(res) {
+            vm.newContact = {customFields:{}};
 
-      vm.lists.addNewContact(vm.newContact).then(
-        function(res) {
-          vm.newContact = {customFields:{}};
-
-          domServices.modal('contactList-addContactManual', 'close');
-          messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
-        },
-        function (err) {
-          vm.modalErrors = err;
-        }
-      );
-
+            domServices.modal('contactList-addContactManual', 'close');
+            messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
+          },
+          function (err) {
+            vm.modalErrors = err;
+          }
+        );
+      }
     }
 
     function updateContact() {
 
       var newContact = angular.copy(vm.newContact);
       var currentList = angular.copy(vm.lists.activeList);
-      vm.lists.updateContact(vm.newContact).then(
-        function(res) {
-          vm.newContact = {customFields:{}};
+      if(validatePhoneNumber() && validateLandlineNumber(newContact.landlineNumber)){
+        vm.lists.updateContact(vm.newContact).then(
+          function(res) {
+            vm.newContact = {customFields:{}};
 
-          domServices.modal('contactList-addContactManual', 'close');
-          messenger.ok('Contact '+ newContact.firstName + ' has been updated');
-        },
-        function (err) {
-          vm.modalErrors = err;
-        }
-      );
+            domServices.modal('contactList-addContactManual', 'close');
+            messenger.ok('Contact '+ newContact.firstName + ' has been updated');
+          },
+          function (err) {
+            vm.modalErrors = err;
+          }
+        );
+      }
 
+    }
+
+    function validatePhoneNumber() {
+      if(!validatePhone()){
+        messenger.error("The mobile number for this country is not valid.");
+        return false;
+      }
+      return true;
+    }
+
+    function validateLandlineNumber(landlineNumber) {
+      if(landlineNumber && !validLandlineNumber()){
+        messenger.error("The landline number for this country is not valid.");
+        return false;
+      }
+      return true;
+    }
+
+    function validatePhone() {
+      return $("#mobile").intlTelInput("isValidNumber");
+    }
+
+    function validLandlineNumber() {
+      return $("#landlineNumber").intlTelInput("isValidNumber");
     }
 
 
