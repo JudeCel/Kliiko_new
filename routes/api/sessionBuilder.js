@@ -42,17 +42,6 @@ function update(req, res, next) {
   let sessionId = req.params.id;
   let sessionDataObj = req.body;
 
-  // if(!sessionObj) { res.send({error:' Required body param @sessionObj is missed'}); return;}
-  //
-  //
-  // if (req.body.step3) {
-  //   params = sessionObj.steps.step3
-  // } else {
-  //   params = sessionObj.steps.step1
-  // }
-  //
-  // if (req.body.data) params = req.body.data;
-
   sessionBuilderServices.update(sessionId, res.locals.currentDomain.id, sessionDataObj).then(function(result) {
     res.send(result);
   }, function(error) {

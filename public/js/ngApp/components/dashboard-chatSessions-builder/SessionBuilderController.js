@@ -495,6 +495,14 @@
       vm.chatSessionTopicsList = builderServices.reorderTopics(vm.chatSessionTopicsList, data, t);
 
       vm.session.steps.step2.topics = vm.chatSessionTopicsList;
+      vm.session.updateTopics().then(
+        function (res) {
+          dbg.log2('topic removed');
+        },
+        function (err) {
+          messenger.error(err);
+        }
+      );
 
     }
 
