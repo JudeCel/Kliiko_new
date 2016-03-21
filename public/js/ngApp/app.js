@@ -142,10 +142,11 @@
       });
       accountUser.getAccountUserData(true).then(function(res) { vm.accountUser = res });
 
-      checkForInvite();
-
+      //checkForInvite();
+      //method not needed because invites are handked through mail
       function checkForInvite() {
         var sessionServices;
+
         var inviteToken = $cookies.get('inviteAccepted');
         if (!inviteToken) return;
         $cookies.remove('inviteAccepted');
