@@ -11,6 +11,7 @@
     dbg.log2('#SmsCreditController  started');
     var vm =  this;
 
+    vm.currentSmsCreditCount = 0;
     vm.creditList = [];
     vm.addonQty = [
       {value: 1, name: "1"},
@@ -32,6 +33,11 @@
     init();
 
     function init() {
+      getCurrentSmsCreditCount();
+      getAddonList();
+    }
+
+    function getAddonList() {
       SmsCreditService.getAllCreditPlans().then(function(result) {
         if(result.error){
           messenger.error(result.error);
@@ -41,10 +47,17 @@
       })
     }
 
+    function getCurrentSmsCreditCount() {
+      SmsCreditService.creditCount().then(function(result) {
+        if(result.error){
+          messenger.error(result.error);
+        }else{
+          vm.currentSmsCreditCount = result.creditCount;
+        }
+      })
+    }
+
     function purchaseCredits(addonId, qty) {
-
-
-
       SmsCreditService.puchaseCredits({
         addonId: addonId,
         addon_quantity: qty
@@ -52,9 +65,8 @@
         if(result.error){
           messenger.error(result.error);
         }else{
-          console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-          console.log(result);
-          console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+          vm.currentSmsCreditCount = result.smsCretiCount;
+          messenger.ok(result.message);
         }
 
       })
@@ -67,7 +79,7 @@
     function totalPrice(priceInCents, qty) {
       var totalPrice = null;
       if(!qty){
-        return priceInDollars(priceInCents);
+        return priceInDollars(0);
       }else{
         totalPrice = priceInCents * qty;
         return priceInDollars(totalPrice);

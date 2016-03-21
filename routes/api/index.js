@@ -98,8 +98,11 @@ router.get('/survey/constants', survey.getConstants);
 
 // Subscription
 router.get('/subscriptionPlan', subscription.getPlans);
+
+// Addons
 router.get('/subscriptionSmsCredits', smsCredit.get);
 router.post('/subscriptionSmsCredits/puchaseCredits', smsCredit.purchase);
+router.get('/subscriptionSmsCredits/creditCount', smsCredit.creditCount);
 
 // contact List
 router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
