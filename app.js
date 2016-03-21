@@ -15,7 +15,6 @@ var currentUser = require('./middleware/currentUser');
 var flash = require('connect-flash');
 var app = express();
 var fs = require('fs');
-var socketsServer = require('./chatRoom/sockets');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -57,7 +56,6 @@ app.use('/webhooks', currentUser.assign, webhooks);
 
 
 // Added socket.io routes
-app = socketsServer.addRoutes(app);
 // catch 404 and forward to error handler
 
 app.use(function(req, res, next) {

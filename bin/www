@@ -11,8 +11,6 @@ var models = require("../models");
 var config = require('config');
 var _ = require('lodash');
 
-
-
 /**
  * Get port from environment and store in Express.
  */
@@ -39,12 +37,10 @@ switch (environment) {
 }
 
 /**
- * Create HTTP server.
+ * Create HTTP serve
  */
- var socketsServer = require('./../chatRoom/sockets');
- 
+
  var server = http.createServer(app);
- socketsServer.listen(server);
 
 /**
  * Listen on provided port, on all network interfaces.

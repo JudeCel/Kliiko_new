@@ -1,5 +1,4 @@
 'use strict';
-var fileUploader = require('./../../middleware/fileUploader.js');
 var multiparty = require('connect-multiparty');
 var multipartyMiddleware = multiparty();
 var express = require('express');
@@ -18,11 +17,9 @@ var survey = require('./survey');
 var chargebee = require('./chargebee');
 var mailTemplates = require('./mailTemplate');
 let topic = require('./topic');
-var gallery = require('./gallery');
 var brandColour = require('./brandColour');
 var session = require('./session');
 var myDashboard = require('./myDashboard');
-
 let contactList = require('./contactList');
 let contactListUser = require('./contactListUser');
 
@@ -82,13 +79,6 @@ router.put('/chargebee/subscription', multipartyMiddleware, chargebee.chargebeeS
 router.get('/chargebee/subscriptions', multipartyMiddleware, chargebee.chargebeeSubscriptionGet);
 router.get('/chargebee/coupon', multipartyMiddleware, chargebee.chargebeeCouponGet);
 
-router.post('/gallery', gallery.postResources);
-router.post('/gallery/uploadFile', fileUploader(), gallery.uploadResource);
-router.post('/gallery/saveYoutubeUrl', gallery.saveYoutubeResource);
-router.post('/gallery/deleteZipFile', gallery.deleteZipFile);
-router.get('/gallery', gallery.getResources);
-router.get('/gallery/download', gallery.downloadResources);
-router.delete('/gallery', gallery.deleteResources);
 
 router.get('/chargebee/tst', multipartyMiddleware, chargebee.tstGet);
 
@@ -106,7 +96,6 @@ router.get('/survey/constants', survey.getConstants);
 // contact List
 router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
 router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
-router.post('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']), fileUploader({path:config.get('fileUploadPath')}),contactList.parseImportFile);
 router.put('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']),contactList.importContacts);
 router.put('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.update);
 router.delete('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.destroy);
