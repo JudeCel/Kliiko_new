@@ -34,10 +34,8 @@ function updateSessionTopics(sessionId, topicsArray) {
 
   let ids = _.map(topicsArray, 'id');
   joinToSession(ids, sessionId).then(function(sessionTopics) {
-    console.log(sessionTopics);
     _.map(sessionTopics, function(sessionTopic) {
       _.map(topicsArray, function(topic) {
-
         for (var i = 0, len = sessionTopic.length; i < len ; i++) {
           if (topic.id == sessionTopic[i].TopicId) {
             sessionTopic[i].order = topic.order;
@@ -162,11 +160,34 @@ function create(params) {
 }
 
 function update(params) {
+
   let deferred = q.defer();
-  Topic.update(params,{ where:{id: params.id}} ).then(function(topic) {
-    deferred.resolve(topic);
-  },function(err) {
-    deferred.reject(err);
+  let id = params.id;
+
+  delete params.id;
+
+  models.sequelize.transaction().then(function(t) {
+    Topic.update(params, {
+      where:{id: id}
+    }, {transaction: t}).then(function(topic) {
+      models.SessionTopics.update(params, {
+        where:{TopicId: id}
+      }, {transaction: t}).then(function(sessionTopic) {
+        t.commit().then(function() {
+          deferred.resolve(sessionTopic);
+        });
+      },function(err) {
+        t.rollback().then(function() {
+          deferred.reject(err);
+        });
+      });
+
+    },function(err) {
+      t.rollback().then(function() {
+        deferred.reject(err);
+      });
+    });
   });
+
   return deferred.promise;
 }

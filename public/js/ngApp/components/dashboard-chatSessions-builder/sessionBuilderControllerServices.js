@@ -74,7 +74,6 @@
     function reorderTopics(vmTopics, data, t) {
       var droppedOrderId = data.order || 0;
       var targetOrderId = t.order || 0;
-      
 
       for (var i = 0, len = vmTopics.length; i < len ; i++) {
         if (data.id == vmTopics[i].id) {
@@ -165,12 +164,12 @@
 
     function parseTopics(topicsArray) {
       for (var i = 0, len = topicsArray.length; i < len ; i++) {
-        topicsArray[i].order = topicsArray[i].SessionTopics[0].order;
+        topicsArray[i].order = topicsArray[i].SessionTopics[0].order || i;
       }
 
       return topicsArray;
     }
 
   }
-  
+
 })();
