@@ -17,7 +17,13 @@ function envConfig() {
       return stubTransport;
       break;
     default:
-      return process.env.MAIL_TRANSPORT_SERVICE;
+      return {
+        service: process.env.MAIL_TRANSPORT_SERVICE,
+        auth: {
+          user: process.env.MAIL_TRANSPORT_AUTH_USER,
+          pass: process.env.MAIL_TRANSPORT_AUTH_PASS
+        }
+      };
   }
 }
 
