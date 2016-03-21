@@ -491,11 +491,8 @@
     }
 
     function reorderTopics(data, t) {
-      
       vm.chatSessionTopicsList = builderServices.reorderTopics(vm.chatSessionTopicsList, data, t);
-
       vm.session.steps.step2.topics = vm.chatSessionTopicsList;
-
     }
 
     function topicSelectClickHandle(topicObj) {

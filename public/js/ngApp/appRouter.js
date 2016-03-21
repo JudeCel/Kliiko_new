@@ -186,6 +186,8 @@
               '/js/ngApp/components/dashboard-chatSessions-builder/sessionBuilderControllerServices.js',
               '/js/ngApp/components/dashboard-chatSessions-builder/SessionBuilderController.js',
 
+             '/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js',
+
              '/js/vendors/ngDraggable/ngDraggable.js',
              '/js/vendors/ng-file-upload/ng-file-upload.js',
 
@@ -203,7 +205,7 @@
              '/js/ngApp/filters/num.js',
              '/js/ngApp/filters/human2Camel.js',
 
-              '/js/vendors/ng-file-upload/ng-file-upload.js',
+
               "/js/ngApp/components/dashboard-resources-gallery/GalleryController.js",
               "/js/ngApp/components/dashboard-resources-gallery/GalleryService.js"
 

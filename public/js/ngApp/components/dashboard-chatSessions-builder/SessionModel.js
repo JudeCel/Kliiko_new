@@ -55,6 +55,7 @@
     SessionModel.prototype.sendSms = sendSms;
     SessionModel.prototype.addMembers = addMembers;
     SessionModel.prototype.saveTopics = saveTopics;
+    //SessionModel.prototype.updateTopic = updateTopic;
     SessionModel.prototype.inviteParticipants = inviteParticipants;
     SessionModel.prototype.inviteObservers = inviteObservers;
     SessionModel.prototype.removeMember = removeMember;
@@ -293,6 +294,7 @@
       });
       return deferred.promise;
     }
+
 
     function inviteParticipants(members) {
       var self = this;
