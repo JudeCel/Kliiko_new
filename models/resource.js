@@ -6,7 +6,6 @@ module.exports = (Sequelize, DataTypes) => {
     private: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
     name: { type: DataTypes.STRING, allowNull: true },
-    sessionMemberId: { type: DataTypes.INTEGER, allowNull: true },
     accountUserId: { type: DataTypes.INTEGER, allowNull: true },
     topicId: { type: DataTypes.INTEGER, allowNull: true },
     image: { type: DataTypes.TEXT, allowNull: true },
