@@ -25,7 +25,7 @@ module.exports = (Sequelize, DataTypes) => {
           Account.hasMany(models.BrandProjectPreference, { foreignKey: 'accountId' });
           Account.belongsToMany(models.User, { through: { model: models.AccountUser} } );
           //TODo fix owner Type
-          Account.hasMany(models.Invite, { foreignKey: 'ownerId'/*, scope: { ownerType: 'account' } */});
+          Account.hasMany(models.Invite, { foreignKey: 'ownerId', scope: { ownerType: 'account' } });
           Account.hasMany(models.ContactList, { foreignKey: 'accountId' });
           Account.hasOne(models.Subscription, { foreignKey: 'accountId' });
         }

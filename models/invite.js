@@ -10,7 +10,7 @@ module.exports = (Sequelize, DataTypes) => {
     expireAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: true } },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles },
     ownerId: { type: DataTypes.INTEGER, allowNull: false },
-    ownerType: { type: DataTypes.ENUM, allowNull: false, values: ['account', 'session'], defaultValue: 'account' },
+    ownerType: { type: DataTypes.STRING, allowNull: false, defaultValue: 'account' },
     accountUserId: { type: DataTypes.INTEGER, allowNull: false },
     status: { type: DataTypes.ENUM, allowNull: false, values: constants.inviteStatuses, defaultValue: 'pending' },
     userType: { type: DataTypes.ENUM, allowNull: false, values: ['existing', 'new'], defaultValue: 'existing' },
