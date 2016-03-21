@@ -3,6 +3,8 @@
 /**
  * Module dependencies.
  */
+
+require('dotenv').config();
 var express = require('express');
 var app = require('../app');
 var debug = require('debug')('kliiko:server');
