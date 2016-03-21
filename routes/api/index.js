@@ -1,5 +1,4 @@
 'use strict';
-var fileUploader = require('./../../middleware/fileUploader.js');
 var multiparty = require('connect-multiparty');
 var multipartyMiddleware = multiparty();
 var express = require('express');
@@ -18,12 +17,10 @@ var subscription = require('./subscription');
 var smsCredit = require('./smsCredit');
 var mailTemplates = require('./mailTemplate');
 let topic = require('./topic');
-var gallery = require('./gallery');
 var brandColour = require('./brandColour');
 var session = require('./session');
 var sessionBuilder = require('./sessionBuilder');
 var myDashboard = require('./myDashboard');
-
 let contactList = require('./contactList');
 let contactListUser = require('./contactListUser');
 
@@ -80,13 +77,6 @@ router.post('/mailTemplate/save', mailTemplates.saveMailTemplatePost);
 router.post('/mailTemplate/reset', mailTemplates.resetMailTemplatePost);
 router.post('/mailTemplate/preview', mailTemplates.previewMailTemplatePost);
 
-router.post('/gallery', gallery.postResources);
-router.post('/gallery/uploadFile', fileUploader(), gallery.uploadResource);
-router.post('/gallery/saveYoutubeUrl', gallery.saveYoutubeResource);
-router.post('/gallery/deleteZipFile', gallery.deleteZipFile);
-router.get('/gallery', gallery.getResources);
-router.get('/gallery/download', gallery.downloadResources);
-router.delete('/gallery', gallery.deleteResources);
 
 router.get('/survey', survey.get);
 router.delete('/survey', survey.remove);
@@ -112,7 +102,7 @@ router.get('/subscriptionSmsCredits/creditCount', smsCredit.creditCount);
 // contact List
 router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
 router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
-router.post('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']), fileUploader({path:process.env.FILE_UPLOAD_PATH}),contactList.parseImportFile);
+// router.post('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']), fileUploader({path:process.env.FILE_UPLOAD_PATH}),contactList.parseImportFile);
 router.put('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']),contactList.importContacts);
 router.put('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.update);
 router.delete('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.destroy);
