@@ -406,12 +406,8 @@
     function facilitatorsSelectHandle(facilitator) {
       vm.session.steps.step2.facilitator = facilitator;
       vm.session.addMembers(facilitator, 'facilitator').then(
-        function (res) {
-          vm.session.update();
-        },
-        function (err) {
-          messenger.error(err);
-        }
+        function (res) {  vm.session.update();  },
+        function (err) { messenger.error(err);  }
       );
 
 
@@ -685,7 +681,7 @@
       members.splice(index, 1);
     }
 
-  
+
 
     function sendGenericEmail() {
       var data = findSelectedMembers();
