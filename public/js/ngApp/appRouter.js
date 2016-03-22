@@ -187,6 +187,7 @@
               '/js/ngApp/components/dashboard-chatSessions-builder/SessionBuilderController.js',
               '/js/ngApp/components/dashboard-chatSessions-builder/steps/sessionStep1Controller.js',
               '/js/ngApp/components/dashboard-chatSessions-builder/steps/sessionStep4-5Controller.js',
+              '/js/ngApp/components/dashboard-chatSessions-builder/steps/sessionStep2Controller.js',
 
              '/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js',
 

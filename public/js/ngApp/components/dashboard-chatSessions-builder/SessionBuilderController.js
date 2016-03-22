@@ -70,11 +70,11 @@
     // step 2
 
     vm.faderHack = faderHack;
-    vm.topicsOnDropComplete = topicsOnDropComplete;
-    vm.removeTopicFromList = removeTopicFromList;
-    vm.reorderTopics = reorderTopics;
-    vm.topicSelectClickHandle = topicSelectClickHandle;
-    vm.selectAllTopics = selectAllTopics;
+    // vm.topicsOnDropComplete = topicsOnDropComplete;
+    // vm.removeTopicFromList = removeTopicFromList;
+    // vm.reorderTopics = reorderTopics;
+    // vm.topicSelectClickHandle = topicSelectClickHandle;
+    // vm.selectAllTopics = selectAllTopics;
 
     // step3
 
@@ -333,6 +333,9 @@
         } /*else if (vm.currentStep == 4) {
           return vm.basePath+'steps/step4.tplTemp.html';
         }*/
+        if (vm.currentStep == 2) {
+          return vm.basePath+'steps/step2.tplTemp.html';
+        }
         else
           return vm.basePath+'steps/step'+vm.currentStep+'.tpl.html';
       }
@@ -362,103 +365,103 @@
       }, 10);
     }
 
-    function topicsOnDropComplete(data, event) {
-      if (!data) return;
-
-      thisAdd(data);
-
-      // if there more topics selected, then "drop" them also
-      if ( Object.keys(vm.selectedTopics).length ) {
-        for (var key in vm.selectedTopics) {
-          thisAdd(vm.selectedTopics[key]);
-        }
-      }
-
-
-      function thisAdd(data) {
-        var topicIds = [];
-
-        // check if this topic already in selected chat session topics list
-        if (vm.chatSessionTopicsList.length) {
-          for (var i = 0; i < vm.chatSessionTopicsList.length ; i++) {
-            if (data.id ==  vm.chatSessionTopicsList[i].id ) return;
-          }
-          push();
-        } else {
-          push();
-
-        }
-
-        function push() {
-          data.order = vm.chatSessionTopicsList.length || 0;
-          vm.chatSessionTopicsList.push(data);
-        }
-
-        vm.session.steps.step2.topics = vm.chatSessionTopicsList;
-
-        for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
-          topicIds.push(vm.chatSessionTopicsList[i].id)
-        }
-
-        vm.session.saveTopics(vm.chatSessionTopicsList).then(
-          function (res) {
-            dbg.log2('topic added');
-          },
-          function (err) {
-            messenger.error(err);
-          }
-        );
-
-      }
-
-    }
-
-    function removeTopicFromList(id) {
-      for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
-        if ( id ==  vm.chatSessionTopicsList[i].id ) {
-          vm.chatSessionTopicsList.splice(i, 1);
-          break;
-        }
-      }
-
-      vm.session.steps.step2.topics = vm.chatSessionTopicsList;
-
-      vm.session.saveTopics().then(
-        function (res) {
-          dbg.log2('topic removed');
-        },
-        function (err) {
-          messenger.error(err);
-        }
-      );
-    }
-
-    function reorderTopics(data, t) {
-      vm.chatSessionTopicsList = builderServices.reorderTopics(vm.chatSessionTopicsList, data, t);
-      vm.session.steps.step2.topics = vm.chatSessionTopicsList;
-    }
-
-    function topicSelectClickHandle(topicObj) {
-      if ( vm.selectedTopics.hasOwnProperty(topicObj.id) ) {
-        delete vm.selectedTopics[topicObj.id];
-      } else {
-        vm.selectedTopics[topicObj.id] = topicObj;
-      }
-
-    }
-
-    function selectAllTopics(allTopics) {
-      vm.allTopicsSelected = !vm.allTopicsSelected;
-
-      vm.selectedTopics = {};
-      if (vm.allTopicsSelected) {
-        for (var i = 0, len = allTopics.length; i < len ; i++) {
-          vm.selectedTopics[ allTopics[i].id ] = allTopics[i];
-        }
-      }
-
-
-    }
+    // function topicsOnDropComplete(data, event) {
+    //   if (!data) return;
+    //
+    //   thisAdd(data);
+    //
+    //   // if there more topics selected, then "drop" them also
+    //   if ( Object.keys(vm.selectedTopics).length ) {
+    //     for (var key in vm.selectedTopics) {
+    //       thisAdd(vm.selectedTopics[key]);
+    //     }
+    //   }
+    //
+    //
+    //   function thisAdd(data) {
+    //     var topicIds = [];
+    //
+    //     // check if this topic already in selected chat session topics list
+    //     if (vm.chatSessionTopicsList.length) {
+    //       for (var i = 0; i < vm.chatSessionTopicsList.length ; i++) {
+    //         if (data.id ==  vm.chatSessionTopicsList[i].id ) return;
+    //       }
+    //       push();
+    //     } else {
+    //       push();
+    //
+    //     }
+    //
+    //     function push() {
+    //       data.order = vm.chatSessionTopicsList.length || 0;
+    //       vm.chatSessionTopicsList.push(data);
+    //     }
+    //
+    //     vm.session.steps.step2.topics = vm.chatSessionTopicsList;
+    //
+    //     for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
+    //       topicIds.push(vm.chatSessionTopicsList[i].id)
+    //     }
+    //
+    //     vm.session.saveTopics(vm.chatSessionTopicsList).then(
+    //       function (res) {
+    //         dbg.log2('topic added');
+    //       },
+    //       function (err) {
+    //         messenger.error(err);
+    //       }
+    //     );
+    //
+    //   }
+    //
+    // }
+    //
+    // function removeTopicFromList(id) {
+    //   for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
+    //     if ( id ==  vm.chatSessionTopicsList[i].id ) {
+    //       vm.chatSessionTopicsList.splice(i, 1);
+    //       break;
+    //     }
+    //   }
+    //
+    //   vm.session.steps.step2.topics = vm.chatSessionTopicsList;
+    //
+    //   vm.session.saveTopics().then(
+    //     function (res) {
+    //       dbg.log2('topic removed');
+    //     },
+    //     function (err) {
+    //       messenger.error(err);
+    //     }
+    //   );
+    // }
+    //
+    // function reorderTopics(data, t) {
+    //   vm.chatSessionTopicsList = builderServices.reorderTopics(vm.chatSessionTopicsList, data, t);
+    //   vm.session.steps.step2.topics = vm.chatSessionTopicsList;
+    // }
+    //
+    // function topicSelectClickHandle(topicObj) {
+    //   if ( vm.selectedTopics.hasOwnProperty(topicObj.id) ) {
+    //     delete vm.selectedTopics[topicObj.id];
+    //   } else {
+    //     vm.selectedTopics[topicObj.id] = topicObj;
+    //   }
+    //
+    // }
+    //
+    // function selectAllTopics(allTopics) {
+    //   vm.allTopicsSelected = !vm.allTopicsSelected;
+    //
+    //   vm.selectedTopics = {};
+    //   if (vm.allTopicsSelected) {
+    //     for (var i = 0, len = allTopics.length; i < len ; i++) {
+    //       vm.selectedTopics[ allTopics[i].id ] = allTopics[i];
+    //     }
+    //   }
+    //
+    //
+    // }
 
     /// step 4 + 5
     function showCorrectStatus(member) {
