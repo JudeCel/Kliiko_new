@@ -30,7 +30,6 @@ switch (environment) {
     app.use('/*', express.static('./build/index.html'));
     break;
   default:
-    console.log('** DEV **');
     app.use(express.static('./src/client/'));
     app.use(express.static('./'));
     app.use(express.static('./tmp'));
@@ -50,7 +49,7 @@ switch (environment) {
  * Listen on provided port, on all network interfaces.
  */
 models.sequelize.sync().then(function () {
-  server.listen(port, process.env.SERVER_DOMAIN);
+  server.listen(port);
   server.on('error', onError);
   server.on('listening', onListening);
 });
