@@ -1,7 +1,6 @@
 'use strict';
 
 var twilioRepo = require('./../../lib/twilio');
-var config = require('config');
 var assert = require('chai').assert;
 var _ = require('lodash');
 
@@ -9,7 +8,7 @@ describe('LIB - Twilio', function() {
   describe('#sendSms', function() {
     function multipleMobiles(count, mobile) {
       let array = new Array(count);
-      array.fill(mobile || config.get('twilioSenderNumber'));
+      array.fill(mobile || process.env.TWILIO_SENDER_NUMBER);
       return array;
     };
 
