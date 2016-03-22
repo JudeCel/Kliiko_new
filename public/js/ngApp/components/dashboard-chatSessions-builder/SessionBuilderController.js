@@ -266,13 +266,7 @@
       if (step == 3) {
         $ocLazyLoad.load( builderServices.getDependencies().step3 ).then(function(res) {
           vm.currentStep = step;
-        //  vm.sessionEmailTemplates = sortBySpecifiedIds(vm.session.steps.step3.emailTemplates);
-          //vm.sessionEmailTemplates = vm.session.steps.step3.emailTemplates;
-          vm.templateNamesToHide = {};
-
-          $rootScope.$on('updateSessionBuilderEmails', updateSessionBuilderEmailsHandler);
           deferred.resolve();
-          return deferred.promise;
         },
           function(err) {
             messenger.error(err);
@@ -283,7 +277,6 @@
         $ocLazyLoad.load( builderServices.getDependencies().step4 ).then(function(res) {
           vm.currentStep = step;
           deferred.resolve();
-          return deferred.promise;
         },
           function(err) {
             messenger.error(err);
@@ -295,7 +288,6 @@
           vm.currentStep = step;
           vm.lastStep = true;
           deferred.resolve();
-          return deferred.promise;
         },
           function(err) {
             messenger.error(err);
@@ -321,18 +313,6 @@
 
 
     function updateStep(dataObj) {
-    /*  if (dataObj == 'startTime') {
-        parseDateAndTime();
-        updateStep({startTime: vm.session.steps.step1.startTime});
-        return;
-      }
-
-      if (dataObj == 'endTime') {
-        parseDateAndTime();
-        updateStep({endTime: vm.session.steps.step1.endTime});
-        return;
-      }*/
-
         vm.session.updateStep(dataObj).then(
         function (res) {
         },
@@ -343,62 +323,17 @@
 
     }
 
-
-    /**
-     * convert date and time inputs to timestamp in session object -> steps -> step1 for start and rnd dates
-     */
-  /*  function parseDateAndTime(initial) {
-      var startDate, startHours, startMinutes, endDate, endHours, endMinutes;
-
-      if (initial) {
-        vm.step1.startDate = new Date(vm.session.steps.step1.startTime);
-        vm.step1.startTime = new Date(vm.session.steps.step1.startTime);
-
-        vm.step1.endDate = new Date(vm.session.steps.step1.endTime);
-        vm.step1.endTime = new Date(vm.session.steps.step1.endTime);
-
-      } else {
-        if (vm.step1.startDate && vm.step1.startTime) {
-          startDate = new Date(vm.step1.startDate);
-          startHours = new Date(vm.step1.startTime).getHours();
-          startMinutes = new Date(vm.step1.startTime).getMinutes();
-
-          startDate.setHours(startHours);
-          startDate.setMinutes(startMinutes);
-
-          vm.session.steps.step1.startTime = startDate;
-        }
-
-        if (vm.step1.endDate && vm.step1.endTime) {
-          endDate = new Date(vm.step1.endDate);
-          endHours = new Date(vm.step1.endTime).getHours();
-          endMinutes = new Date(vm.step1.endTime).getMinutes();
-
-          endDate.setHours(endHours);
-          endDate.setMinutes(endMinutes);
-
-          vm.session.steps.step1.endTime = endDate;
-        }
-
-        (new Date(startDate).getTime() > new Date(endDate).getTime() )
-          ?  vm.accordions.dateAndTimeError = true
-          :  vm.accordions.dateAndTimeError = false;
-
-      }
-
-
-    }
-*/
-
-
     function currentPageToDisplay() {
       if ( vm.showContactsList || vm.searchingParticipants || vm.searchingObservers ) {
-        return 'contactLists.html';
+        return vm.basePath+'steps/contactLists.html';
       }
       else if (vm.currentStep >= 0){
         if (vm.currentStep == 1) {
           return vm.basePath+'steps/step1.tplTemp.html';
-        } else
+        } /*else if (vm.currentStep == 4) {
+          return vm.basePath+'steps/step4.tplTemp.html';
+        }*/
+        else
           return vm.basePath+'steps/step'+vm.currentStep+'.tpl.html';
       }
 
@@ -522,20 +457,6 @@
         }
       }
 
-
-    }
-
-    /// step 3
-    function updateSessionBuilderEmailsHandler(e, attrs) {
-      vm.session.update().then(
-        function (res) {
-          //vm.sessionEmailTemplates = sortBySpecifiedIds(res.sessionBuilder.steps.step3.emailTemplates);
-          //vm.sessionEmailTemplates = res.sessionBuilder.steps.step3.emailTemplates;
-        },
-        function (err) {
-          messenger.error(err);
-        }
-      );
 
     }
 
