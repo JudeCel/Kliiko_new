@@ -1,5 +1,4 @@
 "use strict";
-var config = require('config');
 var assert = require("chai").assert;
 
 var usersMailer = require('./../../mailers/users.js');
