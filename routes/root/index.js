@@ -7,7 +7,6 @@ var resetPassword = require('../../services/resetPassword');
 var emailConfirmation = require('../../services/emailConfirmation');
 var passport = require('passport');
 var subdomains = require('../../lib/subdomains');
-var config = require('config');
 var mailers = require('../../mailers');
 var session = require('../../middleware/session');
 var middlewareFilters = require('../../middleware/filters');
@@ -108,7 +107,7 @@ router.post('/registration', function (req, res, next) {
           tplData.success = 'Email confirmation sent to ' + email;
         }
       });
-      res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: config.applicationName});
+      res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: process.env.MAIL_FROM_NAME});
     };
   });
 });

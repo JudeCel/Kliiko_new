@@ -4,14 +4,12 @@ var router = express.Router();
 var _ = require('lodash');
 var sessionMember = require('./../../middleware/sessionMember.js');
 var socketHelper = require("../socketHelper");
-var config = require('config');
 var fileUploader = require('./../../middleware/fileUploader.js');
 
 
 
 function ioUrl() {
-  let serverConf = config.get('server')
-  return serverConf.domain + ":" + serverConf.port + serverConf.chatUrl
+  return process.env.SERVER_DOMAIN + ":" + process.env.SERVERV_PORT + process.env.SERVER_CHAT_URL
 }
 
 function uploadResourceCallback(userId, json) {

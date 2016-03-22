@@ -2,7 +2,6 @@
 
 var ejs = require('ejs');
 var fs = require('fs');
-var config = require('config');
 var nodemailer = require('nodemailer');
 var stubTransport = {
     name: 'testsend',

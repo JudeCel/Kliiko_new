@@ -8,7 +8,6 @@ var brandProjectConstants = require('../util/brandProjectConstants');
 
 var q = require('q');
 var _ = require('lodash');
-var config = require('config');
 
 const MESSAGES = {
   notFound: 'Scheme not found!',

@@ -1,7 +1,7 @@
 module.exports = {
   mode: process.env.CHAT_CONF_MODE,
   conflict: process.env.CHAT_CONF_CONFLICT,
-  copyright: process.env.CHAT_CONF_COPYRIGHT
+  copyright: process.env.CHAT_CONF_COPYRIGHT,
   port: process.env.CHAT_CONF_PORT,
   domain: process.env.CHAT_CONF_DOMAIN,
   paths: {

@@ -1,6 +1,5 @@
 'use strict';
 
-var config = require('config');
 var helpers = require('./helpers');
 
 var mailTemplate = require('./mailTemplate');
@@ -29,7 +28,7 @@ function sendInviteAccountManager(inviteParams, callback) {
         transporter.sendMail({
           from: mailFrom,
           to: inviteParams.email,
-          subject: config.mail.fromName + ' - Join account',
+          subject: process.env.MAIL_FROM_NAME + ' - Join account',
           html: html,
           attachments: [{
             filename: 'header.png',

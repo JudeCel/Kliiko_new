@@ -4,11 +4,9 @@ var fs = require("fs");
 var zip = require("node-native-zip");
 var q = require('q');
 var _ = require('lodash');
-var config = require('config');
 var models = require('./../../models')
 var account = models.Account;
 var Resource = models.Resource;
-var config = require('config');
 var expressValidatorStub = require('../../chatRoom/helpers/expressValidatorStub.js');
 var updateTmpTitle = require('../../chatRoom/handlers/updateTmpTitle.js');
 var deleteResource = require('../../chatRoom/handlers/deleteResource.js');
@@ -73,7 +71,7 @@ function generateFileName() {
 function deleteZipFile(params) {
   let deferred = q.defer();
 
-  fs.unlink(config.get("chatUploadDir") + params.fileName,  function(err) {
+  fs.unlink(process.env.FILE_UPLOAD_PATH + params.fileName,  function(err) {
     if(err){
       deferred.reject({error: "was not able to delete"});
     }else{
@@ -115,7 +113,7 @@ function selectFilesForZip(results){
     if(allowedTypesForZip.indexOf(resource.resourceType) > -1){
       files.push({
         name: resource.JSON.name,
-        path: config.get("chatUploadDir") + resource.JSON.name
+        path: process.env.FILE_UPLOAD_PATH + resource.JSON.name
       })
     }
     deferred.resolve(files);
@@ -134,7 +132,7 @@ function pushFilesToZip(files) {
     }else{
       let buff = archive.toBuffer();
       let fileName = generateFileName();
-      fs.writeFile(config.get("chatUploadDir") + fileName, buff, function (err) {
+      fs.writeFile(process.env.FILE_UPLOAD_PATH + fileName, buff, function (err) {
         if(err){
           deferred.reject(err);
         }else{
