@@ -22,6 +22,7 @@
     vm.$state = $state;
 
     vm.session = new SessionModel(sessionId);
+    builderServices.session = vm.session;
 
     vm.session.init().then(function(res) {
       vm.mouseOveringMember = [];
@@ -41,14 +42,14 @@
       vm.observers = vm.session.steps.step5.observers;
       vm.chatSessionTopicsList = [];
 
-      parseDateAndTime('initial');
+    //  parseDateAndTime('initial');
       initStep(null, 'initial');
 
 
     });
 
 
-    vm.currentStep = 1;
+    vm.currentStep = -1;
 
     vm.selectedTopics = {};
     vm.allTopicsSelected = false;
@@ -183,7 +184,7 @@
       showExpiresWarning();
 
 
-      if (step == 1) {
+    /*  if (step == 1) {
         // populate facilitator
         if (vm.session.steps.step2.facilitator) {
           intervals.facilitators = setInterval(function() {
@@ -243,6 +244,9 @@
 
         deferred.resolve();
         return deferred.promise;
+      }*/
+      if (step == 1) {
+        vm.currentStep = 1;
       }
       if (step == 2) {
         $ocLazyLoad.load( builderServices.getDependencies().step2 ).then(function(res) {
@@ -317,7 +321,7 @@
 
 
     function updateStep(dataObj) {
-      if (dataObj == 'startTime') {
+    /*  if (dataObj == 'startTime') {
         parseDateAndTime();
         updateStep({startTime: vm.session.steps.step1.startTime});
         return;
@@ -327,7 +331,7 @@
         parseDateAndTime();
         updateStep({endTime: vm.session.steps.step1.endTime});
         return;
-      }
+      }*/
 
         vm.session.updateStep(dataObj).then(
         function (res) {
@@ -343,7 +347,7 @@
     /**
      * convert date and time inputs to timestamp in session object -> steps -> step1 for start and rnd dates
      */
-    function parseDateAndTime(initial) {
+  /*  function parseDateAndTime(initial) {
       var startDate, startHours, startMinutes, endDate, endHours, endMinutes;
 
       if (initial) {
@@ -384,17 +388,21 @@
 
 
     }
-
+*/
 
 
     function currentPageToDisplay() {
-
       if ( vm.showContactsList || vm.searchingParticipants || vm.searchingObservers ) {
         return 'contactLists.html';
       }
-      else {
-        return 'step'+vm.currentStep+'.tpl.html';
+      else if (vm.currentStep >= 0){
+        if (vm.currentStep == 1) {
+          return vm.basePath+'steps/step1.tplTemp.html';
+        } else
+          return vm.basePath+'steps/step'+vm.currentStep+'.tpl.html';
       }
+
+      return "";
     }
 
     /// step 2
