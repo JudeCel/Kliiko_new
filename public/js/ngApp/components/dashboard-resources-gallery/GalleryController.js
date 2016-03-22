@@ -118,7 +118,7 @@
           $scope.resources.push(res);
           cancel()
           progressbar.complete();
-          messenger.ok("Resource was sucessfully created.");
+          messenger.ok("Resource was successfully created.");
         }
       })
     }
@@ -149,7 +149,7 @@
               }else{
                 $scope.resources.push(res.data);
                 cancel()
-                messenger.ok("Resource was sucessfully created.");
+                messenger.ok("Resource was successfully created.");
                 $scope.submitIsDisabled = false;
               }
               progressbar.complete();

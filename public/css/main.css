@@ -2182,6 +2182,7 @@ hr.survey-hr {
   right: 2%; }
   #resources-topics .control-block > img {
     position: relative;
+    top: -7px;
     z-index: 10;
     background: #ddd; }
   #resources-topics .control-block .edit-block {
