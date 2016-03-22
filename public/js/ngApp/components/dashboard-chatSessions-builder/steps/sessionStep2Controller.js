@@ -40,7 +40,7 @@
       thisAdd(data);
 
       // if there more topics selected, then "drop" them also
-      if ( Object.keys(vm.selectedTopics).length ) {
+      if ( vm.selectedTopics && Object.keys(vm.selectedTopics).length ) {
         for (var key in vm.selectedTopics) {
           thisAdd(vm.selectedTopics[key]);
         }
@@ -135,17 +135,10 @@
    
     function initStep(step) {
       $ocLazyLoad.load( builderServices.getDependencies().step2 ).then(function(res) {
-          //vm.currentStep = step;
-          debugger; //debugger
           if (vm.session.steps.step2.topics.length) vm.chatSessionTopicsList = builderServices.parseTopics(vm.session.steps.step2.topics);
-
-          deferred.resolve();
-          return deferred.promise;
-
         },
         function(err) {
           messenger.error(err);
-          deferred.reject(err);
         });
     }
 
