@@ -4,7 +4,6 @@ var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
-var config = require('config');
 var models  = require('./../models');
 var usersService = require('./../services/users.js');
 var socialProfileService = require('./../services/socialProfile.js');
@@ -25,9 +24,9 @@ passport.use(new LocalStrategy({
 ));
 
 passport.use(new FacebookStrategy({
-    clientID: config.get("facebookclientID") ,
-    clientSecret: config.get("facebookClientSecret") ,
-    callbackURL: config.get("facebookCallbackURL"),
+    clientID: process.env.FACEBOOK_CLIENT_ID,
+    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    callbackURL: process.env.FACEBOOK_CALLBACK_URL,
     passReqToCallback : true,
     profileFields: ['id', 'displayName','emails', 'name']
   },
@@ -43,9 +42,9 @@ passport.use(new FacebookStrategy({
 ));
 
 passport.use(new GoogleStrategy({
-    clientID: config.get("googleClientID"),
-    clientSecret: config.get("googleClientSecret"),
-    callbackURL: config.get("googleCallbackURL")
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLE_CALLBACK_URL,
   },
   function(token, refreshToken, profile, done) {
 
@@ -92,7 +91,7 @@ function prepareUserData(user, profile, callback){
     callback('Your account has not been confirmed, please check your e-mail and follow the link.');
     return;
   }
-  
+
   user.getAccounts({ include: [ models.AccountUser ] }).then(function(accounts) {
     let account = accounts[0];
     if(account.AccountUser.active) {

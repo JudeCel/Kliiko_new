@@ -2,15 +2,14 @@
 var webFaultHelper = require('../helpers/webFaultHelper.js');
 var uploadResourceCallback = require('./saveResourceToDb.js');
 var fs = require('fs');
-var config = require('config').get('chatConf');
 var im = require('imagemagick');
 var joi = require("joi");
 var _ = require("lodash")
 var async = require('async');
 
 //use PATH for imagemagick instead set
-im.convert.path = config.paths.convertPath;
-im.identify.path = config.paths.identifyPath;
+im.convert.path = process.env.CHAT_CONF_PATHS_CONVERT_PATH;
+im.identify.path = process.env.CHAT_CONF_PATHS_IDENTIFY_PATH;
 
 const gallery = {
   panel: {

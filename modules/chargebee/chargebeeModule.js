@@ -1,6 +1,5 @@
 'use strict';
 
-let config = require('config');
 let chargebee = require("chargebee");
 let q = require('q');
 let models =  require('./../../models');
@@ -19,11 +18,10 @@ module.exports = {
   tstGet: tstGet
 };
 
-let chargebeeConfigs = config.get('chargebee');
 
 chargebee.configure({
-  site : chargebeeConfigs.site,
-  api_key : chargebeeConfigs.api_key
+  site : process.env.CHARGEBEE_SITE,
+  api_key : process.env.CHARGEBEE_API_KEY
 });
 
 
