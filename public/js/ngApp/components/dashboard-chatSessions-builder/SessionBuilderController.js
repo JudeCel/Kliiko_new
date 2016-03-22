@@ -249,11 +249,10 @@
         vm.currentStep = 1;
       }
       if (step == 2) {
+
+
         $ocLazyLoad.load( builderServices.getDependencies().step2 ).then(function(res) {
           vm.currentStep = step;
-
-          if (vm.session.steps.step2.topics.length) vm.chatSessionTopicsList = builderServices.parseTopics(vm.session.steps.step2.topics);
-
           deferred.resolve();
           return deferred.promise;
 
