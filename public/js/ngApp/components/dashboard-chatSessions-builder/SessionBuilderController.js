@@ -70,11 +70,11 @@
     // step 2
 
     vm.faderHack = faderHack;
-    vm.topicsOnDropComplete = topicsOnDropComplete;
-    vm.removeTopicFromList = removeTopicFromList;
-    vm.reorderTopics = reorderTopics;
-    vm.topicSelectClickHandle = topicSelectClickHandle;
-    vm.selectAllTopics = selectAllTopics;
+    // vm.topicsOnDropComplete = topicsOnDropComplete;
+    // vm.removeTopicFromList = removeTopicFromList;
+    // vm.reorderTopics = reorderTopics;
+    // vm.topicSelectClickHandle = topicSelectClickHandle;
+    // vm.selectAllTopics = selectAllTopics;
 
     // step3
 

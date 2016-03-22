@@ -3,7 +3,7 @@
 
   angular.module('KliikoApp').controller('SessionStep2Controller', SessionStep2Controller);
 
-  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', '$state',  '$filter', 'domServices', 'ngProgressFactory', '$rootScope', '$scope'];
+  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', '$state',  '$filter', 'domServices','$ocLazyLoad', 'ngProgressFactory', '$rootScope', '$scope'];
   function SessionStep2Controller(dbg, builderServices, messenger, $state, $filter, domServices, $ocLazyLoad, ngProgressFactory,  $rootScope, $scope) {
     dbg.log2('#SessionBuilderController 1 started');
 
