@@ -8,30 +8,21 @@
     dbg.log2('#SessionBuilderController 1 started');
 
     var vm = this;
-
     var colorSchemeId, brandLogoId;
-    var intervals = {};
-
     vm.step1 = {};
 
     vm.accordions = {};
-    vm.$state = $state;
     vm.facilitators = [];
-
+    vm.logosList = [];
     vm.session = null;
 
-    vm.closeSession = closeSession;
-    vm.openSession = openSession;
     vm.updateStep = updateStep;
-    vm.goToStep = goToStep;
-    vm.goToChat = goToChat;
     vm.addFacilitatorsClickHandle = addFacilitatorsClickHandle;
     vm.facilitatorsSelectHandle = facilitatorsSelectHandle;
-    vm.parentController;
 
     vm.watchers = [];
     vm.initController = function() {
-      vm.session = builderServices.session; //parentController.session;
+      vm.session = builderServices.session;
       vm.today = new Date();
       vm.dateTime = builderServices.getTimeSettings();
       parseDateAndTime('initial');
@@ -44,76 +35,6 @@
       }
       vm.watchers.length = 0;
     });
-
-    function closeSession() {
-      vm.session.close();
-    }
-
-    function openSession() {
-      vm.session.open();
-    }
-
-
-    function goToStep(step) {
-      if (!angular.isNumber(step)) {
-        if (step === 'back')  handlePreviousStep();
-        if (step === 'next') handleNextStep();
-        if (step === 'finish') {
-          vm.session.update();
-          $state.go('dashboard.chatSessions');
-          messenger.ok('New session is created');
-        }
-      }
-
-      function handlePreviousStep() {
-        vm.cantMoveNextStep = false;  step = vm.currentStep - 1;
-        vm.session.goPreviouseStep();
-        initStep(step).then(function (res) {
-          vm.currentStep = step;
-        });
-
-
-      }
-
-      function handleNextStep() {
-        var routerProgressbar = ngProgressFactory.createInstance();
-        routerProgressbar.start();
-
-        step = vm.currentStep;
-
-        vm.session.updateStep().then(
-          function(res) {
-            vm.searchingParticipants = false;
-            vm.searchingObservers = false;
-
-            vm.session.goNextStep().then(
-              function (res) {
-                initStep(step+1).then(function(res) {
-                  $stateParams.ssessionBuilderStep = vm.currentStep = step+1;
-                });
-
-                routerProgressbar.complete();
-              },
-              function (err) {
-                routerProgressbar.complete();
-                messenger.error(err)
-              }
-            );
-
-          },
-          function (err) {
-            routerProgressbar.complete();
-            if (err) messenger.error(err);
-          }
-        );
-      }
-
-    }
-
-    function goToChat(session) {
-      if (session.showStatus && session.showStatus == 'Expired') return;
-      $window.location.href = session.chatRoomUrl + session.id;
-    }
 
     function initStep(step, initial) {
         // populate facilitator
@@ -145,9 +66,8 @@
 
         // populate color scheme
         if (vm.session.steps.step1.brandProjectPreferenceId) {
-
           if (vm.session.steps.step1.resourceId) {
-            vm.watchers.push($scope.$watch('step1Controller.logosList', function (newval, oldval) {
+            vm.watchers.push($scope.$watch('step1Controller.colorsList', function (newval, oldval) {
               if (vm.colorsList) {
                 for (var i = 0, len = vm.colorsList.length; i < len ; i++) {
                   if (vm.colorsList[i].id == vm.session.steps.step1.brandProjectPreferenceId) {
@@ -181,9 +101,7 @@
           messenger.error(err);
         }
       );
-
     }
-
 
     /**
      * convert date and time inputs to timestamp in session object -> steps -> step1 for start and rnd dates
@@ -228,12 +146,7 @@
           :  vm.accordions.dateAndTimeError = false;
 
       }
-
-
     }
-
-
-    /// step 2
 
     function addFacilitatorsClickHandle() {
       vm.showContactsList = true;
@@ -245,11 +158,7 @@
         function (res) {  vm.session.update();  },
         function (err) { messenger.error(err);  }
       );
-
-
     }
-
-
   }
 
 })();
