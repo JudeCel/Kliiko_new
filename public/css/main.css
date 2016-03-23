@@ -4,6 +4,9 @@
 .btn-md {
   height: 45px; }
 
+.tabs-links {
+  margin-bottom: 30px; }
+
 .btn-dashboard-menu, .btn-addNewElement {
   background-color: inherit;
   min-width: 49px;

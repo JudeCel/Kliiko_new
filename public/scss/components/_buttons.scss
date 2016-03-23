@@ -4,6 +4,11 @@
 .btn-md {
   height: 45px;
 }
+
+.tabs-links {
+  margin-bottom: 30px;
+}
+
 .btn-dashboard-menu {
   background-color: inherit;
   //width: 13%;
@@ -12,6 +17,7 @@
   margin-left: 36px;
   margin-top: 30px;
   cursor: pointer;
+
 
   &.btn-green {
     color: $green;
