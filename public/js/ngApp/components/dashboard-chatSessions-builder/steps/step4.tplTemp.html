@@ -8,7 +8,7 @@
     </div>
   </div>
 
-  <div ng-if='lastStepsController.participants.length > 0' ng-controller='ContactListController as clc' ng-init='clc.hideModalStuff = true;'>
+  <div ng-if='sbc.participants.length > 0' ng-controller='ContactListController as clc' ng-init='clc.hideModalStuff = true;'>
     <div class="text-right filter-row">
 
       <a href="" ng-class="{active:sbc.participantsFilterType.all}" ng-click="lastStepsController.setMembersFilter('participants', 'all')">All({{lastStepsController.participants.length  }})</a>
@@ -37,7 +37,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="member in lastStepsController.participants | filter: lastStepsController.participantsFilter: strict " ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='sbc.mouseOveringMember[$index] = false'>
+          <tr ng-repeat="member in lastStepsController.participants = sbc.participants | filter: lastStepsController.participantsFilter: strict " ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
 
             <td>
               <div class='checkbox checkbox-xs checkbox-success'>
@@ -71,7 +71,7 @@
 
     <div class='row'>
       <div class='btn-standart btn-green' ng-click='lastStepsController.inviteMembers()'>
-        Invite ({{ sbc.findSelectedMembers().length }})
+        Invite ({{ lastStepsController.findSelectedMembers().length }})
       </div>
       <div class='btn-standart btn-green' ng-click='lastStepsController.sendGenericEmail()'>
         Send Generic Email

@@ -174,6 +174,7 @@
     }
 
     function findSelectedMembers() {
+      //!!!!!vm.currentStep = 4;
       return builderServices.findSelectedMembers(vm);
     }
 

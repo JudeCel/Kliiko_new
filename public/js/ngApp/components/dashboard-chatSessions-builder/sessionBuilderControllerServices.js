@@ -115,6 +115,7 @@
     }
 
     function currentMemberList(vm) {
+      //check against step in session object!!!!!!!
       if(vm.currentStep == 4) {
         return vm.participants;
       }
