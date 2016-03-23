@@ -22,9 +22,9 @@ Redis 3.0.5
  npm install
 ```
 
-1) Copy  ```./config/config.json.sample``` to  ``` ./config/config.json```
+1) Copy  ```sample.env``` to  ``` .env```
 
-2) Create databases with the names from ``` ./config/config.json```
+2) Change database URL environment variables in .env file "DATABASE_URL" and "DATABASE_URL_TEST" to corresponding databases
 
 3) Run migrations in order to sycnhronize database
 ```sh
