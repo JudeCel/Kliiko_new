@@ -104,6 +104,9 @@
       var members = currentMemberList(vm);
       var stepString = currentStepString(vm);
 
+      console.log("______~~~~~~", members, "~~~~~~~~~~~~",stepString);
+
+
       for (var i in members) {
         var member = members[i];
         if(member[stepString]) {
@@ -115,29 +118,31 @@
     }
 
     function currentMemberList(vm) {
-      //check against step in session object!!!!!!!
-      if(vm.currentStep == 4) {
+      if (vm.session.sessionData.step == "manageSessionParticipants") {
         return vm.participants;
       }
-      else if(vm.currentStep == 5) {
+      else if (vm.session.sessionData.step == 'inviteSessionObservers') {
         return vm.observers;
       }
     }
 
     function currentStepString(vm) {
-      if(vm.currentStep == 4) {
+
+      if (vm.session.sessionData.step == "manageSessionParticipants") {
         return 'step4';
       }
-      else if(vm.currentStep == 5) {
+      else// if (vm.session.sessionData.step == 'inviteSessionObservers') {
         return 'step5';
-      }
+    //  }
     }
 
     function selectMembers(listId, members) {
       var selected = [];
       for(var i in members) {
+        console.log('selected id', listId);
         var member = members[i];
         if(member._selected) {
+
           member.listId = listId;
           selected.push(member);
         }

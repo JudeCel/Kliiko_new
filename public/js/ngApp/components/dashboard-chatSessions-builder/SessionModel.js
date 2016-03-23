@@ -60,6 +60,7 @@
     SessionModel.prototype.inviteObservers = inviteObservers;
     SessionModel.prototype.removeMember = removeMember;
     SessionModel.prototype.sendGenericEmail = sendGenericEmail;
+    SessionModel.prototype.processStepResponse = processStepResponse;
 
 
     return SessionModel;
@@ -191,14 +192,23 @@
 
     }
 
+    function processStepResponse(res, deferred) {
+      var self = this;
+      if (res.error) {
+        deferred.reject(res.error);
+      } else {
+        self.getRemoteData().then(function() {
+          deferred.resolve(res);
+        });
+      }
+    }
+
     function goNextStep(step) {
       var deferred = $q.defer();
       var self = this;
 
       sessionBuilderRestApi.nextStep({id: self.id, otherId: 'next'}, {}, function(res) {
-        res.error
-          ? deferred.reject(res.error)
-          : deferred.resolve(res);
+        self.processStepResponse(res, deferred);
       });
 
       return deferred.promise;
@@ -209,9 +219,7 @@
       var deferred = $q.defer();
 
       sessionBuilderRestApi.previousStep({id: self.id, otherId: 'previous'}, {}, function(res) {
-        res.error
-          ? deferred.reject(res.error)
-          : deferred.resolve(res);
+        self.processStepResponse(res, deferred);
       });
 
       return deferred.promise;
@@ -299,7 +307,7 @@
     function inviteParticipants(members) {
       var self = this;
       var deferred = $q.defer();
-      
+
       sessionBuilderRestApi.inviteMembers({ id: self.id }, { members: members, role: 'participant' }, function(res) {
         if (res.error) {
           deferred.reject(res.error);

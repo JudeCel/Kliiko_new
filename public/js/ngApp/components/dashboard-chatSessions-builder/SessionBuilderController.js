@@ -15,9 +15,9 @@
 
     vm.step1 = {};
 
-    vm.accordions = {};
+  /*  vm.accordions = {};
     vm.participants = [];
-    vm.observers = [];
+    vm.observers = [];*/
     vm.basePath = '/js/ngApp/components/dashboard-chatSessions-builder/';
     vm.$state = $state;
 
@@ -25,7 +25,7 @@
     builderServices.session = vm.session;
 
     vm.session.init().then(function(res) {
-      vm.mouseOveringMember = [];
+  //    vm.mouseOveringMember = [];
 
       //add session id for newly build one
       if (!$stateParams.id) {
@@ -51,12 +51,12 @@
 
     vm.currentStep = -1;
 
-    vm.selectedTopics = {};
+/*    vm.selectedTopics = {};
     vm.allTopicsSelected = false;
 
     vm.participantsFilterType = {all:true};
     vm.observersFilterType = {all:true};
-
+*/
     vm.closeSession = closeSession;
     vm.openSession = openSession;
     vm.stepsClassIsActive = stepsClassIsActive;
@@ -79,20 +79,18 @@
     // step3
 
     // step 4 + 5
-    vm.showCorrectStatus = showCorrectStatus;
+  /*  vm.showCorrectStatus = showCorrectStatus;
     vm.inviteMembers = inviteMembers;
-    vm.modalWindowHandler = modalWindowHandler;
+    vm.modalWindowHandler = modalWindowHandler;*/
     vm.finishSelectingMembers = finishSelectingMembers;
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
     vm.selectObserversClickHandle = selectObserversClickHandle;
-    vm.selectedAllMembers = selectedAllMembers;
+  /*  vm.selectedAllMembers = selectedAllMembers;
     vm.findSelectedMembers = findSelectedMembers;
     vm.removeFromList = removeFromList;
     vm.sendGenericEmail = sendGenericEmail;
     vm.setMembersFilter = setMembersFilter;
-
-
-
+*/
     function closeSession() {
       vm.session.close();
     }
@@ -116,12 +114,13 @@
 
       function handlePreviousStep() {
         vm.cantMoveNextStep = false;  step = vm.currentStep - 1;
-        vm.session.goPreviouseStep();
-        initStep(step).then(function (res) {
-          vm.currentStep = step;
-        });
-
-
+        vm.session.goPreviouseStep().then(function(result) {
+          initStep(step).then(function (res) {
+            vm.currentStep = step;
+          });
+        }, function(error) {
+          messenger.error(err)
+        }) ;
       }
 
       function handleNextStep() {
@@ -329,10 +328,10 @@
       else if (vm.currentStep >= 0){
         if (vm.currentStep == 1) {
           return vm.basePath+'steps/step1.tplTemp.html';
-        } /*else if (vm.currentStep == 4) {
+        } else if (vm.currentStep == 4 || vm.currentStep == 5) {
+        //} else if (vm.session.sessionData.step == "manageSessionParticipants") {
           return vm.basePath+'steps/step4.tplTemp.html';
-        }*/
-        if (vm.currentStep == 2) {
+        } else if (vm.currentStep == 2) {
           return vm.basePath+'steps/step2.tplTemp.html';
         }
         else
@@ -463,7 +462,7 @@
     // }
 
     /// step 4 + 5
-    function showCorrectStatus(member) {
+/*    function showCorrectStatus(member) {
       if(member.invite) {
         return member.invite.status;
       }
@@ -544,7 +543,7 @@
         });
       }
     }
-
+*/
     function selectParticipantsClickHandle() {
       vm.searchingParticipants = true;
     }
@@ -555,7 +554,7 @@
 
 
 
-    function selectedAllMembers() {
+  /*  function selectedAllMembers() {
       var members = builderServices.currentMemberList(vm);
       var stepString = builderServices.currentStepString(vm);
 
@@ -570,7 +569,7 @@
     function findSelectedMembers() {
       return builderServices.findSelectedMembers(vm);
     }
-
+*/
     function finishSelectingMembers(activeList) {
       if (vm.searchingParticipants) {
         vm.participants = vm.participants.concat(builderServices.selectMembers(activeList.id, activeList.members));
@@ -582,10 +581,9 @@
         vm.observers = vm.observers.concat(builderServices.selectMembers(activeList.id, activeList.members));
         vm.observers = builderServices.removeDuplicatesFromArray(vm.observers);
         vm.searchingObservers = false;
-
       }
     }
-
+/*
     function removeFromList(member, skipDb) {
       if(skipDb) {
         removeMemberFromList(member);
@@ -633,7 +631,7 @@
         : filter['all'] = true;
       vm[memberType+'FilterType'] = filter;
     }
-
+*/
 
   }
 

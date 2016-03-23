@@ -21,25 +21,41 @@
     vm.inviteMembers = inviteMembers;
     vm.modalWindowHandler = modalWindowHandler;
     vm.finishSelectingMembers = finishSelectingMembers;
-  /*  vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
-    vm.selectObserversClickHandle = selectObserversClickHandle;*/
     vm.selectedAllMembers = selectedAllMembers;
     vm.findSelectedMembers = findSelectedMembers;
     vm.removeFromList = removeFromList;
     vm.sendGenericEmail = sendGenericEmail;
     vm.setMembersFilter = setMembersFilter;
 
+
+    vm.isParticipantPage = function() {
+      return vm.session.sessionData.step == "manageSessionParticipants";
+    }
+
+    vm.prepareData = function(participants, observers) {
+      if (vm.isParticipantPage()) {
+        vm.participants = participants;
+      } else {
+        vm.participants = observers;
+      }
+
+      return vm.participants;
+    }
+
     vm.initStep = function(step) {
       var deferred = $q.defer();
 
       vm.session = builderServices.session;
-
       vm.mouseOveringMember = [];
-      vm.participants = vm.session.steps.step4.participants;
-      vm.observers = vm.session.steps.step5.observers;
+      if (vm.isParticipantPage()) {
+        vm.participants = vm.session.steps.step4.participants;
+      } else {
+        vm.participants = vm.session.steps.step5.observers;
+      }
 
-      if (step == 4) {
+      if (vm.session.sessionData.step == "manageSessionParticipants") {
         $ocLazyLoad.load( builderServices.getDependencies().step4 ).then(function(res) {
+          vm.pageTitle = "Participants";
           deferred.resolve();
         },
           function(err) {
@@ -47,10 +63,10 @@
             deferred.reject(err);
           });
       }
-      if (step == 5) {
+      else if (vm.session.sessionData.step == 'inviteSessionObservers') {
         $ocLazyLoad.load( builderServices.getDependencies().step5 ).then(function(res) {
-          vm.currentStep = step;
           vm.lastStep = true;
+          vm.pageTitle = "Observers";
           deferred.resolve();
         },
           function(err) {
@@ -82,11 +98,14 @@
 
       if(data.length > 0) {
         var promise;
-        if(vm.currentStep == 4) {
+        if (vm.session.sessionData.step == "manageSessionParticipants") {
           promise = vm.session.inviteParticipants(data);
         }
-        else if(vm.currentStep == 5) {
+        else if (vm.session.sessionData.step == 'inviteSessionObservers') {
           promise = vm.session.inviteObservers(data);
+        }
+        else {
+          messenger.error("Not valid session step");
         }
 
         promise.then(function(res) {
@@ -164,7 +183,6 @@
     function selectedAllMembers() {
       var members = builderServices.currentMemberList(vm);
       var stepString = builderServices.currentStepString(vm);
-
       for(var i in members) {
         var member = members[i];
         if(!showCorrectStatus(member)) {
@@ -174,7 +192,6 @@
     }
 
     function findSelectedMembers() {
-      //!!!!!vm.currentStep = 4;
       return builderServices.findSelectedMembers(vm);
     }
 
@@ -200,7 +217,6 @@
       else {
         var confirmed = confirm('Are you sure you want to do this?');
         if(!confirmed) return;
-
         vm.session.removeMember(member).then(function(res) {
           removeMemberFromList(member);
           messenger.ok(res.message);
@@ -233,7 +249,8 @@
       }
     }
 
-    function setMembersFilter(memberType, filterName) {
+    function setMembersFilter(filterName) {
+      var memberType = vm.session.sessionData.step == "manageSessionParticipants" ? "participants" : "observers";
       var filter = {};
       filterName.length
         ? filter[filterName] = true
