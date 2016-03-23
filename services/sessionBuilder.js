@@ -730,16 +730,16 @@ function validateStepThree(params) {
     }).then(function(count) {
       let errors = {};
 
-      //todo @pavel: uncomment later
-      // if(count < MIN_MAIL_TEMPLATES){
-      //   errors.emailTemplates = MESSAGES.errors.thirdStep.emailTemplates + MIN_MAIL_TEMPLATES;
-      // }
+
+      if(count < MIN_MAIL_TEMPLATES){
+        errors.emailTemplates = MESSAGES.errors.thirdStep.emailTemplates + MIN_MAIL_TEMPLATES;
+      }
 
       _.isEmpty(errors) ? deferred.resolve() : deferred.reject(errors);
     }).catch(function(error) {
       deferred.reject(error);
     })
-  })
+  });
 
   return deferred.promise;
 }

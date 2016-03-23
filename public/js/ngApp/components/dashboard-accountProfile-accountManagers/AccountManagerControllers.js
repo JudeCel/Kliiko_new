@@ -13,9 +13,9 @@
   });
 
   angular.module('KliikoApp').controller('AccountManagerController', AccountManagerController);
-  AccountManagerController.$inject = ['dbg', 'accountManagerServices', '$modal', '$scope', '$rootScope', '$filter', '$timeout', 'angularConfirm'];
+  AccountManagerController.$inject = ['dbg', 'accountManagerServices', '$modal', '$scope', '$rootScope', '$filter', '$timeout', 'angularConfirm', 'messenger'];
 
-  function AccountManagerController(dbg, accountManagerServices, $modal, $scope, $rootScope, $filter, $timeout, angularConfirm) {
+  function AccountManagerController(dbg, accountManagerServices, $modal, $scope, $rootScope, $filter, $timeout, angularConfirm, messenger) {
     dbg.log2('#AccountManagerController started');
 
     $scope.accountUsers = {};
@@ -75,6 +75,7 @@
             setMessage($scope, res.message);
             var index = $scope.accountUsers.indexOf(accountUser);
             $scope.accountUsers.splice(index, 1);
+            messenger.ok(res.message)
           }
         });
       });
