@@ -23,9 +23,9 @@
     vm.reorderTopics = reorderTopics;
     vm.topicSelectClickHandle = topicSelectClickHandle;
     vm.selectAllTopics = selectAllTopics;
-    
-    
-    
+    vm.chatSessionTopicsList = [];
+
+
     initController();
 
     function initController() {
@@ -132,7 +132,7 @@
 
     }
 
-   
+
     function initStep(step) {
       $ocLazyLoad.load( builderServices.getDependencies().step2 ).then(function(res) {
           if (vm.session.steps.step2.topics.length) vm.chatSessionTopicsList = builderServices.parseTopics(vm.session.steps.step2.topics);
@@ -167,11 +167,11 @@
     // }
 
 
-  
+
 
     /// step 2
 
-    
+
 
 
   }
