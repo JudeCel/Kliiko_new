@@ -27,7 +27,7 @@ function post(req, res, next) {
 };
 
 function removeInvite(req, res, next) {
-  var params = { accountUserId: req.query.id, accountId: res.locals.currentDomain.id };
+  var params = { accountUserId: req.query.id };
 
   inviteService.findAndRemoveInvite(params, function(error, message) {
     if(error) {
