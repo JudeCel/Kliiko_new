@@ -104,9 +104,6 @@
       var members = currentMemberList(vm);
       var stepString = currentStepString(vm);
 
-      console.log("______~~~~~~", members, "~~~~~~~~~~~~",stepString);
-
-
       for (var i in members) {
         var member = members[i];
         if(member[stepString]) {
@@ -118,28 +115,16 @@
     }
 
     function currentMemberList(vm) {
-      if (vm.session.sessionData.step == "manageSessionParticipants") {
         return vm.participants;
-      }
-      else if (vm.session.sessionData.step == 'inviteSessionObservers') {
-        return vm.observers;
-      }
     }
 
     function currentStepString(vm) {
-
-      if (vm.session.sessionData.step == "manageSessionParticipants") {
         return 'step4';
-      }
-      else// if (vm.session.sessionData.step == 'inviteSessionObservers') {
-        return 'step5';
-    //  }
     }
 
     function selectMembers(listId, members) {
       var selected = [];
       for(var i in members) {
-        console.log('selected id', listId);
         var member = members[i];
         if(member._selected) {
 

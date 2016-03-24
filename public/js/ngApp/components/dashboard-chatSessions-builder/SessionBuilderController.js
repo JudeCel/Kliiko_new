@@ -9,15 +9,12 @@
 
     var vm = this;
 
-    var colorSchemeId, brandLogoId;
+    // var colorSchemeId, brandLogoId;
     var intervals = {};
     var sessionId = $stateParams.id || null;
 
-    vm.step1 = {};
+    // vm.step1 = {};
 
-  /*  vm.accordions = {};
-    vm.participants = [];
-    vm.observers = [];*/
     vm.basePath = '/js/ngApp/components/dashboard-chatSessions-builder/';
     vm.$state = $state;
 
@@ -35,12 +32,12 @@
       }
 
 
-      vm.today = new Date();
-      vm.dateTime = builderServices.getTimeSettings();
+      // vm.today = new Date();
+      // vm.dateTime = builderServices.getTimeSettings();
 
-      vm.participants = vm.session.steps.step4.participants;
-      vm.observers = vm.session.steps.step5.observers;
-      vm.chatSessionTopicsList = [];
+      //vm.participants = vm.session.steps.step4.participants;
+      // vm.observers = vm.session.steps.step5.observers;
+      // vm.chatSessionTopicsList = [];
 
     //  parseDateAndTime('initial');
       initStep(null, 'initial');

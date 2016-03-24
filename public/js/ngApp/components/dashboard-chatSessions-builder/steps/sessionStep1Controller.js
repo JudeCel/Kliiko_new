@@ -66,18 +66,16 @@
 
         // populate color scheme
         if (vm.session.steps.step1.brandProjectPreferenceId) {
-          if (vm.session.steps.step1.resourceId) {
-            vm.watchers.push($scope.$watch('step1Controller.colorsList', function (newval, oldval) {
-              if (vm.colorsList) {
-                for (var i = 0, len = vm.colorsList.length; i < len ; i++) {
-                  if (vm.colorsList[i].id == vm.session.steps.step1.brandProjectPreferenceId) {
-                    vm.colorScheme = vm.colorsList[i];
-                    break;
-                  }
+          vm.watchers.push($scope.$watch('step1Controller.colorsList', function (newval, oldval) {
+            if (vm.colorsList) {
+              for (var i = 0, len = vm.colorsList.length; i < len ; i++) {
+                if (vm.colorsList[i].id == vm.session.steps.step1.brandProjectPreferenceId) {
+                  vm.colorScheme = vm.colorsList[i];
+                  break;
                 }
               }
-            }, true));
-          }
+            }
+          }, true));
         }
     }
 

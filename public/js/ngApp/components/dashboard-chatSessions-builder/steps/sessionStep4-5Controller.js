@@ -85,11 +85,11 @@
 
     /// step 4 + 5
     function showCorrectStatus(member) {
-      if(member.invite) {
-        return member.invite.status;
-      }
-      else if(member.sessionMember) {
+      if(member.sessionMember) {
         return 'confirmed';
+      }
+      else {
+        return member.status;
       }
     }
 
@@ -114,12 +114,7 @@
             removeFromList(member, true);
           }
 
-          if(vm.currentStep == 4) {
-            vm.participants = vm.participants.concat(res.data);
-          }
-          else if(vm.currentStep == 5) {
-            vm.observers = vm.observers.concat(res.data);
-          }
+          vm.participants = vm.participants.concat(res.data);
 
           messenger.ok(res.message);
         }, function(error) {
@@ -168,17 +163,6 @@
         });
       }
     }
-/*
-    function selectParticipantsClickHandle() {
-      console.log("__searching participants");
-      vm.searchingParticipants = true;
-    }
-
-    function selectObserversClickHandle() {
-      vm.searchingObservers = true;
-    }*/
-
-
 
     function selectedAllMembers() {
       var members = builderServices.currentMemberList(vm);
@@ -206,7 +190,6 @@
         vm.observers = vm.observers.concat(builderServices.selectMembers(activeList.id, activeList.members));
         vm.observers = builderServices.removeDuplicatesFromArray(vm.observers);
         vm.searchingObservers = false;
-
       }
     }
 
@@ -231,8 +214,6 @@
       var index = members.indexOf(member);
       members.splice(index, 1);
     }
-
-
 
     function sendGenericEmail() {
       var data = findSelectedMembers();
