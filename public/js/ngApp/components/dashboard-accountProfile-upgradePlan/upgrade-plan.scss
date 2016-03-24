@@ -1,4 +1,5 @@
 #upgrade-plan-content {
+
   h2 {
     margin: 45px;
     font-size: .8em;
@@ -29,15 +30,6 @@
       font-size: 2em;
       text-align: center;
       background: $lightGray;
-
-      &.active {
-        color: white;
-        background: $blue;
-      }
-
-      &.done {
-        background: rgba(88, 188, 227, 0.65);
-      }
     }
 
     span.step-name {
@@ -94,8 +86,8 @@
       > .label {
         position: absolute;
         top:320px;
-        left: 0;
-        color: $green;
+        left: 10px;
+        color: #E51D39;
         font-size: calc(100vw/30);
         font-weight: bold;
 

@@ -24,7 +24,8 @@ const MESSAGES = {
   notFound: {
     subscription: 'No subscription found',
     accountUser: 'No account user found',
-    subscriptionPlan: 'No plan found'
+    subscriptionPlan: 'No plan found',
+    account: "No account found."
   },
   validation: {
     session: "You have to many sessions",
@@ -47,14 +48,77 @@ module.exports = {
   getAllPlans: getAllPlans
 }
 
-function getAllPlans() {
+function getAllPlans(accountId) {
   let deferred = q.defer();
 
   chargebee.plan.list({}).request(function(error, result){
     if(error){
       deferred.reject(error);
     }else{
-      deferred.resolve(result.list);
+      findSubscription(accountId).then(function(currentSub) {
+        addPlanEstimateChargeAndConstants(result.list, accountId).then(function(planWithConstsAndEstimates) {
+          console.log(planWithConstsAndEstimates);
+          deferred.resolve({currentPlan: currentSub.SubscriptionPlan, plans: planWithConstsAndEstimates});
+        })
+      }, function(error) {
+        deferred.reject(filters.errors(error));
+      })
+    }
+  });
+
+  return deferred.promise;
+}
+
+function addPlanEstimateChargeAndConstants(plans, accountId) {
+  let deferred = q.defer();
+  let plansWithAllInfo = [];
+
+  findSubscription(accountId).then(function(accountSubscription) {
+    async.each(plans, function(plan, callback) {
+      if(plan.plan.id == accountSubscription.SubscriptionPlan.chargebeePlanId && plan.plan.id != "Free"){
+        plan.additionalParams = planConstants[plan.plan.id];
+        plansWithAllInfo.push(plan);
+        callback();
+      }else if(plan.plan.id != accountSubscription.SubscriptionPlan.chargebeePlanId && plan.plan.id != "Free"){
+        getEstimateCharge(plan, accountSubscription).then(function(planWithEstimate) {
+          planWithEstimate.additionalParams = planConstants[planWithEstimate.plan.id];
+          plansWithAllInfo.push(planWithEstimate);
+          callback();
+        }, function(error) {
+          callback(error);
+        })
+      }else{
+        callback();
+      }
+    }, function(error, _result) {
+      if(error){
+        deferred.reject(error);
+      }else {
+        deferred.resolve(plansWithAllInfo);
+      }
+    });
+  }, function(error) {
+    deferred.reject(MESSAGES.notFound.account);
+  })
+
+  return deferred.promise;
+}
+
+function getEstimateCharge(plan, accountSubscription) {
+  let deferred = q.defer();
+
+  chargebee.estimate.update_subscription({
+    subscription: {
+      id: accountSubscription.subscriptionId,
+      plan_id: plan.plan.id
+    }
+  }).request(function(error ,result){
+    if(error){
+      plan.chargeEstimate = error;
+      deferred.resolve(plan);
+    }else{
+      plan.chargeEstimate = result.estimate;
+      deferred.resolve(plan);
     }
   });
 
@@ -165,7 +229,7 @@ function updateSubscription(accountId, newPlanId, provider) {
   }).then(function(subscription) {
     return SubscriptionPlan.find({
       where: {
-        id: newPlanId
+        chargebeePlanId: newPlanId
       }
     }).then(function(plan) {
       if(plan){

@@ -10,325 +10,262 @@
     var vm = this;
 
     var modalTplPath = 'js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/';
-    // var selectedPaymentMethod, step2IsValid;
 
-    // set first step for 5 steps checkout process
-    $stateParams.planUpgradeStep = 1;
+    vm.selectedPlan = null;
+    vm.currentStep = 1;
+    vm.subPlans = vm.testData;
+    // vm.currentPlan = null;
+    vm.currentPlan = {
+      additionalContactListCount: -1,
+      chargebeePlanId: "plan3",
+      contactListCount: 1,
+      contactListMemberCount: -1,
+      createdAt: "2016-03-22T08:13:27.509Z",
+      deletedAt: null,
+      id: 4,
+      observerCount: 15,
+      paidSmsCount: 600,
+      participantCount: 8,
+      priority: 4,
+      sessionCount: -1,
+      surveyCount: -1,
+      updatedAt: "2016-03-22T08:13:27.509Z"
+    }
 
-    // vm.currentStep = $stateParams.planUpgradeStep;
-    // vm.$state = $state;
-    // vm.cantMoveNextStep = false;
-    // vm.modContentBlock = {selectedPlanDetails: true};
-    // vm.updateBtn = 'Update';
-    // vm.upgradeDuration = 1;
-    // vm.finalPrice = 0 ;
-    //
-    // vm.incorrectPromocode = null;
-    // vm.promocodeData = null;
+    vm.steps = [
+      {
+        title: "Choose a plan",
+        number: 1,
+        key: "selectPlan"
+      },
+      {
+        title: "Confirmation",
+        number: 2,
+        key: "confirmation"
+      },
+      {
+        title: "Submited",
+        number: 3,
+        key: "submited"
+      }
+    ]
 
-    // vm.paymentDetails = {
-    //   chargebee: {
-    //     selected: false,
-    //     tos: false
-    //   },
-    //   changePaymentMethodTo: changePaymentMethodTo
-    // };
+    vm.planColors = {
+      Single: {
+        header: "list-group-item-heading yellow-header-bg",
+        body: "price-label yellow-bg",
+        light: "list-group-item-text yellow-light-bg"
+      },
+      Fixed: {
+        header: "list-group-item-heading green-header-bg",
+        body: "price-label green-bg",
+        light: "list-group-item-text green-light-bg"
+      },
+      Unlimited: {
+        header: "list-group-item-heading blue-header-bg",
+        body: "price-label blue-bg",
+        light: "list-group-item-text blue-light-bg"
+      }
+    };
 
-    // vm.canUpgradeTo = canUpgradeTo;
-    // vm.stepsClassIsActive = stepsClassIsActive;
-    // vm.stepsClassIsDone = stepsClassIsDone;
-    // vm.openPlanDetailsModal = openPlanDetailsModal;
-    // vm.upgradeToPlan = upgradeToPlan;
-    // vm.updateUserData = updateUserData;
-    // vm.goToStep = goToStep;
-    // vm.handleUserDataChangeClick = handleUserDataChangeClick;
-    // vm.updateFinalPrice = updateFinalPrice;
-    // vm.handleTosCheck = handleTosCheck;
-    // vm.todChecked = todChecked;
+    vm.checkIfUnlimited = checkIfUnlimited;
+    vm.stepIsActive = stepIsActive;
+    vm.stepIsCompleted = stepIsCompleted;
+    vm.nextStep = nextStep;
+    vm.previouseStep = previouseStep;
+    vm.selectPlan = selectPlan;
+    vm.submitOrder = submitOrder;
+    vm.isCurrentPlan = isCurrentPlan;
 
-    vm.subPlans = []
     init();
 
-    // $('#contactDetailsModal').on('hide.bs.modal', function (e) {
-    //   init();
-    // });
-
     function init() {
-
       planService.getAllPlans().then(function(result) {
         if(result.error){
           messenger.error(result.error);
         }else {
-          vm.subPlans = result.subPlans
+          console.log(result);
+          vm.subPlans = result.plans;
+          vm.currentPlan = result.currentPlan;
         }
       })
 
-    //   upgradePlanServices.init().then(fetchInitData);
-    //
-    //   function fetchInitData() {
-    //     // get all plans details
-    //     var progressbarForPlans = ngProgressFactory.createInstance();
-    //     progressbarForPlans.start();
-    //     upgradePlanServices.getPlans().then(function (res) {
-    //       dbg.log2('#UpgradePlanController > fetchInitData > plans fetched');
-    //       progressbarForPlans.complete();
-    //       vm.plans = res
-    //     });
-    //
-    //     // get all data for current user
-    //     var progressbarForUserData = ngProgressFactory.createInstance();
-    //     progressbarForUserData.start();
-    //     user.getUserData().then(function (res) {
-    //       dbg.log2('#UpgradePlanController > fetchInitData > userData fetched');
-    //       progressbarForUserData.complete();
-    //       vm.userData = $.extend({}, res);
-    //     });
-    //   }
-    //
-    //   // after payment callback url case
-    //   if ($stateParams.step && $stateParams.step == 5)  { goToStep(5) }
+    //   vm.subPlans = [ { plan:
+    //    { id: 'Free',
+    //      name: 'Free',
+    //      invoice_name: 'Free',
+    //      price: 0,
+    //      period: 1,
+    //      period_unit: 'month',
+    //      trial_period: 30,
+    //      trial_period_unit: 'day',
+    //      charge_model: 'per_unit',
+    //      free_quantity: 1,
+    //      status: 'active',
+    //      enabled_in_hosted_pages: true,
+    //      enabled_in_portal: true,
+    //      object: 'plan',
+    //      taxable: true },
+    //   chargeEstimate:
+    //    { created_at: 1458823532,
+    //      recurring: true,
+    //      subscription_id: 'HtZEwS9PgAFSKCKQh',
+    //      subscription_status: 'active',
+    //      term_ends_at: 1461500076,
+    //      collect_now: false,
+    //      price_type: 'tax_exclusive',
+    //      amount: 0,
+    //      credits_applied: 0,
+    //      amount_due: 0,
+    //      object: 'estimate',
+    //      sub_total: 0 },
+    //   additionalParams:
+    //    { sessionCount: 1,
+    //      contactListCount: 1,
+    //      surveyCount: 1,
+    //      additionalContactListCount: 0,
+    //      contactListMemberCount: -1,
+    //      participantCount: 8,
+    //      observerCount: 15,
+    //      paidSmsCount: 50,
+    //      priority: 1 } },
+    // { plan:
+    //    { id: 'plan2',
+    //      name: 'Fixed',
+    //      invoice_name: 'Fixed',
+    //      price: 50000,
+    //      period: 1,
+    //      period_unit: 'month',
+    //      charge_model: 'per_unit',
+    //      free_quantity: 0,
+    //      status: 'active',
+    //      enabled_in_hosted_pages: true,
+    //      enabled_in_portal: true,
+    //      object: 'plan',
+    //      taxable: true },
+    //   chargeEstimate:
+    //    { created_at: 1458823532,
+    //      recurring: true,
+    //      subscription_id: 'HtZEwS9PgAFSKCKQh',
+    //      subscription_status: 'active',
+    //      term_ends_at: 1461500076,
+    //      collect_now: true,
+    //      price_type: 'tax_exclusive',
+    //      amount: 49966,
+    //      credits_applied: 49966,
+    //      amount_due: 0,
+    //      object: 'estimate',
+    //      sub_total: 49966,
+    //      line_items: [Object] },
+    //   additionalParams:
+    //    { sessionCount: 3,
+    //      contactListCount: 1,
+    //      surveyCount: 1,
+    //      additionalContactListCount: 1,
+    //      contactListMemberCount: -1,
+    //      participantCount: 8,
+    //      observerCount: 15,
+    //      paidSmsCount: 50,
+    //      priority: 3 } },
+    // { plan:
+    //    { id: 'plan1',
+    //      name: 'Single',
+    //      invoice_name: 'Plan 1',
+    //      price: 15000,
+    //      period: 1,
+    //      period_unit: 'month',
+    //      trial_period: 30,
+    //      trial_period_unit: 'day',
+    //      charge_model: 'per_unit',
+    //      free_quantity: 0,
+    //      status: 'active',
+    //      enabled_in_hosted_pages: true,
+    //      enabled_in_portal: true,
+    //      object: 'plan',
+    //      taxable: true },
+    //   chargeEstimate:
+    //    { created_at: 1458823532,
+    //      recurring: true,
+    //      subscription_id: 'HtZEwS9PgAFSKCKQh',
+    //      subscription_status: 'active',
+    //      term_ends_at: 1461500076,
+    //      collect_now: true,
+    //      price_type: 'tax_exclusive',
+    //      amount: 14990,
+    //      credits_applied: 14990,
+    //      amount_due: 0,
+    //      object: 'estimate',
+    //      sub_total: 14990,
+    //      line_items: [Object] },
+    //   additionalParams:
+    //    { sessionCount: 1,
+    //      contactListCount: 1,
+    //      surveyCount: 1,
+    //      additionalContactListCount: 0,
+    //      contactListMemberCount: -1,
+    //      participantCount: 8,
+    //      observerCount: 15,
+    //      paidSmsCount: 50,
+    //      priority: 2 } } ]
+
     }
 
-    // /**
-    //  * Hide downgrade options
-    //  * @param planNumber {'plan1' || 'plan2'}
-    //  * @returns {boolean}
-    //  */
-    // function canUpgradeTo(planNumber) {
-    //   if (!vm.userData || !vm.userData.subscriptions) return true;
-    //
-    //   if (planNumber === 'plan1') {
-    //     if (vm.userData.subscriptions.planId == 'plan1' || vm.userData.subscriptions.planId == 'plan2' ) return false;
-    //   }
-    //
-    //   if (planNumber === 'plan2') {
-    //     if ( vm.userData.subscriptions.planId == 'plan2' ) return false;
-    //   }
-    //
-    //   return true
-    // }
-    //
-    // /**
-    //  * Helpers for ng-class
-    //  * @param step {int || char}
-    //  * @returns {boolean}
-    //  */
-    // function stepsClassIsActive(step) {
-    //   return (vm.currentStep == step);
-    // }
-    //
-    // function stepsClassIsDone(step) {
-    //   return (vm.currentStep > step);
-    // }
-    //
-    //
-    // /**
-    //  * Open plan upgrade modal with particular plan information
-    //  * @param plan {string}
-    //  */
-    // function openPlanDetailsModal(plan) {
-    //   vm.currentPlan = vm.plans[plan];
-    //   vm.currentPlanModalContentTpl = modalTplPath + vm.currentPlan.id + '.tpl.html';
-    //
-    //   domServices.modal('plansModal');
-    // }
-    //
-    // /**
-    //  * Proceed with selected plan upgrade steps
-    //  * @param plan {string}
-    //  */
-    // function upgradeToPlan(plan) {
-    //   dbg.log('#UpgradePlanController > Upgrade to plan >', plan);
-    //
-    //   vm.selectedPlan = vm.plans[plan];
-    //   vm.finalPrice = vm.selectedPlan.price;
-    //
-    //   domServices.modal('plansModal', 'close');
-    //
-    //
-    //   goToStep(2);
-    // }
-    //
-    // function goToStep(step) {
-    //   if (!angular.isNumber(step)) {
-    //     if (step === 'back') { step = vm.currentStep - 1; vm.cantMoveNextStep = false; }
-    //     if (step === 'next') { step = vm.currentStep + 1 }
-    //     if (step === 'submit') {
-    //       //step = 5;
-    //       submitUpgrade();
-    //       return
-    //     }
-    //   }
-    //
-    //   var valid = validateStep(step);
-    //
-    //   if (!valid) return;
-    //
-    //   $stateParams.planUpgradeStep = vm.currentStep = step;
-    //
-    // }
-    //
-    // /**
-    //  * Validate and process steps data
-    //  * @param step {number}
-    //  * @returns {boolean}
-    //  */
-    // function validateStep(step) {
-    //   if (step === 3) { return validateStep2() }
-    //   if (step === 4) { return validateStep3() }
-    //
-    //   return true;
-    //
-    //   function validateStep2() {
-    //     if (step2IsValid) {
-    //       vm.cantMoveNextStep = true;
-    //       handleTosCheck();
-    //       return true;
-    //     }
-    //     if (!vm.promocode || !vm.promocode.length) {
-    //       vm.cantMoveNextStep = true;
-    //       return true;
-    //     }
-    //     upgradePlanServices.validatePromocode(vm.promocode).then(
-    //       function(res) {
-    //         vm.incorrectPromocode = null;
-    //         step2IsValid =  true; goToStep(3);
-    //         vm.promocodeData = res;
-    //         calculateDiscount();
-    //       },
-    //       function(err) {
-    //         messenger.error('Incorrect Promotional Code');
-    //         vm.incorrectPromocode = true;
-    //         return false;
-    //       }
-    //     );
-    //
-    //   }
-    //
-    //   function validateStep3() {
-    //     if (vm.cantMoveNextStep) {
-    //       domServices.shakeClass('terms-attention');
-    //       return false;
-    //     }
-    //     return true;
-    //   }
-    // }
-    //
-    // function updateUserData(data, form) {
-    //   vm.errors = {};
-    //   user.updateUserData(data).then(function (res) {
-    //     vm.updateBtn = 'Updated';
-    //
-    //     //hide 'updated' button in a while
-    //     setTimeout(function () {
-    //       vm.updateBtn = 'Update';
-    //       form.$setPristine();
-    //       form.$setUntouched();
-    //     }, 2000);
-    //
-    //   }, function(err) {
-    //     vm.errors = err;
-    //   });
-    // }
-    //
-    // function changePaymentMethodTo(type) {
-    //   if (type === 'chargebee') vm.paymentDetails.chargebee.selected = true;
-    //
-    //   selectedPaymentMethod = type;
-    //
-    //   // forbid to press next if TOS are not checked
-    //   $scope.$watch(function () {  return vm.paymentDetails[type].tos;  },function(value) {
-    //     vm.cantMoveNextStep = !value;
-    //   });
-    //
-    // }
-    //
-    // function handleUserDataChangeClick() {
-    //   domServices.modal('contactDetailsModal');
-    // }
-    //
-    // function updateFinalPrice() {
-    //   vm.finalPrice = vm.selectedPlan.price  * vm.upgradeDuration;
-    //   vm.orderTotal = vm.finalPrice;
-    // }
-    //
-    //
-    // function calculateDiscount() {
-    //   vm.discount = upgradePlanServices.calculateDiscount(vm.finalPrice);
-    //   vm.orderTotal = vm.finalPrice - vm.discount;
-    // }
-    //
-    // function handleTosCheck() {
-    //   vm.cantMoveNextStep = !vm.paymentDetails.chargebee.tos;
-    //   step2IsValid = vm.paymentDetails.chargebee.tos;
-    // }
-    //
-    // function todChecked(argument) {
-    //   if(vm.paymentDetails.chargebee.tos){
-    //     return true;
-    //   }else{
-    //     return false;
-    //   }
-    // }
-    //
-    // function submitUpgrade() {
-    //   dbg.log2('#UpgradePlanControllerAppController > submitUpgrade ');
-    //
-    //   var progressbar = ngProgressFactory.createInstance();
-    //   progressbar.start();
-    //
-    //   var planObject = {
-    //     plan: vm.selectedPlan,
-    //     duration: vm.upgradeDuration
-    //   };
-    //
-    //   var paymentObject = {
-    //     paymentMethod: selectedPaymentMethod,
-    //     promocode: vm.promocode,
-    //     currency: 'USD',
-    //     totalPrice: vm.finalPrice
-    //   };
-    //
-    //   domServices.showFader();
-    //
-    //   upgradePlanServices.submitUpgrade(planObject, paymentObject, vm.userData).then(
-    //     function(res) {
-    //       dbg.log2('#UpgradePlanControllerAppController > submitUpgrade > success ');
-    //
-    //
-    //       if (res.hosted_page)  {
-    //         // case of new subscription. go to prepared hosted page;
-    //         window.location = res.hosted_page.url;
-    //         return;
-    //       } else {
-    //         // case when subscription is aupdated
-    //         $rootScope.$emit('app.updateUser');
-    //         progressbar.complete();
-    //         goToStep(5);
-    //         domServices.hideFader();
-    //         vm.paymentSubmitSuccess = true;
-    //       }
-    //
-    //
-    //
-    //     },
-    //     function(err) {
-    //       dbg.log2('#UpgradePlanControllerAppController > submitUpgrade > error: ', err);
-    //
-    //       progressbar.complete();
-    //       goToStep(5);
-    //       domServices.hideFader();
-    //
-    //       messenger.error('Submitting Failed: '+ err);
-    //
-    //       vm.cantMoveNextStep = true;
-    //       vm.paymentSubmitSuccess = null;
-    //       vm.paymentSubmitError = err.error_msg;
-    //     }
-    //   );
-    // }
+    function selectPlan(plan) {
+      vm.selectedPlan = plan;
+      nextStep();
+    }
+
+    function submitOrder(tosConfirmed) {
+      console.log(tosConfirmed);
+      if(!tosConfirmed){
+        domServices.shakeClass('shake-this');
+      }else{
+        planService.updatePlan(vm.selectedPlan.plan.id).then(function(result) {
+          if(result.error){
+            messenger.error(result.error);
+          }else {
+            dbg.yell(result);
+          }
+        })
+      }
+    }
+
+    function nextStep(){
+      vm.currentStep = vm.currentStep + 1
+      return vm.currentStep;
+    }
+
+    function previouseStep() {
+      vm.currentStep = vm.currentStep - 1
+      return vm.currentStep;
+    }
+
+    function checkIfUnlimited(count) {
+      if(count == -1){
+        return "Unlimited";
+      }else{
+        return count;
+      }
+    }
+
+    function isCurrentPlan(planId) {
+      return planId == vm.currentPlan.chargebeePlanId
+    }
+
+    function stepIsActive(step, additionalStyle) {
+      if(vm.currentStep == step){
+        return "active " + additionalStyle;
+      }else{
+        return additionalStyle;
+      }
+    }
+
+    function stepIsCompleted(step, additionalStyle) {
+      if(vm.currentStep > step){
+        return "done " + additionalStyle;
+      }
+    }
 
   }
-
 
 })();

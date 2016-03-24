@@ -98,6 +98,7 @@ router.get('/survey/constants', survey.getConstants);
 
 // Subscription
 router.get('/subscriptionPlan', subscription.getPlans);
+router.put('/subscriptionPlan/updatePlan', subscription.updatePlan);
 
 // Addons
 router.get('/subscriptionSmsCredits', smsCredit.get);
