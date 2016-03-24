@@ -35,7 +35,7 @@
       // vm.today = new Date();
       // vm.dateTime = builderServices.getTimeSettings();
 
-      //vm.participants = vm.session.steps.step4.participants;
+      vm.participants = vm.session.steps.step4.participants;
       // vm.observers = vm.session.steps.step5.observers;
       // vm.chatSessionTopicsList = [];
 
