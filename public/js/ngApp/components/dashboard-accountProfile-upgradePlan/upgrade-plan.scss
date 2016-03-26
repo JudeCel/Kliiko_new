@@ -7,14 +7,10 @@
   }
 
   #steps-row {
-    display: block;
-    width: 405px;
-    width: 600px;
-    margin: 0 auto;
 
     .step-container {
       display: block;
-      margin: 10px;
+      margin-left: 38px;
       float: left;
       width: 100px;
       font-size: .5em;
@@ -30,6 +26,11 @@
       font-size: 2em;
       text-align: center;
       background: $lightGray;
+
+      &.active,
+      &done{
+        background: #4DC0E9;
+      }
     }
 
     span.step-name {

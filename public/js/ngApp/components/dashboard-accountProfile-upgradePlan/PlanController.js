@@ -9,9 +9,10 @@
     dbg.log2('#PlanController  started');
     var vm = this;
 
+    vm.planInModal = null;
     vm.selectedPlan = null;
     vm.currentStep = 1;
-    vm.subPlans = vm.testData;
+
     // vm.currentPlan = null;
     vm.currentPlan = {
       additionalContactListCount: -1,
@@ -29,6 +30,21 @@
       surveyCount: -1,
       updatedAt: "2016-03-22T08:13:27.509Z"
     }
+
+    vm.stepLayouts = [
+      {
+        inQueue: 1,
+        src: "js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/selectPlan.tpl.html"
+      },
+      {
+        inQueue: 2,
+        src: "js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/confirmation.tpl.html"
+      },
+      {
+        inQueue: 3,
+        src: "js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/submited.tpl.html"
+      }
+    ]
 
     vm.steps = [
       {
@@ -66,6 +82,13 @@
       }
     };
 
+    var modalTplPath = 'js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/';
+
+    vm.canSeeBackButton = canSeeBackButton;
+    vm.canSeeOrderButton = canSeeOrderButton;
+    vm.subPlans = vm.testData;
+    vm.isCurrentStep = isCurrentStep;
+    vm.openPlanDetailsModal = openPlanDetailsModal;
     vm.checkIfUnlimited = checkIfUnlimited;
     vm.stepIsActive = stepIsActive;
     vm.stepIsCompleted = stepIsCompleted;
@@ -220,8 +243,7 @@
           if(result.error){
             messenger.error(result.error);
           }else {
-            window.location = result.url;
-            // dbg.yell(result);
+            dbg.yell(result);
           }
         })
       }
@@ -245,6 +267,10 @@
       }
     }
 
+    function isCurrentStep(inQueue){
+      return vm.currentStep == inQueue;
+    }
+
     function isCurrentPlan(planId) {
       return planId == vm.currentPlan.chargebeePlanId
     }
@@ -261,6 +287,20 @@
       if(vm.currentStep > step){
         return "done " + additionalStyle;
       }
+    }
+
+    function openPlanDetailsModal(plan) {
+      vm.planInModal = plan;
+      vm.currentPlanModalContentTpl = modalTplPath + plan.id + '.tpl.html';
+      domServices.modal('plansModal');
+    }
+
+    function canSeeBackButton() {
+      return vm.currentStep < 1 || vm.currentStep > 3;
+    }
+
+    function canSeeOrderButton() {
+      return vm.currentStep < 1 || vm.currentStep > 3;
     }
 
   }

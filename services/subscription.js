@@ -352,15 +352,6 @@ function chargebeePortalCreate(params, provider) {
 // Important decision!!!
 // ----------------------------------------------------------------------------------------------------
 
-function checkHowWeCanPay(argument) {
-  // This is the third case what we can do.
-  // we can check if there are a valid cards already added in customers portal and charge it.
-  // or
-  // if there is not a valid card then we can do a checkout process.
-
-  // in this case we need to change 'updateSubscription' function
-}
-
 // If we will decide to use checkout process, then this is the endpoint, for that!!!
 // Check in chargebee docs, how we can do a redirect back to our site, or how we can embed iframe with the checkout form!
 function chargebeeSubUpdateViaCheckout(subscriptionId, params, provider) {
@@ -421,8 +412,18 @@ function chargebeeSubUpdate(subscriptionId, params, provider) {
   return deferred.promise;
 }
 
-// ----------------------------------------------------------------------------------------------------
+function combinateBothPaymentFlows(argument) {
+  // This is the third case what we can do.
+  // we can check if there are a valid cards already added in customers portal and charge it.
+  // or
+  // if there is not a valid card then we can do a checkout process.
 
+  // in this case we need to change 'updateSubscription' function
+}
+
+// ----------------------------------------------------------------------------------------------------
+// Important decision!!!
+// ----------------------------------------------------------------------------------------------------
 
 
 
