@@ -222,6 +222,11 @@ function createPortalSession(accountId, callbackUrl, provider) {
 }
 
 function updateSubscription(accountId, newPlanId, provider) {
+  console.log("******************************************")
+  console.log(newPlanId)
+  console.log(accountId)
+  console.log("******************************************")
+
   let deferred = q.defer();
   findSubscription(accountId).then(function(subscription) {
     if(subscription) {
@@ -244,24 +249,34 @@ function updateSubscription(accountId, newPlanId, provider) {
     });
   }).then(function(result) {
     return canSwitchPlan(accountId, result.currentPlan, result.newPlan).then(function() {
+      console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+      console.log(result.currentPlan.chargebeePlanId);
+      console.log("from ---> to")
+      console.log(result.newPlan.chargebeePlanId);
+      console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+
       return chargebeeSubUpdate(result.subscription.subscriptionId, {plan_id: result.newPlan.chargebeePlanId}, provider).then(function(updatedSub) {
-        return models.sequelize.transaction(function (t) {
-          return result.subscription.update({planId: updatedSub.plan_id, subscriptionPlanId: result.newPlan.id}, {transaction: t, returning: true}).then(function(updatedSub) {
+        console.log(updatedSub)
 
-            let params = planConstants[updatedSub.SubscriptionPlan.chargebeePlanId];
-            params.paidSmsCount = params.paidSmsCount + result.newPlan.paidSmsCount;
+        // return models.sequelize.transaction(function (t) {
+        //   return result.subscription.update({planId: updatedSub.plan_id, subscriptionPlanId: result.newPlan.id}, {transaction: t, returning: true}).then(function(updatedSub) {
 
-            return updatedSub.SubscriptionPreference.update({ data: params }, {transaction: t, returning: true}).then(function(preference) {
-              updatedSub.SubscriptionPlan = result.newPlan;
-              return updatedSub;
-            }, function(error) {
-              throw error;
-            });
-          }, function(error) {
-            throw error;
-          })
-        });
+        //     let params = planConstants[updatedSub.SubscriptionPlan.chargebeePlanId];
+        //     params.paidSmsCount = params.paidSmsCount + result.newPlan.paidSmsCount;
+
+        //     return updatedSub.SubscriptionPreference.update({ data: params }, {transaction: t, returning: true}).then(function(preference) {
+        //       updatedSub.SubscriptionPlan = result.newPlan;
+        //       return updatedSub;
+        //     }, function(error) {
+        //       throw error;
+        //     });
+        //   }, function(error) {
+        //     throw error;
+        //   })
+        // });
       }, function(error) {
+        console.log(error)
+
         deferred.reject(error);
       });
     }, function(error) {
@@ -329,60 +344,87 @@ function chargebeePortalCreate(params, provider) {
 
   return deferred.promise;
 }
+ 
 
-function chargebeeSubUpdate(subscriptionId, params, provider) {
+
+
+// ----------------------------------------------------------------------------------------------------
+// Important decision!!!
+// ----------------------------------------------------------------------------------------------------
+
+function checkHowWeCanPay(argument) {
+  // This is the third case what we can do.
+  // we can check if there are a valid cards already added in customers portal and charge it.
+  // or
+  // if there is not a valid card then we can do a checkout process.
+
+  // in this case we need to change 'updateSubscription' function
+}
+
+// If we will decide to use checkout process, then this is the endpoint, for that!!!
+// Check in chargebee docs, how we can do a redirect back to our site, or how we can embed iframe with the checkout form!
+function chargebeeSubUpdateViaCheckout(subscriptionId, params, provider) {
+  // in this case we need to change 'updateSubscription' function
   let deferred = q.defer();
-  let checkoutParams = {
-    subscription : {
-      id : subscriptionId, 
-      plan_id : params.planId,
-      redirect_url: 'http://user.focus.com:8080/webhooks/chargebee/hostedPageSuccess',
-      cancel_ul: 'http://user.focus.com:8080/dashboard#/account-profile/upgrade-plan'
-    }
+
+  if(!provider) {
+    provider = chargebee.hosted_page.checkout_existing;
   }
 
-  // if(!provider) {
-  //   // provider = chargebee.subscription.update;
-  //   provider = chargebee.hosted_page.checkout_existing;
-  // }
-
-  chargebee.hosted_page.checkout_existing({
-    subscription : {
+  provider({
+    subscription: {
       id : subscriptionId, 
-      plan_id : params.planId
+      plan_id : params.plan_id
     }
   }).request(function(error,result){
     if(error){
-      //handle error
-      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-      console.log(error);
-      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-      
+      console.log("#################################### error");
+      console.log(error)
+      console.log("#################################### error");
+      // deferred.reject(error);
     }else{
-      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-      console.log(result);
-      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-      var hosted_page = result.hosted_page;
+      console.log("####################################");
+      console.log(result)
+      console.log("####################################");
+      // deferred.resolve(result.hosted_page);
     }
   });
 
-  // provider(checkoutParams).request(function(error, result) {
-  //   if(error) {
-  //     console.log(error)
-  //     deferred.reject(error);
-  //   }
-  //   else {
-  //     console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-  //     console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-  //     console.log(result)
-  //     console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-  //     console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-  //     deferred.resolve(result.subscription);
-  //   }
-  // });
+  return deferred.promise;
+}
+
+// If we will decide to fill card details via customers portal,
+// then we will be able to charge immediately!!!
+function chargebeeSubUpdate(subscriptionId, params, provider) {
+  // this is already working as expected.
+  let deferred = q.defer();
+
+  if(!provider) {
+    provider = chargebee.subscription.update;
+  }
+
+  provider(subscriptionId, params).request(function(error, result) {
+    if(error) {
+      console.log("#################################### error");
+      console.log(error)
+      console.log("#################################### error");
+      // deferred.reject(error);
+    }
+    else {
+      console.log("####################################");
+      console.log(result)
+      console.log("####################################");
+      // deferred.resolve(result.subscription);
+    }
+  });
 
   return deferred.promise;
 }
+
+// ----------------------------------------------------------------------------------------------------
+
+
+
 
 function chargebeeSubCreate(params, provider) {
   let deferred = q.defer();

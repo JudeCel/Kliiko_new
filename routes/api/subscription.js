@@ -20,7 +20,7 @@ function getPlans(req, res, next) {
 
 function updatePlan(req, res, next) {
   let accountId = res.locals.currentDomain.id;
-  let newPlanId = req.body.newPlanId;
+  let newPlanId = req.body.planId;
 
   subscription.updateSubscription(accountId, newPlanId).then(function(result) {
     res.send({subPlans: result});

@@ -15,7 +15,7 @@
     // vm.currentPlan = null;
     vm.currentPlan = {
       additionalContactListCount: -1,
-      chargebeePlanId: "plan3",
+      chargebeePlanId: "plan5",
       contactListCount: 1,
       contactListMemberCount: -1,
       createdAt: "2016-03-22T08:13:27.509Z",
@@ -213,7 +213,6 @@
     }
 
     function submitOrder(tosConfirmed) {
-      console.log(tosConfirmed);
       if(!tosConfirmed){
         domServices.shakeClass('shake-this');
       }else{
@@ -221,7 +220,8 @@
           if(result.error){
             messenger.error(result.error);
           }else {
-            dbg.yell(result);
+            window.location = result.url;
+            // dbg.yell(result);
           }
         })
       }

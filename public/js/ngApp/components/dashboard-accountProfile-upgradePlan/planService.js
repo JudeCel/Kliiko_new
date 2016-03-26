@@ -28,7 +28,7 @@
     function updatePlan(planId) {
       var deferred = $q.defer();
       dbg.log2('#SubscriptionPlanService > updatePlan > make rest call');
-      subscriptionPlanRestApi.updatePlan({newPlanId: planId}, function(res) {
+      subscriptionPlanRestApi.updatePlan({planId: planId}, function(res) {
         dbg.log2('#SubscriptionPlanService > updatePlan > rest call responds');
         deferred.resolve(res);
       });
