@@ -55,14 +55,18 @@ function getAllPlans(accountId) {
     if(error){
       deferred.reject(error);
     }else{
-      findSubscription(accountId).then(function(currentSub) {
-        addPlanEstimateChargeAndConstants(result.list, accountId).then(function(planWithConstsAndEstimates) {
-          console.log(planWithConstsAndEstimates);
-          deferred.resolve({currentPlan: currentSub.SubscriptionPlan, plans: planWithConstsAndEstimates});
+      if(accountId){
+        findSubscription(accountId).then(function(currentSub) {
+          addPlanEstimateChargeAndConstants(result.list, accountId).then(function(planWithConstsAndEstimates) {
+            console.log(planWithConstsAndEstimates);
+            deferred.resolve({currentPlan: currentSub.SubscriptionPlan, plans: planWithConstsAndEstimates});
+          })
+        }, function(error) {
+          deferred.reject(filters.errors(error));
         })
-      }, function(error) {
-        deferred.reject(filters.errors(error));
-      })
+      }else{
+        deferred.resolve(result.list)
+      }
     }
   });
 
@@ -328,19 +332,54 @@ function chargebeePortalCreate(params, provider) {
 
 function chargebeeSubUpdate(subscriptionId, params, provider) {
   let deferred = q.defer();
-
-  if(!provider) {
-    provider = chargebee.subscription.update;
+  let checkoutParams = {
+    subscription : {
+      id : subscriptionId, 
+      plan_id : params.planId,
+      redirect_url: 'http://user.focus.com:8080/webhooks/chargebee/hostedPageSuccess',
+      cancel_ul: 'http://user.focus.com:8080/dashboard#/account-profile/upgrade-plan'
+    }
   }
 
-  provider(subscriptionId, params).request(function(error, result) {
-    if(error) {
-      deferred.reject(error);
+  // if(!provider) {
+  //   // provider = chargebee.subscription.update;
+  //   provider = chargebee.hosted_page.checkout_existing;
+  // }
+
+  chargebee.hosted_page.checkout_existing({
+    subscription : {
+      id : subscriptionId, 
+      plan_id : params.planId
     }
-    else {
-      deferred.resolve(result.subscription);
+  }).request(function(error,result){
+    if(error){
+      //handle error
+      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+      console.log(error);
+      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+      
+    }else{
+      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+      console.log(result);
+      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+      var hosted_page = result.hosted_page;
     }
   });
+
+  // provider(checkoutParams).request(function(error, result) {
+  //   if(error) {
+  //     console.log(error)
+  //     deferred.reject(error);
+  //   }
+  //   else {
+  //     console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+  //     console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+  //     console.log(result)
+  //     console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+  //     console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+  //     deferred.resolve(result.subscription);
+  //   }
+  // });
 
   return deferred.promise;
 }

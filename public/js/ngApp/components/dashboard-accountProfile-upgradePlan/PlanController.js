@@ -9,8 +9,6 @@
     dbg.log2('#PlanController  started');
     var vm = this;
 
-    var modalTplPath = 'js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/';
-
     vm.selectedPlan = null;
     vm.currentStep = 1;
     vm.subPlans = vm.testData;
@@ -80,134 +78,133 @@
     init();
 
     function init() {
-      planService.getAllPlans().then(function(result) {
-        if(result.error){
-          messenger.error(result.error);
-        }else {
-          console.log(result);
-          vm.subPlans = result.plans;
-          vm.currentPlan = result.currentPlan;
-        }
-      })
+      // planService.getAllPlans().then(function(result) {
+      //   if(result.error){
+      //     messenger.error(result.error);
+      //   }else {
+      //     console.log(result);
+      //     vm.subPlans = result.plans;
+      //     vm.currentPlan = result.currentPlan;
+      //   }
+      // })
 
-    //   vm.subPlans = [ { plan:
-    //    { id: 'Free',
-    //      name: 'Free',
-    //      invoice_name: 'Free',
-    //      price: 0,
-    //      period: 1,
-    //      period_unit: 'month',
-    //      trial_period: 30,
-    //      trial_period_unit: 'day',
-    //      charge_model: 'per_unit',
-    //      free_quantity: 1,
-    //      status: 'active',
-    //      enabled_in_hosted_pages: true,
-    //      enabled_in_portal: true,
-    //      object: 'plan',
-    //      taxable: true },
-    //   chargeEstimate:
-    //    { created_at: 1458823532,
-    //      recurring: true,
-    //      subscription_id: 'HtZEwS9PgAFSKCKQh',
-    //      subscription_status: 'active',
-    //      term_ends_at: 1461500076,
-    //      collect_now: false,
-    //      price_type: 'tax_exclusive',
-    //      amount: 0,
-    //      credits_applied: 0,
-    //      amount_due: 0,
-    //      object: 'estimate',
-    //      sub_total: 0 },
-    //   additionalParams:
-    //    { sessionCount: 1,
-    //      contactListCount: 1,
-    //      surveyCount: 1,
-    //      additionalContactListCount: 0,
-    //      contactListMemberCount: -1,
-    //      participantCount: 8,
-    //      observerCount: 15,
-    //      paidSmsCount: 50,
-    //      priority: 1 } },
-    // { plan:
-    //    { id: 'plan2',
-    //      name: 'Fixed',
-    //      invoice_name: 'Fixed',
-    //      price: 50000,
-    //      period: 1,
-    //      period_unit: 'month',
-    //      charge_model: 'per_unit',
-    //      free_quantity: 0,
-    //      status: 'active',
-    //      enabled_in_hosted_pages: true,
-    //      enabled_in_portal: true,
-    //      object: 'plan',
-    //      taxable: true },
-    //   chargeEstimate:
-    //    { created_at: 1458823532,
-    //      recurring: true,
-    //      subscription_id: 'HtZEwS9PgAFSKCKQh',
-    //      subscription_status: 'active',
-    //      term_ends_at: 1461500076,
-    //      collect_now: true,
-    //      price_type: 'tax_exclusive',
-    //      amount: 49966,
-    //      credits_applied: 49966,
-    //      amount_due: 0,
-    //      object: 'estimate',
-    //      sub_total: 49966,
-    //      line_items: [Object] },
-    //   additionalParams:
-    //    { sessionCount: 3,
-    //      contactListCount: 1,
-    //      surveyCount: 1,
-    //      additionalContactListCount: 1,
-    //      contactListMemberCount: -1,
-    //      participantCount: 8,
-    //      observerCount: 15,
-    //      paidSmsCount: 50,
-    //      priority: 3 } },
-    // { plan:
-    //    { id: 'plan1',
-    //      name: 'Single',
-    //      invoice_name: 'Plan 1',
-    //      price: 15000,
-    //      period: 1,
-    //      period_unit: 'month',
-    //      trial_period: 30,
-    //      trial_period_unit: 'day',
-    //      charge_model: 'per_unit',
-    //      free_quantity: 0,
-    //      status: 'active',
-    //      enabled_in_hosted_pages: true,
-    //      enabled_in_portal: true,
-    //      object: 'plan',
-    //      taxable: true },
-    //   chargeEstimate:
-    //    { created_at: 1458823532,
-    //      recurring: true,
-    //      subscription_id: 'HtZEwS9PgAFSKCKQh',
-    //      subscription_status: 'active',
-    //      term_ends_at: 1461500076,
-    //      collect_now: true,
-    //      price_type: 'tax_exclusive',
-    //      amount: 14990,
-    //      credits_applied: 14990,
-    //      amount_due: 0,
-    //      object: 'estimate',
-    //      sub_total: 14990,
-    //      line_items: [Object] },
-    //   additionalParams:
-    //    { sessionCount: 1,
-    //      contactListCount: 1,
-    //      surveyCount: 1,
-    //      additionalContactListCount: 0,
-    //      contactListMemberCount: -1,
-    //      participantCount: 8,
-    //      observerCount: 15,
-    //      paidSmsCount: 50,
-    //      priority: 2 } } ]
-
+      vm.subPlans = [ { plan: 
+     { id: 'plan2',
+       name: 'Fixed',
+       invoice_name: 'Fixed',
+       price: 50000,
+       period: 1,
+       period_unit: 'month',
+       charge_model: 'per_unit',
+       free_quantity: 0,
+       status: 'active',
+       enabled_in_hosted_pages: true,
+       enabled_in_portal: true,
+       object: 'plan',
+       taxable: true },
+    chargeEstimate: 
+     { created_at: 1458981857,
+       recurring: true,
+       subscription_id: '1sjs9fzPgTWHFbXk',
+       subscription_status: 'active',
+       term_ends_at: 1461660257,
+       collect_now: true,
+       price_type: 'tax_exclusive',
+       amount: 50000,
+       credits_applied: 0,
+       amount_due: 50000,
+       object: 'estimate',
+       sub_total: 50000,
+       line_items: [Object] },
+    additionalParams: 
+     { sessionCount: 3,
+       contactListCount: 1,
+       surveyCount: 1,
+       additionalContactListCount: 1,
+       contactListMemberCount: -1,
+       participantCount: 8,
+       observerCount: 15,
+       paidSmsCount: 50,
+       priority: 3 } },
+  { plan: 
+     { id: 'plan1',
+       name: 'Single',
+       invoice_name: 'Plan 1',
+       price: 15000,
+       period: 1,
+       period_unit: 'month',
+       trial_period: 30,
+       trial_period_unit: 'day',
+       charge_model: 'per_unit',
+       free_quantity: 0,
+       status: 'active',
+       enabled_in_hosted_pages: true,
+       enabled_in_portal: true,
+       object: 'plan',
+       taxable: true },
+    chargeEstimate: 
+     { created_at: 1458981857,
+       recurring: true,
+       subscription_id: '1sjs9fzPgTWHFbXk',
+       subscription_status: 'in_trial',
+       term_ends_at: 1461511675,
+       collect_now: false,
+       price_type: 'tax_exclusive',
+       amount: 15000,
+       credits_applied: 0,
+       amount_due: 15000,
+       object: 'estimate',
+       sub_total: 15000,
+       line_items: [Object] },
+    additionalParams: 
+     { sessionCount: 1,
+       contactListCount: 1,
+       surveyCount: 1,
+       additionalContactListCount: 0,
+       contactListMemberCount: -1,
+       participantCount: 8,
+       observerCount: 15,
+       paidSmsCount: 50,
+       priority: 2 } },
+  { plan: 
+     { id: 'plan3',
+       name: 'Unlimited',
+       invoice_name: 'Unlimited',
+       price: 90000,
+       period: 1,
+       period_unit: 'month',
+       charge_model: 'per_unit',
+       free_quantity: 0,
+       status: 'active',
+       enabled_in_hosted_pages: true,
+       enabled_in_portal: true,
+       object: 'plan',
+       taxable: true },
+    chargeEstimate: 
+     { created_at: 1458981857,
+       recurring: true,
+       subscription_id: '1sjs9fzPgTWHFbXk',
+       subscription_status: 'active',
+       term_ends_at: 1461660257,
+       collect_now: true,
+       price_type: 'tax_exclusive',
+       amount: 90000,
+       credits_applied: 0,
+       amount_due: 90000,
+       object: 'estimate',
+       sub_total: 90000,
+       line_items: [Object] },
+    additionalParams: 
+     { sessionCount: -1,
+       contactListCount: 1,
+       surveyCount: -1,
+       additionalContactListCount: -1,
+       contactListMemberCount: -1,
+       participantCount: 8,
+       observerCount: 15,
+       paidSmsCount: 600,
+       priority: 4 } } ]
+  
     }
 
     function selectPlan(plan) {
