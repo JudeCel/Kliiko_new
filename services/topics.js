@@ -31,24 +31,29 @@ function getAll(accountId) {
 
 function updateSessionTopics(sessionId, topicsArray) {
   let deferred = q.defer();
-
   let ids = _.map(topicsArray, 'id');
-  joinToSession(ids, sessionId).then(function(sessionTopics) {
+  joinToSession(ids, sessionId, topicsArray).then(function(sessionTopics) {
+  /*
     _.map(sessionTopics, function(sessionTopic) {
       _.map(topicsArray, function(topic) {
-        for (var i = 0, len = sessionTopic.length; i < len ; i++) {
-          if (topic.id == sessionTopic[i].TopicId) {
-            sessionTopic[i].order = topic.order;
-            sessionTopic[i].active = topic.active;
-            sessionTopic[i].update(sessionTopic[i]);
-            //todo save this to db
+        if(topic.id == sessionTopic.TopicId) {
 
+          if (topic.active) sessionTopic.active = topic.active;
+          else  sessionTopic.active = false;
+          if (topic.order)  sessionTopic.order = topic.order;
+          else sessionTopic.order = 0;
+          //any field update this way makes extra copy in database
+          try {
+            sessionTopic.update({}).then(function(res) {
+            }).catch(function(err){
+
+            });
+          } catch (err) {
           }
         }
-
       });
     });
-
+*/
     deferred.resolve(sessionTopics);
   }, function(err) {
     deferred.reject(err);
@@ -62,7 +67,7 @@ function joinToSession(ids, sessionId) {
   Session.find({where: { id: sessionId } }).then(function(session) {
     Topic.findAll({where: {id: ids}}).then(function(results) {
       session.addTopics(results).then(function(result) {
-        deferred.resolve(result);
+        deferred.resolve(result[0]);
       }, function(err) {
         deferred.reject(err);
       })
@@ -105,7 +110,7 @@ function removeAllFromSession(sessionId) {
     }]
   }).then(function(results) {
     let ids = _.map(results, 'id');
-    removeFromSession(ids, sessionId).then(function(result) {
+    models.SessionTopics.destroy({ where: { SessionId: sessionId, TopicId: { $in: ids }  } } ).then(function(result) {
       deferred.resolve(result);
     }, function(err) {
       deferred.reject(err);
@@ -165,7 +170,6 @@ function update(params) {
   let id = params.id;
 
   delete params.id;
-
   models.sequelize.transaction().then(function(t) {
     Topic.update(params, {
       where:{id: id}

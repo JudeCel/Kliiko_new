@@ -111,10 +111,13 @@
         promise.then(function(res) {
           for(var i in data) {
             var member = data[i];
-            removeFromList(member, true);
+             for(var j in res.data) {
+               if (member.email == res.data[j].email) {
+                  data[i] = angular.extend(member, res.data[j]);
+                  member.step4 = false;
+               }
+             }
           }
-
-          vm.participants = vm.participants.concat(res.data);
 
           messenger.ok(res.message);
         }, function(error) {
@@ -204,6 +207,7 @@
           removeMemberFromList(member);
           messenger.ok(res.message);
         }, function(error) {
+          removeMemberFromList(member);
           messenger.error(error);
         });
       }
