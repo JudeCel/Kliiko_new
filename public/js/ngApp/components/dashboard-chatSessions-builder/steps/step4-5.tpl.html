@@ -79,7 +79,7 @@
       <div class='btn-standart btn-green' ng-click='lastStepsController.sendGenericEmail()'>
         Send Generic Email
       </div>
-      <div class='btn-standart btn-green' ng-click='lastStepsController.modalWindowHandler("showSms", lastStepsController.findSelectedMembers())'>
+      <div ng-show = "lastStepsController.isParticipantPage()" class='btn-standart btn-green' ng-click='lastStepsController.modalWindowHandler("showSms", lastStepsController.findSelectedMembers())'>
         Send SMS
       </div>
     </div>
