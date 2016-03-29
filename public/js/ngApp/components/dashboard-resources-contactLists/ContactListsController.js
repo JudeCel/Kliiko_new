@@ -7,10 +7,9 @@
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
-    vm.lists = new ListsModel();
-
     vm.listIdToEdit = null;
-
+    vm.newList = {};
+    vm.lists = new ListsModel();
     vm.newList = {};
     vm.modalErrors = {};
     vm.allSelected = false;
@@ -19,15 +18,12 @@
     vm.importData = { excel:false, csv:false, fileToImport: null};
     vm.basePath = '/js/ngApp/components/dashboard-resources-contactLists/';
     vm.importErrorMessage = null;
-    vm.hideStuff = false;
-    vm.hideModalStuff = false;
 
     vm.importedFields = [];
     vm.contactListDropItems = [];
     vm.validContactList = [];
     vm.contactListToAdd = [];
 
-    vm.initLists = initLists;
     vm.changeActiveList = changeActiveList;
     vm.addNewList = addNewList;
     vm.submitNewList = submitNewList;
@@ -58,30 +54,6 @@
 
     vm.onFieldMapDrop = onFieldMapDrop;
     vm.mappingFieldsContinue = mappingFieldsContinue;
-
-    // required for correct list switching.
-    var isSelected = false;
-
-
-
-    function initLists(listType) {
-
-      if (listType) {
-        if (listType == 'facilitators') vm.sectListActiveToFacilitators();
-      }
-    }
-
-
-
-    vm.sectListActiveToFacilitators = function() {
-      if (isSelected) return;
-
-      isSelected = true;
-      // timeout is for correct list switching (think about it as of promise)
-      setTimeout(function() {   vm.changeActiveList(1)  }, 300);
-
-    };
-
 
 
     function changeActiveList(index) {
@@ -284,14 +256,12 @@
       }
 
       if (action == 'cancel') {
-        if(vm.lists) {
-          for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
-            if (vm.lists.activeList.members[i].id == vm.contactSnapshot.id) {
-              vm.lists.activeList.members[i] = angular.copy(vm.contactSnapshot);
-              vm.contactSnapshot = null;
-              break;
+        for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
+          if (vm.lists.activeList.members[i].id == vm.contactSnapshot.id) {
+            vm.lists.activeList.members[i] = angular.copy(vm.contactSnapshot);
+            vm.contactSnapshot = null;
+            break;
 
-            }
           }
         }
       }
@@ -321,33 +291,26 @@
       var currentList = vm.lists.activeList;
 
       var newContact = angular.copy(vm.newContact);
+      if(validatePhoneNumber() && validateLandlineNumber(newContact.landlineNumber)){
+        vm.lists.addNewContact(vm.newContact).then(
+          function(res) {
+            vm.newContact = {customFields:{}};
 
-      vm.lists.addNewContact(vm.newContact).then(
-        function(res) {
-          vm.newContact = {customFields:{}};
-
-          domServices.modal('contactList-addContactManual', 'close');
-          messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
-        },
-        function (err) {
-          vm.modalErrors = err;
-        }
-      );
-
+            domServices.modal('contactList-addContactManual', 'close');
+            messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
+          },
+          function (err) {
+            vm.modalErrors = err;
+          }
+        );
+      }
     }
 
     function updateContact() {
-      var newContact = angular.copy(vm.newContact);
 
-      if(vm.hideModalStuff) {
-        newContact.update(newContact.listId).then(function() {
-          domServices.modal('contactList-addContactManual', 'close');
-        }, function(error) {
-          vm.modalErrors = err;
-        });
-      }
-      else {
-        var currentList = angular.copy(vm.lists.activeList);
+      var newContact = angular.copy(vm.newContact);
+      var currentList = angular.copy(vm.lists.activeList);
+      if(validatePhoneNumber() && validateLandlineNumber(newContact.landlineNumber)){
         vm.lists.updateContact(vm.newContact).then(
           function(res) {
             vm.newContact = {customFields:{}};
@@ -361,6 +324,30 @@
         );
       }
 
+    }
+
+    function validatePhoneNumber() {
+      if(!validatePhone()){
+        messenger.error("The mobile number for this country is not valid.");
+        return false;
+      }
+      return true;
+    }
+
+    function validateLandlineNumber(landlineNumber) {
+      if(landlineNumber && !validLandlineNumber()){
+        messenger.error("The landline number for this country is not valid.");
+        return false;
+      }
+      return true;
+    }
+
+    function validatePhone() {
+      return $("#mobile").intlTelInput("isValidNumber");
+    }
+
+    function validLandlineNumber() {
+      return $("#landlineNumber").intlTelInput("isValidNumber");
     }
 
 
@@ -405,7 +392,7 @@
         ? vm.allSelected = false
         : vm.allSelected = !vm.allSelected;
 
-      if (!vm.lists.activeList || !vm.lists.activeList.members) return;
+      if (!vm.lists.activeList.members) return;
 
       for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
         vm.lists.activeList.members[i]._selected = vm.allSelected;
@@ -628,7 +615,6 @@
         }
       );
     }
-
 
   }
 })();

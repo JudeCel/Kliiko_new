@@ -1,6 +1,5 @@
 "use strict";
 
-var config = require('config');
 var helpers = require('./helpers');
 var users = exports;
 var mailTemplate = require('./mailTemplate');
@@ -14,7 +13,7 @@ users.sendReactivateOrDeactivate = function(params, callback){
   let templateType = !params.active ? 'deactivatedAccount' : 'reactivatedAccount';
   mailTemplateService.getActiveMailTemplate(templateType, null, function(error, result) {
     //if failed to find mail template from DB, use old version
-    let fields = { name: params.name, active: params.active,  firstName: params.firstName, lastName: params.lastName, logInUrl: "http://"+config.get("server").domain}
+    let fields = { name: params.name, active: params.active,  firstName: params.firstName, lastName: params.lastName, logInUrl: "http://"+process.env.SERVER_DOMAIN}
     if (error) {
       helpers.renderMailTemplate('reactivateOrDeactivate', fields, function(err, html){
         if(err) {
@@ -58,7 +57,7 @@ users.sendResetPasswordToken = function(params, callback) {
         transporter.sendMail({
           from: mailFrom,
           to: params.email,
-          subject: config.mail.fromName + ' - Reset password',
+          subject: process.env.MAIL_FROM_NAME + ' - Reset password',
           html: html
         }, callback);
       });
@@ -92,7 +91,7 @@ users.sendEmailConfirmationToken = function(params, callback) {
         transporter.sendMail({
           from: mailFrom,
           to: params.email,
-          subject: config.mail.fromName + ' - Confirmation Email',
+          subject: process.env.MAIL_FROM_NAME + ' - Confirmation Email',
           html: html
         }, callback);
       });
@@ -121,7 +120,7 @@ users.sendEmailConfirmationSuccess = function(params, callback) {
         transporter.sendMail({
           from: mailFrom,
           to: params.email,
-          subject: config.mail.fromName + ' - Email Confirmation Success',
+          subject: process.env.MAIL_FROM_NAME + ' - Email Confirmation Success',
           html: html
         }, callback);
       });
@@ -144,7 +143,7 @@ users.sendPasswordChangedSuccess = function(params, callback) {
         transporter.sendMail({
           from: mailFrom,
           to: params.email,
-          subject: config.mail.fromName + ' - Change password Success',
+          subject: process.env.MAIL_FROM_NAME + ' - Change password Success',
           html: html
         }, callback);
       });
@@ -175,7 +174,7 @@ users.sendResetPasswordSuccess = function(params, callback) {
         transporter.sendMail({
           from: mailFrom,
           to: params.email,
-          subject: config.mail.fromName + ' - Change password Success',
+          subject: process.env.MAIL_FROM_NAME + ' - Change password Success',
           html: html
         }, callback);
       });

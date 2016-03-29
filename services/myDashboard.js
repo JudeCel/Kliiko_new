@@ -111,8 +111,8 @@ function prepareSessions(sessions) {
 function prepareAccountUsers(accountUsers, protocol) {
   let object = {
     accountManager: { name: 'Account Manager', field: 'accountManager', data: [] },
-    observer: { name: 'Observer', field: 'observer', data: [] },
-    facilitator: { name: 'Facilitator', field: 'facilitator', data: [] }
+    facilitator: { name: 'Facilitator', field: 'facilitator', data: [] },
+    observer: { name: 'Observer', field: 'observer', data: [] }
   };
 
   _.map(accountUsers, function(accountUser) {

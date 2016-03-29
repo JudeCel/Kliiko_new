@@ -152,6 +152,7 @@
 
     function facilitatorsSelectHandle(facilitator) {
       vm.session.steps.step2.facilitator = facilitator;
+      vm.showContactsList = false;
       vm.session.addMembers(facilitator, 'facilitator').then(
         function (res) {  vm.session.update();  },
         function (err) { messenger.error(err);  }

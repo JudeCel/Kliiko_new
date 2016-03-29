@@ -127,7 +127,7 @@ function preValidate(user, currentDomainId, params, callback) {
       callback(null, true);
     }
     else {
-      callback({ email: 'This account has already accepted invite.' });
+      callback({ email: 'This user is already invited.' });
     }
   }).catch(function(error) {
     callback(filters.errors(error));

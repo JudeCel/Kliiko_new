@@ -1,4 +1,7 @@
 'use strict';
+require('dotenv-extended').load({
+  errorOnMissing: true
+});
 
 var models = require('../models');
 var Account = models.Account;

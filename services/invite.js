@@ -49,7 +49,7 @@ function createBulkInvites(arrayParams) {
     paramObject.sentAt = new Date();
     paramObject.expireAt = expireDate;
   });
-
+  console.log("____, ", arrayParams);
   Invite.bulkCreate(arrayParams, {
     validate: true,
     returning: true
@@ -65,6 +65,7 @@ function createBulkInvites(arrayParams) {
         }, Account, Session, User]
       }).then(function(invites) {
         async.each(invites, function(invite, callback) {
+          console.log("__send invite", invite);
           sendInvite(invite).then(function() {
             callback();
           }, function(error) {
@@ -90,6 +91,7 @@ function createBulkInvites(arrayParams) {
       deferred.reject({ email: 'User has already been invited' });
     }
     else {
+      console.log("_____error", error);
       deferred.reject(filters.errors(error));
     }
   });
@@ -331,7 +333,7 @@ function acceptInviteNew(token, params, callback) {
   });
 };
 function setAccountUserActive(accountUserId, callback) {
-  AccountUser.update({status: "active"}, { where:{ id: accountUserId } }).then(function(result) {
+  AccountUser.update({active: true, status: "active"}, { where:{ id: accountUserId } }).then(function(result) {
     callback(null, result);
   },function(err) {
     callback(filters.errors(error));
@@ -340,6 +342,7 @@ function setAccountUserActive(accountUserId, callback) {
 
 function updateUser(params, invite, callback) {
   setAccountUserActive(invite.accountUserId, function(res, _) {
+    params.confirmedAt = new Date();
     User.update(params, { where: { id: invite.userId } }).then(function(result) {
       callback(null, true);
     }).catch(function(error) {

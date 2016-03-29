@@ -1067,7 +1067,7 @@ footer {
   width: 15% !important; }
 
 .intl-tel-input {
-  width: 100%; }
+  width: 100% !important; }
 
 .dashboard-header .my-details-container {
   height: 20px;
@@ -2062,6 +2062,7 @@ hr.survey-hr {
   #email-template-editor .mail-template-list {
     max-height: 650px;
     overflow-y: scroll;
+    overflow-x: hidden;
     width: 100%;
     padding: 0; }
   #email-template-editor .mail-template-list-heading {
@@ -2938,6 +2939,7 @@ hr.survey-hr {
       #session-builder-content #step-3 #email-template-editor .mail-template-list {
         max-height: 650px;
         overflow-y: scroll;
+        overflow-x: hidden;
         width: 100%;
         padding: 0; }
       #session-builder-content #step-3 #email-template-editor .mail-template-list-heading {

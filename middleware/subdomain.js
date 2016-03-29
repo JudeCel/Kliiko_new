@@ -1,7 +1,6 @@
 "use strict";
 var models  = require('./../models');
 var Sequelize = models.sequelize;
-var config = require('config');
 var policy = require('./policy');
 var Account  = models.Account;
 var _ = require('lodash');
@@ -28,7 +27,7 @@ function getSubdomain(req) {
 }
 
 function comparedWithBaseDomainName(subdomain) {
-  return (config.get("server")["baseSubdomain"] !== subdomain );
+  return (process.env.SERVER_BASE_SUBDOMAIN !== subdomain );
 }
 
 function getAccauntWithRoles(user, subdomain, callback) {

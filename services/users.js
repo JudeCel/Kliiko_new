@@ -207,7 +207,7 @@ function setResetToken(email, callback) {
     include: {model: AccountUser, attributes: ['firstName']}
   }).done(function (foundUser) {
     if (!foundUser) {
-      callback(null, null);
+      callback(null, null, null);
       return;
     }
     User.update({
@@ -220,11 +220,11 @@ function setResetToken(email, callback) {
       if (result[0] > 0) {
         return callback(null, token, foundUser.AccountUsers[0].firstName);
       } else {
-        callback(null, null);
+        callback(null, null, null);
       }
     })
     .catch(function (err) {
-      callback(true, null);
+      callback(true, null, null);
     });
   });
 }

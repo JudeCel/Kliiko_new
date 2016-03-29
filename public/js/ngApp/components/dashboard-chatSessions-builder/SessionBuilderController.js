@@ -19,14 +19,15 @@
     vm.session.init().then(function(res) {
 
     //add session id for newly build one
-    if (!$stateParams.id) {
-      $state.go('dashboard.chatSessions.builder', {id: vm.session.id}, {
-        location: true, inherit: false, notify: false, reload:false
-      });
-    }
+      if (!$stateParams.id) {
+        $state.go('dashboard.chatSessions.builder', {id: vm.session.id}, {
+          location: true, inherit: false, notify: false, reload:false
+        });
+      }
 
-    vm.participants = vm.session.steps.step4.participants;
-    initStep(null, 'initial');
+      vm.participants = vm.session.steps.step4.participants;
+      vm.observers = [];
+      initStep(null, 'initial');
     });
 
     vm.currentStep = -1;
@@ -66,7 +67,7 @@
 
 
       function handlePreviousStep() {
-        vm.cantMoveNextStep = false;  step = vm.currentStep - 1;
+        vm.cantMoveNextStep = false;
         vm.session.goPreviouseStep().then(function(result) {
           initStep().then(function (res) {});
         }, function(error) {
@@ -77,8 +78,6 @@
       function handleNextStep() {
         var routerProgressbar = ngProgressFactory.createInstance();
         routerProgressbar.start();
-
-        step = vm.currentStep;
 
         vm.session.updateStep().then(
           function(res) {
@@ -112,7 +111,15 @@
 
 
     function initStep() {
+
+      console.log("____reinit", vm.currentStep);
       var deferred = $q.defer();
+
+      if (!$stateParams.id) {
+        $state.go('dashboard.chatSessions.builder', {id: vm.session.id}, {
+          location: true, inherit: false, notify: false, reload:false
+        });
+      }
 
       vm.lastStep = null;
       showExpiresWarning();
@@ -121,8 +128,6 @@
         $ocLazyLoad.load( builderServices.getDependencies().step2 ).then(function(res) {
           vm.currentStep = 2;
           deferred.resolve();
-          return deferred.promise;
-
         },
         function(err) {
           messenger.error(err);
@@ -245,6 +250,8 @@
         vm.observers = builderServices.removeDuplicatesFromArray(vm.observers);
         vm.searchingObservers = false;
       }
+
+      console.log("______activeList", vm.participants);
     }
   }
 

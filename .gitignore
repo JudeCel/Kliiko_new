@@ -9,5 +9,6 @@
 /build/*
 /npm-debug.log
 /.tmp/templates.js
+.env
 
 .vscode/settings.json
