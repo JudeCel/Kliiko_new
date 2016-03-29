@@ -5,7 +5,7 @@
 
   SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', '$state',  '$filter', 'domServices','$ocLazyLoad', 'ngProgressFactory', '$rootScope', '$scope'];
   function SessionStep2Controller(dbg, builderServices, messenger, $state, $filter, domServices, $ocLazyLoad, ngProgressFactory,  $rootScope, $scope) {
-    dbg.log2('#SessionBuilderController 1 started');
+    dbg.log2('#SessionBuilderController 2 started');
 
     var vm = this;
 
@@ -17,6 +17,7 @@
     vm.parentController;
 
     vm.watchers = [];
+    vm.selectedTopics = [];
 
     vm.topicsOnDropComplete = topicsOnDropComplete;
     vm.removeTopicFromList = removeTopicFromList;
@@ -25,12 +26,9 @@
     vm.selectAllTopics = selectAllTopics;
     vm.chatSessionTopicsList = [];
 
-
-    initController();
-
-    function initController() {
+    vm.initController = function() {
+      initStep();
       vm.session = builderServices.session; //parentController.session;
-      initStep(null, 'initial');
     }
 
 
@@ -128,52 +126,22 @@
           vm.selectedTopics[ allTopics[i].id ] = allTopics[i];
         }
       }
-
-
     }
 
 
-    function initStep(step) {
+    function initStep() {
       $ocLazyLoad.load( builderServices.getDependencies().step2 ).then(function(res) {
-          if (vm.session.steps.step2.topics.length) vm.chatSessionTopicsList = builderServices.parseTopics(vm.session.steps.step2.topics);
+          var runOnce = $scope.$watch('step2Controller.session.steps.step2.topics', function (newval, oldval) {
+            if (vm.session.steps.step2.topics.length) {
+              vm.chatSessionTopicsList = builderServices.parseTopics(vm.session.steps.step2.topics);
+            }
+            runOnce();
+          });
         },
         function(err) {
           messenger.error(err);
         });
     }
-
-
-    // function updateStep(dataObj) {
-    //   if (dataObj == 'startTime') {
-    //     parseDateAndTime();
-    //     updateStep({startTime: vm.session.steps.step1.startTime});
-    //     return;
-    //   }
-    //
-    //   if (dataObj == 'endTime') {
-    //     parseDateAndTime();
-    //     updateStep({endTime: vm.session.steps.step1.endTime});
-    //     return;
-    //   }
-    //
-    //     vm.session.updateStep(dataObj).then(
-    //     function (res) {
-    //     },
-    //     function (err) {
-    //       messenger.error(err);
-    //     }
-    //   );
-    //
-    // }
-
-
-
-
-    /// step 2
-
-
-
-
   }
 
 })();

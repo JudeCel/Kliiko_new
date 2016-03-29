@@ -1,4 +1,4 @@
-<section  ng-controller="SessionStep2Controller as step2Controller">
+<section  ng-controller="SessionStep2Controller as step2Controller" ng-init="step2Controller.initController()">
     <section class="global-wrapper" ng-controller='TopicsController as topics'>
         <section id="step-2" class="animated fadeIn" >
 
@@ -81,12 +81,6 @@
                                 <img class="ico-active-unactive" ng-show="t.active" src="/icons/unlocked.png" ng-click="t.active = !t.active; t.update()"  alt="Active" title="Active">
                                 <img class="ico-active-unactive" ng-show="!t.active" src="/icons/locked.png"  ng-click="t.active = !t.active; t.update()" alt="Not Active" title="Not Active">
 
-                                <!--<span ng-if&#45;&#45;="topics.editBlockHelper == $index">-->
-                                    <!--<input id="topic-input-ts-{{ $index }}" type="text" ng-model="t.name"-->
-                                           <!--maxlength="{{ ::topics.nameMaxSize}}"-->
-                                           <!--ng-blur="topics.saveInline($index, t.name)">-->
-                                    <!--<span class="inline-editor-help">Characters left: {{ topics.nameMaxSize - t.name.length }}</span>-->
-                                <!--</span>-->
                             </div>
 
                             <div class="control-block">
@@ -146,4 +140,3 @@
 
     </section>
 </section>
-

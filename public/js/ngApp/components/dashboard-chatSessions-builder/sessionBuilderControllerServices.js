@@ -154,10 +154,10 @@
     }
 
     function parseTopics(topicsArray) {
+      topicsArray.sort(function(a, b){return b.SessionTopics[0].order-a.SessionTopics[0].order});
       for (var i = 0, len = topicsArray.length; i < len ; i++) {
-        topicsArray[i].order = topicsArray[i].SessionTopics[0].order || i;
+        topicsArray[i].order = topicsArray[i].SessionTopics[0].order;
       }
-
       return topicsArray;
     }
 

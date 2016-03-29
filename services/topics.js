@@ -33,27 +33,19 @@ function updateSessionTopics(sessionId, topicsArray) {
   let deferred = q.defer();
   let ids = _.map(topicsArray, 'id');
   joinToSession(ids, sessionId, topicsArray).then(function(sessionTopics) {
-  /*
+
     _.map(sessionTopics, function(sessionTopic) {
       _.map(topicsArray, function(topic) {
         if(topic.id == sessionTopic.TopicId) {
-
-          if (topic.active) sessionTopic.active = topic.active;
-          else  sessionTopic.active = false;
-          if (topic.order)  sessionTopic.order = topic.order;
-          else sessionTopic.order = 0;
-          //any field update this way makes extra copy in database
-          try {
-            sessionTopic.update({}).then(function(res) {
-            }).catch(function(err){
-
-            });
-          } catch (err) {
+          let params = {
+            active: topic.active,
+            order: topic.order
           }
+          sessionTopic.update(params);
         }
       });
     });
-*/
+
     deferred.resolve(sessionTopics);
   }, function(err) {
     deferred.reject(err);
@@ -67,7 +59,9 @@ function joinToSession(ids, sessionId) {
   Session.find({where: { id: sessionId } }).then(function(session) {
     Topic.findAll({where: {id: ids}}).then(function(results) {
       session.addTopics(results).then(function(result) {
-        deferred.resolve(result[0]);
+        models.SessionTopics.findAll({ where: { SessionId: sessionId, TopicId: { $in: ids } } }).then(function (results) {
+          deferred.resolve(results);
+        });
       }, function(err) {
         deferred.reject(err);
       })
