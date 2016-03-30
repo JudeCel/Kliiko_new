@@ -20,7 +20,7 @@ module.exports = (Sequelize, DataTypes) => {
     indexes: [
       { name: "UniqInvite",
         unique: {args: true, message: "User has already been invited."},
-        fields: ['accountUserId', 'accountId', 'ownerId']
+        fields: ['accountUserId', 'accountId']
       }
     ],
     classMethods: {
