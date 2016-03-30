@@ -14,15 +14,15 @@ module.exports = (Sequelize, DataTypes) => {
     ownerType: { type: DataTypes.STRING, allowNull: false, defaultValue: 'account' },
     accountUserId: { type: DataTypes.INTEGER, allowNull: false },
     status: { type: DataTypes.ENUM, allowNull: false, values: constants.inviteStatuses, defaultValue: 'pending' },
-  //  accountId: { type: DataTypes.INTEGER, allowNull: false},
+    accountId: { type: DataTypes.INTEGER, allowNull: true},
     userType: { type: DataTypes.ENUM, allowNull: false, values: ['existing', 'new'], defaultValue: 'existing' },
   }, {
-    /*indexes: [
+    indexes: [
       { name: "UniqInvite",
         unique: {args: true, message: "User has already been invited."},
-        fields: ['accountUserId', 'accountId']
+        fields: ['accountUserId', 'accountId', 'ownerId']
       }
-    ],*/
+    ],
     classMethods: {
       associate: function(models) {
         Invite.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'cascade' });

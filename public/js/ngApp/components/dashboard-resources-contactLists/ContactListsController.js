@@ -369,11 +369,19 @@
     }
 
     function validatePhone() {
-      return $("#mobile").intlTelInput("isValidNumber");
+      if ($("#contactMobile").val().length) {
+        return $("#contactMobile").intlTelInput("isValidNumber");
+      }
+
+      return true;
     }
 
     function validLandlineNumber() {
-      return $("#landlineNumber").intlTelInput("isValidNumber");
+      if ($("#contactLandlineNumber").val().length) {
+        return $("#contactLandlineNumber").intlTelInput("isValidNumber");
+      }
+
+      return true;
     }
 
 

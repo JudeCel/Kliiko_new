@@ -49,7 +49,6 @@ function createBulkInvites(arrayParams) {
     paramObject.sentAt = new Date();
     paramObject.expireAt = expireDate;
   });
-  console.log("____, ", arrayParams);
   Invite.bulkCreate(arrayParams, {
     validate: true,
     returning: true
@@ -65,7 +64,6 @@ function createBulkInvites(arrayParams) {
         }, Account, Session, User]
       }).then(function(invites) {
         async.each(invites, function(invite, callback) {
-          console.log("__send invite", invite);
           sendInvite(invite).then(function() {
             callback();
           }, function(error) {
@@ -91,7 +89,6 @@ function createBulkInvites(arrayParams) {
       deferred.reject({ email: 'User has already been invited' });
     }
     else {
-      console.log("_____error", error);
       deferred.reject(filters.errors(error));
     }
   });
@@ -106,8 +103,8 @@ function createInvite(params) {
   let expireDate = new Date();
   expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
   accountOrSession(params);
-
   Invite.create({
+    accountId: params.accountId,
     accountUserId: params.accountUserId,
     userId: params.userId,
     ownerId: params.ownerId,
