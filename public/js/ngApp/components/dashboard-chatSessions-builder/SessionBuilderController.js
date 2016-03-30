@@ -9,7 +9,7 @@
 
     var vm = this;
     var intervals = {};
-    var sessionId = $stateParams.id || null;
+    var sessionId = $stateParams.id;
     vm.basePath = '/js/ngApp/components/dashboard-chatSessions-builder/';
     vm.$state = $state;
 
@@ -17,8 +17,6 @@
     builderServices.session = vm.session;
 
     vm.session.init().then(function(res) {
-
-    //add session id for newly build one
       if (!$stateParams.id) {
         $state.go('dashboard.chatSessions.builder', {id: vm.session.id}, {
           location: true, inherit: false, notify: false, reload:false
@@ -26,11 +24,15 @@
       }
 
       vm.participants = vm.session.steps.step4.participants;
-      vm.observers = [];
-      initStep(null, 'initial');
+      vm.observers = vm.session.steps.step5.observers;
+      vm.currentStep = -1;
+      initStep().then(function (step) {
+        vm.currentStep = step;
+      });
+    }, function (error) {
+      messenger.error(error);
     });
 
-    vm.currentStep = -1;
     vm.closeSession = closeSession;
     vm.openSession = openSession;
     vm.stepsClassIsActive = stepsClassIsActive;
@@ -39,7 +41,6 @@
     vm.goToChat = goToChat;
     vm.currentPageToDisplay = currentPageToDisplay;
     vm.addFacilitatorsClickHandle = addFacilitatorsClickHandle;
-    vm.facilitatorsSelectHandle = facilitatorsSelectHandle;
 
     vm.faderHack = faderHack;
 
@@ -47,11 +48,11 @@
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
     vm.selectObserversClickHandle = selectObserversClickHandle;
     function closeSession() {
-      vm.session.close();
+      vm.session.setOpen(false);
     }
 
     function openSession() {
-      vm.session.open();
+      vm.session.setOpen(true);
     }
 
     function goToStep(step) {
@@ -65,11 +66,12 @@
         }
       }
 
-
       function handlePreviousStep() {
         vm.cantMoveNextStep = false;
         vm.session.goPreviouseStep().then(function(result) {
-          initStep().then(function (res) {});
+          initStep().then(function (step) {
+            vm.currentStep = step;
+          });
         }, function(error) {
           messenger.error(err)
         }) ;
@@ -78,27 +80,16 @@
       function handleNextStep() {
         var routerProgressbar = ngProgressFactory.createInstance();
         routerProgressbar.start();
-
-        vm.session.updateStep().then(
-          function(res) {
-            vm.searchingParticipants = false;
-            vm.searchingObservers = false;
-
-            vm.session.goNextStep().then(
-              function (res) {
-                initStep().then(function(res) {});
-                routerProgressbar.complete();
-              },
-              function (err) {
-                routerProgressbar.complete();
-                messenger.error(err)
-              }
-            );
-
+        vm.session.goNextStep().then(
+          function (res) {
+            initStep().then(function(step) {
+              vm.currentStep = step;
+            });
+            routerProgressbar.complete();
           },
           function (err) {
             routerProgressbar.complete();
-            if (err) messenger.error(err);
+            messenger.error(err)
           }
         );
       }
@@ -111,8 +102,6 @@
 
 
     function initStep() {
-
-      console.log("____reinit", vm.currentStep);
       var deferred = $q.defer();
 
       if (!$stateParams.id) {
@@ -125,47 +114,19 @@
       showExpiresWarning();
 
       if (vm.session.sessionData.step == "facilitatiorAndTopics") {
-        $ocLazyLoad.load( builderServices.getDependencies().step2 ).then(function(res) {
-          vm.currentStep = 2;
-          deferred.resolve();
-        },
-        function(err) {
-          messenger.error(err);
-          deferred.reject(err);
-        });
+        deferred.resolve(2);
       }
       else if (vm.session.sessionData.step == "manageSessionEmails") {
-        $ocLazyLoad.load( builderServices.getDependencies().step3 ).then(function(res) {
-          vm.currentStep = 3;
-          deferred.resolve();
-        },
-          function(err) {
-            messenger.error(err);
-            deferred.reject(err);
-          });
+        deferred.resolve(3);
       }
       else if (vm.session.sessionData.step == "manageSessionParticipants") {
-        $ocLazyLoad.load( builderServices.getDependencies().step4 ).then(function(res) {
-          vm.currentStep = 4;
-          deferred.resolve();
-        },
-          function(err) {
-            messenger.error(err);
-            deferred.reject(err);
-          });
+        deferred.resolve(4);
       }
       else if (vm.session.sessionData.step == "inviteSessionObservers") {
-        $ocLazyLoad.load( builderServices.getDependencies().step5 ).then(function(res) {
-          vm.lastStep = true;
-          vm.currentStep = 5;
-          deferred.resolve();
-        },
-          function(err) {
-            messenger.error(err);
-            deferred.reject(err);
-          });
+        vm.lastStep = true;
+        deferred.resolve(5);
       } else {
-        vm.currentStep = 1;
+        deferred.resolve(1);
       }
 
       return deferred.promise;
@@ -183,45 +144,31 @@
 
 
     function updateStep(dataObj) {
-        vm.session.updateStep(dataObj).then(
-        function (res) {
-        },
-        function (err) {
-          messenger.error(err);
-        }
+        vm.session.updateStep(dataObj).then(null, function (err) {
+            messenger.error(err);
+          }
       );
     }
 
     function currentPageToDisplay() {
+      var path = "";
       if ( vm.showContactsList || vm.searchingParticipants || vm.searchingObservers ) {
         return vm.basePath+'steps/contactLists.html';
       }
 
-      if (vm.currentStep == 1) {
-        return vm.basePath+'steps/step1.tpl.html';
-      } else if (vm.currentStep == 2) {
-        return vm.basePath+'steps/step2.tpl.html';
+      if (vm.currentStep) {
+        if(vm.currentStep == 4 || vm.currentStep == 5) {
+          path = vm.basePath+'steps/step4-5.tpl.html';
+        } else if (vm.currentStep != -1){
+          path = vm.basePath+`steps/step${vm.currentStep}.tpl.html`;
+        }
       }
-      else if (vm.currentStep == 3) {
-        return vm.basePath+'steps/step3.tpl.html';
-      }
-      else if (vm.currentStep == 4 || vm.currentStep == 5) {
-        return vm.basePath+'steps/step4-5.tpl.html';
-      }
-      else
-        return "";
+
+      return path;
     }
 
     function addFacilitatorsClickHandle() {
       vm.showContactsList = true;
-    }
-
-    function facilitatorsSelectHandle(facilitator) {
-      vm.session.steps.step2.facilitator = facilitator;
-      vm.session.addMembers(facilitator, 'facilitator').then(
-        function (res) {  vm.session.update();  },
-        function (err) { messenger.error(err);  }
-      );
     }
 
     function faderHack() {
@@ -250,8 +197,6 @@
         vm.observers = builderServices.removeDuplicatesFromArray(vm.observers);
         vm.searchingObservers = false;
       }
-
-      console.log("______activeList", vm.participants);
     }
   }
 

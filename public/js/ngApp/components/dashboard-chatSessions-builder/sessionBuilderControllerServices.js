@@ -9,7 +9,6 @@
 
 
     Services.getTimeSettings = getTimeSettings;
-    Services.getDependencies = getDependencies;
     Services.reorderTopics = reorderTopics;
     Services.getExpireDays = getExpireDays;
     Services.findSelectedMembers = findSelectedMembers;
@@ -30,44 +29,6 @@
           hstep: [1, 2, 3],
           mstep: [1, 5, 10, 15, 25, 30]
         }
-      }
-    }
-
-    function getDependencies() {
-      return {
-        step2:  [
-            '/js/ngApp/components/dashboard-resources-topics/TopicsController.js',
-            '/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js'
-        ],
-        step3: [
-          '/js/ngApp/components/dashboard-resources-emailTemplates/EmailTemplateEditorController.js',
-          '/js/vendors/ng-file-upload/ng-file-upload.js'
-        ],
-        step4: [
-          '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
-          '/js/ngApp/modules/contactList/contactList.js',
-          '/js/ngApp/directives/custom-select-directive.js',
-          '/js/vendors/ng-file-upload/ng-file-upload.js',
-          '/js/ngApp/filters/num.js',
-          '/js/ngApp/filters/human2Camel.js'
-        ],
-        step5: [
-          '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
-          '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
-          '/js/ngApp/modules/contactList/contactList.js',
-          '/js/ngApp/directives/custom-select-directive.js',
-          '/js/vendors/ng-file-upload/ng-file-upload.js',
-          '/js/ngApp/filters/num.js',
-          '/js/ngApp/filters/human2Camel.js'
-        ]
-
       }
     }
 

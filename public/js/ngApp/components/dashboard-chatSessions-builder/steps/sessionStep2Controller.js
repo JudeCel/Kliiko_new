@@ -28,7 +28,7 @@
 
     vm.initController = function() {
       initStep();
-      vm.session = builderServices.session; //parentController.session;
+      vm.session = builderServices.session;
     }
 
 
@@ -130,17 +130,12 @@
 
 
     function initStep() {
-      $ocLazyLoad.load( builderServices.getDependencies().step2 ).then(function(res) {
-          var runOnce = $scope.$watch('step2Controller.session.steps.step2.topics', function (newval, oldval) {
-            if (vm.session.steps.step2.topics.length) {
-              vm.chatSessionTopicsList = builderServices.parseTopics(vm.session.steps.step2.topics);
-            }
-            runOnce();
-          });
-        },
-        function(err) {
-          messenger.error(err);
-        });
+      var runOnce = $scope.$watch('step2Controller.session.steps.step2.topics', function (newval, oldval) {
+        if (vm.session.steps.step2.topics.length) {
+          vm.chatSessionTopicsList = builderServices.parseTopics(vm.session.steps.step2.topics);
+        }
+        runOnce();
+      });
     }
   }
 

@@ -8,8 +8,8 @@
 
   SessionModel.$inject = ['$q', 'globalSettings', '$resource'];
   function SessionModel($q, globalSettings, $resource)  {
-    var apiPath = globalSettings.restUrl+'/sessionBuilder/:id/:path/:otherId';
-    var sessionBuilderRestApi = $resource(apiPath, { id : '@id', otherId: '@otherId' }, {
+    var apiPath = globalSettings.restUrl+'/sessionBuilder/:id/:path/:arg';
+    var sessionBuilderRestApi = $resource(apiPath, { id : '@id', arg: '@arg' }, {
       post: { method: 'POST' },
       put: { method: 'PUT' },
       sendSms: { method: 'POST', params: { path: 'sendSms' } },
@@ -43,10 +43,8 @@
     SessionModel.prototype.init = init;
     SessionModel.prototype.createNew = createNew;
     SessionModel.prototype.getRemoteData = getRemoteData;
-    SessionModel.prototype.close = close;
-    SessionModel.prototype.open = open;
-    SessionModel.prototype.update = update;
-
+    SessionModel.prototype.setOpen = setOpen;
+  //  SessionModel.prototype.update = update;
 
     SessionModel.prototype.goNextStep = goNextStep;
     SessionModel.prototype.goPreviouseStep = goPreviousStep;
@@ -55,7 +53,6 @@
     SessionModel.prototype.sendSms = sendSms;
     SessionModel.prototype.addMembers = addMembers;
     SessionModel.prototype.saveTopics = saveTopics;
-    //SessionModel.prototype.updateTopic = updateTopic;
     SessionModel.prototype.inviteParticipants = inviteParticipants;
     SessionModel.prototype.inviteObservers = inviteObservers;
     SessionModel.prototype.removeMember = removeMember;
@@ -93,9 +90,13 @@
       var self = this;
       var deferred = $q.defer();
 
-      (!self.id)
-        ? self.createNew().then(function(res) { self.getRemoteData().then(resolve); })
-        : self.getRemoteData().then(resolve);
+      if (!self.id) {
+          self.createNew().then( function(res) {
+            self.getRemoteData().then(resolve, reject);
+          }, reject);
+      } else {
+        self.getRemoteData().then(resolve, reject);
+      }
 
       return deferred.promise;
 
@@ -103,6 +104,9 @@
         deferred.resolve(res);
       }
 
+      function reject(err) {
+        deferred.reject(err);
+      }
 
     }
 
@@ -111,7 +115,9 @@
 
       var deferred = $q.defer();
       sessionBuilderRestApi.post({},{},function(res) {
-        if (res.error) { deferred.reject(res.error); return deferred.promise; }
+        if (res.error) {
+          deferred.reject(res.error);
+        }
         self = angular.merge(self, res.sessionBuilder);
         deferred.resolve(res);
       });
@@ -143,27 +149,12 @@
       return deferred.promise;
     }
 
-    function close() {
+    function setOpen(open) {
       var self = this;
       var deferred = $q.defer();
-      self.active = self.sessionData.active = false;
-      self.update({active:self.active}).then(
+      self.updateStep({active: open}).then(
         function (res) {
-          deferred.resolve(res);
-        },
-        function (err) {
-          deferred.reject(err);
-        }
-      );
-      return deferred.promise;
-    }
-
-    function open() {
-      var self = this;
-      var deferred = $q.defer();
-      self.active = self.sessionData.active = true;
-      self.update({active:self.active}).then(
-        function (res) {
+          self.active = self.sessionData.active = open;
           deferred.resolve(res)
         },
         function (err) {
@@ -171,25 +162,6 @@
         }
       );
       return deferred.promise;
-    }
-
-
-    function update(data) {
-      var deferred = $q.defer();
-      var self = this;
-
-      var step3 = null;
-
-      if (self.currentStep == 'manageSessionParticipants') step3 = true;
-
-      sessionBuilderRestApi.put({id:self.id},{sessionObj:self, step3:step3, data:data},function(res) {
-        if (res.error) { deferred.reject(res.error); return deferred.promise; }
-
-        deferred.resolve(res);
-      });
-
-      return deferred.promise;
-
     }
 
     function processStepResponse(res, deferred) {
@@ -207,7 +179,7 @@
       var deferred = $q.defer();
       var self = this;
 
-      sessionBuilderRestApi.nextStep({id: self.id, otherId: 'next'}, {}, function(res) {
+      sessionBuilderRestApi.nextStep({id: self.id, arg: 'next'}, {}, function(res) {
         self.processStepResponse(res, deferred);
       });
 
@@ -218,7 +190,7 @@
       var self = this;
       var deferred = $q.defer();
 
-      sessionBuilderRestApi.previousStep({id: self.id, otherId: 'previous'}, {}, function(res) {
+      sessionBuilderRestApi.previousStep({id: self.id, arg: 'previous'}, {}, function(res) {
         self.processStepResponse(res, deferred);
       });
 
@@ -231,9 +203,10 @@
 
       sessionBuilderRestApi.put({id:self.id}, stepDataObj,function(res) {
         if (res.error) {
-          return deferred.reject(res.error);
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
         }
-        deferred.resolve(res);
       });
 
       return deferred.promise;
@@ -337,7 +310,7 @@
       var deferred = $q.defer();
 
       if(member.invite) {
-        sessionBuilderRestApi.removeInvite({ id: self.id, otherId: member.invite.id }, function(res) {
+        sessionBuilderRestApi.removeInvite({ id: self.id, arg: member.invite.id }, function(res) {
           if(res.error) {
             deferred.reject(res.error);
           }
@@ -345,7 +318,7 @@
         });
       }
       else {
-        sessionBuilderRestApi.removeSessionMember({ id: self.id, otherId: member.id }, function(res) {
+        sessionBuilderRestApi.removeSessionMember({ id: self.id, arg: member.id }, function(res) {
           if(res.error) {
             deferred.reject(res.error);
           }

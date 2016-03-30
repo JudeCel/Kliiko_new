@@ -190,6 +190,7 @@
               '/js/ngApp/components/dashboard-chatSessions-builder/steps/sessionStep2Controller.js',
 
              '/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js',
+             '/js/ngApp/components/dashboard-resources-topics/TopicsController.js',
 
              '/js/vendors/ngDraggable/ngDraggable.js',
              '/js/vendors/ng-file-upload/ng-file-upload.js',
@@ -204,14 +205,14 @@
              '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
              '/js/ngApp/modules/contactList/contactList.js',
              '/js/ngApp/directives/custom-select-directive.js',
-             '/js/vendors/ng-file-upload/ng-file-upload.js',
              '/js/ngApp/filters/num.js',
              '/js/ngApp/filters/human2Camel.js',
 
 
               "/js/ngApp/components/dashboard-resources-gallery/GalleryController.js",
-              "/js/ngApp/components/dashboard-resources-gallery/GalleryService.js"
+              "/js/ngApp/components/dashboard-resources-gallery/GalleryService.js",
 
+              '/js/ngApp/components/dashboard-resources-emailTemplates/EmailTemplateEditorController.js',
             ]);
 
           }]

@@ -25,8 +25,8 @@ module.exports = (Sequelize, DataTypes) => {
     ],
     classMethods: {
       associate: function(models) {
-        Invite.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'cascade' });
-        Invite.belongsTo(models.Account, { foreignKey: 'ownerId', onDelete: 'cascade' });
+        Invite.belongsTo(models.User, { foreignKey: 'userId' });
+        Invite.belongsTo(models.Account, { foreignKey: 'ownerId' });
         Invite.belongsTo(models.Session, { foreignKey: 'ownerId', onDelete: 'cascade' });
         Invite.belongsTo(models.AccountUser, { foreignKey: 'accountUserId', onDelete: 'cascade' });
       }

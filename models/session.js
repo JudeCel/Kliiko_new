@@ -38,11 +38,11 @@ module.exports = (Sequelize, DataTypes) => {
         Session.belongsTo(models.BrandProject, {foreignKey: 'brand_project_id'});
         Session.belongsTo(models.Account, {foreignKey: 'accountId'});
         Session.belongsTo(models.BrandProjectPreference, {foreignKey: 'brandProjectPreferenceId'});
-        Session.belongsToMany(models.Topic, {through: {model: models.SessionTopics}});
+        Session.belongsToMany(models.Topic, {through: {model: models.SessionTopics}, onDelete: 'cascade'});
         Session.belongsTo(models.Resource, { foreignKey: 'resourceId' });
         Session.hasMany(models.SessionMember, {foreignKey: 'sessionId', onDelete: 'cascade'});
         Session.hasMany(models.MailTemplate, {foreignKey: 'sessionId', onDelete: 'cascade', hooks:true});
-        Session.hasMany(models.Invite, { foreignKey: 'ownerId', scope: { ownerType: 'session' } });
+        Session.hasMany(models.Invite, { foreignKey: 'ownerId', scope: { ownerType: 'session' }, onDelete: 'cascade' });
       }
     }
   }

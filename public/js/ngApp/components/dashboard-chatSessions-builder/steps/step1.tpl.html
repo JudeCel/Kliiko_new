@@ -12,7 +12,7 @@
                 </div>
             </uib-accordion-heading>
             <label for="sessionBuilder-session-name">Name your session &nbsp; </label>
-            <input id="sessionBuilder-session-name" type="text" ng-model="sbc.session.steps.step1.name" ng-blur="sbc.updateStep({name:sbc.session.steps.step1.name});">
+            <input id="sessionBuilder-session-name" type="text" ng-model="sbc.session.steps.step1.name" ng-blur="step1Controller.updateStep({name:sbc.session.steps.step1.name});">
         </uib-accordion-group>
 
         <!-- Date And Time -->
@@ -111,13 +111,6 @@
 
                                     <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index"> {{
                                         member[tableRow] || '-' }}
-                                    </td>
-
-                                    <td>
-                                            <span class='table-item-edit-group'>
-                                              <!--<img src='/icons/dashboardElement_edit.png' alt='' ng-click="clc.contactAddEditClickHandle('update', member)"/>-->
-                                                <!--<img src='/icons/dashboardElement_remove.png' alt='' ng-click="clc.removeContacts(member.id)" />-->
-                                            </span>
                                     </td>
                                 </tr>
 

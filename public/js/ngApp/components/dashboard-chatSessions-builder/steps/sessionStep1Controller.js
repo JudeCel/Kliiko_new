@@ -92,10 +92,7 @@
         return;
       }
 
-        vm.session.updateStep(dataObj).then(
-        function (res) {
-        },
-        function (err) {
+        vm.session.updateStep(dataObj).then(null, function (err) {
           messenger.error(err);
         }
       );
@@ -153,8 +150,9 @@
     function facilitatorsSelectHandle(facilitator) {
       vm.session.steps.step2.facilitator = facilitator;
       vm.showContactsList = false;
-      vm.session.addMembers(facilitator, 'facilitator').then(
-        function (res) {  vm.session.update();  },
+      vm.session.addMembers(facilitator, 'facilitator').then( function (res) {
+          messenger.ok("Facilitator was successfully set");
+        },
         function (err) { messenger.error(err);  }
       );
     }

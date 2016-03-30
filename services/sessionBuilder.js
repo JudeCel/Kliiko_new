@@ -606,7 +606,6 @@ function step4and5Queries(session, role) {
 
         cb(null, members.concat(accountUsers));
       }).catch(function(error) {
-        console.log("___", error);
         cb(filters.errors(error));
       });
     }

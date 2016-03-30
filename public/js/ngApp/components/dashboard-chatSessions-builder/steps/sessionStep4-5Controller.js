@@ -54,25 +54,13 @@
       }
 
       if (vm.session.sessionData.step == "manageSessionParticipants") {
-        $ocLazyLoad.load( builderServices.getDependencies().step4 ).then(function(res) {
-          vm.pageTitle = "Participants";
-          deferred.resolve();
-        },
-          function(err) {
-            messenger.error(err);
-            deferred.reject(err);
-          });
+        vm.pageTitle = "Participants";
+        deferred.resolve();
       }
       else if (vm.session.sessionData.step == 'inviteSessionObservers') {
-        $ocLazyLoad.load( builderServices.getDependencies().step5 ).then(function(res) {
-          vm.lastStep = true;
-          vm.pageTitle = "Observers";
-          deferred.resolve();
-        },
-          function(err) {
-            messenger.error(err);
-            deferred.reject(err);
-          });
+        vm.lastStep = true;
+        vm.pageTitle = "Observers";
+        deferred.resolve();
       }
 
       return deferred.promise;

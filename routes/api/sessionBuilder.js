@@ -41,7 +41,7 @@ function openBuild(req, res, next) {
 function update(req, res, next) {
   let sessionId = req.params.id;
   let sessionDataObj = req.body;
-
+  console.log("____________", sessionDataObj);
   sessionBuilderServices.update(sessionId, res.locals.currentDomain.id, sessionDataObj).then(function(result) {
     res.send(result);
   }, function(error) {

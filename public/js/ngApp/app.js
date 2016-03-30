@@ -141,32 +141,6 @@
         vm.user = res;
       });
       accountUser.getAccountUserData(true).then(function(res) { vm.accountUser = res });
-
-      //checkForInvite();
-      //method not needed because invites are handked through mail
-      function checkForInvite() {
-        var sessionServices;
-
-        var inviteToken = $cookies.get('inviteAccepted');
-        if (!inviteToken) return;
-        $cookies.remove('inviteAccepted');
-        $ocLazyLoad.load(['/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js']).then(function() {
-          sessionServices = $injector.get('topicsAndSessions');
-
-          sessionServices.getSessionByInvite(inviteToken).then(function(res) {
-            if (res.error) {
-              alert(res.error);
-            }
-          },
-          function (err) {
-            alert(err);
-          });
-
-        });
-
-
-      }
-
     }
 
 
