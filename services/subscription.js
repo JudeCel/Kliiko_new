@@ -45,7 +45,8 @@ module.exports = {
   updateSubscription: updateSubscription,
   cancelSubscription: cancelSubscription,
   recurringSubscription: recurringSubscription,
-  getAllPlans: getAllPlans
+  getAllPlans: getAllPlans,
+  retrievCheckoutAndUpdateSub: retrievCheckoutAndUpdateSub
 }
 
 function getAllPlans(accountId) {
@@ -222,6 +223,8 @@ function createPortalSession(accountId, callbackUrl, provider) {
 }
 
 function updateSubscription(accountId, newPlanId, provider) {
+
+
   let deferred = q.defer();
   findSubscription(accountId).then(function(subscription) {
     if(subscription) {
@@ -247,8 +250,10 @@ function updateSubscription(accountId, newPlanId, provider) {
       return accountHasValidCeditCard(result.subscription.subscriptionId).then(function(creditCardStatus){
 
         let params = {
+          id: result.subscription.id,
           subscriptionId: result.subscription.subscriptionId,
-          planId: result.newPlan.chargebeePlanId,
+          newPlanId: result.newPlan.chargebeePlanId,
+          newPlanSubscriptionId: result.newPlan.chargebeePlanId,
           provider: provider
         }
 
@@ -262,7 +267,8 @@ function updateSubscription(accountId, newPlanId, provider) {
 
                 return updatedSub.SubscriptionPreference.update({ data: params }, {transaction: t, returning: true}).then(function(preference) {
                   updatedSub.SubscriptionPlan = result.newPlan;
-                  return updatedSub;
+                  console.log(updatedSub)
+                  return {result: updatedSub, redirect: false}
                 }, function(error) {
                   throw error;
                 });
@@ -275,7 +281,7 @@ function updateSubscription(accountId, newPlanId, provider) {
           })
         }else{
           return chargebeeSubUpdateViaCheckout(params).then(function(result) {
-            return result
+            return {result: result, redirect: true}
           }, function(error) {
             deferred.reject(error);
           })
@@ -286,8 +292,8 @@ function updateSubscription(accountId, newPlanId, provider) {
     }, function(error) {
       deferred.reject(error);
     });
-  }).then(function(subscription) {
-    deferred.resolve(subscription);
+  }).then(function(result) {
+    deferred.resolve(result);
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -295,7 +301,47 @@ function updateSubscription(accountId, newPlanId, provider) {
   return deferred.promise;
 }
 
-function successCharge(argument) { // if success charge to user credit card was made, then update sub in our system
+function retrievCheckoutAndUpdateSub(hostedPageId) {
+  let deferred = q.defer();
+
+  chargebee.hosted_page.retrieve(hostedPageId).request(function(error,result){
+    if(error){
+      deferred.reject(error);
+    }else{
+      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%% result");
+      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+      console.log(result.hosted_page.content.subscription.id);
+      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+
+      return findSubscriptionByChargebeeId(result.hosted_page.content.subscription.id).then(function(subscription) {
+        return subscription.update({planId: result.hosted_page.content.plan_id, subscriptionPlanId: }, {transaction: t, returning: true}).then(function(updatedSub) {
+
+          let params = planConstants[updatedSub.SubscriptionPlan.chargebeePlanId];
+          params.paidSmsCount = params.paidSmsCount + result.newPlan.paidSmsCount;
+
+          return updatedSub.SubscriptionPreference.update({ data: params }, {transaction: t, returning: true}).then(function(preference) {
+            updatedSub.SubscriptionPlan = result.newPlan;
+            console.log("________________________________________________-")
+            console.log(updatedSub)
+            console.log("________________________________________________-")
+            return {result: updatedSub, redirect: false}
+          }, function(error) {
+            throw error;
+          });
+        }, function(error) {
+          throw error;
+        })
+      }, function(error) {
+        // body...
+      })
+    }
+  });
+
+  return deferred.promise;
+}
+
+function updateSubLocally() { // if success charge to user credit card was made, then update sub in our system
+  
 }
 
 function cancelSubscription(subscriptionId, eventId) {
@@ -354,6 +400,7 @@ function chargebeePortalCreate(params, provider) {
 
 function chargebeeSubUpdateViaCheckout(params, provider) {
   let deferred = q.defer();
+  let passThruContent = JSON.stringify(params)
 
   if(!provider) {
     provider = chargebee.hosted_page.checkout_existing;
@@ -362,18 +409,15 @@ function chargebeeSubUpdateViaCheckout(params, provider) {
   provider({
     subscription: {
       id: params.subscriptionId,
-      plan_id: params.plan_id
-    }
+      plan_id: params.newPlanId
+    }, 
+    redirect_url: "http://user.focus.com:8080/dashboard#/account-profile/upgrade-plan",
+    cancel_url: "http://user.focus.com:8080/dashboard#/account-profile/upgrade-plan",
+    pass_thru_content: passThruContent
   }).request(function(error,result){
     if(error){
-      console.log("#################################### error");
-      console.log(error)
-      console.log("#################################### error");
       deferred.reject(error);
     }else{
-      console.log("####################################");
-      console.log(result)
-      console.log("####################################");
       deferred.resolve(result.hosted_page);
     }
   });
@@ -381,10 +425,8 @@ function chargebeeSubUpdateViaCheckout(params, provider) {
   return deferred.promise;
 }
 
-// If we will decide to fill card details via customers portal,
-// then we will be able to charge immediately!!!
 function chargebeeSubUpdate(params) {
-  // this is already working as expected.
+  console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^6  chargebeeSubUpdate")
   let deferred = q.defer();
 
   if(!params.provider) {
@@ -393,15 +435,9 @@ function chargebeeSubUpdate(params) {
 
   provider(params.subscriptionId, params).request(function(error, result) {
     if(error) {
-      console.log("#################################### error");
-      console.log(error)
-      console.log("#################################### error");
       deferred.reject(error);
     }
     else {
-      console.log("####################################");
-      console.log(result)
-      console.log("####################################");
       deferred.resolve(result.subscription);
     }
   });

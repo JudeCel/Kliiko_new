@@ -4,10 +4,11 @@
   angular.module('KliikoApp').
     controller('PlanController', PlanController);
 
-  PlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams', 'planService', 'user', 'ngProgressFactory', '$scope', 'messenger',  '$rootScope'];
-  function PlanController(dbg, domServices, $state, $stateParams, planService, user, ngProgressFactory, $scope, messenger, $rootScope) {
+  PlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams', 'planService', 'user', 'ngProgressFactory', '$scope', 'messenger',  '$rootScope', '$location'];
+  function PlanController(dbg, domServices, $state, $stateParams, planService, user, ngProgressFactory, $scope, messenger, $rootScope, $location) {
     dbg.log2('#PlanController  started');
     var vm = this;
+    var urlParams = null;
 
     vm.planInModal = null;
     vm.selectedPlan = null;
@@ -86,6 +87,15 @@
     init();
 
     function init() {
+      // if(urlParams){
+      //   vm.currentStep = 3;
+        succeededCheckout($location.search());
+      // }else{
+        // getPlans();
+      // }
+    }
+
+    function getPlans() {
       planService.getAllPlans().then(function(result) {
         if(result.error){
           messenger.error(result.error);
@@ -104,23 +114,35 @@
       })
     }
 
-    function selectPlan(plan) {
-      vm.selectedPlan = plan;
-      nextStep();
+    function succeededCheckout(params) {
+      console.log(params.id);
+      planService.retrievCheckoutAndUpdateSub(params.id).then(function(result) {
+        console.log(result);
+      })
     }
 
     function submitOrder(tosConfirmed) {
       if(!tosConfirmed){
         domServices.shakeClass('shake-this');
       }else{
-        planService.updatePlan(vm.selectedPlan.plan.id).then(function(result) {
-          if(result.error){
-            messenger.error(result.error);
+        planService.updatePlan(vm.selectedPlan.plan.id).then(function(response) {
+          if(response.error){
+            messenger.error(response.error);
           }else {
-            dbg.yell(result);
+            if(response.redirect){
+              window.location = response.result.url;
+            }else{
+              console.log(response);
+              nextStep();
+            }
           }
         })
       }
+    }
+  
+    function selectPlan(plan) {
+      vm.selectedPlan = plan;
+      nextStep();
     }
 
     function nextStep(){
