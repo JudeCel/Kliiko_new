@@ -26,13 +26,17 @@
   <section class="container plans-table">
       <div class="row">
         <div ng-repeat="subscriptionPlan in up.subPlans">
-          <div class="col-sm-4 col-xs-12 plan-block" ng-if="subscriptionPlan.plan.name != 'Free'">
+          <div class="col-sm-4 col-xs-12 plan-block" ng-if="up.showPlanInList(subscriptionPlan.plan.id)">
             <div class="included-plan-fader" ng-show="up.isCurrentPlan(subscriptionPlan.plan.id)"><div class="label">CURRENT</div></div>
             <div class="list-group">
               <h4 ng-class="up.planColors[subscriptionPlan.plan.name].header">{{subscriptionPlan.plan.name}}</h4>
               <div ng-class="up.planColors[subscriptionPlan.plan.name].body">
                 <h5 class="outline"><sup>$US</sup>{{subscriptionPlan.plan.price | price:'':0 }}</h5>
-                <p>12 Months to use</p>
+                <p>
+                  {{ subscriptionPlan.plan.period }}
+                  {{ subscriptionPlan.plan.period_unit }}
+                  to use
+                </p>
               </div>
 
               <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
@@ -73,27 +77,9 @@
                 <b>Unlimited</b>
                 Contact List members allowed
                </p>
-               <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
-               </p>
-               <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
-                 <b>object: </b>
-                 {{subscriptionPlan.chargeEstimate.object}}
-               </p>
-               <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
-                 <b>amount: </b>
-                 {{subscriptionPlan.chargeEstimate.amount | price:'':0}}
-               </p>
-               <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
-                 <b>ammount due: </b>
-                 {{subscriptionPlan.chargeEstimate.amount_due | price:'':0}}
-               </p>
-               <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
-                 <b>sub total: </b>
-                 {{subscriptionPlan.chargeEstimate.sub_total | price:'':0}}
-               </p>
               <div class="list-group-item-text buttons-area">
                 <div class="btn-dashboard-plans pull-right learn" ng-click="up.openPlanDetailsModal(subscriptionPlan.plan)">
-                  Learn More 
+                  Learn More
                 </div>
                 <div class="btn-dashboard-plans pull-right want btn-brown" ng-click="up.selectPlan(subscriptionPlan)">
                   I Want This Plan
@@ -103,9 +89,8 @@
             </div>
           </div>
         </div>
-      </div><!--/row-->
-  </section><!--/pricing tables .container.plans-table -->
-
+      </div>
+  </section>
   <div id="disclaimer">
     <p>
       <b>Please Note:</b> Depending on the nature of your project, you may also need to provide appropriate Incentive-Gifts to your group-Session Participants

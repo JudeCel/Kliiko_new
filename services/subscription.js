@@ -182,7 +182,7 @@ function createSubscription(accountId, userId, provider) {
       if(plan){
         return models.sequelize.transaction(function (t) {
           return Subscription.create(subscriptionParams(accountId, chargebeeSub, plan.id), {transaction: t}).then(function(subscription) {
-            return SubscriptionPreference.create({subscriptionId: subscription.id}, {transaction: t}).then(function() {
+            return SubscriptionPreference.create({subscriptionId: subscription.id, data: planConstants[plan.chargebeePlanId]}, {transaction: t}).then(function() {
               return subscription;
             }, function(error) {
               throw error;
@@ -245,9 +245,9 @@ function updateSubscription(accountId, newPlanId, provider) {
   }).then(function(result) {
     return canSwitchPlan(accountId, result.currentPlan, result.newPlan).then(function() {
       return accountHasValidCeditCard(result.subscription.subscriptionId).then(function(creditCardStatus){
-        
+
         let params = {
-          subscriptionId: result.subscription.subscriptionId, 
+          subscriptionId: result.subscription.subscriptionId,
           planId: result.newPlan.chargebeePlanId,
           provider: provider
         }
@@ -361,7 +361,7 @@ function chargebeeSubUpdateViaCheckout(params, provider) {
 
   provider({
     subscription: {
-      id: params.subscriptionId, 
+      id: params.subscriptionId,
       plan_id: params.plan_id
     }
   }).request(function(error,result){
@@ -416,9 +416,11 @@ function accountHasValidCeditCard(subscriptionId) {
     if(error){
       deferred.reject(error);
     }else{
-      deferred.resolve(result.card_status)
+      deferred.resolve(result.customer.card_status)
     }
   });
+
+  return deferred.promise;
 }
 
 function chargebeeSubCreate(params, provider) {
@@ -459,7 +461,7 @@ function chargebeePortalParams(subscription, callbackUrl) {
 
 function chargebeeSubParams(accountUser) {
   return {
-    plan_id: 'Free',
+    plan_id: 'free',
     customer: {
       email: accountUser.email,
       first_name: accountUser.firstName,

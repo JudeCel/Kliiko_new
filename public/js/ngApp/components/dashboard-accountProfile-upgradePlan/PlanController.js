@@ -12,24 +12,9 @@
     vm.planInModal = null;
     vm.selectedPlan = null;
     vm.currentStep = 1;
-
-    // vm.currentPlan = null;
-    vm.currentPlan = {
-      additionalContactListCount: -1,
-      chargebeePlanId: "plan5",
-      contactListCount: 1,
-      contactListMemberCount: -1,
-      createdAt: "2016-03-22T08:13:27.509Z",
-      deletedAt: null,
-      id: 4,
-      observerCount: 15,
-      paidSmsCount: 600,
-      participantCount: 8,
-      priority: 4,
-      sessionCount: -1,
-      surveyCount: -1,
-      updatedAt: "2016-03-22T08:13:27.509Z"
-    }
+    vm.currentPlan = null;
+    vm.fixedYearly = null;
+    vm.fixedMonthly = null;
 
     vm.stepLayouts = [
       {
@@ -84,8 +69,6 @@
 
     var modalTplPath = 'js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/';
 
-    vm.canSeeBackButton = canSeeBackButton;
-    vm.canSeeOrderButton = canSeeOrderButton;
     vm.subPlans = vm.testData;
     vm.isCurrentStep = isCurrentStep;
     vm.openPlanDetailsModal = openPlanDetailsModal;
@@ -97,137 +80,28 @@
     vm.selectPlan = selectPlan;
     vm.submitOrder = submitOrder;
     vm.isCurrentPlan = isCurrentPlan;
+    vm.showPlanInList = showPlanInList;
+    vm.switchPlan = switchPlan;
 
     init();
 
     function init() {
-      // planService.getAllPlans().then(function(result) {
-      //   if(result.error){
-      //     messenger.error(result.error);
-      //   }else {
-      //     console.log(result);
-      //     vm.subPlans = result.plans;
-      //     vm.currentPlan = result.currentPlan;
-      //   }
-      // })
-
-      vm.subPlans = [ { plan: 
-     { id: 'plan2',
-       name: 'Fixed',
-       invoice_name: 'Fixed',
-       price: 50000,
-       period: 1,
-       period_unit: 'month',
-       charge_model: 'per_unit',
-       free_quantity: 0,
-       status: 'active',
-       enabled_in_hosted_pages: true,
-       enabled_in_portal: true,
-       object: 'plan',
-       taxable: true },
-    chargeEstimate: 
-     { created_at: 1458981857,
-       recurring: true,
-       subscription_id: '1sjs9fzPgTWHFbXk',
-       subscription_status: 'active',
-       term_ends_at: 1461660257,
-       collect_now: true,
-       price_type: 'tax_exclusive',
-       amount: 50000,
-       credits_applied: 0,
-       amount_due: 50000,
-       object: 'estimate',
-       sub_total: 50000,
-       line_items: [Object] },
-    additionalParams: 
-     { sessionCount: 3,
-       contactListCount: 1,
-       surveyCount: 1,
-       additionalContactListCount: 1,
-       contactListMemberCount: -1,
-       participantCount: 8,
-       observerCount: 15,
-       paidSmsCount: 50,
-       priority: 3 } },
-  { plan: 
-     { id: 'plan1',
-       name: 'Single',
-       invoice_name: 'Plan 1',
-       price: 15000,
-       period: 1,
-       period_unit: 'month',
-       trial_period: 30,
-       trial_period_unit: 'day',
-       charge_model: 'per_unit',
-       free_quantity: 0,
-       status: 'active',
-       enabled_in_hosted_pages: true,
-       enabled_in_portal: true,
-       object: 'plan',
-       taxable: true },
-    chargeEstimate: 
-     { created_at: 1458981857,
-       recurring: true,
-       subscription_id: '1sjs9fzPgTWHFbXk',
-       subscription_status: 'in_trial',
-       term_ends_at: 1461511675,
-       collect_now: false,
-       price_type: 'tax_exclusive',
-       amount: 15000,
-       credits_applied: 0,
-       amount_due: 15000,
-       object: 'estimate',
-       sub_total: 15000,
-       line_items: [Object] },
-    additionalParams: 
-     { sessionCount: 1,
-       contactListCount: 1,
-       surveyCount: 1,
-       additionalContactListCount: 0,
-       contactListMemberCount: -1,
-       participantCount: 8,
-       observerCount: 15,
-       paidSmsCount: 50,
-       priority: 2 } },
-  { plan: 
-     { id: 'plan3',
-       name: 'Unlimited',
-       invoice_name: 'Unlimited',
-       price: 90000,
-       period: 1,
-       period_unit: 'month',
-       charge_model: 'per_unit',
-       free_quantity: 0,
-       status: 'active',
-       enabled_in_hosted_pages: true,
-       enabled_in_portal: true,
-       object: 'plan',
-       taxable: true },
-    chargeEstimate: 
-     { created_at: 1458981857,
-       recurring: true,
-       subscription_id: '1sjs9fzPgTWHFbXk',
-       subscription_status: 'active',
-       term_ends_at: 1461660257,
-       collect_now: true,
-       price_type: 'tax_exclusive',
-       amount: 90000,
-       credits_applied: 0,
-       amount_due: 90000,
-       object: 'estimate',
-       sub_total: 90000,
-       line_items: [Object] },
-    additionalParams: 
-     { sessionCount: -1,
-       contactListCount: 1,
-       surveyCount: -1,
-       additionalContactListCount: -1,
-       contactListMemberCount: -1,
-       participantCount: 8,
-       observerCount: 15,
-       paidSmsCount: 600,
-       priority: 4 } } ]
-  
+      planService.getAllPlans().then(function(result) {
+        if(result.error){
+          messenger.error(result.error);
+        }else {
+          vm.subPlans = result.plans;
+          vm.currentPlan = result.currentPlan;
+          angular.forEach(result.plans, function(result) {
+            if(result.plan.id == "fixed_yearly"){
+              vm.fixedYearly = result;
+            }
+            if(result.plan.id == "fixed_monthly"){
+              vm.fixedMonthly = result;
+            }
+          });
+        }
+      })
     }
 
     function selectPlan(plan) {
@@ -295,12 +169,18 @@
       domServices.modal('plansModal');
     }
 
-    function canSeeBackButton() {
-      return vm.currentStep < 1 || vm.currentStep > 3;
+    function showPlanInList(planId){
+      if(planId == "free"){
+        return false;
+      }else if(planId == "fixed_yearly"){
+        return false;
+      }else{
+        return true
+      }
     }
 
-    function canSeeOrderButton() {
-      return vm.currentStep < 1 || vm.currentStep > 3;
+    function switchPlan(switchPlan) {
+      return vm.selectedPlan = switchPlan;
     }
 
   }

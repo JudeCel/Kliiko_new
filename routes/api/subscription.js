@@ -25,7 +25,6 @@ function updatePlan(req, res, next) {
   subscription.updateSubscription(accountId, newPlanId).then(function(result) {
     res.send({subPlans: result});
   }, function(err) {
-    console.log(err);
     res.send({ error: err });
   });
 }

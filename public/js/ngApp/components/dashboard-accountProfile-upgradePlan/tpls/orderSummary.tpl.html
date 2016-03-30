@@ -8,22 +8,85 @@
       <div class="col-sm-4 col-md-4">Duration</div>
       <div class="col-sm-4 col-md-4">Total</div>
     </div>
+
     <div class="row">
       <div class="col-sm-3 col-md-3">
         {{up.selectedPlan.plan.name}}
       </div>
       <div class="col-sm-4 col-md-4">
-        {{ up.selectedPlan.plan.period }} 
+        {{ up.selectedPlan.plan.period }}
         {{ up.selectedPlan.plan.period_unit }}
       </div>
       <div class="col-sm-4 col-md-4">
         {{ up.selectedPlan.chargeEstimate.amount_due / 100 | currency:"USD$":0 }}
       </div>
     </div>
+
     <hr>
     <div class="row">
       <div class="col-sm-5 col-md-5 total">Order Total</div>
       <div class="col-sm-3 col-md-3">{{ up.selectedPlan.chargeEstimate.sub_total / 100 | currency:"USD$":0 }}</div>
     </div>
   </div>
+
+  <div ng-if="up.selectedPlan.plan.id == 'fixed_monthly'">
+    <div class="col-md-12 caption">
+      You want this plan?
+    </div>
+    <div class="table-content">
+      <div class="row table-header" >
+        <div class="col-sm-3 col-md-3">Plan</div>
+        <div class="col-sm-4 col-md-4">Duration</div>
+        <div class="col-sm-4 col-md-4">Total</div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-3 col-md-3">
+          {{up.fixedYearly.plan.name}}
+        </div>
+        <div class="col-sm-4 col-md-4">
+          {{ up.fixedYearly.plan.period }}
+          {{ up.fixedYearly.plan.period_unit }}
+        </div>
+        <div class="col-sm-4 col-md-4">
+          {{ up.fixedYearly.chargeEstimate.amount_due / 100 | currency:"USD$":0 }}
+        </div>
+      </div>
+
+      <hr>
+      <div class="row">
+        <div class="btn btn-sm pull-right btn-standart btn-green" ng-click="up.switchPlan(up.fixedYearly)">I want this plan</div>
+      </div>
+    </div>
+  </div>
+
+  <div ng-if="up.selectedPlan.plan.id == 'fixed_yearly'">
+    <div class="col-md-12 caption">
+      You want this plan?
+    </div>
+    <div class="table-content">
+      <div class="row table-header" >
+        <div class="col-sm-3 col-md-3">Plan</div>
+        <div class="col-sm-4 col-md-4">Duration</div>
+        <div class="col-sm-4 col-md-4">Total</div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-3 col-md-3">
+          {{up.fixedMonthly.plan.name}}
+        </div>
+        <div class="col-sm-4 col-md-4">
+          {{ up.fixedMonthly.plan.period }}
+          {{ up.fixedMonthly.plan.period_unit }}
+        </div>
+        <div class="col-sm-4 col-md-4">
+          {{ up.fixedMonthly.chargeEstimate.amount_due / 100 | currency:"USD$":0 }}
+        </div>
+      </div>
+
+      <hr>
+      <div class="row">
+        <div class="btn btn-sm pull-right btn-standart btn-green" ng-click="up.switchPlan(up.fixedMonthly)">I want this plan</div>
+      </div>
+    </div>
 </div>
