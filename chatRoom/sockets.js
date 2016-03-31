@@ -2,10 +2,10 @@
 var mtypes = require('./helpers/mtypes');
 var socketio = require('socket.io');
 var express = require('express');
-var config = require('config'); // need replace with orginal config
 var conflict = 'drop current';
 var expressValidatorStub = require('./helpers/expressValidatorStub.js');
 var currentUser = require('../middleware/currentUser');
+var chatConfHelper = require('./confHelper.js');
 
 var io;
 var _ = require('lodash');
@@ -49,7 +49,11 @@ module.exports.listen = function (server) {
       });
 
       var resCb = function (result) {
-        io.connected[socket.id].emit('config_info', config.get('chatConf'), result.dataValues);
+        io.connected[socket.id].emit(
+          'config_info',
+          chatConfHelper,
+          result.dataValues
+        );
       };
 
       var nextCb = function (err) {

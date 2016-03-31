@@ -11,13 +11,12 @@ var SubscriptionPreference = models.SubscriptionPreference;
 var q = require('q');
 var _ = require('lodash');
 var async = require('async');
-var config = require('config');
 var chargebee = require('chargebee');
 var planConstants = require('./../util/planConstants');
-var chargebeeConfigs = config.get('chargebee');
+
 chargebee.configure({
-  site: chargebeeConfigs.site,
-  api_key: chargebeeConfigs.api_key
+  site: process.env.CHARGEBEE_SITE,
+  api_key: process.env.CHARGEBEE_API_KEY
 });
 
 const MESSAGES = {

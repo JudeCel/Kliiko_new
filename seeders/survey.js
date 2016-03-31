@@ -1,4 +1,7 @@
 'use strict';
+require('dotenv-extended').load({
+  errorOnMissing: true
+});
 
 var survey = require('./../test/fixtures/survey');
 survey.createSurvey().then(function(result){

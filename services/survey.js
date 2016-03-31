@@ -14,7 +14,6 @@ var contactListUserServices = require('./../services/contactListUser');
 var async = require('async');
 var q = require('q');
 var _ = require('lodash');
-var config = require('config');
 var surveyConstants = require('../util/surveyConstants');
 
 const MESSAGES = {
@@ -753,7 +752,7 @@ function getIds(questions) {
 };
 
 function validUrl(survey) {
-  return 'http://' + config.get('server')['domain'] + ':' + config.get('server')['port'] + '/survey/' + survey.id;
+  return 'http://' + process.env.SERVER_DOMAIN + ':' + process.env.SERVER_PORT + '/survey/' + survey.id;
 };
 
 function validateParams(params, attributes) {
