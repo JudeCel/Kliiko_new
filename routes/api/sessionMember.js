@@ -9,6 +9,16 @@ module.exports = {
 function addMembers(req, res, next) {
   var params = req.body;
 
+  let members = [];
+  for (var i = 0, len = params.members.length; i < len ; i++) {
+    members[i] = {
+      accountUserId: params.members[i].accountUserId,
+      username: params.members[i].firstName + ' '+ params.members[i].lastName,
+    };
+  }
+
+  params.members = members;
+
   if (params.role == 'facilitator') {
 
     sessionMemberService.removeByRole(params.role, params.sessionId, res.locals.currentDomain.id).then(

@@ -236,15 +236,8 @@
       var params = {
         sessionId: self.id,
         role: role,
-        members: []
+        members: members
       };
-
-      for (var i = 0, len = members.length; i < len ; i++) {
-        params.members[i] = {
-          accountUserId: members[i].accountUserId,
-          username: members[i].firstName + ' '+ members[i].lastName,
-        };
-      }
 
       sessionMemberApi.post({},params,function(res) {
         if (res.error) { deferred.reject(err);  return deferred.promise;}
