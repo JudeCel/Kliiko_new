@@ -635,7 +635,6 @@ function validate(session, params) {
 
 function findValidation(step, params) {
   let deferred = q.defer();
-  console.log("''''''''''''______findValidation_________1", step);
   if(step == 'setUp') {
     let error = validateStepOne(params).then(function() {
       deferred.resolve();
