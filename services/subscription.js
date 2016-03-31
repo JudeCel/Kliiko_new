@@ -146,7 +146,7 @@ function chargebeePortalParams(subscription, callbackUrl) {
 
 function chargebeeSubParams(accountUser) {
   return {
-    plan_id: 'Free',
+    plan_id: 'free',
     customer: {
       email: accountUser.email,
       first_name: accountUser.firstName,

@@ -54,11 +54,11 @@
         vm.participants = vm.session.steps.step5.observers;
       }
 
-      if (vm.session.sessionData.step == "manageSessionParticipants") {
+      if (vm.isParticipantPage()) {
         vm.pageTitle = "Participants";
         deferred.resolve();
       }
-      else if (vm.session.sessionData.step == 'inviteSessionObservers') {
+      else {
         vm.lastStep = true;
         vm.pageTitle = "Observers";
         deferred.resolve();
@@ -87,14 +87,11 @@
 
       if(data.length > 0) {
         var promise;
-        if (vm.session.sessionData.step == "manageSessionParticipants") {
+        if (vm.isParticipantPage()) {
           promise = vm.session.inviteParticipants(data);
         }
-        else if (vm.session.sessionData.step == 'inviteSessionObservers') {
-          promise = vm.session.inviteObservers(data);
-        }
         else {
-          messenger.error("Not valid session step");
+          promise = vm.session.inviteObservers(data);
         }
 
         promise.then(function(res) {
