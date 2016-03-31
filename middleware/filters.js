@@ -53,6 +53,7 @@ function myDashboardPage(req, res, next) {
     },
     include: [models.Account]
   }).then(function(accountUsers) {
+
     if(accountUsers.length == 1) {
       res.redirect(subdomains.url(req, accountUsers[0].Account.name, '/dashboard'));
     }

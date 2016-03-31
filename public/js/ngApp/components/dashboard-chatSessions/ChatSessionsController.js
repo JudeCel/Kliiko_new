@@ -2,12 +2,16 @@
   'use strict';
 
   angular.module('KliikoApp').controller('ChatSessionsController', ChatSessionsController);
-  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'messenger', 'angularConfirm', '$window', '$rootScope'];
 
-  function ChatSessionsController(dbg, chatSessionsServices, messenger, angularConfirm, $window, $rootScope) {
+  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'messenger', 'angularConfirm', '$window', '$rootScope'];
+  function ChatSessionsController(dbg, chatSessionsServices, messenger, angularConfirm, $window, $rootScope){
     dbg.log2('#ChatSessionsController started');
 
     var vm = this;
+
+    vm.basePath = '/js/ngApp/components/dashboard-chatSessions/';
+
+////////
     vm.removeSession = removeSession;
     vm.copySession = copySession;
     vm.rateSessionMember = rateSessionMember;
@@ -31,7 +35,7 @@
         vm.sessionListManageRoles = res.sessionListManageRoles;
         dbg.log2('#ChatSessionsController > getChatSessions > res ', res.data);
       });
-    };
+    }
 
     function removeSession(session) {
       angularConfirm('Are you sure you want to remove Session?').then(function(response) {
@@ -43,11 +47,10 @@
             messenger.ok(res.message);
             var index = vm.sessions.indexOf(session);
             vm.sessions.splice(index, 1);
-            $rootScope.$emit('app.updateUser');
           }
         });
       });
-    };
+    }
 
     function copySession(session) {
       chatSessionsServices.copySession({ id: session.id }).then(function(res) {
@@ -55,7 +58,6 @@
           messenger.error(chatSessionsServices.prepareError(res.error));
         }
         else {
-          $rootScope.$emit('app.updateUser');
           messenger.ok(res.message);
           vm.sessions.push(res.data);
         }
@@ -81,13 +83,13 @@
 
     function rowClass(session, user) {
       return 'session-' + session.showStatus.toLowerCase();
-    };
+    }
 
     function goToChat(session) {
       if(!isExpired(session)) {
         $window.location.href = vm.chatRoomUrl + session.id;
       }
-    };
+    }
 
     function subscriptionEndDate(user) {
       if(user && user.subscriptions) {
@@ -96,7 +98,7 @@
       else {
         return 'not found';
       }
-    };
+    }
 
     function hasAccess(sessionId, accountUser) {
       var found = vm.sessionListManageRoles.accountUser.indexOf(accountUser.role);
@@ -137,5 +139,5 @@
       }, 0);
       vm.sessionRating = rating / (session.SessionMembers.length || 1);
     }
-  };
+  }
 })();

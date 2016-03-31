@@ -1,0 +1,358 @@
+#session-builder-content {
+
+  .btn-standart {
+    font-size: 1.2rem;
+  }
+
+  .drop-area {
+    padding: 8px;
+    border: 2px dashed $lightGray;
+
+    &.drag-enter {
+      background: $lightGreen;
+    }
+  }
+
+  #steps-row {
+    display: block;
+    width: 405px;
+    width: 600px;
+    margin: 0 auto;
+
+    .step-container {
+      display: block;
+      margin: 10px;
+      float: left;
+      width: 100px;
+      font-size: .5em;
+    }
+
+    span.step-number {
+      display: block;
+      float: left;
+      width: 61px;
+      margin: 0 20px 5px 20px;
+      padding: 9px;
+      color: white;
+      font-size: 2em;
+      text-align: center;
+      background: $lightGray;
+
+      &.active {
+        color: white;
+        background: $green;
+      }
+
+      &.done {
+        background: rgba(88, 188, 227, 0.65);
+      }
+    }
+
+    span.step-name {
+      color: $lightGray;
+
+      &.active,
+      &.done {
+        color: $grey;
+      }
+    }
+
+  }
+
+  .benefits {
+    margin-left: 5%;
+
+    p {
+      margin: 0 0 -10px 0;
+      padding: 10px 100px 10px 30px;
+
+      font-size: 1.9rem;
+      text-align: left;
+
+      border-left: 3px solid $green;
+
+      &::before {
+        content:  url('./../icons/ic_tick.png');
+        display: block;
+        margin-left: -70px;
+        margin-top: 5px;
+        position: absolute;
+      }
+    }
+  }
+
+
+
+  .plans-table {
+    .plan-block {
+      display: block;
+    }
+
+    .included-plan-fader {
+      display: block;
+      position: absolute;
+      z-index: 2000;
+      width: 100%;
+      height: 100%;
+      background: white;
+      opacity: .8;
+
+      > .label {
+        position: absolute;
+        top:320px;
+        left: 0;
+        color: $green;
+        font-size: calc(100vw/30);
+        font-weight: bold;
+
+        -webkit-transform: rotate(-15deg);
+        -moz-transform: rotate(-15deg);
+        -ms-transform: rotate(-15deg);
+        -o-transform: rotate(-15deg);
+        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+
+      }
+    }
+
+    .list-group {
+      border: none;
+      box-shadow: none;
+      -webkit-box-shadow: none;
+    }
+
+    #best-value-badge {
+      position: absolute;
+      top:-4px;
+      right: -4px;
+      z-index: 100;
+    }
+
+    h4 {
+      max-width: 90%;
+      margin: 0 auto;
+      margin-bottom: 5px;
+      padding: 6px;
+      font-size: 3.3rem;
+      font-weight: bold;
+      font-style: italic;
+
+    }
+
+    .price-label {
+      display: block;
+      position: relative;
+      padding-top: 40px;
+      height: 190px;
+
+      h5 {
+
+        font-size: 6rem;
+        font-weight: 900;
+        color: white;
+
+      }
+      .outline {
+        color: white;
+        //http://stackoverflow.com/questions/4919076/outline-effect-to-text
+        text-shadow:
+                0 0 4px $grey, 0 0 4px $grey,
+                0 0 4px $grey, 0 0 4px $grey,
+                0 0 4px $grey, 0 0 4px $grey,
+                0 0 4px $grey, 0 0 4px $grey,
+                0 0 4px $grey, 0 0 4px $grey,
+                0 0 4px $grey, 0 0 4px $grey,
+                0 0 4px $grey, 0 0 4px $grey,
+                0 0 4px $grey, 0 0 4px $grey,
+                0 0 4px $grey, 0 0 4px $grey,
+                0 0 4px $grey, 0 0 4px $grey;
+      }
+
+      p {
+        font-size: 1.5rem;
+      }
+    }
+
+    .list-group-item-text {
+      margin: 4px auto;
+      padding: 10px;
+      width: 90%;
+      font-size: 2.1rem;
+    }
+
+    .yellow-bg {background: $yellow;}
+    .yellow-light-bg {background: #FDFAD7;}
+    .yellow-header-bg {background: #F8F49B;}
+    .green-bg {background: #4CB648;}
+    .green-light-bg {background: #DBF1DC;}
+    .green-header-bg {background: #A5DAA4;}
+    .blue-bg {background: #4CC0E9;}
+    .blue-light-bg {background: #DBF1FC;}
+    .blue-header-bg {background: #A5DFF3;}
+  }
+
+  .btn-dashboard-plans {
+    display: block;
+    height: 50px;
+    margin: 5px 0;
+    padding: 9px 20px;
+    font-size: 2.3rem;
+    border: solid 3px $grey;
+    cursor: pointer;
+  }
+  .buttons-area {
+    margin-top: 18px !important;
+    padding: 0 !important;
+  }
+  .btn-brown {$thisColor: #979137; color:$thisColor; border-color: $thisColor;}
+  .btn-green {$thisColor: #4CB344; color:$thisColor; border-color: $thisColor}
+  .btn-blue {$thisColor: #65C8EE; color:$thisColor; border-color: $thisColor}
+
+  .learn {width: 160px;}
+  .want {width: 200px;}
+
+  .modal-footer {
+    font-size: 2rem;
+
+    .go-back-btn {color: $grey; border-color: $grey; }
+    .i-want-btn {color:$grey; border-color: $yellow;}
+  }
+
+
+
+  ///////////////
+  top: -85px;
+  h1 {
+    padding: 15px;
+    font-size: 3.3rem;
+    font-weight: 100;
+  }
+
+  p {
+    font-size: 2rem;
+    color: $grey;
+  }
+
+  .panel {
+    border-radius: 0px;
+    color: $grey;
+  }
+
+  a.accordion-toggle {
+    text-decoration: none;
+
+    &:hover { text-decoration: none }
+  }
+
+
+  .panel-heading {
+    border: none;
+    background: #F6F8F7;
+    &:hover {
+      background: $lightGreen;
+
+      > .panel-title { color: $green; }
+
+    }
+
+    .panel-title {
+      font-size: 2rem;
+      text-align: left;
+      color: $grey;
+    }
+  }
+
+  .panel-value,
+   span.panel-value {
+    margin: 0 3rem;
+  }
+
+  .accordion-heading-helper.active {
+    background: yellow;
+    .panel-heading {
+      background: $lightGreen !important;
+    }
+  }
+
+  .panel-body {
+    p {
+      font-size: 1.9rem;
+      text-align: left;
+      color: $grey;
+    }
+  }
+  //////////////
+
+  #disclaimer {
+    margin-top: 60px;
+    color: $grey;
+    font-size: 1.5rem;
+  }
+
+
+  .ng-custom-select {
+
+
+    .ncs-select {
+      position: relative;
+      color: $grey;
+      font-size: 1.5rem;
+      text-align: left;
+
+      .ncs-input-field {
+        display: block;
+        padding: 9px;
+
+        background: $lightGray;
+      }
+
+      .ncs-arrow-bnt {
+        position: absolute;
+        top:13px; right: 2rem;
+        cursor: pointer;
+      }
+
+      .ncs-content {
+        position: absolute;
+        z-index: 3000;
+        margin-top: -3px;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: scroll;
+        border: 3px solid $lightGray;
+        background: white;
+
+        .ncs-content-item {
+          padding: 3px 10px;
+          cursor: pointer;
+
+          &:hover {
+            background: $yellow;
+          }
+        }
+      }
+    }
+
+    .ncs-click-anywhere {
+      display: block;
+      position: absolute;
+      width: 200vw;
+      height: 200vh;
+      background: black;
+
+      top:-100vh; left: -100vw;
+    }
+
+
+  }
+
+
+  a.btn.btn-link {
+    outline: none;
+  }
+
+  @import "./steps/step1";
+  @import "./steps/step2";
+  @import "./steps/step3-4";
+  @import "./steps/step4-5";
+
+}

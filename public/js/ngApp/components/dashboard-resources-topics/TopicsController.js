@@ -75,7 +75,7 @@
 
         topic
           ? messenger.ok('New copy has been added')
-          : messenger.ok('New Topic has been added');
+          : messenger.ok('New topic has been added');
 
       }
       function error(err) {
@@ -90,7 +90,7 @@
         return;
       }
 
-      var doIt = confirm('Delete this Topic?');
+      var doIt = confirm('Delete this topic?');
 
       if (!doIt) return;
 
@@ -123,13 +123,16 @@
       }
     }
 
-    function toggleEditBlock(blockIndex) {
+    function toggleEditBlock(blockIndex,inputId) {
       jQuery('#edit-block-'+blockIndex).toggle();
+
+      // timeout is to wait the animation
+      if (inputId) setTimeout(function() { jQuery('#'+inputId).focus(); }, 200);
     }
 
-    function edit(blockIndex) {
+    function edit(blockIndex, inputId) {
       tempName = vm.list[blockIndex].name;
-      toggleEditBlock(blockIndex);
+      toggleEditBlock(blockIndex, inputId);
 
       vm.editBlockHelper = blockIndex;
     }
@@ -138,11 +141,11 @@
       var newName = newName || tempName;
       vm.list[blockIndex].name = newName;
 
-      messenger.ok('Topic name changed');
+      messenger.ok('Topics name changed');
       vm.editBlockHelper = null;
 
       topicsAndSessions.updateTopic(vm.list[blockIndex]).then(success, error);
-      function success(res) { dbg.log('#TopicsController > saveInline > topic name has been updated'); }
+      function success(res) { dbg.log('#TopicsController > saveInline > topics name has been updated'); }
       function error(err) {
         messenger.error(err);
         dbg.error(err);

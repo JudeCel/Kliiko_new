@@ -99,6 +99,13 @@
 
             }
           }
+
+          // make lists by type
+          self.listByType = {}
+          for (var i = 0, len = self.items.length; i < len ; i++) {
+            self.listByType[self.items[i].name] = self.items[i];
+          }
+
           deferred.resolve();
         },
         function(err) { deferred.reject(err) }

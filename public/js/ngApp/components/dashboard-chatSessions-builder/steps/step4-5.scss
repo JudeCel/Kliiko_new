@@ -1,0 +1,29 @@
+#step-contactlists,
+#step-4-participants,
+#step-5-observers {
+  font-size: 14px;
+  .btn-standart {
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+  .dashboard-container {
+    width: 100%;
+  }
+  #no-contacts-in-list {
+    height: auto;
+  }
+
+  .filter-row {
+    > a {
+      margin: 1px 4px;
+
+      &.active {
+        font-weight: bold;
+        opacity:.65;
+        text-decoration: none;
+        cursor: default;
+      }
+    }
+  }
+}

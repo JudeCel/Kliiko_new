@@ -60,4 +60,4 @@ module.exports = {
     resetByToken: resetByToken,
     checkTokenExpired: checkTokenExpired
 
-}
+};

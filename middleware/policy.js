@@ -1,6 +1,15 @@
 "use strict";
 var _ = require('lodash');
-var accessDeniedMessage = 'Access Denied!!!!'
+var accessDeniedMessage = 'Access Denied!';
+
+
+module.exports = {
+  hasAccess: checkRoles,
+  accessDeniedMessage: accessDeniedMessage,
+  authorized: authorized
+};
+
+
 
 function checkRoles(roles, allowedRoles) {
   let result = _.intersection(allowedRoles, roles);
@@ -19,8 +28,3 @@ function authorized(allowedRoles) {
   }
 }
 
-module.exports = {
-  hasAccess: checkRoles,
-  accessDeniedMessage: accessDeniedMessage,
-  authorized: authorized
-}

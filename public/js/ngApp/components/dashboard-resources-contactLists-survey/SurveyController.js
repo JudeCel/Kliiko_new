@@ -72,6 +72,8 @@
     vm.getResourceThumbUrl = getResourceThumbUrl;
     vm.setUploadtype = setUploadtype;
     vm.resourceTitle = resourceTitle;
+    
+    vm.initLogosList = brandLogosFromGallery;
 
     function onDropComplete(index, data, evt) {
       var answer = data.answer;
@@ -156,10 +158,10 @@
 
       if(resourceType == "youtube"){
         saveYoutubeUrl(resourceType);
-      }else{
-        if(vm.file){
+      } else {
+        if (vm.file) {
           uploadFile(resourceType);
-        }else{
+        } else {
           messenger.error("Please select a file.");
         }
       }
@@ -202,25 +204,28 @@
       GalleryServices.createResource(resourceParams).then(function(res) {
         if(res.error){
           messenger.error(res.error);
-        }else{
-
-          if(resourceType == "brandLogo"){
+        } else {
+          if (resourceType == "brandLogo"){
             vm.surveySelecctOptions.show = false;
             vm.surveySelecctOptions.uploaded = true;
 
-          }else{
+          } else {
             vm.question.Resource = {};
           }
 
           GalleryServices.postuploadData(resourceParams).then(function(res) {
             if(res.error){
               messenger.error(res.error);
-            }else{
+            } else {
 
-              if(resourceType == "brandLogo"){
-                vm.survey.resourceId = res.data.id;
-                vm.survey.Resource = res.data;
-              }else{
+              if (resourceType == "brandLogo"){
+                vm.initLogosList();
+                if (vm.survey) {
+                  vm.survey.resourceId = res.data.id;
+                  vm.survey.Resource = res.data;
+                }
+
+              } else {
                 vm.question.resourceId = res.data.id;
                 vm.question.Resource = res.data;
               }
@@ -228,6 +233,8 @@
               clearform();
               vm.disableUpload = false;
             }
+
+
           })
         }
       })

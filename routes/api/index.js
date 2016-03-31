@@ -20,10 +20,13 @@ let topic = require('./topic');
 var gallery = require('./gallery');
 var brandColour = require('./brandColour');
 var session = require('./session');
+var sessionBuilder = require('./sessionBuilder');
 var myDashboard = require('./myDashboard');
 
 let contactList = require('./contactList');
 let contactListUser = require('./contactListUser');
+
+let sessionMember = require('./sessionMember');
 
 module.exports = router;
 
@@ -69,6 +72,7 @@ router.post('/banners/:bannerType', multipartyMiddleware, banners.bannersBannerT
 router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelete);
 
 router.get('/mailTemplates', mailTemplates.allMailTemplatesGet);
+router.get('/sessionMailTemplates', mailTemplates.allSessionMailTemplatesGet);
 router.post('/mailTemplate', mailTemplates.mailTemplatePost);
 router.delete('/mailTemplate', mailTemplates.deleteMailTemplate);
 router.post('/mailTemplate/save', mailTemplates.saveMailTemplatePost);
@@ -126,8 +130,31 @@ router.post('/brandColour', brandColour.create);
 router.put('/brandColour', brandColour.update);
 router.post('/brandColour/copy', brandColour.copy);
 
+router.post('/session/getByInvite',  policy.authorized(['accountManager', 'admin']), session.getSessionByInvite);
 router.get('/session/ratings',  policy.authorized(['admin']), session.getAllSessionRatings);
 router.get('/session/list', sessionMemberMiddleware.hasAccess(['facilitator', 'observer', 'participant'], ['accountManager', 'admin']), session.get);
 router.delete('/session/:id', policy.authorized(['accountManager', 'admin']), session.remove);
 router.post('/session/:id', policy.authorized(['accountManager', 'admin']), session.copy);
+
+
+
+// Session Member
 router.post('/sessionMember/rate/:id', sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin']), session.updateRating);
+router.post('/sessionMember', sessionMember.addMembers);
+
+
+// Session Builder
+router.post('/sessionBuilder',  policy.authorized(['accountManager', 'admin']), sessionBuilder.new);
+router.get('/sessionBuilder/:id',  policy.authorized(['accountManager', 'admin']), sessionBuilder.openBuild);
+router.put('/sessionBuilder/:id',  policy.authorized(['accountManager', 'admin']), sessionBuilder.update);
+router.post('/sessionBuilder/:id',  policy.authorized(['accountManager', 'admin']), sessionBuilder.nextStep);
+router.delete('/sessionBuilder/:id',  policy.authorized(['accountManager', 'admin']), sessionBuilder.cancel);
+router.post('/sessionBuilder/:id/sendSms',  policy.authorized(['accountManager', 'admin']), sessionBuilder.sendSms);
+router.post('/sessionBuilder/:id/invite',  policy.authorized(['accountManager', 'admin']), sessionBuilder.inviteMembers);
+router.delete('/sessionBuilder/:id/removeInvite/:inviteId',  policy.authorized(['accountManager', 'admin']), sessionBuilder.removeInvite);
+router.delete('/sessionBuilder/:id/removeSessionMember/:sessionMemberId',  policy.authorized(['accountManager', 'admin']), sessionBuilder.removeSessionMember);
+router.post('/sessionBuilder/:id/sendGenericEmail',  policy.authorized(['accountManager', 'admin']), sessionBuilder.sendGenericEmail);
+router.post('/sessionBuilder/:id/addTopics',  policy.authorized(['accountManager', 'admin']), sessionBuilder.addTopics);
+
+router.post('/sessionBuilder/:id/step/next',  policy.authorized(['accountManager', 'admin']), sessionBuilder.nextStep );
+router.post('/sessionBuilder/:id/step/previous',  policy.authorized(['accountManager', 'admin']), sessionBuilder.prevStep);

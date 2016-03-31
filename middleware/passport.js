@@ -67,12 +67,10 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(userObject, done) {
   models.User.find({ attributes: ['email', 'id', 'signInCount'], where: { id: userObject.id } }).done(function(result){
     if (result) {
-      result.getOwnerAccount().then(function(ownerAccounts) {
-        done(null, userParams(result, ownerAccounts[0]));
-      });
+      done(null, userParams(result));
     }else{
       done("not found", null);
-    };
+    }
   });
 });
 
@@ -80,9 +78,7 @@ function userParams(user, ownerAccount) {
   return {
     id: user.id,
     email: user.email,
-    ownerAccountSubdomain: ownerAccount.name,
-    signInCount: user.signInCount,
-    ownerAccountId: ownerAccount.id
+    signInCount: user.signInCount
   };
 }
 
@@ -96,7 +92,7 @@ function prepareUserData(user, profile, callback){
     let account = accounts[0];
     if(account.AccountUser.active) {
       user.increment('signInCount').done(function(result) {
-        callback(null, userParams(result, account));
+        callback(null, userParams(result));
       });
     }
     else {

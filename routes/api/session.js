@@ -8,43 +8,45 @@ module.exports = {
   remove: remove,
   copy: copy,
   updateRating: updateRating,
-  getAllSessionRatings: getAllSessionRatings
+  getAllSessionRatings: getAllSessionRatings,
+  getSessionByInvite: getSessionByInvite
 };
+
 
 function get(req, res, next) {
   sessionServices.findAllSessions(req.user.id, res.locals.currentDomain).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
-};
+}
 
 function getAllSessionRatings(req, res, next) {
   sessionServices.getAllSessionRatings().then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
-};
+}
 
 function remove(req, res, next) {
   sessionServices.removeSession(req.params.id, res.locals.currentDomain.id).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
-};
+}
 
 function copy(req, res, next) {
   sessionServices.copySession(req.params.id, res.locals.currentDomain.id).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
-};
+}
 
 function updateRating(req, res, next) {
   sessionServices.updateSessionMemberRating(req.body, req.user.id, res.locals.currentDomain.id).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
-};
+}
 
 function getResponses(res) {
   return {
@@ -55,7 +57,7 @@ function getResponses(res) {
       res.send(prepareParams(result));
     }
   };
-};
+}
 
 function prepareParams(result) {
   return {
@@ -65,4 +67,15 @@ function prepareParams(result) {
     message: result.message,
     dateFormat: constants.dateFormat
   };
+}
+
+function getSessionByInvite(req, res, next) {
+  sessionServices.getSessionByInvite(req.body.token).then(
+    function(resp) {
+      res.send(resp.Session);
+    },
+    function(err) {
+      res.send({ error: err });
+    }
+  );
 }
