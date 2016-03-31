@@ -255,16 +255,10 @@
 
       sessionBuilderRestApi.addTopics({id: self.id}, { topicsArray: topicsArray }, function(res) {
         if (res.error) {
-          // as ngDropped fires for every one in a stack, we can ignore that calls
-          if (res.error.name && res.error.name == 'SequelizeUniqueConstraintError') {
-            deferred.resolve();
-            return deferred.promise;
-          }
           deferred.reject(res.error);
-          return deferred.promise;
+        } else {
+          deferred.resolve(res.data);
         }
-
-        deferred.resolve(res.data);
       });
       return deferred.promise;
     }

@@ -13,7 +13,6 @@
     Services.getExpireDays = getExpireDays;
     Services.findSelectedMembers = findSelectedMembers;
     Services.currentMemberList = currentMemberList;
-    Services.currentStepString = currentStepString;
     Services.selectMembers = selectMembers;
     Services.removeDuplicatesFromArray = removeDuplicatesFromArray;
     Services.parseTopics = parseTopics;
@@ -63,11 +62,10 @@
     function findSelectedMembers(vm) {
       var array = [];
       var members = currentMemberList(vm);
-      var stepString = currentStepString(vm);
 
       for (var i in members) {
         var member = members[i];
-        if(member[stepString]) {
+        if(member.isSelected) {
           array.push(member);
         }
       }
@@ -76,11 +74,7 @@
     }
 
     function currentMemberList(vm) {
-        return vm.participants;
-    }
-
-    function currentStepString(vm) {
-        return 'step4';
+        return vm.stepMembers;
     }
 
     function selectMembers(listId, members) {
@@ -121,7 +115,5 @@
       }
       return topicsArray;
     }
-
   }
-
 })();

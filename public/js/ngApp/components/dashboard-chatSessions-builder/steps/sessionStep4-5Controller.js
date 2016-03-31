@@ -27,6 +27,7 @@
     vm.sendGenericEmail = sendGenericEmail;
     vm.setMembersFilter = setMembersFilter;
 
+    vm.stepMembers = [];
 
     vm.isParticipantPage = function() {
       return vm.session.sessionData.step == "manageSessionParticipants";
@@ -34,12 +35,12 @@
 
     vm.prepareData = function(participants, observers) {
       if (vm.isParticipantPage()) {
-        vm.participants = participants;
+        vm.stepMembers = participants;
       } else {
-        vm.participants = observers;
+        vm.stepMembers = observers;
       }
 
-      return vm.participants;
+      return vm.stepMembers;
     }
 
     vm.initStep = function(step) {
@@ -102,7 +103,7 @@
              for(var j in res.data) {
                if (member.email == res.data[j].email) {
                   data[i] = angular.extend(member, res.data[j]);
-                  member.step4 = false;
+                  member.isSelected = false;
                }
              }
           }
@@ -157,11 +158,10 @@
 
     function selectedAllMembers() {
       var members = builderServices.currentMemberList(vm);
-      var stepString = builderServices.currentStepString(vm);
       for(var i in members) {
         var member = members[i];
         if(!showCorrectStatus(member)) {
-           member[stepString] = vm.selectedAll;
+           member.isSelected = vm.selectedAll;
         }
       }
     }

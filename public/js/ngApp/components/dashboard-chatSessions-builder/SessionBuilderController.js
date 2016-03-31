@@ -60,7 +60,6 @@
         if (step === 'back')  handlePreviousStep();
         if (step === 'next') handleNextStep();
         if (step === 'finish') {
-          vm.session.update();
           $state.go('dashboard.chatSessions');
           messenger.ok('New session is created');
         }
