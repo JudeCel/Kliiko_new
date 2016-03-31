@@ -11,7 +11,7 @@ module.exports = (Sequelize, DataTypes) => {
 
     name: { type: DataTypes.STRING, allowNull: false,  defaultValue: 'untitled', validate: { notEmpty: true } },
 
-    startTime: { type: DataTypes.DATE, allowNull: false, defaultValue: Date.now(), validate: {
+    start_time: { type: DataTypes.DATE, allowNull: false, defaultValue: Date.now(), validate: {
       isValid: function(value, next) {
         if(this.startTime > this.endTime) {
           next("Start date can't be higher then end date.")
@@ -21,7 +21,7 @@ module.exports = (Sequelize, DataTypes) => {
         }
       }
     } },
-    endTime: { type: DataTypes.DATE, allowNull: false , defaultValue: Date.now() },
+    end_time: { type: DataTypes.DATE, allowNull: false , defaultValue: Date.now() },
     incentive_details: { type: DataTypes.STRING, allowNull: true  },
     active:	{ type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     colours_used: { type: DataTypes.TEXT, allowNull: true },
