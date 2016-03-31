@@ -59,7 +59,6 @@ function getAllPlans(accountId) {
       if(accountId){
         findSubscription(accountId).then(function(currentSub) {
           addPlanEstimateChargeAndConstants(result.list, accountId).then(function(planWithConstsAndEstimates) {
-            console.log(planWithConstsAndEstimates);
             deferred.resolve({currentPlan: currentSub.SubscriptionPlan, plans: planWithConstsAndEstimates});
           })
         }, function(error) {
@@ -222,10 +221,9 @@ function createPortalSession(accountId, callbackUrl, provider) {
   return deferred.promise;
 }
 
-function updateSubscription(accountId, newPlanId, provider) {
-
-
+function gatherInformation(accountId, newPlanId) {
   let deferred = q.defer();
+
   findSubscription(accountId).then(function(subscription) {
     if(subscription) {
       return subscription;
@@ -246,42 +244,33 @@ function updateSubscription(accountId, newPlanId, provider) {
       }
     });
   }).then(function(result) {
-    return canSwitchPlan(accountId, result.currentPlan, result.newPlan).then(function() {
-      return accountHasValidCeditCard(result.subscription.subscriptionId).then(function(creditCardStatus){
+    deferred.resolve(result);
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
 
-        let params = {
-          id: result.subscription.id,
-          subscriptionId: result.subscription.subscriptionId,
-          newPlanId: result.newPlan.chargebeePlanId,
-          newPlanSubscriptionId: result.newPlan.chargebeePlanId,
-          provider: provider
-        }
+  return deferred.promise;
+}
 
+function updateSubscription(accountId, newPlanId, provider) {
+  let deferred = q.defer();
+
+  gatherInformation(accountId, newPlanId).then(function(result) {
+    canSwitchPlan(accountId, result.currentPlan, result.newPlan).then(function() {
+      accountHasValidCeditCard(result.subscription.subscriptionId).then(function(creditCardStatus){
         if(creditCardStatus == "valid"){
-          return chargebeeSubUpdate(params).then(function(updatedSub) {
-            return models.sequelize.transaction(function (t) {
-              return result.subscription.update({planId: updatedSub.plan_id, subscriptionPlanId: result.newPlan.id}, {transaction: t, returning: true}).then(function(updatedSub) {
-
-                let params = planConstants[updatedSub.SubscriptionPlan.chargebeePlanId];
-                params.paidSmsCount = params.paidSmsCount + result.newPlan.paidSmsCount;
-
-                return updatedSub.SubscriptionPreference.update({ data: params }, {transaction: t, returning: true}).then(function(preference) {
-                  updatedSub.SubscriptionPlan = result.newPlan;
-                  console.log(updatedSub)
-                  return {result: updatedSub, redirect: false}
-                }, function(error) {
-                  throw error;
-                });
-              }, function(error) {
-                throw error;
-              })
-            });
+          chargebeeSubUpdate(chargebeePassParams(result), provider).then(function(chargebeSubscription) {
+            update(chargebeePassParams(result), provider).then(function(result) {
+              deferred.resolve(result);
+            }, function(error) {
+              deferred.reject(error);
+            })
           }, function(error) {
             deferred.reject(error);
           })
         }else{
-          return chargebeeSubUpdateViaCheckout(params).then(function(result) {
-            return {result: result, redirect: true}
+          chargebeeSubUpdateViaCheckout(chargebeePassParams(result, provider)).then(function(result) {
+            deferred.resolve({result: result, redirect: true});
           }, function(error) {
             deferred.reject(error);
           })
@@ -292,11 +281,9 @@ function updateSubscription(accountId, newPlanId, provider) {
     }, function(error) {
       deferred.reject(error);
     });
-  }).then(function(result) {
-    deferred.resolve(result);
-  }).catch(function(error) {
+  }, function(error) {
     deferred.reject(error);
-  });
+  })
 
   return deferred.promise;
 }
@@ -304,35 +291,15 @@ function updateSubscription(accountId, newPlanId, provider) {
 function retrievCheckoutAndUpdateSub(hostedPageId) {
   let deferred = q.defer();
 
-  chargebee.hosted_page.retrieve(hostedPageId).request(function(error,result){
+  chargebee.hosted_page.retrieve(hostedPageId).request(function(error, result){
     if(error){
       deferred.reject(error);
     }else{
-      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%% result");
-      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-      console.log(result.hosted_page.content.subscription.id);
-      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-
-      return findSubscriptionByChargebeeId(result.hosted_page.content.subscription.id).then(function(subscription) {
-        return subscription.update({planId: result.hosted_page.content.plan_id, subscriptionPlanId: }, {transaction: t, returning: true}).then(function(updatedSub) {
-
-          let params = planConstants[updatedSub.SubscriptionPlan.chargebeePlanId];
-          params.paidSmsCount = params.paidSmsCount + result.newPlan.paidSmsCount;
-
-          return updatedSub.SubscriptionPreference.update({ data: params }, {transaction: t, returning: true}).then(function(preference) {
-            updatedSub.SubscriptionPlan = result.newPlan;
-            console.log("________________________________________________-")
-            console.log(updatedSub)
-            console.log("________________________________________________-")
-            return {result: updatedSub, redirect: false}
-          }, function(error) {
-            throw error;
-          });
-        }, function(error) {
-          throw error;
-        })
+      let passThruContent = JSON.parse(result.hosted_page.pass_thru_content)
+      update(passThruContent).then(function(result) {
+        deferred.resolve(result);
       }, function(error) {
-        // body...
+        deferred.reject(filters.errors(error));
       })
     }
   });
@@ -340,8 +307,30 @@ function retrievCheckoutAndUpdateSub(hostedPageId) {
   return deferred.promise;
 }
 
-function updateSubLocally() { // if success charge to user credit card was made, then update sub in our system
-  
+function update(passThruContent){
+  let deferred = q.defer();
+
+  findSubscriptionByChargebeeId(passThruContent.subscriptionId).then(function(subscription) {
+    subscription.update({planId: passThruContent.planId, subscriptionPlanId: passThruContent.subscriptionPlanId}).then(function(updatedSub) {
+
+      let params = planConstants[passThruContent.planId];
+      params.paidSmsCount = params.paidSmsCount + passThruContent.paidSmsCount;
+
+      updatedSub.SubscriptionPreference.update({ data: params }).then(function(preference) {
+        deferred.resolve({result: updatedSub, redirect: false});
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }, function(error) {
+      deferred.reject(error);
+    }).then(function(updatedSub) {
+
+    })
+  }, function(error) {
+    deferred.reject(error);
+  })
+
+  return deferred.promise;
 }
 
 function cancelSubscription(subscriptionId, eventId) {
@@ -401,7 +390,6 @@ function chargebeePortalCreate(params, provider) {
 function chargebeeSubUpdateViaCheckout(params, provider) {
   let deferred = q.defer();
   let passThruContent = JSON.stringify(params)
-
   if(!provider) {
     provider = chargebee.hosted_page.checkout_existing;
   }
@@ -409,8 +397,8 @@ function chargebeeSubUpdateViaCheckout(params, provider) {
   provider({
     subscription: {
       id: params.subscriptionId,
-      plan_id: params.newPlanId
-    }, 
+      plan_id: params.planId
+    },
     redirect_url: "http://user.focus.com:8080/dashboard#/account-profile/upgrade-plan",
     cancel_url: "http://user.focus.com:8080/dashboard#/account-profile/upgrade-plan",
     pass_thru_content: passThruContent
@@ -425,20 +413,18 @@ function chargebeeSubUpdateViaCheckout(params, provider) {
   return deferred.promise;
 }
 
-function chargebeeSubUpdate(params) {
-  console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^6  chargebeeSubUpdate")
+function chargebeeSubUpdate(params, provider) {
   let deferred = q.defer();
 
-  if(!params.provider) {
+  if(!provider) {
     provider = chargebee.subscription.update;
   }
 
-  provider(params.subscriptionId, params).request(function(error, result) {
-    if(error) {
+  chargebee.subscription.update(params.subscriptionId, { plan_id: params.planId }).request(function(error,result){
+    if(error){
       deferred.reject(error);
-    }
-    else {
-      deferred.resolve(result.subscription);
+    }else{
+      deferred.resolve(result);
     }
   });
 
@@ -492,6 +478,16 @@ function chargebeePortalParams(subscription, callbackUrl) {
   return {
     redirect_url: callbackUrl,
     customer: { id: subscription.customerId }
+  }
+}
+
+function chargebeePassParams(result) {
+  return {
+    id: result.subscription.id,
+    subscriptionId: result.subscription.subscriptionId,
+    planId: result.newPlan.chargebeePlanId,
+    subscriptionPlanId: result.newPlan.id,
+    paidSmsCount: result.newPlan.paidSmsCount
   }
 }
 

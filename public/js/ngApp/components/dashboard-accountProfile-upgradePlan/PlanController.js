@@ -8,7 +8,7 @@
   function PlanController(dbg, domServices, $state, $stateParams, planService, user, ngProgressFactory, $scope, messenger, $rootScope, $location) {
     dbg.log2('#PlanController  started');
     var vm = this;
-    var urlParams = null;
+    var urlParams = $location.search();
 
     vm.planInModal = null;
     vm.selectedPlan = null;
@@ -87,12 +87,15 @@
     init();
 
     function init() {
-      // if(urlParams){
-      //   vm.currentStep = 3;
+      if(urlParams.state == 'succeeded'){
+        vm.currentStep = 3;
         succeededCheckout($location.search());
-      // }else{
-        // getPlans();
-      // }
+      }else if(urlParams.state == 'cancelled'){
+        messenger.error("Order was cancelled");
+        getPlans();
+      }else{
+        getPlans();
+      }
     }
 
     function getPlans() {
@@ -125,6 +128,7 @@
       if(!tosConfirmed){
         domServices.shakeClass('shake-this');
       }else{
+        return vm.submitDisabled = true;
         planService.updatePlan(vm.selectedPlan.plan.id).then(function(response) {
           if(response.error){
             messenger.error(response.error);
@@ -132,14 +136,13 @@
             if(response.redirect){
               window.location = response.result.url;
             }else{
-              console.log(response);
               nextStep();
             }
           }
         })
       }
     }
-  
+
     function selectPlan(plan) {
       vm.selectedPlan = plan;
       nextStep();
@@ -168,7 +171,11 @@
     }
 
     function isCurrentPlan(planId) {
-      return planId == vm.currentPlan.chargebeePlanId
+      if(planId == 'fixed_monthly'){
+        return vm.currentPlan.chargebeePlanId == 'fixed_yearly'
+      }else{
+        return planId == vm.currentPlan.chargebeePlanId
+      }
     }
 
     function stepIsActive(step, additionalStyle) {
