@@ -47,7 +47,7 @@
           return;
         }
         for (var i = 0, len = vm.facilitators.length; i < len ; i++) {
-          if (vm.facilitators[i].accountUserId == vm.session.steps.step2.facilitator) {
+          if (vm.facilitators[i].accountUserId == vm.session.steps.step1.facilitator) {
             vm.selectedFacilitator = vm.facilitators[i];
             break;
           }

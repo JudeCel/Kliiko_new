@@ -32,10 +32,10 @@ const MESSAGES = {
       nameRequired: 'Name must be provided',
       startTimeRequired: 'Start time must be provided',
       endTimeRequired: 'End time must be provided',
-      invalidDateRange: "Start date can't be higher then end date."
+      invalidDateRange: "Start date can't be higher then end date.",
+      facilitator: 'No facilitator provided'
     },
     secondStep: {
-      facilitator: 'No facilitator provided',
       topics: 'No topics selected'
     },
     thirdStep: {
@@ -466,9 +466,13 @@ function stepsDefinition(session) {
     resourceId: session.resourceId,
     brandProjectPreferenceId:  session.brandProjectPreferenceId
   };
-
   object.step2 = { stepName: 'facilitatiorAndTopics' };
   async.parallel([
+    function(cb) {
+      async.parallel(step1Queries(session, object.step1), function(error, _result) {
+        cb(error);
+      });
+    },
     function(cb) {
       async.parallel(step2Queries(session, object.step2), function(error, _result) {
         cb(error);
@@ -528,7 +532,7 @@ function searchSessionMembers(sessionId, role) {
   });
 }
 
-function step2Queries(session, step) {
+function step1Queries(session, step) {
   return [
     function(cb) {
       searchSessionMembers(session.id, 'facilitator').then(function(members) {
@@ -539,7 +543,12 @@ function step2Queries(session, step) {
       }).catch(function(error) {
         cb(filters.errors(error));
       });
-    },
+    }
+  ];
+}
+
+function step2Queries(session, step) {
+  return [
     function(cb) {
       models.Topic.findAll({
         include: [{
@@ -626,10 +635,13 @@ function validate(session, params) {
 
 function findValidation(step, params) {
   let deferred = q.defer();
-
+  console.log("''''''''''''______findValidation_________1", step);
   if(step == 'setUp') {
-    let error = validateStepOne(params);
-    error ? deferred.reject(error) : deferred.resolve();
+    let error = validateStepOne(params).then(function() {
+      deferred.resolve();
+    }, function(error) {
+      deferred.reject(error)
+    });
   }
   else if(step == 'facilitatiorAndTopics') {
     validateStepTwo(params).then(function() {
@@ -667,25 +679,43 @@ function findValidation(step, params) {
 }
 
 function validateStepOne(params) {
-  let errors = {};
+  let deferred = q.defer();
 
-  if(!params.name) {
-    errors.name = MESSAGES.errors.firstStep.nameRequired;
-  }
+  findSession(params.id, params.accountId).then(function(session) {
+    let object = {};
+    async.parallel(step1Queries(session, object), function(error, _result) {
+      let errors = {};
+      if(!params.name) {
+        errors.name = MESSAGES.errors.firstStep.nameRequired;
+      }
 
-  if(!params.startTime) {
-    errors.startTime = MESSAGES.errors.firstStep.startTimeRequired;
-  }
+      if(!params.startTime) {
+        errors.startTime = MESSAGES.errors.firstStep.startTimeRequired;
+      }
 
-  if(!params.endTime) {
-    errors.endTime = MESSAGES.errors.firstStep.endTimeRequired;
-  }
+      if(!params.endTime) {
+        errors.endTime = MESSAGES.errors.firstStep.endTimeRequired;
+      }
 
-  if(params.startTime > params.endTime) {
-    errors.startTime = MESSAGES.errors.firstStep.invalidDateRange;
-  }
+      if(params.startTime > params.endTime) {
+        errors.startTime = MESSAGES.errors.firstStep.invalidDateRange;
+      }
 
-  return _.isEmpty(errors) ? null : errors;
+      if(!object.facilitator) {
+        errors.facilitator = MESSAGES.errors.firstStep.facilitator;
+      }
+
+      if (_.isEmpty(errors)) {
+        deferred.resolve();
+      } else {
+        deferred.reject(errors);
+      }
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
 }
 
 function validateStepTwo(params) {
@@ -699,9 +729,6 @@ function validateStepTwo(params) {
       }
       else {
         let errors = {};
-        if(!object.facilitator) {
-          errors.facilitator = MESSAGES.errors.secondStep.facilitator;
-        }
 
         if(_.isEmpty(object.topics)) {
           errors.topics = MESSAGES.errors.secondStep.topics;
