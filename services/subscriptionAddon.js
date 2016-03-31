@@ -12,13 +12,11 @@ var _ = require('lodash');
 var async = require('async');
 var config = require('config');
 var chargebee = require('chargebee');
-var chargebeeConfigs = config.get('chargebee');
 
 chargebee.configure({
-  site: chargebeeConfigs.site,
-  api_key: chargebeeConfigs.api_key
+  site: process.env.CHARGEBEE_SITE,
+  api_key: process.env.CHARGEBEE_API_KEY
 });
-
 // We can get credit count when we call addon from chargebee system, there is unit field for addon.
 // Right now I didn't do that extra call because we have only one addon.
 const CREDIT_COUNT_PER_ADDON = 35;

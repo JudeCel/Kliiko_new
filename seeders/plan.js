@@ -1,4 +1,7 @@
 'use strict';
+require('dotenv-extended').load({
+  errorOnMissing: true
+});
 
 var subscriptionPlans = require('./../test/fixtures/subscriptionPlans');
 subscriptionPlans.createPlans().then(function(result){
