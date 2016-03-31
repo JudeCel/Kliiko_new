@@ -52,7 +52,7 @@
             break;
           }
         }
-
+        vm.name = vm.session.steps.step1.name;
       }, true);
 
       // populate logo
@@ -83,23 +83,36 @@
         }, true);
       }
     }
+
+    vm.updateName = function() {
+      updateStep({name: vm.name}).then(function() {
+        vm.session.steps.step1.name = vm.name;
+      }, function(err) {
+        vm.name = vm.session.steps.step1.name;
+      });
+    }
+
     function updateStep(dataObj) {
       if (dataObj == 'startTime') {
         parseDateAndTime();
-        updateStep({startTime: vm.session.steps.step1.startTime});
-        return;
+        return updateStep({startTime: vm.session.steps.step1.startTime});
       }
 
       if (dataObj == 'endTime') {
         parseDateAndTime();
-        updateStep({endTime: vm.session.steps.step1.endTime});
-        return;
+        return updateStep({endTime: vm.session.steps.step1.endTime});
       }
 
-        vm.session.updateStep(dataObj).then(null, function (err) {
-          messenger.error(err);
-        }
-      );
+      var deferred = $q.defer();
+
+      vm.session.updateStep(dataObj).then(function() {
+        deferred.resolve();
+      }, function (err) {
+        messenger.error(err);
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
     }
 
     /**

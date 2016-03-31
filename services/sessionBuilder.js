@@ -639,7 +639,7 @@ function findValidation(step, params) {
     let error = validateStepOne(params).then(function() {
       deferred.resolve();
     }, function(error) {
-      deferred.reject(error)
+      deferred.reject(error);
     });
   }
   else if(step == 'facilitatiorAndTopics') {
