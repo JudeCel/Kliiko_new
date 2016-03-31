@@ -4,7 +4,7 @@ var _ = require('lodash');
 var ContactListUser = class ContactListUser {
   constructor(defaultFields, customFields, participantsFields, visibleFields,  data) {
     this.mapFields(defaultFields, customFields, participantsFields, data);
-    this.assignId(data);
+    this.assignIds(data);
   }
 
   mapFields(defaultFields, customFields, participantsFields, data) {
@@ -22,7 +22,7 @@ var ContactListUser = class ContactListUser {
     });
   }
 
-  assignId(data){
+  assignIds(data){
     this.id = data.id;
     this.accountUserId = data.accountUserId;
   }

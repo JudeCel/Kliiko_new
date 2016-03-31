@@ -141,8 +141,6 @@
                             <div class='modal-body text-gray-medium'>
                                 <form class='form-horizontal' role='form'>
 
-                                    <!------------------------------------------>
-
                                     <uib-accordion close-others="false">
                                         <uib-accordion-group is-open="clc.modContentBlock.generalDetails">
                                             <uib-accordion-heading>
@@ -195,8 +193,6 @@
                                         </uib-accordion-group>
                                     </uib-accordion>
 
-                                    <!------------------------------------------>
-
                                     <div class='row'>
                                         <div class='col-md-12'>
                                             <div class='btn-standart btn-green pull-right' data-dismiss="modal">Done
@@ -226,8 +222,6 @@
                     <span class="panel-value pull-right">{{ step1Controller.brandLogo.JSON.name }}</span>
                 </div>
             </uib-accordion-heading>
-
-            <!------------------------->
 
             <section>
 
@@ -265,14 +259,11 @@
                 </div>
 
             </section>
-            <!------------------------->
-
 
             <section id='GalleryController' ng-controller='GalleryController' ng-init="sc.initLogosList()">
                 <!-- Table view -->
                 <div class="gallery-body col-md-12">
                     <table class="table table-hover table-responsive" >
-                        <!--------------------->
                         <br>
                         <div class='col-sm-4' ng-repeat="resource in step1Controller.logosList = sc.brandLogos">
                             <label for="{{ $index }}-logo">
