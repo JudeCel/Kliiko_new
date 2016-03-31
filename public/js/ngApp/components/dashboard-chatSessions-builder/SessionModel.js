@@ -250,13 +250,11 @@
     function saveTopics(topicsArray) {
       var self = this;
       var deferred = $q.defer();
-
-      var topicsArray = topicsArray || self.steps.step2.topics;
-
       sessionBuilderRestApi.addTopics({id: self.id}, { topicsArray: topicsArray }, function(res) {
         if (res.error) {
           deferred.reject(res.error);
         } else {
+          self.steps.step2.topics = topicsArray
           deferred.resolve(res.data);
         }
       });

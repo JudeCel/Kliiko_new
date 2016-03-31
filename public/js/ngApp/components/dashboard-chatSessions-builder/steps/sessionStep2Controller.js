@@ -70,17 +70,11 @@
           topicIds.push(vm.chatSessionTopicsList[i].id)
         }
 
-        vm.session.saveTopics(vm.chatSessionTopicsList).then(
-          function (res) {
-            dbg.log2('topic added');
-          },
-          function (err) {
+        vm.session.saveTopics(vm.chatSessionTopicsList).then(null, function (err) {
             messenger.error(err);
           }
         );
-
       }
-
     }
 
     function removeTopicFromList(id) {
@@ -91,9 +85,7 @@
         }
       }
 
-      vm.session.steps.step2.topics = vm.chatSessionTopicsList;
-
-      vm.session.saveTopics().then(
+      vm.session.saveTopics(vm.chatSessionTopicsList).then(
         function (res) {
           dbg.log2('topic removed');
         },
