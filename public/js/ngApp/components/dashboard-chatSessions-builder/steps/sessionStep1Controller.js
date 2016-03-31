@@ -20,7 +20,6 @@
     vm.addFacilitatorsClickHandle = addFacilitatorsClickHandle;
     vm.facilitatorsSelectHandle = facilitatorsSelectHandle;
 
-    vm.watchers = [];
     vm.initController = function() {
       vm.session = builderServices.session;
       vm.today = new Date();
@@ -30,55 +29,60 @@
     }
 
     $scope.$on('$destroy', function() {
-      for (var i; i < vm.watchers.length; i++) {
-        vm.watchers[i]();
-      }
-      vm.watchers.length = 0;
+      if (vm.wFacilitators) {
+        vm.wFacilitators();
+      };
+      if (vm.wLogosList) {
+        vm.wLogosList();
+      };
+      if (vm.wColorsList) {
+        vm.wColorsList();
+      };
     });
 
     function initStep(step, initial) {
-        // populate facilitator
-        vm.watchers.push($scope.$watch('step1Controller.facilitators', function (newval, oldval) {
-          if (!vm.facilitators) {
-            return;
+      // populate facilitator
+      vm.wFacilitators = $scope.$watch('step1Controller.facilitators', function (newval, oldval) {
+        if (!vm.facilitators) {
+          return;
+        }
+        for (var i = 0, len = vm.facilitators.length; i < len ; i++) {
+          if (vm.facilitators[i].accountUserId == vm.session.steps.step2.facilitator) {
+            vm.selectedFacilitator = vm.facilitators[i];
+            break;
           }
-          for (var i = 0, len = vm.facilitators.length; i < len ; i++) {
-            if (vm.facilitators[i].accountUserId == vm.session.steps.step2.facilitator) {
-              vm.selectedFacilitator = vm.facilitators[i];
-              break;
-            }
-          }
-        }, true));
-
-        // populate logo
-        if (vm.session.steps.step1.resourceId) {
-          vm.watchers.push($scope.$watch('step1Controller.logosList', function (newval, oldval) {
-            if (vm.logosList) {
-              for (var i = 0, len = vm.logosList.length; i < len ; i++) {
-                if (vm.logosList[i].id == vm.session.steps.step1.resourceId) {
-                  vm.brandLogo = vm.logosList[i];
-                  break;
-                }
-              }
-            }
-          }, true));
         }
 
-        // populate color scheme
-        if (vm.session.steps.step1.brandProjectPreferenceId) {
-          vm.watchers.push($scope.$watch('step1Controller.colorsList', function (newval, oldval) {
-            if (vm.colorsList) {
-              for (var i = 0, len = vm.colorsList.length; i < len ; i++) {
-                if (vm.colorsList[i].id == vm.session.steps.step1.brandProjectPreferenceId) {
-                  vm.colorScheme = vm.colorsList[i];
-                  break;
-                }
+      }, true);
+
+      // populate logo
+      if (vm.session.steps.step1.resourceId) {
+        vm.wLogosList = $scope.$watch('step1Controller.logosList', function (newval, oldval) {
+          if (vm.logosList) {
+            for (var i = 0, len = vm.logosList.length; i < len ; i++) {
+              if (vm.logosList[i].id == vm.session.steps.step1.resourceId) {
+                vm.brandLogo = vm.logosList[i];
+                break;
               }
             }
-          }, true));
-        }
+          }
+        }, true);
+      }
+
+      // populate color scheme
+      if (vm.session.steps.step1.brandProjectPreferenceId) {
+        vm.wColorsList = $scope.$watch('step1Controller.colorsList', function (newval, oldval) {
+          if (vm.colorsList) {
+            for (var i = 0, len = vm.colorsList.length; i < len ; i++) {
+              if (vm.colorsList[i].id == vm.session.steps.step1.brandProjectPreferenceId) {
+                vm.colorScheme = vm.colorsList[i];
+                break;
+              }
+            }
+          }
+        }, true);
+      }
     }
-
     function updateStep(dataObj) {
       if (dataObj == 'startTime') {
         parseDateAndTime();
