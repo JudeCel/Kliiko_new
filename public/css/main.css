@@ -1530,13 +1530,11 @@ hr.survey-hr {
   font-weight: bolder; }
 
 #upgrade-plan-content #steps-row {
-  display: block;
-  width: 405px;
-  width: 600px;
-  margin: 0 auto; }
+  width: 440px;
+  display: inline-block; }
   #upgrade-plan-content #steps-row .step-container {
     display: block;
-    margin: 10px;
+    margin-left: 38px;
     float: left;
     width: 100px;
     font-size: .5em; }
@@ -1550,11 +1548,8 @@ hr.survey-hr {
     font-size: 2em;
     text-align: center;
     background: #ddd; }
-    #upgrade-plan-content #steps-row span.step-number.active {
-      color: white;
+    #upgrade-plan-content #steps-row span.step-number.active, #upgrade-plan-content #steps-row span.step-numberdone {
       background: #4DC0E9; }
-    #upgrade-plan-content #steps-row span.step-number.done {
-      background: rgba(88, 188, 227, 0.65); }
   #upgrade-plan-content #steps-row span.step-name {
     color: #ddd; }
     #upgrade-plan-content #steps-row span.step-name.active, #upgrade-plan-content #steps-row span.step-name.done {
@@ -1589,8 +1584,8 @@ hr.survey-hr {
   #upgrade-plan-content .plans-table .included-plan-fader > .label {
     position: absolute;
     top: 320px;
-    left: 0;
-    color: #2F9F69;
+    left: 10px;
+    color: #E51D39;
     font-size: calc(100vw/30);
     font-weight: bold;
     -webkit-transform: rotate(-15deg);

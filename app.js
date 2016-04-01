@@ -14,6 +14,7 @@ var flash = require('connect-flash');
 var app = express();
 var fs = require('fs');
 var socketsServer = require('./chatRoom/sockets');
+var airbrake = require('./lib/airbrake').instance;
 
 
 // view engine setup
@@ -50,13 +51,11 @@ var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
 var resources = require('./routes/resources');
 var api = require('./routes/api');
-var webhooks = require('./routes/webhooks');
 
 app.use('/', routes);
 app.use('/dashboard', currentUser.assign, dashboard);
 app.use('/resources', currentUser.assign, resources);
 app.use('/api', currentUser.assign, api);
-app.use('/webhooks', currentUser.assign, webhooks);
 
 
 // Added socket.io routes
@@ -75,6 +74,7 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
+    airbrake.notify(err);
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
@@ -86,14 +86,12 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
+  airbrake.notify(err);
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
     error: {}
   });
 });
-
-// Moment for DateTime formating
-app.locals.moment = require('moment');
 
 module.exports = app;

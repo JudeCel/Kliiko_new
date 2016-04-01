@@ -355,6 +355,22 @@
         }]
 
       })
+
+      .state('dashboard.smsCredits', {
+        url: "/smsCredits",
+        views: {
+          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-smsCredits/dashboard-content.html"}
+        },
+
+
+
+        onEnter: ['dbg', function (dbg) {
+          dbg.rs('dashboard.smsCredits is on');
+        }]
+
+      })
+
+
       .state('dashboard.resources.emailTemplates', {
         url: "/email-templates",
         views: {

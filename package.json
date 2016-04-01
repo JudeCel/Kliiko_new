@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "test": "mocha test",
-    "reset": "node ./lib/tasks/dbReset && node ./seeders/users && node ./seeders/chatSession && node ./seeders/mailTemplates.js"
+    "reset": "node ./lib/tasks/dbReset && node ./seeders/users && node ./seeders/chatSession && node ./seeders/mailTemplates && node ./seeders/plan"
   },
   "engineStrict": true,
   "engine": {
@@ -69,6 +69,7 @@
     "yargs": "^3.29.0"
   },
   "dependencies": {
+    "airbrake": "^1.0.0",
     "async": "^1.5.0",
     "bcrypt": "^0.8.5",
     "body-parser": "^1.13.3",

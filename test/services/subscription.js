@@ -5,17 +5,26 @@ var Subscription = models.Subscription;
 
 var subscriptionServices = require('./../../services/subscription');
 var userFixture = require('./../fixtures/user');
+var subscriptionFixture = require('./../fixtures/subscriptionPlans');
+var surveyFixture = require('./../fixtures/survey');
 
+var async = require('async');
 var assert = require('chai').assert;
+var _ = require('lodash');
 
 describe('SERVICE - Subscription', function() {
   var testData;
+  var currentSubPlanId;
 
   beforeEach(function(done) {
     userFixture.createUserAndOwnerAccount().then(function(result) {
       testData = result;
+      return subscriptionFixture.createPlans();
+    }).then(function(results) {
+      testData.subscriptionPlan = _.find(results, ['priority', 4]);
+      testData.lowerPlan = _.find(results, ['priority', testData.subscriptionPlan.priority - 1]);
       done();
-    }, function(error) {
+    }).catch(function(error) {
       done(error);
     });
   });
@@ -44,6 +53,7 @@ describe('SERVICE - Subscription', function() {
       it('should succeed on creating subscription', function(done) {
         subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function(subscription) {
           assert.isNotNull(subscription);
+          assert.isNotNull(subscription.SubscriptionPreference);
           assert.equal(subscription.accountId, testData.account.id);
           done();
         }, function(error) {
@@ -108,6 +118,205 @@ describe('SERVICE - Subscription', function() {
     });
   });
 
+  describe('#updateSubscription', function() {
+    beforeEach(function(done) {
+      subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function(subscription) {
+        currentSubPlanId = subscription.subscriptionPlanId;
+        done();
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    function updateProvider(params) {
+      return function() {
+        return {
+          request: function(callback) {
+            callback(null, {
+              subscription: { id: params.id, plan_id: params.plan_id }
+            });
+          }
+        }
+      }
+    }
+
+    describe('happy path', function() {
+      it('should succeed on updating subscription', function(done) {
+        let smsCount = 650; // sms count that is expected when updating from "free" plan to "unlimited" plan!
+
+        subscriptionServices.updateSubscription(testData.account.id, testData.subscriptionPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })).then(function(subscription) {
+          assert.isNotNull(subscription);
+          assert.isNotNull(subscription.SubscriptionPreference);
+          assert.equal(subscription.accountId, testData.account.id);
+          assert.equal(subscription.planId, testData.subscriptionPlan.chargebeePlanId);
+          assert.equal(subscription.SubscriptionPreference.data.paidSmsCount, smsCount);
+          done();
+        }, function(error) {
+          done(error);
+        });
+      });
+    });
+
+    describe('sad path', function() {
+      function errorProvider(error) {
+        return function() {
+          return {
+            request: function(callback) {
+              callback({ errors: [{ path: 'error', message: error }] });
+            }
+          }
+        }
+      }
+
+      it('plan not found', function(done) {
+        let invalidPlanId = testData.subscriptionPlan.id + 100;
+
+        subscriptionServices.updateSubscription(testData.account.id, invalidPlanId, errorProvider('some error')).then(function() {
+          done('Should not get here!');
+        }, function(error) {
+          assert.deepEqual(error, 'No plan found');
+          done();
+        });
+      });
+
+      it('No subscription found', function(done) {
+        let invalidAccountId = testData.account.id + 100;
+
+        subscriptionServices.updateSubscription(invalidAccountId, testData.subscriptionPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })).then(function(subscription) {
+          done('Should not get here!');
+        }, function(error) {
+          assert.equal(error, "No subscription found");
+          done();
+        });
+      });
+
+      it('cant switch on the same plan as user has already', function(done) {
+        let invalidAccountId = testData.account.id + 100;
+
+        subscriptionServices.updateSubscription(testData.account.id, currentSubPlanId, updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })).then(function(subscription) {
+          done('Should not get here!');
+        }, function(error) {
+          assert.equal(error, "Can't switch to current plan");
+          done();
+        });
+      });
+
+      describe("downgrade", function() {
+
+        function getUltimateSub(testData) {
+          return function(cb) {
+            subscriptionServices.updateSubscription(testData.account.id, testData.subscriptionPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })).then(function(subscription) {
+              cb();
+            }, function(error) {
+              cb(error);
+            });
+          }
+        }
+
+        describe("happy path", function() {
+          it('should successfully downgrade plan', function(done) {
+            let functionList = [
+              getUltimateSub(testData)
+            ]
+
+            async.waterfall(functionList, function (error, result) {
+              if( error ){
+                done(error);
+              } else {
+                subscriptionServices.updateSubscription(testData.account.id, testData.lowerPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.lowerPlan.chargebeePlanId })).then(function(subscription) {
+                  assert.equal(subscription.planId, testData.lowerPlan.chargebeePlanId);
+                  done();
+                }, function(error) {
+                  done("should not get here");
+                });
+              }
+            });
+          });
+        });
+
+        describe("sad path", function() {
+
+          function createTestSurvey(testData) {
+            return function(cb) {
+              surveyFixture.createSurvey(testData.account.name).then(function() {
+                cb();
+              }, function(error) {
+                cb(error);
+              })
+            }
+          }
+
+          function createSession(testData) {
+            let startTime = new Date();
+            let endTime = startTime.setHours(startTime.getHours() + 2000)
+
+            return function(cb) {
+              models.Session.create({
+                accountId: testData.account.id,
+                start_time: startTime,
+                end_time: endTime,
+                name: "My cool session"
+              }).then(function() {
+                cb();
+              }).catch(function(error) {
+                cb(error);
+              });
+            }
+          }
+
+          function createTestContactList(testData) {
+            return function(cb) {
+              models.ContactList.create({
+                accountId: testData.account.id,
+                name: "My cool Test contact list"
+              }).then(function() {
+                cb();
+              }).catch(function(error) {
+                cb(error);
+              });
+            }
+          }
+
+          it('downgrade not possible due to many surveys, sessions and contact lists for account', function(done) {
+            let functionList = [
+              getUltimateSub(testData),
+              createTestSurvey(testData),
+              createTestSurvey(testData),
+              createTestSurvey(testData),
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createSession(testData),
+              createTestContactList(testData)
+            ]
+
+            async.waterfall(functionList, function (error, result) {
+              if( error ){
+                done(error);
+              } else {
+                subscriptionServices.updateSubscription(testData.account.id, testData.lowerPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.lowerPlan.chargebeePlanId })).then(function(subscription) {
+                  done("should not get here");
+                }, function(error) {
+                  assert.equal(error.survey, 'You have to many surveys');
+                  assert.equal(error.contactList, 'You have to many contact lists');
+                  assert.equal(error.session, 'You have to many sessions');
+                  done();
+                });
+              }
+            });
+
+          });
+        });
+      });
+    });
+  });
+
   describe('#findSubscription', function() {
     describe('happy path', function() {
       beforeEach(function(done) {
@@ -136,6 +345,41 @@ describe('SERVICE - Subscription', function() {
           done();
         }, function(error) {
           done(error);
+        });
+      });
+    });
+  });
+
+  describe('#findSubscriptionByChargebeeId', function() {
+    var subId = 'SomeUniqueID';
+
+    describe('happy path', function() {
+      beforeEach(function(done) {
+        subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: subId })).then(function() {
+          done();
+        }, function(error) {
+          done(error);
+        });
+      });
+
+      it('should succeed on finding subscription', function(done) {
+        subscriptionServices.findSubscriptionByChargebeeId(subId).then(function(subscription) {
+          assert.isNotNull(subscription);
+          assert.equal(subscription.accountId, testData.account.id);
+          done();
+        }, function(error) {
+          done(error);
+        });
+      });
+    });
+
+    describe('sad path', function() {
+      it('should fail because no subscription for this account', function(done) {
+        subscriptionServices.findSubscriptionByChargebeeId('someNonExistingId').then(function(subscription) {
+          done('Should not get here!');
+        }, function(error) {
+          assert.equal(error, subscriptionServices.messages.notFound.subscription);
+          done();
         });
       });
     });
@@ -203,4 +447,178 @@ describe('SERVICE - Subscription', function() {
       });
     });
   });
+
+  describe('#cancelSubscription', function() {
+    var subId = 'SomeUniqueID';
+    beforeEach(function(done) {
+      subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: subId })).then(function() {
+        done();
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    // Should have contact list promise also
+    function surveyPromise() {
+      return models.Survey.count({ where: { accountId: testData.account.id, closed: true } });
+    }
+
+    function sessionPromise() {
+      return models.Session.count({ where: { accountId: testData.account.id, active: false } });
+    }
+
+    describe('happy path', function() {
+      function surveyHelper() {
+        return function(cb) {
+          let params = {
+            accountId: testData.account.id,
+            name: 'some name',
+            description: 'some descp',
+            thanks: 'some thanks'
+          };
+
+          models.Survey.create(params).then(function() {
+            cb();
+          }, function(error) {
+            cb(error);
+          });
+        }
+      }
+
+      function sessionHelper() {
+        return function(cb) {
+          let params = {
+            accountId: testData.account.id,
+            name: 'some name',
+            start_time: new Date(),
+            end_time: new Date()
+          };
+
+          models.Session.create(params).then(function() {
+            cb();
+          }, function(error) {
+            cb(error);
+          });
+        }
+      }
+
+      beforeEach(function(done) {
+        async.parallel([
+          function(cb) {
+            let functionArray = [surveyHelper(), surveyHelper()];
+            async.waterfall(functionArray, function(error, _result) {
+              cb(error);
+            });
+          },
+          function(cb) {
+            let functionArray = [sessionHelper(), sessionHelper()];
+            async.waterfall(functionArray, function(error, _result) {
+              cb(error);
+            });
+          }
+        ], function(error, _result) {
+          done(error);
+        });
+      });
+
+      it('should succeed on closing subscription and dependencies', function(done) {
+        surveyPromise().then(function(c) {
+          assert.equal(c, 0);
+          return sessionPromise();
+        }).then(function(c) {
+          assert.equal(c, 0);
+          return subscriptionServices.cancelSubscription(subId, 'someEventId');
+        }).then(function(result) {
+          Subscription.find({ where: { subscriptionId: subId } }).then(function(subscription) {
+            assert.equal(subscription.active, false);
+            return result.promise;
+          }).then(function() {
+            return surveyPromise();
+          }).then(function(c) {
+            assert.equal(c, 2);
+            return sessionPromise();
+          }).then(function(c) {
+            assert.equal(c, 2);
+            done();
+          }).catch(function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+    });
+
+    describe('sad path', function() {
+      it('should fail because cannot find subscription', function(done) {
+        subscriptionServices.cancelSubscription('someNonExistingId', 'someEventId').then(function() {
+          done('Should not get here!');
+        }, function(error) {
+          assert.deepEqual(error, subscriptionServices.messages.notFound.subscription);
+          done();
+        });
+      });
+
+      it('should fail no dependencies', function(done) {
+        subscriptionServices.cancelSubscription(subId, 'someEventId').then(function(result) {
+          return result.promise;
+        }).then(function() {
+          return surveyPromise();
+        }).then(function(c) {
+          assert.equal(c, 0);
+          return sessionPromise();
+        }).then(function(c) {
+          assert.equal(c, 0);
+          done();
+        }).catch(function(error) {
+          done(error);
+        });
+      });
+    });
+  });
+
+  describe('#recurringSubscription', function() {
+    var subId = 'SomeUniqueID';
+    beforeEach(function(done) {
+      subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: subId })).then(function() {
+        done();
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    describe('happy path', function() {
+      it('should succeed on changed subscription preferences', function(done) {
+        subscriptionServices.findSubscriptionByChargebeeId(subId).then(function(subscription) {
+          // currentSms (50) and planSms (50) should be equal,
+          // after recurring preference model value should be currentSms + planSms (100)
+          let currentSms = subscription.SubscriptionPreference.data.paidSmsCount;
+          let planSms = subscription.SubscriptionPlan.paidSmsCount;
+          assert.equal(currentSms, planSms);
+
+          subscriptionServices.recurringSubscription(subId, 'someEventId').then(function(result) {
+            assert.equal(result.subscription.lastWebhookId, 'someEventId');
+            return result.promise;
+          }).then(function(result) {
+            assert.equal(result.SubscriptionPreference.data.paidSmsCount, currentSms + planSms);
+            done();
+          }).catch(function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+
+    describe('sad path', function() {
+      it('should fail because cannot find subscription', function(done) {
+        subscriptionServices.recurringSubscription('someNonExistingId', 'someEventId').then(function() {
+          done('Should not get here!');
+        }, function(error) {
+          assert.deepEqual(error, subscriptionServices.messages.notFound.subscription);
+          done();
+        });
+      });
+    });
+  });
+
 });

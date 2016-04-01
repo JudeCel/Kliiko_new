@@ -9,17 +9,16 @@ var ContactListUser = models.ContactListUser;
 
 var surveyConstants = require('../../util/surveyConstants');
 var surveyServices = require('./../../services/survey');
-var userFixture = require('./../fixtures/user');
+var subscriptionFixture = require('./../fixtures/subscription');
 var assert = require('chai').assert;
 var _ = require('lodash');
 
 describe('SERVICE - Survey', function() {
-  var testUser, testAccount;
+  var testData;
 
   beforeEach(function(done) {
-    userFixture.createUserAndOwnerAccount().then(function(result) {
-      testUser = result.user;
-      testAccount = result.account;
+    subscriptionFixture.createSubscription().then(function(result) {
+      testData = result;
       done();
     }, function(error) {
       done(error);
@@ -33,7 +32,7 @@ describe('SERVICE - Survey', function() {
   });
 
   function accountParams() {
-    return { id: testAccount.id };
+    return { id: testData.account.id };
   };
 
   function surveyAnswerParams(questions) {
@@ -69,7 +68,7 @@ describe('SERVICE - Survey', function() {
       name: 'Survey name',
       description: 'Survey description',
       thanks: 'Survey thanks',
-      accountId: testAccount.id,
+      accountId: testData.account.id,
       confirmedAt: new Date(),
       SurveyQuestions: [
         surveyQuestionParams(0),
@@ -145,7 +144,7 @@ describe('SERVICE - Survey', function() {
             assert.equal(survey.name, 'Survey name');
             assert.equal(survey.description, 'Survey description');
             assert.equal(survey.thanks, 'Survey thanks');
-            assert.equal(survey.accountId, testAccount.id);
+            assert.equal(survey.accountId, testData.account.id);
 
             assert.equal(survey.SurveyQuestions[0].type, params.SurveyQuestions[0].type);
             assert.equal(survey.SurveyQuestions[0].order, params.SurveyQuestions[0].order);
@@ -533,12 +532,16 @@ describe('SERVICE - Survey', function() {
         surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
           let survey = result.data;
 
-          surveyServices.copySurvey({ id: survey.id }, accountParams()).then(function(result) {
-            assert.notEqual(result.data.id, survey.id);
+          models.SubscriptionPreference.update({ 'data.surveyCount': 2 }, { where: { subscriptionId: testData.subscription.id } }).then(function() {
+            surveyServices.copySurvey({ id: survey.id }, accountParams()).then(function(result) {
+              assert.notEqual(result.data.id, survey.id);
 
-            Survey.count().then(function(c) {
-              assert.equal(c, 2);
-              done();
+              Survey.count().then(function(c) {
+                assert.equal(c, 2);
+                done();
+              });
+            }, function(error) {
+              done(error);
             });
           }, function(error) {
             done(error);
