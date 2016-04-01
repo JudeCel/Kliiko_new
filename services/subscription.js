@@ -32,7 +32,8 @@ const MESSAGES = {
     contactList: "You have to many contact lists",
   },
   alreadyExists: 'Subscription already exists',
-  cantSwitchPlan: "Can't switch to current plan"
+  cantSwitchPlan: "Can't switch to current plan",
+  successPlanUpdate: 'Plan was successfully updated.'
 }
 
 module.exports = {
@@ -78,11 +79,11 @@ function addPlanEstimateChargeAndConstants(plans, accountId) {
 
   findSubscription(accountId).then(function(accountSubscription) {
     async.each(plans, function(plan, callback) {
-      if(plan.plan.id == accountSubscription.SubscriptionPlan.chargebeePlanId && plan.plan.id != "Free"){
+      if(notNeedEstimatePrice(plan, accountSubscription)){
         plan.additionalParams = planConstants[plan.plan.id];
         plansWithAllInfo.push(plan);
         callback();
-      }else if(plan.plan.id != accountSubscription.SubscriptionPlan.chargebeePlanId && plan.plan.id != "Free"){
+      }else if(needEstimatePrice(plan, accountSubscription)){
         getEstimateCharge(plan, accountSubscription).then(function(planWithEstimate) {
           planWithEstimate.additionalParams = planConstants[planWithEstimate.plan.id];
           plansWithAllInfo.push(planWithEstimate);
@@ -101,10 +102,18 @@ function addPlanEstimateChargeAndConstants(plans, accountId) {
       }
     });
   }, function(error) {
-    deferred.reject(MESSAGES.notFound.account);
+    deferred.reject(error);
   })
 
   return deferred.promise;
+}
+
+function notNeedEstimatePrice(plan, accountSubscription) {
+  return plan.plan.id == accountSubscription.SubscriptionPlan.chargebeePlanId && plan.plan.id != "Free"
+}
+
+function needEstimatePrice(plan, accountSubscription) {
+  return plan.plan.id != accountSubscription.SubscriptionPlan.chargebeePlanId && plan.plan.id != "Free"
 }
 
 function getEstimateCharge(plan, accountSubscription) {
@@ -257,9 +266,9 @@ function updateSubscription(accountId, newPlanId, provider) {
   gatherInformation(accountId, newPlanId).then(function(result) {
     canSwitchPlan(accountId, result.currentPlan, result.newPlan).then(function() {
       accountHasValidCeditCard(result.subscription.subscriptionId).then(function(creditCardStatus){
-        if(creditCardStatus == "valid"){
+        if(validCard(creditCardStatus)){
           chargebeeSubUpdate(chargebeePassParams(result), provider).then(function(chargebeSubscription) {
-            update(chargebeePassParams(result), provider).then(function(result) {
+            updateSubscriptionData(chargebeePassParams(result), provider).then(function(result) {
               deferred.resolve(result);
             }, function(error) {
               deferred.reject(error);
@@ -287,6 +296,10 @@ function updateSubscription(accountId, newPlanId, provider) {
   return deferred.promise;
 }
 
+function validCard(creditCardStatus) {
+  return creditCardStatus == "valid"
+}
+
 function retrievCheckoutAndUpdateSub(hostedPageId) {
   let deferred = q.defer();
 
@@ -295,8 +308,8 @@ function retrievCheckoutAndUpdateSub(hostedPageId) {
       deferred.reject(error);
     }else{
       let passThruContent = JSON.parse(result.hosted_page.pass_thru_content)
-      update(passThruContent).then(function(result) {
-        deferred.resolve(result);
+      updateSubscriptionData(passThruContent).then(function(result) {
+        deferred.resolve({message: MESSAGES.successPlanUpdate});
       }, function(error) {
         deferred.reject(filters.errors(error));
       })
@@ -306,7 +319,7 @@ function retrievCheckoutAndUpdateSub(hostedPageId) {
   return deferred.promise;
 }
 
-function update(passThruContent){
+function updateSubscriptionData(passThruContent){
   let deferred = q.defer();
 
   findSubscriptionByChargebeeId(passThruContent.subscriptionId).then(function(subscription) {

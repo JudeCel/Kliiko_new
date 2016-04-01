@@ -5,7 +5,7 @@
       <br>
       <div class="row">
         <div class="col-md-3">
-        </div> 
+        </div>
         <div class="col-md-6">
           <div id="steps-row">
             <div class="step-container" ng-repeat="step in up.steps">
@@ -18,7 +18,7 @@
         </div>
       </div>
 
-      <div ng-repeat="layout in up.stepLayouts" src="layout.src">
+      <div ng-repeat="layout in up.stepLayouts">
         <div ng-show="up.isCurrentStep(layout.inQueue)" ng-include src="layout.src"></div>
       </div>
 
@@ -29,7 +29,7 @@
   <!-- MODALS -->
   <section>
     <div class='modal fade' id='plansModal' role='dialog'>
-      <div class='modal-dialog changePasswordModal' style="width: 800px">
+      <div class='modal-dialog contactDetailsModal'>
         <div class='modal-content border-green border-radius-none'>
           <div class='modal-header'>
             <button type='button' class='close' data-dismiss='modal'>&times;</button>

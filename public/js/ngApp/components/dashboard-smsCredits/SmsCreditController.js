@@ -77,12 +77,10 @@
     }
 
     function totalPrice(priceInCents, qty) {
-      var totalPrice = null;
       if(!qty){
         return priceInDollars(0);
       }else{
-        totalPrice = priceInCents * qty;
-        return priceInDollars(totalPrice);
+        return priceInDollars(priceInCents * qty);
       }
     }
 

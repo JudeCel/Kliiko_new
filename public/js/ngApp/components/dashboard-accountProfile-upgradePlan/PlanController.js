@@ -16,6 +16,7 @@
     vm.currentPlan = null;
     vm.fixedYearly = null;
     vm.fixedMonthly = null;
+    vm.purchaseWasSuccessfull = true
 
     vm.stepLayouts = [
       {
@@ -28,7 +29,7 @@
       },
       {
         inQueue: 3,
-        src: "js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/submited.tpl.html"
+        src: "js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/submitted.tpl.html"
       }
     ]
 
@@ -46,7 +47,7 @@
       {
         title: "Submited",
         number: 3,
-        key: "submited"
+        key: "submitted"
       }
     ]
 
@@ -83,6 +84,7 @@
     vm.isCurrentPlan = isCurrentPlan;
     vm.showPlanInList = showPlanInList;
     vm.switchPlan = switchPlan;
+    vm.showCalculatedPrice = showCalculatedPrice;
 
     init();
 
@@ -118,9 +120,13 @@
     }
 
     function succeededCheckout(params) {
-      console.log(params.id);
       planService.retrievCheckoutAndUpdateSub(params.id).then(function(result) {
-        console.log(result);
+        if(result.error){
+          vm.purchaseWasSuccessfull = false;
+          messenger.error(result.error);
+        }else{
+          messenger.ok(result.message);
+        }
       })
     }
 
@@ -148,12 +154,12 @@
     }
 
     function nextStep(){
-      vm.currentStep = vm.currentStep + 1
+      vm.currentStep = ++vm.currentStep;
       return vm.currentStep;
     }
 
     function previouseStep() {
-      vm.currentStep = vm.currentStep - 1
+      vm.currentStep = --vm.currentStep;
       return vm.currentStep;
     }
 
@@ -198,9 +204,7 @@
     }
 
     function showPlanInList(planId){
-      if(planId == "free"){
-        return false;
-      }else if(planId == "fixed_yearly"){
+      if(planId == "free" || planId == "fixed_yearly"){
         return false;
       }else{
         return true
@@ -208,7 +212,11 @@
     }
 
     function switchPlan(switchPlan) {
-      return vm.selectedPlan = switchPlan;
+      vm.selectedPlan = switchPlan;
+    }
+
+    function showCalculatedPrice(price) {
+      return price / 100;
     }
 
   }

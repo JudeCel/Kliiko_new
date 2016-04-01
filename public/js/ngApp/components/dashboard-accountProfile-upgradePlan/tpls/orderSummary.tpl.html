@@ -18,14 +18,14 @@
         {{ up.selectedPlan.plan.period_unit }}
       </div>
       <div class="col-sm-4 col-md-4">
-        {{ up.selectedPlan.chargeEstimate.amount_due / 100 | currency:"USD$":0 }}
+        {{ up.showCalculatedPrice(up.selectedPlan.chargeEstimate.amount_due) | currency:"USD$":0 }}
       </div>
     </div>
 
     <hr>
     <div class="row">
       <div class="col-sm-5 col-md-5 total">Order Total</div>
-      <div class="col-sm-3 col-md-3">{{ up.selectedPlan.chargeEstimate.sub_total / 100 | currency:"USD$":0 }}</div>
+      <div class="col-sm-3 col-md-3">{{ up.showCalculatedPrice(up.selectedPlan.chargeEstimate.sub_total) | currency:"USD$":0 }}</div>
     </div>
   </div>
 
@@ -61,7 +61,7 @@
       </div>
     </div>
   </div>
-  
+
   <div ng-if="up.selectedPlan.plan.id == 'fixed_yearly'">
     <div class="col-md-12 caption">
       You want this plan, for one month?
