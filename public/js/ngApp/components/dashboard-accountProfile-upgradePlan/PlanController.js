@@ -154,13 +154,11 @@
     }
 
     function nextStep(){
-      vm.currentStep = ++vm.currentStep;
-      return vm.currentStep;
+      return ++vm.currentStep;
     }
 
     function previouseStep() {
-      vm.currentStep = --vm.currentStep;
-      return vm.currentStep;
+      return --vm.currentStep;
     }
 
     function checkIfUnlimited(count) {
