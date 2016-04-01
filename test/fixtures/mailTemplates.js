@@ -39,7 +39,8 @@ let templateFiles = [
     name: constants.mailTemplateType.generic,
     type: "generic",
     subject: "Invitation",
-    systemMessage: false
+    systemMessage: false,
+    required: false
   },
   {
     fileName: 'InvitationSeries_NotAtAll.html',
@@ -180,7 +181,8 @@ function createMailTemplateFromFile(fileInfo, callback) {
           subject: fileInfo.subject,
           content: minifiedData,
           systemMessage: fileInfo.systemMessage,
-          category: fileInfo.type
+          category: fileInfo.type,
+          required: fileInfo.required
         };
 
         MailTemplateService.createBaseMailTemplate(mailTemplateAttrs, function (err, mailTemplate) {

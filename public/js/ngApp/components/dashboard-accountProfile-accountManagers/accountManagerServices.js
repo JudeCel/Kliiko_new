@@ -44,7 +44,6 @@
 
     function removeInvite(data) {
       var deferred = $q.defer();
-
       dbg.log2('#AccountManagerServices > removeInvite > make rest call', data);
       accountManagerRestApi.removeInvite.delete(data, function(res) {
         dbg.log2('#AccountManagerServices > removeInvite > rest call responds');

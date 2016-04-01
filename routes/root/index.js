@@ -264,6 +264,10 @@ router.route('/invite/:token/decline').get(inviteRoutes.decline);
 router.route('/invite/:token/accept').get(inviteRoutes.acceptGet);
 router.route('/invite/:token/accept').post(inviteRoutes.acceptPost);
 
+router.route('/invite/:token/notThisTime').get(inviteRoutes.sessionNotThisTime);
+router.route('/invite/:token/notAtAll').get(inviteRoutes.sessionNotAtAll);
+
+
 router.route('/survey/:id').get(surveyRoutes.index);
 
 router.route('/my-dashboard').get(myDashboardRoutes.index);

@@ -38,14 +38,14 @@ function allByAccount(accountId) {
     // selectFields.push([models.sequelize.fn('COUNT', models.sequelize.col('ContactListUsers.AccountUser.Invites.id')), 'Invites'])
     let deferred = q.defer();
     ContactList.findAll({where: { accountId: accountId },
-      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable', 'participantsFields' ],
+      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable', 'participantsFields'],
       group: [
         "ContactList.id",
         "ContactListUsers.id",
         "ContactListUsers.AccountUser.id",
         "ContactListUsers.AccountUser.Invites.id" ],
       include: [{
-        model: models.ContactListUser, attributes: ['id', 'customFields'],
+        model: models.ContactListUser, attributes: ['id', 'customFields', 'accountUserId'],
         include: [{
           model: models.AccountUser,
           attributes: selectFields,

@@ -36,8 +36,11 @@
 @import "../js/ngApp/components/dashboard-resources-emailTemplates/mail-templates";
 @import "../js/ngApp/components/dashboard-resources-topics/topics";
 @import "../js/ngApp/components/dashboard-resources-contactLists/contact-lists";
+@import "../js/ngApp/components/dashboard-chatSessions-builder/session-builder";
 
 //SHARED
 .margin-top-2rem { margin-top: 2rem;}
 .margin-top-3rem { margin-top: 3rem;}
+.margin020 { margin: 0 20px; }
 .fade-disabled {opacity: .45 !important;}
+.flex, .display-flex { display: flex; }

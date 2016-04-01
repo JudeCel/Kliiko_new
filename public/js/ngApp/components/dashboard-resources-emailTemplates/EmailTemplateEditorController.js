@@ -17,13 +17,22 @@
 
   function EmailTemplateEditorController(dbg, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, ngProgressFactory) {
     dbg.log2('#EmailTemplateEditorController started');
+
     var vm = this;
+    var selectedTemplate;
     vm.currentTemplate = {index: 0};
     vm.emailTemplates = [];
     vm.templateToDelete;
     vm.newResource = {};
-
+    vm.properties = {};
     var showSystemMail = $stateParams.systemMail;
+
+    vm.preInit = function(params) {
+      if (params) {
+        vm.properties = params;
+      }
+      vm.init();
+    }
 
     vm.init = function () {
       vm.emailTemplates = vm.emailTemplates.concat(vm.constantEmailTemplates);
@@ -56,29 +65,74 @@
       });
 
       $('#templateContent').wysiwyg("setContent", "");
+
       refreshTemplateList(function() {
         if (vm.emailTemplates && vm.emailTemplates.length) {
           vm.startEditingTemplate(0);
         }
       });
-    }
 
-    vm.startEditingTemplate = function(templateIndex) {
-      mailTemplate.getMailTemplate(vm.emailTemplates[templateIndex]).then(function (res) {
-        if (res.error) {return;}
 
-        vm.currentTemplate = vm.emailTemplates[templateIndex];
+
+
+    };
+
+    vm.startEditingTemplate = startEditingTemplate;
+    vm.modifyAndSave = modifyAndSave;
+    vm.deleteTemplate = deleteTemplate;
+    vm.resetMailTemplate = resetMailTemplate;
+    vm.previewMailTemplate = previewMailTemplate;
+    vm.saveEmailTemplate = saveEmailTemplate;
+
+
+
+
+    function startEditingTemplate(templateIndex, inSession, templateId, template) {
+      if (template)  selectedTemplate = template;
+      if (templateId) {
+        mailTemplate.getMailTemplate({id:templateId}).then(function (res) {
+          if (res.error) return;
+          //vm.currentTemplate = vm.emailTemplates[templateIndex];
+          populateTemplate(res);
+        });
+        return;
+      }
+      if (!inSession) {
+        mailTemplate.getMailTemplate(vm.emailTemplates[templateIndex]).then(function (res) {
+          if (res.error) return;
+          vm.currentTemplate = vm.emailTemplates[templateIndex];
+          populateTemplate(res);
+        });
+      } else {
+        mailTemplate.getMailTemplate(vm.emailTemplatesForSessionBuilder[templateIndex]).then(function (res) {
+          if (res.error) return;
+          vm.currentTemplate = vm.emailTemplatesForSessionBuilder[templateIndex];
+          populateTemplate(res);
+        });
+      }
+
+      function populateTemplate(res) {
         vm.currentTemplate.content = res.template.content;
         vm.currentTemplate.index = templateIndex;
         vm.currentTemplate.subject = res.template.subject;
         $('#templateContent').wysiwyg('setContent', vm.currentTemplate.content);
-      });
+      }
+
+
     }
 
-    vm.modifyAndSave = function(createCopy) {
+    /**
+     *
+     * @param createCopy {boolean}
+     * @param [template] {object} default valuse is currentTemplate
+     */
+    function modifyAndSave(createCopy, template) {
+      var template = template || vm.currentTemplate;
+
       vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
       vm.currentTemplate.error = {};
-      mailTemplate.saveMailTemplate(vm.currentTemplate, createCopy).then(function (res) {
+      template.properties = vm.properties;
+      mailTemplate.saveMailTemplate(template, createCopy).then(function (res) {
         if (!res.error) {
           refreshTemplateList(function() {
             var index = getIndexOfMailTemplateWithId(res.templates.id);
@@ -86,14 +140,14 @@
               vm.startEditingTemplate(index);
             }
           });
-          messenger.ok("Template was sucessfully saved.");
+          messenger.ok("Template was successfully saved.");
         } else {
           processErrors(res.error);
         }
       });
     }
 
-    vm.deleteTemplate = function(template, key, event) {
+    function deleteTemplate(template, key, event) {
       vm.templateToDelete = {template: template, key: key};
       domServices.modal('confirmDialog');
 
@@ -103,7 +157,7 @@
       }
     }
 
-    vm.resetMailTemplate = function() {
+    function resetMailTemplate() {
       mailTemplate.resetMailTemplate(vm.currentTemplate).then(function (res) {
         if (!res.error) {
           refreshTemplateList(function() {
@@ -115,7 +169,7 @@
       });
     }
 
-    vm.previewMailTemplate = function() {
+    function previewMailTemplate() {
       vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
       var contentFrame = $("#contentFrame").contents().find('html');
       domServices.modal('previewMailTemplateModal');
@@ -125,6 +179,29 @@
           $("#mailTemplatePreviewSubject").html(res.template.subject);
         } else {
           messenger.error(res.error);
+        }
+      });
+    }
+
+    function saveEmailTemplate(force) {
+      selectedTemplate.subject = vm.currentTemplate.subject;
+      selectedTemplate.content = vm.currentTemplate.content;
+      selectedTemplate.properties = vm.properties;
+
+      if (force) {
+        selectedTemplate.content = $('#templateContent').wysiwyg('getContent');
+      }
+      mailTemplate.saveTemplate(selectedTemplate).then(function (res) {
+        if (!res.error) {
+          refreshTemplateList(function() {
+            var index = getIndexOfMailTemplateWithId(res.templates.id);
+            if (index != -1) {
+              vm.startEditingTemplate(index);
+            }
+          });
+          messenger.ok("Template was successfully saved.");
+        } else {
+          processErrors(res.error);
         }
       });
     }
@@ -148,20 +225,32 @@
       return -1;
     }
 
-    function refreshTemplateList(callback) {
-      mailTemplate.getAllMailTemplates(showSystemMail).then(function (res) {
-        vm.emailTemplates = res.templates;
-        if (vm.emailTemplates.length && vm.currentTemplate == -1) {
-          vm.startEditingTemplate(0);
-        }
+    function preprocessMailTemplateList(res, callback) {
+      vm.emailTemplates = res.templates;
+      if (vm.emailTemplates.length && vm.currentTemplate == -1) {
+        vm.startEditingTemplate(0);
+      }
 
-        callback();
-      });
+      // session builder section
+      vm.emailTemplatesForSessionBuilder = vm.emailTemplates;
+      callback();
+    }
+
+    function refreshTemplateList(callback) {
+      if (vm.properties.sessionBuilder) {
+        mailTemplate.getAllSessionMailTemplates(showSystemMail).then(function (res) {
+          preprocessMailTemplateList(res, callback);
+        });
+      } else {
+        mailTemplate.getAllMailTemplates(showSystemMail).then(function (res) {
+          preprocessMailTemplateList(res, callback);
+        });
+      }
     }
 
     vm.cancelTemplateDelete = function() {
       domServices.modal('confirmDialog', 'close');
-    }
+    };
 
     vm.approveTemplateDelete = function() {
       domServices.modal('confirmDialog', 'close');
@@ -177,7 +266,7 @@
           }
         });
       });
-    }
+    };
 
     vm.uploadResourceForm = function(uploadType) {
       domServices.modal('uploadTemplateResource');
@@ -186,7 +275,7 @@
       if(!$scope.$$phase) {
         $scope.$apply();
       }
-    }
+    };
 
     function uploadTypeForTitle(uploadType) {
       if(uploadType == "youtubeUrl"){
@@ -270,7 +359,5 @@
 
       return item.AccountId;
     }
-
-    vm.init();
   }
 })();

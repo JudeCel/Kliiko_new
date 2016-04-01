@@ -8,7 +8,8 @@
   function topicsAndSessionsFactory(dbg, globalSettings, $q, $resource) {
     var restApi = {
       topics: $resource(globalSettings.restUrl +'/topics'),
-      topic: $resource(globalSettings.restUrl +'/topic/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}})
+      topic: $resource(globalSettings.restUrl +'/topic/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      sessionByInvite: $resource(globalSettings.restUrl +'/session/getByInvite', {}, {post: {method: 'POST'}, put: {method: 'PUT'}})
     };
 
     var topicsAndSessionsFactory = {};
@@ -16,6 +17,7 @@
     topicsAndSessionsFactory.createNewTopic = createNewTopic;
     topicsAndSessionsFactory.updateTopic = updateTopic;
     topicsAndSessionsFactory.deleteTopic = deleteTopic;
+    topicsAndSessionsFactory.getSessionByInvite = getSessionByInvite;
 
 
     return topicsAndSessionsFactory;
@@ -125,6 +127,20 @@
         deferred.reject('Connection error');
       }
 
+    }
+
+
+    function getSessionByInvite(token) {
+      var deferred = $q.defer();
+
+      restApi.sessionByInvite.post({}, {token: token}, function(res) {
+        if (res.error) {
+          return deferred.reject(res.error);
+        }
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
     }
 
   }

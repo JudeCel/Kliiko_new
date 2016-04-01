@@ -193,18 +193,18 @@ describe('SERVICE - AccountManager', function() {
         }
 
         AccountUser.find({ where: { email: req.body.email } }).then(function(accountUser) {
-          inviteService.createInvite(params, function(error, invite) {
+          inviteService.createInvite(params).then(function(data) {
             if(error) {
               done(error);
             }
 
             let userParams = { accountName: 'newname', password: 'newpassword' };
-            inviteService.acceptInviteNew(invite.token, userParams, function(error, message) {
+            inviteService.acceptInviteNew(data.invite.token, userParams, function(error, message) {
               if(error) {
                 done(error);
               }
 
-              async.parallel(countTables({ invite: 0, account: 1, user: 2, accountUser: 2 }), function(error, result) {
+              async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 2 }), function(error, result) {
                 if(error) {
                   done(error);
                 }
@@ -231,7 +231,7 @@ describe('SERVICE - AccountManager', function() {
         }
 
         User.find({ where: { email: req.body.email } }).then(function(user) {
-          inviteService.createInvite(params, function(error, invite) {
+          inviteService.createInvite(params).then(function(data) {
             if(error) {
               done(error);
             }
@@ -266,18 +266,18 @@ describe('SERVICE - AccountManager', function() {
           done(error);
         }
         AccountUser.find({ where: { email: req.body.email } }).then(function(accountUser) {
-          inviteService.createInvite(params, function(error, invite) {
+          inviteService.createInvite(params).then(function(data) {
             if(error) {
               done(error);
             }
 
             let userParams = { accountName: 'newname', password: 'newpassword' };
-            inviteService.acceptInviteNew(invite.token, userParams, function(error, message) {
+            inviteService.acceptInviteNew(data.invite.token, userParams, function(error, message) {
               if(error) {
                 done(error);
               }
 
-              async.parallel(countTables({ invite: 0, account: 1, user: 2, accountUser: 2 }), function(error, result) {
+              async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 2 }), function(error, result) {
                 if(error) {
                   done(error);
                 }

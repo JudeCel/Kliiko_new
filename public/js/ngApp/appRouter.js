@@ -151,6 +151,14 @@
       ///////////////////////// Sessions
       .state('dashboard.chatSessions', {
         url: '/chatSessions',
+        resolve: {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              '/js/ngApp/components/dashboard-chatSessions/ChatSessionsController.js',
+              '/js/ngApp/components/dashboard-chatSessions/chatSessionsServices.js',
+            ]);
+          }]
+        },
         onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location, banners) {
           dbg.rs('chatSessions');
 
@@ -165,6 +173,59 @@
         }],
         views: {
           'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-chatSessions/dashboard-content.html"}
+        }
+
+      })
+
+      .state('dashboard.chatSessions.builder', {
+        url: '/builder/:id',
+        resolve: {
+          loadDependencies: ['dbg', '$ocLazyLoad', function(dbg, $ocLazyLoad) {
+           return $ocLazyLoad.load([
+              '/js/ngApp/components/dashboard-chatSessions-builder/SessionModel.js',
+              '/js/ngApp/components/dashboard-chatSessions-builder/sessionBuilderControllerServices.js',
+              '/js/ngApp/components/dashboard-chatSessions-builder/SessionBuilderController.js',
+              '/js/ngApp/components/dashboard-chatSessions-builder/steps/sessionStep1Controller.js',
+              '/js/ngApp/components/dashboard-chatSessions-builder/steps/sessionStep4-5Controller.js',
+              '/js/ngApp/components/dashboard-chatSessions-builder/steps/sessionStep2Controller.js',
+
+             '/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js',
+             '/js/ngApp/components/dashboard-resources-topics/TopicsController.js',
+
+             '/js/vendors/ngDraggable/ngDraggable.js',
+             '/js/vendors/ng-file-upload/ng-file-upload.js',
+
+              '/js/ngApp/components/dashboard-resources-brandColours/brandColourServices.js',
+              '/js/ngApp/components/dashboard-resources-brandColours/BrandColourController.js',
+
+             '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
+             '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
+             '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
+             '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
+             '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
+             '/js/ngApp/modules/contactList/contactList.js',
+             '/js/ngApp/directives/custom-select-directive.js',
+             '/js/ngApp/filters/num.js',
+             '/js/ngApp/filters/human2Camel.js',
+
+
+              "/js/ngApp/components/dashboard-resources-gallery/GalleryController.js",
+              "/js/ngApp/components/dashboard-resources-gallery/GalleryService.js",
+
+              '/js/ngApp/components/dashboard-resources-emailTemplates/EmailTemplateEditorController.js',
+            ]);
+
+          }]
+        },
+        onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location, banners) {
+          dbg.rs('chatSessions builder');
+          $stateParams.bannerType = 'sessions';
+
+          banners.setMainBannerForPage('sessions');
+
+        }],
+        views: {
+          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-chatSessions-builder/session-builder-index.html"}
         }
 
       })
@@ -198,6 +259,13 @@
         },
 
         resolve: {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              "/js/ngApp/components/dashboard-resources-gallery/GalleryController.js",
+              "/js/ngApp/components/dashboard-resources-gallery/GalleryService.js"
+            ]);
+          }],
+
           checkPermission: ['$q', '$timeout', 'user', 'dbg', 'ngProgressFactory', 'banners',function($q, $timeout, user, dbg, ngProgressFactory, banners) {
             var deferred = $q.defer();
 
@@ -230,7 +298,7 @@
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-contactLists/dashboard-content.html"}
         },
         resolve: {
-          loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
+          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
             return $ocLazyLoad.load([
               '/js/vendors/ngDraggable/ngDraggable.js',
               '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
@@ -340,7 +408,7 @@
 
       })
       .state('dashboard.resources.brandColours', {
-        url: '/brand-colours',
+        url: '/brand-colours/:new?backTo&id',
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-brandColours/dashboard-content.html"}
         },

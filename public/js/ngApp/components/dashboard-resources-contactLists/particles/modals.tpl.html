@@ -2,22 +2,7 @@
 
 <section>
     <!-- add contact manually -->
-    <div id="contactList-addContactManual" class="modal fade"  role="dialog">
-        <div class="modal-dialog contactDetailsModal" style="width: 800px">
-            <div class="modal-content border-green border-radius-none">
-                <div class='modal-header'>
-                    <button type='button' class='close' data-dismiss="modal">&times;</button>
-                    <h2 class='modal-title text-center'>{{clc.contactModalTitle}}</h2>
-                </div>
-
-                <div class='modal-body text-gray-medium'>
-                    <ng-include ng-hide="clc.importData.excel || clc.importData.csv" src="clc.basePath+'particles/modals-contact-table.tpl.html'"></ng-include>
-                    <ng-include ng-show="clc.importData.excel || clc.importData.csv" src="clc.basePath+'particles/modals-excel-csv-import.tpl.html'"></ng-include>
-
-                </div>
-
-            </div>
-        </div>
+    <div id="contactList-addContactManual" class="modal fade"  role="dialog" ng-include="'js/ngApp/components/dashboard-resources-contactLists/particles/modals-addContactManual.tpl.html'">
     </div>
 
 
@@ -84,7 +69,7 @@
                     <button type='button' class='close' data-dismiss="modal">&times;</button>
                     <h2 class='modal-title text-center'>Map fields from file</h2>
                 </div>
-                
+
                   <div class='modal-body text-gray-medium'>
                     <uib-tabset justified="true">
                       <uib-tab heading="Field Mapping" active="clc.modalTab1">
@@ -102,16 +87,16 @@
                                   </td>
                                 </tr>
                               </table>
-                            </div>                               
+                            </div>
                           </div>
                           <div class="col-md-1"></div>
                           <div id="contactList-fieldColumnRight" class="col-md-6 panel panel-default">
                             <h3>Contact List</h3>
                             <!-- Template for table below -->
-                            <script type="text/ng-template" id="fieldTemplate.html">                               
-                                <td>{{cl.name}}</td> 
+                            <script type="text/ng-template" id="fieldTemplate.html">
+                                <td>{{cl.name}}</td>
                                 <td class="contactList-dropPlaceholderCell">
-                                  <div class="contactList-dropPlaceholder">                                                                
+                                  <div class="contactList-dropPlaceholder">
                                     <div ng-show="cl.field" class="contactList-drop-item" ng-drag="true" ng-drag-data="cl">{{cl.field}}
                                         <img src="/icons/ic_move.png" class="pull-left ic-move">
                                         <button  ng-click="clc.clearDoppedItem(cl)" type='button' class='close'>&times;</button>
@@ -130,10 +115,10 @@
                                   <button id="additionalMappingFieldnameBtn" class="btn btn-standart btn-blue" type="button" ng-click="clc.addCustomField();" aria-describedby="additionalMappingFieldname">
                                       +
                                   </button>
-                                </span>                         
+                                </span>
                               </div>
                            </div>
-                            
+
                         </div>
 
                         <div class='row modal-footer'>
@@ -148,20 +133,20 @@
                       </div>
                     </form>
                     </uib-tab >
-                  
+
                   <uib-tab heading="Custom Fields" active="clc.modalTab2">
                     <div class='row contactList-customfields'>
                       <ng-include src="clc.basePath+'particles/modals-custom-fields.tpl.html'"></ng-include>
                       <div class='btn-standart btn-green pull-right modals-btn' ng-click="clc.updateCustomFieldList()" ng-class="{disabled:clc.newListErrorMessage}">Update</div>
                     </div>
                   </uib-tab>
-              </uib-tabset>     
+              </uib-tabset>
           </div>
         </div>
 
       </div>
     </div>
-  
+
     <!-- Manage columns view -->
     <div id="contactList-manageColumns" class="modal fade"  role="dialog">
         <div class="modal-dialog contactDetailsModal" style="width: 800px">

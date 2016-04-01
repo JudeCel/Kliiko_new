@@ -4,6 +4,7 @@ var policy = require('./../middleware/policy');
 var models = require('./../models');
 var filters = require('./../models/filters');
 var Session  = models.Session;
+var Invite  = models.Invite;
 var SessionMember  = models.SessionMember;
 var AccountUser  = models.AccountUser;
 var Account  = models.Account;
@@ -35,8 +36,36 @@ module.exports = {
   removeSession: removeSession,
   updateSessionMemberRating: updateSessionMemberRating,
   getAllSessionRatings: getAllSessionRatings,
-  addShowStatus: addShowStatus
+  addShowStatus: addShowStatus,
+  getSessionByInvite: getSessionByInvite
 };
+
+function isInviteSessionInvalid(resp) {
+  if ( new Date().getTime() < new Date(resp.Session.startTime).getTime() ) return 'Sorry, the '+res.Session.name+' Session is not yet open. Please check the Start Date & Time on your Confirmation email, or contact the Facilitator';
+  if ( res.Session.isFull) return 'Sorry, the available places for the '+res.Session.name+' Session have already been filled. The Facilitator will contact you ASAP';
+  if ( !res.Session.active) return 'Sorry, the '+res.Session.name+' Session is now closed. For any queries, please contact the Facilitator';
+
+  return null;
+}
+
+function getSessionByInvite(token) {
+  var deferred = q.defer();
+  if (!token) {
+    deferred.reject('No invite @token has been provided');
+  }
+
+  Invite.find({where:{token:token}, include: [Session]}).then(function(resp) {
+    let sessionError = isInviteSessionInvalid(resp);
+    if (sessionError) {
+      return deferred.reject(sessionError);
+    }
+    deferred.resolve(resp);
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
 
 // Exports
 function findSession(sessionId, accountId) {
@@ -334,7 +363,7 @@ function simpleParams(data, message) {
 function modifySessions(sessions, accountId) {
   let deferred = q.defer();
 
-  models.Subscription.find({ where: { AccountId: accountId } }).then(function(subscription) {
+  models.Subscription.find({ where: { accountId: accountId } }).then(function(subscription) {
     let array = _.isArray(sessions) ? sessions : [sessions];
     _.map(array, function(session) {
       addShowStatus(session, subscription);

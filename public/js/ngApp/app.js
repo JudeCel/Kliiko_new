@@ -15,6 +15,8 @@
     'domServices',
     'messenger',
     'ngMessages',
+    'ngCookies',
+    'colorpicker.module',
     'internationalPhoneNumber',
 
     // app modules
@@ -41,7 +43,7 @@
     .run(appRun)
     .controller('AppController', AppController);
 
-  myInterceptor.$injectopr = ['$log','$q', '$rootScope'];
+  myInterceptor.$inject = ['$log','$q', '$rootScope'];
   function myInterceptor($log, $q, $rootScope) {
     // Show progress bar on every request
 
@@ -106,8 +108,8 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'ngProgressFactory', 'user', '$q', 'accountUser'];
-  function AppController($rootScope, dbg, ngProgressFactory, user, $q, accountUser) {
+  AppController.$inject = ['$rootScope', 'dbg', 'ngProgressFactory', 'user', '$q', 'accountUser','$cookies', '$ocLazyLoad', '$injector'];
+  function AppController($rootScope, dbg, ngProgressFactory, user, $q, accountUser, $cookies, $ocLazyLoad, $injector) {
     var vm = this;
     var progressbar = ngProgressFactory.createInstance();
     progressbar.start();
@@ -140,6 +142,7 @@
       });
       accountUser.getAccountUserData(true).then(function(res) { vm.accountUser = res });
     }
+
 
   }
 

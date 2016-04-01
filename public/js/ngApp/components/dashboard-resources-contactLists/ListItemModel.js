@@ -122,6 +122,5 @@
       self.update(self);
     }
 
-
   }
 })();
