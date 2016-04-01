@@ -10,7 +10,6 @@ var Account = models.Account;
 var q = require('q');
 var _ = require('lodash');
 var async = require('async');
-var config = require('config');
 var chargebee = require('./../lib/chargebee').instance;
 
 // We can get credit count when we call addon from chargebee system, there is unit field for addon.
