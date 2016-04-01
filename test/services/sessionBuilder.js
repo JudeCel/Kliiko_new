@@ -5,7 +5,6 @@ var userFixture = require('./../fixtures/user');
 var models = require('./../../models');
 
 var sessionBuilderServices = require('./../../services/sessionBuilder');
-var config = require('config');
 var async = require('async');
 
 describe('SERVICE - SessionBuilder', function() {
@@ -248,7 +247,7 @@ describe('SERVICE - SessionBuilder', function() {
   });
 
   describe('#sendSms', function(done) {
-    var mobileNumber = config.get('twilioSenderNumber');
+    var mobileNumber = process.env.TWILIO_SENDER_NUMBER
 
     describe('happy path', function(done) {
       function provider(params, callback) {
