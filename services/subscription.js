@@ -536,7 +536,7 @@ function disableSubDependencies(accountId) {
   let arrayFunctions = [
     parallelFunc(models.Session.update({ active: false }, where)),
     parallelFunc(models.Survey.update({ closed: true }, where)),
-    parallelFunc(models.ContactList.update({ editable: false }, where))
+    parallelFunc(models.ContactList.update({ active: false }, where))
   ];
 
   async.parallel(arrayFunctions, function(error, _result) {
