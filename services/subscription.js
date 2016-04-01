@@ -5,6 +5,7 @@ var filters = require('./../models/filters');
 var airbrake = require('./../lib/airbrake').instance;
 var Subscription = models.Subscription;
 var AccountUser = models.AccountUser;
+var Account = models.Account;
 var SubscriptionPlan = models.SubscriptionPlan;
 var SubscriptionPreference = models.SubscriptionPreference;
 
@@ -135,7 +136,7 @@ function getEstimateCharge(plan, accountSubscription) {
 function findSubscription(accountId) {
   let deferred = q.defer();
 
-  Subscription.find({ where: { accountId: accountId }, include: [SubscriptionPlan, SubscriptionPreference] }).then(function(subscription) {
+  Subscription.find({ where: { accountId: accountId }, include: [SubscriptionPlan, SubscriptionPreference, Account] }).then(function(subscription) {
     deferred.resolve(subscription);
   }).catch(function(error) {
     deferred.reject(error);
@@ -241,7 +242,7 @@ function gatherInformation(accountId, newPlanId) {
       }
     }).then(function(plan) {
       if(plan){
-        return {subscription: subscription, currentPlan: subscription.SubscriptionPlan, newPlan: plan}
+        return {accountName: subscription.Account.name, subscription: subscription, currentPlan: subscription.SubscriptionPlan, newPlan: plan}
       }else{
         deferred.reject(MESSAGES.notFound.subscriptionPlan);
       }
@@ -397,6 +398,7 @@ function chargebeePortalCreate(params, provider) {
 function chargebeeSubUpdateViaCheckout(params, provider) {
   let deferred = q.defer();
   let passThruContent = JSON.stringify(params)
+
   if(!provider) {
     provider = chargebee.hosted_page.checkout_existing;
   }
@@ -406,8 +408,8 @@ function chargebeeSubUpdateViaCheckout(params, provider) {
       id: params.subscriptionId,
       plan_id: params.planId
     },
-    redirect_url: "http://user.focus.com:8080/dashboard#/account-profile/upgrade-plan",
-    cancel_url: "http://user.focus.com:8080/dashboard#/account-profile/upgrade-plan",
+    redirect_url: redirectUrl(params.accountName),
+    cancel_url: redirectUrl(params.accountName),
     pass_thru_content: passThruContent
   }).request(function(error,result){
     if(error){
@@ -418,6 +420,10 @@ function chargebeeSubUpdateViaCheckout(params, provider) {
   });
 
   return deferred.promise;
+}
+
+function redirectUrl(accountName) {
+  return "http://" + accountName + ".focus.com:8080/dashboard#/account-profile/upgrade-plan";
 }
 
 function chargebeeSubUpdate(params, provider) {
@@ -494,7 +500,8 @@ function chargebeePassParams(result) {
     subscriptionId: result.subscription.subscriptionId,
     planId: result.newPlan.chargebeePlanId,
     subscriptionPlanId: result.newPlan.id,
-    paidSmsCount: result.newPlan.paidSmsCount
+    paidSmsCount: result.newPlan.paidSmsCount,
+    accountName: result.accountName
   }
 }
 
