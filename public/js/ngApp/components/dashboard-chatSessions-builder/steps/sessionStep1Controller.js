@@ -95,12 +95,12 @@
     function updateStep(dataObj) {
       if (dataObj == 'startTime') {
         parseDateAndTime();
-        return updateStep({startTime: vm.session.steps.step1.startTime});
+        return updateStep({start_time: vm.session.steps.step1.startTime});
       }
 
       if (dataObj == 'endTime') {
         parseDateAndTime();
-        return updateStep({endTime: vm.session.steps.step1.endTime});
+        return updateStep({end_time: vm.session.steps.step1.endTime});
       }
 
       var deferred = $q.defer();
