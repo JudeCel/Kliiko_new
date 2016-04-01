@@ -128,7 +128,6 @@
       if(!tosConfirmed){
         domServices.shakeClass('shake-this');
       }else{
-        return vm.submitDisabled = true;
         planService.updatePlan(vm.selectedPlan.plan.id).then(function(response) {
           if(response.error){
             messenger.error(response.error);
@@ -172,7 +171,7 @@
 
     function isCurrentPlan(planId) {
       if(planId == 'fixed_monthly'){
-        return vm.currentPlan.chargebeePlanId == 'fixed_yearly'
+        return vm.currentPlan.chargebeePlanId == 'fixed_yearly' || vm.currentPlan.chargebeePlanId == 'fixed_monthly';
       }else{
         return planId == vm.currentPlan.chargebeePlanId
       }
