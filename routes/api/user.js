@@ -36,7 +36,6 @@ function userGet(req, res, next) {
   let currentDomain = res.locals.currentDomain
   let roles = currentDomain.roles;
   let reqUser = req.user;
-  console.log(getUserBasicData())
 
   q.all([
     getUserBasicData(),

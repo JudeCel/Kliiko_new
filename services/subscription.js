@@ -11,13 +11,8 @@ var SubscriptionPreference = models.SubscriptionPreference;
 var q = require('q');
 var _ = require('lodash');
 var async = require('async');
-var chargebee = require('chargebee');
+var chargebee = require('./../lib/chargebee').instance;
 var planConstants = require('./../util/planConstants');
-
-chargebee.configure({
-  site: process.env.CHARGEBEE_SITE,
-  api_key: process.env.CHARGEBEE_API_KEY
-});
 
 const MESSAGES = {
   notFound: {

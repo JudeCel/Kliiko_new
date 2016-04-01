@@ -45,7 +45,7 @@
         key: "confirmation"
       },
       {
-        title: "Submited",
+        title: "Submitted",
         number: 3,
         key: "submitted"
       }
