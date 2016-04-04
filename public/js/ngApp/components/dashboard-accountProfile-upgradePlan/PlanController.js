@@ -89,14 +89,30 @@
     init();
 
     function init() {
+      errorWhileCretingSubscription()
       if(urlParams.state == 'succeeded'){
         vm.currentStep = 3;
         succeededCheckout($location.search());
+        removeUrlParams(['state', 'id'])
       }else if(urlParams.state == 'cancelled'){
         messenger.error("Order was cancelled");
+        removeUrlParams(['state'])
         getPlans();
       }else{
         getPlans();
+      }
+    }
+
+    function removeUrlParams(params) {
+      angular.forEach(params, function(value) {
+        $location.search(value, null);
+      });
+    }
+
+    function errorWhileCretingSubscription() {
+      if(urlParams.error) {
+        messenger.error(urlParams.error);
+        $location.search('error', null)
       }
     }
 
