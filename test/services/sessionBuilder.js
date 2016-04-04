@@ -571,25 +571,17 @@ describe('SERVICE - SessionBuilder', function() {
     });
 
     describe('sad path', function(done) {
-      it('should fail because no facilitator', function(done) {
+      it('should fail because no topics', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
           params.step = 'facilitatiorAndTopics';
 
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-            createDependencies(params, { facilitator: true }, function(error) {
-              if(error) {
-                done(error);
-              }
-              else {
-                sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-                  console.log(result);
-                  done('Should not get here!');
-                }, function(error) {
-                  assert.equal(error.facilitator, sessionBuilderServices.messages.errors.secondStep.facilitator);
-                  done();
-                });
-              }
+            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              assert.equal(error.topics, 'No topics selected');
+              done();
             });
           }, function(error) {
             done(error);
@@ -631,7 +623,9 @@ describe('SERVICE - SessionBuilder', function() {
         subject: "Test Subject",
         content: "<p>Test Content</p>",
         systemMessage: true,
-        sessionId: sessionId
+        sessionId: sessionId,
+        isCopy: true,
+        required: true
       }
     }
 
@@ -639,7 +633,7 @@ describe('SERVICE - SessionBuilder', function() {
       let array = new Array(count);
       array.fill(
         function(cb) {
-          models.MailTemplate.create(mailTemplateParams(sessionId)).then(function() {
+          models.MailTemplate.create(mailTemplateParams(sessionId)).then(function(result) {
             cb();
           }).catch(function(error) {
             cb(error);
@@ -655,9 +649,12 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           params.step = 'manageSessionEmails';
 
+          console.log(params);
+
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             async.parallel(multipleTemplates(5, params.id), function(error, _result) {
               if(error){
+                console.log(error);
                 done(error);
               }
               sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {

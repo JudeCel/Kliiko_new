@@ -256,7 +256,7 @@ describe('SERVICE - BrandColour', function() {
       it('should succeed on returning fields', function (done) {
         let fields = brandColourServices.manageFields();
         assert.equal(_.size(fields.participants), 8);
-        assert.equal(fields.chatRoom.length, 6);
+        assert.equal(fields.chatRoom.length, 7);
         done();
       });
     });

@@ -173,7 +173,7 @@ describe('SERVICE - AccountManager', function() {
         let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
 
         accountManagerService.createOrFindAccountManager(req,res, function(error, params) {
-          assert.deepEqual(error, { email: 'This account has already accepted invite.' });
+          assert.deepEqual(error.email, "This user is already invited.");
           done();
         });
       });
