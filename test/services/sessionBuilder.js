@@ -102,13 +102,12 @@ describe('SERVICE - SessionBuilder', function() {
     describe('happy path', function(done) {
       it('should update session', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+
           let params = sessionParams(result);
           params.name = 'My first cool session';
 
-          sessionBuilderServices.update(params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             assert.equal(result.sessionBuilder.steps.step1.name, params.name);
-            assert.equal(result.sessionBuilder.steps.step1.startTime, params.startTime);
-            assert.equal(result.sessionBuilder.steps.step1.endTime, params.endTime);
             done();
           }, function(error) {
             done(error);
@@ -121,12 +120,12 @@ describe('SERVICE - SessionBuilder', function() {
       it('should fail on updating session', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
-          params.startTime.setDate(params.startTime.getDate() + 10);
+          params.name = "";
 
-          sessionBuilderServices.update(params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             done('Should not get here!');
           }, function(error) {
-            assert.equal(error.startTime, sessionBuilderServices.messages.errors.firstStep.invalidDateRange);
+            assert.equal(error.name, "Name can't be empty");
             done();
           });
         });
@@ -136,21 +135,33 @@ describe('SERVICE - SessionBuilder', function() {
 
   describe('#nextStep', function(done) {
     describe('happy path', function(done) {
+
+      function sessionMemberParams(sessionId) {
+        return {
+          sessionId: sessionId,
+          username: 'Dude',
+          role: 'facilitator',
+          accountUserId: testAccountUser.id
+        }
+      }
+
       it('should go to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
           params.name = 'My first cool session';
 
-          sessionBuilderServices.update(params).then(function(result) {
-            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-              assert.equal(result.sessionBuilder.steps.step1.name, params.name);
-              assert.deepEqual(result.sessionBuilder.steps.step1.startTime, params.startTime);
-              assert.deepEqual(result.sessionBuilder.steps.step1.endTime, params.endTime);
-              done();
-            }, function(error) {
-              done(error);
+          models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+            sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+              sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                assert.equal(result.sessionBuilder.steps.step1.name, params.name);
+                done();
+              }, function(error) {
+                done(error);
+              });
             });
           });
+        }, function(error) {
+          done(error);
         });
       });
     });
@@ -161,7 +172,7 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           params.step = 'done';
 
-          sessionBuilderServices.update(params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             assert.equal(result.sessionBuilder.currentStep, params.step);
 
             sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
@@ -183,7 +194,7 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           params.step = 'manageSessionEmails';
 
-          sessionBuilderServices.update(params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             assert.equal(result.sessionBuilder.currentStep, params.step);
 
             sessionBuilderServices.prevStep(params.id, params.accountId).then(function(result) {
@@ -203,7 +214,7 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           assert.equal(result.sessionBuilder.currentStep, 'setUp');
 
-          sessionBuilderServices.update(params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             assert.equal(result.sessionBuilder.currentStep, 'setUp');
 
             sessionBuilderServices.prevStep(params.id, params.accountId).then(function(result) {
@@ -423,22 +434,35 @@ describe('SERVICE - SessionBuilder', function() {
 
   describe('#firstStep', function(done) {
     describe('happy path', function(done) {
+      function sessionMemberParams(sessionId) {
+        return {
+          sessionId: sessionId,
+          username: 'Es krucs!',
+          role: 'facilitator',
+          accountUserId: testAccountUser.id
+        }
+      }
+
       it('should succeed on moving to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
           params.name = 'My first cool session';
 
-          sessionBuilderServices.update(params).then(function(result) {
-            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-              sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
-                assert.equal(session.step, 'facilitatiorAndTopics');
-                done();
+          models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+            sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+              sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
+                  assert.equal(session.step, 'facilitatiorAndTopics');
+                  done();
+                }, function(error) {
+                  done(error);
+                });
               }, function(error) {
                 done(error);
               });
-            }, function(error) {
-              done(error);
             });
+          }, function(error) {
+            done(error);
           });
         });
       });
@@ -448,12 +472,11 @@ describe('SERVICE - SessionBuilder', function() {
       it('should fail on #update', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
-          params.startTime.setDate(params.startTime.getDate() + 10);
 
-          sessionBuilderServices.update(params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, { end_time: null }).then(function(result) {
             done('Should not get here!');
           }, function(error) {
-            assert.equal(error.startTime, sessionBuilderServices.messages.errors.firstStep.invalidDateRange);
+            assert.equal(error.end_time, "End Time can't be empty");
             done();
           });
         });
@@ -522,7 +545,7 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           params.step = 'facilitatiorAndTopics';
 
-          sessionBuilderServices.update(params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             createDependencies(params, {}, function(error) {
               if(error) {
                 done(error);
@@ -553,13 +576,14 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           params.step = 'facilitatiorAndTopics';
 
-          sessionBuilderServices.update(params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             createDependencies(params, { facilitator: true }, function(error) {
               if(error) {
                 done(error);
               }
               else {
                 sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                  console.log(result);
                   done('Should not get here!');
                 }, function(error) {
                   assert.equal(error.facilitator, sessionBuilderServices.messages.errors.secondStep.facilitator);
@@ -578,7 +602,7 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           params.step = 'facilitatiorAndTopics';
 
-          sessionBuilderServices.update(params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             createDependencies(params, { topics: true }, function(error) {
               if(error) {
                 done(error);
@@ -631,7 +655,7 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           params.step = 'manageSessionEmails';
 
-          sessionBuilderServices.update(params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             async.parallel(multipleTemplates(5, params.id), function(error, _result) {
               if(error){
                 done(error);
@@ -662,7 +686,7 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           params.step = 'manageSessionEmails';
 
-          sessionBuilderServices.update(params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
               done('Should not get here!');
             }, function(error) {
@@ -693,7 +717,7 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           params.step = 'manageSessionParticipants';
 
-          sessionBuilderServices.update(params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             models.SessionMember.create(sessionMemberParams(params.id)).then(function(member) {
               sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
                 sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
@@ -721,7 +745,7 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           params.step = 'manageSessionParticipants';
 
-          sessionBuilderServices.update(params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
               done('Should not get here!');
             }, function(error) {
@@ -752,7 +776,7 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           params.step = 'inviteSessionObservers';
 
-          sessionBuilderServices.update(params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             models.SessionMember.create(sessionMemberParams(params.id)).then(function(member) {
               sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
                 sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
@@ -780,7 +804,7 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           params.step = 'manageSessionParticipants';
 
-          sessionBuilderServices.update(params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
               done('Should not get here!');
             }, function(error) {

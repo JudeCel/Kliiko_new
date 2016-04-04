@@ -481,7 +481,8 @@ function stepsDefinition(session) {
     function(cb) {
       object.step3 = {
         stepName: 'manageSessionEmails',
-        incentive_details: session.incentive_details
+        incentive_details: session.incentive_details,
+        emailTemplates: []
       };
       cb();
     },
