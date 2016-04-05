@@ -46,8 +46,7 @@ describe('Service Session Member', () => {
       let params = {
         role: 'facilitator',
         accountUserId: TestAccount.id,
-        username: "name",
-        avatar_info: "0:4:3:1:4:3"
+        username: "name"
       }
 
       TestSession.createSessionMember(params).then(function (result) {

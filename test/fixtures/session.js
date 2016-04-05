@@ -152,7 +152,6 @@ function addSessionMember(accountUserId, session, role, name, callback) {
   let params = { role: role,
                  accountUserId: accountUserId,
                  username: name,
-                 avatar_info: "0:4:3:1:4:3",
                  token: role
                 }
   session.createSessionMember(params).then(function(result) {

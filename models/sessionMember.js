@@ -14,7 +14,7 @@ module.exports = (Sequelize, DataTypes) => {
     username: { type: DataTypes.STRING, allowNull: false },
     colour: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 6710886 },
     online: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    avatar_info: { type: DataTypes.STRING, allowNull: false, defaultValue: '0:3:0:0:0:0' },
+    avatarData: { type: DataTypes.JSONB, allowNull: false, defaultValue: { base: 0, face: 3, body: 0, hair: 0, desk: 0, face: 0 } },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionMemberRoles },
     rating: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0, validate: { min: 0, max: 5 } }
   }, {
