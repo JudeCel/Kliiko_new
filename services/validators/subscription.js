@@ -62,7 +62,7 @@ function validate(accountId, type, count) {
         dependency.model.count(dependency.params(accountId)).then(function(c) {
           let maxCount = preference.data[dependency.key];
 
-          if(c + count <= maxCount) {
+          if(c + count <= maxCount || maxCount == -1) {
             deferred.resolve();
           }
           else {

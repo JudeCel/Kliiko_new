@@ -155,7 +155,7 @@
             messenger.error(response.error);
           }else {
             if(response.redirect){
-              window.location = response.result.url;
+              window.location = response.hosted_page.url;
             }else{
               nextStep();
             }

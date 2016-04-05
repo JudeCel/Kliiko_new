@@ -121,7 +121,7 @@ describe('SERVICE - Subscription', function() {
   describe('#updateSubscription', function() {
     beforeEach(function(done) {
       subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function(subscription) {
-        currentSubPlanId = subscription.subscriptionPlanId;
+        currentSubPlanId = subscription.planId;
         done();
       }, function(error) {
         done(error);
@@ -133,7 +133,57 @@ describe('SERVICE - Subscription', function() {
         return {
           request: function(callback) {
             callback(null, {
-              subscription: { id: params.id, plan_id: params.plan_id }
+              id: params.id,
+              plan_id: params.plan_id
+            });
+          }
+        }
+      }
+    }
+
+    function viaCheckoutProvider(params) {
+      return function() {
+        return {
+          request: function(callback) {
+            callback(null, {
+              hosted_page: {
+                id: params.id,
+                type: "checkout_existing",
+                url: "https://yourapp.chargebee.com/pages/v2/EmKrsbXtONZfPVXmoSHLVpfBJYlsIIut/checkout",
+                state: "created",
+                embed: true,
+                created_at: 1453977370,
+                expires_at: 1453980970,
+                object: "hosted_page"
+              }
+            });
+          }
+        }
+      }
+    }
+
+    function invalidCreditCardProvider() {
+      return function() {
+        return {
+          request: function(callback) {
+            callback(null, {
+              customer: {
+                card_status: "no_card"
+              }
+            });
+          }
+        }
+      }
+    }
+
+    function validCreditCardProvider() {
+      return function() {
+        return {
+          request: function(callback) {
+            callback(null, {
+              customer: {
+                card_status: "valid"
+              }
             });
           }
         }
@@ -141,15 +191,34 @@ describe('SERVICE - Subscription', function() {
     }
 
     describe('happy path', function() {
-      it('should succeed on updating subscription', function(done) {
+      it('should succeed on updating subscription without valid credit card', function(done) {
         let smsCount = 650; // sms count that is expected when updating from "free" plan to "unlimited" plan!
+        let providers = {
+          creditCard: invalidCreditCardProvider(),
+          viaCheckout: viaCheckoutProvider({ id: 'SomeUniqueID' })
+        }
+        subscriptionServices.updateSubscription(testData.account.id, testData.subscriptionPlan.chargebeePlanId, providers).then(function(result) {
+          assert.equal(result.redirect, true);
+          assert.equal(result.hosted_page.object, "hosted_page");
+          assert.equal(result.hosted_page.id, "SomeUniqueID");
+          assert.equal(result.hosted_page.url, "https://yourapp.chargebee.com/pages/v2/EmKrsbXtONZfPVXmoSHLVpfBJYlsIIut/checkout");
+          done();
+        }, function(error) {
+          done(error);
+        });
+      });
 
-        subscriptionServices.updateSubscription(testData.account.id, testData.subscriptionPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })).then(function(subscription) {
-          assert.isNotNull(subscription);
-          assert.isNotNull(subscription.SubscriptionPreference);
-          assert.equal(subscription.accountId, testData.account.id);
-          assert.equal(subscription.planId, testData.subscriptionPlan.chargebeePlanId);
-          assert.equal(subscription.SubscriptionPreference.data.paidSmsCount, smsCount);
+      it('should succeed on updating subscription with valid credit card', function(done) {
+        let smsCount = 650; // sms count that is expected when updating from "free" plan to "unlimited" plan!
+        let providers = {
+          creditCard: validCreditCardProvider(),
+          updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })
+        }
+        subscriptionServices.updateSubscription(testData.account.id, testData.subscriptionPlan.chargebeePlanId, providers).then(function(result) {
+          assert.isNotNull(result.subscription);
+          assert.isNotNull(result.subscription.SubscriptionPreference);
+          assert.equal(result.subscription.accountId, testData.account.id);
+          assert.equal(result.subscription.planId, testData.subscriptionPlan.chargebeePlanId);
           done();
         }, function(error) {
           done(error);
@@ -169,9 +238,13 @@ describe('SERVICE - Subscription', function() {
       }
 
       it('plan not found', function(done) {
-        let invalidPlanId = testData.subscriptionPlan.id + 100;
+        let invalidPlanId = "this_will_not_work";
+        let providers = {
+          updateProvider: errorProvider('some error'),
+          creditCard: validCreditCardProvider()
+        }
 
-        subscriptionServices.updateSubscription(testData.account.id, invalidPlanId, errorProvider('some error')).then(function() {
+        subscriptionServices.updateSubscription(testData.account.id, invalidPlanId, providers).then(function() {
           done('Should not get here!');
         }, function(error) {
           assert.deepEqual(error, 'No plan found');
@@ -181,8 +254,12 @@ describe('SERVICE - Subscription', function() {
 
       it('No subscription found', function(done) {
         let invalidAccountId = testData.account.id + 100;
+        let providers = {
+          updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId }),
+          creditCard: validCreditCardProvider()
+        }
 
-        subscriptionServices.updateSubscription(invalidAccountId, testData.subscriptionPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })).then(function(subscription) {
+        subscriptionServices.updateSubscription(invalidAccountId, testData.subscriptionPlan.id, providers).then(function(subscription) {
           done('Should not get here!');
         }, function(error) {
           assert.equal(error, "No subscription found");
@@ -192,20 +269,34 @@ describe('SERVICE - Subscription', function() {
 
       it('cant switch on the same plan as user has already', function(done) {
         let invalidAccountId = testData.account.id + 100;
+        let providers = {
+          updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: currentSubPlanId }),
+          creditCard: validCreditCardProvider()
+        }
 
-        subscriptionServices.updateSubscription(testData.account.id, currentSubPlanId, updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })).then(function(subscription) {
-          done('Should not get here!');
-        }, function(error) {
-          assert.equal(error, "Can't switch to current plan");
-          done();
-        });
+        Subscription.find({
+          where: {
+            accountId: testData.account.id
+          },
+          include: [models.SubscriptionPlan]
+        }).then(function(subscription) {
+          subscriptionServices.updateSubscription(testData.account.id, subscription.SubscriptionPlan.chargebeePlanId, providers).then(function(subscription) {
+            done('Should not get here!');
+          }, function(error) {
+            assert.equal(error, "Can't switch to current plan");
+            done();
+          });
+        })
       });
 
       describe("downgrade", function() {
-
         function getUltimateSub(testData) {
+          let providers = {
+            creditCard: validCreditCardProvider(),
+            updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })
+           }
           return function(cb) {
-            subscriptionServices.updateSubscription(testData.account.id, testData.subscriptionPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })).then(function(subscription) {
+            subscriptionServices.updateSubscription(testData.account.id, testData.subscriptionPlan.chargebeePlanId, providers).then(function(subscription) {
               cb();
             }, function(error) {
               cb(error);
@@ -223,8 +314,13 @@ describe('SERVICE - Subscription', function() {
               if( error ){
                 done(error);
               } else {
-                subscriptionServices.updateSubscription(testData.account.id, testData.lowerPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.lowerPlan.chargebeePlanId })).then(function(subscription) {
-                  assert.equal(subscription.planId, testData.lowerPlan.chargebeePlanId);
+                let providers = {
+                  creditCard: validCreditCardProvider(),
+                  updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })
+                 }
+
+                subscriptionServices.updateSubscription(testData.account.id, testData.lowerPlan.chargebeePlanId, providers).then(function(result) {
+                  assert.equal(result.subscription.planId, testData.lowerPlan.chargebeePlanId);
                   done();
                 }, function(error) {
                   done("should not get here");
@@ -300,7 +396,12 @@ describe('SERVICE - Subscription', function() {
               if( error ){
                 done(error);
               } else {
-                subscriptionServices.updateSubscription(testData.account.id, testData.lowerPlan.id, updateProvider({ id: 'SomeUniqueID', plan_id: testData.lowerPlan.chargebeePlanId })).then(function(subscription) {
+                let providers = {
+                  creditCard: validCreditCardProvider(),
+                  updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })
+                 }
+
+                subscriptionServices.updateSubscription(testData.account.id, testData.lowerPlan.chargebeePlanId, providers).then(function(subscription) {
                   done("should not get here");
                 }, function(error) {
                   assert.equal(error.survey, 'You have to many surveys');

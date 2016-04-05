@@ -249,6 +249,8 @@ function gatherInformation(accountId, newPlanId) {
     });
   }).then(function(result) {
     deferred.resolve(result);
+  }, function(error) {
+    deferred.reject(error);
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -256,15 +258,25 @@ function gatherInformation(accountId, newPlanId) {
   return deferred.promise;
 }
 
-function updateSubscription(accountId, newPlanId, provider) {
+function updateSubscription(accountId, newPlanId, providers) {
   let deferred = q.defer();
+
+  // Thiss is because we need to moch chargebee responses for tests!!!
+  if(!providers){
+    providers = {
+      creditCard: null,
+      updateProvider: null,
+      viaCheckout: null
+    }
+  }
+  console.log(providers.updateProvider);
 
   gatherInformation(accountId, newPlanId).then(function(result) {
     canSwitchPlan(accountId, result.currentPlan, result.newPlan).then(function() {
-      accountHasValidCeditCard(result.subscription.subscriptionId).then(function(creditCardStatus){
+      accountHasValidCeditCard(result.subscription.subscriptionId, providers.creditCard).then(function(creditCardStatus){
         if(validCard(creditCardStatus)){
-          chargebeeSubUpdate(chargebeePassParams(result), provider).then(function(chargebeSubscription) {
-            updateSubscriptionData(chargebeePassParams(result), provider).then(function(result) {
+          chargebeeSubUpdate(chargebeePassParams(result), providers.updateProvider).then(function(chargebeSubscription) {
+            updateSubscriptionData(chargebeePassParams(result)).then(function(result) {
               deferred.resolve(result);
             }, function(error) {
               deferred.reject(error);
@@ -273,8 +285,8 @@ function updateSubscription(accountId, newPlanId, provider) {
             deferred.reject(error);
           })
         }else{
-          chargebeeSubUpdateViaCheckout(chargebeePassParams(result, provider)).then(function(result) {
-            deferred.resolve({result: result, redirect: true});
+          chargebeeSubUpdateViaCheckout(chargebeePassParams(result), providers.viaCheckout).then(function(hosted_page) {
+            deferred.resolve({hosted_page: hosted_page, redirect: true});
           }, function(error) {
             deferred.reject(error);
           })
@@ -291,6 +303,7 @@ function updateSubscription(accountId, newPlanId, provider) {
 
   return deferred.promise;
 }
+
 
 function validCard(creditCardStatus) {
   return creditCardStatus == "valid"
@@ -317,7 +330,6 @@ function retrievCheckoutAndUpdateSub(hostedPageId) {
 
 function updateSubscriptionData(passThruContent){
   let deferred = q.defer();
-
   findSubscriptionByChargebeeId(passThruContent.subscriptionId).then(function(subscription) {
     subscription.update({planId: passThruContent.planId, subscriptionPlanId: passThruContent.subscriptionPlanId}).then(function(updatedSub) {
 
@@ -325,7 +337,7 @@ function updateSubscriptionData(passThruContent){
       params.paidSmsCount = params.paidSmsCount + passThruContent.paidSmsCount;
 
       updatedSub.SubscriptionPreference.update({ data: params }).then(function(preference) {
-        deferred.resolve({result: updatedSub, redirect: false});
+        deferred.resolve({subscription: updatedSub, redirect: false});
       }, function(error) {
         deferred.reject(error);
       });
@@ -429,11 +441,12 @@ function redirectUrl(accountName) {
 function chargebeeSubUpdate(params, provider) {
   let deferred = q.defer();
 
+
   if(!provider) {
     provider = chargebee.subscription.update;
   }
 
-  chargebee.subscription.update(params.subscriptionId, { plan_id: params.planId }).request(function(error,result){
+  provider(params.subscriptionId, { plan_id: params.planId }).request(function(error, result){
     if(error){
       deferred.reject(error);
     }else{
@@ -444,10 +457,15 @@ function chargebeeSubUpdate(params, provider) {
   return deferred.promise;
 }
 
-function accountHasValidCeditCard(subscriptionId) {
+function accountHasValidCeditCard(subscriptionId, provider) {
   let deferred = q.defer();
 
-  chargebee.subscription.retrieve(subscriptionId).request(function(error,result){
+
+  if(!provider){
+    provider = chargebee.subscription.retrieve
+  }
+
+  provider(subscriptionId).request(function(error, result){
     if(error){
       deferred.reject(error);
     }else{
