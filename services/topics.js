@@ -11,8 +11,11 @@ module.exports = {
   create: create,
   update: update,
   destroy: destroy,
-  joninSession: joninSession,
-  removeSession: removeSession,
+  updateSessionTopics: updateSessionTopics,
+  joinToSession: joinToSession,
+  removeFromSession: removeFromSession,
+  removeAllFromSession: removeAllFromSession,
+  removeAllAndAddNew: removeAllAndAddNew,
   MESSAGES: MESSAGES
 };
 
@@ -26,11 +29,57 @@ function getAll(accountId) {
   return deferred.promise;
 }
 
-function joninSession(ids, sessionId) {
+function updateSessionTopics(sessionId, topicsArray) {
+  let deferred = q.defer();
+  let ids = _.map(topicsArray, 'id');
+  joinToSession(ids, sessionId, topicsArray).then(function(sessionTopics) {
+
+    _.map(sessionTopics, function(sessionTopic) {
+      _.map(topicsArray, function(topic) {
+        if(topic.id == sessionTopic.TopicId) {
+          let params = {
+            active: topic.active,
+            order: topic.order
+          }
+          sessionTopic.update(params);
+        }
+      });
+    });
+
+    deferred.resolve(sessionTopics);
+  }, function(err) {
+    deferred.reject(err);
+  });
+
+  return deferred.promise;
+}
+
+function joinToSession(ids, sessionId) {
   let deferred = q.defer();
   Session.find({where: { id: sessionId } }).then(function(session) {
     Topic.findAll({where: {id: ids}}).then(function(results) {
       session.addTopics(results).then(function(result) {
+        models.SessionTopics.findAll({ where: { SessionId: sessionId, TopicId: { $in: ids } } }).then(function (results) {
+          deferred.resolve(results);
+        });
+      }, function(err) {
+        deferred.reject(err);
+      })
+    }, function(err) {
+      deferred.reject(err);
+    })
+  }, function(err) {
+    deferred.reject(err);
+  });
+
+  return deferred.promise;
+}
+
+function removeFromSession(ids, sessionId) {
+  let deferred = q.defer();
+  Session.find({where: { id: sessionId } }).then(function(session) {
+    Topic.findAll({where: {id: ids}}).then(function(results) {
+      session.removeTopics(results).then(function(result) {
         deferred.resolve(result);
       }, function(err) {
         deferred.reject(err);
@@ -45,20 +94,39 @@ function joninSession(ids, sessionId) {
   return deferred.promise;
 }
 
-function removeSession(ids, sessionId) {
+function removeAllFromSession(sessionId) {
   let deferred = q.defer();
-  Session.find({where: { id: sessionId } }).then(function(session) {
-    Topic.findAll({where: {id: ids}}).then(function(results) {
-      session.removeTopics(results).then(function(result) {
-        deferred.resolve(result);
-      }, function(err) {
-        deferred.reject(err);
-      })
+
+  Topic.findAll({
+    include: [{
+      model: models.Session,
+      where: { id: sessionId }
+    }]
+  }).then(function(results) {
+    let ids = _.map(results, 'id');
+    models.SessionTopics.destroy({ where: { SessionId: sessionId, TopicId: { $in: ids }  } } ).then(function(result) {
+      deferred.resolve(result);
     }, function(err) {
       deferred.reject(err);
-    })
+    });
   }, function(err) {
     deferred.reject(err);
+  });
+
+  return deferred.promise;
+}
+
+function removeAllAndAddNew(sessionId, topics) {
+  let deferred = q.defer();
+
+  removeAllFromSession(sessionId).then(function() {
+    updateSessionTopics(sessionId, topics).then(function(result) {
+      deferred.resolve(result);
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }, function(error) {
+    deferred.reject(error);
   });
 
   return deferred.promise;
@@ -91,11 +159,33 @@ function create(params) {
 }
 
 function update(params) {
+
   let deferred = q.defer();
-  Topic.update(params,{ where:{id: params.id}} ).then(function(topic) {
-    deferred.resolve(topic);
-  },function(err) {
-    deferred.reject(err);
+  let id = params.id;
+
+  delete params.id;
+  models.sequelize.transaction().then(function(t) {
+    Topic.update(params, {
+      where:{id: id}
+    }, {transaction: t}).then(function(topic) {
+      models.SessionTopics.update(params, {
+        where:{TopicId: id}
+      }, {transaction: t}).then(function(sessionTopic) {
+        t.commit().then(function() {
+          deferred.resolve(sessionTopic);
+        });
+      },function(err) {
+        t.rollback().then(function() {
+          deferred.reject(err);
+        });
+      });
+
+    },function(err) {
+      t.rollback().then(function() {
+        deferred.reject(err);
+      });
+    });
   });
+
   return deferred.promise;
 }

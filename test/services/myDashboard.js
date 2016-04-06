@@ -8,6 +8,7 @@ var myDashboardServices = require('./../../services/myDashboard');
 var userFixture = require('./../fixtures/user');
 var sessionFixture = require('./../fixtures/session');
 var assert = require('chai').assert;
+var _ = require('lodash');
 
 describe('SERVICE - MyDashboard', function() {
   var testData;
@@ -87,16 +88,26 @@ describe('SERVICE - MyDashboard', function() {
 
     describe('sad path', function() {
       it('should fail on finding session because not a member to session', function (done) {
-        SessionMember.destroy({ where: { role: 'participant' } }).then(function() {
-          myDashboardServices.getAllSessions(testData.user.id).then(function(sessions) {
-            assert.deepEqual(sessions, []);
-            done();
-          }, function(error) {
+        SessionMember.findAll({
+          include: [AccountUser]
+        }).then(function(members) {
+          let object = {};
+          _.map(members, function(member) {
+            object[member.role] = member.AccountUser.UserId;
+          });
+
+          SessionMember.destroy({ where: { role: 'participant' } }).then(function() {
+            myDashboardServices.getAllSessions(object.participant).then(function(sessions) {
+              assert.deepEqual(sessions, []);
+              done();
+            }, function(error) {
+              done(error);
+            });
+          }).catch(function(error) {
             done(error);
           });
-        }).catch(function(error) {
-          done(error);
         });
+
       });
     });
   });

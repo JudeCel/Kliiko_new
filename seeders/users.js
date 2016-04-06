@@ -1,4 +1,7 @@
 'use strict';
+require('dotenv-extended').load({
+  errorOnMissing: true
+});
 
 var UserService = require('./../services/users');
 var async = require('async');

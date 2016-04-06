@@ -8,6 +8,7 @@ var ContactList = models.ContactList;
 var _ = require('lodash');
 var async = require('async');
 var constants = require('../util/constants');
+var validators = require('./../services/validators');
 
 var csv = require('fast-csv');
 var xlsx = require('xlsx');
@@ -37,14 +38,14 @@ function allByAccount(accountId) {
     // selectFields.push([models.sequelize.fn('COUNT', models.sequelize.col('ContactListUsers.AccountUser.Invites.id')), 'Invites'])
     let deferred = q.defer();
     ContactList.findAll({where: { accountId: accountId },
-      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable', 'participantsFields' ],
+      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable', 'participantsFields'],
       group: [
         "ContactList.id",
         "ContactListUsers.id",
         "ContactListUsers.AccountUser.id",
         "ContactListUsers.AccountUser.Invites.id" ],
       include: [{
-        model: models.ContactListUser, attributes: ['id', 'customFields'],
+        model: models.ContactListUser, attributes: ['id', 'customFields', 'accountUserId'],
         include: [{
           model: models.AccountUser,
           attributes: selectFields,
@@ -90,11 +91,17 @@ function prepareData(lists) {
 
 function create(params) {
   let deferred = q.defer();
-  ContactList.create(params).then(function(result) {
-    deferred.resolve(result);
-  }, function(err) {
-    deferred.reject(err);
+
+  validators.subscription(params.accountId, 'contactList', 1).then(function() {
+    ContactList.create(params).then(function(result) {
+      deferred.resolve(result);
+    }, function(err) {
+      deferred.reject(err);
+    });
+  }, function(error) {
+    deferred.reject(error);
   });
+
   return deferred.promise;
 }
 

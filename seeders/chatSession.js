@@ -1,4 +1,7 @@
 'use strict';
+require('dotenv-extended').load({
+  errorOnMissing: true
+});
 
 var sessionFixture = require('./../test/fixtures/session');
 sessionFixture.createChat().then(function(result) {

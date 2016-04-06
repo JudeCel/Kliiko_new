@@ -10,11 +10,18 @@ module.exports = {
   saveMailTemplatePost: saveMailTemplatePost,
   deleteMailTemplate: deleteMailTemplate,
   resetMailTemplatePost: resetMailTemplatePost,
-  previewMailTemplatePost: previewMailTemplatePost
+  previewMailTemplatePost: previewMailTemplatePost,
+  allSessionMailTemplatesGet: allSessionMailTemplatesGet
 };
 
+function allSessionMailTemplatesGet(req, res, next) {
+  MailTemplateService.getAllSessionMailTemplates(res.locals.currentDomain.id, true, null, req.query.getSystemMail, false,function(error, result) {
+    res.send({error: error, templates: result});
+  });
+}
+
 function allMailTemplatesGet(req, res, next) {
-  MailTemplateService.getAllMailTemplates(req.user, req.query.getSystemMail,function(error, result) {
+  MailTemplateService.getAllMailTemplates(res.locals.currentDomain.id, true, req.query.getSystemMail, false, function(error, result) {
     res.send({error: error, templates: result});
   });
 }
@@ -28,7 +35,7 @@ function mailTemplatePost(req, res, next) {
 
 function saveMailTemplatePost(req, res, next) {
   let shouldOverwrite = policy.hasAccess(res.locals.currentDomain.roles, ['admin']);
-  MailTemplateService.saveMailTemplate(req.body.mailTemplate, req.body.copy, req.user.ownerAccountId, shouldOverwrite,function(error, result) {
+  MailTemplateService.saveMailTemplate(req.body.mailTemplate, req.body.copy, res.locals.currentDomain.id, shouldOverwrite,function(error, result) {
     res.send({error: error, templates: result});
   });
 }

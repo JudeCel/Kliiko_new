@@ -5,50 +5,30 @@ var ContactListService  = require('./../../services/contactList');
 var ContactListUserService  = require('./../../services/contactListUser');
 var UserService  = require('./../../services/users');
 var constants = require('./../../util/constants');
-var userFixture = require('./../fixtures/user');
+var subscriptionFixture = require('./../fixtures/subscription');
 var _ = require('lodash');
 
 describe('Services -> ContactList', () => {
+  var testData;
+  beforeEach(function(done) {
+    subscriptionFixture.createSubscription().then(function(result) {
+      testData = result;
+      done();
+    }, function(error) {
+      done(error);
+    });
+  });
+
+  afterEach(function(done) {
+    models.sequelize.sync({force: true}).done((error, result) => {
+      done();
+    });
+  });
+
   describe('create',  () => {
-    var validAttrs = {
-      accountName: "DainisL",
-      firstName: "Dainis",
-      lastName: "Lapins",
-      password: "cool_password",
-      email: "dainis@gmail.com",
-      gender: "male"
-    }
-
-    beforeEach((done) => {
-      models.sequelize.sync({force: true}).done((error, result) => {
-        done();
-      });
-    });
-
-    afterEach(function(done) {
-      models.sequelize.sync({force: true}).done((error, result) => {
-        done();
-      });
-    });
-
-
     describe("succsess", function() {
-      let TestUser = null;
-      let TestAccount = null;
-
-      beforeEach((done)=> {
-        UserService.create(validAttrs, function(errors, user) {
-          user.getOwnerAccount().then(function(results) {
-            TestAccount = results[0]
-            TestUser = user;
-            done();
-          });
-        });
-      })
-
-
       it("createDefaultLists by default user flow", (done) => {
-        TestAccount.getContactLists().then(function(CLResults) {
+        testData.account.getContactLists().then(function(CLResults) {
           assert.equal(CLResults.length, 3);
           assert.equal(CLResults[0].editable, false);
           assert.sameMembers(CLResults[0].defaultFields, constants.contactListDefaultFields);
@@ -59,7 +39,7 @@ describe('Services -> ContactList', () => {
 
       it("create", (done) => {
         let attrs = {
-          accountId: TestAccount.id,
+          accountId: testData.account.id,
           name: "cool list",
           customFields: ["one", "two", "three"]
          }
@@ -77,14 +57,14 @@ describe('Services -> ContactList', () => {
 
       it("destroy", (done) => {
         let attrs = {
-          accountId: TestAccount.id,
+          accountId: testData.account.id,
           name: "customList",
           customFields: ["one", "two", "three"]
          }
 
         ContactListService.create(attrs).then(function(contactList) {
-          ContactListService.destroy(contactList.id, TestAccount.id).then(function(result) {
-            TestAccount.getContactLists().then(function(CLResults) {
+          ContactListService.destroy(contactList.id, testData.account.id).then(function(result) {
+            testData.account.getContactLists().then(function(CLResults) {
               assert.equal(CLResults.length, 3);
               done();
             }, function(err) {
@@ -100,23 +80,9 @@ describe('Services -> ContactList', () => {
     });
 
     describe("failed", function() {
-      let TestAccount = null;
-      let TestUser = null;
-      beforeEach((done) => {
-        models.sequelize.sync({force: true}).done((error, result) => {
-          UserService.create(validAttrs, function(errors, user) {
-            user.getOwnerAccount().then(function(results) {
-              TestAccount = results[0]
-              TestUser = user;
-              done();
-            });
-          });
-        });
-      });
-
       it("create", (done) => {
         let attrs = {
-          accountId: TestAccount.id,
+          accountId: testData.account.id,
           name: "Facilitators",
           customFields: ["one", "two", "three"]
         }
@@ -132,33 +98,16 @@ describe('Services -> ContactList', () => {
   });
 
   describe('#parseFile', function() {
-    var testUser, testAccount;
     var testFileValid = { xls: 'test/fixtures/contactList/list_valid.xls', csv: 'test/fixtures/contactList/list_valid.csv' };
     var testFileInvalid = { xls: 'test/fixtures/contactList/list_invalid.xls', csv: 'test/fixtures/contactList/list_invalid.csv' };
 
     function defaultParams() {
       return {
-        accountId: testAccount.id,
+        accountId: testData.account.id,
         name: 'cool list',
         customFields: ['one', 'two', 'three']
       };
     }
-
-    beforeEach(function(done) {
-      userFixture.createUserAndOwnerAccount().then(function(result) {
-        testUser = result.user;
-        testAccount = result.account;
-        done();
-      }, function(error) {
-        done(error);
-      });
-    });
-
-    afterEach(function(done) {
-      models.sequelize.sync({ force: true }).then(() => {
-        done();
-      });
-    });
 
     describe('happy path', function() {
       describe('should succeed', function() {
@@ -346,8 +295,8 @@ describe('Services -> ContactList', () => {
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             let attrs = {
-              userId: testUser.id,
-              accountId: testAccount.id,
+              userId: testData.user.id,
+              accountId: testData.account.id,
               contactListId: contactList.id,
               defaultFields: {
                 firstName: "DainisNew",

@@ -3,19 +3,21 @@
 /**
  * Module dependencies.
  */
+ require('dotenv-extended').load({
+     errorOnMissing: true
+ });
 var express = require('express');
 var app = require('../app');
 var debug = require('debug')('kliiko:server');
 var http = require('http');
 var models = require("../models");
-var config = require('config');
 var _ = require('lodash');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || config.get("server")['port']);
+var port = normalizePort(process.env.SERVER_PORT);
 var environment = process.env.NODE_ENV;
 app.set('port', port);
 
@@ -28,7 +30,6 @@ switch (environment) {
     app.use('/*', express.static('./build/index.html'));
     break;
   default:
-    console.log('** DEV **');
     app.use(express.static('./src/client/'));
     app.use(express.static('./'));
     app.use(express.static('./tmp'));
@@ -37,16 +38,15 @@ switch (environment) {
 }
 
 /**
- * Create HTTP serve
+ * Create HTTP server.
  */
-
  var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 models.sequelize.sync().then(function () {
-  server.listen(port, config.get("server")['domain']);
+  server.listen(port);
   server.on('error', onError);
   server.on('listening', onListening);
 });
@@ -111,5 +111,3 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
-
-console.log('Server listening on port ' + port);

@@ -2,7 +2,6 @@
 
 var ejs = require('ejs');
 var fs = require('fs');
-var config = require('config');
 var nodemailer = require('nodemailer');
 var stubTransport = {
     name: 'testsend',
@@ -17,16 +16,22 @@ function envConfig() {
       return stubTransport;
       break;
     default:
-      return config.get('mail')['transport'];
+      return {
+        service: process.env.MAIL_TRANSPORT_SERVICE,
+        auth: {
+          user: process.env.MAIL_TRANSPORT_AUTH_USER,
+          pass: process.env.MAIL_TRANSPORT_AUTH_PASS
+        }
+      };
   }
 }
 
 helpers.mailFrom = function(){
-  return config.get('mail')['fromName']+" <"+config.get('mail')['fromEmail']+">";
+  return process.env.MAIL_FROM_NAME + " <" + process.env.MAIL_FROM_EMAIL + ">";
 };
 
 helpers.getUrl = function(token, path){
-  return "http://"+config.get('server')['domain']+":"+config.get('server')['port']+path+token;
+  return "http://" + process.env.SERVER_DOMAIN + ":" + process.env.SERVER_PORT + path + token;
 };
 
 helpers.renderMailTemplate = function(filename, params, callback){

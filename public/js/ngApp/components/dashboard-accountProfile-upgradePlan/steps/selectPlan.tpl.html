@@ -1,0 +1,102 @@
+<section id="step-1" class="animated fadeIn">
+  <h2>Our plans come with all there included extras:</h2>
+
+  <div class="row benefits">
+    <div class="col-md-6">
+      <p>Recruiter: build a new instant contact list with a quick customised survey</p>
+      <p>Your Brand logo & custom colours</p>
+      <p>Video and text hep menu</p>
+      <p>Video and text hep menu</p>
+      <p>Discussion Guide Tips</p>
+      <p>Whiteboard functionality</p>
+      <p>Multimedia management and storage</p>
+    </div>
+    <div class="col-md-6">
+      <p>Import a database and manage interaction with your Contact List</p>
+      <p>Reporting functions</p>
+      <p>Available on tablet and mobile platforms</p>
+      <p>Custom email invitation & reminder messages</p>
+      <p>Unlimited Topics</p>
+      <p>Secure applications (SSL)</p>
+    </div>
+  </div>
+
+  <h2>Choose a plan</h2>
+
+  <section class="container plans-table">
+      <div class="row">
+        <div ng-repeat="subscriptionPlan in up.subPlans">
+          <div class="col-sm-4 col-xs-12 plan-block" ng-if="up.showPlanInList(subscriptionPlan.plan.id)">
+            <div class="included-plan-fader" ng-show="up.isCurrentPlan(subscriptionPlan.plan.id)"><div class="label">CURRENT</div></div>
+            <div class="list-group">
+              <h4 ng-class="up.planColors[subscriptionPlan.plan.name].header">{{subscriptionPlan.plan.name}}</h4>
+              <div ng-class="up.planColors[subscriptionPlan.plan.name].body">
+                <h5 class="outline"><sup>$US</sup>{{subscriptionPlan.plan.price | price:'':0 }}</h5>
+                <p>
+                  {{ subscriptionPlan.plan.period }}
+                  {{ subscriptionPlan.plan.period_unit }}
+                  to use
+                </p>
+              </div>
+
+              <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                <b>
+                  {{ up.checkIfUnlimited(subscriptionPlan.additionalParams.sessionCount) }}
+                </b>
+                Session('s) to use over 12 months
+              </p>
+
+              <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                Up to
+                <b>
+                  {{ subscriptionPlan.additionalParams.participantCount }}
+                  Participants
+                </b>
+                per Session
+              </p>
+
+              <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                Up to
+                <b>
+                  {{ subscriptionPlan.additionalParams.observerCount }}
+                  Observers
+                </b>
+                per Session
+              </p>
+
+              <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                Up to
+                <b>
+                  {{ subscriptionPlan.additionalParams.paidSmsCount }}
+                  Paid SMS
+                </b>
+                reminders to Participants
+                <sup>*</sup>
+              </p>
+              <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                <b>Unlimited</b>
+                Contact List members allowed
+               </p>
+              <div class="list-group-item-text buttons-area">
+                <div class="btn-dashboard-plans pull-right learn" ng-click="up.openPlanDetailsModal(subscriptionPlan.plan)">
+                  Learn More
+                </div>
+                <div class="btn-dashboard-plans pull-right want btn-brown" ng-click="up.selectPlan(subscriptionPlan)">
+                  I Want This Plan
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+  </section>
+  <div id="disclaimer">
+    <p>
+      <b>Please Note:</b> Depending on the nature of your project, you may also need to provide appropriate Incentive-Gifts to your group-Session Participants
+    </p>
+    <p>
+      *Your credit card will be charged for any additional SMS.
+    </p>
+  </div>
+</section>

@@ -7,10 +7,11 @@
 
   GalleryController.$inject = ['dbg', 'GalleryServices', '$modal',
                                '$scope', 'domServices', 'messenger',
-                               'globalSettings', '$sce', 'filterFilter', '$timeout', 'ngProgressFactory'];
+                               'globalSettings', '$sce', 'filterFilter', '$timeout', 'ngProgressFactory', '$state', '$stateParams'];
 
-  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, globalSettings, $sce, filterFilter, $timeout, ngProgressFactory){
+  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, globalSettings, $sce, filterFilter, $timeout, ngProgressFactory, $state, $stateParams){
     dbg.log2('#GalleryController  started');
+
     initList();
     $scope.filterType = "";
     $scope.viewType = sessionStorage.getItem('viewType');
@@ -21,7 +22,8 @@
       { fileType: "pdf", uploadText: "Upload PDF", filterText: "PDF's"},
       { fileType: "video", uploadText: "Upload Video", filterText: "Videos"},
       { fileType: "youtubeUrl", uploadText: "Save youtube URL", filterText: "Youtube URL's"},
-    ]
+    ];
+
 
     function initList() {
       if(!sessionStorage.getItem('viewType')){
@@ -116,7 +118,7 @@
           $scope.resources.push(res);
           cancel()
           progressbar.complete();
-          messenger.ok("Resource was sucessfully created.");
+          messenger.ok("Resource was successfully created.");
         }
       })
     }
@@ -147,7 +149,7 @@
               }else{
                 $scope.resources.push(res.data);
                 cancel()
-                messenger.ok("Resource was sucessfully created.");
+                messenger.ok("Resource was successfully created.");
                 $scope.submitIsDisabled = false;
               }
               progressbar.complete();
@@ -267,19 +269,19 @@
 
     $scope.disableButton = function() {
       $scope.submitIsDisabled = true;
-    }
+    };
 
     $scope.checkType = function(first, second) {
       return first == second;
-    }
+    };
 
     $scope.getResourceNameUrl = function(resource){
       return "/chat_room/uploads/" + resource.JSON.name;
-    }
+    };
 
     $scope.getResourceThumbUrl = function(resource){
       return "/chat_room/uploads/" + resource.JSON.tableThumb;
-    }
+    };
 
     $scope.resourceTitle = function(text){
       if(text.length < 1){

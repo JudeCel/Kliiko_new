@@ -24,6 +24,6 @@ function post(req, res, next) {
       res.redirect('/dashboard');
     }
   }, function(error) {
-    res.send({ error: error });
+    res.redirect('/dashboard#/account-profile/upgrade-plan?error=' + error);
   });
 }

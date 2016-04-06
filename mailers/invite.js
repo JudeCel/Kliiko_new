@@ -1,9 +1,9 @@
 'use strict';
 
-var config = require('config');
 var helpers = require('./helpers');
 
 var mailTemplate = require('./mailTemplate');
+var mailHelper = require('./mailHelper');
 var mailTemplateService = require('../services/mailTemplate');
 
 var mailFrom = helpers.mailFrom();
@@ -29,7 +29,7 @@ function sendInviteAccountManager(inviteParams, callback) {
         transporter.sendMail({
           from: mailFrom,
           to: inviteParams.email,
-          subject: config.mail.fromName + ' - Join account',
+          subject: process.env.MAIL_FROM_NAME + ' - Join account',
           html: html,
           attachments: [{
             filename: 'header.png',
@@ -57,6 +57,26 @@ function sendInviteAccountManager(inviteParams, callback) {
 
 };
 
+function sendInviteSession(inviteParams, callback) {
+  if(inviteParams.role == 'observer') {
+    inviteParams.logInUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/accept/';
+
+    mailHelper.sendObserverInvitation(inviteParams, function(error, result) {
+      callback(error, result);
+    });
+  }
+  else if(inviteParams.role == 'participant') {
+    inviteParams.acceptInvitationUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/accept/';
+    inviteParams.invitationNotThisTimeUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/notThisTime/';
+    inviteParams.invitationNotAtAllUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/notAtAll/';
+
+    mailHelper.sendFirstInvitation(inviteParams, function(error, result) {
+      callback(error, result);
+    });
+  }
+};
+
 module.exports = {
-  sendInviteAccountManager: sendInviteAccountManager
+  sendInviteAccountManager: sendInviteAccountManager,
+  sendInviteSession: sendInviteSession
 };

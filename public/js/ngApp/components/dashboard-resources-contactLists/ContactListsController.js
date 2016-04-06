@@ -19,11 +19,14 @@
     vm.basePath = '/js/ngApp/components/dashboard-resources-contactLists/';
     vm.importErrorMessage = null;
 
+    vm.hideStuff = false;
+    vm.hideModalStuff = false;
     vm.importedFields = [];
     vm.contactListDropItems = [];
     vm.validContactList = [];
     vm.contactListToAdd = [];
 
+    vm.initLists = initLists;
     vm.changeActiveList = changeActiveList;
     vm.addNewList = addNewList;
     vm.submitNewList = submitNewList;
@@ -54,6 +57,29 @@
 
     vm.onFieldMapDrop = onFieldMapDrop;
     vm.mappingFieldsContinue = mappingFieldsContinue;
+
+    // required for correct list switching.
+    var isSelected = false;
+
+
+
+    function initLists(listType) {
+
+      if (listType) {
+        if (listType == 'facilitators') vm.sectListActiveToFacilitators();
+      }
+    }
+
+
+
+    vm.sectListActiveToFacilitators = function() {
+      if (isSelected) return;
+
+      isSelected = true;
+      // timeout is for correct list switching (think about it as of promise)
+      setTimeout(function() {   vm.changeActiveList(1)  }, 300);
+
+    };
 
 
     function changeActiveList(index) {
@@ -343,11 +369,19 @@
     }
 
     function validatePhone() {
-      return $("#mobile").intlTelInput("isValidNumber");
+      if ($("#contactMobile").val().length) {
+        return $("#contactMobile").intlTelInput("isValidNumber");
+      }
+
+      return true;
     }
 
     function validLandlineNumber() {
-      return $("#landlineNumber").intlTelInput("isValidNumber");
+      if ($("#contactLandlineNumber").val().length) {
+        return $("#contactLandlineNumber").intlTelInput("isValidNumber");
+      }
+
+      return true;
     }
 
 
@@ -392,7 +426,7 @@
         ? vm.allSelected = false
         : vm.allSelected = !vm.allSelected;
 
-      if (!vm.lists.activeList.members) return;
+      if (!vm.lists.activeList || !vm.lists.activeList.members) return;
 
       for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
         vm.lists.activeList.members[i]._selected = vm.allSelected;

@@ -1,0 +1,12 @@
+<section id="step-5">
+  <div class="row">
+    <section ng-if="up.purchaseWasSuccessfull">
+      <h1>Thank you</h1>
+      <p>Your order confirmation and invoice have been emailed to you</p>
+    </section>
+
+    <section ng-if="!up.purchaseWasSuccessfull">
+      <h1>The purchase was not successfull!</h1>
+    </section>
+  </div>
+</section>

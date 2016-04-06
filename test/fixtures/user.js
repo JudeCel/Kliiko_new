@@ -33,7 +33,16 @@ function createUserAndOwnerAccount(params) {
       }
       else {
         user.getOwnerAccount().then(function(accounts) {
-          deferred.resolve({ user: user, account: accounts[0] });
+          models.AccountUser.find({
+            where: {
+              UserId: user.id,
+              AccountId: accounts[0].id
+            }
+          }).then(function(accountUser) {
+            deferred.resolve({ user: user, account: accounts[0], accountUser: accountUser });
+          }).catch(function(error) {
+            deferred.reject(error);
+          })
         });
       }
     });

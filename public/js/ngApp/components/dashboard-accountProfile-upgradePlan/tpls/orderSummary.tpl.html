@@ -1,33 +1,94 @@
 <div class="row">
+  <div class="col-md-12 caption">
+    Order Summary
+  </div>
+  <div class="table-content">
+    <div class="row table-header" >
+      <div class="col-sm-3">Plan</div>
+      <div class="col-sm-4">Duration</div>
+      <div class="col-sm-4">Total</div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-3">
+        {{up.selectedPlan.plan.name}}
+      </div>
+      <div class="col-sm-4">
+        {{ up.selectedPlan.plan.period }}
+        {{ up.selectedPlan.plan.period_unit }}
+      </div>
+      <div class="col-sm-4">
+        {{ up.showCalculatedPrice(up.selectedPlan.chargeEstimate.amount_due) | currency:"USD$":0 }}
+      </div>
+    </div>
+
+    <hr>
+    <div class="row">
+      <div class="col-sm-5 total">Order Total</div>
+      <div class="col-sm-3">{{ up.showCalculatedPrice(up.selectedPlan.chargeEstimate.sub_total) | currency:"USD$":0 }}</div>
+    </div>
+  </div>
+
+  <br>
+
+  <div ng-if="up.selectedPlan.plan.id == 'fixed_monthly'">
     <div class="col-md-12 caption">
-        Order Summary
+      You want this plan, for one year?
     </div>
     <div class="table-content">
-        <div class="row table-header" >
-            <div class="col-sm-5 col-md-5">Plan</div>
-            <div class="col-sm-3 col-md-3">Duration</div>
-            <div class="col-sm-4 col-md-4">Total</div>
+      <div class="row table-header" >
+        <div class="col-sm-3">Plan</div>
+        <div class="col-sm-4">Duration</div>
+        <div class="col-sm-4">Total</div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-3">
+          {{up.fixedYearly.plan.name}}
         </div>
-        <div class="row">
-            <div class="col-sm-5 col-md-5">{{up.selectedPlan.name}}</div>
-            <div class="col-sm-3 col-md-3">{{up.upgradeDuration || 1}}</div>
-            <div class="col-sm-4 col-md-4">{{up.finalPrice | price}}</div>
+        <div class="col-sm-4">
+          {{ up.fixedYearly.plan.period }}
+          {{ up.fixedYearly.plan.period_unit }}
         </div>
-        <div class="row">
-            <div class="col-sm-5 col-md-5">1 Free month</div>
-            <div class="col-sm-3 col-md-3">1</div>
-            <div class="col-sm-4 col-md-4">$US0</div>
+        <div class="col-sm-4">
+          {{ up.fixedYearly.chargeEstimate.amount_due / 100 | currency:"USD$":0 }}
         </div>
-        <div class="row" ng-show="up.promocodeData">
-            <div class="col-sm-5 col-md-5"><small>{{ up.promocodeData.name}}</small></div>
-            <div class="col-sm-3 col-md-3"></div>
-            <div class="col-sm-4 col-md-4"> <small>({{ up.discount | price }})</small></div>
+      </div>
+
+      <hr>
+      <div class="row">
+        <div class="pull-right btn btn-addNewElement btn-green" ng-click="up.switchPlan(up.fixedYearly)">I want this plan</div>
+      </div>
+    </div>
+  </div>
+
+  <div ng-if="up.selectedPlan.plan.id == 'fixed_yearly'">
+    <div class="col-md-12 caption">
+      You want this plan, for one month?
+    </div>
+    <div class="table-content">
+      <div class="row table-header" >
+        <div class="col-sm-3">Plan</div>
+        <div class="col-sm-4">Duration</div>
+        <div class="col-sm-4">Total</div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-3">
+          {{up.fixedMonthly.plan.name}}
         </div>
-        <hr>
-        <div class="row">
-            <div class="col-sm-5 col-md-5 total">Order Total</div>
-            <div class="col-sm-3 col-md-3">{{( up.upgradeDuration | num) + 1}}</div>
-            <div class="col-sm-4 col-md-4">{{up.orderTotal | price}}</div>
+        <div class="col-sm-4">
+          {{ up.fixedMonthly.plan.period }}
+          {{ up.fixedMonthly.plan.period_unit }}
         </div>
+        <div class="col-sm-4">
+          {{ up.fixedMonthly.chargeEstimate.amount_due / 100 | currency:"USD$":0 }}
+        </div>
+      </div>
+
+      <hr>
+      <div class="row">
+        <div class="pull-right btn btn-addNewElement btn-green" ng-click="up.switchPlan(up.fixedMonthly)">I want this plan</div>
+      </div>
     </div>
 </div>

@@ -140,13 +140,21 @@ describe('SERVICE - Session', function() {
         models.SessionMember.find({ where: { role: 'facilitator' } }).then(function(member) {
           let params = { id: member.id, rating: 4 };
 
-          sessionServices.updateSessionMemberRating(params, testData.user.id, testData.account.id).then(function(result) {
-            assert.equal(result.data.rating, 4);
-            assert.equal(result.message, sessionServices.messages.rated);
-            done();
-          }, function(error) {
-            done(error);
-          });
+          models.SessionMember.find({
+            where: {
+              role: 'participant'
+            },
+            include: [models.AccountUser]
+          }).then(function(member) {
+            sessionServices.updateSessionMemberRating(params, member.AccountUser.UserId, testData.account.id).then(function(result) {
+              assert.equal(result.data.rating, 4);
+              assert.equal(result.message, sessionServices.messages.rated);
+              done();
+            }, function(error) {
+              done(error);
+            });
+          })
+
         })
       });
     });

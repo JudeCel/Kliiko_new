@@ -1,9 +1,7 @@
 "use strict";
-
 var express = require('express');
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
-var config = require('config');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -15,6 +13,7 @@ var currentUser = require('./middleware/currentUser');
 var flash = require('connect-flash');
 var app = express();
 var fs = require('fs');
+var airbrake = require('./lib/airbrake').instance;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -26,15 +25,19 @@ app.set('view options', { layout: 'layout.ejs' });
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser(config.get("cookieSecret")));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-  store: new RedisStore(config.get("redisSession")),
-  secret: config.get("sessionSecret"),
+  store: new RedisStore({
+      port: process.env.REDIS_PORT,
+      host: process.env.REDIS_HOST,
+      db: parseInt(process.env.REDIS_DB)
+  }),
+  secret: process.env.SESSION_SECRET,
   resave: true, saveUninitialized: false,
-  domain: config.get('server')['baseDomain'],
-  cookie: { domain: config.get('server')['baseDomain']}
+  domain: process.env.SERVER_BASE_DOMAIN,
+  cookie: { domain: process.env.SERVER_BASE_DOMAIN}
 }));
 
 app.use(passport.initialize());
@@ -46,13 +49,11 @@ var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
 var resources = require('./routes/resources');
 var api = require('./routes/api');
-var webhooks = require('./routes/webhooks');
 
 app.use('/', routes);
 app.use('/dashboard', currentUser.assign, dashboard);
 app.use('/resources', currentUser.assign, resources);
 app.use('/api', currentUser.assign, api);
-app.use('/webhooks', currentUser.assign, webhooks);
 
 
 // Added socket.io routes
@@ -70,6 +71,7 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
+    airbrake.notify(err);
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
@@ -81,14 +83,12 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
+  airbrake.notify(err);
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
     error: {}
   });
 });
-
-// Moment for DateTime formating
-app.locals.moment = require('moment');
 
 module.exports = app;

@@ -4,7 +4,6 @@ var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
-var config = require('config');
 var models  = require('./../models');
 var usersService = require('./../services/users.js');
 var socialProfileService = require('./../services/socialProfile.js');
@@ -25,9 +24,9 @@ passport.use(new LocalStrategy({
 ));
 
 passport.use(new FacebookStrategy({
-    clientID: config.get("facebookclientID") ,
-    clientSecret: config.get("facebookClientSecret") ,
-    callbackURL: config.get("facebookCallbackURL"),
+    clientID: process.env.FACEBOOK_CLIENT_ID,
+    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    callbackURL: process.env.FACEBOOK_CALLBACK_URL,
     passReqToCallback : true,
     profileFields: ['id', 'displayName','emails', 'name']
   },
@@ -43,9 +42,9 @@ passport.use(new FacebookStrategy({
 ));
 
 passport.use(new GoogleStrategy({
-    clientID: config.get("googleClientID"),
-    clientSecret: config.get("googleClientSecret"),
-    callbackURL: config.get("googleCallbackURL")
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLE_CALLBACK_URL,
   },
   function(token, refreshToken, profile, done) {
 
@@ -68,12 +67,10 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(userObject, done) {
   models.User.find({ attributes: ['email', 'id', 'signInCount'], where: { id: userObject.id } }).done(function(result){
     if (result) {
-      result.getOwnerAccount().then(function(ownerAccounts) {
-        done(null, userParams(result, ownerAccounts[0]));
-      });
+      done(null, userParams(result));
     }else{
       done("not found", null);
-    };
+    }
   });
 });
 
@@ -81,9 +78,7 @@ function userParams(user, ownerAccount) {
   return {
     id: user.id,
     email: user.email,
-    ownerAccountSubdomain: ownerAccount.name,
-    signInCount: user.signInCount,
-    ownerAccountId: ownerAccount.id
+    signInCount: user.signInCount
   };
 }
 
@@ -92,12 +87,12 @@ function prepareUserData(user, profile, callback){
     callback('Your account has not been confirmed, please check your e-mail and follow the link.');
     return;
   }
-  
+
   user.getAccounts({ include: [ models.AccountUser ] }).then(function(accounts) {
     let account = accounts[0];
     if(account.AccountUser.active) {
       user.increment('signInCount').done(function(result) {
-        callback(null, userParams(result, account));
+        callback(null, userParams(result));
       });
     }
     else {

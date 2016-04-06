@@ -1,111 +1,48 @@
-<section id="upgrade-plan-content" ng-controller="UpgradePlanController as up">
-    <div class="row row-centered">
-        <div class='col-md-offset-1 col-md-10 сol-centered dashboard-index text-center'>
-
-            <h1>Upgrade Plan</h1>
-            <br>
-
-            <div class="row">
-                <div class=" col-md-12">
-                    <div id="steps-row" style="margin: 0 auto">
-                        <div class="step-container">
-                            <span class="step-number"
-                                  ng-class="{'active': up.stepsClassIsActive(1), 'done':up.stepsClassIsDone(1)}">1</span>
-                            <span class="step-name"
-                                  ng-class="{'active': up.stepsClassIsActive(1), 'done':up.stepsClassIsDone(1)}">Select Plan Upgrade</span>
-                        </div>
-                        <div class="step-container">
-                            <span class="step-number"
-                                  ng-class="{'active': up.stepsClassIsActive(2), 'done':up.stepsClassIsDone(2)}">2</span>
-                            <span class="step-name"
-                                  ng-class="{'active': up.stepsClassIsActive(2), 'done':up.stepsClassIsDone(2)}">Check Details</span>
-                        </div>
-                        <div class="step-container">
-                            <span class="step-number"
-                                  ng-class="{'active': up.stepsClassIsActive(3), 'done':up.stepsClassIsDone(3)}">3</span>
-                            <span class="step-name"
-                                  ng-class="{'active': up.stepsClassIsActive(3), 'done':up.stepsClassIsDone(3)}">Payment Options</span>
-                        </div>
-                        <div class="step-container">
-                            <span class="step-number"
-                                  ng-class="{'active': up.stepsClassIsActive(4), 'done':up.stepsClassIsDone(4)}">4</span>
-                            <span class="step-name"
-                                  ng-class="{'active': up.stepsClassIsActive(4), 'done':up.stepsClassIsDone(4)}">Confirmation</span>
-                        </div>
-                        <div class="step-container">
-                            <span class="step-number"
-                                  ng-class="{'active': up.stepsClassIsActive(5), 'done':up.stepsClassIsDone(5)}">5</span>
-                            <span class="step-name"
-                                  ng-class="{'active': up.stepsClassIsActive(5), 'done':up.stepsClassIsDone(5)}">Submitted</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <ng-include ng-show="up.plans"  src="'js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/step'+up.currentStep+'.tpl.html'"></ng-include>
-
-
-            <div class="row" ng-hide="up.stepsClassIsActive(1)">
-
-                <div class="col-md-2 btn-dashboard-plans btn-md btn-green" ng-click="up.goToStep('back')"
-                     ng-hide="up.stepsClassIsActive(5)">
-                    <img class="ic" src="icons/back_green.png" alt="Go Back"> Back
-                </div>
-
-                <div class="col-md-2 btn-dashboard-plans btn-md pull-right btn-blue" ng-click="up.goToStep('next')"
-                     ng-class="{'btn-forbidden': up.cantMoveNextStep}"
-                     ng-hide="up.stepsClassIsActive(4) || up.stepsClassIsActive(5)">
-                    Next <img class="ic ic-flipX" src="icons/back_blue.png" alt="Go Next Step">
-                </div>
-
-                <div class="col-md-5 btn-dashboard-plans btn-md btn-green" ui-sref="dashboard.accountProfile"
-                     ng-show="up.stepsClassIsActive(5)">
-                    Back to account profile
-                </div>
-                <div class="col-md-4 btn-dashboard-plans btn-md pull-right btn-standart btn-red"
-                     ng-click="up.goToStep('submit')"
-                     ng-show="up.stepsClassIsActive(4)">
-                    Submit My Order
-                </div>
-                <div class="col-md-3 btn-dashboard-plans btn-md pull-right btn-standart btn-red" ui-sref="dashboard"
-                     ng-show="up.stepsClassIsActive(5) && !up.cantMoveNextStep">
-                    Build new session
-                </div>
-            </div>
-
+<section id="upgrade-plan-content" ng-controller="PlanController as up">
+  <div class="row row-centered">
+    <div class='col-md-offset-1 col-md-10 сol-centered dashboard-index text-center'>
+      <h1>Upgrade Plan</h1>
+      <br>
+      <div class="row">
+        <div id="steps-row">
+          <div class="step-container" ng-repeat="step in up.steps">
+            <span ng-class="up.stepIsActive(step.number, 'step-number')">{{ step.number }}</span>
+            <span ng-class="up.stepIsActive(step.number, 'step-name')">{{ step.title }}</span>
+          </div>
         </div>
+      </div>
 
+      <div ng-repeat="layout in up.stepLayouts">
+        <div ng-show="up.isCurrentStep(layout.inQueue)" ng-include src="layout.src"></div>
+      </div>
+
+      </div>
     </div>
+  </div>
 
-    <!----------- MODALS ---------------------->
-    <section>
-        <!-- plansModal -->
-        <div class='modal fade' id='plansModal' role='dialog'>
-            <div class='modal-dialog changePasswordModal' style="width: 800px">
-                <div class='modal-content border-green border-radius-none'>
-                    <div class='modal-header'>
-                        <button type='button' class='close' data-dismiss='modal'>&times;</button>
-                        <h1 class='modal-title text-center'>Learn More about the {{up.currentPlan.name}}</h1>
-                    </div>
-                    <div class='modal-body'>
-
-                        <ng-include src="up.currentPlanModalContentTpl"></ng-include>
-                    </div>
-                    <div class='modal-footer'>
-                        <div type='button' class='pull-left btn-dashboard-plans go-back-btn' data-dismiss='modal'>Go
-                            Back
-                        </div>
-                        <div type='submit' class='pull-right btn-dashboard-plans i-want-btn'
-                             ng-click="up.upgradeToPlan(up.currentPlan.id)">I Want This Plan
-                        </div>
-                    </div>
-                </div>
+  <!-- MODALS -->
+  <section>
+    <div class='modal fade' id='plansModal' role='dialog'>
+      <div class='modal-dialog contactDetailsModal'>
+        <div class='modal-content border-green border-radius-none'>
+          <div class='modal-header'>
+            <button type='button' class='close' data-dismiss='modal'>&times;</button>
+            <h1 class='modal-title text-center'>Learn More about the {{up.planInModal.name}}</h1>
+          </div>
+          <div class='modal-body'>
+            <ng-include src="up.currentPlanModalContentTpl"></ng-include>
+          </div>
+          <div class='modal-footer'>
+            <div type='button' class='pull-left btn-dashboard-plans go-back-btn' data-dismiss='modal'>
+              Cancel
             </div>
+            <div type='submit' class='pull-right btn-dashboard-plans i-want-btn'
+                 ng-click="up.selectPlan(up.planInModal)" data-dismiss='modal'>
+              I Want This Plan
+            </div>
+          </div>
         </div>
-
-
-    </section>
-
-
+      </div>
+    </div>
+  </section>
 </section>

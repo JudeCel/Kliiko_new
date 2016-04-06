@@ -1,0 +1,63 @@
+<section id='sms-credits' ng-controller='SmsCreditController as sms'>
+  <span class="row">
+    <span class="col-md-12">
+
+      <div class="panel panel-success border-green">
+        <div class="panel-body">
+
+          <h4>
+            You currently have
+            {{ sms.currentSmsCreditCount }}
+            SMS credits.
+          </h4>
+
+          <hr>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th></th>
+              </tr>
+              </thead>
+            <tbody>
+              <tr  ng-repeat="smsCredit in sms.creditList">
+
+                <td>
+                <b>Additional SMS Credits</b>
+                </td>
+
+                <td>
+                  {{ sms.priceInDollars(smsCredit.addon.price) | currency : "$": 2}} per {{smsCredit.addon.unit}}
+                </td>
+
+                <td>
+                  <select ng-model="selectedQty" class="form-control" style="width: 200px;">
+                    <option selected="selected" value="">Please select quantity</option>
+                    <option ng-repeat="qty in sms.addonQty" value="{{qty.value}}">{{qty.value}}</option>
+                  </select>
+                </td>
+
+                <td>
+                  {{sms.totalPrice(smsCredit.addon.price, selectedQty) | currency : "$": 2 }}
+                </td>
+
+                <td>
+                  <a href="" class="pull-right btn btn-addNewElement btn-green" ng-click="sms.purchaseCredits(smsCredit.addon.id, selectedQty)">
+                    Purchase
+                  </a>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+    </span>
+  </span>
+</section>

@@ -1,13 +1,15 @@
 (function () {
   'use strict';
 
-  angular.module('KliikoApp', ['colorpicker.module']).controller('BrandColourController', BrandColourController);
-  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', 'ngProgressFactory', '$timeout', 'domServices'];
+  angular.module('KliikoApp').controller('BrandColourController', BrandColourController);
 
-  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, ngProgressFactory, $timeout, domServices) {
+  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', 'ngProgressFactory', '$timeout', 'domServices', '$stateParams', '$state'];
+  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, ngProgressFactory, $timeout, domServices, $stateParams, $state) {
     dbg.log2('#BrandColourController started');
 
     var vm = this;
+
+
     vm.removeScheme = removeScheme;
     vm.copyScheme = copyScheme;
     vm.finishManage = finishManage;
@@ -37,8 +39,14 @@
         vm.hexRegex = new RegExp(res.hexRegex);
         vm.participantColours = res.participantColours;
         dbg.log2('#BrandColourController > getAllSchemes > res ', res.data);
+
+        // if we want to open create step from the start
+        if ($stateParams.new)  changePage('create');
       });
-    };
+
+
+
+    }
 
     function removeScheme(scheme) {
       angularConfirm('Are you sure you want to remove Scheme?').then(function(response) {
@@ -156,7 +164,12 @@
     function changePage(page, scheme) {
       vm.formSubmitted = false;
 
-      if(page == 'index') {
+      if(page == 'indexBack' && $stateParams.backTo) {
+        $state.go($stateParams.backTo, {id:$stateParams.id});
+        return
+      }
+
+      if(page == 'index' || page == 'indexBack') {
         init();
         vm.currentPage = { page: page };
       }

@@ -7,7 +7,6 @@ var resetPassword = require('../../services/resetPassword');
 var emailConfirmation = require('../../services/emailConfirmation');
 var passport = require('passport');
 var subdomains = require('../../lib/subdomains');
-var config = require('config');
 var mailers = require('../../mailers');
 var session = require('../../middleware/session');
 var middlewareFilters = require('../../middleware/filters');
@@ -15,6 +14,7 @@ var socialProfileMiddleware = require('../../middleware/socialProfile');
 var inviteRoutes = require('./invite.js');
 var surveyRoutes = require('./survey.js');
 var myDashboardRoutes = require('./myDashboard.js');
+var chargebeeRoutes = require('./chargebee.js');
 var constants = require('../../util/constants');
 var appData = require('../../services/webAppData');
 
@@ -108,7 +108,7 @@ router.post('/registration', function (req, res, next) {
           tplData.success = 'Email confirmation sent to ' + email;
         }
       });
-      res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: config.applicationName});
+      res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: process.env.MAIL_FROM_NAME});
     };
   });
 });
@@ -264,8 +264,14 @@ router.route('/invite/:token/decline').get(inviteRoutes.decline);
 router.route('/invite/:token/accept').get(inviteRoutes.acceptGet);
 router.route('/invite/:token/accept').post(inviteRoutes.acceptPost);
 
+router.route('/invite/:token/notThisTime').get(inviteRoutes.sessionNotThisTime);
+router.route('/invite/:token/notAtAll').get(inviteRoutes.sessionNotAtAll);
+
+
 router.route('/survey/:id').get(surveyRoutes.index);
 
 router.route('/my-dashboard').get(myDashboardRoutes.index);
+
+router.route('/chargebee/webhooks').post(chargebeeRoutes.endPoint);
 
 module.exports = router;

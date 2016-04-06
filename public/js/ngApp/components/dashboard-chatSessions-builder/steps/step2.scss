@@ -1,0 +1,112 @@
+#step-2  {
+
+  font-size: 2rem;
+  text-align: left;
+
+  .panel-title {
+    font-size: 2rem;
+    text-align: left;
+    color: $grey;
+  }
+
+  a.accordion-toggle {
+    text-decoration: none;
+
+    &:hover { text-decoration: none }
+  }
+
+  .panel-heading {
+    border: none;
+
+    &:hover {
+      color: $green;
+      background: #A5DAA4;
+    }
+  }
+
+  .panel-label {
+    font-size: 2rem;
+    text-align: left;
+    color: $grey;
+
+  }
+
+  .panel-body {
+    p {
+      font-size: 1.9rem;
+      text-align: left;
+      color: $grey;
+    }
+  }
+
+  div#no-contacts-in-list {
+    margin-top: 0;
+
+    height: auto;
+  }
+
+
+  #dashboard-contact-lists-main-table {
+    input[type="radio"] {
+      margin-left: 2rem;
+    }
+  }
+  td {
+    padding: 8px 0;
+    text-align: left;
+  }
+
+  #create-new-btn {
+    margin-left: 20px;
+    margin-top: -8px;
+    margin-bottom: 10px;
+  }
+
+  .flex {
+    padding-left: 12px;
+  }
+  .check {
+    float: left;
+    margin-right: 10px;
+  }
+
+
+
+  input#duration-input,
+  select#duration-input{
+    padding:2px;
+    float: left;
+    width: 55px;
+  }
+
+  .topic-list-item {
+    margin: 4px;
+    padding: 4px;
+    cursor: pointer;
+    background: #F6F8F7;
+
+    &:hover {
+      background: $lightGreen;
+    }
+
+    .control-block {
+      >.ic {
+        top: -7px;
+      }
+    }
+
+  }
+
+  img.ico-active-unactive {
+    position: relative;
+    float: right;
+    left: -90px; top: -2px;
+
+  }
+
+  span.edit-block {
+    padding: 1px 10px !important;
+  }
+
+
+}
