@@ -35,7 +35,7 @@
 
     vm.steps = [
       {
-        title: "Choose a plan",
+        title: "Select Plan Upgrade",
         number: 1,
         key: "selectPlan"
       },
