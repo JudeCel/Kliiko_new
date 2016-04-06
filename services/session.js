@@ -395,7 +395,7 @@ function addShowStatus(session, subscription) {
     if(subscription && date > subscription.trialEnd) {
       session.dataValues.showStatus = 'Expired';
     }
-    else if(date < new Date(session.start_time)) {
+    else if(date < new Date(session.startTime)) {
       session.dataValues.showStatus = 'Pending';
     }
     else {

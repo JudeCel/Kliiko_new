@@ -461,8 +461,8 @@ function stepsDefinition(session) {
   object.step1 = {
     stepName: "setUp",
     name: session.name,
-    startTime: session.start_time,
-    endTime: session.end_time,
+    startTime: session.startTime,
+    endTime: session.endTime,
     resourceId: session.resourceId,
     brandProjectPreferenceId:  session.brandProjectPreferenceId
   };
