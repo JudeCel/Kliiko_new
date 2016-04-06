@@ -28,7 +28,7 @@ module.exports = (Sequelize, DataTypes) => {
         Resource.belongsTo(models.Topic, { foreignKey: 'topicId' });
         Resource.belongsTo(models.Account, { foreignKey: 'accountId' });
         Resource.belongsTo(models.AccountUser, { foreignKey: 'accountUserId' });
-        Resource.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId' });
+        // Resource.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId' });
         Resource.hasMany(models.Survey, { foreignKey: 'surveyId' });
         Resource.hasMany(models.Survey, { foreignKey: 'surveyQuestionId' });
       }

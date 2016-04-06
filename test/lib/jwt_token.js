@@ -3,8 +3,7 @@ var assert = require('chai').assert;
 var jwt_token = require('./../../lib/jwt_token');
 
 var jwt = require('jsonwebtoken');
-var config = require('config');
-var JWTSecret = config.get("JWTSecret");
+var JWTSecret = process.env.JWT_SECRET_KEY;
 
 describe('#token', function() {
   describe('session member', function() {
