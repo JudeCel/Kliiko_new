@@ -77,9 +77,7 @@
                     <div id="contact-lists-right-column" class="col-md-12">
                         <!-- TABLE -->
                         <section id="dashboard-contact-lists-main-table">
-
-                            <table class='table table-responsive table-dashboardElements'
-                                   ng-hide="!clc.lists.activeList.members.length" style="font-size: 1.6rem">
+                            <table class='table table-responsive table-dashboardElements' ng-hide="clc.lists.activeList.members.length < 1" style="font-size: 1.6rem">
                                 <thead>
                                 <tr>
                                     <th class="selection-column"></th>
