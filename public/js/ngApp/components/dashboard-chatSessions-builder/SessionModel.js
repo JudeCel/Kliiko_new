@@ -32,8 +32,8 @@
       remove: { method: 'delete', params: { id: '@id' } }
     });
 
-    var sessionMemberApi = $resource(globalSettings.restUrl + '/sessionMember', {}, {
-      post: { method: 'POST' , isArray: true }
+    var sessionMemberApi = $resource(globalSettings.restUrl + '/sessionMember/:path', {}, {
+      post: { method: 'POST', params: { path: 'addFacilitator' } }
     });
 
 
@@ -228,19 +228,18 @@
     }
 
 
-    function addMembers(members, role) {
+    function addMembers(member, role) {
       var self = this;
       var deferred = $q.defer();
-      if (!angular.isArray(members)) members = [members];
-
       var params = {
         sessionId: self.id,
         role: role,
-        members: members
-      };
+        username: member.firstName,
+        accountUserId: member.accountUserId
+      }
 
       sessionMemberApi.post({},params,function(res) {
-        if (res.error) { deferred.reject(err);  return deferred.promise;}
+        if (res.error) { deferred.reject(res.error);  return deferred.promise;}
         deferred.resolve();
       });
 

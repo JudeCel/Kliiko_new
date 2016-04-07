@@ -193,7 +193,6 @@ function copySession(sessionId, accountId) {
       if(facilitator) {
         delete facilitator.id;
         delete facilitator.token;
-        delete facilitator.sessionId;
 
         // Not confirmed.
         copySessionMember(session, facilitator).then(function(copy) {
@@ -339,18 +338,14 @@ function findAllSessionsAsMember(userId, accountId) {
 function copySessionMember(session, facilitator) {
   let deferred = q.defer();
 
-  session.createSessionMember(facilitator).then(function(result) {
-    sessionMemberServices.createToken(result.id).then(function() {
-      findSession(session.id, session.accountId).then(function(result) {
-        deferred.resolve(result.data);
-      }, function(error) {
-        deferred.reject(error);
-      });
+  sessionMemberServices.createWithTokenAndColour(facilitator).then(function() {
+    findSession(session.id, session.accountId).then(function(result) {
+      deferred.resolve(result.data);
     }, function(error) {
-      deferred.reject(filters.errors(error));
+      deferred.reject(error);
     });
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
+  }, function(error) {
+    deferred.reject(error);
   });
 
   return deferred.promise;

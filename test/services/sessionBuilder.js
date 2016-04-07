@@ -40,6 +40,16 @@ describe('SERVICE - SessionBuilder', function() {
     };
   };
 
+  function sessionMemberParams(sessionId) {
+    return {
+      sessionId: sessionId,
+      username: 'Dude',
+      role: 'facilitator',
+      accountUserId: testAccountUser.id,
+      colour: 'red'
+    };
+  };
+
   describe('#initializeBuilder', function(done) {
     describe('happy path', function(done) {
       it('should initialize builder', function(done) {
@@ -135,16 +145,6 @@ describe('SERVICE - SessionBuilder', function() {
 
   describe('#nextStep', function(done) {
     describe('happy path', function(done) {
-
-      function sessionMemberParams(sessionId) {
-        return {
-          sessionId: sessionId,
-          username: 'Dude',
-          role: 'facilitator',
-          accountUserId: testAccountUser.id
-        }
-      }
-
       it('should go to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
@@ -317,15 +317,6 @@ describe('SERVICE - SessionBuilder', function() {
   });
 
   describe('#removeSessionMember', function(done) {
-    function sessionMemberParams(sessionId) {
-      return {
-        sessionId: sessionId,
-        username: 'Es krucs!',
-        role: 'facilitator',
-        accountUserId: testAccountUser.id
-      }
-    }
-
     describe('happy path', function(done) {
       it('should remove session member from session', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
@@ -434,15 +425,6 @@ describe('SERVICE - SessionBuilder', function() {
 
   describe('#firstStep', function(done) {
     describe('happy path', function(done) {
-      function sessionMemberParams(sessionId) {
-        return {
-          sessionId: sessionId,
-          username: 'Es krucs!',
-          role: 'facilitator',
-          accountUserId: testAccountUser.id
-        }
-      }
-
       it('should succeed on moving to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
@@ -485,14 +467,6 @@ describe('SERVICE - SessionBuilder', function() {
   });
 
   describe('#secondStep', function(done) {
-    function sessionMemberParams(sessionId) {
-      return {
-        sessionId: sessionId,
-        username: 'Es krucs!',
-        role: 'facilitator',
-        accountUserId: testAccountUser.id
-      }
-    }
     function topicParams(accountId) {
       return {
         accountId: accountId,
@@ -649,12 +623,9 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           params.step = 'manageSessionEmails';
 
-          console.log(params);
-
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             async.parallel(multipleTemplates(5, params.id), function(error, _result) {
               if(error){
-                console.log(error);
                 done(error);
               }
               sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
@@ -699,15 +670,6 @@ describe('SERVICE - SessionBuilder', function() {
   });
 
   describe('#fourthStep', function(done) {
-    function sessionMemberParams(sessionId) {
-      return {
-        sessionId: sessionId,
-        username: 'Es krucs!',
-        role: 'participant',
-        accountUserId: testAccountUser.id
-      }
-    }
-
     describe('happy path', function(done) {
       it('should succeed on moving to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
@@ -758,15 +720,6 @@ describe('SERVICE - SessionBuilder', function() {
   });
 
   describe('#fifthStep', function(done) {
-    function sessionMemberParams(sessionId) {
-      return {
-        sessionId: sessionId,
-        username: 'Es krucs!',
-        role: 'observer',
-        accountUserId: testAccountUser.id
-      }
-    }
-
     describe('happy path', function(done) {
       it('should succeed on moving to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
