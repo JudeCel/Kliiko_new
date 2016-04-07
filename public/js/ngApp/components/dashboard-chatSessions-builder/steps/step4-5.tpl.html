@@ -41,7 +41,6 @@
         </thead>
         <tbody>
           <tr ng-repeat="member in lastStepsController.stepMembers | filter: lastStepsController.participantsFilter: strict " ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
-
             <td>
               <div class='checkbox checkbox-xs checkbox-success'>
                 <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.isSelected' ng-disabled='lastStepsController.showCorrectStatus(member)' />
@@ -54,7 +53,8 @@
             <td>{{ member.mobile }}</td>
             <td class='col-xs-2'>
               <div ng-if='!lastStepsController.mouseOveringMember[$index]'>
-                {{ member.inviteStatus }}
+                <div ng-if="!member.inviteStatus">{{ member.invite.status }}</div>
+                <div ng-if="member.inviteStatus">{{ member.inviteStatus }}</div>
               </div>
               <div ng-if='lastStepsController.mouseOveringMember[$index]'>
                 <img src='/icons/session_grey.png' ng-click='lastStepsController.modalWindowHandler("showSms", [member])' />
