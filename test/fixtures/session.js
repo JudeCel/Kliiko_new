@@ -152,12 +152,12 @@ function addSessionMember(accountUserId, session, role, name, callback) {
   let params = { role: role,
                  accountUserId: accountUserId,
                  username: name,
-                 token: role
+                 token: role,
+                 sessionId: session.id
                 }
-  session.createSessionMember(params).then(function(result) {
+  SessionMemberService.createWithTokenAndColour(params).then(function(result) {
     callback(null, result);
-  })
-  .catch(function(error) {
+  }).catch(function(error) {
     callback(error);
   });
 }

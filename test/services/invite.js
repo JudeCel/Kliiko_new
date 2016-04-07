@@ -111,8 +111,11 @@ describe('SERVICE - Invite', function() {
           let errorParams = {
             role: "Role can't be empty",
             ownerId: "Owner Id can't be empty",
-            accountUserId: "Account User Id can't be empty"
+            ownerType: "Owner Type can't be empty",
+            accountUserId: "Account User Id can't be empty",
+            userType: "User Type can't be empty"
           };
+
           assert.deepEqual(error, errorParams);
           done();
         });
