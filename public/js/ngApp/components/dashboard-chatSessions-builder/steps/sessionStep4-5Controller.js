@@ -95,12 +95,14 @@
         }
 
         promise.then(function(res) {
+
           for(var i in data) {
             var member = data[i];
              for(var j in res.data) {
                if (member.email == res.data[j].email) {
                   data[i] = angular.extend(member, res.data[j]);
                   member.isSelected = false;
+                  member.inviteStatus = res.data[j].invite.status
                }
              }
           }
