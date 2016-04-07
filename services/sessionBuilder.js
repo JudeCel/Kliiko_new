@@ -42,10 +42,10 @@ const MESSAGES = {
       emailTemplates: "Not enough mail templates provided, needed "
     },
     fourthStep: {
-      participants: 'No participants provided'
+      participants: 'No participants invited'
     },
     fifthStep: {
-      observers: 'No observers provided'
+      observers: 'No observers invited'
     }
   }
 };
@@ -665,11 +665,7 @@ function findValidation(step, params) {
     });
   }
   else if(step == 'inviteSessionObservers') {
-    validateStepFive(params).then(function() {
-      deferred.resolve();
-    }, function(error) {
-      deferred.reject(error);
-    });
+    deferred.resolve(); // We don't need any validations on the last step
   }
   else {
     deferred.resolve();
@@ -774,34 +770,20 @@ function validateStepFour(params) {
   let deferred = q.defer();
 
   findSession(params.id, params.accountId).then(function(session) {
-    searchSessionMembers(session.id, 'participant').then(function(members) {
+    models.Invite.count({
+      where:{
+        ownerId: session.id,
+        ownerType: "session",
+        role: "participant"
+      }
+    }).then(function(count) {
       let errors = {};
-      if(_.isEmpty(members)) {
+      if(count < 1) {
         errors.participants = MESSAGES.errors.fourthStep.participants;
       }
       _.isEmpty(errors) ? deferred.resolve() : deferred.reject(errors);
     }).catch(function(error) {
-      deferred.reject(error);
-    });
-  }, function(error) {
-    deferred.reject(error);
-  });
-
-  return deferred.promise;
-}
-
-function validateStepFive(params) {
-  let deferred = q.defer();
-
-  findSession(params.id, params.accountId).then(function(session) {
-    searchSessionMembers(session.id, 'observer').then(function(members) {
-      let errors = {};
-      if(_.isEmpty(members)) {
-        errors.observers = MESSAGES.errors.fifthStep.observers;
-      }
-      _.isEmpty(errors) ? deferred.resolve() : deferred.reject(errors);
-    }).catch(function(error) {
-      deferred.reject(error);
+      deferred.reject(filters.errors(error));
     });
   }, function(error) {
     deferred.reject(error);
