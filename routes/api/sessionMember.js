@@ -1,54 +1,21 @@
 'use strict';
 
-let sessionMemberService = require('./../../services/sessionMember');
+var sessionMemberService = require('./../../services/sessionMember');
 
 module.exports = {
-  addMembers: addMembers
+  addFacilitator: addFacilitator
 };
 
-function addMembers(req, res, next) {
-  var params = req.body;
+function addFacilitator(req, res, next) {
+  let params = req.body;
 
-  let members = [];
-  for (var i = 0, len = params.members.length; i < len ; i++) {
-    members[i] = {
-      accountUserId: params.members[i].accountUserId,
-      username: params.members[i].firstName + ' '+ params.members[i].lastName,
-    };
-  }
-
-  params.members = members;
-
-  if (params.role == 'facilitator') {
-
-    sessionMemberService.removeByRole(params.role, params.sessionId, res.locals.currentDomain.id).then(
-      function (resp) {
-        createBulk();
-      },
-      function (err) {
-        res.send({error: err});
-      }
-    );
-
-
-  } else {
-    createBulk();
-  }
-
-  function createBulk() {
-    for (var i = 0, len = params.members.length; i < len ; i++) {
-      params.members[i].sessionId = params.sessionId;
-      params.members[i].role = params.role
-    }
-    sessionMemberService.bulkCreate(params.members, params.sessionId).then(
-      function (resp) {
-        res.send(resp);
-      },
-      function (err) {
-        res.send({error:err});
-      }
-    );
-  }
-
-
+  sessionMemberService.removeByRole('facilitator', params.sessionId, res.locals.currentDomain.id).then(function() {
+    sessionMemberService.createWithTokenAndColour(params).then(function(sessionMember) {
+      res.send(sessionMember);
+    }, function (err) {
+      res.send({error:err});
+    });
+  }, function (err) {
+    res.send({error: err});
+  });
 }

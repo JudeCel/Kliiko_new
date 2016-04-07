@@ -153,12 +153,12 @@ function addSessionMember(accountUserId, session, role, name, callback) {
                  accountUserId: accountUserId,
                  username: name,
                  avatar_info: "0:4:3:1:4:3",
-                 token: role
+                 token: role,
+                 sessionId: session.id
                 }
-  session.createSessionMember(params).then(function(result) {
+  SessionMemberService.createWithTokenAndColour(params).then(function(result) {
     callback(null, result);
-  })
-  .catch(function(error) {
+  }).catch(function(error) {
     callback(error);
   });
 }

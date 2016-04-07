@@ -2,6 +2,7 @@
 
 var models = require('./../models');
 var filters = require('./../models/filters');
+var brandProjectConstants = require('../util/brandProjectConstants');
 
 var Session = models.Session;
 var SessionMember = models.SessionMember;
@@ -17,11 +18,42 @@ const MESSAGES = {
 
 module.exports = {
   createToken: createToken,
-  bulkCreate: bulkCreate,
   removeByIds: removeByIds,
   removeByRole: removeByRole,
+  createWithTokenAndColour: createWithTokenAndColour,
   messages: MESSAGES
 };
+
+function createWithTokenAndColour(params) {
+  let deferred = q.defer();
+
+  params.token = params.token || uuid.v1();
+
+  if(params.role == 'facilitator') {
+    params.colour = brandProjectConstants.memberColours.facilitator;
+    createHelper(deferred, params);
+  }
+  else {
+    SessionMember.count({
+      where: {
+        sessionId: params.sessionId
+      }
+    }).then(function(c) {
+      params.colour = brandProjectConstants.memberColours.participants[c+1];
+      createHelper(deferred, params);
+    });
+  }
+
+  return deferred.promise;
+}
+
+function createHelper(deferred, params) {
+  SessionMember.create(params).then(function(sessionMember) {
+    deferred.resolve(sessionMember);
+  }, function(error) {
+    deferred.reject(filters.errors(error));
+  });
+}
 
 function createToken(id) {
   let deferred = q.defer();
@@ -41,35 +73,6 @@ function createToken(id) {
 
   return deferred.promise;
 }
-
-/**
- * bulkCreate
- * @param params {Array}
- * @param sessionId {number}
- * @returns {*|promise}
- */
-function bulkCreate(params, sessionId) {
-  let deferred = q.defer();
-
-  SessionMember.bulkCreate(params).then(function(result) {
-    SessionMember.findAll({
-      where: { sessionId: sessionId }
-    }).then(function(members) {
-      if(_.isEmpty(members)) {
-        deferred.reject(MESSAGES.wrongSessionId + sessionId);
-      }
-      else {
-        deferred.resolve(members);
-      }
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
-    });
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
-  });
-
-  return deferred.promise;
-};
 
 function removeByIds(ids, sessionId, accountId) {
   let deferred = q.defer();

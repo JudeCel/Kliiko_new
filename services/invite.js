@@ -8,6 +8,7 @@ var Account = models.Account;
 var AccountUser = models.AccountUser;
 var Session = models.Session;
 
+var sessionMemberService = require('./../services/sessionMember');
 var inviteMailer = require('../mailers/invite');
 var constants = require('../util/constants');
 
@@ -365,7 +366,7 @@ function sessionAccept(token, password) {
 
       User.create({ email: invite.AccountUser.email, password: password, confirmedAt: new Date()  }).then(function(user) {
         invite.AccountUser.update({ UserId: user.id, active:true}).then(function() {
-          models.SessionMember.create(params).then(function() {
+          sessionMemberService.createWithTokenAndColour(params).then(function() {
             invite.update({ status: 'confirmed' }).then(function() {
               deferred.resolve(MESSAGES.confirmed);
             }, function(error) {

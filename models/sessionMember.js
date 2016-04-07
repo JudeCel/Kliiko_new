@@ -12,7 +12,7 @@ module.exports = (Sequelize, DataTypes) => {
       isUnique: validations.unique(Sequelize, 'SessionMember', 'token')
     } },
     username: { type: DataTypes.STRING, allowNull: false },
-    colour: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 6710886 },
+    colour: { type: DataTypes.STRING, allowNull: false },
     online: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     avatar_info: { type: DataTypes.STRING, allowNull: false, defaultValue: '0:3:0:0:0:0' },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionMemberRoles },
