@@ -49,14 +49,6 @@ describe('SERVICE - BrandColour', function() {
     assert.equal(data.colours.font, params.colours.font || '#58595B');
     assert.equal(data.colours.headerButton, params.colours.headerButton || '#4CBFE9');
     assert.equal(data.colours.consoleButtonActive, params.colours.consoleButtonActive || '#4CB649');
-    assert.equal(data.colours.participants[1], params.colours.participants[1] || '#4CB649');
-    assert.equal(data.colours.participants[2], params.colours.participants[2] || '#2F9F69');
-    assert.equal(data.colours.participants[3], params.colours.participants[3] || '#9B0E26');
-    assert.equal(data.colours.participants[4], params.colours.participants[4] || '#3F893B');
-    assert.equal(data.colours.participants[5], params.colours.participants[5] || '#7F7426');
-    assert.equal(data.colours.participants[6], params.colours.participants[6] || '#27606D');
-    assert.equal(data.colours.participants[7], params.colours.participants[7] || '#F0E935');
-    assert.equal(data.colours.participants[8], params.colours.participants[8] || '#4CBFE9');
   }
 
   describe('#findScheme', function() {
@@ -255,8 +247,7 @@ describe('SERVICE - BrandColour', function() {
     describe('happy path', function() {
       it('should succeed on returning fields', function (done) {
         let fields = brandColourServices.manageFields();
-        assert.equal(_.size(fields.participants), 8);
-        assert.equal(fields.chatRoom.length, 7);
+        assert.equal(fields.chatRoom.length, 6);
         done();
       });
     });

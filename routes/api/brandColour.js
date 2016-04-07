@@ -47,7 +47,7 @@ function getResponses(res) {
         message: result.message,
         manageFields: brandColourServices.manageFields(),
         hexRegex: brandProjectConstants.hexRegex,
-        participantColours: brandProjectConstants.participantColours
+        memberColours: brandProjectConstants.memberColours
       };
 
       res.send(results);
