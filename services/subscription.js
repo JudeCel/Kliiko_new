@@ -269,7 +269,6 @@ function updateSubscription(accountId, newPlanId, providers) {
       viaCheckout: null
     }
   }
-  console.log(providers.updateProvider);
 
   gatherInformation(accountId, newPlanId).then(function(result) {
     canSwitchPlan(accountId, result.currentPlan, result.newPlan).then(function() {

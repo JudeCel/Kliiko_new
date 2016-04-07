@@ -36,7 +36,8 @@ function createWithTokenAndColour(params) {
   else {
     SessionMember.count({
       where: {
-        sessionId: params.sessionId
+        sessionId: params.sessionId,
+        role: params.role
       }
     }).then(function(c) {
       params.colour = brandProjectConstants.memberColours.participants[c+1];
