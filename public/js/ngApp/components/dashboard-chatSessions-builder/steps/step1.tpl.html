@@ -71,13 +71,12 @@
                  ng-click="step1Controller.selectedFacilitator = null">
                 Clear Selection
             </div>
-
-            <div id='dashboard-contact-lists' ng-controller="ContactListController as clc" ng-init="clc.initLists('facilitators')">
-                <div class="row">
+            <div id='dashboard-contact-lists' ng-controller="ContactListController as clc">
+                <div class="row" ng-init="clc.initLists('facilitators')">
                     <div id="contact-lists-right-column" class="col-md-12">
                         <!-- TABLE -->
                         <section id="dashboard-contact-lists-main-table">
-                            <table class='table table-responsive table-dashboardElements' ng-hide="clc.lists.activeList.members.length < 1" style="font-size: 1.6rem">
+                            <table class='table table-responsive table-dashboardElements' style="font-size: 1.6rem" ng-if="clc.lists.activeList.members.length > 0">
                                 <thead>
                                 <tr>
                                     <th class="selection-column"></th>
@@ -117,7 +116,7 @@
                         </section>
                         <!--eof table-->
 
-                        <div id="no-contacts-in-list-" ng-show="!clc.lists.activeList.members.length">
+                        <div id="no-contacts-in-list-" ng-if="clc.lists.activeList.members.length < 1">
                             There is no contacts in this list yet
                             <div class="btn-standart btn-green margin020" ng-hide="sbc.showContactsList" ng-click="sbc.addFacilitatorsClickHandle()">
                                 Add Facilitator To Contact List &nbsp;<img src="/icons/account_manager_green.png">
