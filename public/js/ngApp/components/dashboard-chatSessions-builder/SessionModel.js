@@ -129,7 +129,7 @@
       var self = this;
       var deferred = $q.defer();
       sessionBuilderRestApi.get({id:self.id}, {}, function(res) {
-        self = angular.merge(self, res.sessionBuilder);
+        self.sessionData = angular.merge(self, res.sessionBuilder);
 
         // get current session data
         chatSessionApi.get({}, function(sessionApiRes) {
