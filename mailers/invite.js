@@ -11,7 +11,7 @@ var transporter = helpers.createTransport();
 
 function sendInviteAccountManager(inviteParams, callback) {
   let accountId = null;
-  mailTemplateService.getActiveMailTemplate("accountManagerConfirmation", inviteParams.accountId, function(error, result) {
+  mailTemplateService.getActiveMailTemplate("accountManagerConfirmation", inviteParams, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
       let links = {

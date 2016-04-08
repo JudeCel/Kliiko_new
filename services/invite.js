@@ -179,8 +179,9 @@ function sendInvite(invite, deferred) {
     }).then(function(sessionMember) {
       let facilitator = sessionMember.AccountUser;
       let inviteParams = {
+        sessionId: session.id,
         role: invite.role,
-        accountId: invite.accountId,
+        accountId: session.accountId,
         token: invite.token,
         firstName: invite.AccountUser.firstName,
         lastName: invite.AccountUser.lastName,
@@ -198,7 +199,6 @@ function sendInvite(invite, deferred) {
         facilitatorMobileNumber: facilitator.mobile,
         unsubscribeMailUrl: 'some unsub url'
       }
-
       inviteMailer.sendInviteSession(inviteParams, function(error, data) {
         if(error) {
           deferred.reject(error);
