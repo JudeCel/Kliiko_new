@@ -10,5 +10,5 @@
 /npm-debug.log
 /.tmp/templates.js
 .env
-
+/chatRoom/public/uploads/*
 .vscode/settings.json

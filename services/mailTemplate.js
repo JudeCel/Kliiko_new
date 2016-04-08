@@ -82,6 +82,10 @@ function getLatestMailTemplate(req, callback) {
     '$or': [{id: req.latestId}, {MailTemplateBaseId: req.id}]
   };
 
+  if (req.sessionId) {
+    templateQuery['$and'] = {sessionId: req.sessionId};
+  }
+
   MailTemplate.findAll({
     include: [{
       model: MailTemplateOriginal, attributes: ['id', 'name']
@@ -140,7 +144,14 @@ function getBaseMailTemplate(req, callback) {
 
   for category reference -> constants.mailTemplateType[]
  */
-function getActiveMailTemplate(category, accountId, callback) {
+function getActiveMailTemplate(category, params, callback) {
+  let accountId = null;
+  let sessionId = null;
+  if (params) {
+    accountId = params.accountId;
+    sessionId = params.sessionId;
+  }
+
   if (!constants.mailTemplateType[category]) {
     return callback({error: "mail category not found"});
   }
@@ -153,7 +164,7 @@ function getActiveMailTemplate(category, accountId, callback) {
     raw: true
   }).then(function (result) {
     //get reference to active mail template
-    getLatestMailTemplate({id: result.id, latestId: result.mailTemplateActive, accountId: accountId}, function(err, template) {
+    getLatestMailTemplate({id: result.id, latestId: result.mailTemplateActive, accountId: accountId, sessionId: sessionId}, function(err, template) {
       if (!template) {
         callback(null, result);
       } else {
