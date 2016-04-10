@@ -1,7 +1,7 @@
 'use strict';
 
 function map() {
-  if (app.get('env') === 'production') {
+  if (process.env.NODE_ENV === 'production') {
     process.env.REDIS_HOST = process.env.REDIS_MASTER_SERVICE_HOST;
     process.env.REDIS_PORT = process.env.REDIS_MASTER_SERVICE_PORT;
   }
