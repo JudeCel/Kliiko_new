@@ -9,7 +9,7 @@ COPY package.json /var/www/klzii
 
 COPY . /var/www/klzii
 
-RUN npm install
+RUN npm install --production --quiet
 
 EXPOSE 8080
 
