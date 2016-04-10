@@ -136,7 +136,7 @@ describe('SERVICE - Session', function() {
 
   describe('#updateSessionMemberRating', function() {
     describe('happy path', function() {
-      it.only('should succeed on updating rating', function (done) {
+      it('should succeed on updating rating', function (done) {
         models.SessionMember.find({ where: { role: 'facilitator' } }).then(function(member) {
           let params = { id: member.id, rating: 4 };
 

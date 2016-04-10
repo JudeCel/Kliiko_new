@@ -149,22 +149,13 @@ function copyScheme(params, accountId) {
 };
 
 function manageFields() {
-  let object = { chatRoom: [], participants: [] };
+  let object = { chatRoom: [] };
 
   _.map(brandProjectConstants.preferenceColours, function(value, key) {
-    if(key == 'participants') {
-      _.map(value, function(value, key) {
-        object.participants.push({
-          model: key
-        });
-      });
-    }
-    else {
-      object.chatRoom.push({
-        title: _.startCase(key),
-        model: key
-      });
-    }
+    object.chatRoom.push({
+      title: _.startCase(key),
+      model: key
+    });
   });
 
   return object;
@@ -193,20 +184,8 @@ function assignDefaultColours(colours) {
 function validateColours(colours, errors) {
   let regex = new RegExp(brandProjectConstants.hexRegex);
   _.map(colours, function(value, key) {
-    if(_.isObject(value)) {
-      _.map(value, function(subvalue, subkey) {
-        if(!regex.test(subvalue)) {
-          errors[subkey] = _.startCase(key + subkey) + ': ' + MESSAGES.notValid;
-        }
-        else if(!_.includes(brandProjectConstants.participantColours, subvalue)) {
-          errors[subkey] = _.startCase(key + subkey) + ': ' + MESSAGES.notFromList;
-        }
-      });
-    }
-    else {
-      if(!regex.test(value)) {
-        errors[key] = _.startCase(key) + ': ' + MESSAGES.notValid;
-      }
+    if(!regex.test(value)) {
+      errors[key] = _.startCase(key) + ': ' + MESSAGES.notValid;
     }
   });
 }

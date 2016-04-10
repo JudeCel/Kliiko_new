@@ -1,8 +1,0 @@
-
-/* import stylesheets and hide from ie/mac \*/
-@import url("./reset.css");
-@import url("./generic.css");
-@import url("./master.css");
-@import url("./greenroom.css");
-@import url("./chatHistory.css");
-/* end import/hide */

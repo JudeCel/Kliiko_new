@@ -13,7 +13,6 @@ var currentUser = require('./middleware/currentUser');
 var flash = require('connect-flash');
 var app = express();
 var fs = require('fs');
-var socketsServer = require('./chatRoom/sockets');
 var airbrake = require('./lib/airbrake').instance;
 var productionEnvMapper = require("./util/productionEnvMapper")
 
@@ -62,7 +61,6 @@ app.use('/api', currentUser.assign, api);
 
 
 // Added socket.io routes
-app = socketsServer.addRoutes(app);
 // catch 404 and forward to error handler
 
 app.use(function(req, res, next) {

@@ -6,7 +6,6 @@
       <p>Recruiter: build a new instant contact list with a quick customised survey</p>
       <p>Your Brand logo & custom colours</p>
       <p>Video and text hep menu</p>
-      <p>Video and text hep menu</p>
       <p>Discussion Guide Tips</p>
       <p>Whiteboard functionality</p>
       <p>Multimedia management and storage</p>
@@ -43,7 +42,9 @@
                 <b>
                   {{ up.checkIfUnlimited(subscriptionPlan.additionalParams.sessionCount) }}
                 </b>
-                Session('s) to use over 12 months
+                Session('s) to use over
+                {{ subscriptionPlan.plan.period }}
+                {{ subscriptionPlan.plan.period_unit }}
               </p>
 
               <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
