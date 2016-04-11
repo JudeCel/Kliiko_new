@@ -2,6 +2,10 @@
 require('dotenv-extended').load({
   errorOnMissing: true
 });
+var productionEnvMapper = require("./util/productionEnvMapper")
+
+// Maps Kubernetes specific values to Local values
+productionEnvMapper.map();
 
 var subscriptionPlans = require('./../test/fixtures/subscriptionPlans');
 subscriptionPlans.createPlans().then(function(result){
