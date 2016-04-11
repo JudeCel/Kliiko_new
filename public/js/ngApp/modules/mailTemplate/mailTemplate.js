@@ -27,11 +27,10 @@
     MailTemplateService.previewMailTemplate = previewMailTemplate;
     return MailTemplateService;
 
-    function getAllSessionMailTemplates(getSystemMail) {
+    function getAllSessionMailTemplates(getSystemMail, params) {
       dbg.log2('#KliikoApp.mailTemplate > get all session mail templates for user');
       var deferred = $q.defer();
-
-      mailRestApi.sessionMailTemplates.get({getSystemMail:getSystemMail}, function (res) {
+      mailRestApi.sessionMailTemplates.get({getSystemMail: getSystemMail, params: params}, function (res) {
         dbg.log2('#KliikoApp.sessionMailTemplate > get all templates> server respond >');
         deferred.resolve(res);
       });

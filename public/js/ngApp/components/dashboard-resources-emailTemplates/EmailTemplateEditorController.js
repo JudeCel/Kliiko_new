@@ -238,11 +238,11 @@
 
     function refreshTemplateList(callback) {
       if (vm.properties.sessionBuilder) {
-        mailTemplate.getAllSessionMailTemplates(showSystemMail).then(function (res) {
+        mailTemplate.getAllSessionMailTemplates(showSystemMail, vm.properties).then(function (res) {
           preprocessMailTemplateList(res, callback);
         });
       } else {
-        mailTemplate.getAllMailTemplates(showSystemMail).then(function (res) {
+        mailTemplate.getAllMailTemplates(showSystemMail, vm.properties).then(function (res) {
           preprocessMailTemplateList(res, callback);
         });
       }

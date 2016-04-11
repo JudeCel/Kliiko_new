@@ -203,7 +203,7 @@ function getAllSessionMailTemplates(accountId, getNoAccountData, sessionId, getS
 }
 
 function getAllMailTemplates(accountId, getNoAccountData, getSystemMail, fullData, callback) {
-  let templateQuery = {sessionId: null};
+  let templateQuery = {};
   getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, null, templateQuery, false, callback);
 }
 
@@ -211,15 +211,14 @@ function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSyste
   let query = templateQuery || {};
 
   let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
+  query.systemMessage = false;
 
-  if (!getSystemMail) {
-    //getting list that any user can edit
+  if(!query.sessionId){
+    query['$or'] = query['$or'] || [{AccountId: accountId}, {AccountId: null}];
+  }
+
+  if(!getSystemMail) {
     query.systemMessage = false;
-    if (getNoAccountData) {
-      query['$or'] = [{AccountId: accountId}, {AccountId: null}];
-    } else {
-      query.AccountId = accountId;
-    }
   }
 
   let attributes = [];
@@ -228,6 +227,7 @@ function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSyste
   } else {
     attributes = constants.mailTemplateFieldsForList;
   }
+
   MailTemplate.findAll({
       include: include,
       where: query,
