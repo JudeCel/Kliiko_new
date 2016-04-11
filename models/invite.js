@@ -17,12 +17,6 @@ module.exports = (Sequelize, DataTypes) => {
     accountId: { type: DataTypes.INTEGER, allowNull: true},
     userType: { type: DataTypes.ENUM, allowNull: false, values: ['existing', 'new'], defaultValue: 'existing' },
   }, {
-    indexes: [
-      { name: "UniqInvite",
-        unique: {args: true, message: "User has already been invited."},
-        fields: ['accountUserId', 'accountId']
-      }
-    ],
     classMethods: {
       associate: function(models) {
         Invite.belongsTo(models.User, { foreignKey: 'userId' });
