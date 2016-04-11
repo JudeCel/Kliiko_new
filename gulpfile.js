@@ -1,6 +1,5 @@
 // gulp task manager
 var gulp = require('gulp'),
-  jshint = require('gulp-jshint'),
   jscs = require('gulp-jscs'),
   util = require('gulp-util'),
   gulpPrint = require('gulp-print'),
@@ -27,17 +26,6 @@ var gulp = require('gulp'),
 
 gulp.task('help', taskListing);
 gulp.task('default', ['help']);
-
-gulp.task('vet', function () {
-  log('Analyzing source with JSHINT and JSCS');
-  gulp.src(config.alljs)
-    .pipe(gulpif(args.verbose, gulpPrint()))
-    .pipe(jscs())
-    .pipe(jshint())
-    .pipe(jshint.reporter('jshint-stylish', {verbose: true}));
-  //  .pipe(jshint.reporter('fail'))
-
-});
 
 gulp.task('templatecache', function (){
   log('Creating AngularJS $templateCache');
@@ -82,8 +70,6 @@ gulp.task('bootstrap', function () {
     .pipe(plumber())
 
     .pipe(sass())
-
-
     //   .on('error', errorLoger)
     .pipe(autoprefixer({browsers: ['last 2 version', '> 5%']}))
     .pipe(gulp.dest(config.css))
