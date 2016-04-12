@@ -46,7 +46,7 @@ module.exports = {
   },
   unlimited: {
     sessionCount: -1,
-    contactListCount: 1,
+    contactListCount: -1,
     surveyCount: -1,
     additionalContactListCount: -1,
     contactListMemberCount: -1,

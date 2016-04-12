@@ -74,7 +74,7 @@
     vm.subPlans = vm.testData;
     vm.isCurrentStep = isCurrentStep;
     vm.openPlanDetailsModal = openPlanDetailsModal;
-    vm.checkIfUnlimited = checkIfUnlimited;
+    vm.checkTheCount = checkTheCount;
     vm.stepIsActive = stepIsActive;
     vm.stepIsCompleted = stepIsCompleted;
     vm.nextStep = nextStep;
@@ -177,9 +177,11 @@
       return --vm.currentStep;
     }
 
-    function checkIfUnlimited(count) {
+    function checkTheCount(count) {
       if(count == -1){
         return "Unlimited";
+      } else if(count == 0) {
+        return "No";
       }else{
         return count;
       }
