@@ -1633,7 +1633,8 @@ hr.survey-hr {
   margin: 4px auto;
   padding: 10px;
   width: 90%;
-  font-size: 2.1rem; }
+  font-size: 2.1rem;
+  min-height: 74px; }
 
 #upgrade-plan-content .plans-table .yellow-bg {
   background: #F0E935; }
