@@ -211,13 +211,12 @@ function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSyste
   let query = templateQuery || {};
 
   let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
-  query.systemMessage = false;
 
   if(!query.sessionId){
-    query['$or'] = query['$or'] || [{AccountId: accountId}, {AccountId: null}];
+    query['$or'] = [{AccountId: accountId}, {AccountId: null}];
   }
 
-  if(!getSystemMail) {
+  if (!getSystemMail) {
     query.systemMessage = false;
   }
 
