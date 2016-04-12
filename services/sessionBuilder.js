@@ -282,8 +282,7 @@ function removeInvite(params) {
   models.Invite.find({
     where: {
       id: params.inviteId,
-      ownerId: params.id,
-      ownerType: 'session',
+      sessionId: params.id,
       status: 'pending'
     }
   }).then(function(invite) {
@@ -602,8 +601,7 @@ function step4and5Queries(session, role) {
         include: [{
           model: models.Invite,
           where: {
-            ownerId: session.id,
-            ownerType: 'session',
+            sessionId: session.id,
             role: role,
             status: { $ne: 'confirmed' }
           },
@@ -787,8 +785,7 @@ function validateStepFour(params) {
   findSession(params.id, params.accountId).then(function(session) {
     models.Invite.count({
       where:{
-        ownerId: session.id,
-        ownerType: "session",
+        sessionId: session.id,
         role: "participant"
       }
     }).then(function(count) {

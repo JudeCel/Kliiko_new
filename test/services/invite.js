@@ -110,10 +110,7 @@ describe('SERVICE - Invite', function() {
         }, function(error) {
           let errorParams = {
             role: "Role can't be empty",
-            ownerId: "Owner Id can't be empty",
-            ownerType: "Owner Type can't be empty",
-            accountUserId: "Account User Id can't be empty",
-            userType: "User Type can't be empty"
+            accountUserId: "Account User Id can't be empty"
           };
 
           assert.deepEqual(error, errorParams);
@@ -133,7 +130,6 @@ describe('SERVICE - Invite', function() {
         validParams(testUser, testAccount, body, function(err, params) {
           inviteService.createInvite(params).then(function(data) {
             assert.equal(data.invite.userId, params.userId);
-            assert.equal(data.invite.ownerId, params.ownerId);
             assert.equal(data.invite.role, params.role);
             assert.equal(data.invite.userType, params.userType);
             done();
