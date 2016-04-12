@@ -179,7 +179,7 @@ function sendInvite(invite, deferred) {
         endTime: dateFormat(invite.endDate, 'h:MM:ss'),
         startDate: dateFormat(invite.startDate, 'yyyy-mm-dd'),
         endDate: dateFormat(invite.endDate, 'yyyy-mm-dd'),
-        incentive: 'something incentive',
+        incentive: session.incentive_details,
         facilitatorFirstName: facilitator.firstName,
         facilitatorLastName: facilitator.lastName,
         facilitatorMail: facilitator.email,
