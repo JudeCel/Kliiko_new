@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var subscription = require('./../../services/subscription');
+var subdomains = require('../../lib/subdomains');
 
 module.exports = {
   getPlans: getPlans,
@@ -20,10 +21,14 @@ function getPlans(req, res, next) {
 }
 
 function updatePlan(req, res, next) {
-  let accountId = res.locals.currentDomain.id;
-  let newPlanId = req.body.planId;
+  let redirectUrl = subdomains.url(req, res.locals.currentDomain.name, '/dashboard#/account-profile/upgrade-plan')
+  let params = {
+    accountId: res.locals.currentDomain.id,
+    newPlanId: req.body.planId,
+    redirectUrl: redirectUrl
+  }
 
-  subscription.updateSubscription(accountId, newPlanId).then(function(result) {
+  subscription.updateSubscription(params).then(function(result) {
     res.send(result);
   }, function(err) {
     res.send({ error: err });
