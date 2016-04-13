@@ -142,7 +142,7 @@
           });
           messenger.ok("Template was successfully saved.");
         } else {
-          processErrors(res.error);
+          messenger.error(res.error);
         }
       });
     }
@@ -201,20 +201,9 @@
           });
           messenger.ok("Template was successfully saved.");
         } else {
-          processErrors(res.error);
+          messenger.error(res.error);
         }
       });
-    }
-
-    function processErrors(err) {
-      if (!err) {
-        return;
-      }
-
-      var errors = err.errors;
-      for (var e in errors) {
-          vm.currentTemplate.error[errors[e].path] = errors[e].message;
-      }
     }
 
     function getIndexOfMailTemplateWithId(id) {

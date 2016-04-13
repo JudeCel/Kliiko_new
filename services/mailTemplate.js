@@ -211,13 +211,12 @@ function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSyste
   let query = templateQuery || {};
 
   let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
-  query.systemMessage = false;
 
   if(!query.sessionId){
-    query['$or'] = query['$or'] || [{AccountId: accountId}, {AccountId: null}];
+    query['$or'] = [{AccountId: accountId}, {AccountId: null}];
   }
 
-  if(!getSystemMail) {
+  if (!getSystemMail) {
     query.systemMessage = false;
   }
 
@@ -323,9 +322,56 @@ function shouldCreateCopy(template, createCopy, accountId, shouldOverwrite) {
   return (result || createCopy);
 }
 
+function variablesForTemplate(type) {
+  switch (type) {
+    case "firstInvitation":
+      return ["{First Name}", "{Session Name}", "{Start Time}", "{End Time}", "{Start Date}", "{End Date}", "{Incentive}", "{Accept Invitation}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}", "{Invitation Not This Time}", "{Invitation Not At All}"];
+      break;
+    case "closeSession":
+      return ["{First Name}", "{Incentive}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}", "{Close Session Yes In Future}", "{Close Session No In Future}"];
+      break;
+    case "confirmation":
+      return ["{First Name}", "{Start Time}", "{Start Date}", "{Confirmation Check In}", "{Participant Email}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}"];
+      break;
+    case "generic":
+      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}"];
+      break;
+    case "notAtAll":
+      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}"];
+      break;
+    case "notThisTime":
+      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}"];
+      break;
+    case "accountManagerConfirmation":
+      return ["{First Name}", "{Login}", "{Last Name}"];
+      break;
+    default:
+      return [];
+  }
+}
+
+function validateTemplate(template) {
+  var params = variablesForTemplate(template['MailTemplateBase.category']);
+  var error = null;
+  if (params.length) {
+    _.map(params, function(variable) {
+        if (template.content.indexOf(variable) == -1){
+          error = "Missing <b>" + variable + "</b> variable";
+        }
+    });
+  }
+
+  return error;
+}
+
 function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, callback) {
   if (!template) {
     return callback("e-mail template not provided");
+  }
+  var validationResult = validateTemplate(template);
+  if (validationResult) {
+    callback(validationResult);
+    return;
   }
   var id = template.id;
   delete template["id"];
