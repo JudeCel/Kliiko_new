@@ -142,7 +142,7 @@
           });
           messenger.ok("Template was successfully saved.");
         } else {
-          processErrors(res.error);
+          messenger.error(res.error);
         }
       });
     }
@@ -201,20 +201,9 @@
           });
           messenger.ok("Template was successfully saved.");
         } else {
-          processErrors(res.error);
+          messenger.error(res.error);
         }
       });
-    }
-
-    function processErrors(err) {
-      if (!err) {
-        return;
-      }
-
-      var errors = err.errors;
-      for (var e in errors) {
-          vm.currentTemplate.error[errors[e].path] = errors[e].message;
-      }
     }
 
     function getIndexOfMailTemplateWithId(id) {
@@ -238,11 +227,11 @@
 
     function refreshTemplateList(callback) {
       if (vm.properties.sessionBuilder) {
-        mailTemplate.getAllSessionMailTemplates(showSystemMail).then(function (res) {
+        mailTemplate.getAllSessionMailTemplates(showSystemMail, vm.properties).then(function (res) {
           preprocessMailTemplateList(res, callback);
         });
       } else {
-        mailTemplate.getAllMailTemplates(showSystemMail).then(function (res) {
+        mailTemplate.getAllMailTemplates(showSystemMail, vm.properties).then(function (res) {
           preprocessMailTemplateList(res, callback);
         });
       }

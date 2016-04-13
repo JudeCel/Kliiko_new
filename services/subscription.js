@@ -258,7 +258,7 @@ function gatherInformation(accountId, newPlanId) {
   return deferred.promise;
 }
 
-function updateSubscription(accountId, newPlanId, providers) {
+function updateSubscription(params, providers) {
   let deferred = q.defer();
 
   // Thiss is because we need to moch chargebee responses for tests!!!
@@ -270,8 +270,8 @@ function updateSubscription(accountId, newPlanId, providers) {
     }
   }
 
-  gatherInformation(accountId, newPlanId).then(function(result) {
-    canSwitchPlan(accountId, result.currentPlan, result.newPlan).then(function() {
+  gatherInformation(params.accountId, params.newPlanId).then(function(result) {
+    canSwitchPlan(params.accountId, result.currentPlan, result.newPlan).then(function() {
       accountHasValidCeditCard(result.subscription.subscriptionId, providers.creditCard).then(function(creditCardStatus){
         if(validCard(creditCardStatus)){
           chargebeeSubUpdate(chargebeePassParams(result), providers.updateProvider).then(function(chargebeSubscription) {
@@ -284,7 +284,7 @@ function updateSubscription(accountId, newPlanId, providers) {
             deferred.reject(error);
           })
         }else{
-          chargebeeSubUpdateViaCheckout(chargebeePassParams(result), providers.viaCheckout).then(function(hosted_page) {
+          chargebeeSubUpdateViaCheckout(chargebeePassParams(result), params.redirectUrl, providers.viaCheckout).then(function(hosted_page) {
             deferred.resolve({hosted_page: hosted_page, redirect: true});
           }, function(error) {
             deferred.reject(error);
@@ -406,7 +406,7 @@ function chargebeePortalCreate(params, provider) {
   return deferred.promise;
 }
 
-function chargebeeSubUpdateViaCheckout(params, provider) {
+function chargebeeSubUpdateViaCheckout(params, redirectUrl, provider) {
   let deferred = q.defer();
   let passThruContent = JSON.stringify(params)
 
@@ -419,8 +419,8 @@ function chargebeeSubUpdateViaCheckout(params, provider) {
       id: params.subscriptionId,
       plan_id: params.planId
     },
-    redirect_url: redirectUrl(params.accountName),
-    cancel_url: redirectUrl(params.accountName),
+    redirect_url: redirectUrl,
+    cancel_url: redirectUrl,
     pass_thru_content: passThruContent
   }).request(function(error,result){
     if(error){
@@ -431,10 +431,6 @@ function chargebeeSubUpdateViaCheckout(params, provider) {
   });
 
   return deferred.promise;
-}
-
-function redirectUrl(accountName) {
-  return "http://" + accountName + ".focus.com:8080/dashboard#/account-profile/upgrade-plan";
 }
 
 function chargebeeSubUpdate(params, provider) {

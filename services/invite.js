@@ -27,29 +27,17 @@ const MESSAGES = {
   declined: 'Successfully declined invite'
 };
 
-function accountOrSession(params) {
-  if(params.accountId) {
-    params.ownerId = params.accountId;
-    params.ownerType = 'account';
-  }
-  else if(params.sessionId) {
-    params.ownerId = params.sessionId;
-    params.ownerType = 'session';
-  }
-}
-
 function createBulkInvites(arrayParams) {
   let deferred = q.defer();
 
   let expireDate = new Date();
   expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
-
   _.map(arrayParams, function(paramObject) {
-    accountOrSession(paramObject);
     paramObject.token = uuid.v1();
     paramObject.sentAt = new Date();
     paramObject.expireAt = expireDate;
   });
+
   Invite.bulkCreate(arrayParams, {
     validate: true,
     returning: true
@@ -103,13 +91,12 @@ function createInvite(params) {
   let token = uuid.v1();
   let expireDate = new Date();
   expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
-  accountOrSession(params);
+
   Invite.create({
-    accountId: params.accountId,
     accountUserId: params.accountUserId,
     userId: params.userId,
-    ownerId: params.ownerId,
-    ownerType: params.ownerType,
+    accountId: params.accountId,
+    sessionId: params.sessionId,
     token: token,
     sentAt: new Date(),
     expireAt: expireDate,
@@ -149,7 +136,7 @@ function sendInvite(invite, deferred) {
     deferred = q.defer();
   }
 
-  if(invite.ownerType == 'account') {
+  if(invite.accountId) {
     let inviteParams = {
       token: invite.token,
       email: invite.AccountUser.email,
@@ -192,7 +179,7 @@ function sendInvite(invite, deferred) {
         endTime: dateFormat(invite.endDate, 'h:MM:ss'),
         startDate: dateFormat(invite.startDate, 'yyyy-mm-dd'),
         endDate: dateFormat(invite.endDate, 'yyyy-mm-dd'),
-        incentive: 'something incentive',
+        incentive: session.incentive_details,
         facilitatorFirstName: facilitator.firstName,
         facilitatorLastName: facilitator.lastName,
         facilitatorMail: facilitator.email,
@@ -358,7 +345,7 @@ function sessionAccept(token, password) {
     }
     else {
       let params = {
-        sessionId: invite.ownerId,
+        sessionId: invite.sessionId,
         accountUserId: invite.accountUserId,
         username: invite.AccountUser.firstName,
         role: invite.role
