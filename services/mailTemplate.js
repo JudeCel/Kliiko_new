@@ -424,9 +424,22 @@ function deleteMailTemplate(id, callback) {
   });
 }
 
+function prepareMailDefaultParameters(params) {
+  params = params || {};
+  var defaultParams = {
+    firstName: "", lastName: "", accountName: "", startDate: new Date().toLocaleDateString(), startTime: new Date().toLocaleTimeString(),
+    endDate: new Date().toLocaleDateString(), endTime: new Date().toLocaleTimeString(),
+    facilitatorFirstName: "", facilitatorLastName: "", facilitatorMail: "", participantMail: "", facilitatorMobileNumber: "",
+    sessionName: "", incentive: "", acceptInvitationUrl: "", invitationNotThisTimeUrl: "", invitationNotAtAllUrl: "", unsubscribeMailUrl: "", participateInFutureUrl: "",
+    dontParticipateInFutureUrl: "", confirmationCheckInUrl: "", logInUrl: "", resetPasswordUrl: ""
+  };
+  _.extend(defaultParams, params);
+  return defaultParams;
+}
 //replace templates "In Editor" variables with .ejs compatible variables
 //in HTML content and subject
 function composeMailFromTemplate(template, params) {
+  params = prepareMailDefaultParameters(params);
   try {
     template.content = formatTemplateString(template.content);
     template.subject = formatTemplateString(template.subject);
