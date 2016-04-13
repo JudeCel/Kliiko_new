@@ -1,6 +1,7 @@
 "use strict";
 var express = require('express');
 var async = require('async');
+var _ = require('lodash');
 var router = express.Router();
 var usersRepo = require('../../services/users');
 var resetPassword = require('../../services/resetPassword');
@@ -20,16 +21,50 @@ var appData = require('../../services/webAppData');
 
 router.use(function (req, res, next) {
   res.locals.appData = appData;
-    if (req.path == '/logout' || req.path.indexOf('invite') > -1) {
-        return next();
+    if (req.path == '/logout') {
+      return next();
     }
-    // TODO: need include chat also!
-    // if (req.user && (req.path.indexOf('dashboard') == -1)) {
-    //     res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
-    // } else {
-        next();
-    // }
+
+    let validPaths = ['invite', 'survey', 'my-dashboard', 'chargebee', 'api'];
+
+    if(filterValidPaths(req.path, validPaths)){
+      next();
+    }else{
+      let user = req.user;
+      let account = res.locals.currentDomain;
+
+      if(user && account){
+        if(req.path.includes("/dashboard")){
+          next();
+        }else{
+          res.redirect(subdomains.url(req, res.locals.currentDomain.name, '/dashboard'));
+        }
+      }else if(user && !account) {
+        res.redirect(subdomains.url(req, process.env.SERVER_BASE_SUBDOMAIN, '/my-dashboard'));
+      }else{
+        if(filterRoutes(req.path)) {
+          next();
+        }else {
+          res.redirect(subdomains.url(req, process.env.SERVER_BASE_SUBDOMAIN, '/login'));
+        }
+      }
+    }
 });
+
+function filterRoutes(path) {
+  let array = _.map(router.stack, function(layer) {
+    if(layer.route && layer.route.path != '/'){
+      return layer.route.path;
+    }
+  });
+  return filterValidPaths(path, array);
+}
+
+function filterValidPaths(path, valid) {
+  return !_.isEmpty(_.filter(valid, function(validPath) {
+    return path.includes(validPath);
+  }));
+}
 
 /* GET root page. */
 
@@ -116,7 +151,7 @@ router.post('/registration', function (req, res, next) {
 router.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
     if (err || !user) {
-      return  res.render('login', {title: 'Login', error: err, message: ''});
+      return  res.render('login', {title: 'Login', error: err || info.message, message: ''});
     }
     req.login(user, function(err) {
       if (err) {
@@ -257,8 +292,6 @@ router.route('/resetpassword/:token')
             });
         });
     });
-
-
 router.route('/invite/:token').get(inviteRoutes.index);
 router.route('/invite/:token/decline').get(inviteRoutes.decline);
 router.route('/invite/:token/accept').get(inviteRoutes.acceptGet);

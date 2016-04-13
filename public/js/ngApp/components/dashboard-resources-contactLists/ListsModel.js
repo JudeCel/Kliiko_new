@@ -36,7 +36,7 @@
      * @constructor
      */
     function ListsModel(params) {
-      let deferred = $q.defer();
+      var deferred = $q.defer();
 
       var params = params || {};
       //get all properties
@@ -62,7 +62,7 @@
      * Fetch all lists and set first one as active
      */
     function init() {
-      let deferred = $q.defer();
+      var deferred = $q.defer();
 
       var self = this;
       self.getAll().then(

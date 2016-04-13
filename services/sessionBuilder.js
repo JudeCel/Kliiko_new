@@ -10,6 +10,7 @@ var inviteService = require('./invite');
 var mailTemplateService = require('./mailTemplate');
 var twilioLib = require('./../lib/twilio');
 var mailHelper = require('./../mailers/mailHelper');
+var validators = require('./../services/validators');
 
 var async = require('async');
 var _ = require('lodash');
@@ -70,16 +71,20 @@ module.exports = {
 function initializeBuilder(params) {
   let deferred = q.defer();
 
-  params.step = 'setUp';
-  Session.create(params).then(function(session) {
-    sessionBuilderObject(session).then(function(result) {
-      deferred.resolve(result);
-    }, function(error) {
-      deferred.reject(error);
+  validators.subscription(params.accountId, 'session', 1).then(function() {
+    params.step = 'setUp';
+    Session.create(params).then(function(session) {
+      sessionBuilderObject(session).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
     });
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
-  });
+  }, function(error) {
+    deferred.reject(error);
+  })
 
   return deferred.promise;
 }
