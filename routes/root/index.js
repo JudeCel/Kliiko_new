@@ -1,6 +1,7 @@
 "use strict";
 var express = require('express');
 var async = require('async');
+var _ = require('lodash');
 var router = express.Router();
 var usersRepo = require('../../services/users');
 var resetPassword = require('../../services/resetPassword');
@@ -20,16 +21,28 @@ var appData = require('../../services/webAppData');
 
 router.use(function (req, res, next) {
   res.locals.appData = appData;
-    if (req.path == '/logout' || req.path.indexOf('invite') > -1) {
-        return next();
+    if (req.path == '/logout') {
+      return next();
     }
-    // TODO: need include chat also!
-    // if (req.user && (req.path.indexOf('dashboard') == -1)) {
-    //     res.redirect(subdomains.url(req, req.user.subdomain, '/dashboard'));
-    // } else {
+
+    if(filterValidPaths(req.path)){
+      next();
+    }else{
+      if (req.user) {
+        res.redirect(subdomains.url(req, res.locals.currentDomain.name, '/dashboard'));
+      } else {
         next();
-    // }
+      }
+    }
 });
+
+function filterValidPaths(path) {
+  let validPaths = ['invite', 'survey', 'dashboard', 'chargebee', 'api'];
+
+  return !_.isEmpty(_.filter(validPaths, function(validPath) {
+    return path.includes(validPath);
+  }));
+}
 
 /* GET root page. */
 
@@ -257,8 +270,6 @@ router.route('/resetpassword/:token')
             });
         });
     });
-
-
 router.route('/invite/:token').get(inviteRoutes.index);
 router.route('/invite/:token/decline').get(inviteRoutes.decline);
 router.route('/invite/:token/accept').get(inviteRoutes.acceptGet);
