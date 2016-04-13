@@ -25,21 +25,43 @@ router.use(function (req, res, next) {
       return next();
     }
 
-    if(filterValidPaths(req.path)){
+    let validPaths = ['invite', 'survey', 'my-dashboard', 'chargebee', 'api'];
+
+    if(filterValidPaths(req.path, validPaths)){
       next();
     }else{
-      if (req.user) {
-        res.redirect(subdomains.url(req, res.locals.currentDomain.name, '/dashboard'));
-      } else {
-        next();
+      let user = req.user;
+      let account = res.locals.currentDomain;
+
+      if(user && account){
+        if(req.path.includes("/dashboard")){
+          next();
+        }else{
+          res.redirect(subdomains.url(req, res.locals.currentDomain.name, '/dashboard'));
+        }
+      }else if(user && !account) {
+        res.redirect(subdomains.url(req, process.env.SERVER_BASE_SUBDOMAIN, '/my-dashboard'));
+      }else{
+        if(filterRoutes(req.path)) {
+          next();
+        }else {
+          res.redirect(subdomains.url(req, process.env.SERVER_BASE_SUBDOMAIN, '/login'));
+        }
       }
     }
 });
 
-function filterValidPaths(path) {
-  let validPaths = ['invite', 'survey', 'dashboard', 'chargebee', 'api'];
+function filterRoutes(path) {
+  let array = _.map(router.stack, function(layer) {
+    if(layer.route && layer.route.path != '/'){
+      return layer.route.path;
+    }
+  });
+  return filterValidPaths(path, array);
+}
 
-  return !_.isEmpty(_.filter(validPaths, function(validPath) {
+function filterValidPaths(path, valid) {
+  return !_.isEmpty(_.filter(valid, function(validPath) {
     return path.includes(validPath);
   }));
 }
