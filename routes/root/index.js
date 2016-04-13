@@ -116,7 +116,7 @@ router.post('/registration', function (req, res, next) {
 router.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
     if (err || !user) {
-      return  res.render('login', {title: 'Login', error: err, message: ''});
+      return  res.render('login', {title: 'Login', error: err || info.message, message: ''});
     }
     req.login(user, function(err) {
       if (err) {
