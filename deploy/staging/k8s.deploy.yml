@@ -29,7 +29,7 @@ spec:
         env: staging
     spec:
       containers:
-      - name: master
+      - name: redis-redis
         image: redis
         resources:
           requests:
@@ -63,13 +63,13 @@ metadata:
     env: staging
   name: admin
 spec:
-  replicas: 2
+  replicas: 3
   template:
     metadata:
       labels:
         name: admin
         env: staging
-        version: "0.0.1"
+        version: "0.0.6"
     spec:
       containers:
       - image: "944561038201.dkr.ecr.us-west-2.amazonaws.com/klzii_main:latest"
@@ -77,8 +77,16 @@ spec:
         ports:
         - containerPort: 3000
         env:
+        - name: REDIS_HOST
+          value: "redis-master"
+        - name: REDIS_PORT
+          value: "6379"
         - name: DATABASE_URL
           value: "postgres://klzii:VQqttpXdE42u6PUKWusy@klzii-staging.cyujokxcbe0c.us-west-2.rds.amazonaws.com:5432/klzii_staging"
+        - name: AIRBRAKE_PROJECT_ID
+          value: "121542"
+        - name: AIRBRAKE_API_KEY
+          value: "607e87c9e8b7500497bb84c51162b0a82"
         - name: SERVER_BASE_DOMAIN
           value: ".staging.klzii.com"
         - name: SERVER_DOMAIN
