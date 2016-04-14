@@ -74,7 +74,7 @@
     vm.subPlans = vm.testData;
     vm.isCurrentStep = isCurrentStep;
     vm.openPlanDetailsModal = openPlanDetailsModal;
-    vm.checkIfUnlimited = checkIfUnlimited;
+    vm.checkTheCount = checkTheCount;
     vm.stepIsActive = stepIsActive;
     vm.stepIsCompleted = stepIsCompleted;
     vm.nextStep = nextStep;
@@ -121,8 +121,9 @@
         if(result.error){
           messenger.error(result.error);
         }else {
-          vm.subPlans = result.plans;
           vm.currentPlan = result.currentPlan;
+          sortSubscriptionPlnas(result);
+
           angular.forEach(result.plans, function(result) {
             if(result.plan.id == "fixed_yearly"){
               vm.fixedYearly = result;
@@ -131,8 +132,27 @@
               vm.fixedMonthly = result;
             }
           });
+
         }
       })
+    }
+
+    function sortSubscriptionPlnas(result) {
+      var sortedSubs = []
+
+      angular.forEach(result.plans, function(result) {
+        if (result.plan.id == "single") {
+          sortedSubs[0] = (result);
+        } else if(result.plan.id == "fixed_monthly") {
+          sortedSubs[1] = (result);
+        } else if(result.plan.id == "unlimited"){
+          sortedSubs[2] = (result);
+        } else {
+          sortedSubs.push(result)
+        }
+      });
+
+      vm.subPlans = sortedSubs;
     }
 
     function succeededCheckout(params) {
@@ -177,9 +197,11 @@
       return --vm.currentStep;
     }
 
-    function checkIfUnlimited(count) {
+    function checkTheCount(count) {
       if(count == -1){
         return "Unlimited";
+      } else if(count == 0) {
+        return "No";
       }else{
         return count;
       }

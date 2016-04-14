@@ -31,6 +31,7 @@
       });
     }, function (error) {
       messenger.error(error);
+      window.history.back();
     });
 
     vm.closeSession = closeSession;

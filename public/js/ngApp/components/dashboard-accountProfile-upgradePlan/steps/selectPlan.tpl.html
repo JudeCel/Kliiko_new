@@ -40,7 +40,7 @@
 
               <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
                 <b>
-                  {{ up.checkIfUnlimited(subscriptionPlan.additionalParams.sessionCount) }}
+                  {{ up.checkTheCount(subscriptionPlan.additionalParams.sessionCount) }}
                 </b>
                 Session('s) to use over
                 {{ subscriptionPlan.plan.period }}
@@ -74,10 +74,21 @@
                 reminders to Participants
                 <sup>*</sup>
               </p>
+
               <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
-                <b>Unlimited</b>
+                <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.contactListMemberCount) }}</b>
                 Contact List members allowed
                </p>
+
+               <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                 <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.contactListCount) }}</b>
+                 Number Of contact Lists
+                </p>
+
+                <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                  <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.additionalContactListCount) }}</b>
+                  Additional Contact Lists
+                 </p>
               <div class="list-group-item-text buttons-area">
                 <div class="btn-dashboard-plans pull-right learn" ng-click="up.openPlanDetailsModal(subscriptionPlan.plan)">
                   Learn More

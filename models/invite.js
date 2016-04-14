@@ -10,19 +10,16 @@ module.exports = (Sequelize, DataTypes) => {
     expireAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: true } },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles },
 
-    ownerId: { type: DataTypes.INTEGER, allowNull: false },
-    ownerType: { type: DataTypes.STRING, allowNull: false, defaultValue: 'account' },
     accountUserId: { type: DataTypes.INTEGER, allowNull: false },
     status: { type: DataTypes.ENUM, allowNull: false, values: constants.inviteStatuses, defaultValue: 'pending' },
-    accountId: { type: DataTypes.INTEGER, allowNull: true},
     userType: { type: DataTypes.ENUM, allowNull: false, values: ['existing', 'new'], defaultValue: 'existing' },
   }, {
     classMethods: {
       associate: function(models) {
         Invite.belongsTo(models.User, { foreignKey: 'userId' });
-        Invite.belongsTo(models.Account, { foreignKey: 'ownerId' });
-        Invite.belongsTo(models.Session, { foreignKey: 'ownerId', onDelete: 'cascade' });
-        Invite.belongsTo(models.AccountUser, { foreignKey: 'accountUserId', onDelete: 'cascade' });
+        Invite.belongsTo(models.Session, { foreignKey: 'sessionId' });
+        Invite.belongsTo(models.Account, { foreignKey: 'accountId' });
+        Invite.belongsTo(models.AccountUser, { foreignKey: 'accountUserId' });
       }
     }
   });
