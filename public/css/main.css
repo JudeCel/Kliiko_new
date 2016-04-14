@@ -2676,9 +2676,6 @@ hr.survey-hr {
     padding: 15px;
     font-size: 3.3rem;
     font-weight: 100; }
-  #session-builder-content p {
-    font-size: 2rem;
-    color: #58595b; }
   #session-builder-content .panel {
     border-radius: 0px;
     color: #58595b; }
@@ -2704,10 +2701,6 @@ hr.survey-hr {
     background: yellow; }
     #session-builder-content .accordion-heading-helper.active .panel-heading {
       background: rgba(174, 239, 137, 0.5) !important; }
-  #session-builder-content .panel-body p {
-    font-size: 1.9rem;
-    text-align: left;
-    color: #58595b; }
   #session-builder-content #disclaimer {
     margin-top: 60px;
     color: #58595b;
