@@ -78,6 +78,12 @@
     dbgProvider.debugLevel('trace');
 
     $httpProvider.interceptors.push('myInterceptor');
+    if (!$httpProvider.defaults.headers.get) {
+        $httpProvider.defaults.headers.get = {};
+    }
+
+    $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+    $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
   }
 
   appRun.$inject = ['$stateParams', 'dbg', '$rootScope', '$state', 'globalSettings', 'ngProgressFactory'];

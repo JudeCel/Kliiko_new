@@ -45,7 +45,7 @@ function acceptGet(req, res, next) {
 
 function acceptPost(req, res, next) {
   inviteService.findInvite(req.params.token, function(error, invite) {
-    if(invite.ownerType == 'session') {
+    if(invite.sessionId) {
       inviteService.sessionAccept(req.params.token, req.body.password).then(function(message) {
         req.flash('message', message);
         res.redirect('/login');

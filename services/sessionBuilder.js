@@ -10,6 +10,7 @@ var inviteService = require('./invite');
 var mailTemplateService = require('./mailTemplate');
 var twilioLib = require('./../lib/twilio');
 var mailHelper = require('./../mailers/mailHelper');
+var validators = require('./../services/validators');
 
 var async = require('async');
 var _ = require('lodash');
@@ -39,7 +40,7 @@ const MESSAGES = {
       topics: 'No topics selected'
     },
     thirdStep: {
-      emailTemplates: "Not enough mail templates provided, needed "
+      emailTemplates: "You need to copy each of the required e-mail template."
     },
     fourthStep: {
       participants: 'No participants invited'
@@ -70,16 +71,20 @@ module.exports = {
 function initializeBuilder(params) {
   let deferred = q.defer();
 
-  params.step = 'setUp';
-  Session.create(params).then(function(session) {
-    sessionBuilderObject(session).then(function(result) {
-      deferred.resolve(result);
-    }, function(error) {
-      deferred.reject(error);
+  validators.subscription(params.accountId, 'session', 1).then(function() {
+    params.step = 'setUp';
+    Session.create(params).then(function(session) {
+      sessionBuilderObject(session).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
     });
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
-  });
+  }, function(error) {
+    deferred.reject(error);
+  })
 
   return deferred.promise;
 }
@@ -282,8 +287,7 @@ function removeInvite(params) {
   models.Invite.find({
     where: {
       id: params.inviteId,
-      ownerId: params.id,
-      ownerType: 'session',
+      sessionId: params.id,
       status: 'pending'
     }
   }).then(function(invite) {
@@ -602,8 +606,7 @@ function step4and5Queries(session, role) {
         include: [{
           model: models.Invite,
           where: {
-            ownerId: session.id,
-            ownerType: 'session',
+            sessionId: session.id,
             role: role,
             status: { $ne: 'confirmed' }
           },
@@ -742,19 +745,34 @@ function validateStepTwo(params) {
 
 function validateStepThree(params) {
   let deferred = q.defer();
+  let mailCategories = ["firstInvitation", "confirmation", "notThisTime", "notAtAll", "closeSession"];
+  let baseTemplateQuery = {category:{ $in: mailCategories }};
+  let include = [{ model: models.MailTemplateBase, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
 
   findSession(params.id, params.accountId).then(function(session) {
-    models.MailTemplate.count({
+    models.MailTemplate.findAll({
       where: {
         sessionId: session.id,
         isCopy: true,
         required: true
-      }
-    }).then(function(count) {
+      },
+      include: include
+    }).then(function(templates) {
+      let uniqueCopies = [];
       let errors = {};
 
-      if(count < MIN_MAIL_TEMPLATES){
-        errors.emailTemplates = MESSAGES.errors.thirdStep.emailTemplates + MIN_MAIL_TEMPLATES;
+      _.forEach(mailCategories, function(category) {
+        _.forEach(templates, function(template) {
+          if(template.MailTemplateBase.category == category){
+            uniqueCopies.push(template.MailTemplateBase.category);
+          }
+        });
+      })
+
+      uniqueCopies = _.uniq(uniqueCopies);
+
+      if(uniqueCopies.length < MIN_MAIL_TEMPLATES){
+        errors.emailTemplates = MESSAGES.errors.thirdStep.emailTemplates;
       }
 
       _.isEmpty(errors) ? deferred.resolve() : deferred.reject(errors);
@@ -772,8 +790,7 @@ function validateStepFour(params) {
   findSession(params.id, params.accountId).then(function(session) {
     models.Invite.count({
       where:{
-        ownerId: session.id,
-        ownerType: "session",
+        sessionId: session.id,
         role: "participant"
       }
     }).then(function(count) {

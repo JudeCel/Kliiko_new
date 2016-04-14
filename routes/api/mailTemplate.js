@@ -15,7 +15,12 @@ module.exports = {
 };
 
 function allSessionMailTemplatesGet(req, res, next) {
-  MailTemplateService.getAllSessionMailTemplates(res.locals.currentDomain.id, true, null, req.query.getSystemMail, false,function(error, result) {
+  let sessionId = null;
+  if(req.query.params){
+    sessionId = JSON.parse(req.query.params).sessionId;
+  }
+
+  MailTemplateService.getAllSessionMailTemplates(res.locals.currentDomain.id, true, sessionId, req.query.getSystemMail, false,function(error, result) {
     res.send({error: error, templates: result});
   });
 }

@@ -9,7 +9,7 @@
 
     vm.listIdToEdit = null;
     vm.newList = {};
-    vm.lists = new ListsModel();
+    vm.lists = {};
     vm.newList = {};
     vm.modalErrors = {};
     vm.allSelected = false;
@@ -61,16 +61,14 @@
     // required for correct list switching.
     var isSelected = false;
 
-
-
     function initLists(listType) {
-
-      if (listType) {
-        if (listType == 'facilitators') vm.sectListActiveToFacilitators();
-      }
+      new ListsModel().then(function(result) {
+        vm.lists = result;
+        if(listType == 'facilitators') {
+          vm.sectListActiveToFacilitators();
+        }
+      });
     }
-
-
 
     vm.sectListActiveToFacilitators = function() {
       if (isSelected) return;

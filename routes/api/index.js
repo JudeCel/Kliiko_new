@@ -2,6 +2,7 @@
 var multiparty = require('connect-multiparty');
 var multipartyMiddleware = multiparty();
 var express = require('express');
+var _ = require('lodash');
 var router = express.Router();
 var policy = require('../../middleware/policy.js');
 var sessionMemberMiddleware = require('./../../middleware/sessionMember');
@@ -30,7 +31,9 @@ module.exports = router;
 
 // Common Rules
 router.use(function (req, res, next) {
-  if (req.user) {
+  let exceptionPaths = ["/survey/constants", "/survey/find"];
+
+  if (req.user || _.includes(exceptionPaths, req.path)) {
     next();
   } else {
     notAuthExit(res);

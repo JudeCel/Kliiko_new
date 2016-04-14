@@ -36,6 +36,8 @@
      * @constructor
      */
     function ListsModel(params) {
+      var deferred = $q.defer();
+
       var params = params || {};
       //get all properties
       var self = this;
@@ -47,24 +49,34 @@
       self.activeList = null;
       self.activeListIndex = null;
 
-      self.init();
+      self.init().then(function() {
+        deferred.resolve(self);
+      }, function(err) {
+        deferred.reject(err);
+      });
 
+      return deferred.promise;
     }
 
     /**
      * Fetch all lists and set first one as active
      */
     function init() {
+      var deferred = $q.defer();
+
       var self = this;
       self.getAll().then(
         function (res) {
           self.changeActiveList(0);
+          deferred.resolve();
         },
         function (err) {
           console.error('Something wrong in ListsModel Initing');
+          deferred.reject(err);
         }
       );
 
+      return deferred.promise;
     }
 
     /**
@@ -126,9 +138,9 @@
 
       if (self.activeListIndex == index && !force) return;
 
-
       self.activeListIndex = index;
       self.activeList = self.items[index];
+      return self.activeList
     }
 
     /**

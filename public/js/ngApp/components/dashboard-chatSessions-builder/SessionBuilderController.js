@@ -31,6 +31,7 @@
       });
     }, function (error) {
       messenger.error(error);
+      window.history.back();
     });
 
     vm.closeSession = closeSession;
@@ -159,7 +160,7 @@
         if(vm.currentStep == 4 || vm.currentStep == 5) {
           path = vm.basePath+'steps/step4-5.tpl.html';
         } else if (vm.currentStep != -1){
-          path = vm.basePath+`steps/step${vm.currentStep}.tpl.html`;
+          path = vm.basePath + 'steps/step' + vm.currentStep + '.tpl.html';
         }
       }
 

@@ -361,8 +361,7 @@ describe('SERVICE - SessionBuilder', function() {
         sentAt: new Date(),
         expireAt: new Date(),
         role: 'facilitator',
-        ownerId: sessionId,
-        ownerType: 'session',
+        sessionId: sessionId,
         accountUserId: testAccountUser.id
       }
     }

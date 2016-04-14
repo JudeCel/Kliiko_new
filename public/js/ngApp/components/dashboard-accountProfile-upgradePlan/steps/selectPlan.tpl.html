@@ -6,7 +6,6 @@
       <p>Recruiter: build a new instant contact list with a quick customised survey</p>
       <p>Your Brand logo & custom colours</p>
       <p>Video and text hep menu</p>
-      <p>Video and text hep menu</p>
       <p>Discussion Guide Tips</p>
       <p>Whiteboard functionality</p>
       <p>Multimedia management and storage</p>
@@ -41,9 +40,11 @@
 
               <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
                 <b>
-                  {{ up.checkIfUnlimited(subscriptionPlan.additionalParams.sessionCount) }}
+                  {{ up.checkTheCount(subscriptionPlan.additionalParams.sessionCount) }}
                 </b>
-                Session('s) to use over 12 months
+                Session('s) to use over
+                {{ subscriptionPlan.plan.period }}
+                {{ subscriptionPlan.plan.period_unit }}
               </p>
 
               <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
@@ -73,10 +74,21 @@
                 reminders to Participants
                 <sup>*</sup>
               </p>
+
               <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
-                <b>Unlimited</b>
+                <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.contactListMemberCount) }}</b>
                 Contact List members allowed
                </p>
+
+               <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                 <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.contactListCount) }}</b>
+                 Number Of contact Lists
+                </p>
+
+                <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                  <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.additionalContactListCount) }}</b>
+                  Additional Contact Lists
+                 </p>
               <div class="list-group-item-text buttons-area">
                 <div class="btn-dashboard-plans pull-right learn" ng-click="up.openPlanDetailsModal(subscriptionPlan.plan)">
                   Learn More

@@ -32,7 +32,7 @@ function sendSessionClose(params, callback) {
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendFirstInvitation(params, callback) {
-  mailTemplateService.getActiveMailTemplate("firstInvitation", params.accountId, function(error, result) {
+  mailTemplateService.getActiveMailTemplate("firstInvitation", params, function(error, result) {
     if (error) {
       return callback(error);
     }
@@ -62,7 +62,7 @@ function sendFirstInvitation(params, callback) {
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendInviteConfirmation(params, callback) {
-  mailTemplateService.getActiveMailTemplate("confirmation", params.accountId, function(error, result) {
+  mailTemplateService.getActiveMailTemplate("confirmation", params, function(error, result) {
     if (error) {
       return callback(error);
     }
@@ -88,7 +88,7 @@ function sendInviteConfirmation(params, callback) {
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendInvitationNotThisTime(params, callback) {
-  mailTemplateService.getActiveMailTemplate("notThisTime", params.accountId, function(error, result) {
+  mailTemplateService.getActiveMailTemplate("notThisTime", params, function(error, result) {
     if (error) {
       return callback(error);
     }
@@ -109,7 +109,7 @@ function sendInvitationNotThisTime(params, callback) {
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendInvitationNotAtAll(params, callback) {
-  mailTemplateService.getActiveMailTemplate("notAtAll", params.accountId, function(error, result) {
+  mailTemplateService.getActiveMailTemplate("notAtAll", params, function(error, result) {
     if (error) {
       return callback(error);
     }
@@ -130,7 +130,7 @@ function sendInvitationNotAtAll(params, callback) {
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendGeneric(params, callback) {
-  mailTemplateService.getActiveMailTemplate("generic", params.accountId, function(error, result) {
+  mailTemplateService.getActiveMailTemplate("generic", params, function(error, result) {
     if (error) {
       return callback(error);
     }

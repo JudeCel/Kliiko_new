@@ -9,9 +9,9 @@ COPY package.json /var/www/klzii
 
 COPY . /var/www/klzii
 
-RUN npm install
+RUN npm install --production --quiet
 
 EXPOSE 8080
 
-CMD NODE_ENV=production node node_modules/gulp/bin/gulp.js
+CMD NODE_ENV=production npm run start
 

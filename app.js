@@ -14,6 +14,10 @@ var flash = require('connect-flash');
 var app = express();
 var fs = require('fs');
 var airbrake = require('./lib/airbrake').instance;
+var productionEnvMapper = require("./util/productionEnvMapper")
+
+// Maps Kubernetes specific values to Local values
+productionEnvMapper.map();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
