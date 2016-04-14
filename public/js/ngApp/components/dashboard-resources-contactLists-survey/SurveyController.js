@@ -72,7 +72,8 @@
     vm.getResourceThumbUrl = getResourceThumbUrl;
     vm.setUploadtype = setUploadtype;
     vm.resourceTitle = resourceTitle;
-    
+    vm.canCreateNew = canCreateNew
+
     vm.initLogosList = brandLogosFromGallery;
 
     function onDropComplete(index, data, evt) {
@@ -174,7 +175,7 @@
       domServices.modal('questionModal', 'close');
     }
 
-    function setUploadtype(type){ 
+    function setUploadtype(type){
       if(type == 'audio'){
         return "audio/mpeg, audio/mp3"
       }else if('video'){
@@ -547,4 +548,12 @@
       return (vm.currentContacts[cd.model] ? false : cd.disabled);
     };
   };
+
+  function canCreateNew(validSub) {
+    if(validSub){
+      return "Create New Survey";
+    }else{
+      return "Please update your subscription to: Create New Survey";
+    }
+  }
 })();
