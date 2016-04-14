@@ -25,7 +25,7 @@ router.use(function (req, res, next) {
       return next();
     }
 
-    let validPaths = ['invite', 'survey', 'my-dashboard', 'chargebee', 'api'];
+    let validPaths = ['invite', 'survey', 'my-dashboard', 'chargebee', 'api', 'emailConfirmation'];
 
     if(filterValidPaths(req.path, validPaths)){
       next();
@@ -184,7 +184,6 @@ router.get('/login', function (req, res, next) {
 
 router.route('/emailConfirmation/:token')
   .get(function (req, res, next) {
-
     let tplData = {
       title: 'Email Confirmation',
       user: true,
@@ -197,7 +196,8 @@ router.route('/emailConfirmation/:token')
         tplData.user = false;
         tplData.errors.password = "Token expired";
         tplData.message = '';
-        res.render('/login', tplData);
+        tplData.error = tplData.errors.password;
+        res.render('login', tplData);
       }else{
         emailConfirmation.getEmailConfirmationByToken(user, function (err, user) {
           if (err) {

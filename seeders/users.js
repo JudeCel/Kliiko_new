@@ -2,10 +2,6 @@
 require('dotenv-extended').load({
   errorOnMissing: true
 });
-var productionEnvMapper = require("../util/productionEnvMapper")
-
-// Maps Kubernetes specific values to Local values
-productionEnvMapper.map();
 
 var UserService = require('./../services/users');
 var async = require('async');
