@@ -129,20 +129,26 @@
       var self = this;
       var deferred = $q.defer();
       sessionBuilderRestApi.get({id:self.id}, {}, function(res) {
-        self.sessionData = angular.merge(self, res.sessionBuilder);
+        if(res.error){
+          deferred.reject(res.error);
+        }else{
+          self.sessionData = angular.merge(self, res.sessionBuilder);
+          // get current session data
 
-        // get current session data
-        chatSessionApi.get({}, function(sessionApiRes) {
-          self.chatRoomUrl = sessionApiRes.chatRoomUrl;
+          chatSessionApi.get({}, function(sessionApiRes) {
+            self.chatRoomUrl = sessionApiRes.chatRoomUrl;
 
-          for (var i = 0, len = sessionApiRes.data.length; i < len ; i++) {
-            if (sessionApiRes.data[i].id == self.id) {
-              self.sessionData = sessionApiRes.data[i];
-              break;
+            for (var i = 0, len = sessionApiRes.data.length; i < len ; i++) {
+              if (sessionApiRes.data[i].id == self.id) {
+                self.sessionData = sessionApiRes.data[i];
+                break;
+              }
             }
-          }
-          deferred.resolve();
-        });
+            deferred.resolve();
+          });
+
+        }
+
 
       });
 
