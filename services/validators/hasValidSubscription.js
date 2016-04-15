@@ -9,7 +9,8 @@ var _ = require('lodash');
 
 const MESSAGES = {
   error: {
-    inactiveSubscription: "Your subscription is expired, please update your subscription plan."
+    inactiveSubscription: "Your subscription is expired, please update your subscription plan.",
+    noSubscription: "You don't have a subscription. Please purchase a plan."
   }
 }
 
@@ -23,13 +24,18 @@ function validate(accountId) {
 
   Subscription.find({
     where: {
-      accountId: accountId
+      accountId: accountId,
+      active: true
     }
   }).then(function(subscription) {
-    if(subscription.active){
-      deferred.resolve();
+    if(subscription){
+      if(subscription.active){
+        deferred.resolve();
+      }else{
+        deferred.reject(MESSAGES.error.inactiveSubscription);
+      }
     }else{
-      deferred.reject(MESSAGES.error.inactiveSubscription);
+      deferred.reject(MESSAGES.error.noSubscription);
     }
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
