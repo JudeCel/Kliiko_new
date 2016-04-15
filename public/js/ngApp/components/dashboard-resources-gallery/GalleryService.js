@@ -4,7 +4,7 @@
   GalleryServices.$inject = ['globalSettings', '$q', '$resource', 'dbg', 'Upload'];
 
   function GalleryServices(globalSettings, $q, $resource, dbg, Upload) {
-    var galleryRestApi = $resource(globalSettings.chatUrl.domain + '/resources/:path', null, {
+    var galleryRestApi = $resource(globalSettings.serverChatDomainUrl + '/resources/:path', null, {
       uploadFile: { method: 'POST', params: { path: 'uploadFile' } },
       saveYoutubeUrl: { method: 'POST', params: { path: 'saveYoutubeUrl' } },
       deleteZipFile: { method: 'POST', params: { path: 'deleteZipFile' } },
@@ -71,7 +71,7 @@
       var deferred = $q.defer();
 
       Upload.upload({
-        url: globalSettings.chatUrl+'/resources/upload',
+        url: globalSettings.serverChatDomainUrl+'/resources/upload',
         method: 'POST',
         data: {file: newResource.file, private: newResource.private, type: newResource.type}
       }).then(function(res) {
