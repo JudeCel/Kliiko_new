@@ -25,7 +25,7 @@ router.use(function (req, res, next) {
       return next();
     }
 
-    let validPaths = ['invite', 'survey', 'my-dashboard', 'chargebee', 'api', 'emailConfirmation'];
+    let validPaths = ['invite', 'survey', 'my-dashboard', 'chargebee', 'api'];
 
     if(filterValidPaths(req.path, validPaths)){
       next();

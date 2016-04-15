@@ -240,21 +240,18 @@ function destroy(id, accountId) {
 function sendSms(data, provider) {
   let deferred = q.defer();
   let numbers = _.map(data.recievers, 'mobile');
-  validators.hasValidSubscription(accountId).then(function() {
-    twilioLib.sendSms(numbers, data.message, provider).then(function(result) {
-      deferred.resolve(result);
-    }, function(error) {
-      deferred.reject(error);
-    });
+
+  twilioLib.sendSms(numbers, data.message, provider).then(function(result) {
+    deferred.resolve(result);
   }, function(error) {
     deferred.reject(error);
-  })
+  });
 
   return deferred.promise;
 }
 
 // Untested
-function inviteMembers(sessionId, data) {
+function inviteMembers(sessionId, data, accountId) {
   let deferred = q.defer();
   validators.hasValidSubscription(accountId).then(function() {
     inviteParams(sessionId, data).then(function(params) {
@@ -285,64 +282,57 @@ function inviteMembers(sessionId, data) {
 function removeSessionMember(params) {
   let deferred = q.defer();
 
-  validators.hasValidSubscription(accountId).then(function() {
-    models.SessionMember.find({
-      where: {
-        id: params.sessionMemberId,
-        sessionId: params.id
-      }
-    }).then(function(sessionMember) {
-      if(sessionMember) {
-        sessionMember.destroy().then(function() {
-          deferred.resolve(MESSAGES.sessionMemberRemoved);
-        }).catch(function(error) {
-          deferred.reject(filters.errors(error));
-        });
-      }
-      else {
-        deferred.reject(MESSAGES.sessionMemberNotFound);
-      }
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
-    });
-  }, function(error) {
-    deferred.reject(error);
-  })
+  models.SessionMember.find({
+    where: {
+      id: params.sessionMemberId,
+      sessionId: params.id
+    }
+  }).then(function(sessionMember) {
+    if(sessionMember) {
+      sessionMember.destroy().then(function() {
+        deferred.resolve(MESSAGES.sessionMemberRemoved);
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+    else {
+      deferred.reject(MESSAGES.sessionMemberNotFound);
+    }
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
 
   return deferred.promise;
 }
 
 function removeInvite(params) {
   let deferred = q.defer();
-  validators.hasValidSubscription(accountId).then(function() {
-    models.Invite.find({
-      where: {
-        id: params.inviteId,
-        sessionId: params.id,
-        status: 'pending'
-      }
-    }).then(function(invite) {
-      if(invite) {
-        invite.destroy().then(function() {
-          deferred.resolve(MESSAGES.inviteRemoved);
-        }).catch(function(error) {
-          deferred.reject(filters.errors(error));
-        });
-      }
-      else {
-        deferred.reject(MESSAGES.inviteNotFound);
-      }
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
-    });
-  }, function(error) {
-    deferred.reject(error);
-  })
+
+  models.Invite.find({
+    where: {
+      id: params.inviteId,
+      sessionId: params.id,
+      status: 'pending'
+    }
+  }).then(function(invite) {
+    if(invite) {
+      invite.destroy().then(function() {
+        deferred.resolve(MESSAGES.inviteRemoved);
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+    else {
+      deferred.reject(MESSAGES.inviteNotFound);
+    }
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
 
   return deferred.promise;
 }
 
-function sendGenericEmail(sessionId, data) {
+function sendGenericEmail(sessionId, data, accountId) {
   let deferred = q.defer();
 
   validators.hasValidSubscription(accountId).then(function() {
