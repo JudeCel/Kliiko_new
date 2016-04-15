@@ -2754,7 +2754,7 @@ hr.survey-hr {
       display: flex;
       height: 44px;
       margin: 40px 20px; }
-    #session-builder-content #step-1 input {
+    #session-builder-content #step-1 .green-input input {
       margin: 0 5px;
       padding: 5px;
       border: 2px solid #2F9F69; }
@@ -2802,7 +2802,6 @@ hr.survey-hr {
         margin-top: -6px;
         height: 44px;
         border-radius: 0;
-        border: 2px solid #2F9F69;
         background-color: white;
         background-image: none;
         outline: none; }

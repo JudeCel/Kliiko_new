@@ -3,7 +3,7 @@
 
     <uib-accordion close-others="false">
         <!-- Session Name -->
-        <uib-accordion-group is-open="step1Controller.accordions.sessionName">
+        <uib-accordion-group is-open="step1Controller.accordions.sessionName" class="green-input">
             <uib-accordion-heading>
                 <div class="panel-label">
                     Name Your Chat Session
@@ -16,7 +16,7 @@
         </uib-accordion-group>
 
         <!-- Date And Time -->
-        <uib-accordion-group is-open="step1Controller.accordions.dateAndTime">
+        <uib-accordion-group is-open="step1Controller.accordions.dateAndTime" class="green-input">
             <uib-accordion-heading>
                 <div class="panel-label">
                     Enter Date And Time
@@ -291,7 +291,7 @@
                     <div class='col-sm-6' ng-repeat='scheme in step1Controller.colorsList = bcc.schemes' ng-show="bcc.schemes.length">
                         <label for="{{ $index }}-scheme">
                             <div class='panel panel-default panel-success'>
-                                <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='background-color: {{ scheme.colours.browserBackground }};'>
+                                <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='font-weight:normal; background-color: {{ scheme.colours.browserBackground }};'>
                                     <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/preview.html'"></ng-include>
                                 </div>
 
