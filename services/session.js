@@ -188,39 +188,43 @@ function copySession(sessionId, accountId) {
   let deferred = q.defer();
 
   validators.hasValidSubscription(accountId).then(function() {
-    findSession(sessionId, accountId).then(function(result) {
-      delete result.data.dataValues.id;
+    validators.subscription(accountId, 'session', 1).then(function() {
+      findSession(sessionId, accountId).then(function(result) {
+        delete result.data.dataValues.id;
 
-      Session.create(result.data.dataValues).then(function(session) {
-        let facilitator = result.data.dataValues.facilitator;
-        if(facilitator) {
-          delete facilitator.id;
-          delete facilitator.token;
+        Session.create(result.data.dataValues).then(function(session) {
+          let facilitator = result.data.dataValues.facilitator;
+          if(facilitator) {
+            delete facilitator.id;
+            delete facilitator.token;
 
-          // Not confirmed.
-          copySessionMember(session, facilitator).then(function(copy) {
-            modifySessions(copy, accountId).then(function(result) {
+            // Not confirmed.
+            copySessionMember(session, facilitator).then(function(copy) {
+              modifySessions(copy, accountId).then(function(result) {
+                deferred.resolve(simpleParams(result, MESSAGES.copied));
+              }, function(error) {
+                deferred.reject(error);
+              });
+            }, function(error) {
+              deferred.reject(error);
+            });
+          }
+          else {
+            modifySessions(session, accountId).then(function(result) {
               deferred.resolve(simpleParams(result, MESSAGES.copied));
             }, function(error) {
               deferred.reject(error);
             });
-          }, function(error) {
-            deferred.reject(error);
-          });
-        }
-        else {
-          modifySessions(session, accountId).then(function(result) {
-            deferred.resolve(simpleParams(result, MESSAGES.copied));
-          }, function(error) {
-            deferred.reject(error);
-          });
-        }
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
+          }
+        }).catch(function(error) {
+          deferred.reject(filters.errors(error));
+        });
+      }, function(error) {
+        deferred.reject(error);
       });
     }, function(error) {
       deferred.reject(error);
-    });
+    })
   }, function(error) {
     deferred.reject(error);
   })
