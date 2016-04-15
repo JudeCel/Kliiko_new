@@ -159,7 +159,7 @@
           deferred.resolve(newList);
         },
         function (err) {
-          deferred.reject(err.message);
+          deferred.reject(err);
         }
       );
 
@@ -269,31 +269,26 @@
       var newContactObj = newContactObj;
       var currentListId = self.activeList.id;
 
-      contactListServices.createUser(newContactObj, currentListId).then(
-        function (res) {
+      contactListServices.createUser(newContactObj, currentListId).then(function (res) {
+        newContactObj = angular.extend(newContactObj, res);
+        newContactObj = new Member(newContactObj);
 
-          newContactObj = angular.extend(newContactObj, res);
+        for (var i = 0, len = self.items.length; i < len ; i++) {
+          if (self.items[i].id == currentListId) {
 
-          newContactObj = new Member(newContactObj);
+            if (!self.items[i].members) self.items[i].members = [];
 
-          for (var i = 0, len = self.items.length; i < len ; i++) {
-            if (self.items[i].id == currentListId) {
+            self.items[i].members.push(newContactObj);
+            self.items[i].membersCount++;
 
-              if (!self.items[i].members) self.items[i].members = [];
-
-              self.items[i].members.push(newContactObj);
-              self.items[i].membersCount++;
-
-              break;
-            }
+            break;
           }
-
-          deferred.resolve(res);
-        },
-        function (err) {
-          deferred.reject(err);
         }
-      );
+
+        deferred.resolve(res);
+      }, function (err) {
+        deferred.reject(err);
+      });
       return deferred.promise;
     }
 

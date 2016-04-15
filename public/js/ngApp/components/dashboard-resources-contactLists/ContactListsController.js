@@ -2,8 +2,8 @@
   'use strict';
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'contactListsControllerServices', 'ngDraggable', '$timeout'];
-  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, contactListsControllerServices, ngDraggable, $timeout) {
+  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout'];
+  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, ngDraggable, $timeout) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
@@ -324,28 +324,33 @@
             messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
           },
           function (err) {
-            vm.modalErrors = err;
+            if(err.subEnded){
+              messenger.error(err);
+            }else{
+              vm.modalErrors = err;
+            }
           }
         );
       }
     }
 
     function updateContact() {
-
       var newContact = angular.copy(vm.newContact);
       var currentList = angular.copy(vm.lists.activeList);
       if(validatePhoneNumber() && validateLandlineNumber(newContact.landlineNumber)){
-        vm.lists.updateContact(vm.newContact).then(
-          function(res) {
-            vm.newContact = {customFields:{}};
+        vm.lists.updateContact(vm.newContact).then(function(res) {
+          vm.newContact = {customFields:{}};
 
-            domServices.modal('contactList-addContactManual', 'close');
-            messenger.ok('Contact '+ newContact.firstName + ' has been updated');
-          },
-          function (err) {
+          domServices.modal('contactList-addContactManual', 'close');
+          messenger.ok('Contact '+ newContact.firstName + ' has been updated');
+        },
+        function (err) {
+          if(err.subEnded){
+            messenger.error(err);
+          }else{
             vm.modalErrors = err;
           }
-        );
+        });
       }
 
     }
