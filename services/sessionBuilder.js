@@ -117,7 +117,8 @@ function findSession(id, accountId) {
 
 function update(sessionId, accountId, params) {
   let deferred = q.defer();
-  validators.hasValidSubscription(params.accountId).then(function() {
+
+  validators.hasValidSubscription(accountId).then(function() {
     findSession(sessionId, accountId).then(function(session) {
       session.updateAttributes(params).then(function(updatedSession) {
         sessionBuilderObject(updatedSession).then(function(result) {
