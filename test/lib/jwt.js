@@ -13,7 +13,7 @@ describe('#token', function() {
       let token = jwt_token.token(id);
 
       jwt.verify(token, JWTSecret, function(err, decoded) {
-        if (err) {done(error)};
+        if (err) {done(err)};
 
         assert.equal(decoded.aud, `AccountUser:${id}`);
         assert.equal(decoded.sub, `AccountUser:${id}`);
