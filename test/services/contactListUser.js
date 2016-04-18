@@ -248,7 +248,7 @@ describe('Services -> ContactListUser', () => {
         });
       });
 
-      it.only("update ", (done) => {
+      it("update ", (done) => {
           let attrs = {
             accountId: TestAccount.id,
             contactListId: TestContactList.id,

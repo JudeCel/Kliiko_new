@@ -2,6 +2,7 @@
 
 var assert = require('chai').assert;
 var userFixture = require('./../fixtures/user');
+var subscriptionFixture = require('./../fixtures/subscription');
 var models = require('./../../models');
 
 var sessionBuilderServices = require('./../../services/sessionBuilder');
@@ -15,7 +16,15 @@ describe('SERVICE - SessionBuilder', function() {
       testUser = result.user;
       testAccount = result.account;
       testAccountUser = result.accountUser;
-      done();
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function(subscription) {
+        models.SubscriptionPreference.update({'data.sessionCount': 2}, { where: { subscriptionId: subscription.id } }).then(function(result) {
+          done();
+        }, function(error) {
+          done(error);
+        })
+      }, function(error) {
+        done(error);
+      })
     }, function(error) {
       done(error);
     });
@@ -617,7 +626,7 @@ describe('SERVICE - SessionBuilder', function() {
     };
 
     describe('happy path', function(done) {
-      it('should succeed on moving to next step', function(done) {
+      it.only('should succeed on moving to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
           params.step = 'manageSessionEmails';
