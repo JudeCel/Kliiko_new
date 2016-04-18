@@ -41,7 +41,7 @@
       var deferred = $q.defer();
       dbg.log2('#KliikoApp.fileUploader > ping server');
 
-      resourceForServer(token).get({}, function(res) {
+      resourceForServer(token).ping({}, function(res) {
         dbg.log2('#KliikoApp.fileUploader > ping server > server respond >', res);
         deferred.resolve();
       }, function(error) {
@@ -54,7 +54,7 @@
     function resourceForServer(token) {
       return $resource(globalSettings.serverChatDomainUrl + '/api/resources/ping', {},
         {
-          'Authorization': token,
+          ping: { method: 'GET', headers: { 'Authorization': token } }
         }
       );
     }
