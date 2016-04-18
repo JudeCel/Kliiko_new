@@ -1,7 +1,7 @@
 'use strict';
 
 var assert = require('chai').assert;
-var jwt_token = require('./../../lib/jwtToken');
+var jwt_token = require('./../../lib/jwt');
 
 var jwt = require('jsonwebtoken');
 var JWTSecret = process.env.JWT_SECRET_KEY;
