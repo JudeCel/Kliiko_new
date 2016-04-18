@@ -25,7 +25,7 @@ router.use(function (req, res, next) {
       return next();
     }
 
-    let validPaths = ['invite', 'survey', 'my-dashboard', 'chargebee', 'api', 'emailConfirmation'];
+    let validPaths = ['invite', 'survey', 'my-dashboard', 'chargebee', 'api'];
 
     if(filterValidPaths(req.path, validPaths)){
       next();
@@ -54,18 +54,29 @@ router.use(function (req, res, next) {
 function filterRoutes(path) {
   let array = _.map(router.stack, function(layer) {
     if(layer.route && layer.route.path != '/'){
-      return layer.route.path;
+      let route = layer.route.path;
+      let changables = [":token", ":id"];
+
+      if(filterValidPaths(route, changables)){
+        _.map(foundPaths(route, changables), function(foundPath) {
+          route = route.replace(foundPath, "");
+        });
+      }
+      return route;
     }
   });
   return filterValidPaths(path, array);
 }
 
 function filterValidPaths(path, valid) {
-  return !_.isEmpty(_.filter(valid, function(validPath) {
-    return path.includes(validPath);
-  }));
+  return !_.isEmpty(foundPaths(path, valid));
 }
 
+function foundPaths(path, valid) {
+  return _.filter(valid, function(validPath) {
+    return path.includes(validPath);
+  });
+}
 /* GET root page. */
 
 router.get('/', function (req, res, next) {

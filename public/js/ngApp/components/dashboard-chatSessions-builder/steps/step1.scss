@@ -9,14 +9,14 @@
 
   text-align: left;
   font-size:  2rem;
-  label {
 
-  }
+  .green-input{
+    input {
+      margin: 0 5px;
+      padding: 5px;
+      border: 2px solid $green;
+    }
 
-  input {
-    margin: 0 5px;
-    padding: 5px;
-    border: 2px solid $green;
   }
 
   code {
@@ -87,7 +87,6 @@
         margin-top: -6px;
         height: 44px;
         border-radius: 0;
-        border: 2px solid $green;
         background-color: white;
         background-image: none;
         outline: none;

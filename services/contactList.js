@@ -92,26 +92,34 @@ function prepareData(lists) {
 function create(params) {
   let deferred = q.defer();
 
-  validators.subscription(params.accountId, 'contactList', 1).then(function() {
-    ContactList.create(params).then(function(result) {
-      deferred.resolve(result);
-    }, function(err) {
-      deferred.reject(err);
+  validators.hasValidSubscription(params.accountId).then(function() {
+    validators.subscription(params.accountId, 'contactList', 1).then(function() {
+      ContactList.create(params).then(function(result) {
+        deferred.resolve(result);
+      }, function(err) {
+        deferred.reject(err);
+      });
+    }, function(error) {
+      deferred.reject(error);
     });
   }, function(error) {
     deferred.reject(error);
-  });
+  })
 
   return deferred.promise;
 }
 
 function update(params) {
   let deferred = q.defer();
-  ContactList.update(params,  {where: {id: params.id} }).then(function(result) {
-    deferred.resolve(result);
-  }, function(err) {
-    deferred.reject(err);
-  });
+  validators.hasValidSubscription(params.accountId).then(function() {
+    ContactList.update(params,  {where: {id: params.id} }).then(function(result) {
+      deferred.resolve(result);
+    }, function(err) {
+      deferred.reject(err);
+    });
+  }, function(error) {
+    deferred.reject(error);
+  })
   return deferred.promise;
 }
 

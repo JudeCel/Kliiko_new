@@ -87,7 +87,8 @@ function sendSms(req, res, next) {
 }
 
 function inviteMembers(req, res, next) {
-  sessionBuilderServices.inviteMembers(req.params.id, req.body).then(function(result) {
+  let accountId = res.locals.currentDomain.id;
+  sessionBuilderServices.inviteMembers(req.params.id, req.body, accountId).then(function(result) {
     res.send({ data: result, message: 'Successfully invited contacts' });
   }, function(error) {
     res.send({ error: error });
@@ -95,7 +96,8 @@ function inviteMembers(req, res, next) {
 }
 
 function removeInvite(req, res, next) {
-  sessionBuilderServices.removeInvite(req.params).then(function(message) {
+  let accountId = res.locals.currentDomain.id;
+  sessionBuilderServices.removeInvite(req.params, accountId).then(function(message) {
     res.send({ message: message });
   }, function(error) {
     res.send({ error: error });
@@ -111,7 +113,8 @@ function removeSessionMember(req, res, next) {
 }
 
 function sendGenericEmail(req, res, next) {
-  sessionBuilderServices.sendGenericEmail(req.params.id, req.body).then(function(message) {
+  let accountId = res.locals.currentDomain.id;
+  sessionBuilderServices.sendGenericEmail(req.params.id, req.body, accountId).then(function(message) {
     res.send({ message: message });
   }, function(error) {
     res.send({ error: error });

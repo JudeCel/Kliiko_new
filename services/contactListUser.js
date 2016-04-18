@@ -9,6 +9,7 @@ var ContactList = models.ContactList;
 var ContactListUser = models.ContactListUser;
 var AccountUserService = require('./../services/accountUser');
 var dataWrappers = require('./../models/dataWrappers');
+var validators = require('./../services/validators');
 var async = require('async');
 
 module.exports = {
@@ -168,37 +169,42 @@ function validateUniqEmail(params, transaction) {
 
 function create(params, transaction) {
   let deferred = q.defer();
-  validateUniqEmail(params).then(function(result) {
-    if (result) {
-      deferred.reject(result)
-    }else{
-      AccountUser.find(
-        { where: {
-          email: params.defaultFields.email,
-          AccountId: params.accountId
-        }
-      }
-    ).then(function(accountUser) {
-      if (accountUser) {
-        ContactListUser.create(contactListUserParams(params, accountUser), {transaction: transaction}).then(function(contactListUser) {
-          buildWrappedResponse(contactListUser.id, deferred, transaction);
-        }, function(err) {
-          deferred.reject(err);
-        })
+
+  validators.hasValidSubscription(params.accountId).then(function() {
+    validateUniqEmail(params).then(function(result) {
+      if (result) {
+        deferred.reject(result)
       }else{
-        createNewAccountUser(params, transaction).then(function(newAccountUser) {
-          ContactListUser.create(contactListUserParams(params, newAccountUser), {transaction: transaction}).then(function(contactListUser) {
-            buildWrappedResponse(contactListUser.id, deferred, transaction);
-          }, function(err) {
-            deferred.reject(err);
-          })
-        }, function(err) {
-          deferred.reject(filters.errors(err));
-        })
+        AccountUser.find(
+          { where: {
+            email: params.defaultFields.email,
+            AccountId: params.accountId
+          }
+        }).then(function(accountUser) {
+          if (accountUser) {
+            ContactListUser.create(contactListUserParams(params, accountUser), {transaction: transaction}).then(function(contactListUser) {
+              buildWrappedResponse(contactListUser.id, deferred, transaction);
+            }, function(err) {
+              deferred.reject(err);
+            })
+          }else{
+            createNewAccountUser(params, transaction).then(function(newAccountUser) {
+              ContactListUser.create(contactListUserParams(params, newAccountUser), {transaction: transaction}).then(function(contactListUser) {
+                buildWrappedResponse(contactListUser.id, deferred, transaction);
+              }, function(err) {
+                deferred.reject(err);
+              })
+            }, function(err) {
+              deferred.reject(filters.errors(err));
+            })
+          }
+        });
       }
-    });
-    }
+    })
+  }, function(error) {
+    deferred.reject({subEnded: error});
   })
+
   return deferred.promise;
 }
 
@@ -231,17 +237,23 @@ function contactListUserParams(params, accountUser) {
 
 function update(params) {
   let deferred = q.defer();
-  ContactListUser.find({where: {id: params.id}, include: [AccountUser, ContactList]}).then(function(contactListUser) {
-    let customFields = _.merge(contactListUser.customFields,  params.customFields)
-    contactListUser.updateAttributes({customFields: customFields}).then(function(result) {
-      contactListUser.AccountUser.updateAttributes(params.defaultFields).then(function(accountUser) {
-        buildWrappedResponse(contactListUser.id, deferred);
+
+  validators.hasValidSubscription(params.accountId).then(function() {
+    ContactListUser.find({where: {id: params.id}, include: [AccountUser, ContactList]}).then(function(contactListUser) {
+      let customFields = _.merge(contactListUser.customFields,  params.customFields)
+      contactListUser.updateAttributes({customFields: customFields}).then(function(result) {
+        contactListUser.AccountUser.updateAttributes(params.defaultFields).then(function(accountUser) {
+          buildWrappedResponse(contactListUser.id, deferred);
+        }, function(err) {
+          deferred.reject(filters.errors(err));
+        })
       }, function(err) {
         deferred.reject(filters.errors(err));
       })
-    }, function(err) {
-      deferred.reject(filters.errors(err));
     })
+  }, function(error) {
+    deferred.reject({subEnded: error});
   })
+
   return deferred.promise;
 }

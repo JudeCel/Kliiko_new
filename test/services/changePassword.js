@@ -70,7 +70,7 @@ describe('Change Password', function() {
       user: testUser.dataValues
     }
     changePassword.save(attrs, function(errors, user){
-      assert.equal(errors.message, 'Validation error: Make sure your password is longer than 7 characters');
+      assert.equal(errors.message, 'Validation error: Make sure your password is 7 characters and longer');
       done();
     });
   });

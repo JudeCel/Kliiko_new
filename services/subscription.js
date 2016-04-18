@@ -47,6 +47,7 @@ module.exports = {
 
 function getAllPlans(accountId) {
   let deferred = q.defer();
+  let currentPlan = {};
 
   chargebee.plan.list({}).request(function(error, result){
     if(error){
@@ -54,8 +55,11 @@ function getAllPlans(accountId) {
     }else{
       if(accountId){
         findSubscription(accountId).then(function(currentSub) {
+          if(currentSub.active){
+            currentPlan = currentSub.SubscriptionPlan;
+          }
           addPlanEstimateChargeAndConstants(result.list, accountId).then(function(planWithConstsAndEstimates) {
-            deferred.resolve({currentPlan: currentSub.SubscriptionPlan, plans: planWithConstsAndEstimates});
+            deferred.resolve({currentPlan: currentPlan, plans: planWithConstsAndEstimates});
           })
         }, function(error) {
           deferred.reject(filters.errors(error));
@@ -330,7 +334,7 @@ function retrievCheckoutAndUpdateSub(hostedPageId) {
 function updateSubscriptionData(passThruContent){
   let deferred = q.defer();
   findSubscriptionByChargebeeId(passThruContent.subscriptionId).then(function(subscription) {
-    subscription.update({planId: passThruContent.planId, subscriptionPlanId: passThruContent.subscriptionPlanId}).then(function(updatedSub) {
+    subscription.update({planId: passThruContent.planId, subscriptionPlanId: passThruContent.subscriptionPlanId, active: true}).then(function(updatedSub) {
 
       let params = planConstants[passThruContent.planId];
       params.paidSmsCount = params.paidSmsCount + passThruContent.paidSmsCount;
@@ -623,7 +627,13 @@ function canSwitchPlan(accountId, currentPlan, newPlan){
   }else if(currentPlan.priority < newPlan.priority){
     deferred.resolve();
   }else{
-    deferred.reject(MESSAGES.cantSwitchPlan);
+    findSubscription(accountId).then(function(subscription) {
+      if(subscription.active){
+        deferred.reject(MESSAGES.cantSwitchPlan);
+      }else{
+        deferred.resolve();
+      }
+    })
   }
 
   return deferred.promise;

@@ -42,8 +42,8 @@ function create(req, res, next) {
 
   contactListService.create(params).then(function(result) {
     res.send(result);
-  }, function(err) {
-    res.send({ error: err });
+  }, function(error) {
+    res.send({ error: error });
   })
 }
 
@@ -123,4 +123,3 @@ function importContacts(req, res, next) {
 
 
 }
-

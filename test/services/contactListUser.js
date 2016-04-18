@@ -1,8 +1,10 @@
 "use strict";
 var assert = require('chai').assert;
 var models  = require('./../../models');
+var subscriptionFixture = require('./../fixtures/subscriptionPlans');
 var ContactListUserService  = require('./../../services/contactListUser');
 var UserService  = require('./../../services/users');
+var subscriptionServices = require('./../../services/subscription');
 var validAttrs = {
   accountName: "DainisL",
   firstName: "Dainis",
@@ -27,6 +29,18 @@ describe('Services -> ContactListUser', () => {
       });
     });
 
+    function successProvider(params) {
+      return function() {
+        return {
+          request: function(callback) {
+            callback(null, {
+              subscription: { id: params.id, plan_id: 'unlimited' },
+              customer: { id: params.id }
+            });
+          }
+        }
+      }
+    }
 
     describe("succsess", function() {
       let TestUser = null;
@@ -43,7 +57,11 @@ describe('Services -> ContactListUser', () => {
               TestAccountUser = accountUsers[0]
               TestAccount.getContactLists().then(function(CLUResults) {
                 TestContactList = CLUResults[0];
-                done();
+                subscriptionFixture.createPlans().then(function() {
+                  subscriptionServices.createSubscription(TestAccount.id, TestUser.id, successProvider({ id: 'SomeUniqueID' })).then(function(subscription) {
+                    done();
+                  });
+                })
               });
             })
           });
@@ -230,7 +248,7 @@ describe('Services -> ContactListUser', () => {
         });
       });
 
-      it("update ", (done) => {
+      it.only("update ", (done) => {
           let attrs = {
             accountId: TestAccount.id,
             contactListId: TestContactList.id,
@@ -247,13 +265,14 @@ describe('Services -> ContactListUser', () => {
         let updateparams = {
           id: null,
           customFields: {one: 444},
-          defaultFields: {firstName: "newNameUpdate"}
+          defaultFields: {firstName: "newNameUpdate"},
+          accountId: TestAccount.id
         }
 
         ContactListUserService.create(attrs).then(function(contactListUser) {
           updateparams.id = contactListUser.id;
           ContactListUserService.update(updateparams).then(function(result) {
-              assert.equal(result.firstName, updateparams.defaultFields.firstName)
+            assert.equal(result.firstName, updateparams.defaultFields.firstName)
             done()
           }, function(err) {
             done(err)

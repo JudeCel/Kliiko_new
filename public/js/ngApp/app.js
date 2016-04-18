@@ -21,6 +21,7 @@
 
     // app modules
     'KliikoApp.user',
+    'KliikoApp.account',
     'KliikoApp.accountUser',
     'KliikoApp.banners',
     'KliikoApp.mailTemplate'
@@ -114,8 +115,8 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'ngProgressFactory', 'user', '$q', 'accountUser','$cookies', '$ocLazyLoad', '$injector'];
-  function AppController($rootScope, dbg, ngProgressFactory, user, $q, accountUser, $cookies, $ocLazyLoad, $injector) {
+  AppController.$inject = ['$rootScope', 'dbg', 'ngProgressFactory', 'user', '$q', 'accountUser', 'account','$cookies', '$ocLazyLoad', '$injector'];
+  function AppController($rootScope, dbg, ngProgressFactory, user, $q, accountUser, account, $cookies, $ocLazyLoad, $injector) {
     var vm = this;
     var progressbar = ngProgressFactory.createInstance();
     progressbar.start();
@@ -147,6 +148,9 @@
         vm.user = res;
       });
       accountUser.getAccountUserData(true).then(function(res) { vm.accountUser = res });
+      account.getAccountData(true).then(function(res) {
+        vm.account = res 
+      });
     }
 
 
