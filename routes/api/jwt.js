@@ -3,7 +3,7 @@
 var jwt = require('./../../lib/jwt');
 
 function getToken(req, res, next) {
-  let token = jwt.token(res.locals.currentDomain.id);
+  let token = jwt.token(res.locals.currentUser.accountUserId);
   res.send({ token: token });
 };
 

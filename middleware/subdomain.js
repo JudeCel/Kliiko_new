@@ -13,6 +13,7 @@ function assignCurrentDomain(result, res) {
 
 function assignCurrentUserInfo(result, req) {
   _.merge(req.user, _.pick(result.accountUser.dataValues, prepareValidAccountUserParams()));
+  req.user.accountUserId = result.accountUser.id;
 }
 
 function prepareValidAccountUserParams() {
