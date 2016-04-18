@@ -251,10 +251,11 @@ function sendSms(data, provider) {
 }
 
 // Untested
-function inviteMembers(sessionId, data, accountId) {
+function inviteMembers(sessionId, data, accountId, accountName) {
   let deferred = q.defer();
   validators.hasValidSubscription(accountId).then(function() {
     inviteParams(sessionId, data).then(function(params) {
+      params.accountName = accountName;
       inviteService.createBulkInvites(params).then(function(invites) {
         let ids = _.map(invites, 'accountUserId');
         AccountUser.findAll({ where: { id: { $in: ids } }, include:[models.Invite] }).then(function(accountUsers) {

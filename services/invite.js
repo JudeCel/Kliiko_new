@@ -53,6 +53,7 @@ function createBulkInvites(arrayParams) {
         }, Account, Session, User]
       }).then(function(invites) {
         async.each(invites, function(invite, callback) {
+          invite.accountName = arrayParams.accountName;
           sendInvite(invite).then(function() {
             callback();
           }, function(error) {
@@ -113,6 +114,7 @@ function createInvite(params) {
         token: token
       }
     }).then(function(invite) {
+      invite.accountName = params.accountName;
       sendInvite(invite, deferred);
     });
   }).catch(function(error) {
@@ -172,7 +174,7 @@ function sendInvite(invite, deferred) {
         token: invite.token,
         firstName: invite.AccountUser.firstName,
         lastName: invite.AccountUser.lastName,
-        accountName: "cant get",
+        accountName: invite.accountName,
         email: invite.AccountUser.email,
         sessionName: session.name,
         startTime: dateFormat(invite.startDate, 'h:MM:ss'),
