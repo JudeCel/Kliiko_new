@@ -1,9 +1,9 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('GalleryServices', GalleryServices);
-  GalleryServices.$inject = ['globalSettings', '$q', '$resource', 'dbg', 'Upload'];
+  GalleryServices.$inject = ['globalSettings', '$q', '$resource', 'dbg', 'fileUploader'];
 
-  function GalleryServices(globalSettings, $q, $resource, dbg, Upload) {
+  function GalleryServices(globalSettings, $q, $resource, dbg, fileUploader) {
     var galleryRestApi = $resource(globalSettings.serverChatDomainUrl + '/resources/:path', null, {
       uploadFile: { method: 'POST', params: { path: 'uploadFile' } },
       saveYoutubeUrl: { method: 'POST', params: { path: 'saveYoutubeUrl' } },
@@ -58,27 +58,20 @@
     function createResource(params) {
       var deferred = $q.defer();
 
-      dbg.log2('#GalleryServices > createGalleryResources > make rest call');
-      galleryRestApi.save(params, function(res) {
-        dbg.log2('#GalleryServices > createGalleryResources > rest call responds');
-        deferred.resolve(res);
+      fileUploader.upload(params).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.resolve(error);
       });
 
       return deferred.promise;
     }
 
-    function postuploadData(newResource){
+    function postuploadData(newResource) {
       var deferred = $q.defer();
 
-      Upload.upload({
-        url: globalSettings.serverChatDomainUrl+'/resources/upload',
-        method: 'POST',
-        data: {file: newResource.file, private: newResource.private, type: newResource.type}
-      }).then(function(res) {
-          deferred.resolve(res);
-        }, function(error) {
-          deferred.resolve({error: error.data.error});
-        });
+      console.warn(newResource);
+
 
       return deferred.promise;
     }
