@@ -31,6 +31,22 @@
       vm.session = builderServices.session;
     }
 
+    vm.canDragElement = function(element) {
+      var count = 0;
+      var selected = false;
+      vm.selectedTopics.map(function(item, val) {
+        count++;
+        if (val == element.id) {
+          selected = true;
+        }
+      });
+
+      if (count == 0) {
+        return true;
+      } else {
+        return selected;
+      }
+    }
 
     function topicsOnDropComplete(data, event) {
       if (!data) return;
