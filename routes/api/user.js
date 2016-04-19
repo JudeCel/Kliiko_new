@@ -33,28 +33,7 @@ function userPost(req, res, next) {
  * Get All current user data, that can be required by app at the start
  */
 function userGet(req, res, next) {
-  let currentDomain = res.locals.currentDomain
-  let roles = currentDomain.roles;
-  let reqUser = req.user;
-
-  q.all([
-    getUserBasicData(),
-  ]).then(function(response) {
-    let user = response[0];
-    //user.subscriptions = response[1][0];
-    res.send(user);
-  });
-
-  function getUserBasicData() {
-    let deferred = q.defer();
-    reqUser.roles = roles;
-
-
-
-    deferred.resolve(reqUser);
-    return deferred.promise;
-  }
-
+  res.send(req.user);
 }
 
 function changePassword(req, res, next) {

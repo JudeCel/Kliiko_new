@@ -15,9 +15,9 @@
   }
 
   angular.module('KliikoApp.Root').controller('SurveyClientController', SurveyClientController);
-  SurveyClientController.$inject = ['dbg', 'surveyServices', 'messenger', '$timeout', 'ngProgressFactory', '$sce'];
+  SurveyClientController.$inject = ['dbg', 'surveyServices', 'messenger', '$timeout', '$sce'];
 
-  function SurveyClientController(dbg, surveyServices, messenger, $timeout, ngProgressFactory, $sce) {
+  function SurveyClientController(dbg, surveyServices, messenger, $timeout, $sce) {
     dbg.log2('#SurveyClientController started');
 
     var vm = this;
@@ -41,12 +41,8 @@
     };
 
     function init(surveyId) {
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
-
       surveyServices.findSurvey({ id: surveyId }).then(function(res) {
         dbg.log2('#SurveyClientController > findSurvey > res ', res);
-        progressbar.complete();
 
         if(res.error) {
           vm.message = surveyServices.prepareError(res.error);
@@ -60,8 +56,6 @@
     function submitSurvey() {
       vm.submitedSurvey = true;
       vm.submitingSurvey = true;
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
 
       $timeout(function() {
         if(vm.submitForm.$valid) {
@@ -84,7 +78,6 @@
         }
 
         vm.submitingSurvey = false;
-        progressbar.complete();
       }, 1000);
     };
 

@@ -116,20 +116,26 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'ngProgressFactory', 'user', '$q', 'accountUser', 'account','$cookies', '$ocLazyLoad', '$injector', 'fileUploader'];
-  function AppController($rootScope, dbg, ngProgressFactory, user, $q, accountUser, account, $cookies, $ocLazyLoad, $injector, fileUploader) {
+  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$ocLazyLoad', '$injector', 'fileUploader'];
+  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $ocLazyLoad, $injector, fileUploader) {
     var vm = this;
-    var progressbar = ngProgressFactory.createInstance();
-    progressbar.start();
     dbg.log2('#AppController started ');
-    progressbar.complete();
-
     $rootScope.$on('app.updateUser', init);
 
     init();
 
     function init() {
-      user.getUserData(true).then(function(res) {
+      user.getUserData().then(function(res) {
+        setSessionStorage(res);
+        vm.user = res;
+      });
+      accountUser.getAccountUserData().then(function(res) { vm.accountUser = res });
+      account.getAccountData().then(function(res) { vm.account = res });
+      fileUploader.getToken().then(function(res) { vm.fileUploader = res });
+    }
+
+    function setSessionStorage(res) {
+      if(res.phoneCountryData) {
         var phoneIsoCode = 'au';
         if(typeof res.phoneCountryData === 'string' && res.phoneCountryData.length){
           phoneIsoCode = JSON.parse(res.phoneCountryData).iso2;
@@ -137,7 +143,9 @@
           phoneIsoCode = res.phoneCountryData.iso2;
         }
         sessionStorage.setItem('phoneCountryData',  phoneIsoCode);
+      }
 
+      if(res.landlineNumberCountryData) {
         var landlineNumberIsoCode = 'au';
         if(typeof res.landlineNumberCountryData === 'string'){
           landlineNumberIsoCode = JSON.parse(res.landlineNumberCountryData).iso2;
@@ -145,15 +153,8 @@
           landlineNumberIsoCode = res.landlineNumberCountryData.iso2;
         }
         sessionStorage.setItem('landlineNumberCountryData',  landlineNumberIsoCode);
-
-        vm.user = res;
-      });
-      accountUser.getAccountUserData(true).then(function(res) { vm.accountUser = res });
-      account.getAccountData(true).then(function(res) { vm.account = res });
-      fileUploader.getToken().then(function(res) { vm.fileUploader = res });
+      }
     }
-
-
   }
 
 

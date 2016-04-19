@@ -5,8 +5,8 @@
     module('KliikoApp').
     controller('TopicsController', TopicsController);
 
-  TopicsController.$inject = ['dbg', 'domServices', 'topicsAndSessions','ngProgressFactory','messenger'];
-  function TopicsController(dbg, domServices, topicsAndSessions, ngProgressFactory, messenger) {
+  TopicsController.$inject = ['dbg', 'domServices', 'topicsAndSessions', 'messenger'];
+  function TopicsController(dbg, domServices, topicsAndSessions, messenger) {
     dbg.log2('#TopicsController controller started');
 
     var vm = this;
@@ -28,17 +28,12 @@
     init();
 
     function init() {
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
-
       topicsAndSessions.getAllTopics().then(
         function(res) {
           dbg.log2('#TopicsController > getAllTopics > success > ', res);
           vm.list = res;
-          progressbar.complete();
         },
         function(err) {
-          progressbar.complete();
           dbg.error('#TopicsController > getAllTopics > error:', err);
           messenger.error('There is an error while fetching data!');
         }
@@ -54,9 +49,6 @@
     function validateNewAndAdd(topic) {
       if (!topic && !vm.newTopicName.length) return;
 
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
-
       var params = {};
 
       if (!topic) {
@@ -69,7 +61,6 @@
       function success(res) {
         vm.list.push(res.data);
         domServices.modal('createNewTopic', 'close');
-        progressbar.complete();
         dbg.log('#TopicsController > validateNewAndAdd > New topic has been added');
         vm.newTopicName = null;
 
@@ -79,7 +70,6 @@
 
       }
       function error(err) {
-        progressbar.complete();
         messenger.error(err);
       }
     }
@@ -94,8 +84,6 @@
 
       if (!doIt) return;
 
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
       topicsAndSessions.deleteTopic(id).then(success, error);
 
       function success(res) {
@@ -111,14 +99,12 @@
 
         vm.editBlockHelper = null;
 
-        progressbar.complete();
         dbg.log('#TopicsController > deleteTopic > topic has been removed');
         messenger.ok('Topic has been removed');
 
       }
 
       function error(err) {
-        progressbar.complete();
         messenger.error(err);
       }
     }

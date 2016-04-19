@@ -15,8 +15,8 @@
     module('KliikoApp').
     controller('ContactDetailsModalController', ContactDetailsModalController)
 
-  ContactDetailsModalController.$inject = ['dbg', 'user','domServices', 'ngProgressFactory', 'messenger'];
-  function ContactDetailsModalController(dbg,  user, domServices, ngProgressFactory, messenger) {
+  ContactDetailsModalController.$inject = ['dbg', 'user','domServices', 'messenger'];
+  function ContactDetailsModalController(dbg,  user, domServices, messenger) {
     dbg.log2('#ContactDetailsModalController  started');
     var vm = this;
     init();
@@ -38,8 +38,6 @@
     vm.landlineNumberIso2 = null;
 
     function init() {
-      vm.progressbar = ngProgressFactory.createInstance();
-
       // update form on every modal opening. will reset after 'cancel'
       jQuery('#contactDetailsModal').on('show.bs.modal', function (event) {
         // get all data for current user

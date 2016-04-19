@@ -88,7 +88,8 @@ function sendSms(req, res, next) {
 
 function inviteMembers(req, res, next) {
   let accountId = res.locals.currentDomain.id;
-  sessionBuilderServices.inviteMembers(req.params.id, req.body, accountId).then(function(result) {
+  let accountName = res.locals.currentDomain.name;
+  sessionBuilderServices.inviteMembers(req.params.id, req.body, accountId, accountName).then(function(result) {
     res.send({ data: result, message: 'Successfully invited contacts' });
   }, function(error) {
     res.send({ error: error });
