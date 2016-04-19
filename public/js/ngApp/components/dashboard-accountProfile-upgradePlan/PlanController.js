@@ -79,7 +79,7 @@
     vm.stepIsCompleted = stepIsCompleted;
     vm.nextStep = nextStep;
     vm.previouseStep = previouseStep;
-    vm.selectPlan = selectPlan;
+    vm.wantThisPlan = wantThisPlan;
     vm.submitOrder = submitOrder;
     vm.isCurrentPlan = isCurrentPlan;
     vm.showPlanInList = showPlanInList;
@@ -184,7 +184,8 @@
       }
     }
 
-    function selectPlan(plan) {
+    function wantThisPlan(plan) {
+      console.log(plan);
       vm.selectedPlan = plan;
       nextStep();
     }
@@ -233,9 +234,9 @@
       }
     }
 
-    function openPlanDetailsModal(plan) {
-      vm.planInModal = plan;
-      vm.currentPlanModalContentTpl = modalTplPath + plan.id + '.tpl.html';
+    function openPlanDetailsModal(subscriptionPlan) {
+      vm.planInModal = subscriptionPlan;
+      vm.currentPlanModalContentTpl = modalTplPath + subscriptionPlan.plan.id + '.tpl.html';
       domServices.modal('plansModal');
     }
 
