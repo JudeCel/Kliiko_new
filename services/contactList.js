@@ -33,7 +33,7 @@ function destroy(contacListId, accoutId) {
   });
   return deferred.promise;
 }
-function allByAccount(accountId) {
+function allByAccount(accountId, sessionId) {
     let selectFields =  constants.contactListDefaultFields.concat('id')
     // selectFields.push([models.sequelize.fn('COUNT', models.sequelize.col('ContactListUsers.AccountUser.Invites.id')), 'Invites'])
     let deferred = q.defer();
@@ -50,17 +50,114 @@ function allByAccount(accountId) {
           model: models.AccountUser,
           attributes: selectFields,
           include: [{
-            model: models.Invite
+            model: models.Invite,
           }]
         }],
         order: ['position']
       }]
     }).then(function(results) {
-      deferred.resolve(prepareData(results));
+      if(sessionId) {
+        removeInvitedUsers(results, sessionId).then(function(mapedResults) {
+          deferred.resolve(prepareData(mapedResults));
+        }, function(error) {
+          deferred.reject(error);
+        })
+      }else{
+        deferred.resolve(prepareData(results));
+      }
     }, function(err) {
       deferred.reject(err);
     });
     return deferred.promise;
+}
+
+function removeInvitedUsers(results, sessionId) {
+  let deferred = q.defer();
+
+  async.waterfall([
+    function(cb) {
+      removeAlreadyInvitedresult(sessionId, results).then(function(listWithoutAlreadyInvitedUsers) {
+        cb(null, listWithoutAlreadyInvitedUsers);
+      }, function(error) {
+        cb(error);
+      })
+    },
+    function(listWithoutAlreadyInvitedUsers, cb) {
+      removeFacilitatorFromList(sessionId, listWithoutAlreadyInvitedUsers).then(function(listWithoutFacilitator) {
+        deferred.resolve(listWithoutFacilitator);
+      }, function(error) {
+        deferred.reject(error);
+      })
+    }
+  ], function(error, list) {
+    if(error) {
+      deferred.reject(error);
+    }
+    else {
+      deferred.resolve(list);
+    }
+  });
+
+  return deferred.promise;
+}
+
+function removeAlreadyInvitedresult(sessionId, results) {
+  let deferred = q.defer();
+
+  try{
+    _.map(results, function(result) {
+      let users = []
+      _.map(result.ContactListUsers, function(user) {
+        let array = [];
+
+        if(user.AccountUser.Invites) {
+          _.map(user.AccountUser.Invites, function(invite) {
+            if(invite.sessionId == sessionId){
+              array.push(user);
+            }
+          })
+
+          if(!_.isEmpty(array)){
+            users.push(user);
+          }
+        }
+      });
+
+      if(!_.isEmpty(users)){
+        result.ContactListUsers = _.xor(result.ContactListUsers, users);
+      }
+    })
+    deferred.resolve(results);
+
+  }catch(error){
+    deferred.reject(error);
+  }
+
+  return deferred.promise;
+}
+
+function removeFacilitatorFromList(sessionId, results) {
+  let deferred = q.defer();
+
+  _.map(results, function(result) {
+    if(result.name == "Facilitators"){
+      models.SessionMember.find({
+        where: {
+          sessionId: sessionId,
+          role: 'facilitator'
+        }
+      }).then(function(facilitator) {
+        _.remove(result.ContactListUsers, function(user) {
+          return user.accountUserId == facilitator.accountUserId;
+        })
+        deferred.resolve(results);
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+  })
+
+  return deferred.promise;
 }
 
 function prepareData(lists) {

@@ -12,27 +12,19 @@ module.exports = {
   destroy: destroy,
   update: update,
   parseImportFile: parseImportFile,
-  importContacts: importContacts,
-  listForInvites: listForInvites
+  importContacts: importContacts
 };
 
 function index(req, res, next) {
   let accaountId = res.locals.currentDomain.id;
-  contactListService.allByAccount(accaountId).then(function(lists) {
+  let sessionId = req.query.sessionId;
+
+  contactListService.allByAccount(accaountId, sessionId).then(function(lists) {
     res.send(lists);
   },function(err) {
     res.send({ error: err });
   });
 };
-
-function listForInvites(req, res, next) {
-  let accaountId = res.locals.currentDomain.id;
-  let sessionId = null;
-  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-}
 
 // Create Params example
 // {  customFields: ARRAY/optional =>  [ someCustomFieldsName ],

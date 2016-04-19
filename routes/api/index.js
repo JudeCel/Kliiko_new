@@ -106,7 +106,6 @@ router.get('/subscriptionSmsCredits/creditCount', smsCredit.creditCount);
 
 // contact List
 router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
-router.get('/listForInvites', policy.authorized(['accountManager', 'admin']), contactList.listForInvites);
 router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
 // router.post('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']), fileUploader({path:process.env.FILE_UPLOAD_PATH}),contactList.parseImportFile);
 router.put('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']),contactList.importContacts);

@@ -8,6 +8,7 @@
     var vm =  this;
 
     vm.listIdToEdit = null;
+    vm.sessionId = null;
     vm.newList = {};
     vm.lists = {};
     vm.newList = {};
@@ -57,17 +58,22 @@
 
     vm.onFieldMapDrop = onFieldMapDrop;
     vm.mappingFieldsContinue = mappingFieldsContinue;
+    vm.setSessionId = setSessionId;
 
     // required for correct list switching.
     var isSelected = false;
 
     function initLists(listType) {
-      new ListsModel().then(function(result) {
+      new ListsModel({sessionId: vm.sessionId}).then(function(result) {
         vm.lists = result;
         if(listType == 'facilitators') {
           vm.sectListActiveToFacilitators();
         }
       });
+    }
+
+    function setSessionId(sessionId) {
+      vm.sessionId = sessionId;
     }
 
     vm.sectListActiveToFacilitators = function() {
