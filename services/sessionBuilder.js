@@ -71,17 +71,21 @@ module.exports = {
 function initializeBuilder(params) {
   let deferred = q.defer();
 
-  validators.subscription(params.accountId, 'session', 1).then(function() {
-    params.step = 'setUp';
-    Session.create(params).then(function(session) {
-      sessionBuilderObject(session).then(function(result) {
-        deferred.resolve(result);
-      }, function(error) {
-        deferred.reject(error);
+  validators.hasValidSubscription(params.accountId).then(function() {
+    validators.subscription(params.accountId, 'session', 1).then(function() {
+      params.step = 'setUp';
+      Session.create(params).then(function(session) {
+        sessionBuilderObject(session).then(function(result) {
+          deferred.resolve(result);
+        }, function(error) {
+          deferred.reject(error);
+        });
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
       });
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
-    });
+    }, function(error) {
+      deferred.reject(error);
+    })
   }, function(error) {
     deferred.reject(error);
   })
@@ -114,41 +118,48 @@ function findSession(id, accountId) {
 function update(sessionId, accountId, params) {
   let deferred = q.defer();
 
-  findSession(sessionId, accountId).then(function(session) {
-    session.updateAttributes(params).then(function(updatedSession) {
-      sessionBuilderObject(updatedSession).then(function(result) {
-        deferred.resolve(result);
-      }, function(error) {
-        deferred.reject(error);
+  validators.hasValidSubscription(accountId).then(function() {
+    findSession(sessionId, accountId).then(function(session) {
+      session.updateAttributes(params).then(function(updatedSession) {
+        sessionBuilderObject(updatedSession).then(function(result) {
+          deferred.resolve(result);
+        }, function(error) {
+          deferred.reject(error);
+        });
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
       });
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
+    }, function(error) {
+      deferred.reject(error);
     });
   }, function(error) {
     deferred.reject(error);
-  });
+  })
 
   return deferred.promise;
 }
 
 function nextStep(id, accountId) {
   let deferred = q.defer();
+  validators.hasValidSubscription(accountId).then(function() {
+    findSession(id, accountId).then(function(session) {
+      sessionBuilderObject(session).then(function(sessionObj) {
+        let params = findCurrentStep(sessionObj.sessionBuilder.steps, session.step);
+        params.id = id;
+        params.accountId = accountId;
 
-  findSession(id, accountId).then(function(session) {
-    sessionBuilderObject(session).then(function(sessionObj) {
-      let params = findCurrentStep(sessionObj.sessionBuilder.steps, session.step);
-      params.id = id;
-      params.accountId = accountId;
-
-      validate(session, params).then(function() {
-        session.updateAttributes({ step: findNewStep(session.step, false) }).then(function(updatedSession) {
-          sessionBuilderObject(updatedSession).then(function(result) {
-            deferred.resolve(result);
-          }, function(error) {
-            deferred.reject(error);
+        validate(session, params).then(function() {
+          session.updateAttributes({ step: findNewStep(session.step, false) }).then(function(updatedSession) {
+            sessionBuilderObject(updatedSession).then(function(result) {
+              deferred.resolve(result);
+            }, function(error) {
+              deferred.reject(error);
+            });
+          }).catch(function(error) {
+            deferred.reject(filters.errors(error));
           });
-        }).catch(function(error) {
-          deferred.reject(filters.errors(error));
+        }, function(error) {
+          deferred.reject(error);
         });
       }, function(error) {
         deferred.reject(error);
@@ -158,43 +169,49 @@ function nextStep(id, accountId) {
     });
   }, function(error) {
     deferred.reject(error);
-  });
+  })
 
   return deferred.promise;
 }
 
 function prevStep(id, accountId) {
   let deferred = q.defer();
-
-  findSession(id, accountId).then(function(session) {
-    session.updateAttributes({ step: findNewStep(session.step, true) }).then(function(updatedSession) {
-      sessionBuilderObject(updatedSession).then(function(result) {
-        deferred.resolve(result);
-      }, function(error) {
-        deferred.reject(error);
+  validators.hasValidSubscription(accountId).then(function() {
+    findSession(id, accountId).then(function(session) {
+      session.updateAttributes({ step: findNewStep(session.step, true) }).then(function(updatedSession) {
+        sessionBuilderObject(updatedSession).then(function(result) {
+          deferred.resolve(result);
+        }, function(error) {
+          deferred.reject(error);
+        });
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
       });
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
+    }, function(error) {
+      deferred.reject(error);
     });
   }, function(error) {
     deferred.reject(error);
-  });
+  })
 
   return deferred.promise;
 }
 
 function openBuild(id, accountId) {
   let deferred = q.defer();
-
-  findSession(id, accountId).then(function(session) {
-    sessionBuilderObject(session).then(function(result) {
-      deferred.resolve(result);
+  validators.hasValidSubscription(accountId).then(function() {
+    findSession(id, accountId).then(function(session) {
+      sessionBuilderObject(session).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.reject(error);
+      });
     }, function(error) {
       deferred.reject(error);
     });
   }, function(error) {
     deferred.reject(error);
-  });
+  })
 
   return deferred.promise;
 }
@@ -203,15 +220,19 @@ function openBuild(id, accountId) {
 function destroy(id, accountId) {
   let deferred = q.defer();
 
-  findSession(id, accountId).then(function(session) {
-    session.destroy(function(result) {
-      deferred.resolve(MESSAGES.cancel);
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
+  validators.hasValidSubscription(accountId).then(function() {
+    findSession(id, accountId).then(function(session) {
+      session.destroy(function(result) {
+        deferred.resolve(MESSAGES.cancel);
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }, function(error) {
+      deferred.reject(error);
     });
   }, function(error) {
     deferred.reject(error);
-  });
+  })
 
   return deferred.promise;
 }
@@ -230,27 +251,30 @@ function sendSms(data, provider) {
 }
 
 // Untested
-function inviteMembers(sessionId, data) {
+function inviteMembers(sessionId, data, accountId) {
   let deferred = q.defer();
+  validators.hasValidSubscription(accountId).then(function() {
+    inviteParams(sessionId, data).then(function(params) {
+      inviteService.createBulkInvites(params).then(function(invites) {
+        let ids = _.map(invites, 'accountUserId');
+        AccountUser.findAll({ where: { id: { $in: ids } }, include:[models.Invite] }).then(function(accountUsers) {
+          _.map(accountUsers, function(accountUser) {
+            accountUser.dataValues.invite = _.last(accountUser.Invites);
+          });
 
-  inviteParams(sessionId, data).then(function(params) {
-    inviteService.createBulkInvites(params).then(function(invites) {
-      let ids = _.map(invites, 'accountUserId');
-      AccountUser.findAll({ where: { id: { $in: ids } }, include:[models.Invite] }).then(function(accountUsers) {
-        _.map(accountUsers, function(accountUser) {
-          accountUser.dataValues.invite = _.last(accountUser.Invites);
+          deferred.resolve(accountUsers);
+        }).catch(function(error) {
+          deferred.reject(filters.errors(error));
         });
-
-        deferred.resolve(accountUsers);
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
+      }, function(error) {
+        deferred.reject(error);
       });
     }, function(error) {
       deferred.reject(error);
     });
   }, function(error) {
     deferred.reject(error);
-  });
+  })
 
   return deferred.promise;
 }
@@ -308,74 +332,78 @@ function removeInvite(params) {
   return deferred.promise;
 }
 
-function sendGenericEmail(sessionId, data) {
+function sendGenericEmail(sessionId, data, accountId) {
   let deferred = q.defer();
 
-  models.SessionMember.find({
-    where: {
-      role: 'facilitator'
-    },
-    include: [{
-      model: Session,
+  validators.hasValidSubscription(accountId).then(function() {
+    models.SessionMember.find({
       where: {
-        id: sessionId
-      }
-    }, AccountUser]
-  }).then(function(sessionMember) {
-    if(sessionMember) {
-      let ids = _.map(data.recievers, 'id');
+        role: 'facilitator'
+      },
+      include: [{
+        model: Session,
+        where: {
+          id: sessionId
+        }
+      }, AccountUser]
+    }).then(function(sessionMember) {
+      if(sessionMember) {
+        let ids = _.map(data.recievers, 'id');
 
-      AccountUser.findAll({
-        include: [{
-          model: models.ContactListUser,
-          where: {
-            id: { $in: ids }
-          }
-        }]
-      }).then(function(accountUsers) {
-        let params = [];
-        let facilitator = sessionMember.AccountUser;
+        AccountUser.findAll({
+          include: [{
+            model: models.ContactListUser,
+            where: {
+              id: { $in: ids }
+            }
+          }]
+        }).then(function(accountUsers) {
+          let params = [];
+          let facilitator = sessionMember.AccountUser;
 
-        _.map(accountUsers, function(accountUser) {
-          params.push({
-            accountId: accountUser.accountId,
-            email: accountUser.email,
-            firstName: accountUser.firstName,
-            facilitatorFirstName: facilitator.firstName,
-            facilitatorLastName: facilitator.lastName,
-            facilitatorMail: facilitator.email,
-            facilitatorMobileNumber: facilitator.mobile,
-            unsubscribeMailUrl: 'some unsub url'
+          _.map(accountUsers, function(accountUser) {
+            params.push({
+              accountId: accountUser.accountId,
+              email: accountUser.email,
+              firstName: accountUser.firstName,
+              facilitatorFirstName: facilitator.firstName,
+              facilitatorLastName: facilitator.lastName,
+              facilitatorMail: facilitator.email,
+              facilitatorMobileNumber: facilitator.mobile,
+              unsubscribeMailUrl: 'some unsub url'
+            });
           });
-        });
 
-        async.each(params, function(emailParams, callback) {
-          mailHelper.sendGeneric(emailParams, function(error, result) {
+          async.each(params, function(emailParams, callback) {
+            mailHelper.sendGeneric(emailParams, function(error, result) {
+              if(error) {
+                callback(error);
+              }
+              else {
+                callback(null, result);
+              }
+            });
+          }, function(error) {
             if(error) {
-              callback(error);
+              deferred.reject(error);
             }
             else {
-              callback(null, result);
+              deferred.resolve(`Sent ${accountUsers.length} emails`);
             }
           });
-        }, function(error) {
-          if(error) {
-            deferred.reject(error);
-          }
-          else {
-            deferred.resolve(`Sent ${accountUsers.length} emails`);
-          }
+        }).catch(function(error) {
+          deferred.reject(filters.errors(error));
         });
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
-      });
-    }
-    else {
-      deferred.reject(MESSAGES.sessionMemberNotFound);
-    }
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
-  });
+      }
+      else {
+        deferred.reject(MESSAGES.sessionMemberNotFound);
+      }
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
+    });
+  }, function(error) {
+    deferred.reject(error);
+  })
 
   return deferred.promise;
 }

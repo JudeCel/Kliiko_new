@@ -13,6 +13,8 @@ var q = require('q');
 var _ = require('lodash');
 
 var sessionMemberServices = require('./../services/sessionMember');
+var validators = require('./../services/validators');
+
 
 const VALID_ATTRIBUTES = {
   sessionMember: ['id', 'role', 'rating', 'sessionId', 'accountUserId', 'username']
@@ -169,15 +171,15 @@ function prepareAccountRatings(accounts) {
 function removeSession(sessionId, accountId) {
   let deferred = q.defer();
 
-  findSession(sessionId, accountId).then(function(result) {
-    result.data.destroy().then(function() {
-      deferred.resolve(simpleParams(null, MESSAGES.removed));
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
+    findSession(sessionId, accountId).then(function(result) {
+      result.data.destroy().then(function() {
+        deferred.resolve(simpleParams(null, MESSAGES.removed));
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }, function(error) {
+      deferred.reject(error);
     });
-  }, function(error) {
-    deferred.reject(error);
-  });
 
   return deferred.promise;
 };
@@ -185,39 +187,47 @@ function removeSession(sessionId, accountId) {
 function copySession(sessionId, accountId) {
   let deferred = q.defer();
 
-  findSession(sessionId, accountId).then(function(result) {
-    delete result.data.dataValues.id;
+  validators.hasValidSubscription(accountId).then(function() {
+    validators.subscription(accountId, 'session', 1).then(function() {
+      findSession(sessionId, accountId).then(function(result) {
+        delete result.data.dataValues.id;
 
-    Session.create(result.data.dataValues).then(function(session) {
-      let facilitator = result.data.dataValues.facilitator;
-      if(facilitator) {
-        delete facilitator.id;
-        delete facilitator.token;
+        Session.create(result.data.dataValues).then(function(session) {
+          let facilitator = result.data.dataValues.facilitator;
+          if(facilitator) {
+            delete facilitator.id;
+            delete facilitator.token;
 
-        // Not confirmed.
-        copySessionMember(session, facilitator).then(function(copy) {
-          modifySessions(copy, accountId).then(function(result) {
-            deferred.resolve(simpleParams(result, MESSAGES.copied));
-          }, function(error) {
-            deferred.reject(error);
-          });
-        }, function(error) {
-          deferred.reject(error);
+            // Not confirmed.
+            copySessionMember(session, facilitator).then(function(copy) {
+              modifySessions(copy, accountId).then(function(result) {
+                deferred.resolve(simpleParams(result, MESSAGES.copied));
+              }, function(error) {
+                deferred.reject(error);
+              });
+            }, function(error) {
+              deferred.reject(error);
+            });
+          }
+          else {
+            modifySessions(session, accountId).then(function(result) {
+              deferred.resolve(simpleParams(result, MESSAGES.copied));
+            }, function(error) {
+              deferred.reject(error);
+            });
+          }
+        }).catch(function(error) {
+          deferred.reject(filters.errors(error));
         });
-      }
-      else {
-        modifySessions(session, accountId).then(function(result) {
-          deferred.resolve(simpleParams(result, MESSAGES.copied));
-        }, function(error) {
-          deferred.reject(error);
-        });
-      }
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
-    });
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }, function(error) {
+      deferred.reject(error);
+    })
   }, function(error) {
     deferred.reject(error);
-  });
+  })
 
   return deferred.promise;
 };
@@ -229,39 +239,43 @@ function chatRoomUrl() {
 function updateSessionMemberRating(params, userId, accountId) {
   let deferred = q.defer();
 
-  SessionMember.find({
-    where: {
-      id: params.id
-    },
-    attributes: VALID_ATTRIBUTES.sessionMember,
-    returning: true
-  }).then(function(member) {
-    if(member) {
-      AccountUser.find({
-        where: {
-          id: member.accountUserId,
-          UserId: userId,
-          AccountId: accountId
-        }
-      }).then(function(accountUser) {
-        if(accountUser) {
-          deferred.reject(MESSAGES.cantRateSelf);
-        }
-        else {
-          member.update({ rating: params.rating }, { returning: true }).then(function(sessionMember) {
-            deferred.resolve(simpleParams(member, MESSAGES.rated));
-          }).catch(function(error) {
-            deferred.reject(filters.errors(error));
-          });
-        }
-      });
-    }
-    else {
-      deferred.reject(MESSAGES.sessionMemberNotFound);
-    }
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
-  });
+  validators.hasValidSubscription(accountId).then(function() {
+    SessionMember.find({
+      where: {
+        id: params.id
+      },
+      attributes: VALID_ATTRIBUTES.sessionMember,
+      returning: true
+    }).then(function(member) {
+      if(member) {
+        AccountUser.find({
+          where: {
+            id: member.accountUserId,
+            UserId: userId,
+            AccountId: accountId
+          }
+        }).then(function(accountUser) {
+          if(accountUser) {
+            deferred.reject(MESSAGES.cantRateSelf);
+          }
+          else {
+            member.update({ rating: params.rating }, { returning: true }).then(function(sessionMember) {
+              deferred.resolve(simpleParams(member, MESSAGES.rated));
+            }).catch(function(error) {
+              deferred.reject(filters.errors(error));
+            });
+          }
+        });
+      }
+      else {
+        deferred.reject(MESSAGES.sessionMemberNotFound);
+      }
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
+    });
+  }, function(error) {
+    deferred.reject(error);
+  })
 
   return deferred.promise;
 };

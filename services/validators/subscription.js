@@ -52,7 +52,8 @@ function validate(accountId, type, count) {
     include: [{
       model: Subscription,
       where: {
-        accountId: accountId
+        accountId: accountId,
+        active: true
       }
     }]
   }).then(function(preference) {

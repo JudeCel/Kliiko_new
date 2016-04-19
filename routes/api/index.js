@@ -8,6 +8,8 @@ var policy = require('../../middleware/policy.js');
 var sessionMemberMiddleware = require('./../../middleware/sessionMember');
 
 var userRoutes = require('./user');
+var account = require('./account');
+var jwt = require('./jwt');
 var accountUser = require('./accountUser');
 var accountManager = require('./accountManager');
 var promotionCode = require('./promotionCode');
@@ -53,6 +55,8 @@ router.post('/user', userRoutes.userPost);
 router.put('/user', userRoutes.changePassword);
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
 router.get('/accountUser', accountUser.get);
+router.get('/account', account.get);
+router.get('/jwtToken', jwt.getToken);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
 router.post('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.post);

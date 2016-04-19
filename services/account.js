@@ -1,9 +1,11 @@
 'use strict';
 
-var Account  = require('./../models').Account;
+var models = require('./../models')
+var Account  = models.Account;
 var filters = require('./../models/filters');
 var contactListService  = require('./contactList');
 var _ = require('lodash');
+var q = require('q');
 
 function create(object, callback) {
   object.account = {};
@@ -31,7 +33,25 @@ function updateInstance(account, params, callback) {
   });
 }
 
+function findWithSubscription(accountId) {
+  let deferred = q.defer();
+
+  Account.find({
+    where: {
+      id: accountId,
+    },
+    include: [models.Subscription]
+  }).then(function(result) {
+    deferred.resolve(result);
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
 module.exports = {
   create: create,
-  updateInstance: updateInstance
+  updateInstance: updateInstance,
+  findWithSubscription: findWithSubscription
 }
