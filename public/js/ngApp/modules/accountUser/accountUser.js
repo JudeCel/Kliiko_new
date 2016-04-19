@@ -14,22 +14,20 @@
     UserService.getAccountUserData = getAccountUserData;
     return UserService;
 
-    function getAccountUserData(forceUpdate) {
-      dbg.log2('#KliikoApp.user > get all accountuser details');
+    function getAccountUserData() {
+      dbg.log2('#KliikoApp.accountUser > get accountuser');
       var deferred = $q.defer();
 
-      if(accountUser && accountUser.id && !forceUpdate) {
-        dbg.log2('#KliikoApp.user > get all accountuser details > return cached value');
-        deferred.resolve(accountUser);
-        return deferred.promise;
-      }
-
-      dbg.log2('#KliikoApp.user > get all accountuser details > will return value from server');
       accountUserRestApi.get({}, function (res) {
-        dbg.log2('#KliikoApp.user > get all accountuser details > server respond >', res);
-        accountUser = res;
-        fetchRole(accountUser);
-        deferred.resolve(accountUser);
+        dbg.log2('#KliikoApp.accountUser > get accountuser > server respond >', res);
+        if(res.error) {
+          deferred.reject(res.error);
+        }
+        else {
+          accountUser = res;
+          fetchRole(accountUser);
+          deferred.resolve(accountUser);
+        }
       });
 
       return deferred.promise;
