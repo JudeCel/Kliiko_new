@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('BrandColourController', BrandColourController);
 
-  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', 'ngProgressFactory', '$timeout', 'domServices', '$stateParams', '$state'];
-  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, ngProgressFactory, $timeout, domServices, $stateParams, $state) {
+  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', '$timeout', 'domServices', '$stateParams', '$state'];
+  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, $timeout, domServices, $stateParams, $state) {
     dbg.log2('#BrandColourController started');
 
     var vm = this;
@@ -28,11 +28,7 @@
     changePage('index');
 
     function init() {
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
-
       brandColourServices.getAllSchemes().then(function(res) {
-        progressbar.complete();
         vm.schemes = res.data;
         vm.manageFields = res.manageFields;
         vm.hexRegex = new RegExp(res.hexRegex);
@@ -49,12 +45,8 @@
 
     function removeScheme(scheme) {
       angularConfirm('Are you sure you want to remove Scheme?').then(function(response) {
-        var progressbar = ngProgressFactory.createInstance();
-        progressbar.start();
-
         brandColourServices.removeScheme({ id: scheme.id }).then(function(res) {
           dbg.log2('#BrandColourController > removeScheme > res ', res);
-          progressbar.complete();
 
           if(res.error) {
             messenger.error(brandColourServices.prepareError(res.error));
@@ -69,12 +61,8 @@
     };
 
     function copyScheme(scheme) {
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
-
       brandColourServices.copyScheme({ id: scheme.id }).then(function(res) {
         dbg.log2('#BrandColourController > copyScheme > res ', res);
-        progressbar.complete();
 
         if(res.error) {
           messenger.error(brandColourServices.prepareError(res.error));
@@ -105,13 +93,9 @@
     };
 
     function finishCreate() {
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
-
       brandColourServices.createScheme(vm.scheme).then(function(res) {
         dbg.log2('#BrandColourController > finishCreate > res ', res);
 
-        progressbar.complete();
         if(res.error) {
           messenger.error(brandColourServices.prepareError(res.error));
         }
@@ -123,13 +107,9 @@
     };
 
     function finishEdit() {
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
-
       brandColourServices.updateScheme(vm.scheme).then(function(res) {
         dbg.log2('#BrandColourController > finishEdit > res ', res);
 
-        progressbar.complete();
         if(res.error) {
           messenger.error(brandColourServices.prepareError(res.error));
         }

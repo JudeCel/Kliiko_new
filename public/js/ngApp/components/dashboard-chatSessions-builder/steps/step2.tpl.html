@@ -29,7 +29,7 @@
 
                         <div id="topics-list">
                             <div class="topic-list-item" ng-repeat="t in topics.list"
-                                 ng-drag="true" ng-drag-data="t" ng-drag-success="step2Controller.topicsOnDropComplete($data,$event)">
+                                 ng-drag="step2Controller.canDragElement(t)" ng-drag-data="t" ng-drag-success="step2Controller.topicsOnDropComplete($data,$event)">
                                 <div class="panel-label">
                                         <span ng-if="topics.editBlockHelper != $index">
 

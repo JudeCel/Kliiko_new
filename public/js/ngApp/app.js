@@ -115,14 +115,10 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'ngProgressFactory', 'user', '$q', 'accountUser', 'account','$cookies', '$ocLazyLoad', '$injector'];
-  function AppController($rootScope, dbg, ngProgressFactory, user, $q, accountUser, account, $cookies, $ocLazyLoad, $injector) {
+  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$ocLazyLoad', '$injector'];
+  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $ocLazyLoad, $injector) {
     var vm = this;
-    var progressbar = ngProgressFactory.createInstance();
-    progressbar.start();
     dbg.log2('#AppController started ');
-    progressbar.complete();
-
     $rootScope.$on('app.updateUser', init);
 
     init();

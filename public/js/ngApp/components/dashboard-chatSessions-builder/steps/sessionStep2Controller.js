@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep2Controller', SessionStep2Controller);
 
-  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', '$state',  '$filter', 'domServices','$ocLazyLoad', 'ngProgressFactory', '$rootScope', '$scope'];
-  function SessionStep2Controller(dbg, builderServices, messenger, $state, $filter, domServices, $ocLazyLoad, ngProgressFactory,  $rootScope, $scope) {
+  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', '$state',  '$filter', 'domServices','$ocLazyLoad', '$rootScope', '$scope'];
+  function SessionStep2Controller(dbg, builderServices, messenger, $state, $filter, domServices, $ocLazyLoad,  $rootScope, $scope) {
     dbg.log2('#SessionBuilderController 2 started');
 
     var vm = this;
@@ -31,6 +31,22 @@
       vm.session = builderServices.session;
     }
 
+    vm.canDragElement = function(element) {
+      var count = 0;
+      var selected = false;
+      vm.selectedTopics.map(function(item, val) {
+        count++;
+        if (val == element.id) {
+          selected = true;
+        }
+      });
+
+      if (count == 0) {
+        return true;
+      } else {
+        return selected;
+      }
+    }
 
     function topicsOnDropComplete(data, event) {
       if (!data) return;

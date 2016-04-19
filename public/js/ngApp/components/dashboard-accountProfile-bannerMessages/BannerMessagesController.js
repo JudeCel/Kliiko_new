@@ -5,8 +5,8 @@
     module('KliikoApp').
     controller('BannerMessagesController', BannerMessagesController);
 
-  BannerMessagesController.$inject = ['dbg', 'banners', 'ngProgressFactory', '$rootScope', 'messenger'];
-  function BannerMessagesController(dbg, banners, ngProgressFactory, $rootScope, messenger) {
+  BannerMessagesController.$inject = ['dbg', 'banners', '$rootScope', 'messenger'];
+  function BannerMessagesController(dbg, banners, $rootScope, messenger) {
     dbg.log2('#BannerMessagesController controller started');
     var vm = this;
 
@@ -58,20 +58,16 @@
 
       if (!confirmation) return;
 
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
       vm[bannerType+'Banner'] = null;
 
       banners.remove(bannerType).then(
         function(res) {
           dbg.log2('#BannerMessagesController > remove > success', res);
           init();
-          progressbar.complete();
         },
         function(err) {
           dbg.error('#BannerMessagesController > remove > error ', err);
           init();
-          progressbar.complete();
         }
       );
     }
@@ -88,15 +84,10 @@
      * Fetch and populate all banners
      */
     function init() {
-      var InitProgressbar = ngProgressFactory.createInstance();
-      InitProgressbar.start();
-
       banners.getAllBanners().then(function(res) {
         for (var key in res) {
           vm[key+'Banner'] = res[key];
         }
-
-        InitProgressbar.complete();
       });
 
     }
