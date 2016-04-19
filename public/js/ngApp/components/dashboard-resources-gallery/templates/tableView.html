@@ -46,11 +46,10 @@
             <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
           </button>
 
-          <a ng-href='{{ resource.url.full }}' download="name" class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' ng-if='!typeOf.youtube'>
+          <button ng-click="downloadFiles(resource)" class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' ng-if='!typeOf.youtube' download>
             <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>
-          </a>
+          </button>
         </td>
-
       </tr>
     </tbody>
   </table>

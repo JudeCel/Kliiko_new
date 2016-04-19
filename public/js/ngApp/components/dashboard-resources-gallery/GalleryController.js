@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', '$scope', 'domServices', 'messenger', '$sce', 'filterFilter', '$timeout'];
-  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, $sce, filterFilter, $timeout) {
+  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', '$scope', 'domServices', 'messenger', '$sce', 'filterFilter', '$timeout', '$http'];
+  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, $sce, filterFilter, $timeout, $http) {
     dbg.log2('#GalleryController started');
     var vm = this;
 
@@ -58,6 +58,19 @@
       };
     }
 
+    $scope.downloadFiles = function (resource) {
+      console.log("resource");
+      $http({
+        method: 'GET',
+        cache: false,
+        url: resource.url.full,
+        headers: {
+            'Content-Type': 'application/json; charset=utf-8'
+        }
+      }).then(function(resp) {
+        resp.data;
+      })
+    }
     initList();
     $scope.filterType = "";
     $scope.viewType = sessionStorage.getItem('viewType');
