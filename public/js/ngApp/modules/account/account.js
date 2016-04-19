@@ -14,22 +14,20 @@
     UserService.getAccountData = getAccountData;
     return UserService;
 
-    function getAccountData(forceUpdate) {
-      dbg.log2('#KliikoApp.account > get all account details');
+    function getAccountData() {
+      dbg.log2('#KliikoApp.account > get account');
       var deferred = $q.defer();
 
-      if(account && account.id && !forceUpdate) {
-        dbg.log2('#KliikoApp.account > get all account details > return cached value');
-        deferred.resolve(account);
-        return deferred.promise;
-      }
-
-      dbg.log2('#KliikoApp.account > get all account details > will return value from server');
       accountRestApi.get({}, function (res) {
-        dbg.log2('#KliikoApp.account > get all account details > server respond >', res);
-        account = res;
-        fetchSubscription(account);
-        deferred.resolve(account);
+        dbg.log2('#KliikoApp.account > get account > server respond >', res);
+        if(res.error) {
+          deferred.reject(res.error);
+        }
+        else {
+          account = res;
+          fetchSubscription(account);
+          deferred.resolve(account);
+        }
       });
 
       return deferred.promise;
