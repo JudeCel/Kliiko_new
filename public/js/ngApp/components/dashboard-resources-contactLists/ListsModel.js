@@ -84,12 +84,7 @@
      */
     function getAll(params) {
       var deferred = $q.defer();
-
-
       var self = this;
-
-      console.warn(params);
-      
 
       contactListServices.getContactLists(params).then(
         function(res) {
