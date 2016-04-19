@@ -5,8 +5,8 @@
     module('KliikoApp').
     controller('ChangePasswordModalController', ChangePasswordModalController);
 
-  ChangePasswordModalController.$inject = ['dbg', 'user','domServices', 'ngProgressFactory', 'messenger'];
-  function ChangePasswordModalController(dbg,  user, domServices, ngProgressFactory, messenger) {
+  ChangePasswordModalController.$inject = ['dbg', 'user','domServices', 'messenger'];
+  function ChangePasswordModalController(dbg,  user, domServices, messenger) {
     dbg.log2('#ChangePasswordModalController  started');
     var vm = this;
 
