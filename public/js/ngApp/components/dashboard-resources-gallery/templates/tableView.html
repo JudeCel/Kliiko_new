@@ -1,0 +1,57 @@
+<div class='gallery-body col-md-12'>
+  <table class='table table-hover table-responsive'>
+    <tbody>
+      <tr ng-repeat='resource in gc.resourceList | filter: { resourceType: gc.filterType }' ng-init='typeOf = gc.isTypeOf(resource.type)'>
+        <td class='vertical-align-middle'>
+          <input class='margin-left-6' type='checkbox' value='{{ resource.id }}' ng-click="resourcesSelected(resource.id)" ng-model='resource.checked'/>
+        </td>
+
+        <td ng-if='typeOf.video || typeOf.youtube'>
+          <span class='glyphicon glyphicon-facetime-video border-green gallery-list-icon' aria-hidden='true'></span>
+        </td>
+
+        <td ng-if='typeOf.image || typeOf.brandLogo'>
+          <div class='gallery-table-image-box border-green'>
+            <div class='responsive-container'>
+              <div class='dummy'></div>
+
+              <div class='img-container'>
+                <img width='84px' heigth='84px' ng-src='{{ resource.url }}'/>
+              </div>
+            </div>
+          </div>
+        </td>
+
+        <td ng-if='typeOf.audio'>
+          <span class='glyphicon glyphicon-music border-green gallery-list-icon' aria-hidden='true'></span>
+        </td>
+
+        <td ng-if='typeOf.pdf'>
+          <span class='glyphicon glyphicon-file border-green gallery-list-icon' aria-hidden='true'></span>
+        </td>
+
+        <td class='vertical-align-middle'>
+          {{ resource.name }}
+        </td>
+
+        <td class='vertical-align-middle'>
+          <p class='uppercase'>{{ resource.type }}/{{ resource.extension }}</p>
+          <a ng-if='!typeOf.youtube' href="{{ resource.url }}" target='_blank'>
+            {{ resource.url | limitTo: 30 }}{{resource.url.length > 30 ? '...' : ''}}
+          </a>
+        </td>
+
+        <td>
+          <button type='submit' class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' ng-click='gc.deleteResource(resource.id)'>
+            <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+          </button>
+
+          <a ng-href='{{ resource.url }}' download="name" class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' ng-if='!typeOf.youtube'>
+            <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>
+          </a>
+        </td>
+
+      </tr>
+    </tbody>
+  </table>
+</div>

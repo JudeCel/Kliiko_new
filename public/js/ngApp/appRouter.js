@@ -254,36 +254,17 @@
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-gallery/dashboard-content.html"}
         },
-
         resolve: {
           loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
             return $ocLazyLoad.load([
               "/js/ngApp/components/dashboard-resources-gallery/GalleryController.js",
               "/js/ngApp/components/dashboard-resources-gallery/GalleryService.js"
             ]);
-          }],
-
-          checkPermission: ['$q', '$timeout', 'user', 'dbg', 'banners',function($q, $timeout, user, dbg, banners) {
-            var deferred = $q.defer();
-
-            user.canAccess('bannerMessages').then(
-              function(res) {
-                // load rarely needed module: ng-file-upload
-                banners.initUpload().then(function() { deferred.resolve(); });
-
-              },
-
-              function(err) { dbg.warn(err); }
-
-            );
-            return deferred.promise;
           }]
         },
-
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.gallery is on');
         }]
-
       })
 
       .state('dashboard.resources.contactLists', {
