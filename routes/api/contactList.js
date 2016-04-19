@@ -12,7 +12,8 @@ module.exports = {
   destroy: destroy,
   update: update,
   parseImportFile: parseImportFile,
-  importContacts: importContacts
+  importContacts: importContacts,
+  listForInvites: listForInvites
 };
 
 function index(req, res, next) {
@@ -23,6 +24,15 @@ function index(req, res, next) {
     res.send({ error: err });
   });
 };
+
+function listForInvites(req, res, next) {
+  let accaountId = res.locals.currentDomain.id;
+  let sessionId = null;
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+}
 
 // Create Params example
 // {  customFields: ARRAY/optional =>  [ someCustomFieldsName ],
