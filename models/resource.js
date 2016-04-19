@@ -13,8 +13,9 @@ module.exports = (Sequelize, DataTypes) => {
     file: { type: DataTypes.TEXT, allowNull: true },
     audio: { type: DataTypes.TEXT, allowNull: true },
     link: { type: DataTypes.TEXT, allowNull: true },
+    expiryDate: { type: DataTypes.DATE, allowNull: true },
     type: { type: DataTypes.ENUM, allowNull: false,
-      values: [ 'video', 'audio', 'image', 'pdf', 'csv', 'link']
+      values: [ 'video', 'audio', 'image', 'pdf', 'csv', 'link', 'zip']
     },
     scope: { type: DataTypes.ENUM, allowNull: false,
       values: [ 'participant', 'facilitator', 'co-facilitator', 'observer',
@@ -28,7 +29,6 @@ module.exports = (Sequelize, DataTypes) => {
         Resource.belongsTo(models.Topic, { foreignKey: 'topicId' });
         Resource.belongsTo(models.Account, { foreignKey: 'accountId' });
         Resource.belongsTo(models.AccountUser, { foreignKey: 'accountUserId' });
-        // Resource.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId' });
         Resource.hasMany(models.Survey, { foreignKey: 'surveyId' });
         Resource.hasMany(models.Survey, { foreignKey: 'surveyQuestionId' });
       }
