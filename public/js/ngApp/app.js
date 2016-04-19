@@ -116,8 +116,8 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$ocLazyLoad', '$injector', 'ngProgressFactory'];
-  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $ocLazyLoad, $injector) {
+  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$ocLazyLoad', '$injector', 'fileUploader', 'ngProgressFactory'];
+  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $ocLazyLoad, $injector, fileUploader) {
     var vm = this;
     dbg.log2('#AppController started ');
     $rootScope.$on('app.updateUser', init);
@@ -131,6 +131,7 @@
       });
       accountUser.getAccountUserData().then(function(res) { vm.accountUser = res });
       account.getAccountData().then(function(res) { vm.account = res });
+      fileUploader.getToken().then(function(res) { vm.fileUploader = res });
     }
 
     function setSessionStorage(res) {
@@ -153,6 +154,7 @@
         }
         sessionStorage.setItem('landlineNumberCountryData',  landlineNumberIsoCode);
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         vm.user = res;
       });
@@ -162,6 +164,9 @@
 =======
       }
 >>>>>>> 0d2448be1c5cc76aef8886b11938dfd503d8d89c
+=======
+      }
+>>>>>>> 0c4363f09f655e04e1f8ec636e33d5cd9cf5afd8
     }
   }
 
