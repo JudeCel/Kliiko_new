@@ -14,12 +14,16 @@ module.exports = (Sequelize, DataTypes) => {
     audio: { type: DataTypes.TEXT, allowNull: true },
     link: { type: DataTypes.TEXT, allowNull: true },
     expiryDate: { type: DataTypes.DATE, allowNull: true },
+    status: { type: DataTypes.ENUM, allowNull: false,
+      values: [ 'completed', 'progress', 'failed'],
+      defaultValue: 'completed'
+    },
     type: { type: DataTypes.ENUM, allowNull: false,
       values: [ 'video', 'audio', 'image', 'pdf', 'csv', 'link', 'zip']
     },
     scope: { type: DataTypes.ENUM, allowNull: false,
       values: [ 'participant', 'facilitator', 'co-facilitator', 'observer',
-        'report', 'vote', 'collage', 'brandLogo', 'youtubeUrl'
+        'report', 'vote', 'collage', 'brandLogo', 'youtubeUrl', 'zip'
               ]
     }
   }, {
