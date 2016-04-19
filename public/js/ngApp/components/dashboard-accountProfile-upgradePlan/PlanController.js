@@ -4,8 +4,8 @@
   angular.module('KliikoApp').
     controller('PlanController', PlanController);
 
-  PlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams', 'planService', 'user', 'ngProgressFactory', '$scope', 'messenger',  '$rootScope', '$location'];
-  function PlanController(dbg, domServices, $state, $stateParams, planService, user, ngProgressFactory, $scope, messenger, $rootScope, $location) {
+  PlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams', 'planService', 'user', '$scope', 'messenger',  '$rootScope', '$location'];
+  function PlanController(dbg, domServices, $state, $stateParams, planService, user, $scope, messenger, $rootScope, $location) {
     dbg.log2('#PlanController  started');
     var vm = this;
     var urlParams = $location.search();

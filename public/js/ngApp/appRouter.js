@@ -92,16 +92,13 @@
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-bannerMessages/dashboard-content.html"}
         },
         resolve: {
-          checkPermission: ['$q', '$timeout', 'user', 'dbg', 'ngProgressFactory', 'banners',function($q, $timeout, user, dbg, ngProgressFactory, banners) {
+          checkPermission: ['$q', '$timeout', 'user', 'dbg', 'banners',function($q, $timeout, user, dbg, banners) {
             var deferred = $q.defer();
 
             user.canAccess('bannerMessages').then(
               function(res) {
-                var progressbar = ngProgressFactory.createInstance();
-                progressbar.start();
-
                 // load rarely needed module: ng-file-upload
-                banners.initUpload().then(function() { progressbar.complete(); deferred.resolve(); });
+                banners.initUpload().then(function() { deferred.resolve(); });
 
               },
 
@@ -266,16 +263,13 @@
             ]);
           }],
 
-          checkPermission: ['$q', '$timeout', 'user', 'dbg', 'ngProgressFactory', 'banners',function($q, $timeout, user, dbg, ngProgressFactory, banners) {
+          checkPermission: ['$q', '$timeout', 'user', 'dbg', 'banners',function($q, $timeout, user, dbg, banners) {
             var deferred = $q.defer();
 
             user.canAccess('bannerMessages').then(
               function(res) {
-                var progressbar = ngProgressFactory.createInstance();
-                progressbar.start();
-
                 // load rarely needed module: ng-file-upload
-                banners.initUpload().then(function() { progressbar.complete(); deferred.resolve(); });
+                banners.initUpload().then(function() { deferred.resolve(); });
 
               },
 

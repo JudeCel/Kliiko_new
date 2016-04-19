@@ -126,9 +126,9 @@
   };
 
   angular.module('KliikoApp').controller('AccountManagerModalController', AccountManagerModalController);
-  AccountManagerModalController.$inject = ['dbg', '$scope', '$uibModalInstance', 'accountManagerServices', '$rootScope', 'ngProgressFactory'];
+  AccountManagerModalController.$inject = ['dbg', '$scope', '$uibModalInstance', 'accountManagerServices', '$rootScope'];
 
-  function AccountManagerModalController(dbg, $scope, $uibModalInstance, accountManagerServices, $rootScope, ngProgressFactory) {
+  function AccountManagerModalController(dbg, $scope, $uibModalInstance, accountManagerServices, $rootScope) {
     dbg.log2('#AccountManagerModalController started');
 
     $scope.accountUser = {};
@@ -139,12 +139,9 @@
       if($scope.sendingData) return;
 
       $scope.sendingData = true;
-      var progressbar = ngProgressFactory.createInstance();
-      progressbar.start();
       dbg.log2('#AccountManagerModalController > submitForm', $scope.accountUser);
       accountManagerServices.createAccountManager($scope.accountUser).then(function(res) {
         $scope.sendingData = false;
-        progressbar.complete();
         if(res.error) {
           $scope.errors = res.error;
         }
