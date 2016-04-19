@@ -34,7 +34,7 @@
     }
 
     function fetchSubscription(account) {
-      account["isActiveSubscription"] = account.Subscription.active;
+      account["isActiveSubscription"] = account.Subscription ? account.Subscription.active : false;
     }
   }
 })();
