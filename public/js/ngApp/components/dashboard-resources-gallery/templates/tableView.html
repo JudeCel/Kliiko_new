@@ -16,7 +16,7 @@
               <div class='dummy'></div>
 
               <div class='img-container'>
-                <img width='84px' heigth='84px' ng-src='{{ resource.url }}'/>
+                <img width='84px' heigth='84px' ng-src='{{ resource.url.thumb }}'/>
               </div>
             </div>
           </div>
@@ -36,8 +36,8 @@
 
         <td class='vertical-align-middle'>
           <p class='uppercase'>{{ resource.type }}/{{ resource.extension }}</p>
-          <a ng-if='!typeOf.youtube' href="{{ resource.url }}" target='_blank'>
-            {{ resource.url | limitTo: 30 }}{{resource.url.length > 30 ? '...' : ''}}
+          <a ng-if='!typeOf.youtube' href="{{ resource.url.full }}" target='_blank'>
+            {{ resource.url.full | limitTo: 30 }}{{resource.url.full.length > 30 ? '...' : ''}}
           </a>
         </td>
 
@@ -46,7 +46,7 @@
             <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
           </button>
 
-          <a ng-href='{{ resource.url }}' download="name" class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' ng-if='!typeOf.youtube'>
+          <a ng-href='{{ resource.url.full }}' download="name" class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' ng-if='!typeOf.youtube'>
             <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>
           </a>
         </td>
