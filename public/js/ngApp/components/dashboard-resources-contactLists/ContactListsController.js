@@ -7,6 +7,7 @@
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
+    vm.currentStep = null;
     vm.listIdToEdit = null;
     vm.sessionId = null;
     vm.newList = {};
@@ -59,6 +60,7 @@
     vm.onFieldMapDrop = onFieldMapDrop;
     vm.mappingFieldsContinue = mappingFieldsContinue;
     vm.setSessionId = setSessionId;
+    vm.removeAccountManagersIfLastStep = removeAccountManagersIfLastStep;
 
     // required for correct list switching.
     var isSelected = false;
@@ -66,6 +68,11 @@
     function initLists(listType) {
       new ListsModel({sessionId: vm.sessionId}).then(function(result) {
         vm.lists = result;
+
+        if(vm.currentStep == "inviteSessionObservers"){
+          removeAccountManagerList()
+        }
+
         if(listType == 'facilitators') {
           vm.sectListActiveToFacilitators();
         }
@@ -74,6 +81,20 @@
 
     function setSessionId(sessionId) {
       vm.sessionId = sessionId;
+    }
+
+    function removeAccountManagersIfLastStep(currentStep) {
+      vm.currentStep = currentStep;
+    }
+
+    function removeAccountManagerList() {
+      var array = []
+      angular.forEach(vm.lists.items, function(item) {
+        if(item.name != "Account Managers"){
+          array.push(item);
+        }
+      })
+      vm.lists.items = array;
     }
 
     vm.sectListActiveToFacilitators = function() {
