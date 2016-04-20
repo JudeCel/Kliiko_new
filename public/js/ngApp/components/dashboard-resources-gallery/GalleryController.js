@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['dbg', 'GalleryServices', 'domServices', 'messenger'];
-  function GalleryController(dbg, GalleryServices, domServices, messenger) {
+  GalleryController.$inject = ['dbg', 'GalleryServices', 'domServices', 'messenger', '$sce'];
+  function GalleryController(dbg, GalleryServices, domServices, messenger, $sce) {
     dbg.log2('#GalleryController started');
     var vm = this;
 
@@ -32,6 +32,7 @@
     vm.massAction = massAction;
     vm.filterResources = filterResources;
     vm.getFilterResources = getFilterResources;
+    vm.youtubeUrl = youtubeUrl;
 
     function initController() {
       vm.currentPage.viewType = sessionStorage.getItem('viewType') || vm.currentPage.viewType;
@@ -151,6 +152,7 @@
     function filterResources(id) {
       vm.currentPage.filter = id;
       vm.currentList = getFilterResources(id);
+      vm.shouldSelectAllResources = false;
     }
 
     function getFilterResources(filter, key) {
@@ -177,10 +179,14 @@
       return array;
     }
 
+    function youtubeUrl(url) {
+      return $sce.trustAsResourceUrl('http://www.youtube.com/embed/' + url);
+    }
+
     function getSelectedResources(key, filter) {
       var array = [];
-      for(var i in gc.currentList) {
-        var resource = gc.currentList[i];
+      for(var i in vm.currentList) {
+        var resource = vm.currentList[i];
         if(resource.checked) {
           if(key) {
             array.push(resource[key]);

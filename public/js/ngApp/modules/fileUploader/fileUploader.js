@@ -24,7 +24,7 @@
       dbg.log2('#KliikoApp.fileUploader > get token');
 
       fileUploaderApiLocal.get({}, function(res) {
-        dbg.log2('#KliikoApp.fileUploader > get token > server respond >', res);
+        dbg.log2('#KliikoApp.fileUploader > get token > server respond >');
         fileUploader.token = thisToken = res.token;
         pingServer().then(function() {
           console.log("can ping");
