@@ -26,6 +26,7 @@ var gulp = require('gulp'),
   useref = require('gulp-useref'),
   minifyHtml = require('gulp-minify-html'),
   nodeInspector = require('gulp-node-inspector'),
+  clean_css = require('gulp-clean-css'),
   args = require('yargs').argv,
   port = process.env.PORT || config.defaultPort;
 
@@ -226,10 +227,18 @@ gulp.task('clean', function (done) {
 
 var frontendScripts = [
   "public/js/vendors/jQuery/jquery-2.1.4.min.js",
-  "public/js/vendors/angular/1.4.8/angular.js",
-  "public/js/vendors/angular/**/*.min.js",
+  "public/js/vendors/angular/1.4.8/angular.min.js",
+  "public/js/vendors/angular/1.4.8/angular-animate.min.js",
+  "public/js/vendors/angular/1.4.8/angular-aria.min.js",
+  "public/js/vendors/angular/1.4.8/angular-cookies.min.js",
+  "public/js/vendors/angular/1.4.8/angular-loader.min.js",
+  "public/js/vendors/angular/1.4.8/angular-message-format.min.js",
+  "public/js/vendors/angular/1.4.8/angular-messages.min.js",
+  "public/js/vendors/angular/1.4.8/angular-resource.min.js",
+  "public/js/vendors/angular/1.4.8/angular-route.min.js",
+  "public/js/vendors/angular/1.4.8/angular-sanitize.min.js",
+  "public/js/vendors/angular/1.4.8/angular-touch.min.js",
   "public/js/vendors/angular-material/**/*.min.js",
-  "public/js/vendors/moment/moment.js",
   "public/js/vendors/moment/moment.js",
   "public/js/vendors/bootstrap/bootstrap.js",
   "public/js/vendors/bootstrap/bootstrap-show-password.js",
@@ -250,10 +259,34 @@ var frontendScripts = [
   "public/js/ngApp/components/**/*.js",
   "public/js/ngApp/filters/**/*.js",
   "public/js/ngApp/factories/**/*.js"
+
 ]
 
+var frontendStyles = [
+  "public/css/bootstrap-social.css",
+  "public/css/awesome-bootstrap-checkbox.css",
+  "public/css/bootstrap.css",
+  "public/css/bootstrap-theme.css",
+  "public/css/font-awesome.css",
+  "public/css/main.css",
+  "public/css/animate/animate.css",
+  "public/css/colorpicker/colorpicker.min.css",
+  "public/js/vendors/intl-tel-input/src/intlTelInput.css",
+  "public/js/vendors/ngProgress/ngProgress.css",
+  "public/js/vendors/jwysiwyg/jquery.wysiwyg.css",
+  "public/js/vendors/angular-material/1.0.1/angular-material.min.css"
+]
 
-gulp.task('build', function(){
+gulp.task('build-css', function(){
+  return gulp.src(frontendStyles)
+  .pipe(sourcemaps.init())
+  .pipe(clean_css())
+  .pipe(concat('concat.css'))
+  .pipe(sourcemaps.write())
+  .pipe(gulp.dest('public/css/compiled'))
+});
+
+gulp.task('build-js', function(){
   return gulp.src(frontendScripts)
   .pipe(sourcemaps.init())
   .pipe(concat('concat.js'))
@@ -261,17 +294,25 @@ gulp.task('build', function(){
   .pipe(gulp.dest('public/js/compiled'))
 });
 
-gulp.task('build-prod', function(){
+gulp.task('build-js-prod', function(){
   return gulp.src(frontendScripts)
   .pipe(concat('concat.js'))
   .pipe(gulp.dest('public/js/compiled'))
   .pipe(rename('concat.js'))
-  .pipe(uglify({mangle: false}))
+  .pipe(uglify())
   .pipe(gulp.dest('public/js/compiled'))
   .pipe(exit());
 });
 
-gulp.task('default', ['build', 'serve-dev']);
+gulp.task('minify-css', function() {
+  return gulp.src(frontendStyles)
+    .pipe(clean_css({compatibility: 'ie8'}))
+    .pipe(gulp.dest('public/js/compiled'));
+});
+
+gulp.task('default', ['build-js', 'build-css', 'serve-dev']);
+
+gulp.task('build-prod', ['build-css', 'build-js-prod']);
 
 function clean(path, done) {
   log('Cleanening:' + util.colors.blue(path));
