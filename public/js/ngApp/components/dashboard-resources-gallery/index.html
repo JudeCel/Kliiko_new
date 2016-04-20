@@ -5,7 +5,7 @@
         <h2 class='text-center'>Gallery</h2>
       </div>
       <div class='col-md-3 text-right'>
-        <button class='btn btn-addNewElement btn-green gallery-btn-width' type='button' ng-click='gc.changeView()'>
+        <button class='btn btn-addNewElement btn-green gallery-btn-width' type='button' ng-click='gc.changeView(gc.currentPage.viewType)'>
           <span class='{{ gc.currentPage.viewClass }}' aria-hidden='true'></span>
         </button>
 
