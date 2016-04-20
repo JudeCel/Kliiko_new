@@ -46,13 +46,14 @@
       var server = serverData();
       dbg.log2('#KliikoApp.fileUploader > upload file');
 
+      console.log(data);
       Upload.upload({
         url: server.url + 'upload',
         method: 'POST',
         headers: server.headers,
         file: data.file,
         params: {
-          scope: 'collage',
+          scope: data.scope,
           private: data.private,
           type: data.type,
           name: data.name

@@ -11,12 +11,12 @@
     vm.newResource = {};
     vm.currentPage = { page: 'index', viewType: 'panel', viewClass: 'glyphicon glyphicon-th-list', upload: null };
     vm.uploadTypes = [
-      { type: 'image',     text: 'Image',      format: '.gif, .jpeg, .jpg, .png, .bmp' },
-      { type: 'brandLogo', text: 'Brand Logo', format: '.gif, .jpeg, .jpg, .png, .bmp' },
-      { type: 'audio',     text: 'Audio',      format: '.mpeg, .mp3' },
-      { type: 'pdf',       text: 'PDF',        format: '.pdf' },
-      { type: 'video',     text: 'Video',      format: '.oog, .mp4' },
-      { type: 'youtube',   text: 'Youtube',    format: 'url' },
+      { id: 'image',     type: 'image', text: 'Image',      scope: 'collage',   format: '.gif, .jpeg, .jpg, .png, .bmp' },
+      { id: 'brandLogo', type: 'image', text: 'Brand Logo', scope: 'brandLogo', format: '.gif, .jpeg, .jpg, .png, .bmp' },
+      { id: 'audio',     type: 'audio', text: 'Audio',      scope: 'collage',   format: '.mpeg, .mp3' },
+      { id: 'pdf',       type: 'file',  text: 'PDF',        scope: 'pdf',       format: '.pdf' },
+      { id: 'video',     type: 'video', text: 'Video',      scope: 'collage',   format: '.oog, .mp4' },
+      { id: 'youtube',   type: 'link',  text: 'Youtube',    scope: 'youtube',   format: 'url' },
     ];
 
     getResourceList();
@@ -25,7 +25,7 @@
     vm.createResource = createResource;
     vm.changeView = changeView;
     vm.isTypeOf = isTypeOf;
-    vm.getFormatsForUpload = getFormatsForUpload;
+    vm.getUploadType = getUploadType;
     vm.openUploadModal = openUploadModal;
 
     function getResourceList() {
@@ -78,31 +78,33 @@
       sessionStorage.setItem('viewType', vm.currentPage.viewType);
     }
 
-    function isTypeOf(string) {
-      string = string || vm.currentPage.viewType;
+    function isTypeOf(resource) {
       return {
-        panel: string == 'panel',
-        table: string == 'table',
-        image: string == 'image',
-        brandLogo: string == 'brandLogo',
-        audio: string == 'audio',
-        pdf: string == 'pdf',
-        youtube: string == 'youtube'
+        panel: vm.currentPage.viewType == 'panel',
+        table: vm.currentPage.viewType == 'table',
+        image: resource.type == 'image',
+        audio: resource.type == 'audio',
+        video: resource.type == 'video',
+        brandLogo: resource.type == 'image' && resource.scope == 'brandLogo',
+        youtube: resource.type == 'link' && resource.scope == 'youtube',
+        pdf: resource.type == 'file' && resource.scope == 'pdf',
       };
     }
 
-    function getFormatsForUpload() {
+    function getUploadType(id) {
       for(var i in vm.uploadTypes) {
         var upload = vm.uploadTypes[i];
-        if(upload.type == vm.currentPage.upload) {
-          return upload.format;
+        if(upload.id == (id || vm.currentPage.upload)) {
+          return upload;
         }
       }
     }
 
-    function openUploadModal(type) {
-      vm.newResource = { type: type };
-      vm.currentPage.upload = type;
+    function openUploadModal(id) {
+      var upload = getUploadType(id);
+      vm.newResource = { type: upload.type, scope: upload.scope };
+      vm.currentPage.upload = id;
+      console.log(id);
       domServices.modal('uploadResource');
     }
 
@@ -112,15 +114,8 @@
         errors.name = 'No name provided';
       }
 
-      if(isTypeOf().youtube) {
-        if(invalidLength(vm.newResource.youtube)) {
-          errors.youtube = 'No youtube link provided';
-        }
-      }
-      else {
-        if(!vm.newResource.file) {
-          errors.file = 'No file provided';
-        }
+      if(!vm.newResource.file) {
+        errors.file = 'No file provided';
       }
 
       var invalid = Object.keys(errors).length;

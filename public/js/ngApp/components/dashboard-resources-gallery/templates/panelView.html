@@ -1,4 +1,4 @@
-<div ng-repeat='resource in gc.resourceList | filter: { resourceType: gc.filterType }' ng-init='typeOf = gc.isTypeOf(resource.type)'>
+<div ng-repeat='resource in gc.resourceList | filter: { resourceType: gc.filterType }' ng-init='typeOf = gc.isTypeOf(resource)'>
   <div class='col-xs-4'>
     <div class='panel panel-success border-green'>
       <div class='panel-body'>

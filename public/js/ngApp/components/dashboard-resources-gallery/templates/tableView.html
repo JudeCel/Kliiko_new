@@ -1,7 +1,7 @@
 <div class='gallery-body col-md-12'>
   <table class='table table-hover table-responsive'>
     <tbody>
-      <tr ng-repeat='resource in gc.resourceList | filter: { resourceType: gc.filterType }' ng-init='typeOf = gc.isTypeOf(resource.type)'>
+      <tr ng-repeat='resource in gc.resourceList | filter: { resourceType: gc.filterType }' ng-init='typeOf = gc.isTypeOf(resource)'>
         <td class='vertical-align-middle'>
           <input class='margin-left-6' type='checkbox' value='{{ resource.id }}' ng-click='resource.checked = !!resource.checked' ng-model='resource.checked' />
         </td>
