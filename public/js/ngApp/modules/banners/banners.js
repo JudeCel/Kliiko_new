@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp.banners', []).factory('banners', bannersFactory);
 
-  bannersFactory.$inject = ['globalSettings', '$q', '$resource', 'dbg', '$ocLazyLoad', '$injector', '$rootScope'];
-  function bannersFactory(globalSettings, $q, $resource, dbg, $ocLazyLoad, $injector, $rootScope) {
+  bannersFactory.$inject = ['globalSettings', '$q', '$resource', 'dbg', '$injector', '$rootScope'];
+  function bannersFactory(globalSettings, $q, $resource, dbg, $injector, $rootScope) {
     var Upload, bannersCache, currentBannerType;
     var bannersPublicMethods = {};
 
@@ -33,10 +33,8 @@
         return deferred.promise;
       }
 
-      $ocLazyLoad.load(['/js/vendors/ng-file-upload/ng-file-upload.js']).then(function() {
-        Upload = $injector.get('Upload');
-        deferred.resolve();
-      });
+      Upload = $injector.get('Upload');
+      deferred.resolve();
 
       return deferred.promise;
     }
@@ -138,4 +136,3 @@
   }
 
 })();
-
