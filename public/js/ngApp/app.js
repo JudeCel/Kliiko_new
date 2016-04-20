@@ -4,7 +4,6 @@
   var includes = [
     // common modules
     'ngRoute',
-    'oc.lazyLoad',
     'ngResource',
     'ngProgress',
     'ngMaterial',
@@ -116,8 +115,8 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$ocLazyLoad', '$injector', 'fileUploader'];
-  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $ocLazyLoad, $injector, fileUploader) {
+  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader'];
+  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader) {
     var vm = this;
     dbg.log2('#AppController started ');
     $rootScope.$on('app.updateUser', init);
