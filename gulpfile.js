@@ -239,7 +239,7 @@ var frontendScripts = [
   "public/js/vendors/jwysiwyg/controls/wysiwyg.image.js",
   "public/js/vendors/ng-file-upload/ng-file-upload.js",
   "public/js/vendors/ngDraggable/ngDraggable.js",
-  "public/js/vendors/ngProgress/ngProgress.min.js",
+  "public/js/vendors/ngProgress/ngprogress.min.js",
   "public/js/vendors/ui-bootstrap/**/*.min.js",
   "public/js/vendors/ui-router/**/*.js",
   "public/js/ngApp/modules/**/*.js",
