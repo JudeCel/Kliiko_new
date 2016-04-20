@@ -153,6 +153,7 @@ router.delete('/sessionBuilder/:id/removeInvite/:inviteId',  policy.authorized([
 router.delete('/sessionBuilder/:id/removeSessionMember/:sessionMemberId',  policy.authorized(['accountManager', 'admin']), sessionBuilder.removeSessionMember);
 router.post('/sessionBuilder/:id/sendGenericEmail',  policy.authorized(['accountManager', 'admin']), sessionBuilder.sendGenericEmail);
 router.post('/sessionBuilder/:id/addTopics',  policy.authorized(['accountManager', 'admin']), sessionBuilder.addTopics);
+router.post('/sessionBuilder/:id/removeTopic',  policy.authorized(['accountManager', 'admin']), sessionBuilder.removeTopic);
 
 router.post('/sessionBuilder/:id/step/next',  policy.authorized(['accountManager', 'admin']), sessionBuilder.nextStep );
 router.post('/sessionBuilder/:id/step/previous',  policy.authorized(['accountManager', 'admin']), sessionBuilder.prevStep);

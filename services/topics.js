@@ -129,12 +129,8 @@ function removeAllFromSession(sessionId) {
 function removeAllAndAddNew(sessionId, topics) {
   let deferred = q.defer();
 
-  removeAllFromSession(sessionId).then(function() {
-    updateSessionTopics(sessionId, topics).then(function(result) {
-      deferred.resolve(result);
-    }, function(error) {
-      deferred.reject(error);
-    });
+  updateSessionTopics(sessionId, topics).then(function(result) {
+    deferred.resolve(result);
   }, function(error) {
     deferred.reject(error);
   });
