@@ -50,47 +50,31 @@
 
     function topicsOnDropComplete(data, event) {
       if (!data) return;
+      var topicArray = [];
 
-      thisAdd(data);
-
-      // if there more topics selected, then "drop" them also
-      if ( vm.selectedTopics && Object.keys(vm.selectedTopics).length ) {
+      if(vm.selectedTopics.length == 0){
+        topicArray.push(data);
+      }else{
         for (var key in vm.selectedTopics) {
-          thisAdd(vm.selectedTopics[key]);
+          topicArray.push(vm.selectedTopics[key]);
         }
       }
 
-
-      function thisAdd(data) {
-        var topicIds = [];
-
-        // check if this topic already in selected chat session topics list
-        if (vm.chatSessionTopicsList.length) {
-          for (var i = 0; i < vm.chatSessionTopicsList.length ; i++) {
-            if (data.id ==  vm.chatSessionTopicsList[i].id ) return;
+      for (var i = 0; i < vm.chatSessionTopicsList.length; i++) {
+        for (var ii = 0; ii < topicArray.length; ii++) {
+          if(topicArray[ii].id == vm.chatSessionTopicsList[i].id) {
+            return
           }
-          push();
-        } else {
-          push();
-
         }
-
-        function push() {
-          data.order = vm.chatSessionTopicsList.length || 0;
-          vm.chatSessionTopicsList.push(data);
-        }
-
-        vm.session.steps.step2.topics = vm.chatSessionTopicsList;
-
-        for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
-          topicIds.push(vm.chatSessionTopicsList[i].id)
-        }
-
-        vm.session.saveTopics(vm.chatSessionTopicsList).then(null, function (err) {
-            messenger.error(err);
-          }
-        );
       }
+
+      vm.session.saveTopics(topicArray).then(function(results) {
+        angular.forEach(results, function(result) {
+          vm.chatSessionTopicsList.push(result.Topic);
+        })
+      }, function(error) {
+        messenger.error(err);
+      });
     }
 
     function removeTopicFromList(id) {
