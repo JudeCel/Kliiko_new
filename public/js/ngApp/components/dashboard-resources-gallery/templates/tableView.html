@@ -1,7 +1,7 @@
 <div class='gallery-body col-md-12'>
   <table class='table table-hover table-responsive'>
     <tbody>
-      <tr ng-repeat='resource in gc.resourceList | filter: { resourceType: gc.filterType }' ng-init='typeOf = gc.isTypeOf(resource.type)'>
+      <tr ng-repeat='resource in gc.resourceList | filter: { resourceType: gc.filterType }' ng-init='typeOf = gc.isTypeOf(resource)'>
         <td class='vertical-align-middle'>
           <input class='margin-left-6' type='checkbox' value='{{ resource.id }}' ng-click='resource.checked = !!resource.checked' ng-model='resource.checked' />
         </td>
@@ -35,14 +35,13 @@
         </td>
 
         <td class='vertical-align-middle'>
-          <p class='uppercase'>{{ resource.type }}/{{ resource.extension }}</p>
-          <a ng-if='!typeOf.youtube' href="{{ resource.url.full }}" target='_blank'>
-            {{ resource.url.full | limitTo: 30 }}{{resource.url.full.length > 30 ? '...' : ''}}
+          <a href="{{ resource.url.full }}" target='_blank'>
+            <p class='uppercase'>{{ resource.type }}/{{ resource.extension || resource.scope }}</p>
           </a>
         </td>
 
         <td>
-          <button type='submit' class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' ng-click='gc.deleteResources([resource.id])'>
+          <button type='submit' class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' ng-click='gc.removeResources([resource.id])'>
             <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
           </button>
 
