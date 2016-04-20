@@ -24,8 +24,8 @@
           vm.accountUsers = res.data.accountUsers;
           vm.systemUrl = res.systemUrl;
           vm.dateFormat = res.dateFormat;
-
-          if(vm.accountUsers) {
+          
+          if(Object.keys(vm.accountUsers).length) {
             setInitialTab();
           }
           else if(vm.sessions.length > 0) {

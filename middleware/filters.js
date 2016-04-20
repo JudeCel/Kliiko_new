@@ -53,8 +53,7 @@ function myDashboardPage(req, res, next) {
     },
     include: [models.Account]
   }).then(function(accountUsers) {
-
-    if(accountUsers.length == 1) {
+    if(accountUsers.length == 1 && compareRoles(accountUsers[0].role)) {
       res.redirect(subdomains.url(req, accountUsers[0].Account.name, '/dashboard'));
     }
     else {
@@ -63,4 +62,8 @@ function myDashboardPage(req, res, next) {
   }, function(error) {
     res.send({ error: error });
   });
+}
+
+function compareRoles(role) {
+  return role == 'accountManager' || role == 'admin';
 }
