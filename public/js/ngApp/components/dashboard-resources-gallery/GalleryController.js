@@ -27,6 +27,8 @@
     vm.isTypeOf = isTypeOf;
     vm.getUploadType = getUploadType;
     vm.openUploadModal = openUploadModal;
+    vm.selectAllResources = selectAllResources;
+    vm.massAction = massAction;
 
     function getResourceList() {
       GalleryServices.listResources().then(function(result) {
@@ -38,11 +40,12 @@
 
     function removeResources(resourceIds) {
       GalleryServices.removeResources(resourceIds).then(function(result) {
-        messenger.ok(result.message);
         result.ids.map(function(deleted) {
           var removeIndex = vm.resourceList.map(function(resource) { return resource.id; }).indexOf(deleted.id);
           ~removeIndex && vm.resourceList.splice(removeIndex, 1);
         });
+
+        messenger.ok(result.message);
       }, function(error) {
         messenger.error(error);
       });
@@ -108,6 +111,48 @@
       vm.newResource = { type: upload.type, scope: upload.scope };
       vm.currentPage.upload = id;
       domServices.modal('uploadResource');
+    }
+
+    function selectAllResources() {
+      vm.resourceList.map(function(resource) {
+        resource.checked = vm.shouldSelectAllResources;
+      });
+    }
+
+    function massAction(type) {
+      var selectedResources = getSelectedResources('id');
+      if(selectedResources.length) {
+        switch(type) {
+          case 'download':
+
+            break;
+          case 'delete':
+            removeResources(selectedResources);
+            break;
+          default:
+
+        }
+      }
+      else {
+        messenger.error('No resources selected');
+      }
+    }
+
+    function getSelectedResources(key) {
+      var array = [];
+      for(var i in vm.resourceList) {
+        var resource = vm.resourceList[i];
+        if(resource.checked) {
+          if(key) {
+            array.push(resource[key]);
+          }
+          else {
+            array.push(resource);
+          }
+        }
+      }
+
+      return array;
     }
 
     function validateResource(callback) {

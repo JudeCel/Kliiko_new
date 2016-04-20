@@ -59,7 +59,7 @@
         </a>
 
         <div class='pull-right'>
-          <a href='{{ resource.url.full }}' target='_blank' class='btn green-text no-margin negative-top-margin pull-right gallery-btn-width uppercase'>
+          <a ng-if='typeOf.youtube' href='{{ resource.url.full }}' target='_blank' class='btn green-text no-margin negative-top-margin pull-right gallery-btn-width uppercase'>
             <p class='uppercase margin-right-10'>{{ resource.type }}/{{ resource.extension || resource.scope }}</p>
           </a>
         </div>

@@ -29,6 +29,7 @@
 <div class='col-md-12 fixed-bottom-margin'>
   <div class='dashboard-container'>
     {{ typeOf = gc.isTypeOf({}); "" }}
+    <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/filters.html'"></ng-include>
     <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/tableView.html'" ng-if='typeOf.table'></ng-include>
     <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/panelView.html'" ng-if='typeOf.panel'></ng-include>
     <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/modalWindow.html'"></ng-include>
