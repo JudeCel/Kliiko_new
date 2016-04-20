@@ -39,7 +39,10 @@
     function removeResources(resourceIds) {
       GalleryServices.removeResources(resourceIds).then(function(result) {
         messenger.ok(result.message);
-        // remove from view
+        result.ids.map(function(deleted) {
+          var removeIndex = vm.resourceList.map(function(resource) { return resource.id; }).indexOf(deleted.id);
+          ~removeIndex && vm.resourceList.splice(removeIndex, 1);
+        });
       }, function(error) {
         messenger.error(error);
       });
@@ -104,7 +107,6 @@
       var upload = getUploadType(id);
       vm.newResource = { type: upload.type, scope: upload.scope };
       vm.currentPage.upload = id;
-      console.log(id);
       domServices.modal('uploadResource');
     }
 

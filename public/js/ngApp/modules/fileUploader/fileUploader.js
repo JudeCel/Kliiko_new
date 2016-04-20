@@ -46,7 +46,6 @@
       var server = serverData();
       dbg.log2('#KliikoApp.fileUploader > upload file');
 
-      console.log(data);
       Upload.upload({
         url: server.url + 'upload',
         method: 'POST',
@@ -88,7 +87,7 @@
       var deferred = $q.defer();
       dbg.log2('#KliikoApp.fileUploader > remove resource');
 
-      resourceForServer().remove({ resourceIds: resourceIds }, function(result) {
+      resourceForServer('delete').remove({ 'ids[]': resourceIds }, function(result) {
         dbg.log2('#KliikoApp.fileUploader > remove resource > server respond >', result);
         deferred.resolve(result);
       }, function(error) {
@@ -122,8 +121,9 @@
     }
 
     function resourceForServer(path) {
+      path = path || '';
       var server = serverData();
-      return $resource(server.url + path || '', {}, {
+      return $resource(server.url + path, {}, {
         get: { method: 'GET', headers: server.headers },
         remove: { method: 'DELETE', headers: server.headers },
       });

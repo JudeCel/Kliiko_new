@@ -13,9 +13,10 @@
           <label for='name'>Name</label>
           <input ng-model='gc.newResource.name' type='text' class='form-control center-block' name='name' id='name' placeholder='Name' required>
         </div>
+
         <div ng-if='typeOf.youtube' class='form-group'>
           <label for='youtube'>Youtube Url</label>
-          <input ng-model='gc.newResource.youtube' type='text' class='form-control center-block' name='youtube' id='youtube' placeholder='Youtube URL' required>
+          <input ng-model='gc.newResource.file' type='text' class='form-control center-block' name='youtube' id='youtube' placeholder='Youtube URL' required>
         </div>
 
         <div ng-if='!typeOf.youtube' class='form-group'>
@@ -24,7 +25,7 @@
             Drop images here or click to upload
           </div>
 
-          <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
+          <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
           <div class='row'>
             <div class='col-xs-10'>
               <p class='text-max-width'>

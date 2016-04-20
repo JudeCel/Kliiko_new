@@ -50,7 +50,7 @@
 
         {{ resource.name }}
 
-        <button class='btn btn-addNewElement btn-green pull-right margin-only-right-10 gallery-btn-width' ng-click='gc.deleteResources([resource.id])'>
+        <button class='btn btn-addNewElement btn-green pull-right margin-only-right-10 gallery-btn-width' ng-click='gc.removeResources([resource.id])'>
           <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
         </button>
 
@@ -59,8 +59,9 @@
         </a>
 
         <div class='pull-right'>
-          <p ng-if='!typeOf.youtube' class='uppercase margin-right-10'>{{ resource.type }}/{{ resource.extension }}</p>
-          <a ng-if='typeOf.youtube' href='{{ resource.url.full }}' target='_blank' class='btn green-text no-margin negative-top-margin pull-right gallery-btn-width uppercase'>link</a>
+          <a href='{{ resource.url.full }}' target='_blank' class='btn green-text no-margin negative-top-margin pull-right gallery-btn-width uppercase'>
+            <p class='uppercase margin-right-10'>{{ resource.type }}/{{ resource.extension || resource.scope }}</p>
+          </a>
         </div>
       </div>
     </div>
