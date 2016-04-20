@@ -16,7 +16,7 @@
 
         <ul class='dropdown-menu dropdown-menu-right' aria-labelledby='uploadResourceDropdown'>
           <li ng-repeat='upload in gc.uploadTypes'>
-            <a ng-click='uploadResourceForm(upload.type)' data-toggle='modal'>
+            <a ng-click='gc.openUploadModal(upload.type)' data-toggle='modal'>
               {{ upload.text }}
             </a>
           </li>
@@ -28,6 +28,8 @@
 
 <div class='col-md-12 fixed-bottom-margin'>
   <div class='dashboard-container'>
-    <ng-include ng-if='gc.isTypeOf().table' src="'/js/ngApp/components/dashboard-resources-gallery/templates/tableView.html'"></ng-include>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/tableView.html'" ng-if='gc.isTypeOf().table'></ng-include>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/panelView.html'" ng-if='gc.isTypeOf().panel'></ng-include>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/modalWindow.html'"></ng-include>
   </div>
 </div>

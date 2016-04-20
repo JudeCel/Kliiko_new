@@ -3,7 +3,7 @@
     <tbody>
       <tr ng-repeat='resource in gc.resourceList | filter: { resourceType: gc.filterType }' ng-init='typeOf = gc.isTypeOf(resource.type)'>
         <td class='vertical-align-middle'>
-          <input class='margin-left-6' type='checkbox' value='{{ resource.id }}' ng-click="resourcesSelected(resource.id)" ng-model='resource.checked'/>
+          <input class='margin-left-6' type='checkbox' value='{{ resource.id }}' ng-click='resource.checked = !!resource.checked' ng-model='resource.checked' />
         </td>
 
         <td ng-if='typeOf.video || typeOf.youtube'>
@@ -42,13 +42,13 @@
         </td>
 
         <td>
-          <button type='submit' class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' ng-click='gc.deleteResource(resource.id)'>
+          <button type='submit' class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' ng-click='gc.deleteResources([resource.id])'>
             <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
           </button>
 
-          <button ng-click="downloadFiles(resource)" class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' ng-if='!typeOf.youtube' download>
+          <a href='{{ resource.url.full }}' download class='btn btn-addNewElement btn-green pull-right margin-right-10 gallery-btn-width' ng-if='!typeOf.youtube'>
             <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>
-          </button>
+          </a>
         </td>
       </tr>
     </tbody>

@@ -19,6 +19,7 @@
     fileUploaderService.getToken = getToken;
     fileUploaderService.upload = upload;
     fileUploaderService.list = list;
+    fileUploaderService.remove = remove;
     fileUploaderService.pingServer = pingServer;
 
     return fileUploaderService;
@@ -59,7 +60,7 @@
           scope: 'collage',
           private: data.private,
           type: data.type,
-          name: data.title
+          name: data.name
         }
       }).then(function(result) {
         dbg.log2('#KliikoApp.fileUploader > upload file > server respond >', result);
@@ -81,6 +82,21 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > list resources > server error >', error);
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function remove(resourceIds) {
+      var deferred = $q.defer();
+      dbg.log2('#KliikoApp.fileUploader > remove resource');
+
+      resourceForServer().remove({ resourceIds: resourceIds }, function(result) {
+        dbg.log2('#KliikoApp.fileUploader > remove resource > server respond >', result);
+        deferred.resolve(result);
+      }, function(error) {
+        dbg.log2('#KliikoApp.fileUploader > remove resource > server error >', error);
         deferred.reject(error);
       });
 
@@ -111,7 +127,10 @@
 
     function resourceForServer(path) {
       var server = serverData();
-      return $resource(server.url + path, {}, { get: { method: 'GET', headers: server.headers } });
+      return $resource(server.url + path || '', {}, {
+        get: { method: 'GET', headers: server.headers },
+        remove: { method: 'DELETE', headers: server.headers },
+      });
     }
   }
 })();

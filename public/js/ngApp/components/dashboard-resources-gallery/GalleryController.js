@@ -8,27 +8,60 @@
     dbg.log2('#GalleryController started');
     var vm = this;
 
-    vm.currentPage = { page: 'index', viewType: 'panel', viewClass: 'glyphicon glyphicon-th-list' };
+    vm.newResource = {};
+    vm.currentPage = { page: 'index', viewType: 'panel', viewClass: 'glyphicon glyphicon-th-list', upload: null };
     vm.uploadTypes = [
-      { type: 'image',     text: 'Image',      },
-      { type: 'brandLogo', text: 'Brand Logo', },
-      { type: 'audio',     text: 'Audio',      },
-      { type: 'pdf',       text: 'PDF',        },
-      { type: 'video',     text: 'Video',      },
-      { type: 'youtube',   text: 'Youtube',    },
+      { type: 'image',     text: 'Image',      format: '.gif, .jpeg, .jpg, .png, .bmp' },
+      { type: 'brandLogo', text: 'Brand Logo', format: '.gif, .jpeg, .jpg, .png, .bmp' },
+      { type: 'audio',     text: 'Audio',      format: '.mpeg, .mp3' },
+      { type: 'pdf',       text: 'PDF',        format: '.pdf' },
+      { type: 'video',     text: 'Video',      format: '.oog, .mp4' },
+      { type: 'youtube',   text: 'Youtube',    format: 'url' },
     ];
 
     getResourceList();
     vm.getResourceList = getResourceList;
+    vm.removeResources = removeResources;
+    vm.createResource = createResource;
     vm.changeView = changeView;
     vm.isTypeOf = isTypeOf;
+    vm.getFormatsForUpload = getFormatsForUpload;
+    vm.openUploadModal = openUploadModal;
 
     function getResourceList() {
       GalleryServices.listResources().then(function(result) {
-        console.log(result);
         vm.resourceList = result.resources;
       }, function(error) {
-        console.error(error);
+        messenger.error(error);
+      });
+    }
+
+    function removeResources(resourceIds) {
+      GalleryServices.removeResources(resourceIds).then(function(result) {
+        messenger.ok(result.message);
+        // remove from view
+      }, function(error) {
+        messenger.error(error);
+      });
+    }
+
+    function createResource() {
+      validateResource(function(errors) {
+        if(errors) {
+          messenger.error(errors);
+        }
+        else {
+          vm.modalWindowDisabled = true;
+          GalleryServices.createResource(vm.newResource).then(function(result) {
+            vm.modalWindowDisabled = false;
+            vm.resourceList = vm.resourceList.concat(result.data.resources);
+            messenger.ok(result.message);
+            domServices.modal('uploadResource', 'close');
+          }, function(error) {
+            vm.modalWindowDisabled = false;
+            messenger.error(error);
+          });
+        }
       });
     }
 
@@ -58,19 +91,46 @@
       };
     }
 
-    $scope.downloadFiles = function (resource) {
-      console.log("resource");
-      $http({
-        method: 'GET',
-        cache: false,
-        url: resource.url.full,
-        headers: {
-            'Content-Type': 'application/json; charset=utf-8'
+    function getFormatsForUpload() {
+      for(var i in vm.uploadTypes) {
+        var upload = vm.uploadTypes[i];
+        if(upload.type == vm.currentPage.upload) {
+          return upload.format;
         }
-      }).then(function(resp) {
-        resp.data;
-      })
+      }
     }
+
+    function openUploadModal(type) {
+      vm.newResource = { type: type };
+      vm.currentPage.upload = type;
+      domServices.modal('uploadResource');
+    }
+
+    function validateResource(callback) {
+      var errors = {};
+      if(invalidLength(vm.newResource.name)) {
+        errors.name = 'No name provided';
+      }
+
+      if(isTypeOf().youtube) {
+        if(invalidLength(vm.newResource.youtube)) {
+          errors.youtube = 'No youtube link provided';
+        }
+      }
+      else {
+        if(!vm.newResource.file) {
+          errors.file = 'No file provided';
+        }
+      }
+
+      var invalid = Object.keys(errors).length;
+      callback(invalid ? errors : null);
+    }
+
+    function invalidLength(string) {
+      return !(string && string.length);
+    }
+
     initList();
     $scope.filterType = "";
     $scope.viewType = sessionStorage.getItem('viewType');

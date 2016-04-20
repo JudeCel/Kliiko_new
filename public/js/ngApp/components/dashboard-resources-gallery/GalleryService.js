@@ -18,6 +18,7 @@
     upServices.downloadResources = downloadResources;
     upServices.deleteResources = deleteResources;
     upServices.createResource = createResource;
+    upServices.removeResources = removeResources;
     upServices.listResources = listResources;
     upServices.saveYoutubeUrl = saveYoutubeUrl;
     upServices.postuploadData = postuploadData;
@@ -72,6 +73,18 @@
       var deferred = $q.defer();
 
       fileUploader.upload(params).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.resolve(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function removeResources(resourceIds) {
+      var deferred = $q.defer();
+
+      fileUploader.remove(resourceIds).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
         deferred.resolve(error);

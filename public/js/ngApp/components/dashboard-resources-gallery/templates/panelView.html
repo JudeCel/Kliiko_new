@@ -1,0 +1,68 @@
+<div ng-repeat='resource in gc.resourceList | filter: { resourceType: gc.filterType }' ng-init='typeOf = gc.isTypeOf(resource.type)'>
+  <div class='col-xs-4'>
+    <div class='panel panel-success border-green'>
+      <div class='panel-body'>
+        <div class='responsive-container' ng-if='typeOf.youtube'>
+          <div class='dummy'></div>
+
+          <div class='embed-responsive-youtube'>
+            <div class='embed-responsive embed-responsive-4by3'>
+              Needs youtube
+            </div>
+          </div>
+        </div>
+
+        <div class='responsive-container' ng-if='typeOf.image || typeOf.brandLogo'>
+          <div class='dummy'></div>
+
+          <div class='img-container'>
+            <img ng-src='{{ resource.url.thumb }}'/>
+          </div>
+        </div>
+
+        <div class='responsive-container' ng-if='typeOf.audio'>
+          <div class='dummy'></div>
+
+          <div class='img-container'>
+            <span class='glyphicon glyphicon-music icon-200' aria-hidden='true'></span>
+          </div>
+        </div>
+
+        <div class='responsive-container' ng-if='typeOf.video'>
+          <div class='dummy'></div>
+
+          <div class='img-container'>
+            <span class='glyphicon glyphicon-facetime-video icon-200' aria-hidden='true'></span>
+          </div>
+        </div>
+
+        <div class='responsive-container' ng-if='typeOf.pdf'>
+          <div class='dummy'></div>
+
+          <div class='img-container'>
+            <span class='glyphicon glyphicon-file icon-200' aria-hidden='true'></span>
+          </div>
+        </div>
+      </div>
+
+      <div class='panel-footer'>
+        <input class='pull-left col-md-1' type='checkbox' value='{{ resource.id }}' ng-click='resource.checked = !!resource.checked' ng-model='resource.checked' />
+
+        {{ resource.name }}
+
+        <button class='btn btn-addNewElement btn-green pull-right margin-only-right-10 gallery-btn-width' ng-click='gc.deleteResources([resource.id])'>
+          <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+        </button>
+
+        <a href='{{ resource.url.full }}' download ng-if='!typeOf.youtube' class='btn btn-addNewElement btn-green margin-only-right-10 pull-right gallery-btn-width'>
+          <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>
+        </a>
+
+        <div class='pull-right'>
+          <p ng-if='!typeOf.youtube' class='uppercase margin-right-10'>{{ resource.type }}/{{ resource.extension }}</p>
+          <a ng-if='typeOf.youtube' href='{{ resource.url.full }}' target='_blank' class='btn green-text no-margin negative-top-margin pull-right gallery-btn-width uppercase'>link</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
