@@ -84,19 +84,14 @@
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-bannerMessages/dashboard-content.html"}
         },
         resolve: {
-          checkPermission: ['$q', '$timeout', 'user', 'dbg', 'banners',function($q, $timeout, user, dbg, banners) {
+          checkPermission: ['$q', '$timeout', 'accountUser', 'dbg',function($q, $timeout, accountUser, dbg) {
             var deferred = $q.defer();
-
-            user.canAccess('bannerMessages').then(
-              function(res) {
-                // load rarely needed module: ng-file-upload
-                banners.initUpload().then(function() { deferred.resolve(); });
-
-              },
-
-              function(err) { dbg.warn(err); }
-
-            );
+            if(accountUser.isAdmin()) {
+              deferred.resolve();
+            }
+            else {
+              deferred.reject({ error: 'Not an admin' });
+            }
             return deferred.promise;
           }]
         },
@@ -190,23 +185,6 @@
         url: "/gallery",
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-gallery/dashboard-content.html"}
-        },
-        resolve: {
-          checkPermission: ['$q', '$timeout', 'user', 'dbg', 'banners',function($q, $timeout, user, dbg, banners) {
-            var deferred = $q.defer();
-
-            user.canAccess('bannerMessages').then(
-              function(res) {
-                // load rarely needed module: ng-file-upload
-                banners.initUpload().then(function() { deferred.resolve(); });
-
-              },
-
-              function(err) { dbg.warn(err); }
-
-            );
-            return deferred.promise;
-          }]
         },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.gallery is on');

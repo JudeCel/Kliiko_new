@@ -20,6 +20,7 @@
     'ngDraggable',
     'contactList',
     'topicsAndSessions',
+    'ngFileUpload',
 
 
     // app modules
