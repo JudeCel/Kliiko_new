@@ -259,7 +259,6 @@ var frontendScripts = [
   "public/js/ngApp/components/**/*.js",
   "public/js/ngApp/filters/**/*.js",
   "public/js/ngApp/factories/**/*.js"
-
 ]
 
 var frontendStyles = [
@@ -283,6 +282,13 @@ gulp.task('build-css', function(){
   .pipe(clean_css())
   .pipe(concat('concat.css'))
   .pipe(sourcemaps.write())
+  .pipe(gulp.dest('public/css/compiled'))
+});
+
+gulp.task('build-css-prod', function(){
+  return gulp.src(frontendStyles)
+  .pipe(clean_css())
+  .pipe(concat('concat.css'))
   .pipe(gulp.dest('public/css/compiled'))
 });
 
@@ -312,7 +318,7 @@ gulp.task('minify-css', function() {
 
 gulp.task('default', ['build-js', 'build-css', 'serve-dev']);
 
-gulp.task('build-prod', ['build-css', 'build-js-prod']);
+gulp.task('build-prod', ['build-css-prod', 'build-js-prod']);
 
 function clean(path, done) {
   log('Cleanening:' + util.colors.blue(path));
