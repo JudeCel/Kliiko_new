@@ -3,16 +3,15 @@
 
   angular.module('KliikoApp.banners', []).factory('banners', bannersFactory);
 
-  bannersFactory.$inject = ['globalSettings', '$q', '$resource', 'dbg', '$ocLazyLoad', '$injector', '$rootScope'];
-  function bannersFactory(globalSettings, $q, $resource, dbg, $ocLazyLoad, $injector, $rootScope) {
-    var Upload, bannersCache, currentBannerType;
+  bannersFactory.$inject = ['globalSettings', '$q', '$resource', 'dbg', 'Upload', '$rootScope'];
+  function bannersFactory(globalSettings, $q, $resource, dbg, Upload, $rootScope) {
+    var bannersCache, currentBannerType;
     var bannersPublicMethods = {};
 
     var bannerMessagesRestApi = {
       banners: $resource(globalSettings.restUrl +'/banners/:bannerType', {bannerType: '@bannerType'})
     };
 
-    bannersPublicMethods.initUpload = initUpload;
     bannersPublicMethods.getAllBanners = getAllBanners;
     bannersPublicMethods.upload = upload;
     bannersPublicMethods.remove = remove;
@@ -20,26 +19,6 @@
     bannersPublicMethods.setMainBannerForPage = setMainBannerForPage;
 
     return bannersPublicMethods;
-
-    /**
-     * Will load ng-file-upload module, so it can be used here in public methods
-     * @returns {promise.promise|*|jQuery.promise|d.promise|promise|r.promise}
-     */
-    function initUpload() {
-      var deferred = $q.defer();
-
-      if (Upload) {
-        deferred.resolve();
-        return deferred.promise;
-      }
-
-      $ocLazyLoad.load(['/js/vendors/ng-file-upload/ng-file-upload.js']).then(function() {
-        Upload = $injector.get('Upload');
-        deferred.resolve();
-      });
-
-      return deferred.promise;
-    }
 
     /**
      * Fetch all banners
@@ -138,4 +117,3 @@
   }
 
 })();
-

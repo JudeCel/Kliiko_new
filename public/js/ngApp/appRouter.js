@@ -50,14 +50,6 @@
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-upgradePlan/dashboard-content.html"}
         },
-        resolve: {
-          loadDependencies: ['$q', '$ocLazyLoad', function($q, $ocLazyLoad) {
-            return $ocLazyLoad.load([
-              '/js/ngApp/filters/num.js',
-              '/js/ngApp/filters/price.js'
-            ]);
-          }]
-        },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.accountProfile.upgradePlan is on');
         }]
@@ -92,19 +84,14 @@
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-bannerMessages/dashboard-content.html"}
         },
         resolve: {
-          checkPermission: ['$q', '$timeout', 'user', 'dbg', 'banners',function($q, $timeout, user, dbg, banners) {
+          checkPermission: ['$q', '$timeout', 'accountUser', 'dbg',function($q, $timeout, accountUser, dbg) {
             var deferred = $q.defer();
-
-            user.canAccess('bannerMessages').then(
-              function(res) {
-                // load rarely needed module: ng-file-upload
-                banners.initUpload().then(function() { deferred.resolve(); });
-
-              },
-
-              function(err) { dbg.warn(err); }
-
-            );
+            if(accountUser.isAdmin()) {
+              deferred.resolve();
+            }
+            else {
+              deferred.reject({ error: 'Not an admin' });
+            }
             return deferred.promise;
           }]
         },
@@ -130,15 +117,6 @@
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-sessionRating/dashboard-content.html"}
         },
-        resolve: {
-          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
-            return $ocLazyLoad.load([
-              '/js/ngApp/components/dashboard-accountProfile-sessionRating/SessionRatingControllers.js',
-              '/js/ngApp/components/dashboard-accountProfile-sessionRating/sessionRatingServices.js',
-              '/js/ngApp/filters/human2Camel.js'
-            ])
-          }]
-        },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.accountProfile.sessionRating is on');
         }]
@@ -148,14 +126,6 @@
       ///////////////////////// Sessions
       .state('dashboard.chatSessions', {
         url: '/chatSessions',
-        resolve: {
-          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
-            return $ocLazyLoad.load([
-              '/js/ngApp/components/dashboard-chatSessions/ChatSessionsController.js',
-              '/js/ngApp/components/dashboard-chatSessions/chatSessionsServices.js',
-            ]);
-          }]
-        },
         onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location, banners) {
           dbg.rs('chatSessions');
 
@@ -176,44 +146,6 @@
 
       .state('dashboard.chatSessions.builder', {
         url: '/builder/:id',
-        resolve: {
-          loadDependencies: ['dbg', '$ocLazyLoad', function(dbg, $ocLazyLoad) {
-           return $ocLazyLoad.load([
-              '/js/ngApp/components/dashboard-chatSessions-builder/SessionModel.js',
-              '/js/ngApp/components/dashboard-chatSessions-builder/sessionBuilderControllerServices.js',
-              '/js/ngApp/components/dashboard-chatSessions-builder/SessionBuilderController.js',
-              '/js/ngApp/components/dashboard-chatSessions-builder/steps/sessionStep1Controller.js',
-              '/js/ngApp/components/dashboard-chatSessions-builder/steps/sessionStep4-5Controller.js',
-              '/js/ngApp/components/dashboard-chatSessions-builder/steps/sessionStep2Controller.js',
-
-             '/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js',
-             '/js/ngApp/components/dashboard-resources-topics/TopicsController.js',
-
-             '/js/vendors/ngDraggable/ngDraggable.js',
-             '/js/vendors/ng-file-upload/ng-file-upload.js',
-
-              '/js/ngApp/components/dashboard-resources-brandColours/brandColourServices.js',
-              '/js/ngApp/components/dashboard-resources-brandColours/BrandColourController.js',
-
-             '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
-             '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
-             '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
-             '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
-             '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
-             '/js/ngApp/modules/contactList/contactList.js',
-             '/js/ngApp/directives/custom-select-directive.js',
-             '/js/ngApp/filters/num.js',
-             '/js/ngApp/filters/human2Camel.js',
-
-
-              "/js/ngApp/components/dashboard-resources-gallery/GalleryController.js",
-              "/js/ngApp/components/dashboard-resources-gallery/GalleryService.js",
-
-              '/js/ngApp/components/dashboard-resources-emailTemplates/EmailTemplateEditorController.js',
-            ]);
-
-          }]
-        },
         onEnter: ['$state', '$stateParams', 'dbg', '$location', 'banners', function ($state, $stateParams, dbg, $location, banners) {
           dbg.rs('chatSessions builder');
           $stateParams.bannerType = 'sessions';
@@ -254,36 +186,9 @@
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-gallery/dashboard-content.html"}
         },
-
-        resolve: {
-          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
-            return $ocLazyLoad.load([
-              "/js/ngApp/components/dashboard-resources-gallery/GalleryController.js",
-              "/js/ngApp/components/dashboard-resources-gallery/GalleryService.js"
-            ]);
-          }],
-
-          checkPermission: ['$q', '$timeout', 'user', 'dbg', 'banners',function($q, $timeout, user, dbg, banners) {
-            var deferred = $q.defer();
-
-            user.canAccess('bannerMessages').then(
-              function(res) {
-                // load rarely needed module: ng-file-upload
-                banners.initUpload().then(function() { deferred.resolve(); });
-
-              },
-
-              function(err) { dbg.warn(err); }
-
-            );
-            return deferred.promise;
-          }]
-        },
-
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.gallery is on');
         }]
-
       })
 
       .state('dashboard.resources.contactLists', {
@@ -291,23 +196,6 @@
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-contactLists/dashboard-content.html"}
         },
-        resolve: {
-          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
-            return $ocLazyLoad.load([
-              '/js/vendors/ngDraggable/ngDraggable.js',
-              '/js/ngApp/components/dashboard-resources-contactLists/contactListsControllerServices.js',
-              '/js/ngApp/components/dashboard-resources-contactLists/ContactListsController.js',
-              '/js/ngApp/components/dashboard-resources-contactLists/ListsModel.js',
-              '/js/ngApp/components/dashboard-resources-contactLists/ListItemModel.js',
-              '/js/ngApp/components/dashboard-resources-contactLists/ListItemMemberModel.js',
-              '/js/ngApp/modules/contactList/contactList.js',
-              '/js/ngApp/directives/custom-select-directive.js',
-              '/js/vendors/ng-file-upload/ng-file-upload.js',
-              '/js/ngApp/filters/num.js',
-              '/js/ngApp/filters/human2Camel.js'
-
-            ]);
-          }]},
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.contactLists is on');
         }]
@@ -318,14 +206,6 @@
         views: {
           'resourcesContent': { templateUrl: prePath + 'dashboard-resources-contactLists-survey/dashboard-content.html' }
         },
-        resolve: {
-          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
-            return $ocLazyLoad.load([
-              '/js/vendors/ngDraggable/ngDraggable.js',
-              '/js/vendors/ng-file-upload/ng-file-upload.js'
-            ]);
-          }]
-        },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.contactLists.survey is on');
         }]
@@ -335,14 +215,6 @@
         url: "/topics",
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-topics/dashboard-content.html"}
-        },
-        resolve: {
-          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
-            return $ocLazyLoad.load([
-              '/js/ngApp/components/dashboard-resources-topics/TopicsController.js',
-              '/js/ngApp/modules/topicsAndSessions/topicsAndSessions.js'
-            ]);
-          }]
         },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.topics is on');
@@ -370,14 +242,6 @@
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-emailTemplates/dashboard-content.html"}
         },
-        resolve: {
-          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
-            return $ocLazyLoad.load([
-              '/js/ngApp/components/dashboard-resources-emailTemplates/EmailTemplateEditorController.js',
-              '/js/vendors/ng-file-upload/ng-file-upload.js'
-            ]);
-          }]
-        },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.emailTemplates is on');
         }]
@@ -388,14 +252,6 @@
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-resources-emailTemplates/dashboard-content.html"}
         },
-        resolve: {
-          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
-            return $ocLazyLoad.load([
-              '/js/ngApp/components/dashboard-resources-emailTemplates/EmailTemplateEditorController.js',
-              '/js/vendors/ng-file-upload/ng-file-upload.js'
-            ]);
-          }]
-        },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.accountProfile.emailTemplates is on');
         }]
@@ -405,16 +261,6 @@
         url: '/brand-colours/:new?backTo&id',
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-brandColours/dashboard-content.html"}
-        },
-        resolve: {
-          loadDependencies: ['$ocLazyLoad', function($ocLazyLoad) {
-            return $ocLazyLoad.load([
-              '/css/colorpicker/colorpicker.min.css',
-              '/js/ngApp/directives/bootstrap-colorpicker-module.min.js',
-              '/js/ngApp/components/dashboard-resources-brandColours/BrandColourController.js',
-              '/js/ngApp/components/dashboard-resources-brandColours/brandColourServices.js'
-            ]);
-          }]
         },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.brandColours is on');

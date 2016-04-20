@@ -3,13 +3,8 @@
 
   angular.module('KliikoApp.fileUploader', []).factory('fileUploader', fileUploaderFactory);
 
-  fileUploaderFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg', '$ocLazyLoad', '$injector'];
-  function fileUploaderFactory($q, globalSettings, $resource, dbg, $ocLazyLoad, $injector) {
-    var Upload;
-    $ocLazyLoad.load(['/js/vendors/ng-file-upload/ng-file-upload.js']).then(function() {
-      Upload = $injector.get('Upload');
-    });
-
+  fileUploaderFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg', 'Upload'];
+  function fileUploaderFactory($q, globalSettings, $resource, dbg, Upload) {
     var fileUploaderApiLocal = $resource(globalSettings.restUrl + '/jwtToken');
 
     var thisToken = '';
@@ -19,6 +14,7 @@
     fileUploaderService.getToken = getToken;
     fileUploaderService.upload = upload;
     fileUploaderService.list = list;
+    fileUploaderService.remove = remove;
     fileUploaderService.pingServer = pingServer;
 
     return fileUploaderService;
@@ -56,10 +52,10 @@
         headers: server.headers,
         file: data.file,
         params: {
-          scope: 'collage',
+          scope: data.scope,
           private: data.private,
           type: data.type,
-          name: data.title
+          name: data.name
         }
       }).then(function(result) {
         dbg.log2('#KliikoApp.fileUploader > upload file > server respond >', result);
@@ -81,6 +77,21 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > list resources > server error >', error);
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function remove(resourceIds) {
+      var deferred = $q.defer();
+      dbg.log2('#KliikoApp.fileUploader > remove resource');
+
+      resourceForServer('delete').remove({ 'ids[]': resourceIds }, function(result) {
+        dbg.log2('#KliikoApp.fileUploader > remove resource > server respond >', result);
+        deferred.resolve(result);
+      }, function(error) {
+        dbg.log2('#KliikoApp.fileUploader > remove resource > server error >', error);
         deferred.reject(error);
       });
 
@@ -110,8 +121,12 @@
     }
 
     function resourceForServer(path) {
+      path = path || '';
       var server = serverData();
-      return $resource(server.url + path, {}, { get: { method: 'GET', headers: server.headers } });
+      return $resource(server.url + path, {}, {
+        get: { method: 'GET', headers: server.headers },
+        remove: { method: 'DELETE', headers: server.headers },
+      });
     }
   }
 })();

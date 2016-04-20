@@ -1,16 +1,132 @@
 (function () {
   'use strict';
 
-  angular.
-    module('KliikoApp').
-    controller('GalleryController', GalleryController);
+  angular.module('KliikoApp').controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal',
-                               '$scope', 'domServices', 'messenger',
-                               'globalSettings', '$sce', 'filterFilter', '$timeout', 'ngProgressFactory', '$state', '$stateParams'];
+  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', '$scope', 'domServices', 'messenger', '$sce', 'filterFilter', '$timeout', '$http'];
+  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, $sce, filterFilter, $timeout, $http) {
+    dbg.log2('#GalleryController started');
+    var vm = this;
 
-  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, globalSettings, $sce, filterFilter, $timeout, ngProgressFactory, $state, $stateParams){
-    dbg.log2('#GalleryController  started');
+    vm.newResource = {};
+    vm.currentPage = { page: 'index', viewType: 'panel', viewClass: 'glyphicon glyphicon-th-list', upload: null };
+    vm.uploadTypes = [
+      { id: 'image',     type: 'image', text: 'Image',      scope: 'collage',   format: '.gif, .jpeg, .jpg, .png, .bmp' },
+      { id: 'brandLogo', type: 'image', text: 'Brand Logo', scope: 'brandLogo', format: '.gif, .jpeg, .jpg, .png, .bmp' },
+      { id: 'audio',     type: 'audio', text: 'Audio',      scope: 'collage',   format: '.mpeg, .mp3' },
+      { id: 'pdf',       type: 'file',  text: 'PDF',        scope: 'pdf',       format: '.pdf' },
+      { id: 'video',     type: 'video', text: 'Video',      scope: 'collage',   format: '.oog, .mp4' },
+      { id: 'youtube',   type: 'link',  text: 'Youtube',    scope: 'youtube',   format: 'url' },
+    ];
+
+    getResourceList();
+    vm.getResourceList = getResourceList;
+    vm.removeResources = removeResources;
+    vm.createResource = createResource;
+    vm.changeView = changeView;
+    vm.isTypeOf = isTypeOf;
+    vm.getUploadType = getUploadType;
+    vm.openUploadModal = openUploadModal;
+
+    function getResourceList() {
+      GalleryServices.listResources().then(function(result) {
+        vm.resourceList = result.resources;
+      }, function(error) {
+        messenger.error(error);
+      });
+    }
+
+    function removeResources(resourceIds) {
+      GalleryServices.removeResources(resourceIds).then(function(result) {
+        messenger.ok(result.message);
+        result.ids.map(function(deleted) {
+          var removeIndex = vm.resourceList.map(function(resource) { return resource.id; }).indexOf(deleted.id);
+          ~removeIndex && vm.resourceList.splice(removeIndex, 1);
+        });
+      }, function(error) {
+        messenger.error(error);
+      });
+    }
+
+    function createResource() {
+      validateResource(function(errors) {
+        if(errors) {
+          messenger.error(errors);
+        }
+        else {
+          vm.modalWindowDisabled = true;
+          GalleryServices.createResource(vm.newResource).then(function(result) {
+            vm.modalWindowDisabled = false;
+            vm.resourceList = vm.resourceList.concat(result.data.resources);
+            messenger.ok(result.message);
+            domServices.modal('uploadResource', 'close');
+          }, function(error) {
+            vm.modalWindowDisabled = false;
+            messenger.error(error);
+          });
+        }
+      });
+    }
+
+    function changeView(type) {
+      if(vm.currentPage.viewType == 'table') {
+        vm.currentPage.viewType = 'panel';
+        vm.currentPage.viewClass = 'glyphicon glyphicon-th-list';
+      }
+      else {
+        vm.currentPage.viewType = 'table';
+        vm.currentPage.viewClass = 'glyphicon glyphicon-th';
+      }
+
+      sessionStorage.setItem('viewType', vm.currentPage.viewType);
+    }
+
+    function isTypeOf(resource) {
+      return {
+        panel: vm.currentPage.viewType == 'panel',
+        table: vm.currentPage.viewType == 'table',
+        image: resource.type == 'image',
+        audio: resource.type == 'audio',
+        video: resource.type == 'video',
+        brandLogo: resource.type == 'image' && resource.scope == 'brandLogo',
+        youtube: resource.type == 'link' && resource.scope == 'youtube',
+        pdf: resource.type == 'file' && resource.scope == 'pdf',
+      };
+    }
+
+    function getUploadType(id) {
+      for(var i in vm.uploadTypes) {
+        var upload = vm.uploadTypes[i];
+        if(upload.id == (id || vm.currentPage.upload)) {
+          return upload;
+        }
+      }
+    }
+
+    function openUploadModal(id) {
+      var upload = getUploadType(id);
+      vm.newResource = { type: upload.type, scope: upload.scope };
+      vm.currentPage.upload = id;
+      domServices.modal('uploadResource');
+    }
+
+    function validateResource(callback) {
+      var errors = {};
+      if(invalidLength(vm.newResource.name)) {
+        errors.name = 'No name provided';
+      }
+
+      if(!vm.newResource.file) {
+        errors.file = 'No file provided';
+      }
+
+      var invalid = Object.keys(errors).length;
+      callback(invalid ? errors : null);
+    }
+
+    function invalidLength(string) {
+      return !(string && string.length);
+    }
 
     initList();
     $scope.filterType = "";
@@ -125,7 +241,6 @@
 
     function saveResource(newResource){
       if(newResource.fileTst){
-        var progressbar = ngProgressFactory.createInstance();
 
         var resourceParams = {
           title: newResource.title,
@@ -152,7 +267,6 @@
                 messenger.ok("Resource was successfully created.");
                 $scope.submitIsDisabled = false;
               }
-              progressbar.complete();
             })
           }
         })

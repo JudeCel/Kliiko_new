@@ -1,0 +1,36 @@
+<div class='col-md-12'>
+  <div class='dashboard-container'>
+    <div class='row'>
+      <div class='col-md-offset-3 col-md-6'>
+        <h2 class='text-center'>Gallery</h2>
+      </div>
+      <div class='col-md-3 text-right'>
+        <button class='btn btn-addNewElement btn-green gallery-btn-width' type='button' ng-click='gc.changeView()'>
+          <span class='{{ gc.currentPage.viewClass }}' aria-hidden='true'></span>
+        </button>
+
+        <button class='btn btn-addNewElement btn-green gallery-btn-width' id='uploadResourceDropdown' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>
+          <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
+          Add New Resource
+        </button>
+
+        <ul class='dropdown-menu dropdown-menu-right' aria-labelledby='uploadResourceDropdown'>
+          <li ng-repeat='upload in gc.uploadTypes'>
+            <a ng-click='gc.openUploadModal(upload.id)' data-toggle='modal'>
+              {{ upload.text }}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class='col-md-12 fixed-bottom-margin'>
+  <div class='dashboard-container'>
+    {{ typeOf = gc.isTypeOf({}); "" }}
+    <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/tableView.html'" ng-if='typeOf.table'></ng-include>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/panelView.html'" ng-if='typeOf.panel'></ng-include>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/modalWindow.html'"></ng-include>
+  </div>
+</div>

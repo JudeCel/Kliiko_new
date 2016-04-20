@@ -10,9 +10,10 @@
 
     var accountUser = {};
 
-    var UserService = {};
-    UserService.getAccountUserData = getAccountUserData;
-    return UserService;
+    var AccountUserService = {};
+    AccountUserService.getAccountUserData = getAccountUserData;
+    AccountUserService.isAdmin = isAdmin;
+    return AccountUserService;
 
     function getAccountUserData() {
       dbg.log2('#KliikoApp.accountUser > get accountuser');
@@ -31,6 +32,10 @@
       });
 
       return deferred.promise;
+    }
+
+    function isAdmin() {
+      return accountUser.isAdmin;
     }
 
     function fetchRole(accountUser) {
