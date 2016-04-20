@@ -48,7 +48,7 @@ metadata:
 spec:
   ports:
     - port: 80
-      targetPort: 80
+      targetPort: 8080
       protocol: TCP
   selector:
     name: admin
@@ -75,7 +75,7 @@ spec:
         imagePullPolicy: Always
         name: admin
         ports:
-        - containerPort: 3000
+        - containerPort: 8080
         env:
         - name: REDIS_HOST
           value: "redis-master"
@@ -93,8 +93,6 @@ spec:
           value: "www.klzii.com"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
-        - name: SERVER_PORT
-          value: "80"
 ---
 apiVersion: v1
 data:

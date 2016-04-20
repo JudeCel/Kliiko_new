@@ -1,17 +1,76 @@
 (function () {
   'use strict';
 
-  angular.
-    module('KliikoApp').
-    controller('GalleryController', GalleryController);
+  angular.module('KliikoApp').controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal',
-                               '$scope', 'domServices', 'messenger',
-                               'globalSettings', '$sce', 'filterFilter', '$timeout', 'ngProgressFactory', '$state', '$stateParams'];
+  GalleryController.$inject = ['dbg', 'GalleryServices', '$modal', '$scope', 'domServices', 'messenger', '$sce', 'filterFilter', '$timeout', '$http'];
+  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, $sce, filterFilter, $timeout, $http) {
+    dbg.log2('#GalleryController started');
+    var vm = this;
 
-  function GalleryController(dbg, GalleryServices, $modal, $scope, domServices, messenger, globalSettings, $sce, filterFilter, $timeout, ngProgressFactory, $state, $stateParams){
-    dbg.log2('#GalleryController  started');
+    vm.currentPage = { page: 'index', viewType: 'panel', viewClass: 'glyphicon glyphicon-th-list' };
+    vm.uploadTypes = [
+      { type: 'image',     text: 'Image',      },
+      { type: 'brandLogo', text: 'Brand Logo', },
+      { type: 'audio',     text: 'Audio',      },
+      { type: 'pdf',       text: 'PDF',        },
+      { type: 'video',     text: 'Video',      },
+      { type: 'youtube',   text: 'Youtube',    },
+    ];
 
+    getResourceList();
+    vm.getResourceList = getResourceList;
+    vm.changeView = changeView;
+    vm.isTypeOf = isTypeOf;
+
+    function getResourceList() {
+      GalleryServices.listResources().then(function(result) {
+        console.log(result);
+        vm.resourceList = result.resources;
+      }, function(error) {
+        console.error(error);
+      });
+    }
+
+    function changeView(type) {
+      if(vm.currentPage.viewType == 'table') {
+        vm.currentPage.viewType = 'panel';
+        vm.currentPage.viewClass = 'glyphicon glyphicon-th-list';
+      }
+      else {
+        vm.currentPage.viewType = 'table';
+        vm.currentPage.viewClass = 'glyphicon glyphicon-th';
+      }
+
+      sessionStorage.setItem('viewType', vm.currentPage.viewType);
+    }
+
+    function isTypeOf(string) {
+      string = string || vm.currentPage.viewType;
+      return {
+        panel: string == 'panel',
+        table: string == 'table',
+        image: string == 'image',
+        brandLogo: string == 'brandLogo',
+        audio: string == 'audio',
+        pdf: string == 'pdf',
+        youtube: string == 'youtube'
+      };
+    }
+
+    $scope.downloadFiles = function (resource) {
+      console.log("resource");
+      $http({
+        method: 'GET',
+        cache: false,
+        url: resource.url.full,
+        headers: {
+            'Content-Type': 'application/json; charset=utf-8'
+        }
+      }).then(function(resp) {
+        resp.data;
+      })
+    }
     initList();
     $scope.filterType = "";
     $scope.viewType = sessionStorage.getItem('viewType');
@@ -125,7 +184,6 @@
 
     function saveResource(newResource){
       if(newResource.fileTst){
-        var progressbar = ngProgressFactory.createInstance();
 
         var resourceParams = {
           title: newResource.title,
@@ -152,7 +210,6 @@
                 messenger.ok("Resource was successfully created.");
                 $scope.submitIsDisabled = false;
               }
-              progressbar.complete();
             })
           }
         })

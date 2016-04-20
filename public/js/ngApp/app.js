@@ -17,6 +17,10 @@
     'ngCookies',
     'colorpicker.module',
     'internationalPhoneNumber',
+    'ngDraggable',
+    'contactList',
+    'topicsAndSessions',
+
 
     // app modules
     'KliikoApp.user',
@@ -30,9 +34,6 @@
   angular
     .module('KliikoApp', includes)
     .factory('myInterceptor', myInterceptor)
-
-
-
     .config(appConfigs)
     .run(appRun)
     .controller('AppController', AppController);
@@ -155,6 +156,4 @@
       }
     }
   }
-
-
 })();

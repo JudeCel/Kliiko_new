@@ -191,7 +191,6 @@
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-gallery/dashboard-content.html"}
         },
-
         resolve: {
           checkPermission: ['$q', '$timeout', 'user', 'dbg', 'banners',function($q, $timeout, user, dbg, banners) {
             var deferred = $q.defer();
@@ -209,11 +208,9 @@
             return deferred.promise;
           }]
         },
-
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.resources.gallery is on');
         }]
-
       })
 
       .state('dashboard.resources.contactLists', {

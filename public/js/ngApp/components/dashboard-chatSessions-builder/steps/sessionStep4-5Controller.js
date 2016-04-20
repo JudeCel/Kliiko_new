@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep4-5Controller', LastSessionStepController);
 
-  LastSessionStepController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices', '$ocLazyLoad', '$q', '$window', '$rootScope', '$scope'];
-  function LastSessionStepController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $ocLazyLoad, $q, $window,  $rootScope, $scope) {
+  LastSessionStepController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', '$rootScope', '$scope'];
+  function LastSessionStepController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window,  $rootScope, $scope) {
     dbg.log2('#SessionBuilderController 4-5 started');
 
     var vm = this;

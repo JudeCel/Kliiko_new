@@ -1,3 +1,7 @@
+<section id='GalleryController' ng-controller='GalleryController as gc'>
+  <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/' + gc.currentPage.page + '.html'"></ng-include>
+</section>
+
 <section id='GalleryController' ng-controller='GalleryController'>
   <form ng-submit="submitIdsForMassAction(action)">
 
