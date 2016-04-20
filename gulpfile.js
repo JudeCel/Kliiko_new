@@ -18,6 +18,11 @@ var gulp = require('gulp'),
   templateCache = require('gulp-angular-templatecache'),
   imagemin = require('gulp-imagemin'),
   concat = require('gulp-concat'),
+  uglify = require('gulp-uglify'),
+  sourcemaps = require('gulp-sourcemaps'),
+  rename = require('gulp-rename'),
+  order = require('gulp-order'),
+  exit = require('gulp-exit'),
   useref = require('gulp-useref'),
   minifyHtml = require('gulp-minify-html'),
   nodeInspector = require('gulp-node-inspector'),
@@ -219,8 +224,54 @@ gulp.task('clean', function (done) {
   clean(files, done)
 });
 
-gulp.task('default', ['serve-dev']);
+var frontendScripts = [
+  "public/js/vendors/jQuery/jquery-2.1.4.min.js",
+  "public/js/vendors/angular/1.4.8/angular.js",
+  "public/js/vendors/angular/**/*.min.js",
+  "public/js/vendors/angular-material/**/*.min.js",
+  "public/js/vendors/moment/moment.js",
+  "public/js/vendors/moment/moment.js",
+  "public/js/vendors/bootstrap/bootstrap.js",
+  "public/js/vendors/bootstrap/bootstrap-show-password.js",
+  "public/js/vendors/international-phone-number/**/*.js",
+  "public/js/vendors/intl-tel-input/**/*.js",
+  "public/js/vendors/jwysiwyg/jquery.wysiwyg.js",
+  "public/js/vendors/jwysiwyg/controls/wysiwyg.image.js",
+  "public/js/vendors/ng-file-upload/ng-file-upload.js",
+  "public/js/vendors/ngDraggable/ngDraggable.js",
+  "public/js/vendors/ngProgress/ngProgress.min.js",
+  "public/js/vendors/ui-bootstrap/**/*.min.js",
+  "public/js/vendors/ui-router/**/*.js",
+  "public/js/ngApp/modules/**/*.js",
+  "public/js/ngApp/app.js",
+  "public/js/ngApp/settings/appGlobalSettings.js",
+  "public/js/ngApp/directives/**/*.js",
+  "public/js/ngApp/appRouter.js",
+  "public/js/ngApp/components/**/*.js",
+  "public/js/ngApp/filters/**/*.js",
+  "public/js/ngApp/factories/**/*.js"
+]
 
+
+gulp.task('build', function(){
+  return gulp.src(frontendScripts)
+  .pipe(sourcemaps.init())
+  .pipe(concat('concat.js'))
+  .pipe(sourcemaps.write())
+  .pipe(gulp.dest('public/js/compiled'))
+});
+
+gulp.task('build-prod', function(){
+  return gulp.src(frontendScripts)
+  .pipe(concat('concat.js'))
+  .pipe(gulp.dest('public/js/compiled'))
+  .pipe(rename('concat.js'))
+  .pipe(uglify({mangle: false}))
+  .pipe(gulp.dest('public/js/compiled'))
+  .pipe(exit());
+});
+
+gulp.task('default', ['build', 'serve-dev']);
 
 function clean(path, done) {
   log('Cleanening:' + util.colors.blue(path));
