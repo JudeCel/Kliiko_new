@@ -19,11 +19,11 @@ module.exports = (Sequelize, DataTypes) => {
       defaultValue: 'completed'
     },
     type: { type: DataTypes.ENUM, allowNull: false,
-      values: [ 'video', 'audio', 'image', 'pdf', 'csv', 'link', 'zip']
+      values: [ 'video', 'audio', 'image', 'file', 'link']
     },
     scope: { type: DataTypes.ENUM, allowNull: false,
       values: [ 'participant', 'facilitator', 'co-facilitator', 'observer',
-        'report', 'vote', 'collage', 'brandLogo', 'youtubeUrl', 'zip'
+        'report', 'vote', 'collage', 'brandLogo', 'youtubeUrl', 'zip', 'pdf', 'csv'
               ]
     }
   }, {
