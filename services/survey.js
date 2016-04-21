@@ -6,7 +6,6 @@ var Survey = models.Survey;
 var Resource = models.Resource;
 var SurveyQuestion = models.SurveyQuestion;
 var SurveyAnswer = models.SurveyAnswer;
-var Resource = models.Resource;
 var ContactList = models.ContactList;
 var validators = require('./../services/validators');
 var contactListUserServices = require('./../services/contactListUser');
@@ -80,28 +79,11 @@ function findAllSurveys(account) {
       ['id', 'asc'],
       [SurveyQuestion, 'order', 'ASC']
     ],
-    include: [
-      {
-        model: Resource
-      },
-      {
+    include: [{
       model: SurveyQuestion,
       attributes: VALID_ATTRIBUTES.question,
-      include: [{
-        model: Resource
-      }]
     }]
   }).then(function(surveys) {
-    surveys.forEach(function(survey, index, array) {
-      if(survey.Resource){
-        survey.Resource.JSON = JSON.parse(decodeURI(survey.Resource.JSON));
-      }
-      survey.SurveyQuestions.forEach(function(question, index, array) {
-        if(question.Resource){
-          question.Resource.JSON = JSON.parse(decodeURI(question.Resource.JSON));
-        }
-      });
-    });
     deferred.resolve(simpleParams(surveys));
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(filters.errors(error));
@@ -727,7 +709,7 @@ function validAnswerParams(params) {
 
 function bulkUpdateQuestions(surveyId, questions, t) {
   let deferred = q.defer();
-  
+
   questions.forEach(function(question, index, array) {
     if(question.id && question.surveyId) {
       SurveyQuestion.update(question, {

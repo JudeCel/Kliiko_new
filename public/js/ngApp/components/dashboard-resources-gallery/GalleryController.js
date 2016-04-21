@@ -3,13 +3,16 @@
 
   angular.module('KliikoApp').controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['dbg', 'GalleryServices', 'domServices', 'messenger', '$sce'];
-  function GalleryController(dbg, GalleryServices, domServices, messenger, $sce) {
+  GalleryController.$inject = ['$q', 'dbg', 'GalleryServices', 'domServices', 'messenger', '$sce', '$scope'];
+  function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce, $scope) {
     dbg.log2('#GalleryController started');
     var vm = this;
 
+    vm.templatesDir = '/js/ngApp/components/dashboard-resources-gallery/templates/';
     vm.newResource = {};
     vm.resourceList = [];
+    $scope.addedList = [];
+    vm.galleryScope = $scope;
     vm.currentList = [];
     vm.currentPage = { page: 'index', viewType: 'panel', viewClass: 'glyphicon glyphicon-th-list', upload: null, filter: null };
     vm.uploadTypes = [
@@ -42,6 +45,7 @@
       vm.currentPage.viewClass = sessionStorage.getItem('viewClass') || vm.currentPage.viewClass;
 
       GalleryServices.listResources().then(function(result) {
+        vm.currentPage.main = true;
         vm.resourceList = result.resources;
         filterResources(vm.currentPage.filter);
       }, function(error) {
@@ -81,12 +85,18 @@
     }
 
     function refreshResource(resource) {
+      let deferred = $q.defer();
+
       GalleryServices.refreshResource(resource.id).then(function(result) {
         resource = result.data;
         messenger.ok(result.message);
+        deferred.resolve(resource);
       }, function(error) {
         messenger.error(error);
+        deferred.reject(error);
       });
+
+      return deferred.promise;
     }
 
     function createResource() {
@@ -98,6 +108,7 @@
           vm.modalWindowDisabled = true;
           GalleryServices.createResource(vm.newResource).then(function(result) {
             closeModalAndSetVariables(result.data);
+            $scope.addedList.push(result.data.resource);
           }, function(error) {
             vm.modalWindowDisabled = false;
             messenger.error(error);
