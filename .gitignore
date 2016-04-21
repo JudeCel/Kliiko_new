@@ -1,5 +1,7 @@
 /public/uploads
 /public/js/compiled/*
+/public/css/compiled/*
+/public/css/main.css
 /modelsTmp
 /node_modules/*
 /bower_components/*

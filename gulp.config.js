@@ -5,6 +5,7 @@ module.exports = function () {
     var server = './bin/';
     var views = './views/';
 
+
     var config = {
 
         config: 'config/**/*.*',

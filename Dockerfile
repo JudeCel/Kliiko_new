@@ -9,8 +9,7 @@ COPY package.json /var/www/klzii
 
 COPY . /var/www/klzii
 
-RUN npm install --quiet && gulp build-prod
-
+RUN npm install --quiet && ./node_modules/gulp/bin/gulp.js build-prod
 
 EXPOSE 8080
 
