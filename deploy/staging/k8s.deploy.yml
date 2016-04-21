@@ -68,7 +68,7 @@ spec:
       labels:
         name: admin
         env: staging
-        version: "0.0.8"
+        version: "0.0.15"
     spec:
       containers:
       - image: "944561038201.dkr.ecr.us-west-2.amazonaws.com/klzii_main:latest"
