@@ -1,0 +1,41 @@
+.table-no-inside-borders{
+  tbody > tr > td{
+    border: none !important;
+  }
+}
+
+.table-dashboardElements {
+  border: 0;
+  border-collapse: separate;
+  border-spacing: 0px 10px;
+  margin-top: -10px;
+  margin-bottom: 0px;
+}
+
+.table-dashboardElements > thead {
+  color: white;
+  background-color: $blue;
+}
+
+.table-dashboardElements > tbody {
+  background-color: $light-grey;
+  .dashboardElementsEditRemove {
+    min-width: 15%;
+  }
+
+  tr.session-pending {
+    background-color: #E6E6E6;
+  }
+
+  tr.session-open {
+    background-color: #D6E9DF;
+  }
+}
+
+.table-dashboardElements > thead > tr > th,
+.table-dashboardElements > tbody > tr > td {
+  vertical-align: middle;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  border: 0;
+}

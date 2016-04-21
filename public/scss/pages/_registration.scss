@@ -1,0 +1,104 @@
+#signup {
+  .has-error {
+  color: #f00;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 370px;
+  display: inline-block;
+}
+  .btn-radius-padding-left {
+    padding-left: 25px !important;
+  }
+  .btn-radius-text {
+    font-size: 16px !important;
+    padding-right: 30px;
+  }
+  .singup-btn-size {
+  height: 45px;
+  }
+  .form-control {
+    border-width: 2px;
+    height: 40px;
+    border-radius: 0;
+  }
+  .checkbox-signup {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 8px;
+    padding-left: 9px;
+    font-size: 13px;
+  }
+
+  input[class=checkbox-login] {
+    display: none; }
+
+  input[class=checkbox-login] + label {
+    background: url("/icons/login_checkbox.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    margin-top: 1px;
+    margin-left: 0;
+    margin-bottom: 0;
+    background-size: contain;
+  }
+
+  input[class=checkbox-login]:checked + label {
+    background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    background-size: contain;
+    margin-top: 1px;
+  }
+
+  .table {
+
+    td {
+      padding-left: 2px;
+      padding-right: 5px;
+      border: 1px solid #f00;
+      margin-left: -25px;
+
+      &:first-of-type {
+      padding-right: 15px;
+      white-space: nowrap;
+    }
+
+      &.error-column {
+        padding: 0;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        height: 17px;
+      }
+    }
+  }
+  .table-v-content-middle {
+
+    td{
+      vertical-align: middle;
+    }
+  }
+}
+
+/*Blue checkbox could be outside registration/login scope*/
+input[class=checkbox-blue] {
+    display: none; 
+}
+
+input[class=checkbox-blue] + label {
+background: url("/icons/checkbox_blue.jpg") no-repeat;
+height: 22px;
+width: 22px;
+margin-top: 1px;
+margin-left: 0;
+margin-bottom: 0;
+background-size: contain;
+}
+
+input[class=checkbox-blue]:checked + label {
+background: url("/icons/checkbox_blue_chk.jpg") no-repeat;
+height: 22px;
+width: 22px;
+background-size: contain;
+margin-top: 1px;
+}
+

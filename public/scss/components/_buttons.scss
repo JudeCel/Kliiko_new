@@ -1,0 +1,204 @@
+.remove-link-line > a {
+  text-decoration: none;
+}
+.btn-md {
+  height: 45px;
+}
+
+.tabs-links {
+  margin-bottom: 30px;
+}
+
+.btn-dashboard-menu {
+  background-color: inherit;
+  //width: 13%;
+  min-width: 49px;
+  height: 36px;
+  margin-left: 36px;
+  margin-top: 30px;
+  cursor: pointer;
+
+
+  &.btn-green {
+    color: $green;
+    border-color: $green;
+    background: white;
+
+    &:hover {
+      color: $greenHover;
+      border-color: $greenHover;
+    }
+    &.active {
+      color: white;
+      border-color: $green;
+      background: $green;
+    }
+  }
+
+  &.btn-short {
+    min-width: 0 !important;
+    max-width: 100px;
+  }
+  padding-top: 4px;
+  padding-left: 15px;
+  vertical-align: middle;
+  border: 2px solid $blue;
+  border-radius: 0px;
+  font-family: SourceSansPro-Regular;
+  color: $blue;
+  line-height: 26px;
+  text-align: left;
+
+  &:hover{
+    color: $blueHover;
+    border-color: $blueHover;
+  }
+
+  > img {
+    margin-left: 14px;
+  }
+}
+
+
+.btn-dashboard-menu.active {
+  color: white;
+  background-color: $blue;
+
+  img {
+    padding: 25px 25px 0px 0px;
+    background-size: auto;
+    width: 0px;
+    height: 0px;
+  }
+
+  img.upgrade {
+    background-image: url('/icons/upgrade_white.png');
+  }
+
+  img.account-manager {
+    background-image: url('/icons/account_manager_white.png');
+  }
+}
+
+
+.btn-header-dropdown {
+  margin-left: 10px;
+  padding-right: 15px;
+  padding-left: 15px;
+  font-family: SourceSansPro-Regular;
+  height: 36px;
+  border-radius: 0px;
+  border: none;
+  color: white;
+  background-color: $yellow;
+  font-weight: bold;
+  text-shadow: 2px 2px $grey;
+}
+
+.btn-header-green {
+  @extend .btn-header-dropdown;
+  background-color: #4CB649;
+}
+
+.btn-header-red {
+  @extend .btn-header-dropdown;
+  background-color: $red;
+}
+
+.btn-addNewElement {
+  @extend .btn-dashboard-menu;
+  width: auto;
+  margin: 0;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.btn-simple {
+  margin-left: 10px;
+  font-family: SourceSansPro-Regular;
+  height: 36px;
+  border-radius: 0px;
+  background-color: inherit;
+}
+
+.btn-standart {
+  display: initial;
+  padding: 9px;
+  border: 2px solid lightgrey;
+  cursor: pointer;
+  background: white;
+
+  &.btn-red {
+    color: $red;
+    border-color: $red !important;
+  }
+
+  &.btn-blue {
+    color: $blue;
+    border-color: $blue !important;
+  }
+
+  &.btn-blue {
+    color: $blue;
+    border-color: $blue !important;
+
+    &:hover {
+      color: white;
+      border-color: $blue !important;
+      background: $blue;
+    }
+  }
+
+  &.btn-green {
+    color: $green;
+    border-color: $green !important;
+
+    &:hover {
+      color: white;
+      border-color: $green !important;
+      background: $green;
+    }
+  }
+
+  &.btn-text-middle {
+    font-size: 80%;
+  }
+
+  &.btn-x {
+    padding: 1px 6px !important;
+  }
+
+  &.btn-glyphonic {
+    padding: 3px 4px 1px 4px;
+  }
+}
+
+.btn-forbidden, .btn-disabled, .disabled {
+  cursor: not-allowed !important;
+}
+//////
+
+//checkbox
+/* CHECKBOX */
+input.kliiko-checkbox {
+  display: none;
+}
+
+input.kliiko-checkbox + label {
+  max-width: none;
+  background: url("/icons/login_checkbox.jpeg") no-repeat;
+  height: 22px;
+  width: 22px;
+  margin-top: 0;
+  margin-left: 0;
+  margin-bottom: -5px;
+  background-size: contain;
+}
+
+input.kliiko-checkbox:checked + label{
+  background: url("/icons/login_checkbox_chk.jpeg") no-repeat;
+  height: 22px;
+  width: 22px;
+  background-size: contain;
+  //margin-top: 1px;
+}

@@ -1,0 +1,99 @@
+.changePasswordModal {
+  width: 20%;
+  padding-top: 100px;
+}
+
+.contactDetailsModal {
+  width: 60%;
+  padding-top: 100px;
+   .table td {
+    padding-left: 2px;
+    padding-right: 5px;
+    border: 1px solid #f00;
+    margin-left: -25px;
+    max-width: 215px;
+
+        &:first-of-type {
+        padding-right: 15px;
+        white-space: nowrap;
+      }
+      &.error-column {
+        padding: 0;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        height: 17px;
+      }
+  }
+
+  h2 { margin: 16px }
+
+  input.form-control {
+    border-width: 2px;
+    height: 40px;
+    border-radius: 0;
+  }
+  .modal-header {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .modal-body {
+    padding-top: 0;
+  }
+  /* RADIO BUTTON */
+  input[type="radio"]:checked + span{
+    &:after{
+      background: $red !important;
+      border:2px solid $red !important;
+    }
+  }
+
+/* CHECKBOX */
+  input[class=checkbox-login] {
+    display: none;
+  }
+
+  input[class=checkbox-login] + label {
+    background: url("/icons/checkbox-out.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    margin-top: 0px;
+    margin-left: 0;
+    margin-bottom: -5px;
+    background-size: contain;
+  }
+
+  input[class=checkbox-login]:checked + label {
+    background: url("/icons/checkbox-in.jpeg") no-repeat;
+    height: 22px;
+    width: 22px;
+    background-size: contain;
+    margin-top: 1px;
+  }
+}
+
+.accountDatabaseCommentModal {
+  @extend .contactDetailsModal;
+  width: 400px;
+  padding-top: 100px;
+}
+
+.surveyPreviewModal {
+  @extend .contactDetailsModal;
+  width: 800px;
+  padding-bottom: 100px;
+  padding-top: 100px;
+}
+
+.brandColourPreviewModal {
+  @extend .contactDetailsModal;
+  width: 35%;
+  padding-bottom: 100px;
+  padding-top: 100px;
+}
+
+@media (max-width: 768px) {
+  .accountDatabaseCommentModal,
+  .surveyPreviewModal {
+    width: auto;
+  }
+}
