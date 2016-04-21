@@ -30,16 +30,9 @@ gulp.task('serve-dev', ['build-js', 'build-css'], function () {
   app.set('port', port);
   var server = http.createServer(app);
   server.listen(port);
+  console.log("Server started on port: " + port);
 });
 
-gulp.task('build-sass', function () {
-  return gulp
-    .src(config.sass)
-    .pipe(plumber())
-    .pipe(sass())
-    .pipe(autoprefixer({browsers: ['last 2 version', '> 5%']}))
-    .pipe(gulp.dest(config.css));
-});
 
 gulp.task('watch', ['watch-css', 'watch-js']);
 
@@ -130,7 +123,7 @@ gulp.task('build-css', ['build-sass'], function(){
   .pipe(gulp.dest('public/css/compiled'))
 });
 
-gulp.task('build-css-prod', function(){
+gulp.task('build-css-prod', ['build-sass'], function(){
   return gulp.src(frontendStyles)
   .pipe(clean_css())
   .pipe(concat('concat.css'))
@@ -161,5 +154,13 @@ gulp.task('minify-css', function() {
     .pipe(gulp.dest('public/js/compiled'));
 });
 
+gulp.task('build-sass', function () {
+  return gulp
+    .src(config.sass)
+    .pipe(plumber())
+    .pipe(sass())
+    .pipe(autoprefixer({browsers: ['last 2 version', '> 5%']}))
+    .pipe(gulp.dest(config.css));
+});
 
 gulp.task('build-prod', ['build-css-prod', 'build-js-prod']);
