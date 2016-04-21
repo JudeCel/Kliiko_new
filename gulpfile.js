@@ -50,7 +50,7 @@ gulp.task('watch-css', function () {
 });
 
 gulp.task('watch-js', function () {
-  watch(['**/*.js', "!public/js/compiled/**/*.js"], batch(function (events, done) {
+  watch(['public/js/**/*.js', "!public/js/compiled/**/*.js"], batch(function (events, done) {
     gulp.start('build-js', done);
   }));
 });
@@ -150,7 +150,7 @@ gulp.task('build-js-prod', function(){
   .pipe(concat('concat.js'))
   .pipe(gulp.dest('public/js/compiled'))
   .pipe(rename('concat.js'))
-  .pipe(uglify({mangle: false}))
+  .pipe(uglify())
   .pipe(gulp.dest('public/js/compiled'))
   .pipe(exit());
 });
