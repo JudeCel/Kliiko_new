@@ -15,7 +15,7 @@
         </button>
 
         <ul class='dropdown-menu dropdown-menu-right' aria-labelledby='uploadResourceDropdown'>
-          <li ng-repeat='upload in gc.uploadTypes'>
+          <li ng-repeat='upload in gc.uploadTypes' ng-if='upload.format'>
             <a ng-click='gc.openUploadModal(upload.id)' data-toggle='modal'>
               {{ upload.text }}
             </a>
@@ -29,9 +29,9 @@
 <div class='col-md-12 fixed-bottom-margin'>
   <div class='dashboard-container'>
     {{ typeOf = gc.isTypeOf({}); "" }}
-    <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/filters.html'"></ng-include>
-    <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/tableView.html'" ng-if='typeOf.table'></ng-include>
-    <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/panelView.html'" ng-if='typeOf.panel'></ng-include>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/filters.html'" id='filter-view'></ng-include>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/tableView.html'" ng-if='typeOf.table' id='table-view'></ng-include>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/panelView.html'" ng-if='typeOf.panel' id='panel-view'></ng-include>
     <ng-include src="'/js/ngApp/components/dashboard-resources-gallery/templates/modalWindow.html'"></ng-include>
   </div>
 </div>

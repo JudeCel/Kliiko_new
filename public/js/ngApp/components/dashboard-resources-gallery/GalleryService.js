@@ -9,6 +9,8 @@
     upServices.listResources = listResources;
     upServices.createResource = createResource;
     upServices.removeResources = removeResources;
+    upServices.zipResources = zipResources;
+    upServices.refreshResource = refreshResource;
 
     return upServices;
 
@@ -40,6 +42,30 @@
       var deferred = $q.defer();
 
       fileUploader.remove(resourceIds).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.resolve(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function zipResources(resourceIds, name) {
+      var deferred = $q.defer();
+
+      fileUploader.zip(resourceIds, name).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.resolve(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function refreshResource(resourceId) {
+      var deferred = $q.defer();
+
+      fileUploader.refresh(resourceId).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
         deferred.resolve(error);

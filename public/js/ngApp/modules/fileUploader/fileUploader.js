@@ -15,6 +15,8 @@
     fileUploaderService.upload = upload;
     fileUploaderService.list = list;
     fileUploaderService.remove = remove;
+    fileUploaderService.zip = zip;
+    fileUploaderService.refresh = refresh;
     fileUploaderService.pingServer = pingServer;
 
     return fileUploaderService;
@@ -85,13 +87,43 @@
 
     function remove(resourceIds) {
       var deferred = $q.defer();
-      dbg.log2('#KliikoApp.fileUploader > remove resource');
+      dbg.log2('#KliikoApp.fileUploader > remove resources');
 
-      resourceForServer('delete').remove({ 'ids[]': resourceIds }, function(result) {
-        dbg.log2('#KliikoApp.fileUploader > remove resource > server respond >', result);
+      resourceForServer('delete').delete({ 'ids[]': resourceIds }, function(result) {
+        dbg.log2('#KliikoApp.fileUploader > remove resources > server respond >', result);
         deferred.resolve(result);
       }, function(error) {
-        dbg.log2('#KliikoApp.fileUploader > remove resource > server error >', error);
+        dbg.log2('#KliikoApp.fileUploader > remove resources > server error >', error);
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function zip(resourceIds, name) {
+      var deferred = $q.defer();
+      dbg.log2('#KliikoApp.fileUploader > zip resources');
+
+      resourceForServer('zip').post({ 'ids': resourceIds, name: name }, function(result) {
+        dbg.log2('#KliikoApp.fileUploader > zip resources > server respond >', result);
+        deferred.resolve(result);
+      }, function(error) {
+        dbg.log2('#KliikoApp.fileUploader > zip resources > server error >', error);
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function refresh(resourceId) {
+      var deferred = $q.defer();
+      dbg.log2('#KliikoApp.fileUploader > refresh resource');
+
+      resourceForServer('show/' + resourceId).get({}, function(result) {
+        dbg.log2('#KliikoApp.fileUploader > refresh resource > server respond >', result);
+        deferred.resolve(result);
+      }, function(error) {
+        dbg.log2('#KliikoApp.fileUploader > refresh resource > server error >', error);
         deferred.reject(error);
       });
 
@@ -125,7 +157,8 @@
       var server = serverData();
       return $resource(server.url + path, {}, {
         get: { method: 'GET', headers: server.headers },
-        remove: { method: 'DELETE', headers: server.headers },
+        delete: { method: 'DELETE', headers: server.headers },
+        post: { method: 'POST', headers: server.headers },
       });
     }
   }

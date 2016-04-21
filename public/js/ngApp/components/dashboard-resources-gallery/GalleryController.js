@@ -19,10 +19,13 @@
       { id: 'pdf',       type: 'file',  text: 'PDF',        scope: 'pdf',       format: '.pdf' },
       { id: 'video',     type: 'video', text: 'Video',      scope: 'collage',   format: '.oog, .mp4' },
       { id: 'youtube',   type: 'link',  text: 'Youtube',    scope: 'youtube',   format: 'url' },
+      { id: 'zip',       type: 'file',  text: 'Achive',     scope: 'zip',       format: null },
     ];
 
     vm.init = initController;
     vm.removeResources = removeResources;
+    vm.zipResources = zipResources;
+    vm.refreshResource = refreshResource;
     vm.createResource = createResource;
     vm.changeView = changeView;
     vm.isTypeOf = isTypeOf;
@@ -60,6 +63,32 @@
       });
     }
 
+    function zipResources() {
+      validateResource(function(errors) {
+        if(errors) {
+          messenger.error(errors);
+        }
+        else {
+          vm.modalWindowDisabled = true;
+          GalleryServices.zipResources(vm.newResource.file, vm.newResource.name).then(function(result) {
+            closeModalAndSetVariables(result);
+          }, function(error) {
+            vm.modalWindowDisabled = false;
+            messenger.error(error);
+          });
+        }
+      });
+    }
+
+    function refreshResource(resource) {
+      GalleryServices.refreshResource(resource.id).then(function(result) {
+        resource = result.data;
+        messenger.ok(result.message);
+      }, function(error) {
+        messenger.error(error);
+      });
+    }
+
     function createResource() {
       validateResource(function(errors) {
         if(errors) {
@@ -68,11 +97,7 @@
         else {
           vm.modalWindowDisabled = true;
           GalleryServices.createResource(vm.newResource).then(function(result) {
-            vm.modalWindowDisabled = false;
-            vm.resourceList.push(result.data.resource);
-            domServices.modal('uploadResource', 'close');
-            filterResources(vm.currentPage.filter);
-            messenger.ok(result.data.message);
+            closeModalAndSetVariables(result.data);
           }, function(error) {
             vm.modalWindowDisabled = false;
             messenger.error(error);
@@ -105,6 +130,7 @@
         brandLogo: resource.type == 'image' && resource.scope == 'brandLogo',
         youtube: resource.type == 'link' && resource.scope == 'youtube',
         pdf: resource.type == 'file' && resource.scope == 'pdf',
+        zip: resource.type == 'file' && resource.scope == 'zip',
       };
     }
 
@@ -135,7 +161,8 @@
       if(selectedResources.length) {
         switch(type) {
           case 'download':
-
+            openUploadModal('zip');
+            vm.newResource.file = selectedResources;
             break;
           case 'delete':
             removeResources(selectedResources);
@@ -216,6 +243,14 @@
 
     function invalidLength(string) {
       return !(string && string.length);
+    }
+
+    function closeModalAndSetVariables(data) {
+      vm.modalWindowDisabled = false;
+      vm.resourceList.push(data.resource);
+      domServices.modal('uploadResource', 'close');
+      filterResources(vm.currentPage.filter);
+      messenger.ok(data.message);
     }
   }
 })();

@@ -11,7 +11,7 @@ var sampleSurvey = {
   "description":"Welcome to the sample survey, please fill all answers.",
   "thanks": "Thank you for participating in this survey!",
   "closed":false,
-  "SurveyQuestion":[
+  "SurveyQuestions":[
     {
       "name":"Question number 1",
       "type":"radio",
