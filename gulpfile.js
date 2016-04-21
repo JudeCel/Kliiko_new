@@ -143,9 +143,7 @@ gulp.task('build-js-prod', function(){
   .pipe(concat('concat.js'))
   .pipe(gulp.dest('public/js/compiled'))
   .pipe(rename('concat.js'))
-  .pipe(uglify({mangle: false}))
   .pipe(gulp.dest('public/js/compiled'))
-  .pipe(exit());
 });
 
 gulp.task('minify-css', function() {
@@ -160,7 +158,10 @@ gulp.task('build-sass', function () {
     .pipe(plumber())
     .pipe(sass())
     .pipe(autoprefixer({browsers: ['last 2 version', '> 5%']}))
+    .pipe(uglify({mangle: false}))
     .pipe(gulp.dest(config.css));
 });
 
-gulp.task('build-prod', ['build-css-prod', 'build-js-prod']);
+gulp.task('build-prod', ['build-css-prod', 'build-js-prod'], function(){
+  return gulp.src("").pipe(exit())
+});
