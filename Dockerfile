@@ -1,4 +1,4 @@
-FROM node:argon
+FROM node:5.10.1-wheezy
 
 RUN apt-get install libstdc++6
 

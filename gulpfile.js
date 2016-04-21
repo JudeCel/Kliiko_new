@@ -142,10 +142,9 @@ gulp.task('build-js-prod', function(){
   return gulp.src(frontendScripts)
   .pipe(concat('concat.js'))
   .pipe(gulp.dest('public/js/compiled'))
+  .pipe(uglify({mangle: false}))
   .pipe(rename('concat.js'))
-  .pipe(uglify())
   .pipe(gulp.dest('public/js/compiled'))
-  .pipe(exit());
 });
 
 gulp.task('minify-css', function() {
@@ -163,4 +162,6 @@ gulp.task('build-sass', function () {
     .pipe(gulp.dest(config.css));
 });
 
-gulp.task('build-prod', ['build-css-prod', 'build-js-prod']);
+gulp.task('build-prod', ['build-css-prod', 'build-js-prod'], function(){
+  return gulp.src("").pipe(exit())
+});
