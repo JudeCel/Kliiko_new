@@ -143,7 +143,7 @@ gulp.task('build-js-prod', function(){
   .pipe(concat('concat.js'))
   .pipe(gulp.dest('public/js/compiled'))
   .pipe(rename('concat.js'))
-  .pipe(uglify())
+  .pipe(uglify({mangle: false}))
   .pipe(gulp.dest('public/js/compiled'))
   .pipe(exit());
 });
