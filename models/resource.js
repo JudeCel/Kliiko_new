@@ -34,7 +34,7 @@ module.exports = (Sequelize, DataTypes) => {
         Resource.belongsTo(models.Account, { foreignKey: 'accountId' });
         Resource.belongsTo(models.AccountUser, { foreignKey: 'accountUserId' });
         Resource.hasMany(models.Survey, { foreignKey: 'surveyId' });
-        Resource.hasMany(models.Survey, { foreignKey: 'surveyQuestionId' });
+        Resource.hasMany(models.SurveyQuestion, { foreignKey: 'surveyQuestionId' });
       }
     }
   });
