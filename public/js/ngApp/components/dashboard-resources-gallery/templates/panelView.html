@@ -2,64 +2,49 @@
   <div class='col-xs-4'>
     <div class='panel panel-success border-green'>
       <div class='panel-body'>
-        <div class='responsive-container' ng-if='typeOf.youtube'>
-          <div class='dummy'></div>
-
-          <div class='embed-responsive-youtube'>
-            <iframe type='text/html' ng-src='{{ gc.youtubeUrl(resource.url.full) }}' frameBorder='0' />
-          </div>
+        <div class='row text-center' ng-if='typeOf.youtube'>
+          <iframe type='text/html' ng-src='{{ gc.youtubeUrl(resource.url.full) }}' frameBorder='0' />
         </div>
 
-        <div class='responsive-container' ng-if='typeOf.image || typeOf.brandLogo'>
-          <div class='dummy'></div>
-
-          <div class='img-container'>
-            <img ng-src='{{ resource.url.thumb }}'/>
-          </div>
+        <div class='row text-center' ng-if='typeOf.image || typeOf.brandLogo'>
+          <img ng-src='{{ resource.url.thumb }}'/>
         </div>
 
-        <div class='responsive-container' ng-if='typeOf.audio'>
-          <div class='dummy'></div>
-
-          <div class='img-container'>
-            <span class='glyphicon glyphicon-music icon-200' aria-hidden='true'></span>
-          </div>
+        <div class='row text-center' ng-if='typeOf.audio'>
+          <span class='glyphicon glyphicon-music' aria-hidden='true'></span>
         </div>
 
-        <div class='responsive-container' ng-if='typeOf.video'>
-          <div class='dummy'></div>
-
-          <div class='img-container'>
-            <span class='glyphicon glyphicon-facetime-video icon-200' aria-hidden='true'></span>
-          </div>
+        <div class='row text-center' ng-if='typeOf.video'>
+          <span class='glyphicon glyphicon-facetime-video' aria-hidden='true'></span>
         </div>
 
-        <div class='responsive-container' ng-if='typeOf.pdf'>
-          <div class='dummy'></div>
-
-          <div class='img-container'>
-            <span class='glyphicon glyphicon-file icon-200' aria-hidden='true'></span>
-          </div>
+        <div class='row text-center' ng-if='typeOf.pdf'>
+          <span class='glyphicon glyphicon-file' aria-hidden='true'></span>
         </div>
       </div>
 
       <div class='panel-footer'>
-        <input class='pull-left col-md-1' type='checkbox' value='{{ resource.id }}' ng-click='resource.checked = !!resource.checked' ng-model='resource.checked' />
+        <div class='row'>
+          <div class='col-xs-6 panel-name'>
+            <input type='checkbox' ng-click='resource.checked = !!resource.checked' ng-model='resource.checked' />
+            {{ resource.name }}
+          </div>
 
-        {{ resource.name }}
+          <div class='col-xs-6'>
+            <button class='btn btn-addNewElement btn-green pull-right gallery-btn-width' ng-click='gc.removeResources([resource.id])'>
+              <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+            </button>
 
-        <button class='btn btn-addNewElement btn-green pull-right margin-only-right-10 gallery-btn-width' ng-click='gc.removeResources([resource.id])'>
-          <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
-        </button>
+            <a href='{{ resource.url.full }}' download ng-if='!typeOf.youtube' class='btn btn-addNewElement btn-green pull-right gallery-btn-width'>
+              <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>
+            </a>
 
-        <a href='{{ resource.url.full }}' download ng-if='!typeOf.youtube' class='btn btn-addNewElement btn-green margin-only-right-10 pull-right gallery-btn-width'>
-          <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>
-        </a>
-
-        <div class='pull-right'>
-          <a ng-if='typeOf.youtube' href='{{ resource.url.full }}' target='_blank' class='btn green-text no-margin negative-top-margin pull-right gallery-btn-width uppercase'>
-            <p class='uppercase margin-right-10'>{{ resource.type }}/{{ resource.extension || resource.scope }}</p>
-          </a>
+            <div class='pull-right'>
+              <a ng-if='typeOf.youtube' href='{{ resource.url.full }}' target='_blank' class='btn btn-addNewElement btn-green pull-right text-uppercase'>
+                <p class='text-uppercase'>{{ resource.scope }}</p>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>

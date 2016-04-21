@@ -1,21 +1,22 @@
-<div class='col-md-12 category-selection'>
-  <div class='col-md-6 margin-bottom-10'>
-    <input id='selectAll' ng-click='gc.selectAllResources()' name='selectAll' type='checkbox' value='selectAll' ng-model='gc.shouldSelectAllResources' />
-    <label for='selectAll' class='margin-right-10'>Select All</label>
+<div class='col-md-12'>
+  <div class='row'>
+    <div id='select-section' class='col-md-6'>
+      <input id='selectAll' ng-click='gc.selectAllResources()' name='selectAll' type='checkbox' value='selectAll' ng-model='gc.shouldSelectAllResources' />
+      <label for='selectAll'>Select All</label>
 
-    <button type='submit' class='btn btn-addNewElement btn-green no-margin gallery-btn-width' ng-click="gc.massAction('delete')">
-      <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
-    </button>
-    <button type='submit' class='btn btn-addNewElement btn-green no-margin gallery-btn-width' ng-click="gc.massAction('download')">
-      <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>
-    </button>
+      <button type='submit' class='btn btn-addNewElement btn-green gallery-btn-width' ng-click="gc.massAction('delete')">
+        <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+      </button>
+      <button type='submit' class='btn btn-addNewElement btn-green gallery-btn-width' ng-click="gc.massAction('download')">
+        <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>
+      </button>
+    </div>
+
+    <div id='filter-section' class='col-md-6'>
+      <a class='pull-right green-text' ng-click='gc.filterResources()'>All({{ gc.getFilterResources().length }})</a>
+      <a class='pull-right green-text' ng-repeat='upload in gc.uploadTypes' ng-click='gc.filterResources(upload.id)'>
+        {{ upload.text }}({{ gc.getFilterResources(upload.id, 'id').length }})
+      </a>
+    </div>
   </div>
-
-  <div class='col-md-6 no-padding'>
-    <a class='pull-right green-text' ng-click='gc.filterResources()'>All({{ gc.getFilterResources().length }})</a>
-    <a class='pull-right margin-right-10 green-text' ng-repeat='upload in gc.uploadTypes' ng-click='gc.filterResources(upload.id)'>
-      {{ upload.text }}({{ gc.getFilterResources(upload.id, 'id').length }})
-    </a>
-  </div>
-
 </div>
