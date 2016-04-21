@@ -142,6 +142,7 @@ gulp.task('build-js-prod', function(){
   return gulp.src(frontendScripts)
   .pipe(concat('concat.js'))
   .pipe(gulp.dest('public/js/compiled'))
+  .pipe(uglify({mangle: false}))
   .pipe(rename('concat.js'))
   .pipe(gulp.dest('public/js/compiled'))
 });
@@ -158,7 +159,6 @@ gulp.task('build-sass', function () {
     .pipe(plumber())
     .pipe(sass())
     .pipe(autoprefixer({browsers: ['last 2 version', '> 5%']}))
-    .pipe(uglify({mangle: false}))
     .pipe(gulp.dest(config.css));
 });
 
