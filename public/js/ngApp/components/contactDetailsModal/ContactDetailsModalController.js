@@ -96,6 +96,7 @@
         // countrySelected(data);
 
         vm.errors = {};
+        delete data.id;
         user.updateUserData(data, form).then(function (res) {
           vm.updateBtn = 'Updated';
           form.$setPristine();
