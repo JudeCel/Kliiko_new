@@ -89,11 +89,18 @@
 
     function removeAccountManagerList() {
       var array = []
+      var activeList = null;
+
       angular.forEach(vm.lists.items, function(item) {
+        if(item.name == "Facilitators"){
+          activeList = item;
+        }
+
         if(item.name != "Account Managers"){
           array.push(item);
         }
       })
+      vm.lists.activeList = activeList;
       vm.lists.items = array;
     }
 
