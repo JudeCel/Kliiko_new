@@ -48,46 +48,59 @@
       }
     }
 
+    function isTopicAdded(topic) {
+      var present = false;
+      vm.chatSessionTopicsList.map(function(item){
+        if (topic.id == item.id) {
+          present = true;
+        }
+      });
+      return present;
+    }
+
     function topicsOnDropComplete(data, event) {
       if (!data) return;
       var topicArray = [];
 
       if(vm.selectedTopics.length == 0){
-        topicArray.push(data);
+        if (!isTopicAdded(data)) {
+          topicArray.push(data);
+        }
       }else{
         for (var key in vm.selectedTopics) {
-          topicArray.push(vm.selectedTopics[key]);
-        }
-      }
-
-      for (var i = 0; i < vm.chatSessionTopicsList.length; i++) {
-        for (var ii = 0; ii < topicArray.length; ii++) {
-          if(topicArray[ii].id == vm.chatSessionTopicsList[i].id) {
-            return
+          if (!isTopicAdded(vm.selectedTopics[key])) {
+            topicArray.push(vm.selectedTopics[key]);
           }
         }
       }
 
+      if (topicArray.length == 0) return;
+
       vm.session.saveTopics(topicArray).then(function(results) {
         angular.forEach(results, function(result) {
-          vm.chatSessionTopicsList.push(result.Topic);
-        })
+          if (!isTopicAdded(result.Topic)) {
+            vm.chatSessionTopicsList.push(result.Topic);
+          }
+        });
       }, function(error) {
         messenger.error(err);
       });
     }
 
-    function removeTopicFromList(id) {
+    function removeTopicFromLocalList(id) {
       for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
         if ( id ==  vm.chatSessionTopicsList[i].id ) {
           vm.chatSessionTopicsList.splice(i, 1);
           break;
         }
       }
+    }
 
-      vm.session.saveTopics(vm.chatSessionTopicsList).then(
+    function removeTopicFromList(id) {
+      vm.session.removeTopic(id).then(
         function (res) {
           dbg.log2('topic removed');
+          removeTopicFromLocalList(id);
         },
         function (err) {
           messenger.error(err);
