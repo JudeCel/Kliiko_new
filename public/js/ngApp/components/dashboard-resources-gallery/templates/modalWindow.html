@@ -5,7 +5,7 @@
       <div class='modal-header'>
         <button type='button' class='close' data-dismiss='modal'>&times;</button>
         <h2 class='modal-title text-center'>New resource.</h2>
-        <p class='modal-title text-center' ng-if='!typeOf.youtube'>Maximum file size is 5MB.</p>
+        <p class='modal-title text-center' ng-if='!typeOf.youtube && !typeOf.zip'>Maximum file size is 5MB.</p>
       </div>
 
       <div class='modal-body'>
@@ -19,7 +19,7 @@
           <input ng-model='gc.newResource.file' type='text' class='form-control center-block' name='youtube' id='youtube' placeholder='Youtube URL' required>
         </div>
 
-        <div ng-if='!typeOf.youtube' class='form-group'>
+        <div ng-if='!typeOf.youtube && !typeOf.zip' class='form-group'>
           <label for='file'>File</label>
           <div ngf-drop ngf-select ng-model='gc.newResource.file' class='drop-box' ngf-drag-over-class="'dragover'" accept='{{ gc.getUploadType().format }}'>
             Drop images here or click to upload
@@ -45,7 +45,8 @@
 
       <div class='modal-footer'>
         <button class='btn btn-addNewElement pull-left btn-green gallery-btn-width' data-dismiss='modal'>Cancel</button>
-        <button class='btn btn-addNewElement pull-right btn-green gallery-btn-width' ng-click='gc.createResource()' ng-disabled='gc.modalWindowDisabled'>Submit</button>
+        <button ng-if='!typeOf.zip' class='btn btn-addNewElement pull-right btn-green gallery-btn-width' ng-click='gc.createResource()' ng-disabled='gc.modalWindowDisabled'>Submit</button>
+        <button ng-if='typeOf.zip' class='btn btn-addNewElement pull-right btn-green gallery-btn-width' ng-click='gc.zipResources()' ng-disabled='gc.modalWindowDisabled'>Archivate</button>
       </div>
     </div>
   </div>
