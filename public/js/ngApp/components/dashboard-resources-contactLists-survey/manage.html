@@ -1,6 +1,6 @@
 <div class='col-md-12 fixed-bottom-margin' id='GalleryController' ng-controller='GalleryController as gc'>
   <div>
-    {{ uploadTypes = sc.uploadTypes[gc.currentModal.set]; "" }}
+    {{ upload = sc.galleryDropdownData(gc.currentModalSet); "" }}
     <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
   </div>
 

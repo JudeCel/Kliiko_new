@@ -1,4 +1,4 @@
-<div class='modal fade' id='uploadResource' role='dialog' ng-if='gc.currentModal.upload'>
+<div class='modal fade' id='uploadResource' role='dialog' ng-if='upload.modal.upload'>
   <div class='modal-dialog changePasswordModal' >
     <div class='modal-content border-green border-radius-none'>
       {{ typeOf = gc.isTypeOf(gc.newResource); "" }}
@@ -52,7 +52,7 @@
   </div>
 </div>
 
-<div class='modal fade' id='selectResource' role='dialog' ng-if='gc.currentModal.select'>
+<div class='modal fade' id='selectResource' role='dialog' ng-if='upload.modal.select'>
   <div class='modal-dialog gallerySelectModal'>
     <div class='modal-content border-green border-radius-none'>
       <div class='modal-header'>
@@ -60,16 +60,16 @@
         <h2 class='modal-title text-center'>Resources</h2>
       </div>
 
-      <div class='modal-body' ng-init='gc.tabActive = uploadTypes[0].id'>
+      <div class='modal-body' ng-init='gc.tabActive = upload.types[0].id'>
         <ul class='nav nav-pills cursor-pointer'>
-          <li ng-repeat='upload in uploadTypes' ng-class="gc.tabActive == upload.id ? 'active' : '' ">
-            <a class='border-radius-none' aria-controls='{{ upload.id }}' ng-click='gc.tabActive = upload.id'>{{ upload.text }}</a>
+          <li ng-repeat='u in upload.types' ng-class="gc.tabActive == u.id ? 'active' : '' ">
+            <a class='border-radius-none' aria-controls='{{ u.id }}' ng-click='gc.tabActive = u.id'>{{ u.text }}</a>
           </li>
         </ul>
 
         <div class='tab-content' id='panel-view'>
-          <div ng-repeat='upload in uploadTypes' class='row tab-pane' ng-class="gc.tabActive == upload.id ? 'active' : '' " id='{{ upload.id }}'>
-            <div ng-repeat='resource in gc.selectionList[upload.id]' ng-init='typeOf = gc.isTypeOf(resource); gc.hideElements = true'>
+          <div ng-repeat='u in upload.types' class='row tab-pane' ng-class="gc.tabActive == u.id ? 'active' : '' " id='{{ u.id }}'>
+            <div ng-repeat='resource in gc.selectionList[u.id]' ng-init='typeOf = gc.isTypeOf(resource); gc.hideElements = true'>
               <div class='col-xs-6 cursor-pointer' ng-click='gc.resourceSelected(resource)'>
                 <ng-include src="gc.templatesDir + 'panel.html'"></ng-include>
               </div>

@@ -9,7 +9,7 @@
           <span class='{{ gc.currentPage.viewClass }}' aria-hidden='true'></span>
         </button>
 
-        <ng-include src="gc.templatesDir + 'dropdown.html'" ng-init='gc.currentModal = { upload: true }'></ng-include>
+        <ng-include src="gc.templatesDir + 'dropdown.html'" ng-init='upload = { types: gc.uploadTypes, modal: { upload: true } }'></ng-include>
       </div>
     </div>
   </div>

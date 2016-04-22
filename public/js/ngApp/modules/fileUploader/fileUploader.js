@@ -71,10 +71,11 @@
     }
 
     function list(params) {
+      params = params || {};
       var deferred = $q.defer();
       dbg.log2('#KliikoApp.fileUploader > list resources');
 
-      resourceForServer('').get(params || {}, function(result) {
+      resourceForServer('').get({ 'type[]': params.type, 'scope[]': params.scope }, function(result) {
         dbg.log2('#KliikoApp.fileUploader > list resources > server respond >', result);
         deferred.resolve(result);
       }, function(error) {

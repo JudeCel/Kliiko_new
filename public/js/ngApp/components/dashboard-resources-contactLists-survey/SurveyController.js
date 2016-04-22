@@ -45,6 +45,7 @@
     vm.changeQuestions = changeQuestions;
     vm.contactDetailDisabled = contactDetailDisabled;
     vm.onDropComplete = onDropComplete;
+    vm.galleryDropdownData = galleryDropdownData;
 
     vm.canCreateNew = canCreateNew;
 
@@ -272,10 +273,17 @@
       }
     };
 
+    function galleryDropdownData(type) {
+      return {
+        types: vm.uploadTypes[type],
+        modal: { upload: true, select: true, set: type }
+      };
+    }
+
     function initGallery(gc) {
       vm.uploadTypes = {
         survey: [gc.getUploadType('brandLogo')],
-        questions: [gc.getUploadType('video'), gc.getUploadType('audio')]
+        questions: [gc.getUploadType('video'), gc.getUploadType('audio'), gc.getUploadType('youtube')]
       }
 
       if(vm.survey.resourceId) {
@@ -287,13 +295,8 @@
       gc.listResources({ type: ['image', 'video', 'audio'], scope: ['brandLogo', 'collage'] }).then(function(result) {
         for(var i in result.resources) {
           var resource = result.resources[i];
-
-          if(resource.scope == 'brandLogo') {
-            gc.selectionList[resource.scope].push(resource);
-          }
-          else {
-            gc.selectionList[resource.type].push(resource);
-          }
+          var type = gc.getUploadTypeFromResource(resource);
+          gc.selectionList[type].push(resource);
         }
       });
 
@@ -314,7 +317,7 @@
             vm.survey.resourceId = resource.id;
             vm.survey.resource = resource;
             break;
-          case 'collage':
+          case 'collage', 'youtube':
 
             break;
           default:

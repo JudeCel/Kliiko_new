@@ -14,10 +14,10 @@
 
     return upServices;
 
-    function listResources() {
+    function listResources(params) {
       var deferred = $q.defer();
 
-      fileUploader.list().then(function(result) {
+      fileUploader.list(params).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
         deferred.resolve(error);

@@ -40,34 +40,8 @@
 
     <label class='col-xs-2 control-label' for='audioVideo-{{object.order}}'>Audio/Video</label>
     <div class='col-xs-10 col-md-6' ng-show="question.Resource == null">
-      
-      <button class='btn btn-addNewElement btn-green gallery-btn-width no-margin'
-              type='button' id='uploadResourceDropdown' data-toggle='dropdown'
-              aria-haspopup='true' aria-expanded='false'>
-        <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
-        Add audio/video
-      </button>
-
-      <ul class='dropdown-menu survey-dropdown-margin' aria-labelledby='uploadResourceDropdown'>
-        <li class='text-right text-size-dashboard'>
-          <a ng-click="sc.openQuestionModal('audio', question)" data-toggle='modal' href=''>
-            Upload Audio
-          </a>
-        </li>
-
-        <li class='text-right text-size-dashboard'>
-          <a ng-click="sc.openQuestionModal('video', question)" data-toggle='modal' href=''>
-            Upload video
-          </a>
-        </li>
-
-
-        <li class='text-right text-size-dashboard'>
-          <a ng-click="sc.openQuestionModal('youtube', question)" data-toggle='modal' href=''>
-            Save Youtube URL
-          </a>
-        </li>
-      </ul>
+      {{ upload = sc.galleryDropdownData("questions"); "" }}
+      <div ng-include="gc.templatesDir + 'dropdown.html'"></div>
     </div>
 
     <div class='col-xs-10 col-md-6' ng-if='question.Resource'>

@@ -40,6 +40,7 @@
     vm.changeView = changeView;
     vm.isTypeOf = isTypeOf;
     vm.getUploadType = getUploadType;
+    vm.getUploadTypeFromResource = getUploadTypeFromResource;
     vm.resourceSelected = resourceSelected;
     vm.openUploadModal = openUploadModal;
     vm.openSelectModal = openSelectModal;
@@ -143,14 +144,26 @@
       return {
         panel: vm.currentPage.viewType == 'panel',
         table: vm.currentPage.viewType == 'table',
-        image: resource.type == 'image',
-        audio: resource.type == 'audio',
-        video: resource.type == 'video',
+        image: resource.type == 'image' && resource.scope == 'collage',
+        audio: resource.type == 'audio' && resource.scope == 'collage',
+        video: resource.type == 'video' && resource.scope == 'collage',
         brandLogo: resource.type == 'image' && resource.scope == 'brandLogo',
         youtube: resource.type == 'link' && resource.scope == 'youtube',
         pdf: resource.type == 'file' && resource.scope == 'pdf',
         zip: resource.type == 'file' && resource.scope == 'zip',
       };
+    }
+
+    function getUploadTypeFromResource(resource) {
+      var types = isTypeOf(resource);
+      delete types.panel;
+      delete types.table;
+      for(var i in types) {
+        var type = types[i];
+        if(type) {
+          return i;
+        }
+      }
     }
 
     function getUploadType(id) {
@@ -167,14 +180,16 @@
       domServices.modal('selectResource', 'close');
     }
 
-    function openUploadModal(id) {
+    function openUploadModal(id, set) {
       var upload = getUploadType(id);
       vm.newResource = { type: upload.type, scope: upload.scope };
       vm.currentPage.upload = id;
       domServices.modal('uploadResource');
+      vm.currentModalSet = set;
     }
 
-    function openSelectModal() {
+    function openSelectModal(set) {
+      vm.currentModalSet = set;
       domServices.modal('selectResource');
     }
 
