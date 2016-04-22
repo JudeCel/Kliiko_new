@@ -14,6 +14,7 @@ module.exports = (Sequelize, DataTypes) => {
     audio: { type: DataTypes.TEXT, allowNull: true },
     link: { type: DataTypes.TEXT, allowNull: true },
     expiryDate: { type: DataTypes.DATE, allowNull: true },
+    properties: { type: DataTypes.JSONB, allowNull: false, defaultValue: {} },
     status: { type: DataTypes.ENUM, allowNull: false,
       values: [ 'completed', 'progress', 'failed'],
       defaultValue: 'completed'

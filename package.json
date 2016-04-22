@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "test": "./node_modules/.bin/mocha test",
+    "gulp": "./node_modules/.bin/gulp",
     "reset": "node ./lib/tasks/dbReset && node ./seeders/users && node ./seeders/chatSession && node ./seeders/mailTemplates && node ./seeders/plan"
   },
   "engineStrict": true,
