@@ -97,7 +97,7 @@
       let deferred = $q.defer();
 
       GalleryServices.refreshResource(resource.id).then(function(result) {
-        resource = result.resource;
+        angular.copy(result.resource, resource);
         messenger.ok(result.message);
         deferred.resolve(result.resource);
       }, function(error) {
