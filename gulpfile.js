@@ -37,7 +37,7 @@ gulp.task('serve-dev', ['build-js', 'build-css'], function () {
 gulp.task('watch', ['watch-css', 'watch-js']);
 
 gulp.task('watch-css', function () {
-  watch(['**/*.scss', '**/*.css', '!public/css/compiled/**/*.css', '!public/css/main.css'], batch(function (events, done) {
+  watch(['public/scss/**/*.scss', 'public/css/**/*.css', '!public/css/compiled/**/*.css', '!public/css/main.css'], batch(function (events, done) {
     gulp.start('build-css', done);
   }));
 });
