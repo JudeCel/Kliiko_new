@@ -70,11 +70,11 @@
       return deferred.promise;
     }
 
-    function list(type) {
+    function list(params) {
       var deferred = $q.defer();
       dbg.log2('#KliikoApp.fileUploader > list resources');
 
-      resourceForServer(type || 'all').get({}, function(result) {
+      resourceForServer('').get(params || {}, function(result) {
         dbg.log2('#KliikoApp.fileUploader > list resources > server respond >', result);
         deferred.resolve(result);
       }, function(error) {

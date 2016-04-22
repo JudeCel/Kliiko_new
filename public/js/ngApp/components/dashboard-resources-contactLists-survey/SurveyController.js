@@ -273,29 +273,56 @@
     };
 
     function initGallery(gc) {
-      vm.uploadTypes.survey = [gc.getUploadType('brandLogo')];
-      vm.uploadTypes.questions = [gc.getUploadType('video'), gc.getUploadType('audio')];
-      vm.refreshResource = gc.refreshResource;
+      vm.uploadTypes = {
+        survey: [gc.getUploadType('brandLogo')],
+        questions: [gc.getUploadType('video'), gc.getUploadType('audio')]
+      }
 
       if(vm.survey.resourceId) {
-        vm.refreshResource({ id: vm.survey.resourceId }).then(function(resource) {
+        gc.refreshResource({ id: vm.survey.resourceId }).then(function(resource) {
           vm.survey.resource = resource;
         });
       }
-      gc.galleryScope.$watchCollection('addedList', function(current, original) {
-        if(current.length) {
-          var resource = current[current.length - 1];
-          switch(resource.scope) {
-            case 'brandLogo':
-              vm.survey.resourceId = resource.id;
-              vm.survey.resource = resource;
-              break;
-            case 'collage':
 
-              break;
+      gc.listResources({ type: ['image', 'video', 'audio'], scope: ['brandLogo', 'collage'] }).then(function(result) {
+        for(var i in result.resources) {
+          var resource = result.resources[i];
+
+          if(resource.scope == 'brandLogo') {
+            gc.selectionList[resource.scope].push(resource);
+          }
+          else {
+            gc.selectionList[resource.type].push(resource);
           }
         }
       });
+
+      gc.galleryScope.$watch('currentSelectedResource', watcher);
+      gc.galleryScope.$watchCollection('addedList', watcher);
+
+      function watcher(current, original) {
+        var resource = {};
+        if(current instanceof Array && current.length) {
+          resource = current[current.length - 1];
+        }
+        else if(current) {
+          resource = current;
+        }
+
+        switch(resource.scope) {
+          case 'brandLogo':
+            vm.survey.resourceId = resource.id;
+            vm.survey.resource = resource;
+            break;
+          case 'collage':
+
+            break;
+          default:
+            if(current != original) {
+              messenger.error('Error while watching gallery');
+            }
+        }
+      }
     }
 
     function seedContactDetails(answer) {

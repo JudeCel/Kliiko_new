@@ -22,7 +22,7 @@
         <label class='col-xs-2 control-label' for='brandLogo'>Survey Logo</label>
         <div class='col-xs-10 col-md-6'>
           <img ng-src='{{ sc.survey.resource.url.thumb }}' class='img-responsive' ng-if='sc.survey.resource'/>
-          <div ng-include="gc.templatesDir + 'dropdown.html'" ng-init='uploadTypes = sc.uploadTypes.survey; gc.currentModal = { upload: true, select: true, set: "survey" }'></div>
+          <div ng-include="gc.templatesDir + 'dropdown.html'" ng-init='gc.uploadTypes = sc.uploadTypes.survey; gc.currentModal = { upload: true, select: true, set: "survey" }'></div>
         </div>
         <!--
         <div ng-if="sc.survey.Resource" style="display: inline-block;">

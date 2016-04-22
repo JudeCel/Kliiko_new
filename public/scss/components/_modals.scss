@@ -89,6 +89,9 @@
   width: 800px;
   padding-bottom: 100px;
   padding-top: 100px;
+  .modal-body > .nav.nav-pills {
+    margin-bottom: 10px;
+  }
 }
 
 .brandColourPreviewModal {

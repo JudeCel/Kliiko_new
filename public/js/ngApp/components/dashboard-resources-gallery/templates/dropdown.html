@@ -4,7 +4,7 @@
 </button>
 
 <ul ng-if='gc.currentModal.upload' class='dropdown-menu' ng-class="gc.currentPage.main ? 'dropdown-menu-right' : '' " aria-labelledby='uploadResourceDropdown'>
-  <li ng-repeat='upload in uploadTypes' ng-if='upload.format'>
+  <li ng-repeat='upload in gc.uploadTypes' class='cursor-pointer' ng-if='upload.format'>
     <a ng-click='gc.openUploadModal(upload.id)' data-toggle='modal'>
       {{ upload.text }}
     </a>

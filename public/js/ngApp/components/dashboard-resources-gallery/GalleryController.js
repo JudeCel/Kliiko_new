@@ -11,6 +11,7 @@
     vm.templatesDir = '/js/ngApp/components/dashboard-resources-gallery/templates/';
     vm.newResource = {};
     vm.resourceList = [];
+    vm.selectionList = {};
     $scope.addedList = [];
     vm.galleryScope = $scope;
     vm.currentList = [];
@@ -25,7 +26,13 @@
       { id: 'zip',       type: 'file',  text: 'Achive',     scope: 'zip',       format: null },
     ];
 
+    for(var i in vm.uploadTypes) {
+      var upload = vm.uploadTypes[i];
+      vm.selectionList[upload.id] = [];
+    }
+
     vm.init = initController;
+    vm.listResources = GalleryServices.listResources;
     vm.removeResources = removeResources;
     vm.zipResources = zipResources;
     vm.refreshResource = refreshResource;
@@ -33,6 +40,7 @@
     vm.changeView = changeView;
     vm.isTypeOf = isTypeOf;
     vm.getUploadType = getUploadType;
+    vm.resourceSelected = resourceSelected;
     vm.openUploadModal = openUploadModal;
     vm.openSelectModal = openSelectModal;
     vm.selectAllResources = selectAllResources;
@@ -109,7 +117,6 @@
           vm.modalWindowDisabled = true;
           GalleryServices.createResource(vm.newResource).then(function(result) {
             closeModalAndSetVariables(result.data);
-            $scope.addedList.push(result.data.resource);
           }, function(error) {
             vm.modalWindowDisabled = false;
             messenger.error(error);
@@ -153,6 +160,11 @@
           return upload;
         }
       }
+    }
+
+    function resourceSelected(resource) {
+      $scope.currentSelectedResource = resource;
+      domServices.modal('selectResource', 'close');
     }
 
     function openUploadModal(id) {
@@ -264,6 +276,8 @@
     function closeModalAndSetVariables(data) {
       vm.modalWindowDisabled = false;
       vm.resourceList.push(data.resource);
+      $scope.addedList.push(data.resource);
+      vm.selectionList[vm.currentPage.upload].push(data.resource);
       domServices.modal('uploadResource', 'close');
       filterResources(vm.currentPage.filter);
       messenger.ok(data.message);

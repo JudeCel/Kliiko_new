@@ -137,6 +137,9 @@ background-color: $blue !important;
 .no-pointer-events [role="button"] {
   pointer-events: none;
 }
+.cursor-pointer {
+  cursor: pointer;
+}
 .text-font-family {
 font-family: Sofia Pro Condensed;
 }

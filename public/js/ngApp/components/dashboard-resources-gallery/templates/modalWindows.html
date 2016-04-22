@@ -60,22 +60,22 @@
         <h2 class='modal-title text-center'>Resources</h2>
       </div>
 
-      <div class='modal-body' ng-init='tabActive = uploadTypes[0].id'>
-        <ul class='nav nav-pills border-radius-none'>
-          <li class='border-radius-none' ng-repeat='upload in uploadTypes' ng-class="tabActive == upload.id ? 'active' : '' " ng-click='tabActive = upload.id'>
-            <a aria-controls='{{ upload.id }}'>{{ upload.text }}</a>
+      <div class='modal-body' ng-init='gc.tabActive = uploadTypes[0].id'>
+        <ul class='nav nav-pills cursor-pointer'>
+          <li ng-repeat='upload in uploadTypes' ng-class="gc.tabActive == upload.id ? 'active' : '' ">
+            <a class='border-radius-none' aria-controls='{{ upload.id }}' ng-click='gc.tabActive = upload.id'>{{ upload.text }}</a>
           </li>
         </ul>
 
-        <div class='tab-content border-green'>
-          <div ng-repeat='upload in uploadTypes' class='tab-pane' ng-class="tabActive == upload.id ? 'active' : '' " id='{{ upload.id }}'>
-            {{ upload.id }}
+        <div class='tab-content' id='panel-view'>
+          <div ng-repeat='upload in uploadTypes' class='row tab-pane' ng-class="gc.tabActive == upload.id ? 'active' : '' " id='{{ upload.id }}'>
+            <div ng-repeat='resource in gc.selectionList[upload.id]' ng-init='typeOf = gc.isTypeOf(resource); gc.hideElements = true'>
+              <div class='col-xs-6 cursor-pointer' ng-click='gc.resourceSelected(resource)'>
+                <ng-include src="gc.templatesDir + 'panel.html'"></ng-include>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div class='modal-footer'>
-        <button class='btn btn-addNewElement pull-left btn-green gallery-btn-width' data-dismiss='modal'>Cancel</button>
       </div>
     </div>
   </div>
