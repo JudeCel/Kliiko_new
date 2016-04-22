@@ -46,6 +46,7 @@
     vm.contactDetailDisabled = contactDetailDisabled;
     vm.onDropComplete = onDropComplete;
     vm.galleryDropdownData = galleryDropdownData;
+    vm.getResourceFromList = getResourceFromList;
 
     vm.canCreateNew = canCreateNew;
 
@@ -273,59 +274,50 @@
       }
     };
 
-    function galleryDropdownData(type) {
+    function galleryDropdownData(type, dependency) {
       return {
         types: vm.uploadTypes[type],
-        modal: { upload: true, select: true, set: type }
+        modal: { upload: true, select: true, set: type },
+        dependency: dependency
       };
     }
 
+    function getResourceFromList(dependency) {
+      if(!dependency) {
+        return null;
+      }
+      else if(dependency.resource) {
+        return dependency.resource;
+      }
+      else if(dependency.resourceId) {
+        for(var i in vm.galleryController.resourceList) {
+          var resource = vm.galleryController.resourceList[i];
+          if(resource.id == dependency.resourceId) {
+            dependency.resource = resource;
+            return resource;
+          }
+        }
+      }
+      else {
+        return null;
+      }
+    }
+
     function initGallery(gc) {
+      vm.galleryController = gc;
       vm.uploadTypes = {
         survey: [gc.getUploadType('brandLogo')],
         questions: [gc.getUploadType('video'), gc.getUploadType('audio'), gc.getUploadType('youtube')]
       }
 
-      if(vm.survey.resourceId) {
-        gc.refreshResource({ id: vm.survey.resourceId }).then(function(resource) {
-          vm.survey.resource = resource;
-        });
-      }
-
-      gc.listResources({ type: ['image', 'video', 'audio'], scope: ['brandLogo', 'collage'] }).then(function(result) {
+      gc.listResources({ type: ['image', 'video', 'audio', 'link'], scope: ['brandLogo', 'collage', 'youtube'] }).then(function(result) {
+        gc.resourceList = result.resources;
         for(var i in result.resources) {
           var resource = result.resources[i];
           var type = gc.getUploadTypeFromResource(resource);
           gc.selectionList[type].push(resource);
         }
       });
-
-      gc.galleryScope.$watch('currentSelectedResource', watcher);
-      gc.galleryScope.$watchCollection('addedList', watcher);
-
-      function watcher(current, original) {
-        var resource = {};
-        if(current instanceof Array && current.length) {
-          resource = current[current.length - 1];
-        }
-        else if(current) {
-          resource = current;
-        }
-
-        switch(resource.scope) {
-          case 'brandLogo':
-            vm.survey.resourceId = resource.id;
-            vm.survey.resource = resource;
-            break;
-          case 'collage', 'youtube':
-
-            break;
-          default:
-            if(current != original) {
-              messenger.error('Error while watching gallery');
-            }
-        }
-      }
     }
 
     function seedContactDetails(answer) {

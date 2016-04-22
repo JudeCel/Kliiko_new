@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['$q', 'dbg', 'GalleryServices', 'domServices', 'messenger', '$sce', '$scope'];
-  function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce, $scope) {
+  GalleryController.$inject = ['$q', 'dbg', 'GalleryServices', 'domServices', 'messenger', '$sce'];
+  function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce) {
     dbg.log2('#GalleryController started');
     var vm = this;
 
@@ -12,8 +12,6 @@
     vm.newResource = {};
     vm.resourceList = [];
     vm.selectionList = {};
-    $scope.addedList = [];
-    vm.galleryScope = $scope;
     vm.currentList = [];
     vm.currentPage = { page: 'index', viewType: 'panel', viewClass: 'glyphicon glyphicon-th-list', upload: null, filter: null };
     vm.uploadTypes = [
@@ -42,6 +40,7 @@
     vm.getUploadType = getUploadType;
     vm.getUploadTypeFromResource = getUploadTypeFromResource;
     vm.resourceSelected = resourceSelected;
+    vm.removeDependency = removeDependency;
     vm.openUploadModal = openUploadModal;
     vm.openSelectModal = openSelectModal;
     vm.selectAllResources = selectAllResources;
@@ -175,21 +174,36 @@
       }
     }
 
+    function setDependency(resource) {
+      if(vm.currentDependency) {
+        vm.currentDependency.resourceId = resource.id;
+        vm.currentDependency.resource = resource;
+      }
+    }
+
+    function removeDependency(dependency) {
+      if(dependency) {
+        dependency.resourceId = null;
+        dependency.resource = null;
+      }
+    }
+
     function resourceSelected(resource) {
-      $scope.currentSelectedResource = resource;
+      setDependency(resource);
       domServices.modal('selectResource', 'close');
     }
 
-    function openUploadModal(id, set) {
-      var upload = getUploadType(id);
-      vm.newResource = { type: upload.type, scope: upload.scope };
-      vm.currentPage.upload = id;
+    function openUploadModal(current, parent) {
+      vm.newResource = { type: current.type, scope: current.scope };
+      vm.currentPage.upload = current.id;
       domServices.modal('uploadResource');
-      vm.currentModalSet = set;
+      vm.currentModalSet = parent.modal.set;
+      vm.currentDependency = parent.dependency;
     }
 
-    function openSelectModal(set) {
-      vm.currentModalSet = set;
+    function openSelectModal(parent) {
+      vm.currentModalSet = parent.modal.set;
+      vm.currentDependency = parent.dependency;
       domServices.modal('selectResource');
     }
 
@@ -204,7 +218,8 @@
       if(selectedResources.length) {
         switch(type) {
           case 'download':
-            openUploadModal('zip');
+            var upload = getUploadType('zip');
+            openUploadModal(upload);
             vm.newResource.file = selectedResources;
             break;
           case 'delete':
@@ -291,9 +306,9 @@
     function closeModalAndSetVariables(data) {
       vm.modalWindowDisabled = false;
       vm.resourceList.push(data.resource);
-      $scope.addedList.push(data.resource);
       vm.selectionList[vm.currentPage.upload].push(data.resource);
       domServices.modal('uploadResource', 'close');
+      setDependency(data.resource)
       filterResources(vm.currentPage.filter);
       messenger.ok(data.message);
     }

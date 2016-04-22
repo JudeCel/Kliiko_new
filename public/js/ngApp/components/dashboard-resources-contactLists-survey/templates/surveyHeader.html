@@ -21,8 +21,8 @@
       <div class='form-group'>
         <label class='col-xs-2 control-label' for='brandLogo'>Survey Logo</label>
         <div class='col-xs-10 col-md-6'>
-          {{ upload = sc.galleryDropdownData("survey"); "" }}
-          <img ng-src='{{ sc.survey.resource.url.thumb }}' class='img-responsive' ng-if='sc.survey.resource'/>
+          {{ upload = sc.galleryDropdownData("survey", sc.survey); resource = resource = sc.getResourceFromList(sc.survey); "" }}
+          <div ng-include="gc.templatesDir + 'view.html'" ng-if='resource'></div>
           <div ng-include="gc.templatesDir + 'dropdown.html'"></div>
         </div>
       </div>

@@ -60,7 +60,7 @@
         <h2 class='modal-title text-center'>Resources</h2>
       </div>
 
-      <div class='modal-body' ng-init='gc.tabActive = upload.types[0].id'>
+      <div class='modal-body'>
         <ul class='nav nav-pills cursor-pointer'>
           <li ng-repeat='u in upload.types' ng-class="gc.tabActive == u.id ? 'active' : '' ">
             <a class='border-radius-none' aria-controls='{{ u.id }}' ng-click='gc.tabActive = u.id'>{{ u.text }}</a>
