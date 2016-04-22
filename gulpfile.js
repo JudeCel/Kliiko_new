@@ -25,14 +25,15 @@ var gulp = require('gulp'),
 gulp.task('default', ['serve-dev', 'watch']);
 
 gulp.task('serve-dev', ['build-js', 'build-css'], function () {
-  var port = process.env.SERVER_PORT;
-  var environment = process.env.NODE_ENV;
-  app.set('port', port);
-  var server = http.createServer(app);
-  server.listen(port);
-  console.log("Server started on port: " + port);
+	nodemon({
+    script: 'bin/www',
+		ext: 'html js',
+	  ignore: ['public/**/*']
+  })
+	.on('restart', function () {
+		console.log('Server restarted!')
+	})
 });
-
 
 gulp.task('watch', ['watch-css', 'watch-js']);
 
