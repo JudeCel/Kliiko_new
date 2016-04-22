@@ -4,11 +4,10 @@
   accountManagerServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
 
   function accountManagerServices(globalSettings, $q, $resource, dbg) {
-    var accountManagerRestApi = {
-      accountManager: $resource(globalSettings.restUrl +'/accountManager', {}, { post: { method: 'POST' } }),
-      removeAccountUser: $resource(globalSettings.restUrl +'/accountManager/accountUser', {}, { post: { method: 'POST' } }),
-      removeInvite: $resource(globalSettings.restUrl +'/invite', {}, { post: { method: 'POST' } })
-    };
+    var accountManagerRestApi = $resource(globalSettings.restUrl + '/accountManager/:path', null, {
+      update: { method: 'PUT' },
+      deleteAccountUser: { method: 'DELETE', params: { path: 'accountUser' } }
+    });
 
     var upServices = {};
 
@@ -16,13 +15,14 @@
     upServices.createAccountManager = createAccountManager;
     upServices.removeInvite = removeInvite;
     upServices.removeAccountUser = removeAccountUser;
+    upServices.editAccountManager = editAccountManager;
     return upServices;
 
     function getAllManagersList() {
       var deferred = $q.defer();
 
       dbg.log2('#AccountManagerServices > getAllManagersList > make rest call');
-      accountManagerRestApi.accountManager.get({}, function(res) {
+      accountManagerRestApi.get( function(res) {
         dbg.log2('#AccountManagerServices > getAllManagersList > rest call responds');
         deferred.resolve(res);
       });
@@ -33,8 +33,8 @@
     function createAccountManager(data) {
       var deferred = $q.defer();
 
-      dbg.log2('#AccountManagerServices > createAccountManager > make rest call', data);
-      accountManagerRestApi.accountManager.save(data, function(res) {
+      dbg.log2('#AccountManagerServices > createAccountManager > make rest call');
+      accountManagerRestApi.save(data, function(res) {
         dbg.log2('#AccountManagerServices > createAccountManager > rest call responds');
         deferred.resolve(res);
       });
@@ -42,10 +42,22 @@
       return deferred.promise;
     };
 
+    function editAccountManager(data) {
+      var deferred = $q.defer();
+
+      dbg.log2('#AccountManagerServices > editAccountManager > make rest call', data);
+      accountManagerRestApi.update(data, function(res) {
+        dbg.log2('#AccountManagerServices > editAccountManager > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
+
     function removeInvite(data) {
       var deferred = $q.defer();
-      dbg.log2('#AccountManagerServices > removeInvite > make rest call', data);
-      accountManagerRestApi.removeInvite.delete(data, function(res) {
+      dbg.log2('#AccountManagerServices > removeInvite > make rest call');
+      accountManagerRestApi.delete(data, function(res) {
         dbg.log2('#AccountManagerServices > removeInvite > rest call responds');
         deferred.resolve(res);
       });
@@ -57,7 +69,7 @@
       var deferred = $q.defer();
 
       dbg.log2('#AccountManagerServices > removeAccountUser > make rest call', data);
-      accountManagerRestApi.removeAccountUser.delete(data, function(res) {
+      accountManagerRestApi.deleteAccountUser(data, function(res) {
         dbg.log2('#AccountManagerServices > removeAccountUser > rest call responds');
         deferred.resolve(res);
       });

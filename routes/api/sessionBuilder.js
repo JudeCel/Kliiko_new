@@ -17,7 +17,8 @@ module.exports = {
   removeInvite: removeInvite,
   removeSessionMember: removeSessionMember,
   sendGenericEmail: sendGenericEmail,
-  addTopics: addTopics
+  addTopics: addTopics,
+  removeTopic: removeTopic
 };
 
 function initializeBuilder(req, res, next) {
@@ -128,6 +129,16 @@ function addTopics(req, res, next) {
 
 
   topicsService.removeAllAndAddNew(req.params.id, req.body.topicsArray).then(function(result) {
+    res.send({succuss:true, data:result});
+  }, function(error) {
+    res.send({ error: error });
+  });
+}
+
+function removeTopic(req, res, next) {
+  let topicId = req.body.topicId;
+  var ids = [topicId];
+  topicsService.removeFromSession(ids, req.params.id).then(function(result) {
     res.send({succuss:true, data:result});
   }, function(error) {
     res.send({ error: error });

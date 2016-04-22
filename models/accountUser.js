@@ -10,6 +10,7 @@ module.exports = (Sequelize, DataTypes) => {
     gender: {type: DataTypes.ENUM, allowNull: false, validate: { notEmpty: true }, values: ["male", "female"] },
     owner: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    reveiveNewsLetters: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles },
     status: { type: DataTypes.ENUM, allowNull: false, values: ['invited', 'active', 'inactive', 'added'], defaultValue: 'active' },
     state: {type: DataTypes.STRING, allowNull: true },

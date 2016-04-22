@@ -49,7 +49,7 @@
       self.activeList = null;
       self.activeListIndex = null;
 
-      self.init().then(function() {
+      self.init(params).then(function() {
         deferred.resolve(self);
       }, function(err) {
         deferred.reject(err);
@@ -61,11 +61,11 @@
     /**
      * Fetch all lists and set first one as active
      */
-    function init() {
+    function init(params) {
       var deferred = $q.defer();
 
       var self = this;
-      self.getAll().then(
+      self.getAll(params).then(
         function (res) {
           self.changeActiveList(0);
           deferred.resolve();
@@ -82,13 +82,11 @@
     /**
      * Get all lists, store them as ListItemModel and sort by 'id'
      */
-    function getAll() {
+    function getAll(params) {
       var deferred = $q.defer();
-
-
       var self = this;
 
-      contactListServices.getContactLists().then(
+      contactListServices.getContactLists(params).then(
         function(res) {
           // prepare itmes
           for (var i = 0, len = res.length; i < len ; i++) {

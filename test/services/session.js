@@ -5,6 +5,7 @@ var Session = models.Session;
 
 var sessionServices = require('./../../services/session');
 var sessionFixture = require('./../fixtures/session');
+var subscriptionFixture = require('./../fixtures/subscription');
 
 var assert = require('chai').assert;
 
@@ -17,7 +18,12 @@ describe('SERVICE - Session', function() {
       testData.account = result.account;
       testData.session = result.session;
       testData.preference = result.preference;
-      done();
+      subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {
+        testData.subscription = subscription;
+        done();
+      }, function(error) {
+        done(error);
+      })
     }, function(error) {
       done(error);
     });
@@ -105,31 +111,39 @@ describe('SERVICE - Session', function() {
   describe('#copySession', function() {
     describe('happy path', function() {
       it('should succeed on copieing session', function (done) {
-        Session.count().then(function(c) {
-          assert.equal(c, 1);
+        models.SubscriptionPreference.update({'data.sessionCount': 2}, { where: { subscriptionId: testData.subscription.id } }).then(function(result) {
+          Session.count().then(function(c) {
+            assert.equal(c, 1);
 
-          sessionServices.copySession(testData.session.id, testData.account.id).then(function(result) {
-            assert.equal(result.message, sessionServices.messages.copied);
+            sessionServices.copySession(testData.session.id, testData.account.id).then(function(result) {
+              assert.equal(result.message, sessionServices.messages.copied);
 
-            Session.count().then(function(c) {
-              assert.equal(c, 2);
-              done();
+              Session.count().then(function(c) {
+                assert.equal(c, 2);
+                done();
+              });
+            }, function(error) {
+              done(error);
             });
-          }, function(error) {
-            done(error);
           });
-        });
+        }, function(error) {
+          done(error);
+        })
       });
     });
 
     describe('sad path', function() {
       it('should fail because not found', function (done) {
-        sessionServices.copySession(testData.session.id + 100, testData.account.id).then(function(result) {
-          done('Should not get here!');
+        models.SubscriptionPreference.update({'data.sessionCount': 2}, { where: { subscriptionId: testData.subscription.id } }).then(function(result) {
+          sessionServices.copySession(testData.session.id + 100, testData.account.id).then(function(result) {
+            done('Should not get here!');
+          }, function(error) {
+            assert.equal(error, sessionServices.messages.notFound);
+            done();
+          });
         }, function(error) {
-          assert.equal(error, sessionServices.messages.notFound);
-          done();
-        });
+          done(error);
+        })
       });
     });
   });

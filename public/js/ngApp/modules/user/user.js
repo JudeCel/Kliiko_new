@@ -10,6 +10,7 @@
     var UserService = {};
     UserService.getUserData = getUserData;
     UserService.changeUserPassword = changeUserPassword;
+    UserService.updateUserData = updateUserData;
     return UserService;
 
     function getUserData(forceUpdate) {
@@ -39,6 +40,22 @@
           deferred.reject(res.error);
         }
         else {
+          deferred.resolve(res);
+        }
+      });
+
+      return deferred.promise;
+    }
+
+    function updateUserData(data) {
+      var deferred = $q.defer();
+
+      usersRestApi.post(data, function (res) {
+        if(res.error) {
+          deferred.reject(res.error);
+        }
+        else {
+          user = res;
           deferred.resolve(res);
         }
       });

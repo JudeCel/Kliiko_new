@@ -36,11 +36,10 @@
      * Fetch all contact lists for this account
      * @returns {*|promise|array}
      */
-    function getContactLists() {
+    function getContactLists(params) {
       var deferred = $q.defer();
-
       dbg.log2('#contactListServices > getContactLists > call to api');
-      contactListsApi.contactLists.query(function(res) {
+      contactListsApi.contactLists.query(params, function(res) {
         if (res.error) {
           dbg.log1('#contactListServices > getContactLists > error: ', res.error);
           deferred.reject(res.error);

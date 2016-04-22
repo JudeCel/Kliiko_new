@@ -17,7 +17,9 @@ module.exports = {
 
 function index(req, res, next) {
   let accaountId = res.locals.currentDomain.id;
-  contactListService.allByAccount(accaountId).then(function(lists) {
+  let sessionId = req.query.sessionId;
+
+  contactListService.allByAccount(accaountId, sessionId).then(function(lists) {
     res.send(lists);
   },function(err) {
     res.send({ error: err });

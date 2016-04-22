@@ -24,7 +24,8 @@ module.exports = {
     'mobile',
     'comment',
     'phoneCountryData',
-    'landlineNumberCountryData'
+    'landlineNumberCountryData',
+    'reveiveNewsLetters'
   ],
   safeUserParams: [
     'id',

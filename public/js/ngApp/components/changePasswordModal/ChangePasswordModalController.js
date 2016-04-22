@@ -17,13 +17,9 @@
     function changePasswordData(data, form) {
       user.changeUserPassword(data, form).then(function (res) {
         vm.passwordData = {};
-        if(res.error){
-          var errors = prepareError(res.error);
-          messenger.error(errors);
-        }else{
-          cancel();
-          messenger.ok(res.message);
-        }
+        messenger.ok(res.message);
+      }, function(error) {
+        messenger.error(error);
       });
     }
 

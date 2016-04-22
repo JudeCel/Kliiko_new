@@ -1,14 +1,18 @@
-<section id='step-contactlists' ng-controller='ContactListController as clc' ng-init='clc.hideStuff = true; clc.initLists()'>
-  <div class='row'>
-    <h3 class='text-center'></h3>
-    <div class='btn-standart btn-green' ng-hide="sbc.showContactsList" ng-click='sbc.finishSelectingMembers(clc.lists.activeList)'>
-      Select Contacts
+<section id='step-contactlists' ng-controller='ContactListController as clc'>
+  <div ng-init="clc.hideStuff = true; clc.setSessionId(sbc.session.id); clc.initLists()">
+
+    <div class='row'>
+      <h3 class='text-center'></h3>
+      <div class='btn-standart btn-green' ng-hide="sbc.showContactsList" ng-click='sbc.finishSelectingMembers(clc.lists.activeList)'>
+        Select Contacts
+      </div>
+
+      <div class='btn-standart btn-green' ng-show="sbc.showContactsList" ng-click='sbc.showContactsList = null'>
+        Finish With Adding
+      </div>
     </div>
 
-    <div class='btn-standart btn-green' ng-show="sbc.showContactsList" ng-click='sbc.showContactsList = null'>
-      Finish With Adding
-    </div>
+    <ng-include ng-init="clc.removeAccountManagersIfLastStep(sbc.session.currentStep)" id='dashboard-contact-lists' class='side-margin' src="'/js/ngApp/components/dashboard-resources-contactLists/index.html'"></ng-include>
+
   </div>
-
-  <ng-include id='dashboard-contact-lists' class='side-margin' src="'/js/ngApp/components/dashboard-resources-contactLists/index.html'"></ng-include>
 </section>

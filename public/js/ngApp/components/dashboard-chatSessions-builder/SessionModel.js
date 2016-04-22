@@ -18,6 +18,7 @@
       removeSessionMember: { method: 'DELETE', params: { path: 'removeSessionMember' } },
       sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } },
       addTopics: {method: 'POST',  params: {path: 'addTopics'} },
+      removeTopic: {method: 'POST',  params: {path: 'removeTopic'} },
 
       nextStep: {method: 'POST', params: {path: 'step'} },
       previousStep: {method: 'POST', params: {path: 'step'} }
@@ -58,7 +59,7 @@
     SessionModel.prototype.removeMember = removeMember;
     SessionModel.prototype.sendGenericEmail = sendGenericEmail;
     SessionModel.prototype.processStepResponse = processStepResponse;
-
+    SessionModel.prototype.removeTopic = removeTopic;
 
     return SessionModel;
 
@@ -266,6 +267,18 @@
       return deferred.promise;
     }
 
+    function removeTopic(topicId) {
+      var self = this;
+      var deferred = $q.defer();
+      sessionBuilderRestApi.removeTopic({id: self.id}, { topicId: topicId }, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res.data);
+        }
+      });
+      return deferred.promise;
+    }
 
     function inviteParticipants(members) {
       var self = this;

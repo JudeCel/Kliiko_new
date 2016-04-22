@@ -75,9 +75,7 @@
 
 
     function updateUserData(data, form) {
-      console.log(validatePhoneNumber())
-
-      if(validatePhoneNumber() && validateLandlineNumber(data.landlineNumber)){
+      if(validatePhoneNumber(data.mobile) && validateLandlineNumber(data.landlineNumber)){
         getPhoneCountryData();
         getLandlineNumberCountryData();
 
@@ -98,6 +96,7 @@
         // countrySelected(data);
 
         vm.errors = {};
+        delete data.id;
         user.updateUserData(data, form).then(function (res) {
           vm.updateBtn = 'Updated';
           form.$setPristine();
@@ -109,8 +108,8 @@
       }
     }
 
-    function validatePhoneNumber() {
-      if(!validatePhone()){
+    function validatePhoneNumber(mobile) {
+      if(mobile === undefined && !validatePhone()){
         messenger.error("The mobile number for this country is not valid.");
         return false;
       }
@@ -118,7 +117,7 @@
     }
 
     function validateLandlineNumber(landlineNumber) {
-      if(landlineNumber && !validLandlineNumber()){
+      if(landlineNumber === undefined && !validLandlineNumber()){
         messenger.error("The landline number for this country is not valid.");
         return false;
       }

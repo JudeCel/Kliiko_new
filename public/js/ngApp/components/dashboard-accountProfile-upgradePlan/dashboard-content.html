@@ -27,7 +27,7 @@
         <div class='modal-content border-green border-radius-none'>
           <div class='modal-header'>
             <button type='button' class='close' data-dismiss='modal'>&times;</button>
-            <h1 class='modal-title text-center'>Learn More about the {{up.planInModal.name}}</h1>
+            <h1 class='modal-title text-center'>Learn More about the {{up.planInModal.plan.name}}</h1>
           </div>
           <div class='modal-body'>
             <ng-include src="up.currentPlanModalContentTpl"></ng-include>
@@ -37,7 +37,7 @@
               Cancel
             </div>
             <div type='submit' class='pull-right btn-dashboard-plans i-want-btn'
-                 ng-click="up.selectPlan(up.planInModal)" data-dismiss='modal'>
+                 ng-click="up.wantThisPlan(up.planInModal)" data-dismiss='modal'>
               I Want This Plan
             </div>
           </div>

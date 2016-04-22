@@ -59,9 +59,19 @@ function joinToSession(ids, sessionId) {
   Session.find({where: { id: sessionId } }).then(function(session) {
     Topic.findAll({where: {id: ids}}).then(function(results) {
       session.addTopics(results).then(function(result) {
-        models.SessionTopics.findAll({ where: { SessionId: sessionId, TopicId: { $in: ids } } }).then(function (results) {
-          deferred.resolve(results);
+
+        models.SessionTopics.findAll({
+          where: {
+            SessionId: sessionId
+          },
+          attributes: [],
+          include: [Topic]
+        }).then( function(sessionTopics) {
+
+          console.log(sessionTopics);
+          deferred.resolve(sessionTopics);
         });
+
       }, function(err) {
         deferred.reject(err);
       })
@@ -119,12 +129,8 @@ function removeAllFromSession(sessionId) {
 function removeAllAndAddNew(sessionId, topics) {
   let deferred = q.defer();
 
-  removeAllFromSession(sessionId).then(function() {
-    updateSessionTopics(sessionId, topics).then(function(result) {
-      deferred.resolve(result);
-    }, function(error) {
-      deferred.reject(error);
-    });
+  updateSessionTopics(sessionId, topics).then(function(result) {
+    deferred.resolve(result);
   }, function(error) {
     deferred.reject(error);
   });
