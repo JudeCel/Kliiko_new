@@ -9,6 +9,7 @@ var Account = models.Account;
 var async = require('async');
 var _ = require('lodash');
 var crypto = require('crypto');
+var q = require('q');
 
 //Exports
 function createOrFindAccountManager(req, res, callback) {
@@ -41,6 +42,26 @@ function createOrFindAccountManager(req, res, callback) {
     });
   });
 };
+
+function updateAccountManager(data) {
+  let deferred = q.defer();
+
+  AccountUser.update(updateParams(data), { where: { id: data.id }, returning: true }).then(function() {
+    AccountUser.find({
+      where :{
+        id: data.id
+      }
+    }).then(function(accountManager) {
+      deferred.resolve({message: "Account manager was successfully updated.", accountManager: accountManager});
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
+    });
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
 
 function createAccountUser(params, userId, type, accountId, cb) {
   adjustParamsForNewAccountUser(params, userId, accountId);
@@ -157,6 +178,23 @@ function findUsers(model, where, attributes, cb) {
   });
 }
 
+function updateParams(params) {
+  return {
+    firstName: params.firstName,
+    lastName: params.lastName,
+    email: params.email,
+    gender: params.gender,
+    mobile: params.mobile,
+    landlineNumber: params.landlineNumber,
+    state: params.state,
+    postalAddress: params.postalAddress,
+    city: params.city,
+    country: params.country,
+    postCode: params.postCode,
+    companyName: params.companyName
+  }
+}
+
 function inviteParams(accountUserId, accountId, userId, type) {
   return { userId: userId, accountUserId: accountUserId, accountId: accountId, userType: type, role: 'accountManager' };
 };
@@ -168,5 +206,6 @@ function prepareParams(req) {
 module.exports = {
   createOrFindAccountManager: createOrFindAccountManager,
   findAccountManagers: findAccountManagers,
-  findAndRemoveAccountUser: findAndRemoveAccountUser
+  findAndRemoveAccountUser: findAndRemoveAccountUser,
+  updateAccountManager: updateAccountManager
 };

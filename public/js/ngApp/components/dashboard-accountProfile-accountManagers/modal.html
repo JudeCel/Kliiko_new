@@ -1,7 +1,8 @@
 <div class='modal-header'>
   <button type='button' class='close' ng-click='closeModal()'>&times;</button>
-  <h2 class='modal-title text-center'>Add new Account Manager</h2>
+  <h2 class='modal-title text-center'>{{ amc.modalTitle }}</h2>
 </div>
+
 <div class='modal-body text-gray-medium'>
   <form class='form-horizontal' role='form' novalidate>
     <div class='col-md-6'>
@@ -9,7 +10,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First name<span class='text-red-dark'>*</span></label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.firstName }}</span>
-          <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='accountUser.firstName'>
+          <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='amc.accountUser.firstName'>
         </div>
       </div>
 
@@ -17,7 +18,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='lastName'>Last name<span class='text-red-dark'>*</span></label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.lastName }}</span>
-          <input type='text' class='form-control' id='lastName' placeholder='Last name' ng-model='accountUser.lastName'>
+          <input type='text' class='form-control' id='lastName' placeholder='Last name' ng-model='amc.accountUser.lastName'>
         </div>
       </div>
 
@@ -25,7 +26,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='email'>Email<span class='text-red-dark'>*</span></label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.email }}</span>
-          <input type='text' class='form-control' id='email' placeholder='Email' ng-model='accountUser.email'>
+          <input type='text' class='form-control' id='email' placeholder='Email' ng-model='amc.accountUser.email'>
         </div>
       </div>
 
@@ -33,8 +34,8 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='gender'>Gender<span class='text-red-dark'>*</span></label>
         <div class='col-md-8'>
           <div class='has-error text-red-dark'>{{ errors.gender }}</div>
-          <label class='radio-inline'><input type='radio' value='male' name='radio_gender' ng-model='accountUser.gender'>Male</label>
-          <label class='radio-inline'><input type='radio' value='female' name='radio_gender' ng-model='accountUser.gender'>Female</label>
+          <label class='radio-inline'><input type='radio' value='male' name='radio_gender' ng-model='amc.accountUser.gender'>Male</label>
+          <label class='radio-inline'><input type='radio' value='female' name='radio_gender' ng-model='amc.accountUser.gender'>Female</label>
         </div>
       </div>
 
@@ -42,7 +43,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.mobile }}</span>
-          <input type='text' class='form-control' id='mobile' placeholder='Mobile number' ng-model='accountUser.mobile'>
+          <input type='text' class='form-control' id='mobile' placeholder='Mobile number' ng-model='amc.accountUser.mobile'>
         </div>
       </div>
 
@@ -50,7 +51,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.landlineNumber }}</span>
-          <input type='text' class='form-control' id='landlineNumber' placeholder='Landline number' ng-model='accountUser.landlineNumber'>
+          <input type='text' class='form-control' id='landlineNumber' placeholder='Landline number' ng-model='amc.accountUser.landlineNumber'>
         </div>
       </div>
     </div>
@@ -60,7 +61,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='postalAddress'>Postal address</label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.postalAddress }}</span>
-          <input type='text' class='form-control' id='postalAddress' placeholder='Postal address' ng-model='accountUser.postalAddress'>
+          <input type='text' class='form-control' id='postalAddress' placeholder='Postal address' ng-model='amc.accountUser.postalAddress'>
         </div>
       </div>
 
@@ -68,7 +69,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='city'>City</label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.city }}</span>
-          <input type='text' class='form-control' id='city' placeholder='City' ng-model='accountUser.city'>
+          <input type='text' class='form-control' id='city' placeholder='City' ng-model='amc.accountUser.city'>
         </div>
       </div>
 
@@ -76,7 +77,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='state'>State</label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.state }}</span>
-          <input type='text' class='form-control' id='state' placeholder='State' ng-model='accountUser.state'>
+          <input type='text' class='form-control' id='state' placeholder='State' ng-model='amc.accountUser.state'>
         </div>
       </div>
 
@@ -84,7 +85,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='postCode'>Postcode</label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.postCode }}</span>
-          <input type='text' class='form-control' id='postCode' placeholder='Postcode' ng-model='accountUser.postCode'>
+          <input type='text' class='form-control' id='postCode' placeholder='Postcode' ng-model='amc.accountUser.postCode'>
         </div>
       </div>
 
@@ -92,7 +93,7 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='country'>Country</label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.country }}</span>
-          <input type='text' class='form-control' id='country' placeholder='Country' ng-model='user.country'>
+          <input type='text' class='form-control' id='country' placeholder='Country' ng-model='amc.accountUser.country'>
         </div>
       </div>
 
@@ -100,20 +101,15 @@
         <label class='control-label col-md-4 text-no-bold text-login-page' for='companyName'>Company name</label>
         <div class='col-md-8'>
           <span class='has-error text-red-dark'>{{ errors.companyName }}</span>
-          <input type='text' class='form-control' id='companyName' placeholder='Company name' ng-model='accountUser.companyName'>
+          <input type='text' class='form-control' id='companyName' placeholder='Company name' ng-model='amc.accountUser.companyName'>
         </div>
       </div>
     </div>
 
     <div class='row'>
       <div class='col-md-12'>
-        <div class='col-md-10'></div>
-        <div class='col-md-1'>
-          <button ng-click='submitForm()' type='button' class='btn border-red text-red-dark border-radius-none background-transp pull-right btn-md'>Invite</button>
-        </div>
-        <div class='col-md-1'>
-          <button ng-click='closeModal()' type='button' class='btn border-red text-red-dark border-radius-none background-transp pull-right btn-md'>Close</button>
-        </div>
+        <button ng-click='amc.submitForm(amc.formAction, amc.accountUser)' type='button' class='btn border-red text-red-dark border-radius-none background-transp btn-md pull-right'>{{amc.saveButtonText}}</button>
+        <button data-dismiss='modal' type='button' class='btn border-red text-red-dark border-radius-none background-transp btn-md pull-left'>Close</button>
       </div>
     </div>
   </form>

@@ -58,6 +58,7 @@ router.get('/account', account.get);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
 router.post('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.post);
+router.put('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.put);
 router.delete('/accountManager/accountUser', policy.authorized(['accountManager', 'admin']), accountManager.removeAccountUser);
 router.delete('/invite', policy.authorized(['accountManager', 'admin']), accountManager.removeInvite);
 

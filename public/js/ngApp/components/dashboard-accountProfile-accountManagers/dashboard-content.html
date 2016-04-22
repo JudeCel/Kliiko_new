@@ -1,15 +1,13 @@
-<section id='account-manager-content' ng-controller='AccountManagerController'>
+<section id='account-manager-content' ng-controller='AccountManagerController as amc'>
   <div class='col-md-12'>
     <div class='dashboard-container'>
       <div class='row'>
         <div class='col-md-3'></div>
         <div class='col-md-6'>
           <h2 class='text-center'>Account Managers</h2>
-          <h4 class='text-center has-error text-red-dark'>{{ error }}</h4>
-          <h4 class='text-center'>{{ message }}</h4>
         </div>
         <div class='col-md-3 text-right'>
-          <div class='btn btn-addNewElement' ng-click='openModal()'>Add New Account Manager</div>
+          <div class='btn btn-addNewElement' ng-click='amc.openModal(amc.createNewModalTitle, "new")'>Add New Account Manager</div>
         </div>
       </div>
     </div>
@@ -30,7 +28,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat='accountUser in accountUsers'>
+          <tr ng-repeat='accountUser in amc.accountUsers'>
             <td>{{ accountUser.firstName }}</td>
             <td>{{ accountUser.lastName }}</td>
             <td>{{ accountUser.gender }}</td>
@@ -38,12 +36,20 @@
             <td>{{ accountUser.mobile }}</td>
             <td>{{ accountUser.status }}</td>
             <td class='text-right dashboardElementsEditRemove'>
-              <img src='/icons/dashboardElement_edit.png' alt='' />
-              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='removeAccountUser(accountUser)' ng-if='!isAccountOwner(accountUser)' />
+              <img src='/icons/dashboardElement_edit.png' alt='' / ng-click="amc.openModal(amc.editModalTitle, 'edit', accountUser)">
+              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='amc.removeAccountUser(accountUser)' ng-if='!amc.isAccountOwner(accountUser)' />
             </td>
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+    <div class='modal fade' id='accountManagerModal' role='dialog'>
+    <div class='modal-dialog changePasswordModal' style="width: 800px">
+      <div class='modal-content border-green border-radius-none'>
+        <ng-include src="amc.modalPath"></ng-include>
+      </div>
     </div>
   </div>
 </section>

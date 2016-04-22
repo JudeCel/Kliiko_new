@@ -26,6 +26,14 @@ function post(req, res, next) {
   });
 };
 
+function put(req, res, next) {
+  accountManagerService.updateAccountManager(req.body).then(function(response) {
+    res.send(response);
+  }, function(error) {
+    res.send({ error: error });
+  })
+}
+
 function removeInvite(req, res, next) {
   var params = { accountUserId: req.query.id };
 
@@ -53,6 +61,7 @@ function removeAccountUser(req, res, next) {
 module.exports = {
   get: get,
   post: post,
+  put: put,
   removeInvite: removeInvite,
   removeAccountUser: removeAccountUser
 };
