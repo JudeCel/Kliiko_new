@@ -9,7 +9,7 @@
           <span class='{{ gc.currentPage.viewClass }}' aria-hidden='true'></span>
         </button>
 
-        <ng-include src="gc.templatesDir + 'dropdownAndModal.html'" ng-init='uploadTypes = gc.uploadTypes'></ng-include>
+        <ng-include src="gc.templatesDir + 'dropdown.html'" ng-init='uploadTypes = gc.uploadTypes; gc.currentModal = "upload"'></ng-include>
       </div>
     </div>
   </div>
@@ -21,6 +21,6 @@
     <ng-include src="gc.templatesDir + 'filters.html'" id='filter-view'></ng-include>
     <ng-include src="gc.templatesDir + 'tableView.html'" ng-if='typeOf.table' id='table-view'></ng-include>
     <ng-include src="gc.templatesDir + 'panelView.html'" ng-if='typeOf.panel' id='panel-view'></ng-include>
-    <ng-include src="gc.templatesDir + 'modalWindow.html'"></ng-include>
+    <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
   </div>
 </div>

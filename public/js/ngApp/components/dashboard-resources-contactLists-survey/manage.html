@@ -1,4 +1,9 @@
 <div class='col-md-12 fixed-bottom-margin' id='GalleryController' ng-controller='GalleryController as gc'>
+  <div>
+    {{ uploadTypes = sc.uploadTypes[gc.currentModal.set]; "" }}
+    <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
+  </div>
+
   <div class='dashboard-container' ng-init='sc.initGallery(gc)'>
 
     <form id='manageForm' name='sc.manageForm' novalidate>
@@ -16,7 +21,7 @@
 
         <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(0, 3) track by $index'>
           <div ng-init='question = sc.initQuestion(object, sc.survey.SurveyQuestions[object.order])'>
-            <div id='panel-{{ object.order }}' class='panel panel-default no-border-radius'>
+            <div id='panel-{{ object.order }}' class='panel panel-default border-radius-none'>
               <div class='panel-heading' ng-if='!object.hardcodedName'><strong>Question #{{ object.order + 1 }}</strong></h4></div>
               <div class='panel-heading' ng-if='object.hardcodedName'><strong>{{ object.name }}</strong></h4></div>
               <div class='panel-body'>
@@ -39,7 +44,7 @@
         <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(3, 6) track by $index'>
           <div ng-init='question = sc.initQuestion(object, sc.survey.SurveyQuestions[object.order])'>
             <uib-accordion close-others='false'>
-              <uib-accordion-group is-open='object.open' id='panel-{{ object.order }}' class='no-border-radius'>
+              <uib-accordion-group is-open='object.open' id='panel-{{ object.order }}' class='border-radius-none'>
                 <uib-accordion-heading>
                   <div>
                     <strong>{{ object.name }}</strong>
@@ -65,7 +70,7 @@
         <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(6, 10) track by $index'>
           <div ng-init='question = sc.initQuestion(object, sc.survey.SurveyQuestions[object.order])'>
             <ng-form name='{{ object.order }}'>
-              <div id='panel-{{ object.order }}' class='panel panel-default no-border-radius'>
+              <div id='panel-{{ object.order }}' class='panel panel-default border-radius-none'>
                 <div class='panel-heading' ng-if='!object.hardcodedName'><strong>Question #{{ object.order + 1 }}</strong></h4></div>
                 <div class='panel-heading' ng-if='object.hardcodedName'><strong>{{ object.name }}</strong></h4></div>
                 <div class='panel-body'>

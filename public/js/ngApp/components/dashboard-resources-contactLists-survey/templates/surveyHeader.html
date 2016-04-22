@@ -1,8 +1,7 @@
 <h4>Survey Template</h4>
 <hr class='survey-hr' />
 
-<div id='panel-introduction' class='panel panel-default no-border-radius'>
-  <ng-include src="gc.templatesDir + 'modalWindow.html'"></ng-include>
+<div id='panel-introduction' class='panel panel-default border-radius-none'>
   <div class='panel-heading'><strong>Introduction</strong></div>
   <div class='panel-body'>
     <div class='form-horizontal'>
@@ -23,7 +22,7 @@
         <label class='col-xs-2 control-label' for='brandLogo'>Survey Logo</label>
         <div class='col-xs-10 col-md-6'>
           <img ng-src='{{ sc.survey.resource.url.thumb }}' class='img-responsive' ng-if='sc.survey.resource'/>
-          <div ng-include="gc.templatesDir + 'dropdownAndModal.html'" ng-init='uploadTypes = sc.uploadTypes.survey'></div>
+          <div ng-include="gc.templatesDir + 'dropdown.html'" ng-init='uploadTypes = sc.uploadTypes.survey; gc.currentModal = { upload: true, select: true, set: "survey" }'></div>
         </div>
         <!--
         <div ng-if="sc.survey.Resource" style="display: inline-block;">

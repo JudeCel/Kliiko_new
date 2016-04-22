@@ -1,8 +1,4 @@
 /* Borders */
-.border-radius-none {
-  border-radius: 0;
-}
-
 .border-brown,
 .border-yellow,
 .border-red,
@@ -134,7 +130,7 @@ background-color: $blue !important;
   padding-left: 0px;
   padding-right: 0px;
 }
-.no-border-radius {
+.border-radius-none {
   border-radius: 0 !important;
 }
 .no-pointer-events,

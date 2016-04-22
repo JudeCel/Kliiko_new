@@ -34,6 +34,7 @@
     vm.isTypeOf = isTypeOf;
     vm.getUploadType = getUploadType;
     vm.openUploadModal = openUploadModal;
+    vm.openSelectModal = openSelectModal;
     vm.selectAllResources = selectAllResources;
     vm.massAction = massAction;
     vm.filterResources = filterResources;
@@ -88,9 +89,9 @@
       let deferred = $q.defer();
 
       GalleryServices.refreshResource(resource.id).then(function(result) {
-        resource = result.data;
+        resource = result.resource;
         messenger.ok(result.message);
-        deferred.resolve(resource);
+        deferred.resolve(result.resource);
       }, function(error) {
         messenger.error(error);
         deferred.reject(error);
@@ -159,6 +160,10 @@
       vm.newResource = { type: upload.type, scope: upload.scope };
       vm.currentPage.upload = id;
       domServices.modal('uploadResource');
+    }
+
+    function openSelectModal() {
+      domServices.modal('selectResource');
     }
 
     function selectAllResources() {
