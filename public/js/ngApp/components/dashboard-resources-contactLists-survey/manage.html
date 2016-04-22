@@ -1,5 +1,5 @@
-<div class='col-md-12 fixed-bottom-margin'>
-  <div class='dashboard-container'>
+<div class='col-md-12 fixed-bottom-margin' id='GalleryController' ng-controller='GalleryController as gc'>
+  <div class='dashboard-container' ng-init='sc.initGallery(gc)'>
 
     <form id='manageForm' name='sc.manageForm' novalidate>
       <fieldset ng-disabled='sc.submitingForm'>

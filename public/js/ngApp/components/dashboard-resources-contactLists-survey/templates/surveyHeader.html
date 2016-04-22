@@ -2,6 +2,7 @@
 <hr class='survey-hr' />
 
 <div id='panel-introduction' class='panel panel-default no-border-radius'>
+  <ng-include src="gc.templatesDir + 'modalWindow.html'"></ng-include>
   <div class='panel-heading'><strong>Introduction</strong></div>
   <div class='panel-body'>
     <div class='form-horizontal'>
@@ -18,9 +19,13 @@
             ng-model='sc.survey.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='sc.submitedForm'>
         </div>
       </div>
-      <label class='col-xs-2 control-label' for='brandLogo'>Survey Logo</label>
       <div class='form-group'>
-        <img ng-src="{{ sc.getResourceThumbUrl(sc.survey.Resource) }}" class="img-responsive" style="display: inline-block;" ng-if="sc.survey.Resource"/>
+        <label class='col-xs-2 control-label' for='brandLogo'>Survey Logo</label>
+        <div class='col-xs-10 col-md-6'>
+          <img ng-src='{{ sc.survey.resource.url.thumb }}' class='img-responsive' ng-if='sc.survey.resource'/>
+          <div ng-include="gc.templatesDir + 'dropdownAndModal.html'" ng-init='uploadTypes = sc.uploadTypes.survey'></div>
+        </div>
+        <!--
         <div ng-if="sc.survey.Resource" style="display: inline-block;">
           <button type='submit' class='btn btn-addNewElement btn-green no-margin gallery-btn-width'
                   ng-click="sc.removeResource(sc.survey.resourceId, null, sc.survey)">
@@ -93,7 +98,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <div class='form-group'>
