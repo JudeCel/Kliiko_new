@@ -1576,7 +1576,6 @@ hr.survey-hr {
 #upgrade-plan-content .plans-table .included-plan-fader {
   display: block;
   position: absolute;
-  z-index: 2000;
   width: 100%;
   height: 100%;
   background: white;
