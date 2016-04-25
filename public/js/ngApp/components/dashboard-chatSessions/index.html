@@ -28,7 +28,7 @@
             <td>{{ session.facilitator.username }}</td>
             <td>{{ session.start_time | date:sc.dateFormat }}</td>
             <td>{{ session.end_time | date:sc.dateFormat }}</td>
-            <td>{{ csc.subscriptionEndDate(app.user) | date:sc.dateFormat }}</td>
+            <td>{{ session.expireDate | date:sc.dateFormat }}</td>
             <td>{{ session.showStatus }}</td>
             <td class='text-right dashboardElementsEditRemove'>
               <span class='glyphicon glyphicon-star' aria-hidden='true' ng-if='csc.hasAccess(session.id, app.accountUser)' ng-click='csc.changePage("sessionRating", session)'></span>
