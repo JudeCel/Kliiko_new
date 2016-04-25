@@ -197,6 +197,7 @@
       vm.newResource = { type: current.type, scope: current.scope };
       vm.currentPage.upload = current.id;
       domServices.modal('uploadResource');
+      parent = parent || { modal: {} };
       vm.currentModalSet = parent.modal.set;
       vm.currentDependency = parent.dependency;
     }
