@@ -34,12 +34,13 @@
     vm.canDragElement = function(element) {
       var count = 0;
       var selected = false;
-      vm.selectedTopics.map(function(item, val) {
+      for(var i in vm.selectedTopics) {
+        var topic = vm.selectedTopics[i];
         count++;
-        if (val == element.id) {
+        if (topic.id == element.id) {
           selected = true;
         }
-      });
+      }
 
       if (count == 0) {
         return true;
@@ -62,7 +63,7 @@
       if (!data) return;
       var topicArray = [];
 
-      if(vm.selectedTopics.length == 0){
+      if(vm.selectedTopics.length == 0 || Object.keys(vm.selectedTopics).length == 0){
         if (!isTopicAdded(data)) {
           topicArray.push(data);
         }
@@ -114,7 +115,8 @@
     }
 
     function topicSelectClickHandle(topicObj) {
-      if ( vm.selectedTopics.hasOwnProperty(topicObj.id) ) {
+      console.error(typeof vm.selectedTopics);
+      if (vm.selectedTopics[topicObj.id]) {
         delete vm.selectedTopics[topicObj.id];
       } else {
         vm.selectedTopics[topicObj.id] = topicObj;
