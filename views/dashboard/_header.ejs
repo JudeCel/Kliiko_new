@@ -30,7 +30,7 @@
       <%= currentDomain.name %>
     </div>
     <div class='col-xs-12 col-md-6 btn-group remove-link-line nav-button-top-margin' style="float: right;" role='group'>
-      Welcome, <%= currentUser.firstName %>!
+      Welcome, {{ app.user.firstName }}!
       <a href='/dashboard/landing'>
         <button class='btn-header-green' type='button'>
           Tour video
