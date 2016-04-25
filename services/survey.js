@@ -110,6 +110,9 @@ function findSurvey(params, skipValidations) {
   }).then(function(survey) {
     if(survey) {
       if(skipValidations) {
+        deferred.resolve(simpleParams(survey));
+      }
+      else {
         if(survey.closed) {
           deferred.reject(MESSAGES.alreadyClosed);
         }
@@ -119,9 +122,6 @@ function findSurvey(params, skipValidations) {
         else {
           deferred.resolve(simpleParams(survey));
         }
-      }
-      else {
-        deferred.resolve(simpleParams(survey));
       }
     }
     else {
@@ -351,8 +351,8 @@ function copySurvey(params, account) {
     }).then(function(survey) {
       if(survey) {
         createSurveyWithQuestions(survey, account).then(function(result) {
-          findSurvey(result, true).then(function(result) {
-            deferred.resolve(simpleParams(result, MESSAGES.copied));
+          findSurvey(result.data, true).then(function(result) {
+            deferred.resolve(simpleParams(result.data, MESSAGES.copied));
           }, function(error) {
             deferred.reject(error);
           });
