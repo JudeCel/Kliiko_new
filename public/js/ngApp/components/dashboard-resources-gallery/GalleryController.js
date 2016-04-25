@@ -2,6 +2,7 @@
   'use strict';
 
   angular.module('KliikoApp').controller('GalleryController', GalleryController);
+  angular.module('KliikoApp.Root').controller('GalleryController', GalleryController);
 
   GalleryController.$inject = ['$q', 'dbg', 'GalleryServices', 'domServices', 'messenger', '$sce'];
   function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce) {

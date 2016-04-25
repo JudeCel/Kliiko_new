@@ -17,6 +17,7 @@
     fileUploaderService.remove = remove;
     fileUploaderService.zip = zip;
     fileUploaderService.refresh = refresh;
+    fileUploaderService.survey = survey;
     fileUploaderService.pingServer = pingServer;
 
     return fileUploaderService;
@@ -75,7 +76,7 @@
       var deferred = $q.defer();
       dbg.log2('#KliikoApp.fileUploader > list resources');
 
-      resourceForServer('').get({ 'type[]': params.type, 'scope[]': params.scope }, function(result) {
+      resourceForServer('resources', '').get({ 'type[]': params.type, 'scope[]': params.scope }, function(result) {
         dbg.log2('#KliikoApp.fileUploader > list resources > server respond >', result);
         deferred.resolve(result);
       }, function(error) {
@@ -90,7 +91,7 @@
       var deferred = $q.defer();
       dbg.log2('#KliikoApp.fileUploader > remove resources');
 
-      resourceForServer('delete').delete({ 'ids[]': resourceIds }, function(result) {
+      resourceForServer('resources', 'delete').delete({ 'ids[]': resourceIds }, function(result) {
         dbg.log2('#KliikoApp.fileUploader > remove resources > server respond >', result);
         deferred.resolve(result);
       }, function(error) {
@@ -105,7 +106,7 @@
       var deferred = $q.defer();
       dbg.log2('#KliikoApp.fileUploader > zip resources');
 
-      resourceForServer('zip').post({ 'ids': resourceIds, name: name }, function(result) {
+      resourceForServer('resources', 'zip').post({ 'ids': resourceIds, name: name }, function(result) {
         dbg.log2('#KliikoApp.fileUploader > zip resources > server respond >', result);
         deferred.resolve(result);
       }, function(error) {
@@ -120,7 +121,7 @@
       var deferred = $q.defer();
       dbg.log2('#KliikoApp.fileUploader > refresh resource');
 
-      resourceForServer('show/' + resourceId).get({}, function(result) {
+      resourceForServer('resources', resourceId).get({}, function(result) {
         dbg.log2('#KliikoApp.fileUploader > refresh resource > server respond >', result);
         deferred.resolve(result);
       }, function(error) {
@@ -131,11 +132,26 @@
       return deferred.promise;
     }
 
+    function survey(surveyId) {
+      var deferred = $q.defer();
+      dbg.log2('#KliikoApp.fileUploader > survey resource');
+
+      resourceForServer('surveys', surveyId).get({}, function(result) {
+        dbg.log2('#KliikoApp.fileUploader > survey resource > server respond >', result);
+        deferred.resolve(result);
+      }, function(error) {
+        dbg.log2('#KliikoApp.fileUploader > survey resource > server error >', error);
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
+
     function pingServer() {
       var deferred = $q.defer();
       dbg.log2('#KliikoApp.fileUploader > ping server');
 
-      resourceForServer('ping').get({}, function(result) {
+      resourceForServer('resources', 'ping').get({}, function(result) {
         dbg.log2('#KliikoApp.fileUploader > ping server > server respond >', result);
         deferred.resolve(result);
       }, function(error) {
@@ -146,16 +162,16 @@
       return deferred.promise;
     }
 
-    function serverData() {
+    function serverData(what) {
       return {
         headers: { 'Authorization': thisToken },
-        url: globalSettings.serverChatDomainUrl + '/api/resources/'
+        url: globalSettings.serverChatDomainUrl + '/api/' + what +  '/'
       };
     }
 
-    function resourceForServer(path) {
+    function resourceForServer(what, path) {
       path = path || '';
-      var server = serverData();
+      var server = serverData(what);
       return $resource(server.url + path, {}, {
         get: { method: 'GET', headers: server.headers },
         delete: { method: 'DELETE', headers: server.headers },

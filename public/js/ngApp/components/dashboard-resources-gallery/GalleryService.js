@@ -1,6 +1,7 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('GalleryServices', GalleryServices);
+  angular.module('KliikoApp.Root').factory('GalleryServices', GalleryServices);
 
   GalleryServices.$inject = ['$q', 'fileUploader'];
   function GalleryServices($q, fileUploader) {
@@ -11,6 +12,7 @@
     upServices.removeResources = removeResources;
     upServices.zipResources = zipResources;
     upServices.refreshResource = refreshResource;
+    upServices.surveyResources = surveyResources;
 
     return upServices;
 
@@ -66,6 +68,18 @@
       var deferred = $q.defer();
 
       fileUploader.refresh(resourceId).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.resolve(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function surveyResources(surveyId) {
+      var deferred = $q.defer();
+
+      fileUploader.survey(surveyId).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
         deferred.resolve(error);
