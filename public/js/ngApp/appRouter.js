@@ -83,22 +83,9 @@
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-bannerMessages/dashboard-content.html"}
         },
-        resolve: {
-          checkPermission: ['$q', '$timeout', 'accountUser', 'dbg',function($q, $timeout, accountUser, dbg) {
-            var deferred = $q.defer();
-            if(accountUser.isAdmin()) {
-              deferred.resolve();
-            }
-            else {
-              deferred.reject({ error: 'Not an admin' });
-            }
-            return deferred.promise;
-          }]
-        },
         onEnter: ['dbg', function (dbg) {
           dbg.rs('dashboard.accountProfile.bannerMessages is on');
         }]
-
       })
 
       .state('dashboard.accountProfile.accountDatabase', {

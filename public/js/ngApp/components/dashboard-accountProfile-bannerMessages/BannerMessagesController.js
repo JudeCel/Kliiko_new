@@ -1,98 +1,60 @@
 (function () {
   'use strict';
 
-  angular.
-    module('KliikoApp').
-    controller('BannerMessagesController', BannerMessagesController);
-
-  BannerMessagesController.$inject = ['dbg', 'banners', '$rootScope', 'messenger'];
-  function BannerMessagesController(dbg, banners, $rootScope, messenger) {
+  angular.module('KliikoApp').controller('BannerMessagesController', BannerMessagesController);
+  BannerMessagesController.$inject = ['dbg', 'messenger', 'fileUploader', 'accountUser', '$window'];
+  function BannerMessagesController(dbg, messenger, fileUploader, accountUser, $window) {
     dbg.log2('#BannerMessagesController controller started');
     var vm = this;
 
-    vm.error = [];
-    vm.profileBanner = {};
-    vm.sessionsBanner = {};
-    vm.resourcesBanner = {};
+    vm.file = {};
+    vm.banners = ['profile', 'sessions', 'resources'];
 
+    vm.init = init;
+    vm.isAdmin = isAdmin;
     vm.upload = upload;
     vm.remove = remove;
-    vm.saveLink = saveLink;
 
-    init();
-
-
-    /**
-     * Upload new banner with particular 'bannerType'
-     * @param fileModel {file}
-     * @param bannerType {string} - types can be found in models/templateBanners -> page
-     */
-    function upload(fileModel, bannerType) {
-
-      banners.upload(fileModel, bannerType).then(
-        function(res) {
-          dbg.log1('#BannerMessagesController > upload > success ', res);
-          init();
-        },
-        function(err) {
-          dbg.log1('#BannerMessagesController > upload > error ', err);
-
-          var msg = '';
-          for (var i = 0, len = err.length; i < len ; i++) {
-            msg = msg + err[i].errorMessage +' ';
-            vm.error.push(err[i].errorMessage);
-          }
-
-          messenger.error('Upload Fails: \n '+ msg);
-          init();
-        }
-      );
+    function isAdmin() {
+      return accountUser.isAdmin();
     }
 
-    /**
-     * Remove banner by type (bannerType === app page)
-     * @param bannerType {string}
-     */
+    function upload(bannerType) {
+      var banner = vm.file[bannerType];
+      var data = {
+        file: banner.file,
+        scope: 'banner',
+        type: 'image',
+        name: bannerType
+      };
+
+      fileUploader.upload(data).then(function(result) {
+        banner.resource = result.data.resource;
+      });
+    }
+
     function remove(bannerType) {
       var confirmation = confirm('Are you sure?');
+      if(!confirmation) return;
 
-      if (!confirmation) return;
-
-      vm[bannerType+'Banner'] = null;
-
-      banners.remove(bannerType).then(
-        function(res) {
-          dbg.log2('#BannerMessagesController > remove > success', res);
-          init();
-        },
-        function(err) {
-          dbg.error('#BannerMessagesController > remove > error ', err);
-          init();
-        }
-      );
-    }
-
-    function saveLink(bannerType) {
-      banners.saveLink(bannerType, vm[bannerType+'Banner'].link).then(
-        function(res) {  messenger.ok('Link saved') },
-        function(err) {  messenger.error('Link not saved') }
-      );
-
-    }
-
-    /**
-     * Fetch and populate all banners
-     */
-    function init() {
-      banners.getAllBanners().then(function(res) {
-        for (var key in res) {
-          vm[key+'Banner'] = res[key];
-        }
+      fileUploader.remove([vm.file[bannerType].resource.id]).then(function() {
+        vm.file[bannerType] = {};
       });
-
     }
 
+    function init() {
+      if(isAdmin()) {
+        fileUploader.list({ type: ['image'], scope: ['banner'] }).then(function(result) {
+          console.log(result);
+          for(var i in result.resources) {
+            var banner = result.resources[i];
+            console.log(banner);
+          }
+        });
+      }
+      else {
+        $window.location.href = '/';
+      }
+    }
   }
-
-
 })();

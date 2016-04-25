@@ -46,7 +46,7 @@
 
     function upload(data) {
       var deferred = $q.defer();
-      var server = serverData();
+      var server = serverData('resources');
       dbg.log2('#KliikoApp.fileUploader > upload file');
 
       Upload.upload({
