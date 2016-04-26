@@ -10,7 +10,7 @@ module.exports = (Sequelize, DataTypes) => {
     classMethods: {
       associate: function(models) {
         Vote.belongsTo(models.SessionMember, {foreignKey: 'sessionMemberId'});
-        Vote.belongsTo(models.Event, {foreignKey: 'eventId'});
+        Vote.belongsTo(models.Message, {foreignKey: 'messageId'});
       }
     }
   });
