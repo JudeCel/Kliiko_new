@@ -147,6 +147,21 @@
       return deferred.promise;
     }
 
+    function banner() {
+      var deferred = $q.defer();
+      dbg.log2('#KliikoApp.fileUploader > banner resource');
+
+      resourceForServer('banners').get({}, function(result) {
+        dbg.log2('#KliikoApp.fileUploader > banner resource > server respond >', result);
+        deferred.resolve(result);
+      }, function(error) {
+        dbg.log2('#KliikoApp.fileUploader > banner resource > server error >', error);
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
+
     function pingServer() {
       var deferred = $q.defer();
       dbg.log2('#KliikoApp.fileUploader > ping server');

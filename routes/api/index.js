@@ -72,10 +72,7 @@ router.put('/promotionCode/:id', policy.authorized(['admin']), promotionCode.upd
 router.get('/accountDatabase', policy.authorized(['admin']), accountDatabase.get);
 router.put('/accountDatabase/:id', policy.authorized(['admin']), accountDatabase.update);
 
-router.get('/banners', banners.bannersGet);
-router.post('/banners', multipartyMiddleware, banners.bannersPost);
-router.post('/banners/:bannerType', multipartyMiddleware, banners.bannersBannerTypePost);
-router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelete);
+router.post('/banners', banners.create);
 
 router.get('/mailTemplates', mailTemplates.allMailTemplatesGet);
 router.get('/sessionMailTemplates', mailTemplates.allSessionMailTemplatesGet);

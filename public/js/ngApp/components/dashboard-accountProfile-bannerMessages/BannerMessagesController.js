@@ -2,8 +2,8 @@
   'use strict';
 
   angular.module('KliikoApp').controller('BannerMessagesController', BannerMessagesController);
-  BannerMessagesController.$inject = ['dbg', 'messenger', 'fileUploader', 'accountUser', '$window'];
-  function BannerMessagesController(dbg, messenger, fileUploader, accountUser, $window) {
+  BannerMessagesController.$inject = ['dbg', 'messenger', 'fileUploader', 'accountUser', '$window', 'BannerMessagesServices'];
+  function BannerMessagesController(dbg, messenger, fileUploader, accountUser, $window, BannerMessagesServices) {
     dbg.log2('#BannerMessagesController controller started');
     var vm = this;
 
@@ -30,6 +30,11 @@
 
       fileUploader.upload(data).then(function(result) {
         banner.resource = result.data.resource;
+        BannerMessagesServices.createBanner({ page: bannerType, resourceId: banner.resource.id }).then(function(result) {
+          messenger.ok(result.message);
+        }, function(error) {
+          messenger.error(error);
+        });
       });
     }
 

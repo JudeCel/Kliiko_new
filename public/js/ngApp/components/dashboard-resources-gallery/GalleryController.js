@@ -54,7 +54,16 @@
       vm.currentPage.viewType = sessionStorage.getItem('viewType') || vm.currentPage.viewType;
       vm.currentPage.viewClass = sessionStorage.getItem('viewClass') || vm.currentPage.viewClass;
 
-      GalleryServices.listResources().then(function(result) {
+      var scopes = [], types = [];
+      for(var i in vm.uploadTypes) {
+        var upload = vm.uploadTypes[i];
+        scopes.push(upload.scope);
+        types.push(upload.type);
+      }
+      scopes = Array.from(new Set(scopes));
+      types = Array.from(new Set(types));
+
+      GalleryServices.listResources({ scope: scopes, type: types }).then(function(result) {
         vm.currentPage.main = true;
         vm.resourceList = result.resources;
         filterResources(vm.currentPage.filter);
