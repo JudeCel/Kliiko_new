@@ -3,8 +3,13 @@
 <main class='main-first-page'>
   <div class='container' ng-controller='BannerMessagesController as bmc'>
     <div class='page-banner'>
-      <div ng-if='bmc.file[bmc.currentBanner].resource'>
-        <img class='center-block' ng-src='{{ bmc.file[bmc.currentBanner].resource.url.full }}' alt=''>
+      {{ banner = bmc.file[bmc.currentBanner]; '' }}
+      <div ng-if='banner.resource'>
+        <img ng-if='!banner.link' class='center-block' ng-src='{{ banner.resource.url.full }}' alt=''>
+
+        <a ng-if='banner.link' href='{{ banner.link }}' target='_blank'>
+          <img class='center-block' ng-src='{{ banner.resource.url.full }}' alt=''>
+        </a>
       </div>
     </div>
 

@@ -43,15 +43,19 @@
   .dragover {
     border: 5px dashed blue;
   }
-  
+
 
 }
 
 .banner-link-menu {
   width: 500px;
-  height: 80px;
   padding: 10px;
+  padding-bottom: 0px;
   overflow: hidden;
+  .btn-glyphonic {
+    margin-top: 10px;
+    float: right;
+  }
 }
 .banner-link-label {
   color: $blue !important;

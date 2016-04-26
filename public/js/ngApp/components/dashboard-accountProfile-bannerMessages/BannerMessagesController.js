@@ -12,6 +12,7 @@
 
     vm.init = init;
     vm.upload = upload;
+    vm.update = update;
     vm.remove = remove;
     vm.isAdmin = isAdmin;
 
@@ -47,12 +48,23 @@
       };
 
       fileUploader.upload(data).then(function(result) {
-        banner.resource = result.data.resource;
+        banner = result.data;
         BannerMessagesServices.createBanner({ page: bannerType, resourceId: banner.resource.id }).then(function(result) {
           messenger.ok(result.message);
         }, function(error) {
           messenger.error(error);
         });
+      });
+    }
+
+    function update(bannerType) {
+      var banner = vm.file[bannerType];
+
+      BannerMessagesServices.updateBanner({ link: banner.link, id: banner.id }).then(function(result) {
+        banner.link = result.data.link;
+        messenger.ok(result.message);
+      }, function(error) {
+        messenger.error(error);
       });
     }
 
