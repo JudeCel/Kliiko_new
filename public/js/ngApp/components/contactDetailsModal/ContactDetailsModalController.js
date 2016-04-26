@@ -20,6 +20,7 @@
     dbg.log2('#ContactDetailsModalController  started');
     var vm = this;
     vm.userData = {};
+    vm.resetUserData = {};
     init();
 
     vm.errors = {};
@@ -49,6 +50,7 @@
     }
 
     function initUser(user) {
+      angular.copy(user, vm.resetUserData);
       angular.copy(user, vm.userData);
     }
 
@@ -135,6 +137,7 @@
     }
 
     function cancel(){
+      angular.copy(vm.resetUserData, vm.userData);
       domServices.modal('contactDetailsModal', 'close');
     }
 
