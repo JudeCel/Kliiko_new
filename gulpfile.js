@@ -25,20 +25,20 @@ var gulp = require('gulp'),
 gulp.task('default', ['serve-dev', 'watch']);
 
 gulp.task('serve-dev', ['build-js', 'build-css'], function () {
-	nodemon({
+  nodemon({
     script: 'bin/www',
-		ext: 'html js',
-	  ignore: ['public/**/*']
+    ext: 'html js',
+    ignore: ['public/**/*']
   })
-	.on('restart', function () {
-		console.log('Server restarted!')
-	})
+  .on('restart', function () {
+    console.log('Server restarted!')
+  })
 });
 
 gulp.task('watch', ['watch-css', 'watch-js']);
 
 gulp.task('watch-css', function () {
-  watch(['public/scss/**/*.scss', 'public/css/**/*.css', '!public/css/compiled/**/*.css', '!public/css/main.css'], batch(function (events, done) {
+  watch(['public/js/**/*.scss', 'public/scss/**/*.scss', 'public/css/**/*.css', '!public/css/compiled/**/*.css', '!public/css/main.css'], batch(function (events, done) {
     gulp.start('build-css', done);
   }));
 });
