@@ -3,6 +3,7 @@
 var policy = require('./../middleware/policy');
 var models = require('./../models');
 var filters = require('./../models/filters');
+var subscriptionService = require('./subscription');
 var Session  = models.Session;
 var Invite  = models.Invite;
 var SessionMember  = models.SessionMember;
@@ -373,24 +374,30 @@ function modifySessions(sessions, accountId) {
   let deferred = q.defer();
 
   models.Subscription.find({ where: { accountId: accountId } }).then(function(subscription) {
-    let array = _.isArray(sessions) ? sessions : [sessions];
-    _.map(array, function(session) {
-      addShowStatus(session, subscription);
-      let facilitator = findFacilitator(session.SessionMembers);
-      if(facilitator) {
-        let facIndex;
+    subscriptionService.getChargebeeSubscription(subscription.subscriptionId).then(function(chargebeeSub) {
 
-        session.dataValues.facilitator = facilitator;
-        _.map(session.SessionMembers, function(member, index) {
-          if(member.id == facilitator.id) {
-            facIndex = index;
-          }
-        });
-        session.SessionMembers.splice(facIndex, 1);
-      }
-    });
+      let array = _.isArray(sessions) ? sessions : [sessions];
+      _.map(array, function(session) {
+        addShowStatus(session, chargebeeSub);
+        let facilitator = findFacilitator(session.SessionMembers);
+        if(facilitator) {
+          let facIndex;
 
-    deferred.resolve(sessions);
+          session.dataValues.facilitator = facilitator;
+          _.map(session.SessionMembers, function(member, index) {
+            if(member.id == facilitator.id) {
+              facIndex = index;
+            }
+          });
+          session.SessionMembers.splice(facIndex, 1);
+        }
+      });
+
+      deferred.resolve(sessions);
+
+    }, function(error) {
+      deferred.reject(error);
+    })
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -398,10 +405,13 @@ function modifySessions(sessions, accountId) {
   return deferred.promise;
 }
 
-function addShowStatus(session, subscription) {
+function addShowStatus(session, chargebeeSub) {
+  let endDate = new Date((chargebeeSub.current_term_end || chargebeeSub.trial_end) * 1000);
+  session.dataValues.expireDate = endDate;
+
   if(session.active) {
     var date = new Date();
-    if(subscription && date > subscription.trialEnd) {
+    if(chargebeeSub && date > endDate) {
       session.dataValues.showStatus = 'Expired';
     }
     else if(date < new Date(session.startTime)) {

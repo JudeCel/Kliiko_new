@@ -10,6 +10,7 @@ var Session = models.Session;
 
 var sessionMemberService = require('./../services/sessionMember');
 var inviteMailer = require('../mailers/invite');
+var mailerHelpers = require('../mailers/mailHelper');
 var constants = require('../util/constants');
 
 var dateFormat = require('dateformat');
@@ -385,7 +386,11 @@ function declineSessionInvite(token, status) {
     }
     else {
       invite.update({ status: status }).then(function() {
-        deferred.resolve(MESSAGES.declined);
+        sendEmail(status, invite).then(function() {
+          deferred.resolve(MESSAGES.declined);
+        }, function(error) {
+          deferred.reject(error);
+        })
       }, function(error) {
         deferred.reject(filters.errors(error));
       });
@@ -395,7 +400,67 @@ function declineSessionInvite(token, status) {
   return deferred.promise;
 }
 
+function sendEmail(status, invite) {
+  let deferred = q.defer();
+
+  prepareMailInformation(invite).then(function(data) {
+    if(status == "notAtAll"){
+      mailerHelpers.sendInvitationNotAtAll(data, function(error, result) {
+        if(error){
+          deferred.reject(error);
+        }else{
+          deferred.resolve(result);
+        }
+      })
+    }else if(status = "notThisTime"){
+      mailerHelpers.sendInvitationNotThisTime(data, function(error, result) {
+        if(error){
+          deferred.reject(error);
+        }else{
+          deferred.resolve(result);
+        }
+      })
+    }else{
+      deferred.resolve();
+    }
+  }, function(error) {
+    deferred.reject(error);
+  })
+
+  return deferred.promise;
+}
+
 //Helpers
+function prepareMailInformation(invite) {
+  let deferred = q.defer();
+
+  models.SessionMember.find({
+    where: {
+      sessionId: invite.sessionId,
+      role: 'facilitator'
+    },
+    include: [AccountUser]
+  }).then(function(facilitator) {
+    deferred.resolve(prepareMailParams(invite.sessionId, invite.AccountUser, facilitator.AccountUser));
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function prepareMailParams(sessionId, receiver, facilitator) {
+  return {
+    email: receiver.email,
+    firstName: receiver.firstName, //receiver name
+    facilitatorFirstName: facilitator.firstName,
+    facilitatorLastName: facilitator.lastName,
+    facilitatorMail: facilitator.email,
+    facilitatorMobileNumber: facilitator.mobile,
+    unsubscribeMailUrl: "" // this functionality is not implemented, yet!
+  }
+}
+
 function removeAllAssociatedDataOnNewUser(invite, callback) {
   async.waterfall([
     function(cb) {

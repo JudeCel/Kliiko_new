@@ -1,4 +1,4 @@
-<section id='banner-messages' ng-controller='BannerMessagesController as bmc'>
+<section id='banner-messages'>
   <div ng-if='bmc.isAdmin()'>
     <div ng-init='bmc.init()'>
       <div class='col-md-12' >
@@ -32,6 +32,24 @@
                 <button class='btn-standart btn-blue btn-glyphonic' ng-click='bmc.remove(banner)' data-toggle='tooltip' data-placement='bottom' title='Remove banner'>
                   <span class='glyphicon glyphicon-remove' aria-hidden='true' />
                 </button>
+
+                <md-menu>
+                  <button class='btn-standart btn-blue btn-glyphonic' ng-click='$mdOpenMenu(ev)' data-toggle='tooltip' data-placement='bottom' title='Edit link'>
+                    <span class='glyphicon glyphicon-link' aria-hidden='true' />
+                  </button>
+
+                  <md-menu-content class='banner-link-menu'>
+                    <md-input-container>
+                      <form ng-submit='bmc.update(banner)'>
+                        <label class='banner-link-label'>Banner Link</label>
+                        <input class='banner-link-input' ng-model='bmc.file[banner].link' ng-model-options='{ debounce: 1000 }'>
+                        <button class='btn-standart btn-blue btn-glyphonic' data-toggle='tooltip' data-placement='bottom' title='Submit'>
+                          <span class='glyphicon glyphicon-ok' aria-hidden='true' />
+                        </button>
+                      </form>
+                    </md-input-container>
+                   </md-menu-content>
+                </md-menu>
               </div>
             </div>
           </div>

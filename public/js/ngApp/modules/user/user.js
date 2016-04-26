@@ -4,7 +4,8 @@
 
   usersFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg'];
   function usersFactory($q, globalSettings, $resource, dbg) {
-    var user = {};
+    var vm = this;
+    vm.user = {};
     var usersRestApi = $resource(globalSettings.restUrl + '/user', {}, {post: {method: 'POST'}, changePassword: {method: 'PUT'}});
 
     var UserService = {};
@@ -13,7 +14,8 @@
     UserService.updateUserData = updateUserData;
     return UserService;
 
-    function getUserData(forceUpdate) {
+    function getUserData(app) {
+      vm.app = app;
       dbg.log2('#KliikoApp.user > get user');
       var deferred = $q.defer();
 
@@ -24,8 +26,8 @@
           deferred.reject(res.error);
         }
         else {
-          user = res;
-          deferred.resolve(user);
+          vm.user = res;
+          deferred.resolve(vm.user);
         }
       });
 
@@ -55,7 +57,7 @@
           deferred.reject(res.error);
         }
         else {
-          user = res;
+          vm.app.user = res;
           deferred.resolve(res);
         }
       });

@@ -73,6 +73,7 @@ router.get('/accountDatabase', policy.authorized(['admin']), accountDatabase.get
 router.put('/accountDatabase/:id', policy.authorized(['admin']), accountDatabase.update);
 
 router.post('/banners', banners.create);
+router.put('/banners', banners.update);
 
 router.get('/mailTemplates', mailTemplates.allMailTemplatesGet);
 router.get('/sessionMailTemplates', mailTemplates.allSessionMailTemplatesGet);

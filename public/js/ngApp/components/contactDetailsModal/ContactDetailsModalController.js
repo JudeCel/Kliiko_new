@@ -19,12 +19,14 @@
   function ContactDetailsModalController(dbg,  user, domServices, messenger) {
     dbg.log2('#ContactDetailsModalController  started');
     var vm = this;
+    vm.userData = {};
     init();
 
     vm.errors = {};
     vm.updateUserData = updateUserData;
     vm.cancel = cancel;
     vm.validatePhone = validatePhone;
+    vm.initUser = initUser;
 
     vm.phoneCountryData = sessionStorage.getItem('phoneCountryData') || 'au';
     vm.landlineNumberCountryData = sessionStorage.getItem('landlineNumberCountryData') || 'au';
@@ -40,14 +42,14 @@
     function init() {
       // update form on every modal opening. will reset after 'cancel'
       jQuery('#contactDetailsModal').on('show.bs.modal', function (event) {
-        // get all data for current user
-        user.getUserData().then(function (res) {
-          vm.userData = $.extend({}, res);
-        });
         vm.userDetailsForm.$setPristine();
         vm.userDetailsForm.$setUntouched();
         vm.errors = {};
       });
+    }
+
+    function initUser(user) {
+      angular.copy(user, vm.userData);
     }
 
     function getPhoneCountryData() {

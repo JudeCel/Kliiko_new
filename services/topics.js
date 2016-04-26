@@ -67,8 +67,6 @@ function joinToSession(ids, sessionId) {
           attributes: [],
           include: [Topic]
         }).then( function(sessionTopics) {
-
-          console.log(sessionTopics);
           deferred.resolve(sessionTopics);
         });
 
