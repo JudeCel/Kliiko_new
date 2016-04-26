@@ -31,8 +31,16 @@ helpers.mailFrom = function(){
 };
 
 helpers.getUrl = function(token, path){
-  return "http://" + process.env.SERVER_DOMAIN + ":" + process.env.SERVER_PORT + path + token;
+  return "http://" + process.env.SERVER_DOMAIN + returnPort() + path + token;
 };
+
+function returnPort() {
+  if(process.env.NODE_ENV == "production"){
+    return '';
+  }else{
+    return ":" + process.env.SERVER_PORT;
+  }
+}
 
 helpers.renderMailTemplate = function(filename, params, callback){
   let tplfile = __dirname + '/templates/' + filename + '.ejs';
