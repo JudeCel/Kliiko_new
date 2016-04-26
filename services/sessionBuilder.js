@@ -124,14 +124,12 @@ function update(sessionId, accountId, params) {
       session.updateAttributes(params).then(function(updatedSession) {
         sessionBuilderObject(updatedSession).then(function(sessionObject) {
           if(!updatedSession.active){
-            console.log(updatedSession.active);
             sendCloseSessionMail(updatedSession).then(function() {
               deferred.resolve(sessionObject);
             },function(error) {
               deferred.reject(error);
             })
           }else{
-            console.log(updatedSession.active);
             deferred.resolve(sessionObject);
           }
         }, function(error) {

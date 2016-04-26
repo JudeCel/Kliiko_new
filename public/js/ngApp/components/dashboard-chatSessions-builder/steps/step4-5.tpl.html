@@ -53,7 +53,7 @@
             <td>{{ member.mobile }}</td>
             <td class='col-xs-2'>
               <div ng-if='!lastStepsController.mouseOveringMember[$index]'>
-                <div ng-if="!member.inviteStatus">{{ lastStepsController.fixInviteStatus(member.invite.status) }}</div>
+                <div ng-if="!member.inviteStatus">{{ member.invite.status || "accepted" }}</div>
                 <div ng-if="member.inviteStatus">{{ member.inviteStatus }}</div>
               </div>
               <div ng-if='lastStepsController.mouseOveringMember[$index]'>

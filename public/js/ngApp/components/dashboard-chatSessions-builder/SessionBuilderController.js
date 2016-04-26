@@ -49,11 +49,17 @@
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
     vm.selectObserversClickHandle = selectObserversClickHandle;
     function closeSession() {
-      vm.session.setOpen(false);
+      vm.session.setOpen(false).then(function(res) {
+      }, function(err) {
+        messenger.error(err);
+      });
     }
 
     function openSession() {
-      vm.session.setOpen(true);
+      vm.session.setOpen(true).then(function(res) {
+      }, function(err) {
+        messenger.error(err);
+      });
     }
 
     function goToStep(step) {
