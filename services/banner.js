@@ -13,8 +13,19 @@ module.exports = {
 function create(params) {
   let deferred = q.defer();
 
-  Banner.create(params).then(function(banner) {
-    deferred.resolve(banner);
+  Banner.find({
+    where: { page: params.page }
+  }).then(function(result) {
+    if(result) {
+      deferred.reject('Banner already exists!');
+    }
+    else {
+      Banner.create(params).then(function(banner) {
+        deferred.resolve(banner);
+      }, function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
   }, function(error) {
     deferred.reject(filters.errors(error));
   });

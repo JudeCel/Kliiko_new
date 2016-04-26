@@ -28,7 +28,6 @@
     'KliikoApp.account',
     'KliikoApp.accountUser',
     'KliikoApp.fileUploader',
-    'KliikoApp.banners',
     'KliikoApp.mailTemplate'
   ];
 

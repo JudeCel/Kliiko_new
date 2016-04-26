@@ -7,10 +7,9 @@
   function fileUploaderFactory($q, globalSettings, $resource, dbg, Upload) {
     var fileUploaderApiLocal = $resource(globalSettings.restUrl + '/jwtToken');
 
-    var thisToken = '';
-    var fileUploader = {};
     var fileUploaderService = {};
 
+    fileUploaderService.token = null;
     fileUploaderService.getToken = getToken;
     fileUploaderService.upload = upload;
     fileUploaderService.list = list;
@@ -18,6 +17,7 @@
     fileUploaderService.zip = zip;
     fileUploaderService.refresh = refresh;
     fileUploaderService.survey = survey;
+    fileUploaderService.banner = banner;
     fileUploaderService.pingServer = pingServer;
 
     return fileUploaderService;
@@ -28,14 +28,14 @@
 
       fileUploaderApiLocal.get({}, function(res) {
         dbg.log2('#KliikoApp.fileUploader > get token > server respond >');
-        fileUploader.token = thisToken = res.token;
+        fileUploaderService.token = res.token;
         pingServer().then(function() {
           console.log("can ping");
-          deferred.resolve(fileUploader);
+          deferred.resolve({ token: res.token });
         }, function(error) {
           console.error("some error");
           console.error(error);
-          deferred.resolve(fileUploader);
+          deferred.resolve({ token: res.token });
         });
       }, function(error) {
         deferred.reject(error);
@@ -179,7 +179,7 @@
 
     function serverData(what) {
       return {
-        headers: { 'Authorization': thisToken },
+        headers: { 'Authorization': fileUploaderService.token },
         url: globalSettings.serverChatDomainUrl + '/api/' + what +  '/'
       };
     }

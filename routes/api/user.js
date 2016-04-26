@@ -48,26 +48,10 @@ function changePassword(req, res, next) {
 
 function userCanAccessPost(req, res, next) {
   var roles = res.locals.currentDomain.roles;
-  var section = req.body.section;
 
-  if (section === 'bannerMessages') {handleBannerMessages(); return}
-
-  handleDefault();
-
-
-  function handleBannerMessages() {
-    if (policy.authorized(roles)) {
-      res.send({accessPermitted: true, role: roles})
-    } else {
-      res.send({error: `Access Denied for ${roles}`});
-    }
-  }
-
-  function handleDefault() {
-    if (policy.authorized(roles)) {
-      next();
-    }else {
-      res.send({error: 'Access Denied'});
-    }
+  if (policy.authorized(roles)) {
+    next();
+  }else {
+    res.send({error: 'Access Denied'});
   }
 }
