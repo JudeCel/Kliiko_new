@@ -29,6 +29,7 @@ const MESSAGES = {
   accountUserNotFound: 'Account User not found',
 
   errors: {
+    cantSendCloseMails: "Were not able to send emails to informa all participants, that session was closed.",
     firstStep: {
       nameRequired: 'Name must be provided',
       startTimeRequired: 'Start time must be provided',
@@ -121,8 +122,18 @@ function update(sessionId, accountId, params) {
   validators.hasValidSubscription(accountId).then(function() {
     findSession(sessionId, accountId).then(function(session) {
       session.updateAttributes(params).then(function(updatedSession) {
-        sessionBuilderObject(updatedSession).then(function(result) {
-          deferred.resolve(result);
+        sessionBuilderObject(updatedSession).then(function(sessionObject) {
+          if(!updatedSession.active){
+            console.log(updatedSession.active);
+            sendCloseSessionMail(updatedSession).then(function() {
+              deferred.resolve(sessionObject);
+            },function(error) {
+              deferred.reject(error);
+            })
+          }else{
+            console.log(updatedSession.active);
+            deferred.resolve(sessionObject);
+          }
         }, function(error) {
           deferred.reject(error);
         });
@@ -137,6 +148,84 @@ function update(sessionId, accountId, params) {
   })
 
   return deferred.promise;
+}
+
+function sendCloseSessionMail(session) {
+  let deferred = q.defer();
+
+  models.SessionMember.find({
+    where: {
+      sessionId: session.id,
+      role: 'facilitator'
+    },
+    include: [AccountUser]
+  }).then(function(facilitator) {
+    models.SessionMember.findAll({
+      where: {
+        sessionId: session.id,
+        role: ["participant", "observer"]
+      },
+      include: [AccountUser]
+    }).then(function(sessionMembers) {
+      if(canSendCloseMails(session, facilitator, sessionMembers.length)){
+        sendToEachParticipant(session, facilitator, sessionMembers).then(function() {
+          deferred.resolve();
+        },function(errors) {
+          deferred.reject(errors);
+        })
+      }else{
+        deferred.reject(MESSAGES.errors.cantSendCloseMails);
+      }
+    }).catch(function(error) {
+      deferred.reject(error);
+    });
+  }).catch(function(error) {
+    deferred.reject(error);
+  })
+
+  return deferred.promise;
+}
+
+function sendToEachParticipant(session, facilitator,sessionMembers ) {
+  let deferred = q.defer();
+  let errors = [];
+
+  _.map(sessionMembers, function(sessionMember) {
+    mailHelper.sendSessionClose(prepareCloseSessionEmailParams(session, facilitator.AccountUser, sessionMember.AccountUser), function(error, result) {
+      if(error) {
+        errors.push({accournUserId: sessionMember.AccountUser.id, error: error})
+      }
+    })
+  })
+
+  if(errors.length > 0){
+    deferred.reject(error);
+  }else{
+    deferred.resolve();
+  }
+
+  return deferred.promise;
+}
+
+function canSendCloseMails(session, facilitator, memberCount) {
+  return session && facilitator && memberCount > 0;
+}
+
+function prepareCloseSessionEmailParams(session, facilitator, receiver) {
+  return {
+    sessionId: session.id,
+    sessionName: session.name,
+    email: receiver.email,
+    firstName: receiver.firstName, //receiver name
+    incentive: session.incentive,
+    facilitatorMobileNumber: facilitator.mobile,
+    facilitatorFirstName: facilitator.firstName,
+    facilitatorLastName: facilitator.lastName,
+    facilitatorMail: facilitator.email,
+    participateInFutureUrl: "",
+    dontParticipateInFutureUrl: "",
+    unsubscribeMailUrl: ""
+  }
 }
 
 function nextStep(id, accountId) {
