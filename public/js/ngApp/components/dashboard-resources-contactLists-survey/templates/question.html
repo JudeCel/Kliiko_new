@@ -40,7 +40,7 @@
 
     <label class='col-xs-2 control-label' for='audioVideo-{{object.order}}'>Audio/Video</label>
     <div class='col-xs-10 col-md-6'>
-      {{ upload = sc.galleryDropdownData("questions", question); resource = sc.getResourceFromList(question); "" }}
+      {{ upload = sc.galleryDropdownData("questions", question); resource = gc.getResourceFromList(question); "" }}
       <div ng-include="gc.templatesDir + 'view.html'" ng-if='resource'></div>
       <div ng-include="gc.templatesDir + 'dropdown.html'"></div>
     </div>

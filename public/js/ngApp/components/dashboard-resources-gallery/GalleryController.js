@@ -42,6 +42,7 @@
     vm.getUploadTypeFromResource = getUploadTypeFromResource;
     vm.resourceSelected = resourceSelected;
     vm.removeDependency = removeDependency;
+    vm.getResourceFromList = getResourceFromList;
     vm.openUploadModal = openUploadModal;
     vm.openSelectModal = openSelectModal;
     vm.selectAllResources = selectAllResources;
@@ -195,6 +196,27 @@
       if(dependency) {
         dependency.resourceId = null;
         dependency.resource = null;
+      }
+    }
+
+    function getResourceFromList(dependency) {
+      if(!dependency) {
+        return null;
+      }
+      else if(dependency.resource) {
+        return dependency.resource;
+      }
+      else if(dependency.resourceId) {
+        for(var i in vm.resourceList) {
+          var resource = vm.resourceList[i];
+          if(resource.id == dependency.resourceId) {
+            dependency.resource = resource;
+            return resource;
+          }
+        }
+      }
+      else {
+        return null;
       }
     }
 

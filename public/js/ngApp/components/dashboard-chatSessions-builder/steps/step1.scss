@@ -108,22 +108,14 @@
 
 
   #GalleryController {
-    .panel {
-      cursor: pointer;
-      padding: 10px;
-      background: #F6F8F7;
-
-      &:hover {
-        background: $lightGreen
+    .dropdown-menu {
+      top: inherit;
+    }
+    .gallerySelectModal {
+      .panel {
+        margin-bottom: 10px !important;
       }
     }
-    img  {
-      max-width: 100%;
-      padding: 20px;
-      border: 2px solid $green;
-      background: white;
-    }
-
   }
 
 

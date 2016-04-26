@@ -46,7 +46,6 @@
     vm.contactDetailDisabled = contactDetailDisabled;
     vm.onDropComplete = onDropComplete;
     vm.galleryDropdownData = galleryDropdownData;
-    vm.getResourceFromList = getResourceFromList;
 
     vm.canCreateNew = canCreateNew;
 
@@ -282,29 +281,7 @@
       };
     }
 
-    function getResourceFromList(dependency) {
-      if(!dependency) {
-        return null;
-      }
-      else if(dependency.resource) {
-        return dependency.resource;
-      }
-      else if(dependency.resourceId) {
-        for(var i in vm.galleryController.resourceList) {
-          var resource = vm.galleryController.resourceList[i];
-          if(resource.id == dependency.resourceId) {
-            dependency.resource = resource;
-            return resource;
-          }
-        }
-      }
-      else {
-        return null;
-      }
-    }
-
     function initGallery(gc) {
-      vm.galleryController = gc;
       vm.uploadTypes = {
         survey: [gc.getUploadType('brandLogo')],
         questions: [gc.getUploadType('video'), gc.getUploadType('audio'), gc.getUploadType('youtube')]
