@@ -53,7 +53,6 @@ module.exports = (Sequelize, DataTypes) => {
           User.hasMany(models.SocialProfile, { foreignKey: 'userId'});
           User.belongsToMany(models.Account, { through: { model: models.AccountUser} });
           User.hasMany(models.AccountUser, { onDelete: 'CASCADE' });
-          User.hasMany(models.Event, { foreignKey: 'userId'});
           //previously scope was set as scope: { owner: true }, which didn't allow to get an account user
           User.belongsToMany(models.Account, { through: { model: models.AccountUser},  as: 'OwnerAccount'});
           User.hasMany(models.Invite, { foreignKey: 'userId' });
