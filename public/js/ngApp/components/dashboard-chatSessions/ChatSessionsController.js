@@ -18,7 +18,6 @@
 
     vm.changePage = changePage;
     vm.rowClass = rowClass;
-    vm.subscriptionEndDate = subscriptionEndDate;
     vm.goToChat = goToChat;
     vm.hasAccess = hasAccess;
     vm.isExpired = isExpired;
@@ -88,15 +87,6 @@
     function goToChat(session) {
       if(!isExpired(session)) {
         $window.location.href = vm.chatRoomUrl + session.id;
-      }
-    }
-
-    function subscriptionEndDate(user) {
-      if(user && user.subscriptions) {
-        return user.subscriptions.trialEnd;
-      }
-      else {
-        return 'not found';
       }
     }
 

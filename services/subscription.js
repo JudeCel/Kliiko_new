@@ -42,7 +42,22 @@ module.exports = {
   cancelSubscription: cancelSubscription,
   recurringSubscription: recurringSubscription,
   getAllPlans: getAllPlans,
-  retrievCheckoutAndUpdateSub: retrievCheckoutAndUpdateSub
+  retrievCheckoutAndUpdateSub: retrievCheckoutAndUpdateSub,
+  getChargebeeSubscription: getChargebeeSubscription
+}
+
+function getChargebeeSubscription(subscriptionId) {
+  let deferred = q.defer();
+
+  chargebee.subscription.retrieve(subscriptionId).request(function(error,result){
+    if(error){
+      deferred.reject(error);
+    }else{
+      deferred.resolve(result.subscription);
+    }
+  });
+
+  return deferred.promise;
 }
 
 function getAllPlans(accountId) {

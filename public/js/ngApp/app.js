@@ -125,7 +125,7 @@
     init();
 
     function init() {
-      user.getUserData().then(function(res) {
+      user.getUserData(vm).then(function(res) {
         setSessionStorage(res);
         vm.user = res;
       });

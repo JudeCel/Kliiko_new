@@ -26,6 +26,7 @@
     vm.removeFromList = removeFromList;
     vm.sendGenericEmail = sendGenericEmail;
     vm.setMembersFilter = setMembersFilter;
+    vm.fixInviteStatus = fixInviteStatus;
 
     vm.stepMembers = [];
 
@@ -80,6 +81,10 @@
       else {
         return member.status;
       }
+    }
+
+    function fixInviteStatus(status) {
+      return status.split(/(?=[A-Z])/).join(' ').toLowerCase();
     }
 
     function inviteMembers() {
