@@ -268,3 +268,8 @@ color: #737373;
 .intl-tel-input{
   width: 100% !important;
 }
+
+.animated {
+  -webkit-animation-fill-mode: none !important;
+  animation-fill-mode: none !important;
+}
