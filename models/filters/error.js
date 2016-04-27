@@ -22,6 +22,10 @@ function parseErrorMessage(error, object) {
   let field = _.startCase(path);
 
   switch(true) {
+    case message.includes('lower(name::text)'):
+      path = 'name';
+      message = `Name has already been taken`;
+      break;
     case message.includes("null value in column"):
     case message.includes(" cannot be null"):
     case message.includes("can't be empty"): // promotionCode
