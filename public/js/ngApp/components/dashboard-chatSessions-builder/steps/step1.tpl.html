@@ -211,70 +211,24 @@
 
         <!-- Brand Logo -->
         <uib-accordion-group is-open="step1Controller.accordions.brandLogo">
-            <uib-accordion-heading>
-                <div class="panel-label">
-                    Select Brand Logo (optional) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.brandLogo, 'glyphicon-chevron-right': !step1Controller.accordions.brandLogo}"></i>
-                    <span class="panel-value pull-right">{{ step1Controller.brandLogo.JSON.name }}</span>
-                </div>
-            </uib-accordion-heading>
+          <uib-accordion-heading>
+            <div class="panel-label">
+              Select Brand Logo (optional) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.brandLogo, 'glyphicon-chevron-right': !step1Controller.accordions.brandLogo}"></i>
+            </div>
+          </uib-accordion-heading>
 
-            <section>
+          <div id='GalleryController' ng-controller='GalleryController as gc'>
+            <div>
+              {{ upload = step1Controller.galleryDropdownData(gc.currentDependency); "" }}
+              <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
+            </div>
 
-                <div class='form-group'>
-                    <img ng-src="{{ sc.getResourceThumbUrl(sc.survey.Resource) }}" class="img-responsive" style="display: inline-block;" ng-if="sc.survey.Resource"/>
-                    <div ng-if="sc.survey.Resource" style="display: inline-block;">
-                        <button type='submit' class='btn btn-addNewElement btn-green no-margin gallery-btn-width'
-                                ng-click="sc.removeResource(sc.survey.resourceId, null, sc.survey)">
-                            <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
-                        </button>
-                    </div>
-
-                    <div class='col-xs-8 col-md-8 drop-area'>
-                        <div ngf-drop ngf-select class="drop-box" ng-model="sc.file" ng-change="sc.saveResource('brandLogo')" id="brandLogo"
-                             ngf-drag-over-class="'dragover'" accept="image/gif, image/jpeg, image/jpg, image/png, image/bmp">
-                            Drop images or click here to upload new logo
-                        </div>
-
-                        <div ngf-no-file-drop >
-                            File Drag/Drop is not supported for this browser
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class='form-group'>
-                    <div class='col-md-8'>
-                        <div class='has-error' ng-messages='sc.manageForm.description.$error'>
-                            <div ng-repeat='error in sc.validationErrors'>
-                                <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-            </section>
-
-            <section id='GalleryController' ng-controller='GalleryController' ng-init="sc.initLogosList()">
-                <!-- Table view -->
-                <div class="gallery-body col-md-12">
-                    <table class="table table-hover table-responsive" >
-                        <br>
-                        <div class='col-sm-4' ng-repeat="resource in step1Controller.logosList = sc.brandLogos">
-                            <label for="{{ $index }}-logo">
-                                <div class='panel'>
-                                    <input id="{{ $index }}-logo" type="radio" ng-model="step1Controller.brandLogo" ng-value="resource" ng-click="sbc.updateStep({resourceId:step1Controller.brandLogo.id})">
-                                    <img calss="source-img" ng-src='{{ getResourceNameUrl(resource) }}'/>
-                                </div>
-                            </label>
-                        </div>
-                        <div class='col-sm-12'>
-                            <div class="btn-standart btn-red" ng-show="step1Controller.brandLogo" ng-click="step1Controller.brandLogo = null; sbc.updateStep({brandProjectPreferenceId:null})">Clean Selection</div>
-                        </div>
-
-                    </table>
-                </div>
-            </section>
+            <div ng-init='step1Controller.initGallery(gc)'>
+              {{ upload = step1Controller.galleryDropdownData(step1Controller.session.sessionData); resource = gc.getResourceFromList(step1Controller.session.sessionData);"" }}
+              <div ng-include="gc.templatesDir + 'view.html'" ng-if='resource'></div>
+              <div ng-include="gc.templatesDir + 'dropdown.html'"></div>
+            </div>
+          </div>
         </uib-accordion-group>
 
         <!-- Color Scheme -->

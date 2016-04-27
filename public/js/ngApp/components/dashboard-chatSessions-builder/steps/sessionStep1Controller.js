@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep1Controller', SessionStep1Controller);
 
-  SessionStep1Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices', '$ocLazyLoad', '$q', '$window', '$rootScope', '$scope'];
-  function SessionStep1Controller(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $ocLazyLoad, $q, $window, $rootScope, $scope) {
+  SessionStep1Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope'];
+  function SessionStep1Controller(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope) {
     dbg.log2('#SessionBuilderController 1 started');
 
     var vm = this;
@@ -19,6 +19,8 @@
     vm.updateStep = updateStep;
     vm.addFacilitatorsClickHandle = addFacilitatorsClickHandle;
     vm.facilitatorsSelectHandle = facilitatorsSelectHandle;
+    vm.initGallery = initGallery;
+    vm.galleryDropdownData = galleryDropdownData;
 
     vm.initController = function() {
       vm.session = builderServices.session;
@@ -54,20 +56,6 @@
         }
         vm.name = vm.session.steps.step1.name;
       }, true);
-
-      // populate logo
-      if (vm.session.steps.step1.resourceId) {
-        vm.wLogosList = $scope.$watch('step1Controller.logosList', function (newval, oldval) {
-          if (vm.logosList) {
-            for (var i = 0, len = vm.logosList.length; i < len ; i++) {
-              if (vm.logosList[i].id == vm.session.steps.step1.resourceId) {
-                vm.brandLogo = vm.logosList[i];
-                break;
-              }
-            }
-          }
-        }, true);
-      }
 
       // populate color scheme
       if (vm.session.steps.step1.brandProjectPreferenceId) {
@@ -172,6 +160,36 @@
         },
         function (err) { messenger.error(err);  }
       );
+    }
+
+    // Gallery stuff
+    $scope.$watch(function() {
+      return vm.session.sessionData.resourceId;
+    }, function(next, prev) {
+      if(next != prev) {
+        updateStep({ resourceId: next });
+      }
+    });
+
+    function initGallery(gc) {
+      vm.uploadTypes = [gc.getUploadType('brandLogo')];
+
+      gc.listResources({ type: ['image'], scope: ['brandLogo'] }).then(function(result) {
+        gc.resourceList = result.resources;
+        for(var i in result.resources) {
+          var resource = result.resources[i];
+          var type = gc.getUploadTypeFromResource(resource);
+          gc.selectionList[type].push(resource);
+        }
+      });
+    }
+
+    function galleryDropdownData(dependency) {
+      return {
+        types: vm.uploadTypes,
+        modal: { upload: true, select: true },
+        dependency: dependency
+      };
     }
   }
 

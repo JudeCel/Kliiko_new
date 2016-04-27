@@ -1,6 +1,6 @@
 <div class='col-xs-12'>
   <center>
-    <img ng-src='{{ sc.getResourceThumbUrl(sc.survey.Resource) }}' class='img-responsive' ng-if='sc.survey.Resource'/>
+    <img ng-src='{{ sc.survey.resource.url.full }}' class='img-responsive' ng-if='sc.survey.resource'/>
   </center>
 </div>
 <p class='lead survey-header text-break-all'>{{ sc.survey.name }}
@@ -14,12 +14,12 @@
   <fieldset ng-disabled='sc.submitingSurvey'>
     <ng-form name='answers'>
       <div ng-repeat='question in sc.survey.SurveyQuestions track by question.order' ng-init='sq = sc.surveySelect.SurveyQuestions[question.id] = {}'>
-        <div class='panel no-border-radius' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order].$error, "panel")'>
-          <div class='panel-heading no-border-radius'>
+        <div class='panel border-radius-none' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order].$error, "panel")'>
+          <div class='panel-heading border-radius-none'>
             <h3 class='panel-title'><small>{{ question.name }}</small><span class='panel-title help-block'>{{ question.question }}</span></h3>
           </div>
 
-          <div class='panel-body no-border-radius'>
+          <div class='panel-body border-radius-none'>
             <div class='has-error' ng-messages='sc.submitForm.answers[question.order].$error'>
               <div ng-repeat='error in sc.validationErrors'>
                 <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
@@ -37,7 +37,7 @@
             </div>
 
             <div ng-if='question.type == "textarea"' ng-repeat='answer in question.answers'>
-              <textarea class='form-control no-border-radius' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order].$error, "panel")'
+              <textarea class='form-control border-radius-none' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order].$error, "panel")'
                 placeholder='Answer' rows='5' name='{{ question.order }}'
                 ng-model='sq.answer' ng-minlength='minsMaxs.textarea.min' ng-maxlength='minsMaxs.textarea.max' ng-required='sc.submitedSurvey'>
               </textarea>
@@ -64,14 +64,14 @@
 
                     <label class='col-xs-2 control-label' for='contact-{{ contact.model }}'>{{ contact.name }}</label>
                     <div class='col-xs-10' ng-if='contact.input'>
-                      <input type='text' class='form-control no-border-radius' id='contact-{{ contact.model }}' placeholder='{{ contact.name }}'
+                      <input type='text' class='form-control border-radius-none' id='contact-{{ contact.model }}' placeholder='{{ contact.name }}'
                         name='{{ contact.model }}' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
                         ng-model='sq.contactDetails[contact.model]' ng-disabled='!sq.answer' ng-required='sq.answer && sc.submitedSurvey'
                         ng-minlength='1' ng-maxlength='20'>
                     </div>
 
                     <div class='col-xs-10' ng-if='contact.select'>
-                      <select class='form-control no-border-radius' id='contact-{{ contact.model }}' name='{{ contact.model }}'
+                      <select class='form-control border-radius-none' id='contact-{{ contact.model }}' name='{{ contact.model }}'
                         ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
                         ng-model='sq.contactDetails[contact.model]' ng-required='sq.answer && sc.submitedSurvey' ng-disabled='!sq.answer'>
                         <option ng-repeat='option in contact.options' value='{{ option }}'>
@@ -85,22 +85,10 @@
             </div>
           </div>
 
-          <div ng-if='question.Resource'>
-            <div class='col-xs-offset-3'>
-              <div class='responsive-container' ng-if="question.Resource.JSON.type == 'audio'">
-                <audio width="100%" controls  data-ng-src='{{ sc.getResourceNameUrl(question.Resource) }}'></audio>
-              </div>
-            </div>
-
-            <div class='responsive-container' ng-if="question.Resource.JSON.type == 'youtubeUrl'">
-              <div class="embed-responsive embed-responsive-4by3" ng-bind-html="sc.renderHtml(question.Resource)"></div>
-            </div>
-
-            <div class='responsive-container' ng-if="question.Resource.JSON.type == 'video'">
-              <video width="100%" controls data-ng-src='{{ sc.getResourceNameUrl(question.Resource) }}'></video>
-            </div>
+          <div ng-if='question.resource'>
+            {{ resource = question.resource; "" }}
+            <div ng-include="gc.templatesDir + 'view.html'" ng-if='resource'></div>
           </div>
-
 
         </div>
       </div>

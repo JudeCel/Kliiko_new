@@ -1,107 +1,88 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('GalleryServices', GalleryServices);
-  GalleryServices.$inject = ['globalSettings', '$q', '$resource', 'dbg', 'Upload'];
+  angular.module('KliikoApp.Root').factory('GalleryServices', GalleryServices);
 
-  function GalleryServices(globalSettings, $q, $resource, dbg, Upload) {
-    var galleryRestApi = $resource(globalSettings.chatUrl.domain + '/resources/:path', null, {
-      uploadFile: { method: 'POST', params: { path: 'uploadFile' } },
-      saveYoutubeUrl: { method: 'POST', params: { path: 'saveYoutubeUrl' } },
-      deleteZipFile: { method: 'POST', params: { path: 'deleteZipFile' } },
-      download: { method: 'GET', params: { path: 'download' } },
-      zip: { method: 'DELETE', params: { path: 'zip' } }
-    });
-
+  GalleryServices.$inject = ['$q', 'fileUploader'];
+  function GalleryServices($q, fileUploader) {
     var upServices = {};
 
-    upServices.getResources = getResources;
-    upServices.downloadResources = downloadResources;
-    upServices.deleteResources = deleteResources;
+    upServices.listResources = listResources;
     upServices.createResource = createResource;
-    upServices.saveYoutubeUrl = saveYoutubeUrl;
-    upServices.postuploadData = postuploadData;
-    upServices.deleteZipFile = deleteZipFile;
+    upServices.removeResources = removeResources;
+    upServices.zipResources = zipResources;
+    upServices.refreshResource = refreshResource;
+    upServices.surveyResources = surveyResources;
+
     return upServices;
 
-    function getResources(type) {
-      var deferred = $q.defer();
-      dbg.log2('#GalleryServices > getResources > make rest call');
-      galleryRestApi.get(type, function(res) {
-        dbg.log2('#GalleryServices > getResources > rest call responds');
-        deferred.resolve(res);
-      });
-      return deferred.promise;
-    };
-
-    function downloadResources(ids) {
-      var deferred = $q.defer();
-      dbg.log2('#GalleryServices > downloadGalleryResources > make rest call');
-      galleryRestApi.download(ids, function(res) {
-        dbg.log2('#GalleryServices > downloadGalleryResources > rest call responds');
-        deferred.resolve(res);
-      });
-      return deferred.promise;
-    };
-
-    function deleteResources(ids) {
+    function listResources(params) {
       var deferred = $q.defer();
 
-      dbg.log2('#GalleryServices > deleteGalleryResources > make rest call');
-      galleryRestApi.delete(ids, function(res) {
-        dbg.log2('#GalleryServices > deleteGalleryResources > rest call responds');
-        deferred.resolve(res);
+      fileUploader.list(params).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.resolve(error);
       });
 
       return deferred.promise;
-    };
+    }
 
     function createResource(params) {
       var deferred = $q.defer();
 
-      dbg.log2('#GalleryServices > createGalleryResources > make rest call');
-      galleryRestApi.save(params, function(res) {
-        dbg.log2('#GalleryServices > createGalleryResources > rest call responds');
-        deferred.resolve(res);
+      fileUploader.upload(params).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.resolve(error);
       });
 
       return deferred.promise;
     }
 
-    function postuploadData(newResource){
+    function removeResources(resourceIds) {
       var deferred = $q.defer();
 
-      Upload.upload({
-        url: globalSettings.chatUrl+'/resources/upload',
-        method: 'POST',
-        data: {file: newResource.file, private: newResource.private, type: newResource.type}
-      }).then(function(res) {
-          deferred.resolve(res);
-        }, function(error) {
-          deferred.resolve({error: error.data.error});
-        });
-
-      return deferred.promise;
-    }
-
-    function saveYoutubeUrl(params) {
-      var deferred = $q.defer();
-
-      dbg.log2('#GalleryServices > saveYoutubeUrlResources > make rest call');
-      galleryRestApi.saveYoutubeUrl(params, function(res) {
-        dbg.log2('#GalleryServices > saveYoutubeUrlResources > rest call responds');
-        deferred.resolve(res);
+      fileUploader.remove(resourceIds).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.resolve(error);
       });
 
       return deferred.promise;
     }
 
-    function deleteZipFile(params) {
+    function zipResources(resourceIds, name) {
       var deferred = $q.defer();
 
-      dbg.log2('#GalleryServices > deleteZipFile > make rest call');
-      galleryRestApi.deleteZipFile(params, function(res) {
-        dbg.log2('#GalleryServices > deleteZipFile > rest call responds');
-        deferred.resolve(res);
+      fileUploader.zip(resourceIds, name).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.resolve(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function refreshResource(resourceId) {
+      var deferred = $q.defer();
+
+      fileUploader.refresh(resourceId).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.resolve(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function surveyResources(surveyId) {
+      var deferred = $q.defer();
+
+      fileUploader.survey(surveyId).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.resolve(error);
       });
 
       return deferred.promise;

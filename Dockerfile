@@ -1,4 +1,4 @@
-FROM node:argon
+FROM node:5.10.1-wheezy
 
 RUN apt-get install libstdc++6
 
@@ -9,7 +9,7 @@ COPY package.json /var/www/klzii
 
 COPY . /var/www/klzii
 
-RUN npm install --production --quiet
+RUN npm install --quiet && ./node_modules/gulp/bin/gulp.js build-prod
 
 EXPOSE 8080
 

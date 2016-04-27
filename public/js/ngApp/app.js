@@ -4,7 +4,6 @@
   var includes = [
     // common modules
     'ngRoute',
-    'oc.lazyLoad',
     'ngResource',
     'ngProgress',
     'ngMaterial',
@@ -18,21 +17,23 @@
     'ngCookies',
     'colorpicker.module',
     'internationalPhoneNumber',
+    'ngDraggable',
+    'contactList',
+    'topicsAndSessions',
+    'ngFileUpload',
+
 
     // app modules
     'KliikoApp.user',
     'KliikoApp.account',
     'KliikoApp.accountUser',
-    'KliikoApp.banners',
+    'KliikoApp.fileUploader',
     'KliikoApp.mailTemplate'
   ];
 
   angular
     .module('KliikoApp', includes)
     .factory('myInterceptor', myInterceptor)
-
-
-
     .config(appConfigs)
     .run(appRun)
     .controller('AppController', AppController);
@@ -115,8 +116,8 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$ocLazyLoad', '$injector'];
-  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $ocLazyLoad, $injector) {
+  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader'];
+  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader) {
     var vm = this;
     dbg.log2('#AppController started ');
     $rootScope.$on('app.updateUser', init);
@@ -130,6 +131,7 @@
       });
       accountUser.getAccountUserData().then(function(res) { vm.accountUser = res });
       account.getAccountData().then(function(res) { vm.account = res });
+      fileUploader.getToken().then(function(res) { vm.fileUploader = res });
     }
 
     function setSessionStorage(res) {
@@ -154,6 +156,4 @@
       }
     }
   }
-
-
 })();
