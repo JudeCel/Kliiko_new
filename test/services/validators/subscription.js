@@ -64,8 +64,8 @@ describe('SERVICE - VALIDATORS - Subscription', function() {
         let params = {
           accountId: testData.account.id,
           name: 'some name',
-          start_time: new Date(),
-          end_time: new Date()
+          startTime: new Date(),
+          endTime: new Date()
         };
 
         models.Session.create(params).then(function() {

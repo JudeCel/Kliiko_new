@@ -24,8 +24,8 @@
                   <tbody>
                     <tr ng-repeat='session in dashboard.sessions'>
                       <td>{{ session.name }}</td>
-                      <td>{{ session.start_time | date:dashboard.dateFormat }}</td>
-                      <td>{{ session.end_time | date:dashboard.dateFormat }}</td>
+                      <td>{{ session.startTime | date:dashboard.dateFormat }}</td>
+                      <td>{{ session.endTime | date:dashboard.dateFormat }}</td>
                       <td>{{ session.showStatus }}</td>
                       <td><span class='glyphicon glyphicon-play' aria-hidden='true'></span></td>
                     </tr>

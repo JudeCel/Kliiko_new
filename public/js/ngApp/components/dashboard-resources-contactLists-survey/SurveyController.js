@@ -2,32 +2,15 @@
   'use strict';
 
   angular.module('KliikoApp').controller('SurveyController', SurveyController);
-  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', 'domServices',
-    'GalleryServices', '$sce', '$anchorScroll', '$location', '$window', 'ngDraggable'];
+  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$anchorScroll', '$location', '$window'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, domServices, GalleryServices, $sce, $anchorScroll,
-    $location, $window, ngDraggable) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $anchorScroll, $location, $window) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
-    vm.surveys = {Resource: null};
-    vm.brandLogos = {};
-    vm.questionResource = {};
-    vm.question = {showUpload: true};
-    vm.disableUpload = false;
-    vm.surveySelecctOptions = {
-      show: true,
-      uploaded: false
-    };
+    vm.surveys = {};
+    vm.uploadTypes = {};
 
-    // Resource files
-    vm.title = "";
-    vm.file = null;
-    vm.youtubeUrl = "";
-    vm.introductionFile = {};
-    vm.likeDislike = {};
-    vm.importance = {};
-    vm.surveyBrandLogo = {};
     vm.popOverMessages = {
       remove: 'Remove survey',
       edit: 'Edit survey',
@@ -49,6 +32,7 @@
     vm.initQuestion = initQuestion;
     vm.initAnswers = initAnswers;
     vm.initContacts = initContacts;
+    vm.initGallery = initGallery;
 
     // Helpers
     vm.statusIcon = statusIcon;
@@ -61,20 +45,9 @@
     vm.changeQuestions = changeQuestions;
     vm.contactDetailDisabled = contactDetailDisabled;
     vm.onDropComplete = onDropComplete;
+    vm.galleryDropdownData = galleryDropdownData;
 
-    vm.openBrandLogosModal = openBrandLogosModal;
-    vm.openQuestionModal = openQuestionModal;
-    vm.selectBrandLogo = selectBrandLogo;
-    vm.removeResource = removeResource;
-    vm.saveResource = saveResource;
-    vm.renderHtml = renderHtml;
-    vm.getResourceNameUrl = getResourceNameUrl;
-    vm.getResourceThumbUrl = getResourceThumbUrl;
-    vm.setUploadtype = setUploadtype;
-    vm.resourceTitle = resourceTitle;
-    vm.canCreateNew = canCreateNew
-
-    vm.initLogosList = brandLogosFromGallery;
+    vm.canCreateNew = canCreateNew;
 
     function onDropComplete(index, data, evt) {
       var answer = data.answer;
@@ -109,169 +82,6 @@
         vm.dateFormat = res.dateFormat;
         dbg.log2('#SurveyController > getAllSurveys > res ', res.data);
       });
-    };
-
-    function openBrandLogosModal(){
-      brandLogosFromGallery();
-      domServices.modal('getGallery');
-    }
-
-    function openQuestionModal(type, question) {
-      vm.questionResource.type = type;
-      vm.question = question;
-      domServices.modal('questionModal');
-    }
-
-    function selectBrandLogo(resource){
-      vm.surveySelecctOptions.show = false;
-      vm.survey.resourceId = resource.id;
-      vm.survey.Resource = resource;
-    }
-
-    function removeResource(id, question, survey){
-      GalleryServices.deleteResources({resource_id: id}).then(function(res) {
-        if(res.error){
-          messenger.error(res.error);
-        }else{
-          if(survey){
-            vm.surveySelecctOptions.show = true;
-            vm.surveySelecctOptions.uploaded = false;
-            survey.Resource = null;
-            survey.resourceId = null;
-          }
-          if(question){
-            question.Resource = null;
-            question.resourceId = null;
-          }
-          clearform();
-        }
-      });
-    }
-
-    function brandLogosFromGallery(){
-      GalleryServices.getResources({type: "brandLogo"}).then(function(res) {
-        vm.brandLogos = res.data;
-      });
-    }
-
-    function saveResource(resourceType){
-      vm.disableUpload = true;
-
-      if(resourceType == "youtube"){
-        saveYoutubeUrl(resourceType);
-      } else {
-        if (vm.file) {
-          uploadFile(resourceType);
-        } else {
-          messenger.error("Please select a file.");
-        }
-      }
-    }
-
-    function clearform(){
-      vm.title = "";
-      vm.file = null;
-      vm.youtubeUrl = "";
-      domServices.modal('questionModal', 'close');
-    }
-
-    function setUploadtype(type){
-      if(type == 'audio'){
-        return "audio/mpeg, audio/mp3"
-      }else if('video'){
-        return "video/oog, video/mp4"
-      }
-    }
-
-    function resourceTitle(text){
-      if(text.length < 1){
-        return "No title.";
-      }else if(text.length > 10){
-        return text.substring(10, length)+'...';
-      }else{
-        return text;
-      }
-    }
-
-    function uploadFile(resourceType) {
-      var resourceParams = {
-        title: vm.title,
-        type: resourceType,
-        text: vm.file.name,
-        file: vm.file
-      };
-
-
-      GalleryServices.createResource(resourceParams).then(function(res) {
-        if(res.error){
-          messenger.error(res.error);
-        } else {
-          if (resourceType == "brandLogo"){
-            vm.surveySelecctOptions.show = false;
-            vm.surveySelecctOptions.uploaded = true;
-
-          } else {
-            vm.question.Resource = {};
-          }
-
-          GalleryServices.postuploadData(resourceParams).then(function(res) {
-            if(res.error){
-              messenger.error(res.error);
-            } else {
-
-              if (resourceType == "brandLogo"){
-                vm.initLogosList();
-                if (vm.survey) {
-                  vm.survey.resourceId = res.data.id;
-                  vm.survey.Resource = res.data;
-                }
-
-              } else {
-                vm.question.resourceId = res.data.id;
-                vm.question.Resource = res.data;
-              }
-
-              clearform();
-              vm.disableUpload = false;
-            }
-
-
-          })
-        }
-      })
-
-    }
-
-    function saveYoutubeUrl() {
-      vm.question.resourceId = null;
-      vm.question.Resource = null;
-
-      var resourceParams = {
-        title: vm.title,
-        text: vm.youtubeUrl
-      };
-
-      GalleryServices.saveYoutubeUrl(resourceParams).then(function(res) {
-        if(res.error){
-          messenger.error(res.error);
-        }else{
-          clearform();
-          vm.question.Resource = res;
-          vm.question.resourceId = res.id;
-        }
-      })
-    }
-
-    function getResourceNameUrl(resource){
-      return "/chat_room/uploads/" + resource.JSON.name;
-    }
-
-    function getResourceThumbUrl(resource){
-      return "/chat_room/uploads/" + resource.JSON.panelThumb;
-    }
-
-    function renderHtml(resource) {
-      return $sce.trustAsHtml(resource.JSON.message);
     };
 
     function removeSurvey(survey) {
@@ -462,6 +272,30 @@
         }
       }
     };
+
+    function galleryDropdownData(type, dependency) {
+      return {
+        types: vm.uploadTypes[type],
+        modal: { upload: true, select: true, set: type },
+        dependency: dependency
+      };
+    }
+
+    function initGallery(gc) {
+      vm.uploadTypes = {
+        survey: [gc.getUploadType('brandLogo')],
+        questions: [gc.getUploadType('video'), gc.getUploadType('audio'), gc.getUploadType('youtube')]
+      }
+
+      gc.listResources({ type: ['image', 'video', 'audio', 'link'], scope: ['brandLogo', 'collage', 'youtube'] }).then(function(result) {
+        gc.resourceList = result.resources;
+        for(var i in result.resources) {
+          var resource = result.resources[i];
+          var type = gc.getUploadTypeFromResource(resource);
+          gc.selectionList[type].push(resource);
+        }
+      });
+    }
 
     function seedContactDetails(answer) {
       answer.contactDetails = {};

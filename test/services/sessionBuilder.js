@@ -463,10 +463,10 @@ describe('SERVICE - SessionBuilder', function() {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
 
-          sessionBuilderServices.update(params.id, params.accountId, { end_time: null }).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, { endTime: null }).then(function(result) {
             done('Should not get here!');
           }, function(error) {
-            assert.equal(error.end_time, "End Time can't be empty");
+            assert.equal(error.endTime, "End Time can't be empty");
             done();
           });
         });

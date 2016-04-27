@@ -3,10 +3,8 @@
 var models = require('./../models');
 var filters = require('./../models/filters');
 var Survey = models.Survey;
-var Resource = models.Resource;
 var SurveyQuestion = models.SurveyQuestion;
 var SurveyAnswer = models.SurveyAnswer;
-var Resource = models.Resource;
 var ContactList = models.ContactList;
 var validators = require('./../services/validators');
 var contactListUserServices = require('./../services/contactListUser');
@@ -80,28 +78,11 @@ function findAllSurveys(account) {
       ['id', 'asc'],
       [SurveyQuestion, 'order', 'ASC']
     ],
-    include: [
-      {
-        model: Resource
-      },
-      {
+    include: [{
       model: SurveyQuestion,
       attributes: VALID_ATTRIBUTES.question,
-      include: [{
-        model: Resource
-      }]
     }]
   }).then(function(surveys) {
-    surveys.forEach(function(survey, index, array) {
-      if(survey.Resource){
-        survey.Resource.JSON = JSON.parse(decodeURI(survey.Resource.JSON));
-      }
-      survey.SurveyQuestions.forEach(function(question, index, array) {
-        if(question.Resource){
-          question.Resource.JSON = JSON.parse(decodeURI(question.Resource.JSON));
-        }
-      });
-    });
     deferred.resolve(simpleParams(surveys));
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(filters.errors(error));
@@ -112,20 +93,15 @@ function findAllSurveys(account) {
   return deferred.promise;
 };
 
-function findSurvey(params) {
+function findSurvey(params, skipValidations) {
   let deferred = q.defer();
 
   Survey.find({
     where: { id: params.id },
     attributes: VALID_ATTRIBUTES.survey,
-    include: [
-      {
-        model: Resource
-      },
-      {
+    include: [{
         model: SurveyQuestion,
-        attributes: VALID_ATTRIBUTES.question,
-        include: [{ model: Resource }]
+        attributes: VALID_ATTRIBUTES.question
       }
     ],
     order: [
@@ -133,24 +109,19 @@ function findSurvey(params) {
     ]
   }).then(function(survey) {
     if(survey) {
-      if(survey.closed) {
-        deferred.reject(MESSAGES.alreadyClosed);
-      }
-      else if(!survey.confirmedAt) {
-        deferred.reject(MESSAGES.notConfirmed);
+      if(skipValidations) {
+        deferred.resolve(simpleParams(survey));
       }
       else {
-        if(survey.Resource){
-          survey.Resource.JSON = JSON.parse(decodeURI(survey.Resource.JSON));
+        if(survey.closed) {
+          deferred.reject(MESSAGES.alreadyClosed);
         }
-
-        survey.SurveyQuestions.forEach(function(question, index, array) {
-          if(question.Resource){
-            question.Resource.JSON = JSON.parse(decodeURI(question.Resource.JSON));
-          }
-        });
-
-        deferred.resolve(simpleParams(survey));
+        else if(!survey.confirmedAt) {
+          deferred.reject(MESSAGES.notConfirmed);
+        }
+        else {
+          deferred.resolve(simpleParams(survey));
+        }
       }
     }
     else {
@@ -372,32 +343,19 @@ function copySurvey(params, account) {
     Survey.find({
       where: { id: params.id, accountId: account.id },
       attributes: ['accountId', 'name', 'description', 'thanks', 'resourceId'],
-      include: [
-        Resource,
-        {
+      include: [{
           model: SurveyQuestion,
           attributes: ['name', 'question', 'order', 'answers', 'type', 'resourceId'],
-          include: Resource
         }
       ]
     }).then(function(survey) {
       if(survey) {
-
         createSurveyWithQuestions(survey, account).then(function(result) {
-
-          async.parallel({
-            survey: function(callback) {
-              copySurveyResources(result.data, callback)
-            },
-            questions: function(callback) {
-              copyQuestionResources(result.data, callback)
-            }
-          }, function(err, copyed) {
-            findCopyedSurvey(copyed.survey).then(function(result) {
-              deferred.resolve(simpleParams(result, MESSAGES.copied));
-            })
+          findSurvey(result.data, true).then(function(result) {
+            deferred.resolve(simpleParams(result.data, MESSAGES.copied));
+          }, function(error) {
+            deferred.reject(error);
           });
-
         }, function(error) {
           deferred.reject(error);
         });
@@ -416,97 +374,6 @@ function copySurvey(params, account) {
 
   return deferred.promise;
 };
-
-function findCopyedSurvey(survey) {
-  let deferred = q.defer();
-
-  Survey.find({
-    where: {id: survey.id},
-    attributes: VALID_ATTRIBUTES.survey,
-    include: [
-      {
-        model: Resource
-      },
-      {
-        model: SurveyQuestion,
-        attributes: VALID_ATTRIBUTES.question,
-        include: [{ model: Resource }]
-      }
-    ],
-    order: [
-      [SurveyQuestion, 'order', 'ASC']
-    ]
-  }).then(function(survey) {
-
-    if(survey.Resource){
-      survey.Resource.JSON = JSON.parse(decodeURI(survey.Resource.JSON));
-    }
-
-    survey.SurveyQuestions.forEach(function(question, index, array) {
-      if(question.Resource){
-        question.Resource.JSON = JSON.parse(decodeURI(question.Resource.JSON));
-      }
-    });
-
-    deferred.resolve(survey);
-  })
-
-  return deferred.promise;
-}
-
-function copySurveyResources(survey, callback) {
-  if(survey.resourceId){
-    createNewResource(survey.resourceId).then(function(result) {
-      Survey.update({resourceId: result.id}, {
-        where: {id: survey.id},
-        returning: true
-      }).then(function(updatedSurvey) {
-        callback(null, updatedSurvey[1][0]);
-      })
-    })
-  }else{
-    callback(null, survey)
-  }
-}
-
-function copyQuestionResources(survey, callback) {
-  let questionsProcessed = 0;
-
-  survey.SurveyQuestions.forEach(function(question) {
-    if(question.resourceId){
-      createNewResource(question.resourceId);
-    }
-
-    questionsProcessed++;
-
-    if(questionsProcessed === survey.SurveyQuestions.length) {
-      callback();
-    }
-  });
-}
-
-function createNewResource(resourceId){
-  let deferred = q.defer();
-
-  Resource.find({
-    where: {id: resourceId},
-    attributes: ['topicId', 'userId', 'thumb_URL', 'URL', 'HTML', 'JSON', 'resourceType']
-  }).then(function(resource) {
-    Resource.create({
-      topicId: resource.topicId,
-      userId: resource.userId,
-      thumb_URL: resource.thumb_URL,
-      URL: resource.URL,
-      HTML: resource.HTML,
-      JSON: resource.JSON,
-      resourceType: resource.resourceType
-    }).then(function(copyedResource) {
-      deferred.resolve(copyedResource);
-    })
-  })
-
-  return deferred.promise;
-}
 
 function answerSurvey(params) {
   let deferred = q.defer();
@@ -727,7 +594,7 @@ function validAnswerParams(params) {
 
 function bulkUpdateQuestions(surveyId, questions, t) {
   let deferred = q.defer();
-  
+
   questions.forEach(function(question, index, array) {
     if(question.id && question.surveyId) {
       SurveyQuestion.update(question, {

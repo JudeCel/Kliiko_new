@@ -3,7 +3,6 @@ var express = require('express');
 var router = express.Router();
 var subdomains = require('../../lib/subdomains.js');
 var policy = require('../../middleware/policy.js');
-var uploadBannerRoutes = require('./uploadBanner.js');
 var accountDatabaseRoutes = require('./accountDatabase.js');
 var paymentDetailsRoutes = require('./paymentDetails.js');
 var selectPlanRoutes = require('./selectPlan.js');
@@ -24,7 +23,7 @@ router.use(function (req, res, next) {
   } else {
     res.redirect(subdomains.url(req, subdomains.base, '/'));
   }
-}, uploadBannerRoutes.getProfileBanner);
+});
 
 router.get('/', policy.authorized(['admin', 'accountManager']) , function(req, res, next) {
   res.render(views_path('index'), { title: 'My Dashboard', user: req.user, message: req.flash('message')[0] });
@@ -42,10 +41,6 @@ router.post('/selectPlan', policy.authorized(['accountManager']), selectPlanRout
 router.get('/upgradeplans', function(req, res) {
   res.render(views_path('upgradePlans'), { title: 'Upgrade Plans' });
 });
-
-router.get('/uploadbanner', policy.authorized(['admin']), uploadBannerRoutes.get);
-router.post('/uploadbanner', policy.authorized(['admin']), uploadBannerRoutes.uploadFields, uploadBannerRoutes.post);
-router.get('/uploadbanner/:page', policy.authorized(['admin']), uploadBannerRoutes.destroy);
 
 router.get('/accountDatabase/exportCsv', policy.authorized(['admin']), accountDatabaseRoutes.exportCsv);
 

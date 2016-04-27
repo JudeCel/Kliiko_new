@@ -1,0 +1,5 @@
+<div ng-repeat='resource in gc.currentList' ng-init='typeOf = gc.isTypeOf(resource)'>
+  <div class='col-xs-4'>
+    <ng-include src="gc.templatesDir + 'panel.html'"></ng-include>
+  </div>
+</div>

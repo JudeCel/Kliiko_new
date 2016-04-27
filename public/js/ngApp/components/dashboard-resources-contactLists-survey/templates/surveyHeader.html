@@ -1,7 +1,7 @@
 <h4>Survey Template</h4>
 <hr class='survey-hr' />
 
-<div id='panel-introduction' class='panel panel-default no-border-radius'>
+<div id='panel-introduction' class='panel panel-default border-radius-none'>
   <div class='panel-heading'><strong>Introduction</strong></div>
   <div class='panel-body'>
     <div class='form-horizontal'>
@@ -18,81 +18,12 @@
             ng-model='sc.survey.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='sc.submitedForm'>
         </div>
       </div>
-      <label class='col-xs-2 control-label' for='brandLogo'>Survey Logo</label>
       <div class='form-group'>
-        <img ng-src="{{ sc.getResourceThumbUrl(sc.survey.Resource) }}" class="img-responsive" style="display: inline-block;" ng-if="sc.survey.Resource"/>
-        <div ng-if="sc.survey.Resource" style="display: inline-block;">
-          <button type='submit' class='btn btn-addNewElement btn-green no-margin gallery-btn-width'
-                  ng-click="sc.removeResource(sc.survey.resourceId, null, sc.survey)">
-            <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
-          </button>
-        </div>
-
-        <div ng-show='!sc.disableUpload'>
-          <div ng-if="!sc.survey.Resource">
-            <div class='col-xs-4 col-md-4'>
-              <div ngf-drop ngf-select class="drop-box" ng-model="sc.file" ng-change="sc.saveResource('brandLogo')" id="brandLogo"
-                   ngf-drag-over-class="'dragover'" accept="image/gif, image/jpeg, image/jpg, image/png, image/bmp">
-                Drop images here or click to upload
-              </div>
-
-              <div ngf-no-file-drop >
-                File Drag/Drop is not supported for this browser
-              </div>
-            </div>
-
-            <a ng-click="sc.openBrandLogosModal()" class='btn btn-addNewElement btn-green no-margin gallery-btn-width'>
-              Select from gallery.
-            </a>
-          </div>
-
-
-        </div>
-
-        <div class='modal fade' id='getGallery' role='dialog'>
-          <div class='modal-dialog' style="width:1000px;">
-            <div class='modal-content border-green border-radius-none'>
-              <div class='modal-header'>
-                <button type='button' class='close' data-dismiss='modal' ng-click="clearFormData()">&times;</button>
-                <h2 class='modal-title text-center'>Select resource from gallery.</h2>
-              </div>
-              <div class='modal-body'>
-
-                <div ng-repeat="resource in sc.brandLogos">
-                  <div class="col-xs-4 col-md-4">
-                    <div class="panel panel-success border-green">
-                      <div class="panel-body">
-
-                        <div class="responsive-container">
-                          <div class="dummy"></div>
-
-                          <div class="img-container">
-                            <img ng-src="{{ sc.getResourceThumbUrl(resource) }}" class="center-block vertical-align img-responsive img-max-height-width"/>
-                          </div>
-                        </div>
-
-                      </div>
-
-                      <div class="panel-footer">
-     
-                        {{ sc.resourceTitle(resource.JSON.title) }}
-
-                        <button class="btn btn-addNewElement pull-rigth no-margin btn-green gallery-btn-width"
-                                data-dismiss='modal'
-                                style="margin-top: -8px; float: right;"
-                                ng-click="sc.selectBrandLogo(resource)">
-                          Select
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class='modal-footer' style="border: none;">
-
-              </div>
-            </div>
-          </div>
+        <label class='col-xs-2 control-label' for='brandLogo'>Survey Logo</label>
+        <div class='col-xs-10 col-md-6'>
+          {{ upload = sc.galleryDropdownData("survey", sc.survey); resource = gc.getResourceFromList(sc.survey); "" }}
+          <div ng-include="gc.templatesDir + 'view.html'" ng-if='resource'></div>
+          <div ng-include="gc.templatesDir + 'dropdown.html'"></div>
         </div>
       </div>
 

@@ -17,6 +17,7 @@ output.settings = {
   baseDomain: process.env.SERVER_BASE_DOMAIN,
   domain: process.env.SERVER_DOMAIN,
   chatUrl: process.env.SERVER_CHAT_URL,
+  serverChatDomainUrl: process.env.SERVER_CHAT_DOMAIN_URL,
   baseSubdomain: process.env.SERVER_BASE_SUBDOMAIN
 }
 

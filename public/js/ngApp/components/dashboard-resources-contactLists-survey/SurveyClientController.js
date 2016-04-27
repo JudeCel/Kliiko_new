@@ -15,9 +15,9 @@
   }
 
   angular.module('KliikoApp.Root').controller('SurveyClientController', SurveyClientController);
-  SurveyClientController.$inject = ['dbg', 'surveyServices', 'messenger', '$timeout', '$sce'];
+  SurveyClientController.$inject = ['dbg', 'surveyServices', 'GalleryServices', 'messenger', '$timeout'];
 
-  function SurveyClientController(dbg, surveyServices, messenger, $timeout, $sce) {
+  function SurveyClientController(dbg, surveyServices, GalleryServices, messenger, $timeout) {
     dbg.log2('#SurveyClientController started');
 
     var vm = this;
@@ -26,9 +26,6 @@
     vm.pickValidClass = surveyServices.pickValidClass;
     vm.submitSurvey = submitSurvey;
     vm.init = init;
-    vm.getResourceNameUrl = getResourceNameUrl;
-    vm.getResourceThumbUrl = getResourceThumbUrl;
-    vm.renderHtml = renderHtml;
 
     initConstants();
 
@@ -49,6 +46,11 @@
         }
         else {
           vm.survey = res.data;
+          GalleryServices.surveyResources(vm.survey.id).then(function(result) {
+            mapSurveyResources(result.survey);
+          }, function() {
+            messenger.error("Can't load resources");
+          });
         }
       });
     };
@@ -81,17 +83,19 @@
       }, 1000);
     };
 
-    function getResourceNameUrl(resource){
-      return "/chat_room/uploads/" + resource.JSON.name;
+    function mapSurveyResources(survey) {
+      vm.survey.resource = survey.resource;
+      for(var i in survey.SurveyQuestions) {
+        var question = survey.SurveyQuestions[i];
+
+        for(var j in vm.survey.SurveyQuestions) {
+          var surveyQuestion = vm.survey.SurveyQuestions[j];
+
+          if(surveyQuestion.id == question.id) {
+            surveyQuestion.resource = question.resource;
+          }
+        }
+      }
     }
-
-    function getResourceThumbUrl(resource){
-      return "/chat_room/uploads/" + resource.JSON.panelThumb;
-    }
-
-    function renderHtml(resource) {
-      return $sce.trustAsHtml(resource.JSON.message);
-    };
-
   };
 })();

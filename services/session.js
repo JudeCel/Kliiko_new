@@ -414,7 +414,7 @@ function addShowStatus(session, chargebeeSub) {
     if(chargebeeSub && date > endDate) {
       session.dataValues.showStatus = 'Expired';
     }
-    else if(date < new Date(session.start_time)) {
+    else if(date < new Date(session.startTime)) {
       session.dataValues.showStatus = 'Pending';
     }
     else {

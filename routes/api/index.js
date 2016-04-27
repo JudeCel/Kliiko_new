@@ -4,11 +4,13 @@ var multipartyMiddleware = multiparty();
 var express = require('express');
 var _ = require('lodash');
 var router = express.Router();
+var contactListImport = require('../../middleware/contactListImport.js');
 var policy = require('../../middleware/policy.js');
 var sessionMemberMiddleware = require('./../../middleware/sessionMember');
 
 var userRoutes = require('./user');
 var account = require('./account');
+var jwt = require('./jwt');
 var accountUser = require('./accountUser');
 var accountManager = require('./accountManager');
 var promotionCode = require('./promotionCode');
@@ -55,6 +57,7 @@ router.put('/user', userRoutes.changePassword);
 router.post('/user/canAccess', userRoutes.userCanAccessPost);
 router.get('/accountUser', accountUser.get);
 router.get('/account', account.get);
+router.get('/jwtToken', jwt.getToken);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
 router.post('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.post);
@@ -70,10 +73,8 @@ router.put('/promotionCode/:id', policy.authorized(['admin']), promotionCode.upd
 router.get('/accountDatabase', policy.authorized(['admin']), accountDatabase.get);
 router.put('/accountDatabase/:id', policy.authorized(['admin']), accountDatabase.update);
 
-router.get('/banners', banners.bannersGet);
-router.post('/banners', multipartyMiddleware, banners.bannersPost);
-router.post('/banners/:bannerType', multipartyMiddleware, banners.bannersBannerTypePost);
-router.delete('/banners/:bannerType', multipartyMiddleware, banners.bannersDelete);
+router.post('/banners', banners.create);
+router.put('/banners', banners.update);
 
 router.get('/mailTemplates', mailTemplates.allMailTemplatesGet);
 router.get('/sessionMailTemplates', mailTemplates.allSessionMailTemplatesGet);
@@ -108,8 +109,9 @@ router.get('/subscriptionSmsCredits/creditCount', smsCredit.creditCount);
 // contact List
 router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
 router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
-// router.post('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']), fileUploader({path:process.env.FILE_UPLOAD_PATH}),contactList.parseImportFile);
-router.put('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']),contactList.importContacts);
+
+router.post('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']), contactListImport.single('uploadedfile'), contactList.parseImportFile);
+router.put('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']), contactList.importContacts);
 router.put('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.update);
 router.delete('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.destroy);
 

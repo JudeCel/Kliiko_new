@@ -350,8 +350,8 @@ describe('SERVICE - Subscription', function() {
             return function(cb) {
               models.Session.create({
                 accountId: testData.account.id,
-                start_time: startTime,
-                end_time: endTime,
+                startTime: startTime,
+                endTime: endTime,
                 name: "My cool session"
               }).then(function() {
                 cb();
@@ -592,8 +592,8 @@ describe('SERVICE - Subscription', function() {
           let params = {
             accountId: testData.account.id,
             name: 'some name',
-            start_time: new Date(),
-            end_time: new Date()
+            startTime: new Date(),
+            endTime: new Date()
           };
 
           models.Session.create(params).then(function() {

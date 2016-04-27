@@ -1,0 +1,61 @@
+<div class='gallery-body col-md-12'>
+  <table class='table table-hover table-responsive'>
+    <tbody>
+      <tr ng-repeat='resource in gc.currentList' ng-init='typeOf = gc.isTypeOf(resource)'>
+        <td>
+          <input type='checkbox' value='{{ resource.id }}' ng-click='resource.checked = !!resource.checked' ng-model='resource.checked' />
+        </td>
+
+        <td ng-if='typeOf.video || typeOf.youtube'>
+          <span class='glyphicon glyphicon-facetime-video border-green' aria-hidden='true'></span>
+        </td>
+
+        <td ng-if='typeOf.image || typeOf.brandLogo'>
+          <div class='image-box border-green'>
+            <img width='84px' heigth='84px' ng-src='{{ resource.url.thumb }}'/>
+          </div>
+        </td>
+
+        <td ng-if='typeOf.audio'>
+          <span class='glyphicon glyphicon-music border-green' aria-hidden='true'></span>
+        </td>
+
+        <td ng-if='typeOf.pdf'>
+          <span class='glyphicon glyphicon-file border-green' aria-hidden='true'></span>
+        </td>
+
+        <td ng-if='typeOf.zip'>
+          <span class='glyphicon glyphicon-lock border-green' aria-hidden='true'></span>
+        </td>
+
+        <td>
+          {{ resource.name }}
+        </td>
+
+        <td>
+          <a href='{{ resource.url.full }}' target='_blank'>
+            <p class='text-uppercase'>{{ resource.type }}/{{ resource.extension || resource.scope }}</p>
+          </a>
+        </td>
+
+        <td>
+          <button class='btn btn-addNewElement btn-green pull-right gallery-btn-width' ng-click='gc.removeResources([resource.id])'>
+            <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+          </button>
+
+          <div ng-if='resource.url.full && !typeOf.youtube'>
+            <a href='{{ resource.url.full }}' download class='btn btn-addNewElement btn-green pull-right gallery-btn-width'>
+              <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>
+            </a>
+          </div>
+
+          <div ng-if='!resource.url.full'>
+            <button class='btn btn-addNewElement btn-green pull-right gallery-btn-width' ng-click='gc.refreshResource(resource)'>
+              <span class='glyphicon glyphicon-refresh' aria-hidden='true'></span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
