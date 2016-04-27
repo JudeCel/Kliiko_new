@@ -105,6 +105,26 @@
 
                   <tr>
                     <td>
+                      <label class="text-no-bold text-login-page" for="password">Password</label>
+                    </td>
+                    <td>
+                      <input type="password" value="<%= password %>" class="form-control" name="password" id="password" placeholder="Password">
+                    </td>
+                    <td class="text-red-dark">
+                      <h6>*</h6>
+                    </td>
+                  </tr>
+
+
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                        <span class="has-error"><%= errors.password %></span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
                       <label class="text-no-bold text-login-page" for="gender">Gender</label>
                     </td>
                     <td>
@@ -200,27 +220,6 @@
                       <div class="has-error" id="landline_number_error"><%= errors.landlineNumber %></div>
                     </td>
                   </tr>
-
-                  <tr>
-                    <td>
-                      <label class="text-no-bold text-login-page" for="password">Password</label>
-                    </td>
-                    <td>
-                      <input type="password" value="<%= password %>" class="form-control" name="password" id="password" placeholder="Password">
-                    </td>
-                    <td class="text-red-dark">
-                      <h6>*</h6>
-                    </td>
-                  </tr>
-
-
-                  <tr>
-                    <td></td>
-                    <td class="error-column">
-                        <span class="has-error"><%= errors.password %></span>
-                    </td>
-                  </tr>
-
                 </table>
                 <div class="form-group">
 
