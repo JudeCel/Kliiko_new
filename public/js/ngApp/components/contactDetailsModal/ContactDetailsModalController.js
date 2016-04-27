@@ -20,6 +20,7 @@
     dbg.log2('#ContactDetailsModalController  started');
     var vm = this;
     vm.userData = {};
+    vm.resetUserData = {};
     init();
 
     vm.errors = {};
@@ -49,6 +50,7 @@
     }
 
     function initUser(user) {
+      angular.copy(user, vm.resetUserData);
       angular.copy(user, vm.userData);
     }
 
@@ -100,6 +102,8 @@
         vm.errors = {};
         delete data.id;
         user.updateUserData(data, form).then(function (res) {
+          angular.copy(res, vm.userData);
+          angular.copy(res, vm.resetUserData);
           vm.updateBtn = 'Updated';
           form.$setPristine();
           form.$setUntouched();
@@ -135,6 +139,8 @@
     }
 
     function cancel(){
+      angular.copy(vm.resetUserData, vm.userData);
+      vm.errors = {};
       domServices.modal('contactDetailsModal', 'close');
     }
 
