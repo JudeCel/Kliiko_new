@@ -7,6 +7,7 @@
   function fileUploaderFactory($q, globalSettings, $resource, dbg, Upload) {
     var fileUploaderApiLocal = $resource(globalSettings.restUrl + '/jwtToken');
 
+    var requestError = 'Request failed';
     var fileUploaderService = {};
 
     fileUploaderService.token = null;
@@ -28,17 +29,13 @@
 
       fileUploaderApiLocal.get({}, function(res) {
         dbg.log2('#KliikoApp.fileUploader > get token > server respond >');
-        fileUploaderService.token = res.token;
-        pingServer().then(function() {
-          console.log("can ping");
+        if(res.error) {
+          deferred.reject(res.error);
+        }
+        else {
+          fileUploaderService.token = res.token;
           deferred.resolve({ token: res.token });
-        }, function(error) {
-          console.error("some error");
-          console.error(error);
-          deferred.resolve({ token: res.token });
-        });
-      }, function(error) {
-        deferred.reject(error);
+        }
       });
 
       return deferred.promise;
@@ -65,7 +62,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > upload file > server error >', error);
-        deferred.resolve(error);
+        deferred.reject(error.data || requestError);
       });
 
       return deferred.promise;
@@ -81,7 +78,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > list resources > server error >', error);
-        deferred.reject(error);
+        deferred.reject(error.data || requestError);
       });
 
       return deferred.promise;
@@ -96,7 +93,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > remove resources > server error >', error);
-        deferred.reject(error);
+        deferred.reject(error.data || requestError);
       });
 
       return deferred.promise;
@@ -111,7 +108,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > zip resources > server error >', error);
-        deferred.reject(error);
+        deferred.reject(error.data || requestError);
       });
 
       return deferred.promise;
@@ -126,7 +123,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > refresh resource > server error >', error);
-        deferred.reject(error);
+        deferred.reject(error.data || requestError);
       });
 
       return deferred.promise;
@@ -141,7 +138,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > survey resource > server error >', error);
-        deferred.reject(error);
+        deferred.reject(error.data || requestError);
       });
 
       return deferred.promise;
@@ -156,7 +153,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > banner resource > server error >', error);
-        deferred.reject(error);
+        deferred.reject(error.data || requestError);
       });
 
       return deferred.promise;
@@ -171,7 +168,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > ping server > server error >', error);
-        deferred.reject(error);
+        deferred.reject(error.data || requestError);
       });
 
       return deferred.promise;
