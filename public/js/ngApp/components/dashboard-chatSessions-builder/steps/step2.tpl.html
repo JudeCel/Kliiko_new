@@ -69,7 +69,6 @@
                 <span ng-if--="topics.editBlockHelper != $index">
                   <img src="icons/ic_move.png">
                   {{ t.name }}
-                  <b>{{ t.SessionTopics[0].order }}</b>
                 </span>
 
                 <img class="ico-active-unactive" ng-show="t.active" src="/icons/unlocked.png" ng-click="t.active = !t.active; t.update()"  alt="Active" title="Active">
