@@ -102,6 +102,8 @@
         vm.errors = {};
         delete data.id;
         user.updateUserData(data, form).then(function (res) {
+          angular.copy(res, vm.userData);
+          angular.copy(res, vm.resetUserData);
           vm.updateBtn = 'Updated';
           form.$setPristine();
           form.$setUntouched();
