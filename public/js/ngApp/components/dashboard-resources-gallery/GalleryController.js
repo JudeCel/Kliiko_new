@@ -105,7 +105,7 @@
     }
 
     function refreshResource(resource) {
-      let deferred = $q.defer();
+      var deferred = $q.defer();
 
       GalleryServices.refreshResource(resource.id).then(function(result) {
         angular.copy(result.resource, resource);
