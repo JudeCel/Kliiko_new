@@ -138,6 +138,7 @@
 
     function cancel(){
       angular.copy(vm.resetUserData, vm.userData);
+      vm.errors = {};
       domServices.modal('contactDetailsModal', 'close');
     }
 
