@@ -1,12 +1,12 @@
 <div class='modal fade' id='contactDetailsModal' role='dialog' ng-controller="ContactDetailsModalController as cdm">
-  <div class='modal-dialog contactDetailsModal' ng-if="app.user" ng-init="cdm.initUser(app.user)">
+  <div class='modal-dialog contactDetailsModal'>
     <div class='modal-content border-red border-radius-none'>
       <div class='modal-header'>
         <button type='button' class='close' data-dismiss='modal'>&times;</button>
         <h2 class='modal-title text-center'>Contact Details</h2>
       </div>
       <div class='modal-body'>
-        <form class='form-horizontal' method='post' ng-submit='cdm.updateUserData(cdm.userData, cdm.userDetailsForm)' name='cdm.userDetailsForm'>
+        <form class='form-horizontal' method='post' ng-submit='cdm.updateUserData()' name='cdm.userDetailsForm'>
           <div class='row'>
             <div class='col-xs-12'>
               <div class='col-md-6'>
