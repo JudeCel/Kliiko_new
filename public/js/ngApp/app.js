@@ -21,7 +21,7 @@
     'contactList',
     'topicsAndSessions',
     'ngFileUpload',
-
+    'ui.sortable',
 
     // app modules
     'KliikoApp.user',

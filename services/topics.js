@@ -1,5 +1,6 @@
 'use strict';
 let q = require('q');
+var filters = require('./../models/filters');
 var models = require('./../models');
 var Topic = models.Topic;
 var _ = require('lodash');
@@ -32,21 +33,23 @@ function getAll(accountId) {
 function updateSessionTopics(sessionId, topicsArray) {
   let deferred = q.defer();
   let ids = _.map(topicsArray, 'id');
+  let returning = [];
   joinToSession(ids, sessionId, topicsArray).then(function(sessionTopics) {
 
     _.map(sessionTopics, function(sessionTopic) {
       _.map(topicsArray, function(topic) {
         if(topic.id == sessionTopic.TopicId) {
-          let params = {
-            active: topic.active,
-            order: topic.order
-          }
-          sessionTopic.update(params);
+          sessionTopic.order = topic.order;
+          sessionTopic.active = topic.active;
+          sessionTopic.update({order: sessionTopic.order, active: sessionTopic.active});
+
+          topic.SessionTopics = [sessionTopic];
+          returning.push(topic);
         }
       });
     });
 
-    deferred.resolve(sessionTopics);
+    deferred.resolve(returning);
   }, function(err) {
     deferred.reject(err);
   });
@@ -64,12 +67,11 @@ function joinToSession(ids, sessionId) {
           where: {
             SessionId: sessionId
           },
-          attributes: [],
+          order: '"order" ASC',
           include: [Topic]
         }).then( function(sessionTopics) {
           deferred.resolve(sessionTopics);
         });
-
       }, function(err) {
         deferred.reject(err);
       })

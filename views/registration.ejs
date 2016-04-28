@@ -4,18 +4,18 @@
 <main class="main-first-page-registration">
   <div class="login-container center-block text-font-family">
     <ul class="nav nav-tabs">
-      <li><a class="background-yellow text-white text-shadow-gray btn login-kliiko-tab" href="/login">Login to Klzii</a></li>
-      <li class="active"><a class="background-green text-white text-center login-signup-tab" data-toggle="tab" href="#signup">Get a Klzii Account</a>
+      <li><a class="background-yellow text-white text-shadow-gray btn login-kliiko-tab" href="/login">Login to klzii</a></li>
+      <li class="active"><a class="background-green text-white text-center login-signup-tab" data-toggle="tab" href="#signup">Get a klzii Account</a>
       </li>
     </ul>
     <div class="tab-content border-green">
         <div id="signup" class="tab-pane fade in active">
           <h2 class="text-center text-gray-dark">Welcome!</h2>
-          <h5 class="text-center text-gray-light">Sign up to Klzii and host your own chat session.</h5>
+          <h5 class="text-center text-gray-light">Sign up to klzii and host your own chat session.</h5>
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
-              <form method="post" action="/registration" novalidate="">
+              <form method="post" action="/registration" novalidate="" id="register">
                 <% if(socialProfile){ %>
                  <input type="hidden" name="socialProfile[provider]" value="<%=socialProfile.provider%>">
                  <input type="hidden" name="socialProfile[id]" value="<%=socialProfile.id%>">
@@ -105,6 +105,26 @@
 
                   <tr>
                     <td>
+                      <label class="text-no-bold text-login-page" for="password">Password</label>
+                    </td>
+                    <td>
+                      <input type="password" value="<%= password %>" class="form-control" name="password" id="password" placeholder="Password">
+                    </td>
+                    <td class="text-red-dark">
+                      <h6>*</h6>
+                    </td>
+                  </tr>
+
+
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                        <span class="has-error"><%= errors.password %></span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
                       <label class="text-no-bold text-login-page" for="gender">Gender</label>
                     </td>
                     <td>
@@ -152,16 +172,8 @@
                       </label>
                     </td>
                     <td>
-                      <input onchange="getNewMobileCountry();"
-                             default-country="au"
-                             type="tel"
-                             value="<%= mobile %>"
-                             id="mobilePhone"
-                             name="mobile"
-                             placeholder="Mobile Number"
-                             class="form-control">
-
-                      <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="">
+                      <input type="tel" value="<%= mobile %>" id="mobilePhone" name="mobile" placeholder="Mobile Number" class="form-control">
+                      <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="<%= phoneCountryData %>">
                     </td>
                   </tr>
 
@@ -181,16 +193,8 @@
                       </label>
                     </td>
                     <td>
-                      <input onchange="getNewLandlineNumberCountry();"
-                             default-country="au"
-                             type="tel"
-                             value="<%= landlineNumber %>"
-                             id="landline_number"
-                             name="landlineNumber"
-                             placeholder="Landline Number"
-                             class="form-control">
-
-                      <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="">
+                      <input type="tel" value="<%= landlineNumber %>" id="landline_number" name="landlineNumber" placeholder="Landline Number" class="form-control">
+                      <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="<%= landlineNumberCountryData %>">
                     </td>
                   </tr>
 
@@ -200,27 +204,6 @@
                       <div class="has-error" id="landline_number_error"><%= errors.landlineNumber %></div>
                     </td>
                   </tr>
-
-                  <tr>
-                    <td>
-                      <label class="text-no-bold text-login-page" for="password">Password</label>
-                    </td>
-                    <td>
-                      <input type="password" value="<%= password %>" class="form-control" name="password" id="password" placeholder="Password">
-                    </td>
-                    <td class="text-red-dark">
-                      <h6>*</h6>
-                    </td>
-                  </tr>
-
-
-                  <tr>
-                    <td></td>
-                    <td class="error-column">
-                        <span class="has-error"><%= errors.password %></span>
-                    </td>
-                  </tr>
-
                 </table>
                 <div class="form-group">
 
@@ -235,7 +218,7 @@
                   <div class="check">
                     <input type="checkbox" class="checkbox-login" name="reveiveNewsLetters" id="reveiveNewsLetters" value='on'/>
                     <label for="reveiveNewsLetters"></label>
-                    <span class="checkbox-signup" id="reveiveNewsLetters">Yes send me the Klzii Newsletter which includes hints, tips and updates.</span>
+                    <span class="checkbox-signup" id="reveiveNewsLetters">Yes send me the klzii Newsletter which includes hints, tips and updates.</span>
                   </div>
                 </div>
 

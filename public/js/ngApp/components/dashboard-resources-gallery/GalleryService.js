@@ -22,7 +22,7 @@
       fileUploader.list(params).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
-        deferred.resolve(error);
+        deferred.reject(error);
       });
 
       return deferred.promise;
@@ -34,7 +34,7 @@
       fileUploader.upload(params).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
-        deferred.resolve(error);
+        deferred.reject(error);
       });
 
       return deferred.promise;
@@ -46,7 +46,7 @@
       fileUploader.remove(resourceIds).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
-        deferred.resolve(error);
+        deferred.reject(error);
       });
 
       return deferred.promise;
@@ -58,7 +58,7 @@
       fileUploader.zip(resourceIds, name).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
-        deferred.resolve(error);
+        deferred.reject(error);
       });
 
       return deferred.promise;
@@ -70,7 +70,7 @@
       fileUploader.refresh(resourceId).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
-        deferred.resolve(error);
+        deferred.reject(error);
       });
 
       return deferred.promise;
@@ -82,7 +82,7 @@
       fileUploader.survey(surveyId).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
-        deferred.resolve(error);
+        deferred.reject(error);
       });
 
       return deferred.promise;

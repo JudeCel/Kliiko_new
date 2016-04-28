@@ -18,17 +18,30 @@
 
     vm.watchers = [];
     vm.selectedTopics = [];
+    vm.sessionTopics = [];
 
+    vm.orderTopics = orderTopics;
     vm.topicsOnDropComplete = topicsOnDropComplete;
     vm.removeTopicFromList = removeTopicFromList;
-    vm.reorderTopics = reorderTopics;
     vm.topicSelectClickHandle = topicSelectClickHandle;
     vm.selectAllTopics = selectAllTopics;
     vm.chatSessionTopicsList = [];
 
+    vm.sortableOptionsA = {
+      stop : function(e, ui) {
+        vm.chatSessionTopicsList.map(function(topic, index) {
+          topic.order = index;
+          topic.SessionTopics[0].order = topic.order;
+        })
+
+        saveTopics(vm.chatSessionTopicsList);
+      }
+    };
+
     vm.initController = function() {
       initStep();
       vm.session = builderServices.session;
+      vm.sessionTopics = vm.session.steps.step2.topics;
     }
 
     vm.canDragElement = function(element) {
@@ -59,33 +72,57 @@
       return present;
     }
 
-    function topicsOnDropComplete(data, event) {
+    function topicsOnDropComplete(topic, event) {
+      var data = angular.copy(topic);
+
       if (!data) return;
       var topicArray = [];
 
       if(vm.selectedTopics.length == 0 || Object.keys(vm.selectedTopics).length == 0){
         if (!isTopicAdded(data)) {
+          data.order = vm.chatSessionTopicsList.length;
           topicArray.push(data);
         }
       }else{
-        for (var key in vm.selectedTopics) {
-          if (!isTopicAdded(vm.selectedTopics[key])) {
-            topicArray.push(vm.selectedTopics[key]);
+        vm.selectedTopics.map(function(topic) {
+          if (!isTopicAdded(topic)) {
+            topic.order = vm.chatSessionTopicsList.length;
+            topic.SessionTopics = [{order: topic.order}];
+            vm.chatSessionTopicsList.push(topic);
+            topicArray.push(topic);
           }
-        }
+        })
       }
 
       if (topicArray.length == 0) return;
 
+      saveTopics(topicArray);
+    }
+
+    function saveTopics(topicArray) {
       vm.session.saveTopics(topicArray).then(function(results) {
         angular.forEach(results, function(result) {
-          if (!isTopicAdded(result.Topic)) {
-            vm.chatSessionTopicsList.push(result.Topic);
+          if (!isTopicAdded(result)) {
+            vm.chatSessionTopicsList.push(result);
           }
         });
       }, function(error) {
-        messenger.error(err);
+        messenger.error(error);
       });
+    }
+
+    function removeTopicFromList(id) {
+      vm.session.removeTopic(id).then(
+        function (res) {
+          dbg.log2('topic removed');
+          removeTopicFromLocalList(id);
+          reOrderOnDelete();
+          saveTopics(vm.chatSessionTopicsList);
+        },
+        function (err) {
+          messenger.error(err);
+        }
+      );
     }
 
     function removeTopicFromLocalList(id) {
@@ -97,37 +134,33 @@
       }
     }
 
-    function removeTopicFromList(id) {
-      vm.session.removeTopic(id).then(
-        function (res) {
-          dbg.log2('topic removed');
-          removeTopicFromLocalList(id);
-        },
-        function (err) {
-          messenger.error(err);
+    function reOrderOnDelete() {
+      vm.chatSessionTopicsList.map(function(topic, index) {
+        if(topic.order != index){
+          topic.order = index;
+          topic.SessionTopics[0].order = topic.order;
         }
-      );
+      })
     }
 
-    function reorderTopics(data, t) {
-      vm.chatSessionTopicsList = builderServices.reorderTopics(vm.chatSessionTopicsList, data, t);
-      vm.session.steps.step2.topics = vm.chatSessionTopicsList;
+    function orderTopics(topics) {
+      topics.map(function(topic, index) {
+        topic.order = index;
+      });
     }
 
     function topicSelectClickHandle(topicObj) {
-      console.error(typeof vm.selectedTopics);
       if (vm.selectedTopics[topicObj.id]) {
         delete vm.selectedTopics[topicObj.id];
       } else {
         vm.selectedTopics[topicObj.id] = topicObj;
       }
-
     }
 
     function selectAllTopics(allTopics) {
       vm.allTopicsSelected = !vm.allTopicsSelected;
 
-      vm.selectedTopics = {};
+      vm.selectedTopics = [];
       if (vm.allTopicsSelected) {
         for (var i = 0, len = allTopics.length; i < len ; i++) {
           vm.selectedTopics[ allTopics[i].id ] = allTopics[i];
@@ -135,11 +168,10 @@
       }
     }
 
-
     function initStep() {
       var runOnce = $scope.$watch('step2Controller.session.steps.step2.topics', function (newval, oldval) {
         if (vm.session.steps.step2.topics.length) {
-          vm.chatSessionTopicsList = builderServices.parseTopics(vm.session.steps.step2.topics);
+          vm.chatSessionTopicsList = vm.session.steps.step2.topics;
         }
         runOnce();
       });

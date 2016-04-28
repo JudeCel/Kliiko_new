@@ -84,8 +84,20 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/registration', function (req, res, next) {
-  res.render('registration', usersRepo.prepareParams(req));
+  let params = usersRepo.prepareParams(req);
+  params.phoneCountryData = replaceToString(params.phoneCountryData);
+  params.landlineNumberCountryData = replaceToString(params.landlineNumberCountryData);
+  res.render('registration', params);
 });
+
+function replaceToString(value) {
+  if(_.isEmpty(value)) {
+    return '';
+  }
+  else {
+    return value;
+  }
+}
 
 router.get('/welcome', function (req, res, next) {
   res.render('welcome', usersRepo.prepareParams(req));
