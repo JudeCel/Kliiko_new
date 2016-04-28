@@ -34,7 +34,6 @@
   margin-bottom: 15%;
   color: $font-color;
   font-size: 30px;
-  font-family: SourceSansPro-Regular;
   text-align: center;
 }
 
@@ -64,6 +63,7 @@
 body{
   background-color: #eeeeee;
   margin: 0 0 50px; /* bottom = footer height */
+  font-family: sans-serif;
 }
 
 html {
@@ -141,14 +141,14 @@ background-color: $blue !important;
   cursor: pointer;
 }
 .text-font-family {
-font-family: Sofia Pro Condensed;
+  font-family: sans-serif;
 }
 .text-left {
   text-align: left;
 }
 
 .text-font-family-tabs {
-  font-family: Source sans pro black;
+  font-family: sans-serif black;
 }
 
 .text-vertical-middle {
