@@ -52,6 +52,8 @@
     function initUser(user) {
       angular.copy(user, vm.resetUserData);
       angular.copy(user, vm.userData);
+      phoneCountrySelected(vm.userData);
+      landlineNumberCountrySelected(vm.userData);
     }
 
     function getPhoneCountryData() {
@@ -73,12 +75,14 @@
     }
 
     function landlineNumberCountrySelected(user) {
-      sessionStorage.setItem('landlineNumberCountryData', user.phoneCountryData.iso2);
+      sessionStorage.setItem('landlineNumberCountryData', user.landlineNumberCountryData.iso2);
       return vm.landlineNumberCountryData = sessionStorage.getItem('landlineNumberCountryData')
     }
 
 
     function updateUserData(data, form) {
+      data.mobile = $("#mobile").val();
+      data.landlineNumber = $("#landlineNumber").val();
       if(validatePhoneNumber(data.mobile) && validateLandlineNumber(data.landlineNumber)){
         getPhoneCountryData();
         getLandlineNumberCountryData();

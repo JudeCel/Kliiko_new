@@ -143,6 +143,7 @@ function prepareParams(req, errors) {
     landlineNumber: '',
     gender: '',
     phoneCountryData: {},
+    landlineNumberCountryData: {},
     tipsAndUpdate: 'on',
     termsAndConditions: 'false',
     errors: (errors || {}),

@@ -13,32 +13,48 @@
   </div>
 
   <script type="text/javascript">
-    $("#mobilePhone").intlTelInput();
-    $("#landline_number").intlTelInput();
+    var mobilePhone = $("#mobilePhone");
+    mobilePhone.intlTelInput({
+      preferredCountries: ["au"],
+      initialCountry: "au"
+    });
 
-    function getNewMobileCountry() {
+    var landline_number = $("#landline_number");
+    landline_number.intlTelInput({
+      preferredCountries: ["au"],
+      initialCountry: "au"
+    });
+
+    var data = $("#phoneCountryData").val();
+    if(data) {
+      mobilePhone.intlTelInput("setCountry", JSON.parse(data).iso2);
+    }
+
+    data = $("#landlineNumberCountryData").val();
+    if(data) {
+      landline_number.intlTelInput("setCountry", JSON.parse(data).iso2);
+    }
+
+
+    $('#register').submit(function() {
+      var phoneData = mobilePhone.intlTelInput("getSelectedCountryData");
       var phoneCountryData = {
-        iso2: $("#mobilePhone").intlTelInput("getSelectedCountryData").iso2,
-        dialCode: $("#mobilePhone").intlTelInput("getSelectedCountryData").dialCode,
-        countryName: $("#mobilePhone").intlTelInput("getSelectedCountryData").name
+        iso2: phoneData.iso2,
+        dialCode: phoneData.dialCode,
+        countryName: phoneData.name
       };
-
       var json = JSON.stringify(phoneCountryData);
-      document.getElementById('phoneCountryData').setAttribute('value', json);
-      var json_object = eval("("+json+")");
-    }
+      $("#phoneCountryData").val(json);
 
-    function getNewLandlineNumberCountry() {
-      var landlineNumberCountryData = {
-        iso2: $("#landline_number").intlTelInput("getSelectedCountryData").iso2,
-        dialCode: $("#landline_number").intlTelInput("getSelectedCountryData").dialCode,
-        countryName: $("#landline_number").intlTelInput("getSelectedCountryData").name
+      phoneData = landline_number.intlTelInput("getSelectedCountryData");
+      phoneCountryData = {
+        iso2: phoneData.iso2,
+        dialCode: phoneData.dialCode,
+        countryName: phoneData.name
       };
-
-      var json = JSON.stringify(landlineNumberCountryData);
-      document.getElementById('landlineNumberCountryData').setAttribute('value', json);
-      var json_object = eval("("+json+")");
-    }
+      json = JSON.stringify(phoneCountryData);
+      $("#landlineNumberCountryData").val(json);
+    });
   </script>
   </body>
 </html>
