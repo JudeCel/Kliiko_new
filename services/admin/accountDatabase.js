@@ -88,8 +88,8 @@ function buldCSVRow(account, accountUser) {
     'Gender': accountUser.gender || '',
     'Mobile': accountUser.mobile || '',
     'Landline': accountUser.landlineNumber || '',
-    'Sessions purchased': '',
-    'Type permission': '',
+    'Sessions Purchased': '',
+    'Tips Permission': '',
     'Active Sessions': '',
     'Comment': accountUser.comment || ''
   };
@@ -109,8 +109,8 @@ function csvHeader() {
     'Gender',
     'Mobile',
     'Landline',
-    'Sessions purchased',
-    'Type permission',
+    'Sessions Purchased',
+    'Tips Permission',
     'Active Sessions',
     'Comment'
   ];

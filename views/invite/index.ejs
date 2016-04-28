@@ -14,7 +14,7 @@
         <h1 class='text-center text-gray-dark'>Invite</h1>
         <%if(invite.userType == "new") { %>
           <h5 class='text-center text-gray-dark'>
-            You have been invited to join Klzii, type in password to accept or click decline to refuse.
+            You have been invited to join klzii, type in password to accept or click decline to refuse.
           </h5>
           <span class='error-column has-error text-center' id='warning-email-password'><%= error.password %></span>
           <form class='non-resubmitable' method='post' action='/invite/<%= invite.token %>/accept' novalidate>
@@ -46,7 +46,7 @@
           </form>
         <% } else { %>
           <h5 class='text-center text-gray-dark'>
-            You have been invited to join Klzii, click accept or decline.
+            You have been invited to join klzii, click accept or decline.
           </h5>
           <div class='container-fluid'>
             <div class='row'>

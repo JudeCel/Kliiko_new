@@ -15,7 +15,7 @@ describe('MAILERS - Invite ', () => {
           done(error);
         }
 
-        assert.include(result.data.html, 'Hello! And welcome to Klzii');
+        assert.include(result.data.html, 'Hello! And welcome to klzii');
         assert.include(result.data.html, 'You can login anytime with your');
         assert.include(result.data.to, email);
         assert.include(result.data.html, token);
