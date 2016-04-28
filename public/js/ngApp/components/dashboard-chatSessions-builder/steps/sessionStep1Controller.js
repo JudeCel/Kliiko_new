@@ -25,6 +25,8 @@
     vm.initController = function() {
       vm.session = builderServices.session;
       vm.today = new Date();
+      vm.today.setDate(vm.today.getDate() - 1);
+
       vm.dateTime = builderServices.getTimeSettings();
       parseDateAndTime('initial');
       initStep(null, 'initial');
