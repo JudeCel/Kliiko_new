@@ -67,11 +67,11 @@ function joinToSession(ids, sessionId) {
           where: {
             SessionId: sessionId
           },
+          order: '"order" ASC',
           include: [Topic]
         }).then( function(sessionTopics) {
           deferred.resolve(sessionTopics);
         });
-
       }, function(err) {
         deferred.reject(err);
       })
