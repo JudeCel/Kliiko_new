@@ -482,8 +482,6 @@ function sendMailFromTemplateWithCalendarEvent(id, params, callback) {
 
 //replace all "In Editor" variables with .ejs compatible variables
 function formatTemplateString(str) {
-  str = str.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
-
   str = str.replace(/\{First Name\}/ig, "<%= firstName %>");
   str = str.replace(/\{Last Name\}/ig, "<%= lastName %>");
   str = str.replace(/\{Account Name\}/ig, "<%= accountName %>");

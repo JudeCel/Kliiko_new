@@ -53,6 +53,15 @@ function extractImageResources(tepmlateHtml) {
           };
         }
       },
+      exclusiveFilter: function(frame) {
+        if (frame.attribs.style) {
+          if(frame.tag =='span' && (frame.attribs.style.indexOf("color:red") != -1)) {
+            return true;
+          };
+        }
+
+        return false;
+      },
       allowedTags:false,
       allowedAttributes: false,
       allowedSchemes: ['data', 'cid', 'http', 'https']
