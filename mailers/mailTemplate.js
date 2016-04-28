@@ -31,7 +31,7 @@ function preparePathData (attribs, resources) {
   return {path: path, name: name};
 }
 
-function extractImageResources(tepmlateHtml) {
+function formatMailTemplate(tepmlateHtml) {
   var resources = [];
   return {html: sanitizeHtml(tepmlateHtml, {
       transformTags: {
@@ -71,7 +71,7 @@ function extractImageResources(tepmlateHtml) {
 }
 
 function sendMailWithTemplate(template, mailParams, callback) {
-  let parsedTemplate = extractImageResources(template.content);
+  let parsedTemplate = formatMailTemplate(template.content);
   transporter.sendMail({
     from: mailFrom,
     to: mailParams.email,
@@ -122,5 +122,6 @@ function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {
 
 module.exports = {
   sendMailWithTemplate: sendMailWithTemplate,
-  sendMailWithTemplateAndCalendarEvent: sendMailWithTemplateAndCalendarEvent
+  sendMailWithTemplateAndCalendarEvent: sendMailWithTemplateAndCalendarEvent,
+  formatMailTemplate: formatMailTemplate
 };

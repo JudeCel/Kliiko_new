@@ -538,5 +538,11 @@ function composePreviewMailTemplate(mailTemplate) {
     resetPasswordUrl: "#/resetPasswordUrl"
   };
 
-  return composeMailFromTemplate(mailTemplate, mailPreviewVariables);
+  var template = composeMailFromTemplate(mailTemplate, mailPreviewVariables);
+  // try {
+  //   template.content = templateMailer.formatMailTemplate(template.content);
+  // } catch (e) {
+  // }
+
+  return template;
 }
