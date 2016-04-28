@@ -61,12 +61,12 @@
         </div>
         <div class="col-md-6" ng-hide="!topics.list.length">
           <h3>Chat Session topics</h3>
-          <div>
-            <div class="drop-area" ng-drop="true">Drop Selected Topics Here</div>
-            <br>
-            <div class="topic-list-item" ng-repeat="t in step2Controller.chatSessionTopicsList | orderBy:'SessionTopics[0].order' "  ng-drag="true" ng-drag-data="t">
-              <div class="panel-label" ng-drop="true" ng-drop-success="step2Controller.reorderTopics($data, t)">
-                <span ng-if--="topics.editBlockHelper != $index">
+          <div class="drop-area" ng-drop="true">Drop Selected Topics Here</div>
+          </br>
+          <div ui-sortable="step2Controller.sortableOptionsA" ng-model="step2Controller.chatSessionTopicsList">
+            <div class="topic-list-item" ng-repeat="t in step2Controller.chatSessionTopicsList">
+              <div class="panel-label">
+                <span>
                   <img src="icons/ic_move.png">
                   {{ t.name }}
                 </span>

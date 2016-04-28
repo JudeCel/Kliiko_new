@@ -672,12 +672,12 @@ function step2Queries(session, step) {
   return [
     function(cb) {
       models.Topic.findAll({
+        order: '"SessionTopics.order" ASC',
         include: [{
           model: models.SessionTopics,
           where: {
             SessionId: session.id
           },
-          //todo get order
           attributes: ['order']
         }]
       }).then(function(topics) {
