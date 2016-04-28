@@ -23,33 +23,20 @@
     vm.orderTopics = orderTopics;
     vm.topicsOnDropComplete = topicsOnDropComplete;
     vm.removeTopicFromList = removeTopicFromList;
-    vm.reorderTopics = reorderTopics;
     vm.topicSelectClickHandle = topicSelectClickHandle;
     vm.selectAllTopics = selectAllTopics;
     vm.chatSessionTopicsList = [];
 
-    /////////////////////////////////////////
+    vm.sortableOptionsA = {
+      stop : function(e, ui) {
+        vm.chatSessionTopicsList.map(function(topic, index) {
+          topic.order = index;
+          topic.SessionTopics[0].order = topic.order;
+        })
 
-    $scope.list = vm.selectAllTopics;
-    $scope.sortingLog = [];
-
-    $scope.sortableOptions = {
-      update: function(e, ui) {
-        var logEntry = tmpList.map(function(i){
-          return i.value;
-        }).join(', ');
-        $scope.sortingLog.push('Update: ' + logEntry);
-      },
-      stop: function(e, ui) {
-        // this callback has the changed model
-        var logEntry = tmpList.map(function(i){
-          return i.value;
-        }).join(', ');
-        $scope.sortingLog.push('Stop: ' + logEntry);
+        saveTopics(vm.chatSessionTopicsList);
       }
     };
-
-    /////////////////////////////////////////
 
     vm.initController = function() {
       initStep();
@@ -112,19 +99,6 @@
       saveTopics(topicArray);
     }
 
-    function reorderTopics(topic1, topic2) {
-      var order1 = topic1.SessionTopics[0].order;
-      var order2 = topic2.SessionTopics[0].order;
-      topic1.SessionTopics[0].order = order2;
-      topic2.SessionTopics[0].order = order1;
-
-      vm.chatSessionTopicsList.map(function(topic) {
-        topic.order = topic.SessionTopics[0].order
-      })
-
-      saveTopics(vm.chatSessionTopicsList);
-    }
-
     function saveTopics(topicArray) {
       vm.session.saveTopics(topicArray).then(function(results) {
         angular.forEach(results, function(result) {
@@ -181,12 +155,10 @@
       } else {
         vm.selectedTopics[topicObj.id] = topicObj;
       }
-
     }
 
     function selectAllTopics(allTopics) {
       vm.allTopicsSelected = !vm.allTopicsSelected;
-
 
       vm.selectedTopics = [];
       if (vm.allTopicsSelected) {
@@ -204,7 +176,6 @@
         runOnce();
       });
     }
-
   }
 
 })();

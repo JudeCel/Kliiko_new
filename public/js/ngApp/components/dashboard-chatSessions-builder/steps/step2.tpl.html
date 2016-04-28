@@ -61,51 +61,12 @@
         </div>
         <div class="col-md-6" ng-hide="!topics.list.length">
           <h3>Chat Session topics</h3>
-
-          <div class="floatleft">
-            <ul ui-sortable="sortableOptions" ng-model="list" class="list">
-              <li ng-repeat="item in list" class="item">
-                {{item}}
-              </li>
-            </ul>
-          </div>
-
-          <div class="floatleft" style="margin-left: 20px;">
-            <ul class="list logList">
-              <li ng-repeat="entry in sortingLog track by $index" class="logItem">
-                {{entry}}
-              </li>
-            </ul>
-          </div>
-
-          <!-- <div class="drop-area" ng-drop="true">Drop Selected Topics Here</div>
+          <div class="drop-area" ng-drop="true">Drop Selected Topics Here</div>
           </br>
-          <div ui-sortable="sortableOptions">
-            <div class="topic-list-item" ng-repeat="topic in step2Controller.chatSessionTopicsList | orderBy:'SessionTopics[0].order' ">
-              <span ng-if--="topics.editBlockHelper != $index">
-                <img src="icons/ic_move.png">
-                {{ topic.name }}
-              </span>
-
-              <img class="ico-active-unactive" ng-show="t.active" src="/icons/unlocked.png" ng-click="t.active = !t.active; t.update()"  alt="Active" title="Active">
-              <img class="ico-active-unactive" ng-show="!t.active" src="/icons/locked.png"  ng-click="t.active = !t.active; t.update()" alt="Not Active" title="Not Active">
-              <div class="control-block">
-                <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(t.id)"
-                src="/icons/dashboardElement_remove.png" alt="" title="Delete">
-              </div>
-            </div>
-          </div>
-
-          <ul ng-repeat='topic in step2Controller.chatSessionTopicsList'>
-            <li>
-              {{topic.name}}
-            </li>
-          </ul> -->
-
-          <!-- <div>
-            <div class="topic-list-item" ng-repeat="t in step2Controller.chatSessionTopicsList | orderBy:'SessionTopics[0].order' "  ng-drag="true" ng-drag-data="t">
-              <div class="panel-label" ng-drop="true" ng-drop-success="step2Controller.reorderTopics($data, t)">
-                <span ng-if--="topics.editBlockHelper != $index">
+          <div ui-sortable="step2Controller.sortableOptionsA" ng-model="step2Controller.chatSessionTopicsList">
+            <div class="topic-list-item" ng-repeat="t in step2Controller.chatSessionTopicsList">
+              <div class="panel-label">
+                <span>
                   <img src="icons/ic_move.png">
                   {{ t.name }}
                 </span>
@@ -119,8 +80,7 @@
                      src="/icons/dashboardElement_remove.png" alt="" title="Delete">
               </div>
             </div>
-          </div> -->
-
+          </div>
         </div>
       </div>
     </section>
