@@ -8,7 +8,6 @@ var _ = require('lodash');
 var ejs = require('ejs');
 var constants = require('../util/constants');
 
-
 module.exports = {
   validate: validate,
   create: create,
@@ -537,12 +536,8 @@ function composePreviewMailTemplate(mailTemplate) {
     logInUrl: "#/LogInUrl",
     resetPasswordUrl: "#/resetPasswordUrl"
   };
-
   var template = composeMailFromTemplate(mailTemplate, mailPreviewVariables);
-  // try {
-  //   template.content = templateMailer.formatMailTemplate(template.content);
-  // } catch (e) {
-  // }
+  template.content = template.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
 
   return template;
 }
