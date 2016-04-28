@@ -56,6 +56,7 @@ function update(req, callback){
 }
 
 function createUser(params, callback) {
+  parseParams(params);
   let createNewUserFunctionList = [
     function (cb) {
       models.sequelize.transaction().then(function(t) {
@@ -86,6 +87,16 @@ function createUser(params, callback) {
       });
     }
   });
+}
+
+function parseParams(params) {
+  if(typeof params.phoneCountryData == 'string') {
+    params.phoneCountryData = JSON.parse(params.phoneCountryData);
+  }
+
+  if(typeof params.landlineNumberCountryData == 'string') {
+    params.landlineNumberCountryData = JSON.parse(params.landlineNumberCountryData);
+  }
 }
 
 function comparePassword(email, password, callback) {
