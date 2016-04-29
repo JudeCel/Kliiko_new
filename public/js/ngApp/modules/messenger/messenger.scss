@@ -8,6 +8,10 @@
   text-align: left;
   z-index: 99999999;
   //pointer-events: none;
+  .animated {
+    -webkit-animation-fill-mode: both !important;
+    animation-fill-mode: both !important;
+  }
 }
 .message {
   margin: 4px;
