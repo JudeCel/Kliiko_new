@@ -1,5 +1,23 @@
 #upgrade-plan-content {
 
+  .wrapper {
+    height: 101px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: table;
+  }
+
+  .flex-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 101px;
+    padding:0;
+  }
+
   h2 {
     margin: 45px;
     font-size: .8em;
@@ -160,11 +178,12 @@
     }
 
     .list-group-item-text {
-      margin: 4px auto;
+      margin-top: 4px;
+      margin-left: auto;
+      margin-right: auto;
       padding: 10px;
       width: 90%;
       font-size: 2.1rem;
-      min-height:74px;
     }
 
     .yellow-bg {background: $yellow;}
@@ -180,9 +199,8 @@
 
   .btn-dashboard-plans {
     display: block;
-    height: 50px;
     margin: 5px 0;
-    padding: 9px 20px;
+    padding: 9px 10px;
     font-size: 2.3rem;
     border: solid 3px $grey;
     cursor: pointer;
@@ -195,8 +213,8 @@
   .btn-green {$thisColor: #4CB344; color:$thisColor; border-color: $thisColor}
   .btn-blue {$thisColor: #65C8EE; color:$thisColor; border-color: $thisColor}
 
-  .learn {width: 160px;}
-  .want {width: 200px;}
+  .learn {margin-left: 5px;}
+  .want {margin-left: 5px;}
 
   .modal-footer {
     font-size: 2rem;
