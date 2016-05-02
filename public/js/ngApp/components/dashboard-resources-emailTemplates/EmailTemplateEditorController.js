@@ -23,8 +23,8 @@
     vm.currentTemplate = {index: 0};
     vm.emailTemplates = [];
     vm.templateToDelete;
-    vm.newResource = {};
     vm.properties = {};
+    vm.currentUpload = 'image';
     var showSystemMail = $stateParams.systemMail;
 
     vm.preInit = function(params) {
@@ -48,7 +48,10 @@
           insertImage: {
             visible : true,
             exec: function() {
-              vm.uploadResourceForm('image');
+              vm.currentUpload = 'image';
+              $scope.$apply(function() {
+                vm.galleryController.openUploadModal(vm.uploadTypes.image, { modal: {}, callback: postUpload });
+              });
             }
           }
         }
@@ -60,7 +63,10 @@
         callbackArguments: [],
         tooltip: 'Add YouTube link',
         exec: function() {
-          vm.uploadResourceForm('youtubeUrl');
+          vm.currentUpload = 'video';
+          $scope.$apply(function() {
+            vm.galleryController.openUploadModal(vm.uploadTypes.video, { modal: {}, callback: postUpload });
+          });
         }
       });
 
@@ -83,6 +89,8 @@
     vm.resetMailTemplate = resetMailTemplate;
     vm.previewMailTemplate = previewMailTemplate;
     vm.saveEmailTemplate = saveEmailTemplate;
+    vm.initGallery = initGallery;
+    vm.galleryDropdownData = galleryDropdownData;
 
 
 
@@ -257,78 +265,6 @@
       });
     };
 
-    vm.uploadResourceForm = function(uploadType) {
-      domServices.modal('uploadTemplateResource');
-      vm.newResource.type = uploadType;
-      vm.uploadTypeForTitle = uploadTypeForTitle(uploadType);
-      if(!$scope.$$phase) {
-        $scope.$apply();
-      }
-    };
-
-    function uploadTypeForTitle(uploadType) {
-      if(uploadType == "youtubeUrl"){
-        return "youtube";
-      }
-      return uploadType;
-    }
-
-    vm.submitForm = function(newResource) {
-      if(newResource.type == "youtubeUrl"){
-        saveYoutube(newResource);
-      }else{
-        saveResource(newResource);
-      }
-    };
-
-    function cancel() {
-      domServices.modal('uploadTemplateResource', 'close');
-    }
-
-    function saveYoutube(newResource){
-      var resourceParams = {
-        title: newResource.title,
-        text: newResource.youtubeUrl
-      };
-
-      GalleryServices.saveYoutubeUrl(resourceParams).then(function(res) {
-        if(res.error) {
-          messenger.error(res.error);
-        } else {
-          var linkHTML = '<a href="' + res.JSON.url + '" target="_blank" style="display:block;text-decoration:none;color:#000;"><img src="/icons/header button icons/videoLink.png"></img> </a>';
-          $('#templateContent').wysiwyg("insertHtml", linkHTML);
-          vm.newResource = {};
-          cancel();
-        }
-      })
-    }
-
-    function saveResource(newResource){
-      var resourceParams = {
-        title: newResource.title,
-        type: newResource.type,
-        text: vm.newResource.fileTst.name,
-        file: newResource.fileTst
-      };
-
-      GalleryServices.createResource(resourceParams).then(function(res) {
-        if(res.error){
-          messenger.error(res.error);
-        } else {
-          GalleryServices.postuploadData(resourceParams).then(function(res) {
-            if(res.error) {
-              messenger.error(res.error);
-            } else {
-              var linkHTML = '<img src="/chat_room/uploads/' + res.data.JSON.name + '" style="max-width:600px;"></img>';
-              $('#templateContent').wysiwyg("insertHtml", linkHTML);
-              vm.newResource = {};
-              cancel();
-            }
-          })
-        }
-      })
-    }
-
     vm.isCurrent = function(key) {
       return (key == vm.currentTemplate.index);
     }
@@ -343,6 +279,33 @@
       }
 
       return item.AccountId;
+    }
+
+    function postUpload(resource) {
+      if(resource.type == 'image') {
+        var linkHTML = '<img src="' + resource.url.full + '" style="max-width:600px;"></img>';
+        $('#templateContent').wysiwyg("insertHtml", linkHTML);
+      }
+      else {
+        var linkHTML = '<a href="https://www.youtube.com/watch?v=' + resource.url.full + '" target="_blank" style="display:block;text-decoration:none;color:#000;"><img src="/icons/header button icons/videoLink.png"></img> </a>';
+        $('#templateContent').wysiwyg("insertHtml", linkHTML);
+      }
+    }
+
+    function initGallery(gc) {
+      vm.galleryController = gc;
+      vm.uploadTypes = {
+        image: gc.getUploadType('image'),
+        video: gc.getUploadType('youtube')
+      };
+    }
+
+    function galleryDropdownData(dependency) {
+      return {
+        types: vm.uploadTypes[vm.currentUpload],
+        modal: { upload: true },
+        dependency: dependency
+      };
     }
   }
 })();
