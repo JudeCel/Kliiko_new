@@ -17,6 +17,7 @@
     vm.isAccountOwner = isAccountOwner;
     vm.removeInvite = removeInvite;
     vm.submitForm = submitForm;
+    vm.cancel = cancel;
 
     vm.modalInstance = null;
     vm.editModalInstance = null;
@@ -42,6 +43,9 @@
     };
 
     function openModal(modalTitle, action, accountUser) {
+      vm.userIndex = vm.accountUsers.indexOf(accountUser);
+      angular.copy(accountUser, vm.accountUser)
+
       if(!mobile || !landlineNumber) {
         mobile = $('#mobileAM');
         landlineNumber = $('#landlineNumberAM');
@@ -49,7 +53,6 @@
 
       vm.modalTitle = modalTitle;
       vm.formAction = action;
-      vm.accountUser = accountUser;
 
       mobile.intlTelInput('setCountry', getCountry('phoneCountryData'));
       landlineNumber.intlTelInput('setCountry', getCountry('landlineNumberCountryData'));
@@ -141,7 +144,8 @@
         if(result.error) {
           messenger.error(result.error);
         }else{
-          onSuccess(result.message)
+          vm.accountUsers[vm.userIndex] = result.accountManager;
+          onSuccess(result.message);
         }
       })
     }
@@ -162,6 +166,10 @@
 
     function edditing(action) {
       return action == 'edit';
+    }
+
+    function cancel() {
+      domServices.modal('accountManagerModal', 'close');
     }
   }
 })();
