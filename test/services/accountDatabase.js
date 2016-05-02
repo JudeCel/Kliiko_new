@@ -57,8 +57,8 @@ describe('SERVICE - AccountDatabase', function() {
       Gender: 'male',
       Mobile: '',
       Landline: '',
-      'Sessions purchased': '',
-      'Type permission': '',
+      'Sessions Purchased': '',
+      'Tips Permission': '',
       'Active Sessions': '',
       Comment: ''
     };
@@ -78,8 +78,8 @@ describe('SERVICE - AccountDatabase', function() {
       'Gender',
       'Mobile',
       'Landline',
-      'Sessions purchased',
-      'Type permission',
+      'Sessions Purchased',
+      'Tips Permission',
       'Active Sessions',
       'Comment'
     ];

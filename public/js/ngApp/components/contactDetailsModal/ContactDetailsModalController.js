@@ -1,150 +1,71 @@
 (function () {
   'use strict';
 
-  angular.
-    module('KliikoApp').
-    config(function(ipnConfig) {
-      ipnConfig.autoPlaceholder = true;
-      ipnConfig.customPlaceholder = function() {
-        return "Recomended";
-      };
-      ipnConfig.preferredCountries = ['au'];
-      return ipnConfig;
-    });
-  angular.
-    module('KliikoApp').
-    controller('ContactDetailsModalController', ContactDetailsModalController)
+  angular.module('KliikoApp').controller('ContactDetailsModalController', ContactDetailsModalController)
 
-  ContactDetailsModalController.$inject = ['dbg', 'user','domServices', 'messenger'];
-  function ContactDetailsModalController(dbg,  user, domServices, messenger) {
-    dbg.log2('#ContactDetailsModalController  started');
+  ContactDetailsModalController.$inject = ['dbg', 'user', 'domServices', 'messenger', '$scope'];
+  function ContactDetailsModalController(dbg, user, domServices, messenger, $scope) {
+    dbg.log2('#ContactDetailsModalController started');
+
     var vm = this;
-    vm.userData = {};
-    vm.resetUserData = {};
-    init();
+    var mobile = $('#mobile');
+    var landlineNumber = $('#landlineNumber');
 
-    vm.errors = {};
+    vm.userData = {};
     vm.updateUserData = updateUserData;
     vm.cancel = cancel;
-    vm.validatePhone = validatePhone;
-    vm.initUser = initUser;
 
-    vm.phoneCountryData = sessionStorage.getItem('phoneCountryData') || 'au';
-    vm.landlineNumberCountryData = sessionStorage.getItem('landlineNumberCountryData') || 'au';
+    mobile.on('countrychange', function(event, countryData) {
+      if(vm.userData.phoneCountryData && countryData.iso2 != vm.userData.phoneCountryData.iso2) {
+        vm.userDetailsForm.$setDirty();
+        $scope.$apply();
+      }
+    });
 
-    vm.phoneDialCode = null;
-    vm.phoneCountryName = null;
-    vm.phoneIso2 = null;
+    landlineNumber.on('countrychange', function(event, countryData) {
+      if(vm.userData.landlineNumberCountryData && countryData.iso2 != vm.userData.landlineNumberCountryData.iso2) {
+        vm.userDetailsForm.$setDirty();
+        $scope.$apply();
+      }
+    });
 
-    vm.landlineNumberDialCode = null;
-    vm.landlineNumberCountryName = null;
-    vm.landlineNumberIso2 = null;
+    $('#contactDetailsModal').on('show.bs.modal', function (event) {
+      vm.userDetailsForm.$setPristine();
+      vm.userDetailsForm.$setUntouched();
 
-    function init() {
-      // update form on every modal opening. will reset after 'cancel'
-      jQuery('#contactDetailsModal').on('show.bs.modal', function (event) {
+      vm.errors = {};
+      vm.userData = angular.copy(user.user);
+      delete vm.userData.id;
+      $scope.$apply();
+
+      mobile.intlTelInput('setCountry', vm.userData.phoneCountryData.iso2);
+      landlineNumber.intlTelInput('setCountry', vm.userData.landlineNumberCountryData.iso2);
+    });
+
+    function updateUserData() {
+      setDependencies();
+
+      user.updateUserData(vm.userData).then(function(res) {
+        vm.updateBtn = 'Updated';
         vm.userDetailsForm.$setPristine();
         vm.userDetailsForm.$setUntouched();
         vm.errors = {};
+        messenger.ok('Contact details updated successfully.');
+      }, function(error) {
+        vm.errors = error;
       });
     }
 
-    function initUser(user) {
-      angular.copy(user, vm.resetUserData);
-      angular.copy(user, vm.userData);
-    }
+    function setDependencies() {
+      vm.userData.phoneCountryData = mobile.intlTelInput('getSelectedCountryData');
+      vm.userData.landlineNumberCountryData = landlineNumber.intlTelInput('getSelectedCountryData');
 
-    function getPhoneCountryData() {
-      vm.phoneDialCode = $("#mobile").intlTelInput("getSelectedCountryData").dialCode;
-      vm.phoneCountryName = $("#mobile").intlTelInput("getSelectedCountryData").name;
-      vm.phoneIso2 = $("#mobile").intlTelInput("getSelectedCountryData").iso2;
-    }
-
-    function getLandlineNumberCountryData() {
-      vm.landlineNumberDialCode = $("#landlineNumber").intlTelInput("getSelectedCountryData").dialCode;
-      vm.landlineNumberCountryName = $("#landlineNumber").intlTelInput("getSelectedCountryData").name;
-      vm.landlineNumberIso2 = $("#landlineNumber").intlTelInput("getSelectedCountryData").iso2;
-    }
-
-
-    function phoneCountrySelected(user) {
-      sessionStorage.setItem('phoneCountryData', user.phoneCountryData.iso2);
-      return vm.phoneCountryData = sessionStorage.getItem('phoneCountryData')
-    }
-
-    function landlineNumberCountrySelected(user) {
-      sessionStorage.setItem('landlineNumberCountryData', user.phoneCountryData.iso2);
-      return vm.landlineNumberCountryData = sessionStorage.getItem('landlineNumberCountryData')
-    }
-
-
-    function updateUserData(data, form) {
-      if(validatePhoneNumber(data.mobile) && validateLandlineNumber(data.landlineNumber)){
-        getPhoneCountryData();
-        getLandlineNumberCountryData();
-
-        var phoneCountryData = {
-          iso2: vm.phoneIso2,
-          dialCode: vm.phoneDialCode,
-          countryName: vm.phoneCountryName
-        }
-
-        var landlineNumberCountryData = {
-          iso2: vm.landlineNumberIso2,
-          dialCode: vm.landlineNumberDialCode,
-          countryName: vm.landlineNumberCountryName
-        }
-
-        data.phoneCountryData = phoneCountryData;
-        data.landlineNumberCountryData = landlineNumberCountryData;
-        // countrySelected(data);
-
-        vm.errors = {};
-        delete data.id;
-        user.updateUserData(data, form).then(function (res) {
-          angular.copy(res, vm.userData);
-          angular.copy(res, vm.resetUserData);
-          vm.updateBtn = 'Updated';
-          form.$setPristine();
-          form.$setUntouched();
-          messenger.ok('Contact details updated successfully.');
-        }, function(err) {
-          vm.errors = err;
-        });
-      }
-    }
-
-    function validatePhoneNumber(mobile) {
-      if(mobile === undefined && !validatePhone()){
-        messenger.error("The mobile number for this country is not valid.");
-        return false;
-      }
-      return true;
-    }
-
-    function validateLandlineNumber(landlineNumber) {
-      if(landlineNumber === undefined && !validLandlineNumber()){
-        messenger.error("The landline number for this country is not valid.");
-        return false;
-      }
-      return true;
-    }
-
-    function validatePhone() {
-      return $("#mobile").intlTelInput("isValidNumber");
-    }
-
-    function validLandlineNumber() {
-      return $("#landlineNumber").intlTelInput("isValidNumber");
+      vm.userData.mobile = mobile.val();
+      vm.userData.landlineNumber = landlineNumber.val();
     }
 
     function cancel(){
-      angular.copy(vm.resetUserData, vm.userData);
-      vm.errors = {};
       domServices.modal('contactDetailsModal', 'close');
     }
-
   }
-
-
 })();

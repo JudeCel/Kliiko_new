@@ -13,7 +13,6 @@ var account = require('./account');
 var jwt = require('./jwt');
 var accountUser = require('./accountUser');
 var accountManager = require('./accountManager');
-var promotionCode = require('./promotionCode');
 var accountDatabase = require('./accountDatabase');
 var banners = require('./banners');
 var survey = require('./survey');
@@ -64,11 +63,6 @@ router.post('/accountManager', policy.authorized(['accountManager', 'admin']), a
 router.put('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.put);
 router.delete('/accountManager/accountUser', policy.authorized(['accountManager', 'admin']), accountManager.removeAccountUser);
 router.delete('/invite', policy.authorized(['accountManager', 'admin']), accountManager.removeInvite);
-
-router.get('/promotionCode', policy.authorized(['admin']), promotionCode.get);
-router.post('/promotionCode', policy.authorized(['admin']), promotionCode.create);
-router.delete('/promotionCode/:id', policy.authorized(['admin']), promotionCode.remove);
-router.put('/promotionCode/:id', policy.authorized(['admin']), promotionCode.update);
 
 router.get('/accountDatabase', policy.authorized(['admin']), accountDatabase.get);
 router.put('/accountDatabase/:id', policy.authorized(['admin']), accountDatabase.update);

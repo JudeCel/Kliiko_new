@@ -25,18 +25,13 @@
       <img ui-sref-active='active' class='account-database pull-right' src='/icons/upgrade_blue.png' alt='' />
     </div>
 
-    <div ui-sref-active='active' ui-sref='dashboard.accountProfile.promotionCode' class='btn btn-dashboard-menu' ng-show="app.accountUser.isAdmin">
-      <span class='pull-left'>Promotion Codes</span>
-      <img ui-sref-active='active' class='promotion-code pull-right' src='/icons/upgrade_blue.png' alt='' />
-    </div>
-
     <div ui-sref-active='active' ui-sref='dashboard.accountProfile.bannerMessages' ng-show="app.accountUser.isAdmin" class='btn btn-dashboard-menu'>
-      <span class='pull-left'>Upload Banner</span>
+      <span class='pull-left'>Upload Banners</span>
       <img ui-sref-active='active' class='promotion-code pull-right' src='/icons/gallery_blue.png' alt='' />
     </div>
 
     <div ui-sref-active='active' ui-sref='dashboard.accountProfile.emailTemplates({systemMail: true })' ng-show="app.accountUser.isAdmin" class='btn btn-dashboard-menu'>
-      <span class='pull-left'>EmailTemplates</span>
+      <span class='pull-left'>Email Templates</span>
       <img ui-sref-active='active' class='promotion-code pull-right' src='/icons/upgrade_blue.png' alt='' />
     </div>
 
@@ -47,7 +42,7 @@
   </div>
 </div>
 
-<div ui-view='accountProfileContent' class='row'>
+<div ui-view='accountProfileContent'>
   <div class='col-md-3'></div>
   <div class='col-md-6 dashboard-index text-center'>
     Here you can manage your Account Profile by upgrading your Plan and adding Account Managers.

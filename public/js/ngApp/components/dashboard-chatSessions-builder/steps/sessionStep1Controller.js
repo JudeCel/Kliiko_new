@@ -25,6 +25,8 @@
     vm.initController = function() {
       vm.session = builderServices.session;
       vm.today = new Date();
+      vm.today.setDate(vm.today.getDate() - 1);
+
       vm.dateTime = builderServices.getTimeSettings();
       parseDateAndTime('initial');
       initStep(null, 'initial');
@@ -83,12 +85,12 @@
     function updateStep(dataObj) {
       if (dataObj == 'startTime') {
         parseDateAndTime();
-        return updateStep({start_time: vm.session.steps.step1.startTime});
+        return updateStep({startTime: vm.session.steps.step1.startTime});
       }
 
       if (dataObj == 'endTime') {
         parseDateAndTime();
-        return updateStep({end_time: vm.session.steps.step1.endTime});
+        return updateStep({endTime: vm.session.steps.step1.endTime});
       }
 
       var deferred = $q.defer();

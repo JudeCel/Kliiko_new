@@ -1,9 +1,9 @@
   <footer id="footer" class="text-center">
-      © Klzii
+      © klzii
       |
-      <a href="#">Privacy policy</a>
+      <a href="#">Privacy Policy</a>
       |
-      <a href="#">Terms and conditions</a>
+      <a href="#">Terms & Conditions</a>
     </footer>
 
 
@@ -13,32 +13,32 @@
   </div>
 
   <script type="text/javascript">
-    $("#mobilePhone").intlTelInput();
-    $("#landline_number").intlTelInput();
+    var array = [
+      { id: "#mobilePhone", hidden: "#phoneCountryData" },
+      { id: "#landline_number", hidden: "#landlineNumberCountryData" },
+    ];
 
-    function getNewMobileCountry() {
-      var phoneCountryData = {
-        iso2: $("#mobilePhone").intlTelInput("getSelectedCountryData").iso2,
-        dialCode: $("#mobilePhone").intlTelInput("getSelectedCountryData").dialCode,
-        countryName: $("#mobilePhone").intlTelInput("getSelectedCountryData").name
-      };
+    array.map(function(element) {
+      var field = $(element.id);
+      field.intlTelInput({
+        preferredCountries: ['au'],
+        initialCountry: 'au'
+      });
 
-      var json = JSON.stringify(phoneCountryData);
-      document.getElementById('phoneCountryData').setAttribute('value', json);
-      var json_object = eval("("+json+")");
-    }
+      var data = $(element.hidden).val();
+      if(data) {
+        field.intlTelInput('setCountry', JSON.parse(data).iso2);
+      }
+    });
 
-    function getNewLandlineNumberCountry() {
-      var landlineNumberCountryData = {
-        iso2: $("#landline_number").intlTelInput("getSelectedCountryData").iso2,
-        dialCode: $("#landline_number").intlTelInput("getSelectedCountryData").dialCode,
-        countryName: $("#landline_number").intlTelInput("getSelectedCountryData").name
-      };
-
-      var json = JSON.stringify(landlineNumberCountryData);
-      document.getElementById('landlineNumberCountryData').setAttribute('value', json);
-      var json_object = eval("("+json+")");
-    }
+    $('#register').submit(function() {
+      array.map(function(element) {
+        var field = $(element.id);
+        var phoneData = field.intlTelInput('getSelectedCountryData');
+        var json = JSON.stringify(phoneData);
+        $(element.hidden).val(json);
+      });
+    });
   </script>
   </body>
 </html>

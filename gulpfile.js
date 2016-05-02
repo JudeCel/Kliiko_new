@@ -66,6 +66,7 @@ gulp.task('webserver', function() {
 
 var frontendScripts = [
   "public/js/vendors/jQuery/jquery-2.1.4.min.js",
+  "public/js/vendors/jQuery/jquery-ui.js",
   "public/js/vendors/angular/1.4.8/angular.min.js",
   "public/js/vendors/angular/1.4.8/angular-animate.min.js",
   "public/js/vendors/angular/1.4.8/angular-aria.min.js",
@@ -77,12 +78,16 @@ var frontendScripts = [
   "public/js/vendors/angular/1.4.8/angular-route.min.js",
   "public/js/vendors/angular/1.4.8/angular-sanitize.min.js",
   "public/js/vendors/angular/1.4.8/angular-touch.min.js",
+
+  "public/js/vendors/angular-ui-sortable/sortable.js",
+  "public/js/vendors/jquery-ui/*.js",
+
   "public/js/vendors/angular-material/**/*.min.js",
   "public/js/vendors/moment/moment.js",
   "public/js/vendors/bootstrap/bootstrap.js",
   "public/js/vendors/bootstrap/bootstrap-show-password.js",
-  "public/js/vendors/international-phone-number/**/*.js",
   "public/js/vendors/intl-tel-input/**/*.js",
+  "public/js/vendors/international-phone-number/**/*.js",
   "public/js/vendors/jwysiwyg/jquery.wysiwyg.js",
   "public/js/vendors/jwysiwyg/controls/wysiwyg.image.js",
   "public/js/vendors/ng-file-upload/ng-file-upload.js",
@@ -112,7 +117,8 @@ var frontendStyles = [
   "public/js/vendors/intl-tel-input/src/intlTelInput.css",
   "public/js/vendors/ngProgress/ngProgress.css",
   "public/js/vendors/jwysiwyg/jquery.wysiwyg.css",
-  "public/js/vendors/angular-material/1.0.1/angular-material.min.css"
+  "public/js/vendors/angular-material/1.0.1/angular-material.min.css",
+  "public/js/vendors/jquery-ui/*.css",
 ]
 
 gulp.task('build-css', ['build-sass'], function(){
