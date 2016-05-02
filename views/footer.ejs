@@ -13,47 +13,31 @@
   </div>
 
   <script type="text/javascript">
-    var mobilePhone = $("#mobilePhone");
-    mobilePhone.intlTelInput({
-      preferredCountries: ["au"],
-      initialCountry: "au"
+    var array = [
+      { id: "#mobilePhone", hidden: "#phoneCountryData" },
+      { id: "#landline_number", hidden: "#landlineNumberCountryData" },
+    ];
+
+    array.map(function(element) {
+      var field = $(element.id);
+      field.intlTelInput({
+        preferredCountries: ['au'],
+        initialCountry: 'au'
+      });
+
+      var data = $(element.hidden).val();
+      if(data) {
+        field.intlTelInput('setCountry', JSON.parse(data).iso2);
+      }
     });
-
-    var landline_number = $("#landline_number");
-    landline_number.intlTelInput({
-      preferredCountries: ["au"],
-      initialCountry: "au"
-    });
-
-    var data = $("#phoneCountryData").val();
-    if(data) {
-      mobilePhone.intlTelInput("setCountry", JSON.parse(data).iso2);
-    }
-
-    data = $("#landlineNumberCountryData").val();
-    if(data) {
-      landline_number.intlTelInput("setCountry", JSON.parse(data).iso2);
-    }
-
 
     $('#register').submit(function() {
-      var phoneData = mobilePhone.intlTelInput("getSelectedCountryData");
-      var phoneCountryData = {
-        iso2: phoneData.iso2,
-        dialCode: phoneData.dialCode,
-        countryName: phoneData.name
-      };
-      var json = JSON.stringify(phoneCountryData);
-      $("#phoneCountryData").val(json);
-
-      phoneData = landline_number.intlTelInput("getSelectedCountryData");
-      phoneCountryData = {
-        iso2: phoneData.iso2,
-        dialCode: phoneData.dialCode,
-        countryName: phoneData.name
-      };
-      json = JSON.stringify(phoneCountryData);
-      $("#landlineNumberCountryData").val(json);
+      array.map(function(element) {
+        var field = $(element.id);
+        var phoneData = field.intlTelInput('getSelectedCountryData');
+        var json = JSON.stringify(phoneData);
+        $(element.hidden).val(json);
+      });
     });
   </script>
   </body>

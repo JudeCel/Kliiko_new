@@ -8,7 +8,6 @@ var _ = require('lodash');
 var ejs = require('ejs');
 var constants = require('../util/constants');
 
-
 module.exports = {
   validate: validate,
   create: create,
@@ -482,8 +481,6 @@ function sendMailFromTemplateWithCalendarEvent(id, params, callback) {
 
 //replace all "In Editor" variables with .ejs compatible variables
 function formatTemplateString(str) {
-  str = str.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
-
   str = str.replace(/\{First Name\}/ig, "<%= firstName %>");
   str = str.replace(/\{Last Name\}/ig, "<%= lastName %>");
   str = str.replace(/\{Account Name\}/ig, "<%= accountName %>");
@@ -539,6 +536,8 @@ function composePreviewMailTemplate(mailTemplate) {
     logInUrl: "#/LogInUrl",
     resetPasswordUrl: "#/resetPasswordUrl"
   };
+  var template = composeMailFromTemplate(mailTemplate, mailPreviewVariables);
+  template.content = template.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
 
-  return composeMailFromTemplate(mailTemplate, mailPreviewVariables);
+  return template;
 }

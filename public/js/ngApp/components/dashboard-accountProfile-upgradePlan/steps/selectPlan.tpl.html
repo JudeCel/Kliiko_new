@@ -23,92 +23,125 @@
   <h2>Choose a plan</h2>
 
   <section class="container plans-table">
-      <div class="row">
-        <div ng-repeat="subscriptionPlan in up.subPlans">
-          <div class="col-sm-4 col-xs-12 plan-block" ng-if="up.showPlanInList(subscriptionPlan.plan.id)">
-            <div class="included-plan-fader" ng-show="up.isCurrentPlan(subscriptionPlan.plan.id)"><div class="label">CURRENT</div></div>
-            <div class="list-group">
-              <h4 ng-class="up.planColors[subscriptionPlan.plan.name].header">{{subscriptionPlan.plan.name}}</h4>
-              <div ng-class="up.planColors[subscriptionPlan.plan.name].body">
-                <h5 class="outline"><sup>$US</sup>{{subscriptionPlan.plan.price | price:'':0 }}</h5>
-                <p>
-                  {{ subscriptionPlan.plan.period }}
-                  {{ subscriptionPlan.plan.period_unit }}
-                  to use
-                </p>
-              </div>
-
-              <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
-                <b>
-                  {{ up.checkTheCount(subscriptionPlan.additionalParams.sessionCount) }}
-                </b>
-                Session('s) to use over
+    <div class="row">
+      <div ng-repeat="subscriptionPlan in up.subPlans">
+        <div class="col-sm-4 col-xs-12 plan-block" ng-if="up.showPlanInList(subscriptionPlan.plan.id)">
+          <div class="included-plan-fader" ng-show="up.isCurrentPlan(subscriptionPlan.plan.id)"><div class="label">CURRENT</div></div>
+          <div class="list-group">
+            <h4 ng-class="up.planColors[subscriptionPlan.plan.name].header">{{subscriptionPlan.plan.name}}</h4>
+            <div ng-class="up.planColors[subscriptionPlan.plan.name].body">
+              <h5 class="outline"><sup>$US</sup>{{subscriptionPlan.plan.price | price:'':0 }}</h5>
+              <p>
                 {{ subscriptionPlan.plan.period }}
                 {{ subscriptionPlan.plan.period_unit }}
+                to use
               </p>
+            </div>
 
-              <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
-                Up to
-                <b>
-                  {{ subscriptionPlan.additionalParams.participantCount }}
-                  Participants
-                </b>
-                per Session
-              </p>
-
-              <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
-                Up to
-                <b>
-                  {{ subscriptionPlan.additionalParams.observerCount }}
-                  Observers
-                </b>
-                per Session
-              </p>
-
-              <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
-                Up to
-                <b>
-                  {{ subscriptionPlan.additionalParams.paidSmsCount }}
-                  Paid SMS
-                </b>
-                reminders to Participants
-                <sup>*</sup>
-              </p>
-
-              <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
-                <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.contactListMemberCount) }}</b>
-                Contact List members allowed
-               </p>
-
-               <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
-                 <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.contactListCount) }}</b>
-                 Number Of contact Lists
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                <p>
+                  <b>
+                    {{ up.checkTheCount(subscriptionPlan.additionalParams.sessionCount) }}
+                  </b>
+                  Session('s) to use over
+                  {{ subscriptionPlan.plan.period }}
+                  {{ subscriptionPlan.plan.period_unit }}
                 </p>
+              </div>
+            </div>
 
-                <p ng-class="up.planColors[subscriptionPlan.plan.name].light">
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                <p>
+                  Up to
+                  <b>
+                    {{ subscriptionPlan.additionalParams.participantCount }}
+                    Participants
+                  </b>
+                  per Session
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                <p>
+                  Up to
+                  <b>
+                    {{ subscriptionPlan.additionalParams.observerCount }}
+                    Observers
+                  </b>
+                  per Session
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                <p>
+                  Up to
+                  <b>
+                    {{ subscriptionPlan.additionalParams.paidSmsCount }}
+                    Paid SMS
+                  </b>
+                  reminders to Participants
+                  <sup>*</sup>
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                <p>
+                  <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.contactListMemberCount) }}</b>
+                  Contact List members allowed
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                <p>
+                  <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.contactListCount) }}</b>
+                  Number Of contact Lists
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+                <p>
                   <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.additionalContactListCount) }}</b>
                   Additional Contact Lists
-                 </p>
-              <div class="list-group-item-text buttons-area">
-                <div class="btn-dashboard-plans pull-right learn" ng-click="up.openPlanDetailsModal(subscriptionPlan)">
-                  Learn More
-                </div>
-                <div class="btn-dashboard-plans pull-right want btn-brown" ng-click="up.wantThisPlan(subscriptionPlan)">
-                  I Want This Plan
-                </div>
+                </p>
               </div>
-
             </div>
+
+            <div class="list-group-item-text buttons-area">
+              <div class="btn-dashboard-plans pull-right learn" ng-click="up.openPlanDetailsModal(subscriptionPlan)">
+                Learn More
+              </div>
+              <div class="btn-dashboard-plans pull-right want btn-brown" ng-click="up.wantThisPlan(subscriptionPlan)">
+                I Want This Plan
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="row">
+      <div id="disclaimer">
+        <p>
+          <b>Please Note:</b> Depending on the nature of your project, you may also need to provide appropriate Incentive-Gifts to your group-Session Participants
+        </p>
+        <p>
+          *Your credit card will be charged for any additional SMS.
+        </p>
+      </div>
+    </div>
   </section>
-  <div id="disclaimer">
-    <p>
-      <b>Please Note:</b> Depending on the nature of your project, you may also need to provide appropriate Incentive-Gifts to your group-Session Participants
-    </p>
-    <p>
-      *Your credit card will be charged for any additional SMS.
-    </p>
-  </div>
+
 </section>

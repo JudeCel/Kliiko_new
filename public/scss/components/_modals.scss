@@ -101,6 +101,10 @@
   padding-top: 100px;
 }
 
+.accountManagerModal {
+  @extend .contactDetailsModal;
+}
+
 @media (max-width: 768px) {
   .accountDatabaseCommentModal,
   .surveyPreviewModal {

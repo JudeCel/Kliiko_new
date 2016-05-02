@@ -29,9 +29,9 @@
     function updateAccountUser(data) {
       var deferred = $q.defer();
 
-      dbg.log2('#PromotionCodeServices > updateAccountUser > make rest call', data);
+      dbg.log2('#AccountDatabaseServices > updateAccountUser > make rest call', data);
       accountDatabaseRestApi.accountDatabase.update({ id: data.accountId }, data, function(res) {
-        dbg.log2('#PromotionCodeServices > updateAccountUser > rest call responds');
+        dbg.log2('#AccountDatabaseServices > updateAccountUser > rest call responds');
         deferred.resolve(res);
       });
 

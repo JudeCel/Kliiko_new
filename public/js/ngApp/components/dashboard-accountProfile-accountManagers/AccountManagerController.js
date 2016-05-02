@@ -7,9 +7,9 @@
   function AccountManagerController(dbg, messenger, accountManagerServices, angularConfirm, $window, $rootScope, domServices){
     dbg.log2('#AccountManagerController started');
     var vm = this;
+    var mobile, landlineNumber;
 
     init();
-
     vm.openModal = openModal;
     vm.removeAccountUser = removeAccountUser;
     vm.isInvited = isInvited;
@@ -42,12 +42,28 @@
     };
 
     function openModal(modalTitle, action, accountUser) {
+      if(!mobile || !landlineNumber) {
+        mobile = $('#mobileAM');
+        landlineNumber = $('#landlineNumberAM');
+      }
+
       vm.modalTitle = modalTitle;
       vm.formAction = action;
       vm.accountUser = accountUser;
 
+      mobile.intlTelInput('setCountry', getCountry('phoneCountryData'));
+      landlineNumber.intlTelInput('setCountry', getCountry('landlineNumberCountryData'));
       setSaveButtonText(vm.formAction);
       domServices.modal('accountManagerModal');
+    }
+
+    function getCountry(type) {
+      if(vm.accountUser) {
+        return vm.accountUser[type].iso2 || 'au';
+      }
+      else {
+        return 'au';
+      }
     }
 
     function setSaveButtonText(action) {
@@ -101,6 +117,7 @@
     };
 
     function submitForm(action, data) {
+      setDependencies(data);
       if(edditing(action)) {
         editAccountManager(data);
       }else{
@@ -133,6 +150,14 @@
       domServices.modal('accountManagerModal', 'close');
       vm.accountUser = {};
       messenger.ok(message);
+    }
+
+    function setDependencies(data) {
+      data.phoneCountryData = mobile.intlTelInput('getSelectedCountryData');
+      data.landlineNumberCountryData = landlineNumber.intlTelInput('getSelectedCountryData');
+
+      data.mobile = mobile.val();
+      data.landlineNumber = landlineNumber.val();
     }
 
     function edditing(action) {

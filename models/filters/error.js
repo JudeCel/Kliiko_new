@@ -28,7 +28,6 @@ function parseErrorMessage(error, object) {
       break;
     case message.includes("null value in column"):
     case message.includes(" cannot be null"):
-    case message.includes("can't be empty"): // promotionCode
     case message.includes("Validation notEmpty failed"):
       message = `${field} can't be empty`;
       break;
