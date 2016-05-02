@@ -57,10 +57,10 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
+  name: admin
   labels:
     name: admin
     env: staging
-  name: admin
 spec:
   replicas: 1
   template:
@@ -68,10 +68,10 @@ spec:
       labels:
         name: admin
         env: staging
-        version: "0.0.15"
+        version: "0.0.21"	
     spec:
       containers:
-      - image: "944561038201.dkr.ecr.us-west-2.amazonaws.com/klzii_main:latest"
+      - image: "gcr.io/klzii-1262/klzii_main:latest"
         imagePullPolicy: Always
         name: admin
         ports:
@@ -84,7 +84,7 @@ spec:
         - name: REDIS_PORT
           value: "6379"
         - name: DATABASE_URL
-          value: "postgres://klzii:VQqttpXdE42u6PUKWusy@klzii-staging.cyujokxcbe0c.us-west-2.rds.amazonaws.com:5432/klzii_staging"
+          value: "postgres://postgres:nWD44LS3bYs29JeP@postgres-master-staging/klzii_staging"
         - name: AIRBRAKE_PROJECT_ID
           value: "121542"
         - name: AIRBRAKE_API_KEY
@@ -95,15 +95,6 @@ spec:
           value: "www.klzii.com"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
-        volumeMounts:
-        - mountPath: /var/www/klzii/public/
-          name: asset-volume
-      volumes:
-    - name: asset-volume
-      awsElasticBlockStore:
-        volumeID: vol-75c913c3
-        fsType: ext4
-
 ---
 apiVersion: v1
 data:
@@ -168,7 +159,7 @@ spec:
     spec:
       containers:
       - name: nginx-ssl-proxy
-        image: 944561038201.dkr.ecr.us-west-2.amazonaws.com/nginx-ssl-proxy:latest
+        image: gcr.io/klzii-1262/nginx-ssl-proxy:latest
         env:
         - name: SERVICE_HOST_ENV_NAME
           value: ADMIN_SERVICE_HOST
@@ -189,3 +180,64 @@ spec:
       - name: ssl-proxy-secret
         secret:
           secretName: ssl-proxy-secret
+---
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    name: postgres
+    role: master
+  template:
+    metadata:
+      labels:
+        name: postgres
+        role: master
+    spec:
+      containers:
+        - name: postgres
+          image: msiegenthaler/postgres-kubernetes@9.5
+          ports:
+            - name: transport
+              containerPort: 5432
+          volumeMounts:
+            - name: data-storage-staging
+              mountPath: /var/lib/postgresql/data
+            - name: credentials
+              mountPath: /etc/postgres-credentials
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+      volumes:
+        - name: data-storage-staging
+          gcePersistentDisk:
+            pdName: postgres-disk-staging
+            fsType: ext4
+        - name: credentials
+          secret:
+            secretName: postgres-credentials-staging
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-credentials-staging
+data:
+  user: cG9zdGdyZXMK
+  password: bldENDRMUzNiWXMyOUplUAo=
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-master-staging
+  labels:
+    name: postgres
+    role: master
+spec:
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    name: postgres
+    role: master
