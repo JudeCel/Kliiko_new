@@ -33,10 +33,22 @@ function createOrFindAccountManager(req, res, callback) {
           }
         })
       } else {
-        User.create(userParams(params.email)).then(function(newUser) {
-          createAccountUser(params, newUser.id, "new", currentDomain.id, callback);
-        }, function(error) {
-          callback(filters.errors(error));
+        createAccountUser(params, null, "new", currentDomain.id, function(error, data) {
+          if(error) {
+            callback(error);
+          }
+          else {
+            User.create(userParams(params.email)).then(function(newUser) {
+              AccountUser.update({ UserId: newUser.id }, { where: { id: data.accountUserId } }).then(function() {
+                data.userId = newUser.id;
+                callback(null, data);
+              }, function(error) {
+                callback(filters.errors(error));
+              });
+            }, function(error) {
+              callback(filters.errors(error));
+            });
+          }
         });
       }
     });
@@ -46,7 +58,7 @@ function createOrFindAccountManager(req, res, callback) {
 function updateAccountManager(data) {
   let deferred = q.defer();
 
-  AccountUser.update(updateParams(data), { where: { id: data.id }, returning: true }).then(function() {
+  AccountUser.update(prepareParams(data), { where: { id: data.id }, returning: true }).then(function() {
     AccountUser.find({
       where :{
         id: data.id
@@ -178,29 +190,12 @@ function findUsers(model, where, attributes, cb) {
   });
 }
 
-function updateParams(params) {
-  return {
-    firstName: params.firstName,
-    lastName: params.lastName,
-    email: params.email,
-    gender: params.gender,
-    mobile: params.mobile,
-    landlineNumber: params.landlineNumber,
-    state: params.state,
-    postalAddress: params.postalAddress,
-    city: params.city,
-    country: params.country,
-    postCode: params.postCode,
-    companyName: params.companyName
-  }
-}
-
 function inviteParams(accountUserId, accountId, userId, type) {
   return { userId: userId, accountUserId: accountUserId, accountId: accountId, userType: type, role: 'accountManager' };
 };
 
 function prepareParams(req) {
-  return _.pick(req.body, ['firstName', 'lastName', 'gender', 'email', 'mobile', 'postalAddress', 'city', 'state', 'postCode', 'companyName', 'landlineNumber']);
+  return _.pick(req.body, ['firstName', 'lastName', 'gender', 'email', 'mobile', 'phoneCountryData', 'country', 'postalAddress', 'city', 'state', 'postCode', 'companyName', 'landlineNumber', 'landlineNumberCountryData']);
 };
 
 module.exports = {
