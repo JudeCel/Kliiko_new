@@ -48,7 +48,7 @@
       };
 
       fileUploader.upload(data).then(function(result) {
-        banner = result.data;
+        banner = vm.file[bannerType] = result.data;
         BannerMessagesServices.createBanner({ page: bannerType, resourceId: banner.resource.id }).then(function(result) {
           messenger.ok(result.message);
         }, function(error) {
