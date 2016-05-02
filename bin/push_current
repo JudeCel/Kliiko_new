@@ -1,4 +1,3 @@
 #!/bin/sh
-aws ecr get-login | bash
-docker build -t 944561038201.dkr.ecr.us-west-2.amazonaws.com/klzii_main .
-docker push 944561038201.dkr.ecr.us-west-2.amazonaws.com/klzii_main:latest
+docker build -t "gcr.io/klzii-1262/klzii_main:latest" .
+gcloud docker push gcr.io/klzii-1262/klzii_main:latest
