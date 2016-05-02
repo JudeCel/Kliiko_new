@@ -24,7 +24,7 @@
     vm.formAction = null;
 
     vm.accountUsers = [];
-    vm.accountUser = null;
+    vm.accountUser = {};
 
     vm.saveButtonText = "";
     vm.modalTitle = "";
@@ -56,16 +56,16 @@
 
       mobile.intlTelInput('setCountry', getCountry('phoneCountryData'));
       landlineNumber.intlTelInput('setCountry', getCountry('landlineNumberCountryData'));
+
       setSaveButtonText(vm.formAction);
       domServices.modal('accountManagerModal');
     }
 
     function getCountry(type) {
-      if(vm.accountUser) {
-        return vm.accountUser[type].iso2 || 'au';
-      }
-      else {
+      if(angular.equals({}, vm.accountUser)) {
         return 'au';
+      } else {
+        return vm.accountUser[type].iso2 || 'au';
       }
     }
 
