@@ -24,7 +24,7 @@
     vm.formAction = null;
 
     vm.accountUsers = [];
-    vm.accountUser = {};
+    vm.accountUser = null;
 
     vm.saveButtonText = "";
     vm.modalTitle = "";
