@@ -1,4 +1,5 @@
 <section id="step-3">
+
   <div class="row">
     <div class="col-md-6">
       <ng-include src="'js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/orderSummary.tpl.html'"></ng-include>
@@ -22,20 +23,21 @@
       </section>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="check-element animate-show">
+        <div class="col-md-4 btn-dashboard-plans btn-md pull-left btn-standart btn-red" ng-click="up.previouseStep()">
+            Back
+        </div>
+      </div>
+
+      <div class="check-element animate-show">
+        <div class="col-md-4 btn-dashboard-plans btn-md pull-right btn-standart btn-red" ng-click="up.submitOrder(up.purchaseTos)">
+            Submit My Order
+        </div>
+      </div>
+    </div>
+  </div>
+
 </section>
-
-<div class="row">
-
-  <div class="check-element animate-show">
-    <div class="col-md-4 btn-dashboard-plans btn-md pull-left btn-standart btn-red" ng-click="up.previouseStep()">
-        Back
-    </div>
-  </div>
-
-  <div class="check-element animate-show">
-    <div class="col-md-4 btn-dashboard-plans btn-md pull-right btn-standart btn-red" ng-click="up.submitOrder(up.purchaseTos)">
-        Submit My Order
-    </div>
-  </div>
-
-</div>
