@@ -191,10 +191,10 @@ color: #737373;
 }
 /* Responsive design */
 
-@media (min-width: 300px){
+@media (min-width: 584px){
   .container
   {
-    width: auto;
+    min-width: 584px;
   }
   .tab-content {
     width: auto;
@@ -203,7 +203,7 @@ color: #737373;
 
   .dashboard-container {
     background-color: #fff;
-    width: auto;
+    min-width: 584px
   }
 
   .login-container {

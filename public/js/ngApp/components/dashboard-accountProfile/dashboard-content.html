@@ -4,50 +4,53 @@
        <p class="warning" ng-if="app.user.trial"><img src="icons/ic_attention.png" class="ic"> Your free trial will expire in {{app.user.trial.daysLeft}} day<span ng-if="app.user.trial.daysLeft > 1">s</span> </p>
     </div>
   </div>
-  <div class='col-xs-12 col-sm-12 col-md-12'>
-  <div class='text-center remove-link-line tabs-links'>
-    <div ng-if="!app.user.onMaximumPlan" ui-sref-active='active' ui-sref='dashboard.accountProfile.upgradePlan' class='btn btn-dashboard-menu' ng-show="app.accountUser.isAccountManager">
-      <span class='pull-left'>Upgrade Plan</span>
-      <img ui-sref-active='active' class='upgrade pull-right' src='/icons/upgrade_blue.png' alt='' />
-    </div>
-    <div ng-if="app.user.onMaximumPlan" class='btn btn-dashboard-menu disabled fade-disabled' ng-show="app.accountUser.isAccountManager"  title="Already on top plan">
-      <span class='pull-left'>Upgrade Plan</span>
-      <img ui-sref-active='active' class='upgrade pull-right' src='/icons/upgrade_blue.png' alt='' />
-    </div>
 
-    <div ui-sref-active='active' ui-sref='dashboard.accountProfile.accountManagers' class='btn btn-dashboard-menu' ng-show="app.accountUser.isAccountManager">
-      <span class='pull-left'>Account Managers</span>
-      <img ui-sref-active='active' class='account-manager pull-right' src='/icons/account_manager_blue.png' alt='' />
-    </div>
+  <div class="row">
+    <div class='col-xs-12'>
+      <div class='text-center remove-link-line tabs-links'>
+        <div ng-if="!app.user.onMaximumPlan" ui-sref-active='active' ui-sref='dashboard.accountProfile.upgradePlan' class='btn btn-dashboard-menu' ng-show="app.accountUser.isAccountManager">
+          <span class='pull-left'>Upgrade Plan</span>
+          <img ui-sref-active='active' class='upgrade pull-right' src='/icons/upgrade_blue.png' alt='' />
+        </div>
+        <div ng-if="app.user.onMaximumPlan" class='btn btn-dashboard-menu disabled fade-disabled' ng-show="app.accountUser.isAccountManager"  title="Already on top plan">
+          <span class='pull-left'>Upgrade Plan</span>
+          <img ui-sref-active='active' class='upgrade pull-right' src='/icons/upgrade_blue.png' alt='' />
+        </div>
 
-    <div ui-sref-active='active' ui-sref='dashboard.accountProfile.accountDatabase' class='btn btn-dashboard-menu' ng-show="app.accountUser.isAdmin">
-      <span class='pull-left'>Account Database</span>
-      <img ui-sref-active='active' class='account-database pull-right' src='/icons/upgrade_blue.png' alt='' />
-    </div>
+        <div ui-sref-active='active' ui-sref='dashboard.accountProfile.accountManagers' class='btn btn-dashboard-menu' ng-show="app.accountUser.isAccountManager">
+          <span class='pull-left'>Account Managers</span>
+          <img ui-sref-active='active' class='account-manager pull-right' src='/icons/account_manager_blue.png' alt='' />
+        </div>
 
-    <div ui-sref-active='active' ui-sref='dashboard.accountProfile.bannerMessages' ng-show="app.accountUser.isAdmin" class='btn btn-dashboard-menu'>
-      <span class='pull-left'>Upload Banners</span>
-      <img ui-sref-active='active' class='promotion-code pull-right' src='/icons/gallery_blue.png' alt='' />
-    </div>
+        <div ui-sref-active='active' ui-sref='dashboard.accountProfile.accountDatabase' class='btn btn-dashboard-menu' ng-show="app.accountUser.isAdmin">
+          <span class='pull-left'>Account Database</span>
+          <img ui-sref-active='active' class='account-database pull-right' src='/icons/upgrade_blue.png' alt='' />
+        </div>
 
-    <div ui-sref-active='active' ui-sref='dashboard.accountProfile.emailTemplates({systemMail: true })' ng-show="app.accountUser.isAdmin" class='btn btn-dashboard-menu'>
-      <span class='pull-left'>Email Templates</span>
-      <img ui-sref-active='active' class='promotion-code pull-right' src='/icons/upgrade_blue.png' alt='' />
-    </div>
+        <div ui-sref-active='active' ui-sref='dashboard.accountProfile.bannerMessages' ng-show="app.accountUser.isAdmin" class='btn btn-dashboard-menu'>
+          <span class='pull-left'>Upload Banners</span>
+          <img ui-sref-active='active' class='promotion-code pull-right' src='/icons/gallery_blue.png' alt='' />
+        </div>
 
-    <div ui-sref-active='active' ui-sref='dashboard.accountProfile.sessionRating' class='btn btn-dashboard-menu' ng-show="app.accountUser.isAdmin">
-      <span class='pull-left'>Session Rating</span>
-      <img ui-sref-active='active' class='account-database pull-right' src='/icons/upgrade_blue.png' alt='' />
+        <div ui-sref-active='active' ui-sref='dashboard.accountProfile.emailTemplates({systemMail: true })' ng-show="app.accountUser.isAdmin" class='btn btn-dashboard-menu'>
+          <span class='pull-left'>Email Templates</span>
+          <img ui-sref-active='active' class='promotion-code pull-right' src='/icons/upgrade_blue.png' alt='' />
+        </div>
+
+        <div ui-sref-active='active' ui-sref='dashboard.accountProfile.sessionRating' class='btn btn-dashboard-menu' ng-show="app.accountUser.isAdmin">
+          <span class='pull-left'>Session Rating</span>
+          <img ui-sref-active='active' class='account-database pull-right' src='/icons/upgrade_blue.png' alt='' />
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<div ui-view='accountProfileContent'>
-  <div class='col-md-3'></div>
-  <div class='col-md-6 dashboard-index text-center'>
-    Here you can manage your Account Profile by upgrading your Plan and adding Account Managers.
+  <div ui-view='accountProfileContent'>
+    <div class='col-md-3'></div>
+    <div class='col-md-6 dashboard-index text-center'>
+      Here you can manage your Account Profile by upgrading your Plan and adding Account Managers.
+    </div>
   </div>
-</div>
 
 
 </section>

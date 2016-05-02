@@ -58,7 +58,24 @@ function createOrFindAccountManager(req, res, callback) {
 function updateAccountManager(data) {
   let deferred = q.defer();
 
-  AccountUser.update(prepareParams(data), { where: { id: data.id }, returning: true }).then(function() {
+  let params = {
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+    gender: data.gender,
+    mobile: data.mobile,
+    phoneCountryData: data.phoneCountryData,
+    country: data.country,
+    postalAddress: data.postalAddress,
+    city: data.city,
+    state: data.state,
+    postCode: data.postCode,
+    companyName: data.companyName,
+    landlineNumber: data.landlineNumber,
+    landlineNumberCountryData: data.landlineNumberCountryData
+  };
+
+  AccountUser.update(params, { where: { id: data.id }, returning: true }).then(function(au) {
     AccountUser.find({
       where :{
         id: data.id
