@@ -37,6 +37,13 @@ spec:
             memory: 100Mi
         ports:
         - containerPort: 6379
+        volumeMounts:
+          - mountPath: /redis-master-data
+            name: data
+      volumes:
+        - name: data
+          emptyDir: {}
+
 ---
 apiVersion: v1
 kind: Service
@@ -63,12 +70,16 @@ metadata:
     env: staging
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      env: staging
+      name: admin
   template:
     metadata:
       labels:
         name: admin
         env: staging
-        version: "0.0.22"	
+        version: "0.0.23"	
     spec:
       containers:
       - image: "gcr.io/klzii-1262/klzii_main:latest"
@@ -224,8 +235,8 @@ kind: Secret
 metadata:
   name: postgres-credentials-staging
 data:
-  user: cG9zdGdyZXMK
-  password: bldENDRMUzNiWXMyOUplUAo=
+  user: cG9zdGdyZXM=
+  password: bldENDRMUzNiWXMyOUplUA==
 ---
 apiVersion: v1
 kind: Service
