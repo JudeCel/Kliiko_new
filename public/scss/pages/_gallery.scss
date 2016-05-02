@@ -43,8 +43,10 @@
       margin: 0;
     }
     iframe {
-      height: 245px;
+      display: block;
+      height: 252px;
       padding-top: 15px;
+      margin: 0 auto;
     }
     .panel-body {
       .glyphicon {
