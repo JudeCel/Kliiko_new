@@ -9,7 +9,6 @@
 
 
     Services.getTimeSettings = getTimeSettings;
-    Services.reorderTopics = reorderTopics;
     Services.getExpireDays = getExpireDays;
     Services.findSelectedMembers = findSelectedMembers;
     Services.currentMemberList = currentMemberList;
@@ -28,27 +27,6 @@
           mstep: [1, 5, 10, 15, 25, 30]
         }
       }
-    }
-
-    function reorderTopics(vmTopics, data, t) {
-
-      var droppedOrderId = data.order || 0;
-      var targetOrderId = t.order || 0;
-
-      for (var i = 0, len = vmTopics.length; i < len ; i++) {
-        if (data.id == vmTopics[i].id) {
-          vmTopics[i].order = targetOrderId;
-          topicsAndSessions.updateTopic(vmTopics[i]);
-        }
-
-        if (t.id == vmTopics[i].id) {
-          vmTopics[i].order = droppedOrderId;
-          topicsAndSessions.updateTopic(vmTopics[i]);
-        }
-      }
-
-      return vmTopics;
-
     }
 
     function getExpireDays(endDate) {

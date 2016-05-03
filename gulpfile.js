@@ -95,6 +95,9 @@ var frontendScripts = [
   "public/js/vendors/ngProgress/ngprogress.min.js",
   "public/js/vendors/ui-bootstrap/**/*.min.js",
   "public/js/vendors/ui-router/**/*.js",
+
+  "public/js/vendors/paginate/dirPagination.js",
+
   "public/js/ngApp/modules/**/*.js",
   "public/js/ngApp/app.js",
   "public/js/ngApp/settings/appGlobalSettings.js",

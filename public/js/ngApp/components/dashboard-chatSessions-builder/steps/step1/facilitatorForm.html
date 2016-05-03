@@ -1,0 +1,126 @@
+<div class='modal fade' id='facilitatorForm' role='dialog'>
+  <div class='modal-dialog accountManagerModal'>
+    <div class='modal-content border-green border-radius-none'>
+      <div class='modal-header'>
+        <button type='button' class='close' data-dismiss='modal'>&times;</button>
+        <h2 class='modal-title text-center'>
+          Add New Contact
+        </h2>
+      </div>
+
+      <div class='modal-body text-gray-medium'>
+        <form class='form-horizontal' role='form' novalidate>
+          <div class='row'>
+            <div class='col-xs-12'>
+              <div class='col-md-6'>
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First name<span class='text-red-dark'>*</span></label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ errors.firstName }}</span>
+                    <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='amc.accountUser.firstName'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='lastName'>Last name<span class='text-red-dark'>*</span></label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ errors.lastName }}</span>
+                    <input type='text' class='form-control' id='lastName' placeholder='Last name' ng-model='amc.accountUser.lastName'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='email'>Email<span class='text-red-dark'>*</span></label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ errors.email }}</span>
+                    <input type='text' class='form-control' id='email' placeholder='Email' ng-model='amc.accountUser.email'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='gender'>Gender<span class='text-red-dark'>*</span></label>
+                  <div class='col-md-8'>
+                    <div class='has-error text-red-dark'>{{ errors.gender }}</div>
+                    <label class='radio-inline'><input type='radio' value='male' name='radio_gender' ng-model='amc.accountUser.gender'>Male</label>
+                    <label class='radio-inline'><input type='radio' value='female' name='radio_gender' ng-model='amc.accountUser.gender'>Female</label>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ errors.mobile }}</span>
+                    <input type='text' international-phone-number ng-model='amc.accountUser.mobile' default-country='{{amc.phoneCountryData}}' id='mobileAM' class='form-control'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ errors.landlineNumber }}</span>
+                    <input type='text' class='form-control' international-phone-number id='landlineNumberAM' ng-model='amc.accountUser.landlineNumber'>
+                  </div>
+                </div>
+              </div>
+
+              <div class='col-md-6'>
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='postalAddress'>Postal address</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ errors.postalAddress }}</span>
+                    <input type='text' class='form-control' id='postalAddress' placeholder='Postal address' ng-model='amc.accountUser.postalAddress'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='city'>City</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ errors.city }}</span>
+                    <input type='text' class='form-control' id='city' placeholder='City' ng-model='amc.accountUser.city'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='state'>State</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ errors.state }}</span>
+                    <input type='text' class='form-control' id='state' placeholder='State' ng-model='amc.accountUser.state'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='postCode'>Postcode</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ errors.postCode }}</span>
+                    <input type='text' class='form-control' id='postCode' placeholder='Postcode' ng-model='amc.accountUser.postCode'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='country'>Country</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ errors.country }}</span>
+                    <input type='text' class='form-control' id='country' placeholder='Country' ng-model='amc.accountUser.country'>
+                  </div>
+                </div>
+
+                <div class='form-group'>
+                  <label class='control-label col-md-4 text-no-bold text-login-page' for='companyName'>Company name</label>
+                  <div class='col-md-8'>
+                    <span class='has-error text-red-dark'>{{ errors.companyName }}</span>
+                    <input type='text' class='form-control' id='companyName' placeholder='Company name' ng-model='amc.accountUser.companyName'>
+                  </div>
+                </div>
+              </div>
+
+              <div class='col-md-12'>
+                <button ng-click='amc.submitForm(amc.formAction, amc.accountUser)' type='button' class='btn border-red text-red-dark border-radius-none background-transp btn-md pull-right'>{{amc.saveButtonText}}</button>
+                <button ng-click='amc.cancel()' type='button' class='btn border-red text-red-dark border-radius-none background-transp btn-md pull-left'>Close</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
