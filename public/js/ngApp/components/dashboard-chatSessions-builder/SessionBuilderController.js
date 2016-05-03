@@ -159,9 +159,11 @@
     function currentPageToDisplay() {
       var path = "";
       if ( vm.showContactsList || vm.searchingParticipants || vm.searchingObservers ) {
+        vm.hideStuff = true;
         return vm.basePath+'steps/contactLists.html';
       }
 
+      vm.hideStuff = false;
       if (vm.currentStep) {
         if(vm.currentStep == 4 || vm.currentStep == 5) {
           path = vm.basePath+'steps/step4-5.tpl.html';
