@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep4-5Controller', LastSessionStepController);
 
-  LastSessionStepController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', '$rootScope', '$scope'];
-  function LastSessionStepController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window,  $rootScope, $scope) {
+  LastSessionStepController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', '$rootScope', '$scope', 'angularConfirm'];
+  function LastSessionStepController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window,  $rootScope, $scope, angularConfirm) {
     dbg.log2('#SessionBuilderController 4-5 started');
 
     var vm = this;
@@ -16,11 +16,12 @@
     vm.participantsFilterType = {all:true};
     vm.observersFilterType = {all:true};
 
+
+
     // step 4 + 5
     vm.showCorrectStatus = showCorrectStatus;
     vm.inviteMembers = inviteMembers;
     vm.modalWindowHandler = modalWindowHandler;
-    vm.finishSelectingMembers = finishSelectingMembers;
     vm.selectedAllMembers = selectedAllMembers;
     vm.findSelectedMembers = findSelectedMembers;
     vm.removeFromList = removeFromList;
@@ -44,22 +45,22 @@
       return vm.stepMembers;
     }
 
-    vm.initStep = function(step) {
+    vm.initStep = function(participants) {
       var deferred = $q.defer();
 
       vm.session = builderServices.session;
       vm.mouseOveringMember = [];
-      if (vm.isParticipantPage()) {
-        vm.participants = vm.session.steps.step4.participants;
-      } else {
-        vm.participants = vm.session.steps.step5.observers;
-      }
 
       if (vm.isParticipantPage()) {
+        if(participants.length == 0 && vm.stepMembers.length == 0) {
+          updateParticipantsList(null);
+        }
+
+        vm.stepMembers = vm.session.steps.step4.participants;
         vm.pageTitle = "Participants";
         deferred.resolve();
-      }
-      else {
+      } else {
+        vm.stepMembers = vm.session.steps.step5.observers;
         vm.lastStep = true;
         vm.pageTitle = "Observers";
         deferred.resolve();
@@ -71,6 +72,14 @@
       setTimeout(function() {
         jQuery('.modal-backdrop.fade.in').hide();
       }, 10);
+    }
+
+    function updateParticipantsList(value) {
+      vm.session.sessionData.participantListId = value;
+      vm.session.updateStep({ participantListId: value }).then(function(res) {
+      }, function (error) {
+        messenger.error(error);
+      });
     }
 
     /// step 4 + 5
@@ -174,33 +183,18 @@
       return builderServices.findSelectedMembers(vm);
     }
 
-    function finishSelectingMembers(activeList) {
-      if (vm.searchingParticipants) {
-        vm.participants = vm.participants.concat(builderServices.selectMembers(activeList.id, activeList.members));
-        vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
-        vm.searchingParticipants = false;
-      }
-
-      if (vm.searchingObservers) {
-        vm.observers = vm.observers.concat(builderServices.selectMembers(activeList.id, activeList.members));
-        vm.observers = builderServices.removeDuplicatesFromArray(vm.observers);
-        vm.searchingObservers = false;
-      }
-    }
-
-    function removeFromList(member, skipDb) {
-      if(skipDb) {
+    function removeFromList(member) {
+      if(member.inviteStatus == 'Not Invited') {
         removeMemberFromList(member);
       }
       else {
-        var confirmed = confirm('Are you sure you want to do this?');
-        if(!confirmed) return;
-        vm.session.removeMember(member).then(function(res) {
-          removeMemberFromList(member);
-          messenger.ok(res.message);
-        }, function(error) {
-          removeMemberFromList(member);
-          messenger.error(error);
+        angularConfirm('Are you sure you want to do this?').then(function(response) {
+          vm.session.removeMember(member).then(function(res) {
+            removeMemberFromList(member);
+            messenger.ok(res.message);
+          }, function(error) {
+            messenger.error(error);
+          });
         });
       }
     }
@@ -209,6 +203,9 @@
       var members = builderServices.currentMemberList(vm);
       var index = members.indexOf(member);
       members.splice(index, 1);
+      if(members.length == 0) {
+        updateParticipantsList(null);
+      }
     }
 
     function sendGenericEmail() {
