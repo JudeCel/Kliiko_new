@@ -79,6 +79,11 @@
             <div class="btn-standart btn-red" ng-click="clc.deleteList(clc.lists.activeList, $index)">Remove this List</div>
           </span>
 
+          <span ng-show="clc.lists.activeList.editable">
+            &nbsp; or &nbsp;
+            <div class='btn-standart btn-green' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
+          </span>
+
 
         </div>
       </div>
