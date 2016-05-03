@@ -232,6 +232,7 @@
       parent = parent || { modal: {} };
       vm.currentModalSet = parent.modal.set;
       vm.currentDependency = parent.dependency;
+      vm.currentCallback = parent.callback;
     }
 
     function openSelectModal(parent) {
@@ -344,6 +345,9 @@
       setDependency(data.resource)
       filterResources(vm.currentPage.filter);
       messenger.ok(data.message);
+      if(vm.currentCallback) {
+        vm.currentCallback(data.resource);
+      }
     }
   }
 })();
