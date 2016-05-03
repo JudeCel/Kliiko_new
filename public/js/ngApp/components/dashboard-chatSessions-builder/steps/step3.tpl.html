@@ -1,4 +1,4 @@
-<section id="step-3">
+<section id="step-3" ng-controller="SessionStep3Controller as step3Controller">
 
   <h3 class="text-center">Manage Session Emails</h3>
 
@@ -21,15 +21,32 @@
     <uib-accordion-group is-open="sbc.accordions.emailTemplates">
       <uib-accordion-heading>
         <div class="panel-label">
-          Email Templates
+          Email Templates (*Required)
           <i class="pull-right glyphicon"
              ng-class="{'glyphicon-chevron-down': sbc.accordions.emailTemplates, 'glyphicon-chevron-right': !sbc.accordions.emailTemplates}"></i>
         </div>
       </uib-accordion-heading>
 
+      <div ng-show="step3Controller.showTemplateStatus">
+        <div ng-repeat="(key, t) in step3Controller.mailTemplateList track by $index" class="list-group-item" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : t.AccountId}">
+          <img src="/icons/ic_tick.png" alt="" ng-show="t.created" class="pull-right">
+          {{ t.name }}
+          <span ng-if="t.name != 'Generic'">*</span>
+          <span ng-if="t.name == 'Generic'"> (optional)</span>
+        </div>
 
-      <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec" 
-               ng-init="ec.preInit({sessionBuilder:true, sessionId: sbc.session.id})">
+        <div class="buttons-area">
+          <button type="submit" class="col-md-2 btn-standart btn-green pull-left" ng-click="step3Controller.editTemplates(true)">Edit Templates</button>
+        </div>
+      </div>
+
+      <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec"
+               ng-init="ec.preInit({sessionBuilder:true, sessionId: sbc.session.id})" ng-show="!step3Controller.showTemplateStatus">
+
+        <div class="buttons-area">
+          <button type="submit" class="btn btn-green pull-right" ng-click="step3Controller.editTemplates(false)">Back</button>
+        </div>
+
         <h1 class="text-center">Edit Email Templates</h1>
         <div class="list-group col-md-3 mail-template-list-section">
           <div class="panel-heading mail-template-list-heading"><strong>Email Templates</strong></div>
@@ -38,7 +55,7 @@
                ng-click="ec.startEditingTemplate(key, true, t.id, t); sbc.showEmailsTemplateEditeor = true;">
               <div ng-hide="t.AccountId">
                 <img src="/icons/ic_arrow_right.png" class="pull-right" ng-hide="!ec.isCurrent(key)">
-                  {{ t.name }} 
+                  {{ t.name }}
                   <span ng-if="t.name != 'Generic'">*</span>
                   <span ng-if="t.name == 'Generic'"> (optional)</span>
               </div>
@@ -66,12 +83,13 @@
               </td>
             </tr>
           </table>
+          <div class="row">
+            <button type="submit" class="btn btn-green pull-right" ng-click="ec.saveEmailTemplate(true)">Save</button>
+            <button type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
+          </div>
           <span>Content:</span>
           <textarea id="templateContent"></textarea>
           <div class="has-error text-center">{{ec.currentTemplate.error.content}}</div>
-          <br>
-          <button type="submit" class="btn btn-green pull-right" ng-click="ec.saveEmailTemplate(true)">Save</button>
-          <button type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
         </div>
 
         <!-- Modal Preview-->
@@ -123,13 +141,13 @@
                 <div class='modal-body'>
                   <div class="form-group">
                     <label for="title">Title</label>
-                    <input ng-model="ec.newResource.title" type="text" class="form-control center-block" 
+                    <input ng-model="ec.newResource.title" type="text" class="form-control center-block"
                            name="title" id="title" placeholder="Title">
                   </div>
 
                   <div ng-if="ec.newResource.type == 'youtubeUrl'" class="form-group">
                     <label for="youtubeUrl">Youtube Url</label>
-                    <input ng-model="ec.newResource.youtubeUrl" type="text" class="form-control center-block" 
+                    <input ng-model="ec.newResource.youtubeUrl" type="text" class="form-control center-block"
                            name="youtubeUrl" id="youtubeUrl" placeholder="Youtube URL">
                   </div>
 

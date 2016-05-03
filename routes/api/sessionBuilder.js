@@ -18,7 +18,8 @@ module.exports = {
   removeSessionMember: removeSessionMember,
   sendGenericEmail: sendGenericEmail,
   addTopics: addTopics,
-  removeTopic: removeTopic
+  removeTopic: removeTopic,
+  sessionMailTemplateStatus: sessionMailTemplateStatus
 };
 
 function initializeBuilder(req, res, next) {
@@ -47,8 +48,15 @@ function update(req, res, next) {
   }, function(error) {
     res.send({error: error});
   });
+}
 
-
+function sessionMailTemplateStatus(req, res, next) {
+  let sessionId = req.params.id;
+  sessionBuilderServices.sessionMailTemplateStatus(sessionId, res.locals.currentDomain.id).then(function(result) {
+    res.send(result);
+  }, function(error) {
+    res.send({error: error});
+  });
 }
 
 function nextStep(req, res, next) {

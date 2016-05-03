@@ -149,6 +149,7 @@ router.post('/sessionBuilder/:id/invite',  policy.authorized(['accountManager', 
 router.delete('/sessionBuilder/:id/removeInvite/:inviteId',  policy.authorized(['accountManager', 'admin']), sessionBuilder.removeInvite);
 router.delete('/sessionBuilder/:id/removeSessionMember/:sessionMemberId',  policy.authorized(['accountManager', 'admin']), sessionBuilder.removeSessionMember);
 router.post('/sessionBuilder/:id/sendGenericEmail',  policy.authorized(['accountManager', 'admin']), sessionBuilder.sendGenericEmail);
+router.get('/sessionBuilder/:id/sessionMailTemplateStatus',  policy.authorized(['accountManager', 'admin']), sessionBuilder.sessionMailTemplateStatus);
 router.post('/sessionBuilder/:id/addTopics',  policy.authorized(['accountManager', 'admin']), sessionBuilder.addTopics);
 router.post('/sessionBuilder/:id/removeTopic',  policy.authorized(['accountManager', 'admin']), sessionBuilder.removeTopic);
 

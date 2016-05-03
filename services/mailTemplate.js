@@ -16,7 +16,6 @@ module.exports = {
   getMailTemplate: getMailTemplate,
   saveMailTemplate: saveMailTemplate,
   getAllSessionMailTemplates: getAllSessionMailTemplates,
-
   createBaseMailTemplate: createBaseMailTemplate,
   copyBaseTemplates: copyBaseTemplates,
   copyBaseTemplatesForSession: copyBaseTemplatesForSession,
@@ -26,10 +25,26 @@ module.exports = {
   sendMailFromTemplate: sendMailFromTemplate,
   sendMailFromTemplateWithCalendarEvent: sendMailFromTemplateWithCalendarEvent,
   composePreviewMailTemplate: composePreviewMailTemplate,
-  getActiveMailTemplate: getActiveMailTemplate
+  getActiveMailTemplate: getActiveMailTemplate,
+  getMailTemplateTypeList: getMailTemplateTypeList
 };
 
+var templateHeaderListFields = [
+    'id', 'name', 'category'
+];
 
+function getMailTemplateTypeList(categories, callback) {
+  let query = {category:{ $in: categories }};
+  MailTemplateOriginal.findAll({
+      attributes: templateHeaderListFields,
+      raw: true,
+      where: query
+  }).then(function(templates) {
+    callback(null, templates);
+  }).catch(function(error) {
+    callback(error);
+  });
+};
 
 function validate(params, callback) {
   MailTemplate.build(params).validate().done(function(errors, _account) {
@@ -363,6 +378,68 @@ function validateTemplate(template) {
   return error;
 }
 
+function getTemplateIdForSessionWithBaseId(template) {
+  //saving from session builder
+  if (template.properties.sessionId) {
+    //version
+    if (!template.sessionId) {
+      //console.log("will need to get id for existing Temmplate /w sessionId", template.properties.sessionId);
+      console.log("___will create Temmplate /w sessionId", template);
+      return template.id;
+    }
+  }
+
+  return template.id;
+}
+
+function getMailTemplateForSession(req, callback) {
+  let query = {id: req.template.id};
+  if (req.accountId) {
+    query['$or'] = [{AccountId: req.accountId}, {AccountId: null}];
+  }
+  if (req.template.properties.sessionId) {
+    if (!req.template.sessionId) {
+      query.sessionId = req.template.properties.sessionId;
+    } else {
+      query.sessionId = req.template.sessionId;
+    }
+  } else {
+    return callback(req.template);
+  }
+
+  let baseTemplateQuery = {id: req.template['MailTemplateBase.id']};
+  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
+
+
+    MailTemplate.find({
+      where: {
+        sessionId: req.template.properties.sessionId,
+        isCopy: true,
+        required: true
+      },
+      include: include})
+      .then(function(templates) {
+        callback(null, templates)
+      }).catch(function(error) {
+        callback(error);
+      });
+}
+
+/*
+ill need to get id for existing Temmplate /w sessionId { id: 1,
+  name: 'First Invitation',
+  MailTemplateBaseId: 1,
+  AccountId: null,
+  systemMessage: false,
+  isCopy: null,
+  sessionId: null,
+  'MailTemplateBase.id': 1,
+  'MailTemplateBase.name': 'First Invitation',
+  'MailTemplateBase.systemMessage': false,
+  'MailTemplateBase.category': 'firstInvitation',
+  subject: 'Invitation to {Session Name}',
+*/
+
 function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, callback) {
   if (!template) {
     return callback("e-mail template not provided");
@@ -372,27 +449,43 @@ function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, call
     callback(validationResult);
     return;
   }
-  var id = template.id;
-  delete template["id"];
-  if (shouldCreateCopy(template, createCopy, accountId, shouldOverwrite)) {
-    prepareAdminTemplate(template, shouldOverwrite, accountId);
-    template.isCopy = true;
-    create(template, function(error, result) {
-      if (!error) {
-        setMailTemplateDefault(result.MailTemplateBaseId, result.id, shouldOverwrite, callback);
-      } else {
-        callback(error);
-      }
-    });
-  } else {
-    update(id, template, function(error, result) {
-      if (!error) {
-        setMailTemplateDefault(template.MailTemplateBaseId, id, shouldOverwrite, callback);
-      } else {
-        callback(error);
-      }
-    });
-  }
+
+  getMailTemplateForSession({template:template, accountId: accountId}, function(error, result) {
+    var id = null;
+    var overwriteSessionElement = false;
+    if (result && result.id != template.id) {
+      id = result.id;
+      overwriteSessionElement = true;
+      template.name = result.name;
+      template.sessionId = result.sessionId;
+      template.isCopy = true;
+      template.AccountId = result.AccountId;
+    } else {
+      id = template.id;
+    }
+
+    delete template["id"];
+    if (!overwriteSessionElement && shouldCreateCopy(template, createCopy, accountId, shouldOverwrite)) {
+      prepareAdminTemplate(template, shouldOverwrite, accountId);
+      template.isCopy = true;
+      create(template, function(error, result) {
+        if (!error) {
+          setMailTemplateDefault(result.MailTemplateBaseId, result.id, shouldOverwrite, callback);
+        } else {
+          callback(error);
+        }
+      });
+    } else {
+      update(id, template, function(error, result) {
+        if (!error) {
+          setMailTemplateDefault(template.MailTemplateBaseId, id, shouldOverwrite, callback);
+        } else {
+          callback(error);
+        }
+      });
+    }
+
+  });
 }
 
 
