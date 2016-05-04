@@ -927,7 +927,6 @@ function getStepThreeTemplateTypes(params) {
         _.forEach(templates, function(template) {
           if(template.MailTemplateBase.category == category){
             uniqueCopies.push(template.MailTemplateBase.category);
-            console.log("~~", template.MailTemplateBase.name);
           }
         });
       })
@@ -945,7 +944,6 @@ function getStepThreeTemplateTypes(params) {
 function validateStepThree(params) {
   let deferred = q.defer();
   getStepThreeTemplateTypes(params).then(function(uniqueCopies) {
-      console.log("test, ", uniqueCopies);
       let errors = {};
       if(uniqueCopies.length < MIN_MAIL_TEMPLATES){
         errors.emailTemplates = MESSAGES.errors.thirdStep.emailTemplates;
