@@ -38,7 +38,8 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: true, saveUninitialized: false,
   domain: process.env.SERVER_BASE_DOMAIN,
-  cookie: { domain: process.env.SERVER_BASE_DOMAIN}
+  cookie: { domain: process.env.SERVER_BASE_DOMAIN},
+  rolling: true
 }));
 
 app.use(passport.initialize());
