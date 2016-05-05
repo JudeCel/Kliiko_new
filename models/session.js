@@ -6,6 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     brand_project_id: { type: DataTypes.INTEGER, allowNull: true },
     accountId: { type: DataTypes.INTEGER, allowNull: false  },
+    participantListId: { type: DataTypes.INTEGER, allowNull: true  },
     brandProjectPreferenceId: { type: DataTypes.INTEGER, allowNull: true  },
 
     name: { type: DataTypes.STRING, allowNull: false,  defaultValue: 'untitled', validate: { notEmpty: true } },
@@ -38,6 +39,7 @@ module.exports = (Sequelize, DataTypes) => {
         Session.belongsTo(models.Account, {foreignKey: 'accountId'});
         Session.belongsTo(models.BrandProjectPreference, {foreignKey: 'brandProjectPreferenceId'});
         Session.belongsToMany(models.Topic, {through: {model: models.SessionTopics}, onDelete: 'cascade'});
+        Session.belongsTo(models.ContactList, { foreignKey: 'participantListId' });
         Session.hasMany(models.SessionMember, {foreignKey: 'sessionId', onDelete: 'cascade'});
         Session.hasMany(models.MailTemplate, {foreignKey: 'sessionId', onDelete: 'cascade', hooks:true});
         Session.hasMany(models.Invite, { foreignKey: 'sessionId', onDelete: 'cascade' });

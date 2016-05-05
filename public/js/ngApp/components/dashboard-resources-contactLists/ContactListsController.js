@@ -7,7 +7,6 @@
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
-    vm.currentStep = null;
     vm.listIdToEdit = null;
     vm.sessionId = null;
     vm.newList = {};
@@ -60,7 +59,6 @@
     vm.onFieldMapDrop = onFieldMapDrop;
     vm.mappingFieldsContinue = mappingFieldsContinue;
     vm.setSessionId = setSessionId;
-    vm.removeAccountManagersIfLastStep = removeAccountManagersIfLastStep;
 
     // required for correct list switching.
     var isSelected = false;
@@ -69,8 +67,8 @@
       new ListsModel({sessionId: vm.sessionId}).then(function(result) {
         vm.lists = result;
 
-        if(vm.currentStep == "inviteSessionObservers"){
-          removeAccountManagerList()
+        if(vm.listIgnoring) {
+          removeSpecificLists();
         }
 
         if(listType == 'facilitators') {
@@ -83,24 +81,31 @@
       vm.sessionId = sessionId;
     }
 
-    function removeAccountManagersIfLastStep(currentStep) {
-      vm.currentStep = currentStep;
-    }
-
-    function removeAccountManagerList() {
+    function removeSpecificLists() {
       var array = []
       var activeList = null;
 
-      angular.forEach(vm.lists.items, function(item) {
-        if(item.name == "Facilitators"){
-          activeList = item;
+      for(var i in vm.lists.items) {
+        var item = vm.lists.items[i];
+        if(vm.listIgnoring.includes) {
+          if(vm.listIgnoring.ids && vm.listIgnoring.ids.includes(item.id)
+          || vm.listIgnoring.names && vm.listIgnoring.names.includes(item.name)) {
+            array.push(item);
+          }
+        }
+        else if(vm.listIgnoring.ignores) {
+          if(vm.listIgnoring.ids && !vm.listIgnoring.ids.includes(item.id)
+          || vm.listIgnoring.names && !vm.listIgnoring.names.includes(item.name)) {
+            array.push(item);
+          }
         }
 
-        if(item.name != "Account Managers"){
-          array.push(item);
+        if(vm.listIgnoring.active && vm.listIgnoring.active.id == item.id || vm.listIgnoring.active.name == item.name) {
+          activeList = item;
         }
-      })
-      vm.lists.activeList = activeList;
+      }
+
+      vm.lists.activeList = activeList || array[0];
       vm.lists.items = array;
     }
 

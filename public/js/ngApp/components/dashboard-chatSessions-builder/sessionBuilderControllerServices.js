@@ -57,14 +57,12 @@
       var diff = expDay.diff(today, 'days');
 
       if(diff <= 5 && diff > 0) {
-        return "Session will expire in " + diff + " day's."
+        return "Session will expire in " + diff + " day(s)";
       }else if(diff == 0){
-        return "Session will expire today."
-      }else{
-        return "Session has expired."
+        return "Session will expire today";
       }
 
-      return (diff <= 5) ? {days:diff} : null;
+      return null;
     }
 
     function findSelectedMembers(vm) {

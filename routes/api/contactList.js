@@ -16,10 +16,10 @@ module.exports = {
 };
 
 function index(req, res, next) {
-  let accaountId = res.locals.currentDomain.id;
+  let accountId = res.locals.currentDomain.id;
   let sessionId = req.query.sessionId;
 
-  contactListService.allByAccount(accaountId, sessionId).then(function(lists) {
+  contactListService.allByAccount(accountId, sessionId).then(function(lists) {
     res.send(lists);
   },function(err) {
     res.send({ error: err });
@@ -60,7 +60,7 @@ function update(req, res, next) {
 
   let params = req.body;
   params.id = req.params.id;
-  params.accaountId = res.locals.currentDomain.id;
+  params.accountId = res.locals.currentDomain.id;
 
   contactListService.update(params).then(function(result) {
     res.send({success: true, itemsUpdatedAmount:result});
