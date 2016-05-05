@@ -19,7 +19,7 @@ var userlist = [{
   firstName: "First user",
   lastName: "Last",
   password: "qwerty123",
-  gender: "male",
+  gender: "female",
   email: "chatUser@insider.com",
   confirmedAt: new Date()
 },{
@@ -29,6 +29,14 @@ var userlist = [{
   password: "qwerty123",
   gender: "male",
   email: "dainisl@insider.com",
+  confirmedAt: new Date()
+},{
+  accountName: "observerUser",
+  firstName: "Observer",
+  lastName: "Observer",
+  password: "qwerty123",
+  gender: "male",
+  email: "Observer@insider.com",
   confirmedAt: new Date()
 }]
 
@@ -51,6 +59,12 @@ function createUsers(callback) {
     function(cb) {
       createUser(userlist[1], function(error, results) {
         userData[1] = results;
+        cb(error);
+      });
+    },
+    function(cb) {
+      createUser(userlist[2], function(error, results) {
+        userData[2] = results;
         cb(error);
       });
     }
@@ -114,12 +128,31 @@ function crateBrandProject(session, callback) {
 };
 
 function createTopic(session, brandProject, callback) {
-  session.createTopic({ accountId: userData[0].account.id, name: "Cool Topic" })
-  .then(function (_result) {
-    callback(null, session, brandProject);
-  })
-  .catch(function (error) {
-    callback(error);
+  async.parallel([
+    function(cb) {
+      session.createTopic({ accountId: userData[0].account.id, name: "Cool Topic" })
+      .then(function (_result) {
+        cb(null, {session: session, brandProject: brandProject});
+      })
+      .catch(function (error) {
+        cb(error);
+      });
+    },
+    function(cb) {
+      session.createTopic({ accountId: userData[0].account.id, name: "Cool Topic 2" })
+      .then(function (_result) {
+        cb(null,  {session: session, brandProject: brandProject});
+      })
+      .catch(function (error) {
+        cb(error);
+      });
+    }
+  ], function(error, _results) {
+    if (error) {
+      callback(error);
+    }else {
+      callback(null, session, brandProject);
+    }
   });
 }
 
@@ -130,6 +163,9 @@ function addSessionMembers(erorr, session, callback) {
     },
     function(cb) {
       addSessionMember(userData[1].account.AccountUser.id, session, 'facilitator', 'Facilitator - AccountManager', cb);
+    },
+    function(cb) {
+      addSessionMember(userData[2].account.AccountUser.id, session, 'observer', 'Observer', cb);
     }
   ], function(error, results) {
     callback(error, results);
