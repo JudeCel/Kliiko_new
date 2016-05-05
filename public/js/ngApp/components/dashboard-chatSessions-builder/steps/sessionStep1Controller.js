@@ -9,30 +9,114 @@
 
     var vm = this;
     var colorSchemeId, brandLogoId;
+    vm.editedContactIndex = null;
     vm.step1 = {};
 
+    vm.userData = {};
     vm.accordions = {};
     vm.facilitators = [];
     vm.logosList = [];
     vm.allContacts = [];
     vm.session = null;
 
+    vm.formAction = null;
+
     vm.updateStep = updateStep;
     vm.addFacilitatorsClickHandle = addFacilitatorsClickHandle;
     vm.facilitatorsSelectHandle = facilitatorsSelectHandle;
     vm.initGallery = initGallery;
     vm.galleryDropdownData = galleryDropdownData;
-
-    /////////////////////////////////////////////////////////////
+    vm.newFacilitator = newFacilitator;
+    vm.openFacilitatorForm = openFacilitatorForm;
+    vm.closeFacilitatorForm = closeFacilitatorForm;
+    vm.deleteContact = deleteContact;
+    vm.editContact = editContact;
+    vm.saveEdited = saveEdited;
 
     vm.currentPage = 1;
     vm.pageSize = 3;
+    vm.facilitatorContactListId = null;
 
-    /////////////////////////////////////////////////////////////
+    function newFacilitator(userData) {
+      var params = {
+        defaultFields: userData,
+        contactListId: vm.facilitatorContactListId
+      }
+
+      step1Service.createNewFcilitator(params).then(function (result) {
+        vm.formAction = 'new';
+
+        vm.allContacts.push({
+          firstName: result.firstName,
+          lastName: result.lastName,
+          email: result.email,
+          companyName: result.companyName,
+          listName: "Facilitators"
+        });
+
+        messenger.ok('New contact '+ result.firstName + ' was added to list Facilitators');
+        closeFacilitatorForm();
+      }, function (error) {
+        messenger.error(error);
+      })
+    }
+
+    function deleteContact(member) {
+      step1Service.deleteContact(member.id).then(function () {
+        vm.allContacts.splice(vm.allContacts.indexOf(member), 1);
+      }, function (error) {
+        messenger.error(error);
+      })
+    }
+
+    function saveEdited(userData) {
+      var params = {
+        defaultFields: userData,
+        contactListId: vm.facilitatorContactListId
+      }
+
+      step1Service.updateContact(params).then(function (result) {
+        angular.copy(
+          {
+            firstName: result.data.firstName,
+            lastName: result.data.lastName,
+            email: result.data.email,
+            companyName: result.data.companyName,
+            listName: vm.allContacts[vm.editedContactIndex].listName
+          },
+          vm.allContacts[vm.editedContactIndex]
+        )
+
+        messenger.ok('Contact '+ result.data.firstName + ' has been updated');
+        closeFacilitatorForm();
+      }, function (error) {
+        messenger.error(error);
+      })
+    }
+
+    function editContact(userData) {
+      vm.formAction = 'update';
+      domServices.modal('facilitatorForm');
+      angular.copy(userData, vm.userData);
+      vm.editedContactIndex = vm.allContacts.indexOf(userData);
+    }
+
+    function openFacilitatorForm() {
+      vm.formAction = 'new';
+      domServices.modal('facilitatorForm');
+    }
+
+    function closeFacilitatorForm() {
+      domServices.modal('facilitatorForm', 'close');
+      vm.userData = {};
+    }
 
     function getAllContacts() {
       step1Service.getAllContacts(sessionId).then(function(results) {
         results.map(function(result) {
+          if (result.name == "Facilitators") {
+            vm.facilitatorContactListId = result.id;
+          }
           result.members.map(function(member) {
             member.listName = result.name;
             vm.allContacts.push(member);

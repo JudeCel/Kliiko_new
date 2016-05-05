@@ -3,8 +3,11 @@
     <div class='modal-content border-green border-radius-none'>
       <div class='modal-header'>
         <button type='button' class='close' data-dismiss='modal'>&times;</button>
-        <h2 class='modal-title text-center'>
-          Add New Contact
+        <h2 class='modal-title text-center' ng-if="step1Controller.formAction == 'new'">
+          Create New Facilitator
+        </h2>
+        <h2 class='modal-title text-center' ng-if="step1Controller.formAction == 'update'">
+          Update Facilitator
         </h2>
       </div>
 
@@ -16,49 +19,43 @@
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First name<span class='text-red-dark'>*</span></label>
                   <div class='col-md-8'>
-                    <span class='has-error text-red-dark'>{{ errors.firstName }}</span>
-                    <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='amc.accountUser.firstName'>
+                    <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='step1Controller.userData.firstName'>
                   </div>
                 </div>
 
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='lastName'>Last name<span class='text-red-dark'>*</span></label>
                   <div class='col-md-8'>
-                    <span class='has-error text-red-dark'>{{ errors.lastName }}</span>
-                    <input type='text' class='form-control' id='lastName' placeholder='Last name' ng-model='amc.accountUser.lastName'>
+                    <input type='text' class='form-control' id='lastName' placeholder='Last name' ng-model='step1Controller.userData.lastName'>
                   </div>
                 </div>
 
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='email'>Email<span class='text-red-dark'>*</span></label>
                   <div class='col-md-8'>
-                    <span class='has-error text-red-dark'>{{ errors.email }}</span>
-                    <input type='text' class='form-control' id='email' placeholder='Email' ng-model='amc.accountUser.email'>
+                    <input type='text' class='form-control' id='email' placeholder='Email' ng-model='step1Controller.userData.email'>
                   </div>
                 </div>
 
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='gender'>Gender<span class='text-red-dark'>*</span></label>
                   <div class='col-md-8'>
-                    <div class='has-error text-red-dark'>{{ errors.gender }}</div>
-                    <label class='radio-inline'><input type='radio' value='male' name='radio_gender' ng-model='amc.accountUser.gender'>Male</label>
-                    <label class='radio-inline'><input type='radio' value='female' name='radio_gender' ng-model='amc.accountUser.gender'>Female</label>
+                    <label class='radio-inline'><input type='radio' value='male' name='radio_gender' ng-model='step1Controller.userData.gender'>Male</label>
+                    <label class='radio-inline'><input type='radio' value='female' name='radio_gender' ng-model='step1Controller.userData.gender'>Female</label>
                   </div>
                 </div>
 
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
                   <div class='col-md-8'>
-                    <span class='has-error text-red-dark'>{{ errors.mobile }}</span>
-                    <input type='text' international-phone-number ng-model='amc.accountUser.mobile' default-country='{{amc.phoneCountryData}}' id='mobileAM' class='form-control'>
+                    <input type='text' international-phone-number ng-model='step1Controller.userData.mobile' default-country='{{amc.phoneCountryData}}' id='mobileAM' class='form-control'>
                   </div>
                 </div>
 
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
                   <div class='col-md-8'>
-                    <span class='has-error text-red-dark'>{{ errors.landlineNumber }}</span>
-                    <input type='text' class='form-control' international-phone-number id='landlineNumberAM' ng-model='amc.accountUser.landlineNumber'>
+                    <input type='text' class='form-control' international-phone-number id='landlineNumberAM' ng-model='step1Controller.userData.landlineNumber'>
                   </div>
                 </div>
               </div>
@@ -67,55 +64,56 @@
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='postalAddress'>Postal address</label>
                   <div class='col-md-8'>
-                    <span class='has-error text-red-dark'>{{ errors.postalAddress }}</span>
-                    <input type='text' class='form-control' id='postalAddress' placeholder='Postal address' ng-model='amc.accountUser.postalAddress'>
+                    <input type='text' class='form-control' id='postalAddress' placeholder='Postal address' ng-model='step1Controller.userData.postalAddress'>
                   </div>
                 </div>
 
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='city'>City</label>
                   <div class='col-md-8'>
-                    <span class='has-error text-red-dark'>{{ errors.city }}</span>
-                    <input type='text' class='form-control' id='city' placeholder='City' ng-model='amc.accountUser.city'>
+                    <input type='text' class='form-control' id='city' placeholder='City' ng-model='step1Controller.userData.city'>
                   </div>
                 </div>
 
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='state'>State</label>
                   <div class='col-md-8'>
-                    <span class='has-error text-red-dark'>{{ errors.state }}</span>
-                    <input type='text' class='form-control' id='state' placeholder='State' ng-model='amc.accountUser.state'>
+                    <input type='text' class='form-control' id='state' placeholder='State' ng-model='step1Controller.userData.state'>
                   </div>
                 </div>
 
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='postCode'>Postcode</label>
                   <div class='col-md-8'>
-                    <span class='has-error text-red-dark'>{{ errors.postCode }}</span>
-                    <input type='text' class='form-control' id='postCode' placeholder='Postcode' ng-model='amc.accountUser.postCode'>
+                    <input type='text' class='form-control' id='postCode' placeholder='Postcode' ng-model='step1Controller.userData.postCode'>
                   </div>
                 </div>
 
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='country'>Country</label>
                   <div class='col-md-8'>
-                    <span class='has-error text-red-dark'>{{ errors.country }}</span>
-                    <input type='text' class='form-control' id='country' placeholder='Country' ng-model='amc.accountUser.country'>
+                    <input type='text' class='form-control' id='country' placeholder='Country' ng-model='step1Controller.userData.country'>
                   </div>
                 </div>
 
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='companyName'>Company name</label>
                   <div class='col-md-8'>
-                    <span class='has-error text-red-dark'>{{ errors.companyName }}</span>
-                    <input type='text' class='form-control' id='companyName' placeholder='Company name' ng-model='amc.accountUser.companyName'>
+                    <input type='text' class='form-control' id='companyName' placeholder='Company name' ng-model='step1Controller.userData.companyName'>
                   </div>
                 </div>
               </div>
 
               <div class='col-md-12'>
-                <button ng-click='amc.submitForm(amc.formAction, amc.accountUser)' type='button' class='btn border-red text-red-dark border-radius-none background-transp btn-md pull-right'>{{amc.saveButtonText}}</button>
-                <button ng-click='amc.cancel()' type='button' class='btn border-red text-red-dark border-radius-none background-transp btn-md pull-left'>Close</button>
+                <button ng-if="step1Controller.formAction == 'new'" ng-click='step1Controller.newFacilitator(step1Controller.userData)' type='button' class='btn border-red text-red-dark border-radius-none background-transp btn-md pull-right'>
+                  Create Facilitator
+                </button>
+                <button ng-if="step1Controller.formAction == 'update'" ng-click='step1Controller.saveEdited(step1Controller.userData)' type='button' class='btn border-red text-red-dark border-radius-none background-transp btn-md pull-right'>
+                  Update Facilitator
+                </button>
+                <button ng-click='step1Controller.closeFacilitatorForm()' type='button' class='btn border-red text-red-dark border-radius-none background-transp btn-md pull-left'>
+                  Close
+                </button>
               </div>
             </div>
           </div>

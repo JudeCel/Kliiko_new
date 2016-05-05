@@ -61,20 +61,23 @@
             {{ step1Controller.selectedFacilitator.lastName + ' ' + step1Controller.selectedFacilitator.firstName}}
           </span>
         </div>
+        <!-- {{ sbc.session.steps.step1.facilitator }} -->
       </uib-accordion-heading>
 
       <div id='dashboard-contact-lists' ng-controller="ContactListController as clc">
         <div class="row" ng-init="clc.initLists('facilitators')">
           <div id="contact-lists-right-column" class="col-md-12">
 
-            <label class='control-label col-md-1 text-no-bold text-login-page' for='firstName'>
-              Search:
-            </label>
-            <div class='col-md-4'>
-              <input ng-model="q" id="search" class="form-control" placeholder="Filter text">
+            <div class="search-contact">
+              <label class='control-label col-md-1 text-no-bold text-login-page' for='firstName'>
+                Search:
+              </label>
+              <div class='col-md-4'>
+                <input ng-model="q" id="search" class="form-control" placeholder="Filter text">
+              </div>
             </div>
 
-            <div class="btn-standart btn-green pull-right" ng-click="sbc.openFacilitatorForm()">
+            <div class="btn-standart btn-green pull-right" ng-click="step1Controller.openFacilitatorForm()">
               Add New Constact &nbsp;
               <img src="/icons/account_manager_green.png">
             </div>
@@ -82,16 +85,17 @@
             <ng-include src="'js/ngApp/components/dashboard-chatSessions-builder/steps/step1/facilitatorForm.html'"></ng-include>
 
             <section id="dashboard-contact-lists-main-table">
-              <table class='table table-responsive table-dashboardElements' style="font-size: 1.6rem" ng-if="clc.lists.activeList.members.length > 0">
+              <table class='table table-responsive table-dashboardElements' style="font-size: 1.6rem" ng-if="step1Controller.allContacts.length > 0">
                 <thead>
                   <tr>
                     <th></th>
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>E-mail</th>
-                    <th>Mobile</th>
                     <th>Company Name</th>
                     <th>From list</th>
+                    <th></th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -102,34 +106,40 @@
                     <td>{{ member.firstName }}</td>
                     <td>{{ member.lastName }}</td>
                     <td>{{ member.email }}</td>
-                    <td>{{ member.mobile || '-' }}</td>
                     <td>{{ member.companyName || '-' }}</td>
                     <td>{{ member.listName }}</td>
+                    <td>
+                      <img ng-click="step1Controller.editContact(member)"class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit"
+                    </td>
+                    <td>
+                      <img ng-click="step1Controller.deleteContact(member)" class="pull-right ic" src="/icons/dashboardElement_remove.png" alt="" title="Delete">
+                    </td>
                   </tr>
                 </tbody>
               </table>
 
-              <dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)">
-                <ul class="pagination" ng-if="1 < pages.length || !autoHide">
-                  <li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }">
-                    <a href="" ng-click="setCurrent(1)">&laquo;</a>
-                  </li>
-                  <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }">
-                    <a href="" ng-click="setCurrent(pagination.current - 1)">&lsaquo;</a>
-                  </li>
-                  <li ng-repeat="pageNumber in pages track by tracker(pageNumber, $index)" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }">
-                    <a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a>
-                  </li>
+              <div class="faciliator-paginate">
+                <dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)">
+                  <ul class="pagination" ng-if="1 < pages.length || !autoHide">
+                    <li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }">
+                      <a href="" ng-click="setCurrent(1)">&laquo;</a>
+                    </li>
+                    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }">
+                      <a href="" ng-click="setCurrent(pagination.current - 1)">&lsaquo;</a>
+                    </li>
+                    <li ng-repeat="pageNumber in pages track by tracker(pageNumber, $index)" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }">
+                      <a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a>
+                    </li>
 
-                  <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }">
-                    <a href="" ng-click="setCurrent(pagination.current + 1)">&rsaquo;</a>
-                  </li>
-                  <li ng-if="boundaryLinks"  ng-class="{ disabled : pagination.current == pagination.last }">
-                    <a href="" ng-click="setCurrent(pagination.last)" style="colort: #4CB344;">&raquo;</a>
-                  </li>
-                </ul>
-              </dir-pagination-controls>
-
+                    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }">
+                      <a href="" ng-click="setCurrent(pagination.current + 1)">&rsaquo;</a>
+                    </li>
+                    <li ng-if="boundaryLinks"  ng-class="{ disabled : pagination.current == pagination.last }">
+                      <a href="" ng-click="setCurrent(pagination.last)" style="colort: #4CB344;">&raquo;</a>
+                    </li>
+                  </ul>
+                </dir-pagination-controls>
+              <div>
             </section>
           </div>
         </div>
