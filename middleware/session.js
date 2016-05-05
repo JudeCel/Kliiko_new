@@ -6,11 +6,9 @@ function createUserSession(req, done) {
   req.session.cookie.expires = true;
 
   if(!!req.body.rememberMe) {
-    req.session.maxLength = rememberMeExpiryTime;
     req.session.cookie.maxAge = rememberMeExpiryTime;
   }
   else {
-    req.session.maxLength = standardExpiryTime;
     req.session.cookie.maxAge = standardExpiryTime;
   }
 
@@ -18,7 +16,10 @@ function createUserSession(req, done) {
 }
 
 function extendUserSession(req, res, next) {
-  req.session.cookie.maxAge = req.session.maxLength;
+  let maxAge = req.session.cookie.originalMaxAge;
+  req.session.cookie.expires = new Date(Date.now() + maxAge);
+  req.session.cookie.maxAge = maxAge;
+
   req.session.save(function(error) {
     next(error);
   });
