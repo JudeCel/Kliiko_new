@@ -379,7 +379,7 @@ function validateTemplate(template) {
 }
 
 function getMailTemplateForSession(req, callback) {
-  if (!req.template.properties.sessionId) {
+  if (!req.template.properties || !req.template.properties.sessionId) {
     return callback(req.template);
   }
 
