@@ -1,4 +1,5 @@
-<section id="step-3">
+<div ng-controller='GalleryController as gc'>
+<section id="step-3" ng-controller="SessionStep3Controller as step3Controller">
 
   <h3 class="text-center">Manage Session Emails</h3>
 
@@ -21,24 +22,41 @@
     <uib-accordion-group is-open="sbc.accordions.emailTemplates">
       <uib-accordion-heading>
         <div class="panel-label">
-          Email Templates
+          Email Templates (*Required)
           <i class="pull-right glyphicon"
              ng-class="{'glyphicon-chevron-down': sbc.accordions.emailTemplates, 'glyphicon-chevron-right': !sbc.accordions.emailTemplates}"></i>
         </div>
       </uib-accordion-heading>
 
+      <div ng-show="step3Controller.showTemplateStatus">
+        <div ng-repeat="(key, t) in step3Controller.mailTemplateList track by $index" class="list-group-item" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : t.AccountId}">
+          <img src="/icons/ic_tick.png" alt="" ng-show="t.created" class="pull-right">
+          {{ t.name }}
+          <span>{{step3Controller.isTemplateRequired(t)}}</span>
+        </div>
 
-      <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec" 
-               ng-init="ec.preInit({sessionBuilder:true, sessionId: sbc.session.id})">
+        <div class="buttons-area">
+          <div class="col-xs-12 centeredWarning fa fa-exclamation-triangle" aria-hidden="true"> You must customize all required Email Templates before inviting Participants (Step 4)</div>
+          <button type="submit" class="btn-standart btn-green pull-left" ng-click="step3Controller.editTemplates(true)">Edit Templates</button>
+        </div>
+      </div>
+
+      <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec"
+               ng-init="ec.preInit({sessionBuilder:true, sessionId: sbc.session.id})" ng-show="!step3Controller.showTemplateStatus">
+
+        <div class="buttons-area">
+          <button type="submit" class="btn btn-green pull-right" ng-click="step3Controller.editTemplates(false)">Back</button>
+        </div>
+
         <h1 class="text-center">Edit Email Templates</h1>
-        <div class="list-group col-md-3 mail-template-list-section">
+        <div class="list-group col-xs-3 mail-template-list-section">
           <div class="panel-heading mail-template-list-heading"><strong>Email Templates</strong></div>
           <div id="mail-template-list" class="mail-template-list">
             <a ng-repeat="(key, t) in ec.emailTemplates track by $index" class="list-group-item" ng-hide="t.hideIt" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : t.AccountId}"
                ng-click="ec.startEditingTemplate(key, true, t.id, t); sbc.showEmailsTemplateEditeor = true;">
               <div ng-hide="t.AccountId">
                 <img src="/icons/ic_arrow_right.png" class="pull-right" ng-hide="!ec.isCurrent(key)">
-                  {{ t.name }} 
+                  {{ t.name }}
                   <span ng-if="t.name != 'Generic'">*</span>
                   <span ng-if="t.name == 'Generic'"> (optional)</span>
               </div>
@@ -54,7 +72,7 @@
           </div>
         </div>
 
-        <div class="col-md-8 mail-template-details" ng-show="sbc.showEmailsTemplateEditeor">
+        <div class="col-xs-8 mail-template-details" ng-show="sbc.showEmailsTemplateEditeor">
           <table>
             <tr>
               <td>Subject:</td>
@@ -66,12 +84,13 @@
               </td>
             </tr>
           </table>
+          <div class="row">
+            <button type="submit" class="btn btn-green pull-right" ng-click="ec.saveEmailTemplate(true)">Save</button>
+            <button type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
+          </div>
           <span>Content:</span>
           <textarea id="templateContent"></textarea>
           <div class="has-error text-center">{{ec.currentTemplate.error.content}}</div>
-          <br>
-          <button type="submit" class="btn btn-green pull-right" ng-click="ec.saveEmailTemplate(true)">Save</button>
-          <button type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
         </div>
 
         <!-- Modal Preview-->
@@ -111,43 +130,9 @@
           </div>
         </div>
 
-        <!-- resourceModal -->
-        <div class='modal fade' id='uploadTemplateResource' role='dialog'>
-          <div class='modal-dialog'>
-            <div class='modal-content border-green border-radius-none'>
-              <div class='modal-header'>
-                <button type='button' class='close' data-dismiss='modal'>&times;</button>
-                <h1 class='modal-title text-center'>New {{ ec.uploadTypeForTitle }} resource.</h1>
-              </div>
-              <form ng-submit="ec.submitForm(ec.newResource)">
-                <div class='modal-body'>
-                  <div class="form-group">
-                    <label for="title">Title</label>
-                    <input ng-model="ec.newResource.title" type="text" class="form-control center-block" 
-                           name="title" id="title" placeholder="Title">
-                  </div>
-
-                  <div ng-if="ec.newResource.type == 'youtubeUrl'" class="form-group">
-                    <label for="youtubeUrl">Youtube Url</label>
-                    <input ng-model="ec.newResource.youtubeUrl" type="text" class="form-control center-block" 
-                           name="youtubeUrl" id="youtubeUrl" placeholder="Youtube URL">
-                  </div>
-
-                  <div ng-if="ec.newResource.type !== 'youtubeUrl'" class="form-group">
-                    <label for="fileTst">File</label>
-                    <div ngf-drop ngf-select ng-model="ec.newResource.fileTst" ng-change="ec.uploadTst()" class="drop-box" ngf-drag-over-class="'dragover'">
-                        Drop images here or click to upload</div>
-                    <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
-                    {{ ec.newResource.fileTst.name }}
-                  </div>
-                </div>
-                <div class='modal-footer'>
-                  <div type='button' class='pull-left btn-dashboard-plans go-back-btn' data-dismiss='modal'>Cancel</div>
-                  <input type='submit' class='pull-right btn-dashboard-plans btn'>
-                </div>
-              </form>
-            </div>
-          </div>
+        <div ng-init='ec.initGallery(gc)'>
+          {{ upload = ec.galleryDropdownData(gc.currentDependency); "" }}
+          <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
         </div>
       </section>
     </uib-accordion-group>
@@ -155,3 +140,4 @@
   </uib-accordion>
 
 </section>
+</div>
