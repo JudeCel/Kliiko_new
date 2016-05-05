@@ -1,4 +1,4 @@
-<section id='step-4-participants' ng-controller="SessionStep4-5Controller as lastStepsController" ng-init="lastStepsController.initStep()">
+<section id='step-4-participants' ng-controller="SessionStep4-5Controller as lastStepsController" ng-init="lastStepsController.initStep(sbc.participants, sbc.observers)">
   <div class='row'>
     <h3 class='text-center'>{{lastStepsController.isParticipantPage() ? "Participants" : "Observers"}}</h3>
     <div class='text-center'>

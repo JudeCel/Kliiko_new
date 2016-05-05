@@ -180,11 +180,9 @@ router.post('/login', function(req, res, next) {
       if (err) {
         return next(err);
       }
-      session.rememberMe(req, function(err, result) {
+      session.createUserSession(req, function(err, result) {
         if (err) { throw err}
-        if (result) {
-          middlewareFilters.myDashboardPage(req, res, next);
-        }
+        middlewareFilters.myDashboardPage(req, res, next);
       });
     });
   })(req, res, next);

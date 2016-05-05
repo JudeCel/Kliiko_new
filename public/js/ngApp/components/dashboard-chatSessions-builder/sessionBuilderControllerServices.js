@@ -9,7 +9,6 @@
 
 
     Services.getTimeSettings = getTimeSettings;
-    Services.reorderTopics = reorderTopics;
     Services.getExpireDays = getExpireDays;
     Services.findSelectedMembers = findSelectedMembers;
     Services.currentMemberList = currentMemberList;
@@ -30,41 +29,18 @@
       }
     }
 
-    function reorderTopics(vmTopics, data, t) {
-
-      var droppedOrderId = data.order || 0;
-      var targetOrderId = t.order || 0;
-
-      for (var i = 0, len = vmTopics.length; i < len ; i++) {
-        if (data.id == vmTopics[i].id) {
-          vmTopics[i].order = targetOrderId;
-          topicsAndSessions.updateTopic(vmTopics[i]);
-        }
-
-        if (t.id == vmTopics[i].id) {
-          vmTopics[i].order = droppedOrderId;
-          topicsAndSessions.updateTopic(vmTopics[i]);
-        }
-      }
-
-      return vmTopics;
-
-    }
-
     function getExpireDays(endDate) {
       var today = moment(new Date());
       var expDay = moment(endDate);
       var diff = expDay.diff(today, 'days');
 
       if(diff <= 5 && diff > 0) {
-        return "Session will expire in " + diff + " day's."
+        return "Session will expire in " + diff + " day(s)";
       }else if(diff == 0){
-        return "Session will expire today."
-      }else{
-        return "Session has expired."
+        return "Session will expire today";
       }
 
-      return (diff <= 5) ? {days:diff} : null;
+      return null;
     }
 
     function findSelectedMembers(vm) {

@@ -12,7 +12,7 @@
       </div>
     </div>
 
-    <ng-include ng-init="clc.removeAccountManagersIfLastStep(sbc.session.currentStep)" id='dashboard-contact-lists' class='side-margin' src="'/js/ngApp/components/dashboard-resources-contactLists/index.html'"></ng-include>
+    <ng-include ng-init="clc.listIgnoring = sbc.listIgnoring" id='dashboard-contact-lists' class='side-margin' src="'/js/ngApp/components/dashboard-resources-contactLists/index.html'"></ng-include>
 
   </div>
 </section>

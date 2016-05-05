@@ -9,7 +9,8 @@ module.exports = (Sequelize, DataTypes) => {
     email: { type: DataTypes.STRING, allowNull: false, validate: {
       notEmpty: true,
       is: constants.emailRegExp,
-      isUnique: validations.unique(Sequelize, 'User', 'email')
+      isUnique: validations.unique(Sequelize, 'User', 'email'),
+      isLength: validations.length('email', { max: 60 })
     } },
     encryptedPassword: { type : DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     password: {
@@ -23,7 +24,7 @@ module.exports = (Sequelize, DataTypes) => {
       validate: {
         isLongEnough: function(value) {
           if(value.length < 7) {
-            throw new Error("Make sure your password is 7 characters and longer");
+            throw new Error("Make sure your Password is at least 7 characters");
           }
         }
       }

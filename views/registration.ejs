@@ -11,7 +11,7 @@
     <div class="tab-content border-green">
         <div id="signup" class="tab-pane fade in active">
           <h2 class="text-center text-gray-dark">Welcome!</h2>
-          <h5 class="text-center text-gray-light">Sign up to klzii and host your own chat session.</h5>
+          <h5 class="text-center text-gray-light">Sign up to klzii and host your own Chat Sessions.</h5>
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
@@ -31,7 +31,7 @@
                       </label>
                     </td>
                     <td>
-                      <input type="text" value="<%= accountName %>" class="form-control" name="accountName" id="account_name" placeholder="Account name">
+                      <input type="text" value="<%= accountName %>" class="form-control" name="accountName" id="account_name" placeholder="Account Name">
                     </td>
                     <td class="text-red-dark">
                       <h6>*</h6>
@@ -48,10 +48,10 @@
 
                   <tr>
                     <td>
-                      <label class="text-no-bold text-login-page" for="firstName">First name</label>
+                      <label class="text-no-bold text-login-page" for="firstName">First Name</label>
                     </td>
                     <td>
-                      <input type="text" value="<%= firstName %>" class="form-control" name="firstName" id="first_name" placeholder="First name">
+                      <input type="text" value="<%= firstName %>" class="form-control" name="firstName" id="first_name" placeholder="First Name">
                     </td>
                     <td class="text-red-dark">
                       <h6>*</h6>
@@ -67,10 +67,10 @@
 
                   <tr>
                     <td>
-                      <label class="text-no-bold text-login-page" for="lastName">Last name</label>
+                      <label class="text-no-bold text-login-page" for="lastName">Last Name</label>
                     </td>
                     <td>
-                      <input type="text" value="<%= lastName %>" class="form-control" name="lastName" id="last_name" placeholder="Last name">
+                      <input type="text" value="<%= lastName %>" class="form-control" name="lastName" id="last_name" placeholder="Last Name">
                     </td>
                     <td class="text-red-dark">
                       <h6>*</h6>
@@ -118,9 +118,15 @@
 
                   <tr>
                     <td></td>
+                    <% if(errors.password){ %>
                     <td class="error-column">
                         <span class="has-error"><%= errors.password %></span>
                     </td>
+                    <% } else{ %>
+                    <td>
+                      Make sure your Password is at least 7 characters
+                    </td>
+                    <% } %>
                   </tr>
 
                   <tr>
@@ -210,7 +216,7 @@
                   <div class="check">
                     <input type="checkbox" class="checkbox-login" name="termsAndConditions" id="termsAndConditions" value='true'/>
                     <label for="termsAndConditions"></label>
-                    <span class="checkbox-signup" id="termsAndConditions">You have read and agree to the <a class="text-red-dark" href="url">Administrator Terms & Conditions</a>.</span>
+                    <span class="checkbox-signup" id="termsAndConditions">You have read and agree to the <a class="text-red-dark" href="url">Account Terms & Conditions</a>.</span>
                   </div>
                   <span class="has-error error-column text-center"><%= errors.termsAndConditions %></span>
 
@@ -218,7 +224,7 @@
                   <div class="check">
                     <input type="checkbox" class="checkbox-login" name="reveiveNewsLetters" id="reveiveNewsLetters" value='on'/>
                     <label for="reveiveNewsLetters"></label>
-                    <span class="checkbox-signup" id="reveiveNewsLetters">Yes send me the klzii Newsletter which includes hints, tips and updates.</span>
+                    <span class="checkbox-signup" id="reveiveNewsLetters">Yes send me the klzii Newsletter which includes tips and updates.</span>
                   </div>
                 </div>
 

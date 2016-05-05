@@ -16,15 +16,20 @@
 
 
     <div class="row">
-      <div id="contact-lists-left-column" class="col-md-2">
+      <div id="contact-lists-left-column" class="col-md-3">
         <div id="list-of-contacts">
           <div class="header">
             Contact Lists
           </div>
 
-          <div class="item"  ng-class="{'active':clc.lists.activeListIndex == $index}" ng-click="clc.changeActiveList($index)"
-               ng-repeat="item in clc.lists.items ">
-            <div class="item-name">{{ item.name }} <span ng-show="item.membersCount">&nbsp;({{ item.membersCount }})</span></div>  <div class="item-selection-mark"><i class="glyphicon glyphicon-chevron-right pull-right"></i></div>
+          <div class="item" ng-class="{'active':clc.lists.activeListIndex == $index}" ng-click="clc.changeActiveList($index)" ng-repeat="item in clc.lists.items ">
+            <div class="item-name">{{ item.name }}
+              <span ng-show="item.membersCount">&nbsp;({{ item.membersCount }})</span>
+            </div>
+
+            <div class="item-selection-mark">
+              <i class="glyphicon glyphicon-chevron-right pull-right"></i>
+            </div>
           </div>
         </div>
 
@@ -34,9 +39,9 @@
         </div>
       </div>
 
-      <div id="contact-lists-right-column" class="col-md-10">
+      <div id="contact-lists-right-column" class="col-md-9">
         <div id="list-mass-actions" ng-class="row" ng-hide="!clc.lists.activeList.members.length">
-          <span class="col-md-5">
+          <span class="col-md-6">
             <div class="check">
               <input id="dashboard-contact-lists-selectAll-mass-action"  ng-click="clc.selectAll()" class="kliiko-checkbox checkbox-btn btn-green"  type="checkbox" ng-checked="clc.allSelected">
               <label for="dashboard-contact-lists-selectAll-mass-action" ></label> Select all
@@ -72,6 +77,11 @@
           <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable">
             &nbsp; or &nbsp;
             <div class="btn-standart btn-red" ng-click="clc.deleteList(clc.lists.activeList, $index)">Remove this List</div>
+          </span>
+
+          <span ng-show="clc.lists.activeList.editable">
+            &nbsp; or &nbsp;
+            <div class='btn-standart btn-green' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
           </span>
 
 
