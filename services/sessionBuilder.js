@@ -786,7 +786,7 @@ function findValidation(step, params) {
     });
   }
   else if(step == 'inviteSessionObservers') {
-    deferred.resolve(); // We don't need any validations on the last step
+    deferred.resolve();
   }
   else {
     deferred.resolve();

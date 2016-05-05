@@ -400,35 +400,58 @@ function getMailTemplateForSession(req, callback) {
     });
 }
 
+function buildTemplate(inputTemplate, sourceTemplate) {
+  let id = null;
+  let overwriteSessionElement = false;
+  let targetTemplate = {
+    name: inputTemplate.name,
+    subject: inputTemplate.subject,
+    content: inputTemplate.content,
+    systemMessage: inputTemplate.systemMessage,
+    required: (inputTemplate.required==null||inputTemplate.required==undefined)?true:false,
+    isCopy: inputTemplate.isCopy,
+    MailTemplateBaseId: inputTemplate.MailTemplateBaseId,
+    AccountId: inputTemplate.AccountId,
+    'MailTemplateBase.id': inputTemplate['MailTemplateBase.id'],
+    'MailTemplateBase.name': inputTemplate['MailTemplateBase.name'],
+    'MailTemplateBase.systemMessage': inputTemplate['MailTemplateBase.systemMessage'],
+    'MailTemplateBase.category': inputTemplate['MailTemplateBase.category'],
+    properties: inputTemplate.properties
+  };
+  if (sourceTemplate) {
+    id = sourceTemplate.id;
+    overwriteSessionElement = true;
+    targetTemplate.name = sourceTemplate.name;
+    targetTemplate.sessionId = sourceTemplate.sessionId;
+    targetTemplate.isCopy = true;
+    targetTemplate.AccountId = sourceTemplate.AccountId;
+  } else {
+    id = inputTemplate.id;
+  }
+
+  return {
+    id: id,
+    template: targetTemplate,
+    overwriteSessionElement: overwriteSessionElement
+  };
+}
+
 function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, callback) {
   if (!template) {
     return callback("e-mail template not provided");
   }
-  var validationResult = validateTemplate(template);
+  let validationResult = validateTemplate(template);
   if (validationResult) {
     callback(validationResult);
     return;
   }
 
   getMailTemplateForSession({template:template, accountId: accountId}, function(error, result) {
-    let id = null;
-    let overwriteSessionElement = false;
-    if (result && result.id != template.id) {
-      id = result.id;
-      overwriteSessionElement = true;
-      template.name = result.name;
-      template.sessionId = result.sessionId;
-      template.isCopy = true;
-      template.AccountId = result.AccountId;
-    } else {
-      id = template.id;
-    }
-    //make build function for template.
-    delete template["id"];
-    if (!overwriteSessionElement && shouldCreateCopy(template, createCopy, accountId, shouldOverwrite)) {
-      prepareAdminTemplate(template, shouldOverwrite, accountId);
-      template.isCopy = true;
-      create(template, function(error, result) {
+    let templateObject = buildTemplate(template, result);
+    if (!templateObject.overwriteSessionElement && shouldCreateCopy(templateObject.template, createCopy, accountId, shouldOverwrite)) {
+      prepareAdminTemplate(templateObject.template, shouldOverwrite, accountId);
+      templateObject.template.isCopy = true;
+      create(templateObject.template, function(error, result) {
         if (error) {
           callback(error);
         } else {
@@ -436,9 +459,9 @@ function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, call
         }
       });
     } else {
-      update(id, template, function(error, result) {
+      update(templateObject.id, templateObject.template, function(error, result) {
         if (!error) {
-          setMailTemplateDefault(template.MailTemplateBaseId, id, shouldOverwrite, callback);
+          setMailTemplateDefault(templateObject.template.MailTemplateBaseId, templateObject.id, shouldOverwrite, callback);
         } else {
           callback(error);
         }
@@ -477,7 +500,7 @@ function deleteMailTemplate(id, callback) {
 
 function prepareMailDefaultParameters(params) {
   params = params || {};
-  var defaultParams = {
+  let defaultParams = {
     firstName: "", lastName: "", accountName: "", startDate: new Date().toLocaleDateString(), startTime: new Date().toLocaleTimeString(),
     endDate: new Date().toLocaleDateString(), endTime: new Date().toLocaleTimeString(),
     facilitatorFirstName: "", facilitatorLastName: "", facilitatorMail: "", participantMail: "", facilitatorMobileNumber: "",
