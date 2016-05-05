@@ -4,6 +4,8 @@ var models  = require('./../../models');
 var mailHelper = require('./../../mailers/mailHelper');
 var mailFixture = require('./../fixtures/mailTemplates');
 var userFixture = require('./../fixtures/user');
+var constants = require('../../util/constants');
+var mailTemplateService = require('./../../services/mailTemplate');
 
 let accountId;
 let params = {
@@ -34,6 +36,7 @@ describe('send MailTemplates',  () => {
   before((done) => {
     models.sequelize.sync({force: true}).done((error, result) => {
       userFixture.createUserAndOwnerAccount().then(function(result) {
+        accountId = result.account.id;
         params.accountId = result.account.id;
         mailFixture.createMailTemplate().then(function(result) {
           done();
@@ -44,7 +47,45 @@ describe('send MailTemplates',  () => {
     });
   });
 
-  describe('#createOrFindAccountManager', function() {
+  describe('#Make copies of mail template', function() {
+    it('#Create copy of mail template', (done) =>  {
+      models.MailTemplate.find({
+        include: [{ model: models.MailTemplateBase, attributes: ['id', 'name'], where: {category: "firstInvitation"}}],
+        attributes: constants.mailTemplateFields,
+        raw: true
+      }).then(function (result) {
+        mailTemplateService.saveMailTemplate(result, false, accountId, false, function(error, saveResult) {
+          assert.isNull(error);
+          assert.notEqual(saveResult.id, result.id, 'should not overwrite original mail');
+
+          done();
+        });
+
+      }).catch(function (err) {
+        assert.isNull(err);
+      });
+    })
+
+    it('#Create copy of mail template for session', (done) =>  {
+      models.MailTemplate.find({
+        include: [{ model: models.MailTemplateBase, attributes: ['id', 'name'], where: {category: "firstInvitation"}}],
+        attributes: constants.mailTemplateFields,
+        raw: true
+      }).then(function (result) {
+        result.properties = {sessionId: 0};
+        mailTemplateService.saveMailTemplate(result, false, accountId, false, function(error, saveResult) {
+          assert.isNull(error);
+          assert.notEqual(saveResult.id, result.id, 'should not overwrite original mail');
+          done();
+        });
+
+      }).catch(function (err) {
+        assert.isNull(err);
+      });
+    })
+  });
+
+  describe('#Send mail templates', function() {
 
     it('Send session slose mail', (done) =>  {
       mailHelper.sendSessionClose(params, function(error){

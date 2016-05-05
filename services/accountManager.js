@@ -12,48 +12,68 @@ var crypto = require('crypto');
 var q = require('q');
 
 //Exports
-function createOrFindAccountManager(req, res, callback) {
-  let user = req.user;
-  let params = prepareParams(req);
-  let currentDomain = res.locals.currentDomain;
+function createOrFindAccountManager(user, body, accountId) {
+  let deferred = q.defer();
+  let params = prepareParams(body);
 
-  preValidate(user, currentDomain.id, params, function(error) {
-    if(error) {
-      return callback(error);
+  preValidate(user, accountId, params.email).then(function() {
+    return User.find({ where: { email: params.email } });
+  }).then(function(existsUser) {
+    if(existsUser) {
+      return inviteExistingUser(existsUser, params, accountId);
     }
-    User.find({
-      where: { email: params.email }
-    }).then(function(existsUser) {
-      if(existsUser) {
-        existsUser.getAccounts({ where: {id: currentDomain.id } }).then(function (results) {
-          if (_.isEmpty(results)) {
-            createAccountUser(params, existsUser.id, "existing", currentDomain.id, callback);
-          }else{
-            callback('This account has already accepted invite.');
-          }
-        })
-      } else {
-        createAccountUser(params, null, "new", currentDomain.id, function(error, data) {
-          if(error) {
-            callback(error);
-          }
-          else {
-            User.create(userParams(params.email)).then(function(newUser) {
-              AccountUser.update({ UserId: newUser.id }, { where: { id: data.accountUserId } }).then(function() {
-                data.userId = newUser.id;
-                callback(null, data);
-              }, function(error) {
-                callback(filters.errors(error));
-              });
-            }, function(error) {
-              callback(filters.errors(error));
-            });
-          }
-        });
-      }
-    });
+    else {
+      return inviteNewUser(params, accountId);
+    }
+  }).then(function(params) {
+    deferred.resolve(params);
+  }).catch(function(error) {
+    console.error(error);
+    deferred.reject(filters.errors(error));
   });
+
+  return deferred.promise;
 };
+
+function inviteNewUser(params, accountId) {
+  let deferred = q.defer();
+
+  createAccountUser(params, null, 'new', accountId).then(function(data) {
+    User.create(userParams(params.email)).then(function(newUser) {
+      AccountUser.update({ UserId: newUser.id }, { where: { id: data.accountUserId } }).then(function() {
+        data.userId = newUser.id;
+        deferred.resolve(data);
+      }, function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }, function(error) {
+      deferred.reject(filters.errors(error));
+    });
+  }, function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function inviteExistingUser(existsUser, params, accountId) {
+  let deferred = q.defer();
+
+  existsUser.getAccounts({ where: { id: accountId } }).then(function(results) {
+    if(_.isEmpty(results)) {
+      createAccountUser(params, existsUser.id, 'existing', accountId).then(function(params) {
+        deferred.resolve(params);
+      }, function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+    else {
+      deferred.reject('This account has already accepted invite.');
+    }
+  });
+
+  return deferred.promise;
+}
 
 function updateAccountManager(data) {
   let deferred = q.defer();
@@ -93,21 +113,25 @@ function updateAccountManager(data) {
 }
 
 function createAccountUser(params, userId, type, accountId, cb) {
+  let deferred = q.defer();
   adjustParamsForNewAccountUser(params, userId, accountId);
+
   AccountUser.create(params).then(function(newAccountUser){
-    addToContactList(newAccountUser, function(error) {
-      if (error) {
-        cb(filters.errors(error));
-      }else {
-        cb(null, inviteParams(newAccountUser.id, accountId, userId, type));
-      }
-    })
+    addToContactList(newAccountUser).then(function() {
+      deferred.resolve(inviteParams(newAccountUser.id, accountId, userId, type));
+    }, function(error) {
+      deferred.reject(filters.errors(error));
+    });
   }).catch(function(error) {
-    cb(filters.errors(error));
+    deferred.reject(filters.errors(error));
   });
+
+  return deferred.promise;
 }
 
 function addToContactList(accountUser, callback) {
+  let deferred = q.defer();
+
   models.ContactList.find({
     where: {
       role: accountUser.role,
@@ -119,13 +143,16 @@ function addToContactList(accountUser, callback) {
       accountUserId: accountUser.id,
       accountId: accountUser.AccountId,
       contactListId: contactList.id
-    }
+    };
+
     models.ContactListUser.create(params).then(function() {
-      callback(null);
-    },function(err) {
-      callback(err);
-    })
-  })
+      deferred.resolve();
+    },function(error) {
+      deferred.reject(filters.errors(error));
+    });
+  });
+
+  return deferred.promise;
 }
 
 function userParams(email) {
@@ -158,30 +185,35 @@ function findAndRemoveAccountUser(id, callback) {
 };
 
 //Helpers
-function preValidate(user, currentDomainId, params, callback) {
-  if(user.email == params.email) {
-    return callback({ email: 'You are trying to invite yourself.' });
+function preValidate(user, accountId, email) {
+  let deferred = q.defer();
+
+  if(user.email == email) {
+    deferred.reject({ email: 'You are trying to invite yourself.' });
+  }
+  else {
+    AccountUser.findAll({
+      include: [{
+        model: User,
+        where: { email: email }
+      }],
+      where: {
+        UserId: { $ne: user.id },
+        AccountId: accountId
+      }
+    }).then(function(accountUsers) {
+      if(_.isEmpty(accountUsers)) {
+        deferred.resolve();
+      }
+      else {
+        deferred.reject({ email: 'This user is already invited.' });
+      }
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
+    });
   }
 
-  AccountUser.findAll({
-    include: [{
-      model: User,
-      where: { email: params.email }
-    }],
-    where: {
-      UserId: { $ne: user.id },
-      AccountId: currentDomainId
-    }
-  }).then(function(accountUsers) {
-    if(_.isEmpty(accountUsers)) {
-      callback(null, true);
-    }
-    else {
-      callback({ email: 'This user is already invited.' });
-    }
-  }).catch(function(error) {
-    callback(filters.errors(error));
-  });
+  return deferred.promise;
 };
 
 function adjustParamsForNewAccountUser(params, userId, accountId) {
@@ -211,8 +243,8 @@ function inviteParams(accountUserId, accountId, userId, type) {
   return { userId: userId, accountUserId: accountUserId, accountId: accountId, userType: type, role: 'accountManager' };
 };
 
-function prepareParams(req) {
-  return _.pick(req.body, ['firstName', 'lastName', 'gender', 'email', 'mobile', 'phoneCountryData', 'country', 'postalAddress', 'city', 'state', 'postCode', 'companyName', 'landlineNumber', 'landlineNumberCountryData']);
+function prepareParams(body) {
+  return _.pick(body, ['firstName', 'lastName', 'gender', 'email', 'mobile', 'phoneCountryData', 'country', 'postalAddress', 'city', 'state', 'postCode', 'companyName', 'landlineNumber', 'landlineNumberCountryData']);
 };
 
 module.exports = {

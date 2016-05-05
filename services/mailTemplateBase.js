@@ -11,7 +11,6 @@ var templateFields = [
     'content',
 ];
 
-
 function validate(params, callback) {
   let attrs = {name: params.accountName}
   MailTemplateCopy.build(attrs).validate().done(function(errors, _account) {
