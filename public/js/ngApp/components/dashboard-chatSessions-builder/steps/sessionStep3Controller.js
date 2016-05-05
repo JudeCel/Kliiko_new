@@ -26,6 +26,14 @@
       }
     }
 
+    vm.isTemplateRequired = function(template) {
+      if (template.name == "Generic") {
+        return "(optional)";
+      } else {
+        return "*";
+      }
+    }
+
     vm.getPreparedMailTemplateList();
 
   }
