@@ -25,20 +25,20 @@
         <tbody>
           <tr ng-repeat='accountUser in amc.accountUsers'>
             <td>
-              {{ accountUser.firstName | limitTo:amc.maxLength }}
+              {{ accountUser.firstName | limitTo:amc.maxLength.normal }}
               <span ng-if='accountUser.firstName.length > amc.maxLength'>...</span>
             </td>
             <td>
-              {{ accountUser.lastName | limitTo:amc.maxLength }}
+              {{ accountUser.lastName | limitTo:amc.maxLength.normal }}
               <span ng-if='accountUser.lastName.length > amc.maxLength'>...</span>
             </td>
             <td>{{ accountUser.gender }}</td>
             <td>
-              {{ accountUser.email | limitTo:amc.maxLength }}
+              {{ accountUser.email | limitTo:amc.maxLength.email }}
               <span ng-if='accountUser.email.length > amc.maxLength'>...</span>
             </td>
             <td>
-              {{ accountUser.mobile | limitTo:amc.maxLength }}
+              {{ accountUser.mobile | limitTo:amc.maxLength.normal }}
               <span ng-if='accountUser.mobile.length > amc.maxLength'>...</span>
             </td>
             <td>{{ accountUser.status }}</td>
