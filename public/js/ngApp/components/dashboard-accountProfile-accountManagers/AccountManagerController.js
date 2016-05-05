@@ -8,6 +8,7 @@
     dbg.log2('#AccountManagerController started');
     var vm = this;
     var mobile, landlineNumber;
+    vm.maxLength = 20;
 
     init();
     vm.openModal = openModal;
