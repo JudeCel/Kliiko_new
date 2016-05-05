@@ -1,278 +1,215 @@
 <section id="step-1" class="animated fadeIn" ng-controller="SessionStep1Controller as step1Controller" ng-init="step1Controller.initController()">
-    <h3 class="text-center">Set-Up Chat Session</h3>
+  <h3 class="text-center">Set-Up Chat Session</h3>
 
-    <uib-accordion close-others="false">
-        <!-- Session Name -->
-        <uib-accordion-group is-open="step1Controller.accordions.sessionName" class="green-input">
-            <uib-accordion-heading>
-                <div class="panel-label">
-                    Name Your Chat Session
-                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.sessionName, 'glyphicon-chevron-right': !step1Controller.accordions.sessionName}"></i>
-                    <span class="panel-value pu :)ll-right">{{ sbc.session.steps.step1.name }}</span>
-                </div>
-            </uib-accordion-heading>
-            <label for="sessionBuilder-session-name">Name your session &nbsp; </label>
-            <input id="sessionBuilder-session-name" type="text" ng-model="step1Controller.name" ng-blur="step1Controller.updateName();">
-        </uib-accordion-group>
+  <uib-accordion close-others="false">
+    <!-- Session Name -->
+    <uib-accordion-group is-open="step1Controller.accordions.sessionName" class="green-input">
+      <uib-accordion-heading>
+        <div class="panel-label">
+          Name Your Chat Session
+          <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.sessionName, 'glyphicon-chevron-right': !step1Controller.accordions.sessionName}"></i>
+          <span class="panel-value pull-right">{{ sbc.session.steps.step1.name }}</span>
+        </div>
+      </uib-accordion-heading>
+      <label for="sessionBuilder-session-name">Name your session &nbsp; </label>
+      <input id="sessionBuilder-session-name" type="text" ng-model="step1Controller.name" ng-blur="step1Controller.updateName();">
+    </uib-accordion-group>
 
-        <!-- Date And Time -->
-        <uib-accordion-group is-open="step1Controller.accordions.dateAndTime" class="green-input">
-            <uib-accordion-heading>
-                <div class="panel-label">
-                    Enter Date And Time
-                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.dateAndTime, 'glyphicon-chevron-right': !step1Controller.accordions.dateAndTime}"></i>
-                    <span class="panel-value pull-right">{{ step1Controller.step1.startTime | date : 'short'}} - {{ step1Controller.step1.endTime | date : 'short'}}</span>
-                </div>
-            </uib-accordion-heading>
+    <!-- Date And Time -->
+    <uib-accordion-group is-open="step1Controller.accordions.dateAndTime" class="green-input">
+      <uib-accordion-heading>
+        <div class="panel-label">
+          Enter Date And Time
+          <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.dateAndTime, 'glyphicon-chevron-right': !step1Controller.accordions.dateAndTime}"></i>
+          <span class="panel-value pull-right">{{ step1Controller.step1.startTime | date : 'short'}} - {{ step1Controller.step1.endTime | date : 'short'}}</span>
+        </div>
+      </uib-accordion-heading>
 
+      <div class="data-time-content-wrapper" style="display: flex">
+        <span class="date-time-label">Start</span> <img class="date-time-ico" src="/icons/calendar_green.png" alt="">
+        <md-datepicker ng-model="step1Controller.step1.startDate"
+                       md-min-date="::step1Controller.today"
+                       md-max-date="step1Controller.step1.endDate"
+                       ng-change="step1Controller.updateStep('startTime')"
+                       md-placeholder="Enter date"></md-datepicker>
 
+        <img class="date-time-ico time" src="/icons/time_green.png" alt="">
+        <uib-timepicker class="timepicker-wrapper" ng-model="step1Controller.step1.startTime" ng-change="step1Controller.updateStep('startTime')" hour-step="step1Controller.dateTime.hstep" minute-step="step1Controller.dateTime.mstep" show-meridian="true"></uib-timepicker>
+      </div>
+      <div class="data-time-content-wrapper">
+        <span class="date-time-label end">End</span><img class="date-time-ico" src="/icons/calendar_green.png" alt="">
+        <md-datepicker ng-model="step1Controller.step1.endDate"
+                       md-min-date="step1Controller.step1.startDate"
+                       ng-change="step1Controller.updateStep('endTime')"
+                       md-placeholder="Enter date"></md-datepicker>
 
-            <div class="data-time-content-wrapper" style="display: flex">
-                <span class="date-time-label">Start</span> <img class="date-time-ico" src="/icons/calendar_green.png" alt="">
-                <md-datepicker ng-model="step1Controller.step1.startDate"
-                               md-min-date="::step1Controller.today"
-                               md-max-date="step1Controller.step1.endDate"
-                               ng-change="step1Controller.updateStep('startTime')"
-                               md-placeholder="Enter date"></md-datepicker>
+        <img class="date-time-ico time" src="/icons/time_green.png" alt="">
+        <uib-timepicker class="timepicker-wrapper" ng-model="step1Controller.step1.endTime" ng-change="step1Controller.updateStep('endTime')" hour-step="step1Controller.dateTime.hstep" minute-step="step1Controller.dateTime.mstep" show-meridian="true"></uib-timepicker>
+        <code ng-show="step1Controller.accordions.dateAndTimeError" class="margin020">
+          End Time should be greater then Start Time
+        </code>
+      </div>
+    </uib-accordion-group>
 
-                <img class="date-time-ico time" src="/icons/time_green.png" alt="">
-                <uib-timepicker class="timepicker-wrapper" ng-model="step1Controller.step1.startTime" ng-change="step1Controller.updateStep('startTime')" hour-step="step1Controller.dateTime.hstep" minute-step="step1Controller.dateTime.mstep" show-meridian="true"></uib-timepicker>
+    <!-- Facilitators -->
+    <uib-accordion-group is-open="step1Controller.accordions.facilitators">
+      <uib-accordion-heading>
+        <div class="panel-label">
+          Select Facilitator
+          <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.sessionName, 'glyphicon-chevron-right': !step1Controller.accordions.sessionName}"></i>
+          <span class="panel-value pull-right">
+            {{ step1Controller.selectedFacilitator.lastName + ' ' + step1Controller.selectedFacilitator.firstName}}
+          </span>
+        </div>
+        <!-- {{ sbc.session.steps.step1.facilitator }} -->
+      </uib-accordion-heading>
 
+      <div id='dashboard-contact-lists' ng-controller="ContactListController as clc">
+        <div class="row" ng-init="clc.initLists('facilitators')">
+          <div id="contact-lists-right-column" class="col-md-12">
+
+            <div class="search-contact">
+              <label class='control-label col-md-1 text-no-bold text-login-page' for='firstName'>
+                Search:
+              </label>
+              <div class='col-md-4'>
+                <input ng-model="q" id="search" class="form-control" placeholder="Filter text">
+              </div>
             </div>
-            <div class="data-time-content-wrapper">
-                <span class="date-time-label end">End</span><img class="date-time-ico" src="/icons/calendar_green.png" alt="">
-                <md-datepicker ng-model="step1Controller.step1.endDate"
-                               md-min-date="step1Controller.step1.startDate"
-                               ng-change="step1Controller.updateStep('endTime')"
-                               md-placeholder="Enter date"></md-datepicker>
 
-                <img class="date-time-ico time" src="/icons/time_green.png" alt="">
-                <uib-timepicker class="timepicker-wrapper" ng-model="step1Controller.step1.endTime" ng-change="step1Controller.updateStep('endTime')" hour-step="step1Controller.dateTime.hstep" minute-step="step1Controller.dateTime.mstep" show-meridian="true"></uib-timepicker>
-                <code ng-show="step1Controller.accordions.dateAndTimeError" class="margin020">End Time should be greater then Start Time</code>
+            <div class="btn-standart btn-green pull-right" ng-click="step1Controller.openFacilitatorForm()">
+              Add New Constact &nbsp;
+              <img src="/icons/account_manager_green.png">
             </div>
 
+            <ng-include src="'js/ngApp/components/dashboard-chatSessions-builder/steps/step1/facilitatorForm.html'"></ng-include>
 
-        </uib-accordion-group>
+            <section id="dashboard-contact-lists-main-table">
+              <table class='table table-responsive table-dashboardElements' style="font-size: 1.6rem" ng-if="step1Controller.allContacts.length > 0">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>E-mail</th>
+                    <th>Company Name</th>
+                    <th>From list</th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="member-row" dir-paginate="member in step1Controller.facilitators = step1Controller.allContacts | filter:q | itemsPerPage: step1Controller.pageSize" current-page="step1Controller.currentPage">
+                    <td class="selection-column">
+                      <input type="radio" ng-value="member" ng-model="step1Controller.selectedFacilitator" ng-click="step1Controller.facilitatorsSelectHandle(step1Controller.selectedFacilitator)">
+                    </td>
+                    <td>{{ member.firstName }}</td>
+                    <td>{{ member.lastName }}</td>
+                    <td>{{ member.email }}</td>
+                    <td>{{ member.companyName || '-' }}</td>
+                    <td>{{ member.listName }}</td>
+                    <td>
+                      <img ng-click="step1Controller.editContact(member)"class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit"
+                    </td>
+                    <td>
+                      <img ng-click="step1Controller.deleteContact(member)" class="pull-right ic" src="/icons/dashboardElement_remove.png" alt="" title="Delete">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
 
-        <!-- Facilitators -->
-        <uib-accordion-group is-open="step1Controller.accordions.facilitators">
-            <uib-accordion-heading>
-                <div class="panel-label">
-                    Select Facilitator
-                    <i class="pull-right glyphicon"
-                       ng-class="{'glyphicon-chevron-down': step1Controller.accordions.sessionName, 'glyphicon-chevron-right': !step1Controller.accordions.sessionName}"></i>
-                    <span class="panel-value pull-right">{{ step1Controller.selectedFacilitator.lastName + ' ' + step1Controller.selectedFacilitator.firstName}}</span>
-                </div>
-            </uib-accordion-heading>
+              <div class="faciliator-paginate">
+                <dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)">
+                  <ul class="pagination" ng-if="1 < pages.length || !autoHide">
+                    <li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }">
+                      <a href="" ng-click="setCurrent(1)">&laquo;</a>
+                    </li>
+                    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }">
+                      <a href="" ng-click="setCurrent(pagination.current - 1)">&lsaquo;</a>
+                    </li>
+                    <li ng-repeat="pageNumber in pages track by tracker(pageNumber, $index)" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }">
+                      <a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a>
+                    </li>
 
-            <div ng-show="sbc.selectedFacilitator" class="btn-standart btn-red"
-                 ng-click="step1Controller.selectedFacilitator = null">
-                Clear Selection
-            </div>
-            <div id='dashboard-contact-lists' ng-controller="ContactListController as clc">
-                <div class="row" ng-init="clc.initLists('facilitators')">
-                    <div id="contact-lists-right-column" class="col-md-12">
-                        <!-- TABLE -->
-                        <section id="dashboard-contact-lists-main-table">
-                            <table class='table table-responsive table-dashboardElements' style="font-size: 1.6rem" ng-if="clc.lists.activeList.members.length > 0">
-                                <thead>
-                                <tr>
-                                    <th class="selection-column"></th>
-                                    <th class="th-header druggable"
-                                        ng-repeat="rowHeader in clc.lists.activeList.visibleFields track by $index"
-                                        ng-click="clc.changeTableSortingFilter(rowHeader)"
-                                        ng-drag="true" ng-drag-data="$index">
-                                        <span class="sorting-order-arrow"><i class="glyphicon glyphicon-triangle-top"
-                                                                             ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
-                                        <span class="sorting-order-arrow"><i class="glyphicon glyphicon-triangle-bottom"
-                                                                             ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
-                                        <span class="th-name" ng-drop="true"
-                                              ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader | human2Camel : true}}</span>
+                    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }">
+                      <a href="" ng-click="setCurrent(pagination.current + 1)">&rsaquo;</a>
+                    </li>
+                    <li ng-if="boundaryLinks"  ng-class="{ disabled : pagination.current == pagination.last }">
+                      <a href="" ng-click="setCurrent(pagination.last)" style="colort: #4CB344;">&raquo;</a>
+                    </li>
+                  </ul>
+                </dir-pagination-controls>
+              <div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </uib-accordion-group>
 
-                                    </th>
+    <!-- Brand Logo -->
+    <uib-accordion-group is-open="step1Controller.accordions.brandLogo">
+      <uib-accordion-heading>
+        <div class="panel-label">
+          Select Brand Logo (optional) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.brandLogo, 'glyphicon-chevron-right': !step1Controller.accordions.brandLogo}"></i>
+        </div>
+      </uib-accordion-heading>
 
-                                    <th ng-click="clc.showManageColumnsModal()">
-                                        <img ng-click="sbc.faderHack()"  src="/icons/grid.png">
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr class="member-row"
-                                    ng-repeat='member in step1Controller.facilitators = (clc.lists.listByType["Facilitators"].members | orderBy: clc.tableSort.by : clc.tableSort.reverse)'
-                                    ng-class="{'selected':member._selected}">
-                                    <td class="selection-column">
-                                        <input type="radio" ng-value="member" ng-model="step1Controller.selectedFacilitator" ng-click="step1Controller.facilitatorsSelectHandle(step1Controller.selectedFacilitator)">
-                                    </td>
+      <div id='GalleryController' ng-controller='GalleryController as gc'>
+        <div>
+          {{ upload = step1Controller.galleryDropdownData(gc.currentDependency); "" }}
+          <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
+        </div>
 
-                                    <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index"> {{
-                                        member[tableRow] || '-' }}
-                                    </td>
-                                </tr>
+        <div ng-init='step1Controller.initGallery(gc)'>
+          {{ upload = step1Controller.galleryDropdownData(step1Controller.session.sessionData); resource = gc.getResourceFromList(step1Controller.session.sessionData);"" }}
+          <div ng-include="gc.templatesDir + 'view.html'" ng-if='resource'></div>
+          <div ng-include="gc.templatesDir + 'dropdown.html'"></div>
+        </div>
+      </div>
+    </uib-accordion-group>
 
-                                </tbody>
-                            </table>
-                        </section>
-                        <!--eof table-->
+      <!-- Color Scheme -->
+      <uib-accordion-group is-open="step1Controller.accordions.colorScheme">
+        <uib-accordion-heading>
+          <div class="panel-label">
+            Select Colour Scheme (optional) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.colorScheme, 'glyphicon-chevron-right': !step1Controller.accordions.colorScheme}"></i>
+            <span class="panel-value pull-right">{{ step1Controller.colorScheme.name }}</span>
+          </div>
+        </uib-accordion-heading>
 
-                        <div id="no-contacts-in-list-" ng-if="clc.lists.activeList.members.length < 1">
-                            There is no contacts in this list yet
-                            <div class="btn-standart btn-green margin020" ng-hide="sbc.showContactsList" ng-click="sbc.addFacilitatorsClickHandle()">
-                                Add Facilitator To Contact List &nbsp;<img src="/icons/account_manager_green.png">
+        <section>
+          <div class='row' ng-controller='BrandColourController as bcc'>
+            <div class='col-sm-6' ng-repeat='scheme in step1Controller.colorsList = bcc.schemes' ng-show="bcc.schemes.length">
+              <label for="{{ $index }}-scheme">
+                <div class='panel panel-default panel-success'>
+                  <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='font-weight:normal; background-color: {{ scheme.colours.browserBackground }};'>
+                    <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/preview.html'"></ng-include>
+                  </div>
 
-                            </div>
-                        </div>
+                  <div class='panel-heading'>
+                    <div class='row'>
+                      <div class='col-xs-1'>
+                        <input id="{{ $index }}-scheme" type="radio" ng-model="step1Controller.colorScheme" ng-value="scheme" ng-click="sbc.updateStep({brandProjectPreferenceId:step1Controller.colorScheme.id})">
+                      </div>
+                      <div class='col-xs-10'>
+                        <h3 class='panel-title text-max-width'>{{ scheme.name }}</h3>
+                      </div>
                     </div>
+                  </div>
                 </div>
-
-                <!-- MODALS -->
-                <!-- Manage columns view -->
-                <div id="contactList-manageColumns" class="modal fade" role="dialog">
-                    <div class="modal-dialog contactDetailsModal" style="width: 800px">
-                        <div class="modal-content border-green border-radius-none">
-                            <div class='modal-header'>
-                                <button type='button' class='close' data-dismiss="modal">&times;</button>
-                                <h2 class='modal-title text-center'>Manage Columns in View</h2>
-                            </div>
-                            <div class='modal-body text-gray-medium'>
-                                <form class='form-horizontal' role='form'>
-
-                                    <uib-accordion close-others="false">
-                                        <uib-accordion-group is-open="clc.modContentBlock.generalDetails">
-                                            <uib-accordion-heading>
-                                                <div class="panel-label">
-                                                    General Details<i class="pull-right glyphicon"
-                                                                      ng-class="{'glyphicon-chevron-down': clc.modContentBlock.generalDetails, 'glyphicon-chevron-right': !clc.modContentBlock.generalDetails}"></i>
-                                                </div>
-                                            </uib-accordion-heading>
-                                            <span class="row">
-                                              <span class="col-md-3"
-                                                    ng-repeat="column in clc.lists.activeList.availableTables() track by $index">
-                                                <div class="check fields-to-show">
-                                                    <input id="dashboard-contact-lists-fields-{{ $index }}"
-                                                           ng-click="clc.lists.activeList.toggleTableToShow(column)"
-                                                           class="kliiko-checkbox checkbox-btn btn-green"
-                                                           ng-model="clc.selectedTables[column]" type="checkbox">
-                                                    <label for="dashboard-contact-lists-fields-{{ $index }}"></label>
-                                                    {{column }}
-                                                </div>
-
-                                              </span>
-                                            </span>
-
-                                        </uib-accordion-group>
-
-
-                                        <uib-accordion-group is-open="clc.modContentBlock.history">
-                                            <uib-accordion-heading>
-                                                <div class="panel-label">
-                                                    Participant Invitation History <i class="pull-right glyphicon"
-                                                                                      ng-class="{'glyphicon-chevron-down': clc.modContentBlock.history, 'glyphicon-chevron-right': !clc.modContentBlock.history}"></i>
-                                                </div>
-                                            </uib-accordion-heading>
-
-                                            <span class="row">
-                                              <span class="col-md-3"
-                                                    ng-repeat="column in clc.lists.activeList.participantsFields">
-                                                <div class="check fields-to-show">
-                                                    <input id="dashboard-contact-lists-participants-{{ $index }}"
-                                                           ng-click="clc.lists.activeList.toggleTableToShow(column)"
-                                                           class="kliiko-checkbox checkbox-btn btn-green"
-                                                           ng-model="clc.selectedTables[column]" type="checkbox">
-                                                    <label for="dashboard-contact-lists-participants-{{ $index }}"></label>
-                                                    {{column }}
-                                                </div>
-
-                                              </span>
-                                            </span>
-
-                                        </uib-accordion-group>
-                                    </uib-accordion>
-
-                                    <div class='row'>
-                                        <div class='col-md-12'>
-                                            <div class='btn-standart btn-green pull-right' data-dismiss="modal">Done
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                </form>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-
+              </label>
             </div>
 
-
-        </uib-accordion-group>
-
-        <!-- Brand Logo -->
-        <uib-accordion-group is-open="step1Controller.accordions.brandLogo">
-          <uib-accordion-heading>
-            <div class="panel-label">
-              Select Brand Logo (optional) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.brandLogo, 'glyphicon-chevron-right': !step1Controller.accordions.brandLogo}"></i>
-            </div>
-          </uib-accordion-heading>
-
-          <div id='GalleryController' ng-controller='GalleryController as gc'>
-            <div>
-              {{ upload = step1Controller.galleryDropdownData(gc.currentDependency); "" }}
-              <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
+            <div class='col-sm-12'>
+             <div class="btn-standart btn-red" ng-show="step1Controller.colorScheme" ng-click="step1Controller.colorScheme = null">Clean Color Scheme Selection</div>
             </div>
 
-            <div ng-init='step1Controller.initGallery(gc)'>
-              {{ upload = step1Controller.galleryDropdownData(step1Controller.session.sessionData); resource = gc.getResourceFromList(step1Controller.session.sessionData);"" }}
-              <div ng-include="gc.templatesDir + 'view.html'" ng-if='resource'></div>
-              <div ng-include="gc.templatesDir + 'dropdown.html'"></div>
+            <div id="create-color-scheme-area" ng-show="!bcc.schemes.length">
+              <h4>There is no defined color schemes. </h4>
+              <div class="btn-standart btn-green" ui-sref="dashboard.resources.brandColours({new:'new', backTo:step1Controller.$state.current.name, id:step1Controller.session.id})">Create one</div>
             </div>
           </div>
-        </uib-accordion-group>
-
-        <!-- Color Scheme -->
-        <uib-accordion-group is-open="step1Controller.accordions.colorScheme">
-            <uib-accordion-heading>
-                <div class="panel-label">
-                    Select Colour Scheme (optional) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.colorScheme, 'glyphicon-chevron-right': !step1Controller.accordions.colorScheme}"></i>
-                    <span class="panel-value pull-right">{{ step1Controller.colorScheme.name }}</span>
-                </div>
-            </uib-accordion-heading>
-
-            <section>
-                <div class='row' ng-controller='BrandColourController as bcc'>
-                    <div class='col-sm-6' ng-repeat='scheme in step1Controller.colorsList = bcc.schemes' ng-show="bcc.schemes.length">
-                        <label for="{{ $index }}-scheme">
-                            <div class='panel panel-default panel-success'>
-                                <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='font-weight:normal; background-color: {{ scheme.colours.browserBackground }};'>
-                                    <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/preview.html'"></ng-include>
-                                </div>
-
-                                <div class='panel-heading'>
-                                    <div class='row'>
-                                        <div class='col-xs-1'>
-                                            <input id="{{ $index }}-scheme" type="radio" ng-model="step1Controller.colorScheme" ng-value="scheme" ng-click="sbc.updateStep({brandProjectPreferenceId:step1Controller.colorScheme.id})">
-                                        </div>
-                                        <div class='col-xs-10'>
-                                            <h3 class='panel-title text-max-width'>{{ scheme.name }}</h3>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class='col-sm-12'>
-                       <div class="btn-standart btn-red" ng-show="step1Controller.colorScheme" ng-click="step1Controller.colorScheme = null">Clean Color Scheme Selection</div>
-                    </div>
-                    <div id="create-color-scheme-area" ng-show="!bcc.schemes.length">
-                        <h4>There is no defined color schemes. </h4>
-                        <div class="btn-standart btn-green" ui-sref="dashboard.resources.brandColours({new:'new', backTo:step1Controller.$state.current.name, id:step1Controller.session.id})">Create one</div>
-                    </div>
-                </div>
-            </section>
-
-        </uib-accordion-group>
-
-    </uib-accordion>
+        </section>
+    </uib-accordion-group>
+  </uib-accordion>
 </section>

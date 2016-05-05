@@ -3,25 +3,130 @@
 
   angular.module('KliikoApp').controller('SessionStep1Controller', SessionStep1Controller);
 
-  SessionStep1Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope'];
-  function SessionStep1Controller(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope) {
+  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope'];
+  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope) {
     dbg.log2('#SessionBuilderController 1 started');
 
     var vm = this;
     var colorSchemeId, brandLogoId;
+    vm.editedContactIndex = null;
     vm.step1 = {};
     vm.$state = $state;
 
+    vm.userData = {};
     vm.accordions = {};
     vm.facilitators = [];
     vm.logosList = [];
+    vm.allContacts = [];
     vm.session = null;
+
+    vm.formAction = null;
 
     vm.updateStep = updateStep;
     vm.addFacilitatorsClickHandle = addFacilitatorsClickHandle;
     vm.facilitatorsSelectHandle = facilitatorsSelectHandle;
     vm.initGallery = initGallery;
     vm.galleryDropdownData = galleryDropdownData;
+    vm.newFacilitator = newFacilitator;
+    vm.openFacilitatorForm = openFacilitatorForm;
+    vm.closeFacilitatorForm = closeFacilitatorForm;
+    vm.deleteContact = deleteContact;
+    vm.editContact = editContact;
+    vm.saveEdited = saveEdited;
+
+    vm.currentPage = 1;
+    vm.pageSize = 3;
+    vm.facilitatorContactListId = null;
+
+    function newFacilitator(userData) {
+      var params = {
+        defaultFields: userData,
+        contactListId: vm.facilitatorContactListId
+      }
+
+      step1Service.createNewFcilitator(params).then(function (result) {
+        vm.formAction = 'new';
+
+        vm.allContacts.push({
+          firstName: result.firstName,
+          lastName: result.lastName,
+          email: result.email,
+          companyName: result.companyName,
+          listName: "Facilitators"
+        });
+
+        messenger.ok('New contact '+ result.firstName + ' was added to list Facilitators');
+        closeFacilitatorForm();
+      }, function (error) {
+        messenger.error(error);
+      })
+    }
+
+    function deleteContact(member) {
+      step1Service.deleteContact(member.id).then(function () {
+        vm.allContacts.splice(vm.allContacts.indexOf(member), 1);
+      }, function (error) {
+        messenger.error(error);
+      })
+    }
+
+    function saveEdited(userData) {
+      var params = {
+        defaultFields: userData,
+        contactListId: vm.facilitatorContactListId
+      }
+
+      step1Service.updateContact(params).then(function (result) {
+        angular.copy(
+          {
+            firstName: result.data.firstName,
+            lastName: result.data.lastName,
+            email: result.data.email,
+            companyName: result.data.companyName,
+            listName: vm.allContacts[vm.editedContactIndex].listName
+          },
+          vm.allContacts[vm.editedContactIndex]
+        )
+
+        messenger.ok('Contact '+ result.data.firstName + ' has been updated');
+        closeFacilitatorForm();
+      }, function (error) {
+        messenger.error(error);
+      })
+    }
+
+    function editContact(userData) {
+      vm.formAction = 'update';
+      domServices.modal('facilitatorForm');
+      angular.copy(userData, vm.userData);
+      vm.editedContactIndex = vm.allContacts.indexOf(userData);
+    }
+
+    function openFacilitatorForm() {
+      vm.formAction = 'new';
+      domServices.modal('facilitatorForm');
+    }
+
+    function closeFacilitatorForm() {
+      domServices.modal('facilitatorForm', 'close');
+      vm.userData = {};
+    }
+
+    function getAllContacts() {
+      step1Service.getAllContacts(sessionId).then(function(results) {
+        results.map(function(result) {
+          if (result.name == "Facilitators") {
+            vm.facilitatorContactListId = result.id;
+          }
+          result.members.map(function(member) {
+            member.listName = result.name;
+            vm.allContacts.push(member);
+          });
+        });
+      }, function(error) {
+        messenger.error(error);
+      })
+    }
 
     vm.initController = function() {
       vm.session = builderServices.session;
@@ -31,6 +136,15 @@
       vm.dateTime = builderServices.getTimeSettings();
       parseDateAndTime('initial');
       initStep(null, 'initial');
+      getAllContacts();
+    }
+
+    function sessionId() {
+      if(vm.session.id) {
+        return vm.session.id;
+      }else{
+        return null;
+      }
     }
 
     $scope.$on('$destroy', function() {
@@ -46,20 +160,6 @@
     });
 
     function initStep(step, initial) {
-      // populate facilitator
-      vm.wFacilitators = $scope.$watch('step1Controller.facilitators', function (newval, oldval) {
-        if (!vm.facilitators) {
-          return;
-        }
-        for (var i = 0, len = vm.facilitators.length; i < len ; i++) {
-          if (vm.facilitators[i].accountUserId == vm.session.steps.step1.facilitator) {
-            vm.selectedFacilitator = vm.facilitators[i];
-            break;
-          }
-        }
-        vm.name = vm.session.steps.step1.name;
-      }, true);
-
       // populate color scheme
       if (vm.session.steps.step1.brandProjectPreferenceId) {
         vm.wColorsList = $scope.$watch('step1Controller.colorsList', function (newval, oldval) {
@@ -73,6 +173,7 @@
           }
         }, true);
       }
+
     }
 
     vm.updateName = function() {
@@ -159,6 +260,7 @@
       vm.session.steps.step2.facilitator = facilitator;
       vm.showContactsList = false;
       vm.session.addMembers(facilitator, 'facilitator').then( function (res) {
+          console.error(res);
           messenger.ok("Facilitator was successfully set");
         },
         function (err) { messenger.error(err);  }
