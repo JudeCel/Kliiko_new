@@ -584,7 +584,8 @@ function stepsDefinition(session) {
     startTime: session.startTime,
     endTime: session.endTime,
     resourceId: session.resourceId,
-    brandProjectPreferenceId:  session.brandProjectPreferenceId
+    brandProjectPreferenceId:  session.brandProjectPreferenceId,
+
   };
   object.step2 = { stepName: 'facilitatiorAndTopics' };
   async.parallel([
@@ -658,7 +659,7 @@ function step1Queries(session, step) {
     function(cb) {
       searchSessionMembers(session.id, 'facilitator').then(function(members) {
         if(!_.isEmpty(members)) {
-          step.facilitator = members[0].id;
+          step.facilitator = members[0];
         }
         cb();
       }).catch(function(error) {
