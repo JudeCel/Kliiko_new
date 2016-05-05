@@ -311,9 +311,6 @@
       }
 
       if (action === 'update') {
-        // $("#contactMobile").intlTelInput('setCountry', contactObj.phoneCountryData.iso2);
-        // $("#contactLandlineNumber").intlTelInput('setCountry', contactObj.landlineNumberCountryData.iso2);
-
         vm.contactSnapshot = angular.copy(contactObj);
 
         vm.contactModalTitle = 'Edit Contact';
@@ -344,7 +341,6 @@
         vm.importData = { excel:false, csv: true, fileToImport: null};
 
       }
-
 
       domServices.modal('contactList-addContactManual');
     }
@@ -393,11 +389,11 @@
     }
 
     function setDependencies(newContact) {
-      newContact.phoneCountryData = $("#contactMobile").intlTelInput('getSelectedCountryData');
-      newContact.landlineNumberCountryData = $("#contactLandlineNumber").intlTelInput('getSelectedCountryData');
+      newContact.phoneCountryData = $("#facilitatorMobile").intlTelInput('getSelectedCountryData');
+      newContact.landlineNumberCountryData = $("#facilitatorLandlineNumber").intlTelInput('getSelectedCountryData');
 
-      newContact.mobile = $("#contactMobile").val();
-      newContact.landlineNumber = $("#contactLandlineNumber").val();
+      newContact.mobile = $("#facilitatorMobile").val();
+      newContact.landlineNumber = $("#facilitatorLandlineNumber").val();
 
       return newContact;
     }

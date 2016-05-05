@@ -41,13 +41,14 @@
     vm.facilitatorContactListId = null;
 
     function newFacilitator(userData) {
+
+      userData = setDependencies(userData);
       var params = {
         defaultFields: userData,
         contactListId: vm.facilitatorContactListId
       }
 
       step1Service.createNewFcilitator(params).then(function (result) {
-        vm.formAction = 'new';
         vm.allContacts.push(result);
         messenger.ok('New contact '+ result.firstName + ' was added to list Facilitators');
         closeFacilitatorForm();
@@ -65,6 +66,7 @@
     }
 
     function saveEdited(userData) {
+      userData = setDependencies(userData);
       var params = {
         defaultFields: userData,
         contactListId: vm.facilitatorContactListId
@@ -90,6 +92,8 @@
     }
 
     function editContact(userData) {
+      
+
       vm.formAction = 'update';
       domServices.modal('facilitatorForm');
       angular.copy(userData, vm.userData);
@@ -104,6 +108,16 @@
     function closeFacilitatorForm() {
       domServices.modal('facilitatorForm', 'close');
       vm.userData = {};
+    }
+
+    function setDependencies(newContact) {
+      newContact.phoneCountryData = $("#contactMobile").intlTelInput('getSelectedCountryData');
+      newContact.landlineNumberCountryData = $("#contactLandlineNumber").intlTelInput('getSelectedCountryData');
+
+      newContact.mobile = $("#contactMobile").val();
+      newContact.landlineNumber = $("#contactLandlineNumber").val();
+
+      return newContact;
     }
 
     function getAllContacts() {
