@@ -1,7 +1,7 @@
   <div ng-controller='GalleryController as gc'>
     <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec" ng-init="ec.preInit()">
       <h1 class="text-center">Edit Email Templates</h1>
-        <div class="contentOffset list-group col-xs-3 col-lg-3 mail-template-list-section">
+        <div class="contentOffset list-group col-xs-3 mail-template-list-section">
           <div class="panel-heading mail-template-list-heading"><strong>Email Templates</strong></div>
           <div id="mail-template-list" class="mail-template-list">
             <a ng-repeat="(key, t) in ec.emailTemplates" class="list-group-item" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : ec.isEditable(t, app.accountUser.isAdmin)}"
@@ -21,7 +21,7 @@
           </div>
         </div>
 
-        <div class="col-xs-8 col-sm-8 col-lg-8 mail-template-details">
+        <div class="col-xs-8  mail-template-details">
           <table>
             <tr>
               <td class="template-detail-name-column">Template Name:</td>

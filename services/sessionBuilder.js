@@ -861,37 +861,13 @@ function validateStepTwo(params) {
   return deferred.promise;
 }
 
-function sessionMailTemplateStatus(id, accountId) {
+function getSessionObjectForMailTemplate(id, accountId) {
   let deferred = q.defer();
   validators.hasValidSubscription(accountId).then(function() {
       findSession(id, accountId).then(function(session) {
         sessionBuilderObject(session).then(function(sessionObj) {
-          let params = findCurrentStep(sessionObj.sessionBuilder.steps, session.step);
-          params.id = id;
-          params.accountId = accountId;
-
-          mailTemplateService.getMailTemplateTypeList(mailCategories, function(error, result) {
-            if (error) {
-              deferred.reject(error);
-            } else {
-              getStepThreeTemplateTypes(params).then(function(uniqueCopies) {
-                if(uniqueCopies.length) {
-                  _.forEach(uniqueCopies, function(category) {
-                    _.forEach(result, function(template) {
-                      if(template.category == category) {
-                        template.created = true;
-                      }
-                    });
-                  })
-                }
-                deferred.resolve({templates: result});
-              }).catch(function(error) {
-                deferred.reject(error);
-              });
-            }
-          }, function(error) {
-              deferred.reject(error);
-          });
+          let response = {sessionObj: sessionObj, session: session};
+          deferred.resolve(response);
         }, function(error) {
           deferred.reject(error);
         });
@@ -901,6 +877,48 @@ function sessionMailTemplateStatus(id, accountId) {
     }, function(error) {
       deferred.reject(error);
     })
+  return deferred.promise;
+}
+
+function prepareCreatedSessionTemplateList(params, templates, deferred) {
+  getStepThreeTemplateTypes(params).then(function(uniqueCopies) {
+    if(uniqueCopies && uniqueCopies.length) {
+      _.forEach(uniqueCopies, function(category) {
+        _.forEach(templates, function(template) {
+          if(template.category == category) {
+            template.created = true;
+          }
+        });
+      })
+    }
+    deferred.resolve({templates: templates});
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+}
+
+function processSessionObjectForMailTemplate(id, accountId, sessionObj, session, deferred) {
+  let params = findCurrentStep(sessionObj.sessionBuilder.steps, session.step);
+  params.id = id;
+  params.accountId = accountId;
+  mailTemplateService.getMailTemplateTypeList(mailCategories, function(error, result) {
+    if (error) {
+      deferred.reject(error);
+    } else {
+      prepareCreatedSessionTemplateList(params, result, deferred);
+    }
+  }, function(error) {
+      deferred.reject(error);
+  });
+}
+
+function sessionMailTemplateStatus(id, accountId) {
+  let deferred = q.defer();
+  getSessionObjectForMailTemplate(id, accountId).then(function(result) {
+      processSessionObjectForMailTemplate(id, accountId, result.sessionObj, result.session, deferred);
+    }, function(error) {
+      deferred.reject(error);
+  });
   return deferred.promise;
 }
 

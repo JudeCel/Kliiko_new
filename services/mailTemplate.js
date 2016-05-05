@@ -379,17 +379,7 @@ function validateTemplate(template) {
 }
 
 function getMailTemplateForSession(req, callback) {
-  let query = {id: req.template.id};
-  if (req.accountId) {
-    query['$or'] = [{AccountId: req.accountId}, {AccountId: null}];
-  }
-  if (req.template.properties.sessionId) {
-    if (!req.template.sessionId) {
-      query.sessionId = req.template.properties.sessionId;
-    } else {
-      query.sessionId = req.template.sessionId;
-    }
-  } else {
+  if (!req.template.properties.sessionId) {
     return callback(req.template);
   }
 
@@ -421,8 +411,8 @@ function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, call
   }
 
   getMailTemplateForSession({template:template, accountId: accountId}, function(error, result) {
-    var id = null;
-    var overwriteSessionElement = false;
+    let id = null;
+    let overwriteSessionElement = false;
     if (result && result.id != template.id) {
       id = result.id;
       overwriteSessionElement = true;
@@ -433,16 +423,16 @@ function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, call
     } else {
       id = template.id;
     }
-
+    //make build function for template.
     delete template["id"];
     if (!overwriteSessionElement && shouldCreateCopy(template, createCopy, accountId, shouldOverwrite)) {
       prepareAdminTemplate(template, shouldOverwrite, accountId);
       template.isCopy = true;
       create(template, function(error, result) {
-        if (!error) {
-          setMailTemplateDefault(result.MailTemplateBaseId, result.id, shouldOverwrite, callback);
-        } else {
+        if (error) {
           callback(error);
+        } else {
+          setMailTemplateDefault(result.MailTemplateBaseId, result.id, shouldOverwrite, callback);
         }
       });
     } else {
