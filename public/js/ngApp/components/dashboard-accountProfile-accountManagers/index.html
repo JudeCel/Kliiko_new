@@ -24,11 +24,23 @@
         </thead>
         <tbody>
           <tr ng-repeat='accountUser in amc.accountUsers'>
-            <td>{{ accountUser.firstName }}</td>
-            <td>{{ accountUser.lastName }}</td>
+            <td>
+              {{ accountUser.firstName | limitTo:amc.maxLength.normal }}
+              <span ng-if='accountUser.firstName.length > amc.maxLength.normal'>...</span>
+            </td>
+            <td>
+              {{ accountUser.lastName | limitTo:amc.maxLength.normal }}
+              <span ng-if='accountUser.lastName.length > amc.maxLength.normal'>...</span>
+            </td>
             <td>{{ accountUser.gender }}</td>
-            <td>{{ accountUser.email }}</td>
-            <td>{{ accountUser.mobile }}</td>
+            <td>
+              {{ accountUser.email | limitTo:amc.maxLength.email }}
+              <span ng-if='accountUser.email.length > amc.maxLength.email'>...</span>
+            </td>
+            <td>
+              {{ accountUser.mobile | limitTo:amc.maxLength.normal }}
+              <span ng-if='accountUser.mobile.length > amc.maxLength.normal'>...</span>
+            </td>
             <td>{{ accountUser.status }}</td>
             <td class='text-right dashboardElementsEditRemove'>
               <img src='/icons/dashboardElement_edit.png' alt='' / ng-click="amc.openModal(amc.editModalTitle, 'edit', accountUser)">

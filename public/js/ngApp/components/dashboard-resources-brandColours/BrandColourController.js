@@ -145,7 +145,7 @@
 
       if(page == 'index' || page == 'indexBack') {
         init();
-        vm.currentPage = { page: page };
+        vm.currentPage = { page: 'index' };
       }
       else {
         if(page == 'edit') {

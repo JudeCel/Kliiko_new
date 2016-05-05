@@ -15,6 +15,7 @@
 
     vm.session = new SessionModel(sessionId);
     builderServices.session = vm.session;
+    builderServices.mainController = vm;
 
     vm.session.init().then(function(res) {
       if (!$stateParams.id) {
@@ -63,6 +64,7 @@
     }
 
     function goToStep(step) {
+      vm.listIgnoring = null;
       if (!angular.isNumber(step)) {
         if (step === 'back')  handlePreviousStep();
         if (step === 'next') handleNextStep();
@@ -159,9 +161,11 @@
     function currentPageToDisplay() {
       var path = "";
       if ( vm.showContactsList || vm.searchingParticipants || vm.searchingObservers ) {
+        vm.hideStuff = true;
         return vm.basePath+'steps/contactLists.html';
       }
 
+      vm.hideStuff = false;
       if (vm.currentStep) {
         if(vm.currentStep == 4 || vm.currentStep == 5) {
           path = vm.basePath+'steps/step4-5.tpl.html';
@@ -184,6 +188,14 @@
     }
 
     function selectParticipantsClickHandle() {
+      var id = vm.session.sessionData.participantListId;
+      if(id) {
+        vm.listIgnoring = { includes: true, active: { id: id }, ids: [id] };
+      }
+      else {
+        vm.listIgnoring = false;
+      }
+
       vm.searchingParticipants = true;
     }
 
@@ -193,8 +205,26 @@
 
     function finishSelectingMembers(activeList) {
       if (vm.searchingParticipants) {
-        vm.participants = vm.participants.concat(builderServices.selectMembers(activeList.id, activeList.members));
-        vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
+        var list = builderServices.selectMembers(activeList.id, activeList.members);
+
+        if(list.length > 0) {
+          if(!vm.session.sessionData.participantListId) {
+            vm.session.sessionData.participantListId = activeList.id;
+            vm.session.updateStep({ participantListId: activeList.id }).then(function(res) {
+            }, function (error) {
+              messenger.error(error);
+            });
+          }
+
+          if(vm.session.sessionData.participantListId == activeList.id) {
+            vm.participants = vm.participants.concat(list);
+            vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
+          }
+          else {
+            messenger.error("You can't select members from " + activeList.name + ' list');
+          }
+        }
+
         vm.searchingParticipants = false;
       }
 

@@ -20,6 +20,30 @@
     }
   }
 
+  @media (min-width: 584px){
+    #contact-lists-left-column {
+      padding-right: 5px;
+      padding-left: 5px;
+    }
+
+    #contact-lists-right-column {
+      padding-right: 5px;
+      padding-left: 5px;
+    }
+  }
+
+  @media (min-width: 1800px){
+    #contact-lists-left-column {
+      padding-right: 15px;
+      padding-left: 15px;
+    }
+
+    #contact-lists-right-column {
+      padding-right: 15px;
+      padding-left: 15px;
+    }
+  }
+
   #contact-lists-left-column {
 
     #list-of-contacts {
@@ -65,7 +89,7 @@
       }
 
       .item-name {
-        width: 6vw;
+        width: 90%;
         word-wrap: break-word;
       }
 
@@ -108,7 +132,7 @@
   }
   th, td {
     overflow: hidden;
-    min-width: 60px; 
+    min-width: 60px;
   }
 
   ////////
@@ -187,10 +211,7 @@
     }
 
     #no-contacts-in-list {
-      width: 450px;
       height: 500px;
-      margin-top: 74px;
-      margin-left: 18%;
     }
   }
 

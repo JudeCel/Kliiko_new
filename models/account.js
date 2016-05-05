@@ -9,7 +9,8 @@ module.exports = (Sequelize, DataTypes) => {
       validate: {
         notEmpty: true,
         is: constants.accountNameRegExp,
-        isUnique: validations.unique(Sequelize, 'Account', 'name', { lower: true })
+        isUnique: validations.unique(Sequelize, 'Account', 'name', { lower: true }),
+        isLength: validations.length('accountName', { max: 20 })
       }
     }
   },{

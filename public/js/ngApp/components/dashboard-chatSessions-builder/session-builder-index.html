@@ -74,7 +74,7 @@
 
       <ng-include src="sbc.currentPageToDisplay()"></ng-include>
 
-      <div class="col-md-12">
+      <div class="col-md-12" ng-if='!sbc.hideStuff'>
         <div class="row">
             <div class="col-md-3 btn-standart btn-green" ng-click="sbc.goToStep('back')"  ng-hide="sbc.stepsClassIsActive(1)">
               Previous step
