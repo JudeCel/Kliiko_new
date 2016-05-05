@@ -10,6 +10,7 @@
     var vm = this;
     var colorSchemeId, brandLogoId;
     vm.step1 = {};
+    vm.$state = $state;
 
     vm.accordions = {};
     vm.facilitators = [];
