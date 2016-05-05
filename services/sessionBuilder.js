@@ -888,7 +888,6 @@ function sessionMailTemplateStatus(id, accountId) {
               }).catch(function(error) {
                 deferred.reject(error);
               });
-              //getStepThreeTemplateTypes
             }
           }, function(error) {
               deferred.reject(error);

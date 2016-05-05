@@ -378,20 +378,6 @@ function validateTemplate(template) {
   return error;
 }
 
-function getTemplateIdForSessionWithBaseId(template) {
-  //saving from session builder
-  if (template.properties.sessionId) {
-    //version
-    if (!template.sessionId) {
-      //console.log("will need to get id for existing Temmplate /w sessionId", template.properties.sessionId);
-      console.log("___will create Temmplate /w sessionId", template);
-      return template.id;
-    }
-  }
-
-  return template.id;
-}
-
 function getMailTemplateForSession(req, callback) {
   let query = {id: req.template.id};
   if (req.accountId) {
@@ -410,35 +396,19 @@ function getMailTemplateForSession(req, callback) {
   let baseTemplateQuery = {id: req.template['MailTemplateBase.id']};
   let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
 
-
-    MailTemplate.find({
-      where: {
-        sessionId: req.template.properties.sessionId,
-        isCopy: true,
-        required: true
-      },
-      include: include})
-      .then(function(templates) {
-        callback(null, templates)
-      }).catch(function(error) {
-        callback(error);
-      });
+  MailTemplate.find({
+    where: {
+      sessionId: req.template.properties.sessionId,
+      isCopy: true,
+      required: true
+    },
+    include: include})
+    .then(function(templates) {
+      callback(null, templates)
+    }).catch(function(error) {
+      callback(error);
+    });
 }
-
-/*
-ill need to get id for existing Temmplate /w sessionId { id: 1,
-  name: 'First Invitation',
-  MailTemplateBaseId: 1,
-  AccountId: null,
-  systemMessage: false,
-  isCopy: null,
-  sessionId: null,
-  'MailTemplateBase.id': 1,
-  'MailTemplateBase.name': 'First Invitation',
-  'MailTemplateBase.systemMessage': false,
-  'MailTemplateBase.category': 'firstInvitation',
-  subject: 'Invitation to {Session Name}',
-*/
 
 function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, callback) {
   if (!template) {
@@ -484,7 +454,6 @@ function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, call
         }
       });
     }
-
   });
 }
 
