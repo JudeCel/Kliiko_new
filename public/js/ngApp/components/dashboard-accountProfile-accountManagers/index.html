@@ -37,8 +37,10 @@
             <span ng-if='accountUser.email.length > amc.maxLength.email'>...</span>
           </td>
           <td>
-            {{ accountUser.mobile | limitTo:amc.maxLength.normal }}
-            <span ng-if='accountUser.mobile.length > amc.maxLength.normal'>...</span>
+            <span ng-if='accountUser.mobile'>
+              {{ number = '+' + accountUser.phoneCountryData.dialCode + ' ' + accountUser.mobile; number | limitTo:amc.maxLength.normal }}
+              <span ng-if='number.length > amc.maxLength.normal'>...</span>
+            </span>
           </td>
           <td>{{ accountUser.status }}</td>
           <td class='text-right dashboardElementsEditRemove'>
