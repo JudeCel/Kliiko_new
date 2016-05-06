@@ -1,5 +1,6 @@
 'use strict';
 
+var constants = require('../util/constants');
 var models = require('./../models');
 var filters = require('./../models/filters');
 var AccountUser = models.AccountUser;
@@ -11,13 +12,31 @@ var _ = require('lodash');
 var crypto = require('crypto');
 var q = require('q');
 
+module.exports = {
+  createOrFindAccountManager: createOrFindAccountManager,
+  findAccountManagers: findAccountManagers,
+  findAndRemoveAccountUser: findAndRemoveAccountUser,
+  updateAccountManager: updateAccountManager
+};
+
 //Exports
 function createOrFindAccountManager(user, body, accountId) {
   let deferred = q.defer();
   let params = prepareParams(body);
+  params.role = 'accountManager';
+  delete params.id;
 
-  preValidate(user, accountId, params.email).then(function() {
-    return User.find({ where: { email: params.email } });
+  AccountUser.build(params).validate().then(function(errors) {
+    errors = errors || {};
+    delete params.role;
+    return preValidate(user, accountId, params.email, errors);
+  }).then(function(errors) {
+    if(_.isEmpty(errors)) {
+      return User.find({ where: { email: params.email } });
+    }
+    else {
+      throw errors;
+    }
   }).then(function(existsUser) {
     if(existsUser) {
       return inviteExistingUser(existsUser, params, accountId);
@@ -28,12 +47,113 @@ function createOrFindAccountManager(user, body, accountId) {
   }).then(function(params) {
     deferred.resolve(params);
   }).catch(function(error) {
-    console.error(error);
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function findAccountManagers(accountId) {
+  let deferred = q.defer();
+
+  AccountUser.findAll({
+    where: {
+      AccountId: accountId,
+      role: 'accountManager'
+    }
+  }).then(function(result) {
+    deferred.resolve(result);
+  }, function(error) {
     deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
-};
+}
+
+function findAndRemoveAccountUser(id, accountId) {
+  let deferred = q.defer();
+
+  AccountUser.find({
+    where: {
+      id: id,
+      owner: false
+    },
+    include: [{
+      model: Account,
+      where: { id: accountId }
+    }]
+  }).then(function(result) {
+    if(result) {
+      result.destroy().then(function() {
+        deferred.resolve('Successfully removed account from Account List');
+      }, function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+    else {
+      deferred.reject('Account not found or you are not an owner');
+    }
+  });
+
+  return deferred.promise;
+}
+
+function updateAccountManager(data) {
+  let deferred = q.defer();
+  let params = prepareParams(data);
+
+  AccountUser.update(params, { where: { id: data.id }, returning: true }).then(function(result) {
+    if(result[0] == 1) {
+      deferred.resolve({ message: 'Account manager was successfully updated.', accountManager: result[1][0] });
+    }
+    else {
+      deferred.reject("Account Manager not found");
+    }
+  }, function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+//Helpers
+function preValidate(user, accountId, email, errors) {
+  let deferred = q.defer();
+  if(!_.isEmpty(errors)) {
+    errors = filters.errors(errors);
+  }
+
+  if(user.email == email) {
+    errors.email = 'You are trying to invite yourself.';
+    deferred.resolve(errors);
+  }
+  else if(email) {
+    AccountUser.findAll({
+      include: [{
+        model: User,
+        where: { email: email }
+      }],
+      where: {
+        UserId: { $ne: user.id },
+        AccountId: accountId
+      }
+    }).then(function(accountUsers) {
+      if(!_.isEmpty(accountUsers)) {
+        errors.email = 'This user is already invited.';
+      }
+
+      deferred.resolve(errors);
+    }).catch(function(error) {
+      errors = _.merge(errors, filters.errors(error));
+      deferred.resolve(errors);
+    });
+  }
+  else {
+    deferred.resolve(errors);
+  }
+
+  return deferred.promise;
+}
 
 function inviteNewUser(params, accountId) {
   let deferred = q.defer();
@@ -75,43 +195,6 @@ function inviteExistingUser(existsUser, params, accountId) {
   return deferred.promise;
 }
 
-function updateAccountManager(data) {
-  let deferred = q.defer();
-
-  let params = {
-    firstName: data.firstName,
-    lastName: data.lastName,
-    email: data.email,
-    gender: data.gender,
-    mobile: data.mobile,
-    phoneCountryData: data.phoneCountryData,
-    country: data.country,
-    postalAddress: data.postalAddress,
-    city: data.city,
-    state: data.state,
-    postCode: data.postCode,
-    companyName: data.companyName,
-    landlineNumber: data.landlineNumber,
-    landlineNumberCountryData: data.landlineNumberCountryData
-  };
-
-  AccountUser.update(params, { where: { id: data.id }, returning: true }).then(function(au) {
-    AccountUser.find({
-      where :{
-        id: data.id
-      }
-    }).then(function(accountManager) {
-      deferred.resolve({message: "Account manager was successfully updated.", accountManager: accountManager});
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
-    });
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
-  });
-
-  return deferred.promise;
-}
-
 function createAccountUser(params, userId, type, accountId, cb) {
   let deferred = q.defer();
   adjustParamsForNewAccountUser(params, userId, accountId);
@@ -129,7 +212,7 @@ function createAccountUser(params, userId, type, accountId, cb) {
   return deferred.promise;
 }
 
-function addToContactList(accountUser, callback) {
+function addToContactList(accountUser) {
   let deferred = q.defer();
 
   models.ContactList.find({
@@ -156,100 +239,24 @@ function addToContactList(accountUser, callback) {
 }
 
 function userParams(email) {
-  return {email: email, password: crypto.randomBytes(16).toString('hex')};
+  return {
+    email: email,
+    password: crypto.randomBytes(16).toString('hex')
+  };
 }
 
-function findAccountManagers(currentDomainId, callback) {
-  AccountUser.findAll({where: {AccountId:  currentDomainId,
-    role: 'accountManager'}}).then(function(results) {
-      callback(null, results);
-  })
-};
-
-function findAndRemoveAccountUser(id, callback) {
-  AccountUser.find({
-    where: {
-      id: id,
-      owner: false
-    }
-  }).then(function(result) {
-    if(result) {
-      result.destroy().then(function() {
-        callback(null, 'Successfully removed account from Account List');
-      });
-    }
-    else {
-      callback('Account not found or you are not an owner');
-    }
-  });
-};
-
-//Helpers
-function preValidate(user, accountId, email) {
-  let deferred = q.defer();
-
-  if(user.email == email) {
-    deferred.reject({ email: 'You are trying to invite yourself.' });
-  }
-  else {
-    AccountUser.findAll({
-      include: [{
-        model: User,
-        where: { email: email }
-      }],
-      where: {
-        UserId: { $ne: user.id },
-        AccountId: accountId
-      }
-    }).then(function(accountUsers) {
-      if(_.isEmpty(accountUsers)) {
-        deferred.resolve();
-      }
-      else {
-        deferred.reject({ email: 'This user is already invited.' });
-      }
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
-    });
-  }
-
-  return deferred.promise;
-};
-
 function adjustParamsForNewAccountUser(params, userId, accountId) {
-  params.status = "invited";
+  params.status = 'invited';
   params.role = 'accountManager';
   params.AccountId = accountId;
   params.UserId = userId;
   return params;
 }
 
-// return all Account managers invaited and accepted
-function findUsers(model, where, attributes, cb) {
-  AccountUser.findAll({
-    where: where,
-    include: [{
-      model: model
-    }],
-    attributes: attributes
-  }).then(function(accountUser) {
-    cb(null, accountUser);
-  }).catch(function(error) {
-    cb(filters.errors(error));
-  });
-}
-
 function inviteParams(accountUserId, accountId, userId, type) {
   return { userId: userId, accountUserId: accountUserId, accountId: accountId, userType: type, role: 'accountManager' };
-};
+}
 
 function prepareParams(body) {
-  return _.pick(body, ['firstName', 'lastName', 'gender', 'email', 'mobile', 'phoneCountryData', 'country', 'postalAddress', 'city', 'state', 'postCode', 'companyName', 'landlineNumber', 'landlineNumberCountryData']);
-};
-
-module.exports = {
-  createOrFindAccountManager: createOrFindAccountManager,
-  findAccountManagers: findAccountManagers,
-  findAndRemoveAccountUser: findAndRemoveAccountUser,
-  updateAccountManager: updateAccountManager
-};
+  return _.pick(body, constants.safeAccountUserParams);
+}

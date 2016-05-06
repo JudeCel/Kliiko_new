@@ -2,13 +2,10 @@ var accountManagerService = require('../../services/accountManager');
 var inviteService = require('../../services/invite');
 
 function get(req, res, next) {
-  accountManagerService.findAccountManagers(res.locals.currentDomain.id, function(error, accountUsers) {
-    if(error) {
-      res.send({ error: error });
-    }
-    else {
-      res.send({ accountUsers: accountUsers });
-    }
+  accountManagerService.findAccountManagers(res.locals.currentDomain.id).then(function(accountUsers) {
+    res.send({ accountUsers: accountUsers });
+  }, function(error) {
+    res.send({ error: error });
   });
 };
 
@@ -46,13 +43,10 @@ function removeInvite(req, res, next) {
 };
 
 function removeAccountUser(req, res, next) {
-  accountManagerService.findAndRemoveAccountUser(req.query.id, function(error, message) {
-    if(error) {
-      res.send({ error: error });
-    }
-    else {
-      res.send({ message: message });
-    }
+  accountManagerService.findAndRemoveAccountUser(req.query.id, res.locals.currentDomain.id).then(function(message) {
+    res.send({ message: message });
+  }, function(error) {
+    res.send({ error: error });
   });
 };
 

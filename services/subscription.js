@@ -46,10 +46,14 @@ module.exports = {
   getChargebeeSubscription: getChargebeeSubscription
 }
 
-function getChargebeeSubscription(subscriptionId) {
+function getChargebeeSubscription(subscriptionId, provider) {
   let deferred = q.defer();
 
-  chargebee.subscription.retrieve(subscriptionId).request(function(error,result){
+  if(!provider) {
+    provider = chargebee.subscription.retrieve;
+  }
+
+  provider(subscriptionId).request(function(error,result){
     if(error){
       deferred.reject(error);
     }else{
@@ -200,7 +204,9 @@ function createSubscription(accountId, userId, provider) {
     }
   }).then(function(chargebeeSub) {
     return SubscriptionPlan.find({
-      chargebeePlanId: chargebeeSub.subscription.plan_id
+      where: {
+        chargebeePlanId: chargebeeSub.subscription.plan_id
+      }
     }).then(function(plan) {
       if(plan){
         return models.sequelize.transaction(function (t) {
