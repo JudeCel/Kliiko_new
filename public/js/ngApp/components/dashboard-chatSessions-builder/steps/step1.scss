@@ -1,4 +1,35 @@
 #step-1 {
+  .search-contact{
+    label{
+      padding-top: 9px;
+      margin-bottom: 0;
+      text-align: right;
+      font-size: 17px;
+      color: #737373;
+    }
+    input{
+      border-width: 2px;
+      height: 45px;
+      border-radius: 0;
+      font-size: 14px;
+      line-height: 1.42857143;
+      color: #555;
+    }
+  }
+
+  .faciliator-paginate{
+    .pagination > .active > a{
+      background-color: #2F9F69;
+      border-color: #2F9F69;
+      color: #fff;
+    }
+    .pagination > li > a {
+      color: #2F9F69;
+    }
+    .pagination > .disabled > a {
+      color: #ddd;
+    }
+  }
 
   .data-time-content-wrapper {
     position: relative;

@@ -17,6 +17,7 @@ var _ = require('lodash');
 var q = require('q');
 
 const MIN_MAIL_TEMPLATES = 5;
+let mailCategories = ["firstInvitation", "confirmation", "generic", "notThisTime", "notAtAll", "closeSession"];
 
 const MESSAGES = {
   setUp: "You have successfully setted up your chat session.",
@@ -66,7 +67,8 @@ module.exports = {
   inviteMembers: inviteMembers,
   removeInvite: removeInvite,
   removeSessionMember: removeSessionMember,
-  sendGenericEmail: sendGenericEmail
+  sendGenericEmail: sendGenericEmail,
+  sessionMailTemplateStatus: sessionMailTemplateStatus
 };
 
 function initializeBuilder(params) {
@@ -584,7 +586,8 @@ function stepsDefinition(session) {
     startTime: session.startTime,
     endTime: session.endTime,
     resourceId: session.resourceId,
-    brandProjectPreferenceId:  session.brandProjectPreferenceId
+    brandProjectPreferenceId:  session.brandProjectPreferenceId,
+
   };
   object.step2 = { stepName: 'facilitatiorAndTopics' };
   async.parallel([
@@ -658,7 +661,7 @@ function step1Queries(session, step) {
     function(cb) {
       searchSessionMembers(session.id, 'facilitator').then(function(members) {
         if(!_.isEmpty(members)) {
-          step.facilitator = members[0].id;
+          step.facilitator = members[0];
         }
         cb();
       }).catch(function(error) {
@@ -784,7 +787,7 @@ function findValidation(step, params) {
     });
   }
   else if(step == 'inviteSessionObservers') {
-    deferred.resolve(); // We don't need any validations on the last step
+    deferred.resolve();
   }
   else {
     deferred.resolve();
@@ -859,9 +862,69 @@ function validateStepTwo(params) {
   return deferred.promise;
 }
 
-function validateStepThree(params) {
+function getSessionObjectForMailTemplate(id, accountId) {
   let deferred = q.defer();
-  let mailCategories = ["firstInvitation", "confirmation", "notThisTime", "notAtAll", "closeSession"];
+  validators.hasValidSubscription(accountId).then(function() {
+      findSession(id, accountId).then(function(session) {
+        sessionBuilderObject(session).then(function(sessionObj) {
+          let response = {sessionObj: sessionObj, session: session};
+          deferred.resolve(response);
+        }, function(error) {
+          deferred.reject(error);
+        });
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }, function(error) {
+      deferred.reject(error);
+    })
+  return deferred.promise;
+}
+
+function prepareCreatedSessionTemplateList(params, templates, deferred) {
+  getStepThreeTemplateTypes(params).then(function(uniqueCopies) {
+    if(uniqueCopies && uniqueCopies.length) {
+      _.forEach(uniqueCopies, function(category) {
+        _.forEach(templates, function(template) {
+          if(template.category == category) {
+            template.created = true;
+          }
+        });
+      })
+    }
+    deferred.resolve({templates: templates});
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+}
+
+function processSessionObjectForMailTemplate(id, accountId, sessionObj, session, deferred) {
+  let params = findCurrentStep(sessionObj.sessionBuilder.steps, session.step);
+  params.id = id;
+  params.accountId = accountId;
+  mailTemplateService.getMailTemplateTypeList(mailCategories, function(error, result) {
+    if (error) {
+      deferred.reject(error);
+    } else {
+      prepareCreatedSessionTemplateList(params, result, deferred);
+    }
+  }, function(error) {
+      deferred.reject(error);
+  });
+}
+
+function sessionMailTemplateStatus(id, accountId) {
+  let deferred = q.defer();
+  getSessionObjectForMailTemplate(id, accountId).then(function(result) {
+      processSessionObjectForMailTemplate(id, accountId, result.sessionObj, result.session, deferred);
+    }, function(error) {
+      deferred.reject(error);
+  });
+  return deferred.promise;
+}
+
+function getStepThreeTemplateTypes(params) {
+  let deferred = q.defer();
   let baseTemplateQuery = {category:{ $in: mailCategories }};
   let include = [{ model: models.MailTemplateBase, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
 
@@ -878,6 +941,7 @@ function validateStepThree(params) {
       let errors = {};
 
       _.forEach(mailCategories, function(category) {
+
         _.forEach(templates, function(template) {
           if(template.MailTemplateBase.category == category){
             uniqueCopies.push(template.MailTemplateBase.category);
@@ -886,16 +950,26 @@ function validateStepThree(params) {
       })
 
       uniqueCopies = _.uniq(uniqueCopies);
-
-      if(uniqueCopies.length < MIN_MAIL_TEMPLATES){
-        errors.emailTemplates = MESSAGES.errors.thirdStep.emailTemplates;
-      }
-
-      _.isEmpty(errors) ? deferred.resolve() : deferred.reject(errors);
+      deferred.resolve(uniqueCopies);
     }).catch(function(error) {
       deferred.reject(error);
     })
   });
+
+  return deferred.promise;
+}
+
+function validateStepThree(params) {
+  let deferred = q.defer();
+  getStepThreeTemplateTypes(params).then(function(uniqueCopies) {
+      let errors = {};
+      if(uniqueCopies.length < MIN_MAIL_TEMPLATES){
+        errors.emailTemplates = MESSAGES.errors.thirdStep.emailTemplates;
+      }
+      _.isEmpty(errors) ? deferred.resolve() : deferred.reject(errors);
+    }).catch(function(error) {
+      deferred.reject(error);
+    });
 
   return deferred.promise;
 }

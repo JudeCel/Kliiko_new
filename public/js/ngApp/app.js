@@ -22,6 +22,7 @@
     'topicsAndSessions',
     'ngFileUpload',
     'ui.sortable',
+    'angularUtils.directives.dirPagination',
 
     // app modules
     'KliikoApp.user',

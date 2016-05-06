@@ -9,7 +9,8 @@ module.exports = (Sequelize, DataTypes) => {
     email: { type: DataTypes.STRING, allowNull: false, validate: {
       notEmpty: true,
       is: constants.emailRegExp,
-      isUnique: validations.unique(Sequelize, 'User', 'email')
+      isUnique: validations.unique(Sequelize, 'User', 'email'),
+      isLength: validations.length('email', { max: 60 })
     } },
     encryptedPassword: { type : DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     password: {

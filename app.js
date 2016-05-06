@@ -10,6 +10,7 @@ var bodyParser = require('body-parser');
 var passport = require('./middleware/passport');
 var subdomain = require('./middleware/subdomain');
 var currentUser = require('./middleware/currentUser');
+var sessionMiddleware = require('./middleware/session');
 var flash = require('connect-flash');
 var app = express();
 var fs = require('fs');
@@ -37,7 +38,8 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: true, saveUninitialized: false,
   domain: process.env.SERVER_BASE_DOMAIN,
-  cookie: { domain: process.env.SERVER_BASE_DOMAIN}
+  cookie: { domain: process.env.SERVER_BASE_DOMAIN},
+  rolling: true
 }));
 
 app.use(passport.initialize());
@@ -51,10 +53,9 @@ var resources = require('./routes/resources');
 var api = require('./routes/api');
 
 app.use('/', routes);
-app.use('/dashboard', currentUser.assign, dashboard);
-app.use('/resources', currentUser.assign, resources);
-app.use('/api', currentUser.assign, api);
-
+app.use('/dashboard', sessionMiddleware.extendUserSession, currentUser.assign, dashboard);
+app.use('/resources', sessionMiddleware.extendUserSession, currentUser.assign, resources);
+app.use('/api', sessionMiddleware.extendUserSession, currentUser.assign, api);
 
 // Added socket.io routes
 // catch 404 and forward to error handler
