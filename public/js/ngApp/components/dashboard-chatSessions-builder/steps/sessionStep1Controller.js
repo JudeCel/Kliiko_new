@@ -81,16 +81,7 @@
       }
 
       step1Service.updateContact(params).then(function (result) {
-        angular.copy(
-          {
-            firstName: result.data.firstName,
-            lastName: result.data.lastName,
-            email: result.data.email,
-            companyName: result.data.companyName,
-            listName: vm.allContacts[vm.editedContactIndex].listName
-          },
-          vm.allContacts[vm.editedContactIndex]
-        )
+        angular.copy(result.data, vm.allContacts[vm.editedContactIndex])
 
         messenger.ok('Contact '+ result.data.firstName + ' has been updated');
         closeFacilitatorForm();
@@ -100,8 +91,6 @@
     }
 
     function editContact(userData) {
-
-
       vm.formAction = 'update';
       domServices.modal('facilitatorForm');
       angular.copy(userData, vm.userData);
@@ -119,11 +108,11 @@
     }
 
     function setDependencies(newContact) {
-      newContact.phoneCountryData = $("#contactMobile").intlTelInput('getSelectedCountryData');
-      newContact.landlineNumberCountryData = $("#contactLandlineNumber").intlTelInput('getSelectedCountryData');
+      newContact.phoneCountryData = $("#facilitatorMobile").intlTelInput('getSelectedCountryData');
+      newContact.landlineNumberCountryData = $("#facilitatorLandlineNumber").intlTelInput('getSelectedCountryData');
 
-      newContact.mobile = $("#contactMobile").val();
-      newContact.landlineNumber = $("#contactLandlineNumber").val();
+      newContact.mobile = $("#facilitatorMobile").val();
+      newContact.landlineNumber = $("#facilitatorLandlineNumber").val();
 
       return newContact;
     }
