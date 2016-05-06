@@ -9,39 +9,25 @@ var AccountUser = models.AccountUser;
 var userService = require('./../../services/users');
 var inviteService = require('./../../services/invite');
 var accountManagerService = require('./../../services/accountManager');
+var userFixture = require('./../fixtures/user');
 
 var assert = require('chai').assert;
 var async = require('async');
 
-var testUser = null, testAccountUser = null, testAccount = null;
+var testData;
 
 describe('SERVICE - AccountManager', function() {
   beforeEach(function(done) {
-    let attrs = {
-      accountName: "Lilo",
-      firstName: "Lilu",
-      lastName: "Dalas",
-      password: "multipassword",
-      email: "lilu.tanya@gmail.com",
-      gender: "male"
-    };
-
-    models.sequelize.sync({ force: true }).then(() => {
-      userService.create(attrs, function(err, user) {
-        testUser = user;
-        user.getOwnerAccount().then(function(accounts) {
-          user.getAccountUsers().then(function(accountUsers) {
-            testAccountUser = accountUsers[0];
-            testAccount = accounts[0];
-            done();
-          });
-        });
-      });
+    userFixture.createUserAndOwnerAccount().then(function(result) {
+      testData = result;
+      done();
+    }).catch(function(error) {
+      done(error);
     });
   });
 
   afterEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
+    models.sequelize.sync({ force: true }).then(function() {
       done();
     });
   });
@@ -75,104 +61,68 @@ describe('SERVICE - AccountManager', function() {
     ];
   }
 
-  function requestObject(params) {
+  function sampleData(params) {
     let newParams = params || {};
 
     return {
-      user: {
-        id: testUser.id,
-        ownerAccountId: testAccount.id,
-        email: 'someother@email.com'
-      },
+      accountId: testData.account.id,
+      role: 'accountManager',
+      user: { id: testData.user.id, email: testData.user.email },
       body: {
         firstName: 'FirstName',
         lastName: 'LastName',
         gender: 'male',
         email: 'some@email.com'
-      },
-      query: {
-        id: newParams.id,
-        type: newParams.type
       }
-    };
+    }
   }
 
   describe('#createOrFindAccountManager', function() {
-    let role = 'accountManager';
     describe('happy path', function() {
-      it.skip('should find existing user', function (done) {
-        let req = requestObject();
-        req.body.email = 'lilu2.tanya@gmail.com';
-        let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
+      it('should create new user', function(done) {
+        let data = sampleData();
 
-        accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
-          if(error) {
-            done(error);
-          }
+        accountManagerService.createOrFindAccountManager(data.user, data.body, data.accountId).then(function(params) {
+          AccountUser.find({ where: { email: data.body.email } }).then(function(accountUser) {
+            let returnParams = {
+              userId: accountUser.UserId,
+              accountUserId: accountUser.id,
+              accountId: data.accountId,
+              userType: 'new',
+              role: accountUser.role
+            };
 
-          let returnParams = {
-            accountUserId: testAccountUser.id,
-            accountId: testAccount.id,
-            userType: 'existing',
-            role: 'accountManager'
-          };
-
-          assert.equal(error, null);
-          assert.deepEqual(params, returnParams);
-          done();
-        });
-      });
-
-      it('should create new user', function (done) {
-        let req = requestObject();
-        let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
-
-        accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
-          if(error) {
-            done(error);
-          }
-
-          AccountUser.find({ where: { email: req.body.email } }).then(function(accountUser) {
-            if(accountUser) {
-              let returnParams = {
-                userId: accountUser.UserId,
-                accountUserId: accountUser.id,
-                accountId: testAccount.id,
-                userType: 'new',
-                role: accountUser.role
-              };
-
-              assert.equal(error, null);
-              assert.deepEqual(params, returnParams);
-              done();
-            }
-            else {
-              done('AccountUser not found');
-            }
+            assert.deepEqual(params, returnParams);
+            done();
           });
+        }, function(error) {
+          done(error);
         });
       });
     });
 
     describe('sad path', function() {
       it('should fail because of inviting himself', function (done) {
-        let req = requestObject();
-        req.user.email = 'some@email.com';
-        let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
+        let data = sampleData();
+        data.user.email = data.body.email;
 
-        accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
+        accountManagerService.createOrFindAccountManager(data.user, data.body, data.accountId).then(function(params) {
+          done('Should not get here!');
+        }, function(error) {
           assert.deepEqual(error, { email: 'You are trying to invite yourself.' });
           done();
         });
       });
 
       it('should fail because of already accepted', function (done) {
-        let req = requestObject();
-        req.user.id = testUser.id + 99;
-        req.body.email = 'lilu.tanya@gmail.com';
-        let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
+        let data = sampleData();
+        data.user.id = testData.user.id + 99;
+        data.user.email = 'other@mail.com';
+        data.body.email = testData.user.email;
 
-        accountManagerService.createOrFindAccountManager(req,res, function(error, params) {
+        accountManagerService.createOrFindAccountManager(data.user, data.body, data.accountId).then(function(params) {
+          done('Should not get here!');
+        }, function(error) {
           assert.deepEqual(error.email, "This user is already invited.");
           done();
         });
@@ -181,57 +131,13 @@ describe('SERVICE - AccountManager', function() {
   });
 
   describe('#findAccountManagers', function() {
-    let role = 'accountManager';
-
     it('should find accepted user', function (done) {
-      let req = requestObject();
-      let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
+      let data = sampleData();
 
-      accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
-        if(error) {
-          done(error);
-        }
-
-        AccountUser.find({ where: { email: req.body.email } }).then(function(accountUser) {
-          inviteService.createInvite(params).then(function(data) {
-            if(error) {
-              done(error);
-            }
-
-            let userParams = { accountName: 'newname', password: 'newpassword' };
-            inviteService.acceptInviteNew(data.invite.token, userParams, function(error, message) {
-              if(error) {
-                done(error);
-              }
-
-              async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 2 }), function(error, result) {
-                if(error) {
-                  done(error);
-                }
-                accountManagerService.findAccountManagers(testAccount.id, function(error, userArray) {
-                  let subject = userArray[0];
-                  assert.equal(subject.status, "active");
-                  assert.equal(subject.AccountId, testAccount.id);
-                  done();
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-
-    it('should find invited user', function (done) {
-
-      let req = requestObject();
-      let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
-      accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
-        if(error) {
-          done(error);
-        }
-
-        User.find({ where: { email: req.body.email } }).then(function(user) {
-          inviteService.createInvite(params).then(function(data) {
+      accountManagerService.createOrFindAccountManager(data.user, data.body, data.accountId).then(function(params) {
+        inviteService.createInvite(params).then(function(result) {
+          let userParams = { accountName: 'newname', password: 'newpassword' };
+          inviteService.acceptInviteNew(result.invite.token, userParams, function(error, message) {
             if(error) {
               done(error);
             }
@@ -240,39 +146,59 @@ describe('SERVICE - AccountManager', function() {
               if(error) {
                 done(error);
               }
-
-              accountManagerService.findAccountManagers(testAccount.id, function(error, userArray) {
-                let subject = userArray[1];
-                assert.equal(subject.status, "invited");
-                assert.equal(subject.AccountId, testAccount.id);
+              accountManagerService.findAccountManagers(data.accountId).then(function(results) {
+                let subject = results[0];
+                assert.equal(subject.status, 'active');
+                assert.equal(subject.AccountId, data.accountId);
                 done();
+              }, function(error) {
+                done(error);
               });
             });
           });
         });
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    it('should find invited user', function (done) {
+      let data = sampleData();
+
+      accountManagerService.createOrFindAccountManager(data.user, data.body, data.accountId).then(function(params) {
+        inviteService.createInvite(params).then(function(result) {
+          async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 2 }), function(error, result) {
+            if(error) {
+              done(error);
+            }
+
+            accountManagerService.findAccountManagers(data.accountId).then(function(result) {
+              let subject = result[1];
+              assert.equal(subject.status, 'invited');
+              assert.equal(subject.AccountId, data.accountId);
+              done();
+            }, function(error) {
+              done(error);
+            });
+          });
+        }, function(error) {
+          done(error);
+        });
+      }, function(error) {
+        done(error);
       });
     });
   });
 
   describe('#findAndRemoveAccountUser', function() {
-    let role = 'accountManager';
-
     it('should remove account from list', function (done) {
-      let req = requestObject();
-      let res = { locals: {currentDomain: { id: testAccount.id, name: testAccount.name, roles: [role] } } }
+      let data = sampleData();
 
-      accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
-        if(error) {
-          done(error);
-        }
-        AccountUser.find({ where: { email: req.body.email } }).then(function(accountUser) {
-          inviteService.createInvite(params).then(function(data) {
-            if(error) {
-              done(error);
-            }
-
+      accountManagerService.createOrFindAccountManager(data.user, data.body, data.accountId).then(function(params) {
+        AccountUser.find({ where: { email: data.body.email } }).then(function(accountUser) {
+          inviteService.createInvite(params).then(function(result) {
             let userParams = { accountName: 'newname', password: 'newpassword' };
-            inviteService.acceptInviteNew(data.invite.token, userParams, function(error, message) {
+            inviteService.acceptInviteNew(result.invite.token, userParams, function(error, message) {
               if(error) {
                 done(error);
               }
@@ -282,18 +208,21 @@ describe('SERVICE - AccountManager', function() {
                   done(error);
                 }
 
-                accountManagerService.findAndRemoveAccountUser(accountUser.id, function(error, message) {
-                  assert.equal(error, null);
+                accountManagerService.findAndRemoveAccountUser(accountUser.id, data.accountId).then(function(message) {
                   assert.equal(message, 'Successfully removed account from Account List');
 
                   async.parallel(countTables({ invite: 0, account: 1, user: 2, accountUser: 1 }), function(error, result) {
                     done(error);
                   });
+                }, function(error) {
+                  done(error);
                 });
               });
             });
           });
         });
+      }, function(error) {
+        done(error);
       });
     });
   });

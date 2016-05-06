@@ -23,10 +23,13 @@ module.exports = {
 function createOrFindAccountManager(user, body, accountId) {
   let deferred = q.defer();
   let params = prepareParams(body);
+  params.role = 'accountManager';
   delete params.id;
 
   AccountUser.build(params).validate().then(function(errors) {
-    return preValidate(user, accountId, params.email, filters.errors(errors));
+    errors = errors || {};
+    delete params.role;
+    return preValidate(user, accountId, params.email, errors);
   }).then(function(errors) {
     if(_.isEmpty(errors)) {
       return User.find({ where: { email: params.email } });
@@ -116,6 +119,9 @@ function updateAccountManager(data) {
 //Helpers
 function preValidate(user, accountId, email, errors) {
   let deferred = q.defer();
+  if(!_.isEmpty(errors)) {
+    errors = filters.errors(error);
+  }
 
   if(user.email == email) {
     errors.email = 'You are trying to invite yourself.';
