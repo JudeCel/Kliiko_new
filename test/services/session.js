@@ -199,11 +199,13 @@ describe('SERVICE - Session', function() {
         sessionServices.findSession(testData.session.id, testData.account.id, provider).then(function(result) {
           let params = { id: result.data.SessionMembers[0].id, rating: 4 };
 
-          sessionServices.updateSessionMemberRating(params, testData.user.id, testData.account.id).then(function(result) {
-            done('Should not get here!');
-          }, function(error) {
-            assert.equal(error, sessionServices.messages.cantRateSelf);
-            done();
+          models.AccountUser.find({ accountUserId: result.data.SessionMembers[0].accountUserId }).then(function(accountUser) {
+            sessionServices.updateSessionMemberRating(params, accountUser.UserId, accountUser.AccountId).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              assert.equal(error, sessionServices.messages.cantRateSelf);
+              done();
+            });
           });
         });
       });
