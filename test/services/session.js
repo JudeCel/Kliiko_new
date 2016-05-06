@@ -196,11 +196,14 @@ describe('SERVICE - Session', function() {
       });
 
       it('should fail because cannot rate self', function (done) {
-        sessionServices.findSession(testData.session.id, testData.account.id, provider).then(function(result) {
-          let params = { id: result.data.SessionMembers[0].id, rating: 4 };
+        models.Subscription.find({ include: [{ model: models.Account, include: [{ model: models.AccountUser, include: [models.SessionMember] }] }] }).then(function(subscription) {
+          let accountId = subscription.Account.AccountUsers[0].AccountId;
+          let userId = subscription.Account.AccountUsers[0].UserId;
 
-          models.AccountUser.find({ accountUserId: result.data.SessionMembers[0].accountUserId }).then(function(accountUser) {
-            sessionServices.updateSessionMemberRating(params, accountUser.UserId, accountUser.AccountId).then(function(result) {
+          sessionServices.findSession(testData.session.id, accountId, provider).then(function(result) {
+            let params = { id: subscription.Account.AccountUsers[0].SessionMembers[0].id, rating: 4 };
+
+            sessionServices.updateSessionMemberRating(params, userId, accountId).then(function(result) {
               done('Should not get here!');
             }, function(error) {
               assert.equal(error, sessionServices.messages.cantRateSelf);
