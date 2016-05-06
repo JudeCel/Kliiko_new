@@ -13,6 +13,7 @@
     vm.step1 = {};
     vm.$state = $state;
 
+    vm.selectedFacilitator = {};
     vm.userData = {};
     vm.accordions = {};
     vm.facilitators = [];
@@ -21,6 +22,7 @@
     vm.session = null;
 
     vm.formAction = null;
+    vm.name = '';
 
     vm.updateStep = updateStep;
     vm.addFacilitatorsClickHandle = addFacilitatorsClickHandle;
@@ -39,22 +41,15 @@
     vm.facilitatorContactListId = null;
 
     function newFacilitator(userData) {
+
+      userData = setDependencies(userData);
       var params = {
         defaultFields: userData,
         contactListId: vm.facilitatorContactListId
       }
 
       step1Service.createNewFcilitator(params).then(function (result) {
-        vm.formAction = 'new';
-
-        vm.allContacts.push({
-          firstName: result.firstName,
-          lastName: result.lastName,
-          email: result.email,
-          companyName: result.companyName,
-          listName: "Facilitators"
-        });
-
+        vm.allContacts.push(result);
         messenger.ok('New contact '+ result.firstName + ' was added to list Facilitators');
         closeFacilitatorForm();
       }, function (error) {
@@ -71,6 +66,7 @@
     }
 
     function saveEdited(userData) {
+      userData = setDependencies(userData);
       var params = {
         defaultFields: userData,
         contactListId: vm.facilitatorContactListId
@@ -96,6 +92,8 @@
     }
 
     function editContact(userData) {
+      
+
       vm.formAction = 'update';
       domServices.modal('facilitatorForm');
       angular.copy(userData, vm.userData);
@@ -110,6 +108,16 @@
     function closeFacilitatorForm() {
       domServices.modal('facilitatorForm', 'close');
       vm.userData = {};
+    }
+
+    function setDependencies(newContact) {
+      newContact.phoneCountryData = $("#contactMobile").intlTelInput('getSelectedCountryData');
+      newContact.landlineNumberCountryData = $("#contactLandlineNumber").intlTelInput('getSelectedCountryData');
+
+      newContact.mobile = $("#contactMobile").val();
+      newContact.landlineNumber = $("#contactLandlineNumber").val();
+
+      return newContact;
     }
 
     function getAllContacts() {
@@ -137,6 +145,8 @@
       parseDateAndTime('initial');
       initStep(null, 'initial');
       getAllContacts();
+      vm.name = vm.session.steps.step1.name;
+      vm.selectedFacilitator = vm.session.steps.step1.facilitator;
     }
 
     function sessionId() {
@@ -257,10 +267,10 @@
     }
 
     function facilitatorsSelectHandle(facilitator) {
-      vm.session.steps.step2.facilitator = facilitator;
       vm.showContactsList = false;
       vm.session.addMembers(facilitator, 'facilitator').then( function (res) {
           console.error(res);
+          vm.session.steps.step1.facilitator = facilitator;
           messenger.ok("Facilitator was successfully set");
         },
         function (err) { messenger.error(err);  }

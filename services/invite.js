@@ -76,12 +76,7 @@ function createBulkInvites(arrayParams) {
       deferred.reject("None created");
     }
   }).catch(function(error) {
-    if(error.name == 'SequelizeUniqueConstraintError') {
-      deferred.reject({ email: 'User has already been invited' });
-    }
-    else {
-      deferred.reject(filters.errors(error));
-    }
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;

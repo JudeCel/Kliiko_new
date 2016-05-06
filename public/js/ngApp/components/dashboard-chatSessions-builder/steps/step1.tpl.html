@@ -58,10 +58,9 @@
           Select Facilitator
           <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.sessionName, 'glyphicon-chevron-right': !step1Controller.accordions.sessionName}"></i>
           <span class="panel-value pull-right">
-            {{ step1Controller.selectedFacilitator.lastName + ' ' + step1Controller.selectedFacilitator.firstName}}
+            {{ step1Controller.session.steps.step1.facilitator.lastName + ' ' + step1Controller.session.steps.step1.facilitator.firstName}}
           </span>
         </div>
-        <!-- {{ sbc.session.steps.step1.facilitator }} -->
       </uib-accordion-heading>
 
       <div id='dashboard-contact-lists' ng-controller="ContactListController as clc">
@@ -99,9 +98,16 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="member-row" dir-paginate="member in step1Controller.facilitators = step1Controller.allContacts | filter:q | itemsPerPage: step1Controller.pageSize" current-page="step1Controller.currentPage">
+                  <tr class="member-row"
+                      dir-paginate="member in step1Controller.allContacts | filter:q | itemsPerPage: step1Controller.pageSize"
+                      current-page="step1Controller.currentPage"
+                      ng-class="{'selected':member._selected}">
+
                     <td class="selection-column">
-                      <input type="radio" ng-value="member" ng-model="step1Controller.selectedFacilitator" ng-click="step1Controller.facilitatorsSelectHandle(step1Controller.selectedFacilitator)">
+                      <input type="radio"
+                             ng-value="member"
+                             ng-model="step1Controller.selectedFacilitator"
+                             ng-click="step1Controller.facilitatorsSelectHandle(step1Controller.selectedFacilitator)">
                     </td>
                     <td>{{ member.firstName }}</td>
                     <td>{{ member.lastName }}</td>

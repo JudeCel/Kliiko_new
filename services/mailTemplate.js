@@ -211,7 +211,7 @@ function getAllSessionMailTemplates(accountId, getNoAccountData, sessionId, getS
   let baseTemplateQuery = {category:{ $in: ["firstInvitation", "confirmation", "notThisTime", "notAtAll", "closeSession", "generic"] }};
   let templateQuery = {};
   if (sessionId) {
-    templateQuery['$or'] = [{sessionId: sessionId}, {sessionId: null}];
+    templateQuery.sessionId = {'$or': [sessionId, null]};
   }
   getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback);
 }
@@ -226,7 +226,7 @@ function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSyste
 
   let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
 
-  if(!query.sessionId){
+  if(accountId && !getSystemMail){
     query['$or'] = [{AccountId: accountId}, {AccountId: null}];
   }
 
