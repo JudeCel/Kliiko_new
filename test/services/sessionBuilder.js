@@ -3,10 +3,13 @@
 var assert = require('chai').assert;
 var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscription');
+var mailFixture = require('./../fixtures/mailTemplates');
+var constants = require('../../util/constants');
 var models = require('./../../models');
 
 var sessionBuilderServices = require('./../../services/sessionBuilder');
 var async = require('async');
+var _ = require('lodash');
 
 describe('SERVICE - SessionBuilder', function() {
   var testUser, testAccount, testAccountUser;
@@ -611,20 +614,6 @@ describe('SERVICE - SessionBuilder', function() {
       }
     }
 
-    function multipleTemplates(count, sessionId) {
-      let array = new Array(count);
-      array.fill(
-        function(cb) {
-          models.MailTemplate.create(mailTemplateParams(sessionId)).then(function(result) {
-            cb();
-          }).catch(function(error) {
-            cb(error);
-          });
-        }
-      );
-      return array;
-    };
-
     describe('happy path', function(done) {
       it('should succeed on moving to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
@@ -632,22 +621,30 @@ describe('SERVICE - SessionBuilder', function() {
           params.step = 'manageSessionEmails';
 
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-            async.parallel(multipleTemplates(5, params.id), function(error, _result) {
-              if(error){
-                done(error);
-              }
-              sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-                sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
-                  assert.equal(session.step, 'manageSessionParticipants');
-                  done();
-                }, function(error) {
-                  done(error);
-                });
+            mailFixture.createMailTemplate().then(function() {
+              models.MailTemplate.findAll({
+                include: [{
+                  model: models.MailTemplateBase,
+                  where: { category: { $in: constants.sessionBuilderEmails } }
+                }]
+              }).then(function(result) {
+                let ids = _.map(result, 'id');
+
+                models.MailTemplate.update({ sessionId: params.id, isCopy: true }, { where: { MailTemplateBaseId: { $in: ids } } }).then(function() {
+                  sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                    sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
+                      assert.equal(session.step, 'manageSessionParticipants');
+                      done();
+                    }, function(error) {
+                      done(error);
+                    });
+                  }, function(error) {
+                    done(error);
+                  });
+                })
               }, function(error) {
                 done(error);
               });
-            }, function(error) {
-              done(error);
             });
           }, function(error) {
             done(error);
@@ -666,7 +663,7 @@ describe('SERVICE - SessionBuilder', function() {
             sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
               done('Should not get here!');
             }, function(error) {
-              assert.equal(error.emailTemplates, sessionBuilderServices.messages.errors.thirdStep.emailTemplates + 5);
+              assert.equal(error.emailTemplates, sessionBuilderServices.messages.errors.thirdStep.emailTemplates);
               done();
             });
           }, function(error) {
@@ -678,6 +675,17 @@ describe('SERVICE - SessionBuilder', function() {
   });
 
   describe('#fourthStep', function(done) {
+    function inviteParams(sessionId) {
+      return {
+        token: 'randomtoken',
+        sentAt: new Date(),
+        expireAt: new Date(),
+        role: 'participant',
+        sessionId: sessionId,
+        accountUserId: testAccountUser.id
+      }
+    }
+
     describe('happy path', function(done) {
       it('should succeed on moving to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
@@ -685,7 +693,7 @@ describe('SERVICE - SessionBuilder', function() {
           params.step = 'manageSessionParticipants';
 
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-            models.SessionMember.create(sessionMemberParams(params.id)).then(function(member) {
+            models.Invite.create(inviteParams(params.id)).then(function() {
               sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
                 sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
                   assert.equal(session.step, 'inviteSessionObservers');
