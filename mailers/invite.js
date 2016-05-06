@@ -74,6 +74,13 @@ function sendInviteSession(inviteParams, callback) {
       callback(error, result);
     });
   }
+  else if(inviteParams.role == 'facilitator'){
+    inviteParams.logInUrl = helpers.getUrl(inviteParams.token, '/invite/');
+
+    mailHelper.sendFacilitatorEmailConfirmation(inviteParams, function(error, result) {
+      callback(error, result);
+    });
+  }
 };
 
 module.exports = {

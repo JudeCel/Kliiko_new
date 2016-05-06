@@ -25,8 +25,6 @@
     vm.name = '';
 
     vm.updateStep = updateStep;
-    vm.addFacilitatorsClickHandle = addFacilitatorsClickHandle;
-    vm.facilitatorsSelectHandle = facilitatorsSelectHandle;
     vm.initGallery = initGallery;
     vm.galleryDropdownData = galleryDropdownData;
     vm.newFacilitator = newFacilitator;
@@ -35,13 +33,22 @@
     vm.deleteContact = deleteContact;
     vm.editContact = editContact;
     vm.saveEdited = saveEdited;
+    vm.inviteFacilitator = inviteFacilitator;
 
     vm.currentPage = 1;
     vm.pageSize = 3;
     vm.facilitatorContactListId = null;
 
-    function newFacilitator(userData) {
+    function inviteFacilitator(facilitator) {
+      vm.session.addMembers(facilitator, 'facilitator').then( function (res) {
+        vm.session.steps.step1.facilitator = facilitator;
+        messenger.ok("Facilitator was successfully set");
+      }, function (err) {
+        messenger.error(err);
+      });
+    }
 
+    function newFacilitator(userData) {
       userData = setDependencies(userData);
       var params = {
         defaultFields: userData,
@@ -49,6 +56,7 @@
       }
 
       step1Service.createNewFcilitator(params).then(function (result) {
+        result.listName = "facilitator";
         vm.allContacts.push(result);
         messenger.ok('New contact '+ result.firstName + ' was added to list Facilitators');
         closeFacilitatorForm();
@@ -92,7 +100,7 @@
     }
 
     function editContact(userData) {
-      
+
 
       vm.formAction = 'update';
       domServices.modal('facilitatorForm');
@@ -260,21 +268,6 @@
           :  vm.accordions.dateAndTimeError = false;
 
       }
-    }
-
-    function addFacilitatorsClickHandle() {
-      vm.showContactsList = true;
-    }
-
-    function facilitatorsSelectHandle(facilitator) {
-      vm.showContactsList = false;
-      vm.session.addMembers(facilitator, 'facilitator').then( function (res) {
-          console.error(res);
-          vm.session.steps.step1.facilitator = facilitator;
-          messenger.ok("Facilitator was successfully set");
-        },
-        function (err) { messenger.error(err);  }
-      );
     }
 
     // Gallery stuff
