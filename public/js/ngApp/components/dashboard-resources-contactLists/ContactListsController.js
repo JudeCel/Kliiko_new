@@ -342,7 +342,6 @@
 
       }
 
-
       domServices.modal('contactList-addContactManual');
     }
 
@@ -352,36 +351,16 @@
      */
     function createContact() {
       var currentList = vm.lists.activeList;
-
       var newContact = angular.copy(vm.newContact);
-      if(validatePhoneNumber() && validateLandlineNumber(newContact.landlineNumber)){
-        vm.lists.addNewContact(vm.newContact).then(
-          function(res) {
-            vm.newContact = {customFields:{}};
 
-            domServices.modal('contactList-addContactManual', 'close');
-            messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
-          },
-          function (err) {
-            if(err.subEnded){
-              messenger.error(err);
-            }else{
-              vm.modalErrors = err;
-            }
-          }
-        );
-      }
-    }
+      vm.newContact = setDependencies(vm.newContact);
 
-    function updateContact() {
-      var newContact = angular.copy(vm.newContact);
-      var currentList = angular.copy(vm.lists.activeList);
-      if(validatePhoneNumber() && validateLandlineNumber(newContact.landlineNumber)){
-        vm.lists.updateContact(vm.newContact).then(function(res) {
+      vm.lists.addNewContact(vm.newContact).then(
+        function(res) {
           vm.newContact = {customFields:{}};
 
           domServices.modal('contactList-addContactManual', 'close');
-          messenger.ok('Contact '+ newContact.firstName + ' has been updated');
+          messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
         },
         function (err) {
           if(err.subEnded){
@@ -389,43 +368,35 @@
           }else{
             vm.modalErrors = err;
           }
-        });
-      }
-
+        }
+      );
     }
 
-    function validatePhoneNumber() {
-      if(!validatePhone()){
-        messenger.error("The mobile number for this country is not valid.");
-        return false;
-      }
-      return true;
+    function updateContact() {
+      var currentList = vm.lists.activeList;
+      var newContact = angular.copy(vm.newContact);
+
+      vm.newContact = setDependencies(vm.newContact);
+
+      vm.lists.updateContact(vm.newContact).then(function(res) {
+        vm.newContact = {customFields:{}};
+        domServices.modal('contactList-addContactManual', 'close');
+        messenger.ok('Contact '+ newContact.firstName + ' has been updated');
+      },
+      function (err) {
+        messenger.error(err);
+      });
     }
 
-    function validateLandlineNumber(landlineNumber) {
-      if(landlineNumber && !validLandlineNumber()){
-        messenger.error("The landline number for this country is not valid.");
-        return false;
-      }
-      return true;
+    function setDependencies(newContact) {
+      newContact.phoneCountryData = $("#facilitatorMobile").intlTelInput('getSelectedCountryData');
+      newContact.landlineNumberCountryData = $("#facilitatorLandlineNumber").intlTelInput('getSelectedCountryData');
+
+      newContact.mobile = $("#facilitatorMobile").val();
+      newContact.landlineNumber = $("#facilitatorLandlineNumber").val();
+
+      return newContact;
     }
-
-    function validatePhone() {
-      if ($("#contactMobile").val().length) {
-        return $("#contactMobile").intlTelInput("isValidNumber");
-      }
-
-      return true;
-    }
-
-    function validLandlineNumber() {
-      if ($("#contactLandlineNumber").val().length) {
-        return $("#contactLandlineNumber").intlTelInput("isValidNumber");
-      }
-
-      return true;
-    }
-
 
     /**
      * Remove contacts from list by given ids

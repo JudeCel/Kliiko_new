@@ -30,7 +30,7 @@ function create(params, callback) {
   let err = {};
 
   if (params.termsAndConditions === "false") {
-    err.termsAndConditions = "You must agree to the terms and conditions before register."
+    err.termsAndConditions = "You must agree to the Terms & Conditions before Sign up."
     return callback(err);
   }
 

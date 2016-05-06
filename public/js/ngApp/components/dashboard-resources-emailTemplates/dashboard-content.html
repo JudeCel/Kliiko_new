@@ -1,9 +1,7 @@
-<div class="row">
-  <div class="col-md-12" ng-controller='GalleryController as gc'>
+  <div ng-controller='GalleryController as gc' class='row'>
     <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec" ng-init="ec.preInit()">
       <h1 class="text-center">Edit Email Templates</h1>
-      <div class="row">
-        <div class="list-group col-md-3 mail-template-list-section">
+        <div class="contentOffset list-group col-xs-3 mail-template-list-section">
           <div class="panel-heading mail-template-list-heading"><strong>Email Templates</strong></div>
           <div id="mail-template-list" class="mail-template-list">
             <a ng-repeat="(key, t) in ec.emailTemplates" class="list-group-item" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : ec.isEditable(t, app.accountUser.isAdmin)}"
@@ -23,7 +21,7 @@
           </div>
         </div>
 
-        <div class="col-md-8 mail-template-details">
+        <div class="col-xs-8  mail-template-details">
           <table>
             <tr>
               <td class="template-detail-name-column">Template Name:</td>
@@ -58,9 +56,6 @@
           <button type="submit" class="btn btn-lightgreen pull-right" ng-click="ec.modifyAndSave(true)" ng-hide="ec.currentTemplate.systemMessage">Create Copy</button>
           <button type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
         </div>
-      </div>
-
-
 
       <!-- Modal Preview-->
       <div class='modal fade' id='previewMailTemplateModal' role='dialog'>
@@ -105,4 +100,3 @@
       </div>
     </section>
   </div>
-</div>

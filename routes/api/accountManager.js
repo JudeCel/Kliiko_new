@@ -13,16 +13,14 @@ function get(req, res, next) {
 };
 
 function post(req, res, next) {
-  accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
-    if(error) {
-      return res.send({ error: error });
-    }
-
+  accountManagerService.createOrFindAccountManager(req.user, req.body, res.locals.currentDomain.id).then(function(params) {
     inviteService.createInvite(params).then(function(data) {
       res.send({ invite: data.invite, message: 'Successfully sent invite.' });
     }, function(error) {
       res.send({ error: error });
     });
+  }, function(error) {
+    res.send({ error: error });
   });
 };
 
