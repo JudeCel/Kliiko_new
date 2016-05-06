@@ -204,7 +204,9 @@ function createSubscription(accountId, userId, provider) {
     }
   }).then(function(chargebeeSub) {
     return SubscriptionPlan.find({
-      chargebeePlanId: chargebeeSub.subscription.plan_id
+      where: {
+        chargebeePlanId: chargebeeSub.subscription.plan_id
+      }
     }).then(function(plan) {
       if(plan){
         return models.sequelize.transaction(function (t) {
