@@ -56,7 +56,7 @@
       }
 
       step1Service.createNewFcilitator(params).then(function (result) {
-        result.listName = "facilitator";
+        result.listName = "Facilitators";
         vm.allContacts.push(result);
         messenger.ok('New contact '+ result.firstName + ' was added to list Facilitators');
         closeFacilitatorForm();
@@ -82,7 +82,7 @@
 
       step1Service.updateContact(params).then(function (result) {
         angular.copy(result.data, vm.allContacts[vm.editedContactIndex])
-
+        vm.userData = {};
         messenger.ok('Contact '+ result.data.firstName + ' has been updated');
         closeFacilitatorForm();
       }, function (error) {
@@ -98,6 +98,7 @@
     }
 
     function openFacilitatorForm() {
+      vm.userData = {};
       vm.formAction = 'new';
       domServices.modal('facilitatorForm');
     }
