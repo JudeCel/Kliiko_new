@@ -7,6 +7,7 @@ var SessionMember = models.SessionMember;
 var myDashboardServices = require('./../../services/myDashboard');
 var userFixture = require('./../fixtures/user');
 var sessionFixture = require('./../fixtures/session');
+var subscriptionFixture = require('./../fixtures/subscription');
 var assert = require('chai').assert;
 var _ = require('lodash');
 
@@ -33,7 +34,7 @@ describe('SERVICE - MyDashboard', function() {
     });
 
     describe('happy path', function() {
-      it('should succeed on finding one of each role', function (done) {
+      it('should succeed on finding one of each role', function(done) {
         userFixture.createMultipleAccountUsers(['observer', 'facilitator'], testData).then(function() {
           myDashboardServices.getAllAccountUsers(testData.user.id, 'http').then(function(result) {
             assert.equal(result.accountManager.data.length, 1);
@@ -48,7 +49,7 @@ describe('SERVICE - MyDashboard', function() {
         });
       });
 
-      it('should succeed on finding one of each except facilitator', function (done) {
+      it('should succeed on finding one of each except facilitator', function(done) {
         userFixture.createMultipleAccountUsers(['observer'], testData).then(function() {
           myDashboardServices.getAllAccountUsers(testData.user.id, 'http').then(function(result) {
             assert.equal(result.accountManager.data.length, 1);
@@ -69,15 +70,28 @@ describe('SERVICE - MyDashboard', function() {
     beforeEach(function(done) {
       sessionFixture.createChat().then(function(result) {
         testData = result;
-        done();
+        subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {
+          testData.subscription = subscription;
+          done();
+        }, function(error) {
+          done(error);
+        });
       }, function(error) {
         done(error);
       });
     });
 
     describe('happy path', function() {
-      it('should succeed on finding session for current user as participant', function (done) {
-        myDashboardServices.getAllSessions(testData.user.id).then(function(sessions) {
+      it('should succeed on finding session for current user as participant', function(done) {
+        function provider(params) {
+          return {
+            request: function(callback) {
+              callback(null, { subscription: {} });
+            }
+          }
+        }
+
+        myDashboardServices.getAllSessions(testData.user.id, provider).then(function(sessions) {
           assert.equal(sessions[0].id, testData.session.id);
           done();
         }, function(error) {
@@ -87,7 +101,7 @@ describe('SERVICE - MyDashboard', function() {
     });
 
     describe('sad path', function() {
-      it('should fail on finding session because not a member to session', function (done) {
+      it('should fail on finding session because not a member to session', function(done) {
         SessionMember.findAll({
           include: [AccountUser]
         }).then(function(members) {

@@ -370,11 +370,11 @@ function simpleParams(data, message) {
   return { data: data, message: message };
 };
 
-function modifySessions(sessions, accountId) {
+function modifySessions(sessions, accountId, provider) {
   let deferred = q.defer();
 
   models.Subscription.find({ where: { accountId: accountId } }).then(function(subscription) {
-    subscriptionService.getChargebeeSubscription(subscription.subscriptionId).then(function(chargebeeSub) {
+    subscriptionService.getChargebeeSubscription(subscription.subscriptionId, provider).then(function(chargebeeSub) {
 
       let array = _.isArray(sessions) ? sessions : [sessions];
       _.map(array, function(session) {

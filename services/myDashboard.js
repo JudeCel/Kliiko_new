@@ -12,6 +12,7 @@ var _ = require('lodash');
 var async = require('async');
 
 var sessionServices = require('./session.js')
+var subscriptionServices = require('./subscription.js')
 var subdomains = require('./../lib/subdomains.js');
 
 module.exports = {
@@ -69,7 +70,7 @@ function getAllAccountUsers(userId, protocol) {
   return deferred.promise;
 }
 
-function getAllSessions(userId) {
+function getAllSessions(userId, provider) {
   let deferred = q.defer();
 
   Session.findAll({
@@ -91,7 +92,11 @@ function getAllSessions(userId) {
       }]
     }]
   }).then(function(sessions) {
-    deferred.resolve(prepareSessions(sessions));
+    prepareSessions(sessions, provider).then(function(results) {
+      deferred.resolve(results);
+    }, function(error) {
+      deferred.reject(error);
+    });
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -100,12 +105,26 @@ function getAllSessions(userId) {
 }
 
 // Helpers
-function prepareSessions(sessions) {
-  _.map(sessions, function(session) {
-    sessionServices.addShowStatus(session, session.Account.Subscription);
+function prepareSessions(sessions, provider) {
+  let deferred = q.defer();
+
+  async.each(sessions, function(session, callback) {
+    subscriptionServices.getChargebeeSubscription(session.Account.Subscription.subscriptionId, provider).then(function(chargebeeSub) {
+      sessionServices.addShowStatus(session, chargebeeSub);
+      callback();
+    }, function(error) {
+      callback(error);
+    });
+  }, function(error) {
+    if(error) {
+      deferred.reject(error);
+    }
+    else {
+      deferred.resolve(sessions);
+    }
   });
 
-  return sessions;
+  return deferred.promise;
 }
 
 function prepareAccountUsers(accountUsers, protocol) {
