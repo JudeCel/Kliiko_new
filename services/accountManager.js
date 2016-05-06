@@ -120,7 +120,7 @@ function updateAccountManager(data) {
 function preValidate(user, accountId, email, errors) {
   let deferred = q.defer();
   if(!_.isEmpty(errors)) {
-    errors = filters.errors(error);
+    errors = filters.errors(errors);
   }
 
   if(user.email == email) {

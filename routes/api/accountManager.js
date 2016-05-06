@@ -43,7 +43,7 @@ function removeInvite(req, res, next) {
 };
 
 function removeAccountUser(req, res, next) {
-  accountManagerService.findAndRemoveAccountUser(req.query.id).then(function(message) {
+  accountManagerService.findAndRemoveAccountUser(req.query.id, res.locals.currentDomain.id).then(function(message) {
     res.send({ message: message });
   }, function(error) {
     res.send({ error: error });
