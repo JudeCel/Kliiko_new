@@ -1,4 +1,4 @@
-FROM node:5.10.1-wheezy
+FROM node:5.11.0-wheezy
 
 RUN apt-get install libstdc++6
 
