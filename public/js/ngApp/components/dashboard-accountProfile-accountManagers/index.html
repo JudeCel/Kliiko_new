@@ -37,14 +37,9 @@
             <span ng-if='accountUser.email.length > amc.maxLength.email'>...</span>
           </td>
           <td>
-            <span class='intl-tel-input' ng-if='accountUser.mobile'>
-              <span class='flag-container selected-flag'>
-                <span class='iti-flag' ng-class='accountUser.phoneCountryData.iso2'></span>
-                <span class='mobile-near-flag'>
-                  {{ accountUser.mobile | limitTo:amc.maxLength.normal }}
-                  <span ng-if='accountUser.mobile.length > amc.maxLength.normal'>...</span>
-                </span>
-              </span>
+            <span ng-if='accountUser.mobile'>
+              {{ number = '+' + accountUser.phoneCountryData.dialCode + ' ' + accountUser.mobile; number | limitTo:amc.maxLength.normal }}
+              <span ng-if='number.length > amc.maxLength.normal'>...</span>
             </span>
           </td>
           <td>{{ accountUser.status }}</td>
