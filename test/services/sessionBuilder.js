@@ -602,18 +602,6 @@ describe('SERVICE - SessionBuilder', function() {
   });
 
   describe('#thirdStep', function(done) {
-    function mailTemplateParams(sessionId) {
-      return {
-        name: "Test Name",
-        subject: "Test Subject",
-        content: "<p>Test Content</p>",
-        systemMessage: true,
-        sessionId: sessionId,
-        isCopy: true,
-        required: true
-      }
-    }
-
     describe('happy path', function(done) {
       it('should succeed on moving to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
