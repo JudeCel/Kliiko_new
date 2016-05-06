@@ -71,7 +71,7 @@ function getSessionByInvite(token) {
 }
 
 // Exports
-function findSession(sessionId, accountId) {
+function findSession(sessionId, accountId, provider) {
   let deferred = q.defer();
 
   Session.find({
@@ -86,7 +86,7 @@ function findSession(sessionId, accountId) {
     }]
   }).then(function(session) {
     if(session) {
-      modifySessions(session, accountId).then(function(result) {
+      modifySessions(session, accountId, provider).then(function(result) {
         deferred.resolve(simpleParams(result));
       }, function(error) {
         deferred.reject(error);
@@ -102,17 +102,17 @@ function findSession(sessionId, accountId) {
   return deferred.promise;
 };
 
-function findAllSessions(userId, domain) {
+function findAllSessions(userId, domain, provider) {
   let deferred = q.defer();
   if(policy.hasAccess(domain.roles, ['accountManager', 'admin'])) {
-    findAllSessionsAsManager(domain.id).then(function(data) {
+    findAllSessionsAsManager(domain.id, provider).then(function(data) {
       deferred.resolve(data);
     }, function(error) {
       deferred.reject(error);
     });
   }
   else {
-    findAllSessionsAsMember(userId, accountId).then(function(data) {
+    findAllSessionsAsMember(userId, accountId, provider).then(function(data) {
       deferred.resolve(data);
     }, function(error) {
       deferred.reject(error);
@@ -169,10 +169,10 @@ function prepareAccountRatings(accounts) {
   return ratings;
 };
 
-function removeSession(sessionId, accountId) {
+function removeSession(sessionId, accountId, provider) {
   let deferred = q.defer();
 
-    findSession(sessionId, accountId).then(function(result) {
+    findSession(sessionId, accountId, provider).then(function(result) {
       result.data.destroy().then(function() {
         deferred.resolve(simpleParams(null, MESSAGES.removed));
       }).catch(function(error) {
@@ -185,12 +185,12 @@ function removeSession(sessionId, accountId) {
   return deferred.promise;
 };
 
-function copySession(sessionId, accountId) {
+function copySession(sessionId, accountId, provider) {
   let deferred = q.defer();
 
   validators.hasValidSubscription(accountId).then(function() {
     validators.subscription(accountId, 'session', 1).then(function() {
-      findSession(sessionId, accountId).then(function(result) {
+      findSession(sessionId, accountId, provider).then(function(result) {
         delete result.data.dataValues.id;
 
         Session.create(result.data.dataValues).then(function(session) {
@@ -200,8 +200,8 @@ function copySession(sessionId, accountId) {
             delete facilitator.token;
 
             // Not confirmed.
-            copySessionMember(session, facilitator).then(function(copy) {
-              modifySessions(copy, accountId).then(function(result) {
+            copySessionMember(session, facilitator, provider).then(function(copy) {
+              modifySessions(copy, accountId, provider).then(function(result) {
                 deferred.resolve(simpleParams(result, MESSAGES.copied));
               }, function(error) {
                 deferred.reject(error);
@@ -211,7 +211,7 @@ function copySession(sessionId, accountId) {
             });
           }
           else {
-            modifySessions(session, accountId).then(function(result) {
+            modifySessions(session, accountId, provider).then(function(result) {
               deferred.resolve(simpleParams(result, MESSAGES.copied));
             }, function(error) {
               deferred.reject(error);
@@ -293,7 +293,7 @@ function findFacilitator(members) {
   return facilitator.dataValues;
 }
 
-function findAllSessionsAsManager(accountId) {
+function findAllSessionsAsManager(accountId, provider) {
   let deferred = q.defer();
 
   Session.findAll({
@@ -306,7 +306,7 @@ function findAllSessionsAsManager(accountId) {
       required: false
     }]
   }).then(function(sessions) {
-    modifySessions(sessions, accountId).then(function(result) {
+    modifySessions(sessions, accountId, provider).then(function(result) {
       deferred.resolve(simpleParams(result));
     }, function(error) {
       deferred.reject(error);
@@ -318,7 +318,7 @@ function findAllSessionsAsManager(accountId) {
   return deferred.promise;
 };
 
-function findAllSessionsAsMember(userId, accountId) {
+function findAllSessionsAsMember(userId, accountId, provider) {
   let deferred = q.defer();
 
   Session.findAll({
@@ -338,7 +338,7 @@ function findAllSessionsAsMember(userId, accountId) {
       }]
     }]
   }).then(function(sessions) {
-    modifySessions(sessions, accountId).then(function(result) {
+    modifySessions(sessions, accountId, provider).then(function(result) {
       deferred.resolve(simpleParams(result));
     }, function(error) {
       deferred.reject(error);
@@ -350,11 +350,11 @@ function findAllSessionsAsMember(userId, accountId) {
   return deferred.promise;
 };
 
-function copySessionMember(session, facilitator) {
+function copySessionMember(session, facilitator, provider) {
   let deferred = q.defer();
 
   sessionMemberServices.createWithTokenAndColour(facilitator).then(function() {
-    findSession(session.id, session.accountId).then(function(result) {
+    findSession(session.id, session.accountId, provider).then(function(result) {
       deferred.resolve(result.data);
     }, function(error) {
       deferred.reject(error);
