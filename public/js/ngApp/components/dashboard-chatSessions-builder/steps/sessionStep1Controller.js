@@ -23,6 +23,7 @@
 
     vm.formAction = null;
     vm.name = '';
+    vm.editedContactListName = '';
 
     vm.updateStep = updateStep;
     vm.initGallery = initGallery;
@@ -81,6 +82,7 @@
       }
 
       step1Service.updateContact(params).then(function (result) {
+        result.data.listName = vm.editedContactListName;
         angular.copy(result.data, vm.allContacts[vm.editedContactIndex])
         vm.userData = {};
         messenger.ok('Contact '+ result.data.firstName + ' has been updated');
@@ -91,6 +93,7 @@
     }
 
     function editContact(userData) {
+      vm.editedContactListName = userData.listName;
       vm.formAction = 'update';
       domServices.modal('facilitatorForm');
       angular.copy(userData, vm.userData);
