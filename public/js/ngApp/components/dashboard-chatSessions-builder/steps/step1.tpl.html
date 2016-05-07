@@ -84,41 +84,42 @@
             <ng-include src="'js/ngApp/components/dashboard-chatSessions-builder/steps/step1/facilitatorForm.html'"></ng-include>
 
             <section id="dashboard-contact-lists-main-table">
-              <table class='table table-responsive table-dashboardElements' style="font-size: 1.6rem" ng-if="step1Controller.allContacts.length > 0">
-                <thead>
-                  <tr>
-                    <th></th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>E-mail</th>
-                    <th>Company Name</th>
-                    <th>From list</th>
-                    <th></th>
-                    <!-- <th></th> -->
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="member-row"
-                      dir-paginate="member in step1Controller.allContacts | filter:q | itemsPerPage: step1Controller.pageSize"
-                      current-page="step1Controller.currentPage"
-                      ng-class="{'selected':member._selected}">
+                <table class='table table-responsive table-dashboardElements' style="font-size: 1.6rem" ng-if="step1Controller.allContacts.length > 0">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>E-mail</th>
+                      <th>Company Name</th>
+                      <th>From list</th>
+                      <th></th>
+                      <!-- <th></th> -->
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <form>
+                      <tr class="member-row"
+                          dir-paginate="member in step1Controller.allContacts | filter:q | itemsPerPage: step1Controller.pageSize"
+                          current-page="step1Controller.currentPage"
+                          ng-class="{'selected':member._selected}">
 
-                    <td>
-                      <input type="radio" ng-value="member" ng-checked="step1Controller.selectedFacilitator == member" ng-click='step1Controller.inviteFacilitator(member)'>
-                    </td>
-                    <td>{{ member.firstName }}</td>
-                    <td>{{ member.lastName }}</td>
-                    <td>{{ member.email }}</td>
-                    <td>{{ member.companyName || '-' }}</td>
-                    <td>{{ member.listName }}</td>
-                    <td>
-                      <img ng-click="step1Controller.editContact(member)"class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" style="margin: 0 5px 5px 5px;">
-                      <img ng-click="step1Controller.deleteContact(member)" class="pull-right ic" src="/icons/dashboardElement_remove.png" alt="" title="Delete" style="margin: 0 5px 5px 5px;">
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
+                        <td>
+                          <input type="radio" name="member" ng-checked="step1Controller.selectedFacilitator.email == member.email" ng-click='step1Controller.inviteFacilitator(member)'>
+                        </td>
+                        <td>{{ member.firstName }}</td>
+                        <td>{{ member.lastName }}</td>
+                        <td>{{ member.email }}</td>
+                        <td>{{ member.companyName || '-' }}</td>
+                        <td>{{ member.listName }}</td>
+                        <td>
+                          <img ng-click="step1Controller.editContact(member)"class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" style="margin: 0 5px 5px 5px;">
+                          <img ng-click="step1Controller.deleteContact(member)" class="pull-right ic" src="/icons/dashboardElement_remove.png" alt="" title="Delete" style="margin: 0 5px 5px 5px;">
+                        </td>
+                      </tr>
+                  </form>
+                  </tbody>
+                </table>
               <div class="faciliator-paginate">
                 <dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)">
                   <ul class="pagination" ng-if="1 < pages.length || !autoHide">
