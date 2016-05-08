@@ -79,7 +79,7 @@ spec:
       labels:
         name: admin
         env: staging
-        version: "0.0.25"	
+        version: "0.0.28"	
     spec:
       containers:
       - image: "gcr.io/klzii-1303/klzii_main:latest"
