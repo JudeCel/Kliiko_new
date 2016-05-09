@@ -9,12 +9,14 @@ var AccountUser = models.AccountUser;
 var Session = models.Session;
 
 var sessionMemberService = require('./../services/sessionMember');
+var socialProfileService = require('./socialProfile');
 var inviteMailer = require('../mailers/invite');
 var mailerHelpers = require('../mailers/mailHelper');
 var constants = require('../util/constants');
 
 var dateFormat = require('dateformat');
 var uuid = require('node-uuid');
+var crypto = require('crypto');
 var async = require('async');
 var _ = require('lodash');
 var q = require('q');
@@ -334,7 +336,7 @@ function updateUser(params, invite, callback) {
   })
 };
 
-function sessionAccept(token, password) {
+function sessionAccept(token, body) {
   let deferred = q.defer();
 
   findInvite(token, function(error, invite) {
@@ -349,11 +351,28 @@ function sessionAccept(token, password) {
         role: invite.role
       };
 
-      User.create({ email: invite.AccountUser.email, password: password, confirmedAt: new Date()  }).then(function(user) {
+      if(body.social) {
+        body.password = crypto.randomBytes(16).toString('hex');
+      }
+
+      User.create({ email: invite.AccountUser.email, password: body.password, confirmedAt: new Date()  }).then(function(user) {
         invite.AccountUser.update({ UserId: user.id, active:true}).then(function() {
           sessionMemberService.createWithTokenAndColour(params).then(function() {
             invite.update({ status: 'confirmed' }).then(function() {
-              deferred.resolve({ message: MESSAGES.confirmed, user: user });
+              if(body.social) {
+                body.social.user = { id: user.id };
+                socialProfileService.create(body.social, function(error, object) {
+                  if(object.error) {
+                    deferred.reject(object.error);
+                  }
+                  else {
+                    deferred.resolve({ message: MESSAGES.confirmed, user: user });
+                  }
+                });
+              }
+              else {
+                deferred.resolve({ message: MESSAGES.confirmed, user: user });
+              }
             }, function(error) {
               deferred.reject(filters.errors(error));
             });

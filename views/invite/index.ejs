@@ -26,7 +26,26 @@
                     </div>
                   </div>
                 </div>
-                <div class='col-xs-12 invisible'>#</div>
+
+                <div class='col-xs-12 text-center'>or</div>
+
+                <div class='col-xs-12 form-group'>
+                  <div class='form-group center-block'>
+                    <div class='check-google center-block'>
+                      <a href='/invite/auth/google/<%= invite.token %>' class='btn btn-block btn-social btn-google'>
+                        <i class='fa fa-google'></i> Use Google account
+                      </a>
+                    </div>
+                  </div>
+                  <div class='form-group center-block'>
+                    <div class='check-facebook center-block'>
+                      <a href='/invite/auth/facebook/<%= invite.token %>' class='btn btn-block btn-social btn-facebook'>
+                        <i class='fa fa-facebook'></i> Use Facebook account
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
                 <div class='col-xs-3'>
                   <button type='submit' value='Submit' class='btn border-yellow text-brown-light background-transp pull-right'>Accept</button>
                 </div>

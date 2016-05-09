@@ -52,7 +52,7 @@
       };
 
       fileUploader.upload(data).then(function(result) {
-        let resource = result.data.resource;
+        var resource = result.data.resource;
         BannerMessagesServices.createBanner({ page: bannerType, resourceId: resource.id }).then(function(result) {
           vm.file[bannerType] = result.data;
           vm.file[bannerType].resource = resource;

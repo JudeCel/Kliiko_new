@@ -2,6 +2,7 @@
 
 var userRoutes = require('./user.js');
 var inviteService = require('../../services/invite');
+var middlewareFilters = require('../../middleware/filters');
 
 function views_path(action) {
   return 'invite/' + action;
@@ -46,10 +47,13 @@ function acceptGet(req, res, next) {
 
 function acceptPost(req, res, next) {
   inviteService.findInvite(req.params.token, function(error, invite) {
+    if(error) {
+      return res.render(views_path('index'), simpleParams('Invite', invite, error));
+    }
+
     if(invite.sessionId) {
-      inviteService.sessionAccept(req.params.token, req.body.password).then(function(data) {
-        req.body.email = data.user.email;
-        userRoutes.login(req, res, next);
+      inviteService.sessionAccept(req.params.token, req.body).then(function(data) {
+        loginUser(req, res, next, data.user);
       }, function(error) {
         res.render(views_path('index'), simpleParams('Invite', invite, error));
       });
@@ -60,13 +64,24 @@ function acceptPost(req, res, next) {
           res.render(views_path('index'), simpleParams('Invite', invite, error));
         }
         else {
-          req.body.email = user.email;
-          userRoutes.login(req, res, next);
+          loginUser(req, res, next, user);
         }
       });
     }
   });
 };
+
+function loginUser(req, res, next, user) {
+  if(req.body.social) {
+    req.login(user, function(err) {
+      middlewareFilters.myDashboardPage(req, res, next);
+    });
+  }
+  else {
+    req.body.email = user.email;
+    userRoutes.login(req, res, next);
+  }
+}
 
 function simpleParams(title, invite, error, message) {
   return { title: title, invite: invite || {}, error: error || {}, message: message || '' };
