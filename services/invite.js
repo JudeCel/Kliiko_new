@@ -307,7 +307,7 @@ function acceptInviteNew(token, params, callback) {
       }
       else {
         invite.update({ status: 'confirmed' }).then(function() {
-          callback(null, invite, MESSAGES.confirmed);
+          callback(null, invite, user.email, MESSAGES.confirmed);
         }).catch(function(error) {
           callback(filters.errors(error));
         });
@@ -326,8 +326,8 @@ function setAccountUserActive(accountUserId, callback) {
 function updateUser(params, invite, callback) {
   setAccountUserActive(invite.accountUserId, function(res, _) {
     params.confirmedAt = new Date();
-    User.update(params, { where: { id: invite.userId } }).then(function(result) {
-      callback(null, true);
+    User.update(params, { where: { id: invite.userId }, returning: true }).then(function(result) {
+      callback(null, result[1][0]);
     }).catch(function(error) {
       callback(filters.errors(error));
     });
@@ -353,7 +353,7 @@ function sessionAccept(token, password) {
         invite.AccountUser.update({ UserId: user.id, active:true}).then(function() {
           sessionMemberService.createWithTokenAndColour(params).then(function() {
             invite.update({ status: 'confirmed' }).then(function() {
-              deferred.resolve(MESSAGES.confirmed);
+              deferred.resolve({ message: MESSAGES.confirmed, user: user });
             }, function(error) {
               deferred.reject(filters.errors(error));
             });

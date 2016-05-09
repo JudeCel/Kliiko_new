@@ -1,5 +1,6 @@
 'use strict';
 
+var userRoutes = require('./user.js');
 var inviteService = require('../../services/invite');
 
 function views_path(action) {
@@ -46,22 +47,21 @@ function acceptGet(req, res, next) {
 function acceptPost(req, res, next) {
   inviteService.findInvite(req.params.token, function(error, invite) {
     if(invite.sessionId) {
-      inviteService.sessionAccept(req.params.token, req.body.password).then(function(message) {
-        req.flash('message', message);
-        res.redirect('/login');
+      inviteService.sessionAccept(req.params.token, req.body.password).then(function(data) {
+        req.body.email = data.user.email;
+        userRoutes.login(req, res, next);
       }, function(error) {
-        req.flash('message', error);
-        res.redirect('/login');
+        res.render(views_path('index'), simpleParams('Invite', invite, error));
       });
     }
     else {
-      inviteService.acceptInviteNew(req.params.token, req.body, function(error, invite, message) {
+      inviteService.acceptInviteNew(req.params.token, req.body, function(error, invite, user, message) {
         if(error) {
           res.render(views_path('index'), simpleParams('Invite', invite, error));
         }
         else {
-          req.flash('message', message);
-          res.redirect('/login');
+          req.body.email = user.email;
+          userRoutes.login(req, res, next);
         }
       });
     }

@@ -9,9 +9,10 @@ var emailConfirmation = require('../../services/emailConfirmation');
 var passport = require('passport');
 var subdomains = require('../../lib/subdomains');
 var mailers = require('../../mailers');
-var session = require('../../middleware/session');
+
 var middlewareFilters = require('../../middleware/filters');
 var socialProfileMiddleware = require('../../middleware/socialProfile');
+var userRoutes = require('./user.js');
 var inviteRoutes = require('./invite.js');
 var surveyRoutes = require('./survey.js');
 var myDashboardRoutes = require('./myDashboard.js');
@@ -172,20 +173,7 @@ router.post('/registration', function (req, res, next) {
 });
 
 router.post('/login', function(req, res, next) {
-  passport.authenticate('local', function(err, user, info) {
-    if (err || !user) {
-      return  res.render('login', {title: 'Login', error: err || info.message, message: ''});
-    }
-    req.login(user, function(err) {
-      if (err) {
-        return next(err);
-      }
-      session.createUserSession(req, function(err, result) {
-        if (err) { throw err}
-        middlewareFilters.myDashboardPage(req, res, next);
-      });
-    });
-  })(req, res, next);
+  userRoutes.login(req, res, next);
 });
 
 router.get('/login', function (req, res, next) {

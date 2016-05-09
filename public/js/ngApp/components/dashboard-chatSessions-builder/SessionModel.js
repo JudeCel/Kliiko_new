@@ -337,7 +337,7 @@
         });
       }
       else {
-        sessionBuilderRestApi.removeSessionMember({ id: self.id, arg: member.id }, function(res) {
+        sessionBuilderRestApi.removeSessionMember({ id: self.id, arg: member.sessionMember.id }, function(res) {
           if(res.error) {
             deferred.reject(res.error);
           }
