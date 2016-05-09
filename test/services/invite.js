@@ -11,6 +11,7 @@ var inviteService = require('./../../services/invite');
 var accountManagerService = require('./../../services/accountManager');
 var assert = require('chai').assert;
 var async = require('async');
+var q = require('q');
 
 var testUser = null, testUser2 = null, testAccount = null, accountUser2 = null;
 
@@ -51,20 +52,27 @@ describe('SERVICE - Invite', function() {
     });
   });
 
-  function requestObject(user, body) {
+  function sampleData(user, accountId, body) {
     return {
+      accountId: accountId,
+      role: 'accountManager',
       user: { id: user.id, email: user.email },
       body: body
     };
   }
 
   function validParams(user, account, body, cb) {
-    let role = "accountManager"
-    let req = requestObject(user, body)
-    let res = { locals: {currentDomain: { id: account.id, name: account.name, roles: [role] } } }
-    accountManagerService.createOrFindAccountManager(req, res, function(error, params) {
-      cb(error, params);
+    let deferred = q.defer();
+
+    let data = sampleData(user, account.id, body);
+
+    accountManagerService.createOrFindAccountManager(data.user, data.body, data.accountId).then(function(params) {
+      deferred.resolve(params);
+    }, function(error) {
+      deferred.reject(error);
     });
+
+    return deferred.promise;
   };
 
   function countTables(params) {
@@ -125,16 +133,20 @@ describe('SERVICE - Invite', function() {
           lastName: accountUser2.lastName,
           gender: accountUser2.gender,
           email: accountUser2.email
-        }
+        };
 
-        validParams(testUser, testAccount, body, function(err, params) {
+        validParams(testUser, testAccount, body).then(function(params) {
           inviteService.createInvite(params).then(function(data) {
             assert.equal(data.invite.userId, params.userId);
             assert.equal(data.invite.role, params.role);
             assert.equal(data.invite.userType, params.userType);
             done();
+          }, function(error) {
+            done(error);
           });
-        })
+        }, function(error) {
+          done(error);
+        });
       });
     });
   });
@@ -146,8 +158,9 @@ describe('SERVICE - Invite', function() {
           lastName: accountUser2.lastName,
           gender: accountUser2.gender,
           email: accountUser2.email
-        }
-        validParams(testUser, testAccount, body, function(err, params) {
+        };
+
+        validParams(testUser, testAccount, body).then(function(params) {
           inviteService.createInvite(params).then(function(data) {
             async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
               if(error) {
@@ -165,7 +178,11 @@ describe('SERVICE - Invite', function() {
                 });
               });
             });
+          }, function(error) {
+            done(error);
           });
+        }, function(error) {
+          done(error);
         });
       });
 
@@ -174,8 +191,9 @@ describe('SERVICE - Invite', function() {
           lastName: accountUser2.lastName,
           gender: accountUser2.gender,
           email: accountUser2.email
-        }
-        validParams(testUser, testAccount, body, function(err, params) {
+        };
+
+        validParams(testUser, testAccount, body).then(function(params) {
           inviteService.createInvite(params).then(function(data) {
             Invite.update({ status: 'confirmed' }, { where: { id: data.invite.id } }).then(function() {
               async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
@@ -191,7 +209,11 @@ describe('SERVICE - Invite', function() {
                 });
               });
             });
+          }, function(error) {
+            done(error);
           });
+        }, function(error) {
+          done(error);
         });
       });
     });
@@ -202,8 +224,9 @@ describe('SERVICE - Invite', function() {
           lastName: "newlastName",
           gender: "male",
           email: "newuser@gmail.com"
-        }
-        validParams(testUser, testAccount, body, function(err, params) {
+        };
+
+        validParams(testUser, testAccount, body).then(function(params) {
           inviteService.createInvite(params).then(function(data) {
             async.parallel(countTables({ invite: 1, account: 2, user: 3, accountUser: 3 }), function(error, result) {
               if(error) {
@@ -221,7 +244,11 @@ describe('SERVICE - Invite', function() {
                 });
               });
             });
+          }, function(error) {
+            done(error);
           });
+        }, function(error) {
+          done(error);
         });
       });
     });
@@ -235,14 +262,18 @@ describe('SERVICE - Invite', function() {
         email: "newuser@gmail.com"
       }
 
-      validParams(testUser, testAccount, body, function(err, params) {
+      validParams(testUser, testAccount, body).then(function(params) {
         inviteService.createInvite(params).then(function(data) {
           inviteService.findInvite(data.invite.token, function(error, result) {
             assert.equal(error, null);
             assert.equal(data.invite.id, result.id);
             done();
           });
+        }, function(error) {
+          done(error);
         });
+      }, function(error) {
+        done(error);
       });
     });
 
@@ -261,8 +292,9 @@ describe('SERVICE - Invite', function() {
         lastName: "newlastName",
         gender: "male",
         email: "newuser@gmail.com"
-      }
-      validParams(testUser, testAccount, body, function(err, params) {
+      };
+
+      validParams(testUser, testAccount, body).then(function(params) {
         inviteService.createInvite(params).then(function(data) {
           inviteService.declineInvite(data.invite.token, function(error, result, message) {
             assert.equal(error, null);
@@ -270,7 +302,11 @@ describe('SERVICE - Invite', function() {
             assert.equal(message, inviteService.messages.declined);
             done();
           });
+        }, function(error) {
+          done(error);
         });
+      }, function(error) {
+        done(error);
       });
     });
   });
@@ -281,8 +317,9 @@ describe('SERVICE - Invite', function() {
         lastName: accountUser2.lastName,
         gender: accountUser2.gender,
         email: accountUser2.email
-      }
-      validParams(testUser, testAccount, body, function(err, params) {
+      };
+
+      validParams(testUser, testAccount, body).then(function(params) {
         inviteService.createInvite(params).then(function(data) {
           async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
             if(error) {
@@ -301,7 +338,11 @@ describe('SERVICE - Invite', function() {
               });
             });
           });
+        }, function(error) {
+          done(error);
         });
+      }, function(error) {
+        done(error);
       });
     });
   });
@@ -312,8 +353,9 @@ describe('SERVICE - Invite', function() {
         lastName: "newlastName",
         gender: "male",
         email: "newuser@gmail.com"
-      }
-      validParams(testUser, testAccount, body, function(err, params) {
+      };
+
+      validParams(testUser, testAccount, body).then(function(params) {
         inviteService.createInvite(params).then(function(data) {
           let oldPassword = data.invite.User.encryptedPassword;
 
@@ -343,7 +385,11 @@ describe('SERVICE - Invite', function() {
               });
             });
           });
+        }, function(error) {
+          done(error);
         });
+      }, function(error) {
+        done(error);
       });
     });
   });

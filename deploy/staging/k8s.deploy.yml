@@ -79,10 +79,10 @@ spec:
       labels:
         name: admin
         env: staging
-        version: "0.0.23"	
+        version: "0.0.29"	
     spec:
       containers:
-      - image: "gcr.io/klzii-1262/klzii_main:latest"
+      - image: "gcr.io/klzii-1303/klzii_main:latest"
         imagePullPolicy: Always
         name: admin
         ports:
@@ -170,7 +170,7 @@ spec:
     spec:
       containers:
       - name: nginx-ssl-proxy
-        image: gcr.io/klzii-1262/nginx-ssl-proxy:latest
+        image: gcr.io/klzii-1303/nginx-ssl-proxy:latest
         env:
         - name: SERVICE_HOST_ENV_NAME
           value: ADMIN_SERVICE_HOST

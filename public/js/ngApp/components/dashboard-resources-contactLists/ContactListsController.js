@@ -389,11 +389,11 @@
     }
 
     function setDependencies(newContact) {
-      newContact.phoneCountryData = $("#facilitatorMobile").intlTelInput('getSelectedCountryData');
-      newContact.landlineNumberCountryData = $("#facilitatorLandlineNumber").intlTelInput('getSelectedCountryData');
+      newContact.phoneCountryData = $("#contactListMobile").intlTelInput('getSelectedCountryData');
+      newContact.landlineNumberCountryData = $("#contactListLandlineNumber").intlTelInput('getSelectedCountryData');
 
-      newContact.mobile = $("#facilitatorMobile").val();
-      newContact.landlineNumber = $("#facilitatorLandlineNumber").val();
+      newContact.mobile = $("#contactListMobile").val();
+      newContact.landlineNumber = $("#contactListLandlineNumber").val();
 
       return newContact;
     }

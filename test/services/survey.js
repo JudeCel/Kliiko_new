@@ -218,7 +218,7 @@ describe('SERVICE - Survey', function() {
         surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
           let survey = result.data;
 
-          surveyServices.findSurvey({ id: survey.id }, accountParams()).then(function(result) {
+          surveyServices.findSurvey({ id: survey.id }).then(function(result) {
             assert.equal(result.data.id, survey.id);
             done();
           }, function(error) {
@@ -235,7 +235,7 @@ describe('SERVICE - Survey', function() {
         surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
           let survey = result.data;
 
-          surveyServices.findSurvey({ id: survey.id + 100 }, accountParams()).then(function(result) {
+          surveyServices.findSurvey({ id: survey.id + 100 }).then(function(result) {
             done('Should not get here!');
           }, function(error) {
             assert.equal(error, surveyServices.messages.notFound);
@@ -251,7 +251,7 @@ describe('SERVICE - Survey', function() {
         surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
           let survey = result.data;
 
-          surveyServices.findSurvey({ id: survey.id }, accountParams()).then(function(result) {
+          surveyServices.findSurvey({ id: survey.id }).then(function(result) {
             done('Should not get here!');
           }, function(error) {
             assert.equal(error, surveyServices.messages.alreadyClosed);
@@ -266,7 +266,7 @@ describe('SERVICE - Survey', function() {
 
         surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
           let survey = result.data;
-          surveyServices.findSurvey({ id: survey.id }, accountParams()).then(function(result) {
+          surveyServices.findSurvey({ id: survey.id }).then(function(result) {
             done('Should not get here!');
           }, function(error) {
             assert.equal(error, surveyServices.messages.notConfirmed);
@@ -381,7 +381,7 @@ describe('SERVICE - Survey', function() {
             let updatedSurvey = result.data;
             assert.equal(result.message, surveyServices.messages.updated);
 
-            surveyServices.findSurvey({ id: updatedSurvey.id }, accountParams()).then(function(result) {
+            surveyServices.findSurvey({ id: updatedSurvey.id }).then(function(result) {
               assert.equal(result.data.id, updatedSurvey.id);
               assert.equal(result.data.SurveyQuestions.length, 1);
               done();
@@ -410,7 +410,7 @@ describe('SERVICE - Survey', function() {
             let updatedSurvey = result.data;
             assert.equal(result.message, surveyServices.messages.updated);
 
-            surveyServices.findSurvey({ id: updatedSurvey.id }, accountParams()).then(function(result) {
+            surveyServices.findSurvey({ id: updatedSurvey.id }).then(function(result) {
               assert.equal(result.data.id, updatedSurvey.id);
               assert.equal(result.data.SurveyQuestions.length, 2);
               assert.equal(result.data.SurveyQuestions[0].name, 'Changed name');
@@ -436,7 +436,7 @@ describe('SERVICE - Survey', function() {
             let updatedSurvey = result.data;
             assert.equal(result.message, surveyServices.messages.updated);
 
-            surveyServices.findSurvey({ id: updatedSurvey.id }, accountParams()).then(function(result) {
+            surveyServices.findSurvey({ id: updatedSurvey.id }).then(function(result) {
               assert.equal(result.data.id, updatedSurvey.id);
               assert.equal(result.data.SurveyQuestions.length, 3);
               done();

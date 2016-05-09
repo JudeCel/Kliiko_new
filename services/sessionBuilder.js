@@ -17,7 +17,6 @@ var _ = require('lodash');
 var q = require('q');
 
 const MIN_MAIL_TEMPLATES = 5;
-let mailCategories = ["firstInvitation", "confirmation", "generic", "notThisTime", "notAtAll", "closeSession"];
 
 const MESSAGES = {
   setUp: "You have successfully setted up your chat session.",
@@ -662,13 +661,44 @@ function step1Queries(session, step) {
       searchSessionMembers(session.id, 'facilitator').then(function(members) {
         if(!_.isEmpty(members)) {
           step.facilitator = members[0];
+
+
+          models.Invite.find({
+            where: {
+              sessionId: session.id,
+              accountUserId: step.facilitator.id,
+              role: 'facilitator'
+            }
+          }).then(function(invite) {
+
+            if(invite){
+              cb();
+            }else{
+              inviteService.createInvite(facilitatorInviteParams(step.facilitator, session.id)).then(function() {
+                cb();
+              }, function(error) {
+                cb("Invite as Facilitator for " + step.facilitator.firstName + " " + step.facilitator.lastName + " were not sent.");
+              });
+            }
+          })
+        }else{
+          cb();
         }
-        cb();
       }).catch(function(error) {
         cb(filters.errors(error));
       });
     }
   ];
+}
+
+function facilitatorInviteParams(facilitator, sessionId) {
+  return {
+    accountUserId: facilitator.id,
+    userId: facilitator.UserId,
+    sessionId: sessionId,
+    role: 'facilitator',
+    userType: facilitator.UserId ? 'existing' : 'new'
+  }
 }
 
 function step2Queries(session, step) {
@@ -902,7 +932,7 @@ function processSessionObjectForMailTemplate(id, accountId, sessionObj, session,
   let params = findCurrentStep(sessionObj.sessionBuilder.steps, session.step);
   params.id = id;
   params.accountId = accountId;
-  mailTemplateService.getMailTemplateTypeList(mailCategories, function(error, result) {
+  mailTemplateService.getMailTemplateTypeList(constants.sessionBuilderEmails, function(error, result) {
     if (error) {
       deferred.reject(error);
     } else {
@@ -925,7 +955,7 @@ function sessionMailTemplateStatus(id, accountId) {
 
 function getStepThreeTemplateTypes(params) {
   let deferred = q.defer();
-  let baseTemplateQuery = {category:{ $in: mailCategories }};
+  let baseTemplateQuery = {category:{ $in: constants.sessionBuilderEmails }};
   let include = [{ model: models.MailTemplateBase, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
 
   findSession(params.id, params.accountId).then(function(session) {
@@ -940,8 +970,7 @@ function getStepThreeTemplateTypes(params) {
       let uniqueCopies = [];
       let errors = {};
 
-      _.forEach(mailCategories, function(category) {
-
+      _.forEach(constants.sessionBuilderEmails, function(category) {
         _.forEach(templates, function(template) {
           if(template.MailTemplateBase.category == category){
             uniqueCopies.push(template.MailTemplateBase.category);
@@ -981,7 +1010,7 @@ function validateStepFour(params) {
     models.Invite.count({
       where:{
         sessionId: session.id,
-        role: "participant"
+        role: 'participant'
       }
     }).then(function(count) {
       let errors = {};

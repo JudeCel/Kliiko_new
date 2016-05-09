@@ -37,8 +37,7 @@
             <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
             <div class='col-md-8'>
                 <span class='has-error text-red-dark'>{{ clc.modalErrors.mobile }}</span>
-                <!-- <input type='tel' class='form-control' id='mobile' placeholder='Mobile number' ng-model='clc.newContact.mobile'> -->
-                <input international-phone-number type="text" ng-model='clc.newContact.mobile' id="contactMobile" class='form-control'>
+                <input international-phone-number type="text" ng-model='clc.newContact.mobile' id="contactListMobile" class='form-control'>
             </div>
         </div>
 
@@ -46,9 +45,7 @@
             <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
             <div class='col-md-8'>
                 <span class='has-error text-red-dark'>{{ clc.modalErrors.landlineNumber }}</span>
-                <!-- <input type='text' class='form-control' id='landlineNumber' placeholder='Landline number' ng-model='clc.newContact.landlineNumber'> -->
-                <input international-phone-number type="text" ng-model='clc.newContact.landlineNumber' id="contactLandlineNumber" class='form-control'>
-
+                <input international-phone-number type="text" ng-model='clc.newContact.landlineNumber' id="contactListLandlineNumber" class='form-control'>
             </div>
         </div>
     </div>

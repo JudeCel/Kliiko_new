@@ -15,3 +15,4 @@
 .env
 /chatRoom/public/uploads/*
 .vscode/settings.json
+**/.DS_Store
