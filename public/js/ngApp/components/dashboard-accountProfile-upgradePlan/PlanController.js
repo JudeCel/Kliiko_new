@@ -85,6 +85,7 @@
     vm.showPlanInList = showPlanInList;
     vm.switchPlan = switchPlan;
     vm.showCalculatedPrice = showCalculatedPrice;
+    vm.viewForFixedPlans = viewForFixedPlans;
 
     init();
 
@@ -254,6 +255,14 @@
 
     function showCalculatedPrice(price) {
       return price / 100;
+    }
+
+    function viewForFixedPlans(plan) {
+      if(plan == 'fixed_yearly' || plan == 'fixed_monthly') {
+        return true;
+      }else{
+        return false;
+      }
     }
 
   }

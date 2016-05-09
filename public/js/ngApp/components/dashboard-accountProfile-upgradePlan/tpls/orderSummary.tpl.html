@@ -2,7 +2,8 @@
   <div class="col-md-12 caption">
     Order Summary
   </div>
-  <div class="table-content">
+
+  <div class="table-content" ng-if="!up.viewForFixedPlans(up.selectedPlan.plan.id)">
     <div class="row table-header" >
       <div class="col-sm-3">Plan</div>
       <div class="col-sm-4">Duration</div>
@@ -29,66 +30,53 @@
     </div>
   </div>
 
-  <br>
-
-  <div ng-if="up.selectedPlan.plan.id == 'fixed_monthly'">
-    <div class="col-md-12 caption">
-      You want this plan, for one year?
+  <div class="table-content" ng-if="up.viewForFixedPlans(up.selectedPlan.plan.id)">
+    <div class="row table-header" >
+      <div class="col-sm-1"></div>
+      <div class="col-sm-3">Plan</div>
+      <div class="col-sm-4">Duration</div>
+      <div class="col-sm-4">Total</div>
     </div>
-    <div class="table-content">
-      <div class="row table-header" >
-        <div class="col-sm-3">Plan</div>
-        <div class="col-sm-4">Duration</div>
-        <div class="col-sm-4">Total</div>
-      </div>
 
-      <div class="row">
-        <div class="col-sm-3">
-          {{up.fixedYearly.plan.name}}
-        </div>
-        <div class="col-sm-4">
-          {{ up.fixedYearly.plan.period }}
-          {{ up.fixedYearly.plan.period_unit }}
-        </div>
-        <div class="col-sm-4">
-          {{ up.fixedYearly.chargeEstimate.amount_due / 100 | currency:"USD$":0 }}
-        </div>
+    <!-- FIXED MONTHLY -->
+    <div class="row">
+      <div class="col-sm-1">
+        <input type="radio" name="plan" ng-click="up.switchPlan(up.fixedMonthly)" ng-checked="up.selectedPlan == up.fixedMonthly"/>
       </div>
+      <div class="col-sm-3">
+        Fixed
+      </div>
+      <div class="col-sm-4">
+        {{ up.fixedMonthly.plan.period }}
+        {{ up.fixedMonthly.plan.period_unit }}
+      </div>
+      <div class="col-sm-4">
+        {{ up.showCalculatedPrice(up.fixedMonthly.chargeEstimate.amount_due) | currency:"USD$":0 }}
+      </div>
+    </div>
 
-      <hr>
-      <div class="row">
-        <div class="pull-right btn btn-addNewElement btn-green" ng-click="up.switchPlan(up.fixedYearly)">I want this plan</div>
+    <!-- FIXED YEARLY -->
+    <div class="row">
+      <div class="col-sm-1">
+        <input type="radio" name="plan" ng-click="up.switchPlan(up.fixedYearly)" ng-checked="up.selectedPlan == up.fixedYearly"/>
       </div>
+      <div class="col-sm-3">
+        Fixed
+      </div>
+      <div class="col-sm-4">
+        {{ up.fixedYearly.plan.period }}
+        {{ up.fixedYearly.plan.period_unit }}
+      </div>
+      <div class="col-sm-4">
+        {{ up.showCalculatedPrice(up.fixedYearly.chargeEstimate.amount_due) | currency:"USD$":0 }}
+      </div>
+    </div>
+
+    <hr>
+    <div class="row">
+      <div class="col-sm-5 total">Order Total</div>
+      <div class="col-sm-3">{{ up.showCalculatedPrice(up.selectedPlan.chargeEstimate.sub_total) | currency:"USD$":0 }}</div>
     </div>
   </div>
 
-  <div ng-if="up.selectedPlan.plan.id == 'fixed_yearly'">
-    <div class="col-md-12 caption">
-      You want this plan, for one month?
-    </div>
-    <div class="table-content">
-      <div class="row table-header" >
-        <div class="col-sm-3">Plan</div>
-        <div class="col-sm-4">Duration</div>
-        <div class="col-sm-4">Total</div>
-      </div>
-
-      <div class="row">
-        <div class="col-sm-3">
-          {{up.fixedMonthly.plan.name}}
-        </div>
-        <div class="col-sm-4">
-          {{ up.fixedMonthly.plan.period }}
-          {{ up.fixedMonthly.plan.period_unit }}
-        </div>
-        <div class="col-sm-4">
-          {{ up.fixedMonthly.chargeEstimate.amount_due / 100 | currency:"USD$":0 }}
-        </div>
-      </div>
-
-      <hr>
-      <div class="row">
-        <div class="pull-right btn btn-addNewElement btn-green" ng-click="up.switchPlan(up.fixedMonthly)">I want this plan</div>
-      </div>
-    </div>
 </div>
