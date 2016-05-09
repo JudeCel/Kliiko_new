@@ -9,6 +9,10 @@
 
     vm.file = {};
     vm.banners = ['profile', 'sessions', 'resources'];
+    for(var i in vm.banners) {
+      var banner = vm.banners[i];
+      vm.file[banner] = {};
+    }
 
     vm.init = init;
     vm.upload = upload;
@@ -48,8 +52,10 @@
       };
 
       fileUploader.upload(data).then(function(result) {
-        banner = vm.file[bannerType] = result.data;
-        BannerMessagesServices.createBanner({ page: bannerType, resourceId: banner.resource.id }).then(function(result) {
+        let resource = result.data.resource;
+        BannerMessagesServices.createBanner({ page: bannerType, resourceId: resource.id }).then(function(result) {
+          vm.file[bannerType] = result.data;
+          vm.file[bannerType].resource = resource;
           messenger.ok(result.message);
         }, function(error) {
           messenger.error(error);

@@ -3,7 +3,7 @@
 <main class='main-first-page'>
   <div class='container' ng-controller='BannerMessagesController as bmc'>
     <div class='page-banner'>
-      {{ banner = bmc.file[bmc.currentBanner]; '' }}
+      <span class='hidden'>{{ banner = bmc.file[bmc.currentBanner]; '' }}</span>
       <div ng-if='banner.resource'>
         <img ng-if='!banner.link' class='center-block' ng-src='{{ banner.resource.url.full }}' alt=''>
 
