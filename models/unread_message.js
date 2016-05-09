@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = (Sequelize, DataTypes) => {
-  var OfflineMessage = Sequelize.define('OfflineMessage', {
+  var UnreadMessage = Sequelize.define('UnreadMessage', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     sessionMemberId: {type: DataTypes.INTEGER, allowNull: false },
     messageId: { type: DataTypes.INTEGER, allowNull: true },
@@ -17,12 +17,12 @@ module.exports = (Sequelize, DataTypes) => {
     ],
     classMethods: {
       associate: function(models) {
-        OfflineMessage.belongsTo(models.Topic, { foreignKey: 'topicId' });
-        OfflineMessage.belongsTo(models.Message, { foreignKey: 'messageId' });
-        OfflineMessage.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId' });
+        UnreadMessage.belongsTo(models.Topic, { foreignKey: 'topicId' });
+        UnreadMessage.belongsTo(models.Message, { foreignKey: 'messageId' });
+        UnreadMessage.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId' });
       }
     }
   });
 
-  return OfflineMessage;
+  return UnreadMessage;
 };
