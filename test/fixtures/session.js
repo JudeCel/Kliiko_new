@@ -31,6 +31,14 @@ var userlist = [{
   email: "dainisl@insider.com",
   confirmedAt: new Date()
 },{
+  accountName: "participant",
+  firstName: "participant Dainis",
+  lastName: "participant Lapins",
+  password: "qwerty123",
+  gender: "male",
+  email: "participant@insider.com",
+  confirmedAt: new Date()
+},{
   accountName: "observerUser",
   firstName: "Observer",
   lastName: "Observer",
@@ -159,13 +167,16 @@ function createTopic(session, brandProject, callback) {
 function addSessionMembers(erorr, session, callback) {
   async.parallel([
     function(cb) {
-      addSessionMember(userData[0].account.AccountUser.id, session, 'participant', 'Participant - AccountOwner', cb);
+      addSessionMember(userData[0].account.AccountUser.id, session, 'participant', 'Participant - AccountOwner', 'participant', cb);
     },
     function(cb) {
-      addSessionMember(userData[1].account.AccountUser.id, session, 'facilitator', 'Facilitator - AccountManager', cb);
+      addSessionMember(userData[1].account.AccountUser.id, session, 'facilitator', 'Facilitator - AccountManager','facilitator', cb);
     },
     function(cb) {
-      addSessionMember(userData[2].account.AccountUser.id, session, 'observer', 'Observer', cb);
+      addSessionMember(userData[2].account.AccountUser.id, session, 'participant', 'participant', 'participant2', cb);
+    },
+    function(cb) {
+      addSessionMember(userData[2].account.AccountUser.id, session, 'observer', 'observer', 'observer', cb);
     }
   ], function(error, results) {
     callback(error, results);
@@ -183,12 +194,12 @@ function addBrandProjectPreferences(session, accountId, callback) {
   });
 }
 
-function addSessionMember(accountUserId, session, role, name, callback) {
+function addSessionMember(accountUserId, session, role, name, token, callback) {
 
   let params = { role: role,
                  accountUserId: accountUserId,
                  username: name,
-                 token: role,
+                 token: token,
                  sessionId: session.id
                 }
   SessionMemberService.createWithTokenAndColour(params).then(function(result) {
