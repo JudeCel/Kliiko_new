@@ -6,7 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
     sessionMemberId: {type: DataTypes.INTEGER, allowNull: false },
     messageId: { type: DataTypes.INTEGER, allowNull: true },
     topicId: { type: DataTypes.INTEGER, allowNull: false },
-    scope: { type: DataTypes.ENUM, allowNull: false, values: ['replay', 'normal'], defaultValue: 'normal' },
+    scope: { type: DataTypes.ENUM, allowNull: false, values: ['reply', 'normal'], defaultValue: 'normal' },
   }, {
     timestamps: true,
     indexes: [
