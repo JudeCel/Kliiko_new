@@ -39,10 +39,18 @@ describe('SERVICE - Session', function() {
     return { id: testData.account.id, roles: ['accountManager'] };
   };
 
+  function provider(params) {
+    return {
+      request: function(callback) {
+        callback(null, { subscription: {} });
+      }
+    }
+  }
+
   describe('#findSession', function() {
     describe('happy path', function() {
       it('should succeed on finding session', function (done) {
-        sessionServices.findSession(testData.session.id, testData.account.id).then(function(result) {
+        sessionServices.findSession(testData.session.id, testData.account.id, provider).then(function(result) {
           assert.equal(result.data.accountId, testData.account.id);
           done();
         }, function(error) {
@@ -53,7 +61,7 @@ describe('SERVICE - Session', function() {
 
     describe('sad path', function() {
       it('should fail on finding session', function (done) {
-        sessionServices.findSession(testData.session.id + 100, testData.account.id).then(function(result) {
+        sessionServices.findSession(testData.session.id + 100, testData.account.id, provider).then(function(result) {
           done('Should not get here!');
         }, function(error) {
           assert.equal(error, sessionServices.messages.notFound);
@@ -66,7 +74,7 @@ describe('SERVICE - Session', function() {
   describe('#findAllSessions', function() {
     describe('happy path', function() {
       it('should succeed on finding all sessions', function (done) {
-        sessionServices.findAllSessions(testData.user.id, accountParams()).then(function(result) {
+        sessionServices.findAllSessions(testData.user.id, accountParams(), provider).then(function(result) {
           assert.equal(result.data[0].accountId, testData.account.id);
           done();
         }, function(error) {
@@ -82,7 +90,7 @@ describe('SERVICE - Session', function() {
         Session.count().then(function(c) {
           assert.equal(c, 1);
 
-          sessionServices.removeSession(testData.session.id, testData.account.id).then(function(result) {
+          sessionServices.removeSession(testData.session.id, testData.account.id, provider).then(function(result) {
             assert.equal(result.message, sessionServices.messages.removed);
 
             Session.count().then(function(c) {
@@ -98,7 +106,7 @@ describe('SERVICE - Session', function() {
 
     describe('sad path', function() {
       it('should fail because not found', function (done) {
-        sessionServices.removeSession(testData.session.id + 100, testData.account.id).then(function(result) {
+        sessionServices.removeSession(testData.session.id + 100, testData.account.id, provider).then(function(result) {
           done('Should not get here!');
         }, function(error) {
           assert.equal(error, sessionServices.messages.notFound);
@@ -115,7 +123,7 @@ describe('SERVICE - Session', function() {
           Session.count().then(function(c) {
             assert.equal(c, 1);
 
-            sessionServices.copySession(testData.session.id, testData.account.id).then(function(result) {
+            sessionServices.copySession(testData.session.id, testData.account.id, provider).then(function(result) {
               assert.equal(result.message, sessionServices.messages.copied);
 
               Session.count().then(function(c) {
@@ -135,7 +143,7 @@ describe('SERVICE - Session', function() {
     describe('sad path', function() {
       it('should fail because not found', function (done) {
         models.SubscriptionPreference.update({'data.sessionCount': 2}, { where: { subscriptionId: testData.subscription.id } }).then(function(result) {
-          sessionServices.copySession(testData.session.id + 100, testData.account.id).then(function(result) {
+          sessionServices.copySession(testData.session.id + 100, testData.account.id, provider).then(function(result) {
             done('Should not get here!');
           }, function(error) {
             assert.equal(error, sessionServices.messages.notFound);
@@ -175,7 +183,7 @@ describe('SERVICE - Session', function() {
 
     describe('sad path', function() {
       it('should fail because not found', function (done) {
-        sessionServices.findSession(testData.session.id, testData.account.id).then(function(result) {
+        sessionServices.findSession(testData.session.id, testData.account.id, provider).then(function(result) {
           let params = { id: result.data.dataValues.facilitator.id + 100, rating: 4 };
 
           sessionServices.updateSessionMemberRating(params, testData.user.id, testData.account.id).then(function(result) {
@@ -188,14 +196,19 @@ describe('SERVICE - Session', function() {
       });
 
       it('should fail because cannot rate self', function (done) {
-        sessionServices.findSession(testData.session.id, testData.account.id).then(function(result) {
-          let params = { id: result.data.SessionMembers[0].id, rating: 4 };
+        models.Subscription.find({ include: [{ model: models.Account, include: [{ model: models.AccountUser, include: [models.SessionMember] }] }] }).then(function(subscription) {
+          let accountId = subscription.Account.AccountUsers[0].AccountId;
+          let userId = subscription.Account.AccountUsers[0].UserId;
 
-          sessionServices.updateSessionMemberRating(params, testData.user.id, testData.account.id).then(function(result) {
-            done('Should not get here!');
-          }, function(error) {
-            assert.equal(error, sessionServices.messages.cantRateSelf);
-            done();
+          sessionServices.findSession(testData.session.id, accountId, provider).then(function(result) {
+            let params = { id: subscription.Account.AccountUsers[0].SessionMembers[0].id, rating: 4 };
+
+            sessionServices.updateSessionMemberRating(params, userId, accountId).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              assert.equal(error, sessionServices.messages.cantRateSelf);
+              done();
+            });
           });
         });
       });

@@ -10,7 +10,6 @@ var q = require('q');
 
 var minimize = new Minimize();
 let num = 0;
-let deferred = q.defer();
 
 let templateFiles = [
   {
@@ -194,6 +193,8 @@ function createMailTemplateFromFile(fileInfo, callback) {
 }
 
 function createMailTemplate() {
+  let deferred = q.defer();
+
   num = 0;
   async.waterfall([
     (cb) => { addTemplate(cb) },
@@ -218,7 +219,14 @@ function createMailTemplate() {
     addTemplate,
     addTemplate,
     createMailTemplateCopies
-  ]);
+  ], function(error, result) {
+    if(error) {
+      deferred.reject(filters.errors(error));
+    }
+    else {
+      deferred.resolve();
+    }
+  });
 
   return deferred.promise;
 }
@@ -238,15 +246,9 @@ function readContents(fileName, callback) {
   });
 }
 
-function copyFromMailTemplates(callback) {
+function createMailTemplateCopies(callback) {
   MailTemplateService.copyBaseTemplates(function (error, result) {
     callback(error, result);
-  });
-}
-
-function createMailTemplateCopies() {
-  copyFromMailTemplates(function (error, _result) {
-    deferred.resolve();
   });
 }
 
