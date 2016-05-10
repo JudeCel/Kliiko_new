@@ -19,6 +19,7 @@
       sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } },
       sessionMailTemplateStatus: { method: 'GET', params: { path: 'sessionMailTemplateStatus' } },
       addTopics: {method: 'POST',  params: {path: 'addTopics'} },
+      updateSessionTopicName: {method: 'POST',  params: {path: 'updateSessionTopicName'} },
       removeTopic: {method: 'POST',  params: {path: 'removeTopic'} },
 
       nextStep: {method: 'POST', params: {path: 'step'} },
@@ -55,6 +56,7 @@
     SessionModel.prototype.sendSms = sendSms;
     SessionModel.prototype.addMembers = addMembers;
     SessionModel.prototype.saveTopics = saveTopics;
+    SessionModel.prototype.updateSessionTopicName = updateSessionTopicName;
     SessionModel.prototype.inviteParticipants = inviteParticipants;
     SessionModel.prototype.inviteObservers = inviteObservers;
     SessionModel.prototype.removeMember = removeMember;
@@ -280,6 +282,20 @@
           deferred.resolve(res.data);
         }
       });
+      return deferred.promise;
+    }
+
+    function updateSessionTopicName(params) {
+      var deferred = $q.defer();
+
+      sessionBuilderRestApi.updateSessionTopicName({id: self.id}, { topicsArray: topicsArray }, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
+        }
+      });
+
       return deferred.promise;
     }
 

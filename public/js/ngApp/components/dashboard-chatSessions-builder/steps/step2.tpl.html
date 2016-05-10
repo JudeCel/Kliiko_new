@@ -68,7 +68,7 @@
               <div class="panel-label">
                 <span>
                   <img src="icons/ic_move.png">
-                  {{ t.name }}
+                  {{ t.SessionTopics[0].name }}
                 </span>
 
                 <img class="ico-active-unactive" ng-show="t.active" src="/icons/unlocked.png" ng-click="t.active = !t.active; t.update()"  alt="Active" title="Active">
@@ -76,9 +76,10 @@
               </div>
 
               <div class="control-block">
-                <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(t.id)"
-                     src="/icons/dashboardElement_remove.png" alt="" title="Delete">
+                <img class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" ng-click"step2Controller.editSessionTopic()">
+                <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(t.id)" src="/icons/dashboardElement_remove.png" alt="" title="Delete">
               </div>
+
             </div>
           </div>
         </div>

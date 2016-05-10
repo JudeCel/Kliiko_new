@@ -62,6 +62,19 @@
       }
     }
 
+    function updateSessionTopicName(sessionTopicName, sessionTopicId) {
+      var params = {
+        sessionTopicName: sessionTopicName,
+        sessionTopicId: sessionTopicId
+      }
+
+      vm.session.updateSessionTopicName(params).then(function(results) {
+        
+      }, function(error) {
+        messenger.error(error);
+      });
+    }
+
     function isTopicAdded(topic) {
       var present = false;
       vm.chatSessionTopicsList.map(function(item){

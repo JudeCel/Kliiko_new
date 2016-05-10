@@ -116,6 +116,7 @@ router.put('/contactListsUser/:id', policy.authorized(['accountManager', 'admin'
 
 router.get('/topics', multipartyMiddleware, topic.get);
 router.post('/topic', multipartyMiddleware, topic.post);
+router.post('/updateSessionTopicName', multipartyMiddleware, topic.updateSessionTopicName);
 router.put('/topic/:id',multipartyMiddleware, topic.updateById);
 router.delete('/topic/:id', multipartyMiddleware, topic.deleteById);
 
