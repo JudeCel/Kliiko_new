@@ -1,16 +1,10 @@
 <% include ../header %>
-<script> function parseInvite() {
-    var token = window.location.pathname.split('/')[2];
-    document.cookie = 'inviteAccepted='+token+'; expires=Fri, 3 Aug 2027 20:47:11 UTC; path=/; domain=.focus.com';
-  }
-</script>
 <div class='login-container center-block'>
   <div class='tab-content border-yellow text-font-family'>
     <div id='login' class='tab-pane fade in active'>
       <%if(Object.keys(invite).length == 0) { %>
         <h1 class='text-center text-gray-dark'>Invite not found</h1>
       <% } else { %>
-        <script>parseInvite();</script>
         <h1 class='text-center text-gray-dark'>Invite</h1>
         <%if(invite.userType == "new") { %>
           <h5 class='text-center text-gray-dark'>
@@ -32,7 +26,26 @@
                     </div>
                   </div>
                 </div>
-                <div class='col-xs-12 invisible'>#</div>
+
+                <div class='col-xs-12 text-center'>or</div>
+
+                <div class='col-xs-12 form-group'>
+                  <div class='form-group center-block'>
+                    <div class='check-google center-block'>
+                      <a href='/invite/auth/google/<%= invite.token %>' class='btn btn-block btn-social btn-google'>
+                        <i class='fa fa-google'></i> Use Google account
+                      </a>
+                    </div>
+                  </div>
+                  <div class='form-group center-block'>
+                    <div class='check-facebook center-block'>
+                      <a href='/invite/auth/facebook/<%= invite.token %>' class='btn btn-block btn-social btn-facebook'>
+                        <i class='fa fa-facebook'></i> Use Facebook account
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
                 <div class='col-xs-3'>
                   <button type='submit' value='Submit' class='btn border-yellow text-brown-light background-transp pull-right'>Accept</button>
                 </div>

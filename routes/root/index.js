@@ -9,9 +9,10 @@ var emailConfirmation = require('../../services/emailConfirmation');
 var passport = require('passport');
 var subdomains = require('../../lib/subdomains');
 var mailers = require('../../mailers');
-var session = require('../../middleware/session');
+
 var middlewareFilters = require('../../middleware/filters');
 var socialProfileMiddleware = require('../../middleware/socialProfile');
+var userRoutes = require('./user.js');
 var inviteRoutes = require('./invite.js');
 var surveyRoutes = require('./survey.js');
 var myDashboardRoutes = require('./myDashboard.js');
@@ -103,8 +104,8 @@ router.get('/welcome', function (req, res, next) {
   res.render('welcome', usersRepo.prepareParams(req));
 });
 
-router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
-
+let registrationState = JSON.stringify({ type: 'registration' });
+router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'], state: registrationState }));
 router.get('/auth/facebook/callback', function(req, res, next) {
   passport.authenticate('facebook', function(err, user, info) {
     if (err) {
@@ -115,17 +116,34 @@ router.get('/auth/facebook/callback', function(req, res, next) {
         middlewareFilters.myDashboardPage(req, res, next);
       })
     }else{
-      res.locals = usersRepo.prepareParams(req);
-      socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
-        res.render("registration", {appData: res.locals, error: {}});
-      }, function(err) {
-        next(err);
-      })
+      req.query.state = JSON.parse(req.query.state);
+      if(req.query.state.type == 'registration') {
+        res.locals = usersRepo.prepareParams(req);
+        socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
+          res.render("registration", {appData: res.locals, error: {}});
+        }, function(err) {
+          next(err);
+        })
+      }
+      else {
+        let object = {
+          params: {
+            socialProfile: {
+              id: info.id,
+              provider: info.provider
+            }
+          }
+        };
+
+        req.params.token = req.query.state.token;
+        req.body.social = object;
+        inviteRoutes.acceptPost(req, res, next);
+      }
     }
   })(req, res, next);
 });
 
-router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'], state: registrationState }));
 router.get('/auth/google/callback', function(req, res, next) {
   passport.authenticate('google', function(err, user, info) {
     if (err) {
@@ -172,20 +190,7 @@ router.post('/registration', function (req, res, next) {
 });
 
 router.post('/login', function(req, res, next) {
-  passport.authenticate('local', function(err, user, info) {
-    if (err || !user) {
-      return  res.render('login', {title: 'Login', error: err || info.message, message: ''});
-    }
-    req.login(user, function(err) {
-      if (err) {
-        return next(err);
-      }
-      session.createUserSession(req, function(err, result) {
-        if (err) { throw err}
-        middlewareFilters.myDashboardPage(req, res, next);
-      });
-    });
-  })(req, res, next);
+  userRoutes.login(req, res, next);
 });
 
 router.get('/login', function (req, res, next) {
@@ -313,6 +318,21 @@ router.route('/resetpassword/:token')
             });
         });
     });
+
+router.route('/invite/auth/:provider/:token').get(function(req, res, next) {
+  let state = JSON.stringify({ type: 'invite', token: req.params.token });
+  switch(req.params.provider) {
+    case 'google':
+      return passport.authenticate('google', { scope : ['profile', 'email'], state: state })(req, res, next);
+      break;
+    case 'facebook':
+      return passport.authenticate('facebook', { scope : ['email'], state: state })(req, res, next);
+      break;
+    default:
+      req.redirect('/login');
+  }
+});
+
 router.route('/invite/:token').get(inviteRoutes.index);
 router.route('/invite/:token/decline').get(inviteRoutes.decline);
 router.route('/invite/:token/accept').get(inviteRoutes.acceptGet);

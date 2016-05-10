@@ -33,7 +33,10 @@
         </td>
 
         <td>
-          <a href='{{ resource.url.full }}' target='_blank'>
+          <a ng-if='!typeOf.youtube' href='{{ resource.url.full }}' target='_blank'>
+            <p class='text-uppercase'>{{ resource.type }}/{{ resource.extension || resource.scope }}</p>
+          </a>
+          <a ng-if='typeOf.youtube' ng-href='{{ gc.normalYoutubeUrl(resource.url.full) }}' target='_blank'>
             <p class='text-uppercase'>{{ resource.type }}/{{ resource.extension || resource.scope }}</p>
           </a>
         </td>
