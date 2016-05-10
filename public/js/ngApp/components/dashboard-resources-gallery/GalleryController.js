@@ -50,6 +50,7 @@
     vm.filterResources = filterResources;
     vm.getFilterResources = getFilterResources;
     vm.youtubeUrl = youtubeUrl;
+    vm.normalYoutubeUrl = normalYoutubeUrl;
 
     function initController() {
       vm.currentPage.viewType = sessionStorage.getItem('viewType') || vm.currentPage.viewType;
@@ -296,6 +297,10 @@
       }
 
       return array;
+    }
+
+    function normalYoutubeUrl(url) {
+      return 'https://www.youtube.com/watch?v=' + url;
     }
 
     function youtubeUrl(url) {

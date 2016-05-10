@@ -1,15 +1,17 @@
 <div class='panel panel-success border-green'>
   <div class='panel-body'>
-    <div class='row text-center' ng-if='typeOf.youtube'>
-      <iframe type='text/html' ng-src='{{ gc.youtubeUrl(resource.url.full) }}' frameBorder='0' />
-    </div>
-
     <div class='row text-center' ng-if='typeOf.image || typeOf.brandLogo'>
       <img ng-src='{{ resource.url.thumb }}'/>
     </div>
 
     <div class='row text-center' ng-if='typeOf.audio'>
       <span class='glyphicon glyphicon-music' aria-hidden='true'></span>
+    </div>
+
+    <div class='row text-center glyphicon-youtube' ng-if='typeOf.youtube'>
+      <a ng-href='{{ gc.normalYoutubeUrl(resource.url.full) }}' target='_blank'>
+        <span class='glyphicon glyphicon-facetime-video' aria-hidden='true'></span>
+      </a>
     </div>
 
     <div class='row text-center' ng-if='typeOf.video'>
@@ -54,8 +56,8 @@
         </div>
 
         <div class='pull-right'>
-          <a ng-if='typeOf.youtube' href='{{ resource.url.full }}' target='_blank' class='btn btn-addNewElement btn-green pull-right text-uppercase'>
-            <p class='text-uppercase'>{{ resource.scope }}</p>
+          <a ng-if='typeOf.youtube' ng-href='{{ gc.normalYoutubeUrl(resource.url.full) }}' target='_blank' class='btn btn-addNewElement btn-green pull-right text-uppercase'>
+            <span class='glyphicon glyphicon-facetime-video'></span>
           </a>
         </div>
       </div>
