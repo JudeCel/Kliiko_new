@@ -239,7 +239,6 @@ function chatRoomUrl() {
 
 function updateSessionMemberRating(params, userId, accountId) {
   let deferred = q.defer();
-
   validators.hasValidSubscription(accountId).then(function() {
     SessionMember.find({
       where: {
@@ -295,7 +294,6 @@ function findFacilitator(members) {
 
 function findAllSessionsAsManager(accountId, provider) {
   let deferred = q.defer();
-
   Session.findAll({
     where: {
       accountId: accountId
@@ -303,7 +301,11 @@ function findAllSessionsAsManager(accountId, provider) {
     include: [{
       model: SessionMember,
       attributes: VALID_ATTRIBUTES.sessionMember,
-      required: false
+      required: false,
+      include: [{
+        model: AccountUser,
+        attributes: ['firstName', 'lastName', 'email']
+      }]
     }]
   }).then(function(sessions) {
     modifySessions(sessions, accountId, provider).then(function(result) {
@@ -320,7 +322,6 @@ function findAllSessionsAsManager(accountId, provider) {
 
 function findAllSessionsAsMember(userId, accountId, provider) {
   let deferred = q.defer();
-
   Session.findAll({
     attributes: ['id'],
     where: {
