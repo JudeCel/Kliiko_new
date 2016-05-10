@@ -16,7 +16,7 @@
     'ngMessages',
     'ngCookies',
     'colorpicker.module',
-    'internationalPhoneNumber',
+    'betsol.intlTelInput',
     'ngDraggable',
     'contactList',
     'topicsAndSessions',
@@ -36,6 +36,7 @@
     .module('KliikoApp', includes)
     .factory('myInterceptor', myInterceptor)
     .config(appConfigs)
+    .config(phoneNumbersConfig)
     .run(appRun)
     .controller('AppController', AppController);
 
@@ -43,8 +44,20 @@
     .module('KliikoApp.Root', includes)
     .factory('myInterceptor', myInterceptor)
     .config(appConfigs)
+    .config(phoneNumbersConfig)
     .run(appRun)
     .controller('AppController', AppController);
+
+  function phoneNumbersConfig(intlTelInputOptions) {
+    angular.extend(intlTelInputOptions, {
+      nationalMode: false,
+      defaultCountry: 'au',
+      preferredCountries: ['au'],
+      utilsScript: 'js/vendors/intl-tel-input/src/utils.js',
+      autoFormat: true,
+      autoPlaceholder: true
+    });
+  }
 
   myInterceptor.$inject = ['$log','$q', '$rootScope'];
   function myInterceptor($log, $q, $rootScope) {
@@ -117,9 +130,10 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader'];
-  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader) {
+  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader', 'domServices'];
+  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader, domServices) {
     var vm = this;
+    vm.openContactDetailsModal = openContactDetailsModal;
     dbg.log2('#AppController started ');
     $rootScope.$on('app.updateUser', init);
 
@@ -133,6 +147,12 @@
       accountUser.getAccountUserData().then(function(res) { vm.accountUser = res });
       account.getAccountData().then(function(res) { vm.account = res });
       fileUploader.getToken().then(function(res) { vm.fileUploader = res });
+    }
+
+    function openContactDetailsModal() {
+      setTimeout(function () {
+        domServices.modal('contactDetailsModal');
+      }, 10);
     }
 
     function setSessionStorage(res) {

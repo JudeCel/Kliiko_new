@@ -50,7 +50,6 @@
     }
 
     function newFacilitator(userData) {
-      userData = setDependencies(userData);
       var params = {
         defaultFields: userData,
         contactListId: vm.facilitatorContactListId
@@ -75,7 +74,6 @@
     }
 
     function saveEdited(userData) {
-      userData = setDependencies(userData);
       var params = {
         defaultFields: userData,
         contactListId: vm.facilitatorContactListId
@@ -109,16 +107,6 @@
     function closeFacilitatorForm() {
       domServices.modal('facilitatorForm', 'close');
       vm.userData = {};
-    }
-
-    function setDependencies(newContact) {
-      newContact.phoneCountryData = $("#facilitatorMobile").intlTelInput('getSelectedCountryData');
-      newContact.landlineNumberCountryData = $("#facilitatorLandlineNumber").intlTelInput('getSelectedCountryData');
-
-      newContact.mobile = $("#facilitatorMobile").val();
-      newContact.landlineNumber = $("#facilitatorLandlineNumber").val();
-
-      return newContact;
     }
 
     function getAllContacts() {
