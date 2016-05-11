@@ -709,7 +709,7 @@ function step2Queries(session, step) {
         include: [{
           model: models.SessionTopics,
           where: {
-            SessionId: session.id
+            sessionId: session.id
           },
           attributes: ['order']
         }]

@@ -12,7 +12,7 @@ module.exports = (Sequelize, DataTypes) => {
     timestamps: true,
     classMethods: {
       associate: function(models) {
-        Topic.hasMany(models.SessionTopics, { foreignKey: 'TopicId' });
+        Topic.hasMany(models.SessionTopics, { foreignKey: 'topicId' });
         Topic.belongsToMany(models.Session, { through: { model: models.SessionTopics } });
       }
     }
