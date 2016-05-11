@@ -195,11 +195,9 @@ function getActiveMailTemplate(category, params, callback) {
 function getMailTemplateForReset(req, callback) {
   MailTemplate.find({
     include: [{ model: MailTemplateOriginal, attributes: constants.originalMailTemplateFields}],
-    where: {
-      id: req.id,
-    },
-    attributes: constants.mailTemplateFieldsForList,
+    attributes: constants.mailTemplateFields,
     raw: true,
+    where: {AccountId: null, MailTemplateBaseId: req.baseId}
   }).then(function (result) {
     callback(null, result);
   }).catch(function (err) {
@@ -230,6 +228,9 @@ function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSyste
     query['$or'] = [{AccountId: accountId}, {AccountId: null}];
   }
 
+  if (!accountId) {
+    query.AccountId = null;
+  }
   if (!getSystemMail) {
     query.systemMessage = false;
   }
@@ -309,15 +310,9 @@ function setMailTemplateDefault (id, templateCopyId, isAdmin, callback) {
   });
 }
 
-function prepareAdminTemplate(template, shouldOverwrite, accountId) {
-  if (!template["systemMessage"] && !shouldOverwrite) {
-    template.AccountId = accountId;
-  }
-}
-
-function shouldCreateCopy(template, createCopy, accountId, shouldOverwrite) {
+function shouldCreateCopy(template, shouldOverwrite, accountId) {
   var result = false;
-  if (!template["systemMessage"] && (!template["AccountId"])) {
+  if (accountId && !template["systemMessage"] && (!template["AccountId"])) {
     result = true;
 
     if (shouldOverwrite && template["isCopy"]) {
@@ -333,7 +328,7 @@ function shouldCreateCopy(template, createCopy, accountId, shouldOverwrite) {
     }
   }
 
-  return (result || createCopy);
+  return (result || shouldOverwrite);
 }
 
 function variablesForTemplate(type) {
@@ -436,7 +431,7 @@ function buildTemplate(inputTemplate, sourceTemplate) {
   };
 }
 
-function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, callback) {
+function saveMailTemplate(template, createCopy, accountId, callback) {
   if (!template) {
     return callback("e-mail template not provided");
   }
@@ -448,20 +443,20 @@ function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, call
 
   getMailTemplateForSession({template:template, accountId: accountId}, function(error, result) {
     let templateObject = buildTemplate(template, result);
-    if (!templateObject.overwriteSessionElement && shouldCreateCopy(templateObject.template, createCopy, accountId, shouldOverwrite)) {
-      prepareAdminTemplate(templateObject.template, shouldOverwrite, accountId);
+    if (!templateObject.overwriteSessionElement && shouldCreateCopy(templateObject.template, createCopy, accountId)) {
       templateObject.template.isCopy = true;
+      templateObject.template.AccountId = accountId;
       create(templateObject.template, function(error, result) {
         if (error) {
           callback(error);
         } else {
-          setMailTemplateDefault(result.MailTemplateBaseId, result.id, shouldOverwrite, callback);
+          setMailTemplateDefault(result.MailTemplateBaseId, result.id, !createCopy, callback);
         }
       });
     } else {
       update(templateObject.id, templateObject.template, function(error, result) {
         if (!error) {
-          setMailTemplateDefault(templateObject.template.MailTemplateBaseId, templateObject.id, shouldOverwrite, callback);
+          setMailTemplateDefault(templateObject.template.MailTemplateBaseId, templateObject.id, !createCopy, callback);
         } else {
           callback(error);
         }
@@ -471,16 +466,22 @@ function saveMailTemplate(template, createCopy, accountId, shouldOverwrite, call
 }
 
 
-function resetMailTemplate(templateId, callback) {
+function resetMailTemplate(templateId, baseTemplateId, isCopy, callback) {
   if (!templateId) {
       return callback("e-mail template not provided");
   }
 
-  getMailTemplateForReset({id: templateId}, function(err, result) {
+  getMailTemplateForReset({id: templateId, baseId:baseTemplateId}, function(err, result) {
     if (result) {
-      update(templateId, {name: result["MailTemplateBase.name"], subject: result["MailTemplateBase.subject"], content: result["MailTemplateBase.content"]}, function(error, result) {
+      if (isCopy) {
+        update(templateId, {name: result.name, subject: result.subject, content: result.content}, function(error, result) {
           callback(error, result);
-      });
+        });
+      } else {
+        update(templateId, {name: result["MailTemplateBase.name"], subject: result["MailTemplateBase.subject"], content: result["MailTemplateBase.content"]}, function(error, result) {
+          callback(error, result);
+        });
+      }
     } else {
       callback(err);
     }

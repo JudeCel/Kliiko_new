@@ -26,7 +26,14 @@ function allSessionMailTemplatesGet(req, res, next) {
 }
 
 function allMailTemplatesGet(req, res, next) {
-  MailTemplateService.getAllMailTemplates(res.locals.currentDomain.id, true, req.query.getSystemMail, false, function(error, result) {
+  let accountId;
+  if (policy.hasAccess(res.locals.currentDomain.roles, ['admin'])) {
+    accountId = null;
+  } else {
+    accountId = res.locals.currentDomain.id;
+  }
+
+  MailTemplateService.getAllMailTemplates(accountId, true, req.query.getSystemMail, false, function(error, result) {
     res.send({error: error, templates: result});
   });
 }
@@ -39,8 +46,13 @@ function mailTemplatePost(req, res, next) {
 }
 
 function saveMailTemplatePost(req, res, next) {
-  let shouldOverwrite = policy.hasAccess(res.locals.currentDomain.roles, ['admin']);
-  MailTemplateService.saveMailTemplate(req.body.mailTemplate, req.body.copy, res.locals.currentDomain.id, shouldOverwrite,function(error, result) {
+  let canOverwrite = policy.hasAccess(res.locals.currentDomain.roles, ['admin']);
+  var makeCopy = false;
+  if (!canOverwrite) {
+    makeCopy = req.body.copy;
+  }
+  var accountId = canOverwrite?null:res.locals.currentDomain.id;
+  MailTemplateService.saveMailTemplate(req.body.mailTemplate, makeCopy, accountId,function(error, result) {
     res.send({error: error, templates: result});
   });
 }
@@ -52,7 +64,7 @@ function deleteMailTemplate(req, res, next) {
 }
 
 function resetMailTemplatePost(req, res, next) {
-  MailTemplateService.resetMailTemplate(req.body.mailTemplateId, function(error, result) {
+  MailTemplateService.resetMailTemplate(req.body.mailTemplateId, req.body.mailTemplateBaseId, req.body.isCopy, function(error, result) {
     res.send({error: error, template: result});
   });
 }

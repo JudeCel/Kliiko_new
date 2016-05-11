@@ -249,6 +249,18 @@
       domServices.modal('confirmDialog', 'close');
     };
 
+    vm.resetButtonVisible = function(isAdmin) {
+      if (isAdmin) {
+        return true;
+      } else {
+        if (vm.currentTemplate.isCopy) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+
     vm.approveTemplateDelete = function() {
       domServices.modal('confirmDialog', 'close');
       var nextSelection = -1;
