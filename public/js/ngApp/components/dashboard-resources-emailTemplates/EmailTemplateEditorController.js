@@ -253,11 +253,7 @@
       if (isAdmin) {
         return true;
       } else {
-        if (vm.currentTemplate.isCopy) {
-          return true;
-        } else {
-          return false;
-        }
+        return vm.currentTemplate.isCopy;
       }
     }
 

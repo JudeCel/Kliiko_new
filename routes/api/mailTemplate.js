@@ -27,9 +27,7 @@ function allSessionMailTemplatesGet(req, res, next) {
 
 function allMailTemplatesGet(req, res, next) {
   let accountId;
-  if (policy.hasAccess(res.locals.currentDomain.roles, ['admin'])) {
-    accountId = null;
-  } else {
+  if (!policy.hasAccess(res.locals.currentDomain.roles, ['admin'])) {
     accountId = res.locals.currentDomain.id;
   }
 
@@ -51,7 +49,7 @@ function saveMailTemplatePost(req, res, next) {
   if (!canOverwrite) {
     makeCopy = req.body.copy;
   }
-  var accountId = canOverwrite?null:res.locals.currentDomain.id;
+  var accountId = canOverwrite ? null:res.locals.currentDomain.id;
   MailTemplateService.saveMailTemplate(req.body.mailTemplate, makeCopy, accountId,function(error, result) {
     res.send({error: error, templates: result});
   });
