@@ -19,6 +19,7 @@
       sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } },
       sessionMailTemplateStatus: { method: 'GET', params: { path: 'sessionMailTemplateStatus' } },
       addTopics: {method: 'POST',  params: {path: 'addTopics'} },
+      updateSessionTopicName: {method: 'POST',  params: {path: 'updateSessionTopicName'} },
       removeTopic: {method: 'POST',  params: {path: 'removeTopic'} },
 
       nextStep: {method: 'POST', params: {path: 'step'} },
@@ -37,7 +38,6 @@
     var sessionMemberApi = $resource(globalSettings.restUrl + '/sessionMember/:path', {}, {
       post: { method: 'POST', params: { path: 'addFacilitator' } }
     });
-
 
     var SessionModel;
 
@@ -280,6 +280,20 @@
           deferred.resolve(res.data);
         }
       });
+      return deferred.promise;
+    }
+
+    function updateSessionTopicName(params) {
+      var deferred = $q.defer();
+
+      topicRestApi.sessionTopic(params, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
+        }
+      });
+
       return deferred.promise;
     }
 

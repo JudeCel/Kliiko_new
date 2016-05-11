@@ -3,29 +3,33 @@
 
   angular.module('KliikoApp').controller('SessionStep2Controller', SessionStep2Controller);
 
-  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', '$state',  '$filter', 'domServices', '$rootScope', '$scope'];
-  function SessionStep2Controller(dbg, builderServices, messenger, $state, $filter, domServices, $rootScope, $scope) {
+  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', '$state',  '$filter', 'domServices', '$rootScope', '$scope', 'topicsAndSessions'];
+  function SessionStep2Controller(dbg, builderServices, messenger, $state, $filter, domServices, $rootScope, $scope, topicsAndSessions) {
     dbg.log2('#SessionBuilderController 2 started');
 
     var vm = this;
 
     vm.step2 = {};
     vm.accordions = {};
+    vm.editTopics = {};
     vm.$state = $state;
 
 
     vm.parentController;
-
+    vm.topicIndex = null;
     vm.watchers = [];
     vm.selectedTopics = [];
     vm.sessionTopics = [];
+    vm.chatSessionTopicsList = [];
+    vm.topicList = [];
 
+    vm.openModal = openModal;
+    vm.submitEditForm = submitEditForm;
     vm.orderTopics = orderTopics;
     vm.topicsOnDropComplete = topicsOnDropComplete;
     vm.removeTopicFromList = removeTopicFromList;
     vm.topicSelectClickHandle = topicSelectClickHandle;
     vm.selectAllTopics = selectAllTopics;
-    vm.chatSessionTopicsList = [];
 
     vm.sortableOptionsA = {
       stop : function(e, ui) {
@@ -62,6 +66,61 @@
       }
     }
 
+    function updateTopicName(topic) {
+      topicsAndSessions.updateTopic(topic).then(function(result) {
+        domServices.modal('editTopic', 'close');
+        vm.topicList[vm.topicIndex] = vm.editTopics;
+      }, function(error) {
+        console.log(error);
+      })
+    }
+
+    function updateSessionTopicName(sessionTopicName, sessionTopicId) {
+      var params = {
+        sessionTopicName: sessionTopicName,
+        sessionTopicId: sessionTopicId
+      }
+
+      topicsAndSessions.updateSessionTopicName(params).then(function(result) {
+        vm.chatSessionTopicsList[vm.topicIndex].SessionTopics[0] = result.sessionTopic;
+        domServices.modal('editTopic', 'close');
+        messenger.ok(result.message);
+      }, function(error) {
+        messenger.error(result.error);
+      });
+    }
+
+    function submitEditForm() {
+      if(vm.editTopics.postTo == 'updateSessionTopic') {
+        updateSessionTopicName(vm.editTopics.name, vm.editTopics.id);
+      }else if(vm.editTopics.postTo == 'updateTopic') {
+        updateTopicName(vm.editTopics);
+      }else{
+        messenger.error("Sorry, but something went wrong.");
+      }
+    }
+
+    function openModal(edit, topic) {
+      if(edit == 'sessionTopic'){
+        prepareSessionTopicData(topic);
+      }else{
+        vm.topicIndex = vm.topicList.indexOf(topic);
+        angular.copy(topic, vm.editTopics);
+        vm.editTopics.formTitle = 'Edit Topic'
+        vm.editTopics.postTo = 'updateTopic'
+      }
+
+      domServices.modal('editTopic');
+    }
+
+    function prepareSessionTopicData(topic) {
+      vm.topicIndex = vm.chatSessionTopicsList.indexOf(topic);
+      vm.editTopics.name = topic.SessionTopics[0].name;
+      vm.editTopics.id = topic.SessionTopics[0].id;
+      vm.editTopics.formTitle = 'Edit Session Topic'
+      vm.editTopics.postTo = 'updateSessionTopic'
+    }
+
     function isTopicAdded(topic) {
       var present = false;
       vm.chatSessionTopicsList.map(function(item){
@@ -87,7 +146,7 @@
         vm.selectedTopics.map(function(topic) {
           if (!isTopicAdded(topic)) {
             topic.order = vm.chatSessionTopicsList.length;
-            topic.SessionTopics = [{order: topic.order}];
+            topic.SessionTopics = [{ order: topic.order, name: topic.name }];
             vm.chatSessionTopicsList.push(topic);
             topicArray.push(topic);
           }
