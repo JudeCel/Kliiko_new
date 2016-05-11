@@ -6,7 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
     sessionTopicId: { type: DataTypes.INTEGER, allowNull: false },
     audioId: { type: DataTypes.INTEGER, allowNull: true },
     videoId: { type: DataTypes.INTEGER, allowNull: true },
-    iamageId: { type: DataTypes.INTEGER, allowNull: true },
+    imageId: { type: DataTypes.INTEGER, allowNull: true },
     fileId: { type: DataTypes.INTEGER, allowNull: true },
     surveyId: { type: DataTypes.INTEGER, allowNull: true }
   }, {
@@ -16,7 +16,7 @@ module.exports = (Sequelize, DataTypes) => {
         Console.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId' });
         Console.belongsTo(models.Resource, { foreignKey: 'audioId' });
         Console.belongsTo(models.Resource, { foreignKey: 'videoId' });
-        Console.belongsTo(models.Resource, { foreignKey: 'iamageId' });
+        Console.belongsTo(models.Resource, { foreignKey: 'imageId' });
         Console.belongsTo(models.Resource, { foreignKey: 'fileId' });
         Console.belongsTo(models.Survey, { foreignKey: 'surveyId' });
       }
