@@ -49,11 +49,11 @@
           <div class="has-error text-center">{{ec.currentTemplate.error.content}}</div>
           <br>
 
-          <button type="submit" class="btn btn-red pull-left" ng-click="ec.resetMailTemplate()">Reset</button>
+          <button type="submit" class="btn btn-red pull-left" ng-click="ec.resetMailTemplate()" ng-show="ec.resetButtonVisible(app.accountUser.isAdmin)">Reset</button>
 
 
           <button type="submit" class="btn btn-green pull-right" ng-click="ec.modifyAndSave()">Modify & Save Copy</button>
-          <button type="submit" class="btn btn-lightgreen pull-right" ng-click="ec.modifyAndSave(true)" ng-hide="ec.currentTemplate.systemMessage">Create Copy</button>
+          <button type="submit" class="btn btn-lightgreen pull-right" ng-click="ec.modifyAndSave(true)" ng-if="ec.copyButtonVisible(app.accountUser.isAdmin)">Create Copy</button>
           <button type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
         </div>
 

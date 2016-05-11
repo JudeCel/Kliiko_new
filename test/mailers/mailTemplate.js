@@ -54,7 +54,7 @@ describe('send MailTemplates',  () => {
         attributes: constants.mailTemplateFields,
         raw: true
       }).then(function (result) {
-        mailTemplateService.saveMailTemplate(result, false, accountId, false, function(error, saveResult) {
+        mailTemplateService.saveMailTemplate(result, false, accountId, function(error, saveResult) {
           assert.isNull(error);
           assert.notEqual(saveResult.id, result.id, 'should not overwrite original mail');
 
@@ -73,7 +73,7 @@ describe('send MailTemplates',  () => {
         raw: true
       }).then(function (result) {
         result.properties = {sessionId: 0};
-        mailTemplateService.saveMailTemplate(result, false, accountId, false, function(error, saveResult) {
+        mailTemplateService.saveMailTemplate(result, false, accountId, function(error, saveResult) {
           assert.isNull(error);
           assert.notEqual(saveResult.id, result.id, 'should not overwrite original mail');
           done();
