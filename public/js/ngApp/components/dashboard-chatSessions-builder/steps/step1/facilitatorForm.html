@@ -12,7 +12,8 @@
       </div>
 
       <div class='modal-body text-gray-medium'>
-        <form class='form-horizontal' role='form' novalidate>
+        <form class='form-horizontal' role='form' novalidate ng-controller='PhoneNumberController as pnc'>
+          <span class='hidden'>{{ pnc.init(step1Controller.userData, 'facilitatorForm'); '' }}</span>
           <div class='row'>
             <div class='col-xs-12'>
               <div class='col-md-6'>
@@ -48,14 +49,24 @@
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
                   <div class='col-md-8'>
-                    <input type='text' international-phone-number ng-model='step1Controller.userData.mobile' id='facilitatorMobile' class='form-control'>
+                    <input type='tel'
+                      intl-tel-input
+                      intl-tel-input-controller='pnc.mobileController'
+                      ng-model='step1Controller.userData.mobile'
+                      id='facilitatorMobile'
+                      class='form-control'>
                   </div>
                 </div>
 
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
                   <div class='col-md-8'>
-                    <input type='text' class='form-control' international-phone-number id='facilitatorLandlineNumber' ng-model='step1Controller.userData.landlineNumber'>
+                    <input type='tel'
+                      intl-tel-input
+                      intl-tel-input-controller='pnc.landlineController'
+                      ng-model='step1Controller.userData.landlineNumber'
+                      id='facilitatorLandlineNumber'
+                      class='form-control'>
                   </div>
                 </div>
               </div>

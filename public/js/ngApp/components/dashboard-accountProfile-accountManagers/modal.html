@@ -7,7 +7,9 @@
       </div>
 
       <div class='modal-body text-gray-medium'>
-        <form class='form-horizontal' role='form' novalidate>
+        <form class='form-horizontal' role='form' novalidate ng-controller='PhoneNumberController as pnc'>
+          <span class='hidden'>{{ pnc.init(amc.accountUser, 'accountManagerModal'); '' }}</span>
+
           <div class='row'>
             <div class='col-xs-12'>
               <div class='col-md-6'>
@@ -48,7 +50,12 @@
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
                   <div class='col-md-8'>
                     <span class='has-error text-red-dark'>{{ errors.mobile }}</span>
-                    <input type='text' international-phone-number ng-model='amc.accountUser.mobile' default-country='{{amc.phoneCountryData}}' id='mobileAM' class='form-control'>
+                    <input type='tel'
+                      intl-tel-input
+                      intl-tel-input-controller='pnc.mobileController'
+                      ng-model='amc.accountUser.mobile'
+                      id='mobileAM'
+                      class='form-control'>
                   </div>
                 </div>
 
@@ -56,7 +63,12 @@
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
                   <div class='col-md-8'>
                     <span class='has-error text-red-dark'>{{ errors.landlineNumber }}</span>
-                    <input type='text' class='form-control' international-phone-number id='landlineNumberAM' ng-model='amc.accountUser.landlineNumber'>
+                    <input type='tel'
+                      intl-tel-input
+                      intl-tel-input-controller='pnc.landlineController'
+                      ng-model='amc.accountUser.landlineNumber'
+                      id='landlineNumberAM'
+                      class='form-control'>
                   </div>
                 </div>
               </div>

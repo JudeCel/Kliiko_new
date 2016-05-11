@@ -353,8 +353,6 @@
       var currentList = vm.lists.activeList;
       var newContact = angular.copy(vm.newContact);
 
-      vm.newContact = setDependencies(vm.newContact);
-
       vm.lists.addNewContact(vm.newContact).then(
         function(res) {
           vm.newContact = {customFields:{}};
@@ -376,8 +374,6 @@
       var currentList = vm.lists.activeList;
       var newContact = angular.copy(vm.newContact);
 
-      vm.newContact = setDependencies(vm.newContact);
-
       vm.lists.updateContact(vm.newContact).then(function(res) {
         vm.newContact = {customFields:{}};
         domServices.modal('contactList-addContactManual', 'close');
@@ -386,16 +382,6 @@
       function (err) {
         messenger.error(err);
       });
-    }
-
-    function setDependencies(newContact) {
-      newContact.phoneCountryData = $("#contactListMobile").intlTelInput('getSelectedCountryData');
-      newContact.landlineNumberCountryData = $("#contactListLandlineNumber").intlTelInput('getSelectedCountryData');
-
-      newContact.mobile = $("#contactListMobile").val();
-      newContact.landlineNumber = $("#contactListLandlineNumber").val();
-
-      return newContact;
     }
 
     /**

@@ -4,8 +4,8 @@
   angular.module('domServices', [])
     .factory('domServices', domServicesFactory);
 
-  domServicesFactory.$inject = ['dbg'];
-  function domServicesFactory(dbg) {
+  domServicesFactory.$inject = ['dbg', '$rootScope'];
+  function domServicesFactory(dbg, $rootScope) {
 
     var domServicesPublicMethods = {};
     domServicesPublicMethods.modal = handleModalActions;
@@ -22,9 +22,14 @@
      * @param [close] {boolean}
      */
     function handleModalActions(modalId, close) {
-      close
-        ? jQuery('#' + modalId).modal('hide')
-        : jQuery('#' + modalId).modal('show');
+      if(close) {
+        jQuery('#' + modalId).modal('hide');
+        $rootScope.$broadcast('modal-close', modalId);
+      }
+      else {
+        jQuery('#' + modalId).modal('show');
+        $rootScope.$broadcast('modal-open', modalId);
+      }
     }
 
 
