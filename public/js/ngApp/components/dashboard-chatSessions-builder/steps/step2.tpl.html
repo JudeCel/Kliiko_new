@@ -27,8 +27,8 @@
             </div>
 
             <div id="topics-list" ng-init="step2Controller.orderTopics(topics.list)">
-              <div class="topic-list-item" ng-repeat="t in topics.list"
-                   ng-drag="step2Controller.canDragElement(t)" ng-drag-data="t" ng-drag-success="step2Controller.topicsOnDropComplete($data,$event)">
+              <div ng-hide="true">{{ step2Controller.topicList = topics.list }}</div>
+              <div class="topic-list-item" ng-repeat="t in step2Controller.topicList" ng-drag="step2Controller.canDragElement(t)" ng-drag-data="t" ng-drag-success="step2Controller.topicsOnDropComplete($data, $event)">
                    {{ t.order = $index; "" }}
                 <div class="panel-label">
                   <span ng-if="topics.editBlockHelper != $index">
@@ -39,21 +39,14 @@
                     {{t.name}}
                   </span>
                   <span ng-if="topics.editBlockHelper == $index">
-                    <input id="topic-input-{{ $index }}" type="text" ng-model="t.name"
-                           maxlength="{{ ::topics.nameMaxSize}}"
-                           ng-blur="topics.saveInline($index, t.name)">
+
                     <span class="inline-editor-help">Characters left: {{ topics.nameMaxSize - t.name.length }}</span>
                   </span>
                 </div>
                 <div class="control-block">
-                  <span id="edit-block-{{ $index }}" class="edit-block animated slideInRight"
-                        style="display: none">
-                    <img src="/icons/ic_edit.png" alt="" title="Rename" ng-click="topics.edit($index, 'topic-input-'+$index)">
-                  </span>
-                  <img class="pull-right ic" ng-click="topics.deleteTopic(t.id)"
-                      src="/icons/dashboardElement_remove.png" alt="" title="Delete">
-                  <img class="pull-right ic" src="/icons/dashboardElement_edit.png" alt=""
-                      title="Edit" ng-click="topics.toggleEditBlock($index)">
+
+                  <img class="pull-right ic" ng-click="topics.deleteTopic(t.id)" src="/icons/dashboardElement_remove.png" alt="" title="Delete">
+                  <img class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" ng-click="step2Controller.openModal('', t)">
                 </div>
               </div>
             </div>
@@ -65,21 +58,57 @@
           </br>
           <div ui-sortable="step2Controller.sortableOptionsA" ng-model="step2Controller.chatSessionTopicsList">
             <div class="topic-list-item" ng-repeat="t in step2Controller.chatSessionTopicsList">
+
               <div class="panel-label">
                 <span>
                   <img src="icons/ic_move.png">
                   {{ t.SessionTopics[0].name }}
                 </span>
 
-                <img class="ico-active-unactive" ng-show="t.active" src="/icons/unlocked.png" ng-click="t.active = !t.active; t.update()"  alt="Active" title="Active">
+                <img class="ico-active-unactive" ng-show="t.active" src="/icons/unlocked.png" ng-click="t.active = !t.active; t.update();"  alt="Active" title="Active">
                 <img class="ico-active-unactive" ng-show="!t.active" src="/icons/locked.png"  ng-click="t.active = !t.active; t.update()" alt="Not Active" title="Not Active">
               </div>
 
               <div class="control-block">
-                <img class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" ng-click"step2Controller.editSessionTopic()">
                 <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(t.id)" src="/icons/dashboardElement_remove.png" alt="" title="Delete">
+                <img class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" ng-click="step2Controller.openModal('sessionTopic', t)">
               </div>
 
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class='modal fade' id='editTopic' role='dialog'>
+        <div class='modal-dialog changePasswordModal' style="width: 800px">
+          <div class='modal-content border-green border-radius-none'>
+            <div class='modal-header'>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h1 class='modal-title text-center'>{{ step2Controller.editTopics.formTitle }}</h1>
+            </div>
+            <div class='modal-body'>
+              <form>
+                <div class="row">
+                  <div class="text-center">
+                    <input id="new-topic-input" type="text" maxlength="15" ng-model="step2Controller.editTopics.name">
+                    <br>
+                    <!-- <div id="new-topic-input-help">
+                      Characters left: {{ topics.nameMaxSize - topics.newTopicName.length }}
+                    </div> -->
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class='modal-footer'>
+              <div type='button' class='pull-left btn-standart btn-red' data-dismiss='modal'>
+                Cancel
+              </div>
+
+              <div type='submit' class='pull-right btn-standart btn-green' ng-click="step2Controller.submitEditForm()">
+                Update
+              </div>
             </div>
           </div>
         </div>

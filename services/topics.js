@@ -5,7 +5,10 @@ var models = require('./../models');
 var Topic = models.Topic;
 var _ = require('lodash');
 var Session = models.Session;
-const MESSAGES = {error: { isRelaitedSession: "Can't delete topic is related session" } };
+const MESSAGES = {
+  updatedSessionTopic: "Session Topic was successfully update.",
+  error: { isRelaitedSession: "Can't delete topic is related session" }
+};
 
 module.exports = {
   getAll: getAll,
@@ -43,12 +46,18 @@ function getAll(accountId) {
 function updateSessionTopicName(params) {
   let deferred = q.defer();
 
-  models.sessionTopics.update({
-    name: params.name
-  }, {
-    where: params.id
-  }).then(function(result) {
-    deferred.resolve(result);
+  models.SessionTopics.update({ name: params.sessionTopicName }, {
+    where: {
+      id: params.sessionTopicId
+    }
+  }).then(function() {
+    models.SessionTopics.find({
+      where: {
+        id: params.sessionTopicId
+      }
+    }).then(function(result) {
+      deferred.resolve({ sessionTopic: result, message: MESSAGES.updatedSessionTopic });
+    })
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -68,7 +77,6 @@ function updateSessionTopics(sessionId, topicsArray) {
           sessionTopic.order = topic.order;
           sessionTopic.active = topic.active;
           if(!sessionTopic.name) {
-            console.log(sessionTopic);
             sessionTopic.name = topic.name;
           }
           sessionTopic.update({

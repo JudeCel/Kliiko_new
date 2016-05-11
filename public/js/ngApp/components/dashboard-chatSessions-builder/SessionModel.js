@@ -39,7 +39,6 @@
       post: { method: 'POST', params: { path: 'addFacilitator' } }
     });
 
-
     var SessionModel;
 
     SessionModel = SessionModel;
@@ -56,7 +55,6 @@
     SessionModel.prototype.sendSms = sendSms;
     SessionModel.prototype.addMembers = addMembers;
     SessionModel.prototype.saveTopics = saveTopics;
-    SessionModel.prototype.updateSessionTopicName = updateSessionTopicName;
     SessionModel.prototype.inviteParticipants = inviteParticipants;
     SessionModel.prototype.inviteObservers = inviteObservers;
     SessionModel.prototype.removeMember = removeMember;
@@ -288,7 +286,7 @@
     function updateSessionTopicName(params) {
       var deferred = $q.defer();
 
-      sessionBuilderRestApi.updateSessionTopicName({id: self.id}, { topicsArray: topicsArray }, function(res) {
+      topicRestApi.sessionTopic(params, function(res) {
         if (res.error) {
           deferred.reject(res.error);
         } else {
