@@ -253,6 +253,10 @@
       return isAdmin || vm.currentTemplate.isCopy;
     }
 
+    vm.copyButtonVisible = function(isAdmin) {
+      return !vm.currentTemplate.systemMessage && !isAdmin;
+    }
+
     vm.approveTemplateDelete = function() {
       domServices.modal('confirmDialog', 'close');
       var nextSelection = -1;

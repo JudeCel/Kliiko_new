@@ -47,7 +47,7 @@ function saveMailTemplatePost(req, res, next) {
   let canOverwrite = policy.hasAccess(res.locals.currentDomain.roles, ['admin']);
   let makeCopy = !canOverwrite ? req.body.copy : false;
 
-  var accountId = canOverwrite ? null:res.locals.currentDomain.id;
+  var accountId = canOverwrite ? null : res.locals.currentDomain.id;
   MailTemplateService.saveMailTemplate(req.body.mailTemplate, makeCopy, accountId,function(error, result) {
     res.send({error: error, templates: result});
   });

@@ -53,7 +53,7 @@
 
 
           <button type="submit" class="btn btn-green pull-right" ng-click="ec.modifyAndSave()">Modify & Save Copy</button>
-          <button type="submit" class="btn btn-lightgreen pull-right" ng-click="ec.modifyAndSave(true)" ng-if="!ec.currentTemplate.systemMessage && !app.accountUser.isAdmin">Create Copy</button>
+          <button type="submit" class="btn btn-lightgreen pull-right" ng-click="ec.modifyAndSave(true)" ng-if="ec.copyButtonVisible(app.accountUser.isAdmin)">Create Copy</button>
           <button type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
         </div>
 

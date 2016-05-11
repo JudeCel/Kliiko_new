@@ -310,9 +310,13 @@ function setMailTemplateDefault (id, templateCopyId, isAdmin, callback) {
   });
 }
 
+function canTemplateBeCopied(template, accountId) {
+  return accountId && !template["systemMessage"] && (!template["AccountId"]);
+}
+
 function shouldCreateCopy(template, shouldOverwrite, accountId) {
   var result = false;
-  if (accountId && !template["systemMessage"] && (!template["AccountId"])) {
+  if (canTemplateBeCopied(template, accountId)) {
     result = true;
 
     if (shouldOverwrite && template["isCopy"]) {
@@ -432,37 +436,38 @@ function buildTemplate(inputTemplate, sourceTemplate) {
 }
 
 function saveMailTemplate(template, createCopy, accountId, callback) {
-  if (!template) {
-    return callback("e-mail template not provided");
-  }
-  let validationResult = validateTemplate(template);
-  if (validationResult) {
-    callback(validationResult);
-    return;
-  }
-
-  getMailTemplateForSession({template:template, accountId: accountId}, function(error, result) {
-    let templateObject = buildTemplate(template, result);
-    if (!templateObject.overwriteSessionElement && shouldCreateCopy(templateObject.template, createCopy, accountId)) {
-      templateObject.template.isCopy = true;
-      templateObject.template.AccountId = accountId;
-      create(templateObject.template, function(error, result) {
-        if (error) {
-          callback(error);
-        } else {
-          setMailTemplateDefault(result.MailTemplateBaseId, result.id, !createCopy, callback);
-        }
-      });
-    } else {
-      update(templateObject.id, templateObject.template, function(error, result) {
-        if (!error) {
-          setMailTemplateDefault(templateObject.template.MailTemplateBaseId, templateObject.id, !createCopy, callback);
-        } else {
-          callback(error);
-        }
-      });
+  if (template) {
+    let validationResult = validateTemplate(template);
+    if (validationResult) {
+      callback(validationResult);
+      return;
     }
-  });
+
+    getMailTemplateForSession({template:template, accountId: accountId}, function(error, result) {
+      let templateObject = buildTemplate(template, result);
+      if (!templateObject.overwriteSessionElement && shouldCreateCopy(templateObject.template, createCopy, accountId)) {
+        templateObject.template.isCopy = true;
+        templateObject.template.AccountId = accountId;
+        create(templateObject.template, function(error, result) {
+          if (error) {
+            callback(error);
+          } else {
+            setMailTemplateDefault(result.MailTemplateBaseId, result.id, !createCopy, callback);
+          }
+        });
+      } else {
+        update(templateObject.id, templateObject.template, function(error, result) {
+          if (error) {
+            callback(error);
+          } else {
+            setMailTemplateDefault(templateObject.template.MailTemplateBaseId, templateObject.id, !createCopy, callback);
+          }
+        });
+      }
+    });
+  } else {
+    callback("e-mail template not provided");
+  }
 }
 
 
