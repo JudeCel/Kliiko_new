@@ -250,11 +250,7 @@
     };
 
     vm.resetButtonVisible = function(isAdmin) {
-      if (isAdmin) {
-        return true;
-      } else {
-        return vm.currentTemplate.isCopy;
-      }
+      return isAdmin || vm.currentTemplate.isCopy;
     }
 
     vm.approveTemplateDelete = function() {
