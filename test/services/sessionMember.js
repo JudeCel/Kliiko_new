@@ -70,11 +70,11 @@ describe('SERVICE - SessionMember', function() {
     describe('happy path', function() {
       it('should succeed on removing session member by ids', function (done) {
         SessionMember.findAll().then(function(members) {
-          assert.equal(members.length, 2);
+          assert.equal(members.length, 4);
           let ids = _.map(members, 'id');
 
           sessionMemberServices.removeByIds(ids, testData.session.id, testData.account.id).then(function(removed) {
-            assert.equal(removed, 2);
+            assert.equal(removed, 4);
 
             SessionMember.count().then(function(c) {
               assert.equal(c, 0);
@@ -90,13 +90,13 @@ describe('SERVICE - SessionMember', function() {
     describe('sad path', function() {
       it('should fail on removing session member by ids', function (done) {
         SessionMember.findAll().then(function(members) {
-          assert.equal(members.length, 2);
+          assert.equal(members.length, 4);
 
           sessionMemberServices.removeByIds([], testData.session.id, testData.account.id).then(function(removed) {
             assert.equal(removed, 0);
 
             SessionMember.count().then(function(c) {
-              assert.equal(c, 2);
+              assert.equal(c, 4);
               done();
             });
           }, function(error) {
@@ -111,16 +111,17 @@ describe('SERVICE - SessionMember', function() {
     describe('happy path', function() {
       it('should succeed on removing session member by role', function (done) {
         SessionMember.count().then(function(c) {
-          assert.equal(c, 2);
+          assert.equal(c, 4);
 
           sessionMemberServices.removeByRole('participant', testData.session.id, testData.account.id).then(function(removed) {
-            assert.equal(removed, 1);
+            assert.equal(removed, 2);
 
             SessionMember.count().then(function(c) {
-              assert.equal(c, 1);
+              assert.equal(c, 2);
               done();
             });
           }, function(error) {
+            console.log(error);
             done(error);
           });
         });
@@ -130,13 +131,12 @@ describe('SERVICE - SessionMember', function() {
     describe('sad path', function() {
       it('should fail on removing session member because none with that role', function (done) {
         SessionMember.count().then(function(c) {
-          assert.equal(c, 2);
+          assert.equal(c, 4);
 
           sessionMemberServices.removeByRole('observer', testData.session.id, testData.account.id).then(function(removed) {
-            assert.equal(removed, 0);
+            assert.equal(removed, 1);
 
             SessionMember.count().then(function(c) {
-              assert.equal(c, 2);
               done();
             });
           }, function(error) {
