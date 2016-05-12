@@ -158,23 +158,25 @@ describe('SERVICE - SessionBuilder', function() {
   describe('#nextStep', function(done) {
     describe('happy path', function(done) {
       it('should go to next step', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = sessionParams(result);
-          params.name = 'My first cool session';
+        mailFixture.createMailTemplate().then(function() {
+          sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+            let params = sessionParams(result);
+            params.name = 'My first cool session';
 
-          models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
-            sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-              sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-                assert.equal(result.sessionBuilder.steps.step1.name, params.name);
-                done();
-              }, function(error) {
-                done(error);
+            models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+              sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+                sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                  assert.equal(result.sessionBuilder.steps.step1.name, params.name);
+                  done();
+                }, function(error) {
+                  done(error);
+                });
               });
             });
+          }, function(error) {
+            done(error);
           });
-        }, function(error) {
-          done(error);
-        });
+        })
       });
     });
 
@@ -442,18 +444,22 @@ describe('SERVICE - SessionBuilder', function() {
           params.name = 'My first cool session';
 
           models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
-            sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-              sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-                sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
-                  assert.equal(session.step, 'facilitatiorAndTopics');
-                  done();
+            mailFixture.createMailTemplate().then(function() {
+              sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+                sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                  sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
+                    assert.equal(session.step, 'facilitatiorAndTopics');
+                    done();
+                  }, function(error) {
+                    done(error);
+                  });
                 }, function(error) {
                   done(error);
                 });
               }, function(error) {
                 done(error);
               });
-            });
+            })
           }, function(error) {
             done(error);
           });
@@ -536,16 +542,18 @@ describe('SERVICE - SessionBuilder', function() {
                 done(error);
               }
               else {
-                sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-                  sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
-                    assert.equal(session.step, 'manageSessionEmails');
-                    done();
+                mailFixture.createMailTemplate().then(function() {
+                  sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                    sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
+                      assert.equal(session.step, 'manageSessionEmails');
+                      done();
+                    }, function(error) {
+                      done(error);
+                    });
                   }, function(error) {
                     done(error);
                   });
-                }, function(error) {
-                  done(error);
-                });
+                })
               }
             });
           }, function(error) {
@@ -574,7 +582,7 @@ describe('SERVICE - SessionBuilder', function() {
         });
       });
 
-      it('should fail because no topics', function(done) {
+      it('should fail', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
           params.step = 'facilitatiorAndTopics';
@@ -585,12 +593,14 @@ describe('SERVICE - SessionBuilder', function() {
                 done(error);
               }
               else {
-                sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-                  done('Should not get here!');
-                }, function(error) {
-                  assert.equal(error.topics, sessionBuilderServices.messages.errors.secondStep.topics);
-                  done();
-                });
+                mailFixture.createMailTemplate().then(function() {
+                  sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                    done('Should not get here!');
+                  }, function(error) {
+                    assert.equal(error.topics, sessionBuilderServices.messages.errors.secondStep.topics);
+                    done();
+                  });
+                })
               }
             });
           }, function(error) {
@@ -732,16 +742,18 @@ describe('SERVICE - SessionBuilder', function() {
 
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             models.SessionMember.create(sessionMemberParams(params.id)).then(function(member) {
-              sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-                sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
-                  assert.equal(session.step, 'done');
-                  done();
+              mailFixture.createMailTemplate().then(function() {
+                sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                  sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
+                    assert.equal(session.step, 'done');
+                    done();
+                  }, function(error) {
+                    done(error);
+                  });
                 }, function(error) {
                   done(error);
                 });
-              }, function(error) {
-                done(error);
-              });
+              })
             }, function(error) {
               done(error);
             });
