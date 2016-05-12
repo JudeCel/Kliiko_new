@@ -6,7 +6,9 @@
         <h2 class='modal-title text-center'>Contact Details</h2>
       </div>
       <div class='modal-body'>
-        <form class='form-horizontal' method='post' ng-submit='cdm.updateUserData()' name='cdm.userDetailsForm'>
+        <form class='form-horizontal' method='post' ng-submit='cdm.updateUserData()' name='cdm.userDetailsForm' ng-controller='PhoneNumberController as pnc'>
+          <span class='hidden'>{{ pnc.init(cdm.userData, 'contactDetailsModal'); '' }}</span>
+
           <div class='row'>
             <div class='col-xs-12'>
               <div class='col-md-6'>
@@ -47,7 +49,12 @@
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
                   <div class='col-md-8'>
                     <span class='has-error text-red-dark'>{{ cdm.errors.mobile }}</span>
-                    <input type="text" international-phone-number ng-model='cdm.userData.mobile' default-country='{{cdm.phoneCountryData}}' id="mobile" class='form-control'>
+                    <input type='tel'
+                      intl-tel-input
+                      intl-tel-input-controller='pnc.mobileController'
+                      ng-model='cdm.userData.mobile'
+                      id='mobile'
+                      class='form-control'>
                   </div>
                 </div>
 
@@ -55,7 +62,12 @@
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
                   <div class='col-md-8'>
                     <span class='has-error text-red-dark'>{{ cdm.errors.landlineNumber }}</span>
-                    <input type="text" international-phone-number ng-model='cdm.userData.landlineNumber' default-country='{{cdm.landlineNumberCountryData}}' id="landlineNumber" class='form-control'>
+                    <input type='tel'
+                      intl-tel-input
+                      intl-tel-input-controller='pnc.landlineController'
+                      ng-model='cdm.userData.landlineNumber'
+                      id='landlineNumber'
+                      class='form-control'>
                   </div>
                 </div>
               </div>

@@ -5,12 +5,16 @@ var models = require('./../models');
 var Topic = models.Topic;
 var _ = require('lodash');
 var Session = models.Session;
-const MESSAGES = {error: { isRelaitedSession: "Can't delete topic is related session" } };
+const MESSAGES = {
+  updatedSessionTopic: "Session Topic was successfully update.",
+  error: { isRelaitedSession: "Can't delete topic is related session" }
+};
 
 module.exports = {
   getAll: getAll,
   create: create,
   update: update,
+  updateSessionTopicName: updateSessionTopicName,
   destroy: destroy,
   updateSessionTopics: updateSessionTopics,
   joinToSession: joinToSession,
@@ -22,11 +26,42 @@ module.exports = {
 
 function getAll(accountId) {
   let deferred = q.defer();
-  Topic.findAll({where: { accountId: accountId }, include: [{ model: models.Session }] }).then(function(results){
+  Topic.findAll({
+    where: {
+      accountId: accountId
+    },
+    include: [{
+      model: models.Session
+    },{
+      model: models.SessionTopics
+    }]
+  }).then(function(results){
     deferred.resolve(results);
   },function(err) {
     deferred.reject(err);
   });
+  return deferred.promise;
+}
+
+function updateSessionTopicName(params) {
+  let deferred = q.defer();
+
+  models.SessionTopics.update({ name: params.sessionTopicName }, {
+    where: {
+      id: params.sessionTopicId
+    }
+  }).then(function() {
+    models.SessionTopics.find({
+      where: {
+        id: params.sessionTopicId
+      }
+    }).then(function(result) {
+      deferred.resolve({ sessionTopic: result, message: MESSAGES.updatedSessionTopic });
+    })
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
   return deferred.promise;
 }
 
@@ -41,7 +76,14 @@ function updateSessionTopics(sessionId, topicsArray) {
         if(topic.id == sessionTopic.topicId) {
           sessionTopic.order = topic.order;
           sessionTopic.active = topic.active;
-          sessionTopic.update({order: sessionTopic.order, active: sessionTopic.active});
+          if(!sessionTopic.name) {
+            sessionTopic.name = topic.name;
+          }
+          sessionTopic.update({
+            order: sessionTopic.order,
+            active: sessionTopic.active,
+            name: sessionTopic.name
+          });
 
           topic.SessionTopics = [sessionTopic];
           returning.push(topic);
@@ -62,7 +104,6 @@ function joinToSession(ids, sessionId) {
   Session.find({where: { id: sessionId } }).then(function(session) {
     Topic.findAll({where: {id: ids}}).then(function(results) {
       session.addTopics(results).then(function(result) {
-
         models.SessionTopics.findAll({
           where: {
             sessionId: sessionId
@@ -72,9 +113,11 @@ function joinToSession(ids, sessionId) {
         }).then( function(sessionTopics) {
           deferred.resolve(sessionTopics);
         });
+
       }, function(err) {
         deferred.reject(err);
       })
+
     }, function(err) {
       deferred.reject(err);
     })
@@ -165,7 +208,6 @@ function create(params) {
 }
 
 function update(params) {
-
   let deferred = q.defer();
   let id = params.id;
 
@@ -174,6 +216,7 @@ function update(params) {
     Topic.update(params, {
       where:{id: id}
     }, {transaction: t}).then(function(topic) {
+      delete params.name
       models.SessionTopics.update(params, {
         where:{topicId: id}
       }, {transaction: t}).then(function(sessionTopic) {

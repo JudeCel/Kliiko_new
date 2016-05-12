@@ -3,11 +3,10 @@
 
   angular.module('KliikoApp').controller('AccountManagerController', AccountManagerController);
 
-  AccountManagerController.$inject = ['dbg', 'messenger', 'accountManagerServices', 'angularConfirm', '$window', '$rootScope', 'domServices'];
-  function AccountManagerController(dbg, messenger, accountManagerServices, angularConfirm, $window, $rootScope, domServices){
+  AccountManagerController.$inject = ['dbg', 'messenger', 'accountManagerServices', 'angularConfirm', '$window', '$rootScope', 'domServices', '$scope'];
+  function AccountManagerController(dbg, messenger, accountManagerServices, angularConfirm, $window, $rootScope, domServices, $scope){
     dbg.log2('#AccountManagerController started');
     var vm = this;
-    var mobile, landlineNumber;
     vm.maxLength = { normal: 20, email: 40 };
 
     init();
@@ -47,27 +46,11 @@
       vm.userIndex = vm.accountUsers.indexOf(accountUser);
       angular.copy(accountUser, vm.accountUser)
 
-      if(!mobile || !landlineNumber) {
-        mobile = $('#mobileAM');
-        landlineNumber = $('#landlineNumberAM');
-      }
-
       vm.modalTitle = modalTitle;
       vm.formAction = action;
 
-      mobile.intlTelInput('setCountry', getCountry('phoneCountryData'));
-      landlineNumber.intlTelInput('setCountry', getCountry('landlineNumberCountryData'));
-
       setSaveButtonText(vm.formAction);
       domServices.modal('accountManagerModal');
-    }
-
-    function getCountry(type) {
-      if(angular.equals({}, vm.accountUser)) {
-        return 'au';
-      } else {
-        return vm.accountUser[type].iso2 || 'au';
-      }
     }
 
     function setSaveButtonText(action) {
@@ -83,7 +66,7 @@
         accountManagerServices.removeAccountUser({ id: accountUser.id }).then(function(res) {
           dbg.log2('#AccountManagerController > removeAccountUser > res ', res);
           if(res.error) {
-
+            messenger.error(res.error);
           }
           else {
             var index = vm.accountUsers.indexOf(accountUser);
@@ -121,7 +104,6 @@
     };
 
     function submitForm(action, data) {
-      setDependencies(data);
       if(edditing(action)) {
         editAccountManager(data);
       }else{
@@ -155,14 +137,6 @@
       domServices.modal('accountManagerModal', 'close');
       vm.accountUser = {};
       messenger.ok(message);
-    }
-
-    function setDependencies(data) {
-      data.phoneCountryData = mobile.intlTelInput('getSelectedCountryData');
-      data.landlineNumberCountryData = landlineNumber.intlTelInput('getSelectedCountryData');
-
-      data.mobile = mobile.val();
-      data.landlineNumber = landlineNumber.val();
     }
 
     function edditing(action) {

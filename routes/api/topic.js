@@ -6,7 +6,8 @@ module.exports = {
   get: getAll,
   post: post,
   deleteById: deleteById,
-  updateById: updateById
+  updateById: updateById,
+  updateSessionTopicName: updateSessionTopicName
 };
 
 function getAll(req, res, next) {
@@ -17,7 +18,13 @@ function getAll(req, res, next) {
   );
 }
 
-
+function updateSessionTopicName(req, res, next) {
+  topicsService.updateSessionTopicName(req.body).then(function(response) {
+    res.send(response)
+  }, function(error) {
+    res.send({ error: error })
+  });
+}
 
 function post(req, res, next) {
 

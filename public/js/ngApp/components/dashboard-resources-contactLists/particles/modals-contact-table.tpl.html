@@ -1,4 +1,5 @@
-<form class='form-horizontal' ng-submit="clc.updateOrCreateContact()">
+<form class='form-horizontal' ng-submit="clc.updateOrCreateContact()" ng-controller='PhoneNumberController as pnc'>
+    <span class='hidden'>{{ pnc.init(clc.newContact, 'contactList-addContactManual'); '' }}</span>
     <div class='col-md-6'>
         <div class='form-group'>
             <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First name<span class='text-red-dark'>*</span></label>
@@ -37,7 +38,12 @@
             <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
             <div class='col-md-8'>
                 <span class='has-error text-red-dark'>{{ clc.modalErrors.mobile }}</span>
-                <input international-phone-number type="text" ng-model='clc.newContact.mobile' id="contactListMobile" class='form-control'>
+                <input type='tel'
+                  intl-tel-input
+                  intl-tel-input-controller='pnc.mobileController'
+                  ng-model='clc.newContact.mobile'
+                  id='contactListMobile'
+                  class='form-control'>
             </div>
         </div>
 
@@ -45,7 +51,12 @@
             <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
             <div class='col-md-8'>
                 <span class='has-error text-red-dark'>{{ clc.modalErrors.landlineNumber }}</span>
-                <input international-phone-number type="text" ng-model='clc.newContact.landlineNumber' id="contactListLandlineNumber" class='form-control'>
+                <input type='tel'
+                  intl-tel-input
+                  intl-tel-input-controller='pnc.landlineController'
+                  ng-model='clc.newContact.landlineNumber'
+                  id='contactListLandlineNumber'
+                  class='form-control'>
             </div>
         </div>
     </div>
