@@ -94,7 +94,7 @@
       dbg.log2('#KliikoApp.mailTemplate > reset mail template', mTemplate);
       var deferred = $q.defer();
 
-      mailRestApi.resetMailTemplate.post({mailTemplateId:mTemplate.id}, function (res) {
+      mailRestApi.resetMailTemplate.post({mailTemplateId: mTemplate.id, mailTemplateBaseId: mTemplate["MailTemplateBase.id"], isCopy: mTemplate.isCopy,}, function (res) {
         dbg.log2('#KliikoApp.mailTemplate > reset mail template> server respond >');
         deferred.resolve(res);
       });
