@@ -169,37 +169,44 @@ function validateUniqEmail(params, transaction) {
 
 function create(params, transaction) {
   let deferred = q.defer();
+  let errors = {};
 
   validators.hasValidSubscription(params.accountId).then(function() {
     validateUniqEmail(params).then(function(result) {
-      if (result) {
-        deferred.reject(result)
-      }else{
-        AccountUser.find(
-          { where: {
-            email: params.defaultFields.email,
-            AccountId: params.accountId
-          }
-        }).then(function(accountUser) {
-          if (accountUser) {
-            ContactListUser.create(contactListUserParams(params, accountUser), {transaction: transaction}).then(function(contactListUser) {
-              buildWrappedResponse(contactListUser.id, deferred, transaction);
-            }, function(err) {
-              deferred.reject(err);
-            })
-          }else{
-            createNewAccountUser(params, transaction).then(function(newAccountUser) {
+      if(result) {
+        _.merge(errors, result)
+      }
+
+      AccountUser.find(
+        { where: {
+          email: params.defaultFields.email,
+          AccountId: params.accountId
+        }
+      }).then(function(accountUser) {
+        if (accountUser && !_.has(errors, 'email')) {
+          ContactListUser.create(contactListUserParams(params, accountUser), {transaction: transaction}).then(function(contactListUser) {
+            buildWrappedResponse(contactListUser.id, deferred, transaction);
+          }, function(err) {
+            deferred.reject(err);
+          })
+        }else{
+          createNewAccountUser(params, transaction).then(function(newAccountUser) {
+            if(_.isEmpty(errors)){
               ContactListUser.create(contactListUserParams(params, newAccountUser), {transaction: transaction}).then(function(contactListUser) {
                 buildWrappedResponse(contactListUser.id, deferred, transaction);
               }, function(err) {
                 deferred.reject(err);
               })
-            }, function(err) {
-              deferred.reject(filters.errors(err));
-            })
-          }
-        });
-      }
+            }else{
+              deferred.reject(errors);
+            }
+          }, function(err) {
+            _.merge(errors, filters.errors(err))
+            deferred.reject(errors);
+          })
+        }
+      });
+
     })
   }, function(error) {
     deferred.reject({subEnded: error});

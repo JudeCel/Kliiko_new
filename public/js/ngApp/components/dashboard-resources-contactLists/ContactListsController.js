@@ -353,21 +353,20 @@
       var currentList = vm.lists.activeList;
       var newContact = angular.copy(vm.newContact);
 
-      vm.lists.addNewContact(vm.newContact).then(
-        function(res) {
-          vm.newContact = {customFields:{}};
+      vm.lists.addNewContact(vm.newContact).then(function(res) {
+        vm.newContact = {customFields:{}};
 
-          domServices.modal('contactList-addContactManual', 'close');
-          messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
-        },
-        function (err) {
-          if(err.subEnded){
-            messenger.error(err);
-          }else{
-            vm.modalErrors = err;
-          }
+        domServices.modal('contactList-addContactManual', 'close');
+        messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
+      }, function (err) {
+        // console.log(err);
+        //   messenger.error(err);
+        if(err.subEnded){
+          messenger.error(err);
+        }else{
+          vm.modalErrors = err;
         }
-      );
+      });
     }
 
     function updateContact() {
