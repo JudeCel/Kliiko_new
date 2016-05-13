@@ -359,8 +359,6 @@
         domServices.modal('contactList-addContactManual', 'close');
         messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
       }, function (err) {
-        // console.log(err);
-        //   messenger.error(err);
         if(err.subEnded){
           messenger.error(err);
         }else{
