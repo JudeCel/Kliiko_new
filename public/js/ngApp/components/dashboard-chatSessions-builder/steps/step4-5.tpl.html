@@ -58,7 +58,7 @@
               </div>
               <div ng-if='lastStepsController.mouseOveringMember[$index]'>
                 <img src='/icons/session_grey.png' ng-click='lastStepsController.modalWindowHandler("showSms", [member])' />
-                <img src='/icons/dashboardElement_edit.png' ng-click="clc.contactAddEditClickHandle('update', member)" ng-if='!lastStepsController.showCorrectStatus(member)' />
+                <img src='/icons/dashboardElement_edit.png' ng-click="lastStepsController.openEditContactModal(member)" ng-if='!lastStepsController.showCorrectStatus(member)' />
                 <img src='/icons/dashboardElement_remove.png' ng-click='lastStepsController.removeFromList(member)' />
               </div>
             </td>
@@ -82,5 +82,7 @@
       </div>
     </div>
   </div>
+
+  <ng-include src="'js/ngApp/components/dashboard-chatSessions-builder/steps/step4-5/contactEditForm.html'"></ng-include>
 
 </section>
