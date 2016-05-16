@@ -253,7 +253,6 @@
     }
 
     function mapCorrectData(object) {
-      console.log(object);
       return {
         accountUserId: object.accountUserId,
         postalAddress: object.postalAddress,
