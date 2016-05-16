@@ -32,6 +32,7 @@
     vm.openEditContactModal = openEditContactModal;
     vm.updateContact = updateContact;
     vm.returnMemberInviteStatus = returnMemberInviteStatus;
+    vm.closeEditContactForm = closeEditContactForm;
 
     vm.stepMembers = [];
 
