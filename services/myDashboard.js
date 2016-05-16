@@ -60,7 +60,8 @@ function getAllAccountUsers(userId, protocol) {
     where: {
       UserId: userId
     },
-    include: [Account]
+
+    include: [Account, {model: models.Invite, attributes: ['role', 'status']}]
   }).then(function(accountUsers) {
     deferred.resolve(prepareAccountUsers(accountUsers, protocol));
   }).catch(function(error) {
@@ -72,6 +73,7 @@ function getAllAccountUsers(userId, protocol) {
 
 function getAllSessions(userId, provider) {
   let deferred = q.defer();
+
 
   Session.findAll({
     include: [{
@@ -92,6 +94,7 @@ function getAllSessions(userId, provider) {
       }]
     }]
   }).then(function(sessions) {
+
     prepareSessions(sessions, provider).then(function(results) {
       deferred.resolve(results);
     }, function(error) {

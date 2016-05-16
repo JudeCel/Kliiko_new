@@ -186,7 +186,6 @@
     }
 
     function wantThisPlan(plan) {
-      console.log(plan);
       vm.selectedPlan = plan;
       nextStep();
     }

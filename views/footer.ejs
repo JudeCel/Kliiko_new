@@ -21,9 +21,14 @@
     array.map(function(element) {
       var field = $(element.id);
       field.intlTelInput({
+        nationalMode: false,
+        defaultCountry: 'au',
         preferredCountries: ['au'],
-        initialCountry: 'au'
+        utilsScript: 'js/vendors/intl-tel-input/src/utils.js',
+        autoFormat: true,
+        autoPlaceholder: true
       });
+
 
       var data = $(element.hidden).val();
       if(data) {

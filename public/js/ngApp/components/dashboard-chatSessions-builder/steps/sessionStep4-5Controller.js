@@ -3,20 +3,21 @@
 
   angular.module('KliikoApp').controller('SessionStep4-5Controller', LastSessionStepController);
 
-  LastSessionStepController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', '$rootScope', '$scope', 'angularConfirm'];
-  function LastSessionStepController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window,  $rootScope, $scope, angularConfirm) {
+  LastSessionStepController.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', '$rootScope', '$scope', 'angularConfirm'];
+  function LastSessionStepController(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window,  $rootScope, $scope, angularConfirm) {
     dbg.log2('#SessionBuilderController 4-5 started');
 
     var vm = this;
 
+    vm.beforeEditInviteStatus = '';
     vm.accordions = {};
     vm.participants = [];
     vm.observers = [];
+    vm.editContactIndex = null;
+    vm.contactData = {};
 
     vm.participantsFilterType = {all:true};
     vm.observersFilterType = {all:true};
-
-
 
     // step 4 + 5
     vm.showCorrectStatus = showCorrectStatus;
@@ -28,6 +29,10 @@
     vm.sendGenericEmail = sendGenericEmail;
     vm.setMembersFilter = setMembersFilter;
     vm.fixInviteStatus = fixInviteStatus;
+    vm.openEditContactModal = openEditContactModal;
+    vm.updateContact = updateContact;
+    vm.returnMemberInviteStatus = returnMemberInviteStatus;
+    vm.closeEditContactForm = closeEditContactForm;
 
     vm.stepMembers = [];
 
@@ -232,6 +237,62 @@
       vm[memberType+'FilterType'] = filter;
     }
 
+    function openEditContactModal(object) {
+      vm.beforeEditInviteStatus = object.inviteStatus;
+
+      vm.editContactIndex = vm.stepMembers.indexOf(object);
+      angular.copy(object, vm.contactData);
+      domServices.modal('editContactForm');
+    }
+
+    function updateContact() {
+      var params = {defaultFields: vm.contactData};
+
+      step1Service.updateContact(params).then(function (result) {
+        vm.beforeEditInviteStatus = '';
+        angular.copy(mapCorrectData(result.data), vm.stepMembers[vm.editContactIndex]);
+        messenger.ok('Contact '+ result.data.firstName + ' has been updated');
+        closeEditContactForm();
+      }, function (error) {
+        messenger.error(error);
+      })
+    }
+
+    function mapCorrectData(object) {
+      return {
+        accountUserId: object.accountUserId,
+        postalAddress: object.postalAddress,
+        city: object.city,
+        companyName: object.companyName,
+        country: object.country,
+        email: object.email,
+        firstName: object.firstName,
+        gender: object.gender,
+        id: object.id,
+        landlineNumber: object.landlineNumber,
+        lastName: object.lastName,
+        mobile: object.mobile,
+        postCode: object.postCode,
+        state: object.state
+      }
+    }
+
+    function closeEditContactForm() {
+      domServices.modal('editContactForm', 'close');
+      vm.contactData = {};
+    }
+
+    function returnMemberInviteStatus(member) {
+      if(vm.beforeEditInviteStatus) {
+        return vm.beforeEditInviteStatus;
+      }else if(member.inviteStatus){
+        return member.inviteStatus
+      }else if(member.invite) {
+        return member.invite.status
+      }else{
+        return "accepted"
+      }
+    }
 
   }
 
