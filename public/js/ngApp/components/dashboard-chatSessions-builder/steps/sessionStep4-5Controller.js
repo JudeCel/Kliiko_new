@@ -9,6 +9,7 @@
 
     var vm = this;
 
+    vm.beforeEditInviteStatus = '';
     vm.accordions = {};
     vm.participants = [];
     vm.observers = [];
@@ -30,6 +31,7 @@
     vm.fixInviteStatus = fixInviteStatus;
     vm.openEditContactModal = openEditContactModal;
     vm.updateContact = updateContact;
+    vm.returnMemberInviteStatus = returnMemberInviteStatus;
 
     vm.stepMembers = [];
 
@@ -235,6 +237,8 @@
     }
 
     function openEditContactModal(object) {
+      vm.beforeEditInviteStatus = object.inviteStatus;
+
       vm.editContactIndex = vm.stepMembers.indexOf(object);
       angular.copy(object, vm.contactData);
       domServices.modal('editContactForm');
@@ -244,6 +248,7 @@
       var params = {defaultFields: vm.contactData};
 
       step1Service.updateContact(params).then(function (result) {
+        vm.beforeEditInviteStatus = '';
         angular.copy(mapCorrectData(result.data), vm.stepMembers[vm.editContactIndex]);
         messenger.ok('Contact '+ result.data.firstName + ' has been updated');
         closeEditContactForm();
@@ -275,6 +280,19 @@
       domServices.modal('editContactForm', 'close');
       vm.contactData = {};
     }
+
+    function returnMemberInviteStatus(member) {
+      if(vm.beforeEditInviteStatus) {
+        return vm.beforeEditInviteStatus;
+      }else if(member.inviteStatus){
+        return member.inviteStatus
+      }else if(member.invite) {
+        return member.invite.status
+      }else{
+        return "accepted"
+      }
+    }
+
   }
 
 })();

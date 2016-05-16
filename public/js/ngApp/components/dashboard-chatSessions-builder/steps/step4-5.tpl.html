@@ -53,8 +53,9 @@
             <td>{{ member.mobile }}</td>
             <td class='col-xs-2'>
               <div ng-if='!lastStepsController.mouseOveringMember[$index]'>
-                <div ng-if="!member.inviteStatus">{{ member.invite.status || "accepted" }}</div>
-                <div ng-if="member.inviteStatus">{{ member.inviteStatus }}</div>
+                <!-- <div ng-if="!member.inviteStatus">{{ member.invite.status || "accepted" }}</div>
+                <div ng-if="member.inviteStatus">{{ member.inviteStatus }}</div> -->
+                {{ lastStepsController.returnMemberInviteStatus(member) }}
               </div>
               <div ng-if='lastStepsController.mouseOveringMember[$index]'>
                 <img src='/icons/session_grey.png' ng-click='lastStepsController.modalWindowHandler("showSms", [member])' />
