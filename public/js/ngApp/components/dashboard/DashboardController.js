@@ -13,6 +13,31 @@
     vm.initMyDashboard = initMyDashboard;
     vm.changeTab = changeTab;
     vm.activeClass = activeClass;
+    vm.hasPendingInvite = hasPendingInvite;
+    vm.tabCount = tabCount;
+
+    function tabCount(accountUsers) {
+      var count = 0;
+
+      accountUsers.map(function(ac) {
+        if(hasPendingInvite(ac.Invites)) {
+          count++;
+        }
+      })
+
+      return count;
+    }
+
+    function hasPendingInvite(invites) {
+      var confirmed = true;
+
+      if(invites.length > 0){
+        invites.map(function(invite) {
+          confirmed = (invite.role == vm.currentTab && invite.status == 'confirmed');
+        })
+      }
+      return confirmed;
+    }
 
     function initMyDashboard() {
       dashboardServices.getAllData().then(function(res) {
@@ -24,7 +49,7 @@
           vm.accountUsers = res.data.accountUsers;
           vm.systemUrl = res.systemUrl;
           vm.dateFormat = res.dateFormat;
-          
+
           if(Object.keys(vm.accountUsers).length) {
             setInitialTab();
           }
