@@ -249,7 +249,6 @@
       var params = {defaultFields: vm.contactData};
 
       step1Service.updateContact(params).then(function (result) {
-        vm.beforeEditInviteStatus = '';
         angular.copy(mapCorrectData(result.data), vm.stepMembers[vm.editContactIndex]);
         messenger.ok('Contact '+ result.data.firstName + ' has been updated');
         closeEditContactForm();
