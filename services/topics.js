@@ -73,7 +73,7 @@ function updateSessionTopics(sessionId, topicsArray) {
 
     _.map(sessionTopics, function(sessionTopic) {
       _.map(topicsArray, function(topic) {
-        if(topic.id == sessionTopic.TopicId) {
+        if(topic.id == sessionTopic.topicId) {
           sessionTopic.order = topic.order;
           sessionTopic.active = topic.active;
           if(!sessionTopic.name) {
@@ -106,7 +106,7 @@ function joinToSession(ids, sessionId) {
       session.addTopics(results).then(function(result) {
         models.SessionTopics.findAll({
           where: {
-            SessionId: sessionId
+            sessionId: sessionId
           },
           order: '"order" ASC',
           include: [Topic]
@@ -157,7 +157,7 @@ function removeAllFromSession(sessionId) {
     }]
   }).then(function(results) {
     let ids = _.map(results, 'id');
-    models.SessionTopics.destroy({ where: { SessionId: sessionId, TopicId: { $in: ids }  } } ).then(function(result) {
+    models.SessionTopics.destroy({ where: { sessionId: sessionId, topicId: { $in: ids }  } } ).then(function(result) {
       deferred.resolve(result);
     }, function(err) {
       deferred.reject(err);
@@ -218,7 +218,7 @@ function update(params) {
     }, {transaction: t}).then(function(topic) {
       delete params.name
       models.SessionTopics.update(params, {
-        where:{TopicId: id}
+        where:{topicId: id}
       }, {transaction: t}).then(function(sessionTopic) {
         t.commit().then(function() {
           deferred.resolve(sessionTopic);
