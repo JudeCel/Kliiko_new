@@ -32,8 +32,8 @@ module.exports = {
     'email'
   ],
   contactListDefaultFields: [
-    "firstName", "lastName", "gender", "email", "city",
-    "state", "country", "postCode", "companyName",
+    "firstName", "lastName", "gender", "email", 'postalAddress',
+    "city", "state", "country", "postCode", "companyName",
     "landlineNumber", "mobile"
   ],
   originalMailTemplateFields: [
