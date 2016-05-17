@@ -283,14 +283,16 @@
 
     function returnMemberInviteStatus(member) {
       if(vm.beforeEditInviteStatus) {
-        return vm.beforeEditInviteStatus;
+        member.inviteStatus = vm.beforeEditInviteStatus;
       }else if(member.inviteStatus){
-        return member.inviteStatus
+        // Do Nothing
       }else if(member.invite) {
-        return member.invite.status
+        member.inviteStatus = member.invite.status;
       }else{
-        return "accepted"
+        member.inviteStatus = "accepted";
       }
+
+      return member.inviteStatus;
     }
 
   }
