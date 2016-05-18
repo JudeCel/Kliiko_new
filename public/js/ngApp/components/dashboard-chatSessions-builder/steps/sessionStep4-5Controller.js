@@ -9,6 +9,7 @@
 
     var vm = this;
 
+    vm.beforeEditInviteStatus = '';
     vm.accordions = {};
     vm.participants = [];
     vm.observers = [];
@@ -30,6 +31,8 @@
     vm.fixInviteStatus = fixInviteStatus;
     vm.openEditContactModal = openEditContactModal;
     vm.updateContact = updateContact;
+    vm.returnMemberInviteStatus = returnMemberInviteStatus;
+    vm.closeEditContactForm = closeEditContactForm;
 
     vm.stepMembers = [];
 
@@ -235,6 +238,8 @@
     }
 
     function openEditContactModal(object) {
+      vm.beforeEditInviteStatus = object.inviteStatus;
+
       vm.editContactIndex = vm.stepMembers.indexOf(object);
       angular.copy(object, vm.contactData);
       domServices.modal('editContactForm');
@@ -275,6 +280,21 @@
       domServices.modal('editContactForm', 'close');
       vm.contactData = {};
     }
+
+    function returnMemberInviteStatus(member) {
+      if(vm.beforeEditInviteStatus) {
+        member.inviteStatus = vm.beforeEditInviteStatus;
+      }else if(member.inviteStatus){
+        // Do Nothing
+      }else if(member.invite) {
+        member.inviteStatus = member.invite.status;
+      }else{
+        member.inviteStatus = "accepted";
+      }
+
+      return member.inviteStatus;
+    }
+
   }
 
 })();

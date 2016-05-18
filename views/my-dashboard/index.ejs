@@ -47,8 +47,8 @@
                         <th></th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr ng-repeat='accountUser in au.data'>
+                    <tbody ng-repeat='accountUser in au.data'>
+                      <tr ng-if="dashboard.hasPendingInvite(accountUser.Invites)">
                         <td>{{ accountUser.Account.name }}</td>
                         <td>{{ accountUser.firstName }}</td>
                         <td>{{ accountUser.lastName }}</td>
