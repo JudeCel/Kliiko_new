@@ -6,7 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
     topicId: { type: DataTypes.INTEGER, allowNull: false },
     sessionId: { type: DataTypes.INTEGER, allowNull: false },
     order: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-    greetingMessage: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
+    greetingMessage: { type: DataTypes.STRING, allowNull: true, validate: { notEmpty: true } },
     name: { type: DataTypes.STRING, allowNull: true }
   }, {
     timestamps: true,

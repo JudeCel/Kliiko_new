@@ -75,13 +75,14 @@
       })
     }
 
-    function updateSessionTopicName(sessionTopicName, sessionTopicId) {
-      var params = {
-        sessionTopicName: sessionTopicName,
+    function updateSessionTopicName(params, sessionTopicId) {
+      var editParams = {
+        sessionTopicName: params.name,
+        greetingMessage: params.greetingMessage,
         sessionTopicId: sessionTopicId
       }
 
-      topicsAndSessions.updateSessionTopicName(params).then(function(result) {
+      topicsAndSessions.updateSessionTopicName(editParams).then(function(result) {
         vm.chatSessionTopicsList[vm.topicIndex].SessionTopics[0] = result.sessionTopic;
         domServices.modal('editTopic', 'close');
         messenger.ok(result.message);
@@ -92,7 +93,7 @@
 
     function submitEditForm() {
       if(vm.editTopics.postTo == 'updateSessionTopic') {
-        updateSessionTopicName(vm.editTopics.name, vm.editTopics.id);
+        updateSessionTopicName({name: vm.editTopics.name, greetingMessage: vm.editTopics.greetingMessage}, vm.editTopics.id);
       }else if(vm.editTopics.postTo == 'updateTopic') {
         updateTopicName(vm.editTopics);
       }else{
@@ -117,8 +118,9 @@
       vm.topicIndex = vm.chatSessionTopicsList.indexOf(topic);
       vm.editTopics.name = topic.SessionTopics[0].name;
       vm.editTopics.id = topic.SessionTopics[0].id;
-      vm.editTopics.formTitle = 'Edit Session Topic'
-      vm.editTopics.postTo = 'updateSessionTopic'
+      vm.editTopics.formTitle = 'Edit Session Topic';
+      vm.editTopics.postTo = 'updateSessionTopic';
+      vm.editTopics.greetingMessage = topic.SessionTopics[0].greetingMessage;
     }
 
     function isTopicAdded(topic) {

@@ -711,7 +711,7 @@ function step2Queries(session, step) {
           where: {
             sessionId: session.id
           },
-          attributes: ['order', 'name', 'id']
+          attributes: ['order', 'name', 'greetingMessage', 'id']
         }]
       }).then(function(topics) {
         step.topics = topics;
