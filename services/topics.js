@@ -46,7 +46,7 @@ function getAll(accountId) {
 function updateSessionTopicName(params) {
   let deferred = q.defer();
 
-  models.SessionTopics.update({ name: params.sessionTopicName, greetingMessage: params.greetingMessage }, {
+  models.SessionTopics.update({ name: params.sessionTopicName, boardMessage: params.boardMessage }, {
     where: {
       id: params.sessionTopicId
     }
@@ -81,15 +81,15 @@ function updateSessionTopics(sessionId, topicsArray) {
             sessionTopic.name = topic.name;
           }
 
-          if(!sessionTopic.greetingMessage) {
-            sessionTopic.greetingMessage = "Say something nice if you wish!";
+          if(!sessionTopic.boardMessage) {
+            sessionTopic.boardMessage = "Say something nice if you wish!";
           }
 
           sessionTopic.update({
             order: sessionTopic.order,
             active: sessionTopic.active,
             name: sessionTopic.name,
-            greetingMessage: sessionTopic.greetingMessage
+            boardMessage: sessionTopic.boardMessage
           });
 
           topic.SessionTopics = [sessionTopic];

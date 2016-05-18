@@ -10,6 +10,8 @@
     var vm = this;
     var urlParams = $location.search();
 
+    vm.whatIsCredits = "Prorated credits are the credits that get created if, during the Change Subscription operation, the option Apply prorated credits and charges is selected. These credits cannot be added to subscriptions manually. When a subscription is renewed, the available credits are automatically redeemed and this will recur until the credits run out."
+
     vm.planInModal = null;
     vm.selectedPlan = null;
     vm.currentStep = 1;

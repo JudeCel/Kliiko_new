@@ -78,7 +78,7 @@
     function updateSessionTopicName(params, sessionTopicId) {
       var editParams = {
         sessionTopicName: params.name,
-        greetingMessage: params.greetingMessage,
+        boardMessage: params.boardMessage,
         sessionTopicId: sessionTopicId
       }
 
@@ -93,7 +93,7 @@
 
     function submitEditForm() {
       if(vm.editTopics.postTo == 'updateSessionTopic') {
-        updateSessionTopicName({name: vm.editTopics.name, greetingMessage: vm.editTopics.greetingMessage}, vm.editTopics.id);
+        updateSessionTopicName({name: vm.editTopics.name, boardMessage: vm.editTopics.boardMessage}, vm.editTopics.id);
       }else if(vm.editTopics.postTo == 'updateTopic') {
         updateTopicName(vm.editTopics);
       }else{
@@ -120,7 +120,7 @@
       vm.editTopics.id = topic.SessionTopics[0].id;
       vm.editTopics.formTitle = 'Edit Session Topic';
       vm.editTopics.postTo = 'updateSessionTopic';
-      vm.editTopics.greetingMessage = topic.SessionTopics[0].greetingMessage;
+      vm.editTopics.boardMessage = topic.SessionTopics[0].boardMessage;
     }
 
     function isTopicAdded(topic) {
