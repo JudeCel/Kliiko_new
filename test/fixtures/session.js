@@ -138,7 +138,7 @@ function crateBrandProject(session, callback) {
 function createTopic(session, brandProject, callback) {
   async.parallel([
     function(cb) {
-      session.createTopic({ accountId: userData[0].account.id, name: "Cool Topic" }, {name: "Cool  Session Topic 1", greetingMessage: "hey!"})
+      session.createTopic({ accountId: userData[0].account.id, name: "Cool Topic" }, {name: "Cool  Session Topic 1", boardMessage: "hey!"})
       .then(function (_result) {
         cb(null, {session: session, brandProject: brandProject});
       })
@@ -147,7 +147,7 @@ function createTopic(session, brandProject, callback) {
       });
     },
     function(cb) {
-      session.createTopic({ accountId: userData[0].account.id, name: "Cool Topic 2" }, {name: "Cool  Session Topic 2", greetingMessage: "hey!"})
+      session.createTopic({ accountId: userData[0].account.id, name: "Cool Topic 2" }, {name: "Cool  Session Topic 2", boardMessage: "hey!"})
       .then(function (_result) {
         cb(null,  {session: session, brandProject: brandProject});
       })
