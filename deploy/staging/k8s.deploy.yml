@@ -69,7 +69,7 @@ metadata:
     name: admin
     env: staging
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       env: staging
