@@ -57,6 +57,8 @@ function update(req, callback){
 
 function createUser(params, callback) {
   parsePhoneParams(params);
+
+
   let createNewUserFunctionList = [
     function (cb) {
       models.sequelize.transaction().then(function(t) {
@@ -93,7 +95,7 @@ function parsePhoneParams(params) {
   if(typeof params.phoneCountryData == 'string') {
     params.phoneCountryData = JSON.parse(params.phoneCountryData);
 
-    if(params.landlineNumber.length < 0 && !params.mobile.includes("+" + params.phoneCountryData.dialCode)){
+    if(params.mobile.length > 0 && !params.mobile.includes("+" + params.phoneCountryData.dialCode)){
       params.mobile = "+" + params.phoneCountryData.dialCode + params.mobile;
     }
   }
@@ -101,7 +103,7 @@ function parsePhoneParams(params) {
   if(typeof params.landlineNumberCountryData == 'string') {
     params.landlineNumberCountryData = JSON.parse(params.landlineNumberCountryData);
 
-    if(params.landlineNumber.length < 0 && !params.landlineNumber.includes("+" + params.landlineNumberCountryData.dialCode)){
+    if(params.landlineNumber.length > 0 && !params.landlineNumber.includes("+" + params.landlineNumberCountryData.dialCode)){
       params.landlineNumber = "+" + params.landlineNumberCountryData.dialCode + params.landlineNumber;
     }
   }
