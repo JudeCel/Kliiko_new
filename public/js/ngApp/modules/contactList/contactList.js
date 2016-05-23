@@ -264,7 +264,7 @@
         }
 
         dbg.log1('#contactListServices > createUser > success '); dbg.log2(res);
-        deferred.resolve(contactsArray);
+        deferred.resolve(res);
         return deferred.promise;
       });
 

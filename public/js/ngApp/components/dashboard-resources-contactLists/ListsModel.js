@@ -446,19 +446,10 @@
 
       contactListServices.addImportedContacts(contactsArray, self.activeList.id).then(
         function (res) {
-          for (var i = 0, len = self.items.length; i < len ; i++) {
-            if (self.items[i].id == self.activeList.id) {
 
-              if (!self.items[i].members) self.items[i].members = [];
-
-              self.items[i].members = self.items[i].members.concat(self.importPreviewArray);
-              self.items[i].membersCount = + self.items[i].membersCount + self.importPreviewArray.length;
-
-              self.importPreviewArray = null;
-              self.changeActiveList(self.activeListIndex, 'force');
-              break;
-            }
-          }
+          res.data.map(function (newMember) {
+            self.activeList.members.push(newMember)
+          })
 
           deferred.resolve(res);
         },
