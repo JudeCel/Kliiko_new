@@ -15,6 +15,20 @@
     vm.activeClass = activeClass;
     vm.hasPendingInvite = hasPendingInvite;
     vm.tabCount = tabCount;
+    vm.redirectToChatSession = redirectToChatSession;
+
+    vm.disablePlayButton = false;
+
+    function redirectToChatSession() {
+      vm.disablePlayButton = true;
+      dashboardServices.generateRedirectLink({redirectToChat: true}).then(function(result) {
+        window.open(result.url, '_blank');
+        vm.disablePlayButton = false;
+      }, function(error) {
+        vm.disablePlayButton = false;
+        messenger.error(error);
+      });
+    }
 
     function tabCount(accountUsers) {
       var count = 0;
