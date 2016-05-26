@@ -31,9 +31,10 @@ function getAll(accountId) {
       accountId: accountId
     },
     include: [{
-      model: models.Session
-    },{
-      model: models.SessionTopics
+      model: models.SessionTopics,
+      include: [{
+        model: models.Session
+      }]
     }]
   }).then(function(results){
     deferred.resolve(results);
