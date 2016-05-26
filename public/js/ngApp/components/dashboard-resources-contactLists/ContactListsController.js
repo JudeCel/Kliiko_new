@@ -448,22 +448,15 @@
     function startImport() {
       if (!vm.importData.file) return;
 
-      vm.lists.parseImportFile(vm.importData.file).then(
-        function(res) {
-          domServices.modal('contactList-addContactManual','close');
-          vm.lists.generateImportPreview(res.data);
-          domServices.modal('modals-import-preview');
-          processImportData(res);
-
-        },
-        function(err) {
-          messenger.error('Import Failed');
-          vm.importErrorMessage = 'This file media type is not recognized or it is corrupted. Please, choose another file.'
-        }
-      );
-
-
-
+      vm.lists.parseImportFile(vm.importData.file).then(function(res) {
+        domServices.modal('contactList-addContactManual', 'close');
+        vm.lists.generateImportPreview(res.data);
+        domServices.modal('modals-import-preview');
+        processImportData(res);
+      }, function(err) {
+        messenger.error('Import Failed');
+        vm.importErrorMessage = 'This file media type is not recognized or it is corrupted. Please, choose another file.'
+      });
     }
 
     function prepareListForMapping(list) {

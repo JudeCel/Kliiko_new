@@ -40,6 +40,9 @@ function parseFile(id, filePath) {
           case '.xls':
             parseXls(emails, deferred, contactList, filePath);
             break;
+          case '.xlsx':
+            parseXls(emails, deferred, contactList, filePath);
+            break;
           default:
             deferred.reject("Wrong file format: " + path.extname(filePath) + "!");
         }
