@@ -636,8 +636,7 @@
       vm.lists.addImportedContacts().then(
         function(res) {
           domServices.modal('modals-import-preview', 'close');
-
-          messenger.ok('New contacts has been imported to list '+ vm.lists.activeList.name);
+          messenger.ok(res.data.length + ' new contacts has been imported to list '+ vm.lists.activeList.name);
         },
         function(err) {
 
