@@ -59,6 +59,7 @@
     vm.onFieldMapDrop = onFieldMapDrop;
     vm.mappingFieldsContinue = mappingFieldsContinue;
     vm.setSessionId = setSessionId;
+    vm.returnContactCount = returnContactCount;
 
     // required for correct list switching.
     var isSelected = false;
@@ -107,6 +108,10 @@
 
       vm.lists.activeList = activeList || array[0];
       vm.lists.items = array;
+    }
+
+    function returnContactCount(item) {
+      return item.members.length;
     }
 
     vm.sectListActiveToFacilitators = function() {
