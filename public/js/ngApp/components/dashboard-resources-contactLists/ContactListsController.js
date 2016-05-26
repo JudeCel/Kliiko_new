@@ -221,7 +221,7 @@
     }
 
     function deleteList(listItem, index) {
-      var confirmed = confirm('Are you sure?');
+      var confirmed = confirm('Are you sure, that you want to delete this contact list?');
       if (!confirmed) return;
 
       vm.lists.delete(listItem, index).then(
@@ -389,7 +389,7 @@
       if (!ids) return;
       if (!angular.isArray(ids)) ids = [ids];
 
-      var confirmed = confirm('Are you sure?');
+      var confirmed = confirm("Are you sure, that you want to delete these contact('s')?");
       if (!confirmed) return;
 
       vm.lists.deleteContacts(ids).then(
