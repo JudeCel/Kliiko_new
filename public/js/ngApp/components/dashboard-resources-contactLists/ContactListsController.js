@@ -616,10 +616,18 @@
       var newList = angular.copy(vm.newList);
       var parsedList = prepareParsedList(vm.newList);
 
+      console.log("||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log(vm.additionalMappingFieldname);
+      console.log("#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
       if(parsedList.customFields.length < 12) {
-        parsedList.customFields.push(vm.additionalMappingFieldname);
-        vm.additionalMappingFieldname = "";
-        updateActiveCustomList(newList, parsedList);
+        if(vm.additionalMappingFieldname) {
+          parsedList.customFields.push(vm.additionalMappingFieldname);
+          vm.additionalMappingFieldname = "";
+          updateActiveCustomList(newList, parsedList);
+        }else{
+          messenger.error("Please add name for your custom field.");
+        }
       }else{
         messenger.error("To many custom fields, allowed: 12");
       }
