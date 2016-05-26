@@ -615,9 +615,14 @@
     vm.addCustomField = function() {
       var newList = angular.copy(vm.newList);
       var parsedList = prepareParsedList(vm.newList);
-      parsedList.customFields.push(vm.additionalMappingFieldname);
-      vm.additionalMappingFieldname = "";
-      updateActiveCustomList(newList, parsedList);
+
+      if(parsedList.customFields.length < 12) {
+        parsedList.customFields.push(vm.additionalMappingFieldname);
+        vm.additionalMappingFieldname = "";
+        updateActiveCustomList(newList, parsedList);
+      }else{
+        messenger.error("To many custom fields, allowed: 12");
+      }
     };
 
     function addImportedContacts() {
