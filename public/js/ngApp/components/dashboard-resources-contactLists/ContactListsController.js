@@ -616,10 +616,6 @@
       var newList = angular.copy(vm.newList);
       var parsedList = prepareParsedList(vm.newList);
 
-      console.log("||||||||||||||||||||||||||||||||||||||||||||||||");
-      console.log(vm.additionalMappingFieldname);
-      console.log("#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-
       if(parsedList.customFields.length < 12) {
         if(vm.additionalMappingFieldname) {
           parsedList.customFields.push(vm.additionalMappingFieldname);
