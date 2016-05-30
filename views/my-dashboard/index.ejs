@@ -28,7 +28,7 @@
                       <td>{{ session.endTime | date:dashboard.dateFormat }}</td>
                       <td>{{ session.showStatus }}</td>
                       <td>
-                        <a ng-if="!dashboard.disablePlayButton" href="#" ng-click="dashboard.redirectToChatSession()" class='glyphicon glyphicon-play' aria-hidden='true'></a>
+                        <a ng-if="!dashboard.disablePlayButton" href="#" ng-click="dashboard.redirectToChatSession(session.id)" class='glyphicon glyphicon-play' aria-hidden='true'></a>
                       </td>
                     </tr>
                   </tbody>

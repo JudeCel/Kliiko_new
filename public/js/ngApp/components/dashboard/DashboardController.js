@@ -19,10 +19,10 @@
 
     vm.disablePlayButton = false;
 
-    function redirectToChatSession() {
+    function redirectToChatSession(sessionId) {
       vm.disablePlayButton = true;
-      dashboardServices.generateRedirectLink().then(function(result) {
-        window.open(result.url, '_blank');
+      dashboardServices.generateRedirectLink(sessionId).then(function(url) {
+        window.open(url, '_blank');
         vm.disablePlayButton = false;
       }, function(error) {
         vm.disablePlayButton = false;

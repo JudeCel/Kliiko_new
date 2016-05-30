@@ -9,27 +9,27 @@
       data: { method: 'GET', params: { path: 'data' } }
     });
 
-    var jwtTokenApi = $resource(globalSettings.restUrl + '/jwtToken');
+    var jwtTokenForMemberApi = $resource(globalSettings.restUrl + '/jwtTokenForMember');
 
     var services = {};
     services.getAllData = getAllData;
     services.generateRedirectLink = generateRedirectLink;
     return services;
 
-    function generateRedirectLink() {
+    function generateRedirectLink(sessionId) {
       var deferred = $q.defer();
 
-      jwtTokenApi.get({}, function(res) {
+      jwtTokenForMemberApi.get({ sessionId: sessionId }, function(res) {
+        console.log(res.token);
         if(res.error) {
           deferred.reject(res.error);
         } else {
-          var server = serverData('auth/token', res.token);
-
           $http({
             method: "GET",
-            url: server.url
+            url: globalSettings.serverChatDomainUrl + '/api/auth/token/',
+            headers: { 'Authorization': res.token }
           }).then(function succes(response) {
-            deferred.resolve(response);
+            deferred.resolve(response.data.redirect_url);
           }, function error(response) {
             deferred.reject({error: response.status + ": " + response.statusText});
           });

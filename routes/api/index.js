@@ -57,6 +57,7 @@ router.post('/user/canAccess', userRoutes.userCanAccessPost);
 router.get('/accountUser', accountUser.get);
 router.get('/account', account.get);
 router.get('/jwtToken', jwt.getToken);
+router.get('/jwtTokenForMember', jwt.jwtTokenForMember);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
 router.post('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.post);
