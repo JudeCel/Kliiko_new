@@ -8,12 +8,6 @@ function getToken(req, res, next) {
 };
 
 function jwtTokenForMember(req, res, next) {
-  // let accountId = res.locals.currentUser.id;
-  // let sessionId = req.query.sessionId;
-
-  console.log(res.locals.currentUser.id);
-  console.log(req.query.sessionId);
-
   jwt.tokenForMember(res.locals.currentUser.id, req.query.sessionId).then(function(result) {
     res.send(result);
   }, function(error) {
