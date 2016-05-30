@@ -2,9 +2,9 @@
   'use strict';
 
   angular.module('KliikoApp.Root').factory('dashboardServices', dashboardServices);
-  dashboardServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
+  dashboardServices.$inject = ['globalSettings', '$q', '$resource', 'dbg', '$http'];
 
-  function dashboardServices(globalSettings, $q, $resource, dbg) {
+  function dashboardServices(globalSettings, $q, $resource, dbg, $http) {
     var myDashboardApi = $resource(globalSettings.restUrl + '/myDashboard/:path', null, {
       data: { method: 'GET', params: { path: 'data' } }
     });
@@ -16,14 +16,23 @@
     services.generateRedirectLink = generateRedirectLink;
     return services;
 
-    function generateRedirectLink(params) {
+    function generateRedirectLink() {
       var deferred = $q.defer();
 
-      jwtTokenApi.get(params, function(res) {
+      jwtTokenApi.get({}, function(res) {
         if(res.error) {
           deferred.reject(res.error);
         } else {
-          deferred.resolve({ url: res.url });
+          var server = serverData('auth/token', res.token);
+
+          $http({
+            method: "GET",
+            url: server.url
+          }).then(function succes(response) {
+            deferred.resolve(response);
+          }, function error(response) {
+            deferred.reject({error: response.status + ": " + response.statusText});
+          });
         }
       });
 
@@ -40,6 +49,13 @@
       });
 
       return deferred.promise;
+    };
+
+    function serverData(what, token) {
+      return {
+        headers: { 'Authorization': token },
+        url: globalSettings.serverChatDomainUrl + '/api/' + what +  '/'
+      };
     };
   };
 })();
