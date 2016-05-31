@@ -21,7 +21,10 @@
     vm.goToChat = goToChat;
     vm.hasAccess = hasAccess;
     vm.isExpired = isExpired;
+    vm.isMember = isMember;
+    vm.redirectToChatSession = redirectToChatSession;
 
+    vm.disablePlayButton = false;
     vm.originalSession = {};
 
     changePage('index');
@@ -33,6 +36,33 @@
         vm.chatRoomUrl = res.chatRoomUrl;
         vm.sessionListManageRoles = res.sessionListManageRoles;
         dbg.log2('#ChatSessionsController > getChatSessions > res ', res.data);
+      });
+    }
+
+    function isMember(facilitatorEmail, members, user) {
+      var isMemeber = false;
+
+      if(facilitatorEmail == user.email) {
+        isMemeber = true;
+      }else{
+        members.map(function(member) {
+          if(member.AccountUser.email == user.email) {
+            isMemeber = true;
+          }
+        });
+      }
+
+      return isMemeber;
+    }
+
+    function redirectToChatSession(sessionId) {
+      vm.disablePlayButton = true;
+      chatSessionsServices.generateRedirectLink(sessionId).then(function(url) {
+        window.open(url, '_blank');
+        vm.disablePlayButton = false;
+      }, function(error) {
+        vm.disablePlayButton = false;
+        messenger.error(error);
       });
     }
 
