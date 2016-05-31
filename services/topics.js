@@ -209,8 +209,8 @@ function create(params) {
   let deferred = q.defer();
   Topic.create(params).then(function(topic) {
     deferred.resolve(topic);
-  },function(err) {
-    deferred.reject(err);
+  },function(error) {
+    deferred.reject(filters.errors(error));
   });
   return deferred.promise;
 }
