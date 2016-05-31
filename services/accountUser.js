@@ -44,6 +44,7 @@ function prepareAccountManagerParams(params, account, user) {
 
 function create(params, accountId, role, t) {
   var deferred = q.defer();
+  
   AccountUser.create(buidAttrs(params, accountId, role), { transaction: t }).then(function(result) {
     deferred.resolve(result);
   }, function(error) {
