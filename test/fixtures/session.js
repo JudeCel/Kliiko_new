@@ -165,17 +165,17 @@ function createTopic(session, brandProject, callback) {
 }
 
 function addSessionMembers(erorr, session, callback) {
-  async.parallel([
+  async.waterfall([
     function(cb) {
       addSessionMember(userData[0].account.AccountUser.id, session, 'participant', 'Participant - AccountOwner', 'participant', cb);
     },
-    function(cb) {
+    function(data, cb) {
       addSessionMember(userData[1].account.AccountUser.id, session, 'facilitator', 'Facilitator - AccountManager','facilitator', cb);
     },
-    function(cb) {
+    function(data, cb) {
       addSessionMember(userData[2].account.AccountUser.id, session, 'participant', 'participant', 'participant2', cb);
     },
-    function(cb) {
+    function(data, cb) {
       addSessionMember(userData[2].account.AccountUser.id, session, 'observer', 'observer', 'observer', cb);
     }
   ], function(error, results) {
@@ -218,7 +218,7 @@ function createChat() {
     }
     else {
       Session.find({
-        where: { id: result[0].sessionId },
+        where: { id: result.sessionId },
         include: [{
           model: Account,
           include: [models.User]
