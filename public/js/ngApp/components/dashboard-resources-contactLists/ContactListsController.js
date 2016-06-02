@@ -60,6 +60,7 @@
     vm.mappingFieldsContinue = mappingFieldsContinue;
     vm.setSessionId = setSessionId;
     vm.returnContactCount = returnContactCount;
+    vm.canAddMoreFields = canAddMoreFields;
 
     // required for correct list switching.
     var isSelected = false;
@@ -614,7 +615,7 @@
       var newList = angular.copy(vm.newList);
       var parsedList = prepareParsedList(vm.newList);
 
-      if(parsedList.customFields.length < 12) {
+      if(canAddMoreFields()) {
         if(vm.additionalMappingFieldname) {
           parsedList.customFields.push(vm.additionalMappingFieldname);
           vm.additionalMappingFieldname = "";
@@ -623,9 +624,14 @@
           messenger.error("Please add name for your custom field.");
         }
       }else{
-        messenger.error("To many custom fields, allowed: 12");
+        messenger.error("To many custom fields, allowed: 16");
       }
     };
+
+    function canAddMoreFields() {
+      var parsedList = prepareParsedList(vm.newList);
+      return parsedList.customFields.length < 16;
+    }
 
     function addImportedContacts() {
 
