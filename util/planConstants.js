@@ -13,7 +13,7 @@ module.exports = {
 
     recruiterContactListCount: 1,
     accountUserCount: 1,
-    topicCount: -1
+    topicCount: 1
   },
   single: {
     sessionCount: 1,

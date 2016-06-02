@@ -37,6 +37,13 @@ const DEPENDENCIES = {
     params: function(accountId) {
       return { where: { accountId: accountId } };
     }
+  },
+  topic: {
+    key: 'topicCount',
+    model: models.Topic,
+    params: function(accountId) {
+      return { where: { accountId: accountId } };
+    }
   }
 };
 
@@ -47,6 +54,7 @@ module.exports = {
 
 function validate(accountId, type, count) {
   let deferred = q.defer();
+
 
   SubscriptionPreference.find({
     include: [{
