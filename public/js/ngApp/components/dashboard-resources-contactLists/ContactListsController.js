@@ -75,6 +75,8 @@
 
         if(listType == 'facilitators') {
           vm.sectListActiveToFacilitators();
+        } else {
+          vm.changeActiveList(0);
         }
       });
     }
@@ -127,7 +129,10 @@
 
     function changeActiveList(index) {
       selectAll(true);
-      vm.lists.changeActiveList(index);
+      var temp = vm.lists.changeActiveList(index, true);
+      if (temp) {
+        vm.name = temp.name;
+      }
       vm.allSelected = false;
     }
 
@@ -565,11 +570,6 @@
 
     vm.updateCustomFieldList = function() {
       if (vm.newListErrorMessage) return;
-      if (!vm.newList.name) {
-        dbg.log2('#ContactListController > updateList > error > list name is empty');
-        messenger.error('List Name can not be blank');
-        return;
-      }
       var newList = angular.copy(vm.newList);
       var parsedList = prepareParsedList(vm.newList);
       updateActiveCustomList(newList, parsedList);
@@ -614,7 +614,6 @@
     vm.addCustomField = function() {
       var newList = angular.copy(vm.newList);
       var parsedList = prepareParsedList(vm.newList);
-
       if(canAddMoreFields()) {
         if(vm.additionalMappingFieldname) {
           parsedList.customFields.push(vm.additionalMappingFieldname);
@@ -624,13 +623,13 @@
           messenger.error("Please add name for your custom field.");
         }
       }else{
-        messenger.error("To many custom fields, allowed: 16");
+        messenger.error("Too many custom fields, allowed: 12");
       }
     };
 
     function canAddMoreFields() {
       var parsedList = prepareParsedList(vm.newList);
-      return parsedList.customFields.length < 16;
+      return parsedList.customFields.length < 12;
     }
 
     function addImportedContacts() {
