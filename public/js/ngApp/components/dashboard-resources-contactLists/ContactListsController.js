@@ -132,6 +132,7 @@
       var temp = vm.lists.changeActiveList(index, true);
       if (temp) {
         vm.name = temp.name;
+        console.log("____++++", vm.name);
       }
       vm.allSelected = false;
     }
@@ -187,7 +188,7 @@
 
     function updateList() {
       if (vm.newListErrorMessage) return;
-
+      newList.name = vm.name;
       if (!vm.newList.name) {
         dbg.log2('#ContactListController > updateList > error > list name is empty');
         messenger.error('List Name can not be blank');
@@ -196,13 +197,13 @@
 
 
       var newList = angular.copy(vm.newList);
-
+      newList.name = vm.name;
       var parsedList = prepareParsedList(vm.newList);
 
       vm.lists.updateActiveItem(parsedList).then(
         function (res) {
           domServices.modal('contactList-addNewListModal', 'close');
-          messenger.ok('List "'+ newList.name + '" updated');
+          messenger.ok('List "'+ vm.name + '" updated');
 
           vm.newList = {};
         },
@@ -463,6 +464,7 @@
         domServices.modal('contactList-addContactManual', 'close');
         vm.lists.generateImportPreview(res.data);
         domServices.modal('modals-import-preview');
+        console.log("___2");
         processImportData(res);
       }, function(err) {
         messenger.error('Import Failed');
@@ -562,6 +564,7 @@
 
       domServices.modal('contactList-addNewListFieldsModal', 'close');
       domServices.modal('modals-import-preview');
+      console.log("___1");
     }
 
     vm.clearDoppedItem = function(item) {
@@ -570,7 +573,13 @@
 
     vm.updateCustomFieldList = function() {
       if (vm.newListErrorMessage) return;
+
       var newList = angular.copy(vm.newList);
+      if (!vm.newList.name) {
+        dbg.log2('#ContactListController > updateList > error > list name is empty');
+        messenger.error('List Name can not be blank');
+        return;
+      }
       var parsedList = prepareParsedList(vm.newList);
       updateActiveCustomList(newList, parsedList);
     };
