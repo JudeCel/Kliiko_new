@@ -26,6 +26,7 @@ module.exports = (Sequelize, DataTypes) => {
         SessionMember.belongsTo(models.AccountUser, { foreignKey: 'accountUserId' });
         SessionMember.hasMany(models.Shape, { foreignKey: 'sessionMemberId' });
         SessionMember.hasMany(models.Message, { foreignKey: 'sessionMemberId' });
+        SessionMember.hasMany(models.MiniSurveyAnswer, { foreignKey: 'sessionMemberId' });
       }
     }
   });
