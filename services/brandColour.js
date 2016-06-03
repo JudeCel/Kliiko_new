@@ -91,6 +91,7 @@ function createScheme(params, accountId) {
   return deferred.promise;
 };
 
+// Clean UP mmove this to validations file.
 function canCreateCustomColors(accountId) {
   let deferred = q.defer();
 

@@ -67,7 +67,8 @@ module.exports = {
   removeInvite: removeInvite,
   removeSessionMember: removeSessionMember,
   sendGenericEmail: sendGenericEmail,
-  sessionMailTemplateStatus: sessionMailTemplateStatus
+  sessionMailTemplateStatus: sessionMailTemplateStatus,
+  canAddObservers: canAddObservers
 };
 
 function initializeBuilder(params) {
@@ -766,12 +767,46 @@ function step4and5Queries(session, role) {
           accountUser.dataValues.invite = _.last(accountUser.Invites);
         });
 
-        cb(null, members.concat(accountUsers));
+        // if (role == 'observer') {
+        //   canAddObservers(session.accountId).then(function () {
+        //     cb(null, members.concat(accountUsers));
+        //   }, function (error) {
+        //     cb(MESSAGES.canAddObservers);
+        //   });
+        // }else{
+          cb(null, members.concat(accountUsers));
+        // }
+
       }).catch(function(error) {
         cb(filters.errors(error));
       });
     }
   ];
+}
+
+// Clean UP mmove this to validations file.
+function canAddObservers(accountId) {
+  let deferred = q.defer();
+
+  models.SubscriptionPreference.find({
+    include: [{
+      model: models.Subscription,
+      where: {
+        accountId: accountId,
+        active: true
+      }
+    }]
+  }).then(function(preference) {
+    if(preference.data.exportRecruiterSurveyData) {
+      deferred.resolve();
+    }else{
+      deferred.reject(MESSAGES.cantExportSurveyData);
+    }
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
 }
 
 function validate(session, params) {

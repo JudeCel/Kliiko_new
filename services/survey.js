@@ -506,6 +506,7 @@ function exportSurvey(params, account) {
   return deferred.promise;
 };
 
+// Clean UP mmove this to validations file.
 function canExportSurveyData(account) {
   let deferred = q.defer();
 

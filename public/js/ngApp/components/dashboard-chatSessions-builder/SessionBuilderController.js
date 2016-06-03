@@ -217,6 +217,7 @@
           }
 
           if(vm.session.sessionData.participantListId == activeList.id) {
+
             vm.participants = vm.participants.concat(list);
             vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
           }
@@ -229,6 +230,9 @@
       }
 
       if (vm.searchingObservers) {
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        console.log(builderServices.selectMembers(activeList.id, activeList.members));
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         vm.observers = vm.observers.concat(builderServices.selectMembers(activeList.id, activeList.members));
         vm.observers = builderServices.removeDuplicatesFromArray(vm.observers);
         vm.searchingObservers = false;
