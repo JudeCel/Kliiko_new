@@ -127,6 +127,7 @@ router.delete('/brandColour', brandColour.remove);
 router.post('/brandColour', brandColour.create);
 router.put('/brandColour', brandColour.update);
 router.post('/brandColour/copy', brandColour.copy);
+router.get('/brandColour/canCreateCustomColors', brandColour.canCreateCustomColors);
 
 router.post('/session/getByInvite',  policy.authorized(['accountManager', 'admin']), session.getSessionByInvite);
 router.get('/session/ratings',  policy.authorized(['admin']), session.getAllSessionRatings);

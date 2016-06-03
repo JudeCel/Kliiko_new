@@ -16,7 +16,8 @@ const MESSAGES = {
   copied: 'Scheme copied successfully!',
   updated: 'Scheme updated successfully!',
   notValid: 'Not valid colour',
-  notFromList: 'Colour is not from the list'
+  notFromList: 'Colour is not from the list',
+  canCreateCustomColors: 'Please Update your subscription plan, to create custom color schemes.'
 };
 
 const VALID_ATTRIBUTES = {
@@ -65,26 +66,54 @@ function findAllSchemes(accountId) {
 function createScheme(params, accountId) {
   let deferred = q.defer();
 
-  params.accountId = accountId;
-  let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
-  let errors = {};
-  validateColours(validParams.colours, errors);
+  canCreateCustomColors(accountId).then(function() {
+    params.accountId = accountId;
+    let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
+    let errors = {};
+    validateColours(validParams.colours, errors);
 
-  if(_.isEmpty(errors)) {
-    BrandProjectPreference.create(validParams).then(function(result) {
-      deferred.resolve(simpleParams(result, MESSAGES.created));
-    }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
-      deferred.reject(filters.errors(error));
-    }).catch(function(error) {
-      deferred.reject(error);
-    });
-  }
-  else {
-    deferred.reject(errors);
-  }
+    if(_.isEmpty(errors)) {
+      BrandProjectPreference.create(validParams).then(function(result) {
+        deferred.resolve(simpleParams(result, MESSAGES.created));
+      }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
+        deferred.reject(filters.errors(error));
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
+    }
+    else {
+      deferred.reject(errors);
+    }
+  }, function(error) {
+    deferred.reject(error);
+  });
 
   return deferred.promise;
 };
+
+function canCreateCustomColors(accountId) {
+  let deferred = q.defer();
+
+  models.SubscriptionPreference.find({
+    include: [{
+      model: models.Subscription,
+      where: {
+        accountId: accountId,
+        active: true
+      }
+    }]
+  }).then(function(preference) {
+    if(preference.data.brandLogoAndCustomColors) {
+      deferred.resolve();
+    }else{
+      deferred.reject(MESSAGES.canCreateCustomColors);
+    }
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
 
 function updateScheme(params, accountId) {
   let deferred = q.defer();
@@ -202,5 +231,6 @@ module.exports = {
   createScheme: createScheme,
   updateScheme: updateScheme,
   removeScheme: removeScheme,
-  copyScheme: copyScheme
+  copyScheme: copyScheme,
+  canCreateCustomColors: canCreateCustomColors
 };

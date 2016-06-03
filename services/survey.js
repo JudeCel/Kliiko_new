@@ -474,7 +474,7 @@ function confirmSurvey(params, account) {
 function exportSurvey(params, account) {
   let deferred = q.defer();
 
-  canExportSurveyData(account.id).then(function() {
+  canExportSurveyData(account).then(function() {
     Survey.find({
       where: { id: params.id, accountId: account.id },
       attributes: ['id'],

@@ -8,6 +8,13 @@ function get(req, res, next) {
   );
 };
 
+function canCreateCustomColors(req, res, next) {
+  brandColourServices.canCreateCustomColors(res.locals.currentDomain.id).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+}
+
 function remove(req, res, next) {
   brandColourServices.removeScheme(req.query, res.locals.currentDomain.id).then(
     getResponses(res).onSuccess,
@@ -60,5 +67,6 @@ module.exports = {
   remove: remove,
   copy: copy,
   create: create,
-  update: update
+  update: update,
+  canCreateCustomColors: canCreateCustomColors
 };
