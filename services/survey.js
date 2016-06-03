@@ -15,6 +15,7 @@ var _ = require('lodash');
 var surveyConstants = require('../util/surveyConstants');
 
 const MESSAGES = {
+  cantExportSurveyData: 'Please Update your subscription plan, to export survey data.',
   notFound: 'Survey not found!',
   alreadyClosed: 'Survey closed, please contact admin!',
   notConfirmed: 'Survey not confirmed, please contact admin!',
@@ -473,33 +474,69 @@ function confirmSurvey(params, account) {
 function exportSurvey(params, account) {
   let deferred = q.defer();
 
-  Survey.find({
-    where: { id: params.id, accountId: account.id },
-    attributes: ['id'],
-    include: [{
-      model: SurveyQuestion,
-      attributes: VALID_ATTRIBUTES.question
-    }, SurveyAnswer],
-    order: [
-      [SurveyQuestion, 'order', 'ASC']
-    ]
-  }).then(function(survey) {
-    if(survey) {
-      let header = createCsvHeader(survey.SurveyQuestions);
-      let data = createCsvData(header, survey);
-      deferred.resolve(simpleParams({ header: header, data: data }));
-    }
-    else {
-      deferred.reject(MESSAGES.notFound);
-    }
-  }).catch(Survey.sequelize.ValidationError, function(error) {
-    deferred.reject(filters.errors(error));
-  }).catch(function(error) {
+  canExportSurveyData(account.id).then(function() {
+    Survey.find({
+      where: { id: params.id, accountId: account.id },
+      attributes: ['id'],
+      include: [{
+        model: SurveyQuestion,
+        attributes: VALID_ATTRIBUTES.question
+      }, SurveyAnswer],
+      order: [
+        [SurveyQuestion, 'order', 'ASC']
+      ]
+    }).then(function(survey) {
+      if(survey) {
+        let header = createCsvHeader(survey.SurveyQuestions);
+        let data = createCsvData(header, survey);
+        deferred.resolve(simpleParams({ header: header, data: data }));
+      }
+      else {
+        deferred.reject(MESSAGES.notFound);
+      }
+    }).catch(Survey.sequelize.ValidationError, function(error) {
+      deferred.reject(filters.errors(error));
+    }).catch(function(error) {
+      deferred.reject(error);
+    });
+  }, function(error) {
+    console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    console.log(error);
     deferred.reject(error);
   });
 
   return deferred.promise;
 };
+
+function canExportSurveyData(accountId) {
+  let deferred = q.defer();
+
+  models.SubscriptionPreference.find({
+    include: [{
+      model: models.Subscription,
+      where: {
+        accountId: accountId,
+        active: true
+      }
+    }]
+  }).then(function(preference) {
+    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    console.log(preference.data.exportRecruiterSurveyData);
+    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+    if(preference.data.exportRecruiterSurveyData) {
+      deferred.resolve();
+    }else{
+      console.log(MESSAGES.cantExportSurveyData);
+
+      deferred.reject(MESSAGES.cantExportSurveyData);
+    }
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
 
 function constantsSurvey() {
   let deferred = q.defer();
