@@ -500,35 +500,27 @@ function exportSurvey(params, account) {
       deferred.reject(error);
     });
   }, function(error) {
-    console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-    console.log(error);
     deferred.reject(error);
   });
 
   return deferred.promise;
 };
 
-function canExportSurveyData(accountId) {
+function canExportSurveyData(account) {
   let deferred = q.defer();
 
   models.SubscriptionPreference.find({
     include: [{
       model: models.Subscription,
       where: {
-        accountId: accountId,
+        accountId: account.id,
         active: true
       }
     }]
   }).then(function(preference) {
-    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    console.log(preference.data.exportRecruiterSurveyData);
-    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
     if(preference.data.exportRecruiterSurveyData) {
       deferred.resolve();
     }else{
-      console.log(MESSAGES.cantExportSurveyData);
-
       deferred.reject(MESSAGES.cantExportSurveyData);
     }
   }, function(error) {
@@ -705,5 +697,6 @@ module.exports = {
   answerSurvey: answerSurvey,
   confirmSurvey: confirmSurvey,
   exportSurvey: exportSurvey,
-  constantsSurvey: constantsSurvey
+  constantsSurvey: constantsSurvey,
+  canExportSurveyData: canExportSurveyData
 };

@@ -90,6 +90,7 @@ router.get('/survey/find', survey.find);
 router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', survey.confirm);
 router.get('/survey/constants', survey.getConstants);
+router.get('/survey/canExportSurveyData', survey.canExportSurveyData);
 
 // Subscription
 router.get('/subscriptionPlan', subscription.getPlans);
