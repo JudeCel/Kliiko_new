@@ -29,6 +29,7 @@ const MESSAGES = {
   accountUserNotFound: 'Account User not found',
 
   errors: {
+    cantAddObservers: "Please Update your subscription plan, to invite Observers to your session.",
     cantSendCloseMails: "Were not able to send emails to informa all participants, that session was closed.",
     firstStep: {
       nameRequired: 'Name must be provided',
@@ -767,16 +768,7 @@ function step4and5Queries(session, role) {
           accountUser.dataValues.invite = _.last(accountUser.Invites);
         });
 
-        // if (role == 'observer') {
-        //   canAddObservers(session.accountId).then(function () {
-        //     cb(null, members.concat(accountUsers));
-        //   }, function (error) {
-        //     cb(MESSAGES.canAddObservers);
-        //   });
-        // }else{
-          cb(null, members.concat(accountUsers));
-        // }
-
+        cb(null, members.concat(accountUsers));
       }).catch(function(error) {
         cb(filters.errors(error));
       });
@@ -797,10 +789,10 @@ function canAddObservers(accountId) {
       }
     }]
   }).then(function(preference) {
-    if(preference.data.exportRecruiterSurveyData) {
+    if(preference.data.canInviteObserversToSession) {
       deferred.resolve();
     }else{
-      deferred.reject(MESSAGES.cantExportSurveyData);
+      deferred.reject(MESSAGES.errors.cantAddObservers);
     }
   }, function(error) {
     deferred.reject(error);

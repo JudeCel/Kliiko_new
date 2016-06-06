@@ -19,7 +19,8 @@ module.exports = {
   sendGenericEmail: sendGenericEmail,
   addTopics: addTopics,
   removeTopic: removeTopic,
-  sessionMailTemplateStatus: sessionMailTemplateStatus
+  sessionMailTemplateStatus: sessionMailTemplateStatus,
+  canAddObservers: canAddObservers
 };
 
 function initializeBuilder(req, res, next) {
@@ -29,6 +30,14 @@ function initializeBuilder(req, res, next) {
   }, function(error) {
     res.send({error: error});
   })
+}
+
+function canAddObservers(req, res, next) {
+  sessionBuilderServices.canAddObservers(res.locals.currentDomain.id).then(function(result) {
+    res.send(result);
+  }, function(error) {
+    res.send({error: error});
+  });
 }
 
 function openBuild(req, res, next) {

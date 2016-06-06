@@ -143,6 +143,8 @@ router.post('/sessionMember/addFacilitator', sessionMember.addFacilitator);
 
 
 // Session Builder
+router.get('/sessionBuilder/canAddObservers',  policy.authorized(['accountManager', 'admin']), sessionBuilder.canAddObservers);
+
 router.post('/sessionBuilder',  policy.authorized(['accountManager', 'admin']), sessionBuilder.new);
 router.get('/sessionBuilder/:id',  policy.authorized(['accountManager', 'admin']), sessionBuilder.openBuild);
 router.put('/sessionBuilder/:id',  policy.authorized(['accountManager', 'admin']), sessionBuilder.update);

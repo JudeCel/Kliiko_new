@@ -49,6 +49,8 @@
     vm.finishSelectingMembers = finishSelectingMembers;
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
     vm.selectObserversClickHandle = selectObserversClickHandle;
+    vm.canAddObservers = canAddObservers;
+
     function closeSession() {
       vm.session.setOpen(false).then(function(res) {
       }, function(err) {
@@ -199,8 +201,18 @@
       vm.searchingParticipants = true;
     }
 
+    function canAddObservers() {
+
+    }
+
     function selectObserversClickHandle() {
-      vm.searchingObservers = true;
+      builderServices.canAddObservers().then(function(res) {
+        if(res.error) {
+          messenger.error(res.error);
+        }else{
+          vm.searchingObservers = true;
+        }
+      });
     }
 
     function finishSelectingMembers(activeList) {
@@ -230,9 +242,6 @@
       }
 
       if (vm.searchingObservers) {
-        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        console.log(builderServices.selectMembers(activeList.id, activeList.members));
-        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         vm.observers = vm.observers.concat(builderServices.selectMembers(activeList.id, activeList.members));
         vm.observers = builderServices.removeDuplicatesFromArray(vm.observers);
         vm.searchingObservers = false;
