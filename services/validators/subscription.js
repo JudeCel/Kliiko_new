@@ -49,7 +49,7 @@ const DEPENDENCIES = {
     key: 'accountUserCount',
     model: models.AccountUser,
     params: function(accountId) {
-      return { where: { accountId: accountId } };
+      return { where: { AccountId: accountId } };
     }
   }
 };
