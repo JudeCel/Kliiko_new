@@ -132,7 +132,6 @@
       var temp = vm.lists.changeActiveList(index, true);
       if (temp) {
         vm.name = temp.name;
-        console.log("____++++", vm.name);
       }
       vm.allSelected = false;
     }
@@ -464,7 +463,6 @@
         domServices.modal('contactList-addContactManual', 'close');
         vm.lists.generateImportPreview(res.data);
         domServices.modal('modals-import-preview');
-        console.log("___2");
         processImportData(res);
       }, function(err) {
         messenger.error('Import Failed');
@@ -564,7 +562,6 @@
 
       domServices.modal('contactList-addNewListFieldsModal', 'close');
       domServices.modal('modals-import-preview');
-      console.log("___1");
     }
 
     vm.clearDoppedItem = function(item) {
@@ -575,7 +572,8 @@
       if (vm.newListErrorMessage) return;
 
       var newList = angular.copy(vm.newList);
-      if (!vm.newList.name) {
+      newList.name = vm.name;
+      if (!newList.name) {
         dbg.log2('#ContactListController > updateList > error > list name is empty');
         messenger.error('List Name can not be blank');
         return;
@@ -623,6 +621,7 @@
     vm.addCustomField = function() {
       var newList = angular.copy(vm.newList);
       var parsedList = prepareParsedList(vm.newList);
+      newList.name = vm.name;
       if(canAddMoreFields()) {
         if(vm.additionalMappingFieldname) {
           parsedList.customFields.push(vm.additionalMappingFieldname);
