@@ -222,10 +222,9 @@
         name: list.name,
         customFields: []
       };
-      delete list.name;
 
       for (var key in list) {
-        if (list[key].length) output.customFields.push(list[key]);
+        if (key != "name" && list[key].length) output.customFields.push(list[key]);
       }
 
       return output
