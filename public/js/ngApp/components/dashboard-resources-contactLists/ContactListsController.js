@@ -61,7 +61,7 @@
     vm.setSessionId = setSessionId;
     vm.returnContactCount = returnContactCount;
     vm.canAddMoreFields = canAddMoreFields;
-
+    var maxAllowedCustomFields = 12;
     // required for correct list switching.
     var isSelected = false;
 
@@ -187,7 +187,7 @@
 
     function updateList() {
       if (vm.newListErrorMessage) return;
-      newList.name = vm.name;
+      vm.newList.name = vm.name;
       if (!vm.newList.name) {
         dbg.log2('#ContactListController > updateList > error > list name is empty');
         messenger.error('List Name can not be blank');
@@ -196,7 +196,6 @@
 
 
       var newList = angular.copy(vm.newList);
-      newList.name = vm.name;
       var parsedList = prepareParsedList(vm.newList);
 
       vm.lists.updateActiveItem(parsedList).then(
@@ -630,13 +629,13 @@
           messenger.error("Please add name for your custom field.");
         }
       }else{
-        messenger.error("Too many custom fields, allowed: 12");
+        messenger.error("Too many custom fields, allowed: " + maxAllowedCustomFields);
       }
     };
 
     function canAddMoreFields() {
       var parsedList = prepareParsedList(vm.newList);
-      return parsedList.customFields.length < 12;
+      return parsedList.customFields.length < maxAllowedCustomFields;
     }
 
     function addImportedContacts() {
