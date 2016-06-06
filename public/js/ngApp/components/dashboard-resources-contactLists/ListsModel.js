@@ -131,7 +131,6 @@
      */
     function changeActiveList(index, force) {
       var self = this;
-
       if ( typeof(index) == 'undefined' || index < 0 ) var index = 0;
 
       if (self.activeListIndex == index && !force) return;
@@ -172,7 +171,6 @@
      */
     function updateActiveItem(updateFieldsObj) {
       var deferred = $q.defer();
-
       var self = this;
       var currentIndex = self.activeListIndex;
 
