@@ -68,7 +68,7 @@ function getAllPlans(accountId) {
   let deferred = q.defer();
   let currentPlan = {};
 
-  chargebee.plan.list({limit: 5}).request(function(error, result){
+  chargebee.plan.list({limit: 20}).request(function(error, result){
     if(error){
       deferred.reject(error);
     }else{

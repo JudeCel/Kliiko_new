@@ -22,7 +22,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: 1,
-    priority: -1
+    priority: -10
   },
   single: {
     sessionCount: 1,
@@ -33,7 +33,7 @@ module.exports = {
     participantCount: 8,
     observerCount: 15,
     paiedSmsCount: 50,
-    priority: 2,
+    priority: -10,
 
     recruiterContactListCount: 1,
     accountUserCount: 1,
@@ -48,7 +48,7 @@ module.exports = {
     participantCount: 8,
     observerCount: 15,
     paiedSmsCount: 50,
-    priority: 3,
+    priority: -10,
 
     recruiterContactListCount: 1,
     accountUserCount: 1,
@@ -63,7 +63,7 @@ module.exports = {
     participantCount: 8,
     observerCount: 15,
     paiedSmsCount: 50,
-    priority: 3,
+    priority: -10,
 
     recruiterContactListCount: 1,
     accountUserCount: 1,
@@ -78,7 +78,7 @@ module.exports = {
     participantCount: 8,
     observerCount: 15,
     paiedSmsCount: 600,
-    priority: 4,
+    priority: -10,
 
     recruiterContactListCount: 1,
     accountUserCount: 1,
@@ -153,7 +153,8 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: -1,
-    priority: 1
+    priority: 1,
+    related: 'senior_yearly'
   },
   senior_yearly: {
     sessionCount: 8,
@@ -199,7 +200,8 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: 20,
-    priority: 2
+    priority: 2,
+    related: 'core_yearly'
   },
   core_yearly: {
     sessionCount: 3,
@@ -245,7 +247,8 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: 5,
-    priority: 3
+    priority: 3,
+    related: 'junior_yearly'
   },
   junior_yearly: {
     sessionCount: 1,
