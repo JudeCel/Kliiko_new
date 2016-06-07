@@ -38,7 +38,6 @@ module.exports = (Sequelize, DataTypes) => {
         Resource.hasMany(models.Survey, { foreignKey: 'resourceId' });
         Resource.hasMany(models.SurveyQuestion, { foreignKey: 'resourceId' });
         Resource.belongsToMany(models.Session, {through: {model: models.SessionResource}, foreignKey: 'resourceId'});
-        Resource.hasMany(models.SessionTopicsReport, { foreignKey: 'resourceId', onDelete: 'cascade' });
       }
     }
   });
