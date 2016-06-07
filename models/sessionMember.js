@@ -27,6 +27,7 @@ module.exports = (Sequelize, DataTypes) => {
         SessionMember.hasMany(models.Shape, { foreignKey: 'sessionMemberId' });
         SessionMember.hasMany(models.Message, { foreignKey: 'sessionMemberId' });
         SessionMember.hasMany(models.MiniSurveyAnswer, { foreignKey: 'sessionMemberId' });
+        SessionMember.hasMany(models.SessionTopicsReport, { foreignKey: 'sessionMemberId', onDelete: 'cascade' });
       }
     }
   });
