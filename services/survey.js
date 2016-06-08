@@ -474,6 +474,7 @@ function confirmSurvey(params, account) {
 function exportSurvey(params, account) {
   let deferred = q.defer();
 
+
   canExportSurveyData(account).then(function() {
     Survey.find({
       where: { id: params.id, accountId: account.id },
@@ -509,6 +510,7 @@ function exportSurvey(params, account) {
 // Clean UP mmove this to validations file.
 function canExportSurveyData(account) {
   let deferred = q.defer();
+
 
   models.SubscriptionPreference.find({
     include: [{

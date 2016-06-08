@@ -545,7 +545,7 @@ function chargebeePassParams(result) {
 
 function chargebeeSubParams(accountUser) {
   return {
-    plan_id: 'free',
+    plan_id: 'free_trial',
     customer: {
       email: accountUser.email,
       first_name: accountUser.firstName,

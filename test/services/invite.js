@@ -9,6 +9,7 @@ var AccountUser = models.AccountUser;
 var userService = require('./../../services/users');
 var inviteService = require('./../../services/invite');
 var accountManagerService = require('./../../services/accountManager');
+var subscriptionFixture = require('./../fixtures/subscription');
 var assert = require('chai').assert;
 var async = require('async');
 var q = require('q');
@@ -135,18 +136,23 @@ describe('SERVICE - Invite', function() {
           email: accountUser2.email
         };
 
-        validParams(testUser, testAccount, body).then(function(params) {
-          inviteService.createInvite(params).then(function(data) {
-            assert.equal(data.invite.userId, params.userId);
-            assert.equal(data.invite.role, params.role);
-            assert.equal(data.invite.userType, params.userType);
-            done();
+        subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+          validParams(testUser, testAccount, body).then(function(params) {
+            inviteService.createInvite(params).then(function(data) {
+              assert.equal(data.invite.userId, params.userId);
+              assert.equal(data.invite.role, params.role);
+              assert.equal(data.invite.userType, params.userType);
+              done();
+            }, function(error) {
+              done(error);
+            });
           }, function(error) {
             done(error);
           });
         }, function(error) {
           done(error);
         });
+
       });
     });
   });
@@ -160,23 +166,27 @@ describe('SERVICE - Invite', function() {
           email: accountUser2.email
         };
 
-        validParams(testUser, testAccount, body).then(function(params) {
-          inviteService.createInvite(params).then(function(data) {
-            async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
-              if(error) {
-                done(error);
-              }
-
-              inviteService.removeInvite(data.invite, function(error, result) {
+        subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+          validParams(testUser, testAccount, body).then(function(params) {
+            inviteService.createInvite(params).then(function(data) {
+              async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
                 if(error) {
                   done(error);
                 }
 
-                assert.equal(result, inviteService.messages.removed);
-                async.parallel(countTables({ invite: 0, account: 2, user: 2, accountUser: 3 }), function(error, result) {
-                  done(error);
+                inviteService.removeInvite(data.invite, function(error, result) {
+                  if(error) {
+                    done(error);
+                  }
+
+                  assert.equal(result, inviteService.messages.removed);
+                  async.parallel(countTables({ invite: 0, account: 2, user: 2, accountUser: 3 }), function(error, result) {
+                    done(error);
+                  });
                 });
               });
+            }, function(error) {
+              done(error);
             });
           }, function(error) {
             done(error);
@@ -193,21 +203,25 @@ describe('SERVICE - Invite', function() {
           email: accountUser2.email
         };
 
-        validParams(testUser, testAccount, body).then(function(params) {
-          inviteService.createInvite(params).then(function(data) {
-            Invite.update({ status: 'confirmed' }, { where: { id: data.invite.id } }).then(function() {
-              async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
-                if(error) {
-                  done(error);
-                }
-
-                inviteService.removeInvite(data.invite, function(error, result) {
-                  assert.equal(error, inviteService.messages.cantRemove);
-                  async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
+        subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+          validParams(testUser, testAccount, body).then(function(params) {
+            inviteService.createInvite(params).then(function(data) {
+              Invite.update({ status: 'confirmed' }, { where: { id: data.invite.id } }).then(function() {
+                async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
+                  if(error) {
                     done(error);
+                  }
+
+                  inviteService.removeInvite(data.invite, function(error, result) {
+                    assert.equal(error, inviteService.messages.cantRemove);
+                    async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
+                      done(error);
+                    });
                   });
                 });
               });
+            }, function(error) {
+              done(error);
             });
           }, function(error) {
             done(error);
@@ -215,6 +229,7 @@ describe('SERVICE - Invite', function() {
         }, function(error) {
           done(error);
         });
+
       });
     });
 
@@ -226,23 +241,27 @@ describe('SERVICE - Invite', function() {
           email: "newuser@gmail.com"
         };
 
-        validParams(testUser, testAccount, body).then(function(params) {
-          inviteService.createInvite(params).then(function(data) {
-            async.parallel(countTables({ invite: 1, account: 2, user: 3, accountUser: 3 }), function(error, result) {
-              if(error) {
-                done(error);
-              }
-
-              inviteService.removeInvite(data.invite, function(error, result) {
+        subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+          validParams(testUser, testAccount, body).then(function(params) {
+            inviteService.createInvite(params).then(function(data) {
+              async.parallel(countTables({ invite: 1, account: 2, user: 3, accountUser: 3 }), function(error, result) {
                 if(error) {
                   done(error);
                 }
 
-                assert.equal(result, inviteService.messages.removed);
-                async.parallel(countTables({ invite: 0, account: 2, user: 2, accountUser: 2 }), function(error, result) {
-                  done(error);
+                inviteService.removeInvite(data.invite, function(error, result) {
+                  if(error) {
+                    done(error);
+                  }
+
+                  assert.equal(result, inviteService.messages.removed);
+                  async.parallel(countTables({ invite: 0, account: 2, user: 2, accountUser: 2 }), function(error, result) {
+                    done(error);
+                  });
                 });
               });
+            }, function(error) {
+              done(error);
             });
           }, function(error) {
             done(error);
@@ -250,6 +269,7 @@ describe('SERVICE - Invite', function() {
         }, function(error) {
           done(error);
         });
+
       });
     });
   });
@@ -262,12 +282,16 @@ describe('SERVICE - Invite', function() {
         email: "newuser@gmail.com"
       }
 
-      validParams(testUser, testAccount, body).then(function(params) {
-        inviteService.createInvite(params).then(function(data) {
-          inviteService.findInvite(data.invite.token, function(error, result) {
-            assert.equal(error, null);
-            assert.equal(data.invite.id, result.id);
-            done();
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        validParams(testUser, testAccount, body).then(function(params) {
+          inviteService.createInvite(params).then(function(data) {
+            inviteService.findInvite(data.invite.token, function(error, result) {
+              assert.equal(error, null);
+              assert.equal(data.invite.id, result.id);
+              done();
+            });
+          }, function(error) {
+            done(error);
           });
         }, function(error) {
           done(error);
@@ -275,6 +299,7 @@ describe('SERVICE - Invite', function() {
       }, function(error) {
         done(error);
       });
+
     });
 
     it('should fail on finding invite', function (done) {
@@ -294,13 +319,17 @@ describe('SERVICE - Invite', function() {
         email: "newuser@gmail.com"
       };
 
-      validParams(testUser, testAccount, body).then(function(params) {
-        inviteService.createInvite(params).then(function(data) {
-          inviteService.declineInvite(data.invite.token, function(error, result, message) {
-            assert.equal(error, null);
-            assert.equal(data.invite.id, result.id);
-            assert.equal(message, inviteService.messages.declined);
-            done();
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        validParams(testUser, testAccount, body).then(function(params) {
+          inviteService.createInvite(params).then(function(data) {
+            inviteService.declineInvite(data.invite.token, function(error, result, message) {
+              assert.equal(error, null);
+              assert.equal(data.invite.id, result.id);
+              assert.equal(message, inviteService.messages.declined);
+              done();
+            });
+          }, function(error) {
+            done(error);
           });
         }, function(error) {
           done(error);
@@ -308,6 +337,7 @@ describe('SERVICE - Invite', function() {
       }, function(error) {
         done(error);
       });
+
     });
   });
 
@@ -319,24 +349,28 @@ describe('SERVICE - Invite', function() {
         email: accountUser2.email
       };
 
-      validParams(testUser, testAccount, body).then(function(params) {
-        inviteService.createInvite(params).then(function(data) {
-          async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
-            if(error) {
-              done(error);
-            }
-
-            inviteService.acceptInviteExisting(data.invite.token, function(error, _result, message) {
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        validParams(testUser, testAccount, body).then(function(params) {
+          inviteService.createInvite(params).then(function(data) {
+            async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
               if(error) {
                 done(error);
               }
-              async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
-                Invite.find({ where: { id: data.invite.id } }).then(function(invite) {
-                  assert.equal(invite.status, 'confirmed');
+
+              inviteService.acceptInviteExisting(data.invite.token, function(error, _result, message) {
+                if(error) {
                   done(error);
+                }
+                async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
+                  Invite.find({ where: { id: data.invite.id } }).then(function(invite) {
+                    assert.equal(invite.status, 'confirmed');
+                    done(error);
+                  });
                 });
               });
             });
+          }, function(error) {
+            done(error);
           });
         }, function(error) {
           done(error);
@@ -355,42 +389,48 @@ describe('SERVICE - Invite', function() {
         email: "newuser@gmail.com"
       };
 
-      validParams(testUser, testAccount, body).then(function(params) {
-        inviteService.createInvite(params).then(function(data) {
-          let oldPassword = data.invite.User.encryptedPassword;
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        validParams(testUser, testAccount, body).then(function(params) {
+          inviteService.createInvite(params).then(function(data) {
+            let oldPassword = data.invite.User.encryptedPassword;
 
-          async.parallel(countTables({ invite: 1, account: 2, user: 3, accountUser: 3 }), function(error, result) {
-            if(error) {
-              done(error);
-            }
-
-            let userParams = { accountName: 'newname', password: 'newpassword' };
-            inviteService.acceptInviteNew(data.invite.token, userParams, function(error, message) {
+            async.parallel(countTables({ invite: 1, account: 2, user: 3, accountUser: 3 }), function(error, result) {
               if(error) {
                 done(error);
               }
 
-              data.invite.User.reload().then(function(user) {
-                assert.notEqual(user.encryptedPassword, oldPassword);
+              let userParams = { accountName: 'newname', password: 'newpassword' };
+              inviteService.acceptInviteNew(data.invite.token, userParams, function(error, message) {
+                if(error) {
+                  done(error);
+                }
 
-                user.getAccounts().then(function(accounts) {
-                  assert.equal(accounts[0].name, testAccount.name);
-                  async.parallel(countTables({ invite: 1, account: 2, user: 3, accountUser: 3 }), function(error, result) {
-                    Invite.find({ where: { id: data.invite.id } }).then(function(invite) {
-                      assert.equal(invite.status, 'confirmed');
-                      done(error);
+                data.invite.User.reload().then(function(user) {
+                  assert.notEqual(user.encryptedPassword, oldPassword);
+
+                  user.getAccounts().then(function(accounts) {
+                    assert.equal(accounts[0].name, testAccount.name);
+                    async.parallel(countTables({ invite: 1, account: 2, user: 3, accountUser: 3 }), function(error, result) {
+                      Invite.find({ where: { id: data.invite.id } }).then(function(invite) {
+                        assert.equal(invite.status, 'confirmed');
+                        done(error);
+                      });
                     });
                   });
                 });
               });
             });
+          }, function(error) {
+            done(error);
           });
         }, function(error) {
           done(error);
         });
+
       }, function(error) {
         done(error);
       });
+
     });
   });
 
