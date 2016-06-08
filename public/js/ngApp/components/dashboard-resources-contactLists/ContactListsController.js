@@ -522,8 +522,9 @@
     // Drag and drop fields section
     function onFieldMapDrop(dataSource, dataTarget) {
       if (dataSource.field) {
+        var dataTargetValue = dataTarget.field;
         dataTarget.field = dataSource.field;
-        dataSource.field = null;
+        dataSource.field = dataTargetValue;
       } else {
         dataTarget.field = dataSource;
       }
