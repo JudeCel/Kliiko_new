@@ -9,10 +9,11 @@ function get(req, res, next) {
 };
 
 function canCreateCustomColors(req, res, next) {
-  brandColourServices.canCreateCustomColors(res.locals.currentDomain.id).then(
-    getResponses(res).onSuccess,
-    getResponses(res).onError
-  );
+  brandColourServices.canCreateCustomColors(res.locals.currentDomain.id).then(function(result) {
+    res.send({result: result});
+  }, function(err) {
+    res.send(({ error: err.message }));
+  });
 }
 
 function remove(req, res, next) {

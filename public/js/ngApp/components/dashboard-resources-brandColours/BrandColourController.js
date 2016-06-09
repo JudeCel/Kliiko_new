@@ -135,20 +135,20 @@
     function changePage(page, scheme) {
       vm.formSubmitted = false;
 
-      brandColourServices.canCreateCustomColors().then(function(res) {
-        if(page == 'create' || page == 'edit' && res.error) {
-          messenger.error(res.error);
-        }else{
-          if(page == 'indexBack' && $stateParams.backTo) {
-            $state.go($stateParams.backTo, {id:$stateParams.id});
-            return
-          }
+      if(page == 'indexBack' && $stateParams.backTo) {
+        $state.go($stateParams.backTo, {id:$stateParams.id});
+        return
+      }
 
-          if(page == 'index' || page == 'indexBack') {
-            init();
-            vm.currentPage = { page: 'index' };
-          }
-          else {
+      if(page == 'index' || page == 'indexBack') {
+        init();
+        vm.currentPage = { page: 'index' };
+      }
+      else {
+        brandColourServices.canCreateCustomColors().then(function(res) {
+          if(res.error) {
+            messenger.error(res.error);
+          }else{
             if(page == 'edit') {
               vm.originalScheme = {};
               angular.copy(scheme, vm.originalScheme);
@@ -160,9 +160,8 @@
             vm.scheme = scheme || { colours: { } };
             vm.currentPage = { page: 'manage', type: page };
           }
-        }
-      });
-
+        });
+      }
     };
 
     function undoCurrentScheme() {
