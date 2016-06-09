@@ -26,12 +26,9 @@ module.exports = (Sequelize, DataTypes) => {
     customEmailInvitationAndReminderMessages: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     topicCount: { type: DataTypes.INTEGER, allowNull: false },
     priority: { type: DataTypes.INTEGER, allowNull: false },
-
-    // Not sure if these are needed anymore
-    // surveyCount: { type: DataTypes.INTEGER, allowNull: false },
-    // participantCount: { type: DataTypes.INTEGER, allowNull: false },
-    // observerCount: { type: DataTypes.INTEGER, allowNull: false },
-    // Not sure if these are needed anymore
+    surveyCount: { type: DataTypes.INTEGER, allowNull: false },
+    participantCount: { type: DataTypes.INTEGER, allowNull: false },
+    observerCount: { type: DataTypes.INTEGER, allowNull: false },
 
     chargebeePlanId: { type: DataTypes.STRING, allowNull: false,
       validate: {
@@ -51,25 +48,3 @@ module.exports = (Sequelize, DataTypes) => {
 
   return SubscriptionPlan;
 };
-
-
-// sessionCount: 1,
-// contactListCount: 1,
-// recruiterContactListCount: 1,
-// importDatabase: true,
-// brandLogoAndCustomColors: true,
-// contactListMemberCount: -1,
-// accountUserCount: 1,
-// exportContactListAndParticipantHistory: false,
-// exportRecruiterSurveyData: false,
-// accessKlzziForum: true,
-// accessKlzziFocus: true,
-// canInviteObserversToSession: true,
-// paiedSmsCount: 20,
-// discussionGuideTips: true,
-// whiteboardFunctionality: true,
-// uploadToGallery: true,
-// reportingFunctions: true,
-// availableOnTabletAndMobilePlatforms: true,
-// customEmailInvitationAndReminderMessages: true,
-// topicCount: -1

@@ -623,7 +623,7 @@ describe('SERVICE - Subscription', function() {
         });
       });
 
-      it.only('should succeed on closing subscription and dependencies', function(done) {
+      it('should succeed on closing subscription and dependencies', function(done) {
         surveyPromise().then(function(c) {
           assert.equal(c, 0);
           return sessionPromise();
