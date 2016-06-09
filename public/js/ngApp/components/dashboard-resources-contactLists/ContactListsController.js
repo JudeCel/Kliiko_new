@@ -61,7 +61,6 @@
     vm.setSessionId = setSessionId;
     vm.returnContactCount = returnContactCount;
     vm.canAddMoreFields = canAddMoreFields;
-    var maxAllowedCustomFields = 12;
     // required for correct list switching.
     var isSelected = false;
 
@@ -222,8 +221,8 @@
         customFields: []
       };
 
-      for (var key in list) {
-        if (key != "name" && list[key].length) output.customFields.push(list[key]);
+      for (var key in list.customFields) {
+        if (list.customFields[key]) output.customFields.push(list.customFields[key]);
       }
 
       return output
@@ -254,14 +253,14 @@
 
     function prepareCustomFields() {
       vm.listIdToEdit = vm.lists.activeList.id;
-      vm.newList = {};
+      vm.newList = {customFields:{}, name: vm.lists.activeList.name};
       vm.listModalTitle = 'Edit List And Custom Fields';
 
       // populate with existing data
       vm.newList.name = vm.lists.activeList.name;
-      for (var i = 0, len = vm.lists.activeList.customFields.length; i < len ; i++) {
+      for (var i = 0, len = vm.lists.activeList.maxCustomFields; i < len ; i++) {
         var I = i+1;
-        vm.newList['customField'+I] = vm.lists.activeList.customFields[i];
+        vm.newList.customFields['customField'+I] = vm.lists.activeList.customFields[i];
       }
     }
 
@@ -522,8 +521,9 @@
     // Drag and drop fields section
     function onFieldMapDrop(dataSource, dataTarget) {
       if (dataSource.field) {
+        var dataTargetValue = dataTarget.field;
         dataTarget.field = dataSource.field;
-        dataSource.field = null;
+        dataSource.field = dataTargetValue;
       } else {
         dataTarget.field = dataSource;
       }
@@ -578,6 +578,7 @@
         messenger.error('List Name can not be blank');
         return;
       }
+
       var parsedList = prepareParsedList(vm.newList);
       updateActiveCustomList(newList, parsedList);
     };
@@ -631,13 +632,13 @@
           messenger.error("Please add name for your custom field.");
         }
       }else{
-        messenger.error("Too many custom fields, allowed: " + maxAllowedCustomFields);
+        messenger.error("Too many custom fields, allowed: " + vm.lists.activeList.maxCustomFields);
       }
     };
 
     function canAddMoreFields() {
       var parsedList = prepareParsedList(vm.newList);
-      return parsedList.customFields.length < maxAllowedCustomFields;
+      return parsedList.customFields.length < vm.lists.activeList.maxCustomFields;
     }
 
     function addImportedContacts() {
