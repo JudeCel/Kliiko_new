@@ -17,7 +17,7 @@ module.exports = (Sequelize, DataTypes) => {
       associate: function(models) {
         SessionTopicsReport.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId' });
         SessionTopicsReport.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId' });
-        SessionTopicsReport.hasOne(models.Resource, { foreignKey: 'resourceId' });
+        SessionTopicsReport.belongsTo(models.Resource, { foreignKey: 'resourceId' });
       }
     }
   });
