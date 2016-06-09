@@ -6,6 +6,7 @@ var BrandProjectPreference = models.BrandProjectPreference;
 var brandColourServices = require('./../../services/brandColour');
 var sessionFixture = require('./../fixtures/session');
 var brandProjectConstants = require('./../../util/brandProjectConstants');
+var subscriptionFixture = require('./../fixtures/subscription');
 var assert = require('chai').assert;
 var _ = require('lodash');
 
@@ -92,33 +93,41 @@ describe('SERVICE - BrandColour', function() {
   describe('#createScheme', function() {
     describe('happy path', function() {
       it('should succeed on creating scheme', function (done) {
-        BrandProjectPreference.count().then(function(c) {
-          assert.equal(c, 1);
+        subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function() {
+          BrandProjectPreference.count().then(function(c) {
+            assert.equal(c, 1);
 
-          brandColourServices.createScheme({ name: 'untitled' }, accountParams()).then(function(result) {
-            testScheme(result.data, { name: 'untitled' });
-            BrandProjectPreference.count().then(function(c) {
-              assert.equal(c, 2);
-              done();
+            brandColourServices.createScheme({ name: 'untitled' }, accountParams()).then(function(result) {
+              testScheme(result.data, { name: 'untitled' });
+              BrandProjectPreference.count().then(function(c) {
+                assert.equal(c, 2);
+                done();
+              });
+            }, function(error) {
+              done(error);
             });
-          }, function(error) {
-            done(error);
           });
+        }, function(error) {
+          done(error);
         });
       });
     });
 
     describe('sad path', function() {
       it('should fail because of colour regex', function (done) {
-        BrandProjectPreference.count().then(function(c) {
-          assert.equal(c, 1);
+        subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function() {
+          BrandProjectPreference.count().then(function(c) {
+            assert.equal(c, 1);
 
-          brandColourServices.createScheme({ colours: { browserBackground: 'somerandomstring' } }, accountParams()).then(function(result) {
-            done('Should not get here!');
-          }, function(error) {
-            assert.deepEqual(error, { browserBackground: 'Browser Background: Not valid colour' });
-            done();
+            brandColourServices.createScheme({ colours: { browserBackground: 'somerandomstring' } }, accountParams()).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              assert.deepEqual(error, { browserBackground: 'Browser Background: Not valid colour' });
+              done();
+            });
           });
+        }, function(error) {
+          done(error);
         });
       });
     });
@@ -213,20 +222,24 @@ describe('SERVICE - BrandColour', function() {
   describe('#copyScheme', function() {
     describe('happy path', function() {
       it('should succeed on copieing scheme', function (done) {
-        BrandProjectPreference.count().then(function(c) {
-          assert.equal(c, 1);
+        subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function() {
+          BrandProjectPreference.count().then(function(c) {
+            assert.equal(c, 1);
 
-          brandColourServices.copyScheme({ id: testData.preference.id }, accountParams()).then(function(result) {
-            testScheme(result.data);
-            assert.equal(result.message, brandColourServices.messages.copied);
+            brandColourServices.copyScheme({ id: testData.preference.id }, accountParams()).then(function(result) {
+              testScheme(result.data);
+              assert.equal(result.message, brandColourServices.messages.copied);
 
-            BrandProjectPreference.count().then(function(c) {
-              assert.equal(c, 2);
-              done();
+              BrandProjectPreference.count().then(function(c) {
+                assert.equal(c, 2);
+                done();
+              });
+            }, function(error) {
+              done(error);
             });
-          }, function(error) {
-            done(error);
           });
+        }, function(error) {
+          done(error);
         });
       });
     });

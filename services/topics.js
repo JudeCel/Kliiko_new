@@ -1,10 +1,12 @@
 'use strict';
 let q = require('q');
+var validators = require('./../services/validators');
 var filters = require('./../models/filters');
 var models = require('./../models');
 var Topic = models.Topic;
 var _ = require('lodash');
 var Session = models.Session;
+
 const MESSAGES = {
   updatedSessionTopic: "Session Topic was successfully update.",
   error: { isRelaitedSession: "Can't delete topic is related session" }
@@ -207,11 +209,17 @@ function destroy(id) {
 
 function create(params) {
   let deferred = q.defer();
-  Topic.create(params).then(function(topic) {
-    deferred.resolve(topic);
+
+  validators.subscription(params.accountId, 'topic', 1).then(function() {
+    Topic.create(params).then(function(topic) {
+      deferred.resolve(topic);
+    },function(error) {
+      deferred.reject(filters.errors(error));
+    });
   },function(error) {
-    deferred.reject(filters.errors(error));
+    deferred.reject(error);
   });
+
   return deferred.promise;
 }
 

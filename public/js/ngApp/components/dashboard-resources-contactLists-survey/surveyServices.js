@@ -12,7 +12,8 @@
       copy: { method: 'POST', params: { path: 'copy' } },
       answer: { method: 'POST', params: { path: 'answer' } },
       confirm: { method: 'PUT', params: { path: 'confirm' } },
-      constants: { method: 'GET', params: { path: 'constants' } }
+      constants: { method: 'GET', params: { path: 'constants' } },
+      canExportSurveyData: { method: 'GET', params: { path: 'canExportSurveyData' } }
     });
 
     var upServices = {};
@@ -29,6 +30,7 @@
     upServices.confirmSurvey = confirmSurvey;
     upServices.pickValidClass = pickValidClass;
     upServices.prepareError = prepareError;
+    upServices.canExportSurveyData = canExportSurveyData;
     return upServices;
 
     function getConstants() {
@@ -42,6 +44,18 @@
 
       return deferred.promise;
     };
+
+    function canExportSurveyData() {
+      var deferred = $q.defer();
+
+      dbg.log2('#surveyServices > canExportSurveyData > make rest call');
+      surveyRestApi.canExportSurveyData({}, function(res) {
+        dbg.log2('#surveyServices > canExportSurveyData > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
 
     function getAllSurveys() {
       var deferred = $q.defer();

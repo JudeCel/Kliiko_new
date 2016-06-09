@@ -49,6 +49,7 @@
     vm.finishSelectingMembers = finishSelectingMembers;
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
     vm.selectObserversClickHandle = selectObserversClickHandle;
+
     function closeSession() {
       vm.session.setOpen(false).then(function(res) {
       }, function(err) {
@@ -200,7 +201,13 @@
     }
 
     function selectObserversClickHandle() {
-      vm.searchingObservers = true;
+      builderServices.canAddObservers().then(function(res) {
+        if(res.error) {
+          messenger.error(res.error);
+        }else{
+          vm.searchingObservers = true;
+        }
+      });
     }
 
     function finishSelectingMembers(activeList) {
@@ -217,6 +224,7 @@
           }
 
           if(vm.session.sessionData.participantListId == activeList.id) {
+
             vm.participants = vm.participants.concat(list);
             vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
           }

@@ -42,15 +42,22 @@
       });
     };
 
+
     function openModal(modalTitle, action, accountUser) {
-      vm.userIndex = vm.accountUsers.indexOf(accountUser);
-      angular.copy(accountUser, vm.accountUser)
+      accountManagerServices.canAddAccountManager().then(function(res) {
+        if(res.error) {
+          messenger.error(res.error);
+        }else{
+          vm.userIndex = vm.accountUsers.indexOf(accountUser);
+          angular.copy(accountUser, vm.accountUser)
 
-      vm.modalTitle = modalTitle;
-      vm.formAction = action;
+          vm.modalTitle = modalTitle;
+          vm.formAction = action;
 
-      setSaveButtonText(vm.formAction);
-      domServices.modal('accountManagerModal');
+          setSaveButtonText(vm.formAction);
+          domServices.modal('accountManagerModal');
+        }
+      });
     }
 
     function setSaveButtonText(action) {

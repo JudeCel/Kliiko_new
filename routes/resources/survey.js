@@ -9,7 +9,7 @@ function exportSurvey(req, res, next) {
       res.send(csv);
     });
   }, function(error) {
-
+    res.send({error: error});
   });
 };
 
