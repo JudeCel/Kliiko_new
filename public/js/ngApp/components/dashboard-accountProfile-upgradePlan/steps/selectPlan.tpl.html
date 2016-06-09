@@ -25,11 +25,11 @@
   <section class="container plans-table">
     <div class="row">
       <div ng-repeat="subscriptionPlan in up.subPlans">
-        <div class="col-sm-4 col-xs-12 plan-block" ng-if="up.showPlanInList(subscriptionPlan.plan.id)">
-          <div class="included-plan-fader" ng-show="up.isCurrentPlan(subscriptionPlan.plan.id)"><div class="label">CURRENT</div></div>
+        <div class="col-sm-4 col-xs-12 plan-block" ng-if="up.showPlanInList(subscriptionPlan)">
+          <div class="included-plan-fader" ng-show="up.isCurrentPlan(subscriptionPlan)"><div class="label">CURRENT</div></div>
           <div class="list-group">
-            <h4 ng-class="up.planColors[subscriptionPlan.plan.name].header">{{subscriptionPlan.plan.name}}</h4>
-            <div ng-class="up.planColors[subscriptionPlan.plan.name].body">
+            <h4 ng-class="up.planColors[subscriptionPlan.plan.id].header">{{subscriptionPlan.plan.name}}</h4>
+            <div ng-class="up.planColors[subscriptionPlan.plan.id].body">
               <h5 class="outline"><sup>$US</sup>{{subscriptionPlan.plan.price | price:'':0 }}</h5>
               <p>
                 {{ subscriptionPlan.plan.period }}
@@ -39,7 +39,7 @@
             </div>
 
             <div class="wrapper">
-              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
                 <p>
                   <b>
                     {{ up.checkTheCount(subscriptionPlan.additionalParams.sessionCount) }}
@@ -52,7 +52,7 @@
             </div>
 
             <div class="wrapper">
-              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
                 <p>
                   Up to
                   <b>
@@ -65,7 +65,7 @@
             </div>
 
             <div class="wrapper">
-              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
                 <p>
                   Up to
                   <b>
@@ -78,7 +78,7 @@
             </div>
 
             <div class="wrapper">
-              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
                 <p>
                   Up to
                   <b>
@@ -92,7 +92,7 @@
             </div>
 
             <div class="wrapper">
-              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
                 <p>
                   <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.contactListMemberCount) }}</b>
                   Contact List members allowed
@@ -101,7 +101,7 @@
             </div>
 
             <div class="wrapper">
-              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
                 <p>
                   <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.contactListCount) }}</b>
                   Number Of contact Lists
@@ -110,7 +110,7 @@
             </div>
 
             <div class="wrapper">
-              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
                 <p>
                   <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.additionalContactListCount) }}</b>
                   Additional Contact Lists

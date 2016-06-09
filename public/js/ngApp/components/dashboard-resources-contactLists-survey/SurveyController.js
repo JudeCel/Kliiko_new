@@ -212,7 +212,13 @@
     };
 
     function exportSurvey(surveyId) {
-      $window.location.href = '/resources/survey/export/' + surveyId;
+      surveyServices.canExportSurveyData().then(function(res) {
+        if(res.error) {
+          messenger.error(res.error);
+        }else{
+          $window.location.href = '/resources/survey/export/' + surveyId;
+        }
+      });
     };
 
     function changeQuestions(question, order) {

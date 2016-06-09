@@ -29,6 +29,7 @@ const MESSAGES = {
   accountUserNotFound: 'Account User not found',
 
   errors: {
+    cantAddObservers: "Please Update your subscription plan, to invite Observers to your session.",
     cantSendCloseMails: "Were not able to send emails to informa all participants, that session was closed.",
     firstStep: {
       nameRequired: 'Name must be provided',
@@ -67,7 +68,8 @@ module.exports = {
   removeInvite: removeInvite,
   removeSessionMember: removeSessionMember,
   sendGenericEmail: sendGenericEmail,
-  sessionMailTemplateStatus: sessionMailTemplateStatus
+  sessionMailTemplateStatus: sessionMailTemplateStatus,
+  canAddObservers: canAddObservers
 };
 
 function initializeBuilder(params) {
@@ -772,6 +774,18 @@ function step4and5Queries(session, role) {
       });
     }
   ];
+}
+
+function canAddObservers(accountId) {
+  let deferred = q.defer();
+
+  validators.planAllowsToDoIt(accountId, 'canInviteObserversToSession').then(function() {
+    deferred.resolve();
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
 }
 
 function validate(session, params) {

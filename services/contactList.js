@@ -14,6 +14,7 @@ var csv = require('fast-csv');
 var xlsx = require('xlsx');
 var path = require('path');
 const ROW_NR = 2;
+const MAX_CUSTOM_FIELDS = 16;
 
 module.exports = {
   create: create,
@@ -168,6 +169,7 @@ function prepareData(lists) {
       editable: list.editable,
       defaultFields: list.defaultFields,
       customFields: list.customFields,
+      maxCustomFields: MAX_CUSTOM_FIELDS,
       visibleFields: list.visibleFields,
       participantsFields: list.participantsFields,
       name: list.name,

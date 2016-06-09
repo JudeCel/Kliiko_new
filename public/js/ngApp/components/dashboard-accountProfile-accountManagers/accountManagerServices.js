@@ -6,7 +6,8 @@
   function accountManagerServices(globalSettings, $q, $resource, dbg) {
     var accountManagerRestApi = $resource(globalSettings.restUrl + '/accountManager/:path', null, {
       update: { method: 'PUT' },
-      deleteAccountUser: { method: 'DELETE', params: { path: 'accountUser' } }
+      deleteAccountUser: { method: 'DELETE', params: { path: 'accountUser' } },
+      canAddAccountManager: { method: 'GET', params: { path: 'canAddAccountManager' } }
     });
 
     var upServices = {};
@@ -16,6 +17,7 @@
     upServices.removeInvite = removeInvite;
     upServices.removeAccountUser = removeAccountUser;
     upServices.editAccountManager = editAccountManager;
+    upServices.canAddAccountManager = canAddAccountManager;
     return upServices;
 
     function getAllManagersList() {
@@ -29,6 +31,18 @@
 
       return deferred.promise;
     };
+
+    function canAddAccountManager() {
+      var deferred = $q.defer();
+
+      dbg.log2('#AccountManagerServices > canAddAccountManager > make rest call');
+      accountManagerRestApi.canAddAccountManager({}, function(res) {
+        dbg.log2('#AccountManagerServices > canAddAccountManager > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
 
     function createAccountManager(data) {
       var deferred = $q.defer();
