@@ -38,9 +38,6 @@
         // if we want to open create step from the start
         if ($stateParams.new)  changePage('create');
       });
-
-
-
     }
 
     function removeScheme(scheme) {
@@ -138,27 +135,34 @@
     function changePage(page, scheme) {
       vm.formSubmitted = false;
 
-      if(page == 'indexBack' && $stateParams.backTo) {
-        $state.go($stateParams.backTo, {id:$stateParams.id});
-        return
-      }
+      brandColourServices.canCreateCustomColors().then(function(res) {
+        if(page == 'create' || page == 'edit' && res.error) {
+          messenger.error(res.error);
+        }else{
+          if(page == 'indexBack' && $stateParams.backTo) {
+            $state.go($stateParams.backTo, {id:$stateParams.id});
+            return
+          }
 
-      if(page == 'index' || page == 'indexBack') {
-        init();
-        vm.currentPage = { page: 'index' };
-      }
-      else {
-        if(page == 'edit') {
-          vm.originalScheme = {};
-          angular.copy(scheme, vm.originalScheme);
-        }
-        else {
-          vm.originalScheme = null;
-        }
+          if(page == 'index' || page == 'indexBack') {
+            init();
+            vm.currentPage = { page: 'index' };
+          }
+          else {
+            if(page == 'edit') {
+              vm.originalScheme = {};
+              angular.copy(scheme, vm.originalScheme);
+            }
+            else {
+              vm.originalScheme = null;
+            }
 
-        vm.scheme = scheme || { colours: { } };
-        vm.currentPage = { page: 'manage', type: page };
-      }
+            vm.scheme = scheme || { colours: { } };
+            vm.currentPage = { page: 'manage', type: page };
+          }
+        }
+      });
+
     };
 
     function undoCurrentScheme() {

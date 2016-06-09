@@ -5,8 +5,11 @@
 
   function sessionBuilderControllerServices(globalSettings, $q, $resource, dbg, topicsAndSessions) {
 
-    var Services = {};
+    var sessionBuilderApi = $resource(globalSettings.restUrl + '/sessionBuilder/:path', null, {
+      canAddObservers: { method: 'GET', params: { path: 'canAddObservers' } },
+    });
 
+    var Services = {};
 
     Services.getTimeSettings = getTimeSettings;
     Services.getExpireDays = getExpireDays;
@@ -14,8 +17,22 @@
     Services.currentMemberList = currentMemberList;
     Services.selectMembers = selectMembers;
     Services.removeDuplicatesFromArray = removeDuplicatesFromArray;
+    Services.canAddObservers = canAddObservers;
 
     return Services;
+
+    function canAddObservers() {
+      var deferred = $q.defer();
+
+      dbg.log2('#brandColourServices > canAddObservers > make rest call');
+      sessionBuilderApi.canAddObservers({}, function(res) {
+        dbg.log2('#brandColourServices > canAddObservers > rest call responds');
+
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
 
     function getTimeSettings() {
       return {

@@ -4,6 +4,7 @@ var models  = require('./../../models');
 var Session = models.Session;
 var topicService  = require('./../../services/topics');
 var UserService  = require('./../../services/users');
+var subscriptionFixture = require('./../fixtures/subscription');
 let q = require('q');
 
 describe('Topic Service', function() {
@@ -29,6 +30,7 @@ describe('Topic Service', function() {
 
   var testUser = null;
   var testAccount = null;
+  var testData = null;
 
   beforeEach(function(done) {
     var userAttrs = {
@@ -62,10 +64,17 @@ describe('Topic Service', function() {
       name: "cool topic name"
     }
 
-    topicService.create(attrs).then(function(topic){
-      assert.equal(topic.name, attrs.name)
-      done();
+    subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+      topicService.create(attrs).then(function(topic){
+        assert.equal(topic.name, attrs.name)
+        done();
+      }, function(error) {
+        done(error);
+      });
+    }, function(error) {
+      done(error);
     });
+
   });
 
   describe("with Session", function() {
@@ -85,21 +94,25 @@ describe('Topic Service', function() {
         name: "without session"
       }
 
-      topicService.create(attrs).then(function(topic){
-        topicService.joinToSession([topic.id], testSession.id).then(function(result) {
-          topic.getSessions().then(function(resuts) {
-            assert.lengthOf(resuts, 1)
-            done();
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        topicService.create(attrs).then(function(topic){
+          topicService.joinToSession([topic.id], testSession.id).then(function(result) {
+            topic.getSessions().then(function(resuts) {
+              assert.lengthOf(resuts, 1)
+              done();
+            }, function(err) {
+              done(err)
+            })
           }, function(err) {
             done(err)
           })
         }, function(err) {
           done(err)
-        })
-      }, function(err) {
-        done(err)
+        });
+      }, function(error) {
+        done(error);
       });
-    })
+    });
 
     it("removeFromSession", function(done) {
       let attrs = {
@@ -107,19 +120,23 @@ describe('Topic Service', function() {
         name: "without session"
       }
 
-      topicService.create(attrs).then(function(topic){
-        topicService.joinToSession([topic.id], testSession.id).then(function(_) {
-          topicService.removeFromSession([testSession.id], testSession.id).then(function(result) {
-            assert.equal(result, 1)
-            done()
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        topicService.create(attrs).then(function(topic){
+          topicService.joinToSession([topic.id], testSession.id).then(function(_) {
+            topicService.removeFromSession([testSession.id], testSession.id).then(function(result) {
+              assert.equal(result, 1)
+              done()
+            }, function(err) {
+              done(err)
+            })
           }, function(err) {
             done(err)
           })
         }, function(err) {
           done(err)
-        })
-      }, function(err) {
-        done(err)
+        });
+      }, function(error) {
+        done(error);
       });
     })
 
@@ -129,20 +146,25 @@ describe('Topic Service', function() {
         name: "without session"
       }
 
-      topicService.create(attrs).then(function(topic){
-        topicService.joinToSession([topic.id], testSession.id).then(function(_) {
-          topicService.destroy(topic.id).then(function(result) {
-            done("can't get here");
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        topicService.create(attrs).then(function(topic){
+          topicService.joinToSession([topic.id], testSession.id).then(function(_) {
+            topicService.destroy(topic.id).then(function(result) {
+              done("can't get here");
+            }, function(err) {
+              assert.equal(err, topicService.MESSAGES.error.isRelaitedSession)
+              done();
+            })
           }, function(err) {
-            assert.equal(err, topicService.MESSAGES.error.isRelaitedSession)
-            done();
+            done(err)
           })
         }, function(err) {
           done(err)
-        })
-      }, function(err) {
-        done(err)
+        });
+      }, function(error) {
+        done(error);
       });
+
     })
   })
 
@@ -153,16 +175,22 @@ describe('Topic Service', function() {
         accountId: testAccount.id,
         name: "without session"
       }
-      topicService.create(attrs).then(function(topic){
-        topicService.destroy(topic.id).then(function(result) {
-          assert.equal(result, 1)
-          done();
+
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        topicService.create(attrs).then(function(topic){
+          topicService.destroy(topic.id).then(function(result) {
+            assert.equal(result, 1)
+            done();
+          }, function(err) {
+            done(err)
+          })
         }, function(err) {
           done(err)
-        })
-      }, function(err) {
-        done(err)
+        });
+      }, function(error) {
+        done(error);
       });
+
     })
   });
 });

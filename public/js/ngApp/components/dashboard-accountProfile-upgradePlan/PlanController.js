@@ -16,9 +16,10 @@
     vm.selectedPlan = null;
     vm.currentStep = 1;
     vm.currentPlan = null;
-    vm.fixedYearly = null;
-    vm.fixedMonthly = null;
+    vm.monthlyPlan = null;
+    vm.yearlyPlan = null;
     vm.purchaseWasSuccessfull = true
+    vm.subPlans = [];
 
     vm.stepLayouts = [
       {
@@ -54,17 +55,17 @@
     ]
 
     vm.planColors = {
-      Single: {
+      junior_monthly: {
         header: "list-group-item-heading yellow-header-bg",
         body: "price-label yellow-bg",
         light: "list-group-item-text yellow-light-bg"
       },
-      Fixed: {
+      core_monthly: {
         header: "list-group-item-heading green-header-bg",
         body: "price-label green-bg",
         light: "list-group-item-text green-light-bg"
       },
-      Unlimited: {
+      senior_monthly: {
         header: "list-group-item-heading blue-header-bg",
         body: "price-label blue-bg",
         light: "list-group-item-text blue-light-bg"
@@ -73,7 +74,6 @@
 
     var modalTplPath = 'js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/';
 
-    vm.subPlans = vm.testData;
     vm.isCurrentStep = isCurrentStep;
     vm.openPlanDetailsModal = openPlanDetailsModal;
     vm.checkTheCount = checkTheCount;
@@ -87,7 +87,7 @@
     vm.showPlanInList = showPlanInList;
     vm.switchPlan = switchPlan;
     vm.showCalculatedPrice = showCalculatedPrice;
-    vm.viewForFixedPlans = viewForFixedPlans;
+    vm.checkRadioButton = checkRadioButton;
 
     init();
 
@@ -124,38 +124,10 @@
         if(result.error){
           messenger.error(result.error);
         }else {
+          vm.subPlans = result.plans;
           vm.currentPlan = result.currentPlan;
-          sortSubscriptionPlnas(result);
-
-          angular.forEach(result.plans, function(result) {
-            if(result.plan.id == "fixed_yearly"){
-              vm.fixedYearly = result;
-            }
-            if(result.plan.id == "fixed_monthly"){
-              vm.fixedMonthly = result;
-            }
-          });
-
         }
       })
-    }
-
-    function sortSubscriptionPlnas(result) {
-      var sortedSubs = []
-
-      angular.forEach(result.plans, function(result) {
-        if (result.plan.id == "single") {
-          sortedSubs[0] = (result);
-        } else if(result.plan.id == "fixed_monthly") {
-          sortedSubs[1] = (result);
-        } else if(result.plan.id == "unlimited"){
-          sortedSubs[2] = (result);
-        } else {
-          sortedSubs.push(result)
-        }
-      });
-
-      vm.subPlans = sortedSubs;
     }
 
     function succeededCheckout(params) {
@@ -187,9 +159,26 @@
       }
     }
 
-    function wantThisPlan(plan) {
-      vm.selectedPlan = plan;
+    function wantThisPlan(selectedSubPlan) {
+      vm.selectedPlan = selectedSubPlan;
+
+      vm.subPlans.map(function(subPlan) {
+        if(subPlan.plan.id == vm.selectedPlan.plan.id) {
+          vm.monthlyPlan = subPlan;
+        }
+
+        if(subPlan.plan.period_unit == "year" && subPlan.plan.name.includes(vm.selectedPlan.plan.name)) {
+          vm.yearlyPlan = subPlan;
+        }
+      });
+
       nextStep();
+    }
+
+    function checkRadioButton(currentPlan, checkPlan) {
+      if(currentPlan && checkPlan) {
+        return currentPlan.plan.id == checkPlan.plan.id;
+      }
     }
 
     function nextStep(){
@@ -214,11 +203,11 @@
       return vm.currentStep == inQueue;
     }
 
-    function isCurrentPlan(planId) {
-      if(planId == 'fixed_monthly'){
-        return vm.currentPlan.chargebeePlanId == 'fixed_yearly' || vm.currentPlan.chargebeePlanId == 'fixed_monthly';
+    function isCurrentPlan(subPlan) {
+      if(vm.currentPlan.chargebeePlanId.includes('_yearly')) {
+        return subPlan.additionalParams.related == vm.currentPlan.chargebeePlanId;
       }else{
-        return planId == vm.currentPlan.chargebeePlanId
+        return vm.currentPlan.chargebeePlanId == subPlan.plan.id;
       }
     }
 
@@ -242,12 +231,8 @@
       domServices.modal('plansModal');
     }
 
-    function showPlanInList(planId){
-      if(planId == "free" || planId == "fixed_yearly"){
-        return false;
-      }else{
-        return true
-      }
+    function showPlanInList(plan){
+      return plan.additionalParams.priority > 0;
     }
 
     function switchPlan(switchPlan) {
@@ -257,15 +242,5 @@
     function showCalculatedPrice(price) {
       return price / 100;
     }
-
-    function viewForFixedPlans(plan) {
-      if(plan == 'fixed_yearly' || plan == 'fixed_monthly') {
-        return true;
-      }else{
-        return false;
-      }
-    }
-
   }
-
 })();
