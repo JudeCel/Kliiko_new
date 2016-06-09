@@ -40,6 +40,7 @@ module.exports = (Sequelize, DataTypes) => {
         Session.belongsTo(models.BrandProjectPreference, {foreignKey: 'brandProjectPreferenceId'});
         Session.belongsToMany(models.Topic, {through: {model: models.SessionTopics}, foreignKey: 'sessionId', onDelete: 'cascade'});
         Session.belongsTo(models.ContactList, { foreignKey: 'participantListId' });
+        Session.hasMany(models.MiniSurvey, {foreignKey: 'sessionId', onDelete: 'cascade'});
         Session.hasMany(models.SessionMember, {foreignKey: 'sessionId', onDelete: 'cascade'});
         Session.hasMany(models.MailTemplate, {foreignKey: 'sessionId', onDelete: 'cascade', hooks:true});
         Session.hasMany(models.Invite, { foreignKey: 'sessionId', onDelete: 'cascade' });

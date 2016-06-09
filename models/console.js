@@ -8,7 +8,7 @@ module.exports = (Sequelize, DataTypes) => {
     videoId: { type: DataTypes.INTEGER, allowNull: true },
     imageId: { type: DataTypes.INTEGER, allowNull: true },
     fileId: { type: DataTypes.INTEGER, allowNull: true },
-    surveyId: { type: DataTypes.INTEGER, allowNull: true }
+    miniSurveyId: { type: DataTypes.INTEGER, allowNull: true }
   }, {
     timestamps: true,
     classMethods: {
@@ -18,7 +18,7 @@ module.exports = (Sequelize, DataTypes) => {
         Console.belongsTo(models.Resource, { foreignKey: 'videoId' });
         Console.belongsTo(models.Resource, { foreignKey: 'imageId' });
         Console.belongsTo(models.Resource, { foreignKey: 'fileId' });
-        Console.belongsTo(models.Survey, { foreignKey: 'surveyId' });
+        Console.belongsTo(models.MiniSurvey, { foreignKey: 'miniSurveyId' });
       }
     }
   });

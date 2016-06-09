@@ -3,6 +3,7 @@
 var models = require('./../models');
 var filters = require('./../models/filters');
 var brandProjectConstants = require('../util/brandProjectConstants');
+var constants = require('./../util/constants');
 
 var Session = models.Session;
 var SessionMember = models.SessionMember;
@@ -29,21 +30,26 @@ function createWithTokenAndColour(params) {
 
   params.token = params.token || uuid.v1();
 
-  if(params.role == 'facilitator') {
-    params.colour = brandProjectConstants.memberColours.facilitator;
-    createHelper(deferred, params);
-  }
-  else {
-    SessionMember.count({
-      where: {
-        sessionId: params.sessionId,
-        role: params.role
-      }
-    }).then(function(c) {
-      params.colour = brandProjectConstants.memberColours.participants[c+1];
+  models.AccountUser.find({ where: { id: params.accountUserId } }).then(function(accountUser) {
+    params.avatarData = accountUser.gender == 'male' ? constants.sessionMemberMan : constants.sessionMemberWoman;
+
+    if(params.role == 'facilitator' || params.role == 'observer') {
+      params.colour = brandProjectConstants.memberColours.facilitator;
       createHelper(deferred, params);
-    });
-  }
+    }
+    else {
+      SessionMember.count({
+        where: {
+          sessionId: params.sessionId,
+          role: params.role
+        }
+      }).then(function(c) {
+        params.colour = brandProjectConstants.memberColours.participants[c+1];
+        createHelper(deferred, params);
+      });
+    }
+  });
+
 
   return deferred.promise;
 }
