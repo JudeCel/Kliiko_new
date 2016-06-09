@@ -21,7 +21,7 @@ describe('SERVICE - Subscription', function() {
       testData = result;
       return subscriptionFixture.createPlans();
     }).then(function(results) {
-      testData.subscriptionPlan = _.find(results, ['priority', 4]);
+      testData.subscriptionPlan = _.find(results, ['priority', 3]);
       testData.lowerPlan = _.find(results, ['priority', testData.subscriptionPlan.priority - 1]);
       done();
     }).catch(function(error) {
@@ -40,7 +40,7 @@ describe('SERVICE - Subscription', function() {
       return {
         request: function(callback) {
           callback(null, {
-            subscription: { id: params.id, plan_id: 'free' },
+            subscription: { id: params.id, plan_id: 'free_trial' },
             customer: { id: params.id }
           });
         }
@@ -623,7 +623,7 @@ describe('SERVICE - Subscription', function() {
         });
       });
 
-      it('should succeed on closing subscription and dependencies', function(done) {
+      it.only('should succeed on closing subscription and dependencies', function(done) {
         surveyPromise().then(function(c) {
           assert.equal(c, 0);
           return sessionPromise();

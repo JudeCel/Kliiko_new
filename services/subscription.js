@@ -381,11 +381,11 @@ function cancelSubscription(subscriptionId, eventId) {
   let deferred = q.defer();
 
   findSubscriptionByChargebeeId(subscriptionId).then(function(subscription) {
-    subscription.update({ active: false, lastWebhookId: eventId }, { returning: true }).then(function(subscription) {
-      let promise = disableSubDependencies(subscription.accountId);
-      deferred.resolve({ subscription: subscription, promise: promise });
+    updateSubscription({accountId: subscription.accountId, newPlanId: "free_account"}, false).then(function(result) {
+      console.log(result);
+      deferred.resolve({ result: result });
     }, function(error) {
-      deferred.reject(filters.errors(error));
+      deferred.reject(error);
     });
   }, function(error) {
     deferred.reject(error);
