@@ -17,7 +17,7 @@ module.exports = (Sequelize, DataTypes) => {
     accessKlzziForum: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     accessKlzziFocus: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     canInviteObserversToSession: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    paiedSmsCount: { type: DataTypes.INTEGER, allowNull: false },
+    paidSmsCount: { type: DataTypes.INTEGER, allowNull: false },
     discussionGuideTips: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     whiteboardFunctionality: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     uploadToGallery: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
@@ -27,8 +27,6 @@ module.exports = (Sequelize, DataTypes) => {
     topicCount: { type: DataTypes.INTEGER, allowNull: false },
     priority: { type: DataTypes.INTEGER, allowNull: false },
     surveyCount: { type: DataTypes.INTEGER, allowNull: false },
-    participantCount: { type: DataTypes.INTEGER, allowNull: false },
-    observerCount: { type: DataTypes.INTEGER, allowNull: false },
 
     chargebeePlanId: { type: DataTypes.STRING, allowNull: false,
       validate: {

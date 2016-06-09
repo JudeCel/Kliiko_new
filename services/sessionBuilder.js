@@ -776,24 +776,11 @@ function step4and5Queries(session, role) {
   ];
 }
 
-// Clean UP mmove this to validations file.
 function canAddObservers(accountId) {
   let deferred = q.defer();
 
-  models.SubscriptionPreference.find({
-    include: [{
-      model: models.Subscription,
-      where: {
-        accountId: accountId,
-        active: true
-      }
-    }]
-  }).then(function(preference) {
-    if(preference.data.canInviteObserversToSession) {
-      deferred.resolve();
-    }else{
-      deferred.reject(MESSAGES.errors.cantAddObservers);
-    }
+  validators.planAllowsToDoIt(accountId, 'canInviteObserversToSession').then(function() {
+    deferred.resolve();
   }, function(error) {
     deferred.reject(error);
   });

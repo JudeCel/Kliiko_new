@@ -3,7 +3,7 @@
 var models = require('./../models');
 var filters = require('./../models/filters');
 var BrandProjectPreference = models.BrandProjectPreference;
-
+var validators = require('./../services/validators');
 var brandProjectConstants = require('../util/brandProjectConstants');
 
 var q = require('q');
@@ -91,24 +91,11 @@ function createScheme(params, accountId) {
   return deferred.promise;
 };
 
-// Clean UP mmove this to validations file.
 function canCreateCustomColors(accountId) {
   let deferred = q.defer();
 
-  models.SubscriptionPreference.find({
-    include: [{
-      model: models.Subscription,
-      where: {
-        accountId: accountId,
-        active: true
-      }
-    }]
-  }).then(function(preference) {
-    if(preference.data.brandLogoAndCustomColors) {
-      deferred.resolve();
-    }else{
-      deferred.reject(MESSAGES.canCreateCustomColors);
-    }
+  validators.planAllowsToDoIt(accountId, 'brandLogoAndCustomColors').then(function() {
+    deferred.resolve();
   }, function(error) {
     deferred.reject(error);
   });

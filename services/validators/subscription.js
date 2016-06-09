@@ -56,7 +56,8 @@ const DEPENDENCIES = {
 
 module.exports = {
   messages: MESSAGES,
-  validate: validate
+  validate: validate,
+  planAllowsToDoIt: planAllowsToDoIt
 };
 
 function validate(accountId, type, count) {
@@ -97,6 +98,30 @@ function validate(accountId, type, count) {
     }
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function planAllowsToDoIt(accountId, key) {
+  let deferred = q.defer();
+
+  models.SubscriptionPreference.find({
+    include: [{
+      model: models.Subscription,
+      where: {
+        accountId: accountId,
+        active: true
+      }
+    }]
+  }).then(function(preference) {
+    if(preference.data[key]) {
+      deferred.resolve();
+    }else{
+      deferred.reject(MESSAGES.canCreateCustomColors);
+    }
+  }, function(error) {
+    deferred.reject(error);
   });
 
   return deferred.promise;

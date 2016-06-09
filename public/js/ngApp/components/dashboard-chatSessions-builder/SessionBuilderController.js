@@ -201,10 +201,6 @@
       vm.searchingParticipants = true;
     }
 
-    function canAddObservers() {
-
-    }
-
     function selectObserversClickHandle() {
       builderServices.canAddObservers().then(function(res) {
         if(res.error) {

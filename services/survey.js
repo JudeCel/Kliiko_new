@@ -507,25 +507,11 @@ function exportSurvey(params, account) {
   return deferred.promise;
 };
 
-// Clean UP mmove this to validations file.
 function canExportSurveyData(account) {
   let deferred = q.defer();
 
-
-  models.SubscriptionPreference.find({
-    include: [{
-      model: models.Subscription,
-      where: {
-        accountId: account.id,
-        active: true
-      }
-    }]
-  }).then(function(preference) {
-    if(preference.data.exportRecruiterSurveyData) {
-      deferred.resolve();
-    }else{
-      deferred.reject(MESSAGES.cantExportSurveyData);
-    }
+  validators.planAllowsToDoIt(account.id, 'exportRecruiterSurveyData').then(function() {
+    deferred.resolve();
   }, function(error) {
     deferred.reject(error);
   });
