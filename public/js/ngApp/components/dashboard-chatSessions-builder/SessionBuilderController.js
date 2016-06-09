@@ -49,7 +49,6 @@
     vm.finishSelectingMembers = finishSelectingMembers;
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
     vm.selectObserversClickHandle = selectObserversClickHandle;
-    vm.canAddObservers = canAddObservers;
 
     function closeSession() {
       vm.session.setOpen(false).then(function(res) {
