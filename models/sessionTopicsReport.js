@@ -18,7 +18,7 @@ module.exports = (Sequelize, DataTypes) => {
         SessionTopicsReport.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId' });
         SessionTopicsReport.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId' });
         SessionTopicsReport.hasOne(models.Resource, { foreignKey: 'resourceId' });
-      }ato
+      }
     }
   });
 

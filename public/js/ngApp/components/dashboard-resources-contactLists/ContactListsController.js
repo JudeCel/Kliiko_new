@@ -502,8 +502,6 @@
       domServices.modal('contactList-addContactManual', 'close');
       prepareCustomFields();
 
-
-
       for (var j = 0; j < vm.importedFields.length; j++) {
         for (var i = 0; i < vm.contactListDropItems.defaultFields.length; i++) {
           if (vm.contactListDropItems.defaultFields[i].name == vm.importedFields[j]) {
@@ -517,6 +515,8 @@
           }
         }
       }
+
+      processMappingFields();
     }
 
     // Drag and drop fields section
@@ -529,9 +529,7 @@
       }
     }
 
-    //assigns contact info to mapped fields
-    function mappingFieldsContinue() {
-
+    function processMappingFields() {
       var output = {valid:[], invalid:[], duplicateEntries: []};
       var userList = [];
       for (var j = 0; j < vm.validContactList.length; j++ ) {
@@ -557,7 +555,11 @@
       output.valid = userList;
 
       vm.lists.generateImportPreview(output);
+    }
 
+    //assigns contact info to mapped fields
+    function mappingFieldsContinue() {
+      processMappingFields();
       domServices.modal('contactList-addNewListFieldsModal', 'close');
       domServices.modal('modals-import-preview');
     }
