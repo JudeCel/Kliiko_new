@@ -44,20 +44,14 @@ const DEPENDENCIES = {
     params: function(accountId) {
       return { where: { accountId: accountId } };
     }
-  },
-  accountUser: {
-    key: 'accountUserCount',
-    model: models.AccountUser,
-    params: function(accountId) {
-      return { where: { AccountId: accountId } };
-    }
   }
 };
 
 module.exports = {
   messages: MESSAGES,
   validate: validate,
-  planAllowsToDoIt: planAllowsToDoIt
+  planAllowsToDoIt: planAllowsToDoIt,
+  canAddAccountUsers: canAddAccountUsers
 };
 
 function validate(accountId, type, count) {
@@ -120,6 +114,44 @@ function planAllowsToDoIt(accountId, key) {
     }else{
       deferred.reject(MESSAGES.canCreateCustomColors);
     }
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function canAddAccountUsers(accountId) {
+  let deferred = q.defer();
+
+  models.SubscriptionPreference.find({
+    include: [{
+      model: models.Subscription,
+      where: {
+        accountId: accountId,
+        active: true
+      }
+    }]
+  }).then(function(preference) {
+    models.AccountUser.count({
+      where: {
+        role: 'accountManager'
+      },
+      include: [{
+        model: models.Account,
+        where: {
+          id: accountId
+        }
+      }]
+    }).then(function(count) {
+      if(preference.data.accountUserCount <= count) {
+        deferred.reject(MESSAGES.count('AccountUser', preference.data.accountUserCount));
+      }else{
+        deferred.resolve();
+      }
+    }).catch(function(error) {
+      deferred.reject(error);
+    });
   }, function(error) {
     deferred.reject(error);
   });

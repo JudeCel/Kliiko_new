@@ -1,5 +1,6 @@
 module.exports = {
   subscription: require('./subscription.js').validate,
   planAllowsToDoIt: require('./subscription.js').planAllowsToDoIt,
-  hasValidSubscription: require('./hasValidSubscription.js').validate
+  hasValidSubscription: require('./hasValidSubscription.js').validate,
+  canAddAccountUsers: require('./subscription.js').canAddAccountUsers
 };
