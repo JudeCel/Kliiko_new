@@ -645,7 +645,7 @@ function canSwitchPlan(accountId, currentPlan, newPlan){
         }
       }
     });
-  }else if(currentPlan.priority < newPlan.priority){
+  }else if(validatePlanPriority(newPlan.priority, currentPlan.priority)){
     deferred.resolve();
   }else{
     findSubscription(accountId).then(function(subscription) {
@@ -658,6 +658,16 @@ function canSwitchPlan(accountId, currentPlan, newPlan){
   }
 
   return deferred.promise;
+}
+
+function validatePlanPriority(newPlanPriority, currentPlanPriority) {
+  if(newPlanPriority == -1) {
+    return true;
+  }else if(currentPlanPriority < newPlanPriority){
+    return true;
+  }else{
+    return false;
+  }
 }
 
 function validateSessionCount(accountId, newPlan) {
