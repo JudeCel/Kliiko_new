@@ -91,11 +91,11 @@ function parseXls(emails, deferred, contactList, filePath) {
         data.mobile = data.mobile.toString();
 
         if(data.mobile.length > 0 && !data.mobile.includes("+61")) {
-          data.mobile = "+61" + data.mobile;
+          data.mobile = "+61 " + data.mobile;
         }
 
         if(data.landlineNumber.length > 0 && !data.landlineNumber.includes("+61")) {
-          data.landlineNumber = "+61" + data.landlineNumber;
+          data.landlineNumber = "+61 " + data.landlineNumber;
         }
 
         object.valid.push(data);
@@ -137,6 +137,15 @@ function parseCsv(emails, deferred, contactList, filePath) {
     return data;
   }).validate(function(data, next) {
     validateRow(emails, contactList, data, uniqRowListCounter).then(function() {
+
+      if(data.mobile.length > 0 && !data.mobile.includes("+61")) {
+        data.mobile = "+61 " + data.mobile;
+      }
+
+      if(data.landlineNumber.length > 0 && !data.landlineNumber.includes("+61")) {
+        data.landlineNumber = "+61 " + data.landlineNumber;
+      }
+
       ++ rowNr
       next(null, true);
     }, function(error) {
