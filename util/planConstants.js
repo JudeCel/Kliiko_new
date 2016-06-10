@@ -69,7 +69,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: -1,
-    priority: 1,
+    priority: 3,
     related: 'senior_yearly',
     surveyCount: 4
   },
@@ -167,7 +167,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: 5,
-    priority: 3,
+    priority: 1,
     related: 'junior_yearly',
     surveyCount: 1
   },

@@ -24,7 +24,8 @@
 
   <section class="container plans-table">
     <div class="row">
-      <div ng-repeat="subscriptionPlan in up.subPlans">
+      <div ng-repeat="subscriptionPlan in up.subPlans | orderBy:'-additionalParams.priority' ">
+        <!-- {{ subscriptionPlan.additionalParams.priority }} -->
         <div class="col-sm-4 col-xs-12 plan-block" ng-if="up.showPlanInList(subscriptionPlan)">
           <div class="included-plan-fader" ng-show="up.isCurrentPlan(subscriptionPlan)"><div class="label">CURRENT</div></div>
           <div class="list-group">
@@ -35,6 +36,7 @@
                 {{ subscriptionPlan.plan.period }}
                 {{ subscriptionPlan.plan.period_unit }}
                 to use
+                <b>{{ subscriptionPlan.additionalParams.priority }}</b>
               </p>
             </div>
 
