@@ -465,6 +465,7 @@ function prepareMailInformation(invite) {
 
 function prepareMailParams(sessionId, receiver, facilitator) {
   return {
+    sessionId: sessionId,
     email: receiver.email,
     firstName: receiver.firstName, //receiver name
     facilitatorFirstName: facilitator.firstName,

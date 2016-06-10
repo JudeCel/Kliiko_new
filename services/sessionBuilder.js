@@ -454,14 +454,15 @@ function sendGenericEmail(sessionId, data, accountId) {
 
           _.map(accountUsers, function(accountUser) {
             params.push({
-              accountId: accountUser.accountId,
+              accountId: accountId,
               email: accountUser.email,
               firstName: accountUser.firstName,
               facilitatorFirstName: facilitator.firstName,
               facilitatorLastName: facilitator.lastName,
               facilitatorMail: facilitator.email,
               facilitatorMobileNumber: facilitator.mobile,
-              unsubscribeMailUrl: 'some unsub url'
+              unsubscribeMailUrl: 'some unsub url',
+              sessionId: sessionId
             });
           });
 
