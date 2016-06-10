@@ -587,12 +587,27 @@
       updateActiveCustomList(newList, parsedList);
     };
 
+    function reduceFieldList(dest, source) {
+      var removeDiffList = [];
+      dest.map(function(objDest) {
+        source.map(function(objSource) {
+          if (objSource.name == objDest.name) {
+            objSource.field = objDest.field;
+          }
+        });
+      });
+    }
+
     function updateActiveCustomList(newList, parsedList) {
       vm.lists.updateActiveItem(parsedList).then(
         function (res) {
           messenger.ok('List "'+ newList.name + '" updated');
+          var oldFields = vm.contactListDropItems.customFields;
+
           prepareCustomFields();
-          vm.contactListDropItems.customFields = prepareListForMapping(vm.lists.activeList.customFields);
+          var newFields = prepareListForMapping(vm.lists.activeList.customFields);
+          reduceFieldList(oldFields, newFields);
+          vm.contactListDropItems.customFields = newFields;
         },
         function (err) {
           messenger.error('Could not update new list: '+ err);
@@ -642,7 +657,11 @@
 
     function canAddMoreFields() {
       var parsedList = prepareParsedList(vm.newList);
-      return parsedList.customFields.length < vm.lists.activeList.maxCustomFields;
+      if (vm.lists.activeList) {
+        return parsedList.customFields.length < vm.lists.activeList.maxCustomFields;
+      } else {
+        return false;
+      }
     }
 
     function addImportedContacts() {
