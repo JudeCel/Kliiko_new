@@ -6,11 +6,27 @@ module.exports = (Sequelize, DataTypes) => {
     sessionMemberId: { type: DataTypes.INTEGER, allowNull: false },
     sessionTopicId: { type: DataTypes.INTEGER, allowNull: false },
     resourceId: { type: DataTypes.INTEGER, allowNull: true },
-    status: { type: DataTypes.ENUM, allowNull: false,
+    type: {
+      type: DataTypes.ENUM, allowNull: false,
+      values: ['all', 'star', 'votes', 'whiteboard']
+    },
+    facilitator: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false
+    },
+    format: {
+      type: DataTypes.ENUM, allowNull: false,
+      values: ['txt', 'csv', 'pdf']
+    },
+    status: {
+      type: DataTypes.ENUM, allowNull: false,
       values: [ 'completed', 'progress', 'failed'],
       defaultValue: 'progress'
     },
-    message: {type: DataTypes.TEXT, allowNull: true}
+    message: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    }
   }, {
     timestamps: true,
     classMethods: {
