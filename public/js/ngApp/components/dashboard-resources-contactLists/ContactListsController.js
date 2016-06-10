@@ -24,7 +24,6 @@
     vm.hideModalStuff = false;
     vm.importedFields = [];
     vm.contactListDropItems = [];
-    vm.validContactList = [];
     vm.contactListToAdd = [];
 
     vm.initLists = initLists;
@@ -483,7 +482,7 @@
     function processImportData(res) {
       //fields for left column in mapping
       vm.importedFields = res.data.fileFields;
-      vm.validContactList = res.data.valid.concat(res.data.invalid);
+      vm.currentContactListData = res.data;
 
       //fill values for right column
       var array = [];
@@ -533,30 +532,35 @@
       }
     }
 
-    function processMappingFields() {
-      var output = {valid:[], invalid:[], duplicateEntries: []};
+    function processMappingListSegment(list) {
       var userList = [];
-      for (var j = 0; j < vm.validContactList.length; j++ ) {
+      for (var j = 0; j < list.length; j++ ) {
         var user = {};
         for (var i = 0; i < vm.contactListDropItems.customFields.length; i++) {
           if (vm.contactListDropItems.customFields[i].field) {
-            user[vm.contactListDropItems.customFields[i].name] = vm.validContactList[j][vm.contactListDropItems.customFields[i].field];
+            user[vm.contactListDropItems.customFields[i].name] = list[j][vm.contactListDropItems.customFields[i].field];
           }
         }//for
 
         for (var i = 0; i < vm.contactListDropItems.defaultFields.length; i++) {
           if (vm.contactListDropItems.defaultFields[i].field) {
-            user[vm.contactListDropItems.defaultFields[i].name] = vm.validContactList[j][vm.contactListDropItems.defaultFields[i].field];
+            user[vm.contactListDropItems.defaultFields[i].name] = list[j][vm.contactListDropItems.defaultFields[i].field];
           }
         }//for
 
-        user.rowNr = vm.validContactList[j].rowNr;
+        user.rowNr = list[j].rowNr;
 
         userList.push(user);
       }//for
-      vm.contactListToAdd = userList;
+      return userList;
+    }
 
-      output.valid = userList;
+    function processMappingFields() {
+      var output = {valid:[], invalid:[], duplicateEntries: []};
+      vm.contactListToAdd = processMappingListSegment(vm.currentContactListData.valid);
+      output.valid = vm.contactListToAdd;
+      output.invalid = processMappingListSegment(vm.currentContactListData.invalid);
+      output.duplicateEntries = processMappingListSegment(vm.currentContactListData.duplicateEntries);
 
       vm.lists.generateImportPreview(output);
     }
