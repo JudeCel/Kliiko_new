@@ -113,7 +113,11 @@
     }
 
     function returnContactCount(item) {
-      return item.members.length;
+      if(item.members) {
+        return item.members.length;
+      }else{
+        return 0;
+      }
     }
 
     vm.sectListActiveToFacilitators = function() {
