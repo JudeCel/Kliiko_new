@@ -79,6 +79,28 @@
       return deferred.promise;
     }
 
+    function prepareListItems(res) {
+      var list = [];
+      for (var i = 0, len = res.length; i < len ; i++) {
+        var resItem = new ListItemModel(res[i]);
+        list.push(resItem);
+      }
+
+      for (var i = 0, len = list.length; i < len ; i++) {
+        if ( list[i].members && list[i].members.length) {
+          var membersRaw = list[i].members;
+          list[i].members = [];
+
+          for (var j = 0, lenj = membersRaw.length; j < lenj ; j++) {
+            var newMember = new Member(membersRaw[j], list[i].customFields);
+            list[i].members.push(newMember);
+          }
+        }
+      }
+
+      return list;
+    }
+
     /**
      * Get all lists, store them as ListItemModel and sort by 'id'
      */
@@ -89,27 +111,9 @@
       contactListServices.getContactLists(params).then(
         function(res) {
           // prepare itmes
-          for (var i = 0, len = res.length; i < len ; i++) {
-            var resItem = new ListItemModel(res[i]);
 
-            self.items.push(resItem);
-          }
+          self.items = prepareListItems(res);
           self.items = $filter('orderBy')(self.items, 'id');
-
-          //prepare members
-          for (var i = 0, len = self.items.length; i < len ; i++) {
-            if ( self.items[i].members && self.items[i].members.length) {
-              var membersRaw = self.items[i].members;
-              self.items[i].members = [];
-
-              for (var j = 0, lenj = membersRaw.length; j < lenj ; j++) {
-                var newMember = new Member(membersRaw[j], self.items[i].customFields);
-                self.items[i].members.push(newMember);
-              }
-
-            }
-          }
-
           // make lists by type
           self.listByType = {}
           for (var i = 0, len = self.items.length; i < len ; i++) {
@@ -293,7 +297,6 @@
       var self = this;
 
       var activeList = self.activeList;
-
       contact.update(activeList.id).then(
         function(res) {
 
@@ -444,11 +447,10 @@
 
       contactListServices.addImportedContacts(contactsArray, self.activeList.id).then(
         function (res) {
-
           res.data.map(function (newMember) {
-            self.activeList.members.push(newMember)
+            var newMember = new Member(newMember, self.activeList.customFields);
+            self.activeList.members.push(newMember);
           })
-
           deferred.resolve(res);
         },
         function(err) {
