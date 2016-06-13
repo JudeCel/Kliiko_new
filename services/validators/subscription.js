@@ -9,6 +9,7 @@ var q = require('q');
 var _ = require('lodash');
 
 const MESSAGES = {
+  planDoesntAllowToDoThis: "Please update your subscription plan to one that includes this feature.",
   notFound: 'No subscription found',
   notValidDependency: 'Not valid dependency',
   count: function(type, maxCount) {
@@ -100,6 +101,7 @@ function validate(accountId, type, count) {
 function planAllowsToDoIt(accountId, key) {
   let deferred = q.defer();
 
+
   models.SubscriptionPreference.find({
     include: [{
       model: models.Subscription,
@@ -112,7 +114,7 @@ function planAllowsToDoIt(accountId, key) {
     if(preference.data[key]) {
       deferred.resolve();
     }else{
-      deferred.reject(MESSAGES.canCreateCustomColors);
+      deferred.reject(MESSAGES.planDoesntAllowToDoThis);
     }
   }, function(error) {
     deferred.reject(error);
