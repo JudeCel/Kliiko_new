@@ -62,7 +62,7 @@ function createOrFindAccountManager(user, body, accountId) {
 function canAddAccountManager(accountId) {
   let deferred = q.defer();
 
-  validators.canAddAccountUsers(accountId, 'accountUser', 2).then(function() {
+  validators.canAddAccountUsers(accountId, 'accountUser', 1).then(function() {
     deferred.resolve();
   },function(error) {
     deferred.reject(error);
