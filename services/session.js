@@ -191,10 +191,11 @@ function copySession(sessionId, accountId, provider) {
   validators.hasValidSubscription(accountId).then(function() {
     validators.subscription(accountId, 'session', 1).then(function() {
       findSession(sessionId, accountId, provider).then(function(result) {
+        let facilitator = result.data.dataValues.facilitator;
         delete result.data.dataValues.id;
+        delete result.data.dataValues.facilitator;
 
         Session.create(result.data.dataValues).then(function(session) {
-          let facilitator = result.data.dataValues.facilitator;
           if(facilitator) {
             delete facilitator.id;
             delete facilitator.token;
@@ -353,8 +354,8 @@ function findAllSessionsAsMember(userId, accountId, provider) {
 
 function copySessionMember(session, facilitator, provider) {
   let deferred = q.defer();
-
-  sessionMemberServices.createWithTokenAndColour(facilitator).then(function() {
+  facilitator.sessionId = session.id;
+  sessionMemberServices.createWithTokenAndColour(facilitator).then(function(sessionMember) {
     findSession(session.id, session.accountId, provider).then(function(result) {
       deferred.resolve(result.data);
     }, function(error) {
