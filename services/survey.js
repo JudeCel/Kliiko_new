@@ -236,15 +236,12 @@ function createSurveyWithQuestions(params, account) {
         return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t }).then(function(survey) {
           let fields = getContactListFields(survey.SurveyQuestions);
 
-          return validators.subscription(survey.accountId, 'contactList', 1).then(function() {
-            return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
-              return survey;
-            }, function(error) {
-              throw error;
-            });
+          return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
+            return survey;
           }, function(error) {
             throw error;
           });
+
         });
       }).then(function(survey) {
         survey.update({ url: validUrl(survey) }).then(function(survey) {
@@ -509,7 +506,6 @@ function exportSurvey(params, account) {
 
 function canExportSurveyData(account) {
   let deferred = q.defer();
-
   validators.planAllowsToDoIt(account.id, 'exportRecruiterSurveyData').then(function() {
     deferred.resolve();
   }, function(error) {

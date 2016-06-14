@@ -85,19 +85,19 @@ function parseXls(emails, deferred, contactList, filePath) {
         data[value] = array[index] || '';
       })
       ++ rowNr
+
+      data.landlineNumber = data.landlineNumber.toString();
+      data.mobile = data.mobile.toString();
+
+      if(data.mobile.length > 0 && !data.mobile.includes("+61")) {
+        data.mobile = "+61 " + data.mobile;
+      }
+
+      if(data.landlineNumber.length > 0 && !data.landlineNumber.includes("+61")) {
+        data.landlineNumber = "+61 " + data.landlineNumber;
+      }
+
       validateRow(emails, contactList, data, uniqRowListCounter).then(function() {
-
-        data.landlineNumber = data.landlineNumber.toString();
-        data.mobile = data.mobile.toString();
-
-        if(data.mobile.length > 0 && !data.mobile.includes("+61")) {
-          data.mobile = "+61 " + data.mobile;
-        }
-
-        if(data.landlineNumber.length > 0 && !data.landlineNumber.includes("+61")) {
-          data.landlineNumber = "+61 " + data.landlineNumber;
-        }
-
         object.valid.push(data);
         cb();
       }, function(error) {
@@ -136,16 +136,18 @@ function parseCsv(emails, deferred, contactList, filePath) {
     data.rowNr = rowNr;
     return data;
   }).validate(function(data, next) {
+    data.landlineNumber = data.landlineNumber.toString();
+    data.mobile = data.mobile.toString();
+
+    if(data.mobile.length > 0 && !data.mobile.includes("+61")) {
+      data.mobile = "+61 " + data.mobile;
+    }
+
+    if(data.landlineNumber.length > 0 && !data.landlineNumber.includes("+61")) {
+      data.landlineNumber = "+61 " + data.landlineNumber;
+    }
+
     validateRow(emails, contactList, data, uniqRowListCounter).then(function() {
-
-      if(data.mobile.length > 0 && !data.mobile.includes("+61")) {
-        data.mobile = "+61 " + data.mobile;
-      }
-
-      if(data.landlineNumber.length > 0 && !data.landlineNumber.includes("+61")) {
-        data.landlineNumber = "+61 " + data.landlineNumber;
-      }
-
       ++ rowNr
       next(null, true);
     }, function(error) {

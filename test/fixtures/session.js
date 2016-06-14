@@ -115,10 +115,8 @@ function createSession(callback) {
       callback(error, result);
     });
   }).catch(Session.sequelize.ValidationError, function(error) {
-    console.log(error);
     callback(error);
   }).catch(function(error) {
-    console.log(error);
     callback(error);
   });
 }
@@ -127,10 +125,8 @@ function crateBrandProject(session, callback) {
   session.createBrandProject(brandProjectParams()).then(function(result) {
     callback(null, session, result);
   }).catch(BrandProject.sequelize.ValidationError, function(error) {
-    console.log(error);
     callback(error);
   }).catch(function(error) {
-    console.log(error);
     callback(error);
   });
 };

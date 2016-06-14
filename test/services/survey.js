@@ -10,6 +10,8 @@ var ContactListUser = models.ContactListUser;
 var surveyConstants = require('../../util/surveyConstants');
 var surveyServices = require('./../../services/survey');
 var subscriptionFixture = require('./../fixtures/subscription');
+var userFixture = require('./../fixtures/user');
+
 var assert = require('chai').assert;
 var _ = require('lodash');
 
@@ -17,10 +19,18 @@ describe('SERVICE - Survey', function() {
   var testData;
 
   beforeEach(function(done) {
-    subscriptionFixture.createSubscription().then(function(result) {
+    userFixture.createUserAndOwnerAccount().then(function(result) {
       testData = result;
-      done();
-    }, function(error) {
+      subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {
+        models.SubscriptionPreference.update({'data.surveyCount': 5, 'data.exportRecruiterSurveyData': true}, { where: { subscriptionId: subscription.id } }).then(function() {
+          done();
+        }, function(error) {
+          done(error);
+        })
+      }, function(error) {
+        done(error);
+      })
+    }).catch(function(error) {
       done(error);
     });
   });
@@ -30,10 +40,6 @@ describe('SERVICE - Survey', function() {
       done();
     });
   });
-
-  function accountParams() {
-    return { id: testData.account.id };
-  };
 
   function surveyAnswerParams(questions) {
     let params = { SurveyQuestions: {} };
@@ -135,9 +141,9 @@ describe('SERVICE - Survey', function() {
 
         ContactList.count().then(function(c) {
           assert.equal(c, 3);
-
           let params = surveyParams();
-          surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+
+          surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
             let survey = result.data;
 
             assert.equal(result.message, surveyServices.messages.created);
@@ -171,7 +177,7 @@ describe('SERVICE - Survey', function() {
 
     describe('sad path', function() {
       it('should fail without params', function (done) {
-        surveyServices.createSurveyWithQuestions({}, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions({}, testData.account).then(function(result) {
           done('Should not get here!');
         }, function(error) {
           let allErrors = {
@@ -192,7 +198,7 @@ describe('SERVICE - Survey', function() {
         let params = surveyParams();
         params.SurveyQuestions[0].name = '';
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           done('Should not get here!');
         }, function(error) {
           assert.deepEqual(error, { name: "Name can't be empty" });
@@ -215,7 +221,7 @@ describe('SERVICE - Survey', function() {
       it('should succeed on finding survey', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
 
           surveyServices.findSurvey({ id: survey.id }).then(function(result) {
@@ -232,7 +238,7 @@ describe('SERVICE - Survey', function() {
       it('should fail on finding survey', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
 
           surveyServices.findSurvey({ id: survey.id + 100 }).then(function(result) {
@@ -248,7 +254,7 @@ describe('SERVICE - Survey', function() {
         let params = surveyParams();
         params.closed = true;
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
 
           surveyServices.findSurvey({ id: survey.id }).then(function(result) {
@@ -264,7 +270,7 @@ describe('SERVICE - Survey', function() {
         let params = surveyParams();
         delete params.confirmedAt;
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
           surveyServices.findSurvey({ id: survey.id }).then(function(result) {
             done('Should not get here!');
@@ -279,7 +285,7 @@ describe('SERVICE - Survey', function() {
 
   describe('#findAllSurveys', function() {
     it('should succeed on finding 0 surveys', function (done) {
-      surveyServices.findAllSurveys(accountParams()).then(function(result) {
+      surveyServices.findAllSurveys(testData.account).then(function(result) {
         assert.deepEqual(result.data, []);
         done();
       }, function(error) {
@@ -290,10 +296,10 @@ describe('SERVICE - Survey', function() {
     it('should succeed on finding all surveys', function (done) {
       let params = surveyParams();
 
-      surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+      surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
         let survey = result.data;
 
-        surveyServices.findAllSurveys(accountParams()).then(function(result) {
+        surveyServices.findAllSurveys(testData.account).then(function(result) {
           assert.equal(result.data[0].id, survey.id);
           done();
         }, function(error) {
@@ -303,17 +309,20 @@ describe('SERVICE - Survey', function() {
     });
   });
 
+
+
+
   describe('#changeStatus', function() {
     describe('happy path', function() {
       it('should succeed on changing status', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
           assert.equal(survey.closed, false);
 
-          surveyServices.changeStatus({ id: survey.id, closed: true }, accountParams()).then(function(result) {
-            assert.equal(result.message, surveyServices.messages.closed);
+          surveyServices.changeStatus({ id: survey.id, closed: true }, testData.account).then(function(result) {
+            assert.equal(result.message, "Survey has been successfully closed!");
             assert.equal(result.data.closed, true);
             done();
           }, function(error) {
@@ -327,11 +336,11 @@ describe('SERVICE - Survey', function() {
       it('should fail on finding survey', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
           assert.equal(survey.closed, false);
 
-          surveyServices.changeStatus({ id: survey.id + 100, closed: true }, accountParams()).then(function(result) {
+          surveyServices.changeStatus({ id: survey.id + 100, closed: true }, testData.account).then(function(result) {
             done('Should not get here!');
           }, function(error) {
             assert.equal(error, surveyServices.messages.notFound);
@@ -347,14 +356,14 @@ describe('SERVICE - Survey', function() {
       it('should update survey', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
           assert.equal(survey.closed, false);
 
           params.id = survey.id;
           params.closed = true;
 
-          surveyServices.updateSurvey(params, accountParams()).then(function(result) {
+          surveyServices.updateSurvey(params, testData.account).then(function(result) {
             assert.equal(result.message, surveyServices.messages.updated);
             assert.equal(result.data.id, survey.id);
             assert.equal(result.data.closed, true);
@@ -368,7 +377,7 @@ describe('SERVICE - Survey', function() {
       it('should remove surveys question', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
           assert.equal(survey.SurveyQuestions.length, 2);
 
@@ -377,7 +386,7 @@ describe('SERVICE - Survey', function() {
           params.SurveyQuestions[0].id = survey.SurveyQuestions[0].id;
           params.SurveyQuestions[0].surveyId = survey.SurveyQuestions[0].surveyId;
 
-          surveyServices.updateSurvey(params, accountParams()).then(function(result) {
+          surveyServices.updateSurvey(params, testData.account).then(function(result) {
             let updatedSurvey = result.data;
             assert.equal(result.message, surveyServices.messages.updated);
 
@@ -395,7 +404,7 @@ describe('SERVICE - Survey', function() {
       it('should update surveys first question', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
           assert.equal(survey.SurveyQuestions.length, 2);
 
@@ -406,7 +415,7 @@ describe('SERVICE - Survey', function() {
           params.SurveyQuestions[1].surveyId = survey.SurveyQuestions[1].surveyId;
           params.SurveyQuestions[0].name = 'Changed name';
 
-          surveyServices.updateSurvey(params, accountParams()).then(function(result) {
+          surveyServices.updateSurvey(params, testData.account).then(function(result) {
             let updatedSurvey = result.data;
             assert.equal(result.message, surveyServices.messages.updated);
 
@@ -425,14 +434,14 @@ describe('SERVICE - Survey', function() {
       it('should add another surveys question', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
           assert.equal(survey.SurveyQuestions.length, 2);
 
           params.id = survey.id;
           params.SurveyQuestions.splice(1, 1);
 
-          surveyServices.updateSurvey(params, accountParams()).then(function(result) {
+          surveyServices.updateSurvey(params, testData.account).then(function(result) {
             let updatedSurvey = result.data;
             assert.equal(result.message, surveyServices.messages.updated);
 
@@ -452,11 +461,11 @@ describe('SERVICE - Survey', function() {
       it('should fail finding survey', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
           let updateParams = { id: survey.id + 100, closed: true };
 
-          surveyServices.updateSurvey(updateParams, accountParams()).then(function(result) {
+          surveyServices.updateSurvey(updateParams, testData.account).then(function(result) {
             done('Should not get here!');
           }, function(error) {
             assert.equal(error, surveyServices.messages.notFound);
@@ -468,10 +477,10 @@ describe('SERVICE - Survey', function() {
       it('should fail updating not valid values', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
           let updateParams = { id: survey.id, name: '' };
-          surveyServices.updateSurvey(updateParams, accountParams()).then(function(result) {
+          surveyServices.updateSurvey(updateParams, testData.account).then(function(result) {
             done('Should not get here!');
           }, function(error) {
             assert.deepEqual(error.name, "Name can't be empty");
@@ -487,10 +496,10 @@ describe('SERVICE - Survey', function() {
       it('should succeed on deleting survey', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
 
-          surveyServices.removeSurvey({ id: survey.id }, accountParams()).then(function(result) {
+          surveyServices.removeSurvey({ id: survey.id }, testData.account).then(function(result) {
             assert.equal(result.message, surveyServices.messages.removed);
             Survey.count().then(function(c) {
               assert.equal(c, 0);
@@ -507,10 +516,10 @@ describe('SERVICE - Survey', function() {
       it('should fail on finding survey', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
 
-          surveyServices.removeSurvey({ id: survey.id + 100 }, accountParams()).then(function(result) {
+          surveyServices.removeSurvey({ id: survey.id + 100 }, testData.account).then(function(result) {
             done('Should not get here!');
           }, function(error) {
             assert.equal(error, surveyServices.messages.notFound);
@@ -529,19 +538,15 @@ describe('SERVICE - Survey', function() {
       it('should succeed on changing status', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
+          surveyServices.copySurvey({ id: survey.id }, testData.account).then(function(result) {
+            console.log(3);
+            assert.notEqual(result.data.id, survey.id);
 
-          models.SubscriptionPreference.update({ 'data.surveyCount': 2, 'data.contactListCount': 2}, { where: { subscriptionId: testData.subscription.id } }).then(function(result) {
-            surveyServices.copySurvey({ id: survey.id }, accountParams()).then(function(result) {
-              assert.notEqual(result.data.id, survey.id);
-
-              Survey.count().then(function(c) {
-                assert.equal(c, 2);
-                done();
-              });
-            }, function(error) {
-              done(error);
+            Survey.count().then(function(c) {
+              assert.equal(c, 2);
+              done();
             });
           }, function(error) {
             done(error);
@@ -554,10 +559,10 @@ describe('SERVICE - Survey', function() {
       it('should fail on finding survey', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
 
-          surveyServices.copySurvey({ id: survey.id + 100 }, accountParams()).then(function(result) {
+          surveyServices.copySurvey({ id: survey.id + 100 }, testData.account).then(function(result) {
             done('Should not get here!');
           }, function(error) {
             assert.equal(error, surveyServices.messages.notFound);
@@ -576,7 +581,7 @@ describe('SERVICE - Survey', function() {
       it('should succeed on answering questions', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
 
           SurveyQuestion.findAll().then(function(results) {
@@ -608,7 +613,7 @@ describe('SERVICE - Survey', function() {
         ContactListUser.count().then(function(c) {
           assert.equal(c, 0);
 
-          surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+          surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
             let survey = result.data;
 
             SurveyQuestion.findAll().then(function(results) {
@@ -643,7 +648,7 @@ describe('SERVICE - Survey', function() {
         ContactListUser.count().then(function(c) {
           assert.equal(c, 0);
 
-          surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+          surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
             let survey = result.data;
 
             SurveyQuestion.findAll().then(function(results) {
@@ -670,11 +675,11 @@ describe('SERVICE - Survey', function() {
         let params = surveyParams();
         delete params.confirmedAt;
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
           let date = new Date();
 
-          surveyServices.confirmSurvey({ id: survey.id, confirmedAt: date }, accountParams()).then(function(result) {
+          surveyServices.confirmSurvey({ id: survey.id, confirmedAt: date }, testData.account).then(function(result) {
             assert.deepEqual(result.data.confirmedAt, date);
             done();
           }, function(error) {
@@ -688,11 +693,11 @@ describe('SERVICE - Survey', function() {
       it('should fail on finding survey', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
           let date = new Date();
 
-          surveyServices.confirmSurvey({ id: survey.id + 100, confirmedAt: date }, accountParams()).then(function(result) {
+          surveyServices.confirmSurvey({ id: survey.id + 100, confirmedAt: date }, testData.account).then(function(result) {
             done('Should not get here!');
           }, function(error) {
             assert.equal(error, surveyServices.messages.notFound);
@@ -709,26 +714,27 @@ describe('SERVICE - Survey', function() {
         let params = surveyParams();
         delete params.confirmedAt;
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
           let answerParams = surveyAnswerParams(survey.SurveyQuestions);
           answerParams.surveyId = survey.id;
 
           surveyServices.answerSurvey(answerParams).then(function(result) {
-            surveyServices.exportSurvey({ id: survey.id }, accountParams()).then(function(result) {
-              let validResult = {
-                header: [ 'Some default name 0', 'Some default name 1' ],
-                data: [{
-                  'Some default name 0': '3 answer 0',
-                  'Some default name 1': '3 answer 1'
-                }]
-              };
 
-              assert.deepEqual(result.data, validResult);
-              done();
-            }, function(error) {
-              done(error);
-            });
+              surveyServices.exportSurvey({ id: survey.id }, testData.account).then(function(result) {
+                let validResult = {
+                  header: [ 'Some default name 0', 'Some default name 1' ],
+                  data: [{
+                    'Some default name 0': '3 answer 0',
+                    'Some default name 1': '3 answer 1'
+                  }]
+                };
+
+                assert.deepEqual(result.data, validResult);
+                done();
+              }, function(error) {
+                done(error);
+              });
           });
         });
       });
@@ -738,10 +744,10 @@ describe('SERVICE - Survey', function() {
       it('should fail on finding survey', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
 
-          surveyServices.exportSurvey({ id: survey.id + 100 }, accountParams()).then(function(result) {
+          surveyServices.exportSurvey({ id: survey.id + 100 }, testData.account).then(function(result) {
             done('Should not get here!');
           }, function(error) {
             assert.equal(error, surveyServices.messages.notFound);

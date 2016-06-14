@@ -122,8 +122,8 @@ describe('Services -> ContactList', () => {
               assert.equal(result.valid[0].lastName, 'insider user');
               assert.equal(result.valid[0].gender, 'male');
               assert.equal(result.valid[0].email, 'user@insider.com');
-              assert.equal(result.valid[0].mobile, '3124421424');
-              assert.equal(result.valid[0].landlineNumber, '312756661424');
+              assert.equal(result.valid[0].mobile, '+61 3124421424');
+              assert.equal(result.valid[0].landlineNumber, '+61 312756661424');
               assert.equal(result.valid[0].postalAddress, 'Super street 2- 7');
               assert.equal(result.valid[0].city, 'Riga');
               assert.equal(result.valid[0].state, 'LA');
@@ -138,6 +138,8 @@ describe('Services -> ContactList', () => {
             }, function(error) {
               callback(error);
             });
+          }, function(error) {
+            callback(error);
           });
         }
 

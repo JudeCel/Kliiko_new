@@ -622,33 +622,6 @@ describe('SERVICE - Subscription', function() {
           done(error);
         });
       });
-
-      it('should succeed on closing subscription and dependencies', function(done) {
-        surveyPromise().then(function(c) {
-          assert.equal(c, 0);
-          return sessionPromise();
-        }).then(function(c) {
-          assert.equal(c, 0);
-          return subscriptionServices.cancelSubscription(subId, 'someEventId');
-        }).then(function(result) {
-          Subscription.find({ where: { subscriptionId: subId } }).then(function(subscription) {
-            assert.equal(subscription.active, false);
-            return result.promise;
-          }).then(function() {
-            return surveyPromise();
-          }).then(function(c) {
-            assert.equal(c, 2);
-            return sessionPromise();
-          }).then(function(c) {
-            assert.equal(c, 2);
-            done();
-          }).catch(function(error) {
-            done(error);
-          });
-        }, function(error) {
-          done(error);
-        });
-      });
     });
 
     describe('sad path', function() {
@@ -658,22 +631,6 @@ describe('SERVICE - Subscription', function() {
         }, function(error) {
           assert.deepEqual(error, subscriptionServices.messages.notFound.subscription);
           done();
-        });
-      });
-
-      it('should fail no dependencies', function(done) {
-        subscriptionServices.cancelSubscription(subId, 'someEventId').then(function(result) {
-          return result.promise;
-        }).then(function() {
-          return surveyPromise();
-        }).then(function(c) {
-          assert.equal(c, 0);
-          return sessionPromise();
-        }).then(function(c) {
-          assert.equal(c, 0);
-          done();
-        }).catch(function(error) {
-          done(error);
         });
       });
     });
