@@ -377,12 +377,11 @@ function updateSubscriptionData(passThruContent){
   return deferred.promise;
 }
 
-function cancelSubscription(subscriptionId, eventId) {
+function cancelSubscription(subscriptionId, eventId, provider) {
   let deferred = q.defer();
 
   findSubscriptionByChargebeeId(subscriptionId).then(function(subscription) {
-    updateSubscription({accountId: subscription.accountId, newPlanId: "free_account"}, false).then(function(result) {
-      console.log(result);
+    updateSubscription({accountId: subscription.accountId, newPlanId: "free_account"}, provider).then(function(result) {
       deferred.resolve({ result: result });
     }, function(error) {
       deferred.reject(error);
@@ -624,7 +623,6 @@ function prepareRecurringParams(plan, preference) {
 }
 
 // Validators
-
 function canSwitchPlan(accountId, currentPlan, newPlan){
   let deferred = q.defer();
 
@@ -661,7 +659,9 @@ function canSwitchPlan(accountId, currentPlan, newPlan){
 }
 
 function validatePlanPriority(newPlanPriority, currentPlanPriority) {
-  if(newPlanPriority == -1) {
+  if(newPlanPriority == currentPlanPriority) {
+    return false;
+  }else if(newPlanPriority == -1) {
     return true;
   }else if(currentPlanPriority < newPlanPriority){
     return true;

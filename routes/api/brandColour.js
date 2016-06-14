@@ -12,7 +12,7 @@ function canCreateCustomColors(req, res, next) {
   brandColourServices.canCreateCustomColors(res.locals.currentDomain.id).then(function(result) {
     res.send({result: result});
   }, function(err) {
-    res.send(({ error: err.message }));
+    res.send({ error: err });
   });
 }
 

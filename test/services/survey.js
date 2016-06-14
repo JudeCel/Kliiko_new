@@ -709,28 +709,32 @@ describe('SERVICE - Survey', function() {
         let params = surveyParams();
         delete params.confirmedAt;
 
-        surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
-          let survey = result.data;
-          let answerParams = surveyAnswerParams(survey.SurveyQuestions);
-          answerParams.surveyId = survey.id;
+        models.SubscriptionPreference.update({'data.surveyCount': 5, exportRecruiterSurveyData: true}, { where: { subscriptionId: testData.subscription.id } }).then(function() {
+          surveyServices.createSurveyWithQuestions(params, accountParams()).then(function(result) {
+            let survey = result.data;
+            let answerParams = surveyAnswerParams(survey.SurveyQuestions);
+            answerParams.surveyId = survey.id;
 
-          surveyServices.answerSurvey(answerParams).then(function(result) {
-            surveyServices.exportSurvey({ id: survey.id }, accountParams()).then(function(result) {
-              let validResult = {
-                header: [ 'Some default name 0', 'Some default name 1' ],
-                data: [{
-                  'Some default name 0': '3 answer 0',
-                  'Some default name 1': '3 answer 1'
-                }]
-              };
+            surveyServices.answerSurvey(answerParams).then(function(result) {
+              surveyServices.exportSurvey({ id: survey.id }, accountParams()).then(function(result) {
+                let validResult = {
+                  header: [ 'Some default name 0', 'Some default name 1' ],
+                  data: [{
+                    'Some default name 0': '3 answer 0',
+                    'Some default name 1': '3 answer 1'
+                  }]
+                };
 
-              assert.deepEqual(result.data, validResult);
-              done();
-            }, function(error) {
-              done(error);
+                assert.deepEqual(result.data, validResult);
+                done();
+              }, function(error) {
+                done(error);
+              });
             });
           });
-        });
+        }, function(error) {
+          done(error);
+        })
       });
     });
 

@@ -16,8 +16,7 @@ const MESSAGES = {
   copied: 'Scheme copied successfully!',
   updated: 'Scheme updated successfully!',
   notValid: 'Not valid colour',
-  notFromList: 'Colour is not from the list',
-  canCreateCustomColors: 'Please Update your subscription plan, to create custom color schemes.'
+  notFromList: 'Colour is not from the list'
 };
 
 const VALID_ATTRIBUTES = {

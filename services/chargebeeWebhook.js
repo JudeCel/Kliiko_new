@@ -17,7 +17,7 @@ function select(params) {
   let hook = CHARGEBEE_EVENTS[params.event_type];
 
   if(hook) {
-    hook(params.content.subscription.id, params.id).then(function(result) {
+    hook(params.content.subscription.id, params.id, params.provider).then(function(result) {
       deferred.resolve(result);
     }, function(error) {
       deferred.reject(error);
