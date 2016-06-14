@@ -13,6 +13,7 @@ var Account  = models.Account;
 
 var q = require('q');
 var _ = require('lodash');
+var async = require('async');
 
 var sessionMemberServices = require('./../services/sessionMember');
 var validators = require('./../services/validators');
@@ -187,6 +188,7 @@ function removeSession(sessionId, accountId, provider) {
 };
 
 function copySessionTopics(accountId, fromSessionId, toSessionId) {
+  let deferred = q.defer();
   topicsService.getAll(accountId).then(function(allTopics) {
     let topicsArray = [];
     allTopics.map(function(topic) {
@@ -201,14 +203,15 @@ function copySessionTopics(accountId, fromSessionId, toSessionId) {
     });
 
     topicsService.updateSessionTopics(toSessionId, topicsArray).then(function(successResponse) {
-
+      deferred.resolve(successResponse);
     }, function(failureResponse) {
-
+      deferred.reject(failureResponse);
     });
-
   }, function(error) {
-
+    deferred.reject(error);
   });
+
+  return deferred.promise;
 }
 
 function copySession(sessionId, accountId, provider) {
@@ -222,29 +225,34 @@ function copySession(sessionId, accountId, provider) {
         delete result.data.dataValues.facilitator;
 
         Session.create(result.data.dataValues).then(function(session) {
-          if(facilitator) {
-            delete facilitator.id;
-            delete facilitator.token;
-
-            copySessionTopics(accountId, sessionId, session.id);
-            // Not confirmed.
-            copySessionMember(session, facilitator, provider).then(function(copy) {
-              modifySessions(copy, accountId, provider).then(function(result) {
-                deferred.resolve(simpleParams(result, MESSAGES.copied));
-              }, function(error) {
-                deferred.reject(error);
-              });
-            }, function(error) {
-              deferred.reject(error);
-            });
-          }
-          else {
-            modifySessions(session, accountId, provider).then(function(result) {
-              deferred.resolve(simpleParams(result, MESSAGES.copied));
-            }, function(error) {
-              deferred.reject(error);
-            });
-          }
+          async.waterfall([
+              function (callback) {
+                copySessionTopics(accountId, sessionId, session.id).then(function(successResponse) {
+                  callback();
+                }, function(errorResponse) {
+                  //we ignore error because data is copied step by step, and one error shouldn't stop following copying
+                  callback();
+                });
+              },
+              function (callback) {
+                //copying facilitator
+                if(facilitator) {
+                  delete facilitator.id;
+                  delete facilitator.token;
+                  copySessionMember(session, facilitator, provider).then(function(copy) {
+                    session = copy;
+                    callback();
+                  }, function(error) {
+                    callback();
+                  });
+                } else {
+                  callback();
+                }
+              }
+          ], function (error) {
+            //we ignore error in callback because data is copied step by step, and one error shouldn't stop following copying
+            prepareModifiedSessions(session, accountId, provider, deferred);
+          });
         }).catch(function(error) {
           deferred.reject(filters.errors(error));
         });
@@ -260,6 +268,14 @@ function copySession(sessionId, accountId, provider) {
 
   return deferred.promise;
 };
+
+function prepareModifiedSessions(session, accountId, provider, deferred) {
+  modifySessions(session, accountId, provider).then(function(result) {
+    deferred.resolve(simpleParams(result, MESSAGES.copied));
+  }, function(error) {
+    deferred.reject(error);
+  });
+}
 
 function chatRoomUrl() {
   return '/chat/';
