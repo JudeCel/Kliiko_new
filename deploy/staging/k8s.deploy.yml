@@ -79,7 +79,7 @@ spec:
       labels:
         name: admin
         env: staging
-        version: "0.0.29"
+        version: "0.0.30"
     spec:
       containers:
       - image: "gcr.io/sound-temple-130607/klzii_main:latest"
