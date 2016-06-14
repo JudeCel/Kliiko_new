@@ -89,14 +89,30 @@
               <h1 class='modal-title text-center'>{{ step2Controller.editTopics.formTitle }}</h1>
             </div>
             <div class='modal-body'>
-              <form>
-                <div class="row">
-                  <div class="text-center">
-                    <input id="new-topic-input" type="text" maxlength="15" ng-model="step2Controller.editTopics.name">
-                    <br>
-                    <!-- <div id="new-topic-input-help">
-                      Characters left: {{ topics.nameMaxSize - topics.newTopicName.length }}
-                    </div> -->
+              <form class='form-horizontal'>
+                <div class='row'>
+                  <div class='col-xs-12'>
+                      <div class='form-group'>
+                        <label class='control-label col-md-3 text-no-bold text-login-page' for='editTipicName'>
+                          Name:
+                        </label>
+                        <div class='col-md-4'>
+                          <input type='text' class='form-control' id='editTipicName' placeholder='Name' ng-model='step2Controller.editTopics.name' maxlength="15">
+                        </div>
+                        <div class='col-md-5'>
+                          <div id="new-topic-input-help" style="font-size: 20px; float: left; padding-top: 3px;">
+                            Characters left: {{ topics.nameMaxSize - step2Controller.editTopics.name.length }}
+                          </div>
+                        </div>
+                      </div>
+                      <div class='form-group'>
+                        <label class='control-label col-md-3 text-no-bold text-login-page' for='editTipicGreetingMessage'>
+                          Greeting Message:
+                        </label>
+                        <div class='col-md-7'>
+                          <textarea type='text' class='form-control' id='editTipicGreetingMessage' placeholder='Greeting Message' ng-model='step2Controller.editTopics.boardMessage' style="resize: none;"></textarea>
+                        </div>
+                      </div>
                   </div>
                 </div>
               </form>

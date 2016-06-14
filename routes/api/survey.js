@@ -8,6 +8,13 @@ function get(req, res, next) {
   );
 };
 
+function canExportSurveyData(req, res, next) {
+  surveyService.canExportSurveyData(res.locals.currentDomain).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+}
+
 function find(req, res, next) {
   surveyService.findSurvey(req.query).then(
     getResponses(res).onSuccess,
@@ -92,5 +99,6 @@ module.exports = {
   copy: copy,
   answer: answer,
   confirm: confirm,
-  getConstants: getConstants
+  getConstants: getConstants,
+  canExportSurveyData: canExportSurveyData
 };

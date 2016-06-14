@@ -125,19 +125,21 @@ function assignErrorWithRowNr(errors, error, attrs) {
 function bulkCreate(list, accountId) {
   let errors = {required: false};
   let deferred = q.defer();
-    models.sequelize.transaction().then(function(t) {
-      async.map(list, transactionFun(t, accountId, errors), function(err, results) {
-        if (errors.required) {
-          t.rollback().then(function() {
-            deferred.reject(errors);
-          });
-        }else {
-          t.commit().then(function() {
-            deferred.resolve(results);
-          });
-        }
-      });
+
+  models.sequelize.transaction().then(function(t) {
+    async.map(list, transactionFun(t, accountId, errors), function(err, results) {
+      if (errors.required) {
+        t.rollback().then(function() {
+          deferred.reject(errors);
+        });
+      }else {
+        t.commit().then(function() {
+          deferred.resolve(results);
+        });
+      }
     });
+  });
+
   return deferred.promise;
 }
 

@@ -9,6 +9,14 @@ function get(req, res, next) {
   });
 };
 
+function canAddAccountManager(req, res, next) {
+  accountManagerService.canAddAccountManager(res.locals.currentDomain.id).then(function(response) {
+    res.send(response);
+  }, function(error) {
+    res.send({ error: error });
+  });
+}
+
 function post(req, res, next) {
   accountManagerService.createOrFindAccountManager(req.user, req.body, res.locals.currentDomain.id).then(function(params) {
     inviteService.createInvite(params).then(function(data) {
@@ -55,5 +63,6 @@ module.exports = {
   post: post,
   put: put,
   removeInvite: removeInvite,
-  removeAccountUser: removeAccountUser
+  removeAccountUser: removeAccountUser,
+  canAddAccountManager: canAddAccountManager
 };

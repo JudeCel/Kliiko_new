@@ -68,7 +68,7 @@ function getAllPlans(accountId) {
   let deferred = q.defer();
   let currentPlan = {};
 
-  chargebee.plan.list({}).request(function(error, result){
+  chargebee.plan.list({limit: 20}).request(function(error, result){
     if(error){
       deferred.reject(error);
     }else{
@@ -377,15 +377,14 @@ function updateSubscriptionData(passThruContent){
   return deferred.promise;
 }
 
-function cancelSubscription(subscriptionId, eventId) {
+function cancelSubscription(subscriptionId, eventId, provider) {
   let deferred = q.defer();
 
   findSubscriptionByChargebeeId(subscriptionId).then(function(subscription) {
-    subscription.update({ active: false, lastWebhookId: eventId }, { returning: true }).then(function(subscription) {
-      let promise = disableSubDependencies(subscription.accountId);
-      deferred.resolve({ subscription: subscription, promise: promise });
+    updateSubscription({accountId: subscription.accountId, newPlanId: "free_account"}, provider).then(function(result) {
+      deferred.resolve({ result: result });
     }, function(error) {
-      deferred.reject(filters.errors(error));
+      deferred.reject(error);
     });
   }, function(error) {
     deferred.reject(error);
@@ -545,7 +544,7 @@ function chargebeePassParams(result) {
 
 function chargebeeSubParams(accountUser) {
   return {
-    plan_id: 'free',
+    plan_id: 'free_trial',
     customer: {
       email: accountUser.email,
       first_name: accountUser.firstName,
@@ -624,7 +623,6 @@ function prepareRecurringParams(plan, preference) {
 }
 
 // Validators
-
 function canSwitchPlan(accountId, currentPlan, newPlan){
   let deferred = q.defer();
 
@@ -645,7 +643,7 @@ function canSwitchPlan(accountId, currentPlan, newPlan){
         }
       }
     });
-  }else if(currentPlan.priority < newPlan.priority){
+  }else if(validatePlanPriority(newPlan.priority, currentPlan.priority)){
     deferred.resolve();
   }else{
     findSubscription(accountId).then(function(subscription) {
@@ -658,6 +656,18 @@ function canSwitchPlan(accountId, currentPlan, newPlan){
   }
 
   return deferred.promise;
+}
+
+function validatePlanPriority(newPlanPriority, currentPlanPriority) {
+  if(newPlanPriority == currentPlanPriority) {
+    return false;
+  }else if(newPlanPriority == -1) {
+    return true;
+  }else if(currentPlanPriority < newPlanPriority){
+    return true;
+  }else{
+    return false;
+  }
 }
 
 function validateSessionCount(accountId, newPlan) {

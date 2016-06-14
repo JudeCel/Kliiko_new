@@ -81,5 +81,7 @@ module.exports = {
   sessionBuilderSteps: ['setUp', 'facilitatiorAndTopics', 'manageSessionEmails',
     'manageSessionParticipants', 'inviteSessionObservers', 'done'],
   inviteStatuses: ['pending', 'confirmed', 'rejected', 'notThisTime', 'notAtAll', 'expired'],
-  sessionBuilderEmails: ['firstInvitation', 'confirmation', 'generic', 'notThisTime', 'notAtAll', 'closeSession']
+  sessionBuilderEmails: ['firstInvitation', 'confirmation', 'generic', 'notThisTime', 'notAtAll', 'closeSession'],
+  sessionMemberMan: { base: 0, face: 5, body: 5, hair: -1, desk: -1, head: -1 },
+  sessionMemberWoman: { base: 0, face: 5, body: -1, hair: -1, desk: -1, head: 2 }
 }

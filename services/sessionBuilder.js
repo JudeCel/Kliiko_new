@@ -29,6 +29,7 @@ const MESSAGES = {
   accountUserNotFound: 'Account User not found',
 
   errors: {
+    cantAddObservers: "Please Update your subscription plan, to invite Observers to your session.",
     cantSendCloseMails: "Were not able to send emails to informa all participants, that session was closed.",
     firstStep: {
       nameRequired: 'Name must be provided',
@@ -67,7 +68,8 @@ module.exports = {
   removeInvite: removeInvite,
   removeSessionMember: removeSessionMember,
   sendGenericEmail: sendGenericEmail,
-  sessionMailTemplateStatus: sessionMailTemplateStatus
+  sessionMailTemplateStatus: sessionMailTemplateStatus,
+  canAddObservers: canAddObservers
 };
 
 function initializeBuilder(params) {
@@ -452,14 +454,15 @@ function sendGenericEmail(sessionId, data, accountId) {
 
           _.map(accountUsers, function(accountUser) {
             params.push({
-              accountId: accountUser.accountId,
+              accountId: accountId,
               email: accountUser.email,
               firstName: accountUser.firstName,
               facilitatorFirstName: facilitator.firstName,
               facilitatorLastName: facilitator.lastName,
               facilitatorMail: facilitator.email,
               facilitatorMobileNumber: facilitator.mobile,
-              unsubscribeMailUrl: 'some unsub url'
+              unsubscribeMailUrl: 'some unsub url',
+              sessionId: sessionId
             });
           });
 
@@ -711,7 +714,7 @@ function step2Queries(session, step) {
           where: {
             sessionId: session.id
           },
-          attributes: ['order', 'name', 'id']
+          attributes: ['order', 'name', 'boardMessage', 'id']
         }]
       }).then(function(topics) {
         step.topics = topics;
@@ -772,6 +775,18 @@ function step4and5Queries(session, role) {
       });
     }
   ];
+}
+
+function canAddObservers(accountId) {
+  let deferred = q.defer();
+
+  validators.planAllowsToDoIt(accountId, 'canInviteObserversToSession').then(function() {
+    deferred.resolve();
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
 }
 
 function validate(session, params) {

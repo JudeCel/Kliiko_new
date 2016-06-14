@@ -23,7 +23,7 @@ describe('SERVICE - Session', function() {
         done();
       }, function(error) {
         done(error);
-      })
+      });
     }, function(error) {
       done(error);
     });

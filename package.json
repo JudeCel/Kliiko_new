@@ -11,7 +11,7 @@
   },
   "engineStrict": true,
   "engine": {
-    "node": "~ 4.2"
+    "node": "~ 5.*"
   },
   "repository": {
     "type": "git",

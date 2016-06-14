@@ -7,6 +7,15 @@ function getToken(req, res, next) {
   res.send({ token: token });
 };
 
+function jwtTokenForMember(req, res, next) {
+  jwt.tokenForMember(res.locals.currentUser.id, req.query.sessionId).then(function(result) {
+    res.send(result);
+  }, function(error) {
+    res.send({ error: error });
+  })
+}
+
 module.exports = {
-  getToken: getToken
+  getToken: getToken,
+  jwtTokenForMember: jwtTokenForMember
 };

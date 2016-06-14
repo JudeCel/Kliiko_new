@@ -1,10 +1,12 @@
 'use strict';
 let q = require('q');
+var validators = require('./../services/validators');
 var filters = require('./../models/filters');
 var models = require('./../models');
 var Topic = models.Topic;
 var _ = require('lodash');
 var Session = models.Session;
+
 const MESSAGES = {
   updatedSessionTopic: "Session Topic was successfully update.",
   error: { isRelaitedSession: "Can't delete topic is related session" }
@@ -31,9 +33,10 @@ function getAll(accountId) {
       accountId: accountId
     },
     include: [{
-      model: models.Session
-    },{
-      model: models.SessionTopics
+      model: models.SessionTopics,
+      include: [{
+        model: models.Session
+      }]
     }]
   }).then(function(results){
     deferred.resolve(results);
@@ -46,7 +49,7 @@ function getAll(accountId) {
 function updateSessionTopicName(params) {
   let deferred = q.defer();
 
-  models.SessionTopics.update({ name: params.sessionTopicName }, {
+  models.SessionTopics.update({ name: params.sessionTopicName, boardMessage: params.boardMessage }, {
     where: {
       id: params.sessionTopicId
     }
@@ -76,13 +79,20 @@ function updateSessionTopics(sessionId, topicsArray) {
         if(topic.id == sessionTopic.topicId) {
           sessionTopic.order = topic.order;
           sessionTopic.active = topic.active;
+
           if(!sessionTopic.name) {
             sessionTopic.name = topic.name;
           }
+
+          if(!sessionTopic.boardMessage) {
+            sessionTopic.boardMessage = "Say something nice if you wish!";
+          }
+
           sessionTopic.update({
             order: sessionTopic.order,
             active: sessionTopic.active,
-            name: sessionTopic.name
+            name: sessionTopic.name,
+            boardMessage: sessionTopic.boardMessage
           });
 
           topic.SessionTopics = [sessionTopic];
@@ -199,11 +209,17 @@ function destroy(id) {
 
 function create(params) {
   let deferred = q.defer();
-  Topic.create(params).then(function(topic) {
-    deferred.resolve(topic);
-  },function(err) {
-    deferred.reject(err);
+
+  validators.subscription(params.accountId, 'topic', 1).then(function() {
+    Topic.create(params).then(function(topic) {
+      deferred.resolve(topic);
+    },function(error) {
+      deferred.reject(filters.errors(error));
+    });
+  },function(error) {
+    deferred.reject(error);
   });
+
   return deferred.promise;
 }
 

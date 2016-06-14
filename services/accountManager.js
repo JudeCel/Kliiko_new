@@ -1,5 +1,6 @@
 'use strict';
 
+var validators = require('./../services/validators');
 var constants = require('../util/constants');
 var models = require('./../models');
 var filters = require('./../models/filters');
@@ -16,7 +17,8 @@ module.exports = {
   createOrFindAccountManager: createOrFindAccountManager,
   findAccountManagers: findAccountManagers,
   findAndRemoveAccountUser: findAndRemoveAccountUser,
-  updateAccountManager: updateAccountManager
+  updateAccountManager: updateAccountManager,
+  canAddAccountManager: canAddAccountManager
 };
 
 //Exports
@@ -26,27 +28,43 @@ function createOrFindAccountManager(user, body, accountId) {
   params.role = 'accountManager';
   delete params.id;
 
-  AccountUser.build(params).validate().then(function(errors) {
-    errors = errors || {};
-    delete params.role;
-    return preValidate(user, accountId, params.email, errors);
-  }).then(function(errors) {
-    if(_.isEmpty(errors)) {
-      return User.find({ where: { email: params.email } });
-    }
-    else {
-      throw errors;
-    }
-  }).then(function(existsUser) {
-    if(existsUser) {
-      return inviteExistingUser(existsUser, params, accountId);
-    }
-    else {
-      return inviteNewUser(params, accountId);
-    }
-  }).then(function(params) {
-    deferred.resolve(params);
-  }).catch(function(error) {
+  canAddAccountManager(accountId).then(function() {
+    AccountUser.build(params).validate().then(function(errors) {
+      errors = errors || {};
+      delete params.role;
+      return preValidate(user, accountId, params.email, errors);
+    }).then(function(errors) {
+      if(_.isEmpty(errors)) {
+        return User.find({ where: { email: params.email } });
+      }
+      else {
+        throw errors;
+      }
+    }).then(function(existsUser) {
+      if(existsUser) {
+        return inviteExistingUser(existsUser, params, accountId);
+      }
+      else {
+        return inviteNewUser(params, accountId);
+      }
+    }).then(function(params) {
+      deferred.resolve(params);
+    }).catch(function(error) {
+      deferred.reject(error);
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function canAddAccountManager(accountId) {
+  let deferred = q.defer();
+
+  validators.canAddAccountUsers(accountId, 'accountUser', 1).then(function() {
+    deferred.resolve();
+  },function(error) {
     deferred.reject(error);
   });
 

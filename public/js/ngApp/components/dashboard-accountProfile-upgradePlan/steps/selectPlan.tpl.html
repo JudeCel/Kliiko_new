@@ -24,12 +24,13 @@
 
   <section class="container plans-table">
     <div class="row">
-      <div ng-repeat="subscriptionPlan in up.subPlans">
-        <div class="col-sm-4 col-xs-12 plan-block" ng-if="up.showPlanInList(subscriptionPlan.plan.id)">
-          <div class="included-plan-fader" ng-show="up.isCurrentPlan(subscriptionPlan.plan.id)"><div class="label">CURRENT</div></div>
+      <div ng-repeat="subscriptionPlan in up.subPlans | orderBy:'-additionalParams.priority' ">
+        <!-- {{ subscriptionPlan.additionalParams.priority }} -->
+        <div class="col-sm-4 col-xs-12 plan-block" ng-if="up.showPlanInList(subscriptionPlan)">
+          <div class="included-plan-fader" ng-show="up.isCurrentPlan(subscriptionPlan)"><div class="label">CURRENT</div></div>
           <div class="list-group">
-            <h4 ng-class="up.planColors[subscriptionPlan.plan.name].header">{{subscriptionPlan.plan.name}}</h4>
-            <div ng-class="up.planColors[subscriptionPlan.plan.name].body">
+            <h4 ng-class="up.planColors[subscriptionPlan.plan.id].header">{{subscriptionPlan.plan.name}}</h4>
+            <div ng-class="up.planColors[subscriptionPlan.plan.id].body">
               <h5 class="outline"><sup>$US</sup>{{subscriptionPlan.plan.price | price:'':0 }}</h5>
               <p>
                 {{ subscriptionPlan.plan.period }}
@@ -39,81 +40,191 @@
             </div>
 
             <div class="wrapper">
-              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
                 <p>
                   <b>
                     {{ up.checkTheCount(subscriptionPlan.additionalParams.sessionCount) }}
                   </b>
-                  Session('s) to use over
-                  {{ subscriptionPlan.plan.period }}
-                  {{ subscriptionPlan.plan.period_unit }}
+                  active Session('s) to use over
                 </p>
               </div>
             </div>
 
             <div class="wrapper">
-              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p>
+                  <b>
+                    {{ up.checkTheCount(subscriptionPlan.additionalParams.contactListCount) }}
+                  </b>
+                  Custom contact list('s)
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p>
+                  <b>
+                    {{ up.checkTheCount(subscriptionPlan.additionalParams.recruiterContactListCount) }}
+                  </b>
+                  Survey('s)
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p>
+                  Import a database and manage interaction with your Contact List.
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p ng-class="{'not-included': !subscriptionPlan.additionalParams.brandLogoAndCustomColors}">
+                  Upload brand logos and create custom color schemes.
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p>
+                  <b>
+                    {{ up.checkTheCount(subscriptionPlan.additionalParams.contactListMemberCount) }}
+                  </b>
+                  Contact List members allowed.
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
                 <p>
                   Up to
                   <b>
-                    {{ subscriptionPlan.additionalParams.participantCount }}
-                    Participants
+                    {{ up.checkTheCount(subscriptionPlan.additionalParams.accountUserCount) }}
                   </b>
-                  per Session
+                  account manager('s)
                 </p>
               </div>
             </div>
 
             <div class="wrapper">
-              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p ng-class="{'not-included': !subscriptionPlan.additionalParams.exportContactListAndParticipantHistory}">
+                  Export contact lists and participation history.
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p ng-class="{'not-included': !subscriptionPlan.additionalParams.exportRecruiterSurveyData}">
+                  Export recruiter survey data.
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p ng-class="{'not-included': !subscriptionPlan.additionalParams.accessKlzziForum}">
+                  Access to klzii forum.
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p ng-class="{'not-included': !subscriptionPlan.additionalParams.accessKlzziFocus}">
+                  Access to klzii focus.
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p ng-class="{'not-included': !subscriptionPlan.additionalParams.canInviteObserversToSession}">
+                  Ability to invite Observers to Session.
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
                 <p>
-                  Up to
                   <b>
-                    {{ subscriptionPlan.additionalParams.observerCount }}
-                    Observers
+                    {{ up.checkTheCount(subscriptionPlan.additionalParams.paidSmsCount) }}
                   </b>
-                  per Session
+                  Paid SMS reminders to Participants.
                 </p>
               </div>
             </div>
 
             <div class="wrapper">
-              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p ng-class="{'not-included': !subscriptionPlan.additionalParams.discussionGuideTips}">
+                  Discussion guide tips.
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p ng-class="{'not-included': !subscriptionPlan.additionalParams.whiteboardFunctionality}">
+                  Whiteboard functionality.
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p ng-class="{'not-included': !subscriptionPlan.additionalParams.uploadToGallery}">
+                  Ability to upload and store your multimedia files.
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p ng-class="{'not-included': !subscriptionPlan.additionalParams.reportingFunctions}">
+                  Reporting functions.
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p ng-class="{'not-included': !subscriptionPlan.additionalParams.availableOnTabletAndMobilePlatforms}">
+                  Available on tablet and mobile platforms.
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p ng-class="{'not-included': !subscriptionPlan.additionalParams.customEmailInvitationAndReminderMessages}">
+                  Custom email invitation & reminder messages.
+                </p>
+              </div>
+            </div>
+
+            <div class="wrapper">
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
                 <p>
-                  Up to
                   <b>
-                    {{ subscriptionPlan.additionalParams.paidSmsCount }}
-                    Paid SMS
+                    {{ up.checkTheCount(subscriptionPlan.additionalParams.topicCount) }}
                   </b>
-                  reminders to Participants
-                  <sup>*</sup>
+                  # of Topics
                 </p>
               </div>
             </div>
 
             <div class="wrapper">
-              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
-                <p>
-                  <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.contactListMemberCount) }}</b>
-                  Contact List members allowed
-                </p>
-              </div>
-            </div>
-
-            <div class="wrapper">
-              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
-                <p>
-                  <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.contactListCount) }}</b>
-                  Number Of contact Lists
-                </p>
-              </div>
-            </div>
-
-            <div class="wrapper">
-              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.name].light">
-                <p>
-                  <b>{{ up.checkTheCount(subscriptionPlan.additionalParams.additionalContactListCount) }}</b>
-                  Additional Contact Lists
+              <div class="flex-wrapper" ng-class="up.planColors[subscriptionPlan.plan.id].light">
+                <p ng-class="{'not-included': !subscriptionPlan.additionalParams.customEmailInvitationAndReminderMessages}">
+                  Secure applications (SSL).
                 </p>
               </div>
             </div>

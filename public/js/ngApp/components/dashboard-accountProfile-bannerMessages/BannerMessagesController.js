@@ -75,7 +75,7 @@
     }
 
     function remove(bannerType) {
-      var confirmation = confirm('Are you sure?');
+      var confirmation = confirm("Are you sure, that you want to delete this banner?");
       if(!confirmation) return;
 
       fileUploader.remove([vm.file[bannerType].resource.id]).then(function(result) {

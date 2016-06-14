@@ -1,39 +1,45 @@
 <section id="modals-excel-csv-import">
-    <div id="modals-excel-csv-import-icon" class="row">
-        <div class="col-md-12 text-center">
-            <img ng-show="clc.importData.excel" src="/icons/excel.png">
-            <img ng-show="clc.importData.csv" src="/icons/csv.png" height="110">
-        </div>
+  <div id="modals-excel-csv-import-icon" class="row">
+    <div class="col-md-12 text-center">
+      <img ng-show="clc.importData.excel" src="/icons/excel.png">
+      <img ng-show="clc.importData.csv" src="/icons/csv.png" height="110">
     </div>
+  </div>
 
-    <!---->
+  <!---->
 
-    <section class="banners-section text-center">
-        <div>
-            <div ngf-drop ngf-select ng-model="clc.importData.file" class="drop-box"
-                 ng-change="clc.clearImportErrors()"
-                 ngf-drag-over-class="'dragover'"
-                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, .csv"
-                 ngf-pattern="'.xls,.csv'">Drop file here or click to upload</div>
-            <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
-            <div ng-show="clc.importData.file.name">
-                <br> Selected File: <strong>{{ clc.importData.file.name}}</strong>
-                <small>({{ (clc.importData.file.size / 1024) | num:2 }}Kb)</small>
-                <p class="error-area" ng-show="clc.importErrorMessage">{{ clc.importErrorMessage }}</p>
-            </div>
-            <div><br><em><a href="/media/example-contacts-list-import.xls">Download example file template</a></em></div>
-        </div>
-
-    </section><!--/class="banners-section"-->
-
-    <!---->
-    <div class='row modal-control-buttons'>
-        <div class='col-md-12'>
-
-            <div class='btn-standart btn-red pull-left' data-dismiss="modal">Cancel</div>
-            <div class='btn-standart btn-green pull-right' ng-class="{'btn-disabled': !clc.importData.file.name}" ng-click='clc.startImport()'>Import</div>
-
-        </div>
+  <section class="banners-section text-center">
+    <div>
+      <div ngf-drop ngf-select ng-model="clc.importData.file" class="drop-box"
+           ng-change="clc.clearImportErrors()"
+           ngf-drag-over-class="'dragover'"
+           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, .csv"
+           ngf-pattern="'.xls,.xlsx,.csv'">Drop file here or click to upload</div>
+      <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
+      <div ng-show="clc.importData.file.name">
+          <br> Selected File: <strong>{{ clc.importData.file.name}}</strong>
+          <small>({{ (clc.importData.file.size / 1024) | num:2 }}Kb)</small>
+          <p class="error-area" ng-show="clc.importErrorMessage">{{ clc.importErrorMessage }}</p>
+      </div>
+      <div>
+        <br>
+        <em>
+          <a ng-if="clc.importData.excel" href="/media/example-contacts-list-import.xls" download="example-contacts-list-import.xls">
+            Download example file template
+          </a>
+          <a ng-if="clc.importData.csv" href="/media/example-contacts-list-import.csv" download="example-contacts-list-import.csv">
+            Download example file template
+          </a>
+        </em>
+      </div>
     </div>
+  </section><!--/class="banners-section"-->
 
+  <!---->
+  <div class='row modal-control-buttons'>
+    <div class='col-md-12'>
+      <div class='btn-standart btn-red pull-left' data-dismiss="modal">Cancel</div>
+      <div class='btn-standart btn-green pull-right' ng-class="{'btn-disabled': !clc.importData.file.name}" ng-click='clc.startImport()'>Import</div>
+    </div>
+  </div>
 </section>

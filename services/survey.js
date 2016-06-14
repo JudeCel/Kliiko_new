@@ -15,6 +15,7 @@ var _ = require('lodash');
 var surveyConstants = require('../util/surveyConstants');
 
 const MESSAGES = {
+  cantExportSurveyData: 'Please Update your subscription plan, to export survey data.',
   notFound: 'Survey not found!',
   alreadyClosed: 'Survey closed, please contact admin!',
   notConfirmed: 'Survey not confirmed, please contact admin!',
@@ -235,15 +236,12 @@ function createSurveyWithQuestions(params, account) {
         return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t }).then(function(survey) {
           let fields = getContactListFields(survey.SurveyQuestions);
 
-          return validators.subscription(survey.accountId, 'contactList', 1).then(function() {
-            return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
-              return survey;
-            }, function(error) {
-              throw error;
-            });
+          return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
+            return survey;
           }, function(error) {
             throw error;
           });
+
         });
       }).then(function(survey) {
         survey.update({ url: validUrl(survey) }).then(function(survey) {
@@ -473,33 +471,50 @@ function confirmSurvey(params, account) {
 function exportSurvey(params, account) {
   let deferred = q.defer();
 
-  Survey.find({
-    where: { id: params.id, accountId: account.id },
-    attributes: ['id'],
-    include: [{
-      model: SurveyQuestion,
-      attributes: VALID_ATTRIBUTES.question
-    }, SurveyAnswer],
-    order: [
-      [SurveyQuestion, 'order', 'ASC']
-    ]
-  }).then(function(survey) {
-    if(survey) {
-      let header = createCsvHeader(survey.SurveyQuestions);
-      let data = createCsvData(header, survey);
-      deferred.resolve(simpleParams({ header: header, data: data }));
-    }
-    else {
-      deferred.reject(MESSAGES.notFound);
-    }
-  }).catch(Survey.sequelize.ValidationError, function(error) {
-    deferred.reject(filters.errors(error));
-  }).catch(function(error) {
+
+  canExportSurveyData(account).then(function() {
+    Survey.find({
+      where: { id: params.id, accountId: account.id },
+      attributes: ['id'],
+      include: [{
+        model: SurveyQuestion,
+        attributes: VALID_ATTRIBUTES.question
+      }, SurveyAnswer],
+      order: [
+        [SurveyQuestion, 'order', 'ASC']
+      ]
+    }).then(function(survey) {
+      if(survey) {
+        let header = createCsvHeader(survey.SurveyQuestions);
+        let data = createCsvData(header, survey);
+        deferred.resolve(simpleParams({ header: header, data: data }));
+      }
+      else {
+        deferred.reject(MESSAGES.notFound);
+      }
+    }).catch(Survey.sequelize.ValidationError, function(error) {
+      deferred.reject(filters.errors(error));
+    }).catch(function(error) {
+      deferred.reject(error);
+    });
+  }, function(error) {
     deferred.reject(error);
   });
 
   return deferred.promise;
 };
+
+function canExportSurveyData(account) {
+  let deferred = q.defer();
+
+  validators.planAllowsToDoIt(account.id, 'exportRecruiterSurveyData').then(function() {
+    deferred.resolve();
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
 
 function constantsSurvey() {
   let deferred = q.defer();
@@ -668,5 +683,6 @@ module.exports = {
   answerSurvey: answerSurvey,
   confirmSurvey: confirmSurvey,
   exportSurvey: exportSurvey,
-  constantsSurvey: constantsSurvey
+  constantsSurvey: constantsSurvey,
+  canExportSurveyData: canExportSurveyData
 };

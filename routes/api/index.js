@@ -57,12 +57,14 @@ router.post('/user/canAccess', userRoutes.userCanAccessPost);
 router.get('/accountUser', accountUser.get);
 router.get('/account', account.get);
 router.get('/jwtToken', jwt.getToken);
+router.get('/jwtTokenForMember', jwt.jwtTokenForMember);
 
 router.get('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.get);
 router.post('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.post);
 router.put('/accountManager', policy.authorized(['accountManager', 'admin']), accountManager.put);
 router.delete('/accountManager/accountUser', policy.authorized(['accountManager', 'admin']), accountManager.removeAccountUser);
 router.delete('/invite', policy.authorized(['accountManager', 'admin']), accountManager.removeInvite);
+router.get('/accountManager/canAddAccountManager', policy.authorized(['accountManager', 'admin']), accountManager.canAddAccountManager);
 
 router.get('/accountDatabase', policy.authorized(['admin']), accountDatabase.get);
 router.put('/accountDatabase/:id', policy.authorized(['admin']), accountDatabase.update);
@@ -89,6 +91,7 @@ router.get('/survey/find', survey.find);
 router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', survey.confirm);
 router.get('/survey/constants', survey.getConstants);
+router.get('/survey/canExportSurveyData', survey.canExportSurveyData);
 
 // Subscription
 router.get('/subscriptionPlan', subscription.getPlans);
@@ -125,6 +128,7 @@ router.delete('/brandColour', brandColour.remove);
 router.post('/brandColour', brandColour.create);
 router.put('/brandColour', brandColour.update);
 router.post('/brandColour/copy', brandColour.copy);
+router.get('/brandColour/canCreateCustomColors', brandColour.canCreateCustomColors);
 
 router.post('/session/getByInvite',  policy.authorized(['accountManager', 'admin']), session.getSessionByInvite);
 router.get('/session/ratings',  policy.authorized(['admin']), session.getAllSessionRatings);
@@ -140,6 +144,8 @@ router.post('/sessionMember/addFacilitator', sessionMember.addFacilitator);
 
 
 // Session Builder
+router.get('/sessionBuilder/canAddObservers',  policy.authorized(['accountManager', 'admin']), sessionBuilder.canAddObservers);
+
 router.post('/sessionBuilder',  policy.authorized(['accountManager', 'admin']), sessionBuilder.new);
 router.get('/sessionBuilder/:id',  policy.authorized(['accountManager', 'admin']), sessionBuilder.openBuild);
 router.put('/sessionBuilder/:id',  policy.authorized(['accountManager', 'admin']), sessionBuilder.update);

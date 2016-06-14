@@ -5,7 +5,7 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
     type: { type: DataTypes.STRING, allowNull: false, defaultValue: 'chat' },
-    name: { type: DataTypes.STRING, allowNull: false },
+    name: { type: DataTypes.STRING, allowNull: false, unique: true },
     URL: { type: DataTypes.STRING, allowNull: true },
     description: { type: DataTypes.TEXT }
   }, {

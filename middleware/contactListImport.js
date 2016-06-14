@@ -7,12 +7,14 @@ const VALIDATIONS = {
   maxSize: 5,
   fileTypes: [
     'csv',
-    'xls'
+    'xls',
+    'xlsx'
   ]
 };
 
 function fileFilter(req, file, cb) {
-  let extension = getFileExtension(file.originalname)
+  let extension = getFileExtension(file.originalname);
+
   if (_.includes(VALIDATIONS.fileTypes, extension)) {
     cb(null, true);
   }else {

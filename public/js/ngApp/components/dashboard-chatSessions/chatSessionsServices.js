@@ -1,9 +1,9 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('chatSessionsServices', chatSessionsServices);
-  chatSessionsServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
+  chatSessionsServices.$inject = ['globalSettings', '$q', '$resource', 'dbg', '$http'];
 
-  function chatSessionsServices(globalSettings, $q, $resource, dbg) {
+  function chatSessionsServices(globalSettings, $q, $resource, dbg, $http) {
     var chatSessionApi = $resource(globalSettings.restUrl + '/session/:id', null, {
       get: { method: 'get', params: { id: 'list' } },
       copy: { method: 'post', params: { id: '@id' } },
@@ -14,12 +14,16 @@
       rate: { method: 'post', params: { id: '@id', path: 'rate' } }
     });
 
+    var jwtTokenForMemberApi = $resource(globalSettings.restUrl + '/jwtTokenForMember');
+
+
     var csServices = {};
     csServices.findAllSessions = findAllSessions;
     csServices.removeSession = removeSession;
     csServices.copySession = copySession;
     csServices.rateSessionMember = rateSessionMember;
     csServices.prepareError = prepareError;
+    csServices.generateRedirectLink = generateRedirectLink;
     return csServices;
 
     function findAllSessions() {
@@ -33,6 +37,29 @@
 
       return deferred.promise;
     };
+
+    function generateRedirectLink(sessionId) {
+      var deferred = $q.defer();
+
+      jwtTokenForMemberApi.get({ sessionId: sessionId }, function(res) {
+        console.log(res);
+        if(res.error) {
+          deferred.reject(res.error);
+        } else {
+          $http({
+            method: "GET",
+            url: globalSettings.serverChatDomainUrl + '/api/auth/token/',
+            headers: { 'Authorization': res.token }
+          }).then(function succes(response) {
+            deferred.resolve(response.data.redirect_url);
+          }, function error(response) {
+            deferred.reject({error: response.status + ": " + response.statusText});
+          });
+        }
+      });
+
+      return deferred.promise;
+    }
 
     function removeSession(data) {
       var deferred = $q.defer();

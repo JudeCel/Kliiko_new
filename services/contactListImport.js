@@ -40,6 +40,9 @@ function parseFile(id, filePath) {
           case '.xls':
             parseXls(emails, deferred, contactList, filePath);
             break;
+          case '.xlsx':
+            parseXls(emails, deferred, contactList, filePath);
+            break;
           default:
             deferred.reject("Wrong file format: " + path.extname(filePath) + "!");
         }
@@ -83,6 +86,18 @@ function parseXls(emails, deferred, contactList, filePath) {
       })
       ++ rowNr
       validateRow(emails, contactList, data, uniqRowListCounter).then(function() {
+
+        data.landlineNumber = data.landlineNumber.toString();
+        data.mobile = data.mobile.toString();
+
+        if(data.mobile.length > 0 && !data.mobile.includes("+61")) {
+          data.mobile = "+61 " + data.mobile;
+        }
+
+        if(data.landlineNumber.length > 0 && !data.landlineNumber.includes("+61")) {
+          data.landlineNumber = "+61 " + data.landlineNumber;
+        }
+
         object.valid.push(data);
         cb();
       }, function(error) {
@@ -122,6 +137,15 @@ function parseCsv(emails, deferred, contactList, filePath) {
     return data;
   }).validate(function(data, next) {
     validateRow(emails, contactList, data, uniqRowListCounter).then(function() {
+
+      if(data.mobile.length > 0 && !data.mobile.includes("+61")) {
+        data.mobile = "+61 " + data.mobile;
+      }
+
+      if(data.landlineNumber.length > 0 && !data.landlineNumber.includes("+61")) {
+        data.landlineNumber = "+61 " + data.landlineNumber;
+      }
+
       ++ rowNr
       next(null, true);
     }, function(error) {

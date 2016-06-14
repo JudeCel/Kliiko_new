@@ -1,4 +1,5 @@
 <form class='form-horizontal' ng-submit="clc.updateOrCreateContact()" ng-controller='PhoneNumberController as pnc'>
+    <span class='hidden' ng-init="pnc.init(clc.newContact, 'contactList-addContactManual'); ''"></span>
     <span class='hidden'>{{ pnc.init(clc.newContact, 'contactList-addContactManual'); '' }}</span>
     <div class='col-md-6'>
         <div class='form-group'>

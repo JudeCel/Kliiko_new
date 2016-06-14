@@ -12,12 +12,12 @@ module.exports = {
   select: select
 };
 
-function select(type, params) {
+function select(params) {
   let deferred = q.defer();
-  let hook = CHARGEBEE_EVENTS[type];
+  let hook = CHARGEBEE_EVENTS[params.event_type];
 
   if(hook) {
-    hook(params.subscriptionId, params.eventId).then(function(result) {
+    hook(params.content.subscription.id, params.id, params.provider).then(function(result) {
       deferred.resolve(result);
     }, function(error) {
       deferred.reject(error);

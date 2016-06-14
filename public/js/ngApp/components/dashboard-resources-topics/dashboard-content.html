@@ -1,120 +1,123 @@
 <section id='resources-topics' class='row' ng-controller='TopicsController as topics'>
-    <div class='col-md-12'>
-        <div class='dashboard-container margin-top-3rem'>
-            <div class='row'>
-                <div class='col-md-3'></div>
-                <div class='col-md-6'>
-                    <h2 class='text-center'>Topics</h2>
-                    <h4 class='text-center has-error text-red-dark'>{{ topics.error }}</h4>
-                    <h4 class='text-center'>{{ topics.message }}</h4>
-                </div>
-                <div class='col-md-3 text-right' ng-hide="!topics.list.length">
-                    <div class="btn-standart btn-green" ng-click="topics.createNew()">
-                        Create New Topic &nbsp;<img src="icons/add_new_list_green.png" alt="">
-                    </div>
-                </div>
-            </div>
+  <div class='col-md-12'>
+    <div class='dashboard-container margin-top-3rem'>
+      <div class='row'>
+        <div class='col-md-3'></div>
+        <div class='col-md-6'>
+          <h2 class='text-center'>Topics</h2>
+          <h4 class='text-center has-error text-red-dark'>{{ topics.error }}</h4>
+          <h4 class='text-center'>{{ topics.message }}</h4>
         </div>
+        <div class='col-md-3 text-right' ng-hide="!topics.list.length">
+          <div class="btn-standart btn-green" ng-click="topics.createNew()">
+            Create New Topic &nbsp;<img src="icons/add_new_list_green.png" alt="">
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class='col-md-12 fixed-bottom-margin margin-top-2rem'>
-        <div class='dashboard-container'>
-
-            <div id="no-topics-in-list" class="row" ng-show="!topics.list.length">
-                <div class="col-md-12"><h4>You don't have any topics. Add one.</h4></div>
-                <div class="col-md-12 margin-top-2rem">
-                    <div class="btn-standart btn-green" ng-click="topics.createNew()">
-                        Create New Topic &nbsp;<img src="icons/add_new_list_green.png" alt="">
-                    </div>
-                </div>
-
-            </div>
-
-            <div id="topics-list">
-                <div class="topic-list-item" ng-repeat="t in topics.list">
-                    <uib-accordion close-others="false">
-                        <uib-accordion-group is-open="up.modContentBlock.recruiter" heading="true">
-
-                            <uib-accordion-heading>
-                                <div>
-                                    <div class="panel-label">
-                                        <span ng-if="topics.editBlockHelper != $index">
-                                            {{t.name}}
-                                        </span>
-                                        <span ng-if="topics.editBlockHelper == $index">
-                                            <input id="topic-name-input-{{ $index }}" type="text" ng-model="t.name" maxlength="{{ ::topics.nameMaxSize}}" ng-blur="topics.saveInline($index, t.name)">
-                                            <span class="inline-editor-help">Characters left: {{ topics.nameMaxSize - t.name.length }}</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </uib-accordion-heading>
-                            <div ng-show="t.sessions.length" ng-repeat="s in t.sessions" class="row">
-                                <div class="col-md-10">{{ s.name }}</div> <div class="col-md-2">{{s.status}}</div>
-                            </div>
-                            <div ng-show="!t.sessions.length" class="row">
-                                <div class="col-md-10">This topic does not belong to any session</div> <div class="col-md-2"><!--<a href="">Bind to a session</a>--></div>
-                            </div>
-                        </uib-accordion-group>
-                    </uib-accordion>
-                    <div class="control-block">
-                        <span id="edit-block-{{ $index }}" class="edit-block animated slideInRight" style="display: none">
-                            <img src="/icons/ic_edit.png" alt="" title="Rename" ng-click="topics.edit($index, 'topic-name-input-'+$index)">
-                        </span>
-                        <img class="pull-right ic" ng-click="topics.deleteTopic(t.id)" src="/icons/dashboardElement_remove.png" alt="" title="Delete">
-                        <img class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" ng-click="topics.toggleEditBlock($index)">
-                    </div>
-
-                </div>
-
-            </div>
-
+  <div class='col-md-12 fixed-bottom-margin margin-top-2rem'>
+    <div class='dashboard-container'>
+      <div id="no-topics-in-list" class="row" ng-show="!topics.list.length">
+        <div class="col-md-12"><h4>You don't have any topics. Add one.</h4></div>
+        <div class="col-md-12 margin-top-2rem">
+          <div class="btn-standart btn-green" ng-click="topics.createNew()">
+            Create New Topic &nbsp;<img src="icons/add_new_list_green.png" alt="">
+          </div>
         </div>
+      </div>
+
+      <div id="topics-list">
+        <div class="topic-list-item" ng-repeat="t in topics.list">
+          <uib-accordion close-others="false">
+            <uib-accordion-group is-open="up.modContentBlock.recruiter" heading="true">
+              <uib-accordion-heading>
+                <div class="panel-label">
+                  <span ng-if="topics.editBlockHelper != $index">
+                    {{t.name}}
+                  </span>
+                  <span ng-if="topics.editBlockHelper == $index">
+                    <input id="topic-name-input-{{ $index }}" type="text" ng-model="t.name" maxlength="{{ ::topics.nameMaxSize}}" ng-blur="topics.saveInline($index, t.name)">
+                    <span class="inline-editor-help">Characters left: {{ topics.nameMaxSize - t.name.length }}</span>
+                  </span>
+                </div>
+              </uib-accordion-heading>
+
+              <div class="row">
+                <div class="col-md-10" ng-if="t.SessionTopics.length < 1 || !t.SessionTopics">
+                  This topic does not belong to any session.
+                </div>
+                <div class="col-md-12" ng-if="t.SessionTopics.length > 0">
+                  <div class="">
+                    <table class='table table-dashboardElements'>
+                      <thead>
+                        <tr class='background-green'>
+                          <th>Name</th>
+                          <th>Start Date</th>
+                          <th>End Date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class='{{ csc.rowClass(session) }}' ng-repeat='sessionTopic in t.SessionTopics'>
+                          <td>{{ sessionTopic.Session.name }}</td>
+                          <td>{{ sessionTopic.Session.startTime | date:dateFormat }}</td>
+                          <td>{{ sessionTopic.Session.endTime | date:dateFormat }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </uib-accordion-group>
+          </uib-accordion>
+          <div class="control-block">
+            <span id="edit-block-{{ $index }}" class="edit-block animated slideInRight" style="display: none">
+              <img src="/icons/ic_edit.png" alt="" title="Rename" ng-click="topics.edit($index, 'topic-name-input-'+$index)">
+            </span>
+            <img class="pull-right ic" ng-click="topics.deleteTopic(t.id)" src="/icons/dashboardElement_remove.png" alt="" title="Delete">
+            <img class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" ng-click="topics.toggleEditBlock($index)">
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-
-
-
-    <!--------- Modals --------->
-
-    <section>
-        <!-- plansModal -->
-        <div class='modal fade' id='createNewTopic' role='dialog'>
-            <div class='modal-dialog changePasswordModal' style="width: 800px">
-                <div class='modal-content border-green border-radius-none'>
-                    <div class='modal-header'>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h1 class='modal-title text-center'>Create New Topic</h1>
-                    </div>
-                    <div class='modal-body'>
-
-                        <form ng-submit="topics.validateNewAndAdd()">
-                            <div class="row">
-                                <div class="text-center">
-                                    <input id="new-topic-input"  type="text" maxlength="15" ng-model="topics.newTopicName">
-                                    <br>
-                                    <div id="new-topic-input-help"  >
-                                        Characters left: {{ topics.nameMaxSize - topics.newTopicName.length }}
-                                    </div>
-                                </div>
-
-
-                            </div>
-                        </form>
-
-                    </div>
-                    <div class='modal-footer'>
-                        <div type='button' class='pull-left btn-standart btn-red' data-dismiss='modal'>
-                            Cancel
-                        </div>
-
-                        <div type='submit' class='pull-right btn-standart btn-green'
-                             ng-click="topics.validateNewAndAdd()">Create
-                        </div>
-                    </div>
+  <!-- Modals -->
+  <section>
+    <!-- plansModal -->
+    <div class='modal fade' id='createNewTopic' role='dialog'>
+      <div class='modal-dialog changePasswordModal' style="width: 800px">
+        <div class='modal-content border-green border-radius-none'>
+          <div class='modal-header'>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h1 class='modal-title text-center'>Create New Topic</h1>
+          </div>
+          <div class='modal-body'>
+            <form ng-submit="topics.validateNewAndAdd()">
+              <div class="row">
+                <div class="text-center">
+                  <input id="new-topic-input"  type="text" maxlength="15" ng-model="topics.newTopicName">
+                  <br>
+                  <div id="new-topic-input-help"  >
+                    Characters left: {{ topics.nameMaxSize - topics.newTopicName.length }}
+                  </div>
                 </div>
+              </div>
+            </form>
+          </div>
+          <div class='modal-footer'>
+            <div type='button' class='pull-left btn-standart btn-red' data-dismiss='modal'>
+              Cancel
             </div>
+            <div type='submit' class='pull-right btn-standart btn-green' ng-click="topics.validateNewAndAdd()">
+              Create
+            </div>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
 
 </section>

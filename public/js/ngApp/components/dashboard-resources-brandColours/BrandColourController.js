@@ -38,9 +38,6 @@
         // if we want to open create step from the start
         if ($stateParams.new)  changePage('create');
       });
-
-
-
     }
 
     function removeScheme(scheme) {
@@ -148,16 +145,22 @@
         vm.currentPage = { page: 'index' };
       }
       else {
-        if(page == 'edit') {
-          vm.originalScheme = {};
-          angular.copy(scheme, vm.originalScheme);
-        }
-        else {
-          vm.originalScheme = null;
-        }
+        brandColourServices.canCreateCustomColors().then(function(res) {
+          if(res.error) {
+            messenger.error(res.error);
+          }else{
+            if(page == 'edit') {
+              vm.originalScheme = {};
+              angular.copy(scheme, vm.originalScheme);
+            }
+            else {
+              vm.originalScheme = null;
+            }
 
-        vm.scheme = scheme || { colours: { } };
-        vm.currentPage = { page: 'manage', type: page };
+            vm.scheme = scheme || { colours: { } };
+            vm.currentPage = { page: 'manage', type: page };
+          }
+        });
       }
     };
 

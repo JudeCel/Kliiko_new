@@ -23,14 +23,6 @@
       setNumberAndData(next, prev, vm.landlineController, 'landline');
     });
 
-    $rootScope.$on('modal-open', function(event, modal) {
-      if(modal == vm.modalName) {
-        setTimeout(function () {
-          setDefaults();
-        }, 50);
-      }
-    });
-
     function init(userInfo, modalName) {
       vm.userInfo = userInfo || {};
 
@@ -76,7 +68,6 @@
 
     function setDefaults() {
       var country;
-
       if(vm.mobileController) {
         if(vm.userInfo.phoneCountryData) {
           country = vm.userInfo.phoneCountryData.iso2 || vm.defaultCountry;
@@ -84,7 +75,6 @@
         else {
           country = vm.defaultCountry;
         }
-
         vm.mobileController.setCountry(country);
       }
 
