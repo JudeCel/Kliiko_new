@@ -72,7 +72,12 @@ describe('SERVICE - MyDashboard', function() {
         testData = result;
         subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {
           testData.subscription = subscription;
-          done();
+
+          models.SubscriptionPreference.update({'data.sessionCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
+            done();
+          }, function(error) {
+            done(error);
+          });
         }, function(error) {
           done(error);
         });
@@ -102,26 +107,27 @@ describe('SERVICE - MyDashboard', function() {
 
     describe('sad path', function() {
       it('should fail on finding session because not a member to session', function(done) {
-        SessionMember.findAll({
-          include: [AccountUser]
-        }).then(function(members) {
-          let object = {};
-          _.map(members, function(member) {
-            object[member.role] = member.AccountUser.UserId;
-          });
+        function successProvider(params) {
+          return function() {
+            return {
+              request: function(callback) {
+                callback(null, {
+                  subscription: { id: params.subscriptionId, plan_id: params.planId },
+                  customer: { id: params.customerId }
+                });
+              }
+            }
+          }
+        }
 
-          SessionMember.destroy({ where: { role: 'participant' } }).then(function() {
-            myDashboardServices.getAllSessions(object.participant).then(function(sessions) {
-              assert.deepEqual(sessions, []);
-              done();
-            }, function(error) {
-              done(error);
-            });
-          }).catch(function(error) {
-            done(error);
-          });
+        let invalidId = 9876;
+
+        myDashboardServices.getAllSessions(invalidId, successProvider(testData.subscription)).then(function(sessions) {
+          assert.deepEqual(sessions, []);
+          done();
+        }, function(error) {
+          done(error);
         });
-
       });
     });
   });

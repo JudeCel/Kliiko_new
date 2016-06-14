@@ -121,7 +121,6 @@ describe('SERVICE - SessionMember', function() {
               done();
             });
           }, function(error) {
-            console.log(error);
             done(error);
           });
         });

@@ -74,7 +74,6 @@ function getAllAccountUsers(userId, protocol) {
 function getAllSessions(userId, provider) {
   let deferred = q.defer();
 
-
   Session.findAll({
     include: [{
       model: SessionMember,
@@ -94,7 +93,6 @@ function getAllSessions(userId, provider) {
       }]
     }]
   }).then(function(sessions) {
-
     prepareSessions(sessions, provider).then(function(results) {
       deferred.resolve(results);
     }, function(error) {

@@ -506,7 +506,6 @@ function exportSurvey(params, account) {
 
 function canExportSurveyData(account) {
   let deferred = q.defer();
-
   validators.planAllowsToDoIt(account.id, 'exportRecruiterSurveyData').then(function() {
     deferred.resolve();
   }, function(error) {

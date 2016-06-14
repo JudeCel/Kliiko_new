@@ -21,7 +21,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: -1,
-    priority: -1,
+    priority: -20,
     surveyCount: 1
   },
   free_account: {
@@ -45,7 +45,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: 5,
-    priority: -1,
+    priority: -10,
     surveyCount: 1
   },
   senior_monthly: {
@@ -94,7 +94,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: -1,
-    priority: -1,
+    priority: -3,
     surveyCount: 4
   },
   core_monthly: {
@@ -143,7 +143,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: 20,
-    priority: -1,
+    priority: -2,
     surveyCount: 2
   },
   junior_monthly: {
