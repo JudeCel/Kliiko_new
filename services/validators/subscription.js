@@ -101,7 +101,6 @@ function validate(accountId, type, count) {
 function planAllowsToDoIt(accountId, key) {
   let deferred = q.defer();
 
-
   models.SubscriptionPreference.find({
     include: [{
       model: models.Subscription,

@@ -14,6 +14,7 @@ module.exports = {
     accessKlzziFocus: true,
     canInviteObserversToSession: true,
     paidSmsCount: 20,
+    planSmsCount: 20,
     discussionGuideTips: true,
     whiteboardFunctionality: true,
     uploadToGallery: true,
@@ -21,7 +22,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: -1,
-    priority: -1,
+    priority: -20,
     surveyCount: 1
   },
   free_account: {
@@ -38,6 +39,7 @@ module.exports = {
     accessKlzziFocus: true,
     canInviteObserversToSession: false,
     paidSmsCount: 0,
+    planSmsCount: 0,
     discussionGuideTips: true,
     whiteboardFunctionality: true,
     uploadToGallery: false,
@@ -45,7 +47,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: 5,
-    priority: -1,
+    priority: -10,
     surveyCount: 1
   },
   senior_monthly: {
@@ -62,6 +64,7 @@ module.exports = {
     accessKlzziFocus: true,
     canInviteObserversToSession: true,
     paidSmsCount: 75,
+    planSmsCount: 75,
     discussionGuideTips: true,
     whiteboardFunctionality: true,
     uploadToGallery: true,
@@ -87,6 +90,7 @@ module.exports = {
     accessKlzziFocus: true,
     canInviteObserversToSession: true,
     paidSmsCount: 75,
+    planSmsCount: 75,
     discussionGuideTips: true,
     whiteboardFunctionality: true,
     uploadToGallery: true,
@@ -94,7 +98,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: -1,
-    priority: -1,
+    priority: -3,
     surveyCount: 4
   },
   core_monthly: {
@@ -111,6 +115,7 @@ module.exports = {
     accessKlzziFocus: true,
     canInviteObserversToSession: true,
     paidSmsCount: 50,
+    planSmsCount: 50,
     discussionGuideTips: true,
     whiteboardFunctionality: true,
     uploadToGallery: true,
@@ -136,6 +141,7 @@ module.exports = {
     accessKlzziFocus: true,
     canInviteObserversToSession: true,
     paidSmsCount: 50,
+    planSmsCount: 50,
     discussionGuideTips: true,
     whiteboardFunctionality: true,
     uploadToGallery: true,
@@ -143,7 +149,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: 20,
-    priority: -1,
+    priority: -2,
     surveyCount: 2
   },
   junior_monthly: {
@@ -160,6 +166,7 @@ module.exports = {
     accessKlzziFocus: true,
     canInviteObserversToSession: false,
     paidSmsCount: 20,
+    planSmsCount: 20,
     discussionGuideTips: true,
     whiteboardFunctionality: true,
     uploadToGallery: true,
@@ -185,6 +192,7 @@ module.exports = {
     accessKlzziFocus: true,
     canInviteObserversToSession: false,
     paidSmsCount: 20,
+    planSmsCount: 20,
     discussionGuideTips: true,
     whiteboardFunctionality: true,
     uploadToGallery: true,

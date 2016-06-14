@@ -51,8 +51,6 @@ describe('ROUTE - Chargebee Webhooks', function() {
   }
 
   function subParams() {
-    console.log();
-
     return {
       accountId: testData.account.id,
       subscriptionPlanId: testSubscription.subscriptionPlanId,

@@ -284,7 +284,6 @@ describe('SERVICE - Subscription', function() {
           subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: subscription.SubscriptionPlan.chargebeePlanId}, providers).then(function(subscription) {
             done('Should not get here!');
           }, function(error) {
-            console.log(error);
             assert.equal(error, "Can't switch to current plan");
             done();
           });
@@ -632,22 +631,6 @@ describe('SERVICE - Subscription', function() {
         }, function(error) {
           assert.deepEqual(error, subscriptionServices.messages.notFound.subscription);
           done();
-        });
-      });
-
-      it('should fail no dependencies', function(done) {
-        subscriptionServices.cancelSubscription(subId, 'someEventId').then(function(result) {
-          return result.promise;
-        }).then(function() {
-          return surveyPromise();
-        }).then(function(c) {
-          assert.equal(c, 0);
-          return sessionPromise();
-        }).then(function(c) {
-          assert.equal(c, 0);
-          done();
-        }).catch(function(error) {
-          done(error);
         });
       });
     });
