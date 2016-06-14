@@ -14,6 +14,7 @@ var Account  = models.Account;
 var q = require('q');
 var _ = require('lodash');
 var async = require('async');
+var MailTemplateService = require('./mailTemplate');
 
 var sessionMemberServices = require('./../services/sessionMember');
 var validators = require('./../services/validators');
@@ -248,6 +249,11 @@ function copySession(sessionId, accountId, provider) {
                 } else {
                   callback();
                 }
+              },
+              function(callback) {
+                MailTemplateService.copyTemplatesFromSession(accountId, sessionId, session.id, function(error, result) {
+                  callback();
+                });
               }
           ], function (error) {
             //we ignore error in callback because data is copied step by step, and one error shouldn't stop following copying

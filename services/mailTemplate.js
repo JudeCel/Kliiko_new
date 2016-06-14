@@ -26,7 +26,8 @@ module.exports = {
   sendMailFromTemplateWithCalendarEvent: sendMailFromTemplateWithCalendarEvent,
   composePreviewMailTemplate: composePreviewMailTemplate,
   getActiveMailTemplate: getActiveMailTemplate,
-  getMailTemplateTypeList: getMailTemplateTypeList
+  getMailTemplateTypeList: getMailTemplateTypeList,
+  copyTemplatesFromSession: copyTemplatesFromSession
 };
 
 var templateHeaderListFields = [
@@ -272,6 +273,33 @@ function copyBaseTemplatesForSession(accountId, sessionId, callback) {
     }, function(err) {
        callback(err);
     })
+  });
+}
+
+function copyTemplatesFromSession(accountId, sessionIdFrom, sessionIdTo, callback) {
+  getAllSessionMailTemplates(accountId, false, sessionIdFrom, false, true, function(error, result) {
+    if (error) {
+      return callback(error);
+    }
+    var dataToCopy = [];
+    for (var i = 0; i < result.length; i++) {
+      if (result[i].AccountId) {
+        result[i].sessionId = sessionIdTo;
+        delete result[i].id;
+
+        dataToCopy.push(result[i]);
+      }
+    }
+
+    if (dataToCopy.length) {
+      MailTemplate.bulkCreate(dataToCopy).done(function(res) {
+         callback(null, res);
+      }, function(err) {
+         callback(err);
+      })
+    } else {
+      callback(null);
+    }
   });
 }
 
