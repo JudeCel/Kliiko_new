@@ -186,6 +186,31 @@ function removeSession(sessionId, accountId, provider) {
   return deferred.promise;
 };
 
+function copySessionTopics(accountId, fromSessionId, toSessionId) {
+  topicsService.getAll(accountId).then(function(allTopics) {
+    let topicsArray = [];
+    allTopics.map(function(topic) {
+      topic.SessionTopics.map(function(topicItem) {
+
+        if (fromSessionId == topicItem.sessionId) {
+          topic.accountId = accountId;
+          topic.order = topicItem.order;
+          topicsArray.push(topic);
+        }
+      });
+    });
+
+    topicsService.updateSessionTopics(toSessionId, topicsArray).then(function(successResponse) {
+
+    }, function(failureResponse) {
+
+    });
+
+  }, function(error) {
+
+  });
+}
+
 function copySession(sessionId, accountId, provider) {
   let deferred = q.defer();
 
@@ -201,28 +226,7 @@ function copySession(sessionId, accountId, provider) {
             delete facilitator.id;
             delete facilitator.token;
 
-            topicsService.getAll(accountId).then(function(allTopics) {
-              let topicsArray = [];
-              allTopics.map(function(topic) {
-                topic.SessionTopics.map(function(topicItem) {
-
-                  if (sessionId == topicItem.sessionId) {
-                    topic.accountId = accountId;
-                    topic.order = topicItem.order;
-                    topicsArray.push(topic);
-                  }
-                });
-              });
-
-              topicsService.updateSessionTopics(session.id, topicsArray).then(function(successResponse) {
-
-              }, function(failureResponse) {
-
-              });
-
-            }, function(error) {
-
-            });
+            copySessionTopics(accountId, sessionId, session.id);
             // Not confirmed.
             copySessionMember(session, facilitator, provider).then(function(copy) {
               modifySessions(copy, accountId, provider).then(function(result) {
