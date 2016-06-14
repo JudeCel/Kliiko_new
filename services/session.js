@@ -224,7 +224,7 @@ function copySession(sessionId, accountId, provider) {
         let facilitator = result.data.dataValues.facilitator;
         delete result.data.dataValues.id;
         delete result.data.dataValues.facilitator;
-
+        result.data.dataValues.step = "setUp";
         Session.create(result.data.dataValues).then(function(session) {
           async.waterfall([
               function (callback) {
