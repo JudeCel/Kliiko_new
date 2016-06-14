@@ -4,6 +4,7 @@ var policy = require('./../middleware/policy');
 var models = require('./../models');
 var filters = require('./../models/filters');
 var subscriptionService = require('./subscription');
+var topicsService = require('./topics');
 var Session  = models.Session;
 var Invite  = models.Invite;
 var SessionMember  = models.SessionMember;
@@ -200,6 +201,28 @@ function copySession(sessionId, accountId, provider) {
             delete facilitator.id;
             delete facilitator.token;
 
+            topicsService.getAll(accountId).then(function(allTopics) {
+              let topicsArray = [];
+              allTopics.map(function(topic) {
+                topic.SessionTopics.map(function(topicItem) {
+
+                  if (sessionId == topicItem.sessionId) {
+                    topic.accountId = accountId;
+                    topic.order = topicItem.order;
+                    topicsArray.push(topic);
+                  }
+                });
+              });
+
+              topicsService.updateSessionTopics(session.id, topicsArray).then(function(successResponse) {
+
+              }, function(failureResponse) {
+
+              });
+
+            }, function(error) {
+
+            });
             // Not confirmed.
             copySessionMember(session, facilitator, provider).then(function(copy) {
               modifySessions(copy, accountId, provider).then(function(result) {
