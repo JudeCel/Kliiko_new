@@ -11,7 +11,9 @@ var q = require('q');
 
 var validAttributes = [
   'comment',
-  'active'
+  'active',
+  'accountId',
+  'userId'
 ];
 
 function findAllAccounts(callback) {
