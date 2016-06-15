@@ -240,8 +240,7 @@ function copySession(sessionId, accountId, provider) {
                 if(facilitator) {
                   delete facilitator.id;
                   delete facilitator.token;
-                  copySessionMember(session, facilitator, provider).then(function(copy) {
-                    session = copy;
+                  copySessionMember(session, facilitator, provider).then(function() {
                     callback();
                   }, function(error) {
                     callback();
@@ -276,8 +275,12 @@ function copySession(sessionId, accountId, provider) {
 };
 
 function prepareModifiedSessions(session, accountId, provider, deferred) {
-  modifySessions(session, accountId, provider).then(function(result) {
-    deferred.resolve(simpleParams(result, MESSAGES.copied));
+  findSession(session.id, session.accountId, provider).then(function(result) {
+    modifySessions(result.data, accountId, provider).then(function(result) {
+      deferred.resolve(simpleParams(result, MESSAGES.copied));
+    }, function(error) {
+      deferred.reject(error);
+    });
   }, function(error) {
     deferred.reject(error);
   });
@@ -405,11 +408,7 @@ function copySessionMember(session, facilitator, provider) {
   let deferred = q.defer();
   facilitator.sessionId = session.id;
   sessionMemberServices.createWithTokenAndColour(facilitator).then(function(sessionMember) {
-    findSession(session.id, session.accountId, provider).then(function(result) {
-      deferred.resolve(result.data);
-    }, function(error) {
-      deferred.reject(error);
-    });
+     deferred.resolve();
   }, function(error) {
     deferred.reject(error);
   });

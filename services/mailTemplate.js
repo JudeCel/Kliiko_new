@@ -282,14 +282,14 @@ function copyTemplatesFromSession(accountId, sessionIdFrom, sessionIdTo, callbac
       return callback(error);
     }
     var dataToCopy = [];
-    for (var i = 0; i < result.length; i++) {
-      if (result[i].AccountId) {
-        result[i].sessionId = sessionIdTo;
-        delete result[i].id;
+    _.map(result, function(item, index) {
+      if (item.AccountId) {
+        item.sessionId = sessionIdTo;
+        delete item.id;
 
-        dataToCopy.push(result[i]);
+        dataToCopy.push(item);
       }
-    }
+    });
 
     if (dataToCopy.length) {
       MailTemplate.bulkCreate(dataToCopy).done(function(res) {
