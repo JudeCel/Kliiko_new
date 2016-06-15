@@ -242,13 +242,13 @@ function validateRow(emails, contactList, row, uniqRowListCounter) {
 
     if(!row.hasOwnProperty(key)) {
       // Column not  found
-      error[key] = '';
+      error[key] = 'Column not  found';
       --validKeyCount
     }
     else {
       if(rowData.length == 0) {
         // Field is empty
-        error[key] = '';
+        error[key] = 'Field is empty';
         --validKeyCount
       }
 
