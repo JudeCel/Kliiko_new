@@ -555,19 +555,33 @@
       return userList;
     }
 
-    function processMappingFields() {
+    function prepareOutputObject() {
       var output = {valid:[], invalid:[], duplicateEntries: []};
       vm.contactListToAdd = processMappingListSegment(vm.currentContactListData.valid);
       output.valid = vm.contactListToAdd;
       output.invalid = processMappingListSegment(vm.currentContactListData.invalid);
       output.duplicateEntries = processMappingListSegment(vm.currentContactListData.duplicateEntries);
+      return output;
+    }
 
+    function processMappingFields() {
+      var output = prepareOutputObject();
       vm.lists.generateImportPreview(output);
     }
 
     //assigns contact info to mapped fields
     function mappingFieldsContinue() {
-      processMappingFields();
+      var output = prepareOutputObject();
+      var arrayToTest = output.valid.concat(output.invalid).concat(output.duplicateEntries);
+      vm.lists.validateContactImportData(arrayToTest).then(function(res) {
+        console.log("____testSuccess", res);
+        vm.lists.generateImportPreview(res.result);
+      }, function(err) {
+        console.log("____testFailed", err);
+      });
+
+
+      //processMappingFields();
       domServices.modal('contactList-addNewListFieldsModal', 'close');
       domServices.modal('modals-import-preview');
     }

@@ -22,7 +22,8 @@ module.exports = {
   allByAccount: allByAccount,
   destroy: destroy,
   createDefaultLists: createDefaultLists,
-  parseFile: require('./contactListImport').parseFile
+  parseFile: require('./contactListImport').parseFile,
+  validateContactList: require('./contactListImport').validateContactList
 };
 
 function destroy(contacListId, accoutId) {

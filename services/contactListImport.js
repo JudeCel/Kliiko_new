@@ -11,7 +11,64 @@ var xlsx = require('xlsx');
 var path = require('path');
 
 module.exports = {
-  parseFile: parseFile
+  parseFile: parseFile,
+  validateContactList: validateContactList
+};
+
+function validateContactList(id, list) {
+  let deferred = q.defer();
+
+  ContactList.find({ where: { id: id } }).then(function(contactList) {
+
+    if(contactList) {
+      models.AccountUser.findAll({
+        attributes: ['email'],
+        include: [{
+          model: models.ContactListUser,
+          where: {
+            contactListId: contactList.id,
+            accountId: contactList.accountId
+          }
+        }]
+      }).then(function(results) {
+        let emails = _.map(results, function(value) {
+          return value.email;
+        });
+        // main processing here
+        let object = defaultParserObject(contactList);
+        let uniqRowListCounter = {};
+
+        async.forEach(list, function(data, cb) {
+          if (data.validationErrors) {
+            delete data.validationErrors;
+          }
+
+          validateRow(emails, contactList, data, uniqRowListCounter).then(function() {
+            object.valid.push(data);
+            cb();
+          }, function(error) {
+            data.validationErrors = error;
+            if(data.isValid){object.invalid.push(data)};
+            cb();
+          });
+
+        }, function() {
+          addDublicateEntries(object, uniqRowListCounter);
+          deferred.resolve(object);
+        });
+
+      }).catch(models.User.sequelize.ValidationError, function(error) {
+        deferred.reject(error);
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
+    }
+    else {
+      deferred.reject('ContactList not found!');
+    }
+  });
+
+  return deferred.promise;
 };
 
 function parseFile(id, filePath) {
