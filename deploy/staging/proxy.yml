@@ -77,4 +77,3 @@ kind: Secret
 metadata:
   name: ssl-proxy-secret
 type: Opaque
----

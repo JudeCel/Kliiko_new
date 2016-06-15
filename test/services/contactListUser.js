@@ -34,7 +34,7 @@ describe('Services -> ContactListUser', () => {
         return {
           request: function(callback) {
             callback(null, {
-              subscription: { id: params.id, plan_id: 'unlimited' },
+              subscription: { id: params.id, plan_id: 'senior_monthly' },
               customer: { id: params.id }
             });
           }
@@ -57,10 +57,14 @@ describe('Services -> ContactListUser', () => {
               TestAccountUser = accountUsers[0]
               TestAccount.getContactLists().then(function(CLUResults) {
                 TestContactList = CLUResults[0];
-                subscriptionFixture.createPlans().then(function() {
+                subscriptionFixture.createPlans().then(function(res) {
                   subscriptionServices.createSubscription(TestAccount.id, TestUser.id, successProvider({ id: 'SomeUniqueID' })).then(function(subscription) {
                     done();
+                  }, function(error) {
+                    done(error);
                   });
+                }, function(error) {
+                  done(error);
                 })
               });
             })
