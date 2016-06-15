@@ -4,6 +4,7 @@ var policy = require('./../middleware/policy');
 var models = require('./../models');
 var filters = require('./../models/filters');
 var subscriptionService = require('./subscription');
+var topicsService = require('./topics');
 var Session  = models.Session;
 var Invite  = models.Invite;
 var SessionMember  = models.SessionMember;
@@ -12,6 +13,8 @@ var Account  = models.Account;
 
 var q = require('q');
 var _ = require('lodash');
+var async = require('async');
+var MailTemplateService = require('./mailTemplate');
 
 var sessionMemberServices = require('./../services/sessionMember');
 var validators = require('./../services/validators');
@@ -185,38 +188,76 @@ function removeSession(sessionId, accountId, provider) {
   return deferred.promise;
 };
 
+function copySessionTopics(accountId, fromSessionId, toSessionId) {
+  let deferred = q.defer();
+  topicsService.getAll(accountId).then(function(allTopics) {
+    let topicsArray = [];
+    allTopics.map(function(topic) {
+      topic.SessionTopics.map(function(topicItem) {
+
+        if (fromSessionId == topicItem.sessionId) {
+          topic.accountId = accountId;
+          topic.order = topicItem.order;
+          topicsArray.push(topic);
+        }
+      });
+    });
+
+    topicsService.updateSessionTopics(toSessionId, topicsArray).then(function(successResponse) {
+      deferred.resolve(successResponse);
+    }, function(failureResponse) {
+      deferred.reject(failureResponse);
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
 function copySession(sessionId, accountId, provider) {
   let deferred = q.defer();
 
   validators.hasValidSubscription(accountId).then(function() {
     validators.subscription(accountId, 'session', 1).then(function() {
       findSession(sessionId, accountId, provider).then(function(result) {
+        let facilitator = result.data.dataValues.facilitator;
         delete result.data.dataValues.id;
-
+        delete result.data.dataValues.facilitator;
+        result.data.dataValues.step = "setUp";
         Session.create(result.data.dataValues).then(function(session) {
-          let facilitator = result.data.dataValues.facilitator;
-          if(facilitator) {
-            delete facilitator.id;
-            delete facilitator.token;
-
-            // Not confirmed.
-            copySessionMember(session, facilitator, provider).then(function(copy) {
-              modifySessions(copy, accountId, provider).then(function(result) {
-                deferred.resolve(simpleParams(result, MESSAGES.copied));
-              }, function(error) {
-                deferred.reject(error);
-              });
-            }, function(error) {
-              deferred.reject(error);
-            });
-          }
-          else {
-            modifySessions(session, accountId, provider).then(function(result) {
-              deferred.resolve(simpleParams(result, MESSAGES.copied));
-            }, function(error) {
-              deferred.reject(error);
-            });
-          }
+          async.waterfall([
+              function (callback) {
+                copySessionTopics(accountId, sessionId, session.id).then(function(successResponse) {
+                  callback();
+                }, function(errorResponse) {
+                  //we ignore error because data is copied step by step, and one error shouldn't stop following copying
+                  callback();
+                });
+              },
+              function (callback) {
+                //copying facilitator
+                if(facilitator) {
+                  delete facilitator.id;
+                  delete facilitator.token;
+                  copySessionMember(session, facilitator, provider).then(function() {
+                    callback();
+                  }, function(error) {
+                    callback();
+                  });
+                } else {
+                  callback();
+                }
+              },
+              function(callback) {
+                MailTemplateService.copyTemplatesFromSession(accountId, sessionId, session.id, function(error, result) {
+                  callback();
+                });
+              }
+          ], function (error) {
+            //we ignore error in callback because data is copied step by step, and one error shouldn't stop following copying
+            prepareModifiedSessions(session, accountId, provider, deferred);
+          });
         }).catch(function(error) {
           deferred.reject(filters.errors(error));
         });
@@ -232,6 +273,18 @@ function copySession(sessionId, accountId, provider) {
 
   return deferred.promise;
 };
+
+function prepareModifiedSessions(session, accountId, provider, deferred) {
+  findSession(session.id, session.accountId, provider).then(function(result) {
+    modifySessions(result.data, accountId, provider).then(function(result) {
+      deferred.resolve(simpleParams(result, MESSAGES.copied));
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+}
 
 function chatRoomUrl() {
   return '/chat/';
@@ -353,13 +406,9 @@ function findAllSessionsAsMember(userId, accountId, provider) {
 
 function copySessionMember(session, facilitator, provider) {
   let deferred = q.defer();
-
-  sessionMemberServices.createWithTokenAndColour(facilitator).then(function() {
-    findSession(session.id, session.accountId, provider).then(function(result) {
-      deferred.resolve(result.data);
-    }, function(error) {
-      deferred.reject(error);
-    });
+  facilitator.sessionId = session.id;
+  sessionMemberServices.createWithTokenAndColour(facilitator).then(function(sessionMember) {
+     deferred.resolve();
   }, function(error) {
     deferred.reject(error);
   });
