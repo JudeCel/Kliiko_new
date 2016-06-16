@@ -9,6 +9,7 @@ var async = require('async');
 var csv = require('fast-csv');
 var xlsx = require('xlsx');
 var path = require('path');
+var constants = require('../util/constants');
 
 module.exports = {
   parseFile: parseFile,
@@ -18,7 +19,8 @@ module.exports = {
 let requiredFields = ["firstName", "lastName", "gender", "email"];
 let importErrors = {
   fieldRequired: "Required",
-  emailTaken: 'Email already taken'
+  emailTaken: 'Email already taken',
+  emailInvalidFormat: "Email has invalid format"
 }
 
 function validateContactList(id, list) {
@@ -255,10 +257,14 @@ function validateRow(emails, contactList, row, uniqRowListCounter) {
       }
 
       if(key == 'email') {
-        uniqRowListCounterFun(key, row, uniqRowListCounter)
+        uniqRowListCounterFun(key, row, uniqRowListCounter);
 
-        if (_.includes(emails, rowData)) {
-          error[key] = importErrors.emailTaken;
+        if (constants.emailRegExp.test(rowData)) {
+          if (_.includes(emails, rowData)) {
+            error[key] = importErrors.emailTaken;
+          }
+        } else {
+          error[key] = importErrors.emailInvalidFormat;
         }
       }
     }
