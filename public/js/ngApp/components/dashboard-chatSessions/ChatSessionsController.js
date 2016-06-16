@@ -44,7 +44,7 @@
 
       if(facilitatorEmail == user.email) {
         isMemeber = true;
-      }else{
+      }else if (members) {
         members.map(function(member) {
           if(member.AccountUser.email == user.email) {
             isMemeber = true;

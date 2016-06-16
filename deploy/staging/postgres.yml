@@ -1,0 +1,60 @@
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    name: postgres
+    role: master
+  template:
+    metadata:
+      labels:
+        name: postgres
+        role: master
+    spec:
+      containers:
+        - name: postgres
+          image: msiegenthaler/postgres-kubernetes@9.5
+          ports:
+            - name: transport
+              containerPort: 5432
+          volumeMounts:
+            - name: data-storage
+              mountPath: /var/lib/postgresql/data
+            - name: credentials
+              mountPath: /etc/postgres-credentials
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+      volumes:
+        - name: data-storage
+          gcePersistentDisk:
+            pdName: postgres-disk
+            fsType: ext4
+        - name: credentials
+          secret:
+            secretName: postgres-credentials
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-credentials
+data:
+  user: cG9zdGdyZXM=
+  password: bldENDRMUzNiWXMyOUplUA==
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-master
+  labels:
+    name: postgres
+    role: master
+spec:
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    name: postgres
+    role: master
