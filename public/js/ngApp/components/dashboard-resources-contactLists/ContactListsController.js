@@ -549,7 +549,7 @@
         }//for
 
         user.rowNr = list[j].rowNr;
-
+        user.validationErrors = list[j].validationErrors;
         userList.push(user);
       }//for
       return userList;
@@ -572,16 +572,15 @@
     //assigns contact info to mapped fields
     function mappingFieldsContinue() {
       var output = prepareOutputObject();
+      var data = vm.currentContactListData;
+      //gather processed fields to retest after remaping
       var arrayToTest = output.valid.concat(output.invalid).concat(output.duplicateEntries);
       vm.lists.validateContactImportData(arrayToTest).then(function(res) {
-        console.log("____testSuccess", res);
         vm.lists.generateImportPreview(res.result);
       }, function(err) {
-        console.log("____testFailed", err);
+        messenger.error('Field Re-Map failed');
       });
 
-
-      //processMappingFields();
       domServices.modal('contactList-addNewListFieldsModal', 'close');
       domServices.modal('modals-import-preview');
     }

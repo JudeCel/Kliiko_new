@@ -239,7 +239,6 @@
         data: {uploadedfile: file}
       }).then(function (res) {
         deferred.resolve(res);
-        //testContactImport(listId, res.data.result.invalid);
       }, function (err) {
         deferred.reject(err);
       });
