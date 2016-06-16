@@ -549,25 +549,38 @@
         }//for
 
         user.rowNr = list[j].rowNr;
-
+        user.validationErrors = list[j].validationErrors;
         userList.push(user);
       }//for
       return userList;
     }
 
-    function processMappingFields() {
+    function prepareOutputObject() {
       var output = {valid:[], invalid:[], duplicateEntries: []};
       vm.contactListToAdd = processMappingListSegment(vm.currentContactListData.valid);
       output.valid = vm.contactListToAdd;
       output.invalid = processMappingListSegment(vm.currentContactListData.invalid);
       output.duplicateEntries = processMappingListSegment(vm.currentContactListData.duplicateEntries);
+      return output;
+    }
 
+    function processMappingFields() {
+      var output = prepareOutputObject();
       vm.lists.generateImportPreview(output);
     }
 
     //assigns contact info to mapped fields
     function mappingFieldsContinue() {
-      processMappingFields();
+      var output = prepareOutputObject();
+      var data = vm.currentContactListData;
+      //gather processed fields to retest after remaping
+      var arrayToTest = output.valid.concat(output.invalid).concat(output.duplicateEntries);
+      vm.lists.validateContactImportData(arrayToTest).then(function(res) {
+        vm.lists.generateImportPreview(res.result);
+      }, function(err) {
+        messenger.error('Field Re-Map failed');
+      });
+
       domServices.modal('contactList-addNewListFieldsModal', 'close');
       domServices.modal('modals-import-preview');
     }
