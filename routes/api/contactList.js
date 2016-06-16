@@ -109,7 +109,6 @@ function validateContacts(req, res, next) {
   contactListService.validateContactList(contactListId, req.body.contactsArray).then(function(result) {
     res.send({success: true, result: result});
   }, function(err) {
-    res.status(415);
     res.send({error:err});
   })
 }
