@@ -378,11 +378,20 @@ function updateSubscriptionData(passThruContent){
 }
 
 function cancelSubscription(subscriptionId, eventId, provider) {
-  let deferred = q.defer();
+  console.log("+++++++++++++== services/subscription.js", "PARAMS");
+  console.log(subscriptionId, eventId);
+  console.log("+++++++++++++== services/subscription.js", "PARAMS");
 
+  let deferred = q.defer();
   findSubscriptionByChargebeeId(subscriptionId).then(function(subscription) {
-    updateSubscription({accountId: subscription.accountId, newPlanId: "free_account"}, provider).then(function(result) {
-      deferred.resolve({ result: result });
+    console.log("+++++++++++++== services/subscription.js", "subscription");
+    console.log(subscription);
+    console.log("+++++++++++++== services/subscription.js", "subscription");
+    updateSubscription({accountId: subscription.accountId, newPlanId: "free_account"}, provider).then(function() {
+      console.log("+++++++++++++== services/subscription.js", "free_account");
+      console.log("EVERYTHING WENT WELL");
+      console.log("+++++++++++++== services/subscription.js", "free_account");
+      deferred.resolve();
     }, function(error) {
       deferred.reject(error);
     });
