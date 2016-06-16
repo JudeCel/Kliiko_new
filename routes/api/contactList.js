@@ -12,7 +12,8 @@ module.exports = {
   destroy: destroy,
   update: update,
   parseImportFile: parseImportFile,
-  importContacts: importContacts
+  importContacts: importContacts,
+  validateContacts: validateContacts
 };
 
 function index(req, res, next) {
@@ -97,9 +98,18 @@ function parseImportFile(req, res, next) {
     res.send({success: true, result: result});
     fs.unlink(file.path);
   }, function(err) {
-    res.status(415);
     res.send({error:err});
     fs.unlink(file.path);
+  })
+}
+
+function validateContacts(req, res, next) {
+  validations.params(res, req.params.id, 'query param @id is missed');
+  let contactListId = req.params.id;
+  contactListService.validateContactList(contactListId, req.body.contactsArray).then(function(result) {
+    res.send({success: true, result: result});
+  }, function(err) {
+    res.send({error:err});
   })
 }
 

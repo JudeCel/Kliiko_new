@@ -109,6 +109,8 @@ router.post('/contactLists', policy.authorized(['accountManager', 'admin']), con
 
 router.post('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']), contactListImport.single('uploadedfile'), contactList.parseImportFile);
 router.put('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']), contactList.importContacts);
+router.post('/contactLists/:id/validate', policy.authorized(['accountManager', 'admin']), contactList.validateContacts);
+
 router.put('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.update);
 router.delete('/contactLists/:id', policy.authorized(['accountManager', 'admin']), contactList.destroy);
 

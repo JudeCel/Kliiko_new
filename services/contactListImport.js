@@ -11,7 +11,66 @@ var xlsx = require('xlsx');
 var path = require('path');
 
 module.exports = {
-  parseFile: parseFile
+  parseFile: parseFile,
+  validateContactList: validateContactList
+};
+
+let requiredFields = ["firstName", "lastName", "gender", "email"];
+let importErrors = {
+  fieldRequired: "Required",
+  emailTaken: 'Email already taken'
+}
+
+function validateContactList(id, list) {
+  let deferred = q.defer();
+
+  ContactList.find({ where: { id: id } }).then(function(contactList) {
+
+    if(contactList) {
+      models.AccountUser.findAll({
+        attributes: ['email'],
+        include: [{
+          model: models.ContactListUser,
+          where: {
+            contactListId: contactList.id,
+            accountId: contactList.accountId
+          }
+        }]
+      }).then(function(results) {
+        let emails = _.map(results, "email");
+
+        // main processing here
+        let object = defaultParserObject(contactList);
+        let uniqueRowListCounter = {};
+
+        async.forEach(list, function(data, cb) {
+          delete data.validationErrors;
+          validateRow(emails, contactList, data, uniqueRowListCounter).then(function() {
+            object.valid.push(data);
+            cb();
+          }, function(error) {
+            data.validationErrors = error;
+            if(data.isValid){object.invalid.push(data)};
+            cb();
+          });
+
+        }, function() {
+          addDublicateEntries(object, uniqueRowListCounter);
+          deferred.resolve(object);
+        });
+
+      }).catch(models.User.sequelize.ValidationError, function(error) {
+        deferred.reject(error);
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
+    }
+    else {
+      deferred.reject('ContactList not found!');
+    }
+  });
+
+  return deferred.promise;
 };
 
 function parseFile(id, filePath) {
@@ -182,16 +241,16 @@ function validateRow(emails, contactList, row, uniqRowListCounter) {
 
   _.map(contactList.defaultFields, function(key) {
     let rowData = row[key];
-
-    if(!row.hasOwnProperty(key)) {
+    let keyRequired = requiredFields.indexOf(key) > -1;
+    if(!rowData && keyRequired) {
       // Column not  found
-      error[key] = '';
+      error[key] = importErrors.fieldRequired;
       --validKeyCount
     }
     else {
-      if(rowData.length == 0) {
+      if(rowData && rowData.length == 0 && keyRequired) {
         // Field is empty
-        error[key] = '';
+        error[key] = importErrors.fieldRequired;
         --validKeyCount
       }
 
@@ -199,21 +258,8 @@ function validateRow(emails, contactList, row, uniqRowListCounter) {
         uniqRowListCounterFun(key, row, uniqRowListCounter)
 
         if (_.includes(emails, rowData)) {
-          error[key] = 'Email already taken';
+          error[key] = importErrors.emailTaken;
         }
-      }
-    }
-  });
-
-  _.map(contactList.customFields, function(key) {
-    let rowData = row[key];
-
-    if(!row.hasOwnProperty(key)) {
-      error[key] = '';
-
-    }else {
-      if(rowData.length == 0){
-        error[key] = '';
       }
     }
   });

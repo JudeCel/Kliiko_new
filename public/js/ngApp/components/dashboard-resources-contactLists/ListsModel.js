@@ -25,6 +25,7 @@
     ListsModel.prototype.parseImportFile = parseImportFile;
     ListsModel.prototype.generateImportPreview = generateImportPreview;
     ListsModel.prototype.addImportedContacts = addImportedContacts;
+    ListsModel.prototype.validateContactImportData = validateContactImportData;
 
     return ListsModel;
 
@@ -389,7 +390,17 @@
       });
 
       return deferred.promise;
+    }
 
+    function validateContactImportData(contactList) {
+      var deferred = $q.defer();
+      contactListServices.validateContactImportData(this.activeList.id, contactList).then(function(res) {
+        deferred.resolve(res);
+      }, function(err) {
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
     }
 
     /**

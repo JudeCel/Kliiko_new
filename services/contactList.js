@@ -9,6 +9,7 @@ var _ = require('lodash');
 var async = require('async');
 var constants = require('../util/constants');
 var validators = require('./../services/validators');
+var contactListImport = require('./contactListImport');
 
 var csv = require('fast-csv');
 var xlsx = require('xlsx');
@@ -16,13 +17,15 @@ var path = require('path');
 const ROW_NR = 2;
 const MAX_CUSTOM_FIELDS = 16;
 
+
 module.exports = {
   create: create,
   update: update,
   allByAccount: allByAccount,
   destroy: destroy,
   createDefaultLists: createDefaultLists,
-  parseFile: require('./contactListImport').parseFile
+  parseFile: contactListImport.parseFile,
+  validateContactList: contactListImport.validateContactList
 };
 
 function destroy(contacListId, accoutId) {
