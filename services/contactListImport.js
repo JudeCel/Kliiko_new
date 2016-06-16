@@ -15,6 +15,12 @@ module.exports = {
   validateContactList: validateContactList
 };
 
+let requiredFields = ["firstName", "lastName", "gender", "email"];
+let importErrors = {
+  fieldRequired: "Required",
+  emailTaken: 'Email already taken'
+}
+
 function validateContactList(id, list) {
   let deferred = q.defer();
 
@@ -239,16 +245,16 @@ function validateRow(emails, contactList, row, uniqRowListCounter) {
 
   _.map(contactList.defaultFields, function(key) {
     let rowData = row[key];
-
-    if(!row.hasOwnProperty(key)) {
+    let keyRequired = requiredFields.indexOf(key) > -1;
+    if(!rowData && keyRequired) {
       // Column not  found
-      error[key] = 'Column not  found';
+      error[key] = importErrors.fieldRequired;
       --validKeyCount
     }
     else {
-      if(rowData.length == 0) {
+      if(rowData && rowData.length == 0 && keyRequired) {
         // Field is empty
-        error[key] = 'Field is empty';
+        error[key] = importErrors.fieldRequired;
         --validKeyCount
       }
 
@@ -256,21 +262,8 @@ function validateRow(emails, contactList, row, uniqRowListCounter) {
         uniqRowListCounterFun(key, row, uniqRowListCounter)
 
         if (_.includes(emails, rowData)) {
-          error[key] = 'Email already taken';
+          error[key] = importErrors.emailTaken;
         }
-      }
-    }
-  });
-
-  _.map(contactList.customFields, function(key) {
-    let rowData = row[key];
-
-    if(!row.hasOwnProperty(key)) {
-      error[key] = '';
-
-    }else {
-      if(rowData.length == 0){
-        error[key] = '';
       }
     }
   });
