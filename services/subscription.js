@@ -302,7 +302,7 @@ function updateSubscription(params, providers) {
   gatherInformation(params.accountId, params.newPlanId).then(function(result) {
     canSwitchPlan(params.accountId, result.currentPlan, result.newPlan).then(function() {
       accountHasValidCeditCard(result.subscription.subscriptionId, providers.creditCard).then(function(creditCardStatus){
-        if(validCard(creditCardStatus)){
+        if(params.skipCardCheck || validCard(creditCardStatus)){
           chargebeeSubUpdate(chargebeePassParams(result), providers.updateProvider).then(function(chargebeSubscription) {
             updateSubscriptionData(chargebeePassParams(result)).then(function(result) {
               deferred.resolve(result);
@@ -391,7 +391,7 @@ function cancelSubscription(subscriptionId, eventId, provider) {
     console.log("+++++++++++++== services/subscription.js", "subscription");
     console.log(subscription);
     console.log("+++++++++++++== services/subscription.js", "subscription");
-    updateSubscription({accountId: subscription.accountId, newPlanId: "free_account"}, provider).then(function() {
+    updateSubscription({accountId: subscription.accountId, newPlanId: "free_account", skipCardCheck: true}, provider).then(function() {
       console.log("+++++++++++++== services/subscription.js", "free_account");
       console.log("EVERYTHING WENT WELL");
       console.log("+++++++++++++== services/subscription.js", "free_account");
