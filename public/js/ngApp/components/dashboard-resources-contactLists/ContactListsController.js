@@ -704,5 +704,9 @@
       );
     }
 
+    vm.getPreviewFields = function() {
+      return vm.lists.activeList.defaultFields.concat(vm.lists.activeList.customFields);
+    }
+
   }
 })();
