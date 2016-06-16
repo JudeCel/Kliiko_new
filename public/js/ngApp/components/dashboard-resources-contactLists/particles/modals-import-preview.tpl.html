@@ -37,8 +37,7 @@
                         <tbody>
                         <tr class="member-row" ng-repeat='member in clc.lists.importPreviewArray | orderBy: clc.tableSort.by : clc.tableSort.reverse' ng-class="{'selected':member._selected}">
                             <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index">
-                                <code ng-show="member.validationErrors[tableRow]">{{ member.validationErrors[tableRow] }}</code><br>
-                                {{ member[tableRow] }}
+                                {{ member[tableRow] || '-' }}
                             </td>
                         </tr>
 
@@ -69,8 +68,8 @@
                         <tr class="member-row" ng-repeat='member in clc.lists.importPreviewInvalidArray | orderBy: clc.tableSort.by : clc.tableSort.reverse' ng-class="{'selected':member._selected}">
                             <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index">
                                 <code ng-show="member.validationErrors[tableRow]">{{ member.validationErrors[tableRow] }}</code><br>
-                               {{ member[tableRow] }}
-
+                                <span ng-show="!member.validationErrors[tableRow] && !member[tableRow]">-</span>
+                                {{ member[tableRow] }}
 
                             </td>
                         </tr>
@@ -100,7 +99,7 @@
                         </thead>
                         <tbody>
                         <tr class="member-row" ng-repeat='member in clc.lists.importPreviewDublicatesArray | orderBy: clc.tableSort.by : clc.tableSort.reverse' ng-class="{'selected':member._selected}">
-                            <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index">{{ member[tableRow] }}</td>
+                            <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index">{{ member[tableRow] || '-' }}</td>
                         </tr>
 
                         </tbody>
