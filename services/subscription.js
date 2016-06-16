@@ -286,6 +286,10 @@ function gatherInformation(accountId, newPlanId) {
 function updateSubscription(params, providers) {
   let deferred = q.defer();
 
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ services/subscription.js/updateSubscriotpn");
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ services/subscription.js/updateSubscriotpn");
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ services/subscription.js/updateSubscriotpn");
+
   // Thiss is because we need to moch chargebee responses for tests!!!
   if(!providers){
     providers = {
