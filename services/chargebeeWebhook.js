@@ -13,14 +13,8 @@ module.exports = {
 };
 
 function select(params) {
-  console.log("!!!!!!!!!!!!!!! services/chargebeeWebhook.js  select");
-  console.log(params);
-
   let deferred = q.defer();
   let hook = CHARGEBEE_EVENTS[params.event_type];
-
-  console.log(hook);
-  console.log("!!!!!!!!!!!!!!! services/chargebeeWebhook.js  select");
 
   if(hook) {
     hook(params.content.subscription.id, params.id, params.provider).then(function() {
