@@ -37,19 +37,15 @@ function validateContactList(id, list) {
           }
         }]
       }).then(function(results) {
-        let emails = _.map(results, function(value) {
-          return value.email;
-        });
+        let emails = _.map(results, "email");
+
         // main processing here
         let object = defaultParserObject(contactList);
-        let uniqRowListCounter = {};
+        let uniqueRowListCounter = {};
 
         async.forEach(list, function(data, cb) {
-          if (data.validationErrors) {
-            delete data.validationErrors;
-          }
-
-          validateRow(emails, contactList, data, uniqRowListCounter).then(function() {
+          delete data.validationErrors;
+          validateRow(emails, contactList, data, uniqueRowListCounter).then(function() {
             object.valid.push(data);
             cb();
           }, function(error) {
@@ -59,7 +55,7 @@ function validateContactList(id, list) {
           });
 
         }, function() {
-          addDublicateEntries(object, uniqRowListCounter);
+          addDublicateEntries(object, uniqueRowListCounter);
           deferred.resolve(object);
         });
 
