@@ -7,8 +7,6 @@ module.exports = {
 };
 
 function endPoint(req, res, next) {
-  console.log("~~~~~~~~~~~~~~~~ routes/root/chargebee.js");
-
   chargebeeWebhookService.select(req.body).then(function() {
     res.sendStatus(200);
   }, function() {
