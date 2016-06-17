@@ -1,3 +1,0 @@
-#!/bin/sh
-docker build -t "gcr.io/sound-temple-130607/klzii_main:latest" .
-gcloud docker push gcr.io/sound-temple-130607/klzii_main:latest

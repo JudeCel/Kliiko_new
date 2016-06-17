@@ -298,7 +298,7 @@ function updateSubscription(params, providers) {
   gatherInformation(params.accountId, params.newPlanId).then(function(result) {
     canSwitchPlan(params.accountId, result.currentPlan, result.newPlan).then(function() {
       accountHasValidCeditCard(result.subscription.subscriptionId, providers.creditCard).then(function(creditCardStatus){
-        if(validCard(creditCardStatus)){
+        if(params.skipCardCheck || validCard(creditCardStatus)){
           chargebeeSubUpdate(chargebeePassParams(result), providers.updateProvider).then(function(chargebeSubscription) {
             updateSubscriptionData(chargebeePassParams(result)).then(function(result) {
               deferred.resolve(result);
@@ -379,10 +379,9 @@ function updateSubscriptionData(passThruContent){
 
 function cancelSubscription(subscriptionId, eventId, provider) {
   let deferred = q.defer();
-
   findSubscriptionByChargebeeId(subscriptionId).then(function(subscription) {
-    updateSubscription({accountId: subscription.accountId, newPlanId: "free_account"}, provider).then(function(result) {
-      deferred.resolve({ result: result });
+    updateSubscription({accountId: subscription.accountId, newPlanId: "free_account", skipCardCheck: true}, provider).then(function() {
+      deferred.resolve();
     }, function(error) {
       deferred.reject(error);
     });
