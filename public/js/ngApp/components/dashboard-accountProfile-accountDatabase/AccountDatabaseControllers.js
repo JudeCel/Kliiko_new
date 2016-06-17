@@ -4,7 +4,18 @@
   angular.module('KliikoApp').filter('findAccountUser', function(){
     return function(account, user) {
       for(var index in account.AccountUsers) {
-        if(account.AccountUsers[index].UserId == user.id) {
+        if(account.AccountUsers[index].UserId == user.UserId) {
+          return index;
+        }
+      }
+      return -1;
+    }
+  });
+
+  angular.module('KliikoApp').filter('findPositionById', function() {
+    return function(account, accountList) {
+      for(var index in accountList) {
+        if(account.id == accountList[index].id) {
           return index;
         }
       }
@@ -47,7 +58,7 @@
 
       $scope.changeAccountStatusSending = true;
       var accountUser = $scope.findRightAccountUser(account, user);
-      var params = { accountId: account.id, userId: user.id, active: !accountUser.active };
+      var params = { accountId: account.id, userId: user.UserId, active: !accountUser.active };
       dbg.log2('#AccountDatabaseController > changeAccountStatus', params);
 
       AccountDatabaseServices.updateAccountUser(params).then(function(res) {

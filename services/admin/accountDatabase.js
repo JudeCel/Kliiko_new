@@ -25,30 +25,35 @@ function findAllAccounts(callback) {
 };
 
 function updateAccountUser(params, callback) {
-  AccountUser.update(validateParams(params), {
-    where: {
-      UserId: params.userId,
-      AccountId: params.accountId
-    },
-    returning: true
-  }).then(function(result) {
-    if(result[0] == 0) {
-      callback('There is no AccountUser with userId: ' + params.userId + ' and accountId: ' + params.accountId);
-    }
-    else {
-      let accountUser = result[1][0];
-      accountUser.getAccount({ include: [{ model: User, attributes: userAttributes() }, AccountUser ] }).then(function(account) {
-        if(params.hasOwnProperty('active')) {
-          accountUser.getUser().then(function(user) {
-            mailers.users.sendReactivateOrDeactivate({ email: user.email, name: account.name, active: accountUser.active, firstName: accountUser.firstName, lastName: accountUser.lastName });
-          });
-        }
-        callback(null, account);
-      });
-    }
-  }).catch(function(error) {
-    callback(filters.errors(error));
-  });
+  let updateParams = validateParams(params);
+  if (params.userId) {
+    AccountUser.update(updateParams, {
+      where: {
+        UserId: params.userId,
+        AccountId: params.accountId
+      },
+      returning: true
+    }).then(function(result) {
+      if(result[0] == 0) {
+        callback('There is no AccountUser with userId: ' + params.userId + ' and accountId: ' + params.accountId);
+      }
+      else {
+        let accountUser = result[1][0];
+        accountUser.getAccount({ include: [{ model: User, attributes: userAttributes() }, AccountUser ] }).then(function(account) {
+          if(params.hasOwnProperty('active')) {
+            accountUser.getUser().then(function(user) {
+              mailers.users.sendReactivateOrDeactivate({ email: user.email, name: account.name, active: accountUser.active, firstName: accountUser.firstName, lastName: accountUser.lastName });
+            });
+          }
+          callback(null, account);
+        });
+      }
+    }).catch(function(error) {
+      callback(filters.errors(error));
+    });
+  } else {
+    callback('Account is not verified');
+  }
 };
 
 function csvData() {

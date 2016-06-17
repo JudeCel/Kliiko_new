@@ -10,6 +10,7 @@
       contactListsUsersToRemove: $resource(globalSettings.restUrl +  '/contactListsUsersToRemove', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       contactListsUser: $resource(globalSettings.restUrl +  '/contactListsUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       contactListsImport: $resource(globalSettings.restUrl +  '/contactLists/:id/import', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsValidate: $resource(globalSettings.restUrl +  '/contactLists/:id/validate', {id:'@id'}, {post: {method: 'POST'}})
     };
 
 
@@ -26,7 +27,7 @@
 
     publicServices.parseImportFile = parseImportFile;
     publicServices.addImportedContacts = addImportedContacts;
-
+    publicServices.validateContactImportData = validateContactImportData;
 
 
     return publicServices;
@@ -238,7 +239,6 @@
         data: {uploadedfile: file}
       }).then(function (res) {
         deferred.resolve(res);
-
       }, function (err) {
         deferred.reject(err);
       });
@@ -260,14 +260,29 @@
         if (res.error) {
           dbg.log1('#contactListServices > createUser > error: ', res.error);
           deferred.reject(res.error);
-          return deferred.promise;
+        } else {
+          dbg.log1('#contactListServices > createUser > success '); dbg.log2(res);
+          deferred.resolve(res);
         }
-
-        dbg.log1('#contactListServices > createUser > success '); dbg.log2(res);
-        deferred.resolve(res);
-        return deferred.promise;
       });
 
+
+      return deferred.promise;
+    }
+
+    function validateContactImportData(listId, contactList) {
+      var params = {
+        contactsArray: contactList
+      };
+      var deferred = $q.defer();
+
+      contactListsApi.contactListsValidate.post({ id: listId }, params, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
+        }
+      });
 
       return deferred.promise;
     }
