@@ -14,7 +14,7 @@ function get(req, res, next) {
 };
 
 function update(req, res, next) {
-  accountDatabaseService.updateAccountUser(req.body, function(error, account) {
+  accountDatabaseService.updateAccountUser(req.body, req.user, function(error, account) {
     if(error) {
       res.send({ error: error });
     }
