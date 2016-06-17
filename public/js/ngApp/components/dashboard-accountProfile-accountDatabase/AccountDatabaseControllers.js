@@ -4,7 +4,7 @@
   angular.module('KliikoApp').filter('findAccountUser', function(){
     return function(account, user) {
       for(var index in account.AccountUsers) {
-        if(account.AccountUsers[index].UserId == user.id) {
+        if(account.AccountUsers[index].UserId == user.UserId) {
           return index;
         }
       }

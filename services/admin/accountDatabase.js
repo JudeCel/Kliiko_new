@@ -11,9 +11,7 @@ var q = require('q');
 
 var validAttributes = [
   'comment',
-  'active',
-  'accountId',
-  'userId'
+  'active'
 ];
 
 function findAllAccounts(callback) {
@@ -27,9 +25,9 @@ function findAllAccounts(callback) {
 };
 
 function updateAccountUser(params, callback) {
-  params = validateParams(params);
+  let updateParams = validateParams(params);
   if (params.userId) {
-    AccountUser.update(params, {
+    AccountUser.update(updateParams, {
       where: {
         UserId: params.userId,
         AccountId: params.accountId
