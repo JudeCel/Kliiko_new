@@ -4,7 +4,7 @@
   angular.module('KliikoApp').filter('findAccountUser', function(){
     return function(account, user) {
       for(var index in account.AccountUsers) {
-        if(account.AccountUsers[index].UserId == user.UserId) {
+        if(account.AccountUsers[index] && account.AccountUsers[index].UserId == user.UserId) {
           return index;
         }
       }
@@ -47,7 +47,7 @@
         controller: AccountDatabaseModalController,
         resolve: {
           data: function() {
-            return { userId: user.id, accountId: account.id, comment: $scope.findRightAccountUser(account, user).comment };
+            return { userId: user.UserId, accountId: account.id, comment: $scope.findRightAccountUser(account, user).comment };
           }
         }
       });
