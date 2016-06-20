@@ -87,12 +87,12 @@ describe('SERVICE - AccountDatabase', function() {
 
   it('Reactivates/Deactives user', function (done) {
     let params = { userId: testUser.id, accountId: testAccount.id, active: false };
-    accountDatabaseService.updateAccountUser(params, function(error, account) {
+    accountDatabaseService.updateAccountUser(params, {}, function(error, account) {
       assert.equal(error, null);
       assert.equal(account.AccountUsers[0].active, false);
 
       params.active = true;
-      accountDatabaseService.updateAccountUser(params, function(error, account) {
+      accountDatabaseService.updateAccountUser(params, {}, function(error, account) {
         assert.equal(error, null);
         assert.equal(account.AccountUsers[0].active, true);
         done();
@@ -103,7 +103,7 @@ describe('SERVICE - AccountDatabase', function() {
   it('Returns error on Reactivates/Deactives user', function (done) {
     let params = { userId: testUser.id + 1, accountId: testAccount.id + 1, active: false };
 
-    accountDatabaseService.updateAccountUser(params, function(error, account) {
+    accountDatabaseService.updateAccountUser(params, {},function(error, account) {
       assert.equal(account, null);
       assert.equal(error, 'There is no AccountUser with userId: ' + params.userId + ' and accountId: ' + params.accountId);
       done();
@@ -115,12 +115,12 @@ describe('SERVICE - AccountDatabase', function() {
     let updatedComment = 'Yeah, I just made an update to my comment';
     let params = { userId: testUser.id, accountId: testAccount.id, comment: comment };
 
-    accountDatabaseService.updateAccountUser(params, function(error, account) {
+    accountDatabaseService.updateAccountUser(params, {}, function(error, account) {
       assert.equal(error, null);
       assert.equal(account.AccountUsers[0].comment, comment);
 
       params.comment = updatedComment;
-      accountDatabaseService.updateAccountUser(params, function(error, account) {
+      accountDatabaseService.updateAccountUser(params, {}, function(error, account) {
         assert.equal(error, null);
         assert.equal(account.AccountUsers[0].comment, updatedComment);
         done();
