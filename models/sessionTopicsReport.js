@@ -26,6 +26,10 @@ module.exports = (Sequelize, DataTypes) => {
     message: {
       type: DataTypes.TEXT,
       allowNull: true
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     timestamps: true,
