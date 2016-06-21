@@ -16,7 +16,7 @@ var validAttributes = [
 
 function findAllAccounts(callback) {
   Account.findAll({
-    include: [{ model: AccountUser, include: [ { model: User } ] } ]
+    include: [{ model: AccountUser, include: [ { model: User } ] }, {model: models.Subscription} ]
   }).then(function(accounts) {
     callback(null, accounts);
   }, function(error) {
@@ -24,35 +24,49 @@ function findAllAccounts(callback) {
   });
 };
 
-function updateAccountUser(params, callback) {
+function shouldUpdateUser(params, byUser) {
+  //is active field being updated
+  if (_.indexOf(_.keys(params), "active") > 0) {
+    return !(params.userId == byUser.accountUserId);
+  }
+  return true;
+}
+
+function updateAccountUser(params, byUser, callback) {
+  byUser = byUser || {};
   let updateParams = validateParams(params);
-  if (params.userId) {
-    AccountUser.update(updateParams, {
-      where: {
-        UserId: params.userId,
-        AccountId: params.accountId
-      },
-      returning: true
-    }).then(function(result) {
-      if(result[0] == 0) {
-        callback('There is no AccountUser with userId: ' + params.userId + ' and accountId: ' + params.accountId);
-      }
-      else {
-        let accountUser = result[1][0];
-        accountUser.getAccount({ include: [{ model: User, attributes: userAttributes() }, AccountUser ] }).then(function(account) {
-          if(params.hasOwnProperty('active')) {
-            accountUser.getUser().then(function(user) {
-              mailers.users.sendReactivateOrDeactivate({ email: user.email, name: account.name, active: accountUser.active, firstName: accountUser.firstName, lastName: accountUser.lastName });
-            });
-          }
-          callback(null, account);
-        });
-      }
-    }).catch(function(error) {
-      callback(filters.errors(error));
-    });
+
+  if (shouldUpdateUser(params, byUser)) {
+    if (params.userId) {
+      AccountUser.update(updateParams, {
+        where: {
+          UserId: params.userId,
+          AccountId: params.accountId
+        },
+        returning: true
+      }).then(function(result) {
+        if(result[0] == 0) {
+          callback('There is no AccountUser with userId: ' + params.userId + ' and accountId: ' + params.accountId);
+        }
+        else {
+          let accountUser = result[1][0];
+          accountUser.getAccount({ include: [{ model: User, attributes: userAttributes() }, AccountUser ] }).then(function(account) {
+            if(params.hasOwnProperty('active')) {
+              accountUser.getUser().then(function(user) {
+                mailers.users.sendReactivateOrDeactivate({ email: user.email, name: account.name, active: accountUser.active, firstName: accountUser.firstName, lastName: accountUser.lastName });
+              });
+            }
+            callback(null, account);
+          });
+        }
+      }).catch(function(error) {
+        callback(filters.errors(error));
+      });
+    } else {
+      callback('Account is not verified');
+    }
   } else {
-    callback('Account is not verified');
+    callback('Cannot disable your account');
   }
 };
 

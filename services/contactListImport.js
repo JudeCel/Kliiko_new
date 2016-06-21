@@ -20,7 +20,8 @@ let requiredFields = ["firstName", "lastName", "gender", "email"];
 let importErrors = {
   fieldRequired: "Required",
   emailTaken: 'Email already taken',
-  emailInvalidFormat: "Email has invalid format"
+  emailInvalidFormat: "Email has invalid format",
+  wrongGender: "Gender is incorrect"
 }
 
 function validateContactList(id, list) {
@@ -236,7 +237,25 @@ function skipInvalidRow(data, contactList) {
   return _.isEmpty(result)
 }
 
-function validateRow(emails, contactList, row, uniqRowListCounter) {
+function checkKeyValues(rowData, emails, key, row, uniqueRowListCounter, error) {
+  if(key == 'email') {
+    uniqRowListCounterFun(key, row, uniqueRowListCounter);
+
+    if (constants.emailRegExp.test(rowData)) {
+      if (_.includes(emails, rowData)) {
+        error[key] = importErrors.emailTaken;
+      }
+    } else {
+      error[key] = importErrors.emailInvalidFormat;
+    }
+  } else if (key == 'gender') {
+    if (!_.includes(constants.gender, rowData)) {
+      error[key] = importErrors.wrongGender;
+    }
+  }
+}
+
+function validateRow(emails, contactList, row, uniqueRowListCounter) {
   let deferred = q.defer();
   let error = {};
   let validKeyCount = contactList.defaultFields.length
@@ -256,17 +275,8 @@ function validateRow(emails, contactList, row, uniqRowListCounter) {
         --validKeyCount
       }
 
-      if(key == 'email') {
-        uniqRowListCounterFun(key, row, uniqRowListCounter);
+      checkKeyValues(rowData, emails, key, row, uniqueRowListCounter, error);
 
-        if (constants.emailRegExp.test(rowData)) {
-          if (_.includes(emails, rowData)) {
-            error[key] = importErrors.emailTaken;
-          }
-        } else {
-          error[key] = importErrors.emailInvalidFormat;
-        }
-      }
     }
   });
 

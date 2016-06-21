@@ -72,8 +72,7 @@
 }
 
 .accountDatabaseCommentModal {
-  @extend .contactDetailsModal;
-  width: 400px;
+  max-width: 768px;
   padding-top: 100px;
 }
 
