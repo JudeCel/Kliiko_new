@@ -115,7 +115,7 @@ describe('Services -> ContactList', () => {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
               assert.lengthOf(result.valid, 3);
-              assert.deepEqual(result.invalid, []);
+              assert.lengthOf(result.invalid, 1)
               assert.ok(_.isEqual(result.contactListFields.defaultFields, contactList.defaultFields));
               assert.ok(_.isEqual(result.contactListFields.customFields, contactList.customFields));
               assert.equal(result.valid[0].firstName, 'user');
@@ -158,12 +158,12 @@ describe('Services -> ContactList', () => {
     });
 
     describe('sad path', function() {
-      describe('should fail fully', function() {
+      describe('should fail partially', function() {
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              assert.equal(result.valid.length, 0);
-              assert.equal(result.invalid.length, 5);
+              assert.equal(result.valid.length, 5);
+              assert.equal(result.invalid.length, 1);
               callback(null, true);
             }, function(error) {
               callback(error);
@@ -184,13 +184,11 @@ describe('Services -> ContactList', () => {
         });
       });
 
-      describe('should fail because default field - companyName is not found', function() {
+      describe('should fail because field - firstName is not found', function() {
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              assert.equal(result.invalid[0].validationErrors.companyName, '');
-              assert.equal(result.invalid[1].validationErrors.companyName, '');
-              assert.equal(result.invalid[2].validationErrors.companyName, '');
+              assert.equal(result.invalid[0].validationErrors.firstName, 'Required');
               callback(null, true);
             }, function(error) {
               callback(error);
@@ -241,13 +239,15 @@ describe('Services -> ContactList', () => {
         });
       });
 
-      describe('should fail because custom field - three is not found', function() {
+      describe('should fail because missing fields: firstName, lastName, gender, email', function() {
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              assert.equal(result.invalid[0].validationErrors.three, '');
-              assert.equal(result.invalid[1].validationErrors.three, '');
-              assert.equal(result.invalid[2].validationErrors.three, '');
+              assert.equal(result.invalid[0].validationErrors.firstName, 'Required');
+              assert.equal(result.invalid[0].validationErrors.lastName, 'Required');
+              assert.equal(result.invalid[0].validationErrors.gender, 'Required');
+              assert.equal(result.invalid[0].validationErrors.email, 'Required');
+
               callback(null, true);
             }, function(error) {
               callback(error);
@@ -268,11 +268,11 @@ describe('Services -> ContactList', () => {
         });
       });
 
-      describe('should fail because of missing data', function() {
+      describe('should fail because of missing gender data', function() {
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              assert.equal(result.invalid[0].validationErrors.country, '');
+              assert.equal(result.invalid[0].validationErrors.gender, 'Required');
               callback(null, true);
             }, function(error) {
               callback(error);
@@ -334,32 +334,6 @@ describe('Services -> ContactList', () => {
         });
       });
 
-      describe('should fail, but not raise error on empty custom field - two', function() {
-        function failureFunction(filePath, callback) {
-          ContactListService.create(defaultParams()).then(function(contactList) {
-            ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              assert.equal(result.invalid[0].two, 2);
-              assert.equal(result.invalid[1].two, 3);
-              assert.equal(result.invalid[2].two, '');
-              callback(null, true);
-            }, function(error) {
-              callback(error);
-            });
-          });
-        }
-
-        it('#parseCsv', function(done) {
-          failureFunction(testFileInvalid.csv, function(error) {
-            done(error);
-          });
-        });
-
-        it('#parseXls', function(done) {
-          failureFunction(testFileInvalid.xls, function(error) {
-            done(error);
-          });
-        });
-      });
     });
   });
 });

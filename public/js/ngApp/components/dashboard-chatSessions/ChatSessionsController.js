@@ -11,7 +11,6 @@
 
     vm.basePath = '/js/ngApp/components/dashboard-chatSessions/';
 
-////////
     vm.removeSession = removeSession;
     vm.copySession = copySession;
     vm.rateSessionMember = rateSessionMember;
@@ -26,6 +25,9 @@
 
     vm.disablePlayButton = false;
     vm.originalSession = {};
+
+    vm.orderByField = 'name';
+    vm.reverseSort = true;
 
     changePage('index');
 

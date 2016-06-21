@@ -4,7 +4,7 @@
   angular.module('KliikoApp').filter('findAccountUser', function(){
     return function(account, user) {
       for(var index in account.AccountUsers) {
-        if(account.AccountUsers[index].UserId == user.UserId) {
+        if(account.AccountUsers[index] && account.AccountUsers[index].UserId == user.UserId) {
           return index;
         }
       }
@@ -47,7 +47,7 @@
         controller: AccountDatabaseModalController,
         resolve: {
           data: function() {
-            return { userId: user.id, accountId: account.id, comment: $scope.findRightAccountUser(account, user).comment };
+            return { userId: user.UserId, accountId: account.id, comment: $scope.findRightAccountUser(account, user).comment };
           }
         }
       });
@@ -108,6 +108,14 @@
         $rootScope.changedUserComment = null;
       }
     });
+
+    $scope.planToUpperCase = function( plan ) {
+      if (plan) {
+        return plan.split('_').map( function(v) { return v } ).join( ' ' );
+      } else {
+        return "";
+      }
+    }
   };
 
   angular.module('KliikoApp').controller('AccountDatabaseModalController', AccountDatabaseModalController);
@@ -148,5 +156,6 @@
       $scope.errors = {};
       $uibModalInstance.dismiss('cancel');
     };
+
   };
 })();

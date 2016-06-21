@@ -32,9 +32,7 @@
             <th>Gender</th>
             <th>Mobile</th>
             <th>Landline</th>
-            <th>Sessions Purchased</th>
-            <th>Tips Permission</th>
-            <th>Active Sessions</th>
+            <th>Active Plan</th>
             <th>Comment</th>
           </tr>
         </thead>
@@ -55,10 +53,9 @@
             <td>{{ accountUser.gender }}</td>
             <td>{{ accountUser.mobile }}</td>
             <td>{{ accountUser.landlineNumber }}</td>
-            <td>*</td>
-            <td>*</td>
-            <td>*</td>
-            <td ng-click='editComment(account, accountUser.User)'>
+            <td>{{ planToUpperCase(account.Subscription.planId) }}</td>
+
+            <td ng-click='editComment(account, accountUser)'>
               <img src='/icons/add_new_list_blue.png' alt='' />
               {{ accountUser.comment }}
             </td>
