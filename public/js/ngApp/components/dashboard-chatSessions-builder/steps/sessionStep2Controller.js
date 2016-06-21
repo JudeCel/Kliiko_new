@@ -106,7 +106,9 @@
         prepareSessionTopicData(topic);
       }else{
         vm.topicIndex = vm.topicList.indexOf(topic);
-        angular.copy(topic, vm.editTopics);
+        if(topic != vm.editTopics) {
+          angular.copy(topic, vm.editTopics);
+        }
         vm.editTopics.formTitle = 'Edit Topic'
         vm.editTopics.postTo = 'updateTopic'
       }
