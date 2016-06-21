@@ -108,6 +108,14 @@
         $rootScope.changedUserComment = null;
       }
     });
+
+    $scope.planToUpperCase = function( plan ) {
+      if (plan) {
+        return plan.split('_').map( function(v) { return v } ).join( ' ' );
+      } else {
+        return "";
+      }
+    }
   };
 
   angular.module('KliikoApp').controller('AccountDatabaseModalController', AccountDatabaseModalController);
@@ -148,5 +156,6 @@
       $scope.errors = {};
       $uibModalInstance.dismiss('cancel');
     };
+
   };
 })();
