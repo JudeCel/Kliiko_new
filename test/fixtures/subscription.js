@@ -18,7 +18,7 @@ function successProvider(params) {
     return {
       request: function(callback) {
         callback(null, {
-          subscription: { id: params.id, plan_id: 'free_account' },
+          subscription: { id: params.id, plan_id: params.plan || 'free_account' },
           customer: { id: params.id }
         });
       }
@@ -27,11 +27,11 @@ function successProvider(params) {
 }
 
 var testData;
-function createSubscription(accountId, userId) {
+function createSubscription(accountId, userId, plan) {
   let deferred = q.defer();
   if(accountId && userId){
     subscriptionPlansFixture.createPlans().then(function() {
-      subscriptionService.createSubscription(accountId, userId, successProvider({ id: 'RandomUniqueId666' })).then(function(subscription) {
+      subscriptionService.createSubscription(accountId, userId, successProvider({ id: 'RandomUniqueId666', plan: plan })).then(function(subscription) {
         deferred.resolve(subscription);
       }, function(error) {
         deferred.reject(error);

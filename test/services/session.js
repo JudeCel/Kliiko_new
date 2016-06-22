@@ -14,16 +14,8 @@ describe('SERVICE - Session', function() {
 
   beforeEach(function(done) {
     sessionFixture.createChat().then(function(result) {
-      testData.user = result.user;
-      testData.account = result.account;
-      testData.session = result.session;
-      testData.preference = result.preference;
-      subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {
-        testData.subscription = subscription;
-        done();
-      }, function(error) {
-        done(error);
-      });
+      testData = result;
+      done();
     }, function(error) {
       done(error);
     });
