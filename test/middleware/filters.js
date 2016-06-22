@@ -20,14 +20,16 @@ describe('MIDDLEWARE - Filters', function() {
 
   describe('#myDashboardPage', function() {
     beforeEach(function(done) {
-      userFixture.createUserAndOwnerAccount().then(function(result) {
-        testData = result;
-        AccountUser.find({ where: { UserId: result.user.id, AccountId: result.account.id } }).then(function(accountUser) {
-          testData.accountUser = accountUser;
-          done();
+      models.sequelize.sync({ force: true }).then(function() {
+        userFixture.createUserAndOwnerAccount().then(function(result) {
+          testData = result;
+          AccountUser.find({ where: { UserId: result.user.id, AccountId: result.account.id } }).then(function(accountUser) {
+            testData.accountUser = accountUser;
+            done();
+          });
+        }, function(error) {
+          done(error);
         });
-      }, function(error) {
-        done(error);
       });
     });
 
