@@ -49,6 +49,7 @@ function createMainAccount(callback) {
   createUserAndOwnerAccount(userParams('chatUser', 'female')).then(function(data) {
     mainData = data;
     subscriptionFixture.createSubscription(data.account.id, data.user.id, 'free_trial').then(function(subscription) {
+      mainData.subscription = subscription;
       callback();
     }, function(error) {
       callback(error);

@@ -70,14 +70,8 @@ describe('SERVICE - MyDashboard', function() {
     beforeEach(function(done) {
       sessionFixture.createChat().then(function(result) {
         testData = result;
-        subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {
-          testData.subscription = subscription;
-
-          models.SubscriptionPreference.update({'data.sessionCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
-            done();
-          }, function(error) {
-            done(error);
-          });
+        models.SubscriptionPreference.update({'data.sessionCount': 5}, { where: { subscriptionId: testData.subscription.id } }).then(function() {
+          done();
         }, function(error) {
           done(error);
         });
