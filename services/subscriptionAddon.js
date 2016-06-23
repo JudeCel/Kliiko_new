@@ -30,7 +30,10 @@ module.exports = {
 function getAllAddons() {
   let deferred = q.defer();
 
-  chargebee.addon.list({}).request(function(error, result){
+  chargebee.addon.list({
+    limit: 1,
+    "status[is_not]" : "archived"
+  }).request(function(error, result){
     if(error){
       deferred.reject(error);
     }else{
@@ -100,6 +103,7 @@ function chargebeeAddonCharge(params) {
     if(error){
       deferred.reject(error);
     }else{
+      console.log(result);
       deferred.resolve(result.invoice);
     }
   });
