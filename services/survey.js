@@ -651,8 +651,16 @@ function getIds(questions) {
 };
 
 function validUrl(survey) {
-  return 'http://' + process.env.SERVER_DOMAIN + ':' + process.env.SERVER_PORT + '/survey/' + survey.id;
+  return 'http://' + process.env.SERVER_DOMAIN + getPort() + '/survey/' + survey.id;
 };
+
+function getPort() {
+  let port = ''
+  if (process.env.SERVER_PORT && process.env.NODE_ENV != 'production') {
+    port = ':'+ process.env.SERVER_PORT
+  }
+  return port
+}
 
 function validateParams(params, attributes) {
   if(_.isObject(params.SurveyQuestions)) {
