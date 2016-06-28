@@ -27,11 +27,16 @@ function successProvider(params) {
 }
 
 var testData;
-function createSubscription(accountId, userId) {
+function createSubscription(accountId, userId, provider) {
   let deferred = q.defer();
+
+  if(!provider) {
+    provider = successProvider;
+  }
+
   if(accountId && userId){
     subscriptionPlansFixture.createPlans().then(function() {
-      subscriptionService.createSubscription(accountId, userId, successProvider({ id: 'RandomUniqueId666' })).then(function(subscription) {
+      subscriptionService.createSubscription(accountId, userId, provider({ id: 'RandomUniqueId666' })).then(function(subscription) {
         deferred.resolve(subscription);
       }, function(error) {
         deferred.reject(error);
@@ -45,7 +50,7 @@ function createSubscription(accountId, userId) {
       return subscriptionPlansFixture.createPlans();
     }).then(function(plans) {
       testData.subscriptionPlans = plans;
-      return subscriptionService.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'RandomUniqueId666' }));
+      return subscriptionService.createSubscription(testData.account.id, testData.user.id, provider({ id: 'RandomUniqueId666' }));
     }).then(function(subscription) {
       testData.subscription = subscription;
       deferred.resolve(testData);

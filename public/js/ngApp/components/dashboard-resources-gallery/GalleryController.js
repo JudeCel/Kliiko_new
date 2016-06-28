@@ -22,7 +22,7 @@
       { id: 'pdf',       type: 'file',  text: 'PDF',        scope: 'pdf',       format: '.pdf' },
       { id: 'video',     type: 'video', text: 'Video',      scope: 'collage',   format: '.oog, .mp4' },
       { id: 'youtube',   type: 'link',  text: 'Youtube',    scope: 'youtube',   format: 'url' },
-      { id: 'zip',       type: 'file',  text: 'Achive',     scope: 'zip',       format: null },
+      { id: 'zip',       type: 'file',  text: 'Archive',     scope: 'zip',       format: null },
     ];
 
     for(var i in vm.uploadTypes) {

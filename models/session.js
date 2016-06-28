@@ -44,6 +44,7 @@ module.exports = (Sequelize, DataTypes) => {
         Session.hasMany(models.SessionMember, {foreignKey: 'sessionId', onDelete: 'cascade'});
         Session.hasMany(models.MailTemplate, {foreignKey: 'sessionId', onDelete: 'cascade', hooks:true});
         Session.hasMany(models.Invite, { foreignKey: 'sessionId', onDelete: 'cascade' });
+        Session.hasMany(models.DirectMessage, { foreignKey: 'sessionId', onDelete: 'cascade' });
         Session.belongsToMany(models.Resource, {through: {model: models.SessionResource}, foreignKey: 'sessionId'});
         Session.hasMany(models.SessionTopicsReport, { foreignKey: 'sessionId', onDelete: 'cascade' });
       }

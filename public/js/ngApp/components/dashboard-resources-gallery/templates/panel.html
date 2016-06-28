@@ -33,12 +33,16 @@
         {{ resource.name }}
       </div>
 
-      <div class='col-xs-6 panel-name' ng-if='!gc.hideElements'>
+      <div class='col-xs-5 panel-name' ng-if='!gc.hideElements'>
         <input type='checkbox' ng-click='resource.checked = !!resource.checked' ng-model='resource.checked' />
         {{ resource.name }}
       </div>
 
-      <div class='col-xs-6' ng-if='!gc.hideElements'>
+      <div class="col-xs-3 panel-name" style="display:inline-block;">
+        <p class="pull-right">{{ resource.extension || resource.scope | uppercase }}</p>
+      </div>
+
+      <div class='col-xs-4' ng-if='!gc.hideElements'>
         <button class='btn btn-addNewElement btn-green pull-right gallery-btn-width' ng-click='gc.removeResources([resource.id])'>
           <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
         </button>

@@ -70,9 +70,9 @@
       topicsAndSessions.updateTopic(topic).then(function(result) {
         domServices.modal('editTopic', 'close');
         vm.topicList[vm.topicIndex] = vm.editTopics;
-      }, function(error) {
-        console.log(error);
-      })
+      }, function(result) {
+        messenger.error(result.errors[0].message);
+      });
     }
 
     function updateSessionTopicName(params, sessionTopicId) {
