@@ -59,6 +59,7 @@
           messenger.error(res.error);
         }
         else {
+          $('.main-first-page').removeClass('hidden');
           vm.sessions = res.data.sessions;
           vm.accountUsers = res.data.accountUsers;
           vm.systemUrl = res.systemUrl;
