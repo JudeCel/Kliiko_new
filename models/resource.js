@@ -23,9 +23,8 @@ module.exports = (Sequelize, DataTypes) => {
       values: [ 'video', 'audio', 'image', 'file', 'link']
     },
     scope: { type: DataTypes.ENUM, allowNull: false,
-      values: [ 'participant', 'facilitator', 'co-facilitator', 'observer',
-        'report', 'vote', 'collage', 'brandLogo', 'youtube', 'zip', 'pdf', 'csv', 'banner'
-              ]
+      values: [ 'participant', 'facilitator', 'co-facilitator', 'observer', 'report', 'vote',
+        'collage', 'brandLogo', 'youtube', 'zip', 'pdf', 'csv', 'banner', 'txt' ]
     }
   }, {
     timestamps: true,
