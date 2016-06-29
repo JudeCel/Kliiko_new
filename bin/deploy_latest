@@ -1,0 +1,3 @@
+#!/bin/bash
+# Deletes old admin deployment and recreates it
+kubectl delete deployment admin && kubectl apply -f deploy/staging/admin.yml
