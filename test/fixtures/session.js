@@ -12,7 +12,7 @@ var SessionMemberService = require('./../../services/sessionMember');
 var mainData;
 
 const DEPENDENCY_COUNT = {
-  participants: 2,
+  participants: 8,
   observers: 1,
   topics: 2
 };
