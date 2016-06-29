@@ -17,13 +17,14 @@
     vm.nameMaxSize = 15;
     vm.newTopicName = null;
     vm.editBlockHelper = null;
+    vm.modalAction = '';
+    vm.topicModalTitle = '';
+    vm.topicData = {};
+    vm.editTopicIndex = null;
 
-    vm.createNew = createNewTopic;
-    vm.validateNewAndAdd = validateNewAndAdd;
     vm.deleteTopic = deleteTopic;
-    vm.toggleEditBlock = toggleEditBlock;
-    vm.edit = edit;
-    vm.saveInline = saveInline;
+    vm.openModal = openModal;
+    vm.submitModalForm = submitModalForm;
 
     init();
 
@@ -40,39 +41,63 @@
       )
     }
 
+    function openModal(action, topic) {
+      vm.modalAction = action;
 
-    function createNewTopic() {
-      vm.newTopicName = null;
-      domServices.modal('createNewTopic');
+      if(vm.modalAction == 'edit'){
+        vm.editTopicIndex = vm.list.indexOf(topic);
+        angular.copy(topic, vm.topicData);
+        setEditData();
+      }else if(vm.modalAction = "new") {
+        setCreateData()
+      }else{
+        messenger.error('Something went wrong, please try later.')
+      }
+    };
+
+    function setEditData() {
+      domServices.modal('topicModalWindow');
+      vm.topicModalTitle = 'Edit Topic'
     }
 
-    function validateNewAndAdd(topic) {
-      if (!topic && !vm.newTopicName.length) return;
+    function setCreateData() {
+      domServices.modal('topicModalWindow');
+      vm.topicModalTitle = 'Create New Topic';
+    }
 
-      var params = {};
-
-      if (!topic) {
-        params.name = vm.newTopicName;
-      } else {
-        params = topic;
+    function submitModalForm() {
+      if(vm.modalAction == 'edit'){
+        editTopic();
+      }else if(vm.modalAction = "new") {
+        createTopic();
+      }else{
+        messenger.error('Something went wrong, please try later.')
+        domServices.modal('topicModalWindow', 'close');
       }
+    }
 
-      topicsAndSessions.createNewTopic(params).then(success, error);
-      function success(res) {
+    function editTopic() {
+      topicsAndSessions.updateTopic(vm.topicData).then(function(res) {
+        vm.list[vm.editTopicIndex] = vm.topicData;
+        messenger.ok('Topic has been updated.');
+        domServices.modal('topicModalWindow', 'close');
+        vm.topicData = {};
+      }, function(error) {
+        messenger.error(error)
+      });
+    }
+
+    function createTopic() {
+      topicsAndSessions.createNewTopic(vm.topicData).then(function(res) {
         vm.list.push(res.data);
-        domServices.modal('createNewTopic', 'close');
-        dbg.log('#TopicsController > validateNewAndAdd > New topic has been added');
-        vm.newTopicName = null;
-
-        topic
-          ? messenger.ok('New copy has been added')
-          : messenger.ok('New topic has been added');
-
-      }
-      function error(err) {
-        messenger.error(err);
-      }
+        messenger.ok('New topic has been added');
+        domServices.modal('topicModalWindow', 'close');
+        vm.topicData = {};
+      }, function(error) {
+        messenger.error(error)
+      });
     }
+
 
     function deleteTopic(id) {
       if (!id) {
@@ -108,35 +133,5 @@
         messenger.error(err);
       }
     }
-
-    function toggleEditBlock(blockIndex,inputId) {
-      jQuery('#edit-block-'+blockIndex).toggle();
-
-      // timeout is to wait the animation
-      if (inputId) setTimeout(function() { jQuery('#'+inputId).focus(); }, 200);
-    }
-
-    function edit(blockIndex, inputId) {
-      tempName = vm.list[blockIndex].name;
-      toggleEditBlock(blockIndex, inputId);
-
-      vm.editBlockHelper = blockIndex;
-    }
-
-    function saveInline(blockIndex, newName) {
-      var newName = newName || tempName;
-      vm.list[blockIndex].name = newName;
-
-      messenger.ok('Topics name changed');
-      vm.editBlockHelper = null;
-
-      topicsAndSessions.updateTopic(vm.list[blockIndex]).then(success, error);
-      function success(res) { dbg.log('#TopicsController > saveInline > topics name has been updated'); }
-      function error(err) {
-        messenger.error(err);
-        dbg.error(err);
-      }
-    }
-
   }
 })();
