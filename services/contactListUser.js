@@ -11,6 +11,7 @@ var AccountUserService = require('./../services/accountUser');
 var dataWrappers = require('./../models/dataWrappers');
 var validators = require('./../services/validators');
 var async = require('async');
+var uuid = require('node-uuid');
 
 module.exports = {
   findByContactList: findByContactList,
@@ -19,7 +20,8 @@ module.exports = {
   update: update,
   destroy: destroy,
   updatePositions: updatePositions,
-  bulkCreate: bulkCreate
+  bulkCreate: bulkCreate,
+  destroyByToken: destroyByToken
 };
 
 function wrappersContactListUser(item, list) {
@@ -92,6 +94,16 @@ function destroy(ids, accountId) {
 
   let deferred = q.defer();
   ContactListUser.destroy({where: { id: ids, accountId: accountId}}).then(function(result) {
+    deferred.resolve(result);
+  }, function(err) {
+    deferred.reject(err);
+  });
+  return deferred.promise;
+}
+
+function destroyByToken(token) {
+  let deferred = q.defer();
+  ContactListUser.destroy({where: { unsubscribeToken: token}}).then(function(result) {
     deferred.resolve(result);
   }, function(err) {
     deferred.reject(err);
@@ -240,7 +252,8 @@ function contactListUserParams(params, accountUser) {
     accountUserId: accountUser.id,
     accountId: params.accountId,
     contactListId: params.contactListId,
-    customFields: params.customFields || {}
+    customFields: params.customFields || {},
+    unsubscribeToken: uuid.v1()
   }
 }
 

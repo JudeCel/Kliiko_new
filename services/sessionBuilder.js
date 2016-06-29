@@ -10,6 +10,7 @@ var inviteService = require('./invite');
 var mailTemplateService = require('./mailTemplate');
 var twilioLib = require('./../lib/twilio');
 var mailHelper = require('./../mailers/mailHelper');
+var mailUrlHelper = require('./../mailers/helpers');
 var validators = require('./../services/validators');
 
 var async = require('async');
@@ -348,7 +349,7 @@ function inviteMembers(sessionId, data, accountId, accountName) {
       params.accountName = accountName;
       inviteService.createBulkInvites(params).then(function(invites) {
         let ids = _.map(invites, 'accountUserId');
-        AccountUser.findAll({ where: { id: { $in: ids } }, include:[models.Invite] }).then(function(accountUsers) {
+        AccountUser.findAll({ where: { id: { $in: ids } }, include:[models.Invite, models.ContactListUser] }).then(function(accountUsers) {
           _.map(accountUsers, function(accountUser) {
             accountUser.dataValues.invite = _.last(accountUser.Invites);
           });
@@ -461,7 +462,7 @@ function sendGenericEmail(sessionId, data, accountId) {
               facilitatorLastName: facilitator.lastName,
               facilitatorMail: facilitator.email,
               facilitatorMobileNumber: facilitator.mobile,
-              unsubscribeMailUrl: 'some unsub url',
+              unsubscribeMailUrl: mailUrlHelper.getUrl(accountUser.ContactListUsers[0].unsubscribeToken, '/unsubscribe/'),
               sessionId: sessionId
             });
           });
