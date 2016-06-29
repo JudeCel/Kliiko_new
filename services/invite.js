@@ -21,6 +21,8 @@ var async = require('async');
 var _ = require('lodash');
 var q = require('q');
 
+var mailUrlHelper = require('../mailers/helpers');
+
 const EXPIRE_AFTER_DAYS = 5;
 
 const MESSAGES = {
@@ -52,11 +54,16 @@ function createBulkInvites(arrayParams) {
         include: [{
           model: AccountUser,
           attributes:
-          constants.safeAccountUserParams
+          constants.safeAccountUserParams,
+          include: {model: models.ContactListUser}
         }, Account, Session, User]
       }).then(function(invites) {
         async.each(invites, function(invite, callback) {
           invite.accountName = arrayParams.accountName;
+          if (invite.AccountUser.ContactListUsers.length) {
+            invite.unsubscribeMailUrl = mailUrlHelper.getUrl(invite.AccountUser.ContactListUsers[0].unsubscribeToken, '/unsubscribe/');
+          }
+
           sendInvite(invite).then(function() {
             callback();
           }, function(error) {
@@ -184,8 +191,9 @@ function sendInvite(invite, deferred) {
         facilitatorLastName: facilitator.lastName,
         facilitatorMail: facilitator.email,
         facilitatorMobileNumber: facilitator.mobile,
-        unsubscribeMailUrl: 'some unsub url'
+        unsubscribeMailUrl: invite.unsubscribeMailUrl
       }
+
       inviteMailer.sendInviteSession(inviteParams, function(error, data) {
         if(error) {
           deferred.reject(error);
