@@ -9,7 +9,7 @@
           <h4 class='text-center'>{{ topics.message }}</h4>
         </div>
         <div class='col-md-3 text-right' ng-hide="!topics.list.length">
-          <div class="btn-standart btn-green" ng-click="topics.createNew()">
+          <div class="btn-standart btn-green" ng-click="topics.openModal('new')">
             Create New Topic &nbsp;<img src="icons/add_new_list_green.png" alt="">
           </div>
         </div>
@@ -72,11 +72,8 @@
             </uib-accordion-group>
           </uib-accordion>
           <div class="control-block">
-            <span id="edit-block-{{ $index }}" class="edit-block animated slideInRight" style="display: none">
-              <img src="/icons/ic_edit.png" alt="" title="Rename" ng-click="topics.edit($index, 'topic-name-input-'+$index)">
-            </span>
             <img class="pull-right ic" ng-click="topics.deleteTopic(t.id)" src="/icons/dashboardElement_remove.png" alt="" title="Delete">
-            <img class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" ng-click="topics.toggleEditBlock($index)">
+            <img class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" ng-click="topics.openModal('edit', t)">
           </div>
         </div>
       </div>
@@ -86,21 +83,21 @@
   <!-- Modals -->
   <section>
     <!-- plansModal -->
-    <div class='modal fade' id='createNewTopic' role='dialog'>
+    <div class='modal fade' id='topicModalWindow' role='dialog'>
       <div class='modal-dialog changePasswordModal' style="width: 800px">
         <div class='modal-content border-green border-radius-none'>
           <div class='modal-header'>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h1 class='modal-title text-center'>Create New Topic</h1>
+            <h1 class='modal-title text-center'>{{ topics.topicModalTitle }}</h1>
           </div>
           <div class='modal-body'>
             <form ng-submit="topics.validateNewAndAdd()">
               <div class="row">
                 <div class="text-center">
-                  <input id="new-topic-input"  type="text" maxlength="15" ng-model="topics.newTopicName">
+                  <input id="new-topic-input"  type="text" maxlength="15" ng-model="topics.topicData.name">
                   <br>
                   <div id="new-topic-input-help"  >
-                    Characters left: {{ topics.nameMaxSize - topics.newTopicName.length }}
+                    Characters left: {{ topics.nameMaxSize - topics.topicData.length }}
                   </div>
                 </div>
               </div>
@@ -110,8 +107,8 @@
             <div type='button' class='pull-left btn-standart btn-red' data-dismiss='modal'>
               Cancel
             </div>
-            <div type='submit' class='pull-right btn-standart btn-green' ng-click="topics.validateNewAndAdd()">
-              Create
+            <div type='submit' class='pull-right btn-standart btn-green' ng-click="topics.submitModalForm()">
+              Save
             </div>
           </div>
         </div>

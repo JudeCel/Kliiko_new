@@ -1,0 +1,4 @@
+#!/bin/bash
+# Deletes old admin deployment and recreates it
+echo "Deploying latest klzii_admin image from docker hub"
+kubectl delete deployment admin && kubectl apply -f deploy/staging/admin.yml
