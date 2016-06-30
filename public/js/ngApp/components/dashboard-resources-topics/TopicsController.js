@@ -61,7 +61,7 @@
     }
 
     function setCreateData() {
-      domServices.modal('topicModalWindow');
+      domServices.modal('createNewTopic');
       vm.topicModalTitle = 'Create New Topic';
     }
 
@@ -91,7 +91,7 @@
       topicsAndSessions.createNewTopic(vm.topicData).then(function(res) {
         vm.list.push(res.data);
         messenger.ok('New topic has been added');
-        domServices.modal('topicModalWindow', 'close');
+        domServices.modal('createNewTopic', 'close');
         vm.topicData = {};
       }, function(error) {
         messenger.error(error)
