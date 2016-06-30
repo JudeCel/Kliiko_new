@@ -62,13 +62,15 @@ function createBulkInvites(arrayParams) {
           invite.accountName = arrayParams.accountName;
           if (invite.AccountUser.ContactListUsers.length) {
             invite.unsubscribeMailUrl = mailUrlHelper.getUrl(invite.AccountUser.ContactListUsers[0].unsubscribeToken, '/unsubscribe/');
-          }
 
-          sendInvite(invite).then(function() {
+            sendInvite(invite).then(function() {
+              callback();
+            }, function(error) {
+              callback(error);
+            });
+          } else {
             callback();
-          }, function(error) {
-            callback(error);
-          });
+          }
         }, function(error) {
           if(error) {
             deferred.reject(error);
