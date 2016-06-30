@@ -8,7 +8,8 @@ module.exports = (Sequelize, DataTypes) => {
     userId: { type: DataTypes.INTEGER, allowNull: true },
     contactListId: {type: DataTypes.INTEGER, allowNull: false},
     position: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
-    customFields: { type: DataTypes.JSONB, allowNull: false, defaultValue: {} }
+    customFields: { type: DataTypes.JSONB, allowNull: false, defaultValue: {} },
+    unsubscribeToken: {type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4}
   },{
     indexes: [
       { name: "UniqEmailContactList",

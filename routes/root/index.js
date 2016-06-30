@@ -19,16 +19,15 @@ var myDashboardRoutes = require('./myDashboard.js');
 var chargebeeRoutes = require('./chargebee.js');
 var constants = require('../../util/constants');
 var appData = require('../../services/webAppData');
+var contactListUserRoutes = require('./contactListUser');
 
 router.use(function (req, res, next) {
   res.locals.appData = appData;
     if (req.path == '/logout') {
       return next();
     }
-
-    let validPaths = ['invite', 'survey', 'my-dashboard', 'chargebee', 'api'];
-
-    if(filterValidPaths(req.path, validPaths)){
+        
+    if(filterValidPaths(req.path, constants.validRoutePaths)){
       next();
     }else{
       let user = req.user;
@@ -347,5 +346,7 @@ router.route('/survey/:id').get(surveyRoutes.index);
 router.route('/my-dashboard').get(myDashboardRoutes.index);
 
 router.route('/chargebee/webhooks').post(chargebeeRoutes.endPoint);
+
+router.route('/unsubscribe/:token').get(contactListUserRoutes.unsubscribe);
 
 module.exports = router;
