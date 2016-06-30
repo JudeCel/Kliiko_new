@@ -11,11 +11,11 @@ function unsubscribe(req, res, next) {
       title: "Unsubscribe"
   }
 
-  contactListUser.destroyByToken(req.params.token).then(function(response) {
-    if (response == 1) {
-      message.result = "You have been unsubscribed from mail";
-    } else {
+  contactListUser.destroyByToken(req.params.token).then(function(deletedCount) {
+    if (deletedCount == 0) {
       message.result = "You are already unsubscribed from mail";
+    } else {
+      message.result = "You have been unsubscribed from mail";
     }
     res.render('unsubscribe', message);
   }, function(err) {

@@ -11,7 +11,6 @@ var AccountUserService = require('./../services/accountUser');
 var dataWrappers = require('./../models/dataWrappers');
 var validators = require('./../services/validators');
 var async = require('async');
-var uuid = require('node-uuid');
 
 module.exports = {
   findByContactList: findByContactList,
@@ -252,8 +251,7 @@ function contactListUserParams(params, accountUser) {
     accountUserId: accountUser.id,
     accountId: params.accountId,
     contactListId: params.contactListId,
-    customFields: params.customFields || {},
-    unsubscribeToken: uuid.v1()
+    customFields: params.customFields || {}
   }
 }
 

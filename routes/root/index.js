@@ -26,10 +26,8 @@ router.use(function (req, res, next) {
     if (req.path == '/logout') {
       return next();
     }
-    
-    let validPaths = ['invite', 'survey', 'my-dashboard', 'chargebee', 'api', 'unsubscribe'];
-
-    if(filterValidPaths(req.path, validPaths)){
+        
+    if(filterValidPaths(req.path, constants.validRoutePaths)){
       next();
     }else{
       let user = req.user;
