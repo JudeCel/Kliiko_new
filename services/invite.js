@@ -482,7 +482,7 @@ function prepareMailParams(sessionId, receiver, facilitator) {
     facilitatorLastName: facilitator.lastName,
     facilitatorMail: facilitator.email,
     facilitatorMobileNumber: facilitator.mobile,
-    unsubscribeMailUrl: "" // this functionality is not implemented, yet!
+    unsubscribeMailUrl: ""
   }
 }
 
