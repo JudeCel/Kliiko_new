@@ -19,7 +19,7 @@ metadata:
   labels:
     name: admin
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       name: admin
@@ -27,7 +27,6 @@ spec:
     metadata:
       labels:
         name: admin
-        version: "0.0.29"
     spec:
       imagePullSecrets:
         - name: docker-hub-secret
