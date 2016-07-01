@@ -36,6 +36,7 @@
       var params = params || {};
       //get all properties
       var self = this;
+      self.members = [];
       for (var p in params) {
         if (params.hasOwnProperty(p)) self[p] = params[p];
       }
