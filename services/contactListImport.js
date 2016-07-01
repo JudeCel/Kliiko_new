@@ -254,6 +254,7 @@ function checkKeyValues(rowData, emails, key, row, uniqueRowListCounter, error) 
       error[key] = importErrors.wrongGender;
     }
   } else if (key == 'firstName' || key == 'lastName') {
+    rowData = rowData.replace(/\s\s+/g, '');
     if (!constants.validNameRegExp.test(rowData) || rowData.length < 2) {
       error[key] = importErrors.invalidFormat;
     }
