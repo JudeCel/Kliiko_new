@@ -23,8 +23,6 @@
     vm.chatSessionTopicsList = [];
     vm.topicList = [];
 
-    vm.openModal = openModal;
-    vm.submitEditForm = submitEditForm;
     vm.orderTopics = orderTopics;
     vm.topicsOnDropComplete = topicsOnDropComplete;
     vm.removeTopicFromList = removeTopicFromList;
@@ -66,55 +64,6 @@
       }
     }
 
-    function updateTopicName(topic) {
-      topicsAndSessions.updateTopic(topic).then(function(result) {
-        domServices.modal('editTopic', 'close');
-        vm.topicList[vm.topicIndex] = vm.editTopics;
-      }, function(result) {
-        messenger.error(result.errors[0].message);
-      });
-    }
-
-    function updateSessionTopicName(params, sessionTopicId) {
-      var editParams = {
-        sessionTopicName: params.name,
-        boardMessage: params.boardMessage,
-        sessionTopicId: sessionTopicId
-      }
-
-      topicsAndSessions.updateSessionTopicName(editParams).then(function(result) {
-        vm.chatSessionTopicsList[vm.topicIndex].SessionTopics[0] = result.sessionTopic;
-        domServices.modal('editTopic', 'close');
-        messenger.ok(result.message);
-      }, function(error) {
-        messenger.error(result.error);
-      });
-    }
-
-    function submitEditForm() {
-      if(vm.editTopics.postTo == 'updateSessionTopic') {
-        updateSessionTopicName({name: vm.editTopics.name, boardMessage: vm.editTopics.boardMessage}, vm.editTopics.id);
-      }else if(vm.editTopics.postTo == 'updateTopic') {
-        updateTopicName(vm.editTopics);
-      }else{
-        messenger.error("Sorry, but something went wrong.");
-      }
-    }
-
-    function openModal(edit, topic) {
-      if(edit == 'sessionTopic'){
-        prepareSessionTopicData(topic);
-      }else{
-        vm.topicIndex = vm.topicList.indexOf(topic);
-        if(topic != vm.editTopics) {
-          angular.copy(topic, vm.editTopics);
-        }
-        vm.editTopics.formTitle = 'Edit Topic'
-        vm.editTopics.postTo = 'updateTopic'
-      }
-
-      domServices.modal('editTopic');
-    }
 
     function prepareSessionTopicData(topic) {
       vm.topicIndex = vm.chatSessionTopicsList.indexOf(topic);
