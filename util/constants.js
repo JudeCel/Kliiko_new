@@ -4,6 +4,7 @@ module.exports = {
   phoneRegExp: /^\+?(?:[0-9] ?){6,14}[0-9]$/,
   validPhoneFormat: '1 123456789',
   emailRegExp: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  validNameRegExp: /^[a-zA-Z -]+$/i,
   systemRoles: ['admin', 'accountManager', 'facilitator', 'observer', 'participant'],
   sessionMemberRoles: ['facilitator', 'observer', 'participant'],
   gender: ["male", "female"],
