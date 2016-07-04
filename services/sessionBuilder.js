@@ -10,6 +10,7 @@ var inviteService = require('./invite');
 var mailTemplateService = require('./mailTemplate');
 var twilioLib = require('./../lib/twilio');
 var mailHelper = require('./../mailers/mailHelper');
+var mailUrlHelper = require('./../mailers/helpers');
 var validators = require('./../services/validators');
 
 var async = require('async');
@@ -343,12 +344,22 @@ function sendSms(data, provider) {
 // Untested
 function inviteMembers(sessionId, data, accountId, accountName) {
   let deferred = q.defer();
+  let contactListUsersIds = _.map(data.members, 'listId');
+
   validators.hasValidSubscription(accountId).then(function() {
     inviteParams(sessionId, data).then(function(params) {
       params.accountName = accountName;
       inviteService.createBulkInvites(params).then(function(invites) {
         let ids = _.map(invites, 'accountUserId');
-        AccountUser.findAll({ where: { id: { $in: ids } }, include:[models.Invite] }).then(function(accountUsers) {
+        AccountUser.findAll({
+          where: {
+            id: { $in: ids }
+          },
+          include: [ models.Invite, {
+            model: models.ContactListUser,
+            where: { contactListId: {$in: contactListUsersIds} }
+          }]
+        }).then(function(accountUsers) {
           _.map(accountUsers, function(accountUser) {
             accountUser.dataValues.invite = _.last(accountUser.Invites);
           });
@@ -423,79 +434,98 @@ function removeInvite(params) {
   return deferred.promise;
 }
 
+function getSessionParticipant(sessionId, participantType) {
+  let deferred = q.defer();
+  models.SessionMember.find({
+     where: {
+       role: participantType
+     },
+    include: [{
+      model: Session,
+      where: {
+        id: sessionId
+      }
+    }, {model: AccountUser}]
+  }).then(function(participant) {
+    deferred.resolve(participant);
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function prepareGenericMailParameters(sessionMember, accountUsers, accountId, sessionId) {
+  let facilitator = sessionMember.AccountUser;
+  let params = [];
+
+  _.map(accountUsers, function(accountUser) {
+    params.push({
+      accountId: accountId,
+      email: accountUser.email,
+      firstName: accountUser.firstName,
+      facilitatorFirstName: facilitator.firstName,
+      facilitatorLastName: facilitator.lastName,
+      facilitatorMail: facilitator.email,
+      facilitatorMobileNumber: facilitator.mobile,
+      unsubscribeMailUrl: mailUrlHelper.getUrl(accountUser.ContactListUsers[0].unsubscribeToken, '/unsubscribe/'),
+      sessionId: sessionId
+    });
+  });
+  return params;
+}
+
+function sendGenericEmailsAsync(params, accountUsers, deferred) {
+  async.each(params, function(emailParams, callback) {
+    mailHelper.sendGeneric(emailParams, function(error, result) {
+      if(error) {
+        callback(error);
+      }
+      else {
+        callback(null, result);
+      }
+    });
+  }, function(error) {
+    if(error) {
+      deferred.reject(error);
+    }
+    else {
+      deferred.resolve(`Sent ${accountUsers.length} emails`);
+    }
+  });
+}
+
 function sendGenericEmail(sessionId, data, accountId) {
   let deferred = q.defer();
 
   validators.hasValidSubscription(accountId).then(function() {
-    models.SessionMember.find({
-      where: {
-        role: 'facilitator'
-      },
-      include: [{
-        model: Session,
-        where: {
-          id: sessionId
-        }
-      }, AccountUser]
-    }).then(function(sessionMember) {
+    getSessionParticipant(sessionId, 'facilitator').then(function(sessionMember) {
       if(sessionMember) {
         let ids = _.map(data.recievers, 'id');
-
+        let listIds = _.map(data.recievers, 'listId');
         AccountUser.findAll({
           include: [{
             model: models.ContactListUser,
             where: {
-              id: { $in: ids }
+              id: { $in: ids },
+              contactListId: { $in: listIds }
             }
           }]
         }).then(function(accountUsers) {
-          let params = [];
-          let facilitator = sessionMember.AccountUser;
-
-          _.map(accountUsers, function(accountUser) {
-            params.push({
-              accountId: accountId,
-              email: accountUser.email,
-              firstName: accountUser.firstName,
-              facilitatorFirstName: facilitator.firstName,
-              facilitatorLastName: facilitator.lastName,
-              facilitatorMail: facilitator.email,
-              facilitatorMobileNumber: facilitator.mobile,
-              unsubscribeMailUrl: 'some unsub url',
-              sessionId: sessionId
-            });
-          });
-
-          async.each(params, function(emailParams, callback) {
-            mailHelper.sendGeneric(emailParams, function(error, result) {
-              if(error) {
-                callback(error);
-              }
-              else {
-                callback(null, result);
-              }
-            });
-          }, function(error) {
-            if(error) {
-              deferred.reject(error);
-            }
-            else {
-              deferred.resolve(`Sent ${accountUsers.length} emails`);
-            }
-          });
+          let params = prepareGenericMailParameters(sessionMember, accountUsers, accountId, sessionId);
+          sendGenericEmailsAsync(params, accountUsers, deferred);
         }).catch(function(error) {
           deferred.reject(filters.errors(error));
         });
-      }
-      else {
+      } else {
         deferred.reject(MESSAGES.sessionMemberNotFound);
       }
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
-    });
-  }, function(error) {
-    deferred.reject(error);
-  })
+    }, function (error) {
+       deferred.reject(filters.errors(error));
+     });
+   }, function(error) {
+     deferred.reject(filters.errors(error));
+   });
 
   return deferred.promise;
 }

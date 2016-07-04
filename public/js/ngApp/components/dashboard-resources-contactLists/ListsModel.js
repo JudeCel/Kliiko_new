@@ -158,6 +158,7 @@
         function (res) {
           var newList = new ListItemModel(res);
           self.items.push( newList );
+          self.changeActiveList(self.items.length - 1, true);
           deferred.resolve(newList);
         },
         function (err) {

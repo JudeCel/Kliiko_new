@@ -19,7 +19,8 @@ module.exports = {
   update: update,
   destroy: destroy,
   updatePositions: updatePositions,
-  bulkCreate: bulkCreate
+  bulkCreate: bulkCreate,
+  destroyByToken: destroyByToken
 };
 
 function wrappersContactListUser(item, list) {
@@ -92,6 +93,16 @@ function destroy(ids, accountId) {
 
   let deferred = q.defer();
   ContactListUser.destroy({where: { id: ids, accountId: accountId}}).then(function(result) {
+    deferred.resolve(result);
+  }, function(err) {
+    deferred.reject(err);
+  });
+  return deferred.promise;
+}
+
+function destroyByToken(token) {
+  let deferred = q.defer();
+  ContactListUser.destroy({where: { unsubscribeToken: token}}).then(function(result) {
     deferred.resolve(result);
   }, function(err) {
     deferred.reject(err);

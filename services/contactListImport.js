@@ -21,7 +21,8 @@ let importErrors = {
   fieldRequired: "Required",
   emailTaken: 'Email already taken',
   emailInvalidFormat: "Email has invalid format",
-  wrongGender: "Gender is incorrect"
+  wrongGender: "Gender is incorrect",
+  invalidFormat: "Invalid format"
 }
 
 function validateContactList(id, list) {
@@ -252,6 +253,11 @@ function checkKeyValues(rowData, emails, key, row, uniqueRowListCounter, error) 
     if (!_.includes(constants.gender, rowData)) {
       error[key] = importErrors.wrongGender;
     }
+  } else if (key == 'firstName' || key == 'lastName') {
+    rowData = rowData.replace(/\s\s+/g, '');
+    if (!constants.validNameRegExp.test(rowData) || rowData.length < 2) {
+      error[key] = importErrors.invalidFormat;
+    }
   }
 }
 
@@ -274,9 +280,7 @@ function validateRow(emails, contactList, row, uniqueRowListCounter) {
         error[key] = importErrors.fieldRequired;
         --validKeyCount
       }
-
       checkKeyValues(rowData, emails, key, row, uniqueRowListCounter, error);
-
     }
   });
 

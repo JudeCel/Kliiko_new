@@ -4,6 +4,7 @@ module.exports = {
   phoneRegExp: /^\+?(?:[0-9] ?){6,14}[0-9]$/,
   validPhoneFormat: '1 123456789',
   emailRegExp: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  validNameRegExp: /^[a-zA-Z -]+$/i,
   systemRoles: ['admin', 'accountManager', 'facilitator', 'observer', 'participant'],
   sessionMemberRoles: ['facilitator', 'observer', 'participant'],
   gender: ["male", "female"],
@@ -84,5 +85,6 @@ module.exports = {
   inviteStatuses: ['pending', 'confirmed', 'rejected', 'notThisTime', 'notAtAll', 'expired'],
   sessionBuilderEmails: ['firstInvitation', 'confirmation', 'generic', 'notThisTime', 'notAtAll', 'closeSession'],
   sessionMemberMan: { base: 0, face: 5, body: 5, hair: -1, desk: -1, head: -1 },
-  sessionMemberWoman: { base: 0, face: 5, body: -1, hair: -1, desk: -1, head: 2 }
+  sessionMemberWoman: { base: 0, face: 5, body: -1, hair: -1, desk: -1, head: 2 },
+  validRoutePaths : ['invite', 'survey', 'my-dashboard', 'chargebee', 'api', 'unsubscribe']
 }
