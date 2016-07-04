@@ -52,6 +52,10 @@ describe('SERVICE - BrandColour', function() {
     assert.equal(data.colours.consoleButtonActive, params.colours.consoleButtonActive || '#4CB649');
   }
 
+  function countWhere() {
+    return { where: { accountId: accountParams() } };
+  }
+
   describe('#findScheme', function() {
     describe('happy path', function() {
       it('should succeed on finding scheme', function (done) {
@@ -93,12 +97,12 @@ describe('SERVICE - BrandColour', function() {
   describe('#createScheme', function() {
     describe('happy path', function() {
       it('should succeed on creating scheme', function (done) {
-        BrandProjectPreference.count().then(function(c) {
+        BrandProjectPreference.count(countWhere()).then(function(c) {
           assert.equal(c, 1);
 
           brandColourServices.createScheme({ name: 'untitled' }, accountParams()).then(function(result) {
             testScheme(result.data, { name: 'untitled' });
-            BrandProjectPreference.count().then(function(c) {
+            BrandProjectPreference.count(countWhere()).then(function(c) {
               assert.equal(c, 2);
               done();
             });
@@ -111,7 +115,7 @@ describe('SERVICE - BrandColour', function() {
 
     describe('sad path', function() {
       it('should fail because of colour regex', function (done) {
-        BrandProjectPreference.count().then(function(c) {
+        BrandProjectPreference.count(countWhere()).then(function(c) {
           assert.equal(c, 1);
 
           brandColourServices.createScheme({ colours: { browserBackground: 'somerandomstring' } }, accountParams()).then(function(result) {
@@ -182,13 +186,13 @@ describe('SERVICE - BrandColour', function() {
   describe('#removeScheme', function() {
     describe('happy path', function() {
       it('should succeed on deleting scheme', function (done) {
-        BrandProjectPreference.count().then(function(c) {
+        BrandProjectPreference.count(countWhere()).then(function(c) {
           assert.equal(c, 1);
 
           brandColourServices.removeScheme({ id: testData.preference.id }, accountParams()).then(function(result) {
             assert.equal(result.message, brandColourServices.messages.removed);
 
-            BrandProjectPreference.count().then(function(c) {
+            BrandProjectPreference.count(countWhere()).then(function(c) {
               assert.equal(c, 0);
               done();
             });
@@ -214,14 +218,14 @@ describe('SERVICE - BrandColour', function() {
   describe('#copyScheme', function() {
     describe('happy path', function() {
       it('should succeed on copieing scheme', function (done) {
-        BrandProjectPreference.count().then(function(c) {
+        BrandProjectPreference.count(countWhere()).then(function(c) {
           assert.equal(c, 1);
 
           brandColourServices.copyScheme({ id: testData.preference.id }, accountParams()).then(function(result) {
             testScheme(result.data);
             assert.equal(result.message, brandColourServices.messages.copied);
 
-            BrandProjectPreference.count().then(function(c) {
+            BrandProjectPreference.count(countWhere()).then(function(c) {
               assert.equal(c, 2);
               done();
             });
