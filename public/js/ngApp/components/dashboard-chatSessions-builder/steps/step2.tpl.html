@@ -45,8 +45,8 @@
                 </div>
                 <div class="control-block">
 
-                  <img class="pull-right ic" ng-click="topics.deleteTopic(t.id)" src="/icons/dashboardElement_remove.png" alt="" title="Delete">
-                  <img class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" ng-click="topics.openModal('edit', t)">
+                  <img ng-drag="false" class="pull-right ic" ng-click="topics.deleteTopic(t.id)" src="/icons/dashboardElement_remove.png" alt="" title="Delete">
+                  <img ng-drag="false" class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" ng-click="topics.openModal('edit', t)">
                 </div>
               </div>
             </div>
