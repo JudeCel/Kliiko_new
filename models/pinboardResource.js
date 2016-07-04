@@ -5,7 +5,7 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     sessionTopicId: { type: DataTypes.INTEGER, allowNull: false },
     sessionMemberId: { type: DataTypes.INTEGER, allowNull: false },
-    resourceId: { type: DataTypes.INTEGER, allowNull: false},
+    resourceId: { type: DataTypes.INTEGER, allowNull: true},
   }, {
     indexes: [{
       name: "uniquePinboardResource",
@@ -17,7 +17,7 @@ module.exports = (Sequelize, DataTypes) => {
       associate: function(models) {
         PinboardResource.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId' });
         PinboardResource.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId' });
-        PinboardResource.belongsTo(models.Resource, { foreignKey: 'resourceId', onDelete: 'cascade' });
+        PinboardResource.belongsTo(models.Resource, { foreignKey: 'resourceId' });
       }
     }
   });
