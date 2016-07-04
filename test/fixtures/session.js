@@ -60,17 +60,19 @@ function createMainAccount(callback) {
 }
 
 function createSessionWithFacilitator(callback) {
-  models.Session.create(sessionParams(), { include: [models.BrandProjectPreference] }).then(function(result) {
-    mainData.session = result;
-    mainData.preference = result.BrandProjectPreference;
-    let params = sessionMemberParams(mainData.accountUser.firstName, 'facilitator', mainData.accountUser.id, 'facilitator');
-    return createSessionMember(params);
-  }).then(function(data) {
-    mainData.facilitator = data;
-    mainData.sessionMembers = [data];
-    callback();
-  }).catch(function(error) {
-    callback(error);
+  models.BrandProjectPreference.find({ where: { accountId: mainData.account.id } }).then(function(preference) {
+    models.Session.create(sessionParams(preference.id)).then(function(result) {
+      mainData.session = result;
+      mainData.preference = preference;
+      let params = sessionMemberParams(mainData.accountUser.firstName, 'facilitator', mainData.accountUser.id, 'facilitator');
+      return createSessionMember(params);
+    }).then(function(data) {
+      mainData.facilitator = data;
+      mainData.sessionMembers = [data];
+      callback();
+    }).catch(function(error) {
+      callback(error);
+    });
   });
 }
 
@@ -189,14 +191,14 @@ function sessionMemberParams(name, role, accountUserId, token) {
   };
 }
 
-function sessionParams() {
+function sessionParams(preferenceId) {
   let startTime = new Date();
   return {
     accountId: mainData.account.id,
     name: 'cool session',
     startTime: startTime,
     endTime: startTime.setHours(startTime.getHours() + 2000),
-    BrandProjectPreference: brandProjectPreferenceParams()
+    brandProjectPreferenceId: preferenceId
   };
 }
 

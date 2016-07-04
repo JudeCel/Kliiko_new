@@ -90,6 +90,27 @@ function createScheme(params, accountId) {
   return deferred.promise;
 };
 
+function createDefaultForAccount(params, t) {
+  let deferred = q.defer();
+
+  let errors = {};
+  let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
+  validateColours(validParams.colours, errors);
+
+  if(_.isEmpty(errors)) {
+    BrandProjectPreference.create(validParams, { transaction: t }).then(function(result) {
+      deferred.resolve();
+    }).catch(function(error) {
+      deferred.reject(error);
+    });
+  }
+  else {
+    deferred.reject(errors);
+  }
+
+  return deferred.promise;
+}
+
 function canCreateCustomColors(accountId) {
   let deferred = q.defer();
 
@@ -216,6 +237,7 @@ module.exports = {
   findScheme: findScheme,
   findAllSchemes: findAllSchemes,
   createScheme: createScheme,
+  createDefaultForAccount: createDefaultForAccount,
   updateScheme: updateScheme,
   removeScheme: removeScheme,
   copyScheme: copyScheme,
