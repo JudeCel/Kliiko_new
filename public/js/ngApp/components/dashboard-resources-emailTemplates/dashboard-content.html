@@ -12,7 +12,7 @@
 
               <div class="input-group input-group-sm" ng-hide="!ec.isEditable(t, app.accountUser.isAdmin)">
                 <input type="text" class="form-control mail-list-input" aria-describedby="basic-addon3" ng-model="t.name" ng-class="{'inactive':!ec.isCurrent(key)}" >
-                <span class="input-group-addon" id="basic-addon3" ng-hide="!ec.isCurrent(key)">{{t["MailTemplateBase.name"] | limitTo: 7}}{{t["MailTemplateBase.name"].length > 7 ? '...' : ''}}</span>
+                <span class="input-group-addon" id="basic-addon3" ng-hide="!ec.isCurrent(key)" data-toggle="tooltip" data-placement="top" title="{{t['MailTemplateBase.name']}}">{{t["MailTemplateBase.name"] | limitTo: 7}}{{t["MailTemplateBase.name"].length > 7 ? '...' : ''}}</span>
                 <span class="input-group-btn" ng-hide="!ec.isCurrent(key)">
                 <button class="btn glyphicon glyphicon-remove" type="button" ng-click="ec.deleteTemplate(t, key, $event);"></button>
                 </span>

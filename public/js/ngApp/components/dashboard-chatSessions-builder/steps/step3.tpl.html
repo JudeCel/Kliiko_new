@@ -30,6 +30,9 @@
 
       <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec" ng-init="ec.preInit({sessionBuilder:true, sessionId: sbc.session.id})">
         <h1 class="text-center">Edit Email Templates</h1>
+
+        <div class="col-xs-12 centeredWarning fa fa-exclamation-triangle" aria-hidden="true"> You must customize all required Email Templates before inviting Participants (Step 4)</div>
+
         <div class="list-group col-xs-3 mail-template-list-section">
           <div class="panel-heading mail-template-list-heading"><strong>Email Templates</strong></div>
           <div id="mail-template-list" class="mail-template-list">
@@ -42,10 +45,10 @@
                   <span ng-if="t.name == 'Generic'"> (optional)</span>
               </div>
 
-              <div class="input-group input-group-sm display-flex" ng-hide="!t.AccountId">
+              <div class="input-group input-group-sm display-flex" ng-hide="!t.AccountId" data-toggle="tooltip" data-placement="top" title="{{step3Controller.templateName(t.name)}}">
                 <img src="/icons/ic_tick.png" alt="" ng-hide="!t.sessionId">
-                <input type="text" class="form-control mail-list-input dis" aria-describedby="basic-addon3" ng-model="t.name" ng-class="{'inactive':!ec.isCurrent(key)}" disabled="true">
-                <span class="input-group-btn" ng-hide="!ec.isCurrent(key)">
+                <input type="text" class="form-control mail-list-input dis" aria-describedby="basic-addon4" value="{{step3Controller.templateName(t.name)}}" ng-class="{'inactive':!ec.isCurrent(key)}" disabled="true">
+                <span class="input-group-btn" ng-hide="!ec.isCurrent(key)" id="basic-addon4">
                   <button class="btn glyphicon glyphicon-remove" type="button" ng-click="ec.deleteTemplate(t, key, $event);"></button>
                 </span>
               </div>
