@@ -9,7 +9,6 @@
     var vm = this;
     vm.mailTemplateList = [];
     vm.session = builderServices.session;
-    vm.showTemplateStatus = true;
 
     vm.getPreparedMailTemplateList = function() {
       vm.session.getSessionMailTemplateStatus().then(function(res) {
@@ -17,13 +16,6 @@
       }, function (err) {
         messenger.error(err);
       });
-    }
-
-    vm.editTemplates = function(hideEditor) {
-      vm.showTemplateStatus = !hideEditor;
-      if (vm.showTemplateStatus) {
-        vm.getPreparedMailTemplateList();
-      }
     }
 
     vm.isTemplateRequired = function(template) {
