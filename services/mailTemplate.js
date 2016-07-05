@@ -252,11 +252,23 @@ function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSyste
       raw: true,
       order: "id ASC"
   }).then(function(result) {
+    sortMailTemplates(result);
     callback(null, result);
   }).catch(function(error) {
     callback(error);
   });
 };
+
+function sortMailTemplates(result) {
+  let templateOrder = {"firstInvitation": 1, "confirmation": 2, "notThisTime": 3, "notAtAll": 4, "closeSession": 5, "generic": 6};
+  result.sort(function(a, b) {
+    if (!a.AccountId && !b.AccountId) {
+      return templateOrder[a['MailTemplateBase.category']] - templateOrder[b['MailTemplateBase.category']];
+    } else {
+      return 0;
+    }
+  });
+}
 
 function copyBaseTemplatesForSession(accountId, sessionId, callback) {
   getAllSessionMailTemplates(accountId, false, null, false, true, function(error, result) {
