@@ -69,7 +69,8 @@
             </tr>
           </table>
           <div class="row">
-            <button type="submit" class="btn btn-green pull-right" ng-click="ec.saveEmailTemplate(true)">Save</button>
+            <button type="submit" class="btn btn-green pull-right" ng-click="ec.modifyAndSave(false)">Apply</button>
+            <button type="submit" class="btn btn-lightgreen pull-right" ng-click="ec.modifyAndSave(true)">Save As</button>
             <button type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
           </div>
           <span>Content:</span>

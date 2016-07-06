@@ -264,6 +264,10 @@ function sortMailTemplates(result) {
   result.sort(function(a, b) {
     if (!a.AccountId && !b.AccountId) {
       return templateOrder[a['MailTemplateBase.category']] - templateOrder[b['MailTemplateBase.category']];
+    } else if (!a.AccountId && b.AccountId) {
+      return -1;
+    } else if (a.AccountId && !b.AccountId) {
+      return 1;
     } else {
       return 0;
     }
@@ -366,9 +370,10 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
     }
   }
 
-  //in case if template was modified in session builder
+  // in case if template was modified in session builder
   if (template.properties && template.properties.sessionId) {
     if (template.sessionId != template.properties.sessionId) {
+      console.log("here?", template.sessionId, template.properties.sessionId);
       result = true;
       template.sessionId = template.properties.sessionId;
     }
@@ -443,7 +448,6 @@ function getMailTemplateForSession(req, callback) {
 
 function buildTemplate(inputTemplate, sourceTemplate) {
   let id = null;
-  let overwriteSessionElement = false;
   let targetTemplate = {
     name: inputTemplate.name,
     subject: inputTemplate.subject,
@@ -457,23 +461,15 @@ function buildTemplate(inputTemplate, sourceTemplate) {
     'MailTemplateBase.name': inputTemplate['MailTemplateBase.name'],
     'MailTemplateBase.systemMessage': inputTemplate['MailTemplateBase.systemMessage'],
     'MailTemplateBase.category': inputTemplate['MailTemplateBase.category'],
+    sessionId: inputTemplate.sessionId,
     properties: inputTemplate.properties
   };
-  if (sourceTemplate) {
-    id = sourceTemplate.id;
-    overwriteSessionElement = true;
-    targetTemplate.name = sourceTemplate.name;
-    targetTemplate.sessionId = sourceTemplate.sessionId;
-    targetTemplate.isCopy = true;
-    targetTemplate.AccountId = sourceTemplate.AccountId;
-  } else {
-    id = inputTemplate.id;
-  }
+
+  id = inputTemplate.id;
 
   return {
     id: id,
-    template: targetTemplate,
-    overwriteSessionElement: overwriteSessionElement
+    template: targetTemplate
   };
 }
 
@@ -485,9 +481,10 @@ function saveMailTemplate(template, createCopy, accountId, callback) {
       return;
     }
 
+    let templateObject = buildTemplate(template);
+
     getMailTemplateForSession({template:template, accountId: accountId}, function(error, result) {
-      let templateObject = buildTemplate(template, result);
-      if (!templateObject.overwriteSessionElement && shouldCreateCopy(templateObject.template, createCopy, accountId)) {
+      if (shouldCreateCopy(templateObject.template, createCopy, accountId)) {
         templateObject.template.isCopy = true;
         templateObject.template.AccountId = accountId;
         create(templateObject.template, function(error, result) {
