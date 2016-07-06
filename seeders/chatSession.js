@@ -8,6 +8,7 @@ sessionFixture.createChat().then(function(result) {
   console.log('Session created!');
   process.exit();
 }).catch(function(error) {
-  console.log("Error: " + error);
+  console.log("Error: ", error);
+
   process.exit();
 });

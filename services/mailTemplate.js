@@ -74,15 +74,15 @@ function create(params, callback) {
 }
 
 function update(id, parameters, callback){
-    MailTemplate.update(parameters, {
-        where: {id: id}
-    })
-    .then(function (result) {
-        return callback(null, result);
-    })
-    .catch(function (err) {
-        callback(err);
-    });
+  MailTemplate.update(parameters, {
+      where: {id: id}
+  })
+  .then(function (result) {
+      return callback(null, result);
+  })
+  .catch(function (err) {
+      callback(err);
+  });
 }
 
 function getLatestMailTemplate(req, callback) {
@@ -373,7 +373,6 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
   // in case if template was modified in session builder
   if (template.properties && template.properties.sessionId) {
     if (template.sessionId != template.properties.sessionId) {
-      console.log("here?", template.sessionId, template.properties.sessionId);
       result = true;
       template.sessionId = template.properties.sessionId;
     }
@@ -432,7 +431,7 @@ function getMailTemplateForSession(req, callback) {
   let baseTemplateQuery = {id: req.template['MailTemplateBase.id']};
   let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
 
-  MailTemplate.find({
+  MailTemplate.findAll({
     where: {
       sessionId: req.template.properties.sessionId,
       isCopy: true,
@@ -473,6 +472,23 @@ function buildTemplate(inputTemplate, sourceTemplate) {
   };
 }
 
+function removeTemplatesFromSession(ids, callback){
+  if (ids && ids.length > 0) {
+    let parameters = {sessionId: null};
+    MailTemplate.update(parameters, {
+      where: { id: {$in: ids} }
+    })
+    .then(function (result) {
+      return callback(null, result);
+    })
+    .catch(function (err) {
+      callback(err);
+    });
+  } else {
+    callback();
+  }
+}
+
 function saveMailTemplate(template, createCopy, accountId, callback) {
   if (template) {
     let validationResult = validateTemplate(template);
@@ -484,26 +500,35 @@ function saveMailTemplate(template, createCopy, accountId, callback) {
     let templateObject = buildTemplate(template);
 
     getMailTemplateForSession({template:template, accountId: accountId}, function(error, result) {
-      if (shouldCreateCopy(templateObject.template, createCopy, accountId)) {
-        templateObject.template.isCopy = true;
-        templateObject.template.AccountId = accountId;
-        create(templateObject.template, function(error, result) {
-          if (error) {
-            callback(error);
-          } else {
-            setMailTemplateDefault(result.MailTemplateBaseId, result.id, !createCopy, callback);
-          }
-        });
-      } else {
-        update(templateObject.id, templateObject.template, function(error, result) {
-          if (error) {
-            callback(error);
-          } else {
-            setMailTemplateDefault(templateObject.template.MailTemplateBaseId, templateObject.id, !createCopy, callback);
-          }
-        });
+      let ids = [];
+      if (result && result.id != templateObject.id) {
+        ids = _.map(result, 'id');
       }
-    });
+
+      removeTemplatesFromSession(ids, function() {
+        if (shouldCreateCopy(templateObject.template, createCopy, accountId)) {
+          templateObject.template.isCopy = true;
+          templateObject.template.AccountId = accountId;
+
+          create(templateObject.template, function(error, result) {
+            if (error) {
+              callback(error);
+            } else {
+              setMailTemplateDefault(result.MailTemplateBaseId, result.id, !createCopy, callback);
+            }
+          });
+
+        } else {
+          update(templateObject.id, templateObject.template, function(error, result) {
+            if (error) {
+              callback(error);
+            } else {
+              setMailTemplateDefault(templateObject.template.MailTemplateBaseId, templateObject.id, !createCopy, callback);
+            }
+          });
+        }
+      });//removeTemplatesFromSession
+    });//getMailTemplateForSession
   } else {
     callback("e-mail template not provided");
   }
