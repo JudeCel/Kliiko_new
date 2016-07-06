@@ -15,7 +15,7 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
-              <form method="post" action="/registration" novalidate="" id="register">
+              <form method="post" action="/freeTrialRegistration" novalidate="" id="register">
                 <% if(socialProfile){ %>
                  <input type="hidden" name="socialProfile[provider]" value="<%=socialProfile.provider%>">
                  <input type="hidden" name="socialProfile[id]" value="<%=socialProfile.id%>">
@@ -115,7 +115,6 @@
                     </td>
                   </tr>
 
-
                   <tr>
                     <td></td>
                     <% if(errors.password){ %>
@@ -128,47 +127,7 @@
                     </td>
                     <% } %>
                   </tr>
-                  <tr>
-                    <td>
-                      <label class="text-no-bold text-login-page" for="mobile">
-                        Mobile
-                        <br>
-                        Number
-                      </label>
-                    </td>
-                    <td>
-                      <input type="tel" value="<%= mobile %>" id="mobilePhone" name="mobile" placeholder="Mobile Number" class="form-control">
-                      <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="<%= phoneCountryData %>">
-                    </td>
-                  </tr>
 
-                  <tr>
-                    <td></td>
-                    <td class="error-column">
-                      <div class="has-error" id="mobilePhoneError"><%= errors.mobile %></div>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td>
-                      <label class="text-no-bold text-login-page" for="landlineNumber">
-                        Landline
-                        <br>
-                        Number
-                      </label>
-                    </td>
-                    <td>
-                      <input type="tel" value="<%= landlineNumber %>" id="landline_number" name="landlineNumber" placeholder="Landline Number" class="form-control">
-                      <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="<%= landlineNumberCountryData %>">
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td></td>
-                    <td class="error-column">
-                      <div class="has-error" id="landline_number_error"><%= errors.landlineNumber %></div>
-                    </td>
-                  </tr>
                 </table>
 
                 <div class="form-group">

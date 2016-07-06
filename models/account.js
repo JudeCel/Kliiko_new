@@ -5,6 +5,7 @@ var validations = require('./validations');
 module.exports = (Sequelize, DataTypes) => {
   var Account = Sequelize.define('Account', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    selectedPlanOnRegistration: {type: DataTypes.STRING, allowNull: true },
     name: {type: DataTypes.STRING, allowNull: false,
       validate: {
         notEmpty: true,

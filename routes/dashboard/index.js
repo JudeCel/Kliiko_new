@@ -8,6 +8,7 @@ var paymentDetailsRoutes = require('./paymentDetails.js');
 var selectPlanRoutes = require('./selectPlan.js');
 var appData = require('../../services/webAppData');
 var middlewareFilters = require('../../middleware/filters');
+var subscriptionService = require('../../services/subscription');
 
 function views_path(action) {
   let views_name_space = 'dashboard/';
@@ -30,8 +31,24 @@ router.get('/', policy.authorized(['admin', 'accountManager']) , function(req, r
 });
 
 router.get('/landing', function(req, res) {
+
+
+  if(req.query.id && req.query.state == 'succeeded' ){
+    succeededCheckout(req.query);
+  }
+
   res.render(views_path('landing'), { title: 'Landing page' });
 });
+
+function succeededCheckout(params) {
+  subscriptionService.retrievCheckoutAndUpdateSub(params.id).then(function(response) {
+    console.log("~~~~~~~~~~~~ response");
+    console.log(response);
+  }, function(error) {
+    console.log("~~~~~~~~~~~~ ERROR");
+    console.log(error);
+  });
+}
 
 router.get('/paymentDetails', policy.authorized(['accountManager']), paymentDetailsRoutes.get);
 

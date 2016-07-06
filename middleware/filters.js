@@ -4,7 +4,9 @@ var models = require('../models');
 var AccountUser = models.AccountUser;
 var Subscription = models.Subscription;
 var subdomains = require('../lib/subdomains');
+var subscriptionService = require('../services/subscription');
 var _ = require('lodash');
+var q = require('q');
 
 module.exports = {
   landingPage: landingPage,
@@ -22,6 +24,8 @@ function landingPage(req, res, next) {
 }
 
 function planSelectPage(req, res, next) {
+  let redirectUrl = subdomains.url(req, res.locals.currentDomain.name, '/dashboard/landing');
+
   if(req.originalUrl == '/dashboard/selectPlan') {
     next();
   }
@@ -33,9 +37,13 @@ function planSelectPage(req, res, next) {
     }).then(function(subscription) {
       if(subscription) {
         next();
-      }
-      else {
-        res.redirect(subdomains.url(req, res.locals.currentDomain.name, '/dashboard/selectPlan'));
+      } else {
+        createSubscription(res.locals.currentDomain.id, res.locals.currentUser.id, redirectUrl).then(function(response) {
+          res.writeHead(301, { Location: response.hosted_page.url   } );
+          res.end();
+        }, function(error) {
+          res.send({ error: error });
+        });
       }
     }, function(error) {
       res.send({ error: error });
@@ -44,6 +52,38 @@ function planSelectPage(req, res, next) {
   else {
     next();
   }
+}
+
+function createSubscription(accountId, userId, redirectUrl) {
+  let deferred = q.defer();
+
+  models.Account.find({
+    where: {
+      id: accountId
+    }
+  }).then(function(account) {
+
+    subscriptionService.createSubscription(accountId, userId).then(function(response) {
+
+      subscriptionService.updateSubscription({
+        accountId: account.id,
+        newPlanId: account.selectedPlanOnRegistration,
+        redirectUrl: redirectUrl
+      }).then(function(response) {
+        deferred.resolve(response);
+      }, function(erros) {
+        deferred.reject(error);
+      });
+
+    }, function(error) {
+      deferred.reject(error);
+    });
+
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
 }
 
 function myDashboardPage(req, res, next) {

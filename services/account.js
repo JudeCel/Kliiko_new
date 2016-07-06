@@ -11,7 +11,7 @@ function create(object, callback) {
   object.account = {};
   object.errors = object.errors || {};
 
-  Account.create({ name: object.params.accountName }, { transaction: object.transaction }).then(function(result) {
+  Account.create({ name: object.params.accountName, selectedPlanOnRegistration: object.params.selectedPlanOnRegistration }, { transaction: object.transaction }).then(function(result) {
     contactListService.createDefaultLists(result.id, object.transaction).then(function(_promise) {
       object.account = result;
       callback(null, object);

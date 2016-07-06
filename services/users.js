@@ -26,7 +26,6 @@ module.exports = {
 
 
 function create(params, callback) {
-
   let err = {};
 
   if (params.termsAndConditions === "false") {
@@ -57,7 +56,6 @@ function update(req, callback){
 
 function createUser(params, callback) {
   parsePhoneParams(params);
-
 
   let createNewUserFunctionList = [
     function (cb) {

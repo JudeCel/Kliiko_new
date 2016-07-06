@@ -309,6 +309,10 @@ function updateSubscription(params, providers) {
             deferred.reject(error);
           })
         }else{
+          console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+          console.log(params);
+          console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
           chargebeeSubUpdateViaCheckout(chargebeePassParams(result), params.redirectUrl, providers.viaCheckout).then(function(hosted_page) {
             deferred.resolve({hosted_page: hosted_page, redirect: true});
           }, function(error) {

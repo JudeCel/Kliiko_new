@@ -2,6 +2,7 @@
 var express = require('express');
 var async = require('async');
 var _ = require('lodash');
+var url = require('url');
 var router = express.Router();
 var usersRepo = require('../../services/users');
 var resetPassword = require('../../services/resetPassword');
@@ -26,7 +27,7 @@ router.use(function (req, res, next) {
     if (req.path == '/logout') {
       return next();
     }
-        
+
     if(filterValidPaths(req.path, constants.validRoutePaths)){
       next();
     }else{
@@ -85,9 +86,26 @@ router.get('/', function (req, res, next) {
 
 router.get('/registration', function (req, res, next) {
   let params = usersRepo.prepareParams(req);
+
   params.phoneCountryData = replaceToString(params.phoneCountryData);
   params.landlineNumberCountryData = replaceToString(params.landlineNumberCountryData);
   res.render('registration', params);
+});
+
+router.get('/freeTrialRegistration', function (req, res, next) {
+  let params = usersRepo.prepareParams(req);
+
+  res.render('freeTrialRegistration', params);
+});
+
+router.get('/paidPlanRegistration', function (req, res, next) {
+  let params = usersRepo.prepareParams(req);
+
+  params.selectedPlanOnRegistration = req.query.selected_plan;
+  params.phoneCountryData = replaceToString(params.phoneCountryData);
+  params.landlineNumberCountryData = replaceToString(params.landlineNumberCountryData);
+
+  res.render('paidPlanRegistration', params);
 });
 
 function replaceToString(value) {
@@ -162,6 +180,62 @@ router.get('/auth/google/callback', function(req, res, next) {
     }
   })(req, res, next);
 });
+
+router.post('/paidPlanRegistration', function (req, res, next) {
+  let params = usersRepo.prepareParams(req);
+
+  usersRepo.create(params, function (error, result) {
+    if (error) {
+        res.render('paidPlanRegistration', usersRepo.prepareParams(req, error));
+    } else {
+      let tplData = {
+        title: 'Email Confirmation',
+        error: '',
+        success: '',
+        email: ''
+      };
+
+      let email = req.body.email;
+      emailConfirmation.sendEmailConfirmationToken(email, function (err) {
+        if (err) {
+          tplData.error = 'Failed to send data. Please try later';
+        } else {
+          tplData.success = 'Email confirmation sent to ' + email;
+        }
+      });
+      res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: process.env.MAIL_FROM_NAME});
+    };
+  });
+});
+
+router.post('/freeTrialRegistration', function (req, res, next) {
+  let params = usersRepo.prepareParams(req);
+  params.selectedPlanOnRegistration = 'free_trial';
+
+  usersRepo.create(params, function (error, result) {
+    if (error) {
+        res.render('freeTrialRegistration', usersRepo.prepareParams(req, error));
+    } else {
+      let tplData = {
+        title: 'Email Confirmation',
+        error: '',
+        success: '',
+        email: ''
+      };
+
+      let email = req.body.email;
+      emailConfirmation.sendEmailConfirmationToken(email, function (err) {
+        if (err) {
+          tplData.error = 'Failed to send data. Please try later';
+        } else {
+          tplData.success = 'Email confirmation sent to ' + email;
+        }
+      });
+      res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: process.env.MAIL_FROM_NAME});
+    };
+  });
+});
+
 
 router.post('/registration', function (req, res, next) {
   usersRepo.create(usersRepo.prepareParams(req), function (error, result) {

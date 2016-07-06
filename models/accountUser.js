@@ -8,7 +8,7 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     firstName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true, isLength: validations.length('firstName', { max: 35 }) } },
     lastName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true, isLength: validations.length('lastName', { max: 35 }) } },
-    gender: {type: DataTypes.ENUM, allowNull: true, validate: { notEmpty: true }, values: constants.gender },
+    gender: {type: DataTypes.ENUM, allowNull: true, values: constants.gender },
     owner: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     reveiveNewsLetters: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
