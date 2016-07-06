@@ -115,7 +115,7 @@
                         <div class="pull-left">
                             <div class='btn-standart btn-red' data-dismiss="modal">Cancel</div>
                             <div class='btn-standart btn-green' ng-click='clc.reUpload()'>Re-Upload File</div>
-                            <div class='btn-standart btn-green' ng-click='clc.reMap()'>Re-Map Fields</div>
+                            <div class='btn-standart btn-green' ng-click='clc.reMap()' ng-show="clc.lists.activeList.editable">Re-Map Fields</div>
                         </div>
 
                         <div class="pull-right">
