@@ -24,7 +24,7 @@ module.exports = (Sequelize, DataTypes) => {
     },
     scope: { type: DataTypes.ENUM, allowNull: false,
       values: [ 'participant', 'facilitator', 'co-facilitator', 'observer', 'report', 'vote',
-        'collage', 'brandLogo', 'youtube', 'zip', 'pdf', 'csv', 'banner', 'txt' ]
+        'collage', 'brandLogo', 'youtube', 'zip', 'pdf', 'csv', 'banner', 'txt', 'pinboard' ]
     }
   }, {
     timestamps: true,
