@@ -44,11 +44,7 @@
     }
 
     vm.resetMailTemplate = function() {
-      vm.editor.resetMailTemplate().then(function() {
-
-      }, function() {
-
-      });
+      vm.editor.resetMailTemplate();
     }
 
     vm.deleteTemplate = function(t, key, $event) {
