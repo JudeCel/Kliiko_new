@@ -11,6 +11,7 @@ var SessionMemberService = require('./../../services/sessionMember');
 
 var mainData;
 
+const COUNT_NAME = ["one", "two", "three", "four", "five", "six", "seven", "eight" ]
 const DEPENDENCY_COUNT = {
   participants: 8,
   observers: 1,
@@ -79,7 +80,7 @@ function createSessionWithFacilitator(callback) {
 function createSubAccountsAndSessionMembers(callback) {
   let participants = _.times(DEPENDENCY_COUNT.participants, function(index) {
     return function(cb) {
-      createAccountAndSessionMember(index, 'participant').then(function() {
+      createAccountAndSessionMember(COUNT_NAME[index], 'participant').then(function() {
         cb();
       }, function(error) {
         cb(error);
@@ -89,7 +90,7 @@ function createSubAccountsAndSessionMembers(callback) {
 
   let observers = _.times(DEPENDENCY_COUNT.observers, function(index) {
     return function(cb) {
-      createAccountAndSessionMember(index, 'observer').then(function() {
+      createAccountAndSessionMember(COUNT_NAME[index], 'observer').then(function() {
         cb();
       }, function(error) {
         cb(error);
@@ -129,7 +130,7 @@ function createTopics(callback) {
 // Helpers
 function createAccountAndSessionMember(index, role, gender) {
   let deferred = q.defer();
-  let name = role + (index+1);
+  let name = (role + index);
 
   createUserAndOwnerAccount(userParams(name, gender)).then(function(result) {
     let params = sessionMemberParams(result.accountUser.firstName, role, result.accountUser.id, name);

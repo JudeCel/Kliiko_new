@@ -61,7 +61,7 @@ function crateAccountManager(callback) {
 function createUser() {
   async.waterfall(createNewUserFunctionList, function (error, _result) {
     if (error) {
-      console.log("wee get error:" + error);
+      console.log("wee get error:", error);
       process.exit();
     }
     console.log("Done!!");

@@ -9,6 +9,5 @@ sessionFixture.createChat().then(function(result) {
   process.exit();
 }).catch(function(error) {
   console.log("Error: ", error);
-
   process.exit();
 });
