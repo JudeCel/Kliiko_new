@@ -434,12 +434,17 @@ function modifySessions(sessions, accountId, provider) {
           let facIndex;
 
           session.dataValues.facilitator = facilitator;
+          let total = 0;
           _.map(session.SessionMembers, function(member, index) {
             if(member.id == facilitator.id) {
               facIndex = index;
             }
+            else {
+              total += member.rating;
+            }
           });
           session.SessionMembers.splice(facIndex, 1);
+          session.dataValues.averageRating = total / session.SessionMembers.length;
         }
       });
 

@@ -9,6 +9,13 @@ function unique(sequelize, model, fieldName, otherValue) {
         if(otherValue.lower) {
           where[fieldName] = sequelize.fn('lower', value);
         }
+        else {
+          where[fieldName] = value;
+        }
+
+        if(otherValue.accountContext) {
+          where.accountId = this.accountId;
+        }
       }
       else {
         where[fieldName] = value;
