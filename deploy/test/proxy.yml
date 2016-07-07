@@ -1,0 +1,61 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: proxy-admin
+  labels:
+    name: nginx
+    role: ssl-proxy
+    app: admin
+spec:
+  ports:
+  - name: https
+    port: 443
+    targetPort: ssl-proxy-https
+    protocol: TCP
+  - name: http
+    port: 80
+    targetPort: ssl-proxy-http
+    protocol: TCP
+  selector:
+    name: nginx
+    role: ssl-proxy
+    app: admin
+  type: LoadBalancer
+---
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: proxy-admin
+  labels:
+    name: nginx
+    role: ssl-proxy
+    app: admin
+spec:
+  replicas: 1
+  selector:
+    name: nginx
+    role: ssl-proxy
+    app: admin
+  template:
+    metadata:
+      name: proxy-admin
+      labels:
+        name: nginx
+        role: ssl-proxy
+        app: admin
+    spec:
+      containers:
+      - name: nginx-ssl-proxy
+        image: janjiss/nginx-ssl-proxy-websockets:latest
+        env:
+        - name: SERVICE_HOST_ENV_NAME
+          value: ADMIN_SERVICE_HOST
+        - name: SERVICE_PORT_ENV_NAME
+          value: ADMIN_SERVICE_PORT
+        - name: ENABLE_SSL
+          value: 'false'
+        ports:
+        - name: ssl-proxy-http
+          containerPort: 80
+        - name: ssl-proxy-https
+          containerPort: 443
