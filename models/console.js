@@ -6,7 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
     sessionTopicId: { type: DataTypes.INTEGER, allowNull: false },
     audioId: { type: DataTypes.INTEGER, allowNull: true },
     videoId: { type: DataTypes.INTEGER, allowNull: true },
-    imageId: { type: DataTypes.INTEGER, allowNull: true },
+    pinboard:	{ type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     fileId: { type: DataTypes.INTEGER, allowNull: true },
     miniSurveyId: { type: DataTypes.INTEGER, allowNull: true }
   }, {
