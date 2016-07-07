@@ -445,7 +445,7 @@ function getMailTemplateForSession(req, callback) {
     });
 }
 
-function buildTemplate(inputTemplate, sourceTemplate) {
+function buildTemplate(inputTemplate) {
   let id = null;
   let targetTemplate = {
     name: inputTemplate.name,
@@ -501,7 +501,7 @@ function saveMailTemplate(template, createCopy, accountId, callback) {
 
     getMailTemplateForSession({template:template, accountId: accountId}, function(error, result) {
       let ids = [];
-      if (result && result.id != templateObject.id) {
+      if (!createCopy && result && result.id != templateObject.id) {
         ids = _.map(result, 'id');
       }
 
@@ -509,6 +509,9 @@ function saveMailTemplate(template, createCopy, accountId, callback) {
         if (shouldCreateCopy(templateObject.template, createCopy, accountId)) {
           templateObject.template.isCopy = true;
           templateObject.template.AccountId = accountId;
+          if (createCopy) {
+            templateObject.template.sessionId = null;
+          }
 
           create(templateObject.template, function(error, result) {
             if (error) {

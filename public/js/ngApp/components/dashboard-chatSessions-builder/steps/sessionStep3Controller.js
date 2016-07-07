@@ -29,9 +29,44 @@
     vm.getPreparedMailTemplateList();
 
     vm.templateName = function(baseName) {
-      return baseName + " (" + vm.session.steps.step1.name +")";
+      return baseName + " " + vm.session.steps.step1.name;
     }
 
+    vm.isCreated = function(template) {
+      var imageUrl = "/icons/ic_cross.png";
+      vm.mailTemplateList.map(function(item) {
+        if (template && item.id == template.id && item.created == true) {
+          imageUrl = "/icons/ic_tick.png";
+        }
+      });
+
+      return imageUrl;
+    }
+
+    vm.resetMailTemplate = function() {
+      vm.editor.resetMailTemplate().then(function() {
+
+      }, function() {
+
+      });
+    }
+
+    vm.deleteTemplate = function(t, key, $event) {
+      vm.editor.deleteTemplate(t, key, $event).then(function() {
+        vm.getPreparedMailTemplateList();
+      }, function() {
+        //failure is handled in mail template controller. This is a wrapper
+      });
+    }
+
+    vm.modifyAndSave = function(createCopy, addSessionInfo) {
+      //null - will pickup current template
+      vm.editor.modifyAndSave(createCopy, null ,addSessionInfo).then(function() {
+        vm.getPreparedMailTemplateList();
+      }, function() {
+        //failure is handled in mail template controller. This is a wrapper
+      });
+    }
   }
 
 })();
