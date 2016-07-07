@@ -21,6 +21,7 @@
     vm.hasAccess = hasAccess;
     vm.isExpired = isExpired;
     vm.isMember = isMember;
+    vm.mouseOver = mouseOver;
     vm.redirectToChatSession = redirectToChatSession;
 
     vm.disablePlayButton = false;
@@ -160,6 +161,11 @@
         return sum + member.rating;
       }, 0);
       vm.sessionRating = rating / (session.SessionMembers.length || 1);
+      session.averageRating = vm.sessionRating;
+    }
+
+    function mouseOver() {
+      return '/js/ngApp/components/dashboard-chatSessions/averageRating.html';
     }
   }
 })();

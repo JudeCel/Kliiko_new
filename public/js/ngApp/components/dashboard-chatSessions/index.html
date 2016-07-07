@@ -56,7 +56,8 @@
             <td>{{ session.expireDate | date:sc.dateFormat }}</td>
             <td>{{ session.showStatus }}</td>
             <td class='text-right dashboardElementsEditRemove'>
-              <span class='glyphicon glyphicon-star' aria-hidden='true' ng-if='csc.hasAccess(session.id, app.accountUser)' ng-click='csc.changePage("sessionRating", session)'></span>
+
+              <span uib-popover-template='csc.mouseOver()' popover-trigger='mouseenter' class='glyphicon glyphicon-star' aria-hidden='true' ng-if='csc.hasAccess(session.id, app.accountUser)' ng-click='csc.changePage("sessionRating", session)'></span>
               <img src='/icons/resources_grey.png' alt='' ng-click='csc.copySession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
               <img src='/icons/dashboardElement_edit.png' alt='' ng-if='csc.hasAccess(session.id, app.accountUser)' ui-sref="dashboard.chatSessions.builder({id:session.id})" ng-click=""/>
               <img src='/icons/dashboardElement_remove.png' alt='' ng-click='csc.removeSession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
