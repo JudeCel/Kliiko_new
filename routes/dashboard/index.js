@@ -32,7 +32,6 @@ router.get('/', policy.authorized(['admin', 'accountManager']) , function(req, r
 
 router.get('/landing', function(req, res) {
 
-
   if(req.query.id && req.query.state == 'succeeded' ){
     succeededCheckout(req.query);
   }

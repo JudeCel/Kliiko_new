@@ -38,9 +38,18 @@ function planSelectPage(req, res, next) {
       if(subscription) {
         next();
       } else {
+        console.log("user diesnt have subscription");
         createSubscription(res.locals.currentDomain.id, res.locals.currentUser.id, redirectUrl).then(function(response) {
-          res.writeHead(301, { Location: response.hosted_page.url   } );
-          res.end();
+          console.log("Subscription for user was created: ");
+          console.log('hosted_page' in response, "Check if it is hosted page!");
+          if('hosted_page' in response) {
+            console.log("User got paid plan");
+            res.writeHead(301, { Location: response.hosted_page.url } );
+            res.end();
+          }else {
+            console.log("user choosed free trial");
+            res.redirect(subdomains.url(req, res.locals.currentDomain.name, '/dashboard/landing'));
+          }
         }, function(error) {
           res.send({ error: error });
         });
@@ -62,23 +71,23 @@ function createSubscription(accountId, userId, redirectUrl) {
       id: accountId
     }
   }).then(function(account) {
-
     subscriptionService.createSubscription(accountId, userId).then(function(response) {
-
-      subscriptionService.updateSubscription({
-        accountId: account.id,
-        newPlanId: account.selectedPlanOnRegistration,
-        redirectUrl: redirectUrl
-      }).then(function(response) {
+      if(account.selectedPlanOnRegistration && account.selectedPlanOnRegistration != "free_trial"){
+        subscriptionService.updateSubscription({
+          accountId: account.id,
+          newPlanId: account.selectedPlanOnRegistration,
+          redirectUrl: redirectUrl
+        }).then(function(response) {
+          deferred.resolve(response);
+        }, function(erros) {
+          deferred.reject(error);
+        });
+      }else{
         deferred.resolve(response);
-      }, function(erros) {
-        deferred.reject(error);
-      });
-
+      }
     }, function(error) {
       deferred.reject(error);
     });
-
   }).catch(function(error) {
     deferred.reject(error);
   });

@@ -23,7 +23,8 @@ module.exports = {
     customEmailInvitationAndReminderMessages: true,
     topicCount: -1,
     priority: -20,
-    surveyCount: 1
+    surveyCount: 1,
+    secureSsl: true
   },
   free_account: {
     sessionCount: 1,
@@ -48,7 +49,8 @@ module.exports = {
     customEmailInvitationAndReminderMessages: true,
     topicCount: 5,
     priority: -10,
-    surveyCount: 1
+    surveyCount: 1,
+    secureSsl: true
   },
   senior_monthly: {
     sessionCount: 8,
@@ -74,7 +76,8 @@ module.exports = {
     topicCount: -1,
     priority: 3,
     related: 'senior_yearly',
-    surveyCount: 4
+    surveyCount: 4,
+    secureSsl: true
   },
   senior_yearly: {
     sessionCount: 8,
@@ -99,7 +102,8 @@ module.exports = {
     customEmailInvitationAndReminderMessages: true,
     topicCount: -1,
     priority: -3,
-    surveyCount: 4
+    surveyCount: 4,
+    secureSsl: true
   },
   core_monthly: {
     sessionCount: 3,
@@ -125,7 +129,8 @@ module.exports = {
     topicCount: 20,
     priority: 2,
     related: 'core_yearly',
-    surveyCount: 2
+    surveyCount: 2,
+    secureSsl: true
   },
   core_yearly: {
     sessionCount: 3,
@@ -150,7 +155,8 @@ module.exports = {
     customEmailInvitationAndReminderMessages: true,
     topicCount: 20,
     priority: -2,
-    surveyCount: 2
+    surveyCount: 2,
+    secureSsl: true
   },
   junior_monthly: {
     sessionCount: 1,
@@ -176,7 +182,8 @@ module.exports = {
     topicCount: 5,
     priority: 1,
     related: 'junior_yearly',
-    surveyCount: 1
+    surveyCount: 1,
+    secureSsl: true
   },
   junior_yearly: {
     sessionCount: 1,
@@ -201,6 +208,7 @@ module.exports = {
     customEmailInvitationAndReminderMessages: true,
     topicCount: 5,
     priority: -1,
-    surveyCount: 1
+    surveyCount: 1,
+    secureSsl: true
   }
 }

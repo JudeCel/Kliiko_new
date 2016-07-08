@@ -21,6 +21,30 @@
     vm.purchaseWasSuccessfull = true
     vm.subPlans = [];
 
+    vm.planOptions = [
+      'Number of Active Sessions',
+      'Number of Contact Lists',
+      'Recruiter lists \n (build Contact Lists on demand)',
+      'Import and manage your \n existing contacts',
+      'Custom logo and branding',
+      'Contacts per account',
+      'Managers per account',
+      'Export contact and \n participation history',
+      'Export Recruiter survey results',
+      'Access klzii Forum',
+      'Access klzii Focus',
+      'Observers can watch sessions',
+      'Paid SMS reminders for participants',
+      'Tips for guiding discussions',
+      'Whiteboard functionality',
+      'Upload and store multimedia',
+      'Reporting and analysis',
+      'Mobile and tablet compatible',
+      'Customise email invitations \n and reminders',
+      'Number of topics',
+      'Private and secure sessions (SSL)'
+    ]
+
     vm.stepLayouts = [
       {
         inQueue: 1,
@@ -88,6 +112,8 @@
     vm.switchPlan = switchPlan;
     vm.showCalculatedPrice = showCalculatedPrice;
     vm.checkRadioButton = checkRadioButton;
+    vm.optionBackground = optionBackground;
+    vm.openContactUsModal = openContactUsModal;
 
     init();
 
@@ -124,6 +150,9 @@
         if(result.error){
           messenger.error(result.error);
         }else {
+
+          console.log(result.plans);
+
           vm.subPlans = result.plans;
           vm.currentPlan = result.currentPlan;
         }
@@ -241,6 +270,18 @@
 
     function showCalculatedPrice(price) {
       return price / 100;
+    }
+
+    function optionBackground(index) {
+      if(index%2 > 0) {
+        return "background-color: #dedede;"
+      }else{
+        return "background-color: #cdcdcd;"
+      }
+    }
+
+    function openContactUsModal() {
+      domServices.modal('contactUsModal');
     }
   }
 })();

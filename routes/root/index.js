@@ -101,7 +101,10 @@ router.get('/freeTrialRegistration', function (req, res, next) {
 router.get('/paidPlanRegistration', function (req, res, next) {
   let params = usersRepo.prepareParams(req);
 
-  params.selectedPlanOnRegistration = req.query.selected_plan;
+  if(req.query.selected_plan) {
+    params.selectedPlanOnRegistration = req.query.selected_plan;
+  }
+
   params.phoneCountryData = replaceToString(params.phoneCountryData);
   params.landlineNumberCountryData = replaceToString(params.landlineNumberCountryData);
 
@@ -280,6 +283,9 @@ router.route('/emailConfirmation/:token')
     };
 
     emailConfirmation.checkTokenExpired(req.params.token, function (err, user) {
+      console.log(err);
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      console.log(user);
       if (err || !user) {
         tplData.user = false;
         tplData.errors.password = "Token expired";
@@ -293,9 +299,14 @@ router.route('/emailConfirmation/:token')
             tplData.errors.password = "Something is wrong with email confirmation";
             res.render('/login', tplData);
           }else{
-            mailers.users.sendEmailConfirmationSuccess({email: user.email}, function (err, data) {
-              res.redirect('/');
+            req.login(user, function(err) {
+              middlewareFilters.myDashboardPage(req, res, next);
             });
+
+            // Will check if this is needed anymore!!!
+            // mailers.users.sendEmailConfirmationSuccess({email: user.email}, function (err, data) {
+            //   res.redirect('/');
+            // });
           };
         });
       }
