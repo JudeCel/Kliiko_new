@@ -47,7 +47,7 @@
 
       if(invites.length > 0){
         invites.map(function(invite) {
-          confirmed = (invite.role == vm.currentTab && invite.status == 'confirmed');
+          confirmed = invite.status == 'confirmed';
         })
       }
       return confirmed;

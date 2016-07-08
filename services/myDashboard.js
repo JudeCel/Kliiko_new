@@ -77,7 +77,7 @@ function getAllSessions(userId, provider) {
   Session.findAll({
     include: [{
       model: SessionMember,
-      role: 'participant',
+      where: { role: 'participant' },
       include: [{
         model: AccountUser,
         where: {
