@@ -1,0 +1,14 @@
+<span class='render-gallery'>
+  {{ typeOf = gc.isTypeOf(resource); "" }}
+  <iframe type='text/html' ng-src='{{ gc.youtubeUrl(resource.url.full) }}' frameBorder='0' ng-if='typeOf.youtube' />
+
+  <img ng-src='{{ resource.url.thumb }}' ng-if='typeOf.image || typeOf.brandLogo'/>
+
+  <audio controls ng-if='typeOf.audio' ng-src='{{ gc.resourceUrl(resource.url.full) }}' type='audio/mp3' />
+
+  <video controls ng-if='typeOf.video' ng-src='{{ gc.resourceUrl(resource.url.full) }}' type='video/mp4' />
+
+  <span class='glyphicon glyphicon-file' aria-hidden='true' ng-if='typeOf.pdf'></span>
+
+  <span class='glyphicon glyphicon-lock' aria-hidden='true' ng-if='typeOf.zip'></span>
+</span>

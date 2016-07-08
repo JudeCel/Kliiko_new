@@ -73,6 +73,12 @@
     }
   }
 
+  .render-gallery {
+    image, video, img {
+      width: 300px;
+    }
+  }
+
   .green-text {
     color: #2D8C5E;
   }

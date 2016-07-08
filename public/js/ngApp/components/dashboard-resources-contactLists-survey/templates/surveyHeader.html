@@ -22,7 +22,7 @@
         <label class='col-xs-2 control-label' for='brandLogo'>Survey Logo</label>
         <div class='col-xs-10 col-md-6'>
           {{ upload = sc.galleryDropdownData("survey", sc.survey); resource = gc.getResourceFromList(sc.survey); "" }}
-          <div ng-include="gc.templatesDir + 'view.html'" ng-if='resource'></div>
+          <div ng-include="gc.templatesDir + 'viewRendered.html'" ng-if='resource'></div>
           <div ng-include="gc.templatesDir + 'dropdown.html'"></div>
         </div>
       </div>

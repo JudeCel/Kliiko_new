@@ -87,7 +87,7 @@
 
           <div ng-if='question.resource'>
             {{ resource = question.resource; "" }}
-            <div ng-include="gc.templatesDir + 'view.html'" ng-if='resource'></div>
+            <div ng-include="gc.templatesDir + 'viewRendered.html'" ng-if='resource'></div>
           </div>
 
         </div>
