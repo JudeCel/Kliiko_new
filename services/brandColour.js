@@ -172,9 +172,14 @@ function copyScheme(params, accountId) {
 
   findScheme(params, accountId).then(function(result) {
     delete result.data.dataValues.id;
+    result.data.dataValues.name = 'Copy of ' + result.data.dataValues.name;
 
     createScheme(result.data.dataValues, accountId).then(function(result) {
-      deferred.resolve(simpleParams(result.data, MESSAGES.copied));
+      updateScheme({ id: result.data.id, name: result.data.name + ' #' + result.data.id }, accountId).then(function(result) {
+        deferred.resolve(simpleParams(result.data, MESSAGES.copied));
+      }, function(error) {
+        deferred.reject(filters.errors(error));
+      });
     }, function(error) {
       deferred.reject(error);
     });
