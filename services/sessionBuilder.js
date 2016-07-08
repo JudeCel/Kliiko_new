@@ -176,7 +176,9 @@ function sendCloseSessionMail(session) {
           deferred.reject(errors);
         })
       }else{
-        deferred.reject(MESSAGES.errors.cantSendCloseMails);
+        session.update({ active: true }).then(function() {
+          deferred.reject(MESSAGES.errors.cantSendCloseMails);
+        });
       }
     }).catch(function(error) {
       deferred.reject(error);
