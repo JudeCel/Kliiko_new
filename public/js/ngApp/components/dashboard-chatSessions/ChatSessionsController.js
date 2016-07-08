@@ -17,7 +17,6 @@
 
     vm.changePage = changePage;
     vm.rowClass = rowClass;
-    vm.goToChat = goToChat;
     vm.hasAccess = hasAccess;
     vm.isExpired = isExpired;
     vm.isMember = isMember;
@@ -61,7 +60,7 @@
     function redirectToChatSession(sessionId) {
       vm.disablePlayButton = true;
       chatSessionsServices.generateRedirectLink(sessionId).then(function(url) {
-        window.open(url, '_blank');
+        $window.open(url);
         vm.disablePlayButton = false;
       }, function(error) {
         vm.disablePlayButton = false;
@@ -115,12 +114,6 @@
 
     function rowClass(session, user) {
       return 'session-' + session.showStatus.toLowerCase();
-    }
-
-    function goToChat(session) {
-      if(!isExpired(session)) {
-        $window.location.href = vm.chatRoomUrl + session.id;
-      }
     }
 
     function hasAccess(sessionId, accountUser) {

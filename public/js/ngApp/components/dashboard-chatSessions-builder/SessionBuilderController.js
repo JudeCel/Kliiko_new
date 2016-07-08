@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope'];
-  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope) {
+  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices'];
+  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -41,6 +41,7 @@
     vm.updateStep = updateStep;
     vm.goToStep = goToStep;
     vm.goToChat = goToChat;
+    vm.canSeeGoToChat = canSeeGoToChat;
     vm.currentPageToDisplay = currentPageToDisplay;
     vm.addFacilitatorsClickHandle = addFacilitatorsClickHandle;
 
@@ -106,7 +107,33 @@
 
     function goToChat(session) {
       if (session.showStatus && session.showStatus == 'Expired') return;
-      $window.location.href = session.chatRoomUrl + session.id;
+
+      vm.disableRedirectButton = true;
+      chatSessionsServices.generateRedirectLink(session.id).then(function(url) {
+        $window.open(url);
+        vm.disableRedirectButton = false;
+      }, function(error) {
+        vm.disableRedirectButton = false;
+        messenger.error(error);
+      });
+    }
+
+    function canSeeGoToChat(session, accountUser) {
+      if(session.sessionData) {
+        let facilitator = session.sessionData.facilitator ? session.sessionData.facilitator.accountUserId == accountUser.id : false;
+        let member = false;
+        if(session.sessionData.SessionMembers) {
+          session.sessionData.SessionMembers.map(function(member) {
+            if(member.accountUserId == accountUser.id) {
+              member = true;
+            }
+          });
+        }
+        return facilitator || member;
+      }
+      else {
+        return false;
+      }
     }
 
 

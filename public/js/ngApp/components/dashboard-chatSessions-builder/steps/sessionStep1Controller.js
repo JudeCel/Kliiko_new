@@ -43,6 +43,7 @@
 
     function inviteFacilitator(facilitator) {
       vm.session.addMembers(facilitator, 'facilitator').then( function (res) {
+        vm.session.sessionData.facilitator = facilitator;
         vm.session.steps.step1.facilitator = facilitator;
         messenger.ok("Facilitator was successfully set");
       }, function (err) {

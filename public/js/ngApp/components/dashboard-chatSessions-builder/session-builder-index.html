@@ -85,7 +85,7 @@
             <div class="col-md-2 btn-standart pull-right btn-green" ng-click="sbc.goToStep('finish')" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-show="sbc.lastStep">
               Finish with builder
             </div>
-            <div ng-if="sbc.session.chatRoomUrl" class="col-md-2 btn-standart pull-right btn-blue margin020" ng-click="sbc.goToChat(sbc.session)">
+            <div ng-if="sbc.canSeeGoToChat(sbc.session, app.accountUser)" class="col-md-2 btn-standart pull-right btn-blue margin020" ng-click="sbc.goToChat(sbc.session)">
               Enter Chat Room
             </div>
         </div>

@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp.Root').controller('DashboardController', DashboardController);
 
-  DashboardController.$inject = ['dbg', '$state', '$stateParams', 'dashboardServices', 'messenger'];
-  function DashboardController(dbg, $state, $stateParams, dashboardServices, messenger) {
+  DashboardController.$inject = ['dbg', '$state', '$stateParams', 'dashboardServices', 'messenger', '$window'];
+  function DashboardController(dbg, $state, $stateParams, dashboardServices, messenger, $window) {
     dbg.log2('#Dashboard controller started');
 
     var vm = this;
@@ -22,7 +22,7 @@
     function redirectToChatSession(sessionId) {
       vm.disablePlayButton = true;
       dashboardServices.generateRedirectLink(sessionId).then(function(url) {
-        window.open(url, '_blank');
+        $window.open(url);
         vm.disablePlayButton = false;
       }, function(error) {
         vm.disablePlayButton = false;
