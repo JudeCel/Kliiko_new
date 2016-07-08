@@ -35,12 +35,16 @@
     vm.isCreated = function(template) {
       var imageUrl = "/icons/ic_cross.png";
       vm.mailTemplateList.map(function(item) {
-        if (template && item.id == template.id && item.created == true) {
-          imageUrl = "/icons/ic_tick.png";
+        if (isTemplateCreated(template, item)) {
+          return imageUrl = "/icons/ic_tick.png";
         }
       });
 
       return imageUrl;
+    }
+
+    function isTemplateCreated(template, item) {
+      return (template && item.id == template.id && item.created == true);
     }
 
     vm.resetMailTemplate = function() {
