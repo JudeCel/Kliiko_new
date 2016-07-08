@@ -21,7 +21,7 @@ var validators = require('./../services/validators');
 
 
 const VALID_ATTRIBUTES = {
-  sessionMember: ['id', 'role', 'rating', 'sessionId', 'accountUserId', 'username']
+  sessionMember: ['id', 'role', 'rating', 'sessionId', 'accountUserId', 'username', 'comment']
 };
 
 const MESSAGES = {
@@ -30,6 +30,7 @@ const MESSAGES = {
   copied: 'Session sucessfully copied',
   sessionMemberNotFound: 'Session Member not found',
   rated: 'Session Member rated',
+  commentChanged: 'Comment updated successfully',
   cantRateSelf: "You can't rate your self"
 };
 
@@ -43,6 +44,7 @@ module.exports = {
   updateSessionMemberRating: updateSessionMemberRating,
   getAllSessionRatings: getAllSessionRatings,
   addShowStatus: addShowStatus,
+  changeComment: changeComment,
   getSessionByInvite: getSessionByInvite
 };
 
@@ -74,6 +76,31 @@ function getSessionByInvite(token) {
 }
 
 // Exports
+function changeComment(id, comment, accountId) {
+  let deferred = q.defer();
+
+  SessionMember.find({
+    where: { id: id },
+    include: [{
+      model: Session,
+      where: { accountId: accountId }
+    }]
+  }).then(function(sessionMember) {
+    if(sessionMember) {
+      sessionMember.update({ comment: comment }).then(function() {
+        deferred.resolve(simpleParams(null, MESSAGES.commentChanged));
+      }, function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+    else {
+      deferred.reject(MESSAGES.sessionMemberNotFound);
+    }
+  });
+
+  return deferred.promise;
+}
+
 function findSession(sessionId, accountId, provider) {
   let deferred = q.defer();
 

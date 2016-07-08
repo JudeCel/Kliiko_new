@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('ChatSessionsController', ChatSessionsController);
 
-  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'messenger', 'angularConfirm', '$window', '$rootScope'];
-  function ChatSessionsController(dbg, chatSessionsServices, messenger, angularConfirm, $window, $rootScope){
+  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'messenger', 'angularConfirm', '$window', '$rootScope', 'domServices'];
+  function ChatSessionsController(dbg, chatSessionsServices, messenger, angularConfirm, $window, $rootScope, domServices){
     dbg.log2('#ChatSessionsController started');
 
     var vm = this;
@@ -22,6 +22,9 @@
     vm.isMember = isMember;
     vm.mouseOver = mouseOver;
     vm.redirectToChatSession = redirectToChatSession;
+    vm.openModalWindow = openModalWindow;
+    vm.closeModal = closeModal;
+    vm.saveComment = saveComment;
 
     vm.disablePlayButton = false;
     vm.originalSession = {};
@@ -38,6 +41,24 @@
         vm.chatRoomUrl = res.chatRoomUrl;
         vm.sessionListManageRoles = res.sessionListManageRoles;
         dbg.log2('#ChatSessionsController > getChatSessions > res ', res.data);
+      });
+    }
+
+    function openModalWindow(member) {
+      vm.currentMemberModal = member;
+      domServices.modal('chatSessionsModal');
+    }
+
+    function closeModal() {
+      domServices.modal('chatSessionsModal', 1);
+    }
+
+    function saveComment() {
+      chatSessionsServices.saveComment(vm.currentMemberModal).then(function(res) {
+        messenger.ok(res.message);
+        domServices.modal('chatSessionsModal', 1);
+      }, function(error) {
+        messenger.error(error);
       });
     }
 
