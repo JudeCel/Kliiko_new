@@ -29,13 +29,15 @@ function createAdmin(callback) {
       return callback(errors)
     }
     user.getOwnerAccount().then(function(results) {
-      let account = results[0].AccountUser;
-      if (account) {
-        account.update({ role: 'admin' });
-        callback(null)
-      }else{
-        callback("Account not found for user")
-      }
+      results[0].update({ admin: true }).then(function() {
+        let account = results[0].AccountUser;
+        if (account) {
+          account.update({ role: 'admin' });
+          callback(null)
+        }else{
+          callback("Account not found for user")
+        }
+      });
     }).catch(function(err) {
       callback(err);
     });
