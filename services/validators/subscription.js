@@ -9,9 +9,10 @@ var q = require('q');
 var _ = require('lodash');
 
 const MESSAGES = {
-  planDoesntAllowToDoThis: "Please update your subscription plan to one that includes this feature.",
+  planDoesntAllowToDoThis: 'Please update your subscription plan to one that includes this feature.',
   notFound: 'No subscription found',
   notValidDependency: 'Not valid dependency',
+  inactiveSubscription: 'Your subscription is expired, please update your subscription plan.',
   count: function(type, maxCount) {
     return `You have reached limit for ${_.startCase(type)}s (max: ${maxCount})`
   }
@@ -58,21 +59,12 @@ module.exports = {
 function validate(accountId, type, count) {
   let deferred = q.defer();
 
-
-  SubscriptionPreference.find({
-    include: [{
-      model: Subscription,
-      where: {
-        accountId: accountId,
-        active: true
-      }
-    }]
-  }).then(function(preference) {
-    if(preference) {
+  validQuery(accountId).then(function(subscription) {
+    if(subscription) {
       let dependency = DEPENDENCIES[type];
       if(dependency) {
         dependency.model.count(dependency.params(accountId)).then(function(c) {
-          let maxCount = preference.data[dependency.key];
+          let maxCount = subscription.SubscriptionPreference.data[dependency.key];
 
           if(c + count <= maxCount || maxCount == -1) {
             deferred.resolve();
@@ -89,10 +81,10 @@ function validate(accountId, type, count) {
       }
     }
     else {
-      deferred.reject(MESSAGES.notFound);
+      deferred.resolve();
     }
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
+  }, function(error) {
+    deferred.reject(error);
   });
 
   return deferred.promise;
@@ -101,19 +93,17 @@ function validate(accountId, type, count) {
 function planAllowsToDoIt(accountId, key) {
   let deferred = q.defer();
 
-  models.SubscriptionPreference.find({
-    include: [{
-      model: models.Subscription,
-      where: {
-        accountId: accountId,
-        active: true
+  validQuery(accountId).then(function(subscription) {
+    if(subscription) {
+      if(subscription.SubscriptionPreference.data[key]) {
+        deferred.resolve();
       }
-    }]
-  }).then(function(preference) {
-    if(preference.data[key]) {
+      else {
+        deferred.reject(MESSAGES.planDoesntAllowToDoThis);
+      }
+    }
+    else {
       deferred.resolve();
-    }else{
-      deferred.reject(MESSAGES.planDoesntAllowToDoThis);
     }
   }, function(error) {
     deferred.reject(error);
@@ -125,36 +115,67 @@ function planAllowsToDoIt(accountId, key) {
 function canAddAccountUsers(accountId) {
   let deferred = q.defer();
 
-  models.SubscriptionPreference.find({
-    include: [{
-      model: models.Subscription,
-      where: {
-        accountId: accountId,
-        active: true
-      }
-    }]
-  }).then(function(preference) {
-    models.AccountUser.count({
-      where: {
-        role: 'accountManager'
-      },
-      include: [{
-        model: models.Account,
+  validQuery(accountId).then(function(subscription) {
+    if(subscription) {
+      models.AccountUser.count({
         where: {
-          id: accountId
+          role: 'accountManager'
+        },
+        include: [{
+          model: models.Account,
+          where: {
+            id: accountId
+          }
+        }]
+      }).then(function(count) {
+        if(subscription.SubscriptionPreference.data.accountUserCount <= count) {
+          deferred.reject(MESSAGES.count('AccountUser', subscription.SubscriptionPreference.data.accountUserCount));
+        }else{
+          deferred.resolve();
         }
-      }]
-    }).then(function(count) {
-      if(preference.data.accountUserCount <= count) {
-        deferred.reject(MESSAGES.count('AccountUser', preference.data.accountUserCount));
-      }else{
-        deferred.resolve();
-      }
-    }).catch(function(error) {
-      deferred.reject(error);
-    });
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
+    }
+    else {
+      deferred.resolve();
+    }
   }, function(error) {
     deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function validQuery(accountId) {
+  let deferred = q.defer();
+
+  models.Account.find({
+    where: { id: accountId },
+    include: [{
+      model: Subscription,
+      include: [SubscriptionPreference]
+    }]
+  }).then(function(account) {
+    if(account) {
+      if(account.admin) {
+        deferred.resolve();
+      }
+      else if(account.Subscription) {
+        if(account.Subscription.active) {
+          deferred.resolve(account.Subscription);
+        }
+        else {
+          deferred.reject(MESSAGES.inactiveSubscription);
+        }
+      }
+      else {
+        deferred.reject(MESSAGES.notFound);
+      }
+    }
+    else {
+      deferred.reject(MESSAGES.notFound);
+    }
   });
 
   return deferred.promise;

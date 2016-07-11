@@ -450,41 +450,57 @@ function simpleParams(data, message) {
 function modifySessions(sessions, accountId, provider) {
   let deferred = q.defer();
 
-  models.Subscription.find({ where: { accountId: accountId } }).then(function(subscription) {
-    subscriptionService.getChargebeeSubscription(subscription.subscriptionId, provider).then(function(chargebeeSub) {
-
-      let array = _.isArray(sessions) ? sessions : [sessions];
-      _.map(array, function(session) {
-        addShowStatus(session, chargebeeSub);
-        let facilitator = findFacilitator(session.SessionMembers);
-        if(facilitator) {
-          let facIndex;
-
-          session.dataValues.facilitator = facilitator;
-          let total = 0;
-          _.map(session.SessionMembers, function(member, index) {
-            if(member.id == facilitator.id) {
-              facIndex = index;
-            }
-            else {
-              total += member.rating;
-            }
-          });
-          session.SessionMembers.splice(facIndex, 1);
-          session.dataValues.averageRating = total / session.SessionMembers.length;
-        }
-      });
-
+  models.Account.find({ where: { id: accountId } }).then(function(account) {
+    if(account.admin) {
+      changeSessionData(sessions, null, provider);
       deferred.resolve(sessions);
+    }
+    else {
+      models.Subscription.find({ where: { accountId: accountId } }).then(function(subscription) {
+        subscriptionService.getChargebeeSubscription(subscription.subscriptionId, provider).then(function(chargebeeSub) {
+          changeSessionData(sessions, chargebeeSub, provider);
+          deferred.resolve(sessions);
+        }, function(error) {
+          deferred.reject(error);
+        })
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+  })
 
-    }, function(error) {
-      deferred.reject(error);
-    })
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
-  });
 
   return deferred.promise;
+}
+
+function changeSessionData(sessions, chargebeeSub, provider) {
+  let array = _.isArray(sessions) ? sessions : [sessions];
+  _.map(array, function(session) {
+    if(chargebeeSub) {
+      addShowStatus(session, chargebeeSub);
+    }
+    else {
+      session.dataValues.showStatus = 'Indefinite';
+    }
+
+    let facilitator = findFacilitator(session.SessionMembers);
+    if(facilitator) {
+      let facIndex;
+
+      session.dataValues.facilitator = facilitator;
+      let total = 0;
+      _.map(session.SessionMembers, function(member, index) {
+        if(member.id == facilitator.id) {
+          facIndex = index;
+        }
+        else {
+          total += member.rating;
+        }
+      });
+      session.SessionMembers.splice(facIndex, 1);
+      session.dataValues.averageRating = total / session.SessionMembers.length;
+    }
+  });
 }
 
 function addShowStatus(session, chargebeeSub) {
