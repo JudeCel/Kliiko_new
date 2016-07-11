@@ -3,5 +3,5 @@
 echo "Deploying latest test klzii_admin image from docker hub"
 gcloud container clusters get-credentials klzii-test && \
 kubectl delete deployment admin && \
-kubectl apply -f deploy/staging/admin.yml && \
+kubectl apply -f deploy/test/admin.yml && \
 kubectl get pods
