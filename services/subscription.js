@@ -3,6 +3,8 @@
 var models = require('./../models');
 var filters = require('./../models/filters');
 var airbrake = require('./../lib/airbrake').instance;
+var quotesMailer = require('../mailers/quotes');
+
 var Subscription = models.Subscription;
 var AccountUser = models.AccountUser;
 var Account = models.Account;
@@ -14,6 +16,9 @@ var _ = require('lodash');
 var async = require('async');
 var chargebee = require('./../lib/chargebee').instance;
 var planConstants = require('./../util/planConstants');
+
+const getAQuoteFieldsNeeded = ['firstName', 'lastName', 'contactNumber', 'email', 'companyName', 'positionInCompany', 'companyUrl', 'comments']
+const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const MESSAGES = {
   notFound: {
@@ -29,7 +34,8 @@ const MESSAGES = {
   },
   alreadyExists: 'Subscription already exists',
   cantSwitchPlan: "Can't switch to current plan",
-  successPlanUpdate: 'Plan was successfully updated.'
+  successPlanUpdate: 'Plan was successfully updated.',
+  quoteSent: "Quote was successfully sent."
 }
 
 module.exports = {
@@ -43,7 +49,35 @@ module.exports = {
   recurringSubscription: recurringSubscription,
   getAllPlans: getAllPlans,
   retrievCheckoutAndUpdateSub: retrievCheckoutAndUpdateSub,
-  getChargebeeSubscription: getChargebeeSubscription
+  getChargebeeSubscription: getChargebeeSubscription,
+  postQuote: postQuote
+}
+
+function postQuote(params) {
+  let deferred = q.defer();
+  let errors = [];
+
+  _.map(getAQuoteFieldsNeeded, function(field) {
+    if(!params[field]) {
+      errors.push("Please provide: " + field);
+    }
+  });
+
+  if(!emailRegex.test(params.email)) {
+    errors.push("E-mail format is not valid.")
+  }
+
+  if(errors.length > 0) {
+    deferred.reject(errors);
+  }else{
+    quotesMailer.sendQuote(params).then(function() {
+      deferred.resolve({message: MESSAGES.quoteSent});
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }
+
+  return deferred.promise;
 }
 
 function getChargebeeSubscription(subscriptionId, provider) {

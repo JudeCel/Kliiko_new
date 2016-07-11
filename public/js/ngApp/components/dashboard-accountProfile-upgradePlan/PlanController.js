@@ -20,6 +20,7 @@
     vm.yearlyPlan = null;
     vm.purchaseWasSuccessfull = true
     vm.subPlans = [];
+    vm.contactUsUser = {};
 
     vm.planOptions = [
       'Number of Active Sessions',
@@ -114,6 +115,7 @@
     vm.checkRadioButton = checkRadioButton;
     vm.optionBackground = optionBackground;
     vm.openContactUsModal = openContactUsModal;
+    vm.submitContactusForm = submitContactusForm;
 
     init();
 
@@ -280,8 +282,26 @@
       }
     }
 
-    function openContactUsModal() {
+    function openContactUsModal(user) {
+      vm.contactUsUser = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        contactNumber: user.mobile,
+        companyName: user.companyName
+      }
       domServices.modal('contactUsModal');
+    }
+
+    function submitContactusForm() {
+      planService.submitContactusForm(vm.contactUsUser).then(function(result) {
+        console.log(result);
+        if(result.error){
+          messenger.error(result.error);
+        }else{
+          messenger.ok(result.message);
+        }
+      });
     }
   }
 })();

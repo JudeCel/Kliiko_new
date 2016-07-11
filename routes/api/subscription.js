@@ -7,8 +7,17 @@ var subdomains = require('../../lib/subdomains');
 module.exports = {
   getPlans: getPlans,
   updatePlan: updatePlan,
-  retrievCheckoutAndUpdateSub: retrievCheckoutAndUpdateSub
+  retrievCheckoutAndUpdateSub: retrievCheckoutAndUpdateSub,
+  postQuote: postQuote
 };
+
+function postQuote(req, res, next) {
+  subscription.postQuote(req.body).then(function(result) {
+    res.send(result);
+  }, function(error) {
+    res.send({ error: error });
+  })
+}
 
 function getPlans(req, res, next) {
   let accountId = res.locals.currentDomain.id;
