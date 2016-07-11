@@ -120,8 +120,8 @@
 
     function canSeeGoToChat(session, accountUser) {
       if(session.sessionData) {
-        let facilitator = session.sessionData.facilitator ? session.sessionData.facilitator.accountUserId == accountUser.id : false;
-        let member = false;
+        var facilitator = session.sessionData.facilitator ? session.sessionData.facilitator.accountUserId == accountUser.id : false;
+        var member = false;
         if(session.sessionData.SessionMembers) {
           session.sessionData.SessionMembers.map(function(member) {
             if(member.accountUserId == accountUser.id) {
