@@ -1,9 +1,16 @@
 "use strict";
 var assert = require("chai").assert;
+var models  = require('./../../models');
 
 var usersMailer = require('./../../mailers/users.js');
 
 describe('Mailer Users', () => {
+  before((done) => {
+    models.sequelize.sync({force: true}).done((error, result) => {
+      done();
+    });
+  });
+
   describe('sendEmailConfirmationSuccess ', () => {
     describe('success ', () => {
       let email = "testeEmail@gmail.com";
@@ -24,7 +31,7 @@ describe('Mailer Users', () => {
       let params = { 'email': email };
       it('content', (done) =>  {
         usersMailer.sendPasswordChangedSuccess(params, function(err, result) {
-          assert.include(result.data.html, "you have successfully changed your Password!");
+          assert.include(result.data.html, "Your password changed successfully");
           assert.include(result.data.to, email);
           done();
         });
@@ -55,7 +62,7 @@ describe('Mailer Users', () => {
       let params = { 'email': email, "token": token };
       it('content', (done) =>  {
         usersMailer.sendResetPasswordToken(params, function(err, result) {
-          assert.include(result.data.html, "this is to confirm you wish to Change your Password");
+          assert.include(result.data.html, "A request was made to change your password");
           assert.include(result.data.to, email);
           assert.include(result.data.html, token);
           done();
