@@ -13,6 +13,21 @@
   messengerFactory.$inject = [];
   function messengerFactory()  {
 
+    var entityMap = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': '&quot;',
+      "'": '&#39;',
+      "/": '&#x2F;'
+    };
+
+    function escapeHtmlToString(str) {
+      return String(str).replace(/[&<>"'\/]/g, function (s) {
+        return entityMap[s];
+      });
+    }
+
     // Init. Timeout is to bypass 'undefined' error
     setTimeout(function() {
       jQuery('body').prepend('<div id="messenger-area"></div>');
@@ -51,13 +66,12 @@
 
       function parseMessage(rawMessage) {
         var output = '';
-        if ( typeof(rawMessage) === 'string') output = rawMessage;
+        if ( typeof(rawMessage) === 'string') output = escapeHtmlToString(rawMessage);
         if ( angular.isObject(rawMessage) ) {
           for (var property in rawMessage) {
-            output += property + ': ' + rawMessage[property]+'<br/> ';
+            output += property + ': ' + escapeHtmlToString(rawMessage[property]) +'<br/> ';
           }
         }
-
 
         return output;
       }
@@ -107,4 +121,3 @@
 
 
 })();
-
