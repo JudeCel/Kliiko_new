@@ -43,7 +43,7 @@ function planSelectPage(req, res, next) {
             res.writeHead(301, { Location: response.hosted_page.url } );
             res.end();
           }else {
-            res.redirect(subdomains.url(req, res.locals.currentDomain.name, '/dashboard/landing'));
+            res.redirect(redirectUrl);
           }
         }, function(error) {
           res.send({ error: error });

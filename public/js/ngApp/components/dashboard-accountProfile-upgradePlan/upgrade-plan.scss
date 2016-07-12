@@ -1,5 +1,8 @@
 #upgrade-plan-content {
 
+  .plan-option-dark-grey{background-color: #dedede;}
+  .plan-option-light-grey{background-color: #cdcdcd;}
+
   .get-quote-note{
     font-size: 14px;
     color: grey;
@@ -42,14 +45,14 @@
     }
   }
 
-  .align-wertical-parent {
+  .align-vertical-parent {
     display: table;
     width: 100%;
     height: 60px;
     margin-bottom: 3px;
   }
 
-  .align-wertical-child {
+  .align-vertical-child {
     font-size: 14px;
     display: table-cell;
     vertical-align: middle;
@@ -78,7 +81,7 @@
     .white-space-pre-line {
       white-space: pre-line;
     }
-    .align-wertical-child{
+    .align-vertical-child{
       text-align: left;
     }
   }

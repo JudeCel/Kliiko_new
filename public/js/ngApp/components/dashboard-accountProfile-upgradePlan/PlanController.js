@@ -174,11 +174,11 @@
           messenger.error(result.error);
         }else {
           result.plans.map(function (subPlan) {
-            if (subPlan.plan.period_unit == 'month' && subPlan.additionalParams.priority > 0) {
+            if (canPush('month', subPlan)) {
               vm.monthlyPlans.push(subPlan);
             }
 
-            if (subPlan.plan.period_unit == 'year' && subPlan.additionalParams.priority > 0) {
+            if (canPush('year', subPlan)) {
               vm.annualPlans.push(subPlan);
             }
           });
@@ -187,6 +187,10 @@
           vm.currentPlan = result.currentPlan;
         }
       })
+    }
+
+    function canPush(period, subPlan) {
+      return subPlan.plan.period_unit == period && subPlan.additionalParams.priority > 0;
     }
 
     function succeededCheckout(params) {
@@ -300,9 +304,9 @@
 
     function optionBackground(index) {
       if(index%2 > 0) {
-        return "background-color: #dedede;"
+        return "plan-option-dark-grey"
       }else{
-        return "background-color: #cdcdcd;"
+        return "plan-option-light-grey"
       }
     }
 

@@ -15,7 +15,7 @@ function sendQuote(params) {
     }else{
       transporter.sendMail({
         from: params.email,
-        to: 'bligzna.lauris@gmail.com',
+        to: process.GET_A_QUOTE_EMAIL,
         subject: subject(params.firstName, params.lastName),
         html: html
       }, function(error, info){
