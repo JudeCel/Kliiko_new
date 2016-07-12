@@ -42,17 +42,17 @@ spec:
         - name: SERVER_CHAT_DOMAIN_URL
           value: "https://chat.klzii.com"
         - name: FACEBOOK_CALLBACK_URL
-          value: "https://chat.klzii.com/auth/facebook/callback"
+          value: "https://www.klzii.com/auth/facebook/callback"
         - name: FACEBOOK_CLIENT_ID
           value: "895147450520688"
         - name: FACEBOOK_CLIENT_SECRET
           value: "5c18ba36fe2a55ae05fd64fe41bcb002"
         - name: GOOGLE_CALLBACK_URL
-          value: "https://chat.klzii.com/auth/google/callback"
+          value: "https://www.klzii.com/auth/google/callback"
         - name: GOOGLE_CLIENT_ID
-          value: "895147450520688"
+          value: "570903251504-hvev7sqcqqvl977djc1kqv722sqgidp3.apps.googleusercontent.com"
         - name: GOOGLE_CLIENT_SECRET
-          value: "5c18ba36fe2a55ae05fd64fe41bcb002"
+          value: "i_S2xLucKbRL14sp6hHSRVA_"
         - name: REDIS_PORT
           value: "6379"
         - name: DATABASE_URL
