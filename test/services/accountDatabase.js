@@ -1,38 +1,25 @@
 'use strict';
 
 var models = require('./../../models');
+var Account = models.Account;
 var usersServices = require('./../../services/users');
 var accountDatabaseService = require('./../../services/admin/accountDatabase');
-var Account = require('./../../models').Account;
+var userFixture = require('./../fixtures/user');
 var assert = require('chai').assert;
 var _ = require('lodash');
 
 describe('SERVICE - AccountDatabase', function() {
-  var testUser = null;
-  var testAccount = null;
-  var testAccountUser = null;
+  var testUser, testAccount, testAccountUser;
 
   beforeEach(function(done) {
-    var attrs = {
-      accountName: "BLauris",
-      firstName: "Lauris",
-      lastName: "Blīgzna",
-      password: "multipassword",
-      email: "bligzna.lauris@gmail.com",
-      gender: "male"
-    }
-
     models.sequelize.sync({ force: true }).then(() => {
-      usersServices.create(attrs, function(errors, user) {
-        testUser = user;
-        user.getOwnerAccount().then(function(accounts) {
-          user.getAccountUsers().then(function(results) {
-            testAccountUser = results[0]
-            testAccount = accounts[0];
-            done();
-
-          })
-        });
+      userFixture.createUserAndOwnerAccount().then(function(result) {
+        testUser = result.user;
+        testAccount = result.account;
+        testAccountUser = result.accountUser;
+        done();
+      }).catch(function(error) {
+        done(error);
       });
     });
   });
@@ -46,7 +33,7 @@ describe('SERVICE - AccountDatabase', function() {
   function csvData() {
     return {
       'Account Name': 'BLauris',
-      'Account Manager': 'Lauris Blīgzna',
+      'Account Manager': 'Lauris Bligzna',
       Registered: testAccountUser.createdAt,
       'E-mail': 'bligzna.lauris@gmail.com',
       Address: '',

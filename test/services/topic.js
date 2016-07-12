@@ -5,6 +5,7 @@ var Session = models.Session;
 var topicService  = require('./../../services/topics');
 var UserService  = require('./../../services/users');
 var subscriptionFixture = require('./../fixtures/subscription');
+var userFixture = require('./../fixtures/user');
 let q = require('q');
 
 describe('Topic Service', function() {
@@ -28,27 +29,15 @@ describe('Topic Service', function() {
     return deferred.promise;
   }
 
-  var testUser = null;
-  var testAccount = null;
-  var testData = null;
+  var testUser, testAccount;
 
   beforeEach(function(done) {
-    var userAttrs = {
-      accountName: "Lauris",
-      firstName: "Lauris",
-      lastName: "Blīgzna",
-      password: "multipassword",
-      email: "bligzna.lauris@gmail.com",
-      gender: "male"
-    }
-    models.sequelize.sync({ force: true }).then(() => {
-      UserService.create(userAttrs, function(errors, user) {
-        testUser = user;
-        user.getOwnerAccount().then(function(results) {
-          testAccount = results[0];
-          done();
-        })
-      });
+    userFixture.createUserAndOwnerAccount().then(function(result) {
+      testUser = result.user;
+      testAccount = result.account;
+      done();
+    }).catch(function(error) {
+      done(error);
     });
   });
 

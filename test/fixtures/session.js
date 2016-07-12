@@ -10,8 +10,9 @@ var models = require('../../models');
 var SessionMemberService = require('./../../services/sessionMember');
 
 var mainData;
+var manualDependencies = {};
 
-const COUNT_NAME = ["one", "two", "three", "four", "five", "six", "seven", "eight" ]
+const COUNT_NAME = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'];
 const DEPENDENCY_COUNT = {
   participants: 8,
   observers: 1,
@@ -30,8 +31,10 @@ var functionList = [
   createTopics
 ];
 
-function createChat() {
+function createChat(dependencies) {
   let deferred = q.defer();
+
+  setDependenciesManually(dependencies);
 
   async.waterfall(functionList, function(error, result) {
     if(error) {
@@ -78,7 +81,7 @@ function createSessionWithFacilitator(callback) {
 }
 
 function createSubAccountsAndSessionMembers(callback) {
-  let participants = _.times(DEPENDENCY_COUNT.participants, function(index) {
+  let participants = _.times(getDependency('participants'), function(index) {
     return function(cb) {
       createAccountAndSessionMember(COUNT_NAME[index], 'participant').then(function() {
         cb();
@@ -88,7 +91,7 @@ function createSubAccountsAndSessionMembers(callback) {
     };
   });
 
-  let observers = _.times(DEPENDENCY_COUNT.observers, function(index) {
+  let observers = _.times(getDependency('observers'), function(index) {
     return function(cb) {
       createAccountAndSessionMember(COUNT_NAME[index], 'observer').then(function() {
         cb();
@@ -107,7 +110,7 @@ function createSubAccountsAndSessionMembers(callback) {
 function createTopics(callback) {
   mainData.topics = [];
 
-  let functions = _.times(DEPENDENCY_COUNT.topics, function(index) {
+  let functions = _.times(getDependency('topics'), function(index) {
     return function(cb) {
       let topic = { accountId: mainData.account.id, name: 'Cool Topic'+(index+1) };
       let sessionTopic = { name: 'Cool Session Topic'+(index+1), boardMessage: 'Heyhey'+(index+1) };
@@ -208,4 +211,18 @@ function brandProjectPreferenceParams() {
     name: 'Default scheme',
     accountId: mainData.account.id
   };
+}
+
+function setDependenciesManually(dependencies) {
+  if(dependencies) {
+    manualDependencies = {
+      participants: dependencies.participants,
+      observers: dependencies.observers,
+      topics: dependencies.topics
+    };
+  }
+}
+
+function getDependency(dependency) {
+  return manualDependencies[dependency] || DEPENDENCY_COUNT[dependency];
 }
