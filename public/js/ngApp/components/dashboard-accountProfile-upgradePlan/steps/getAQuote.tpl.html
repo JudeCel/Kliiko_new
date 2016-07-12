@@ -1,100 +1,80 @@
-<div class="col-sm-12">
-  <div class="col-sm-10 col-sm-offset-1">
-    <div class="contact-us">
-      <span>
-        Enterprise Plan
-      </span>
+<!-- MODALS -->
+<div class='modal fade' id='contactUsModal' role='dialog'>
+  <div class='modal-dialog contactDetailsModal'>
+    <div class='modal-content border-green border-radius-none'>
+      <div class='modal-header'>
+        <button type='button' class='close' data-dismiss='modal'>&times;</button>
+        <h1 class='modal-title text-center'>Get a Wuote</h1>
+      </div>
+      <div class='modal-body'>
+        <form class="form-horizontal">
+          <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First Name<span class='text-red-dark'>*</span></label>
+            <div class='col-md-6'>
+              <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='up.contactUsUser.firstName'>
+            </div>
+          </div>
 
-      <div class="contact-us-btn-red pull-right" style="cursor:pointer" ng-click="up.openContactUsModal(app.user)">Get A Quote</div>
+          <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Last Name<span class='text-red-dark'>*</span></label>
+            <div class='col-md-6'>
+              <input type='text' class='form-control' id='firstName' placeholder='Last name' ng-model='up.contactUsUser.lastName'>
+            </div>
+          </div>
 
-      <p>
-        klzii Supports organizations large and small. If need more Managers,
-        <br/>
-        Active Sessions, contact lists or recruitment lists, contact our sales team form
-        <br/>
-        assistance.
+          <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Email<span class='text-red-dark'>*</span></label>
+            <div class='col-md-6'>
+              <input type="email" class='form-control' id='firstName' placeholder='Email' ng-model='up.contactUsUser.email'>
+            </div>
+          </div>
+
+          <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Contact Number<span class='text-red-dark'>*</span></label>
+            <div class='col-md-6'>
+              <input type='text' class='form-control' id='firstName' placeholder='Contact Number' ng-model='up.contactUsUser.contactNumber'>
+            </div>
+          </div>
+
+          <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Company Name<span class='text-red-dark'>*</span></label>
+            <div class='col-md-6'>
+              <input type='text' class='form-control' id='firstName' placeholder='Company Name' ng-model='up.contactUsUser.companyName'>
+            </div>
+          </div>
+
+          <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Position in Company<span class='text-red-dark'>*</span></label>
+            <div class='col-md-6'>
+              <input type='text' class='form-control' id='firstName' placeholder='Position in Company' ng-model='up.contactUsUser.positionInCompany'>
+            </div>
+          </div>
+
+          <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Company URL<span class='text-red-dark'>*</span></label>
+            <div class='col-md-6'>
+              <input type='text' class='form-control' id='firstName' placeholder='Company URL' ng-model='up.contactUsUser.companyUrl'>
+            </div>
+          </div>
+
+          <div class='form-group'>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Comments<span class='text-red-dark'>*</span></label>
+            <div class='col-md-6'>
+              <textarea rows="4" cols="50" type='text' class='form-control' id='firstName' placeholder='Comments' ng-model='up.contactUsUser.comments'>
+              </textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <p class='get-quote-note'>
+        Please note: This information will help us understand your needs.
       </p>
-    </div>
-  </div>
-
-  <!-- MODALS -->
-  <div class='modal fade' id='contactUsModal' role='dialog'>
-    <div class='modal-dialog contactDetailsModal'>
-      <div class='modal-content border-green border-radius-none'>
-        <div class='modal-header'>
-          <button type='button' class='close' data-dismiss='modal'>&times;</button>
-          <h1 class='modal-title text-center'>Get a Wuote</h1>
+      <div class='modal-footer'>
+        <div type='button' class='pull-left btn-dashboard-plans btn-red' data-dismiss='modal'>
+          Cancel
         </div>
-        <div class='modal-body'>
-          <form class="form-horizontal">
-            <div class='form-group'>
-              <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First Name<span class='text-red-dark'>*</span></label>
-              <div class='col-md-6'>
-                <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='up.contactUsUser.firstName'>
-              </div>
-            </div>
-
-            <div class='form-group'>
-              <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Last Name<span class='text-red-dark'>*</span></label>
-              <div class='col-md-6'>
-                <input type='text' class='form-control' id='firstName' placeholder='Last name' ng-model='up.contactUsUser.lastName'>
-              </div>
-            </div>
-
-            <div class='form-group'>
-              <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Email<span class='text-red-dark'>*</span></label>
-              <div class='col-md-6'>
-                <input type="email" class='form-control' id='firstName' placeholder='Email' ng-model='up.contactUsUser.email'>
-              </div>
-            </div>
-
-            <div class='form-group'>
-              <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Contact Number<span class='text-red-dark'>*</span></label>
-              <div class='col-md-6'>
-                <input type='text' class='form-control' id='firstName' placeholder='Contact Number' ng-model='up.contactUsUser.contactNumber'>
-              </div>
-            </div>
-
-            <div class='form-group'>
-              <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Company Name<span class='text-red-dark'>*</span></label>
-              <div class='col-md-6'>
-                <input type='text' class='form-control' id='firstName' placeholder='Company Name' ng-model='up.contactUsUser.companyName'>
-              </div>
-            </div>
-
-            <div class='form-group'>
-              <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Position in Company<span class='text-red-dark'>*</span></label>
-              <div class='col-md-6'>
-                <input type='text' class='form-control' id='firstName' placeholder='Position in Company' ng-model='up.contactUsUser.positionInCompany'>
-              </div>
-            </div>
-
-            <div class='form-group'>
-              <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Company URL<span class='text-red-dark'>*</span></label>
-              <div class='col-md-6'>
-                <input type='text' class='form-control' id='firstName' placeholder='Company URL' ng-model='up.contactUsUser.companyUrl'>
-              </div>
-            </div>
-
-            <div class='form-group'>
-              <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Comments<span class='text-red-dark'>*</span></label>
-              <div class='col-md-6'>
-                <textarea rows="4" cols="50" type='text' class='form-control' id='firstName' placeholder='Comments' ng-model='up.contactUsUser.comments'>
-                </textarea>
-              </div>
-            </div>
-          </form>
-        </div>
-        <p class='get-quote-note'>
-          Please note: This information will help us understand your needs.
-        </p>
-        <div class='modal-footer'>
-          <div type='button' class='pull-left btn-dashboard-plans btn-red' data-dismiss='modal'>
-            Cancel
-          </div>
-          <div type='submit' class='pull-right btn-dashboard-plans btn-green' ng-click="up.submitContactusForm()">
-            Get Quote
-          </div>
+        <div type='submit' class='pull-right btn-dashboard-plans btn-green' ng-click="up.submitContactusForm()">
+          Get Quote
         </div>
       </div>
     </div>

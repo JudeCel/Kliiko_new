@@ -187,7 +187,27 @@
       </div>
     </div>
 
-    <ng-include src="'/js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/getAQuote.tpl.html'"></ng-include>
+    <div class="col-sm-12">
+      <div class="col-sm-10 col-sm-offset-1">
+        <div class="contact-us">
+          <span>
+            Enterprise Plan
+          </span>
+
+          <div class="contact-us-btn-red pull-right" style="cursor:pointer" ng-click="up.openContactUsModal(app.user)">Get A Quote</div>
+
+          <p>
+            klzii Supports organizations large and small. If need more Managers,
+            <br/>
+            Active Sessions, contact lists or recruitment lists, contact our sales team form
+            <br/>
+            assistance.
+          </p>
+        </div>
+      </div>
+
+      <ng-include src="'/js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/getAQuote.tpl.html'"></ng-include>
+    </div>
 
     <div class="coll-sm-12" id="disclaimer">
       <p>

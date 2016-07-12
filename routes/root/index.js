@@ -299,11 +299,6 @@ router.route('/emailConfirmation/:token')
             req.login(user, function(err) {
               middlewareFilters.myDashboardPage(req, res, next);
             });
-
-            // Need to speak with the client about this one!
-            // mailers.users.sendEmailConfirmationSuccess({email: user.email}, function (err, data) {
-            //   res.redirect('/');
-            // });
           };
         });
       }
