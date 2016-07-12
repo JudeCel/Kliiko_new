@@ -283,9 +283,6 @@ router.route('/emailConfirmation/:token')
     };
 
     emailConfirmation.checkTokenExpired(req.params.token, function (err, user) {
-      console.log(err);
-      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      console.log(user);
       if (err || !user) {
         tplData.user = false;
         tplData.errors.password = "Token expired";
@@ -303,7 +300,7 @@ router.route('/emailConfirmation/:token')
               middlewareFilters.myDashboardPage(req, res, next);
             });
 
-            // Will check if this is needed anymore!!!
+            // Need to speak with the client about this one!
             // mailers.users.sendEmailConfirmationSuccess({email: user.email}, function (err, data) {
             //   res.redirect('/');
             // });

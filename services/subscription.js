@@ -16,9 +16,18 @@ var _ = require('lodash');
 var async = require('async');
 var chargebee = require('./../lib/chargebee').instance;
 var planConstants = require('./../util/planConstants');
+var constants = require('../util/constants');
 
-const getAQuoteFieldsNeeded = ['firstName', 'lastName', 'contactNumber', 'email', 'companyName', 'positionInCompany', 'companyUrl', 'comments']
-const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const getAQuoteFieldsNeeded = [
+  'firstName',
+  'lastName',
+  'contactNumber',
+  'email',
+  'companyName',
+  'positionInCompany',
+  'companyUrl',
+  'comments'
+]
 
 const MESSAGES = {
   notFound: {
@@ -63,7 +72,7 @@ function postQuote(params) {
     }
   });
 
-  if(!emailRegex.test(params.email)) {
+  if(!constants.emailRegExp.test(params.email)) {
     errors.push("E-mail format is not valid.")
   }
 
@@ -343,10 +352,6 @@ function updateSubscription(params, providers) {
             deferred.reject(error);
           })
         }else{
-          console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-          console.log(params);
-          console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
           chargebeeSubUpdateViaCheckout(chargebeePassParams(result), params.redirectUrl, providers.viaCheckout).then(function(hosted_page) {
             deferred.resolve({hosted_page: hosted_page, redirect: true});
           }, function(error) {

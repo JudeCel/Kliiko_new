@@ -27,8 +27,7 @@ module.exports = {
     'comment',
     'phoneCountryData',
     'landlineNumberCountryData',
-    'reveiveNewsLetters',
-    'selectedPlanOnRegistration'
+    'reveiveNewsLetters'
   ],
   safeUserParams: [
     'id',

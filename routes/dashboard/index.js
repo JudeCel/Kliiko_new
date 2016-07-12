@@ -33,21 +33,11 @@ router.get('/', policy.authorized(['admin', 'accountManager']) , function(req, r
 router.get('/landing', function(req, res) {
 
   if(req.query.id && req.query.state == 'succeeded' ){
-    succeededCheckout(req.query);
+    subscriptionService.retrievCheckoutAndUpdateSub(req.query.id)
   }
 
   res.render(views_path('landing'), { title: 'Landing page' });
 });
-
-function succeededCheckout(params) {
-  subscriptionService.retrievCheckoutAndUpdateSub(params.id).then(function(response) {
-    console.log("~~~~~~~~~~~~ response");
-    console.log(response);
-  }, function(error) {
-    console.log("~~~~~~~~~~~~ ERROR");
-    console.log(error);
-  });
-}
 
 router.get('/paymentDetails', policy.authorized(['accountManager']), paymentDetailsRoutes.get);
 

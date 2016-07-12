@@ -38,16 +38,11 @@ function planSelectPage(req, res, next) {
       if(subscription) {
         next();
       } else {
-        console.log("user diesnt have subscription");
         createSubscription(res.locals.currentDomain.id, res.locals.currentUser.id, redirectUrl).then(function(response) {
-          console.log("Subscription for user was created: ");
-          console.log('hosted_page' in response, "Check if it is hosted page!");
           if('hosted_page' in response) {
-            console.log("User got paid plan");
             res.writeHead(301, { Location: response.hosted_page.url } );
             res.end();
           }else {
-            console.log("user choosed free trial");
             res.redirect(subdomains.url(req, res.locals.currentDomain.name, '/dashboard/landing'));
           }
         }, function(error) {
