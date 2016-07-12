@@ -51,6 +51,7 @@
     vm.getFilterResources = getFilterResources;
     vm.youtubeUrl = youtubeUrl;
     vm.normalYoutubeUrl = normalYoutubeUrl;
+    vm.resourceUrl = resourceUrl;
 
     function initController() {
       vm.currentPage.viewType = sessionStorage.getItem('viewType') || vm.currentPage.viewType;
@@ -304,7 +305,11 @@
     }
 
     function youtubeUrl(url) {
-      return $sce.trustAsResourceUrl('http://www.youtube.com/embed/' + url);
+      return $sce.trustAsResourceUrl('https://www.youtube.com/embed/' + url);
+    }
+
+    function resourceUrl(url) {
+      return $sce.trustAsResourceUrl(url);
     }
 
     function getSelectedResources(key, filter) {

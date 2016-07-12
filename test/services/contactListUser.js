@@ -14,7 +14,7 @@ var validAttrs = {
   gender: "male"
 }
 
-describe('Services -> ContactListUser', () => {
+describe('SERVICE - ContactListUser', () => {
   describe('create',  () => {
 
     beforeEach((done) => {
@@ -77,8 +77,8 @@ describe('Services -> ContactListUser', () => {
             rowNr: 2,
             contactListId: TestContactList.id,
             defaultFields: {
-              firstName: "DainisNew1",
-              lastName: "LapinsNew1",
+              firstName: "DainisNewA",
+              lastName: "LapinsNewA",
               password: "cool_password",
               email: "dainis1@gmail.com",
               gender: "male"
@@ -88,8 +88,8 @@ describe('Services -> ContactListUser', () => {
               rowNr: 2,
               contactListId: TestContactList.id,
               defaultFields: {
-                firstName: "DainisNew",
-                lastName: "LapinsNew",
+                firstName: "DainisNewB",
+                lastName: "LapinsNewB",
                 password: "cool_password",
                 email: "dainis2@gmail.com",
                 gender: "male"
@@ -112,8 +112,8 @@ describe('Services -> ContactListUser', () => {
               rowNr: 2,
               contactListId: TestContactList.id,
               defaultFields: {
-                firstName: "DainisNew1",
-                lastName: "LapinsNew1",
+                firstName: "DainisNewA",
+                lastName: "LapinsNewA",
                 password: "cool_password",
                 email: "dainis1@gmail.com",
                 gender: "male"
@@ -123,8 +123,8 @@ describe('Services -> ContactListUser', () => {
                 rowNr: 4,
                 contactListId: TestContactList.id,
                 defaultFields: {
-                  firstName: "DainisNew",
-                  lastName: "LapinsNew",
+                  firstName: "DainisNewB",
+                  lastName: "LapinsNewB",
                   password: "cool_password",
                   email: "dainis2@gmail.com",
                   gender: "male"

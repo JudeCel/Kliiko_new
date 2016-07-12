@@ -35,6 +35,7 @@
     vm.editContact = editContact;
     vm.saveEdited = saveEdited;
     vm.inviteFacilitator = inviteFacilitator;
+    vm.cleanColorScheme = cleanColorScheme;
 
     vm.currentPage = 1;
     vm.pageSize = 3;
@@ -42,11 +43,17 @@
 
     function inviteFacilitator(facilitator) {
       vm.session.addMembers(facilitator, 'facilitator').then( function (res) {
+        vm.session.sessionData.facilitator = facilitator;
         vm.session.steps.step1.facilitator = facilitator;
         messenger.ok("Facilitator was successfully set");
       }, function (err) {
         messenger.error(err);
       });
+    }
+
+    function cleanColorScheme(executeUpdate) {
+      vm.colorScheme = null;
+      executeUpdate({ brandProjectPreferenceId: null });
     }
 
     function newFacilitator(userData) {

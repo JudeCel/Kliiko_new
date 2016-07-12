@@ -58,6 +58,9 @@
       .panel-name {
         height: 36px;
         line-height: 3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .btn.btn-addNewElement.btn-green {
         margin-left: 5px;
@@ -67,6 +70,12 @@
       a {
         color: $green;
       }
+    }
+  }
+
+  .render-gallery {
+    image, video, img {
+      width: 300px;
     }
   }
 

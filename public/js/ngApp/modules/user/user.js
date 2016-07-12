@@ -26,6 +26,7 @@
           deferred.reject(res.error);
         }
         else {
+          $('#welcome-user').removeClass('hidden');
           UserService.user = res;
           deferred.resolve(UserService.user);
         }

@@ -40,30 +40,18 @@ spec:
         - name: REDIS_HOST
           value: "redis-master"
         - name: SERVER_CHAT_DOMAIN_URL
-          value: "https://chat.klzii.com"
-        - name: FACEBOOK_CALLBACK_URL
-          value: "https://www.klzii.com/auth/facebook/callback"
-        - name: FACEBOOK_CLIENT_ID
-          value: "895147450520688"
-        - name: FACEBOOK_CLIENT_SECRET
-          value: "5c18ba36fe2a55ae05fd64fe41bcb002"
-        - name: GOOGLE_CALLBACK_URL
-          value: "https://www.klzii.com/auth/google/callback"
-        - name: GOOGLE_CLIENT_ID
-          value: "570903251504-hvev7sqcqqvl977djc1kqv722sqgidp3.apps.googleusercontent.com"
-        - name: GOOGLE_CLIENT_SECRET
-          value: "i_S2xLucKbRL14sp6hHSRVA_"
+          value: "https://chat.test.klzii.com"
         - name: REDIS_PORT
           value: "6379"
         - name: DATABASE_URL
-          value: "postgres://postgres:nWD44LS3bYs29JeP@postgres-master/klzii_production"
+          value: "postgres://postgres:nWD44LS3bYs29JeP@postgres-master/klzii_test"
         - name: AIRBRAKE_PROJECT_ID
           value: "121542"
         - name: AIRBRAKE_API_KEY
           value: "607e87c9e8b7500497bb84c51162b0a82"
         - name: SERVER_BASE_DOMAIN
-          value: ".klzii.com"
+          value: ".test.klzii.com"
         - name: SERVER_DOMAIN
-          value: "www.klzii.com"
+          value: "www.test.klzii.com"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"

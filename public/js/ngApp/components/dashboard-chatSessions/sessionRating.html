@@ -30,6 +30,7 @@
             <td>{{ member.AccountUser.lastName }}</td>
             <td>{{ member.AccountUser.email }}</td>
             <td class='pull-right'>
+              <span class='session-rating-comment text-vertical-middle glyphicon glyphicon-pencil' ng-click='csc.openModalWindow(member)' aria-hidden='true'></span>
               <uib-rating class='session-rating-stars text-vertical-middle' ng-model='member.rating' max='5' aria-labelledby='default-rating' ng-click='csc.rateSessionMember(member)'>
               </uib-rating>
             </td>
@@ -39,3 +40,5 @@
     </div>
   </div>
 </div>
+
+<ng-include src="'/js/ngApp/components/dashboard-chatSessions/modal.html'"></ng-include>

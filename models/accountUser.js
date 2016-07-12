@@ -6,9 +6,9 @@ var validations = require('./validations');
 module.exports = (Sequelize, DataTypes) => {
   var AccountUser = Sequelize.define('AccountUser', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    firstName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true, isLength: validations.length('firstName', { max: 35 }) } },
-    lastName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true, isLength: validations.length('lastName', { max: 35 }) } },
-    gender: {type: DataTypes.ENUM, allowNull: true, values: constants.gender },
+    firstName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true, isLength: validations.length('firstName', { max: 35 }), isNameValid: validations.userName('firstName') } },
+    lastName: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true, isLength: validations.length('lastName', { max: 35 }), isLastNameValid: validations.userName('lastName') } },
+    gender: {type: DataTypes.ENUM, allowNull: false, validate: { notEmpty: true }, values: constants.gender },
     owner: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     reveiveNewsLetters: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },

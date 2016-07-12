@@ -4,6 +4,7 @@ var models = require('./../models')
 var Account  = models.Account;
 var filters = require('./../models/filters');
 var contactListService  = require('./contactList');
+var brandColourService  = require('./brandColour');
 var _ = require('lodash');
 var q = require('q');
 
@@ -13,8 +14,13 @@ function create(object, callback) {
 
   Account.create({ name: object.params.accountName, selectedPlanOnRegistration: object.params.selectedPlanOnRegistration }, { transaction: object.transaction }).then(function(result) {
     contactListService.createDefaultLists(result.id, object.transaction).then(function(_promise) {
-      object.account = result;
-      callback(null, object);
+      brandColourService.createDefaultForAccount({ accountId: result.id, name: 'Default scheme', colours: {} }, object.transaction).then(function() {
+        object.account = result;
+        callback(null, object);
+      }, function(error) {
+        _.merge(object.errors, filters.errors(error));
+        callback(null, object);
+      });
     }, function(error) {
       _.merge(object.errors, filters.errors(error));
       callback(null, object);

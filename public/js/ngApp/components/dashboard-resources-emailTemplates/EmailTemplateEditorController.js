@@ -19,7 +19,6 @@
     dbg.log2('#EmailTemplateEditorController started');
 
     var vm = this;
-    var selectedTemplate;
     vm.currentTemplate = {index: 0};
     vm.emailTemplates = [];
     vm.templateToDelete;
@@ -96,25 +95,21 @@
 
 
     function startEditingTemplate(templateIndex, inSession, templateId, template) {
-      if (template)  selectedTemplate = template;
+      var selectedTemplate = {};
+      if (template) {
+        selectedTemplate = template;
+      } else {
+        selectedTemplate = vm.emailTemplates[templateIndex];
+      }
+
+      if (!templateId) {
+        templateId =  selectedTemplate.id;
+      }
+
       if (templateId) {
         mailTemplate.getMailTemplate({id:templateId}).then(function (res) {
           if (res.error) return;
-          //vm.currentTemplate = vm.emailTemplates[templateIndex];
-          populateTemplate(res);
-        });
-        return;
-      }
-      if (!inSession) {
-        mailTemplate.getMailTemplate(vm.emailTemplates[templateIndex]).then(function (res) {
-          if (res.error) return;
           vm.currentTemplate = vm.emailTemplates[templateIndex];
-          populateTemplate(res);
-        });
-      } else {
-        mailTemplate.getMailTemplate(vm.emailTemplatesForSessionBuilder[templateIndex]).then(function (res) {
-          if (res.error) return;
-          vm.currentTemplate = vm.emailTemplatesForSessionBuilder[templateIndex];
           populateTemplate(res);
         });
       }
@@ -125,8 +120,6 @@
         vm.currentTemplate.subject = res.template.subject;
         $('#templateContent').wysiwyg('setContent', vm.currentTemplate.content);
       }
-
-
     }
 
     /**
@@ -192,14 +185,12 @@
     }
 
     function saveEmailTemplate(force) {
-      selectedTemplate.subject = vm.currentTemplate.subject;
-      selectedTemplate.content = vm.currentTemplate.content;
-      selectedTemplate.properties = vm.properties;
+      vm.currentTemplate.properties = vm.properties;
 
       if (force) {
-        selectedTemplate.content = $('#templateContent').wysiwyg('getContent');
+        vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
       }
-      mailTemplate.saveTemplate(selectedTemplate).then(function (res) {
+      mailTemplate.saveTemplate(vm.currentTemplate).then(function (res) {
         if (!res.error) {
           refreshTemplateList(function() {
             var index = getIndexOfMailTemplateWithId(res.templates.id);

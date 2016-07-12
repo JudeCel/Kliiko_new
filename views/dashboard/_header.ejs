@@ -24,7 +24,7 @@
       <%= currentDomain.name %>
     </div>
     <div class='col-xs-12 col-md-7 btn-group remove-link-line nav-button-top-margin text-right' role='group'>
-      Welcome, {{ app.user.firstName }}!
+      <span id='welcome-user' class='hidden'>Welcome, {{ app.user.firstName }}!</span>
       <a href='/dashboard/landing'>
         <button class='btn-header-green' type='button'>
           Tour Video

@@ -142,6 +142,7 @@ router.post('/session/:id', policy.authorized(['accountManager', 'admin']), sess
 
 
 // Session Member
+router.post('/sessionMember/comment/:id', sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin']), session.comment);
 router.post('/sessionMember/rate/:id', sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin']), session.updateRating);
 router.post('/sessionMember/addFacilitator', sessionMember.addFacilitator);
 

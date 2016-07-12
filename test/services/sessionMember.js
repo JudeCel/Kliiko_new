@@ -13,7 +13,7 @@ describe('SERVICE - SessionMember', function() {
   var testData = {};
 
   beforeEach(function(done) {
-    sessionFixture.createChat().then(function(result) {
+    sessionFixture.createChat({ participants: 2 }).then(function(result) {
       testData.user = result.user;
       testData.account = result.account;
       testData.session = result.session;

@@ -290,13 +290,28 @@ function acceptInviteExisting(token, callback) {
     else if(invite.userType == 'new') {
       return callback(null, invite);
     }
-    setAccountUserActive(invite.accountUserId, function(err, result) {
+    setAccountUserActive(invite, function(err, result) {
       if(err) {
         return callback(err);
       }
 
       invite.update({ status: 'confirmed' }).then(function() {
-        callback(null, invite, MESSAGES.confirmed);
+        if(invite.sessionId) {
+          let params = {
+            sessionId: invite.sessionId,
+            accountUserId: invite.accountUserId,
+            username: invite.AccountUser.firstName,
+            role: invite.role
+          };
+          sessionMemberService.createWithTokenAndColour(params).then(function() {
+            callback(null, invite, MESSAGES.confirmed);
+          }, function(error) {
+            callback(filters.errors(error));
+          });
+        }
+        else {
+          callback(null, invite, MESSAGES.confirmed);
+        }
       }).catch(function(error) {
         callback(filters.errors(error));
       });
@@ -327,8 +342,8 @@ function acceptInviteNew(token, params, callback) {
     });
   });
 };
-function setAccountUserActive(accountUserId, callback) {
-  AccountUser.update({active: true, status: "active"}, { where:{ id: accountUserId } }).then(function(result) {
+function setAccountUserActive(invite, callback) {
+  AccountUser.update({active: true, status: "active", UserId: invite.userId}, { where:{ id: invite.accountUserId } }).then(function(result) {
     callback(null, result);
   },function(err) {
     callback(filters.errors(error));
@@ -336,7 +351,7 @@ function setAccountUserActive(accountUserId, callback) {
 }
 
 function updateUser(params, invite, callback) {
-  setAccountUserActive(invite.accountUserId, function(res, _) {
+  setAccountUserActive(invite, function(res, _) {
     params.confirmedAt = new Date();
     User.update(params, { where: { id: invite.userId }, returning: true }).then(function(result) {
       callback(null, result[1][0]);

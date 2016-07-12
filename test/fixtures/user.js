@@ -20,7 +20,7 @@ function createUserAndOwnerAccount(params) {
   let attrs = {
     accountName: 'BLauris',
     firstName: 'Lauris',
-    lastName: 'Blīgzna',
+    lastName: 'Bligzna',
     password: 'multipassword',
     email: 'bligzna.lauris@gmail.com',
     gender: 'male'

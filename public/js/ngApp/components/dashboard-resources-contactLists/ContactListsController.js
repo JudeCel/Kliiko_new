@@ -138,12 +138,22 @@
       vm.allSelected = false;
     }
 
+
+    function prepareDefaultCustomFields() {
+      vm.newList = {customFields:{}, name: ""};
+      for (var i = 0, len = vm.lists.activeList.maxCustomFields; i < len ; i++) {
+        var I = i+1;
+        vm.newList.customFields['customField'+I] = "";
+      }
+    }
+
     /**
      * Open modal and prepare variables
      */
     function addNewList() {
       vm.listIdToEdit = null;
       vm.listModalTitle = 'Add New List';
+      prepareDefaultCustomFields();
       domServices.modal('contactList-addNewListModal');
     }
 
@@ -176,8 +186,9 @@
           domServices.modal('contactList-addNewListModal', 'close');
           messenger.ok('New List "'+ res.name + '" added');
 
-          vm.lists.changeActiveList(vm.lists.items.length -1);
+          vm.changeActiveList(vm.lists.items.length -1);
           vm.newList.name = "";
+          prepareCustomFields();
         },
         function(err) {
           messenger.error('Could not create new list: '+ err);

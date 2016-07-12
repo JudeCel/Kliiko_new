@@ -197,6 +197,7 @@ function create(params) {
   validators.hasValidSubscription(params.accountId).then(function() {
     validators.subscription(params.accountId, 'contactList', 1).then(function() {
       ContactList.create(params).then(function(result) {
+        result.dataValues.maxCustomFields = MAX_CUSTOM_FIELDS;
         deferred.resolve(result);
       }, function(err) {
         deferred.reject(err);

@@ -541,7 +541,6 @@ describe('SERVICE - Survey', function() {
         surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
           surveyServices.copySurvey({ id: survey.id }, testData.account).then(function(result) {
-            console.log(3);
             assert.notEqual(result.data.id, survey.id);
 
             Survey.count().then(function(c) {

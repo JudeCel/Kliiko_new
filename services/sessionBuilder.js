@@ -176,7 +176,9 @@ function sendCloseSessionMail(session) {
           deferred.reject(errors);
         })
       }else{
-        deferred.reject(MESSAGES.errors.cantSendCloseMails);
+        session.update({ active: true }).then(function() {
+          deferred.reject(MESSAGES.errors.cantSendCloseMails);
+        });
       }
     }).catch(function(error) {
       deferred.reject(error);
@@ -541,8 +543,12 @@ function inviteParams(sessionId, data) {
     },
     include: [models.AccountUser]
   }).then(function(clUsers) {
+    let emails = [];
+    let accountId = clUsers[0].AccountUser.AccountId;
     let params = _.map(clUsers, function(clUser) {
+      emails.push(clUser.AccountUser.email);
       return {
+        email: clUser.AccountUser.email,
         accountUserId: clUser.accountUserId,
         sessionId: sessionId,
         role: data.role,
@@ -550,7 +556,27 @@ function inviteParams(sessionId, data) {
       }
     });
 
-    deferred.resolve(params);
+
+    models.AccountUser.findAll({
+      where: {
+        email: { $in: emails },
+        AccountId: { $ne: accountId }
+      }
+    }).then(function(results) {
+      if(results.length > 0) {
+        _.map(results, function(accountUser) {
+          _.map(params, function(inviteParam) {
+            if(inviteParam.email == accountUser.email) {
+              inviteParam.userType = 'existing';
+              inviteParam.userId = accountUser.UserId;
+            }
+          })
+        });
+      }
+
+      deferred.resolve(params);
+    });
+
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });

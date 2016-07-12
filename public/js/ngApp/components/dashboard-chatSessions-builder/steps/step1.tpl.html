@@ -29,7 +29,6 @@
         <span class="date-time-label">Start</span> <img class="date-time-ico" src="/icons/calendar_green.png" alt="">
         <md-datepicker ng-model="step1Controller.step1.startDate"
                        md-min-date="::step1Controller.today"
-                       md-max-date="step1Controller.step1.endDate"
                        ng-change="step1Controller.updateStep('startTime')"
                        md-placeholder="Enter date"></md-datepicker>
 
@@ -203,7 +202,7 @@
             </div>
 
             <div class='col-sm-12'>
-             <div class="btn-standart btn-red" ng-show="step1Controller.colorScheme" ng-click="step1Controller.colorScheme = null">Clean Color Scheme Selection</div>
+              <div class="btn-standart btn-red" ng-show="step1Controller.colorScheme" ng-click="step1Controller.cleanColorScheme(sbc.updateStep)">Clean Color Scheme Selection</div>
             </div>
 
             <div id="create-color-scheme-area" ng-show="!bcc.schemes.length">

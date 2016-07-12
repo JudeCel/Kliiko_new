@@ -11,6 +11,7 @@
     });
 
     var sessionMemberApi = $resource(globalSettings.restUrl + '/sessionMember/:path/:id', null, {
+      comment: { method: 'post', params: { id: '@id', path: 'comment' } },
       rate: { method: 'post', params: { id: '@id', path: 'rate' } }
     });
 
@@ -24,6 +25,7 @@
     csServices.rateSessionMember = rateSessionMember;
     csServices.prepareError = prepareError;
     csServices.generateRedirectLink = generateRedirectLink;
+    csServices.saveComment = saveComment;
     return csServices;
 
     function findAllSessions() {
@@ -37,6 +39,18 @@
 
       return deferred.promise;
     };
+
+    function saveComment(member) {
+      var deferred = $q.defer();
+
+      dbg.log2('#ChatSessions > saveComment > make rest call');
+      sessionMemberApi.comment({ id: member.id }, { comment: member.comment }, function(res) {
+        dbg.log2('#ChatSessions > comment > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
 
     function generateRedirectLink(sessionId) {
       var deferred = $q.defer();
