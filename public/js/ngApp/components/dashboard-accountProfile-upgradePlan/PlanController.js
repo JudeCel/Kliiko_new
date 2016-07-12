@@ -18,9 +18,11 @@
     vm.currentPlan = null;
     vm.monthlyPlan = null;
     vm.yearlyPlan = null;
-    vm.purchaseWasSuccessfull = true
+    vm.purchaseWasSuccessfull = true;
     vm.subPlans = [];
     vm.contactUsUser = {};
+    vm.monthlyPlans = [];
+    vm.annualPlans = [];
 
     vm.planOptions = [
       'Number of Active Sessions',
@@ -80,19 +82,35 @@
     ]
 
     vm.planColors = {
+      junior_yearly: {
+        header: "list-group-item-heading junior_yearly_light",
+        body: "price-label junior_yearly_dark",
+        light: "list-group-item-text yellow-light-bg"
+      },
+      core_yearly: {
+        header: "list-group-item-heading core_yearly_light",
+        body: "price-label core_yearly_dark",
+        light: "list-group-item-text green-light-bg"
+      },
+      senior_yearly: {
+        header: "list-group-item-heading senior_yearly_light",
+        body: "price-label senior_yearly_dark",
+        light: "list-group-item-text blue-light-bg"
+      },
+
       junior_monthly: {
-        header: "list-group-item-heading yellow-header-bg",
-        body: "price-label yellow-bg",
+        header: "list-group-item-heading junior_monthly_light",
+        body: "price-label junior_monthly_dark",
         light: "list-group-item-text yellow-light-bg"
       },
       core_monthly: {
-        header: "list-group-item-heading green-header-bg",
-        body: "price-label green-bg",
+        header: "list-group-item-heading core_monthly_light",
+        body: "price-label core_monthly_dark",
         light: "list-group-item-text green-light-bg"
       },
       senior_monthly: {
-        header: "list-group-item-heading blue-header-bg",
-        body: "price-label blue-bg",
+        header: "list-group-item-heading senior_monthly_light",
+        body: "price-label senior_yearly_dark",
         light: "list-group-item-text blue-light-bg"
       }
     };
@@ -116,6 +134,9 @@
     vm.optionBackground = optionBackground;
     vm.openContactUsModal = openContactUsModal;
     vm.submitContactusForm = submitContactusForm;
+    vm.switchPlanView = switchPlanView;
+    vm.planOptionColor = planOptionColor;
+    vm.selectPlanBtnColor = selectPlanBtnColor;
 
     init();
 
@@ -152,10 +173,17 @@
         if(result.error){
           messenger.error(result.error);
         }else {
+          result.plans.map(function (subPlan) {
+            if (subPlan.plan.period_unit == 'month' && subPlan.additionalParams.priority > 0) {
+              vm.monthlyPlans.push(subPlan);
+            }
 
-          console.log(result.plans);
+            if (subPlan.plan.period_unit == 'year' && subPlan.additionalParams.priority > 0) {
+              vm.annualPlans.push(subPlan);
+            }
+          });
 
-          vm.subPlans = result.plans;
+          vm.subPlans = vm.monthlyPlans;
           vm.currentPlan = result.currentPlan;
         }
       })
@@ -224,7 +252,7 @@
       if(count == -1){
         return "Unlimited";
       } else if(count == 0) {
-        return "No";
+        return "false";
       }else{
         return count;
       }
@@ -235,11 +263,7 @@
     }
 
     function isCurrentPlan(subPlan) {
-      if(vm.currentPlan.chargebeePlanId.includes('_yearly')) {
-        return subPlan.additionalParams.related == vm.currentPlan.chargebeePlanId;
-      }else{
-        return vm.currentPlan.chargebeePlanId == subPlan.plan.id;
-      }
+      return vm.currentPlan.chargebeePlanId == subPlan.plan.id;
     }
 
     function stepIsActive(step, additionalStyle) {
@@ -292,16 +316,35 @@
       }
       domServices.modal('contactUsModal');
     }
+    function switchPlanView(view) {
+      if (view == 'annual') {
+        vm.subPlans = vm.annualPlans;
+      }
+      if (view == 'monthly') {
+        vm.subPlans = vm.monthlyPlans;
+      }
+    }
 
     function submitContactusForm() {
       planService.submitContactusForm(vm.contactUsUser).then(function(result) {
-        console.log(result);
         if(result.error){
           messenger.error(result.error);
         }else{
           messenger.ok(result.message);
         }
       });
+    }
+
+    function planOptionColor(plan, index) {
+      if (index%2 > 0) {
+        return plan + "_light";
+      }else{
+        return plan + "_dark";
+      }
+    }
+
+    function selectPlanBtnColor(plan) {
+      return plan + "_btn"
     }
   }
 })();

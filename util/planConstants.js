@@ -22,7 +22,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: -1,
-    priority: -20,
+    priority: -1,
     surveyCount: 1,
     secureSsl: true
   },
@@ -48,7 +48,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: 5,
-    priority: -10,
+    priority: -1,
     surveyCount: 1,
     secureSsl: true
   },
@@ -74,7 +74,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: -1,
-    priority: 3,
+    priority: 1,
     related: 'senior_yearly',
     surveyCount: 4,
     secureSsl: true
@@ -101,7 +101,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: -1,
-    priority: -3,
+    priority: 1,
     surveyCount: 4,
     secureSsl: true
   },
@@ -154,7 +154,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: 20,
-    priority: -2,
+    priority: 2,
     surveyCount: 2,
     secureSsl: true
   },
@@ -180,7 +180,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: 5,
-    priority: 1,
+    priority: 3,
     related: 'junior_yearly',
     surveyCount: 1,
     secureSsl: true
@@ -207,7 +207,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: 5,
-    priority: -1,
+    priority: 3,
     surveyCount: 1,
     secureSsl: true
   }

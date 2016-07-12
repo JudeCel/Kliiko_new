@@ -14,7 +14,8 @@
     text-align: left;
     border: solid 2px #e51d39;
     padding: 10px 20px;
-    margin-top: 80px;
+    margin-top: 60px;
+    margin-bottom: 40px;
 
     .contact-us-btn-red{
       display: inline-block;
@@ -36,14 +37,15 @@
     }
 
     p{
-      font-size: 18px;
+      margin-top: 20px;
+      font-size: 15px;
     }
   }
 
   .align-wertical-parent {
     display: table;
     width: 100%;
-    height: 50px;
+    height: 60px;
     margin-bottom: 3px;
   }
 
@@ -51,23 +53,25 @@
     font-size: 14px;
     display: table-cell;
     vertical-align: middle;
-    padding: 0 20px;
+    padding: 10px 0px 10px 20px;
     text-align: center;
   }
 
   .plan-option-list{
-    margin-top: 181px;
     .option-btn-red{
+      margin-top: 110px;
       display: inline-block;
       width: 48%;
-      padding: 10px 20px;
       font-size: 14px;
       color: #e51d39;
       border:solid 2px #e51d39;
-      margin-bottom: 20px;
     }
     .option-btn-red:hover{
       cursor: pointe;
+      color: #fff;
+      background-color: #e51d39;
+    }
+    .option-btn-red-active{
       color: #fff;
       background-color: #e51d39;
     }
@@ -186,13 +190,13 @@
       height: 100%;
       background: white;
       opacity: .8;
-
+      z-index: 100;
       > .label {
         position: absolute;
         top:320px;
         left: 10px;
         color: #E51D39;
-        font-size: calc(100vw/30);
+        font-size: calc(100vw/36);
         font-weight: bold;
 
         -webkit-transform: rotate(-15deg);
@@ -218,28 +222,25 @@
     }
 
     h4 {
-      max-width: 90%;
+      max-width: 70%;
       margin: 0 auto;
       margin-bottom: 5px;
       padding: 6px;
-      font-size: 3.3rem;
+      font-size: 2.3rem;
       font-weight: bold;
       font-style: italic;
-
     }
 
     .price-label {
       display: block;
       position: relative;
-      padding-top: 40px;
-      height: 190px;
+      padding: 10px 0px;
 
       h5 {
-
-        font-size: 6rem;
+        font-size: 3rem;
         font-weight: 900;
         color: white;
-
+        margin-bottom: 20px;
       }
       .outline {
         color: white;
@@ -259,6 +260,8 @@
 
       p {
         font-size: 1.5rem;
+        color: #fff;
+        margin-bottom: 0px;
       }
     }
 
@@ -267,6 +270,39 @@
       width: 100%;
       font-size: 16px;
       margin-bottom: 3px;
+    }
+
+    .junior_monthly_dark, .junior_yearly_dark{background-color: #6ebc95;}
+    .junior_monthly_light, .junior_yearly_light{background-color: #d6ece0;}
+
+    .core_monthly_dark, .core_yearly_dark{background-color: #4CC0E9;}
+    .core_monthly_light, .core_yearly_light{background-color: #A5DFF3;}
+
+    .senior_monthly_dark, .senior_yearly_dark{background-color: #82cc81;}
+    .senior_monthly_light, .senior_yearly_light{background-color: #dbf1dc;}
+
+    .junior_monthly_btn, .junior_yearly_btn{
+      border-color: #6ebc95 !important;
+      background-color: #fff !important;
+      color: #6ebc95 !important;
+      width: 60%;
+      margin: 0 auto;
+    }
+
+    .core_monthly_btn, .core_yearly_btn{
+      border-color: #4CC0E9;
+      background-color: #fff;
+      color: #4CC0E9;
+      width: 60%;
+      margin: 0 auto;
+    }
+
+    .senior_monthly_btn, .senior_yearly_btn{
+      border-color: #82cc81;
+      background-color: #fff;
+      color: #82cc81;
+      width: 60%;
+      margin: 0 auto;
     }
 
     .yellow-bg {background: $yellow;}

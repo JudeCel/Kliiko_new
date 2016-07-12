@@ -1,281 +1,203 @@
-<section id="step-1" class="animated fadeIn">
+<section id="step-1">
   <h2>Choose a plan</h2>
-
-  <section class="container plans-table">
-    <div class="row">
+  <section class="plans-table">
+    <div class="coll-sm-12">
       <div class="col-sm-3 plan-option-list">
-        <div class="option-btn-red" style="cursor:pointer">Monthly</div>
-        <div class="option-btn-red" style="cursor:pointer">Annual</div>
-
-        <div class="align-wertical-parent" ng-repeat="option in up.planOptions" style="{{ up.optionBackground($index) }}" >
-          <span class="align-wertical-child white-space-pre-line">{{ option }}</span>
-        </div>
-
+        <div class="option-btn-red btn-dashboard-plans" ng-click="up.switchPlanView('monthly')">Monthly</div>
+        <div class="option-btn-red btn-dashboard-plans" ng-click="up.switchPlanView('annual')">Annual</div>
       </div>
-      <div ng-repeat="subscriptionPlan in up.subPlans | orderBy:'-additionalParams.priority' ">
+
+      <div ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' ">
         <div class="col-sm-3 plan-block" ng-if="up.showPlanInList(subscriptionPlan)">
-          <div class="included-plan-fader" ng-show="up.isCurrentPlan(subscriptionPlan)"><div class="label">CURRENT</div></div>
-          <div class="list-group">
-            <h4 ng-class="up.planColors[subscriptionPlan.plan.id].header">{{subscriptionPlan.plan.name}}</h4>
-            <div ng-class="up.planColors[subscriptionPlan.plan.id].body" style="margin-bottom: 6px;">
-              <h5 class="outline"><sup>$US</sup>{{subscriptionPlan.plan.price | price:'':0 }}</h5>
-              <p>
-                {{ subscriptionPlan.plan.period }}
-                {{ subscriptionPlan.plan.period_unit }}
-                to use
-              </p>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.sessionCount) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.contactListCount) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.recruiterContactListCount) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.importDatabase) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.brandLogoAndCustomColors) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.contactListMemberCount) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.accountUserCount) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.exportContactListAndParticipantHistory) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.exportRecruiterSurveyData) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.accessKlzziForum) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.accessKlzziFocus) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.canInviteObserversToSession) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.planSmsCount) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.discussionGuideTips) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.whiteboardFunctionality) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.uploadToGallery) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.reportingFunctions) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.availableOnTabletAndMobilePlatforms) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.customEmailInvitationAndReminderMessages) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.topicCount) }}
-              </span>
-            </div>
-
-            <div class="{{ up.planColors[subscriptionPlan.plan.id].light }} align-wertical-parent">
-              <span class="align-wertical-child">
-                {{ up.checkTheCount(subscriptionPlan.additionalParams.secureSsl) }}
-              </span>
-            </div>
-
-            <div class="list-group-item-text buttons-area">
-              <div class="btn-dashboard-plans pull-right want {{ up.planColors[subscriptionPlan.plan.id].light }}" ng-click="up.wantThisPlan(subscriptionPlan)">
-                Upgrade Plan
-              </div>
-            </div>
-
+          <h4 ng-class="up.planColors[subscriptionPlan.plan.id].header">{{subscriptionPlan.plan.name}}</h4>
+          <div ng-class="up.planColors[subscriptionPlan.plan.id].body" style="margin-bottom: 6px;">
+            <h5 class="outline">
+              <sup>$US</sup>
+              {{subscriptionPlan.plan.price | price:'':0 }}
+              <sub>/mth</sub>
+            </h5>
+            <p>Get 2 Moths FREE</p>
+            <p>on all annual plans</p>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-xs-8 contact-us">
-        <span>
-          Enterprise Plan
-        </span>
+      <div class="coll-sm-12">
+        <div class="col-sm-3 plan-option-list">
+          <div class="align-wertical-parent" ng-repeat="option in up.planOptions" style="{{ up.optionBackground($index) }}" >
+            <span class="align-wertical-child white-space-pre-line">{{ option }}</span>
+            <!-- <span class="align-wertical-child glyphicon glyphicon-question-sign" style="" aria-hidden="true"></span> -->
+          </div>
+        </div>
 
-        <div class="contact-us-btn-red pull-right" style="cursor:pointer" ng-click="up.openContactUsModal(app.user)">Get A Quote</div>
+        <div ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' ">
+          <div class="col-sm-3 plan-block" ng-if="up.showPlanInList(subscriptionPlan)">
+            <div class="included-plan-fader" ng-show="up.isCurrentPlan(subscriptionPlan)"><div class="label">CURRENT</div></div>
+            <div class="list-group">
 
-        <p>
-          klzii Supports organizations large and small. If need more Managers,
-          <br/>
-          Active Sessions, contact lists or recruitment lists, contact our sales team form
-          <br/>
-          assistance.
-        </p>
-      </div>
-
-      <!-- MODALS -->
-      <section>
-        <div class='modal fade' id='contactUsModal' role='dialog'>
-          <div class='modal-dialog contactDetailsModal'>
-            <div class='modal-content border-green border-radius-none'>
-              <div class='modal-header'>
-                <button type='button' class='close' data-dismiss='modal'>&times;</button>
-                <h1 class='modal-title text-center'>Get a Wuote</h1>
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 1) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  {{ up.checkTheCount(subscriptionPlan.additionalParams.sessionCount) }}
+                </span>
               </div>
-              <div class='modal-body'>
-                <form class="form-horizontal">
-                  <div class='form-group'>
-                    <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First Name<span class='text-red-dark'>*</span></label>
-                    <div class='col-md-6'>
-                      <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='up.contactUsUser.firstName'>
-                    </div>
-                  </div>
 
-                  <div class='form-group'>
-                    <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Last Name<span class='text-red-dark'>*</span></label>
-                    <div class='col-md-6'>
-                      <input type='text' class='form-control' id='firstName' placeholder='Last name' ng-model='up.contactUsUser.lastName'>
-                    </div>
-                  </div>
-
-                  <div class='form-group'>
-                    <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Email<span class='text-red-dark'>*</span></label>
-                    <div class='col-md-6'>
-                      <input type="email" class='form-control' id='firstName' placeholder='Email' ng-model='up.contactUsUser.email'>
-                    </div>
-                  </div>
-
-                  <div class='form-group'>
-                    <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Contact Number<span class='text-red-dark'>*</span></label>
-                    <div class='col-md-6'>
-                      <input type='text' class='form-control' id='firstName' placeholder='Contact Number' ng-model='up.contactUsUser.contactNumber'>
-                    </div>
-                  </div>
-
-                  <div class='form-group'>
-                    <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Company Name</label>
-                    <div class='col-md-6'>
-                      <input type='text' class='form-control' id='firstName' placeholder='Company Name' ng-model='up.contactUsUser.companyName'>
-                    </div>
-                  </div>
-
-                  <div class='form-group'>
-                    <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Position in Company</label>
-                    <div class='col-md-6'>
-                      <input type='text' class='form-control' id='firstName' placeholder='Position in Company' ng-model='up.contactUsUser.positionInCompany'>
-                    </div>
-                  </div>
-
-                  <div class='form-group'>
-                    <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Company URL</label>
-                    <div class='col-md-6'>
-                      <input type='text' class='form-control' id='firstName' placeholder='Company URL' ng-model='up.contactUsUser.companyUrl'>
-                    </div>
-                  </div>
-
-                  <div class='form-group'>
-                    <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Comments<span class='text-red-dark'>*</span></label>
-                    <div class='col-md-6'>
-                      <textarea rows="4" cols="50" type='text' class='form-control' id='firstName' placeholder='Comments' ng-model='up.contactUsUser.comments'>
-                      </textarea>
-                    </div>
-                  </div>
-                </form>
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 2) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  {{ up.checkTheCount(subscriptionPlan.additionalParams.contactListCount) }}
+                </span>
               </div>
-              <p class='get-quote-note'>
-                Please note: This information will help us understand your needs.
-              </p>
-              <div class='modal-footer'>
-                <div type='button' class='pull-left btn-dashboard-plans go-back-btn' data-dismiss='modal'>
-                  Cancel
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 1) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  {{ up.checkTheCount(subscriptionPlan.additionalParams.recruiterContactListCount) }}
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 2) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  <span ng-if="subscriptionPlan.additionalParams.importDatabase" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  <span ng-if="!subscriptionPlan.additionalParams.importDatabase">-</span>
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 1) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  <span ng-if="subscriptionPlan.additionalParams.brandLogoAndCustomColors" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  <span ng-if="!subscriptionPlan.additionalParams.brandLogoAndCustomColors">-</span>
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 2) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  {{ up.checkTheCount(subscriptionPlan.additionalParams.contactListMemberCount) }}
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 1) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  {{ up.checkTheCount(subscriptionPlan.additionalParams.accountUserCount) }}
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 2) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  <span ng-if="subscriptionPlan.additionalParams.exportContactListAndParticipantHistory" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  <span ng-if="!subscriptionPlan.additionalParams.exportContactListAndParticipantHistory">-</span>
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 1) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  <span ng-if="subscriptionPlan.additionalParams.exportRecruiterSurveyData" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  <span ng-if="!subscriptionPlan.additionalParams.exportRecruiterSurveyData">-</span>
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 2) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  <span ng-if="subscriptionPlan.additionalParams.accessKlzziForum" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  <span ng-if="!subscriptionPlan.additionalParams.accessKlzziForum">-</span>
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 1) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  <span ng-if="subscriptionPlan.additionalParams.accessKlzziForum" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  <span ng-if="!subscriptionPlan.additionalParams.accessKlzziForum">-</span>
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 2) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  <span ng-if="subscriptionPlan.additionalParams.canInviteObserversToSession" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  <span ng-if="!subscriptionPlan.additionalParams.canInviteObserversToSession">-</span>
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 1) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  {{ up.checkTheCount(subscriptionPlan.additionalParams.planSmsCount) }}
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 2) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  <span ng-if="subscriptionPlan.additionalParams.discussionGuideTips" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  <span ng-if="!subscriptionPlan.additionalParams.discussionGuideTips">-</span>
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 1) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  <span ng-if="subscriptionPlan.additionalParams.whiteboardFunctionality" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  <span ng-if="!subscriptionPlan.additionalParams.whiteboardFunctionality">-</span>
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 2) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  <span ng-if="subscriptionPlan.additionalParams.uploadToGallery" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  <span ng-if="!subscriptionPlan.additionalParams.uploadToGallery">-</span>
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 1) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  <span ng-if="subscriptionPlan.additionalParams.reportingFunctions" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  <span ng-if="!subscriptionPlan.additionalParams.reportingFunctions">-</span>
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 2) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  <span ng-if="subscriptionPlan.additionalParams.availableOnTabletAndMobilePlatforms" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  <span ng-if="!subscriptionPlan.additionalParams.availableOnTabletAndMobilePlatforms">-</span>
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 1) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  <span ng-if="subscriptionPlan.additionalParams.customEmailInvitationAndReminderMessages" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  <span ng-if="!subscriptionPlan.additionalParams.customEmailInvitationAndReminderMessages">-</span>
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 2) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  {{ up.checkTheCount(subscriptionPlan.additionalParams.topicCount) }}
+                </span>
+              </div>
+
+              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 1) }} align-wertical-parent">
+                <span class="align-wertical-child">
+                  <span ng-if="subscriptionPlan.additionalParams.secureSsl" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  <span ng-if="!subscriptionPlan.additionalParams.secureSsl">-</span>
+                </span>
+              </div>
+
+              <div class="list-group-item-text buttons-area">
+                <div class="{{ up.selectPlanBtnColor(subscriptionPlan.plan.id) }} btn-dashboard-plans want" ng-click="up.wantThisPlan(subscriptionPlan)">
+                  Upgrade Plan
                 </div>
-                <div type='submit' class='pull-right btn-dashboard-plans i-want-btn' ng-click="up.submitContactusForm()">
-                  Get Quote
-                </div>
               </div>
+
             </div>
           </div>
         </div>
-      </section>
-    </div>
-
-    <div class="row">
-      <div id="disclaimer">
-        <p>
-          <b>Please Note:</b> Depending on the nature of your project, you may also need to provide appropriate Incentive-Gifts to your group-Session Participants
-        </p>
-        <p>
-          *Your credit card will be charged for any additional SMS.
-        </p>
       </div>
     </div>
+
+    <ng-include src="'/js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/getAQuote.tpl.html'"></ng-include>
+
+    <div class="coll-sm-12" id="disclaimer">
+      <p>
+        <b>Please Note:</b> Depending on the nature of your project, you may also need to provide appropriate Incentive-Gifts to your group-Session Participants
+      </p>
+      <p>
+        *Your credit card will be charged for any additional SMS.
+      </p>
+    </div>
+
   </section>
-
 </section>
