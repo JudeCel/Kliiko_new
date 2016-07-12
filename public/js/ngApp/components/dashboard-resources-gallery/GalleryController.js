@@ -305,7 +305,7 @@
     }
 
     function youtubeUrl(url) {
-      return $sce.trustAsResourceUrl('http://www.youtube.com/embed/' + url);
+      return $sce.trustAsResourceUrl('https://www.youtube.com/embed/' + url);
     }
 
     function resourceUrl(url) {

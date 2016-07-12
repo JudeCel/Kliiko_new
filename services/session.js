@@ -162,7 +162,7 @@ function getAllSessionRatings() {
       attributes: ['id', 'name'],
       include: [{
         model: SessionMember,
-        attributes: ['rating']
+        attributes: ['rating', 'role']
       }]
     }]
   }).then(function(accounts) {
@@ -182,9 +182,15 @@ function prepareAccountRatings(accounts) {
 
     _.map(account.Sessions, function(session) {
       let sObject = { name: session.name, rating: 0 };
+      let length = 0;
       _.map(session.SessionMembers, function(member) {
+        if(member.role != 'facilitator') {
+          length++;
+        }
+
         sObject.rating += member.rating;
       });
+      sObject.rating /= (length || 1);
 
       object.rating += sObject.rating;
       object.sessions.push(sObject);
