@@ -353,6 +353,10 @@
             object[question.order] = question;
           }
           survey.SurveyQuestions = object;
+          vm.currentSurveyMode = 'Edit';
+        }
+        else {
+          vm.currentSurveyMode = 'Create';
         }
 
         vm.submitError = null;

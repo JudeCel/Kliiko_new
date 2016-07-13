@@ -1,5 +1,6 @@
-<h4>Survey Template</h4>
-<hr class='survey-hr' />
+<h4 class='text-center'>
+  Modify & Enable this Introduction & Questions Template for your own needs. Then post the survey link and your Contact List will start building instantly. In Advanced Recruiter you can add 3 extra questions with multi-media.
+</h4>
 
 <div id='panel-introduction' class='panel panel-default border-radius-none'>
   <div class='panel-heading'><strong>Introduction</strong></div>
@@ -23,6 +24,7 @@
         <div class='col-xs-10 col-md-6'>
           {{ upload = sc.galleryDropdownData("survey", sc.survey); resource = gc.getResourceFromList(sc.survey); "" }}
           <div ng-include="gc.templatesDir + 'viewRendered.html'" ng-if='resource'></div>
+          <img ng-src='/icons/Klzii_RGB_72.png' ng-if='!resource'/>
           <div ng-include="gc.templatesDir + 'dropdown.html'"></div>
         </div>
       </div>
