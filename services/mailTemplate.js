@@ -8,6 +8,15 @@ var _ = require('lodash');
 var ejs = require('ejs');
 var constants = require('../util/constants');
 
+const CORRECT_ORDER = [
+  'First Invitation',
+  'Confirmation',
+  'Not This Time',
+  'Not At All',
+  'Close Session',
+  'Generic'
+];
+
 module.exports = {
   validate: validate,
   create: create,
@@ -34,6 +43,28 @@ var templateHeaderListFields = [
     'id', 'name', 'category'
 ];
 
+function orderCorrectly(array, field, copies) {
+  let currentOrder = _.map(array, field);
+  let correctArray = _.map(CORRECT_ORDER, function(name) {
+    let index = currentOrder.indexOf(name);
+    return array[index];
+  });
+
+  if(copies) {
+    let extraCopies = [];
+    let selectedCopies = _.filter(array, 'isCopy');
+    _.map(CORRECT_ORDER, function(name) {
+      let found = _.filter(selectedCopies, function(copy) {
+        return copy[field] == name;
+      });
+      extraCopies = extraCopies.concat(found);
+    });
+    correctArray = correctArray.concat(extraCopies);
+  }
+
+  return correctArray;
+}
+
 function getMailTemplateTypeList(categories, callback) {
   let query = {category:{ $in: categories }};
   MailTemplateOriginal.findAll({
@@ -41,7 +72,8 @@ function getMailTemplateTypeList(categories, callback) {
       raw: true,
       where: query
   }).then(function(templates) {
-    callback(null, templates);
+    let correctOrderTemplates = orderCorrectly(templates, 'name');
+    callback(null, correctOrderTemplates);
   }).catch(function(error) {
     callback(error);
   });
@@ -251,8 +283,9 @@ function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSyste
       attributes: attributes,
       raw: true,
       order: "id ASC"
-  }).then(function(result) {
-    callback(null, result);
+  }).then(function(templates) {
+    let correctOrderTemplates = orderCorrectly(templates, 'MailTemplateBase.name', true);
+    callback(null, correctOrderTemplates);
   }).catch(function(error) {
     callback(error);
   });
