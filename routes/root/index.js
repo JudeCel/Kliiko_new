@@ -191,22 +191,14 @@ router.post('/paidPlanRegistration', function (req, res, next) {
     if (error) {
         res.render('paidPlanRegistration', usersRepo.prepareParams(req, error));
     } else {
-      let tplData = {
-        title: 'Email Confirmation',
-        error: '',
-        success: '',
-        email: ''
-      };
-
       let email = req.body.email;
       emailConfirmation.sendEmailConfirmationToken(email, function (err) {
         if (err) {
-          tplData.error = 'Failed to send data. Please try later';
+          res.render('welcome',  {title: 'Failed to send data. Please try later', error: 'Failed to send data. Please try later', message: '' , applicationName: process.env.MAIL_FROM_NAME});
         } else {
-          tplData.success = 'Email confirmation sent to ' + email;
+          res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: process.env.MAIL_FROM_NAME});
         }
       });
-      res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: process.env.MAIL_FROM_NAME});
     };
   });
 });
@@ -217,24 +209,17 @@ router.post('/freeTrialRegistration', function (req, res, next) {
 
   usersRepo.create(params, function (error, result) {
     if (error) {
-        res.render('freeTrialRegistration', usersRepo.prepareParams(req, error));
+      console.log(error);
+      res.render('freeTrialRegistration', usersRepo.prepareParams(req, error));
     } else {
-      let tplData = {
-        title: 'Email Confirmation',
-        error: '',
-        success: '',
-        email: ''
-      };
-
       let email = req.body.email;
       emailConfirmation.sendEmailConfirmationToken(email, function (err) {
         if (err) {
-          tplData.error = 'Failed to send data. Please try later';
+          res.render('welcome',  {title: 'Failed to send data. Please try later', error: 'Failed to send data. Please try later', message: '' , applicationName: process.env.MAIL_FROM_NAME});
         } else {
-          tplData.success = 'Email confirmation sent to ' + email;
+          res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: process.env.MAIL_FROM_NAME});
         }
       });
-      res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: process.env.MAIL_FROM_NAME});
     };
   });
 });

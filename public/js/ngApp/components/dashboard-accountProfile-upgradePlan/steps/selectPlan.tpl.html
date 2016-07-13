@@ -28,7 +28,7 @@
       <div class="coll-sm-12">
         <div class="col-sm-3 plan-option-list">
           <div class="align-vertical-parent" ng-repeat="option in up.planOptions">
-            <span class="align-vertical-child white-space-pre-line">{{ option }}</span>
+            <span class="{{ up.optionBackground(index) }} align-vertical-child white-space-pre-line">{{ option }}</span>
           </div>
         </div>
 
@@ -211,7 +211,7 @@
       <ng-include src="'/js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/getAQuote.tpl.html'"></ng-include>
     </div>
 
-    <div class="coll-sm-12" id="disclaimer">
+    <div class="col-sm-12" id="disclaimer">
       <p>
         <b>Please Note:</b> Depending on the nature of your project, you may also need to provide appropriate Incentive-Gifts to your group-Session Participants
       </p>
