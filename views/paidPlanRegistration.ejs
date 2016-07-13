@@ -4,8 +4,7 @@
 <main class="main-first-page-registration">
   <div class="login-container center-block text-font-family">
     <ul class="nav nav-tabs">
-      <li><a class="background-yellow text-white text-shadow-gray btn login-kliiko-tab" href="/login">Login to klzii</a></li>
-      <li class="active"><a class="background-green text-white text-center login-signup-tab" data-toggle="tab" href="#signup">Get a klzii Account</a>
+      <li class="active"><a class="background-green text-white text-center signup-via-sales-page" data-toggle="tab" href="#signup">Get a klzii Account</a>
       </li>
     </ul>
     <div class="tab-content border-green">
@@ -15,188 +14,205 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
-              <% if(!selectedPlanOnRegistration){ %>
-                <h1 class="text-center">Please return back and select a plan.</h1>
-              <% }else{ %>
-                <form method="post" action="/paidPlanRegistration" novalidate="" id="register">
-                  <% if(socialProfile){ %>
-                   <input type="hidden" name="socialProfile[provider]" value="<%=socialProfile.provider%>">
-                   <input type="hidden" name="socialProfile[id]" value="<%=socialProfile.id%>">
-                  <% } %>
-                  <input type="hidden" name="selectedPlanOnRegistration" value="<%=selectedPlanOnRegistration%>">
-                  <p class="pull-right text-red-dark"> * <i>Required</i> </p>
-                  <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
-                    <tr>
-                      <td>
-                        <label class="text-no-bold text-login-page" for="accountName">
-                          Account
-                          <br>
-                          Name
-                        </label>
-                      </td>
-                      <td>
-                        <input type="text" value="<%= accountName %>" class="form-control" name="accountName" id="account_name" placeholder="Account Name">
-                      </td>
-                      <td class="text-red-dark">
-                        <h6>*</h6>
-                      </td>
-                    </tr>
+              <form method="post" action="/paidPlanRegistration" novalidate="" id="register">
+                <% if(socialProfile){ %>
+                  <%=socialProfile.provider%>
+                  <%=socialProfile.id%>
+                 <input type="hidden" name="socialProfile[provider]" value="<%=socialProfile.provider%>">
+                 <input type="hidden" name="socialProfile[id]" value="<%=socialProfile.id%>">
+                <% } %>
+                <input type="hidden" name="selectedPlanOnRegistration" value="<%=selectedPlanOnRegistration%>">
+                <p class="pull-right text-red-dark"> * <i>Required</i> </p>
+                <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
+                  <tr>
+                    <td>
+                      <label class="text-no-bold text-login-page" for="accountName">
+                        Account
+                        <br>
+                        Name
+                      </label>
+                    </td>
+                    <td>
+                      <input type="text" value="<%= accountName %>" class="form-control" name="accountName" id="account_name" placeholder="Account Name">
+                    </td>
+                    <td class="text-red-dark">
+                      <h6>*</h6>
+                    </td>
+                  </tr>
 
-                    <tr>
-                      <td></td>
-                      <td class="error-column">
-                        <span class="has-error"><%= errors.name %></span>
-                      </td>
-                    </tr>
-
-
-                    <tr>
-                      <td>
-                        <label class="text-no-bold text-login-page" for="firstName">First Name</label>
-                      </td>
-                      <td>
-                        <input type="text" value="<%= firstName %>" class="form-control" name="firstName" id="first_name" placeholder="First Name">
-                      </td>
-                      <td class="text-red-dark">
-                        <h6>*</h6>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td></td>
-                      <td class="error-column">
-                        <span class="has-error"><%= errors.firstName %></span>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <label class="text-no-bold text-login-page" for="lastName">Last Name</label>
-                      </td>
-                      <td>
-                        <input type="text" value="<%= lastName %>" class="form-control" name="lastName" id="last_name" placeholder="Last Name">
-                      </td>
-                      <td class="text-red-dark">
-                        <h6>*</h6>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td></td>
-                      <td class="error-column">
-                        <span class="has-error"><%= errors.lastName %></span>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <label class="text-no-bold text-login-page" for="email">Email</label>
-                      </td>
-                      <td>
-                        <input type="email" value="<%= email %>" class="form-control" name="email" id="email" placeholder="Email">
-                      </td>
-                      <td class="text-red-dark">
-                        <h6>*</h6>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td></td>
-                      <td class="error-column">
-                        <span class="has-error "><%= errors.email %></span>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <label class="text-no-bold text-login-page" for="password">Password</label>
-                      </td>
-                      <td>
-                        <input type="password" value="<%= password %>" class="form-control" name="password" id="password" placeholder="Password">
-                      </td>
-                      <td class="text-red-dark">
-                        <h6>*</h6>
-                      </td>
-                    </tr>
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                      <span class="has-error"><%= errors.name %></span>
+                    </td>
+                  </tr>
 
 
-                    <tr>
-                      <td></td>
-                      <% if(errors.password){ %>
-                      <td class="error-column">
-                          <span class="has-error"><%= errors.password %></span>
-                      </td>
-                      <% } else{ %>
-                      <td>
-                        Make sure your Password is at least 7 characters
-                      </td>
-                      <% } %>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label class="text-no-bold text-login-page" for="mobile">
-                          Mobile
-                          <br>
-                          Number
-                        </label>
-                      </td>
-                      <td>
-                        <input type="tel" value="<%= mobile %>" id="mobilePhone" name="mobile" placeholder="Mobile Number" class="form-control">
-                        <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="<%= phoneCountryData %>">
-                      </td>
-                    </tr>
+                  <tr>
+                    <td>
+                      <label class="text-no-bold text-login-page" for="firstName">First Name</label>
+                    </td>
+                    <td>
+                      <input type="text" value="<%= firstName %>" class="form-control" name="firstName" id="first_name" placeholder="First Name">
+                    </td>
+                    <td class="text-red-dark">
+                      <h6>*</h6>
+                    </td>
+                  </tr>
 
-                    <tr>
-                      <td></td>
-                      <td class="error-column">
-                        <div class="has-error" id="mobilePhoneError"><%= errors.mobile %></div>
-                      </td>
-                    </tr>
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                      <span class="has-error"><%= errors.firstName %></span>
+                    </td>
+                  </tr>
 
-                    <tr>
-                      <td>
-                        <label class="text-no-bold text-login-page" for="landlineNumber">
-                          Landline
-                          <br>
-                          Number
-                        </label>
-                      </td>
-                      <td>
-                        <input type="tel" value="<%= landlineNumber %>" id="landline_number" name="landlineNumber" placeholder="Landline Number" class="form-control">
-                        <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="<%= landlineNumberCountryData %>">
-                      </td>
-                    </tr>
+                  <tr>
+                    <td>
+                      <label class="text-no-bold text-login-page" for="lastName">Last Name</label>
+                    </td>
+                    <td>
+                      <input type="text" value="<%= lastName %>" class="form-control" name="lastName" id="last_name" placeholder="Last Name">
+                    </td>
+                    <td class="text-red-dark">
+                      <h6>*</h6>
+                    </td>
+                  </tr>
 
-                    <tr>
-                      <td></td>
-                      <td class="error-column">
-                        <div class="has-error" id="landline_number_error"><%= errors.landlineNumber %></div>
-                      </td>
-                    </tr>
-                  </table>
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                      <span class="has-error"><%= errors.lastName %></span>
+                    </td>
+                  </tr>
 
-                  <div class="form-group">
-                    <div class="check">
-                      <input type="checkbox" class="checkbox-login" name="termsAndConditions" id="termsAndConditions" value='true'/>
-                      <label for="termsAndConditions"></label>
-                      <span class="checkbox-signup" id="termsAndConditions">You have read and agree to the <a class="text-red-dark" href="url">Account Terms & Conditions</a>.</span>
+                  <tr>
+                    <td>
+                      <label class="text-no-bold text-login-page" for="email">Email</label>
+                    </td>
+                    <td>
+                      <input type="email" value="<%= email %>" class="form-control" name="email" id="email" placeholder="Email">
+                    </td>
+                    <td class="text-red-dark">
+                      <h6>*</h6>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                      <span class="has-error "><%= errors.email %></span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <label class="text-no-bold text-login-page" for="password">Password</label>
+                    </td>
+                    <td>
+                      <input type="password" value="<%= password %>" class="form-control" name="password" id="password" placeholder="Password">
+                    </td>
+                    <td class="text-red-dark">
+                      <h6>*</h6>
+                    </td>
+                  </tr>
+
+
+                  <tr>
+                    <td></td>
+                    <% if(errors.password){ %>
+                    <td class="error-column">
+                        <span class="has-error"><%= errors.password %></span>
+                    </td>
+                    <% } else{ %>
+                    <td>
+                      Make sure your Password is at least 7 characters
+                    </td>
+                    <% } %>
+                  </tr>
+                  <tr>
+                    <td>
+                      <label class="text-no-bold text-login-page" for="mobile">
+                        Mobile
+                        <br>
+                        Number
+                      </label>
+                    </td>
+                    <td>
+                      <input type="tel" value="<%= mobile %>" id="mobilePhone" name="mobile" placeholder="Mobile Number" class="form-control">
+                      <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="<%= phoneCountryData %>">
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                      <div class="has-error" id="mobilePhoneError"><%= errors.mobile %></div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <label class="text-no-bold text-login-page" for="landlineNumber">
+                        Landline
+                        <br>
+                        Number
+                      </label>
+                    </td>
+                    <td>
+                      <input type="tel" value="<%= landlineNumber %>" id="landline_number" name="landlineNumber" placeholder="Landline Number" class="form-control">
+                      <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="<%= landlineNumberCountryData %>">
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td></td>
+                    <td class="error-column">
+                      <div class="has-error" id="landline_number_error"><%= errors.landlineNumber %></div>
+                    </td>
+                  </tr>
+                </table>
+
+                <div class="form-group">
+                  <div class="check">
+                    <input type="checkbox" class="checkbox-login" name="termsAndConditions" id="termsAndConditions" value='true'/>
+                    <label for="termsAndConditions"></label>
+                    <span class="checkbox-signup" id="termsAndConditions">You have read and agree to the <a class="text-red-dark" href="url">Account Terms & Conditions</a>.</span>
+                  </div>
+                  <span class="has-error error-column text-center"><%= errors.termsAndConditions %></span>
+
+                  <div class="check">
+                    <input type="checkbox" class="checkbox-login" name="reveiveNewsLetters" id="reveiveNewsLetters" value='on'/>
+                    <label for="reveiveNewsLetters"></label>
+                    <span class="checkbox-signup" id="reveiveNewsLetters">Yes send me the klzii Newsletter which includes tips and updates.</span>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12 form-group">
+                    <div class="form-group center-block">
+                      <div class="check-google center-block">
+                        <a href="/auth/googlePaiedPlanRegistration?selectedPlanOnRegistration=<%=selectedPlanOnRegistration%>" class="btn btn-block btn-social btn-google">
+                          <i class="fa fa-google"></i> Login or sign up with Google
+                        </a>
+                      </div>
                     </div>
-                    <span class="has-error error-column text-center"><%= errors.termsAndConditions %></span>
-
-                    <div class="check">
-                      <input type="checkbox" class="checkbox-login" name="reveiveNewsLetters" id="reveiveNewsLetters" value='on'/>
-                      <label for="reveiveNewsLetters"></label>
-                      <span class="checkbox-signup" id="reveiveNewsLetters">Yes send me the klzii Newsletter which includes tips and updates.</span>
+                    <div class="form-group center-block">
+                      <div class="check-facebook center-block">
+                        <a href="/auth/facebookPaiedPlanRegistration?selectedPlanOnRegistration=<%=selectedPlanOnRegistration%>" class="btn btn-block btn-social btn-facebook">
+                          <i class="fa fa-facebook"></i> Login or sign up with Facebook
+                        </a>
+                      </div>
                     </div>
                   </div>
+                </div>
 
-                  <div class="form-group text-right">
-                    <div class="check">
-                      <button type="submit" value="Register" class="btn border-green border-radius-none text-green-dark background-transp">Sign up</button>
-                    </div>
+                <div class="form-group text-right">
+                  <div class="check">
+                    <button type="submit" value="Register" class="btn border-green border-radius-none text-green-dark background-transp">Sign up</button>
                   </div>
-                </form>
-              <% } %>
+                </div>
+              </form>
             </div>
           </div>
         </div>

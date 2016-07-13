@@ -6,7 +6,7 @@ var User = models.User;
 var SocialProfile  = models.SocialProfile;
 
 var _ = require('lodash');
-var needConfirmatinMessage = { message: "Please confirm Your Email" }
+var needConfirmatinMessage = { message: "Please verify your email address" }
 
 module.exports = {
   create: create,

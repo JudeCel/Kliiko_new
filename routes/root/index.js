@@ -124,9 +124,30 @@ router.get('/welcome', function (req, res, next) {
   res.render('welcome', usersRepo.prepareParams(req));
 });
 
-let registrationState = JSON.stringify({ type: 'registration' });
-router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'], state: registrationState }));
+let registrationState = JSON.stringify({
+  type: 'registration',
+  page: 'freeTrialRegistration',
+  selectedPlanOnRegistration: 'core_monthly'
+});
+
+router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
+router.get('/auth/facebookFreeTrialRegistration', passport.authenticate(
+  'facebook', { scope : ['email'], state: JSON.stringify({ type: 'registration', page: "freeTrialRegistration" })
+}));
+
+router.get("/auth/facebookPaiedPlanRegistration", function (req, res, next) {
+  passport.authenticate(
+    'facebook',
+    { scope : ['email'], state: JSON.stringify({
+      type: 'registration',
+      page: "paidPlanRegistration",
+      selectedPlanOnRegistration: req.query.selectedPlanOnRegistration
+    })
+  })(req, res, next)
+}, function() {});
+
 router.get('/auth/facebook/callback', function(req, res, next) {
+  let returnParams = JSON.parse(req.query.state);
   passport.authenticate('facebook', function(err, user, info) {
     if (err) {
       return res.render('login', { title: 'Login', error: err.message, message: "" });
@@ -140,7 +161,14 @@ router.get('/auth/facebook/callback', function(req, res, next) {
       if(req.query.state.type == 'registration') {
         res.locals = usersRepo.prepareParams(req);
         socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
-          res.render("registration", {appData: res.locals, error: {}});
+          if (returnParams.page == 'freeTrialRegistration') {
+            res.render('freeTrialRegistration', {appData: res.locals, error: {}});
+          }else if(returnParams.page == 'paidPlanRegistration'){
+            res.locals.selectedPlanOnRegistration = returnParams.selectedPlanOnRegistration;
+            res.render("paidPlanRegistration", {appData: res.locals, error: {}});
+          }else{
+            res.render("registration", {appData: res.locals, error: {}});
+          }
         }, function(err) {
           next(err);
         })
@@ -164,7 +192,25 @@ router.get('/auth/facebook/callback', function(req, res, next) {
 });
 
 router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'], state: registrationState }));
+router.get('/auth/googleFreeTrialRegistration', passport.authenticate(
+  'google', { scope :
+    ['profile', 'email'], state: JSON.stringify({ type: 'registration', page: "freeTrialRegistration" })
+}));
+
+router.get("/auth/googlePaiedPlanRegistration", function (req, res, next) {
+  passport.authenticate(
+    'facebook',
+    { scope : ['email'], state: JSON.stringify({
+      type: 'registration',
+      page: "paidPlanRegistration",
+      selectedPlanOnRegistration: req.query.selectedPlanOnRegistration
+    })
+  })(req, res, next)
+}, function() {});
+
 router.get('/auth/google/callback', function(req, res, next) {
+  let returnParams = JSON.parse(req.query.state);
+
   passport.authenticate('google', function(err, user, info) {
     if (err) {
       return res.render('login', { title: 'Login', error: err.message, message: "" });
@@ -176,7 +222,13 @@ router.get('/auth/google/callback', function(req, res, next) {
     }else{
       res.locals = usersRepo.prepareParams(req);
       socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
-        res.render("registration", { appData: res.locals, error: {} });
+        if (returnParams.page == 'freeTrialRegistration') {
+          res.render('freeTrialRegistration', {appData: res.locals, error: {}});
+        }else if(returnParams.page == 'paidPlanRegistration'){
+          res.render("paidPlanRegistration", {appData: res.locals, error: {}});
+        }else{
+          res.render("registration", {appData: res.locals, error: {}});
+        }
       }, function(err) {
         next(err)
       });
@@ -196,7 +248,7 @@ router.post('/paidPlanRegistration', function (req, res, next) {
         if (err) {
           res.render('welcome',  {title: 'Failed to send data. Please try later', error: 'Failed to send data. Please try later', message: '' , applicationName: process.env.MAIL_FROM_NAME});
         } else {
-          res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: process.env.MAIL_FROM_NAME});
+          res.render('welcome',  {title: 'Please verify your email address', error: "Please verify your email address", message: '' , applicationName: process.env.MAIL_FROM_NAME});
         }
       });
     };
@@ -217,7 +269,7 @@ router.post('/freeTrialRegistration', function (req, res, next) {
         if (err) {
           res.render('welcome',  {title: 'Failed to send data. Please try later', error: 'Failed to send data. Please try later', message: '' , applicationName: process.env.MAIL_FROM_NAME});
         } else {
-          res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: process.env.MAIL_FROM_NAME});
+          res.render('welcome',  {title: 'Please verify your email address', error: "Please verify your email address", message: '' , applicationName: process.env.MAIL_FROM_NAME});
         }
       });
     };
@@ -245,7 +297,7 @@ router.post('/registration', function (req, res, next) {
           tplData.success = 'Email confirmation sent to ' + email;
         }
       });
-      res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: process.env.MAIL_FROM_NAME});
+      res.render('welcome',  {title: 'Please verify your email address', error: "Please verify your email address", message: '' , applicationName: process.env.MAIL_FROM_NAME});
     };
   });
 });
