@@ -81,40 +81,6 @@
       }
     ]
 
-    vm.planColors = {
-      junior_yearly: {
-        header: "list-group-item-heading junior_yearly_light",
-        body: "price-label junior_yearly_dark",
-        light: "list-group-item-text yellow-light-bg"
-      },
-      core_yearly: {
-        header: "list-group-item-heading core_yearly_light",
-        body: "price-label core_yearly_dark",
-        light: "list-group-item-text green-light-bg"
-      },
-      senior_yearly: {
-        header: "list-group-item-heading senior_yearly_light",
-        body: "price-label senior_yearly_dark",
-        light: "list-group-item-text blue-light-bg"
-      },
-
-      junior_monthly: {
-        header: "list-group-item-heading junior_monthly_light",
-        body: "price-label junior_monthly_dark",
-        light: "list-group-item-text yellow-light-bg"
-      },
-      core_monthly: {
-        header: "list-group-item-heading core_monthly_light",
-        body: "price-label core_monthly_dark",
-        light: "list-group-item-text green-light-bg"
-      },
-      senior_monthly: {
-        header: "list-group-item-heading senior_monthly_light",
-        body: "price-label senior_yearly_dark",
-        light: "list-group-item-text blue-light-bg"
-      }
-    };
-
     var modalTplPath = 'js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/';
 
     vm.isCurrentStep = isCurrentStep;
@@ -339,10 +305,11 @@
       });
     }
 
-    function planOptionColor(plan, index) {
-      if (index%2 > 0) {
+    function planOptionColor(plan, number) {
+      if (number == 'odd') {
         return plan + "_light";
-      }else{
+      }
+      if (number == "even") {
         return plan + "_dark";
       }
     }
