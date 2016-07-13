@@ -47,8 +47,6 @@
     vm.onDropComplete = onDropComplete;
     vm.galleryDropdownData = galleryDropdownData;
 
-    vm.canCreateNew = canCreateNew;
-
     function onDropComplete(index, data, evt) {
       var answer = data.answer;
       var question = vm.survey.SurveyQuestions[data.questionOrder].answers;
@@ -388,12 +386,4 @@
       return (vm.currentContacts[cd.model] ? false : cd.disabled);
     };
   };
-
-  function canCreateNew(validSub) {
-    if(validSub){
-      return "Create New Survey";
-    }else{
-      return "Please update your subscription to: Create New Survey";
-    }
-  }
 })();
