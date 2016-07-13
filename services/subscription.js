@@ -277,7 +277,6 @@ function createSubscription(accountId, userId, provider) {
 
 function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
   let deferred = q.defer();
-
   models.Account.find({
     where: {
       id: accountId

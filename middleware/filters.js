@@ -25,7 +25,6 @@ function landingPage(req, res, next) {
 
 function planSelectPage(req, res, next) {
   let redirectUrl = subdomains.url(req, res.locals.currentDomain.name, '/dashboard/landing');
-
   if(req.originalUrl == '/dashboard/selectPlan') {
     next();
   }
