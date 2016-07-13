@@ -59,7 +59,8 @@ module.exports = {
   getAllPlans: getAllPlans,
   retrievCheckoutAndUpdateSub: retrievCheckoutAndUpdateSub,
   getChargebeeSubscription: getChargebeeSubscription,
-  postQuote: postQuote
+  postQuote: postQuote,
+  createSubscriptionOnFirstLogin: createSubscriptionOnFirstLogin
 }
 
 function postQuote(params) {
@@ -269,6 +270,38 @@ function createSubscription(accountId, userId, provider) {
     deferred.resolve(subscription);
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
+  let deferred = q.defer();
+
+  models.Account.find({
+    where: {
+      id: accountId
+    }
+  }).then(function(account) {
+    createSubscription(accountId, userId).then(function(response) {
+      if(account.selectedPlanOnRegistration && account.selectedPlanOnRegistration != "free_trial"){
+        updateSubscription({
+          accountId: account.id,
+          newPlanId: account.selectedPlanOnRegistration,
+          redirectUrl: redirectUrl
+        }).then(function(response) {
+          deferred.resolve(response);
+        }, function(erros) {
+          deferred.reject(error);
+        });
+      }else{
+        deferred.resolve(response);
+      }
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }).catch(function(error) {
+    deferred.reject(error);
   });
 
   return deferred.promise;

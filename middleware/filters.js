@@ -38,7 +38,7 @@ function planSelectPage(req, res, next) {
       if(subscription) {
         next();
       } else {
-        createSubscription(res.locals.currentDomain.id, res.locals.currentUser.id, redirectUrl).then(function(response) {
+        subscriptionService.createSubscriptionOnFirstLogin(res.locals.currentDomain.id, res.locals.currentUser.id, redirectUrl).then(function(response) {
           if('hosted_page' in response) {
             res.writeHead(301, { Location: response.hosted_page.url } );
             res.end();
@@ -56,38 +56,6 @@ function planSelectPage(req, res, next) {
   else {
     next();
   }
-}
-
-function createSubscription(accountId, userId, redirectUrl) {
-  let deferred = q.defer();
-
-  models.Account.find({
-    where: {
-      id: accountId
-    }
-  }).then(function(account) {
-    subscriptionService.createSubscription(accountId, userId).then(function(response) {
-      if(account.selectedPlanOnRegistration && account.selectedPlanOnRegistration != "free_trial"){
-        subscriptionService.updateSubscription({
-          accountId: account.id,
-          newPlanId: account.selectedPlanOnRegistration,
-          redirectUrl: redirectUrl
-        }).then(function(response) {
-          deferred.resolve(response);
-        }, function(erros) {
-          deferred.reject(error);
-        });
-      }else{
-        deferred.resolve(response);
-      }
-    }, function(error) {
-      deferred.reject(error);
-    });
-  }).catch(function(error) {
-    deferred.reject(error);
-  });
-
-  return deferred.promise;
 }
 
 function myDashboardPage(req, res, next) {
