@@ -48,7 +48,7 @@
       var message = parseMessage(message);
 
       self.id = 'msgId' + new Date().getTime();
-      self.tpl = '<div id="'+self.id+'" class="message animated fadeInDown '+ type +'">'+message+'</div>';
+      self.tpl = '<div id="'+self.id+'" class="message animated fadeInDown '+ type +'"><div class="message-text">'+message+'</div></div>';
       self.flash = function(delay) {
         var delay = delay || 3000;
         // show
@@ -77,7 +77,15 @@
         if ( typeof(rawMessage) === 'string') output = escapeHtmlToString(rawMessage);
         if ( angular.isObject(rawMessage) ) {
           for (var property in rawMessage) {
-            output += escapeHtmlToString(rawMessage[property]) +'<br/> ';
+            var message = rawMessage[property];
+            if(Array.isArray(message)) {
+              for (var i in message) {
+                output += escapeHtmlToString(property + ' ' + message[i]) +'<br/> ';
+              }
+            }
+            else {
+              output += escapeHtmlToString(rawMessage[property]) +'<br/> ';
+            }
           }
         }
 
