@@ -69,6 +69,9 @@
           case Array.isArray(error.data.errors.type):
             deferred.reject(error.data.errors.type[0]);
             break;
+          case Array.isArray(error.data.errors.name):
+            deferred.reject("Name "  + error.data.errors.name[0]);
+            break;
           default:
             deferred.reject(requestError);
         }
