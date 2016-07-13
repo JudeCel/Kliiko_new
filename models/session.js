@@ -1,6 +1,12 @@
 'use strict';
 var constants = require('../util/constants');
 
+function initializeDate() {
+  let date = new Date();
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
 module.exports = (Sequelize, DataTypes) => {
   var Session = Sequelize.define('Session', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -11,7 +17,7 @@ module.exports = (Sequelize, DataTypes) => {
 
     name: { type: DataTypes.STRING, allowNull: false,  defaultValue: 'untitled', validate: { notEmpty: true } },
 
-    startTime: { type: DataTypes.DATE, allowNull: false, defaultValue: Date.now(), validate: {
+    startTime: { type: DataTypes.DATE, allowNull: false, defaultValue: initializeDate(), validate: {
       isValid: function(value, next) {
         if(this.startTime > this.endTime) {
           next("Start date can't be higher then end date.")
@@ -21,7 +27,7 @@ module.exports = (Sequelize, DataTypes) => {
         }
       }
     } },
-    endTime: { type: DataTypes.DATE, allowNull: false , defaultValue: Date.now() },
+    endTime: { type: DataTypes.DATE, allowNull: false , defaultValue: initializeDate() },
     incentive_details: { type: DataTypes.STRING, allowNull: true  },
     active:	{ type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     colours_used: { type: DataTypes.TEXT, allowNull: true },
