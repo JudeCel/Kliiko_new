@@ -222,12 +222,15 @@
       if (!vm.session.steps) return;
       if (initial) {
 
-        vm.step1.startDate = new Date(vm.session.steps.step1.startTime);
-        vm.step1.startTime = new Date(vm.session.steps.step1.startTime);
+        var startDate = new Date(vm.session.steps.step1.startTime);
+        startDate.setHours(0,0,0,0);
+        vm.step1.startDate = startDate;
+        vm.step1.startTime = startDate
 
-        vm.step1.endDate = new Date(vm.session.steps.step1.endTime);
-        vm.step1.endTime = new Date(vm.session.steps.step1.endTime);
-
+        var startDate = new Date(vm.session.steps.step1.startTime);
+        startDate.setHours(0,0,0,0);
+        vm.step1.endDate = startDate;
+        vm.step1.endTime = startDate
       } else {
         if (vm.step1.startDate && vm.step1.startTime) {
           startDate = new Date(vm.step1.startDate);
