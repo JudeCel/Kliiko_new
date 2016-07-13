@@ -31,7 +31,7 @@ const MESSAGES = {
 
   errors: {
     cantAddObservers: "Please Update your subscription plan, to invite Observers to your session.",
-    cantSendCloseMails: "Were not able to send emails to informa all participants, that session was closed.",
+    cantSendCloseMails: "Were not able to send emails to inform all participants, that session was closed.",
     firstStep: {
       nameRequired: 'Name must be provided',
       startTimeRequired: 'Start time must be provided',
