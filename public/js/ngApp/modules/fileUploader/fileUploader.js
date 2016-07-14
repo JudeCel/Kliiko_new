@@ -53,7 +53,7 @@
         file: data.file,
         params: {
           scope: data.scope,
-          private: data.private,
+          stock: data.stock,
           type: data.type,
           name: data.name
         }

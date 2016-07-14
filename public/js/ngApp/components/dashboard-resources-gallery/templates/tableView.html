@@ -42,7 +42,7 @@
         </td>
 
         <td>
-          <button class='btn btn-addNewElement btn-green pull-right gallery-btn-width' ng-click='gc.removeResources([resource.id])'>
+          <button class='btn btn-addNewElement btn-green pull-right gallery-btn-width' ng-if='!resource.stock' ng-click='gc.removeResources([resource.id])'>
             <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
           </button>
 
