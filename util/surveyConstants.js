@@ -181,25 +181,49 @@ module.exports = {
     {
       order: 3,
       name: 'Like-Dislike',
+      question: 'Please play the audio/video clip first, and then select how much you like or dislike (subject description)?',
+      answers: [
+        { name: 'Like A Lot', order: 0 },
+        { name: 'Like', order: 1 },
+        { name: 'Neither Like or Dislike', order: 2 },
+        { name: 'Dislike', order: 3 },
+        { name: 'Dislike A Lot', order: 4 },
+        { name: "Don't Know", order: 5 }
+      ],
       input: true,
       audioVideo: true,
       minAnswers: 2,
-      maxAnswers: 5
+      maxAnswers: 7
     },
     {
       order: 4,
       name: 'Importance',
+      question: 'How important is it for (brand/organisation) to provide (product/service)?',
+      answers: [
+        { name: 'Very Important', order: 0 },
+        { name: 'Fairly Important', order: 1 },
+        { name: 'Not Very Important', order: 2 },
+        { name: 'Not At All Important', order: 3 },
+        { name: "Don't Know", order: 4 }
+      ],
       input: true,
       audioVideo: true,
       minAnswers: 2,
-      maxAnswers: 5
+      maxAnswers: 7
     },
     {
       order: 5,
       name: 'Most Important',
+      question: 'Which ONE of these product/service features is the MOST important to you?',
+      answers: [
+        { name: 'Feature', order: 0 },
+        { name: 'Feature', order: 1 },
+        { name: 'Feature', order: 2 },
+        { name: 'Feature', order: 3 }
+      ],
       input: true,
       minAnswers: 2,
-      maxAnswers: 5
+      maxAnswers: 7
     },
     {
       order: 6,

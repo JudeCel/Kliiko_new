@@ -115,23 +115,36 @@
       });
     };
 
+    function findSelected() {
+      var array = [];
+      for(var i in vm.survey.SurveyQuestions) {
+        var question = vm.survey.SurveyQuestions[i];
+        if(question.active) {
+          array.push(question);
+        }
+      }
+      return array;
+    }
+
     function finishManage() {
       vm.submitedForm = true;
       vm.submitingForm = true;
 
       $timeout(function() {
         if(vm.manageForm.$valid) {
-          if(Object.keys(vm.survey.SurveyQuestions).length < vm.minQuestions) {
+          var selected = findSelected();
+          if(selected.length < vm.minQuestions) {
             vm.submitError = vm.constantErrors.minQuestions + vm.minQuestions;
           }
           else {
             delete vm.submitError;
+            var object = JSON.parse(JSON.stringify(vm.survey));
+            object.SurveyQuestions = selected;
             if(vm.currentPage.type == 'create') {
-              finishCreate();
+              finishCreate(object);
             }
             else {
-              vm.survey.id = vm.survey.id;
-              finishEdit();
+              finishEdit(object);
             }
           }
         }
@@ -154,8 +167,8 @@
       }, 1000);
     };
 
-    function finishCreate() {
-      surveyServices.createSurvey(vm.survey).then(function(res) {
+    function finishCreate(survey) {
+      surveyServices.createSurvey(survey).then(function(res) {
         dbg.log2('#SurveyController > finishCreate > res ', res);
 
         if(res.error) {
@@ -168,8 +181,8 @@
       });
     };
 
-    function finishEdit() {
-      surveyServices.updateSurvey(vm.survey).then(function(res) {
+    function finishEdit(survey) {
+      surveyServices.updateSurvey(survey).then(function(res) {
         dbg.log2('#SurveyController > finishEdit > res ', res);
 
         if(res.error) {
@@ -257,7 +270,9 @@
 
     function initAnswers(object, question) {
       if(question.answers) {
-        question.active =  true;
+        if(!question.isDefault) {
+          question.active =  true;
+        }
         return question.answers;
       }
       else {
@@ -354,6 +369,13 @@
             var question = survey.SurveyQuestions[i];
             object[question.order] = question;
           }
+          for(var i in vm.defaultQuestions) {
+            var question = vm.defaultQuestions[i];
+            if(!object[question.order]) {
+              object[question.order] = defaultQuestionParams(question);
+            }
+          }
+
           survey.SurveyQuestions = object;
           vm.currentSurveyMode = 'Edit';
         }
@@ -369,11 +391,22 @@
       }
     };
 
+    function defaultQuestionParams(question) {
+      return {
+        name: question.name,
+        question: question.question,
+        answers: question.answers,
+        order: question.order,
+        audioVideo: question.audioVideo,
+        isDefault: true
+      };
+    }
+
     function defaultSurveyData() {
       var array = [];
       for(var i in vm.defaultQuestions) {
-        var question = vm.defaultQuestions[i];
-        array.push({ name: question.name, question: question.question, answers: question.answers, order: question.order });
+        var params = defaultQuestionParams(vm.defaultQuestions[i]);
+        array.push(params);
       }
 
       return {
