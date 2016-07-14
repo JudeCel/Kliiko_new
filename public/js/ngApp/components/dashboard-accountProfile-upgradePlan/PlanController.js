@@ -81,7 +81,7 @@
       }
     ]
 
-    var modalTplPath = 'js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/';
+    var modalTplPath = '/js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/';
 
     vm.isCurrentStep = isCurrentStep;
     vm.openPlanDetailsModal = openPlanDetailsModal;
