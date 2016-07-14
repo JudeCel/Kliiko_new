@@ -11,6 +11,8 @@
     vm.surveys = {};
     vm.uploadTypes = {};
 
+    vm.defaultIntroduction = "(Brand/Organisation) would like your fast feedback on (issue). It will only take 2 minutes, and you'll be in the draw for (prize). Thanks for your help!";
+
     vm.popOverMessages = {
       remove: 'Remove survey',
       edit: 'Edit survey',
@@ -361,11 +363,24 @@
 
         vm.submitError = null;
         vm.currentContacts = null;
-        vm.survey = survey || { SurveyQuestions: {} };
+        vm.survey = survey || defaultSurveyData();
         vm.currentPage = { page: 'manage', type: page };
         moveBrowserTo('');
       }
     };
+
+    function defaultSurveyData() {
+      var array = [];
+      for(var i in vm.defaultQuestions) {
+        var question = vm.defaultQuestions[i];
+        array.push({ name: question.name, question: question.question, answers: question.answers, order: question.order });
+      }
+
+      return {
+        description: vm.defaultIntroduction,
+        SurveyQuestions: array
+      };
+    }
 
     function moveBrowserTo(elementId) {
       $timeout(function () {

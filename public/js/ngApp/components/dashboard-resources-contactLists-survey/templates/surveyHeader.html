@@ -37,7 +37,7 @@
             </div>
           </div>
 
-          <textarea class='form-control' id='description' placeholder='Introduction' name='description' rows='5'
+          <textarea class='form-control' id='description' placeholder='{{ sc.defaultIntroduction }}' name='description' rows='5'
             ng-model='sc.survey.description' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='sc.submitedForm'>
           </textarea>
         </div>

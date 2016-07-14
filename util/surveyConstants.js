@@ -5,11 +5,11 @@ module.exports = {
   minsMaxs: {
     input: {
       min: 1,
-      max: 20
+      max: 30
     },
     textarea: {
       min: 1,
-      max: 500
+      max: 200
     }
   },
   validationErrors: {
@@ -27,7 +27,7 @@ module.exports = {
       },
       {
         type: 'maxlength',
-        message: 'Field is too long!',
+        message: 'No more than 30 characters.',
       }
     ],
     answer: [
@@ -144,6 +144,13 @@ module.exports = {
     {
       order: 0,
       name: 'First Choice',
+      question: 'Which ONE of these is your FIRST choice for (product/service type)?',
+      answers: [
+        { name: 'Brand Name', order: 0 },
+        { name: 'Brand Name', order: 1 },
+        { name: 'Brand Name', order: 2 },
+        { name: "Don't Know", order: 3 }
+      ],
       input: true,
       minAnswers: 2,
       maxAnswers: 5
@@ -151,6 +158,13 @@ module.exports = {
     {
       order: 1,
       name: 'Second Choice',
+      question: 'Which ONE of these is your SECOND choice for (product/service type)?',
+      answers: [
+        { name: 'Brand Name', order: 0 },
+        { name: 'Brand Name', order: 1 },
+        { name: 'Brand Name', order: 2 },
+        { name: "Don't Know", order: 3 }
+      ],
       input: true,
       minAnswers: 2,
       maxAnswers: 5
@@ -158,6 +172,8 @@ module.exports = {
     {
       order: 2,
       name: 'Advice',
+      question: 'What advice would you like to give to (Brand Name) to improve (product/service)?',
+      answers: [ { placeHolder: 'Answer - 200 Character Limit', order: 0 } ],
       textArea: true,
       minAnswers: 1,
       maxAnswers: 1

@@ -18,7 +18,7 @@
           <span class='glyphicon glyphicon-resize-vertical'></span>
         </span>
 
-        <input ng-cancel-drag type='text' class='form-control' id='answer-{{ object.order }}-{{ answer.order }}' placeholder='Answer' name='{{ answer.order }}'
+        <input ng-cancel-drag type='text' class='form-control' id='answer-{{ object.order }}-{{ answer.order }}' placeholder='{{ answer.placeHolder || "Answer" }}' name='{{ answer.order }}'
           ng-model='answer.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='question.active'>
 
         <span class='input-group-addon' ng-if='sc.canChangeAnswers("remove", question)'>

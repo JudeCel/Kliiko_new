@@ -8,7 +8,7 @@
 
     <label class='col-xs-2 control-label' for='questionName-{{object.order}}'>Name</label>
     <div class='col-xs-10 col-md-6'>
-      <input type='text' class='form-control' id='questionName-{{object.order}}' placeholder='Name' name='name'
+      <input type='text' class='form-control' id='questionName-{{object.order}}' placeholder='{{ object.name || "Name" }}' name='name'
         ng-model='question.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='question.active'>
     </div>
   </div>
@@ -24,7 +24,7 @@
 
     <label class='col-xs-2 control-label' for='questionName-{{object.order}}'>Question</label>
     <div class='col-xs-10 col-md-6'>
-      <input type='text' class='form-control' placeholder='Question' rows='5' name='question'
+      <textarea type='text' class='form-control' placeholder='{{ object.question || "Question" }}' rows='3' name='question'
         ng-model='question.question' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='question.active'>
     </div>
   </div>
