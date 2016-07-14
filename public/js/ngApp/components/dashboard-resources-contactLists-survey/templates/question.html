@@ -2,7 +2,7 @@
   <div class='form-group'>
     <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.manageForm[object.order].name.$error'>
       <div ng-repeat='error in sc.validationErrors'>
-        <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+        <div class='help-block' ng-message='{{ error.type }}'>{{ sc.replaceErrorMessage(error, "input") }}</div>
       </div>
     </div>
 
@@ -18,13 +18,13 @@
   <div class='form-group'>
     <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.manageForm[object.order].question.$error'>
       <div ng-repeat='error in sc.validationErrors'>
-        <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+        <div class='help-block' ng-message='{{ error.type }}'>{{ sc.replaceErrorMessage(error, "textarea") }}</div>
       </div>
     </div>
 
     <label class='col-xs-2 control-label' for='questionName-{{object.order}}'>Question</label>
     <div class='col-xs-10 col-md-6'>
-      <textarea type='text' class='form-control' placeholder='{{ object.question || "Question" }}' rows='3' name='question'
+      <textarea type='text' class='form-control' placeholder='{{ object.question || "Question" }}' rows='4' name='question'
         ng-model='question.question' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='question.active'>
     </div>
   </div>

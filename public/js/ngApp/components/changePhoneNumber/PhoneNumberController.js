@@ -2,6 +2,7 @@
   'use strict';
 
   angular.module('KliikoApp').controller('PhoneNumberController', PhoneNumberController);
+  angular.module('KliikoApp.Root').controller('PhoneNumberController', PhoneNumberController);
 
   PhoneNumberController.$inject = ['dbg', '$scope', '$q', '$rootScope'];
   function PhoneNumberController(dbg, $scope, $q, $rootScope) {

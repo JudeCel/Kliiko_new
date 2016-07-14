@@ -30,7 +30,7 @@
                   <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/answers.html'"></ng-include>
                 </ng-form>
               </div>
-              <div class='panel-footer' ng-if='!sc.survey.confirmedAt'>
+              <div class='panel-footer' ng-if='!sc.survey.confirmedAt && !question.required'>
                 <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/questionFooter.html'"></ng-include>
               </div>
             </div>
@@ -59,7 +59,7 @@
                 <ng-form name='{{ object.order }}'>
                   <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/question.html'"></ng-include>
                   <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/answers.html'"></ng-include>
-                  <div ng-if='!sc.survey.confirmedAt'>
+                  <div ng-if='!sc.survey.confirmedAt && !question.required'>
                     <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/questionFooter.html'"></ng-include>
                   </div>
                 </ng-form>
@@ -81,7 +81,7 @@
                   <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/question.html'"></ng-include>
                   <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/answers.html'"></ng-include>
                 </div>
-                <div class='panel-footer' ng-if='!sc.survey.confirmedAt'>
+                <div class='panel-footer' ng-if='!sc.survey.confirmedAt && !question.required'>
                   <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/questionFooter.html'"></ng-include>
                 </div>
               </div>
@@ -96,7 +96,7 @@
         <div class='col-sm-12'>
           <hr class='survey-hr' />
 
-          <button class='btn btn-addNewElement btn-green' data-toggle='modal' data-target='#previewModal'>Preview</button>
+          <button class='btn btn-addNewElement btn-green' data-toggle='modal' data-target='#previewModal' ng-click='sc.showPreview()'>Preview</button>
           <button class='btn btn-addNewElement btn-green' ng-click='sc.finishManage()'>Finish</button>
 
           <span class='has-error'>

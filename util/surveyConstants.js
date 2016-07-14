@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  minQuestions: 2,
+  minQuestions: 3,
   minsMaxs: {
     input: {
       min: 1,
@@ -9,7 +9,7 @@ module.exports = {
     },
     textarea: {
       min: 1,
-      max: 200
+      max: 300
     }
   },
   validationErrors: {
@@ -27,7 +27,7 @@ module.exports = {
       },
       {
         type: 'maxlength',
-        message: 'No more than 30 characters.',
+        message: 'No more than XXX characters.',
       }
     ],
     answer: [
@@ -69,6 +69,7 @@ module.exports = {
       model: 'age',
       name: 'Age',
       input: true,
+      canDisable: true,
       order: 3
     },
     {
@@ -80,13 +81,14 @@ module.exports = {
     {
       model: 'mobile',
       name: 'Mobile',
-      input: true,
+      number: true,
+      canDisable: true,
       order: 5
     },
     {
       model: 'landlineNumber',
       name: 'Landline Number',
-      input: true,
+      number: true,
       canDisable: true,
       disabled: true,
       order: 6
@@ -228,7 +230,9 @@ module.exports = {
     {
       order: 6,
       name: 'Interest',
+      question: "Would you be interested in taking part in a future online discussion group, about (brand/product/service)? It'll be easy and fun, chatting with others like yourself. And if you participate there'll also be a gift for your help.",
       hardcodedName: true,
+      required: true,
       checkbox: true,
       minAnswers: 1,
       maxAnswers: 1
@@ -236,6 +240,7 @@ module.exports = {
     {
       order: 7,
       name: 'Prize Draw',
+      question: 'Would you like to be in the draw for (prize)?',
       hardcodedName: true,
       checkbox: true,
       minAnswers: 1,
@@ -243,8 +248,10 @@ module.exports = {
     },
     {
       order: 8,
-      name: 'Contact details',
+      name: 'Contact Details',
+      question: 'To finish, we just need your Contact Details. Your information will remain confidential and not be shared with other parties. Please see our Privacy Policy below. If you do not want to provide your details, you will not be eligible for a discussion group and the prize draw.',
       hardcodedName: true,
+      required: true,
       contact: true,
       minAnswers: 1,
       maxAnswers: 1

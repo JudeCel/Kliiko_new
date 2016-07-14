@@ -60,7 +60,8 @@ const VALID_ATTRIBUTES = {
     'type',
     'question',
     'order',
-    'answers'
+    'answers',
+    'required'
   ]
 }
 

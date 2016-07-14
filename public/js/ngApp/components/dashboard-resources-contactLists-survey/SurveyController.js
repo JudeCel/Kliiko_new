@@ -12,6 +12,7 @@
     vm.uploadTypes = {};
 
     vm.defaultIntroduction = "(Brand/Organisation) would like your fast feedback on (issue). It will only take 2 minutes, and you'll be in the draw for (prize). Thanks for your help!";
+    vm.defaultThanks = "Thanks for all your feedback and help with our survey! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).";
 
     vm.popOverMessages = {
       remove: 'Remove survey',
@@ -37,6 +38,8 @@
     vm.initGallery = initGallery;
 
     // Helpers
+    vm.showPreview = showPreview;
+    vm.replaceErrorMessage = replaceErrorMessage;
     vm.statusIcon = statusIcon;
     vm.canChangeAnswers = canChangeAnswers;
     vm.changeAnswers = changeAnswers;
@@ -64,6 +67,18 @@
 
     initConstants();
     changePage('index');
+
+    function showPreview() {
+      var selected = findSelected();
+      vm.previewSurvey = JSON.parse(JSON.stringify(vm.survey));
+      vm.previewSurvey.SurveyQuestions = selected;
+    }
+
+    function replaceErrorMessage(error, type) {
+      if(vm.minsMaxs) {
+        return error.message.replace('XXX', vm.minsMaxs[type].max);
+      }
+    }
 
     function initConstants() {
       surveyServices.getConstants().then(function(res) {
@@ -153,7 +168,10 @@
           $timeout(function() {
             var form = angular.element('#manageForm');
             var elem = form.find('.ng-invalid:first');
-            var panel = elem.parents('.panel:first');
+            var panel = elem.children('.panel:first');
+            if(panel.length == 0) {
+              panel = elem.parents('.panel:first');
+            }
 
             var panelParent = panel.scope().$parent;
             if(panelParent.hasOwnProperty('accordion')) {
@@ -269,6 +287,10 @@
     };
 
     function initAnswers(object, question) {
+      if(question.required) {
+        question.active = true;
+      }
+
       if(question.answers) {
         if(!question.isDefault) {
           question.active =  true;
@@ -398,6 +420,7 @@
         answers: question.answers,
         order: question.order,
         audioVideo: question.audioVideo,
+        required: question.required,
         isDefault: true
       };
     }
@@ -411,6 +434,7 @@
 
       return {
         description: vm.defaultIntroduction,
+        thanks: vm.defaultThanks,
         SurveyQuestions: array
       };
     }

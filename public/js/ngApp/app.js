@@ -53,7 +53,7 @@
       nationalMode: false,
       defaultCountry: 'au',
       preferredCountries: ['au'],
-      utilsScript: 'js/vendors/intl-tel-input/src/utils.js',
+      utilsScript: '/js/vendors/intl-tel-input/src/utils.js',
       autoFormat: true,
       autoPlaceholder: true
     });
