@@ -51,15 +51,15 @@
     vm.stepLayouts = [
       {
         inQueue: 1,
-        src: "js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/selectPlan.tpl.html"
+        src: "/js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/selectPlan.tpl.html"
       },
       {
         inQueue: 2,
-        src: "js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/confirmation.tpl.html"
+        src: "/js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/confirmation.tpl.html"
       },
       {
         inQueue: 3,
-        src: "js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/submitted.tpl.html"
+        src: "/js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/submitted.tpl.html"
       }
     ]
 

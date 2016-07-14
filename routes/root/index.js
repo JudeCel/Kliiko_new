@@ -124,17 +124,11 @@ router.get('/welcome', function (req, res, next) {
   res.render('welcome', usersRepo.prepareParams(req));
 });
 
-let registrationState = JSON.stringify({
-  type: 'registration',
-  page: 'freeTrialRegistration',
-  selectedPlanOnRegistration: 'core_monthly'
-});
-
-router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
+let registrationState = JSON.stringify({type: 'registration'});
+router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'], state: registrationState }));
 router.get('/auth/facebookFreeTrialRegistration', passport.authenticate(
   'facebook', { scope : ['email'], state: JSON.stringify({ type: 'registration', page: "freeTrialRegistration" })
 }));
-
 router.get("/auth/facebookPaiedPlanRegistration", function (req, res, next) {
   passport.authenticate(
     'facebook',
@@ -199,7 +193,7 @@ router.get('/auth/googleFreeTrialRegistration', passport.authenticate(
 
 router.get("/auth/googlePaiedPlanRegistration", function (req, res, next) {
   passport.authenticate(
-    'facebook',
+    'google',
     { scope : ['email'], state: JSON.stringify({
       type: 'registration',
       page: "paidPlanRegistration",
@@ -210,7 +204,6 @@ router.get("/auth/googlePaiedPlanRegistration", function (req, res, next) {
 
 router.get('/auth/google/callback', function(req, res, next) {
   let returnParams = JSON.parse(req.query.state);
-
   passport.authenticate('google', function(err, user, info) {
     if (err) {
       return res.render('login', { title: 'Login', error: err.message, message: "" });
@@ -225,6 +218,7 @@ router.get('/auth/google/callback', function(req, res, next) {
         if (returnParams.page == 'freeTrialRegistration') {
           res.render('freeTrialRegistration', {appData: res.locals, error: {}});
         }else if(returnParams.page == 'paidPlanRegistration'){
+          res.locals.selectedPlanOnRegistration = returnParams.selectedPlanOnRegistration;
           res.render("paidPlanRegistration", {appData: res.locals, error: {}});
         }else{
           res.render("registration", {appData: res.locals, error: {}});
@@ -238,7 +232,6 @@ router.get('/auth/google/callback', function(req, res, next) {
 
 router.post('/paidPlanRegistration', function (req, res, next) {
   let params = usersRepo.prepareParams(req);
-
   usersRepo.create(params, function (error, result) {
     if (error) {
         res.render('paidPlanRegistration', usersRepo.prepareParams(req, error));

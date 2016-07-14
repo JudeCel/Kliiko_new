@@ -16,8 +16,6 @@
             <div class="col-md-12">
               <form method="post" action="/paidPlanRegistration" novalidate="" id="register">
                 <% if(socialProfile){ %>
-                  <%=socialProfile.provider%>
-                  <%=socialProfile.id%>
                  <input type="hidden" name="socialProfile[provider]" value="<%=socialProfile.provider%>">
                  <input type="hidden" name="socialProfile[id]" value="<%=socialProfile.id%>">
                 <% } %>
