@@ -4,8 +4,10 @@
 <main class="main-first-page-registration">
   <div class="login-container center-block text-font-family">
     <ul class="nav nav-tabs">
-      <li><a class="background-yellow text-white text-shadow-gray btn login-kliiko-tab" href="/login">Login to klzii</a></li>
-      <li class="active"><a class="background-green text-white text-center login-signup-tab" data-toggle="tab" href="#signup">Get a klzii Account</a>
+      <li class="active">
+        <a class="background-green text-white text-center signup-via-sales-page" data-toggle="tab" href="#signup">
+          Get a Klzii Free Trial Account
+        </a>
       </li>
     </ul>
     <div class="tab-content border-green">
@@ -15,7 +17,7 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
-              <form method="post" action="/registration" novalidate="" id="register">
+              <form method="post" action="/freeTrialRegistration" novalidate="" id="register">
                 <% if(socialProfile){ %>
                  <input type="hidden" name="socialProfile[provider]" value="<%=socialProfile.provider%>">
                  <input type="hidden" name="socialProfile[id]" value="<%=socialProfile.id%>">
@@ -115,7 +117,6 @@
                     </td>
                   </tr>
 
-
                   <tr>
                     <td></td>
                     <% if(errors.password){ %>
@@ -128,47 +129,7 @@
                     </td>
                     <% } %>
                   </tr>
-                  <tr>
-                    <td>
-                      <label class="text-no-bold text-login-page" for="mobile">
-                        Mobile
-                        <br>
-                        Number
-                      </label>
-                    </td>
-                    <td>
-                      <input type="tel" value="<%= mobile %>" id="mobilePhone" name="mobile" placeholder="Mobile Number" class="form-control">
-                      <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="<%= JSON.stringify(phoneCountryData) %>">
-                    </td>
-                  </tr>
 
-                  <tr>
-                    <td></td>
-                    <td class="error-column">
-                      <div class="has-error" id="mobilePhoneError"><%= errors.mobile %></div>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td>
-                      <label class="text-no-bold text-login-page" for="landlineNumber">
-                        Landline
-                        <br>
-                        Number
-                      </label>
-                    </td>
-                    <td>
-                      <input type="tel" value="<%= landlineNumber %>" id="landline_number" name="landlineNumber" placeholder="Landline Number" class="form-control">
-                      <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="<%= JSON.stringify(landlineNumberCountryData) %>">
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td></td>
-                    <td class="error-column">
-                      <div class="has-error" id="landline_number_error"><%= errors.landlineNumber %></div>
-                    </td>
-                  </tr>
                 </table>
 
                 <div class="form-group">
@@ -183,6 +144,25 @@
                     <input type="checkbox" class="checkbox-login" name="reveiveNewsLetters" id="reveiveNewsLetters" value='on'/>
                     <label for="reveiveNewsLetters"></label>
                     <span class="checkbox-signup" id="reveiveNewsLetters">Yes send me the klzii Newsletter which includes tips and updates.</span>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12 form-group">
+                    <div class="form-group center-block">
+                      <div class="check-google center-block">
+                        <a href="/auth/googleFreeTrialRegistration" class="btn btn-block btn-social btn-google">
+                          <i class="fa fa-google"></i> Login or sign up with Google
+                        </a>
+                      </div>
+                    </div>
+                    <div class="form-group center-block">
+                      <div class="check-facebook center-block">
+                        <a href="/auth/facebookFreeTrialRegistration" class="btn btn-block btn-social btn-facebook">
+                          <i class="fa fa-facebook"></i> Login or sign up with Facebook
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

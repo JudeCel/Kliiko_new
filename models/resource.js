@@ -3,7 +3,7 @@
 module.exports = (Sequelize, DataTypes) => {
   var Resource = Sequelize.define('Resource', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    private: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
+    stock: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
     name: { type: DataTypes.STRING, allowNull: true },
     accountUserId: { type: DataTypes.INTEGER, allowNull: true },

@@ -8,6 +8,7 @@ var paymentDetailsRoutes = require('./paymentDetails.js');
 var selectPlanRoutes = require('./selectPlan.js');
 var appData = require('../../services/webAppData');
 var middlewareFilters = require('../../middleware/filters');
+var subscriptionService = require('../../services/subscription');
 
 function views_path(action) {
   let views_name_space = 'dashboard/';
@@ -30,6 +31,11 @@ router.get('/', policy.authorized(['admin', 'accountManager']) , function(req, r
 });
 
 router.get('/landing', function(req, res) {
+
+  if(req.query.id && req.query.state == 'succeeded' ){
+    subscriptionService.retrievCheckoutAndUpdateSub(req.query.id)
+  }
+
   res.render(views_path('landing'), { title: 'Landing page' });
 });
 

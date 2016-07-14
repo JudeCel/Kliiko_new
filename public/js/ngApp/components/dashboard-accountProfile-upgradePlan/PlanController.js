@@ -18,21 +18,48 @@
     vm.currentPlan = null;
     vm.monthlyPlan = null;
     vm.yearlyPlan = null;
-    vm.purchaseWasSuccessfull = true
+    vm.purchaseWasSuccessfull = true;
     vm.subPlans = [];
+    vm.contactUsUser = {};
+    vm.monthlyPlans = [];
+    vm.annualPlans = [];
+
+    vm.planOptions = [
+      'Number of Active Sessions',
+      'Number of Contact Lists',
+      'Recruiter lists \n (build Contact Lists on demand)',
+      'Import and manage your \n existing contacts',
+      'Custom logo and branding',
+      'Contacts per account',
+      'Managers per account',
+      'Export contact and \n participation history',
+      'Export Recruiter survey results',
+      'Access klzii Forum',
+      'Access klzii Focus',
+      'Observers can watch sessions',
+      'Paid SMS reminders for participants',
+      'Tips for guiding discussions',
+      'Whiteboard functionality',
+      'Upload and store multimedia',
+      'Reporting and analysis',
+      'Mobile and tablet compatible',
+      'Customise email invitations \n and reminders',
+      'Number of topics',
+      'Private and secure sessions (SSL)'
+    ]
 
     vm.stepLayouts = [
       {
         inQueue: 1,
-        src: "js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/selectPlan.tpl.html"
+        src: "/js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/selectPlan.tpl.html"
       },
       {
         inQueue: 2,
-        src: "js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/confirmation.tpl.html"
+        src: "/js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/confirmation.tpl.html"
       },
       {
         inQueue: 3,
-        src: "js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/submitted.tpl.html"
+        src: "/js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/submitted.tpl.html"
       }
     ]
 
@@ -54,24 +81,6 @@
       }
     ]
 
-    vm.planColors = {
-      junior_monthly: {
-        header: "list-group-item-heading yellow-header-bg",
-        body: "price-label yellow-bg",
-        light: "list-group-item-text yellow-light-bg"
-      },
-      core_monthly: {
-        header: "list-group-item-heading green-header-bg",
-        body: "price-label green-bg",
-        light: "list-group-item-text green-light-bg"
-      },
-      senior_monthly: {
-        header: "list-group-item-heading blue-header-bg",
-        body: "price-label blue-bg",
-        light: "list-group-item-text blue-light-bg"
-      }
-    };
-
     var modalTplPath = 'js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/';
 
     vm.isCurrentStep = isCurrentStep;
@@ -88,6 +97,12 @@
     vm.switchPlan = switchPlan;
     vm.showCalculatedPrice = showCalculatedPrice;
     vm.checkRadioButton = checkRadioButton;
+    vm.optionBackground = optionBackground;
+    vm.openContactUsModal = openContactUsModal;
+    vm.submitContactusForm = submitContactusForm;
+    vm.switchPlanView = switchPlanView;
+    vm.planOptionColor = planOptionColor;
+    vm.selectPlanBtnColor = selectPlanBtnColor;
 
     init();
 
@@ -124,10 +139,24 @@
         if(result.error){
           messenger.error(result.error);
         }else {
-          vm.subPlans = result.plans;
+          result.plans.map(function (subPlan) {
+            if (canPush('month', subPlan)) {
+              vm.monthlyPlans.push(subPlan);
+            }
+
+            if (canPush('year', subPlan)) {
+              vm.annualPlans.push(subPlan);
+            }
+          });
+
+          vm.subPlans = vm.monthlyPlans;
           vm.currentPlan = result.currentPlan;
         }
       })
+    }
+
+    function canPush(period, subPlan) {
+      return subPlan.plan.period_unit == period && subPlan.additionalParams.priority > 0;
     }
 
     function succeededCheckout(params) {
@@ -193,7 +222,7 @@
       if(count == -1){
         return "Unlimited";
       } else if(count == 0) {
-        return "No";
+        return "false";
       }else{
         return count;
       }
@@ -204,11 +233,7 @@
     }
 
     function isCurrentPlan(subPlan) {
-      if(vm.currentPlan.chargebeePlanId.includes('_yearly')) {
-        return subPlan.additionalParams.related == vm.currentPlan.chargebeePlanId;
-      }else{
-        return vm.currentPlan.chargebeePlanId == subPlan.plan.id;
-      }
+      return vm.currentPlan.chargebeePlanId == subPlan.plan.id;
     }
 
     function stepIsActive(step, additionalStyle) {
@@ -241,6 +266,56 @@
 
     function showCalculatedPrice(price) {
       return price / 100;
+    }
+
+    function optionBackground(index) {
+      if(index%2 > 0) {
+        return "plan-option-dark-grey"
+      }else{
+        return "plan-option-light-grey"
+      }
+    }
+
+    function openContactUsModal(user) {
+      vm.contactUsUser = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        contactNumber: user.mobile,
+        companyName: user.companyName
+      }
+      domServices.modal('contactUsModal');
+    }
+    function switchPlanView(view) {
+      if (view == 'annual') {
+        vm.subPlans = vm.annualPlans;
+      }
+      if (view == 'monthly') {
+        vm.subPlans = vm.monthlyPlans;
+      }
+    }
+
+    function submitContactusForm() {
+      planService.submitContactusForm(vm.contactUsUser).then(function(result) {
+        if(result.error){
+          messenger.error(result.error);
+        }else{
+          messenger.ok(result.message);
+        }
+      });
+    }
+
+    function planOptionColor(plan, number) {
+      if (number == 'odd') {
+        return plan + "_light";
+      }
+      if (number == "even") {
+        return plan + "_dark";
+      }
+    }
+
+    function selectPlanBtnColor(plan) {
+      return plan + "_btn"
     }
   }
 })();

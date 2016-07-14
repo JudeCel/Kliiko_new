@@ -26,7 +26,6 @@ module.exports = {
 
 
 function create(params, callback) {
-
   let err = {};
 
   if (params.termsAndConditions === "false") {
@@ -57,7 +56,6 @@ function update(req, callback){
 
 function createUser(params, callback) {
   parsePhoneParams(params);
-
 
   let createNewUserFunctionList = [
     function (cb) {
@@ -92,20 +90,23 @@ function createUser(params, callback) {
 }
 
 function parsePhoneParams(params) {
-  if(typeof params.phoneCountryData == 'string') {
+  try {
     params.phoneCountryData = JSON.parse(params.phoneCountryData);
 
     if(params.mobile.length > 0 && !params.mobile.includes("+" + params.phoneCountryData.dialCode)){
       params.mobile = "+" + params.phoneCountryData.dialCode + params.mobile;
     }
-  }
 
-  if(typeof params.landlineNumberCountryData == 'string') {
     params.landlineNumberCountryData = JSON.parse(params.landlineNumberCountryData);
 
     if(params.landlineNumber.length > 0 && !params.landlineNumber.includes("+" + params.landlineNumberCountryData.dialCode)){
       params.landlineNumber = "+" + params.landlineNumberCountryData.dialCode + params.landlineNumber;
     }
+  }  catch (exception) {
+    params.mobile = "";
+    params.landlineNumber = "";
+    params.phoneCountryData = {name: "Australia", iso2: "au", dialCode: "61"};
+    params.landlineNumberCountryData = {name: "Australia", iso2: "au", dialCode: "61"};
   }
 }
 

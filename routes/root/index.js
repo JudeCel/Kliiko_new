@@ -2,6 +2,7 @@
 var express = require('express');
 var async = require('async');
 var _ = require('lodash');
+var url = require('url');
 var router = express.Router();
 var usersRepo = require('../../services/users');
 var resetPassword = require('../../services/resetPassword');
@@ -26,7 +27,7 @@ router.use(function (req, res, next) {
     if (req.path == '/logout') {
       return next();
     }
-        
+
     if(filterValidPaths(req.path, constants.validRoutePaths)){
       next();
     }else{
@@ -85,9 +86,29 @@ router.get('/', function (req, res, next) {
 
 router.get('/registration', function (req, res, next) {
   let params = usersRepo.prepareParams(req);
+
   params.phoneCountryData = replaceToString(params.phoneCountryData);
   params.landlineNumberCountryData = replaceToString(params.landlineNumberCountryData);
   res.render('registration', params);
+});
+
+router.get('/freeTrialRegistration', function (req, res, next) {
+  let params = usersRepo.prepareParams(req);
+
+  res.render('freeTrialRegistration', params);
+});
+
+router.get('/paidPlanRegistration', function (req, res, next) {
+  let params = usersRepo.prepareParams(req);
+
+  if(req.query.selected_plan) {
+    params.selectedPlanOnRegistration = req.query.selected_plan;
+  }
+
+  params.phoneCountryData = replaceToString(params.phoneCountryData);
+  params.landlineNumberCountryData = replaceToString(params.landlineNumberCountryData);
+
+  res.render('paidPlanRegistration', params);
 });
 
 function replaceToString(value) {
@@ -103,9 +124,24 @@ router.get('/welcome', function (req, res, next) {
   res.render('welcome', usersRepo.prepareParams(req));
 });
 
-let registrationState = JSON.stringify({ type: 'registration' });
+let registrationState = JSON.stringify({type: 'registration'});
 router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'], state: registrationState }));
+router.get('/auth/facebookFreeTrialRegistration', passport.authenticate(
+  'facebook', { scope : ['email'], state: JSON.stringify({ type: 'registration', page: "freeTrialRegistration" })
+}));
+router.get("/auth/facebookPaiedPlanRegistration", function (req, res, next) {
+  passport.authenticate(
+    'facebook',
+    { scope : ['email'], state: JSON.stringify({
+      type: 'registration',
+      page: "paidPlanRegistration",
+      selectedPlanOnRegistration: req.query.selectedPlanOnRegistration
+    })
+  })(req, res, next)
+}, function() {});
+
 router.get('/auth/facebook/callback', function(req, res, next) {
+  let returnParams = JSON.parse(req.query.state);
   passport.authenticate('facebook', function(err, user, info) {
     if (err) {
       return res.render('login', { title: 'Login', error: err.message, message: "" });
@@ -119,7 +155,14 @@ router.get('/auth/facebook/callback', function(req, res, next) {
       if(req.query.state.type == 'registration') {
         res.locals = usersRepo.prepareParams(req);
         socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
-          res.render("registration", {appData: res.locals, error: {}});
+          if (returnParams.page == 'freeTrialRegistration') {
+            res.render('freeTrialRegistration', {appData: res.locals, error: {}});
+          }else if(returnParams.page == 'paidPlanRegistration'){
+            res.locals.selectedPlanOnRegistration = returnParams.selectedPlanOnRegistration;
+            res.render("paidPlanRegistration", {appData: res.locals, error: {}});
+          }else{
+            res.render("registration", {appData: res.locals, error: {}});
+          }
         }, function(err) {
           next(err);
         })
@@ -143,7 +186,24 @@ router.get('/auth/facebook/callback', function(req, res, next) {
 });
 
 router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'], state: registrationState }));
+router.get('/auth/googleFreeTrialRegistration', passport.authenticate(
+  'google', { scope :
+    ['profile', 'email'], state: JSON.stringify({ type: 'registration', page: "freeTrialRegistration" })
+}));
+
+router.get("/auth/googlePaiedPlanRegistration", function (req, res, next) {
+  passport.authenticate(
+    'google',
+    { scope : ['email'], state: JSON.stringify({
+      type: 'registration',
+      page: "paidPlanRegistration",
+      selectedPlanOnRegistration: req.query.selectedPlanOnRegistration
+    })
+  })(req, res, next)
+}, function() {});
+
 router.get('/auth/google/callback', function(req, res, next) {
+  let returnParams = JSON.parse(req.query.state);
   passport.authenticate('google', function(err, user, info) {
     if (err) {
       return res.render('login', { title: 'Login', error: err.message, message: "" });
@@ -155,13 +215,60 @@ router.get('/auth/google/callback', function(req, res, next) {
     }else{
       res.locals = usersRepo.prepareParams(req);
       socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
-        res.render("registration", { appData: res.locals, error: {} });
+        if (returnParams.page == 'freeTrialRegistration') {
+          res.render('freeTrialRegistration', {appData: res.locals, error: {}});
+        }else if(returnParams.page == 'paidPlanRegistration'){
+          res.locals.selectedPlanOnRegistration = returnParams.selectedPlanOnRegistration;
+          res.render("paidPlanRegistration", {appData: res.locals, error: {}});
+        }else{
+          res.render("registration", {appData: res.locals, error: {}});
+        }
       }, function(err) {
         next(err)
       });
     }
   })(req, res, next);
 });
+
+router.post('/paidPlanRegistration', function (req, res, next) {
+  let params = usersRepo.prepareParams(req);
+  usersRepo.create(params, function (error, result) {
+    if (error) {
+        res.render('paidPlanRegistration', usersRepo.prepareParams(req, error));
+    } else {
+      let email = req.body.email;
+      emailConfirmation.sendEmailConfirmationToken(email, function (err) {
+        if (err) {
+          res.render('welcome',  {title: 'Failed to send data. Please try later', error: 'Failed to send data. Please try later', message: '' , applicationName: process.env.MAIL_FROM_NAME});
+        } else {
+          res.render('welcome',  {title: 'Please verify your email address', error: "Please verify your email address", message: '' , applicationName: process.env.MAIL_FROM_NAME});
+        }
+      });
+    };
+  });
+});
+
+router.post('/freeTrialRegistration', function (req, res, next) {
+  let params = usersRepo.prepareParams(req);
+  params.selectedPlanOnRegistration = 'free_trial';
+
+  usersRepo.create(params, function (error, result) {
+    if (error) {
+      console.log(error);
+      res.render('freeTrialRegistration', usersRepo.prepareParams(req, error));
+    } else {
+      let email = req.body.email;
+      emailConfirmation.sendEmailConfirmationToken(email, function (err) {
+        if (err) {
+          res.render('welcome',  {title: 'Failed to send data. Please try later', error: 'Failed to send data. Please try later', message: '' , applicationName: process.env.MAIL_FROM_NAME});
+        } else {
+          res.render('welcome',  {title: 'Please verify your email address', error: "Please verify your email address", message: '' , applicationName: process.env.MAIL_FROM_NAME});
+        }
+      });
+    };
+  });
+});
+
 
 router.post('/registration', function (req, res, next) {
   usersRepo.create(usersRepo.prepareParams(req), function (error, result) {
@@ -183,7 +290,7 @@ router.post('/registration', function (req, res, next) {
           tplData.success = 'Email confirmation sent to ' + email;
         }
       });
-      res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: process.env.MAIL_FROM_NAME});
+      res.render('welcome',  {title: 'Please verify your email address', error: "Please verify your email address", message: '' , applicationName: process.env.MAIL_FROM_NAME});
     };
   });
 });
@@ -219,8 +326,8 @@ router.route('/emailConfirmation/:token')
             tplData.errors.password = "Something is wrong with email confirmation";
             res.render('/login', tplData);
           }else{
-            mailers.users.sendEmailConfirmationSuccess({email: user.email}, function (err, data) {
-              res.redirect('/');
+            req.login(user, function(err) {
+              middlewareFilters.myDashboardPage(req, res, next);
             });
           };
         });
