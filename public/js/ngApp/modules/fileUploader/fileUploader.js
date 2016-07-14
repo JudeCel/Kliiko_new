@@ -85,7 +85,7 @@
       var deferred = $q.defer();
       dbg.log2('#KliikoApp.fileUploader > list resources');
 
-      resourceForServer('resources', '').get({ 'type[]': params.type, 'scope[]': params.scope }, function(result) {
+      resourceForServer('resources', '').get({ 'type[]': params.type, 'scope[]': params.scope, stock: params.stock }, function(result) {
         dbg.log2('#KliikoApp.fileUploader > list resources > server respond >', result);
         deferred.resolve(result);
       }, function(error) {
