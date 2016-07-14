@@ -3,6 +3,8 @@
 var models = require('./../models');
 var filters = require('./../models/filters');
 var airbrake = require('./../lib/airbrake').instance;
+var quotesMailer = require('../mailers/quotes');
+
 var Subscription = models.Subscription;
 var AccountUser = models.AccountUser;
 var Account = models.Account;
@@ -14,6 +16,18 @@ var _ = require('lodash');
 var async = require('async');
 var chargebee = require('./../lib/chargebee').instance;
 var planConstants = require('./../util/planConstants');
+var constants = require('../util/constants');
+
+const getAQuoteFieldsNeeded = [
+  'firstName',
+  'lastName',
+  'contactNumber',
+  'email',
+  'companyName',
+  'positionInCompany',
+  'companyUrl',
+  'comments'
+]
 
 const MESSAGES = {
   notFound: {
@@ -29,7 +43,8 @@ const MESSAGES = {
   },
   alreadyExists: 'Subscription already exists',
   cantSwitchPlan: "Can't switch to current plan",
-  successPlanUpdate: 'Plan was successfully updated.'
+  successPlanUpdate: 'Plan was successfully updated.',
+  quoteSent: "Quote was successfully sent."
 }
 
 module.exports = {
@@ -43,7 +58,36 @@ module.exports = {
   recurringSubscription: recurringSubscription,
   getAllPlans: getAllPlans,
   retrievCheckoutAndUpdateSub: retrievCheckoutAndUpdateSub,
-  getChargebeeSubscription: getChargebeeSubscription
+  getChargebeeSubscription: getChargebeeSubscription,
+  postQuote: postQuote,
+  createSubscriptionOnFirstLogin: createSubscriptionOnFirstLogin
+}
+
+function postQuote(params) {
+  let deferred = q.defer();
+  let errors = [];
+
+  _.map(getAQuoteFieldsNeeded, function(field) {
+    if(!params[field]) {
+      errors.push("Please provide: " + field);
+    }
+  });
+
+  if(!constants.emailRegExp.test(params.email)) {
+    errors.push("E-mail format is not valid.")
+  }
+
+  if(errors.length > 0) {
+    deferred.reject(errors);
+  }else{
+    quotesMailer.sendQuote(params).then(function() {
+      deferred.resolve({message: MESSAGES.quoteSent});
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }
+
+  return deferred.promise;
 }
 
 function getChargebeeSubscription(subscriptionId, provider) {
@@ -226,6 +270,37 @@ function createSubscription(accountId, userId, provider) {
     deferred.resolve(subscription);
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
+  let deferred = q.defer();
+  models.Account.find({
+    where: {
+      id: accountId
+    }
+  }).then(function(account) {
+    createSubscription(accountId, userId).then(function(response) {
+      if(account.selectedPlanOnRegistration && account.selectedPlanOnRegistration != "free_trial"){
+        updateSubscription({
+          accountId: account.id,
+          newPlanId: account.selectedPlanOnRegistration,
+          redirectUrl: redirectUrl
+        }).then(function(response) {
+          deferred.resolve(response);
+        }, function(erros) {
+          deferred.reject(error);
+        });
+      }else{
+        deferred.resolve(response);
+      }
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }).catch(function(error) {
+    deferred.reject(error);
   });
 
   return deferred.promise;

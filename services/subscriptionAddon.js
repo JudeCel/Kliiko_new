@@ -103,7 +103,6 @@ function chargebeeAddonCharge(params) {
     if(error){
       deferred.reject(error);
     }else{
-      console.log(result);
       deferred.resolve(result.invoice);
     }
   });

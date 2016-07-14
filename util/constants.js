@@ -7,7 +7,7 @@ module.exports = {
   validNameRegExp: /^[a-zA-Z -]+$/i,
   systemRoles: ['admin', 'accountManager', 'facilitator', 'observer', 'participant'],
   sessionMemberRoles: ['facilitator', 'observer', 'participant'],
-  gender: ["male", "female"],
+  gender: ["", "male", "female"],
   safeAccountUserParams: [
     'id',
     'firstName',

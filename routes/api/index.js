@@ -97,6 +97,7 @@ router.get('/survey/canExportSurveyData', survey.canExportSurveyData);
 router.get('/subscriptionPlan', subscription.getPlans);
 router.put('/subscriptionPlan/updatePlan', subscription.updatePlan);
 router.put('/subscriptionPlan/UpdateViaCheckout', subscription.retrievCheckoutAndUpdateSub)
+router.post('/subscriptionPlan/postQuote', subscription.postQuote)
 
 // Addons
 router.get('/subscriptionSmsCredits', smsCredit.get);

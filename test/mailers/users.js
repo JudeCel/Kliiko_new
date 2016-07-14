@@ -46,7 +46,7 @@ describe('Mailer Users', () => {
       let params = { 'email': email, "token": token };
       it('content', (done) =>  {
         usersMailer.sendEmailConfirmationToken(params, function(err, result) {
-          assert.include(result.data.html, "Please confirm your email");
+          assert.include(result.data.html, "Please verify your email address");
           assert.include(result.data.to, email);
           assert.include(result.data.html, token);
           done();
