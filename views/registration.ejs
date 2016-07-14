@@ -138,7 +138,7 @@
                     </td>
                     <td>
                       <input type="tel" value="<%= mobile %>" id="mobilePhone" name="mobile" placeholder="Mobile Number" class="form-control">
-                      <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="<%= phoneCountryData %>">
+                      <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="<%= JSON.stringify(phoneCountryData) %>">
                     </td>
                   </tr>
 
@@ -159,7 +159,7 @@
                     </td>
                     <td>
                       <input type="tel" value="<%= landlineNumber %>" id="landline_number" name="landlineNumber" placeholder="Landline Number" class="form-control">
-                      <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="<%= landlineNumberCountryData %>">
+                      <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="<%= JSON.stringify(landlineNumberCountryData) %>">
                     </td>
                   </tr>
 

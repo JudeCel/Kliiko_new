@@ -143,7 +143,8 @@
         <div class='col-md-12'>
 
             <div class='btn-standart btn-red pull-left' ng-click="clc.contactAddEditClickHandle('cancel')" data-dismiss="modal">Cancel</div>
-            <input type="submit" ng-hide="clc.updateExistingUser" class='btn-standart btn-green pull-right' value="Create">
+            <input type="submit" ng-click="clc.canAddNew = false" ng-hide="clc.updateExistingUser" class='btn-standart btn-green pull-right' value="Save">
+            <input type="submit" ng-click="clc.canAddNew = true" ng-hide="clc.updateExistingUser" class='btn-standart btn-green pull-right margin-right-10' value="Save & Add Another">
             <input type="submit" ng-show="clc.updateExistingUser"  class='btn-standart btn-green pull-right' value="Update">
 
         </div>

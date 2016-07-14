@@ -34,7 +34,7 @@
 
       var data = $(element.hidden).val();
       if(data) {
-        field.intlTelInput('setCountry', JSON.parse(data).iso2);
+        field.intlTelInput('setCountry', JSON.parse(data).iso2 || 'au');
       }
     });
 

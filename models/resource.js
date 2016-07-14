@@ -28,6 +28,11 @@ module.exports = (Sequelize, DataTypes) => {
     }
   }, {
     timestamps: true,
+    indexes: [
+      { name: "UniqResourceNameByAccount",
+        unique: {args: true},
+        fields: ['accountId','name', 'type']
+    }],
     classMethods: {
       associate: function(models) {
         Resource.belongsTo(models.Topic, { foreignKey: 'topicId' });

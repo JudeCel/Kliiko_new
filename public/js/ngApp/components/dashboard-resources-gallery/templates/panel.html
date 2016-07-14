@@ -1,7 +1,20 @@
 <div class='panel panel-success border-green'>
+  <div class='panel-heading'>
+    <div class='row'>
+      <div class='col-xs-12 panel-name text-center' ng-if='gc.hideElements'>
+        {{ resource.name }}
+      </div>
+
+      <div class='col-xs-12 panel-name' ng-if='!gc.hideElements'>
+        <input type='checkbox' ng-click='resource.checked = !!resource.checked' ng-model='resource.checked' />
+        <span>{{ resource.name }}</span>
+      </div>
+    </div>
+  </div>
+
   <div class='panel-body'>
     <div class='row text-center' ng-if='typeOf.image || typeOf.brandLogo'>
-      <img ng-src='{{ resource.url.thumb }}'/>
+      <img ng-src='{{ resource.url.gallery_thumb }}'/>
     </div>
 
     <div class='row text-center' ng-if='typeOf.audio'>
@@ -29,20 +42,7 @@
 
   <div class='panel-footer'>
     <div class='row'>
-      <div class='col-xs-12 panel-name text-center' ng-if='gc.hideElements'>
-        {{ resource.name }}
-      </div>
-
-      <div class='col-xs-5 panel-name' ng-if='!gc.hideElements'>
-        <input type='checkbox' ng-click='resource.checked = !!resource.checked' ng-model='resource.checked' />
-        {{ resource.name }}
-      </div>
-
-      <div class="col-xs-3 panel-name" style="display:inline-block;">
-        <p class="pull-right">{{ resource.extension || resource.scope | uppercase }}</p>
-      </div>
-
-      <div class='col-xs-4' ng-if='!gc.hideElements'>
+      <div class='col-xs-12' ng-if='!gc.hideElements'>
         <button class='btn btn-addNewElement btn-green pull-right gallery-btn-width' ng-click='gc.removeResources([resource.id])'>
           <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
         </button>
@@ -64,6 +64,8 @@
             <span class='glyphicon glyphicon-facetime-video'></span>
           </a>
         </div>
+
+        <span class='resource-format pull-right'>{{ resource.extension || resource.scope | uppercase }}</span>
       </div>
     </div>
   </div>

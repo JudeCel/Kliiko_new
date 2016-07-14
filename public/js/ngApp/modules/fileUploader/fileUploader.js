@@ -69,6 +69,9 @@
           case Array.isArray(error.data.errors.type):
             deferred.reject(error.data.errors.type[0]);
             break;
+          case typeof error.data.errors === 'object':
+            deferred.reject(error.data.errors);
+            break;
           default:
             deferred.reject(requestError);
         }

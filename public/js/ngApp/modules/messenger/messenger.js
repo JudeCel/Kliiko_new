@@ -33,7 +33,6 @@
       jQuery('body').prepend('<div id="messenger-area"></div>');
     }, 10);
 
-
     /**
      * Generate message in default "messenger-area" with given text
      * @param type {string} "ok" or "error"
@@ -49,7 +48,7 @@
       var message = parseMessage(message);
 
       self.id = 'msgId' + new Date().getTime();
-      self.tpl = '<div id="'+self.id+'" class="message animated fadeInDown '+ type +'">'+message+'</div>';
+      self.tpl = '<div id="'+self.id+'" class="message animated fadeInDown '+ type +'"><div class="message-text">'+message+'</div></div>';
       self.flash = function(delay) {
         var delay = delay || 3000;
         // show
@@ -57,19 +56,36 @@
         self.$el = jQuery('#'+self.id);
 
         // and hide
-        setTimeout(function() {
-          self.$el.removeClass('fadeInDown').addClass('fadeOutDown');
-          setTimeout(function() { self.$el.detach() }, 2000);
-        }, delay);
+        if(type != 'error') {
+          setTimeout(function() {
+            self.$el.removeClass('fadeInDown').addClass('fadeOutDown');
+            setTimeout(function() { self.$el.detach() }, 2000);
+          }, delay);
+        }
+        else {
+          var closeButton = '<div id="button-'+self.id+'" class="pull-right cursor-pointer glyphicon glyphicon-remove"></div>';
+          self.$el.prepend(closeButton);
+          self.$button = jQuery('#button-'+self.id);
+          self.$button.click(function() {
+            self.$el.detach();
+          });
+        }
       };
-
 
       function parseMessage(rawMessage) {
         var output = '';
         if ( typeof(rawMessage) === 'string') output = escapeHtmlToString(rawMessage);
         if ( angular.isObject(rawMessage) ) {
           for (var property in rawMessage) {
-            output += property + ': ' + escapeHtmlToString(rawMessage[property]) +'<br/> ';
+            var message = rawMessage[property];
+            if(Array.isArray(message)) {
+              for (var i in message) {
+                output += escapeHtmlToString(property + ' ' + message[i]) +'<br/> ';
+              }
+            }
+            else {
+              output += escapeHtmlToString(rawMessage[property]) +'<br/> ';
+            }
           }
         }
 

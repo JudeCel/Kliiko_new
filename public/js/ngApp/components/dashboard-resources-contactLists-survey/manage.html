@@ -9,7 +9,7 @@
     <form id='manageForm' name='sc.manageForm' novalidate>
       <fieldset ng-disabled='sc.submitingForm'>
         <div class='col-md-offset-3 col-md-6'>
-          <h2 class='text-center'>Manage Survey</h2>
+          <h2 class='text-center'>{{ sc.currentSurveyMode }} Survey</h2>
         </div>
         <div class='col-md-3 text-right'>
           <button class='btn btn-addNewElement btn-green' ng-click="sc.changePage('index')">Back</button>
