@@ -3,7 +3,7 @@
 
   <div class='form-group' ng-repeat='answer in question.answers track by $index' ng-drop='true' ng-drop-success='sc.onDropComplete($index, $data, $event)'>
     <div class='col-md-8' ng-drag='true' ng-drag-data='{ answer: answer, questionOrder: question.order }'>
-      <textarea ng-cancel-drag class='form-control' id='answers-{{object.order}}-{{ answer.order }}' placeholder='Answer' rows='5' disabled
+      <textarea ng-cancel-drag class='form-control' id='answers-{{object.order}}-{{ answer.order }}' placeholder='{{ answer.placeHolder || "Answer" }}' rows='5' disabled
         ng-model='answer.name'>
       </textarea>
 

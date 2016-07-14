@@ -66,7 +66,7 @@
       scopes = Array.from(new Set(scopes));
       types = Array.from(new Set(types));
 
-      GalleryServices.listResources({ scope: scopes, type: types }).then(function(result) {
+      GalleryServices.listResources({ scope: scopes, type: types, stock: true }).then(function(result) {
         vm.currentPage.main = true;
         vm.resourceList = result.resources;
         filterResources(vm.currentPage.filter);

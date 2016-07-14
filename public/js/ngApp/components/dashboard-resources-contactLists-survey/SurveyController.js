@@ -11,6 +11,9 @@
     vm.surveys = {};
     vm.uploadTypes = {};
 
+    vm.defaultIntroduction = "(Brand/Organisation) would like your fast feedback on (issue). It will only take 2 minutes, and you'll be in the draw for (prize). Thanks for your help!";
+    vm.defaultThanks = "Thanks for all your feedback and help with our survey! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).";
+
     vm.popOverMessages = {
       remove: 'Remove survey',
       edit: 'Edit survey',
@@ -35,6 +38,8 @@
     vm.initGallery = initGallery;
 
     // Helpers
+    vm.showPreview = showPreview;
+    vm.replaceErrorMessage = replaceErrorMessage;
     vm.statusIcon = statusIcon;
     vm.canChangeAnswers = canChangeAnswers;
     vm.changeAnswers = changeAnswers;
@@ -62,6 +67,18 @@
 
     initConstants();
     changePage('index');
+
+    function showPreview() {
+      var selected = findSelected();
+      vm.previewSurvey = JSON.parse(JSON.stringify(vm.survey));
+      vm.previewSurvey.SurveyQuestions = selected;
+    }
+
+    function replaceErrorMessage(error, type) {
+      if(vm.minsMaxs) {
+        return error.message.replace('XXX', vm.minsMaxs[type].max);
+      }
+    }
 
     function initConstants() {
       surveyServices.getConstants().then(function(res) {
@@ -113,23 +130,36 @@
       });
     };
 
+    function findSelected() {
+      var array = [];
+      for(var i in vm.survey.SurveyQuestions) {
+        var question = vm.survey.SurveyQuestions[i];
+        if(question.active) {
+          array.push(question);
+        }
+      }
+      return array;
+    }
+
     function finishManage() {
       vm.submitedForm = true;
       vm.submitingForm = true;
 
       $timeout(function() {
         if(vm.manageForm.$valid) {
-          if(Object.keys(vm.survey.SurveyQuestions).length < vm.minQuestions) {
+          var selected = findSelected();
+          if(selected.length < vm.minQuestions) {
             vm.submitError = vm.constantErrors.minQuestions + vm.minQuestions;
           }
           else {
             delete vm.submitError;
+            var object = JSON.parse(JSON.stringify(vm.survey));
+            object.SurveyQuestions = selected;
             if(vm.currentPage.type == 'create') {
-              finishCreate();
+              finishCreate(object);
             }
             else {
-              vm.survey.id = vm.survey.id;
-              finishEdit();
+              finishEdit(object);
             }
           }
         }
@@ -138,7 +168,10 @@
           $timeout(function() {
             var form = angular.element('#manageForm');
             var elem = form.find('.ng-invalid:first');
-            var panel = elem.parents('.panel:first');
+            var panel = elem.children('.panel:first');
+            if(panel.length == 0) {
+              panel = elem.parents('.panel:first');
+            }
 
             var panelParent = panel.scope().$parent;
             if(panelParent.hasOwnProperty('accordion')) {
@@ -152,8 +185,8 @@
       }, 1000);
     };
 
-    function finishCreate() {
-      surveyServices.createSurvey(vm.survey).then(function(res) {
+    function finishCreate(survey) {
+      surveyServices.createSurvey(survey).then(function(res) {
         dbg.log2('#SurveyController > finishCreate > res ', res);
 
         if(res.error) {
@@ -166,8 +199,8 @@
       });
     };
 
-    function finishEdit() {
-      surveyServices.updateSurvey(vm.survey).then(function(res) {
+    function finishEdit(survey) {
+      surveyServices.updateSurvey(survey).then(function(res) {
         dbg.log2('#SurveyController > finishEdit > res ', res);
 
         if(res.error) {
@@ -254,8 +287,14 @@
     };
 
     function initAnswers(object, question) {
+      if(question.required) {
+        question.active = true;
+      }
+
       if(question.answers) {
-        question.active =  true;
+        if(!question.isDefault) {
+          question.active =  true;
+        }
         return question.answers;
       }
       else {
@@ -352,6 +391,13 @@
             var question = survey.SurveyQuestions[i];
             object[question.order] = question;
           }
+          for(var i in vm.defaultQuestions) {
+            var question = vm.defaultQuestions[i];
+            if(!object[question.order]) {
+              object[question.order] = defaultQuestionParams(question);
+            }
+          }
+
           survey.SurveyQuestions = object;
           vm.currentSurveyMode = 'Edit';
         }
@@ -361,11 +407,37 @@
 
         vm.submitError = null;
         vm.currentContacts = null;
-        vm.survey = survey || { SurveyQuestions: {} };
+        vm.survey = survey || defaultSurveyData();
         vm.currentPage = { page: 'manage', type: page };
         moveBrowserTo('');
       }
     };
+
+    function defaultQuestionParams(question) {
+      return {
+        name: question.name,
+        question: question.question,
+        answers: question.answers,
+        order: question.order,
+        audioVideo: question.audioVideo,
+        required: question.required,
+        isDefault: true
+      };
+    }
+
+    function defaultSurveyData() {
+      var array = [];
+      for(var i in vm.defaultQuestions) {
+        var params = defaultQuestionParams(vm.defaultQuestions[i]);
+        array.push(params);
+      }
+
+      return {
+        description: vm.defaultIntroduction,
+        thanks: vm.defaultThanks,
+        SurveyQuestions: array
+      };
+    }
 
     function moveBrowserTo(elementId) {
       $timeout(function () {

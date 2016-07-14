@@ -9,7 +9,7 @@
       <div class='form-group'>
         <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.manageForm.surveyName.$error'>
           <div ng-repeat='error in sc.validationErrors'>
-            <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+            <div class='help-block' ng-message='{{ error.type }}'>{{ sc.replaceErrorMessage(error, "input") }}</div>
           </div>
         </div>
 
@@ -33,11 +33,11 @@
         <div class='col-md-8'>
           <div class='has-error' ng-messages='sc.manageForm.description.$error'>
             <div ng-repeat='error in sc.validationErrors'>
-              <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+              <div class='help-block' ng-message='{{ error.type }}'>{{ sc.replaceErrorMessage(error, "textarea") }}</div>
             </div>
           </div>
 
-          <textarea class='form-control' id='description' placeholder='Introduction' name='description' rows='5'
+          <textarea class='form-control' id='description' placeholder='{{ sc.defaultIntroduction }}' name='description' rows='5'
             ng-model='sc.survey.description' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='sc.submitedForm'>
           </textarea>
         </div>

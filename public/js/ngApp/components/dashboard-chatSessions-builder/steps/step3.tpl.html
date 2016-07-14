@@ -28,27 +28,10 @@
         </div>
       </uib-accordion-heading>
 
-      <div ng-show="step3Controller.showTemplateStatus">
-        <div ng-repeat="(key, t) in step3Controller.mailTemplateList track by $index" class="list-group-item" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : t.AccountId}">
-          <img src="/icons/ic_tick.png" alt="" ng-show="t.created" class="pull-right">
-          {{ t.name }}
-          <span>{{step3Controller.isTemplateRequired(t)}}</span>
-        </div>
+      <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec" ng-init="ec.preInit({sessionBuilder:true, sessionId: sbc.session.id})">
+        <h3 class="text-center">Edit Email Templates</h3>
+        <h4 class="col-xs-12 text-center fa fa-exclamation-triangle" aria-hidden="true"> You must customize all required Email Templates before inviting Participants (Step 4)</h4>
 
-        <div class="buttons-area">
-          <div class="col-xs-12 centeredWarning fa fa-exclamation-triangle" aria-hidden="true"> You must customize all required Email Templates before inviting Participants (Step 4)</div>
-          <button type="submit" class="btn-standart btn-green pull-left" ng-click="step3Controller.editTemplates(true)">Edit Templates</button>
-        </div>
-      </div>
-
-      <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec"
-               ng-init="ec.preInit({sessionBuilder:true, sessionId: sbc.session.id})" ng-show="!step3Controller.showTemplateStatus">
-
-        <div class="buttons-area">
-          <button type="submit" class="btn btn-green pull-right" ng-click="step3Controller.editTemplates(false)">Back</button>
-        </div>
-
-        <h1 class="text-center">Edit Email Templates</h1>
         <div class="list-group col-xs-3 mail-template-list-section">
           <div class="panel-heading mail-template-list-heading"><strong>Email Templates</strong></div>
           <div id="mail-template-list" class="mail-template-list">
