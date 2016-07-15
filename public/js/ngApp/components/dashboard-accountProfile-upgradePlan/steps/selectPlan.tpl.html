@@ -14,7 +14,7 @@
           </h4>
           <div class="{{ subscriptionPlan.plan.id + '_dark' }} price-label">
             <div class="col-sm-1 pull-right">
-              <img ng-if="up.mostPopular(subscriptionPlan.plan.id)" class="most-popular pull-right">
+              <div ng-if="up.mostPopular(subscriptionPlan.plan.id)" class="most-popular pull-right"></div>
             </div>
             <h5 class="outline">
               <sup>$US</sup>
