@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-md-3">
           <div class="btn-standart btn-green" ui-sref="dashboard.chatSessions">
-            <img class="ic" src="icons/back_green.png" alt="Go Back">
+            <img class="ic" src="/icons/back_green.png" alt="Go Back">
             Back to Chat Sessions
           </div>
         </div>
@@ -13,7 +13,7 @@
         <div class="col-md-3">
           <div ng-show="sbc.session.sessionData.active && sbc.session.currentStep == 'inviteSessionObservers'" class="btn-standart btn-red" ng-click="sbc.closeSession()">
             Close Chat Session
-            <img class="ic" src="icons/ic_close_session.png" alt="Close Session">
+            <img class="ic" src="/icons/ic_close_session.png" alt="Close Session">
           </div>
           <div ng-show="sbc.session.sessionData.active == false" class="btn-standart btn-green" ng-click="sbc.openSession()">
             Activate Chat Session
@@ -22,7 +22,7 @@
       </div>
 
 
-      <p class="warning" ng-if="sbc.expireWarning"><img src="icons/ic_attention.png" class="ic">
+      <p class="warning" ng-if="sbc.expireWarning"><img src="/icons/ic_attention.png" class="ic">
         &nbsp; {{ sbc.expireWarning }}
       <br>
 
