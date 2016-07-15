@@ -13,6 +13,9 @@
             {{subscriptionPlan.plan.name}}
           </h4>
           <div class="{{ subscriptionPlan.plan.id + '_dark' }} price-label">
+            <div class="col-sm-1 pull-right">
+              <img ng-if="up.mostPopular(subscriptionPlan.plan.id)" class="most-popular pull-right">
+            </div>
             <h5 class="outline">
               <sup>$US</sup>
               {{subscriptionPlan.plan.price | price:'':0 }}
@@ -24,7 +27,6 @@
         </div>
       </div>
     </div>
-
       <div class="coll-sm-12">
         <div class="col-sm-3 plan-option-list">
           <div class="align-vertical-parent" ng-repeat="option in up.planOptions">

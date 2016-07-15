@@ -3,6 +3,18 @@
   .plan-option-dark-grey{background-color: #dedede;}
   .plan-option-light-grey{background-color: #cdcdcd;}
 
+  .most-popular{
+    position: absolute;
+    display: block;
+    width: 75px;
+    height: 73px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    top: -14px;
+    left: -40px;
+    background-image: url('/icons/MostPopular.png');
+  }
+
   .get-quote-note{
     font-size: 14px;
     color: grey;

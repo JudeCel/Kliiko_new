@@ -103,6 +103,7 @@
     vm.switchPlanView = switchPlanView;
     vm.planOptionColor = planOptionColor;
     vm.selectPlanBtnColor = selectPlanBtnColor;
+    vm.mostPopular = mostPopular;
 
     init();
 
@@ -316,6 +317,10 @@
 
     function selectPlanBtnColor(plan) {
       return plan + "_btn"
+    }
+
+    function mostPopular(planId) {
+      return 'core_monthly' == planId;
     }
   }
 })();
