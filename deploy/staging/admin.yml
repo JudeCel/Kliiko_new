@@ -44,9 +44,9 @@ spec:
         - name: FACEBOOK_CALLBACK_URL
           value: "https://www.klzii.com/auth/facebook/callback"
         - name: FACEBOOK_CLIENT_ID
-          value: "895147450520688"
+          value: "1740610496152274"
         - name: FACEBOOK_CLIENT_SECRET
-          value: "5c18ba36fe2a55ae05fd64fe41bcb002"
+          value: "7d0f78d9fdd0052c20cdf5c2aeda7b33"
         - name: GOOGLE_CALLBACK_URL
           value: "https://www.klzii.com/auth/google/callback"
         - name: GOOGLE_CLIENT_ID
