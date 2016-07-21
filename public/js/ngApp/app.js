@@ -120,7 +120,10 @@
       routerProgressbar = ngProgressFactory.createInstance();
       routerProgressbar.start();
     });
-    $rootScope.$on('$stateChangeSuccess',function(){  routerProgressbar.complete();  });
+    $rootScope.$on('$stateChangeSuccess',function(){
+      $('.modal-backdrop').remove();
+      routerProgressbar.complete();
+    });
 
     $rootScope.progressbarStart = function() {
       rootScopeProgress.start();
