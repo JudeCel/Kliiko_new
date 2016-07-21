@@ -60,7 +60,9 @@
         }, function(error) {
           messenger.error(error);
         });
-      });
+      }, function(error) {
+         messenger.error(error);
+       });
     }
 
     function update(bannerType) {
