@@ -59,6 +59,7 @@
     vm.mappingFieldsContinue = mappingFieldsContinue;
     vm.setSessionId = setSessionId;
     vm.returnContactCount = returnContactCount;
+    vm.returnSelectedCount = returnSelectedCount;
     vm.canAddMoreFields = canAddMoreFields;
     // required for correct list switching.
     var isSelected = false;
@@ -109,6 +110,21 @@
 
       vm.lists.activeList = activeList || array[0];
       vm.lists.items = array;
+    }
+
+    function returnSelectedCount(item) {
+      if(item.members) {
+        var count = 0;
+        for(var i in item.members) {
+          if(item.members[i]._selected) {
+            count++;
+          }
+        }
+        return count;
+      }
+      else {
+        return 0;
+      }
     }
 
     function returnContactCount(item) {

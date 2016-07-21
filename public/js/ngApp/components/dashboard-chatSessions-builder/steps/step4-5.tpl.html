@@ -1,12 +1,11 @@
 <section id='step-4-participants' ng-controller="SessionStep4-5Controller as lastStepsController" ng-init="lastStepsController.initStep(sbc.participants, sbc.observers)">
   <div class='row'>
-    <h3 class='text-center'>{{lastStepsController.isParticipantPage() ? "Participants" : "Observers"}}</h3>
     <div class='text-center'>
-      <div class='btn-standart btn-green' ng-click='sbc.selectParticipantsClickHandle()' ng-show="lastStepsController.isParticipantPage()">
-        Select Participants From Contact List
+      <div class='btn-standart btn-green increased-margin' ng-click='sbc.selectParticipantsClickHandle()' ng-show="lastStepsController.isParticipantPage()">
+        Invite Participants From Contact List
       </div>
-      <div class='btn-standart btn-green' ng-click='sbc.selectObserversClickHandle()' ng-show="!lastStepsController.isParticipantPage()">
-        Select Observers From Contact List
+      <div class='btn-standart btn-green increased-margin' ng-click='sbc.selectObserversClickHandle()' ng-show="!lastStepsController.isParticipantPage()">
+        Invite Observers From Contact List
       </div>
     </div>
   </div>

@@ -2,12 +2,11 @@
   <div ng-init="clc.hideStuff = true; clc.setSessionId(sbc.session.id); clc.initLists()">
 
     <div class='row'>
-      <h3 class='text-center'></h3>
-      <div class='btn-standart btn-green' ng-hide="sbc.showContactsList" ng-click='sbc.finishSelectingMembers(clc.lists.activeList)'>
-        Select Contacts
+      <div class='btn-standart btn-red increased-margin' ng-hide="sbc.showContactsList" ng-click='sbc.finishSelectingMembers(clc.lists.activeList)'>
+        Select Contacts to Invite
       </div>
 
-      <div class='btn-standart btn-green' ng-show="sbc.showContactsList" ng-click='sbc.showContactsList = null'>
+      <div class='btn-standart btn-red increased-margin' ng-show="sbc.showContactsList" ng-click='sbc.showContactsList = null'>
         Finish With Adding
       </div>
     </div>

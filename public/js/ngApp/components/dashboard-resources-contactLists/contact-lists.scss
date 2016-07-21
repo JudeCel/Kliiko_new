@@ -47,7 +47,7 @@
   #contact-lists-left-column {
 
     #list-of-contacts {
-      margin-top: 52px;
+      margin-top: -3px;
       padding: 0;
       border: 3px solid $green;
 
@@ -91,6 +91,14 @@
       .item-name {
         width: 90%;
         word-wrap: break-word;
+        .row > .col-md-4,
+        .row > .col-md-8 {
+          padding-left: 0;
+          padding-right: 0;
+        }
+        .row > .col-md-8 {
+          padding-left: 5px;
+        }
       }
 
       .item-selection-mark {
@@ -106,7 +114,7 @@
       .btn-standart {
         display: block;
         margin-top: 10px;
-        width: 160px;
+        width: 200px;
       }
     }
 
@@ -209,10 +217,6 @@
         margin-left: 4px;
       }
     }
-
-    #no-contacts-in-list {
-      height: 500px;
-    }
   }
 
 
@@ -284,21 +288,18 @@
   }
 
   .custom-select-directive {
-
-    $thisWidth: 150px;
-
-     .dd-directive {
+   .dd-directive {
       padding: 7px 20px !important;
       text-align: left !important;
     }
 
     .wrapper-dropdown-cd {
-      width: $thisWidth;
+      max-width: 100%;
     }
 
     ul.dropdown {
       left:-2px;
-      width: $thisWidth;
+      max-width: 100%;
       border: 2px solid $green;
       border-top: none;
       z-index:300 !important;
