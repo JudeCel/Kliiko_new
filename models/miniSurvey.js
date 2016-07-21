@@ -13,6 +13,7 @@ module.exports = (Sequelize, DataTypes) => {
     classMethods: {
       associate: function(models) {
         MiniSurvey.hasMany(models.MiniSurveyAnswer, { onDelete: 'cascade', foreignKey: 'miniSurveyId' });
+        MiniSurvey.hasOne(models.Console, {foreignKey: 'miniSurveyId' });
         MiniSurvey.belongsTo(models.Session, { foreignKey: 'sessionId' });
         MiniSurvey.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId' });
       }

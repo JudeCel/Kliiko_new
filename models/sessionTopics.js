@@ -15,6 +15,7 @@ module.exports = (Sequelize, DataTypes) => {
         SessionTopics.belongsTo(models.Topic, { foreignKey: 'topicId' });
         SessionTopics.belongsTo(models.Session, { foreignKey: 'sessionId' });
         SessionTopics.hasMany(models.MiniSurvey, { foreignKey: 'sessionTopicId', onDelete: 'cascade' });
+        SessionTopics.hasOne(models.Console, { foreignKey: 'sessionTopicId', onDelete: 'cascade' });
         SessionTopics.hasMany(models.SessionTopicsReport, { foreignKey: 'sessionTopicId', onDelete: 'cascade' });
       }
     }
