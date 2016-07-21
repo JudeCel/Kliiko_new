@@ -29,6 +29,7 @@
     'KliikoApp.account',
     'KliikoApp.accountUser',
     'KliikoApp.fileUploader',
+    'KliikoApp.goToChatroom',
     'KliikoApp.mailTemplate'
   ];
 

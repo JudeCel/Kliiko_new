@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('ChatSessionsController', ChatSessionsController);
 
-  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'messenger', 'angularConfirm', '$window', '$rootScope', 'domServices'];
-  function ChatSessionsController(dbg, chatSessionsServices, messenger, angularConfirm, $window, $rootScope, domServices){
+  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'goToChatroom', 'messenger', 'angularConfirm', '$window', '$rootScope', 'domServices'];
+  function ChatSessionsController(dbg, chatSessionsServices, goToChatroom, messenger, angularConfirm, $window, $rootScope, domServices){
     dbg.log2('#ChatSessionsController started');
 
     var vm = this;
@@ -80,12 +80,11 @@
 
     function redirectToChatSession(sessionId) {
       vm.disablePlayButton = true;
-      chatSessionsServices.generateRedirectLink(sessionId).then(function(url) {
-        $window.open(url);
+
+      goToChatroom.go(sessionId).then(function(url) {
         vm.disablePlayButton = false;
       }, function(error) {
         vm.disablePlayButton = false;
-        messenger.error(error);
       });
     }
 

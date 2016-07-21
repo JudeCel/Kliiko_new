@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices'];
-  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices) {
+  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom'];
+  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -109,12 +109,10 @@
       if (session.showStatus && session.showStatus == 'Expired') return;
 
       vm.disableRedirectButton = true;
-      chatSessionsServices.generateRedirectLink(session.id).then(function(url) {
-        $window.open(url);
+      goToChatroom.go(session.id).then(function(url) {
         vm.disableRedirectButton = false;
       }, function(error) {
         vm.disableRedirectButton = false;
-        messenger.error(error);
       });
     }
 
