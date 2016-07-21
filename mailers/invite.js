@@ -18,7 +18,9 @@ function sendInviteAccountManager(inviteParams, callback) {
         url: helpers.getUrl(inviteParams.token, '/invite/'),
         firstName: inviteParams.firstName,
         lastName: inviteParams.lastName,
-        accountName: inviteParams.accountName
+        accountName: inviteParams.accountName,
+        termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+        privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       };
 
       helpers.renderMailTemplate('invite/inviteAccountUser', links, function(error, html){
@@ -58,6 +60,9 @@ function sendInviteAccountManager(inviteParams, callback) {
 };
 
 function sendInviteSession(inviteParams, callback) {
+  inviteParams.termsOfUseUrl = helpers.getUrl('', '/terms_of_use');
+  inviteParams.privacyPolicyUrl = helpers.getUrl('', '/privacy_policy');
+
   if(inviteParams.role == 'observer') {
     inviteParams.logInUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/accept/';
 

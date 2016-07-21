@@ -646,6 +646,8 @@ function formatTemplateString(str) {
 
   str = str.replace(/\{Invitation Not At All\}/ig, "<%= invitationNotAtAllUrl %>");
   str = str.replace(/\{Mail Unsubscribe\}/ig, "<%= unsubscribeMailUrl %>");
+  str = str.replace(/\{Privacy Policy\}/ig, "<%= privacyPolicyUrl %>");
+  str = str.replace(/\{Terms of Use\}/ig, "<%= termsOfUseUrl %>");
   str = str.replace(/\{Close Session Yes In Future\}/ig, "<%= participateInFutureUrl %>");
   str = str.replace(/\{Close Session No In Future\}/ig, "<%= dontParticipateInFutureUrl %>");
   str = str.replace(/\{Confirmation Check In\}/ig, "<%= confirmationCheckInUrl %>");

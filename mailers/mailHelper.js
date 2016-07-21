@@ -1,4 +1,5 @@
 'use strict';
+var helpers = require('./helpers');
 var mailTemplate = require('./mailTemplate');
 var mailTemplateService = require('../services/mailTemplate');
 
@@ -12,6 +13,8 @@ function sendSessionClose(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       sessionName: params.sessionName,
+      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       firstName: params.firstName, //receiver name
       incentive: params.incentive,
       facilitatorMobileNumber: params.facilitatorMobileNumber,
@@ -38,6 +41,8 @@ function sendFirstInvitation(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
+      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       sessionName: params.sessionName,
       startTime: params.startTime,
       endTime: params.endTime,
@@ -68,6 +73,8 @@ function sendInviteConfirmation(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
+      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       startTime: params.startTime,
       startDate: params.startDate,
       confirmationCheckInUrl: params.confirmationCheckInUrl,
@@ -94,6 +101,8 @@ function sendInvitationNotThisTime(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
+      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       facilitatorFirstName: params.facilitatorFirstName,
       facilitatorLastName: params.facilitatorLastName,
       facilitatorMail: params.facilitatorMail,
@@ -115,6 +124,8 @@ function sendInvitationNotAtAll(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
+      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       facilitatorFirstName: params.facilitatorFirstName,
       facilitatorLastName: params.facilitatorLastName,
       facilitatorMail: params.facilitatorMail,
@@ -136,6 +147,8 @@ function sendGeneric(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
+      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       facilitatorFirstName: params.facilitatorFirstName,
       facilitatorLastName: params.facilitatorLastName,
       facilitatorMail: params.facilitatorMail,
@@ -157,6 +170,8 @@ function sendFacilitatorEmailConfirmation(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
+      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       lastName: params.lastName,
       accountName: params.accountName,
       sessionName: params.sessionName,
@@ -182,6 +197,8 @@ function sendParticipantOverquota(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
+      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       lastName: params.lastName,
       accountName: params.accountName,
       sessionName: params.sessionName,
@@ -203,6 +220,8 @@ function sendObserverInvitation(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
+      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       lastName: params.lastName,
       accountName: params.accountName,//account we invite
       sessionName: params.sessionName,
