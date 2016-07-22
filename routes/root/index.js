@@ -230,56 +230,18 @@ router.get('/auth/google/callback', function(req, res, next) {
   })(req, res, next);
 });
 
-router.post('/paidPlanRegistration', function (req, res, next) {
-  let params = usersRepo.prepareParams(req);
-  usersRepo.create(params, function (error, result) {
-    if (error) {
-        res.render('paidPlanRegistration', usersRepo.prepareParams(req, error));
-    } else {
-      let email = req.body.email;
-      emailConfirmation.sendEmailConfirmationToken(email, function (err) {
-        if (err) {
-          res.render('welcome',  {title: 'Failed to send data. Please try later', error: 'Failed to send data. Please try later', message: '' , applicationName: process.env.MAIL_FROM_NAME});
-        } else {
-          res.render('welcome',  {title: 'Please verify your email address', error: "Please verify your email address", message: '' , applicationName: process.env.MAIL_FROM_NAME});
-        }
-      });
-    };
-  });
-});
-
-router.post('/freeTrialRegistration', function (req, res, next) {
-  let params = usersRepo.prepareParams(req);
-  params.selectedPlanOnRegistration = 'free_trial';
-
-  usersRepo.create(params, function (error, result) {
-    if (error) {
-      console.log(error);
-      res.render('freeTrialRegistration', usersRepo.prepareParams(req, error));
-    } else {
-      let email = req.body.email;
-      emailConfirmation.sendEmailConfirmationToken(email, function (err) {
-        if (err) {
-          res.render('welcome',  {title: 'Failed to send data. Please try later', error: 'Failed to send data. Please try later', message: '' , applicationName: process.env.MAIL_FROM_NAME});
-        } else {
-          res.render('welcome',  {title: 'Please verify your email address', error: "Please verify your email address", message: '' , applicationName: process.env.MAIL_FROM_NAME});
-        }
-      });
-    };
-  });
-});
-
-
-router.post('/registration', function (req, res, next) {
-  usersRepo.create(usersRepo.prepareParams(req), function (error, result) {
-    if (error) {
-        res.render('registration', usersRepo.prepareParams(req, error));
-    } else {
+function createUserAndSendEmail(req, res, userParams, renderInfo) {
+  usersRepo.create(userParams, function(error, result) {
+    if(error) {
+      res.render(renderInfo.failed, usersRepo.prepareParams(req, error));
+    }
+    else {
       let tplData = {
         title: 'Email Confirmation',
         error: '',
         success: '',
-        email: ''
+        email: '',
+        applicationName: process.env.MAIL_FROM_NAME
       };
 
       let email = req.body.email;
@@ -289,10 +251,26 @@ router.post('/registration', function (req, res, next) {
         } else {
           tplData.success = 'Email confirmation sent to ' + email;
         }
+        res.render(renderInfo.success, tplData);
       });
-      res.render('welcome',  {title: 'Please verify your email address', error: "Please verify your email address", message: '' , applicationName: process.env.MAIL_FROM_NAME});
     };
   });
+}
+
+router.post('/paidPlanRegistration', function (req, res, next) {
+  let userParams = usersRepo.prepareParams(req);
+  createUserAndSendEmail(req, res, userParams, { failed: 'paidPlanRegistration', success: 'welcome' });
+});
+
+router.post('/freeTrialRegistration', function (req, res, next) {
+  let userParams = usersRepo.prepareParams(req);
+  userParams.selectedPlanOnRegistration = 'free_trial';
+  createUserAndSendEmail(req, res, userParams, { failed: 'freeTrialRegistration', success: 'welcome' });
+});
+
+router.post('/registration', function (req, res, next) {
+  let userParams = usersRepo.prepareParams(req);
+  createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
 });
 
 router.post('/login', function(req, res, next) {
