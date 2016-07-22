@@ -12,7 +12,7 @@ var async = require('async');
 var assert = require('chai').assert;
 var _ = require('lodash');
 
-describe('SERVICE - Subscription', function() {
+describe.only('SERVICE - Subscription', function() {
   var testData;
   var currentSubPlanId;
 
@@ -21,8 +21,8 @@ describe('SERVICE - Subscription', function() {
       testData = result;
       return subscriptionFixture.createPlans();
     }).then(function(results) {
-      testData.subscriptionPlan = _.find(results, ['priority', 3]);
-      testData.lowerPlan = _.find(results, ['priority', testData.subscriptionPlan.priority - 1]);
+      testData.subscriptionPlan = _.find(results, ['priority', 1]);
+      testData.lowerPlan = _.find(results, ['priority', testData.subscriptionPlan.priority + 1]);
       done();
     }).catch(function(error) {
       done(error);
@@ -335,10 +335,10 @@ describe('SERVICE - Subscription', function() {
 
           function createTestSurvey(testData) {
             return function(cb) {
-              surveyFixture.createSurvey(testData.account.name).then(function() {
+              models.Survey.create({accountId: testData.account.id, name: "jeeee", description: "eeeeeeeeee", thanks: "oooooo" }).then(function() {
                 cb();
               }, function(error) {
-                cb(error);
+                cb(error);``
               })
             }
           }
@@ -361,11 +361,11 @@ describe('SERVICE - Subscription', function() {
             }
           }
 
-          function createTestContactList(testData) {
+          function createTestContactList(testData, nr) {
             return function(cb) {
               models.ContactList.create({
                 accountId: testData.account.id,
-                name: "My cool Test contact list"
+                name: "My cool Test contact list" + nr
               }).then(function() {
                 cb();
               }).catch(function(error) {
@@ -390,7 +390,10 @@ describe('SERVICE - Subscription', function() {
               createSession(testData),
               createSession(testData),
               createSession(testData),
-              createTestContactList(testData)
+              createTestContactList(testData, 1),
+              createTestContactList(testData, 2),
+              createTestContactList(testData, 3),
+              createTestContactList(testData, 4)
             ]
 
             async.waterfall(functionList, function (error, result) {
