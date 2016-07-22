@@ -20,6 +20,9 @@
   background-color: $light-grey;
   .dashboardElementsEditRemove {
     min-width: 15%;
+    .glyphicon {
+      vertical-align: middle;
+    }
   }
 
   tr.session-pending {
