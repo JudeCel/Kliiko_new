@@ -103,7 +103,7 @@ describe('MIDDLEWARE - Filters', function() {
     }
 
     describe('happy path', function() {
-      it('should succeed on redirecting to select plan page', function(done) {
+      it('should succeed on redirecting to landing page', function(done) {
         models.Subscription.destroy({where: {accountId: testData.account.id}}).then(function() {
           filtersMiddleware.planSelectPage(reqObject(), resObject('dashboard/landing', done, testData.account.id));
         })

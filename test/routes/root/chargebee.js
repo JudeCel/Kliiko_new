@@ -73,7 +73,7 @@ describe('ROUTE - Chargebee Webhooks', function() {
           },
           provider: {
             creditCard: validCreditCardProvider(),
-            updateProvider: updateProvider({ id: 'someSubId', plan_id: testSubscription.planId })
+            updateProvider: updateProvider({ id: subId, plan_id: testSubscription.planId })
           }
         }
       };
@@ -117,7 +117,14 @@ describe('ROUTE - Chargebee Webhooks', function() {
 
     describe('happy path', function() {
       it('should return 200', function(done) {
-        chargebeeRoutes.endPoint(reqObject(testSubscription.subscriptionId), resObject(200, done));
+        let providers = {
+          creditCard: validCreditCardProvider(),
+          updateProvider: updateProvider({ id: testSubscription.subscriptionId, plan_id: testSubscription.planId })
+        }
+
+        subscriptionServices.updateSubscription({accountId: testSubscription.accountId, newPlanId: 'core_monthly', skipCardCheck: true}, providers).then(function() {
+          chargebeeRoutes.endPoint(reqObject(testSubscription.subscriptionId), resObject(200, done));
+        });
       });
 
       it('should work if random hook comes in', function(done) {
