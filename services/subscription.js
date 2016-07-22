@@ -142,6 +142,7 @@ function addPlanEstimateChargeAndConstants(plans, accountId) {
 
   findSubscription(accountId).then(function(accountSubscription) {
     async.each(plans, function(plan, callback) {
+      // TODO Refacture to one function
       if(notNeedEstimatePrice(plan, accountSubscription)){
         plan.additionalParams = planConstants[plan.plan.id];
         plansWithAllInfo.push(plan);
@@ -171,14 +172,17 @@ function addPlanEstimateChargeAndConstants(plans, accountId) {
   return deferred.promise;
 }
 
+
+// TODO  re-write to one function
 function notNeedEstimatePrice(plan, accountSubscription) {
-  return plan.plan.id == accountSubscription.SubscriptionPlan.chargebeePlanId && plan.plan.id != "Free"
+  return plan.plan.id == accountSubscription.SubscriptionPlan.chargebeePlanId && plan.plan.id != "free_trial"
 }
 
 function needEstimatePrice(plan, accountSubscription) {
-  return plan.plan.id != accountSubscription.SubscriptionPlan.chargebeePlanId && plan.plan.id != "Free"
+  return plan.plan.id != accountSubscription.SubscriptionPlan.chargebeePlanId && plan.plan.id != "free_trial"
 }
 
+// TODO this is realy plan ?
 function getEstimateCharge(plan, accountSubscription) {
   let deferred = q.defer();
 
@@ -190,6 +194,7 @@ function getEstimateCharge(plan, accountSubscription) {
   }).request(function(error ,result){
     if(error){
       plan.chargeEstimate = error;
+      // TODO why resolve?
       deferred.resolve(plan);
     }else{
       plan.chargeEstimate = result.estimate;
@@ -258,6 +263,7 @@ function createSubscription(accountId, userId, provider) {
             return SubscriptionPreference.create({subscriptionId: subscription.id, data: planConstants[plan.chargebeePlanId]}, {transaction: t}).then(function() {
               return subscription;
             }, function(error) {
+              // TODO Take a look!!!
               throw error;
             });
           });
@@ -282,6 +288,7 @@ function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
       id: accountId
     }
   }).then(function(account) {
+    if (!account) { return deferred.reject(MESSAGES.notFound.account)}
     createSubscription(accountId, userId).then(function(response) {
       if(account.selectedPlanOnRegistration && account.selectedPlanOnRegistration != "free_trial"){
         updateSubscription({
@@ -700,15 +707,15 @@ function prepareRecurringParams(plan, preference) {
 function canSwitchPlan(accountId, currentPlan, newPlan){
   let deferred = q.defer();
 
-  if(currentPlan.priority > newPlan.priority){
+  if(currentPlan.priority < newPlan.priority){
     let functionArray = [
       validateSessionCount(accountId, newPlan),
       validateSurveyCount(accountId, newPlan),
       validateContactListCount(accountId, newPlan)
     ]
-    async.waterfall(functionArray, function(error, errorMessages) {
-      if(error){
-        deferred.reject(error);
+    async.waterfall(functionArray, function(systemError, errorMessages) {
+      if(systemError){
+        deferred.reject(systemError);
       }else{
         if(_.isEmpty(errorMessages)){
           deferred.resolve();
@@ -737,7 +744,7 @@ function validatePlanPriority(newPlanPriority, currentPlanPriority) {
     return false;
   }else if(newPlanPriority == -1) {
     return true;
-  }else if(currentPlanPriority < newPlanPriority){
+  }else if(currentPlanPriority > newPlanPriority){
     return true;
   }else{
     return false;
@@ -789,8 +796,9 @@ function validateContactListCount(accountId, newPlan) {
       }
     }).then(function(c) {
       errors = errors || {};
+      // TODO WTF!!!
       let defaultListCount = 4; // By default each user has 4 contact lists: Account Managers, Facilitators, Observers and Surveys
-      if(defaultListCount < c){
+      if((defaultListCount + newPlan.contactListCount) < c){
         errors.contactList = MESSAGES.validation.contactList;
       }
 

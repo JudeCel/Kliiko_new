@@ -94,13 +94,19 @@ describe('MIDDLEWARE - Filters', function() {
         redirect: function(url) {
           assert.include(url, matcher);
           done();
+        },
+        send: function(resp) {
+          assert.equal(resp.error, "No account found.");
+          done();
         }
       }
     }
 
     describe('happy path', function() {
-      it('should succeed on redirecting to select plan page', function(done) {
-        filtersMiddleware.planSelectPage(reqObject(), resObject('selectPlan', done, testData.account.id + 100));
+      it('should succeed on redirecting to landing page', function(done) {
+        models.Subscription.destroy({where: {accountId: testData.account.id}}).then(function() {
+          filtersMiddleware.planSelectPage(reqObject(), resObject('dashboard/landing', done, testData.account.id));
+        })
       });
 
       it('should succeed on skipping this check because path matches', function(done) {
@@ -115,6 +121,11 @@ describe('MIDDLEWARE - Filters', function() {
         });
       });
     });
-  });
 
+    describe('sad path', function() {
+      it('should succeed on redirecting to select plan page', function(done) {
+        filtersMiddleware.planSelectPage(reqObject(), resObject('selectPlan', done, testData.account.id + 100));
+      });
+    });
+  });
 });

@@ -37,7 +37,7 @@ function planSelectPage(req, res, next) {
       if(subscription) {
         next();
       } else {
-        subscriptionService.createSubscriptionOnFirstLogin(res.locals.currentDomain.id, res.locals.currentUser.id, redirectUrl).then(function(response) {
+        subscriptionService.createSubscriptionOnFirstLogin(res.locals.currentDomain.id, req.user.id, redirectUrl).then(function(response) {
           if('hosted_page' in response) {
             res.writeHead(301, { Location: response.hosted_page.url } );
             res.end();

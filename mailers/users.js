@@ -14,8 +14,6 @@ users.sendReactivateOrDeactivate = function(params, callback){
   mailTemplateService.getActiveMailTemplate(templateType, null, function(error, result) {
     //if failed to find mail template from DB, use old version
     let fields = { name: params.name, active: params.active,  firstName: params.firstName, lastName: params.lastName, logInUrl: "http://"+process.env.SERVER_DOMAIN}
-    fields.termsOfUseUrl = helpers.getUrl('', '/terms_of_use');
-    fields.privacyPolicyUrl = helpers.getUrl('', '/privacy_policy');
     if (error) {
       helpers.renderMailTemplate('reactivateOrDeactivate', fields, function(err, html){
         if(err) {
