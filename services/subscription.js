@@ -288,6 +288,7 @@ function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
       id: accountId
     }
   }).then(function(account) {
+    if (!account) { return deferred.reject(MESSAGES.notFound.account)}
     createSubscription(accountId, userId).then(function(response) {
       if(account.selectedPlanOnRegistration && account.selectedPlanOnRegistration != "free_trial"){
         updateSubscription({
