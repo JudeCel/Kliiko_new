@@ -14,8 +14,6 @@ users.sendReactivateOrDeactivate = function(params, callback){
   mailTemplateService.getActiveMailTemplate(templateType, null, function(error, result) {
     //if failed to find mail template from DB, use old version
     let fields = { name: params.name, active: params.active,  firstName: params.firstName, lastName: params.lastName, logInUrl: "http://"+process.env.SERVER_DOMAIN}
-    fields.termsOfUseUrl = helpers.getUrl('', '/terms_of_use');
-    fields.privacyPolicyUrl = helpers.getUrl('', '/privacy_policy');
     if (error) {
       helpers.renderMailTemplate('reactivateOrDeactivate', fields, function(err, html){
         if(err) {
@@ -80,13 +78,12 @@ users.sendResetPasswordToken = function(params, callback) {
 users.sendEmailConfirmationToken = function(params, callback) {
   const emailConfirmationPath = '/emailConfirmation/';
   let mailUrl = helpers.getUrl(params.token, emailConfirmationPath);
-
   mailTemplateService.getActiveMailTemplate("registerConfirmationEmail", null, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
-      let fields = {url: mailUrl};
+      let link = { url: mailUrl };
 
-      helpers.renderMailTemplate('confirmationEmail', fields, function(err, html){
+      helpers.renderMailTemplate('confirmationEmail', link, function(err, html){
         if (err) {
           return callback(err);
         }
@@ -101,8 +98,6 @@ users.sendEmailConfirmationToken = function(params, callback) {
     } else {
       // found template in db
       var mailContent = mailTemplateService.composeMailFromTemplate(result, {
-        termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
-        privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
         logInUrl: mailUrl
       });
       if (mailContent.error) {
