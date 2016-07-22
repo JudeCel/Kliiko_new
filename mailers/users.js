@@ -80,12 +80,13 @@ users.sendResetPasswordToken = function(params, callback) {
 users.sendEmailConfirmationToken = function(params, callback) {
   const emailConfirmationPath = '/emailConfirmation/';
   let mailUrl = helpers.getUrl(params.token, emailConfirmationPath);
+
   mailTemplateService.getActiveMailTemplate("registerConfirmationEmail", null, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
-      let link = { url: mailUrl };
+      let fields = {url: mailUrl};
 
-      helpers.renderMailTemplate('confirmationEmail', link, function(err, html){
+      helpers.renderMailTemplate('confirmationEmail', fields, function(err, html){
         if (err) {
           return callback(err);
         }
@@ -100,6 +101,8 @@ users.sendEmailConfirmationToken = function(params, callback) {
     } else {
       // found template in db
       var mailContent = mailTemplateService.composeMailFromTemplate(result, {
+        termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+        privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
         logInUrl: mailUrl
       });
       if (mailContent.error) {
