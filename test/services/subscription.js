@@ -12,7 +12,7 @@ var async = require('async');
 var assert = require('chai').assert;
 var _ = require('lodash');
 
-describe.only('SERVICE - Subscription', function() {
+describe('SERVICE - Subscription', function() {
   var testData;
   var currentSubPlanId;
 
