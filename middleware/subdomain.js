@@ -25,7 +25,7 @@ function prepareValidAccountUserParams() {
 }
 
 function getSubdomain(req) {
-  return _.last(req.subdomains);
+  return _.first(req.subdomains);
 }
 
 function comparedWithBaseDomainName(subdomain) {
