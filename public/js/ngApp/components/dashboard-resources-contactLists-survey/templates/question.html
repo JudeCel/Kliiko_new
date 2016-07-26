@@ -22,10 +22,10 @@
       </div>
     </div>
 
-    <label class='col-xs-2 control-label' for='questionName-{{object.order}}'>Question</label>
+    <label class='col-xs-2 control-label' for='questionQuestion-{{object.order}}'>Question</label>
     <div class='col-xs-10 col-md-6'>
       <textarea type='text' class='form-control' placeholder='{{ object.question || "Question" }}' rows='4' name='question'
-        ng-model='question.question' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='question.active'>
+        ng-model='question.question' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='question.active' id='questionQuestion-{{object.order}}' />
     </div>
   </div>
 </div>
