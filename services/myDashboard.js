@@ -137,7 +137,7 @@ function prepareAccountUsers(accountUsers, protocol) {
 
   _.map(accountUsers, function(accountUser) {
     if(object[accountUser.role]) {
-      accountUser.dataValues.dashboardUrl = subdomains.url({ protocol: protocol }, accountUser.Account.name, '/dashboard');
+      accountUser.dataValues.dashboardUrl = subdomains.url({ protocol: protocol }, accountUser.Account.subdomain, '/dashboard');
       object[accountUser.role].data.push(accountUser);
     }
   });

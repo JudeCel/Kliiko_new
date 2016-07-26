@@ -7,18 +7,27 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     selectedPlanOnRegistration: {type: DataTypes.STRING, allowNull: true },
     admin: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    subdomain: {type: DataTypes.STRING, allowNull: false},
     name: {type: DataTypes.STRING, allowNull: false,
+      set: function(val) {
+        this.setDataValue('name', val)
+        if (val) {
+          this.setDataValue('subdomain', val.replace(/ /g,'').toLowerCase())
+        }
+      },
       validate: {
         notEmpty: true,
         is: constants.accountNameRegExp,
-        isUnique: validations.unique(Sequelize, 'Account', 'name', { lower: true }),
+        isUnique: validations.uniqueStructureSql(Sequelize, 'Account', 'name'),
         isLength: validations.length('accountName', { max: 20 })
       }
     }
   },{
       indexes: [
-        { name: 'unique_name', unique: true, fields: [Sequelize.fn('lower', Sequelize.col('name'))] },
-        { fields: [Sequelize.fn('lower', Sequelize.col('name'))] },
+        { name: 'accounts_unique_name',unique: true, fields: [
+          Sequelize.fn('regexp_replace', Sequelize.fn('lower', Sequelize.col('name')), '\\s', '', 'g')
+        ]},
+        { fields: ['subdomain'] },
         { fields: ['id'] }
       ],
       classMethods: {
