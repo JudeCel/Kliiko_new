@@ -61,7 +61,7 @@ describe('MIDDLEWARE - Filters', function() {
       });
 
       it('should succeed on redirecting to only account', function(done) {
-        filtersMiddleware.myDashboardPage(reqObject(), resObject(testData.account.name, done));
+        filtersMiddleware.myDashboardPage(reqObject(), resObject(testData.account.name.toLowerCase(), done));
       });
     });
   });
