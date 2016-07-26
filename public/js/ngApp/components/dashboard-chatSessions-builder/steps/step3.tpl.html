@@ -28,7 +28,7 @@
         </div>
       </uib-accordion-heading>
 
-      <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec" ng-init="ec.preInit({sessionBuilder:true, sessionId: sbc.session.id})">
+      <section id="email-template-editor" ng-if="sbc.accordions.emailTemplates" ng-controller="EmailTemplateEditorController as ec" ng-init="ec.preInit({sessionBuilder:true, sessionId: sbc.session.id})">
         <h3 class="text-center">Edit Email Templates</h3>
         <h4 class="col-xs-12 text-center fa fa-exclamation-triangle" aria-hidden="true"> You must customize all required Email Templates before inviting Participants (Step 4)</h4>
 
@@ -68,8 +68,8 @@
             </tr>
           </table>
           <div class="row">
-            <button type="submit" class="btn btn-green pull-right" ng-click="ec.saveEmailTemplate(true)">Save</button>
-            <button type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
+            <button id='mailModifySaveCopy' type="submit" class="btn btn-green pull-right" ng-click="ec.saveEmailTemplate(true)">Save</button>
+            <button id='mailPreviewButton' type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
           </div>
           <span>Content:</span>
           <textarea id="templateContent"></textarea>

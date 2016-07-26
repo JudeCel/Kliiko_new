@@ -66,10 +66,10 @@
 
             <div class='btn-standart btn-green pull-right' ng-click='clc.editCustomFields()' ng-hide="!clc.lists.activeList.editable">Edit Custom Fields</div>
 
-            <div custom-select-directive data-title="Add New Contacts" data-id="contact-lists-add-button-1" class="custom-select-directive pull-right">
-              <li ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
-              <li ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
-              <li ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
+            <div custom-select-directive data-title="Add New Contacts" data-id="contact-lists-add-button" class="custom-select-directive pull-right">
+              <li id='contactListAddNew' ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
+              <li id='contactListAddExcel' ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
+              <li id='contactListAddCsv' ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
             </div>
 
           </div>
@@ -77,7 +77,7 @@
           <!-- TABLE -->
 
           <div id="no-contacts-in-list" class="text-center" ng-show="!clc.lists.activeList.members.length">
-            <div custom-select-directive data-title="Add New Contacts" data-id="contact-lists-add-button-2" class="custom-select-directive">
+            <div custom-select-directive data-title="Add New Contacts" data-id="contact-lists-add-button" class="custom-select-directive">
               <li ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
               <li ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
               <li ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
