@@ -5,7 +5,7 @@ var uniqueValidation  = require('./../../../models/validations/unique');
 var Account  = models.Account;
 
 describe('uniqueValidation', () => {
-  describe.only('unique', () =>  {
+  describe('unique', () =>  {
     describe("account name variants", () =>  {
       var sql = uniqueValidation.unique(models.sequelize, 'Account', 'name', { lower: true })
       before((done) => {
