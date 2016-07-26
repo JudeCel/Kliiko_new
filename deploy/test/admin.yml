@@ -54,6 +54,6 @@ spec:
         - name: SERVER_DOMAIN
           value: "www.test.klzii.com"
         - name: SERVER_BASE_SUBDOMAIN
-          value: "test"
+          value: "www"
         - name: SERVER_SKIP_SUBDOMAINS
-          value: "www, test"
+          value: "www,test"

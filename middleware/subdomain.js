@@ -30,7 +30,7 @@ function getSubdomain(req) {
   subdomains = _.difference(req.subdomains, skipSubdomains)
 
   if (_.last(subdomains)) {
-    return _.first(subdomains);
+    return _.last(subdomains);
   }else{
     return process.env.SERVER_BASE_SUBDOMAIN
   }
