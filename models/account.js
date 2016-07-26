@@ -18,15 +18,13 @@ module.exports = (Sequelize, DataTypes) => {
       validate: {
         notEmpty: true,
         is: constants.accountNameRegExp,
-        isUnique: validations.uniqueStructureSql(Sequelize, 'Account', 'name'),
+        isUnique: validations.unique(Sequelize, 'Account', 'name', { lower: true }),
         isLength: validations.length('accountName', { max: 20 })
       }
     }
   },{
       indexes: [
-        { name: 'accounts_unique_name',unique: true, fields: [
-          Sequelize.fn('regexp_replace', Sequelize.fn('lower', Sequelize.col('name')), '\\s', '', 'g')
-        ]},
+        { name: 'accounts_unique_name', unique: true, fields: ['subdomain']},
         { fields: ['subdomain'] },
         { fields: ['id'] }
       ],

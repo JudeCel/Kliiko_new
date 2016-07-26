@@ -31,7 +31,7 @@ describe('Account', () => {
         });
     });
 
-    describe.only("validation cases", ()=> {
+    describe("validation cases", ()=> {
       describe("same characters", () => {
         beforeEach((done) => {
           Account.create({name: "DainisL"})

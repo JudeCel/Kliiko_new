@@ -7,6 +7,7 @@ var _ = require('lodash');
 var constants = require('../util/constants');
 
 function assignCurrentDomain(result, res) {
+
   res.locals.currentDomain = { id: result.id, name: result.subdomain, roles: [result.accountUser.role] };
   res.locals.hasAccess = policy.hasAccess;
 }
@@ -40,7 +41,7 @@ function getAccauntWithRoles(user, subdomain, callback) {
       let account = accounts[0];
 
       if (account) {
-        let result = { id: account.id, name: subdomain, accountUser: account.AccountUser }
+        let result = { id: account.id, subdomain: account.subdomain, accountUser: account.AccountUser }
         callback(null, result)
       }else {
         callback(true)

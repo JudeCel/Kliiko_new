@@ -5,13 +5,13 @@ var uniqueValidation  = require('./../../../models/validations/unique');
 var Account  = models.Account;
 
 describe('uniqueValidation', () => {
-  describe('uniqueStructureSql',  ()=>  {
+  describe.only('unique', () =>  {
     describe("account name variants", () =>  {
-      var sql = uniqueValidation.uniqueStructureSql(models.sequelize, "Account", "name")
+      var sql = uniqueValidation.unique(models.sequelize, 'Account', 'name', { lower: true })
       before((done) => {
         models.sequelize.sync({ force: true }).then(() => {
           Account.create({name: "DainisL"})
-            .then(function(result) {
+            .then(function() {
               done();
             }).catch(function(error) {
               done(error);

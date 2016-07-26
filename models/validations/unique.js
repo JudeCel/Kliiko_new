@@ -7,7 +7,11 @@ function unique(sequelize, model, fieldName, otherValue) {
       let where = {};
       if(otherValue) {
         if(otherValue.lower) {
-          where[fieldName] = where[fieldName] = sequelize.fn('lower', value);
+        where = {
+              $and: [sequelize.where(
+              sequelize.fn('regexp_replace', sequelize.fn('lower', sequelize.col(fieldName)), "\\s", '', 'g'),
+              sequelize.fn('regexp_replace', sequelize.fn('lower', value), "\\s", '', 'g')
+          )]}
         }
         else {
           where[fieldName] = value;
@@ -20,7 +24,9 @@ function unique(sequelize, model, fieldName, otherValue) {
       else {
         where[fieldName] = value;
       }
-      where.id = { $ne: this.id };
+      if (this && this.id) {
+        where.id = { $ne: this.id };
+      }
       sequelize.models[model].find({ where: where }).then(function(result) {
         if(result) {
           next(`${_.startCase(fieldName)} must be unique`);
@@ -36,29 +42,6 @@ function unique(sequelize, model, fieldName, otherValue) {
   }
 };
 
-function uniqueStructureSql(sequelize, model, fieldName) {
-  return function(value, next) {
-    let where = {
-      $and: [ sequelize.where(
-      sequelize.fn('regexp_replace', sequelize.fn('lower', sequelize.col(fieldName)), "\\s", '', 'g'),
-      sequelize.fn('regexp_replace', sequelize.fn('lower', value), "\\s", '', 'g')
-    )]}
-
-    if (this && this.id) {
-      where.id = { $ne: this.id };
-    }
-    sequelize.models[model].find({ where: where }).then(function(result) {
-      if(result) {
-        next(`${_.startCase(fieldName)} must be unique`);
-      }
-      else {
-        next();
-      }
-    });
-  }
-};
-
 module.exports = {
-  unique: unique,
-  uniqueStructureSql: uniqueStructureSql
+  unique: unique
 };
