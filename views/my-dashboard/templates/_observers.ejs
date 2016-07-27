@@ -1,0 +1,28 @@
+<div ng-if='myDashboard.isTabActive("observer")'>
+  <h4 class='text-center'>Please select a <strong>Chat Session</strong> & Enter the <strong>Chat Room</strong></h4>
+
+  <table class='table table-responsive table-dashboardElements'>
+    <thead>
+      <tr>
+        <th>Account Name</th>
+        <th>Chat Session Name</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody ng-repeat='au in myDashboard.accountUsers.observer.data'>
+      <tr>
+        <td>{{ au.Account.name }}</td>
+        <td>{{ au.session.name }}</td>
+        <td>{{ au.session.startTime | date:dashboard.dateFormat }}</td>
+        <td>{{ au.session.endTime | date:dashboard.dateFormat }}</td>
+        <td>{{ au.session.showStatus }}</td>
+        <td>
+          <a ng-if='!myDashboard.disablePlayButton' href='#' ng-click='myDashboard.redirectToChatSession(au.session.id)' class='go-to-chatroom glyphicon glyphicon-play' title='Go to Chatroom' />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

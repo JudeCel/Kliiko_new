@@ -1,0 +1,20 @@
+<div ng-if='myDashboard.isTabActive("accountManager")'>
+  <h4 class='text-center'>Please select an <strong>Account</strong></h4>
+
+  <table class='table table-responsive table-dashboardElements'>
+    <thead>
+      <tr>
+        <th>Account Name</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody ng-repeat='au in myDashboard.accountUsers.accountManager.data'>
+      <tr>
+        <td>{{ au.Account.name }}</td>
+        <td>
+          <a href='{{ au.dashboardUrl }}' class='go-to-dashboard glyphicon glyphicon-play' title='Go to Dashboard' />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

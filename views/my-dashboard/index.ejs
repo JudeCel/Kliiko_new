@@ -1,71 +1,25 @@
 <% include _header %>
 
 <main class='main-first-page hidden'>
-  <div class='container' ng-controller='DashboardController as dashboard'>
-    <% include _navTabs %>
+  <div class='container' ng-controller='DashboardController as myDashboard'>
+    <div ng-init='myDashboard.initMyDashboard()'>
+      <ul class='nav nav-tabs' id='nav-tabs-main' ng-if='!myDashboard.hideTabs'>
+        <li ng-repeat='au in myDashboard.accountUsers' ng-class='myDashboard.activeClass(au.field)' ng-click='myDashboard.changeTab(au.field)'>
+          <a>{{ au.name }} ({{ au.data.length }})</a>
+        </li>
+      </ul>
+    </div>
 
     <div class='dashboard-container border-blue box-shadow'>
       <div class='row'>
         <div class='col-xs-12'>
           <div class='dashboard-container fixed-bottom-margin'>
-            <div class='row' ng-if="dashboard.currentTab == 'participant'">
-              <h2 class='text-center'>Participating in following sessions</h2>
-              <div class='col-xs-12'>
-                <table class='table table-responsive table-dashboardElements'>
-                  <thead>
-                    <tr>
-                      <th>Session Name</th>
-                      <th>Start Date</th>
-                      <th>End Date</th>
-                      <th>Status</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr ng-repeat='session in dashboard.sessions'>
-                      <td>{{ session.name }}</td>
-                      <td>{{ session.startTime | date:dashboard.dateFormat }}</td>
-                      <td>{{ session.endTime | date:dashboard.dateFormat }}</td>
-                      <td>{{ session.showStatus }}</td>
-                      <td>
-                        <a ng-if="!dashboard.disablePlayButton" href="#" ng-click="dashboard.redirectToChatSession(session.id)" class='glyphicon glyphicon-play' aria-hidden='true'></a>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <h2 class='text-center'>My Dashboard</h2>
 
-            <div ng-repeat='au in dashboard.accountUsers'>
-              <div class='row' ng-if="dashboard.currentTab == au.field">
-                <h2 class='text-center'>{{ au.name }} in accounts</h2>
-                <div class='col-xs-12'>
-                  <table class='table table-responsive table-dashboardElements'>
-                    <thead>
-                      <tr>
-                        <th>Account Name</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody ng-repeat='accountUser in au.data'>
-                      <tr ng-if="dashboard.hasPendingInvite(accountUser.Invites)">
-                        <td>{{ accountUser.Account.name }}</td>
-                        <td>{{ accountUser.firstName }}</td>
-                        <td>{{ accountUser.lastName }}</td>
-                        <td>
-                          <a href='{{ accountUser.dashboardUrl }}'>
-                            <span class='glyphicon glyphicon-play' aria-hidden='true'></span>
-                          </a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
+            <% include ./templates/_accountManagers %>
+            <% include ./templates/_facilitators %>
+            <% include ./templates/_participants %>
+            <% include ./templates/_observers %>
           </div>
         </div>
       </div>

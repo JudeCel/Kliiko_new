@@ -31,7 +31,13 @@ const MESSAGES = {
   sessionMemberNotFound: 'Session Member not found',
   rated: 'Session Member rated',
   commentChanged: 'Comment updated successfully',
-  cantRateSelf: "You can't rate your self"
+  cantRateSelf: "You can't rate your self",
+  errors: {
+    Expired: 'This session has expired',
+    Pending: 'This session has not started yet',
+    Closed: 'This session has been closed'
+  },
+  noTopics: 'There are no topics added'
 };
 
 module.exports = {
@@ -45,6 +51,7 @@ module.exports = {
   getAllSessionRatings: getAllSessionRatings,
   addShowStatus: addShowStatus,
   changeComment: changeComment,
+  validateSession: validateSession,
   getSessionByInvite: getSessionByInvite
 };
 
@@ -508,23 +515,96 @@ function changeSessionData(sessions, chargebeeSub, provider) {
   });
 }
 
+// function functionName() {
+//   let order = ['accountManager', 'facilitator', 'participant', 'observer'];
+//   models.AccountUser.findAll({
+//     where: { UserId: userId },
+//     include: [{
+//       model: models.Account,
+//       include: [{
+//         model: models.Session,
+//         where: { id: sessionId }
+//       }]
+//     }]
+//   }).then(function(accountUsers) {
+//     console.log(accountUsers);
+//   });
+// }
+
+function validateSession(sessionId, provider) {
+  let deferred = q.defer();
+
+  async.waterfall([
+    function(cb) { validateDates(sessionId, provider, cb); },
+    function(cb) { validateTopics(sessionId, cb); }
+  ], function(error) {
+    if(error) {
+      deferred.reject(error);
+    }
+    else {
+      deferred.resolve();
+    }
+  });
+
+  return deferred.promise;
+}
+
+function validateDates(sessionId, provider, cb) {
+  models.Session.find({
+    where: { id: sessionId },
+    include: [{
+      model: Account,
+      include: [models.Subscription]
+    }]
+  }).then(function(session) {
+    console.log(sessionId);
+    subscriptionService.getChargebeeSubscription(session.Account.Subscription.subscriptionId, provider).then(function(chargebeeSub) {
+      addShowStatus(session, chargebeeSub);
+      let error = MESSAGES.errors[session.dataValues.showStatus];
+
+      if(error) {
+        cb(error);
+      }
+      else {
+        cb();
+      }
+    }, function(error) {
+      cb(error);
+    });
+  }).catch(function(error) {
+    cb(filters.errors(error));
+  });
+}
+
+function validateTopics(sessionId, cb) {
+  models.SessionTopics.count({ where: { sessionId: sessionId } }).then(function(count) {
+    if(count > 0) {
+      cb()
+    }
+    else {
+      cb(MESSAGES.noTopics);
+    }
+  });
+}
+
 function addShowStatus(session, chargebeeSub) {
   let endDate = new Date((chargebeeSub.current_term_end || chargebeeSub.trial_end) * 1000);
-  session.dataValues.expireDate = endDate;
+  let settings = session.dataValues || session;
+  settings.expireDate = endDate;
 
   if(session.active) {
     var date = new Date();
-    if(chargebeeSub && date > endDate) {
-      session.dataValues.showStatus = 'Expired';
+    if(chargebeeSub && (date > endDate || date > new Date(session.endTime))) {
+      settings.showStatus = 'Expired';
     }
     else if(date < new Date(session.startTime)) {
-      session.dataValues.showStatus = 'Pending';
+      settings.showStatus = 'Pending';
     }
     else {
-      session.dataValues.showStatus = 'Open';
+      settings.showStatus = 'Open';
     }
   }
   else {
-    session.dataValues.showStatus = 'Closed';
+    settings.showStatus = 'Closed';
   }
 }
