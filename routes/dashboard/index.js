@@ -26,7 +26,7 @@ router.use(function (req, res, next) {
   }
 });
 
-router.get('/', policy.authorized(['admin', 'accountManager']) , function(req, res, next) {
+router.get('/', policy.authorized(['facilitator','admin', 'accountManager']) , function(req, res, next) {
   res.render(views_path('index'), { title: 'My Dashboard', user: req.user, message: req.flash('message')[0] });
 });
 

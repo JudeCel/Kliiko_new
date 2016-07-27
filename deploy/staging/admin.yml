@@ -67,3 +67,5 @@ spec:
           value: "www.klzii.com"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
+        - name: SERVER_SKIP_SUBDOMAINS
+          value: "www"

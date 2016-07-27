@@ -17,7 +17,7 @@ module.exports = {
 function landingPage(req, res, next) {
   if(!req.session.landingPage && req.user.signInCount == 1) {
     req.session.landingPage = true;
-    res.redirect(subdomains.url(req, req.user.ownerAccountSubdomain, '/dashboard/landing'));
+    res.redirect(subdomains.url(req, res.locals.currentDomain.name, '/dashboard/landing'));
   } else {
     next();
   }
@@ -65,7 +65,7 @@ function myDashboardPage(req, res, next) {
     include: [models.Account]
   }).then(function(accountUsers) {
     if(accountUsers.length == 1 && compareRoles(accountUsers[0].role)) {
-      res.redirect(subdomains.url(req, accountUsers[0].Account.name, '/dashboard#/account-profile'));
+      res.redirect(subdomains.url(req, accountUsers[0].Account.subdomain, '/dashboard#/account-profile'));
     }
     else {
       res.redirect(subdomains.url(req, subdomains.base, '/my-dashboard'));

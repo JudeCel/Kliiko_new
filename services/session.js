@@ -142,7 +142,7 @@ function findAllSessions(userId, domain, provider) {
     });
   }
   else {
-    findAllSessionsAsMember(userId, accountId, provider).then(function(data) {
+    findAllSessionsAsMember(userId, domain.id, provider).then(function(data) {
       deferred.resolve(data);
     }, function(error) {
       deferred.reject(error);
@@ -409,7 +409,6 @@ function findAllSessionsAsManager(accountId, provider) {
 function findAllSessionsAsMember(userId, accountId, provider) {
   let deferred = q.defer();
   Session.findAll({
-    attributes: ['id'],
     where: {
       accountId: accountId
     },
