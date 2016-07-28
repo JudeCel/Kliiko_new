@@ -198,7 +198,7 @@
             Enterprise Plan
           </span>
 
-          <div class="contact-us-btn-red pull-right" style="cursor:pointer" ng-click="up.openContactUsModal(app.user)">Get A Quote</div>
+          <div class="contact-us-btn-red pull-right" ng-click="up.openContactUsModal(app.user)">Get A Quote</div>
 
           <p>
             klzii Supports organizations large and small. If need more Managers,
@@ -213,14 +213,17 @@
       <ng-include src="'/js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/getAQuote.tpl.html'"></ng-include>
     </div>
 
-    <div class="col-sm-12" id="disclaimer">
+    <div class="col-sm-10 col-sm-offset-1" id="disclaimer">
       <p>
         <b>Please Note:</b> Depending on the nature of your project, you may also need to provide appropriate Incentive-Gifts to your group-Session Participants
       </p>
       <p>
-        *Your credit card will be charged for any additional SMS.
+        *You can purchase additional SMS credits as required.
       </p>
     </div>
 
+    <div class="col-sm-12">
+      <a href='/dashboard#/smsCredits'><div class="contact-us-btn-red">Buy More SMS Credits</div></a>
+    </div>
   </section>
 </section>
