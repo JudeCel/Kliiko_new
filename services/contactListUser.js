@@ -7,9 +7,9 @@ var filters = require('./../models/filters');
 var AccountUser = models.AccountUser;
 var ContactList = models.ContactList;
 var ContactListUser = models.ContactListUser;
-var AccountUserService = require('./../services/accountUser');
+var AccountUserService = require('./accountUser');
 var dataWrappers = require('./../models/dataWrappers');
-var validators = require('./../services/validators');
+var validators = require('./validators');
 var async = require('async');
 
 module.exports = {
@@ -20,6 +20,7 @@ module.exports = {
   destroy: destroy,
   updatePositions: updatePositions,
   bulkCreate: bulkCreate,
+  contactListUserParams: contactListUserParams,
   destroyByToken: destroyByToken
 };
 

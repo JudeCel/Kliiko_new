@@ -119,7 +119,7 @@
     function canSeeGoToChat(session, accountUser) {
       if(session.sessionData) {
         var facilitator = session.sessionData.facilitator ? session.sessionData.facilitator.accountUserId == accountUser.id : false;
-        var member = false;
+        var member, topics = false;
         if(session.sessionData.SessionMembers) {
           session.sessionData.SessionMembers.map(function(member) {
             if(member.accountUserId == accountUser.id) {
@@ -127,7 +127,12 @@
             }
           });
         }
-        return facilitator || member;
+
+        if(session.steps.step2.topics.length > 0) {
+          topics = true;
+        }
+
+        return (facilitator || member) && topics;
       }
       else {
         return false;

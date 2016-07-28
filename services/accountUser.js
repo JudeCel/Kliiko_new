@@ -24,12 +24,27 @@ function createAccountManager(object, callback) {
   object.errors = object.errors || {};
 
   AccountUser.create(prepareAccountManagerParams(object.params, object.account, object.user), { transaction: object.transaction })
-  .then(function(_result) {
-    callback(null, object);
+  .then(function(accountUser) {
+    let contactList = selectAccountManagerContactList(object.contactLists);
+    let cluParams = contactListUserParams({ accountId: accountUser.AccountId, contactListId: contactList.id }, accountUser);
+    models.ContactListUser.create(cluParams, {transaction: object.transaction}).then(function() {
+      callback(null, object);
+    }, function(error) {
+      _.merge(object.errors, filters.errors(error));
+      callback(null, object);
+    });
   }, function(error) {
     _.merge(object.errors, filters.errors(error));
     callback(null, object);
   });
+}
+
+function selectAccountManagerContactList(contactLists) {
+  for(var i in contactLists) {
+    if(contactLists[i].role == 'accountManager') {
+      return contactLists[i];
+    }
+  }
 }
 
 function prepareAccountManagerParams(params, account, user) {
@@ -44,7 +59,7 @@ function prepareAccountManagerParams(params, account, user) {
 
 function create(params, accountId, role, t) {
   var deferred = q.defer();
-  
+
   AccountUser.create(buidAttrs(params, accountId, role), { transaction: t }).then(function(result) {
     deferred.resolve(result);
   }, function(error) {
@@ -135,6 +150,16 @@ function findWithSessionMembers(userId, accountId) {
   });
 
   return deferred.promise;
+}
+
+function contactListUserParams(params, accountUser) {
+  return {
+    userId: accountUser.UserId,
+    accountUserId: accountUser.id,
+    accountId: params.accountId,
+    contactListId: params.contactListId,
+    customFields: params.customFields || {}
+  }
 }
 
 module.exports = {

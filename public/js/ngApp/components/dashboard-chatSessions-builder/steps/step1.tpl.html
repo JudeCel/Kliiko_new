@@ -44,10 +44,10 @@
 
         <img class="date-time-ico time" src="/icons/time_green.png" alt="">
         <uib-timepicker class="timepicker-wrapper" ng-model="step1Controller.step1.endTime" ng-change="step1Controller.updateStep('endTime')" hour-step="step1Controller.dateTime.hstep" minute-step="step1Controller.dateTime.mstep" show-meridian="true"></uib-timepicker>
-        <code ng-show="step1Controller.accordions.dateAndTimeError" class="margin020">
-          End Time should be greater then Start Time
-        </code>
       </div>
+      <code ng-if="step1Controller.accordions.dateAndTimeError" class='calendar-error'>
+        End Time should be greater then Start Time
+      </code>
     </uib-accordion-group>
 
     <!-- Facilitators -->

@@ -100,6 +100,7 @@
     vm.optionBackground = optionBackground;
     vm.openContactUsModal = openContactUsModal;
     vm.submitContactusForm = submitContactusForm;
+    vm.buttonClassName = buttonClassName;
     vm.switchPlanView = switchPlanView;
     vm.planOptionColor = planOptionColor;
     vm.selectPlanBtnColor = selectPlanBtnColor;
@@ -150,6 +151,7 @@
             }
           });
 
+          vm.annualOrMonthly = 'monthly';
           vm.subPlans = vm.monthlyPlans;
           vm.currentPlan = result.currentPlan;
         }
@@ -287,7 +289,15 @@
       }
       domServices.modal('contactUsModal');
     }
+
+    function buttonClassName(view) {
+      var className = 'option-btn-red btn-dashboard-plans';
+      return vm.annualOrMonthly == view ? className + ' active' : className;
+    }
+
     function switchPlanView(view) {
+      vm.annualOrMonthly = view;
+
       if (view == 'annual') {
         vm.subPlans = vm.annualPlans;
       }
