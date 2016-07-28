@@ -3,8 +3,8 @@
   <section class="plans-table">
     <div class="coll-sm-12">
       <div class="col-sm-3 plan-option-list">
-        <div class="option-btn-red btn-dashboard-plans" ng-click="up.switchPlanView('monthly')">Monthly</div>
-        <div class="option-btn-red btn-dashboard-plans" ng-click="up.switchPlanView('annual')">Annual</div>
+        <div class="{{ up.buttonClassName('monthly') }}" ng-click="up.switchPlanView('monthly')">Monthly</div>
+        <div class="{{ up.buttonClassName('annual') }}" ng-click="up.switchPlanView('annual')">Annual</div>
       </div>
 
       <div ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' ">

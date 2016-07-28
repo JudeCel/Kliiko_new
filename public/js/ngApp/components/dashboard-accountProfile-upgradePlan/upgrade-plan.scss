@@ -85,12 +85,8 @@
       color: #e51d39;
       border:solid 2px #e51d39;
     }
-    .option-btn-red:hover{
-      cursor: pointe;
-      color: #fff;
-      background-color: #e51d39;
-    }
-    .option-btn-red-active{
+    .option-btn-red:hover, .option-btn-red.active{
+      cursor: pointer;
       color: #fff;
       background-color: #e51d39;
     }
