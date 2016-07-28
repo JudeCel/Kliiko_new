@@ -5,7 +5,6 @@ var filters = require('./../models/filters');
 var AccountUser = models.AccountUser;
 var SessionMember = models.SessionMember;
 var User = models.User;
-var contactListUserServices = require('./contactListUser');
 var _ = require('lodash');
 var q = require('q');
 
@@ -27,7 +26,7 @@ function createAccountManager(object, callback) {
   AccountUser.create(prepareAccountManagerParams(object.params, object.account, object.user), { transaction: object.transaction })
   .then(function(accountUser) {
     let contactList = selectAccountManagerContactList(object.contactLists);
-    let cluParams = contactListUserServices.contactListUserParams({ accountId: accountUser.AccountId, contactListId: contactList.id }, accountUser);
+    let cluParams = contactListUserParams({ accountId: accountUser.AccountId, contactListId: contactList.id }, accountUser);
     models.ContactListUser.create(cluParams, {transaction: object.transaction}).then(function() {
       callback(null, object);
     }, function(error) {
@@ -151,6 +150,16 @@ function findWithSessionMembers(userId, accountId) {
   });
 
   return deferred.promise;
+}
+
+function contactListUserParams(params, accountUser) {
+  return {
+    userId: accountUser.UserId,
+    accountUserId: accountUser.id,
+    accountId: params.accountId,
+    contactListId: params.contactListId,
+    customFields: params.customFields || {}
+  }
 }
 
 module.exports = {

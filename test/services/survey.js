@@ -594,7 +594,7 @@ describe('SERVICE - Survey', function() {
                 assert.equal(c, 1);
 
                 ContactListUser.count().then(function(c) {
-                  assert.equal(c, 0);
+                  assert.equal(c, 1);
                   done();
                 });
               });
@@ -610,7 +610,7 @@ describe('SERVICE - Survey', function() {
         params.SurveyQuestions.push(surveyQuestionContactList());
 
         ContactListUser.count().then(function(c) {
-          assert.equal(c, 0);
+          assert.equal(c, 1);
 
           surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
             let survey = result.data;
@@ -626,7 +626,7 @@ describe('SERVICE - Survey', function() {
                   assert.equal(c, 1);
 
                   ContactListUser.count().then(function(c) {
-                    assert.equal(c, 1);
+                    assert.equal(c, 2);
                     done();
                   });
                 });
@@ -645,7 +645,7 @@ describe('SERVICE - Survey', function() {
         params.SurveyQuestions.push(surveyQuestionContactList());
 
         ContactListUser.count().then(function(c) {
-          assert.equal(c, 0);
+          assert.equal(c, 1);
 
           surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
             let survey = result.data;
