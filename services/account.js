@@ -13,9 +13,10 @@ function create(object, callback) {
   object.errors = object.errors || {};
 
   Account.create({ name: object.params.accountName, selectedPlanOnRegistration: object.params.selectedPlanOnRegistration }, { transaction: object.transaction }).then(function(result) {
-    contactListService.createDefaultLists(result.id, object.transaction).then(function(_promise) {
+    contactListService.createDefaultLists(result.id, object.transaction).then(function(contactLists) {
       brandColourService.createDefaultForAccount({ accountId: result.id, name: 'Default scheme', colours: {} }, object.transaction).then(function() {
         object.account = result;
+        object.contactLists = contactLists.results;
         callback(null, object);
       }, function(error) {
         _.merge(object.errors, filters.errors(error));

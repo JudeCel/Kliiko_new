@@ -226,13 +226,13 @@ function update(params) {
   return deferred.promise;
 }
 
-function createDefaultLists(accoutId, t) {
+function createDefaultLists(accountId, t) {
   let deferred = q.defer();
   ContactList.bulkCreate([
-    { name: 'Account Managers', accountId: accoutId, editable: false, role: 'accountManager' },
-    { name: 'Facilitators', accountId: accoutId, editable: false, role: 'facilitator'},
-    { name: 'Observers', accountId: accoutId, editable: false, role: 'observer' }
-  ], { transaction: t }).done(function(results) {
+    { name: 'Account Managers', accountId: accountId, editable: false, role: 'accountManager' },
+    { name: 'Facilitators', accountId: accountId, editable: false, role: 'facilitator'},
+    { name: 'Observers', accountId: accountId, editable: false, role: 'observer' }
+  ], { transaction: t, returning: true }).then(function(results) {
     deferred.resolve({results: results, transaction: t});
   }, function(err) {
     deferred.reject({error: err, transaction: t});

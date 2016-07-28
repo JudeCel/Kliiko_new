@@ -20,6 +20,7 @@ module.exports = {
   destroy: destroy,
   updatePositions: updatePositions,
   bulkCreate: bulkCreate,
+  contactListUserParams: contactListUserParams,
   destroyByToken: destroyByToken
 };
 
