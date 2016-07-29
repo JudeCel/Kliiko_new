@@ -55,5 +55,15 @@ spec:
           value: "www.test.klzii.com"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
-        - name: SERVER_SKIP_SUBDOMAINS
-          value: "www,test"
+        - name: FACEBOOK_CLIENT_ID
+          value: "1740610496152274"
+        - name: FACEBOOK_CLIENT_SECRET
+          value: "7d0f78d9fdd0052c20cdf5c2aeda7b33"
+        - name: FACEBOOK_CALLBACK_URL
+          value: "http://www.test.klzii.com/auth/facebook/callback"
+        - name: GOOGLE_CLIENT_ID
+          value: "570903251504-hvev7sqcqqvl977djc1kqv722sqgidp3.apps.googleusercontent.com"
+        - name: GOOGLE_CLIENT_SECRET
+          value: "i_S2xLucKbRL14sp6hHSRVA_"
+        - name: GOOGLE_CALLBACK_URL
+          value: "http://www.test.klzii.com/auth/google/callback"
