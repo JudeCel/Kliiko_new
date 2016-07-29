@@ -40,7 +40,7 @@ spec:
         - name: REDIS_HOST
           value: "redis-master"
         - name: SERVER_CHAT_DOMAIN_URL
-          value: "https://chat.test.klzii.com"
+          value: "http://chat.test.klzii.com"
         - name: REDIS_PORT
           value: "6379"
         - name: DATABASE_URL
