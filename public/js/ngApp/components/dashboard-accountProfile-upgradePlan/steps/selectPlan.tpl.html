@@ -1,10 +1,12 @@
 <section id="step-1">
   <h2>Choose a plan:</h2>
   <section class="plans-table">
-    <div class="coll-sm-12">
+    <div class="col-sm-12">
       <div class="col-sm-3 plan-option-list">
-        <div class="{{ up.buttonClassName('monthly') }}" ng-click="up.switchPlanView('monthly')">Monthly</div>
-        <div class="{{ up.buttonClassName('annual') }}" ng-click="up.switchPlanView('annual')">Annual</div>
+        <div class='flex-box'>
+          <div class="flex-el {{ up.buttonClassName('monthly') }}" ng-click="up.switchPlanView('monthly')">Monthly</div>
+          <div class="flex-el {{ up.buttonClassName('annual') }}" ng-click="up.switchPlanView('annual')">Annual</div>
+        </div>
       </div>
 
       <div ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' ">
@@ -27,7 +29,7 @@
         </div>
       </div>
     </div>
-      <div class="coll-sm-12">
+      <div class="col-sm-12">
         <div class="col-sm-3 plan-option-list">
           <div class="align-vertical-parent" ng-repeat="option in up.planOptions">
             <span class="{{ up.optionBackground(index) }} align-vertical-child white-space-pre-line">{{ option }}</span>

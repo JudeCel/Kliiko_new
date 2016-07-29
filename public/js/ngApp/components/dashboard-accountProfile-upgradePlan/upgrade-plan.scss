@@ -273,6 +273,12 @@
                 0 0 4px $grey, 0 0 4px $grey;
       }
 
+      @media (max-width: 1200px) {
+        .outline {
+          font-size: 16px
+        }
+      }
+
       p {
         font-size: 1.5rem;
         color: #fff;
@@ -333,7 +339,6 @@
 
   .btn-dashboard-plans {
     display: block;
-    margin: 5px 0;
     padding: 9px 10px;
     font-size: 16px;
     border: solid 3px $grey;

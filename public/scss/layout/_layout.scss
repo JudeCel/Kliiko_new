@@ -1,3 +1,18 @@
+.flex-box {
+  width: 100%;
+  display: -webkit-flex;
+  display: flex;
+  .flex-el {
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    margin-right: 2px;
+  }
+  .flex-el:last-child {
+    margin-right: 0px;
+  }
+}
+
 /* Borders */
 .border-brown,
 .border-yellow,
