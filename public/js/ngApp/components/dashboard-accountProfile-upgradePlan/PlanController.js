@@ -98,7 +98,7 @@
     vm.showCalculatedPrice = showCalculatedPrice;
     vm.checkRadioButton = checkRadioButton;
     vm.optionBackground = optionBackground;
-    vm.openContactUsModal = openContactUsModal;
+    vm.openGetQuoteModal = openGetQuoteModal;
     vm.submitContactusForm = submitContactusForm;
     vm.buttonClassName = buttonClassName;
     vm.switchPlanView = switchPlanView;
@@ -279,7 +279,7 @@
       }
     }
 
-    function openContactUsModal(user) {
+    function openGetQuoteModal(user) {
       vm.contactUsUser = {
         firstName: user.firstName,
         lastName: user.lastName,
@@ -287,7 +287,7 @@
         contactNumber: user.mobile,
         companyName: user.companyName
       }
-      domServices.modal('contactUsModal');
+      domServices.modal('getQuoteModal');
     }
 
     function buttonClassName(view) {
