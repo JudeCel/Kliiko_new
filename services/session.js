@@ -4,6 +4,7 @@ var policy = require('./../middleware/policy');
 var models = require('./../models');
 var filters = require('./../models/filters');
 var subscriptionService = require('./subscription');
+var sessionValidator = require('./validators/session');
 var topicsService = require('./topics');
 var Session  = models.Session;
 var Invite  = models.Invite;
@@ -32,12 +33,6 @@ const MESSAGES = {
   rated: 'Session Member rated',
   commentChanged: 'Comment updated successfully',
   cantRateSelf: "You can't rate your self",
-  errors: {
-    Expired: 'This session has expired',
-    Pending: 'This session has not started yet',
-    Closed: 'This session has been closed'
-  },
-  noTopics: 'There are no topics added'
 };
 
 module.exports = {
@@ -49,7 +44,6 @@ module.exports = {
   removeSession: removeSession,
   updateSessionMemberRating: updateSessionMemberRating,
   getAllSessionRatings: getAllSessionRatings,
-  addShowStatus: addShowStatus,
   changeComment: changeComment,
   validateSession: validateSession,
   getSessionByInvite: getSessionByInvite
@@ -489,7 +483,7 @@ function changeSessionData(sessions, chargebeeSub, provider) {
   let array = _.isArray(sessions) ? sessions : [sessions];
   _.map(array, function(session) {
     if(chargebeeSub) {
-      addShowStatus(session, chargebeeSub);
+      sessionValidator.addShowStatus(session, chargebeeSub);
     }
     else {
       session.dataValues.showStatus = 'Indefinite';
@@ -515,96 +509,25 @@ function changeSessionData(sessions, chargebeeSub, provider) {
   });
 }
 
-// function functionName() {
-//   let order = ['accountManager', 'facilitator', 'participant', 'observer'];
-//   models.AccountUser.findAll({
-//     where: { UserId: userId },
-//     include: [{
-//       model: models.Account,
-//       include: [{
-//         model: models.Session,
-//         where: { id: sessionId }
-//       }]
-//     }]
-//   }).then(function(accountUsers) {
-//     console.log(accountUsers);
-//   });
-// }
-
-function validateSession(sessionId, provider) {
+function validateSession(userId, sessionId, provider) {
   let deferred = q.defer();
 
-  async.waterfall([
-    function(cb) { validateDates(sessionId, provider, cb); },
-    function(cb) { validateTopics(sessionId, cb); }
-  ], function(error) {
-    if(error) {
-      deferred.reject(error);
-    }
-    else {
-      deferred.resolve();
-    }
+  models.SessionMember.find({
+    include: [{
+      model: models.Session,
+      where: { id: sessionId },
+      include: [models.SessionTopics]
+    }, {
+      model: models.AccountUser,
+      where: { UserId: userId }
+    }]
+  }).then(function(sessionMember) {
+    return sessionValidator.validate(sessionMember, provider);
+  }).then(function() {
+    deferred.resolve();
+  }).catch(function(error) {
+    deferred.reject(error);
   });
 
   return deferred.promise;
-}
-
-function validateDates(sessionId, provider, cb) {
-  models.Session.find({
-    where: { id: sessionId },
-    include: [{
-      model: Account,
-      include: [models.Subscription]
-    }]
-  }).then(function(session) {
-    console.log(sessionId);
-    subscriptionService.getChargebeeSubscription(session.Account.Subscription.subscriptionId, provider).then(function(chargebeeSub) {
-      addShowStatus(session, chargebeeSub);
-      let error = MESSAGES.errors[session.dataValues.showStatus];
-
-      if(error) {
-        cb(error);
-      }
-      else {
-        cb();
-      }
-    }, function(error) {
-      cb(error);
-    });
-  }).catch(function(error) {
-    cb(filters.errors(error));
-  });
-}
-
-function validateTopics(sessionId, cb) {
-  models.SessionTopics.count({ where: { sessionId: sessionId } }).then(function(count) {
-    if(count > 0) {
-      cb()
-    }
-    else {
-      cb(MESSAGES.noTopics);
-    }
-  });
-}
-
-function addShowStatus(session, chargebeeSub) {
-  let endDate = new Date((chargebeeSub.current_term_end || chargebeeSub.trial_end) * 1000);
-  let settings = session.dataValues || session;
-  settings.expireDate = endDate;
-
-  if(session.active) {
-    var date = new Date();
-    if(chargebeeSub && (date > endDate || date > new Date(session.endTime))) {
-      settings.showStatus = 'Expired';
-    }
-    else if(date < new Date(session.startTime)) {
-      settings.showStatus = 'Pending';
-    }
-    else {
-      settings.showStatus = 'Open';
-    }
-  }
-  else {
-    settings.showStatus = 'Closed';
-  }
 }

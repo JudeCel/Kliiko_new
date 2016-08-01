@@ -12,8 +12,8 @@ var q = require('q');
 var _ = require('lodash');
 var async = require('async');
 
-var sessionServices = require('./session.js')
-var subscriptionServices = require('./subscription.js')
+var sessionValidator = require('./validators/session.js');
+var subscriptionServices = require('./subscription.js');
 var subdomains = require('./../lib/subdomains.js');
 
 module.exports = {
@@ -84,7 +84,7 @@ function prepareAsync(data, provider) {
 
   async.each(data, function(accountUser, callback) {
     subscriptionServices.getChargebeeSubscription(accountUser.dataValues.session.Account.Subscription.subscriptionId, provider).then(function(chargebeeSub) {
-      sessionServices.addShowStatus(accountUser.dataValues.session, chargebeeSub);
+      sessionValidator.addShowStatus(accountUser.dataValues.session, chargebeeSub);
       callback();
     }, function(error) {
       callback(error);
