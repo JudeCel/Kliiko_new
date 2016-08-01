@@ -80,6 +80,10 @@ function foundPaths(path, valid) {
 }
 /* GET root page. */
 
+router.get('/ping', function(req, res, next) {
+  res.send({ status: 'ok' });
+});
+
 router.get('/', function (req, res, next) {
     res.render('login', {title: 'Login', error: "", message: ''});
 });
