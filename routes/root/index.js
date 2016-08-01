@@ -281,7 +281,7 @@ router.get('/login', function (req, res, next) {
     res.render('login', { title: 'Login', error: '', message: req.flash('message')[0] });
 });
 
-router.route('/emailConfirmation/:token')
+router.route('/VerifyEmail/:token')
   .get(function (req, res, next) {
     let tplData = {
       title: 'Email Confirmation',

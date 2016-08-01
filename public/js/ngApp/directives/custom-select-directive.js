@@ -19,7 +19,7 @@ function customSelectDirective() {
         restrict: 'EA',
         replace: false,
         transclude: true,
-        templateUrl: 'js/ngApp/directives/custom-select-directive.tpl.html',
+        templateUrl: '/js/ngApp/directives/custom-select-directive.tpl.html',
         controller: controller,
     };
     return directive;

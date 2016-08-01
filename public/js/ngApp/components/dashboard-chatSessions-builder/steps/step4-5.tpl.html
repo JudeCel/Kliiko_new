@@ -69,8 +69,8 @@
     </div>
 
     <div class='row'>
-      <div class='btn-standart btn-green' ng-click='lastStepsController.inviteMembers()'>
-        Invite ({{ lastStepsController.findSelectedMembers().length }})
+      <div class='btn-standart btn-red' ng-click='lastStepsController.inviteMembers()'>
+        <i class='fa fa-envelope' aria-hidden='true' /> ({{ lastStepsController.findSelectedMembers().length }})
       </div>
       <div class='btn-standart btn-green' ng-click='lastStepsController.sendGenericEmail()'>
         Send Generic Email

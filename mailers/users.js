@@ -76,8 +76,7 @@ users.sendResetPasswordToken = function(params, callback) {
 };
 
 users.sendEmailConfirmationToken = function(params, callback) {
-  const emailConfirmationPath = '/emailConfirmation/';
-  let mailUrl = helpers.getUrl(params.token, emailConfirmationPath);
+  let mailUrl = helpers.getUrl(params.token, '/VerifyEmail/');
   mailTemplateService.getActiveMailTemplate("registerConfirmationEmail", null, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {

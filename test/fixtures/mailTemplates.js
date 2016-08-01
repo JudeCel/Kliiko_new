@@ -122,7 +122,7 @@ let templateFiles = [
     fileName: 'SystemEmail_ConfirmationEmail.html',
     name: constants.mailTemplateType.registerConfirmationEmail,
     type: "registerConfirmationEmail",
-    subject: "Confirmation Email",
+    subject: "Verify Email Address",
     systemMessage: true
   },
   {
