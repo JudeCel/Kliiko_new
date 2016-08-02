@@ -376,6 +376,9 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
     if (template.sessionId != template.properties.sessionId) {
       result = true;
       template.sessionId = template.properties.sessionId;
+      if(template.properties.templateName) {
+        template.name = template.name + " " + template.properties.templateName;
+      }
     }
   }
 

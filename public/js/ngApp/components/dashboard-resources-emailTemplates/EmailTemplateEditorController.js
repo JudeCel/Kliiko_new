@@ -127,7 +127,7 @@
      * @param createCopy {boolean}
      * @param [template] {object} default valuse is currentTemplate
      */
-    function modifyAndSave(createCopy, template, includeProperties) {
+    function modifyAndSave(createCopy, template, includeProperties, templateName) {
       var deferred = $q.defer();
       var template = template || vm.currentTemplate;
 
@@ -135,6 +135,7 @@
       vm.currentTemplate.error = {};
       if (includeProperties) {
         template.properties = vm.properties;
+        template.properties.templateName = templateName;
       }
       mailTemplate.saveMailTemplate(template, createCopy).then(function (res) {
         if (!res.error) {

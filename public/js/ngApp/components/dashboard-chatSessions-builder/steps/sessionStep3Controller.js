@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep3Controller', SessionStep3Controller);
 
-  SessionStep3Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', '$state',  '$filter', '$scope', 'SessionModel'];
-  function SessionStep3Controller(dbg, builderServices, messenger, $state, $filter, $scope, SessionModel) {
+  SessionStep3Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', '$state',  '$filter', '$scope', 'SessionModel', 'domServices'];
+  function SessionStep3Controller(dbg, builderServices, messenger, $state, $filter, $scope, SessionModel, domServices) {
     dbg.log2('#SessionBuilderController 3 started');
     var vm = this;
     vm.mailTemplateList = [];
@@ -61,11 +61,19 @@
 
     vm.modifyAndSave = function(createCopy, addSessionInfo) {
       //null - will pickup current template
-      vm.editor.modifyAndSave(createCopy, null ,addSessionInfo).then(function() {
+      if(vm.templateNameAdd) {
+        domServices.modal('templateNameModal', true);
+      }
+      vm.editor.modifyAndSave(createCopy, null ,addSessionInfo, vm.templateNameAdd).then(function() {
         vm.getPreparedMailTemplateList();
       }, function() {
         //failure is handled in mail template controller. This is a wrapper
       });
+    }
+
+    vm.openModal = function() {
+      vm.templateNameAdd = null;
+      domServices.modal('templateNameModal');
     }
   }
 
