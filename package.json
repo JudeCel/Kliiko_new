@@ -91,7 +91,7 @@
     "dotenv-extended": "^1.0.0",
     "ejs": "^2.4.1",
     "express": "^4.14.0",
-    "express-session": "^1.13.0",
+    "express-session": "^1.14.0",
     "fast-csv": "^1.0.0",
     "forever-monitor": "^1.7.0",
     "fs-extra": "^0.26.2",
