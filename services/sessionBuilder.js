@@ -12,6 +12,7 @@ var twilioLib = require('./../lib/twilio');
 var mailHelper = require('./../mailers/mailHelper');
 var mailUrlHelper = require('./../mailers/helpers');
 var validators = require('./../services/validators');
+var sessionMemberServices = require('./sessionMember');
 
 var async = require('async');
 var _ = require('lodash');
@@ -73,6 +74,19 @@ module.exports = {
   canAddObservers: canAddObservers
 };
 
+function addDefaultObservers(session) {
+  models.AccountUser.findAll({ where: { AccountId: session.accountId, role: 'accountManager' } }).then(function(accountUsers) {
+    _.map(accountUsers, function(accountUser) {
+      sessionMemberServices.createWithTokenAndColour({
+        sessionId: session.id,
+        accountUserId: accountUser.id,
+        username: accountUser.firstName,
+        role: 'observer'
+      });
+    });
+  });
+}
+
 function initializeBuilder(params) {
   let deferred = q.defer();
 
@@ -80,6 +94,7 @@ function initializeBuilder(params) {
     validators.subscription(params.accountId, 'session', 1).then(function() {
       params.step = 'setUp';
       Session.create(params).then(function(session) {
+        addDefaultObservers(session, params);
         sessionBuilderObject(session).then(function(result) {
           deferred.resolve(result);
         }, function(error) {

@@ -18,8 +18,6 @@
     vm.changePage = changePage;
     vm.rowClass = rowClass;
     vm.hasAccess = hasAccess;
-    vm.isExpired = isExpired;
-    vm.isMember = isMember;
     vm.mouseOver = mouseOver;
     vm.redirectToChatSession = redirectToChatSession;
     vm.openModalWindow = openModalWindow;
@@ -60,22 +58,6 @@
       }, function(error) {
         messenger.error(error);
       });
-    }
-
-    function isMember(facilitatorEmail, members, user) {
-      var isMemeber = false;
-
-      if(facilitatorEmail == user.email) {
-        isMemeber = true;
-      }else if (members) {
-        members.map(function(member) {
-          if(member.AccountUser.email == user.email) {
-            isMemeber = true;
-          }
-        });
-      }
-
-      return isMemeber;
     }
 
     function redirectToChatSession(sessionId) {
@@ -163,10 +145,6 @@
         angular.copy(session, vm.originalSession);
         vm.currentPage = { page: page };
       }
-    };
-
-    function isExpired(session) {
-      return session.showStatus == 'Expired';
     };
 
     function calculateSessionRating(session) {

@@ -110,29 +110,51 @@ function prepareAccountUsers(accountUsers, protocol) {
   };
 
   _.map(accountUsers, function(accountUser) {
-    switch(accountUser.role) {
-      case 'accountManager':
-        addDashboardUrl(accountUser, '/dashboard', protocol);
-        break;
-      case 'facilitator':
-        addDashboardUrl(accountUser, '/dashboard#/chatSessions/builder/', protocol);
-        addSession(accountUser);
-        break;
-      case 'participant':
-      case 'observer':
-        addSession(accountUser);
-        break;
-    }
-    object[accountUser.role].data.push(accountUser);
+    userSwitch(object, accountUser, protocol);
+
+    _.map(accountUser.SessionMembers, function(sessionMember) {
+      let user = _.cloneDeep(accountUser);
+      user.role = sessionMember.role;
+      user.SessionMembers = [sessionMember];
+      userSwitch(object, user, protocol);
+    });
   });
 
   _.map(object, function(value, key) {
     if(_.isEmpty(value.data)) {
       delete object[key];
     }
+    else {
+      value.data = _.uniqBy(value.data, 'session.id');
+    }
   });
 
   return object;
+}
+
+function userSwitch(object, user, protocol) {
+  switch(user.role) {
+    case 'accountManager':
+      addDashboardUrl(user, '/dashboard', protocol);
+      break;
+    case 'facilitator':
+      addDashboardUrl(user, '/dashboard#/chatSessions/builder/', protocol);
+      addSession(user);
+      break;
+    case 'participant':
+    case 'observer':
+      addSession(user);
+      break;
+  }
+
+  if(user.dataValues.needsSession) {
+    if(user.dataValues.session) {
+      object[user.role].data.push(user);
+    }
+  }
+  else {
+    object[user.role].data.push(user);
+  }
 }
 
 function addDashboardUrl(accountUser, path, protocol) {
@@ -140,7 +162,9 @@ function addDashboardUrl(accountUser, path, protocol) {
 }
 
 function addSession(accountUser) {
+  accountUser.dataValues.needsSession = true;
   let sessionMember = accountUser.SessionMembers[0];
+
   if(sessionMember) {
     accountUser.dataValues.session = sessionMember.Session.dataValues;
   }

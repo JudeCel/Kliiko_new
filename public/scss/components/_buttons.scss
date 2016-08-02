@@ -202,8 +202,12 @@ input.kliiko-checkbox:checked + label{
 
 .go-to-chatroom,
 .go-to-dashboard {
-  padding: 5px;
+  padding: 6px;
   margin-right: 5px;
+  vertical-align: middle;
+  margin-top: -2px;
+  width: 30px;
+  height: 30px;
 }
 
 .go-to-chatroom,

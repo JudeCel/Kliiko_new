@@ -516,13 +516,21 @@ function validateSession(userId, sessionId, provider) {
     include: [{
       model: models.Session,
       where: { id: sessionId },
-      include: [models.SessionTopics]
+      include: [{
+        model: models.Account,
+        include: [models.Subscription]
+      }, models.SessionTopics]
     }, {
       model: models.AccountUser,
       where: { UserId: userId }
     }]
   }).then(function(sessionMember) {
-    return sessionValidator.validate(sessionMember, provider);
+    if(sessionMember) {
+      return sessionValidator.validate(sessionMember, provider);
+    }
+    else {
+      deferred.reject(MESSAGES.sessionMemberNotFound);
+    }
   }).then(function() {
     deferred.resolve();
   }).catch(function(error) {
