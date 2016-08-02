@@ -10,7 +10,8 @@ var _ = require('lodash');
 const MESSAGES = {
   error: {
     inactiveSubscription: "Your subscription is expired, please update your subscription plan.",
-    noSubscription: "You don't have a subscription. Please purchase a plan."
+    noSubscription: "You don't have a subscription. Please purchase a plan.",
+    account: 'Account not found'
   }
 }
 
@@ -22,23 +23,29 @@ module.exports = {
 function validate(accountId) {
   let deferred = q.defer();
 
-  Subscription.find({
-    where: {
-      accountId: accountId,
-      active: true
-    }
-  }).then(function(subscription) {
-    if(subscription){
-      if(subscription.active){
+  models.Account.find({
+    where: { id: accountId },
+    include: [Subscription]
+  }).then(function(account) {
+    if(account) {
+      if(account.admin) {
         deferred.resolve();
-      }else{
-        deferred.reject(MESSAGES.error.inactiveSubscription);
       }
-    }else{
-      deferred.reject(MESSAGES.error.noSubscription);
+      else if(account.Subscription) {
+        if(account.Subscription.active) {
+          deferred.resolve();
+        }
+        else {
+          deferred.reject(MESSAGES.error.inactiveSubscription);
+        }
+      }
+      else {
+        deferred.reject(MESSAGES.error.noSubscription);
+      }
     }
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
+    else {
+      deferred.reject(MESSAGES.error.account);
+    }
   });
 
   return deferred.promise;

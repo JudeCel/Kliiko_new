@@ -9,7 +9,7 @@
     </label>
 
     <div class='col-xs-10 col-md-6'>
-      <div class='input-group' ng-if='cd.input'>
+      <div class='input-group' ng-if='cd.input || cd.number'>
         <input type='text' class='form-control' id='{{ cd.name }}' placeholder='' ng-disabled='sc.contactDetailDisabled(cd)'>
 
         <span class='input-group-addon' ng-if='!cd.canDisable || (cd.canDisable && sc.survey.confirmedAt)'>@</span>
@@ -19,7 +19,7 @@
       </div>
 
       <div ng-if='cd.select'>
-        <select class='form-control' id='{{ cd.name }}'>
+        <select class='form-control' id='{{ cd.name }}' style='text-transform: capitalize;'>
           <option ng-repeat='option in cd.options' value='{{ option }}'>{{ option }}</option>
         </select>
       </div>

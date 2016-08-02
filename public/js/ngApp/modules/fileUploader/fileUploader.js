@@ -53,7 +53,7 @@
         file: data.file,
         params: {
           scope: data.scope,
-          private: data.private,
+          stock: data.stock,
           type: data.type,
           name: data.name
         }
@@ -61,8 +61,20 @@
         dbg.log2('#KliikoApp.fileUploader > upload file > server respond >', result);
         deferred.resolve(result);
       }, function(error) {
-        dbg.log2('#KliikoApp.fileUploader > upload file > server error >', error);
-        deferred.reject(error.data || requestError);
+        // This is because angular file upload can't understand CORS origin responses.
+        switch (true) {
+          case error.status == -1:
+            deferred.reject("File is too big");
+            break;
+          case Array.isArray(error.data.errors.type):
+            deferred.reject(error.data.errors.type[0]);
+            break;
+          case typeof error.data.errors === 'object':
+            deferred.reject(error.data.errors);
+            break;
+          default:
+            deferred.reject(requestError);
+        }
       });
 
       return deferred.promise;
@@ -73,7 +85,7 @@
       var deferred = $q.defer();
       dbg.log2('#KliikoApp.fileUploader > list resources');
 
-      resourceForServer('resources', '').get({ 'type[]': params.type, 'scope[]': params.scope }, function(result) {
+      resourceForServer('resources', '').get({ 'type[]': params.type, 'scope[]': params.scope, stock: params.stock }, function(result) {
         dbg.log2('#KliikoApp.fileUploader > list resources > server respond >', result);
         deferred.resolve(result);
       }, function(error) {

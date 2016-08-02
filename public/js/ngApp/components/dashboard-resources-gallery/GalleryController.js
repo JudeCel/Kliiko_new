@@ -51,6 +51,7 @@
     vm.getFilterResources = getFilterResources;
     vm.youtubeUrl = youtubeUrl;
     vm.normalYoutubeUrl = normalYoutubeUrl;
+    vm.resourceUrl = resourceUrl;
 
     function initController() {
       vm.currentPage.viewType = sessionStorage.getItem('viewType') || vm.currentPage.viewType;
@@ -65,7 +66,7 @@
       scopes = Array.from(new Set(scopes));
       types = Array.from(new Set(types));
 
-      GalleryServices.listResources({ scope: scopes, type: types }).then(function(result) {
+      GalleryServices.listResources({ scope: scopes, type: types, stock: true }).then(function(result) {
         vm.currentPage.main = true;
         vm.resourceList = result.resources;
         filterResources(vm.currentPage.filter);
@@ -304,7 +305,11 @@
     }
 
     function youtubeUrl(url) {
-      return $sce.trustAsResourceUrl('http://www.youtube.com/embed/' + url);
+      return $sce.trustAsResourceUrl('https://www.youtube.com/embed/' + url);
+    }
+
+    function resourceUrl(url) {
+      return $sce.trustAsResourceUrl(url);
     }
 
     function getSelectedResources(key, filter) {

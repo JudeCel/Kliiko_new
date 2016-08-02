@@ -4,6 +4,7 @@ var MailTemplate  = require('./../models').MailTemplate;
 var MailTemplateOriginal  = require('./../models').MailTemplateBase;
 var filters = require('./../models/filters');
 var templateMailer = require('../mailers/mailTemplate');
+var mailersHelpers = require('../mailers/helpers');
 var _ = require('lodash');
 var ejs = require('ejs');
 var constants = require('../util/constants');
@@ -574,6 +575,8 @@ function deleteMailTemplate(id, callback) {
 function prepareMailDefaultParameters(params) {
   params = params || {};
   let defaultParams = {
+    termsOfUseUrl: mailersHelpers.getUrl('', '/terms_of_use'),
+    privacyPolicyUrl: mailersHelpers.getUrl('', '/privacy_policy'),
     firstName: "", lastName: "", accountName: "", startDate: new Date().toLocaleDateString(), startTime: new Date().toLocaleTimeString(),
     endDate: new Date().toLocaleDateString(), endTime: new Date().toLocaleTimeString(),
     facilitatorFirstName: "", facilitatorLastName: "", facilitatorMail: "", participantMail: "", facilitatorMobileNumber: "",
@@ -650,6 +653,8 @@ function formatTemplateString(str) {
 
   str = str.replace(/\{Invitation Not At All\}/ig, "<%= invitationNotAtAllUrl %>");
   str = str.replace(/\{Mail Unsubscribe\}/ig, "<%= unsubscribeMailUrl %>");
+  str = str.replace(/\{Privacy Policy\}/ig, "<%= privacyPolicyUrl %>");
+  str = str.replace(/\{Terms of Use\}/ig, "<%= termsOfUseUrl %>");
   str = str.replace(/\{Close Session Yes In Future\}/ig, "<%= participateInFutureUrl %>");
   str = str.replace(/\{Close Session No In Future\}/ig, "<%= dontParticipateInFutureUrl %>");
   str = str.replace(/\{Confirmation Check In\}/ig, "<%= confirmationCheckInUrl %>");

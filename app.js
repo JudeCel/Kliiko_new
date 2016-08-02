@@ -15,7 +15,7 @@ var flash = require('connect-flash');
 var app = express();
 var fs = require('fs');
 var airbrake = require('./lib/airbrake').instance;
-
+app.use(airbrake.expressHandler());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -72,7 +72,6 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
-    airbrake.notify(err);
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,

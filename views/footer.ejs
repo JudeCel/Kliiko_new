@@ -1,12 +1,6 @@
   <footer id="footer" class="text-center">
-      © klzii
-      |
-      <a href="#">Privacy Policy</a>
-      |
-      <a href="#">Terms & Conditions</a>
-      |
-      Version: 0.0.2
-    </footer>
+    © klzii | <a href='/privacy_policy' target='_blank'>Privacy Policy</a> | <a href='/terms_of_use' target='_blank'>Terms & Conditions</a> | Version: 0.0.2
+  </footer>
 
 
   <!-- null modal == fader -->
@@ -26,7 +20,7 @@
         nationalMode: false,
         defaultCountry: 'au',
         preferredCountries: ['au'],
-        utilsScript: 'js/vendors/intl-tel-input/src/utils.js',
+        utilsScript: '/js/vendors/intl-tel-input/src/utils.js',
         autoFormat: true,
         autoPlaceholder: true
       });
@@ -34,7 +28,7 @@
 
       var data = $(element.hidden).val();
       if(data) {
-        field.intlTelInput('setCountry', JSON.parse(data).iso2);
+        field.intlTelInput('setCountry', JSON.parse(data).iso2 || 'au');
       }
     });
 
@@ -47,5 +41,16 @@
       });
     });
   </script>
-  </body>
+  <script>
+    !function() {
+      var e=document.createElement("script"),
+          t=document.getElementsByTagName("script")[0];
+
+      e.async=1,
+      e.src="https://inlinemanual.com/embed/player.4d477842920267622ba2d80045849e23.js",
+      e.charset="UTF-8",
+      t.parentNode.insertBefore(e,t)
+    }();
+  </script>
+</body>
 </html>

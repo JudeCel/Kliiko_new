@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-md-3">
           <div class="btn-standart btn-green" ui-sref="dashboard.chatSessions">
-            <img class="ic" src="icons/back_green.png" alt="Go Back">
+            <img class="ic" src="/icons/back_green.png" alt="Go Back">
             Back to Chat Sessions
           </div>
         </div>
@@ -13,7 +13,7 @@
         <div class="col-md-3">
           <div ng-show="sbc.session.sessionData.active && sbc.session.currentStep == 'inviteSessionObservers'" class="btn-standart btn-red" ng-click="sbc.closeSession()">
             Close Chat Session
-            <img class="ic" src="icons/ic_close_session.png" alt="Close Session">
+            <img class="ic" src="/icons/ic_close_session.png" alt="Close Session">
           </div>
           <div ng-show="sbc.session.sessionData.active == false" class="btn-standart btn-green" ng-click="sbc.openSession()">
             Activate Chat Session
@@ -22,7 +22,7 @@
       </div>
 
 
-      <p class="warning" ng-if="sbc.expireWarning"><img src="icons/ic_attention.png" class="ic">
+      <p class="warning" ng-if="sbc.expireWarning"><img src="/icons/ic_attention.png" class="ic">
         &nbsp; {{ sbc.expireWarning }}
       <br>
 
@@ -57,7 +57,7 @@
                 4
               </span>
               <span class="step-name" ng-class="{'active': sbc.stepsClassIsActive(4), 'done':sbc.stepsClassIsDone(4)}">
-                Manage Session Participants
+                Invite Participants
               </span>
             </div>
             <div class="step-container">
@@ -65,7 +65,7 @@
                 5
               </span>
               <span class="step-name" ng-class="{'active': sbc.stepsClassIsActive(5), 'done':sbc.stepsClassIsDone(5)}">
-                Invite Session Observers
+                Invite Observers
               </span>
             </div>
           </div>
@@ -85,7 +85,7 @@
             <div class="col-md-2 btn-standart pull-right btn-green" ng-click="sbc.goToStep('finish')" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-show="sbc.lastStep">
               Finish with builder
             </div>
-            <div ng-if="sbc.session.chatRoomUrl" class="col-md-2 btn-standart pull-right btn-blue margin020" ng-click="sbc.goToChat(sbc.session)">
+            <div ng-if="sbc.canSeeGoToChat(sbc.session, app.accountUser)" class="col-md-2 btn-standart pull-right btn-blue margin020" ng-click="sbc.goToChat(sbc.session)">
               Enter Chat Room
             </div>
         </div>

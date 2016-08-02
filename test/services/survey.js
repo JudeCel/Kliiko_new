@@ -541,7 +541,6 @@ describe('SERVICE - Survey', function() {
         surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
           surveyServices.copySurvey({ id: survey.id }, testData.account).then(function(result) {
-            console.log(3);
             assert.notEqual(result.data.id, survey.id);
 
             Survey.count().then(function(c) {
@@ -595,7 +594,7 @@ describe('SERVICE - Survey', function() {
                 assert.equal(c, 1);
 
                 ContactListUser.count().then(function(c) {
-                  assert.equal(c, 0);
+                  assert.equal(c, 1);
                   done();
                 });
               });
@@ -611,7 +610,7 @@ describe('SERVICE - Survey', function() {
         params.SurveyQuestions.push(surveyQuestionContactList());
 
         ContactListUser.count().then(function(c) {
-          assert.equal(c, 0);
+          assert.equal(c, 1);
 
           surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
             let survey = result.data;
@@ -627,7 +626,7 @@ describe('SERVICE - Survey', function() {
                   assert.equal(c, 1);
 
                   ContactListUser.count().then(function(c) {
-                    assert.equal(c, 1);
+                    assert.equal(c, 2);
                     done();
                   });
                 });
@@ -646,7 +645,7 @@ describe('SERVICE - Survey', function() {
         params.SurveyQuestions.push(surveyQuestionContactList());
 
         ContactListUser.count().then(function(c) {
-          assert.equal(c, 0);
+          assert.equal(c, 1);
 
           surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
             let survey = result.data;

@@ -128,47 +128,6 @@
                     </td>
                     <% } %>
                   </tr>
-
-                  <tr>
-                    <td>
-                      <label class="text-no-bold text-login-page" for="gender">Gender</label>
-                    </td>
-                    <td>
-                      <form>
-
-                        <label for="gender_male" class="radio-button">
-
-                          <% if(gender === "male"){ %>
-                             <input type="radio" name="gender" value="male" id="gender_male" checked>
-                          <% } else{ %>
-                             <input type="radio" name="gender" value="male" id="gender_male">
-                          <% } %>
-                          <span class="checkbox-signup btn-radius-text">Male</span>
-                        </label>
-
-                        <label for="gender_female" class="radio-button">
-
-                          <% if(gender === "female"){ %>
-                             <input type="radio" name="gender" value="female" id="gender_female" checked>
-                          <% } else{ %>
-                             <input type="radio" name="gender" value="female" id="gender_female">
-                          <% } %>
-                          <span class="checkbox-signup btn-radius-text btn-radius-padding-left">Female</span>
-                        </label>
-                      </form>
-                    </td>
-                    <td class="text-red-dark">
-                      <h6>*</h6>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td></td>
-                    <td class="error-column">
-                        <span class="has-error"><%= errors.gender %></span>
-                    </td>
-                  </tr>
-
                   <tr>
                     <td>
                       <label class="text-no-bold text-login-page" for="mobile">
@@ -179,7 +138,7 @@
                     </td>
                     <td>
                       <input type="tel" value="<%= mobile %>" id="mobilePhone" name="mobile" placeholder="Mobile Number" class="form-control">
-                      <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="<%= phoneCountryData %>">
+                      <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="<%= JSON.stringify(phoneCountryData) %>">
                     </td>
                   </tr>
 
@@ -200,7 +159,7 @@
                     </td>
                     <td>
                       <input type="tel" value="<%= landlineNumber %>" id="landline_number" name="landlineNumber" placeholder="Landline Number" class="form-control">
-                      <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="<%= landlineNumberCountryData %>">
+                      <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="<%= JSON.stringify(landlineNumberCountryData) %>">
                     </td>
                   </tr>
 
@@ -211,15 +170,14 @@
                     </td>
                   </tr>
                 </table>
-                <div class="form-group">
 
+                <div class="form-group">
                   <div class="check">
                     <input type="checkbox" class="checkbox-login" name="termsAndConditions" id="termsAndConditions" value='true'/>
                     <label for="termsAndConditions"></label>
-                    <span class="checkbox-signup" id="termsAndConditions">You have read and agree to the <a class="text-red-dark" href="url">Account Terms & Conditions</a>.</span>
+                    <span class="checkbox-signup" id="termsAndConditions">You have read and agree to the <a class="text-red-dark" href="/terms_of_use" target="_blank">Account Terms & Conditions</a>.</span>
                   </div>
                   <span class="has-error error-column text-center"><%= errors.termsAndConditions %></span>
-
 
                   <div class="check">
                     <input type="checkbox" class="checkbox-login" name="reveiveNewsLetters" id="reveiveNewsLetters" value='on'/>

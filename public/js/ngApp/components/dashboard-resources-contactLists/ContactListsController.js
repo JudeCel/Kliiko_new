@@ -59,6 +59,7 @@
     vm.mappingFieldsContinue = mappingFieldsContinue;
     vm.setSessionId = setSessionId;
     vm.returnContactCount = returnContactCount;
+    vm.returnSelectedCount = returnSelectedCount;
     vm.canAddMoreFields = canAddMoreFields;
     // required for correct list switching.
     var isSelected = false;
@@ -109,6 +110,21 @@
 
       vm.lists.activeList = activeList || array[0];
       vm.lists.items = array;
+    }
+
+    function returnSelectedCount(item) {
+      if(item.members) {
+        var count = 0;
+        for(var i in item.members) {
+          if(item.members[i]._selected) {
+            count++;
+          }
+        }
+        return count;
+      }
+      else {
+        return 0;
+      }
     }
 
     function returnContactCount(item) {
@@ -364,6 +380,7 @@
 
       }
 
+      vm.canAddNew = false;
       domServices.modal('contactList-addContactManual');
     }
 
@@ -378,7 +395,9 @@
       vm.lists.addNewContact(vm.newContact).then(function(res) {
         vm.newContact = {customFields:{}};
 
-        domServices.modal('contactList-addContactManual', 'close');
+        if(!vm.canAddNew) {
+          domServices.modal('contactList-addContactManual', 'close');
+        }
         messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
       }, function (err) {
         if(err.subEnded){

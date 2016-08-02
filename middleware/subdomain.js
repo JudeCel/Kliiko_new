@@ -7,7 +7,8 @@ var _ = require('lodash');
 var constants = require('../util/constants');
 
 function assignCurrentDomain(result, res) {
-  res.locals.currentDomain = { id: result.id, name: result.name, roles: [result.accountUser.role] };
+
+  res.locals.currentDomain = { id: result.id, name: result.subdomain, roles: [result.accountUser.role] };
   res.locals.hasAccess = policy.hasAccess;
 }
 
@@ -24,7 +25,15 @@ function prepareValidAccountUserParams() {
 }
 
 function getSubdomain(req) {
-  return _.last(req.subdomains);
+  let subdomains = req.subdomains
+  let skipSubdomains = _.split(process.env.SERVER_SKIP_SUBDOMAINS, ",")
+  subdomains = _.difference(req.subdomains, skipSubdomains)
+
+  if (_.last(subdomains)) {
+    return _.last(subdomains);
+  }else{
+    return process.env.SERVER_BASE_SUBDOMAIN
+  }
 }
 
 function comparedWithBaseDomainName(subdomain) {
@@ -34,13 +43,13 @@ function comparedWithBaseDomainName(subdomain) {
 function getAccauntWithRoles(user, subdomain, callback) {
   models.User.find({attributes: ['id'], where: {id: user.id}}).then(function(user){
     user.getAccounts({where: {
-      $and: [ Sequelize.where(Sequelize.fn('lower', Sequelize.col('name')), Sequelize.fn('lower', subdomain))] },
+      $and: [ Sequelize.where(Sequelize.col('subdomain'), subdomain)] },
       include: [ { model: models.AccountUser }], limit: 1 }
     ).then(function(accounts) {
       let account = accounts[0];
 
       if (account) {
-        let result = { id: account.id, name: subdomain, accountUser: account.AccountUser }
+        let result = { id: account.id, subdomain: account.subdomain, accountUser: account.AccountUser }
         callback(null, result)
       }else {
         callback(true)

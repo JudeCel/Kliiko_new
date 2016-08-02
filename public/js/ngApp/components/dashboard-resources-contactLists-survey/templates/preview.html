@@ -1,19 +1,25 @@
+<span class='hidden'>{{ survey = sc.previewSurvey || sc.survey; "" }}</span>
+
 <div class='col-xs-12'>
   <center>
-    <img ng-src='{{ sc.survey.resource.url.full }}' class='img-responsive' ng-if='sc.survey.resource'/>
+    <img ng-src='{{ survey.resource.url.full }}' class='img-responsive' ng-if='survey.resource'/>
+    <img ng-src='/icons/Klzii_RGB_72.png' ng-if='!survey.resource'/>
   </center>
 </div>
-<p class='lead survey-header text-break-all'>{{ sc.survey.name }}
+
+<p class='lead survey-header text-break-all'>
+  {{ survey.name }}
   <span class='help-block'>
-    <small>{{ sc.survey.description }}</small>
+    <small>{{ survey.description }}</small>
   </span>
 </p>
+
 <hr />
 
 <form name='sc.submitForm' novalidate>
   <fieldset ng-disabled='sc.submitingSurvey'>
     <ng-form name='answers'>
-      <div ng-repeat='question in sc.survey.SurveyQuestions track by question.order' ng-init='sq = sc.surveySelect.SurveyQuestions[question.id] = {}'>
+      <div ng-repeat='question in survey.SurveyQuestions track by question.order' ng-init='sq = sc.surveySelect.SurveyQuestions[question.id] = {}'>
         <div class='panel border-radius-none' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order].$error, "panel")'>
           <div class='panel-heading border-radius-none'>
             <h3 class='panel-title'><small>{{ question.name }}</small><span class='panel-title help-block'>{{ question.question }}</span></h3>
@@ -22,7 +28,7 @@
           <div class='panel-body border-radius-none'>
             <div class='has-error' ng-messages='sc.submitForm.answers[question.order].$error'>
               <div ng-repeat='error in sc.validationErrors'>
-                <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+                <div class='help-block' ng-message='{{ error.type }}'>{{ sc.replaceErrorMessage(error, "textarea") }}</div>
               </div>
             </div>
 
@@ -47,7 +53,7 @@
               <div class='form-group col-sm-12'>
                 <div class='col-sm-12 checkbox checkbox-sm survey-input' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order].$error, "checkbox")'>
                   <input class='styled' id='checkbox-{{ question.order }}-{{ answer.order }}' type='checkbox' name='{{ question.order }}'
-                    ng-model='sq.answer' ng-init='sq.answer = false' ng-required='sq.answer && sc.submitedSurvey'>
+                    ng-model='sq.answer' ng-init='sq.answer = true' ng-required='sq.answer && sc.submitedSurvey'>
 
                   <label for='checkbox-{{ question.order }}-{{ answer.order }}'>{{ answer.name }}</label>
                 </div>
@@ -63,11 +69,21 @@
                     </div>
 
                     <label class='col-xs-2 control-label' for='contact-{{ contact.model }}'>{{ contact.name }}</label>
+
+                    <div class='col-xs-10' ng-if='contact.number'>
+                      <span class='hidden'>{{ pnc.init(sq.contactDetails); '' }}</span>
+                      <input type='text' class='form-control border-radius-none' id='contact-{{ contact.model }}' placeholder='{{ contact.name }}'
+                        intl-tel-input intl-tel-input-controller='pnc.mobileController'
+                        name='{{ contact.model }}' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
+                        ng-model='sq.contactDetails[contact.model]' ng-disabled='!sq.answer' ng-required='sq.answer && sc.submitedSurvey'
+                        ng-minlength='1'>
+                    </div>
+
                     <div class='col-xs-10' ng-if='contact.input'>
                       <input type='text' class='form-control border-radius-none' id='contact-{{ contact.model }}' placeholder='{{ contact.name }}'
                         name='{{ contact.model }}' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
                         ng-model='sq.contactDetails[contact.model]' ng-disabled='!sq.answer' ng-required='sq.answer && sc.submitedSurvey'
-                        ng-minlength='1' ng-maxlength='20'>
+                        ng-minlength='1'>
                     </div>
 
                     <div class='col-xs-10' ng-if='contact.select'>
@@ -87,7 +103,7 @@
 
           <div ng-if='question.resource'>
             {{ resource = question.resource; "" }}
-            <div ng-include="gc.templatesDir + 'view.html'" ng-if='resource'></div>
+            <div ng-include="gc.templatesDir + 'viewRendered.html'" ng-if='resource'></div>
           </div>
 
         </div>
@@ -98,6 +114,6 @@
 
 <p class='lead survey-footer text-break-all'>
   <span class='help-block'>
-    <small>{{ sc.survey.thanks }}</small>
+    <small>{{ survey.thanks }}</small>
   </span>
 </p>

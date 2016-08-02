@@ -29,6 +29,7 @@
     'KliikoApp.account',
     'KliikoApp.accountUser',
     'KliikoApp.fileUploader',
+    'KliikoApp.goToChatroom',
     'KliikoApp.mailTemplate'
   ];
 
@@ -53,7 +54,7 @@
       nationalMode: false,
       defaultCountry: 'au',
       preferredCountries: ['au'],
-      utilsScript: 'js/vendors/intl-tel-input/src/utils.js',
+      utilsScript: '/js/vendors/intl-tel-input/src/utils.js',
       autoFormat: true,
       autoPlaceholder: true
     });
@@ -119,7 +120,10 @@
       routerProgressbar = ngProgressFactory.createInstance();
       routerProgressbar.start();
     });
-    $rootScope.$on('$stateChangeSuccess',function(){  routerProgressbar.complete();  });
+    $rootScope.$on('$stateChangeSuccess',function(){
+      $('.modal-backdrop').remove();
+      routerProgressbar.complete();
+    });
 
     $rootScope.progressbarStart = function() {
       rootScopeProgress.start();

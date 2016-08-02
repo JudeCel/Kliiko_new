@@ -14,7 +14,7 @@ var validAttrs = {
   gender: "male"
 }
 
-describe('Services -> ContactListUser', () => {
+describe('SERVICE - ContactListUser', () => {
   describe('create',  () => {
 
     beforeEach((done) => {
@@ -77,8 +77,8 @@ describe('Services -> ContactListUser', () => {
             rowNr: 2,
             contactListId: TestContactList.id,
             defaultFields: {
-              firstName: "DainisNew1",
-              lastName: "LapinsNew1",
+              firstName: "DainisNewA",
+              lastName: "LapinsNewA",
               password: "cool_password",
               email: "dainis1@gmail.com",
               gender: "male"
@@ -88,8 +88,8 @@ describe('Services -> ContactListUser', () => {
               rowNr: 2,
               contactListId: TestContactList.id,
               defaultFields: {
-                firstName: "DainisNew",
-                lastName: "LapinsNew",
+                firstName: "DainisNewB",
+                lastName: "LapinsNewB",
                 password: "cool_password",
                 email: "dainis2@gmail.com",
                 gender: "male"
@@ -112,8 +112,8 @@ describe('Services -> ContactListUser', () => {
               rowNr: 2,
               contactListId: TestContactList.id,
               defaultFields: {
-                firstName: "DainisNew1",
-                lastName: "LapinsNew1",
+                firstName: "DainisNewA",
+                lastName: "LapinsNewA",
                 password: "cool_password",
                 email: "dainis1@gmail.com",
                 gender: "male"
@@ -123,8 +123,8 @@ describe('Services -> ContactListUser', () => {
                 rowNr: 4,
                 contactListId: TestContactList.id,
                 defaultFields: {
-                  firstName: "DainisNew",
-                  lastName: "LapinsNew",
+                  firstName: "DainisNewB",
+                  lastName: "LapinsNewB",
                   password: "cool_password",
                   email: "dainis2@gmail.com",
                   gender: "male"
@@ -151,24 +151,29 @@ describe('Services -> ContactListUser', () => {
       })
 
       it("create to existing user base", (done) => {
-          let attrs = {
-            accountId: TestAccount.id,
-            contactListId: TestContactList.id,
-            defaultFields: {
-              firstName: "DainisNew",
-              lastName: "LapinsNew",
-              password: "cool_password",
-              email: "dainis@gmail.com",
-              gender: "male"
-            },
-            customFields: { one: "1", two:" 2", three:" 3" }
-           }
-        ContactListUserService.create(attrs).then(function(contactListUser) {
-          assert.equal(contactListUser.firstName, validAttrs.firstName);
-          assert.equal(contactListUser.email, validAttrs.email);
-          done()
-        }, function(err) {
-          done(err);
+        let attrs = {
+          accountId: TestAccount.id,
+          contactListId: TestContactList.id,
+          defaultFields: {
+            firstName: "DainisNew",
+            lastName: "LapinsNew",
+            password: "cool_password",
+            email: "dainis@gmail.com",
+            gender: "male"
+          },
+          customFields: { one: "1", two:" 2", three:" 3" }
+        };
+
+        models.ContactListUser.destroy({ where: { accountUserId: TestAccountUser.id } }).then(function() {
+          ContactListUserService.create(attrs).then(function(contactListUser) {
+            assert.equal(contactListUser.firstName, validAttrs.firstName);
+            assert.equal(contactListUser.email, validAttrs.email);
+            done()
+          }, function(err) {
+            done(err);
+          });
+        }, function(error) {
+          done(error);
         });
       });
 
@@ -202,29 +207,15 @@ describe('Services -> ContactListUser', () => {
       });
 
       it("destroy ", (done) => {
-          let attrs = {
-            accountId: TestAccount.id,
-            contactListId: TestContactList.id,
-            defaultFields: {
-              firstName: "DainisNew",
-              lastName: "LapinsNew",
-              password: "cool_password",
-              email: "dainis186@gmail.com",
-              gender: "male"
-            },
-            customFields: { one: "1", two:" 2", three:" 3" }
-           }
-        ContactListUserService.create(attrs).then(function(contactListUser) {
+        models.ContactListUser.find({ where: { accountUserId: TestAccountUser.id } }).then(function(contactListUser) {
           ContactListUserService.destroy([contactListUser.id], TestAccount.id).then(function() {
             TestContactList.getContactListUsers().then(function(result) {
               assert.lengthOf(result, 0)
-              done()
+              done();
             }, function(err) {
               done(err)
-            })
+            });
           });
-        }, function(err) {
-          done(err);
         });
       });
 

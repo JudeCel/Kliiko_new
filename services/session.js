@@ -21,7 +21,7 @@ var validators = require('./../services/validators');
 
 
 const VALID_ATTRIBUTES = {
-  sessionMember: ['id', 'role', 'rating', 'sessionId', 'accountUserId', 'username']
+  sessionMember: ['id', 'role', 'rating', 'sessionId', 'accountUserId', 'username', 'comment']
 };
 
 const MESSAGES = {
@@ -30,6 +30,7 @@ const MESSAGES = {
   copied: 'Session sucessfully copied',
   sessionMemberNotFound: 'Session Member not found',
   rated: 'Session Member rated',
+  commentChanged: 'Comment updated successfully',
   cantRateSelf: "You can't rate your self"
 };
 
@@ -43,6 +44,7 @@ module.exports = {
   updateSessionMemberRating: updateSessionMemberRating,
   getAllSessionRatings: getAllSessionRatings,
   addShowStatus: addShowStatus,
+  changeComment: changeComment,
   getSessionByInvite: getSessionByInvite
 };
 
@@ -74,6 +76,31 @@ function getSessionByInvite(token) {
 }
 
 // Exports
+function changeComment(id, comment, accountId) {
+  let deferred = q.defer();
+
+  SessionMember.find({
+    where: { id: id },
+    include: [{
+      model: Session,
+      where: { accountId: accountId }
+    }]
+  }).then(function(sessionMember) {
+    if(sessionMember) {
+      sessionMember.update({ comment: comment }).then(function() {
+        deferred.resolve(simpleParams(null, MESSAGES.commentChanged));
+      }, function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+    else {
+      deferred.reject(MESSAGES.sessionMemberNotFound);
+    }
+  });
+
+  return deferred.promise;
+}
+
 function findSession(sessionId, accountId, provider) {
   let deferred = q.defer();
 
@@ -115,7 +142,7 @@ function findAllSessions(userId, domain, provider) {
     });
   }
   else {
-    findAllSessionsAsMember(userId, accountId, provider).then(function(data) {
+    findAllSessionsAsMember(userId, domain.id, provider).then(function(data) {
       deferred.resolve(data);
     }, function(error) {
       deferred.reject(error);
@@ -135,7 +162,7 @@ function getAllSessionRatings() {
       attributes: ['id', 'name'],
       include: [{
         model: SessionMember,
-        attributes: ['rating']
+        attributes: ['rating', 'role']
       }]
     }]
   }).then(function(accounts) {
@@ -155,9 +182,15 @@ function prepareAccountRatings(accounts) {
 
     _.map(account.Sessions, function(session) {
       let sObject = { name: session.name, rating: 0 };
+      let length = 0;
       _.map(session.SessionMembers, function(member) {
+        if(member.role != 'facilitator') {
+          length++;
+        }
+
         sObject.rating += member.rating;
       });
+      sObject.rating /= (length || 1);
 
       object.rating += sObject.rating;
       object.sessions.push(sObject);
@@ -376,7 +409,6 @@ function findAllSessionsAsManager(accountId, provider) {
 function findAllSessionsAsMember(userId, accountId, provider) {
   let deferred = q.defer();
   Session.findAll({
-    attributes: ['id'],
     where: {
       accountId: accountId
     },
@@ -423,36 +455,57 @@ function simpleParams(data, message) {
 function modifySessions(sessions, accountId, provider) {
   let deferred = q.defer();
 
-  models.Subscription.find({ where: { accountId: accountId } }).then(function(subscription) {
-    subscriptionService.getChargebeeSubscription(subscription.subscriptionId, provider).then(function(chargebeeSub) {
-
-      let array = _.isArray(sessions) ? sessions : [sessions];
-      _.map(array, function(session) {
-        addShowStatus(session, chargebeeSub);
-        let facilitator = findFacilitator(session.SessionMembers);
-        if(facilitator) {
-          let facIndex;
-
-          session.dataValues.facilitator = facilitator;
-          _.map(session.SessionMembers, function(member, index) {
-            if(member.id == facilitator.id) {
-              facIndex = index;
-            }
-          });
-          session.SessionMembers.splice(facIndex, 1);
-        }
-      });
-
+  models.Account.find({ where: { id: accountId } }).then(function(account) {
+    if(account.admin) {
+      changeSessionData(sessions, null, provider);
       deferred.resolve(sessions);
+    }
+    else {
+      models.Subscription.find({ where: { accountId: accountId } }).then(function(subscription) {
+        subscriptionService.getChargebeeSubscription(subscription.subscriptionId, provider).then(function(chargebeeSub) {
+          changeSessionData(sessions, chargebeeSub, provider);
+          deferred.resolve(sessions);
+        }, function(error) {
+          deferred.reject(error);
+        })
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+  })
 
-    }, function(error) {
-      deferred.reject(error);
-    })
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
-  });
 
   return deferred.promise;
+}
+
+function changeSessionData(sessions, chargebeeSub, provider) {
+  let array = _.isArray(sessions) ? sessions : [sessions];
+  _.map(array, function(session) {
+    if(chargebeeSub) {
+      addShowStatus(session, chargebeeSub);
+    }
+    else {
+      session.dataValues.showStatus = 'Indefinite';
+    }
+
+    let facilitator = findFacilitator(session.SessionMembers);
+    if(facilitator) {
+      let facIndex;
+
+      session.dataValues.facilitator = facilitator;
+      let total = 0;
+      _.map(session.SessionMembers, function(member, index) {
+        if(member.id == facilitator.id) {
+          facIndex = index;
+        }
+        else {
+          total += member.rating;
+        }
+      });
+      session.SessionMembers.splice(facIndex, 1);
+      session.dataValues.averageRating = total / session.SessionMembers.length;
+    }
+  });
 }
 
 function addShowStatus(session, chargebeeSub) {

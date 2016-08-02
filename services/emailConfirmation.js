@@ -74,7 +74,8 @@ function checkTokenExpired(token, callback) {
 
 function confirm(token, callback) {
   User.update({
-    confirmedAt: new Date()
+    confirmedAt: new Date(),
+    confirmationToken: null
   }, {
     where: {confirmationToken: token}
   })

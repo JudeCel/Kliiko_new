@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin
+  labels:
+    name: admin
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    name: admin
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: admin
+  labels:
+    name: admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: admin
+  template:
+    metadata:
+      labels:
+        name: admin
+    spec:
+      imagePullSecrets:
+        - name: docker-hub-secret
+      containers:
+      - image: "index.docker.io/klzii/kliiko:latest"
+        imagePullPolicy: Always
+        name: admin
+        ports:
+        - containerPort: 8080
+        env:
+        - name: REDIS_HOST
+          value: "redis-master"
+        - name: SERVER_CHAT_DOMAIN_URL
+          value: "http://chat.test.klzii.com"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: DATABASE_URL
+          value: "postgres://postgres:nWD44LS3bYs29JeP@postgres-master/klzii_test"
+        - name: AIRBRAKE_PROJECT_ID
+          value: "121542"
+        - name: AIRBRAKE_API_KEY
+          value: "607e87c9e8b7500497bb84c51162b0a82"
+        - name: SERVER_BASE_DOMAIN
+          value: ".test.klzii.com"
+        - name: SERVER_DOMAIN
+          value: "www.test.klzii.com"
+        - name: SERVER_BASE_SUBDOMAIN
+          value: "www"
+        - name: FACEBOOK_CLIENT_ID
+          value: "1740610496152274"
+        - name: FACEBOOK_CLIENT_SECRET
+          value: "7d0f78d9fdd0052c20cdf5c2aeda7b33"
+        - name: FACEBOOK_CALLBACK_URL
+          value: "http://www.test.klzii.com/auth/facebook/callback"
+        - name: GOOGLE_CLIENT_ID
+          value: "570903251504-hvev7sqcqqvl977djc1kqv722sqgidp3.apps.googleusercontent.com"
+        - name: GOOGLE_CLIENT_SECRET
+          value: "i_S2xLucKbRL14sp6hHSRVA_"
+        - name: GOOGLE_CALLBACK_URL
+          value: "http://www.test.klzii.com/auth/google/callback"

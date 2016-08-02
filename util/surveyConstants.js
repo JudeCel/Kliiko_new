@@ -1,15 +1,15 @@
 'use strict';
 
 module.exports = {
-  minQuestions: 2,
+  minQuestions: 3,
   minsMaxs: {
     input: {
       min: 1,
-      max: 20
+      max: 30
     },
     textarea: {
       min: 1,
-      max: 500
+      max: 300
     }
   },
   validationErrors: {
@@ -27,7 +27,7 @@ module.exports = {
       },
       {
         type: 'maxlength',
-        message: 'Field is too long!',
+        message: 'No more than XXX characters.',
       }
     ],
     answer: [
@@ -69,6 +69,7 @@ module.exports = {
       model: 'age',
       name: 'Age',
       input: true,
+      canDisable: true,
       order: 3
     },
     {
@@ -80,13 +81,14 @@ module.exports = {
     {
       model: 'mobile',
       name: 'Mobile',
-      input: true,
+      number: true,
+      canDisable: true,
       order: 5
     },
     {
       model: 'landlineNumber',
       name: 'Landline Number',
-      input: true,
+      number: true,
       canDisable: true,
       disabled: true,
       order: 6
@@ -144,6 +146,13 @@ module.exports = {
     {
       order: 0,
       name: 'First Choice',
+      question: 'Which ONE of these is your FIRST choice for (product/service type)?',
+      answers: [
+        { name: 'Brand Name', order: 0 },
+        { name: 'Brand Name', order: 1 },
+        { name: 'Brand Name', order: 2 },
+        { name: "Don't Know", order: 3 }
+      ],
       input: true,
       minAnswers: 2,
       maxAnswers: 5
@@ -151,6 +160,13 @@ module.exports = {
     {
       order: 1,
       name: 'Second Choice',
+      question: 'Which ONE of these is your SECOND choice for (product/service type)?',
+      answers: [
+        { name: 'Brand Name', order: 0 },
+        { name: 'Brand Name', order: 1 },
+        { name: 'Brand Name', order: 2 },
+        { name: "Don't Know", order: 3 }
+      ],
       input: true,
       minAnswers: 2,
       maxAnswers: 5
@@ -158,6 +174,8 @@ module.exports = {
     {
       order: 2,
       name: 'Advice',
+      question: 'What advice would you like to give to (Brand Name) to improve (product/service)?',
+      answers: [ { placeHolder: 'Answer - 200 Character Limit', order: 0 } ],
       textArea: true,
       minAnswers: 1,
       maxAnswers: 1
@@ -165,30 +183,56 @@ module.exports = {
     {
       order: 3,
       name: 'Like-Dislike',
+      question: 'Please play the audio/video clip first, and then select how much you like or dislike (subject description)?',
+      answers: [
+        { name: 'Like A Lot', order: 0 },
+        { name: 'Like', order: 1 },
+        { name: 'Neither Like or Dislike', order: 2 },
+        { name: 'Dislike', order: 3 },
+        { name: 'Dislike A Lot', order: 4 },
+        { name: "Don't Know", order: 5 }
+      ],
       input: true,
       audioVideo: true,
       minAnswers: 2,
-      maxAnswers: 5
+      maxAnswers: 7
     },
     {
       order: 4,
       name: 'Importance',
+      question: 'How important is it for (brand/organisation) to provide (product/service)?',
+      answers: [
+        { name: 'Very Important', order: 0 },
+        { name: 'Fairly Important', order: 1 },
+        { name: 'Not Very Important', order: 2 },
+        { name: 'Not At All Important', order: 3 },
+        { name: "Don't Know", order: 4 }
+      ],
       input: true,
       audioVideo: true,
       minAnswers: 2,
-      maxAnswers: 5
+      maxAnswers: 7
     },
     {
       order: 5,
       name: 'Most Important',
+      question: 'Which ONE of these product/service features is the MOST important to you?',
+      answers: [
+        { name: 'Feature', order: 0 },
+        { name: 'Feature', order: 1 },
+        { name: 'Feature', order: 2 },
+        { name: 'Feature', order: 3 }
+      ],
       input: true,
       minAnswers: 2,
-      maxAnswers: 5
+      maxAnswers: 7
     },
     {
       order: 6,
       name: 'Interest',
+      question: "Would you be interested in taking part in a future online discussion group, about (brand/product/service)? It'll be easy and fun, chatting with others like yourself. And if you participate there'll also be a gift for your help.",
       hardcodedName: true,
+      required: true,
       checkbox: true,
       minAnswers: 1,
       maxAnswers: 1
@@ -196,6 +240,7 @@ module.exports = {
     {
       order: 7,
       name: 'Prize Draw',
+      question: 'Would you like to be in the draw for (prize)?',
       hardcodedName: true,
       checkbox: true,
       minAnswers: 1,
@@ -203,8 +248,10 @@ module.exports = {
     },
     {
       order: 8,
-      name: 'Contact details',
+      name: 'Contact Details',
+      question: 'To finish, we just need your Contact Details. Your information will remain confidential and not be shared with other parties. Please see our Privacy Policy below. If you do not want to provide your details, you will not be eligible for a discussion group and the prize draw.',
       hardcodedName: true,
+      required: true,
       contact: true,
       minAnswers: 1,
       maxAnswers: 1

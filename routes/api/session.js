@@ -5,6 +5,7 @@ var sessionServices = require('./../../services/session');
 
 module.exports = {
   get: get,
+  comment: comment,
   remove: remove,
   copy: copy,
   updateRating: updateRating,
@@ -12,6 +13,12 @@ module.exports = {
   getSessionByInvite: getSessionByInvite
 };
 
+function comment(req, res, next) {
+  sessionServices.changeComment(req.params.id, req.body.comment, res.locals.currentDomain.id).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+}
 
 function get(req, res, next) {
   sessionServices.findAllSessions(req.user.id, res.locals.currentDomain).then(
@@ -62,7 +69,6 @@ function getResponses(res) {
 function prepareParams(result) {
   return {
     sessionListManageRoles: constants.sessionListManageRoles,
-    chatRoomUrl: sessionServices.chatRoomUrl(),
     data: result.data,
     message: result.message,
     dateFormat: constants.dateFormat

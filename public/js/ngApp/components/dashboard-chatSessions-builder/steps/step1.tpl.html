@@ -29,7 +29,6 @@
         <span class="date-time-label">Start</span> <img class="date-time-ico" src="/icons/calendar_green.png" alt="">
         <md-datepicker ng-model="step1Controller.step1.startDate"
                        md-min-date="::step1Controller.today"
-                       md-max-date="step1Controller.step1.endDate"
                        ng-change="step1Controller.updateStep('startTime')"
                        md-placeholder="Enter date"></md-datepicker>
 
@@ -45,10 +44,10 @@
 
         <img class="date-time-ico time" src="/icons/time_green.png" alt="">
         <uib-timepicker class="timepicker-wrapper" ng-model="step1Controller.step1.endTime" ng-change="step1Controller.updateStep('endTime')" hour-step="step1Controller.dateTime.hstep" minute-step="step1Controller.dateTime.mstep" show-meridian="true"></uib-timepicker>
-        <code ng-show="step1Controller.accordions.dateAndTimeError" class="margin020">
-          End Time should be greater then Start Time
-        </code>
       </div>
+      <code ng-if="step1Controller.accordions.dateAndTimeError" class='calendar-error'>
+        End Time should be greater then Start Time
+      </code>
     </uib-accordion-group>
 
     <!-- Facilitators -->
@@ -81,7 +80,7 @@
               <img src="/icons/account_manager_green.png">
             </div>
 
-            <ng-include src="'js/ngApp/components/dashboard-chatSessions-builder/steps/step1/facilitatorForm.html'"></ng-include>
+            <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/steps/step1/facilitatorForm.html'"></ng-include>
 
             <section id="dashboard-contact-lists-main-table">
                 <table class='table table-responsive table-dashboardElements' style="font-size: 1.6rem" ng-if="step1Controller.allContacts.length > 0">
@@ -203,7 +202,7 @@
             </div>
 
             <div class='col-sm-12'>
-             <div class="btn-standart btn-red" ng-show="step1Controller.colorScheme" ng-click="step1Controller.colorScheme = null">Clean Color Scheme Selection</div>
+              <div class="btn-standart btn-red" ng-show="step1Controller.colorScheme" ng-click="step1Controller.cleanColorScheme(sbc.updateStep)">Clean Color Scheme Selection</div>
             </div>
 
             <div id="create-color-scheme-area" ng-show="!bcc.schemes.length">

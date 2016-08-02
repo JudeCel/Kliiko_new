@@ -222,7 +222,7 @@ describe('SERVICE - BrandColour', function() {
           assert.equal(c, 1);
 
           brandColourServices.copyScheme({ id: testData.preference.id }, accountParams()).then(function(result) {
-            testScheme(result.data);
+            testScheme(result.data, { name: `Copy of Default scheme #${result.data.id}` });
             assert.equal(result.message, brandColourServices.messages.copied);
 
             BrandProjectPreference.count(countWhere()).then(function(c) {

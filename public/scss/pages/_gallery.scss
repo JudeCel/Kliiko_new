@@ -48,25 +48,41 @@
       padding-top: 15px;
       margin: 0 auto;
     }
+    .panel-heading {
+      .panel-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
     .panel-body {
       .glyphicon {
         font-size: 220px;
         padding-top: 30px;
       }
+      img {
+        max-width: 90%;
+        height: 250px;
+      }
     }
     .panel-footer {
-      .panel-name {
-        height: 36px;
-        line-height: 3;
-      }
       .btn.btn-addNewElement.btn-green {
         margin-left: 5px;
+      }
+      .resource-format {
+        padding-top: 9px;
       }
     }
     .glyphicon-youtube {
       a {
         color: $green;
       }
+    }
+  }
+
+  .render-gallery {
+    image, video, img {
+      width: 300px;
     }
   }
 

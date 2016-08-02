@@ -97,6 +97,7 @@ router.get('/survey/canExportSurveyData', survey.canExportSurveyData);
 router.get('/subscriptionPlan', subscription.getPlans);
 router.put('/subscriptionPlan/updatePlan', subscription.updatePlan);
 router.put('/subscriptionPlan/UpdateViaCheckout', subscription.retrievCheckoutAndUpdateSub)
+router.post('/subscriptionPlan/postQuote', subscription.postQuote)
 
 // Addons
 router.get('/subscriptionSmsCredits', smsCredit.get);
@@ -104,8 +105,8 @@ router.post('/subscriptionSmsCredits/puchaseCredits', smsCredit.purchase);
 router.get('/subscriptionSmsCredits/creditCount', smsCredit.creditCount);
 
 // contact List
-router.get('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.index);
-router.post('/contactLists', policy.authorized(['accountManager', 'admin']), contactList.create);
+router.get('/contactLists', policy.authorized(['facilitator','accountManager', 'admin']), contactList.index);
+router.post('/contactLists', policy.authorized(['facilitator','accountManager', 'admin']), contactList.create);
 
 router.post('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']), contactListImport.single('uploadedfile'), contactList.parseImportFile);
 router.put('/contactLists/:id/import', policy.authorized(['accountManager', 'admin']), contactList.importContacts);
@@ -141,6 +142,7 @@ router.post('/session/:id', policy.authorized(['accountManager', 'admin']), sess
 
 
 // Session Member
+router.post('/sessionMember/comment/:id', sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin']), session.comment);
 router.post('/sessionMember/rate/:id', sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin']), session.updateRating);
 router.post('/sessionMember/addFacilitator', sessionMember.addFacilitator);
 
@@ -149,18 +151,18 @@ router.post('/sessionMember/addFacilitator', sessionMember.addFacilitator);
 router.get('/sessionBuilder/canAddObservers',  policy.authorized(['accountManager', 'admin']), sessionBuilder.canAddObservers);
 
 router.post('/sessionBuilder',  policy.authorized(['accountManager', 'admin']), sessionBuilder.new);
-router.get('/sessionBuilder/:id',  policy.authorized(['accountManager', 'admin']), sessionBuilder.openBuild);
-router.put('/sessionBuilder/:id',  policy.authorized(['accountManager', 'admin']), sessionBuilder.update);
-router.post('/sessionBuilder/:id',  policy.authorized(['accountManager', 'admin']), sessionBuilder.nextStep);
-router.delete('/sessionBuilder/:id',  policy.authorized(['accountManager', 'admin']), sessionBuilder.cancel);
-router.post('/sessionBuilder/:id/sendSms',  policy.authorized(['accountManager', 'admin']), sessionBuilder.sendSms);
-router.post('/sessionBuilder/:id/invite',  policy.authorized(['accountManager', 'admin']), sessionBuilder.inviteMembers);
-router.delete('/sessionBuilder/:id/removeInvite/:inviteId',  policy.authorized(['accountManager', 'admin']), sessionBuilder.removeInvite);
-router.delete('/sessionBuilder/:id/removeSessionMember/:sessionMemberId',  policy.authorized(['accountManager', 'admin']), sessionBuilder.removeSessionMember);
-router.post('/sessionBuilder/:id/sendGenericEmail',  policy.authorized(['accountManager', 'admin']), sessionBuilder.sendGenericEmail);
-router.get('/sessionBuilder/:id/sessionMailTemplateStatus',  policy.authorized(['accountManager', 'admin']), sessionBuilder.sessionMailTemplateStatus);
-router.post('/sessionBuilder/:id/addTopics',  policy.authorized(['accountManager', 'admin']), sessionBuilder.addTopics);
-router.post('/sessionBuilder/:id/removeTopic',  policy.authorized(['accountManager', 'admin']), sessionBuilder.removeTopic);
+router.get('/sessionBuilder/:id',  policy.authorized(['facilitator', 'accountManager', 'admin']), sessionBuilder.openBuild);
+router.put('/sessionBuilder/:id',  policy.authorized(['facilitator', 'accountManager', 'admin']), sessionBuilder.update);
+router.post('/sessionBuilder/:id',  policy.authorized(['facilitator', 'accountManager', 'admin']), sessionBuilder.nextStep);
+router.delete('/sessionBuilder/:id',  policy.authorized(['facilitator', 'accountManager', 'admin']), sessionBuilder.cancel);
+router.post('/sessionBuilder/:id/sendSms',  policy.authorized(['facilitator','accountManager', 'admin']), sessionBuilder.sendSms);
+router.post('/sessionBuilder/:id/invite',  policy.authorized(['facilitator', 'accountManager', 'admin']), sessionBuilder.inviteMembers);
+router.delete('/sessionBuilder/:id/removeInvite/:inviteId',  policy.authorized(['facilitator', 'accountManager', 'admin']), sessionBuilder.removeInvite);
+router.delete('/sessionBuilder/:id/removeSessionMember/:sessionMemberId', policy.authorized(['accountManager', 'admin']), sessionBuilder.removeSessionMember);
+router.post('/sessionBuilder/:id/sendGenericEmail',  policy.authorized(['facilitator', 'accountManager', 'admin']), sessionBuilder.sendGenericEmail);
+router.get('/sessionBuilder/:id/sessionMailTemplateStatus',  policy.authorized(['facilitator','accountManager', 'admin']), sessionBuilder.sessionMailTemplateStatus);
+router.post('/sessionBuilder/:id/addTopics',  policy.authorized(['facilitator', 'accountManager', 'admin']), sessionBuilder.addTopics);
+router.post('/sessionBuilder/:id/removeTopic',  policy.authorized(['facilitator','accountManager', 'admin']), sessionBuilder.removeTopic);
 
-router.post('/sessionBuilder/:id/step/next',  policy.authorized(['accountManager', 'admin']), sessionBuilder.nextStep );
-router.post('/sessionBuilder/:id/step/previous',  policy.authorized(['accountManager', 'admin']), sessionBuilder.prevStep);
+router.post('/sessionBuilder/:id/step/next',  policy.authorized(['facilitator', 'accountManager', 'admin']), sessionBuilder.nextStep );
+router.post('/sessionBuilder/:id/step/previous',  policy.authorized(['facilitator', 'accountManager', 'admin']), sessionBuilder.prevStep);

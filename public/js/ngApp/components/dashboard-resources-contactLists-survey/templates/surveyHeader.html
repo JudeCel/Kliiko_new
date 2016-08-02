@@ -1,5 +1,6 @@
-<h4>Survey Template</h4>
-<hr class='survey-hr' />
+<h4 class='text-center'>
+  Modify & Enable this Introduction & Questions Template for your own needs. Then post the survey link and your Contact List will start building instantly. In Advanced Recruiter you can add 3 extra questions with multi-media.
+</h4>
 
 <div id='panel-introduction' class='panel panel-default border-radius-none'>
   <div class='panel-heading'><strong>Introduction</strong></div>
@@ -8,7 +9,7 @@
       <div class='form-group'>
         <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.manageForm.surveyName.$error'>
           <div ng-repeat='error in sc.validationErrors'>
-            <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+            <div class='help-block' ng-message='{{ error.type }}'>{{ sc.replaceErrorMessage(error, "input") }}</div>
           </div>
         </div>
 
@@ -22,7 +23,8 @@
         <label class='col-xs-2 control-label' for='brandLogo'>Survey Logo</label>
         <div class='col-xs-10 col-md-6'>
           {{ upload = sc.galleryDropdownData("survey", sc.survey); resource = gc.getResourceFromList(sc.survey); "" }}
-          <div ng-include="gc.templatesDir + 'view.html'" ng-if='resource'></div>
+          <div ng-include="gc.templatesDir + 'viewRendered.html'" ng-if='resource'></div>
+          <img ng-src='/icons/Klzii_RGB_72.png' ng-if='!resource'/>
           <div ng-include="gc.templatesDir + 'dropdown.html'"></div>
         </div>
       </div>
@@ -31,11 +33,11 @@
         <div class='col-md-8'>
           <div class='has-error' ng-messages='sc.manageForm.description.$error'>
             <div ng-repeat='error in sc.validationErrors'>
-              <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+              <div class='help-block' ng-message='{{ error.type }}'>{{ sc.replaceErrorMessage(error, "textarea") }}</div>
             </div>
           </div>
 
-          <textarea class='form-control' id='description' placeholder='Introduction' name='description' rows='5'
+          <textarea class='form-control' id='description' placeholder='{{ sc.defaultIntroduction }}' name='description' rows='5'
             ng-model='sc.survey.description' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='sc.submitedForm'>
           </textarea>
         </div>

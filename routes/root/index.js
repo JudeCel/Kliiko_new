@@ -2,6 +2,7 @@
 var express = require('express');
 var async = require('async');
 var _ = require('lodash');
+var url = require('url');
 var router = express.Router();
 var usersRepo = require('../../services/users');
 var resetPassword = require('../../services/resetPassword');
@@ -26,7 +27,7 @@ router.use(function (req, res, next) {
     if (req.path == '/logout') {
       return next();
     }
-        
+
     if(filterValidPaths(req.path, constants.validRoutePaths)){
       next();
     }else{
@@ -79,15 +80,39 @@ function foundPaths(path, valid) {
 }
 /* GET root page. */
 
+router.get('/ping', function(req, res, next) {
+  res.send({ status: 'ok' });
+});
+
 router.get('/', function (req, res, next) {
     res.render('login', {title: 'Login', error: "", message: ''});
 });
 
 router.get('/registration', function (req, res, next) {
   let params = usersRepo.prepareParams(req);
+
   params.phoneCountryData = replaceToString(params.phoneCountryData);
   params.landlineNumberCountryData = replaceToString(params.landlineNumberCountryData);
   res.render('registration', params);
+});
+
+router.get('/freeTrialRegistration', function (req, res, next) {
+  let params = usersRepo.prepareParams(req);
+
+  res.render('freeTrialRegistration', params);
+});
+
+router.get('/paidPlanRegistration', function (req, res, next) {
+  let params = usersRepo.prepareParams(req);
+
+  if(req.query.selected_plan) {
+    params.selectedPlanOnRegistration = req.query.selected_plan;
+  }
+
+  params.phoneCountryData = replaceToString(params.phoneCountryData);
+  params.landlineNumberCountryData = replaceToString(params.landlineNumberCountryData);
+
+  res.render('paidPlanRegistration', params);
 });
 
 function replaceToString(value) {
@@ -103,9 +128,24 @@ router.get('/welcome', function (req, res, next) {
   res.render('welcome', usersRepo.prepareParams(req));
 });
 
-let registrationState = JSON.stringify({ type: 'registration' });
+let registrationState = JSON.stringify({type: 'registration'});
 router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'], state: registrationState }));
+router.get('/auth/facebookFreeTrialRegistration', passport.authenticate(
+  'facebook', { scope : ['email'], state: JSON.stringify({ type: 'registration', page: "freeTrialRegistration" })
+}));
+router.get("/auth/facebookPaiedPlanRegistration", function (req, res, next) {
+  passport.authenticate(
+    'facebook',
+    { scope : ['email'], state: JSON.stringify({
+      type: 'registration',
+      page: "paidPlanRegistration",
+      selectedPlanOnRegistration: req.query.selectedPlanOnRegistration
+    })
+  })(req, res, next)
+}, function() {});
+
 router.get('/auth/facebook/callback', function(req, res, next) {
+  let returnParams = JSON.parse(req.query.state);
   passport.authenticate('facebook', function(err, user, info) {
     if (err) {
       return res.render('login', { title: 'Login', error: err.message, message: "" });
@@ -119,7 +159,14 @@ router.get('/auth/facebook/callback', function(req, res, next) {
       if(req.query.state.type == 'registration') {
         res.locals = usersRepo.prepareParams(req);
         socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
-          res.render("registration", {appData: res.locals, error: {}});
+          if (returnParams.page == 'freeTrialRegistration') {
+            res.render('freeTrialRegistration', {appData: res.locals, error: {}});
+          }else if(returnParams.page == 'paidPlanRegistration'){
+            res.locals.selectedPlanOnRegistration = returnParams.selectedPlanOnRegistration;
+            res.render("paidPlanRegistration", {appData: res.locals, error: {}});
+          }else{
+            res.render("registration", {appData: res.locals, error: {}});
+          }
         }, function(err) {
           next(err);
         })
@@ -143,7 +190,24 @@ router.get('/auth/facebook/callback', function(req, res, next) {
 });
 
 router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'], state: registrationState }));
+router.get('/auth/googleFreeTrialRegistration', passport.authenticate(
+  'google', { scope :
+    ['profile', 'email'], state: JSON.stringify({ type: 'registration', page: "freeTrialRegistration" })
+}));
+
+router.get("/auth/googlePaiedPlanRegistration", function (req, res, next) {
+  passport.authenticate(
+    'google',
+    { scope : ['email'], state: JSON.stringify({
+      type: 'registration',
+      page: "paidPlanRegistration",
+      selectedPlanOnRegistration: req.query.selectedPlanOnRegistration
+    })
+  })(req, res, next)
+}, function() {});
+
 router.get('/auth/google/callback', function(req, res, next) {
+  let returnParams = JSON.parse(req.query.state);
   passport.authenticate('google', function(err, user, info) {
     if (err) {
       return res.render('login', { title: 'Login', error: err.message, message: "" });
@@ -155,7 +219,14 @@ router.get('/auth/google/callback', function(req, res, next) {
     }else{
       res.locals = usersRepo.prepareParams(req);
       socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
-        res.render("registration", { appData: res.locals, error: {} });
+        if (returnParams.page == 'freeTrialRegistration') {
+          res.render('freeTrialRegistration', {appData: res.locals, error: {}});
+        }else if(returnParams.page == 'paidPlanRegistration'){
+          res.locals.selectedPlanOnRegistration = returnParams.selectedPlanOnRegistration;
+          res.render("paidPlanRegistration", {appData: res.locals, error: {}});
+        }else{
+          res.render("registration", {appData: res.locals, error: {}});
+        }
       }, function(err) {
         next(err)
       });
@@ -163,16 +234,18 @@ router.get('/auth/google/callback', function(req, res, next) {
   })(req, res, next);
 });
 
-router.post('/registration', function (req, res, next) {
-  usersRepo.create(usersRepo.prepareParams(req), function (error, result) {
-    if (error) {
-        res.render('registration', usersRepo.prepareParams(req, error));
-    } else {
+function createUserAndSendEmail(req, res, userParams, renderInfo) {
+  usersRepo.create(userParams, function(error, result) {
+    if(error) {
+      res.render(renderInfo.failed, usersRepo.prepareParams(req, error));
+    }
+    else {
       let tplData = {
         title: 'Email Confirmation',
         error: '',
         success: '',
-        email: ''
+        email: '',
+        applicationName: process.env.MAIL_FROM_NAME
       };
 
       let email = req.body.email;
@@ -182,10 +255,26 @@ router.post('/registration', function (req, res, next) {
         } else {
           tplData.success = 'Email confirmation sent to ' + email;
         }
+        res.render(renderInfo.success, tplData);
       });
-      res.render('welcome',  {title: 'Please confirm Your Email', error: "Please confirm Your Email", message: '' , applicationName: process.env.MAIL_FROM_NAME});
     };
   });
+}
+
+router.post('/paidPlanRegistration', function (req, res, next) {
+  let userParams = usersRepo.prepareParams(req);
+  createUserAndSendEmail(req, res, userParams, { failed: 'paidPlanRegistration', success: 'welcome' });
+});
+
+router.post('/freeTrialRegistration', function (req, res, next) {
+  let userParams = usersRepo.prepareParams(req);
+  userParams.selectedPlanOnRegistration = 'free_trial';
+  createUserAndSendEmail(req, res, userParams, { failed: 'freeTrialRegistration', success: 'welcome' });
+});
+
+router.post('/registration', function (req, res, next) {
+  let userParams = usersRepo.prepareParams(req);
+  createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
 });
 
 router.post('/login', function(req, res, next) {
@@ -196,7 +285,7 @@ router.get('/login', function (req, res, next) {
     res.render('login', { title: 'Login', error: '', message: req.flash('message')[0] });
 });
 
-router.route('/emailConfirmation/:token')
+router.route('/VerifyEmail/:token')
   .get(function (req, res, next) {
     let tplData = {
       title: 'Email Confirmation',
@@ -219,8 +308,8 @@ router.route('/emailConfirmation/:token')
             tplData.errors.password = "Something is wrong with email confirmation";
             res.render('/login', tplData);
           }else{
-            mailers.users.sendEmailConfirmationSuccess({email: user.email}, function (err, data) {
-              res.redirect('/');
+            req.login(user, function(err) {
+              middlewareFilters.myDashboardPage(req, res, next);
             });
           };
         });
@@ -348,5 +437,13 @@ router.route('/my-dashboard').get(myDashboardRoutes.index);
 router.route('/chargebee/webhooks').post(chargebeeRoutes.endPoint);
 
 router.route('/unsubscribe/:token').get(contactListUserRoutes.unsubscribe);
+
+router.get('/privacy_policy', function(req, res, next) {
+  res.render('privacy_policy', { title: 'Privacy Policy' });
+});
+
+router.get('/terms_of_use', function(req, res, next) {
+  res.render('terms_of_use', { title: 'Terms of Use' });
+});
 
 module.exports = router;

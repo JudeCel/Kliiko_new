@@ -42,8 +42,8 @@
 
     $scope.editComment = function(account, user) {
       $scope.modalInstance = $modal.open({
-        templateUrl: 'js/ngApp/components/dashboard-accountProfile-accountDatabase/modal.html',
-        windowTemplateUrl: 'js/ngApp/components/dashboard-accountProfile-accountDatabase/window.html',
+        templateUrl: '/js/ngApp/components/dashboard-accountProfile-accountDatabase/modal.html',
+        windowTemplateUrl: '/js/ngApp/components/dashboard-accountProfile-accountDatabase/window.html',
         controller: AccountDatabaseModalController,
         resolve: {
           data: function() {

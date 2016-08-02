@@ -19,15 +19,24 @@
   <div class="row">
     <div class='col-md-12 fixed-bottom-margin'>
       <div class='dashboard-container'>
-        <div id="contact-lists-left-column" class="col-md-3">
+        <div id="contact-lists-left-column" class="col-md-3 text-left">
           <div id="list-of-contacts">
             <div class="header">
-              Contact Lists
+              Select a Contact List
             </div>
 
             <div class="item" ng-class="{'active':clc.lists.activeListIndex == $index}" ng-click="clc.changeActiveList($index)" ng-repeat="item in clc.lists.items ">
-              <div class="item-name">{{ item.name }}
-                <span>&nbsp;({{ clc.returnContactCount(item) }})</span>
+              <div class="item-name">
+                <div class='row'>
+                  <div class='col-md-8'>
+                    {{ item.name }}
+                    <span>({{ clc.returnContactCount(item) }})</span>
+                  </div>
+
+                  <div class='col-md-4'>
+                    <span>{{ clc.returnSelectedCount(item) }} selected</span>
+                  </div>
+                </div>
               </div>
 
               <div class="item-selection-mark">
@@ -37,7 +46,7 @@
           </div>
 
           <div id="under-list-of-contacts-btns">
-            <div class="btn-standart btn-green" ng-click="clc.addNewList()">Add new list <img src="/icons/add_new_list_green.png" class="pull-right"></div>
+            <div class="btn-standart btn-green" ng-click="clc.addNewList()">Add New Contact List<img src="/icons/add_new_list_green.png" class="pull-right"></div>
             <div class="btn-standart btn-blue" ui-sref='dashboard.resources.survey' ng-if='!clc.hideStuff'>Recruiter <img src="/icons/recruiter_blue.png" class="pull-right"></div>
           </div>
         </div>
@@ -49,7 +58,7 @@
                 <input id="dashboard-contact-lists-selectAll-mass-action"  ng-click="clc.selectAll()" class="kliiko-checkbox checkbox-btn btn-green"  type="checkbox" ng-checked="clc.allSelected">
                 <label for="dashboard-contact-lists-selectAll-mass-action" ></label> Select all
               </div>
-              <div class="check" ng-click="clc.massDelete()">
+              <div class="check" ng-click="clc.massDelete()" ng-if='!clc.hideStuff'>
                 <img src='/icons/dashboardElement_remove.png' alt='' height="22px" />
                 Delete
               </div>
@@ -57,24 +66,21 @@
 
             <div class='btn-standart btn-green pull-right' ng-click='clc.editCustomFields()' ng-hide="!clc.lists.activeList.editable">Edit Custom Fields</div>
 
-            <div custom-select-directive data-title="Add Contacts" data-id="contact-lists-add-button-1" class="custom-select-directive pull-right">
-              <li ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
-              <li ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
-              <li ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
+            <div custom-select-directive data-title="Add New Contacts" data-id="contact-lists-add-button-1" class="custom-select-directive pull-right">
+              <li id='contactListAddNew' ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
+              <li id='contactListAddExcel' ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
+              <li id='contactListAddCsv' ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
             </div>
 
           </div>
 
           <!-- TABLE -->
-          <ng-include src="clc.basePath+'particles/table.tpl.html'"></ng-include>
 
           <div id="no-contacts-in-list" class="text-center" ng-show="!clc.lists.activeList.members.length">
-            <h3>There is no contacts in this list yet</h3>
-
-            <div custom-select-directive data-title="Add Contacts" data-id="contact-lists-add-button-2" class="custom-select-directive">
-              <li ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
-              <li ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
-              <li ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
+            <div custom-select-directive data-title="Add New Contacts" data-id="contact-lists-add-button-2" class="custom-select-directive">
+              <li id='contactListAddNew' ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
+              <li id='contactListAddExcel' ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
+              <li id='contactListAddCsv' ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
             </div>
 
             <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable">
@@ -89,6 +95,8 @@
 
 
           </div>
+
+          <ng-include src="clc.basePath+'particles/table.tpl.html'"></ng-include>
         </div>
 
 

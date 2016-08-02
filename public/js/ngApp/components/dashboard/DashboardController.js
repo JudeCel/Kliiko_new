@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp.Root').controller('DashboardController', DashboardController);
 
-  DashboardController.$inject = ['dbg', '$state', '$stateParams', 'dashboardServices', 'messenger'];
-  function DashboardController(dbg, $state, $stateParams, dashboardServices, messenger) {
+  DashboardController.$inject = ['dbg', '$state', '$stateParams', 'dashboardServices', 'goToChatroom', 'messenger', '$window'];
+  function DashboardController(dbg, $state, $stateParams, dashboardServices, goToChatroom, messenger, $window) {
     dbg.log2('#Dashboard controller started');
 
     var vm = this;
@@ -21,12 +21,11 @@
 
     function redirectToChatSession(sessionId) {
       vm.disablePlayButton = true;
-      dashboardServices.generateRedirectLink(sessionId).then(function(url) {
-        window.open(url, '_blank');
+
+      goToChatroom.go(sessionId).then(function(url) {
         vm.disablePlayButton = false;
       }, function(error) {
         vm.disablePlayButton = false;
-        messenger.error(error);
       });
     }
 
@@ -47,7 +46,7 @@
 
       if(invites.length > 0){
         invites.map(function(invite) {
-          confirmed = (invite.role == vm.currentTab && invite.status == 'confirmed');
+          confirmed = invite.status == 'confirmed';
         })
       }
       return confirmed;

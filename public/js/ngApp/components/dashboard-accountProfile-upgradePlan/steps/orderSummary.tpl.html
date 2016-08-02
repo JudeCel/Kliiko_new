@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="col-md-12 caption">
+    Order Summary
+  </div>
+
+  <div class="table-content">
+    <div class="row table-header" >
+      <div class="col-sm-3">Plan</div>
+      <div class="col-sm-3">Duration</div>
+      <div class="col-sm-3">Amount Due</div>
+      <div class="col-sm-2">
+        <a href="#" data-toggle="tooltip" title="{{ up.whatIsCredits }}">Credits</a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-3">
+        {{ up.selectedPlan.plan.name }}
+      </div>
+      <div class="col-sm-3">
+        {{ up.selectedPlan.plan.period }}
+        {{ up.selectedPlan.plan.period_unit }}
+      </div>
+      <div class="col-sm-3">
+        {{ up.showCalculatedPrice(up.selectedPlan.chargeEstimate.amount_due) | currency:"$":0 }}
+      </div>
+      <div class="col-sm-2">
+        {{ up.showCalculatedPrice(up.selectedPlan.chargeEstimate.credits_applied) | currency:"$":0 }}
+      </div>
+    </div>
+  </div>
+</div>

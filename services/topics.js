@@ -40,8 +40,8 @@ function getAll(accountId) {
     }]
   }).then(function(results){
     deferred.resolve(results);
-  },function(err) {
-    deferred.reject(err);
+  }, function(error) {
+    deferred.reject(filters.errors(error));
   });
   return deferred.promise;
 }
@@ -102,8 +102,8 @@ function updateSessionTopics(sessionId, topicsArray) {
     });
 
     deferred.resolve(returning);
-  }, function(err) {
-    deferred.reject(err);
+  }, function(error) {
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
@@ -124,15 +124,15 @@ function joinToSession(ids, sessionId) {
           deferred.resolve(sessionTopics);
         });
 
-      }, function(err) {
-        deferred.reject(err);
+      }, function(error) {
+        deferred.reject(filters.errors(error));
       })
 
-    }, function(err) {
-      deferred.reject(err);
+    }, function(error) {
+      deferred.reject(filters.errors(error));
     })
-  }, function(err) {
-    deferred.reject(err);
+  }, function(error) {
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
@@ -144,14 +144,14 @@ function removeFromSession(ids, sessionId) {
     Topic.findAll({where: {id: ids}}).then(function(results) {
       session.removeTopics(results).then(function(result) {
         deferred.resolve(result);
-      }, function(err) {
-        deferred.reject(err);
+      }, function(error) {
+        deferred.reject(filters.errors(error));
       })
-    }, function(err) {
-      deferred.reject(err);
+    }, function(error) {
+      deferred.reject(filters.errors(error));
     })
-  }, function(err) {
-    deferred.reject(err);
+  }, function(error) {
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
@@ -169,11 +169,11 @@ function removeAllFromSession(sessionId) {
     let ids = _.map(results, 'id');
     models.SessionTopics.destroy({ where: { sessionId: sessionId, topicId: { $in: ids }  } } ).then(function(result) {
       deferred.resolve(result);
-    }, function(err) {
-      deferred.reject(err);
+    }, function(error) {
+      deferred.reject(filters.errors(error));
     });
-  }, function(err) {
-    deferred.reject(err);
+  }, function(error) {
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
@@ -197,8 +197,8 @@ function destroy(id) {
     if (_.isEmpty(topic.Sessions)) {
       Topic.destroy({where: { id: id } }).then(function(result) {
         deferred.resolve(result)
-      },function(err) {
-        deferred.reject(err);
+      },function(error) {
+        deferred.reject(filters.errors(error));
       })
     } else {
       deferred.reject(MESSAGES.error.isRelaitedSession);
@@ -239,15 +239,15 @@ function update(params) {
         t.commit().then(function() {
           deferred.resolve(sessionTopic);
         });
-      },function(err) {
+      },function(error) {
         t.rollback().then(function() {
-          deferred.reject(err);
+          deferred.reject(filters.errors(error));
         });
       });
 
-    },function(err) {
+    },function(error) {
       t.rollback().then(function() {
-        deferred.reject(err);
+        deferred.reject(filters.errors(error));
       });
     });
   });

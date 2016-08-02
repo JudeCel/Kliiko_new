@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope'];
-  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope) {
+  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom'];
+  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -41,6 +41,7 @@
     vm.updateStep = updateStep;
     vm.goToStep = goToStep;
     vm.goToChat = goToChat;
+    vm.canSeeGoToChat = canSeeGoToChat;
     vm.currentPageToDisplay = currentPageToDisplay;
     vm.addFacilitatorsClickHandle = addFacilitatorsClickHandle;
 
@@ -106,7 +107,36 @@
 
     function goToChat(session) {
       if (session.showStatus && session.showStatus == 'Expired') return;
-      $window.location.href = session.chatRoomUrl + session.id;
+
+      vm.disableRedirectButton = true;
+      goToChatroom.go(session.id).then(function(url) {
+        vm.disableRedirectButton = false;
+      }, function(error) {
+        vm.disableRedirectButton = false;
+      });
+    }
+
+    function canSeeGoToChat(session, accountUser) {
+      if(session.sessionData) {
+        var facilitator = session.sessionData.facilitator ? session.sessionData.facilitator.accountUserId == accountUser.id : false;
+        var member, topics = false;
+        if(session.sessionData.SessionMembers) {
+          session.sessionData.SessionMembers.map(function(member) {
+            if(member.accountUserId == accountUser.id) {
+              member = true;
+            }
+          });
+        }
+
+        if(session.steps.step2.topics.length > 0) {
+          topics = true;
+        }
+
+        return (facilitator || member) && topics;
+      }
+      else {
+        return false;
+      }
     }
 
 
