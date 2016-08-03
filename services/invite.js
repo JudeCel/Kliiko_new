@@ -56,7 +56,10 @@ function createBulkInvites(arrayParams) {
           attributes:
           constants.safeAccountUserParams,
           include: {model: models.ContactListUser}
-        }, Account, Session, User]
+        }, {
+          model: Session,
+          include: [Account]
+        }, Account, User]
       }).then(function(invites) {
         async.each(invites, function(invite, callback) {
           invite.accountName = arrayParams.accountName;
@@ -116,7 +119,10 @@ function createInvite(params) {
         model: AccountUser,
         attributes:
         constants.safeAccountUserParams
-      }, Account, Session, User],
+      }, {
+        model: Session,
+        include: [Account]
+      }, Account, User],
       where: {
         token: token
       }
@@ -181,7 +187,7 @@ function sendInvite(invite, deferred) {
         token: invite.token,
         firstName: invite.AccountUser.firstName,
         lastName: invite.AccountUser.lastName,
-        accountName: invite.accountName,
+        accountName: session.Account.name,
         email: invite.AccountUser.email,
         sessionName: session.name,
         startTime: dateFormat(session.startTime, 'h:MM:ss'),
