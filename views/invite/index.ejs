@@ -2,80 +2,76 @@
 <div class='login-container center-block'>
   <div class='tab-content border-yellow text-font-family'>
     <div id='login' class='tab-pane fade in active'>
-      <%if(Object.keys(invite).length == 0) { %>
-        <h1 class='text-center text-gray-dark'>Invite not found</h1>
-      <% } else { %>
-        <h1 class='text-center text-gray-dark'>Invite</h1>
-        <%if(invite.userType == "new") { %>
-          <h5 class='text-center text-gray-dark'>
-            You have been invited to join klzii, type in password to accept or click decline to refuse.
-          </h5>
-          <span class='error-column has-error text-center' id='warning-email-password'><%= error.password %></span>
-          <form class='non-resubmitable' method='post' action='/invite/<%= invite.token %>/accept' novalidate>
-            <div class='container-fluid'>
-              <div class='row'>
-                <div class='col-xs-12'>
-                  <div class='form-group text-left text-gray-dark table-v-content-middle'>
-                    <div class='row'>
-                      <div class='col-xs-4'>
-                        <label class='pull-right' for='password'>Password <img src='/icons/lock.png' /></label>
-                      </div>
-                      <div class='col-xs-8'>
-                        <input type='password' class='form-control center-block border-brown' name='password' id='password' placeholder='Password'>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class='col-xs-12 text-center'>or</div>
-
-                <div class='col-xs-12 form-group'>
-                  <div class='form-group center-block'>
-                    <div class='check-google center-block'>
-                      <a href='/invite/auth/google/<%= invite.token %>' class='btn btn-block btn-social btn-google'>
-                        <i class='fa fa-google'></i> Use Google account
-                      </a>
-                    </div>
-                  </div>
-                  <div class='form-group center-block'>
-                    <div class='check-facebook center-block'>
-                      <a href='/invite/auth/facebook/<%= invite.token %>' class='btn btn-block btn-social btn-facebook'>
-                        <i class='fa fa-facebook'></i> Use Facebook account
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                <div class='col-xs-3'>
-                  <button type='submit' value='Submit' class='btn border-yellow text-brown-light background-transp pull-right'>Accept</button>
-                </div>
-                <div class='col-xs-6'></div>
-                <div class='col-xs-3'>
-                  <a href='/invite/<%= invite.token %>/decline' class='btn border-yellow text-brown-light background-transp pull-right'>Decline</a>
-                </div>
-                <div class='col-xs-12 invisible'>#</div>
-              </div>
-            </div>
-          </form>
-        <% } else { %>
-          <h5 class='text-center text-gray-dark'>
-            You have been invited to join klzii, click accept or decline.
-          </h5>
+      <h1 class='text-center text-gray-dark'>Choose Your Password</h1>
+      <%if(invite.userType == "new") { %>
+        <h5 class='text-center text-gray-dark'>
+          Create your own memorable password with at least 7 characters.
+        </h5>
+        <span class='error-column has-error text-center' id='warning-email-password'><%= error.password %></span>
+        <form class='non-resubmitable' method='post' action='/invite/<%= invite.token %>/accept' novalidate>
           <div class='container-fluid'>
             <div class='row'>
-              <div class='col-xs-12 invisible'>#</div>
-              <div class='col-xs-6'>
-                <a href='/invite/<%= invite.token %>/accept' class='btn border-yellow text-brown-light background-transp pull-right'>Accept</a>
+              <div class='col-xs-12'>
+                <div class='form-group text-left text-gray-dark table-v-content-middle'>
+                  <div class='row'>
+                    <div class='col-xs-4'>
+                      <label class='pull-right' for='password'>Password <img src='/icons/lock.png' /></label>
+                    </div>
+                    <div class='col-xs-8'>
+                      <input type='password' class='form-control center-block border-brown' name='password' id='password' placeholder='Password'>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <%if(invite.accountId) { %>
-              <div class='col-xs-6'>
-                <a href='/invite/<%= invite.token %>/decline' class='btn border-yellow text-brown-light background-transp pull-left'>Decline</a>
+
+              <div class='col-xs-12 text-center'>or</div>
+
+              <div class='col-xs-12 form-group'>
+                <div class='form-group center-block'>
+                  <div class='check-google center-block'>
+                    <a href='/invite/auth/google/<%= invite.token %>' class='btn btn-block btn-social btn-google'>
+                      <i class='fa fa-google'></i> Use Google account
+                    </a>
+                  </div>
+                </div>
+                <div class='form-group center-block'>
+                  <div class='check-facebook center-block'>
+                    <a href='/invite/auth/facebook/<%= invite.token %>' class='btn btn-block btn-social btn-facebook'>
+                      <i class='fa fa-facebook'></i> Use Facebook account
+                    </a>
+                  </div>
+                </div>
               </div>
-              <% } %>
+
+              <div class='col-xs-3'>
+                <button type='submit' value='Submit' class='btn border-yellow text-brown-light background-transp pull-right'>Accept</button>
+              </div>
+              <div class='col-xs-6'></div>
+              <div class='col-xs-3'>
+                <a href='/invite/<%= invite.token %>/decline' class='btn border-yellow text-brown-light background-transp pull-right'>Decline</a>
+              </div>
               <div class='col-xs-12 invisible'>#</div>
             </div>
           </div>
-        <% } %>
+        </form>
+      <% } else { %>
+        <h5 class='text-center text-gray-dark'>
+          You have been invited to join klzii, click accept or decline.
+        </h5>
+        <div class='container-fluid'>
+          <div class='row'>
+            <div class='col-xs-12 invisible'>#</div>
+            <div class='col-xs-6'>
+              <a href='/invite/<%= invite.token %>/accept' class='btn border-yellow text-brown-light background-transp pull-right'>Accept</a>
+            </div>
+            <%if(invite.accountId) { %>
+            <div class='col-xs-6'>
+              <a href='/invite/<%= invite.token %>/decline' class='btn border-yellow text-brown-light background-transp pull-left'>Decline</a>
+            </div>
+            <% } %>
+            <div class='col-xs-12 invisible'>#</div>
+          </div>
+        </div>
       <% } %>
     </div>
   </div>
