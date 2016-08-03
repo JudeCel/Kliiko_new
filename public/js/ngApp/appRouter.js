@@ -34,9 +34,10 @@
         views: {
           'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-accountProfile/dashboard-content.html"}
         },
-        onEnter: ['dbg', function(dbg) {
+        onEnter: ['$state', 'dbg', 'accountUser', function($state, dbg, accountUser) {
           dbg.rs('dashboard.accountProfile is on');
           sessionStorage.setItem('bannerType', 'profile');
+          if(accountUser.accountUser.isFacilitator) $state.go('dashboard.chatSessions');
         }]
       })
       .state('dashboard.accountProfile.upgradePlan', {
@@ -110,13 +111,12 @@
       })
       .state('dashboard.resources', {
         url: "/resources",
-        onEnter: ['$state', 'dbg', function($state, dbg) {
+        onEnter: ['$state', 'dbg', 'accountUser', function($state, dbg, accountUser) {
           dbg.rs('resources');
           sessionStorage.setItem('bannerType', 'resources');
 
-          setTimeout(function() {
-            if ($state.current.name == 'dashboard.resources') $state.go('dashboard.resources.gallery');
-          }, 10);
+          if(accountUser.accountUser.isFacilitator) $state.go('dashboard.chatSessions');
+          else if ($state.current.name == 'dashboard.resources') $state.go('dashboard.resources.gallery');
         }],
         views: {
           'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-resources/resources.html"}
