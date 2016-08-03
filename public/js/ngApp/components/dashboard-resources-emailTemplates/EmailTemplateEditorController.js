@@ -3,7 +3,7 @@
 
   angular.module('KliikoApp').controller('EmailTemplateEditorController', EmailTemplateEditorController);
 
-  EmailTemplateEditorController.$inject = ['dbg', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger'];
+  EmailTemplateEditorController.$inject = ['dbg', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', '$q'];
   //necessary to bypass email editors restrictions
   jQuery.browser = {};
     (function () {
@@ -15,7 +15,7 @@
         }
     })();
 
-  function EmailTemplateEditorController(dbg, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger) {
+  function EmailTemplateEditorController(dbg, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q) {
     dbg.log2('#EmailTemplateEditorController started');
 
     var vm = this;
@@ -127,12 +127,16 @@
      * @param createCopy {boolean}
      * @param [template] {object} default valuse is currentTemplate
      */
-    function modifyAndSave(createCopy, template) {
+    function modifyAndSave(createCopy, template, includeProperties, templateName) {
+      var deferred = $q.defer();
       var template = template || vm.currentTemplate;
 
       vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
       vm.currentTemplate.error = {};
-      template.properties = vm.properties;
+      if (includeProperties) {
+        template.properties = vm.properties;
+        template.properties.templateName = templateName;
+      }
       mailTemplate.saveMailTemplate(template, createCopy).then(function (res) {
         if (!res.error) {
           refreshTemplateList(function() {
@@ -142,32 +146,43 @@
             }
           });
           messenger.ok("Template was successfully saved.");
+          deferred.resolve();
         } else {
           messenger.error(res.error);
+          deferred.reject();
         }
       });
+
+      return deferred.promise;
     }
 
     function deleteTemplate(template, key, event) {
-      vm.templateToDelete = {template: template, key: key};
+      var deferred = $q.defer();
+      vm.templateToDelete = {template: template, key: key, deferred: deferred};
       domServices.modal('confirmDialog');
 
       if(event) {
         event.stopPropagation();
         event.preventDefault();
       }
+      return deferred.promise;
     }
 
     function resetMailTemplate() {
+      var deferred = $q.defer();
       mailTemplate.resetMailTemplate(vm.currentTemplate).then(function (res) {
         if (!res.error) {
           refreshTemplateList(function() {
             vm.startEditingTemplate(vm.currentTemplate.index);
+            deferred.resolve();
           });
         } else {
           messenger.error(res.error);
+          deferred.reject();
         }
       });
+
+      return deferred.promise;
     }
 
     function previewMailTemplate() {
@@ -185,6 +200,7 @@
     }
 
     function saveEmailTemplate(force) {
+      var deferred = $q.defer();
       vm.currentTemplate.properties = vm.properties;
 
       if (force) {
@@ -197,12 +213,16 @@
             if (index != -1) {
               vm.startEditingTemplate(index);
             }
+            deferred.resolve();
           });
           messenger.ok("Template was successfully saved.");
         } else {
           messenger.error(res.error);
+          deferred.reject();
         }
       });
+
+      return deferred.promise;
     }
 
     function getIndexOfMailTemplateWithId(id) {
@@ -260,6 +280,8 @@
           if (nextSelection != -1) {
             vm.startEditingTemplate(nextSelection);
           }
+
+          vm.templateToDelete.deferred.resolve();
         });
       });
     };
