@@ -7,7 +7,7 @@
         </h2>
       </div>
       <div class='text-right'>
-        <button id='dashboard-build-new-session'class='btn btn-addNewElement btn-green' ui-sref="dashboard.chatSessions.builder">Build New Session</button>
+        <button ng-if='!app.accountUser.isFacilitator' id='dashboard-build-new-session'class='btn btn-addNewElement btn-green' ui-sref="dashboard.chatSessions.builder">Build New Session</button>
       </div>
     </div>
     <div class='col-xs-12 fixed-bottom-margin'>

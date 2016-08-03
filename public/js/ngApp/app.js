@@ -60,13 +60,16 @@
     });
   }
 
-  myInterceptor.$inject = ['$log','$q', '$rootScope'];
-  function myInterceptor($log, $q, $rootScope) {
+  myInterceptor.$inject = ['$log','$q', '$rootScope', 'messenger'];
+  function myInterceptor($log, $q, $rootScope, messenger) {
     // Show progress bar on every request
 
     var requestInterceptor = {
       request: function(config) {
-        $rootScope.progressbarStart();
+        if(config.transformResponse.length > 0) {
+          $rootScope.progressbarStart();
+        }
+
         return config;
       },
 
@@ -74,12 +77,17 @@
         if (response.status == 404) {
           alert('that is all folks');
         }
-        $rootScope.progressbarComplete();
+        if(response.config.transformResponse.length > 0) {
+          $rootScope.progressbarComplete();
+        }
         return response;
       },
 
       // optional method
       'responseError': function(rejection) {
+        if(rejection.status == 404) {
+          messenger.error(rejection.data);
+        }
         $rootScope.progressbarComplete();
         return $q.reject(rejection);
       }

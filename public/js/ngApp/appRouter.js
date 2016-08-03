@@ -87,13 +87,9 @@
       })
       .state('dashboard.chatSessions', {
         url: '/chatSessions',
-        onEnter: ['$state', 'dbg', function ($state, dbg) {
+        onEnter: ['dbg', function (dbg) {
           dbg.rs('chatSessions');
           sessionStorage.setItem('bannerType', 'sessions');
-
-          setTimeout(function() {
-           if ($state.current.name == 'dashboard.chatSessions') $state.go('dashboard.chatSessions');
-          }, 10);
         }],
         views: {
           'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-chatSessions/dashboard-content.html"}
@@ -101,9 +97,12 @@
       })
       .state('dashboard.chatSessions.builder', {
         url: '/builder/:id',
-        onEnter: ['dbg', function(dbg) {
+        onEnter: ['$state', 'dbg', 'accountUser', function($state, dbg, accountUser) {
           dbg.rs('chatSessions builder');
           sessionStorage.setItem('bannerType', 'sessions');
+          setTimeout(function() {
+            if(accountUser.accountUser.isFacilitator && !$state.params.id) $state.go('dashboard.chatSessions');
+          }, 10);
         }],
         views: {
           'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-chatSessions-builder/session-builder-index.html"}
