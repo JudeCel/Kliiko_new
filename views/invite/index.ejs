@@ -44,11 +44,11 @@
               </div>
 
               <div class='col-xs-3'>
-                <button type='submit' value='Submit' class='btn border-yellow text-brown-light background-transp pull-right'>Accept</button>
+                <button type='submit' value='Submit' class='btn border-yellow text-brown-light background-transp pull-right'>Let's Go</button>
               </div>
               <div class='col-xs-6'></div>
               <div class='col-xs-3'>
-                <a href='/invite/<%= invite.token %>/decline' class='btn border-yellow text-brown-light background-transp pull-right'>Decline</a>
+                <a href='/invite/<%= invite.token %>/decline' class='btn border-yellow text-brown-light background-transp pull-right'>Cancel</a>
               </div>
               <div class='col-xs-12 invisible'>#</div>
             </div>
@@ -62,11 +62,11 @@
           <div class='row'>
             <div class='col-xs-12 invisible'>#</div>
             <div class='col-xs-6'>
-              <a href='/invite/<%= invite.token %>/accept' class='btn border-yellow text-brown-light background-transp pull-right'>Accept</a>
+              <a href='/invite/<%= invite.token %>/accept' class='btn border-yellow text-brown-light background-transp pull-right'>Let's Go</a>
             </div>
             <%if(invite.accountId) { %>
             <div class='col-xs-6'>
-              <a href='/invite/<%= invite.token %>/decline' class='btn border-yellow text-brown-light background-transp pull-left'>Decline</a>
+              <a href='/invite/<%= invite.token %>/decline' class='btn border-yellow text-brown-light background-transp pull-left'>Cancel</a>
             </div>
             <% } %>
             <div class='col-xs-12 invisible'>#</div>
