@@ -310,7 +310,11 @@ function acceptInviteExisting(token, callback) {
             role: invite.role
           };
           sessionMemberService.createWithTokenAndColour(params).then(function() {
-            callback(null, invite, MESSAGES.confirmed);
+            sendEmail('inviteConfirmation', invite).then(function() {
+              callback(null, invite, MESSAGES.confirmed);
+            }, function(error) {
+              callback(error);
+            });
           }, function(error) {
             callback(filters.errors(error));
           });
@@ -397,12 +401,20 @@ function sessionAccept(token, body) {
                     deferred.reject(object.error);
                   }
                   else {
-                    deferred.resolve({ message: MESSAGES.confirmed, user: user });
+                    sendEmail('inviteConfirmation', invite).then(function() {
+                      deferred.resolve({ message: MESSAGES.confirmed, user: user });
+                    }, function(error) {
+                      deferred.reject(error);
+                    });
                   }
                 });
               }
               else {
-                deferred.resolve({ message: MESSAGES.confirmed, user: user });
+                sendEmail('inviteConfirmation', invite).then(function() {
+                  deferred.resolve({ message: MESSAGES.confirmed, user: user });
+                }, function(error) {
+                  deferred.reject(error);
+                });
               }
             }, function(error) {
               deferred.reject(filters.errors(error));
@@ -449,25 +461,29 @@ function sendEmail(status, invite) {
   let deferred = q.defer();
 
   prepareMailInformation(invite).then(function(data) {
-    if(status == "notAtAll"){
-      mailerHelpers.sendInvitationNotAtAll(data, function(error, result) {
-        if(error){
-          deferred.reject(error);
-        }else{
-          deferred.resolve(result);
-        }
-      })
-    }else if(status = "notThisTime"){
-      mailerHelpers.sendInvitationNotThisTime(data, function(error, result) {
-        if(error){
-          deferred.reject(error);
-        }else{
-          deferred.resolve(result);
-        }
-      })
-    }else{
-      deferred.resolve();
+    let doSendEmail;
+
+    if(status == 'notAtAll') {
+      doSendEmail = mailerHelpers.sendInvitationNotAtAll;
     }
+    else if(status == 'notThisTime') {
+      doSendEmail = mailerHelpers.sendInvitationNotThisTime;
+    }
+    else if(status == 'inviteConfirmation') {
+      doSendEmail = mailerHelpers.sendInviteConfirmation;
+    }
+    else {
+      return deferred.resolve();
+    }
+
+    doSendEmail(data, function(error, result) {
+      if(error) {
+        deferred.reject(error);
+      }
+      else {
+        deferred.resolve(result);
+      }
+    });
   }, function(error) {
     deferred.reject(error);
   })
@@ -484,9 +500,9 @@ function prepareMailInformation(invite) {
       sessionId: invite.sessionId,
       role: 'facilitator'
     },
-    include: [AccountUser]
+    include: [AccountUser, Session]
   }).then(function(facilitator) {
-    deferred.resolve(prepareMailParams(invite.sessionId, invite.AccountUser, facilitator.AccountUser));
+    deferred.resolve(prepareMailParams(facilitator.Session, invite.AccountUser, facilitator.AccountUser));
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -494,16 +510,22 @@ function prepareMailInformation(invite) {
   return deferred.promise;
 }
 
-function prepareMailParams(sessionId, receiver, facilitator) {
+function prepareMailParams(session, receiver, facilitator) {
+  console.log(facilitator.dataValues);
   return {
-    sessionId: sessionId,
+    sessionId: session.id,
     email: receiver.email,
     firstName: receiver.firstName, //receiver name
     facilitatorFirstName: facilitator.firstName,
     facilitatorLastName: facilitator.lastName,
     facilitatorMail: facilitator.email,
     facilitatorMobileNumber: facilitator.mobile,
-    unsubscribeMailUrl: ""
+    unsubscribeMailUrl: 'not-found',
+    startTime: session.startTime,
+    startDate: session.startDate,
+    confirmationCheckInUrl: 'not-found',
+    participantMail: receiver.email,
+    incentive: session.incentive
   }
 }
 
