@@ -176,8 +176,8 @@ function copyScheme(params, accountId) {
     result.data.dataValues.name = originalName + new Date().getTime();
 
     createScheme(result.data.dataValues, accountId).then(function(result) {
-      updateScheme({ id: result.data.id, name: originalName + ' #' + result.data.id }, accountId).then(function(result) {
-        deferred.resolve(simpleParams(result.data, MESSAGES.copied));
+      result.data.update({ name: originalName + ' #' + result.data.id }, { returning: true }).then(function(result) {
+        deferred.resolve(simpleParams(result, MESSAGES.copied));
       }, function(error) {
         deferred.reject(filters.errors(error));
       });

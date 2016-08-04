@@ -53,6 +53,9 @@
       }else{
         messenger.error('Something went wrong, please try later.')
       }
+      setTimeout(function () {
+        $("#new-topic-input").focus();
+      }, 200);
     };
 
     function setEditData() {

@@ -52,47 +52,48 @@
         </div>
 
         <div id="contact-lists-right-column" class="col-md-9">
-          <div id="list-mass-actions" ng-class="row" ng-hide="!clc.lists.activeList.members.length">
-            <span class="col-md-6">
-              <div class="check">
-                <input id="dashboard-contact-lists-selectAll-mass-action"  ng-click="clc.selectAll()" class="kliiko-checkbox checkbox-btn btn-green"  type="checkbox" ng-checked="clc.allSelected">
-                <label for="dashboard-contact-lists-selectAll-mass-action" ></label> Select all
-              </div>
-              <div class="check" ng-click="clc.massDelete()" ng-if='!clc.hideStuff'>
-                <img src='/icons/dashboardElement_remove.png' alt='' height="22px" />
-                Delete
-              </div>
-            </span>
-
-            <div class='btn-standart btn-green pull-right' ng-click='clc.editCustomFields()' ng-hide="!clc.lists.activeList.editable">Edit Custom Fields</div>
-
-            <div custom-select-directive data-title="Add New Contacts" data-id="contact-lists-add-button-1" class="custom-select-directive pull-right">
-              <li id='contactListAddNew' ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
-              <li id='contactListAddExcel' ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
-              <li id='contactListAddCsv' ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
+          <div id="list-mass-actions" ng-if="clc.lists.activeList.members.length">
+            <div class="check">
+              <input id="dashboard-contact-lists-selectAll-mass-action"  ng-click="clc.selectAll()" class="kliiko-checkbox checkbox-btn btn-green"  type="checkbox" ng-checked="clc.allSelected">
+              <label for="dashboard-contact-lists-selectAll-mass-action" ></label> Select all
+            </div>
+            <div class="check" ng-click="clc.massDelete()" ng-if='!clc.hideStuff'>
+              <img src='/icons/dashboardElement_remove.png' alt='' height="22px" />
+              Delete
             </div>
 
+            <span class='text-center pull-right'>
+              <span ng-if="clc.lists.activeList.editable">
+                <div class='btn-standart btn-green' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
+                &nbsp; or &nbsp;
+              </span>
+
+              <div custom-select-directive data-title="Add New Contacts" data-id="contact-lists-add-button-1" class="custom-select-directive">
+                <li id='contactListAddNew' ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
+                <li id='contactListAddExcel' ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
+                <li id='contactListAddCsv' ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
+              </div>
+            </span>
           </div>
 
           <!-- TABLE -->
 
-          <div id="no-contacts-in-list" class="text-center" ng-show="!clc.lists.activeList.members.length">
+          <div id="no-contacts-in-list" class="text-center pull-right" ng-if="!clc.lists.activeList.members.length">
+            <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable">
+              <div class="btn-standart btn-red" ng-click="clc.deleteList(clc.lists.activeList, $index)">Remove this List</div>
+            </span>
+
+            <span ng-if="clc.lists.activeList.editable">
+              &nbsp; or &nbsp;
+              <div class='btn-standart btn-green' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
+              &nbsp; or &nbsp;
+            </span>
+
             <div custom-select-directive data-title="Add New Contacts" data-id="contact-lists-add-button-2" class="custom-select-directive">
               <li id='contactListAddNew' ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
               <li id='contactListAddExcel' ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
               <li id='contactListAddCsv' ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
             </div>
-
-            <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable">
-              &nbsp; or &nbsp;
-              <div class="btn-standart btn-red" ng-click="clc.deleteList(clc.lists.activeList, $index)">Remove this List</div>
-            </span>
-
-            <span ng-show="clc.lists.activeList.editable">
-              &nbsp; or &nbsp;
-              <div class='btn-standart btn-green' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
-            </span>
-
 
           </div>
 

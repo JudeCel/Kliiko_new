@@ -150,17 +150,9 @@
     overflow: inherit;
 
     #list-mass-actions {
-      outline: none;
-
       .check {
         float: left;
-        margin-top: 11px;
         margin-right: 20px;
-
-      }
-
-      .pull-right {
-        margin: 0 10px;
       }
     }
 
@@ -294,12 +286,13 @@
     }
 
     .wrapper-dropdown-cd {
+      height: 39px;
       max-width: 100%;
     }
 
     ul.dropdown {
       left:-2px;
-      max-width: 100%;
+      width: 200px;
       border: 2px solid $green;
       border-top: none;
       z-index:300 !important;
@@ -318,10 +311,6 @@
       }
     }
   }
-  #contact-lists-add-button-1 {
-    padding: 8px !important;
-  }
-
 
   @import "particles/modals-excel-csv-import";
 
