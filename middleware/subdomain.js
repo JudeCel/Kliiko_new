@@ -5,6 +5,7 @@ var policy = require('./policy');
 var Account  = models.Account;
 var _ = require('lodash');
 var constants = require('../util/constants');
+var libSubdomains = require('./../lib/subdomains');
 
 function assignCurrentDomain(result, res) {
 
@@ -79,7 +80,7 @@ function getAccauntWithRoles(user, subdomain, debug, callback) {
   });
 }
 
-function isDomainAvailableForThisUser(req, subdomain, debug, callback) {
+function isDomainAvailableForThisUser(req, res, subdomain, debug, callback) {
   debug.isDomainAvailableForThisUser.user = req.user;
 
   if (req.user) {
@@ -88,7 +89,9 @@ function isDomainAvailableForThisUser(req, subdomain, debug, callback) {
     })
   }else{
     debug.isDomainAvailableForThisUser.notFoundUser = true;
-    callback(true, null);
+    req.session.destroy(function() {
+      res.redirect(libSubdomains.url(req, libSubdomains.base, "/"));
+    })
   }
 }
 
@@ -126,7 +129,7 @@ module.exports = function(req, res, next) {
   debug.exports.subdomain = subdomain;
 
   if (comparedWithBaseDomainName(subdomain, debug)) {
-    isDomainAvailableForThisUser(req, subdomain, debug, function(error, result){
+    isDomainAvailableForThisUser(req, res, subdomain, debug, function(error, result){
       if(result){
         assignCurrentDomain(result, res)
         assignCurrentUserInfo(result, req)
