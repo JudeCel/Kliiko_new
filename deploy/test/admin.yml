@@ -67,3 +67,9 @@ spec:
           value: "i_S2xLucKbRL14sp6hHSRVA_"
         - name: GOOGLE_CALLBACK_URL
           value: "http://www.test.klzii.com/auth/google/callback"
+        - name: SESSION_COOKIES_NAME
+          value: "klzii_test_demo"
+        - name: SESSION_SECRET
+          value: "e4165b06ff82cd6425100d7403bcd213770a88caab4a68ee50b5d659bbe3a16c26826a2a963d032c822854a7f392e266a843e3731290467b9201e467cb36ea9c"
+        - name: COOKIE_SECRET
+          value: "eda80b40b4ee5e5c87eee6eefb6a5393c47f6832c740e745292bbd03ca09f4545873765e0fa1190f3e29f67048e3dc17170e70dcc814b695a5408fdd87141998"

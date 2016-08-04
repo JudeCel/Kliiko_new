@@ -69,3 +69,9 @@ spec:
           value: "www"
         - name: SERVER_SKIP_SUBDOMAINS
           value: "www"
+        - name: SESSION_COOKIES_NAME
+          value: "klzii"
+        - name: SESSION_SECRET
+          value: "d31ffc942a0c160844117563d3c3003b7c7625d8f01771300189d8afb6602f0d2e3676fea88b2722704792546b16daad66ff57fb4ec31e5f504da0859c1c7719"
+        - name: COOKIE_SECRET
+          value: "384ea4460f93543b5df82b039ff9da764bfd6393e16dd0913dfaf91b380baa409ed7587865b76d8cb2ac70bd5a7db538280778ac6bc2c73b737709e5ef7df98e"

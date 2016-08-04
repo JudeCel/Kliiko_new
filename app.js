@@ -38,7 +38,7 @@ app.use(session({
   cookie: { domain: process.env.SERVER_BASE_DOMAIN},
   domain: process.env.SERVER_BASE_DOMAIN,
   secret: process.env.SESSION_SECRET,
-  name: `_klzii_${app.get('env')}`,
+  name: `_klzii_${process.env.SESSION_COOKIES_NAME}`,
   saveUninitialized: false,
   rolling: true,
   resave: true
