@@ -42,6 +42,14 @@ module.exports = {
       {
         type: 'maxlength',
         message: 'Answer is too long!',
+      },
+      {
+        type: 'phoneNumber',
+        message: 'Invalid phone number.',
+      },
+      {
+        type: 'landlineNumber',
+        message: 'Invalid phone number.',
       }
     ]
   },

@@ -68,7 +68,7 @@
             dbg.log2('#SurveyClientController > answerSurvey > res ', res);
 
             if(res.error) {
-              messenger.error(surveyServices.prepareError(res.error));
+              messenger.error(res.error);
             }
             else {
               vm.message = res.message;
