@@ -95,6 +95,8 @@ function isDomainAvailableForThisUser(req, subdomain, debug, callback) {
 module.exports = function(req, res, next) {
   let debug = {
     exports: {
+      cookies: req.cookies,
+      session: req.session,
       subdomain: null,
       notValidResult: null
     },
