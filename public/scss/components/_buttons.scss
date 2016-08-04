@@ -199,3 +199,31 @@ input.kliiko-checkbox:checked + label{
   background-size: contain;
   //margin-top: 1px;
 }
+
+.go-to-chatroom,
+.go-to-dashboard {
+  padding: 6px;
+  margin-right: 5px;
+  vertical-align: middle;
+  margin-top: -2px;
+  width: 30px;
+  height: 30px;
+}
+
+.go-to-chatroom,
+.go-to-chatroom:focus,
+.go-to-chatroom:hover,
+.go-to-chatroom:active {
+  color: $blue;
+  text-decoration: none;
+  border: 2px solid $blue;
+}
+
+.go-to-dashboard,
+.go-to-dashboard:focus,
+.go-to-dashboard:hover,
+.go-to-dashboard:active {
+  color: $green;
+  text-decoration: none;
+  border: 2px solid $green;
+}

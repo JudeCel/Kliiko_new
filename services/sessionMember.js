@@ -33,25 +33,39 @@ function createWithTokenAndColour(params) {
   models.AccountUser.find({ where: { id: params.accountUserId } }).then(function(accountUser) {
     params.avatarData = accountUser.gender == 'male' ? constants.sessionMemberMan : constants.sessionMemberWoman;
 
-    if(params.role == 'facilitator' || params.role == 'observer') {
-      params.colour = brandProjectConstants.memberColours.facilitator;
-      createHelper(deferred, params);
-    }
-    else {
-      SessionMember.count({
-        where: {
-          sessionId: params.sessionId,
-          role: params.role
-        }
-      }).then(function(c) {
-        params.colour = brandProjectConstants.memberColours.participants[c+1];
-        createHelper(deferred, params);
-      });
-    }
+    SessionMember.find({ where: { sessionId: params.sessionId, accountUserId: params.accountUserId } }).then(function(sessionMember) {
+      let correctFunction = createHelper;
+      if(sessionMember) {
+        correctFunction = updateHelper;
+      }
+
+      if(params.role == 'facilitator' || params.role == 'observer') {
+        params.colour = brandProjectConstants.memberColours.facilitator;
+        correctFunction(deferred, params, sessionMember);
+      }
+      else {
+        SessionMember.count({
+          where: {
+            sessionId: params.sessionId,
+            role: params.role
+          }
+        }).then(function(c) {
+          params.colour = brandProjectConstants.memberColours.participants[c+1];
+          correctFunction(deferred, params, sessionMember);
+        });
+      }
+    });
   });
 
-
   return deferred.promise;
+}
+
+function updateHelper(deferred, params, sessionMember) {
+  sessionMember.update(params, { returning: true }).then(function(sm) {
+    deferred.resolve(sm);
+  }, function(error) {
+    deferred.reject(filters.errors(error));
+  });
 }
 
 function createHelper(deferred, params) {
@@ -107,7 +121,7 @@ function removeByIds(ids, sessionId, accountId) {
 function removeByRole(role, sessionId, accountId) {
   let deferred = q.defer();
 
-  SessionMember.destroy({
+  SessionMember.findAll({
     where: {
       sessionId: sessionId,
       role: role
@@ -117,9 +131,26 @@ function removeByRole(role, sessionId, accountId) {
       where: {
         accountId: accountId
       }
-    }]
-  }).then(function(removedCount) {
-    deferred.resolve(removedCount);
+    }, models.AccountUser]
+  }).then(function(sessionMembers) {
+    let members = [], managers = [];
+    _.map(sessionMembers, function(sessionMember) {
+      if(sessionMember.AccountUser.role == 'accountManager') {
+        managers.push(sessionMember);
+      }
+      else {
+        members.push(sessionMember);
+      }
+    });
+
+    let ids = _.map(members, 'id');
+    SessionMember.destroy({ where: { id: ids } }).then(function(removedCount) {
+      _.map(managers, function(sessionMember) {
+        sessionMember.update({ role: 'observer' });
+      });
+
+      deferred.resolve(removedCount);
+    });
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });

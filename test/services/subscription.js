@@ -554,10 +554,46 @@ describe('SERVICE - Subscription', function() {
   });
 
   describe('#cancelSubscription', function() {
+    function updateProvider(params) {
+      return function() {
+        return {
+          request: function(callback) {
+            callback(null, {
+              id: params.id,
+              plan_id: params.plan_id
+            });
+          }
+        }
+      }
+    }
+
+    function validCreditCardProvider() {
+      return function() {
+        return {
+          request: function(callback) {
+            callback(null, {
+              customer: {
+                card_status: "valid"
+              }
+            });
+          }
+        }
+      }
+    }
+
     var subId = 'SomeUniqueID';
+    var providers = {
+      creditCard: validCreditCardProvider(),
+      updateProvider: updateProvider({ id: subId, plan_id: "core_monthly" })
+    }
+
     beforeEach(function(done) {
       subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: subId })).then(function() {
-        done();
+        subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: "core_monthly", skipCardCheck: true}, providers).then(function(result) {
+          done();
+        }, function(error) {
+          done(error);
+        });
       }, function(error) {
         done(error);
       });
@@ -625,6 +661,27 @@ describe('SERVICE - Subscription', function() {
           done(error);
         });
       });
+
+      it('should succeed on closing subscription and dependencies', function(done) {
+        surveyPromise().then(function(c) {
+          assert.equal(c, 0);
+          return sessionPromise();
+        }).then(function(c) {
+          assert.equal(c, 0);
+          return subscriptionServices.cancelSubscription(subId, 'someEventId', providers);
+        }).then(function(result) {
+          return surveyPromise();
+        }).then(function(c) {
+          assert.equal(c, 2);
+          return sessionPromise();
+        }).then(function(c) {
+          assert.equal(c, 2);
+          done();
+        }).catch(function(error) {
+          done(error);
+        });
+      });
+
     });
 
     describe('sad path', function() {

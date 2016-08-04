@@ -34,9 +34,10 @@
         views: {
           'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-accountProfile/dashboard-content.html"}
         },
-        onEnter: ['dbg', function(dbg) {
+        onEnter: ['$state', 'dbg', 'accountUser', function($state, dbg, accountUser) {
           dbg.rs('dashboard.accountProfile is on');
           sessionStorage.setItem('bannerType', 'profile');
+          if(accountUser.accountUser.isFacilitator) $state.go('dashboard.chatSessions');
         }]
       })
       .state('dashboard.accountProfile.upgradePlan', {
@@ -86,13 +87,9 @@
       })
       .state('dashboard.chatSessions', {
         url: '/chatSessions',
-        onEnter: ['$state', 'dbg', function ($state, dbg) {
+        onEnter: ['dbg', function (dbg) {
           dbg.rs('chatSessions');
           sessionStorage.setItem('bannerType', 'sessions');
-
-          setTimeout(function() {
-           if ($state.current.name == 'dashboard.chatSessions') $state.go('dashboard.chatSessions');
-          }, 10);
         }],
         views: {
           'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-chatSessions/dashboard-content.html"}
@@ -100,9 +97,12 @@
       })
       .state('dashboard.chatSessions.builder', {
         url: '/builder/:id',
-        onEnter: ['dbg', function(dbg) {
+        onEnter: ['$state', 'dbg', 'accountUser', function($state, dbg, accountUser) {
           dbg.rs('chatSessions builder');
           sessionStorage.setItem('bannerType', 'sessions');
+          setTimeout(function() {
+            if(accountUser.accountUser.isFacilitator && !$state.params.id) $state.go('dashboard.chatSessions');
+          }, 10);
         }],
         views: {
           'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-chatSessions-builder/session-builder-index.html"}
@@ -110,13 +110,12 @@
       })
       .state('dashboard.resources', {
         url: "/resources",
-        onEnter: ['$state', 'dbg', function($state, dbg) {
+        onEnter: ['$state', 'dbg', 'accountUser', function($state, dbg, accountUser) {
           dbg.rs('resources');
           sessionStorage.setItem('bannerType', 'resources');
 
-          setTimeout(function() {
-            if ($state.current.name == 'dashboard.resources') $state.go('dashboard.resources.gallery');
-          }, 10);
+          if(accountUser.accountUser.isFacilitator) $state.go('dashboard.chatSessions');
+          else if ($state.current.name == 'dashboard.resources') $state.go('dashboard.resources.gallery');
         }],
         views: {
           'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-resources/resources.html"}

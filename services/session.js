@@ -4,6 +4,7 @@ var policy = require('./../middleware/policy');
 var models = require('./../models');
 var filters = require('./../models/filters');
 var subscriptionService = require('./subscription');
+var sessionValidator = require('./validators/session');
 var topicsService = require('./topics');
 var Session  = models.Session;
 var Invite  = models.Invite;
@@ -31,7 +32,7 @@ const MESSAGES = {
   sessionMemberNotFound: 'Session Member not found',
   rated: 'Session Member rated',
   commentChanged: 'Comment updated successfully',
-  cantRateSelf: "You can't rate your self"
+  cantRateSelf: "You can't rate your self",
 };
 
 module.exports = {
@@ -43,8 +44,8 @@ module.exports = {
   removeSession: removeSession,
   updateSessionMemberRating: updateSessionMemberRating,
   getAllSessionRatings: getAllSessionRatings,
-  addShowStatus: addShowStatus,
   changeComment: changeComment,
+  validateSession: validateSession,
   getSessionByInvite: getSessionByInvite
 };
 
@@ -482,7 +483,7 @@ function changeSessionData(sessions, chargebeeSub, provider) {
   let array = _.isArray(sessions) ? sessions : [sessions];
   _.map(array, function(session) {
     if(chargebeeSub) {
-      addShowStatus(session, chargebeeSub);
+      sessionValidator.addShowStatus(session, chargebeeSub);
     }
     else {
       session.dataValues.showStatus = 'Indefinite';
@@ -508,23 +509,33 @@ function changeSessionData(sessions, chargebeeSub, provider) {
   });
 }
 
-function addShowStatus(session, chargebeeSub) {
-  let endDate = new Date((chargebeeSub.current_term_end || chargebeeSub.trial_end) * 1000);
-  session.dataValues.expireDate = endDate;
+function validateSession(userId, sessionId, provider) {
+  let deferred = q.defer();
 
-  if(session.active) {
-    var date = new Date();
-    if(chargebeeSub && date > endDate) {
-      session.dataValues.showStatus = 'Expired';
-    }
-    else if(date < new Date(session.startTime)) {
-      session.dataValues.showStatus = 'Pending';
+  models.SessionMember.find({
+    include: [{
+      model: models.Session,
+      where: { id: sessionId },
+      include: [{
+        model: models.Account,
+        include: [models.Subscription]
+      }, models.SessionTopics]
+    }, {
+      model: models.AccountUser,
+      where: { UserId: userId }
+    }]
+  }).then(function(sessionMember) {
+    if(sessionMember) {
+      return sessionValidator.validate(sessionMember, provider);
     }
     else {
-      session.dataValues.showStatus = 'Open';
+      deferred.reject(MESSAGES.sessionMemberNotFound);
     }
-  }
-  else {
-    session.dataValues.showStatus = 'Closed';
-  }
+  }).then(function() {
+    deferred.resolve();
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
 }
