@@ -493,10 +493,8 @@ function exportSurvey(params, account) {
       else {
         deferred.reject(MESSAGES.notFound);
       }
-    }).catch(Survey.sequelize.ValidationError, function(error) {
-      deferred.reject(filters.errors(error));
     }).catch(function(error) {
-      deferred.reject(error);
+      deferred.reject(filters.errors(error));
     });
   }, function(error) {
     deferred.reject(error);
@@ -535,7 +533,7 @@ function createCsvHeader(questions) {
   questions.forEach(function(question) {
     array.push(question.name);
     if(question.answers[0].contactDetails) {
-      question.answers[0].contactDetails.forEach(function(contact) {
+      _.map(question.answers[0].contactDetails, function(contact) {
         array.push(contact.name);
       });
     }
