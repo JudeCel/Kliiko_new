@@ -29,7 +29,7 @@
     vm.getPreparedMailTemplateList();
 
     vm.templateName = function(baseName) {
-      return baseName + " " + vm.session.steps.step1.name;
+      return baseName;
     }
 
     vm.isCreated = function(template) {
