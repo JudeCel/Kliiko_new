@@ -10,7 +10,12 @@ function views_path(action) {
 
 function index(req, res, next) {
   inviteService.findInvite(req.params.token, function(error, invite) {
-    res.render(views_path('index'), simpleParams('Invite', invite, error));
+    if(error == 'Invite not found') {
+      res.redirect('/login');
+    }
+    else {
+      res.render(views_path('index'), simpleParams('Invite', invite, error));
+    }
   });
 }
 
