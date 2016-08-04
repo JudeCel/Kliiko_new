@@ -74,10 +74,9 @@
           <div class="has-error text-center">{{ec.currentTemplate.error.content}}</div>
 
           <div class="row">
-            <button type="submit" class="btn btn-red pull-left" ng-click="step3Controller.resetMailTemplate()" ng-show="ec.resetButtonVisible(app.accountUser.isAdmin)">Cancel</button>
-            <button type="submit" class="btn btn-green pull-right" ng-click="step3Controller.modifyAndSave(false, true)">Apply</button>
-            <button type="submit" class="btn btn-lightgreen pull-right" ng-click="step3Controller.modifyAndSave(false, false)">Save</button>
+            <button type="submit" class="btn btn-red pull-right" ng-click="step3Controller.resetMailTemplate()" ng-show="ec.resetButtonVisible(app.accountUser.isAdmin)">Cancel</button>
             <button type="submit" class="btn btn-lightgreen pull-right" ng-click="step3Controller.openModal()">Save As</button>
+            <button type="submit" class="btn btn-green pull-right" ng-click="step3Controller.modifyAndSave(false, true)">Apply</button>
             <button type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
           </div>
 
