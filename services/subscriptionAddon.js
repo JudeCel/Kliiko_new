@@ -17,7 +17,8 @@ var chargebee = require('./../lib/chargebee').instance;
 const CREDIT_COUNT_PER_ADDON = 35;
 
 const MESSAGES = {
-  successfulPurchase: "You have sucessfully purchase additional sms credits."
+  successfulPurchase: 'You have sucessfully purchased additional sms credits.',
+  notAllowed: 'You must have plan that allows you to buy additional sms credits'
 }
 
 module.exports = {
@@ -68,21 +69,26 @@ function chargeAddon(params) {
   let deferred = q.defer();
 
   Subscription.find({ where: { accountId: params.accountId }, include: [models.SubscriptionPreference] }).then(function(subscription) {
-    params.subscriptionId = subscription.subscriptionId
-    params.customerId = subscription.customerId
-    params.id = subscription.id
-    params.currentSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
+    if(subscription.planId == 'free_account') {
+      deferred.reject(MESSAGES.notAllowed);
+    }
+    else {
+      params.subscriptionId = subscription.subscriptionId
+      params.customerId = subscription.customerId
+      params.id = subscription.id
+      params.currentSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
 
-    chargebeeAddonCharge(params).then(function(result) {
-      addSmsCreditsToAccountSubscription(params, result.invoice).then(function(result) {
-        deferred.resolve({smsCretiCount: result, message: MESSAGES.successfulPurchase});
+      chargebeeAddonCharge(params).then(function(result) {
+        addSmsCreditsToAccountSubscription(params, result.invoice).then(function(result) {
+          deferred.resolve({smsCretiCount: result, message: MESSAGES.successfulPurchase});
+        }, function(error) {
+          deferred.reject(error);
+        })
+
       }, function(error) {
         deferred.reject(error);
-      })
-
-    }, function(error) {
-      deferred.reject(error);
-    })
+      });
+    }
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
