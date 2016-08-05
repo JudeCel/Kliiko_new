@@ -552,7 +552,7 @@ function chargebeeSubUpdate(params, provider) {
 
   provider(params.subscriptionId, { plan_id: params.planId }).request(function(error, result){
     if(error){
-      deferred.reject(error);
+      deferred.reject(error.message);
     }else{
       deferred.resolve(result);
     }

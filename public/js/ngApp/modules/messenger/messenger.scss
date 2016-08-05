@@ -1,13 +1,12 @@
 
 #messenger-area {
-  //display: block;
   position: fixed;
   right: 3%;
   margin: 33px;
   margin-top: 96px;
   text-align: left;
   z-index: 99999999;
-  //pointer-events: none;
+  max-width: 50%;
   .animated {
     -webkit-animation-fill-mode: both !important;
     animation-fill-mode: both !important;
