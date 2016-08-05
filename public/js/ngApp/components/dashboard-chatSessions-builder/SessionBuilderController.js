@@ -31,8 +31,10 @@
         vm.currentStep = step;
       });
     }, function (error) {
-      messenger.error(error);
       window.history.back();
+      setTimeout(function () {
+        messenger.error(error);
+      }, 100);
     });
 
     vm.closeSession = closeSession;
