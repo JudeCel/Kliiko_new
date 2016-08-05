@@ -26,9 +26,7 @@
             </div>
 
             <div ng-if='bmc.file[banner].resource.url.full'>
-              <img ng-src='{{ bmc.file[banner].resource.url.full }}'>
-
-              <div class='banner-management-btns'>
+              <div class='pull-right'>
                 <button class='btn-standart btn-blue btn-glyphonic' ng-click='bmc.remove(banner)' data-toggle='tooltip' data-placement='bottom' title='Remove banner'>
                   <span class='glyphicon glyphicon-remove' aria-hidden='true' />
                 </button>
@@ -50,6 +48,10 @@
                     </md-input-container>
                    </md-menu-content>
                 </md-menu>
+              </div>
+
+              <div class='row'>
+                <img ng-src='{{ bmc.file[banner].resource.url.full }}'>
               </div>
             </div>
           </div>
