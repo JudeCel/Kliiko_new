@@ -64,7 +64,7 @@ spec:
         - name: SERVER_BASE_DOMAIN
           value: ".klzii.chat"
         - name: SERVER_DOMAIN
-          value: "www.klzii.chat"
+          value: klzii.chat"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
         - name: SERVER_SKIP_SUBDOMAINS
