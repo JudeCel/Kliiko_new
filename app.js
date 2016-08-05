@@ -35,11 +35,13 @@ app.use(session({
       host: process.env.REDIS_HOST,
       db: parseInt(process.env.REDIS_DB)
   }),
-  secret: process.env.SESSION_SECRET,
-  resave: true, saveUninitialized: false,
-  domain: process.env.SERVER_BASE_DOMAIN,
   cookie: { domain: process.env.SERVER_BASE_DOMAIN},
-  rolling: true
+  domain: process.env.SERVER_BASE_DOMAIN,
+  secret: process.env.SESSION_SECRET,
+  name: process.env.SESSION_COOKIES_NAME,
+  saveUninitialized: false,
+  rolling: true,
+  resave: true
 }));
 
 app.use(passport.initialize());
