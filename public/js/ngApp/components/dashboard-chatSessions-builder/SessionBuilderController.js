@@ -119,10 +119,10 @@
     function canSeeGoToChat(session, accountUser) {
       if(session.sessionData) {
         var facilitator = session.sessionData.facilitator ? session.sessionData.facilitator.accountUserId == accountUser.id : false;
-        var member, topics = false;
+        var member = false, topics = false;
         if(session.sessionData.SessionMembers) {
-          session.sessionData.SessionMembers.map(function(member) {
-            if(member.accountUserId == accountUser.id) {
+          session.sessionData.SessionMembers.map(function(sessionMember) {
+            if(sessionMember.accountUserId == accountUser.id) {
               member = true;
             }
           });
