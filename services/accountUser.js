@@ -26,13 +26,19 @@ function createAccountManager(object, callback) {
   AccountUser.create(prepareAccountManagerParams(object.params, object.account, object.user), { transaction: object.transaction })
   .then(function(accountUser) {
     let contactList = selectAccountManagerContactList(object.contactLists);
-    let cluParams = contactListUserParams({ accountId: accountUser.AccountId, contactListId: contactList.id }, accountUser);
-    models.ContactListUser.create(cluParams, {transaction: object.transaction}).then(function() {
+    if(contactList) {
+      let cluParams = contactListUserParams({ accountId: accountUser.AccountId, contactListId: contactList.id }, accountUser);
+      models.ContactListUser.create(cluParams, {transaction: object.transaction}).then(function() {
+        callback(null, object);
+      }, function(error) {
+        _.merge(object.errors, filters.errors(error));
+        callback(null, object);
+      });
+    }
+    else {
+      object.errors.contactList = 'Contact List not found';
       callback(null, object);
-    }, function(error) {
-      _.merge(object.errors, filters.errors(error));
-      callback(null, object);
-    });
+    }
   }, function(error) {
     _.merge(object.errors, filters.errors(error));
     callback(null, object);
