@@ -9,6 +9,7 @@ module.exports = (Sequelize, DataTypes) => {
     type: { type: DataTypes.STRING, allowNull: false, defaultValue: 'chat' },
     name: { type: DataTypes.STRING, allowNull: false,
       validate: {
+        notEmpty: true,
         isUnique: validations.unique(Sequelize, 'Topic', 'name', { accountContext: true }),
       }
     },
