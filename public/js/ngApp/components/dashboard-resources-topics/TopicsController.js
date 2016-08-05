@@ -49,6 +49,7 @@
         angular.copy(topic, vm.topicData);
         setEditData();
       }else if(vm.modalAction = "new") {
+        vm.topicData = {};
         setCreateData()
       }else{
         messenger.error('Something went wrong, please try later.')
