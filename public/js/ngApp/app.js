@@ -111,8 +111,8 @@
     $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
   }
 
-  appRun.$inject = ['$stateParams', 'dbg', '$rootScope', '$state', 'globalSettings', 'ngProgressFactory'];
-  function appRun($stateParams, dbg, $rootScope, $state, globalSettings, ngProgressFactory) {
+  appRun.$inject = ['$stateParams', 'dbg', '$rootScope', '$state', 'globalSettings', 'ngProgressFactory', 'messenger'];
+  function appRun($stateParams, dbg, $rootScope, $state, globalSettings, ngProgressFactory, messenger) {
     dbg.log('#appRun started ');
     var routerProgressbar;
     var rootScopeProgress = ngProgressFactory.createInstance();
@@ -130,6 +130,7 @@
     });
     $rootScope.$on('$stateChangeSuccess',function(){
       $('.modal-backdrop').remove();
+      messenger.clear();
       routerProgressbar.complete();
     });
 

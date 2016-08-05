@@ -50,25 +50,38 @@
       self.id = 'msgId' + new Date().getTime();
       self.tpl = '<div id="'+self.id+'" class="message animated fadeInDown '+ type +'"><div class="message-text">'+message+'</div></div>';
       self.flash = function(delay) {
-        var delay = delay || 3000;
-        // show
-        jQuery('#messenger-area').prepend(self.tpl);
-        self.$el = jQuery('#'+self.id);
+        var parent = jQuery('#messenger-area');
 
-        // and hide
-        if(type != 'error') {
-          setTimeout(function() {
-            self.$el.removeClass('fadeInDown').addClass('fadeOutDown');
-            setTimeout(function() { self.$el.detach() }, 2000);
-          }, delay);
+        if(parent.children().length >= 5) {
+          var child = parent.children().last();
+          child.detach();
+          showMsg(parent);
         }
         else {
-          var closeButton = '<div id="button-'+self.id+'" class="pull-right cursor-pointer glyphicon glyphicon-remove"></div>';
-          self.$el.prepend(closeButton);
-          self.$button = jQuery('#button-'+self.id);
-          self.$button.click(function() {
-            self.$el.detach();
-          });
+          showMsg(parent);
+        }
+
+        function showMsg(parent) {
+          var delay = delay || 3000;
+          // show
+          parent.prepend(self.tpl);
+          self.$el = jQuery('#'+self.id);
+
+          // and hide
+          if(type != 'error') {
+            setTimeout(function() {
+              self.$el.removeClass('fadeInDown').addClass('fadeOutDown');
+              setTimeout(function() { self.$el.detach() }, 2000);
+            }, delay);
+          }
+          else {
+            var closeButton = '<div id="button-'+self.id+'" class="pull-right cursor-pointer glyphicon glyphicon-remove"></div>';
+            self.$el.prepend(closeButton);
+            self.$button = jQuery('#button-'+self.id);
+            self.$button.click(function() {
+              self.$el.detach();
+            });
+          }
         }
       };
 
@@ -97,6 +110,7 @@
 
     messengerPublicMethods.ok = ok;
     messengerPublicMethods.error = error;
+    messengerPublicMethods.clear = clear;
 
     return messengerPublicMethods;
 
@@ -130,6 +144,9 @@
       m.flash(delay);
     }
 
+    function clear() {
+      jQuery('#messenger-area').empty();
+    }
 
   }
 
