@@ -88,17 +88,7 @@ function prepareUserData(user, profile, callback){
     return;
   }
 
-  user.getAccounts({ include: [ models.AccountUser ] }).then(function(accounts) {
-    let account = accounts[0];
-    if(account.AccountUser.active) {
-      user.increment('signInCount').done(function(result) {
-        callback(null, userParams(result));
-      });
-    }
-    else {
-      callback('Sorry, your account has been deactivated. Please get in touch with the administration');
-    }
-  });
+  callback(null, userParams(user));
 }
 
 module.exports = passport;

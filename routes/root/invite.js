@@ -38,14 +38,12 @@ function decline(req, res, next) {
 
 function acceptGet(req, res, next) {
   inviteService.acceptInviteExisting(req.params.token, function(error, invite, message) {
-    if(error) {
-      res.render(views_path('index'), simpleParams('Invite', invite, error));
-
+    if(error == 'Invite not found') {
+      res.redirect('/login');
     }
     else {
-      //added check if invite exists to avoid runtime error
-      if (invite && invite.userType == 'new') {
-        res.render(views_path('index'), simpleParams('Accept Invite', invite) );
+      if(invite && invite.userType == 'new') {
+        res.render(views_path('index'), simpleParams('Accept Invite'));
       }
       else {
         req.flash('message', message);

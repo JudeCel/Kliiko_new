@@ -353,7 +353,7 @@ function acceptInviteNew(token, params, callback) {
   });
 };
 function setAccountUserActive(invite, callback) {
-  AccountUser.update({active: true, status: "active", UserId: invite.userId}, { where:{ id: invite.accountUserId } }).then(function(result) {
+  AccountUser.update({active: true, status: 'active'}, { where:{ id: invite.accountUserId } }).then(function(result) {
     callback(null, result);
   },function(err) {
     callback(filters.errors(error));
