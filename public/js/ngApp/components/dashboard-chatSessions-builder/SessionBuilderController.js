@@ -263,9 +263,12 @@
           else {
             messenger.error("You can't select members from " + activeList.name + ' list');
           }
-        }
 
-        vm.searchingParticipants = false;
+          vm.searchingParticipants = false;
+        }
+        else {
+          messenger.error('There are no contacts selected');
+        }
       }
 
       if (vm.searchingObservers) {
