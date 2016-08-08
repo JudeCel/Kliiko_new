@@ -204,7 +204,15 @@
     padding: 0 !important;
   }
   .btn-brown {$thisColor: #979137; color:$thisColor; border-color: $thisColor;}
-  .btn-green {$thisColor: #4CB344; color:$thisColor; border-color: $thisColor}
+  .btn-green {
+    $thisColor: #4CB344;
+    color:$thisColor;
+    border-color: $thisColor;
+    &:hover {
+      color: white !important;
+    }
+  }
+
   .btn-blue {$thisColor: #65C8EE; color:$thisColor; border-color: $thisColor}
 
   .learn {width: 160px;}
