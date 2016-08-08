@@ -1078,7 +1078,11 @@ function validateStepThree(params) {
   let deferred = q.defer();
   getStepThreeTemplateTypes(params).then(function(uniqueCopies) {
       let errors = {};
-      if(uniqueCopies.length < MIN_MAIL_TEMPLATES){
+      let filtered = _.filter(uniqueCopies, function(copy) {
+        return copy != 'generic';
+      });
+
+      if(filtered.length < MIN_MAIL_TEMPLATES){
         errors.emailTemplates = MESSAGES.errors.thirdStep.emailTemplates;
       }
       _.isEmpty(errors) ? deferred.resolve() : deferred.reject(errors);
