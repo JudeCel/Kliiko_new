@@ -59,7 +59,7 @@
 
             <td ng-click='editComment(account, accountUser)'>
               <img src='/icons/add_new_list_blue.png' alt='' />
-              {{ accountUser.comment }}
+              {{ accountUser.comment | limitTo: 50 }}{{ accountUser.comment.length > 20 ? '&hellip;' : '' }}
             </td>
           </tr>
         </tbody>
