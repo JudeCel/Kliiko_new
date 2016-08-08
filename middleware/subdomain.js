@@ -51,8 +51,13 @@ function getAccauntWithRoles(user, subdomain, callback) {
       let account = accounts[0];
 
       if (account) {
-        let result = { id: account.id, subdomain: account.subdomain, accountUser: account.AccountUser }
-        callback(null, result)
+        if(account.AccountUser.active) {
+          let result = { id: account.id, subdomain: account.subdomain, accountUser: account.AccountUser }
+          callback(null, result)
+        }
+        else {
+          callback('Sorry, your account has been deactivated. Please get in touch with the administration');
+        }
       }else {
         callback(true)
       }
