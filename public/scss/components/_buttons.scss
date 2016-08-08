@@ -110,6 +110,23 @@
   margin-bottom: 20px;
 }
 
+.btn-google {
+  &:hover {
+    color: white;
+  }
+  &:focus {
+    color: white;
+  }
+}
+.btn-facebook {
+  &:hover {
+    color: white;
+  }
+  &:focus {
+    color: white;
+  }
+}
+
 .btn-simple {
   margin-left: 10px;
   height: 36px;
