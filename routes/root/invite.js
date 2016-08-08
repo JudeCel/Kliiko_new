@@ -14,7 +14,12 @@ function index(req, res, next) {
       res.redirect('/login');
     }
     else {
-      res.render(views_path('index'), simpleParams('Invite', invite, error));
+      if(invite.userType == 'existing') {
+        acceptGet(req, res, next);
+      }
+      else {
+        res.render(views_path('index'), simpleParams('Invite', invite, error));
+      }
     }
   });
 }

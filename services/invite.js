@@ -511,7 +511,6 @@ function prepareMailInformation(invite) {
 }
 
 function prepareMailParams(session, receiver, facilitator) {
-  console.log(facilitator.dataValues);
   return {
     sessionId: session.id,
     email: receiver.email,
