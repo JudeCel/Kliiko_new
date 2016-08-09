@@ -43,7 +43,7 @@ function acceptGet(req, res, next) {
     }
     else {
       if(invite && invite.userType == 'new') {
-        res.render(views_path('index'), simpleParams('Accept Invite'));
+        res.render(views_path('index'), simpleParams('Accept Invite', invite, error));
       }
       else {
         req.flash('message', message);
