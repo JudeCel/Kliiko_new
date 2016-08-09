@@ -3,15 +3,15 @@ Tested on: Node.js version 4.2.x LTS, NPM version 3.3.x
 
 ## Dependencies
 
-Node.js >= 4.2.x
+Node.js >= 5.11.x
 
-Express 4.1.x
+Express 4.14.x
 
-NPM 3.3.x
+NPM 3.8.x
 
-PostgreSQL 9.4.5
+PostgreSQL 9.5.x
 
-Redis 3.0.5
+Redis 3.2.x
 
 [ImageMagick](http://www.imagemagick.org/)
 
@@ -60,7 +60,7 @@ In the project we use ORM [Sequelize](http://docs.sequelizejs.com/en/latest/)
 Also we use code-first migrations [Sequelize Migrations ](http://docs.sequelizejs.com/en/latest/docs/migrations/)
 
 To restart DB, delete and recreate all tables based on the models, run this command from root directory of the project:
-``` node lib/tasks/dbReset.js ```
+``` npm run reset ```
 
 To run seeds for user run this command: ``` node seeders/users.js ```
 To run seeds for chat session run this command: ``` node seeders/chatSession.js ```
@@ -72,13 +72,9 @@ Default user credentials email ``` admin@insider.com ``` or ``` user@insider.com
 
 Run commands in terminal:
 
-1) ``` npm install gulp -g```
+1) RUN GULP   ``` npm run gulp ```
 
-2) ``` npm install ```  
-
-3) RUN GULP   ``` gulp ```
-
-4) Open browser: ``` http://insider.focus.com:8080/ ```
+2) Open browser: ``` http://insider.focus.com:8080/ ```
 
 
 ### Tests
@@ -93,6 +89,7 @@ Install mocha ```  npm install mocha -g ```
  ``` npm test ```
 
 ### Debugging
+If need uses debugger the gulp should be installed globally ``` npm install gulp -g```
 
  1) Run Gulp with --debug argument ```gulp --debug ```
 
