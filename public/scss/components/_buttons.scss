@@ -89,10 +89,7 @@
   img.brand-colour {
     background-image: url('/icons/brand_colour_white.png');
   }
-
-
 }
-
 
 .btn-header-dropdown {
   margin-left: 10px;
@@ -124,6 +121,15 @@
   margin-bottom: 20px;
 }
 
+#btn-contact-list,
+#btn-gallery,
+#btn-topics,
+#btn-email-templates,
+#btn-brand-colors {
+  @extend .btn-dashboard-menu;
+  width: 187px;
+}
+
 .btn-google {
   &:hover {
     color: white;
@@ -146,6 +152,10 @@
   height: 36px;
   border-radius: 0px;
   background-color: inherit;
+}
+
+.btn-width-208 {
+  width: 208px !important;
 }
 
 .btn-standart {

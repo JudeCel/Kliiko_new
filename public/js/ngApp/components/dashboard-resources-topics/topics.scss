@@ -1,17 +1,21 @@
 #resources-topics {
 
+  &.create-new-topic {
+    #topics-list {
+      margin-right: -40px;
+        .topic-list-item {
+            position: relative;
+            width: 31%;
+            display: inline-block;
+            margin-right: 2%;
+          }
+    }
+  }
 
   #no-topics-in-list { text-align: center; }
 
-  #topics-list {
-    margin-right: -40px;
-  }
-
   .topic-list-item {
     position: relative;
-    width: 31%;
-    display: inline-block;
-    margin-right: 2%;
   }
 
   .panel {
