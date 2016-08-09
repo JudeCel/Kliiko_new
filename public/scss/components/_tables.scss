@@ -20,8 +20,9 @@
   background-color: $light-grey;
   .dashboardElementsEditRemove {
     min-width: 15%;
-    .glyphicon {
+    .glyphicon, img {
       vertical-align: middle;
+      margin-right: 4px;
     }
   }
 
