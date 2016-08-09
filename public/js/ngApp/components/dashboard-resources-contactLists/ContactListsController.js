@@ -735,7 +735,12 @@
     }
 
     vm.getPreviewFields = function() {
-      return vm.lists.activeList.defaultFields.concat(vm.lists.activeList.customFields);
+      if(vm.lists.activeList) {
+        return vm.lists.activeList.defaultFields.concat(vm.lists.activeList.customFields);
+      }
+      else {
+        return [];
+      }
     }
 
   }
