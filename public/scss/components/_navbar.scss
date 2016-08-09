@@ -44,8 +44,6 @@
     & > a:hover,
     & > a:focus {
       background-image: url('/icons/profile_white.png');
-      background-repeat: no-repeat;
-      background-position: 170px center;
     }
   }
 
@@ -59,8 +57,6 @@
     & > a:hover,
     & > a:focus {
       background-image: url('/icons/session_white.png');
-      background-repeat: no-repeat;
-      background-position: 120px center;
     }
   }
 
@@ -73,9 +69,7 @@
     &.active > a,
     & > a:hover,
     & > a:focus {
-          background-image: url('/icons/resources_white.png');
-          background-repeat: no-repeat;
-          background-position: 130px center;
+      background-image: url('/icons/resources_white.png');
     }
   }
 
