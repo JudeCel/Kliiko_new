@@ -125,7 +125,9 @@ function prepareAccountUsers(accountUsers, protocol) {
       delete object[key];
     }
     else {
-      value.data = _.uniqBy(value.data, 'dataValues.session.id');
+      value.data = _.uniqBy(value.data, function(user) {
+        return user["dataValues.session.id"] || user.id;
+      });
     }
   });
 
