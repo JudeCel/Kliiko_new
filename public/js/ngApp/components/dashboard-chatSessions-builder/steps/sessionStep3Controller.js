@@ -19,9 +19,10 @@
     }
 
     vm.isTemplateRequired = function(template) {
-      if (template.name == "Generic") {
+      if(template && template['MailTemplateBase.name'] == "Generic") {
         return "(optional)";
-      } else {
+      }
+      else {
         return "*";
       }
     }

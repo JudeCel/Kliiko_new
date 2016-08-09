@@ -42,8 +42,7 @@
 
                 <img ng-src="{{step3Controller.isCreated(t)}}" class="pull-left">
                   {{ t.name }}
-                  <span ng-if="t.name != 'Generic'">*</span>
-                  <span ng-if="t.name == 'Generic'"> (optional)</span>
+                  <span>{{ step3Controller.isTemplateRequired(t) }}</span>
               </div>
 
               <div class="input-group input-group-sm display-flex" ng-hide="!t.AccountId" data-toggle="tooltip" data-placement="top" title="{{step3Controller.templateName(t.name)}}">

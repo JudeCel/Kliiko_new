@@ -7,7 +7,7 @@
             <a ng-repeat="(key, t) in ec.emailTemplates" class="list-group-item" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : ec.isEditable(t, app.accountUser.isAdmin)}"
             ng-click="ec.startEditingTemplate(key)">
               <div ng-hide="ec.isEditable(t, app.accountUser.isAdmin)">
-                <img src="/icons/ic_arrow_right.png" class="pull-right" ng-hide="!ec.isCurrent(key)"> {{t["MailTemplateBase.name"]}}
+                <img src="/icons/ic_arrow_right.png" class="pull-right" ng-hide="!ec.isCurrent(key)">{{::t.name}}
               </div>
 
               <div class="input-group input-group-sm" ng-hide="!ec.isEditable(t, app.accountUser.isAdmin)">
