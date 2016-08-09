@@ -19,9 +19,12 @@
       font-size: 16px;
       font-weight: bold;
       height: 44px;
+      padding-right: 50px;
+      margin-right: 10px;
 
       &:hover {
         background-color: $blue;
+        color: white;
       }
 
       & > img{
@@ -30,14 +33,60 @@
       }
     }
   }
+
+  & > li#dashboard-accountProfile {
+    & > a {
+    background-image: url('/icons/profile_grey.png');
+    background-repeat: no-repeat;
+    background-position: 170px center;
+    }
+    &.active > a,
+    & > a:hover,
+    & > a:focus {
+      background-image: url('/icons/profile_white.png');
+      background-repeat: no-repeat;
+      background-position: 170px center;
+    }
+  }
+
+  & > li#dashboard-chatSessions {
+    & > a {
+    background-image: url('/icons/session_grey.png');
+    background-repeat: no-repeat;
+    background-position: 120px center;
+    }
+    &.active > a,
+    & > a:hover,
+    & > a:focus {
+      background-image: url('/icons/session_white.png');
+      background-repeat: no-repeat;
+      background-position: 120px center;
+    }
+  }
+
+  & > li#dashboard-resources {
+    & > a {
+    background-image: url('/icons/resources_grey.png');
+    background-repeat: no-repeat;
+    background-position: 130px center;
+    }
+    &.active > a,
+    & > a:hover,
+    & > a:focus {
+          background-image: url('/icons/resources_white.png');
+          background-repeat: no-repeat;
+          background-position: 130px center;
+    }
+  }
+
 }
 
 #nav-tabs-main > li,
 #nav-tabs-main > li:hover,
-#nav-tabs-main > li:focus,
-#nav-tabs-main > li:active {
+#nav-tabs-main > li:focus {
   outline: 0;
 }
+
 
 #nav-tabs-main > li.active > a,
 #nav-tabs-main > li.active > a:hover,
