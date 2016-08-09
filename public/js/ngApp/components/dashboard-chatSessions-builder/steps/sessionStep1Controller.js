@@ -41,6 +41,12 @@
     vm.pageSize = 3;
     vm.facilitatorContactListId = null;
 
+    vm.format = 'dd/MM/yyyy';
+    vm.dateOption = {
+      minDate: Date.now(),
+      startingDay: 1,
+    }
+
     function inviteFacilitator(facilitator) {
       vm.session.addMembers(facilitator, 'facilitator').then( function (res) {
         vm.session.sessionData.facilitator = facilitator;
@@ -138,7 +144,8 @@
       vm.today.setDate(vm.today.getDate() - 1);
 
       vm.dateTime = builderServices.getTimeSettings();
-      parseDateAndTime('initial');
+      vm.step1.startTime = new Date(vm.session.steps.step1.startTime);
+      vm.step1.endTime = new Date(vm.session.steps.step1.endTime);
       initStep(null, 'initial');
       getAllContacts();
       vm.name = vm.session.steps.step1.name;
@@ -190,15 +197,38 @@
       });
     }
 
+    function validateDate(date) {
+      if(date) {
+        if(vm.step1.endTime < vm.step1.startTime) {
+          vm.accordions.dateAndTimeError = true;
+        }
+        else {
+          vm.accordions.dateAndTimeError = false;
+          vm.accordions.invalidFormat = false;
+          return true;
+        }
+      }
+      else {
+        vm.accordions.dateAndTimeError = false;
+        vm.accordions.invalidFormat = true;
+      }
+
+      return false;
+    }
+
     function updateStep(dataObj) {
       if (dataObj == 'startTime') {
-        parseDateAndTime();
-        return updateStep({startTime: vm.session.steps.step1.startTime});
+        if(validateDate(vm.step1.startTime)) {
+          updateStep({startTime: vm.step1.startTime});
+        }
+        return;
       }
 
       if (dataObj == 'endTime') {
-        parseDateAndTime();
-        return updateStep({endTime: vm.session.steps.step1.endTime});
+        if(validateDate(vm.step1.endTime)) {
+          updateStep({endTime: vm.step1.endTime});
+        }
+        return;
       }
 
       var deferred = $q.defer();
@@ -211,51 +241,6 @@
       });
 
       return deferred.promise;
-    }
-
-    /**
-     * convert date and time inputs to timestamp in session object -> steps -> step1 for start and rnd dates
-     */
-    function parseDateAndTime(initial) {
-      var startDate, startHours, startMinutes, endDate, endHours, endMinutes;
-
-      if (!vm.session.steps) return;
-      if (initial) {
-
-        vm.step1.startDate = new Date(vm.session.steps.step1.startTime);
-        vm.step1.startTime = new Date(vm.session.steps.step1.startTime);
-
-        vm.step1.endDate = new Date(vm.session.steps.step1.endTime);
-        vm.step1.endTime = new Date(vm.session.steps.step1.endTime);
-
-      } else {
-        if (vm.step1.startDate && vm.step1.startTime) {
-          startDate = new Date(vm.step1.startDate);
-          startHours = new Date(vm.step1.startTime).getHours();
-          startMinutes = new Date(vm.step1.startTime).getMinutes();
-
-          startDate.setHours(startHours);
-          startDate.setMinutes(startMinutes);
-
-          vm.session.steps.step1.startTime = startDate;
-        }
-
-        if (vm.step1.endDate && vm.step1.endTime) {
-          endDate = new Date(vm.step1.endDate);
-          endHours = new Date(vm.step1.endTime).getHours();
-          endMinutes = new Date(vm.step1.endTime).getMinutes();
-
-          endDate.setHours(endHours);
-          endDate.setMinutes(endMinutes);
-
-          vm.session.steps.step1.endTime = endDate;
-        }
-
-        (new Date(startDate).getTime() > new Date(endDate).getTime() )
-          ?  vm.accordions.dateAndTimeError = true
-          :  vm.accordions.dateAndTimeError = false;
-
-      }
     }
 
     // Gallery stuff

@@ -21,32 +21,64 @@
         <div class="panel-label">
           Enter Date And Time
           <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.dateAndTime, 'glyphicon-chevron-right': !step1Controller.accordions.dateAndTime}"></i>
-          <span class="panel-value pull-right">{{ step1Controller.step1.startTime | date : 'short'}} - {{ step1Controller.step1.endTime | date : 'short'}}</span>
+          <span class="panel-value pull-right">{{ step1Controller.step1.startTime | date : step1Controller.format}} - {{ step1Controller.step1.endTime | date : step1Controller.format}}</span>
         </div>
       </uib-accordion-heading>
 
       <div class="data-time-content-wrapper" style="display: flex">
-        <span class="date-time-label">Start</span> <img class="date-time-ico" src="/icons/calendar_green.png" alt="">
-        <md-datepicker ng-model="step1Controller.step1.startDate"
-                       md-min-date="::step1Controller.today"
-                       ng-change="step1Controller.updateStep('startTime')"
-                       md-placeholder="Enter date"></md-datepicker>
+        <span class='date-time-label'>Start</span>
+        <img class='date-time-ico' src='/icons/calendar_green.png' ng-click='step1Controller.startOpened = true' />
 
-        <img class="date-time-ico time" src="/icons/time_green.png" alt="">
-        <uib-timepicker class="timepicker-wrapper" ng-model="step1Controller.step1.startTime" ng-change="step1Controller.updateStep('startTime')" hour-step="step1Controller.dateTime.hstep" minute-step="step1Controller.dateTime.mstep" show-meridian="true"></uib-timepicker>
+        <input type='text' class='timepicker-wrapper date'
+          uib-datepicker-popup='{{step1Controller.format}}'
+          ng-model='step1Controller.step1.startTime'
+          ng-change="step1Controller.updateStep('startTime')"
+          is-open='step1Controller.startOpened'
+          datepicker-options='step1Controller.dateOption'
+          close-text='X'
+        />
+
+        <img class='date-time-ico time' src='/icons/time_green.png' />
+        <uib-timepicker class='timepicker-wrapper'
+          ng-model='step1Controller.step1.startTime'
+          ng-change="step1Controller.updateStep('startTime')"
+          hour-step='step1Controller.dateTime.hstep'
+          minute-step='step1Controller.dateTime.mstep'
+          show-meridian='true'
+        >
+        </uib-timepicker>
       </div>
+
       <div class="data-time-content-wrapper">
-        <span class="date-time-label end">End</span><img class="date-time-ico" src="/icons/calendar_green.png" alt="">
-        <md-datepicker ng-model="step1Controller.step1.endDate"
-                       md-min-date="step1Controller.step1.startDate"
-                       ng-change="step1Controller.updateStep('endTime')"
-                       md-placeholder="Enter date"></md-datepicker>
+        <span class='date-time-label end'>End</span>
+        <img class='date-time-ico' src='/icons/calendar_green.png' ng-click='step1Controller.endOpened = true' />
 
-        <img class="date-time-ico time" src="/icons/time_green.png" alt="">
-        <uib-timepicker class="timepicker-wrapper" ng-model="step1Controller.step1.endTime" ng-change="step1Controller.updateStep('endTime')" hour-step="step1Controller.dateTime.hstep" minute-step="step1Controller.dateTime.mstep" show-meridian="true"></uib-timepicker>
+        <input type='text' class='timepicker-wrapper date'
+          uib-datepicker-popup='{{step1Controller.format}}'
+          ng-model='step1Controller.step1.endTime'
+          ng-change="step1Controller.updateStep('endTime')"
+          is-open='step1Controller.endOpened'
+          datepicker-options='step1Controller.dateOption'
+          close-text='X'
+        />
+
+        <img class='date-time-ico time' src='/icons/time_green.png' />
+        <uib-timepicker class='timepicker-wrapper'
+          ng-model='step1Controller.step1.endTime'
+          ng-change="step1Controller.updateStep('endTime')"
+          hour-step='step1Controller.dateTime.hstep'
+          minute-step='step1Controller.dateTime.mstep'
+          show-meridian='true'
+        >
+        </uib-timepicker>
       </div>
+
       <code ng-if="step1Controller.accordions.dateAndTimeError" class='calendar-error'>
         End Time should be greater then Start Time
+      </code>
+
+      <code ng-if='step1Controller.accordions.invalidFormat' class='calendar-error'>
+        Invalid date format
       </code>
     </uib-accordion-group>
 
