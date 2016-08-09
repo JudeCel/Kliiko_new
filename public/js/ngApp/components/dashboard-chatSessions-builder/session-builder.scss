@@ -209,11 +209,12 @@
     $thisColor: #4CB344;
     color:$thisColor;
     border-color: $thisColor;
+    width: 185px;
     &:hover {
       color: white !important;
     }
-    &.btn-chat-sessions {
-      margin-left: 10px;
+    &.btn-back {
+      margin-left: -11px;
       padding-left: 40px;
       background-image: url('/icons/back_green.png');
       background-repeat: no-repeat;
