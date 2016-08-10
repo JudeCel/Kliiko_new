@@ -60,11 +60,13 @@
       var scopes = [], types = [];
       for(var i in vm.uploadTypes) {
         var upload = vm.uploadTypes[i];
-        scopes.push(upload.scope);
-        types.push(upload.type);
+        if (scopes.indexOf(upload.scope) == -1) {
+          scopes.push(upload.scope);
+        }
+        if (types.indexOf(upload.type) == -1) {
+          types.push(upload.type);
+        }
       }
-      scopes = Array.from(new Set(scopes));
-      types = Array.from(new Set(types));
 
       GalleryServices.listResources({ scope: scopes, type: types, stock: true }).then(function(result) {
         vm.currentPage.main = true;
