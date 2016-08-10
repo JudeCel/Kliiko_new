@@ -47,16 +47,26 @@ function findWithSubscription(accountId) {
     where: {
       id: accountId,
     },
-    include: [models.Subscription]
+    include: [{model: models.Subscription, include: [models.SubscriptionPreference]}]
   }).then(function(result) {
-    deferred.resolve(result);
+    if (result) {
+      deferred.resolve(mapSubscriptionData(result));
+    }else{
+      deferred.reject("Account not found");
+    }
   }, function(error) {
     deferred.reject(error);
   });
 
   return deferred.promise;
 }
+function mapSubscriptionData(result) {
+  let account = _.pick(result, ['id', 'admin', 'subdomain', 'name']);
+  account.Subscription = _.pick(result.Subscription, ['id', 'accountId','subscriptionPlanId','planId', 'customerId', 'lastWebhookId', 'subscriptionId','active']);
+  account.permissions = result.Subscription.SubscriptionPreference.dataValues;
 
+  return account;
+}
 module.exports = {
   create: create,
   updateInstance: updateInstance,

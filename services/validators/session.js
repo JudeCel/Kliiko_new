@@ -28,16 +28,9 @@ function validate(sessionMember, provider) {
   let deferred = q.defer();
   let list = [function(cb) { validateTopics(sessionMember.Session, cb); }];
 
-  if(sessionMember.AccountUser.role == 'accountManager') {
-    if(sessionMember.role == 'participant') {
-      list.push(function(cb) { validateState(sessionMember.Session, cb); });
-      list.push(function(cb) { validateDates(sessionMember.Session, provider, cb); });
-    }
-  }
-  else {
+  if(sessionMember.AccountUser.role != 'accountManager') {
     switch(sessionMember.role) {
       case 'participant':
-      case 'observer':
         list.push(function(cb) { validateState(sessionMember.Session, cb); });
         list.push(function(cb) { validateDates(sessionMember.Session, provider, cb); });
         break;
