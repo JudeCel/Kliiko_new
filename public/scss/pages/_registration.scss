@@ -3,7 +3,7 @@
   color: #f00;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 370px;
+  width: 88%;
   display: inline-block;
 }
   .btn-radius-padding-left {
@@ -72,16 +72,17 @@
     }
   }
   .table-v-content-middle {
-
+    margin-bottom: 0;
     td{
       vertical-align: middle;
+      padding-bottom: 0;
     }
   }
 }
 
 /*Blue checkbox could be outside registration/login scope*/
 input[class=checkbox-blue] {
-    display: none; 
+    display: none;
 }
 
 input[class=checkbox-blue] + label {
@@ -101,4 +102,3 @@ width: 22px;
 background-size: contain;
 margin-top: 1px;
 }
-

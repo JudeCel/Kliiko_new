@@ -1,4 +1,4 @@
-<section id='resources-topics' class='row' ng-controller='TopicsController as topics'>
+<section id='resources-topics' class='row create-new-topic' ng-controller='TopicsController as topics'>
   <div class='col-md-12'>
     <div class='dashboard-container margin-top-3rem'>
       <div class='row'>
@@ -9,7 +9,7 @@
           <h4 class='text-center'>{{ topics.message }}</h4>
         </div>
         <div class='col-md-3 text-right' ng-hide="!topics.list.length">
-          <div class="btn-standart btn-green" ng-click="topics.openModal('new')">
+          <div class="btn-standart btn-green btn-width-208" ng-click="topics.openModal('new')">
             Create New Topic &nbsp;<img src="icons/add_new_list_green.png" alt="">
           </div>
         </div>
@@ -22,7 +22,7 @@
       <div id="no-topics-in-list" class="row" ng-show="!topics.list.length">
         <div class="col-md-12"><h4>You don't have any topics. Add one.</h4></div>
         <div class="col-md-12 margin-top-2rem">
-          <div class="btn-standart btn-green" ng-click="topics.openModal('new')">
+          <div class="btn-standart btn-green btn-width-208" ng-click="topics.openModal('new')">
             Create New Topic &nbsp;<img src="icons/add_new_list_green.png" alt="">
           </div>
         </div>

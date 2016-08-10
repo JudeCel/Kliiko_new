@@ -20,14 +20,11 @@
                  <input type="hidden" name="socialProfile[provider]" value="<%=socialProfile.provider%>">
                  <input type="hidden" name="socialProfile[id]" value="<%=socialProfile.id%>">
                 <% } %>
-                <p class="pull-right text-red-dark"> * <i>Required</i> </p>
                 <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
                   <tr>
                     <td>
                       <label class="text-no-bold text-login-page" for="accountName">
-                        Account
-                        <br>
-                        Name
+                        Account Name
                       </label>
                     </td>
                     <td>
@@ -124,16 +121,14 @@
                     </td>
                     <% } else{ %>
                     <td>
-                      Make sure your Password is at least 7 characters
+                      <i>Make sure your Password is at least 7 characters</i>
                     </td>
                     <% } %>
                   </tr>
                   <tr>
                     <td>
                       <label class="text-no-bold text-login-page" for="mobile">
-                        Mobile
-                        <br>
-                        Number
+                        Mobile Number
                       </label>
                     </td>
                     <td>
@@ -152,9 +147,7 @@
                   <tr>
                     <td>
                       <label class="text-no-bold text-login-page" for="landlineNumber">
-                        Landline
-                        <br>
-                        Number
+                        Landline Number
                       </label>
                     </td>
                     <td>
