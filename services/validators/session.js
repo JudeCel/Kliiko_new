@@ -37,7 +37,6 @@ function validate(sessionMember, provider) {
   else {
     switch(sessionMember.role) {
       case 'participant':
-      case 'observer':
         list.push(function(cb) { validateState(sessionMember.Session, cb); });
         list.push(function(cb) { validateDates(sessionMember.Session, provider, cb); });
         break;
