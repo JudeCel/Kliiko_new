@@ -78,7 +78,7 @@
             <div class="col-md-3 btn-standart btn-green btn-width-208" ng-click="sbc.goToStep('back')"  ng-hide="sbc.stepsClassIsActive(1)">
               Previous step
             </div>
-            <div class="col-md-2 btn-standart pull-right btn-green btn-width-208t" ng-click="sbc.goToStep('next')" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-hide="sbc.lastStep">
+            <div class="col-md-2 btn-standart pull-right btn-green btn-width-208" ng-click="sbc.goToStep('next')" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-hide="sbc.lastStep">
               Next step
             </div>
             <div class="col-md-2 btn-standart pull-right btn-green" ng-click="sbc.goToStep('finish')" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-show="sbc.lastStep">

@@ -64,7 +64,7 @@
 
 .login-header {
   height: 100px;
-  padding-top: 30px; 
+  padding-top: 30px;
 }
 
 .page-banner {
@@ -288,6 +288,10 @@ color: #737373;
   .mobile-near-flag {
     padding-left: 25px;
   }
+}
+
+.inline-block {
+  display: inline-block !important;
 }
 
 .iti-flag {background-image: url("/images/flags.png") !important;}
