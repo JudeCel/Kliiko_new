@@ -6,8 +6,7 @@
     <button class='btn btn-addNewElement btn-green gallery-btn-width' type='button' ng-click='gc.changeView(gc.currentPage.viewType)'>
       <span class='{{ gc.currentPage.viewClass }}' aria-hidden='true'></span>
     </button>
-
-    <ng-include class='dropdown' src="gc.templatesDir + 'dropdown.html'" ng-init='upload = { types: gc.uploadTypes, modal: { upload: true } }' style='padding-bottom: 9px;'></ng-include>
+    <ng-include ng-if='app.account.permissions.data.uploadToGallery' class='dropdown' src="gc.templatesDir + 'dropdown.html'" ng-init='upload = { types: gc.uploadTypes, modal: { upload: true } }' style='padding-bottom: 9px;'></ng-include>
   </div>
 </div>
 
