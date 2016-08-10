@@ -10,6 +10,9 @@
     zoom: 1;
     margin-right: 10px;
     vertical-align: top;
+    width: 225px;
+    background-repeat: no-repeat;
+    background-position: 170px center;
 
     & > a {
       border: 2px solid $font-color;
@@ -18,9 +21,9 @@
       color: $font-color;
       font-size: 16px;
       font-weight: bold;
-      height: 44px;
       padding-right: 50px;
       margin-right: 10px;
+      height: 44px;
 
       &:hover {
         background-color: $blue;
@@ -37,8 +40,6 @@
   & > li#dashboard-accountProfile {
     & > a {
     background-image: url('/icons/profile_grey.png');
-    background-repeat: no-repeat;
-    background-position: 170px center;
     }
     &.active > a,
     & > a:hover,
@@ -50,8 +51,6 @@
   & > li#dashboard-chatSessions {
     & > a {
     background-image: url('/icons/session_grey.png');
-    background-repeat: no-repeat;
-    background-position: 120px center;
     }
     &.active > a,
     & > a:hover,
@@ -63,8 +62,6 @@
   & > li#dashboard-resources {
     & > a {
     background-image: url('/icons/resources_grey.png');
-    background-repeat: no-repeat;
-    background-position: 130px center;
     }
     &.active > a,
     & > a:hover,

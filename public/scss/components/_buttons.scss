@@ -17,7 +17,14 @@
   margin-left: 36px;
   margin-top: 30px;
   cursor: pointer;
-
+  padding-top: 3px;
+  padding-left: 15px;
+  vertical-align: middle;
+  border: 2px solid $blue;
+  border-radius: 0px;
+  color: $blue;
+  line-height: 26px;
+  text-align: left;
 
   &.btn-green {
     color: $green;
@@ -39,14 +46,6 @@
     min-width: 0 !important;
     max-width: 100px;
   }
-  padding-top: 4px;
-  padding-left: 15px;
-  vertical-align: middle;
-  border: 2px solid $blue;
-  border-radius: 0px;
-  color: $blue;
-  line-height: 26px;
-  text-align: left;
 
   &:hover{
     color: $blueHover;
@@ -57,7 +56,6 @@
     margin-left: 14px;
   }
 }
-
 
 .btn-dashboard-menu.active {
   color: white;
@@ -128,6 +126,32 @@
 #btn-brand-colors {
   @extend .btn-dashboard-menu;
   width: 187px;
+}
+
+#mailCreateCopy,
+#mailModifySaveCopy,
+#mailPreviewButton,
+#brand-colour-back,
+#brand-colour-save {
+  width: 80px;
+}
+
+.btn-small {
+  min-width: 80px;
+  width: 80px;
+  max-width: 80px;
+}
+
+.btn-medium {
+  min-width: 130px;
+  width: 130px;
+  max-width:130px;
+}
+
+.btn-large {
+  min-width:200px;
+  width: 200px;
+  max-width: 200px;
 }
 
 .btn-google {

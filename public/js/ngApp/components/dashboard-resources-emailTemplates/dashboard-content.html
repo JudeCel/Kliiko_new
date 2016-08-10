@@ -50,9 +50,9 @@
           <br>
 
           <button type="submit" class="btn btn-red pull-right" ng-click="ec.resetMailTemplate()" ng-show="ec.resetButtonVisible(app.accountUser.isAdmin)">Cancel</button>
-          <button id='mailCreateCopy' type="submit" class="btn btn-lightgreen pull-right" ng-click="ec.modifyAndSave(true)" ng-if="ec.copyButtonVisible(app.accountUser.isAdmin)">Save As</button>
-          <button id='mailModifySaveCopy' type="submit" class="btn btn-green pull-right" ng-click="ec.modifyAndSave()">Save</button>
-          <button id='mailPreviewButton' type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
+          <button id='mailCreateCopy' type="submit" class="btn btn-lightgreen pull-right btn-small" ng-click="ec.modifyAndSave(true)" ng-if="ec.copyButtonVisible(app.accountUser.isAdmin)">Save As</button>
+          <button id='mailModifySaveCopy' type="submit" class="btn btn-green pull-right btn-small" ng-click="ec.modifyAndSave()">Save</button>
+          <button id='mailPreviewButton' type="submit" class="btn btn-blue pull-right btn-small" ng-click="ec.previewMailTemplate()">Preview</button>
         </div>
 
       <!-- Modal Preview-->
