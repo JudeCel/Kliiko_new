@@ -57,10 +57,12 @@
   }
 
   #create-new-btn {
-    margin-left: 20px;
-    margin-top: -8px;
-    margin-bottom: 10px;
-    width: 155px;
+    background-image: url('/icons/add_new_list_green.png');
+    background-repeat: no-repeat;
+    background-position: 160px center;
+    &:hover {
+        background-image: url('/icons/add_new_list_white.png');
+    }
   }
 
   .flex {

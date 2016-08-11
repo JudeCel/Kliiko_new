@@ -12,7 +12,7 @@
           <h2 class='text-center'>{{ sc.currentSurveyMode }} Survey</h2>
         </div>
         <div class='col-md-3 text-right'>
-          <button class='btn btn-addNewElement btn-green' ng-click="sc.changePage('index')">Back</button>
+          <button class='btn btn-standart btn-margin btn-green btn-small' ng-click="sc.changePage('index')">Back</button>
         </div>
 
         <div class='col-sm-12'>
@@ -96,8 +96,8 @@
         <div class='col-sm-12'>
           <hr class='survey-hr' />
 
-          <button id='showSurveyPreview' class='btn btn-addNewElement btn-green' data-toggle='modal' data-target='#previewModal' ng-click='sc.showPreview()'>Preview</button>
-          <button id='finishSurvey' class='btn btn-addNewElement btn-green' ng-click='sc.finishManage()'>Finish</button>
+          <button id='showSurveyPreview' class='btn btn-standart btn-margin btn-green btn-small' data-toggle='modal' data-target='#previewModal' ng-click='sc.showPreview()'>Preview</button>
+          <button id='finishSurvey' class='btn btn-standart btn-margin btn-green btn-small' ng-click='sc.finishManage()'>Finish</button>
 
           <span class='has-error'>
             <span class='help-block'>{{ sc.submitError }}</span>

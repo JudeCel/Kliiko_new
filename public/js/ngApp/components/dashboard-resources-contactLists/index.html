@@ -46,8 +46,12 @@
           </div>
 
           <div id="under-list-of-contacts-btns">
-            <div class="btn-standart btn-green btn-large" ng-click="clc.addNewList()">Add New Contact List<img src="/icons/add_new_list_green.png" class="pull-right"></div>
-            <div class="btn-standart btn-blue btn-large" ui-sref='dashboard.resources.survey' ng-if='!clc.hideStuff'>Recruiter <img src="/icons/recruiter_blue.png" class="pull-right"></div>
+            <div class="btn btn-standart btn-green btn-large" ng-click="clc.addNewList()">
+              <span class="pull-left">Add New Contact List</span>
+              <img id="btn-add-new-contact-list" src="/icons/add_new_list_green.png" class="pull-right"></div>
+            <div class="btn btn-standart btn-blue btn-large" ui-sref='dashboard.resources.survey' ng-if='!clc.hideStuff'>
+              <span class="pull-left">Recruiter</span>
+              <img id="btn-recruiter" src="/icons/recruiter_blue.png" class="pull-right"></div>
           </div>
         </div>
 
@@ -68,7 +72,7 @@
                 &nbsp; or &nbsp;
               </span>
 
-              <div custom-select-directive data-title="Add New Contacts" data-id="contact-lists-add-button-1" class="custom-select-directive btn-width-208">
+              <div custom-select-directive data-title="Add New Contacts" data-id="contact-lists-add-button-1" class="custom-select-directive btn-large">
                 <li id='contactListAddNew' ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
                 <li id='contactListAddExcel' ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
                 <li id='contactListAddCsv' ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
@@ -89,7 +93,7 @@
               &nbsp; or &nbsp;
             </span>
 
-            <div custom-select-directive data-title="Add New Contacts" data-id="contact-lists-add-button-2" class="custom-select-directive btn-width-208">
+            <div custom-select-directive data-title="Add New Contacts" data-id="contact-lists-add-button-2" class="custom-select-directive btn-large">
               <li id='contactListAddNew' ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
               <li id='contactListAddExcel' ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
               <li id='contactListAddCsv' ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>

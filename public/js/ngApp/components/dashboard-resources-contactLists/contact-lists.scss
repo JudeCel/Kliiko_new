@@ -41,10 +41,24 @@
     #contact-lists-right-column {
       padding-right: 15px;
       padding-left: 15px;
+
+      .btn-green {
+        &.btn-add-new-contact {
+          padding-right: 50px;
+          background-image: url('/icons/account_manager_green.png');
+          background-position: right center;
+          background-repeat: no-repeat;
+          &:hover,
+          &:focus {
+              background-image: url('/icons/account_manager_white.png') !important;
+          }
+        }
+      }
     }
   }
 
   #contact-lists-left-column {
+
 
     #list-of-contacts {
       margin-top: -3px;
@@ -112,14 +126,39 @@
     #under-list-of-contacts-btns {
       margin-top: 5px;
       .btn-standart {
-        display: block;
         margin-top: 10px;
-        width: 200px;
+      }
+      img {
+        padding: 25px 25px 0px 0px;
+        background-size: auto;
+        width: 0px;
+        height: 0px;
+      }
+      .btn-green {
+        img {
+           background-image: url('/icons/add_new_list_green.png')
+        }
+        &:hover,
+        &:focus {
+          img#btn-add-new-contact-list {
+            background-image: url('/icons/add_new_list_white.png') !important;
+          }
+        }
+      }
+      .btn-blue {
+        img {
+           background-image: url('/icons/recruiter_blue.png')
+        }
+        &:hover,
+        &:focus {
+          img#btn-recruiter {
+            background-image: url('/icons/recruiter_white.png') !important;
+          }
+        }
       }
     }
 
   }
-
 
   #dashboard-contact-lists-main-table {
     position: relative;
@@ -156,8 +195,6 @@
         margin-right: 20px;
       }
     }
-
-
 
     .table-item-edit-group {
       min-width: 70px;
@@ -211,7 +248,6 @@
       }
     }
   }
-
 
   .modal-title {
     margin-bottom: 40px;
@@ -274,21 +310,10 @@
     }
   }
 
-
-
-  label.control-label {
-    //margin-top: 23px;
-  }
-
   .custom-select-directive {
    .dd-directive {
-      padding: 7px 20px !important;
+      padding: 3px 20px !important;
       text-align: left !important;
-    }
-
-    .wrapper-dropdown-cd {
-      height: 39px;
-      max-width: 100%;
     }
 
     ul.dropdown {

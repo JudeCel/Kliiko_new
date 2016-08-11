@@ -81,8 +81,6 @@
     }
   }
 
-
-
   .plans-table {
     .plan-block {
       display: block;
@@ -203,23 +201,24 @@
     margin-top: 18px !important;
     padding: 0 !important;
   }
-  .btn-brown {$thisColor: #979137; color:$thisColor; border-color: $thisColor;}
-  .btn-blue {$thisColor: #65C8EE; color:$thisColor; border-color: $thisColor}
-  .btn-green {
-    $thisColor: #4CB344;
+  .btn-brown {
+    $thisColor: #979137;
     color:$thisColor;
     border-color: $thisColor;
     &:hover {
       color: white !important;
     }
-    &.btn-back {
-      padding-left: 40px;
-      background-image: url('/icons/back_green.png');
-      background-repeat: no-repeat;
-      background-position: 10px center;
-      &:hover {
-        background-image: url('/icons/back_white.png');
-      }
+  }
+
+  .btn-green.btn-back {
+    padding-left: 40px;
+    background-image: url('/icons/back_green.png');
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    &:hover {
+      background-image: url('/icons/back_white.png') !important;
+      background-repeat: no-repeat !important;
+      background-position: 10px center !important;
     }
   }
 
@@ -232,8 +231,6 @@
     .go-back-btn {color: $grey; border-color: $grey; }
     .i-want-btn {color:$grey; border-color: $yellow;}
   }
-
-
 
   ///////////////
   top: -85px;
@@ -292,10 +289,7 @@
     font-size: 1.5rem;
   }
 
-
   .ng-custom-select {
-
-
     .ncs-select {
       position: relative;
       color: $grey;
@@ -345,10 +339,7 @@
 
       top:-100vh; left: -100vw;
     }
-
-
   }
-
 
   a.btn.btn-link {
     outline: none;
@@ -358,5 +349,4 @@
   @import "./steps/step2";
   @import "./steps/step3-4";
   @import "./steps/step4-5";
-
 }

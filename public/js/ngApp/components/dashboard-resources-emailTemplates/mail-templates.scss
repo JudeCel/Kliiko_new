@@ -72,41 +72,6 @@
         min-height: 500px;
     }
 
-    .btn-red {
-        background-color:white;
-        border-color: red !important;
-        border-radius: 0px;
-        color: red;
-        border: 2px solid;
-    }
-    .btn-green {
-        background-color:white;
-        border-color: green !important;
-        border-radius: 0px;
-        color: green;
-        border: 2px solid;
-        margin-left: 5px;
-    }
-    .btn-lightgreen {
-        background-color:white;
-        border-color: mediumseagreen !important;
-        border-radius: 0px;
-        color: mediumseagreen;
-        border: 2px solid;
-        margin-left: 5px;
-    }
-    .btn-red {
-      margin-left: 5px;
-    }
-    .btn-blue {
-        background-color:white;
-        border-color: cornflowerblue !important;
-        border-radius: 0px;
-        color: cornflowerblue;
-        border: 2px solid;
-        margin-left: 5px;
-    }
-
     .list-group-item.active {
         background-color: #c0e2d1 !important;
         border: none;
