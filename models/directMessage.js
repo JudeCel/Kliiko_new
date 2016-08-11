@@ -12,9 +12,9 @@ module.exports = (Sequelize, DataTypes) => {
     timestamps: true,
     classMethods: {
       associate: function(models) {
-        DirectMessage.belongsTo(models.Session, { foreignKey: 'sessionId' });
-        DirectMessage.belongsTo(models.SessionMember, { foreignKey: 'senderId', as: 'sender' });
-        DirectMessage.belongsTo(models.SessionMember, { foreignKey: 'recieverId', as: 'reciever' });
+        DirectMessage.belongsTo(models.Session, { foreignKey: 'sessionId', onDelete: 'cascade' });
+        DirectMessage.belongsTo(models.SessionMember, { foreignKey: 'senderId', as: 'sender', onDelete: 'cascade' });
+        DirectMessage.belongsTo(models.SessionMember, { foreignKey: 'recieverId', as: 'reciever', onDelete: 'cascade' });
       }
     }
   });

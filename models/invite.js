@@ -16,10 +16,10 @@ module.exports = (Sequelize, DataTypes) => {
   }, {
     classMethods: {
       associate: function(models) {
-        Invite.belongsTo(models.User, { foreignKey: 'userId' });
-        Invite.belongsTo(models.Session, { foreignKey: 'sessionId' });
-        Invite.belongsTo(models.Account, { foreignKey: 'accountId' });
-        Invite.belongsTo(models.AccountUser, { foreignKey: 'accountUserId' });
+        Invite.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'cascade' });
+        Invite.belongsTo(models.Session, { foreignKey: 'sessionId', onDelete: 'cascade' });
+        Invite.belongsTo(models.Account, { foreignKey: 'accountId', onDelete: 'cascade' });
+        Invite.belongsTo(models.AccountUser, { foreignKey: 'accountUserId', onDelete: 'cascade' });
       }
     }
   });

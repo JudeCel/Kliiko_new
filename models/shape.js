@@ -16,8 +16,8 @@ module.exports = (Sequelize, DataTypes) => {
     ],
     classMethods: {
       associate: function(models) {
-        Shape.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId' });
-        Shape.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId' });
+        Shape.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId', onDelete: 'cascade' });
+        Shape.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId', onDelete: 'cascade' });
       }
     }
   });

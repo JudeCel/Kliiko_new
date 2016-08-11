@@ -12,11 +12,11 @@ module.exports = (Sequelize, DataTypes) => {
     timestamps: true,
     classMethods: {
       associate: function(models) {
-        SessionTopics.belongsTo(models.Topic, { foreignKey: 'topicId' });
-        SessionTopics.belongsTo(models.Session, { foreignKey: 'sessionId' });
-        SessionTopics.hasMany(models.MiniSurvey, { foreignKey: 'sessionTopicId', onDelete: 'cascade' });
-        SessionTopics.hasOne(models.Console, { foreignKey: 'sessionTopicId', onDelete: 'cascade' });
-        SessionTopics.hasMany(models.SessionTopicsReport, { foreignKey: 'sessionTopicId', onDelete: 'cascade' });
+        SessionTopics.belongsTo(models.Topic, { foreignKey: 'topicId', onDelete: 'cascade' });
+        SessionTopics.belongsTo(models.Session, { foreignKey: 'sessionId', onDelete: 'cascade' });
+        SessionTopics.hasMany(models.MiniSurvey, { foreignKey: 'sessionTopicId'});
+        SessionTopics.hasOne(models.Console, { foreignKey: 'sessionTopicId'});
+        SessionTopics.hasMany(models.SessionTopicsReport, { foreignKey: 'sessionTopicId' });
       }
     }
   });

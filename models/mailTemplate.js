@@ -16,7 +16,7 @@ module.exports = (Sequelize, DataTypes) => {
       associate: function(models) {
         MailTemplate.belongsTo(models.MailTemplateBase);
         MailTemplate.belongsTo(models.Account);
-        MailTemplate.belongsTo(models.Session, { foreignKey: 'sessionId' });
+        MailTemplate.belongsTo(models.Session, { foreignKey: 'sessionId', onDelete: 'cascade' });
       }
     }
   });
