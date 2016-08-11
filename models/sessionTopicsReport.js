@@ -37,7 +37,7 @@ module.exports = (Sequelize, DataTypes) => {
       associate: function(models) {
         SessionTopicsReport.belongsTo(models.Session, { foreignKey: 'sessionId', onDelete: 'cascade' });
         SessionTopicsReport.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId', onDelete: 'cascade' });
-        SessionTopicsReport.belongsTo(models.Resource, { foreignKey: 'resourceId', onDelete: 'cascade' });
+        SessionTopicsReport.belongsTo(models.Resource, { foreignKey: 'resourceId'});
       }
     }
   });
