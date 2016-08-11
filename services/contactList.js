@@ -3,6 +3,7 @@
 var q = require('q');
 var models = require('./../models');
 var dataWrappers = require('./../models/dataWrappers');
+var filters = require('./../models/filters');
 var ContactListUser = dataWrappers.ContactListUser;
 var ContactList = models.ContactList;
 var _ = require('lodash');
