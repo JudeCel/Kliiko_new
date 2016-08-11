@@ -32,6 +32,27 @@ function shouldUpdateUser(params, byUser) {
   return true;
 }
 
+function updateAccountUserComment(params) {
+  let deferred = q.defer();
+
+  AccountUser.find({ where: { id: params.id } }).then(function(accountUser) {
+    if(accountUser) {
+      accountUser.update({ comment: params.comment }).then(function() {
+        accountUser.getAccount({ include: [{ model: User, attributes: userAttributes() }, AccountUser, models.Subscription ] }).then(function(account) {
+          deferred.resolve(account);
+        });
+      }, function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+    else {
+      deferred.reject('Account User not found');
+    }
+  });
+
+  return deferred.promise;
+}
+
 function updateAccountUser(params, byUser, callback) {
   byUser = byUser || {};
   let updateParams = validateParams(params);
@@ -154,6 +175,7 @@ function validateParams(params, attrs) {
 module.exports = {
   findAllAccounts: findAllAccounts,
   updateAccountUser: updateAccountUser,
+  updateAccountUserComment: updateAccountUserComment,
   csvData: csvData,
   csvHeader: csvHeader
 };

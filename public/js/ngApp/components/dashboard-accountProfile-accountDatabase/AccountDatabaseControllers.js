@@ -24,9 +24,9 @@
   });
 
   angular.module('KliikoApp').controller('AccountDatabaseController', AccountDatabaseController);
-  AccountDatabaseController.$inject = ['dbg', 'AccountDatabaseServices', '$modal', '$scope', '$rootScope', '$filter', 'angularConfirm', 'messenger'];
+  AccountDatabaseController.$inject = ['dbg', 'AccountDatabaseServices', '$scope', '$filter', 'messenger', 'domServices'];
 
-  function AccountDatabaseController(dbg, AccountDatabaseServices, $modal, $scope, $rootScope, $filter, angularConfirm, messenger) {
+  function AccountDatabaseController(dbg, AccountDatabaseServices, $scope, $filter, messenger, domServices) {
     dbg.log2('#AccountDatabaseController started');
 
     $scope.accounts = {};
@@ -40,17 +40,13 @@
       });
     };
 
-    $scope.editComment = function(account, user) {
-      $scope.modalInstance = $modal.open({
-        templateUrl: '/js/ngApp/components/dashboard-accountProfile-accountDatabase/modal.html',
-        windowTemplateUrl: '/js/ngApp/components/dashboard-accountProfile-accountDatabase/window.html',
-        controller: AccountDatabaseModalController,
-        resolve: {
-          data: function() {
-            return { userId: user.UserId, accountId: account.id, comment: $scope.findRightAccountUser(account, user).comment };
-          }
-        }
-      });
+    $scope.editComment = function(accountUser) {
+      $scope.currentAccountUser = accountUser;
+      domServices.modal('accountDatabaseCommentModal');
+    };
+
+    $scope.closeModal = function() {
+      domServices.modal('accountDatabaseCommentModal', 1);
     };
 
     $scope.changeAccountStatus = function(account, user) {
@@ -97,17 +93,25 @@
       }
     };
 
-    $rootScope.$watch('changedUserComment', function(data) {
-      if($rootScope.changedUserComment) {
-        var index = $filter('findPositionById')(data.account, $scope.accounts);
-        if(index > -1) {
-          $scope.accounts.splice(index, 1, data.account);
-        }
+    $scope.updateComment = function() {
+      $scope.sendingData = true;
 
-        messenger.ok(data.message);
-        $rootScope.changedUserComment = null;
-      }
-    });
+      AccountDatabaseServices.updateAccountUserComment({ id: $scope.currentAccountUser.id, comment: $scope.currentAccountUser.comment }).then(function(res) {
+        $scope.sendingData = false;
+
+        if(res.error) {
+          messenger.error(res.error);
+        }
+        else {
+          var index = $filter('findPositionById')(res.account, $scope.accounts);
+          if(index > -1) {
+            $scope.accounts.splice(index, 1, res.account);
+          }
+
+          messenger.ok(res.message);
+        }
+      });
+    };
 
     $scope.planToUpperCase = function( plan ) {
       if (plan) {
@@ -116,46 +120,5 @@
         return "";
       }
     }
-  };
-
-  angular.module('KliikoApp').controller('AccountDatabaseModalController', AccountDatabaseModalController);
-  AccountDatabaseModalController.$inject = ['dbg', '$scope', '$uibModalInstance', 'AccountDatabaseServices', '$rootScope', 'data'];
-
-  function AccountDatabaseModalController(dbg, $scope, $uibModalInstance, AccountDatabaseServices, $rootScope, data) {
-    dbg.log2('#AccountDatabaseModalController started');
-
-    $scope.user = {};
-    $scope.errors = {};
-    $scope.comment = data.comment;
-    $scope.userId = data.userId;
-    $scope.accountId = data.accountId;
-
-    $scope.sendingData = false;
-
-    $scope.submitForm = function() {
-      if($scope.sendingData) return;
-
-      var params = { accountId: $scope.accountId, userId: $scope.userId, comment: $scope.comment };
-      $scope.sendingData = true;
-      dbg.log2('#AccountDatabaseModalController > submitForm', params);
-
-      AccountDatabaseServices.updateAccountUser(params).then(function(res) {
-        $scope.sendingData = false;
-        if(res.error) {
-          $scope.errors = res.error;
-        }
-        else {
-          $rootScope.changedUserComment = { account: res.account, message: res.message };
-          $uibModalInstance.dismiss('cancel');
-        }
-      });
-    };
-
-    $scope.closeModal = function() {
-      $scope.user = {};
-      $scope.errors = {};
-      $uibModalInstance.dismiss('cancel');
-    };
-
   };
 })();

@@ -24,7 +24,16 @@ function update(req, res, next) {
   });
 };
 
+function updateAccountUserComment(req, res, next) {
+  accountDatabaseService.updateAccountUserComment(req.body).then(function(account) {
+    res.send({ account: account, message: 'Successfully updated account user' });
+  }, function(error) {
+    res.send({ error: error });
+  });
+};
+
 module.exports = {
   get: get,
+  updateAccountUserComment: updateAccountUserComment,
   update: update
 };
