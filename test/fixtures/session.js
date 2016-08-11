@@ -135,7 +135,7 @@ function createAccountAndSessionMember(index, role, gender) {
   let deferred = q.defer();
   let name = (role + index);
 
-  createUserAndOwnerAccount(userParams(name, gender)).then(function(result) {
+  createUserAndOwnerAccount(userParams(name, gender), role).then(function(result) {
     let params = sessionMemberParams(result.accountUser.firstName, role, result.accountUser.id, name);
     return createSessionMember(params);
   }).then(function(member) {
@@ -160,11 +160,27 @@ function createSessionMember(params) {
   return deferred.promise;
 }
 
-function createUserAndOwnerAccount(params) {
+function createUserAndOwnerAccount(params, role) {
   let deferred = q.defer();
 
   userFixture.createUserAndOwnerAccount(params).then(function(data) {
-    deferred.resolve(data);
+    if(role) {
+      let newParams = data.accountUser.dataValues;
+      newParams.role = role;
+      newParams.AccountId = mainData.account.id;
+      delete newParams.id;
+      delete newParams.owner;
+
+      models.AccountUser.create(newParams).then(function(accountUser) {
+        data.accountUser = accountUser;
+        deferred.resolve(data);
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }
+    else {
+      deferred.resolve(data);
+    }
   }, function(error) {
     deferred.reject(error);
   });
