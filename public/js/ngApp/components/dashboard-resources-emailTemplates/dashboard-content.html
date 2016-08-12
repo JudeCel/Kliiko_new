@@ -60,11 +60,14 @@
         <div class='modal-dialog'>
           <div class='modal-content border-green border-radius-none preview-content'>
             <div class='modal-header'>
-              <button type='button' class='close' data-dismiss='modal'>&times;</button>
               <h1 class='modal-title' id="mailTemplatePreviewSubject"></h1>
             </div>
             <div class='modal-body'>
               <iframe id="contentFrame" class="preview-frame"></iframe>
+              <div class='modal-footer'>
+                  <button type="submit" data-dismiss='modal'
+                          class="btn btn-standart btn-red btn-small pull-left">Close</button>
+              </div>
             </div>
           </div>
         </div>
@@ -74,7 +77,6 @@
         <div class='modal-dialog'>
           <div class='modal-content border-green border-radius-none'>
             <div class='modal-header'>
-              <button type='button' class='close' data-dismiss='modal'>&times;</button>
               <h1 class='modal-title text-center'>Delete template: {{ec.templateToDelete.template.name}}</h1>
             </div>
 
@@ -82,8 +84,8 @@
               <form>
                 <div>
                   <span class="pull-right">
-                    <button type="button" ng-click="ec.cancelTemplateDelete()" class="btn btn-standart border-red text-red-dark border-radius-none background-transp pull-right btn-small">Cancel</button>&nbsp;&nbsp;
-                    <button type="button" ng-click="ec.approveTemplateDelete()" class="btn btn-standart border-green text-green-dark border-radius-none background-transp pull-right btn-small">Yes</button>
+                    <button type="button" ng-click="ec.cancelTemplateDelete()" class="btn btn-standart btn-red pull-right btn-small">Cancel</button>&nbsp;&nbsp;
+                    <button type="button" ng-click="ec.approveTemplateDelete()" class="btn btn-standart btn-green pull-right btn-small">Yes</button>
                   </span>
                 </div>
               </form>

@@ -3,7 +3,6 @@
   <div class='modal-dialog getQuoteModal'>
     <div class='modal-content border-red border-radius-none'>
       <div class='modal-header'>
-        <button type='button' class='close' data-dismiss='modal'>&times;</button>
         <h1 class='modal-title text-center'>Get a Quote</h1>
       </div>
       <div class='modal-body'>
@@ -70,7 +69,10 @@
         Please note: This information will help us understand your needs.
       </p>
       <div class='modal-footer'>
-        <div type='submit' class='pull-right contact-us-btn-red' ng-click="up.submitContactusForm()">
+        <div type='button' data-dismiss='modal' class='btn btn-standart btn-red btn-medium pull-left'>
+          Close
+        </div>
+        <div type='submit' class='btn btn-standart btn-green btn-medium pull-right' ng-click="up.submitContactusForm()">
           Get Quote
         </div>
       </div>

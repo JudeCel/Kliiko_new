@@ -2,7 +2,6 @@
   <div class='modal-dialog accountManagerModal'>
     <div class='modal-content border-green border-radius-none'>
       <div class='modal-header'>
-        <button type='button' class='close' data-dismiss='modal'>&times;</button>
         <h2 class='modal-title text-center'>{{ amc.modalTitle }}</h2>
       </div>
 
@@ -124,8 +123,10 @@
               </div>
 
               <div class='col-md-12'>
-                <button ng-click='amc.submitForm(amc.formAction, amc.accountUser)' type='button' class='btn border-red text-red-dark border-radius-none background-transp btn-md pull-right'>{{amc.saveButtonText}}</button>
-                <button ng-click='amc.cancel()' type='button' class='btn border-red text-red-dark border-radius-none background-transp btn-md pull-left'>Close</button>
+                <button ng-click='amc.submitForm(amc.formAction, amc.accountUser)' type='button'
+                       class='btn btn-standart btn-green btn-small pull-right'>{{amc.saveButtonText}}</button>
+                <button ng-click='amc.cancel()' type='button'
+                        class='btn btn-standart btn-red btn-small pull-left'>Close</button>
               </div>
             </div>
           </div>
