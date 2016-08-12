@@ -53,6 +53,8 @@ spec:
           value: "570903251504-hvev7sqcqqvl977djc1kqv722sqgidp3.apps.googleusercontent.com"
         - name: GOOGLE_CLIENT_SECRET
           value: "i_S2xLucKbRL14sp6hHSRVA_"
+        - name: MAIL_FROM_EMAIL
+          value: "klzii.noreply@gmail.com"
         - name: REDIS_PORT
           value: "6379"
         - name: DATABASE_URL

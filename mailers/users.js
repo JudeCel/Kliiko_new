@@ -90,7 +90,7 @@ users.sendEmailConfirmationToken = function(params, callback) {
         transporter.sendMail({
           from: mailFrom,
           to: params.email,
-          subject: process.env.MAIL_FROM_NAME + ' - Confirmation Email',
+          subject: process.env.MAIL_FROM_NAME + ' - Verify Email Address',
           html: html
         }, callback);
       });

@@ -20,8 +20,8 @@ module.exports = (Sequelize, DataTypes) => {
     classMethods: {
       associate: function(models) {
         Message.hasMany(models.Vote, { foreignKey: 'messageId' });
-        Message.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId' });
-        Message.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId' });
+        Message.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId', onDelete: 'cascade' });
+        Message.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId', onDelete: 'cascade' });
       }
     }
   });

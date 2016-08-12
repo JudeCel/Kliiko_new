@@ -15,32 +15,32 @@
         <thead>
           <tr class='background-green'>
             <th>
-              <a class="white-sort-text" href="" ng-click="csc.orderByField='name'; csc.reverseSort = !csc.reverseSort">
+              <a class="white-sort-text" href="" ng-click="csc.changeOrder('name')">
                 Name
               </a>
             </th>
             <th>
-              <a class="white-sort-text" href="" ng-click="csc.orderByField='facilitator.username'; csc.reverseSort = !csc.reverseSort">
+              <a class="white-sort-text" href="" ng-click="csc.changeOrder('facilitator.username')">
                 Facilitator
               </a>
             </th>
             <th>
-              <a class="white-sort-text" href="" ng-click="csc.orderByField='startTime'; csc.reverseSort = !csc.reverseSort">
+              <a class="white-sort-text" href="" ng-click="csc.changeOrder('startTime')">
                 Start Date
               </a>
             </th>
             <th>
-              <a class="white-sort-text" href="" ng-click="csc.orderByField='endTime'; csc.reverseSort = !csc.reverseSort">
+              <a class="white-sort-text" href="" ng-click="csc.changeOrder('endTime')">
                 End Date
               </a>
             </th>
             <th>
-              <a class="white-sort-text" href="" ng-click="csc.orderByField='expireDate'; csc.reverseSort = !csc.reverseSort">
+              <a class="white-sort-text" href="" ng-click="csc.changeOrder('expireDate')">
                 Expiration Date
               </a>
             </th>
             <th>
-              <a class="white-sort-text" href="" ng-click="csc.orderByField='showStatus'; csc.reverseSort = !csc.reverseSort">
+              <a class="white-sort-text" href="" ng-click="csc.changeOrder('showStatus')">
                 Status
               </a>
             </th>
@@ -48,7 +48,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr class='{{ csc.rowClass(session) }}' ng-repeat='session in csc.sessions | orderBy:csc.orderByField:csc.reverseSort'>
+          <tr class='{{ csc.rowClass(session) }}' ng-repeat='session in csc.sessions | orderBy:csc.orderByField'>
             <td>{{ session.name }}</td>
             <td>{{ session.facilitator.username }}</td>
             <td>{{ session.startTime | date:sc.dateFormat }}</td>

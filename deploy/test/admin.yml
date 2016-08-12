@@ -53,6 +53,8 @@ spec:
           value: ".test.klzii.com"
         - name: SERVER_DOMAIN
           value: "www.test.klzii.com"
+        - name: MAIL_FROM_EMAIL
+          value: "klzii.noreply@gmail.com"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
         - name: FACEBOOK_CLIENT_ID

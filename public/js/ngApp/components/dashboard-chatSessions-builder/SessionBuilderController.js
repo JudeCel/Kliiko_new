@@ -118,19 +118,37 @@
       });
     }
 
-    function canSeeGoToChat(session, accountUser) {
-      if(session.sessionData) {
-        var facilitator = session.sessionData.facilitator ? session.sessionData.facilitator.accountUserId == accountUser.id : false;
-        var member = false, topics = false;
-        if(session.sessionData.SessionMembers) {
-          session.sessionData.SessionMembers.map(function(sessionMember) {
-            if(sessionMember.accountUserId == accountUser.id) {
-              member = true;
+    function canSeeGoToChat(accountUser) {
+      var sessionData = vm.session.sessionData;
+
+      if(sessionData) {
+        var facilitator = false, member = false, topics = false, membersArray = sessionData.SessionMembers, different;
+
+        if(sessionData.facilitator) {
+          facilitator = sessionData.facilitator.accountUserId == accountUser.id;
+        }
+        else if(sessionData.steps.step1.facilitator) {
+          different = true;
+          membersArray = sessionData.steps.step4.participants.concat(sessionData.steps.step5.observers);
+          facilitator = sessionData.steps.step1.facilitator.id == accountUser.id;
+        }
+
+        if(membersArray) {
+          membersArray.map(function(sessionMember) {
+            if(different) {
+              if(sessionMember.id == accountUser.id) {
+                member = true;
+              }
+            }
+            else {
+              if(sessionMember.accountUserId == accountUser.id) {
+                member = true;
+              }
             }
           });
         }
 
-        if(session.steps.step2.topics.length > 0) {
+        if(vm.session.steps.step2.topics.length > 0) {
           topics = true;
         }
 

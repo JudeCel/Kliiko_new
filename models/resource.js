@@ -38,10 +38,10 @@ module.exports = (Sequelize, DataTypes) => {
         Resource.belongsTo(models.Topic, { foreignKey: 'topicId' });
         Resource.belongsTo(models.Account, { foreignKey: 'accountId' });
         Resource.belongsTo(models.AccountUser, { foreignKey: 'accountUserId' });
-        Resource.hasMany(models.Banner, { onDelete: 'cascade', foreignKey: 'resourceId' });
+        Resource.hasMany(models.Banner, {foreignKey: 'resourceId' });
         Resource.hasMany(models.Survey, { foreignKey: 'resourceId' });
         Resource.hasMany(models.SurveyQuestion, { foreignKey: 'resourceId' });
-        Resource.belongsToMany(models.Session, {through: {model: models.SessionResource}, foreignKey: 'resourceId'});
+        Resource.belongsToMany(models.Session, {through: {model: models.SessionResource, onDelete: 'cascade'}, foreignKey: 'resourceId'});
       }
     }
   });

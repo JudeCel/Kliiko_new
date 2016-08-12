@@ -23,8 +23,8 @@ module.exports = (Sequelize, DataTypes) => {
     timestamps: true,
     classMethods: {
       associate: function(models) {
-        SessionMember.belongsTo(models.Session, { foreignKey: 'sessionId' });
-        SessionMember.belongsTo(models.AccountUser, { foreignKey: 'accountUserId' });
+        SessionMember.belongsTo(models.Session, { foreignKey: 'sessionId', onDelete: 'cascade' });
+        SessionMember.belongsTo(models.AccountUser, { foreignKey: 'accountUserId', onDelete: 'cascade' });
         SessionMember.hasMany(models.Shape, { foreignKey: 'sessionMemberId' });
         SessionMember.hasMany(models.Message, { foreignKey: 'sessionMemberId' });
         SessionMember.hasMany(models.MiniSurveyAnswer, { foreignKey: 'sessionMemberId' });
