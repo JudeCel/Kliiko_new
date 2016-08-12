@@ -1,7 +1,5 @@
 
-<div class="btn-group">
-  <div class="dropdown inline-block margin-right-10">
-    <button ng-if='upload.modal.upload' class='btn btn-standart btn-green btn-large btn-margin dropdown-toggle no-margin-bottom' id='uploadResourceDropdown'
+    <button ng-if='upload.modal.upload' class='btn btn-standart btn-green btn-large btn-margin dropdown-toggle' id='uploadResourceDropdown'
             data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>
           <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
           <span>Add New Resource</span>
@@ -13,13 +11,11 @@
         </a>
       </li>
     </ul>
-</div>
-<button ng-if='upload.modal.select' class='btn btn-standart btn-margin btn-green btn-large pull-right' ng-click='gc.openSelectModal(upload)' data-toggle='modal'>
+<button ng-if='upload.modal.select' class='btn btn-standart btn-margin btn-green btn-large' ng-click='gc.openSelectModal(upload)' data-toggle='modal'>
   <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
   <span>Select From Gallery</span>
 </button>
-<button ng-if='upload.dependency.resource' class='btn btn-standart btn-margin btn-green btn-small-x pull-right' ng-click='gc.removeDependency(upload.dependency)'>
+<button ng-if='upload.dependency.resource' class='btn btn-standart btn-margin btn-green btn-small-x' ng-click='gc.removeDependency(upload.dependency)'>
   <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
   <span>Remove</span>
 </button>
-</div>
