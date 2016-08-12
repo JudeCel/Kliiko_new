@@ -439,8 +439,15 @@ function updateSubscriptionData(passThruContent){
   findSubscriptionByChargebeeId(passThruContent.subscriptionId).then(function(subscription) {
     subscription.update({planId: passThruContent.planId, subscriptionPlanId: passThruContent.subscriptionPlanId, active: true}).then(function(updatedSub) {
 
-      let params = planConstants[passThruContent.planId];
-      params.paidSmsCount = params.paidSmsCount + passThruContent.paidSmsCount;
+      let params = _.cloneDeep(planConstants[passThruContent.planId]);
+      if(passThruContent.oldPriority > params.priority || passThruContent.oldPriority == -1) {
+        params.paidSmsCount = params.paidSmsCount + passThruContent.paidSmsCount;
+      }
+      else {
+        let smsCount = passThruContent.paidSmsCount - passThruContent.planSmsCount;
+        smsCount = smsCount > 0 ? smsCount : 0;
+        params.paidSmsCount = params.paidSmsCount > smsCount ? params.paidSmsCount : smsCount;
+      }
 
       updatedSub.SubscriptionPreference.update({ data: params }).then(function(preference) {
         deferred.resolve({subscription: updatedSub, redirect: false});
@@ -622,7 +629,9 @@ function chargebeePassParams(result) {
     subscriptionId: result.subscription.subscriptionId,
     planId: result.newPlan.chargebeePlanId,
     subscriptionPlanId: result.newPlan.id,
-    paidSmsCount: result.newPlan.paidSmsCount,
+    paidSmsCount: result.subscription.SubscriptionPreference.data.paidSmsCount,
+    planSmsCount: result.subscription.SubscriptionPreference.data.planSmsCount,
+    oldPriority: result.subscription.SubscriptionPlan.priority,
     accountName: result.accountName
   }
 }
