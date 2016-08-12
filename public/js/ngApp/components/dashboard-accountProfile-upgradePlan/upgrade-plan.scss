@@ -344,6 +344,10 @@
     border: solid 3px $grey;
     cursor: pointer;
     text-align: center;
+    &.btn-back,
+    &.btn-submit {
+      padding: 3px;
+    }
   }
   .buttons-area {
     margin-top: 18px !important;
