@@ -5,7 +5,7 @@
         <button type='button' class='close' data-dismiss='modal'>&times;</button>
         <h2 class='modal-title text-center'>Contact Details</h2>
       </div>
-      <div class='modal-body'>
+      <div class='modal-body margin-right-10'>
         <form class='form-horizontal' method='post' ng-submit='cdm.updateUserData()' name='cdm.userDetailsForm' ng-controller='PhoneNumberController as pnc'>
           <span class='hidden'>{{ pnc.init(cdm.userData, 'contactDetailsModal'); '' }}</span>
 
@@ -124,9 +124,12 @@
 
               <div class='col-md-12'>
                 <span class="pull-right">
-                  <button type="button" ng-show="cdm.userDetailsForm.$dirty" ng-click="cdm.cancel()" class="btn border-red text-red-dark border-radius-none background-transp pull-right- btn-md">Cancel</button>&nbsp;&nbsp;
-                  <button type="submit" ng-show="cdm.userDetailsForm.$dirty" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Update</button>
-                  <button type="button" ng-show="cdm.userDetailsForm.$pristine" ng-click="cdm.cancel()" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Done</button>
+                  <button type="submit" ng-show="cdm.userDetailsForm.$dirty"
+                          class="btn btn-standart btn-green btn-small pull-right">Update</button>
+                  <button type="button" ng-show="cdm.userDetailsForm.$dirty" ng-click="cdm.cancel()"
+                          class="btn btn-standart btn-red btn-small pull-right margin-right-10">Cancel</button>&nbsp;&nbsp;
+                  <button type="button" ng-show="cdm.userDetailsForm.$pristine" ng-click="cdm.cancel()"
+                          class="btn btn-standart btn-green btn-small pull-right">Done</button>
                 </span>
                 <div class='check'>
                   <input ng-model='cdm.userData.reveiveNewsLetters' type='checkbox' class='checkbox-login' name='reveiveNewsLetters' id='reveiveNewsLetters'/>
