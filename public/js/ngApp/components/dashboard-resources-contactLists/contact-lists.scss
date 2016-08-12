@@ -42,23 +42,22 @@
       padding-right: 15px;
       padding-left: 15px;
 
-      .btn-green {
-        &.btn-add-new-contact {
+      .btn-add-new-contact {
           padding-right: 50px;
           background-image: url('/icons/account_manager_green.png');
-          background-position: right center;
+          background-position: 150px center;
           background-repeat: no-repeat;
           &:hover,
           &:focus {
               background-image: url('/icons/account_manager_white.png') !important;
+              background-position: 150px center !important;
+              background-repeat: no-repeat !important;
           }
         }
-      }
     }
   }
 
   #contact-lists-left-column {
-
 
     #list-of-contacts {
       margin-top: -3px;

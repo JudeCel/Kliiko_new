@@ -13,14 +13,12 @@
   }
 
   .dashboard-container {
-    img {
-      padding: 25px 25px 0px 0px;
-      background-size: auto;
-      width: 0px;
-      height: 0px;
-    }
     .btn-green {
       img {
+        padding: 27px 25px 0px 0px;
+        background-size: auto;
+        width: 0px;
+        height: 0px;
          background-image: url('/icons/add_new_list_green.png')
       }
       &:hover,
