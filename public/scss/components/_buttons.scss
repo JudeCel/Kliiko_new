@@ -39,11 +39,10 @@
 
 .btn-dashboard-menu {
   min-width: 47px;
-  margin-left: 36px;
+  margin-left: 10px;
   margin-top: 30px;
   cursor: pointer;
   padding-left: 15px;
-  width: 187px !important;
 
   &.btn-short {
     min-width: 0 !important;
@@ -91,6 +90,7 @@
   color: white;
   background-color: $yellow;
   font-weight: bold;
+  width: 140px;
 }
 
 .btn-header-green {
@@ -130,9 +130,9 @@
 }
 
 .btn-medium {
-  min-width: 130px;
-  width: 130px;
-  max-width:130px;
+  min-width: 140px;
+  width: 140px;
+  max-width:140px;
 }
 
 .btn-large {

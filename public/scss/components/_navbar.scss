@@ -70,6 +70,13 @@
     }
   }
 
+  & > li#btn-my-dashboard {
+    width: 250px;
+    & > a {
+        padding-right: 15px;
+    }
+  }
+
 }
 
 #nav-tabs-main > li,
