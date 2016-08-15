@@ -5,6 +5,8 @@ var AccountUser = models.AccountUser;
 var Subscription = models.Subscription;
 var subdomains = require('../lib/subdomains');
 var subscriptionService = require('../services/subscription');
+var myDashboardServices = require('../services/myDashboard');
+var jwt = require('../lib/jwt');
 var _ = require('lodash');
 var q = require('q');
 
@@ -41,7 +43,7 @@ function planSelectPage(req, res, next) {
       res.send({ error: error });
     });
   }
-  else if(_.includes(res.locals.currentDomain.roles, 'facilitator') && req.user.signInCount == 1 && !req.session.landed) {
+  else if(req.user.signInCount == 1 && _.includes(res.locals.currentDomain.roles, 'facilitator') && !req.session.landed) {
     req.session.landed = true;
     res.redirect(redirectUrl);
   }
@@ -51,23 +53,57 @@ function planSelectPage(req, res, next) {
 }
 
 function myDashboardPage(req, res, next) {
-  AccountUser.findAll({
-    where: {
-      UserId: req.user.id
-    },
-    include: [models.Account]
-  }).then(function(accountUsers) {
-    if(accountUsers.length == 1 && compareRoles(accountUsers[0].role)) {
-      res.redirect(subdomains.url(req, accountUsers[0].Account.subdomain, '/dashboard'));
+  myDashboardServices.getAllData(req.user.id, req.protocol).then(function(result) {
+    let managers = result.accountManager || result.facilitator;
+
+    if(!managers) {
+      let observers = shouldRedirectToChat(result.observer);
+      let participants = shouldRedirectToChat(result.participant);
+
+      if(participants && observers) {
+        res.redirect(subdomains.url(req, subdomains.base, '/my-dashboard'));
+      }
+      else if(participants || observers) {
+        jwt.tokenForMember(req.user.id, (participants || observers).dataValues.session.id).then(function(url) {
+          console.log("---------------1");
+          console.log(url);
+          console.log("---------------1");
+          res.redirect(url);
+        }, function(error) {
+          console.log("---------------2");
+          console.error(error);
+          console.log("---------------2");
+          res.redirect(subdomains.url(req, subdomains.base, '/my-dashboard'));
+        });
+      }
     }
     else {
-      res.redirect(subdomains.url(req, subdomains.base, '/my-dashboard'));
+      if(!req.user.signInCount || req.user.signInCount == 1) {
+        res.redirect(subdomains.url(req, selectManager(result.accountManager, result.facilitator).subdomain, '/dashboard'));
+      }
+      else {
+        res.redirect(subdomains.url(req, subdomains.base, '/my-dashboard'));
+      }
     }
   }, function(error) {
     res.send({ error: error });
   });
 }
 
-function compareRoles(role) {
-  return role == 'accountManager' || role == 'admin' || role == 'facilitator';
+function shouldRedirectToChat(members) {
+  if(members && members.data.length == 1) {
+    return members.data[0];
+  }
+  else {
+    return false;
+  }
+}
+
+function selectManager(accountManagers, facilitators) {
+  if(accountManagers) {
+    return accountManagers.data[0].Account;
+  }
+  else if(facilitators) {
+    return facilitators.data[0].Account;
+  }
 }

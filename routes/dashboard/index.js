@@ -3,6 +3,7 @@ var express = require('express');
 var router = express.Router();
 var subdomains = require('../../lib/subdomains.js');
 var policy = require('../../middleware/policy.js');
+var models = require('../../models');
 var accountDatabaseRoutes = require('./accountDatabase.js');
 var paymentDetailsRoutes = require('./paymentDetails.js');
 var selectPlanRoutes = require('./selectPlan.js');
@@ -31,6 +32,10 @@ router.get('/', policy.authorized(['facilitator','admin', 'accountManager']) , f
 router.get('/landing', function(req, res) {
   if(req.query.id && req.query.state == 'succeeded' ){
     subscriptionService.retrievCheckoutAndUpdateSub(req.query.id)
+  }
+
+  if(req.user.signInCount == 0) {
+    models.User.update({ signInCount: 1 }, { where: { id: req.user.id } });
   }
 
   res.render(views_path('landing'), { title: 'Landing page' });

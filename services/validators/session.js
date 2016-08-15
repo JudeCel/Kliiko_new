@@ -1,6 +1,5 @@
 'use strict';
 
-var sessionServices = require('./../session');
 var subscriptionServices = require('./../subscription');
 
 var q = require('q');
