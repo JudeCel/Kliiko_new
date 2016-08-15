@@ -3,16 +3,22 @@
   padding-bottom: 2%;
 }
 
-.color-input {
-  @extend .color-input-addon;
-  padding: 6px 8%;
+.inner-addon {
+  .glyphicon {
+    position: absolute;
+    padding: 5px;
+    pointer-events: none;
+  }
+  .glyphicon-pencil {
+    right: 10px;
+    top: 5px;
+    z-index: 3;
+  }
+  input {
+    padding-right: 35px;
+  }
 }
 
-.color-input-addon {
-  border: 1px solid;
-  font-size: 1em;
-  margin: 0px !important;
-}
 .label-size {
   font-size: 0.8em;
 }
