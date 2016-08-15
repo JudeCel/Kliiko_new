@@ -29,13 +29,12 @@ module.exports = (Sequelize, DataTypes) => {
     } },
     endTime: { type: DataTypes.DATE, allowNull: false , defaultValue: initializeDate() },
     incentive_details: { type: DataTypes.STRING, allowNull: true  },
-    active:	{ type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     colours_used: { type: DataTypes.TEXT, allowNull: true },
 
     step: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionBuilderSteps, defaultValue: 'setUp' },
 
     status: { type: DataTypes.ENUM, allowNull: false,
-      values: ['build', 'expired', 'pending', 'active'], defaultValue: 'build' },
+      values: ['build', 'expired', 'pending', 'open', 'close'], defaultValue: 'build'},
 
   }, {
     timestamps: true,
