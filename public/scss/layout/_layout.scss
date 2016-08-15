@@ -141,6 +141,11 @@ background-color: $blue !important;
 .text-no-bold {
   font-weight: normal !important;
 }
+
+.no-padding {
+    padding: 0 !important;
+}
+
 .no-side-padding {
   padding-left: 0px;
   padding-right: 0px;
@@ -274,6 +279,22 @@ color: #737373;
 
 .margin-right-10 {
   margin-right: 10px;
+}
+
+.margin-top-10 {
+  margin-top: 10px !important;
+}
+
+.no-margin {
+  margin: 0 !important;
+}
+
+.no-margin-top {
+  margin-top: 0 !important;
+}
+
+.no-margin-bottom {
+  margin-bottom: 0 !important;
 }
 
 .intl-tel-input{

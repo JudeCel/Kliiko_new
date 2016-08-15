@@ -3,7 +3,6 @@
     <div class='modal-content border-green border-radius-none'>
       {{ typeOf = gc.isTypeOf(gc.newResource); "" }}
       <div class='modal-header'>
-        <button type='button' class='close' data-dismiss='modal'>&times;</button>
         <h2 class='modal-title text-center'>New resource.</h2>
         <p class='modal-title text-center' ng-if='!typeOf.youtube && !typeOf.zip'>Maximum file size is 5MB.</p>
       </div>

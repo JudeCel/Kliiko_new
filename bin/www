@@ -6,6 +6,8 @@
  require('dotenv-extended').load({
      errorOnMissing: true
  });
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length;
 var express = require('express');
 var app = require('../app');
 var debug = require('debug')('kliiko:server');
@@ -40,17 +42,31 @@ switch (environment) {
 /**
  * Create HTTP server.
  */
- var server = http.createServer(app);
- // server.maxConnections = 20;
+ if (cluster.isMaster) {
+   console.log(`Cluster count: ${numCPUs}`);
+  // Fork workers.
+  for (var i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
 
-/**
- * Listen on provided port, on all network interfaces.
- */
-models.sequelize.sync().then(function () {
-  server.listen(port);
-  server.on('error', onError);
-  server.on('listening', onListening);
-});
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`worker ${worker.process.pid} died`);
+  });
+} else {
+  // Workers can share any TCP connection
+  // In this case it is an HTTP server
+  var server = http.createServer(app);
+  /**
+  * Listen on provided port, on all network interfaces.
+  */
+  models.sequelize.sync().then(function () {
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening);
+  });
+}
+
+ // server.maxConnections = 20;
 
 
 /**

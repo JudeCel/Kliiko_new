@@ -15,6 +15,7 @@ var mailerHelpers = require('../mailers/mailHelper');
 var constants = require('../util/constants');
 
 var dateFormat = require('dateformat');
+var moment = require('moment');
 var uuid = require('node-uuid');
 var crypto = require('crypto');
 var async = require('async');
@@ -190,10 +191,10 @@ function sendInvite(invite, deferred) {
         accountName: session.Account.name,
         email: invite.AccountUser.email,
         sessionName: session.name,
-        startTime: dateFormat(session.startTime, 'h:MM:ss'),
-        endTime: dateFormat(session.endTime, 'h:MM:ss'),
-        startDate: dateFormat(session.startTime, 'yyyy-mm-dd'),
-        endDate: dateFormat(session.endTime, 'yyyy-mm-dd'),
+        startTime: moment(session.startTime).format('h:mm:00'),
+        endTime: moment(session.endTime).format('h:mm:00'),
+        startDate: moment(session.startTime).format('YYYY-M-D'),
+        endDate: moment(session.endTime).format('YYYY-M-D'),
         incentive: session.incentive_details,
         facilitatorFirstName: facilitator.firstName,
         facilitatorLastName: facilitator.lastName,
@@ -201,7 +202,6 @@ function sendInvite(invite, deferred) {
         facilitatorMobileNumber: facilitator.mobile,
         unsubscribeMailUrl: invite.unsubscribeMailUrl
       }
-
       inviteMailer.sendInviteSession(inviteParams, function(error, data) {
         if(error) {
           deferred.reject(error);

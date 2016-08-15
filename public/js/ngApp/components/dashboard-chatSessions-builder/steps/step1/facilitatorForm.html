@@ -2,11 +2,10 @@
   <div class='modal-dialog accountManagerModal'>
     <div class='modal-content border-green border-radius-none'>
       <div class='modal-header'>
-        <button type='button' class='close' data-dismiss='modal'>&times;</button>
-        <h2 class='modal-title text-center' ng-if="step1Controller.formAction == 'new'">
+        <h2 class='modal-title text-center no-margin-top' ng-if="step1Controller.formAction == 'new'">
           Create New Facilitator
         </h2>
-        <h2 class='modal-title text-center' ng-if="step1Controller.formAction == 'update'">
+        <h2 class='modal-title text-center no-margin-top' ng-if="step1Controller.formAction == 'update'">
           Update Facilitator
         </h2>
       </div>
@@ -116,13 +115,15 @@
               </div>
 
               <div class='col-md-12'>
-                <button ng-if="step1Controller.formAction == 'new'" ng-click='step1Controller.newFacilitator(step1Controller.userData)' type='button' class='btn border-red text-red-dark border-radius-none background-transp btn-md pull-right'>
-                  Create Facilitator
+                <button ng-if="step1Controller.formAction == 'new'" ng-click='step1Controller.newFacilitator(step1Controller.userData)'
+                        type='button' class='btn btn-standart btn-green btn-small pull-right'>
+                  Create
                 </button>
-                <button ng-if="step1Controller.formAction == 'update'" ng-click='step1Controller.saveEdited(step1Controller.userData)' type='button' class='btn border-red text-red-dark border-radius-none background-transp btn-md pull-right'>
-                  Update Facilitator
+                <button ng-if="step1Controller.formAction == 'update'" ng-click='step1Controller.saveEdited(step1Controller.userData)'
+                        type='button' class='btn btn-standart btn-green btn-small pull-right'>
+                  Update
                 </button>
-                <button ng-click='step1Controller.closeFacilitatorForm()' type='button' class='btn border-red text-red-dark border-radius-none background-transp btn-md pull-left'>
+                <button ng-click='step1Controller.closeFacilitatorForm()' type='button' class='btn btn-standart btn-red btn-small pull-left'>
                   Close
                 </button>
               </div>

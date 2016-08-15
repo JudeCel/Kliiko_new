@@ -2,13 +2,11 @@
   <div class='modal-dialog contactDetailsModal'>
     <div class='modal-content border-red border-radius-none'>
       <div class='modal-header'>
-        <button type='button' class='close' data-dismiss='modal'>&times;</button>
         <h2 class='modal-title text-center'>Contact Details</h2>
       </div>
-      <div class='modal-body'>
+      <div class='modal-body margin-right-10'>
         <form class='form-horizontal' method='post' ng-submit='cdm.updateUserData()' name='cdm.userDetailsForm' ng-controller='PhoneNumberController as pnc'>
           <span class='hidden'>{{ pnc.init(cdm.userData, 'contactDetailsModal'); '' }}</span>
-
           <div class='row'>
             <div class='col-xs-12'>
               <div class='col-md-6'>
@@ -19,7 +17,6 @@
                     <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='cdm.userData.firstName'>
                   </div>
                 </div>
-
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='lastName'>Last name<span class='text-red-dark'>*</span></label>
                   <div class='col-md-8'>
@@ -27,7 +24,6 @@
                     <input type='text' class='form-control' id='lastName' placeholder='Last name' ng-model='cdm.userData.lastName'>
                   </div>
                 </div>
-
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='email'>Email<span class='text-red-dark'>*</span></label>
                   <div class='col-md-8'>
@@ -35,16 +31,18 @@
                     <input type='email' class='form-control' id='email' placeholder='Email' ng-model='cdm.userData.email'>
                   </div>
                 </div>
-
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='gender'>Gender<span class='text-red-dark'>*</span></label>
-                  <div class='col-md-8'>
-                    <div class='has-error text-red-dark'>{{ cdm.errors.gender }}</div>
-                    <label class='radio-inline'><input type='radio' value='male' name='radio_gender' ng-model='cdm.userData.gender'>Male</label>
-                    <label class='radio-inline'><input type='radio' value='female' name='radio_gender' ng-model='cdm.userData.gender'>Female</label>
+                  <div class='col-md-8' style="height: 40px;">
+                    <div style="margin-top: 5px;">
+                      <div class='has-error text-red-dark'>{{ cdm.errors.gender }}</div>
+                      <input id="genderMale" type='radio' value='male' name='radio_gender' ng-model='cdm.userData.gender' class="text-vertical-middle">
+                      <label class='radio-inline no-padding margin-right-10' for="genderMale" style="vertical-align: sub;">Male</label>
+                      <input id="genderFemale" type='radio' value='female' name='radio_gender' ng-model='cdm.userData.gender' class="text-vertical-middle">
+                      <label class='radio-inline no-padding' for="genderFemale" style="vertical-align: sub;">Female</label>
+                    </div>
                   </div>
                 </div>
-
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='mobile'>Mobile number</label>
                   <div class='col-md-8'>
@@ -57,7 +55,6 @@
                       class='form-control'>
                   </div>
                 </div>
-
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='landlineNumber'>Landline number</label>
                   <div class='col-md-8'>
@@ -71,7 +68,6 @@
                   </div>
                 </div>
               </div>
-
               <div class='col-md-6'>
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='postalAddress'>Postal address</label>
@@ -80,7 +76,6 @@
                     <input type='text' class='form-control' id='postalAddress' placeholder='Postal address' ng-model='cdm.userData.postalAddress'>
                   </div>
                 </div>
-
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='city'>City</label>
                   <div class='col-md-8'>
@@ -88,7 +83,6 @@
                     <input type='text' class='form-control' id='city' placeholder='City' ng-model='cdm.userData.city'>
                   </div>
                 </div>
-
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='state'>State</label>
                   <div class='col-md-8'>
@@ -96,7 +90,6 @@
                     <input type='text' class='form-control' id='state' placeholder='State' ng-model='cdm.userData.state'>
                   </div>
                 </div>
-
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='postCode'>Postcode</label>
                   <div class='col-md-8'>
@@ -104,7 +97,6 @@
                     <input type='text' class='form-control' id='postCode' placeholder='Postcode' ng-model='cdm.userData.postCode'>
                   </div>
                 </div>
-
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='country'>Country</label>
                   <div class='col-md-8'>
@@ -112,7 +104,6 @@
                     <input type='text' class='form-control' id='country' placeholder='Country' ng-model='cdm.userData.country'>
                   </div>
                 </div>
-
                 <div class='form-group'>
                   <label class='control-label col-md-4 text-no-bold text-login-page' for='companyName'>Company name</label>
                   <div class='col-md-8'>
@@ -121,21 +112,30 @@
                   </div>
                 </div>
               </div>
-
-              <div class='col-md-12'>
-                <span class="pull-right">
-                  <button type="button" ng-show="cdm.userDetailsForm.$dirty" ng-click="cdm.cancel()" class="btn border-red text-red-dark border-radius-none background-transp pull-right- btn-md">Cancel</button>&nbsp;&nbsp;
-                  <button type="submit" ng-show="cdm.userDetailsForm.$dirty" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Update</button>
-                  <button type="button" ng-show="cdm.userDetailsForm.$pristine" ng-click="cdm.cancel()" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Done</button>
-                </span>
-                <div class='check'>
-                  <input ng-model='cdm.userData.reveiveNewsLetters' type='checkbox' class='checkbox-login' name='reveiveNewsLetters' id='reveiveNewsLetters'/>
-                  <label class='checkbox-signup text-no-bold' for='reveiveNewsLetters'>
-                    Yes send me the klzii Newsletter which includes tips and updates.
-                  </label>
+            </div>
+            </div>
+          <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-3">
+                  <button type="button" ng-click="cdm.cancel()"
+                          class="btn btn-standart btn-red btn-small">Cancel</button>&nbsp;&nbsp;
+                </div>
+                <div class="col-md-7 check no-side-padding">
+                  <div class="pull-right margin-top-10">
+                    <input ng-model='cdm.userData.reveiveNewsLetters' type='checkbox' class='checkbox-login inline-block' style="vertical-align: sub;"
+                    name='reveiveNewsLetters' id='reveiveNewsLetters'/>
+                    <label class='checkbox-signup text-no-bold inline-block text-vertical-middle' for='reveiveNewsLetters'>
+                      Yes send me the klzii Newsletter which includes tips and updates.
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <button type="submit" ng-if="cdm.userDetailsForm.$dirty"
+                          class="btn btn-standart btn-green btn-small pull-right">Update</button>
+                  <button type="button" ng-if="cdm.userDetailsForm.$pristine" ng-click="cdm.cancel()"
+                          class="btn btn-standart btn-green btn-small pull-right">Done</button>
                 </div>
               </div>
-            </div>
           </div>
         </form>
       </div>
