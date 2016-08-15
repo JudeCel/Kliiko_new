@@ -106,11 +106,13 @@
       }
     };
 
+    var shouldSkip = false;
     var messengerPublicMethods = {};
 
     messengerPublicMethods.ok = ok;
     messengerPublicMethods.error = error;
     messengerPublicMethods.clear = clear;
+    messengerPublicMethods.changeSkip = changeSkip;
 
     return messengerPublicMethods;
 
@@ -145,7 +147,13 @@
     }
 
     function clear() {
-      jQuery('#messenger-area').empty();
+      if(!shouldSkip) {
+        jQuery('#messenger-area').empty();
+      }
+    }
+
+    function changeSkip(value) {
+      shouldSkip = value;
     }
 
   }

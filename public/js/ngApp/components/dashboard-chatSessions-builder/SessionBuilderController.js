@@ -32,8 +32,9 @@
       });
     }, function (error) {
       window.history.back();
+      messenger.error(error);
       setTimeout(function () {
-        messenger.error(error);
+        messenger.changeSkip(false);
       }, 100);
     });
 

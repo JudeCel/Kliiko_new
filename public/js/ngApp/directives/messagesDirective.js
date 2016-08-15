@@ -9,6 +9,9 @@ function messagesDirective(messenger) {
           case 'clear':
             messenger.clear();
             break;
+          case 'skip':
+            messenger.changeSkip(true);
+            break;
           default:
 
         }
