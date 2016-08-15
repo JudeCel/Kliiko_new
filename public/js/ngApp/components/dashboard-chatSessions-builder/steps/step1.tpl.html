@@ -195,7 +195,7 @@
         <div ng-init='step1Controller.initGallery(gc)'>
           {{ upload = step1Controller.galleryDropdownData(step1Controller.session.sessionData); resource = gc.getResourceFromList(step1Controller.session.sessionData);"" }}
           <div ng-include="gc.templatesDir + 'view.html'" ng-if='resource'></div>
-          <div ng-include="gc.templatesDir + 'dropdown.html'"></div>
+          <ng-include class="dropdown" src="gc.templatesDir + 'dropdown.html'" style="padding-bottom: 6px;"></ng-include>
         </div>
       </div>
     </uib-accordion-group>

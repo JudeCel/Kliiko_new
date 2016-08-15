@@ -3,7 +3,7 @@
     display: inline-block;
     width: 100%;
     margin-bottom: 20px;
-    .btn-addNewElement {
+    .btn-margin {
       margin: 0;
       margin-bottom: 5px;
     }
@@ -23,7 +23,7 @@
     table > tbody > tr > td {
       vertical-align: middle;
     }
-    .btn.btn-addNewElement.btn-green {
+    .btn-margin {
       margin-left: 5px;
     }
     .image-box {
@@ -39,9 +39,6 @@
   }
 
   #panel-view {
-    .btn-addNewElement {
-      margin: 0;
-    }
     iframe {
       display: block;
       height: 252px;
@@ -66,7 +63,7 @@
       }
     }
     .panel-footer {
-      .btn.btn-addNewElement.btn-green {
+      .btn-margin {
         margin-left: 5px;
       }
       .resource-format {
