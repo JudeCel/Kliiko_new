@@ -75,16 +75,16 @@
 
       <div class="col-md-12" ng-if='!sbc.hideStuff'>
         <div class="row">
-            <div class="col-md-3 btn btn-standart btn-green btn-large" ng-click="sbc.goToStep('back')"  ng-hide="sbc.stepsClassIsActive(1)">
+            <div class="col-md-3 btn btn-standart btn-green btn-large" ng-click="sbc.goToStep('back')"  ng-hide="sbc.stepsClassIsActive(1)" messages-directive='clear'>
               Previous step
             </div>
-            <div class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.goToStep('next')" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-hide="sbc.lastStep">
+            <div class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.goToStep('next')" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-hide="sbc.lastStep" messages-directive='clear'>
               Next step
             </div>
-            <div class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.goToStep('finish')" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-show="sbc.lastStep">
+            <div class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.goToStep('finish')" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-show="sbc.lastStep" messages-directive='clear'>
               Finish with builder
             </div>
-            <div ng-if="sbc.canSeeGoToChat(app.accountUser)" class="col-md-2 btn btn-standart pull-right btn-blue margin020 btn-large" ng-click="sbc.goToChat(sbc.session)">
+            <div ng-if="sbc.canSeeGoToChat(app.accountUser)" class="col-md-2 btn btn-standart pull-right btn-blue margin020 btn-large" ng-click="sbc.goToChat(sbc.session)" messages-directive='clear'>
               Enter Chat Room
             </div>
         </div>
