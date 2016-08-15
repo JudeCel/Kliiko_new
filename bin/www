@@ -43,6 +43,7 @@ switch (environment) {
  * Create HTTP server.
  */
  if (cluster.isMaster) {
+   console.log(`Cluster count: ${numCPUs}`);
   // Fork workers.
   for (var i = 0; i < numCPUs; i++) {
     cluster.fork();
