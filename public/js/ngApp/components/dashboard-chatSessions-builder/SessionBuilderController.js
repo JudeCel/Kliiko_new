@@ -32,8 +32,9 @@
       });
     }, function (error) {
       window.history.back();
+      messenger.error(error);
       setTimeout(function () {
-        messenger.error(error);
+        messenger.changeSkip(false);
       }, 100);
     });
 
@@ -127,7 +128,7 @@
         if(sessionData.facilitator) {
           facilitator = sessionData.facilitator.accountUserId == accountUser.id;
         }
-        else if(sessionData.steps.step1.facilitator) {
+        else if(sessionData.steps && sessionData.steps.step1.facilitator) {
           different = true;
           membersArray = sessionData.steps.step4.participants.concat(sessionData.steps.step5.observers);
           facilitator = sessionData.steps.step1.facilitator.id == accountUser.id;
