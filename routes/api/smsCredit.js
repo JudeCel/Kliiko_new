@@ -33,7 +33,7 @@ function purchase(req, res, next) {
 
   subscriptionAddon.chargeAddon(params).then(function(result) {
     res.send(result);
-  }, function(err) {
-    res.send(({ error: err.message }));
+  }, function(error) {
+    res.send(({ error: error }));
   });
 }

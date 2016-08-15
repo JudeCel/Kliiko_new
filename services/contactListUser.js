@@ -198,11 +198,24 @@ function create(params, transaction) {
         }
       }).then(function(accountUser) {
         if (accountUser && !_.has(errors, 'email')) {
-          ContactListUser.create(contactListUserParams(params, accountUser), {transaction: transaction}).then(function(contactListUser) {
-            buildWrappedResponse(contactListUser.id, deferred, transaction);
-          }, function(err) {
-            deferred.reject(err);
-          })
+          if(!accountUser.UserId) {
+            updateAccountUserIfUserFound(accountUser, params.defaultFields.email).then(function(au) {
+              ContactListUser.create(contactListUserParams(params, au), {transaction: transaction}).then(function(contactListUser) {
+                buildWrappedResponse(contactListUser.id, deferred, transaction);
+              }, function(err) {
+                deferred.reject(err);
+              });
+            }, function(error) {
+              deferred.reject(error);
+            });
+          }
+          else {
+            ContactListUser.create(contactListUserParams(params, accountUser), {transaction: transaction}).then(function(contactListUser) {
+              buildWrappedResponse(contactListUser.id, deferred, transaction);
+            }, function(err) {
+              deferred.reject(err);
+            })
+          }
         }else{
           createNewAccountUser(params, transaction).then(function(newAccountUser) {
             if(_.isEmpty(errors)){
@@ -233,7 +246,11 @@ function createNewAccountUser(params, transaction) {
   let deferred = q.defer();
   ContactList.find({where: {id: params.contactListId}}).then(function(contactList) {
     AccountUserService.create(params.defaultFields, params.accountId, contactList.role, transaction).then(function(accountUser) {
-      deferred.resolve(accountUser);
+      updateAccountUserIfUserFound(accountUser, params.defaultFields.email).then(function(accountUser) {
+        deferred.resolve(accountUser);
+      }, function(error) {
+        deferred.reject(error);
+      });
     }, function(err) {
       if(err.name == 'SequelizeUniqueConstraintError') {
         err.errors = [{message: "Email has already been taken", type: "Validation error", path: "email"}];
@@ -243,6 +260,25 @@ function createNewAccountUser(params, transaction) {
       }
     })
   })
+  return deferred.promise;
+}
+
+function updateAccountUserIfUserFound(accountUser, email) {
+  let deferred = q.defer();
+
+  models.User.find({ where: { email: email } }).then(function(user) {
+    if(user) {
+      accountUser.update({ UserId: user.id }, { returning: true }).then(function(au) {
+        deferred.resolve(au);
+      }, function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+    else {
+      deferred.resolve(accountUser);
+    }
+  });
+
   return deferred.promise;
 }
 

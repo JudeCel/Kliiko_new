@@ -71,13 +71,14 @@
     </div>
 
     <div class='row'>
-      <div class='btn-standart btn-red' ng-click='lastStepsController.inviteMembers()'>
-        <i class='fa fa-envelope' aria-hidden='true' /> ({{ lastStepsController.findSelectedMembers().length }})
+      <div class='btn btn-standart btn-red btn-medium' ng-click='lastStepsController.inviteMembers()'>
+        <i class='fa fa-envelope' aria-hidden='true' /> Send Invite
+        ({{ lastStepsController.findSelectedMembers().length }})
       </div>
-      <div class='btn-standart btn-green' ng-click='lastStepsController.sendGenericEmail()'>
+      <div class='btn btn-standart btn-green btn-medium' ng-click='lastStepsController.sendGenericEmail()'>
         Send Generic Email
       </div>
-      <div ng-show = "lastStepsController.isParticipantPage()" class='btn-standart btn-green' ng-click='lastStepsController.modalWindowHandler("showSms", lastStepsController.findSelectedMembers())'>
+      <div ng-show = "lastStepsController.isParticipantPage()" class=' btn btn-standart btn-green btn-medium' ng-click='lastStepsController.modalWindowHandler("showSms", lastStepsController.findSelectedMembers())'>
         Send SMS
       </div>
     </div>

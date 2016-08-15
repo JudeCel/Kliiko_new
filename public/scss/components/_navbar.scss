@@ -10,6 +10,7 @@
     zoom: 1;
     margin-right: 10px;
     vertical-align: top;
+    width: 225px;
 
     & > a {
       border: 2px solid $font-color;
@@ -18,10 +19,15 @@
       color: $font-color;
       font-size: 16px;
       font-weight: bold;
+      padding-right: 50px;
+      margin-right: 10px;
       height: 44px;
+      background-repeat: no-repeat;
+      background-position: 170px center;
 
       &:hover {
         background-color: $blue;
+        color: white;
       }
 
       & > img{
@@ -30,14 +36,55 @@
       }
     }
   }
+
+  & > li#dashboard-accountProfile {
+    & > a {
+    background-image: url('/icons/profile_grey.png');
+    }
+    &.active > a,
+    & > a:hover,
+    & > a:focus {
+      background-image: url('/icons/profile_white.png');
+    }
+  }
+
+  & > li#dashboard-chatSessions {
+    & > a {
+    background-image: url('/icons/session_grey.png');
+    }
+    &.active > a,
+    & > a:hover,
+    & > a:focus {
+      background-image: url('/icons/session_white.png');
+    }
+  }
+
+  & > li#dashboard-resources {
+    & > a {
+    background-image: url('/icons/resources_grey.png');
+    }
+    &.active > a,
+    & > a:hover,
+    & > a:focus {
+      background-image: url('/icons/resources_white.png');
+    }
+  }
+
+  & > li#btn-my-dashboard {
+    width: 250px;
+    & > a {
+        padding-right: 15px;
+    }
+  }
+
 }
 
 #nav-tabs-main > li,
 #nav-tabs-main > li:hover,
-#nav-tabs-main > li:focus,
-#nav-tabs-main > li:active {
+#nav-tabs-main > li:focus {
   outline: 0;
 }
+
 
 #nav-tabs-main > li.active > a,
 #nav-tabs-main > li.active > a:hover,

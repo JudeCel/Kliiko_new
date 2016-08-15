@@ -3,7 +3,6 @@
     <div class='modal-content border-green border-radius-none'>
       {{ typeOf = gc.isTypeOf(gc.newResource); "" }}
       <div class='modal-header'>
-        <button type='button' class='close' data-dismiss='modal'>&times;</button>
         <h2 class='modal-title text-center'>New resource.</h2>
         <p class='modal-title text-center' ng-if='!typeOf.youtube && !typeOf.zip'>Maximum file size is 5MB.</p>
       </div>
@@ -44,9 +43,9 @@
       </div>
 
       <div class='modal-footer'>
-        <button class='btn btn-addNewElement pull-left btn-green gallery-btn-width' data-dismiss='modal'>Cancel</button>
-        <button ng-if='!typeOf.zip' class='btn btn-addNewElement pull-right btn-green gallery-btn-width' ng-click='gc.createResource()' ng-disabled='gc.modalWindowDisabled'>Submit</button>
-        <button ng-if='typeOf.zip' class='btn btn-addNewElement pull-right btn-green gallery-btn-width' ng-click='gc.zipResources()' ng-disabled='gc.modalWindowDisabled'>Archivate</button>
+        <button class='btn btn-standart btn-margin pull-left btn-red btn-small' data-dismiss='modal'>Cancel</button>
+        <button ng-if='!typeOf.zip' class='btn btn-standart btn-margin pull-right btn-green btn-small' ng-click='gc.createResource()' ng-disabled='gc.modalWindowDisabled'>Submit</button>
+        <button ng-if='typeOf.zip' class='btn btn-standart btn-margin pull-right btn-blue btn-small' ng-click='gc.zipResources()' ng-disabled='gc.modalWindowDisabled'>Archivate</button>
       </div>
     </div>
   </div>

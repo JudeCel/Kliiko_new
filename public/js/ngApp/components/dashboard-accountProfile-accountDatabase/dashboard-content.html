@@ -57,13 +57,15 @@
             <td>{{ accountUser.landlineNumber }}</td>
             <td>{{ planToUpperCase(account.Subscription.planId) }}</td>
 
-            <td ng-click='editComment(account, accountUser)'>
+            <td ng-click='editComment(accountUser)'>
               <img src='/icons/add_new_list_blue.png' alt='' />
-              {{ accountUser.comment | limitTo: 50 }}{{ accountUser.comment.length > 20 ? '&hellip;' : '' }}
+              {{ ::accountUser.comment | limitTo: 50 }}{{ accountUser.comment.length > 20 ? '&hellip;' : '' }}
             </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
+
+  <ng-include src="'/js/ngApp/components/dashboard-accountProfile-accountDatabase/modal.html'"></ng-include>
 </section>

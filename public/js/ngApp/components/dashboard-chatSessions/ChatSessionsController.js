@@ -23,12 +23,13 @@
     vm.openModalWindow = openModalWindow;
     vm.closeModal = closeModal;
     vm.saveComment = saveComment;
+    vm.changeOrder = changeOrder;
 
     vm.disablePlayButton = false;
     vm.originalSession = {};
 
-    vm.orderByField = 'name';
-    vm.reverseSort = true;
+    vm.orderByField = 'id';
+    vm.reverseSort = false;
 
     changePage('index');
 
@@ -40,6 +41,11 @@
         vm.sessionListManageRoles = res.sessionListManageRoles;
         dbg.log2('#ChatSessionsController > getChatSessions > res ', res.data);
       });
+    }
+
+    function changeOrder(type) {
+      vm.reverseSort = !vm.reverseSort;
+      vm.orderByField = vm.reverseSort ? '+' + type : '-' + type;
     }
 
     function openModalWindow(member) {

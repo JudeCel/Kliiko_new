@@ -4,14 +4,14 @@
       <h3 class="text-center">Topics</h3>
 
       <div class="row" id='resources-topics' >
-        <div class="col-md-12 text-center" ng-show="!topics.list.length" >
+        <div class="col-md-12 text-center" ng-hide="topics.list.length" >
           <br><br>
           There is no topics yet
-          <div id="create-new-btn" class="btn-standart btn-green" ng-click="topics.openModal('new')">
-            Create New Topic&nbsp;<img src="/icons/add_new_list_green.png" alt="">
+          <div id="create-new-btn" class="btn-standart btn-green btn-large" ng-click="topics.openModal('new')">
+            Create New Topic
           </div>
         </div>
-        <div class="col-md-6" ng-hide="!topics.list.length">
+        <div class="col-md-6" ng-show="topics.list.length">
           <h3>Select topic</h3>
           <br>
           <div>
@@ -21,13 +21,13 @@
                 <label for="select-all-topics" ></label> Select all
               </div>
 
-              <div id="create-new-btn" class="btn-standart btn-green" ng-click="topics.openModal('new')">
-                Create New Topic&nbsp;<img src="/icons/add_new_list_green.png" alt="">
+              <div id="create-new-btn" class="btn-standart btn-green btn-large" ng-click="topics.openModal('new')" style="margin-top: -3px;">
+                Create New Topic
               </div>
             </div>
 
             <div id="topics-list" ng-init="step2Controller.orderTopics(topics.list)">
-              <div ng-hide="true">{{ step2Controller.topicList = topics.list }}</div>
+              <div hidden>{{ step2Controller.topicList = topics.list }}</div>
               <div class="topic-list-item" ng-repeat="t in step2Controller.topicList" ng-drag="step2Controller.canDragElement(t)" ng-drag-data="t" ng-drag-success="step2Controller.topicsOnDropComplete($data, $event)">
                    {{ t.order = $index; "" }}
                 <div class="panel-label">
@@ -52,7 +52,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-6" ng-hide="!topics.list.length">
+        <div class="col-md-6" ng-show="topics.list.length">
           <h3>Chat Session topics</h3>
           <div class="drop-area" ng-drop="true">Drop Selected Topics Here</div>
           </br>

@@ -73,10 +73,10 @@
           <div class="has-error text-center">{{ec.currentTemplate.error.content}}</div>
 
           <div class="row">
-            <button type="submit" class="btn btn-red pull-right" ng-click="step3Controller.resetMailTemplate()" ng-show="ec.resetButtonVisible(app.accountUser.isAdmin)">Cancel</button>
-            <button type="submit" class="btn btn-lightgreen pull-right" ng-click="step3Controller.openModal()">Save As</button>
-            <button type="submit" class="btn btn-green pull-right" ng-click="step3Controller.modifyAndSave(false, true)">Apply</button>
-            <button type="submit" class="btn btn-blue pull-right" ng-click="ec.previewMailTemplate()">Preview</button>
+            <button type="submit" class="btn btn-standart btn-red pull-right btn-small margin-right-10" ng-click="step3Controller.resetMailTemplate()" ng-show="ec.resetButtonVisible(app.accountUser.isAdmin)">Cancel</button>
+            <button type="submit" class="btn btn-standart btn-lightgreen pull-right btn-small margin-right-10" ng-click="step3Controller.openModal()">Save As</button>
+            <button type="submit" class="btn btn-standart btn-green pull-right btn-small margin-right-10" ng-click="step3Controller.modifyAndSave(false, true)">Apply</button>
+            <button type="submit" class="btn btn-standart btn-blue pull-right btn-small margin-right-10" ng-click="ec.previewMailTemplate()">Preview</button>
           </div>
 
         </div>
@@ -86,11 +86,14 @@
           <div class='modal-dialog'>
             <div class='modal-content border-green border-radius-none preview-content'>
               <div class='modal-header'>
-                <button type='button' class='close' data-dismiss='modal'>&times;</button>
                 <h1 class='modal-title' id="mailTemplatePreviewSubject"></h1>
               </div>
               <div class='modal-body'>
                 <iframe id="contentFrame" class="preview-frame"></iframe>
+                <div class='modal-footer'>
+                    <button type="submit" data-dismiss='modal'
+                            class="btn btn-standart btn-red btn-small pull-left">Close</button>
+                </div>
               </div>
             </div>
           </div>
@@ -100,7 +103,6 @@
           <div class='modal-dialog'>
             <div class='modal-content border-green border-radius-none'>
               <div class='modal-header'>
-                <button type='button' class='close' data-dismiss='modal'>&times;</button>
                 <h1 class='modal-title text-center'>Delete template: {{ec.templateToDelete.template.name}}</h1>
               </div>
 
@@ -108,8 +110,8 @@
                 <form>
                   <div>
                     <span class="pull-right">
-                      <button type="button" ng-click="ec.cancelTemplateDelete()" class="btn border-red text-red-dark border-radius-none background-transp pull-right- btn-md">Cancel</button>&nbsp;&nbsp;
-                      <button type="button" ng-click="ec.approveTemplateDelete()" class="btn border-green text-green-dark border-radius-none background-transp pull-right- btn-md">Yes</button>
+                      <button type="button" ng-click="ec.cancelTemplateDelete()" class="btn btn-standart btn-red btn-small pull-right">Cancel</button>&nbsp;&nbsp;
+                      <button type="button" ng-click="ec.approveTemplateDelete()" class="btn btn-standart btn-green btn-small pull-right">Yes</button>
                     </span>
                   </div>
                 </form>

@@ -5,6 +5,7 @@ var Account  = models.Account;
 var filters = require('./../models/filters');
 var contactListService  = require('./contactList');
 var brandColourService  = require('./brandColour');
+var subscriptionPreferencesCosnt  = require('../util/planConstants.js')
 var _ = require('lodash');
 var q = require('q');
 
@@ -47,14 +48,42 @@ function findWithSubscription(accountId) {
     where: {
       id: accountId,
     },
-    include: [models.Subscription]
+    include: [{model: models.Subscription, include: [models.SubscriptionPreference]}]
   }).then(function(result) {
-    deferred.resolve(result);
+    if (result) {
+      deferred.resolve(mapSubscriptionData(result));
+    }else{
+      deferred.reject("Account not found");
+    }
   }, function(error) {
     deferred.reject(error);
   });
 
   return deferred.promise;
+}
+function mapSubscriptionData(result) {
+  let account = _.pick(result, ['id', 'admin', 'subdomain', 'name']);
+
+  if (result.admin) {
+    let planKeys = subscriptionPreferencesCosnt.free_trial;
+    account.permissions = {};
+
+    _.map(planKeys, (value, key) => {
+      if (_.isBoolean(value)) {
+        account.permissions[key] = true;
+      }
+      if (_.isInteger(value)) {
+        account.permissions[key] = -1;
+      }
+    })
+  }
+
+  if (result.Subscription) {
+    account.Subscription = _.pick(result.Subscription, ['id', 'accountId','subscriptionPlanId','planId', 'customerId', 'lastWebhookId', 'subscriptionId','active']);
+    account.permissions = result.Subscription.SubscriptionPreference.dataValues.data;
+  }
+
+  return account;
 }
 
 module.exports = {

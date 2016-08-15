@@ -1,29 +1,29 @@
 <section ng-if="!app.accountUser.isFacilitator" ng-controller--="ResourcesController as rsc">
   <div class='col-md-12'>
     <div class='text-center remove-link-line tabs-links'>
-      <div ui-sref-active="active" ui-sref="dashboard.resources.gallery" class='btn btn-dashboard-menu btn-green'>
+      <div ui-sref-active="active" ui-sref="dashboard.resources.gallery" class='btn btn-standart btn-dashboard-menu btn-green btn-large'>
         <span class='pull-left'>Gallery</span>
-        <img ui-sref-active='active' class='upgrade pull-right' src='/icons/gallery_green_flat.png' alt='' />
+        <img id="btn-gallery" ui-sref-active='active' class='upgrade pull-right' src='/icons/gallery_green_flat.png' alt='' />
       </div>
 
-      <div ui-sref-active="active" ui-sref="dashboard.resources.contactLists" class='btn btn-dashboard-menu  btn-green' >
+      <div ui-sref-active="active" ui-sref="dashboard.resources.contactLists" class='btn btn-standart btn-dashboard-menu btn-green btn-large'>
         <span class='pull-left'>Contact List</span>
-        <img ui-sref-active='active' class='account-manager pull-right' src='/icons/account_manager_green.png' alt='' />
+        <img id="btn-contact-list" ui-sref-active='active' class='account-manager pull-right' src='/icons/account_manager_green.png' alt='' />
       </div>
 
-      <div ui-sref-active="active" ui-sref="dashboard.resources.topics" class='btn btn-dashboard-menu  btn-green'>
+      <div ui-sref-active="active" ui-sref="dashboard.resources.topics" class='btn btn-standart btn-dashboard-menu btn-green btn-large'>
         <span class='pull-left'>Topics</span>
-        <img ui-sref-active='active' class='account-database pull-right' src='/icons/topic_green_flat.png' alt='' />
+        <img id="btn-topics" ui-sref-active='active' class='account-database pull-right' src='/icons/topic_green_flat.png' alt='' />
       </div>
 
-      <div ui-sref-active="active" ui-sref="dashboard.resources.emailTemplates" class='btn btn-dashboard-menu  btn-green'>
+      <div ui-sref-active="active" ui-sref="dashboard.resources.emailTemplates" class='btn btn-standart btn-dashboard-menu btn-green btn-large'>
         <span class='pull-left'>Email Templates</span>
-        <img ui-sref-active='active' class='promotion-code pull-right' src='/icons/email_template_green.png' alt='' />
+        <img id="btn-email-templates" ui-sref-active='active' class='promotion-code email-template pull-right' src='/icons/email_template_green.png' alt='' />
       </div>
 
-      <div  ui-sref-active="active" ui-sref="dashboard.resources.brandColours" class='btn btn-dashboard-menu  btn-green'>
+      <div  ui-sref-active="active" ui-sref="dashboard.resources.brandColours" class='btn btn-standart btn-dashboard-menu btn-green btn-large'>
         <span class='pull-left'>Brand Colors</span>
-        <img ui-sref-active='active' class='promotion-code pull-right' src='/icons/brand_colour_green.png' alt='' />
+        <img id="btn-brand-colors" ui-sref-active='active' class='promotion-code brand-colour pull-right' src='/icons/brand_colour_green.png' alt='' />
       </div>
     </div>
   </div>

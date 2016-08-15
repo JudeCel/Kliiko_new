@@ -219,14 +219,14 @@
     function updateStep(dataObj) {
       if (dataObj == 'startTime') {
         if(validateDate(vm.step1.startTime)) {
-          updateStep({startTime: vm.step1.startTime});
+          updateStep({startTime: vm.step1.startTime.toString()});
         }
         return;
       }
 
       if (dataObj == 'endTime') {
         if(validateDate(vm.step1.endTime)) {
-          updateStep({endTime: vm.step1.endTime});
+          updateStep({endTime: vm.step1.endTime.toString()});
         }
         return;
       }

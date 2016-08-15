@@ -17,9 +17,9 @@ module.exports = (Sequelize, DataTypes) => {
     ],
     classMethods: {
       associate: function(models) {
-        UnreadMessage.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId' });
-        UnreadMessage.belongsTo(models.Message, { foreignKey: 'messageId' });
-        UnreadMessage.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId' });
+        UnreadMessage.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId', onDelete: 'cascade' });
+        UnreadMessage.belongsTo(models.Message, { foreignKey: 'messageId', onDelete: 'cascade' });
+        UnreadMessage.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId', onDelete: 'cascade' });
       }
     }
   });

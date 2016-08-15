@@ -13,7 +13,7 @@ module.exports = (Sequelize, DataTypes) => {
     timestamps: true,
     classMethods: {
       associate: function(models) {
-        Console.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId' });
+        Console.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId', onDelete: 'cascade' });
         Console.belongsTo(models.Resource, { foreignKey: 'audioId' });
         Console.belongsTo(models.Resource, { foreignKey: 'videoId' });
         Console.belongsTo(models.Resource, { foreignKey: 'imageId' });
