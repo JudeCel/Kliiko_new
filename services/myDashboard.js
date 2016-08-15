@@ -83,6 +83,11 @@ function prepareAsync(data, provider) {
   let deferred = q.defer();
 
   async.each(data, function(accountUser, callback) {
+    if(accountUser.dataValues.session.Account.admin) {
+      sessionValidator.addShowStatus(accountUser.dataValues.session);
+      return callback();
+    }
+
     subscriptionServices.getChargebeeSubscription(accountUser.dataValues.session.Account.Subscription.subscriptionId, provider).then(function(chargebeeSub) {
       sessionValidator.addShowStatus(accountUser.dataValues.session, chargebeeSub);
       callback();
@@ -160,7 +165,12 @@ function userSwitch(object, user, protocol) {
     }
   }
   else {
-    object[user.role].data.push(user);
+    if(user.role == 'admin') {
+      object['accountManager'].data.push(user);
+    }
+    else {
+      object[user.role].data.push(user);
+    }
   }
 }
 
