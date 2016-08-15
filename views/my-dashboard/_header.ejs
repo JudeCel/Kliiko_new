@@ -15,8 +15,8 @@
     <% include ../dashboard/headerIncludes %>
 
 </head>
-<body>
-  <div class='dashboard-header'>
+<body ng-controller='DashboardController as myDashboard'>
+  <div class='dashboard-header' ng-show='myDashboard.accountUsers'>
     <div class='col-xs-2 logo-min-width'>
       <a href='/'><img class='row' src='/icons/Klzii_logo_lines.png'></a>
     </div>
@@ -24,7 +24,7 @@
     </div>
     <div class='col-xs-12 col-md-7 btn-group remove-link-line nav-button-top-margin text-right' role='group'>
       <span id='welcome-user' class='hidden'>Welcome, {{ app.user.firstName }}!</span>
-      <a href='/dashboard/landing'>
+      <a href='/my-dashboard/tour' ng-if="myDashboard.accountUsers.facilitator || myDashboard.accountUsers.accountManager">
         <button class='btn-header-green' type='button'>
           Tour Video
           <span class='glyphicon glyphicon-play' aria-hidden='true'></span>

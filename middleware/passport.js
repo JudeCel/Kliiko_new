@@ -88,7 +88,9 @@ function prepareUserData(user, profile, callback){
     return;
   }
 
-  callback(null, userParams(user));
+  user.increment('signInCount').done(function(result) {
+    callback(null, userParams(result));
+  });
 }
 
 module.exports = passport;
