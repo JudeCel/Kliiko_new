@@ -31,7 +31,7 @@ spec:
       imagePullSecrets:
         - name: docker-hub-secret
       containers:
-      - image: "index.docker.io/klzii/kliiko:latest"
+      - image: "index.docker.io/klzii/kliiko:stable"
         imagePullPolicy: Always
         name: admin
         ports:

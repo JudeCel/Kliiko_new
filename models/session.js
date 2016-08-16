@@ -34,7 +34,7 @@ module.exports = (Sequelize, DataTypes) => {
     step: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionBuilderSteps, defaultValue: 'setUp' },
 
     status: { type: DataTypes.ENUM, allowNull: false,
-      values: ['build', 'expired', 'pending', 'open', 'closed'], defaultValue: 'build'},
+      values: ['open', 'closed'], defaultValue: 'open'},
 
   }, {
     timestamps: true,

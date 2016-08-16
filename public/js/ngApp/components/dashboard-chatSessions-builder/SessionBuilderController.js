@@ -55,14 +55,14 @@
     vm.selectObserversClickHandle = selectObserversClickHandle;
 
     function closeSession() {
-      vm.session.setOpen(false).then(function(res) {
+      vm.session.setOpen('closed').then(function(res) {
       }, function(err) {
         messenger.error(err);
       });
     }
 
     function openSession() {
-      vm.session.setOpen(true).then(function(res) {
+      vm.session.setOpen('open').then(function(res) {
       }, function(err) {
         messenger.error(err);
       });
