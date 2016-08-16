@@ -9,7 +9,7 @@ var subscriptionFixture = require('./../fixtures/subscription');
 
 var assert = require('chai').assert;
 
-describe('SERVICE - Session', function() {
+describe.only('SERVICE - Session', function() {
   var testData = {};
 
   beforeEach(function(done) {
