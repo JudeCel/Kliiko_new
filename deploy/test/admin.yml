@@ -41,6 +41,8 @@ spec:
           value: "redis-master"
         - name: SERVER_CHAT_DOMAIN_URL
           value: "http://chat.test.klzii.com"
+        - name: SERVER_CHAT_DOMAIN_PORT
+          value: "80"
         - name: REDIS_PORT
           value: "6379"
         - name: DATABASE_URL
