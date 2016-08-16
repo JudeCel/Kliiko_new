@@ -41,6 +41,8 @@ spec:
           value: "redis-master"
         - name: SERVER_CHAT_DOMAIN_URL
           value: "http://chat.test.klzii.com"
+        - name: SERVER_CHAT_DOMAIN_PORT
+          value: "80"
         - name: REDIS_PORT
           value: "6379"
         - name: DATABASE_URL
@@ -55,6 +57,12 @@ spec:
           value: "www.test.klzii.com"
         - name: MAIL_FROM_EMAIL
           value: "klzii.noreply@gmail.com"
+        - name: MAIL_FROM_NAME
+          value: "Insider Focus"
+        - name: MAIL_TRANSPORT_AUTH_USER
+          value: "klzii.noreply"
+        - name: MAIL_TRANSPORT_AUTH_PASS
+          value: "ifs_Zupper!pwd"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
         - name: FACEBOOK_CLIENT_ID

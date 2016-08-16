@@ -214,6 +214,7 @@ function sessionMemberParams(name, role, accountUserId, token) {
 function sessionParams(preferenceId) {
   let startTime = new Date();
   return {
+    status: 'open',
     accountId: mainData.account.id,
     name: 'cool session',
     startTime: startTime,

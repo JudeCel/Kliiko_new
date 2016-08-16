@@ -672,7 +672,7 @@ function disableSubDependencies(accountId) {
   let where = { where: { accountId: accountId } };
 
   let arrayFunctions = [
-    parallelFunc(models.Session.update({ active: false }, where)),
+    parallelFunc(models.Session.update({ status: "closed" }, where)),
     parallelFunc(models.Survey.update({ closed: true }, where)),
     parallelFunc(models.ContactList.update({ active: false }, where))
   ];

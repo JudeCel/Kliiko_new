@@ -15,18 +15,41 @@
     <% include ../dashboard/headerIncludes %>
 
 </head>
-<body>
-  <div class='dashboard-header'>
+<body ng-controller='DashboardController as myDashboard'>
+  <div class='dashboard-header' ng-show='myDashboard.accountUsers'>
     <div class='col-xs-2 logo-min-width'>
       <a href='/'><img class='row' src='/icons/Klzii_logo_lines.png'></a>
     </div>
-
-    <div class='col-xs-12 col-md-3 btn-group remove-link-line nav-button-top-margin' style="float: right;" role='group'>
-      <a href='/logout'>
-        <button class='btn-header-red' type='button'>
-          Log out
-          <span class='glyphicon glyphicon-log-out' aria-hidden='true'></span>
+    <div class='col-xs-1 current-domain-name'>
+    </div>
+    <div class='col-xs-12 col-md-7 btn-group remove-link-line nav-button-top-margin text-right' role='group'>
+      <span id='welcome-user' class='hidden'>Welcome, {{ app.user.firstName }}!</span>
+      <a href='/my-dashboard/tour' ng-if="myDashboard.accountUsers.facilitator || myDashboard.accountUsers.accountManager">
+        <button class='btn-header-green' type='button'>
+          Tour Video
+          <span class='glyphicon glyphicon-play' aria-hidden='true'></span>
         </button>
       </a>
+
+      <button class='btn-header-red' type='button'>
+        Help
+        <span class='glyphicon glyphicon-question-sign' aria-hidden='true'></span>
+      </button>
+
+      <button class='btn-header-yellow' type='button' id='headerDropdown' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+        My Details
+        <span class='glyphicon glyphicon-menu-hamburger' aria-hidden='true'></span>
+      </button>
+
+      <ul class='dropdown-menu dropdown-menu-right' aria-labelledby='headerDropdown'>
+        <li class='text-right text-size-dashboard'><a href='' data-toggle='modal' ng-click='app.openContactDetailsModal()'>Contact Details<img class="my-details-container" src='/icons/contact_list_red.png' alt='' /></a></li>
+        <li role="separator" class="divider"></li>
+        <li class='text-right text-size-dashboard'><a href='' data-toggle='modal' data-target='#changePasswordModal'>Change Password<img class="my-details-container" src='/icons/password_green_flat.png' alt='' /></a></li>
+        <li role="separator" class="divider"></li>
+        <li class='text-right text-size-dashboard'><a href='/logout'>Logout<img class="my-details-container" src='/icons/logout_yellow.png' alt='' /></a></li>
+      </ul>
     </div>
   </div>
+
+  <% include ../dashboard/_changePasswordModal %>
+  <% include ../dashboard/_contactDetailsModal %>

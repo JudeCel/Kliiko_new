@@ -605,7 +605,7 @@ describe('SERVICE - Subscription', function() {
     }
 
     function sessionPromise() {
-      return models.Session.count({ where: { accountId: testData.account.id, active: false } });
+      return models.Session.count({ where: { accountId: testData.account.id, status: "closed" } });
     }
 
     describe('happy path', function() {
