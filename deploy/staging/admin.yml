@@ -55,6 +55,12 @@ spec:
           value: "i_S2xLucKbRL14sp6hHSRVA_"
         - name: MAIL_FROM_EMAIL
           value: "klzii.noreply@gmail.com"
+        - name: MAIL_FROM_NAME
+          value: "Insider Focus"
+        - name: MAIL_TRANSPORT_AUTH_USER
+          value: "klzii.noreply"
+        - name: MAIL_TRANSPORT_AUTH_PASS
+          value: "ifs_Zupper!pwd"
         - name: REDIS_PORT
           value: "6379"
         - name: DATABASE_URL
