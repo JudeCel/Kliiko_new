@@ -5,6 +5,7 @@ var subscriptionServices = require('./../subscription');
 
 var q = require('q');
 var async = require('async');
+var _ = require('lodash');
 
 var MESSAGES = {
   closed: 'Session has been closed',
@@ -86,20 +87,22 @@ function addShowStatus(session, chargebeeSub) {
 
   let settings = session.dataValues || session;
   settings.expireDate = endDate;
+  settings.showStatus = _.capitalize(session.status);
 
-  if(session.active) {
-    var date = new Date();
-    if((chargebeeSub && date > endDate) || date > new Date(session.endTime)) {
-      settings.showStatus = 'Expired';
-    }
-    else if(date < new Date(session.startTime)) {
-      settings.showStatus = 'Pending';
-    }
-    else {
-      settings.showStatus = 'Open';
-    }
-  }
-  else {
-    settings.showStatus = 'Closed';
-  }
+  
+  // if(session.status == "") {
+  //   var date = new Date();
+  //   if((chargebeeSub && date > endDate) || date > new Date(session.endTime)) {
+  //     settings.showStatus = 'Expired';
+  //   }
+  //   else if(date < new Date(session.startTime)) {
+  //     settings.showStatus = 'Pending';
+  //   }
+  //   else {
+  //     settings.showStatus = 'Open';
+  //   }
+  // }
+  // else {
+  //   settings.showStatus = 'Closed';
+  // }
 }
