@@ -44,7 +44,7 @@ function planSelectPage(req, res, next) {
       res.send({ error: error });
     });
   }
-  else if(req.user.signInCount == 1 && _.includes(res.locals.currentDomain.roles, 'facilitator') && !req.session.landed) {
+  else if(shouldRedirectFacilitatorToLandingPage(req, res)) {
     req.session.landed = true;
     res.redirect(redirectUrl);
   }
@@ -89,7 +89,7 @@ function myDashboardPage(req, res, next) {
 
 function getUrl(res, token, url) {
   let options = {
-    url: process.env.SERVER_CHAT_DOMAIN_URL + ':' + process.env.SERVER_CHAT_DOMAIN_PORT + '/api/auth/token',
+    url: buildUrlForChatToken(),
     headers: { 'Authorization': token }
   };
 
@@ -120,4 +120,12 @@ function selectManager(accountManagers, facilitators) {
   else if(facilitators) {
     return facilitators.data[0].Account;
   }
+}
+
+function buildUrlForChatToken() {
+  return process.env.SERVER_CHAT_DOMAIN_URL + ':' + process.env.SERVER_CHAT_DOMAIN_PORT + '/api/auth/token';
+}
+
+function shouldRedirectFacilitatorToLandingPage(req, res) {
+  return req.user.signInCount == 1 && _.includes(res.locals.currentDomain.roles, 'facilitator') && !req.session.landed;
 }
