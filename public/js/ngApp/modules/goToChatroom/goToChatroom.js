@@ -48,7 +48,7 @@
           }).then(function(response) {
             deferred.resolve(response.data.redirect_url);
           }, function(response) {
-            deferred.reject({ error: response.status + ": " + response.statusText });
+            deferred.reject(response.data.errors.permissions);
           });
         }
       });

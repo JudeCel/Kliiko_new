@@ -9,6 +9,7 @@ var myDashboardServices = require('../services/myDashboard');
 var jwt = require('../lib/jwt');
 var _ = require('lodash');
 var q = require('q');
+var request = require('request');
 
 module.exports = {
   planSelectPage: planSelectPage,
@@ -53,6 +54,8 @@ function planSelectPage(req, res, next) {
 }
 
 function myDashboardPage(req, res, next) {
+  let myDashboardUrl = subdomains.url(req, subdomains.base, '/my-dashboard');
+
   myDashboardServices.getAllData(req.user.id, req.protocol).then(function(result) {
     let managers = result.accountManager || result.facilitator;
 
@@ -61,19 +64,13 @@ function myDashboardPage(req, res, next) {
       let participants = shouldRedirectToChat(result.participant);
 
       if(participants && observers) {
-        res.redirect(subdomains.url(req, subdomains.base, '/my-dashboard'));
+        res.redirect(myDashboardUrl);
       }
       else if(participants || observers) {
-        jwt.tokenForMember(req.user.id, (participants || observers).dataValues.session.id).then(function(url) {
-          console.log("---------------1");
-          console.log(url);
-          console.log("---------------1");
-          res.redirect(url);
+        jwt.tokenForMember(req.user.id, (participants || observers).dataValues.session.id).then(function(result) {
+          getUrl(res, result.token, myDashboardUrl);
         }, function(error) {
-          console.log("---------------2");
-          console.error(error);
-          console.log("---------------2");
-          res.redirect(subdomains.url(req, subdomains.base, '/my-dashboard'));
+          res.redirect(myDashboardUrl);
         });
       }
     }
@@ -82,11 +79,28 @@ function myDashboardPage(req, res, next) {
         res.redirect(subdomains.url(req, selectManager(result.accountManager, result.facilitator).subdomain, '/dashboard'));
       }
       else {
-        res.redirect(subdomains.url(req, subdomains.base, '/my-dashboard'));
+        res.redirect(myDashboardUrl);
       }
     }
   }, function(error) {
     res.send({ error: error });
+  });
+}
+
+function getUrl(res, token, url) {
+  let options = {
+    url: process.env.SERVER_CHAT_DOMAIN_URL + ':' + process.env.SERVER_CHAT_DOMAIN_PORT + '/api/auth/token',
+    headers: { 'Authorization': token }
+  };
+
+  request.get(options, function(error, response) {
+    let body = JSON.parse(response.body);
+    if(error || response.statusCode != 200) {
+      res.redirect(url);
+    }
+    else {
+      res.redirect(body.redirect_url);
+    }
   });
 }
 
