@@ -144,27 +144,10 @@ background-color: $blue !important;
   font-weight: normal !important;
 }
 
-.no-padding {
-    padding: 0 !important;
-}
-
-.no-side-padding {
-  padding-left: 0px;
-  padding-right: 0px;
-}
-.border-radius-none {
-  border-radius: 0 !important;
-}
-.no-pointer-events,
-.no-pointer-events [role="button"] {
-  pointer-events: none;
-}
-.cursor-pointer {
-  cursor: pointer;
-}
 .text-font-family {
   font-family: sans-serif;
 }
+
 .text-left {
   text-align: left;
 }
@@ -175,6 +158,57 @@ background-color: $blue !important;
 
 .text-vertical-middle {
   vertical-align: middle;
+}
+
+$step: 5;
+$directions: ('right', 'left', 'top', 'bottom');
+
+@for $j from 0 to length($directions) {
+  @for $i from 1 to 5 {
+    .margin-#{nth($directions, $j + 1)}-#{$step * $i}{
+      margin-#{nth($directions, $j + 1)}: $step * $i#{px} !important;
+    }
+  }
+}
+
+@for $j from 0 to length($directions) {
+  @for $i from 1 to 5 {
+    .padding-#{nth($directions, $j + 1)}-#{$step * $i}{
+      padding-#{nth($directions, $j + 1)}: $step * $i#{px} !important;
+    }
+  }
+}
+
+@for $j from 0 to length($directions) {
+    .no-margin-#{nth($directions, $j + 1)} {
+      margin-#{nth($directions, $j + 1)}: 0 !important;
+    }
+}
+
+.no-margin {
+  margin: 0 !important;
+}
+
+.no-padding {
+    padding: 0 !important;
+}
+
+.no-side-padding {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.border-radius-none {
+  border-radius: 0 !important;
+}
+
+.no-pointer-events,
+.no-pointer-events [role="button"] {
+  pointer-events: none;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 /* Text COLOR */
@@ -279,25 +313,6 @@ color: #737373;
   margin-bottom: 100px;
 }
 
-.margin-right-10 {
-  margin-right: 10px;
-}
-
-.margin-top-10 {
-  margin-top: 10px !important;
-}
-
-.no-margin {
-  margin: 0 !important;
-}
-
-.no-margin-top {
-  margin-top: 0 !important;
-}
-
-.no-margin-bottom {
-  margin-bottom: 0 !important;
-}
 
 .intl-tel-input{
   width: 100% !important;

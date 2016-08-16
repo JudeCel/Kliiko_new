@@ -10,9 +10,9 @@
     </thead>
     <tbody ng-repeat='au in myDashboard.accountUsers.accountManager.data'>
       <tr>
-        <td style="padding-left:20px;">{{ au.Account.name }}</td>
+        <td class="padding-left-20">{{ au.Account.name }}</td>
         <td>
-          <a href='{{ au.dashboardUrl }}' class='go-to-dashboard glyphicon glyphicon-play pull-right' style="margin-right: 10px;" title='Go to Dashboard' />
+          <a href='{{ au.dashboardUrl }}' class='go-to-dashboard glyphicon glyphicon-play pull-right margin-right-10' title='Go to Dashboard' />
         </td>
       </tr>
     </tbody>

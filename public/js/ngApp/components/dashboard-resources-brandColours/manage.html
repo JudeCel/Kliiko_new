@@ -4,10 +4,16 @@
       <div>
         <h2 class='text-center'>Manage Brand Color</h2>
       </div>
-      <div class='text-right'>
-        <button id="brand-colour-undo" class='btn btn-standart btn-margin btn-green btn-small' ng-click='bcc.undoCurrentScheme()' ng-if='bcc.originalScheme'>Undo</button>
-        <button id="brand-colour-back" class='btn btn-standart btn-margin btn-green btn-small' ng-click="bcc.changePage('indexBack')"><span>Back</span></button>
-        <button id="brand-colour-save" class='btn btn-standart btn-margin btn-green btn-small' ng-click='bcc.finishManage()'>Save</button>
+      <div>
+        <div class="pull-left">
+          <button id="brand-colour-back-to-default" class='btn btn-standart btn-margin btn-green btn-large margin-left-15'>Back to Default Scheme</button>
+        </div>
+        <div class="pull-right">
+          <button id="brand-colour-undo" class='btn btn-standart btn-margin btn-green btn-small' ng-click='bcc.undoCurrentScheme()' ng-if='bcc.originalScheme'>Undo</button>
+          <button id="brand-colour-back" class='btn btn-standart btn-margin btn-red btn-small' ng-click="bcc.changePage('indexBack')"><span>Back</span></button>
+          <button id="brand-colour-save" class='btn btn-standart btn-margin btn-green btn-small' ng-click='bcc.finishManage()'>Save</button>
+          <button id="brand-colour-save-as" class='btn btn-standart btn-margin btn-lightgreen btn-small'>Save As</button>
+      </div>
       </div>
     </div>
 
