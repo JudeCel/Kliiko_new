@@ -4,15 +4,14 @@
     width: 180px;
     margin-left: 162px;
   }
+  .login-kliiko-tab {
+    width: 180px;
+    margin-left: 25px;
+  }
 
   .signup-via-sales-page {
     width: 180px;
     margin-left: 270px;
-  }
-
-  .login-kliiko-tab {
-    width: 180px;
-    margin-left: 25px;
   }
   .nav-tabs > li > a{
     border-radius: 0;
@@ -22,10 +21,31 @@
   #login{
 
     .forgot-password-padding {
-    padding: 10px;
+      padding: 10px;
     }
     .login-btn-size {
-    height: 45px;
+      height: 45px;
+    }
+
+    #warning-email-password {
+      position:relative;
+      border: 3px solid $red;
+      color: $red;
+      padding: 15px 25px;
+      margin: 10px 15px;
+      width: 95%;
+      height: 85px;
+      font-size: 1.2em;
+      background-color: #f7f5f6;
+      > div {
+        width: 88%;
+      }
+      .close {
+        font-weight: unset;
+        position: absolute;
+        top: 7px;
+        right: 10px;
+      }
     }
 
     input[class=checkbox-login] {
