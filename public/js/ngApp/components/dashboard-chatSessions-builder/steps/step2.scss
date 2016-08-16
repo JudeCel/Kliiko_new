@@ -68,7 +68,15 @@
   }
 
   .flex {
-    padding-left: 12px;
+    padding-left: 11px;
+    > div {
+      display: block;
+      width: 100%;
+       #create-new-btn {
+         margin-top:-4px;
+         margin-right: 4px;
+       }
+    }
   }
   .check {
     float: left;

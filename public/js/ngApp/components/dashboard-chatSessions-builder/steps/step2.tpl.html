@@ -16,13 +16,14 @@
           <br>
           <div>
             <div class="flex">
-              <div class="check">
-                <input id="select-all-topics"  ng-click="step2Controller.selectAllTopics(topics.list)" class="kliiko-checkbox checkbox-btn btn-green"  type="checkbox" ng-checked="step2Controller.allTopicsSelected">
-                <label for="select-all-topics" ></label> Select all
-              </div>
-
-              <div id="create-new-btn" class="btn btn-standart btn-green btn-large" ng-click="topics.openModal('new')" style="margin-top: -3px;">
-                Create New Topic
+              <div>
+                <div class="check">
+                  <input id="select-all-topics"  ng-click="step2Controller.selectAllTopics(topics.list)" class="kliiko-checkbox checkbox-btn btn-green"  type="checkbox" ng-checked="step2Controller.allTopicsSelected">
+                  <label for="select-all-topics" ></label> Select all
+                </div>
+                <div id="create-new-btn" class="btn btn-standart btn-green btn-large text-left pull-right" ng-click="topics.openModal('new')">
+                  Create New Topic
+                </div>
               </div>
             </div>
 
