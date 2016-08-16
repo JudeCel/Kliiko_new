@@ -1,9 +1,8 @@
 (function () {
   'use strict';
 
-  angular.
-    module('KliikoApp').
-    controller('ChangePasswordModalController', ChangePasswordModalController);
+  angular.module('KliikoApp').controller('ChangePasswordModalController', ChangePasswordModalController);
+  angular.module('KliikoApp.Root').controller('ChangePasswordModalController', ChangePasswordModalController);
 
   ChangePasswordModalController.$inject = ['dbg', 'user','domServices', 'messenger'];
   function ChangePasswordModalController(dbg,  user, domServices, messenger) {

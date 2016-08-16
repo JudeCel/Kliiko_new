@@ -2,6 +2,11 @@
 
 var subdomains = require('../../lib/subdomains.js');
 
+module.exports = {
+  index: index,
+  tour: tour
+};
+
 function views_path(action) {
   return 'my-dashboard/' + action;
 };
@@ -14,6 +19,6 @@ function index(req, res, next) {
   }
 };
 
-module.exports = {
-  index: index
+function tour(req, res, next) {
+  res.render(views_path('tour'), { title: 'Tour video' });
 };
