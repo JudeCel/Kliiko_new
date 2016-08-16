@@ -1,3 +1,5 @@
+// STANDART BUTTONS //
+
 .btn-standart {
   display: initial;
   padding: 8px;
@@ -9,20 +11,20 @@
   line-height: 26px;
   padding-top: 3px;
 
-  @mixin content($this) {
-    color: $this;
-    border-color: $this !important;
+  @mixin buttonColor($color) {
+    color: $color;
+    border-color: $color !important;
     &.active,
     &:hover,
     &:focus {
       color: white;
-      background: $this !important;
+      background: $color !important;
     }
   }
-  &.btn-red {@include content($red);}
-  &.btn-blue {@include content($blue);}
-  &.btn-green{@include content($green);}
-  &.btn-lightgreen {@include content(#4CB344);}
+  &.btn-red {@include buttonColor($red);}
+  &.btn-blue {@include buttonColor($blue);}
+  &.btn-green{@include buttonColor($green);}
+  &.btn-lightgreen {@include buttonColor($greenLight);}
 
   &.btn-text-middle {
     font-size: 80%;
@@ -36,6 +38,34 @@
     padding: 3px 4px 1px 4px;
   }
 }
+
+// HEADER BUTTONS //
+
+.btn-header {
+  margin-left: 10px;
+  padding-right: 15px;
+  padding-left: 15px;
+  height: 36px;
+  border-radius: 0px;
+  border: none;
+  color: white;
+  font-weight: bold;
+  width: 140px;
+}
+
+@mixin headerButtons($color, $colorDarker) {
+  @extend .btn-header;
+  background-color: $color !important;
+  &:hover,
+  &:focus {
+    background-color: $colorDarker !important;
+  }
+}
+.btn-header-red {@include headerButtons($red, $redDarker);}
+.btn-header-yellow {@include headerButtons($yellow, $yellowDarker);}
+.btn-header-green{@include headerButtons($greenHeader, $greenDarker);}
+
+// DASHBOARD BUTTONS //
 
 .btn-dashboard-menu {
   min-width: 47px;
@@ -72,48 +102,7 @@
   img#btn-account-managers {background-image: url('/icons/account_manager_white.png');}
 }
 
-.remove-link-line > a {
-  text-decoration: none;
-}
-
-.tabs-links {
-  margin-bottom: 30px;
-}
-
-.btn-header-dropdown {
-  margin-left: 10px;
-  padding-right: 15px;
-  padding-left: 15px;
-  height: 36px;
-  border-radius: 0px;
-  border: none;
-  color: white;
-  background-color: $yellow;
-  font-weight: bold;
-  width: 140px;
-}
-
-.btn-header-green {
-  @extend .btn-header-dropdown;
-  background-color: #4CB649;
-}
-
-.btn-header-red {
-  @extend .btn-header-dropdown;
-  background-color: $red;
-}
-
-.btn-margin {
-  margin: 20px 0;
-}
-
-.btn-addNewElement {
-  // @extend .btn-dashboard-menu;
-  width: auto;
-  margin: 0;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
+// BUTTONS SIZES //
 
 .btn-small-x {
   min-width: 47px;
@@ -143,6 +132,8 @@
   height: 36px;
 }
 
+// SPECIAL BUTTONS //
+
 .btn-simple {
   margin-left: 10px;
   height: 36px;
@@ -150,25 +141,30 @@
   background-color: inherit;
 }
 
-.btn-forbidden, .btn-disabled, .disabled {
+.btn-forbidden,
+.btn-disabled,
+.disabled {
   cursor: not-allowed !important;
 }
 
-.btn-google {
-  &:hover {
-    color: white;
-  }
+.btn-google,
+.btn-facebook  {
+  &:hover,
   &:focus {
     color: white;
   }
 }
-.btn-facebook {
-  &:hover {
-    color: white;
-  }
-  &:focus {
-    color: white;
-  }
+
+.btn-margin {
+  margin: 20px 0;
+}
+
+.remove-link-line > a {
+  text-decoration: none;
+}
+
+.tabs-links {
+  margin-bottom: 30px;
 }
 
 //////

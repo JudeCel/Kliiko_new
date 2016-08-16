@@ -1,9 +1,5 @@
 #session-builder-content {
 
-  .btn-standart {
-    font-size: 1.2rem;
-  }
-
   .drop-area {
     padding: 8px;
     border: 2px dashed $lightGray;
@@ -211,14 +207,14 @@
   }
 
   .btn-green.btn-back {
-    padding-left: 40px;
+    padding-left: 30px;
     background-image: url('/icons/back_green.png');
     background-repeat: no-repeat;
-    background-position: 10px center;
+    background-position: 5px 3px;
     &:hover {
       background-image: url('/icons/back_white.png') !important;
       background-repeat: no-repeat !important;
-      background-position: 10px center !important;
+      background-position: 5px 3px !important;
     }
   }
 
