@@ -45,7 +45,6 @@ module.exports = {
   updateSessionMemberRating: updateSessionMemberRating,
   getAllSessionRatings: getAllSessionRatings,
   changeComment: changeComment,
-  validateSession: validateSession,
   getSessionByInvite: getSessionByInvite
 };
 
@@ -507,35 +506,4 @@ function changeSessionData(sessions, chargebeeSub, provider) {
       session.dataValues.averageRating = total / session.SessionMembers.length;
     }
   });
-}
-
-function validateSession(userId, sessionId, provider) {
-  let deferred = q.defer();
-
-  models.SessionMember.find({
-    include: [{
-      model: models.Session,
-      where: { id: sessionId },
-      include: [{
-        model: models.Account,
-        include: [models.Subscription]
-      }, models.SessionTopics]
-    }, {
-      model: models.AccountUser,
-      where: { UserId: userId }
-    }]
-  }).then(function(sessionMember) {
-    if(sessionMember) {
-      return sessionValidator.validate(sessionMember, provider);
-    }
-    else {
-      deferred.reject(MESSAGES.sessionMemberNotFound);
-    }
-  }).then(function() {
-    deferred.resolve();
-  }).catch(function(error) {
-    deferred.reject(error);
-  });
-
-  return deferred.promise;
 }
