@@ -8,11 +8,10 @@
     dbg.log2('#Dashboard controller started');
 
     var vm = this;
-    vm.accountUsers = {};
+    initMyDashboard();
     vm.disablePlayButton = false;
 
     vm.redirectToChatSession = redirectToChatSession;
-    vm.initMyDashboard = initMyDashboard;
     vm.isTabActive = isTabActive;
     vm.changeTab = changeTab;
     vm.activeClass = activeClass;
@@ -56,11 +55,13 @@
     function setInitialTab() {
       var array = ['accountManager', 'facilitator', 'participant', 'observer'];
 
-      for(var i in array) {
-        var role = array[i];
-        if(vm.accountUsers[role]) {
-          vm.currentTab = role;
-          break;
+      if(vm.accountUsers) {
+        for(var i in array) {
+          var role = array[i];
+          if(vm.accountUsers[role]) {
+            vm.currentTab = role;
+            break;
+          }
         }
       }
     }

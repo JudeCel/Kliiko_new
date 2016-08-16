@@ -2,6 +2,7 @@
   'use strict';
 
   angular.module('KliikoApp').controller('ContactDetailsModalController', ContactDetailsModalController)
+  angular.module('KliikoApp.Root').controller('ContactDetailsModalController', ContactDetailsModalController)
 
   ContactDetailsModalController.$inject = ['dbg', 'user', 'domServices', 'messenger', '$scope'];
   function ContactDetailsModalController(dbg, user, domServices, messenger, $scope) {

@@ -1,5 +1,6 @@
 'use strict';
 
+var constants = require('./../util/constants');
 var models = require('./../models');
 var filters = require('./../models/filters');
 var AccountUser = models.AccountUser;
@@ -168,9 +169,38 @@ function contactListUserParams(params, accountUser) {
   }
 }
 
+function findWithUser(user) {
+  let deferred = q.defer();
+
+  models.User.find({
+    where: { id: user.id },
+    include: [models.AccountUser],
+  }).then(function(result) {
+    assignCurrentUserInfo(result.AccountUsers[0] || {}, user);
+    deferred.resolve(user);
+  }, function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function assignCurrentUserInfo(accountUser, user) {
+  _.merge(user, _.pick(accountUser.dataValues, prepareValidAccountUserParams()));
+  user.accountUserId = accountUser.id;
+}
+
+function prepareValidAccountUserParams() {
+  let safeAccountUserParams = _.cloneDeep(constants.safeAccountUserParams);
+  let index = safeAccountUserParams.indexOf('id');
+  safeAccountUserParams.splice(index, 1);
+  return safeAccountUserParams;
+}
+
 module.exports = {
   create: create,
   createAccountManager: createAccountManager,
   updateWithUserId: updateWithUserId,
+  findWithUser: findWithUser,
   findWithSessionMembers: findWithSessionMembers
 }

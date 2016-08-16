@@ -1,14 +1,12 @@
 <% include _header %>
 
 <main class='main-first-page hidden'>
-  <div class='container' ng-controller='DashboardController as myDashboard'>
-    <div ng-init='myDashboard.initMyDashboard()'>
-      <ul class='nav nav-tabs' id='nav-tabs-main' ng-if='!myDashboard.hideTabs'>
-        <li id="btn-my-dashboard" ng-repeat='au in myDashboard.accountUsers' ng-class='myDashboard.activeClass(au.field)' ng-click='myDashboard.changeTab(au.field)'>
-          <a>{{ au.name }} ({{ au.data.length }})</a>
-        </li>
-      </ul>
-    </div>
+  <div class='container'>
+    <ul class='nav nav-tabs' id='nav-tabs-main' ng-if='!myDashboard.hideTabs'>
+      <li id="btn-my-dashboard" ng-repeat='au in myDashboard.accountUsers' ng-class='myDashboard.activeClass(au.field)' ng-click='myDashboard.changeTab(au.field)'>
+        <a>{{ au.name }} ({{ au.data.length }})</a>
+      </li>
+    </ul>
 
     <div class='dashboard-container border-blue box-shadow'>
       <div class='row'>

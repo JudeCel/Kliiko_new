@@ -8,16 +8,10 @@ output.version = getAppVersion();
 output.mode = process.env.MODE;
 output.settings = {
   restApiUrl: process.env.WEB_APP_SETTINGS_REST_API_URL,
-  paymentModules: {
-    chargebee: {
-      apiEndPoint: process.env.WEB_APP_SETTINGS_PAYMENT_MODULES_CHARGEBEE_API_END_POINT
-    }
-  },
   port: process.env.SERVER_PORT,
   baseDomain: process.env.SERVER_BASE_DOMAIN,
   domain: process.env.SERVER_DOMAIN,
-  chatUrl: process.env.SERVER_CHAT_URL,
-  serverChatDomainUrl: process.env.SERVER_CHAT_DOMAIN_URL,
+  serverChatDomainUrl: process.env.SERVER_CHAT_DOMAIN_URL + ':' + process.env.SERVER_CHAT_DOMAIN_PORT,
   baseSubdomain: process.env.SERVER_BASE_SUBDOMAIN
 }
 
