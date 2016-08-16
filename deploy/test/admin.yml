@@ -57,6 +57,12 @@ spec:
           value: "www.test.klzii.com"
         - name: MAIL_FROM_EMAIL
           value: "klzii.noreply@gmail.com"
+        - name: MAIL_FROM_NAME
+          value: "Insider Focus"
+        - name: MAIL_TRANSPORT_AUTH_USER
+          value: "klzii.noreply"
+        - name: MAIL_TRANSPORT_AUTH_PASS
+          value: "ifs_Zupper!pwd"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
         - name: FACEBOOK_CLIENT_ID

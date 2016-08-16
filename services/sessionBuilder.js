@@ -142,7 +142,7 @@ function update(sessionId, accountId, params) {
     findSession(sessionId, accountId).then(function(session) {
       session.updateAttributes(params).then(function(updatedSession) {
         sessionBuilderObject(updatedSession).then(function(sessionObject) {
-          if(updatedSession.status == "close"){
+          if(updatedSession.status == "closed"){
             sendCloseSessionMail(updatedSession).then(function() {
               deferred.resolve(sessionObject);
             },function(error) {
@@ -191,9 +191,7 @@ function sendCloseSessionMail(session) {
           deferred.reject(errors);
         })
       }else{
-        session.update({ status: "open" }).then(function() {
-          deferred.reject(MESSAGES.errors.cantSendCloseMails);
-        });
+        deferred.reject(MESSAGES.errors.cantSendCloseMails);
       }
     }).catch(function(error) {
       deferred.reject(error);
