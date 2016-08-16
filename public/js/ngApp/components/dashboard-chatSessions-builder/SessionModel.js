@@ -172,12 +172,12 @@
       return deferred.promise;
     }
 
-    function setOpen(open) {
+    function setOpen(status) {
       var self = this;
       var deferred = $q.defer();
-      self.updateStep({active: open}).then(
+      self.updateStep({status: status}).then(
         function (res) {
-          self.active = self.sessionData.active = open;
+          self.status = self.sessionData.status = status;
           deferred.resolve(res)
         },
         function (err) {
