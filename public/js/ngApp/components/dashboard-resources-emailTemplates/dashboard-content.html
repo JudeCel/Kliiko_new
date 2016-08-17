@@ -50,9 +50,9 @@
           <br>
 
           <button type="submit" class="btn btn-standart btn-red btn-small pull-right" ng-click="ec.resetMailTemplate()" ng-show="ec.resetButtonVisible(app.accountUser.isAdmin)">Cancel</button>
-          <button id='mailCreateCopy' type="submit" class="btn btn-standart btn-lightgreen pull-right btn-small margin-right-10" ng-click="ec.modifyAndSave(true)" ng-if="ec.copyButtonVisible(app.accountUser.isAdmin)">Save As</button>
-          <button id='mailModifySaveCopy' type="submit" class="btn btn-standart btn-green pull-right btn-small margin-right-10" ng-click="ec.modifyAndSave()">Save</button>
-          <button id='mailPreviewButton' type="submit" class="btn btn-standart btn-blue pull-right btn-small margin-right-10" ng-click="ec.previewMailTemplate()">Preview</button>
+          <button id='mailCreateCopy' type="submit" class="btn btn-standart btn-lightgreen pull-right btn-small margin-left-10" ng-click="ec.modifyAndSave(true)" ng-if="ec.copyButtonVisible(app.accountUser.isAdmin)">Save As</button>
+          <button id='mailModifySaveCopy' type="submit" class="btn btn-standart btn-green pull-right btn-small margin-left-10" ng-click="ec.modifyAndSave()">Save</button>
+          <button id='mailPreviewButton' type="submit" class="btn btn-standart btn-blue pull-right btn-small margin-left-10" ng-click="ec.previewMailTemplate()">Preview</button>
         </div>
 
       <!-- Modal Preview-->
