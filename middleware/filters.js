@@ -92,13 +92,13 @@ function getUrl(res, token, url) {
     url: buildUrlForChatToken(),
     headers: { 'Authorization': token }
   };
-
+  
   request.get(options, function(error, response) {
-    let body = JSON.parse(response.body);
     if(error || response.statusCode != 200) {
       res.redirect(url);
     }
     else {
+      let body = JSON.parse(response.body);
       res.redirect(body.redirect_url);
     }
   });
