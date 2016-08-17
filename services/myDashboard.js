@@ -146,6 +146,7 @@ function prepareAccountUsers(accountUsers, protocol) {
 
 function userSwitch(object, user, protocol) {
   switch(user.role) {
+    case 'admin':
     case 'accountManager':
       addDashboardUrl(user, '/dashboard', protocol);
       break;

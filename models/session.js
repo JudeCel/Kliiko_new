@@ -28,6 +28,8 @@ module.exports = (Sequelize, DataTypes) => {
       }
     } },
     endTime: { type: DataTypes.DATE, allowNull: false , defaultValue: initializeDate() },
+    startTimeFormat: { type: DataTypes.STRING, allowNull: false, defaultValue: initializeDate().toString()  },
+    endTimeFormat: { type: DataTypes.STRING, allowNull: false, defaultValue: initializeDate().toString()  },
     incentive_details: { type: DataTypes.STRING, allowNull: true  },
     colours_used: { type: DataTypes.TEXT, allowNull: true },
 

@@ -16,11 +16,12 @@
                 <div class='text-center background-yellow'>
                   <b><%= message %></b>
                 </div>
-                <!-- need to add ng-if for  warning-email-password div and close function for button-->
-                <!-- <div class="error-column has-error" id="warning-email-password">
-                  <div><%= error %></div>
+
+                <div class="error-column has-error" id="warning-email-password">
+                  <div class="error-field"><%= error %></div>
                   <button type="button" class="close">×</button>
-                </div> -->
+                </div>
+
                 <form method="post" action='/login'>
                   <div class="container-fluid">
                     <div class="row">

@@ -42,7 +42,7 @@ switch (environment) {
 /**
  * Create HTTP server.
  */
- if (cluster.isMaster) {
+ if (cluster.isMaster && app.get('env') != "development") {
    console.log(`Cluster count: ${numCPUs}`);
   // Fork workers.
   for (var i = 0; i < numCPUs; i++) {
@@ -67,7 +67,6 @@ switch (environment) {
 }
 
  // server.maxConnections = 20;
-
 
 /**
  * Normalize a port into a number, string, or false.
