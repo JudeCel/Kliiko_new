@@ -42,6 +42,15 @@
     });
   </script>
   <script>
+    var error = $('#warning-email-password');
+    $('#warning-email-password > .close').click(function() {
+      error.hide();
+    });
+    if(!$('#warning-email-password > .error-field').text().length) {
+      error.hide();
+    }
+  </script>
+  <script>
     !function() {
       var e=document.createElement("script"),
           t=document.getElementsByTagName("script")[0];
