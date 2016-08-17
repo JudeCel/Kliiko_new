@@ -127,11 +127,17 @@
       return deferred.promise;
     }
 
+    function initializeDate() {
+      let date = new Date();
+      date.setHours(0, 0, 0, 0);
+      return date;
+    }
+
     function createNew() {
       var self = this;
 
       var deferred = $q.defer();
-      sessionBuilderRestApi.post({},{},function(res) {
+      sessionBuilderRestApi.post({},{ date: initializeDate().toString() },function(res) {
         if (res.error) {
           deferred.reject(res.error);
         }

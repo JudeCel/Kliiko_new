@@ -92,7 +92,13 @@ function initializeBuilder(params) {
 
   validators.hasValidSubscription(params.accountId).then(function() {
     validators.subscription(params.accountId, 'session', 1).then(function() {
+
       params.step = 'setUp';
+      params.startTime = params.date;
+      params.endTime = params.date;
+      params.startTimeFormat = params.date;
+      params.endTimeFormat = params.date;
+
       Session.create(params).then(function(session) {
         addDefaultObservers(session, params);
         sessionBuilderObject(session).then(function(result) {
