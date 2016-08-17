@@ -57,21 +57,21 @@ function myDashboardPage(req, res, next) {
   let myDashboardUrl = subdomains.url(req, subdomains.base, '/my-dashboard');
 
   myDashboardServices.getAllData(req.user.id, req.protocol).then(function(result) {
-    let managers = result.accountManager || result.facilitator;
 
+    let managers = result.accountManager || result.facilitator;
     if(!managers) {
       let observers = shouldRedirectToChat(result.observer);
       let participants = shouldRedirectToChat(result.participant);
 
-      if(participants && observers) {
-        res.redirect(myDashboardUrl);
-      }
-      else if(participants || observers) {
+      if((participants && !observers) || (observers && !participants)) {
         jwt.tokenForMember(req.user.id, (participants || observers).dataValues.session.id).then(function(result) {
           getUrl(res, result.token, myDashboardUrl);
         }, function(error) {
           res.redirect(myDashboardUrl);
         });
+      }
+      else{
+        res.redirect(myDashboardUrl);
       }
     }
     else {
