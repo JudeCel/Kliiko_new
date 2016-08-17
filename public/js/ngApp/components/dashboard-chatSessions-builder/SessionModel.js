@@ -131,7 +131,7 @@
       var self = this;
 
       var deferred = $q.defer();
-      sessionBuilderRestApi.post({},{},function(res) {
+      sessionBuilderRestApi.post({},{ date: (new Date()).toString() },function(res) {
         if (res.error) {
           deferred.reject(res.error);
         }

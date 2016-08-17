@@ -87,12 +87,24 @@ function addDefaultObservers(session) {
   });
 }
 
+function initializeDate(dateString) {
+  let date = new Date(dateString);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
 function initializeBuilder(params) {
   let deferred = q.defer();
 
   validators.hasValidSubscription(params.accountId).then(function() {
     validators.subscription(params.accountId, 'session', 1).then(function() {
+      let date = initializeDate(params.date || new Date());
       params.step = 'setUp';
+      params.startTime = date;
+      params.endTime = date;
+      params.startTimeFormat = params.date;
+      params.endTimeFormat = params.date;
+
       Session.create(params).then(function(session) {
         addDefaultObservers(session, params);
         sessionBuilderObject(session).then(function(result) {
