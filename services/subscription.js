@@ -44,7 +44,7 @@ const MESSAGES = {
   alreadyExists: 'Subscription already exists',
   cantSwitchPlan: "Can't switch to current plan",
   successPlanUpdate: 'Plan was successfully updated.',
-  quoteSent: "Quote was successfully sent."
+  quoteSent: "Thanks, your email has been sent. We'll be in touch withing 24 hours."
 }
 
 module.exports = {
