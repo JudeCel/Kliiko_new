@@ -25,6 +25,7 @@
   &.btn-blue {@include buttonColor($blue);}
   &.btn-green{@include buttonColor($green);}
   &.btn-lightgreen {@include buttonColor($greenLight);}
+  &.btn-yellow {@include buttonColor($yellowDarker);}
 
   &.btn-text-middle {
     font-size: 80%;

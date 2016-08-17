@@ -7,7 +7,10 @@
         <h5 class='text-center text-gray-dark'>
           Create your own memorable password with at least 7 characters.
         </h5>
-        <span class='error-column has-error text-center' id='warning-email-password'><%= error.password %></span>
+        <div class='error-column has-error text-center' id='warning-email-password'>
+          <div class="error-field"><%= error.password %></div>
+          <button type="button" class="close">×</button>
+        </div>
         <form class='non-resubmitable' method='post' action='/invite/<%= invite.token %>/accept' novalidate>
           <div class='container-fluid'>
             <div class='row'>
