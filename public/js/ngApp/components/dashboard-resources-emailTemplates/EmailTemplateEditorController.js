@@ -90,6 +90,7 @@
     vm.saveEmailTemplate = saveEmailTemplate;
     vm.initGallery = initGallery;
     vm.galleryDropdownData = galleryDropdownData;
+    vm.openModal = openModal;
 
 
 
@@ -130,6 +131,10 @@
     function modifyAndSave(createCopy, template, includeProperties, templateName) {
       var deferred = $q.defer();
       var template = template || vm.currentTemplate;
+
+      if(templateName) {
+        domServices.modal('templateNameModal', true);
+      }
 
       vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
       vm.currentTemplate.error = {};
@@ -327,6 +332,11 @@
         modal: { upload: true },
         dependency: dependency
       };
+    }
+
+    function openModal() {
+      vm.templateNameAdd = null;
+      domServices.modal('templateNameModal');
     }
   }
 })();

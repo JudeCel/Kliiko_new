@@ -71,11 +71,6 @@
         //failure is handled in mail template controller. This is a wrapper
       });
     }
-
-    vm.openModal = function() {
-      vm.templateNameAdd = null;
-      domServices.modal('templateNameModal');
-    }
   }
 
 })();

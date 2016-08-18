@@ -12,14 +12,14 @@
             <div class='form-group'>
               <label class='control-label col-md-4 text-no-bold text-login-page' for='templateName'>Name</label>
               <div class='col-md-8'>
-                <input type='text' class='form-control' id='templateName' placeholder='Name' ng-model='step3Controller.templateNameAdd'>
+                <input type='text' class='form-control' id='templateName' placeholder='Name' ng-model='ec.templateNameAdd'>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class='modal-footer'>
-        <button ng-click='step3Controller.modifyAndSave(true, true)' type='button' class='btn btn-standart btn-green btn-small pull-right'>
+        <button ng-click='ec.modifyAndSave(true, null, true, ec.templateNameAdd)' type='button' class='btn btn-standart btn-green btn-small pull-right'>
           Save as
         </button>
       </div>
