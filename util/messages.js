@@ -234,5 +234,19 @@ module.exports = {
       format: ' has invalid format',
       empty: ' has already been taken',
     }
+  },
+  middleware: {
+    passport: {
+      userPasswordMatch: 'Sorry, your Email and Password do not match. Please try again.',
+      userNotFound: 'User not found',
+      notConfirmed: 'Your account has not been confirmed, please check your e-mail and follow the link.'
+    },
+    policy: {
+      noAccess: 'Access denied to this page!'
+    },
+    subdomain: {
+      deactivated: 'Sorry, your account has been deactivated. Please get in touch with the administration',
+      noAccessOrNotFound: 'Account not found or you do not have access to this page'
+    }
   }
 };
