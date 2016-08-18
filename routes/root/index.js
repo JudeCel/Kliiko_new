@@ -84,10 +84,6 @@ router.get('/ping', function(req, res, next) {
   res.send({ status: 'ok' });
 });
 
-router.get('/.well-known/acme-challenge/:id', function(req, res, next) {
-  res.send("u1k0RRUoGZw_MWzISIaMQC8ga6TRCDEjG4RNtTsQeLg.OSqph6KpmkAF_8iylHsAxTwTg6l841nm7r6cspPsEb8");
-});
-
 router.get('/', function (req, res, next) {
     res.render('login', {title: 'Login', error: "", message: ''});
 });
