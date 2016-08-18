@@ -111,7 +111,7 @@
     "ncp": "^2.0.0",
     "node-uuid": "^1.4.7",
     "nodemailer": "^2.3.1",
-    "nodemon": "^1.10.0",
+    "nodemon": "1.10.0",
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.0",
     "passport-google-oauth": "^1.0.0",
