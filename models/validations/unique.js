@@ -1,5 +1,7 @@
 'use strict';
+
 var _ = require('lodash');
+var MessagesUtil = require('./../../util/messages');
 
 function unique(sequelize, model, fieldName, otherValue) {
   return function(value, next) {
@@ -7,11 +9,12 @@ function unique(sequelize, model, fieldName, otherValue) {
       let where = {};
       if(otherValue) {
         if(otherValue.lower) {
-        where = {
-              $and: [sequelize.where(
+          where = {
+            $and: [sequelize.where(
               sequelize.fn('regexp_replace', sequelize.fn('lower', sequelize.col(fieldName)), "\\s", '', 'g'),
               sequelize.fn('regexp_replace', sequelize.fn('lower', value), "\\s", '', 'g')
-          )]}
+            )]
+          };
         }
         else {
           where[fieldName] = value;
@@ -24,12 +27,14 @@ function unique(sequelize, model, fieldName, otherValue) {
       else {
         where[fieldName] = value;
       }
-      if (this && this.id) {
+
+      if(this && this.id) {
         where.id = { $ne: this.id };
       }
+
       sequelize.models[model].find({ where: where }).then(function(result) {
         if(result) {
-          next(`${_.startCase(fieldName)} must be unique`);
+          next(_.startCase(fieldName) + ' must be unique');
         }
         else {
           next();

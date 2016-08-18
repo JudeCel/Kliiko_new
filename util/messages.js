@@ -209,4 +209,30 @@ module.exports = {
       }
     }
   },
+  models: {
+    accountUser: {
+      landlineNumber: 'Invalid phone number format (ex. XXX)',
+      mobile: 'Invalid phone number format (ex. XXX)',
+      email: 'Email has already been taken'
+    },
+    session: {
+      date: "Start date can't be higher then end date."
+    },
+    user: {
+      password: 'Make sure your Password is at least 7 characters'
+    },
+    validations: {
+      length: {
+        min: ' must be longer than XXX characters',
+        max: ' must not be longer than XXX characters'
+      },
+      firstLastName: 'Invalid XXX format'
+    },
+    filters: {
+      uniqueAccountName: 'Name has already been taken',
+      empty: " can't be empty",
+      format: ' has invalid format',
+      empty: ' has already been taken',
+    }
+  }
 };
