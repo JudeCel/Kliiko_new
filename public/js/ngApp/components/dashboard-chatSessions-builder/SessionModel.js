@@ -128,7 +128,7 @@
     }
 
     function initializeDate() {
-      let date = new Date();
+      var date = new Date();
       date.setHours(0, 0, 0, 0);
       return date;
     }
