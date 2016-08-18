@@ -248,5 +248,13 @@ module.exports = {
       deactivated: 'Sorry, your account has been deactivated. Please get in touch with the administration',
       noAccessOrNotFound: 'Account not found or you do not have access to this page'
     }
+  },
+  lib: {
+    jwt: {
+      notPart: 'You are not part of this session'
+    },
+    twilio: {
+      allSmsSent: 'All sms have been sent'
+    }
   }
 };
