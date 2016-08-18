@@ -1,4 +1,5 @@
 'use strict';
+var MessagesUtil = require('./messages');
 
 module.exports = {
   minQuestions: 3,
@@ -13,44 +14,20 @@ module.exports = {
     }
   },
   validationErrors: {
-    default: 'There are some errors',
-    unfilled: 'There are some unfilled answers!',
-    minQuestions: 'Not enough questions, needs atleast ',
+    default: MessagesUtil.survey.error.default,
+    unfilled: MessagesUtil.survey.error.unfilled,
+    minQuestions: MessagesUtil.survey.error.minQuestions,
     field: [
-      {
-        type: 'required',
-        message: 'Please fill this field!',
-      },
-      {
-        type: 'minlength',
-        message: 'Field is too short!',
-      },
-      {
-        type: 'maxlength',
-        message: 'No more than XXX characters.',
-      }
+      { type: 'required', message: MessagesUtil.survey.error.field.required },
+      { type: 'minlength', message: MessagesUtil.survey.error.field.minlength },
+      { type: 'maxlength', message: MessagesUtil.survey.error.field.maxlength }
     ],
     answer: [
-      {
-        type: 'required',
-        message: 'Please fill this answer!',
-      },
-      {
-        type: 'minlength',
-        message: 'Answer is too short!',
-      },
-      {
-        type: 'maxlength',
-        message: 'Answer is too long!',
-      },
-      {
-        type: 'phoneNumber',
-        message: 'Invalid phone number.',
-      },
-      {
-        type: 'landlineNumber',
-        message: 'Invalid phone number.',
-      }
+      { type: 'required', message: MessagesUtil.survey.error.answer.required },
+      { type: 'minlength', message: MessagesUtil.survey.error.answer.minlength },
+      { type: 'maxlength', message: MessagesUtil.survey.error.answer.maxlength },
+      { type: 'phoneNumber', message: MessagesUtil.survey.error.answer.phoneNumber },
+      { type: 'landlineNumber', message: MessagesUtil.survey.error.answer.landlineNumber }
     ]
   },
   contactDetails: [

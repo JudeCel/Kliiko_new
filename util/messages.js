@@ -164,7 +164,24 @@ module.exports = {
     closed: 'Survey has been successfully closed!',
     opened: 'Survey has been successfully opened!',
     copied: 'Survey copied successfully!',
-    confirmed: 'Survey confirmed successfully!'
+    confirmed: 'Survey confirmed successfully!',
+    error: {
+      default: 'There are some errors',
+      unfilled: 'There are some unfilled answers!',
+      minQuestions: 'Not enough questions, needs atleast ',
+      field: {
+        required: 'Please fill this field!',
+        minlength: 'Field is too short!',
+        maxlength: 'No more than XXX characters.'
+      },
+      answer: {
+        required: 'Please fill this answer!',
+        minlength: 'Answer is too short!',
+        maxlength: 'Answer is too long!',
+        phoneNumber: 'Invalid phone number.',
+        landlineNumber: 'Invalid phone number.',
+      }
+    }
   },
   topics: {
     updatedSessionTopic: 'Session Topic was successfully updated.',
