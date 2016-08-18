@@ -13,6 +13,7 @@ var mailHelper = require('./../mailers/mailHelper');
 var mailUrlHelper = require('./../mailers/helpers');
 var validators = require('./../services/validators');
 var sessionMemberServices = require('./sessionMember');
+var MessagesUtil = require('./../util/messages');
 
 var async = require('async');
 var _ = require('lodash');
@@ -20,44 +21,9 @@ var q = require('q');
 
 const MIN_MAIL_TEMPLATES = 5;
 
-const MESSAGES = {
-  setUp: "You have successfully setted up your chat session.",
-  cancel: "Session build successfully canceled",
-  notFound: "Session build not found",
-  inviteNotFound: 'Invite not found or is not pending',
-  inviteRemoved: 'Invite removed successfully',
-  sessionMemberNotFound: 'Session Member not found',
-  sessionMemberRemoved: 'Session Member removed successfully',
-  accountUserNotFound: 'Account User not found',
-
-  errors: {
-    cantAddObservers: "Please Update your subscription plan, to invite Observers to your session.",
-    cantSendCloseMails: "Were not able to send emails to inform all participants, that session was closed.",
-    firstStep: {
-      nameRequired: 'Name must be provided',
-      startTimeRequired: 'Start time must be provided',
-      endTimeRequired: 'End time must be provided',
-      invalidDateRange: "Start date can't be higher then end date.",
-      facilitator: 'No facilitator provided'
-    },
-    secondStep: {
-      topics: 'No topics selected'
-    },
-    thirdStep: {
-      emailTemplates: "You need to copy each of the required e-mail template."
-    },
-    fourthStep: {
-      participants: 'No participants invited'
-    },
-    fifthStep: {
-      observers: 'No observers invited'
-    }
-  }
-};
-
 // Exports
 module.exports = {
-  messages: MESSAGES,
+  messages: MessagesUtil.sessionBuilder,
   initializeBuilder: initializeBuilder,
   findSession: findSession,
   update: update,
@@ -132,7 +98,7 @@ function findSession(id, accountId) {
       deferred.resolve(session);
     }
     else {
-      deferred.reject(MESSAGES.notFound);
+      deferred.reject(MessagesUtil.sessionBuilder.notFound);
     }
   }).catch(function(error) {
     deferred.reject(error);
@@ -207,7 +173,7 @@ function sendCloseSessionMail(session) {
           deferred.reject(errors);
         })
       }else{
-        deferred.reject(MESSAGES.errors.cantSendCloseMails);
+        deferred.reject(MessagesUtil.sessionBuilder.errors.cantSendCloseMails);
       }
     }).catch(function(error) {
       deferred.reject(error);
@@ -345,7 +311,7 @@ function destroy(id, accountId) {
   validators.hasValidSubscription(accountId).then(function() {
     findSession(id, accountId).then(function(session) {
       session.destroy(function(result) {
-        deferred.resolve(MESSAGES.cancel);
+        deferred.resolve(MessagesUtil.sessionBuilder.cancel);
       }).catch(function(error) {
         deferred.reject(filters.errors(error));
       });
@@ -423,13 +389,13 @@ function removeSessionMember(params) {
   }).then(function(sessionMember) {
     if(sessionMember) {
       sessionMember.destroy().then(function() {
-        deferred.resolve(MESSAGES.sessionMemberRemoved);
+        deferred.resolve(MessagesUtil.sessionBuilder.sessionMemberRemoved);
       }).catch(function(error) {
         deferred.reject(filters.errors(error));
       });
     }
     else {
-      deferred.reject(MESSAGES.sessionMemberNotFound);
+      deferred.reject(MessagesUtil.sessionBuilder.sessionMemberNotFound);
     }
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
@@ -450,13 +416,13 @@ function removeInvite(params) {
   }).then(function(invite) {
     if(invite) {
       invite.destroy().then(function() {
-        deferred.resolve(MESSAGES.inviteRemoved);
+        deferred.resolve(MessagesUtil.sessionBuilder.inviteRemoved);
       }).catch(function(error) {
         deferred.reject(filters.errors(error));
       });
     }
     else {
-      deferred.reject(MESSAGES.inviteNotFound);
+      deferred.reject(MessagesUtil.sessionBuilder.inviteNotFound);
     }
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
@@ -549,7 +515,7 @@ function sendGenericEmail(sessionId, data, accountId) {
           deferred.reject(filters.errors(error));
         });
       } else {
-        deferred.reject(MESSAGES.sessionMemberNotFound);
+        deferred.reject(MessagesUtil.sessionBuilder.sessionMemberNotFound);
       }
     }, function (error) {
        deferred.reject(filters.errors(error));
@@ -934,23 +900,23 @@ function validateStepOne(params) {
     async.parallel(step1Queries(session, object), function(error, _result) {
       let errors = {};
       if(!params.name) {
-        errors.name = MESSAGES.errors.firstStep.nameRequired;
+        errors.name = MessagesUtil.sessionBuilder.errors.firstStep.nameRequired;
       }
 
       if(!params.startTime) {
-        errors.startTime = MESSAGES.errors.firstStep.startTimeRequired;
+        errors.startTime = MessagesUtil.sessionBuilder.errors.firstStep.startTimeRequired;
       }
 
       if(!params.endTime) {
-        errors.endTime = MESSAGES.errors.firstStep.endTimeRequired;
+        errors.endTime = MessagesUtil.sessionBuilder.errors.firstStep.endTimeRequired;
       }
 
       if(params.startTime > params.endTime) {
-        errors.startTime = MESSAGES.errors.firstStep.invalidDateRange;
+        errors.startTime = MessagesUtil.sessionBuilder.errors.firstStep.invalidDateRange;
       }
 
       if(!object.facilitator) {
-        errors.facilitator = MESSAGES.errors.firstStep.facilitator;
+        errors.facilitator = MessagesUtil.sessionBuilder.errors.firstStep.facilitator;
       }
 
       if (_.isEmpty(errors)) {
@@ -979,7 +945,7 @@ function validateStepTwo(params) {
         let errors = {};
 
         if(_.isEmpty(object.topics)) {
-          errors.topics = MESSAGES.errors.secondStep.topics;
+          errors.topics = MessagesUtil.sessionBuilder.errors.secondStep.topics;
         }
 
         _.isEmpty(errors) ? deferred.resolve() : deferred.reject(errors);
@@ -1097,7 +1063,7 @@ function validateStepThree(params) {
       });
 
       if(filtered.length < MIN_MAIL_TEMPLATES){
-        errors.emailTemplates = MESSAGES.errors.thirdStep.emailTemplates;
+        errors.emailTemplates = MessagesUtil.sessionBuilder.errors.thirdStep.emailTemplates;
       }
       _.isEmpty(errors) ? deferred.resolve() : deferred.reject(errors);
     }).catch(function(error) {
@@ -1119,7 +1085,7 @@ function validateStepFour(params) {
     }).then(function(count) {
       let errors = {};
       if(count < 1) {
-        errors.participants = MESSAGES.errors.fourthStep.participants;
+        errors.participants = MessagesUtil.sessionBuilder.errors.fourthStep.participants;
       }
       _.isEmpty(errors) ? deferred.resolve() : deferred.reject(errors);
     }).catch(function(error) {

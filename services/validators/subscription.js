@@ -1,5 +1,6 @@
 'use strict';
 
+var MessagesUtil = require('./../../util/messages');
 var models = require('./../../models');
 var filters = require('./../../models/filters');
 var Subscription = models.Subscription;
@@ -7,16 +8,6 @@ var SubscriptionPreference = models.SubscriptionPreference;
 
 var q = require('q');
 var _ = require('lodash');
-
-const MESSAGES = {
-  planDoesntAllowToDoThis: 'Please update your subscription plan to one that includes this feature.',
-  notFound: 'No subscription found',
-  notValidDependency: 'Not valid dependency',
-  inactiveSubscription: 'Your subscription is expired, please update your subscription plan.',
-  count: function(type, maxCount) {
-    return `You have reached limit for ${_.startCase(type)}s (max: ${maxCount})`
-  }
-};
 
 const DEPENDENCIES = {
   session: {
@@ -50,7 +41,7 @@ const DEPENDENCIES = {
 };
 
 module.exports = {
-  messages: MESSAGES,
+  messages: MessagesUtil.validators.subscription,
   validate: validate,
   planAllowsToDoIt: planAllowsToDoIt,
   canAddAccountUsers: canAddAccountUsers
@@ -70,14 +61,14 @@ function validate(accountId, type, count) {
             deferred.resolve();
           }
           else {
-            deferred.reject(MESSAGES.count(type, maxCount));
+            deferred.reject(MessagesUtil.validators.subscription.count(type, maxCount));
           }
         }, function(error) {
           deferred.reject(filters.errors(error));
         });
       }
       else {
-        deferred.reject(MESSAGES.notValidDependency);
+        deferred.reject(MessagesUtil.validators.subscription.notValidDependency);
       }
     }
     else {
@@ -99,7 +90,7 @@ function planAllowsToDoIt(accountId, key) {
         deferred.resolve();
       }
       else {
-        deferred.reject(MESSAGES.planDoesntAllowToDoThis);
+        deferred.reject(MessagesUtil.validators.subscription.planDoesntAllowToDoThis);
       }
     }
     else {
@@ -129,7 +120,7 @@ function canAddAccountUsers(accountId) {
         }]
       }).then(function(count) {
         if(subscription.SubscriptionPreference.data.accountUserCount <= count) {
-          deferred.reject(MESSAGES.count('AccountUser', subscription.SubscriptionPreference.data.accountUserCount));
+          deferred.reject(MessagesUtil.validators.subscription.count('AccountUser', subscription.SubscriptionPreference.data.accountUserCount));
         }else{
           deferred.resolve();
         }
@@ -166,15 +157,15 @@ function validQuery(accountId) {
           deferred.resolve(account.Subscription);
         }
         else {
-          deferred.reject(MESSAGES.inactiveSubscription);
+          deferred.reject(MessagesUtil.validators.subscription.inactiveSubscription);
         }
       }
       else {
-        deferred.reject(MESSAGES.notFound);
+        deferred.reject(MessagesUtil.validators.subscription.notFound);
       }
     }
     else {
-      deferred.reject(MESSAGES.notFound);
+      deferred.reject(MessagesUtil.validators.subscription.notFound);
     }
   });
 

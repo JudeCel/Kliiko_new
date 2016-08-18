@@ -17,6 +17,7 @@ var async = require('async');
 var chargebee = require('./../lib/chargebee').instance;
 var planConstants = require('./../util/planConstants');
 var constants = require('../util/constants');
+var MessagesUtil = require('./../util/messages');
 
 const getAQuoteFieldsNeeded = [
   'firstName',
@@ -29,26 +30,8 @@ const getAQuoteFieldsNeeded = [
   'comments'
 ]
 
-const MESSAGES = {
-  notFound: {
-    subscription: 'No subscription found',
-    accountUser: 'No account user found',
-    subscriptionPlan: 'No plan found',
-    account: "No account found."
-  },
-  validation: {
-    session: "You have to many sessions",
-    survey: "You have to many surveys",
-    contactList: "You have to many contact lists",
-  },
-  alreadyExists: 'Subscription already exists',
-  cantSwitchPlan: "Can't switch to current plan",
-  successPlanUpdate: 'Plan was successfully updated.',
-  quoteSent: "Thanks, your email has been sent. We'll be in touch withing 24 hours."
-}
-
 module.exports = {
-  messages: MESSAGES,
+  messages: MessagesUtil.subscription,
   findSubscription: findSubscription,
   findSubscriptionByChargebeeId: findSubscriptionByChargebeeId,
   createPortalSession: createPortalSession,
@@ -69,19 +52,19 @@ function postQuote(params) {
 
   _.map(getAQuoteFieldsNeeded, function(field) {
     if(!params[field]) {
-      errors.push("Please provide: " + field);
+      errors.push(MessagesUtil.subscription.errorInField + field);
     }
   });
 
   if(!constants.emailRegExp.test(params.email)) {
-    errors.push("E-mail format is not valid.")
+    errors.push(MessagesUtil.subscription.emailFormat);
   }
 
   if(errors.length > 0) {
     deferred.reject(errors);
   }else{
     quotesMailer.sendQuote(params).then(function() {
-      deferred.resolve({message: MESSAGES.quoteSent});
+      deferred.resolve({message: MessagesUtil.subscription.quoteSent});
     }, function(error) {
       deferred.reject(error);
     });
@@ -225,7 +208,7 @@ function findSubscriptionByChargebeeId(subscriptionId) {
       deferred.resolve(subscription);
     }
     else {
-      deferred.reject(MESSAGES.notFound.subscription);
+      deferred.reject(MessagesUtil.subscription.notFound.subscription);
     }
   }).catch(function(error) {
     deferred.reject(error);
@@ -239,7 +222,7 @@ function createSubscription(accountId, userId, provider) {
 
   findSubscription(accountId).then(function(subscription) {
     if(subscription) {
-      deferred.reject(MESSAGES.alreadyExists);
+      deferred.reject(MessagesUtil.subscription.alreadyExists);
     }
     else {
       return AccountUser.find({ where: { AccountId: accountId, UserId: userId } });
@@ -249,7 +232,7 @@ function createSubscription(accountId, userId, provider) {
       return chargebeeSubCreate(chargebeeSubParams(accountUser), provider);
     }
     else {
-      deferred.reject(MESSAGES.notFound.accountUser);
+      deferred.reject(MessagesUtil.subscription.notFound.accountUser);
     }
   }).then(function(chargebeeSub) {
     return SubscriptionPlan.find({
@@ -269,7 +252,7 @@ function createSubscription(accountId, userId, provider) {
           });
         });
       }else{
-        deferred.reject(MESSAGES.notFound.subscriptionPlan);
+        deferred.reject(MessagesUtil.subscription.notFound.subscriptionPlan);
       }
     });
   }).then(function(subscription) {
@@ -288,7 +271,7 @@ function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
       id: accountId
     }
   }).then(function(account) {
-    if (!account) { return deferred.reject(MESSAGES.notFound.account)}
+    if (!account) { return deferred.reject(MessagesUtil.subscription.notFound.account)}
     createSubscription(accountId, userId).then(function(response) {
       if(account.selectedPlanOnRegistration && account.selectedPlanOnRegistration != "free_trial"){
         updateSubscription({
@@ -321,7 +304,7 @@ function createPortalSession(accountId, callbackUrl, provider) {
       return chargebeePortalCreate(chargebeePortalParams(subscription, callbackUrl), provider);
     }
     else {
-      deferred.reject(MESSAGES.notFound.subscription);
+      deferred.reject(MessagesUtil.subscription.notFound.subscription);
     }
   }).then(function(chargebeePortal) {
     deferred.resolve(chargebeePortal.access_url);
@@ -340,7 +323,7 @@ function gatherInformation(accountId, newPlanId) {
       return subscription;
     }
     else {
-      deferred.reject(MESSAGES.notFound.subscription);
+      deferred.reject(MessagesUtil.subscription.notFound.subscription);
     }
   }).then(function(subscription) {
     return SubscriptionPlan.find({
@@ -351,7 +334,7 @@ function gatherInformation(accountId, newPlanId) {
       if(plan){
         return {accountName: subscription.Account.name, subscription: subscription, currentPlan: subscription.SubscriptionPlan, newPlan: plan}
       }else{
-        deferred.reject(MESSAGES.notFound.subscriptionPlan);
+        deferred.reject(MessagesUtil.subscription.notFound.subscriptionPlan);
       }
     });
   }).then(function(result) {
@@ -424,7 +407,7 @@ function retrievCheckoutAndUpdateSub(hostedPageId) {
     }else{
       let passThruContent = JSON.parse(result.hosted_page.pass_thru_content)
       updateSubscriptionData(passThruContent).then(function(result) {
-        deferred.resolve({message: MESSAGES.successPlanUpdate});
+        deferred.resolve({message: MessagesUtil.subscription.successPlanUpdate});
       }, function(error) {
         deferred.reject(filters.errors(error));
       })
@@ -742,7 +725,7 @@ function canSwitchPlan(accountId, currentPlan, newPlan){
   }else{
     findSubscription(accountId).then(function(subscription) {
       if(subscription.active){
-        deferred.reject(MESSAGES.cantSwitchPlan);
+        deferred.reject(MessagesUtil.subscription.cantSwitchPlan);
       }else{
         deferred.resolve();
       }
@@ -772,7 +755,7 @@ function validateSessionCount(accountId, newPlan) {
       }
     }).then(function(c) {
       if(newPlan.sessionCount < c){
-        cb(null, {session: MESSAGES.validation.session});
+        cb(null, {session: MessagesUtil.subscription.validation.session});
       }else{
         cb(null, {});
       }
@@ -791,7 +774,7 @@ function validateSurveyCount(accountId, newPlan) {
     }).then(function(c) {
       errors = errors || {};
       if(newPlan.surveyCount < c){
-        errors.survey = MESSAGES.validation.survey;
+        errors.survey = MessagesUtil.subscription.validation.survey;
       }
 
       cb(null, errors);
@@ -812,7 +795,7 @@ function validateContactListCount(accountId, newPlan) {
       // TODO WTF!!!
       let defaultListCount = 4; // By default each user has 4 contact lists: Account Managers, Facilitators, Observers and Surveys
       if((defaultListCount + newPlan.contactListCount) < c){
-        errors.contactList = MESSAGES.validation.contactList;
+        errors.contactList = MessagesUtil.subscription.validation.contactList;
       }
 
       cb(null, errors);

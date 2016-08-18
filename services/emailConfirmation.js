@@ -1,4 +1,6 @@
-"use strict";
+'use strict';
+
+var MessagesUtil = require('./../util/messages');
 var usersService = require('./users');
 var async = require('async');
 var User = require('./../models').User;
@@ -12,7 +14,7 @@ function sendEmailConfirmationToken(email, callback) {
     },
     function (token, next) {
       if (!token) {
-        return next(new Error('Failed create token'));
+        return next(new Error(MessagesUtil.emailConfirmation.error.token));
       }
       let params = {
         token: token,
@@ -62,7 +64,7 @@ function setEmailConfirmationToken(email, callback) {
 
 function checkTokenExpired(token, callback) {
   getUserByToken(token, function (err, user) {
-    if (err || !user) { return callback(new Error('User not found')) };
+    if (err || !user) { return callback(new Error(MessagesUtil.emailConfirmation.error.user)) };
 
     let tokenCreated = new Date(user.get("confirmationToken"));
     let tokenEnd = tokenCreated.setHours(tokenCreated.getHours() + 24);

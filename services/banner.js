@@ -1,17 +1,11 @@
 'use strict';
 
+var MessagesUtil = require('./../util/messages');
 var models = require('./../models');
 var filters = require('./../models/filters');
 var Banner = models.Banner;
 
 var q = require('q');
-
-const MESSAGES = {
-  notFound: 'Banner not found',
-  exists: 'Banner already exists',
-  created: 'Banner created successfully',
-  updated: 'Banner updated successfully'
-};
 
 module.exports = {
   create: create,
@@ -25,11 +19,11 @@ function create(params) {
     where: { page: params.page }
   }).then(function(result) {
     if(result) {
-      deferred.reject(MESSAGES.exists);
+      deferred.reject(MessagesUtil.banner.exists);
     }
     else {
       Banner.create(params).then(function(banner) {
-        deferred.resolve(prepareParams(banner, MESSAGES.created));
+        deferred.resolve(prepareParams(banner, MessagesUtil.banner.created));
       }, function(error) {
         deferred.reject(filters.errors(error));
       });
@@ -49,13 +43,13 @@ function update(params) {
   }).then(function(result) {
     if(result) {
       result.update({ link: params.link }).then(function(banner) {
-        deferred.resolve(prepareParams(banner, MESSAGES.updated));
+        deferred.resolve(prepareParams(banner, MessagesUtil.banner.updated));
       }, function(error) {
         deferred.reject(filters.errors(error));
       });
     }
     else {
-      deferred.reject(MESSAGES.notFound);
+      deferred.reject(MessagesUtil.banner.notFound);
     }
   }, function(error) {
     deferred.reject(filters.errors(error));

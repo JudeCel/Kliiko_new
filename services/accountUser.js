@@ -1,5 +1,6 @@
 'use strict';
 
+var MessagesUtil = require('./../util/messages');
 var constants = require('./../util/constants');
 var models = require('./../models');
 var filters = require('./../models/filters');
@@ -150,7 +151,7 @@ function findWithSessionMembers(userId, accountId) {
       deferred.resolve(accountUser);
     }
     else {
-      deferred.reject({ message: 'AccountUser not found' });
+      deferred.reject({ message: MessagesUtil.accountUser.notFound });
     }
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
