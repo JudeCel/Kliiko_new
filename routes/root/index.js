@@ -85,7 +85,7 @@ router.get('/ping', function(req, res, next) {
 });
 
 router.get('/.well-known/acme-challenge/:id', function(req, res, next) {
-  res.send("9SRUDNjiSL1cSuQ2YaTdGtExcfrx6qYHMIlYGaCQ0oY");
+  res.send("u1k0RRUoGZw_MWzISIaMQC8ga6TRCDEjG4RNtTsQeLg.OSqph6KpmkAF_8iylHsAxTwTg6l841nm7r6cspPsEb8");
 });
 
 router.get('/', function (req, res, next) {
