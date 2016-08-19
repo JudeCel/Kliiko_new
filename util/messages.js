@@ -256,5 +256,17 @@ module.exports = {
     twilio: {
       allSmsSent: 'All sms have been sent'
     }
+  },
+  routes: {
+    user: {
+      updateContactDetails: 'Contact details updated successfully.'
+    },
+    sessionMember: {
+      addFacilitator: 'Facilitator was successfully set'
+    },
+    contactListUser: {
+      newUser: 'New contact was added sucessfully',
+      newFacilitator: 'New facilitator was added sucessfully',
+    }
   }
 };

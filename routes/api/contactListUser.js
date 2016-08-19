@@ -1,6 +1,8 @@
 'use strict';
+
 var contactListUserService = require('../../services/contactListUser');
 var validations = require('../helpers/validations');
+var MessagesUtil = require('./../../util/messages');
 
 module.exports = {
   create: create,
@@ -19,7 +21,7 @@ function create(req, res, next) {
   params.accountId = res.locals.currentDomain.id;
 
   contactListUserService.create(params).then(function(result) {
-    res.send(result);
+    res.send({ user: result, message: MessagesUtil.routes.contactListUser.newUser, facMessage: MessagesUtil.routes.contactListUser.newFacilitator });
   }, function(err) {
     res.send({ error: err });
   })

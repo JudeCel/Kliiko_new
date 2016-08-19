@@ -59,7 +59,6 @@ router.get('/myDashboard/data', myDashboard.getAllData);
 router.get('/user', userRoutes.userGet);
 router.post('/user', userRoutes.userPost);
 router.put('/user', userRoutes.changePassword);
-router.post('/user/canAccess', userRoutes.userCanAccessPost);
 router.get('/accountUser', accountUser.get);
 router.get('/account', account.get);
 router.get('/jwtToken', jwt.getToken);

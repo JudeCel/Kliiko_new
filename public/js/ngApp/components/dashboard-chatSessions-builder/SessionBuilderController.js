@@ -75,7 +75,6 @@
         if (step === 'next') handleNextStep();
         if (step === 'finish') {
           $state.go('dashboard.chatSessions');
-          messenger.ok('New session is created');
         }
       }
 
