@@ -256,6 +256,15 @@ module.exports = {
     }
   },
   routes: {
+    accountDatabase: {
+      success: 'Successfully updated account user'
+    },
+    accountManager: {
+      invite: 'Successfully sent invite.'
+    },
+    sessionBuilder: {
+      invite: 'Successfully invited contacts'
+    },
     user: {
       updateContactDetails: 'Contact details updated successfully.'
     },
