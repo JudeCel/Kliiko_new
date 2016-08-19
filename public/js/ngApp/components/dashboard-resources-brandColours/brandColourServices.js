@@ -17,7 +17,6 @@
     upServices.createScheme = createScheme;
     upServices.removeScheme = removeScheme;
     upServices.copyScheme = copyScheme;
-    upServices.prepareError = prepareError;
     upServices.canCreateCustomColors = canCreateCustomColors;
     return upServices;
 
@@ -91,20 +90,6 @@
       });
 
       return deferred.promise;
-    };
-
-    function prepareError(errors) {
-      if(typeof errors == 'string') {
-        return errors;
-      }
-      else {
-        var string = '';
-        for(var i in errors) {
-          var error = errors[i];
-          string += (error + '<br>');
-        }
-        return string;
-      }
     };
   };
 })();

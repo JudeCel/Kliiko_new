@@ -38,6 +38,7 @@
     .factory('myInterceptor', myInterceptor)
     .config(appConfigs)
     .config(phoneNumbersConfig)
+    .constant('messagesUtil', messagesUtilObject())
     .run(appRun)
     .controller('AppController', AppController);
 
@@ -46,6 +47,7 @@
     .factory('myInterceptor', myInterceptor)
     .config(appConfigs)
     .config(phoneNumbersConfig)
+    .constant('messagesUtil', messagesUtilObject())
     .run(appRun)
     .controller('AppController', AppController);
 
@@ -187,6 +189,34 @@
           landlineNumberIsoCode = res.landlineNumberCountryData.iso2;
         }
         sessionStorage.setItem('landlineNumberCountryData',  landlineNumberIsoCode);
+      }
+    }
+  }
+
+  function messagesUtilObject() {
+    return {
+      sessionBuilder: {
+        noContacts: 'There are no contacts selected',
+        cantSelect: "You can't select members from this list",
+        noMobile: ' has no mobile provided'
+      },
+      gallery: {
+        noResource: 'No resource selected',
+        cantLoad: "Can't load resources"
+      },
+      contactList: {
+        listNameBlank: "Contact list name can't be empty",
+        noUsersRemoved: 'No users was removed',
+        import: {
+          failed: 'Import Failed. Check error(s)',
+          corrupted: 'This file media type is not recognized or it is corrupted. Please, choose another file.'
+          remapFailed: 'Field Re-Map failed',
+          addCustomField: 'Please add name for your custom field.',
+          tooManyCustomFields: "Too many custom fields, allowed: "
+        }
+      },
+      upgradePlan: {
+        orderCancelled: 'Order was cancelled'
       }
     }
   }

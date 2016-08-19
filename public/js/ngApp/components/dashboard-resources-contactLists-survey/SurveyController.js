@@ -105,7 +105,7 @@
           dbg.log2('#SurveyController > removeSurvey > res ', res);
 
           if(res.error) {
-            messenger.error(surveyServices.prepareError(res.error));
+            messenger.error(res.error);
           }
           else {
             messenger.ok(res.message);
@@ -121,7 +121,7 @@
         dbg.log2('#SurveyController > changeStatus > res ', res);
 
         if(res.error) {
-          messenger.error(surveyServices.prepareError(res.error));
+          messenger.error(res.error);
         }
         else {
           survey.closed = !survey.closed;
@@ -190,7 +190,7 @@
         dbg.log2('#SurveyController > finishCreate > res ', res);
 
         if(res.error) {
-          messenger.error(surveyServices.prepareError(res.error));
+          messenger.error(res.error);
         }
         else {
           changePage('index');
@@ -204,7 +204,7 @@
         dbg.log2('#SurveyController > finishEdit > res ', res);
 
         if(res.error) {
-          messenger.error(surveyServices.prepareError(res.error));
+          messenger.error(res.error);
         }
         else {
           changePage('index');
@@ -218,7 +218,7 @@
         dbg.log2('#SurveyController > copySurvey > res ', res);
 
         if(res.error) {
-          messenger.error(surveyServices.prepareError(res.error));
+          messenger.error(res.error);
         }
         else {
           vm.surveys.push(res.data);
@@ -233,7 +233,7 @@
         dbg.log2('#SurveyController > confirmSurvey > res ', res);
 
         if(res.error) {
-          messenger.error(surveyServices.prepareError(res.error));
+          messenger.error(res.error);
         }
         else {
           survey.confirmedAt = date;

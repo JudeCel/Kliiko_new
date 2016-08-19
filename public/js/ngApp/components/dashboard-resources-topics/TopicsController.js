@@ -36,7 +36,7 @@
         },
         function(err) {
           dbg.error('#TopicsController > getAllTopics > error:', err);
-          messenger.error('There is an error while fetching data!');
+          messenger.error(err);
         }
       )
     }
@@ -51,8 +51,6 @@
       }else if(vm.modalAction = "new") {
         vm.topicData = {};
         setCreateData()
-      }else{
-        messenger.error('Something went wrong, please try later.')
       }
 
       $('#topicModalWindow').on('shown.bs.modal', function (e) {
@@ -75,9 +73,6 @@
         editTopic();
       }else if(vm.modalAction = "new") {
         createTopic();
-      }else{
-        messenger.error('Something went wrong, please try later.')
-        domServices.modal('topicModalWindow', 'close');
       }
     }
 

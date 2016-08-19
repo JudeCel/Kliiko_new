@@ -2,8 +2,8 @@
   'use strict';
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout'];
-  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, ngDraggable, $timeout) {
+  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout', 'messagesUtil'];
+  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, ngDraggable, $timeout, messagesUtil) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
@@ -190,7 +190,7 @@
 
       if (!vm.newList.name) {
         dbg.log2('#ContactListController > submitNewList > error > list name is empty');
-        messenger.error('List Name can not be blank');
+        messenger.error(messagesUtil.contactList.listNameBlank);
         return;
       }
 
@@ -207,7 +207,7 @@
           prepareCustomFields();
         },
         function(err) {
-          messenger.error('Could not create new list: '+ err);
+          messenger.error(err);
           dbg.error('#ContactListController > submitNewList > error: ', err);
         }
       )
@@ -219,7 +219,7 @@
       vm.newList.name = vm.name;
       if (!vm.newList.name) {
         dbg.log2('#ContactListController > updateList > error > list name is empty');
-        messenger.error('List Name can not be blank');
+        messenger.error(messagesUtil.contactList.listNameBlank);
         return;
       }
 
@@ -235,7 +235,7 @@
           vm.newList = {};
         },
         function (err) {
-          messenger.error('Could not update new list: '+ err);
+          messenger.error(err);
           dbg.error('#ContactListController > updateList > error: ', err);
         }
       );
@@ -272,7 +272,7 @@
 
         },
         function (err) {
-          messenger.error('There is an error while removing the list');
+          messenger.error(err);
           dbg.error('#ContactListController > removeList > error: ', err);
         }
       );
@@ -437,7 +437,7 @@
         function(res) {
 
           if (!res.total) {
-            messenger.error('No users was removed');
+            messenger.error(messagesUtil.contactList.noUsersRemoved);
             return
           }
 
@@ -495,8 +495,8 @@
         domServices.modal('modals-import-preview');
         processImportData(res);
       }, function(err) {
-        messenger.error('Import Failed');
-        vm.importErrorMessage = 'This file media type is not recognized or it is corrupted. Please, choose another file.'
+        messenger.error(messagesUtil.contactList.import.failed);
+        vm.importErrorMessage = messagesUtil.contactList.import.corrupted;
       });
     }
 
@@ -608,7 +608,7 @@
       vm.lists.validateContactImportData(arrayToTest).then(function(res) {
         vm.lists.generateImportPreview(res.result);
       }, function(err) {
-        messenger.error('Field Re-Map failed');
+        messenger.error(messagesUtil.contactList.import.remapFailed);
       });
 
       domServices.modal('contactList-addNewListFieldsModal', 'close');
@@ -626,7 +626,7 @@
       newList.name = vm.name;
       if (!newList.name) {
         dbg.log2('#ContactListController > updateList > error > list name is empty');
-        messenger.error('List Name can not be blank');
+        messenger.error(messagesUtil.contactList.listNameBlank);
         return;
       }
 
@@ -657,7 +657,7 @@
           vm.contactListDropItems.customFields = newFields;
         },
         function (err) {
-          messenger.error('Could not update new list: '+ err);
+          messenger.error(err);
           dbg.error('#ContactListController > updateList > error: ', err);
         }
       );
@@ -695,10 +695,10 @@
           vm.additionalMappingFieldname = "";
           updateActiveCustomList(newList, parsedList);
         }else{
-          messenger.error("Please add name for your custom field.");
+          messenger.error(messagesUtil.contactList.addCustomFieldName);
         }
       }else{
-        messenger.error("Too many custom fields, allowed: " + vm.lists.activeList.maxCustomFields);
+        messenger.error(messagesUtil.contactList.tooManyCustomFields + vm.lists.activeList.maxCustomFields);
       }
     };
 
@@ -722,7 +722,7 @@
         },
         function(err) {
 
-          messenger.error('Import Failed. Check error(s)');
+          messenger.error(messagesUtil.contactList.import.failed);
           for (var key in err) {
             for (var i = 0, len = vm.lists.importPreviewArray.length; i < len ; i++) {
               if (vm.lists.importPreviewArray[i].rowNr == key) {
