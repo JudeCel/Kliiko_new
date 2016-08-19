@@ -61,7 +61,7 @@ function validate(accountId, type, count) {
             deferred.resolve();
           }
           else {
-            deferred.reject(MessagesUtil.validators.subscription.count(type, maxCount));
+            deferred.reject(countMessage(type, maxCount));
           }
         }, function(error) {
           deferred.reject(filters.errors(error));
@@ -120,7 +120,7 @@ function canAddAccountUsers(accountId) {
         }]
       }).then(function(count) {
         if(subscription.SubscriptionPreference.data.accountUserCount <= count) {
-          deferred.reject(MessagesUtil.validators.subscription.count('AccountUser', subscription.SubscriptionPreference.data.accountUserCount));
+          deferred.reject(countMessage("AccountUser", subscription.SubscriptionPreference.data.accountUserCount));
         }else{
           deferred.resolve();
         }
@@ -170,4 +170,11 @@ function validQuery(accountId) {
   });
 
   return deferred.promise;
+}
+
+function countMessage(type, maxCount) {
+  let message = MessagesUtil.validators.subscription.countLimit;
+  message = message.replace('XXX', _.startCase(type));
+  message = message.replace('YYY', maxCount);
+  return message;
 }

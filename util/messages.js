@@ -204,9 +204,7 @@ module.exports = {
       notFound: 'No subscription found',
       notValidDependency: 'Not valid dependency',
       inactiveSubscription: 'Your subscription is expired, please update your subscription plan.',
-      count: function(type, maxCount) {
-        return `You have reached limit for ${_.startCase(type)}s (max: ${maxCount})`
-      }
+      countLimit: 'You have reached limit for XXXs (max: YYY)'
     }
   },
   models: {
