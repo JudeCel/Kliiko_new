@@ -40,17 +40,17 @@ spec:
         - name: REDIS_HOST
           value: "redis-master"
         - name: SERVER_CHAT_DOMAIN_URL
-          value: "https://chat.klzii.chat"
+          value: "http://chat.klzii.chat"
         - name: SERVER_CHAT_DOMAIN_PORT
-          value: "443"
+          value: "80"
         - name: FACEBOOK_CALLBACK_URL
-          value: "https://www.klzii.chat/auth/facebook/callback"
+          value: "http://www.klzii.chat/auth/facebook/callback"
         - name: FACEBOOK_CLIENT_ID
           value: "1740610496152274"
         - name: FACEBOOK_CLIENT_SECRET
           value: "7d0f78d9fdd0052c20cdf5c2aeda7b33"
         - name: GOOGLE_CALLBACK_URL
-          value: "https://www.klzii.chat/auth/google/callback"
+          value: "http://www.klzii.chat/auth/google/callback"
         - name: GOOGLE_CLIENT_ID
           value: "570903251504-hvev7sqcqqvl977djc1kqv722sqgidp3.apps.googleusercontent.com"
         - name: GOOGLE_CLIENT_SECRET
