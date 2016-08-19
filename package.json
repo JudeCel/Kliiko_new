@@ -4,7 +4,7 @@
   "description": "chargebee",
   "private": true,
   "scripts": {
-    "start": "./node_modules/.bin/nodemon ./bin/www",
+    "start": "./node_modules/.bin/nodemon -L ./bin/www",
     "test": "./node_modules/.bin/mocha test",
     "gulp": "./node_modules/.bin/gulp",
     "reset": "node ./lib/tasks/dbReset && node ./seeders/users && node ./seeders/chatSession && node ./seeders/mailTemplates",
