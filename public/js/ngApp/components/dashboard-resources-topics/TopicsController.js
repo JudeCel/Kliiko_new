@@ -84,7 +84,7 @@
     function editTopic() {
       topicsAndSessions.updateTopic(vm.topicData).then(function(res) {
         vm.list[vm.editTopicIndex] = vm.topicData;
-        messenger.ok('Topic has been updated.');
+        messenger.ok(res.message);
         domServices.modal('topicModalWindow', 'close');
         vm.topicData = {};
       }, function(error) {
@@ -95,7 +95,7 @@
     function createTopic() {
       topicsAndSessions.createNewTopic(vm.topicData).then(function(res) {
         vm.list.push(res.data);
-        messenger.ok('New topic has been added');
+        messenger.ok(res.message);
         domServices.modal('topicModalWindow', 'close');
         vm.topicData = {};
       }, function(error) {
@@ -130,7 +130,7 @@
         vm.editBlockHelper = null;
 
         dbg.log('#TopicsController > deleteTopic > topic has been removed');
-        messenger.ok('Topic has been removed');
+        messenger.ok(res.message);
 
       }
 

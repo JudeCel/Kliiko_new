@@ -156,10 +156,11 @@
 
       contactListServices.submitNewList(newListItemObj).then(
         function (res) {
-          var newList = new ListItemModel(res);
+          var newList = new ListItemModel(res.list);
           self.items.push( newList );
           self.changeActiveList(self.items.length - 1, true);
-          deferred.resolve(newList);
+          res.list = newList;
+          deferred.resolve(res);
         },
         function (err) {
           deferred.reject(err);
@@ -200,7 +201,7 @@
           // update list with the current item
           self.items[currentIndex] = self.activeList;
 
-          deferred.resolve();
+          deferred.resolve(res);
 
         },
         function (err) {
@@ -251,7 +252,8 @@
           }
 
           self.items.splice(index,1);
-          deferred.resolve(item);
+          res.list = item;
+          deferred.resolve(res);
         },
         function (err) {
           deferred.reject(err);

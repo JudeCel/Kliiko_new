@@ -81,7 +81,7 @@ function update(req, res, next) {
   params.id = req.params.id;
 
   contactListUserService.update(params).then(function(result) {
-    res.send({success: true, data: result});
+    res.send({success: true, data: result, message: MessagesUtil.routes.contactListUser.updated });
   }, function(err) {
     res.send({ error: err });
   })

@@ -1,6 +1,7 @@
 'use strict';
 var contactListService = require('../../services/contactList');
 var contactListUserService = require('../../services/contactListUser');
+var MessagesUtil = require('./../../util/messages');
 var _ = require('lodash');
 var validations = require('../helpers/validations');
 var fs = require('fs');
@@ -44,7 +45,7 @@ function create(req, res, next) {
   params.accountId = res.locals.currentDomain.id;
 
   contactListService.create(params).then(function(result) {
-    res.send(result);
+    res.send({ list: result, message: MessagesUtil.routes.contactList.created });
   }, function(error) {
     res.send({ error: error });
   })
@@ -64,7 +65,7 @@ function update(req, res, next) {
   params.accountId = res.locals.currentDomain.id;
 
   contactListService.update(params).then(function(result) {
-    res.send({success: true, itemsUpdatedAmount:result});
+    res.send({success: true, itemsUpdatedAmount:result, message: MessagesUtil.routes.contactList.updated });
   }, function(err) {
     res.send({ error: err });
   })
@@ -81,7 +82,7 @@ function destroy(req, res, next) {
 
   let accountId = res.locals.currentDomain.id;
   contactListService.destroy(req.params.id, accountId).then(function(lists) {
-    res.send({success: true, lists: lists});
+    res.send({success: true, lists: lists, message: MessagesUtil.routes.contactList.removed});
   },function(err) {
     res.send({ error: err });
   });
@@ -121,7 +122,7 @@ function importContacts(req, res, next) {
 
   contactListUserService.bulkCreate(req.body.contactsArray, accountId).then(
     function(result) {
-      res.send({success: true, data:result});
+      res.send({success: true, data:result, message: MessagesUtil.routes.contactList.imported });
     },
     function (err) {
       if (err.name && err.name === 'SequelizeUniqueConstraintError') {

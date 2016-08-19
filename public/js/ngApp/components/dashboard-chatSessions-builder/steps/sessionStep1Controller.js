@@ -92,11 +92,11 @@
         contactListId: vm.facilitatorContactListId
       }
 
-      step1Service.updateContact(params).then(function (result) {
-        result.data.listName = vm.editedContactListName;
-        angular.copy(result.data, vm.allContacts[vm.editedContactIndex])
+      step1Service.updateContact(params).then(function(res) {
+        res.data.listName = vm.editedContactListName;
+        angular.copy(res.data, vm.allContacts[vm.editedContactIndex])
         vm.userData = {};
-        messenger.ok('Contact '+ result.data.firstName + ' has been updated');
+        messenger.ok(res.message);
         closeFacilitatorForm();
       }, function (error) {
         messenger.error(error);

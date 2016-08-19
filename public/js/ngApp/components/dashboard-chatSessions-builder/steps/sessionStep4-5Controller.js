@@ -248,9 +248,9 @@
     function updateContact() {
       var params = {defaultFields: vm.contactData};
 
-      step1Service.updateContact(params).then(function (result) {
-        angular.copy(mapCorrectData(result.data), vm.stepMembers[vm.editContactIndex]);
-        messenger.ok('Contact '+ result.data.firstName + ' has been updated');
+      step1Service.updateContact(params).then(function(res) {
+        angular.copy(mapCorrectData(res.data), vm.stepMembers[vm.editContactIndex]);
+        messenger.ok(res.message);
         closeEditContactForm();
       }, function (error) {
         messenger.error(error);

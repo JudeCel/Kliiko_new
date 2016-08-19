@@ -232,7 +232,7 @@ module.exports = {
       uniqueAccountName: 'Name has already been taken',
       empty: " can't be empty",
       format: ' has invalid format',
-      empty: ' has already been taken',
+      unique: ' has already been taken',
     }
   },
   middleware: {
@@ -264,9 +264,24 @@ module.exports = {
     sessionMember: {
       addFacilitator: 'Facilitator was successfully set'
     },
+    contactList: {
+      created: 'Successfully created contact list',
+      updated: 'Successfully updated contact list',
+      removed: 'Successfully removed contact list'
+    },
     contactListUser: {
       newUser: 'New contact was added sucessfully',
       newFacilitator: 'New facilitator was added sucessfully',
+      updated: 'Contact has been updated sucessfully',
+      imported: 'Contacts has been updated sucessfully'
+    },
+    mailTemplates: {
+      saved: 'Template was successfully saved.'
+    },
+    topic: {
+      created: 'Topic created successfully',
+      updated: 'Topic updated successfully',
+      removed: 'Topic removed successfully',
     }
   }
 };

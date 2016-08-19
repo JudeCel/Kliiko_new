@@ -200,7 +200,7 @@
           vm.newList = {};
 
           domServices.modal('contactList-addNewListModal', 'close');
-          messenger.ok('New List "'+ res.name + '" added');
+          messenger.ok(res.message);
 
           vm.changeActiveList(vm.lists.items.length -1);
           vm.newList.name = "";
@@ -230,7 +230,7 @@
       vm.lists.updateActiveItem(parsedList).then(
         function (res) {
           domServices.modal('contactList-addNewListModal', 'close');
-          messenger.ok('List "'+ vm.name + '" updated');
+          messenger.ok(res.message);
 
           vm.newList = {};
         },
@@ -265,7 +265,7 @@
       vm.lists.delete(listItem, index).then(
         function (res) {
           dbg.log('#ContactListController > removeList > success: List "'+ listItem.name + '" removed');
-          messenger.ok('List "'+ listItem.name +'" successfully removed');
+          messenger.ok(res.message);
 
           var newIndex = vm.lists.activeListIndex - 1;
           vm.lists.changeActiveList(newIndex)
@@ -398,7 +398,7 @@
         if(!vm.canAddNew) {
           domServices.modal('contactList-addContactManual', 'close');
         }
-        messenger.ok('New contact '+ newContact.firstName + ' was added to list '+ currentList.name);
+        messenger.ok(res.message);
       }, function (err) {
         if(err.subEnded){
           messenger.error(err);
@@ -415,7 +415,7 @@
       vm.lists.updateContact(vm.newContact).then(function(res) {
         vm.newContact = {customFields:{}};
         domServices.modal('contactList-addContactManual', 'close');
-        messenger.ok('Contact '+ newContact.firstName + ' has been updated');
+        messenger.ok(res.message);
       },
       function (err) {
         messenger.error(err);
@@ -648,7 +648,7 @@
     function updateActiveCustomList(newList, parsedList) {
       vm.lists.updateActiveItem(parsedList).then(
         function (res) {
-          messenger.ok('List "'+ newList.name + '" updated');
+          messenger.ok(res.message);
           var oldFields = vm.contactListDropItems.customFields;
 
           prepareCustomFields();
@@ -718,7 +718,7 @@
       vm.lists.addImportedContacts().then(
         function(res) {
           domServices.modal('modals-import-preview', 'close');
-          messenger.ok(res.data.length + ' new contacts has been imported to list '+ vm.lists.activeList.name);
+          messenger.ok(res.message);
         },
         function(err) {
 
