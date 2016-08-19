@@ -209,7 +209,7 @@
         noUsersRemoved: 'No users was removed',
         import: {
           failed: 'Import Failed. Check error(s)',
-          corrupted: 'This file media type is not recognized or it is corrupted. Please, choose another file.'
+          corrupted: 'This file media type is not recognized or it is corrupted. Please, choose another file.',
           remapFailed: 'Field Re-Map failed',
           addCustomField: 'Please add name for your custom field.',
           tooManyCustomFields: "Too many custom fields, allowed: "
