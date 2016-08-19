@@ -6,7 +6,7 @@
  require('dotenv-extended').load({
      errorOnMissing: true
  });
-const cluster = require('cluster');
+// const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 var express = require('express');
 var app = require('../app');
@@ -42,17 +42,17 @@ switch (environment) {
 /**
  * Create HTTP server.
  */
- if (cluster.isMaster && app.get('env') != "development") {
-   console.log(`Cluster count: ${numCPUs}`);
-  // Fork workers.
-  for (var i = 0; i < numCPUs; i++) {
-    cluster.fork();
-  }
-
-  cluster.on('exit', (worker, code, signal) => {
-    console.log(`worker ${worker.process.pid} died`);
-  });
-} else {
+ // if (cluster.isMaster && app.get('env') != "development") {
+ //   console.log(`Cluster count: ${numCPUs}`);
+ //  // Fork workers.
+ //  for (var i = 0; i < numCPUs; i++) {
+ //    cluster.fork();
+ //  }
+ //
+ //  cluster.on('exit', (worker, code, signal) => {
+ //    console.log(`worker ${worker.process.pid} died`);
+ //  });
+// } else {
   // Workers can share any TCP connection
   // In this case it is an HTTP server
   var server = http.createServer(app);
@@ -64,7 +64,7 @@ switch (environment) {
     server.on('error', onError);
     server.on('listening', onListening);
   });
-}
+// }
 
  // server.maxConnections = 20;
 
