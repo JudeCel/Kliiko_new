@@ -33,6 +33,7 @@
           uib-datepicker-popup='{{step1Controller.format}}'
           ng-model='step1Controller.step1.startTime'
           ng-change="step1Controller.updateStep('startTime')"
+          ng-click='step1Controller.startOpened = true'
           is-open='step1Controller.startOpened'
           datepicker-options='step1Controller.dateOption'
           close-text='X'
@@ -57,6 +58,7 @@
           uib-datepicker-popup='{{step1Controller.format}}'
           ng-model='step1Controller.step1.endTime'
           ng-change="step1Controller.updateStep('endTime')"
+          ng-click='step1Controller.endOpened = true'
           is-open='step1Controller.endOpened'
           datepicker-options='step1Controller.dateOption'
           close-text='X'
