@@ -11,8 +11,9 @@ var passport = require('./middleware/passport');
 var subdomain = require('./middleware/subdomain');
 var currentUser = require('./middleware/currentUser');
 var sessionMiddleware = require('./middleware/session');
-var flash = require('connect-flash');
+
 var app = express();
+var flash = require('connect-flash');
 var fs = require('fs');
 var airbrake = require('./lib/airbrake').instance;
 app.use(airbrake.expressHandler());
@@ -20,10 +21,10 @@ app.use(airbrake.expressHandler());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.set('view options', { layout: 'layout.ejs' });
+app.use(logger('combined'));
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('combined'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));

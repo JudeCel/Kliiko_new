@@ -66,6 +66,17 @@ switch (environment) {
   });
 // }
 
+process.on('uncaughtException', function (err) {
+  console.log('Caught exception ++++++++++++++++++++++++++');
+  console.log('Caught exception: ' + err);
+  console.log('Caught exception ++++++++++++++++++++++++++');
+});
+process.on('error', function (err) {
+  console.log('Caught error ++++++++++++++++++++++++++');
+  console.log('Caught error: ' + err);
+  console.log('Caught error ++++++++++++++++++++++++++');
+});
+
  // server.maxConnections = 20;
 
 /**
