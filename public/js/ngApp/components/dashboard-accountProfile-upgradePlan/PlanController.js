@@ -199,7 +199,7 @@
           vm.monthlyPlan = subPlan;
         }
 
-        if(subPlan.plan.period_unit == "year" && subPlan.plan.name.includes(vm.selectedPlan.plan.name)) {
+        if(subPlan.plan.period_unit == "year" && subPlan.plan.name.indexOf(vm.selectedPlan.plan.name) != -1) {
           vm.yearlyPlan = subPlan;
         }
       });
