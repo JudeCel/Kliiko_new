@@ -344,7 +344,7 @@ function acceptInviteNew(token, params, callback) {
       }
       else {
         invite.update({ status: 'confirmed' }).then(function() {
-          callback(null, invite, user.email, MESSAGES.confirmed);
+          callback(null, invite, user, MESSAGES.confirmed);
         }).catch(function(error) {
           callback(filters.errors(error));
         });
