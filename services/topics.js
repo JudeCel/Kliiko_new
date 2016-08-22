@@ -73,28 +73,18 @@ function updateSessionTopics(sessionId, topicsArray) {
   let ids = _.map(topicsArray, 'id');
   let returning = [];
   joinToSession(ids, sessionId, topicsArray).then(function(sessionTopics) {
-
     _.map(sessionTopics, function(sessionTopic) {
       _.map(topicsArray, function(topic) {
         if(topic.id == sessionTopic.topicId) {
-          sessionTopic.order = topic.order;
-          sessionTopic.active = topic.active;
-
-          if(!sessionTopic.name) {
-            sessionTopic.name = topic.name;
+          let params = {
+            order: topic.sessionTopic.order,
+            active: topic.sessionTopic.active,
+            landing: topic.sessionTopic.landing,
+            name: topic.sessionTopic.name,
+            boardMessage: topic.sessionTopic.boardMessage,
           }
 
-          if(!sessionTopic.boardMessage) {
-            sessionTopic.boardMessage = "Say something nice if you wish!";
-          }
-
-          sessionTopic.update({
-            order: sessionTopic.order,
-            active: sessionTopic.active,
-            name: sessionTopic.name,
-            boardMessage: sessionTopic.boardMessage
-          });
-
+          sessionTopic.update(params);
           topic.SessionTopics = [sessionTopic];
           returning.push(topic);
         }

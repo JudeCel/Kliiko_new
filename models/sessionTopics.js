@@ -5,9 +5,11 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     topicId: { type: DataTypes.INTEGER, allowNull: false },
     sessionId: { type: DataTypes.INTEGER, allowNull: false },
-    order: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-    boardMessage: { type: DataTypes.STRING, allowNull: true, validate: { notEmpty: true } },
-    name: { type: DataTypes.STRING, allowNull: true }
+    order: { type: DataTypes.INTEGER, allowNull: true, defaultValue: 0 },
+    active: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: true },
+    landing: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
+    boardMessage: { type: DataTypes.STRING, allowNull: true, defaultValue: 'Say something nice if you wish!', validate: { notEmpty: true } },
+    name: { type: DataTypes.STRING, allowNull: true, validate: { notEmpty: true } }
   }, {
     timestamps: true,
     classMethods: {
