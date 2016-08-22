@@ -6,8 +6,7 @@
  require('dotenv-extended').load({
      errorOnMissing: true
  });
-// const cluster = require('cluster');
-const numCPUs = require('os').cpus().length;
+
 var express = require('express');
 var app = require('../app');
 var debug = require('debug')('kliiko:server');
@@ -65,17 +64,6 @@ switch (environment) {
     server.on('listening', onListening);
   });
 // }
-
-process.on('uncaughtException', function (err) {
-  console.log('Caught exception ++++++++++++++++++++++++++');
-  console.log('Caught exception: ' + err);
-  console.log('Caught exception ++++++++++++++++++++++++++');
-});
-process.on('error', function (err) {
-  console.log('Caught error ++++++++++++++++++++++++++');
-  console.log('Caught error: ' + err);
-  console.log('Caught error ++++++++++++++++++++++++++');
-});
 
  // server.maxConnections = 20;
 

@@ -21,7 +21,6 @@ app.use(airbrake.expressHandler());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.set('view options', { layout: 'layout.ejs' });
-app.use(logger('combined'));
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -49,6 +48,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(subdomain);
 app.use(flash());
+app.use(logger('dev'));
 
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
