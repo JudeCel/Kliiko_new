@@ -14,7 +14,10 @@
 
     vm.list = [];
 
-    vm.nameMaxSize = 15;
+    vm.validations = {
+      name: 15,
+      board: 150
+    };
     vm.newTopicName = null;
     vm.editBlockHelper = null;
     vm.modalAction = '';
@@ -52,10 +55,6 @@
         vm.topicData = {};
         setCreateData()
       }
-
-      $('#topicModalWindow').on('shown.bs.modal', function (e) {
-        $("input#new-topic-input").focus();
-      });
     };
 
     function setEditData() {

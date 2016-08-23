@@ -6,7 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
   var Topic = Sequelize.define('Topic', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
-    boardMessage: { type: DataTypes.STRING, allowNull: true, defaultValue: 'Say something nice if you wish!', validate: { notEmpty: true } },
+    boardMessage: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     name: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true, isUnique: validations.unique(Sequelize, 'Topic', 'name', { accountContext: true }) } },
   }, {
     timestamps: true,
