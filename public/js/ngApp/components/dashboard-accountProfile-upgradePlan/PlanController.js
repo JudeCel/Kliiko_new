@@ -24,6 +24,11 @@
     vm.monthlyPlans = [];
     vm.annualPlans = [];
 
+    vm.pricePerEnding = {
+      monthly: 'mth',
+      annual: 'year'
+    }
+
     vm.planOptions = [
       'Number of Active Sessions',
       'Number of Contact Lists',
