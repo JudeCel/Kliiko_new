@@ -33,14 +33,10 @@
           <uib-accordion close-others="false">
             <uib-accordion-group is-open="up.modContentBlock.recruiter" heading="true">
               <uib-accordion-heading>
-                <div class="panel-label">
-                  <span ng-if="topics.editBlockHelper != $index">
-                    {{t.name}}
-                  </span>
-                  <span ng-if="topics.editBlockHelper == $index">
-                    <input id="topic-name-input-{{ $index }}" type="text" ng-model="t.name" maxlength="{{ ::topics.nameMaxSize}}" ng-blur="topics.saveInline($index, t.name)">
-                    <span class="inline-editor-help">Characters left: {{ topics.nameMaxSize - t.name.length }}</span>
-                  </span>
+                <div class='row topic-title'>
+                  {{ t.name }}
+                  <img class="pull-right ic" ng-click="topics.deleteTopic(t.id)" src="/icons/dashboardElement_remove.png" alt="" title="Delete">
+                  <img class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" ng-click="topics.openModal('edit', t);">
                 </div>
               </uib-accordion-heading>
 
@@ -71,10 +67,6 @@
               </div>
             </uib-accordion-group>
           </uib-accordion>
-          <div class="control-block">
-            <img class="pull-right ic" ng-click="topics.deleteTopic(t.id)" src="/icons/dashboardElement_remove.png" alt="" title="Delete">
-            <img class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" ng-click="topics.openModal('edit', t)">
-          </div>
         </div>
       </div>
     </div>

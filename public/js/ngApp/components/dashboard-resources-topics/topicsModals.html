@@ -6,17 +6,19 @@
       </div>
       <div class='modal-body'>
         <form ng-submit="topics.validateNewAndAdd()">
-          <div class="row">
-            <div class="text-center">
-              <input id="new-topic-input"  type="text" maxlength="15" ng-model="topics.topicData.name">
-              <br>
-              <div id="new-topic-input-help"  >
-                Characters left: {{ topics.nameMaxSize - topics.topicData.name.length }}
-              </div>
-            </div>
+          <div class='form-group'>
+            <label for='topicName'>Name</label>
+            <input type='text' class='form-control' id='topicName' placeholder='Name' ng-maxlength='topics.validations.name' required ng-model='topics.topicData.name'>
+            <span class='help-block'>Characters left: {{ topics.validations.name - topics.topicData.name.length }}</span>
+          </div>
+          <div class='form-group'>
+            <label for='topicBoard'>Facilitator Board</label>
+            <textarea rows='3' class='form-control' id='topicBoard' placeholder='Facilitator Board' ng-maxlength='topics.validations.board' required ng-model='topics.topicData.boardMessage' />
+            <span class='help-block'>Characters left: {{ topics.validations.boardMessage - topics.topicData.boardMessage.length }}</span>
           </div>
         </form>
       </div>
+
       <div class='modal-footer'>
         <div type='button' class='pull-left btn-standart btn-red btn-small text-center' data-dismiss='modal'>
           Cancel
