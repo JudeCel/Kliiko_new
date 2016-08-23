@@ -524,6 +524,8 @@ function prepareMailParams(session, receiver, facilitator) {
     unsubscribeMailUrl: 'not-found',
     startTime: session.startTime,
     startDate: session.startDate,
+    orginalStartTime: session.startTime,
+    orginalEndTime: session.endTime,
     confirmationCheckInUrl: 'not-found',
     participantMail: receiver.email,
     incentive: session.incentive

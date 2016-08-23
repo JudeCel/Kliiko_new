@@ -46,6 +46,8 @@ function sendFirstInvitation(params, callback) {
       sessionName: params.sessionName,
       startTime: params.startTime,
       endTime: params.endTime,
+      orginalStartTime: params.startTime,
+      orginalEndTime: params.endTime,
       startDate: params.startDate,
       endDate: params.endDate,
       incentive: params.incentive,
@@ -238,7 +240,7 @@ function sendObserverInvitation(params, callback) {
     if (mailContent.error) {
       return callback(mailContent.error);
     }
-    mailTemplate.sendMailFromTemplateWithCalendarEvent(mailContent, params, callback);
+    mailTemplate.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
   });
 };
 
