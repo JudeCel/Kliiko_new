@@ -191,6 +191,8 @@ function sendInvite(invite, deferred) {
         accountName: session.Account.name,
         email: invite.AccountUser.email,
         sessionName: session.name,
+        orginalStartTime: session.startTime,
+        orginalEndTime: session.endTime,
         startTime: moment.utc(session.startTimeFormat).format('h:mm'),
         endTime: moment.utc(session.endTimeFormat).format('h:mm'),
         startDate: moment.utc(session.startTimeFormat).format('YYYY-M-D'),
