@@ -25,18 +25,14 @@
 
           <div id="topics-list" class='margin-top-20'>
             <div class="topic-list-item" ng-repeat="topic in step2Controller.topics" ng-drag="step2Controller.canDragElement(topic)" ng-drag-success="step2Controller.topicsOnDropComplete(topic)">
-              <div class="panel-label">
-                <div class="check">
-                  <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-checked="topic._selected" ng-click="topic._selected = !topic._selected" type="checkbox">
-                  <label for="memberSelectet{{ $index }}" class="kliiko-checkbox"></label>
-                </div>
-                {{ topic.name }}
+              <div class="check">
+                <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-checked="topic._selected" ng-click="topic._selected = !topic._selected" type="checkbox">
+                <label for="memberSelectet{{ $index }}" class="kliiko-checkbox"></label>
               </div>
 
-              <div class="control-block">
-                <img ng-drag="false" class="pull-right ic" ng-click="tc.deleteTopic(topic.id)" src="/icons/dashboardElement_remove.png" title="Delete">
-                <img ng-drag="false" class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('edit', topic)">
-              </div>
+              {{ topic.name }}
+              <img ng-drag="false" class="pull-right ic" ng-click="tc.deleteTopic(topic.id)" src="/icons/dashboardElement_remove.png" title="Delete">
+              <img ng-drag="false" class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('edit', topic)">
             </div>
           </div>
         </div>
@@ -47,21 +43,16 @@
 
           <div class="margin-top-10" ui-sortable="step2Controller.sortableOptionsA" ng-model="step2Controller.sessionTopicsArray">
             <div class="topic-list-item" ng-repeat="topic in step2Controller.sessionTopicsArray">
-              <div class="panel-label">
-                <span>
-                  <img src="/icons/ic_move.png">
-                  <input type="radio" ng-model="topic.sessionTopic.landing" ng-value="true" ng-change='step2Controller.changeLandingState(topic)' ng-disabled="!topic.sessionTopic.active">
-                  {{ topic.sessionTopic.name }}
-                </span>
+              <span>
+                <img src="/icons/ic_move.png">
+                <input type="radio" ng-model="topic.sessionTopic.landing" ng-value="true" ng-change='step2Controller.changeLandingState(topic)' ng-disabled="!topic.sessionTopic.active">
+                {{ topic.sessionTopic.name }}
+              </span>
 
-                <img class="ico-active-unactive" ng-if="topic.sessionTopic.active" src="/icons/unlocked.png" ng-click="step2Controller.changeActiveState(topic)" title="Active">
-                <img class="ico-active-unactive" ng-if="!topic.sessionTopic.active" src="/icons/locked.png" ng-click="step2Controller.changeActiveState(topic)" title="Not Active">
-              </div>
-
-              <div class="control-block">
-                <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.sessionTopic.id)" src="/icons/dashboardElement_remove.png" title="Delete">
-                <img class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="step2Controller.openModal('sessionTopic', topic)">
-              </div>
+              <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.sessionTopic.id)" src="/icons/dashboardElement_remove.png" title="Delete">
+              <img class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="step2Controller.openModal('sessionTopic', topic)">
+              <img class="pull-right ic" ng-if="topic.sessionTopic.active" src="/icons/unlocked.png" ng-click="step2Controller.changeActiveState(topic)" title="Active">
+              <img class="pull-right ic" ng-if="!topic.sessionTopic.active" src="/icons/locked.png" ng-click="step2Controller.changeActiveState(topic)" title="Not Active">
             </div>
           </div>
         </div>
