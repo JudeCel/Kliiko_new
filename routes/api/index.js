@@ -1,6 +1,4 @@
 'use strict';
-var multiparty = require('connect-multiparty');
-var multipartyMiddleware = multiparty();
 var express = require('express');
 var _ = require('lodash');
 var router = express.Router();
@@ -75,40 +73,40 @@ router.get('/accountDatabase', PERMISSIONS.admin, accountDatabase.get);
 router.put('/accountDatabase/:id', PERMISSIONS.admin, accountDatabase.update);
 router.put('/accountDatabase/:accountUserId/comment', PERMISSIONS.admin, accountDatabase.updateAccountUserComment);
 
-router.post('/banners', banners.create);
-router.put('/banners', banners.update);
+router.post('/banners', PERMISSIONS.admin, banners.create);
+router.put('/banners', PERMISSIONS.admin, banners.update);
 
-router.get('/mailTemplates', mailTemplates.allMailTemplatesGet);
-router.get('/sessionMailTemplates', mailTemplates.allSessionMailTemplatesGet);
-router.post('/mailTemplate', mailTemplates.mailTemplatePost);
-router.delete('/mailTemplate', mailTemplates.deleteMailTemplate);
-router.post('/mailTemplate/save', mailTemplates.saveMailTemplatePost);
-router.post('/mailTemplate/reset', mailTemplates.resetMailTemplatePost);
-router.post('/mailTemplate/preview', mailTemplates.previewMailTemplatePost);
+router.get('/mailTemplates', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.allMailTemplatesGet);
+router.get('/sessionMailTemplates', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.allSessionMailTemplatesGet);
+router.post('/mailTemplate', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.mailTemplatePost);
+router.delete('/mailTemplate', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.deleteMailTemplate);
+router.post('/mailTemplate/save', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.saveMailTemplatePost);
+router.post('/mailTemplate/reset', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.resetMailTemplatePost);
+router.post('/mailTemplate/preview', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.previewMailTemplatePost);
 
 
-router.get('/survey', survey.get);
-router.delete('/survey', survey.remove);
-router.post('/survey', survey.create);
-router.put('/survey', survey.update);
-router.post('/survey/copy', survey.copy);
-router.put('/survey/status', survey.status);
+router.get('/survey', PERMISSIONS.facilitatorManagerAdmin, survey.get);
+router.delete('/survey', PERMISSIONS.facilitatorManagerAdmin, survey.remove);
+router.post('/survey', PERMISSIONS.facilitatorManagerAdmin, survey.create);
+router.put('/survey', PERMISSIONS.facilitatorManagerAdmin, survey.update);
+router.post('/survey/copy', PERMISSIONS.facilitatorManagerAdmin, survey.copy);
+router.put('/survey/status', PERMISSIONS.facilitatorManagerAdmin, survey.status);
 router.get('/survey/find', survey.find);
 router.post('/survey/answer', survey.answer);
-router.put('/survey/confirm', survey.confirm);
+router.put('/survey/confirm', PERMISSIONS.facilitatorManagerAdmin, survey.confirm);
 router.get('/survey/constants', survey.getConstants);
-router.get('/survey/canExportSurveyData', survey.canExportSurveyData);
+router.get('/survey/canExportSurveyData', PERMISSIONS.facilitatorManagerAdmin, survey.canExportSurveyData);
 
 // Subscription
-router.get('/subscriptionPlan', subscription.getPlans);
-router.put('/subscriptionPlan/updatePlan', subscription.updatePlan);
-router.put('/subscriptionPlan/UpdateViaCheckout', subscription.retrievCheckoutAndUpdateSub)
-router.post('/subscriptionPlan/postQuote', subscription.postQuote)
+router.get('/subscriptionPlan', PERMISSIONS.managerAdmin, subscription.getPlans);
+router.put('/subscriptionPlan/updatePlan', PERMISSIONS.managerAdmin, subscription.updatePlan);
+router.put('/subscriptionPlan/UpdateViaCheckout', PERMISSIONS.managerAdmin, subscription.retrievCheckoutAndUpdateSub)
+router.post('/subscriptionPlan/postQuote', PERMISSIONS.managerAdmin, subscription.postQuote)
 
 // Addons
-router.get('/subscriptionSmsCredits', smsCredit.get);
-router.post('/subscriptionSmsCredits/puchaseCredits', smsCredit.purchase);
-router.get('/subscriptionSmsCredits/creditCount', smsCredit.creditCount);
+router.get('/subscriptionSmsCredits', PERMISSIONS.managerAdmin, smsCredit.get);
+router.post('/subscriptionSmsCredits/puchaseCredits', PERMISSIONS.managerAdmin, smsCredit.purchase);
+router.get('/subscriptionSmsCredits/creditCount', PERMISSIONS.managerAdmin, smsCredit.creditCount);
 
 // contact List
 router.get('/contactLists', PERMISSIONS.facilitatorManagerAdmin, contactList.index);
@@ -126,18 +124,18 @@ router.post('/contactListsUser', PERMISSIONS.facilitatorManagerAdmin, contactLis
 router.post('/contactListsUsersToRemove', PERMISSIONS.facilitatorManagerAdmin, contactListUser.destroy);
 router.put('/contactListsUser/:id', PERMISSIONS.facilitatorManagerAdmin, contactListUser.update);
 
-router.get('/topics', multipartyMiddleware, topic.get);
-router.post('/topic', multipartyMiddleware, topic.post);
-router.put('/topic/updateSessionTopicName', multipartyMiddleware, topic.updateSessionTopicName);
-router.put('/topic/:id',multipartyMiddleware, topic.updateById);
-router.delete('/topic/:id', multipartyMiddleware, topic.deleteById);
+router.get('/topics', PERMISSIONS.facilitatorManagerAdmin, topic.get);
+router.post('/topic', PERMISSIONS.facilitatorManagerAdmin, topic.post);
+router.put('/topic/updateSessionTopicName', PERMISSIONS.facilitatorManagerAdmin, topic.updateSessionTopicName);
+router.put('/topic/:id', PERMISSIONS.facilitatorManagerAdmin, topic.updateById);
+router.delete('/topic/:id', PERMISSIONS.facilitatorManagerAdmin, topic.deleteById);
 
-router.get('/brandColour', brandColour.get);
-router.delete('/brandColour', brandColour.remove);
-router.post('/brandColour', brandColour.create);
-router.put('/brandColour', brandColour.update);
-router.post('/brandColour/copy', brandColour.copy);
-router.get('/brandColour/canCreateCustomColors', brandColour.canCreateCustomColors);
+router.get('/brandColour', PERMISSIONS.facilitatorManagerAdmin, brandColour.get);
+router.delete('/brandColour', PERMISSIONS.facilitatorManagerAdmin, brandColour.remove);
+router.post('/brandColour', PERMISSIONS.facilitatorManagerAdmin, brandColour.create);
+router.put('/brandColour', PERMISSIONS.facilitatorManagerAdmin, brandColour.update);
+router.post('/brandColour/copy', PERMISSIONS.facilitatorManagerAdmin, brandColour.copy);
+router.get('/brandColour/canCreateCustomColors', PERMISSIONS.facilitatorManagerAdmin, brandColour.canCreateCustomColors);
 
 router.post('/session/getByInvite',  PERMISSIONS.managerAdmin, session.getSessionByInvite);
 router.get('/session/ratings',  PERMISSIONS.admin, session.getAllSessionRatings);

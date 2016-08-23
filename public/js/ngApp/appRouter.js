@@ -114,8 +114,7 @@
           dbg.rs('resources');
           sessionStorage.setItem('bannerType', 'resources');
 
-          if(accountUser.accountUser.isFacilitator) $state.go('dashboard.chatSessions');
-          else if ($state.current.name == 'dashboard.resources') $state.go('dashboard.resources.gallery');
+          if ($state.current.name == 'dashboard.resources') $state.go('dashboard.resources.gallery');
         }],
         views: {
           'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-resources/resources.html"}

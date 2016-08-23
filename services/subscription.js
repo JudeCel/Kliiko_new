@@ -462,6 +462,7 @@ function cancelSubscription(subscriptionId, eventId, provider) {
       deferred.reject(filters.errors(error));
     });
   }, function(error) {
+    console.log(error, subscriptionId);
     deferred.reject(error);
   });
 
@@ -721,6 +722,9 @@ function canSwitchPlan(accountId, currentPlan, newPlan){
       }
     });
   }else if(validatePlanPriority(newPlan.priority, currentPlan.priority)){
+    deferred.resolve();
+  }
+  else if(newPlan.priority == currentPlan.priority && newPlan.priority == -1 && newPlan.chargebeePlanId != currentPlan.chargebeePlanId) {
     deferred.resolve();
   }else{
     findSubscription(accountId).then(function(subscription) {

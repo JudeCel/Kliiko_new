@@ -185,6 +185,8 @@ function sendInvite(invite, deferred) {
         accountName: session.Account.name,
         email: invite.AccountUser.email,
         sessionName: session.name,
+        orginalStartTime: session.startTime,
+        orginalEndTime: session.endTime,
         startTime: moment.utc(session.startTimeFormat).format('h:mm'),
         endTime: moment.utc(session.endTimeFormat).format('h:mm'),
         startDate: moment.utc(session.startTimeFormat).format('YYYY-M-D'),
@@ -338,7 +340,7 @@ function acceptInviteNew(token, params, callback) {
       }
       else {
         invite.update({ status: 'confirmed' }).then(function() {
-          callback(null, invite, user.email, MessagesUtil.invite.confirmed);
+          callback(null, invite, user, MessagesUtil.invite.confirmed);
         }).catch(function(error) {
           callback(filters.errors(error));
         });
@@ -516,6 +518,8 @@ function prepareMailParams(session, receiver, facilitator) {
     unsubscribeMailUrl: 'not-found',
     startTime: session.startTime,
     startDate: session.startDate,
+    orginalStartTime: session.startTime,
+    orginalEndTime: session.endTime,
     confirmationCheckInUrl: 'not-found',
     participantMail: receiver.email,
     incentive: session.incentive

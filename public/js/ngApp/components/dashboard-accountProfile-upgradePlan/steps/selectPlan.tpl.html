@@ -21,7 +21,7 @@
             <h5 class="outline">
               <sup>$US</sup>
               {{subscriptionPlan.plan.price | price:'':0 }}
-              <sub>/mth</sub>
+              <sub>/{{ up.pricePerEnding[up.annualOrMonthly] }}</sub>
             </h5>
             <p>Get 2 Moths FREE</p>
             <p>on all annual plans</p>

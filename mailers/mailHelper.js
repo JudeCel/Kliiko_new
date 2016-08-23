@@ -46,6 +46,8 @@ function sendFirstInvitation(params, callback) {
       sessionName: params.sessionName,
       startTime: params.startTime,
       endTime: params.endTime,
+      orginalStartTime: params.startTime,
+      orginalEndTime: params.endTime,
       startDate: params.startDate,
       endDate: params.endDate,
       incentive: params.incentive,
@@ -61,7 +63,7 @@ function sendFirstInvitation(params, callback) {
     if (mailContent.error) {
       return callback(mailContent.error);
     }
-    mailTemplate.sendMailWithTemplate(mailContent, params, callback);
+    mailTemplate.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
   });
 };
 
@@ -89,7 +91,7 @@ function sendInviteConfirmation(params, callback) {
     if (mailContent.error) {
       return callback(mailContent.error);
     }
-    mailTemplate.sendMailWithTemplate(mailContent, params, callback);
+    mailTemplate.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
   });
 };
 
@@ -185,7 +187,7 @@ function sendFacilitatorEmailConfirmation(params, callback) {
     if (mailContent.error) {
       return callback(mailContent.error);
     }
-    mailTemplate.sendMailWithTemplate(mailContent, params, callback);
+    mailTemplate.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
   });
 };
 
@@ -238,7 +240,7 @@ function sendObserverInvitation(params, callback) {
     if (mailContent.error) {
       return callback(mailContent.error);
     }
-    mailTemplate.sendMailWithTemplate(mailContent, params, callback);
+    mailTemplate.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
   });
 };
 

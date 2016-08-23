@@ -371,14 +371,19 @@ function answerSurvey(params) {
         return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
           if(!_.isEmpty(fields)) {
             let clParams = findContactListAnswers(contactList, validParams.answers);
-            clParams.contactListId = contactList.id;
-            clParams.accountId = survey.accountId;
+            if(clParams) {
+              clParams.contactListId = contactList.id;
+              clParams.accountId = survey.accountId;
 
-            return contactListUserServices.create(clParams).then(function(result) {
+              return contactListUserServices.create(clParams).then(function(result) {
+                return survey;
+              }, function(error) {
+                throw error;
+              });
+            }
+            else {
               return survey;
-            }, function(error) {
-              throw error;
-            });
+            }
           }
           else {
             return survey;
@@ -407,24 +412,27 @@ function findContactListAnswers(contactList, answers) {
     }
   });
 
-  let params = { customFields:[], defaultFields:[] };
-  let object = {};
-  _.map(contactList.customFields, function(field) {
-    if(values[field]) {
-      object[field] = values[field];
-    }
-  });
-  params.customFields = object;
+  console.error(values);
+  if(values) {
+    let params = { customFields:[], defaultFields:[] };
+    let object = {};
+    _.map(contactList.customFields, function(field) {
+      if(values[field]) {
+        object[field] = values[field];
+      }
+    });
+    params.customFields = object;
 
-  object = {};
-  _.map(contactList.defaultFields, function(field) {
-    if(values[field]) {
-      object[field] = values[field];
-    }
-  });
-  params.defaultFields = object;
+    object = {};
+    _.map(contactList.defaultFields, function(field) {
+      if(values[field]) {
+        object[field] = values[field];
+      }
+    });
+    params.defaultFields = object;
 
-  return params;
+    return params;
+  }
 }
 
 function confirmSurvey(params, account) {
