@@ -5,17 +5,17 @@
  *
  */
 
-"use strict";
-let changePasswordService = require('../../services/changePassword');
-let _ = require('lodash');
-let q = require('q');
-let policy = require('./../../middleware/policy.js')
-let AccountUserService = require('../../services/accountUser');
+'use strict';
+var changePasswordService = require('../../services/changePassword');
+var _ = require('lodash');
+var q = require('q');
+var policy = require('./../../middleware/policy.js')
+var AccountUserService = require('../../services/accountUser');
+var MessagesUtil = require('./../../util/messages');
 
 module.exports = {
   userGet: userGet,
   userPost: userPost,
-  userCanAccessPost:userCanAccessPost,
   changePassword:changePassword
 };
 
@@ -24,7 +24,7 @@ function userPost(req, res, next) {
     if (err) {
       res.send({error:err});
     } else {
-      res.send(req.body);
+      res.send({ user: req.body, message: MessagesUtil.routes.user.updateContactDetails });
     }
   });
 }
@@ -53,14 +53,4 @@ function changePassword(req, res, next) {
       res.send({ message: message });
     }
   });
-}
-
-function userCanAccessPost(req, res, next) {
-  var roles = res.locals.currentDomain.roles;
-
-  if (policy.authorized(roles)) {
-    next();
-  }else {
-    res.send({error: 'Access Denied'});
-  }
 }

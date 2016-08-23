@@ -1,4 +1,5 @@
-"use strict";
+'use strict';
+
 var models  = require('./../models');
 var Sequelize = models.sequelize;
 var policy = require('./policy');
@@ -6,6 +7,7 @@ var Account  = models.Account;
 var _ = require('lodash');
 var constants = require('../util/constants');
 var libSubdomains = require('./../lib/subdomains');
+var MessagesUtil = require('./../util/messages');
 
 function assignCurrentDomain(result, res) {
 
@@ -56,7 +58,7 @@ function getAccauntWithRoles(user, subdomain, callback) {
           callback(null, result)
         }
         else {
-          callback('Sorry, your account has been deactivated. Please get in touch with the administration');
+          callback(MessagesUtil.middleware.subdomain.deactivated);
         }
       }else {
         callback(true)
@@ -89,7 +91,7 @@ module.exports = function(req, res, next) {
         assignCurrentUserInfo(result, req)
         next();
       }else{
-        res.status(404).send('Account not found or you do not have access to this page');
+        res.status(404).send(MessagesUtil.middleware.subdomain.noAccessOrNotFound);
       };
     });
   }else{

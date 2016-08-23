@@ -30,7 +30,7 @@
         vm.userDetailsForm.$setPristine();
         vm.userDetailsForm.$setUntouched();
         vm.errors = {};
-        messenger.ok('Contact details updated successfully.');
+        messenger.ok(res.message);
       }, function(error) {
         vm.errors = error;
       });

@@ -68,22 +68,21 @@
           self.$el = jQuery('#'+self.id);
 
           // and hide
-          if(type != 'error') {
-            setTimeout(function() {
-              self.$el.removeClass('fadeInDown').addClass('fadeOutDown');
-              setTimeout(function() { self.$el.detach() }, 2000);
-            }, delay);
-          }
-          else {
+          if(type == 'error') {
             var closeButton = '<div id="button-'+self.id+'" class="pull-right cursor-pointer glyphicon glyphicon-remove"></div>';
             var icon = '<div id="warning-'+self.id+'" class="pull-left glyphicon glyphicon-alert margin-right-10"></div>';
-           self.$el.prepend(icon);
+            self.$el.prepend(icon);
             self.$el.prepend(closeButton);
             self.$button = jQuery('#button-'+self.id);
             self.$button.click(function() {
               self.$el.detach();
             });
           }
+
+          setTimeout(function() {
+            self.$el.removeClass('fadeInDown').addClass('fadeOutDown');
+            setTimeout(function() { self.$el.detach() }, 2000);
+          }, delay);
         }
       };
 

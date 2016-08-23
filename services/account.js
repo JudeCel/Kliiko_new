@@ -1,6 +1,7 @@
 'use strict';
 
-var models = require('./../models')
+var MessagesUtil = require('./../util/messages');
+var models = require('./../models');
 var Account  = models.Account;
 var filters = require('./../models/filters');
 var contactListService  = require('./contactList');
@@ -53,7 +54,7 @@ function findWithSubscription(accountId) {
     if (result) {
       deferred.resolve(mapSubscriptionData(result));
     }else{
-      deferred.reject("Account not found");
+      deferred.reject(MessagesUtil.account.notFound);
     }
   }, function(error) {
     deferred.reject(error);

@@ -8,27 +8,12 @@ var SurveyAnswer = models.SurveyAnswer;
 var ContactList = models.ContactList;
 var validators = require('./../services/validators');
 var contactListUserServices = require('./../services/contactListUser');
+var MessagesUtil = require('./../util/messages');
 
 var async = require('async');
 var q = require('q');
 var _ = require('lodash');
 var surveyConstants = require('../util/surveyConstants');
-
-const MESSAGES = {
-  cantExportSurveyData: 'Please Update your subscription plan, to export survey data.',
-  notFound: 'Survey not found!',
-  alreadyClosed: 'Survey closed, please contact admin!',
-  notConfirmed: 'Survey not confirmed, please contact admin!',
-  removed: 'Successfully removed survey!',
-  completed: 'Successfully completed survey!',
-  noConstants: 'No constants found!',
-  created: 'Successfully created survey!',
-  updated: 'Successfully updated survey!',
-  closed: 'Survey has been successfully closed!',
-  opened: 'Survey has been successfully opened!',
-  copied: 'Survey copied successfully!',
-  confirmed: 'Survey confirmed successfully!'
-};
 
 const VALID_ATTRIBUTES = {
   manage: [
@@ -116,10 +101,10 @@ function findSurvey(params, skipValidations) {
       }
       else {
         if(survey.closed) {
-          deferred.reject(MESSAGES.alreadyClosed);
+          deferred.reject(MessagesUtil.survey.alreadyClosed);
         }
         else if(!survey.confirmedAt) {
-          deferred.reject(MESSAGES.notConfirmed);
+          deferred.reject(MessagesUtil.survey.notConfirmed);
         }
         else {
           deferred.resolve(simpleParams(survey));
@@ -127,7 +112,7 @@ function findSurvey(params, skipValidations) {
       }
     }
     else {
-      deferred.reject(MESSAGES.notFound);
+      deferred.reject(MessagesUtil.survey.notFound);
     }
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(filters.errors(error));
@@ -143,10 +128,10 @@ function removeSurvey(params, account) {
 
   Survey.destroy({ where: { id: params.id, accountId: account.id } }).then(function(result) {
     if(result > 0) {
-      deferred.resolve(simpleParams(null, MESSAGES.removed));
+      deferred.resolve(simpleParams(null, MessagesUtil.survey.removed));
     }
     else {
-      deferred.reject(MESSAGES.notFound);
+      deferred.reject(MessagesUtil.survey.notFound);
     }
   }).catch(Survey.sequelize.ValidationError, function(error) {
     deferred.reject(filters.errors(error));
@@ -246,7 +231,7 @@ function createSurveyWithQuestions(params, account) {
         });
       }).then(function(survey) {
         survey.update({ url: validUrl(survey) }).then(function(survey) {
-          deferred.resolve(simpleParams(survey, MESSAGES.created));
+          deferred.resolve(simpleParams(survey, MessagesUtil.survey.created));
         });
       }).catch(Survey.sequelize.ValidationError, function(error) {
         deferred.reject(filters.errors(error));
@@ -276,7 +261,7 @@ function updateSurvey(params, account) {
         transaction: t
       }).then(function(result) {
         if(result[0] == 0) {
-          throw MESSAGES.notFound;
+          throw MessagesUtil.survey.notFound;
         }
         else {
           let survey = result[1][0];
@@ -297,7 +282,7 @@ function updateSurvey(params, account) {
         }
       });
     }).then(function(survey) {
-      deferred.resolve(simpleParams(survey, MESSAGES.updated));
+      deferred.resolve(simpleParams(survey, MessagesUtil.survey.updated));
     }).catch(Survey.sequelize.ValidationError, function(error) {
       deferred.reject(filters.errors(error));
     }).catch(function(error) {
@@ -318,11 +303,11 @@ function changeStatus(params, account) {
       returning: true
     }).then(function(result) {
       if(result[0] == 0) {
-        deferred.reject(MESSAGES.notFound);
+        deferred.reject(MessagesUtil.survey.notFound);
       }
       else {
         let survey = result[1][0];
-        deferred.resolve(simpleParams(survey, survey.closed ? MESSAGES.closed : MESSAGES.opened));
+        deferred.resolve(simpleParams(survey, survey.closed ? MessagesUtil.survey.closed : MessagesUtil.survey.opened));
       }
     }).catch(Survey.sequelize.ValidationError, function(error) {
       deferred.reject(filters.errors(error));
@@ -351,7 +336,7 @@ function copySurvey(params, account) {
       if(survey) {
         createSurveyWithQuestions(survey, account).then(function(result) {
           findSurvey(result.data, true).then(function(result) {
-            deferred.resolve(simpleParams(result.data, MESSAGES.copied));
+            deferred.resolve(simpleParams(result.data, MessagesUtil.survey.copied));
           }, function(error) {
             deferred.reject(error);
           });
@@ -360,7 +345,7 @@ function copySurvey(params, account) {
         });
       }
       else {
-        deferred.reject(MESSAGES.notFound);
+        deferred.reject(MessagesUtil.survey.notFound);
       }
     }).catch(Survey.sequelize.ValidationError, function(error) {
       deferred.reject(filters.errors(error));
@@ -409,7 +394,7 @@ function answerSurvey(params) {
       });
     })
   }).then(function(survey) {
-    deferred.resolve(simpleParams(null, MESSAGES.completed));
+    deferred.resolve(simpleParams(null, MessagesUtil.survey.completed));
   }).catch(SurveyAnswer.sequelize.ValidationError, function(error) {
     deferred.reject(filters.errors(error));
   }).catch(function(error) {
@@ -459,11 +444,11 @@ function confirmSurvey(params, account) {
       returning: true
     }).then(function(result) {
       if(result[0] == 0) {
-        deferred.reject(MESSAGES.notFound);
+        deferred.reject(MessagesUtil.survey.notFound);
       }
       else {
         let survey = result[1][0];
-        deferred.resolve(simpleParams(survey, MESSAGES.confirmed));
+        deferred.resolve(simpleParams(survey, MessagesUtil.survey.confirmed));
       }
     }).catch(Survey.sequelize.ValidationError, function(error) {
       deferred.reject(filters.errors(error));
@@ -499,7 +484,7 @@ function exportSurvey(params, account) {
         deferred.resolve(simpleParams({ header: header, data: data }));
       }
       else {
-        deferred.reject(MESSAGES.notFound);
+        deferred.reject(MessagesUtil.survey.notFound);
       }
     }).catch(function(error) {
       deferred.reject(filters.errors(error));
@@ -529,7 +514,7 @@ function constantsSurvey() {
     deferred.resolve(simpleParams(surveyConstants));
   }
   else {
-    deferred.reject(MESSAGES.noConstants);
+    deferred.reject(MessagesUtil.survey.noConstants);
   }
 
   return deferred.promise;
@@ -686,7 +671,7 @@ function validateParams(params, attributes) {
 };
 
 module.exports = {
-  messages: MESSAGES,
+  messages: MessagesUtil.survey,
   findAllSurveys: findAllSurveys,
   findSurvey: findSurvey,
   removeSurvey: removeSurvey,

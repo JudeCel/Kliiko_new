@@ -1,4 +1,6 @@
 'use strict';
+
+var MessagesUtil = require('./../../util/messages');
 var mailers = require('../../mailers');
 var models = require('./../../models');
 var filters = require('./../../models/filters');
@@ -46,7 +48,7 @@ function updateAccountUserComment(params) {
       });
     }
     else {
-      deferred.reject('Account User not found');
+      deferred.reject(MessagesUtil.accountDatabase.notFound);
     }
   });
 
@@ -67,7 +69,7 @@ function updateAccountUser(params, byUser, callback) {
         returning: true
       }).then(function(result) {
         if(result[0] == 0) {
-          callback('There is no AccountUser with userId: ' + params.userId + ' and accountId: ' + params.accountId);
+          callback(MessagesUtil.accountDatabase.notFound);
         }
         else {
           let accountUser = result[1][0];
@@ -84,10 +86,10 @@ function updateAccountUser(params, byUser, callback) {
         callback(filters.errors(error));
       });
     } else {
-      callback('Account is not verified');
+      callback(MessagesUtil.accountDatabase.notVerified);
     }
   } else {
-    callback('Cannot disable your account');
+    callback(MessagesUtil.accountDatabase.selfDisable);
   }
 };
 

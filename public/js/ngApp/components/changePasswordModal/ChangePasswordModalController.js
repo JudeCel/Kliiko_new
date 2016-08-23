@@ -26,14 +26,6 @@
     function cancel(){
       domServices.modal('changePasswordModal', 'close');
     }
-
-    function prepareError(err){
-      if(err.includes("Validation error:")){
-        return err.replace("Validation error: ","")
-      }else{
-        return err
-      }
-    }
   }
 
 })();

@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom'];
-  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom) {
+  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom', 'messagesUtil'];
+  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom, messagesUtil) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -75,7 +75,6 @@
         if (step === 'next') handleNextStep();
         if (step === 'finish') {
           $state.go('dashboard.chatSessions');
-          messenger.ok('New session is created');
         }
       }
 
@@ -280,13 +279,13 @@
             vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
           }
           else {
-            messenger.error("You can't select members from " + activeList.name + ' list');
+            messenger.error(messagesUtil.sessionBuilder.cantSelect);
           }
 
           vm.searchingParticipants = false;
         }
         else {
-          messenger.error('There are no contacts selected');
+          messenger.error(messagesUtil.sessionBuilder.noContacts);
         }
       }
 

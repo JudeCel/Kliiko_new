@@ -1,17 +1,18 @@
-"use strict";
+'use strict';
+
+var MessagesUtil = require('./../util/messages');
 var usersService  = require('./users');
 var mailers = require('../mailers');
-var successMessage = 'Password was changed successfully';
 
 function save(req, callback){
   let errors = {message: ""};
 
   if ( !req.body.password || !req.body.repassword ) {
-    errors.message = "Please fill both password fields.";
+    errors.message = MessagesUtil.changePassword.fillBoth;
   }
 
   if ( req.body.password !== req.body.repassword ) {
-    errors.message = "Passwords not equal";
+    errors.message = MessagesUtil.changePassword.notEqual;
   }
 
   if (errors.message !== "") {
@@ -28,11 +29,11 @@ function save(req, callback){
       return callback(err);
     }
     mailers.users.sendPasswordChangedSuccess(params);
-    callback(null, successMessage, req.user);
+    callback(null, MessagesUtil.changePassword.success, req.user);
   });
 }
 
 module.exports = {
   save: save,
-  successMessage: successMessage
+  successMessage: MessagesUtil.changePassword.success
 }
