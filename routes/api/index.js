@@ -92,10 +92,10 @@ router.post('/survey', PERMISSIONS.facilitatorManagerAdmin, survey.create);
 router.put('/survey', PERMISSIONS.facilitatorManagerAdmin, survey.update);
 router.post('/survey/copy', PERMISSIONS.facilitatorManagerAdmin, survey.copy);
 router.put('/survey/status', PERMISSIONS.facilitatorManagerAdmin, survey.status);
-router.get('/survey/find', PERMISSIONS.facilitatorManagerAdmin, survey.find);
-router.post('/survey/answer', PERMISSIONS.facilitatorManagerAdmin, survey.answer);
+router.get('/survey/find', survey.find);
+router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', PERMISSIONS.facilitatorManagerAdmin, survey.confirm);
-router.get('/survey/constants', PERMISSIONS.facilitatorManagerAdmin, survey.getConstants);
+router.get('/survey/constants', survey.getConstants);
 router.get('/survey/canExportSurveyData', PERMISSIONS.facilitatorManagerAdmin, survey.canExportSurveyData);
 
 // Subscription
