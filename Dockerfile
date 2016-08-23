@@ -9,5 +9,4 @@ RUN npm install --quiet && \
 
 EXPOSE 8080
 
-CMD NODE_ENV=production npm run start
-
+CMD NODE_ENV=production npm run start_pm2
