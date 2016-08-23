@@ -6,11 +6,9 @@ var constants = require('../util/constants');
 module.exports = (Sequelize, DataTypes) => {
   var SessionMember = Sequelize.define('SessionMember', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    sessionId: {type: DataTypes.INTEGER, allowNull: false },
+    sessionId: { type: DataTypes.INTEGER, allowNull: false },
     accountUserId: { type: DataTypes.INTEGER, allowNull: false },
-    token: { type: DataTypes.STRING, allowNull: true, validate: {
-      isUnique: validations.unique(Sequelize, 'SessionMember', 'token')
-    } },
+    token: { type: DataTypes.STRING, allowNull: true, validate: { isUnique: validations.unique(Sequelize, 'SessionMember', 'token') } },
     username: { type: DataTypes.STRING, allowNull: false },
     colour: { type: DataTypes.STRING, allowNull: false },
     avatarData: { type: DataTypes.JSONB, allowNull: false, defaultValue: constants.sessionMemberMan },

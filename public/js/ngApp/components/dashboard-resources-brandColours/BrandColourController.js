@@ -46,7 +46,7 @@
           dbg.log2('#BrandColourController > removeScheme > res ', res);
 
           if(res.error) {
-            messenger.error(brandColourServices.prepareError(res.error));
+            messenger.error(res.error);
           }
           else {
             messenger.ok(res.message);
@@ -62,7 +62,7 @@
         dbg.log2('#BrandColourController > copyScheme > res ', res);
 
         if(res.error) {
-          messenger.error(brandColourServices.prepareError(res.error));
+          messenger.error(res.error);
         }
         else {
           vm.schemes.push(res.data);
@@ -94,7 +94,7 @@
         dbg.log2('#BrandColourController > finishCreate > res ', res);
 
         if(res.error) {
-          messenger.error(brandColourServices.prepareError(res.error));
+          messenger.error(res.error);
         }
         else {
           changePage('index');
@@ -108,7 +108,7 @@
         dbg.log2('#BrandColourController > finishEdit > res ', res);
 
         if(res.error) {
-          messenger.error(brandColourServices.prepareError(res.error));
+          messenger.error(res.error);
         }
         else {
           changePage('index');

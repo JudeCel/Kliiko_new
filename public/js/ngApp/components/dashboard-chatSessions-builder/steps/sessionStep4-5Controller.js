@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep4-5Controller', LastSessionStepController);
 
-  LastSessionStepController.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', '$rootScope', '$scope', 'angularConfirm'];
-  function LastSessionStepController(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window,  $rootScope, $scope, angularConfirm) {
+  LastSessionStepController.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', '$rootScope', '$scope', 'angularConfirm', 'messagesUtil'];
+  function LastSessionStepController(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window,  $rootScope, $scope, angularConfirm, messagesUtil) {
     dbg.log2('#SessionBuilderController 4-5 started');
 
     var vm = this;
@@ -132,7 +132,7 @@
         });
       }
       else {
-        messenger.error('No contacts selected');
+        messenger.error(messagesUtil.sessionBuilder.noContacts);
       }
     }
 
@@ -142,7 +142,7 @@
         for(var i in data) {
           var member = data[i];
           if(!member.mobile) {
-            noMobile[member.firstName + ' ' + member.lastName] = ' has no mobile provided';
+            noMobile[member.firstName + ' ' + member.lastName] = messagesUtil.sessionBuilder.noMobile;
           }
         }
 
@@ -156,7 +156,7 @@
         }
       }
       else {
-        messenger.error('No contacts selected');
+        messenger.error(messagesUtil.sessionBuilder.noContacts);
       }
     }
 
@@ -224,7 +224,7 @@
         });
       }
       else {
-        messenger.error('No contacts selected');
+        messenger.error(messagesUtil.sessionBuilder.noContacts);
       }
     }
 
@@ -248,9 +248,9 @@
     function updateContact() {
       var params = {defaultFields: vm.contactData};
 
-      step1Service.updateContact(params).then(function (result) {
-        angular.copy(mapCorrectData(result.data), vm.stepMembers[vm.editContactIndex]);
-        messenger.ok('Contact '+ result.data.firstName + ' has been updated');
+      step1Service.updateContact(params).then(function(res) {
+        angular.copy(mapCorrectData(res.data), vm.stepMembers[vm.editContactIndex]);
+        messenger.ok(res.message);
         closeEditContactForm();
       }, function (error) {
         messenger.error(error);

@@ -269,7 +269,7 @@
 
       sessionMemberApi.post({},params,function(res) {
         if (res.error) { deferred.reject(res.error);  return deferred.promise;}
-        deferred.resolve();
+        deferred.resolve(res);
       });
 
       return deferred.promise;

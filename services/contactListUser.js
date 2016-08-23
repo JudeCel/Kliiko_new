@@ -1,5 +1,6 @@
 'use strict';
 
+var MessagesUtil = require('./../util/messages');
 var q = require('q');
 var _ = require('lodash');
 var models = require('./../models');
@@ -42,7 +43,7 @@ function buildWrappedResponse(contactListUserId, deferred, transaction) {
       let newCLU = wrappersContactListUser(result, result.ContactList);
       deferred.resolve(newCLU);
     }else {
-      deferred.reject("Not found");
+      deferred.reject(MessagesUtil.contactListUser.notFound);
     }
   }, function(err) {
     deferred.reject(err);

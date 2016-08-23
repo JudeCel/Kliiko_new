@@ -4,6 +4,7 @@ var models = require('./../models');
 var filters = require('./../models/filters');
 var brandProjectConstants = require('../util/brandProjectConstants');
 var constants = require('./../util/constants');
+var MessagesUtil = require('./../util/messages');
 
 var Session = models.Session;
 var SessionMember = models.SessionMember;
@@ -12,17 +13,12 @@ var q = require('q');
 var _ = require('lodash');
 var uuid = require('node-uuid');
 
-const MESSAGES = {
-  notFound: 'Session Member not Found with Id: ',
-  wrongSessionId: 'Wrong Session id provided: '
-};
-
 module.exports = {
   createToken: createToken,
   removeByIds: removeByIds,
   removeByRole: removeByRole,
   createWithTokenAndColour: createWithTokenAndColour,
-  messages: MESSAGES
+  messages: MessagesUtil.sessionMember
 };
 
 function createWithTokenAndColour(params) {
@@ -88,7 +84,7 @@ function createToken(id) {
       deferred.resolve(result[1][0]);
     }
     else {
-      deferred.reject(MESSAGES.notFound + id);
+      deferred.reject(MessagesUtil.sessionMember.notFound);
     }
   });
 

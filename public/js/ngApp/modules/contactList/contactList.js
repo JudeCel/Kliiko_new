@@ -169,7 +169,7 @@
 
         dbg.log1('#contactListServices > createUser > success '); dbg.log2(res);
 
-        deferred.resolve(res);
+        deferred.resolve(res.user);
       });
 
       return deferred.promise;

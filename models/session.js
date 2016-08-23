@@ -1,11 +1,7 @@
 'use strict';
-var constants = require('../util/constants');
 
-function initializeDate() {
-  let date = new Date();
-  date.setHours(0, 0, 0, 0);
-  return date;
-}
+var constants = require('../util/constants');
+var MessagesUtil = require('./../util/messages');
 
 module.exports = (Sequelize, DataTypes) => {
   var Session = Sequelize.define('Session', {
@@ -14,30 +10,15 @@ module.exports = (Sequelize, DataTypes) => {
     accountId: { type: DataTypes.INTEGER, allowNull: false  },
     participantListId: { type: DataTypes.INTEGER, allowNull: true  },
     brandProjectPreferenceId: { type: DataTypes.INTEGER, allowNull: true  },
-
     name: { type: DataTypes.STRING, allowNull: false,  defaultValue: 'untitled', validate: { notEmpty: true } },
-
-    startTime: { type: DataTypes.DATE, allowNull: false, defaultValue: initializeDate(), validate: {
-      isValid: function(value, next) {
-        if(this.startTime > this.endTime) {
-          next("Start date can't be higher then end date.")
-        }
-        else {
-          next();
-        }
-      }
-    } },
+    startTime: { type: DataTypes.DATE, allowNull: false, defaultValue: initializeDate(), validate: { isValid: validateDate } },
     endTime: { type: DataTypes.DATE, allowNull: false , defaultValue: initializeDate() },
-    startTimeFormat: { type: DataTypes.STRING, allowNull: false, defaultValue: initializeDate().toString()  },
-    endTimeFormat: { type: DataTypes.STRING, allowNull: false, defaultValue: initializeDate().toString()  },
+    startTimeFormat: { type: DataTypes.STRING, allowNull: false, defaultValue: initializeDate().toString() },
+    endTimeFormat: { type: DataTypes.STRING, allowNull: false, defaultValue: initializeDate().toString() },
     incentive_details: { type: DataTypes.STRING, allowNull: true  },
     colours_used: { type: DataTypes.TEXT, allowNull: true },
-
     step: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionBuilderSteps, defaultValue: 'setUp' },
-
-    status: { type: DataTypes.ENUM, allowNull: false,
-      values: ['open', 'closed'], defaultValue: 'open'},
-
+    status: { type: DataTypes.ENUM, allowNull: false, values: ['open', 'closed'], defaultValue: 'open' },
   }, {
     timestamps: true,
     classMethods: {
@@ -58,7 +39,22 @@ module.exports = (Sequelize, DataTypes) => {
         Session.hasMany(models.SessionTopicsReport, { foreignKey: 'sessionId' });
       }
     }
-  }
-);
+  });
+
   return Session;
 };
+
+function validateDate(value, next) {
+  if(this.startTime > this.endTime) {
+    next(MessagesUtil.models.session.date);
+  }
+  else {
+    next();
+  }
+}
+
+function initializeDate() {
+  let date = new Date();
+  date.setHours(0, 0, 0, 0);
+  return date;
+}

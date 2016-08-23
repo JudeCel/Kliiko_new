@@ -1,4 +1,6 @@
 'use strict';
+
+var MessagesUtil = require('./../util/messages');
 let q = require('q');
 var validators = require('./../services/validators');
 var filters = require('./../models/filters');
@@ -6,11 +8,6 @@ var models = require('./../models');
 var Topic = models.Topic;
 var _ = require('lodash');
 var Session = models.Session;
-
-const MESSAGES = {
-  updatedSessionTopic: "Session Topic was successfully update.",
-  error: { isRelaitedSession: "Can't delete topic is related session" }
-};
 
 module.exports = {
   getAll: getAll,
@@ -23,7 +20,7 @@ module.exports = {
   removeFromSession: removeFromSession,
   removeAllFromSession: removeAllFromSession,
   removeAllAndAddNew: removeAllAndAddNew,
-  MESSAGES: MESSAGES
+  messages: MessagesUtil.topics
 };
 
 function getAll(accountId) {
@@ -59,7 +56,7 @@ function updateSessionTopicName(params) {
         id: params.sessionTopicId
       }
     }).then(function(result) {
-      deferred.resolve({ sessionTopic: result, message: MESSAGES.updatedSessionTopic });
+      deferred.resolve({ sessionTopic: result, message: MessagesUtil.topics.updatedSessionTopic });
     })
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
@@ -191,7 +188,7 @@ function destroy(id) {
         deferred.reject(filters.errors(error));
       })
     } else {
-      deferred.reject(MESSAGES.error.isRelaitedSession);
+      deferred.reject(MessagesUtil.topics.error.relatedSession);
     }
   });
   return deferred.promise;

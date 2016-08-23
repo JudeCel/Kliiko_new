@@ -150,7 +150,7 @@
               vm.startEditingTemplate(index);
             }
           });
-          messenger.ok("Template was successfully saved.");
+          messenger.ok(res.message);
           deferred.resolve();
         } else {
           messenger.error(res.error);
@@ -220,7 +220,7 @@
             }
             deferred.resolve();
           });
-          messenger.ok("Template was successfully saved.");
+          messenger.ok(res.message);
         } else {
           messenger.error(res.error);
           deferred.reject();

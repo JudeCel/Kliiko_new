@@ -1,5 +1,6 @@
 'use strict';
 
+var MessagesUtil = require('./../util/messages');
 var validators = require('./../services/validators');
 var constants = require('../util/constants');
 var models = require('./../models');
@@ -103,13 +104,13 @@ function findAndRemoveAccountUser(id, accountId) {
   }).then(function(result) {
     if(result) {
       result.destroy().then(function() {
-        deferred.resolve('Successfully removed account from Account List');
+        deferred.resolve(MessagesUtil.accountManager.removed);
       }, function(error) {
         deferred.reject(filters.errors(error));
       });
     }
     else {
-      deferred.reject('Account not found or you are not an owner');
+      deferred.reject(MessagesUtil.accountManager.notFoundOrOwner);
     }
   });
 
@@ -122,10 +123,10 @@ function updateAccountManager(data) {
 
   AccountUser.update(params, { where: { id: data.id }, returning: true }).then(function(result) {
     if(result[0] == 1) {
-      deferred.resolve({ message: 'Account manager was successfully updated.', accountManager: result[1][0] });
+      deferred.resolve({ message: MessagesUtil.accountManager.updated, accountManager: result[1][0] });
     }
     else {
-      deferred.reject("Account Manager not found");
+      deferred.reject(MessagesUtil.accountManager.notFound);
     }
   }, function(error) {
     deferred.reject(filters.errors(error));
@@ -142,7 +143,7 @@ function preValidate(user, accountId, email, errors) {
   }
 
   if(user.email == email) {
-    errors.email = 'You are trying to invite yourself.';
+    errors.email = MessagesUtil.accountManager.error.selfInvite;
     deferred.resolve(errors);
   }
   else if(email) {
@@ -157,7 +158,7 @@ function preValidate(user, accountId, email, errors) {
       }
     }).then(function(accountUsers) {
       if(!_.isEmpty(accountUsers)) {
-        errors.email = 'This user is already invited.';
+        errors.email = MessagesUtil.accountManager.error.alreadyInvited;
       }
 
       deferred.resolve(errors);
@@ -206,7 +207,7 @@ function inviteExistingUser(existsUser, params, accountId) {
       });
     }
     else {
-      deferred.reject('This account has already accepted invite.');
+      deferred.reject(MessagesUtil.accountManager.error.alreadyAccepted);
     }
   });
 
