@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep2Controller', SessionStep2Controller);
 
-  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'orderByFilter'];
-  function SessionStep2Controller(dbg, sessionBuilderControllerServices, messenger, orderByFilter) {
+  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'orderByFilter', '$scope'];
+  function SessionStep2Controller(dbg, sessionBuilderControllerServices, messenger, orderByFilter, $scope) {
     dbg.log2('#SessionBuilderController 2 started');
 
     var vm = this;
@@ -28,9 +28,13 @@
     vm.changeActiveState = changeActiveState;
     vm.changeLandingState = changeLandingState;
 
+    function initTopicController(tc) {
+      vm.topicsController = tc;
+    }
+
     function init(list) {
       vm.session = sessionBuilderControllerServices.session;
-      vm.topics = list;
+      vm.topics = vm.session.steps.step2.topics;
 
       vm.topics.map(function(topic) {
         addSessionTopic(topic);

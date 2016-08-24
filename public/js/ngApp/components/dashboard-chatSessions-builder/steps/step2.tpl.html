@@ -1,17 +1,17 @@
 <section ng-controller='TopicsController as tc'>
-  <section ng-if='tc.list.length' ng-controller="SessionStep2Controller as step2Controller" ng-init="step2Controller.init(tc.list)">
+  <section ng-controller="SessionStep2Controller as step2Controller" ng-init="step2Controller.init(tc.list)">
     <section id="step-2" class="animated fadeIn">
       <h3 class="text-center">Topics</h3>
 
       <div class="row margin-bottom-20" id='resources-topics'>
-        <div class="col-md-12 text-center" ng-if="!step2Controller.topics.length">
+        <div class="col-md-12 text-center" ng-if="!tc.list.length">
           There are no topics yet
           <div id="create-new-btn" class="btn btn-standart btn-green btn-large" ng-click="tc.openModal('new')">
             Create New Topic
           </div>
         </div>
 
-        <div class="col-md-6" ng-if="step2Controller.topics.length">
+        <div class="col-md-6" ng-if="tc.list.length">
           <h3>Select topic</h3>
           <div class="flex">
             <div class="check">
@@ -24,7 +24,7 @@
           </div>
 
           <div id="topics-list" class='margin-top-20'>
-            <div class="topic-list-item" ng-repeat="topic in step2Controller.topics" ng-drag="step2Controller.canDragElement(topic)" ng-drag-success="step2Controller.topicsOnDropComplete(topic)">
+            <div class="topic-list-item" ng-repeat="topic in tc.list" ng-drag="step2Controller.canDragElement(topic)" ng-drag-success="step2Controller.topicsOnDropComplete(topic)">
               <div class="check">
                 <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-checked="topic._selected" ng-click="topic._selected = !topic._selected" type="checkbox">
                 <label for="memberSelectet{{ $index }}" class="kliiko-checkbox"></label>
@@ -37,7 +37,7 @@
           </div>
         </div>
 
-        <div class="col-md-6" ng-if="step2Controller.topics.length">
+        <div class="col-md-6" ng-if="tc.list.length">
           <h3>Chat Session topics</h3>
           <div class="drop-area" ng-drop="true">Drop Selected Topics Here</div>
 

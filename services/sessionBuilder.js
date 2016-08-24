@@ -764,8 +764,7 @@ function step2Queries(session, step) {
           model: models.SessionTopics,
           where: {
             sessionId: session.id
-          },
-          attributes: ['order', 'name', 'boardMessage', 'id']
+          }
         }]
       }).then(function(topics) {
         step.topics = topics;
