@@ -50,7 +50,7 @@ function saveMailTemplatePost(req, res, next) {
 
   var accountId = canOverwrite ? null : res.locals.currentDomain.id;
   MailTemplateService.saveMailTemplate(req.body.mailTemplate, makeCopy, accountId,function(error, result) {
-    res.send({error: error, templates: result, message: MessagesUtil.routes.mailTemplate.saved });
+    res.send({error: error, templates: result, message: MessagesUtil.routes.mailTemplates.saved });
   });
 }
 
