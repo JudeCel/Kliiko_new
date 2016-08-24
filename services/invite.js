@@ -440,7 +440,7 @@ function declineSessionInvite(token, status) {
     else {
       invite.update({ status: status }).then(function() {
         sendEmail(status, invite).then(function() {
-          deferred.resolve(MessagesUtil.invite.declined);
+          deferred.resolve({ message: MessagesUtil.invite.declined, invite: invite });
         }, function(error) {
           deferred.reject(error);
         })

@@ -46,8 +46,7 @@ function acceptGet(req, res, next) {
         res.render(views_path('index'), simpleParams('Accept Invite', invite, error));
       }
       else {
-        req.flash('message', message);
-        res.redirect('/login');
+        res.render(views_path('accepted'), simpleParams('Invite', invite));
       }
     }
   });
@@ -92,13 +91,12 @@ function loginUser(req, res, next, user) {
 }
 
 function simpleParams(title, invite, error, message) {
-  return { title: title, invite: invite || {}, error: error || {}, message: message || '' };
+  return { title: title, invite: invite || {}, error: error || {}, message: message || '', applicationName: process.env.MAIL_FROM_NAME };
 };
 
 function sessionNotThisTime(req, res, next) {
-  inviteService.declineSessionInvite(req.params.token, 'notThisTime').then(function(message) {
-    req.flash('message', message);
-    res.redirect('/login');
+  inviteService.declineSessionInvite(req.params.token, 'notThisTime').then(function(result) {
+    res.render(views_path('declined'), simpleParams('Invite', result.invite));
   }, function(error) {
     req.flash('message', error);
     res.redirect('/login');
@@ -106,9 +104,8 @@ function sessionNotThisTime(req, res, next) {
 }
 
 function sessionNotAtAll(req, res, next) {
-  inviteService.declineSessionInvite(req.params.token, 'notAtAll').then(function(message) {
-    req.flash('message', message);
-    res.redirect('/login');
+  inviteService.declineSessionInvite(req.params.token, 'notAtAll').then(function(result) {
+    res.render(views_path('declined'), simpleParams('Invite', result.invite));
   }, function(error) {
     req.flash('message', error);
     res.redirect('/login');
