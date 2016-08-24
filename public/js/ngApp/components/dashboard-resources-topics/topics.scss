@@ -40,9 +40,15 @@
     }
   }
 
+  .ic.img-responsive {
+    width: 30px;
+    height: 30px;
+  }
+
   .ic {
     margin: 0 3px;
     cursor: pointer;
+    background-color: #F6F8F7;
   }
 
   #topicModalWindow {
