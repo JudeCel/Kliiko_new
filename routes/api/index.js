@@ -126,7 +126,7 @@ router.put('/contactListsUser/:id', PERMISSIONS.facilitatorManagerAdmin, contact
 
 router.get('/topics', PERMISSIONS.facilitatorManagerAdmin, topic.get);
 router.post('/topic', PERMISSIONS.facilitatorManagerAdmin, topic.post);
-router.put('/topic/updateSessionTopicName', PERMISSIONS.facilitatorManagerAdmin, topic.updateSessionTopicName);
+router.put('/topic/updateSessionTopic', PERMISSIONS.facilitatorManagerAdmin, topic.updateSessionTopic);
 router.put('/topic/:id', PERMISSIONS.facilitatorManagerAdmin, topic.updateById);
 router.delete('/topic/:id', PERMISSIONS.facilitatorManagerAdmin, topic.deleteById);
 

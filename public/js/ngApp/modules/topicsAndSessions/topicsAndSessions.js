@@ -9,7 +9,7 @@
     var restApi = {
       topics: $resource(globalSettings.restUrl +'/topics'),
       topic: $resource(globalSettings.restUrl +'/topic/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      sessionTopic: $resource(globalSettings.restUrl +'/topic/updateSessionTopicName', {id:'@id'}, {put: {method: 'PUT'}}),
+      sessionTopic: $resource(globalSettings.restUrl +'/topic/updateSessionTopic', {id:'@id'}, {put: {method: 'PUT'}}),
       sessionByInvite: $resource(globalSettings.restUrl +'/session/getByInvite', {}, {post: {method: 'POST'}, put: {method: 'PUT'}})
     };
 
@@ -19,11 +19,11 @@
     topicsAndSessionsFactory.updateTopic = updateTopic;
     topicsAndSessionsFactory.deleteTopic = deleteTopic;
     topicsAndSessionsFactory.getSessionByInvite = getSessionByInvite;
-    topicsAndSessionsFactory.updateSessionTopicName = updateSessionTopicName;
+    topicsAndSessionsFactory.updateSessionTopic = updateSessionTopic;
 
     return topicsAndSessionsFactory;
 
-    function updateSessionTopicName(params) {
+    function updateSessionTopic(params) {
       var deferred = $q.defer();
 
       restApi.sessionTopic.put({}, params, function(result) {

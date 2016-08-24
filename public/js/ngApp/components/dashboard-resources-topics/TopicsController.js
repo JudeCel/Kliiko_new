@@ -51,9 +51,14 @@
         vm.editTopicIndex = vm.list.indexOf(topic);
         angular.copy(topic, vm.topicData);
         setEditData();
-      }else if(vm.modalAction = "new") {
+      }else if(vm.modalAction == 'new') {
         vm.topicData = {};
-        setCreateData()
+        setCreateData();
+      }
+      else if(vm.modalAction == 'sessionTopic') {
+        vm.originalReference = topic;
+        angular.copy(topic, vm.topicData);
+        setEditData();
       }
     };
 
@@ -70,8 +75,10 @@
     function submitModalForm() {
       if(vm.modalAction == 'edit'){
         editTopic();
-      }else if(vm.modalAction = "new") {
+      }else if(vm.modalAction == 'new') {
         createTopic();
+      }else if(vm.modalAction == 'sessionTopic') {
+        updateSessionTopic();
       }
     }
 
@@ -81,6 +88,17 @@
 
     function togglePanel(t) {
       t._showPanel = !t._showPanel;
+    }
+
+    function updateSessionTopic() {
+      topicsAndSessions.updateSessionTopic(vm.topicData).then(function(res) {
+        Object.assign(vm.originalReference, vm.topicData);
+        messenger.ok(res.message);
+        domServices.modal('topicModalWindow', 'close');
+        vm.topicData = {};
+      }, function(error) {
+        messenger.error(error)
+      });
     }
 
     function editTopic() {
