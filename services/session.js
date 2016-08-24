@@ -217,11 +217,10 @@ function copySessionTopics(accountId, fromSessionId, toSessionId) {
   topicsService.getAll(accountId).then(function(allTopics) {
     let topicsArray = [];
     allTopics.map(function(topic) {
-      topic.SessionTopics.map(function(topicItem) {
-
-        if (fromSessionId == topicItem.sessionId) {
-          topic.accountId = accountId;
-          topic.order = topicItem.order;
+      topic.SessionTopics.map(function(sessionTopic) {
+        if (fromSessionId == sessionTopic.sessionId) {
+          topic.sessionTopic = sessionTopic;
+          topic.sessionTopic.sessionId = toSessionId;
           topicsArray.push(topic);
         }
       });
