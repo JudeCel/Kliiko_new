@@ -9,13 +9,13 @@
           <div class='form-group'>
             <label for='topicName'>Name</label>
             <input type='text' class='form-control' id='topicName' placeholder='Name' maxlength='{{ topics.validations.name }}' ng-model='topics.topicData.name'>
-            <span class='help-block'>Characters left: {{ topics.validations.name - topics.topicData.name.length }}</span>
+            <span class='help-block'>Characters left: {{ topics.charactersLeft("name") }}</span>
           </div>
 
           <div class='form-group'>
             <label for='topicBoard'>Board Message</label>
-            <textarea rows='3' class='form-control' id='topicBoard' placeholder='Board Message' maxlength='{{ topics.validations.board }}' required ng-model='topics.topicData.boardMessage' />
-            <span class='help-block'>Characters left: {{ topics.validations.board - topics.topicData.boardMessage.length }}</span>
+            <textarea rows='3' class='form-control' id='topicBoard' placeholder='Board Message' maxlength='{{ topics.validations.boardMessage }}' required ng-model='topics.topicData.boardMessage' />
+            <span class='help-block'>Characters left: {{ topics.charactersLeft("boardMessage") }}</span>
           </div>
         </form>
       </div>

@@ -31,7 +31,7 @@
       <div id="topics-list">
         <div class="col-xs-12 col-md-4" ng-repeat="t in topics.list">
           <div class='panel panel-default'>
-            <div class='panel-heading' ng-click='t._showPanel = !t._showPanel'>
+            <div class='panel-heading' ng-click='topics.togglePanel(t)'>
               <div class='row'>
                 <h3 class='panel-title'>
                   {{ t.name }}
@@ -44,7 +44,7 @@
             </div>
 
             <div class='panel-body' ng-if='t._showPanel'>
-              <div class='col-md-12' ng-if='!t.SessionTopics || !t.SessionTopics.length'>
+              <div class='col-md-12' ng-if='!t.SessionTopics.length'>
                 This topic does not belong to any session.
               </div>
 
