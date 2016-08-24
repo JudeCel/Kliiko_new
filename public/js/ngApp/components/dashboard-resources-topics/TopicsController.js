@@ -13,8 +13,8 @@
     var tempName;
 
     vm.list = [];
+    vm.validations = {};
 
-    vm.nameMaxSize = 15;
     vm.newTopicName = null;
     vm.editBlockHelper = null;
     vm.modalAction = '';
@@ -25,6 +25,8 @@
     vm.deleteTopic = deleteTopic;
     vm.openModal = openModal;
     vm.submitModalForm = submitModalForm;
+    vm.charactersLeft = charactersLeft;
+    vm.togglePanel = togglePanel;
 
     init();
 
@@ -32,7 +34,8 @@
       topicsAndSessions.getAllTopics().then(
         function(res) {
           dbg.log2('#TopicsController > getAllTopics > success > ', res);
-          vm.list = res;
+          vm.list = res.topics;
+          vm.validations = res.validations;
         },
         function(err) {
           dbg.error('#TopicsController > getAllTopics > error:', err);
@@ -52,10 +55,6 @@
         vm.topicData = {};
         setCreateData()
       }
-
-      $('#topicModalWindow').on('shown.bs.modal', function (e) {
-        $("input#new-topic-input").focus();
-      });
     };
 
     function setEditData() {
@@ -74,6 +73,14 @@
       }else if(vm.modalAction = "new") {
         createTopic();
       }
+    }
+
+    function charactersLeft(type) {
+      return vm.topicData[type] ? (vm.validations[type] - vm.topicData[type].length) : vm.validations[type];
+    }
+
+    function togglePanel(t) {
+      t._showPanel = !t._showPanel;
     }
 
     function editTopic() {

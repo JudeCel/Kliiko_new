@@ -19,7 +19,7 @@
 
   <div class='col-md-12 fixed-bottom-margin margin-top-2rem'>
     <div class='dashboard-container'>
-      <div id="no-topics-in-list" class="row" ng-show="!topics.list.length">
+      <div class="row text-center" ng-show="!topics.list.length">
         <div class="col-md-12"><h4>You don't have any topics. Add one.</h4></div>
         <div class="col-md-12 margin-top-2rem">
           <div class="btn btn-standart btn-green btn-large" ng-click="topics.openModal('new')">
@@ -29,51 +29,44 @@
       </div>
 
       <div id="topics-list">
-        <div class="topic-list-item" ng-repeat="t in topics.list">
-          <uib-accordion close-others="false">
-            <uib-accordion-group is-open="up.modContentBlock.recruiter" heading="true">
-              <uib-accordion-heading>
-                <div class="panel-label">
-                  <span ng-if="topics.editBlockHelper != $index">
-                    {{t.name}}
+        <div class="col-xs-12 col-md-4" ng-repeat="t in topics.list">
+          <div class='panel panel-default'>
+            <div class='panel-heading' ng-click='topics.togglePanel(t)'>
+              <div class='row'>
+                <h3 class='panel-title'>
+                  {{ t.name }}
+                  <span ng-click="$event.stopPropagation()">
+                    <img class='pull-right ic' ng-click='topics.deleteTopic(t.id)' src='/icons/dashboardElement_remove.png' title='Delete'>
+                    <img class='pull-right ic' ng-click="topics.openModal('edit', t)" src='/icons/dashboardElement_edit.png' title='Edit'>
                   </span>
-                  <span ng-if="topics.editBlockHelper == $index">
-                    <input id="topic-name-input-{{ $index }}" type="text" ng-model="t.name" maxlength="{{ ::topics.nameMaxSize}}" ng-blur="topics.saveInline($index, t.name)">
-                    <span class="inline-editor-help">Characters left: {{ topics.nameMaxSize - t.name.length }}</span>
-                  </span>
-                </div>
-              </uib-accordion-heading>
-
-              <div class="row">
-                <div class="col-md-10" ng-if="t.SessionTopics.length < 1 || !t.SessionTopics">
-                  This topic does not belong to any session.
-                </div>
-                <div class="col-md-12" ng-if="t.SessionTopics.length > 0">
-                  <div class="">
-                    <table class='table table-dashboardElements'>
-                      <thead>
-                        <tr class='background-green'>
-                          <th>Name</th>
-                          <th>Start Date</th>
-                          <th>End Date</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr class='{{ csc.rowClass(session) }}' ng-repeat='sessionTopic in t.SessionTopics'>
-                          <td>{{ sessionTopic.Session.name }}</td>
-                          <td>{{ sessionTopic.Session.startTime | date:dateFormat }}</td>
-                          <td>{{ sessionTopic.Session.endTime | date:dateFormat }}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+                </h3>
               </div>
-            </uib-accordion-group>
-          </uib-accordion>
-          <div class="control-block">
-            <img class="pull-right ic" ng-click="topics.deleteTopic(t.id)" src="/icons/dashboardElement_remove.png" alt="" title="Delete">
-            <img class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" ng-click="topics.openModal('edit', t)">
+            </div>
+
+            <div class='panel-body' ng-if='t._showPanel'>
+              <div class='col-md-12' ng-if='!t.SessionTopics.length'>
+                This topic does not belong to any session.
+              </div>
+
+              <div class='col-md-12' ng-if='t.SessionTopics.length'>
+                <table class='table table-dashboardElements'>
+                  <thead>
+                    <tr class='background-green'>
+                      <th>Name</th>
+                      <th>Start Date</th>
+                      <th>End Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat='sessionTopic in t.SessionTopics'>
+                      <td>{{ sessionTopic.Session.name }}</td>
+                      <td>{{ sessionTopic.Session.startTime | date:dateFormat }}</td>
+                      <td>{{ sessionTopic.Session.endTime | date:dateFormat }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>

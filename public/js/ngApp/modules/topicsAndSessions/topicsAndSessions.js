@@ -45,7 +45,7 @@
       var deferred = $q.defer();
 
       dbg.log2('#topicsAndSessions > getAllTopics > call to API');
-      restApi.topics.query(success, error);
+      restApi.topics.get(success, error);
 
       return deferred.promise;
 

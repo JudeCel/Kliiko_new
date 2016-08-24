@@ -95,7 +95,7 @@
 
   .topic-list-item {
     margin: 4px;
-    padding: 4px;
+    padding: 5px;
     cursor: pointer;
     background: #F6F8F7;
 
@@ -122,5 +122,10 @@
     padding: 1px 10px !important;
   }
 
-
+  #topicModalWindow {
+    font-size: initial;
+    .modal-footer > .btn-standart {
+      font-size: initial
+    }
+  }
 }

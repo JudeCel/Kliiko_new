@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 module.exports = (Sequelize, DataTypes) => {
   var SessionTopics = Sequelize.define('SessionTopics', {
