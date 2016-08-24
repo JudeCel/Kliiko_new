@@ -1,0 +1,23 @@
+<% include ../header %>
+
+<div class='login-container center-block text-font-family'>
+  <ul class='nav nav-tabs'>
+    <li class='active'>
+      <%if(invite.status == "notThisTime") { %>
+      <a href='/registration' class='background-green text-white text-center text-shadow-gray invite-tab'>
+        Get your own Free <%= applicationName %> Account
+      </a>
+      <% } %>
+    </li>
+  </ul>
+
+  <div class='tab-content border-green'>
+    <h1 class='text-gray-dark text-center'>Thanks!</h1>
+    <p class='text-center'>
+      Your request has been recorded.<br />
+      An acknowledgement email is on its way.
+    </p>
+  </div>
+</div>
+
+<% include ../footer %>
