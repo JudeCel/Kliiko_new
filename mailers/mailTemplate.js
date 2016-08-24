@@ -82,6 +82,8 @@ function sendMailWithTemplate(template, mailParams, callback) {
 }
 
 function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {
+  let parsedTemplate = formatMailTemplate(template.content);
+  
     let cal = ical({domain: process.env.SERVER_DOMAIN, name: template.name});
     let event = cal.createEvent({
         start: new Date(mailParams.orginalStartTime),
@@ -104,12 +106,12 @@ function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {
       from: mailFrom,
       to: mailParams.email,
       subject: template.subject,
-      html: template.content,
+      html: parsedTemplate.html,
       //adds calendar event as attachment file
       attachments: [{
         filename: "event.ics",
         content: calendarData
-      }]
+      }].concat(parsedTemplate.resources)
       //makes this mail as calendar event in Outlook and Gmail with html data as content
       /*
       alternatives: [{
