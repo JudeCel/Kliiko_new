@@ -65,10 +65,10 @@
       return can;
     }
 
-    function selectAllTopics() {
+    function selectAllTopics(list) {
       vm.allTopicsSelected = !vm.allTopicsSelected;
 
-      vm.topics.map(function(topic) {
+      list.map(function(topic) {
         topic._selected = vm.allTopicsSelected;
       });
     }
