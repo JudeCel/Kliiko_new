@@ -8,7 +8,10 @@
         <div class="panel-label">
           Name Your Chat Session
           <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.sessionName, 'glyphicon-chevron-right': !step1Controller.accordions.sessionName}"></i>
-          <span class="panel-value pull-right">{{ sbc.session.steps.step1.name }}</span>
+          <span class="panel-value pull-right">
+            {{ sbc.session.steps.step1.name | limitTo:25 }}
+            <span ng-if='accountUser.firstName.length > 25'>...</span>
+          </span>
         </div>
       </uib-accordion-heading>
       <label for="sessionBuilder-session-name">Name your session &nbsp; </label>
