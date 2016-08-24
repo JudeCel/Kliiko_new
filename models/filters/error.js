@@ -53,5 +53,5 @@ function modifyFieldName(field) {
 }
 
 var exceptionFieldNames = {
-  boardMessage: 'facilitatorBoard'
+  boardMessage: 'facilitatorBillboard'
 }
