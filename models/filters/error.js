@@ -3,6 +3,10 @@
 var _ = require('lodash');
 var MessagesUtil = require('./../../util/messages');
 
+module.exports = {
+  errors: filterErrors
+};
+
 function filterErrors(errorsObject) {
   let object = {};
 
@@ -21,7 +25,7 @@ function filterErrors(errorsObject) {
 function parseErrorMessage(error, object) {
   let message = error.message;
   let path = error.path || (error.parent && error.parent.column) || 'unhandled';
-  let field = _.startCase(path);
+  let field = modifyFieldName(path);
 
   switch(true) {
     case message.includes('lower(name::text)'):
@@ -44,6 +48,10 @@ function parseErrorMessage(error, object) {
   object[path] = message;
 }
 
-module.exports = {
-  errors: filterErrors
-};
+function modifyFieldName(field) {
+  return _.startCase(exceptionFieldNames[field] || field);
+}
+
+var exceptionFieldNames = {
+  boardMessage: 'facilitatorBoard'
+}

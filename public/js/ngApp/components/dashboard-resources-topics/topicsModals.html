@@ -7,14 +7,14 @@
       <div class='modal-body'>
         <form>
           <div class='form-group'>
-            <label for='topicName'>Name</label>
-            <input type='text' class='form-control' id='topicName' placeholder='Name' maxlength='{{ topics.validations.name }}' ng-model='topics.topicData.name'>
+            <label for='topicName'>Name Your Topic</label>
+            <input type='text' class='form-control' id='topicName' placeholder='Name Your Topic' maxlength='{{ topics.validations.name }}' ng-model='topics.topicData.name'>
             <span class='help-block'>Characters left: {{ topics.charactersLeft("name") }}</span>
           </div>
 
           <div class='form-group'>
-            <label for='topicBoard'>Board Message</label>
-            <textarea rows='3' class='form-control' id='topicBoard' placeholder='Board Message' maxlength='{{ topics.validations.boardMessage }}' required ng-model='topics.topicData.boardMessage' />
+            <label for='topicBoard'>Facilitator Board</label>
+            <textarea rows='3' class='form-control' id='topicBoard' placeholder='Facilitator Board' maxlength='{{ topics.validations.boardMessage }}' required ng-model='topics.topicData.boardMessage' />
             <span class='help-block'>Characters left: {{ topics.charactersLeft("boardMessage") }}</span>
           </div>
         </form>

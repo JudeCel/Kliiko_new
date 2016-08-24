@@ -46,11 +46,20 @@
   }
 
   #topicModalWindow {
-    .form-control {
-      border-width: 2px;
-      min-height: 40px;
-      border-radius: 0;
-      resize: none;
+    .form-group {
+      label {
+        color: #737373;
+        font-weight: normal;
+      }
+      .help-block {
+        font-style: italic;
+      }
+      .form-control {
+        border-width: 2px;
+        min-height: 40px;
+        border-radius: 0;
+        resize: none;
+      }
     }
   }
 
