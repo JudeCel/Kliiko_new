@@ -483,7 +483,6 @@
 
 
       removeContacts(ids);
-      selectAll();
     }
 
     function startImport() {
