@@ -28,11 +28,7 @@
     vm.changeActiveState = changeActiveState;
     vm.changeLandingState = changeLandingState;
 
-    function initTopicController(tc) {
-      vm.topicsController = tc;
-    }
-
-    function init(list) {
+    function init() {
       vm.session = sessionBuilderControllerServices.session;
       vm.topics = vm.session.steps.step2.topics;
 
