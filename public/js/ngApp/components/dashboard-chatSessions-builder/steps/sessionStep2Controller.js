@@ -91,7 +91,6 @@
       vm.session.removeTopic(id).then(function(res) {
         dbg.log2('topic removed');
         removeTopicFromLocalList(id);
-        saveTopics(vm.sessionTopicsArray);
       }, function(error) {
         messenger.error(error);
       });
@@ -128,7 +127,7 @@
     function removeTopicFromLocalList(id) {
       var found;
       vm.sessionTopicsArray.map(function(topic, index) {
-        if(topic.sessionTopic.id == id) {
+        if(topic.id == id) {
           found = index;
           delete vm.sessionTopicsObject[topic.id];
         }
