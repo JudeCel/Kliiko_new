@@ -68,22 +68,18 @@ function createBaseMailTemplate(params, callback) {
 function create(params, callback) {
   MailTemplate.create(params).then(function(result) {
     callback(null, result);
-  }).catch(MailTemplate.sequelize.ValidationError, function(err) {
-    callback(err);
-  }).catch(function(err) {
-    callback(err);
+  }).catch(function(error) {
+    callback(filters.errors(error));
   });
 }
 
 function update(id, parameters, callback){
   MailTemplate.update(parameters, {
       where: {id: id}
-  })
-  .then(function (result) {
-      return callback(null, result);
-  })
-  .catch(function (err) {
-      callback(err);
+  }).then(function(result) {
+    callback(null, result);
+  }).catch(function(error) {
+    callback(filters.errors(error));
   });
 }
 
@@ -288,8 +284,8 @@ function copyBaseTemplatesForSession(accountId, sessionId, callback) {
     }
     MailTemplate.bulkCreate(result).done(function(res) {
        callback(null, res);
-    }, function(err) {
-       callback(err);
+    }, function(error) {
+       callback(filters.errors(error));
     })
   });
 }
@@ -332,8 +328,8 @@ function copyBaseTemplates(callback) {
     }
     MailTemplate.bulkCreate(result).done(function(res) {
        callback(null, res);
-    }, function(err) {
-       callback(err);
+    }, function(error) {
+      callback(filters.errors(error));
     })
   }).catch(function(error) {
     callback(error);

@@ -30,10 +30,8 @@ function findScheme(params, accountId) {
     else {
       deferred.reject(MessagesUtil.brandColour.notFound);
     }
-  }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
-    deferred.reject(filters.errors(error));
   }).catch(function(error) {
-    deferred.reject(error);
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
@@ -44,10 +42,8 @@ function findAllSchemes(accountId) {
 
   BrandProjectPreference.findAll({ where: { accountId: accountId } }).then(function(schemes) {
     deferred.resolve(simpleParams(schemes));
-  }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
-    deferred.reject(filters.errors(error));
   }).catch(function(error) {
-    deferred.reject(error);
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
@@ -65,10 +61,8 @@ function createScheme(params, accountId) {
     if(_.isEmpty(errors)) {
       BrandProjectPreference.create(validParams).then(function(result) {
         deferred.resolve(simpleParams(result, MessagesUtil.brandColour.created));
-      }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
-        deferred.reject(filters.errors(error));
       }).catch(function(error) {
-        deferred.reject(error);
+        deferred.reject(filters.errors(error));
       });
     }
     else {
@@ -92,7 +86,7 @@ function createDefaultForAccount(params, t) {
     BrandProjectPreference.create(validParams, { transaction: t }).then(function(result) {
       deferred.resolve();
     }).catch(function(error) {
-      deferred.reject(error);
+      deferred.reject(filters.errors(error));
     });
   }
   else {
@@ -124,10 +118,8 @@ function updateScheme(params, accountId) {
     findScheme(params, accountId).then(function(result) {
       result.data.update(validParams, { returning: true }).then(function(scheme) {
         deferred.resolve(simpleParams(scheme, MessagesUtil.brandColour.updated));
-      }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
-        deferred.reject(filters.errors(error));
       }).catch(function(error) {
-        deferred.reject(error);
+        deferred.reject(filters.errors(error));
       });
     }, function(error) {
       deferred.reject(error);
@@ -146,10 +138,8 @@ function removeScheme(params, accountId) {
   findScheme(params, accountId).then(function(result) {
     result.data.destroy().then(function() {
       deferred.resolve(simpleParams(null, MessagesUtil.brandColour.removed));
-    }).catch(BrandProjectPreference.sequelize.ValidationError, function(error) {
-      deferred.reject(filters.errors(error));
     }).catch(function(error) {
-      deferred.reject(error);
+      deferred.reject(filters.errors(error));
     });
   }, function(error) {
     deferred.reject(error);
