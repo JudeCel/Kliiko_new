@@ -33,8 +33,8 @@ function destroy(contacListId, accoutId) {
   let deferred = q.defer();
   ContactList.destroy({where: {id: contacListId, accountId: accoutId, editable: true} }).then(function(result) {
     deferred.resolve(prepareData(result));
-  }, function(err) {
-    deferred.reject(err);
+  }, function(error) {
+    deferred.reject(filters.errors(error));
   });
   return deferred.promise;
 }
@@ -200,8 +200,8 @@ function create(params) {
       ContactList.create(params).then(function(result) {
         result.dataValues.maxCustomFields = MAX_CUSTOM_FIELDS;
         deferred.resolve(result);
-      }, function(err) {
-        deferred.reject(err);
+      }, function(error) {
+        deferred.reject(filters.errors(error));
       });
     }, function(error) {
       deferred.reject(error);
@@ -218,8 +218,8 @@ function update(params) {
   validators.hasValidSubscription(params.accountId).then(function() {
     ContactList.update(params,  {where: {id: params.id} }).then(function(result) {
       deferred.resolve(result);
-    }, function(err) {
-      deferred.reject(err);
+    }, function(error) {
+      deferred.reject(filters.errors(error));
     });
   }, function(error) {
     deferred.reject(error);
