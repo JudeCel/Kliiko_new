@@ -55,7 +55,7 @@
             <td>{{ session.endTime | date:sc.dateFormat }}</td>
             <td>{{ session.expireDate | date:sc.dateFormat }}</td>
             <td>{{ session.showStatus }}</td>
-            <td class='text-right dashboardElementsEditRemove'>
+            <td class='text-right col-xs-3'>
 
               <span id='dashboard-session-rating' uib-popover-template="'averageRating.html'" popover-trigger='mouseenter' class='glyphicon glyphicon-star' aria-hidden='true' ng-if='csc.hasAccess(session.id, app.accountUser)' ng-click='csc.changePage("sessionRating", session)'></span>
               <img id='dashboard-copy-session' src='/icons/resources_grey.png' alt='' ng-click='csc.copySession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
