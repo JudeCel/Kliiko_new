@@ -28,9 +28,10 @@
     vm.changeActiveState = changeActiveState;
     vm.changeLandingState = changeLandingState;
 
-    function init() {
+    function init(topicController) {
       vm.session = sessionBuilderControllerServices.session;
       vm.topics = vm.session.steps.step2.topics;
+      vm.topicController = topicController;
 
       vm.topics.map(function(topic) {
         addSessionTopic(topic);
@@ -160,7 +161,7 @@
 
     function getSelectedTopics() {
       var array = [];
-      vm.topics.map(function(topic) {
+      vm.topicController.list.map(function(topic) {
         if(topic._selected) { array.push(topic); }
       });
       return array;
