@@ -1,15 +1,14 @@
-.changePasswordModal {
-  width: 20%;
-  padding-top: 100px;
+.modal.fade {
+  margin-top: 100px;
+  margin-bottom: 100px;
 }
 
-.getQuoteModal {
-  padding-top: 100px;
+.changePasswordModal {
+  width: 20%;
 }
 
 .contactDetailsModal {
   width: 60%;
-  padding-top: 100px;
    .table td {
     padding-left: 2px;
     padding-right: 5px;
@@ -77,21 +76,16 @@
 
 .accountDatabaseCommentModal {
   max-width: 768px;
-  padding-top: 100px;
 }
 
 .surveyPreviewModal {
   @extend .contactDetailsModal;
   width: 800px;
-  padding-bottom: 100px;
-  padding-top: 100px;
 }
 
 .gallerySelectModal {
   @extend .contactDetailsModal;
   width: 800px;
-  padding-bottom: 100px;
-  padding-top: 100px;
   .modal-body > .nav.nav-pills {
     margin-bottom: 10px;
   }
@@ -100,8 +94,6 @@
 .brandColourPreviewModal {
   @extend .contactDetailsModal;
   width: 35%;
-  padding-bottom: 100px;
-  padding-top: 100px;
 }
 
 .accountManagerModal {
