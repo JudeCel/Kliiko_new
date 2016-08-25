@@ -1,6 +1,8 @@
 .modal.fade {
-  margin-top: 100px;
-  margin-bottom: 100px;
+  .modal-dialog {
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
 }
 
 .changePasswordModal {
