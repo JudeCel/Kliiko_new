@@ -69,6 +69,9 @@ function chargeAddon(params) {
       deferred.reject(MessagesUtil.subscriptionAddon.notAllowed);
     }
     else {
+      if(!params.addon_quantity) {
+        return deferred.reject(MessagesUtil.subscriptionAddon.missingQuantity);
+      }
       params.subscriptionId = subscription.subscriptionId
       params.customerId = subscription.customerId
       params.id = subscription.id
@@ -103,7 +106,7 @@ function chargebeeAddonCharge(params) {
     addon_quantity : params.addon_quantity
   }).request(function(error, result){
     if(error){
-      deferred.reject(error);
+      deferred.reject(error.message);
     }else{
       deferred.resolve(result.invoice);
     }

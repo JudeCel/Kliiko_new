@@ -149,7 +149,8 @@ module.exports = {
   },
   subscriptionAddon: {
     successfulPurchase: 'You have sucessfully purchased additional sms credits.',
-    notAllowed: 'You must have plan that allows you to buy additional sms credits'
+    notAllowed: 'You must have plan that allows you to buy additional sms credits',
+    missingQuantity: 'Quantity not selected'
   },
   survey: {
     cantExportSurveyData: 'Please Update your subscription plan, to export survey data.',
