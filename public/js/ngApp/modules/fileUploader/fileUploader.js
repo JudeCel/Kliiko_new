@@ -62,19 +62,7 @@
         deferred.resolve(result);
       }, function(error) {
         // This is because angular file upload can't understand CORS origin responses.
-        switch (true) {
-          case error.status == -1:
-            deferred.reject("File is too big");
-            break;
-          case Array.isArray(error.data.errors.type):
-            deferred.reject(error.data.errors.type[0]);
-            break;
-          case typeof error.data.errors === 'object':
-            deferred.reject(error.data.errors);
-            break;
-          default:
-            deferred.reject(requestError);
-        }
+        swichErrors(deferred, error)
       });
 
       return deferred.promise;
@@ -105,7 +93,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > remove resources > server error >', error);
-        deferred.reject(error.data || requestError);
+        swichErrors(deferred, error);
       });
 
       return deferred.promise;
@@ -120,7 +108,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > zip resources > server error >', error);
-        deferred.reject(error.data || requestError);
+        swichErrors(deferred, error);
       });
 
       return deferred.promise;
@@ -191,6 +179,22 @@
         headers: { 'Authorization': fileUploaderService.token },
         url: globalSettings.serverChatDomainUrl + '/api/' + what +  '/'
       };
+    }
+    
+    function swichErrors(deferred, error) {
+      switch (true) {
+        case error.status == -1:
+          deferred.reject("File is too big");
+          break;
+        case Array.isArray(error.data.errors.type):
+          deferred.reject(error.data.errors.type[0]);
+          break;
+        case typeof error.data.errors === 'object':
+          deferred.reject(error.data.errors);
+          break;
+        default:
+          deferred.reject(requestError);
+      }
     }
 
     function resourceForServer(what, path) {
