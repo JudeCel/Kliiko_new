@@ -43,24 +43,24 @@
   <div class='panel-footer'>
     <div class='row'>
       <div class='col-xs-12' ng-if='!gc.hideElements'>
-        <button class='btn btn-standart btn-margin btn-green pull-right btn-small-x' ng-if='!resource.stock' ng-click='gc.removeResources([resource.id])'>
+        <button class='margin-left-5 btn btn-standart btn-green pull-right btn-small-x' ng-if='!resource.stock' ng-click='gc.removeResources([resource.id])'>
           <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
         </button>
 
         <div ng-if='resource.url.full && !typeOf.youtube'>
-          <a href='{{ resource.url.full }}' download class='btn btn-margin btn-green pull-right btn-small-x'>
+          <a href='{{ resource.url.full }}' download class='margin-left-5 btn btn-standart btn-green pull-right btn-small-x'>
             <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>
           </a>
         </div>
 
         <div ng-if='!resource.url.full'>
-          <button class='btn btn-standart btn-margin btn-green pull-right btn-small-x' ng-click='gc.refreshResource(resource)'>
+          <button class='margin-left-5 btn btn-standart btn-green pull-right btn-small-x' ng-click='gc.refreshResource(resource)'>
             <span class='glyphicon glyphicon-refresh' aria-hidden='true'></span>
           </button>
         </div>
 
         <div class='pull-right'>
-          <a ng-if='typeOf.youtube' ng-href='{{ gc.normalYoutubeUrl(resource.url.full) }}' target='_blank' class='btn btn-standart btn-margin btn-green pull-right text-uppercase'>
+          <a ng-if='typeOf.youtube' ng-href='{{ gc.normalYoutubeUrl(resource.url.full) }}' target='_blank' class='margin-left-5 btn btn-standart btn-green pull-right text-uppercase'>
             <span class='glyphicon glyphicon-facetime-video'></span>
           </a>
         </div>
