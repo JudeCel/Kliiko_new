@@ -215,6 +215,7 @@ function prepareCloseSessionEmailParams(session, facilitator, receiver) {
     sessionId: session.id,
     sessionName: session.name,
     email: receiver.email,
+    role: receiver.role,
     firstName: receiver.firstName, //receiver name
     incentive: session.incentive,
     facilitatorMobileNumber: facilitator.mobile,
