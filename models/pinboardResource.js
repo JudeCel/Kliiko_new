@@ -15,9 +15,9 @@ module.exports = (Sequelize, DataTypes) => {
     timestamps: true,
     classMethods: {
       associate: function(models) {
-        PinboardResource.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId' });
-        PinboardResource.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId' });
-        PinboardResource.belongsTo(models.Resource, { foreignKey: 'resourceId' });
+        PinboardResource.belongsTo(models.SessionTopics, { foreignKey: 'sessionTopicId', onDelete: 'cascade'});
+        PinboardResource.belongsTo(models.SessionMember, { foreignKey: 'sessionMemberId', onDelete: 'cascade' });
+        PinboardResource.belongsTo(models.Resource, { foreignKey: 'resourceId', onDelete: 'cascade' });
       }
     }
   });
