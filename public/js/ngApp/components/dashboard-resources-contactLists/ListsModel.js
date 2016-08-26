@@ -274,7 +274,7 @@
       var currentListId = self.activeList.id;
 
       contactListServices.createUser(newContactObj, currentListId).then(function (res) {
-        newContactObj = angular.extend(newContactObj, res);
+        newContactObj = angular.extend(newContactObj, res.user);
         newContactObj = new Member(newContactObj);
 
         for (var i = 0, len = self.items.length; i < len ; i++) {
