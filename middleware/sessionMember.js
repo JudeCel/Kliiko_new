@@ -31,7 +31,7 @@ function hasAccess(memberRoles, accountRoles) {
 }
 
 function checkMemberRoles(memberRoles, req, res, next) {
-  let sessionId = req.params.id ? req.params.id : null;
+  let sessionId = req.params.id ? req.params.id : { $ne: null };
 
   SessionMember.find({
     where: { role: { $in: memberRoles }, sessionId: sessionId },
