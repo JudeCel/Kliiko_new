@@ -10,7 +10,8 @@
         <button ng-if='!app.accountUser.isFacilitator' id='dashboard-build-new-session'class='btn btn-standart btn-margin btn-green btn-large' ui-sref="dashboard.chatSessions.builder" messages-directive='skip'>Build New Session</button>
       </div>
     </div>
-    <div class='col-xs-12 fixed-bottom-margin'>
+
+    <div class='col-xs-12'>
       <table class='table table-dashboardElements'>
         <thead>
           <tr class='background-green'>
@@ -68,6 +69,12 @@
         </tbody>
       </table>
     </div>
+
+    <div class='col-xs-12 build-session-text' ng-if='csc.queriedForSessions && !csc.sessions.length'>
+      <h2 class='text-center'>Build a new Session to get started</h2>
+    </div>
+
+    <div class='col-xs-12 fixed-bottom-margin'></div>
   </div>
 </div>
 

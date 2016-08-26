@@ -30,11 +30,13 @@
 
     vm.orderByField = 'id';
     vm.reverseSort = false;
+    vm.queriedForSessions = false;
 
     changePage('index');
 
     function init() {
       chatSessionsServices.findAllSessions().then(function(res) {
+        vm.queriedForSessions = true;
         vm.sessions = res.data;
         vm.dateFormat = res.dateFormat;
         vm.chatRoomUrl = res.chatRoomUrl;
