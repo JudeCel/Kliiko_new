@@ -7,7 +7,7 @@
         </h2>
       </div>
       <div class='text-right'>
-        <button ng-if='!app.accountUser.isFacilitator' id='dashboard-build-new-session'class='btn btn-standart btn-margin btn-green btn-large' ui-sref="dashboard.chatSessions.builder" messages-directive='skip'>Build New Session</button>
+        <button ng-if='!app.accountUser.isFacilitator' id='dashboard-build-new-session'class='btn btn-standart btn-margin btn-green btn-large' ui-sref="account-hub.chatSessions.builder" messages-directive='skip'>Build New Session</button>
       </div>
     </div>
 
@@ -60,7 +60,7 @@
 
               <span id='dashboard-session-rating' uib-popover-template="'averageRating.html'" popover-trigger='mouseenter' class='glyphicon glyphicon-star' aria-hidden='true' ng-if='csc.hasAccess(session.id, app.accountUser)' ng-click='csc.changePage("sessionRating", session)'></span>
               <img id='dashboard-copy-session' src='/icons/resources_grey.png' alt='' ng-click='csc.copySession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
-              <img id='dashboard-edit-session' src='/icons/dashboardElement_edit.png' alt='' ng-if='csc.hasAccess(session.id, app.accountUser)' ui-sref="dashboard.chatSessions.builder({id:session.id})" ng-click=""/>
+              <img id='dashboard-edit-session' src='/icons/dashboardElement_edit.png' alt='' ng-if='csc.hasAccess(session.id, app.accountUser)' ui-sref="account-hub.chatSessions.builder({id:session.id})" ng-click=""/>
               <img src='/icons/dashboardElement_remove.png' alt='' ng-click='csc.removeSession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
 
               <span id="dashboard-enter-chat-room" class='glyphicon glyphicon-play' aria-hidden='true' ng-click='csc.redirectToChatSession(session.id)'></span>

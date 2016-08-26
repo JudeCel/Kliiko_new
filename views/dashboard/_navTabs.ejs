@@ -1,8 +1,8 @@
 <ul class='nav nav-tabs' id='nav-tabs-main'>
   <% if(currentUser.role != "facilitator") { %>
-    <li id='dashboard-accountProfile' ui-sref-active='active' ui-sref='dashboard.accountProfile'><a href=''>Account Profile</a></li>
+    <li id='dashboard-accountProfile' ui-sref-active='active' ui-sref='account-hub.accountProfile'><a href=''>Account Profile</a></li>
   <% } %>
 
-  <li id='dashboard-chatSessions' ui-sref-active='active' ui-sref='dashboard.chatSessions'><a href=''>Sessions</a></li>
-  <li id='dashboard-resources' ui-sref-active='active' ui-sref='dashboard.resources'><a href=''>Resources</a></li>
+  <li id='dashboard-chatSessions' ui-sref-active='active' ui-sref='account-hub.chatSessions'><a href=''>Sessions</a></li>
+  <li id='dashboard-resources' ui-sref-active='active' ui-sref='account-hub.resources'><a href=''>Resources</a></li>
 </ul>

@@ -25,7 +25,7 @@
     </div>
     <div class='col-xs-12 col-md-7 btn-group remove-link-line nav-button-top-margin text-right' role='group'>
       <span id='welcome-user' class='hidden'>Welcome, {{ app.user.firstName }}!</span>
-      <a href='/dashboard/tour'>
+      <a href='/account-hub/tour'>
         <button class='btn-header-green' type='button'>
           Tour Video
           <span class='glyphicon glyphicon-play' aria-hidden='true'></span>
@@ -50,11 +50,11 @@
         <li class='text-right text-size-dashboard'><a href='<%= currentUser.myDashboardUrl %>'>My Dashboard<img class="my-details-container" src='/icons/dashboard_blue.png' alt='' /></a></li>
         <li role="separator" class="divider" ng-if='app.accountUser.isAccountManager'></li>
         <li class='text-right text-size-dashboard' ng-if='app.accountUser.isAccountManager'>
-          <a href='/dashboard/paymentDetails' target="_blank">Payment Details<img class="my-details-container" src='/icons/payment_green.png' alt='' /></a>
+          <a href='/account-hub/paymentDetails' target="_blank">Payment Details<img class="my-details-container" src='/icons/payment_green.png' alt='' /></a>
         </li>
         <li role="separator" class="divider" ng-if='app.accountUser.isAccountManager'></li>
         <li class='text-right text-size-dashboard' ng-if='app.accountUser.isAccountManager'>
-          <a ui-sref="dashboard.smsCredits">Get SMS credits<img class="my-details-container" src='' alt='' /></a>
+          <a ui-sref="account-hub.smsCredits">Get SMS credits<img class="my-details-container" src='' alt='' /></a>
         </li>
         <li role="separator" class="divider"></li>
         <li class='text-right text-size-dashboard'><a href='/logout'>Logout<img class="my-details-container" src='/icons/logout_yellow.png' alt='' /></a></li>

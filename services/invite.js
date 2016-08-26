@@ -522,7 +522,7 @@ function prepareMailParams(session, receiver, facilitator) {
     startDate: session.startDate,
     orginalStartTime: session.startTime,
     orginalEndTime: session.endTime,
-    confirmationCheckInUrl: 'not-found',
+    confirmationCheckInUrl: mailUrlHelper.getUrl('', '/login'),
     participantMail: receiver.email,
     incentive: session.incentive
   }

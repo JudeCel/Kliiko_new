@@ -19,7 +19,7 @@
 
     vm.session.init().then(function(res) {
       if (!$stateParams.id) {
-        $state.go('dashboard.chatSessions.builder', {id: vm.session.id}, {
+        $state.go('account-hub.chatSessions.builder', {id: vm.session.id}, {
           location: true, inherit: false, notify: false, reload:false
         });
       }
@@ -74,7 +74,7 @@
         if (step === 'back')  handlePreviousStep();
         if (step === 'next') handleNextStep();
         if (step === 'finish') {
-          $state.go('dashboard.chatSessions');
+          $state.go('account-hub.chatSessions');
         }
       }
 
@@ -164,7 +164,7 @@
       var deferred = $q.defer();
 
       if (!$stateParams.id) {
-        $state.go('dashboard.chatSessions.builder', {id: vm.session.id}, {
+        $state.go('account-hub.chatSessions.builder', {id: vm.session.id}, {
           location: true, inherit: false, notify: false, reload:false
         });
       }
