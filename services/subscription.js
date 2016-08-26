@@ -521,7 +521,8 @@ function chargebeeSubUpdateViaCheckout(params, redirectUrl, provider) {
     },
     redirect_url: redirectUrl,
     cancel_url: redirectUrl,
-    pass_thru_content: passThruContent
+    pass_thru_content: passThruContent,
+    embed: "false"
   }).request(function(error,result){
     if(error){
       deferred.reject(error);
