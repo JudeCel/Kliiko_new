@@ -13,183 +13,183 @@
         url: "/",
         onEnter: ['$state', 'dbg', function($state, dbg) {
           dbg.rs('index');
-          $state.go('dashboard');
+          $state.go('account-hub');
         }]
       })
-      .state('dashboard', {
+      .state('account-hub', {
         url: "",
         onEnter: ['$state', 'dbg', function($state, dbg) {
-          dbg.rs('dashboard');
+          dbg.rs('account-hub');
 
           setTimeout(function() {
-            if ($state.current.name == 'dashboard') $state.go('dashboard.accountProfile');
+            if ($state.current.name == 'account-hub') $state.go('account-hub.accountProfile');
           }, 10);
         }],
         views: {
-          'dashboard@': {templateUrl: prePath + "dashboard/dashboard.html"},
+          'account-hub@': {templateUrl: prePath + "dashboard/dashboard.html"},
         }
       })
-      .state('dashboard.accountProfile', {
+      .state('account-hub.accountProfile', {
         url: "/account-profile",
         views: {
-          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-accountProfile/dashboard-content.html"}
+          'dashboardContent@account-hub': {templateUrl: prePath + "dashboard-accountProfile/dashboard-content.html"}
         },
         onEnter: ['$state', 'dbg', 'accountUser', function($state, dbg, accountUser) {
-          dbg.rs('dashboard.accountProfile is on');
+          dbg.rs('account-hub.accountProfile is on');
           sessionStorage.setItem('bannerType', 'profile');
-          if(accountUser.accountUser.isFacilitator) $state.go('dashboard.chatSessions');
+          if(accountUser.accountUser.isFacilitator) $state.go('account-hub.chatSessions');
         }]
       })
-      .state('dashboard.accountProfile.upgradePlan', {
+      .state('account-hub.accountProfile.upgradePlan', {
         url: "/upgrade-plan?step",
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-upgradePlan/dashboard-content.html"}
         },
         onEnter: ['dbg', function(dbg) {
-          dbg.rs('dashboard.accountProfile.upgradePlan is on');
+          dbg.rs('account-hub.accountProfile.upgradePlan is on');
         }]
       })
-      .state('dashboard.accountProfile.accountManagers', {
+      .state('account-hub.accountProfile.accountManagers', {
         url: "/account-managers",
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-accountManagers/dashboard-content.html"}
         },
         onEnter: ['dbg', function(dbg) {
-          dbg.rs('dashboard.accountProfile.accountManagers is on');
+          dbg.rs('account-hub.accountProfile.accountManagers is on');
         }]
       })
-      .state('dashboard.accountProfile.bannerMessages', {
+      .state('account-hub.accountProfile.bannerMessages', {
         url: '/banner-messages',
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-bannerMessages/dashboard-content.html"}
         },
         onEnter: ['dbg', function(dbg) {
-          dbg.rs('dashboard.accountProfile.bannerMessages is on');
+          dbg.rs('account-hub.accountProfile.bannerMessages is on');
         }]
       })
-      .state('dashboard.accountProfile.accountDatabase', {
+      .state('account-hub.accountProfile.accountDatabase', {
         url: '/account-database',
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-accountDatabase/dashboard-content.html"}
         },
         onEnter: ['dbg', function(dbg) {
-          dbg.rs('dashboard.accountProfile.accountDatabase is on');
+          dbg.rs('account-hub.accountProfile.accountDatabase is on');
         }]
       })
-      .state('dashboard.accountProfile.sessionRating', {
+      .state('account-hub.accountProfile.sessionRating', {
         url: '/session-rating',
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-sessionRating/dashboard-content.html"}
         },
         onEnter: ['dbg', function(dbg) {
-          dbg.rs('dashboard.accountProfile.sessionRating is on');
+          dbg.rs('account-hub.accountProfile.sessionRating is on');
         }]
       })
-      .state('dashboard.chatSessions', {
+      .state('account-hub.chatSessions', {
         url: '/chatSessions',
         onEnter: ['dbg', function (dbg) {
           dbg.rs('chatSessions');
           sessionStorage.setItem('bannerType', 'sessions');
         }],
         views: {
-          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-chatSessions/dashboard-content.html"}
+          'dashboardContent@account-hub': {templateUrl: prePath + "dashboard-chatSessions/dashboard-content.html"}
         }
       })
-      .state('dashboard.chatSessions.builder', {
+      .state('account-hub.chatSessions.builder', {
         url: '/builder/:id',
         onEnter: ['$state', 'dbg', 'accountUser', function($state, dbg, accountUser) {
           dbg.rs('chatSessions builder');
           sessionStorage.setItem('bannerType', 'sessions');
           setTimeout(function() {
-            if(accountUser.accountUser.isFacilitator && !$state.params.id) $state.go('dashboard.chatSessions');
+            if(accountUser.accountUser.isFacilitator && !$state.params.id) $state.go('account-hub.chatSessions');
           }, 10);
         }],
         views: {
-          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-chatSessions-builder/session-builder-index.html"}
+          'dashboardContent@account-hub': {templateUrl: prePath + "dashboard-chatSessions-builder/session-builder-index.html"}
         }
       })
-      .state('dashboard.resources', {
+      .state('account-hub.resources', {
         url: "/resources",
         onEnter: ['$state', 'dbg', 'accountUser', function($state, dbg, accountUser) {
           dbg.rs('resources');
           sessionStorage.setItem('bannerType', 'resources');
 
-          if ($state.current.name == 'dashboard.resources') $state.go('dashboard.resources.gallery');
+          if ($state.current.name == 'account-hub.resources') $state.go('account-hub.resources.gallery');
         }],
         views: {
-          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-resources/resources.html"}
+          'dashboardContent@account-hub': {templateUrl: prePath + "dashboard-resources/resources.html"}
         }
       })
-      .state('dashboard.resources.gallery', {
+      .state('account-hub.resources.gallery', {
         url: "/gallery",
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-gallery/dashboard-content.html"}
         },
         onEnter: ['dbg', function(dbg) {
-          dbg.rs('dashboard.resources.gallery is on');
+          dbg.rs('account-hub.resources.gallery is on');
         }]
       })
-      .state('dashboard.resources.contactLists', {
+      .state('account-hub.resources.contactLists', {
         url: "/contact-lists",
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-contactLists/dashboard-content.html"}
         },
         onEnter: ['dbg', function(dbg) {
-          dbg.rs('dashboard.resources.contactLists is on');
+          dbg.rs('account-hub.resources.contactLists is on');
         }]
       })
-      .state('dashboard.resources.survey', {
+      .state('account-hub.resources.survey', {
         url: '/survey',
         views: {
           'resourcesContent': { templateUrl: prePath + 'dashboard-resources-contactLists-survey/dashboard-content.html' }
         },
         onEnter: ['dbg', function(dbg) {
-          dbg.rs('dashboard.resources.contactLists.survey is on');
+          dbg.rs('account-hub.resources.contactLists.survey is on');
         }]
       })
-      .state('dashboard.resources.topics', {
+      .state('account-hub.resources.topics', {
         url: "/topics",
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-topics/dashboard-content.html"}
         },
         onEnter: ['dbg', function(dbg) {
-          dbg.rs('dashboard.resources.topics is on');
+          dbg.rs('account-hub.resources.topics is on');
         }]
       })
-      .state('dashboard.smsCredits', {
+      .state('account-hub.smsCredits', {
         url: "/smsCredits",
         views: {
-          'dashboardContent@dashboard': {templateUrl: prePath + "dashboard-smsCredits/dashboard-content.html"}
+          'dashboardContent@account-hub': {templateUrl: prePath + "dashboard-smsCredits/dashboard-content.html"}
         },
         onEnter: ['dbg', function(dbg) {
-          dbg.rs('dashboard.smsCredits is on');
+          dbg.rs('account-hub.smsCredits is on');
         }]
       })
-      .state('dashboard.resources.emailTemplates', {
+      .state('account-hub.resources.emailTemplates', {
         url: "/email-templates",
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-emailTemplates/dashboard-content.html"}
         },
         onEnter: ['dbg', function(dbg) {
-          dbg.rs('dashboard.resources.emailTemplates is on');
+          dbg.rs('account-hub.resources.emailTemplates is on');
         }]
       })
-      .state('dashboard.accountProfile.emailTemplates', {
+      .state('account-hub.accountProfile.emailTemplates', {
         url: "/account-profile?systemMail",
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-resources-emailTemplates/dashboard-content.html"}
         },
         onEnter: ['dbg', function(dbg) {
-          dbg.rs('dashboard.accountProfile.emailTemplates is on');
+          dbg.rs('account-hub.accountProfile.emailTemplates is on');
         }]
       })
-      .state('dashboard.resources.brandColours', {
+      .state('account-hub.resources.brandColours', {
         url: '/brand-colours/:new?backTo&id',
         views: {
           'resourcesContent': {templateUrl: prePath + "dashboard-resources-brandColours/dashboard-content.html"}
         },
         onEnter: ['dbg', function(dbg) {
-          dbg.rs('dashboard.resources.brandColours is on');
+          dbg.rs('account-hub.resources.brandColours is on');
         }]
       })
   }]);

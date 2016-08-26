@@ -56,7 +56,7 @@ var resources = require('./routes/resources');
 var api = require('./routes/api');
 
 app.use('/', routes);
-app.use('/dashboard', sessionMiddleware.extendUserSession, currentUser.assign, dashboard);
+app.use('/account-hub', sessionMiddleware.extendUserSession, currentUser.assign, dashboard);
 app.use('/resources', sessionMiddleware.extendUserSession, currentUser.assign, resources);
 app.use('/api', sessionMiddleware.extendUserSession, currentUser.assign, api);
 

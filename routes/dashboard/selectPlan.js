@@ -18,12 +18,12 @@ function get(req, res, next) {
 function post(req, res, next) {
   subscriptionServices.createSubscription(res.locals.currentDomain.id, req.user.id).then(function() {
     if(req.body.planType == 'paidPlan') {
-      res.redirect('/dashboard#/account-profile/upgrade-plan');
+      res.redirect('/account-hub#/account-profile/upgrade-plan');
     }
     else {
-      res.redirect('/dashboard');
+      res.redirect('/account-hub');
     }
   }, function(error) {
-    res.redirect('/dashboard#/account-profile/upgrade-plan?error=' + error);
+    res.redirect('/account-hub#/account-profile/upgrade-plan?error=' + error);
   });
 }

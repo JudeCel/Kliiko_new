@@ -148,10 +148,10 @@ function userSwitch(object, user, protocol) {
   switch(user.role) {
     case 'admin':
     case 'accountManager':
-      addDashboardUrl(user, '/dashboard', protocol);
+      addDashboardUrl(user, '/account-hub', protocol);
       break;
     case 'facilitator':
-      addDashboardUrl(user, '/dashboard#/chatSessions/builder/', protocol);
+      addDashboardUrl(user, '/account-hub#/chatSessions/builder/', protocol);
       addSession(user);
       break;
     case 'participant':
