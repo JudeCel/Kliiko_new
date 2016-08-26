@@ -59,7 +59,6 @@ function initializeBuilder(params) {
   validators.hasValidSubscription(params.accountId).then(function() {
     validators.subscription(params.accountId, 'session', 1).then(function() {
 
-      params.name = 'Session' + Date.now();
       params.step = 'setUp';
       params.startTime = params.date;
       params.endTime = params.date;

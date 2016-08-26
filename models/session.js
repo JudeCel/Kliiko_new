@@ -13,7 +13,6 @@ module.exports = (Sequelize, DataTypes) => {
     brandProjectPreferenceId: { type: DataTypes.INTEGER, allowNull: true  },
     name: { type: DataTypes.STRING, allowNull: false,  defaultValue: 'untitled', validate: {
       notEmpty: true,
-      isUnique: validations.unique(Sequelize, 'Session', 'name', { accountContext: true }),
       isLength: validations.length('name', { max: 20 })
     } },
     startTime: { type: DataTypes.DATE, allowNull: false, defaultValue: initializeDate(), validate: { isValid: validateDate } },
