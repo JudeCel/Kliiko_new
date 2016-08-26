@@ -145,8 +145,8 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader', 'domServices'];
-  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader, domServices) {
+  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader', 'domServices', '$scope'];
+  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader, domServices, $scope) {
     var vm = this;
     vm.openContactDetailsModal = openContactDetailsModal;
     dbg.log2('#AppController started ');
@@ -189,6 +189,25 @@
           landlineNumberIsoCode = res.landlineNumberCountryData.iso2;
         }
         sessionStorage.setItem('landlineNumberCountryData',  landlineNumberIsoCode);
+      }
+    }
+
+    $('body').on('shown.bs.modal', function(e) {
+      setFocusToFormControl(e.target);
+    });
+
+    $scope.$on('$viewContentLoaded', function() {
+      setFocusToFormControl('body');
+    });
+
+    $scope.$on('$includeContentLoaded', function() {
+      setFocusToFormControl('body');
+    });
+
+    function setFocusToFormControl(target) {
+      var inputs = $(target).find('.form-control:not(.ng-autofocus-skip):visible');
+      if(inputs.length) {
+        inputs[0].focus();
       }
     }
   }
