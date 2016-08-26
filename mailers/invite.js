@@ -71,6 +71,7 @@ function sendInviteSession(inviteParams, callback) {
     });
   }
   else if(inviteParams.role == 'participant') {
+    inviteParams.termsOfUseUrl = helpers.getUrl('', '/terms_of_use_participent');
     inviteParams.acceptInvitationUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/accept/';
     inviteParams.invitationNotThisTimeUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/notThisTime/';
     inviteParams.invitationNotAtAllUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/notAtAll/';

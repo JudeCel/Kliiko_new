@@ -446,5 +446,8 @@ router.get('/privacy_policy', function(req, res, next) {
 router.get('/terms_of_use', function(req, res, next) {
   res.render('terms_of_use', { title: 'Terms of Use' });
 });
+router.get('/terms_of_use_participent', function(req, res, next) {
+  res.render('terms_of_use_participent', { title: 'Terms of Use' });
+});
 
 module.exports = router;
