@@ -1,7 +1,7 @@
 'use strict';
 
 var helpers = require('./helpers');
-
+var terms_of_service = require('../lib/terms_of_service');
 var mailTemplate = require('./mailTemplate');
 var mailHelper = require('./mailHelper');
 var mailTemplateService = require('../services/mailTemplate');
@@ -19,7 +19,7 @@ function sendInviteAccountManager(inviteParams, callback) {
         firstName: inviteParams.firstName,
         lastName: inviteParams.lastName,
         accountName: inviteParams.accountName,
-        termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+        termsOfUseUrl: terms_of_service.filter(inviteParams),
         privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       };
 
@@ -60,7 +60,7 @@ function sendInviteAccountManager(inviteParams, callback) {
 };
 
 function sendInviteSession(inviteParams, callback) {
-  inviteParams.termsOfUseUrl = helpers.getUrl('', '/terms_of_use');
+  inviteParams.termsOfUseUrl = terms_of_service.filter(inviteParams)
   inviteParams.privacyPolicyUrl = helpers.getUrl('', '/privacy_policy');
 
   if(inviteParams.role == 'observer') {
@@ -71,7 +71,6 @@ function sendInviteSession(inviteParams, callback) {
     });
   }
   else if(inviteParams.role == 'participant') {
-    inviteParams.termsOfUseUrl = helpers.getUrl('', '/terms_of_use_participent');
     inviteParams.acceptInvitationUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/accept/';
     inviteParams.invitationNotThisTimeUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/notThisTime/';
     inviteParams.invitationNotAtAllUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/notAtAll/';

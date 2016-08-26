@@ -1,12 +1,17 @@
+
   <footer id="footer" class="text-center">
-    © klzii | <a href='/privacy_policy' target='_blank'>Privacy Policy</a> | <a href='/terms_of_use' target='_blank'>Terms & Conditions</a> | Version: 0.0.2
+    <% if (locals.user && locals.user.role == "participant") { %>
+        <% var terms_of_use_url = '/terms_of_use_participant'; %>
+      <% } else { %>
+        <% var terms_of_use_url = '/terms_of_use'; %>
+    <% } %>
+
+    © klzii | <a href='/privacy_policy' target='_blank'>Privacy Policy</a> | <a href='<%= terms_of_use_url %>' target='_blank'>Terms & Conditions</a> | Version: 0.0.2
   </footer>
 
 
   <!-- null modal == fader -->
-  <div class='modal fade' id='null' role='dialog'>
-
-  </div>
+  <div class='modal fade' id='null' role='dialog'></div>
 
   <script type="text/javascript">
     var array = [

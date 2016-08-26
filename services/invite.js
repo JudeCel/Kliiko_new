@@ -149,6 +149,7 @@ function sendInvite(invite, deferred) {
   if(invite.accountId) {
     let inviteParams = {
       token: invite.token,
+      role: invite.role,
       email: invite.AccountUser.email,
       firstName: invite.AccountUser.firstName,
       lastName: invite.AccountUser.lastName,
@@ -510,6 +511,7 @@ function prepareMailParams(session, receiver, facilitator) {
   return {
     sessionId: session.id,
     email: receiver.email,
+    role: receiver.role,
     firstName: receiver.firstName, //receiver name
     facilitatorFirstName: facilitator.firstName,
     facilitatorLastName: facilitator.lastName,
