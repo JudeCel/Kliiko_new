@@ -1,12 +1,13 @@
+
   <footer id="footer" class="text-center">
-    © klzii | <a href='/privacy_policy' target='_blank'>Privacy Policy</a> | <a href='/terms_of_use' target='_blank'>Terms & Conditions</a> | Version: 0.0.2
+    <% var terms_of_use_url = (locals.user && locals.user.role == "participant") ? '/terms_of_use_participant' : '/terms_of_use'; %>
+
+    © klzii | <a href='/privacy_policy' target='_blank'>Privacy Policy</a> | <a href='<%= terms_of_use_url %>' target='_blank'>Terms & Conditions</a> | Version: 0.0.2
   </footer>
 
 
   <!-- null modal == fader -->
-  <div class='modal fade' id='null' role='dialog'>
-
-  </div>
+  <div class='modal fade' id='null' role='dialog'></div>
 
   <script type="text/javascript">
     var array = [
