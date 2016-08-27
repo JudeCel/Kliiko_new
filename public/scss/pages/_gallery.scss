@@ -94,4 +94,10 @@
   .gallery-btn-width {
     min-width: 47px !important;
   }
+  .drop-area {
+    text-align: center;
+    cursor: pointer;
+    padding: 8px;
+    border: 2px dashed $lightGray;
+  }
 }

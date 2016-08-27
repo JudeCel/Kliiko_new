@@ -1,4 +1,6 @@
-"use strict";
+'use strict';
+
+var MessagesUtil = require('./../util/messages');
 var usersService = require('./users');
 var async = require('async');
 var mailers = require('../mailers');
@@ -10,7 +12,7 @@ function sendToken(email, callback) {
         },
         function (token, userName, next) {
             if (!token) {
-                return next(new Error('E-mail not found'));
+                return next(new Error(MessagesUtil.resetPassword.error.mailNotFound));
             }
 
             let params = {
@@ -42,7 +44,7 @@ function checkTokenExpired(token, callback) {
     usersService.getUserByToken(token, function (err, user) {
 
         if (err || !user) {
-            return callback(new Error('User not found'));
+            return callback(new Error(MessagesUtil.resetPassword.error.userNotFound));
         }
 
         let tokenCreated = new Date(user.get("resetPasswordSentAt"));

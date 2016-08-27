@@ -1,4 +1,6 @@
 'use strict';
+
+var MessagesUtil = require('./../util/messages');
 let q = require('q');
 var validators = require('./../services/validators');
 var filters = require('./../models/filters');
@@ -7,23 +9,18 @@ var Topic = models.Topic;
 var _ = require('lodash');
 var Session = models.Session;
 
-const MESSAGES = {
-  updatedSessionTopic: "Session Topic was successfully update.",
-  error: { isRelaitedSession: "Can't delete topic is related session" }
-};
-
 module.exports = {
   getAll: getAll,
   create: create,
   update: update,
-  updateSessionTopicName: updateSessionTopicName,
+  updateSessionTopic: updateSessionTopic,
   destroy: destroy,
   updateSessionTopics: updateSessionTopics,
   joinToSession: joinToSession,
   removeFromSession: removeFromSession,
   removeAllFromSession: removeAllFromSession,
   removeAllAndAddNew: removeAllAndAddNew,
-  MESSAGES: MESSAGES
+  messages: MessagesUtil.topics
 };
 
 function getAll(accountId) {
@@ -46,21 +43,19 @@ function getAll(accountId) {
   return deferred.promise;
 }
 
-function updateSessionTopicName(params) {
+function updateSessionTopic(params) {
   let deferred = q.defer();
 
-  models.SessionTopics.update({ name: params.sessionTopicName, boardMessage: params.boardMessage }, {
-    where: {
-      id: params.sessionTopicId
+  models.SessionTopics.find({ where: { id: params.id } }).then(function(sessionTopic) {
+    if(sessionTopic) {
+      let validParams = sessionTopicUpdateParams(params);
+      return sessionTopic.update(validParams, { returning: true });
     }
-  }).then(function() {
-    models.SessionTopics.find({
-      where: {
-        id: params.sessionTopicId
-      }
-    }).then(function(result) {
-      deferred.resolve({ sessionTopic: result, message: MESSAGES.updatedSessionTopic });
-    })
+    else {
+      deferred.reject(MessagesUtil.topics.notFoundSessionTopic);
+    }
+  }).then(function(sessionTopic) {
+    deferred.resolve({ sessionTopic: sessionTopic, message: MessagesUtil.topics.updatedSessionTopic });
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -73,28 +68,18 @@ function updateSessionTopics(sessionId, topicsArray) {
   let ids = _.map(topicsArray, 'id');
   let returning = [];
   joinToSession(ids, sessionId, topicsArray).then(function(sessionTopics) {
-
     _.map(sessionTopics, function(sessionTopic) {
       _.map(topicsArray, function(topic) {
         if(topic.id == sessionTopic.topicId) {
-          sessionTopic.order = topic.order;
-          sessionTopic.active = topic.active;
-
-          if(!sessionTopic.name) {
-            sessionTopic.name = topic.name;
+          let params = {
+            order: topic.sessionTopic.order,
+            active: topic.sessionTopic.active,
+            landing: topic.sessionTopic.landing,
+            name: topic.sessionTopic.name,
+            boardMessage: topic.sessionTopic.boardMessage,
           }
 
-          if(!sessionTopic.boardMessage) {
-            sessionTopic.boardMessage = "Say something nice if you wish!";
-          }
-
-          sessionTopic.update({
-            order: sessionTopic.order,
-            active: sessionTopic.active,
-            name: sessionTopic.name,
-            boardMessage: sessionTopic.boardMessage
-          });
-
+          sessionTopic.update(params);
           topic.SessionTopics = [sessionTopic];
           returning.push(topic);
         }
@@ -201,7 +186,7 @@ function destroy(id) {
         deferred.reject(filters.errors(error));
       })
     } else {
-      deferred.reject(MESSAGES.error.isRelaitedSession);
+      deferred.reject(MessagesUtil.topics.error.relatedSession);
     }
   });
   return deferred.promise;
@@ -225,32 +210,23 @@ function create(params) {
 
 function update(params) {
   let deferred = q.defer();
-  let id = params.id;
 
-  delete params.id;
-  models.sequelize.transaction().then(function(t) {
-    Topic.update(params, {
-      where:{id: id}
-    }, {transaction: t}).then(function(topic) {
-      delete params.name
-      models.SessionTopics.update(params, {
-        where:{topicId: id}
-      }, {transaction: t}).then(function(sessionTopic) {
-        t.commit().then(function() {
-          deferred.resolve(sessionTopic);
-        });
-      },function(error) {
-        t.rollback().then(function() {
-          deferred.reject(filters.errors(error));
-        });
-      });
-
-    },function(error) {
-      t.rollback().then(function() {
-        deferred.reject(filters.errors(error));
-      });
-    });
+  Topic.find({ where: { id: params.id } }).then(function(topic) {
+    if(topic) {
+      return topic.update(params, { returning: true });
+    }
+    else {
+      deferred.reject(MessagesUtil.topics.notFound);
+    }
+  }).then(function(topic) {
+    deferred.resolve(topic);
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
+}
+
+function sessionTopicUpdateParams(params) {
+  return _.pick(params, ['name', 'boardMessage']);
 }

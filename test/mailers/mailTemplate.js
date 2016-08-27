@@ -20,6 +20,8 @@ let params = {
   dontParticipateInFutureUrl: "dontParticipateInFutureUrl",
   unsubscribeMailUrl: "unsubscribeMailUrl",
   sessionName: "testSession",
+  orginalStartTime: new Date(),
+  orginalEndTime: new Date(),
   startTime: "startTime",
   endTime: "endTime",
   startDate: "startDate",

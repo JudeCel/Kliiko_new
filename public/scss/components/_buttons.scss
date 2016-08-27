@@ -219,6 +219,7 @@ input.kliiko-checkbox:checked + label{
 .go-to-dashboard:hover,
 .go-to-dashboard:active {
   color: $green;
+  margin-right: 60px;
   text-decoration: none;
   border: 2px solid $green;
 }

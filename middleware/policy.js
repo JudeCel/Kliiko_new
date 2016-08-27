@@ -1,30 +1,28 @@
-"use strict";
-var _ = require('lodash');
-var accessDeniedMessage = 'Access Denied!';
+'use strict';
 
+var _ = require('lodash');
+var MessagesUtil = require('./../util/messages');
 
 module.exports = {
   hasAccess: checkRoles,
-  accessDeniedMessage: accessDeniedMessage,
+  accessDeniedMessage: MessagesUtil.middleware.policy.noAccess,
   authorized: authorized
 };
 
-
-
 function checkRoles(roles, allowedRoles) {
   let result = _.intersection(allowedRoles, roles);
-  return(result.length > 0)
+  return result.length;
 }
 
 function authorized(allowedRoles) {
   return function(req, res, next) {
-    if (!res.locals.currentDomain) { throw new Error('currentDomain is not defined in the response locals') }
-    let roles = res.locals.currentDomain.roles;
-    if (checkRoles(roles, allowedRoles)) {
-      return next();
-    } else {
-      return res.status(404).send(accessDeniedMessage);
+    if(!res.locals.currentDomain) { throw new Error('currentDomain is not defined in the response locals'); }
+
+    if(checkRoles(res.locals.currentDomain.roles, allowedRoles)) {
+      next();
+    }
+    else {
+      res.status(404).send(MessagesUtil.middleware.policy.noAccess);
     }
   }
 }
-

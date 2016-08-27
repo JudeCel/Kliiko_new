@@ -35,10 +35,10 @@ router.use(function (req, res, next) {
       let account = res.locals.currentDomain;
 
       if(user && account){
-        if(req.path.includes("/dashboard")){
+        if(req.path.includes("/account-hub")){
           next();
         }else{
-          res.redirect(subdomains.url(req, res.locals.currentDomain.name, '/dashboard'));
+          res.redirect(subdomains.url(req, res.locals.currentDomain.name, '/account-hub'));
         }
       }else if(user && !account) {
         res.redirect(subdomains.url(req, process.env.SERVER_BASE_SUBDOMAIN, '/my-dashboard'));
@@ -445,6 +445,9 @@ router.get('/privacy_policy', function(req, res, next) {
 
 router.get('/terms_of_use', function(req, res, next) {
   res.render('terms_of_use', { title: 'Terms of Use' });
+});
+router.get('/terms_of_use_participant', function(req, res, next) {
+  res.render('terms_of_use_participant', { title: 'Terms of Use' });
 });
 
 module.exports = router;

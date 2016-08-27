@@ -48,10 +48,10 @@
     }
 
     function inviteFacilitator(facilitator) {
-      vm.session.addMembers(facilitator, 'facilitator').then( function (res) {
+      vm.session.addMembers(facilitator, 'facilitator').then(function(res) {
         vm.session.sessionData.facilitator = facilitator;
         vm.session.steps.step1.facilitator = facilitator;
-        messenger.ok("Facilitator was successfully set");
+        messenger.ok(res.message);
       }, function (err) {
         messenger.error(err);
       });
@@ -68,10 +68,10 @@
         contactListId: vm.facilitatorContactListId
       }
 
-      step1Service.createNewFcilitator(params).then(function (result) {
-        result.listName = "Facilitators";
-        vm.allContacts.push(result);
-        messenger.ok('New contact '+ result.firstName + ' was added to list Facilitators');
+      step1Service.createNewFcilitator(params).then(function(result) {
+        result.user.listName = "Facilitators";
+        vm.allContacts.push(result.user);
+        messenger.ok(result.facMessage);
         closeFacilitatorForm();
       }, function (error) {
         messenger.error(error);
@@ -92,11 +92,11 @@
         contactListId: vm.facilitatorContactListId
       }
 
-      step1Service.updateContact(params).then(function (result) {
-        result.data.listName = vm.editedContactListName;
-        angular.copy(result.data, vm.allContacts[vm.editedContactIndex])
+      step1Service.updateContact(params).then(function(res) {
+        res.data.listName = vm.editedContactListName;
+        angular.copy(res.data, vm.allContacts[vm.editedContactIndex])
         vm.userData = {};
-        messenger.ok('Contact '+ result.data.firstName + ' has been updated');
+        messenger.ok(res.message);
         closeFacilitatorForm();
       }, function (error) {
         messenger.error(error);

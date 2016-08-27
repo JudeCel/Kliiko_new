@@ -1,17 +1,4 @@
 #resources-topics {
-
-  &.create-new-topic {
-    #topics-list {
-      margin-right: -40px;
-        .topic-list-item {
-            position: relative;
-            width: 31%;
-            display: inline-block;
-            margin-right: 2%;
-          }
-    }
-  }
-
   .dashboard-container {
     .btn-green {
       img {
@@ -31,102 +18,55 @@
 
   }
 
-
-  #no-topics-in-list { text-align: center; }
-
-  .topic-list-item {
-    position: relative;
-  }
-
   .panel {
-    width: 100%;
-    border: none;
+    border: 0;
     border-radius: 0;
     background: $lightGray;
 
-    &:hover {
-      background: $lightGreen;
+    .panel-heading {
+      outline: 0;
+      .panel-title {
+        line-height: 1.9;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+    }
+
+    .panel-body {
+      padding-bottom: 5px;
+      background: white;
+      border: 3px solid $lightGray;
+      border-top: none;
     }
   }
 
-  a.accordion-toggle {
-    text-decoration: none !important;
-  }
-
-  .panel-label {
-    padding : 3px;
-
+  .ic.img-responsive {
+    width: 30px;
+    height: 30px;
   }
 
   .ic {
-    margin: 3px;
+    margin: 0 3px;
     cursor: pointer;
+    background-color: #F6F8F7;
   }
 
-  .panel-heading { background: none}
-
-  .control-block {
-    position: absolute;
-    top: 10px;
-    right: 2%;
-
-    > img {
-      position: relative;
-      top: -7px;
-      z-index:10;
-      background: $lightGray;
-    }
-
-    .edit-block {
-      display: inline-block;
-      position: relative;
-      z-index:1;
-      top: -4px;
-      right: -3px;
-      padding: 2px 10px;
-      background: gray;
-
-      img {
-        cursor: pointer;
-        opacity: 0.8;
-
-        &:hover {
-          opacity: 1;
-        }
+  #topicModalWindow {
+    .form-group {
+      label {
+        color: #737373;
+        font-weight: normal;
       }
-
-
-    }
-  }
-
-  .panel-body {
-    background: white;
-    border: 3px solid $lightGray;
-    border-top: none;
-
-    div.row {
-      padding: 10px;
-      cursor: pointer;
-
-      &:hover {
-        background: $lightGreen;
+      .help-block {
+        font-style: italic;
+      }
+      .form-control {
+        border-width: 2px;
+        min-height: 40px;
+        border-radius: 0;
+        resize: none;
       }
     }
-
-    &:hover { border-color: $lightGreen }
-
-  }
-
-
-  #new-topic-input {
-    padding: 9px;
-    font-size: 2.1rem;
-  }
-
-  #new-topic-input-help {
-    margin: 6px 0 0 -85px;
-    color: grey;
-    font-style: italic;
   }
 
 }

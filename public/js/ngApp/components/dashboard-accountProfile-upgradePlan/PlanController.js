@@ -4,8 +4,8 @@
   angular.module('KliikoApp').
     controller('PlanController', PlanController);
 
-  PlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams', 'planService', 'user', '$scope', 'messenger',  '$rootScope', '$location'];
-  function PlanController(dbg, domServices, $state, $stateParams, planService, user, $scope, messenger, $rootScope, $location) {
+  PlanController.$inject = ['dbg', 'domServices', '$state', '$stateParams', 'planService', 'user', '$scope', 'messenger',  '$rootScope', '$location', 'messagesUtil'];
+  function PlanController(dbg, domServices, $state, $stateParams, planService, user, $scope, messenger, $rootScope, $location, messagesUtil) {
     dbg.log2('#PlanController  started');
     var vm = this;
     var urlParams = $location.search();
@@ -23,6 +23,11 @@
     vm.contactUsUser = {};
     vm.monthlyPlans = [];
     vm.annualPlans = [];
+
+    vm.pricePerEnding = {
+      monthly: 'mth',
+      annual: 'year'
+    }
 
     vm.planOptions = [
       'Number of Active Sessions',
@@ -115,7 +120,7 @@
         succeededCheckout($location.search());
         removeUrlParams(['state', 'id'])
       }else if(urlParams.state == 'cancelled'){
-        messenger.error("Order was cancelled");
+        messenger.error(messagesUtil.upgradePlan.orderCancelled);
         removeUrlParams(['state'])
         getPlans();
       }else{
@@ -199,7 +204,7 @@
           vm.monthlyPlan = subPlan;
         }
 
-        if(subPlan.plan.period_unit == "year" && subPlan.plan.name.includes(vm.selectedPlan.plan.name)) {
+        if(subPlan.plan.period_unit == "year" && subPlan.plan.name.indexOf(vm.selectedPlan.plan.name) != -1) {
           vm.yearlyPlan = subPlan;
         }
       });

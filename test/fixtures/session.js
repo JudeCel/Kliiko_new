@@ -112,7 +112,7 @@ function createTopics(callback) {
 
   let functions = _.times(getDependency('topics'), function(index) {
     return function(cb) {
-      let topic = { accountId: mainData.account.id, name: 'Cool Topic'+(index+1) };
+      let topic = { accountId: mainData.account.id, name: 'Cool Topic'+(index+1), boardMessage: 'Say something nice if you wish!' };
       let sessionTopic = { name: 'Cool Session Topic'+(index+1), boardMessage: 'Heyhey'+(index+1) };
 
       mainData.session.createTopic(topic, sessionTopic).then(function(topic) {

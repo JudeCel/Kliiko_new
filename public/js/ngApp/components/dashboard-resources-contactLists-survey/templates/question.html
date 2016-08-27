@@ -34,7 +34,7 @@
   <div class='form-group'>
     <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.manageForm[object.order].audioVideo.$error'>
       <div ng-repeat='error in sc.validationErrors'>
-        <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+        <div class='help-block' ng-message='{{ error.type }}'>{{ sc.replaceErrorMessage(error, "input") }}</div>
       </div>
     </div>
 

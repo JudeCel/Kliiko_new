@@ -264,7 +264,7 @@
     }
 
     #new-list-name-input {
-      margin: 60px;
+      margin: 60px auto;
       width: 60%;
       padding: 9px;
       font-size: 2rem;
@@ -303,6 +303,7 @@
 
   .fields-to-show {
     margin: 10px 0;
+    text-align: left;
 
     label {
       margin-right: 10px;

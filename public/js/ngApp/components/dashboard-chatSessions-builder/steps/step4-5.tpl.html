@@ -1,4 +1,4 @@
-<section id='step-4-participants' ng-controller="SessionStep4-5Controller as lastStepsController" ng-init="lastStepsController.initStep(sbc.participants, sbc.observers)">
+<section id='step-4-participants' class='col-xs-12' ng-controller="SessionStep4-5Controller as lastStepsController" ng-init="lastStepsController.initStep(sbc.participants, sbc.observers)">
   <div class='row'>
     <div class='text-center'>
       <div id='sessionBuilderParticipant' class='btn-standart btn-red increased-margin' ng-click='sbc.selectParticipantsClickHandle()' ng-show="lastStepsController.isParticipantPage()">
@@ -75,7 +75,7 @@
         <i class='fa fa-envelope' aria-hidden='true' /> Send Invite
         ({{ lastStepsController.findSelectedMembers().length }})
       </div>
-      <div class='btn btn-standart btn-green btn-medium' ng-click='lastStepsController.sendGenericEmail()'>
+      <div class='btn btn-standart btn-green btn-large' ng-click='lastStepsController.sendGenericEmail()'>
         Send Generic Email
       </div>
       <div ng-show = "lastStepsController.isParticipantPage()" class=' btn btn-standart btn-green btn-medium' ng-click='lastStepsController.modalWindowHandler("showSms", lastStepsController.findSelectedMembers())'>

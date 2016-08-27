@@ -1,5 +1,6 @@
 'use strict';
 
+var MessagesUtil = require('./../../util/messages');
 var models = require('./../../models');
 var filters = require('./../../models/filters');
 var Subscription = models.Subscription;
@@ -7,16 +8,8 @@ var Subscription = models.Subscription;
 var q = require('q');
 var _ = require('lodash');
 
-const MESSAGES = {
-  error: {
-    inactiveSubscription: "Your subscription is expired, please update your subscription plan.",
-    noSubscription: "You don't have a subscription. Please purchase a plan.",
-    account: 'Account not found'
-  }
-}
-
 module.exports = {
-  messages: MESSAGES,
+  messages: MessagesUtil.validators.subscription,
   validate: validate
 };
 
@@ -36,15 +29,15 @@ function validate(accountId) {
           deferred.resolve();
         }
         else {
-          deferred.reject(MESSAGES.error.inactiveSubscription);
+          deferred.reject(MessagesUtil.validators.subscription.error.inactiveSubscription);
         }
       }
       else {
-        deferred.reject(MESSAGES.error.noSubscription);
+        deferred.reject(MessagesUtil.validators.subscription.error.noSubscription);
       }
     }
     else {
-      deferred.reject(MESSAGES.error.account);
+      deferred.reject(MessagesUtil.validators.subscription.error.account);
     }
   });
 

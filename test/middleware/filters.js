@@ -105,12 +105,12 @@ describe('MIDDLEWARE - Filters', function() {
     describe('happy path', function() {
       it('should succeed on redirecting to landing page', function(done) {
         models.Subscription.destroy({where: {accountId: testData.account.id}}).then(function() {
-          filtersMiddleware.planSelectPage(reqObject(), resObject('dashboard/landing', done, testData.account.id));
+          filtersMiddleware.planSelectPage(reqObject(), resObject('account-hub/landing', done, testData.account.id));
         })
       });
 
       it('should succeed on skipping this check because path matches', function(done) {
-        filtersMiddleware.planSelectPage(reqObject('/dashboard/selectPlan'), resObject(), function() {
+        filtersMiddleware.planSelectPage(reqObject('/account-hub/selectPlan'), resObject(), function() {
           done();
         });
       });

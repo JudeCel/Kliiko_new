@@ -2,6 +2,7 @@
 
 // require('./../lib/airbrake').handleExceptions();
 
+var MessagesUtil = require('./../util/messages');
 var models = require('./../models');
 var filters = require('./../models/filters');
 var Subscription = models.Subscription;
@@ -16,13 +17,8 @@ var chargebee = require('./../lib/chargebee').instance;
 // Right now I didn't do that extra call because we have only one addon.
 const CREDIT_COUNT_PER_ADDON = 35;
 
-const MESSAGES = {
-  successfulPurchase: 'You have sucessfully purchased additional sms credits.',
-  notAllowed: 'You must have plan that allows you to buy additional sms credits'
-}
-
 module.exports = {
-  messages: MESSAGES,
+  messages: MessagesUtil.subscriptionAddon,
   getAllAddons: getAllAddons,
   creditCount: creditCount,
   chargeAddon: chargeAddon
@@ -70,9 +66,12 @@ function chargeAddon(params) {
 
   Subscription.find({ where: { accountId: params.accountId }, include: [models.SubscriptionPreference] }).then(function(subscription) {
     if(subscription.planId == 'free_account') {
-      deferred.reject(MESSAGES.notAllowed);
+      deferred.reject(MessagesUtil.subscriptionAddon.notAllowed);
     }
     else {
+      if(!params.addon_quantity) {
+        return deferred.reject(MessagesUtil.subscriptionAddon.missingQuantity);
+      }
       params.subscriptionId = subscription.subscriptionId
       params.customerId = subscription.customerId
       params.id = subscription.id
@@ -80,7 +79,7 @@ function chargeAddon(params) {
 
       chargebeeAddonCharge(params).then(function(result) {
         addSmsCreditsToAccountSubscription(params, result.invoice).then(function(result) {
-          deferred.resolve({smsCretiCount: result, message: MESSAGES.successfulPurchase});
+          deferred.resolve({smsCretiCount: result, message: MessagesUtil.subscriptionAddon.successfulPurchase});
         }, function(error) {
           deferred.reject(error);
         })
@@ -107,7 +106,7 @@ function chargebeeAddonCharge(params) {
     addon_quantity : params.addon_quantity
   }).request(function(error, result){
     if(error){
-      deferred.reject(error);
+      deferred.reject(error.message);
     }else{
       deferred.resolve(result.invoice);
     }

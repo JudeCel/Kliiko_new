@@ -1,10 +1,15 @@
-"use strict";
+'use strict';
+
 var constants = require('../util/constants');
+var validations = require('./validations');
 
 module.exports = (Sequelize, DataTypes) => {
   var MailTemplate = Sequelize.define('MailTemplate', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    name: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
+    name: { type: DataTypes.STRING, allowNull: false, validate: {
+      notEmpty: true,
+      isLength: validations.length('name', { max: 255 })
+    } },
     subject: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     content: { type: DataTypes.TEXT, allowNull: false, validate: { notEmpty: true } },
     systemMessage: {type: DataTypes.BOOLEAN, allowNull: false, validate: { notEmpty: true } },

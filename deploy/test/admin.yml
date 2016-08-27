@@ -50,7 +50,7 @@ spec:
         - name: AIRBRAKE_PROJECT_ID
           value: "121542"
         - name: AIRBRAKE_API_KEY
-          value: "607e87c9e8b7500497bb84c51162b0a82"
+          value: "607e87c9e8b7500497bb84c51162b0a8"
         - name: SERVER_BASE_DOMAIN
           value: ".test.klzii.com"
         - name: SERVER_DOMAIN
@@ -83,3 +83,9 @@ spec:
           value: "e4165b06ff82cd6425100d7403bcd213770a88caab4a68ee50b5d659bbe3a16c26826a2a963d032c822854a7f392e266a843e3731290467b9201e467cb36ea9c"
         - name: COOKIE_SECRET
           value: "eda80b40b4ee5e5c87eee6eefb6a5393c47f6832c740e745292bbd03ca09f4545873765e0fa1190f3e29f67048e3dc17170e70dcc814b695a5408fdd87141998"
+        - name: TWILIO_ACCOUNT_SID
+          value: "AC07a728c4dd30fcffe94be9cbaf3b579f"
+        - name: TWILIO_AUTH_TOKEN
+          value: "2d12ce11106c17ab443034bfa86145ce"
+        - name: TWILIO_SENDER_NUMBER
+          value: "+12048179165"

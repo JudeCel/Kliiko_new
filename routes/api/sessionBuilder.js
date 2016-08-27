@@ -1,5 +1,6 @@
 'use strict';
 
+var MessagesUtil = require('./../../util/messages');
 var constants = require('../../util/constants');
 var sessionBuilderServices = require('./../../services/sessionBuilder');
 let topicsService = require('./../../services/topics');
@@ -24,7 +25,7 @@ module.exports = {
 };
 
 function initializeBuilder(req, res, next) {
-  let params = { accountId: res.locals.currentDomain.id };
+  let params = { accountId: res.locals.currentDomain.id, date: req.body.date };
   sessionBuilderServices.initializeBuilder(params).then(function(result) {
     res.send(result);
   }, function(error) {
@@ -108,7 +109,7 @@ function inviteMembers(req, res, next) {
   let accountId = res.locals.currentDomain.id;
   let accountName = res.locals.currentDomain.name;
   sessionBuilderServices.inviteMembers(req.params.id, req.body, accountId, accountName).then(function(result) {
-    res.send({ data: result, message: 'Successfully invited contacts' });
+    res.send({ data: result, message: MessagesUtil.routes.sessionBuilder.invite });
   }, function(error) {
     res.send({ error: error });
   });

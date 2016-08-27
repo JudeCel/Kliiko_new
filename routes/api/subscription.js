@@ -30,7 +30,7 @@ function getPlans(req, res, next) {
 }
 
 function updatePlan(req, res, next) {
-  let redirectUrl = subdomains.url(req, res.locals.currentDomain.name, '/dashboard#/account-profile/upgrade-plan')
+  let redirectUrl = subdomains.url(req, res.locals.currentDomain.name, '/account-hub#/account-profile/upgrade-plan')
   let params = {
     accountId: res.locals.currentDomain.id,
     newPlanId: req.body.planId,

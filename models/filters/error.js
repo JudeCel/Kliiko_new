@@ -1,5 +1,11 @@
 'use strict';
+
 var _ = require('lodash');
+var MessagesUtil = require('./../../util/messages');
+
+module.exports = {
+  errors: filterErrors
+};
 
 function filterErrors(errorsObject) {
   let object = {};
@@ -19,29 +25,33 @@ function filterErrors(errorsObject) {
 function parseErrorMessage(error, object) {
   let message = error.message;
   let path = error.path || (error.parent && error.parent.column) || 'unhandled';
-  let field = _.startCase(path);
+  let field = modifyFieldName(path);
 
   switch(true) {
     case message.includes('lower(name::text)'):
       path = 'name';
-      message = `Name has already been taken`;
+      message = MessagesUtil.models.filters.uniqueAccountName;
       break;
     case message.includes("null value in column"):
     case message.includes(" cannot be null"):
     case message.includes("Validation notEmpty failed"):
-      message = `${field} can't be empty`;
+      message = field + MessagesUtil.models.filters.empty;
       break;
     case message.includes('Validation is failed'):
-      message = `${field} has invalid format`;
+      message = field + MessagesUtil.models.filters.format;
       break;
     case message.includes(' must be unique'):
-      message = `${field} has already been taken`;
+      message = field + MessagesUtil.models.filters.unique;
       break;
   }
 
   object[path] = message;
 }
 
-module.exports = {
-  errors: filterErrors
-};
+function modifyFieldName(field) {
+  return _.startCase(exceptionFieldNames[field] || field);
+}
+
+var exceptionFieldNames = {
+  boardMessage: 'facilitatorBillboard'
+}

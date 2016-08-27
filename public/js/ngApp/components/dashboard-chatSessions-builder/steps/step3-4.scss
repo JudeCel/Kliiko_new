@@ -35,4 +35,11 @@
     line-height: 2;
     font-size: 2rem;
   }
+  .input-group-btn {
+    .btn {
+      margin-left: 0;
+      margin-top: -1px;
+      border: 0;
+    }
+  }
 }

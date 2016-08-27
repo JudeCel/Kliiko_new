@@ -1,12 +1,12 @@
 'use strict';
 
+var MessagesUtil = require('./../util/messages');
 var models  = require('./../models');
 var filters = require('./../models/filters');
 var User = models.User;
 var SocialProfile  = models.SocialProfile;
 
 var _ = require('lodash');
-var needConfirmatinMessage = { message: "Please verify your email address" }
 
 module.exports = {
   create: create,
@@ -30,7 +30,7 @@ function findByConfirmedUser(provider, id, callback) {
       if (result.User.confirmedAt) {
         callback(null, result);
       }else {
-        callback(needConfirmatinMessage, null);
+        callback({ message: MessagesUtil.socialProfile.verifyEmail }, null);
       }
     }else {
       callback(err, null);

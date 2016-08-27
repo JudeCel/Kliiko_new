@@ -1,5 +1,6 @@
 "use strict";
 
+var MessagesUtil = require('./../util/messages');
 var MailTemplate  = require('./../models').MailTemplate;
 var MailTemplateOriginal  = require('./../models').MailTemplateBase;
 var filters = require('./../models/filters');
@@ -67,22 +68,18 @@ function createBaseMailTemplate(params, callback) {
 function create(params, callback) {
   MailTemplate.create(params).then(function(result) {
     callback(null, result);
-  }).catch(MailTemplate.sequelize.ValidationError, function(err) {
-    callback(err);
-  }).catch(function(err) {
-    callback(err);
+  }).catch(function(error) {
+    callback(filters.errors(error));
   });
 }
 
 function update(id, parameters, callback){
   MailTemplate.update(parameters, {
       where: {id: id}
-  })
-  .then(function (result) {
-      return callback(null, result);
-  })
-  .catch(function (err) {
-      callback(err);
+  }).then(function(result) {
+    callback(null, result);
+  }).catch(function(error) {
+    callback(filters.errors(error));
   });
 }
 
@@ -119,7 +116,7 @@ function getLatestMailTemplate(req, callback) {
     if (result && result.length) {
       callback(null, result[0]);
     } else {
-      callback({error: "Template not found"});
+      callback({error: MessagesUtil.mailTemplate.notFound});
     }
   }).catch(function (err) {
     callback(err);
@@ -166,7 +163,7 @@ function getBaseMailTemplate(req, callback) {
  */
 function getActiveMailTemplate(category, params, callback) {
   if (!constants.mailTemplateType[category]) {
-    return callback({error: "mail category not found"});
+    return callback({error: MessagesUtil.mailTemplate.error.categoryNotFound});
   }
   //getting mail template original version by category name
   MailTemplateOriginal.find({
@@ -287,8 +284,8 @@ function copyBaseTemplatesForSession(accountId, sessionId, callback) {
     }
     MailTemplate.bulkCreate(result).done(function(res) {
        callback(null, res);
-    }, function(err) {
-       callback(err);
+    }, function(error) {
+       callback(filters.errors(error));
     })
   });
 }
@@ -331,8 +328,8 @@ function copyBaseTemplates(callback) {
     }
     MailTemplate.bulkCreate(result).done(function(res) {
        callback(null, res);
-    }, function(err) {
-       callback(err);
+    }, function(error) {
+      callback(filters.errors(error));
     })
   }).catch(function(error) {
     callback(error);
@@ -376,10 +373,12 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
     if (template.sessionId != template.properties.sessionId) {
       result = true;
       template.sessionId = template.properties.sessionId;
-      if(template.properties.templateName) {
-        template.name = template.name + " " + template.properties.templateName;
-      }
     }
+  }
+
+  if(template.properties && template.properties.templateName) {
+    result = true;
+    template.name = template.name + " " + template.properties.templateName;
   }
 
   return (result || shouldOverwrite);
@@ -537,14 +536,14 @@ function saveMailTemplate(template, createCopy, accountId, callback) {
       });//removeTemplatesFromSession
     });//getMailTemplateForSession
   } else {
-    callback("e-mail template not provided");
+    callback(MessagesUtil.mailTemplate.error.notProvided);
   }
 }
 
 
 function resetMailTemplate(templateId, baseTemplateId, isCopy, callback) {
   if (!templateId) {
-      return callback("e-mail template not provided");
+      return callback(MessagesUtil.mailTemplate.error.notProvided);
   }
 
   getMailTemplateForReset({id: templateId, baseId:baseTemplateId}, function(err, result) {
@@ -566,7 +565,7 @@ function resetMailTemplate(templateId, baseTemplateId, isCopy, callback) {
 
 function deleteMailTemplate(id, callback) {
   if (!id) {
-      return callback("e-mail template id not provided");
+    return callback(MessagesUtil.mailTemplate.error.notProvided);
   }
   MailTemplate.destroy({ where: { id: id, $not: [{id: null}] } }).then(function() {
     callback(null, {});

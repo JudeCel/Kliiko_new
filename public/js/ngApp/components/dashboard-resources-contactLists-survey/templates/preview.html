@@ -64,7 +64,7 @@
                   <div class='form-group' ng-if='contact'>
                     <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.submitForm.answers[question.order][contact.model].$error'>
                       <div ng-repeat='error in sc.validationErrors'>
-                        <div class='help-block' ng-message='{{ error.type }}'>{{ error.message }}</div>
+                        <div class='help-block' ng-message='{{ error.type }}'>{{ sc.replaceErrorMessage(error, "input") }}</div>
                       </div>
                     </div>
 

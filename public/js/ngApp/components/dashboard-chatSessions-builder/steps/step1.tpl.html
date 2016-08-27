@@ -8,7 +8,9 @@
         <div class="panel-label">
           Name Your Chat Session
           <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.sessionName, 'glyphicon-chevron-right': !step1Controller.accordions.sessionName}"></i>
-          <span class="panel-value pull-right">{{ sbc.session.steps.step1.name }}</span>
+          <span class="panel-value pull-right">
+            {{ sbc.session.steps.step1.name }}
+          </span>
         </div>
       </uib-accordion-heading>
       <label for="sessionBuilder-session-name">Name your session &nbsp; </label>
@@ -33,6 +35,7 @@
           uib-datepicker-popup='{{step1Controller.format}}'
           ng-model='step1Controller.step1.startTime'
           ng-change="step1Controller.updateStep('startTime')"
+          ng-click='step1Controller.startOpened = true'
           is-open='step1Controller.startOpened'
           datepicker-options='step1Controller.dateOption'
           close-text='X'
@@ -57,6 +60,7 @@
           uib-datepicker-popup='{{step1Controller.format}}'
           ng-model='step1Controller.step1.endTime'
           ng-change="step1Controller.updateStep('endTime')"
+          ng-click='step1Controller.endOpened = true'
           is-open='step1Controller.endOpened'
           datepicker-options='step1Controller.dateOption'
           close-text='X'
@@ -238,7 +242,7 @@
 
             <div id="create-color-scheme-area" ng-show="!bcc.schemes.length">
               <h4>There is no defined color schemes. </h4>
-              <div class="btn-standart btn-green" ui-sref="dashboard.resources.brandColours({new:'new', backTo:step1Controller.$state.current.name, id:step1Controller.session.id})">Create one</div>
+              <div class="btn-standart btn-green" ui-sref="account-hub.resources.brandColours({new:'new', backTo:step1Controller.$state.current.name, id:step1Controller.session.id})">Create one</div>
             </div>
           </div>
         </section>

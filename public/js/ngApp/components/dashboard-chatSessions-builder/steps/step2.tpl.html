@@ -1,86 +1,66 @@
-<section  ng-controller="SessionStep2Controller as step2Controller" ng-init="step2Controller.initController()">
-  <section class="global-wrapper" ng-controller='TopicsController as topics'>
-    <section id="step-2" class="animated fadeIn" >
+<section ng-controller="SessionStep2Controller as step2Controller">
+  <section ng-controller='TopicsController as tc' ng-init="step2Controller.init(tc)">
+    <section id="step-2" class="animated fadeIn">
       <h3 class="text-center">Topics</h3>
 
-      <div class="row" id='resources-topics' >
-        <div class="col-md-12 text-center" ng-hide="topics.list.length" >
-          <br><br>
-          There is no topics yet
-          <div id="create-new-btn" class="btn btn-standart btn-green btn-large" ng-click="topics.openModal('new')">
+      <div class="row margin-bottom-20" id='resources-topics'>
+        <div class="col-md-12 text-center" ng-if="!tc.list.length">
+          There are no topics yet<br />
+          <div id="create-new-btn" class="btn btn-standart btn-green btn-large text-left" ng-click="tc.openModal('new')">
             Create New Topic
           </div>
         </div>
-        <div class="col-md-6" ng-show="topics.list.length">
+
+        <div class="col-md-6" ng-if="tc.list.length">
           <h3>Select topic</h3>
-          <br>
-          <div>
-            <div class="flex">
-              <div>
-                <div class="check">
-                  <input id="select-all-topics"  ng-click="step2Controller.selectAllTopics(topics.list)" class="kliiko-checkbox checkbox-btn btn-green"  type="checkbox" ng-checked="step2Controller.allTopicsSelected">
-                  <label for="select-all-topics" ></label> Select all
-                </div>
-                <div id="create-new-btn" class="btn btn-standart btn-green btn-large text-left pull-right" ng-click="topics.openModal('new')">
-                  Create New Topic
-                </div>
+          <div class="row create-new-topic-area">
+            <div class="col-md-12">
+              <div class="check">
+                <input id="select-all-topics" ng-click="step2Controller.selectAllTopics(tc.list)" class="kliiko-checkbox checkbox-btn btn-green" type="checkbox" ng-checked="step2Controller.allTopicsSelected">
+                <label for="select-all-topics"></label> Select all
               </div>
-            </div>
-
-            <div id="topics-list" ng-init="step2Controller.orderTopics(topics.list)">
-              <div hidden>{{ step2Controller.topicList = topics.list }}</div>
-              <div class="topic-list-item" ng-repeat="t in step2Controller.topicList" ng-drag="step2Controller.canDragElement(t)" ng-drag-data="t" ng-drag-success="step2Controller.topicsOnDropComplete($data, $event)">
-                   {{ t.order = $index; "" }}
-                <div class="panel-label">
-                  <span ng-if="topics.editBlockHelper != $index">
-                    <div class="check">
-                      <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-checked="step2Controller.selectedTopics[t.id]" ng-click="step2Controller.topicSelectClickHandle(t)" type="checkbox" >
-                      <label for="memberSelectet{{ $index }}" class="kliiko-checkbox" ></label>
-                    </div>
-                    {{t.name}}
-                  </span>
-                  <span ng-if="topics.editBlockHelper == $index">
-
-                    <span class="inline-editor-help">Characters left: {{ topics.nameMaxSize - t.name.length }}</span>
-                  </span>
-                </div>
-                <div class="control-block">
-
-                  <img ng-drag="false" class="pull-right ic" ng-click="topics.deleteTopic(t.id)" src="/icons/dashboardElement_remove.png" alt="" title="Delete">
-                  <img ng-drag="false" class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" ng-click="topics.openModal('edit', t)">
-                </div>
+              <div id="create-new-btn" class="btn btn-standart btn-green btn-large text-left pull-right" ng-click="tc.openModal('new')">
+                Create New Topic
               </div>
             </div>
           </div>
+
+          <div id="topics-list">
+            <div class="topic-list-item" ng-repeat="topic in tc.list" ng-drag="step2Controller.canDragElement(topic)" ng-drag-success="step2Controller.topicsOnDropComplete(topic)">
+              <div class="check">
+                <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-checked="topic._selected" ng-click="topic._selected = !topic._selected" type="checkbox">
+                <label for="memberSelectet{{ $index }}" class="kliiko-checkbox"></label>
+              </div>
+
+              &nbsp;{{ topic.name }}
+              <img ng-drag="false" class="pull-right ic" ng-click="tc.deleteTopic(topic.id)" src="/icons/dashboardElement_remove.png" title="Delete">
+              <img ng-drag="false" class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('edit', topic)">
+            </div>
+          </div>
         </div>
-        <div class="col-md-6" ng-show="topics.list.length">
+
+        <div class="col-md-6" ng-if="tc.list.length">
           <h3>Chat Session topics</h3>
           <div class="drop-area" ng-drop="true">Drop Selected Topics Here</div>
-          </br>
-          <div ui-sortable="step2Controller.sortableOptionsA" ng-model="step2Controller.chatSessionTopicsList">
-            <div class="topic-list-item" ng-repeat="t in step2Controller.chatSessionTopicsList">
 
-              <div class="panel-label">
-                <span>
-                  <img src="/icons/ic_move.png">
-                  {{ t.SessionTopics[0].name }}
-                </span>
+          <div class="margin-top-10" ui-sortable="step2Controller.sortableOptionsA" ng-model="step2Controller.sessionTopicsArray">
+            <div class="topic-list-item" ng-repeat="topic in step2Controller.sessionTopicsArray">
+              <span>
+                <img src="/icons/ic_move.png">
+                <input type="radio" ng-model="topic.sessionTopic.landing" ng-value="true" ng-change='step2Controller.changeLandingState(topic)' ng-disabled="!topic.sessionTopic.active">
+                {{ topic.sessionTopic.name }}
+              </span>
 
-                <img class="ico-active-unactive" ng-show="t.active" src="/icons/unlocked.png" ng-click="t.active = !t.active; t.update();"  alt="Active" title="Active">
-                <img class="ico-active-unactive" ng-show="!t.active" src="/icons/locked.png"  ng-click="t.active = !t.active; t.update()" alt="Not Active" title="Not Active">
-              </div>
-
-              <div class="control-block">
-                <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(t.id)" src="/icons/dashboardElement_remove.png" alt="" title="Delete">
-                <img class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" ng-click="step2Controller.openModal('sessionTopic', t)">
-              </div>
-
+              <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.id)" src="/icons/dashboardElement_remove.png" title="Delete">
+              <img class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('sessionTopic', topic.sessionTopic)">
+              <img class="img-responsive pull-right ic" ng-if="topic.sessionTopic.active" src="/icons/unlocked.png" ng-click="step2Controller.changeActiveState(topic)" title="Active">
+              <img class="img-responsive pull-right ic" ng-if="!topic.sessionTopic.active" src="/icons/locked.png" ng-click="step2Controller.changeActiveState(topic)" title="Not Active">
             </div>
           </div>
         </div>
-        <ng-include src="'/js/ngApp/components/dashboard-resources-topics/topicsModals.html'"></ng-include>
+
+        <ng-include ng-init="topics = tc" src="'/js/ngApp/components/dashboard-resources-topics/topicsModals.html'"></ng-include>
       </div>
     </section>
-    <br><br>
   </section>
 </section>

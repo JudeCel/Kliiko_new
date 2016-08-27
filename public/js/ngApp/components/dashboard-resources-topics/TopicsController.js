@@ -13,8 +13,8 @@
     var tempName;
 
     vm.list = [];
+    vm.validations = {};
 
-    vm.nameMaxSize = 15;
     vm.newTopicName = null;
     vm.editBlockHelper = null;
     vm.modalAction = '';
@@ -25,6 +25,8 @@
     vm.deleteTopic = deleteTopic;
     vm.openModal = openModal;
     vm.submitModalForm = submitModalForm;
+    vm.charactersLeft = charactersLeft;
+    vm.togglePanel = togglePanel;
 
     init();
 
@@ -32,11 +34,12 @@
       topicsAndSessions.getAllTopics().then(
         function(res) {
           dbg.log2('#TopicsController > getAllTopics > success > ', res);
-          vm.list = res;
+          vm.list = res.topics;
+          vm.validations = res.validations;
         },
         function(err) {
           dbg.error('#TopicsController > getAllTopics > error:', err);
-          messenger.error('There is an error while fetching data!');
+          messenger.error(err);
         }
       )
     }
@@ -48,16 +51,15 @@
         vm.editTopicIndex = vm.list.indexOf(topic);
         angular.copy(topic, vm.topicData);
         setEditData();
-      }else if(vm.modalAction = "new") {
+      }else if(vm.modalAction == 'new') {
         vm.topicData = {};
-        setCreateData()
-      }else{
-        messenger.error('Something went wrong, please try later.')
+        setCreateData();
       }
-
-      $('#topicModalWindow').on('shown.bs.modal', function (e) {
-        $("input#new-topic-input").focus();
-      });
+      else if(vm.modalAction == 'sessionTopic') {
+        vm.originalReference = topic;
+        angular.copy(topic, vm.topicData);
+        setEditData();
+      }
     };
 
     function setEditData() {
@@ -73,18 +75,36 @@
     function submitModalForm() {
       if(vm.modalAction == 'edit'){
         editTopic();
-      }else if(vm.modalAction = "new") {
+      }else if(vm.modalAction == 'new') {
         createTopic();
-      }else{
-        messenger.error('Something went wrong, please try later.')
-        domServices.modal('topicModalWindow', 'close');
+      }else if(vm.modalAction == 'sessionTopic') {
+        updateSessionTopic();
       }
+    }
+
+    function charactersLeft(type) {
+      return vm.topicData[type] ? (vm.validations[type] - vm.topicData[type].length) : vm.validations[type];
+    }
+
+    function togglePanel(t) {
+      t._showPanel = !t._showPanel;
+    }
+
+    function updateSessionTopic() {
+      topicsAndSessions.updateSessionTopic(vm.topicData).then(function(res) {
+        Object.assign(vm.originalReference, vm.topicData);
+        messenger.ok(res.message);
+        domServices.modal('topicModalWindow', 'close');
+        vm.topicData = {};
+      }, function(error) {
+        messenger.error(error)
+      });
     }
 
     function editTopic() {
       topicsAndSessions.updateTopic(vm.topicData).then(function(res) {
         vm.list[vm.editTopicIndex] = vm.topicData;
-        messenger.ok('Topic has been updated.');
+        messenger.ok(res.message);
         domServices.modal('topicModalWindow', 'close');
         vm.topicData = {};
       }, function(error) {
@@ -95,7 +115,7 @@
     function createTopic() {
       topicsAndSessions.createNewTopic(vm.topicData).then(function(res) {
         vm.list.push(res.data);
-        messenger.ok('New topic has been added');
+        messenger.ok(res.message);
         domServices.modal('topicModalWindow', 'close');
         vm.topicData = {};
       }, function(error) {
@@ -130,7 +150,7 @@
         vm.editBlockHelper = null;
 
         dbg.log('#TopicsController > deleteTopic > topic has been removed');
-        messenger.ok('Topic has been removed');
+        messenger.ok(res.message);
 
       }
 

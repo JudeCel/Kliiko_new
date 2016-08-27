@@ -15,9 +15,9 @@
   }
 
   angular.module('KliikoApp.Root').controller('SurveyClientController', SurveyClientController);
-  SurveyClientController.$inject = ['dbg', 'surveyServices', 'GalleryServices', 'messenger', '$timeout'];
+  SurveyClientController.$inject = ['dbg', 'surveyServices', 'GalleryServices', 'messenger', '$timeout', 'messagesUtil'];
 
-  function SurveyClientController(dbg, surveyServices, GalleryServices, messenger, $timeout) {
+  function SurveyClientController(dbg, surveyServices, GalleryServices, messenger, $timeout, messagesUtil) {
     dbg.log2('#SurveyClientController started');
 
     var vm = this;
@@ -42,14 +42,14 @@
         dbg.log2('#SurveyClientController > findSurvey > res ', res);
 
         if(res.error) {
-          vm.message = surveyServices.prepareError(res.error);
+          messenger.error(res.error);
         }
         else {
           vm.survey = res.data;
           GalleryServices.surveyResources(vm.survey.id).then(function(result) {
             mapSurveyResources(result.survey);
           }, function() {
-            messenger.error("Can't load resources");
+            messenger.error(messagesUtil.gallery.cantLoad);
           });
         }
       });

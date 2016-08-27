@@ -8,7 +8,7 @@
   <div class="row">
     <div class='col-xs-12'>
       <div class='text-center remove-link-line tabs-links'>
-        <div ng-if="!app.user.onMaximumPlan" ui-sref-active='active' ui-sref='dashboard.accountProfile.upgradePlan' class='btn btn-standart btn-dashboard-menu btn-blue btn-large'
+        <div ng-if="!app.user.onMaximumPlan" ui-sref-active='active' ui-sref='account-hub.accountProfile.upgradePlan' class='btn btn-standart btn-dashboard-menu btn-blue btn-large'
         ng-show="app.accountUser.isAccountManager">
           <span class='pull-left'>Upgrade Plan</span>
           <img id="btn-upgrade-plan" ui-sref-active='active' class='upgrade pull-right' src='/icons/upgrade_blue.png' alt='' />
@@ -18,27 +18,27 @@
           <img ui-sref-active='active' class='upgrade pull-right' src='/icons/upgrade_blue.png' alt='' />
         </div>
 
-        <div ui-sref-active='active' ui-sref='dashboard.accountProfile.accountManagers' class='btn btn-standart btn-dashboard-menu btn-blue btn-large' ng-show="app.accountUser.isAccountManager">
+        <div ui-sref-active='active' ui-sref='account-hub.accountProfile.accountManagers' class='btn btn-standart btn-dashboard-menu btn-blue btn-large' ng-show="app.accountUser.isAccountManager">
           <span class='pull-left'>Account Managers</span>
           <img id="btn-account-managers" ui-sref-active='active' class='account-manager pull-right' src='/icons/account_manager_blue.png' alt='' />
         </div>
 
-        <div ui-sref-active='active' ui-sref='dashboard.accountProfile.accountDatabase' class='btn btn-standart btn-dashboard-menu btn-blue btn-large' ng-show="app.accountUser.isAdmin">
+        <div ui-sref-active='active' ui-sref='account-hub.accountProfile.accountDatabase' class='btn btn-standart btn-dashboard-menu btn-blue btn-large' ng-show="app.accountUser.isAdmin">
           <span class='pull-left'>Account Database</span>
           <img id="btn-account-database" ui-sref-active='active' class='account-database pull-right' src='/icons/upgrade_blue.png' alt='' />
         </div>
 
-        <div ui-sref-active='active' ui-sref='dashboard.accountProfile.bannerMessages' ng-show="app.accountUser.isAdmin" class='btn btn-standart btn-dashboard-menu btn-blue btn-large'>
+        <div ui-sref-active='active' ui-sref='account-hub.accountProfile.bannerMessages' ng-show="app.accountUser.isAdmin" class='btn btn-standart btn-dashboard-menu btn-blue btn-large'>
           <span class='pull-left'>Upload Banners</span>
           <img id="btn-upload-banners" ui-sref-active='active' class='promotion-code pull-right' src='/icons/gallery_blue.png' alt='' />
         </div>
 
-        <div ui-sref-active='active' ui-sref='dashboard.accountProfile.emailTemplates({systemMail: true })' ng-show="app.accountUser.isAdmin" class='btn btn-standart btn-dashboard-menu btn-blue btn-large'>
+        <div ui-sref-active='active' ui-sref='account-hub.accountProfile.emailTemplates({systemMail: true })' ng-show="app.accountUser.isAdmin" class='btn btn-standart btn-dashboard-menu btn-blue btn-large'>
           <span class='pull-left'>Email Templates</span>
           <img id="btn-account-email-templates" ui-sref-active='active' class='promotion-code pull-right' src='/icons/upgrade_blue.png' alt='' />
         </div>
 
-        <div ui-sref-active='active' ui-sref='dashboard.accountProfile.sessionRating' class='btn btn-standart btn-dashboard-menu btn-blue btn-large' ng-show="app.accountUser.isAdmin">
+        <div ui-sref-active='active' ui-sref='account-hub.accountProfile.sessionRating' class='btn btn-standart btn-dashboard-menu btn-blue btn-large' ng-show="app.accountUser.isAdmin">
           <span class='pull-left'>Session Rating</span>
           <img id="btn-session-rating" ui-sref-active='active' class='account-database pull-right' src='/icons/upgrade_blue.png' alt='' />
         </div>

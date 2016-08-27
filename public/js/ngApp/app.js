@@ -38,6 +38,7 @@
     .factory('myInterceptor', myInterceptor)
     .config(appConfigs)
     .config(phoneNumbersConfig)
+    .constant('messagesUtil', messagesUtilObject())
     .run(appRun)
     .controller('AppController', AppController);
 
@@ -46,6 +47,7 @@
     .factory('myInterceptor', myInterceptor)
     .config(appConfigs)
     .config(phoneNumbersConfig)
+    .constant('messagesUtil', messagesUtilObject())
     .run(appRun)
     .controller('AppController', AppController);
 
@@ -143,8 +145,8 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader', 'domServices'];
-  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader, domServices) {
+  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader', 'domServices', '$scope'];
+  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader, domServices, $scope) {
     var vm = this;
     vm.openContactDetailsModal = openContactDetailsModal;
     dbg.log2('#AppController started ');
@@ -187,6 +189,53 @@
           landlineNumberIsoCode = res.landlineNumberCountryData.iso2;
         }
         sessionStorage.setItem('landlineNumberCountryData',  landlineNumberIsoCode);
+      }
+    }
+
+    $('body').on('shown.bs.modal', function(e) {
+      setFocusToFormControl(e.target);
+    });
+
+    $scope.$on('$viewContentLoaded', function() {
+      setFocusToFormControl('body');
+    });
+
+    $scope.$on('$includeContentLoaded', function() {
+      setFocusToFormControl('body');
+    });
+
+    function setFocusToFormControl(target) {
+      var inputs = $(target).find('.form-control:not(.ng-autofocus-skip):visible');
+      if(inputs.length) {
+        inputs[0].focus();
+      }
+    }
+  }
+
+  function messagesUtilObject() {
+    return {
+      sessionBuilder: {
+        noContacts: 'There are no contacts selected',
+        cantSelect: "You can't select members from this list",
+        noMobile: ' has no mobile provided'
+      },
+      gallery: {
+        noResource: 'No resource selected',
+        cantLoad: "Can't load resources"
+      },
+      contactList: {
+        listNameBlank: "Contact list name can't be empty",
+        noUsersRemoved: 'No users was removed',
+        import: {
+          failed: 'Import Failed. Check error(s)',
+          corrupted: 'This file media type is not recognized or it is corrupted. Please, choose another file.',
+          remapFailed: 'Field Re-Map failed',
+          addCustomField: 'Please add name for your custom field.',
+          tooManyCustomFields: "Too many custom fields, allowed: "
+        }
+      },
+      upgradePlan: {
+        orderCancelled: 'Order was cancelled'
       }
     }
   }

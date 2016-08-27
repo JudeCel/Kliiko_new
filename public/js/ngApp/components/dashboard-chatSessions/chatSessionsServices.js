@@ -20,7 +20,6 @@
     csServices.removeSession = removeSession;
     csServices.copySession = copySession;
     csServices.rateSessionMember = rateSessionMember;
-    csServices.prepareError = prepareError;
     csServices.saveComment = saveComment;
     return csServices;
 
@@ -82,19 +81,5 @@
 
       return deferred.promise;
     }
-
-    function prepareError(errors) {
-      if(typeof errors == 'string') {
-        return errors;
-      }
-      else {
-        var string = '';
-        for(var i in errors) {
-          var error = errors[i];
-          string += (error + '<br>');
-        }
-        return string;
-      }
-    };
   };
 })();

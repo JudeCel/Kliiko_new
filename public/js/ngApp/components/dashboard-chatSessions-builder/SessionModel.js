@@ -19,7 +19,6 @@
       sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } },
       sessionMailTemplateStatus: { method: 'GET', params: { path: 'sessionMailTemplateStatus' } },
       addTopics: {method: 'POST',  params: {path: 'addTopics'} },
-      updateSessionTopicName: {method: 'POST',  params: {path: 'updateSessionTopicName'} },
       removeTopic: {method: 'POST',  params: {path: 'removeTopic'} },
 
       nextStep: {method: 'POST', params: {path: 'step'} },
@@ -127,11 +126,17 @@
       return deferred.promise;
     }
 
+    function initializeDate() {
+      var date = new Date();
+      date.setHours(0, 0, 0, 0);
+      return date;
+    }
+
     function createNew() {
       var self = this;
 
       var deferred = $q.defer();
-      sessionBuilderRestApi.post({},{},function(res) {
+      sessionBuilderRestApi.post({},{ date: initializeDate().toString() },function(res) {
         if (res.error) {
           deferred.reject(res.error);
         }
@@ -263,7 +268,7 @@
 
       sessionMemberApi.post({},params,function(res) {
         if (res.error) { deferred.reject(res.error);  return deferred.promise;}
-        deferred.resolve();
+        deferred.resolve(res);
       });
 
       return deferred.promise;
@@ -280,20 +285,6 @@
           deferred.resolve(res.data);
         }
       });
-      return deferred.promise;
-    }
-
-    function updateSessionTopicName(params) {
-      var deferred = $q.defer();
-
-      topicRestApi.sessionTopic(params, function(res) {
-        if (res.error) {
-          deferred.reject(res.error);
-        } else {
-          deferred.resolve(res);
-        }
-      });
-
       return deferred.promise;
     }
 

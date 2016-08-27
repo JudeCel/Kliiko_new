@@ -4,7 +4,7 @@
         <div class="contentOffset list-group col-xs-3 mail-template-list-section">
           <div class="panel-heading mail-template-list-heading"><strong>Email Templates</strong></div>
           <div id="mail-template-list" class="mail-template-list">
-            <a ng-repeat="(key, t) in ec.emailTemplates" class="list-group-item" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : ec.isEditable(t, app.accountUser.isAdmin)}"
+            <a ng-repeat="(key, t) in ec.emailTemplates" class="list-group-item border-radius-none" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : ec.isEditable(t, app.accountUser.isAdmin)}"
             ng-click="ec.startEditingTemplate(key)">
               <div ng-hide="ec.isEditable(t, app.accountUser.isAdmin)">
                 <img src="/icons/ic_arrow_right.png" class="pull-right" ng-hide="!ec.isCurrent(key)">{{::t.name}}
@@ -14,7 +14,7 @@
                 <input type="text" class="form-control mail-list-input" aria-describedby="basic-addon3" ng-model="t.name" ng-class="{'inactive':!ec.isCurrent(key)}" >
                 <span class="input-group-addon" id="basic-addon3" ng-hide="!ec.isCurrent(key)" data-toggle="tooltip" data-placement="top" title="{{t['MailTemplateBase.name']}}">{{t["MailTemplateBase.name"] | limitTo: 7}}{{t["MailTemplateBase.name"].length > 7 ? '...' : ''}}</span>
                 <span class="input-group-btn" ng-hide="!ec.isCurrent(key)">
-                <button class="btn glyphicon glyphicon-remove" type="button" ng-click="ec.deleteTemplate(t, key, $event);"></button>
+                  <button class="btn glyphicon glyphicon-remove" type="button" ng-click="ec.deleteTemplate(t, key, $event);"></button>
                 </span>
               </div>
             </a>
@@ -49,8 +49,8 @@
           <div class="has-error text-center">{{ec.currentTemplate.error.content}}</div>
           <br>
 
-          <button type="submit" class="btn btn-standart btn-red btn-small pull-right" ng-click="ec.resetMailTemplate()" ng-show="ec.resetButtonVisible(app.accountUser.isAdmin)">Cancel</button>
-          <button id='mailCreateCopy' type="submit" class="btn btn-standart btn-lightgreen pull-right btn-small margin-left-10" ng-click="ec.modifyAndSave(true)" ng-if="ec.copyButtonVisible(app.accountUser.isAdmin)">Save As</button>
+          <button type="submit" class="btn btn-standart btn-red btn-small pull-right margin-left-10" ng-click="ec.resetMailTemplate()" ng-show="ec.resetButtonVisible(app.accountUser.isAdmin)">Cancel</button>
+          <button id='mailCreateCopy' type="submit" class="btn btn-standart btn-lightgreen pull-right btn-small margin-left-10" ng-click="ec.openModal()">Save As</button>
           <button id='mailModifySaveCopy' type="submit" class="btn btn-standart btn-green pull-right btn-small margin-left-10" ng-click="ec.modifyAndSave()">Save</button>
           <button id='mailPreviewButton' type="submit" class="btn btn-standart btn-blue pull-right btn-small margin-left-10" ng-click="ec.previewMailTemplate()">Preview</button>
         </div>
@@ -84,8 +84,8 @@
               <form>
                 <div>
                   <span class="pull-right">
-                    <button type="button" ng-click="ec.cancelTemplateDelete()" class="btn btn-standart btn-red pull-right btn-small">Cancel</button>&nbsp;&nbsp;
-                    <button type="button" ng-click="ec.approveTemplateDelete()" class="btn btn-standart btn-green pull-right btn-small">Yes</button>
+                    <button type="button" ng-click="ec.cancelTemplateDelete()" class="btn btn-standart btn-red pull-right btn-small margin-left-10">Cancel</button>&nbsp;&nbsp;
+                    <button type="button" ng-click="ec.approveTemplateDelete()" class="btn btn-standart btn-green pull-right btn-small margin-left-10">Yes</button>
                   </span>
                 </div>
               </form>
@@ -98,5 +98,6 @@
         {{ upload = ec.galleryDropdownData(gc.currentDependency); "" }}
         <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
       </div>
+      <ng-include src="'/js/ngApp/components/dashboard-resources-emailTemplates/modal.html'"></ng-include>
     </section>
   </div>

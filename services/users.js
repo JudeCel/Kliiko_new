@@ -1,4 +1,6 @@
 "use strict";
+
+var MessagesUtil = require('./../util/messages');
 var models = require('./../models');
 var User = models.User;
 var AccountUser = models.AccountUser ;
@@ -29,7 +31,7 @@ function create(params, callback) {
   let err = {};
 
   if (params.termsAndConditions === "false") {
-    err.termsAndConditions = "You must agree to the Terms & Conditions before Sign up."
+    err.termsAndConditions = MessagesUtil.users.agreeTOC;
     return callback(err);
   }
 
@@ -198,7 +200,7 @@ function getUserByToken(token, callback) {
     if (result) {
       return callback(null, result);
     } else {
-      return callback({message: "Password already changed."});
+      return callback({message: MessagesUtil.users.alreadyChanged});
     }
   })
   .catch(function (err) {

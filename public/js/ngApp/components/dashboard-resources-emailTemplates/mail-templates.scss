@@ -78,6 +78,7 @@
     }
 
     .list-group-item {
+        cursor: pointer;
         height: 50px;
         width: 100%;
         background-image: none;
@@ -132,6 +133,20 @@
         margin: 15px !important;
         font-size: 3.3rem;
         font-weight: bolder;
+      }
+    }
+
+    .input-group-btn {
+      .btn {
+        margin-top: -3px;
+        margin-left: -1px;
+        border: 1px solid #ccc;
+        line-height: 1.7;
+      }
+      .btn:hover,
+      .btn:active,
+      .btn:focus {
+        background-color: #eee;
       }
     }
 }

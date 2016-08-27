@@ -1,4 +1,5 @@
 'use strict';
+var terms_of_service = require('../lib/terms_of_service');
 var helpers = require('./helpers');
 var mailTemplate = require('./mailTemplate');
 var mailTemplateService = require('../services/mailTemplate');
@@ -13,7 +14,7 @@ function sendSessionClose(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       sessionName: params.sessionName,
-      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      termsOfUseUrl: terms_of_service.filter(params),
       privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       firstName: params.firstName, //receiver name
       incentive: params.incentive,
@@ -41,11 +42,13 @@ function sendFirstInvitation(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
-      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      termsOfUseUrl: terms_of_service.filter(params),
       privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       sessionName: params.sessionName,
       startTime: params.startTime,
       endTime: params.endTime,
+      orginalStartTime: params.startTime,
+      orginalEndTime: params.endTime,
       startDate: params.startDate,
       endDate: params.endDate,
       incentive: params.incentive,
@@ -61,7 +64,7 @@ function sendFirstInvitation(params, callback) {
     if (mailContent.error) {
       return callback(mailContent.error);
     }
-    mailTemplate.sendMailWithTemplate(mailContent, params, callback);
+    mailTemplate.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
   });
 };
 
@@ -73,7 +76,7 @@ function sendInviteConfirmation(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
-      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      termsOfUseUrl: terms_of_service.filter(params),
       privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       startTime: params.startTime,
       startDate: params.startDate,
@@ -89,7 +92,7 @@ function sendInviteConfirmation(params, callback) {
     if (mailContent.error) {
       return callback(mailContent.error);
     }
-    mailTemplate.sendMailWithTemplate(mailContent, params, callback);
+    mailTemplate.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
   });
 };
 
@@ -101,7 +104,7 @@ function sendInvitationNotThisTime(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
-      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      termsOfUseUrl: terms_of_service.filter(params),
       privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       facilitatorFirstName: params.facilitatorFirstName,
       facilitatorLastName: params.facilitatorLastName,
@@ -124,7 +127,7 @@ function sendInvitationNotAtAll(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
-      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      termsOfUseUrl: terms_of_service.filter(params),
       privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       facilitatorFirstName: params.facilitatorFirstName,
       facilitatorLastName: params.facilitatorLastName,
@@ -147,7 +150,7 @@ function sendGeneric(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
-      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      termsOfUseUrl: terms_of_service.filter(params),
       privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       facilitatorFirstName: params.facilitatorFirstName,
       facilitatorLastName: params.facilitatorLastName,
@@ -170,7 +173,7 @@ function sendFacilitatorEmailConfirmation(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
-      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      termsOfUseUrl: terms_of_service.filter(params),
       privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       lastName: params.lastName,
       accountName: params.accountName,
@@ -185,7 +188,7 @@ function sendFacilitatorEmailConfirmation(params, callback) {
     if (mailContent.error) {
       return callback(mailContent.error);
     }
-    mailTemplate.sendMailWithTemplate(mailContent, params, callback);
+    mailTemplate.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
   });
 };
 
@@ -197,7 +200,7 @@ function sendParticipantOverquota(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
-      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      termsOfUseUrl: terms_of_service.filter(params),
       privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       lastName: params.lastName,
       accountName: params.accountName,
@@ -220,7 +223,7 @@ function sendObserverInvitation(params, callback) {
     }
     let mailContent = mailTemplateService.composeMailFromTemplate(result, {
       firstName: params.firstName, //receiver name
-      termsOfUseUrl: helpers.getUrl('', '/terms_of_use'),
+      termsOfUseUrl: terms_of_service.filter(params),
       privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
       lastName: params.lastName,
       accountName: params.accountName,//account we invite
@@ -238,7 +241,7 @@ function sendObserverInvitation(params, callback) {
     if (mailContent.error) {
       return callback(mailContent.error);
     }
-    mailTemplate.sendMailWithTemplate(mailContent, params, callback);
+    mailTemplate.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
   });
 };
 

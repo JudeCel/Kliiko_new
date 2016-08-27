@@ -48,10 +48,12 @@
           <div id="under-list-of-contacts-btns">
             <div class="btn btn-standart btn-green btn-large" ng-click="clc.addNewList()">
               <span class="pull-left">Add New Contact List</span>
-              <img id="btn-add-new-contact-list" src="/icons/add_new_list_green.png" class="pull-right"></div>
-            <div class="btn btn-standart btn-blue btn-large" ui-sref='dashboard.resources.survey' ng-if='!clc.hideStuff'>
+              <img id="btn-add-new-contact-list" src="/icons/add_new_list_green.png" class="pull-right">
+            </div>
+            <div class="btn btn-standart btn-blue btn-large" ui-sref='account-hub.resources.survey'>
               <span class="pull-left">Recruiter</span>
-              <img id="btn-recruiter" src="/icons/recruiter_blue.png" class="pull-right"></div>
+              <img id="btn-recruiter" src="/icons/recruiter_blue.png" class="pull-right">
+            </div>
           </div>
         </div>
 
@@ -84,12 +86,12 @@
 
           <div id="no-contacts-in-list" class="text-center pull-right" ng-if="!clc.lists.activeList.members.length">
             <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable">
-              <div class="btn-standart btn-red" ng-click="clc.deleteList(clc.lists.activeList, $index)">Remove this List</div>
+              <div class="btn-standart btn-red btn-large" ng-click="clc.deleteList(clc.lists.activeList, $index)">Remove this List</div>
             </span>
 
             <span ng-if="clc.lists.activeList.editable">
               &nbsp; or &nbsp;
-              <div class='btn-standart btn-green' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
+              <div class='btn-standart btn-green btn-large' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
               &nbsp; or &nbsp;
             </span>
 
@@ -98,14 +100,9 @@
               <li id='contactListAddExcel' ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
               <li id='contactListAddCsv' ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
             </div>
-
           </div>
-
           <ng-include src="clc.basePath+'particles/table.tpl.html'"></ng-include>
         </div>
-
-
-
       </div>
     </div>
   </div>

@@ -13,6 +13,7 @@ var socialProfileService = require('./socialProfile');
 var inviteMailer = require('../mailers/invite');
 var mailerHelpers = require('../mailers/mailHelper');
 var constants = require('../util/constants');
+var MessagesUtil = require('./../util/messages');
 
 var dateFormat = require('dateformat');
 var moment = require('moment');
@@ -25,13 +26,6 @@ var q = require('q');
 var mailUrlHelper = require('../mailers/helpers');
 
 const EXPIRE_AFTER_DAYS = 5;
-
-const MESSAGES = {
-  confirmed: 'You have successfully accepted Invite. Please login using your invite e-mail and password.',
-  removed: 'Successfully removed Invite',
-  cantRemove: "Can't remove this invite",
-  declined: 'Successfully declined invite'
-};
 
 function createBulkInvites(arrayParams) {
   let deferred = q.defer();
@@ -155,6 +149,7 @@ function sendInvite(invite, deferred) {
   if(invite.accountId) {
     let inviteParams = {
       token: invite.token,
+      role: invite.role,
       email: invite.AccountUser.email,
       firstName: invite.AccountUser.firstName,
       lastName: invite.AccountUser.lastName,
@@ -191,8 +186,10 @@ function sendInvite(invite, deferred) {
         accountName: session.Account.name,
         email: invite.AccountUser.email,
         sessionName: session.name,
-        startTime: moment.utc(session.startTimeFormat).format('h:mm:00'),
-        endTime: moment.utc(session.endTimeFormat).format('h:mm:00'),
+        orginalStartTime: session.startTime,
+        orginalEndTime: session.endTime,
+        startTime: moment.utc(session.startTimeFormat).format('h:mm'),
+        endTime: moment.utc(session.endTimeFormat).format('h:mm'),
         startDate: moment.utc(session.startTimeFormat).format('YYYY-M-D'),
         endDate: moment.utc(session.endTimeFormat).format('YYYY-M-D'),
         incentive: session.incentive_details,
@@ -252,10 +249,10 @@ function destroyInvite(invite, callback) {
     }
   }).then(function(res) {
     if(res > 0) {
-      callback(null, MESSAGES.removed);
+      callback(null, MessagesUtil.invite.removed);
     }
     else {
-      callback(MESSAGES.cantRemove);
+      callback(MessagesUtil.invite.cantRemove);
     }
   }).catch(function(error) {
     callback(filters.errors(error));
@@ -280,7 +277,7 @@ function declineInvite(token, callback) {
     }
     else {
       invite.update({ status: 'rejected' }).then(function() {
-        callback(null, invite, MESSAGES.declined);
+        callback(null, invite, MessagesUtil.invite.declined);
       }).catch(function(error) {
         callback(filters.errors(error));
       });
@@ -311,7 +308,7 @@ function acceptInviteExisting(token, callback) {
           };
           sessionMemberService.createWithTokenAndColour(params).then(function() {
             sendEmail('inviteConfirmation', invite).then(function() {
-              callback(null, invite, MESSAGES.confirmed);
+              callback(null, invite, MessagesUtil.invite.confirmed);
             }, function(error) {
               callback(error);
             });
@@ -320,7 +317,7 @@ function acceptInviteExisting(token, callback) {
           });
         }
         else {
-          callback(null, invite, MESSAGES.confirmed);
+          callback(null, invite, MessagesUtil.invite.confirmed);
         }
       }).catch(function(error) {
         callback(filters.errors(error));
@@ -344,7 +341,7 @@ function acceptInviteNew(token, params, callback) {
       }
       else {
         invite.update({ status: 'confirmed' }).then(function() {
-          callback(null, invite, user.email, MESSAGES.confirmed);
+          callback(null, invite, user, MessagesUtil.invite.confirmed);
         }).catch(function(error) {
           callback(filters.errors(error));
         });
@@ -402,7 +399,7 @@ function sessionAccept(token, body) {
                   }
                   else {
                     sendEmail('inviteConfirmation', invite).then(function() {
-                      deferred.resolve({ message: MESSAGES.confirmed, user: user });
+                      deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
                     }, function(error) {
                       deferred.reject(error);
                     });
@@ -411,7 +408,7 @@ function sessionAccept(token, body) {
               }
               else {
                 sendEmail('inviteConfirmation', invite).then(function() {
-                  deferred.resolve({ message: MESSAGES.confirmed, user: user });
+                  deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
                 }, function(error) {
                   deferred.reject(error);
                 });
@@ -444,7 +441,7 @@ function declineSessionInvite(token, status) {
     else {
       invite.update({ status: status }).then(function() {
         sendEmail(status, invite).then(function() {
-          deferred.resolve(MESSAGES.declined);
+          deferred.resolve({ message: MessagesUtil.invite.declined, invite: invite });
         }, function(error) {
           deferred.reject(error);
         })
@@ -514,6 +511,7 @@ function prepareMailParams(session, receiver, facilitator) {
   return {
     sessionId: session.id,
     email: receiver.email,
+    role: receiver.role,
     firstName: receiver.firstName, //receiver name
     facilitatorFirstName: facilitator.firstName,
     facilitatorLastName: facilitator.lastName,
@@ -522,7 +520,9 @@ function prepareMailParams(session, receiver, facilitator) {
     unsubscribeMailUrl: 'not-found',
     startTime: session.startTime,
     startDate: session.startDate,
-    confirmationCheckInUrl: 'not-found',
+    orginalStartTime: session.startTime,
+    orginalEndTime: session.endTime,
+    confirmationCheckInUrl: mailUrlHelper.getUrl('', '/login'),
     participantMail: receiver.email,
     incentive: session.incentive
   }
@@ -550,12 +550,12 @@ function removeAllAssociatedDataOnNewUser(invite, callback) {
       });
     }
   ], function(error) {
-    callback(error, MESSAGES.removed);
+    callback(error, MessagesUtil.invite.removed);
   });
 }
 
 module.exports = {
-  messages: MESSAGES,
+  messages: MessagesUtil.invite,
   createBulkInvites: createBulkInvites,
   createInvite: createInvite,
   findAndRemoveInvite: findAndRemoveInvite,

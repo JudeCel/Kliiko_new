@@ -90,6 +90,7 @@
     vm.saveEmailTemplate = saveEmailTemplate;
     vm.initGallery = initGallery;
     vm.galleryDropdownData = galleryDropdownData;
+    vm.openModal = openModal;
 
 
 
@@ -131,6 +132,10 @@
       var deferred = $q.defer();
       var template = template || vm.currentTemplate;
 
+      if(templateName) {
+        domServices.modal('templateNameModal', true);
+      }
+
       vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
       vm.currentTemplate.error = {};
       if (includeProperties) {
@@ -145,7 +150,7 @@
               vm.startEditingTemplate(index);
             }
           });
-          messenger.ok("Template was successfully saved.");
+          messenger.ok(res.message);
           deferred.resolve();
         } else {
           messenger.error(res.error);
@@ -215,7 +220,7 @@
             }
             deferred.resolve();
           });
-          messenger.ok("Template was successfully saved.");
+          messenger.ok(res.message);
         } else {
           messenger.error(res.error);
           deferred.reject();
@@ -327,6 +332,11 @@
         modal: { upload: true },
         dependency: dependency
       };
+    }
+
+    function openModal() {
+      vm.templateNameAdd = null;
+      domServices.modal('templateNameModal');
     }
   }
 })();

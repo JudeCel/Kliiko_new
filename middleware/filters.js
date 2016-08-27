@@ -17,9 +17,9 @@ module.exports = {
 }
 
 function planSelectPage(req, res, next) {
-  let redirectUrl = subdomains.url(req, res.locals.currentDomain.name, '/dashboard/landing');
+  let redirectUrl = subdomains.url(req, res.locals.currentDomain.name, '/account-hub/landing');
 
-  if(req.originalUrl == '/dashboard/selectPlan' || req.originalUrl == '/dashboard/landing') {
+  if(req.originalUrl == '/account-hub/selectPlan' || req.originalUrl == '/account-hub/landing') {
     next();
   }
   else if(_.includes(res.locals.currentDomain.roles, 'accountManager')) {
@@ -76,7 +76,7 @@ function myDashboardPage(req, res, next) {
     }
     else {
       if(!req.user.signInCount || req.user.signInCount == 1) {
-        res.redirect(subdomains.url(req, selectManager(result.accountManager, result.facilitator).subdomain, '/dashboard'));
+        res.redirect(subdomains.url(req, selectManager(result.accountManager, result.facilitator).subdomain, '/account-hub'));
       }
       else {
         res.redirect(myDashboardUrl);
@@ -92,7 +92,7 @@ function getUrl(res, token, url) {
     url: buildUrlForChatToken(),
     headers: { 'Authorization': token }
   };
-  
+
   request.get(options, function(error, response) {
     if(error || response.statusCode != 200) {
       res.redirect(url);

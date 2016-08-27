@@ -1,5 +1,6 @@
 'use strict';
 
+var MessagesUtil = require('./../util/messages');
 var q = require('q');
 var models = require('./../models');
 var ContactList = models.ContactList;
@@ -17,13 +18,6 @@ module.exports = {
 };
 
 let requiredFields = ["firstName", "lastName", "gender", "email"];
-let importErrors = {
-  fieldRequired: "Required",
-  emailTaken: 'Email already taken',
-  emailInvalidFormat: "Email has invalid format",
-  wrongGender: "Gender is incorrect",
-  invalidFormat: "Invalid format"
-}
 
 function validateContactList(id, list) {
   let deferred = q.defer();
@@ -70,7 +64,7 @@ function validateContactList(id, list) {
       });
     }
     else {
-      deferred.reject('ContactList not found!');
+      deferred.reject(MessagesUtil.contactListImport.notFound);
     }
   });
 
@@ -107,7 +101,7 @@ function parseFile(id, filePath) {
             parseXls(emails, deferred, contactList, filePath);
             break;
           default:
-            deferred.reject("Wrong file format: " + path.extname(filePath) + "!");
+            deferred.reject(MessagesUtil.contactListImport.error.wrongFormat + path.extname(filePath));
         }
       }).catch(models.User.sequelize.ValidationError, function(error) {
         deferred.reject(error);
@@ -116,7 +110,7 @@ function parseFile(id, filePath) {
       });
     }
     else {
-      deferred.reject('ContactList not found!');
+      deferred.reject(MessagesUtil.contactListImport.notFound);
     }
   });
 
@@ -244,21 +238,21 @@ function checkKeyValues(rowData, emails, key, row, uniqueRowListCounter, error) 
 
     if (constants.emailRegExp.test(rowData)) {
       if (_.includes(emails, rowData)) {
-        error[key] = importErrors.emailTaken;
+        error[key] = MessagesUtil.contactListImport.emailTaken;
       }
     } else {
-      error[key] = importErrors.emailInvalidFormat;
+      error[key] = MessagesUtil.contactListImport.emailInvalidFormat;
     }
   } else if (key == 'gender') {
     if (!_.includes(constants.gender, rowData)) {
-      error[key] = importErrors.wrongGender;
+      error[key] = MessagesUtil.contactListImport.wrongGender;
     }
   } else if (key == 'firstName' || key == 'lastName') {
     if (rowData instanceof String) {
       rowData = rowData.replace(/\s\s+/g, '');
     }
     if (!constants.validNameRegExp.test(rowData) || rowData.length < 2) {
-      error[key] = importErrors.invalidFormat;
+      error[key] = MessagesUtil.contactListImport.invalidFormat;
     }
   }
 }
@@ -273,13 +267,13 @@ function validateRow(emails, contactList, row, uniqueRowListCounter) {
     let keyRequired = requiredFields.indexOf(key) > -1;
     if(!rowData && keyRequired) {
       // Column not  found
-      error[key] = importErrors.fieldRequired;
+      error[key] = MessagesUtil.contactListImport.fieldRequired;
       --validKeyCount
     }
     else {
       if(rowData && rowData.length == 0 && keyRequired) {
         // Field is empty
-        error[key] = importErrors.fieldRequired;
+        error[key] = MessagesUtil.contactListImport.fieldRequired;
         --validKeyCount
       }
       checkKeyValues(rowData, emails, key, row, uniqueRowListCounter, error);

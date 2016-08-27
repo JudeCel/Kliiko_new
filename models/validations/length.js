@@ -1,17 +1,21 @@
 'use strict';
+
 var _ = require('lodash');
+var MessagesUtil = require('./../../util/messages');
 
 function length(fieldName, values) {
   return function(value, next) {
     if(value && typeof value == 'string') {
       let min = values.min;
       if(min && value.length < min) {
-        return next(`${_.startCase(fieldName)} must be longer than ${min} characters`);
+        let message = MessagesUtil.models.validations.length.min.replace('XXX', min);
+        return next(_.startCase(fieldName) + message);
       }
 
       let max = values.max;
       if(max && value.length > max) {
-        return next(`${_.startCase(fieldName)} must not be longer than ${max} characters`);
+        let message = MessagesUtil.models.validations.length.max.replace('XXX', max);
+        return next(_.startCase(fieldName) + message);
       }
     }
 

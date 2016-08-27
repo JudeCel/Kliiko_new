@@ -5,18 +5,21 @@
         <h1 class='modal-title text-center'>{{ topics.topicModalTitle }}</h1>
       </div>
       <div class='modal-body'>
-        <form ng-submit="topics.validateNewAndAdd()">
-          <div class="row">
-            <div class="text-center">
-              <input id="new-topic-input"  type="text" maxlength="15" ng-model="topics.topicData.name">
-              <br>
-              <div id="new-topic-input-help"  >
-                Characters left: {{ topics.nameMaxSize - topics.topicData.name.length }}
-              </div>
-            </div>
+        <form>
+          <div class='form-group'>
+            <label for='topicName'>Name Your Topic</label>
+            <input type='text' class='form-control' id='topicName' placeholder='Name Your Topic' maxlength='{{ topics.validations.name }}' ng-model='topics.topicData.name'>
+            <span class='help-block'>Characters left: {{ topics.charactersLeft("name") }}</span>
+          </div>
+
+          <div class='form-group'>
+            <label for='topicBoard'>Facilitator Billboard</label>
+            <textarea rows='3' class='form-control' id='topicBoard' placeholder='Facilitator Billboard' maxlength='{{ topics.validations.boardMessage }}' required ng-model='topics.topicData.boardMessage' />
+            <span class='help-block'>Characters left: {{ topics.charactersLeft("boardMessage") }}</span>
           </div>
         </form>
       </div>
+
       <div class='modal-footer'>
         <div type='button' class='pull-left btn-standart btn-red btn-small text-center' data-dismiss='modal'>
           Cancel

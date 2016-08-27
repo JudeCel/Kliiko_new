@@ -3,190 +3,168 @@
 
   angular.module('KliikoApp').controller('SessionStep2Controller', SessionStep2Controller);
 
-  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', '$state',  '$filter', 'domServices', '$rootScope', '$scope', 'topicsAndSessions'];
-  function SessionStep2Controller(dbg, builderServices, messenger, $state, $filter, domServices, $rootScope, $scope, topicsAndSessions) {
+  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'orderByFilter', '$scope'];
+  function SessionStep2Controller(dbg, sessionBuilderControllerServices, messenger, orderByFilter, $scope) {
     dbg.log2('#SessionBuilderController 2 started');
 
     var vm = this;
 
-    vm.step2 = {};
-    vm.accordions = {};
-    vm.editTopics = {};
-    vm.$state = $state;
-
-
-    vm.parentController;
-    vm.topicIndex = null;
-    vm.watchers = [];
-    vm.selectedTopics = [];
-    vm.sessionTopics = [];
-    vm.chatSessionTopicsList = [];
-    vm.topicList = [];
-
-    vm.orderTopics = orderTopics;
-    vm.topicsOnDropComplete = topicsOnDropComplete;
-    vm.removeTopicFromList = removeTopicFromList;
-    vm.topicSelectClickHandle = topicSelectClickHandle;
-    vm.selectAllTopics = selectAllTopics;
+    vm.allTopicsSelected = false;
+    vm.sessionTopicsArray = [];
+    vm.sessionTopicsObject = {};
 
     vm.sortableOptionsA = {
       stop : function(e, ui) {
-        vm.chatSessionTopicsList.map(function(topic, index) {
-          topic.order = index;
-          topic.SessionTopics[0].order = topic.order;
-        })
-
-        saveTopics(vm.chatSessionTopicsList);
+        reOrderTopics();
+        saveTopics(vm.sessionTopicsArray);
       }
     };
 
-    vm.initController = function() {
-      initStep();
-      vm.session = builderServices.session;
-      vm.sessionTopics = vm.session.steps.step2.topics;
-    }
+    vm.init = init;
+    vm.canDragElement = canDragElement;
+    vm.selectAllTopics = selectAllTopics;
+    vm.removeTopicFromList = removeTopicFromList;
+    vm.topicsOnDropComplete = topicsOnDropComplete;
+    vm.changeActiveState = changeActiveState;
+    vm.changeLandingState = changeLandingState;
 
-    vm.canDragElement = function(element) {
-      var count = 0;
-      var selected = false;
-      for(var i in vm.selectedTopics) {
-        var topic = vm.selectedTopics[i];
-        count++;
-        if (topic.id == element.id) {
-          selected = true;
-        }
-      }
+    function init(topicController) {
+      vm.session = sessionBuilderControllerServices.session;
+      vm.topics = vm.session.steps.step2.topics;
+      vm.topicController = topicController;
 
-      if (count == 0) {
-        return true;
-      } else {
-        return selected;
-      }
-    }
-
-
-    function prepareSessionTopicData(topic) {
-      vm.topicIndex = vm.chatSessionTopicsList.indexOf(topic);
-      vm.editTopics.name = topic.SessionTopics[0].name;
-      vm.editTopics.id = topic.SessionTopics[0].id;
-      vm.editTopics.formTitle = 'Edit Session Topic';
-      vm.editTopics.postTo = 'updateSessionTopic';
-      vm.editTopics.boardMessage = topic.SessionTopics[0].boardMessage;
-    }
-
-    function isTopicAdded(topic) {
-      var present = false;
-      vm.chatSessionTopicsList.map(function(item){
-        if (topic.id == item.id) {
-          present = true;
-        }
+      vm.topics.map(function(topic) {
+        addSessionTopic(topic);
       });
-      return present;
+      vm.sessionTopicsArray = orderByFilter(vm.sessionTopicsArray, "sessionTopic.order");
     }
 
-    function topicsOnDropComplete(topic, event) {
-      var data = angular.copy(topic);
-
-      if (!data) return;
-      var topicArray = [];
-
-      if(vm.selectedTopics.length == 0 || Object.keys(vm.selectedTopics).length == 0){
-        if (!isTopicAdded(data)) {
-          data.order = vm.chatSessionTopicsList.length;
-          topicArray.push(data);
+    function addSessionTopic(topic) {
+      if(topic.SessionTopics[0]) {
+        var exists = vm.sessionTopicsObject[topic.id];
+        vm.sessionTopicsObject[topic.id] = topic;
+        vm.sessionTopicsObject[topic.id].sessionTopic = topic.SessionTopics[0];
+        if(!exists) {
+          vm.sessionTopicsArray.push(vm.sessionTopicsObject[topic.id]);
         }
-      }else{
-        vm.selectedTopics.map(function(topic) {
-          if (!isTopicAdded(topic)) {
-            topic.order = vm.chatSessionTopicsList.length;
-            topic.SessionTopics = [{ order: topic.order, name: topic.name }];
-            vm.chatSessionTopicsList.push(topic);
-            topicArray.push(topic);
-          }
-        })
+      }
+    }
+
+    function canDragElement(topic) {
+      var can = false, selected = getSelectedTopics();
+
+      if(!selected.length) {
+        return true;
       }
 
-      if (topicArray.length == 0) return;
+      for(var i in selected) {
+        if(selected[i].id == topic.id) {
+          can = true;
+        }
+      }
 
-      saveTopics(topicArray);
+      return can;
     }
 
-    function saveTopics(topicArray) {
-      vm.session.saveTopics(topicArray).then(function(results) {
-        angular.forEach(results, function(result) {
-          if (!isTopicAdded(result)) {
-            vm.chatSessionTopicsList.push(result);
-          }
+    function selectAllTopics(list) {
+      vm.allTopicsSelected = !vm.allTopicsSelected;
+
+      list.map(function(topic) {
+        topic._selected = vm.allTopicsSelected;
+      });
+    }
+
+    function changeActiveState(topic) {
+      topic.sessionTopic.active = !topic.sessionTopic.active;
+      saveTopics(vm.sessionTopicsArray);
+    }
+
+    function changeLandingState(topic) {
+      vm.sessionTopicsArray.map(function(t) {
+        t.sessionTopic.landing = false;
+      });
+
+      topic.sessionTopic.landing = true;
+      saveTopics(vm.sessionTopicsArray);
+    }
+
+    function removeTopicFromList(id) {
+      vm.session.removeTopic(id).then(function(res) {
+        dbg.log2('topic removed');
+        removeTopicFromLocalList(id);
+      }, function(error) {
+        messenger.error(error);
+      });
+    }
+
+    function topicsOnDropComplete(dragTopic) {
+      var list = [];
+      var selected = getSelectedTopics();
+
+      if(selected.length) {
+        selected.map(function(topic) {
+          addTopics(topic, list);
+        });
+      }
+      else {
+        addTopics(dragTopic, list);
+      }
+
+      if(list.length) {
+        saveTopics(list);
+      }
+    }
+
+    function saveTopics(list) {
+      vm.session.saveTopics(list).then(function(result) {
+        result.map(function(topic) {
+          addSessionTopic(topic);
         });
       }, function(error) {
         messenger.error(error);
       });
     }
 
-    function removeTopicFromList(id) {
-      vm.session.removeTopic(id).then(
-        function (res) {
-          dbg.log2('topic removed');
-          removeTopicFromLocalList(id);
-          reOrderOnDelete();
-          saveTopics(vm.chatSessionTopicsList);
-        },
-        function (err) {
-          messenger.error(err);
-        }
-      );
-    }
-
     function removeTopicFromLocalList(id) {
-      for (var i = 0, len = vm.chatSessionTopicsList.length; i < len ; i++) {
-        if ( id ==  vm.chatSessionTopicsList[i].id ) {
-          vm.chatSessionTopicsList.splice(i, 1);
-          break;
+      var found;
+      vm.sessionTopicsArray.map(function(topic, index) {
+        if(topic.id == id) {
+          found = index;
+          delete vm.sessionTopicsObject[topic.id];
+        }
+      });
+
+      vm.sessionTopicsArray.splice(found, 1);
+      reOrderTopics();
+    }
+
+    function addTopics(topic, list) {
+      if(!vm.sessionTopicsObject[topic.id]) {
+        topic.sessionTopic = {
+          order: vm.sessionTopicsArray.length,
+          active: true,
+          landing: false,
+          name: topic.name,
+          boardMessage: topic.boardMessage
+        }
+        if(list) {
+          list.push(topic);
         }
       }
     }
 
-    function reOrderOnDelete() {
-      vm.chatSessionTopicsList.map(function(topic, index) {
-        if(topic.order != index){
-          topic.order = index;
-          topic.SessionTopics[0].order = topic.order;
-        }
-      })
-    }
-
-    function orderTopics(topics) {
-      topics.map(function(topic, index) {
-        topic.order = index;
+    function reOrderTopics() {
+      vm.sessionTopicsArray.map(function(topic, index) {
+        topic.sessionTopic.order = index;
       });
     }
 
-    function topicSelectClickHandle(topicObj) {
-      if (vm.selectedTopics[topicObj.id]) {
-        delete vm.selectedTopics[topicObj.id];
-      } else {
-        vm.selectedTopics[topicObj.id] = topicObj;
-      }
-    }
-
-    function selectAllTopics(allTopics) {
-      vm.allTopicsSelected = !vm.allTopicsSelected;
-
-      vm.selectedTopics = [];
-      if (vm.allTopicsSelected) {
-        for (var i = 0, len = allTopics.length; i < len ; i++) {
-          vm.selectedTopics[ allTopics[i].id ] = allTopics[i];
-        }
-      }
-    }
-
-    function initStep() {
-      var runOnce = $scope.$watch('step2Controller.session.steps.step2.topics', function (newval, oldval) {
-        if (vm.session.steps.step2.topics.length) {
-          vm.chatSessionTopicsList = vm.session.steps.step2.topics;
-        }
-        runOnce();
+    function getSelectedTopics() {
+      var array = [];
+      vm.topicController.list.map(function(topic) {
+        if(topic._selected) { array.push(topic); }
       });
+      return array;
     }
   }
 

@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom'];
-  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom) {
+  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom', 'messagesUtil'];
+  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom, messagesUtil) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -19,7 +19,7 @@
 
     vm.session.init().then(function(res) {
       if (!$stateParams.id) {
-        $state.go('dashboard.chatSessions.builder', {id: vm.session.id}, {
+        $state.go('account-hub.chatSessions.builder', {id: vm.session.id}, {
           location: true, inherit: false, notify: false, reload:false
         });
       }
@@ -74,8 +74,7 @@
         if (step === 'back')  handlePreviousStep();
         if (step === 'next') handleNextStep();
         if (step === 'finish') {
-          $state.go('dashboard.chatSessions');
-          messenger.ok('New session is created');
+          $state.go('account-hub.chatSessions');
         }
       }
 
@@ -165,7 +164,7 @@
       var deferred = $q.defer();
 
       if (!$stateParams.id) {
-        $state.go('dashboard.chatSessions.builder', {id: vm.session.id}, {
+        $state.go('account-hub.chatSessions.builder', {id: vm.session.id}, {
           location: true, inherit: false, notify: false, reload:false
         });
       }
@@ -280,13 +279,13 @@
             vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
           }
           else {
-            messenger.error("You can't select members from " + activeList.name + ' list');
+            messenger.error(messagesUtil.sessionBuilder.cantSelect);
           }
 
           vm.searchingParticipants = false;
         }
         else {
-          messenger.error('There are no contacts selected');
+          messenger.error(messagesUtil.sessionBuilder.noContacts);
         }
       }
 

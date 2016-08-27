@@ -30,11 +30,13 @@
 
     vm.orderByField = 'id';
     vm.reverseSort = false;
+    vm.queriedForSessions = false;
 
     changePage('index');
 
     function init() {
       chatSessionsServices.findAllSessions().then(function(res) {
+        vm.queriedForSessions = true;
         vm.sessions = res.data;
         vm.dateFormat = res.dateFormat;
         vm.chatRoomUrl = res.chatRoomUrl;
@@ -80,7 +82,7 @@
       angularConfirm('Are you sure you want to remove Session?').then(function(response) {
         chatSessionsServices.removeSession({ id: session.id }).then(function(res) {
           if(res.error) {
-            messenger.error(chatSessionsServices.prepareError(res.error));
+            messenger.error(res.error);
           }
           else {
             messenger.ok(res.message);
@@ -94,7 +96,7 @@
     function copySession(session) {
       chatSessionsServices.copySession({ id: session.id }).then(function(res) {
         if(res.error) {
-          messenger.error(chatSessionsServices.prepareError(res.error));
+          messenger.error(res.error);
         }
         else {
           messenger.ok(res.message);
@@ -106,7 +108,7 @@
     function rateSessionMember(sessionMember) {
       chatSessionsServices.rateSessionMember({ id: sessionMember.id, rating: sessionMember.rating }).then(function(res) {
         if(res.error) {
-          messenger.error(chatSessionsServices.prepareError(res.error));
+          messenger.error(res.error);
           for(var i in vm.originalSession.SessionMembers) {
             var member = vm.originalSession.SessionMembers[i];
             if(member.id == sessionMember.id) {

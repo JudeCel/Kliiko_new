@@ -1,5 +1,6 @@
 'use strict';
 
+var MessagesUtil = require('./../util/messages');
 var policy = require('./../middleware/policy');
 var models = require('./../models');
 var filters = require('./../models/filters');
@@ -25,18 +26,8 @@ const VALID_ATTRIBUTES = {
   sessionMember: ['id', 'role', 'rating', 'sessionId', 'accountUserId', 'username', 'comment']
 };
 
-const MESSAGES = {
-  notFound: 'Session not found',
-  removed: 'Session sucessfully removed',
-  copied: 'Session sucessfully copied',
-  sessionMemberNotFound: 'Session Member not found',
-  rated: 'Session Member rated',
-  commentChanged: 'Comment updated successfully',
-  cantRateSelf: "You can't rate your self",
-};
-
 module.exports = {
-  messages: MESSAGES,
+  messages: MessagesUtil.session,
   chatRoomUrl: chatRoomUrl,
   findSession: findSession,
   findAllSessions: findAllSessions,
@@ -88,13 +79,13 @@ function changeComment(id, comment, accountId) {
   }).then(function(sessionMember) {
     if(sessionMember) {
       sessionMember.update({ comment: comment }).then(function() {
-        deferred.resolve(simpleParams(null, MESSAGES.commentChanged));
+        deferred.resolve(simpleParams(null, MessagesUtil.session.commentChanged));
       }, function(error) {
         deferred.reject(filters.errors(error));
       });
     }
     else {
-      deferred.reject(MESSAGES.sessionMemberNotFound);
+      deferred.reject(MessagesUtil.session.sessionMemberNotFound);
     }
   });
 
@@ -123,7 +114,7 @@ function findSession(sessionId, accountId, provider) {
       });
     }
     else {
-      deferred.reject(MESSAGES.notFound);
+      deferred.reject(MessagesUtil.session.notFound);
     }
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
@@ -210,7 +201,7 @@ function removeSession(sessionId, accountId, provider) {
 
     findSession(sessionId, accountId, provider).then(function(result) {
       result.data.destroy().then(function() {
-        deferred.resolve(simpleParams(null, MESSAGES.removed));
+        deferred.resolve(simpleParams(null, MessagesUtil.session.removed));
       }).catch(function(error) {
         deferred.reject(filters.errors(error));
       });
@@ -226,11 +217,10 @@ function copySessionTopics(accountId, fromSessionId, toSessionId) {
   topicsService.getAll(accountId).then(function(allTopics) {
     let topicsArray = [];
     allTopics.map(function(topic) {
-      topic.SessionTopics.map(function(topicItem) {
-
-        if (fromSessionId == topicItem.sessionId) {
-          topic.accountId = accountId;
-          topic.order = topicItem.order;
+      topic.SessionTopics.map(function(sessionTopic) {
+        if (fromSessionId == sessionTopic.sessionId) {
+          topic.sessionTopic = sessionTopic;
+          topic.sessionTopic.sessionId = toSessionId;
           topicsArray.push(topic);
         }
       });
@@ -310,7 +300,7 @@ function copySession(sessionId, accountId, provider) {
 function prepareModifiedSessions(session, accountId, provider, deferred) {
   findSession(session.id, session.accountId, provider).then(function(result) {
     modifySessions(result.data, accountId, provider).then(function(result) {
-      deferred.resolve(simpleParams(result, MESSAGES.copied));
+      deferred.resolve(simpleParams(result, MessagesUtil.session.copied));
     }, function(error) {
       deferred.reject(error);
     });
@@ -342,11 +332,11 @@ function updateSessionMemberRating(params, userId, accountId) {
           }
         }).then(function(accountUser) {
           if(accountUser) {
-            deferred.reject(MESSAGES.cantRateSelf);
+            deferred.reject(MessagesUtil.session.cantRateSelf);
           }
           else {
             member.update({ rating: params.rating }, { returning: true }).then(function(sessionMember) {
-              deferred.resolve(simpleParams(member, MESSAGES.rated));
+              deferred.resolve(simpleParams(member, MessagesUtil.session.rated));
             }).catch(function(error) {
               deferred.reject(filters.errors(error));
             });
@@ -354,7 +344,7 @@ function updateSessionMemberRating(params, userId, accountId) {
         });
       }
       else {
-        deferred.reject(MESSAGES.sessionMemberNotFound);
+        deferred.reject(MessagesUtil.session.sessionMemberNotFound);
       }
     }).catch(function(error) {
       deferred.reject(filters.errors(error));
