@@ -15,7 +15,7 @@ var validAttrs = {
   gender: "male"
 }
 
-describe.only('Middleware subdomain', () => {
+describe('Middleware subdomain', () => {
 
   let req = { subdomains: [validAttrs.subdomain], user: {id: null} }
   let res = { locals: {} };
