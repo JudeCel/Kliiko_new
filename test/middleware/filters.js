@@ -9,7 +9,7 @@ var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscription');
 var assert = require('chai').assert;
 
-describe.only('MIDDLEWARE - Filters', function() {
+describe('MIDDLEWARE - Filters', function() {
   var testData;
 
   describe('#myDashboardPage', function() {

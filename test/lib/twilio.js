@@ -4,16 +4,16 @@ var twilioRepo = require('./../../lib/twilio');
 var assert = require('chai').assert;
 var _ = require('lodash');
 
-describe('LIB - Twilio', function() {
+describe.only('LIB - Twilio', function() {
   describe('#sendSms', function() {
-    function multipleMobiles(count, mobile) {
+    let multipleMobiles = function(count, mobile) {
       let array = new Array(count);
       array.fill(mobile || process.env.TWILIO_SENDER_NUMBER);
       return array;
     };
 
     describe('happy path', function() {
-      function provider(params, callback) {
+      let provider = function(params, callback) {
         callback();
       };
 
