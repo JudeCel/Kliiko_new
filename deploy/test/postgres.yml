@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: msiegenthaler/postgres-kubernetes@9.5
+          image: 'msiegenthaler/postgres-kubernetes'
           ports:
             - name: transport
               containerPort: 5432
