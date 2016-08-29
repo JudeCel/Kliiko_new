@@ -17,21 +17,17 @@ describe('SERVICE - Subscription', function() {
   var currentSubPlanId;
 
   beforeEach(function(done) {
-    userFixture.createUserAndOwnerAccount().then(function(result) {
-      testData = result;
-      return subscriptionFixture.createPlans();
-    }).then(function(results) {
-      testData.subscriptionPlan = _.find(results, ['priority', 1]);
-      testData.lowerPlan = _.find(results, ['priority', testData.subscriptionPlan.priority + 1]);
-      done();
-    }).catch(function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
     models.sequelize.sync({ force: true }).then(function() {
-      done();
+      userFixture.createUserAndOwnerAccount().then(function(result) {
+        testData = result;
+        return subscriptionFixture.createPlans();
+      }).then(function(results) {
+        testData.subscriptionPlan = _.find(results, ['priority', 1]);
+        testData.lowerPlan = _.find(results, ['priority', testData.subscriptionPlan.priority + 1]);
+        done();
+      }).catch(function(error) {
+        done(error);
+      });
     });
   });
 
