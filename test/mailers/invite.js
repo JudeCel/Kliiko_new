@@ -3,7 +3,7 @@
 var assert = require('chai').assert;
 var inviteMailers = require('./../../mailers/invite.js');
 
-describe.only('MAILERS - Invite ', () => {
+describe('MAILERS - Invite ', () => {
   describe('sendInviteAccountManager ', () => {
     let email = 'testeEmail@gmail.com';
     let token = '56b429319232ba613b76749988de4555';
