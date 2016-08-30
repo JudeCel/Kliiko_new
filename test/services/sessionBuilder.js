@@ -11,7 +11,7 @@ var sessionBuilderServices = require('./../../services/sessionBuilder');
 var async = require('async');
 var _ = require('lodash');
 
-describe.only('SERVICE - SessionBuilder', function() {
+describe('SERVICE - SessionBuilder', function() {
   var testUser, testAccount, testAccountUser;
 
   beforeEach(function(done) {
