@@ -412,7 +412,6 @@ function findContactListAnswers(contactList, answers) {
     }
   });
 
-  console.error(values);
   if(values) {
     let params = { customFields:[], defaultFields:[] };
     let object = {};
