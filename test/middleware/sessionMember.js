@@ -7,7 +7,7 @@ var sessionMemberMiddleware = require('./../../middleware/sessionMember');
 var sessionFixture = require('./../fixtures/session');
 var models = require('./../../models');
 
-describe('MIDDLEWARE - Session Member', function() {
+describe.only('MIDDLEWARE - Session Member', function() {
   let req, res;
 
   function setVariables(userId, sessionId, accountId) {
@@ -21,23 +21,19 @@ describe('MIDDLEWARE - Session Member', function() {
   }
 
   beforeEach(function(done) {
-    sessionFixture.createChat().then(function(result) {
-      _.map(result.sessionMembers, function(member) {
-        if(member.role == 'facilitator') {
-          models.AccountUser.find({ where: { id: member.accountUserId } }).then(function(accountUser) {
-            setVariables(accountUser.UserId, result.session.id, accountUser.AccountId);
-            done();
-          });
-        }
-      });
-    }, function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
     models.sequelize.sync({ force: true }).then(function() {
-      done();
+      sessionFixture.createChat().then(function(result) {
+        _.map(result.sessionMembers, function(member) {
+          if(member.role == 'facilitator') {
+            models.AccountUser.find({ where: { id: member.accountUserId } }).then(function(accountUser) {
+              setVariables(accountUser.UserId, result.session.id, accountUser.AccountId);
+              done();
+            });
+          }
+        });
+      }, function(error) {
+        done(error);
+      });
     });
   });
 

@@ -462,7 +462,6 @@ function cancelSubscription(subscriptionId, eventId, provider) {
       deferred.reject(filters.errors(error));
     });
   }, function(error) {
-    console.log(error, subscriptionId);
     deferred.reject(error);
   });
 

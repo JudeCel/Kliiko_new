@@ -238,21 +238,21 @@ function checkKeyValues(rowData, emails, key, row, uniqueRowListCounter, error) 
 
     if (constants.emailRegExp.test(rowData)) {
       if (_.includes(emails, rowData)) {
-        error[key] = MessagesUtil.contactListImport.emailTaken;
+        error[key] = MessagesUtil.contactListImport.error.emailTaken;
       }
     } else {
-      error[key] = MessagesUtil.contactListImport.emailInvalidFormat;
+      error[key] = MessagesUtil.contactListImport.error.emailInvalidFormat;
     }
   } else if (key == 'gender') {
     if (!_.includes(constants.gender, rowData)) {
-      error[key] = MessagesUtil.contactListImport.wrongGender;
+      error[key] = MessagesUtil.contactListImport.error.wrongGender;
     }
   } else if (key == 'firstName' || key == 'lastName') {
     if (rowData instanceof String) {
       rowData = rowData.replace(/\s\s+/g, '');
     }
     if (!constants.validNameRegExp.test(rowData) || rowData.length < 2) {
-      error[key] = MessagesUtil.contactListImport.invalidFormat;
+      error[key] = MessagesUtil.contactListImport.error.invalidFormat;
     }
   }
 }
@@ -267,13 +267,13 @@ function validateRow(emails, contactList, row, uniqueRowListCounter) {
     let keyRequired = requiredFields.indexOf(key) > -1;
     if(!rowData && keyRequired) {
       // Column not  found
-      error[key] = MessagesUtil.contactListImport.fieldRequired;
+      error[key] = MessagesUtil.contactListImport.error.fieldRequired;
       --validKeyCount
     }
     else {
       if(rowData && rowData.length == 0 && keyRequired) {
         // Field is empty
-        error[key] = MessagesUtil.contactListImport.fieldRequired;
+        error[key] = MessagesUtil.contactListImport.error.fieldRequired;
         --validKeyCount
       }
       checkKeyValues(rowData, emails, key, row, uniqueRowListCounter, error);

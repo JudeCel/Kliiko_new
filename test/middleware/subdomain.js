@@ -7,6 +7,7 @@ var models  = require('./../../models');
 
 var validAttrs = {
   accountName: "DainisL",
+  subdomain: "dainisl",
   firstName: "Dainis",
   lastName: "Lapins",
   password: "cool_password",
@@ -16,7 +17,7 @@ var validAttrs = {
 
 describe('Middleware subdomain', () => {
 
-  let req = { subdomains: [validAttrs.accountName], user: {id: null} }
+  let req = { subdomains: [validAttrs.subdomain], user: {id: null} }
   let res = { locals: {} };
 
   beforeEach((done) => {
@@ -36,7 +37,7 @@ describe('Middleware subdomain', () => {
     it('assign currentDomain to res locaCallback', (done) =>  {
       models.Account.findAll().then(function(result) {
         subdomain(req, res, function() {
-          assert.deepEqual(res.locals.currentDomain, { id: result[0].id, name: validAttrs.accountName, roles: ["accountManager"] });
+          assert.deepEqual(res.locals.currentDomain, { id: result[0].id, name: validAttrs.subdomain, roles: ["accountManager"] });
           done();
         });
       })

@@ -44,7 +44,8 @@ module.exports = {
   messages: MessagesUtil.validators.subscription,
   validate: validate,
   planAllowsToDoIt: planAllowsToDoIt,
-  canAddAccountUsers: canAddAccountUsers
+  canAddAccountUsers: canAddAccountUsers,
+  countMessage: countMessage
 };
 
 function validate(accountId, type, count) {

@@ -10,7 +10,7 @@ describe('Middleware policy', () => {
   describe('authorized ', () => {
     describe('success ', () => {
       it('call next Callback', (done) =>  {
-        res.locals.currentDomain = {name: "dainisL", roles: ["accountManager"]};
+        res.locals.currentDomain = {name: "dainisl", roles: ["accountManager"]};
         let result = policy.authorized(["accountManager", "admin"]);
         result(req, res, done);
       });
