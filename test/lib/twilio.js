@@ -4,7 +4,7 @@ var twilioRepo = require('./../../lib/twilio');
 var assert = require('chai').assert;
 var _ = require('lodash');
 
-describe.only('LIB - Twilio', function() {
+describe('LIB - Twilio', function() {
   describe('#sendSms', function() {
     let multipleMobiles = function(count, mobile) {
       let array = new Array(count);
