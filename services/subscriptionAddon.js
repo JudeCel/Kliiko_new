@@ -119,18 +119,16 @@ function addSmsCreditsToAccountSubscription(params, addonInvoice) {
   let deferred = q.defer();
   let smsCount = calculateSmsCount(params.addon_quantity, params.currentSmsCount);
 
-  models.SubscriptionPreference.update({
-    "data.paidSmsCount": smsCount
-  }, {
-    where: {
-      subscriptionId: params.id
-    },
-    returning: true
+  models.SubscriptionPreference.find({
+    where: { subscriptionId: params.id }
+  }).then(function(result) {
+    result.data.paidSmsCount = smsCount;
+    return result.update({ data:  result.data}, { returning: true });
   }).then(function(result) {
     deferred.resolve(smsCount);
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
-  });
+  })
 
   return deferred.promise;
 }
