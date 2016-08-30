@@ -11,7 +11,7 @@ var sessionBuilderServices = require('./../../services/sessionBuilder');
 var async = require('async');
 var _ = require('lodash');
 
-describe('SERVICE - SessionBuilder', function() {
+describe.only('SERVICE - SessionBuilder', function() {
   var testUser, testAccount, testAccountUser;
 
   beforeEach(function(done) {
@@ -47,8 +47,8 @@ describe('SERVICE - SessionBuilder', function() {
     return {
       id: data.sessionBuilder.id,
       accountId: testAccount.id,
-      startTime: new Date(),
-      endTime: new Date()
+      startTime: (new Date()).toString(),
+      endTime: (new Date()).toString()
     };
   };
 
@@ -126,7 +126,7 @@ describe('SERVICE - SessionBuilder', function() {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
 
           let params = sessionParams(result);
-          params.name = 'My first cool session';
+          params.name = 'My first session';
 
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             assert.equal(result.sessionBuilder.steps.step1.name, params.name);
@@ -161,7 +161,7 @@ describe('SERVICE - SessionBuilder', function() {
         mailFixture.createMailTemplate().then(function() {
           sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
             let params = sessionParams(result);
-            params.name = 'My first cool session';
+            params.name = 'My first session';
 
             models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
               sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
@@ -291,7 +291,7 @@ describe('SERVICE - SessionBuilder', function() {
           };
 
           sessionBuilderServices.sendSms(params, provider).then(function(result) {
-            assert.equal(result, 'All messages have been sent');
+            assert.equal(result, 'All sms have been sent');
             done();
           }, function(error) {
             done(error);
@@ -441,7 +441,7 @@ describe('SERVICE - SessionBuilder', function() {
       it('should succeed on moving to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
-          params.name = 'My first cool session';
+          params.name = 'My first session';
 
           models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
             mailFixture.createMailTemplate().then(function() {
@@ -487,7 +487,8 @@ describe('SERVICE - SessionBuilder', function() {
     function topicParams(accountId) {
       return {
         accountId: accountId,
-        name: 'Krucs!'
+        name: 'Krucs!',
+        boardMessage: 'Hello'
       }
     }
 
