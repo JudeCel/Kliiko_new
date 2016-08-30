@@ -92,7 +92,7 @@ describe('SERVICE - AccountDatabase', function() {
 
     accountDatabaseService.updateAccountUser(params, {},function(error, account) {
       assert.equal(account, null);
-      assert.equal(error, 'There is no AccountUser with userId: ' + params.userId + ' and accountId: ' + params.accountId);
+      assert.equal(error, 'Account User not found');
       done();
     });
   });
