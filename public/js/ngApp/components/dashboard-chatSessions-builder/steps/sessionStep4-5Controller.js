@@ -18,6 +18,15 @@
 
     vm.participantsFilterType = {all:true};
     vm.observersFilterType = {all:true};
+    vm.currentFilter = null;
+    vm.filterTypes = {
+      all: 'All',
+      notInvited: 'Not Invited',
+      accepted: 'Confirmed',
+      notThisTime: 'Not This Time',
+      notAtAll: 'Not At All',
+      pending: 'No Response',
+    };
 
     // step 4 + 5
     vm.showCorrectStatus = showCorrectStatus;
@@ -228,13 +237,8 @@
       }
     }
 
-    function setMembersFilter(filterName) {
-      var memberType = vm.session.sessionData.step == "manageSessionParticipants" ? "participants" : "observers";
-      var filter = {};
-      filterName.length
-        ? filter[filterName] = true
-        : filter['all'] = true;
-      vm[memberType+'FilterType'] = filter;
+    function setMembersFilter(filter) {
+      vm.currentFilter = filter == 'all' ? null : filter;
     }
 
     function openEditContactModal(object) {

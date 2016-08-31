@@ -14,14 +14,14 @@
 
   <div ng-if='lastStepsController.prepareData(sbc.participants, sbc.observers).length > 0' ng-controller='ContactListController as clc' ng-init='clc.hideModalStuff = true;'>
     <div class="text-right filter-row">
-
-      <a href="" ng-class="{active:lastStepsController.participantsFilterType.all}" ng-click="lastStepsController.setMembersFilter('all')">All({{lastStepsController.participants.length  }})</a>
-      <a href="" ng-class="{active:lastStepsController.participantsFilterType.notInvited}" ng-click="lastStepsController.setMembersFilter('notInvited')">Not Invited({{ (lastStepsController.participants | filter: 'Not Invited' : strict).length  }})</a>
-      <a href="" ng-class="{active:lastStepsController.participantsFilterType.confirmed}" ng-click="lastStepsController.setMembersFilter('confirmed')">Confirmed({{ (lastStepsController.participants | filter: 'Confirmed' : strict).length  }})</a>
-      <a href="" ng-class="{active:lastStepsController.participantsFilterType.notThisTime}" ng-click="lastStepsController.setMembersFilter('notThisTime')">Not This Time({{ (lastStepsController.participants | filter: 'Not This Time' : strict).length  }})</a>
-      <a href="" ng-class="{active:lastStepsController.participantsFilterType.notAtAll}" ng-click="lastStepsController.setMembersFilter('notAtAll')">Not At All({{ (lastStepsController.participants | filter: 'Not At All' : strict).length  }})</a>
-      <a href="" ng-class="{active:lastStepsController.participantsFilterType.noReply}" ng-click="lastStepsController.setMembersFilter('noReply')">No Response({{ (lastStepsController.participants | filter: 'No Reply' : strict).length  }})</a>
-
+      <a ng-repeat='(key, value) in lastStepsController.filterTypes' ng-class='{ active: lastStepsController.currentFilter == key || key == "all" && !lastStepsController.currentFilter }' ng-click='lastStepsController.setMembersFilter(key)'>
+        <span ng-if="key == 'all'">
+          {{ value }}({{ lastStepsController.stepMembers.length }})
+        </span>
+        <span ng-if="key != 'all'">
+          {{ value }}({{ (lastStepsController.stepMembers | filter: { inviteStatus:key }).length }})
+        </span>
+      </a>
     </div>
     <div class='row text-left'>
       <table class='table table-dashboardElements'>
@@ -41,7 +41,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="member in lastStepsController.stepMembers | filter: lastStepsController.participantsFilter: strict " ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
+          <tr ng-repeat="member in lastStepsController.stepMembers | filter: lastStepsController.currentFilter: strict" ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
             <td>
               <div class='checkbox checkbox-xs checkbox-success'>
                 <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.isSelected' ng-disabled='lastStepsController.showCorrectStatus(member)' />
