@@ -22,7 +22,7 @@
     vm.filterTypes = {
       all: 'All',
       notInvited: 'Not Invited',
-      accepted: 'Confirmed',
+      confirmed: 'Confirmed',
       notThisTime: 'Not This Time',
       notAtAll: 'Not At All',
       pending: 'No Response',
@@ -293,7 +293,7 @@
       }else if(member.invite) {
         member.inviteStatus = member.invite.status;
       }else{
-        member.inviteStatus = "accepted";
+        member.inviteStatus = "confirmed";
       }
 
       return member.inviteStatus;
