@@ -261,9 +261,9 @@
     }
 
     function finishSelectingMembers(activeList) {
-      if (vm.searchingParticipants) {
-        var list = builderServices.selectMembers(activeList.id, activeList.members);
+      var list = builderServices.selectMembers(activeList.id, activeList.members);
 
+      if (vm.searchingParticipants) {
         if(list.length > 0) {
           if(!vm.session.sessionData.participantListId) {
             vm.session.sessionData.participantListId = activeList.id;
@@ -290,9 +290,14 @@
       }
 
       if (vm.searchingObservers) {
-        vm.observers = vm.observers.concat(builderServices.selectMembers(activeList.id, activeList.members));
-        vm.observers = builderServices.removeDuplicatesFromArray(vm.observers);
-        vm.searchingObservers = false;
+        if(list.length > 0) {
+          vm.observers = vm.observers.concat(list);
+          vm.observers = builderServices.removeDuplicatesFromArray(vm.observers);
+          vm.searchingObservers = false;
+        }
+        else {
+          messenger.error(messagesUtil.sessionBuilder.noContacts);
+        }
       }
     }
   }
