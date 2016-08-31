@@ -41,7 +41,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="member in lastStepsController.stepMembers | filter: lastStepsController.currentFilter: strict" ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
+          <tr ng-repeat="member in lastStepsController.memberArrayFiltered" ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
             <td>
               <div class='checkbox checkbox-xs checkbox-success'>
                 <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.isSelected' ng-disabled='lastStepsController.showCorrectStatus(member)' />

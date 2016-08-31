@@ -44,6 +44,7 @@
     vm.closeEditContactForm = closeEditContactForm;
 
     vm.stepMembers = [];
+    vm.memberArrayFiltered = null;
 
     vm.isParticipantPage = function() {
       return vm.session.sessionData.step == "manageSessionParticipants";
@@ -56,6 +57,9 @@
         vm.stepMembers = observers;
       }
 
+      if(!vm.memberArrayFiltered) {
+        vm.memberArrayFiltered = vm.stepMembers;
+      }
       return vm.stepMembers;
     }
 
@@ -238,7 +242,14 @@
     }
 
     function setMembersFilter(filter) {
-      vm.currentFilter = filter == 'all' ? null : filter;
+      if(filter == "all") {
+        vm.currentFilter = null;
+        vm.memberArrayFiltered = vm.stepMembers;
+      }
+      else {
+        vm.currentFilter = filter;
+        vm.memberArrayFiltered = $filter('filter')(vm.stepMembers, 'inviteStatus == filter');
+      }
     }
 
     function openEditContactModal(object) {
