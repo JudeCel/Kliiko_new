@@ -72,7 +72,7 @@ describe('SERVICE - VALIDATORS - Subscription', function() {
           subscriptionValidators.validate(testData.account.id, 'session', 1).then(function() {
             done('Should not get here!');
           }).catch(function(error) {
-            assert.equal(error, subscriptionValidators.messages.count('session', 1));
+            assert.equal(error, subscriptionValidators.countMessage('session', 1));
             done();
           });
         }, function(error) {
@@ -90,7 +90,7 @@ describe('SERVICE - VALIDATORS - Subscription', function() {
           subscriptionValidators.validate(testData.account.id, 'contactList', 1).then(function() {
             done('Should not get here!');
           }).catch(function(error) {
-            assert.equal(error, subscriptionValidators.messages.count('contactList', 1));
+            assert.equal(error, subscriptionValidators.countMessage('contactList', 1));
             done();
           });
         }, function(error) {
@@ -110,7 +110,7 @@ describe('SERVICE - VALIDATORS - Subscription', function() {
           subscriptionValidators.validate(testData.account.id, 'survey', 1).then(function() {
             done('Should not get here!');
           }).catch(function(error) {
-            assert.equal(error, subscriptionValidators.messages.count('survey', 1));
+            assert.equal(error, subscriptionValidators.countMessage('survey', 1));
             done();
           });
         }, function(error) {

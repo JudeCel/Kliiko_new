@@ -9,6 +9,7 @@ var mailTemplateService = require('./../../services/mailTemplate');
 
 let accountId;
 let params = {
+  role: "accountManager",
   email: "testMailTo@gmail.com",
   firstName: "testName", //receiver name
   incentive: "testIncentive",

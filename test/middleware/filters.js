@@ -12,12 +12,6 @@ var assert = require('chai').assert;
 describe('MIDDLEWARE - Filters', function() {
   var testData;
 
-  afterEach(function(done) {
-    models.sequelize.sync({ force: true }).then(function() {
-      done();
-    });
-  });
-
   describe('#myDashboardPage', function() {
     beforeEach(function(done) {
       models.sequelize.sync({ force: true }).then(function() {
@@ -54,7 +48,7 @@ describe('MIDDLEWARE - Filters', function() {
     describe('happy path', function() {
       it('should succeed on redirecting to my dashboard', function(done) {
         userFixture.createMultipleAccountUsers(['observer'], testData).then(function() {
-          filtersMiddleware.myDashboardPage(reqObject(), resObject('my-dashboard', done));
+          filtersMiddleware.myDashboardPage(reqObject(), resObject('account-hub', done));
         }, function(error) {
           done(error);
         });
@@ -68,11 +62,13 @@ describe('MIDDLEWARE - Filters', function() {
 
   describe('#planSelectPage', function() {
     beforeEach(function(done) {
-      subscriptionFixture.createSubscription().then(function(result) {
-        testData = result;
-        done();
-      }, function(error) {
-        done(error);
+      models.sequelize.sync({ force: true }).then(function() {
+        subscriptionFixture.createSubscription().then(function(result) {
+          testData = result;
+          done();
+        }, function(error) {
+          done(error);
+        });
       });
     });
 

@@ -6,14 +6,14 @@ var _ = require('lodash');
 
 describe('LIB - Twilio', function() {
   describe('#sendSms', function() {
-    function multipleMobiles(count, mobile) {
+    let multipleMobiles = function(count, mobile) {
       let array = new Array(count);
       array.fill(mobile || process.env.TWILIO_SENDER_NUMBER);
       return array;
     };
 
     describe('happy path', function() {
-      function provider(params, callback) {
+      let provider = function(params, callback) {
         callback();
       };
 

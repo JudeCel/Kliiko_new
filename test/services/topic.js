@@ -32,25 +32,22 @@ describe('Topic Service', function() {
   var testUser, testAccount;
 
   beforeEach(function(done) {
-    userFixture.createUserAndOwnerAccount().then(function(result) {
-      testUser = result.user;
-      testAccount = result.account;
-      done();
-    }).catch(function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
     models.sequelize.sync({ force: true }).then(() => {
-      done();
+      userFixture.createUserAndOwnerAccount().then(function(result) {
+        testUser = result.user;
+        testAccount = result.account;
+        done();
+      }).catch(function(error) {
+        done(error);
+        });
     });
   });
 
   it('create', function (done) {
     let attrs = {
       accountId: testAccount.id,
-      name: "cool topic name"
+      name: "cool topic name",
+      boardMessage: "je"
     }
 
     subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
@@ -80,7 +77,8 @@ describe('Topic Service', function() {
     it("joinToSession", function(done) {
       let attrs = {
         accountId: testAccount.id,
-        name: "without session"
+        name: "without session",
+        boardMessage: "je"
       }
 
       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
@@ -106,7 +104,8 @@ describe('Topic Service', function() {
     it("removeFromSession", function(done) {
       let attrs = {
         accountId: testAccount.id,
-        name: "without session"
+        name: "without session",
+        boardMessage: "je"
       }
 
       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
@@ -132,7 +131,8 @@ describe('Topic Service', function() {
     it("destroy", function(done) {
       let attrs = {
         accountId: testAccount.id,
-        name: "without session"
+        name: "without session",
+        boardMessage: "je"
       }
 
       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
@@ -141,7 +141,7 @@ describe('Topic Service', function() {
             topicService.destroy(topic.id).then(function(result) {
               done("can't get here");
             }, function(err) {
-              assert.equal(err, topicService.MESSAGES.error.isRelaitedSession)
+              assert.equal(err, topicService.messages.error.relatedSession)
               done();
             })
           }, function(err) {
@@ -153,7 +153,6 @@ describe('Topic Service', function() {
       }, function(error) {
         done(error);
       });
-
     })
   })
 
@@ -162,7 +161,8 @@ describe('Topic Service', function() {
     it("no relaited with session", function(done) {
       let attrs = {
         accountId: testAccount.id,
-        name: "without session"
+        name: "without session",
+        boardMessage: "je"
       }
 
       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
@@ -170,6 +170,8 @@ describe('Topic Service', function() {
           topicService.destroy(topic.id).then(function(result) {
             assert.equal(result, 1)
             done();
+          }, function(err) {
+            done(err)
           }, function(err) {
             done(err)
           })

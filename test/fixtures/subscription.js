@@ -10,7 +10,8 @@ var q = require('q');
 var _ = require('lodash');
 
 module.exports = {
-  createSubscription: createSubscription
+  createSubscription: createSubscription,
+  successProvider: successProvider
 }
 
 function successProvider(params) {
@@ -36,7 +37,7 @@ function createSubscription(accountId, userId, provider) {
 
   if(accountId && userId){
     subscriptionPlansFixture.createPlans().then(function() {
-      subscriptionService.createSubscription(accountId, userId, provider({ id: 'RandomUniqueId666' })).then(function(subscription) {
+      subscriptionService.createSubscription(accountId, userId, provider({ id: 'RandomUniqueId666' + accountId + userId })).then(function(subscription) {
         deferred.resolve(subscription);
       }, function(error) {
         deferred.reject(error);

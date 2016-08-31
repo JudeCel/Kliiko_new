@@ -1,4 +1,4 @@
-FROM node:5.11.0-wheezy
+FROM node:6.3.1-wheezy
 
 WORKDIR /var/www/klzii
 

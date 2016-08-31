@@ -17,12 +17,11 @@ function checkRoles(roles, allowedRoles) {
 function authorized(allowedRoles) {
   return function(req, res, next) {
     if(!res.locals.currentDomain) { throw new Error('currentDomain is not defined in the response locals'); }
-
     if(checkRoles(res.locals.currentDomain.roles, allowedRoles)) {
       next();
     }
     else {
-      res.status(404).send(MessagesUtil.middleware.policy.noAccess);
+      return res.status(404).send(MessagesUtil.middleware.policy.noAccess);
     }
   }
 }

@@ -59,7 +59,7 @@ describe('SERVICE - SessionMember', function() {
         sessionMemberServices.createToken(fakeId).then(function(result) {
           done('Should not get here!');
         }, function(error) {
-          assert.equal(error, sessionMemberServices.messages.notFound + fakeId);
+          assert.equal(error, sessionMemberServices.messages.notFound);
           done();
         });
       });
