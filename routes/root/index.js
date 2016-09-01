@@ -426,6 +426,7 @@ router.route('/invite/:token/decline').get(inviteRoutes.decline);
 router.route('/invite/:token/accept').get(inviteRoutes.acceptGet);
 router.route('/invite/:token/accept').post(inviteRoutes.acceptPost);
 
+router.route('/invite/:token/session').get(inviteRoutes.sessionAccept);
 router.route('/invite/:token/notThisTime').get(inviteRoutes.sessionNotThisTime);
 router.route('/invite/:token/notAtAll').get(inviteRoutes.sessionNotAtAll);
 

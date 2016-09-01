@@ -94,6 +94,15 @@ function simpleParams(title, invite, error, message) {
   return { title: title, invite: invite || {}, error: error || {}, message: message || '', applicationName: process.env.MAIL_FROM_NAME };
 };
 
+function sessionAccept(req, res, next) {
+  inviteService.acceptSessionInvite(req.params.token).then(function(result) {
+    res.render(views_path('accepted'), simpleParams('Invite', result.invite));
+  }, function(error) {
+    req.flash('message', error);
+    res.redirect('/login');
+  });
+}
+
 function sessionNotThisTime(req, res, next) {
   inviteService.declineSessionInvite(req.params.token, 'notThisTime').then(function(result) {
     res.render(views_path('declined'), simpleParams('Invite', result.invite));
@@ -117,6 +126,7 @@ module.exports = {
   decline: decline,
   acceptGet: acceptGet,
   acceptPost: acceptPost,
+  sessionAccept: sessionAccept,
   sessionNotThisTime: sessionNotThisTime,
   sessionNotAtAll: sessionNotAtAll
 };

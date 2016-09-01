@@ -431,6 +431,29 @@ function sessionAccept(token, body) {
   return deferred.promise;
 }
 
+function acceptSessionInvite(token) {
+  let deferred = q.defer();
+
+  findInvite(token, function(error, invite) {
+    if(error) {
+      deferred.reject(error);
+    }
+    else {
+      invite.update({ token: uuid.v1() }, { returning: true }).then(function(invite) {
+        sendEmail('inviteConfirmation', invite).then(function() {
+          deferred.resolve({ message: MessagesUtil.invite.confirmed, invite: invite });
+        }, function(error) {
+          deferred.reject(error);
+        })
+      }, function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+  });
+
+  return deferred.promise;
+}
+
 function declineSessionInvite(token, status) {
   let deferred = q.defer();
 
@@ -565,5 +588,6 @@ module.exports = {
   acceptInviteNew: acceptInviteNew,
   declineInvite: declineInvite,
   declineSessionInvite: declineSessionInvite,
+  acceptSessionInvite: acceptSessionInvite,
   sessionAccept: sessionAccept
 };
