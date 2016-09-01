@@ -298,3 +298,19 @@ $directions: ('right', 'left', 'top', 'bottom');
   -webkit-animation-fill-mode: none !important;
   animation-fill-mode: none !important;
 }
+
+.dashboard-header > .dashboard-header-mobile {
+    display:none;
+}
+
+@media (max-width: 767px) {  
+    .dashboard-header > div {
+        display:none;
+    }
+    .dashboard-header > .dashboard-header-mobile {
+        display:block;
+    }
+    .dashboard-header {
+        height:auto;
+    }
+}
