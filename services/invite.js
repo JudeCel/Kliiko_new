@@ -454,7 +454,7 @@ function declineSessionInvite(token, status) {
   return deferred.promise;
 }
 
-function needSedConfirmationEmail(inivte) {
+function needSedConfirmationEmail(invite) {
     return invite.role == "participant"
 }
 
