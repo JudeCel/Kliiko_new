@@ -46,7 +46,6 @@
           <div class="margin-top-10" ui-sortable="step2Controller.sortableOptionsA" ng-model="step2Controller.sessionTopicsArray">
             <div class="topic-list-item" ng-repeat="topic in step2Controller.sessionTopicsArray">
               <span>
-                <img src="/icons/ic_move.png">
                 <input type="radio" ng-model="topic.sessionTopic.landing" ng-value="true" ng-change='step2Controller.changeLandingState(topic)' ng-disabled="!topic.sessionTopic.active">
                 {{ topic.sessionTopic.name }}
               </span>
