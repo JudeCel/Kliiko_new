@@ -23,7 +23,7 @@
     'ngFileUpload',
     'ui.sortable',
     'angularUtils.directives.dirPagination',
-
+    'toggle-switch',
     // app modules
     'KliikoApp.user',
     'KliikoApp.account',
