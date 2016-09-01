@@ -1,4 +1,4 @@
-test
+
 # Kliiko
 Tested on: Node.js version 4.2.x LTS, NPM version 3.3.x
 
