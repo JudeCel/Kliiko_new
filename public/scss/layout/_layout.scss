@@ -304,6 +304,16 @@ $directions: ('right', 'left', 'top', 'bottom');
 }
 
 @media (max-width: 767px) {  
+    body{
+        overflow: auto !important;
+        padding: 0px !important;
+    }
+
+    .modal-backdrop
+    {
+        opacity:0 !important;
+    }
+
     .dashboard-header > div {
         display:none;
     }
@@ -312,5 +322,71 @@ $directions: ('right', 'left', 'top', 'bottom');
     }
     .dashboard-header {
         height:auto;
+    }
+
+    .modal {
+        top: 72px !important;
+        overflow-y:auto;
+        position: absolute !important;
+        height:100vh;
+        background-color:#fff;
+        z-index: 1045;
+        padding-left:0px !important;
+
+        .modal-dialog{
+            padding: 0px !important;
+            margin: 0px;
+            position: absolute;
+            width: 100%;
+            height:100vh;
+
+            .modal-content{
+                border: 0px;
+                box-shadow: none;
+            }
+
+            .modal-footer{
+                border-top: 0px;
+
+                button.pull-left{
+                    top: -55px;
+                    position: absolute;
+                    left: 10px;
+                }
+                button.pull-right{
+                    top: -55px;
+                    position: absolute;
+                    right: 15px;
+                }
+            }
+        }
+
+    }
+}
+
+@media (max-width: 479px) {  
+    .modal {
+        .modal-dialog{
+            .modal-footer{
+                button.btn-red{
+                    background-color: #fff !important;
+                    background-image: url("/icons/back_red.png") !important;
+                }
+                button.btn-green{
+                    background-color: #fff !important;
+                    background-image: url("/icons/ic_tick.png") !important;
+                }
+
+                button{
+                    width: 36px;
+                    min-width: 36px;
+                    overflow: hidden;
+                    background-repeat: no-repeat !important;
+                    background-position: center !important;
+                    text-indent: 100px;
+                }
+            }
+        }
+
     }
 }
