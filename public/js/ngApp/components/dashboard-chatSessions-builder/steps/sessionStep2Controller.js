@@ -75,7 +75,7 @@
     }
 
     function changeActiveState(topic) {
-      topic.sessionTopic.active = !topic.sessionTopic.active;
+      // topic.sessionTopic.active = !topic.sessionTopic.active;
       saveTopics(vm.sessionTopicsArray);
     }
 

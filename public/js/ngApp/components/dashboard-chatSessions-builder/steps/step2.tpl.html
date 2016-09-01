@@ -52,8 +52,17 @@
 
               <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.id)" src="/icons/dashboardElement_remove.png" title="Delete">
               <img class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('sessionTopic', topic.sessionTopic)">
+              <div class="onoffswitch">
+                <input ng-model="topic.sessionTopic.active" ng-change="step2Controller.changeActiveState(topic)" type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="{{'myonoffswitch'+ topic.sessionTopic.id}}" checked>
+                <label class="onoffswitch-label" for="{{'myonoffswitch'+ topic.sessionTopic.id}}">
+                  <span class="onoffswitch-inner"></span>
+                  <span class="onoffswitch-switch"></span>
+                </label>
+              </div>
+
+<!--
               <img class="img-responsive pull-right ic" ng-if="topic.sessionTopic.active" src="/icons/unlocked.png" ng-click="step2Controller.changeActiveState(topic)" title="Active">
-              <img class="img-responsive pull-right ic" ng-if="!topic.sessionTopic.active" src="/icons/locked.png" ng-click="step2Controller.changeActiveState(topic)" title="Not Active">
+              <img class="img-responsive pull-right ic" ng-if="!topic.sessionTopic.active" src="/icons/locked.png" ng-click="step2Controller.changeActiveState(topic)" title="Not Active"> -->
             </div>
           </div>
         </div>
