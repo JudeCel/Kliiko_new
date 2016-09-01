@@ -1,3 +1,4 @@
+test
 # Kliiko
 Tested on: Node.js version 4.2.x LTS, NPM version 3.3.x
 
@@ -66,7 +67,7 @@ To run seeds for user run this command: ``` node seeders/users.js ```
 To run seeds for chat session run this command: ``` node seeders/chatSession.js ```
 To run seeds for email template editor run this command: ``` node seeders/mailTemplates.js ```
 
-Default user credentials email ``` admin@insider.com ``` or ``` user@insider.com ``` and password ``` qwerty123 ``` 
+Default user credentials email ``` admin@insider.com ``` or ``` user@insider.com ``` and password ``` qwerty123 ```
 
 ## Run Gulp
 
