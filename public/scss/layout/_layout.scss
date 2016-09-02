@@ -302,208 +302,38 @@ $directions: ('right', 'left', 'top', 'bottom');
 }
 
 .dashboard-header > .dashboard-header-mobile {
-    display:none;
+  display:none;
 }
 
 #reveiveNewsLetters{
-    width: 16px;
-    height: 16px;
+  width: 16px;
+  height: 16px;
 }
 
 #contactDetailsModal
 {
-    .modal-header{
-        padding:0px;
-    }
-}
-
-.modal-dialog{
-    min-width:300px;
-}
-
-@media (max-width: 1330px) {  
-    @media (min-width: 992px) {  
-        #contactDetailsModal{
-            .container-fluid {
-                .check {
-                    div{
-                        position:absolute;
-                        margin-top: 0px !important;
-                        margin-left: -30px;
-                        width: 450px;
-                    }
-                }
-                button{
-                    margin-top: 35px;
-                }
-            }
-        }    
-    }
-}
-
-@media (max-width: 991px) {  
-    @media (min-width: 768px) {  
-        #contactDetailsModal{
-            .container-fluid {
-                margin-top: 10px;
-
-                .check {
-                    div{
-                        position:absolute;
-                        margin-top: -70px !important;
-                        margin-left: 15px;
-                        width: 450px;
-                    }
-                }
-                button{
-                    margin-top: 35px;
-                }
-                button.pull-right, button.btn-green{
-                    margin-top: -40px;
-                }
-            }
-        }    
-    }
+  .modal-header{
+    padding:0px;
+  }
 }
 
 @media (max-width: 767px) {  
-    body{
-        overflow: auto !important;
-        padding: 0px !important;
-    }
+  body{
+    overflow: auto !important;
+    padding: 0px !important;
+  }
 
-    .modal-backdrop
-    {
-        opacity:0 !important;
-    }
-
-    .dashboard-header > div {
-        display:none;
-    }
-    .dashboard-header > .dashboard-header-mobile {
-        display:block;
-    }
-    .dashboard-header {
-        height:auto;
-    }
-
-    #contactDetailsModal
-    {
-        label.control-label, div.col-md-8{
-            padding-left:0px !important;
-            padding-right:0px !important;
-        }
-        .modal-header{
-            border-bottom: 1px solid #eee;
-            margin-bottom: 15px;
-        }
-    }
-
-    .modal {
-        top: 72px !important;
-        overflow-y:auto;
-        position: absolute !important;
-        min-height:100vh;
-        height:auto !important;
-        background-color:#fff;
-        z-index: 1045;
-        padding-left:0px !important;
-        bottom:auto !important;
-
-        .modal-dialog{
-            padding: 0px !important;
-            margin: 0px;
-            position: relative;
-            width: 100%;
-
-            .modal-body{
-                margin-right: 0px !important;
-            }
-
-            .modal-content{
-                border: 0px;
-                box-shadow: none;
-            }
-
-            .modal-footer, .container-fluid{
-                border-top: 0px;
-
-                button.pull-left, button.btn-red{
-                    top: -55px;
-                    position: absolute;
-                    left: 10px;
-                }
-                button.pull-right, button.btn-green{
-                    top: -55px;
-                    position: absolute;
-                    right: 15px;
-                }
-            }
-
-            .container-fluid {
-                .row {
-                    div{
-                        position:inherit;
-                    }
-                }
-                .pull-right{
-                    float: none !important;
-                }
-                .check {
-                    margin-top: -20px;
-                }
-                button.pull-left, button.btn-red,
-                button.pull-right, button.btn-green{
-                    top: -70px;
-                }
-            }
-        }
-
-    }
-
-    #messenger-area{
-        min-width:200px;
-    }
+  #messenger-area{
+    min-width:200px;
+  } 
 }
 
-@media (max-width: 479px) {  
-    .modal {
-        .modal-dialog{
-            .modal-title{
-                font-size:24px;
-                padding-bottom: 5px;
-            }
-
-            .modal-footer, .container-fluid{
-                button.btn-red{
-                    background-color: #fff !important;
-                    background-image: url("/icons/back_red.png") !important;
-                }
-                button.btn-green{
-                    background-color: #fff !important;
-                    background-image: url("/icons/ic_tick.png") !important;
-                }
-
-                button{
-                    width: 36px;
-                    min-width: 36px;
-                    overflow: hidden;
-                    background-repeat: no-repeat !important;
-                    background-position: center !important;
-                    text-indent: 100px;
-                }
-            }
-
-            .container-fluid {
-                
-                .check {
-                    label {
-                        margin-left: 22px;
-                        margin-top: -21px;
-                    }
-                }
-            }
-        }
-
-    }
+@media (max-width: 820px) {  
+  @media (min-width: 768px) {  
+    #nav-tabs-main{
+      li {
+        width: 230px;
+      }
+    }  
+  }
 }
