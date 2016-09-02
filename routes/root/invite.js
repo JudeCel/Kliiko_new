@@ -91,7 +91,7 @@ function loginUser(req, res, next, user) {
 }
 
 function simpleParams(title, invite, error, message) {
-  return { title: title, invite: invite || {}, error: error || {}, message: message || '', applicationName: process.env.MAIL_FROM_NAME };
+  return { title: title, invite: invite || {}, error: error || "", message: message || '', applicationName: process.env.MAIL_FROM_NAME };
 };
 
 function sessionAccept(req, res, next) {

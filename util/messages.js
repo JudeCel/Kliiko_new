@@ -64,6 +64,7 @@ module.exports = {
     confirmed: 'You have successfully accepted Invite. Please login using your invite e-mail and password.',
     removed: 'Successfully removed Invite',
     cantRemove: "Can't remove this invite",
+    sessionIsFull: 'Session is full',
     declined: 'Successfully declined invite'
   },
   mailTemplate: {
