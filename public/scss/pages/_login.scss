@@ -16,7 +16,8 @@
   }
   .login-signup-tab {
     width: 180px;
-    margin-left: 162px;
+    margin-right: 25px;
+    margin-left: 25px;
   }
   .login-kliiko-tab {
     width: 180px;
@@ -30,6 +31,47 @@
   .nav-tabs > li > a{
     border-radius: 0;
 
+  }
+
+  .nav-tabs > li:nth-child(2){
+    float: right;
+  }
+
+
+  @media (max-width: 455px) {
+     .login-signup-tab {
+        width: 150px;
+        margin-right: 15px;
+        margin-left: 10px;
+      }
+
+      .login-kliiko-tab {
+        width: 150px;
+        margin-left: 15px;
+      }
+
+      #login .text-login-page, label.pull-right{
+          padding-right:10px;
+      }
+  }
+
+  @media (max-width: 360px) {
+     .login-signup-tab {
+        width: 150px;
+        margin-right: 10px;
+        margin-left: 10px;
+      }
+
+      .login-kliiko-tab {
+        width: 120px;
+        margin-left: 10px;
+      }
+  }
+
+  .row > div
+  {
+      display: inline-block;
+      width: 100%;
   }
 
   #login{
