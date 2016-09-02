@@ -204,6 +204,10 @@
       setFocusToFormControl('body');
     });
 
+    $('.nav a').click(function(){
+       $('.navbar-collapse').collapse('hide');
+    });
+
     function setFocusToFormControl(target) {
       var inputs = $(target).find('.form-control:not(.ng-autofocus-skip):visible');
       if(inputs.length) {

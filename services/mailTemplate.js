@@ -387,22 +387,22 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
 function variablesForTemplate(type) {
   switch (type) {
     case "firstInvitation":
-      return ["{First Name}", "{Session Name}", "{Start Time}", "{End Time}", "{Start Date}", "{End Date}", "{Incentive}", "{Accept Invitation}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}", "{Invitation Not This Time}", "{Invitation Not At All}"];
+      return ["{First Name}", "{Session Name}", "{Start Time}", "{End Time}", "{Start Date}", "{End Date}", "{Incentive}", "{Accept Invitation}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Invitation Not This Time}", "{Invitation Not At All}"];
       break;
     case "closeSession":
-      return ["{First Name}", "{Incentive}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}", "{Close Session Yes In Future}", "{Close Session No In Future}"];
+      return ["{First Name}", "{Incentive}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Close Session Yes In Future}", "{Close Session No In Future}"];
       break;
     case "confirmation":
-      return ["{First Name}", "{Start Time}", "{Start Date}", "{Confirmation Check In}", "{Participant Email}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}"];
+      return ["{First Name}", "{Start Time}", "{Start Date}", "{Confirmation Check In}", "{Participant Email}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
       break;
     case "generic":
-      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}"];
+      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
       break;
     case "notAtAll":
-      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}"];
+      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
       break;
     case "notThisTime":
-      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}"];
+      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
       break;
     case "accountManagerConfirmation":
       return ["{First Name}", "{Login}", "{Last Name}"];
@@ -418,7 +418,7 @@ function validateTemplate(template) {
   if (params.length) {
     _.map(params, function(variable) {
         if (template.content.indexOf(variable) == -1){
-          error = "Missing <b>" + variable + "</b> variable";
+          error = "Missing " + variable + " variable";
         }
     });
   }

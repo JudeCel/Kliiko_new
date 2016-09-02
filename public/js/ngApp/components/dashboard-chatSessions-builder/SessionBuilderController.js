@@ -261,6 +261,12 @@
     }
 
     function finishSelectingMembers(activeList) {
+      if(!activeList) {
+        vm.searchingParticipants = false;
+        vm.searchingObservers = false;
+        return;
+      }
+
       var list = builderServices.selectMembers(activeList.id, activeList.members);
 
       if (vm.searchingParticipants) {

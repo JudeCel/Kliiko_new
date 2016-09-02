@@ -73,6 +73,7 @@
     }
 
     function submitModalForm() {
+      vm.topicData.boardMessage = vm.topicData.boardMessage || '';
       if(vm.modalAction == 'edit'){
         editTopic();
       }else if(vm.modalAction == 'new') {
