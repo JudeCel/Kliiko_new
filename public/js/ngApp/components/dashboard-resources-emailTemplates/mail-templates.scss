@@ -78,8 +78,8 @@
     }
 
     .list-group-item {
+        padding: 5px 0 5px 5px;
         cursor: pointer;
-        height: 50px;
         width: 100%;
         background-image: none;
         color: gray;
@@ -89,7 +89,7 @@
     }
 
     .list-group-item-white {
-        height: 50px;
+        padding: 5px 0 5px 5px;
         width: 100%;
         background-image: none;
         color: gray;

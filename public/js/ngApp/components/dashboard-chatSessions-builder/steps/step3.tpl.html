@@ -35,7 +35,7 @@
         <div class="list-group col-xs-3 mail-template-list-section">
           <div class="panel-heading mail-template-list-heading"><strong>Email Templates</strong></div>
           <div id="mail-template-list" class="mail-template-list">
-            <a ng-repeat="(key, t) in ec.emailTemplates track by $index" class="list-group-item" ng-hide="t.hideIt" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : t.AccountId}"
+            <a ng-repeat="(key, t) in ec.emailTemplates track by $index" class="list-group-item border-radius-none" ng-hide="t.hideIt" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : t.AccountId}"
                ng-click="ec.startEditingTemplate(key, true, t.id, t); sbc.showEmailsTemplateEditeor = true;">
               <div ng-hide="t.AccountId">
                 <img src="/icons/ic_arrow_right.png" class="pull-right" ng-hide="!ec.isCurrent(key)">
