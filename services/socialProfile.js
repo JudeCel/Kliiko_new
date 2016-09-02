@@ -10,6 +10,7 @@ var _ = require('lodash');
 
 module.exports = {
   create: create,
+  createPromise: createPromise,
   find: find,
   findByConfirmedUser: findByConfirmedUser
 }
@@ -41,16 +42,31 @@ function findByConfirmedUser(provider, id, callback) {
 function create(object, callback) {
   object.errors = object.errors || {};
 
-  let socialProfileParams = {}
-  socialProfileParams['providerUserId'] = object.params.socialProfile.id
-  socialProfileParams['provider'] = object.params.socialProfile.provider
-  socialProfileParams['userId'] = object.user.id
-
-  SocialProfile.create(socialProfileParams, { transaction: object.transaction } ).then(function(result) {
+  SocialProfile.create(socialParams(object), { transaction: object.transaction } ).then(function(result) {
     object.socialProfile = result;
     callback(null, object);
   }, function(error) {
     _.merge(object.errors, filters.errors(error));
     callback(null, object);
   });
+}
+
+function createPromise(params, t) {
+  let deferred = q.defer();
+
+  SocialProfile.create(socialParams(params), { transaction: t }).then(function(result) {
+    deferred.resolve();
+  }, function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function socialParams(object) {
+  return {
+    providerUserId: object.params.socialProfile.id,
+    provider: object.params.socialProfile.provider,
+    userId: object.user.id
+  }
 }

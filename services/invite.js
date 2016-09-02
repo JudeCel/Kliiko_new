@@ -376,51 +376,79 @@ function sessionAccept(token, body) {
       deferred.reject(error);
     }
     else {
-      let params = {
-        sessionId: invite.sessionId,
-        accountUserId: invite.accountUserId,
-        username: invite.AccountUser.firstName,
-        role: invite.role
-      };
-
-      if(body.social) {
-        body.password = crypto.randomBytes(16).toString('hex');
-      }
-
-      User.create({ email: invite.AccountUser.email, password: body.password, confirmedAt: new Date()  }).then(function(user) {
-        invite.AccountUser.update({ UserId: user.id, active:true}).then(function() {
-          sessionMemberService.createWithTokenAndColour(params).then(function() {
-            invite.update({ status: 'confirmed' }).then(function() {
-              if(body.social) {
-                body.social.user = { id: user.id };
-                socialProfileService.create(body.social, function(error, object) {
-                  if(object.error) {
-                    deferred.reject(object.error);
-                  }
-                  else {
-                    deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
-                  }
-                });
-              }
-              else {
-                deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
-              }
-            }, function(error) {
-              deferred.reject(filters.errors(error));
-            });
-          }, function(error) {
-            deferred.reject(filters.errors(error));
-          });
-        }, function(error) {
-          deferred.reject(filters.errors(error));
-        });
-      }, function(error) {
-        deferred.reject(filters.errors(error));
+      canAddSessionMember(invite).then(function() {
+        return sessionAcceptFlow(invite, body);
+      }).then(function(result) {
+        deferred.resolve(result);
+      }).catch(function(error) {
+        deferred.reject(error);
       });
     }
   });
 
   return deferred.promise;
+}
+
+function sessionAcceptFlow(invite, body) {
+  let deferred = q.defer();
+  let user, t;
+
+  models.sequelize.transaction().then(function(transaction) {
+    t = transaction;
+    return User.create({ email: invite.AccountUser.email, password: body.password, confirmedAt: new Date() }, { transaction: t });
+  }).then(function(result) {
+    user = result;
+    return invite.AccountUser.update({ UserId: user.id, active: true }, { transaction: t });
+  }).then(function() {
+    let params = sessionMemberParams(invite, t);
+    return sessionMemberService.createWithTokenAndColour(params);
+  }).then(function() {
+    return invite.update({ status: 'confirmed' }, { transaction: t });
+  }).then(function() {
+    if(body.social) {
+      body.social.user = { id: user.id };
+      return socialProfileService.createPromise(body.social, t);
+    }
+    else {
+      deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
+    }
+  }).then(function() {
+    deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function canAddSessionMember(invite) {
+  let deferred = q.defer();
+
+  models.SessionMember.count({ where: { sessionId: invite.sessionId, role: invite.role } }).then(function(c) {
+    let allowedCount = {
+      facilitator: 1,
+      participant: 8,
+      observer: -1
+    };
+    if(allowedCount[invite.role] < c) {
+      deferred.resolve();
+    }
+    else {
+      deferred.reject(MessagesUtil.invite.sessionIsFull);
+    }
+  });
+
+  return deferred.promise;
+}
+
+function sessionMemberParams(invite, t) {
+  return {
+    sessionId: invite.sessionId,
+    accountUserId: invite.accountUserId,
+    username: invite.AccountUser.firstName,
+    role: invite.role,
+    t: t
+  };
 }
 
 function acceptSessionInvite(token) {
