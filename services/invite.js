@@ -534,7 +534,7 @@ function prepareMailInformation(invite) {
     },
     include: [AccountUser, Session]
   }).then(function(facilitator) {
-    deferred.resolve(prepareMailParams(facilitator.Session, invite.AccountUser, facilitator.AccountUser));
+    deferred.resolve(prepareMailParams(invite, facilitator.Session, invite.AccountUser, facilitator.AccountUser));
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -542,7 +542,7 @@ function prepareMailInformation(invite) {
   return deferred.promise;
 }
 
-function prepareMailParams(session, receiver, facilitator) {
+function prepareMailParams(invite, session, receiver, facilitator) {
   return {
     sessionId: session.id,
     email: receiver.email,
@@ -557,7 +557,7 @@ function prepareMailParams(session, receiver, facilitator) {
     startDate: session.startDate,
     orginalStartTime: session.startTime,
     orginalEndTime: session.endTime,
-    confirmationCheckInUrl: mailUrlHelper.getUrl('', '/login'),
+    confirmationCheckInUrl: mailUrlHelper.getUrl(invite.token, '/invite/') + '/accept/',
     participantMail: receiver.email,
     incentive: session.incentive
   }

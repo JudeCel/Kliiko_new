@@ -64,7 +64,7 @@ function sendInviteSession(inviteParams, callback) {
   inviteParams.privacyPolicyUrl = helpers.getUrl('', '/privacy_policy');
 
   if(inviteParams.role == 'observer') {
-    inviteParams.logInUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/session/';
+    inviteParams.logInUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/accept/';
 
     mailHelper.sendObserverInvitation(inviteParams, function(error, result) {
       callback(error, result);
@@ -80,7 +80,7 @@ function sendInviteSession(inviteParams, callback) {
     });
   }
   else if(inviteParams.role == 'facilitator'){
-    inviteParams.logInUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/session/';
+    inviteParams.logInUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/accept/';
 
     mailHelper.sendFacilitatorEmailConfirmation(inviteParams, function(error, result) {
       callback(error, result);
