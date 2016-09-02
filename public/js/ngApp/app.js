@@ -205,7 +205,8 @@
     });
 
     $('.nav a').click(function(){
-       $('.navbar-collapse').collapse('hide');
+      $('.navbar-collapse').collapse('hide');
+      $('.modal').modal('hide');
     });
 
     function setFocusToFormControl(target) {

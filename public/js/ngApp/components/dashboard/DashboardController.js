@@ -15,6 +15,13 @@
     vm.isTabActive = isTabActive;
     vm.changeTab = changeTab;
     vm.activeClass = activeClass;
+    vm.initMobile = initMobile;
+
+    function initMobile(block) {
+      $('#' + block + ' li:last-child').click(function () {
+        $('#nav-tabs-mobile-title').text($(this).text());
+      });
+    }
 
     function redirectToChatSession(sessionId) {
       vm.disablePlayButton = true;
@@ -60,6 +67,7 @@
           var role = array[i];
           if(vm.accountUsers[role]) {
             vm.currentTab = role;
+            $('#nav-tabs-mobile-title').text(vm.accountUsers[role].name + " (" + vm.accountUsers[role].data.length + ")");
             break;
           }
         }

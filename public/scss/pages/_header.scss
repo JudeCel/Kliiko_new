@@ -41,6 +41,11 @@
 {
   border-radius: 0px;
 
+  .container{
+    background-color: #fff;
+    margin-right: -1px;
+  }
+
   .my-details-container {
     margin-left: 0px;
     margin-right: 10px;
@@ -58,7 +63,7 @@
     background-color: #fff;
     float: left;
     text-align: center;
-    width: 100vw;
+    width: 94vw;
   }
   .navbar-brand {
     float:none;

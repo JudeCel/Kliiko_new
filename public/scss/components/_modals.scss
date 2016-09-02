@@ -115,7 +115,7 @@
 
 @media (max-width: 1330px) {  
   @media (min-width: 992px) {  
-  #contactDetailsModal > .container-fluid {
+  #contactDetailsModal .container-fluid {
     .check {
     div {
       position:absolute;
@@ -133,7 +133,7 @@
 
 @media (max-width: 991px) {  
   @media (min-width: 768px) {  
-    #contactDetailsModal > .container-fluid {
+    #contactDetailsModal .container-fluid {
       margin-top: 10px;
 
       .check {
@@ -141,7 +141,7 @@
           position:absolute;
           margin-top: -70px !important;
           margin-left: 15px;
-          width: 450px;
+          width: 450px !important;
         }
       }
       button{

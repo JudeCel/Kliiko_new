@@ -2,11 +2,25 @@
 
 <main class='main-first-page hidden'>
   <div class='container'>
+
+    <div class="btn-group" id='nav-tabs-mobile'>
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+            <span id="nav-tabs-mobile-title">Menu</span>
+            <span class="caret"><span></span></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li id="btn-my-dashboard" ng-repeat='au in myDashboard.accountUsers' ng-class='myDashboard.activeClass(au.field)' ng-click='myDashboard.changeTab(au.field)' ng-init="myDashboard.initMobile('nav-tabs-mobile')">
+                <a>{{ au.name }} ({{ au.data.length }})</a>
+            </li>
+        </ul>
+    </div>
+
     <ul class='nav nav-tabs' id='nav-tabs-main' ng-if='!myDashboard.hideTabs'>
-      <li id="btn-my-dashboard" ng-repeat='au in myDashboard.accountUsers' ng-class='myDashboard.activeClass(au.field)' ng-click='myDashboard.changeTab(au.field)'>
-        <a>{{ au.name }} ({{ au.data.length }})</a>
-      </li>
+        <li id="btn-my-dashboard" ng-repeat='au in myDashboard.accountUsers' ng-class='myDashboard.activeClass(au.field)' ng-click='myDashboard.changeTab(au.field)' ng-init="myDashboard.initMobile('nav-tabs-main')">
+            <a>{{ au.name }} ({{ au.data.length }})</a>
+        </li>
     </ul>
+    
 
     <div class='dashboard-container border-blue box-shadow'>
       <div class='row'>
