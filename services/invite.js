@@ -398,20 +398,12 @@ function sessionAccept(token, body) {
                     deferred.reject(object.error);
                   }
                   else {
-                    sendEmail('inviteConfirmation', invite).then(function() {
-                      deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
-                    }, function(error) {
-                      deferred.reject(error);
-                    });
+                    deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
                   }
                 });
               }
               else {
-                sendEmail('inviteConfirmation', invite).then(function() {
-                  deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
-                }, function(error) {
-                  deferred.reject(error);
-                });
+                deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
               }
             }, function(error) {
               deferred.reject(filters.errors(error));
