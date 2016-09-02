@@ -477,24 +477,36 @@ function declineSessionInvite(token, status) {
   return deferred.promise;
 }
 
+function needSedConfirmationEmail(invite) {
+    return invite.role == "participant"
+}
+
 function sendEmail(status, invite) {
   let deferred = q.defer();
 
   prepareMailInformation(invite).then(function(data) {
-    let doSendEmail;
+    let doSendEmail = null;
 
-    if(status == 'notAtAll') {
-      doSendEmail = mailerHelpers.sendInvitationNotAtAll;
+    switch (status) {
+      case 'notAtAll':
+        doSendEmail = mailerHelpers.sendInvitationNotAtAll;
+        break;
+      case 'notThisTime':
+        doSendEmail = mailerHelpers.sendInvitationNotThisTime;
+        break;
+      case 'inviteConfirmation':
+        if (needSedConfirmationEmail(invite)) {
+          doSendEmail = mailerHelpers.sendInviteConfirmation;
+        }
+        break;
+      default:
+        return deferred.resolve();
     }
-    else if(status == 'notThisTime') {
-      doSendEmail = mailerHelpers.sendInvitationNotThisTime;
-    }
-    else if(status == 'inviteConfirmation') {
-      doSendEmail = mailerHelpers.sendInviteConfirmation;
-    }
-    else {
+
+    if (!doSendEmail) {
       return deferred.resolve();
     }
+
 
     doSendEmail(data, function(error, result) {
       if(error) {
