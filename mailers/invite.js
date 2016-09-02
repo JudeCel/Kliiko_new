@@ -71,7 +71,7 @@ function sendInviteSession(inviteParams, callback) {
     });
   }
   else if(inviteParams.role == 'participant') {
-    inviteParams.acceptInvitationUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/accept/';
+    inviteParams.acceptInvitationUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/session/';
     inviteParams.invitationNotThisTimeUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/notThisTime/';
     inviteParams.invitationNotAtAllUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/notAtAll/';
 
@@ -80,7 +80,7 @@ function sendInviteSession(inviteParams, callback) {
     });
   }
   else if(inviteParams.role == 'facilitator'){
-    inviteParams.logInUrl = helpers.getUrl(inviteParams.token, '/invite/');
+    inviteParams.logInUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/accept/';
 
     mailHelper.sendFacilitatorEmailConfirmation(inviteParams, function(error, result) {
       callback(error, result);

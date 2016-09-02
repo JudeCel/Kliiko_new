@@ -398,20 +398,12 @@ function sessionAccept(token, body) {
                     deferred.reject(object.error);
                   }
                   else {
-                    sendEmail('inviteConfirmation', invite).then(function() {
-                      deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
-                    }, function(error) {
-                      deferred.reject(error);
-                    });
+                    deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
                   }
                 });
               }
               else {
-                sendEmail('inviteConfirmation', invite).then(function() {
-                  deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
-                }, function(error) {
-                  deferred.reject(error);
-                });
+                deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
               }
             }, function(error) {
               deferred.reject(filters.errors(error));
@@ -422,6 +414,29 @@ function sessionAccept(token, body) {
         }, function(error) {
           deferred.reject(filters.errors(error));
         });
+      }, function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+  });
+
+  return deferred.promise;
+}
+
+function acceptSessionInvite(token) {
+  let deferred = q.defer();
+
+  findInvite(token, function(error, invite) {
+    if(error) {
+      deferred.reject(error);
+    }
+    else {
+      invite.update({ token: uuid.v1() }, { returning: true }).then(function(invite) {
+        sendEmail('inviteConfirmation', invite).then(function() {
+          deferred.resolve({ message: MessagesUtil.invite.confirmed, invite: invite });
+        }, function(error) {
+          deferred.reject(error);
+        })
       }, function(error) {
         deferred.reject(filters.errors(error));
       });
@@ -511,7 +526,7 @@ function prepareMailInformation(invite) {
     },
     include: [AccountUser, Session]
   }).then(function(facilitator) {
-    deferred.resolve(prepareMailParams(facilitator.Session, invite.AccountUser, facilitator.AccountUser));
+    deferred.resolve(prepareMailParams(invite, facilitator.Session, invite.AccountUser, facilitator.AccountUser));
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -519,7 +534,7 @@ function prepareMailInformation(invite) {
   return deferred.promise;
 }
 
-function prepareMailParams(session, receiver, facilitator) {
+function prepareMailParams(invite, session, receiver, facilitator) {
   return {
     sessionId: session.id,
     email: receiver.email,
@@ -534,7 +549,7 @@ function prepareMailParams(session, receiver, facilitator) {
     startDate: session.startDate,
     orginalStartTime: session.startTime,
     orginalEndTime: session.endTime,
-    confirmationCheckInUrl: mailUrlHelper.getUrl('', '/login'),
+    confirmationCheckInUrl: mailUrlHelper.getUrl(invite.token, '/invite/') + '/accept/',
     participantMail: receiver.email,
     incentive: session.incentive
   }
@@ -577,5 +592,6 @@ module.exports = {
   acceptInviteNew: acceptInviteNew,
   declineInvite: declineInvite,
   declineSessionInvite: declineSessionInvite,
+  acceptSessionInvite: acceptSessionInvite,
   sessionAccept: sessionAccept
 };
