@@ -391,27 +391,28 @@ function sessionAccept(token, body) {
 
 function sessionAcceptFlow(invite, body) {
   let deferred = q.defer();
-  let user, t;
+  let user;
 
-  models.sequelize.transaction().then(function(transaction) {
-    t = transaction;
-    return User.create({ email: invite.AccountUser.email, password: body.password, confirmedAt: new Date() }, { transaction: t });
-  }).then(function(result) {
-    user = result;
-    return invite.AccountUser.update({ UserId: user.id, active: true }, { transaction: t });
-  }).then(function() {
-    let params = sessionMemberParams(invite, t);
-    return sessionMemberService.createWithTokenAndColour(params);
-  }).then(function() {
-    return invite.update({ status: 'confirmed' }, { transaction: t });
-  }).then(function() {
-    if(body.social) {
-      body.social.user = { id: user.id };
-      return socialProfileService.createPromise(body.social, t);
-    }
-    else {
-      deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
-    }
+  models.sequelize.transaction().then(function(t) {
+    return User.create({ email: invite.AccountUser.email, password: body.password, confirmedAt: new Date() }, { transaction: t }).then(function(result) {
+      user = result;
+      return invite.AccountUser.update({ UserId: user.id, active: true }, { transaction: t });
+    }).then(function() {
+      let params = sessionMemberParams(invite, t);
+      return sessionMemberService.createWithTokenAndColour(params);
+    }).then(function() {
+      return invite.update({ status: 'confirmed' }, { transaction: t });
+    }).then(function() {
+      if(body.social) {
+        body.social.user = { id: user.id };
+        return socialProfileService.createPromise(body.social, t);
+      }
+      else {
+        return t.commit();
+      }
+    }).catch(function(error) {
+      throw error;
+    });
   }).then(function() {
     deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
   }).catch(function(error) {
@@ -430,7 +431,7 @@ function canAddSessionMember(invite) {
       participant: 8,
       observer: -1
     };
-    if(allowedCount[invite.role] < c) {
+    if(c < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
       deferred.resolve();
     }
     else {
