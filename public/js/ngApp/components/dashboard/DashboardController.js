@@ -18,9 +18,14 @@
     vm.initMobile = initMobile;
     vm.activeTabText = activeTabText;
     vm.sessionBuilderUrl = sessionBuilderUrl;
+    vm.isSelectRoleMessageVisible = isSelectRoleMessageVisible;
+
+    function isSelectRoleMessageVisible() {
+      return vm.accountUsers && Object.keys(vm.accountUsers).length > 1;
+    }
 
     function sessionBuilderUrl(accountUser) {
-        return accountUser.dashboardUrl + accountUser.session.id;
+      return accountUser.dashboardUrl + accountUser.session.id;
     }
 
     function activeTabText() {

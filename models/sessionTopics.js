@@ -8,7 +8,7 @@ module.exports = (Sequelize, DataTypes) => {
     order: { type: DataTypes.INTEGER, allowNull: true, defaultValue: 0 },
     active: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: true },
     landing: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
-    boardMessage: { type: DataTypes.STRING, allowNull: true },
+    boardMessage: { type: DataTypes.TEXT, allowNull: true },
     name: { type: DataTypes.STRING, allowNull: true, validate: { notEmpty: true } }
   }, {
     timestamps: true,

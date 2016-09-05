@@ -370,6 +370,12 @@ input#reveiveNewsLetters{
   }
 }
 
+.selectRoleMessage {
+  text-align-last: center;
+  margin-bottom: 30px;
+  margin-top: -25px;
+}
+
 #small-screen {
   display:none;
   padding-top: 18%;
@@ -430,6 +436,14 @@ input#reveiveNewsLetters{
       strong{
           font-weight:normal !important;
       }
+    }
+  }
+
+  .selectRoleMessage {
+    margin-bottom: 40px;
+
+    h2 {
+      font-size:22px;
     }
   }
 }
