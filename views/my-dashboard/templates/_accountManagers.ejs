@@ -17,4 +17,19 @@
       </tr>
     </tbody>
   </table>
+    
+  <table class='table table-responsive table-dashboardElements table-dashboardElements-mobile'>
+    <tbody ng-repeat='au in myDashboard.accountUsers.accountManager.data'>
+      <tr>
+        <td>
+          <span class="dashboardElements-title">Account Name</span>
+          {{ au.Account.name }}
+        </td>
+        <td>
+          <a href='{{ au.dashboardUrl }}' class='go-to-dashboard glyphicon glyphicon-play pull-right' title='Go to Account Hub' />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
 </div>

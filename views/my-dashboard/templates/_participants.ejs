@@ -23,4 +23,39 @@
       </tr>
     </tbody>
   </table>
+
+  <table class='table table-responsive table-dashboardElements table-dashboardElements-mobile'>
+    <tbody ng-repeat='au in myDashboard.accountUsers.participant.data'>
+      <tr>
+        <td>
+          <div class="dashboardElements-icons">
+              <a ng-if='!myDashboard.disablePlayButton' href='#' ng-click='myDashboard.redirectToChatSession(au.session.id)' class='go-to-chatroom glyphicon glyphicon-play' title='Go to Chatroom'></a>
+          </div>
+          <span class="dashboardElements-title">Chat Session</span>
+          <div class="dashboardElements-name">{{ au.session.name }}</div>
+          <div>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <span class="dashboardElements-title">Start Date</span>
+                    {{ au.session.startTime | date:dashboard.dateFormat }}
+                  </td>
+                  <td>
+                    <span class="dashboardElements-title">End Date</span>
+                    {{ au.session.endTime | date:dashboard.dateFormat }}
+                  </td>
+                  <td>
+                    <span class="dashboardElements-title">Status</span>
+                    {{ au.session.showStatus }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
 </div>

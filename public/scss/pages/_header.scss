@@ -6,6 +6,9 @@
   .text-size-dashboard {
     font-size: 13px;
   }
+  .btn-group{
+    white-space:nowrap;
+  }
 }
 /*  These stules are needed so the subDomain and currentAccount.fullName would be in the same line  */
 .current-domain-name{
@@ -41,6 +44,11 @@
 {
   border-radius: 0px;
 
+  .container{
+    background-color: #fff;
+    margin-right: -1px;
+  }
+
   .my-details-container {
     margin-left: 0px;
     margin-right: 10px;
@@ -58,7 +66,7 @@
     background-color: #fff;
     float: left;
     text-align: center;
-    width: 100vw;
+    width: 94vw;
   }
   .navbar-brand {
     float:none;

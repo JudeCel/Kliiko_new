@@ -204,8 +204,9 @@
       setFocusToFormControl('body');
     });
 
-    $('.nav a').click(function(){
-       $('.navbar-collapse').collapse('hide');
+    $('.dashboard-header-mobile .nav a').click(function () {
+      $('.navbar-collapse').collapse('hide');
+      $('.modal').modal('hide');
     });
 
     function setFocusToFormControl(target) {
