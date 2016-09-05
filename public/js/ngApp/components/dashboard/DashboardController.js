@@ -67,7 +67,7 @@
           var role = array[i];
           if(vm.accountUsers[role]) {
             vm.currentTab = role;
-            $('#nav-tabs-mobile-title').text(vm.accountUsers[role].name + " (" + vm.accountUsers[role].data.length + ")");
+            //$('#nav-tabs-mobile-title').text(vm.accountUsers[role].name + " (" + vm.accountUsers[role].data.length + ")");
             break;
           }
         }

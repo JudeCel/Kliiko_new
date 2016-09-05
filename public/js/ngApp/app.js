@@ -204,7 +204,7 @@
       setFocusToFormControl('body');
     });
 
-    $('.nav a').click(function(){
+    $('.dashboard-header-mobile .nav a').click(function () {
       $('.navbar-collapse').collapse('hide');
       $('.modal').modal('hide');
     });
