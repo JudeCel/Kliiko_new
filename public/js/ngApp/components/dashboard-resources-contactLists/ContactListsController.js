@@ -398,6 +398,7 @@
         if(!vm.canAddNew) {
           domServices.modal('contactList-addContactManual', 'close');
         }
+        vm.modalErrors = {};
         messenger.ok(res.message);
       }, function (err) {
         if(err.subEnded){
@@ -415,9 +416,11 @@
       vm.lists.updateContact(vm.newContact).then(function(res) {
         vm.newContact = {customFields:{}};
         domServices.modal('contactList-addContactManual', 'close');
+        vm.modalErrors = {};
         messenger.ok(res.message);
       },
       function (err) {
+        vm.modalErrors = err;
         messenger.error(err);
       });
     }
