@@ -21,12 +21,7 @@
     vm.isSelectRoleMessageVisible = isSelectRoleMessageVisible;
 
     function isSelectRoleMessageVisible() {
-      if (vm.accountUsers) {
-        return Object.keys(vm.accountUsers).length > 1;
-      }
-      else {
-        return false;
-      }
+      return vm.accountUsers && Object.keys(vm.accountUsers).length > 1;
     }
 
     function sessionBuilderUrl(accountUser) {
