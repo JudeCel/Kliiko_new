@@ -219,7 +219,7 @@ $directions: ('right', 'left', 'top', 'bottom');
 @media (min-width: 584px){
   .container
   {
-    min-width: 584px;
+    min-width: 535px;
   }
   .tab-content {
     width: auto;
@@ -228,7 +228,7 @@ $directions: ('right', 'left', 'top', 'bottom');
 
   .dashboard-container {
     background-color: #fff;
-    min-width: 584px
+    min-width: 535px;
   }
 
   .login-container {
@@ -331,10 +331,10 @@ $directions: ('right', 'left', 'top', 'bottom');
     padding: 0px;
 
     li {
-      background: #3F8438;
-    }
-    li:nth-child(2) {
       background: #4CB649;
+    }
+    li:nth-child(2n+1) {
+      background: #3F8438;
     }
   }
 
@@ -370,10 +370,38 @@ $directions: ('right', 'left', 'top', 'bottom');
   }
 }
 
+#small-screen {
+  display:none;
+  padding-top: 18%;
+
+  div {
+    width: 50%;
+    text-align: center;
+    background-color: rgb(255, 255, 255);
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(204, 204, 204);
+    margin: 0px auto;
+    padding: 30px;
+  }
+}
+
 @media (max-width: 767px) {  
   body{
     overflow: auto !important;
     padding: 0px !important;
+  }
+
+  body.hide-mobile-page > * {
+    display:none !important;
+  }
+
+  body.hide-mobile-page {
+    background: #EFEFEF !important;
+  }
+
+  #small-screen{
+    display:block !important;
   }
 
   #messenger-area {
@@ -393,20 +421,20 @@ $directions: ('right', 'left', 'top', 'bottom');
     box-shadow: none;
 
     h2 {
-      font-size:26px;
+      font-size:22px;
     }
-  }
 
-  .table-dashboardElements {
-    margin-top:10px;
+    h4 {
+      font-size:16px;
 
-    thead{
-      display:none;
+      strong{
+          font-weight:normal !important;
+      }
     }
   }
 }
 
-@media (max-width: 900px) {  
+@media (max-width: 1049px) {  
   @media (min-width: 768px) {  
     #nav-tabs-main{
       li {

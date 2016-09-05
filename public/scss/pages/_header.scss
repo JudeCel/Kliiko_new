@@ -6,6 +6,9 @@
   .text-size-dashboard {
     font-size: 13px;
   }
+  .btn-group{
+    white-space:nowrap;
+  }
 }
 /*  These stules are needed so the subDomain and currentAccount.fullName would be in the same line  */
 .current-domain-name{
