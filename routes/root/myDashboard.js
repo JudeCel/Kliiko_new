@@ -20,5 +20,5 @@ function index(req, res, next) {
 };
 
 function tour(req, res, next) {
-  res.render(views_path('tour'), { title: 'Tour video' });
+  res.render(views_path('tour'), { title: 'Tour videos' });
 };
