@@ -15,7 +15,7 @@
     <% include headerIncludes %>
 
 </head>
-<body>
+<body class="hide-mobile-page">
   <div class='dashboard-header'>
     <div class='col-xs-2 logo-min-width'>
       <a href='/'><img class='row' src='/icons/Klzii_logo_lines.png'></a>
@@ -27,7 +27,7 @@
       <span id='welcome-user' class='hidden'>Welcome, {{ app.user.firstName }}!</span>
       <a href='/account-hub/tour'>
         <button class='btn-header-green' type='button'>
-          Tour Video
+          Tour Videos
           <span class='glyphicon glyphicon-play' aria-hidden='true'></span>
         </button>
       </a>
@@ -54,12 +54,16 @@
         </li>
         <li role="separator" class="divider" ng-if='app.accountUser.isAccountManager'></li>
         <li class='text-right text-size-dashboard' ng-if='app.accountUser.isAccountManager'>
-          <a ui-sref="account-hub.smsCredits">Get SMS credits<img class="my-details-container" src='' alt='' /></a>
+          <a href="/account-hub#/smsCredits">Get SMS credits</a>
         </li>
         <li role="separator" class="divider"></li>
         <li class='text-right text-size-dashboard'><a href='/logout'>Logout<img class="my-details-container" src='/icons/logout_yellow.png' alt='' /></a></li>
       </ul>
     </div>
+  </div>
+
+  <div id="small-screen">
+    <div>This site is not compatible with small window sizes.</div>
   </div>
 
   <% include _changePasswordModal %>

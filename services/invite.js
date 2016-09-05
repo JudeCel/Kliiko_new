@@ -8,15 +8,14 @@ var Account = models.Account;
 var AccountUser = models.AccountUser;
 var Session = models.Session;
 
-var sessionMemberService = require('./../services/sessionMember');
+var emailDate = require('./formats/emailDate');
+var sessionMemberService = require('./sessionMember');
 var socialProfileService = require('./socialProfile');
 var inviteMailer = require('../mailers/invite');
 var mailerHelpers = require('../mailers/mailHelper');
 var constants = require('../util/constants');
 var MessagesUtil = require('./../util/messages');
 
-var dateFormat = require('dateformat');
-var moment = require('moment');
 var uuid = require('node-uuid');
 var crypto = require('crypto');
 var async = require('async');
@@ -188,10 +187,10 @@ function sendInvite(invite, deferred) {
         sessionName: session.name,
         orginalStartTime: session.startTime,
         orginalEndTime: session.endTime,
-        startTime: moment.utc(session.startTimeFormat).format('h:mm'),
-        endTime: moment.utc(session.endTimeFormat).format('h:mm'),
-        startDate: moment.utc(session.startTimeFormat).format('YYYY-M-D'),
-        endDate: moment.utc(session.endTimeFormat).format('YYYY-M-D'),
+        startTime: emailDate.format('time', session.startTimeFormat),
+        endTime: emailDate.format('time', session.endTimeFormat),
+        startDate: emailDate.format('date', session.startTimeFormat),
+        endDate: emailDate.format('date', session.endTimeFormat),
         incentive: session.incentive_details,
         facilitatorFirstName: facilitator.firstName,
         facilitatorLastName: facilitator.lastName,
@@ -214,6 +213,7 @@ function sendInvite(invite, deferred) {
 
   return deferred.promise;
 }
+
 
 function findAndRemoveInvite(params, callback) {
   Invite.find({ where: params }).then(function(invite) {

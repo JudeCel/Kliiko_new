@@ -5,6 +5,7 @@ var MailTemplate  = require('./../models').MailTemplate;
 var MailTemplateOriginal  = require('./../models').MailTemplateBase;
 var filters = require('./../models/filters');
 var templateMailer = require('../mailers/mailTemplate');
+var emailDate = require('./formats/emailDate');
 var mailersHelpers = require('../mailers/helpers');
 var _ = require('lodash');
 var ejs = require('ejs');
@@ -670,10 +671,10 @@ function composePreviewMailTemplate(mailTemplate) {
     firstName: "John",
     lastName: "Smith",
     accountName: "peter",
-    startDate: new Date().toLocaleDateString(),
-    startTime: new Date().toLocaleTimeString(),
-    endDate: new Date().toLocaleDateString(),
-    endTime: new Date().toLocaleTimeString(),
+    startDate: emailDate.format("date", new Date()),
+    startTime: emailDate.format("time", new Date()),
+    endDate: emailDate.format("date", new Date()),
+    endTime: emailDate.format("time", new Date()),
     facilitatorFirstName: "Peter",
     facilitatorLastName: "Anderson",
     facilitatorMail: "peter@mail.com",

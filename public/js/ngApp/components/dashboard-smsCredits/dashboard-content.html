@@ -2,13 +2,15 @@
   <span class="row">
     <span class="col-md-12">
 
-      <div class="panel panel-success border-green">
+      <div class="panel panel-success border-green border-radius-none">
         <div class="panel-body">
-
           <h4>
             You currently have
             {{ sms.currentSmsCreditCount }}
             SMS credits.
+          </h4>
+          <h4>
+            Each block = 35 SMS credits
           </h4>
 
           <hr>
@@ -25,9 +27,8 @@
               </thead>
             <tbody>
               <tr  ng-repeat="smsCredit in sms.creditList">
-
                 <td>
-                <b>Additional SMS Credits</b>
+                  <b>Additional SMS Blocks</b>
                 </td>
 
                 <td>
@@ -35,7 +36,7 @@
                 </td>
 
                 <td>
-                  <select ng-model="selectedQty" class="form-control" style="width: 200px;">
+                  <select ng-model="selectedQty" class="form-control border-radius-none" style="width: 200px;">
                     <option selected="selected" value="">Please select quantity</option>
                     <option ng-repeat="qty in sms.addonQty" value="{{qty.value}}">{{qty.value}}</option>
                   </select>
@@ -50,14 +51,11 @@
                     Purchase
                   </a>
                 </td>
-
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-
-
     </span>
   </span>
 </section>
