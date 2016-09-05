@@ -34,14 +34,15 @@
     }
 
     vm.isCreated = function(template) {
-      var imageUrl = "/icons/ic_cross.png";
+      var className = 'glyphicon';
+      var typeClass = ' glyphicon-remove';
       vm.mailTemplateList.map(function(item) {
-        if (isTemplateCreated(template, item)) {
-          return imageUrl = "/icons/ic_tick.png";
+        if(isTemplateCreated(template, item)) {
+          return typeClass = ' glyphicon-ok';
         }
       });
 
-      return imageUrl;
+      return className + typeClass;
     }
 
     function isTemplateCreated(template, item) {
