@@ -115,19 +115,19 @@
 
 @media (max-width: 1330px) {  
   @media (min-width: 992px) {  
-  #contactDetailsModal .container-fluid {
-    .check {
-    div {
-      position:absolute;
-      margin-top: 0px !important;
-      margin-left: -30px;
-      width: 450px;
+    #contactDetailsModal .container-fluid {
+      .check {
+        div {
+          position:absolute;
+          margin-top: 0px !important;
+          margin-left: -30px;
+          width: 450px;
+        }
+      }
+      button {
+        margin-top: 35px;
+      }
     }
-    }
-    button {
-    margin-top: 35px;
-    }
-  }
   }
 }
 

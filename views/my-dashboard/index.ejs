@@ -5,7 +5,7 @@
 
     <div class="btn-group" id='nav-tabs-mobile'>
         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-            <span id="nav-tabs-mobile-title">{{ myDashboard.accountUsers[myDashboard.currentTab].name }} ({{ myDashboard.accountUsers[myDashboard.currentTab].data.length }})</span>
+            <span id="nav-tabs-mobile-title" ng-if="myDashboard.currentTab">{{ myDashboard.activeTabText() }}</span>
             <span class="caret"><span></span></span>
         </a>
         <ul class="dropdown-menu">

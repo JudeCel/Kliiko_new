@@ -20,7 +20,7 @@
         <td>{{ au.session.endTime | date:dashboard.dateFormat }}</td>
         <td>{{ au.session.showStatus }}</td>
         <td>
-          <a href='{{ au.dashboardUrl + au.session.id }}' title='Go to Session Builder'><img src='/icons/dashboardElement_edit.png' /></a>
+          <a href='{{ myDashboard.sessionBuilderUrl(au) }}' title='Go to Session Builder'><img src='/icons/dashboardElement_edit.png' /></a>
           <a ng-if='!myDashboard.disablePlayButton' href='#' ng-click='myDashboard.redirectToChatSession(au.session.id)' class='go-to-chatroom glyphicon glyphicon-play' title='Go to Chatroom' />
         </td>
       </tr>
@@ -32,7 +32,7 @@
       <tr>
         <td>
           <div class="dashboardElements-icons">
-            <a href='{{ au.dashboardUrl + au.session.id }}' title='Go to Session Builder'><img src='/icons/dashboardElement_edit.png' /></a>
+            <a href='{{ myDashboard.sessionBuilderUrl(au) }}' title='Go to Session Builder'><img src='/icons/dashboardElement_edit.png' /></a>
             <a ng-if='!myDashboard.disablePlayButton' href='#' ng-click='myDashboard.redirectToChatSession(au.session.id)' class='go-to-chatroom glyphicon glyphicon-play' title='Go to Chatroom'></a>
           </div>
           <span class="dashboardElements-title">Chat Session</span>

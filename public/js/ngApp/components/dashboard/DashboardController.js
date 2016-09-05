@@ -16,6 +16,17 @@
     vm.changeTab = changeTab;
     vm.activeClass = activeClass;
     vm.initMobile = initMobile;
+    vm.activeTabText = activeTabText;
+    vm.sessionBuilderUrl = sessionBuilderUrl;
+
+    function sessionBuilderUrl(accountUser) {
+        return accountUser.dashboardUrl + accountUser.session.id;
+    }
+
+    function activeTabText() {
+      var activeTab = vm.accountUsers[vm.currentTab];
+      return activeTab.name + " (" + activeTab.data.length + ")";
+    }
 
     function initMobile(block) {
       $('#' + block + ' li:last-child').click(function () {
@@ -67,7 +78,6 @@
           var role = array[i];
           if(vm.accountUsers[role]) {
             vm.currentTab = role;
-            //$('#nav-tabs-mobile-title').text(vm.accountUsers[role].name + " (" + vm.accountUsers[role].data.length + ")");
             break;
           }
         }
