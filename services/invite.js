@@ -424,20 +424,33 @@ function sessionAcceptFlow(invite, body) {
 
 function canAddSessionMember(invite) {
   let deferred = q.defer();
+  let where = { where: { sessionId: invite.sessionId, role: invite.role } };
 
-  models.SessionMember.count({ where: { sessionId: invite.sessionId, role: invite.role } }).then(function(c) {
-    let allowedCount = {
-      facilitator: 1,
-      participant: 8,
-      observer: -1
-    };
-    if(c < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
-      deferred.resolve();
-    }
-    else {
-      deferred.reject(MessagesUtil.invite.sessionIsFull);
-    }
-  });
+  if(invite.role == 'facilitator') {
+    models.SessionMember.find(where).then(function(sessionMember) {
+      if(invite.accountUserId == sessionMember.accountUserId) {
+        deferred.resolve();
+      }
+      else {
+        deferred.reject(MessagesUtil.invite.inviteExpired);
+      }
+    });
+  }
+  else {
+    models.SessionMember.count(where).then(function(c) {
+      let allowedCount = {
+        participant: 8,
+        observer: -1
+      };
+
+      if(c < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
+        deferred.resolve();
+      }
+      else {
+        deferred.reject(MessagesUtil.invite.sessionIsFull);
+      }
+    });
+  }
 
   return deferred.promise;
 }
