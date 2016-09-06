@@ -46,7 +46,7 @@ function acceptGet(req, res, next) {
         res.render(views_path('index'), simpleParams('Accept Invite', invite, error));
       }
       else {
-        res.render(views_path('accepted'), simpleParams('Invite', invite));
+        acceptPost(req, res, next);
       }
     }
   });
