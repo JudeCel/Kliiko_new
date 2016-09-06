@@ -263,19 +263,20 @@
       }
 
       // session builder section
-      if(vm.properties.sessionBuilder) {
-        vm.emailTemplates.map(function(template) {
-          if(template.isCopy && !template.sessionId && !vm.addedList[template.id]) {
-            vm.addedList[template.id] = template;
-            if(vm.sortedEmailTemplates[template.MailTemplateBaseId]) {
-              vm.sortedEmailTemplates[template.MailTemplateBaseId].push(template);
-            }
-            else {
-              vm.sortedEmailTemplates[template.MailTemplateBaseId] = [template];
-            }
+      vm.emailTemplates.map(function(template) {
+        var sessionBuilder = template.isCopy && !template.sessionId && !vm.addedList[template.id] && vm.properties.sessionBuilder;
+        var normal = !vm.addedList[template.id] && !vm.properties.sessionBuilder;
+
+        if(sessionBuilder || normal) {
+          vm.addedList[template.id] = template;
+          if(vm.sortedEmailTemplates[template.MailTemplateBaseId]) {
+            vm.sortedEmailTemplates[template.MailTemplateBaseId].push(template);
           }
-        });
-      }
+          else {
+            vm.sortedEmailTemplates[template.MailTemplateBaseId] = [template];
+          }
+        }
+      });
       vm.emailTemplatesForSessionBuilder = vm.emailTemplates;
       callback();
     }
