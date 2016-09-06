@@ -1,7 +1,12 @@
 .login-container.invite {
   max-width: 700px;
+  li {
+    width: 100%;
+  }
   .invite-tab {
-    margin-left: 55%;
+    margin-left: 45%;
+    min-width: 235px;
+    margin-right: 50px;
   }
 }
 
