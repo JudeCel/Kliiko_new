@@ -21,6 +21,8 @@
     var vm = this;
     vm.currentTemplate = {index: 0};
     vm.emailTemplates = [];
+    vm.sortedEmailTemplates = {};
+    vm.addedList = {};
     vm.templateToDelete;
     vm.properties = {};
     vm.currentUpload = 'image';
@@ -91,6 +93,7 @@
     vm.initGallery = initGallery;
     vm.galleryDropdownData = galleryDropdownData;
     vm.openModal = openModal;
+    vm.findIndexFromId = findIndexFromId;
 
 
 
@@ -120,6 +123,21 @@
         vm.currentTemplate.index = templateIndex;
         vm.currentTemplate.subject = res.template.subject;
         $('#templateContent').wysiwyg('setContent', vm.currentTemplate.content);
+
+        if(!vm.currentTemplate.isCopy) {
+          vm.viewingTemplate = vm.currentTemplate;
+        }
+        else if(!vm.addedList[vm.currentTemplate.id]) {
+          vm.viewingTemplate = null;
+        }
+      }
+    }
+
+    function findIndexFromId(id) {
+      for(var i in vm.emailTemplates) {
+        if(vm.emailTemplates[i].id == id) {
+          return i;
+        }
       }
     }
 
@@ -245,6 +263,20 @@
       }
 
       // session builder section
+      vm.emailTemplates.map(function(template) {
+        var sessionBuilder = template.isCopy && !template.sessionId && !vm.addedList[template.id] && vm.properties.sessionBuilder;
+        var normal = !vm.addedList[template.id] && !vm.properties.sessionBuilder;
+
+        if(sessionBuilder || normal) {
+          vm.addedList[template.id] = template;
+          if(vm.sortedEmailTemplates[template.MailTemplateBaseId]) {
+            vm.sortedEmailTemplates[template.MailTemplateBaseId].push(template);
+          }
+          else {
+            vm.sortedEmailTemplates[template.MailTemplateBaseId] = [template];
+          }
+        }
+      });
       vm.emailTemplatesForSessionBuilder = vm.emailTemplates;
       callback();
     }
@@ -281,6 +313,17 @@
       }
 
       mailTemplate.deleteMailTemplate(vm.templateToDelete.template).then(function (res) {
+        var template = vm.templateToDelete.template;
+        if(vm.addedList[template.id]) {
+          delete vm.addedList[template.id];
+          var array = [];
+          for(var t in vm.sortedEmailTemplates[template.MailTemplateBaseId]) {
+            if(t.id != template.id) {
+              array.push(t);
+            }
+          }
+          vm.sortedEmailTemplates[template.MailTemplateBaseId] = array;
+        }
         refreshTemplateList(function(res) {
           if (nextSelection != -1) {
             vm.startEditingTemplate(nextSelection);
@@ -293,6 +336,10 @@
 
     vm.isCurrent = function(key) {
       return (key == vm.currentTemplate.index);
+    }
+
+    vm.isCurrentId = function(id) {
+      return (id == vm.currentTemplate.id);
     }
 
     vm.isEditable = function(item, canOverwrite) {
