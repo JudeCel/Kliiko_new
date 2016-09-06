@@ -1,0 +1,20 @@
+<div class='modal fade' id='confirmDialog' role='dialog'>
+  <div class='modal-dialog'>
+    <div class='modal-content border-green border-radius-none'>
+      <div class='modal-header'>
+        <h1 class='modal-title text-center'>Delete template: {{ec.templateToDelete.template.name}}</h1>
+      </div>
+
+      <div class='modal-footer'>
+        <form>
+          <div>
+            <span class="pull-right">
+              <button type="button" ng-click="ec.cancelTemplateDelete()" class="btn btn-standart btn-red pull-right btn-small margin-left-10">Cancel</button>&nbsp;&nbsp;
+              <button type="button" ng-click="ec.approveTemplateDelete()" class="btn btn-standart btn-green pull-right btn-small margin-left-10">Yes</button>
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
