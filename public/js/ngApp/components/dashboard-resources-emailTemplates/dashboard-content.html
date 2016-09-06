@@ -1,103 +1,83 @@
-  <div ng-controller='GalleryController as gc' class='row'>
-    <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec" ng-init="ec.preInit()">
-      <h1 class="text-center">Edit Email Templates</h1>
-        <div class="contentOffset list-group col-xs-3 mail-template-list-section">
-          <div class="panel-heading mail-template-list-heading"><strong>Email Templates</strong></div>
-          <div id="mail-template-list" class="mail-template-list">
-            <a ng-repeat="(key, t) in ec.emailTemplates" class="list-group-item border-radius-none" ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : ec.isEditable(t, app.accountUser.isAdmin)}"
-            ng-click="ec.startEditingTemplate(key)">
-              <div ng-hide="ec.isEditable(t, app.accountUser.isAdmin)">
-                <img src="/icons/ic_arrow_right.png" class="pull-right" ng-hide="!ec.isCurrent(key)">{{::t.name}}
-              </div>
+<div ng-controller='GalleryController as gc' class='row'>
+  <section id="email-template-editor" ng-controller="EmailTemplateEditorController as ec" ng-init="ec.preInit()">
+    <h1 class="text-center">Edit Email Templates</h1>
 
-              <div class="input-group input-group-sm" ng-hide="!ec.isEditable(t, app.accountUser.isAdmin)">
-                <input type="text" class="form-control mail-list-input" aria-describedby="basic-addon3" ng-model="t.name" ng-class="{'inactive':!ec.isCurrent(key)}" >
-                <span class="input-group-addon" id="basic-addon3" ng-hide="!ec.isCurrent(key)" data-toggle="tooltip" data-placement="top" title="{{t['MailTemplateBase.name']}}">{{t["MailTemplateBase.name"] | limitTo: 7}}{{t["MailTemplateBase.name"].length > 7 ? '...' : ''}}</span>
-                <span class="input-group-btn" ng-hide="!ec.isCurrent(key)">
-                  <button class="btn glyphicon glyphicon-remove" type="button" ng-click="ec.deleteTemplate(t, key, $event);"></button>
-                </span>
-              </div>
-            </a>
-          </div>
-        </div>
+    <div class="contentOffset list-group col-xs-3 mail-template-list-section">
+      <div class="panel-heading mail-template-list-heading"><strong>Email Templates</strong></div>
 
-        <div class="col-xs-8  mail-template-details">
-          <table>
-            <tr>
-              <td class="template-detail-name-column">Template Name:</td>
-              <td>
-                <div class="input-group">
-                  <input type="text" class="form-control" aria-describedby="basic-addon2" ng-model="ec.currentTemplate.name">
-                  <span class="input-group-addon" id="basic-addon2">{{ec.currentTemplate["MailTemplateBase.name"]}}</span>
-                </div>
-                <div class="has-error text-center">{{ec.currentTemplate.error.name}}</div>
-              </td>
-            </tr>
+      <div id="mail-template-list" class="mail-template-list">
+        <span ng-repeat="(key, t) in ec.emailTemplates" ng-if="ec.addedList[t.id]">
+          <a class="list-group-item border-radius-none" ng-click="ec.startEditingTemplate(key)" ng-if="!t.isCopy"
+            ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : ec.isEditable(t, app.accountUser.isAdmin)}">
 
-            <tr>
-              <td>Subject:</td>
-              <td>
-                <div>
-                  <input type="text" class="form-control" aria-describedby="basic-addon2" ng-model="ec.currentTemplate.subject">
-                </div>
-                <div class="has-error text-center">{{ec.currentTemplate.error.subject}}</div>
-              </td>
-            </tr>
-          </table>
-          <span>Content:</span>
-          <textarea id="templateContent"></textarea>
-          <div class="has-error text-center">{{ec.currentTemplate.error.content}}</div>
-          <br>
-
-          <button type="submit" class="btn btn-standart btn-red btn-small pull-right margin-left-10" ng-click="ec.resetMailTemplate()" ng-show="ec.resetButtonVisible(app.accountUser.isAdmin)">Cancel</button>
-          <button id='mailCreateCopy' type="submit" class="btn btn-standart btn-lightgreen pull-right btn-small margin-left-10" ng-click="ec.openModal()">Save As</button>
-          <button id='mailModifySaveCopy' type="submit" class="btn btn-standart btn-green pull-right btn-small margin-left-10" ng-click="ec.modifyAndSave()">Save</button>
-          <button id='mailPreviewButton' type="submit" class="btn btn-standart btn-blue pull-right btn-small margin-left-10" ng-click="ec.previewMailTemplate()">Preview</button>
-        </div>
-
-      <!-- Modal Preview-->
-      <div class='modal fade' id='previewMailTemplateModal' role='dialog'>
-        <div class='modal-dialog'>
-          <div class='modal-content border-green border-radius-none preview-content'>
-            <div class='modal-header'>
-              <h1 class='modal-title' id="mailTemplatePreviewSubject"></h1>
+            <div ng-if="!ec.isEditable(t, app.accountUser.isAdmin)">
+              {{::t.name}}
+              <span class='pull-right glyphicon glyphicon-chevron-right' aria-hidden='true' ng-if="!(ec.isCurrent(key) || ec.viewingTemplate.id == t.id)"></span>
+              <span class='pull-right glyphicon glyphicon-chevron-down' aria-hidden='true' ng-if="ec.isCurrent(key) || ec.viewingTemplate.id == t.id"></span>
             </div>
-            <div class='modal-body'>
-              <iframe id="contentFrame" class="preview-frame"></iframe>
-              <div class='modal-footer'>
-                  <button type="submit" data-dismiss='modal'
-                          class="btn btn-standart btn-red btn-small pull-left">Close</button>
-              </div>
+          </a>
+
+          <a class="list-group-item border-radius-none" ng-repeat='(id, inherit) in ec.sortedEmailTemplates[t.id] track by $index'
+            ng-click="ec.startEditingTemplate(ec.findIndexFromId(inherit.id))" ng-if='(ec.isCurrentId(t.id) || ec.viewingTemplate.id == t.id) && inherit.isCopy'
+            ng-class="{'active': ec.isCurrentId(inherit.id), 'list-group-item-white' : ec.isEditable(inherit, app.accountUser.isAdmin)}">
+
+            <div class="input-group input-group-sm" ng-if="ec.isEditable(inherit, app.accountUser.isAdmin)">
+              <input type="text" class="form-control mail-list-input" ng-model="inherit.name" ng-class="{'inactive':!ec.isCurrentId(inherit.id)}" >
+
+              <span class="input-group-addon" id="basic-addon3" ng-if="ec.isCurrentId(inherit.id)" title="{{inherit['MailTemplateBase.name']}}">
+                {{inherit["MailTemplateBase.name"] | limitTo: 7}}{{inherit["MailTemplateBase.name"].length > 7 ? '...' : ''}}
+              </span>
+
+              <span class="input-group-btn" ng-if="ec.isCurrentId(inherit.id)">
+                <button class="btn glyphicon glyphicon-remove" type="button" ng-click="ec.deleteTemplate(inherit, id, $event);"></button>
+              </span>
             </div>
-          </div>
-        </div>
+          </a>
+        </span>
       </div>
+    </div>
 
-      <div class='modal fade' id='confirmDialog' role='dialog'>
-        <div class='modal-dialog'>
-          <div class='modal-content border-green border-radius-none'>
-            <div class='modal-header'>
-              <h1 class='modal-title text-center'>Delete template: {{ec.templateToDelete.template.name}}</h1>
+    <div class="col-xs-8  mail-template-details">
+      <table>
+        <tr>
+          <td class="template-detail-name-column">Template Name:</td>
+          <td>
+            <div class="input-group">
+              <input type="text" class="form-control" aria-describedby="basic-addon2" ng-model="ec.currentTemplate.name">
+              <span class="input-group-addon" id="basic-addon2">{{ec.currentTemplate["MailTemplateBase.name"]}}</span>
             </div>
+            <div class="has-error text-center">{{ec.currentTemplate.error.name}}</div>
+          </td>
+        </tr>
 
-            <div class='modal-footer'>
-              <form>
-                <div>
-                  <span class="pull-right">
-                    <button type="button" ng-click="ec.cancelTemplateDelete()" class="btn btn-standart btn-red pull-right btn-small margin-left-10">Cancel</button>&nbsp;&nbsp;
-                    <button type="button" ng-click="ec.approveTemplateDelete()" class="btn btn-standart btn-green pull-right btn-small margin-left-10">Yes</button>
-                  </span>
-                </div>
-              </form>
+        <tr>
+          <td>Subject:</td>
+          <td>
+            <div>
+              <input type="text" class="form-control" aria-describedby="basic-addon2" ng-model="ec.currentTemplate.subject">
             </div>
-          </div>
-        </div>
-      </div>
+            <div class="has-error text-center">{{ec.currentTemplate.error.subject}}</div>
+          </td>
+        </tr>
+      </table>
+      <span>Content:</span>
+      <textarea id="templateContent"></textarea>
+      <div class="has-error text-center">{{ec.currentTemplate.error.content}}</div>
+      <br>
 
-      <div ng-init='ec.initGallery(gc)'>
-        {{ upload = ec.galleryDropdownData(gc.currentDependency); "" }}
-        <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
-      </div>
-      <ng-include src="'/js/ngApp/components/dashboard-resources-emailTemplates/modal.html'"></ng-include>
-    </section>
-  </div>
+      <button type="submit" class="btn btn-standart btn-red btn-small pull-right margin-left-10" ng-click="ec.resetMailTemplate()" ng-show="ec.resetButtonVisible(app.accountUser.isAdmin)">Cancel</button>
+      <button id='mailCreateCopy' type="submit" class="btn btn-standart btn-lightgreen pull-right btn-small margin-left-10" ng-click="ec.openModal()">Save As</button>
+      <button id='mailModifySaveCopy' type="submit" class="btn btn-standart btn-green pull-right btn-small margin-left-10" ng-click="ec.modifyAndSave()">Save</button>
+      <button id='mailPreviewButton' type="submit" class="btn btn-standart btn-blue pull-right btn-small margin-left-10" ng-click="ec.previewMailTemplate()">Preview</button>
+    </div>
+
+    <div ng-init='ec.initGallery(gc)'>
+      {{ upload = ec.galleryDropdownData(gc.currentDependency); "" }}
+      <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
+    </div>
+
+    <ng-include src="'/js/ngApp/components/dashboard-resources-emailTemplates/preview.html'"></ng-include>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-emailTemplates/confirm.html'"></ng-include>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-emailTemplates/modal.html'"></ng-include>
+  </section>
+</div>
