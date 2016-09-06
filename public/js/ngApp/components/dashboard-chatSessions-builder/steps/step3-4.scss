@@ -49,6 +49,11 @@
     }
   }
 
+  #email-template-editor .mail-template-list {
+    max-height: none;
+    overflow-y: hidden;
+  }
+
   .centeredWarning {
     padding: 0;
     line-height: 2;

@@ -1,16 +1,13 @@
 <div ng-controller='GalleryController as gc'>
   <section id='step-3' ng-controller='SessionStep3Controller as step3Controller'>
-    <div id='email-template-editor'>
+    <div id='email-template-editor' ng-controller="EmailTemplateEditorController as ec">
       <h3 class="text-center">Manage Session Emails</h3>
 
-      <div ng-controller="EmailTemplateEditorController as ec">
-        <uib-accordion close-others="false">
-          <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/steps/step3/incentive.html'"></ng-include>
+      <uib-accordion close-others="false">
+        <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/steps/step3/incentive.html'"></ng-include>
 
-          <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/steps/step3/emails.html'"></ng-include>
-        </uib-accordion>
-      </div>
-
+        <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/steps/step3/emails.html'"></ng-include>
+      </uib-accordion>
 
       <div ng-init='ec.initGallery(gc)'>
         {{ upload = ec.galleryDropdownData(gc.currentDependency); "" }}
