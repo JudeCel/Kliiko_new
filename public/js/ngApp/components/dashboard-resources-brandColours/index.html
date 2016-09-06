@@ -25,7 +25,7 @@
             </div>
           </div>
 
-          <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='background-color: {{ scheme.colours.browserBackground }};'>
+          <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' ng-attr-style='background-color: {{ scheme.colours.browserBackground }};'>
             <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/preview.html'"></ng-include>
           </div>
         </div>

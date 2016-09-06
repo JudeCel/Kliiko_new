@@ -74,6 +74,17 @@
     background-size: contain;
     margin-top: 1px;
   }
+
+  .modal-control-buttons{
+    .pull-left div {
+      float: left;
+      margin-right: 5px;
+    }
+    .pull-right div {
+      float: right;
+      margin-left: 5px;
+    }
+  }
 }
 
 .accountDatabaseCommentModal {
