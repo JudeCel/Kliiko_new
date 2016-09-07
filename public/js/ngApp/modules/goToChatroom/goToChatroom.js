@@ -29,7 +29,7 @@
     function generateRedirectLink(sessionId) {
       var deferred = $q.defer();
 
-      jwtTokenForMemberApi.get({ sessionId: sessionId }, function(res) {
+      jwtTokenForMemberApi.get({ sessionId: sessionId, callback_url: window.location.href }, function(res) {
         if(res.error) {
           deferred.reject(res.error);
         }
