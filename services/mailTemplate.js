@@ -21,7 +21,6 @@ module.exports = {
   getAllSessionMailTemplates: getAllSessionMailTemplates,
   createBaseMailTemplate: createBaseMailTemplate,
   copyBaseTemplates: copyBaseTemplates,
-  copyBaseTemplatesForSession: copyBaseTemplatesForSession,
   deleteMailTemplate: deleteMailTemplate,
   resetMailTemplate: resetMailTemplate,
   composeMailFromTemplate: composeMailFromTemplate,
@@ -270,24 +269,6 @@ function sortMailTemplates(result) {
     } else {
       return 0;
     }
-  });
-}
-
-function copyBaseTemplatesForSession(accountId, sessionId, callback) {
-  getAllSessionMailTemplates(accountId, false, null, false, true, function(error, result) {
-    if (error) {
-      return callback(error);
-    }
-
-    for (var i = 0; i < result.length; i++) {
-      result[i].sessionId = sessionId;
-      delete result[i].id;
-    }
-    MailTemplate.bulkCreate(result).done(function(res) {
-       callback(null, res);
-    }, function(error) {
-       callback(filters.errors(error));
-    })
   });
 }
 
