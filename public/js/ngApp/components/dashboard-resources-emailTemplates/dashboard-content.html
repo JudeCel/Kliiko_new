@@ -12,13 +12,13 @@
 
             <div ng-if="!ec.isEditable(t, app.accountUser.isAdmin)">
               {{::t.name}}
-              <span class='pull-right glyphicon glyphicon-chevron-right' aria-hidden='true' ng-if="!(ec.isCurrent(key) || ec.viewingTemplate.id == t.id)"></span>
-              <span class='pull-right glyphicon glyphicon-chevron-down' aria-hidden='true' ng-if="ec.isCurrent(key) || ec.viewingTemplate.id == t.id"></span>
+              <span class='pull-right glyphicon glyphicon-chevron-right' aria-hidden='true' ng-if="!(ec.isCurrent(key) || ec.viewingTemplateId == t.id)"></span>
+              <span class='pull-right glyphicon glyphicon-chevron-down' aria-hidden='true' ng-if="ec.isCurrent(key) || ec.viewingTemplateId == t.id"></span>
             </div>
           </a>
 
           <a class="list-group-item border-radius-none" ng-repeat='(id, inherit) in ec.sortedEmailTemplates[t.id] track by $index'
-            ng-click="ec.startEditingTemplate(ec.findIndexFromId(inherit.id))" ng-if='(ec.isCurrentId(t.id) || ec.viewingTemplate.id == t.id) && inherit.isCopy'
+            ng-click="ec.startEditingTemplate(ec.findIndexFromId(inherit.id))" ng-if='(ec.isCurrentId(t.id) || ec.viewingTemplateId == t.id) && inherit.isCopy'
             ng-class="{'active': ec.isCurrentId(inherit.id), 'list-group-item-white' : ec.isEditable(inherit, app.accountUser.isAdmin)}">
 
             <div class="input-group input-group-sm" ng-if="ec.isEditable(inherit, app.accountUser.isAdmin)">

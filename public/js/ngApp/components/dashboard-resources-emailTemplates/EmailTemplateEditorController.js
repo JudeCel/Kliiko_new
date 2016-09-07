@@ -125,10 +125,15 @@
         $('#templateContent').wysiwyg('setContent', vm.currentTemplate.content);
 
         if(!vm.currentTemplate.isCopy) {
-          vm.viewingTemplate = vm.currentTemplate;
+          vm.viewingTemplateId = vm.currentTemplate.id;
         }
-        else if(!vm.addedList[vm.currentTemplate.id]) {
-          vm.viewingTemplate = null;
+        else {
+          if(!vm.currentTemplate.sessionId) {
+            vm.viewingTemplateId = vm.currentTemplate.MailTemplateBaseId;
+          }
+          else if(!vm.addedList[vm.currentTemplate.id]) {
+            vm.viewingTemplateId = null;
+          }
         }
       }
     }
@@ -318,15 +323,20 @@
           delete vm.addedList[template.id];
           var array = [];
           for(var t in vm.sortedEmailTemplates[template.MailTemplateBaseId]) {
-            if(t.id != template.id) {
-              array.push(t);
+            var temp = vm.sortedEmailTemplates[template.MailTemplateBaseId][t];
+            if(temp.id != template.id) {
+              array.push(temp);
             }
           }
           vm.sortedEmailTemplates[template.MailTemplateBaseId] = array;
         }
+
         refreshTemplateList(function(res) {
           if (nextSelection != -1) {
             vm.startEditingTemplate(nextSelection);
+          }
+          else {
+            vm.startEditingTemplate(findIndexFromId(template.MailTemplateBaseId));
           }
 
           vm.templateToDelete.deferred.resolve();
