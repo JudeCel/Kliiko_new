@@ -307,11 +307,16 @@ function acceptInviteExisting(token, callback) {
             role: invite.role
           };
           sessionMemberService.createWithTokenAndColour(params).then(function() {
-            sendEmail('inviteConfirmation', invite).then(function() {
+            if(invite.role == 'participant') {
               callback(null, invite, MessagesUtil.invite.confirmed);
-            }, function(error) {
-              callback(error);
-            });
+            }
+            else {
+              sendEmail('inviteConfirmation', invite).then(function() {
+                callback(null, invite, MessagesUtil.invite.confirmed);
+              }, function(error) {
+                callback(error);
+              });
+            }
           }, function(error) {
             callback(filters.errors(error));
           });
