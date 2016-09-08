@@ -282,7 +282,6 @@
           }
         }
       });
-      vm.emailTemplatesForSessionBuilder = vm.emailTemplates;
       callback();
     }
 

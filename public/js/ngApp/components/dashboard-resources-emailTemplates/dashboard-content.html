@@ -17,11 +17,11 @@
             </div>
           </a>
 
-          <a class="list-group-item border-radius-none" ng-repeat='(id, inherit) in ec.sortedEmailTemplates[t.id] track by $index'
+          <a class="list-group-item border-radius-none list-group-item-white" ng-repeat='(id, inherit) in ec.sortedEmailTemplates[t.id] track by $index'
             ng-click="ec.startEditingTemplate(ec.findIndexFromId(inherit.id))" ng-if='(ec.isCurrentId(t.id) || ec.viewingTemplateId == t.id) && inherit.isCopy'
-            ng-class="{'active': ec.isCurrentId(inherit.id), 'list-group-item-white' : ec.isEditable(inherit, app.accountUser.isAdmin)}">
+            ng-class="{'active': ec.isCurrentId(inherit.id)}">
 
-            <div class="input-group input-group-sm" ng-if="ec.isEditable(inherit, app.accountUser.isAdmin)">
+            <div class="input-group input-group-sm">
               <input type="text" class="form-control mail-list-input" ng-model="inherit.name" ng-class="{'inactive':!ec.isCurrentId(inherit.id)}" >
 
               <span class="input-group-addon" id="basic-addon3" ng-if="ec.isCurrentId(inherit.id)" title="{{inherit['MailTemplateBase.name']}}">
