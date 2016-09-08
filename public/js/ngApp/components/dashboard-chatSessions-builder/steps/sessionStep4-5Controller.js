@@ -21,6 +21,7 @@
       all: 'All',
       notInvited: 'Not Invited',
       confirmed: 'Confirmed',
+      inProgress: 'Confirmed',
       notThisTime: 'Not This Time',
       notAtAll: 'Not At All',
       pending: 'No Response',

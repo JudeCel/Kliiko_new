@@ -260,7 +260,7 @@ function destroyInvite(invite, callback) {
 }
 
 function findInvite(token, callback) {
-  Invite.find({ include: [Account, AccountUser, User], where: { token: token, status: 'pending' } }).then(function(result) {
+  Invite.find({ include: [Account, AccountUser, User], where: { token: token, $or: [{ status: 'pending' }, { status: 'inProgress' }] } }).then(function(result) {
     if(result) {
       callback(null, result);
     }
@@ -478,7 +478,7 @@ function acceptSessionInvite(token) {
       deferred.reject(error);
     }
     else {
-      invite.update({ token: uuid.v1() }, { returning: true }).then(function(invite) {
+      invite.update({ token: uuid.v1(), status: 'inProgress' }, { returning: true }).then(function(invite) {
         sendEmail('inviteConfirmation', invite).then(function() {
           deferred.resolve({ message: MessagesUtil.invite.confirmed, invite: invite });
         }, function(error) {
