@@ -471,12 +471,7 @@ function modifySessions(sessions, accountId, provider) {
 function changeSessionData(sessions, chargebeeSub, provider) {
   let array = _.isArray(sessions) ? sessions : [sessions];
   _.map(array, function(session) {
-    if(chargebeeSub) {
-      sessionValidator.addShowStatus(session, chargebeeSub);
-    }
-    else {
-      session.dataValues.showStatus = 'Indefinite';
-    }
+    sessionValidator.addShowStatus(session, chargebeeSub);
 
     let facilitator = findFacilitator(session.SessionMembers);
     if(facilitator) {
