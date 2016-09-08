@@ -8,15 +8,14 @@ var Account = models.Account;
 var AccountUser = models.AccountUser;
 var Session = models.Session;
 
-var sessionMemberService = require('./../services/sessionMember');
+var emailDate = require('./formats/emailDate');
+var sessionMemberService = require('./sessionMember');
 var socialProfileService = require('./socialProfile');
 var inviteMailer = require('../mailers/invite');
 var mailerHelpers = require('../mailers/mailHelper');
 var constants = require('../util/constants');
 var MessagesUtil = require('./../util/messages');
 
-var dateFormat = require('dateformat');
-var moment = require('moment');
 var uuid = require('node-uuid');
 var crypto = require('crypto');
 var async = require('async');
@@ -188,10 +187,10 @@ function sendInvite(invite, deferred) {
         sessionName: session.name,
         orginalStartTime: session.startTime,
         orginalEndTime: session.endTime,
-        startTime: moment.utc(session.startTimeFormat).format('h:mm'),
-        endTime: moment.utc(session.endTimeFormat).format('h:mm'),
-        startDate: moment.utc(session.startTimeFormat).format('YYYY-M-D'),
-        endDate: moment.utc(session.endTimeFormat).format('YYYY-M-D'),
+        startTime: emailDate.format('time', session.startTimeFormat),
+        endTime: emailDate.format('time', session.endTimeFormat),
+        startDate: emailDate.format('date', session.startTimeFormat),
+        endDate: emailDate.format('date', session.endTimeFormat),
         incentive: session.incentive_details,
         facilitatorFirstName: facilitator.firstName,
         facilitatorLastName: facilitator.lastName,
@@ -214,6 +213,7 @@ function sendInvite(invite, deferred) {
 
   return deferred.promise;
 }
+
 
 function findAndRemoveInvite(params, callback) {
   Invite.find({ where: params }).then(function(invite) {
@@ -260,7 +260,7 @@ function destroyInvite(invite, callback) {
 }
 
 function findInvite(token, callback) {
-  Invite.find({ include: [Account, AccountUser, User], where: { token: token, status: 'pending' } }).then(function(result) {
+  Invite.find({ include: [Account, AccountUser, User], where: { token: token, $or: [{ status: 'pending' }, { status: 'inProgress' }] } }).then(function(result) {
     if(result) {
       callback(null, result);
     }
@@ -307,11 +307,16 @@ function acceptInviteExisting(token, callback) {
             role: invite.role
           };
           sessionMemberService.createWithTokenAndColour(params).then(function() {
-            sendEmail('inviteConfirmation', invite).then(function() {
+            if(invite.role == 'participant') {
               callback(null, invite, MessagesUtil.invite.confirmed);
-            }, function(error) {
-              callback(error);
-            });
+            }
+            else {
+              sendEmail('inviteConfirmation', invite).then(function() {
+                callback(null, invite, MessagesUtil.invite.confirmed);
+              }, function(error) {
+                callback(error);
+              });
+            }
           }, function(error) {
             callback(filters.errors(error));
           });
@@ -376,52 +381,109 @@ function sessionAccept(token, body) {
       deferred.reject(error);
     }
     else {
-      let params = {
-        sessionId: invite.sessionId,
-        accountUserId: invite.accountUserId,
-        username: invite.AccountUser.firstName,
-        role: invite.role
+      canAddSessionMember(invite).then(function() {
+        return sessionAcceptFlow(invite, body);
+      }).then(function(result) {
+        deferred.resolve(result);
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
+    }
+  });
+
+  return deferred.promise;
+}
+
+function sessionAcceptFlow(invite, body) {
+  let deferred = q.defer();
+  let user;
+
+  models.sequelize.transaction().then(function(t) {
+    return User.create({ email: invite.AccountUser.email, password: body.password, confirmedAt: new Date() }, { transaction: t }).then(function(result) {
+      user = result;
+      return invite.AccountUser.update({ UserId: user.id, active: true }, { transaction: t });
+    }).then(function() {
+      let params = sessionMemberParams(invite, t);
+      return sessionMemberService.createWithTokenAndColour(params);
+    }).then(function() {
+      return invite.update({ status: 'confirmed' }, { transaction: t });
+    }).then(function() {
+      if(body.social) {
+        body.social.user = { id: user.id };
+        return socialProfileService.createPromise(body.social, t);
+      }
+      else {
+        return t.commit();
+      }
+    }).catch(function(error) {
+      throw error;
+    });
+  }).then(function() {
+    deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function canAddSessionMember(invite) {
+  let deferred = q.defer();
+  let where = { where: { sessionId: invite.sessionId, role: invite.role } };
+
+  if(invite.role == 'facilitator') {
+    models.SessionMember.find(where).then(function(sessionMember) {
+      if(invite.accountUserId == sessionMember.accountUserId) {
+        deferred.resolve();
+      }
+      else {
+        deferred.reject(MessagesUtil.invite.inviteExpired);
+      }
+    });
+  }
+  else {
+    models.SessionMember.count(where).then(function(c) {
+      let allowedCount = {
+        participant: 8,
+        observer: -1
       };
 
-      if(body.social) {
-        body.password = crypto.randomBytes(16).toString('hex');
+      if(c < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
+        deferred.resolve();
       }
+      else {
+        deferred.reject(MessagesUtil.invite.sessionIsFull);
+      }
+    });
+  }
 
-      User.create({ email: invite.AccountUser.email, password: body.password, confirmedAt: new Date()  }).then(function(user) {
-        invite.AccountUser.update({ UserId: user.id, active:true}).then(function() {
-          sessionMemberService.createWithTokenAndColour(params).then(function() {
-            invite.update({ status: 'confirmed' }).then(function() {
-              if(body.social) {
-                body.social.user = { id: user.id };
-                socialProfileService.create(body.social, function(error, object) {
-                  if(object.error) {
-                    deferred.reject(object.error);
-                  }
-                  else {
-                    sendEmail('inviteConfirmation', invite).then(function() {
-                      deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
-                    }, function(error) {
-                      deferred.reject(error);
-                    });
-                  }
-                });
-              }
-              else {
-                sendEmail('inviteConfirmation', invite).then(function() {
-                  deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
-                }, function(error) {
-                  deferred.reject(error);
-                });
-              }
-            }, function(error) {
-              deferred.reject(filters.errors(error));
-            });
-          }, function(error) {
-            deferred.reject(filters.errors(error));
-          });
+  return deferred.promise;
+}
+
+function sessionMemberParams(invite, t) {
+  return {
+    sessionId: invite.sessionId,
+    accountUserId: invite.accountUserId,
+    username: invite.AccountUser.firstName,
+    role: invite.role,
+    t: t
+  };
+}
+
+function acceptSessionInvite(token) {
+  let deferred = q.defer();
+
+  findInvite(token, function(error, invite) {
+    if(error) {
+      deferred.reject(error);
+    }
+    else {
+      invite.update({ token: uuid.v1(), status: 'inProgress' }, { returning: true }).then(function(invite) {
+        sendEmail('inviteConfirmation', invite).then(function() {
+          deferred.resolve({ message: MessagesUtil.invite.confirmed, invite: invite });
         }, function(error) {
-          deferred.reject(filters.errors(error));
-        });
+          deferred.reject(error);
+        })
       }, function(error) {
         deferred.reject(filters.errors(error));
       });
@@ -454,24 +516,36 @@ function declineSessionInvite(token, status) {
   return deferred.promise;
 }
 
+function needSedConfirmationEmail(invite) {
+    return invite.role == "participant"
+}
+
 function sendEmail(status, invite) {
   let deferred = q.defer();
 
   prepareMailInformation(invite).then(function(data) {
-    let doSendEmail;
+    let doSendEmail = null;
 
-    if(status == 'notAtAll') {
-      doSendEmail = mailerHelpers.sendInvitationNotAtAll;
+    switch (status) {
+      case 'notAtAll':
+        doSendEmail = mailerHelpers.sendInvitationNotAtAll;
+        break;
+      case 'notThisTime':
+        doSendEmail = mailerHelpers.sendInvitationNotThisTime;
+        break;
+      case 'inviteConfirmation':
+        if (needSedConfirmationEmail(invite)) {
+          doSendEmail = mailerHelpers.sendInviteConfirmation;
+        }
+        break;
+      default:
+        return deferred.resolve();
     }
-    else if(status == 'notThisTime') {
-      doSendEmail = mailerHelpers.sendInvitationNotThisTime;
-    }
-    else if(status == 'inviteConfirmation') {
-      doSendEmail = mailerHelpers.sendInviteConfirmation;
-    }
-    else {
+
+    if (!doSendEmail) {
       return deferred.resolve();
     }
+
 
     doSendEmail(data, function(error, result) {
       if(error) {
@@ -499,7 +573,7 @@ function prepareMailInformation(invite) {
     },
     include: [AccountUser, Session]
   }).then(function(facilitator) {
-    deferred.resolve(prepareMailParams(facilitator.Session, invite.AccountUser, facilitator.AccountUser));
+    deferred.resolve(prepareMailParams(invite, facilitator.Session, invite.AccountUser, facilitator.AccountUser));
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -507,7 +581,7 @@ function prepareMailInformation(invite) {
   return deferred.promise;
 }
 
-function prepareMailParams(session, receiver, facilitator) {
+function prepareMailParams(invite, session, receiver, facilitator) {
   return {
     sessionId: session.id,
     email: receiver.email,
@@ -518,11 +592,11 @@ function prepareMailParams(session, receiver, facilitator) {
     facilitatorMail: facilitator.email,
     facilitatorMobileNumber: facilitator.mobile,
     unsubscribeMailUrl: 'not-found',
-    startTime: session.startTime,
-    startDate: session.startDate,
+    startTime: emailDate.format('time', session.startTimeFormat),
+    startDate: emailDate.format('date', session.startTimeFormat),
     orginalStartTime: session.startTime,
     orginalEndTime: session.endTime,
-    confirmationCheckInUrl: mailUrlHelper.getUrl('', '/login'),
+    confirmationCheckInUrl: mailUrlHelper.getUrl(invite.token, '/invite/') + '/accept/',
     participantMail: receiver.email,
     incentive: session.incentive
   }
@@ -565,5 +639,6 @@ module.exports = {
   acceptInviteNew: acceptInviteNew,
   declineInvite: declineInvite,
   declineSessionInvite: declineSessionInvite,
+  acceptSessionInvite: acceptSessionInvite,
   sessionAccept: sessionAccept
 };

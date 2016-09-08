@@ -8,7 +8,7 @@ function getToken(req, res, next) {
 };
 
 function jwtTokenForMember(req, res, next) {
-  jwt.tokenForMember(res.locals.currentUser.id, req.query.sessionId).then(function(result) {
+  jwt.tokenForMember(res.locals.currentUser.id, req.query.sessionId, req.query.callback_url).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({ error: error });

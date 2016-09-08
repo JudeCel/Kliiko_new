@@ -7,7 +7,7 @@ var sessionMemberMiddleware = require('./../../middleware/sessionMember');
 var sessionFixture = require('./../fixtures/session');
 var models = require('./../../models');
 
-describe.only('MIDDLEWARE - Session Member', function() {
+describe('MIDDLEWARE - Session Member', function() {
   let req, res;
 
   function setVariables(userId, sessionId, accountId) {

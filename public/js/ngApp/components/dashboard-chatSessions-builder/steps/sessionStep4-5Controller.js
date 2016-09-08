@@ -16,13 +16,12 @@
     vm.editContactIndex = null;
     vm.contactData = {};
 
-    vm.participantsFilterType = {all:true};
-    vm.observersFilterType = {all:true};
-    vm.currentFilter = null;
+    vm.currentFilter = 'all';
     vm.filterTypes = {
       all: 'All',
       notInvited: 'Not Invited',
       confirmed: 'Confirmed',
+      inProgress: 'Confirmed',
       notThisTime: 'Not This Time',
       notAtAll: 'Not At All',
       pending: 'No Response',
@@ -44,22 +43,23 @@
     vm.closeEditContactForm = closeEditContactForm;
 
     vm.stepMembers = [];
-    vm.memberArrayFiltered = null;
 
     vm.isParticipantPage = function() {
       return vm.session.sessionData.step == "manageSessionParticipants";
     }
 
     vm.prepareData = function(participants, observers) {
+      if(vm.previousStep != vm.session.sessionData.step) {
+        vm.previousStep = vm.session.sessionData.step;
+        vm.currentFilter = 'all';
+      }
+
       if (vm.isParticipantPage()) {
         vm.stepMembers = participants;
       } else {
         vm.stepMembers = observers;
       }
 
-      if(!vm.memberArrayFiltered) {
-        vm.memberArrayFiltered = vm.stepMembers;
-      }
       return vm.stepMembers;
     }
 
@@ -242,14 +242,7 @@
     }
 
     function setMembersFilter(filter) {
-      if(filter == "all") {
-        vm.currentFilter = null;
-        vm.memberArrayFiltered = vm.stepMembers;
-      }
-      else {
-        vm.currentFilter = filter;
-        vm.memberArrayFiltered = $filter('filter')(vm.stepMembers, 'inviteStatus == filter');
-      }
+      vm.currentFilter = filter;
     }
 
     function openEditContactModal(object) {

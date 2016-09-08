@@ -10,8 +10,7 @@ var libSubdomains = require('./../lib/subdomains');
 var MessagesUtil = require('./../util/messages');
 
 function assignCurrentDomain(result, res) {
-
-  res.locals.currentDomain = { id: result.id, name: result.subdomain, roles: [result.accountUser.role] };
+  res.locals.currentDomain = { id: result.id, name: result.subdomain, roles: [result.accountUser.role], realName: result.realName };
   res.locals.hasAccess = policy.hasAccess;
 }
 
@@ -54,7 +53,7 @@ function getAccauntWithRoles(user, subdomain, callback) {
 
       if (account) {
         if(account.AccountUser.active) {
-          let result = { id: account.id, subdomain: account.subdomain, accountUser: account.AccountUser }
+          let result = { id: account.id, subdomain: account.subdomain, realName: account.name, accountUser: account.AccountUser }
           callback(null, result)
         }
         else {

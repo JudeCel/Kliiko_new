@@ -23,7 +23,7 @@
     'ngFileUpload',
     'ui.sortable',
     'angularUtils.directives.dirPagination',
-
+    'toggle-switch',
     // app modules
     'KliikoApp.user',
     'KliikoApp.account',
@@ -202,6 +202,11 @@
 
     $scope.$on('$includeContentLoaded', function() {
       setFocusToFormControl('body');
+    });
+
+    $('.dashboard-header-mobile .nav a').click(function () {
+      $('.navbar-collapse').collapse('hide');
+      $('.modal').modal('hide');
     });
 
     function setFocusToFormControl(target) {

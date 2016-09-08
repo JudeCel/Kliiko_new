@@ -13,6 +13,7 @@ module.exports = (Sequelize, DataTypes) => {
     colour: { type: DataTypes.STRING, allowNull: false },
     avatarData: { type: DataTypes.JSONB, allowNull: false, defaultValue: constants.sessionMemberMan },
     sessionTopicContext: { type: DataTypes.JSONB, allowNull: false, defaultValue: { } },
+    currentTopic: { type: DataTypes.JSONB, allowNull: false, defaultValue: { } },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionMemberRoles },
     comment: { type: DataTypes.TEXT, allowNull: true },
     rating: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0, validate: { min: 0, max: 5 } }

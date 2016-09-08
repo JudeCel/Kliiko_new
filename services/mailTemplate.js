@@ -5,6 +5,7 @@ var MailTemplate  = require('./../models').MailTemplate;
 var MailTemplateOriginal  = require('./../models').MailTemplateBase;
 var filters = require('./../models/filters');
 var templateMailer = require('../mailers/mailTemplate');
+var emailDate = require('./formats/emailDate');
 var mailersHelpers = require('../mailers/helpers');
 var _ = require('lodash');
 var ejs = require('ejs');
@@ -20,7 +21,6 @@ module.exports = {
   getAllSessionMailTemplates: getAllSessionMailTemplates,
   createBaseMailTemplate: createBaseMailTemplate,
   copyBaseTemplates: copyBaseTemplates,
-  copyBaseTemplatesForSession: copyBaseTemplatesForSession,
   deleteMailTemplate: deleteMailTemplate,
   resetMailTemplate: resetMailTemplate,
   composeMailFromTemplate: composeMailFromTemplate,
@@ -272,24 +272,6 @@ function sortMailTemplates(result) {
   });
 }
 
-function copyBaseTemplatesForSession(accountId, sessionId, callback) {
-  getAllSessionMailTemplates(accountId, false, null, false, true, function(error, result) {
-    if (error) {
-      return callback(error);
-    }
-
-    for (var i = 0; i < result.length; i++) {
-      result[i].sessionId = sessionId;
-      delete result[i].id;
-    }
-    MailTemplate.bulkCreate(result).done(function(res) {
-       callback(null, res);
-    }, function(error) {
-       callback(filters.errors(error));
-    })
-  });
-}
-
 function copyTemplatesFromSession(accountId, sessionIdFrom, sessionIdTo, callback) {
   getAllSessionMailTemplates(accountId, false, sessionIdFrom, false, true, function(error, result) {
     if (error) {
@@ -387,22 +369,22 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
 function variablesForTemplate(type) {
   switch (type) {
     case "firstInvitation":
-      return ["{First Name}", "{Session Name}", "{Start Time}", "{End Time}", "{Start Date}", "{End Date}", "{Incentive}", "{Accept Invitation}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}", "{Invitation Not This Time}", "{Invitation Not At All}"];
+      return ["{First Name}", "{Session Name}", "{Start Time}", "{End Time}", "{Start Date}", "{End Date}", "{Incentive}", "{Accept Invitation}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Invitation Not This Time}", "{Invitation Not At All}"];
       break;
     case "closeSession":
-      return ["{First Name}", "{Incentive}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}", "{Close Session Yes In Future}", "{Close Session No In Future}"];
+      return ["{First Name}", "{Incentive}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Close Session Yes In Future}", "{Close Session No In Future}"];
       break;
     case "confirmation":
-      return ["{First Name}", "{Start Time}", "{Start Date}", "{Confirmation Check In}", "{Participant Email}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}"];
+      return ["{First Name}", "{Start Time}", "{Start Date}", "{Confirmation Check In}", "{Participant Email}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
       break;
     case "generic":
-      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}"];
+      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
       break;
     case "notAtAll":
-      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}"];
+      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
       break;
     case "notThisTime":
-      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Facilitator Mobile}"];
+      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
       break;
     case "accountManagerConfirmation":
       return ["{First Name}", "{Login}", "{Last Name}"];
@@ -418,7 +400,7 @@ function validateTemplate(template) {
   if (params.length) {
     _.map(params, function(variable) {
         if (template.content.indexOf(variable) == -1){
-          error = "Missing <b>" + variable + "</b> variable";
+          error = "Missing " + variable + " variable";
         }
     });
   }
@@ -670,10 +652,10 @@ function composePreviewMailTemplate(mailTemplate) {
     firstName: "John",
     lastName: "Smith",
     accountName: "peter",
-    startDate: new Date().toLocaleDateString(),
-    startTime: new Date().toLocaleTimeString(),
-    endDate: new Date().toLocaleDateString(),
-    endTime: new Date().toLocaleTimeString(),
+    startDate: emailDate.format("date", new Date()),
+    startTime: emailDate.format("time", new Date()),
+    endDate: emailDate.format("date", new Date()),
+    endTime: emailDate.format("time", new Date()),
     facilitatorFirstName: "Peter",
     facilitatorLastName: "Anderson",
     facilitatorMail: "peter@mail.com",

@@ -6,6 +6,9 @@
   .text-size-dashboard {
     font-size: 13px;
   }
+  .btn-group{
+    white-space:nowrap;
+  }
 }
 /*  These stules are needed so the subDomain and currentAccount.fullName would be in the same line  */
 .current-domain-name{
@@ -21,3 +24,117 @@
   min-width: 306px;
 }
 /*  END  */
+
+.navbar-toggle
+{
+  border-radius:0px;
+  border: 2px solid #58595B !important;
+
+  .icon-bar+.icon-bar {
+    margin-top: 6px;
+  }
+
+  .icon-bar {
+    background-color: #58595B !important;
+    width: 28px;
+  }
+}
+
+.navbar
+{
+  border-radius: 0px;
+
+  .container{
+    background-color: #fff;
+    margin-right: -1px;
+  }
+
+  .my-details-container {
+    margin-left: 0px;
+    margin-right: 10px;
+  }
+  li a {
+    border-bottom: 1px solid #eee;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    line-height: 24px
+  }
+  li:last-child a{
+    border-bottom: 0px;
+  }
+  .navbar-header{
+    background-color: #fff;
+    float: left;
+    text-align: center;
+    width: 94vw;
+  }
+  .navbar-brand {
+    float:none;
+    img {
+      display: inherit;
+      margin: 7px;
+      margin-left: -50px
+    }
+  }
+}
+
+#navbar{
+  ul {
+    width:70%;
+    min-width: 200px;
+    background-color: #fff;
+    margin: 0px;
+    height:100vh;
+    -webkit-box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.2);
+    border-top: 1px solid #eee;
+    margin-bottom: 1px;
+  }
+
+  position: absolute;
+  z-index: 1050;
+  background-color: rgba(0,0,0,0.5);
+  width: 100%;
+  padding: 0px;
+  border-top: 1px solid #fff;
+  padding-top: 62px;
+  z-index: -1;
+  top:0px;
+  transition: none;
+  margin-bottom:-85px;
+}
+
+.navbar-toggle.navbar-left {
+  float: left;
+  margin-left: 10px;
+  width: 47px;
+  height: 47px;
+  padding-left: 8px;
+  background-color: #fff !important;
+}
+
+.navbar-title{
+  cursor:default;
+  color: #777 !important;
+  font-size:24px;
+  padding: 16px 12px !important;
+}
+
+@media (max-width: 767px) {  
+  .dashboard-header > div {
+    display:none;
+  }
+  .dashboard-header > .dashboard-header-mobile {
+    display:block;
+  }
+  .dashboard-header {
+    height:auto;
+  }
+
+  #nav-tabs-main{
+    li {
+      width: 230px;
+    }
+  }  
+}

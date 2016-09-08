@@ -75,7 +75,6 @@
     }
 
     function changeActiveState(topic) {
-      topic.sessionTopic.active = !topic.sessionTopic.active;
       saveTopics(vm.sessionTopicsArray);
     }
 
@@ -111,8 +110,20 @@
       }
 
       if(list.length) {
+        if(!findLandingTopic()) {
+          list[0].sessionTopic.landing = true;
+        }
         saveTopics(list);
       }
+    }
+
+    function findLandingTopic() {
+      for(var i in vm.sessionTopicsArray) {
+        if(vm.sessionTopicsArray[i].sessionTopic.landing) {
+          return vm.sessionTopicsArray[i];
+        }
+      }
+      return false;
     }
 
     function saveTopics(list) {
@@ -126,16 +137,21 @@
     }
 
     function removeTopicFromLocalList(id) {
-      var found;
+      var deletedLanding, found;
       vm.sessionTopicsArray.map(function(topic, index) {
         if(topic.id == id) {
           found = index;
+          deletedLanding = topic.sessionTopic.landing;
           delete vm.sessionTopicsObject[topic.id];
         }
       });
 
       vm.sessionTopicsArray.splice(found, 1);
       reOrderTopics();
+
+      if(deletedLanding && vm.sessionTopicsArray[0]) {
+        changeLandingState(vm.sessionTopicsArray[0]);
+      }
     }
 
     function addTopics(topic, list) {

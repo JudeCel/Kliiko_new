@@ -78,8 +78,8 @@
     }
 
     .list-group-item {
+        padding: 5px 0 5px 5px;
         cursor: pointer;
-        height: 50px;
         width: 100%;
         background-image: none;
         color: gray;
@@ -89,13 +89,16 @@
     }
 
     .list-group-item-white {
-        height: 50px;
-        width: 100%;
-        background-image: none;
-        color: gray;
-        background-color: white !important;
-        margin-bottom: 2px;
-        border: none;
+      padding: 5px 0 5px 5px;
+      width: 100%;
+      background-image: none;
+      color: gray;
+      background-color: white !important;
+      margin-bottom: 2px;
+      border: none;
+      .glyphicon.glyphicon-ok {
+        line-height: 2;
+      }
     }
 
     table {
@@ -125,6 +128,12 @@
         font-size: 14px;
         line-height: 1.7;
       }
+      .glyphicon {
+        &.glyphicon-chevron-down,
+        &.glyphicon-chevron-right {
+          padding-right: 5px;
+        }
+      }
     }
 
     #uploadTemplateResource {
@@ -138,7 +147,7 @@
 
     .input-group-btn {
       .btn {
-        margin-top: -3px;
+        margin-top: -2px;
         margin-left: -1px;
         border: 1px solid #ccc;
         line-height: 1.7;

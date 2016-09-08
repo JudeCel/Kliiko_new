@@ -46,15 +46,20 @@
           <div class="margin-top-10" ui-sortable="step2Controller.sortableOptionsA" ng-model="step2Controller.sessionTopicsArray">
             <div class="topic-list-item" ng-repeat="topic in step2Controller.sessionTopicsArray">
               <span>
-                <img src="/icons/ic_move.png">
                 <input type="radio" ng-model="topic.sessionTopic.landing" ng-value="true" ng-change='step2Controller.changeLandingState(topic)' ng-disabled="!topic.sessionTopic.active">
                 {{ topic.sessionTopic.name }}
               </span>
 
               <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.id)" src="/icons/dashboardElement_remove.png" title="Delete">
               <img class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('sessionTopic', topic.sessionTopic)">
-              <img class="img-responsive pull-right ic" ng-if="topic.sessionTopic.active" src="/icons/unlocked.png" ng-click="step2Controller.changeActiveState(topic)" title="Active">
-              <img class="img-responsive pull-right ic" ng-if="!topic.sessionTopic.active" src="/icons/locked.png" ng-click="step2Controller.changeActiveState(topic)" title="Not Active">
+              <toggle-switch
+                ng-model="topic.sessionTopic.active"
+                ng-change="step2Controller.changeActiveState(topic)"
+                on-label="SHOW"
+                off-label="HIDE"
+                class="pull-right"
+                >
+              </toggle-switch>
             </div>
           </div>
         </div>

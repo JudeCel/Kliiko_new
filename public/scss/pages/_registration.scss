@@ -24,9 +24,17 @@
   .checkbox-signup {
     display: inline-block;
     vertical-align: top;
-    margin-top: 8px;
+    margin-top: 3px;
     padding-left: 9px;
     font-size: 13px;
+  }
+
+  
+  @media (max-width: 469px) {  
+    .checkbox-signup {
+        width:240px;
+
+    }
   }
 
   input[class=checkbox-login] {

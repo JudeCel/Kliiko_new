@@ -18,7 +18,7 @@ var validAttributes = [
 
 function findAllAccounts(callback) {
   Account.findAll({
-    include: [{ model: AccountUser, include: [ { model: User } ] }, {model: models.Subscription} ]
+    include: [{ model: AccountUser, where: { role: 'accountManager' }, include: [ { model: User } ] }, {model: models.Subscription} ]
   }).then(function(accounts) {
     callback(null, accounts);
   }, function(error) {

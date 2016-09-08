@@ -11,21 +11,14 @@
     var goToChatroomService = {};
     goToChatroomService.go = go;
     goToChatroomService.generateRedirectLink = generateRedirectLink;
-    goToChatroomService.openBlankWindow = openBlankWindow;
-    goToChatroomService.changeUrl = changeUrl;
-    goToChatroomService.closeWindow = closeWindow;
-    goToChatroomService.getWindow = getWindow;
     return goToChatroomService;
 
     function go(sessionId) {
       var deferred = $q.defer();
 
-      openBlankWindow();
       generateRedirectLink(sessionId).then(function(url) {
-        changeUrl(url);
-        deferred.resolve(url);
+        window.open(url, '_self');
       }, function(error) {
-        closeWindow();
         messenger.error(error);
         deferred.resolve(error);
       });
@@ -36,7 +29,7 @@
     function generateRedirectLink(sessionId) {
       var deferred = $q.defer();
 
-      jwtTokenForMemberApi.get({ sessionId: sessionId }, function(res) {
+      jwtTokenForMemberApi.get({ sessionId: sessionId, callback_url: window.location.href }, function(res) {
         if(res.error) {
           deferred.reject(res.error);
         }
@@ -54,23 +47,6 @@
       });
 
       return deferred.promise;
-    }
-
-    function openBlankWindow() {
-      blankWindow = window.open('', '_blank');
-      blankWindow.document.write('Loading chatroom...');
-    }
-
-    function changeUrl(url) {
-      blankWindow.location.href = url;
-    }
-
-    function closeWindow() {
-      blankWindow.close();
-    }
-
-    function getWindow() {
-      return blankWindow;
     }
   }
 })();

@@ -57,7 +57,7 @@ function createWithTokenAndColour(params) {
 }
 
 function updateHelper(deferred, params, sessionMember) {
-  sessionMember.update(params, { returning: true }).then(function(sm) {
+  sessionMember.update(params, { returning: true, transaction: params.t }).then(function(sm) {
     deferred.resolve(sm);
   }, function(error) {
     deferred.reject(filters.errors(error));
@@ -65,7 +65,7 @@ function updateHelper(deferred, params, sessionMember) {
 }
 
 function createHelper(deferred, params) {
-  SessionMember.create(params).then(function(sessionMember) {
+  SessionMember.create(params, { transaction: params.t }).then(function(sessionMember) {
     deferred.resolve(sessionMember);
   }, function(error) {
     deferred.reject(filters.errors(error));

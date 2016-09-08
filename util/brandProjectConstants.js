@@ -1,6 +1,6 @@
 'use strict';
 
-const MEMBER_COLOURS = ['#E51E39', '#4DC0E9', '#4CB74A', '#F0EA36', '#9A58A3', '#34499E', '#F38220', '#EF6187', '#9B0E26'];
+const MEMBER_COLOURS = ['#E51E39', '#4DC0E9', '#4CB74A', '#c3be2e', '#9a58a3', '#34499e', '#f38220', '#ef6187', '#9b0e26'];
 
 module.exports = {
   hexRegex: '^#+([a-fA-F0-9]{6})$',
