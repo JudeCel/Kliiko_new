@@ -126,13 +126,16 @@
 
         if(!vm.currentTemplate.isCopy) {
           vm.viewingTemplateId = vm.currentTemplate.id;
+          vm.viewingTemplateName = vm.currentTemplate["MailTemplateBase.name"];
         }
         else {
           if(!vm.currentTemplate.sessionId) {
             vm.viewingTemplateId = vm.currentTemplate.MailTemplateBaseId;
+            vm.viewingTemplateName = vm.currentTemplate["MailTemplateBase.name"];
           }
           else if(!vm.addedList[vm.currentTemplate.id]) {
             vm.viewingTemplateId = null;
+            vm.viewingTemplateName = null;
           }
         }
       }
@@ -274,11 +277,11 @@
 
         if(sessionBuilder || normal) {
           vm.addedList[template.id] = template;
-          if(vm.sortedEmailTemplates[template.MailTemplateBaseId]) {
-            vm.sortedEmailTemplates[template.MailTemplateBaseId].push(template);
+          if(vm.sortedEmailTemplates[template["MailTemplateBase.name"]]) {
+            vm.sortedEmailTemplates[template["MailTemplateBase.name"]].push(template);
           }
           else {
-            vm.sortedEmailTemplates[template.MailTemplateBaseId] = [template];
+            vm.sortedEmailTemplates[template["MailTemplateBase.name"]] = [template];
           }
         }
       });
@@ -321,13 +324,13 @@
         if(vm.addedList[template.id]) {
           delete vm.addedList[template.id];
           var array = [];
-          for(var t in vm.sortedEmailTemplates[template.MailTemplateBaseId]) {
-            var temp = vm.sortedEmailTemplates[template.MailTemplateBaseId][t];
+          for(var t in vm.sortedEmailTemplates[template["MailTemplateBase.name"]]) {
+            var temp = vm.sortedEmailTemplates[template["MailTemplateBase.name"]][t];
             if(temp.id != template.id) {
               array.push(temp);
             }
           }
-          vm.sortedEmailTemplates[template.MailTemplateBaseId] = array;
+          vm.sortedEmailTemplates[template["MailTemplateBase.name"]] = array;
         }
 
         refreshTemplateList(function(res) {

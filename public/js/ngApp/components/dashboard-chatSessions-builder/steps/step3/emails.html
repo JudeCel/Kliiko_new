@@ -38,9 +38,9 @@
             </div>
           </a>
 
-          <a class='list-group-item border-radius-none list-group-item-white' ng-repeat='(id, copyT) in ec.sortedEmailTemplates[t.id] track by $index'
+          <a class='list-group-item border-radius-none list-group-item-white' ng-repeat='(id, copyT) in ec.sortedEmailTemplates[t["MailTemplateBase.name"]] track by $index'
             ng-click='ec.startEditingTemplate(ec.findIndexFromId(copyT.id), true, copyT.id, copyT); sbc.showEmailsTemplateEditeor = true;'
-            ng-class="{'active': ec.isCurrentId(copyT.id) }" ng-if='ec.isCurrentId(t.id) || ec.viewingTemplateId == t.id'>
+            ng-class="{'active': ec.isCurrentId(copyT.id) }" ng-if='t.id != copyT.id && ec.viewingTemplateName == copyT["MailTemplateBase.name"] && t.id == t.MailTemplateBaseId'>
 
             <div class='input-group input-group-sm display-flex' ng-if='copyT.isCopy' title='{{ step3Controller.templateName(copyT.name) }}'>
               <span class='glyphicon glyphicon-ok' aria-hidden='true' ng-if='copyT.sessionId'></span>
