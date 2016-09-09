@@ -18,7 +18,7 @@
           </a>
 
           <a class="list-group-item border-radius-none list-group-item-white" ng-repeat='(id, inherit) in ec.sortedEmailTemplates[t["MailTemplateBase.name"]] track by $index'
-            ng-click="ec.startEditingTemplate(ec.findIndexFromId(inherit.id))" ng-if='ec.viewingTemplateName == inherit["MailTemplateBase.name"] && inherit.isCopy && t.id != inherit.id'
+            ng-click="ec.startEditingTemplate(ec.findIndexFromId(inherit.id))" ng-if='ec.viewingTemplateName == inherit["MailTemplateBase.name"] && inherit.isCopy && t.id != inherit.id && inherit.MailTemplateBaseId == t.id'
             ng-class="{'active': ec.isCurrentId(inherit.id)}">
 
             <div class="input-group input-group-sm">
