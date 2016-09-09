@@ -42,7 +42,7 @@ spec:
         - name: SERVER_CHAT_DOMAIN_URL
           value: "https://chat.klzii.chat"
         - name: SERVER_CHAT_DOMAIN_PORT
-          value: ""
+          value: "443"
         - name: FACEBOOK_CALLBACK_URL
           value: "https://www.klzii.chat/auth/facebook/callback"
         - name: FACEBOOK_CLIENT_ID
