@@ -27,13 +27,19 @@
         $rootScope.$broadcast('modal-close', modalId);
       }
       else {
-        var modals = $('body .modal.fade:visible');
+        var id, modals = $('body .modal.fade:visible');
+
         if(modals.length) {
-          handleModalActions(modals[0].id, true);
+          id = modals[0].id;
+          if(modalId != id) {
+            handleModalActions(id, true);
+          }
         }
 
-        jQuery('#' + modalId).modal('show');
-        $rootScope.$broadcast('modal-open', modalId);
+        if(modalId != id) {
+          jQuery('#' + modalId).modal('show');
+          $rootScope.$broadcast('modal-open', modalId);
+        }
       }
     }
 
