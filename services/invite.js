@@ -517,7 +517,12 @@ function declineSessionInvite(token, status) {
 }
 
 function needSedConfirmationEmail(invite) {
-    return invite.role == "participant"
+  if(invite.role == 'participant') {
+    return true;
+  }
+  else if(invite.role == 'facilitator') {
+    return invite.userType == 'existing';
+  }
 }
 
 function sendEmail(status, invite) {
