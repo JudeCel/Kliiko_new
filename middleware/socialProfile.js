@@ -1,8 +1,8 @@
 "use strict";
 var q = require('q');
 function google(profile, attrs) {
-  attrs.firstName = profile.name.familyName;
-  attrs.lastName = profile.name.givenName;
+  attrs.firstName = profile.name.givenName;
+  attrs.lastName = profile.name.familyName;
   attrs.email = profile.emails[0].value;
   attrs.socialProfile = { provider: profile.provider, id: profile.id }
 }
