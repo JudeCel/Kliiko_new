@@ -133,16 +133,21 @@ function parseXls(emails, deferred, contactList, filePath) {
     json.splice(0, 1);
 
     object.fileFields = fileFieldsArray(object.fileFields, header);
-
     let uniqRowListCounter = {};
 
     async.forEach(json, function(array, cb) {
-      let data = {rowNr: rowNr};
+
+      let data = {};
       _.map(header, function(value, index) {
         data[value] = array[index] || '';
       })
-      ++ rowNr
 
+      if (_.values(data).join("").length == 0) {
+        return cb();
+      }
+
+      data.rowNr = rowNr;
+      ++ rowNr
       data.landlineNumber = data.landlineNumber.toString();
       data.mobile = data.mobile.toString();
 

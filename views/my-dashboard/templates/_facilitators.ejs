@@ -21,7 +21,7 @@
         <td>{{ au.session.showStatus }}</td>
         <td>
           <a href='{{ myDashboard.sessionBuilderUrl(au) }}' title='Go to Session Builder'><img src='/icons/dashboardElement_edit.png' /></a>
-          <a ng-if='!myDashboard.disablePlayButton' href='#' ng-click='myDashboard.redirectToChatSession(au.session.id)' class='go-to-chatroom glyphicon glyphicon-play' title='Go to Chatroom' />
+          <a ng-disabled='myDashboard.disablePlayButton' href='#' ng-click='myDashboard.redirectToChatSession(au.session.id)' class='go-to-chatroom glyphicon glyphicon-play' title='Go to Chatroom' />
         </td>
       </tr>
     </tbody>
@@ -33,7 +33,7 @@
         <td>
           <div class="dashboardElements-icons">
             <a href='{{ myDashboard.sessionBuilderUrl(au) }}' title='Go to Session Builder'><img src='/icons/dashboardElement_edit.png' /></a>
-            <a ng-if='!myDashboard.disablePlayButton' href='#' ng-click='myDashboard.redirectToChatSession(au.session.id)' class='go-to-chatroom glyphicon glyphicon-play' title='Go to Chatroom'></a>
+            <a ng-disabled='myDashboard.disablePlayButton' href='#' ng-click='myDashboard.redirectToChatSession(au.session.id)' class='go-to-chatroom glyphicon glyphicon-play' title='Go to Chatroom'></a>
           </div>
           <span class="dashboardElements-title">Chat Session</span>
           <div class="dashboardElements-name">{{ au.session.name }}</div>
