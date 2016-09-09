@@ -92,8 +92,8 @@
     }
 
     function updateSessionTopic() {
-      topicsAndSessions.updateSessionTopic(vm.topicData).then(function(res) {
-        Object.assign(vm.originalReference, vm.topicData);
+      topicsAndSessions.updateSessionTopic(vm.topicData).then(function (res) {
+        angular.copy(vm.topicData, vm.originalReference);
         messenger.ok(res.message);
         domServices.modal('topicModalWindow', 'close');
         vm.topicData = {};
