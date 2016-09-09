@@ -27,7 +27,6 @@
     vm.submitModalForm = submitModalForm;
     vm.charactersLeft = charactersLeft;
     vm.togglePanel = togglePanel;
-    vm.fixIEObjectAssignSupport = fixIEObjectAssignSupport;
 
     init();
 
@@ -92,33 +91,9 @@
       t._showPanel = !t._showPanel;
     }
 
-    function fixIEObjectAssignSupport() {
-      if (typeof Object.assign != 'function') {
-        Object.assign = function (target) {
-          'use strict';
-          if (target == null) {
-            throw new TypeError('Cannot convert undefined or null to object');
-          }
-          target = Object(target);
-          for (var index = 1; index < arguments.length; index++) {
-            var source = arguments[index];
-            if (source != null) {
-              for (var key in source) {
-                if (Object.prototype.hasOwnProperty.call(source, key)) {
-                  target[key] = source[key];
-                }
-              }
-            }
-          }
-          return target;
-        };
-      }
-    }
-
     function updateSessionTopic() {
       topicsAndSessions.updateSessionTopic(vm.topicData).then(function (res) {
-        vm.fixIEObjectAssignSupport();
-        Object.assign(vm.originalReference, vm.topicData);
+        angular.copy(vm.topicData, vm.originalReference);
         messenger.ok(res.message);
         domServices.modal('topicModalWindow', 'close');
         vm.topicData = {};
