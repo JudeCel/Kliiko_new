@@ -11,6 +11,7 @@
     var vm = this;
     vm.defaultCountry = 'au';
     vm.init = init;
+    // TODO: needs rework
 
     $scope.$watch(function() {
       return watchNumber(vm.mobileController);
@@ -22,6 +23,12 @@
       return watchNumber(vm.landlineController);
     }, function(next, prev) {
       setNumberAndData(next, prev, vm.landlineController, 'landline');
+    });
+
+    $scope.$watch(function() {
+      return watchNumber(vm.contactController);
+    }, function(next, prev) {
+      setNumberAndData(next, prev, vm.contactController, 'contact');
     });
 
     function init(userInfo, modalName) {
@@ -64,6 +71,14 @@
             vm.userInfo.landlineNumberCountryData = controller.getSelectedCountryData();
           }
         }
+        else if(type == 'contact') {
+          phone = controller.getNumber();
+          if(phone) {
+            vm.userInfo.contactNumber = phone;
+            vm.userInfo.contactController = controller;
+            vm.userInfo.contactNumberCountryData = controller.getSelectedCountryData();
+          }
+        }
       }
     }
 
@@ -88,6 +103,17 @@
         }
 
         vm.landlineController.setCountry(country);
+      }
+
+      if(vm.contactController) {
+        if(vm.userInfo.contactNumberCountryData) {
+          country = vm.userInfo.contactNumberCountryData.iso2 || vm.defaultCountry;
+        }
+        else {
+          country = vm.defaultCountry;
+        }
+
+        vm.contactController.setCountry(country);
       }
     }
   }

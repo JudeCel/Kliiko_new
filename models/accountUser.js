@@ -24,10 +24,10 @@ module.exports = (Sequelize, DataTypes) => {
     phoneCountryData:	{ type: DataTypes.JSON, allowNull: false, defaultValue: {name: "Australia", iso2: "au", dialCode: "61"} },
     landlineNumberCountryData: { type: DataTypes.JSON, allowNull: false, defaultValue: {name: "Australia", iso2: "au", dialCode: "61"} },
     landlineNumber: { type: DataTypes.STRING, allowNull: true,
-      validate: { validateNumber: function() { validateNumber(this.landlineNumber, MessagesUtil.models.accountUser.landlineNumber); } }
+      validate: { validateNumber: function() { validations.phone(this.landlineNumber, MessagesUtil.models.accountUser.landlineNumber); } }
     },
     mobile: {type: DataTypes.STRING, allowNull: true,
-      validate: { validateNumber: function() { validateNumber(this.mobile, MessagesUtil.models.accountUser.mobile); } }
+      validate: { validateNumber: function() { validations.phone(this.mobile, MessagesUtil.models.accountUser.mobile); } }
     },
     comment: { type: DataTypes.TEXT, allowNull: true, validate: { isLength: validations.length('comment', { max: 200 }) } },
     email: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true, is: constants.emailRegExp, isLength: validations.length('email', { max: 60 }) } },
@@ -53,11 +53,3 @@ module.exports = (Sequelize, DataTypes) => {
 
   return AccountUser;
 };
-
-
-function validateNumber(number, message) {
-  if(number && !constants.phoneRegExp.test(number)) {
-    var newMessage = message.replace('XXX', constants.validPhoneFormat);
-    throw new Error(newMessage);
-  }
-}
