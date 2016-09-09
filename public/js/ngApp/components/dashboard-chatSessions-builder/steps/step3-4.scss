@@ -34,6 +34,7 @@
     border: none;
     outline: none;
     background: white !important;
+    min-width: 115px;
   }
 
   .list-group-item.active {
@@ -60,6 +61,7 @@
     font-size: 2rem;
   }
   .input-group-btn {
+    width:auto !important;
     .btn {
       margin-left: 0;
       margin-top: -1px;
