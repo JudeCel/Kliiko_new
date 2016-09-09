@@ -148,7 +148,7 @@
   AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader', 'domServices', '$scope'];
   function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader, domServices, $scope) {
     var vm = this;
-    vm.openContactDetailsModal = openContactDetailsModal;
+    vm.openModal = openModal;
     dbg.log2('#AppController started ');
     $rootScope.$on('app.updateUser', init);
 
@@ -164,9 +164,9 @@
       fileUploader.getToken().then(function(res) { vm.fileUploader = res });
     }
 
-    function openContactDetailsModal() {
+    function openModal(id) {
       setTimeout(function () {
-        domServices.modal('contactDetailsModal');
+        domServices.modal(id);
       }, 10);
     }
 
