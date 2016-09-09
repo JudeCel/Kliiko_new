@@ -283,7 +283,7 @@ module.exports = {
       newUser: 'New contact was added sucessfully',
       newFacilitator: 'New facilitator was added sucessfully',
       updated: 'Contact has been updated sucessfully',
-      imported: 'Contacts has been updated sucessfully'
+      imported: 'Contacts has been imported sucessfully'
     },
     mailTemplates: {
       saved: 'Template was successfully saved.'
