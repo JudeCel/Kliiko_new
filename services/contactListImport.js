@@ -238,8 +238,8 @@ function skipInvalidRow(data, contactList) {
 }
 
 function checkKeyValues(rowData, emails, key, row, uniqueRowListCounter, error) {
-  if (key == 'mobile') {
-    if (!constants.phoneRegExp.test(rowData)) {
+  if (_.includes([ 'mobile', 'landlineNumber'], key) ) {
+    if (!_.isEmpty(rowData) && !constants.phoneRegExp.test(rowData)) {
       error[key] = MessagesUtil.contactListImport.error.invalidFormat;
     }
   }
