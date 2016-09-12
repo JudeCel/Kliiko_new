@@ -516,15 +516,6 @@ function declineSessionInvite(token, status) {
   return deferred.promise;
 }
 
-function needSedConfirmationEmail(invite) {
-  if(invite.role == 'participant') {
-    return true;
-  }
-  else if(invite.role == 'facilitator') {
-    return invite.userType == 'existing';
-  }
-}
-
 function sendEmail(status, invite) {
   let deferred = q.defer();
 
@@ -539,8 +530,11 @@ function sendEmail(status, invite) {
         doSendEmail = mailerHelpers.sendInvitationNotThisTime;
         break;
       case 'inviteConfirmation':
-        if (needSedConfirmationEmail(invite)) {
+        if(invite.role == 'participant') {
           doSendEmail = mailerHelpers.sendInviteConfirmation;
+        }
+        else if(invite.role == 'facilitator') {
+          doSendEmail = mailerHelpers.sendFacilitatorEmailConfirmation;
         }
         break;
       default:
@@ -601,6 +595,7 @@ function prepareMailParams(invite, session, receiver, facilitator) {
     startDate: emailDate.format('date', session.startTimeFormat),
     orginalStartTime: session.startTime,
     orginalEndTime: session.endTime,
+    logInUrl: mailUrlHelper.getUrl(invite.token, '/invite/') + '/accept/',
     confirmationCheckInUrl: mailUrlHelper.getUrl(invite.token, '/invite/') + '/accept/',
     participantMail: receiver.email,
     incentive: session.incentive
