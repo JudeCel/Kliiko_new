@@ -84,6 +84,7 @@ var frontendScripts = [
 
   "public/js/vendors/angular-material/**/*.min.js",
   "public/js/vendors/moment/moment.js",
+  "public/js/vendors/jstz/*.js",
   "public/js/vendors/bootstrap/bootstrap.js",
   "public/js/vendors/bootstrap/bootstrap-show-password.js",
   "public/js/vendors/intl-tel-input/**/*.js",

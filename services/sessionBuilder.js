@@ -62,8 +62,6 @@ function initializeBuilder(params) {
       params.step = 'setUp';
       params.startTime = params.date;
       params.endTime = params.date;
-      params.startTimeFormat = params.date;
-      params.endTimeFormat = params.date;
 
       Session.create(params).then(function(session) {
         addDefaultObservers(session, params);
@@ -112,7 +110,7 @@ function update(sessionId, accountId, params) {
 
   validators.hasValidSubscription(accountId).then(function() {
     findSession(sessionId, accountId).then(function(session) {
-      session.updateAttributes(prepareUpdateParams(params)).then(function(updatedSession) {
+      session.updateAttributes(params).then(function(updatedSession) {
         sessionBuilderObject(updatedSession).then(function(sessionObject) {
           if(updatedSession.status == "closed"){
             sendCloseSessionMail(updatedSession).then(function() {
@@ -137,16 +135,6 @@ function update(sessionId, accountId, params) {
   })
 
   return deferred.promise;
-}
-
-function prepareUpdateParams(params) {
-  if(params.startTime) {
-    params.startTimeFormat = params.startTime;
-  }
-  if(params.endTime) {
-    params.endTimeFormat = params.endTime;
-  }
-  return params;
 }
 
 function sendCloseSessionMail(session) {

@@ -217,9 +217,9 @@
     }
 
     function updateStep(dataObj) {
-      if (dataObj == 'startTime' || dataObj == 'endTime') {
+      if (dataObj == 'startTime' || dataObj == 'endTime' || dataObj == 'timeZone') {
         if(validateDate(vm.step1.startTime) && validateDate(vm.step1.endTime)) {
-          updateStep({ startTime: vm.step1.startTime.toString(), endTime: vm.step1.endTime.toString() });
+          updateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone });
         }
         return;
       }

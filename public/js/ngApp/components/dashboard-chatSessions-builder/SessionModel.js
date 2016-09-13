@@ -136,7 +136,7 @@
       var self = this;
 
       var deferred = $q.defer();
-      sessionBuilderRestApi.post({},{ date: initializeDate().toString() },function(res) {
+      sessionBuilderRestApi.post({},{ date: initializeDate().toString(), timeZone: jstz.determine().name() },function(res) {
         if (res.error) {
           deferred.reject(res.error);
         }

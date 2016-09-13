@@ -28,7 +28,7 @@
       </uib-accordion-heading>
 
       <div class="data-time-content-wrapper" style="display: flex">
-        <span class='date-time-label'>Start</span>
+        <span class='date-time-label start'>Start</span>
         <img class='date-time-ico' src='/icons/calendar_green.png' ng-click='step1Controller.startOpened = true' />
 
         <input type='text' class='timepicker-wrapper date'
@@ -75,6 +75,20 @@
           show-meridian='true'
         >
         </uib-timepicker>
+      </div>
+
+      <div class='data-time-content-wrapper'>
+        <span class='date-time-label timeZone'>Time Zone</span>
+        <select class='form-control border-radius-none'
+          ng-controller='TimeZonePickerController as tzpc'
+          ng-model='step1Controller.step1.timeZone'
+          ng-init='tzpc.init(step1Controller.step1)'
+          ng-change="step1Controller.updateStep('timeZone')"
+        >
+          <option ng-repeat='object in tzpc.timeZoneList' value='{{ object.utc[0] }}' ng-selected='tzpc.isSelected(object.utc, step1Controller.step1.timeZone)'>
+            {{ object.text }}
+          </option>
+        </select>
       </div>
 
       <code ng-if="step1Controller.accordions.dateAndTimeError" class='calendar-error'>
