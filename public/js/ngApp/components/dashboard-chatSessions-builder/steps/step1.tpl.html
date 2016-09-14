@@ -34,6 +34,7 @@
         <input type='text' class='timepicker-wrapper date'
           uib-datepicker-popup='{{step1Controller.format}}'
           ng-model='step1Controller.step1.startTime'
+          ng-model-options='step1Controller.step1.ngModalOptions'
           ng-change="step1Controller.updateStep('startTime')"
           ng-click='step1Controller.startOpened = true'
           is-open='step1Controller.startOpened'
@@ -44,6 +45,7 @@
         <img class='date-time-ico time' src='/icons/time_green.png' />
         <uib-timepicker class='timepicker-wrapper'
           ng-model='step1Controller.step1.startTime'
+          ng-model-options='step1Controller.step1.ngModalOptions'
           ng-change="step1Controller.updateStep('startTime')"
           hour-step='step1Controller.dateTime.hstep'
           minute-step='step1Controller.dateTime.mstep'
@@ -59,6 +61,7 @@
         <input type='text' class='timepicker-wrapper date'
           uib-datepicker-popup='{{step1Controller.format}}'
           ng-model='step1Controller.step1.endTime'
+          ng-model-options='step1Controller.step1.ngModalOptions'
           ng-change="step1Controller.updateStep('endTime')"
           ng-click='step1Controller.endOpened = true'
           is-open='step1Controller.endOpened'
@@ -69,6 +72,7 @@
         <img class='date-time-ico time' src='/icons/time_green.png' />
         <uib-timepicker class='timepicker-wrapper'
           ng-model='step1Controller.step1.endTime'
+          ng-model-options='step1Controller.step1.ngModalOptions'
           ng-change="step1Controller.updateStep('endTime')"
           hour-step='step1Controller.dateTime.hstep'
           minute-step='step1Controller.dateTime.mstep'
