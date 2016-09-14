@@ -63,7 +63,7 @@
         deferred.resolve(result);
       }, function(error) {
         // This is because angular file upload can't understand CORS origin responses.
-        swichErrors(deferred, error)
+        switchErrors(deferred, error)
       });
 
       return deferred.promise;
@@ -94,7 +94,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > remove resources > server error >', error);
-        swichErrors(deferred, error);
+        switchErrors(deferred, error);
       });
 
       return deferred.promise;
@@ -109,7 +109,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > zip resources > server error >', error);
-        swichErrors(deferred, error);
+        switchErrors(deferred, error);
       });
 
       return deferred.promise;
@@ -154,7 +154,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > show resource > server error >', error);
-          swichErrors(deferred, error)
+          switchErrors(deferred, error)
       });
 
       return deferred.promise;
@@ -197,7 +197,7 @@
       };
     }
 
-    function swichErrors(deferred, error) {
+    function switchErrors(deferred, error) {
       switch (true) {
         case error.status == -1:
           deferred.reject("File is too big");
