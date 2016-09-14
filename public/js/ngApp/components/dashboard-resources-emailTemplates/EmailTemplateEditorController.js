@@ -3,7 +3,7 @@
 
   angular.module('KliikoApp').controller('EmailTemplateEditorController', EmailTemplateEditorController);
 
-  EmailTemplateEditorController.$inject = ['dbg', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', '$q'];
+  EmailTemplateEditorController.$inject = ['dbg', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', '$q', 'fileUploader'];
   //necessary to bypass email editors restrictions
   jQuery.browser = {};
     (function () {
@@ -15,7 +15,7 @@
         }
     })();
 
-  function EmailTemplateEditorController(dbg, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q) {
+  function EmailTemplateEditorController(dbg, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q, fileUploader) {
     dbg.log2('#EmailTemplateEditorController started');
 
     var vm = this;
@@ -97,7 +97,6 @@
     }
 
     function startEditingTemplate(templateIndex, inSession, templateId, template) {
-      var deferred = $q.defer();
       if (template) {
         selectedTemplate = template;
       } else {
@@ -111,15 +110,22 @@
       if (templateId) {
         mailTemplate.getMailTemplate({id:templateId}).then(function (res) {
           if (res.error) return;
-          // vm.currentTemplate = vm.emailTemplates[templateIndex];
-          populateTemplate(res);
-          deferred.resolve({template: vm.currentTemplate, setContent: setContent});
+
+          if (vm.properties.brandLogoId) {
+            fileUploader.show(vm.properties.brandLogoId).then(function(result) {
+              populateTemplate(res);
+              setContent(vm.currentTemplate.content)
+              $('.wysiwyg iframe').contents().find("img#brandLogoUrl").attr("src", result.resource.url.full);
+            });
+          }else{
+            populateTemplate(res);
+            setContent(vm.currentTemplate.content)
+          }
         });
       }
-
-      return deferred.promise;
-
+      
       function populateTemplate(res) {
+        vm.currentTemplate = vm.emailTemplates[templateIndex];
         vm.currentTemplate.content = res.template.content;
         vm.currentTemplate.index = templateIndex;
         vm.currentTemplate.subject = res.template.subject;
