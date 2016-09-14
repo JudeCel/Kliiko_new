@@ -6,16 +6,12 @@ module.exports = {
   format: format
 }
 
-function format(type, date, timeZone) {
-  if(!timeZone) {
-    timeZone = 'Europe/London'
-  }
-
+function format(type, date) {
   if(type == 'date') {
-    return moment.utc(date).tz(timeZone).format('dddd Do MMMM');
+    return moment(date).format('dddd Do MMMM');
   }
   else if(type == 'time') {
-    let formated = moment.utc(date).tz(timeZone).format('h:mma');
+    let formated = moment(date).format('h:mma');
     return formated.replace(':00', '');
   }
 }
