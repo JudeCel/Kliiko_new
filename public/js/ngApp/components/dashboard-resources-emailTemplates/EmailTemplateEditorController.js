@@ -106,7 +106,7 @@
         mailTemplate.getMailTemplate({id:templateId}).then(function (res) {
           if (res.error) return;
 
-          if (vm.properties.brandLogoId) {
+          if (vm.properties.brandLogoId && inSession) {
             fileUploader.show(vm.properties.brandLogoId).then(function(result) {
               populateTemplate(res);
               setContent(vm.currentTemplate.content)
