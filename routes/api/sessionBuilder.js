@@ -25,7 +25,7 @@ module.exports = {
 };
 
 function initializeBuilder(req, res, next) {
-  let params = { accountId: res.locals.currentDomain.id, date: req.body.date };
+  let params = { accountId: res.locals.currentDomain.id, date: req.body.date, timeZone: req.body.timeZone };
   sessionBuilderServices.initializeBuilder(params).then(function(result) {
     res.send(result);
   }, function(error) {

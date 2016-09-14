@@ -144,8 +144,10 @@
       vm.today.setDate(vm.today.getDate() - 1);
 
       vm.dateTime = builderServices.getTimeSettings();
-      vm.step1.startTime = new Date(vm.session.steps.step1.startTime);
-      vm.step1.endTime = new Date(vm.session.steps.step1.endTime);
+      vm.step1.startTime = vm.session.steps.step1.startTime;
+      vm.step1.endTime = vm.session.steps.step1.endTime;
+      vm.step1.timeZone = vm.session.steps.step1.timeZone;
+      vm.step1.ngModalOptions = { timezone: vm.session.steps.step1.timeZoneOffset };
       initStep(null, 'initial');
       getAllContacts();
       vm.name = vm.session.steps.step1.name;
@@ -217,9 +219,9 @@
     }
 
     function updateStep(dataObj) {
-      if (dataObj == 'startTime' || dataObj == 'endTime') {
+      if (dataObj == 'startTime' || dataObj == 'endTime' || dataObj == 'timeZone') {
         if(validateDate(vm.step1.startTime) && validateDate(vm.step1.endTime)) {
-          updateStep({ startTime: vm.step1.startTime.toString(), endTime: vm.step1.endTime.toString() });
+          updateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone });
         }
         return;
       }

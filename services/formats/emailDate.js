@@ -1,6 +1,6 @@
 'use strict';
 
-var moment = require('moment');
+var moment = require('moment-timezone');
 
 module.exports = {
   format: format
@@ -8,10 +8,10 @@ module.exports = {
 
 function format(type, date) {
   if(type == 'date') {
-    return moment.utc(date).format('dddd Do MMMM');
+    return moment(date).format('dddd Do MMMM');
   }
   else if(type == 'time') {
-    let formated = moment.utc(date).format('h:mma');
+    let formated = moment(date).format('h:mma');
     return formated.replace(':00', '');
   }
 }
