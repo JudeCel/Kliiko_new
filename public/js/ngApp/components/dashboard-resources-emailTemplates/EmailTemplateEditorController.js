@@ -97,14 +97,9 @@
     }
 
     function startEditingTemplate(templateIndex, inSession, templateId, template) {
-      if (template) {
-        selectedTemplate = template;
-      } else {
-        selectedTemplate = vm.emailTemplates[templateIndex];
-      }
 
       if (!templateId) {
-        templateId =  selectedTemplate.id;
+        templateId = template ? template.id : vm.emailTemplates[templateIndex].id;
       }
 
       if (templateId) {
@@ -123,7 +118,7 @@
           }
         });
       }
-      
+
       function populateTemplate(res) {
         vm.currentTemplate = vm.emailTemplates[templateIndex];
         vm.currentTemplate.content = res.template.content;
