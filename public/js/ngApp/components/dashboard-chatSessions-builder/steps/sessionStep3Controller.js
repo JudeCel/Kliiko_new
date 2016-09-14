@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep3Controller', SessionStep3Controller);
 
-  SessionStep3Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', '$state',  '$filter', '$scope', 'SessionModel', 'domServices'];
-  function SessionStep3Controller(dbg, builderServices, messenger, $state, $filter, $scope, SessionModel, domServices) {
+  SessionStep3Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', '$state',  '$filter', '$scope', 'SessionModel', 'domServices', 'fileUploader'];
+  function SessionStep3Controller(dbg, builderServices, messenger, $state, $filter, $scope, SessionModel, domServices, fileUploader) {
     dbg.log2('#SessionBuilderController 3 started');
     var vm = this;
     vm.mailTemplateList = [];
@@ -25,6 +25,19 @@
       else {
         return "*";
       }
+    }
+    vm.selectTemplate = function(key, template, ec, sbc){
+      ec.startEditingTemplate(key, true, template.id, template).then(function(templateResult) {
+        if (vm.session.sessionData.resourceId) {
+          fileUploader.show(vm.session.sessionData.resourceId).then(function(result) {
+            templateResult.setContent(templateResult.template.content);
+            $('.wysiwyg iframe').contents().find("img#brandLogoUrl").attr("src", result.resource.url.full);
+          });
+        }else{
+          templateResult.setContent(templateResult.template.content);
+        }
+      });
+      sbc.showEmailsTemplateEditeor = true;
     }
 
     vm.getPreparedMailTemplateList();

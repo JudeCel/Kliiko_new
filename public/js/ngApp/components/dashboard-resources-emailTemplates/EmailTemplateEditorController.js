@@ -78,10 +78,6 @@
           vm.startEditingTemplate(0);
         }
       });
-
-
-
-
     };
 
     vm.startEditingTemplate = startEditingTemplate;
@@ -90,16 +86,18 @@
     vm.resetMailTemplate = resetMailTemplate;
     vm.previewMailTemplate = previewMailTemplate;
     vm.saveEmailTemplate = saveEmailTemplate;
+    var selectedTemplate = {};
     vm.initGallery = initGallery;
     vm.galleryDropdownData = galleryDropdownData;
     vm.openModal = openModal;
     vm.findIndexFromId = findIndexFromId;
 
-
-
+    function setContent(content) {
+      $('#templateContent').wysiwyg('setContent', content);
+    }
 
     function startEditingTemplate(templateIndex, inSession, templateId, template) {
-      var selectedTemplate = {};
+      var deferred = $q.defer();
       if (template) {
         selectedTemplate = template;
       } else {
@@ -113,16 +111,18 @@
       if (templateId) {
         mailTemplate.getMailTemplate({id:templateId}).then(function (res) {
           if (res.error) return;
-          vm.currentTemplate = vm.emailTemplates[templateIndex];
+          // vm.currentTemplate = vm.emailTemplates[templateIndex];
           populateTemplate(res);
+          deferred.resolve({template: vm.currentTemplate, setContent: setContent});
         });
       }
+
+      return deferred.promise;
 
       function populateTemplate(res) {
         vm.currentTemplate.content = res.template.content;
         vm.currentTemplate.index = templateIndex;
         vm.currentTemplate.subject = res.template.subject;
-        $('#templateContent').wysiwyg('setContent', vm.currentTemplate.content);
 
         if(!vm.currentTemplate.isCopy) {
           vm.viewingTemplateId = vm.currentTemplate.id;

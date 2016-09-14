@@ -20,6 +20,7 @@
     fileUploaderService.survey = survey;
     fileUploaderService.banner = banner;
     fileUploaderService.pingServer = pingServer;
+    fileUploaderService.show = show;
 
     return fileUploaderService;
 
@@ -144,6 +145,21 @@
       return deferred.promise;
     }
 
+    function show(id) {
+      var deferred = $q.defer();
+      dbg.log2('#KliikoApp.fileUploader > show resource');
+
+      resourceForServer('resources', id).get({}, function(result) {
+        dbg.log2('#KliikoApp.fileUploader > show resource > server respond >', result);
+        deferred.resolve(result);
+      }, function(error) {
+        dbg.log2('#KliikoApp.fileUploader > show resource > server error >', error);
+          swichErrors(deferred, error)
+      });
+
+      return deferred.promise;
+    }
+
     function banner() {
       var deferred = $q.defer();
       dbg.log2('#KliikoApp.fileUploader > banner resource');
@@ -180,7 +196,7 @@
         url: globalSettings.serverChatDomainUrl + '/api/' + what +  '/'
       };
     }
-    
+
     function swichErrors(deferred, error) {
       switch (true) {
         case error.status == -1:
