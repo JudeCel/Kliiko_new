@@ -20,6 +20,7 @@
     fileUploaderService.survey = survey;
     fileUploaderService.banner = banner;
     fileUploaderService.pingServer = pingServer;
+    fileUploaderService.show = show;
 
     return fileUploaderService;
 
@@ -62,7 +63,7 @@
         deferred.resolve(result);
       }, function(error) {
         // This is because angular file upload can't understand CORS origin responses.
-        swichErrors(deferred, error)
+        switchErrors(deferred, error)
       });
 
       return deferred.promise;
@@ -93,7 +94,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > remove resources > server error >', error);
-        swichErrors(deferred, error);
+        switchErrors(deferred, error);
       });
 
       return deferred.promise;
@@ -108,7 +109,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > zip resources > server error >', error);
-        swichErrors(deferred, error);
+        switchErrors(deferred, error);
       });
 
       return deferred.promise;
@@ -139,6 +140,21 @@
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > survey resource > server error >', error);
         deferred.reject(error.data || requestError);
+      });
+
+      return deferred.promise;
+    }
+
+    function show(id) {
+      var deferred = $q.defer();
+      dbg.log2('#KliikoApp.fileUploader > show resource');
+
+      resourceForServer('resources', id).get({}, function(result) {
+        dbg.log2('#KliikoApp.fileUploader > show resource > server respond >', result);
+        deferred.resolve(result);
+      }, function(error) {
+        dbg.log2('#KliikoApp.fileUploader > show resource > server error >', error);
+          switchErrors(deferred, error)
       });
 
       return deferred.promise;
@@ -180,8 +196,8 @@
         url: globalSettings.serverChatDomainUrl + '/api/' + what +  '/'
       };
     }
-    
-    function swichErrors(deferred, error) {
+
+    function switchErrors(deferred, error) {
       switch (true) {
         case error.status == -1:
           deferred.reject("File is too big");
