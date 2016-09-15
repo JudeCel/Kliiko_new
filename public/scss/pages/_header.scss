@@ -5,6 +5,9 @@
   }
   .text-size-dashboard {
     font-size: 13px;
+    a {
+      cursor: pointer;
+    }
   }
   .btn-group{
     white-space:nowrap;
@@ -90,6 +93,10 @@
     box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.2);
     border-top: 1px solid #eee;
     margin-bottom: 1px;
+
+    li a {
+      cursor: pointer;
+    }
   }
 
   position: absolute;
