@@ -129,4 +129,30 @@
   .panel-title {
     margin-right: -30px !important;
   }
+  .header input{
+    min-width:55px;
+  }
+}
+
+.panel-group {
+  .scale {
+    transform: scale(.62);
+    margin: -9% -8.5%;
+    @media (max-width: 1550px) {  
+      margin: -10.5% -8.5%;
+    }
+    @media (max-width: 1109px) {  
+      margin: -12.5% -8.5%;
+    }
+  }
+  .hidden {
+    display:none;
+  }
+  label.selected-true {
+    border: 4px solid rgb(47, 159, 105);
+    border-radius: 5px;
+  }
+  label.selected-false {
+    border: 4px solid #fff;
+  }
 }

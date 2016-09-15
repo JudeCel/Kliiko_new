@@ -32,7 +32,7 @@
       </div>
     </div>
 
-    <div ng-if="bcc.schemesTotalItems > 12" class="paginator">
+    <div ng-if="bcc.schemesTotalItems > bcc.schemesItemsPerPage" class="paginator">
       <pagination total-items="bcc.schemesTotalItems" ng-model="bcc.schemesCurrentPage" class="pagination-sm" items-per-page="bcc.schemesItemsPerPage" max-size="10" boundary-links="true"></pagination>
     </div>
 
