@@ -38,10 +38,11 @@
     }
 
     function getCurrentPageSchemes(selectedId) {
-      if (!vm.selectedId && selectedId) {
-        vm.selectedId = selectedId;
-      }
       if (vm.schemes && vm.schemes.length > 0) {
+        if (vm.selectedId == null) {
+          if (selectedId == null) selectedId = 0;
+          vm.selectedId = selectedId;
+        }
         vm.schemes.sort(function (a, b) { 
             if (a.id == vm.selectedId) { return -1 }
             else if (b.id == vm.selectedId) { return 1 }
