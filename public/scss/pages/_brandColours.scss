@@ -98,3 +98,35 @@
     margin: 10px auto 10%;
   }
 }
+
+.paginator {
+  text-align: center;
+  ul {
+    li a {
+      color: #2F9F69 !important;
+    }
+    li.active a {
+      color: #fff !important;
+      background-color: #2F9F69 !important;
+      border-color: #2F9F69 !important;
+    }
+    li.disabled a {
+      color: #777 !important;
+    }
+  }
+}
+
+
+.scale {
+  svg p {
+    @media (max-width: 1860px) {  
+      font-size: 90% !important;
+    }
+    @media (max-width: 1600px) {  
+      font-size: 80% !important;
+    }
+  }
+  .panel-title {
+    margin-right: -30px !important;
+  }
+}

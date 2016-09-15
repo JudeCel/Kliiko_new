@@ -25,11 +25,21 @@
     vm.colorForm = {};
     vm.defaultColours = { black: '#000000', white: '#FFFFFF' };
 
+    vm.schemesTotalItems = 0;
+    vm.schemesCurrentPage = 1;
+    vm.schemesItemsPerPage = 12;
+    vm.setSchemesPage = setSchemesPage;
+
     changePage('index');
+
+    function setSchemesPage(pageNo) {
+      vm.schemesCurrentPage = pageNo;
+    };
 
     function init() {
       brandColourServices.getAllSchemes().then(function(res) {
         vm.schemes = res.data;
+        vm.schemesTotalItems = vm.schemes.length;
         vm.manageFields = res.manageFields;
         vm.hexRegex = new RegExp(res.hexRegex);
         vm.memberColours = res.memberColours;
@@ -52,6 +62,7 @@
             messenger.ok(res.message);
             var index = vm.schemes.indexOf(scheme);
             vm.schemes.splice(index, 1);
+            vm.schemesTotalItems = vm.schemes.length;
           }
         });
       });
@@ -66,6 +77,7 @@
         }
         else {
           vm.schemes.push(res.data);
+          vm.schemesTotalItems = vm.schemes.length;
           messenger.ok(res.message);
         }
       });
