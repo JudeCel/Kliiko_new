@@ -17,7 +17,7 @@ module.exports = (Sequelize, DataTypes) => {
     } },
     startTime: { type: DataTypes.DATE, allowNull: false, defaultValue: initializeDate(), validate: { isValid: validateDate } },
     endTime: { type: DataTypes.DATE, allowNull: false , defaultValue: initializeDate() },
-    timeZone: { type: DataTypes.STRING, allowNull: true },
+    timeZone: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     incentive_details: { type: DataTypes.STRING, allowNull: true  },
     colours_used: { type: DataTypes.TEXT, allowNull: true },
     step: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionBuilderSteps, defaultValue: 'setUp' },
