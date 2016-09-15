@@ -9,7 +9,6 @@
 
     var vm = this;
 
-
     vm.removeScheme = removeScheme;
     vm.copyScheme = copyScheme;
     vm.finishManage = finishManage;
@@ -24,17 +23,36 @@
     vm.scheme = {};
     vm.colorForm = {};
     vm.defaultColours = { black: '#000000', white: '#FFFFFF' };
+    vm.selectedId = null;
 
     vm.schemesTotalItems = 0;
     vm.schemesCurrentPage = 1;
     vm.schemesItemsPerPage = 12;
     vm.setSchemesPage = setSchemesPage;
+    vm.getCurrentPageSchemes = getCurrentPageSchemes;
 
     changePage('index');
 
     function setSchemesPage(pageNo) {
       vm.schemesCurrentPage = pageNo;
-    };
+    }
+
+    function getCurrentPageSchemes(selectedId) {
+      if (!vm.selectedId && selectedId) {
+        vm.selectedId = selectedId;
+      }
+      if (vm.schemes && vm.schemes.length > 0) {
+        vm.schemes.sort(function (a, b) { 
+            if (a.id == vm.selectedId) { return -1 }
+            else if (b.id == vm.selectedId) { return 1 }
+          else return (a.id < b.id) ? -1 : ((b.id < a.id) ? 1 : 0);
+        });
+        return vm.schemes.slice(((vm.schemesCurrentPage - 1) * vm.schemesItemsPerPage), ((vm.schemesCurrentPage) * vm.schemesItemsPerPage));
+      }
+      else {
+        return {};
+      }
+    }
 
     function init() {
       brandColourServices.getAllSchemes().then(function(res) {

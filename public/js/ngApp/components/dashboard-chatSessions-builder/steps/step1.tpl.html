@@ -233,7 +233,7 @@
 
         <section>
           <div class='row' ng-controller='BrandColourController as bcc'>
-            <div class='col-lg-6 col-md-6 col-sm-6 scale' ng-repeat='scheme in step1Controller.colorsList = bcc.schemes.slice(((bcc.schemesCurrentPage-1)*bcc.schemesItemsPerPage), ((bcc.schemesCurrentPage)*bcc.schemesItemsPerPage))' ng-show="bcc.schemes.length">
+            <div class='col-lg-6 col-md-6 col-sm-6 scale' ng-repeat='scheme in step1Controller.colorsList = bcc.getCurrentPageSchemes(step1Controller.session.steps.step1.brandProjectPreferenceId)' ng-show="bcc.schemes.length">
               <label for="{{ $index }}-scheme" class="selected-{{step1Controller.colorScheme.id == scheme.id}}">
                 <div class='panel panel-default panel-success'>
                   <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='font-weight:normal; background-color: {{ scheme.colours.browserBackground }};'>
