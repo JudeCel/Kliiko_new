@@ -8,6 +8,7 @@ var Account = models.Account;
 var AccountUser = models.AccountUser;
 var Session = models.Session;
 
+var moment = require('moment-timezone');
 var emailDate = require('./formats/emailDate');
 var sessionMemberService = require('./sessionMember');
 var socialProfileService = require('./socialProfile');
@@ -185,12 +186,13 @@ function sendInvite(invite, deferred) {
         accountName: session.Account.name,
         email: invite.AccountUser.email,
         sessionName: session.name,
-        orginalStartTime: session.startTime,
-        orginalEndTime: session.endTime,
-        startTime: emailDate.format('time', session.startTime),
-        endTime: emailDate.format('time', session.endTime),
-        startDate: emailDate.format('date', session.startTime),
-        endDate: emailDate.format('date', session.endTime),
+        timeZone: session.timeZone,
+        orginalStartTime: moment(session.startTime).tz(session.timeZone).format(),
+        orginalEndTime: moment(session.endTime).tz(session.timeZone).format(),
+        startTime: emailDate.format('time', session.startTime, session.timeZone),
+        endTime: emailDate.format('time', session.endTime, session.timeZone),
+        startDate: emailDate.format('date', session.startTime, session.timeZone),
+        endDate: emailDate.format('date', session.endTime, session.timeZone),
         incentive: session.incentive_details,
         facilitatorFirstName: facilitator.firstName,
         facilitatorLastName: facilitator.lastName,
@@ -591,8 +593,8 @@ function prepareMailParams(invite, session, receiver, facilitator) {
     facilitatorMail: facilitator.email,
     facilitatorMobileNumber: facilitator.mobile,
     unsubscribeMailUrl: 'not-found',
-    startTime: emailDate.format('time', session.startTime),
-    startDate: emailDate.format('date', session.startTime),
+    startTime: emailDate.format('time', session.startTime, session.timeZone),
+    startDate: emailDate.format('date', session.startTime, session.timeZone),
     orginalStartTime: session.startTime,
     orginalEndTime: session.endTime,
     logInUrl: mailUrlHelper.getUrl(invite.token, '/invite/') + '/accept/',

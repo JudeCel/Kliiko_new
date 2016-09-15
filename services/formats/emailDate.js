@@ -6,7 +6,7 @@ module.exports = {
   format: format
 }
 
-function format(type, date) {
+function format(type, date, timeZone) {
   if(type == 'date') {
     return moment(date).format('dddd Do MMMM');
   }
