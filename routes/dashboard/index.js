@@ -34,10 +34,6 @@ router.get('/landing', function(req, res) {
     subscriptionService.retrievCheckoutAndUpdateSub(req.query.id)
   }
 
-  if(req.user.signInCount == 0) {
-    models.User.update({ signInCount: 1 }, { where: { id: req.user.id } });
-  }
-
   res.render(views_path('landing'), { title: 'Landing page' });
 });
 

@@ -18,7 +18,6 @@ module.exports = {
 
 function planSelectPage(req, res, next) {
   let redirectUrl = subdomains.url(req, res.locals.currentDomain.name, '/account-hub/landing');
-
   if(req.originalUrl == '/account-hub/selectPlan' || req.originalUrl == '/account-hub/landing') {
     next();
   }
@@ -34,7 +33,12 @@ function planSelectPage(req, res, next) {
             res.end();
           }
           else {
-            res.redirect(redirectUrl);
+            if(req.session.landed) {
+              next();
+            }
+            else {
+              res.redirect(redirectUrl);
+            }
           }
         }, function(error) {
           res.send({ error: error });
@@ -75,7 +79,8 @@ function myDashboardPage(req, res, next) {
       }
     }
     else {
-      if(!req.user.signInCount || req.user.signInCount == 1) {
+      if(!req.user.signInCount && !req.session.landed) {
+        req.session.landed = true;
         res.redirect(subdomains.url(req, selectManager(result.accountManager, result.facilitator).subdomain, '/account-hub/landing'));
       }
       else {
