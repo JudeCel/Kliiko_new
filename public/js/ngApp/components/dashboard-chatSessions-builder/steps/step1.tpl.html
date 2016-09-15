@@ -89,7 +89,7 @@
           ng-init='tzpc.init(step1Controller.step1)'
           ng-change="step1Controller.updateStep('timeZone')"
         >
-          <option ng-repeat='object in tzpc.timeZoneList' value='{{ object.utc[0] }}' ng-selected='tzpc.isSelected(object.utc, step1Controller.step1.timeZone)'>
+          <option ng-repeat='object in tzpc.timeZoneList' value='{{ tzpc.optionValue(object.utc, step1Controller.step1.timeZone) }}' ng-selected='tzpc.isSelected(object.utc, step1Controller.step1.timeZone)'>
             {{ object.text }}
           </option>
         </select>

@@ -11,6 +11,7 @@
     var vm = this;
     vm.init = init;
     vm.isSelected = isSelected;
+    vm.optionValue = optionValue;
 
     function init(object) {
       vm.timeZoneList = timeZoneListFull;
@@ -18,7 +19,12 @@
     }
 
     function isSelected(array, zone) {
-      return array.includes(zone);
+      return array.indexOf(zone) > -1;
+    }
+
+    function optionValue(array, zone) {
+      var index = array.indexOf(zone);
+      return array[index > -1 ? index : 0];
     }
 
     var timeZoneListFull = [
