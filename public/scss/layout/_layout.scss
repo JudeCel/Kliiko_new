@@ -323,6 +323,10 @@ input#reveiveNewsLetters{
   background-color: #4CB649;
   margin-top: -25px;
 
+  a.dropdown-toggle {
+    height: 39px;
+  }
+
   ul.dropdown-menu{
     background-color: #4CB649;
     border-radius: 0px;
@@ -346,6 +350,9 @@ input#reveiveNewsLetters{
     margin: -9px -13px;
     height: 39px;
     width: 40px;
+    @-moz-document url-prefix() {
+      margin-top: -30px;
+    }
 
     span{
       border-left: 7px solid transparent;
