@@ -36,6 +36,7 @@
     vm.saveEdited = saveEdited;
     vm.inviteFacilitator = inviteFacilitator;
     vm.cleanColorScheme = cleanColorScheme;
+    vm.updateOrCleanColorScheme = updateOrCleanColorScheme;
 
     vm.currentPage = 1;
     vm.pageSize = 3;
@@ -60,6 +61,16 @@
     function cleanColorScheme(executeUpdate) {
       vm.colorScheme = null;
       executeUpdate({ brandProjectPreferenceId: null });
+    }
+
+    function updateOrCleanColorScheme(id, executeUpdate) {
+      if (vm.session.steps.step1.brandProjectPreferenceId == id) {
+        vm.colorScheme = null;
+        executeUpdate({ brandProjectPreferenceId: null });
+      } else {
+        executeUpdate({ brandProjectPreferenceId: id });
+        vm.session.steps.step1.brandProjectPreferenceId = id;
+      }
     }
 
     function newFacilitator(userData) {

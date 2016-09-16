@@ -232,29 +232,22 @@
         </uib-accordion-heading>
 
         <section>
-          <div class='row' ng-controller='BrandColourController as bcc'>
-            <div class='col-sm-6' ng-repeat='scheme in step1Controller.colorsList = bcc.schemes' ng-show="bcc.schemes.length">
-              <label for="{{ $index }}-scheme">
+          <div class='row' ng-controller='BrandColourController as bcc' ng-init="bcc.setSelectedId(step1Controller.session.steps.step1.brandProjectPreferenceId)">
+            <div class='col-lg-6 col-md-6 col-sm-6 scale' ng-repeat='scheme in step1Controller.colorsList = bcc.pagination.schemes' ng-show="bcc.schemes.length">
+              <label for="{{ $index }}-scheme" class="selected-{{step1Controller.colorScheme.id == scheme.id}}">
                 <div class='panel panel-default panel-success'>
                   <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='font-weight:normal; background-color: {{ scheme.colours.browserBackground }};'>
                     <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/preview.html'"></ng-include>
                   </div>
-
-                  <div class='panel-heading'>
-                    <div class='row'>
-                      <div class='col-xs-1'>
-                        <input id="{{ $index }}-scheme" type="radio" ng-model="step1Controller.colorScheme" ng-value="scheme" ng-click="sbc.updateStep({brandProjectPreferenceId:step1Controller.colorScheme.id})">
-                      </div>
-                      <div class='col-xs-10'>
-                        <h3 class='panel-title text-max-width'>{{ scheme.name }}</h3>
-                      </div>
-                    </div>
-                  </div>
+                  <input class="hidden" id="{{ $index }}-scheme" type="radio" ng-model="step1Controller.colorScheme" ng-value="scheme" ng-click="step1Controller.updateOrCleanColorScheme(scheme.id, sbc.updateStep)">
                 </div>
               </label>
             </div>
 
             <div class='col-sm-12'>
+              <div ng-if="bcc.pagination.schemesTotalItems > bcc.pagination.schemesItemsPerPage" class="paginator">
+                <pagination total-items="bcc.pagination.schemesTotalItems" ng-model="bcc.pagination.schemesCurrentPage" class="pagination-sm" items-per-page="bcc.pagination.schemesItemsPerPage" max-size="10" boundary-links="true" ng-click="bcc.prepareCurrentPageSchemes()"></pagination>
+              </div>
               <div class="btn-standart btn-red" ng-show="step1Controller.colorScheme" ng-click="step1Controller.cleanColorScheme(sbc.updateStep)">Clean Color Scheme Selection</div>
             </div>
 
