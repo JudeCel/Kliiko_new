@@ -31,6 +31,7 @@
         vm.userDetailsForm.$setUntouched();
         vm.errors = {};
         messenger.ok(res.message);
+        domServices.modal('contactDetailsModal', 'close');
       }, function(error) {
         vm.errors = error;
       });

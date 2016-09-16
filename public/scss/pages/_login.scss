@@ -98,6 +98,7 @@
       height: 85px;
       font-size: 1.2em;
       background-color: #f7f5f6;
+
       > div {
         width: 88%;
       }
@@ -148,7 +149,7 @@
     .table {
       td {
         padding-left: 0;
-        padding-right: 0;
+        padding-right: 6px;
       }
       &.error-column {
         padding: 0;
