@@ -18,8 +18,8 @@
     vm.closeModelPreview = closeModelPreview;
     vm.undoCurrentScheme = undoCurrentScheme;
     vm.colorStyles = colorStyles;
-    vm.setSchemesPage = setSchemesPage;
-    vm.getCurrentPageSchemes = getCurrentPageSchemes;
+    vm.prepareCurrentPageSchemes = prepareCurrentPageSchemes;
+    vm.setSelectedId = setSelectedId;
 
     vm.schemes = {};
     vm.scheme = {};
@@ -30,37 +30,41 @@
     vm.pagination = {
       schemesTotalItems: 0,
       schemesCurrentPage: 1,
-      schemesItemsPerPage: 12
+      schemesItemsPerPage: 12,
+      schemes: {}
     }
 
     changePage('index');
-
-    function setSchemesPage(pageNo) {
-        vm.pagination.schemesCurrentPage = pageNo;
+      
+    function setSelectedId(selectedId) {
+      if (vm.selectedId == null) {
+        vm.selectedId = selectedId || 0;
+      }
     }
 
-    function getCurrentPageSchemes(selectedId) {
+    function prepareCurrentPageSchemes() {
       if (vm.schemes && vm.schemes.length > 0) {
-        if (vm.selectedId == null) {
-          if (selectedId == null) selectedId = 0;
-          vm.selectedId = selectedId;
+        for (var i = 0, len = vm.schemes.length; i < len; i++) {
+          if (vm.schemes[i].id == vm.selectedId) {
+            let selectedItem = vm.schemes[i];
+            vm.schemes.splice(i, 1);
+            vm.schemes.unshift(selectedItem);
+            break;
+          }
         }
-        vm.schemes.sort(function (a, b) { 
-            if (a.id == vm.selectedId) { return -1 }
-            else if (b.id == vm.selectedId) { return 1 }
-          else return (a.id < b.id) ? -1 : ((b.id < a.id) ? 1 : 0);
-        });
-        return vm.schemes.slice(((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage), ((vm.pagination.schemesCurrentPage) * vm.pagination.schemesItemsPerPage));
+        vm.pagination.schemes = vm.schemes.slice(((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage), ((vm.pagination.schemesCurrentPage) * vm.pagination.schemesItemsPerPage));
+        vm.pagination.schemesTotalItems = vm.schemes.length;
       }
       else {
-        return {};
+        vm.pagination.schemes = {};
+        vm.pagination.schemesTotalItems = 0;
       }
     }
 
     function init() {
       brandColourServices.getAllSchemes().then(function(res) {
         vm.schemes = res.data;
-        vm.pagination.schemesTotalItems = vm.schemes.length;
+        vm.prepareCurrentPageSchemes();
         vm.manageFields = res.manageFields;
         vm.hexRegex = new RegExp(res.hexRegex);
         vm.memberColours = res.memberColours;
@@ -83,7 +87,7 @@
             messenger.ok(res.message);
             var index = vm.schemes.indexOf(scheme);
             vm.schemes.splice(index, 1);
-            vm.pagination.schemesTotalItems = vm.schemes.length;
+            vm.prepareCurrentPageSchemes();
           }
         });
       });
@@ -98,7 +102,7 @@
         }
         else {
           vm.schemes.push(res.data);
-          vm.pagination.schemesTotalItems = vm.schemes.length;
+          vm.prepareCurrentPageSchemes();
           messenger.ok(res.message);
         }
       });

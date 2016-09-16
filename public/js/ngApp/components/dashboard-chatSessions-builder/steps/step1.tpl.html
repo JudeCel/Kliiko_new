@@ -233,7 +233,8 @@
 
         <section>
           <div class='row' ng-controller='BrandColourController as bcc'>
-            <div class='col-lg-6 col-md-6 col-sm-6 scale' ng-repeat='scheme in step1Controller.colorsList = bcc.getCurrentPageSchemes(step1Controller.session.steps.step1.brandProjectPreferenceId)' ng-show="bcc.schemes.length">
+            {{bcc.setSelectedId(step1Controller.session.steps.step1.brandProjectPreferenceId)}}
+            <div class='col-lg-6 col-md-6 col-sm-6 scale' ng-repeat='scheme in step1Controller.colorsList = bcc.pagination.schemes' ng-show="bcc.schemes.length">
               <label for="{{ $index }}-scheme" class="selected-{{step1Controller.colorScheme.id == scheme.id}}">
                 <div class='panel panel-default panel-success'>
                   <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='font-weight:normal; background-color: {{ scheme.colours.browserBackground }};'>
@@ -246,7 +247,7 @@
 
             <div class='col-sm-12'>
               <div ng-if="bcc.pagination.schemesTotalItems > bcc.pagination.schemesItemsPerPage" class="paginator">
-                <pagination total-items="bcc.pagination.schemesTotalItems" ng-model="bcc.pagination.schemesCurrentPage" class="pagination-sm" items-per-page="bcc.pagination.schemesItemsPerPage" max-size="10" boundary-links="true"></pagination>
+                <pagination total-items="bcc.pagination.schemesTotalItems" ng-model="bcc.pagination.schemesCurrentPage" class="pagination-sm" items-per-page="bcc.pagination.schemesItemsPerPage" max-size="10" boundary-links="true" ng-click="bcc.prepareCurrentPageSchemes()"></pagination>
               </div>
               <div class="btn-standart btn-red" ng-show="step1Controller.colorScheme" ng-click="step1Controller.cleanColorScheme(sbc.updateStep)">Clean Color Scheme Selection</div>
             </div>
