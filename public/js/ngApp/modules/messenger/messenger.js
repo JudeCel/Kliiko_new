@@ -47,8 +47,14 @@
 
       var message = parseMessage(message);
 
+      var template = "<div class='media'> \
+        <div class='media-left media-middle'></div> \
+        <div class='media-body'></div> \
+        <div class='media-right'></div> \
+      </div>";
+
       self.id = 'msgId' + new Date().getTime();
-      self.tpl = '<div id="'+self.id+'" class="message animated fadeInDown '+ type +'"><div class="message-text">'+message+'</div></div>';
+      self.tpl = '<div id="'+self.id+'" class="message animated fadeInDown '+ type +'">'+template+'</div>';
       self.flash = function(delay) {
         var parent = jQuery('#messenger-area');
 
@@ -66,13 +72,12 @@
           // show
           parent.prepend(self.tpl);
           self.$el = jQuery('#'+self.id);
+          self.$el.find('.media .media-body').prepend(message);
 
           // and hide
           if(type == 'error') {
-            var closeButton = '<div id="button-'+self.id+'" class="pull-right cursor-pointer glyphicon glyphicon-remove"></div>';
-            var icon = '<div id="warning-'+self.id+'" class="pull-left glyphicon glyphicon-alert margin-right-10"></div>';
-            self.$el.prepend(icon);
-            self.$el.prepend(closeButton);
+            self.$el.find('.media .media-left').prepend('<span class="glyphicon glyphicon-alert margin-right-5 margin-left-5"></span>');
+            self.$el.find('.media .media-right').prepend('<span id="button-'+self.id+'" class="pull-right cursor-pointer glyphicon glyphicon-remove"></span>');
             self.$button = jQuery('#button-'+self.id);
             self.$button.click(function() {
               self.$el.detach();
