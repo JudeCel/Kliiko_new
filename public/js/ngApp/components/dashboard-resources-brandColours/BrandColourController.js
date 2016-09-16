@@ -35,7 +35,7 @@
     }
 
     changePage('index');
-      
+
     function setSelectedId(selectedId) {
       if (vm.selectedId == null) {
         vm.selectedId = selectedId || 0;
@@ -46,7 +46,7 @@
       if (vm.schemes && vm.schemes.length > 0) {
         for (var i = 0, len = vm.schemes.length; i < len; i++) {
           if (vm.schemes[i].id == vm.selectedId) {
-            let selectedItem = vm.schemes[i];
+            var selectedItem = vm.schemes[i];
             vm.schemes.splice(i, 1);
             vm.schemes.unshift(selectedItem);
             break;
