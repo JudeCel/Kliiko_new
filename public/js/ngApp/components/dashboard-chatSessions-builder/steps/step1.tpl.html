@@ -232,8 +232,7 @@
         </uib-accordion-heading>
 
         <section>
-          <div class='row' ng-controller='BrandColourController as bcc'>
-            {{bcc.setSelectedId(step1Controller.session.steps.step1.brandProjectPreferenceId)}}
+          <div class='row' ng-controller='BrandColourController as bcc' ng-init="bcc.setSelectedId(step1Controller.session.steps.step1.brandProjectPreferenceId)">
             <div class='col-lg-6 col-md-6 col-sm-6 scale' ng-repeat='scheme in step1Controller.colorsList = bcc.pagination.schemes' ng-show="bcc.schemes.length">
               <label for="{{ $index }}-scheme" class="selected-{{step1Controller.colorScheme.id == scheme.id}}">
                 <div class='panel panel-default panel-success'>

@@ -138,13 +138,14 @@
       border-radius: 0;
     }
 
-    .has-error{
-        color: #f00;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 475px;
-        display: inline-block;
-      }
+    .has-error {
+      color: #f00;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 475px;
+      display:none;
+    }
+
 
     .table {
       td {
