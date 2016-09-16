@@ -18,6 +18,8 @@
     vm.closeModelPreview = closeModelPreview;
     vm.undoCurrentScheme = undoCurrentScheme;
     vm.colorStyles = colorStyles;
+    vm.setSchemesPage = setSchemesPage;
+    vm.getCurrentPageSchemes = getCurrentPageSchemes;
 
     vm.schemes = {};
     vm.scheme = {};
@@ -25,16 +27,16 @@
     vm.defaultColours = { black: '#000000', white: '#FFFFFF' };
     vm.selectedId = null;
 
-    vm.schemesTotalItems = 0;
-    vm.schemesCurrentPage = 1;
-    vm.schemesItemsPerPage = 12;
-    vm.setSchemesPage = setSchemesPage;
-    vm.getCurrentPageSchemes = getCurrentPageSchemes;
+    vm.pagination = {
+      schemesTotalItems: 0,
+      schemesCurrentPage: 1,
+      schemesItemsPerPage: 12
+    }
 
     changePage('index');
 
     function setSchemesPage(pageNo) {
-      vm.schemesCurrentPage = pageNo;
+        vm.pagination.schemesCurrentPage = pageNo;
     }
 
     function getCurrentPageSchemes(selectedId) {
@@ -48,7 +50,7 @@
             else if (b.id == vm.selectedId) { return 1 }
           else return (a.id < b.id) ? -1 : ((b.id < a.id) ? 1 : 0);
         });
-        return vm.schemes.slice(((vm.schemesCurrentPage - 1) * vm.schemesItemsPerPage), ((vm.schemesCurrentPage) * vm.schemesItemsPerPage));
+        return vm.schemes.slice(((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage), ((vm.pagination.schemesCurrentPage) * vm.pagination.schemesItemsPerPage));
       }
       else {
         return {};
@@ -58,7 +60,7 @@
     function init() {
       brandColourServices.getAllSchemes().then(function(res) {
         vm.schemes = res.data;
-        vm.schemesTotalItems = vm.schemes.length;
+        vm.pagination.schemesTotalItems = vm.schemes.length;
         vm.manageFields = res.manageFields;
         vm.hexRegex = new RegExp(res.hexRegex);
         vm.memberColours = res.memberColours;
@@ -81,7 +83,7 @@
             messenger.ok(res.message);
             var index = vm.schemes.indexOf(scheme);
             vm.schemes.splice(index, 1);
-            vm.schemesTotalItems = vm.schemes.length;
+            vm.pagination.schemesTotalItems = vm.schemes.length;
           }
         });
       });
@@ -96,7 +98,7 @@
         }
         else {
           vm.schemes.push(res.data);
-          vm.schemesTotalItems = vm.schemes.length;
+          vm.pagination.schemesTotalItems = vm.schemes.length;
           messenger.ok(res.message);
         }
       });
