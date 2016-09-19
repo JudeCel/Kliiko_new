@@ -167,3 +167,22 @@
     }
   }
 }
+
+.main-first-page-registration .login-container {
+  @media (max-width: 379px) {
+    label.text-login-page {
+      font-size:13px;
+    }
+    tr > td:first-child {
+      padding-right: 5px !important;
+    }
+    input[type='tel']{
+      font-size: 13px;
+    }
+    div.intl-tel-input {
+      width:auto !important;
+      min-width:100% !important;
+      margin-right: -20px;
+    }
+  }
+}

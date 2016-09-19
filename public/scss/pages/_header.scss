@@ -73,6 +73,10 @@
   }
   .navbar-brand {
     float:none;
+    position: absolute;
+    margin-left: 50%;
+    margin-top: -12px;
+    left: 0px !important;
     img {
       display: inherit;
       margin: 7px;
