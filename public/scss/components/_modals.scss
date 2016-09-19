@@ -107,6 +107,11 @@
 .brandColourPreviewModal {
   @extend .contactDetailsModal;
   width: 35%;
+
+  .circle-addon img {
+    width: 38px !important;
+    height: 38px !important;
+  }
 }
 
 .accountManagerModal {

@@ -173,10 +173,11 @@ function copyScheme(params, accountId) {
 };
 
 function manageFields() {
-  let object = { chatRoom: [] };
-
-  _.map(brandProjectConstants.preferenceColours, function(value, key) {
-    object.chatRoom.push({
+  let object = { chatRoom: [], email: [] };
+  let index = 0;
+  _.map(brandProjectConstants.preferenceColours, function (value, key) {
+    index++;
+    (index <= 6 ? object.chatRoom : object.email).push({
       title: _.startCase(key),
       model: key,
       colour: value
