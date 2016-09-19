@@ -154,8 +154,8 @@
       });
     };
 
-    function initColor(model, object) {
-      vm.scheme.colours[model] = object[model] || vm.defaultColours.white;
+    function initColor(field, object) {
+      vm.scheme.colours[field.model] = object[field.model] || field.colour;
       vm.previewScheme = vm.scheme;
     };
 

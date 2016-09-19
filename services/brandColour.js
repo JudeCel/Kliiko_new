@@ -178,7 +178,8 @@ function manageFields() {
   _.map(brandProjectConstants.preferenceColours, function(value, key) {
     object.chatRoom.push({
       title: _.startCase(key),
-      model: key
+      model: key,
+      colour: value
     });
   });
 
