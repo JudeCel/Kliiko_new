@@ -90,15 +90,10 @@ function myDashboardPage(req, res, next) {
 function getUrl(res, token, url) {
   let options = {
     url: buildUrlForChatToken(),
-    headers: { 'Authorization': token },
-    rejectUnauthorized: false
+    headers: { 'Authorization': token }
   };
 
   request.get(options, function(error, response) {
-    console.log("/home/dainisl/code/Kliiko/middleware/filters.js:97");
-    console.log(error);
-    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++");
-
     if(error || response.statusCode != 200) {
       res.redirect(url);
     }
