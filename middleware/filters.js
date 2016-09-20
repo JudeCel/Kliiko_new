@@ -90,7 +90,8 @@ function myDashboardPage(req, res, next) {
 function getUrl(res, token, url) {
   let options = {
     url: buildUrlForChatToken(),
-    headers: { 'Authorization': token }
+    headers: { 'Authorization': token },
+    rejectUnauthorized: false
   };
 
   request.get(options, function(error, response) {
