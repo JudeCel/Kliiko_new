@@ -215,9 +215,9 @@ function assignDefaultColours(colours) {
   let object = { };
 
   _.each(brandProjectConstants.preferenceColours, function (value, key) {
-    if (key == "email") {
-      _.each(value, function (emailValue, emailKey) {
-        object[emailKey] = emailValue;
+    if (typeof(value) == "object") {
+      _.each(value, function (objValue, objKey) {
+        object[objKey] = objValue;
       });
     } else {
       object[key] = value;
