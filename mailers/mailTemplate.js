@@ -18,10 +18,8 @@ function preparePathData (attribs, resources) {
   let filename = attribs.src.split('/');
   let name = _.camelCase(filename[filename.length - 1])+"."+extension;
   let path = attribs.src;
-  if (path.indexOf("/chat_room/upload") == -1) {
+  if (path.indexOf("http://") == -1 && path.indexOf("https://") == -1) {
     path = "public" + path;
-  } else {
-    path = path.replace("/chat_room/uploads/", "chatRoom/public/uploads/");
   }
   resources.push({filename: name, path: path, cid: name+"@att"});
   attribs.src = "cid:"+name+"@att";
