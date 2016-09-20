@@ -15,8 +15,8 @@
       <div class='form-inline input-group inner-addon'>
         <i class='glyphicon glyphicon-pencil' aria-hidden='true'></i>
         <input class='form-control' id='{{ field.model }}' name='{{ field.model }}' colorpicker colorpicker-position='top'
-          ng-required='bcc.formSubmitted' ng-pattern='bcc.hexRegex' ng-init='bcc.initColor(field, scheme)'
-          ng-model='scheme[field.model]' ng-style='bcc.colorStyles(scheme[field.model])' />
+          ng-required='bcc.formSubmitted' ng-pattern='bcc.hexRegex' ng-init='bcc.initColor(field, bcc.scheme.colours)'
+          ng-model='bcc.scheme.colours[field.model]' ng-style='bcc.colorStyles(bcc.scheme.colours[field.model])' />
       </div>
     </div>
   </div>

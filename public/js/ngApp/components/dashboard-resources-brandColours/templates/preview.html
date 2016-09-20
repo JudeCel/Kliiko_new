@@ -24,21 +24,8 @@
               <span class="chatMiddleButtons glyphicon glyphicon-file" aria-hidden="true"></span>
             </div>
             <div class="participants">
-              <div>
-                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[1] }};" />
-                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[2] }};" />
-              </div>
-              <div>
-                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[3] }};" />
-                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[4] }};"/>
-              </div>
-              <div>
-                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[5] }};"/>
-                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[6] }};"/>
-              </div>
-              <div>
-                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[7] }};"/>
-                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[8] }};"/>
+              <div ng-repeat="column in [1, 2, 3, 4]">
+                <span ng-repeat="index in [column * 2 - 1, column * 2]" ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/participant.html'"></span>
               </div>
             </div>
           </div>
