@@ -5,11 +5,12 @@
 
     <div class='col-xs-12'>
       <div class='col-xs-12 chatContainer' ng-attr-style='background-color: {{ previewScheme.mainBackground }}; border-color: {{ previewScheme.mainBorder }};'>
-        <div class='containerInnerBox' style='height: 25em'>
+        <div class='containerInnerBox'>
           <div class="pull-left">
             <div>
-              <div class="pull-left">
-                avatar
+              <div class="pull-left avatar">
+                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.facilitator }};"/>
+                <div class="outerbox"><div class="triangle"></div><div class="innerbox">Neque porro quisquam est qui dolorem ipsum quia dolor sit amet</div></div>
               </div>
               <div class="pull-right whiteboardContainer">
                 <img src='/images/whiteboard.png' alt='whiteboard' />
@@ -22,8 +23,23 @@
               <span class="chatMiddleButtons glyphicon glyphicon-ok" aria-hidden="true"></span>
               <span class="chatMiddleButtons glyphicon glyphicon-file" aria-hidden="true"></span>
             </div>
-            <div>
-              avatars
+            <div class="participants">
+              <div>
+                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[1] }};" />
+                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[2] }};" />
+              </div>
+              <div>
+                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[3] }};" />
+                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[4] }};"/>
+              </div>
+              <div>
+                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[5] }};"/>
+                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[6] }};"/>
+              </div>
+              <div>
+                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[7] }};"/>
+                <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[8] }};"/>
+              </div>
             </div>
           </div>
           <div class="pull-right">
