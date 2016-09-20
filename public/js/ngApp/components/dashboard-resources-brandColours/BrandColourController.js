@@ -52,8 +52,11 @@
             break;
           }
         }
-        vm.pagination.schemes = vm.schemes.slice(((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage), ((vm.pagination.schemesCurrentPage) * vm.pagination.schemesItemsPerPage));
         vm.pagination.schemesTotalItems = vm.schemes.length;
+        while ((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage >= vm.schemes.length) {
+          vm.pagination.schemesCurrentPage--;
+        }
+        vm.pagination.schemes = vm.schemes.slice(((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage), ((vm.pagination.schemesCurrentPage) * vm.pagination.schemesItemsPerPage));
       }
       else {
         vm.pagination.schemes = {};

@@ -1,6 +1,7 @@
 .manage-preview {
   padding-top: 1%;
-  padding-bottom: 2%;
+  padding-bottom: 1%;
+  margin-bottom: 10px;
 }
 
 .inner-addon {
@@ -16,11 +17,21 @@
   }
   input {
     padding-right: 35px;
+    border: 1px solid !important;
+    border-radius: 0px;
   }
 }
 
 .label-size {
   font-size: 0.8em;
+}
+
+.panel-title {
+  margin-right: -30px !important;
+}
+.panel-body {
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .brandColours {
@@ -29,7 +40,110 @@
     margin-top: 2%;
     border: 2px solid;
     padding-bottom: 3%;
+    padding-right: 3%;
+    padding-left: 3%;
     height: 100%;
+    margin-left:-10px;
+    margin-right:-10px;
+    width: auto !important;
+
+    .userMessageContainer {
+       margin-bottom: 5px;
+      .userNameContainer {
+        color: #4DC0E9;
+        margin-left: 28px;
+      }
+      .messageTextContainer {
+        color: #333;
+        background: #F2F2F4;
+        margin-left: 28px;
+        padding: 1px 3px;
+      }
+      .messageTextContainer, .userNameContainer {
+        @media (max-width: 1529px) {  
+          font-size: 78% !important;
+        }
+        @media (max-width: 1399px) {  
+          font-size: 77% !important;
+          margin-left: 21px !important;
+        }
+      }
+      .smileContainer {
+        position: absolute;
+        img {
+          margin-top: -39px;
+          width: 24px;
+          height: 24px;
+          @media (max-width: 1399px) { 
+            margin-top: -34px; 
+            width: 18px !important;
+            height: 18px !important;
+          }
+        }
+      }
+    }
+    .buttonsContainer {
+      clear: both;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+    .whiteboardContainer img {
+      width: 92%;
+    }
+    .avatar {
+      img:first-child {
+        width: 41%;
+        border-bottom: 7px solid silver;
+        @media (max-width: 1399px) { 
+          border-bottom: 5px solid silver;
+        }
+      }
+      .triangle {
+        position: relative;
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 6px 6px 6px 0;
+        border-color: transparent #FBE7E9 transparent transparent;
+        line-height: 0px;
+        _border-color: #000000 #FBE7E9 #000000 #000000;
+        _filter: progid:DXImageTransform.Microsoft.Chroma(color='#000000');
+        margin-bottom: -10px;
+        margin-left: -5px;
+      }
+      .innerbox {
+        background-color: #FBE7E9;
+        margin-top: -13px;
+        padding: 1px 3px;
+        @media (max-width: 1849px) {  
+          font-size: 70% !important;
+        }
+        @media (max-width: 1399px) { 
+          font-size: 60% !important;
+        }
+      }
+      .outerbox {
+        width: 55%;
+        float: right;
+        padding-right: 8%;
+      }
+    }
+    .participants {
+      padding-top: 1%; 
+      > div {
+        float: left;
+        width: 24%;
+        img {
+          width: 75%;
+          margin-bottom: 12%;
+          border-bottom: 5px solid silver;
+        }
+      }
+      > div:nth-child(2n) {
+        padding-top: 6%; 
+      }
+    }
   }
 
   .chatMiddleButtons {
@@ -42,9 +156,22 @@
   }
 
   .header {
-    border: 1px solid #ccc;
+    box-shadow: 0px 1px 8px rgba(0,0,0,.2);
     background-color: white;
+    color: #111;
+    
+    input{
+      min-width:100px;
+    }
 
+    > div > div:first-child {
+      margin-top: 3px;
+    }
+     
+    .logo {
+      margin-top: 13px;
+      margin-left: 5px;
+    }
     .headerButtons {
       font-size: 1.5em;
       color: white;
@@ -53,6 +180,7 @@
     }
     label {
       padding-top: 6%;
+      white-space: nowrap;
     }
     .input-group {
       margin-bottom: 5%;
@@ -64,7 +192,7 @@
       .form-control:disabled {
         background-color: inherit;
         cursor: pointer;
-        height: 2.5em;
+        height: 2.6em;
         border: 1px solid #ccc;
       }
       .input-group-addon {
@@ -85,6 +213,19 @@
     padding: 0;
     padding-right: 5px;
     background-color: inherit;
+
+    img {
+      width: 26px;
+      height: 26px;
+    }
+  }
+
+  .message-input {
+    height: 26px;
+  }
+
+  .post-button {
+    padding: 5px 10px;
   }
 
   p {
@@ -96,6 +237,20 @@
   }
   .containerInnerBox {
     margin: 10px auto 10%;
+    height: 20em;
+
+    .pull-left {
+      width: 70%;
+      .pull-left {
+        width: 50%;
+      }
+      .pull-right {
+        width: 50%;
+      }
+    }
+    .pull-right {
+      width: 30%;
+    }
   }
 }
 
@@ -116,33 +271,18 @@
   }
 }
 
-
-.scale {
-  svg p {
-    @media (max-width: 1860px) {  
-      font-size: 90% !important;
-    }
-    @media (max-width: 1600px) {  
-      font-size: 80% !important;
-    }
-  }
-  .panel-title {
-    margin-right: -30px !important;
-  }
-  .header input{
-    min-width:55px;
-  }
-}
-
 .panel-group {
   .scale {
     transform: scale(.62);
-    margin: -9% -8.5%;
-    @media (max-width: 1550px) {  
+    margin: -8% -8.5%;
+    @media (max-width: 1299px) {  
       margin: -10.5% -8.5%;
     }
-    @media (max-width: 1109px) {  
-      margin: -12.5% -8.5%;
+    .avatar .innerbox {
+      margin-top: -20px;
+    }
+    .brandColours .chatContainer .userMessageContainer .smileContainer {
+      margin-top: -3px;
     }
   }
   .hidden {
@@ -154,5 +294,13 @@
   }
   label.selected-false {
     border: 4px solid #fff;
+  }
+}
+
+.name-input {
+  width: 100%;
+  padding-right: 20px;
+  input {
+    width:100%;
   }
 }
