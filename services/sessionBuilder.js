@@ -895,7 +895,7 @@ function validateStepOne(params) {
         errors.name = MessagesUtil.sessionBuilder.errors.firstStep.nameRequired;
       }
 
-      if (!params.type || params.type == '') {
+      if (!params.type) {
         errors.type = MessagesUtil.sessionBuilder.errors.firstStep.typeRequired;
       }
 
