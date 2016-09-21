@@ -2,17 +2,6 @@
   font-size: medium;
   text-align: left;
 
-  #create-new-btn {
-    background-image: url('/icons/add_new_list_green.png');
-    background-repeat: no-repeat;
-    background-position: 160px center;
-    &:hover {
-        background-image: url('/icons/add_new_list_white.png') !important;
-        background-repeat: no-repeat !important;
-        background-position: 160px center !important;
-    }
-  }
-
   .create-new-topic-area {
     line-height: 2.2;
     .check {

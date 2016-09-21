@@ -8,6 +8,7 @@ var Account = models.Account;
 var AccountUser = models.AccountUser;
 var Session = models.Session;
 
+var moment = require('moment-timezone');
 var emailDate = require('./formats/emailDate');
 var sessionMemberService = require('./sessionMember');
 var socialProfileService = require('./socialProfile');
@@ -185,12 +186,13 @@ function sendInvite(invite, deferred) {
         accountName: session.Account.name,
         email: invite.AccountUser.email,
         sessionName: session.name,
-        orginalStartTime: session.startTime,
-        orginalEndTime: session.endTime,
-        startTime: emailDate.format('time', session.startTimeFormat),
-        endTime: emailDate.format('time', session.endTimeFormat),
-        startDate: emailDate.format('date', session.startTimeFormat),
-        endDate: emailDate.format('date', session.endTimeFormat),
+        timeZone: session.timeZone,
+        orginalStartTime: moment(session.startTime).tz(session.timeZone).format(),
+        orginalEndTime: moment(session.endTime).tz(session.timeZone).format(),
+        startTime: emailDate.format('time', session.startTime, session.timeZone),
+        endTime: emailDate.format('time', session.endTime, session.timeZone),
+        startDate: emailDate.format('date', session.startTime, session.timeZone),
+        endDate: emailDate.format('date', session.endTime, session.timeZone),
         incentive: session.incentive_details,
         facilitatorFirstName: facilitator.firstName,
         facilitatorLastName: facilitator.lastName,
@@ -293,7 +295,7 @@ function acceptInviteExisting(token, callback) {
     else if(invite.userType == 'new') {
       return callback(null, invite);
     }
-    setAccountUserActive(invite, function(err, result) {
+    setAccountUserActive(invite, function(err, accountUser) {
       if(err) {
         return callback(err);
       }
@@ -306,17 +308,13 @@ function acceptInviteExisting(token, callback) {
             username: invite.AccountUser.firstName,
             role: invite.role
           };
+
           sessionMemberService.createWithTokenAndColour(params).then(function() {
-            if(invite.role == 'participant') {
+            shouldUpdateRole(accountUser, invite.role).then(function() {
               callback(null, invite, MessagesUtil.invite.confirmed);
-            }
-            else {
-              sendEmail('inviteConfirmation', invite).then(function() {
-                callback(null, invite, MessagesUtil.invite.confirmed);
-              }, function(error) {
-                callback(error);
-              });
-            }
+            }, function(error) {
+              callback(filters.errors(error));
+            });
           }, function(error) {
             callback(filters.errors(error));
           });
@@ -330,6 +328,19 @@ function acceptInviteExisting(token, callback) {
     });
   });
 };
+
+function shouldUpdateRole(accountUser, newRole) {
+  let roles = ['observer', 'participant', 'facilitator', 'accountManager', 'admin'];
+
+  if(roles.indexOf(newRole) > roles.indexOf(accountUser.role)) {
+    return accountUser.update({ role: newRole });
+  }
+  else {
+    let deferred = q.defer();
+    deferred.resolve();
+    return deferred.promise;
+  }
+}
 
 function acceptInviteNew(token, params, callback) {
   findInvite(token, function(error, invite) {
@@ -355,8 +366,8 @@ function acceptInviteNew(token, params, callback) {
   });
 };
 function setAccountUserActive(invite, callback) {
-  AccountUser.update({active: true, status: 'active'}, { where:{ id: invite.accountUserId } }).then(function(result) {
-    callback(null, result);
+  AccountUser.update({active: true, status: 'active'}, { where:{ id: invite.accountUserId }, returning: true }).then(function(result) {
+    callback(null, result[1][0]);
   },function(err) {
     callback(filters.errors(error));
   })
@@ -516,10 +527,6 @@ function declineSessionInvite(token, status) {
   return deferred.promise;
 }
 
-function needSedConfirmationEmail(invite) {
-    return invite.role == "participant"
-}
-
 function sendEmail(status, invite) {
   let deferred = q.defer();
 
@@ -534,8 +541,11 @@ function sendEmail(status, invite) {
         doSendEmail = mailerHelpers.sendInvitationNotThisTime;
         break;
       case 'inviteConfirmation':
-        if (needSedConfirmationEmail(invite)) {
+        if(invite.role == 'participant') {
           doSendEmail = mailerHelpers.sendInviteConfirmation;
+        }
+        else if(invite.role == 'facilitator') {
+          doSendEmail = mailerHelpers.sendFacilitatorEmailConfirmation;
         }
         break;
       default:
@@ -592,10 +602,11 @@ function prepareMailParams(invite, session, receiver, facilitator) {
     facilitatorMail: facilitator.email,
     facilitatorMobileNumber: facilitator.mobile,
     unsubscribeMailUrl: 'not-found',
-    startTime: emailDate.format('time', session.startTimeFormat),
-    startDate: emailDate.format('date', session.startTimeFormat),
+    startTime: emailDate.format('time', session.startTime, session.timeZone),
+    startDate: emailDate.format('date', session.startTime, session.timeZone),
     orginalStartTime: session.startTime,
     orginalEndTime: session.endTime,
+    logInUrl: mailUrlHelper.getUrl(invite.token, '/invite/') + '/accept/',
     confirmationCheckInUrl: mailUrlHelper.getUrl(invite.token, '/invite/') + '/accept/',
     participantMail: receiver.email,
     incentive: session.incentive

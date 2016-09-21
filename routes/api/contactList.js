@@ -122,7 +122,7 @@ function importContacts(req, res, next) {
 
   contactListUserService.bulkCreate(req.body.contactsArray, accountId).then(
     function(result) {
-      res.send({success: true, data:result, message: MessagesUtil.routes.contactList.imported });
+      res.send({success: true, data:result, message: MessagesUtil.routes.contactListUser.imported });
     },
     function (err) {
       if (err.name && err.name === 'SequelizeUniqueConstraintError') {

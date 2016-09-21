@@ -5,6 +5,9 @@
   }
   .text-size-dashboard {
     font-size: 13px;
+    a {
+      cursor: pointer;
+    }
   }
   .btn-group{
     white-space:nowrap;
@@ -70,6 +73,10 @@
   }
   .navbar-brand {
     float:none;
+    position: absolute;
+    margin-left: 50%;
+    margin-top: -12px;
+    left: 0px !important;
     img {
       display: inherit;
       margin: 7px;
@@ -90,6 +97,10 @@
     box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.2);
     border-top: 1px solid #eee;
     margin-bottom: 1px;
+
+    li a {
+      cursor: pointer;
+    }
   }
 
   position: absolute;

@@ -20,8 +20,7 @@
           <div class='col-md-8'>
             <div ng-if='!bmc.file[banner].resource.url.full'>
               <div ngf-drop ngf-select ng-model='bmc.file[banner].file' class='drop-box' ng-change='bmc.upload(banner)'
-              ngf-drag-over-class="'dragover'" accept="image/*"
-              ngf-pattern="'image/*'">Drop images here or click to upload</div>
+              ngf-drag-over-class="'dragover'" accept="image/*">Drop images here or click to upload</div>
               <div ngf-no-file-drop >File Drag/Drop is not supported for this browser</div>
             </div>
 

@@ -5,61 +5,68 @@
       <div class='modal-header'>
         <h1 class='modal-title text-center'>Get a Quote</h1>
       </div>
-      <div class='modal-body'>
+      <div class='modal-body' ng-controller='PhoneNumberController as pnc'>
+        <span class='hidden'>{{ pnc.init(up.contactUsUser, 'getQuoteModal'); '' }}</span>
+
         <form class="form-horizontal">
           <div class='form-group'>
-            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First Name<span class='text-red-dark'>*</span></label>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstNameQuote'>First Name<span class='text-red-dark'>*</span></label>
             <div class='col-md-6'>
-              <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='up.contactUsUser.firstName'>
+              <input type='text' class='form-control' id='firstNameQuote' placeholder='First name' ng-model='up.contactUsUser.firstName'>
             </div>
           </div>
 
           <div class='form-group'>
-            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Last Name<span class='text-red-dark'>*</span></label>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='lastNameQuote'>Last Name<span class='text-red-dark'>*</span></label>
             <div class='col-md-6'>
-              <input type='text' class='form-control' id='firstName' placeholder='Last name' ng-model='up.contactUsUser.lastName'>
+              <input type='text' class='form-control' id='lastNameQuote' placeholder='Last name' ng-model='up.contactUsUser.lastName'>
             </div>
           </div>
 
           <div class='form-group'>
-            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Email<span class='text-red-dark'>*</span></label>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='emailQuote'>Email<span class='text-red-dark'>*</span></label>
             <div class='col-md-6'>
-              <input type="email" class='form-control' id='firstName' placeholder='Email' ng-model='up.contactUsUser.email'>
+              <input type="email" class='form-control' id='emailQuote' placeholder='Email' ng-model='up.contactUsUser.email'>
             </div>
           </div>
 
           <div class='form-group'>
-            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Contact Number<span class='text-red-dark'>*</span></label>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='contactNumberQuote'>Contact Number<span class='text-red-dark'>*</span></label>
             <div class='col-md-6'>
-              <input type='text' class='form-control' id='firstName' placeholder='Contact Number' ng-model='up.contactUsUser.contactNumber'>
+              <input type='tel'
+                intl-tel-input
+                intl-tel-input-controller='pnc.contactController'
+                ng-model='up.contactUsUser.contactNumber'
+                id='contactNumberQuote'
+                class='form-control'>
             </div>
           </div>
 
           <div class='form-group'>
-            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Company Name<span class='text-red-dark'>*</span></label>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='companyNameQuote'>Company Name<span class='text-red-dark'>*</span></label>
             <div class='col-md-6'>
-              <input type='text' class='form-control' id='firstName' placeholder='Company Name' ng-model='up.contactUsUser.companyName'>
+              <input type='text' class='form-control' id='companyNameQuote' placeholder='Company Name' ng-model='up.contactUsUser.companyName'>
             </div>
           </div>
 
           <div class='form-group'>
-            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Position in Company<span class='text-red-dark'>*</span></label>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='positionInCompanyQuote'>Position in Company<span class='text-red-dark'>*</span></label>
             <div class='col-md-6'>
-              <input type='text' class='form-control' id='firstName' placeholder='Position in Company' ng-model='up.contactUsUser.positionInCompany'>
+              <input type='text' class='form-control' id='positionInCompanyQuote' placeholder='Position in Company' ng-model='up.contactUsUser.positionInCompany'>
             </div>
           </div>
 
           <div class='form-group'>
-            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Company URL<span class='text-red-dark'>*</span></label>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='companyUrlQuote'>Company URL<span class='text-red-dark'>*</span></label>
             <div class='col-md-6'>
-              <input type='text' class='form-control' id='firstName' placeholder='Company URL' ng-model='up.contactUsUser.companyUrl'>
+              <input type='text' class='form-control' id='companyUrlQuote' placeholder='Company URL' ng-model='up.contactUsUser.companyUrl'>
             </div>
           </div>
 
           <div class='form-group'>
-            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>Comments<span class='text-red-dark'>*</span></label>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='commentsQuote'>Comments<span class='text-red-dark'>*</span></label>
             <div class='col-md-6'>
-              <textarea rows="4" cols="50" type='text' class='form-control' id='firstName' placeholder='Comments' ng-model='up.contactUsUser.comments'>
+              <textarea rows="4" cols="50" type='text' class='form-control' id='commentsQuote' placeholder='Comments' ng-model='up.contactUsUser.comments'>
               </textarea>
             </div>
           </div>

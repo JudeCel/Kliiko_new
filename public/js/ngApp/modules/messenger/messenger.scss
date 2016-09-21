@@ -30,16 +30,9 @@
   }
 
   &.error {
-    padding-left: 50px;
     border-color: $red;
     color: $red;
     background: rgba(255, 255, 255, 0.95);
-    .glyphicon-alert {
-      position: absolute;
-      top: 35%;
-      left: 5px;
-      margin-left: 10px;
-    }
   }
   .message-text:first-letter {
     text-transform: uppercase;

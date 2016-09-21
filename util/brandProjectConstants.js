@@ -24,5 +24,11 @@ module.exports = {
     font: '#58595B',
     headerButton: '#4CBFE9',
     consoleButtonActive: '#4CB649',
-  }
+    email: {
+        hyperlinks: '#2F9F69',
+        acceptButton: '#4CB649',
+        notAtAllButton: '#E51D39',
+        notThisTimeButton: '#4CBFE9',
+    },
+  },
 }

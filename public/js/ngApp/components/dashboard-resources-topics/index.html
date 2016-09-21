@@ -3,8 +3,9 @@
     <h2 class='text-center'>Topics</h2>
   </div>
   <div class='col-md-3 text-right' ng-if="topics.list.length">
-    <div class="btn btn-standart btn-green btn-large inline-block text-center margin-top-2rem" ng-click="topics.openModal('new')">
-      Create New Topic &nbsp;<img id='btn-create-new-topic' src='/icons/add_new_list_green.png'>
+    <div class="btn btn-standart btn-green btn-large" ng-click="topics.openModal('new')">
+      <span class='pull-left'>Create New Topic</span>
+      <span class='fa fa-plus fa-2x pull-right'></span>
     </div>
   </div>
 </div>
@@ -16,7 +17,8 @@
     </div>
     <div class='col-md-12 margin-top-2rem'>
       <div class='btn btn-standart btn-green btn-large' ng-click="topics.openModal('new')">
-        Create New Topic &nbsp;<img id='btn-create-new-topic' src='/icons/add_new_list_green.png'>
+        <span class='pull-left'>Create New Topic</span>
+        <span class='fa fa-plus fa-2x pull-right'></span>
       </div>
     </div>
   </div>

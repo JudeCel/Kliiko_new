@@ -3,7 +3,7 @@
 
   angular.module('KliikoApp').controller('EmailTemplateEditorController', EmailTemplateEditorController);
 
-  EmailTemplateEditorController.$inject = ['dbg', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', '$q'];
+  EmailTemplateEditorController.$inject = ['dbg', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', '$q', 'fileUploader'];
   //necessary to bypass email editors restrictions
   jQuery.browser = {};
     (function () {
@@ -15,7 +15,7 @@
         }
     })();
 
-  function EmailTemplateEditorController(dbg, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q) {
+  function EmailTemplateEditorController(dbg, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q, fileUploader) {
     dbg.log2('#EmailTemplateEditorController started');
 
     var vm = this;
@@ -78,10 +78,6 @@
           vm.startEditingTemplate(0);
         }
       });
-
-
-
-
     };
 
     vm.startEditingTemplate = startEditingTemplate;
@@ -90,39 +86,44 @@
     vm.resetMailTemplate = resetMailTemplate;
     vm.previewMailTemplate = previewMailTemplate;
     vm.saveEmailTemplate = saveEmailTemplate;
+    var selectedTemplate = {};
     vm.initGallery = initGallery;
     vm.galleryDropdownData = galleryDropdownData;
     vm.openModal = openModal;
     vm.findIndexFromId = findIndexFromId;
 
-
-
+    function setContent(content) {
+      $('#templateContent').wysiwyg('setContent', content);
+    }
 
     function startEditingTemplate(templateIndex, inSession, templateId, template) {
-      var selectedTemplate = {};
-      if (template) {
-        selectedTemplate = template;
-      } else {
-        selectedTemplate = vm.emailTemplates[templateIndex];
-      }
 
       if (!templateId) {
-        templateId =  selectedTemplate.id;
+        templateId = template ? template.id : vm.emailTemplates[templateIndex].id;
       }
 
       if (templateId) {
         mailTemplate.getMailTemplate({id:templateId}).then(function (res) {
           if (res.error) return;
-          vm.currentTemplate = vm.emailTemplates[templateIndex];
-          populateTemplate(res);
+
+          if (vm.properties.brandLogoId && inSession) {
+            fileUploader.show(vm.properties.brandLogoId).then(function(result) {
+              populateTemplate(res);
+              setContent(vm.currentTemplate.content)
+              $('.wysiwyg iframe').contents().find("img#brandLogoUrl").attr("src", result.resource.url.full);
+            });
+          }else{
+            populateTemplate(res);
+            setContent(vm.currentTemplate.content)
+          }
         });
       }
 
       function populateTemplate(res) {
+        vm.currentTemplate = vm.emailTemplates[templateIndex];
         vm.currentTemplate.content = res.template.content;
         vm.currentTemplate.index = templateIndex;
         vm.currentTemplate.subject = res.template.subject;
-        $('#templateContent').wysiwyg('setContent', vm.currentTemplate.content);
 
         if(!vm.currentTemplate.isCopy) {
           vm.viewingTemplateId = vm.currentTemplate.id;

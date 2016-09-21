@@ -219,6 +219,7 @@ function sessionParams(preferenceId) {
     name: 'cool session',
     startTime: startTime,
     endTime: startTime.setHours(startTime.getHours() + 2000),
+    timeZone: 'Europe/Riga',
     brandProjectPreferenceId: preferenceId
   };
 }

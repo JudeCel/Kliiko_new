@@ -147,7 +147,9 @@ module.exports = {
     successPlanUpdate: 'Plan was successfully updated.',
     quoteSent: "Thanks, your email has been sent. We'll be in touch withing 24 hours.",
     errorInField: 'Please provide: ',
-    emailFormat: 'E-mail format is not valid.'
+    emailFormat: 'E-mail format is not valid',
+    contactNumberFormat: 'Contact Number format is not valid',
+    urlFormat: 'URL format is not valid'
   },
   subscriptionAddon: {
     successfulPurchase: 'You have sucessfully purchased additional sms credits.',
@@ -283,7 +285,7 @@ module.exports = {
       newUser: 'New contact was added sucessfully',
       newFacilitator: 'New facilitator was added sucessfully',
       updated: 'Contact has been updated sucessfully',
-      imported: 'Contacts has been updated sucessfully'
+      imported: 'Contacts has been imported sucessfully'
     },
     mailTemplates: {
       saved: 'Template was successfully saved.'

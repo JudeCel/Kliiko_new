@@ -6,7 +6,7 @@
     </div>
   </uib-accordion-heading>
 
-  <section ng-if='sbc.accordions.emailTemplates' ng-init='step3Controller.editor = ec; ec.preInit({sessionBuilder:true, sessionId: sbc.session.id})'>
+  <section ng-if='sbc.accordions.emailTemplates' ng-init='step3Controller.editor = ec; ec.preInit({sessionBuilder:true, sessionId: sbc.session.id, brandLogoId: step3Controller.brandLogoId})'>
     <h1 class='text-center'>Edit Email Templates</h1>
     <div class='text-center centeredWarning'>
       <span class='fa fa-exclamation-triangle' aria-hidden="true"></span>

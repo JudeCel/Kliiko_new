@@ -36,6 +36,7 @@
     vm.saveEdited = saveEdited;
     vm.inviteFacilitator = inviteFacilitator;
     vm.cleanColorScheme = cleanColorScheme;
+    vm.updateOrCleanColorScheme = updateOrCleanColorScheme;
 
     vm.currentPage = 1;
     vm.pageSize = 3;
@@ -60,6 +61,16 @@
     function cleanColorScheme(executeUpdate) {
       vm.colorScheme = null;
       executeUpdate({ brandProjectPreferenceId: null });
+    }
+
+    function updateOrCleanColorScheme(id, executeUpdate) {
+      if (vm.session.steps.step1.brandProjectPreferenceId == id) {
+        vm.colorScheme = null;
+        executeUpdate({ brandProjectPreferenceId: null });
+      } else {
+        executeUpdate({ brandProjectPreferenceId: id });
+        vm.session.steps.step1.brandProjectPreferenceId = id;
+      }
     }
 
     function newFacilitator(userData) {
@@ -144,8 +155,10 @@
       vm.today.setDate(vm.today.getDate() - 1);
 
       vm.dateTime = builderServices.getTimeSettings();
-      vm.step1.startTime = new Date(vm.session.steps.step1.startTime);
-      vm.step1.endTime = new Date(vm.session.steps.step1.endTime);
+      vm.step1.startTime = vm.session.steps.step1.startTime;
+      vm.step1.endTime = vm.session.steps.step1.endTime;
+      vm.step1.timeZone = vm.session.steps.step1.timeZone;
+      vm.step1.ngModalOptions = { timezone: vm.session.steps.step1.timeZoneOffset };
       initStep(null, 'initial');
       getAllContacts();
       vm.name = vm.session.steps.step1.name;
@@ -217,9 +230,9 @@
     }
 
     function updateStep(dataObj) {
-      if (dataObj == 'startTime' || dataObj == 'endTime') {
+      if (dataObj == 'startTime' || dataObj == 'endTime' || dataObj == 'timeZone') {
         if(validateDate(vm.step1.startTime) && validateDate(vm.step1.endTime)) {
-          updateStep({ startTime: vm.step1.startTime.toString(), endTime: vm.step1.endTime.toString() });
+          updateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone });
         }
         return;
       }

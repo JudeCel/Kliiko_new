@@ -35,7 +35,7 @@ function createWithTokenAndColour(params) {
         correctFunction = updateHelper;
       }
 
-      if(params.role == 'facilitator' || params.role == 'observer') {
+      if(params.role == 'facilitator') {
         params.colour = brandProjectConstants.memberColours.facilitator;
         correctFunction(deferred, params, sessionMember);
       }
@@ -46,7 +46,9 @@ function createWithTokenAndColour(params) {
             role: params.role
           }
         }).then(function(c) {
-          params.colour = brandProjectConstants.memberColours.participants[c+1];
+          let participants = brandProjectConstants.memberColours.participants;
+          let length = Object.keys(participants).length;
+          params.colour = participants[(c % length) + 1];
           correctFunction(deferred, params, sessionMember);
         });
       }

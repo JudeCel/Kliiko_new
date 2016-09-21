@@ -27,8 +27,19 @@
         $rootScope.$broadcast('modal-close', modalId);
       }
       else {
-        jQuery('#' + modalId).modal('show');
-        $rootScope.$broadcast('modal-open', modalId);
+        var id, modals = $('body .modal.fade:visible');
+
+        if(modals.length) {
+          id = modals[0].id;
+          if(modalId != id) {
+            handleModalActions(id, true);
+          }
+        }
+
+        if(modalId != id) {
+          jQuery('#' + modalId).modal('show');
+          $rootScope.$broadcast('modal-open', modalId);
+        }
       }
     }
 

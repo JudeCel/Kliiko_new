@@ -29,6 +29,7 @@
     vm.originalSession = {};
 
     vm.orderByField = 'id';
+    vm.inAction = false;
     vm.reverseSort = false;
     vm.queriedForSessions = false;
 
@@ -94,15 +95,20 @@
     }
 
     function copySession(session) {
-      chatSessionsServices.copySession({ id: session.id }).then(function(res) {
-        if(res.error) {
-          messenger.error(res.error);
-        }
-        else {
-          messenger.ok(res.message);
-          vm.sessions.push(res.data);
-        }
-      });
+      if(!vm.inAction) {
+        vm.inAction = true;
+
+        chatSessionsServices.copySession({ id: session.id }).then(function(res) {
+          vm.inAction = false;
+          if(res.error) {
+            messenger.error(res.error);
+          }
+          else {
+            messenger.ok(res.message);
+            vm.sessions.push(res.data);
+          }
+        });
+      }
     };
 
     function rateSessionMember(sessionMember) {

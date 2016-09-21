@@ -9,6 +9,7 @@
     var vm = this;
     vm.mailTemplateList = [];
     vm.session = builderServices.session;
+    vm.brandLogoId = vm.session.sessionData.resourceId;
 
     vm.getPreparedMailTemplateList = function() {
       vm.session.getSessionMailTemplateStatus().then(function(res) {

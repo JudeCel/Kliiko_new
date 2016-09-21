@@ -50,14 +50,26 @@ function postQuote(params) {
   let deferred = q.defer();
   let errors = [];
 
+  console.log(params, getAQuoteFieldsNeeded);
   _.map(getAQuoteFieldsNeeded, function(field) {
     if(!params[field]) {
-      errors.push(MessagesUtil.subscription.errorInField + field);
+      if(!errors.length) {
+        errors.push(MessagesUtil.subscription.errorInField)
+      }
+      errors.push(_.startCase(field));
     }
   });
 
   if(!constants.emailRegExp.test(params.email)) {
     errors.push(MessagesUtil.subscription.emailFormat);
+  }
+
+  if(!constants.urlRegExp.test(params.companyUrl)) {
+    errors.push(MessagesUtil.subscription.urlFormat);
+  }
+
+  if(!constants.phoneRegExp.test(params.contactNumber)) {
+    errors.push(MessagesUtil.subscription.contactNumberFormat);
   }
 
   if(errors.length > 0) {

@@ -9,7 +9,6 @@
 
     var vm = this;
 
-
     vm.removeScheme = removeScheme;
     vm.copyScheme = copyScheme;
     vm.finishManage = finishManage;
@@ -19,17 +18,56 @@
     vm.closeModelPreview = closeModelPreview;
     vm.undoCurrentScheme = undoCurrentScheme;
     vm.colorStyles = colorStyles;
+    vm.prepareCurrentPageSchemes = prepareCurrentPageSchemes;
+    vm.setSelectedId = setSelectedId;
 
     vm.schemes = {};
     vm.scheme = {};
     vm.colorForm = {};
     vm.defaultColours = { black: '#000000', white: '#FFFFFF' };
+    vm.selectedId = null;
+
+    vm.pagination = {
+      schemesTotalItems: 0,
+      schemesCurrentPage: 1,
+      schemesItemsPerPage: 12,
+      schemes: {}
+    }
 
     changePage('index');
+
+    function setSelectedId(selectedId) {
+      if (vm.selectedId == null) {
+        vm.selectedId = selectedId || 0;
+      }
+    }
+
+    function prepareCurrentPageSchemes() {
+      if (vm.schemes && vm.schemes.length > 0) {
+        for (var i = 0, len = vm.schemes.length; i < len; i++) {
+          if (vm.schemes[i].id == vm.selectedId) {
+            var selectedItem = vm.schemes[i];
+            vm.schemes.splice(i, 1);
+            vm.schemes.unshift(selectedItem);
+            break;
+          }
+        }
+        vm.pagination.schemesTotalItems = vm.schemes.length;
+        while ((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage >= vm.schemes.length) {
+          vm.pagination.schemesCurrentPage--;
+        }
+        vm.pagination.schemes = vm.schemes.slice(((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage), ((vm.pagination.schemesCurrentPage) * vm.pagination.schemesItemsPerPage));
+      }
+      else {
+        vm.pagination.schemes = {};
+        vm.pagination.schemesTotalItems = 0;
+      }
+    }
 
     function init() {
       brandColourServices.getAllSchemes().then(function(res) {
         vm.schemes = res.data;
+        vm.prepareCurrentPageSchemes();
         vm.manageFields = res.manageFields;
         vm.hexRegex = new RegExp(res.hexRegex);
         vm.memberColours = res.memberColours;
@@ -52,6 +90,7 @@
             messenger.ok(res.message);
             var index = vm.schemes.indexOf(scheme);
             vm.schemes.splice(index, 1);
+            vm.prepareCurrentPageSchemes();
           }
         });
       });
@@ -66,6 +105,7 @@
         }
         else {
           vm.schemes.push(res.data);
+          vm.prepareCurrentPageSchemes();
           messenger.ok(res.message);
         }
       });
@@ -117,8 +157,8 @@
       });
     };
 
-    function initColor(model, object) {
-      vm.scheme.colours[model] = object[model] || vm.defaultColours.white;
+    function initColor(field, object) {
+      vm.scheme.colours[field.model] = object[field.model] || field.colour;
       vm.previewScheme = vm.scheme;
     };
 

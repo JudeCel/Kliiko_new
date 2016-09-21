@@ -173,13 +173,24 @@ function copyScheme(params, accountId) {
 };
 
 function manageFields() {
-  let object = { chatRoom: [] };
+  let object = { chatRoom: [], email: [] };
 
-  _.map(brandProjectConstants.preferenceColours, function(value, key) {
-    object.chatRoom.push({
-      title: _.startCase(key),
-      model: key
-    });
+  _.each(brandProjectConstants.preferenceColours, function (value, key) {
+    if (key == "email") {
+      _.each(value, function (emailValue, emailKey) {
+        object.email.push({
+          title: _.startCase(emailKey),
+          model: emailKey,
+          colour: emailValue
+        });
+      });
+    } else {
+      object.chatRoom.push({
+        title: _.startCase(key),
+        model: key,
+        colour: value
+      });
+    }
   });
 
   return object;
@@ -201,8 +212,19 @@ function validateParams(params, attributes) {
 };
 
 function assignDefaultColours(colours) {
-  let constantValues = _.cloneDeep(brandProjectConstants.preferenceColours);
-  return _.assign(constantValues, colours || {});
+  let object = { };
+
+  _.each(brandProjectConstants.preferenceColours, function (value, key) {
+    if (typeof(value) == "object") {
+      _.each(value, function (objValue, objKey) {
+        object[objKey] = objValue;
+      });
+    } else {
+      object[key] = value;
+    }
+  });
+
+  return _.assign(object, colours || {});
 }
 
 function validateColours(colours, errors) {

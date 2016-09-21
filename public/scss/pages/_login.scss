@@ -89,6 +89,7 @@
     }
 
     #warning-email-password {
+      display:none;
       position:relative;
       border: 3px solid $red;
       color: $red;
@@ -98,6 +99,7 @@
       height: 85px;
       font-size: 1.2em;
       background-color: #f7f5f6;
+
       > div {
         width: 88%;
       }
@@ -137,18 +139,19 @@
       border-radius: 0;
     }
 
-    .has-error{
-        color: #f00;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 475px;
-        display: inline-block;
-      }
+    .has-error {
+      color: #f00;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 475px;
+      display:none;
+    }
+
 
     .table {
       td {
         padding-left: 0;
-        padding-right: 0;
+        padding-right: 6px;
       }
       &.error-column {
         padding: 0;
@@ -162,6 +165,25 @@
       td{
         vertical-align: middle;
       }
+    }
+  }
+}
+
+.main-first-page-registration .login-container {
+  @media (max-width: 379px) {
+    label.text-login-page {
+      font-size:13px;
+    }
+    tr > td:first-child {
+      padding-right: 5px !important;
+    }
+    input[type='tel']{
+      font-size: 13px;
+    }
+    div.intl-tel-input {
+      width:auto !important;
+      min-width:100% !important;
+      margin-right: -20px;
     }
   }
 }
