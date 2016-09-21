@@ -23,6 +23,8 @@
 
     vm.formAction = null;
     vm.name = '';
+    vm.type = null;
+    vm.typeToConfirm = '';
     vm.editedContactListName = '';
 
     vm.updateStep = updateStep;
@@ -66,6 +68,7 @@
     function updateOrCleanColorScheme(id, executeUpdate) {
       if (vm.session.steps.step1.brandProjectPreferenceId == id) {
         vm.colorScheme = null;
+        vm.session.steps.step1.brandProjectPreferenceId = null;
         executeUpdate({ brandProjectPreferenceId: null });
       } else {
         executeUpdate({ brandProjectPreferenceId: id });
@@ -151,6 +154,7 @@
 
     vm.initController = function() {
       vm.session = builderServices.session;
+      console.log(vm.session);
       vm.today = new Date();
       vm.today.setDate(vm.today.getDate() - 1);
 
@@ -162,6 +166,7 @@
       initStep(null, 'initial');
       getAllContacts();
       vm.name = vm.session.steps.step1.name;
+      vm.type = vm.session.steps.step1.type;
       vm.selectedFacilitator = vm.session.steps.step1.facilitator;
     }
 
@@ -207,6 +212,24 @@
         vm.session.steps.step1.name = vm.name;
       }, function(err) {
         vm.name = vm.session.steps.step1.name;
+      });
+    }
+
+    vm.confirmType = function () {
+      vm.typeToConfirm = vm.type;
+      vm.type = vm.session.steps.step1.type;
+      if (vm.session.steps.step1.type == null) {
+        domServices.modal('sessionTypeModal');
+      }
+    }
+
+    vm.updateType = function () {
+      domServices.modal('sessionTypeModal', 'close');
+      vm.type = vm.typeToConfirm;
+      updateStep({type: vm.type}).then(function() {
+        vm.session.steps.step1.type = vm.type;
+      }, function(err) {
+        vm.type = vm.session.steps.step1.type;
       });
     }
 

@@ -15,6 +15,7 @@
     vm.observers = [];
     vm.editContactIndex = null;
     vm.contactData = {};
+    vm.canSendSMS = false;
 
     vm.currentFilter = 'all';
     vm.filterTypes = {
@@ -67,6 +68,7 @@
       var deferred = $q.defer();
 
       vm.session = builderServices.session;
+      vm.canSendSMS = vm.session.steps.step1.type != 'forum';
       vm.mouseOveringMember = [];
 
       if (vm.isParticipantPage()) {
@@ -174,16 +176,17 @@
     }
 
     function modalWindowHandler(modal, data) {
-      if(modal === 'showSms') {
-        showSmsWindow(data);
-      }
-      else if(modal === 'sendSms') {
-        vm.session.sendSms(vm.sendSmsTo, vm.sendSmsMessage).then(function(message) {
-          domServices.modal('sessionBuilder-sendSmsModal', 'close');
-          messenger.ok(message);
-        }, function(error) {
-          messenger.error(error);
-        });
+      if (vm.canSendSMS) {
+        if(modal === 'showSms') {
+          showSmsWindow(data);
+        } else if(modal === 'sendSms') {
+          vm.session.sendSms(vm.sendSmsTo, vm.sendSmsMessage).then(function(message) {
+            domServices.modal('sessionBuilder-sendSmsModal', 'close');
+            messenger.ok(message);
+          }, function(error) {
+            messenger.error(error);
+          });
+        }
       }
     }
 

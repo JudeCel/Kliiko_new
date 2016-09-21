@@ -453,9 +453,10 @@ function canAddSessionMember(invite) {
     });
   }
   else {
+    let session = invite.Session;
     models.SessionMember.count(where).then(function(c) {
       let allowedCount = {
-        participant: 8,
+        participant: session.type == 'forum' ? -1 : 8,
         observer: -1
       };
 

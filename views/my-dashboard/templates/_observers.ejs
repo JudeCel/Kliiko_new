@@ -5,6 +5,7 @@
     <thead>
       <tr>
         <th>Account Name</th>
+        <th>Type</th>
         <th>Chat Session Name</th>
         <th>Start Date</th>
         <th>End Date</th>
@@ -15,6 +16,7 @@
     <tbody ng-repeat='au in myDashboard.accountUsers.observer.data'>
       <tr>
         <td>{{ au.Account.name }}</td>
+        <td class="capitalize">{{ au.session.type }}</td>
         <td>{{ au.session.name }}</td>
         <td>{{ au.session.startTime | date:dashboard.dateFormat }}</td>
         <td>{{ au.session.endTime | date:dashboard.dateFormat }}</td>
