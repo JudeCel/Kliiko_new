@@ -295,7 +295,7 @@ function acceptInviteExisting(token, callback) {
     else if(invite.userType == 'new') {
       return callback(null, invite);
     }
-    setAccountUserActive(invite, function(err, result) {
+    setAccountUserActive(invite, function(err, accountUser) {
       if(err) {
         return callback(err);
       }
@@ -308,8 +308,13 @@ function acceptInviteExisting(token, callback) {
             username: invite.AccountUser.firstName,
             role: invite.role
           };
+
           sessionMemberService.createWithTokenAndColour(params).then(function() {
-            callback(null, invite, MessagesUtil.invite.confirmed);
+            shouldUpdateRole(accountUser, invite.role).then(function() {
+              callback(null, invite, MessagesUtil.invite.confirmed);
+            }, function(error) {
+              callback(filters.errors(error));
+            });
           }, function(error) {
             callback(filters.errors(error));
           });
@@ -323,6 +328,19 @@ function acceptInviteExisting(token, callback) {
     });
   });
 };
+
+function shouldUpdateRole(accountUser, newRole) {
+  let roles = ['observer', 'participant', 'facilitator', 'accountManager', 'admin'];
+
+  if(roles.indexOf(newRole) > roles.indexOf(accountUser.role)) {
+    return accountUser.update({ role: newRole });
+  }
+  else {
+    let deferred = q.defer();
+    deferred.resolve();
+    return deferred.promise;
+  }
+}
 
 function acceptInviteNew(token, params, callback) {
   findInvite(token, function(error, invite) {
@@ -348,8 +366,8 @@ function acceptInviteNew(token, params, callback) {
   });
 };
 function setAccountUserActive(invite, callback) {
-  AccountUser.update({active: true, status: 'active'}, { where:{ id: invite.accountUserId } }).then(function(result) {
-    callback(null, result);
+  AccountUser.update({active: true, status: 'active'}, { where:{ id: invite.accountUserId }, returning: true }).then(function(result) {
+    callback(null, result[1][0]);
   },function(err) {
     callback(filters.errors(error));
   })
