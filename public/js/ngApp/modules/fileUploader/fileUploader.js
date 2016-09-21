@@ -169,7 +169,7 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > banner resource > server error >', error);
-        deferred.reject(error.data || requestError);
+        switchErrors(deferred, error);
       });
 
       return deferred.promise;
