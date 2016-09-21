@@ -22,16 +22,18 @@
   }
 }
 
-.label-size {
-  font-size: 0.8em;
-}
+#brand-colour-content {
+  .label-size {
+    font-size: 0.8em;
+  }
 
-.panel-title {
-  margin-right: -30px !important;
-}
-.panel-body {
-  padding-top: 5px;
-  padding-bottom: 5px;
+  .panel-title {
+    margin-right: -30px;
+  }
+  .panel-body {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
 }
 
 .brandColours {
@@ -60,10 +62,10 @@
         padding: 1px 3px;
       }
       .messageTextContainer, .userNameContainer {
-        @media (max-width: 1529px) {  
+        @media (max-width: 1529px) {
           font-size: 78% !important;
         }
-        @media (max-width: 1399px) {  
+        @media (max-width: 1399px) {
           font-size: 77% !important;
           margin-left: 21px !important;
         }
@@ -74,8 +76,8 @@
           margin-top: -39px;
           width: 24px;
           height: 24px;
-          @media (max-width: 1399px) { 
-            margin-top: -34px; 
+          @media (max-width: 1399px) {
+            margin-top: -34px;
             width: 18px !important;
             height: 18px !important;
           }
@@ -94,7 +96,7 @@
       img:first-child {
         width: 41%;
         border-bottom: 7px solid silver;
-        @media (max-width: 1399px) { 
+        @media (max-width: 1399px) {
           border-bottom: 5px solid silver;
         }
       }
@@ -116,10 +118,10 @@
         background-color: #FBE7E9;
         margin-top: -13px;
         padding: 1px 3px;
-        @media (max-width: 1849px) {  
+        @media (max-width: 1849px) {
           font-size: 70% !important;
         }
-        @media (max-width: 1399px) { 
+        @media (max-width: 1399px) {
           font-size: 60% !important;
         }
       }
@@ -130,7 +132,7 @@
       }
     }
     .participants {
-      padding-top: 1%; 
+      padding-top: 1%;
       > div {
         float: left;
         width: 24%;
@@ -141,7 +143,7 @@
         }
       }
       > div:nth-child(2n) {
-        padding-top: 6%; 
+        padding-top: 6%;
       }
     }
   }
@@ -159,7 +161,7 @@
     box-shadow: 0px 1px 8px rgba(0,0,0,.2);
     background-color: white;
     color: #111;
-    
+
     input{
       min-width:100px;
     }
@@ -167,7 +169,7 @@
     > div > div:first-child {
       margin-top: 3px;
     }
-     
+
     .logo {
       margin-top: 13px;
       margin-left: 5px;
@@ -275,7 +277,7 @@
   .scale {
     transform: scale(.62);
     margin: -8% -8.5%;
-    @media (max-width: 1299px) {  
+    @media (max-width: 1299px) {
       margin: -10.5% -8.5%;
     }
     .avatar .innerbox {
