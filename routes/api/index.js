@@ -136,6 +136,8 @@ router.post('/brandColour', PERMISSIONS.facilitatorManagerAdmin, brandColour.cre
 router.put('/brandColour', PERMISSIONS.facilitatorManagerAdmin, brandColour.update);
 router.post('/brandColour/copy', PERMISSIONS.facilitatorManagerAdmin, brandColour.copy);
 router.get('/brandColour/canCreateCustomColors', PERMISSIONS.facilitatorManagerAdmin, brandColour.canCreateCustomColors);
+//todo: defaultColors
+//router.get('/brandColour/defaultColors', PERMISSIONS.facilitatorManagerAdmin, brandColour.defaultColors);
 
 router.post('/session/getByInvite',  PERMISSIONS.managerAdmin, session.getSessionByInvite);
 router.get('/session/ratings',  PERMISSIONS.admin, session.getAllSessionRatings);

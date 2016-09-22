@@ -13,6 +13,8 @@
 
     var upServices = {};
     upServices.getAllSchemes = getAllSchemes;
+    //todo: defaultColors
+    //upServices.getDefaultColors = getDefaultColors;
     upServices.updateScheme = updateScheme;
     upServices.createScheme = createScheme;
     upServices.removeScheme = removeScheme;
@@ -31,6 +33,20 @@
 
       return deferred.promise;
     };
+
+    //todo: defaultColors
+    /*
+    function getDefaultColors() {
+      var deferred = $q.defer();
+
+      dbg.log2('#brandColourServices > getDefaultColors > make rest call');
+      brandColorApi.defaultColors({}, function (res) {
+        dbg.log2('#brandColourServices > getDefaultColors > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    };*/
 
     function canCreateCustomColors() {
       var deferred = $q.defer();

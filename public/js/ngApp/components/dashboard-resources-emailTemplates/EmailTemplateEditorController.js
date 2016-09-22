@@ -3,7 +3,7 @@
 
   angular.module('KliikoApp').controller('EmailTemplateEditorController', EmailTemplateEditorController);
 
-  EmailTemplateEditorController.$inject = ['dbg', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', '$q', 'fileUploader'];
+  EmailTemplateEditorController.$inject = ['dbg', 'sessionBuilderControllerServices', 'brandColourServices', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', '$q', 'fileUploader'];
   //necessary to bypass email editors restrictions
   jQuery.browser = {};
     (function () {
@@ -15,8 +15,11 @@
         }
     })();
 
-  function EmailTemplateEditorController(dbg, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q, fileUploader) {
+  function EmailTemplateEditorController(dbg, builderServices, brandColourServices, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q, fileUploader) {
     dbg.log2('#EmailTemplateEditorController started');
+
+    //todo: defaultColors
+    //console.log(brandColourServices.getDefaultColors());
 
     var vm = this;
     vm.currentTemplate = {index: 0};
@@ -25,6 +28,7 @@
     vm.addedList = {};
     vm.templateToDelete;
     vm.properties = {};
+    vm.colors = {};
     vm.currentUpload = 'image';
     var showSystemMail = $stateParams.systemMail;
 
@@ -36,6 +40,19 @@
     }
 
     vm.init = function () {
+      if (builderServices.session.sessionData.brandProjectPreferenceId) {
+        brandColourServices.getAllSchemes().then(function (res) {
+          if (res.data) {
+            for (var i = 0, len = res.data.length; i < len; i++) {
+              if (builderServices.session.sessionData.brandProjectPreferenceId == res.data[i].id) {
+                vm.colors = res.data[i].colours;
+                break;
+              }
+            }
+          }
+        });
+      } 
+
       vm.emailTemplates = vm.emailTemplates.concat(vm.constantEmailTemplates);
       $('#templateContent').wysiwyg({
         rmUnusedControls: true,
@@ -109,12 +126,17 @@
           if (vm.properties.brandLogoId && inSession) {
             fileUploader.show(vm.properties.brandLogoId).then(function(result) {
               populateTemplate(res);
-              setContent(vm.currentTemplate.content)
+              setContent(vm.currentTemplate.content);
               $('.wysiwyg iframe').contents().find("img#brandLogoUrl").attr("src", result.resource.url.full);
             });
           }else{
             populateTemplate(res);
-            setContent(vm.currentTemplate.content)
+            var content = vm.currentTemplate.content;
+
+            //todo: replace colors
+            //console.log(vm.colors);
+
+            setContent(content);
           }
         });
       }
