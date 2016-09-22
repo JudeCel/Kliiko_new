@@ -18,9 +18,6 @@
   function EmailTemplateEditorController(dbg, builderServices, brandColourServices, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q, fileUploader) {
     dbg.log2('#EmailTemplateEditorController started');
 
-    //todo: defaultColors
-    //console.log(brandColourServices.getDefaultColors());
-
     var vm = this;
     vm.currentTemplate = {index: 0};
     vm.emailTemplates = [];
@@ -29,6 +26,7 @@
     vm.templateToDelete;
     vm.properties = {};
     vm.colors = {};
+    vm.defaultColors = {};
     vm.currentUpload = 'image';
     var showSystemMail = $stateParams.systemMail;
 
@@ -40,18 +38,16 @@
     }
 
     vm.init = function () {
-      if (builderServices.session.sessionData.brandProjectPreferenceId) {
-        brandColourServices.getAllSchemes().then(function (res) {
-          if (res.data) {
-            for (var i = 0, len = res.data.length; i < len; i++) {
-              if (builderServices.session.sessionData.brandProjectPreferenceId == res.data[i].id) {
-                vm.colors = res.data[i].colours;
-                break;
-              }
-            }
-          }
-        });
-      } 
+      brandColourServices.getAllSchemes().then(function (res) {
+        if (res.manageFields) {
+          vm.defaultColors = res.manageFields;
+        }
+        if (res.data) {
+          res.data.forEach(function (el) {
+            if (builderServices.session.sessionData.brandProjectPreferenceId == el.id) vm.colors = el.colours;
+          });
+        }
+      });
 
       vm.emailTemplates = vm.emailTemplates.concat(vm.constantEmailTemplates);
       $('#templateContent').wysiwyg({
@@ -112,6 +108,17 @@
     function setContent(content) {
       $('#templateContent').wysiwyg('setContent', content);
     }
+      
+    function getColors() {
+      let object = {};
+      for (var param in vm.defaultColors) {
+        for (var color in vm.defaultColors[param]) {
+          var name = vm.defaultColors[param][color].model;
+          object[name] = vm.colors && vm.colors[name] ? vm.colors[name] : vm.defaultColors[param][color].colour;
+        }
+      }
+      return object;
+    }
 
     function startEditingTemplate(templateIndex, inSession, templateId, template) {
 
@@ -131,14 +138,18 @@
             });
           }else{
             populateTemplate(res);
-            var content = vm.currentTemplate.content;
-
-            //todo: replace colors
-            //console.log(vm.colors);
-
-            setContent(content);
+            setContent(vm.currentTemplate.content);
           }
         });
+      }
+
+      function populateContentWithColors() {
+        var colors = getColors();
+        for (var color in colors) {
+          var param = "/*" + color + "*/";
+          //todo: use regexp here
+          vm.currentTemplate.content = vm.currentTemplate.content.replace(param, /*param +*/ colors[color]);
+        }
       }
 
       function populateTemplate(res) {
@@ -161,7 +172,10 @@
             vm.viewingTemplateName = null;
           }
         }
+
+        populateContentWithColors();
       }
+
     }
 
     function findIndexFromId(id) {

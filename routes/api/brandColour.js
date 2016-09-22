@@ -8,15 +8,6 @@ function get(req, res, next) {
   );
 };
 
-//todo: defaultColors
-/*
-function defaultColors(req, res, next) {
-  brandColourServices.manageFields().then(
-    getResponses(res).onSuccess,
-    getResponses(res).onError
-  );
-};*/
-
 function canCreateCustomColors(req, res, next) {
   brandColourServices.canCreateCustomColors(res.locals.currentDomain.id).then(function(result) {
     res.send({result: result});
@@ -78,7 +69,5 @@ module.exports = {
   copy: copy,
   create: create,
   update: update,
-  //todo: defaultColors
-  //defaultColors: defaultColors,
   canCreateCustomColors: canCreateCustomColors
 };

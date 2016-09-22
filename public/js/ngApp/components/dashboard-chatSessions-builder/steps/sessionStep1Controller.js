@@ -154,7 +154,6 @@
 
     vm.initController = function() {
       vm.session = builderServices.session;
-      console.log(vm.session);
       vm.today = new Date();
       vm.today.setDate(vm.today.getDate() - 1);
 
