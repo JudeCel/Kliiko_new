@@ -250,7 +250,7 @@ function checkKeyValues(rowData, emails, key, row, uniqueRowListCounter, error) 
     uniqRowListCounterFun(key, row, uniqueRowListCounter);
 
     if (constants.emailRegExp.test(rowData)) {
-      if (_.includes(emails, rowData)) {
+      if (_.includes(emails, rowData) || uniqueRowListCounter[rowData].count > 1 ) {
         error[key] = MessagesUtil.contactListImport.error.emailTaken;
       }
     } else {
