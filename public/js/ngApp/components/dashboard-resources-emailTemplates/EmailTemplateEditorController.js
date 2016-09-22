@@ -28,6 +28,8 @@
     vm.colors = {};
     vm.defaultColors = {};
     vm.currentUpload = 'image';
+    vm.styleTemplate = null;
+    vm.stylePattern = /<style>[\S\s]*?<\/style>/gi;
     var showSystemMail = $stateParams.systemMail;
 
     vm.preInit = function(params) {
@@ -98,7 +100,6 @@
     vm.deleteTemplate = deleteTemplate;
     vm.resetMailTemplate = resetMailTemplate;
     vm.previewMailTemplate = previewMailTemplate;
-    vm.saveEmailTemplate = saveEmailTemplate;
     var selectedTemplate = {};
     vm.initGallery = initGallery;
     vm.galleryDropdownData = galleryDropdownData;
@@ -144,11 +145,11 @@
       }
 
       function populateContentWithColors() {
+        var styles =  vm.currentTemplate.content.match(vm.stylePattern);
+        vm.styleTemplate = styles ? styles[0] : null;
         var colors = getColors();
         for (var color in colors) {
-          var param = "/*" + color + "*/";
-          //todo: use regexp here
-          vm.currentTemplate.content = vm.currentTemplate.content.replace(param, /*param +*/ colors[color]);
+          vm.currentTemplate.content = vm.currentTemplate.content.replace("{" + color + "}", colors[color]);
         }
       }
 
@@ -200,6 +201,13 @@
       }
 
       vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
+      if (vm.styleTemplate) {
+        var styles = vm.currentTemplate.content.match(vm.stylePattern);
+        if (styles) {
+          vm.currentTemplate.content = vm.currentTemplate.content.replace(styles[0], vm.styleTemplate);
+        }
+      }
+
       vm.currentTemplate.error = {};
       if (includeProperties) {
         template.properties = vm.properties;
@@ -265,32 +273,6 @@
           messenger.error(res.error);
         }
       });
-    }
-
-    function saveEmailTemplate(force) {
-      var deferred = $q.defer();
-      vm.currentTemplate.properties = vm.properties;
-
-      if (force) {
-        vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
-      }
-      mailTemplate.saveTemplate(vm.currentTemplate).then(function (res) {
-        if (!res.error) {
-          refreshTemplateList(function() {
-            var index = getIndexOfMailTemplateWithId(res.templates.id);
-            if (index != -1) {
-              vm.startEditingTemplate(index);
-            }
-            deferred.resolve();
-          });
-          messenger.ok(res.message);
-        } else {
-          messenger.error(res.error);
-          deferred.reject();
-        }
-      });
-
-      return deferred.promise;
     }
 
     function getIndexOfMailTemplateWithId(id) {
