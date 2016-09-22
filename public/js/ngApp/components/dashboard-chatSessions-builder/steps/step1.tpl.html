@@ -209,6 +209,7 @@
       </uib-accordion-heading>
 
       <div id='GalleryController' ng-controller='GalleryController as gc'>
+        <div class="small">Maximum size of your brand logo should be 150x80px</div>
         <div>
           {{ upload = step1Controller.galleryDropdownData(gc.currentDependency); "" }}
           <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
