@@ -1,4 +1,12 @@
 #step-1 {
+  .panel-group .panel-heading {
+    .panel-label {
+      .panel-value.pull-right {
+        max-width: calc(100% - 400px);
+      }
+    } 
+  }
+
   .search-contact{
     label{
       padding-top: 9px;
