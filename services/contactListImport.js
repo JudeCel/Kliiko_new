@@ -89,7 +89,6 @@ function parseFile(id, filePath) {
         let emails = _.map(results, function(value) {
           return value.email;
         });
-
         switch (path.extname(filePath)) {
           case '.csv':
             parseCsv(emails, deferred, contactList, filePath);
@@ -198,15 +197,19 @@ function parseCsv(emails, deferred, contactList, filePath) {
     data.rowNr = rowNr;
     return data;
   }).validate(function(data, next) {
-    data.landlineNumber = data.landlineNumber.toString();
-    data.mobile = data.mobile.toString();
-
-    if(data.mobile.length > 0 && !data.mobile.includes("+61")) {
-      data.mobile = "+61 " + data.mobile;
+    if (data.landlineNumber) {
+      data.landlineNumber = data.landlineNumber.toString();
+      if(data.landlineNumber.length > 0 && !data.landlineNumber.includes("+61")) {
+        data.landlineNumber = "+61 " + data.landlineNumber;
+      }
     }
 
-    if(data.landlineNumber.length > 0 && !data.landlineNumber.includes("+61")) {
-      data.landlineNumber = "+61 " + data.landlineNumber;
+    if (data.mobile) {
+      data.mobile = data.mobile.toString();
+
+      if(data.mobile.length > 0 && !data.mobile.includes("+61")) {
+        data.mobile = "+61 " + data.mobile;
+      }
     }
 
     validateRow(emails, contactList, data, uniqRowListCounter).then(function() {
