@@ -66,6 +66,7 @@
     function updateOrCleanColorScheme(id, executeUpdate) {
       if (vm.session.steps.step1.brandProjectPreferenceId == id) {
         vm.colorScheme = null;
+        vm.session.steps.step1.brandProjectPreferenceId = null;
         executeUpdate({ brandProjectPreferenceId: null });
       } else {
         executeUpdate({ brandProjectPreferenceId: id });
