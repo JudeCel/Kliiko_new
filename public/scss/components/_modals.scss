@@ -112,6 +112,11 @@
     width: 38px !important;
     height: 38px !important;
   }
+
+  .modal-header .close {
+    margin-top: -10px;
+    margin-bottom: 10px;
+  }
 }
 
 .accountManagerModal {
