@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp.mailTemplate', []).factory('mailTemplate', mailTemplateFactory);
 
-  mailTemplateFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg', '$rootScope'];
-  function mailTemplateFactory($q, globalSettings, $resource, dbg, $rootScope) {
+  mailTemplateFactory.$inject = ['$q', 'globalSettings', 'brandColourServices', '$resource', 'dbg', '$rootScope'];
+  function mailTemplateFactory($q, globalSettings, brandColourServices, $resource, dbg, $rootScope) {
 
     var mailRestApi = {
       mailTemplates: $resource(globalSettings.restUrl + '/mailTemplates', {}, {get: {method: 'GET'}}),
@@ -27,12 +27,34 @@
     MailTemplateService.previewMailTemplate = previewMailTemplate;
     return MailTemplateService;
 
-    function getAllSessionMailTemplates(getSystemMail, params) {
+    function getAllSessionMailTemplates(getSystemMail, params, brandProjectPreferenceId) {
       dbg.log2('#KliikoApp.mailTemplate > get all session mail templates for user');
       var deferred = $q.defer();
+        //todo: refactor
       mailRestApi.sessionMailTemplates.get({getSystemMail: getSystemMail, params: params}, function (res) {
         dbg.log2('#KliikoApp.sessionMailTemplate > get all templates> server respond >');
-        deferred.resolve(res);
+        getColors(brandProjectPreferenceId).then(function (colorsRes) {
+          deferred.resolve({mailTemplates: res, colors: colorsRes});
+        });
+      });
+      return deferred.promise;
+    }
+
+    function getColors(brandProjectPreferenceId) {
+      var deferred = $q.defer();
+      brandColourServices.getAllSchemes().then(function (res) {
+        var resObj = {};
+        if (res.manageFields) {
+          resObj.manageFields = res.manageFields;
+        }
+        if (res.data) {
+          res.data.forEach(function (el) {
+            if (brandProjectPreferenceId == el.id) {
+              resObj.colours = el.colours;
+            }
+          });
+        }
+        deferred.resolve(resObj);
       });
       return deferred.promise;
     }

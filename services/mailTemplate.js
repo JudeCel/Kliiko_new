@@ -580,9 +580,6 @@ function composeMailFromTemplate(template, params) {
     template.content = ejs.render(template.content, params);
     template.subject = ejs.render(template.subject, params);
 
-    //temp: test this
-    //console.log(template.content);
-
     return template;
   } catch (error) {
     return {error: error};

@@ -3,7 +3,7 @@
 
   angular.module('KliikoApp').controller('EmailTemplateEditorController', EmailTemplateEditorController);
 
-  EmailTemplateEditorController.$inject = ['dbg', 'sessionBuilderControllerServices', 'brandColourServices', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', '$q', 'fileUploader'];
+  EmailTemplateEditorController.$inject = ['dbg', 'sessionBuilderControllerServices', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', '$q', 'fileUploader'];
   //necessary to bypass email editors restrictions
   jQuery.browser = {};
     (function () {
@@ -15,7 +15,7 @@
         }
     })();
 
-  function EmailTemplateEditorController(dbg, builderServices, brandColourServices, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q, fileUploader) {
+  function EmailTemplateEditorController(dbg, builderServices, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q, fileUploader) {
     dbg.log2('#EmailTemplateEditorController started');
 
     var vm = this;
@@ -40,18 +40,6 @@
     }
 
     vm.init = function () {
-      brandColourServices.getAllSchemes().then(function (res) {
-        if (res.manageFields) {
-          vm.defaultColors = res.manageFields;
-        }
-        if (res.data) {
-          res.data.forEach(function (el) {
-            if (builderServices.session.sessionData.brandProjectPreferenceId == el.id) vm.colors = el.colours;
-          });
-        }
-      });
-      //todo: wait here
-
       vm.emailTemplates = vm.emailTemplates.concat(vm.constantEmailTemplates);
       $('#templateContent').wysiwyg({
         rmUnusedControls: true,
@@ -309,15 +297,12 @@
     }
 
     function refreshTemplateList(callback) {
-      if (vm.properties.sessionBuilder) {
-        mailTemplate.getAllSessionMailTemplates(showSystemMail, vm.properties).then(function (res) {
-          preprocessMailTemplateList(res, callback);
-        });
-      } else {
-        mailTemplate.getAllMailTemplates(showSystemMail, vm.properties).then(function (res) {
-          preprocessMailTemplateList(res, callback);
-        });
-      }
+      (vm.properties.sessionBuilder ? mailTemplate.getAllSessionMailTemplates : mailTemplate.getAllMailTemplates)
+          (showSystemMail, vm.properties, builderServices.session.sessionData.brandProjectPreferenceId).then(function (res) {
+        vm.colors = res.colors.colours;
+        vm.defaultColors = res.colors.manageFields;
+        preprocessMailTemplateList(res.mailTemplates, callback);
+      });
     }
 
     vm.cancelTemplateDelete = function() {

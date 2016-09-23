@@ -159,15 +159,17 @@ function sendInvite(invite, deferred) {
       accountName: invite.Account.name,
       accountId: invite.Account.id
     };
-    inviteParams = populateMailParamsWithColors(inviteParams, invite.Session);
-
-    inviteMailer.sendInviteAccountManager(inviteParams, function(error, data) {
-      if(error) {
-        deferred.reject(error);
-      }
-      else {
-        deferred.resolve(simpleParams(invite));
-      }
+    populateMailParamsWithColors(inviteParams, invite.Session).then(function (params) {
+      inviteMailer.sendInviteAccountManager(params, function (error, data) {
+        if (error) {
+          deferred.reject(error);
+        }
+        else {
+          deferred.resolve(simpleParams(invite));
+        }
+      });
+    }, function (error) {
+      deferred.reject(filters.errors(error));
     });
   }
   else {
@@ -204,16 +206,20 @@ function sendInvite(invite, deferred) {
         facilitatorMobileNumber: facilitator.mobile,
         unsubscribeMailUrl: invite.unsubscribeMailUrl
       }
-      inviteParams = populateMailParamsWithColors(inviteParams, session);
 
-      inviteMailer.sendInviteSession(inviteParams, function(error, data) {
-        if(error) {
-          deferred.reject(error);
-        }
-        else {
-          deferred.resolve(simpleParams(invite));
-        }
+      populateMailParamsWithColors(inviteParams, session).then(function (params) {
+        inviteMailer.sendInviteSession(params, function(error, data) {
+            if (error) {
+            deferred.reject(error);
+          }
+          else {
+            deferred.resolve(simpleParams(invite));
+          }
+        });
+      }, function (error) {
+        deferred.reject(filters.errors(error));
       });
+
     }).catch(function(error) {
       deferred.reject(filters.errors(error));
     });
@@ -589,8 +595,12 @@ function prepareMailInformation(invite) {
       role: 'facilitator'
     },
     include: [AccountUser, Session]
-  }).then(function(facilitator) {
-    deferred.resolve(prepareMailParams(invite, facilitator.Session, invite.AccountUser, facilitator.AccountUser));
+  }).then(function (facilitator) {
+    prepareMailParams(invite, facilitator.Session, invite.AccountUser, facilitator.AccountUser).then(function(res) {
+      deferred.resolve(res);
+    }, function (error) {
+      deferred.reject(filters.errors(error));
+    });
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -599,6 +609,8 @@ function prepareMailInformation(invite) {
 }
 
 function prepareMailParams(invite, session, receiver, facilitator) {
+  let deferred = q.defer();
+
   var object = {
     sessionId: session.id,
     email: receiver.email,
@@ -618,11 +630,20 @@ function prepareMailParams(invite, session, receiver, facilitator) {
     participantMail: receiver.email,
     incentive: session.incentive
   }
-  return populateMailParamsWithColors(object, session);
+
+  return populateMailParamsWithColors(object, session).then(function(res) {
+    deferred.resolve(res);
+  }, function (error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
 }
 
 function populateMailParamsWithColors(params, session)
 {
+  let deferred = q.defer();
+
   _.each(brandProjectConstants.preferenceColours, function (value, key) {
     if (typeof(value) == "object") {
       _.each(value, function (objValue, objKey) {
@@ -639,10 +660,12 @@ function populateMailParamsWithColors(params, session)
         params[key] = value;
       });
     }
+    deferred.resolve(params);
+  }, function (error) {
+    deferred.reject(filters.errors(error));
   });
-  //todo: wait here
 
-  return params
+  return deferred.promise;
 }
 
 function removeAllAssociatedDataOnNewUser(invite, callback) {
