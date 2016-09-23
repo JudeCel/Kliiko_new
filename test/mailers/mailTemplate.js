@@ -33,6 +33,18 @@ let params = {
   invitationNotAtAllUrl: "invitationNotAtAllUrl",
   confirmationCheckInUrl: "confirmationCheckInUrl",
   participantMail: "testParticipant@gmail.com",
+  browserBackground: '#EFEFEF',
+  mainBackground: '#FFFFFF',
+  mainBorder: '#F0E935',
+  font: '#58595B',
+  headerButton: '#4CBFE9',
+  consoleButtonActive: '#4CB649',
+  hyperlinks: '#2F9F69',
+  acceptButton: '#4CB649',
+  notAtAllButton: '#E51D39',
+  notThisTimeButton: '#4CBFE9',
+  participantFirstName: 'Name',
+  participantLastName: 'Last',
 };
 
 describe('send MailTemplates',  () => {

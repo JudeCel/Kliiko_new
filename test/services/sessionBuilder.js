@@ -40,7 +40,11 @@ describe('SERVICE - SessionBuilder', function() {
   });
 
   function accountParams() {
-    return { accountId: testAccount.id };
+    return {
+      accountId: testAccount.id, 
+      timeZone: 'Europe/Riga',
+      type: 'focus',
+    };
   };
 
   function sessionParams(data) {

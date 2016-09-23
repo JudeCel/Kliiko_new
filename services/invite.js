@@ -653,17 +653,21 @@ function populateMailParamsWithColors(params, session)
       params[key] = value;
     }
   });
-    
-  BrandProjectPreference.find({ where: { id: session.brandProjectPreferenceId, accountId: session.accountId } }).then(function(scheme) {
-    if(scheme) {
-      _.each(scheme.colours, function (value, key) {
-        params[key] = value;
-      });
-    }
+   
+  if (session) {
+    BrandProjectPreference.find({ where: { id: session.brandProjectPreferenceId, accountId: session.accountId } }).then(function(scheme) {
+      if(scheme) {
+        _.each(scheme.colours, function (value, key) {
+          params[key] = value;
+        });
+      }
+      deferred.resolve(params);
+    }, function (error) {
+      deferred.reject(filters.errors(error));
+    });
+  } else {
     deferred.resolve(params);
-  }, function (error) {
-    deferred.reject(filters.errors(error));
-  });
+  }
 
   return deferred.promise;
 }

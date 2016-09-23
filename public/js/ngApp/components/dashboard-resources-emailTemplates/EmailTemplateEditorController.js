@@ -272,8 +272,8 @@
       return -1;
     }
 
-    function preprocessMailTemplateList(res, callback) {
-      vm.emailTemplates = res.templates;
+    function preprocessMailTemplateList(templates, callback) {
+      vm.emailTemplates = templates;
       if (vm.emailTemplates.length && vm.currentTemplate == -1) {
         vm.startEditingTemplate(0);
       }
@@ -297,11 +297,11 @@
     }
 
     function refreshTemplateList(callback) {
-      (vm.properties.sessionBuilder ? mailTemplate.getAllSessionMailTemplates : mailTemplate.getAllMailTemplates)
+      (vm.properties.sessionBuilder ? mailTemplate.getAllSessionMailTemplatesWithColors : mailTemplate.getAllMailTemplatesWithColors)
           (showSystemMail, vm.properties, builderServices.session.sessionData.brandProjectPreferenceId).then(function (res) {
-        vm.colors = res.colors.colours;
-        vm.defaultColors = res.colors.manageFields;
-        preprocessMailTemplateList(res.mailTemplates, callback);
+        vm.colors = res.colors;
+        vm.defaultColors = res.manageFields;
+        preprocessMailTemplateList(res.templates, callback);
       });
     }
 
