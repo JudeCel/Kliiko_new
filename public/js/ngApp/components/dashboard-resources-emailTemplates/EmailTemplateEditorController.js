@@ -50,6 +50,7 @@
           });
         }
       });
+      //todo: wait here
 
       vm.emailTemplates = vm.emailTemplates.concat(vm.constantEmailTemplates);
       $('#templateContent').wysiwyg({
@@ -149,7 +150,7 @@
         vm.styleTemplate = styles ? styles[0] : null;
         var colors = getColors();
         for (var color in colors) {
-          vm.currentTemplate.content = vm.currentTemplate.content.replace("{" + color + "}", colors[color]);
+          vm.currentTemplate.content = vm.currentTemplate.content.replace("<%= " + color + " %>", colors[color]);
         }
       }
 

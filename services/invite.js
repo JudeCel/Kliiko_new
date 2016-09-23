@@ -2,11 +2,14 @@
 
 var models = require('./../models');
 var filters = require('./../models/filters');
+var brandProjectConstants = require('../util/brandProjectConstants');
+
 var Invite = models.Invite;
 var User = models.User;
 var Account = models.Account;
 var AccountUser = models.AccountUser;
 var Session = models.Session;
+var BrandProjectPreference = models.BrandProjectPreference;
 
 var moment = require('moment-timezone');
 var emailDate = require('./formats/emailDate');
@@ -156,6 +159,7 @@ function sendInvite(invite, deferred) {
       accountName: invite.Account.name,
       accountId: invite.Account.id
     };
+    inviteParams = populateMailParamsWithColors(inviteParams, invite.Session);
 
     inviteMailer.sendInviteAccountManager(inviteParams, function(error, data) {
       if(error) {
@@ -200,6 +204,8 @@ function sendInvite(invite, deferred) {
         facilitatorMobileNumber: facilitator.mobile,
         unsubscribeMailUrl: invite.unsubscribeMailUrl
       }
+      inviteParams = populateMailParamsWithColors(inviteParams, session);
+
       inviteMailer.sendInviteSession(inviteParams, function(error, data) {
         if(error) {
           deferred.reject(error);
@@ -593,7 +599,7 @@ function prepareMailInformation(invite) {
 }
 
 function prepareMailParams(invite, session, receiver, facilitator) {
-  return {
+  var object = {
     sessionId: session.id,
     email: receiver.email,
     role: receiver.role,
@@ -612,6 +618,31 @@ function prepareMailParams(invite, session, receiver, facilitator) {
     participantMail: receiver.email,
     incentive: session.incentive
   }
+  return populateMailParamsWithColors(object, session);
+}
+
+function populateMailParamsWithColors(params, session)
+{
+  _.each(brandProjectConstants.preferenceColours, function (value, key) {
+    if (typeof(value) == "object") {
+      _.each(value, function (objValue, objKey) {
+        params[objKey] = objValue;
+      });
+    } else {
+      params[key] = value;
+    }
+  });
+    
+  BrandProjectPreference.find({ where: { id: session.brandProjectPreferenceId, accountId: session.accountId } }).then(function(scheme) {
+    if(scheme) {
+      _.each(scheme.colours, function (value, key) {
+        params[key] = value;
+      });
+    }
+  });
+  //todo: wait here
+
+  return params
 }
 
 function removeAllAssociatedDataOnNewUser(invite, callback) {
