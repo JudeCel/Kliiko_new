@@ -17,12 +17,15 @@ function envConfig() {
       break;
     default:
       return {
-        service: process.env.MAIL_TRANSPORT_SERVICE,
+        host: process.env.MAIL_TRANSPORT_SERVICE,
+        port: '587',
         auth: {
           user: process.env.MAIL_TRANSPORT_AUTH_USER,
           pass: process.env.MAIL_TRANSPORT_AUTH_PASS
-        }
-      };
+        },
+        secureConnection: 'false',
+        tls: { ciphers: 'SSLv3' }
+      }
   }
 }
 

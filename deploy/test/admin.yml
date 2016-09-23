@@ -55,14 +55,16 @@ spec:
           value: ".test.klzii.com"
         - name: SERVER_DOMAIN
           value: "www.test.klzii.com"
+        - name: MAIL_TRANSPORT_SERVICE
+          value: "smtp.office365.com"
         - name: MAIL_FROM_EMAIL
-          value: "insiderfocus.noreply@gmail.com"
+          value: "noreply@klzii.com"
         - name: MAIL_FROM_NAME
           value: "klzii"
         - name: MAIL_TRANSPORT_AUTH_USER
-          value: "insiderfocus.noreply"
+          value: "noreply@klzii.com"
         - name: MAIL_TRANSPORT_AUTH_PASS
-          value: "ifs_Zupper!pwd"
+          value: "Zuso0791"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
         - name: FACEBOOK_CLIENT_ID
