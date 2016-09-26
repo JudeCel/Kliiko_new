@@ -25,11 +25,11 @@ Redis 3.2.x
 
 1) Copy  ```sample.env``` to  ``` .env```
 
-2) Change database URL environment variables in .env file "DATABASE_URL" and "DATABASE_URL_TEST" to corresponding databases
+2) Change database URL environment variables in .env file ```DATABASE_NAME_* DATABASE_USER_* DATABASE_PASSWORD_* DATABASE_HOST_* DATABASE_DIALECT_*``` to corresponding databases
 
 3) Run migrations in order to sycnhronize database
 ```sh
-  node node_modules/.bin/sequelize  db:migrate
+  npm run migrations
 ```
 ##  Subdomain setup
 
@@ -95,3 +95,30 @@ If need uses debugger the gulp should be installed globally ``` npm install gulp
  1) Run Gulp with --debug argument ```gulp --debug ```
 
  2) Open Chrome or Opera and go to http://127.0.0.1:8085/?ws=127.0.0.1:8085&port=5858
+
+
+### Migrations
+
+Example
+
+```js
+  'use strict';
+  let Bluebird = require('bluebird');
+  let validateError = require('./helpers/errorFilter.js').validateError
+
+  module.exports = {
+    up: function (queryInterface, Sequelize) {
+      return new Bluebird(function (resolve, reject) {
+        queryInterface.addColumn('Sessions', 'type', { type: Sequelize.ENUM, values: ['focus', 'forum'] }).then(function() {
+          resolve();
+        },function(error) {
+          validateError(error, resolve, reject);
+        });
+    });
+    },
+    down: function (queryInterface, Sequelize) {
+      return queryInterface.removeColumn('Sessions', 'type');
+    }
+  };
+
+```
