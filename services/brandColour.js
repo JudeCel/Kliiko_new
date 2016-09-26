@@ -15,7 +15,8 @@ const VALID_ATTRIBUTES = {
     'id',
     'name',
     'accountId',
-    'colours'
+    'colours',
+    'type'
   ]
 };
 

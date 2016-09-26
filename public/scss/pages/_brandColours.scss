@@ -59,16 +59,22 @@
 
 .brandColours {
   font-size: 70%;
+  
+  .chatMiddleButtons {
+    color: #ccc;
+    border: 2px solid #ccc;
+    padding: 1%;
+    margin: auto;
+    font-size: 160%;
+    position: inherit;
+  }
+
   .chatContainer {
     margin-top: 2%;
     border: 2px solid;
     padding-bottom: 3%;
     padding-right: 3%;
     padding-left: 3%;
-    height: 100%;
-    margin-left:-10px;
-    margin-right:-10px;
-    width: auto !important;
 
     .userMessageContainer {
        margin-bottom: 5px;
@@ -111,11 +117,11 @@
       padding-bottom: 10px;
     }
     .whiteboardContainer img {
-      width: 92%;
+      width: 100%;
     }
     .avatar {
       img:first-child {
-        width: 41%;
+        width: 52%;
         border-bottom: 7px solid silver;
         @media (max-width: 1399px) {
           border-bottom: 5px solid silver;
@@ -127,18 +133,14 @@
         width: 0;
         height: 0;
         border-style: solid;
-        border-width: 6px 6px 6px 0;
-        border-color: transparent #FBE7E9 transparent transparent;
         line-height: 0px;
-        _border-color: #000000 #FBE7E9 #000000 #000000;
         _filter: progid:DXImageTransform.Microsoft.Chroma(color='#000000');
         margin-bottom: -10px;
         margin-left: -5px;
       }
       .innerbox {
         background-color: #FBE7E9;
-        margin-top: -13px;
-        padding: 1px 3px;
+        padding: 2px 4px;
         @media (max-width: 1849px) {
           font-size: 70% !important;
         }
@@ -147,9 +149,6 @@
         }
       }
       .outerbox {
-        width: 55%;
-        float: right;
-        padding-right: 8%;
       }
     }
     .participants {
@@ -168,14 +167,104 @@
       }
     }
   }
+  .chatContainer.focusType {
+    margin-left:-10px;
+    margin-right:-10px;
+    width: auto;
+    height: 100%;
+    
+    .whiteboardContainer img {
+      width: 92%;
+    }
+    .avatar {
+      img:first-child {
+        width: 41%;
+      }
+      .triangle {
+        border-width: 6px 6px 6px 0;
+        border-color: transparent #FBE7E9 transparent transparent;
+        _border-color: #000000 #FBE7E9 #000000 #000000;
+      }
+      .outerbox {
+        width: 55%;
+        float: right;
+        padding-right: 8%;
+        
+        .innerbox {
+          margin-top: -13px;
+          padding: 1px 3px;
+        }
+      }
+    }
+  }
+  
+  .chatContainer.forumTypeLeft {
+    margin-right: 5px;
+    width: calc(33.33% - 5px);
+    padding-bottom: 1%;
+    padding-right: 1%;
+    padding-left: 1%;
+    margin-left: -10px;
 
-  .chatMiddleButtons {
-    color: #ccc;
-    border: 2px solid #ccc;
-    padding: 1%;
-    margin: auto;
-    font-size: 160%;
-    position: inherit;
+    > div:first-child {
+      margin: 0px -4% 10px -4%;
+      padding:5px;
+      text-align: center;
+      color: #fff;
+      font-size: 115%;
+    }
+
+    .buttonsContainer {
+      text-align:center;
+      white-space: nowrap;
+
+      .chatMiddleButtons {
+        font-size: 140%;
+        @media (max-width: 1780px) {
+          font-size: 130%;
+        }
+        @media (max-width: 1700px) {
+          font-size: 105%;
+        }
+        @media (max-width: 1570px) {
+          font-size: 90%;
+        }
+        @media (max-width: 1480px) {
+          font-size: 67%;
+        }
+        @media (max-width: 1290px) {
+          font-size: 40%;
+        }
+        @media (max-width: 1199px) {
+          font-size: 60%;
+        }
+      }
+    }
+
+    .avatar {
+      text-align:center;
+      .triangle {
+        border-width: 0 6px 6px 6px;
+        border-color: transparent transparent #FBE7E9 transparent;
+        _border-color: #000000 #000000 #FBE7E9 #000000;
+        margin-left: 5%;
+        margin-bottom: -3px;
+      }
+      .outerbox {
+        text-align: left;
+        margin-top: -5px;
+      }
+    }
+  }
+
+  .chatContainer.forumTypeRight {
+    padding: 1% 2% 2% 2%;
+    margin-right: -10px;
+    width: calc(66.66% + 20px);
+
+    .footer {
+      margin-top: 2%;
+    }
   }
 
   .header {
@@ -301,8 +390,14 @@
     @media (max-width: 1299px) {
       margin: -10.5% -8.5%;
     }
-    .avatar .innerbox {
+    .chatContainer.focusType .avatar .innerbox {
       margin-top: -20px;
+    }
+    .chatContainer.forumTypeLeft .avatar .innerbox {
+      margin-top: -3px;
+    }
+    .forumTypeRight > div:first-child {
+      display:none;
     }
     .brandColours .chatContainer .userMessageContainer .smileContainer {
       margin-top: -3px;
@@ -325,5 +420,18 @@
   padding-right: 20px;
   input {
     width:100%;
+  }
+}
+
+.brandColourTypeModal .create-types {
+  text-align: center;
+  padding: 20px 0 10px 0px;
+
+  img:first-child {
+    margin-right: 20px;
+  }
+  img {
+    width: 120px;
+    height: 120px;
   }
 }

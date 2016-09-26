@@ -10,7 +10,7 @@
           <a ng-click="bcc.setType('focus')" id="typeFocus">Focus ({{ bcc.typeCount.focus }})</a>
           <a ng-click="bcc.setType('forum')" id="typeForum">Forum ({{ bcc.typeCount.forum }})</a>
         </div>
-        <button class='btn btn-standart btn-margin btn-green pull-right btn-large' ng-click="bcc.changePage('create')">Create New Scheme</button>
+        <button class='btn btn-standart btn-margin btn-green pull-right btn-large' ng-click="bcc.openModalCreate()">Create New Scheme</button>
       </div>
     </div>
 
@@ -44,4 +44,5 @@
   </div>
 </div>
 
-<ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/previewModal.html'"></ng-include>
+<ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/modals/previewModal.html'"></ng-include>
+<ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/modals/typeModal.html'"></ng-include>

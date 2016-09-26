@@ -21,6 +21,8 @@
     vm.prepareCurrentPageSchemes = prepareCurrentPageSchemes;
     vm.setSelectedId = setSelectedId;
     vm.setType = setType;
+    vm.openModalCreate = openModalCreate;
+    vm.createSchemeSelected = createSchemeSelected;
 
     vm.schemes = {};
     vm.scheme = {};
@@ -194,6 +196,17 @@
       vm.previewScheme = vm.scheme;
     };
 
+    function openModalCreate() {
+      domServices.modal('typeModal');
+    };
+
+    function createSchemeSelected(type) {
+      $('#typeModal').on('hidden.bs.modal', function () {
+        changePage('create', null, type);
+      });
+      domServices.modal('typeModal', 'close');
+    }
+
     function openModalPreview(scheme) {
       vm.previewScheme = scheme;
       domServices.modal('previewModal');
@@ -204,7 +217,7 @@
       domServices.modal('previewModal', 'close');
     }
 
-    function changePage(page, scheme) {
+    function changePage(page, scheme, type) {
       vm.formSubmitted = false;
 
       if(page == 'indexBack' && $stateParams.backTo) {
@@ -229,7 +242,7 @@
               vm.originalScheme = null;
             }
 
-            vm.scheme = scheme || { colours: { } };
+            vm.scheme = scheme || { colours: {}, type: type };
             vm.currentPage = { page: 'manage', type: page };
           }
         });
