@@ -40,7 +40,7 @@ function findScheme(params, accountId) {
 function findAllSchemes(accountId) {
   let deferred = q.defer();
 
-  BrandProjectPreference.findAll({ where: { accountId: accountId } }).then(function(schemes) {
+  BrandProjectPreference.findAll({ where: { accountId: accountId }, order: 'name' }).then(function(schemes) {
     deferred.resolve(simpleParams(schemes));
   }).catch(function(error) {
     deferred.reject(filters.errors(error));

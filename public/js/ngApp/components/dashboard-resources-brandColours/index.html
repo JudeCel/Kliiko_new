@@ -5,6 +5,11 @@
         <h2 class='text-center'>Brand Colors</h2>
       </div>
       <div class='col-xs-12'>
+        <div class="pull-left btn-margin green-text filter-section type-selected-{{ bcc.type ? bcc.type : 'all' }}">
+          <a ng-click="bcc.setType(null)" id="typeAll">All ({{ bcc.typeCount.all }})</a>
+          <a ng-click="bcc.setType('focus')" id="typeFocus">Focus ({{ bcc.typeCount.focus }})</a>
+          <a ng-click="bcc.setType('forum')" id="typeForum">Forum ({{ bcc.typeCount.forum }})</a>
+        </div>
         <button class='btn btn-standart btn-margin btn-green pull-right btn-large' ng-click="bcc.changePage('create')">Create New Scheme</button>
       </div>
     </div>

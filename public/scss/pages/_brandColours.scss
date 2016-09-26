@@ -44,6 +44,17 @@
       clear: both;
     }
   }
+  .green-text.filter-section {
+    a, a:hover {
+      color: #2D8C5E;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+  }
+
+  .type-selected-all #typeAll, .type-selected-forum #typeForum, .type-selected-focus #typeFocus {
+    font-weight: bold;
+  }
 }
 
 .brandColours {

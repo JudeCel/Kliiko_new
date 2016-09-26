@@ -20,12 +20,14 @@
     vm.colorStyles = colorStyles;
     vm.prepareCurrentPageSchemes = prepareCurrentPageSchemes;
     vm.setSelectedId = setSelectedId;
+    vm.setType = setType;
 
     vm.schemes = {};
     vm.scheme = {};
     vm.colorForm = {};
     vm.defaultColours = { black: '#000000', white: '#FFFFFF' };
     vm.selectedId = null;
+    vm.type = null;
 
     vm.pagination = {
       schemesTotalItems: 0,
@@ -34,7 +36,19 @@
       schemes: {}
     }
 
+    vm.typeCount = {
+      all: 0,
+      forum: 0,
+      focus: 0
+    }
+
     changePage('index');
+
+    function setType(type) {
+      vm.type = type;
+      vm.pagination.schemesCurrentPage = 1;
+      vm.prepareCurrentPageSchemes();
+    }
 
     function setSelectedId(selectedId) {
       if (vm.selectedId == null) {
@@ -44,19 +58,37 @@
 
     function prepareCurrentPageSchemes() {
       if (vm.schemes && vm.schemes.length > 0) {
-        for (var i = 0, len = vm.schemes.length; i < len; i++) {
-          if (vm.schemes[i].id == vm.selectedId) {
-            var selectedItem = vm.schemes[i];
-            vm.schemes.splice(i, 1);
-            vm.schemes.unshift(selectedItem);
-            break;
+        if (vm.selectedId) {
+          for (var i = 0, len = vm.schemes.length; i < len; i++) {
+            if (vm.schemes[i].id == vm.selectedId) {
+              if (i != 0) {
+                var selectedItem = vm.schemes[i];
+                vm.schemes.splice(i, 1);
+                vm.schemes.unshift(selectedItem);
+              }
+              break;
+            }
           }
         }
-        vm.pagination.schemesTotalItems = vm.schemes.length;
-        while ((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage >= vm.schemes.length) {
+        vm.typeCount.all = vm.schemes.length;
+        vm.typeCount.forum = 0;
+        vm.typeCount.focus = 0;
+        var currentTypeSchemes = [];
+        for (var i = 0, len = vm.schemes.length; i < len; i++) {
+          if (vm.schemes[i].type == vm.type || !vm.type) {
+            currentTypeSchemes.push(vm.schemes[i]);
+          }
+          if (vm.schemes[i].type == 'focus') {
+            vm.typeCount.focus++;
+          } else if (vm.schemes[i].type == 'forum') {
+            vm.typeCount.forum++;
+          }
+        }
+        vm.pagination.schemesTotalItems = currentTypeSchemes.length;
+        while ((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage >= currentTypeSchemes.length) {
           vm.pagination.schemesCurrentPage--;
         }
-        vm.pagination.schemes = vm.schemes.slice(((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage), ((vm.pagination.schemesCurrentPage) * vm.pagination.schemesItemsPerPage));
+        vm.pagination.schemes = currentTypeSchemes.slice(((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage), ((vm.pagination.schemesCurrentPage) * vm.pagination.schemesItemsPerPage));
       }
       else {
         vm.pagination.schemes = {};

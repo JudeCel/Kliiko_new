@@ -227,6 +227,7 @@ function sessionParams(preferenceId) {
 function brandProjectPreferenceParams() {
   return {
     name: 'Default scheme',
+    type: 'focus',
     accountId: mainData.account.id
   };
 }
