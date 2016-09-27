@@ -45,8 +45,16 @@ spec:
           value: "80"
         - name: REDIS_PORT
           value: "6379"
-        - name: DATABASE_URL
-          value: "postgres://postgres:nWD44LS3bYs29JeP@postgres-master/klzii_test"
+        - name: DATABASE_NAME_PROD
+          value: "klzii_test"
+        - name: DATABASE_USER_PROD
+          value: "postgres"
+        - name: DATABASE_PASSWORD_PROD
+          value: "nWD44LS3bYs29JeP@postgres-master"
+        - name: DATABASE_HOST_PROD
+          value: "10.4.0.6"
+        - name: DATABASE_DIALECT_PROD
+          value: "postgres"
         - name: AIRBRAKE_PROJECT_ID
           value: "121542"
         - name: AIRBRAKE_API_KEY

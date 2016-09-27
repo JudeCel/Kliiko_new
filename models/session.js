@@ -22,7 +22,7 @@ module.exports = (Sequelize, DataTypes) => {
     colours_used: { type: DataTypes.TEXT, allowNull: true },
     step: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionBuilderSteps, defaultValue: 'setUp' },
     status: { type: DataTypes.ENUM, allowNull: false, values: ['open', 'closed'], defaultValue: 'open' },
-    type: { type: DataTypes.ENUM, values: ['focus', 'forum'] },
+    type: { type: DataTypes.ENUM, values: ['focus', 'forum'] }
   }, {
     timestamps: true,
     classMethods: {

@@ -67,7 +67,7 @@ spec:
           value: "Zuso0791"
         - name: REDIS_PORT
           value: "6379"
-        - name: DATABASE_URL
+        - name: DATABASE_FULL_URL
           value: "postgres://postgres:nWD44LS3bYs29JeP@postgres-master/klzii_production"
         - name: AIRBRAKE_PROJECT_ID
           value: "121542"
