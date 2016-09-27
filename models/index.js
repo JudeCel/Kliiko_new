@@ -14,11 +14,9 @@ var config    = require(__dirname + '/../config/config.js')[env];
 
 // This workaround for Kubernetas connection
 if (process.env.NODE_ENV == 'production') {
-  let connectionString = `postgres://${config.username}:${config.password}@postgres-master/${config.database}`
-  var sequelize = new Sequelize(connectionString, { logging: false });
+  var sequelize = new Sequelize(process.env.DATABASE_URL, { logging: false });
 }else{
   var sequelize = new Sequelize(config.database, config.username, config.password, config);
-
 }
 
 fs
