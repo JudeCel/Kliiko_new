@@ -217,6 +217,7 @@ function sessionParams(preferenceId) {
     status: 'open',
     accountId: mainData.account.id,
     name: 'cool session',
+    type: 'focus',
     startTime: startTime,
     endTime: startTime.setHours(startTime.getHours() + 2000),
     timeZone: 'Europe/Riga',
