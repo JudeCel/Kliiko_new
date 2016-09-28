@@ -24,6 +24,9 @@ module.exports = (Sequelize, DataTypes) => {
     status: { type: DataTypes.ENUM, allowNull: false, values: ['open', 'closed'], defaultValue: 'open' }
   }, {
     timestamps: true,
+    hooks: {
+      beforeCreate: validations.limit(constants.maxSessionsAmount)
+    },
     classMethods: {
       associate: function (models) {
         Session.belongsTo(models.BrandProject, { foreignKey: 'brand_project_id' });
