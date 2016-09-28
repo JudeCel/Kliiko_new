@@ -25,7 +25,7 @@ module.exports = (Sequelize, DataTypes) => {
   }, {
     timestamps: true,
     hooks: {
-      beforeCreate: validations.limit(1000)
+      beforeCreate: validations.limit(constants.maxSessionsAmount)
     },
     classMethods: {
       associate: function (models) {
