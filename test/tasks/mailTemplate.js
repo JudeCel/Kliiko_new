@@ -2,20 +2,26 @@
 
 var assert = require('assert');
 var models = require('./../../models');
+var mailTemplates = require('./../fixtures/mailTemplates');
+var updateBaseMailTemplatesLogic = require('./../../tasks/updateBaseMailTemplatesLogic.js');
 
 describe('Mail Template Task', () => {
 
   describe("success", function () {
     beforeEach((done) => {
       models.sequelize.sync({ force: true }).done((error, result) => {
-        done();
+        mailTemplates.createMailTemplate().then(function() {
+          done();
+        });
       });
     });
 
     it.only("run task", (done) => {
-      //todo: run udpate
-      //require('./../../tasks/updateBaseMailTemplates.js');
-      done("Not implemented");
+      updateBaseMailTemplatesLogic.doUpdate({ skipLogs: true }).then(function() {
+        done();
+      }, function(error){
+        done(error);
+      });
     });
   });
 
