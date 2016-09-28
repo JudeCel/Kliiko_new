@@ -47,6 +47,16 @@ spec:
           value: "6379"
         - name: DATABASE_URL
           value: "postgres://postgres:nWD44LS3bYs29JeP@postgres-master/klzii_test"
+        - name: DATABASE_NAME_PROD
+          value: "klzii_test"
+        - name: DATABASE_USER_PROD
+          value: "postgres"
+        - name: DATABASE_PASSWORD_PROD
+          value: "nWD44LS3bYs29JeP"
+        - name: DATABASE_HOST_PROD
+          value: "10.7.245.121"
+        - name: DATABASE_DIALECT_PROD
+          value: "postgres"
         - name: AIRBRAKE_PROJECT_ID
           value: "121542"
         - name: AIRBRAKE_API_KEY
@@ -55,14 +65,16 @@ spec:
           value: ".test.klzii.com"
         - name: SERVER_DOMAIN
           value: "www.test.klzii.com"
+        - name: MAIL_TRANSPORT_SERVICE
+          value: "smtp.office365.com"
         - name: MAIL_FROM_EMAIL
-          value: "insiderfocus.noreply@gmail.com"
+          value: "noreply@klzii.com"
         - name: MAIL_FROM_NAME
           value: "klzii"
         - name: MAIL_TRANSPORT_AUTH_USER
-          value: "insiderfocus.noreply"
+          value: "noreply@klzii.com"
         - name: MAIL_TRANSPORT_AUTH_PASS
-          value: "ifs_Zupper!pwd"
+          value: "Zuso0791"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
         - name: FACEBOOK_CLIENT_ID

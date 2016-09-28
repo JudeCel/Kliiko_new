@@ -9,4 +9,5 @@ RUN npm install --quiet && \
 
 EXPOSE 8080
 
+CMD NODE_ENV=production npm run migrations
 CMD NODE_ENV=production npm run start_pm2 && npm run pm2_logs

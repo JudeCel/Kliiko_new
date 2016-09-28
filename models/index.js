@@ -9,8 +9,15 @@ var Sequelize = require('sequelize');
 var basename  = path.basename(module.filename);
 var env       = process.env.NODE_ENV || 'development';
 var db        = {};
+var config    = require(__dirname + '/../config/config.js')[env];
 
-var sequelize = new Sequelize(process.env.DATABASE_URL, { logging: false });
+
+// This workaround for Kubernetas connection
+if (process.env.NODE_ENV == 'production') {
+  var sequelize = new Sequelize(process.env.DATABASE_URL, { logging: false });
+}else{
+  var sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
 
 fs
   .readdirSync(__dirname)

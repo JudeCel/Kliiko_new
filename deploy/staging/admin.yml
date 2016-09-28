@@ -55,17 +55,19 @@ spec:
           value: "570903251504-hvev7sqcqqvl977djc1kqv722sqgidp3.apps.googleusercontent.com"
         - name: GOOGLE_CLIENT_SECRET
           value: "i_S2xLucKbRL14sp6hHSRVA_"
+        - name: MAIL_TRANSPORT_SERVICE
+          value: "smtp.office365.com"
         - name: MAIL_FROM_EMAIL
-          value: "insiderfocus.noreply@gmail.com"
+          value: "noreply@klzii.com"
         - name: MAIL_FROM_NAME
           value: "klzii"
         - name: MAIL_TRANSPORT_AUTH_USER
-          value: "insiderfocus.noreply"
+          value: "noreply@klzii.com"
         - name: MAIL_TRANSPORT_AUTH_PASS
-          value: "ifs_Zupper!pwd"
+          value: "Zuso0791"
         - name: REDIS_PORT
           value: "6379"
-        - name: DATABASE_URL
+        - name: DATABASE_FULL_URL
           value: "postgres://postgres:nWD44LS3bYs29JeP@postgres-master/klzii_production"
         - name: AIRBRAKE_PROJECT_ID
           value: "121542"

@@ -202,6 +202,9 @@
         case error.status == -1:
           deferred.reject("File is too big");
           break;
+        case Array.isArray(error.data.errors.name):
+          deferred.reject(error.data.errors.name[0]);
+          break;
         case Array.isArray(error.data.errors.type):
           deferred.reject(error.data.errors.type[0]);
           break;
