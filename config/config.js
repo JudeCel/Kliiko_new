@@ -9,7 +9,8 @@ var config = {
     "password": process.env.DATABASE_PASSWORD_DEV,
     "database": process.env.DATABASE_NAME_DEV,
     "host": process.env.DATABASE_HOST_DEV,
-    "dialect": process.env.DATABASE_DIALECT_DEV
+    "dialect": process.env.DATABASE_DIALECT_DEV,
+    logging: false
   },
   "test": {
     "username": process.env.DATABASE_USER_TEST,

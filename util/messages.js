@@ -99,6 +99,7 @@ module.exports = {
     sessionMemberNotFound: 'Session Member not found',
     sessionMemberRemoved: 'Session Member removed successfully',
     accountUserNotFound: 'Account User not found',
+    sessionClosed: "You can't send invites because session has been closed",
 
     errors: {
       cantAddObservers: "Please Update your subscription plan, to invite Observers to your session.",

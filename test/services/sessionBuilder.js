@@ -12,7 +12,7 @@ var async = require('async');
 var _ = require('lodash');
 
 describe('SERVICE - SessionBuilder', function() {
-  var testUser, testAccount, testAccountUser;
+  var testUser, testAccount, testAccountUser, subscriptionId;
 
   beforeEach(function(done) {
     userFixture.createUserAndOwnerAccount().then(function(result) {
@@ -20,6 +20,7 @@ describe('SERVICE - SessionBuilder', function() {
       testAccount = result.account;
       testAccountUser = result.accountUser;
       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function(subscription) {
+        subscriptionId = subscription.id;
         models.SubscriptionPreference.update({'data.sessionCount': 2}, { where: { subscriptionId: subscription.id } }).then(function(result) {
           done();
         }, function(error) {
@@ -84,6 +85,82 @@ describe('SERVICE - SessionBuilder', function() {
           assert.equal(result.sessionBuilder.steps.step5.stepName, 'inviteSessionObservers');
           assert.deepEqual(result.sessionBuilder.steps.step5.observers, []);
           done();
+        }, function(error) {
+          done(error);
+        });
+      });
+    });
+
+    describe('happy path', function(done) {
+      it('should craate new session when expired session exists', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+            done();
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+    });
+
+    describe('happy path', function(done) {
+      it('should new expired session when other open session exists', function(done) {
+        models.SubscriptionPreference.update({'data.sessionCount': 1}, { where: { subscriptionId: subscriptionId } }).then(function(result) {
+          sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+            let params = sessionParams(result);
+            let endTime = new Date();
+            endTime.setDate(endTime.getDate() + 1);
+            params.endTime = endTime.toString();
+            sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+              sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+                sessionBuilderServices.update(params2.id, params2.accountId, params2).then(function(result) {
+                  done();
+                }, function(error) {
+                  done(error);
+                });
+              }, function(error) {
+                done();
+              });
+            }, function(error) {
+              done(error);
+            });
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+    });
+
+    describe('sad path', function(done) {
+      it('should fail opening new session when other open session exists', function(done) {
+        models.SubscriptionPreference.update({'data.sessionCount': 1}, { where: { subscriptionId: subscriptionId } }).then(function(result) {
+          sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+            let params = sessionParams(result);
+            let endTime = new Date();
+            endTime.setDate(endTime.getDate() + 1);
+            params.endTime = endTime.toString();
+            sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+              sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+                let params2 = sessionParams(result);
+                params2.endTime = endTime.toString();
+                sessionBuilderServices.update(params2.id, params2.accountId, params2).then(function(result) {
+                  done('Should not open second session!');
+                }, function(error) {
+                  done(error);
+                });
+              }, function(error) {
+                done();
+              });
+            }, function(error) {
+              done(error);
+            });
+          }, function(error) {
+            done(error);
+          });
         }, function(error) {
           done(error);
         });

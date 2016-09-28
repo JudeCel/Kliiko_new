@@ -13,8 +13,15 @@ const DEPENDENCIES = {
   session: {
     key: 'sessionCount',
     model: models.Session,
-    params: function(accountId) {
-      return { where: { accountId: accountId } };
+    params: function(accountId, sessionId) {
+      return {
+        where: {
+          accountId: accountId,
+          status: 'open',
+          endTime: { $gt: new Date() },
+          id: { $ne: sessionId || null }
+        }
+      };
     }
   },
   contactList: {
@@ -48,14 +55,17 @@ module.exports = {
   countMessage: countMessage
 };
 
-function validate(accountId, type, count) {
+function validate(accountId, type, count, params) {
   let deferred = q.defer();
+  if(!params) {
+    params = {};
+  }
 
   validQuery(accountId).then(function(subscription) {
     if(subscription) {
       let dependency = DEPENDENCIES[type];
       if(dependency) {
-        dependency.model.count(dependency.params(accountId)).then(function(c) {
+        dependency.model.count(dependency.params(accountId, params.sessionId)).then(function(c) {
           let maxCount = subscription.SubscriptionPreference.data[dependency.key];
 
           if(c + count <= maxCount || maxCount == -1) {

@@ -108,32 +108,31 @@ function findSession(id, accountId) {
 
 function update(sessionId, accountId, params) {
   let deferred = q.defer();
+  let updatedSession;
 
   validators.hasValidSubscription(accountId).then(function() {
-    findSession(sessionId, accountId).then(function(session) {
-      session.updateAttributes(params).then(function(updatedSession) {
-        sessionBuilderObject(updatedSession).then(function(sessionObject) {
-          if(updatedSession.status == "closed"){
-            sendCloseSessionMail(updatedSession).then(function() {
-              deferred.resolve(sessionObject);
-            },function(error) {
-              deferred.reject(error);
-            })
-          }else{
-            deferred.resolve(sessionObject);
-          }
-        }, function(error) {
-          deferred.reject(error);
-        });
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
+    return validators.subscription(accountId, 'session', 1, { sessionId: sessionId });
+  }).then(function() {
+    return findSession(sessionId, accountId);
+  }).then(function(session) {
+    return session.updateAttributes(params);
+  }).then(function(result) {
+    updatedSession = result;
+    return sessionBuilderObject(updatedSession);
+  }).then(function(sessionObject) {
+    if(updatedSession.status == 'closed') {
+      sendCloseSessionMail(updatedSession).then(function() {
+        deferred.resolve(sessionObject);
+      },function(error) {
+        deferred.reject(error);
       });
-    }, function(error) {
-      deferred.reject(error);
-    });
-  }, function(error) {
-    deferred.reject(error);
-  })
+    }
+    else {
+      deferred.resolve(sessionObject);
+    }
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
 
   return deferred.promise;
 }
@@ -331,41 +330,46 @@ function sendSms(data, provider) {
 // Untested
 function inviteMembers(sessionId, data, accountId, accountName) {
   let deferred = q.defer();
-  let contactListUsersIds = _.map(data.members, 'listId');
 
-  validators.hasValidSubscription(accountId).then(function() {
-    inviteParams(sessionId, data).then(function(params) {
-      params.accountName = accountName;
-      inviteService.createBulkInvites(params).then(function(invites) {
-        let ids = _.map(invites, 'accountUserId');
-        AccountUser.findAll({
-          where: {
-            id: { $in: ids }
-          },
-          include: [ models.Invite, {
-            model: models.ContactListUser,
-            where: { contactListId: {$in: contactListUsersIds} }
-          }]
-        }).then(function(accountUsers) {
-          _.map(accountUsers, function(accountUser) {
-            accountUser.dataValues.invite = _.last(accountUser.Invites);
-          });
-
-          deferred.resolve(accountUsers);
-        }).catch(function(error) {
-          deferred.reject(filters.errors(error));
-        });
-      }, function(error) {
-        deferred.reject(error);
-      });
-    }, function(error) {
-      deferred.reject(error);
+  findSession(sessionId, accountId).then(function(session) {
+    if(session.status == 'closed') {
+      deferred.reject(MessagesUtil.sessionBuilder.sessionClosed);
+    }
+    else {
+      return validators.hasValidSubscription(accountId);
+    }
+  }).then(function() {
+    return inviteParams(sessionId, data);
+  }).then(function(params) {
+    params.accountName = accountName;
+    return inviteService.createBulkInvites(params);
+  }).then(function(invites) {
+    let ids = _.map(invites, 'accountUserId');
+    let contactListUsersIds = _.map(data.members, 'listId');
+    return findAccountUsersByIds(ids, contactListUsersIds);
+  }).then(function(accountUsers) {
+    _.map(accountUsers, function(accountUser) {
+      accountUser.dataValues.invite = _.last(accountUser.Invites);
     });
-  }, function(error) {
-    deferred.reject(error);
-  })
+
+    deferred.resolve(accountUsers);
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
 
   return deferred.promise;
+}
+
+function findAccountUsersByIds(ids, contactListUsersIds) {
+  return AccountUser.findAll({
+    where: {
+      id: { $in: ids }
+    },
+    include: [ models.Invite, {
+      model: models.ContactListUser,
+      where: { contactListId: { $in: contactListUsersIds } }
+    }]
+  });
 }
 
 function removeSessionMember(params) {
@@ -835,9 +839,11 @@ function canAddObservers(accountId) {
 function validate(session, params) {
   let deferred = q.defer();
 
-  findValidation(session.step, params).then(function() {
+  validators.subscription(session.accountId, 'session', 1, { sessionId: session.id }).then(function() {
+    return findValidation(session.step, params);
+  }).then(function() {
     deferred.resolve();
-  }, function(error) {
+  }).catch(function(error) {
     deferred.reject(error);
   });
 
