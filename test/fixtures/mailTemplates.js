@@ -4,7 +4,6 @@ var MailTemplateService = require('./../../services/mailTemplate');
 var async = require('async');
 var fs = require('fs');
 var Minimize = require('minimize');
-var async = require('async');
 var constants = require('./../../util/constants');
 var q = require('q');
 
@@ -13,7 +12,7 @@ let num = 0;
 
 let templateFiles = [
   {
-    fileName: 'InvitationSeries_FirstInvite.html',
+    fileName: 'InvitationSeries_FirstInvitation.html',
     name: constants.mailTemplateType.firstInvitation,
     type: "firstInvitation",
     subject: "Invitation to {Session Name}",
@@ -98,35 +97,35 @@ let templateFiles = [
     systemMessage: true
   },
   {
-    fileName: 'SystemEmail_ResetPasswordSuccess.html',
+    fileName: 'SystemEmail_PasswordResetSuccess.html',
     name: constants.mailTemplateType.passwordResetSuccess,
     type: "passwordResetSuccess",
     subject: "Reset password success",
     systemMessage: true
   },
   {
-    fileName: 'SystemEmail_ChangePasswordSuccess.html',
+    fileName: 'SystemEmail_PasswordChangeSuccess.html',
     name: constants.mailTemplateType.passwordChangeSuccess,
     type: "passwordChangeSuccess",
     subject: "Change password success",
     systemMessage: true
   },
   {
-    fileName: 'SystemEmail_ResetPasswordRequest.html',
+    fileName: 'SystemEmail_PasswordResetRequest.html',
     name: constants.mailTemplateType.passwordResetRequest,
     type: "passwordResetRequest",
     subject: "Reset password",
     systemMessage: true
   },
   {
-    fileName: 'SystemEmail_ConfirmationEmail.html',
+    fileName: 'SystemEmail_RegisterConfirmationEmail.html',
     name: constants.mailTemplateType.registerConfirmationEmail,
     type: "registerConfirmationEmail",
     subject: "Verify Email Address",
     systemMessage: true
   },
   {
-    fileName: 'SystemEmail_ConfirmationEmailSuccess.html',
+    fileName: 'SystemEmail_RegisterConfirmationEmailSuccess.html',
     name: constants.mailTemplateType.registerConfirmationEmailSuccess,
     type: "registerConfirmationEmailSuccess",
     subject: "Email Confirmation Success",
@@ -155,7 +154,7 @@ let templateFiles = [
     systemMessage: true
   },
   {
-    fileName: 'SystemPopup_SessionNotOpenYet.html',
+    fileName: 'SystemPopup_SessionNotYetOpen.html',
     name: constants.mailTemplateType.sessionNotYetOpen,
     type: "sessionNotYetOpen",
     subject: "Session Not Yet Open",
