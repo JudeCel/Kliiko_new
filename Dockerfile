@@ -1,7 +1,7 @@
 FROM node:6.3.1-wheezy
 
 RUN apt-get update && apt-get dist-upgrade -y \
-&& apt-get install -y vim netstat
+&& apt-get install -y vim net-tools
 
 WORKDIR /var/www/klzii
 
