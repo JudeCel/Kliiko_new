@@ -24,7 +24,8 @@ function envConfig() {
           pass: process.env.MAIL_TRANSPORT_AUTH_PASS
         },
         secureConnection: 'false',
-        tls: { ciphers: 'SSLv3' }
+        tls: { ciphers: 'SSLv3' },
+        logger: true
       }
   }
 }
