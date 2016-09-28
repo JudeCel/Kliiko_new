@@ -8,19 +8,20 @@ var async = require('async');
 var fs = require('fs');
 var _ = require('lodash');
 var models = require("../models");
-
 var path = './seeders/mailTemplateFiles/';
-var filesList = fs.readdirSync(path);
-var filesInfo = {};
 
-_.map(filesList, function (item){
-  var nameParts = item.replace(".html", "").split("_");
-  var categoryName = lowerCaseFirstLetter(nameParts[1]);
-  filesInfo[categoryName] = item;
-});
 
 function doUpdate() {
-  models.MailTemplateBase.findAll().then(function(data){
+  var filesList = fs.readdirSync(path);
+  var filesInfo = {};
+
+  _.map(filesList, function (item){
+    var nameParts = item.replace(".html", "").split("_");
+    var categoryName = lowerCaseFirstLetter(nameParts[1]);
+    filesInfo[categoryName] = item;
+  });
+
+  models.MailTemplateBase.findAll().then(function(data) {
     async.map(data, processCallBack(filesInfo), function(error, results) {
       if (error) {
         console.log(error);
@@ -30,6 +31,8 @@ function doUpdate() {
       }
       process.exit();
     });
+  }, function(error) {
+    console.log(error);
   });
 }
 
