@@ -60,18 +60,26 @@
 
     function prepareCurrentPageSchemes() {
       if (vm.schemes && vm.schemes.length > 0) {
+
+        //move to the first place item that was selected when user opened the view
+        //we don't change place when selected item or page index changed, only when user opens the view
+        //only frontend knows which item was selected when user opened the view
         if (vm.selectedId) {
           for (var i = 0, len = vm.schemes.length; i < len; i++) {
             if (vm.schemes[i].id == vm.selectedId) {
+              //if item is not on 1st place - move it
               if (i != 0) {
                 var selectedItem = vm.schemes[i];
                 vm.schemes.splice(i, 1);
                 vm.schemes.unshift(selectedItem);
               }
+              //exit from cycle wned moved or don't need to move
               break;
             }
           }
         }
+
+        //prepare count of items by type and array of items of each type to display when only one type is selected
         vm.typeCount.all = vm.schemes.length;
         vm.typeCount.forum = 0;
         vm.typeCount.focus = 0;
@@ -86,10 +94,14 @@
             vm.typeCount.forum++;
           }
         }
+
         vm.pagination.schemesTotalItems = currentTypeSchemes.length;
+        //decrease page number (f.e. if item removed don't to show empty page)
         while ((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage >= currentTypeSchemes.length) {
           vm.pagination.schemesCurrentPage--;
         }
+
+        //prepare current page items to display
         vm.pagination.schemes = currentTypeSchemes.slice(((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage), ((vm.pagination.schemesCurrentPage) * vm.pagination.schemesItemsPerPage));
       }
       else {

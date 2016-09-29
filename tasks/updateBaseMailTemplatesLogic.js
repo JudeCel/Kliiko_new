@@ -8,19 +8,20 @@ var async = require('async');
 var fs = require('fs');
 var _ = require('lodash');
 var models = require("../models");
-var path = './seeders/mailTemplateFiles/';
+var stringHelpers = require('../util/stringHelpers.js');
 var q = require('q');
+var path = './seeders/mailTemplateFiles/';
 
 
 function doUpdate(config) {
-  let deferred = q.defer();
+  var deferred = q.defer();
 
   var filesList = fs.readdirSync(path);
   var filesInfo = {};
 
   _.map(filesList, function (item){
     var nameParts = item.replace(".html", "").split("_");
-    var categoryName = lowerCaseFirstLetter(nameParts[1]);
+    var categoryName = stringHelpers.lowerCaseFirstLetter(nameParts[1]);
     filesInfo[categoryName] = item;
   });
 
@@ -47,10 +48,6 @@ function outLog(config, message) {
   if (!config || !config.skipLogs) {
     console.log(message);
   }
-}
-
-function lowerCaseFirstLetter(string) {
-  return string.charAt(0).toLowerCase() + string.slice(1);
 }
 
 function processData(item, fileObject, callback) {

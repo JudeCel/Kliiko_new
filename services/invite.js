@@ -31,9 +31,9 @@ var mailUrlHelper = require('../mailers/helpers');
 const EXPIRE_AFTER_DAYS = 5;
 
 function createBulkInvites(arrayParams) {
-  let deferred = q.defer();
+  var deferred = q.defer();
 
-  let expireDate = new Date();
+  var expireDate = new Date();
   expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
   _.map(arrayParams, function(paramObject) {
     paramObject.token = uuid.v1();
@@ -46,7 +46,7 @@ function createBulkInvites(arrayParams) {
     returning: true
   }).then(function(results) {
     if(results.length > 0) {
-      let ids = _.map(results, 'id');
+      var ids = _.map(results, 'id');
       Invite.findAll({
         where: { id: { $in: ids } },
         include: [{
@@ -95,10 +95,10 @@ function createBulkInvites(arrayParams) {
 }
 
 function createInvite(params) {
-  let deferred = q.defer();
+  var deferred = q.defer();
 
-  let token = uuid.v1();
-  let expireDate = new Date();
+  var token = uuid.v1();
+  var expireDate = new Date();
   expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
 
   Invite.create({
@@ -150,7 +150,7 @@ function sendInvite(invite, deferred) {
   }
 
   if(invite.accountId) {
-    let inviteParams = {
+    var inviteParams = {
       token: invite.token,
       role: invite.role,
       email: invite.AccountUser.email,
@@ -173,7 +173,7 @@ function sendInvite(invite, deferred) {
     });
   }
   else {
-    let session = invite.Session;
+    var session = invite.Session;
     models.SessionMember.find({
       where: {
         sessionId: session.id,
@@ -181,8 +181,8 @@ function sendInvite(invite, deferred) {
       },
       include: [AccountUser]
     }).then(function(sessionMember) {
-      let facilitator = sessionMember.AccountUser;
-      let inviteParams = {
+      var facilitator = sessionMember.AccountUser;
+      var inviteParams = {
         sessionId: session.id,
         role: invite.role,
         accountId: session.accountId,
@@ -314,7 +314,7 @@ function acceptInviteExisting(token, callback) {
 
       invite.update({ status: 'confirmed' }).then(function() {
         if(invite.sessionId) {
-          let params = {
+          var params = {
             sessionId: invite.sessionId,
             accountUserId: invite.accountUserId,
             username: invite.AccountUser.firstName,
@@ -342,13 +342,13 @@ function acceptInviteExisting(token, callback) {
 };
 
 function shouldUpdateRole(accountUser, newRole) {
-  let roles = ['observer', 'participant', 'facilitator', 'accountManager', 'admin'];
+  var roles = ['observer', 'participant', 'facilitator', 'accountManager', 'admin'];
 
   if(roles.indexOf(newRole) > roles.indexOf(accountUser.role)) {
     return accountUser.update({ role: newRole });
   }
   else {
-    let deferred = q.defer();
+    var deferred = q.defer();
     deferred.resolve();
     return deferred.promise;
   }
@@ -397,7 +397,7 @@ function updateUser(params, invite, callback) {
 };
 
 function sessionAccept(token, body) {
-  let deferred = q.defer();
+  var deferred = q.defer();
 
   findInvite(token, function(error, invite) {
     if(error) {
@@ -418,15 +418,15 @@ function sessionAccept(token, body) {
 }
 
 function sessionAcceptFlow(invite, body) {
-  let deferred = q.defer();
-  let user;
+  var deferred = q.defer();
+  var user;
 
   models.sequelize.transaction().then(function(t) {
     return User.create({ email: invite.AccountUser.email, password: body.password, confirmedAt: new Date() }, { transaction: t }).then(function(result) {
       user = result;
       return invite.AccountUser.update({ UserId: user.id, active: true }, { transaction: t });
     }).then(function() {
-      let params = sessionMemberParams(invite, t);
+      var params = sessionMemberParams(invite, t);
       return sessionMemberService.createWithTokenAndColour(params);
     }).then(function() {
       return invite.update({ status: 'confirmed' }, { transaction: t });
@@ -451,8 +451,8 @@ function sessionAcceptFlow(invite, body) {
 }
 
 function canAddSessionMember(invite) {
-  let deferred = q.defer();
-  let where = { where: { sessionId: invite.sessionId, role: invite.role } };
+  var deferred = q.defer();
+  var where = { where: { sessionId: invite.sessionId, role: invite.role } };
 
   if(invite.role == 'facilitator') {
     models.SessionMember.find(where).then(function(sessionMember) {
@@ -465,11 +465,11 @@ function canAddSessionMember(invite) {
     });
   }
   else {
-    let session = invite.Session;
+    var session = invite.Session;
     models.SessionMember.count(where).then(function(c) {
-      let allowedCount = {
-        participant: session.type == 'forum' ? -1 : 8,
-        observer: -1
+      var allowedCount = {
+        participant: session.type == 'forum' ? constants.membersAllowedCount.participantsForum : constants.membersAllowedCount.participantsFocus,
+        observer: constants.membersAllowedCount.observers
       };
 
       if(c < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
@@ -495,7 +495,7 @@ function sessionMemberParams(invite, t) {
 }
 
 function acceptSessionInvite(token) {
-  let deferred = q.defer();
+  var deferred = q.defer();
 
   findInvite(token, function(error, invite) {
     if(error) {
@@ -518,7 +518,7 @@ function acceptSessionInvite(token) {
 }
 
 function declineSessionInvite(token, status) {
-  let deferred = q.defer();
+  var deferred = q.defer();
 
   findInvite(token, function(error, invite) {
     if(error) {
@@ -541,10 +541,10 @@ function declineSessionInvite(token, status) {
 }
 
 function sendEmail(status, invite) {
-  let deferred = q.defer();
+  var deferred = q.defer();
 
   prepareMailInformation(invite).then(function(data) {
-    let doSendEmail = null;
+    var doSendEmail = null;
 
     switch (status) {
       case 'notAtAll':
@@ -587,7 +587,7 @@ function sendEmail(status, invite) {
 
 //Helpers
 function prepareMailInformation(invite) {
-  let deferred = q.defer();
+  var deferred = q.defer();
 
   models.SessionMember.find({
     where: {
@@ -609,7 +609,7 @@ function prepareMailInformation(invite) {
 }
 
 function prepareMailParams(invite, session, receiver, facilitator) {
-  let deferred = q.defer();
+  var deferred = q.defer();
 
   var object = {
     sessionId: session.id,
@@ -642,7 +642,7 @@ function prepareMailParams(invite, session, receiver, facilitator) {
 
 function populateMailParamsWithColors(params, session)
 {
-  let deferred = q.defer();
+  var deferred = q.defer();
 
   _.each(brandProjectConstants.preferenceColours, function (value, key) {
     if (typeof(value) == "object") {
@@ -653,7 +653,7 @@ function populateMailParamsWithColors(params, session)
       params[key] = value;
     }
   });
-   
+
   if (session) {
     BrandProjectPreference.find({ where: { id: session.brandProjectPreferenceId, accountId: session.accountId } }).then(function(scheme) {
       if(scheme) {
