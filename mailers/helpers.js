@@ -11,29 +11,20 @@ var stubTransport = {
 var helpers = exports;
 
 function envConfig() {
-
-  console.log(process.env.NODE_ENV, "NODE_ENV");
-  console.log(process.env.MAIL_TRANSPORT_SERVICE, "MAIL_TRANSPORT_SERVICE");
-  console.log(process.env.MAIL_TRANSPORT_AUTH_USER, "MAIL_TRANSPORT_AUTH_USER");
-  console.log(process.env.MAIL_TRANSPORT_AUTH_PASS, "MAIL_TRANSPORT_AUTH_PASS");
-
   switch (process.env.NODE_ENV) {
     case "test":
       return stubTransport;
       break;
     default:
       return {
-        host: process.env.MAIL_TRANSPORT_SERVICE,
-        port: 587,
+        service: process.env.MAIL_TRANSPORT_SERVICE,
         auth: {
           user: process.env.MAIL_TRANSPORT_AUTH_USER,
           pass: process.env.MAIL_TRANSPORT_AUTH_PASS
         },
-        secureConnection: false,
-        tls: { ciphers: 'SSLv3' },
         debug: true,
         logger: true
-      }
+      };
   }
 }
 
