@@ -9,6 +9,7 @@ var async = require('async');
 var fs = require('fs');
 var q = require('q');
 var path = './seeders/mailTemplateFiles/';
+var templatesCount = 21;
 
 describe('Mail Template Task', () => {
 
@@ -23,6 +24,24 @@ describe('Mail Template Task', () => {
 
     it("run task", (done) => {
       updateBaseMailTemplatesLogic.doUpdate({ skipLogs: true }).then(function() {
+        done();
+      }, function(error){
+        done(error);
+      });
+    });
+
+    it("files read", (done) => {
+       let filesInfo = updateBaseMailTemplatesLogic.getTemplateFilesInfo(path);
+       let filesCount = Object.keys(filesInfo).length;
+       if(templatesCount == filesCount) {
+         done();
+       } else {
+         done("Wrong amount of files");
+       }
+    });
+
+    it("check task result", (done) => {
+      updateBaseMailTemplatesLogic.doUpdate({ skipLogs: true }).then(function() {
 
          doCheck().then(function() {
            done();
@@ -33,22 +52,8 @@ describe('Mail Template Task', () => {
          function doCheck() {
            let deferred = q.defer();
            let filesInfo = updateBaseMailTemplatesLogic.getTemplateFilesInfo(path);
-           let filesCount = 0;
-           //need this array for async.map
-           let filesInfoArr = [];
 
-           for (let item in filesInfo) {
-             if (filesInfo.hasOwnProperty(item)) {
-               filesCount++;
-               filesInfoArr.push({ category: item, filePath: path + filesInfo[item] });
-             }
-           }
-
-           if(fs.readdirSync(path).length != filesCount) {
-             deferred.reject("Wrong amount of files");
-           }
-
-           checkContents(filesInfoArr).then(function(data) {
+           checkContents(filesInfo, path).then(function(data) {
              deferred.resolve();
            }, function(error) {
              deferred.reject(error);
@@ -57,11 +62,11 @@ describe('Mail Template Task', () => {
            return deferred.promise;
          }
 
-         function checkContents(filesInfo) {
+         function checkContents(filesInfo, filesPath) {
            let deferred = q.defer();
 
-           async.map(filesInfo, function(fileInfo, callback) {
-             checkContent(fileInfo.filePath, fileInfo.category).then(function(data) {
+           async.map(Object.keys(filesInfo), function(category, callback) {
+             checkContent(filesPath + filesInfo[category], category).then(function(data) {
                callback();
              }, function(error) {
                callback(error);
@@ -104,6 +109,8 @@ describe('Mail Template Task', () => {
         done(error);
       });
     });
+
+
   });
 
 });
