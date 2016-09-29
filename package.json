@@ -113,7 +113,7 @@
     "mv": "^2.1.1",
     "ncp": "^2.0.0",
     "node-uuid": "^1.4.7",
-    "nodemailer": "^2.3.1",
+    "nodemailer": "^2.6.4",
     "nodemon": "1.10.0",
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.0",
