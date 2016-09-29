@@ -1,10 +1,18 @@
 'use strict';
-module.exports = {
-  up: function (queryInterface, Sequelize) {
-    return queryInterface.addColumn('BrandProjectPreferences', 'type', { type: DataTypes.ENUM, allowNull: false, values: ['focus', 'forum'], defaultValue: 'focus' })
-  },
-  down: function (queryInterface, Sequelize) {
-    return queryInterface.removeColumn('BrandProjectPreferences', 'type')
-  }
-};
+ let Bluebird = require('bluebird');
+ let validateError = require('./helpers/errorFilter.js').validateError
 
+ module.exports = {
+   up: function (queryInterface, Sequelize) {
+     return new Bluebird(function (resolve, reject) {
+       queryInterface.addColumn('BrandProjectPreferences', 'type', { type: Sequelize.ENUM, allowNull: false, values: ['focus', 'forum'], defaultValue: 'focus' }).then(function() {
+         resolve();
+       },function(error) {
+         validateError(error, resolve, reject);
+       });
+   });
+   },
+   down: function (queryInterface, Sequelize) {
+     return queryInterface.removeColumn('BrandProjectPreferences', 'type');
+   }
+ };
