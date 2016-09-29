@@ -15,6 +15,7 @@ module.exports = (Sequelize, DataTypes) => {
     },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
     colours: { type: DataTypes.JSONB, allowNull: false, defaultValue: brandProjectConstants.preferenceColours },
+    type: { type: DataTypes.ENUM, allowNull: false, values: ['focus', 'forum'], defaultValue: 'focus' },
   }, {
     timestamps: true,
     classMethods: {

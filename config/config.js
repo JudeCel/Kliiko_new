@@ -17,7 +17,8 @@ var config = {
     "password": process.env.DATABASE_PASSWORD_TEST,
     "database": process.env.DATABASE_NAME_TEST,
     "host": process.env.DATABASE_HOST_TEST,
-    "dialect": process.env.DATABASE_DIALECT_TEST
+    "dialect": process.env.DATABASE_DIALECT_TEST,
+    logging: false
   },
   "production": {
     "username": process.env.DATABASE_USER_PROD,

@@ -20,12 +20,16 @@
     vm.colorStyles = colorStyles;
     vm.prepareCurrentPageSchemes = prepareCurrentPageSchemes;
     vm.setSelectedId = setSelectedId;
+    vm.setType = setType;
+    vm.openModalCreate = openModalCreate;
+    vm.createSchemeSelected = createSchemeSelected;
 
     vm.schemes = {};
     vm.scheme = {};
     vm.colorForm = {};
     vm.defaultColours = { black: '#000000', white: '#FFFFFF' };
     vm.selectedId = null;
+    vm.type = null;
 
     vm.pagination = {
       schemesTotalItems: 0,
@@ -34,7 +38,19 @@
       schemes: {}
     }
 
+    vm.typeCount = {
+      all: 0,
+      forum: 0,
+      focus: 0
+    }
+
     changePage('index');
+
+    function setType(type) {
+      vm.type = type;
+      vm.pagination.schemesCurrentPage = 1;
+      vm.prepareCurrentPageSchemes();
+    }
 
     function setSelectedId(selectedId) {
       if (vm.selectedId == null) {
@@ -44,19 +60,49 @@
 
     function prepareCurrentPageSchemes() {
       if (vm.schemes && vm.schemes.length > 0) {
-        for (var i = 0, len = vm.schemes.length; i < len; i++) {
-          if (vm.schemes[i].id == vm.selectedId) {
-            var selectedItem = vm.schemes[i];
-            vm.schemes.splice(i, 1);
-            vm.schemes.unshift(selectedItem);
-            break;
+
+        //move to the first place item that was selected when user opened the view
+        //we don't change place when selected item or page index changed, only when user opens the view
+        //only frontend knows which item was selected when user opened the view
+        if (vm.selectedId) {
+          for (var i = 0, len = vm.schemes.length; i < len; i++) {
+            if (vm.schemes[i].id == vm.selectedId) {
+              //if item is not on 1st place - move it
+              if (i != 0) {
+                var selectedItem = vm.schemes[i];
+                vm.schemes.splice(i, 1);
+                vm.schemes.unshift(selectedItem);
+              }
+              //exit from cycle wned moved or don't need to move
+              break;
+            }
           }
         }
-        vm.pagination.schemesTotalItems = vm.schemes.length;
-        while ((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage >= vm.schemes.length) {
+
+        //prepare count of items by type and array of items of each type to display when only one type is selected
+        vm.typeCount.all = vm.schemes.length;
+        vm.typeCount.forum = 0;
+        vm.typeCount.focus = 0;
+        var currentTypeSchemes = [];
+        for (var i = 0, len = vm.schemes.length; i < len; i++) {
+          if (vm.schemes[i].type == vm.type || !vm.type) {
+            currentTypeSchemes.push(vm.schemes[i]);
+          }
+          if (vm.schemes[i].type == 'focus') {
+            vm.typeCount.focus++;
+          } else if (vm.schemes[i].type == 'forum') {
+            vm.typeCount.forum++;
+          }
+        }
+
+        vm.pagination.schemesTotalItems = currentTypeSchemes.length;
+        //decrease page number (f.e. if item removed don't to show empty page)
+        while ((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage >= currentTypeSchemes.length) {
           vm.pagination.schemesCurrentPage--;
         }
-        vm.pagination.schemes = vm.schemes.slice(((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage), ((vm.pagination.schemesCurrentPage) * vm.pagination.schemesItemsPerPage));
+
+        //prepare current page items to display
+        vm.pagination.schemes = currentTypeSchemes.slice(((vm.pagination.schemesCurrentPage - 1) * vm.pagination.schemesItemsPerPage), ((vm.pagination.schemesCurrentPage) * vm.pagination.schemesItemsPerPage));
       }
       else {
         vm.pagination.schemes = {};
@@ -162,6 +208,17 @@
       vm.previewScheme = vm.scheme;
     };
 
+    function openModalCreate() {
+      domServices.modal('typeModal');
+    };
+
+    function createSchemeSelected(type) {
+      $('#typeModal').on('hidden.bs.modal', function () {
+        changePage('create', null, type);
+      });
+      domServices.modal('typeModal', 'close');
+    }
+
     function openModalPreview(scheme) {
       vm.previewScheme = scheme;
       domServices.modal('previewModal');
@@ -172,7 +229,7 @@
       domServices.modal('previewModal', 'close');
     }
 
-    function changePage(page, scheme) {
+    function changePage(page, scheme, type) {
       vm.formSubmitted = false;
 
       if(page == 'indexBack' && $stateParams.backTo) {
@@ -197,7 +254,7 @@
               vm.originalScheme = null;
             }
 
-            vm.scheme = scheme || { colours: { } };
+            vm.scheme = scheme || { colours: {}, type: type };
             vm.currentPage = { page: 'manage', type: page };
           }
         });

@@ -17,6 +17,23 @@
       <input id="sessionBuilder-session-name" type="text" ng-model="step1Controller.name" ng-blur="step1Controller.updateName();">
     </uib-accordion-group>
 
+    <!-- Session Type -->
+    <uib-accordion-group is-open="step1Controller.accordions.sessionType" class="green-input session-type">
+      <uib-accordion-heading>
+        <div class="panel-label">
+          Choose Type
+          <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.sessionType, 'glyphicon-chevron-right': !step1Controller.accordions.sessionType}"></i>
+          <span class="panel-value pull-right capitalize">
+            {{ sbc.session.steps.step1.type }}
+          </span>
+        </div>
+      </uib-accordion-heading>
+      <input type="radio" id="sessionBuilder-session-type-focus" name="type" value="focus" ng-model="step1Controller.type" ng-click="step1Controller.confirmType();">
+      <label for="sessionBuilder-session-type-focus">Focus</label>
+      <input type="radio" id="sessionBuilder-session-type-forum" name="type" value="forum" ng-model="step1Controller.type" ng-click="step1Controller.confirmType();">
+      <label for="sessionBuilder-session-type-forum">Forum</label>
+    </uib-accordion-group>
+
     <!-- Date And Time -->
     <uib-accordion-group is-open="step1Controller.accordions.dateAndTime" class="green-input">
       <uib-accordion-heading>
@@ -234,7 +251,8 @@
         </uib-accordion-heading>
 
         <section>
-          <div class='row' ng-controller='BrandColourController as bcc' ng-init="bcc.setSelectedId(step1Controller.session.steps.step1.brandProjectPreferenceId)">
+          <div ng-if="!step1Controller.type" class="small">Select type first</div>
+          <div ng-if="step1Controller.type" class='row' ng-controller='BrandColourController as bcc' ng-init="bcc.setSelectedId(step1Controller.session.steps.step1.brandProjectPreferenceId); bcc.setType(step1Controller.type)">
             <div class='col-lg-6 col-md-6 col-sm-6 scale' ng-repeat='scheme in step1Controller.colorsList = bcc.pagination.schemes' ng-show="bcc.schemes.length">
               <label for="{{ $index }}-scheme" class="selected-{{step1Controller.colorScheme.id == scheme.id}}">
                 <div class='panel panel-default panel-success'>
@@ -261,4 +279,6 @@
         </section>
     </uib-accordion-group>
   </uib-accordion>
+  
+  <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/modals/sessionType.html'"></ng-include>
 </section>

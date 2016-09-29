@@ -5,6 +5,7 @@
     <thead>
       <tr>
         <th>Chat Session Name</th>
+        <th>Type</th>
         <th>Start Date</th>
         <th>End Date</th>
         <th>Status</th>
@@ -14,6 +15,7 @@
     <tbody ng-repeat='au in myDashboard.accountUsers.participant.data'>
       <tr>
         <td>{{ au.session.name }}</td>
+        <td class="capitalize">{{ au.session.type }}</td>
         <td>{{ au.session.startTime | date:dashboard.dateFormat }}</td>
         <td>{{ au.session.endTime | date:dashboard.dateFormat }}</td>
         <td>{{ au.session.showStatus }}</td>
@@ -31,8 +33,20 @@
           <div class="dashboardElements-icons">
               <a ng-disabled='myDashboard.disablePlayButton' href='#' ng-click='myDashboard.redirectToChatSession(au.session.id)' class='go-to-chatroom glyphicon glyphicon-play' title='Go to Chatroom'></a>
           </div>
-          <span class="dashboardElements-title">Chat Session</span>
-          <div class="dashboardElements-name">{{ au.session.name }}</div>
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <span class="dashboardElements-title">Chat Session</span>
+                  <div>{{ au.session.name }}</div>
+                </td>
+                <td>
+                  <span class="dashboardElements-title">Type</span>
+                  <div class="dashboardElements-type">{{ au.session.type }}</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
           <div>
             <table>
               <tbody>

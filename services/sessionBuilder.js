@@ -630,6 +630,7 @@ function stepsDefinition(session) {
   object.step1 = {
     stepName: "setUp",
     name: session.name,
+    type: session.type,
     startTime: moment(session.startTime).tz(session.timeZone).format(),
     endTime: moment(session.endTime).tz(session.timeZone).format(),
     timeZoneOffset: moment(session.endTime).tz(session.timeZone).format('ZZ'),
@@ -898,6 +899,10 @@ function validateStepOne(params) {
       let errors = {};
       if(!params.name) {
         errors.name = MessagesUtil.sessionBuilder.errors.firstStep.nameRequired;
+      }
+
+      if (!params.type) {
+        errors.type = MessagesUtil.sessionBuilder.errors.firstStep.typeRequired;
       }
 
       if(!params.startTime) {

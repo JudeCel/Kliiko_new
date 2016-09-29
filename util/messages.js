@@ -106,6 +106,7 @@ module.exports = {
       cantSendCloseMails: "Were not able to send emails to inform all participants, that session was closed.",
       firstStep: {
         nameRequired: 'Name must be provided',
+        typeRequired: 'Type must be selected',
         startTimeRequired: 'Start time must be provided',
         endTimeRequired: 'End time must be provided',
         invalidDateRange: "Start date can't be higher then end date.",

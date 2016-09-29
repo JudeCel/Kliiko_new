@@ -157,9 +157,7 @@
       top: -6px;
     }
 
-
   }
-
 
   #GalleryController {
 
@@ -170,9 +168,31 @@
     }
   }
 
-
-
   #create-color-scheme-area {
     padding: 20px;
+  }
+
+  .session-type {
+    label {
+      margin-right: 20px;
+      font-weight: 400;
+      cursor:pointer;
+    }
+    input[type='radio'] {
+      cursor:pointer;
+    }
+  }
+
+  .sessionTypeModal {
+    font-size: 16px;
+    color: #111;
+
+    .red-block {
+      font-size: 14px;
+      border: 2px solid red;
+      background-color: #f7f5f6;
+      padding: 10px;
+      margin-top: 10px;
+    }
   }
 }

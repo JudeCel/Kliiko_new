@@ -42,8 +42,9 @@ describe('SERVICE - SessionBuilder', function() {
 
   function accountParams() {
     return {
-      accountId: testAccount.id,
+      accountId: testAccount.id, 
       timeZone: 'Europe/Riga',
+      type: 'focus',
     };
   };
 
