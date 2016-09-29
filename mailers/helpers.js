@@ -24,12 +24,12 @@ function envConfig() {
     default:
       return {
         host: process.env.MAIL_TRANSPORT_SERVICE,
-        port: '587',
+        port: 587,
         auth: {
           user: process.env.MAIL_TRANSPORT_AUTH_USER,
           pass: process.env.MAIL_TRANSPORT_AUTH_PASS
         },
-        secureConnection: 'false',
+        secureConnection: false,
         tls: { ciphers: 'SSLv3' },
         debug: true,
         logger: true
