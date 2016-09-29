@@ -7,7 +7,6 @@ var updateBaseMailTemplatesLogic = require('./../../tasks/updateBaseMailTemplate
 var stringHelpers =  require('./../../util/stringHelpers.js');
 var async = require('async');
 var fs = require('fs');
-var _ = require('lodash');
 var q = require('q');
 var path = './seeders/mailTemplateFiles/';
 
@@ -22,7 +21,7 @@ describe('Mail Template Task', () => {
       });
     });
 
-    it.only("run task", (done) => {
+    it("run task", (done) => {
       updateBaseMailTemplatesLogic.doUpdate({ skipLogs: true }).then(function() {
 
          doCheck().then(function() {
@@ -32,52 +31,73 @@ describe('Mail Template Task', () => {
          });
 
          function doCheck() {
-           var deferred = q.defer();
-           var filesList = fs.readdirSync(path);
-           var filesInfo = {};
-           _.map(filesList, function (item) {
-             var nameParts = item.replace(".html", "").split("_");
-             var categoryName = stringHelpers.lowerCaseFirstLetter(nameParts[1]);
-             filesInfo[categoryName] = item;
-           });
-           models.MailTemplateBase.findAll().then(function(data) {
-             async.map(data, processCheckCallBack(filesInfo), function(error, results) {
-               if (error) {
-                 deferred.reject(error);
-               }
-               if (results) {
-                 deferred.resolve();
-               }
-             });
+           let deferred = q.defer();
+           let filesInfo = updateBaseMailTemplatesLogic.getTemplateFilesInfo(path);
+           let filesCount = 0;
+           //need this array for async.map
+           let filesInfoArr = [];
+
+           for (let item in filesInfo) {
+             if (filesInfo.hasOwnProperty(item)) {
+               filesCount++;
+               filesInfoArr.push({ category: item, filePath: path + filesInfo[item] });
+             }
+           }
+
+           if(fs.readdirSync(path).length != filesCount) {
+             deferred.reject("Wrong amount of files");
+           }
+
+           checkContents(filesInfoArr).then(function(data) {
+             deferred.resolve();
            }, function(error) {
              deferred.reject(error);
            });
+
            return deferred.promise;
          }
 
-         function processData(item, fileObject, callback) {
-           fs.readFile(path + fileObject[item.category], 'utf8', function read(error, fileData) {
-             if (error) {
+         function checkContents(filesInfo) {
+           let deferred = q.defer();
+
+           async.map(filesInfo, function(fileInfo, callback) {
+             checkContent(fileInfo.filePath, fileInfo.category).then(function(data) {
+               callback();
+             }, function(error) {
                callback(error);
+             });
+           }, function(error) {
+             if (error) {
+               deferred.reject(error);
+             } else {
+               deferred.resolve();
+             }
+           });
+
+           return deferred.promise;
+         }
+
+         function checkContent(filePath, category) {
+           let deferred = q.defer();
+
+           fs.readFile(filePath, 'utf8', function read(error, fileData) {
+             if (error) {
+               deferred.reject(error);
              }
              if(fileData) {
-               models.MailTemplateBase.find({ where: { category: item.category } }).then(function(data) {
+               models.MailTemplateBase.find({ where: { category: category } }).then(function(data) {
                  if(data.content == fileData) {
-                   callback(null, "Checked email template for " + item.category);
+                   deferred.resolve();
                  } else {
-                   callback("Failed email template for " + item.category);
+                   deferred.reject("Failed email template for " + category);
                  }
                }, function(error) {
-                 callback(error);
+                 deferred.reject(error);
                });
              }
            });
-         }
 
-         function processCheckCallBack(infoDataObject) {
-           return function(item, callback) {
-             processData(item, infoDataObject, callback);
-           }
+           return deferred.promise;
          }
 
       }, function(error){

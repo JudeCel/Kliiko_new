@@ -14,16 +14,8 @@ var path = './seeders/mailTemplateFiles/';
 
 
 function doUpdate(config) {
-  var deferred = q.defer();
-
-  var filesList = fs.readdirSync(path);
-  var filesInfo = {};
-
-  _.map(filesList, function (item){
-    var nameParts = item.replace(".html", "").split("_");
-    var categoryName = stringHelpers.lowerCaseFirstLetter(nameParts[1]);
-    filesInfo[categoryName] = item;
-  });
+  let deferred = q.defer();
+  let filesInfo = getTemplateFilesInfo(path);
 
   models.MailTemplateBase.findAll().then(function(data) {
     async.map(data, processCallBack(filesInfo), function(error, results) {
@@ -42,6 +34,17 @@ function doUpdate(config) {
   });
 
   return deferred.promise;
+}
+
+function getTemplateFilesInfo(filesPath) {
+  let filesList = fs.readdirSync(filesPath);
+  let filesInfo = {};
+  _.map(filesList, function (item){
+    let nameParts = item.replace(".html", "").split("_");
+    let categoryName = stringHelpers.lowerCaseFirstLetter(nameParts[1]);
+    filesInfo[categoryName] = item;
+  });
+  return filesInfo;
 }
 
 function outLog(config, message) {
@@ -72,5 +75,6 @@ function processCallBack(infoDataObject) {
 }
 
 module.exports = {
-  doUpdate: doUpdate
+  doUpdate: doUpdate,
+  getTemplateFilesInfo: getTemplateFilesInfo
 }
