@@ -11,7 +11,7 @@ var stubTransport = {
 var helpers = exports;
 
 function envConfig() {
-  
+
   console.log(process.env.NODE_ENV, "NODE_ENV");
   console.log(process.env.MAIL_TRANSPORT_SERVICE, "MAIL_TRANSPORT_SERVICE");
   console.log(process.env.MAIL_TRANSPORT_AUTH_USER, "MAIL_TRANSPORT_AUTH_USER");
@@ -31,6 +31,7 @@ function envConfig() {
         },
         secureConnection: 'false',
         tls: { ciphers: 'SSLv3' },
+        debug: true,
         logger: true
       }
   }
