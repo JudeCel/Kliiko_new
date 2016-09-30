@@ -8,7 +8,7 @@ WORKDIR /var/www/klzii
 COPY . /var/www/klzii
 
 RUN npm install --quiet
-RUN ./node_modules/gulp/bin/gulp.js build-prod
+RUN npm run build_prod
 
 EXPOSE 8080
 
