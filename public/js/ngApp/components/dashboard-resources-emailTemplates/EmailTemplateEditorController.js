@@ -298,7 +298,7 @@
 
     function refreshTemplateList(callback) {
       (vm.properties.sessionBuilder ? mailTemplate.getAllSessionMailTemplatesWithColors : mailTemplate.getAllMailTemplatesWithColors)
-          (showSystemMail, vm.properties, builderServices.session.sessionData.brandProjectPreferenceId).then(function (res) {
+          (showSystemMail, vm.properties, vm.properties.sessionBuilder ? builderServices.session.sessionData.brandProjectPreferenceId : null).then(function (res) {
         vm.colors = res.colors;
         vm.defaultColors = res.manageFields;
         preprocessMailTemplateList(res.templates, callback);
