@@ -7,8 +7,7 @@
   * PostgreSQL 9.5.x
   * Redis 3.x.x
   * Python 2.7.x
-
-[ImageMagick](http://www.imagemagick.org/)
+  * [ImageMagick](http://www.imagemagick.org/)
 
 ## Set up Project
 
