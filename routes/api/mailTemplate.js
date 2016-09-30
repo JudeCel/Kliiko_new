@@ -36,11 +36,15 @@ function allSessionMailTemplatesWithColorsGet(req, res, next) {
   }
 
   MailTemplateService.getAllSessionMailTemplates(res.locals.currentDomain.id, true, sessionId, req.query.getSystemMail, false,function(error, result) {
-    BrandColourService.findScheme({ id: req.query.brandProjectPreferenceId }, res.locals.currentDomain.id).then(function (colorsResult) {
-      res.send({error: error, templates: result, colors: colorsResult.data.colours, manageFields: BrandColourService.manageFields()});
-    }, function(error) {
-      res.send({error: error});
-    });
+    if (req.query.brandProjectPreferenceId) {
+      BrandColourService.findScheme({ id: req.query.brandProjectPreferenceId }, res.locals.currentDomain.id).then(function (colorsResult) {
+        res.send({error: error, templates: result, colors: colorsResult.data.colours, manageFields: BrandColourService.manageFields()});
+      }, function(error) {
+        res.send({error: error});
+      });
+    } else {
+      res.send({error: error, templates: result, colors: null, manageFields: BrandColourService.manageFields()});
+    }
   });
 }
 
@@ -62,11 +66,15 @@ function allMailTemplatesWithColorsGet(req, res, next) {
   }
 
   MailTemplateService.getAllMailTemplates(accountId, true, req.query.getSystemMail, false, function (error, result) {
-    BrandColourService.findScheme({ id: req.query.brandProjectPreferenceId }, res.locals.currentDomain.id).then(function (colorsResult) {
-      res.send({error: error, templates: result, colors: colorsResult.data.colours, manageFields: BrandColourService.manageFields()});
-    }, function(error) {
-      res.send({error: error});
-    });
+    if (req.query.brandProjectPreferenceId) {
+      BrandColourService.findScheme({ id: req.query.brandProjectPreferenceId }, res.locals.currentDomain.id).then(function (colorsResult) {
+        res.send({error: error, templates: result, colors: colorsResult.data.colours, manageFields: BrandColourService.manageFields()});
+      }, function(error) {
+        res.send({error: error});
+      });
+    } else {
+      res.send({error: error, templates: result, colors: null, manageFields: BrandColourService.manageFields()});
+    }
   });
 }
 

@@ -202,10 +202,10 @@
         case error.status == -1:
           deferred.reject("File is too big");
           break;
-        case Array.isArray(error.data.errors.name):
+        case Array.isArray(getErrorItem(error, 'name')):
           deferred.reject(error.data.errors.name[0]);
           break;
-        case Array.isArray(error.data.errors.type):
+        case Array.isArray(getErrorItem(error, 'type')):
           deferred.reject(error.data.errors.type[0]);
           break;
         case typeof error.data.errors === 'object':
@@ -214,6 +214,10 @@
         default:
           deferred.reject(requestError);
       }
+    }
+
+    function getErrorItem(error, key) {
+      return error.data.errors ? error.data.errors[key] : null;
     }
 
     function resourceForServer(what, path) {
