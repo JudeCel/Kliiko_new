@@ -35,7 +35,7 @@
       dbg.log2('#KliikoApp.mailTemplate > get all session mail templates for user');
       var deferred = $q.defer();
       mailRestApi.sessionMailTemplates.get({ getSystemMail: getSystemMail, params: params }, function (res) {
-        dbg.log2('#KliikoApp.sessionMailTemplate > get all templates> server respond >');
+        dbg.log2('#KliikoApp.sessionMailTemplate > get all templates > server respond >');
         deferred.resolve(res);
       });
       return deferred.promise;
@@ -45,7 +45,7 @@
       dbg.log2('#KliikoApp.mailTemplate > get all session mail templates with colors for user');
       var deferred = $q.defer();
       mailRestApi.sessionMailTemplatesWithColors.get({ getSystemMail: getSystemMail, params: params, brandProjectPreferenceId: brandProjectPreferenceId }, function (res) {
-        dbg.log2('#KliikoApp.sessionMailTemplate > get all templates> server respond >');
+        dbg.log2('#KliikoApp.sessionMailTemplate > get all templates with colors > server respond >');
         deferred.resolve(res);
       });
       return deferred.promise;
@@ -65,7 +65,7 @@
       dbg.log2('#KliikoApp.mailTemplate > get all mail templates with colors for user');
       var deferred = $q.defer();
       mailRestApi.mailTemplatesWithColors.get({ getSystemMail: getSystemMail, brandProjectPreferenceId: brandProjectPreferenceId }, function (res) {
-        dbg.log2('#KliikoApp.mailTemplate > get all templates> server respond >');
+        dbg.log2('#KliikoApp.mailTemplate > get all templates with colors > server respond >');
         deferred.resolve(res);
       });
       return deferred.promise;
