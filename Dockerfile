@@ -8,9 +8,10 @@ WORKDIR /var/www/klzii
 COPY . /var/www/klzii
 EXPOSE 8080
 
+RUN npm install --quiet
+
 ENV NODE_ENV production
 
-RUN npm install --quiet
 RUN npm run build_prod
 RUN npm run migrations
 RUN npm run start_pm2
