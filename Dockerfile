@@ -10,7 +10,7 @@ EXPOSE 8080
 
 RUN npm install --quiet
 
-ENV NODE_ENV production
+RUN export NODE_ENV=production
 
 RUN npm run build_prod
 RUN npm run migrations
