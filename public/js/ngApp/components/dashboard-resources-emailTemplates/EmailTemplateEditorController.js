@@ -98,9 +98,9 @@
     function setContent(content) {
       $('#templateContent').wysiwyg('setContent', content);
     }
-      
+
     function getColors() {
-      let object = {};
+      var object = {};
       for (var param in vm.defaultColors) {
         for (var color in vm.defaultColors[param]) {
           var name = vm.defaultColors[param][color].model;
