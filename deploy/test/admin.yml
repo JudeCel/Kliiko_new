@@ -54,7 +54,7 @@ spec:
         - name: DATABASE_PASSWORD_PROD
           value: "nWD44LS3bYs29JeP"
         - name: DATABASE_HOST_PROD
-          value: "postgres-maste"
+          value: "10.4.1.7"
         - name: DATABASE_DIALECT_PROD
           value: "postgres"
         - name: AIRBRAKE_PROJECT_ID
