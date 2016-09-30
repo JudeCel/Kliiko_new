@@ -11,7 +11,7 @@
     "gulp": "./node_modules/.bin/gulp",
     "reset": "node ./lib/tasks/dbReset && node ./seeders/users && node ./seeders/chatSession && node ./seeders/mailTemplates",
     "reset_test_db": "NODE_ENV=test node ./tasks/prepareDbForTests",
-    "migrations": "./node_modules/.bin/sequelize db:migrate",
+    "migrations": "node ./node_modules/.bin/sequelize db:migrate",
     "build_prod": "node ./node_modules/gulp/bin/gulp.js build-prod",
     "updateBaseMailTemplates": "node ./tasks/updateBaseMailTemplates.js"
 
