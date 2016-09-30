@@ -10,10 +10,4 @@ EXPOSE 8080
 
 RUN npm install --quiet
 
-RUN export NODE_ENV=production
-ENV NODE_ENV production
-
 RUN npm run build_prod
-RUN NODE_ENV=production npm run migrations
-RUN NODE_ENV=production npm run start_pm2
-RUN npm run pm2_logs

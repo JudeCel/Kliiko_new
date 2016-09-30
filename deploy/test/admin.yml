@@ -32,6 +32,7 @@ spec:
         - name: docker-hub-secret
       containers:
       - image: "index.docker.io/klzii/kliiko:latest"
+        command: ['/bin/sh', './test_start.sh']
         imagePullPolicy: Always
         name: admin
         ports:
@@ -46,7 +47,6 @@ spec:
         - name: REDIS_PORT
           value: "6379"
         - name: DATABASE_URL
-          value: "postgres://postgres:nWD44LS3bYs29JeP@postgres-master/klzii_test"
         - name: DATABASE_NAME_PROD
           value: "klzii_test"
         - name: DATABASE_USER_PROD
