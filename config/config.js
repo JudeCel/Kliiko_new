@@ -1,6 +1,5 @@
 require('dotenv-extended').load({
-    errorOnMissing: true,
-    overrideProcessEnv: false
+    errorOnMissing: true
 });
 
 var config = {
