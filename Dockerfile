@@ -6,12 +6,6 @@ RUN apt-get update && apt-get dist-upgrade -y \
 WORKDIR /var/www/klzii
 
 COPY . /var/www/klzii
-
-RUN npm install --quiet
-RUN npm run build_prod
-
 EXPOSE 8080
 
-CMD set NODE_ENV=production
-CMD npm run migrations
-CMD npm run start_pm2 && npm run pm2_logs
+CMD ['./production_start.sh']
