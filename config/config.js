@@ -1,6 +1,6 @@
-
 require('dotenv-extended').load({
-    errorOnMissing: true
+    errorOnMissing: true,
+    overrideProcessEnv: false
 });
 
 var config = {
@@ -25,7 +25,10 @@ var config = {
     "password": process.env.DATABASE_PASSWORD_PROD,
     "database": process.env.DATABASE_NAME_PROD,
     "host": process.env.DATABASE_HOST_PROD,
-    "dialect": process.env.DATABASE_DIALECT_PROD
+    "dialect": process.env.DATABASE_DIALECT_PROD,
+    logging: false
   }
 }
+
+console.log(config);
 module.exports = config;
