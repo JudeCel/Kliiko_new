@@ -32,7 +32,7 @@ spec:
         - name: docker-hub-secret
       containers:
       - image: "index.docker.io/klzii/kliiko:latest"
-        command: ['/bin/sh', './test_start.sh']
+        command: ['/bin/sh', './start_server.sh']
         imagePullPolicy: Always
         name: admin
         ports:
@@ -40,13 +40,14 @@ spec:
         env:
         - name: REDIS_HOST
           value: "redis-master"
+        - name: NODE_ENV
+          value: "production"
         - name: SERVER_CHAT_DOMAIN_URL
           value: "http://chat.test.klzii.com"
         - name: SERVER_CHAT_DOMAIN_PORT
           value: "80"
         - name: REDIS_PORT
           value: "6379"
-        - name: DATABASE_URL
         - name: DATABASE_NAME_PROD
           value: "klzii_test"
         - name: DATABASE_USER_PROD
@@ -54,7 +55,7 @@ spec:
         - name: DATABASE_PASSWORD_PROD
           value: "nWD44LS3bYs29JeP"
         - name: DATABASE_HOST_PROD
-          value: "10.4.1.7"
+          value: "10.0.0.10"
         - name: DATABASE_DIALECT_PROD
           value: "postgres"
         - name: AIRBRAKE_PROJECT_ID
