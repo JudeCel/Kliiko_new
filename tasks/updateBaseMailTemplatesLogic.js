@@ -59,8 +59,12 @@ function processData(item, fileObject, callback) {
       callback(error);
     }
     if(fileData) {
-      models.MailTemplateBase.update({ content: fileData }, { where: { category: item.category } }).then(function(updateData) {
-        callback(null, "Updated email template for " + item.category);
+      models.MailTemplateBase.update({ content: fileData }, { where: { category: item.category } }).then(function(updateDataBase) {
+        models.MailTemplate.update({ content: fileData }, { where: { MailTemplateBaseId: item.id, isCopy: null, AccountId: null, sessionId: null } }).then(function(updateData) {
+          callback(null, "Updated email template for " + item.category);
+        }, function(error) {
+          callback(error);
+        });
       }, function(error) {
         callback(error);
       });
