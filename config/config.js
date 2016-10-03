@@ -28,6 +28,4 @@ var config = {
     logging: false
   }
 }
-
-console.log(config);
 module.exports = config;
