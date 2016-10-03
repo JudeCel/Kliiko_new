@@ -465,19 +465,20 @@ function canAddSessionMember(invite) {
     });
   }
   else {
-    let session = invite.Session;
-    models.SessionMember.count(where).then(function(c) {
-      let allowedCount = {
-        participant: session.type == 'forum' ? -1 : 8,
-        observer: -1
-      };
+    models.Session.find({ where: { id: invite.sessionId } }).then(function(session) {
+      models.SessionMember.count(where).then(function(c) {
+        let allowedCount = {
+          participant: session.type == 'forum' ? -1 : 8,
+          observer: -1
+        };
 
-      if(c < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
-        deferred.resolve();
-      }
-      else {
-        deferred.reject(MessagesUtil.invite.sessionIsFull);
-      }
+        if(c < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
+          deferred.resolve();
+        }
+        else {
+          deferred.reject(MessagesUtil.invite.sessionIsFull);
+        }
+      });
     });
   }
 

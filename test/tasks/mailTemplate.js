@@ -90,11 +90,19 @@ describe('Mail Template Task', () => {
                deferred.reject(error);
              }
              if(fileData) {
-               models.MailTemplateBase.find({ where: { category: category } }).then(function(data) {
-                 if(data.content == fileData) {
-                   deferred.resolve();
+               models.MailTemplateBase.find({ where: { category: category } }).then(function(baseData) {
+                 if(baseData.content == fileData) {
+                   models.MailTemplate.find({ where: { MailTemplateBaseId: baseData.id, isCopy: null, AccountId: null, sessionId: null } }).then(function(data) {
+                     if(data.content == fileData) {
+                       deferred.resolve();
+                     } else {
+                       deferred.reject("Failed email template for " + category);
+                     }
+                   }, function(error) {
+                     deferred.reject(error);
+                   });
                  } else {
-                   deferred.reject("Failed email template for " + category);
+                   deferred.reject("Failed base email template for " + category);
                  }
                }, function(error) {
                  deferred.reject(error);
