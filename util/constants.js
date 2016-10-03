@@ -39,6 +39,9 @@ module.exports = {
     "city", "state", "country", "postCode", "companyName",
     "landlineNumber", "mobile"
   ],
+  contactListReqiredFields: [
+    "firstName", "lastName", "email"
+  ],
   originalMailTemplateFields: [
     'id', 'name', 'subject', 'content', 'systemMessage', 'category', 'mailTemplateActive'
   ],
