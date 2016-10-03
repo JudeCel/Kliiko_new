@@ -3,7 +3,7 @@
     <span class='hidden'>{{ pnc.init(clc.newContact, 'contactList-addContactManual'); '' }}</span>
     <div class='col-md-6'>
         <div class='form-group'>
-            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First name<span class='text-red-dark'>*</span></label>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='firstName'>First name<span class='text-red-dark'>{{ clc.requireField("firstName") }}</span></label>
             <div class='col-md-8'>
                 <span class='has-error text-red-dark'>{{ clc.modalErrors.firstName }}</span>
                 <input type='text' class='form-control' id='firstName' placeholder='First name' ng-model='clc.newContact.firstName'>
@@ -11,7 +11,7 @@
         </div>
 
         <div class='form-group'>
-            <label class='control-label col-md-4 text-no-bold text-login-page' for='lastName'>Last name<span class='text-red-dark'>*</span></label>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='lastName'>Last name<span class='text-red-dark'>{{ clc.requireField("lastName") }}</span></label>
             <div class='col-md-8'>
                 <span class='has-error text-red-dark'>{{ clc.modalErrors.lastName }}</span>
                 <input type='text' class='form-control' id='lastName' placeholder='Last name' ng-model='clc.newContact.lastName'>
@@ -19,7 +19,7 @@
         </div>
 
         <div class='form-group'>
-            <label class='control-label col-md-4 text-no-bold text-login-page' for='email'>Email<span class='text-red-dark'>*</span></label>
+            <label class='control-label col-md-4 text-no-bold text-login-page' for='email'>Email<span class='text-red-dark'>{{ clc.requireField("email") }}</span></label>
             <div class='col-md-8'>
                 <span class='has-error text-red-dark'>{{ clc.modalErrors.email }}</span>
                 <input type='text' class='form-control' id='email' placeholder='Email' ng-model='clc.newContact.email'>
@@ -27,7 +27,7 @@
         </div>
 
         <div class='form-group'>
-            <label class='control-label col-md-4 text-no-bold text-login-page'>Gender<span class='text-red-dark'>*</span></label>
+            <label class='control-label col-md-4 text-no-bold text-login-page'>Gender<span class='text-red-dark'>{{ clc.requireField("gender") }}</span></label>
             <div class='col-md-8'>
                 <div class='has-error text-red-dark'>{{ clc.modalErrors.gender }}</div>
                 <label class='radio-inline'><input type='radio' value='male' name='radio_gender' ng-model='clc.newContact.gender'>Male</label>

@@ -40,10 +40,9 @@ function destroy(contacListId, accoutId) {
 }
 function allByAccount(accountId, sessionId) {
     let selectFields =  constants.contactListDefaultFields.concat('id')
-    // selectFields.push([models.sequelize.fn('COUNT', models.sequelize.col('ContactListUsers.AccountUser.Invites.id')), 'Invites'])
     let deferred = q.defer();
     ContactList.findAll({where: { accountId: accountId },
-      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable', 'participantsFields'],
+      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable', 'participantsFields', 'role'],
       group: [
         "ContactList.id",
         "ContactListUsers.id",
@@ -177,6 +176,8 @@ function prepareData(lists) {
       visibleFields: list.visibleFields,
       participantsFields: list.participantsFields,
       name: list.name,
+      role: list.role,
+      reqiredFields: reqiredFieldsForList(list),
       membersCount: list.ContactListUsers.length,
       members: _.map(list.ContactListUsers, (listUser) => {
         return new ContactListUser(
@@ -190,6 +191,18 @@ function prepareData(lists) {
     })
   });
   return collection;
+}
+
+function reqiredFieldsForList(list) {
+  let roles = ['accountManager','facilitator'];
+  let defaultList = constants.contactListReqiredFields;
+  if (_.includes(roles, list.role)) {
+    return defaultList;
+  }
+  else {
+    return   _.concat( defaultList, ["gender"])
+  }
+
 }
 
 function create(params) {

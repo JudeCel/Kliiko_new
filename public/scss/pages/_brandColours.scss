@@ -59,7 +59,7 @@
 
 .brandColours {
   font-size: 70%;
-  
+
   .chatMiddleButtons {
     color: #ccc;
     border: 2px solid #ccc;
@@ -172,7 +172,7 @@
     margin-right:-10px;
     width: auto;
     height: 100%;
-    
+
     .whiteboardContainer img {
       width: 92%;
     }
@@ -189,7 +189,7 @@
         width: 55%;
         float: right;
         padding-right: 8%;
-        
+
         .innerbox {
           margin-top: -13px;
           padding: 1px 3px;
@@ -197,7 +197,7 @@
       }
     }
   }
-  
+
   .chatContainer.forumTypeLeft {
     margin-right: 5px;
     width: calc(33.33% - 5px);
@@ -219,24 +219,21 @@
       white-space: nowrap;
 
       .chatMiddleButtons {
-        font-size: 140%;
+        font-size: 150%;
         @media (max-width: 1780px) {
-          font-size: 130%;
-        }
-        @media (max-width: 1700px) {
-          font-size: 105%;
+          font-size: 140%;
         }
         @media (max-width: 1570px) {
-          font-size: 90%;
+          font-size: 120%;
         }
         @media (max-width: 1480px) {
-          font-size: 67%;
+          font-size: 100%;
         }
         @media (max-width: 1290px) {
-          font-size: 40%;
+          font-size: 80%;
         }
         @media (max-width: 1199px) {
-          font-size: 60%;
+          font-size: 70%;
         }
       }
     }

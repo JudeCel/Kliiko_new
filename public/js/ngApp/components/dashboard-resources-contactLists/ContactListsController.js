@@ -61,8 +61,18 @@
     vm.returnContactCount = returnContactCount;
     vm.returnSelectedCount = returnSelectedCount;
     vm.canAddMoreFields = canAddMoreFields;
+    vm.requireField = requireField;
     // required for correct list switching.
     var isSelected = false;
+
+    function requireField(field) {
+      if (vm.lists.activeList.reqiredFields.indexOf(field) > -1) {
+        return "*"
+      }
+      else {
+        return ""
+      }
+    }
 
     function initLists(listType) {
       new ListsModel({sessionId: vm.sessionId}).then(function(result) {
@@ -358,11 +368,12 @@
 
       if (action == 'cancel') {
         for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
-          if (vm.lists.activeList.members[i].id == vm.contactSnapshot.id) {
-            vm.lists.activeList.members[i] = angular.copy(vm.contactSnapshot);
-            vm.contactSnapshot = null;
-            break;
-
+          if ( vm.contactSnapshot) {
+            if (vm.lists.activeList.members[i].id == vm.contactSnapshot.id) {
+              vm.lists.activeList.members[i] = angular.copy(vm.contactSnapshot);
+              vm.contactSnapshot = null;
+              break;
+            }
           }
         }
       }
