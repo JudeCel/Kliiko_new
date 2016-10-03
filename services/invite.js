@@ -631,7 +631,7 @@ function prepareMailParams(invite, session, receiver, facilitator) {
     incentive: session.incentive
   }
 
-  return populateMailParamsWithColors(object, session).then(function(res) {
+  populateMailParamsWithColors(object, session).then(function(res) {
     deferred.resolve(res);
   }, function (error) {
     deferred.reject(filters.errors(error));
