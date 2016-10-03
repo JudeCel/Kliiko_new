@@ -756,7 +756,7 @@ function step2Queries(session, step) {
   return [
     function(cb) {
       models.Topic.findAll({
-        order: '"SessionTopics.order" ASC',
+        order: '"SessionTopics.order" ASC, "SessionTopics.topicId" ASC',
         include: [{
           model: models.SessionTopics,
           where: {
