@@ -26,6 +26,7 @@ module.exports = {
 function getAll(accountId) {
   let deferred = q.defer();
   Topic.findAll({
+    order: '"id" ASC',
     where: {
       accountId: accountId
     },
