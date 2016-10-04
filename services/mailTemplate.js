@@ -358,9 +358,15 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
     }
   }
 
-  if(template.properties && template.properties.templateName) {
-    result = true;
-    template.name = template.name + " " + template.properties.templateName;
+  if(template.properties) {
+    if (template.properties.createdWithCustomName && template.properties.templateName == null) {
+        template.name = null;        
+    }
+
+    if (template.properties.templateName) {
+      result = true;
+      template.name = template.name + " " + template.properties.templateName;
+    }
   }
 
   return (result || shouldOverwrite);
