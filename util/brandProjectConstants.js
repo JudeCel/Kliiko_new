@@ -19,15 +19,15 @@ module.exports = {
   },
   preferenceColours: {
     browserBackground: '#EFEFEF',
-    mainBackground: '#FFFFFF',
-    mainBorder: '#F0E935',
     font: '#58595B',
+    mainBackground: '#FFFFFF',
     headerButton: '#4CBFE9',
+    mainBorder: '#F0E935',
     consoleButtonActive: '#4CB649',
     email: {
         hyperlinks: '#2F9F69',
-        acceptButton: '#4CB649',
         notAtAllButton: '#E51D39',
+        acceptButton: '#4CB649',
         notThisTimeButton: '#4CBFE9',
     },
   },
