@@ -439,6 +439,12 @@
   }
 }
 
+.manage-preview .brandColours .chatContainer.focusType {
+  @media (min-width: 1600px) {
+    height: 440px;
+  }
+}
+
 .name-input {
   width: 100%;
   padding-right: 20px;
