@@ -20,11 +20,13 @@
         </div>
       </div>
       <div class='col-xs-8 chatContainer forumTypeRight' ng-attr-style='background-color: {{ previewScheme.mainBackground }}; border-color: {{ previewScheme.mainBorder }};'>
-        <div ng-repeat="msg in [1, 2, 3, 4]">
-          <div class="userMessageContainer">
-            <div class="userNameContainer">User</div>
-            <div class="messageTextContainer">Neque porro quisquam est qui dolorem ipsum quia dolor sit amet. Neque porro quisquam est qui dolorem ipsum quia dolor sit amet. Neque porro quisquam est qui dolorem ipsum quia dolor sit amet.</div>
-            <div class="smileContainer"><img src='/images/avatar.png' alt='Avatar' /></div>
+        <div class="userMessagesContainer">
+          <div ng-repeat="msg in [1, 2, 3, 4, 5, 6]">
+            <div class="userMessageContainer">
+              <div class="userNameContainer">User</div>
+              <div class="messageTextContainer">Neque porro quisquam est qui dolorem ipsum quia dolor sit amet. Neque porro quisquam est qui dolorem ipsum quia dolor sit amet. Neque porro quisquam est qui dolorem ipsum quia dolor sit amet.</div>
+              <div class="smileContainer"><img src='/images/avatar.png' alt='Avatar' /></div>
+            </div>
           </div>
         </div>
         <div class='row' ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/forum/footer.html'"></div>
