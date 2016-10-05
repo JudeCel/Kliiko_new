@@ -2,8 +2,8 @@
   'use strict';
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout', 'messagesUtil'];
-  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, ngDraggable, $timeout, messagesUtil) {
+  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout', 'messagesUtil', '$confirm'];
+  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, ngDraggable, $timeout, messagesUtil, $confirm) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
@@ -444,27 +444,28 @@
       if (!ids) return;
       if (!angular.isArray(ids)) ids = [ids];
 
-      var confirmed = confirm("Are you sure, that you want to delete these contact('s')?");
-      if (!confirmed) return;
+      $confirm({ text: "Are you sure, that you want to delete these contact('s')?" }).then(function(){
+        vm.lists.deleteContacts(ids).then(
+          function(res) {
 
-      vm.lists.deleteContacts(ids).then(
-        function(res) {
+            if (!res.total) {
+              messenger.error(messagesUtil.contactList.noUsersRemoved);
+              return
+            }
 
-          if (!res.total) {
-            messenger.error(messagesUtil.contactList.noUsersRemoved);
-            return
-          }
+            var message;
+            (res.total > 1)
+              ? message = res.total+' users has been removed'
+              : message = 'User removed';
 
-          var message;
-          (res.total > 1)
-            ? message = res.total+' users has been removed'
-            : message = 'User removed';
+            messenger.ok(message);
 
-          messenger.ok(message);
-
-        },
-        function(err) {  messenger.error(err); }
-      );
+          },
+          function(err) {  messenger.error(err); }
+        );
+      }, function(){
+        // Cancel, nothing to do.
+      });
     }
 
 
