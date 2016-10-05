@@ -279,10 +279,7 @@
 
       // session builder section
       vm.emailTemplates.map(function(template) {
-        var sessionBuilder = template.isCopy && !template.sessionId && !vm.addedList[template.id] && vm.properties.sessionBuilder;
-        var normal = !vm.addedList[template.id] && !vm.properties.sessionBuilder;
-
-        if(sessionBuilder || normal) {
+        if(!vm.addedList[template.id]) {
           vm.addedList[template.id] = template;
           if(vm.sortedEmailTemplates[template["MailTemplateBase.name"]]) {
             vm.sortedEmailTemplates[template["MailTemplateBase.name"]].push(template);
