@@ -28,24 +28,16 @@
 
     function generateRedirectLink(sessionId) {
       var deferred = $q.defer();
-
-      jwtTokenForMemberApi.get({ sessionId: sessionId, callback_url: window.location.href }, function(res) {
+      jwtTokenForMemberApi.get({ sessionId: sessionId, callback_url: window.location.href, chatUrl: globalSettings.serverChatDomainUrl }, function(res) {
         if(res.error) {
           deferred.reject(res.error);
+        } else if (res.errors) {
+          deferred.reject(res.errors.permissions);
         }
         else {
-          $http({
-            method: 'GET',
-            url: globalSettings.serverChatDomainUrl + '/api/auth/token/',
-            headers: { 'Authorization': res.token }
-          }).then(function(response) {
-            deferred.resolve(response.data.redirect_url);
-          }, function(response) {
-            deferred.reject(response.data.errors.permissions);
-          });
+          deferred.resolve(res.redirect_url);
         }
       });
-
       return deferred.promise;
     }
   }
