@@ -113,7 +113,7 @@ function parsePhoneParams(params) {
 }
 
 function comparePassword(email, password, callback) {
-  User.find({where: {email: email}}).done(function (result) {
+  User.find({ where: { email: { ilike: email } } }).done(function (result) {
     if (result) {
         bcrypt.compare(password, result.encryptedPassword, function (err, res) {
             if (err) {
