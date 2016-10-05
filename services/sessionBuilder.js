@@ -713,26 +713,39 @@ function step1Queries(session, step) {
         if(!_.isEmpty(members)) {
           step.facilitator = members[0];
 
-
-          models.Invite.find({
+          models.Invite.destroy({
             where: {
               sessionId: session.id,
-              accountUserId: step.facilitator.id,
+              accountUserId:  {
+                $ne: step.facilitator.id
+              },
               role: 'facilitator'
             }
-          }).then(function(invite) {
+          }).then(function(result) {
 
-            if(invite){
-              cb();
-            }else{
-              inviteService.createInvite(facilitatorInviteParams(step.facilitator, session.id)).then(function() {
+            models.Invite.find({
+              where: {
+                sessionId: session.id,
+                accountUserId: step.facilitator.id,
+                role: 'facilitator'
+              }
+            }).then(function(invite) {
+              if(invite){
                 cb();
-              }, function(error) {
-                cb("Invite as Facilitator for " + step.facilitator.firstName + " " + step.facilitator.lastName + " were not sent.");
-              });
-            }
-          })
-        }else{
+              } else {
+                inviteService.createInvite(facilitatorInviteParams(step.facilitator, session.id)).then(function() {
+                  cb();
+                }, function(error) {
+                  cb("Invite as Facilitator for " + step.facilitator.firstName + " " + step.facilitator.lastName + " were not sent.");
+                });
+              }
+            });
+
+          },function(error) {
+            cb(filters.errors(error));
+          });
+
+        } else {
           cb();
         }
       }).catch(function(error) {
