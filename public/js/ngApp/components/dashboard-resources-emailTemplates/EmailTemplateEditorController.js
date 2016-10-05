@@ -28,8 +28,8 @@
     vm.colors = {};
     vm.defaultColors = {};
     vm.currentUpload = 'image';
-    vm.styleTemplate = null;
-    vm.stylePattern = /<style>[\S\s]*?<\/style>/gi;
+    vm.headTemplate = null;
+    vm.headPattern = /<head>[\S\s]*?<\/head>/gi;
     var showSystemMail = $stateParams.systemMail;
 
     vm.preInit = function(params) {
@@ -134,8 +134,8 @@
       }
 
       function populateContentWithColors() {
-        var styles =  vm.currentTemplate.content.match(vm.stylePattern);
-        vm.styleTemplate = styles ? styles[0] : null;
+        var head =  vm.currentTemplate.content.match(vm.headPattern);
+        vm.headTemplate = head ? head[0] : null;
         var colors = getColors();
         for (var color in colors) {
           vm.currentTemplate.content = vm.currentTemplate.content.replace("<%= " + color + " %>", colors[color]);
@@ -190,11 +190,9 @@
       }
 
       vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
-      if (vm.styleTemplate) {
-        var styles = vm.currentTemplate.content.match(vm.stylePattern);
-        if (styles) {
-          vm.currentTemplate.content = vm.currentTemplate.content.replace(styles[0], vm.styleTemplate);
-        }
+      if (vm.headTemplate) {
+        vm.currentTemplate.content = "<!DOCTYPE HTML PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'><html xmlns='http://www.w3.org/1999/xhtml'>"
+          + vm.headTemplate + "<body>" + vm.currentTemplate.content.substr(vm.currentTemplate.content.indexOf("<table")) + "</body></html>";
       }
 
       vm.currentTemplate.error = {};

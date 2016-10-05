@@ -3,6 +3,7 @@
 var helpers = require('./helpers');
 var mailTemplateService = require('../services/mailTemplate');
 var ical = require('ical-generator');
+var moment = require('moment-timezone');
 var sanitizeHtml = require('sanitize-html');
 var _ = require('lodash');
 
@@ -84,9 +85,9 @@ function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {
 
     let cal = ical({domain: process.env.SERVER_DOMAIN, name: template.name});
     let event = cal.createEvent({
-        start: new Date(mailParams.orginalStartTime),
-        end: new Date(mailParams.orginalEndTime),
-        timestamp: new Date(mailParams.orginalStartTime),
+        start: new Date(moment.tz(mailParams.orginalStartTime, mailParams.timeZone)),
+        end:  new Date(moment.tz(mailParams.orginalEndTime, mailParams.timeZone)),
+        timestamp: new Date(moment.tz(mailParams.orginalStartTime, mailParams.timeZone)),
         summary: template.name,
         timezone: mailParams.timeZone,
         organizer: mailFrom
