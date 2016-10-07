@@ -67,15 +67,19 @@ spec:
         - name: SERVER_DOMAIN
           value: "www.test.klzii.com"
         - name: MAIL_TRANSPORT_SERVICE
-          value: "gmail"
+          value: "smtp.mailgun.org"
         - name: MAIL_FROM_EMAIL
-          value: "insiderfocus.noreply@gmail.com"
+          value: "postmaster@noreply.klzii.com"
         - name: MAIL_FROM_NAME
           value: "klzii"
         - name: MAIL_TRANSPORT_AUTH_USER
-          value: "insiderfocus.noreply"
+          value: "postmaster@noreply.klzii.com"
         - name: MAIL_TRANSPORT_AUTH_PASS
-          value: "ifs_Zupper!pwd"
+          value: "3c005b08f7c42469235456d4da3808da"
+        - name: MAIL_TRANSPORT_SECURE_CONNECTION
+          value: "true"
+        - name: MAIL_TRANSPORT_PORT
+          value: "465"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
         - name: FACEBOOK_CLIENT_ID
