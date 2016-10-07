@@ -77,9 +77,9 @@ spec:
         - name: MAIL_TRANSPORT_AUTH_PASS
           value: "3c005b08f7c42469235456d4da3808da"
         - name: MAIL_TRANSPORT_SECURE_CONNECTION
-          value: "true"
+          value: "false"
         - name: MAIL_TRANSPORT_PORT
-          value: "465"
+          value: "25"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
         - name: FACEBOOK_CLIENT_ID
