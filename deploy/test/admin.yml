@@ -7,13 +7,8 @@ metadata:
 spec:
   ports:
     - port: 80
-      name: "http"
       targetPort: 8080
       protocol: TCP
-    - port: 587
-      name: "mailgun"
-      targetPort: 587
-      protocol: "UDP"
   selector:
     name: admin
 ---
@@ -42,9 +37,6 @@ spec:
         name: admin
         ports:
           - containerPort: 8080
-          - containerPort: 587
-            name: "mailgun"
-            protocol: "UDP"
         env:
         - name: REDIS_HOST
           value: "redis-master"
@@ -87,7 +79,7 @@ spec:
         - name: MAIL_TRANSPORT_SECURE_CONNECTION
           value: "false"
         - name: MAIL_TRANSPORT_PORT
-          value: "587"
+          value: "2525"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
         - name: FACEBOOK_CLIENT_ID
