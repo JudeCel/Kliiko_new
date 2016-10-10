@@ -71,7 +71,7 @@ spec:
         - name: MAIL_TRANSPORT_SECURE_CONNECTION
           value: "false"
         - name: MAIL_TRANSPORT_PORT
-          value: "25"
+          value: "2525"
         - name: REDIS_PORT
           value: "6379"
         - name: DATABASE_NAME_PROD
