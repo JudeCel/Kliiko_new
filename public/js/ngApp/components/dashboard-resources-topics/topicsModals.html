@@ -20,7 +20,7 @@
 
           <div class='form-group'>
             <label for='topicName'>Message Sign</label>
-            <input type='text' class='form-control' id='topicName' placeholder='Name Your Topic' maxlength='{{ topics.validations.sign }}' ng-model='topics.topicData.sign' ng-disabled='topics.topicData.landing'>
+            <input type='text' class='form-control' id='topicName' placeholder='Message Sign' maxlength='{{ topics.validations.sign }}' ng-model='topics.topicData.sign' ng-disabled='topics.topicData.landing'>
             <span class='help-block'>Characters left: {{ topics.charactersLeft("sign") }}</span>
           </div>
         </form>
