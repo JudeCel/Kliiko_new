@@ -1,6 +1,6 @@
 'use strict';
 let Bluebird = require('bluebird');
-const drop_query `DROP FUNCTION IF EXISTS table_update_notify;`
+const drop_query = `DROP FUNCTION IF EXISTS table_update_notify;`
 const query = `
   CREATE OR REPLACE FUNCTION table_update_notify() RETURNS trigger AS $$
       DECLARE
@@ -24,15 +24,16 @@ module.exports = {
         resolve();
       }, function(error) {
         reject(error);
-    })
-  });
+      });
+    });
   },
   down: function (queryInterface, Sequelize) {
     return new Bluebird(function (resolve, reject) {
       queryInterface.sequelize.query(drop_query).then(function(result) {
         resolve();
-      }, function(error) {
+        }, function(error) {
         reject(error);
+      });
     });
   }
-};
+}
