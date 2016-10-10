@@ -75,7 +75,7 @@ spec:
         - name: REDIS_PORT
           value: "6379"
         - name: DATABASE_NAME_PROD
-          value: "klzii_test"
+          value: "klzii_production"
         - name: DATABASE_USER_PROD
           value: "postgres"
         - name: DATABASE_PASSWORD_PROD
