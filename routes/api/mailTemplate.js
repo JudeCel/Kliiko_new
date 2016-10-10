@@ -1,6 +1,7 @@
 "use strict";
 var MailTemplate = require('./../../models').MailTemplate;
 var MailTemplateService = require('./../../services/mailTemplate');
+var BrandColourService = require('./../../services/brandColour');
 var MessagesUtil = require('./../../util/messages');
 var policy = require('./../../middleware/policy.js');
 var _ = require('lodash');
@@ -8,11 +9,13 @@ var _ = require('lodash');
 module.exports = {
   mailTemplatePost: mailTemplatePost,
   allMailTemplatesGet: allMailTemplatesGet,
+  allMailTemplatesWithColorsGet: allMailTemplatesWithColorsGet,
   saveMailTemplatePost: saveMailTemplatePost,
   deleteMailTemplate: deleteMailTemplate,
   resetMailTemplatePost: resetMailTemplatePost,
   previewMailTemplatePost: previewMailTemplatePost,
-  allSessionMailTemplatesGet: allSessionMailTemplatesGet
+  allSessionMailTemplatesGet: allSessionMailTemplatesGet,
+  allSessionMailTemplatesWithColorsGet: allSessionMailTemplatesWithColorsGet,
 };
 
 function allSessionMailTemplatesGet(req, res, next) {
@@ -23,6 +26,25 @@ function allSessionMailTemplatesGet(req, res, next) {
 
   MailTemplateService.getAllSessionMailTemplates(res.locals.currentDomain.id, true, sessionId, req.query.getSystemMail, false,function(error, result) {
     res.send({error: error, templates: result});
+  });
+}
+
+function allSessionMailTemplatesWithColorsGet(req, res, next) {
+  let sessionId = null;
+  if(req.query.params){
+    sessionId = JSON.parse(req.query.params).sessionId;
+  }
+
+  MailTemplateService.getAllSessionMailTemplates(res.locals.currentDomain.id, true, sessionId, req.query.getSystemMail, false,function(error, result) {
+    if (req.query.brandProjectPreferenceId && req.query.brandProjectPreferenceId > 0) {
+      BrandColourService.findScheme({ id: req.query.brandProjectPreferenceId }, res.locals.currentDomain.id).then(function (colorsResult) {
+        res.send({error: error, templates: result, colors: colorsResult.data.colours, manageFields: BrandColourService.manageFields()});
+      }, function(error) {
+        res.send({error: error});
+      });
+    } else {
+      res.send({error: error, templates: result, colors: null, manageFields: BrandColourService.manageFields()});
+    }
   });
 }
 
@@ -37,6 +59,25 @@ function allMailTemplatesGet(req, res, next) {
   });
 }
 
+function allMailTemplatesWithColorsGet(req, res, next) {
+  let accountId;
+  if (!policy.hasAccess(res.locals.currentDomain.roles, ['admin'])) {
+    accountId = res.locals.currentDomain.id;
+  }
+
+  MailTemplateService.getAllMailTemplates(accountId, true, req.query.getSystemMail, false, function (error, result) {
+    if (req.query.brandProjectPreferenceId && req.query.brandProjectPreferenceId > 0) {
+      BrandColourService.findScheme({ id: req.query.brandProjectPreferenceId }, res.locals.currentDomain.id).then(function (colorsResult) {
+        res.send({error: error, templates: result, colors: colorsResult.data.colours, manageFields: BrandColourService.manageFields()});
+      }, function(error) {
+        res.send({error: error});
+      });
+    } else {
+      res.send({error: error, templates: result, colors: null, manageFields: BrandColourService.manageFields()});
+    }
+  });
+}
+
 //get mail template by "id"
 function mailTemplatePost(req, res, next) {
   MailTemplateService.getMailTemplate(req.body.mailTemplate, function(error, result) {
@@ -46,9 +87,8 @@ function mailTemplatePost(req, res, next) {
 
 function saveMailTemplatePost(req, res, next) {
   let canOverwrite = policy.hasAccess(res.locals.currentDomain.roles, ['admin']);
-  let makeCopy = !canOverwrite ? req.body.copy : false;
-
   let sessionId = req.body.mailTemplate.properties && req.body.mailTemplate.properties.sessionId;
+  let makeCopy = canOverwrite && !sessionId ? false : req.body.copy;
   var accountId = canOverwrite && !sessionId ? null : res.locals.currentDomain.id;
   MailTemplateService.saveMailTemplate(req.body.mailTemplate, makeCopy, accountId,function(error, result) {
     res.send({error: error, templates: result, message: MessagesUtil.routes.mailTemplates.saved });

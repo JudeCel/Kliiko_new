@@ -58,3 +58,4 @@ spec:
   selector:
     name: postgres
     role: master
+  type: LoadBalancer

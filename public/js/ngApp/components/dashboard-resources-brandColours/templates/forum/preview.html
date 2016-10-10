@@ -1,0 +1,36 @@
+<div class='brandColours' ng-attr-style='color: {{ previewScheme.font }};'>
+  <div class='row' ng-attr-style='background-color: {{ previewScheme.browserBackground }};'>
+    <div class='col-xs-12 header' ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/forum/header.html'"></div>
+
+    <div class='col-xs-12'>
+      <div class='col-xs-4 chatContainer forumTypeLeft' ng-attr-style='background-color: {{ previewScheme.mainBackground }}; border-color: {{ previewScheme.mainBorder }};'>
+        <div ng-attr-style='background-color: {{ previewScheme.mainBorder }};'>About this Topic</div>
+        <div class="avatar">
+          <img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.facilitator }};" />
+          <div class="outerbox"><div class="triangle"></div><div class="innerbox">Neque porro quisquam est qui dolorem ipsum quia dolor sit amet</div></div>
+        </div>
+        <div class="buttonsContainer">
+          <span class="chatMiddleButtons glyphicon glyphicon-facetime-video" ng-attr-style="color: {{ previewScheme.consoleButtonActive }}; border-color: {{ previewScheme.consoleButtonActive }};" aria-hidden="true"></span>
+          <span class="chatMiddleButtons glyphicon glyphicon-volume-up" aria-hidden="true"></span>
+          <span class="chatMiddleButtons glyphicon glyphicon-ok" aria-hidden="true"></span>
+          <span class="chatMiddleButtons glyphicon glyphicon-file" aria-hidden="true"></span>
+        </div>
+        <div class="whiteboardContainer">
+          <img src='/images/whiteboard.png' alt='whiteboard' />
+        </div>
+      </div>
+      <div class='col-xs-8 chatContainer forumTypeRight' ng-attr-style='background-color: {{ previewScheme.mainBackground }}; border-color: {{ previewScheme.mainBorder }};'>
+        <div class="userMessagesContainer">
+          <div ng-repeat="msg in [1, 2, 3, 4, 5, 6]">
+            <div class="userMessageContainer">
+              <div class="userNameContainer">User</div>
+              <div class="messageTextContainer">Neque porro quisquam est qui dolorem ipsum quia dolor sit amet. Neque porro quisquam est qui dolorem ipsum quia dolor sit amet. Neque porro quisquam est qui dolorem ipsum quia dolor sit amet.</div>
+              <div class="smileContainer"><img src='/images/avatar.png' alt='Avatar' /></div>
+            </div>
+          </div>
+        </div>
+        <div class='row' ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/forum/footer.html'"></div>
+      </div>
+    </div>
+  </div>
+</div>

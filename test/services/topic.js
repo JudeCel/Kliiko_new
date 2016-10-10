@@ -15,6 +15,7 @@ describe('Topic Service', function() {
     let startTime = new Date();
     let sessionAttrs = {
       name: "cool session",
+      type: 'focus',
       startTime: startTime,
       endTime: startTime.setHours(startTime.getHours() + 2000),
       status_id: 1,

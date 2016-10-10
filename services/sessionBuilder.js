@@ -108,32 +108,31 @@ function findSession(id, accountId) {
 
 function update(sessionId, accountId, params) {
   let deferred = q.defer();
+  let updatedSession;
 
   validators.hasValidSubscription(accountId).then(function() {
-    findSession(sessionId, accountId).then(function(session) {
-      session.updateAttributes(params).then(function(updatedSession) {
-        sessionBuilderObject(updatedSession).then(function(sessionObject) {
-          if(updatedSession.status == "closed"){
-            sendCloseSessionMail(updatedSession).then(function() {
-              deferred.resolve(sessionObject);
-            },function(error) {
-              deferred.reject(error);
-            })
-          }else{
-            deferred.resolve(sessionObject);
-          }
-        }, function(error) {
-          deferred.reject(error);
-        });
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
+    return validators.subscription(accountId, 'session', 1, { sessionId: sessionId });
+  }).then(function() {
+    return findSession(sessionId, accountId);
+  }).then(function(session) {
+    return session.updateAttributes(params);
+  }).then(function(result) {
+    updatedSession = result;
+    return sessionBuilderObject(updatedSession);
+  }).then(function(sessionObject) {
+    if(updatedSession.status == 'closed') {
+      sendCloseSessionMail(updatedSession).then(function() {
+        deferred.resolve(sessionObject);
+      },function(error) {
+        deferred.reject(error);
       });
-    }, function(error) {
-      deferred.reject(error);
-    });
-  }, function(error) {
-    deferred.reject(error);
-  })
+    }
+    else {
+      deferred.resolve(sessionObject);
+    }
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
 
   return deferred.promise;
 }
@@ -331,41 +330,46 @@ function sendSms(data, provider) {
 // Untested
 function inviteMembers(sessionId, data, accountId, accountName) {
   let deferred = q.defer();
-  let contactListUsersIds = _.map(data.members, 'listId');
 
-  validators.hasValidSubscription(accountId).then(function() {
-    inviteParams(sessionId, data).then(function(params) {
-      params.accountName = accountName;
-      inviteService.createBulkInvites(params).then(function(invites) {
-        let ids = _.map(invites, 'accountUserId');
-        AccountUser.findAll({
-          where: {
-            id: { $in: ids }
-          },
-          include: [ models.Invite, {
-            model: models.ContactListUser,
-            where: { contactListId: {$in: contactListUsersIds} }
-          }]
-        }).then(function(accountUsers) {
-          _.map(accountUsers, function(accountUser) {
-            accountUser.dataValues.invite = _.last(accountUser.Invites);
-          });
-
-          deferred.resolve(accountUsers);
-        }).catch(function(error) {
-          deferred.reject(filters.errors(error));
-        });
-      }, function(error) {
-        deferred.reject(error);
-      });
-    }, function(error) {
-      deferred.reject(error);
+  findSession(sessionId, accountId).then(function(session) {
+    if(session.status == 'closed') {
+      deferred.reject(MessagesUtil.sessionBuilder.sessionClosed);
+    }
+    else {
+      return validators.hasValidSubscription(accountId);
+    }
+  }).then(function() {
+    return inviteParams(sessionId, data);
+  }).then(function(params) {
+    params.accountName = accountName;
+    return inviteService.createBulkInvites(params);
+  }).then(function(invites) {
+    let ids = _.map(invites, 'accountUserId');
+    let contactListUsersIds = _.map(data.members, 'listId');
+    return findAccountUsersByIds(ids, contactListUsersIds);
+  }).then(function(accountUsers) {
+    _.map(accountUsers, function(accountUser) {
+      accountUser.dataValues.invite = _.last(accountUser.Invites);
     });
-  }, function(error) {
-    deferred.reject(error);
-  })
+
+    deferred.resolve(accountUsers);
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
 
   return deferred.promise;
+}
+
+function findAccountUsersByIds(ids, contactListUsersIds) {
+  return AccountUser.findAll({
+    where: {
+      id: { $in: ids }
+    },
+    include: [ models.Invite, {
+      model: models.ContactListUser,
+      where: { contactListId: { $in: contactListUsersIds } }
+    }]
+  });
 }
 
 function removeSessionMember(params) {
@@ -626,6 +630,7 @@ function stepsDefinition(session) {
   object.step1 = {
     stepName: "setUp",
     name: session.name,
+    type: session.type,
     startTime: moment(session.startTime).tz(session.timeZone).format(),
     endTime: moment(session.endTime).tz(session.timeZone).format(),
     timeZoneOffset: moment(session.endTime).tz(session.timeZone).format('ZZ'),
@@ -708,26 +713,39 @@ function step1Queries(session, step) {
         if(!_.isEmpty(members)) {
           step.facilitator = members[0];
 
-
-          models.Invite.find({
+          models.Invite.destroy({
             where: {
               sessionId: session.id,
-              accountUserId: step.facilitator.id,
+              accountUserId:  {
+                $ne: step.facilitator.id
+              },
               role: 'facilitator'
             }
-          }).then(function(invite) {
+          }).then(function(result) {
 
-            if(invite){
-              cb();
-            }else{
-              inviteService.createInvite(facilitatorInviteParams(step.facilitator, session.id)).then(function() {
+            models.Invite.find({
+              where: {
+                sessionId: session.id,
+                accountUserId: step.facilitator.id,
+                role: 'facilitator'
+              }
+            }).then(function(invite) {
+              if(invite){
                 cb();
-              }, function(error) {
-                cb("Invite as Facilitator for " + step.facilitator.firstName + " " + step.facilitator.lastName + " were not sent.");
-              });
-            }
-          })
-        }else{
+              } else {
+                inviteService.createInvite(facilitatorInviteParams(step.facilitator, session.id)).then(function() {
+                  cb();
+                }, function(error) {
+                  cb("Invite as Facilitator for " + step.facilitator.firstName + " " + step.facilitator.lastName + " were not sent.");
+                });
+              }
+            });
+
+          },function(error) {
+            cb(filters.errors(error));
+          });
+
+        } else {
           cb();
         }
       }).catch(function(error) {
@@ -751,7 +769,7 @@ function step2Queries(session, step) {
   return [
     function(cb) {
       models.Topic.findAll({
-        order: '"SessionTopics.order" ASC',
+        order: '"SessionTopics.order" ASC, "SessionTopics.topicId" ASC',
         include: [{
           model: models.SessionTopics,
           where: {
@@ -834,9 +852,11 @@ function canAddObservers(accountId) {
 function validate(session, params) {
   let deferred = q.defer();
 
-  findValidation(session.step, params).then(function() {
+  validators.subscription(session.accountId, 'session', 1, { sessionId: session.id }).then(function() {
+    return findValidation(session.step, params);
+  }).then(function() {
     deferred.resolve();
-  }, function(error) {
+  }).catch(function(error) {
     deferred.reject(error);
   });
 
@@ -892,6 +912,10 @@ function validateStepOne(params) {
       let errors = {};
       if(!params.name) {
         errors.name = MessagesUtil.sessionBuilder.errors.firstStep.nameRequired;
+      }
+
+      if (!params.type) {
+        errors.type = MessagesUtil.sessionBuilder.errors.firstStep.typeRequired;
       }
 
       if(!params.startTime) {

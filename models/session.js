@@ -22,8 +22,12 @@ module.exports = (Sequelize, DataTypes) => {
     colours_used: { type: DataTypes.TEXT, allowNull: true },
     step: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionBuilderSteps, defaultValue: 'setUp' },
     status: { type: DataTypes.ENUM, allowNull: false, values: ['open', 'closed'], defaultValue: 'open' },
+    type: { type: DataTypes.ENUM, values: ['focus', 'forum'] }
   }, {
     timestamps: true,
+    hooks: {
+      beforeCreate: validations.limit(constants.maxSessionsAmount)
+    },
     classMethods: {
       associate: function (models) {
         Session.belongsTo(models.BrandProject, { foreignKey: 'brand_project_id' });

@@ -14,7 +14,7 @@ function canCreateCustomColors(req, res, next) {
   }, function(err) {
     res.send({ error: err });
   });
-}
+};
 
 function remove(req, res, next) {
   brandColourServices.removeScheme(req.query, res.locals.currentDomain.id).then(

@@ -21,6 +21,11 @@
               </a>
             </th>
             <th>
+              <a class="white-sort-text" href="" ng-click="csc.changeOrder('type')">
+                Type
+              </a>
+            </th>
+            <th>
               <a class="white-sort-text" href="" ng-click="csc.changeOrder('facilitator.username')">
                 Facilitator
               </a>
@@ -51,6 +56,7 @@
         <tbody>
           <tr class='{{ csc.rowClass(session) }}' ng-repeat='session in csc.sessions | orderBy:csc.orderByField'>
             <td>{{ session.name }}</td>
+            <td class="capitalize">{{ session.type }}</td>
             <td>{{ session.facilitator.username }}</td>
             <td>{{ session.startTime | date:sc.dateFormat }}</td>
             <td>{{ session.endTime | date:sc.dateFormat }}</td>

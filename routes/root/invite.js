@@ -3,6 +3,7 @@
 var userRoutes = require('./user.js');
 var inviteService = require('../../services/invite');
 var middlewareFilters = require('../../middleware/filters');
+var _ = require('lodash');
 
 function views_path(action) {
   return 'invite/' + action;
@@ -91,9 +92,24 @@ function loginUser(req, res, next, user) {
   }
 }
 
-function simpleParams(title, invite, error, message) {
-  return { title: title, invite: invite || {}, error: error || "", message: message || '', applicationName: process.env.MAIL_FROM_NAME };
+function simpleParams(title, invite, errors, message) {
+  return {
+    title: title,
+    invite: invite || {},
+    errors: processedErrosMessage(errors || {}),
+    message: message || '',
+    applicationName: process.env.MAIL_FROM_NAME
+  };
 };
+function processedErrosMessage(errors) {
+  let message = [];
+  _.map(["password", "email"], function(item) {
+    if (errors[item]) {
+      message.push(errors[item]);
+    }
+  })
+  return message
+}
 
 function sessionAccept(req, res, next) {
   inviteService.acceptSessionInvite(req.params.token).then(function(result) {

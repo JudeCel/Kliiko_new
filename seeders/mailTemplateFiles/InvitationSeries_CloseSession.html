@@ -2,6 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
+  <style>
+    a { color:<%= hyperlinks %> !important }
+    .mainBorder { border:2px solid <%= mainBorder %> }
+  </style>
   <title>Close Session - Invitation Email Template</title>
 </head>
 
@@ -71,7 +75,7 @@
     <tbody>
       <tr>
         <td>
-          <table width="600" cellpadding="0" cellspacing="0" border="0" align="center" class="devicewidth" bgcolor="#ffffff" style="border: 2px solid #F0EA36;">
+          <table width="600" cellpadding="0" cellspacing="0" border="0" align="center" class="devicewidth mainBorder" bgcolor="#ffffff">
             <tbody>
               <tr>
                 <td width="100%">
@@ -115,7 +119,7 @@
                       </tr>
                       <tr>
                         <td align="center" width="600" height="55" style="background-color:#4CB74A;">
-                          <a href="{Close Session Yes In Future}" target="_blank" title="Yes, in future" style="display:block;text-decoration:none;color:#fff;">Yes, in future</a>
+                          <a href="{Close Session Yes In Future}" target="_blank" title="Yes, in future" style="display:block;text-decoration:none;color:#fff !important;">Yes, in future</a>
                         </td>
                       </tr>
                       <tr>
@@ -125,7 +129,7 @@
                       </tr>
                       <tr>
                         <td align="center" width="600" height="55" style="background-color:#E51E39;">
-                          <a href="{Close Session No In Future}" target="_blank" title="No, in future" style="display:block;text-decoration:none;color:#fff;">No, in future</a>
+                          <a href="{Close Session No In Future}" target="_blank" title="No, in future" style="display:block;text-decoration:none;color:#fff !important;">No, in future</a>
                         </td>
                       </tr>
                       <tr>

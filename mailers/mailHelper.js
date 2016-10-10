@@ -4,245 +4,67 @@ var helpers = require('./helpers');
 var mailTemplate = require('./mailTemplate');
 var mailTemplateService = require('../services/mailTemplate');
 
-//Note. Provide params.email in all methods
-
-//sent on session close, with future interests
-function sendSessionClose(params, callback) {
-  mailTemplateService.getActiveMailTemplate("closeSession", null, function(error, result) {
+function sendEmail(templateName, params, callback, passParamsToGetActiveMailTemplate, isCalendarEvent) {
+  mailTemplateService.getActiveMailTemplate(templateName, passParamsToGetActiveMailTemplate ? params : null, function(error, result) {
     if (error) {
       return callback(error);
     }
-    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
-      sessionName: params.sessionName,
-      termsOfUseUrl: terms_of_service.filter(params),
-      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
-      firstName: params.firstName, //receiver name
-      incentive: params.incentive,
-      facilitatorMobileNumber: params.facilitatorMobileNumber,
-      facilitatorFirstName: params.facilitatorFirstName,
-      facilitatorLastName: params.facilitatorLastName,
-      facilitatorMail: params.facilitatorMail,
-      participateInFutureUrl: params.participateInFutureUrl,
-      dontParticipateInFutureUrl: params.dontParticipateInFutureUrl,
-      unsubscribeMailUrl: params.unsubscribeMailUrl
-    });
+    params.termsOfUseUrl = terms_of_service.filter(params);
+    params.privacyPolicyUrl = helpers.getUrl('', '/privacy_policy');
+    let mailContent = mailTemplateService.composeMailFromTemplate(result, params);
     if (mailContent.error) {
       return callback(mailContent.error);
     }
-
-    mailTemplate.sendMailWithTemplate(mailContent, params, callback);
+    if (isCalendarEvent) {
+      mailTemplate.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
+    } else {
+      mailTemplate.sendMailWithTemplate(mailContent, params, callback);
+    }
   });
+}
+
+//sent on session close, with future interests
+function sendSessionClose(params, callback) {
+  sendEmail("closeSession", params, callback, false, false);
 };
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendFirstInvitation(params, callback) {
-  mailTemplateService.getActiveMailTemplate("firstInvitation", params, function(error, result) {
-    if (error) {
-      return callback(error);
-    }
-    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
-      firstName: params.firstName, //receiver name
-      termsOfUseUrl: terms_of_service.filter(params),
-      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
-      sessionName: params.sessionName,
-      startTime: params.startTime,
-      endTime: params.endTime,
-      orginalStartTime: params.startTime,
-      orginalEndTime: params.endTime,
-      startDate: params.startDate,
-      endDate: params.endDate,
-      incentive: params.incentive,
-      acceptInvitationUrl: params.acceptInvitationUrl,
-      facilitatorFirstName: params.facilitatorFirstName,
-      facilitatorLastName: params.facilitatorLastName,
-      facilitatorMail: params.facilitatorMail,
-      facilitatorMobileNumber: params.facilitatorMobileNumber,
-      invitationNotThisTimeUrl: params.invitationNotThisTimeUrl,
-      invitationNotAtAllUrl: params.invitationNotAtAllUrl,
-      unsubscribeMailUrl: params.unsubscribeMailUrl
-    });
-    if (mailContent.error) {
-      return callback(mailContent.error);
-    }
-    mailTemplate.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
-  });
+  sendEmail("firstInvitation", params, callback, true, true);
 };
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendInviteConfirmation(params, callback) {
-  mailTemplateService.getActiveMailTemplate("confirmation", params, function(error, result) {
-    if (error) {
-      return callback(error);
-    }
-    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
-      firstName: params.firstName, //receiver name
-      termsOfUseUrl: terms_of_service.filter(params),
-      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
-      startTime: params.startTime,
-      startDate: params.startDate,
-      confirmationCheckInUrl: params.confirmationCheckInUrl,
-      participantMail: params.participantMail,
-      incentive: params.incentive,
-      facilitatorFirstName: params.facilitatorFirstName,
-      facilitatorLastName: params.facilitatorLastName,
-      facilitatorMail: params.facilitatorMail,
-      facilitatorMobileNumber: params.facilitatorMobileNumber,
-      unsubscribeMailUrl: params.unsubscribeMailUrl
-    });
-    if (mailContent.error) {
-      return callback(mailContent.error);
-    }
-    mailTemplate.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
-  });
+  sendEmail("confirmation", params, callback, true, true);
 };
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendInvitationNotThisTime(params, callback) {
-  mailTemplateService.getActiveMailTemplate("notThisTime", params, function(error, result) {
-    if (error) {
-      return callback(error);
-    }
-    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
-      firstName: params.firstName, //receiver name
-      termsOfUseUrl: terms_of_service.filter(params),
-      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
-      facilitatorFirstName: params.facilitatorFirstName,
-      facilitatorLastName: params.facilitatorLastName,
-      facilitatorMail: params.facilitatorMail,
-      facilitatorMobileNumber: params.facilitatorMobileNumber,
-      unsubscribeMailUrl: params.unsubscribeMailUrl
-    });
-    if (mailContent.error) {
-      return callback(mailContent.error);
-    }
-    mailTemplate.sendMailWithTemplate(mailContent, params, callback);
-  });
+  sendEmail("notThisTime", params, callback, true, false);
 };
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendInvitationNotAtAll(params, callback) {
-  mailTemplateService.getActiveMailTemplate("notAtAll", params, function(error, result) {
-    if (error) {
-      return callback(error);
-    }
-    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
-      firstName: params.firstName, //receiver name
-      termsOfUseUrl: terms_of_service.filter(params),
-      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
-      facilitatorFirstName: params.facilitatorFirstName,
-      facilitatorLastName: params.facilitatorLastName,
-      facilitatorMail: params.facilitatorMail,
-      facilitatorMobileNumber: params.facilitatorMobileNumber,
-      unsubscribeMailUrl: params.unsubscribeMailUrl
-    });
-    if (mailContent.error) {
-      return callback(mailContent.error);
-    }
-    mailTemplate.sendMailWithTemplate(mailContent, params, callback);
-  });
+  sendEmail("notAtAll", params, callback, true, false);
 };
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendGeneric(params, callback) {
-  mailTemplateService.getActiveMailTemplate("generic", params, function(error, result) {
-    if (error) {
-      return callback(error);
-    }
-    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
-      firstName: params.firstName, //receiver name
-      termsOfUseUrl: terms_of_service.filter(params),
-      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
-      facilitatorFirstName: params.facilitatorFirstName,
-      facilitatorLastName: params.facilitatorLastName,
-      facilitatorMail: params.facilitatorMail,
-      facilitatorMobileNumber: params.facilitatorMobileNumber,
-      unsubscribeMailUrl: params.unsubscribeMailUrl
-    });
-    if (mailContent.error) {
-      return callback(mailContent.error);
-    }
-    mailTemplate.sendMailWithTemplate(mailContent, params, callback);
-  });
+  sendEmail("generic", params, callback, true, false);
 };
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendFacilitatorEmailConfirmation(params, callback) {
-  mailTemplateService.getActiveMailTemplate("facilitatorConfirmation", null, function(error, result) {
-    if (error) {
-      return callback(error);
-    }
-    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
-      firstName: params.firstName, //receiver name
-      termsOfUseUrl: terms_of_service.filter(params),
-      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
-      lastName: params.lastName,
-      accountName: params.accountName,
-      sessionName: params.sessionName,
-      startTime: params.startTime,
-      endTime: params.endTime,
-      startDate: params.startDate,
-      endDate: params.endDate,
-      logInUrl: params.logInUrl
-    });
-
-    if (mailContent.error) {
-      return callback(mailContent.error);
-    }
-    mailTemplate.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
-  });
+  sendEmail("facilitatorConfirmation", params, callback, false, true);
 };
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendParticipantOverquota(params, callback) {
-  mailTemplateService.getActiveMailTemplate("facilitatorOverQuota", null, function(error, result) {
-    if (error) {
-      return callback(error);
-    }
-    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
-      firstName: params.firstName, //receiver name
-      termsOfUseUrl: terms_of_service.filter(params),
-      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
-      lastName: params.lastName,
-      accountName: params.accountName,
-      sessionName: params.sessionName,
-      participantFirstName: params.participantFirstName,
-      participantLastName: params.participantLastName,
-      logInUrl: params.logInUrl
-    });
-    if (mailContent.error) {
-      return callback(mailContent.error);
-    }
-    mailTemplate.sendMailWithTemplate(mailContent, params, callback);
-  });
+  sendEmail("facilitatorOverQuota", params, callback, false, false);
 };
 
 function sendObserverInvitation(params, callback) {
-  mailTemplateService.getActiveMailTemplate("observerInvitation", null, function(error, result) {
-    if (error) {
-      return callback(error);
-    }
-    let mailContent = mailTemplateService.composeMailFromTemplate(result, {
-      firstName: params.firstName, //receiver name
-      termsOfUseUrl: terms_of_service.filter(params),
-      privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
-      lastName: params.lastName,
-      accountName: params.accountName,//account we invite
-      sessionName: params.sessionName,
-      facilitatorFirstName: params.facilitatorFirstName,
-      facilitatorLastName: params.facilitatorLastName,
-      facilitatorMail: params.facilitatorMail,
-      facilitatorMobileNumber: params.facilitatorMobileNumber,
-      startTime: params.startTime,
-      endTime: params.endTime,
-      startDate: params.startDate,
-      endDate: params.endDate,
-      logInUrl: params.logInUrl
-    });
-    if (mailContent.error) {
-      return callback(mailContent.error);
-    }
-    mailTemplate.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
-  });
+  sendEmail("observerInvitation", params, callback, false, true);
 };
 
 module.exports = {

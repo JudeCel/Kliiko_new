@@ -12,6 +12,8 @@ module.exports = (Sequelize, DataTypes) => {
       isUnique: validations.unique(Sequelize, 'Topic', 'name', { accountContext: true }),
       isLength: validations.length('name', { max: topicConstants.validations.name })
     } },
+    sign: { type: DataTypes.STRING, allowNull: true, validate: { isLength: validations.length('sign', { max: topicConstants.validations.sign })
+    } },
   }, {
     timestamps: true,
     classMethods: {

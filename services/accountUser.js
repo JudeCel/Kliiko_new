@@ -66,14 +66,27 @@ function prepareAccountManagerParams(params, account, user) {
 }
 
 function create(params, accountId, role, t) {
-  var deferred = q.defer();
+  let deferred = q.defer();
 
-  AccountUser.create(buidAttrs(params, accountId, role), { transaction: t }).then(function(result) {
+  AccountUser.create(buidAttrs(validateParams(params, role), accountId, role), { transaction: t }).then(function(result) {
     deferred.resolve(result);
   }, function(error) {
     deferred.reject(error);
   });
   return deferred.promise;
+}
+
+function validateParams(params, role) {
+  return validateGender(params, role);
+}
+
+function validateGender(params, role) {
+  let roles = ['accountManager', 'facilitator'];
+
+  if (_.includes(roles, role)) {
+    params.gender = params.gender ? params.gender : params.gender = "";
+  };
+  return params
 }
 
 function buidAttrs(params, accountId, role) {
@@ -203,5 +216,6 @@ module.exports = {
   createAccountManager: createAccountManager,
   updateWithUserId: updateWithUserId,
   findWithUser: findWithUser,
-  findWithSessionMembers: findWithSessionMembers
+  findWithSessionMembers: findWithSessionMembers,
+  validateParams: validateParams
 }

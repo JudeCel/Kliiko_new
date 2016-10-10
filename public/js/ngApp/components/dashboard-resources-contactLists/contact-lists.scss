@@ -155,6 +155,22 @@
           }
         }
       }
+
+      .btn-large {
+        display: inline-block !important;
+        min-width:100px;
+        width: 100%;
+        max-width: none;
+        height: 36px;
+
+        span {
+          text-align: left;
+          width: calc(100% - 25px);
+          white-space: nowrap;
+          overflow:hidden !important;
+          text-overflow: ellipsis;
+        }
+      }
     }
 
   }
@@ -180,6 +196,10 @@
   th, td {
     overflow: hidden;
     min-width: 60px;
+
+    &.row-actions {
+      min-width: 100px;
+    }
   }
 
   ////////

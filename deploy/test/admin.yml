@@ -32,21 +32,32 @@ spec:
         - name: docker-hub-secret
       containers:
       - image: "index.docker.io/klzii/kliiko:latest"
+        command: ['/bin/sh', './start_server.sh']
         imagePullPolicy: Always
         name: admin
         ports:
-        - containerPort: 8080
+          - containerPort: 8080
         env:
         - name: REDIS_HOST
           value: "redis-master"
+        - name: NODE_ENV
+          value: "production"
         - name: SERVER_CHAT_DOMAIN_URL
           value: "http://chat.test.klzii.com"
         - name: SERVER_CHAT_DOMAIN_PORT
           value: "80"
         - name: REDIS_PORT
           value: "6379"
-        - name: DATABASE_URL
-          value: "postgres://postgres:nWD44LS3bYs29JeP@postgres-master/klzii_test"
+        - name: DATABASE_NAME_PROD
+          value: "klzii_test"
+        - name: DATABASE_USER_PROD
+          value: "postgres"
+        - name: DATABASE_PASSWORD_PROD
+          value: "nWD44LS3bYs29JeP"
+        - name: DATABASE_HOST_PROD
+          value: "postgres-master"
+        - name: DATABASE_DIALECT_PROD
+          value: "postgres"
         - name: AIRBRAKE_PROJECT_ID
           value: "121542"
         - name: AIRBRAKE_API_KEY
@@ -55,14 +66,20 @@ spec:
           value: ".test.klzii.com"
         - name: SERVER_DOMAIN
           value: "www.test.klzii.com"
+        - name: MAIL_TRANSPORT_SERVICE
+          value: "smtp.mailgun.org"
         - name: MAIL_FROM_EMAIL
-          value: "insiderfocus.noreply@gmail.com"
+          value: "postmaster@noreply.klzii.com"
         - name: MAIL_FROM_NAME
           value: "klzii"
         - name: MAIL_TRANSPORT_AUTH_USER
-          value: "insiderfocus.noreply"
+          value: "postmaster@noreply.klzii.com"
         - name: MAIL_TRANSPORT_AUTH_PASS
-          value: "ifs_Zupper!pwd"
+          value: "3c005b08f7c42469235456d4da3808da"
+        - name: MAIL_TRANSPORT_SECURE_CONNECTION
+          value: "false"
+        - name: MAIL_TRANSPORT_PORT
+          value: "2525"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
         - name: FACEBOOK_CLIENT_ID

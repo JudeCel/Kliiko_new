@@ -58,12 +58,9 @@ switch (environment) {
   /**
   * Listen on provided port, on all network interfaces.
   */
-  models.sequelize.sync().then(function () {
-    server.listen(port);
-    server.on('error', onError);
-    server.on('listening', onListening);
-  });
-// }
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening);
 
  // server.maxConnections = 20;
 

@@ -58,7 +58,7 @@
 }
 
 @media (max-width: 767px)
-{  
+{
   .table-dashboardElements {
     display:none;
   }
@@ -74,8 +74,9 @@
       text-transform:uppercase;
     }
 
-    .dashboardElements-name{
+    .dashboardElements-type{
       padding-right: 85px;
+      text-transform: capitalize;
     }
 
     td, th {

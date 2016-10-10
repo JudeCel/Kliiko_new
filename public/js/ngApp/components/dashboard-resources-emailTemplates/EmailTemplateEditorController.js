@@ -3,7 +3,7 @@
 
   angular.module('KliikoApp').controller('EmailTemplateEditorController', EmailTemplateEditorController);
 
-  EmailTemplateEditorController.$inject = ['dbg', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', '$q', 'fileUploader'];
+  EmailTemplateEditorController.$inject = ['dbg', 'sessionBuilderControllerServices', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', '$q', 'fileUploader'];
   //necessary to bypass email editors restrictions
   jQuery.browser = {};
     (function () {
@@ -15,7 +15,7 @@
         }
     })();
 
-  function EmailTemplateEditorController(dbg, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q, fileUploader) {
+  function EmailTemplateEditorController(dbg, builderServices, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q, fileUploader) {
     dbg.log2('#EmailTemplateEditorController started');
 
     var vm = this;
@@ -25,7 +25,11 @@
     vm.addedList = {};
     vm.templateToDelete;
     vm.properties = {};
+    vm.colors = {};
+    vm.defaultColors = {};
     vm.currentUpload = 'image';
+    vm.headTemplate = null;
+    vm.headPattern = /<head>[\S\s]*?<\/head>/gi;
     var showSystemMail = $stateParams.systemMail;
 
     vm.preInit = function(params) {
@@ -85,7 +89,6 @@
     vm.deleteTemplate = deleteTemplate;
     vm.resetMailTemplate = resetMailTemplate;
     vm.previewMailTemplate = previewMailTemplate;
-    vm.saveEmailTemplate = saveEmailTemplate;
     var selectedTemplate = {};
     vm.initGallery = initGallery;
     vm.galleryDropdownData = galleryDropdownData;
@@ -94,6 +97,17 @@
 
     function setContent(content) {
       $('#templateContent').wysiwyg('setContent', content);
+    }
+
+    function getColors() {
+      var object = {};
+      for (var param in vm.defaultColors) {
+        for (var color in vm.defaultColors[param]) {
+          var name = vm.defaultColors[param][color].model;
+          object[name] = vm.colors && vm.colors[name] ? vm.colors[name] : vm.defaultColors[param][color].colour;
+        }
+      }
+      return object;
     }
 
     function startEditingTemplate(templateIndex, inSession, templateId, template) {
@@ -109,14 +123,23 @@
           if (vm.properties.brandLogoId && inSession) {
             fileUploader.show(vm.properties.brandLogoId).then(function(result) {
               populateTemplate(res);
-              setContent(vm.currentTemplate.content)
+              setContent(vm.currentTemplate.content);
               $('.wysiwyg iframe').contents().find("img#brandLogoUrl").attr("src", result.resource.url.full);
             });
           }else{
             populateTemplate(res);
-            setContent(vm.currentTemplate.content)
+            setContent(vm.currentTemplate.content);
           }
         });
+      }
+
+      function populateContentWithColors() {
+        var head =  vm.currentTemplate.content.match(vm.headPattern);
+        vm.headTemplate = head ? head[0] : null;
+        var colors = getColors();
+        for (var color in colors) {
+          vm.currentTemplate.content = vm.currentTemplate.content.replace("<%= " + color + " %>", colors[color]);
+        }
       }
 
       function populateTemplate(res) {
@@ -139,7 +162,10 @@
             vm.viewingTemplateName = null;
           }
         }
+
+        populateContentWithColors();
       }
+
     }
 
     function findIndexFromId(id) {
@@ -155,18 +181,24 @@
      * @param createCopy {boolean}
      * @param [template] {object} default valuse is currentTemplate
      */
-    function modifyAndSave(createCopy, template, includeProperties, templateName) {
+    function modifyAndSave(createCopy, templateData, includeProperties, templateName, createdFromModal) {
       var deferred = $q.defer();
-      var template = template || vm.currentTemplate;
+      var template = templateData || vm.currentTemplate;
 
       if(templateName) {
         domServices.modal('templateNameModal', true);
       }
 
       vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
+      if (vm.headTemplate) {
+        vm.currentTemplate.content = "<!DOCTYPE HTML PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'><html xmlns='http://www.w3.org/1999/xhtml'>"
+          + vm.headTemplate + "<body>" + vm.currentTemplate.content.substr(vm.currentTemplate.content.indexOf("<table")) + "</body></html>";
+      }
+
       vm.currentTemplate.error = {};
       if (includeProperties) {
         template.properties = vm.properties;
+        template.properties.createdWithCustomName = createdFromModal;
         template.properties.templateName = templateName;
       }
       mailTemplate.saveMailTemplate(template, createCopy).then(function (res) {
@@ -231,32 +263,6 @@
       });
     }
 
-    function saveEmailTemplate(force) {
-      var deferred = $q.defer();
-      vm.currentTemplate.properties = vm.properties;
-
-      if (force) {
-        vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
-      }
-      mailTemplate.saveTemplate(vm.currentTemplate).then(function (res) {
-        if (!res.error) {
-          refreshTemplateList(function() {
-            var index = getIndexOfMailTemplateWithId(res.templates.id);
-            if (index != -1) {
-              vm.startEditingTemplate(index);
-            }
-            deferred.resolve();
-          });
-          messenger.ok(res.message);
-        } else {
-          messenger.error(res.error);
-          deferred.reject();
-        }
-      });
-
-      return deferred.promise;
-    }
-
     function getIndexOfMailTemplateWithId(id) {
       for (var i = 0; i < vm.emailTemplates.length; i++) {
         if (vm.emailTemplates[i].id == id)
@@ -265,18 +271,15 @@
       return -1;
     }
 
-    function preprocessMailTemplateList(res, callback) {
-      vm.emailTemplates = res.templates;
+    function preprocessMailTemplateList(templates, callback) {
+      vm.emailTemplates = templates;
       if (vm.emailTemplates.length && vm.currentTemplate == -1) {
         vm.startEditingTemplate(0);
       }
 
       // session builder section
       vm.emailTemplates.map(function(template) {
-        var sessionBuilder = template.isCopy && !template.sessionId && !vm.addedList[template.id] && vm.properties.sessionBuilder;
-        var normal = !vm.addedList[template.id] && !vm.properties.sessionBuilder;
-
-        if(sessionBuilder || normal) {
+        if(!vm.addedList[template.id]) {
           vm.addedList[template.id] = template;
           if(vm.sortedEmailTemplates[template["MailTemplateBase.name"]]) {
             vm.sortedEmailTemplates[template["MailTemplateBase.name"]].push(template);
@@ -290,15 +293,12 @@
     }
 
     function refreshTemplateList(callback) {
-      if (vm.properties.sessionBuilder) {
-        mailTemplate.getAllSessionMailTemplates(showSystemMail, vm.properties).then(function (res) {
-          preprocessMailTemplateList(res, callback);
-        });
-      } else {
-        mailTemplate.getAllMailTemplates(showSystemMail, vm.properties).then(function (res) {
-          preprocessMailTemplateList(res, callback);
-        });
-      }
+      (vm.properties.sessionBuilder ? mailTemplate.getAllSessionMailTemplatesWithColors : mailTemplate.getAllMailTemplatesWithColors)
+          (showSystemMail, vm.properties, vm.properties.sessionBuilder ? builderServices.session.sessionData.brandProjectPreferenceId : null).then(function (res) {
+        vm.colors = res.colors;
+        vm.defaultColors = res.manageFields;
+        preprocessMailTemplateList(res.templates, callback);
+      });
     }
 
     vm.cancelTemplateDelete = function() {

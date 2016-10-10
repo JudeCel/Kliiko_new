@@ -23,6 +23,8 @@
 
     vm.formAction = null;
     vm.name = '';
+    vm.type = null;
+    vm.typeToConfirm = '';
     vm.editedContactListName = '';
 
     vm.updateStep = updateStep;
@@ -163,6 +165,7 @@
       initStep(null, 'initial');
       getAllContacts();
       vm.name = vm.session.steps.step1.name;
+      vm.type = vm.session.steps.step1.type;
       vm.selectedFacilitator = vm.session.steps.step1.facilitator;
     }
 
@@ -208,6 +211,24 @@
         vm.session.steps.step1.name = vm.name;
       }, function(err) {
         vm.name = vm.session.steps.step1.name;
+      });
+    }
+
+    vm.confirmType = function () {
+      vm.typeToConfirm = vm.type;
+      vm.type = vm.session.steps.step1.type;
+      if (vm.session.steps.step1.type == null) {
+        domServices.modal('sessionTypeModal');
+      }
+    }
+
+    vm.updateType = function () {
+      domServices.modal('sessionTypeModal', 'close');
+      vm.type = vm.typeToConfirm;
+      updateStep({type: vm.type}).then(function() {
+        vm.session.steps.step1.type = vm.type;
+      }, function(err) {
+        vm.type = vm.session.steps.step1.type;
       });
     }
 
@@ -262,7 +283,7 @@
     function initGallery(gc) {
       vm.uploadTypes = [gc.getUploadType('brandLogo')];
 
-      gc.listResources({ type: ['image'], scope: ['brandLogo'] }).then(function(result) {
+      gc.listResources({ type: ['image'], scope: ['brandLogo'], stock: true }).then(function(result) {
         gc.resourceList = result.resources;
         for(var i in result.resources) {
           var resource = result.resources[i];

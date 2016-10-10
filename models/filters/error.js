@@ -10,13 +10,18 @@ module.exports = {
 function filterErrors(errorsObject) {
   let object = {};
 
-  if(errorsObject.errors) {
-    _.map(errorsObject.errors, function(error) {
-      parseErrorMessage(error, object);
-    });
+  if(typeof errorsObject === 'string') {
+    object = errorsObject;
   }
   else {
-    parseErrorMessage(errorsObject, object);
+    if(errorsObject.errors) {
+      _.map(errorsObject.errors, function(error) {
+        parseErrorMessage(error, object);
+      });
+    }
+    else {
+      parseErrorMessage(errorsObject, object);
+    }
   }
 
   return object;

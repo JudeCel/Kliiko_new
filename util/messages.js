@@ -99,12 +99,14 @@ module.exports = {
     sessionMemberNotFound: 'Session Member not found',
     sessionMemberRemoved: 'Session Member removed successfully',
     accountUserNotFound: 'Account User not found',
+    sessionClosed: "You can't send invites because session has been closed",
 
     errors: {
       cantAddObservers: "Please Update your subscription plan, to invite Observers to your session.",
       cantSendCloseMails: "Were not able to send emails to inform all participants, that session was closed.",
       firstStep: {
         nameRequired: 'Name must be provided',
+        typeRequired: 'Type must be selected',
         startTimeRequired: 'Start time must be provided',
         endTimeRequired: 'End time must be provided',
         invalidDateRange: "Start date can't be higher then end date.",

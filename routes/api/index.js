@@ -78,6 +78,8 @@ router.put('/banners', PERMISSIONS.admin, banners.update);
 
 router.get('/mailTemplates', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.allMailTemplatesGet);
 router.get('/sessionMailTemplates', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.allSessionMailTemplatesGet);
+router.get('/mailTemplatesWithColors', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.allMailTemplatesWithColorsGet);
+router.get('/sessionMailTemplatesWithColors', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.allSessionMailTemplatesWithColorsGet);
 router.post('/mailTemplate', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.mailTemplatePost);
 router.delete('/mailTemplate', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.deleteMailTemplate);
 router.post('/mailTemplate/save', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.saveMailTemplatePost);

@@ -10,7 +10,11 @@
     "test": "./node_modules/.bin/mocha test",
     "gulp": "./node_modules/.bin/gulp",
     "reset": "node ./lib/tasks/dbReset && node ./seeders/users && node ./seeders/chatSession && node ./seeders/mailTemplates",
-    "reset_test_db": "node ./prepareDbForTests"
+    "reset_test_db": "NODE_ENV=test node ./tasks/prepareDbForTests",
+    "migrations": "node ./node_modules/.bin/sequelize db:migrate",
+    "build_prod": "node ./node_modules/gulp/bin/gulp.js build-prod",
+    "updateBaseMailTemplates": "node ./tasks/updateBaseMailTemplates.js"
+
   },
   "engineStrict": true,
   "engine": {
@@ -111,7 +115,7 @@
     "mv": "^2.1.1",
     "ncp": "^2.0.0",
     "node-uuid": "^1.4.7",
-    "nodemailer": "^2.3.1",
+    "nodemailer": "^2.6.4",
     "nodemon": "1.10.0",
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.0",
@@ -119,7 +123,7 @@
     "passport-local": "^1.0.0",
     "pg": "^6.0.3",
     "pg-hstore": "^2.3.2",
-    "pm2": "^1.1.3",
+    "pm2": "^2.0.15",
     "q": "^1.4.1",
     "redis": "^2.5.3",
     "request": "^2.74.0",

@@ -8,6 +8,7 @@ var filters = require('./../models/filters');
 var AccountUser = models.AccountUser;
 var User = models.User;
 var Account = models.Account;
+var AccountUserService = require('./accountUser');
 
 var async = require('async');
 var _ = require('lodash');
@@ -30,7 +31,7 @@ function createOrFindAccountManager(user, body, accountId) {
   delete params.id;
 
   canAddAccountManager(accountId).then(function() {
-    AccountUser.build(params).validate().then(function(errors) {
+    AccountUser.build(AccountUserService.validateParams(params, params.role)).validate().then(function(errors) {
       errors = errors || {};
       delete params.role;
       return preValidate(user, accountId, params.email, errors);
