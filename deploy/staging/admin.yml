@@ -59,15 +59,19 @@ spec:
         - name: GOOGLE_CLIENT_SECRET
           value: "i_S2xLucKbRL14sp6hHSRVA_"
         - name: MAIL_TRANSPORT_SERVICE
-          value: "smtp.office365.com"
+          value: "smtp.mailgun.org"
         - name: MAIL_FROM_EMAIL
-          value: "noreply@klzii.com"
+          value: "postmaster@noreply.klzii.com"
         - name: MAIL_FROM_NAME
           value: "klzii"
         - name: MAIL_TRANSPORT_AUTH_USER
-          value: "noreply@klzii.com"
+          value: "postmaster@noreply.klzii.com"
         - name: MAIL_TRANSPORT_AUTH_PASS
-          value: "Zuso0791"
+          value: "3c005b08f7c42469235456d4da3808da"
+        - name: MAIL_TRANSPORT_SECURE_CONNECTION
+          value: "false"
+        - name: MAIL_TRANSPORT_PORT
+          value: "2525"
         - name: REDIS_PORT
           value: "6379"
         - name: DATABASE_NAME_PROD

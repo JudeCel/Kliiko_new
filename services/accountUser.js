@@ -216,5 +216,6 @@ module.exports = {
   createAccountManager: createAccountManager,
   updateWithUserId: updateWithUserId,
   findWithUser: findWithUser,
-  findWithSessionMembers: findWithSessionMembers
+  findWithSessionMembers: findWithSessionMembers,
+  validateParams: validateParams
 }

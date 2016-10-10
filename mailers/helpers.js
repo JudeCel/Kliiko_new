@@ -16,15 +16,19 @@ function envConfig() {
       return stubTransport;
       break;
     default:
-      return {
-        service: process.env.MAIL_TRANSPORT_SERVICE,
+      let confObject = {
+        host: process.env.MAIL_TRANSPORT_SERVICE,
         auth: {
           user: process.env.MAIL_TRANSPORT_AUTH_USER,
           pass: process.env.MAIL_TRANSPORT_AUTH_PASS
         },
         debug: true,
-        logger: true
+        logger: true,
+        secureConnection: process.env.MAIL_TRANSPORT_SECURE_CONNECTION == "true",
+        port: parseInt(process.env.MAIL_TRANSPORT_PORT)
       };
+      console.log(confObject);
+      return confObject;
   }
 }
 
