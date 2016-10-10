@@ -78,6 +78,8 @@ function updateSessionTopics(sessionId, topicsArray) {
             landing: topic.sessionTopic.landing,
             name: topic.sessionTopic.name,
             boardMessage: topic.sessionTopic.boardMessage,
+            sign: topic.sessionTopic.sign,
+            lastSign: topic.sessionTopic.lastSign,
           }
 
           sessionTopic.update(params);
@@ -229,5 +231,5 @@ function update(params) {
 }
 
 function sessionTopicUpdateParams(params) {
-  return _.pick(params, ['name', 'boardMessage']);
+  return _.pick(params, ['name', 'boardMessage', 'sign', 'lastSign']);
 }
