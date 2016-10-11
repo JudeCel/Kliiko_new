@@ -1,0 +1,12 @@
+<div class='modal-content border-green border-radius-none'>
+    <div class='modal-header'>
+    <h2 class='modal-title text-center'>{{data.title}}</h2>
+    </div>
+    <div class='modal-body'>{{data.text}}</div>
+    <div class='modal-footer'>                
+            <button type="button" ng-click="cancel()"
+                    class="btn btn-standart btn-red btn-small pull-left">{{data.cancel}}</button>
+            <button type="button" ng-click="ok()"
+                    class="btn btn-standart btn-green btn-small pull-right">{{data.ok}}</button>
+        </div>
+</div>

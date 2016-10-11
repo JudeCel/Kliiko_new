@@ -21,8 +21,8 @@
     vm.filterTypes = {
       all: 'All',
       notInvited: 'Not Invited',
-      confirmed: 'Confirmed',
-      inProgress: 'Confirmed',
+      confirmed: 'Checked In',
+      inProgress: 'Accepted',
       notThisTime: 'Not This Time',
       notAtAll: 'Not At All',
       pending: 'No Response',

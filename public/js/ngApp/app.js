@@ -30,7 +30,8 @@
     'KliikoApp.accountUser',
     'KliikoApp.fileUploader',
     'KliikoApp.goToChatroom',
-    'KliikoApp.mailTemplate'
+    'KliikoApp.mailTemplate',
+    'angular-confirm'
   ];
 
   angular
@@ -113,8 +114,8 @@
     $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
   }
 
-  appRun.$inject = ['$stateParams', 'dbg', '$rootScope', '$state', 'globalSettings', 'ngProgressFactory', 'messenger'];
-  function appRun($stateParams, dbg, $rootScope, $state, globalSettings, ngProgressFactory, messenger) {
+  appRun.$inject = ['$stateParams', 'dbg', '$rootScope', '$state', 'globalSettings', 'ngProgressFactory', 'messenger', '$confirmModalDefaults'];
+  function appRun($stateParams, dbg, $rootScope, $state, globalSettings, ngProgressFactory, messenger, $confirmModalDefaults) {
     dbg.log('#appRun started ');
     var routerProgressbar;
     var rootScopeProgress = ngProgressFactory.createInstance();
@@ -142,6 +143,11 @@
     $rootScope.progressbarComplete = function() {
       rootScopeProgress.complete();
     }
+
+    $confirmModalDefaults.templateUrl = '/js/ngApp/templates/confirm-dialog.tpl.html';
+    $confirmModalDefaults.defaultLabels.title = 'Are you sure?';
+    $confirmModalDefaults.defaultLabels.ok = 'Continue';
+    $confirmModalDefaults.defaultLabels.cancel = 'Cancel';
 
   }
 
