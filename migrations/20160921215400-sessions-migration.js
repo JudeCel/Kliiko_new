@@ -5,7 +5,8 @@
  module.exports = {
    up: function (queryInterface, Sequelize) {
      return new Bluebird(function (resolve, reject) {
-       queryInterface.addColumn('Sessions', 'type', { type: Sequelize.ENUM, values: ['focus', 'forum'] }).then(function() {
+       queryInterface.addColumn('Sessions', 'type', { type: Sequelize.ENUM, values: ['focus', 'forum'] }).then(function(result) {
+         console.log(result);
          resolve();
        },function(error) {
          validateError(error, resolve, reject);
