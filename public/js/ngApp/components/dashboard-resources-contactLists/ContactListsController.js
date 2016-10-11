@@ -463,8 +463,6 @@
           },
           function(err) {  messenger.error(err); }
         );
-      }, function(){
-        // Cancel, nothing to do.
       });
     }
 

@@ -79,7 +79,7 @@ var frontendScripts = [
   "public/js/vendors/angular/1.4.8/angular-sanitize.min.js",
   "public/js/vendors/angular/1.4.8/angular-touch.min.js",
 
-  "public/js/vendors/angular-confirm/angular-confirm.min.js",
+  "public/js/vendors/angular-confirm/angular-confirm.js",
 
   "public/js/vendors/angular-ui-sortable/sortable.js",
   "public/js/vendors/jquery-ui/*.js",
