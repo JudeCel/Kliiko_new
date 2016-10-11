@@ -3,7 +3,7 @@
 <div class='col-xs-12'>
   <center>
     <img ng-src='{{ survey.resource.url.full }}' class='img-responsive' ng-if='survey.resource'/>
-    <img ng-src='/icons/Klzii_RGB_72.png' ng-if='!survey.resource'/>
+    <img ng-src='/icons/Klzii_RGB_72.png' ng-if='!survey.resource && !survey.resourceId'/>
   </center>
 </div>
 
