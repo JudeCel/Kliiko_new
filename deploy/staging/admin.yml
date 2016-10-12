@@ -103,8 +103,8 @@ spec:
         - name: COOKIE_SECRET
           value: "384ea4460f93543b5df82b039ff9da764bfd6393e16dd0913dfaf91b380baa409ed7587865b76d8cb2ac70bd5a7db538280778ac6bc2c73b737709e5ef7df98e"
         - name: TWILIO_ACCOUNT_SID
-          value: "AC07a728c4dd30fcffe94be9cbaf3b579f"
+          value: "AC979a928c7e46eb715283177d0bf69d23"
         - name: TWILIO_AUTH_TOKEN
-          value: "2d12ce11106c17ab443034bfa86145ce"
+          value: "40c3e7b2fb16608f28bafbd53466c2dc"
         - name: TWILIO_SENDER_NUMBER
-          value: "+12048179165"
+          value: "+61428805081"
