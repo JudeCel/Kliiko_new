@@ -101,12 +101,13 @@ function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {
     */
 
     let calendarData =  cal.toString();
+    let urlCalendarData = encodeURI(new Buffer(calendarData).toString('base64'));
 
     transporter.sendMail({
       from: mailFrom,
       to: mailParams.email,
       subject: template.subject,
-      html: parsedTemplate.html,
+      html: parsedTemplate.html.replace("{Calendar}", helpers.getUrl('', '/ics?icsdata=' + urlCalendarData)),
       //adds calendar event as attachment file
       attachments: [{
         filename: "event.ics",
@@ -115,8 +116,9 @@ function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {
       //makes this mail as calendar event in Outlook and Gmail with html data as content
       /*
       alternatives: [{
-        contentType: "text/calendar; method=REQUEST; name=event.ics ;component=VEVENT",
-        content: new Buffer(calendarData)
+        contentType: "text/calendar; method=REQUEST; name=event.ics; component=VEVENT",
+        content: new Buffer(calendarData),
+        cid: "event.ics@att"
       }]
       */
     }, callback);
