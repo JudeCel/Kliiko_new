@@ -35,7 +35,7 @@ let params = {
   participantMail: "testParticipant@gmail.com",
   browserBackground: '#EFEFEF',
   mainBackground: '#FFFFFF',
-  mainBorder: '#F0E935',
+  mainBorder: '#C3BE2E',
   font: '#58595B',
   headerButton: '#4CBFE9',
   consoleButtonActive: '#4CB649',
