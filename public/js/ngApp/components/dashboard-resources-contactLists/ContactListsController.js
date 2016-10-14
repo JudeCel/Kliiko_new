@@ -225,7 +225,6 @@
 
     function updateList() {
       if (vm.newListErrorMessage) return;
-      vm.newList.name = vm.name;
       if (!vm.newList.name) {
         dbg.log2('#ContactListController > updateList > error > list name is empty');
         messenger.error(messagesUtil.contactList.listNameBlank);
