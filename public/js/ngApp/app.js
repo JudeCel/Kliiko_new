@@ -24,6 +24,7 @@
     'ui.sortable',
     'angularUtils.directives.dirPagination',
     'toggle-switch',
+    'angular-confirm',
     // app modules
     'KliikoApp.user',
     'KliikoApp.account',
@@ -31,7 +32,7 @@
     'KliikoApp.fileUploader',
     'KliikoApp.goToChatroom',
     'KliikoApp.mailTemplate',
-    'angular-confirm'
+    'KliikoApp.sessionExpire'
   ];
 
   angular
@@ -151,8 +152,8 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader', 'domServices', '$scope'];
-  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader, domServices, $scope) {
+  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader', 'domServices', '$scope', 'sessionExpire'];
+  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader, domServices, $scope, sessionExpire) {
     var vm = this;
     vm.openModal = openModal;
     dbg.log2('#AppController started ');
@@ -168,6 +169,7 @@
       accountUser.getAccountUserData().then(function(res) { vm.accountUser = res });
       account.getAccountData().then(function(res) { vm.account = res });
       fileUploader.getToken().then(function(res) { vm.fileUploader = res });
+      sessionExpire.init();
     }
 
     function openModal(id) {
