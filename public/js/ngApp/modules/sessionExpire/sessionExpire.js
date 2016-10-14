@@ -10,8 +10,7 @@
     });
 
     var vm = {};
-    //vm.expireTime = 4 * 3600 * 1000; // 4h
-    vm.expireTime = 15 * 60 * 1000; // 15m
+    vm.expireTime = 4 * 3600 * 1000; // 4h
     //vm.expireTime = 10 * 1000; // 10s
     vm.pingTime = 5 * 60 * 1000; // 5m
     vm.dialogTimeout = 28; // 28s
