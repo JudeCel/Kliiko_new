@@ -212,6 +212,8 @@
           messenger.ok(res.message);
           deferred.resolve();
         } else {
+          template.error = null;
+          template.properties = null;
           messenger.error(res.error);
           deferred.reject();
         }
