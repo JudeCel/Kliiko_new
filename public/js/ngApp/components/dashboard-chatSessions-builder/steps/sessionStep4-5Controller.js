@@ -293,13 +293,15 @@
     }
 
     function returnMemberInviteStatus(member) {
-      if(vm.beforeEditInviteStatus) {
+      if (vm.beforeEditInviteStatus) {
         member.inviteStatus = vm.beforeEditInviteStatus;
-      }else if(member.inviteStatus){
+      } else if (member.inviteStatus == 'Not Invited') {
+        member.inviteStatus = "notInvited";
+      } else if (member.inviteStatus) {
         // Do Nothing
-      }else if(member.invite) {
+      } else if (member.invite) {
         member.inviteStatus = member.invite.status;
-      }else{
+      } else {
         member.inviteStatus = "confirmed";
       }
 
