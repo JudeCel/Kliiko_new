@@ -46,7 +46,7 @@ describe('SERVICE - BrandColour', function() {
     assert.equal(data.name, params.name || 'Default scheme');
     assert.equal(data.colours.browserBackground, params.colours.browserBackground || '#EFEFEF');
     assert.equal(data.colours.mainBackground, params.colours.mainBackground || '#FFFFFF');
-    assert.equal(data.colours.mainBorder, params.colours.mainBorder || '#F0E935');
+    assert.equal(data.colours.mainBorder, params.colours.mainBorder || '#C3BE2E');
     assert.equal(data.colours.font, params.colours.font || '#58595B');
     assert.equal(data.colours.headerButton, params.colours.headerButton || '#4CBFE9');
     assert.equal(data.colours.consoleButtonActive, params.colours.consoleButtonActive || '#4CB649');

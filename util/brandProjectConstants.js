@@ -22,7 +22,7 @@ module.exports = {
     font: '#58595B',
     mainBackground: '#FFFFFF',
     headerButton: '#4CBFE9',
-    mainBorder: '#F0E935',
+    mainBorder: '#C3BE2E',
     consoleButtonActive: '#4CB649',
     email: {
         hyperlinks: '#2F9F69',
