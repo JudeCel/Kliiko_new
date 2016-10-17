@@ -26,6 +26,7 @@
     vm.pickValidClass = surveyServices.pickValidClass;
     vm.submitSurvey = submitSurvey;
     vm.init = init;
+    vm.checkTag = surveyServices.checkTag;
 
     initConstants();
 

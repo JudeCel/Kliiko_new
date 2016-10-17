@@ -218,7 +218,7 @@ module.exports = {
       question: "Are you interested in taking part in a future online discussion group, about (brand/product/service)?\nIt'll be easy and fun, chatting with others and making a difference.\nIf Yes, we'll need your Contact Details, so we can keep in touch.\nPlease also see our Privacy Policy below.\nYou must be aged 18 or over to participate.",
       hardcodedName: true,
       answers: [
-        { name: 'Yes - I am aged 18 or over & give you permission to contact me in future about a discussion group', order: 0 },
+        { name: 'Yes - I am aged 18 or over & give you permission to contact me in future about a discussion group', order: 0, tag: 'InterestYesTag' },
         { name: 'No', order: 1 }
       ],
       link: { name: 'Privace Policy', url: '/privacy_policy' },
@@ -236,7 +236,8 @@ module.exports = {
       required: true,
       contact: true,
       minAnswers: 0,
-      maxAnswers: 0
+      maxAnswers: 0,
+      enableByTag: 'InterestYesTag'
     }
   ]
 }

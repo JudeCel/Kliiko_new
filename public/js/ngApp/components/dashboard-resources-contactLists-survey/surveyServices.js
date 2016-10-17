@@ -29,6 +29,7 @@
     upServices.answerSurvey = answerSurvey;
     upServices.confirmSurvey = confirmSurvey;
     upServices.pickValidClass = pickValidClass;
+    upServices.checkTag = checkTag;
     upServices.canExportSurveyData = canExportSurveyData;
     return upServices;
 
@@ -167,5 +168,18 @@
     function pickValidClass(error, className) {
       return className + (error && Object.keys(error).length > 0 ? '-danger' : '-success');
     };
+
+    function checkTag(obj) {
+      if (obj.enableByTag) {
+        var elements = document.getElementsByClassName(obj.enableByTag);
+        if (elements.length > 0) {
+          return elements[0].checked;
+        } else {
+          return false;
+        }
+      } else {
+        return true;
+      }
+    }
   };
 })();
