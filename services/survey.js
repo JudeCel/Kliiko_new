@@ -50,6 +50,8 @@ const VALID_ATTRIBUTES = {
   ]
 }
 
+const SMALL_AGE = 'Under 18';
+
 function simpleParams(data, message) {
   return { data: data, message: message };
 };
@@ -371,7 +373,7 @@ function answerSurvey(params) {
         return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
           if(!_.isEmpty(fields)) {
             let clParams = findContactListAnswers(contactList, validParams.answers);
-            if(clParams && clParams != null && clParams.customFields.age != 'Under 18') {
+            if(clParams && clParams != null && clParams.customFields.age != SMALL_AGE) {
               clParams.contactListId = contactList.id;
               clParams.accountId = survey.accountId;
 

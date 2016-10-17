@@ -1,8 +1,8 @@
-<div class='form-horizontal' ng-init='sc.initContacts(question)'>
+<div class='form-horizontal'>
   <br/>
 </div>
 
-<div class='form-horizontal' ng-init='question.type = "input"'>
+<div class='form-horizontal' ng-init='sc.initContacts(question)'>
   <div class='form-group' ng-repeat='cd in sc.contactDetails track by $index'>
     <label class='col-xs-2 control-label' for='{{ cd.name }}'>
       {{ cd.name }}
