@@ -278,6 +278,7 @@
       question.minAnswers = object.minAnswers;
       question.maxAnswers = object.maxAnswers;
       question.contactDetails = object.contactDetails;
+      question.link = object.link;
 
       if(object.hardcodedName) {
         question.name = object.name;
@@ -302,11 +303,13 @@
       }
     };
 
-    function initContacts(answer) {
+    function initContacts(question) {
+      console.log(question);
+      question.type = "contacts"
       if(!vm.currentContacts) {
-        if (!answer ) {
+        /*if (!answer ) {
           answer = {};
-        }
+        }*/
         if(!answer.contactDetails) {
           seedContactDetails(answer);
         }

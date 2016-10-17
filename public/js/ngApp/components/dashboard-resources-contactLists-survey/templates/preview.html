@@ -26,6 +26,10 @@
           </div>
 
           <div class='panel-body border-radius-none'>
+            <div ng-if='question.link' class='link-block'>
+              <a target="_blank" href="{{question.link.url}}">{{question.link.name}}</a>
+            </div>
+
             <div class='has-error' ng-messages='sc.submitForm.answers[question.order].$error'>
               <div ng-repeat='error in sc.validationErrors'>
                 <div class='help-block' ng-message='{{ error.type }}'>{{ sc.replaceErrorMessage(error, "textarea") }}</div>

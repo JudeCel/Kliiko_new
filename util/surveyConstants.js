@@ -53,8 +53,8 @@ module.exports = {
     {
       model: 'age',
       name: 'Age',
-      input: true,
-      canDisable: true,
+      select: true,
+      options: ['Under 18', '18-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70+'],
       order: 3
     },
     {
@@ -221,7 +221,7 @@ module.exports = {
         { name: 'Yes - I am aged 18 or over & give you permission to contact me in future about a discussion group', order: 0 },
         { name: 'No', order: 1 }
       ],
-      link: { name: 'Privace Policy (link to)', url: '/privacy_policy' },
+      link: { name: 'Privace Policy', url: '/privacy_policy' },
       input: true,
       required: true,
       minAnswers: 2,
