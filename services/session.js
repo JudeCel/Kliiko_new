@@ -246,7 +246,8 @@ function copySession(sessionId, accountId, provider) {
       findSession(sessionId, accountId, provider).then(function(result) {
         let facilitator = result.data.dataValues.facilitator;
         delete result.data.dataValues.id;
-        delete result.data.dataValues.facilitator;
+        delete result.data.dataValues.facilitator;        
+        result.data.dataValues.name = "Copy of (" + result.data.dataValues.name + ")"; 
         result.data.dataValues.step = "setUp";
         Session.create(result.data.dataValues).then(function(session) {
           async.waterfall([
@@ -257,21 +258,7 @@ function copySession(sessionId, accountId, provider) {
                   //we ignore error because data is copied step by step, and one error shouldn't stop following copying
                   callback();
                 });
-              },
-              function (callback) {
-                //copying facilitator
-                if(facilitator) {
-                  delete facilitator.id;
-                  delete facilitator.token;
-                  copySessionMember(session, facilitator, provider).then(function() {
-                    callback();
-                  }, function(error) {
-                    callback();
-                  });
-                } else {
-                  callback();
-                }
-              },
+              },              
               function(callback) {
                 MailTemplateService.copyTemplatesFromSession(accountId, sessionId, session.id, function(error, result) {
                   callback();
