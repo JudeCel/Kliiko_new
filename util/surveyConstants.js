@@ -6,11 +6,11 @@ module.exports = {
   minsMaxs: {
     input: {
       min: 1,
-      max: 30
+      max: 100
     },
     textarea: {
       min: 1,
-      max: 300
+      max: 350
     }
   },
   validationErrors: {
@@ -215,31 +215,28 @@ module.exports = {
     {
       order: 6,
       name: 'Interest',
-      question: "Would you be interested in taking part in a future online discussion group, about (brand/product/service)? It'll be easy and fun, chatting with others like yourself. And if you participate there'll also be a gift for your help.",
+      question: "Are you interested in taking part in a future online discussion group, about (brand/product/service)?\nIt'll be easy and fun, chatting with others and making a difference.\nIf Yes, we'll need your Contact Details, so we can keep in touch.\nPlease also see our Privacy Policy below.\nYou must be aged 18 or over to participate.",
       hardcodedName: true,
+      answers: [
+        { name: 'Yes - I am aged 18 or over & give you permission to contact me in future about a discussion group', order: 0 },
+        { name: 'No', order: 1 }
+      ],
+      link: { name: 'Privace Policy (link to)', url: '/privacy_policy' },
+      input: true,
       required: true,
-      checkbox: true,
-      minAnswers: 1,
-      maxAnswers: 1
+      minAnswers: 2,
+      maxAnswers: 2
     },
     {
       order: 7,
-      name: 'Prize Draw',
-      question: 'Would you like to be in the draw for (prize)?',
-      hardcodedName: true,
-      checkbox: true,
-      minAnswers: 1,
-      maxAnswers: 1
-    },
-    {
-      order: 8,
       name: 'Contact Details',
-      question: 'To finish, we just need your Contact Details. Your information will remain confidential and not be shared with other parties. Please see our Privacy Policy below. If you do not want to provide your details, you will not be eligible for a discussion group and the prize draw.',
+      question: 'If you answered Yes, please complete your Contact Details. All information is confidential and will not be shared with other parties.',
       hardcodedName: true,
+      hardcodedQuestion: true,
       required: true,
       contact: true,
-      minAnswers: 1,
-      maxAnswers: 1
+      minAnswers: 0,
+      maxAnswers: 0
     }
   ]
 }

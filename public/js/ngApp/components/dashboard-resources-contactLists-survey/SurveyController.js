@@ -304,6 +304,9 @@
 
     function initContacts(answer) {
       if(!vm.currentContacts) {
+        if (!answer ) {
+          answer = {};
+        }
         if(!answer.contactDetails) {
           seedContactDetails(answer);
         }
