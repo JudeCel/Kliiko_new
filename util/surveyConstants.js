@@ -237,7 +237,7 @@ module.exports = {
       contact: true,
       minAnswers: 0,
       maxAnswers: 0,
-      enableByTag: 'InterestYesTag'
+      handleTag: 'InterestYesTag'
     }
   ]
 }

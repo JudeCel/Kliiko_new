@@ -169,11 +169,18 @@
       return className + (error && Object.keys(error).length > 0 ? '-danger' : '-success');
     };
 
-    function checkTag(obj) {
-      if (obj.enableByTag) {
-        var elements = document.getElementsByClassName(obj.enableByTag);
+    function checkTag(obj, setTagObj) {
+      if (setTagObj) {
+        setTagObj.tagHandled = false;
+      }
+      if (obj.handleTag) {
+        var elements = document.getElementsByClassName(obj.handleTag);
         if (elements.length > 0) {
-          return elements[0].checked;
+          var res = elements[0].checked;
+          if (res) {
+            setTagObj.tagHandled = true;
+          }
+          return res;
         } else {
           return false;
         }
@@ -181,5 +188,7 @@
         return true;
       }
     }
+
+
   };
 })();

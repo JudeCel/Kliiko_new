@@ -66,7 +66,7 @@
 
             <div ng-if='question.type == "input"' ng-repeat='answer in question.answers'>
               <ng-form name='{{ question.order }}' ng-if='answer.contactDetails'>
-                {{tagSelected = sc.checkTag(answer); ''}}
+                {{tagSelected = sc.checkTag(answer, sq); ''}}
 
                 <div ng-repeat='contact in answer.contactDetails | toArray track by $index'>
                   <div class='form-group' ng-if='contact'>
@@ -83,21 +83,21 @@
                       <input type='text' class='form-control border-radius-none' id='contact-{{ contact.model }}' placeholder='{{ contact.name }}'
                         intl-tel-input intl-tel-input-controller='pnc.mobileController'
                         name='{{ contact.model }}' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
-                        ng-model='sq.contactDetails[contact.model]' ng-disabled='!tagSelected' ng-required='tagSelected && sc.submitedSurvey'
+                        ng-model='sq.contactDetails[contact.model]' ng-required='tagSelected && sc.submitedSurvey'
                         ng-minlength='1'>
                     </div>
 
                     <div class='col-xs-10' ng-if='contact.input'>
                       <input type='text' class='form-control border-radius-none' id='contact-{{ contact.model }}' placeholder='{{ contact.name }}'
                         name='{{ contact.model }}' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
-                        ng-model='sq.contactDetails[contact.model]' ng-disabled='!tagSelected' ng-required='tagSelected && sc.submitedSurvey'
+                        ng-model='sq.contactDetails[contact.model]' ng-required='tagSelected && sc.submitedSurvey'
                         ng-minlength='1'>
                     </div>
 
                     <div class='col-xs-10' ng-if='contact.select'>
                       <select class='form-control border-radius-none' id='contact-{{ contact.model }}' name='{{ contact.model }}'
                         ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
-                        ng-model='sq.contactDetails[contact.model]' ng-required='tagSelected && sc.submitedSurvey' ng-disabled='!tagSelected'>
+                        ng-model='sq.contactDetails[contact.model]' ng-required='tagSelected && sc.submitedSurvey'>
                         <option ng-repeat='option in contact.options' value='{{ option }}'>
                           {{ option }}
                         </option>

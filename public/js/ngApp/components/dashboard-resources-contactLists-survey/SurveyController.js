@@ -282,8 +282,8 @@
       if (object.link) {
         question.link = object.link;
       }
-      if (object.enableByTag) {
-        question.enableByTag = object.enableByTag;
+      if (object.handleTag) {
+        question.handleTag = object.handleTag;
       }
 
       if(object.hardcodedName) {
@@ -317,8 +317,8 @@
         if(!answer.contactDetails) {
           seedContactDetails(answer);
         }
-        if (question.enableByTag) {
-          answer.enableByTag = question.enableByTag;
+        if (question.handleTag) {
+          answer.handleTag = question.handleTag;
         }
 
         vm.currentContacts = {};
