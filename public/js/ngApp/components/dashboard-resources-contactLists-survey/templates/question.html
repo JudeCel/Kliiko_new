@@ -24,8 +24,12 @@
 
     <label class='col-xs-2 control-label' for='questionQuestion-{{object.order}}'>Question</label>
     <div class='col-xs-10 col-md-6'>
-      <textarea type='text' class='form-control' placeholder='{{ object.question || "Question" }}' rows='4' name='question'
+      <textarea type='text' class='form-control' placeholder='{{ object.question || "Question" }}' rows='6' name='question' ng-if='!object.hardcodedQuestion'
         ng-model='question.question' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='question.active' id='questionQuestion-{{object.order}}' />
+      <div ng-bind="question.question" ng-if='object.hardcodedQuestion'></div>
+      <div ng-if='question.link' class='link-block'>
+        <a target="_blank" href="{{question.link.url}}">{{question.link.name}}</a>
+      </div>
     </div>
   </div>
 </div>

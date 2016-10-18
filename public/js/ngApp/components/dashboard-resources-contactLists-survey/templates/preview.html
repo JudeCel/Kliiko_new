@@ -26,6 +26,10 @@
           </div>
 
           <div class='panel-body border-radius-none'>
+            <div ng-if='question.link' class='link-block'>
+              <a target="_blank" href="{{question.link.url}}">{{question.link.name}}</a>
+            </div>
+
             <div class='has-error' ng-messages='sc.submitForm.answers[question.order].$error'>
               <div ng-repeat='error in sc.validationErrors'>
                 <div class='help-block' ng-message='{{ error.type }}'>{{ sc.replaceErrorMessage(error, "textarea") }}</div>
@@ -35,7 +39,7 @@
             <div ng-if='question.type == "radio"' ng-repeat='answer in question.answers'>
               <div class='radio radio-sm survey-input' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order].$error, "radio")'>
 
-                <input type='radio' id='radio-{{ question.order }}-{{ answer.order }}' name='{{ question.order }}'
+                <input type='radio' id='radio-{{ question.order }}-{{ answer.order }}' name='{{ question.order }}' ng-class="answer.tag"
                   ng-value='answer.order' ng-model='sq.answer' ng-required='sc.submitedSurvey && !sq.answer'>
 
                 <label for='radio-{{ question.order }}-{{ answer.order }}'>{{ answer.name }}</label>
@@ -58,8 +62,12 @@
                   <label for='checkbox-{{ question.order }}-{{ answer.order }}'>{{ answer.name }}</label>
                 </div>
               </div>
+            </div>
 
+            <div ng-if='question.type == "input"' ng-repeat='answer in question.answers'>
               <ng-form name='{{ question.order }}' ng-if='answer.contactDetails'>
+                {{tagSelected = sc.checkTag(answer, sq); ''}}
+
                 <div ng-repeat='contact in answer.contactDetails | toArray track by $index'>
                   <div class='form-group' ng-if='contact'>
                     <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.submitForm.answers[question.order][contact.model].$error'>
@@ -75,21 +83,21 @@
                       <input type='text' class='form-control border-radius-none' id='contact-{{ contact.model }}' placeholder='{{ contact.name }}'
                         intl-tel-input intl-tel-input-controller='pnc.mobileController'
                         name='{{ contact.model }}' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
-                        ng-model='sq.contactDetails[contact.model]' ng-disabled='!sq.answer' ng-required='sq.answer && sc.submitedSurvey'
+                        ng-model='sq.contactDetails[contact.model]' ng-required='tagSelected && sc.submitedSurvey'
                         ng-minlength='1'>
                     </div>
 
                     <div class='col-xs-10' ng-if='contact.input'>
                       <input type='text' class='form-control border-radius-none' id='contact-{{ contact.model }}' placeholder='{{ contact.name }}'
                         name='{{ contact.model }}' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
-                        ng-model='sq.contactDetails[contact.model]' ng-disabled='!sq.answer' ng-required='sq.answer && sc.submitedSurvey'
+                        ng-model='sq.contactDetails[contact.model]' ng-required='tagSelected && sc.submitedSurvey'
                         ng-minlength='1'>
                     </div>
 
                     <div class='col-xs-10' ng-if='contact.select'>
                       <select class='form-control border-radius-none' id='contact-{{ contact.model }}' name='{{ contact.model }}'
                         ng-class='sc.pickValidClass(sc.submitForm.answers[question.order][contact.model].$error, "panel")'
-                        ng-model='sq.contactDetails[contact.model]' ng-required='sq.answer && sc.submitedSurvey' ng-disabled='!sq.answer'>
+                        ng-model='sq.contactDetails[contact.model]' ng-required='tagSelected && sc.submitedSurvey'>
                         <option ng-repeat='option in contact.options' value='{{ option }}'>
                           {{ option }}
                         </option>

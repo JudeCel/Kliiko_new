@@ -51,6 +51,7 @@
     vm.contactDetailDisabled = contactDetailDisabled;
     vm.onDropComplete = onDropComplete;
     vm.galleryDropdownData = galleryDropdownData;
+    vm.checkTag = surveyServices.checkTag;
 
     function onDropComplete(index, data, evt) {
       var answer = data.answer;
@@ -278,6 +279,12 @@
       question.minAnswers = object.minAnswers;
       question.maxAnswers = object.maxAnswers;
       question.contactDetails = object.contactDetails;
+      if (object.link) {
+        question.link = object.link;
+      }
+      if (object.handleTag) {
+        question.handleTag = object.handleTag;
+      }
 
       if(object.hardcodedName) {
         question.name = object.name;
@@ -302,10 +309,16 @@
       }
     };
 
-    function initContacts(answer) {
+    function initContacts(question) {
+      question.type = "input"
       if(!vm.currentContacts) {
+        question.answers.push({});
+        var answer = question.answers[0];
         if(!answer.contactDetails) {
           seedContactDetails(answer);
+        }
+        if (question.handleTag) {
+          answer.handleTag = question.handleTag;
         }
 
         vm.currentContacts = {};

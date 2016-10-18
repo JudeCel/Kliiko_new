@@ -50,6 +50,8 @@ const VALID_ATTRIBUTES = {
   ]
 }
 
+const SMALL_AGE = 'Under 18';
+
 function simpleParams(data, message) {
   return { data: data, message: message };
 };
@@ -361,17 +363,17 @@ function copySurvey(params, account) {
 
 function answerSurvey(params) {
   let deferred = q.defer();
+
   let validParams = validAnswerParams(params);
 
   models.sequelize.transaction(function (t) {
     return Survey.find({ where: { id: validParams.surveyId }, include: [SurveyQuestion] }).then(function(survey) {
       return SurveyAnswer.create(validParams, { transaction: t }).then(function() {
         let fields = getContactListFields(survey.SurveyQuestions);
-
         return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
           if(!_.isEmpty(fields)) {
             let clParams = findContactListAnswers(contactList, validParams.answers);
-            if(clParams) {
+            if(clParams && clParams != null && clParams.customFields.age != SMALL_AGE) {
               clParams.contactListId = contactList.id;
               clParams.accountId = survey.accountId;
 
@@ -407,7 +409,7 @@ function answerSurvey(params) {
 function findContactListAnswers(contactList, answers) {
   let values;
   _.map(answers, function(object, key) {
-    if(object.contactDetails) {
+    if(object.contactDetails && object.tagHandled == true) {
       values = object.contactDetails;
     }
   });
@@ -431,6 +433,8 @@ function findContactListAnswers(contactList, answers) {
     params.defaultFields = object;
 
     return params;
+  } else {
+    return null;
   }
 }
 
@@ -463,7 +467,6 @@ function confirmSurvey(params, account) {
 
 function exportSurvey(params, account) {
   let deferred = q.defer();
-
 
   canExportSurveyData(account).then(function() {
     Survey.find({
@@ -587,10 +590,17 @@ function validAnswerParams(params) {
       surveyAnswer.answers[i] = {};
     }
 
-    surveyAnswer.answers[i].type = typeof question.answer;
-    surveyAnswer.answers[i].value = question.answer;
-    if(question.answer && question.contactDetails) {
+    if(question.contactDetails) {
+      surveyAnswer.answers[i].type = typeof question.contactDetails;
+      surveyAnswer.answers[i].value = null;
       surveyAnswer.answers[i].contactDetails = question.contactDetails;
+    }
+    else if(question.answer) {
+      surveyAnswer.answers[i].type = typeof question.answer;
+      surveyAnswer.answers[i].value = question.answer;
+    }
+    if (question.tagHandled == true) {
+      surveyAnswer.answers[i].tagHandled = true;
     }
   }
 
