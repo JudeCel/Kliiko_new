@@ -141,7 +141,7 @@
 
     function saveTopics(list) {
       vm.session.saveTopics(list).then(function(result) {
-        result.map(function(topic) {
+        orderByFilter(result, "id").map(function(topic) {
           addSessionTopic(topic);
         });
       }, function(error) {
