@@ -10,9 +10,15 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.ENUM, allowNull: false,
       values: ['all', 'star', 'votes', 'whiteboard']
     },
-    facilitator: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false
+    scopes: {
+      type: DataTypes.ARRAY(DataTypes.TEXT),
+      allowNull: false,
+      defaultValue: []
+    },
+    includes: {
+      type: DataTypes.JSONB,
+      allowNull: false,
+      defaultValue: {}
     },
     format: {
       type: DataTypes.ENUM, allowNull: false,
