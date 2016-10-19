@@ -11,9 +11,9 @@ module.exports = (Sequelize, DataTypes) => {
       values: ['all', 'star', 'votes', 'whiteboard']
     },
     scopes: {
-      type: DataTypes.ARRAY(DataTypes.JSONB),
+      type: DataTypes.JSONB,
       allowNull: false,
-      defaultValue: []
+      defaultValue: {}
     },
     includes: {
       type: DataTypes.JSONB,
