@@ -1,6 +1,6 @@
 <span class='hidden'>{{ survey = sc.previewSurvey || sc.survey; "" }}</span>
 
-<div class='col-xs-12'>
+<div>
   <center>
     <img ng-src='{{ survey.resource.url.full }}' class='img-responsive' ng-if='survey.resource'/>
     <img ng-src='/icons/Klzii_RGB_72.png' ng-if='!survey.resource && !survey.resourceId'/>
