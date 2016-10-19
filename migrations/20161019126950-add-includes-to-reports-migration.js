@@ -6,7 +6,7 @@
    up: function (queryInterface, Sequelize) {
      return new Bluebird(function (resolve, reject) {
          queryInterface.removeColumn('SessionTopicsReports', 'facilitator').then(function() {
-           queryInterface.addColumn('SessionTopicsReports', 'scopes', { type: Sequelize.ARRAY(Sequelize.TEXT), allowNull: false, defaultValue: [] }).then(function() {
+           queryInterface.addColumn('SessionTopicsReports', 'scopes', { type: Sequelize.JSONB, allowNull: false, defaultValue: [] }).then(function() {
            resolve();
          },function(error) {
            validateError(error, resolve, reject);
