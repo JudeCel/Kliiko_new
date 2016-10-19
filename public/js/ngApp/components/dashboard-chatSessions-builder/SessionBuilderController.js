@@ -19,9 +19,11 @@
 
     vm.session.init().then(function(res) {
       if (!$stateParams.id) {
-        $state.go('account-hub.chatSessions.builder', {id: vm.session.id}, {
+        //Next block replaced with 'location.replace' fix back button (DE909). Can be removed after tests.
+        /*$state.go('account-hub.chatSessions.builder', {id: vm.session.id}, {
           location: true, inherit: false, notify: false, reload:false
-        });
+        });*/
+        location.replace(location.href + vm.session.id);
       }
 
       vm.participants = vm.session.steps.step4.participants;
