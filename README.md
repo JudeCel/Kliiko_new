@@ -2,7 +2,7 @@
 
 ## Dependencies
 
-  * Node.js 5.11.x (not 6.x)
+  * Node.js 6.x LTS
   * NPM 3.10.x
   * PostgreSQL 9.5.x
   * Redis 3.x.x
@@ -46,7 +46,7 @@ If needed use specific subdomain name for users then ``` 127.0.0.1 acountName.fo
 ### Windows
 
 Go to ``` C:\Windows\System32\drivers\etc ```
-and add next lines to ``` hosts ``` file 
+and add next lines to ``` hosts ``` file
 ```     
     127.0.0.1     insider.focus.com
     127.0.0.1     www.insider.focus.com
