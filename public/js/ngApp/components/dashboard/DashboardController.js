@@ -10,6 +10,8 @@
     var vm = this;
     initMyDashboard();
     vm.disablePlayButton = false;
+    vm.isAccountManager = false;
+    vm.hasRoles = false;
 
     vm.redirectToChatSession = redirectToChatSession;
     vm.isTabActive = isTabActive;
@@ -56,8 +58,11 @@
         }
         else {
           $('.main-first-page').removeClass('hidden');
-          vm.accountUsers = res.data;
+          vm.accountUsers = res.data || {};
           vm.dateFormat = res.dateFormat;
+          //todo: uncomment
+          //vm.isAccountManager = vm.accountUsers["accountManager"] ? true : false;
+          vm.hasRoles = Object.keys(vm.accountUsers).length > 0;
           setInitialTab();
         }
       });

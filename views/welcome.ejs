@@ -1,23 +1,13 @@
 <% include header %>
 
-<div class='login-container center-block text-font-family'>
-  <ul class='nav nav-tabs'>
-    <li>
-      <a class="background-yellow text-white text-shadow-gray btn login-kliiko-tab" style='visibility:hidden'>
-        Login to <%= applicationName %>
-      </a>
-    </li>
-    <li class='active'>
-      <a class='background-green text-white text-center text-shadow-gray login-signup-tab' data-toggle='tab'>
-        Get a <%= applicationName %> Account
-      </a>
-    </li>
-  </ul>
-
+<div class='login-container login-container-wide center-block text-font-family'>
   <div class='tab-content border-green'>
+    <center><br/><img alt='email' src="/images/email-icon.png"/></center>
     <h1 class='text-gray-dark text-center'>Confirm your details.</h1>
-    <p class='text-center welcome-page'>
-      Thanks for signing up to <%= applicationName %>, please check your email to confirm your new account. Don't forget to check your spam folder if you can't see the email.
+    <p class='text-center welcome-page info-message-text'>
+      Thanks for signing up to <%= applicationName %>!<br/>
+      Please check your email for the Confirmation link.<br/>
+      Don't forget to check your spam folder, if you can't see the email.
     </p>
   </div>
 </div>
