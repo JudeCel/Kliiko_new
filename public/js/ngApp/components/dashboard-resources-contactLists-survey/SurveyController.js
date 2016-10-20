@@ -281,6 +281,9 @@
       question.contactDetails = object.contactDetails;
       if (object.link) {
         question.link = object.link;
+        if(question.answers && question.answers.length > 0) {
+          question.answers[0].link = object.link;
+        }
       }
       if (object.handleTag) {
         question.handleTag = object.handleTag;
