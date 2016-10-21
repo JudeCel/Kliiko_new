@@ -134,8 +134,8 @@
   min-width:300px;
 }
 
-@media (max-width: 1330px) {  
-  @media (min-width: 992px) {  
+@media (max-width: 1330px) {
+  @media (min-width: 992px) {
     #contactDetailsModal .container-fluid {
       .check {
         div {
@@ -152,8 +152,8 @@
   }
 }
 
-@media (max-width: 991px) {  
-  @media (min-width: 768px) {  
+@media (max-width: 991px) {
+  @media (min-width: 768px) {
     #contactDetailsModal .container-fluid {
       margin-top: 10px;
 
@@ -165,17 +165,17 @@
           width: 450px !important;
         }
       }
-      button{
+      .button{
         margin-top: 35px;
       }
-      button.pull-right, button.btn-green{
+      .btn.pull-right, .btn.btn-green{
         margin-top: -40px;
       }
-    } 
+    }
   }
 }
 
-@media (max-width: 767px) {  
+@media (max-width: 767px) {
   .modal-backdrop
   {
     opacity:0 !important;
@@ -222,12 +222,12 @@
       .modal-footer, .container-fluid{
         border-top: 0px;
 
-        button.pull-left, button.btn-red{
+        .btn.pull-left, .btn.btn-red{
           top: -55px;
           position: absolute;
           left: 10px;
         }
-        button.pull-right, button.btn-green{
+        .btn.pull-right, .btn.btn-green{
           top: -55px;
           position: absolute;
           right: 15px;
@@ -246,8 +246,8 @@
         .check {
           margin-top: -20px;
         }
-        button.pull-left, button.btn-red,
-        button.pull-right, button.btn-green{
+        .btn.pull-left, .btn.btn-red,
+        .btn.pull-right, .btn.btn-green{
           top: -70px;
         }
       }
@@ -256,7 +256,7 @@
   }
 }
 
-@media (max-width: 479px) {  
+@media (max-width: 479px) {
   .modal {
     .modal-dialog{
       .modal-title{
@@ -285,7 +285,7 @@
       }
 
       .container-fluid {
-        
+
         .check {
           label {
             margin-left: 22px;

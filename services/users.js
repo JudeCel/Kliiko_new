@@ -79,8 +79,7 @@ function createUser(params, callback) {
               for(let i2=0; i2<result[i1].Invites.length; i2++) {
                 if (result[i1].Invites[i2].status == "inProgress") {
                   canCreate = false;
-                  //todo: set right url
-                  errors.dialog = {link: { url: '/', title: "Continue to Check In" }, message: MessagesUtil.users.dialog.emailExistsContinueToCheckIn}
+                  errors.dialog = {link: { url: '/invite/' + result[i1].Invites[i2].token + '/accept/', title: "Continue to Check In" }, message: MessagesUtil.users.dialog.emailExistsContinueToCheckIn}
                 }
               }
             }
