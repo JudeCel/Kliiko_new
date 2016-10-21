@@ -5,7 +5,7 @@
  module.exports = {
    up: function (queryInterface, Sequelize) {
      return new Bluebird(function (resolve, reject) {
-       queryInterface.addColumn('Messages', 'replyLevel', { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 }).then(function() {
+       queryInterface.addColumn('Messages', 'replayLevel', { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 }).then(function() {
          resolve();
        },function(error) {
          validateError(error, resolve, reject);
