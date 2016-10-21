@@ -62,10 +62,43 @@ function createUser(params, callback) {
   let createNewUserFunctionList = [
     function (cb) {
       models.sequelize.transaction().then(function(t) {
-        User.create(params, { transaction: t } ).then(function (result) {
-          cb(null, { params: params, user: result, transaction: t, errors: {} });
+        accountUserService.findWithEmail(params.email).then(function (result) {
+          let canCreate = true;
+          let errors = {};
+
+          //update errors with diaolg to show if email exists in system
+          for(let i1=0; i1<result.length; i1++) {
+            if (result[i1].UserId != null) {
+              canCreate = false;
+              errors.dialog = {link: null, message: MessagesUtil.users.dialog.emailExistsCanCreateAccount}
+              if (result[i1].role == 'accountManager') {
+                errors.dialog = {link: null, message: MessagesUtil.users.dialog.emailExists}
+                break;
+              }
+            } else {
+              for(let i2=0; i2<result[i1].Invites.length; i2++) {
+                if (result[i1].Invites[i2].status == "inProgress") {
+                  canCreate = false;
+                  //todo: set right url
+                  errors.dialog = {link: { url: '/', title: "Continue to Check In" }, message: MessagesUtil.users.dialog.emailExistsContinueToCheckIn}
+                }
+              }
+            }
+          }
+
+          if (canCreate) {
+             User.create(params, { transaction: t } ).then(function (result) {
+               cb(null, { params: params, user: result, transaction: t, errors: {} });
+             }, function(error) {
+               cb(null, { params: params, user: {}, transaction: t, errors: filters.errors(error) })
+             });
+          }
+          else {
+            cb(null, { params: params, user: result, transaction: t, errors: errors });
+          }
+
         }, function(error) {
-          cb(null, { params: params, user: {}, transaction: t, errors: filters.errors(error) })
+          cb(null, { params: params, user: {}, transaction: t, errors: {} })
         });
       });
     },

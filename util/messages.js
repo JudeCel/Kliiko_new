@@ -199,6 +199,13 @@ module.exports = {
   users: {
     agreeTOC: 'You must agree to the Terms & Conditions before Sign up.',
     alreadyChanged: 'Password already changed.',
+    dialog: {
+      emailExists: "You already have a Role in a system. Please Login.",
+      emailExistsCanCreateAccount: "You already have a Role in a system, you can Create a New Account from your Dashboard. Please Login.",
+      emailExistsContinueToCheckIn: "Sorry, you currently cannot Create a New Account, because you have already Accepted a Session Invitation. \
+        Please continue to Ckeck-In from your Confirmation Email to enter the Session. \
+        You will be able to Create a New Account when you Leave the Session and go to My Dashboard."
+    }
   },
   validators: {
     subscription: {
