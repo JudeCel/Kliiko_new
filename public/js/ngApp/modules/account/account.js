@@ -6,7 +6,7 @@
   accountFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg'];
   function accountFactory($q, globalSettings, $resource, dbg) {
 
-    var accountRestApi = $resource(globalSettings.restUrl + '/account', {}, {});
+    var accountRestApi = $resource(globalSettings.restUrl + '/account', {}, {post: {method: 'POST'}});
 
     var account = {};
 
@@ -41,7 +41,6 @@
         if (res.error) {
           deferred.reject(res.error);
         } else {
-          //todo ???
           deferred.resolve(res);
         }
       });

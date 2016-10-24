@@ -1,4 +1,4 @@
-<div class='modal fade' id='createNewAccountModal' role='dialog'>
+<div class='modal fade' id='createNewAccountModal' role='dialog' ng-controller="CreateNewAccountModalController as cnamc">
   <div class='modal-dialog createNewAccountModal'>
     <div class='modal-content border-green border-radius-none'>
       <div class='modal-header'>
@@ -8,17 +8,17 @@
         <div class='tab-pane fade in active'>
           <div class='text-center background-green'><b id='createNewAccountMessage'></b></div>
           <div id='createNewAccountError' class='text-center background-red'></div>
-          <form method="post">
+          <form method="post" ng-submit="cnamc.createNewAccount()" name="cnamc.createNewAccountForm">
 
             <div class="form-group">
               <label for="newAccountName">Select name for your account</label>
-              <input ng-model="accountName" type="text" class="form-control center-block" name="newAccountName" id="newAccountName" placeholder="">
+              <input ng-model="cnamc.accountData.accountName" type="text" class="form-control center-block" name="newAccountName" id="newAccountName" placeholder="">
             </div>
 
             <div class='modal-footer'>
-                <button type="button"
+                <button type="button" ng-click="cnamc.cancel()"
                         class="btn btn-standart btn-red btn-small pull-left">Cancel</button>&nbsp;&nbsp;
-                <button type="button"
+                <button type="button" ng-click="cnamc.createNewAccount()"
                         class="btn btn-standart btn-green btn-small pull-right">Add</button>
             </div>
 

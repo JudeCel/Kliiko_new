@@ -12,35 +12,57 @@ var async = require('async');
 var _ = require('lodash');
 var q = require('q');
 
-function createNewAccount(params/*accountName, userId*/, accountId) {
+function createNewAccount(params, userId) {
   let deferred = q.defer();
 
-  console.log(params, accountId);
-
-  /*let createNewAccountFunctionList = [
+  let createNewAccountFunctionList = [
     function (cb) {
       models.sequelize.transaction().then(function(t) {
-        //todo: check is accountManager, get account params
-        //add account user params
-        //add user id
-        cb(null, { params: {accountName: accountName}, user: {id: userId}, transaction: t, errors: {} });
+        models.User.find({
+          where: { id: userId },
+          include: [models.AccountUser],
+        }).then(function(result) {
+
+          let canCreate = true;
+          for (let i=0; i<result.AccountUsers.length; i++) {
+            if (result.AccountUsers[i].role == "accountManager" && result.AccountUsers[i].owner) {
+              canCreate = false;
+              break;
+            }
+          }
+
+          if (canCreate) {
+            let createParams = {accountName: params.accountName, firstName: params.accountName, gender: '', lastName: params.accountName, email: result.email};
+            if (result.AccountUsers.length > 0) {
+              createParams.firstName = result.AccountUsers[0].firstName;
+              createParams.lastName = result.AccountUsers[0].lastName;
+              createParams.gender = result.AccountUsers[0].gender;
+            }
+            cb(null, { params: createParams, user: {id: userId}, transaction: t, errors: {} });
+          } else {
+            cb(null, { params: params, transaction: t, errors: filters.errors(MessagesUtil.account.accountExists) })
+          }
+
+        }, function(error) {
+          cb(null, { params: params, transaction: t, errors: filters.errors(error) })
+        });
       });
     },
     create,
     accountUserService.createAccountManager,
-  ]
+  ];
 
   async.waterfall(createNewAccountFunctionList, function(_error, object) {
     if (_.isEmpty(object.errors)) {
       object.transaction.commit().then(function() {
-        callback(null, object.account);
+        deferred.resolve({ data: object.account, message: MessagesUtil.account.created });
       });
     } else {
       object.transaction.rollback().then(function() {
-        callback(object.errors, object.account);
+        deferred.reject(object.errors);
       });
     }
-  });*/
+  });
 
   return deferred.promise;
 }
@@ -130,5 +152,6 @@ function mapSubscriptionData(result) {
 module.exports = {
   create: create,
   updateInstance: updateInstance,
-  findWithSubscription: findWithSubscription
+  findWithSubscription: findWithSubscription,
+  createNewAccount: createNewAccount
 }
