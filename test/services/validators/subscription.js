@@ -65,7 +65,8 @@ describe('SERVICE - VALIDATORS - Subscription', function() {
           accountId: testData.account.id,
           name: 'some name',
           startTime: new Date(),
-          endTime: new Date()
+          endTime: new Date(),
+          timeZone: 'Europe/Riga'
         };
 
         models.Session.create(params).then(function() {
