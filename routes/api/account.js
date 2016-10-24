@@ -14,6 +14,19 @@ function get(req, res, next) {
   });
 };
 
+function createNewAccount(req, res, next) {
+  if(!res.locals.currentDomain) {
+    return res.send({ error: 'Not in account' });
+  }
+
+  accountServices.createNewAccount(req.body, res.locals.currentDomain.id).then(function(result) {
+    res.send(result);
+  }, function(error) {
+    res.send({ error: error });
+  });
+};
+
 module.exports = {
-  get: get
+  get: get,
+  createNewAccount: createNewAccount
 };

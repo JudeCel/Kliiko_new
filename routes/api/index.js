@@ -61,6 +61,7 @@ router.post('/user', userRoutes.userPost);
 router.put('/user', userRoutes.changePassword);
 router.get('/accountUser', accountUser.get);
 router.get('/account', account.get);
+router.post('/account', account.createNewAccount);
 router.get('/jwtToken', jwt.getToken);
 router.get('/jwtTokenForMember', jwt.jwtTokenForMember);
 

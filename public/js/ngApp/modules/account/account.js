@@ -12,6 +12,7 @@
 
     var UserService = {};
     UserService.getAccountData = getAccountData;
+    UserService.createNewAccount = createNewAccount;
     return UserService;
 
     function getAccountData() {
@@ -27,6 +28,21 @@
           account = res;
           fetchSubscription(account);
           deferred.resolve(account);
+        }
+      });
+
+      return deferred.promise;
+    }
+
+    function createNewAccount(data) {
+      var deferred = $q.defer();
+
+      accountRestApi.post(data, function (res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          //todo ???
+          deferred.resolve(res);
         }
       });
 

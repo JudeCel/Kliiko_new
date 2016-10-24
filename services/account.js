@@ -7,8 +7,43 @@ var filters = require('./../models/filters');
 var contactListService  = require('./contactList');
 var brandColourService  = require('./brandColour');
 var subscriptionPreferencesCosnt  = require('../util/planConstants.js')
+var accountUserService = require('./accountUser');
+var async = require('async');
 var _ = require('lodash');
 var q = require('q');
+
+function createNewAccount(params/*accountName, userId*/, accountId) {
+  let deferred = q.defer();
+
+  console.log(params, accountId);
+
+  /*let createNewAccountFunctionList = [
+    function (cb) {
+      models.sequelize.transaction().then(function(t) {
+        //todo: check is accountManager, get account params
+        //add account user params
+        //add user id
+        cb(null, { params: {accountName: accountName}, user: {id: userId}, transaction: t, errors: {} });
+      });
+    },
+    create,
+    accountUserService.createAccountManager,
+  ]
+
+  async.waterfall(createNewAccountFunctionList, function(_error, object) {
+    if (_.isEmpty(object.errors)) {
+      object.transaction.commit().then(function() {
+        callback(null, object.account);
+      });
+    } else {
+      object.transaction.rollback().then(function() {
+        callback(object.errors, object.account);
+      });
+    }
+  });*/
+
+  return deferred.promise;
+}
 
 function create(object, callback) {
   object.account = {};
