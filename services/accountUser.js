@@ -199,6 +199,21 @@ function findWithUser(user) {
   return deferred.promise;
 }
 
+function findById(id) {
+  let deferred = q.defer();
+
+  AccountUser.find({
+    where: { id: id },
+    include: [models.Account]
+  }).then(function(result) {
+    deferred.resolve(result);
+  }, function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
 function assignCurrentUserInfo(accountUser, user) {
   _.merge(user, _.pick(accountUser.dataValues, prepareValidAccountUserParams()));
   user.accountUserId = accountUser.id;
@@ -217,5 +232,6 @@ module.exports = {
   updateWithUserId: updateWithUserId,
   findWithUser: findWithUser,
   findWithSessionMembers: findWithSessionMembers,
-  validateParams: validateParams
+  validateParams: validateParams,
+  findById: findById
 }
