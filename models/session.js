@@ -13,7 +13,7 @@ module.exports = (Sequelize, DataTypes) => {
     brandProjectPreferenceId: { type: DataTypes.INTEGER, allowNull: true  },
     name: { type: DataTypes.STRING, allowNull: false,  defaultValue: 'untitled', validate: {
       notEmpty: true,
-      isLength: validations.length('name', { max: 20 })
+      isLength: validations.length('name', { max: 40 })
     } },
     startTime: { type: DataTypes.DATE, allowNull: false, defaultValue: initializeDate(), validate: { isValid: validateDate } },
     endTime: { type: DataTypes.DATE, allowNull: false , defaultValue: initializeDate() },
