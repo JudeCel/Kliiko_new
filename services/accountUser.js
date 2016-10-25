@@ -209,6 +209,21 @@ function findWithUser(user) {
   return deferred.promise;
 }
 
+function findById(id) {
+  let deferred = q.defer();
+
+  AccountUser.find({
+    where: { id: id },
+    include: [models.Account]
+  }).then(function(result) {
+    deferred.resolve(result);
+  }, function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
 function findWithEmail(email) {
   let deferred = q.defer();
 
@@ -243,5 +258,6 @@ module.exports = {
   findWithUser: findWithUser,
   findWithSessionMembers: findWithSessionMembers,
   validateParams: validateParams,
-  findWithEmail: findWithEmail
+  findWithEmail: findWithEmail,
+  findById: findById
 }
