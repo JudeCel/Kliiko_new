@@ -27,7 +27,7 @@ router.route('/ics').get(ics.render);
 
 router.use(function (req, res, next) {
   res.locals.appData = appData;
-    if (req.path == '/logout') {
+    if (req.path == '/logout' || req.path.startsWith('/VerifyEmail/')) {
       return next();
     }
 
@@ -311,6 +311,7 @@ router.route('/VerifyEmail/:token')
             tplData.errors.password = "Something is wrong with email confirmation";
             res.render('/login', tplData);
           }else{
+            req.logout();
             req.login(user, function(err) {
               middlewareFilters.myDashboardPage(req, res, next);
             });

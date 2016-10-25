@@ -46,8 +46,8 @@
         <li role="separator" class="divider"></li>
         <li class='text-right text-size-dashboard'><a ng-click='app.openModal("changePasswordModal")'>Change Password<img class="my-details-container" src='/icons/password_green_flat.png' alt='' /></a></li>
         <li role="separator" class="divider"></li>
-        <li class='text-right text-size-dashboard' ng-if='!myDashboard.isAccountManager'><a ng-click='app.openModal("createNewAccountModal")'>Create New Account<img class="my-details-container" src='/icons/user_plus_grey.png' alt='' /></a></li>
-        <li role="separator" class="divider" ng-if='!myDashboard.isAccountManager'></li>
+        <li class='text-right text-size-dashboard' ng-if='!myDashboard.hasOwnAccount'><a ng-click='app.openModal("createNewAccountModal")'>Create New Account<img class="my-details-container" src='/icons/user_plus_grey.png' alt='' /></a></li>
+        <li role="separator" class="divider" ng-if='!myDashboard.hasOwnAccount'></li>
         <li class='text-right text-size-dashboard'><a href='/logout'>Logout<img class="my-details-container" src='/icons/logout_yellow.png' alt='' /></a></li>
       </ul>
     </div>
@@ -68,7 +68,7 @@
                     <li><a href='' class="navbar-title">My Details</a></li>
                     <li><a ng-click='app.openModal("contactDetailsModal")'><img class="my-details-container" src='/icons/contact_list_red.png' alt='' />Contact Details</a></li>
                     <li><a ng-click='app.openModal("changePasswordModal")'><img class="my-details-container" src='/icons/password_green_flat.png' alt='' />Change Password</a></li>
-                    <li ng-if='!myDashboard.isAccountManager'><a ng-click='app.openModal("createNewAccountModal")'><img class="my-details-container" src='/icons/user_plus_grey.png' alt='' />Create New Accoun</a></li>
+                    <li ng-if='!myDashboard.hasOwnAccount'><a ng-click='app.openModal("createNewAccountModal")'><img class="my-details-container" src='/icons/user_plus_grey.png' alt='' />Create New Accoun</a></li>
                     <li><a href='/logout'><img class="my-details-container" src='/icons/logout_yellow.png' alt='' />Logout</a></li>
                 </ul>
             </div>
