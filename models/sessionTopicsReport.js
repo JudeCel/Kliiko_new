@@ -7,13 +7,17 @@ module.exports = (Sequelize, DataTypes) => {
     sessionTopicId: { type: DataTypes.INTEGER, allowNull: true },
     resourceId: { type: DataTypes.INTEGER, allowNull: true },
     type: {
-      type: DataTypes.ENUM, allowNull: false,
-      values: ['messages', 'votes', 'whiteboards']
+      type: DataTypes.STRING, allowNull: false
     },
     scopes: {
       type: DataTypes.JSONB,
       allowNull: false,
       defaultValue: {}
+    },
+    includeFields: {
+      type: DataTypes.ARRAY(DataTypes.TEXT),
+      allowNull: false,
+      defaultValue: []
     },
     includes: {
       type: DataTypes.JSONB,

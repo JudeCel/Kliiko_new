@@ -14,6 +14,6 @@
    });
    },
    down: function (queryInterface, Sequelize) {
-     return queryInterface.removeColumn('SessionTopics', 'lastSign');
+     return queryInterface.removeColumn('SessionTopicsReports', 'includes');
    }
  };

@@ -5,18 +5,21 @@
  module.exports = {
    up: function (queryInterface, Sequelize) {
      return new Bluebird(function (resolve, reject) {
-         queryInterface.removeColumn('SessionTopicsReports', 'facilitator').then(function() {
-           queryInterface.addColumn('SessionTopicsReports', 'scopes', { type: Sequelize.JSONB, allowNull: false, defaultValue: [] }).then(function() {
-           resolve();
-         },function(error) {
-           validateError(error, resolve, reject);
-         });
+        queryInterface.removeColumn('SessionTopicsReports', 'facilitator').then(function() {
+          resolve();
        },function(error) {
          validateError(error, resolve, reject);
        });
    });
    },
    down: function (queryInterface, Sequelize) {
-     return queryInterface.removeColumn('SessionTopics', 'lastSign');
+     queryInterface.addColumn('SessionTopicsReports', 'facilitator', { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: true }).then(function() {
+       resolve();
+     },function(error) {
+       validateError(error, resolve, reject);
+     });
+   },function(error) {
+     validateError(error, resolve, reject);
+   });
    }
  };

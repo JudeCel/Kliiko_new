@@ -15,6 +15,14 @@
    });
    },
    down: function (queryInterface, Sequelize) {
-     return queryInterface.removeColumn('SessionTopics', 'lastSign');
+     return new Bluebird(function (resolve, reject) {
+      queryInterface.changeColumn('SessionTopicsReports', 'sessionTopicId',
+        { type: Sequelize.INTEGER, allowNull: false }
+      ).then(function() {
+        resolve();
+      },function(error) {
+        validateError(error, resolve, reject);
+      });
+   });
    }
  };
