@@ -32,7 +32,7 @@ function createNewAccount(params, userId) {
           }
 
           if (canCreate) {
-            let createParams = {accountName: params.accountName, firstName: params.accountName, gender: '', lastName: params.accountName, email: result.email};
+            let createParams = {accountName: params.accountName, firstName: params.accountName, gender: '', lastName: params.accountName, email: result.email, active: false};
             if (result.AccountUsers.length > 0) {
               createParams.firstName = result.AccountUsers[0].firstName;
               createParams.lastName = result.AccountUsers[0].lastName;

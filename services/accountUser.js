@@ -4,6 +4,7 @@ var MessagesUtil = require('./../util/messages');
 var constants = require('./../util/constants');
 var models = require('./../models');
 var filters = require('./../models/filters');
+var emailConfirmation = require('./emailConfirmation');
 var AccountUser = models.AccountUser;
 var SessionMember = models.SessionMember;
 var User = models.User;
@@ -31,7 +32,16 @@ function createAccountManager(object, callback) {
     if(contactList) {
       let cluParams = contactListUserParams({ accountId: accountUser.AccountId, contactListId: contactList.id }, accountUser);
       models.ContactListUser.create(cluParams, {transaction: object.transaction}).then(function() {
-        callback(null, object);
+        if (object.params.active == false) {
+          emailConfirmation.sendEmailConfirmationToken(object.params.email, function(sendError, sendObject) {
+            if (sendError && sendError != null) {
+              _.merge(object.errors, filters.errors(sendError));
+            }
+            callback(null, object);
+          });
+        } else {
+          callback(null, object);
+        }
       }, function(error) {
         _.merge(object.errors, filters.errors(error));
         callback(null, object);

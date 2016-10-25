@@ -60,8 +60,7 @@
           $('.main-first-page').removeClass('hidden');
           vm.accountUsers = res.data || {};
           vm.dateFormat = res.dateFormat;
-          //todo: uncomment
-          //vm.isAccountManager = vm.accountUsers["accountManager"] ? true : false;
+          vm.isAccountManager = vm.accountUsers["accountManager"] ? true : false;
           vm.hasRoles = Object.keys(vm.accountUsers).length > 0;
           setInitialTab();
         }

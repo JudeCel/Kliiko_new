@@ -4,6 +4,7 @@ var MessagesUtil = require('./../util/messages');
 var usersService = require('./users');
 var async = require('async');
 var User = require('./../models').User;
+var AccountUser = require('./../models').AccountUser;
 var uuid = require('node-uuid');
 var mailers = require('../mailers');
 
@@ -31,35 +32,29 @@ function getUserByToken(token, callback) {
       confirmationToken: token
     },
     attributes: ['id', 'confirmedAt', 'email', 'confirmationToken']
-  })
-    .then(function (result) {
-      callback(null, result);
-    })
-    .catch(function (err) {
-      callback(err);
-    });
+  }).then(function (result) {
+    callback(null, result);
+  }).catch(function (err) {
+    callback(err);
+  });
 }
 
 function setEmailConfirmationToken(email, callback) {
-
   let token = uuid.v1();
-
   User.update({
     confirmationToken: token,
     confirmationSentAt: new Date()
   }, {
     where: {email: email}
-  })
-    .then(function (result) {
-      if (result[0] > 0) {
-        callback(null, token);
-      } else {
-        callback(null, null);
-      }
-    })
-    .catch(function (err) {
-      callback(true, null);
-    });
+  }).then(function (result) {
+    if (result[0] > 0) {
+      callback(null, token);
+    } else {
+      callback(null, null);
+    }
+  }).catch(function (err) {
+    callback(true, null);
+  });
 }
 
 function checkTokenExpired(token, callback) {
@@ -75,17 +70,30 @@ function checkTokenExpired(token, callback) {
 }
 
 function confirm(token, callback) {
-  User.update({
-    confirmedAt: new Date(),
-    confirmationToken: null
-  }, {
-    where: {confirmationToken: token}
-  })
-    .then(function (result) {
-      return callback(null, result);
-    })
-    .catch(function (err) {
+  getUserByToken(token, function (err, user) {
+    if (err || !user) { return callback(new Error(MessagesUtil.emailConfirmation.error.user)) };
+
+    User.update({
+      confirmedAt: new Date(),
+      confirmationToken: null
+    }, {
+      where: {confirmationToken: token}
+    }).then(function (result) {
+
+      AccountUser.update({
+        active: true
+      }, {
+        where: {UserId: user.id}
+      }).then(function (accountUserResult) {
+        return callback(null, result);
+      }).catch(function (err) {
+        callback(err);
+      });
+
+    }).catch(function (err) {
       callback(err);
+    });
+
   });
 }
 
