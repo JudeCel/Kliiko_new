@@ -8,7 +8,7 @@
     dbg.log2('#SessionBuilderController 2 started');
 
     var vm = this;
-    const landingSign = "Click to access Topics";
+    var landingSign = "Click to access Topics";
 
     vm.allTopicsSelected = false;
     vm.sessionTopicsArray = [];
