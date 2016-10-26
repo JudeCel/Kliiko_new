@@ -12,7 +12,8 @@ var SessionMemberService = require('./../../services/sessionMember');
 var mainData;
 var manualDependencies = {};
 
-const COUNT_NAME = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'];
+//max 4 symbols
+const COUNT_NAME = ['one', 'two', 'thre', 'four', 'five', 'six', 'seve', 'eigh'];
 const DEPENDENCY_COUNT = {
   participants: 8,
   observers: 1,

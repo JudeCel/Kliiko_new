@@ -36,7 +36,7 @@ spec:
         imagePullPolicy: Always
         name: admin
         ports:
-        - containerPort: 8080
+          - containerPort: 8080
         env:
         - name: REDIS_HOST
           value: "redis-master"
@@ -55,7 +55,7 @@ spec:
         - name: DATABASE_PASSWORD_PROD
           value: "nWD44LS3bYs29JeP"
         - name: DATABASE_HOST_PROD
-          value: "104.197.101.137"
+          value: "postgres-master"
         - name: DATABASE_DIALECT_PROD
           value: "postgres"
         - name: AIRBRAKE_PROJECT_ID
@@ -79,7 +79,7 @@ spec:
         - name: MAIL_TRANSPORT_SECURE_CONNECTION
           value: "false"
         - name: MAIL_TRANSPORT_PORT
-          value: "25"
+          value: "2525"
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
         - name: FACEBOOK_CLIENT_ID
@@ -101,8 +101,8 @@ spec:
         - name: COOKIE_SECRET
           value: "eda80b40b4ee5e5c87eee6eefb6a5393c47f6832c740e745292bbd03ca09f4545873765e0fa1190f3e29f67048e3dc17170e70dcc814b695a5408fdd87141998"
         - name: TWILIO_ACCOUNT_SID
-          value: "AC07a728c4dd30fcffe94be9cbaf3b579f"
+          value: "AC979a928c7e46eb715283177d0bf69d23"
         - name: TWILIO_AUTH_TOKEN
-          value: "2d12ce11106c17ab443034bfa86145ce"
+          value: "40c3e7b2fb16608f28bafbd53466c2dc"
         - name: TWILIO_SENDER_NUMBER
-          value: "+12048179165"
+          value: "+61428805081"

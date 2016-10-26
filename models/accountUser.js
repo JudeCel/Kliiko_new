@@ -7,7 +7,7 @@ var MessagesUtil = require('./../util/messages');
 module.exports = (Sequelize, DataTypes) => {
   var AccountUser = Sequelize.define('AccountUser', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    firstName: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true, isLength: validations.length('firstName', { max: 35 }), isNameValid: validations.userName('firstName') } },
+    firstName: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true, isLength: validations.length('firstName', { max: 15 }), isNameValid: validations.userName('firstName') } },
     lastName: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true, isLength: validations.length('lastName', { max: 35 }), isNameValid: validations.userName('lastName') } },
     gender: { type: DataTypes.ENUM, allowNull: false, values: constants.gender },
     owner: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },

@@ -8,6 +8,7 @@
     dbg.log2('#SessionBuilderController 2 started');
 
     var vm = this;
+    const landingSign = "Click to access Topics";
 
     vm.allTopicsSelected = false;
     vm.sessionTopicsArray = [];
@@ -80,10 +81,16 @@
 
     function changeLandingState(topic) {
       vm.sessionTopicsArray.map(function(t) {
-        t.sessionTopic.landing = false;
+        if (t.sessionTopic.landing) {
+          t.sessionTopic.landing = false;
+          if (landingSign == t.sessionTopic.sign) {
+            t.sessionTopic.sign = t.sessionTopic.lastSign;
+            t.sessionTopic.lastSign = null;
+          }
+        }
       });
 
-      topic.sessionTopic.landing = true;
+      setLanding(topic);
       saveTopics(vm.sessionTopicsArray);
     }
 
@@ -111,10 +118,16 @@
 
       if(list.length) {
         if(!findLandingTopic()) {
-          list[0].sessionTopic.landing = true;
+          setLanding(list[0]);
         }
         saveTopics(list);
       }
+    }
+
+    function setLanding(item) {
+      item.sessionTopic.landing = true;
+      item.sessionTopic.lastSign = item.sessionTopic.sign;
+      item.sessionTopic.sign = landingSign;
     }
 
     function findLandingTopic() {
@@ -128,7 +141,7 @@
 
     function saveTopics(list) {
       vm.session.saveTopics(list).then(function(result) {
-        result.map(function(topic) {
+        orderByFilter(result, "id").map(function(topic) {
           addSessionTopic(topic);
         });
       }, function(error) {
@@ -161,7 +174,9 @@
           active: true,
           landing: false,
           name: topic.name,
-          boardMessage: topic.boardMessage
+          boardMessage: topic.boardMessage,
+          sign: topic.sign,
+          lastSign: null
         }
         if(list) {
           list.push(topic);

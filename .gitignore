@@ -16,3 +16,5 @@
 /chatRoom/public/uploads/*
 .vscode/settings.json
 **/.DS_Store
+/bin/.kube
+/bin/kube_config

@@ -53,7 +53,7 @@ function eachRole(user, role, callback) {
     accountUser = result;
     return createSubscription(account.id, user.id);
   }).then(function(result) {
-    return models.Session.create({ accountId: account.id });
+    return models.Session.create({ accountId: account.id, timeZone: 'Europe/Riga' });
   }).then(function(result) {
     session = result;
     return models.SessionMember.create({

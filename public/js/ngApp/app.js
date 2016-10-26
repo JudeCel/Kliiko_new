@@ -24,13 +24,15 @@
     'ui.sortable',
     'angularUtils.directives.dirPagination',
     'toggle-switch',
+    'angular-confirm',
     // app modules
     'KliikoApp.user',
     'KliikoApp.account',
     'KliikoApp.accountUser',
     'KliikoApp.fileUploader',
     'KliikoApp.goToChatroom',
-    'KliikoApp.mailTemplate'
+    'KliikoApp.mailTemplate',
+    'KliikoApp.sessionExpire'
   ];
 
   angular
@@ -113,8 +115,8 @@
     $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
   }
 
-  appRun.$inject = ['$stateParams', 'dbg', '$rootScope', '$state', 'globalSettings', 'ngProgressFactory', 'messenger'];
-  function appRun($stateParams, dbg, $rootScope, $state, globalSettings, ngProgressFactory, messenger) {
+  appRun.$inject = ['$stateParams', 'dbg', '$rootScope', '$state', 'globalSettings', 'ngProgressFactory', 'messenger', '$confirmModalDefaults'];
+  function appRun($stateParams, dbg, $rootScope, $state, globalSettings, ngProgressFactory, messenger, $confirmModalDefaults) {
     dbg.log('#appRun started ');
     var routerProgressbar;
     var rootScopeProgress = ngProgressFactory.createInstance();
@@ -143,10 +145,15 @@
       rootScopeProgress.complete();
     }
 
+    $confirmModalDefaults.templateUrl = '/js/ngApp/templates/confirm-dialog.tpl.html';
+    $confirmModalDefaults.defaultLabels.title = 'Are you sure?';
+    $confirmModalDefaults.defaultLabels.ok = 'Continue';
+    $confirmModalDefaults.defaultLabels.cancel = 'Cancel';
+
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader', 'domServices', '$scope'];
-  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader, domServices, $scope) {
+  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader', 'domServices', '$scope', 'sessionExpire'];
+  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader, domServices, $scope, sessionExpire) {
     var vm = this;
     vm.openModal = openModal;
     dbg.log2('#AppController started ');
@@ -162,6 +169,7 @@
       accountUser.getAccountUserData().then(function(res) { vm.accountUser = res });
       account.getAccountData().then(function(res) { vm.account = res });
       fileUploader.getToken().then(function(res) { vm.fileUploader = res });
+      sessionExpire.init();
     }
 
     function openModal(id) {

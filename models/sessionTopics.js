@@ -9,7 +9,9 @@ module.exports = (Sequelize, DataTypes) => {
     active: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: true },
     landing: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
     boardMessage: { type: DataTypes.TEXT, allowNull: true },
-    name: { type: DataTypes.STRING, allowNull: true, validate: { notEmpty: true } }
+    name: { type: DataTypes.STRING, allowNull: true, validate: { notEmpty: true } },
+    sign: { type: DataTypes.STRING, allowNull: true },
+    lastSign: { type: DataTypes.STRING, allowNull: true }
   }, {
     timestamps: true,
     classMethods: {

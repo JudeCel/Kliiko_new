@@ -71,17 +71,17 @@ spec:
         - name: MAIL_TRANSPORT_SECURE_CONNECTION
           value: "false"
         - name: MAIL_TRANSPORT_PORT
-          value: "25"
+          value: "2525"
         - name: REDIS_PORT
           value: "6379"
         - name: DATABASE_NAME_PROD
-          value: "klzii_test"
+          value: "klzii_production"
         - name: DATABASE_USER_PROD
           value: "postgres"
         - name: DATABASE_PASSWORD_PROD
           value: "nWD44LS3bYs29JeP"
         - name: DATABASE_HOST_PROD
-          value: "10.4.1.7"
+          value: "postgres-master"
         - name: DATABASE_DIALECT_PROD
           value: "postgres"
         - name: AIRBRAKE_PROJECT_ID
@@ -103,8 +103,8 @@ spec:
         - name: COOKIE_SECRET
           value: "384ea4460f93543b5df82b039ff9da764bfd6393e16dd0913dfaf91b380baa409ed7587865b76d8cb2ac70bd5a7db538280778ac6bc2c73b737709e5ef7df98e"
         - name: TWILIO_ACCOUNT_SID
-          value: "AC07a728c4dd30fcffe94be9cbaf3b579f"
+          value: "AC979a928c7e46eb715283177d0bf69d23"
         - name: TWILIO_AUTH_TOKEN
-          value: "2d12ce11106c17ab443034bfa86145ce"
+          value: "40c3e7b2fb16608f28bafbd53466c2dc"
         - name: TWILIO_SENDER_NUMBER
-          value: "+12048179165"
+          value: "+61428805081"

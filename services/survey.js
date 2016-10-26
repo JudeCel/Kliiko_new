@@ -50,6 +50,8 @@ const VALID_ATTRIBUTES = {
   ]
 }
 
+const SMALL_AGE = 'Under 18';
+
 function simpleParams(data, message) {
   return { data: data, message: message };
 };
@@ -361,17 +363,17 @@ function copySurvey(params, account) {
 
 function answerSurvey(params) {
   let deferred = q.defer();
+
   let validParams = validAnswerParams(params);
 
   models.sequelize.transaction(function (t) {
     return Survey.find({ where: { id: validParams.surveyId }, include: [SurveyQuestion] }).then(function(survey) {
       return SurveyAnswer.create(validParams, { transaction: t }).then(function() {
         let fields = getContactListFields(survey.SurveyQuestions);
-
         return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
           if(!_.isEmpty(fields)) {
             let clParams = findContactListAnswers(contactList, validParams.answers);
-            if(clParams) {
+            if(clParams && clParams != null && clParams.customFields.age != SMALL_AGE) {
               clParams.contactListId = contactList.id;
               clParams.accountId = survey.accountId;
 
@@ -407,7 +409,7 @@ function answerSurvey(params) {
 function findContactListAnswers(contactList, answers) {
   let values;
   _.map(answers, function(object, key) {
-    if(object.contactDetails) {
+    if(object.contactDetails && object.tagHandled == true) {
       values = object.contactDetails;
     }
   });
@@ -431,6 +433,8 @@ function findContactListAnswers(contactList, answers) {
     params.defaultFields = object;
 
     return params;
+  } else {
+    return null;
   }
 }
 
@@ -463,7 +467,6 @@ function confirmSurvey(params, account) {
 
 function exportSurvey(params, account) {
   let deferred = q.defer();
-
 
   canExportSurveyData(account).then(function() {
     Survey.find({
@@ -523,11 +526,12 @@ function constantsSurvey() {
 function createCsvHeader(questions) {
   let array = [];
   questions.forEach(function(question) {
-    array.push(question.name);
     if(question.answers[0].contactDetails) {
       _.map(question.answers[0].contactDetails, function(contact) {
         array.push(contact.name);
       });
+    } else {
+      array.push(question.name);
     }
   });
 
@@ -539,19 +543,30 @@ function createCsvData(header, survey) {
 
   survey.SurveyAnswers.forEach(function(surveyAnswer) {
     let object = {};
+    let indexDiff = 0;
 
     survey.SurveyQuestions.forEach(function(question, index) {
       let answer = surveyAnswer.answers[question.id];
 
       switch(answer.type) {
         case 'number':
-          assignNumber(index, header, object, question, answer);
+          assignNumber(index + indexDiff, header, object, question, answer);
           break;
         case 'string':
-          object[header[index]] = answer.value;
+          object[header[index + indexDiff]] = answer.value;
           break;
         case 'boolean':
-          assignBoolean(index, header, object, question, answer);
+          assignBoolean(index + indexDiff, header, object, question, answer);
+          break;
+        case 'object':
+          if (answer.contactDetails) {
+            for(var property in answer.contactDetails) {
+              while (property.toLowerCase() != header[index + indexDiff].replace(' ', '').toLowerCase()) {
+                indexDiff++;
+              }
+              object[header[index + indexDiff]] = answer.contactDetails[property];
+            }
+          }
           break;
       }
     });
@@ -587,10 +602,17 @@ function validAnswerParams(params) {
       surveyAnswer.answers[i] = {};
     }
 
-    surveyAnswer.answers[i].type = typeof question.answer;
-    surveyAnswer.answers[i].value = question.answer;
-    if(question.answer && question.contactDetails) {
+    if(question.contactDetails) {
+      surveyAnswer.answers[i].type = typeof question.contactDetails;
+      surveyAnswer.answers[i].value = null;
       surveyAnswer.answers[i].contactDetails = question.contactDetails;
+    }
+    else if(question.answer) {
+      surveyAnswer.answers[i].type = typeof question.answer;
+      surveyAnswer.answers[i].value = question.answer;
+    }
+    if (question.tagHandled == true) {
+      surveyAnswer.answers[i].tagHandled = true;
     }
   }
 

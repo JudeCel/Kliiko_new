@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('ChatSessionsController', ChatSessionsController);
 
-  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'goToChatroom', 'messenger', 'angularConfirm', '$window', '$rootScope', 'domServices'];
-  function ChatSessionsController(dbg, chatSessionsServices, goToChatroom, messenger, angularConfirm, $window, $rootScope, domServices){
+  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'goToChatroom', 'messenger', 'angularConfirm', '$window', '$rootScope', 'domServices', '$confirm'];
+  function ChatSessionsController(dbg, chatSessionsServices, goToChatroom, messenger, angularConfirm, $window, $rootScope, domServices, $confirm){
     dbg.log2('#ChatSessionsController started');
 
     var vm = this;
@@ -80,12 +80,11 @@
     }
 
     function removeSession(session) {
-      angularConfirm('Are you sure you want to remove Session?').then(function(response) {
+      $confirm({ text: "You want to Delete this Session?" }).then(function() {
         chatSessionsServices.removeSession({ id: session.id }).then(function(res) {
           if(res.error) {
             messenger.error(res.error);
-          }
-          else {
+          } else {
             messenger.ok(res.message);
             var index = vm.sessions.indexOf(session);
             vm.sessions.splice(index, 1);

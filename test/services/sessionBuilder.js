@@ -53,7 +53,8 @@ describe('SERVICE - SessionBuilder', function() {
       id: data.sessionBuilder.id,
       accountId: testAccount.id,
       startTime: (new Date()).toString(),
-      endTime: (new Date()).toString()
+      endTime: (new Date()).toString(), 
+      timeZone: 'Europe/Riga'
     };
   };
 

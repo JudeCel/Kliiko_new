@@ -11,6 +11,7 @@ function getToken(req, res, next) {
 function getChatRedirectUrl(req, res, result) {
   var options = {
     url: req.query.chatUrl + '/api/auth/token/',
+    rejectUnauthorized: false,
     headers: {
       'Authorization': result.token
     }

@@ -5,8 +5,12 @@
  module.exports = {
    up: function (queryInterface, Sequelize) {
      return new Bluebird(function (resolve, reject) {
-       queryInterface.addColumn('Sessions', 'type', { type: Sequelize.ENUM, values: ['focus', 'forum'] }).then(function() {
-         resolve();
+       queryInterface.addColumn('Sessions', 'type', { type: Sequelize.ENUM, values: ['focus', 'forum'] }).then(function(result) {
+         queryInterface.sequelize.query('UPDATE public."Sessions" SET type = \'focus\'').then(function() {
+           resolve();
+         },function(error) {
+           validateError(error, resolve, reject);
+         });
        },function(error) {
          validateError(error, resolve, reject);
        });

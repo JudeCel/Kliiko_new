@@ -21,6 +21,9 @@ var chargebeeRoutes = require('./chargebee.js');
 var constants = require('../../util/constants');
 var appData = require('../../services/webAppData');
 var contactListUserRoutes = require('./contactListUser');
+var ics = require('./ics');
+
+router.route('/ics').get(ics.render);
 
 router.use(function (req, res, next) {
   res.locals.appData = appData;
@@ -319,6 +322,7 @@ router.route('/VerifyEmail/:token')
 
 router.get('/logout', function (req, res) {
     req.logout();
+    req.session.destroy();
     res.redirect(subdomains.url(req, subdomains.base, '/'));
 });
 

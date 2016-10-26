@@ -51,6 +51,8 @@ var PERMISSIONS = {
   facilitatorManagerAdmin: sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin'])
 }
 
+router.post('/ping', (req, res, next) => { res.send({}); });
+
 // Main Routes
 router.get('/myDashboard/data', myDashboard.getAllData);
 

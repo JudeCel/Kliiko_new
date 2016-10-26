@@ -35,3 +35,18 @@ hr.survey-hr {
 .survey-dropdown-margin{
   margin-left: 6px;
 }
+
+.link-block {
+  padding-bottom: 5px;
+  a {
+    color: #333;
+    text-decoration: underline;
+  }
+}
+
+.form-group {
+  .link-block {
+    padding-top: 10px;
+    padding-bottom: 0px;
+  }
+}

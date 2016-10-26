@@ -109,6 +109,10 @@
         top: 7px;
         right: 10px;
       }
+
+      @media (max-width: 319px) {
+        height: auto;
+      }
     }
 
     input[class=checkbox-login] {
@@ -145,6 +149,10 @@
       text-overflow: ellipsis;
       width: 475px;
       display:none;
+
+      .error-field {
+        display: initial;
+      }
     }
 
 

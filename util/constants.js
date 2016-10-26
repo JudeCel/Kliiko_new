@@ -85,7 +85,7 @@ module.exports = {
   dateFormat: 'MM-dd-yyyy',
   dateFormatWithTime: 'MM-dd-yyyy, HH:mm',
   sessionBuilderSteps: ['setUp', 'facilitatiorAndTopics', 'manageSessionEmails',
-    'manageSessionParticipants', 'inviteSessionObservers', 'done'],
+    'manageSessionParticipants', 'inviteSessionObservers'],
   inviteStatuses: ['pending', 'confirmed', 'rejected', 'notThisTime', 'notAtAll', 'expired', 'inProgress'],
   sessionBuilderEmails: ['firstInvitation', 'confirmation', 'generic', 'notThisTime', 'notAtAll', 'closeSession'],
   sessionMemberMan: { base: 0, face: 5, body: 5, hair: -1, desk: -1, head: -1 },
