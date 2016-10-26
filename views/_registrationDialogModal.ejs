@@ -6,7 +6,7 @@
       </div>
       <div class='modal-footer'>
         <% if(errors.dialog.link == null) { %>
-          <button type="button" onclick='jQuery("#registrationDialogModal").modal("hide");' class="btn btn-standart btn-red btn-small pull-right">Close</button>
+          <button type="button" data-dismiss="modal" class="btn btn-standart btn-red btn-small pull-right">Close</button>
         <% } else { %>
           <a type="button" href="<%= errors.dialog.link.url %>" class="btn btn-standart btn-green btn-small pull-right"><%= errors.dialog.link.title %></a>
         <% } %>

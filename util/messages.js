@@ -1,7 +1,7 @@
 module.exports = {
   account: {
     notFound: 'Account not found',
-    accountExists: 'Your already have your Account',
+    accountExists: 'You already have an Account',
     created: 'Your New Account has been created, please check your email to Confirm'
   },
   accountDatabase: {

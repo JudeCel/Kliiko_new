@@ -12,6 +12,7 @@ var socialProfileService = require('./socialProfile');
 var bcrypt = require('bcrypt');
 var uuid = require('node-uuid');
 var async = require('async');
+var constants = require('./../util/constants');
 
 module.exports = {
   create: create,
@@ -77,7 +78,7 @@ function createUser(params, callback) {
               }
             } else {
               for(let i2=0; i2<result[i1].Invites.length; i2++) {
-                if (result[i1].Invites[i2].status == "inProgress") {
+                if (result[i1].Invites[i2].status == constants.inviteStatuses[constants.inviteStatuses.length-1]) {
                   canCreate = false;
                   errors.dialog = {link: { url: '/invite/' + result[i1].Invites[i2].token + '/accept/', title: "Continue to Check In" }, message: MessagesUtil.users.dialog.emailExistsContinueToCheckIn}
                 }

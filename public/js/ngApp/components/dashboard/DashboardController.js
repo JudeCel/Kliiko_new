@@ -11,6 +11,7 @@
     initMyDashboard();
     vm.disablePlayButton = false;
     vm.hasOwnAccount = false;
+    vm.showCreateNewAccount = false;
     vm.hasRoles = false;
 
     vm.redirectToChatSession = redirectToChatSession;
@@ -70,6 +71,7 @@
             }
           }
           vm.hasRoles = Object.keys(vm.accountUsers).length > 0;
+          vm.showCreateNewAccount = !vm.hasOwnAccount;
           setInitialTab();
         }
       });
