@@ -15,7 +15,7 @@ function get(req, res, next) {
 };
 
 function createNewAccount(req, res, next) {
-  accountServices.createNewAccount(req.body, req.user.id).then(function(result) {
+  accountServices.createNewAccountIfNotExists(req.body, req.user.id).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({ error: error });

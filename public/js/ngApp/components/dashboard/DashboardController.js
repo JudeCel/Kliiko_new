@@ -54,23 +54,14 @@
 
     function initMyDashboard() {
       dashboardServices.getAllData().then(function(res) {
-        if(res.error) {
+        if (res.error) {
           messenger.error(res.error);
-        }
-        else {
+        } else {
           $('.main-first-page').removeClass('hidden');
           vm.accountUsers = res.data || {};
           vm.dateFormat = res.dateFormat;
-          vm.hasOwnAccount = false;
-          if (vm.accountUsers["accountManager"]) {
-            for(var i=0; i<vm.accountUsers["accountManager"].data.length; i++) {
-              if (vm.accountUsers["accountManager"].data[i].owner) {
-                vm.hasOwnAccount = true;
-                break;
-              }
-            }
-          }
-          vm.hasRoles = Object.keys(vm.accountUsers).length > 0;
+          vm.hasOwnAccount = res.hasOwnAccount;
+          vm.hasRoles = res.hasRoles;
           vm.showCreateNewAccount = !vm.hasOwnAccount;
           setInitialTab();
         }

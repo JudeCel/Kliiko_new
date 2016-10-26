@@ -36,12 +36,44 @@ function create(params, callback) {
     return callback(err);
   }
 
-  createUser(params, function (error, result) {
-    if (error) {
-      callback(error);
-    } else {
-      callback(null, result);
+  accountUserService.findWithEmail(params.email).then(function (result) {
+    let canCreate = true;
+    let errorWithDialog = {};
+
+    //update error with diaolg to show if email exists in system
+    for(let i1=0; i1<result.length; i1++) {
+      if (result[i1].UserId != null) {
+        canCreate = false;
+        errorWithDialog.dialog = {link: null, message: MessagesUtil.users.dialog.emailExistsCanCreateAccount}
+        if (result[i1].role == 'accountManager') {
+          errorWithDialog.dialog = {link: null, message: MessagesUtil.users.dialog.emailExists}
+          break;
+        }
+      } else {
+        for(let i2=0; i2<result[i1].Invites.length; i2++) {
+          if (result[i1].Invites[i2].status == constants.inviteStatuses[constants.inviteStatuses.length-1]) {
+            canCreate = false;
+            errorWithDialog.dialog = {link: { url: '/invite/' + result[i1].Invites[i2].token + '/accept/', title: "Continue to Check In" }, message: MessagesUtil.users.dialog.emailExistsContinueToCheckIn}
+          }
+        }
+      }
     }
+
+    if (canCreate) {
+      createUser(params, function (error, result) {
+        if (error) {
+          callback(error);
+        } else {
+          callback(null, result);
+        }
+      });
+    }
+    else {
+      return callback(errorWithDialog);
+    }
+
+  }, function(error) {
+    return callback(error);
   });
 };
 
@@ -63,42 +95,10 @@ function createUser(params, callback) {
   let createNewUserFunctionList = [
     function (cb) {
       models.sequelize.transaction().then(function(t) {
-        accountUserService.findWithEmail(params.email).then(function (result) {
-          let canCreate = true;
-          let errors = {};
-
-          //update errors with diaolg to show if email exists in system
-          for(let i1=0; i1<result.length; i1++) {
-            if (result[i1].UserId != null) {
-              canCreate = false;
-              errors.dialog = {link: null, message: MessagesUtil.users.dialog.emailExistsCanCreateAccount}
-              if (result[i1].role == 'accountManager') {
-                errors.dialog = {link: null, message: MessagesUtil.users.dialog.emailExists}
-                break;
-              }
-            } else {
-              for(let i2=0; i2<result[i1].Invites.length; i2++) {
-                if (result[i1].Invites[i2].status == constants.inviteStatuses[constants.inviteStatuses.length-1]) {
-                  canCreate = false;
-                  errors.dialog = {link: { url: '/invite/' + result[i1].Invites[i2].token + '/accept/', title: "Continue to Check In" }, message: MessagesUtil.users.dialog.emailExistsContinueToCheckIn}
-                }
-              }
-            }
-          }
-
-          if (canCreate) {
-             User.create(params, { transaction: t } ).then(function (result) {
-               cb(null, { params: params, user: result, transaction: t, errors: {} });
-             }, function(error) {
-               cb(null, { params: params, user: {}, transaction: t, errors: filters.errors(error) })
-             });
-          }
-          else {
-            cb(null, { params: params, user: result, transaction: t, errors: errors });
-          }
-
+        User.create(params, { transaction: t } ).then(function (result) {
+          cb(null, { params: params, user: result, transaction: t, errors: {} });
         }, function(error) {
-          cb(null, { params: params, user: {}, transaction: t, errors: {} })
+          cb(null, { params: params, user: {}, transaction: t, errors: filters.errors(error) })
         });
       });
     },

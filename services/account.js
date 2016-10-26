@@ -12,36 +12,50 @@ var async = require('async');
 var _ = require('lodash');
 var q = require('q');
 
+
+function createNewAccountIfNotExists(params, userId) {
+  let deferred = q.defer();
+
+  models.AccountUser.find({ where: { UserId: userId, role: "accountManager", owner: true } }).then(function(result) {
+    if (result.length > 0) {
+      deferred.reject(filters.errors(MessagesUtil.account.accountExists));
+    } else {
+      createNewAccount(params, userId).then(function(createResult) {
+        deferred.resolve(createResult);
+      }, function(error) {
+        deferred.reject(object.errors);
+      });
+    }
+  }, function(error) {
+    deferred.reject(object.errors);
+  });
+
+  return deferred.promise;
+}
+
 function createNewAccount(params, userId) {
   let deferred = q.defer();
 
   let createNewAccountFunctionList = [
     function (cb) {
       models.sequelize.transaction().then(function(t) {
-        models.User.find({
-          where: { id: userId },
-          include: [models.AccountUser],
-        }).then(function(result) {
+        models.AccountUser.find({ where: { UserId: userId } }).then(function(result) {
 
-          let canCreate = true;
-          for (let i=0; i<result.AccountUsers.length; i++) {
-            if (result.AccountUsers[i].role == "accountManager" && result.AccountUsers[i].owner) {
-              canCreate = false;
-              break;
-            }
-          }
+          let createParams = {
+            accountName: params.accountName,
+            firstName: params.accountName,
+            gender: '',
+            lastName: params.accountName,
+            email: result.email,
+            active: false
 
-          if (canCreate) {
-            let createParams = {accountName: params.accountName, firstName: params.accountName, gender: '', lastName: params.accountName, email: result.email, active: false};
-            if (result.AccountUsers.length > 0) {
-              createParams.firstName = result.AccountUsers[0].firstName;
-              createParams.lastName = result.AccountUsers[0].lastName;
-              createParams.gender = result.AccountUsers[0].gender;
-            }
-            cb(null, { params: createParams, user: {id: userId}, transaction: t, errors: {} });
-          } else {
-            cb(null, { params: params, transaction: t, errors: filters.errors(MessagesUtil.account.accountExists) })
+          };
+          if (result) {
+            createParams.firstName = result.firstName;
+            createParams.lastName = result.lastName;
+            createParams.gender = result.gender;
           }
+          cb(null, { params: createParams, user: {id: userId}, transaction: t, errors: {} });
 
         }, function(error) {
           cb(null, { params: params, transaction: t, errors: filters.errors(error) })
