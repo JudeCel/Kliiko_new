@@ -15,9 +15,8 @@ var q = require('q');
 
 function createNewAccountIfNotExists(params, userId) {
   let deferred = q.defer();
-
   models.AccountUser.find({ where: { UserId: userId, role: "accountManager", owner: true } }).then(function(result) {
-    if (result.length > 0) {
+    if (result) {
       deferred.reject(filters.errors(MessagesUtil.account.accountExists));
     } else {
       createNewAccount(params, userId).then(function(createResult) {
@@ -47,8 +46,8 @@ function createNewAccount(params, userId) {
             gender: '',
             lastName: params.accountName,
             email: result.email,
-            active: false
-
+            active: false,
+            selectedPlanOnRegistration: 'free_trial',
           };
           if (result) {
             createParams.firstName = result.firstName;
@@ -167,5 +166,6 @@ module.exports = {
   create: create,
   updateInstance: updateInstance,
   findWithSubscription: findWithSubscription,
-  createNewAccount: createNewAccount
+  createNewAccount: createNewAccount,
+  createNewAccountIfNotExists: createNewAccountIfNotExists
 }
