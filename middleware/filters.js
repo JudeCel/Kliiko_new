@@ -78,7 +78,7 @@ function myDashboardPage(req, res, next) {
         res.redirect(myDashboardUrl);
       }
     } else {
-      if((!req.user.signInCount || req.user.signInCount <= 1) && !req.session.landed) {
+      if((!req.user.signInCount) && !req.session.landed) {
         req.session.landed = true;
         res.redirect(subdomains.url(req, selectManager(result.accountManager, result.facilitator).subdomain, '/account-hub/landing'));
       }
