@@ -10,6 +10,9 @@
     var vm = this;
     initMyDashboard();
     vm.disablePlayButton = false;
+    vm.hasOwnAccount = false;
+    vm.showCreateNewAccount = false;
+    vm.hasRoles = false;
 
     vm.redirectToChatSession = redirectToChatSession;
     vm.isTabActive = isTabActive;
@@ -51,13 +54,15 @@
 
     function initMyDashboard() {
       dashboardServices.getAllData().then(function(res) {
-        if(res.error) {
+        if (res.error) {
           messenger.error(res.error);
-        }
-        else {
+        } else {
           $('.main-first-page').removeClass('hidden');
-          vm.accountUsers = res.data;
+          vm.accountUsers = res.data || {};
           vm.dateFormat = res.dateFormat;
+          vm.hasOwnAccount = res.hasOwnAccount;
+          vm.hasRoles = res.hasRoles;
+          vm.showCreateNewAccount = !vm.hasOwnAccount;
           setInitialTab();
         }
       });

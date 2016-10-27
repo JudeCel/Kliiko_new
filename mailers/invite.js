@@ -15,12 +15,12 @@ function sendInviteAccountManager(inviteParams, callback) {
     //if failed to find mail template from DB, use old version
     if (error) {
       let links = {
-        url: helpers.getUrl(inviteParams.token, '/invite/'),
+        url: helpers.getUrl(inviteParams.token, null, '/invite/'),
         firstName: inviteParams.firstName,
         lastName: inviteParams.lastName,
         accountName: inviteParams.accountName,
         termsOfUseUrl: terms_of_service.filter(inviteParams),
-        privacyPolicyUrl: helpers.getUrl('', '/privacy_policy'),
+        privacyPolicyUrl: helpers.getUrl('', null, '/privacy_policy'),
       };
 
       helpers.renderMailTemplate('invite/inviteAccountUser', links, function(error, html){
@@ -43,7 +43,7 @@ function sendInviteAccountManager(inviteParams, callback) {
     } else {
       // found template in db
       var params = {
-        logInUrl: helpers.getUrl(inviteParams.token, '/invite/'),
+        logInUrl: helpers.getUrl(inviteParams.token, null, '/invite/'),
         firstName: inviteParams.firstName,
         lastName: inviteParams.lastName,
         accountName: inviteParams.accountName
@@ -61,26 +61,26 @@ function sendInviteAccountManager(inviteParams, callback) {
 
 function sendInviteSession(inviteParams, callback) {
   inviteParams.termsOfUseUrl = terms_of_service.filter(inviteParams)
-  inviteParams.privacyPolicyUrl = helpers.getUrl('', '/privacy_policy');
+  inviteParams.privacyPolicyUrl = helpers.getUrl('', null, '/privacy_policy');
 
   if(inviteParams.role == 'observer') {
-    inviteParams.logInUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/accept/';
+    inviteParams.logInUrl = helpers.getUrl(inviteParams.token, null, '/invite/') + '/accept/';
 
     mailHelper.sendObserverInvitation(inviteParams, function(error, result) {
       callback(error, result);
     });
   }
   else if(inviteParams.role == 'participant') {
-    inviteParams.acceptInvitationUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/session/';
-    inviteParams.invitationNotThisTimeUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/notThisTime/';
-    inviteParams.invitationNotAtAllUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/notAtAll/';
+    inviteParams.acceptInvitationUrl = helpers.getUrl(inviteParams.token, null, '/invite/') + '/session/';
+    inviteParams.invitationNotThisTimeUrl = helpers.getUrl(inviteParams.token, null, '/invite/') + '/notThisTime/';
+    inviteParams.invitationNotAtAllUrl = helpers.getUrl(inviteParams.token, null, '/invite/') + '/notAtAll/';
 
     mailHelper.sendFirstInvitation(inviteParams, function(error, result) {
       callback(error, result);
     });
   }
   else if(inviteParams.role == 'facilitator'){
-    inviteParams.logInUrl = helpers.getUrl(inviteParams.token, '/invite/') + '/accept/';
+    inviteParams.logInUrl = helpers.getUrl(inviteParams.token, null, '/invite/') + '/accept/';
 
     mailHelper.sendFacilitatorEmailConfirmation(inviteParams, function(error, result) {
       callback(error, result);

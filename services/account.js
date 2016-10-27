@@ -7,8 +7,85 @@ var filters = require('./../models/filters');
 var contactListService  = require('./contactList');
 var brandColourService  = require('./brandColour');
 var subscriptionPreferencesCosnt  = require('../util/planConstants.js')
+var accountUserService = require('./accountUser');
+var async = require('async');
 var _ = require('lodash');
 var q = require('q');
+
+
+function createNewAccountIfNotExists(params, userId) {
+  let deferred = q.defer();
+  models.AccountUser.find({ where: { UserId: userId, role: "accountManager", owner: true } }).then(function(result) {
+    if (result) {
+      deferred.reject(filters.errors(MessagesUtil.account.accountExists));
+    } else {
+      createNewAccount(params, userId).then(function(createResult) {
+        deferred.resolve(createResult);
+      }, function(error) {
+        deferred.reject(object.errors);
+      });
+    }
+  }, function(error) {
+    deferred.reject(object.errors);
+  });
+
+  return deferred.promise;
+}
+
+function createNewAccount(params, userId) {
+  let deferred = q.defer();
+
+  let createNewAccountFunctionList = [
+    function (cb) {
+      models.sequelize.transaction().then(function(t) {
+        models.User.find({
+          where: { id: userId },
+          include: [models.AccountUser]
+        }).then(function(result) {
+
+          let createParams = getCreateNewAccountParams(params.accountName, result.email);
+          if (result.AccountUsers[0]) {
+            createParams.firstName = result.AccountUsers[0].firstName;
+            createParams.lastName = result.AccountUsers[0].lastName;
+            createParams.gender = result.AccountUsers[0].gender;
+          }
+          cb(null, { params: createParams, user: {id: userId}, transaction: t, errors: {} });
+
+        }, function(error) {
+          cb(null, { params: params, transaction: t, errors: filters.errors(error) })
+        });
+      });
+    },
+    create,
+    accountUserService.createAccountManager,
+  ];
+
+  async.waterfall(createNewAccountFunctionList, function(_error, object) {
+    if (_.isEmpty(object.errors)) {
+      object.transaction.commit().then(function() {
+        deferred.resolve({ data: object.account, message: MessagesUtil.account.created });
+      });
+    } else {
+      object.transaction.rollback().then(function() {
+        deferred.reject(object.errors);
+      });
+    }
+  });
+
+  return deferred.promise;
+}
+
+function getCreateNewAccountParams(accountName, email) {
+  return {
+    accountName: accountName,
+    firstName: accountName,
+    gender: '',
+    lastName: accountName,
+    email: email,
+    active: false,
+    selectedPlanOnRegistration: 'free_trial',
+  };
+}
 
 function create(object, callback) {
   object.account = {};
@@ -95,5 +172,7 @@ function mapSubscriptionData(result) {
 module.exports = {
   create: create,
   updateInstance: updateInstance,
-  findWithSubscription: findWithSubscription
+  findWithSubscription: findWithSubscription,
+  createNewAccount: createNewAccount,
+  createNewAccountIfNotExists: createNewAccountIfNotExists
 }

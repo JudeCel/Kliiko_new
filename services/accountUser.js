@@ -4,6 +4,7 @@ var MessagesUtil = require('./../util/messages');
 var constants = require('./../util/constants');
 var models = require('./../models');
 var filters = require('./../models/filters');
+var emailConfirmation = require('./emailConfirmation');
 var AccountUser = models.AccountUser;
 var SessionMember = models.SessionMember;
 var User = models.User;
@@ -31,7 +32,16 @@ function createAccountManager(object, callback) {
     if(contactList) {
       let cluParams = contactListUserParams({ accountId: accountUser.AccountId, contactListId: contactList.id }, accountUser);
       models.ContactListUser.create(cluParams, {transaction: object.transaction}).then(function() {
-        callback(null, object);
+        if (object.params.active == false) {
+          emailConfirmation.sendEmailAccountConfirmationToken(object.params.email, accountUser.id, function(sendError, sendObject) {
+            if (sendError) {
+              _.merge(object.errors, filters.errors(sendError));
+            }
+            callback(null, object);
+          });
+        } else {
+          callback(null, object);
+        }
       }, function(error) {
         _.merge(object.errors, filters.errors(error));
         callback(null, object);
@@ -214,6 +224,21 @@ function findById(id) {
   return deferred.promise;
 }
 
+function findWithEmail(email) {
+  let deferred = q.defer();
+
+  models.AccountUser.all({
+    where: { email: { ilike: email } },
+    include: [models.Invite],
+  }).then(function(result) {
+    deferred.resolve(result);
+  }, function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
 function assignCurrentUserInfo(accountUser, user) {
   _.merge(user, _.pick(accountUser.dataValues, prepareValidAccountUserParams()));
   user.accountUserId = accountUser.id;
@@ -233,5 +258,6 @@ module.exports = {
   findWithUser: findWithUser,
   findWithSessionMembers: findWithSessionMembers,
   validateParams: validateParams,
+  findWithEmail: findWithEmail,
   findById: findById
 }

@@ -12,7 +12,7 @@ describe('Mailer helpers', () => {
 
         let token = "token";
         let path = "/somePath";
-        let url = helpers.getUrl(token, path);
+        let url = helpers.getUrl(token, null, path);
         assert.equal(url, mailUrlPattern + path + token );
 
       });

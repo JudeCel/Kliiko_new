@@ -459,7 +459,7 @@ function prepareGenericMailParameters(sessionMember, accountUsers, accountId, se
       facilitatorLastName: facilitator.lastName,
       facilitatorMail: facilitator.email,
       facilitatorMobileNumber: facilitator.mobile,
-      unsubscribeMailUrl: mailUrlHelper.getUrl(accountUser.ContactListUsers[0].unsubscribeToken, '/unsubscribe/'),
+      unsubscribeMailUrl: mailUrlHelper.getUrl(accountUser.ContactListUsers[0].unsubscribeToken, null, '/unsubscribe/'),
       sessionId: sessionId
     });
   });
