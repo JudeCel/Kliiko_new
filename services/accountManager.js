@@ -146,6 +146,18 @@ function preValidate(user, accountId, email, errors) {
   if(user.email == email) {
     errors.email = MessagesUtil.accountManager.error.selfInvite;
     deferred.resolve(errors);
+  } else if (email) {
+    AccountUser.findAll({
+      where: { AccountId: accountId, role: "accountManager", email: email }
+    }).then(function(accountUsers) {
+      if(!_.isEmpty(accountUsers)) {
+        errors.email = MessagesUtil.accountManager.error.alreadyInvited;
+      }
+      deferred.resolve(errors);
+    }).catch(function(error) {
+      errors = _.merge(errors, filters.errors(error));
+      deferred.resolve(errors);
+    });
   } else {
     deferred.resolve(errors);
   }
