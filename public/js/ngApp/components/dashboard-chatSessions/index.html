@@ -55,7 +55,10 @@
         </thead>
         <tbody>
           <tr class='{{ csc.rowClass(session) }}' ng-repeat='session in csc.sessions | orderBy:csc.orderByField'>
-            <td>{{ session.name }}</td>
+            <td>
+              {{ session.name }}
+              <i ng-if='session.name == ""'>untitled</i>
+            </td>
             <td class="capitalize">{{ session.type }}</td>
             <td>{{ session.facilitator.username }}</td>
             <td>{{ session.startTime | date:sc.dateFormat }}</td>

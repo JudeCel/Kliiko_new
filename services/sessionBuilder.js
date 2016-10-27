@@ -930,6 +930,10 @@ function validateStepOne(params) {
         errors.startTime = MessagesUtil.sessionBuilder.errors.firstStep.invalidDateRange;
       }
 
+      if(params.startTime == params.endTime) {
+        errors.endTime = MessagesUtil.sessionBuilder.errors.firstStep.invalidEndTime;
+      }
+
       if(!object.facilitator) {
         errors.facilitator = MessagesUtil.sessionBuilder.errors.firstStep.facilitator;
       }

@@ -109,7 +109,8 @@ module.exports = {
         typeRequired: 'Type must be selected',
         startTimeRequired: 'Start time must be provided',
         endTimeRequired: 'End time must be provided',
-        invalidDateRange: "Start date can't be higher then end date.",
+        invalidDateRange: "Start date can't be higher then end date",
+        invalidEndTime: "End time can't be equal to start time",
         facilitator: 'No facilitator provided'
       },
       secondStep: {
