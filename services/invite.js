@@ -63,7 +63,7 @@ function createBulkInvites(arrayParams) {
         async.each(invites, function(invite, callback) {
           invite.accountName = arrayParams.accountName;
           if (invite.AccountUser.ContactListUsers.length) {
-            invite.unsubscribeMailUrl = mailUrlHelper.getUrl(invite.AccountUser.ContactListUsers[0].unsubscribeToken, '/unsubscribe/');
+            invite.unsubscribeMailUrl = mailUrlHelper.getUrl(invite.AccountUser.ContactListUsers[0].unsubscribeToken, null, '/unsubscribe/');
 
             sendInvite(invite).then(function() {
               callback();
@@ -627,8 +627,8 @@ function prepareMailParams(invite, session, receiver, facilitator) {
     startDate: emailDate.format('date', session.startTime, session.timeZone),
     orginalStartTime: session.startTime,
     orginalEndTime: session.endTime,
-    logInUrl: mailUrlHelper.getUrl(invite.token, '/invite/') + '/accept/',
-    confirmationCheckInUrl: mailUrlHelper.getUrl(invite.token, '/invite/') + '/accept/',
+    logInUrl: mailUrlHelper.getUrl(invite.token, null, '/invite/') + '/accept/',
+    confirmationCheckInUrl: mailUrlHelper.getUrl(invite.token, null, '/invite/') + '/accept/',
     participantMail: receiver.email,
     incentive: session.incentive
   }

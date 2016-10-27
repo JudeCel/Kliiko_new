@@ -107,7 +107,7 @@ function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {
       from: mailFrom,
       to: mailParams.email,
       subject: template.subject,
-      html: parsedTemplate.html.replace("{Calendar}", helpers.getUrl('', '/ics?icsdata=' + urlCalendarData)),
+      html: parsedTemplate.html.replace("{Calendar}", helpers.getUrl('', null, '/ics?icsdata=' + urlCalendarData)),
       //adds calendar event as attachment file
       attachments: [{
         filename: "event.ics",

@@ -288,12 +288,13 @@ router.get('/login', function (req, res, next) {
     res.render('login', { title: 'Login', error: '', message: req.flash('message')[0] });
 });
 
-router.route('/VerifyEmail/:token')
+router.route('/VerifyEmail/:token/:accountUserId?')
   .get(function (req, res, next) {
     let tplData = {
       title: 'Email Confirmation',
       user: true,
       token: req.params.token,
+      accountUserId: req.params.accountUserId,
       errors: {}
     };
 
@@ -304,13 +305,14 @@ router.route('/VerifyEmail/:token')
         tplData.message = '';
         tplData.error = tplData.errors.password;
         res.render('login', tplData);
-      }else{
-        emailConfirmation.getEmailConfirmationByToken(user, function (err, user) {
+      } else {
+        let accountUserId = tplData.accountUserId ? parseInt(new Buffer(tplData.accountUserId, 'base64').toString('ascii')) : null;
+        emailConfirmation.getEmailConfirmationByToken(user, accountUserId, function (err, user) {
           if (err) {
             tplData.message = '';
             tplData.errors.password = "Something is wrong with email confirmation";
             res.render('/login', tplData);
-          }else{
+          } else {
             req.logout();
             req.login(user, function(err) {
               middlewareFilters.myDashboardPage(req, res, next);

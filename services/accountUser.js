@@ -33,7 +33,7 @@ function createAccountManager(object, callback) {
       let cluParams = contactListUserParams({ accountId: accountUser.AccountId, contactListId: contactList.id }, accountUser);
       models.ContactListUser.create(cluParams, {transaction: object.transaction}).then(function() {
         if (object.params.active == false) {
-          emailConfirmation.sendEmailConfirmationToken(object.params.email, function(sendError, sendObject) {
+          emailConfirmation.sendEmailAccountConfirmationToken(object.params.email, accountUser.id, function(sendError, sendObject) {
             if (sendError && sendError != null) {
               _.merge(object.errors, filters.errors(sendError));
             }
