@@ -34,7 +34,7 @@ function createAccountManager(object, callback) {
       models.ContactListUser.create(cluParams, {transaction: object.transaction}).then(function() {
         if (object.params.active == false) {
           emailConfirmation.sendEmailAccountConfirmationToken(object.params.email, accountUser.id, function(sendError, sendObject) {
-            if (sendError && sendError != null) {
+            if (sendError) {
               _.merge(object.errors, filters.errors(sendError));
             }
             callback(null, object);

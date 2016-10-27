@@ -38,21 +38,16 @@ function createNewAccount(params, userId) {
   let createNewAccountFunctionList = [
     function (cb) {
       models.sequelize.transaction().then(function(t) {
-        models.AccountUser.find({ where: { UserId: userId } }).then(function(result) {
+        models.User.find({
+          where: { id: userId },
+          include: [models.AccountUser]
+        }).then(function(result) {
 
-          let createParams = {
-            accountName: params.accountName,
-            firstName: params.accountName,
-            gender: '',
-            lastName: params.accountName,
-            email: result.email,
-            active: false,
-            selectedPlanOnRegistration: 'free_trial',
-          };
-          if (result) {
-            createParams.firstName = result.firstName;
-            createParams.lastName = result.lastName;
-            createParams.gender = result.gender;
+          let createParams = getCreateNewAccountParams(params.accountName, result.email);
+          if (result.AccountUsers[0]) {
+            createParams.firstName = result.AccountUsers[0].firstName;
+            createParams.lastName = result.AccountUsers[0].lastName;
+            createParams.gender = result.AccountUsers[0].gender;
           }
           cb(null, { params: createParams, user: {id: userId}, transaction: t, errors: {} });
 
@@ -78,6 +73,18 @@ function createNewAccount(params, userId) {
   });
 
   return deferred.promise;
+}
+
+function getCreateNewAccountParams(accountName, email) {
+  return {
+    accountName: accountName,
+    firstName: accountName,
+    gender: '',
+    lastName: accountName,
+    email: email,
+    active: false,
+    selectedPlanOnRegistration: 'free_trial',
+  };
 }
 
 function create(object, callback) {

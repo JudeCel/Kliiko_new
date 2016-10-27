@@ -15,14 +15,15 @@ function sendEmailConfirmationToken(email, callback) {
       setEmailConfirmationToken(email, next);
     },
     function (token, next) {
-      if (!token) {
+      if (token) {
+        let params = {
+          token: token,
+          email: email
+        };
+        mailers.users.sendEmailConfirmationToken(params, next);
+      } else {
         return next(new Error(MessagesUtil.emailConfirmation.error.token));
       }
-      let params = {
-        token: token,
-        email: email
-      };
-      mailers.users.sendEmailConfirmationToken(params, next);
     }
   ], callback);
 }
@@ -33,15 +34,16 @@ function sendEmailAccountConfirmationToken(email, accountUserId, callback) {
       setEmailConfirmationToken(email, next);
     },
     function (token, next) {
-      if (!token) {
+      if (token) {
+        let params = {
+          token: token,
+          email: email,
+          accountUserId: accountUserId
+        };
+        mailers.users.sendEmailConfirmationToken(params, next);
+      } else {
         return next(new Error(MessagesUtil.emailConfirmation.error.token));
       }
-      let params = {
-        token: token,
-        email: email,
-        accountUserId: accountUserId
-      };
-      mailers.users.sendEmailConfirmationToken(params, next);
     }
   ], callback);
 }
@@ -111,7 +113,7 @@ function confirm(token, accountUserId, callback) {
             transaction: transaction
           }).then(function (accountUserResult) {
             transaction.commit().then(function() {
-              return callback(null, result);
+              callback(null, result);
             });
           }).catch(function (err) {
             transaction.rollback().then(function() {
@@ -120,7 +122,7 @@ function confirm(token, accountUserId, callback) {
           });
         } else {
           transaction.commit().then(function() {
-            return callback(null, result);
+            callback(null, result);
           });
         }
 
