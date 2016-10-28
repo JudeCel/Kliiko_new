@@ -68,7 +68,7 @@ function myDashboardPage(req, res, next, accountUserId) {
       let participants = shouldRedirectToChat(result.participant);
 
       if((participants && !observers) || (observers && !participants)) {
-        jwt.tokenForMember(req.user.id, (participants || observers).dataValues.session.id).then(function(result) {
+        jwt.tokenForMember(req.user.id, (participants || observers).dataValues.session.id, myDashboardUrl).then(function(result) {
           getUrl(res, result.token, myDashboardUrl);
         }, function(error) {
           res.redirect(myDashboardUrl);
