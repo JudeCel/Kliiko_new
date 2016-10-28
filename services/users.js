@@ -24,7 +24,8 @@ module.exports = {
   setResetToken: setResetToken,
   getUserByToken: getUserByToken,
   changePassword: changePassword,
-  update: update
+  update: update,
+  inviteInProcessExists: inviteInProcessExists
 };
 
 
@@ -163,6 +164,23 @@ function comparePassword(email, password, callback) {
     };
   });
 };
+
+function inviteInProcessExists(email, callback) {
+  accountUserService.findWithEmail(email).then(function (result) {
+    for(let i1=0; i1<result.length; i1++) {
+      if (!result[i1].UserId) {
+        for(let i2=0; i2<result[i1].Invites.length; i2++) {
+          if (result[i1].Invites[i2].status == constants.inviteStatuses[constants.inviteStatuses.length-1]) {
+            return callback(true, result[i1].Invites[i2].token);
+          }
+        }
+      }
+    }
+    callback(false, null);
+  }, function(error) {
+    callback(false, null);
+  });
+}
 
 function setEmailConfirmationToken(email, callback) {
 
