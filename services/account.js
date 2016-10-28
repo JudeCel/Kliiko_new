@@ -15,19 +15,24 @@ var q = require('q');
 
 function createNewAccountIfNotExists(params, userId) {
   let deferred = q.defer();
-  models.AccountUser.find({ where: { UserId: userId, role: "accountManager", owner: true } }).then(function(result) {
-    if (result) {
-      deferred.reject(filters.errors(MessagesUtil.account.accountExists));
-    } else {
-      createNewAccount(params, userId).then(function(createResult) {
-        deferred.resolve(createResult);
-      }, function(error) {
-        deferred.reject(object.errors);
-      });
-    }
-  }, function(error) {
-    deferred.reject(object.errors);
-  });
+
+  if (!params.accountName || params.accountName == '') {
+    deferred.reject(filters.errors(MessagesUtil.account.empty));
+  } else {
+    models.AccountUser.find({ where: { UserId: userId, role: "accountManager", owner: true } }).then(function(result) {
+      if (result) {
+        deferred.reject(filters.errors(MessagesUtil.account.accountExists));
+      } else {
+        createNewAccount(params, userId).then(function(createResult) {
+          deferred.resolve(createResult);
+        }, function(error) {
+          deferred.reject(error);
+        });
+      }
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }
 
   return deferred.promise;
 }

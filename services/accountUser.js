@@ -25,6 +25,9 @@ const VALID_ATTRIBUTES = {
 
 function createAccountManager(object, callback) {
   object.errors = object.errors || {};
+  if (object.errors.name) {
+    return callback(null, object);
+  }
 
   AccountUser.create(prepareAccountManagerParams(object.params, object.account, object.user), { transaction: object.transaction })
   .then(function(accountUser) {

@@ -2,7 +2,8 @@ module.exports = {
   account: {
     notFound: 'Account not found',
     accountExists: 'You already have an Account',
-    created: 'Your New Account has been created, please check your email to Confirm'
+    created: 'Your New Account has been created, please check your email to Confirm',
+    empty: "Account name can't be empty",
   },
   accountDatabase: {
     notFound: 'Account User not found',
