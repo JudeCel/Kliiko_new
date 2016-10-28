@@ -64,19 +64,7 @@ function myDashboardPage(req, res, next, accountUserId) {
 
     let managers = result.accountManager || result.facilitator;
     if(!managers) {
-      let observers = shouldRedirectToChat(result.observer);
-      let participants = shouldRedirectToChat(result.participant);
-
-      if((participants && !observers) || (observers && !participants)) {
-        jwt.tokenForMember(req.user.id, (participants || observers).dataValues.session.id, myDashboardUrl).then(function(result) {
-          getUrl(res, result.token, myDashboardUrl);
-        }, function(error) {
-          res.redirect(myDashboardUrl);
-        });
-      }
-      else{
-        res.redirect(myDashboardUrl);
-      }
+      res.redirect(myDashboardUrl);
     } else {
       if((!req.user.signInCount) && !req.session.landed) {
         req.session.landed = true;
@@ -107,15 +95,6 @@ function getUrl(res, token, url) {
       res.redirect(body.redirect_url);
     }
   });
-}
-
-function shouldRedirectToChat(members) {
-  if(members && members.data.length == 1) {
-    return members.data[0];
-  }
-  else {
-    return false;
-  }
 }
 
 function selectManager(accountManagers, facilitators, accountUserId) {
