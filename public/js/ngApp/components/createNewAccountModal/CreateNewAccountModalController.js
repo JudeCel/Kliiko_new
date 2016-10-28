@@ -4,8 +4,8 @@
   angular.module('KliikoApp').controller('CreateNewAccountModalController', CreateNewAccountModalController)
   angular.module('KliikoApp.Root').controller('CreateNewAccountModalController', CreateNewAccountModalController)
 
-  CreateNewAccountModalController.$inject = ['dbg', 'account', 'domServices', 'messenger', '$scope'];
-  function CreateNewAccountModalController(dbg, account, domServices, messenger, $scope) {
+  CreateNewAccountModalController.$inject = ['dbg', 'account', 'domServices', 'messenger'];
+  function CreateNewAccountModalController(dbg, account, domServices, messenger) {
     dbg.log2('#CreateNewAccountModalController started');
 
     var vm = this;

@@ -68,7 +68,7 @@
                     <li><a href='' class="navbar-title">My Details</a></li>
                     <li><a ng-click='app.openModal("contactDetailsModal")'><img class="my-details-container" src='/icons/contact_list_red.png' alt='' />Contact Details</a></li>
                     <li><a ng-click='app.openModal("changePasswordModal")'><img class="my-details-container" src='/icons/password_green_flat.png' alt='' />Change Password</a></li>
-                    <li ng-if='myDashboard.showCreateNewAccount'><a ng-click='app.openModal("createNewAccountModal")'><img class="my-details-container" src='/icons/user_plus_grey.png' alt='' />Create New Accoun</a></li>
+                    <li ng-if='!myDashboard.showCreateNewAccount' data-toggle="collapse" data-target="#navbar"><a ng-click='app.openModal("createNewAccountModal")'><img class="my-details-container" src='/icons/user_plus_grey.png' alt='' />Create New Account</a></li>
                     <li><a href='/logout'><img class="my-details-container" src='/icons/logout_yellow.png' alt='' />Logout</a></li>
                 </ul>
             </div>
