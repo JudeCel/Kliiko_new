@@ -229,7 +229,7 @@ function findSubscriptionByChargebeeId(subscriptionId) {
   return deferred.promise;
 }
 
-function createSubscription(accountId, userId, provider) {
+function createSubscription(accountId, userId, provider, plan) {
   let deferred = q.defer();
 
   findSubscription(accountId).then(function(subscription) {
@@ -241,7 +241,7 @@ function createSubscription(accountId, userId, provider) {
     }
   }).then(function(accountUser) {
     if(accountUser) {
-      return chargebeeSubCreate(chargebeeSubParams(accountUser), provider);
+      return chargebeeSubCreate(chargebeeSubParams(accountUser, plan), provider);
     }
     else {
       deferred.reject(MessagesUtil.subscription.notFound.accountUser);
@@ -284,8 +284,10 @@ function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
     }
   }).then(function(account) {
     if (!account) { return deferred.reject(MessagesUtil.subscription.notFound.account)}
-    createSubscription(accountId, userId).then(function(response) {
-      if(account.selectedPlanOnRegistration && account.selectedPlanOnRegistration != "free_trial"){
+    let plan = account.selectedPlanOnRegistration && (account.selectedPlanOnRegistration == "free_trial" || account.selectedPlanOnRegistration == "free_account") ?
+      account.selectedPlanOnRegistration : null;
+    createSubscription(accountId, userId, null, plan).then(function(response) {
+      if(account.selectedPlanOnRegistration && !plan) {
         updateSubscription({
           accountId: account.id,
           newPlanId: account.selectedPlanOnRegistration,
@@ -302,6 +304,7 @@ function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
       deferred.reject(error);
     });
   }).catch(function(error) {
+    console.log("-1");
     deferred.reject(error);
   });
 
@@ -632,9 +635,9 @@ function chargebeePassParams(result) {
   }
 }
 
-function chargebeeSubParams(accountUser) {
+function chargebeeSubParams(accountUser, plan) {
   return {
-    plan_id: 'free_trial',
+    plan_id: plan || 'free_trial',
     customer: {
       email: accountUser.email,
       first_name: accountUser.firstName,

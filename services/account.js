@@ -48,7 +48,7 @@ function createNewAccount(params, userId) {
           include: [models.AccountUser]
         }).then(function(result) {
 
-          let createParams = getCreateNewAccountParams(params.accountName, result.email);
+          let createParams = getCreateNewAccountParams(params.accountName, result.email, false);
           if (result.AccountUsers[0]) {
             createParams.firstName = result.AccountUsers[0].firstName;
             createParams.lastName = result.AccountUsers[0].lastName;
@@ -80,7 +80,7 @@ function createNewAccount(params, userId) {
   return deferred.promise;
 }
 
-function getCreateNewAccountParams(accountName, email) {
+function getCreateNewAccountParams(accountName, email, freeTrial) {
   return {
     accountName: accountName,
     firstName: accountName,
@@ -88,7 +88,7 @@ function getCreateNewAccountParams(accountName, email) {
     lastName: accountName,
     email: email,
     active: false,
-    selectedPlanOnRegistration: 'free_trial',
+    selectedPlanOnRegistration: freeTrial ? 'free_trial' : 'free_account',
   };
 }
 
