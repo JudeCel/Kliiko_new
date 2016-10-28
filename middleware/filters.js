@@ -57,7 +57,7 @@ function planSelectPage(req, res, next) {
   }
 }
 
-function myDashboardPage(req, res, next) {
+function myDashboardPage(req, res, next, accountUserId) {
   let myDashboardUrl = subdomains.url(req, subdomains.base, '/my-dashboard');
 
   myDashboardServices.getAllData(req.user.id, req.protocol).then(function(result) {
@@ -80,7 +80,7 @@ function myDashboardPage(req, res, next) {
     } else {
       if((!req.user.signInCount) && !req.session.landed) {
         req.session.landed = true;
-        res.redirect(subdomains.url(req, selectManager(result.accountManager, result.facilitator).subdomain, '/account-hub/landing'));
+        res.redirect(subdomains.url(req, selectManager(result.accountManager, result.facilitator, accountUserId).subdomain, '/account-hub/landing'));
       }
       else {
         res.redirect(myDashboardUrl);
@@ -118,11 +118,26 @@ function shouldRedirectToChat(members) {
   }
 }
 
-function selectManager(accountManagers, facilitators) {
-  if(accountManagers) {
-    return accountManagers.data[0].Account;
+function selectManager(accountManagers, facilitators, accountUserId) {
+  if (accountUserId) {
+    if (accountManagers) {
+      for (let i=0; i<accountManagers.data.length; i++) {
+        if (accountManagers.data[i].id == accountUserId) {
+          return accountManagers.data[i].Account;
+        }
+      }
+    } else if (facilitators) {
+      for (let i=0; i<facilitators.data.length; i++) {
+        if (facilitators.data[i].id == accountUserId) {
+          return facilitators.data[i].Account;
+        }
+      }
+    }
   }
-  else if(facilitators) {
+
+  if (accountManagers) {
+    return accountManagers.data[0].Account;
+  } else if (facilitators) {
     return facilitators.data[0].Account;
   }
 }
