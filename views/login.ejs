@@ -96,7 +96,7 @@
 </main>
 
 <% if(error.dialog) { %>
-  <% let errors = error; %>
+  <% var errors = error; %>
   <% include _registrationDialogModal %>
   <script>
     jQuery('#registrationDialogModal').modal('show');
