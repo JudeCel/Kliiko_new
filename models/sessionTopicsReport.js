@@ -37,6 +37,10 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: true
     },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     deletedAt: {
       type: DataTypes.DATE,
       allowNull: true

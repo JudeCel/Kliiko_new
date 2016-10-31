@@ -6,7 +6,7 @@
    up: function (queryInterface, Sequelize) {
      return new Bluebird(function (resolve, reject) {
         queryInterface.removeColumn('SessionTopicsReports', 'facilitator').then(function() {
-          resolve();
+          validateError(error, resolve, reject);
        },function(error) {
          validateError(error, resolve, reject);
        });
