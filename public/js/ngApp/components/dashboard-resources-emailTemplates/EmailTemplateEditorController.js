@@ -126,7 +126,8 @@
               setContent(vm.currentTemplate.content);
               $('.wysiwyg iframe').contents().find("img#brandLogoUrl").attr("src", result.resource.url.full);
             });
-          }else{
+          } else {
+
             populateTemplate(res);
             setContent(vm.currentTemplate.content);
           }
@@ -255,7 +256,7 @@
       vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
       var contentFrame = $("#contentFrame").contents().find('html');
       domServices.modal('previewMailTemplateModal');
-      mailTemplate.previewMailTemplate(vm.currentTemplate).then(function(res) {
+      mailTemplate.previewMailTemplate(vm.currentTemplate, vm.properties.sessionId).then(function(res) {
         if (!res.error) {
           contentFrame.html(res.template.content);
           $("#mailTemplatePreviewSubject").html(res.template.subject);

@@ -106,7 +106,7 @@ function facilitatorInviteParams(facilitator, sessionId) {
 
 function updateToFacilitator(accountUser) {
   let deferred = q.defer();
-  
+
   if (accountUser.role == 'accountManager' || accountUser.role == 'admin') {
     deferred.resolve();
   } else {
