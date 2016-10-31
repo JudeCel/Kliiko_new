@@ -53,13 +53,17 @@ function createWithTokenAndColour(params) {
                 role: 'facilitator'
               }
             }).then(function(invite) {
-              if(invite){
+              if(invite) {
                 deferred.resolve(sessionMemberRes);
               } else {
-                inviteService.createInvite(facilitatorInviteParams(sessionMemberRes, params.sessionId)).then(function() {
-                  deferred.resolve(sessionMemberRes);
+                updateToFacilitator(accountUser).then(function() {
+                  inviteService.createInvite(facilitatorInviteParams(accountUser, params.sessionId)).then(function() {
+                    deferred.resolve(sessionMemberRes);
+                  }, function(error) {
+                    deferred.reject(filters.errors("Invite as Facilitator for " + accountUser.firstName + " " + accountUser.lastName + " were not sent."));
+                  });
                 }, function(error) {
-                  deferred.reject(filters.errors("Invite as Facilitator for " + accountUser.firstName + " " + accountUser.lastName + " were not sent."));
+                  deferred.reject(filters.errors(error));
                 });
               }
             });
@@ -92,12 +96,28 @@ function createWithTokenAndColour(params) {
 
 function facilitatorInviteParams(facilitator, sessionId) {
   return {
-    accountUserId: facilitator.accountUserId,
+    accountUserId: facilitator.id,
     userId: facilitator.UserId,
     sessionId: sessionId,
     role: 'facilitator',
     userType: facilitator.UserId ? 'existing' : 'new'
   }
+}
+
+function updateToFacilitator(accountUser) {
+  let deferred = q.defer();
+  
+  if (accountUser.role == 'accountManager' || accountUser.role == 'admin') {
+    deferred.resolve();
+  } else {
+    models.AccountUser.update({role: 'facilitator'}, { where: { id: accountUser.id } }).then(function(sm) {
+      deferred.resolve();
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }
+
+  return deferred.promise;
 }
 
 function updateHelper(params, sessionMember) {

@@ -61,8 +61,8 @@
       if (!vm.selectedFacilitator || facilitator.email != vm.selectedFacilitator.email) {
         vm.selectedFacilitatorEmail = vm.selectedFacilitator ? vm.selectedFacilitator.email : null;
         var text = vm.selectedFacilitator ?
-          "<p>- If you have already sent Session Invitations, and atarted a Session, this may affect a Participant's level of engagement!</p>"
-            + "<p>- The Name & contact details on the Email Templates signature will change to the new Facilitator on any future emails.</p>"
+          "<p>- If you have already sent Session Invitations, and started a Session, this may affect a Participant's level of engagement!</p>"
+            + "<p>- The Name & Contact details on the Email Templates signature will change to the new Facilitator on any future emails.</p>"
             + "<p>- As will the Facilitator-Avatar Name in the Chat Room.</p>"
             + "<p>- If unavoidable, we strongly recommend sending an SMS, Generic Email or Chat Room Private Message to Participants explaining the change.</p>" :
           "Are you sure you want to select this Facilitator - <b>"
