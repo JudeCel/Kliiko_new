@@ -5,6 +5,7 @@ var filters = require('./../models/filters');
 var brandProjectConstants = require('../util/brandProjectConstants');
 var constants = require('./../util/constants');
 var MessagesUtil = require('./../util/messages');
+var inviteService = require('./invite');
 
 var Session = models.Session;
 var SessionMember = models.SessionMember;
@@ -28,18 +29,49 @@ function createWithTokenAndColour(params) {
 
   models.AccountUser.find({ where: { id: params.accountUserId } }).then(function(accountUser) {
     params.avatarData = accountUser.gender == 'male' ? constants.sessionMemberMan : constants.sessionMemberWoman;
-
     SessionMember.find({ where: { sessionId: params.sessionId, accountUserId: params.accountUserId } }).then(function(sessionMember) {
       let correctFunction = createHelper;
       if(sessionMember) {
         correctFunction = updateHelper;
       }
-
-      if(params.role == 'facilitator') {
+      if (params.role == 'facilitator') {
         params.colour = brandProjectConstants.memberColours.facilitator;
-        correctFunction(deferred, params, sessionMember);
-      }
-      else {
+        correctFunction(params, sessionMember).then(function(sessionMemberRes) {
+          models.Invite.destroy({
+            where: {
+              sessionId: params.sessionId,
+              accountUserId:  {
+                $ne: sessionMemberRes.accountUserId
+              },
+              role: 'facilitator'
+            }
+          }).then(function(result) {
+            models.Invite.find({
+              where: {
+                sessionId: params.sessionId,
+                accountUserId: sessionMemberRes.accountUserId,
+                role: 'facilitator'
+              }
+            }).then(function(invite) {
+              if(invite){
+                deferred.resolve(sessionMemberRes);
+              } else {
+                inviteService.createInvite(facilitatorInviteParams(sessionMemberRes, params.sessionId)).then(function() {
+                  deferred.resolve(sessionMemberRes);
+                }, function(error) {
+                  deferred.reject(filters.errors("Invite as Facilitator for " + accountUser.firstName + " " + accountUser.lastName + " were not sent."));
+                });
+              }
+            });
+          },function(error) {
+            deferred.reject(filters.errors(error));
+          });
+
+        }, function(error) {
+          deferred.reject(filters.errors(error));
+        });
+
+      } else {
         SessionMember.count({
           where: {
             sessionId: params.sessionId,
@@ -58,20 +90,38 @@ function createWithTokenAndColour(params) {
   return deferred.promise;
 }
 
-function updateHelper(deferred, params, sessionMember) {
+function facilitatorInviteParams(facilitator, sessionId) {
+  return {
+    accountUserId: facilitator.accountUserId,
+    userId: facilitator.UserId,
+    sessionId: sessionId,
+    role: 'facilitator',
+    userType: facilitator.UserId ? 'existing' : 'new'
+  }
+}
+
+function updateHelper(params, sessionMember) {
+  let deferred = q.defer();
+
   sessionMember.update(params, { returning: true, transaction: params.t }).then(function(sm) {
     deferred.resolve(sm);
   }, function(error) {
-    deferred.reject(filters.errors(error));
+    deferred.reject(error);
   });
+
+  return deferred.promise;
 }
 
-function createHelper(deferred, params) {
+function createHelper(params) {
+  let deferred = q.defer();
+
   SessionMember.create(params, { transaction: params.t }).then(function(sessionMember) {
     deferred.resolve(sessionMember);
   }, function(error) {
-    deferred.reject(filters.errors(error));
+    deferred.reject(error);
   });
+
+  return deferred.promise;
 }
 
 function createToken(id) {

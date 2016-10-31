@@ -125,7 +125,7 @@
     <uib-accordion-group is-open="step1Controller.accordions.facilitators">
       <uib-accordion-heading>
         <div class="panel-label">
-          Select Facilitator
+          {{ step1Controller.selectedFacilitator ? 'Replace Facilitator' : 'Select Facilitator' }}
           <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.sessionName, 'glyphicon-chevron-right': !step1Controller.accordions.sessionName}"></i>
           <span class="panel-value pull-right">
             {{ step1Controller.session.steps.step1.facilitator.firstName + ' ' + step1Controller.session.steps.step1.facilitator.lastName }}
@@ -133,7 +133,11 @@
         </div>
       </uib-accordion-heading>
 
-      <div id='dashboard-contact-lists' ng-controller="ContactListController as clc">
+      <div ng-if='!step1Controller.canSelectFacilitator'>
+        Before selecting Facilitator for your session, please type session name and select session time.
+      </div>
+
+      <div id='dashboard-contact-lists' ng-controller="ContactListController as clc" ng-if='step1Controller.canSelectFacilitator'>
         <div class="row" ng-init="clc.initLists('facilitators')">
           <div id="contact-lists-right-column" class="col-md-12">
 
@@ -174,7 +178,7 @@
                           ng-class="{'selected':member._selected}">
 
                         <td>
-                          <input type="radio" name="member" ng-checked="step1Controller.selectedFacilitator.email == member.email" ng-click='step1Controller.inviteFacilitator(member)'>
+                          <input type="radio" name="member" value="{{member.email}}" ng-model="step1Controller.selectedFacilitatorEmail" ng-click='step1Controller.inviteFacilitator(member)'>
                         </td>
                         <td>{{ member.firstName }}</td>
                         <td>{{ member.lastName }}</td>
@@ -210,7 +214,7 @@
                     </li>
                   </ul>
                 </dir-pagination-controls>
-              <div>
+              </div>
             </section>
           </div>
         </div>
@@ -279,6 +283,6 @@
         </section>
     </uib-accordion-group>
   </uib-accordion>
-  
+
   <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/modals/sessionType.html'"></ng-include>
 </section>
