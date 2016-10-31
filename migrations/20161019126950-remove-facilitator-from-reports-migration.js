@@ -18,8 +18,5 @@
      },function(error) {
        validateError(error, resolve, reject);
      });
-   },function(error) {
-     validateError(error, resolve, reject);
-   });
    }
  };

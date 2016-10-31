@@ -5,11 +5,12 @@
  module.exports = {
   up: function (queryInterface, Sequelize) {
     return new Bluebird(function (resolve, reject) {
-      queryInterface.addColumn('SessionTopicsReports', 'type', { type: Sequelize.STRING, allowNull: false }).then(function() {
+      queryInterface.removeColumn('SessionTopicsReports', 'enum_SessionTopicsReports_type').then(function() {
         resolve();
       },function(error) {
         validateError(error, resolve, reject);
       });
+
     });
   },
   down: function (queryInterface, Sequelize) {
