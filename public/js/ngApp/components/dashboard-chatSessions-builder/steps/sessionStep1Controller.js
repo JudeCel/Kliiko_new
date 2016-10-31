@@ -67,8 +67,9 @@
             + "<p>- If unavoidable, we strongly recommend sending an SMS, Generic Email or Chat Room Private Message to Participants explaining the change.</p>" :
           "Are you sure you want to select this Facilitator - <b>"
             + facilitator.firstName + " " + facilitator.lastName
-            + "</b>?<br/> We strongly suggest thar any change to the Facilitator later, may confuse Participants!";
-        $confirm({ text: text, htmlText: $sce.trustAsHtml(text), textLeft: true, wide: true }).then(function() {
+            + "</b>?<br/> We strongly suggest that any change to the Facilitator later, may confuse Participants!";
+        var leftAndWide = vm.selectedFacilitator ? true : false;
+        $confirm({ text: text, htmlText: $sce.trustAsHtml(text), textLeft: leftAndWide, wide: leftAndWide }).then(function() {
           vm.session.addMembers(facilitator, 'facilitator').then(function(res) {
             vm.session.sessionData.facilitator = facilitator;
             vm.session.steps.step1.facilitator = facilitator;
