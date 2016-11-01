@@ -54,7 +54,7 @@
 
     function initCanSelectFacilitator() {
       vm.canSelectFacilitator = vm.session.steps.step1.name && vm.session.steps.step1.name.length > 0
-        && new Date(vm.step1.endTime) > new Date(vm.step1.startTime);
+        && vm.type != null && new Date(vm.step1.endTime) > new Date(vm.step1.startTime);
     }
 
     function inviteFacilitator(facilitator) {
@@ -253,6 +253,7 @@
       vm.type = vm.typeToConfirm;
       updateStep({type: vm.type}).then(function() {
         vm.session.steps.step1.type = vm.type;
+        initCanSelectFacilitator();
       }, function(err) {
         vm.type = vm.session.steps.step1.type;
       });

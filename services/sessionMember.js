@@ -5,7 +5,6 @@ var filters = require('./../models/filters');
 var brandProjectConstants = require('../util/brandProjectConstants');
 var constants = require('./../util/constants');
 var MessagesUtil = require('./../util/messages');
-var inviteService = require('./invite');
 
 var Session = models.Session;
 var SessionMember = models.SessionMember;
@@ -29,53 +28,17 @@ function createWithTokenAndColour(params) {
 
   models.AccountUser.find({ where: { id: params.accountUserId } }).then(function(accountUser) {
     params.avatarData = accountUser.gender == 'male' ? constants.sessionMemberMan : constants.sessionMemberWoman;
+
     SessionMember.find({ where: { sessionId: params.sessionId, accountUserId: params.accountUserId } }).then(function(sessionMember) {
       let correctFunction = createHelper;
       if(sessionMember) {
         correctFunction = updateHelper;
       }
-      if (params.role == 'facilitator') {
+
+      if(params.role == 'facilitator') {
         params.colour = brandProjectConstants.memberColours.facilitator;
-        correctFunction(params, sessionMember).then(function(sessionMemberRes) {
-          models.Invite.destroy({
-            where: {
-              sessionId: params.sessionId,
-              accountUserId:  {
-                $ne: sessionMemberRes.accountUserId
-              },
-              role: 'facilitator'
-            }
-          }).then(function(result) {
-            models.Invite.find({
-              where: {
-                sessionId: params.sessionId,
-                accountUserId: sessionMemberRes.accountUserId,
-                role: 'facilitator'
-              }
-            }).then(function(invite) {
-              if(invite) {
-                deferred.resolve(sessionMemberRes);
-              } else {
-                updateToFacilitator(accountUser).then(function() {
-                  inviteService.createInvite(facilitatorInviteParams(accountUser, params.sessionId)).then(function() {
-                    deferred.resolve(sessionMemberRes);
-                  }, function(error) {
-                    deferred.reject(filters.errors("Invite as Facilitator for " + accountUser.firstName + " " + accountUser.lastName + " were not sent."));
-                  });
-                }, function(error) {
-                  deferred.reject(filters.errors(error));
-                });
-              }
-            });
-          },function(error) {
-            deferred.reject(filters.errors(error));
-          });
-
-        }, function(error) {
-          deferred.reject(filters.errors(error));
-        });
-
-      } else {
+        correctFunction(deferred, params, sessionMember);
+      }  else {
         SessionMember.count({
           where: {
             sessionId: params.sessionId,
@@ -94,54 +57,20 @@ function createWithTokenAndColour(params) {
   return deferred.promise;
 }
 
-function facilitatorInviteParams(facilitator, sessionId) {
-  return {
-    accountUserId: facilitator.id,
-    userId: facilitator.UserId,
-    sessionId: sessionId,
-    role: 'facilitator',
-    userType: facilitator.UserId ? 'existing' : 'new'
-  }
-}
-
-function updateToFacilitator(accountUser) {
-  let deferred = q.defer();
-  
-  if (accountUser.role == 'accountManager' || accountUser.role == 'admin') {
-    deferred.resolve();
-  } else {
-    models.AccountUser.update({role: 'facilitator'}, { where: { id: accountUser.id } }).then(function(sm) {
-      deferred.resolve();
-    }, function(error) {
-      deferred.reject(error);
-    });
-  }
-
-  return deferred.promise;
-}
-
-function updateHelper(params, sessionMember) {
-  let deferred = q.defer();
-
+function updateHelper(deferred, params, sessionMember) {
   sessionMember.update(params, { returning: true, transaction: params.t }).then(function(sm) {
     deferred.resolve(sm);
   }, function(error) {
-    deferred.reject(error);
+    deferred.reject(filters.errors(error));
   });
-
-  return deferred.promise;
 }
 
-function createHelper(params) {
-  let deferred = q.defer();
-
+function createHelper(deferred, params) {
   SessionMember.create(params, { transaction: params.t }).then(function(sessionMember) {
     deferred.resolve(sessionMember);
   }, function(error) {
-    deferred.reject(error);
+    deferred.reject(filters.errors(error));
   });
-
-  return deferred.promise;
 }
 
 function createToken(id) {
