@@ -3,6 +3,9 @@
 var MessagesUtil = require('./../util/messages');
 var MailTemplate  = require('./../models').MailTemplate;
 var MailTemplateOriginal  = require('./../models').MailTemplateBase;
+var Session  = require('./../models').Session;
+var SessionMember  = require('./../models').SessionMember;
+var AccountUser  = require('./../models').AccountUser;
 var filters = require('./../models/filters');
 var templateMailer = require('../mailers/mailTemplate');
 var emailDate = require('./formats/emailDate');
@@ -360,7 +363,7 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
 
   if(template.properties) {
     if (template.properties.createdWithCustomName && template.properties.templateName == null) {
-        template.name = null;        
+        template.name = null;
     }
 
     if (template.properties.templateName) {
@@ -565,8 +568,8 @@ function deleteMailTemplate(id, callback) {
 function prepareMailDefaultParameters(params) {
   params = params || {};
   let defaultParams = {
-    termsOfUseUrl: mailersHelpers.getUrl('', '/terms_of_use'),
-    privacyPolicyUrl: mailersHelpers.getUrl('', '/privacy_policy'),
+    termsOfUseUrl: mailersHelpers.getUrl('', null, '/terms_of_use'),
+    privacyPolicyUrl: mailersHelpers.getUrl('', null, '/privacy_policy'),
     firstName: "", lastName: "", accountName: "", startDate: new Date().toLocaleDateString(), startTime: new Date().toLocaleTimeString(),
     endDate: new Date().toLocaleDateString(), endTime: new Date().toLocaleTimeString(),
     facilitatorFirstName: "", facilitatorLastName: "", facilitatorMail: "", participantMail: "", facilitatorMobileNumber: "",
@@ -653,7 +656,7 @@ function formatTemplateString(str) {
   return str;
 }
 
-function composePreviewMailTemplate(mailTemplate) {
+function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
   let mailPreviewVariables = {
     firstName: "John",
     lastName: "Smith",
@@ -679,8 +682,38 @@ function composePreviewMailTemplate(mailTemplate) {
     logInUrl: "#/LogInUrl",
     resetPasswordUrl: "#/resetPasswordUrl"
   };
-  var template = composeMailFromTemplate(mailTemplate, mailPreviewVariables);
-  template.content = template.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
-
-  return template;
+  if (sessionId) {
+    Session.find({
+        where: { id: sessionId },
+        include: [{
+          model: SessionMember,
+          where: { role: "facilitator"},
+          include: [{
+            model: AccountUser
+          }]
+        }]
+       }).then(function (result) {
+      if (result) {
+        mailPreviewVariables.startDate = emailDate.format("date", new Date(result.startTime), result.timeZone);
+        mailPreviewVariables.startTime = emailDate.format("time", new Date(result.startTime), result.timeZone);
+        mailPreviewVariables.endDate = emailDate.format("date", new Date(result.endTime), result.timeZone);
+        mailPreviewVariables.endTime = emailDate.format("time", new Date(result.endTime), result.timeZone);
+        mailPreviewVariables.sessionName = result.name;
+        mailPreviewVariables.incentive = result.incentive_details;
+        if (result.SessionMembers[0]) {
+          mailPreviewVariables.facilitatorFirstName = result.SessionMembers[0].AccountUser.firstName;
+          mailPreviewVariables.facilitatorLastName = result.SessionMembers[0].AccountUser.lastName;
+          mailPreviewVariables.facilitatorMail = result.SessionMembers[0].AccountUser.email;
+          mailPreviewVariables.facilitatorMobileNumber = result.SessionMembers[0].AccountUser.mobile;
+        }
+      }
+      var template = composeMailFromTemplate(mailTemplate, mailPreviewVariables);
+      template.content = template.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
+      callback(template);
+    });
+  } else {
+    var template = composeMailFromTemplate(mailTemplate, mailPreviewVariables);
+    template.content = template.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
+    callback(template);
+  }
 }

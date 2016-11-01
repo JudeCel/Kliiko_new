@@ -18,7 +18,7 @@
                 </div>
 
                 <div class="error-column has-error" id="warning-email-password">
-                  <div class="error-field"><%= error %></div>
+                  <div class="error-field"><%= error.dialog ? "" : error %></div>
                   <button type="button" class="close">×</button>
                 </div>
 
@@ -94,5 +94,13 @@
         </div>
     </div>
 </main>
+
+<% if(error.dialog) { %>
+  <% var errors = error; %>
+  <% include _registrationDialogModal %>
+  <script>
+    jQuery('#registrationDialogModal').modal('show');
+  </script>
+<% } %>
 
 <% include footer %>

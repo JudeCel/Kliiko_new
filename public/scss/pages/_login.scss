@@ -7,6 +7,9 @@
     margin-left: 45%;
     min-width: 235px;
     margin-right: 50px;
+    @media (max-width: 429px) {
+      min-width: 165px;
+    }
   }
 }
 
@@ -175,6 +178,12 @@
       }
     }
   }
+
+  .info-message-text {
+     font-size: 16px;
+     color: #484848;
+  }
+
 }
 
 .main-first-page-registration .login-container {

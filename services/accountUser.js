@@ -4,6 +4,7 @@ var MessagesUtil = require('./../util/messages');
 var constants = require('./../util/constants');
 var models = require('./../models');
 var filters = require('./../models/filters');
+var emailConfirmation = require('./emailConfirmation');
 var AccountUser = models.AccountUser;
 var SessionMember = models.SessionMember;
 var User = models.User;
@@ -24,6 +25,9 @@ const VALID_ATTRIBUTES = {
 
 function createAccountManager(object, callback) {
   object.errors = object.errors || {};
+  if (object.errors.name) {
+    return callback(null, object);
+  }
 
   AccountUser.create(prepareAccountManagerParams(object.params, object.account, object.user), { transaction: object.transaction })
   .then(function(accountUser) {
@@ -31,7 +35,16 @@ function createAccountManager(object, callback) {
     if(contactList) {
       let cluParams = contactListUserParams({ accountId: accountUser.AccountId, contactListId: contactList.id }, accountUser);
       models.ContactListUser.create(cluParams, {transaction: object.transaction}).then(function() {
-        callback(null, object);
+        if (object.params.active == false) {
+          emailConfirmation.sendEmailAccountConfirmationToken(object.params.email, accountUser.id, function(sendError, sendObject) {
+            if (sendError) {
+              _.merge(object.errors, filters.errors(sendError));
+            }
+            callback(null, object);
+          });
+        } else {
+          callback(null, object);
+        }
       }, function(error) {
         _.merge(object.errors, filters.errors(error));
         callback(null, object);
@@ -199,6 +212,36 @@ function findWithUser(user) {
   return deferred.promise;
 }
 
+function findById(id) {
+  let deferred = q.defer();
+
+  AccountUser.find({
+    where: { id: id },
+    include: [models.Account]
+  }).then(function(result) {
+    deferred.resolve(result);
+  }, function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function findWithEmail(email) {
+  let deferred = q.defer();
+
+  models.AccountUser.all({
+    where: { email: { ilike: email } },
+    include: [models.Invite],
+  }).then(function(result) {
+    deferred.resolve(result);
+  }, function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
 function assignCurrentUserInfo(accountUser, user) {
   _.merge(user, _.pick(accountUser.dataValues, prepareValidAccountUserParams()));
   user.accountUserId = accountUser.id;
@@ -217,5 +260,7 @@ module.exports = {
   updateWithUserId: updateWithUserId,
   findWithUser: findWithUser,
   findWithSessionMembers: findWithSessionMembers,
-  validateParams: validateParams
+  validateParams: validateParams,
+  findWithEmail: findWithEmail,
+  findById: findById
 }

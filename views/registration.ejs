@@ -1,6 +1,5 @@
 <% include header %>
 
-
 <main class="main-first-page-registration">
   <div class="login-container center-block text-font-family">
     <ul class="nav nav-tabs">
@@ -41,7 +40,6 @@
                       <span class="has-error"><%= errors.name %></span>
                     </td>
                   </tr>
-
 
                   <tr>
                     <td>
@@ -111,7 +109,6 @@
                       <h6>*</h6>
                     </td>
                   </tr>
-
 
                   <tr>
                     <td></td>
@@ -193,4 +190,12 @@
     </div>
   </div>
 </main>
+
+<% if(errors.dialog) { %>
+  <% include _registrationDialogModal %>
+  <script>
+    jQuery('#registrationDialogModal').modal('show');
+  </script>
+<% } %>
+
 <% include footer %>

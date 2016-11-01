@@ -20,7 +20,8 @@ describe('Topic Service', function() {
       endTime: startTime.setHours(startTime.getHours() + 2000),
       status_id: 1,
       colours_used: '["3","6","5"]',
-      accountId: testAccount.id
+      accountId: testAccount.id,
+      timeZone: 'Europe/Riga'
     }
     Session.create(sessionAttrs).then(function(session) {
       deferred.resolve(session);

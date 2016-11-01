@@ -48,7 +48,7 @@ users.sendResetPasswordToken = function(params, callback) {
   mailTemplateService.getActiveMailTemplate("passwordResetRequest", null, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {
-      let link = { url: helpers.getUrl(params.token, resetPasswordPath)};
+      let link = { url: helpers.getUrl(params.token, null, resetPasswordPath)};
       helpers.renderMailTemplate('resetPasswordToken', link, function(err, html){
         if (err) {
           return callback(err);
@@ -64,7 +64,7 @@ users.sendResetPasswordToken = function(params, callback) {
     } else {
       // found template in db
       var mailContent = mailTemplateService.composeMailFromTemplate(result, {
-        resetPasswordUrl: helpers.getUrl(params.token, resetPasswordPath),
+        resetPasswordUrl: helpers.getUrl(params.token, null, resetPasswordPath),
         firstName: params.name
       });
       if (mailContent.error) {
@@ -76,7 +76,7 @@ users.sendResetPasswordToken = function(params, callback) {
 };
 
 users.sendEmailConfirmationToken = function(params, callback) {
-  let mailUrl = helpers.getUrl(params.token, '/VerifyEmail/');
+  let mailUrl = helpers.getUrl(params.token, params.accountUserId, '/VerifyEmail/');
   mailTemplateService.getActiveMailTemplate("registerConfirmationEmail", null, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {

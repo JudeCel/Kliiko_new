@@ -348,7 +348,8 @@ describe('SERVICE - Subscription', function() {
                 accountId: testData.account.id,
                 startTime: startTime,
                 endTime: endTime,
-                name: "My cool session"
+                name: "My cool session",
+                timeZone: 'Europe/Riga'
               }).then(function() {
                 cb();
               }).catch(function(error) {
@@ -628,7 +629,8 @@ describe('SERVICE - Subscription', function() {
             accountId: testData.account.id,
             name: 'some name',
             startTime: new Date(),
-            endTime: new Date()
+            endTime: new Date(),
+            timeZone: 'Europe/Riga'
           };
 
           models.Session.create(params).then(function() {

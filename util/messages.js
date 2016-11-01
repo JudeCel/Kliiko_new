@@ -1,6 +1,9 @@
 module.exports = {
   account: {
-    notFound: 'Account not found'
+    notFound: 'Account not found',
+    accountExists: 'You already have an Account',
+    created: 'Your New Account has been created, please check your email to Confirm',
+    empty: "Account name can't be empty",
   },
   accountDatabase: {
     notFound: 'Account User not found',
@@ -109,7 +112,8 @@ module.exports = {
         typeRequired: 'Type must be selected',
         startTimeRequired: 'Start time must be provided',
         endTimeRequired: 'End time must be provided',
-        invalidDateRange: "Start date can't be higher then end date.",
+        invalidDateRange: "Start date can't be higher then end date",
+        invalidEndTime: "End time can't be equal to start time",
         facilitator: 'No facilitator provided'
       },
       secondStep: {
@@ -199,6 +203,13 @@ module.exports = {
   users: {
     agreeTOC: 'You must agree to the Terms & Conditions before Sign up.',
     alreadyChanged: 'Password already changed.',
+    dialog: {
+      emailExists: "You already have a Role in the system. Please Login.",
+      emailExistsCanCreateAccount: "You already have a Role in the system, you can Create a New Account from your Dashboard. Please Login.",
+      emailExistsContinueToCheckIn: "Sorry, you currently cannot Create a New Account, because you have already Accepted a Session Invitation. \
+        Please continue to Ckeck-In from your Confirmation Email to enter the Session. \
+        You will be able to Create a New Account when you Leave the Session and go to My Dashboard."
+    }
   },
   validators: {
     subscription: {

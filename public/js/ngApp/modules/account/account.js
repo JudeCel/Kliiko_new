@@ -6,12 +6,13 @@
   accountFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg'];
   function accountFactory($q, globalSettings, $resource, dbg) {
 
-    var accountRestApi = $resource(globalSettings.restUrl + '/account', {}, {});
+    var accountRestApi = $resource(globalSettings.restUrl + '/account', {}, {post: {method: 'POST'}});
 
     var account = {};
 
     var UserService = {};
     UserService.getAccountData = getAccountData;
+    UserService.createNewAccount = createNewAccount;
     return UserService;
 
     function getAccountData() {
@@ -27,6 +28,20 @@
           account = res;
           fetchSubscription(account);
           deferred.resolve(account);
+        }
+      });
+
+      return deferred.promise;
+    }
+
+    function createNewAccount(data) {
+      var deferred = $q.defer();
+
+      accountRestApi.post(data, function (res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
         }
       });
 

@@ -11,9 +11,8 @@ module.exports = (Sequelize, DataTypes) => {
     accountId: { type: DataTypes.INTEGER, allowNull: false  },
     participantListId: { type: DataTypes.INTEGER, allowNull: true  },
     brandProjectPreferenceId: { type: DataTypes.INTEGER, allowNull: true  },
-    name: { type: DataTypes.STRING, allowNull: false,  defaultValue: 'untitled', validate: {
-      notEmpty: true,
-      isLength: validations.length('name', { max: 20 })
+    name: { type: DataTypes.STRING, allowNull: false,  defaultValue: '', validate: {
+      isLength: validations.length('name', { max: 40 })
     } },
     startTime: { type: DataTypes.DATE, allowNull: false, defaultValue: initializeDate(), validate: { isValid: validateDate } },
     endTime: { type: DataTypes.DATE, allowNull: false , defaultValue: initializeDate() },

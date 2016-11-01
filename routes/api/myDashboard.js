@@ -20,9 +20,21 @@ function getResponses(req, res) {
       res.send({ error: error });
     },
     onSuccess: function(result) {
+      let hasOwnAccount = false;
+      if (result["accountManager"]) {
+        for(let i=0; i<result["accountManager"].data.length; i++) {
+          if (result["accountManager"].data[i].owner) {
+            hasOwnAccount = true;
+            break;
+          }
+        }
+      }
+      
       res.send({
         data: result,
-        dateFormat: constants.dateFormatWithTime
+        dateFormat: constants.dateFormatWithTime,
+        hasOwnAccount: hasOwnAccount,
+        hasRoles: Object.keys(result).length > 0
       });
     }
   };

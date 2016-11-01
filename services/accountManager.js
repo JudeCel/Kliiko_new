@@ -146,29 +146,19 @@ function preValidate(user, accountId, email, errors) {
   if(user.email == email) {
     errors.email = MessagesUtil.accountManager.error.selfInvite;
     deferred.resolve(errors);
-  }
-  else if(email) {
+  } else if (email) {
     AccountUser.findAll({
-      include: [{
-        model: User,
-        where: { email: email }
-      }],
-      where: {
-        UserId: { $ne: user.id },
-        AccountId: accountId
-      }
+      where: { AccountId: accountId, role: "accountManager", email: email }
     }).then(function(accountUsers) {
       if(!_.isEmpty(accountUsers)) {
         errors.email = MessagesUtil.accountManager.error.alreadyInvited;
       }
-
       deferred.resolve(errors);
     }).catch(function(error) {
       errors = _.merge(errors, filters.errors(error));
       deferred.resolve(errors);
     });
-  }
-  else {
+  } else {
     deferred.resolve(errors);
   }
 
@@ -200,22 +190,38 @@ function inviteExistingUser(existsUser, params, accountId) {
   let deferred = q.defer();
 
   existsUser.getAccounts({ where: { id: accountId } }).then(function(results) {
-    if(_.isEmpty(results)) {
+    if(!_.isEmpty(results)) {
+      updateAccountUser(existsUser.id, accountId, results[0].AccountUser.id).then(function(params) {
+        deferred.resolve(params);
+      }, function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    } else {
       createAccountUser(params, existsUser.id, 'existing', accountId).then(function(params) {
         deferred.resolve(params);
       }, function(error) {
         deferred.reject(filters.errors(error));
       });
     }
-    else {
-      deferred.reject(MessagesUtil.accountManager.error.alreadyAccepted);
-    }
+
   });
 
   return deferred.promise;
 }
 
-function createAccountUser(params, userId, type, accountId, cb) {
+function updateAccountUser(userId, accountId, accountUserId) {
+  let deferred = q.defer();
+
+  AccountUser.update({ role: 'accountManager' }, { where: { id: accountUserId } }).then(function() {
+    deferred.resolve(inviteParams(accountUserId, accountId, userId, 'existing'));
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function createAccountUser(params, userId, type, accountId) {
   let deferred = q.defer();
   adjustParamsForNewAccountUser(params, userId, accountId);
 

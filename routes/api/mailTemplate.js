@@ -109,10 +109,11 @@ function resetMailTemplatePost(req, res, next) {
 // accepts template object from client - in case if user tests unsaved HTML
 // fills template with preset data for preview purposes
 function previewMailTemplatePost(req, res, next) {
-  var result = MailTemplateService.composePreviewMailTemplate(req.body.mailTemplate);
-  if (!result.error) {
-    res.send({error: null, template: result});
-  } else {
-    res.send({error: result.error, template: null});
-  }
+  MailTemplateService.composePreviewMailTemplate(req.body.mailTemplate, req.body.sessionId, function(result) {
+    if (!result.error) {
+      res.send({error: null, template: result});
+    } else {
+      res.send({error: result.error, template: null});
+    }
+  });
 }

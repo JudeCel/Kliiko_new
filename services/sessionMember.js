@@ -38,8 +38,7 @@ function createWithTokenAndColour(params) {
       if(params.role == 'facilitator') {
         params.colour = brandProjectConstants.memberColours.facilitator;
         correctFunction(deferred, params, sessionMember);
-      }
-      else {
+      }  else {
         SessionMember.count({
           where: {
             sessionId: params.sessionId,

@@ -526,11 +526,12 @@ function constantsSurvey() {
 function createCsvHeader(questions) {
   let array = [];
   questions.forEach(function(question) {
-    array.push(question.name);
     if(question.answers[0].contactDetails) {
       _.map(question.answers[0].contactDetails, function(contact) {
         array.push(contact.name);
       });
+    } else {
+      array.push(question.name);
     }
   });
 
@@ -542,19 +543,30 @@ function createCsvData(header, survey) {
 
   survey.SurveyAnswers.forEach(function(surveyAnswer) {
     let object = {};
+    let indexDiff = 0;
 
     survey.SurveyQuestions.forEach(function(question, index) {
       let answer = surveyAnswer.answers[question.id];
 
       switch(answer.type) {
         case 'number':
-          assignNumber(index, header, object, question, answer);
+          assignNumber(index + indexDiff, header, object, question, answer);
           break;
         case 'string':
-          object[header[index]] = answer.value;
+          object[header[index + indexDiff]] = answer.value;
           break;
         case 'boolean':
-          assignBoolean(index, header, object, question, answer);
+          assignBoolean(index + indexDiff, header, object, question, answer);
+          break;
+        case 'object':
+          if (answer.contactDetails) {
+            for(var property in answer.contactDetails) {
+              while (property.toLowerCase() != header[index + indexDiff].replace(' ', '').toLowerCase()) {
+                indexDiff++;
+              }
+              object[header[index + indexDiff]] = answer.contactDetails[property];
+            }
+          }
           break;
       }
     });
@@ -595,7 +607,7 @@ function validAnswerParams(params) {
       surveyAnswer.answers[i].value = null;
       surveyAnswer.answers[i].contactDetails = question.contactDetails;
     }
-    else if(question.answer) {
+    else if(question.answer || question.answer == 0) {
       surveyAnswer.answers[i].type = typeof question.answer;
       surveyAnswer.answers[i].value = question.answer;
     }
