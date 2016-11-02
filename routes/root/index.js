@@ -314,8 +314,10 @@ router.route('/VerifyEmail/:token/:accountUserId?')
             res.render('/login', tplData);
           } else {
             req.logout();
-            req.login(user, function(err) {
-              middlewareFilters.myDashboardPage(req, res, next, accountUserId);
+            user.increment('signInCount').done(function(result) {
+              req.login(user, function(err) {
+                middlewareFilters.myDashboardPage(req, res, next, accountUserId);
+              });
             });
           };
         });

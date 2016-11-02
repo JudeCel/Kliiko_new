@@ -157,7 +157,7 @@ router.post('/sessionMember/addFacilitator', PERMISSIONS.managerAdmin, sessionMe
 
 
 // Session Builder
-router.get('/sessionBuilder/canAddObservers',  PERMISSIONS.managerAdmin, sessionBuilder.canAddObservers);
+router.get('/sessionBuilder/canAddObservers',  PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.canAddObservers);
 
 router.post('/sessionBuilder', PERMISSIONS.managerAdmin, sessionBuilder.new);
 router.get('/sessionBuilder/:id', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.openBuild);
