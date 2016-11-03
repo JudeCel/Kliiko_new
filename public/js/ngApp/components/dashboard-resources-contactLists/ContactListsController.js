@@ -62,6 +62,8 @@
     vm.returnSelectedCount = returnSelectedCount;
     vm.canAddMoreFields = canAddMoreFields;
     vm.requireField = requireField;
+    vm.isObserverListSelected = isObserverListSelected;
+    
     // required for correct list switching.
     var isSelected = false;
 
@@ -81,8 +83,10 @@
           removeSpecificLists();
         }
 
-        if(listType == 'facilitators') {
+        if (listType == 'facilitators') {
           vm.sectListActiveToFacilitators();
+        } else if (listType == "observers") {
+          vm.changeActiveList(2);
         } else {
           vm.changeActiveList(0);
         }
@@ -751,6 +755,10 @@
       else {
         return [];
       }
+    }
+
+    function isObserverListSelected() {
+        return vm.lists.activeListIndex == 2;
     }
 
   }

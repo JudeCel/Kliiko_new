@@ -1,5 +1,5 @@
 <section id='step-contactlists' ng-controller='ContactListController as clc'>
-  <div ng-init="clc.hideStuff = true; clc.setSessionId(sbc.session.id); clc.initLists()">
+  <div ng-init="clc.hideStuff = true; clc.setSessionId(sbc.session.id); clc.initLists(sbc.isSelectObserverStep() && 'observers' || '');">
 
     <div class='row'>
       <div class='btn-standart btn-red increased-margin' ng-hide="sbc.showContactsList" ng-click='sbc.finishSelectingMembers()'>
