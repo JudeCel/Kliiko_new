@@ -63,7 +63,10 @@
     vm.canAddMoreFields = canAddMoreFields;
     vm.requireField = requireField;
     vm.isObserverListSelected = isObserverListSelected;
-    
+    vm.getTextAfterEditButtonOnStep5 = getTextAfterEditButtonOnStep5;
+
+    var observerListIndex = 2;
+
     // required for correct list switching.
     var isSelected = false;
 
@@ -86,7 +89,7 @@
         if (listType == 'facilitators') {
           vm.sectListActiveToFacilitators();
         } else if (listType == "observers") {
-          vm.changeActiveList(2);
+          vm.changeActiveList(observerListIndex);
         } else {
           vm.changeActiveList(0);
         }
@@ -758,7 +761,11 @@
     }
 
     function isObserverListSelected() {
-        return vm.lists.activeListIndex == 2;
+        return vm.lists.activeListIndex == observerListIndex;
+    }
+
+    function getTextAfterEditButtonOnStep5(isObserverListSelected) {
+      return isObserverListSelected ? '' : '&nbsp; or &nbsp;';
     }
 
   }

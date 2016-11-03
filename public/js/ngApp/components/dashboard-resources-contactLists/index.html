@@ -92,7 +92,7 @@
             <span ng-if="clc.lists.activeList.editable">
               &nbsp; or &nbsp;
               <div class='btn-standart btn-green btn-large' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
-              {{ sbc.isSelectObserverStep() ? '' : '&nbsp; or &nbsp;' }}
+              {{ clc.getTextAfterEditButtonOnStep5(sbc.isSelectObserverStep()) }}
             </span>
 
             <div custom-select-directive ng-hide="sbc.isSelectObserverStep() && !clc.isObserverListSelected()" data-title="Add New Contacts" data-id="contact-lists-add-button-2" class="custom-select-directive btn-large">

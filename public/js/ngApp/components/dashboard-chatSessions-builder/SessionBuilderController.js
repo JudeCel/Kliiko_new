@@ -55,7 +55,6 @@
     vm.finishSelectingMembers = finishSelectingMembers;
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
     vm.selectObserversClickHandle = selectObserversClickHandle;
-
     vm.isSelectObserverStep = isSelectObserverStep;
 
     function closeSession() {
