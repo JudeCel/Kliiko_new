@@ -36,8 +36,12 @@ helpers.mailFrom = function(){
   return process.env.MAIL_FROM_NAME + " <" + process.env.MAIL_FROM_EMAIL + ">";
 };
 
-helpers.getUrl = function(token, path){
-  return "http://" + process.env.SERVER_DOMAIN + returnPort() + path + token;
+helpers.getUrl = function(token, accountUserId, path){
+  let url = "http://" + process.env.SERVER_DOMAIN + returnPort() + path + token;
+  if (accountUserId) {
+    url += '/' + encodeURI(new Buffer(accountUserId.toString()).toString('base64'))
+  }
+  return url;
 };
 
 function returnPort() {

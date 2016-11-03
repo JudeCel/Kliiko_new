@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep1Controller', SessionStep1Controller);
 
-  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope'];
-  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope) {
+  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope', '$confirm', '$sce'];
+  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope, $confirm, $sce) {
     dbg.log2('#SessionBuilderController 1 started');
 
     var vm = this;
@@ -20,6 +20,8 @@
     vm.logosList = [];
     vm.allContacts = [];
     vm.session = null;
+    vm.selectedFacilitatorEmail = null;
+    vm.canSelectFacilitator = false;
 
     vm.formAction = null;
     vm.name = '';
@@ -50,14 +52,35 @@
       startingDay: 1,
     }
 
+    function initCanSelectFacilitator() {
+      vm.canSelectFacilitator = vm.session.steps.step1.name && vm.session.steps.step1.name.length > 0
+        && vm.type != null && new Date(vm.step1.endTime) > new Date(vm.step1.startTime);
+    }
+
     function inviteFacilitator(facilitator) {
-      vm.session.addMembers(facilitator, 'facilitator').then(function(res) {
-        vm.session.sessionData.facilitator = facilitator;
-        vm.session.steps.step1.facilitator = facilitator;
-        messenger.ok(res.message);
-      }, function (err) {
-        messenger.error(err);
-      });
+      if (!vm.selectedFacilitator || facilitator.email != vm.selectedFacilitator.email) {
+        vm.selectedFacilitatorEmail = vm.selectedFacilitator ? vm.selectedFacilitator.email : null;
+        var text = vm.selectedFacilitator ?
+          "<p>- If you have already sent Session Invitations, and started a Session, this may affect a Participant's level of engagement!</p>"
+            + "<p>- The Name & Contact details on the Email Templates signature will change to the new Facilitator on any future emails.</p>"
+            + "<p>- As will the Facilitator-Avatar Name in the Chat Room.</p>"
+            + "<p>- If unavoidable, we strongly recommend sending an SMS, Generic Email or Chat Room Private Message to Participants explaining the change.</p>" :
+          "Are you sure you want to select this Facilitator - <b>"
+            + facilitator.firstName + " " + facilitator.lastName
+            + "</b>?<br/> We strongly suggest that any change to the Facilitator later, may confuse Participants!";
+        var leftAndWide = vm.selectedFacilitator ? true : false;
+        $confirm({ text: text, htmlText: $sce.trustAsHtml(text), textLeft: leftAndWide, wide: leftAndWide }).then(function() {
+          vm.session.addMembers(facilitator, 'facilitator').then(function(res) {
+            vm.session.sessionData.facilitator = facilitator;
+            vm.session.steps.step1.facilitator = facilitator;
+            vm.selectedFacilitator = vm.session.steps.step1.facilitator;
+            vm.selectedFacilitatorEmail = vm.selectedFacilitator.email;
+            messenger.ok(res.message);
+          }, function (err) {
+            messenger.error(err);
+          });
+        });
+      }
     }
 
     function cleanColorScheme(executeUpdate) {
@@ -167,6 +190,8 @@
       vm.name = vm.session.steps.step1.name;
       vm.type = vm.session.steps.step1.type;
       vm.selectedFacilitator = vm.session.steps.step1.facilitator;
+      vm.selectedFacilitatorEmail = vm.selectedFacilitator ? vm.selectedFacilitator.email : null;
+      initCanSelectFacilitator();
     }
 
     function sessionId() {
@@ -209,6 +234,7 @@
     vm.updateName = function() {
       updateStep({name: vm.name}).then(function() {
         vm.session.steps.step1.name = vm.name;
+        initCanSelectFacilitator();
       }, function(err) {
         vm.name = vm.session.steps.step1.name;
       });
@@ -227,23 +253,22 @@
       vm.type = vm.typeToConfirm;
       updateStep({type: vm.type}).then(function() {
         vm.session.steps.step1.type = vm.type;
+        initCanSelectFacilitator();
       }, function(err) {
         vm.type = vm.session.steps.step1.type;
       });
     }
 
     function validateDate(date) {
-      if(date) {
-        if(vm.step1.endTime < vm.step1.startTime) {
+      if (date) {
+        if(vm.step1.endTime <= vm.step1.startTime) {
           vm.accordions.dateAndTimeError = true;
-        }
-        else {
+        } else {
           vm.accordions.dateAndTimeError = false;
           vm.accordions.invalidFormat = false;
           return true;
         }
-      }
-      else {
+      } else {
         vm.accordions.dateAndTimeError = false;
         vm.accordions.invalidFormat = true;
       }
@@ -256,6 +281,7 @@
         if(validateDate(vm.step1.startTime) && validateDate(vm.step1.endTime)) {
           updateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone });
         }
+        initCanSelectFacilitator();
         return;
       }
 

@@ -243,6 +243,10 @@ $directions: ('right', 'left', 'top', 'bottom');
   .login-container {
     max-width: 575px;
   }
+
+  .login-container.login-container-wide {
+    max-width: 585px;
+  }
 }
 
 @media (min-width: 768px){
@@ -422,6 +426,10 @@ input#reveiveNewsLetters{
     background: #EFEFEF !important;
   }
 
+  .fixed-bottom-margin {
+    margin-bottom: 20px;
+  }
+
   #small-screen{
     display:block !important;
   }
@@ -472,4 +480,28 @@ input#reveiveNewsLetters{
       }
     }
   }
+}
+
+.sales-banner {
+  margin-top: 45px;
+  margin-bottom: 10px;
+  text-align: center;
+  a {
+    cursor: pointer;
+    img {
+      max-width: 85%;
+    }
+  }
+}
+
+.noRolesBlock {
+  text-align: center;
+  @media (min-width: 768px) {
+    padding-top: 50px;
+  }
+}
+
+.modal-content-wide {
+  width: 800px;
+  margin-left: -101px;
 }

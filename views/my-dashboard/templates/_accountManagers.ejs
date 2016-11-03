@@ -4,26 +4,32 @@
   <table class='table table-responsive table-dashboardElements'>
     <thead>
       <tr>
-        <th>Account Name</th>
+        <th style='width:75%'>Account Name</th>
+        <th>Status</th>
         <th class='pull-right'>Select Account Hub</th>
       </tr>
     </thead>
     <tbody ng-repeat='au in myDashboard.accountUsers.accountManager.data'>
       <tr>
         <td>{{ au.Account.name }}</td>
+        <td>{{ au.active ? "active" : "not active" }}</td>
         <td>
           <a href='{{ au.dashboardUrl }}' class='go-to-dashboard glyphicon glyphicon-play pull-right' title='Go to Account Hub' />
         </td>
       </tr>
     </tbody>
   </table>
-    
+
   <table class='table table-responsive table-dashboardElements table-dashboardElements-mobile'>
     <tbody ng-repeat='au in myDashboard.accountUsers.accountManager.data'>
       <tr>
         <td>
           <span class="dashboardElements-title">Account Name</span>
           {{ au.Account.name }}
+        </td>
+        <td>
+          <span class="dashboardElements-title">Status</span>
+          {{ au.active ? "active" : "not active" }}
         </td>
         <td>
           <a href='{{ au.dashboardUrl }}' class='go-to-dashboard glyphicon glyphicon-play pull-right' title='Go to Account Hub' />

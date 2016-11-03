@@ -459,7 +459,7 @@ function prepareGenericMailParameters(sessionMember, accountUsers, accountId, se
       facilitatorLastName: facilitator.lastName,
       facilitatorMail: facilitator.email,
       facilitatorMobileNumber: facilitator.mobile,
-      unsubscribeMailUrl: mailUrlHelper.getUrl(accountUser.ContactListUsers[0].unsubscribeToken, '/unsubscribe/'),
+      unsubscribeMailUrl: mailUrlHelper.getUrl(accountUser.ContactListUsers[0].unsubscribeToken, null, '/unsubscribe/'),
       sessionId: sessionId
     });
   });
@@ -712,57 +712,13 @@ function step1Queries(session, step) {
       searchSessionMembers(session.id, 'facilitator').then(function(members) {
         if(!_.isEmpty(members)) {
           step.facilitator = members[0];
-
-          models.Invite.destroy({
-            where: {
-              sessionId: session.id,
-              accountUserId:  {
-                $ne: step.facilitator.id
-              },
-              role: 'facilitator'
-            }
-          }).then(function(result) {
-
-            models.Invite.find({
-              where: {
-                sessionId: session.id,
-                accountUserId: step.facilitator.id,
-                role: 'facilitator'
-              }
-            }).then(function(invite) {
-              if(invite){
-                cb();
-              } else {
-                inviteService.createInvite(facilitatorInviteParams(step.facilitator, session.id)).then(function() {
-                  cb();
-                }, function(error) {
-                  cb("Invite as Facilitator for " + step.facilitator.firstName + " " + step.facilitator.lastName + " were not sent.");
-                });
-              }
-            });
-
-          },function(error) {
-            cb(filters.errors(error));
-          });
-
-        } else {
-          cb();
         }
+        cb();
       }).catch(function(error) {
         cb(filters.errors(error));
       });
     }
   ];
-}
-
-function facilitatorInviteParams(facilitator, sessionId) {
-  return {
-    accountUserId: facilitator.id,
-    userId: facilitator.UserId,
-    sessionId: sessionId,
-    role: 'facilitator',
-    userType: facilitator.UserId ? 'existing' : 'new'
-  }
 }
 
 function step2Queries(session, step) {
@@ -928,6 +884,10 @@ function validateStepOne(params) {
 
       if(params.startTime > params.endTime) {
         errors.startTime = MessagesUtil.sessionBuilder.errors.firstStep.invalidDateRange;
+      }
+
+      if(params.startTime == params.endTime) {
+        errors.endTime = MessagesUtil.sessionBuilder.errors.firstStep.invalidEndTime;
       }
 
       if(!object.facilitator) {

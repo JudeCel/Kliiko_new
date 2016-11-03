@@ -126,7 +126,8 @@
               setContent(vm.currentTemplate.content);
               $('.wysiwyg iframe').contents().find("img#brandLogoUrl").attr("src", result.resource.url.full);
             });
-          }else{
+          } else {
+
             populateTemplate(res);
             setContent(vm.currentTemplate.content);
           }
@@ -255,7 +256,7 @@
       vm.currentTemplate.content = $('#templateContent').wysiwyg('getContent');
       var contentFrame = $("#contentFrame").contents().find('html');
       domServices.modal('previewMailTemplateModal');
-      mailTemplate.previewMailTemplate(vm.currentTemplate).then(function(res) {
+      mailTemplate.previewMailTemplate(vm.currentTemplate, vm.properties.sessionId).then(function(res) {
         if (!res.error) {
           contentFrame.html(res.template.content);
           $("#mailTemplatePreviewSubject").html(res.template.subject);
@@ -283,11 +284,17 @@
       vm.emailTemplates.map(function(template) {
         if(!vm.addedList[template.id]) {
           vm.addedList[template.id] = template;
-          if(vm.sortedEmailTemplates[template["MailTemplateBase.name"]]) {
-            vm.sortedEmailTemplates[template["MailTemplateBase.name"]].push(template);
+          if(!vm.sortedEmailTemplates[template["MailTemplateBase.name"]]) {
+            vm.sortedEmailTemplates[template["MailTemplateBase.name"]] = [];
           }
-          else {
-            vm.sortedEmailTemplates[template["MailTemplateBase.name"]] = [template];
+          vm.sortedEmailTemplates[template["MailTemplateBase.name"]].push(template);
+        } else {
+          //in existing list - we set new items over existing. Items could be overwritten
+          var nList = vm.sortedEmailTemplates[template["MailTemplateBase.name"]];
+          for (var idx = 0; idx < nList.length; idx++) {
+            if (nList[idx].id == template.id) {
+              nList[idx] = template;
+            }
           }
         }
       });

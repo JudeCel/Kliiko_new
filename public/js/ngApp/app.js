@@ -25,6 +25,7 @@
     'angularUtils.directives.dirPagination',
     'toggle-switch',
     'angular-confirm',
+    'ngSanitize',
     // app modules
     'KliikoApp.user',
     'KliikoApp.account',

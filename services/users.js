@@ -12,6 +12,7 @@ var socialProfileService = require('./socialProfile');
 var bcrypt = require('bcrypt');
 var uuid = require('node-uuid');
 var async = require('async');
+var constants = require('./../util/constants');
 
 module.exports = {
   create: create,
@@ -23,7 +24,8 @@ module.exports = {
   setResetToken: setResetToken,
   getUserByToken: getUserByToken,
   changePassword: changePassword,
-  update: update
+  update: update,
+  inviteInProcessExists: inviteInProcessExists
 };
 
 
@@ -35,12 +37,44 @@ function create(params, callback) {
     return callback(err);
   }
 
-  createUser(params, function (error, result) {
-    if (error) {
-      callback(error);
-    } else {
-      callback(null, result);
+  accountUserService.findWithEmail(params.email).then(function (result) {
+    let canCreate = true;
+    let errorWithDialog = {};
+
+    //update error with diaolg to show if email exists in system
+    for(let i1=0; i1<result.length; i1++) {
+      if (result[i1].UserId != null) {
+        canCreate = false;
+        errorWithDialog.dialog = {link: null, message: MessagesUtil.users.dialog.emailExistsCanCreateAccount}
+        if (result[i1].role == 'accountManager') {
+          errorWithDialog.dialog = {link: null, message: MessagesUtil.users.dialog.emailExists}
+          break;
+        }
+      } else {
+        for(let i2=0; i2<result[i1].Invites.length; i2++) {
+          if (result[i1].Invites[i2].status == constants.inviteStatuses[constants.inviteStatuses.length-1]) {
+            canCreate = false;
+            errorWithDialog.dialog = {link: { url: '/invite/' + result[i1].Invites[i2].token + '/accept/', title: "Continue to Check In" }, message: MessagesUtil.users.dialog.emailExistsContinueToCheckIn}
+          }
+        }
+      }
     }
+
+    if (canCreate) {
+      createUser(params, function (error, result) {
+        if (error) {
+          callback(error);
+        } else {
+          callback(null, result);
+        }
+      });
+    }
+    else {
+      return callback(errorWithDialog);
+    }
+
+  }, function(error) {
+    return callback(error);
   });
 };
 
@@ -130,6 +164,23 @@ function comparePassword(email, password, callback) {
     };
   });
 };
+
+function inviteInProcessExists(email, callback) {
+  accountUserService.findWithEmail(email).then(function (result) {
+    for(let i1=0; i1<result.length; i1++) {
+      if (!result[i1].UserId) {
+        for(let i2=0; i2<result[i1].Invites.length; i2++) {
+          if (result[i1].Invites[i2].status == constants.inviteStatuses[constants.inviteStatuses.length-1]) {
+            return callback(true, result[i1].Invites[i2].token);
+          }
+        }
+      }
+    }
+    callback(false, null);
+  }, function(error) {
+    callback(false, null);
+  });
+}
 
 function setEmailConfirmationToken(email, callback) {
 

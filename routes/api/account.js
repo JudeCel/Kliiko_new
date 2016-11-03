@@ -14,6 +14,15 @@ function get(req, res, next) {
   });
 };
 
+function createNewAccount(req, res, next) {
+  accountServices.createNewAccountIfNotExists(req.body, req.user.id).then(function(result) {
+    res.send(result);
+  }, function(error) {
+    res.send({ error: error });
+  });
+};
+
 module.exports = {
-  get: get
+  get: get,
+  createNewAccount: createNewAccount
 };

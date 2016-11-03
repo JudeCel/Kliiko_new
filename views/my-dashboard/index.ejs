@@ -7,7 +7,7 @@
       <h2>Select your Role first!</h2>
     </div>
 
-    <div class="btn-group" id='nav-tabs-mobile'>
+    <div class="btn-group" id='nav-tabs-mobile' ng-if='myDashboard.hasRoles'>
       <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
         <span id="nav-tabs-mobile-title" ng-if="myDashboard.currentTab">{{ myDashboard.activeTabText() }}</span>
         <span class="caret"><span></span></span>
@@ -29,16 +29,29 @@
       <div class='row'>
         <div class='col-xs-12'>
           <div class='dashboard-container fixed-bottom-margin'>
-            <h2 class='text-center'>My Dashboard</h2>
-
-            <% include ./templates/_accountManagers %>
-            <% include ./templates/_facilitators %>
-            <% include ./templates/_participants %>
-            <% include ./templates/_observers %>
+            <div ng-if='myDashboard.hasRoles'>
+              <h2 class='text-center'>My Dashboard</h2>
+              <% include ./templates/_accountManagers %>
+              <% include ./templates/_facilitators %>
+              <% include ./templates/_participants %>
+              <% include ./templates/_observers %>
+            </div>
+            <div ng-if='!myDashboard.hasRoles' class="noRolesBlock">
+              <center><h2>You don't have available roles at this moment</h2></center>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <div ng-if='myDashboard.showCreateNewAccount' class='sales-banner'>
+      <center>
+        <a ng-click='app.openModal("createNewAccountModal")'>
+          <img alt='Get your own klzii account now' src='/images/sales-banner.png'/>
+        </a>
+      </center>
+    </div>
+
   </div>
 </main>
 

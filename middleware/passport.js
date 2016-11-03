@@ -36,10 +36,9 @@ passport.deserializeUser(deserializeUser);
 // Functions
 function localStrategyFunc(username, password, done) {
   usersService.comparePassword(username, password, function(failed, result) {
-    if(failed) {
+    if (failed) {
       done(MessagesUtil.middleware.passport.userPasswordMatch);
-    }
-    else {
+    } else {
       prepareUserData(result, null, done);
     }
   });

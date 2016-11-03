@@ -61,6 +61,7 @@ router.post('/user', userRoutes.userPost);
 router.put('/user', userRoutes.changePassword);
 router.get('/accountUser', accountUser.get);
 router.get('/account', account.get);
+router.post('/account', account.createNewAccount);
 router.get('/jwtToken', jwt.getToken);
 router.get('/jwtTokenForMember', jwt.jwtTokenForMember);
 
@@ -156,7 +157,7 @@ router.post('/sessionMember/addFacilitator', PERMISSIONS.managerAdmin, sessionMe
 
 
 // Session Builder
-router.get('/sessionBuilder/canAddObservers',  PERMISSIONS.managerAdmin, sessionBuilder.canAddObservers);
+router.get('/sessionBuilder/canAddObservers',  PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.canAddObservers);
 
 router.post('/sessionBuilder', PERMISSIONS.managerAdmin, sessionBuilder.new);
 router.get('/sessionBuilder/:id', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.openBuild);

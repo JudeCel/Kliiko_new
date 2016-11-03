@@ -124,10 +124,10 @@
       return deferred.promise;
     }
 
-    function previewMailTemplate(mTemplate) {
+    function previewMailTemplate(mTemplate, sessionId) {
       var deferred = $q.defer();
 
-      mailRestApi.previewMailTemplate.post({mailTemplate:mTemplate}, function (res) {
+      mailRestApi.previewMailTemplate.post({mailTemplate: mTemplate, sessionId: sessionId}, function (res) {
         dbg.log2('#KliikoApp.mailTemplate > preview mail template> server respond >');
         deferred.resolve(res);
       });

@@ -63,7 +63,7 @@ function createBulkInvites(arrayParams) {
         async.each(invites, function(invite, callback) {
           invite.accountName = arrayParams.accountName;
           if (invite.AccountUser.ContactListUsers.length) {
-            invite.unsubscribeMailUrl = mailUrlHelper.getUrl(invite.AccountUser.ContactListUsers[0].unsubscribeToken, '/unsubscribe/');
+            invite.unsubscribeMailUrl = mailUrlHelper.getUrl(invite.AccountUser.ContactListUsers[0].unsubscribeToken, null, '/unsubscribe/');
 
             sendInvite(invite).then(function() {
               callback();
@@ -93,6 +93,74 @@ function createBulkInvites(arrayParams) {
   });
 
   return deferred.promise;
+}
+
+function createFacilitatorInvite(params) {
+  let deferred = q.defer();
+
+  models.Invite.destroy({
+    where: {
+      sessionId: params.sessionId,
+      accountUserId:  {
+        $ne: params.accountUserId
+      },
+      role: 'facilitator'
+    }
+  }).then(function(result) {
+    models.Invite.find({
+      where: {
+        sessionId: params.sessionId,
+        accountUserId: params.accountUserId,
+        role: 'facilitator'
+      }
+    }).then(function(invite) {
+      if (invite) {
+        deferred.resolve();
+      } else {
+        models.AccountUser.find({ where: { id: params.accountUserId } }).then(function(accountUser) {
+          updateToFacilitator(accountUser).then(function() {
+            createInvite(facilitatorInviteParams(accountUser, params.sessionId)).then(function() {
+              deferred.resolve();
+            }, function(error) {
+              deferred.reject(filters.errors("Invite as Facilitator for " + accountUser.firstName + " " + accountUser.lastName + " were not sent."));
+            });
+          }, function(error) {
+            deferred.reject(filters.errors(error));
+          });
+        });
+      }
+    });
+  },function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function updateToFacilitator(accountUser) {
+  let deferred = q.defer();
+
+  if (accountUser.role == 'accountManager' || accountUser.role == 'admin') {
+    deferred.resolve();
+  } else {
+    models.AccountUser.update({role: 'facilitator'}, { where: { id: accountUser.id } }).then(function(res) {
+      deferred.resolve();
+    }, function(error) {
+      deferred.reject(error);
+    });
+  }
+
+  return deferred.promise;
+}
+
+function facilitatorInviteParams(facilitator, sessionId) {
+  return {
+    accountUserId: facilitator.id,
+    userId: facilitator.UserId,
+    sessionId: sessionId,
+    role: 'facilitator',
+    userType: facilitator.UserId ? 'existing' : 'new'
+  }
 }
 
 function createInvite(params) {
@@ -627,8 +695,8 @@ function prepareMailParams(invite, session, receiver, facilitator) {
     startDate: emailDate.format('date', session.startTime, session.timeZone),
     orginalStartTime: session.startTime,
     orginalEndTime: session.endTime,
-    logInUrl: mailUrlHelper.getUrl(invite.token, '/invite/') + '/accept/',
-    confirmationCheckInUrl: mailUrlHelper.getUrl(invite.token, '/invite/') + '/accept/',
+    logInUrl: mailUrlHelper.getUrl(invite.token, null, '/invite/') + '/accept/',
+    confirmationCheckInUrl: mailUrlHelper.getUrl(invite.token, null, '/invite/') + '/accept/',
     participantMail: receiver.email,
     incentive: session.incentive
   }
@@ -712,5 +780,6 @@ module.exports = {
   declineInvite: declineInvite,
   declineSessionInvite: declineSessionInvite,
   acceptSessionInvite: acceptSessionInvite,
-  sessionAccept: sessionAccept
+  sessionAccept: sessionAccept,
+  createFacilitatorInvite: createFacilitatorInvite
 };

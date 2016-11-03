@@ -607,7 +607,7 @@ function validAnswerParams(params) {
       surveyAnswer.answers[i].value = null;
       surveyAnswer.answers[i].contactDetails = question.contactDetails;
     }
-    else if(question.answer) {
+    else if(question.answer || question.answer == 0) {
       surveyAnswer.answers[i].type = typeof question.answer;
       surveyAnswer.answers[i].value = question.answer;
     }

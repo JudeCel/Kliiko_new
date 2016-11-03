@@ -28,7 +28,7 @@ function planSelectPage(req, res, next) {
       }
       else {
         subscriptionService.createSubscriptionOnFirstLogin(res.locals.currentDomain.id, req.user.id, redirectUrl).then(function(response) {
-          if('hosted_page' in response) {
+          if(response && 'hosted_page' in response) {
             res.writeHead(301, { Location: response.hosted_page.url } );
             res.end();
           }
@@ -57,30 +57,18 @@ function planSelectPage(req, res, next) {
   }
 }
 
-function myDashboardPage(req, res, next) {
+function myDashboardPage(req, res, next, accountUserId) {
   let myDashboardUrl = subdomains.url(req, subdomains.base, '/my-dashboard');
 
   myDashboardServices.getAllData(req.user.id, req.protocol).then(function(result) {
 
     let managers = result.accountManager || result.facilitator;
     if(!managers) {
-      let observers = shouldRedirectToChat(result.observer);
-      let participants = shouldRedirectToChat(result.participant);
-
-      if((participants && !observers) || (observers && !participants)) {
-        jwt.tokenForMember(req.user.id, (participants || observers).dataValues.session.id).then(function(result) {
-          getUrl(res, result.token, myDashboardUrl);
-        }, function(error) {
-          res.redirect(myDashboardUrl);
-        });
-      }
-      else{
-        res.redirect(myDashboardUrl);
-      }
+      res.redirect(myDashboardUrl);
     } else {
       if((!req.user.signInCount || req.user.signInCount <= 1) && !req.session.landed) {
         req.session.landed = true;
-        res.redirect(subdomains.url(req, selectManager(result.accountManager, result.facilitator).subdomain, '/account-hub/landing'));
+        res.redirect(subdomains.url(req, selectManager(result.accountManager, result.facilitator, accountUserId).subdomain, '/account-hub/landing'));
       }
       else {
         res.redirect(myDashboardUrl);
@@ -109,20 +97,26 @@ function getUrl(res, token, url) {
   });
 }
 
-function shouldRedirectToChat(members) {
-  if(members && members.data.length == 1) {
-    return members.data[0];
+function selectManager(accountManagers, facilitators, accountUserId) {
+  if (accountUserId) {
+    if (accountManagers) {
+      for (let i=0; i<accountManagers.data.length; i++) {
+        if (accountManagers.data[i].id == accountUserId) {
+          return accountManagers.data[i].Account;
+        }
+      }
+    } else if (facilitators) {
+      for (let i=0; i<facilitators.data.length; i++) {
+        if (facilitators.data[i].id == accountUserId) {
+          return facilitators.data[i].Account;
+        }
+      }
+    }
   }
-  else {
-    return false;
-  }
-}
 
-function selectManager(accountManagers, facilitators) {
-  if(accountManagers) {
+  if (accountManagers) {
     return accountManagers.data[0].Account;
-  }
-  else if(facilitators) {
+  } else if (facilitators) {
     return facilitators.data[0].Account;
   }
 }
