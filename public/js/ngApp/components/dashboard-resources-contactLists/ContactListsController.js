@@ -62,6 +62,12 @@
     vm.returnSelectedCount = returnSelectedCount;
     vm.canAddMoreFields = canAddMoreFields;
     vm.requireField = requireField;
+    vm.isObserverListSelected = isObserverListSelected;
+    vm.findIndexByListName = findIndexByListName;
+
+    var facilitatorsListName = "Facilitators";
+    var observersListName = "Observers";
+
     // required for correct list switching.
     var isSelected = false;
 
@@ -81,8 +87,10 @@
           removeSpecificLists();
         }
 
-        if(listType == 'facilitators') {
+        if (listType == 'facilitators') {
           vm.sectListActiveToFacilitators();
+        } else if (listType == "inviteSessionObservers") {
+          vm.changeActiveList(findIndexByListName(observersListName));
         } else {
           vm.changeActiveList(0);
         }
@@ -149,7 +157,7 @@
 
       isSelected = true;
       // timeout is for correct list switching (think about it as of promise)
-      setTimeout(function() {   vm.changeActiveList(1)  }, 300);
+      setTimeout(function() {   vm.changeActiveList(findIndexByListName(facilitatorsListName))  }, 300);
 
     };
 
@@ -750,6 +758,18 @@
       }
       else {
         return [];
+      }
+    }
+
+    function isObserverListSelected() {
+        return vm.lists.activeListIndex == findIndexByListName(observersListName);
+    }
+
+    function findIndexByListName(listName) {
+      for (var i = 0; i < vm.lists.items.length; i++) {
+        if (vm.lists.items[i].name === listName) {
+          return i;
+        }
       }
     }
 
