@@ -55,6 +55,7 @@
     vm.finishSelectingMembers = finishSelectingMembers;
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
     vm.selectObserversClickHandle = selectObserversClickHandle;
+    vm.isSelectObserverStep = isSelectObserverStep;
 
     function closeSession() {
       vm.session.setOpen('closed').then(function(res) {
@@ -307,6 +308,10 @@
           messenger.error(messagesUtil.sessionBuilder.noContacts);
         }
       }
+    }
+
+    function isSelectObserverStep() {
+      return vm.session.currentStep == "inviteSessionObservers";
     }
   }
 
