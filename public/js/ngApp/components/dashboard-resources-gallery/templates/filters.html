@@ -10,7 +10,7 @@
     </div>
 
     <div id='filter-section' class='col-md-6'>
-      <a class='pull-right green-text' ng-click='gc.filterResources() | filter: '>All({{ gc.getFilterResources().length }})</a>
+      <a class='pull-right green-text' ng-click='gc.filterResources()'>All({{ gc.getFilterResources().length }})</a>
       <a class='pull-right green-text' ng-repeat="upload in gc.uploadTypes | filter: '!Archive'" ng-click='gc.filterResources(upload.id)'>
         {{ upload.text }}({{ gc.getFilterResources(upload.id, 'id').length }})
       </a>
