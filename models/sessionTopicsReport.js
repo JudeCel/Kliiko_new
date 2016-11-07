@@ -39,7 +39,8 @@ module.exports = (Sequelize, DataTypes) => {
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true,
+      defaultValue: DataTypes.UUIDV1
     },
     deletedAt: {
       type: DataTypes.DATE,
