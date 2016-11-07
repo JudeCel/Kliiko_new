@@ -8,7 +8,7 @@
       queryInterface.changeColumn('SessionTopicsReports', 'sessionTopicId',
         { type: Sequelize.INTEGER, allowNull: true }
       ).then(function() {
-        validateError(error, resolve, reject);
+        resolve();
       },function(error) {
         validateError(error, resolve, reject);
       });

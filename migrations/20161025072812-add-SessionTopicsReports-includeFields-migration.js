@@ -7,7 +7,7 @@
      return new Bluebird(function (resolve, reject) {
        queryInterface.addColumn('SessionTopicsReports', 'includeFields',
           { type: Sequelize.ARRAY(Sequelize.TEXT), allowNull: false, defaultValue: [] }).then(function() {
-         validateError(error, resolve, reject);
+         resolve();
        },function(error) {
          validateError(error, resolve, reject);
        });

@@ -6,7 +6,7 @@
   up: function (queryInterface, Sequelize) {
     return new Bluebird(function (resolve, reject) {
       queryInterface.addColumn('SessionTopicsReports', 'name', { type: Sequelize.STRING, allowNull: false }).then(function() {
-        validateError(error, resolve, reject);
+        resolve();
       },function(error) {
         validateError(error, resolve, reject);
       });
