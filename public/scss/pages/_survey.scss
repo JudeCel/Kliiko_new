@@ -50,37 +50,3 @@ hr.survey-hr {
     padding-bottom: 0px;
   }
 }
-
-.surveyStatus {
-  border: 1px solid #a7a7a9;
-  border-radius: 3px;
-  background-color: #fff;
-  text-transform: uppercase;
-  width: 100px;
-  font-size: 12px;
-  cursor: pointer;
-  div {
-    text-align: center;
-    width: 48px;
-    padding: 5px 5px 4px 5px;
-  }
-}
-
-.surveyStatusOpen {
-  div {
-    background-color: #428BCA;
-    border-top-left-radius: 1px;
-    border-bottom-left-radius: 1px;
-    color: #fff;
-  }
-}
-
-.surveyStatusClose {
-  div {
-    padding: 5px 2px 4px 2px;
-    margin-left: 50px;
-    background-color: #eee;
-    border-top-right-radius: 1px;
-    border-bottom-right-radius: 1px;
-  }
-}

@@ -40,7 +40,6 @@
     // Helpers
     vm.showPreview = showPreview;
     vm.replaceErrorMessage = replaceErrorMessage;
-    vm.statusIcon = statusIcon;
     vm.canChangeAnswers = canChangeAnswers;
     vm.changeAnswers = changeAnswers;
     vm.defaultArray = defaultArray;
@@ -266,15 +265,6 @@
       }
       else {
         delete vm.survey.SurveyQuestions[order];
-      }
-    };
-
-    function statusIcon(survey) {
-      if(survey && survey.closed) {
-        return '/icons/password_red.png';
-      }
-      else {
-        return '/icons/password_grey.png';
       }
     };
 
