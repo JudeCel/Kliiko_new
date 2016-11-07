@@ -165,7 +165,7 @@ module.exports = {
   survey: {
     cantExportSurveyData: 'Please Update your subscription plan, to export survey data.',
     notFound: 'Survey not found!',
-    alreadyClosed: 'Survey closed, please contact admin!',
+    alreadyClosed: 'Sorry, this survey has now closed. Thanks for your interest!',
     notConfirmed: 'Survey not confirmed, please contact admin!',
     removed: 'Successfully removed survey!',
     completed: 'Successfully completed survey!',

@@ -15,12 +15,11 @@
     vm.defaultThanks = "Thanks for all your feedback and help with our survey! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).";
 
     vm.popOverMessages = {
-      remove: 'Remove survey',
-      edit: 'Edit survey',
-      copy: 'Copy survey',
-      status: 'Change status',
-      confirm: 'Confirm survey',
-      export: 'Export survey'
+      remove: 'Delete',
+      edit: 'Edit',
+      copy: 'Copy',
+      export: 'Export',
+      report: 'Stats'
     };
 
     // Uses services
@@ -30,6 +29,7 @@
     vm.finishManage = finishManage;
     vm.confirmSurvey = confirmSurvey;
     vm.exportSurvey = exportSurvey;
+    vm.reportSurvey = reportSurvey;
 
     // Inits
     vm.initQuestion = initQuestion;
@@ -116,6 +116,10 @@
         });
       });
     };
+
+    function reportSurvey(surveyId) {
+      //todo: should be implemented in other task
+    }
 
     function changeStatus(survey) {
       surveyServices.changeStatus({ id: survey.id, closed: !survey.closed }).then(function(res) {
