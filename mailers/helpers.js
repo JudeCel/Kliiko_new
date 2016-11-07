@@ -22,12 +22,11 @@ function envConfig() {
           user: process.env.MAIL_TRANSPORT_AUTH_USER,
           pass: process.env.MAIL_TRANSPORT_AUTH_PASS
         },
-        debug: true,
-        logger: true,
+        debug: false,
+        logger: false,
         secureConnection: process.env.MAIL_TRANSPORT_SECURE_CONNECTION == "true",
         port: parseInt(process.env.MAIL_TRANSPORT_PORT)
       };
-      console.log(confObject);
       return confObject;
   }
 }
