@@ -4,9 +4,10 @@
     <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
   </div>
 
-  <div class='dashboard-container' ng-init='sc.initGallery(gc)'>
+  <div class='dashboard-container' ng-init='sc.initGallery(gc); sc.initAutoSave(gc)'>
 
     <form id='manageForm' name='sc.manageForm' novalidate>
+      <input type="submit" name="noActionButton" value="" class="hidden" />
       <fieldset ng-disabled='sc.submitingForm'>
         <div class='col-md-offset-3 col-md-6'>
           <h2 class='text-center'>{{ sc.currentSurveyMode }} Survey</h2>
@@ -97,7 +98,8 @@
           <hr class='survey-hr' />
 
           <button id='showSurveyPreview' class='btn btn-standart btn-margin btn-green btn-small' data-toggle='modal' data-target='#previewModal' ng-click='sc.showPreview()'>Preview</button>
-          <button id='finishSurvey' class='btn btn-standart btn-margin btn-green btn-small' ng-click='sc.finishManage()'>Finish</button>
+          <button id='saveSurvey' class='btn btn-standart btn-margin btn-green btn-small' ng-click='sc.saveSurvey(false, false)'>Save</button>
+          <button id='finishSurvey' class='btn btn-standart btn-margin btn-green btn-small' ng-click='sc.saveSurvey(false, true)'>Publish</button>
 
           <span class='has-error'>
             <span class='help-block'>{{ sc.submitError }}</span>
