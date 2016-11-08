@@ -22,6 +22,7 @@ const VALID_ATTRIBUTES = {
     'confirmedAt',
     'name',
     'closed',
+    'closedAt',
     'description',
     'thanks',
     'SurveyQuestions'
@@ -35,6 +36,7 @@ const VALID_ATTRIBUTES = {
     'thanks',
     'closed',
     'confirmedAt',
+    'closedAt',
     'url'
   ],
   question: [
@@ -128,17 +130,32 @@ function findSurvey(params, skipValidations) {
 function removeSurvey(params, account) {
   let deferred = q.defer();
 
-  Survey.destroy({ where: { id: params.id, accountId: account.id } }).then(function(result) {
-    if(result > 0) {
-      deferred.resolve(simpleParams(null, MessagesUtil.survey.removed));
-    }
-    else {
+  Survey.find({ where: { id: params.id, accountId: account.id } }).then(function(survey) {
+    if(survey) {
+      var validCloseDate = new Date();
+      validCloseDate.setDate(validCloseDate.getDate() - 1);
+
+      if (survey.closed && (new Date(survey.closedAt) <= validCloseDate) || !survey.confirmedAt) {
+        Survey.destroy({ where: { id: params.id, accountId: account.id } }).then(function(result) {
+          if(result > 0) {
+            deferred.resolve(simpleParams(null, MessagesUtil.survey.removed));
+          } else {
+            deferred.reject(MessagesUtil.survey.notFound);
+          }
+        }).catch(Survey.sequelize.ValidationError, function(error) {
+          deferred.reject(filters.errors(error));
+        }).catch(function(error) {
+          deferred.reject(error);
+        });
+      } else {
+        deferred.reject(MessagesUtil.survey.cantDelete);
+      }
+
+    } else {
       deferred.reject(MessagesUtil.survey.notFound);
     }
-  }).catch(Survey.sequelize.ValidationError, function(error) {
-    deferred.reject(filters.errors(error));
   }).catch(function(error) {
-    deferred.reject(error);
+    deferred.reject(MessagesUtil.survey.notFound);
   });
 
   return deferred.promise;
@@ -300,7 +317,7 @@ function updateSurvey(params, account) {
 function changeStatus(params, account) {
   let deferred = q.defer();
   validators.hasValidSubscription(account.id).then(function() {
-    Survey.update({ closed: params.closed }, {
+    Survey.update({ closed: params.closed, closedAt: params.closedAt }, {
       where: { id: params.id, accountId: account.id },
       returning: true
     }).then(function(result) {

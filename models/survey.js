@@ -10,6 +10,7 @@ module.exports = (Sequelize, DataTypes) => {
     thanks: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     closed: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
     confirmedAt: { type: DataTypes.DATE, allowNull: true, validate: { notEmpty: true } },
+    closedAt: { type: DataTypes.DATE, allowNull: true, validate: { notEmpty: true } },
     url: { type: DataTypes.STRING, allowNull: true }
   }, {
     timestamps: true,

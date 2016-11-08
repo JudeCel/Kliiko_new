@@ -49,13 +49,11 @@
             </div>
           </td>
           <td class='text-right dashboardElementsEditRemove dashboardActions'>
-            <img src='/icons/calendar_grey.png' ng-click='sc.confirmSurvey(survey)' ng-if='!survey.confirmedAt' data-toggle='tooltip' data-placement='bottom' />
-
             <span class="fa fa-copy" ng-click='sc.copySurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.copy }}' ></span>
             <span class="fa fa-edit" ng-click='sc.changePage("edit", survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.edit }}' ng-if="app.account.isActiveSubscription"></span>
             <span class="fa fa-bar-chart" title='{{ sc.popOverMessages.report }}' ng-if='survey.confirmedAt' ng-click='sc.reportSurvey(survey.id)'></span>
             <span class="fa fa-mail-forward" ng-click='sc.exportSurvey(survey.id)' ng-if='survey.confirmedAt' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.export }}' ></span>
-            <span class="fa fa-remove" ng-if="survey.closed || !survey.confirmedAt" ng-click='sc.removeSurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.remove }}'></span>
+            <span class="fa fa-remove" ng-if="sc.canDelete(survey)" ng-click='sc.removeSurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.remove }}'></span>
           </td>
         </tr>
       </tbody>
