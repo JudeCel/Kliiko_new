@@ -206,14 +206,16 @@
         dbg.log2('#SurveyController > finishCreate > res ', res);
 
         if (res.error) {
-          messenger.error(res.error);
+          if (!autoSave) {
+            messenger.error(res.error);
+          }
         } else {
           survey.id = res.data.id;
           vm.survey.id = res.data.id;
-          messenger.ok(res.message);
           if (publish) {
             confirmSurvey(survey);
           } else if (!autoSave) {
+            messenger.ok(res.message);
             changePage('index');
           }
         }
@@ -225,12 +227,14 @@
         dbg.log2('#SurveyController > finishEdit > res ', res);
 
         if (res.error) {
-          messenger.error(res.error);
+          if (!autoSave) {
+            messenger.error(res.error);
+          }
         } else {
-          messenger.ok(res.message);
           if (publish) {
             confirmSurvey(survey);
           } else if (!autoSave) {
+            messenger.ok(res.message);
             changePage('index');
           }
         }
