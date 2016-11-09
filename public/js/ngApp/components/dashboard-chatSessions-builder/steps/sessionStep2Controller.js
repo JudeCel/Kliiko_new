@@ -208,13 +208,12 @@
 
     function onDragEnd() {
       var items = getTopicElements();
+      var css = {
+        'transform' : 'none',
+        'z-index' : '1'
+      };
 
       for (var i = 0; i < items.length; i++) {
-        var css = {
-          'transform' : 'none',
-          'z-index' : '1'
-        };
-
         items.eq(i).css(css);
       }
     }
