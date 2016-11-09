@@ -139,9 +139,7 @@
 
     function canDelete(survey) {
       var date = new Date();
-      //todo: change back after test
-      //date.setDate(date.getDate() - 1);
-      date.setTime(date.getTime() - (5*60*1000));
+      date.setDate(date.getDate() - 1);
       return survey.closed && (new Date(survey.closedAt) <= date) || !survey.confirmedAt;
     }
 
