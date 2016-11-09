@@ -133,9 +133,7 @@ function removeSurvey(params, account) {
   Survey.find({ where: { id: params.id, accountId: account.id } }).then(function(survey) {
     if(survey) {
       var validCloseDate = new Date();
-      //todo: change back after test
-      //validCloseDate.setDate(validCloseDate.getDate() - 1);
-      validCloseDate.setTime(validCloseDate.getTime() - (5*60*1000));
+      validCloseDate.setDate(validCloseDate.getDate() - 1);
 
       if (survey.closed && (new Date(survey.closedAt) <= validCloseDate) || !survey.confirmedAt) {
         Survey.destroy({ where: { id: params.id, accountId: account.id } }).then(function(result) {
