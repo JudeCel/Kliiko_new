@@ -28,6 +28,8 @@
     vm.topicsOnDropComplete = topicsOnDropComplete;
     vm.changeActiveState = changeActiveState;
     vm.changeLandingState = changeLandingState;
+    vm.onDragMove = onDragMove;
+    vm.onDragEnd = onDragEnd;
 
     function init(topicController) {
       vm.session = sessionBuilderControllerServices.session;
@@ -197,6 +199,100 @@
       });
       return array;
     }
+
+    function onDragMove() {
+        if (isSelectedMoreThanOneTopic()) {
+          processMultipleSelectedTopics();
+        }
+    }
+
+    function onDragEnd() {
+      var items = getTopicElements();
+
+      for (var i = 0; i < items.length; i++) {
+        var css = {
+          'transform' : 'none',
+          'z-index' : '1'
+        };
+
+        items.eq(i).css(css);
+      }
+    }
+
+    function isSelectedMoreThanOneTopic() {
+      return getSelectedTopics().length > 1;
+    }
+
+    function processMultipleSelectedTopics() {
+      var items = getTopicElements();
+      var draggingItem = $('.topic-list-item.dragging');
+      var itemHeight = draggingItem.innerHeight();
+      var matrix = getTransformMatrix(draggingItem);
+      var mainDraggingElementIndex = getMainDraggingElementIndex(items);
+      var processedItems = 0;
+      var delta = 1;
+
+      // drag items bottom to main dragging topic
+      for (var i = mainDraggingElementIndex + delta; i < items.length; i++) {
+        if (isSelectedTopicElement(items.eq(i))) {
+          var moves = i - mainDraggingElementIndex - processedItems - delta;
+          setTopicTransformCss(matrix, itemHeight, moves, items.eq(i));
+          processedItems++;
+        }
+      }
+
+      processedItems = 0;
+      // drag items on top of main dragging topic
+      for (var i = mainDraggingElementIndex - delta; i >= 0; i--) {
+        if (isSelectedTopicElement(items.eq(i))) {
+          var moves = mainDraggingElementIndex - i - processedItems - delta;
+          moves *= -delta;
+          setTopicTransformCss(matrix, itemHeight, moves, items.eq(i));
+          processedItems++;
+        }
+      }
+    }
+
+    function getTopicElements() {
+      return $('.topic-list-item');
+    }
+
+    function getTransformMatrix(draggingItem) {
+      var transform = draggingItem.css('transform');
+      return transform.split(',');
+    }
+
+    function getMainDraggingElementIndex(items) {
+      for (var i = 0; i < items.length; i++) {
+        if (items.eq(i).hasClass('dragging')) {
+          return i;
+        }
+      }
+    }
+
+    function isSelectedTopicElement(item) {
+      var selectedTopics = getSelectedTopics();
+      for (var i = 0; i < selectedTopics.length; i++) {
+        var selectedTopicName = selectedTopics[i].name;
+        var itemText = item.text().trim();
+        if (selectedTopicName == itemText) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    function setTopicTransformCss(matrix, itemHeight, moves, item) {
+      var initialTransformMatrixTop = matrix[matrix.length - 1].replace(')', '');
+      var adjustedTransformMatrixTop = initialTransformMatrixTop - itemHeight * moves;
+      var css = {
+        'transform': matrix[0] + ', ' + matrix[1] + ', ' + matrix[2] + ', ' + matrix[3] + ', ' + matrix[4] + ', ' + adjustedTransformMatrixTop + ')',
+      };
+
+      item.css(css);
+    }
+
   }
 
 })();
