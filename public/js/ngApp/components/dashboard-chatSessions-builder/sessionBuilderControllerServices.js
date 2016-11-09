@@ -60,13 +60,13 @@
       return null;
     }
 
-    function findSelectedMembers(vm) {
+    function findSelectedMembers(vm, skipInvited) {
       var array = [];
       var members = currentMemberList(vm);
 
       for (var i in members) {
         var member = members[i];
-        if(member.isSelected) {
+        if(member.isSelected && (member.inviteStatus == "notInvited" || !skipInvited)) {
           array.push(member);
         }
       }
