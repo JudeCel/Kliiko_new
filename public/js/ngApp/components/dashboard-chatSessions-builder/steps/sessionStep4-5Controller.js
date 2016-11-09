@@ -193,10 +193,7 @@
     function selectedAllMembers() {
       var members = builderServices.currentMemberList(vm);
       for(var i in members) {
-        var member = members[i];
-        if(!showCorrectStatus(member)) {
-           member.isSelected = vm.selectedAll;
-        }
+        members[i].isSelected = vm.selectedAll;
       }
     }
 
