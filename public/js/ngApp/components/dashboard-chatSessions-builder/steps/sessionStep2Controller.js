@@ -30,6 +30,8 @@
     vm.changeLandingState = changeLandingState;
     vm.onDragMove = onDragMove;
     vm.onDragEnd = onDragEnd;
+    vm.onDragStart = onDragStart;
+    vm.draggingOptions = {};
 
     function init(topicController) {
       vm.session = sessionBuilderControllerServices.session;
@@ -201,7 +203,7 @@
     }
 
     function onDragMove() {
-        if (isSelectedMoreThanOneTopic()) {
+        if (vm.draggingOptions.isSelectedMoreThanOneTopic) {
           processMultipleSelectedTopics();
         }
     }
@@ -218,37 +220,75 @@
       }
     }
 
-    function isSelectedMoreThanOneTopic() {
-      return getSelectedTopics().length > 1;
+    function onDragStart() {
+      initDraggingOptions();
+      initDraggingOffsetOptions();
     }
 
-    function processMultipleSelectedTopics() {
+    function initDraggingOptions() {
       var items = getTopicElements();
       var draggingItem = $('.topic-list-item.dragging');
-      var itemHeight = draggingItem.innerHeight();
-      var matrix = getTransformMatrix(draggingItem);
-      var mainDraggingElementIndex = getMainDraggingElementIndex(items);
+      vm.draggingOptions = {
+        isSelectedMoreThanOneTopic : isSelectedMoreThanOneTopic(),
+        items: items,
+        draggingItem: draggingItem,
+        itemHeight: draggingItem.innerHeight(),
+        mainDraggingElementIndex: getMainDraggingElementIndex(items),
+        selectedTopics: getSelectedTopics(),
+        offsetOptions: []
+      };
+    }
+
+    function initDraggingOffsetOptions() {
       var processedItems = 0;
       var delta = 1;
 
       // drag items bottom to main dragging topic
-      for (var i = mainDraggingElementIndex + delta; i < items.length; i++) {
-        if (isSelectedTopicElement(items.eq(i))) {
-          var moves = i - mainDraggingElementIndex - processedItems - delta;
-          setTopicTransformCss(matrix, itemHeight, moves, items.eq(i));
+      for (var i = vm.draggingOptions.mainDraggingElementIndex + delta; i < vm.draggingOptions.items.length; i++) {
+        if (isSelectedTopicElement(vm.draggingOptions.items.eq(i))) {
+          var moves = i - vm.draggingOptions.mainDraggingElementIndex - processedItems - delta;
           processedItems++;
+          pushToOffsetOptions(moves, i);
         }
       }
 
       processedItems = 0;
       // drag items on top of main dragging topic
-      for (var i = mainDraggingElementIndex - delta; i >= 0; i--) {
-        if (isSelectedTopicElement(items.eq(i))) {
-          var moves = mainDraggingElementIndex - i - processedItems - delta;
+      for (var i = vm.draggingOptions.mainDraggingElementIndex - delta; i >= 0; i--) {
+        if (isSelectedTopicElement(vm.draggingOptions.items.eq(i))) {
+          var moves = vm.draggingOptions.mainDraggingElementIndex - i - processedItems - delta;
           moves *= -delta;
-          setTopicTransformCss(matrix, itemHeight, moves, items.eq(i));
           processedItems++;
+          pushToOffsetOptions(moves, i);
         }
+      }
+    }
+
+    function pushToOffsetOptions(moves, index) {
+      var offset = vm.draggingOptions.itemHeight * moves;
+      vm.draggingOptions.offsetOptions.push({
+        offset: offset,
+        index: index
+      });
+    }
+
+    function isSelectedMoreThanOneTopic() {
+      return getSelectedTopics().length > 1;
+    }
+
+    function processMultipleSelectedTopics() {
+      var matrix = getTransformMatrix(vm.draggingOptions.draggingItem);
+      var initialTransformMatrixTop = matrix[matrix.length - 1].replace(')', '');
+      var matrixUnchagedPart = matrix[0] + ', ' + matrix[1] + ', ' + matrix[2] + ', ' + matrix[3] + ', ' + matrix[4] + ', ';
+      var offsetOptions = vm.draggingOptions.offsetOptions;
+
+      for (var i = 0; i < offsetOptions.length; i++) {
+        var adjustedTransformMatrixTop = initialTransformMatrixTop - offsetOptions[i].offset;
+        var css = {
+          'transform': matrixUnchagedPart + adjustedTransformMatrixTop + ')',
+        };
+
+        vm.draggingOptions.items.eq(offsetOptions[i].index).css(css);
       }
     }
 
@@ -270,9 +310,8 @@
     }
 
     function isSelectedTopicElement(item) {
-      var selectedTopics = getSelectedTopics();
-      for (var i = 0; i < selectedTopics.length; i++) {
-        var selectedTopicName = selectedTopics[i].name;
+      for (var i = 0; i < vm.draggingOptions.selectedTopics.length; i++) {
+        var selectedTopicName = vm.draggingOptions.selectedTopics[i].name;
         var itemText = item.text().trim();
         if (selectedTopicName == itemText) {
           return true;
@@ -281,17 +320,6 @@
 
       return false;
     }
-
-    function setTopicTransformCss(matrix, itemHeight, moves, item) {
-      var initialTransformMatrixTop = matrix[matrix.length - 1].replace(')', '');
-      var adjustedTransformMatrixTop = initialTransformMatrixTop - itemHeight * moves;
-      var css = {
-        'transform': matrix[0] + ', ' + matrix[1] + ', ' + matrix[2] + ', ' + matrix[3] + ', ' + matrix[4] + ', ' + adjustedTransformMatrixTop + ')',
-      };
-
-      item.css(css);
-    }
-
   }
 
 })();
