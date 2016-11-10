@@ -278,8 +278,8 @@
 
     function processMultipleSelectedTopics() {
       var matrix = getTransformMatrix(vm.draggingOptions.draggingItem);
-      var initialTransformMatrixTop = matrix[matrix.length - 1].replace(')', '');
-      var matrixUnchagedPart = matrix[0] + ', ' + matrix[1] + ', ' + matrix[2] + ', ' + matrix[3] + ', ' + matrix[4] + ', ';
+      var initialTransformMatrixTop = matrix[matrix.length - 1];
+      var matrixUnchagedPart = matrix[0] + '(' + matrix[1] + ', ' + matrix[2] + ', ' + matrix[3] + ', ' + matrix[4] + ', ' + matrix[5] + ', ';
       var offsetOptions = vm.draggingOptions.offsetOptions;
 
       for (var i = 0; i < offsetOptions.length; i++) {
@@ -298,7 +298,7 @@
 
     function getTransformMatrix(draggingItem) {
       var transform = draggingItem.css('transform');
-      return transform.split(',');
+      return transform.replace(')', '').split(/,\s|\(/);
     }
 
     function getMainDraggingElementIndex(items) {
