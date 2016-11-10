@@ -766,9 +766,6 @@
     }
 
     function findIndexByListName(listName) {
-      if (!vm.lists || !vm.lists.items) {
-        return 0;
-      }
       for (var i = 0; i < vm.lists.items.length; i++) {
         if (vm.lists.items[i].name === listName) {
           return i;
