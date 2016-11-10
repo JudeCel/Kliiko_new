@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep2Controller', SessionStep2Controller);
 
-  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'orderByFilter', '$scope'];
-  function SessionStep2Controller(dbg, sessionBuilderControllerServices, messenger, orderByFilter, $scope) {
+  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'orderByFilter', '$anchorScroll', '$location', '$scope'];
+  function SessionStep2Controller(dbg, sessionBuilderControllerServices, messenger, orderByFilter, $anchorScroll, $location, $scope) {
     dbg.log2('#SessionBuilderController 2 started');
 
     var vm = this;
@@ -28,6 +28,7 @@
     vm.topicsOnDropComplete = topicsOnDropComplete;
     vm.changeActiveState = changeActiveState;
     vm.changeLandingState = changeLandingState;
+    vm.onDragStart = onDragStart;
 
     function init(topicController) {
       vm.session = sessionBuilderControllerServices.session;
@@ -196,6 +197,33 @@
         if(topic._selected) { array.push(topic); }
       });
       return array;
+    }
+
+    function onDragStart() {
+      scrollToDropSection();
+    }
+
+    function scrollToDropSection() {
+      var dropSectionId = 'drop-section';
+      var dropSectionElement = $('#' + dropSectionId);
+
+      if (!isInViewPort(dropSectionElement)) {
+        $location.hash(dropSectionId);
+        $anchorScroll();
+      }
+    }
+
+    //function above must be moved outside of controller
+    function isInViewPort(element) {
+      if (typeof jQuery === "function" && element instanceof jQuery) {
+          element = element[0];
+      }
+
+      var rectangle = element.getBoundingClientRect();
+      return (
+        rectangle.top >= 0 && rectangle.left >= 0 && rectangle.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rectangle.right <= (window.innerWidth || document.documentElement.clientWidth)
+      );
     }
   }
 
