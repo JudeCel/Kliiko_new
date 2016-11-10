@@ -150,6 +150,7 @@
     $confirmModalDefaults.defaultLabels.title = 'Are you sure?';
     $confirmModalDefaults.defaultLabels.ok = 'Continue';
     $confirmModalDefaults.defaultLabels.cancel = 'Cancel';
+    $confirmModalDefaults.defaultLabels.close = 'Close';
 
   }
 

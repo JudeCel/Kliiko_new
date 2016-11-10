@@ -781,5 +781,6 @@ module.exports = {
   declineSessionInvite: declineSessionInvite,
   acceptSessionInvite: acceptSessionInvite,
   sessionAccept: sessionAccept,
-  createFacilitatorInvite: createFacilitatorInvite
+  createFacilitatorInvite: createFacilitatorInvite,
+  populateMailParamsWithColors: populateMailParamsWithColors
 };

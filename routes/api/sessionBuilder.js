@@ -134,11 +134,29 @@ function removeSessionMember(req, res, next) {
 
 function sendGenericEmail(req, res, next) {
   let accountId = res.locals.currentDomain.id;
-  sessionBuilderServices.sendGenericEmail(req.params.id, req.body, accountId).then(function(message) {
-    res.send({ message: message });
+  let sessionId = req.params.id;
+
+  sessionBuilderServices.sessionMailTemplateStatus(sessionId, accountId).then(function(result) {
+    var genericCreated = false;
+    for (var i=0; i<result.templates.length; i++) {
+      if (result.templates[i].name == "Generic") {
+        genericCreated = result.templates[i].created;
+        break;
+      }
+    }
+    if (genericCreated) {
+      sessionBuilderServices.sendGenericEmail(req.params.id, req.body, accountId).then(function(message) {
+        res.send({ message: message });
+      }, function(error) {
+        res.send({ error: error });
+      });
+    } else {
+      res.send({ genericTemplateNotCreated: true });
+    }
   }, function(error) {
-    res.send({ error: error });
+    res.send({error: error});
   });
+
 }
 
 function addTopics(req, res, next) {

@@ -460,21 +460,25 @@ function prepareGenericMailParameters(sessionMember, accountUsers, accountId, se
       facilitatorMail: facilitator.email,
       facilitatorMobileNumber: facilitator.mobile,
       unsubscribeMailUrl: mailUrlHelper.getUrl(accountUser.ContactListUsers[0].unsubscribeToken, null, '/unsubscribe/'),
-      sessionId: sessionId
+      sessionId: sessionId,
+      role: "participant"
     });
   });
   return params;
 }
 
-function sendGenericEmailsAsync(params, accountUsers, deferred) {
+function sendGenericEmailsAsync(params, accountUsers, session, deferred) {
   async.each(params, function(emailParams, callback) {
-    mailHelper.sendGeneric(emailParams, function(error, result) {
-      if(error) {
-        callback(error);
-      }
-      else {
-        callback(null, result);
-      }
+    inviteService.populateMailParamsWithColors(emailParams, session).then(function (emailParamsRes) {
+      mailHelper.sendGeneric(emailParamsRes, function(error, result) {
+        if(error) {
+          callback(error);
+        } else {
+          callback(null, result);
+        }
+      });
+    }, function (error) {
+      callback(error);
     });
   }, function(error) {
     if(error) {
@@ -486,25 +490,35 @@ function sendGenericEmailsAsync(params, accountUsers, deferred) {
   });
 }
 
+function getGenericEmailRecieversAccountUserIds(recievers) {
+  let ids = [];
+  for (let i=0; i<recievers.length; i++) {
+    let reciever = recievers[i];
+    //reciever.id can be AccountUser Id or ContactListUser Id depends on input data from frontend - is it invited or not
+    ids.push(reciever.accountUserId || reciever.id);
+  }
+  return ids;
+}
+
 function sendGenericEmail(sessionId, data, accountId) {
   let deferred = q.defer();
 
   validators.hasValidSubscription(accountId).then(function() {
     getSessionParticipant(sessionId, 'facilitator').then(function(sessionMember) {
       if(sessionMember) {
-        let ids = _.map(data.recievers, 'id');
-        let listIds = _.map(data.recievers, 'listId');
+        let ids = getGenericEmailRecieversAccountUserIds(data.recievers);
         AccountUser.findAll({
-          include: [{
-            model: models.ContactListUser,
-            where: {
-              id: { $in: ids },
-              contactListId: { $in: listIds }
-            }
-          }]
+          where: {
+            id: { $in: ids }
+          },
+          include: [models.ContactListUser]
         }).then(function(accountUsers) {
           let params = prepareGenericMailParameters(sessionMember, accountUsers, accountId, sessionId);
-          sendGenericEmailsAsync(params, accountUsers, deferred);
+          findSession(sessionId, accountId).then(function(session) {
+            sendGenericEmailsAsync(params, accountUsers, session, deferred);
+          }, function(error) {
+            deferred.reject(filters.errors(error));
+          });
         }).catch(function(error) {
           deferred.reject(filters.errors(error));
         });
