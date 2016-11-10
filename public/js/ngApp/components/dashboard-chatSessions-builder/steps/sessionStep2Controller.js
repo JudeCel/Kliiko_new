@@ -13,6 +13,7 @@
     vm.allTopicsSelected = false;
     vm.sessionTopicsArray = [];
     vm.sessionTopicsObject = {};
+    vm.isDropsectionInViewport = true;
 
     vm.sortableOptionsA = {
       stop : function(e, ui) {
@@ -204,26 +205,10 @@
     }
 
     function scrollToDropSection() {
-      var dropSectionId = 'drop-section';
-      var dropSectionElement = $('#' + dropSectionId);
-
-      if (!isInViewPort(dropSectionElement)) {
-        $location.hash(dropSectionId);
+      if (!vm.isDropsectionInViewport) {
+        $location.hash('drop-section');
         $anchorScroll();
       }
-    }
-
-    //function above must be moved outside of controller
-    function isInViewPort(element) {
-      if (typeof jQuery === "function" && element instanceof jQuery) {
-          element = element[0];
-      }
-
-      var rectangle = element.getBoundingClientRect();
-      return (
-        rectangle.top >= 0 && rectangle.left >= 0 && rectangle.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rectangle.right <= (window.innerWidth || document.documentElement.clientWidth)
-      );
     }
   }
 
