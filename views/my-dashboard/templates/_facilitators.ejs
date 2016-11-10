@@ -23,7 +23,7 @@
         <td>{{ au.session.showStatus }}</td>
         <td>
           <a href='{{ myDashboard.sessionBuilderUrl(au) }}' title='Go to Session Builder'><img src='/icons/dashboardElement_edit.png' /></a>
-          <a ng-disabled='myDashboard.disablePlayButton' href='#' ng-click='myDashboard.redirectToChatSession(au.session.id)' class='go-to-chatroom glyphicon glyphicon-play' title='Go to Chatroom' />
+          <a ng-disabled='myDashboard.disablePlayButton' href='#' ng-click='myDashboard.redirectToChatSession(au.session.id)' class='go-to-green-button'>Enter Chat Room <span class='glyphicon glyphicon-menu-right'/></a>
         </td>
       </tr>
     </tbody>
