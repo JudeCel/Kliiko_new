@@ -27,6 +27,8 @@
     vm.name = '';
     vm.type = null;
     vm.typeToConfirm = '';
+    vm.anonymous = '';
+    vm.anonymousToConfirm = '';
     vm.editedContactListName = '';
 
     vm.updateStep = updateStep;
@@ -189,6 +191,8 @@
       getAllContacts();
       vm.name = vm.session.steps.step1.name;
       vm.type = vm.session.steps.step1.type;
+      vm.anonymous = vm.session.steps.step1.anonymous.toString();
+      console.log(vm.anonymous);
       vm.selectedFacilitator = vm.session.steps.step1.facilitator;
       vm.selectedFacilitatorEmail = vm.selectedFacilitator ? vm.selectedFacilitator.email : null;
       initCanSelectFacilitator();
@@ -256,6 +260,24 @@
         initCanSelectFacilitator();
       }, function(err) {
         vm.type = vm.session.steps.step1.type;
+      });
+    }
+
+    vm.confirmAnonymous = function () {
+      vm.anonymousToConfirm = vm.anonymous;
+      vm.anonymous = vm.session.steps.step1.anonymous.toString();
+      if (!vm.session.steps.step1.anonymous) {
+        domServices.modal('sessionAnonymousModal');
+      }
+    }
+
+    vm.updateAnonymous = function () {
+      domServices.modal('sessionAnonymousModal', 'close');
+      vm.anonymous = vm.anonymousToConfirm;
+      updateStep({anonymous: vm.anonymous}).then(function() {
+        vm.session.steps.step1.anonymous = vm.anonymous;
+      }, function(err) {
+        vm.anonymous = vm.session.steps.step1.anonymous;
       });
     }
 

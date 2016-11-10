@@ -1,0 +1,21 @@
+<div id='sessionAnonymousModal' class='modal fade' role='dialog'>
+  <div class='modal-dialog sessionAnonymousModal'>
+    <div class='modal-content border-green border-radius-none'>
+      <div class='modal-header'>
+        <button type='button' class='close' data-dismiss='modal'>&times;</button>
+        <h2 class='modal-title text-center'>Are you sure?</h2>
+      </div>
+
+      <div class='modal-body'>
+        <div class='form-group'>
+            <center>You can not change this setting once it has bee turned on.</center>
+        </div>
+      </div>
+
+      <div class='modal-footer'>
+        <div type='button' class='btn btn-standart pull-left btn-red' data-dismiss='modal'>Cancel</div>
+        <div type='submit' class='btn btn-standart pull-right btn-green' ng-click="step1Controller.updateAnonymous()">Continue</div>
+      </div>
+    </div>
+  </div>
+</div>

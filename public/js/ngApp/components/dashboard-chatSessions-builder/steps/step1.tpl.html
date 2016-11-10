@@ -34,6 +34,17 @@
       <label for="sessionBuilder-session-type-forum">Forum</label>
     </uib-accordion-group>
 
+    <!-- Anonymous Name -->
+    <uib-accordion-group is-open="step1Controller.accordions.anonymous" class="green-input anonymous">
+      <uib-accordion-heading>
+        <div class="panel-label">
+          Anonymous Name
+        </div>
+      </uib-accordion-heading>
+      <input type="radio" id="sessionBuilder-session-anonymous" name="anonymous" value="true" ng-model="step1Controller.anonymous" ng-click="step1Controller.confirmAnonymous();">
+      <label for="sessionBuilder-session-anonymous"> Turn On Anonymous Name</label>
+    </uib-accordion-group>
+
     <!-- Date And Time -->
     <uib-accordion-group is-open="step1Controller.accordions.dateAndTime" class="green-input">
       <uib-accordion-heading>
@@ -285,4 +296,5 @@
   </uib-accordion>
 
   <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/modals/sessionType.html'"></ng-include>
+  <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/modals/sessionAnonymousModal.html'"></ng-include>
 </section>
