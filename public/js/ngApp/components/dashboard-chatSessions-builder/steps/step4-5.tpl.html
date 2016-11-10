@@ -57,7 +57,7 @@
                 {{ lastStepsController.filterTypes[lastStepsController.returnMemberInviteStatus(member)] }}
               </div>
               <div ng-if='lastStepsController.mouseOveringMember[$index]'>
-                <img src='/icons/session_grey.png' ng-click='lastStepsController.modalWindowHandler("showSms", [member])' title="Send SMS" ng-if="lastStepsController.isParticipantPage() || lastStepsController.canSendSMS" />
+                <img src='/icons/session_grey.png' ng-click='lastStepsController.modalWindowHandler("showSms", [member])' title="Send SMS" ng-if="lastStepsController.canSendSMSOnThisPage()" />
                 <img src='/icons/dashboardElement_edit.png' ng-click="lastStepsController.openEditContactModal(member)" />
                 <img src='/icons/dashboardElement_remove.png' ng-click='lastStepsController.removeFromList(member)' />
               </div>
@@ -79,7 +79,7 @@
         Send Generic Email
         ({{ lastStepsController.findSelectedMembersGenericEmail().length }})
       </div>
-      <div ng-show="lastStepsController.isParticipantPage() && lastStepsController.canSendSMS" class='btn btn-standart btn-green btn-medium' ng-click='lastStepsController.modalWindowHandler("showSms", lastStepsController.findSelectedMembersSMS())'>
+      <div ng-show="lastStepsController.canSendSMSOnThisPage()" class='btn btn-standart btn-green btn-medium' ng-click='lastStepsController.modalWindowHandler("showSms", lastStepsController.findSelectedMembersSMS())'>
         Send SMS
         ({{ lastStepsController.findSelectedMembersSMS().length }})
       </div>

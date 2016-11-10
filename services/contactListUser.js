@@ -297,6 +297,7 @@ function update(params) {
   let deferred = q.defer();
 
   validators.hasValidSubscription(params.accountId).then(function() {
+    //params.id can be AccountUser Id or ContactListUser Id depends on input data from frontend - is it invited or not
     let where = params.defaultFields.status ? {accountId: params.accountId, accountUserId: params.id} : {id: params.id};
     ContactListUser.find({where: where, include: [AccountUser, ContactList]}).then(function(contactListUser) {
       let customFields = _.merge(contactListUser.customFields,  params.customFields)

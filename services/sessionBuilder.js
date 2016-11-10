@@ -490,21 +490,23 @@ function sendGenericEmailsAsync(params, accountUsers, session, deferred) {
   });
 }
 
+function getGenericEmailRecieversAccountUserIds(recievers) {
+  let ids = [];
+  for (let i=0; i<recievers.length; i++) {
+    let reciever = recievers[i];
+    //reciever.id can be AccountUser Id or ContactListUser Id depends on input data from frontend - is it invited or not
+    ids.push(reciever.accountUserId || reciever.id);
+  }
+  return ids;
+}
+
 function sendGenericEmail(sessionId, data, accountId) {
   let deferred = q.defer();
 
   validators.hasValidSubscription(accountId).then(function() {
     getSessionParticipant(sessionId, 'facilitator').then(function(sessionMember) {
       if(sessionMember) {
-        let ids = [];
-        for (let i=0; i<data.recievers.length; i++) {
-          let reciever = data.recievers[i];
-          if (reciever.accountUserId) {
-            ids.push(reciever.accountUserId);
-          } else {
-            ids.push(reciever.id);
-          }
-        }
+        let ids = getGenericEmailRecieversAccountUserIds(data.recievers);
         AccountUser.findAll({
           where: {
             id: { $in: ids }

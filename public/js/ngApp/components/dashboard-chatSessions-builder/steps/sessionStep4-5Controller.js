@@ -50,6 +50,10 @@
       return vm.session.sessionData.step == "manageSessionParticipants";
     }
 
+    vm.canSendSMSOnThisPage = function() {
+      return vm.isParticipantPage() && vm.canSendSMS;
+    }
+
     vm.prepareData = function(participants, observers) {
       if(vm.previousStep != vm.session.sessionData.step) {
         vm.previousStep = vm.session.sessionData.step;
@@ -228,25 +232,14 @@
       var data = findSelectedMembersGenericEmail();
 
       if (data.length > 0) {
-        vm.session.getSessionMailTemplateStatus().then(function(res) {
-          var genericCreated = false;
-          for (var i=0; i<res.templates.length; i++) {
-            if (res.templates[i].name == "Generic") {
-              genericCreated = res.templates[i].created;
-              break;
-            }
-          }
-          if (genericCreated) {
-            vm.session.sendGenericEmail(data).then(function(res) {
-              messenger.ok(res.message);
-            }, function(error) {
-              messenger.error(error);
-            });
-          } else {
+        vm.session.sendGenericEmail(data).then(function(res) {
+          if (res.genericTemplateNotCreated) {
             $confirm({ text: "You need to set up a Generic Email in Step 3 before you can send to your Contacts", closeOnly: true, title: null });
+          } else {
+            messenger.ok(res.message);
           }
-        }, function (err) {
-          messenger.error(err);
+        }, function(error) {
+          messenger.error(error);
         });
       } else {
         messenger.error(messagesUtil.sessionBuilder.noContacts);
