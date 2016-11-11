@@ -140,7 +140,7 @@
           messenger.error(error);
         });
       } else {
-        let someMembersWereSelected = builderServices.someMembersWereSelected(vm);
+        var someMembersWereSelected = builderServices.someMembersWereSelected(vm);
         messenger.error(someMembersWereSelected ? messagesUtil.sessionBuilder.noContactsToInvite : messagesUtil.sessionBuilder.noContacts);
       }
     }
@@ -162,7 +162,7 @@
         } else if (noMobile == 1) {
           messenger.error(messagesUtil.sessionBuilder.noMobileForContact);
         } else {
-          let someMembersWereSelected = builderServices.someMembersWereSelected(vm);
+          var someMembersWereSelected = builderServices.someMembersWereSelected(vm);
           messenger.error(someMembersWereSelected ? messagesUtil.sessionBuilder.noContactsToSendSMS : (noMobile.toString() + messagesUtil.sessionBuilder.noMobileForContacts));
         }
       } else {
