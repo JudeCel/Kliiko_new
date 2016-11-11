@@ -12,6 +12,7 @@ var emailDate = require('./formats/emailDate');
 var mailersHelpers = require('../mailers/helpers');
 var _ = require('lodash');
 var ejs = require('ejs');
+var q = require('q');
 var constants = require('../util/constants');
 
 module.exports = {
@@ -414,17 +415,36 @@ function variablesForTemplate(type) {
 }
 
 function validateTemplate(template) {
-  var params = variablesForTemplate(template['MailTemplateBase.category']);
-  var error = null;
-  if (params.length) {
-    _.map(params, function(variable) {
-        if (template.content.indexOf(variable) == -1){
-          error = "Missing " + variable + " variable";
-        }
-    });
-  }
+  let deferred = q.defer();
 
-  return error;
+  Session.find({ where: { id: template.properties.sessionId } }).then(function (result) {
+    let incentivePopulated = false;
+    if (result && result.incentive_details) {
+      incentivePopulated = true;
+    }
+
+    var params = variablesForTemplate(template['MailTemplateBase.category']);
+    var error = null;
+    if (params.length) {
+      _.map(params, function(variable) {
+          if (template.content.indexOf(variable) == -1) {
+            if (incentivePopulated || variable != "{Incentive}") {
+              error = "Missing " + variable + " variable";
+            }
+          }
+      });
+    }
+    if (error) {
+      deferred.reject(error);
+    } else {
+      deferred.resolve();
+    }
+
+  }, function(error) {
+    deferred.reject(MessagesUtil.session.notFound);
+  });
+
+  return deferred.promise;
 }
 
 function getMailTemplateForSession(req, callback) {
@@ -495,47 +515,47 @@ function removeTemplatesFromSession(ids, callback){
 
 function saveMailTemplate(template, createCopy, accountId, callback) {
   if (template) {
-    let validationResult = validateTemplate(template);
-    if (validationResult) {
-      callback(validationResult);
-      return;
-    }
+    validateTemplate(template).then(function(result) {
 
-    let templateObject = buildTemplate(template);
+      let templateObject = buildTemplate(template);
 
-    getMailTemplateForSession({template:template, accountId: accountId}, function(error, result) {
-      let ids = [];
-      if (!createCopy && result && result.id != templateObject.id) {
-        ids = _.map(result, 'id');
-      }
-
-      removeTemplatesFromSession(ids, function() {
-        if (shouldCreateCopy(templateObject.template, createCopy, accountId)) {
-          templateObject.template.isCopy = true;
-          templateObject.template.AccountId = accountId;
-          if (createCopy) {
-            templateObject.template.sessionId = null;
-          }
-
-          create(templateObject.template, function(error, result) {
-            if (error) {
-              callback(error);
-            } else {
-              setMailTemplateDefault(result.MailTemplateBaseId, result.id, !createCopy, callback);
-            }
-          });
-
-        } else {
-          update(templateObject.id, templateObject.template, function(error, result) {
-            if (error) {
-              callback(error);
-            } else {
-              setMailTemplateDefault(templateObject.template.MailTemplateBaseId, templateObject.id, !createCopy, callback);
-            }
-          });
+      getMailTemplateForSession({template:template, accountId: accountId}, function(error, result) {
+        let ids = [];
+        if (!createCopy && result && result.id != templateObject.id) {
+          ids = _.map(result, 'id');
         }
-      });//removeTemplatesFromSession
-    });//getMailTemplateForSession
+
+        removeTemplatesFromSession(ids, function() {
+          if (shouldCreateCopy(templateObject.template, createCopy, accountId)) {
+            templateObject.template.isCopy = true;
+            templateObject.template.AccountId = accountId;
+            if (createCopy) {
+              templateObject.template.sessionId = null;
+            }
+
+            create(templateObject.template, function(error, result) {
+              if (error) {
+                callback(error);
+              } else {
+                setMailTemplateDefault(result.MailTemplateBaseId, result.id, !createCopy, callback);
+              }
+            });
+
+          } else {
+            update(templateObject.id, templateObject.template, function(error, result) {
+              if (error) {
+                callback(error);
+              } else {
+                setMailTemplateDefault(templateObject.template.MailTemplateBaseId, templateObject.id, !createCopy, callback);
+              }
+            });
+          }
+        });//removeTemplatesFromSession
+      });//getMailTemplateForSession
+
+    }, function(error) {
+      callback(error);
+    });
   } else {
     callback(MessagesUtil.mailTemplate.error.notProvided);
   }
