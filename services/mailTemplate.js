@@ -416,22 +416,41 @@ function variablesForTemplate(type) {
 
 function validateTemplate(template) {
   let deferred = q.defer();
+  var params = variablesForTemplate(template['MailTemplateBase.category']);
+  var error = null;
 
-  Session.find({ where: { id: template.properties.sessionId } }).then(function (result) {
-    let incentivePopulated = false;
-    if (result && result.incentive_details) {
-      incentivePopulated = true;
-    }
+  if (template.properties && template.properties.sessionId) {
+    Session.find({ where: { id: template.properties.sessionId } }).then(function (result) {
+      let incentivePopulated = false;
+      if (result && result.incentive_details) {
+        incentivePopulated = true;
+      }
 
-    var params = variablesForTemplate(template['MailTemplateBase.category']);
-    var error = null;
+      if (params.length) {
+        _.map(params, function(variable) {
+            if (template.content.indexOf(variable) == -1) {
+              if (incentivePopulated || variable != "{Incentive}") {
+                error = "Missing " + variable + " variable";
+              }
+            }
+        });
+      }
+      if (error) {
+        deferred.reject(error);
+      } else {
+        deferred.resolve();
+      }
+
+    }, function(error) {
+      deferred.reject(MessagesUtil.session.notFound);
+    });
+  } else {
     if (params.length) {
       _.map(params, function(variable) {
-          if (template.content.indexOf(variable) == -1) {
-            if (incentivePopulated || variable != "{Incentive}") {
-              error = "Missing " + variable + " variable";
-            }
-          }
+        if (template.content.indexOf(variable) == -1){
+           error = "Missing " + variable + " variable";
+           return;
+        }
       });
     }
     if (error) {
@@ -439,10 +458,7 @@ function validateTemplate(template) {
     } else {
       deferred.resolve();
     }
-
-  }, function(error) {
-    deferred.reject(MessagesUtil.session.notFound);
-  });
+  }
 
   return deferred.promise;
 }
