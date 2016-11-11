@@ -17,7 +17,6 @@ function isInViewport() {
         link : function(scope, element) {
           $(window).scroll(function() {
             scope.isInViewport = isElementInViewPort(element);
-            console.log(scope.isInViewport);
           });
         }
     };
