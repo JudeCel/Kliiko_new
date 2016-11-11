@@ -53,6 +53,10 @@
   border: 0;
 }
 
+.table-dashboardElements > thead > tr > th {
+  outline: none;
+}
+
 .table-dashboardElements-mobile {
   display:none;
 }
