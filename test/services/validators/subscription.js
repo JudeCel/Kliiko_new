@@ -8,21 +8,17 @@ var subscriptionFixture = require('./../../fixtures/subscription');
 
 var assert = require('chai').assert;
 
-describe('SERVICE - VALIDATORS - Subscription', function() {
+describe.only('SERVICE - VALIDATORS - Subscription', function() {
   var testData;
 
   beforeEach(function(done) {
-    subscriptionFixture.createSubscription().then(function(result) {
-      testData = result;
-      done();
-    }, function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
     models.sequelize.sync({ force: true }).then(function() {
-      done();
+      subscriptionFixture.createSubscription().then(function(result) {
+        testData = result;
+        done();
+      }, function(error) {
+        done(error);
+      });
     });
   });
 
