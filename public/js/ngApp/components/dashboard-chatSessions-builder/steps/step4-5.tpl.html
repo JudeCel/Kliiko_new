@@ -33,15 +33,15 @@
                 <label for='checkbox-header'>First Name</label>
               </div>
             </th>
-            <th>Last Name</th>
-            <th>Gender</th>
-            <th>Email</th>
-            <th>Mobile</th>
-            <th>Status</th>
+            <th ng-click="clc.changeTableSortingFilter('lastName')">Last Name</th>
+            <th ng-click="clc.changeTableSortingFilter('gender')">Gender</th>
+            <th ng-click="clc.changeTableSortingFilter('email')">Email</th>
+            <th ng-click="clc.changeTableSortingFilter('mobile')">Mobile</th>
+            <th ng-click="clc.changeTableSortingFilter('status')">Status</th>
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="member in lastStepsController.stepMembers | filter: (lastStepsController.currentFilter == 'all' ? undefined : { inviteStatus: lastStepsController.currentFilter })" ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
+          <tr ng-repeat="member in lastStepsController.stepMembers | filter: (lastStepsController.currentFilter == 'all' ? undefined : { inviteStatus: lastStepsController.currentFilter }) | orderBy: clc.tableSort.by : clc.tableSort.reverse" ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
             <td>
               <div class='checkbox checkbox-xs checkbox-success'>
                 <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.isSelected' />

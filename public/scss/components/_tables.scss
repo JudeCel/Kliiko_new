@@ -53,6 +53,10 @@
   border: 0;
 }
 
+.table-dashboardElements > thead > tr > th:focus {
+  outline: none;
+}
+
 .table-dashboardElements-mobile {
   display:none;
 }
