@@ -8,7 +8,7 @@ var subscriptionFixture = require('./../../fixtures/subscription');
 
 var assert = require('chai').assert;
 
-describe.only('SERVICE - VALIDATORS - Subscription', function() {
+describe('SERVICE - VALIDATORS - Subscription', function() {
   var testData;
 
   beforeEach(function(done) {
