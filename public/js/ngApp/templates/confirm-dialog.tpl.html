@@ -1,5 +1,5 @@
 <div class='modal-content border-green border-radius-none {{data.wide ? "modal-content-wide" : ""}}'>
-    <div class='modal-header'>
+    <div class='modal-header' ng-if="data.title">
       <h2 class='modal-title text-center'>{{data.title}}</h2>
     </div>
     <div class='modal-body'>
@@ -10,10 +10,11 @@
         </div>
       </h4>
     </div>
-    <div class='modal-footer'>
-      <button type="button" ng-click="cancel()"
-          class="btn btn-standart btn-red btn-small pull-left">{{data.cancel}}</button>
-      <button type="button" ng-click="ok()"
-          class="btn btn-standart btn-green btn-small pull-right">{{data.ok}}</button>
+    <div class='modal-footer' ng-if='!data.closeOnly'>
+      <button type="button" ng-click="cancel()" class="btn btn-standart btn-red btn-small pull-left">{{data.cancel}}</button>
+      <button type="button" ng-click="ok()" class="btn btn-standart btn-green btn-small pull-right">{{data.ok}}</button>
+    </div>
+    <div class='modal-footer' ng-if='data.closeOnly'>
+      <button type="button" ng-click="ok()" class="btn btn-standart btn-red btn-small pull-right">{{data.close}}</button>
     </div>
 </div>

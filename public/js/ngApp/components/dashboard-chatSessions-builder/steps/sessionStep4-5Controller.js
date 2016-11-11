@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep4-5Controller', LastSessionStepController);
 
-  LastSessionStepController.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', '$rootScope', '$scope', 'angularConfirm', 'messagesUtil'];
-  function LastSessionStepController(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window,  $rootScope, $scope, angularConfirm, messagesUtil) {
+  LastSessionStepController.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', '$rootScope', '$scope', 'angularConfirm', 'messagesUtil', '$confirm'];
+  function LastSessionStepController(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window,  $rootScope, $scope, angularConfirm, messagesUtil, $confirm) {
     dbg.log2('#SessionBuilderController 4-5 started');
 
     var vm = this;
@@ -29,11 +29,12 @@
     };
 
     // step 4 + 5
-    vm.showCorrectStatus = showCorrectStatus;
     vm.inviteMembers = inviteMembers;
     vm.modalWindowHandler = modalWindowHandler;
     vm.selectedAllMembers = selectedAllMembers;
-    vm.findSelectedMembers = findSelectedMembers;
+    vm.findSelectedMembersSMS = findSelectedMembersSMS;
+    vm.findSelectedMembersGenericEmail = findSelectedMembersGenericEmail;
+    vm.findSelectedMembersInvite = findSelectedMembersInvite;
     vm.removeFromList = removeFromList;
     vm.sendGenericEmail = sendGenericEmail;
     vm.setMembersFilter = setMembersFilter;
@@ -47,6 +48,10 @@
 
     vm.isParticipantPage = function() {
       return vm.session.sessionData.step == "manageSessionParticipants";
+    }
+
+    vm.canSendSMSOnThisPage = function() {
+      return vm.isParticipantPage() && vm.canSendSMS;
     }
 
     vm.prepareData = function(participants, observers) {
@@ -102,29 +107,18 @@
       });
     }
 
-    /// step 4 + 5
-    function showCorrectStatus(member) {
-      if(member.sessionMember) {
-        return 'confirmed';
-      }
-      else {
-        return member.status;
-      }
-    }
-
     function fixInviteStatus(status) {
       return status.split(/(?=[A-Z])/).join(' ').toLowerCase();
     }
 
     function inviteMembers() {
-     var data = findSelectedMembers();
+     var data = findSelectedMembersInvite();
 
       if(data.length > 0) {
         var promise;
         if (vm.isParticipantPage()) {
           promise = vm.session.inviteParticipants(data);
-        }
-        else {
+        } else {
           promise = vm.session.inviteObservers(data);
         }
 
@@ -145,32 +139,33 @@
         }, function(error) {
           messenger.error(error);
         });
-      }
-      else {
-        messenger.error(messagesUtil.sessionBuilder.noContacts);
+      } else {
+        var someMembersWereSelected = builderServices.someMembersWereSelected(vm);
+        messenger.error(someMembersWereSelected ? messagesUtil.sessionBuilder.noContactsToInvite : messagesUtil.sessionBuilder.noContacts);
       }
     }
 
     function showSmsWindow(data) {
-      if(data.length > 0) {
-        var noMobile = {};
-        for(var i in data) {
+      if (data.length > 0) {
+        var noMobile = 0;
+        for (var i in data) {
           var member = data[i];
-          if(!member.mobile) {
-            noMobile[member.firstName + ' ' + member.lastName] = messagesUtil.sessionBuilder.noMobile;
+          if (!member.mobile) {
+            noMobile++;
           }
         }
 
-        if(Object.keys(noMobile).length == 0) {
+        if (noMobile == 0) {
           vm.sendSmsTo = data;
           vm.sendSmsMessage = null;
           domServices.modal('sessionBuilder-sendSmsModal');
+        } else if (noMobile == 1) {
+          messenger.error(messagesUtil.sessionBuilder.noMobileForContact);
+        } else {
+          var someMembersWereSelected = builderServices.someMembersWereSelected(vm);
+          messenger.error(someMembersWereSelected ? messagesUtil.sessionBuilder.noContactsToSendSMS : (noMobile.toString() + messagesUtil.sessionBuilder.noMobileForContacts));
         }
-        else {
-          messenger.error(noMobile);
-        }
-      }
-      else {
+      } else {
         messenger.error(messagesUtil.sessionBuilder.noContacts);
       }
     }
@@ -193,22 +188,26 @@
     function selectedAllMembers() {
       var members = builderServices.currentMemberList(vm);
       for(var i in members) {
-        var member = members[i];
-        if(!showCorrectStatus(member)) {
-           member.isSelected = vm.selectedAll;
-        }
+        members[i].isSelected = vm.selectedAll;
       }
     }
 
-    function findSelectedMembers() {
-      return builderServices.findSelectedMembers(vm);
+    function findSelectedMembersGenericEmail() {
+      return builderServices.findSelectedMembers(vm, false, false);
+    }
+
+    function findSelectedMembersSMS() {
+      return builderServices.findSelectedMembers(vm, false, true);
+    }
+
+    function findSelectedMembersInvite() {
+      return builderServices.findSelectedMembers(vm, true, false);
     }
 
     function removeFromList(member) {
-      if(member.inviteStatus == 'Not Invited') {
+      if(returnMemberInviteStatus(member) == 'notInvited') {
         removeMemberFromList(member);
-      }
-      else {
+      } else {
         angularConfirm('Are you sure you want to do this?').then(function(response) {
           vm.session.removeMember(member).then(function(res) {
             removeMemberFromList(member);
@@ -230,16 +229,19 @@
     }
 
     function sendGenericEmail() {
-      var data = findSelectedMembers();
+      var data = findSelectedMembersGenericEmail();
 
-      if(data.length > 0) {
+      if (data.length > 0) {
         vm.session.sendGenericEmail(data).then(function(res) {
-          messenger.ok(res.message);
+          if (res.genericTemplateNotCreated) {
+            $confirm({ text: "You need to set up a Generic Email in Step 3 before you can send to your Contacts", closeOnly: true, title: null });
+          } else {
+            messenger.ok(res.message);
+          }
         }, function(error) {
           messenger.error(error);
         });
-      }
-      else {
+      } else {
         messenger.error(messagesUtil.sessionBuilder.noContacts);
       }
     }

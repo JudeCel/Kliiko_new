@@ -495,6 +495,27 @@ describe('SERVICE - Survey', function() {
     describe('happy path', function() {
       it('should succeed on deleting survey', function (done) {
         let params = surveyParams();
+        params.confirmedAt = null;
+
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
+          let survey = result.data;
+
+          surveyServices.removeSurvey({ id: survey.id }, testData.account).then(function(result) {
+            assert.equal(result.message, surveyServices.messages.removed);
+            Survey.count().then(function(c) {
+              assert.equal(c, 0);
+              done();
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+
+    describe('sad path', function() {
+      it('should fail on deleting survey', function (done) {
+        let params = surveyParams();
 
         surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;

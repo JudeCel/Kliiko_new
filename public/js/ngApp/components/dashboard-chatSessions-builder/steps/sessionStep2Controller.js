@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep2Controller', SessionStep2Controller);
 
-  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'orderByFilter', '$scope'];
-  function SessionStep2Controller(dbg, sessionBuilderControllerServices, messenger, orderByFilter, $scope) {
+  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'orderByFilter', '$anchorScroll', '$location', '$scope'];
+  function SessionStep2Controller(dbg, sessionBuilderControllerServices, messenger, orderByFilter, $anchorScroll, $location, $scope) {
     dbg.log2('#SessionBuilderController 2 started');
 
     var vm = this;
@@ -13,6 +13,7 @@
     vm.allTopicsSelected = false;
     vm.sessionTopicsArray = [];
     vm.sessionTopicsObject = {};
+    vm.isDropsectionInViewport = true;
 
     vm.sortableOptionsA = {
       stop : function(e, ui) {
@@ -319,6 +320,17 @@
       }
 
       return false;
+    }
+
+    function onDragStart() {
+      scrollToDropSection();
+    }
+
+    function scrollToDropSection() {
+      if (!vm.isDropsectionInViewport) {
+        $location.hash('drop-section');
+        $anchorScroll();
+      }
     }
   }
 

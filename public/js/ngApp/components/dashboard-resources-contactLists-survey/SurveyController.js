@@ -2,45 +2,45 @@
   'use strict';
 
   angular.module('KliikoApp').controller('SurveyController', SurveyController);
-  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$anchorScroll', '$location', '$window'];
+  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$interval', '$anchorScroll', '$location', '$window'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $anchorScroll, $location, $window) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $interval, $anchorScroll, $location, $window) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
     vm.surveys = {};
     vm.uploadTypes = {};
+    vm.autoSave = null;
 
     vm.defaultIntroduction = "(Brand/Organisation) would like your fast feedback on (issue). It will only take 2 minutes, and you'll be in the draw for (prize). Thanks for your help!";
     vm.defaultThanks = "Thanks for all your feedback and help with our survey! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).";
 
     vm.popOverMessages = {
-      remove: 'Remove survey',
-      edit: 'Edit survey',
-      copy: 'Copy survey',
-      status: 'Change status',
-      confirm: 'Confirm survey',
-      export: 'Export survey'
+      remove: 'Delete',
+      edit: 'Edit',
+      copy: 'Copy',
+      export: 'Export',
+      report: 'Stats'
     };
 
     // Uses services
     vm.removeSurvey = removeSurvey;
     vm.changeStatus = changeStatus;
     vm.copySurvey = copySurvey;
-    vm.finishManage = finishManage;
-    vm.confirmSurvey = confirmSurvey;
+    vm.saveSurvey = saveSurvey;
     vm.exportSurvey = exportSurvey;
+    vm.reportSurvey = reportSurvey;
 
     // Inits
     vm.initQuestion = initQuestion;
     vm.initAnswers = initAnswers;
     vm.initContacts = initContacts;
     vm.initGallery = initGallery;
+    vm.initAutoSave = initAutoSave;
 
     // Helpers
     vm.showPreview = showPreview;
     vm.replaceErrorMessage = replaceErrorMessage;
-    vm.statusIcon = statusIcon;
     vm.canChangeAnswers = canChangeAnswers;
     vm.changeAnswers = changeAnswers;
     vm.defaultArray = defaultArray;
@@ -52,6 +52,7 @@
     vm.onDropComplete = onDropComplete;
     vm.galleryDropdownData = galleryDropdownData;
     vm.checkTag = surveyServices.checkTag;
+    vm.canDelete = canDelete;
 
     function onDropComplete(index, data, evt) {
       var answer = data.answer;
@@ -117,19 +118,30 @@
       });
     };
 
+    function reportSurvey(surveyId) {
+      //todo: should be implemented in other task
+    }
+
     function changeStatus(survey) {
-      surveyServices.changeStatus({ id: survey.id, closed: !survey.closed }).then(function(res) {
+      var closedAt = survey.closed ? null : new Date();
+      surveyServices.changeStatus({ id: survey.id, closed: !survey.closed, closedAt: closedAt }).then(function(res) {
         dbg.log2('#SurveyController > changeStatus > res ', res);
 
         if(res.error) {
           messenger.error(res.error);
-        }
-        else {
+        } else {
+          survey.closedAt = closedAt;
           survey.closed = !survey.closed;
           messenger.ok(res.message);
         }
       });
     };
+
+    function canDelete(survey) {
+      var date = new Date();
+      date.setDate(date.getDate() - 1);
+      return survey.closed && (new Date(survey.closedAt) <= date) || !survey.confirmedAt;
+    }
 
     function findSelected() {
       var array = [];
@@ -142,29 +154,32 @@
       return array;
     }
 
-    function finishManage() {
+    function initAutoSave() {
+      vm.autoSave = $interval(function() {
+        saveSurvey(true, false);
+      }, 60000, 0, false);
+    }
+
+    function saveSurvey(autoSave, publish) {
       vm.submitedForm = true;
       vm.submitingForm = true;
 
       $timeout(function() {
         if(vm.manageForm.$valid) {
           var selected = findSelected();
-          if(selected.length < vm.minQuestions) {
+          if(publish && selected.length < vm.minQuestions) {
             vm.submitError = vm.constantErrors.minQuestions + vm.minQuestions;
-          }
-          else {
+          } else {
             delete vm.submitError;
             var object = JSON.parse(JSON.stringify(vm.survey));
             object.SurveyQuestions = selected;
-            if(vm.currentPage.type == 'create') {
-              finishCreate(object);
-            }
-            else {
-              finishEdit(object);
+            if (!object.id) {
+              finishCreate(object, autoSave, publish);
+            } else {
+              finishEdit(object, autoSave, publish);
             }
           }
-        }
-        else {
+        } else if (!autoSave) {
           vm.submitError = vm.constantErrors.default;
           $timeout(function() {
             var form = angular.element('#manageForm');
@@ -184,32 +199,44 @@
 
         vm.submitingForm = false;
       }, 1000);
-    };
+    }
 
-    function finishCreate(survey) {
+    function finishCreate(survey, autoSave, publish) {
       surveyServices.createSurvey(survey).then(function(res) {
         dbg.log2('#SurveyController > finishCreate > res ', res);
 
-        if(res.error) {
-          messenger.error(res.error);
-        }
-        else {
-          changePage('index');
-          messenger.ok(res.message);
+        if (res.error) {
+          if (!autoSave) {
+            messenger.error(res.error);
+          }
+        } else {
+          survey.id = res.data.id;
+          vm.survey.id = res.data.id;
+          if (publish) {
+            confirmSurvey(survey);
+          } else if (!autoSave) {
+            messenger.ok(res.message);
+            changePage('index');
+          }
         }
       });
     };
 
-    function finishEdit(survey) {
+    function finishEdit(survey, autoSave, publish) {
       surveyServices.updateSurvey(survey).then(function(res) {
         dbg.log2('#SurveyController > finishEdit > res ', res);
 
-        if(res.error) {
-          messenger.error(res.error);
-        }
-        else {
-          changePage('index');
-          messenger.ok(res.message);
+        if (res.error) {
+          if (!autoSave) {
+            messenger.error(res.error);
+          }
+        } else {
+          if (publish) {
+            confirmSurvey(survey);
+          } else if (!autoSave) {
+            messenger.ok(res.message);
+            changePage('index');
+          }
         }
       });
     };
@@ -233,12 +260,12 @@
       surveyServices.confirmSurvey({ id: survey.id, confirmedAt: date }).then(function(res) {
         dbg.log2('#SurveyController > confirmSurvey > res ', res);
 
-        if(res.error) {
+        if (res.error) {
           messenger.error(res.error);
-        }
-        else {
+        } else {
           survey.confirmedAt = date;
           messenger.ok(res.message);
+          changePage('index');
         }
       });
     };
@@ -262,15 +289,6 @@
       }
       else {
         delete vm.survey.SurveyQuestions[order];
-      }
-    };
-
-    function statusIcon(survey) {
-      if(survey && survey.closed) {
-        return '/icons/password_red.png';
-      }
-      else {
-        return '/icons/password_grey.png';
       }
     };
 
@@ -396,6 +414,10 @@
 
     function changePage(page, survey) {
       vm.submitedForm = false;
+      if (vm.autoSave) {
+        $interval.cancel(vm.autoSave);
+        vm.autoSave = null;
+      }
       if(page == 'index') {
         init();
         vm.currentPage = { page: page };
