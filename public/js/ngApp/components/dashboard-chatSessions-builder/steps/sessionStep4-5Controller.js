@@ -162,11 +162,11 @@
         } else if (noMobile == 1) {
           messenger.error(messagesUtil.sessionBuilder.noMobileForContact);
         } else {
-          var someMembersWereSelected = builderServices.someMembersWereSelected(vm);
-          messenger.error(someMembersWereSelected ? messagesUtil.sessionBuilder.noContactsToSendSMS : (noMobile.toString() + messagesUtil.sessionBuilder.noMobileForContacts));
+          messenger.error(noMobile.toString() + messagesUtil.sessionBuilder.noMobileForContacts);
         }
       } else {
-        messenger.error(messagesUtil.sessionBuilder.noContacts);
+        var someMembersWereSelected = builderServices.someMembersWereSelected(vm);
+        messenger.error(someMembersWereSelected ? messagesUtil.sessionBuilder.noContactsToSendSMS : messagesUtil.sessionBuilder.noContacts);
       }
     }
 
