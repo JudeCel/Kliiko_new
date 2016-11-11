@@ -653,8 +653,19 @@ function sendMailFromTemplateWithCalendarEvent(id, params, callback) {
   });
 }
 
+
+function prepareDefaultStyles(str) {
+  let idx = str.indexOf('</style>');
+  if (idx > -1) {
+    let standardStyle = ".acceptButton a, .notThisTimeButton a, .notAtAllButton a {color: #ffffff !important;}";
+    str = str.substr(0, idx) + standardStyle + str.substr(idx);
+  }
+  return str;
+}
+
 //replace all "In Editor" variables with .ejs compatible variables
 function formatTemplateString(str) {
+  str = prepareDefaultStyles(str);
   str = str.replace(/\{First Name\}/ig, "<%= firstName %>");
   str = str.replace(/\{Last Name\}/ig, "<%= lastName %>");
   str = str.replace(/\{Account Name\}/ig, "<%= accountName %>");

@@ -37,7 +37,7 @@ describe('Middleware subdomain', () => {
     it('assign currentDomain to res locaCallback', (done) =>  {
       models.Account.findAll().then(function(result) {
         subdomain(req, res, function() {
-          assert.deepEqual(res.locals.currentDomain, { id: result[0].id, name: validAttrs.subdomain, roles: ["accountManager"] });
+          assert.deepEqual(res.locals.currentDomain, {realName: result[0].name, id: result[0].id, name: validAttrs.subdomain, roles: ["accountManager"] });
           done();
         });
       })
