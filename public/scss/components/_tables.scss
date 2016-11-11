@@ -53,7 +53,7 @@
   border: 0;
 }
 
-.table-dashboardElements > thead > tr > th {
+.table-dashboardElements > thead > tr > th:focus {
   outline: none;
 }
 
