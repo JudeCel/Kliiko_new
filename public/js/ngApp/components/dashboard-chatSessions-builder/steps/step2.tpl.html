@@ -41,9 +41,9 @@
           </div>
         </div>
 
-        <div class="col-md-6" ng-if="tc.list.length">
+        <div class="col-md-6" ng-if="tc.list.length" id='drop-section' is-in-viewport="step2Controller.isDropsectionInViewport">
           <h3>Chat Session topics</h3>
-          <div class="drop-area" ng-drop="true">Drop Selected Topics Here</div>
+          <div class="drop-area" ng-drop="true" ng-drag-start="step2Controller.onDragStart()">Drop Selected Topics Here</div>
 
           <div class="margin-top-10" ui-sortable="step2Controller.sortableOptionsA" ng-model="step2Controller.sessionTopicsArray">
             <div class="topic-list-item" ng-repeat="topic in step2Controller.sessionTopicsArray">
