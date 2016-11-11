@@ -223,3 +223,16 @@ input.kliiko-checkbox:checked + label{
   text-decoration: none;
   border: 2px solid $green;
 }
+
+.go-to-green-button,
+.go-to-green-button:focus,
+.go-to-green-button:hover,
+.go-to-green-button:active {
+  background-color: $green;
+  text-decoration: none;
+  color: #fff;
+  padding: 7px;
+  vertical-align: middle;
+  margin-top: -2px;
+  height: 32px;
+}

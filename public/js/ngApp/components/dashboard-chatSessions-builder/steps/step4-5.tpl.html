@@ -33,18 +33,18 @@
                 <label for='checkbox-header'>First Name</label>
               </div>
             </th>
-            <th>Last Name</th>
-            <th>Gender</th>
-            <th>Email</th>
-            <th>Mobile</th>
-            <th>Status</th>
+            <th ng-click="clc.changeTableSortingFilter('lastName')">Last Name</th>
+            <th ng-click="clc.changeTableSortingFilter('gender')">Gender</th>
+            <th ng-click="clc.changeTableSortingFilter('email')">Email</th>
+            <th ng-click="clc.changeTableSortingFilter('mobile')">Mobile</th>
+            <th ng-click="clc.changeTableSortingFilter('status')">Status</th>
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="member in lastStepsController.stepMembers | filter: (lastStepsController.currentFilter == 'all' ? undefined : { inviteStatus: lastStepsController.currentFilter })" ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
+          <tr ng-repeat="member in lastStepsController.stepMembers | filter: (lastStepsController.currentFilter == 'all' ? undefined : { inviteStatus: lastStepsController.currentFilter }) | orderBy: clc.tableSort.by : clc.tableSort.reverse" ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
             <td>
               <div class='checkbox checkbox-xs checkbox-success'>
-                <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.isSelected' ng-disabled='lastStepsController.showCorrectStatus(member)' />
+                <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.isSelected' />
                 <label for='checkbox-{{ $index }}'>{{ member.firstName }}</label>
               </div>
             </td>
@@ -57,8 +57,8 @@
                 {{ lastStepsController.filterTypes[lastStepsController.returnMemberInviteStatus(member)] }}
               </div>
               <div ng-if='lastStepsController.mouseOveringMember[$index]'>
-                <img src='/icons/session_grey.png' ng-click='lastStepsController.modalWindowHandler("showSms", [member])' />
-                <img src='/icons/dashboardElement_edit.png' ng-click="lastStepsController.openEditContactModal(member)" ng-if='!lastStepsController.showCorrectStatus(member)' />
+                <img src='/icons/session_grey.png' ng-click='lastStepsController.modalWindowHandler("showSms", [member])' title="Send SMS" ng-if="lastStepsController.canSendSMS" />
+                <img src='/icons/dashboardElement_edit.png' ng-click="lastStepsController.openEditContactModal(member)" />
                 <img src='/icons/dashboardElement_remove.png' ng-click='lastStepsController.removeFromList(member)' />
               </div>
             </td>
@@ -73,13 +73,15 @@
     <div class='row'>
       <div class='btn btn-standart btn-red btn-medium' ng-click='lastStepsController.inviteMembers()'>
         <i class='fa fa-envelope' aria-hidden='true' /> Send Invite
-        ({{ lastStepsController.findSelectedMembers().length }})
+        ({{ lastStepsController.findSelectedMembersInvite().length }})
       </div>
       <div class='btn btn-standart btn-green btn-large' ng-click='lastStepsController.sendGenericEmail()'>
         Send Generic Email
+        ({{ lastStepsController.findSelectedMembersGenericEmail().length }})
       </div>
-      <div ng-show="lastStepsController.isParticipantPage() && lastStepsController.canSendSMS" class=' btn btn-standart btn-green btn-medium' ng-click='lastStepsController.modalWindowHandler("showSms", lastStepsController.findSelectedMembers())'>
+      <div ng-show="lastStepsController.canSendSMSOnThisPage()" class='btn btn-standart btn-green btn-medium' ng-click='lastStepsController.modalWindowHandler("showSms", lastStepsController.findSelectedMembersSMS())'>
         Send SMS
+        ({{ lastStepsController.findSelectedMembersSMS().length }})
       </div>
     </div>
   </div>

@@ -18,6 +18,7 @@
     Services.selectMembers = selectMembers;
     Services.removeDuplicatesFromArray = removeDuplicatesFromArray;
     Services.canAddObservers = canAddObservers;
+    Services.someMembersWereSelected = someMembersWereSelected;
 
     return Services;
 
@@ -60,18 +61,28 @@
       return null;
     }
 
-    function findSelectedMembers(vm) {
+    function findSelectedMembers(vm, skipInvited, onlyWithMobile) {
       var array = [];
       var members = currentMemberList(vm);
 
       for (var i in members) {
         var member = members[i];
-        if(member.isSelected) {
+        if(member.isSelected && (member.inviteStatus == "notInvited" || !skipInvited) && (!onlyWithMobile || member.mobile)) {
           array.push(member);
         }
       }
 
       return array;
+    }
+
+    function someMembersWereSelected(vm) {
+      var members = currentMemberList(vm);
+      for (var i in members) {
+        if (members[i].isSelected) {
+          return true;
+        }
+      }
+      return false;
     }
 
     function currentMemberList(vm) {
