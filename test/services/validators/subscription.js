@@ -61,11 +61,13 @@ describe('SERVICE - VALIDATORS - Subscription', function() {
       });
 
       it('should fail on validating session count', function(done) {
+        let startTime = new Date();
+        let endTime = new Date().setDate(new Date().getDate() + 1);
         let params = {
           accountId: testData.account.id,
           name: 'some name',
-          startTime: new Date(),
-          endTime: new Date(),
+          startTime: startTime,
+          endTime: endTime,
           timeZone: 'Europe/Riga'
         };
 
