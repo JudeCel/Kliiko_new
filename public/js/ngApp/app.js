@@ -232,7 +232,10 @@
       sessionBuilder: {
         noContacts: 'There are no contacts selected',
         cantSelect: "You can't select members from this list",
-        noMobile: ' has no mobile provided'
+        noMobileForContact: 'The contact has no mobile provided',
+        noMobileForContacts: ' contacts has no mobile provided',
+        noContactsToInvite: 'You have already sent invitation to selected users',
+        noContactsToSendSMS: 'Selected contacts has no mobile provided'
       },
       gallery: {
         noResource: 'No resource selected',

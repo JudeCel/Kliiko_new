@@ -57,7 +57,7 @@
                 {{ lastStepsController.filterTypes[lastStepsController.returnMemberInviteStatus(member)] }}
               </div>
               <div ng-if='lastStepsController.mouseOveringMember[$index]'>
-                <img src='/icons/session_grey.png' ng-click='lastStepsController.modalWindowHandler("showSms", [member])' title="Send SMS" ng-if="lastStepsController.canSendSMSOnThisPage()" />
+                <img src='/icons/session_grey.png' ng-click='lastStepsController.modalWindowHandler("showSms", [member])' title="Send SMS" ng-if="lastStepsController.canSendSMS" />
                 <img src='/icons/dashboardElement_edit.png' ng-click="lastStepsController.openEditContactModal(member)" />
                 <img src='/icons/dashboardElement_remove.png' ng-click='lastStepsController.removeFromList(member)' />
               </div>

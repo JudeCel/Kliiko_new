@@ -139,32 +139,33 @@
         }, function(error) {
           messenger.error(error);
         });
-      }
-      else {
-        messenger.error(messagesUtil.sessionBuilder.noContacts);
+      } else {
+        let someMembersWereSelected = builderServices.someMembersWereSelected(vm);
+        messenger.error(someMembersWereSelected ? messagesUtil.sessionBuilder.noContactsToInvite : messagesUtil.sessionBuilder.noContacts);
       }
     }
 
     function showSmsWindow(data) {
-      if(data.length > 0) {
-        var noMobile = {};
-        for(var i in data) {
+      if (data.length > 0) {
+        var noMobile = 0;
+        for (var i in data) {
           var member = data[i];
-          if(!member.mobile) {
-            noMobile[member.firstName + ' ' + member.lastName] = messagesUtil.sessionBuilder.noMobile;
+          if (!member.mobile) {
+            noMobile++;
           }
         }
 
-        if(Object.keys(noMobile).length == 0) {
+        if (noMobile == 0) {
           vm.sendSmsTo = data;
           vm.sendSmsMessage = null;
           domServices.modal('sessionBuilder-sendSmsModal');
+        } else if (noMobile == 1) {
+          messenger.error(messagesUtil.sessionBuilder.noMobileForContact);
+        } else {
+          let someMembersWereSelected = builderServices.someMembersWereSelected(vm);
+          messenger.error(someMembersWereSelected ? messagesUtil.sessionBuilder.noContactsToSendSMS : (noMobile.toString() + messagesUtil.sessionBuilder.noMobileForContacts));
         }
-        else {
-          messenger.error(noMobile);
-        }
-      }
-      else {
+      } else {
         messenger.error(messagesUtil.sessionBuilder.noContacts);
       }
     }
@@ -192,22 +193,21 @@
     }
 
     function findSelectedMembersGenericEmail() {
-      return builderServices.findSelectedMembers(vm, false);
+      return builderServices.findSelectedMembers(vm, false, false);
     }
 
     function findSelectedMembersSMS() {
-      return builderServices.findSelectedMembers(vm, false);
+      return builderServices.findSelectedMembers(vm, false, true);
     }
 
     function findSelectedMembersInvite() {
-      return builderServices.findSelectedMembers(vm, true);
+      return builderServices.findSelectedMembers(vm, true, false);
     }
 
     function removeFromList(member) {
-      if(member.inviteStatus == 'Not Invited') {
+      if(returnMemberInviteStatus(member) == 'notInvited') {
         removeMemberFromList(member);
-      }
-      else {
+      } else {
         angularConfirm('Are you sure you want to do this?').then(function(response) {
           vm.session.removeMember(member).then(function(res) {
             removeMemberFromList(member);
