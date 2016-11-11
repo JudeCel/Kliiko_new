@@ -16,7 +16,7 @@ function isInViewport() {
         },
         link : function(scope, element) {
           $(window).scroll(function() {
-            scope.isInViewport = isElementInViewPort(element);
+            scope.isInViewport = isElementInViewPort(element[0]);
           });
         }
     };
@@ -24,8 +24,8 @@ function isInViewport() {
     return directive;
 
     function isElementInViewPort(element) {
-      if (typeof jQuery === "function" && element instanceof jQuery) {
-          element = element[0];
+      if (element instanceof jQuery) {
+          throw "Input parameter 'element' must be a raw DOM element. Please try to use element[0]."
       }
 
       var rectangle = element.getBoundingClientRect();
