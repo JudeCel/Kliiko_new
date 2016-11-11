@@ -24,10 +24,6 @@ function isInViewport() {
     return directive;
 
     function isElementInViewPort(element) {
-      if (element instanceof jQuery) {
-          throw "Input parameter 'element' must be a raw DOM element. Please try to use element[0]."
-      }
-
       var rectangle = element.getBoundingClientRect();
       return (
         rectangle.top >= 0 && rectangle.left >= 0 && rectangle.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
