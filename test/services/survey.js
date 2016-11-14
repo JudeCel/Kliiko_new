@@ -786,8 +786,8 @@ describe('SERVICE - Survey', function() {
                 let validResult = {
                   header: [ 'Some default name 0', 'Some default name 1' ],
                   data: [{
-                    'Some default name 0': '3 answer 0',
-                    'Some default name 1': '3 answer 1'
+                    'Some default name 0': '0 answer 0',
+                    'Some default name 1': '0 answer 1'
                   }]
                 };
 
