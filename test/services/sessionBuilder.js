@@ -15,28 +15,24 @@ describe('SERVICE - SessionBuilder', function() {
   var testUser, testAccount, testAccountUser, subscriptionId;
 
   beforeEach(function(done) {
-    userFixture.createUserAndOwnerAccount().then(function(result) {
-      testUser = result.user;
-      testAccount = result.account;
-      testAccountUser = result.accountUser;
-      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function(subscription) {
-        subscriptionId = subscription.id;
-        models.SubscriptionPreference.update({'data.sessionCount': 2}, { where: { subscriptionId: subscription.id } }).then(function(result) {
-          done();
+    models.sequelize.sync({ force: true }).then(() => {
+      userFixture.createUserAndOwnerAccount().then(function(result) {
+        testUser = result.user;
+        testAccount = result.account;
+        testAccountUser = result.accountUser;
+        subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function(subscription) {
+          subscriptionId = subscription.id;
+          models.SubscriptionPreference.update({'data.sessionCount': 2}, { where: { subscriptionId: subscription.id } }).then(function(result) {
+            done();
+          }, function(error) {
+            done(error);
+          })
         }, function(error) {
           done(error);
         })
       }, function(error) {
         done(error);
-      })
-    }, function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
-      done();
+      });
     });
   });
 
