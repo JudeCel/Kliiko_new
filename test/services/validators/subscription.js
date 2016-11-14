@@ -12,17 +12,13 @@ describe('SERVICE - VALIDATORS - Subscription', function() {
   var testData;
 
   beforeEach(function(done) {
-    subscriptionFixture.createSubscription().then(function(result) {
-      testData = result;
-      done();
-    }, function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
     models.sequelize.sync({ force: true }).then(function() {
-      done();
+      subscriptionFixture.createSubscription().then(function(result) {
+        testData = result;
+        done();
+      }, function(error) {
+        done(error);
+      });
     });
   });
 
@@ -61,11 +57,13 @@ describe('SERVICE - VALIDATORS - Subscription', function() {
       });
 
       it('should fail on validating session count', function(done) {
+        let startTime = new Date();
+        let endTime = new Date().setDate(new Date().getDate() + 1);
         let params = {
           accountId: testData.account.id,
           name: 'some name',
-          startTime: new Date(),
-          endTime: new Date(),
+          startTime: startTime,
+          endTime: endTime,
           timeZone: 'Europe/Riga'
         };
 

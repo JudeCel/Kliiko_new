@@ -395,7 +395,7 @@ function variablesForTemplate(type) {
       return ["{First Name}", "{Incentive}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Close Session Yes In Future}", "{Close Session No In Future}"];
       break;
     case "confirmation":
-      return ["{First Name}", "{Start Time}", "{Start Date}", "{Confirmation Check In}", "{Participant Email}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
+      return ["{Incentive}", "{First Name}", "{Start Time}", "{Start Date}", "{Confirmation Check In}", "{Participant Email}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
       break;
     case "generic":
       return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
@@ -416,22 +416,41 @@ function variablesForTemplate(type) {
 
 function validateTemplate(template) {
   let deferred = q.defer();
+  var params = variablesForTemplate(template['MailTemplateBase.category']);
+  var error = null;
 
-  Session.find({ where: { id: template.properties.sessionId } }).then(function (result) {
-    let incentivePopulated = false;
-    if (result && result.incentive_details) {
-      incentivePopulated = true;
-    }
+  if (template.properties && template.properties.sessionId) {
+    Session.find({ where: { id: template.properties.sessionId } }).then(function (result) {
+      let incentivePopulated = false;
+      if (result && result.incentive_details) {
+        incentivePopulated = true;
+      }
 
-    var params = variablesForTemplate(template['MailTemplateBase.category']);
-    var error = null;
+      if (params.length) {
+        _.map(params, function(variable) {
+            if (template.content.indexOf(variable) == -1) {
+              if (incentivePopulated || variable != "{Incentive}") {
+                error = "Missing " + variable + " variable";
+              }
+            }
+        });
+      }
+      if (error) {
+        deferred.reject(error);
+      } else {
+        deferred.resolve();
+      }
+
+    }, function(error) {
+      deferred.reject(MessagesUtil.session.notFound);
+    });
+  } else {
     if (params.length) {
       _.map(params, function(variable) {
-          if (template.content.indexOf(variable) == -1) {
-            if (incentivePopulated || variable != "{Incentive}") {
-              error = "Missing " + variable + " variable";
-            }
-          }
+        if (template.content.indexOf(variable) == -1){
+           error = "Missing " + variable + " variable";
+           return;
+        }
       });
     }
     if (error) {
@@ -439,10 +458,7 @@ function validateTemplate(template) {
     } else {
       deferred.resolve();
     }
-
-  }, function(error) {
-    deferred.reject(MessagesUtil.session.notFound);
-  });
+  }
 
   return deferred.promise;
 }
@@ -653,8 +669,19 @@ function sendMailFromTemplateWithCalendarEvent(id, params, callback) {
   });
 }
 
+
+function prepareDefaultStyles(str) {
+  let idx = str.indexOf('</style>');
+  if (idx > -1) {
+    let standardStyle = ".acceptButton a, .notThisTimeButton a, .notAtAllButton a {color: #ffffff !important;}";
+    str = str.substr(0, idx) + standardStyle + str.substr(idx);
+  }
+  return str;
+}
+
 //replace all "In Editor" variables with .ejs compatible variables
 function formatTemplateString(str) {
+  str = prepareDefaultStyles(str);
   str = str.replace(/\{First Name\}/ig, "<%= firstName %>");
   str = str.replace(/\{Last Name\}/ig, "<%= lastName %>");
   str = str.replace(/\{Account Name\}/ig, "<%= accountName %>");

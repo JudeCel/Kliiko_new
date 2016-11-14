@@ -36,20 +36,24 @@ describe('SERVICE - BrandColour', function() {
   };
 
   function testScheme(data, params) {
-    if(!params) {
+    if (!params) {
       params = { colours: brandProjectConstants.preferenceColours };
-    }
-    else if(!params.colours) {
+    } else if (!params.colours) {
       params.colours = brandProjectConstants.preferenceColours;
     }
 
-    assert.equal(data.name, params.name || 'Default scheme');
+    assert.equal(data.name, params.name || 'Default Focus Scheme');
     assert.equal(data.colours.browserBackground, params.colours.browserBackground || '#EFEFEF');
     assert.equal(data.colours.mainBackground, params.colours.mainBackground || '#FFFFFF');
     assert.equal(data.colours.mainBorder, params.colours.mainBorder || '#C3BE2E');
     assert.equal(data.colours.font, params.colours.font || '#58595B');
     assert.equal(data.colours.headerButton, params.colours.headerButton || '#4CBFE9');
     assert.equal(data.colours.consoleButtonActive, params.colours.consoleButtonActive || '#4CB649');
+    assert.equal(data.colours.hyperlinks, params.colours.email.hyperlinks || '#2F9F69');
+    assert.equal(data.colours.hyperlinks, params.colours.email.hyperlinks || '#2F9F69');
+    assert.equal(data.colours.notAtAllButton, params.colours.email.notAtAllButton || '#E51D39');
+    assert.equal(data.colours.acceptButton, params.colours.email.acceptButton || '#4CB649');
+    assert.equal(data.colours.notThisTimeButton, params.colours.email.notThisTimeButton || '#4CBFE9');
   }
 
   function countWhere() {
@@ -98,12 +102,12 @@ describe('SERVICE - BrandColour', function() {
     describe('happy path', function() {
       it('should succeed on creating scheme', function (done) {
         BrandProjectPreference.count(countWhere()).then(function(c) {
-          assert.equal(c, 1);
+          assert.equal(c, 2);
 
           brandColourServices.createScheme({ name: 'untitled' }, accountParams()).then(function(result) {
             testScheme(result.data, { name: 'untitled' });
             BrandProjectPreference.count(countWhere()).then(function(c) {
-              assert.equal(c, 2);
+              assert.equal(c, 3);
               done();
             });
           }, function(error) {
@@ -116,7 +120,7 @@ describe('SERVICE - BrandColour', function() {
     describe('sad path', function() {
       it('should fail because of colour regex', function (done) {
         BrandProjectPreference.count(countWhere()).then(function(c) {
-          assert.equal(c, 1);
+          assert.equal(c, 2);
 
           brandColourServices.createScheme({ colours: { browserBackground: 'somerandomstring' } }, accountParams()).then(function(result) {
             done('Should not get here!');
@@ -187,13 +191,13 @@ describe('SERVICE - BrandColour', function() {
     describe('happy path', function() {
       it('should succeed on deleting scheme', function (done) {
         BrandProjectPreference.count(countWhere()).then(function(c) {
-          assert.equal(c, 1);
+          assert.equal(c, 2);
 
           brandColourServices.removeScheme({ id: testData.preference.id }, accountParams()).then(function(result) {
             assert.equal(result.message, brandColourServices.messages.removed);
 
             BrandProjectPreference.count(countWhere()).then(function(c) {
-              assert.equal(c, 0);
+              assert.equal(c, 1);
               done();
             });
           }, function(error) {
@@ -219,14 +223,14 @@ describe('SERVICE - BrandColour', function() {
     describe('happy path', function() {
       it('should succeed on copieing scheme', function (done) {
         BrandProjectPreference.count(countWhere()).then(function(c) {
-          assert.equal(c, 1);
+          assert.equal(c, 2);
 
           brandColourServices.copyScheme({ id: testData.preference.id }, accountParams()).then(function(result) {
-            testScheme(result.data, { name: `Copy of Default scheme #${result.data.id}` });
+            testScheme(result.data, { name: `Copy of Default Focus Scheme #${result.data.id}` });
             assert.equal(result.message, brandColourServices.messages.copied);
 
             BrandProjectPreference.count(countWhere()).then(function(c) {
-              assert.equal(c, 2);
+              assert.equal(c, 3);
               done();
             });
           }, function(error) {
