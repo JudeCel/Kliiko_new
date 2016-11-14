@@ -1,6 +1,7 @@
 'use strict';
 
 var MessagesUtil = require('./../util/messages');
+var Constants = require('./../util/constants');
 var models = require('./../models');
 var Account  = models.Account;
 var filters = require('./../models/filters');
@@ -20,10 +21,10 @@ function createNewAccountIfNotExists(params, userId) {
     deferred.reject(filters.errors(MessagesUtil.account.empty));
   } else {
     models.AccountUser.find({ where: { UserId: userId, role: "accountManager", owner: true } }).then(function(result) {
-      if (result) {
+      if (result >= Constants.maxAccountsAmount) {
         deferred.reject(filters.errors(MessagesUtil.account.accountExists));
       } else {
-        createNewAccount(params, userId).then(function(createResult) {
+        createNewAccount(params, userId, result == 0).then(function(createResult) {
           deferred.resolve(createResult);
         }, function(error) {
           deferred.reject(error);
@@ -37,7 +38,7 @@ function createNewAccountIfNotExists(params, userId) {
   return deferred.promise;
 }
 
-function createNewAccount(params, userId) {
+function createNewAccount(params, userId, freeTrial) {
   let deferred = q.defer();
 
   let createNewAccountFunctionList = [
@@ -48,7 +49,7 @@ function createNewAccount(params, userId) {
           include: [models.AccountUser]
         }).then(function(result) {
 
-          let createParams = getCreateNewAccountParams(params.accountName, result.email, false);
+          let createParams = getCreateNewAccountParams(params.accountName, result.email, freeTrial);
           if (result.AccountUsers[0]) {
             createParams.firstName = result.AccountUsers[0].firstName;
             createParams.lastName = result.AccountUsers[0].lastName;
