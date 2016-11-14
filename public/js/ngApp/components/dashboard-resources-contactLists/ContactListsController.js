@@ -384,12 +384,6 @@
         }
       }
 
-      if (action === 'excel') {
-        vm.updateExistingUser = null;
-        vm.contactModalTitle = 'Add New Contacts From Excel';
-        vm.importData = { excel:true, csv: false, fileToImport: null};
-      }
-
       if (action === 'csv') {
         vm.updateExistingUser = null;
         vm.contactModalTitle = 'Add New Contacts From CSV';
