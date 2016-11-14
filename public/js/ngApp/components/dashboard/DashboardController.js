@@ -9,9 +9,11 @@
 
     var vm = this;
     initMyDashboard();
+    vm.initMyDashboard = initMyDashboard;
     vm.disablePlayButton = false;
     vm.hasOwnAccount = false;
-    vm.showCreateNewAccount = false;
+    vm.showCreateNewAccountBanner = false;
+    vm.canCreateNewAccount = false;
     vm.hasRoles = false;
 
     vm.redirectToChatSession = redirectToChatSession;
@@ -62,7 +64,8 @@
           vm.dateFormat = res.dateFormat;
           vm.hasOwnAccount = res.hasOwnAccount;
           vm.hasRoles = res.hasRoles;
-          vm.showCreateNewAccount = !vm.hasOwnAccount;
+          vm.canCreateNewAccount = res.canCreateNewAccount;
+          vm.showCreateNewAccountBanner = !vm.hasOwnAccount;
           setInitialTab();
         }
       });

@@ -47,21 +47,20 @@ describe('SERVICE - Survey', function() {
       _.map(question.answers, function(answer) {
         if(answer.contactDetails) {
           params.SurveyQuestions[question.id] = {
-            answer: true,
+            tagHandled: true,
             contactDetails: {
               firstName: 'firstName',
               lastName: 'lastName',
               gender: 'male',
-              age: 20,
+              age: '30-34',
               email: 'some@email.com',
               mobile: '+371 2222222',
               postalAddress: 'postalAddress',
               country: 'Latvia'
             }
           };
-        }
-        else {
-          params.SurveyQuestions[question.id] = { answer: answer.order };
+        } else {
+          params.SurveyQuestions[question.id] = { answer: 0 };
         }
       });
     });
@@ -83,26 +82,70 @@ describe('SERVICE - Survey', function() {
     };
   };
 
-  function surveyQuestionContactList() {
+  function surveyQuestionContactListConfirm() {
     return {
-      "name":"Contact details",
-      "type":"checkbox",
+      "name":"Interest",
+      "type":"radio",
       "question":"Would you like to share you contact details?",
-      "order":8,
+      "order":7,
       "answers":[
         {
-          "name":"No problemo, amigo",
-          "order":0,
-          "contactDetails":[
-            { order: 0, "model": "firstName", "name":"First Name", "input":true },
-            { order: 1, "model": "lastName", "name":"Last Name", "input":true },
-            { order: 2, "model": "gender", "name":"Gender", "select":true, "options":[ "male", "female" ] },
-            { order: 3, "model": "age", "name":"Age", "input":true },
-            { order: 4, "model": "email", "name":"Email", "input":true },
-            { order: 5, "model": "mobile", "name":"Mobile", "input":true },
-            { order: 6, "model": "postalAddress", "name":"Postal Address", "input":true, },
-            { order: 7, "model": "country", "name":"Country", "input":true, }
-          ]
+          order: 0,
+          tag: 'InterestYesTag',
+          name: 'Yes'
+        },
+        {
+          order: 1,
+          name: 'No'
+        }
+      ]
+    };
+  }
+
+  function surveyQuestionContactList() {
+    return {
+      "name":"Contact Details",
+      "type":"input",
+      "question":"If you answered Yes, please complete your Contact Details",
+      "order":8,
+      "handleTag": 'InterestYesTag',
+
+      "answers":[
+        {
+          "contactDetails": {
+            firstName: { model: 'firstName', name: 'First Name', input: true, order: 0 },
+            lastName: { model: 'lastName', name: 'Last Name', input: true, order: 1 },
+            gender: { model: 'gender',
+               name: 'Gender',
+               select: true,
+               options: [ 'male', 'female' ],
+               order: 2 },
+            age: { model: 'age',
+               name: 'Age',
+               select: true,
+               options: [
+                  'Under 18',
+                  '18-19',
+                  '20-24',
+                  '25-29',
+                  '30-34',
+                  '35-39',
+                  '40-44',
+                  '45-49',
+                  '50-54',
+                  '55-59',
+                  '60-64',
+                  '65-69',
+                  '70+' ],
+               order: 3 },
+            email: { model: 'email', name: 'Email', input: true, order: 4 },
+            mobile: { model: 'mobile',
+               name: 'Mobile',
+               number: true,
+               canDisable: true,
+               order: 5 }
+            },
+          'handleTag': 'InterestYesTag'
         }
       ]
     };
@@ -521,13 +564,9 @@ describe('SERVICE - Survey', function() {
           let survey = result.data;
 
           surveyServices.removeSurvey({ id: survey.id }, testData.account).then(function(result) {
-            assert.equal(result.message, surveyServices.messages.removed);
-            Survey.count().then(function(c) {
-              assert.equal(c, 0);
-              done();
-            });
+            done('Should not get here!');
           }, function(error) {
-            done(error);
+            done();
           });
         });
       });
@@ -628,6 +667,7 @@ describe('SERVICE - Survey', function() {
 
       it('should succeed on answering with contact list', function (done) {
         let params = surveyParams();
+        params.SurveyQuestions.push(surveyQuestionContactListConfirm());
         params.SurveyQuestions.push(surveyQuestionContactList());
 
         ContactListUser.count().then(function(c) {
@@ -663,6 +703,7 @@ describe('SERVICE - Survey', function() {
     describe('sad path', function() {
       it('should fail on account user validations', function (done) {
         let params = surveyParams();
+        params.SurveyQuestions.push(surveyQuestionContactListConfirm());
         params.SurveyQuestions.push(surveyQuestionContactList());
 
         ContactListUser.count().then(function(c) {
@@ -674,7 +715,7 @@ describe('SERVICE - Survey', function() {
             SurveyQuestion.findAll().then(function(results) {
               let answerParams = surveyAnswerParams(results);
               answerParams.surveyId = survey.id;
-              answerParams.SurveyQuestions[3].contactDetails.email = 'invalidEmail';
+              answerParams.SurveyQuestions[4].contactDetails.email = 'invalidEmail';
 
               surveyServices.answerSurvey(answerParams).then(function(result) {
                 done('Should not get here!');
@@ -745,8 +786,8 @@ describe('SERVICE - Survey', function() {
                 let validResult = {
                   header: [ 'Some default name 0', 'Some default name 1' ],
                   data: [{
-                    'Some default name 0': '3 answer 0',
-                    'Some default name 1': '3 answer 1'
+                    'Some default name 0': '0 answer 0',
+                    'Some default name 1': '0 answer 1'
                   }]
                 };
 
