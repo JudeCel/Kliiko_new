@@ -14,6 +14,7 @@
     vm.sessionTopicsArray = [];
     vm.sessionTopicsObject = {};
     vm.isDropsectionInViewport = true;
+    vm.isDragInProgress = false;
 
     vm.sortableOptionsA = {
       stop : function(e, ui) {
@@ -29,10 +30,9 @@
     vm.topicsOnDropComplete = topicsOnDropComplete;
     vm.changeActiveState = changeActiveState;
     vm.changeLandingState = changeLandingState;
-    vm.onDragMove = onDragMove;
     vm.onDragEnd = onDragEnd;
     vm.onDragStart = onDragStart;
-    vm.draggingOptions = {};
+    vm.canBeDraggedAsMultiple = canBeDraggedAsMultiple;
 
     function init(topicController) {
       vm.session = sessionBuilderControllerServices.session;
@@ -63,13 +63,23 @@
         return true;
       }
 
-      for(var i in selected) {
-        if(selected[i].id == topic.id) {
-          can = true;
+      can = isSelectedTopic(selected, topic);
+
+      return can;
+    }
+
+    function canBeDraggedAsMultiple(topic) {
+      return isSelectedTopic(getSelectedTopics(), topic);
+    }
+
+    function isSelectedTopic(selectedTopics, currentTopic) {
+      for(var i in selectedTopics) {
+        if(selectedTopics[i].id == currentTopic.id) {
+          return true;
         }
       }
 
-      return can;
+      return false;
     }
 
     function selectAllTopics(list) {
@@ -203,127 +213,13 @@
       return array;
     }
 
-    function onDragMove() {
-        if (vm.draggingOptions.isSelectedMoreThanOneTopic) {
-          processMultipleSelectedTopics();
-        }
-    }
-
     function onDragEnd() {
-      var items = getTopicElements();
-      var css = {
-        'transform' : 'none',
-        'z-index' : '1'
-      };
-
-      for (var i = 0; i < items.length; i++) {
-        items.eq(i).css(css);
-      }
-    }
-
-    function onDragStart() {
-      initDraggingOptions();
-      initDraggingOffsetOptions();
-    }
-
-    function initDraggingOptions() {
-      var items = getTopicElements();
-      var draggingItem = $('.topic-list-item.dragging');
-      vm.draggingOptions = {
-        isSelectedMoreThanOneTopic : isSelectedMoreThanOneTopic(),
-        items: items,
-        draggingItem: draggingItem,
-        itemHeight: draggingItem.innerHeight(),
-        mainDraggingElementIndex: getMainDraggingElementIndex(items),
-        selectedTopics: getSelectedTopics(),
-        offsetOptions: []
-      };
-    }
-
-    function initDraggingOffsetOptions() {
-      var processedItems = 0;
-      var delta = 1;
-
-      // drag items bottom to main dragging topic
-      for (var i = vm.draggingOptions.mainDraggingElementIndex + delta; i < vm.draggingOptions.items.length; i++) {
-        if (isSelectedTopicElement(vm.draggingOptions.items.eq(i))) {
-          var moves = i - vm.draggingOptions.mainDraggingElementIndex - processedItems - delta;
-          processedItems++;
-          pushToOffsetOptions(moves, i);
-        }
-      }
-
-      processedItems = 0;
-      // drag items on top of main dragging topic
-      for (var i = vm.draggingOptions.mainDraggingElementIndex - delta; i >= 0; i--) {
-        if (isSelectedTopicElement(vm.draggingOptions.items.eq(i))) {
-          var moves = vm.draggingOptions.mainDraggingElementIndex - i - processedItems - delta;
-          moves *= -delta;
-          processedItems++;
-          pushToOffsetOptions(moves, i);
-        }
-      }
-    }
-
-    function pushToOffsetOptions(moves, index) {
-      var offset = vm.draggingOptions.itemHeight * moves;
-      vm.draggingOptions.offsetOptions.push({
-        offset: offset,
-        index: index
-      });
-    }
-
-    function isSelectedMoreThanOneTopic() {
-      return getSelectedTopics().length > 1;
-    }
-
-    function processMultipleSelectedTopics() {
-      var matrix = getTransformMatrix(vm.draggingOptions.draggingItem);
-      var initialTransformMatrixTop = matrix[matrix.length - 1];
-      var matrixUnchagedPart = matrix[0] + '(' + matrix[1] + ', ' + matrix[2] + ', ' + matrix[3] + ', ' + matrix[4] + ', ' + matrix[5] + ', ';
-      var offsetOptions = vm.draggingOptions.offsetOptions;
-
-      for (var i = 0; i < offsetOptions.length; i++) {
-        var adjustedTransformMatrixTop = initialTransformMatrixTop - offsetOptions[i].offset;
-        var css = {
-          'transform': matrixUnchagedPart + adjustedTransformMatrixTop + ')',
-        };
-
-        vm.draggingOptions.items.eq(offsetOptions[i].index).css(css);
-      }
-    }
-
-    function getTopicElements() {
-      return $('.topic-list-item');
-    }
-
-    function getTransformMatrix(draggingItem) {
-      var transform = draggingItem.css('transform');
-      return transform.replace(')', '').split(/,\s|\(/);
-    }
-
-    function getMainDraggingElementIndex(items) {
-      for (var i = 0; i < items.length; i++) {
-        if (items.eq(i).hasClass('dragging')) {
-          return i;
-        }
-      }
-    }
-
-    function isSelectedTopicElement(item) {
-      for (var i = 0; i < vm.draggingOptions.selectedTopics.length; i++) {
-        var selectedTopicName = vm.draggingOptions.selectedTopics[i].name;
-        var itemText = item.text().trim();
-        if (selectedTopicName == itemText) {
-          return true;
-        }
-      }
-
-      return false;
+      vm.isDragInProgress = false;
     }
 
     function onDragStart() {
       scrollToDropSection();
+      vm.isDragInProgress = true;
     }
 
     function scrollToDropSection() {

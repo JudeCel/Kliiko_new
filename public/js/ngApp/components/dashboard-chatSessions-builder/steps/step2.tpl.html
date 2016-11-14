@@ -27,8 +27,8 @@
             </div>
           </div>
 
-          <div id="topics-list">
-            <div class="topic-list-item" ng-repeat="topic in tc.list" ng-drag="step2Controller.canDragElement(topic)" ng-drag-success="step2Controller.topicsOnDropComplete(topic)">
+          <div id="topics-list" multiple-dragging-zone="step2Controller.isDragInProgress" drag-all="step2Controller.allTopicsSelected">
+            <div class="topic-list-item" ng-repeat="topic in tc.list" ng-drag="step2Controller.canDragElement(topic)" ng-drag-success="step2Controller.topicsOnDropComplete(topic)" multiple-dragging-item="step2Controller.canBeDraggedAsMultiple(topic)">
               <div class="check">
                 <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-checked="topic._selected" ng-click="topic._selected = !topic._selected" type="checkbox">
                 <label for="memberSelectet{{ $index }}" class="kliiko-checkbox"></label>
@@ -43,7 +43,7 @@
 
         <div class="col-md-6" ng-if="tc.list.length" id='drop-section' is-in-viewport="step2Controller.isDropsectionInViewport">
           <h3>Chat Session topics</h3>
-          <div class="drop-area" ng-drop="true" ng-drag-move="step2Controller.onDragMove()" ng-drag-stop="step2Controller.onDragEnd()" ng-drag-start="step2Controller.onDragStart()">Drop Selected Topics Here</div>
+          <div class="drop-area" ng-drop="true" ng-drag-start="step2Controller.onDragStart()" ng-drag-move="step2Controller.onDragMove()" ng-drag-stop="step2Controller.onDragEnd()">Drop Selected Topics Here</div>
 
           <div class="margin-top-10" ui-sortable="step2Controller.sortableOptionsA" ng-model="step2Controller.sessionTopicsArray">
             <div class="topic-list-item" ng-repeat="topic in step2Controller.sessionTopicsArray">
