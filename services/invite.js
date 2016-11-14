@@ -573,11 +573,7 @@ function acceptSessionInvite(token) {
     }
     else {
       invite.update({ token: uuid.v1(), status: 'inProgress' }, { returning: true }).then(function(invite) {
-        sendEmail('inviteConfirmation', invite).then(function() {
-          deferred.resolve({ message: MessagesUtil.invite.confirmed, invite: invite });
-        }, function(error) {
-          deferred.reject(error);
-        })
+        deferred.resolve({ message: MessagesUtil.invite.confirmed, invite: invite });
       }, function(error) {
         deferred.reject(filters.errors(error));
       });

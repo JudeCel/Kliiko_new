@@ -113,7 +113,8 @@ function processedErrosMessage(errors) {
 
 function sessionAccept(req, res, next) {
   inviteService.acceptSessionInvite(req.params.token).then(function(result) {
-    res.render(views_path('accepted'), simpleParams('Invite', result.invite));
+    req.params.token = result.invite.token;
+    acceptGet(req, res, next);
   }, function(error) {
     req.flash('message', error);
     res.redirect('/login');
