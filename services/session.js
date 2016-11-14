@@ -2,16 +2,11 @@
 
 var MessagesUtil = require('./../util/messages');
 var policy = require('./../middleware/policy');
-var models = require('./../models');
+var { Subscription, Session, Invite, SessionMember, AccountUser, Account } = require('./../models');
 var filters = require('./../models/filters');
 var subscriptionService = require('./subscription');
 var sessionValidator = require('./validators/session');
 var topicsService = require('./topics');
-var Session  = models.Session;
-var Invite  = models.Invite;
-var SessionMember  = models.SessionMember;
-var AccountUser  = models.AccountUser;
-var Account  = models.Account;
 
 var q = require('q');
 var _ = require('lodash');
@@ -36,7 +31,8 @@ module.exports = {
   updateSessionMemberRating: updateSessionMemberRating,
   getAllSessionRatings: getAllSessionRatings,
   changeComment: changeComment,
-  getSessionByInvite: getSessionByInvite
+  getSessionByInvite: getSessionByInvite,
+  setAnonymous: setAnonymous
 };
 
 function isInviteSessionInvalid(resp) {
@@ -45,6 +41,53 @@ function isInviteSessionInvalid(resp) {
   if ( res.Session.status == "closed") return 'Sorry, the '+res.Session.name+' Session is now closed. For any queries, please contact the Facilitator';
 
   return null;
+}
+
+function setAnonymous(sessionId, accountId) {
+  console.log(accountId);
+  let deferred = q.defer();
+
+  Session.find({
+    where: {
+      id: sessionId,
+      accountId: accountId
+    },
+    include: [{
+      model: SessionMember,
+      required: false,
+      include: [{model: AccountUser }]
+    }]
+  }).then(function(session) {
+    if(session) {
+      console.log(session);
+      if (canChangeAnonymous(session)) {
+        session.update({ anonymous: true }).then(function(updatedSession) {
+          let promises = _.map(session.SessionMembers, (member)=> {
+            sessionMemberServices.processSessionMember(member.AccountUser, member, updatedSession, member.dataValues, q.defer());
+          });
+
+          q.allSettled(promises).then(function () {
+            deferred.resolve(updatedSession);
+          });
+        })
+      }else{
+        deferred.reject("Session cannot be changed");
+      }
+    } else {
+      deferred.reject(MessagesUtil.session.notFound);
+    }
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+function canChangeAnonymous(session) {
+  if (new Date().getTime() > new Date(session.endTime).getTime() ) { return false };
+  if (session.status == "closed") { return false };
+  if (session.anonymous == true) { return false };
+  return true;
 }
 
 function getSessionByInvite(token) {
@@ -246,8 +289,8 @@ function copySession(sessionId, accountId, provider) {
       findSession(sessionId, accountId, provider).then(function(result) {
         let facilitator = result.data.dataValues.facilitator;
         delete result.data.dataValues.id;
-        delete result.data.dataValues.facilitator;        
-        result.data.dataValues.name = "Copy of (" + result.data.dataValues.name + ")"; 
+        delete result.data.dataValues.facilitator;
+        result.data.dataValues.name = "Copy of (" + result.data.dataValues.name + ")";
         result.data.dataValues.step = "setUp";
         Session.create(result.data.dataValues).then(function(session) {
           async.waterfall([
@@ -258,7 +301,7 @@ function copySession(sessionId, accountId, provider) {
                   //we ignore error because data is copied step by step, and one error shouldn't stop following copying
                   callback();
                 });
-              },              
+              },
               function(callback) {
                 MailTemplateService.copyTemplatesFromSession(accountId, sessionId, session.id, function(error, result) {
                   callback();
@@ -432,13 +475,13 @@ function simpleParams(data, message) {
 function modifySessions(sessions, accountId, provider) {
   let deferred = q.defer();
 
-  models.Account.find({ where: { id: accountId } }).then(function(account) {
+  Account.find({ where: { id: accountId } }).then(function(account) {
     if(account.admin) {
       changeSessionData(sessions, null, provider);
       deferred.resolve(sessions);
     }
     else {
-      models.Subscription.find({ where: { accountId: accountId } }).then(function(subscription) {
+      Subscription.find({ where: { accountId: accountId } }).then(function(subscription) {
         subscriptionService.getChargebeeSubscription(subscription.subscriptionId, provider).then(function(chargebeeSub) {
           changeSessionData(sessions, chargebeeSub, provider);
           deferred.resolve(sessions);

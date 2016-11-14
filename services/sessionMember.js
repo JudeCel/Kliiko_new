@@ -1,13 +1,11 @@
 'use strict';
 
-var models = require('./../models');
+var {Session, AccountUser, SessionMember} = require('./../models');
 var filters = require('./../models/filters');
 var brandProjectConstants = require('../util/brandProjectConstants');
 var constants = require('./../util/constants');
+var anonymousWord = require('./../util/anonymousWord');
 var MessagesUtil = require('./../util/messages');
-
-var Session = models.Session;
-var SessionMember = models.SessionMember;
 
 var q = require('q');
 var _ = require('lodash');
@@ -18,43 +16,64 @@ module.exports = {
   removeByIds: removeByIds,
   removeByRole: removeByRole,
   createWithTokenAndColour: createWithTokenAndColour,
-  messages: MessagesUtil.sessionMember
+  messages: MessagesUtil.sessionMember,
+  processSessionMember: processSessionMember
 };
 
 function createWithTokenAndColour(params) {
   let deferred = q.defer();
-
   params.token = params.token || uuid.v1();
 
-  models.AccountUser.find({ where: { id: params.accountUserId } }).then(function(accountUser) {
-    params.avatarData = accountUser.gender == 'male' ? constants.sessionMemberMan : constants.sessionMemberWoman;
-
+  AccountUser.find({ where: { id: params.accountUserId } }).then(function(accountUser) {
     SessionMember.find({ where: { sessionId: params.sessionId, accountUserId: params.accountUserId } }).then(function(sessionMember) {
-      let correctFunction = createHelper;
-      if(sessionMember) {
-        correctFunction = updateHelper;
-      }
-
-      if(params.role == 'facilitator') {
-        params.colour = brandProjectConstants.memberColours.facilitator;
-        correctFunction(deferred, params, sessionMember);
-      }  else {
-        SessionMember.count({
-          where: {
-            sessionId: params.sessionId,
-            role: params.role
-          }
-        }).then(function(c) {
-          let participants = brandProjectConstants.memberColours.participants;
-          let length = Object.keys(participants).length;
-          params.colour = participants[(c % length) + 1];
-          correctFunction(deferred, params, sessionMember);
-        });
-      }
+      Session.find({ where: { id: params.sessionId} }).then(function(session) {
+        processSessionMember(accountUser, sessionMember, session, params, deferred)
+      });
     });
   });
-
   return deferred.promise;
+}
+
+
+function setMemberUserName(params, session) {
+  let deferred = q.defer();
+  SessionMember.findAll({ where: { sessionId: params.sessionId, role: params.role },
+    attributes: ['username']
+  }).then((sessionMembers) => {
+    if (session.anonymous && params.role == 'participant') {
+      anonymousWord.parseFile().then((result) => {
+        anonymousWord.getWord(sessionMembers, result).then((name) => {
+          params.username = name;
+          deferred.resolve({sessionMemberParams: params, memberCount: sessionMembers.length});
+        })
+      })
+    }else{
+      deferred.resolve({sessionMemberParams: params, memberCount: sessionMembers.length});
+    }
+  })
+  return deferred.promise;
+}
+function processSessionMember(accountUser, sessionMember, session, params, deferred) {
+  params.avatarData = accountUser.gender == 'male' ? constants.sessionMemberMan : constants.sessionMemberWoman;
+  let correctFunction = createHelper;
+  setMemberUserName(params, session).then((newParams) => {
+    let sessionMemberParams = newParams.sessionMemberParams
+    let memberCount = newParams.memberCount
+
+    if(sessionMember) {
+      correctFunction = updateHelper;
+    }
+    if(sessionMemberParams.role == 'facilitator') {
+      sessionMemberParams.colour = brandProjectConstants.memberColours.facilitator;
+      correctFunction(deferred, sessionMemberParams, sessionMember);
+    } else {
+      let participants = brandProjectConstants.memberColours.participants;
+      let length = Object.keys(participants).length;
+      sessionMemberParams.colour = participants[(memberCount % length) + 1];
+      correctFunction(deferred, sessionMemberParams, sessionMember);
+    }
+  })
+
 }
 
 function updateHelper(deferred, params, sessionMember) {
@@ -128,7 +147,7 @@ function removeByRole(role, sessionId, accountId) {
       where: {
         accountId: accountId
       }
-    }, models.AccountUser]
+    }, AccountUser]
   }).then(function(sessionMembers) {
     let members = [], managers = [];
     _.map(sessionMembers, function(sessionMember) {

@@ -21,7 +21,8 @@ module.exports = {
   addTopics: addTopics,
   removeTopic: removeTopic,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
-  canAddObservers: canAddObservers
+  canAddObservers: canAddObservers,
+  setAnonymous: setAnonymous
 };
 
 function initializeBuilder(req, res, next) {
@@ -50,6 +51,16 @@ function openBuild(req, res, next) {
   })
 }
 
+function setAnonymous(req, res, next) {
+  let sessionId = req.params.id;
+  sessionBuilderServices.setAnonymous(sessionId, res.locals.currentDomain.id).then(function(result) {
+    console.log(result);
+    res.send(result);
+  }, function(error) {
+    console.log(error);
+    res.send({error: error});
+  });
+}
 function update(req, res, next) {
   let sessionId = req.params.id;
   let sessionDataObj = req.body;

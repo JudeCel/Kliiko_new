@@ -192,7 +192,6 @@
       vm.name = vm.session.steps.step1.name;
       vm.type = vm.session.steps.step1.type;
       vm.anonymous = vm.session.steps.step1.anonymous.toString();
-      console.log(vm.anonymous);
       vm.selectedFacilitator = vm.session.steps.step1.facilitator;
       vm.selectedFacilitatorEmail = vm.selectedFacilitator ? vm.selectedFacilitator.email : null;
       initCanSelectFacilitator();
@@ -274,8 +273,8 @@
     vm.updateAnonymous = function () {
       domServices.modal('sessionAnonymousModal', 'close');
       vm.anonymous = vm.anonymousToConfirm;
-      updateStep({anonymous: vm.anonymous}).then(function() {
-        vm.session.steps.step1.anonymous = vm.anonymous;
+      vm.session.setAnonymous().then(function(res) {
+        vm.session.steps.step1.anonymous = res.anonymous;
       }, function(err) {
         vm.anonymous = vm.session.steps.step1.anonymous;
       });

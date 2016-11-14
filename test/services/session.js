@@ -13,17 +13,14 @@ describe('SERVICE - Session', function() {
   var testData = {};
 
   beforeEach(function(done) {
-    sessionFixture.createChat().then(function(result) {
-      testData = result;
-      done();
-    }, function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
     models.sequelize.sync({ force: true }).then(() => {
-      done();
+      sessionFixture.createChat({ participants: 2 }).then(function(result) {
+        testData = result;
+        testData.session = result.session
+        done();
+      }, function(error) {
+        done(error);
+      });
     });
   });
 
@@ -38,6 +35,21 @@ describe('SERVICE - Session', function() {
       }
     }
   }
+
+  describe('#setAnonymous', function() {
+    it('change to anonymous true', function (done) {
+      sessionServices.setAnonymous(testData.session.id, testData.session.accountId).then((session) => {
+        try {
+          assert.equal(session.anonymous, true);
+          done()
+        } catch (e) {
+          done(e)
+        }
+      }, function(error) {
+        done(error)
+      })
+    });
+  })
 
   describe('#findSession', function() {
     describe('happy path', function() {

@@ -17,6 +17,7 @@
       removeInvite: { method: 'DELETE', params: { path: 'removeInvite' } },
       removeSessionMember: { method: 'DELETE', params: { path: 'removeSessionMember' } },
       sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } },
+      setAnonymous: { method: 'POST', params: { path: 'setAnonymous' } },
       sessionMailTemplateStatus: { method: 'GET', params: { path: 'sessionMailTemplateStatus' } },
       addTopics: {method: 'POST',  params: {path: 'addTopics'} },
       removeTopic: {method: 'POST',  params: {path: 'removeTopic'} },
@@ -45,6 +46,7 @@
     SessionModel.prototype.createNew = createNew;
     SessionModel.prototype.getRemoteData = getRemoteData;
     SessionModel.prototype.setOpen = setOpen;
+    SessionModel.prototype.setAnonymous = setAnonymous;
   //  SessionModel.prototype.update = update;
 
     SessionModel.prototype.goNextStep = goNextStep;
@@ -189,6 +191,20 @@
           deferred.reject(err);
         }
       );
+      return deferred.promise;
+    }
+
+    function setAnonymous() {
+      var self = this;
+      var deferred = $q.defer();
+
+      sessionBuilderRestApi.setAnonymous({ id: self.id },function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
+        }
+      });
       return deferred.promise;
     }
 
