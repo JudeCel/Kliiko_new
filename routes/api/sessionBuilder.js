@@ -3,6 +3,7 @@
 var MessagesUtil = require('./../../util/messages');
 var constants = require('../../util/constants');
 var sessionBuilderServices = require('./../../services/sessionBuilder');
+var sessionServices = require('./../../services/session');
 let topicsService = require('./../../services/topics');
 let _ = require('lodash');
 
@@ -53,8 +54,7 @@ function openBuild(req, res, next) {
 
 function setAnonymous(req, res, next) {
   let sessionId = req.params.id;
-  sessionBuilderServices.setAnonymous(sessionId, res.locals.currentDomain.id).then(function(result) {
-    console.log(result);
+  sessionServices.setAnonymous(sessionId, res.locals.currentDomain.id).then(function(result) {
     res.send(result);
   }, function(error) {
     console.log(error);

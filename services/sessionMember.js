@@ -37,12 +37,12 @@ function createWithTokenAndColour(params) {
 
 function setMemberUserName(params, session) {
   let deferred = q.defer();
-  SessionMember.findAll({ where: { sessionId: params.sessionId, role: params.role },
+  SessionMember.findAll({ where: { sessionId: session.id, role: params.role },
     attributes: ['username']
   }).then((sessionMembers) => {
     if (session.anonymous && params.role == 'participant') {
       anonymousWord.parseFile().then((result) => {
-        anonymousWord.getWord(sessionMembers, result).then((name) => {
+        anonymousWord.getWord(_.map(sessionMembers, (sm) => {return sm.username} ), result).then((name) => {
           params.username = name;
           deferred.resolve({sessionMemberParams: params, memberCount: sessionMembers.length});
         })
@@ -54,24 +54,26 @@ function setMemberUserName(params, session) {
   return deferred.promise;
 }
 function processSessionMember(accountUser, sessionMember, session, params, deferred) {
-  params.avatarData = accountUser.gender == 'male' ? constants.sessionMemberMan : constants.sessionMemberWoman;
-  let correctFunction = createHelper;
+  let correctFunction = null;
+
   setMemberUserName(params, session).then((newParams) => {
     let sessionMemberParams = newParams.sessionMemberParams
     let memberCount = newParams.memberCount
 
     if(sessionMember) {
       correctFunction = updateHelper;
+    }else{
+      correctFunction = createHelper;
+      params.avatarData = accountUser.gender == 'male' ? constants.sessionMemberMan : constants.sessionMemberWoman;
+      if(sessionMemberParams.role == 'facilitator') {
+        sessionMemberParams.colour = brandProjectConstants.memberColours.facilitator;
+      } else {
+        let participants = brandProjectConstants.memberColours.participants;
+        let length = Object.keys(participants).length;
+        sessionMemberParams.colour = participants[(memberCount % length) + 1];
+      }
     }
-    if(sessionMemberParams.role == 'facilitator') {
-      sessionMemberParams.colour = brandProjectConstants.memberColours.facilitator;
-      correctFunction(deferred, sessionMemberParams, sessionMember);
-    } else {
-      let participants = brandProjectConstants.memberColours.participants;
-      let length = Object.keys(participants).length;
-      sessionMemberParams.colour = participants[(memberCount % length) + 1];
-      correctFunction(deferred, sessionMemberParams, sessionMember);
-    }
+    correctFunction(deferred, sessionMemberParams, sessionMember);
   })
 
 }

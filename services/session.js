@@ -44,7 +44,6 @@ function isInviteSessionInvalid(resp) {
 }
 
 function setAnonymous(sessionId, accountId) {
-  console.log(accountId);
   let deferred = q.defer();
 
   Session.find({
@@ -59,13 +58,11 @@ function setAnonymous(sessionId, accountId) {
     }]
   }).then(function(session) {
     if(session) {
-      console.log(session);
       if (canChangeAnonymous(session)) {
         session.update({ anonymous: true }).then(function(updatedSession) {
-          let promises = _.map(session.SessionMembers, (member)=> {
-            sessionMemberServices.processSessionMember(member.AccountUser, member, updatedSession, member.dataValues, q.defer());
+          let promises = _.map(session.SessionMembers, (member) => {
+            sessionMemberServices.processSessionMember(member.AccountUser, member, updatedSession, {role: member.role}, q.defer());
           });
-
           q.allSettled(promises).then(function () {
             deferred.resolve(updatedSession);
           });
