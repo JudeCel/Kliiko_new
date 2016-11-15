@@ -8,7 +8,7 @@ var sessionFixture = require('./../fixtures/session');
 var subscriptionFixture = require('./../fixtures/subscription');
 
 var assert = require('chai').assert;
-describe.only('SERVICE - Session', function() {
+describe('SERVICE - Session', function() {
 
   describe('#canChangeAnonymous', function() {
     it('when session closed', function (done) {
