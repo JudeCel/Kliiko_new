@@ -42,7 +42,7 @@ module.exports = {
 };
 
 function addDefaultObservers(session) {
-  models.AccountUser.findAll({ where: { AccountId: session.accountId, role: 'accountManager' } }).then(function(accountUsers) {
+  models.AccountUser.findAll({ where: { AccountId: session.accountId, role: { $in: ['admin', 'accountManager'] } } }).then(function(accountUsers) {
     _.map(accountUsers, function(accountUser) {
       sessionMemberServices.createWithTokenAndColour({
         sessionId: session.id,
