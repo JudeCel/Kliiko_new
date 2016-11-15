@@ -91,6 +91,7 @@ module.exports = {
     sessionMemberNotFound: 'Session Member not found',
     rated: 'Session Member rated',
     commentChanged: 'Comment updated successfully',
+    cannotBeChanged: 'Session cannot be changed',
     cantRateSelf: "You can't rate your self",
   },
   sessionBuilder: {

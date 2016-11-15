@@ -9,6 +9,58 @@ var subscriptionFixture = require('./../fixtures/subscription');
 
 var assert = require('chai').assert;
 
+describe.only('SERVICE - Session #canChangeAnonymous', function() {
+  it('when session closed', function (done) {
+    let tmpSession = {status: 'closed'}
+    let result = sessionServices.canChangeAnonymous(tmpSession)
+    try {
+      assert.equal(result, false);
+      done()
+    } catch (e) {
+      done(e)
+    }
+  });
+
+  it('when session expired', function (done) {
+    let startTime = new Date();
+    let endTime = startTime.setHours(startTime.getHours() - 2000)
+
+    let tmpSession = {endTime: endTime}
+    let result = sessionServices.canChangeAnonymous(tmpSession)
+    try {
+      assert.equal(result, false);
+      done()
+    } catch (e) {
+      done(e)
+    }
+  });
+
+  it('when session is anonymous', function (done) {
+    let tmpSession = {anonymous: true}
+    let result = sessionServices.canChangeAnonymous(tmpSession)
+    try {
+      assert.equal(result, false);
+      done()
+    } catch (e) {
+      done(e)
+    }
+  });
+
+  it('when session is valid', function (done) {
+    let startTime = new Date();
+    let endTime = startTime.setHours(startTime.getHours() + 2000)
+
+    let tmpSession = {anonymous: false, status: 'open', endTime: endTime}
+    let result = sessionServices.canChangeAnonymous(tmpSession)
+    try {
+      assert.equal(result, true);
+      done()
+    } catch (e) {
+      done(e)
+    }
+  });
+})
+
 describe('SERVICE - Session', function() {
   var testData = {};
 

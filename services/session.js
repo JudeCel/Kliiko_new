@@ -32,7 +32,8 @@ module.exports = {
   getAllSessionRatings: getAllSessionRatings,
   changeComment: changeComment,
   getSessionByInvite: getSessionByInvite,
-  setAnonymous: setAnonymous
+  setAnonymous: setAnonymous,
+  canChangeAnonymous: canChangeAnonymous
 };
 
 function isInviteSessionInvalid(resp) {
@@ -68,7 +69,7 @@ function setAnonymous(sessionId, accountId) {
           });
         })
       }else{
-        deferred.reject("Session cannot be changed");
+        deferred.reject(MessagesUtil.session.cannotBeChanged);
       }
     } else {
       deferred.reject(MessagesUtil.session.notFound);
