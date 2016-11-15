@@ -6,9 +6,11 @@
             <li class="active">
               <a class="background-yellow text-font-family-tabs text-white text-shadow-gray btn login-kliiko-tab" href="#login">Login to klzii</a>
             </li>
-            <li>
-              <a class="background-green text-font-family-tabs text-white text-center text-shadow-gray login-signup-tab" href="/registration">Get a klzii Account</a>
-            </li>
+            <% if(message != 'Invite not found') { %>
+              <li>
+                <a class="background-green text-font-family-tabs text-white text-center text-shadow-gray login-signup-tab" href="/registration">Get a klzii Account</a>
+              </li>
+            <% } %>
         </ul>
         <div class="tab-content border-yellow">
             <div id="login" class="tab-pane fade in active">
