@@ -2,7 +2,7 @@ angular
     .module('KliikoApp')
     .directive('multipleDraggingZone', multipleDraggingZone);
 
-function multipleDraggingZone($timeout) {
+function multipleDraggingZone() {
     var directive = {
         restrict: 'A',
         scope: {
