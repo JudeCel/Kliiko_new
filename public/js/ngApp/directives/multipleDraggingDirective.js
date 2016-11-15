@@ -1,6 +1,6 @@
 angular
     .module('KliikoApp')
-    .directive('multipleDraggingZone', ['$timeout', multipleDraggingZone]);
+    .directive('multipleDraggingZone', multipleDraggingZone);
 
 function multipleDraggingZone($timeout) {
     var directive = {
@@ -19,9 +19,8 @@ function multipleDraggingZone($timeout) {
               initDraggingOptions(scope, element);
               initDraggingOffsetOptions(scope);
 
-              var defaultTimeoutInMs = 100;
               element.mousemove(function() {
-                $timeout(processDragIfMultipleItemsSelected(scope), defaultTimeoutInMs);
+                processDragIfMultipleItemsSelected(scope);
               });
             } else {
               resetTransform(element);
