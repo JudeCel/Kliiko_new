@@ -43,6 +43,7 @@
     vm.updateContact = updateContact;
     vm.returnMemberInviteStatus = returnMemberInviteStatus;
     vm.closeEditContactForm = closeEditContactForm;
+    vm.setMembersStatusTranscription = setMembersStatusTranscription;
 
     vm.stepMembers = [];
 
@@ -294,6 +295,10 @@
       vm.contactData = {};
     }
 
+    function setMembersStatusTranscription(member) {
+      member.inviteStatusTranscription = vm.filterTypes[returnMemberInviteStatus(member)];
+    }
+
     function returnMemberInviteStatus(member) {
       if (vm.beforeEditInviteStatus) {
         member.inviteStatus = vm.beforeEditInviteStatus;
@@ -309,7 +314,6 @@
 
       return member.inviteStatus;
     }
-
   }
 
 })();
