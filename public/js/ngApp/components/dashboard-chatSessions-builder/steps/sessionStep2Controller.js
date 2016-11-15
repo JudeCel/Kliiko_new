@@ -63,7 +63,7 @@
         return true;
       }
 
-      retrun isSelectedTopic(selected, topic);
+      return isSelectedTopic(selected, topic);
     }
 
     function canBeDraggedAsMultiple(topic) {
