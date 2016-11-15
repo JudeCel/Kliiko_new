@@ -28,6 +28,7 @@
     vm.activeTabText = activeTabText;
     vm.sessionBuilderUrl = sessionBuilderUrl;
     vm.isSelectRoleMessageVisible = isSelectRoleMessageVisible;
+    vm.initTimer = initTimer;
 
     function isSelectRoleMessageVisible() {
       return vm.accountUsers && Object.keys(vm.accountUsers).length > 1;
@@ -76,6 +77,14 @@
           vm.hideTabs = !vm.hasRoles || res.theOnlySessionIsPending || res.theOnlySessionIsClosed;
           setInitialTab();
         }
+      });
+    }
+
+    function initTimer() {
+      $('#PendingSessionCountdown').countdown({
+        date: vm.theOnlyPendingSessionTime
+      }, function () {
+        vm.initMyDashboard();
       });
     }
 

@@ -87,6 +87,7 @@ var frontendScripts = [
   "public/js/vendors/angular-material/**/*.min.js",
   "public/js/vendors/moment/moment.js",
   "public/js/vendors/jstz/*.js",
+  "public/js/vendors/jquery-countdown/*.js",
   "public/js/vendors/bootstrap/bootstrap.js",
   "public/js/vendors/bootstrap/bootstrap-show-password.js",
   "public/js/vendors/intl-tel-input/**/*.js",
@@ -125,6 +126,7 @@ var frontendStyles = [
   "public/js/vendors/jwysiwyg/jquery.wysiwyg.css",
   "public/js/vendors/angular-material/1.0.1/angular-material.min.css",
   "public/js/vendors/jquery-ui/*.css",
+  "public/js/vendors/jquery-countdown/*.css",
 ]
 
 gulp.task('build-css', ['build-sass'], function(){

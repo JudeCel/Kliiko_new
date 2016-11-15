@@ -43,7 +43,18 @@
               <center><h2>Sorry, your Session is now closed, please contact your Facilitator for more information.<br/>Or, why not start your own Chat Session!</h2></center>
             </div>
             <div ng-if='myDashboard.theOnlySessionIsPending' class="rolesInfoBlock">
-              <center><h2>Sorry, your Session is yet to Open... but the countdown is<br/>on {{ myDashboard.theOnlyPendingSessionTime }}, please log back in then.</h2></center>
+              <center><h2>Sorry, your Session is yet to Open... but the countdown is on</h2></center>
+              <ul id="PendingSessionCountdown" class="countdown withColor">
+            	  <li><span class="days">00</span><p class="days_text">Days</p></li>
+            		<li class="seperator">:</li>
+            		<li><span class="hours">00</span><p class="hours_text">Hours</p></li>
+            		<li class="seperator">:</li>
+            		<li><span class="minutes">00</span><p class="minutes_text">Minutes</p></li>
+            		<li class="seperator">:</li>
+            		<li><span class="seconds">00</span><p class="seconds_text">Seconds</p></li>
+            	</ul>
+              <center><h2>Please log back in then.</h2></center>
+              <span ng-init='myDashboard.initTimer()'></span>
             </div>
           </div>
         </div>

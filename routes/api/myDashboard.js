@@ -1,5 +1,6 @@
 'use strict';
 
+var moment = require('moment-timezone');
 var constants = require('../../util/constants');
 var myDashboardServices = require('./../../services/myDashboard');
 
@@ -59,7 +60,7 @@ function getResponses(req, res) {
         if (theOnlySession) {
           if (theOnlySession.showStatus == 'Pending') {
             theOnlySessionIsPending = true;
-            theOnlyPendingSessionTime = theOnlySession.startTime;
+            theOnlyPendingSessionTime = moment(theOnlySession.startTime).tz(theOnlySession.timeZone).format();
           } else if (theOnlySession.showStatus == 'Closed') {
             theOnlySessionIsClosed = true;
           }
