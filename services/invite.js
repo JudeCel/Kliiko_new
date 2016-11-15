@@ -348,7 +348,7 @@ function findInvite(token, callback) {
       callback(null, result);
     }
     else {
-      callback('Invite not found');
+      callback(MessagesUtil.invite.notFound);
     }
   });
 };

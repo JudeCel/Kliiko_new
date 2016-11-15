@@ -4,7 +4,8 @@ var userRoutes = require('./user.js');
 var inviteService = require('../../services/invite');
 var middlewareFilters = require('../../middleware/filters');
 var _ = require('lodash');
-let inviteNotFoundMessage = 'Invite not found';
+
+var MessagesUtil = require('./../../util/messages');
 
 function views_path(action) {
   return 'invite/' + action;
@@ -12,7 +13,7 @@ function views_path(action) {
 
 function index(req, res, next) {
   inviteService.findInvite(req.params.token, function(error, invite) {
-    if(error == inviteNotFoundMessage) {
+    if(error == MessagesUtil.invite.notFound) {
       res.redirect('/login');
     }
     else {
@@ -40,7 +41,7 @@ function decline(req, res, next) {
 
 function acceptGet(req, res, next) {
   inviteService.acceptInviteExisting(req.params.token, function(error, invite, message) {
-    if(error == inviteNotFoundMessage) {
+    if(error == MessagesUtil.invite.notFound) {
       res.redirect('/login');
     }
     else {
@@ -117,7 +118,7 @@ function sessionAccept(req, res, next) {
     req.params.token = result.invite.token;
     acceptGet(req, res, next);
   }, function(error) {
-    req.flash('message', error);
+    req.flash('message', { inviteError: true});
     res.redirect('/login');
   });
 }
