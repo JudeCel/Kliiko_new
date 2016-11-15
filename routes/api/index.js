@@ -162,6 +162,7 @@ router.get('/sessionBuilder/canAddObservers',  PERMISSIONS.facilitatorManagerAdm
 router.post('/sessionBuilder', PERMISSIONS.managerAdmin, sessionBuilder.new);
 router.get('/sessionBuilder/:id', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.openBuild);
 router.put('/sessionBuilder/:id', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.update);
+router.post('/sessionBuilder/:id/setAnonymous', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.setAnonymous);
 router.post('/sessionBuilder/:id', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.nextStep);
 router.delete('/sessionBuilder/:id', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.cancel);
 router.post('/sessionBuilder/:id/sendSms', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sendSms);

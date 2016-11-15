@@ -35,7 +35,7 @@ var functionList = [
 function createChat(dependencies) {
   let deferred = q.defer();
 
-  setDependenciesManually(dependencies);
+  setDependenciesManually(dependencies || {});
 
   async.waterfall(functionList, function(error, result) {
     if(error) {
@@ -214,11 +214,13 @@ function sessionMemberParams(name, role, accountUserId, token) {
 
 function sessionParams(preferenceId) {
   let startTime = new Date();
+  let sessionDeps = getDependency('session')
   return {
     status: 'open',
     accountId: mainData.account.id,
     name: 'cool session',
     type: 'focus',
+    anonymous: sessionDeps.anonymous,
     startTime: startTime,
     endTime: startTime.setHours(startTime.getHours() + 2000),
     timeZone: 'Europe/Riga',
@@ -239,7 +241,8 @@ function setDependenciesManually(dependencies) {
     manualDependencies = {
       participants: dependencies.participants,
       observers: dependencies.observers,
-      topics: dependencies.topics
+      topics: dependencies.topics,
+      session: dependencies.session || { anonymous: false }
     };
   }
 }

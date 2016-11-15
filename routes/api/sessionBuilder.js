@@ -3,6 +3,7 @@
 var MessagesUtil = require('./../../util/messages');
 var constants = require('../../util/constants');
 var sessionBuilderServices = require('./../../services/sessionBuilder');
+var sessionServices = require('./../../services/session');
 let topicsService = require('./../../services/topics');
 let _ = require('lodash');
 
@@ -21,7 +22,8 @@ module.exports = {
   addTopics: addTopics,
   removeTopic: removeTopic,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
-  canAddObservers: canAddObservers
+  canAddObservers: canAddObservers,
+  setAnonymous: setAnonymous
 };
 
 function initializeBuilder(req, res, next) {
@@ -50,6 +52,15 @@ function openBuild(req, res, next) {
   })
 }
 
+function setAnonymous(req, res, next) {
+  let sessionId = req.params.id;
+  sessionServices.setAnonymous(sessionId, res.locals.currentDomain.id).then(function(result) {
+    res.send(result);
+  }, function(error) {
+    console.log(error);
+    res.send({error: error});
+  });
+}
 function update(req, res, next) {
   let sessionId = req.params.id;
   let sessionDataObj = req.body;

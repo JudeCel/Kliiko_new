@@ -9,21 +9,70 @@ var subscriptionFixture = require('./../fixtures/subscription');
 
 var assert = require('chai').assert;
 
+describe('SERVICE - Session #canChangeAnonymous', function() {
+  it('when session closed', function (done) {
+    let tmpSession = {status: 'closed'}
+    let result = sessionServices.canChangeAnonymous(tmpSession)
+    try {
+      assert.equal(result, false);
+      done()
+    } catch (e) {
+      done(e)
+    }
+  });
+
+  it('when session expired', function (done) {
+    let startTime = new Date();
+    let endTime = startTime.setHours(startTime.getHours() - 2000)
+
+    let tmpSession = {endTime: endTime}
+    let result = sessionServices.canChangeAnonymous(tmpSession)
+    try {
+      assert.equal(result, false);
+      done()
+    } catch (e) {
+      done(e)
+    }
+  });
+
+  it('when session is anonymous', function (done) {
+    let tmpSession = {anonymous: true}
+    let result = sessionServices.canChangeAnonymous(tmpSession)
+    try {
+      assert.equal(result, false);
+      done()
+    } catch (e) {
+      done(e)
+    }
+  });
+
+  it('when session is valid', function (done) {
+    let startTime = new Date();
+    let endTime = startTime.setHours(startTime.getHours() + 2000)
+
+    let tmpSession = {anonymous: false, status: 'open', endTime: endTime}
+    let result = sessionServices.canChangeAnonymous(tmpSession)
+    try {
+      assert.equal(result, true);
+      done()
+    } catch (e) {
+      done(e)
+    }
+  });
+})
+
 describe('SERVICE - Session', function() {
   var testData = {};
 
   beforeEach(function(done) {
-    sessionFixture.createChat().then(function(result) {
-      testData = result;
-      done();
-    }, function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
     models.sequelize.sync({ force: true }).then(() => {
-      done();
+      sessionFixture.createChat({ participants: 2 }).then(function(result) {
+        testData = result;
+        testData.session = result.session
+        done();
+      }, function(error) {
+        done(error);
+      });
     });
   });
 
@@ -38,6 +87,21 @@ describe('SERVICE - Session', function() {
       }
     }
   }
+
+  describe('#setAnonymous', function() {
+    it('change to anonymous true', function (done) {
+      sessionServices.setAnonymous(testData.session.id, testData.session.accountId).then((session) => {
+        try {
+          assert.equal(session.anonymous, true);
+          done()
+        } catch (e) {
+          done(e)
+        }
+      }, function(error) {
+        done(error)
+      })
+    });
+  })
 
   describe('#findSession', function() {
     describe('happy path', function() {

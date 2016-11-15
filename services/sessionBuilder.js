@@ -650,6 +650,7 @@ function stepsDefinition(session) {
     timeZoneOffset: moment(session.endTime).tz(session.timeZone).format('ZZ'),
     timeZone: session.timeZone,
     resourceId: session.resourceId,
+    anonymous: session.anonymous,
     brandProjectPreferenceId:  session.brandProjectPreferenceId,
   };
 

@@ -11,30 +11,25 @@ var _ = require('lodash');
 
 describe('SERVICE - SessionMember', function() {
   var testData = {};
-
   beforeEach(function(done) {
-    sessionFixture.createChat({ participants: 2 }).then(function(result) {
-      testData.user = result.user;
-      testData.account = result.account;
-      testData.session = result.session;
-      testData.member = result.sessionMembers[0];
-      models.AccountUser.find({
-        where: {
-          AccountId: testData.account.id,
-          UserId: testData.user.id
-        }
-      }).then(function(accountUser) {
-        testData.accountUser = accountUser;
-        done();
-      });
-    }, function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
     models.sequelize.sync({ force: true }).then(() => {
-      done();
+      sessionFixture.createChat({ participants: 2 }).then(function(result) {
+        testData.user = result.user;
+        testData.account = result.account;
+        testData.session = result.session;
+        testData.member = result.sessionMembers[0];
+        models.AccountUser.find({
+          where: {
+            AccountId: testData.account.id,
+            UserId: testData.user.id
+          }
+        }).then(function(accountUser) {
+          testData.accountUser = accountUser;
+          done();
+        });
+      }, function(error) {
+        done(error);
+      });
     });
   });
 
