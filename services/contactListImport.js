@@ -194,36 +194,42 @@ function parseCsv(emails, deferred, contactList, filePath) {
     });
 
     fieldsNeedStored = false;
-    data.rowNr = rowNr;
     return data;
   }).validate(function(data, next) {
-    if (data.landlineNumber) {
-      data.landlineNumber = data.landlineNumber.toString();
-      if(data.landlineNumber.length > 0 && !data.landlineNumber.includes("+61")) {
-        data.landlineNumber = "+61 " + data.landlineNumber;
+
+    if (_.values(data).join("").length == 0) {
+      next();
+    }else {
+      data.rowNr = rowNr;
+
+      if (data.landlineNumber) {
+        data.landlineNumber = data.landlineNumber.toString();
+        if(data.landlineNumber.length > 0 && !data.landlineNumber.includes("+61")) {
+          data.landlineNumber = "+61 " + data.landlineNumber;
+        }
       }
-    }
 
-    if (data.mobile) {
-      data.mobile = data.mobile.toString();
+      if (data.mobile) {
+        data.mobile = data.mobile.toString();
 
-      if(data.mobile.length > 0 && !data.mobile.includes("+61")) {
-        data.mobile = "+61 " + data.mobile;
+        if(data.mobile.length > 0 && !data.mobile.includes("+61")) {
+          data.mobile = "+61 " + data.mobile;
+        }
       }
-    }
 
-    validateRow(emails, contactList, data, uniqRowListCounter).then(function() {
-      ++ rowNr
-      next(null, true);
-    }, function(error) {
-      ++ rowNr
-      data.validationErrors = error;
-      next(null, false);
-    });
+      validateRow(emails, contactList, data, uniqRowListCounter).then(function() {
+        ++ rowNr
+        next(null, true);
+      }, function(error) {
+        ++ rowNr
+        data.validationErrors = error;
+        next(null, false);
+      });
+    }
   }).on('data', function(data) {
     object.valid.push(data);
   }).on('data-invalid', function(data) {
-      if(data.isValid){object.invalid.push(data)};
+      if(data.isValid){ object.invalid.push(data) };
   }).on('error', function(error) {
     deferred.reject(error);
   }).on('end', function() {
