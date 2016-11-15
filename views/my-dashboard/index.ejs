@@ -7,7 +7,7 @@
       <h2>Select your Role first!</h2>
     </div>
 
-    <div class="btn-group" id='nav-tabs-mobile' ng-if='myDashboard.hasRoles'>
+    <div class="btn-group" id='nav-tabs-mobile' ng-if='myDashboard.hasRoles && !myDashboard.hideTabs'>
       <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
         <span id="nav-tabs-mobile-title" ng-if="myDashboard.currentTab">{{ myDashboard.activeTabText() }}</span>
         <span class="caret"><span></span></span>
@@ -29,15 +29,32 @@
       <div class='row'>
         <div class='col-xs-12'>
           <div class='dashboard-container fixed-bottom-margin'>
-            <div ng-if='myDashboard.hasRoles'>
+            <div ng-if='myDashboard.hasRoles && !myDashboard.hideTabs'>
               <h2 class='text-center'>My Dashboard</h2>
               <% include ./templates/_accountManagers %>
               <% include ./templates/_facilitators %>
               <% include ./templates/_participants %>
               <% include ./templates/_observers %>
             </div>
-            <div ng-if='!myDashboard.hasRoles' class="noRolesBlock">
-              <center><h2>You don't have available roles at this moment</h2></center>
+            <div ng-if='!myDashboard.hasRoles' class="rolesInfoBlock">
+              <center><h2>Sorry, you don't have any Session to attend at the moment.<br/>Or, why not start your own Chat Session!</h2></center>
+            </div>
+            <div ng-if='myDashboard.theOnlySessionIsClosed' class="rolesInfoBlock">
+              <center><h2>Sorry, your Session is now closed, please contact your Facilitator for more information.<br/>Or, why not start your own Chat Session!</h2></center>
+            </div>
+            <div ng-if='myDashboard.theOnlySessionIsPending' class="rolesInfoBlock">
+              <center><h2>Sorry, your Session is yet to Open... but the countdown is on</h2></center>
+              <ul id="PendingSessionCountdown" class="countdown withColor">
+            	  <li><span class="days">00</span><p class="days_text">Days</p></li>
+            		<li class="seperator">:</li>
+            		<li><span class="hours">00</span><p class="hours_text">Hours</p></li>
+            		<li class="seperator">:</li>
+            		<li><span class="minutes">00</span><p class="minutes_text">Minutes</p></li>
+            		<li class="seperator">:</li>
+            		<li><span class="seconds">00</span><p class="seconds_text">Seconds</p></li>
+            	</ul>
+              <center><h2>Please log back in then.</h2></center>
+              <span ng-init='myDashboard.initTimer()'></span>
             </div>
           </div>
         </div>

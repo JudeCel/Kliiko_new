@@ -61,10 +61,20 @@ function myDashboardPage(req, res, next, accountUserId) {
   let myDashboardUrl = subdomains.url(req, subdomains.base, '/my-dashboard');
 
   myDashboardServices.getAllData(req.user.id, req.protocol).then(function(result) {
-
     let managers = result.accountManager || result.facilitator;
-    if(!managers) {
-      res.redirect(myDashboardUrl);
+    if (!managers) {
+      let observers = shouldRedirectToChat(result.observer);
+      let participants = shouldRedirectToChat(result.participant);
+
+      if ((participants && !observers) || (observers && !participants)) {
+        jwt.tokenForMember(req.user.id, (participants || observers).dataValues.session.id, myDashboardUrl).then(function(result) {
+          getUrl(res, result.token, myDashboardUrl);
+        }, function(error) {
+          res.redirect(myDashboardUrl);
+        });
+      } else {
+        res.redirect(myDashboardUrl);
+      }
     } else {
       if((!req.user.signInCount || req.user.signInCount <= 1) && !req.session.landed) {
         req.session.landed = true;
@@ -95,6 +105,14 @@ function getUrl(res, token, url) {
       res.redirect(body.redirect_url);
     }
   });
+}
+
+function shouldRedirectToChat(members) {
+  if (members && members.data.length == 1 && (members.data[0].dataValues.session.showStatus == 'Open' || members.data[0].dataValues.session.showStatus == 'Expired')) {
+    return members.data[0];
+  } else {
+    return false;
+  }
 }
 
 function selectManager(accountManagers, facilitators, accountUserId) {

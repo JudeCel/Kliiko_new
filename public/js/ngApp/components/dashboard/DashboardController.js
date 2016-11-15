@@ -15,6 +15,10 @@
     vm.showCreateNewAccountBanner = false;
     vm.canCreateNewAccount = false;
     vm.hasRoles = false;
+    vm.theOnlySessionIsClosed = false;
+    vm.theOnlySessionIsPending = false;
+    vm.theOnlyPendingSessionTime = null;
+    vm.hideTabs = false;
 
     vm.redirectToChatSession = redirectToChatSession;
     vm.isTabActive = isTabActive;
@@ -24,6 +28,7 @@
     vm.activeTabText = activeTabText;
     vm.sessionBuilderUrl = sessionBuilderUrl;
     vm.isSelectRoleMessageVisible = isSelectRoleMessageVisible;
+    vm.initTimer = initTimer;
 
     function isSelectRoleMessageVisible() {
       return vm.accountUsers && Object.keys(vm.accountUsers).length > 1;
@@ -66,8 +71,20 @@
           vm.hasRoles = res.hasRoles;
           vm.canCreateNewAccount = res.canCreateNewAccount;
           vm.showCreateNewAccountBanner = !vm.hasOwnAccount;
+          vm.theOnlySessionIsClosed = res.theOnlySessionIsClosed;
+          vm.theOnlySessionIsPending = res.theOnlySessionIsPending;
+          vm.theOnlyPendingSessionTime = res.theOnlyPendingSessionTime;
+          vm.hideTabs = !vm.hasRoles || res.theOnlySessionIsPending || res.theOnlySessionIsClosed;
           setInitialTab();
         }
+      });
+    }
+
+    function initTimer() {
+      $('#PendingSessionCountdown').countdown({
+        date: vm.theOnlyPendingSessionTime
+      }, function () {
+        vm.initMyDashboard();
       });
     }
 
