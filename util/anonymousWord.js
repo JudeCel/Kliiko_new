@@ -1,6 +1,6 @@
 'use strict';
 var csv = require('fast-csv');
-var pathToFile = '/home/dainisl/code/Kliiko/util/files/V1-AnonymousCodeWords.csv'
+var pathToFile = './util/files/V1-AnonymousCodeWords.csv'
 let Bluebird = require('bluebird');
 var _ = require('lodash')
 var wordsList = [];

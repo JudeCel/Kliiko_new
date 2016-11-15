@@ -16,7 +16,6 @@
     "updateBaseMailTemplates": "node ./tasks/updateBaseMailTemplates.js",
     "enableDatabaseMonitoring": "node ./tasks/databaseMonitoring/enableDatabaseMonitoring.js",
     "enableTableMonitoring": "node ./tasks/databaseMonitoring/enableTableMonitoring.js"
-
   },
   "engineStrict": true,
   "engine": {
