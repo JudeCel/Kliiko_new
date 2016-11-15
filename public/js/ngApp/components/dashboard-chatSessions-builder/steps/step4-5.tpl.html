@@ -27,21 +27,21 @@
       <table class='table table-dashboardElements'>
         <thead>
           <tr class='background-green'>
-            <th>
+            <th ng-click="clc.changeTableSortingFilter('firstName')">
               <div class='checkbox checkbox-xs checkbox-success'>
-                <input class='styled' id='checkbox-header' type='checkbox' name='First Name' ng-model='lastStepsController.selectedAll' ng-change='lastStepsController.selectedAllMembers()' />
-                <label for='checkbox-header'>First Name</label>
+                <input isolate-click class='styled' id='checkbox-header' type='checkbox' name='First Name' ng-model='lastStepsController.selectedAll' ng-change='lastStepsController.selectedAllMembers()' />
+                <label>First Name</label>
               </div>
             </th>
             <th ng-click="clc.changeTableSortingFilter('lastName')">Last Name</th>
             <th ng-click="clc.changeTableSortingFilter('gender')">Gender</th>
             <th ng-click="clc.changeTableSortingFilter('email')">Email</th>
             <th ng-click="clc.changeTableSortingFilter('mobile')">Mobile</th>
-            <th ng-click="clc.changeTableSortingFilter('status')">Status</th>
+            <th ng-click="clc.changeTableSortingFilter('inviteStatusTranscription')">Status</th>
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="member in lastStepsController.stepMembers | filter: (lastStepsController.currentFilter == 'all' ? undefined : { inviteStatus: lastStepsController.currentFilter }) | orderBy: clc.tableSort.by : clc.tableSort.reverse" ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
+          <tr ng-repeat="member in lastStepsController.stepMembers | filter: (lastStepsController.currentFilter == 'all' ? undefined : { inviteStatus: lastStepsController.currentFilter }) | orderBy: clc.tableSort.by : clc.tableSort.reverse" ng-init="lastStepsController.setMembersStatusTranscription(member)" ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
             <td>
               <div class='checkbox checkbox-xs checkbox-success'>
                 <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.isSelected' />
@@ -54,7 +54,7 @@
             <td>{{ member.mobile }}</td>
             <td class='col-xs-2'>
               <div ng-if='!lastStepsController.mouseOveringMember[$index]'>
-                {{ lastStepsController.filterTypes[lastStepsController.returnMemberInviteStatus(member)] }}
+                {{member.inviteStatusTranscription}}
               </div>
               <div ng-if='lastStepsController.mouseOveringMember[$index]'>
                 <img src='/icons/session_grey.png' ng-click='lastStepsController.modalWindowHandler("showSms", [member])' title="Send SMS" ng-if="lastStepsController.canSendSMS" />
