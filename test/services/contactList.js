@@ -11,17 +11,13 @@ var _ = require('lodash');
 describe('Services -> ContactList', () => {
   var testData;
   beforeEach(function(done) {
-    subscriptionFixture.createSubscription().then(function(result) {
-      testData = result;
-      done();
-    }, function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
     models.sequelize.sync({force: true}).done((error, result) => {
-      done();
+      subscriptionFixture.createSubscription().then(function(result) {
+        testData = result;
+        done();
+      }, function(error) {
+        done(error);
+      });
     });
   });
 
@@ -114,27 +110,31 @@ describe('Services -> ContactList', () => {
         function successFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              assert.lengthOf(result.valid, 3);
-              assert.lengthOf(result.invalid, 1)
-              assert.ok(_.isEqual(result.contactListFields.defaultFields, contactList.defaultFields));
-              assert.ok(_.isEqual(result.contactListFields.customFields, contactList.customFields));
-              assert.equal(result.valid[0].firstName, 'user');
-              assert.equal(result.valid[0].lastName, 'insider user');
-              assert.equal(result.valid[0].gender, 'male');
-              assert.equal(result.valid[0].email, 'user@insider.com');
-              assert.equal(result.valid[0].mobile, '+61 3124421424');
-              assert.equal(result.valid[0].landlineNumber, '+61 312756661424');
-              assert.equal(result.valid[0].postalAddress, 'Super street 2- 7');
-              assert.equal(result.valid[0].city, 'Riga');
-              assert.equal(result.valid[0].state, 'LA');
-              assert.equal(result.valid[0].postCode, 'se6 2by');
-              assert.equal(result.valid[0].country, 'USA');
-              assert.equal(result.valid[0].companyName, 'Diatom Ltd.');
-              assert.equal(result.valid[0].age, 18);
-              assert.equal(result.valid[0].one, 1);
-              assert.equal(result.valid[0].two, 2);
-              assert.equal(result.valid[0].three, 3);
-              callback(null, true);
+              try {
+                assert.lengthOf(result.valid, 3);
+                assert.lengthOf(result.invalid, 0)
+                assert.ok(_.isEqual(result.contactListFields.defaultFields, contactList.defaultFields));
+                assert.ok(_.isEqual(result.contactListFields.customFields, contactList.customFields));
+                assert.equal(result.valid[0].firstName, 'user');
+                assert.equal(result.valid[0].lastName, 'insider user');
+                assert.equal(result.valid[0].gender, 'male');
+                assert.equal(result.valid[0].email, 'user@insider.com');
+                assert.equal(result.valid[0].mobile, '+61 3124421424');
+                assert.equal(result.valid[0].landlineNumber, '+61 312756661424');
+                assert.equal(result.valid[0].postalAddress, 'Super street 2- 7');
+                assert.equal(result.valid[0].city, 'Riga');
+                assert.equal(result.valid[0].state, 'LA');
+                assert.equal(result.valid[0].postCode, 'se6 2by');
+                assert.equal(result.valid[0].country, 'USA');
+                assert.equal(result.valid[0].companyName, 'Diatom Ltd.');
+                assert.equal(result.valid[0].age, 18);
+                assert.equal(result.valid[0].one, 1);
+                assert.equal(result.valid[0].two, 2);
+                assert.equal(result.valid[0].three, 3);
+                callback(null, true);
+              } catch (e) {
+                callback(e);
+              }
             }, function(error) {
               callback(error);
             });
@@ -162,9 +162,13 @@ describe('Services -> ContactList', () => {
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              assert.equal(result.valid.length, 5);
-              assert.equal(result.invalid.length, 1);
-              callback(null, true);
+              try {
+                assert.equal(result.valid.length, 3);
+                assert.equal(result.invalid.length, 3);
+                callback(null, true);
+              } catch (e) {
+                callback(e);
+              }
             }, function(error) {
               callback(error);
             });
@@ -184,12 +188,16 @@ describe('Services -> ContactList', () => {
         });
       });
 
-      describe('should fail because field - firstName is not found', function() {
+      describe('should fail because field - lastName is not found', function() {
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              assert.equal(result.invalid[0].validationErrors.firstName, 'Required');
-              callback(null, true);
+              try {
+                assert.equal(result.invalid[2].validationErrors.lastName, 'Required');
+                callback(null, true);
+              } catch (e) {
+                callback(e);
+              }
             }, function(error) {
               callback(error);
             });
@@ -210,16 +218,20 @@ describe('Services -> ContactList', () => {
       });
 
       describe('should fail because duplicate email in file', function() {
-      var testFileValid = { xls: 'test/fixtures/contactList/list_valid_v2.xls', csv: 'test/fixtures/contactList/list_invalid.csv' };
+      var testFileValid = { xls: 'test/fixtures/contactList/list_invalid.xls', csv: 'test/fixtures/contactList/list_invalid.csv' };
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              assert.include(result.duplicateEntries[0].rows, 3);
-              assert.include(result.duplicateEntries[0].rows, 6);
-              assert.lengthOf(result.duplicateEntries, 2);
-              assert.equal(result.duplicateEntries[0].email, "chatUser@insider.com");
-              assert.equal(result.duplicateEntries[1].email, "bligzna.lauris@gmail.com");
-              callback(null, true);
+              try {
+                assert.include(result.duplicateEntries[0].rows, 5);
+                assert.include(result.duplicateEntries[0].rows, 3);
+                assert.lengthOf(result.duplicateEntries, 2);
+                assert.equal(result.duplicateEntries[0].email, "chatUser@insider.com");
+                assert.equal(result.duplicateEntries[1].email, "bligzna.lauris@gmail.com");
+                callback(null, true);
+              } catch (e) {
+                callback(e);
+              }
             }, function(error) {
               callback(error);
             });
@@ -243,12 +255,15 @@ describe('Services -> ContactList', () => {
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              assert.equal(result.invalid[0].validationErrors.firstName, 'Required');
-              assert.equal(result.invalid[0].validationErrors.lastName, 'Required');
-              assert.equal(result.invalid[0].validationErrors.gender, 'Required');
-              assert.equal(result.invalid[0].validationErrors.email, 'Required');
-
-              callback(null, true);
+              try {
+                assert.equal(result.invalid[2].validationErrors.firstName, 'Required');
+                assert.equal(result.invalid[2].validationErrors.lastName, 'Required');
+                assert.equal(result.invalid[2].validationErrors.gender, 'Required');
+                assert.equal(result.invalid[2].validationErrors.email, 'Required');
+                callback(null, true);
+              } catch (e) {
+                callback(e);
+              }
             }, function(error) {
               callback(error);
             });
@@ -272,8 +287,12 @@ describe('Services -> ContactList', () => {
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              assert.equal(result.invalid[0].validationErrors.gender, 'Required');
-              callback(null, true);
+              try {
+                assert.equal(result.invalid[2].validationErrors.gender, 'Required');
+                callback(null, true);
+              } catch (e) {
+                callback(e);
+              }
             }, function(error) {
               callback(error);
             });
