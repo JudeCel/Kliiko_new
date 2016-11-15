@@ -6,15 +6,19 @@
             <li class="active">
               <a class="background-yellow text-font-family-tabs text-white text-shadow-gray btn login-kliiko-tab" href="#login">Login to klzii</a>
             </li>
-            <li>
-              <a class="background-green text-font-family-tabs text-white text-center text-shadow-gray login-signup-tab" href="/registration">Get a klzii Account</a>
-            </li>
+            <% if(!message || (message && message.inviteError == false)) { %>
+              <li>
+                <a class="background-green text-font-family-tabs text-white text-center text-shadow-gray login-signup-tab" href="/registration">Get a klzii Account</a>
+              </li>
+            <% } %>
         </ul>
         <div class="tab-content border-yellow">
             <div id="login" class="tab-pane fade in active">
                 <h1 class="text-gray-dark text-center">Welcome!</h1>
                 <div class='text-center background-yellow'>
-                  <b><%= message %></b>
+                  <% if(!message || (message && message.inviteError == false)) { %>
+                    <b><%= message %></b>
+                  <% } %>
                 </div>
 
                 <div class="error-column has-error" id="warning-email-password">
