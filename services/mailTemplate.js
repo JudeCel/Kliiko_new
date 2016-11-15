@@ -227,8 +227,11 @@ function getAllMailTemplates(accountId, getNoAccountData, getSystemMail, fullDat
 function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback) {
   let query = templateQuery || {};
 
-  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
+  if (getSystemMail) {
+    baseTemplateQuery = {category: {$not: 'confirmation'}};
+  }
 
+  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
   if(accountId && !getSystemMail){
     query['$or'] = [{AccountId: accountId}, {AccountId: null}];
   }
