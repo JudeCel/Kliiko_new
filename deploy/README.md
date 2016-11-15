@@ -103,6 +103,13 @@ In this example ```admin-2357230094-7u343 ``` is the name of application instanc
 ```
 cd YourProjectPath/
 kubectl get pods
+
+
+To watch logs of proxy-chat-twqj5
+```
+kubectl logs -f proxyName
+```
+
 ```
 
 The list of available commands can be seen in project root folder ```package.json``` scripts section.

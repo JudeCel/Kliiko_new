@@ -32,7 +32,8 @@ describe('MIDDLEWARE - Filters', function() {
         user: {
           id: testData.user.id
         },
-        protocol: 'http'
+        protocol: 'http',
+        session: { landed: false }
       }
     }
 
