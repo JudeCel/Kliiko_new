@@ -15,6 +15,10 @@
     vm.showCreateNewAccountBanner = false;
     vm.canCreateNewAccount = false;
     vm.hasRoles = false;
+    vm.theOnlySessionIsClosed = false;
+    vm.theOnlySessionIsPending = false;
+    vm.theOnlyPendingSessionTime = null;
+    vm.hideTabs = false;
 
     vm.redirectToChatSession = redirectToChatSession;
     vm.isTabActive = isTabActive;
@@ -66,6 +70,10 @@
           vm.hasRoles = res.hasRoles;
           vm.canCreateNewAccount = res.canCreateNewAccount;
           vm.showCreateNewAccountBanner = !vm.hasOwnAccount;
+          vm.theOnlySessionIsClosed = res.theOnlySessionIsClosed;
+          vm.theOnlySessionIsPending = res.theOnlySessionIsPending;
+          vm.theOnlyPendingSessionTime = res.theOnlyPendingSessionTime;
+          vm.hideTabs = !vm.hasRoles || res.theOnlySessionIsPending || res.theOnlySessionIsClosed;
           setInitialTab();
         }
       });
