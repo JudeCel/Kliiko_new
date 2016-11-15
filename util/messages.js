@@ -69,7 +69,8 @@ module.exports = {
     cantRemove: "Can't remove this invite",
     sessionIsFull: 'Session is full',
     inviteExpired: 'This invite is not active anymore',
-    declined: 'Successfully declined invite'
+    declined: 'Successfully declined invite',
+    notFound: 'Invite not found'
   },
   mailTemplate: {
     notFound: 'Mail Template not found',
