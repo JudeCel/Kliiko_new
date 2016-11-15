@@ -19,7 +19,7 @@
   },
   "engineStrict": true,
   "engine": {
-    "node": "~ 5.*"
+    "node": "~ 6.9.*"
   },
   "repository": {
     "type": "git",
