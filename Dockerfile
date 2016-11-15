@@ -1,4 +1,4 @@
-FROM node:6.6.0-wheezy
+FROM node:6.9.1-wheezy
 
 RUN apt-get update && apt-get dist-upgrade -y \
 && apt-get install -y vim net-tools

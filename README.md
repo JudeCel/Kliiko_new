@@ -2,7 +2,7 @@
 
 ## Dependencies
 
-  * Node.js 6.x LTS
+  * Node.js 6.9.x LTS
   * NPM 3.10.x
   * PostgreSQL 9.5.x
   * Redis 3.x.x
