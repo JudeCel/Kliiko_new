@@ -3,19 +3,25 @@ var csv = require('fast-csv');
 var pathToFile = '/home/dainisl/code/Kliiko/util/files/V1-AnonymousCodeWords.csv'
 let Bluebird = require('bluebird');
 var _ = require('lodash')
+var wordsList = [];
+var fileIsALoaded = false;
 
 const parseFile = () => {
   return new Bluebird((resolve, reject) =>  {
-    let wordsList = [];
-    csv.fromPath(pathToFile, {
-      headers: true
-    }).on('data', function(data) {
-      wordsList.push(data.comet)
-    }).on('error', function(error) {
-      reject(error);
-    }).on('end', function() {
-      resolve(_.uniq(wordsList));
-    });
+    if (fileIsALoaded) {
+      resolve(wordsList);
+    }else{
+      csv.fromPath(pathToFile, {
+        headers: true
+      }).on('data', function(data) {
+        wordsList.push(data.comet)
+      }).on('error', function(error) {
+        reject(error);
+      }).on('end', function() {
+        fileIsALoaded = true;
+        resolve(_.uniq(wordsList));
+      });
+    }
   })
 }
 
