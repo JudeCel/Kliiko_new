@@ -4,8 +4,8 @@
   "description": "chargebee",
   "private": true,
   "scripts": {
-    "start": "node ./bin/apps",
-    "start_pm2": "./node_modules/.bin/pm2 start ./bin/apps",
+    "start": "node ./bin/server",
+    "start_pm2": "./node_modules/.bin/pm2 start ./bin/server",
     "pm2_logs": "./node_modules/.bin/pm2 logs",
     "test": "./node_modules/.bin/mocha test",
     "gulp": "./node_modules/.bin/gulp",
@@ -122,7 +122,6 @@
     "pg-hstore": "^2.3.2",
     "pm2": "^2.1.4",
     "q": "^1.4.1",
-    "redis": "^2.6.3",
     "request": "^2.74.0",
     "sanitize-html": "^1.5.3",
     "sequelize": "^3.25.0",
