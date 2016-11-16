@@ -32,6 +32,7 @@
     vm.init = initController;
     vm.listResources = GalleryServices.listResources;
     vm.removeResources = removeResources;
+    vm.replaceStockResource = replaceStockResource;
     vm.zipResources = zipResources;
     vm.refreshResource = refreshResource;
     vm.createResource = createResource;
@@ -74,6 +75,10 @@
       }, function(error) {
         messenger.error(error);
       });
+    }
+
+    function replaceStockResource(resourceId) {
+      //todo:
     }
 
     function removeResources(resourceIds) {
@@ -280,21 +285,26 @@
     function getFilterResources(filter, key) {
       var array = [];
 
-      if(filter) {
-        var upload = getUploadType(filter);
-        for(var i in vm.resourceList) {
+      if (filter == 'stock') {
+        for (var i in vm.resourceList) {
           var resource = vm.resourceList[i];
-          if(resource.type == upload.type && resource.scope == upload.scope) {
-            if(key) {
+          if (resource.stock) {
+            array.push(resource);
+          }
+        }
+      } else if (filter) {
+        var upload = getUploadType(filter);
+        for (var i in vm.resourceList) {
+          var resource = vm.resourceList[i];
+          if (resource.type == upload.type && resource.scope == upload.scope) {
+            if (key) {
               array.push(resource[key]);
-            }
-            else {
+            } else {
               array.push(resource);
             }
           }
         }
-      }
-      else {
+      } else {
         array = vm.resourceList;
       }
 
