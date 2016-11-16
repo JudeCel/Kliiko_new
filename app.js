@@ -9,7 +9,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('./middleware/passport');
 var subdomain = require('./middleware/subdomain');
-var letsencrypt = require('./middleware/letsencrypt');
 var currentUser = require('./middleware/currentUser');
 var sessionMiddleware = require('./middleware/session');
 
@@ -27,7 +26,6 @@ app.set('view options', { layout: 'layout.ejs' });
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({limit: '5mb', extended: true }));
-app.use(letsencrypt);
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.static(path.join(__dirname, 'public')));
 

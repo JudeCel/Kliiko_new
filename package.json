@@ -4,8 +4,8 @@
   "description": "chargebee",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "start_pm2": "./node_modules/.bin/pm2 start ./bin/www",
+    "start": "node ./bin/apps",
+    "start_pm2": "./node_modules/.bin/pm2 start ./bin/apps",
     "pm2_logs": "./node_modules/.bin/pm2 logs",
     "test": "./node_modules/.bin/mocha test",
     "gulp": "./node_modules/.bin/gulp",
@@ -110,6 +110,7 @@
     "moment-timezone": "^0.5.5",
     "morgan": "^1.7.0",
     "multer": "^1.2.0",
+    "node-resque": "^4.0.5",
     "node-uuid": "^1.4.7",
     "nodemailer": "^2.6.4",
     "nodemon": "1.10.0",

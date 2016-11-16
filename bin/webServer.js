@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 "use strict";
 /**
  * Module dependencies.
@@ -11,8 +10,6 @@ var express = require('express');
 var app = require('../app');
 var debug = require('debug')('kliiko:server');
 var http = require('http');
-var models = require("../models");
-var _ = require('lodash');
 
 /**
  * Get port from environment and store in Express.
