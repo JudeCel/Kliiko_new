@@ -63,10 +63,8 @@ function myDashboardPage(req, res, next, accountUserId) {
   myDashboardServices.getAllData(req.user.id, req.protocol).then(function(result) {
     let managers = result.accountManager || result.facilitator;
     if (!managers) {
-      let observers = shouldRedirectToChat(result.observer);
-      let participants = shouldRedirectToChat(result.participant);
-
-      if ((participants && !observers) || (observers && !participants)) {
+      let theOnlySession = getTheOnlySession(result);
+      if (theOnlySession && (theOnlySession.showStatus == 'Open' || theOnlySession.showStatus == 'Expired')) {
         jwt.tokenForMember(req.user.id, (participants || observers).dataValues.session.id, myDashboardUrl).then(function(result) {
           getUrl(res, result.token, myDashboardUrl);
         }, function(error) {
@@ -107,11 +105,15 @@ function getUrl(res, token, url) {
   });
 }
 
-function shouldRedirectToChat(members) {
-  if (members && members.data.length == 1 && (members.data[0].dataValues.session.showStatus == 'Open' || members.data[0].dataValues.session.showStatus == 'Expired')) {
-    return members.data[0];
+function getTheOnlySession(accounts) {
+  let participants = accounts.participant;
+  let observers = accounts.observer;
+  if (participants && !observers && participants.data.length == 1) {
+    return participants.data[0].dataValues.session;
+  } else if (observers && !participants && observers.data.length == 1) {
+    return observers.data[0].dataValues.session;
   } else {
-    return false;
+    return null;
   }
 }
 
