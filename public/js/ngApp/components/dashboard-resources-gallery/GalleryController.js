@@ -144,7 +144,7 @@
         } else {
           vm.modalWindowDisabled = true;
           GalleryServices.createOrReplaceResource(vm.newResource).then(function(result) {
-            closeModalAndSetVariables(result.data, vm.newResource.replaceId ? true : false);
+            closeModalAndSetVariables(result.data, vm.newResource.id ? true : false);
           }, function(error) {
             vm.modalWindowDisabled = false;
             messenger.error(error);
@@ -249,7 +249,7 @@
         parent.modal.replace = true;
         vm.newResource.stock = replaceResource.stock;
         vm.newResource.name = replaceResource.name;
-        vm.newResource.replaceId = replaceResource.id;
+        vm.newResource.id = replaceResource.id;
       } else {
         parent.modal.replace = false;
       }
@@ -363,7 +363,7 @@
         errors.name = 'No name provided';
       }
 
-      if(!vm.newResource.file && !vm.newResource.replaceId) {
+      if(!vm.newResource.file) {
         errors.file = 'No file provided';
       }
 
