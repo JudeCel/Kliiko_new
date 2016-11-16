@@ -65,7 +65,7 @@ function myDashboardPage(req, res, next, accountUserId, forceLanding) {
     if (!managers) {
       let theOnlySession = getTheOnlySession(result);
       if (theOnlySession && (theOnlySession.showStatus == 'Open' || theOnlySession.showStatus == 'Expired')) {
-        jwt.tokenForMember(req.user.id, (participants || observers).dataValues.session.id, myDashboardUrl).then(function(result) {
+        jwt.tokenForMember(req.user.id, theOnlySession.id, myDashboardUrl).then(function(result) {
           getUrl(res, result.token, myDashboardUrl);
         }, function(error) {
           res.redirect(myDashboardUrl);
