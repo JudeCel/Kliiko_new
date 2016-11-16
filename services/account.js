@@ -20,7 +20,7 @@ function createNewAccountIfNotExists(params, userId) {
   if (!params.accountName || params.accountName == '') {
     deferred.reject(filters.errors(MessagesUtil.account.empty));
   } else {
-    models.AccountUser.find({ where: { UserId: userId, role: "accountManager", owner: true } }).then(function(result) {
+    models.AccountUser.count({ where: { UserId: userId, role: "accountManager", owner: true } }).then(function(result) {
       if (result >= Constants.maxAccountsAmount) {
         deferred.reject(filters.errors(MessagesUtil.account.accountExists));
       } else {
