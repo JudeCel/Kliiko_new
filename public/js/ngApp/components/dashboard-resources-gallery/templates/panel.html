@@ -67,7 +67,7 @@
 
         <span class='resource-format pull-left'>
           {{ resource.extension || resource.scope | uppercase }}
-          <span ng-if='resource.stock && app.accountUser.isAdmin'>(<u ng-click='gc.replaceStockResource(resource.id)'>Replace stock file</u>)</span>
+          <span ng-if='resource.stock && app.accountUser.isAdmin'>(<u ng-click='gc.replaceStockResource(resource, upload)'>Replace stock file</u>)</span>
         </span>
       </div>
     </div>

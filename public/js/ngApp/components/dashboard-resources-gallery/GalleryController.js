@@ -77,8 +77,21 @@
       });
     }
 
-    function replaceStockResource(resourceId) {
-      //todo:
+    function replaceStockResource(resource, parent) {
+      if (resource.stock) {
+        var id = resource.id;
+        var type = null;
+        for (var i=0; i<=parent.types.length; i++ ) {
+          if (parent.types[i].type == resource.type && parent.types[i].scope == resource.scope) {
+            type = parent.types[i];
+            break;
+          }
+        }
+        if (type) {
+          //todo: need to add replace logic
+          //openUploadModal(type, parent);
+        }
+      }
     }
 
     function removeResources(resourceIds) {
