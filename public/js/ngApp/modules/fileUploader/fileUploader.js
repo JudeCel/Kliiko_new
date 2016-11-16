@@ -56,7 +56,8 @@
           scope: data.scope,
           stock: data.stock,
           type: data.type,
-          name: data.name
+          name: data.name,
+          replaceId: data.replaceId
         }
       }).then(function(result) {
         dbg.log2('#KliikoApp.fileUploader > upload file > server respond >', result);

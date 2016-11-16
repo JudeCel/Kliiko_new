@@ -35,7 +35,7 @@
     vm.replaceStockResource = replaceStockResource;
     vm.zipResources = zipResources;
     vm.refreshResource = refreshResource;
-    vm.createResource = createResource;
+    vm.createOrReplaceResource = createOrReplaceResource;
     vm.changeView = changeView;
     vm.isTypeOf = isTypeOf;
     vm.getUploadType = getUploadType;
@@ -78,19 +78,16 @@
     }
 
     function replaceStockResource(resource, parent) {
-      if (resource.stock) {
-        var id = resource.id;
-        var type = null;
-        for (var i=0; i<=parent.types.length; i++ ) {
-          if (parent.types[i].type == resource.type && parent.types[i].scope == resource.scope) {
-            type = parent.types[i];
-            break;
-          }
+      var id = resource.id;
+      var type = null;
+      for (var i=0; i<=parent.types.length; i++ ) {
+        if (parent.types[i].type == resource.type && parent.types[i].scope == resource.scope) {
+          type = parent.types[i];
+          break;
         }
-        if (type) {
-          //todo: need to add replace logic
-          //openUploadModal(type, parent);
-        }
+      }
+      if (type) {
+        openUploadModal(type, parent, resource);
       }
     }
 
@@ -116,7 +113,7 @@
         else {
           vm.modalWindowDisabled = true;
           GalleryServices.zipResources(vm.newResource.file, vm.newResource.name).then(function(result) {
-            closeModalAndSetVariables(result);
+            closeModalAndSetVariables(result, false);
           }, function(error) {
             vm.modalWindowDisabled = false;
             messenger.error(error);
@@ -140,15 +137,14 @@
       return deferred.promise;
     }
 
-    function createResource() {
+    function createOrReplaceResource() {
       validateResource(function(errors) {
         if(errors) {
           messenger.error(errors);
-        }
-        else {
+        } else {
           vm.modalWindowDisabled = true;
-          GalleryServices.createResource(vm.newResource).then(function(result) {
-            closeModalAndSetVariables(result.data);
+          GalleryServices.createOrReplaceResource(vm.newResource).then(function(result) {
+            closeModalAndSetVariables(result.data, vm.newResource.replaceId ? true : false);
           }, function(error) {
             vm.modalWindowDisabled = false;
             messenger.error(error);
@@ -246,9 +242,17 @@
       domServices.modal('selectResource', 'close');
     }
 
-    function openUploadModal(current, parent) {
+    function openUploadModal(current, parent, replaceResource) {
       vm.newResource = { type: current.type, scope: current.scope };
       vm.currentPage.upload = current.id;
+      if (replaceResource) {
+        parent.modal.replace = true;
+        vm.newResource.stock = replaceResource.stock;
+        vm.newResource.name = replaceResource.name;
+        vm.newResource.replaceId = replaceResource.id;
+      } else {
+        parent.modal.replace = false;
+      }
       domServices.modal('uploadResource');
       parent = parent || { modal: {} };
       vm.currentModalSet = parent.modal.set;
@@ -359,7 +363,7 @@
         errors.name = 'No name provided';
       }
 
-      if(!vm.newResource.file) {
+      if(!vm.newResource.file && !vm.newResource.replaceId) {
         errors.file = 'No file provided';
       }
 
@@ -371,7 +375,8 @@
       return !(string && string.length);
     }
 
-    function closeModalAndSetVariables(data) {
+    function closeModalAndSetVariables(data, replace) {
+      //todo: process replace right way
       vm.modalWindowDisabled = false;
       vm.resourceList.push(data.resource);
       vm.selectionList[vm.currentPage.upload].push(data.resource);
