@@ -57,7 +57,7 @@ function planSelectPage(req, res, next) {
   }
 }
 
-function myDashboardPage(req, res, next, accountUserId) {
+function myDashboardPage(req, res, next, accountUserId, forceLanding) {
   let myDashboardUrl = subdomains.url(req, subdomains.base, '/my-dashboard');
 
   myDashboardServices.getAllData(req.user.id, req.protocol).then(function(result) {
@@ -74,7 +74,7 @@ function myDashboardPage(req, res, next, accountUserId) {
         res.redirect(myDashboardUrl);
       }
     } else {
-      if((!req.user.signInCount || req.user.signInCount <= 1) && !req.session.landed) {
+      if(isLandingRequired(req, forceLanding)) {
         req.session.landed = true;
         res.redirect(subdomains.url(req, selectManager(result.accountManager, result.facilitator, accountUserId).subdomain, '/account-hub/landing'));
       }
@@ -147,4 +147,12 @@ function buildUrlForChatToken() {
 
 function shouldRedirectFacilitatorToLandingPage(req, res) {
   return req.user.signInCount == 1 && _.includes(res.locals.currentDomain.roles, 'facilitator') && !req.session.landed;
+}
+
+function isLandingRequired(req, forceLanding) {
+  return isFirstSignIn(req) && !req.session.landed || forceLanding;
+}
+
+function isFirstSignIn(req) {
+  return !req.user.signInCount || req.user.signInCount <= 1;
 }
