@@ -41,7 +41,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="member in lastStepsController.stepMembers | filter: (lastStepsController.currentFilter == 'all' ? undefined : { inviteStatus: lastStepsController.currentFilter }) | orderBy: clc.tableSort.by : clc.tableSort.reverse" ng-init="lastStepsController.setMembersStatusTranscription(member)" ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
+          <tr ng-repeat="member in lastStepsController.stepMembers | filter: (lastStepsController.currentFilter == 'all' ? undefined : { inviteStatus: lastStepsController.currentFilter }) | orderBy: clc.tableSort.by : clc.tableSort.reverse" ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
             <td>
               <div class='checkbox checkbox-xs checkbox-success'>
                 <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.isSelected' />
@@ -54,7 +54,7 @@
             <td>{{ member.mobile }}</td>
             <td class='col-xs-2'>
               <div ng-if='!lastStepsController.mouseOveringMember[$index]'>
-                {{member.inviteStatusTranscription}}
+                {{ lastStepsController.getMembersStatusTranscription(member); }}
               </div>
               <div ng-if='lastStepsController.mouseOveringMember[$index]'>
                 <img src='/icons/session_grey.png' ng-click='lastStepsController.modalWindowHandler("showSms", [member])' title="Send SMS" ng-if="lastStepsController.canSendSMS" />

@@ -211,7 +211,7 @@ function getMailTemplateForReset(req, callback) {
 }
 
 function getAllSessionMailTemplates(accountId, getNoAccountData, sessionId, getSystemMail, fullData, callback) {
-  let baseTemplateQuery = {category:{ $in: ["firstInvitation", "confirmation", "notThisTime", "notAtAll", "closeSession", "generic"] }};
+  let baseTemplateQuery = {category:{ $in: ["firstInvitation", "notThisTime", "notAtAll", "closeSession", "generic"] }};
   let templateQuery = {};
   if (sessionId) {
     templateQuery.sessionId = {'$or': [sessionId, null]};
@@ -224,12 +224,22 @@ function getAllMailTemplates(accountId, getNoAccountData, getSystemMail, fullDat
   getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, null, templateQuery, false, callback);
 }
 
+function prepareCategoryQuery(baseTemplateQuery) {
+  if (!baseTemplateQuery) {
+    baseTemplateQuery = {};
+  }
+
+  if (!baseTemplateQuery.category) {
+    baseTemplateQuery.category = {};
+  }
+  baseTemplateQuery.category.$not = 'confirmation';
+  return baseTemplateQuery;
+}
+
 function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback) {
   let query = templateQuery || {};
 
-  if (getSystemMail) {
-    baseTemplateQuery = {category: {$not: 'confirmation'}};
-  }
+  baseTemplateQuery = prepareCategoryQuery(baseTemplateQuery);
 
   let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
   if(accountId && !getSystemMail){

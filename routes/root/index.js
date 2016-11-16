@@ -316,7 +316,7 @@ router.route('/VerifyEmail/:token/:accountUserId?')
             req.logout();
             user.increment('signInCount').done(function(result) {
               req.login(user, function(err) {
-                middlewareFilters.myDashboardPage(req, res, next, accountUserId);
+                middlewareFilters.myDashboardPage(req, res, next, accountUserId, true);
               });
             });
           };

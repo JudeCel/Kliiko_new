@@ -14,6 +14,7 @@
     vm.sessionTopicsArray = [];
     vm.sessionTopicsObject = {};
     vm.isDropsectionInViewport = true;
+    vm.isDragInProgress = false;
 
     vm.sortableOptionsA = {
       stop : function(e, ui) {
@@ -29,7 +30,9 @@
     vm.topicsOnDropComplete = topicsOnDropComplete;
     vm.changeActiveState = changeActiveState;
     vm.changeLandingState = changeLandingState;
+    vm.onDragEnd = onDragEnd;
     vm.onDragStart = onDragStart;
+    vm.canBeDraggedAsMultiple = canBeDraggedAsMultiple;
 
     function init(topicController) {
       vm.session = sessionBuilderControllerServices.session;
@@ -60,13 +63,21 @@
         return true;
       }
 
-      for(var i in selected) {
-        if(selected[i].id == topic.id) {
-          can = true;
+      return isSelectedTopic(selected, topic);
+    }
+
+    function canBeDraggedAsMultiple(topic) {
+      return isSelectedTopic(getSelectedTopics(), topic);
+    }
+
+    function isSelectedTopic(selectedTopics, currentTopic) {
+      for(var i in selectedTopics) {
+        if(selectedTopics[i].id == currentTopic.id) {
+          return true;
         }
       }
 
-      return can;
+      return false;
     }
 
     function selectAllTopics(list) {
@@ -200,8 +211,13 @@
       return array;
     }
 
+    function onDragEnd() {
+      vm.isDragInProgress = false;
+    }
+
     function onDragStart() {
       scrollToDropSection();
+      vm.isDragInProgress = true;
     }
 
     function scrollToDropSection() {
