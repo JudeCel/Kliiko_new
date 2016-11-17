@@ -563,19 +563,18 @@ function inviteParams(sessionId, data) {
     models.AccountUser.findAll({
       where: {
         email: { $in: emails },
-        AccountId: { $ne: accountId }
+        AccountId: { $ne: accountId },
+        UserId: { $ne: null }
       }
     }).then(function(results) {
-      if(results.length > 0) {
-        _.map(results, function(accountUser) {
-          _.map(params, function(inviteParam) {
+        _.each(results, function(accountUser) {
+          _.each(params, function(inviteParam) {
             if(inviteParam.email == accountUser.email) {
               inviteParam.userType = 'existing';
               inviteParam.userId = accountUser.UserId;
             }
           })
         });
-      }
 
       deferred.resolve(params);
     });
