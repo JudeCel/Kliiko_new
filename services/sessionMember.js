@@ -65,12 +65,12 @@ function processSessionMember(accountUser, sessionMember, session, params, defer
     }else{
       correctFunction = createHelper;
       params.avatarData = accountUser.gender == 'male' ? constants.sessionMemberMan : constants.sessionMemberWoman;
-      if(sessionMemberParams.role == 'facilitator') {
-        sessionMemberParams.colour = brandProjectConstants.memberColours.facilitator;
-      } else {
+      if(sessionMemberParams.role == 'participant') {
         let participants = brandProjectConstants.memberColours.participants;
         let length = Object.keys(participants).length;
         sessionMemberParams.colour = participants[(memberCount % length) + 1];
+      } else {
+        sessionMemberParams.colour = brandProjectConstants.memberColours.facilitator;
       }
     }
     correctFunction(deferred, sessionMemberParams, sessionMember);

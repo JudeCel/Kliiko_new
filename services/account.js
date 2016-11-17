@@ -20,12 +20,16 @@ function createNewAccountIfNotExists(params, userId) {
   if (!params.accountName || params.accountName == '') {
     deferred.reject(filters.errors(MessagesUtil.account.empty));
   } else {
-    models.AccountUser.count({ where: { UserId: userId, role: "accountManager", owner: true } }).then(function(result) {
-      if (result >= Constants.maxAccountsAmount) {
+    models.AccountUser.count({ where: { UserId: userId, role: "accountManager", owner: true } }).then(function(ownAccounts) {
+      if (ownAccounts >= Constants.maxAccountsAmount) {
         deferred.reject(filters.errors(MessagesUtil.account.accountExists));
       } else {
-        createNewAccount(params, userId, result == 0).then(function(createResult) {
-          deferred.resolve(createResult);
+        models.AccountUser.find({ where: { UserId: userId, role: { $in: ["facilitator", "accountManager"] } } }).then(function(result) {
+          createNewAccount(params, userId, !result).then(function(createResult) {
+            deferred.resolve(createResult);
+          }, function(error) {
+            deferred.reject(error);
+          });
         }, function(error) {
           deferred.reject(error);
         });

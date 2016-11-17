@@ -21,8 +21,7 @@
     vm.filterTypes = {
       all: 'All',
       notInvited: 'Not Invited',
-      confirmed: 'Checked In',
-      inProgress: 'Accepted',
+      confirmed: 'Accepted',
       notThisTime: 'Not This Time',
       notAtAll: 'Not At All',
       pending: 'No Response',
@@ -299,11 +298,17 @@
       member.inviteStatusTranscription = vm.filterTypes[returnMemberInviteStatus(member)];
     }
 
+    vm.getMembersStatusTranscription = function(member) {
+      return vm.filterTypes[returnMemberInviteStatus(member)];
+    }
+
     function returnMemberInviteStatus(member) {
       if (vm.beforeEditInviteStatus) {
         member.inviteStatus = vm.beforeEditInviteStatus;
       } else if (member.inviteStatus == 'Not Invited') {
         member.inviteStatus = "notInvited";
+      } else if (member.inviteStatus == "inProgress") {
+        member.inviteStatus = "pending";
       } else if (member.inviteStatus) {
         // Do Nothing
       } else if (member.invite) {
@@ -311,7 +316,6 @@
       } else {
         member.inviteStatus = "confirmed";
       }
-
       return member.inviteStatus;
     }
   }
