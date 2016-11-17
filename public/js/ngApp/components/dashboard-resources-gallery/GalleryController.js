@@ -4,8 +4,8 @@
   angular.module('KliikoApp').controller('GalleryController', GalleryController);
   angular.module('KliikoApp.Root').controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['$q', 'dbg', 'GalleryServices', 'domServices', 'messenger', '$sce', 'messagesUtil'];
-  function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce, messagesUtil) {
+  GalleryController.$inject = ['$q', 'dbg', 'GalleryServices', 'domServices', 'messenger', '$sce', 'messagesUtil', '$confirm'];
+  function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce, messagesUtil, $confirm) {
     dbg.log2('#GalleryController started');
     var vm = this;
 
@@ -92,6 +92,25 @@
     }
 
     function removeResources(resourceIds) {
+      var closedSessionResources = [];
+      for (var i=0; i<vm.currentList.length; i++) {
+        var resource = vm.currentList[i];
+        if (resourceIds.includes(resource.id) && resource.session_statuses.length == 1 && resource.session_statuses.includes("closed")) {
+          closedSessionResources.push(resource.name);
+        }
+      }
+
+      if (closedSessionResources.length > 0) {
+        var message = "Selected files: " + closedSessionResources.join(", ") + " are used in Closed Session. Do you still want to Delete them?"
+        $confirm({ text: message }).then(function() {
+          removeResourcesConfirmed(resourceIds);
+        });
+      } else {
+        removeResourcesConfirmed(resourceIds);
+      }
+    }
+
+    function removeResourcesConfirmed(resourceIds) {
       GalleryServices.removeResources(resourceIds).then(function(result) {
         result.ids.map(function(deleted) {
           var removeIndex = vm.resourceList.map(function(resource) { return resource.id; }).indexOf(deleted.id);
@@ -287,8 +306,7 @@
           default:
 
         }
-      }
-      else {
+      } else {
         messenger.error(messagesUtil.gallery.noResource);
       }
     }
