@@ -20,7 +20,7 @@ var async = require('async');
 var _ = require('lodash');
 var q = require('q');
 
-const MIN_MAIL_TEMPLATES = 5;
+const MIN_MAIL_TEMPLATES = 4;
 
 // Exports
 module.exports = {

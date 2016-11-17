@@ -13,7 +13,6 @@ var _ = require('lodash');
 
 describe('SERVICE - SessionBuilder', function() {
   var testUser, testAccount, testAccountUser, subscriptionId;
-
   beforeEach(function(done) {
     models.sequelize.sync({ force: true }).then(() => {
       userFixture.createUserAndOwnerAccount().then(function(result) {
@@ -715,7 +714,7 @@ describe('SERVICE - SessionBuilder', function() {
     });
 
     describe('sad path', function(done) {
-      it('should fail because mail templates less then 5', function(done) {
+      it('should fail because mail templates less then 4', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
           params.step = 'manageSessionEmails';
