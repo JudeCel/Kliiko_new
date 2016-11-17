@@ -1,0 +1,36 @@
+#!/usr/bin/env node
+"use strict";
+const NR = require("node-resque");
+const connectionDetails = {
+  host:      '127.0.0.1',
+  password:  null,
+  port:      6379,
+  database:  parseInt(process.env.REDIS_DB),
+  namespace: 'dashboard_jobs',
+  looping: true,
+};
+
+const jobs = {
+  "invite": {
+    perform: (inviteId, callback) => {
+      let answer = a - b;
+      callback(null, answer);
+    },
+  },
+};
+
+const multiWorker = new NR.multiWorker({
+  connection: connectionDetails,
+  queues: ['invites'],
+  minTaskProcessors:   1,
+  maxTaskProcessors:   100,
+  checkTimeout:        1000,
+  maxEventLoopDelay:   10,
+  toDisconnectProcessors: true,
+}, jobs);
+
+multiWorker.start();
+
+multiWorker.on('start', () => {
+  console.log("Node.js Resque server is started.");
+})
