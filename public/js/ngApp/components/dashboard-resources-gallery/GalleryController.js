@@ -376,15 +376,29 @@
     }
 
     function closeModalAndSetVariables(data, replace) {
-      //todo: process replace right way
       vm.modalWindowDisabled = false;
-      vm.resourceList.push(data.resource);
-      vm.selectionList[vm.currentPage.upload].push(data.resource);
+      if (replace) {
+        for (var i=0; i<vm.resourceList.length; i++) {
+          if (vm.resourceList[i].id == data.resource.id) {
+            vm.resourceList[i] = data.resource;
+            break;
+          }
+        }
+        for (var i=0; i<vm.selectionList[vm.currentPage.upload].length; i++) {
+          if (vm.selectionList[vm.currentPage.upload][i].id == data.resource.id) {
+            vm.selectionList[vm.currentPage.upload][i] = data.resource;
+            break;
+          }
+        }
+      } else {
+        vm.resourceList.push(data.resource);
+        vm.selectionList[vm.currentPage.upload].push(data.resource);
+      }
       domServices.modal('uploadResource', 'close');
       setDependency(data.resource)
       filterResources(vm.currentPage.filter);
       messenger.ok(data.message);
-      if(vm.currentCallback) {
+      if (vm.currentCallback) {
         vm.currentCallback(data.resource);
       }
     }
