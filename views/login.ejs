@@ -6,7 +6,7 @@
             <li class="active">
               <a class="background-yellow text-font-family-tabs text-white text-shadow-gray btn login-kliiko-tab" href="#login">Login to klzii</a>
             </li>
-            <% if(!message || (message && message.inviteError == false)) { %>
+            <% if((!message || (message && message.inviteError == false)) && !email) { %>
               <li>
                 <a class="background-green text-font-family-tabs text-white text-center text-shadow-gray login-signup-tab" href="/registration">Get a klzii Account</a>
               </li>
@@ -16,7 +16,7 @@
             <div id="login" class="tab-pane fade in active">
                 <h1 class="text-gray-dark text-center">Welcome!</h1>
                 <div class='text-center background-yellow'>
-                  <% if(!message || (message && message.inviteError == false)) { %>
+                  <% if((!message || (message && message.inviteError == false)) && !email) { %>
                     <b><%= message %></b>
                   <% } %>
                 </div>
@@ -39,7 +39,7 @@
                                 <img src="/icons/user.png" />
                               </td>
                               <td class="form-group">
-                                <input type="email" name='email' class="form-control center-block border-brown" id="email" placeholder="E-mail">
+                                <input type="email" name='email' class="form-control center-block border-brown" id="email" placeholder="E-mail" value="<%= email %>">
                               </td>
                           </tr>
                           <tr>
