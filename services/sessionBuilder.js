@@ -115,19 +115,21 @@ function update(sessionId, accountId, params) {
   }).then(function() {
     return findSession(sessionId, accountId);
   }).then(function(session) {
+    if (params["status"] == 'closed') {
+      params["step"] = 'manageSessionParticipants'
+    }
     return session.updateAttributes(params);
   }).then(function(result) {
     updatedSession = result;
     return sessionBuilderObject(updatedSession);
   }).then(function(sessionObject) {
-    if(updatedSession.status == 'closed') {
+    if (updatedSession.status == 'closed') {
       sendCloseSessionMail(updatedSession).then(function() {
         deferred.resolve(sessionObject);
       },function(error) {
         deferred.reject(error);
       });
-    }
-    else {
+    } else {
       deferred.resolve(sessionObject);
     }
   }).catch(function(error) {

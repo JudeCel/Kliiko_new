@@ -185,7 +185,9 @@
       self.updateStep({status: status}).then(
         function (res) {
           self.status = self.sessionData.status = status;
-          deferred.resolve(res)
+          self.getRemoteData().then(function() {
+            deferred.resolve(res);
+          });
         },
         function (err) {
           deferred.reject(err);

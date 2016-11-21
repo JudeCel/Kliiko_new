@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom', 'messagesUtil'];
-  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom, messagesUtil) {
+  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom', 'messagesUtil', '$confirm'];
+  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom, messagesUtil, $confirm) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -58,10 +58,14 @@
     vm.isSelectObserverStep = isSelectObserverStep;
 
     function closeSession() {
-      vm.session.setOpen('closed').then(function(res) {
-      }, function(err) {
-        messenger.error(err);
-      });
+      if (vm.session.sessionData.showStatus != 'Pending') {
+        $confirm({ text: "You want to Close this Chat Session? You will be able to send the Close Email to Participants, and make Comments." }).then(function() {
+          vm.session.setOpen('closed').then(function(res) {
+          }, function(err) {
+            messenger.error(err);
+          });
+        });
+      }
     }
 
     function openSession() {
