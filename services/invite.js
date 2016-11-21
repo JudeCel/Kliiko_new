@@ -34,8 +34,7 @@ function createBulkInvites(arrayParams) {
   let deferred = q.defer();
 
   let expireDate = new Date();
-  // expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
-  expireDate.setMinutes(expireDate.getMinutes() + 30); // tmp changes for test need to be removed and of day
+  expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
   _.map(arrayParams, function(paramObject) {
     paramObject.token = uuid.v1();
     paramObject.sentAt = new Date();
