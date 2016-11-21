@@ -93,8 +93,8 @@
 
     function removeResources(resourceIds) {
       GalleryServices.closedSessionResourcesRemoveCheck(resourceIds).then(function(result) {
-        if (result.items.length > 0) {
-          var confirmMessage = prepareMessage(result);
+        if (result.used_in_closed_session.items.length > 0) {
+          var confirmMessage = prepareMessage(result.used_in_closed_session);
           $confirm({ text: confirmMessage }).then(function() {
             removeResourcesConfirmed(resourceIds);
           });
