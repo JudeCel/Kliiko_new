@@ -1,35 +1,35 @@
-'use strict';
+'use strict'
 
-const NR = require("node-resque");
- let Bluebird = require('bluebird');
-var queue = null;
+const NR = require("node-resque")
+const connectionDetails = require('../config/backgroudServer.js')
+let Bluebird = require('bluebird')
+var queue = null
 
-const connectionDetails = {
-  host:      '127.0.0.1',
-  password:  null,
-  port:      6379,
-  database:  parseInt(process.env.REDIS_DB),
-  namespace: 'dashboard_jobs',
-  looping: true,
-};
+const jobs = {
+  "invite": {
+    perform: (inviteId, callback) => {
+      console.log("invite id:", inviteId)
+      callback(null)
+    },
+  },
+}
 
-
-function setUpQueue(config, jobs) {
+const setUpQueue = (config) => {
   return new Bluebird((resolve, reject) => {
     if (queue) {
       resolve(queue)
     }else {
-      let tmpQueue = new NR.queue({connection: config}, jobs);
+      let tmpQueue = new NR.queue({connection: config}, jobs)
       tmpQueue.connect(() => {
-        tmpQueue.on('error', (error) => { console.log(error); });
+        tmpQueue.on('error', (error) => { console.log(error) })
         queue = tmpQueue
         resolve(queue)
-      });
+      })
     }
   })
 }
 
-function getQueue() {
+const getQueue = () =>  {
   if (queue) {
     return queue
   } else {
@@ -39,5 +39,6 @@ function getQueue() {
 
 module.exports = {
   setUpQueue: setUpQueue,
-  getQueue: getQueue
-};
+  getQueue: getQueue,
+  jobsList: jobs
+}

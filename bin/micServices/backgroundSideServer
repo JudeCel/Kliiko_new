@@ -1,25 +1,9 @@
 #!/usr/bin/env node
-const backgroundQueue = require('../../services/backgroundQueue.js');
-
 "use strict";
 const NR = require("node-resque");
-const connectionDetails = {
-  host:      '127.0.0.1',
-  password:  null,
-  port:      6379,
-  database:  parseInt(process.env.REDIS_DB),
-  namespace: 'dashboard_jobs',
-  looping: true,
-};
+const connectionDetails = require('../../config/backgroudServer.js');
+const { setUpQueue, jobsList} = require('../../services/backgroundQueue.js');
 
-const jobs = {
-  "invite": {
-    perform: (inviteId, callback) => {
-      console.log("invite id:", inviteId);
-      callback(null);
-    },
-  },
-};
 
 const multiWorker = new NR.multiWorker({
   connection: connectionDetails,
@@ -29,13 +13,8 @@ const multiWorker = new NR.multiWorker({
   checkTimeout:        1000,
   maxEventLoopDelay:   10,
   toDisconnectProcessors: true,
-}, jobs);
+}, jobsList);
 
-multiWorker.start();
-
-multiWorker.on('start', () => {
-  backgroundQueue.setUpQueue(connectionDetails, jobs).then((queue) => {
-    queue.enqueue('invites', "invite", 1);
-  })
+multiWorker.start( () => {
   console.log("Node.js Resque server is started.");
-})
+});
