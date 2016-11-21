@@ -12,7 +12,6 @@ const cluster = require('cluster');
     cluster.fork({ROLE: "backgroundWorkerServer"});
 
     cluster.on('exit', (worker, code, signal) => {
-      console.log(worker);
       console.log(`worker ${worker.process.pid} died`);
     });
   } else {

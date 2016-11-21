@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+const backgroundQueue = require('../../services/backgroundQueue.js');
+
 "use strict";
 const NR = require("node-resque");
 const connectionDetails = {
@@ -13,8 +15,8 @@ const connectionDetails = {
 const jobs = {
   "invite": {
     perform: (inviteId, callback) => {
-      let answer = a - b;
-      callback(null, answer);
+      console.log("invite id:", inviteId);
+      callback(null);
     },
   },
 };
@@ -32,5 +34,8 @@ const multiWorker = new NR.multiWorker({
 multiWorker.start();
 
 multiWorker.on('start', () => {
+  backgroundQueue.setUpQueue(connectionDetails, jobs).then((queue) => {
+    queue.enqueue('invites', "invite", 1);
+  })
   console.log("Node.js Resque server is started.");
 })
