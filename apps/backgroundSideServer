@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 "use strict";
 const NR = require("node-resque");
-const connectionDetails = require('../../config/backgroudServer.js');
-const { setUpQueue, jobsList} = require('../../services/backgroundQueue.js');
+const connectionDetails = require('../config/backgroudServer.js');
+const { setUpQueue, jobsList} = require('../services/backgroundQueue.js');
 
 
 const multiWorker = new NR.multiWorker({

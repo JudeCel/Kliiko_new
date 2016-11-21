@@ -1,8 +1,8 @@
 "use strict";
-const cluster = require('cluster');
 /**
- * Module dependencies.
- */
+This file for only for development to run all mic services in one time, not use with pm2!
+*/
+const cluster = require('cluster');
  require('dotenv-extended').load({
      errorOnMissing: true
  });
@@ -18,11 +18,11 @@ const cluster = require('cluster');
     switch (process.env.ROLE) {
       case "webServer":
         console.log("start web server");
-        require("./micServices/www");
+        require("../apps/webServer");
         break;
       case "backgroundWorkerServer":
         console.log("background Worker Server");
-        require("./micServices/backgroundSideServer");
+        require("../apps/backgroundSideServer");
         break;
       default:
         console.log("Unhandled process role: " + process.env.ROLE);
