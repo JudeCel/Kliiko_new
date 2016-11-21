@@ -13,6 +13,7 @@
     upServices.zipResources = zipResources;
     upServices.refreshResource = refreshResource;
     upServices.surveyResources = surveyResources;
+    upServices.closedSessionResourcesRemoveCheck = closedSessionResourcesRemoveCheck;
 
     return upServices;
 
@@ -44,6 +45,18 @@
       var deferred = $q.defer();
 
       fileUploader.remove(resourceIds).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function closedSessionResourcesRemoveCheck(resourceIds) {
+      var deferred = $q.defer();
+
+      fileUploader.closedSessionResourcesRemoveCheck(resourceIds).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
         deferred.reject(error);

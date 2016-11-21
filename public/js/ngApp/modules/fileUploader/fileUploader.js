@@ -15,6 +15,7 @@
     fileUploaderService.upload = upload;
     fileUploaderService.list = list;
     fileUploaderService.remove = remove;
+    fileUploaderService.closedSessionResourcesRemoveCheck = closedSessionResourcesRemoveCheck;
     fileUploaderService.zip = zip;
     fileUploaderService.refresh = refresh;
     fileUploaderService.survey = survey;
@@ -95,6 +96,21 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > remove resources > server error >', error);
+        switchErrors(deferred, error);
+      });
+
+      return deferred.promise;
+    }
+
+    function closedSessionResourcesRemoveCheck(resourceIds) {
+      var deferred = $q.defer();
+      dbg.log2('#KliikoApp.fileUploader > closed session resources check');
+
+      resourceForServer('resources', 'closed_session_delete_check').get({ 'ids[]': resourceIds }, function(result) {
+        dbg.log2('#KliikoApp.fileUploader > closed session resources check > server respond >', result);
+        deferred.resolve(result);
+      }, function(error) {
+        dbg.log2('#KliikoApp.fileUploader > closed session resources check > server error >', error);
         switchErrors(deferred, error);
       });
 

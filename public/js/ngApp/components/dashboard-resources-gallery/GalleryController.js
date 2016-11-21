@@ -92,55 +92,52 @@
     }
 
     function removeResources(resourceIds) {
-      var closedSessionResources = [];
-      for (var i=0; i<vm.currentList.length; i++) {
-        var resource = vm.currentList[i];
-        if (resourceIds.includes(resource.id) && resource.session_statuses.length == 1 && resource.session_statuses.includes("closed")) {
-          closedSessionResources.push(resource.name);
-        }
-      }
-
-      if (closedSessionResources.length > 0) {
-        var message = "Selected files: " + closedSessionResources.join(", ") + " are used in Closed Session. Do you still want to Delete them?"
-        $confirm({ text: message }).then(function() {
-          removeResourcesConfirmed(resourceIds);
-        });
-      } else {
-        removeResourcesConfirmed(resourceIds);
-      }
-    }
-
-    function removeResourcesConfirmed(resourceIds) {
-      GalleryServices.removeResources(resourceIds).then(function(result) {
-        if (result.removed.length > 0) {
-          result.removed.map(function(deleted) {
-            var removeIndex = vm.resourceList.map(function(resource) { return resource.id; }).indexOf(deleted.id);
-            ~removeIndex && vm.resourceList.splice(removeIndex, 1);
+      GalleryServices.closedSessionResourcesRemoveCheck(resourceIds).then(function(result) {
+        if (result.items.length > 0) {
+          var confirmMessage = prepareMessage(result);
+          $confirm({ text: confirmMessage }).then(function() {
+            removeResourcesConfirmed(resourceIds);
           });
-
-          filterResources(vm.currentPage.filter);
-          messenger.ok("Your selected files were successfully deleted");
-        }
-        if (result.not_removed_stock.length > 0) {
-          var notRemovedStock = getFilesNameByIds(result.not_removed_stock);
-          messenger.error("Sorry, we cannot Delete the following because they are Stock file: " + notRemovedStock.join(", "));
-        }
-        if (result.not_removed_used.length > 0) {
-          var notRemovedUsed = getFilesNameByIds(result.not_removed_used);
-          messenger.error("Sorry, we cannot delete the following files as they are currently used in a Chat Session: " + notRemovedUsed.join(", "));
+        } else {
+          removeResourcesConfirmed(resourceIds);
         }
       }, function(error) {
         messenger.error(error);
       });
     }
 
-    function getFilesNameByIds(ids) {
-      var resNames = []
-      ids.map(function(res) {
-        var index = vm.resourceList.map(function(resource) { return resource.id; }).indexOf(res.id);
-        resNames.push(vm.resourceList[index].name);
+    function removeResourcesConfirmed(resourceIds) {
+      GalleryServices.removeResources(resourceIds).then(function(result) {
+        if (result.removed.items.length > 0) {
+          result.removed.items.map(function(deleted) {
+            var removeIndex = vm.resourceList.map(function(resource) { return resource.id; }).indexOf(deleted.id);
+            ~removeIndex && vm.resourceList.splice(removeIndex, 1);
+          });
+          filterResources(vm.currentPage.filter);
+          messenger.ok(result.removed.message);
+        }
+        if (result.not_removed_stock.items.length > 0) {
+          var notRemovedMessage = prepareMessage(result.not_removed_stock);
+          messenger.error(notRemovedMessage);
+        }
+        if (result.not_removed_used.items.length > 0) {
+          var notRemovedMessage = prepareMessage(result.not_removed_used);
+          messenger.error(notRemovedMessage);
+        }
+      }, function(error) {
+        messenger.error(error);
       });
-      return resNames
+    }
+
+    function prepareMessage(data) {
+      var res = "";
+      data.items.map(function(item) {
+        if (res != "") {
+          res += ", ";
+        }
+        res += item.name;
+      });
+      return data.message.replace('{0}', res);
     }
 
     function zipResources() {
