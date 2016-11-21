@@ -9,6 +9,7 @@ var config = {
     "database": process.env.DATABASE_NAME_DEV,
     "host": process.env.DATABASE_HOST_DEV,
     "dialect": process.env.DATABASE_DIALECT_DEV,
+    "timezone": "UTC",
     logging: false
   },
   "test": {
@@ -17,6 +18,7 @@ var config = {
     "database": process.env.DATABASE_NAME_TEST,
     "host": process.env.DATABASE_HOST_TEST,
     "dialect": process.env.DATABASE_DIALECT_TEST,
+    "timezone": "UTC",
     logging: false
   },
   "production": {
@@ -25,6 +27,7 @@ var config = {
     "database": process.env.DATABASE_NAME_PROD,
     "host": process.env.DATABASE_HOST_PROD,
     "dialect": process.env.DATABASE_DIALECT_PROD,
+    "timezone": "UTC",
     logging: false
   }
 }

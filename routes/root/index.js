@@ -88,7 +88,7 @@ router.get('/ping', function(req, res, next) {
 });
 
 router.get('/', function (req, res, next) {
-    res.render('login', {title: 'Login', error: "", message: ''});
+  res.render('login', {title: 'Login', error: "", message: '', email: ''});
 });
 
 router.get('/registration', function (req, res, next) {
@@ -151,7 +151,7 @@ router.get('/auth/facebook/callback', function(req, res, next) {
   let returnParams = JSON.parse(req.query.state);
   passport.authenticate('facebook', function(err, user, info) {
     if (err) {
-      return res.render('login', { title: 'Login', error: err.message, message: "" });
+      return res.render('login', { title: 'Login', error: err.message, message: "", email: "" });
     }
     if (user) {
       req.login(user, function(err) {
@@ -213,7 +213,7 @@ router.get('/auth/google/callback', function(req, res, next) {
   let returnParams = JSON.parse(req.query.state);
   passport.authenticate('google', function(err, user, info) {
     if (err) {
-      return res.render('login', { title: 'Login', error: err.message, message: "" });
+      return res.render('login', { title: 'Login', error: err.message, message: "", email: "" });
     }
     if (user) {
       req.login(user, function(err) {
@@ -285,7 +285,7 @@ router.post('/login', function(req, res, next) {
 });
 
 router.get('/login', function (req, res, next) {
-    res.render('login', { title: 'Login', error: '', message: req.flash('message')[0] });
+  res.render('login', { title: 'Login', error: '', message: req.flash('message')[0], email: req.flash('email')[0] });
 });
 
 router.route('/VerifyEmail/:token/:accountUserId?')
@@ -303,6 +303,7 @@ router.route('/VerifyEmail/:token/:accountUserId?')
         tplData.user = false;
         tplData.errors.password = "Token expired";
         tplData.message = '';
+        tplData.email = '';
         tplData.error = tplData.errors.password;
         res.render('login', tplData);
       } else {
