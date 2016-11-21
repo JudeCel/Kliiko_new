@@ -8,7 +8,7 @@ var config = {
     password:  null,
     port:      parseInt(process.env.REDIS_PORT),
     database:  parseInt(process.env.REDIS_DB),
-    namespace: 'dashboard_jobs',
+    namespace: 'dashboard_jobs_dev',
     looping: true,
   },
   "test": {
@@ -16,7 +16,7 @@ var config = {
     password:  null,
     port:      parseInt(process.env.REDIS_PORT_TEST),
     database:  parseInt(process.env.REDIS_DB_TEST),
-    namespace: 'dashboard_jobs',
+    namespace: 'dashboard_jobs_test',
     looping: true,
   },
   "production": {
@@ -24,7 +24,7 @@ var config = {
     password:  null,
     port:      parseInt(process.env.REDIS_PORT),
     database:  parseInt(process.env.REDIS_DB),
-    namespace: 'dashboard_jobs',
+    namespace: 'dashboard_jobs_prod',
     looping: false,
   }
 }

@@ -14,19 +14,19 @@ const jobs = {
   },
 }
 
-const setUpQueue = (config) => {
-  return new Bluebird((resolve, reject) => {
+const setUpQueue = (_req, _res, next) => {
     if (queue) {
-      resolve(queue)
+      next()
     }else {
-      let tmpQueue = new NR.queue({connection: config}, jobs)
+      let tmpQueue = new NR.queue({connection: connectionDetails}, jobs)
       tmpQueue.connect(() => {
         tmpQueue.on('error', (error) => { console.log(error) })
         queue = tmpQueue
-        resolve(queue)
+        console.log("node-resque succsess");
+        next()
       })
     }
-  })
+
 }
 
 const getQueue = () =>  {

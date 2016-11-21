@@ -11,6 +11,7 @@ var passport = require('./middleware/passport');
 var subdomain = require('./middleware/subdomain');
 var currentUser = require('./middleware/currentUser');
 var sessionMiddleware = require('./middleware/session');
+const { setUpQueue} = require('./services/backgroundQueue.js');
 
 var app = express();
 var flash = require('connect-flash');
@@ -43,6 +44,8 @@ app.use(session({
   rolling: true,
   resave: true
 }));
+
+app.use(setUpQueue);
 
 app.use(passport.initialize());
 app.use(passport.session());
