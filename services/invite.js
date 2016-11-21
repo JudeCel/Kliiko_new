@@ -391,16 +391,15 @@ function acceptInviteExisting(token, callback) {
 
           sessionMemberService.createWithTokenAndColour(params).then(function() {
             shouldUpdateRole(accountUser, invite.role).then(function() {
-              callback(null, invite, MessagesUtil.invite.confirmed);
+              callback(null, invite, MessagesUtil.invite.confirmed, invite.AccountUser.email);
             }, function(error) {
               callback(filters.errors(error));
             });
           }, function(error) {
             callback(filters.errors(error));
           });
-        }
-        else {
-          callback(null, invite, MessagesUtil.invite.confirmed);
+        } else {
+          callback(null, invite, MessagesUtil.invite.confirmed, invite.AccountUser.email);
         }
       }).catch(function(error) {
         callback(filters.errors(error));
@@ -426,16 +425,14 @@ function acceptInviteNew(token, params, callback) {
   findInvite(token, function(error, invite) {
     if(error) {
       return callback(error);
-    }
-    else if(invite.userType == 'existing') {
+    } else if(invite.userType == 'existing') {
       return callback(true);
     }
 
     updateUser({ password: params.password }, invite, function(error, user) {
-      if(error) {
+      if (error) {
         callback(error, invite);
-      }
-      else {
+      } else {
         invite.update({ status: 'confirmed' }).then(function() {
           callback(null, invite, user, MessagesUtil.invite.confirmed);
         }).catch(function(error) {

@@ -17,7 +17,7 @@ function login(req, res, next) {
         let error = exists ?
           { dialog: {link: { url: '/invite/' + token + '/accept/', title: "Continue to Check In" }, message: MessagesUtil.users.dialog.emailExistsContinueToCheckIn} } :
           (err || info.message);
-        return res.render('login', {title: 'Login', error: error, message: ''});
+        return res.render('login', {title: 'Login', error: error, message: '', email: ''});
       });
     } else {
       req.login(user, function(err) {

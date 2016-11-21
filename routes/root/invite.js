@@ -40,16 +40,18 @@ function decline(req, res, next) {
 }
 
 function acceptGet(req, res, next) {
-  inviteService.acceptInviteExisting(req.params.token, function(error, invite, message) {
-    if(error == MessagesUtil.invite.notFound) {
+  inviteService.acceptInviteExisting(req.params.token, function(error, invite, message, email) {
+    if (error == MessagesUtil.invite.notFound) {
       res.redirect('/login');
-    }
-    else {
-      if(invite && invite.userType == 'new') {
+    } else {
+      if (invite && invite.userType == 'new') {
         res.render(views_path('index'), simpleParams('Accept Invite', invite, error));
-      }
-      else {
-        req.flash('message', message);
+      } else {
+        if (email) {
+          req.flash('email', email);
+        } else {
+          req.flash('message', message);
+        }
         res.redirect('/login');
       }
     }
@@ -62,19 +64,17 @@ function acceptPost(req, res, next) {
       return res.render(views_path('index'), simpleParams('Invite', invite, error));
     }
 
-    if(invite.sessionId) {
+    if (invite.sessionId) {
       inviteService.sessionAccept(req.params.token, req.body).then(function(data) {
         loginUser(req, res, next, data.user);
       }, function(error) {
         res.render(views_path('index'), simpleParams('Invite', invite, error));
       });
-    }
-    else {
+    } else {
       inviteService.acceptInviteNew(req.params.token, req.body, function(error, invite, user, message) {
-        if(error) {
+        if (error) {
           res.render(views_path('index'), simpleParams('Invite', invite, error));
-        }
-        else {
+        } else {
           loginUser(req, res, next, user);
         }
       });
@@ -87,8 +87,7 @@ function loginUser(req, res, next, user) {
     req.login(user, function(err) {
       middlewareFilters.myDashboardPage(req, res, next);
     });
-  }
-  else {
+  } else {
     req.body.email = user.email;
     userRoutes.login(req, res, next);
   }
