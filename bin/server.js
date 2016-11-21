@@ -18,11 +18,11 @@ const cluster = require('cluster');
     switch (process.env.ROLE) {
       case "webServer":
         console.log("start web server");
-        require("../apps/webServer");
+        require("../apps/webServer.js");
         break;
       case "backgroundWorkerServer":
         console.log("background Worker Server");
-        require("../apps/backgroundSideServer");
+        require("../apps/backgroundSideServer.js");
         break;
       default:
         console.log("Unhandled process role: " + process.env.ROLE);

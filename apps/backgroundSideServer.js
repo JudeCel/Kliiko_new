@@ -1,9 +1,7 @@
-#!/usr/bin/env node
 "use strict";
 const NR = require("node-resque");
 const connectionDetails = require('../config/backgroudServer.js');
 const { setUpQueue, jobsList} = require('../services/backgroundQueue.js');
-
 
 const multiWorker = new NR.multiWorker({
   connection: connectionDetails,
@@ -15,6 +13,6 @@ const multiWorker = new NR.multiWorker({
   toDisconnectProcessors: true,
 }, jobsList);
 
-multiWorker.start( () => {
+multiWorker.start(() => {
   console.log("Node.js Resque server is started.");
 });
