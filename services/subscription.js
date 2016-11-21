@@ -812,7 +812,7 @@ function validateContactListCount(accountId, newPlan) {
     }).then(function(c) {
       errors = errors || {};
       // TODO WTF!!!
-      let defaultListCount = 4; // By default each user has 4 contact lists: Account Managers, Facilitators, Observers and Surveys
+      let defaultListCount = 4; // By default each user has 4 contact lists: Account Managers, Hosts, Spectators and Guests
       if((defaultListCount + newPlan.contactListCount) < c){
         errors.contactList = MessagesUtil.subscription.validation.contactList;
       }

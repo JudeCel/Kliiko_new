@@ -122,7 +122,7 @@ function createFacilitatorInvite(params) {
             createInvite(facilitatorInviteParams(accountUser, params.sessionId)).then(function() {
               deferred.resolve();
             }, function(error) {
-              deferred.reject(filters.errors("Invite as Facilitator for " + accountUser.firstName + " " + accountUser.lastName + " were not sent."));
+              deferred.reject(filters.errors("Invite as Host for " + accountUser.firstName + " " + accountUser.lastName + " were not sent."));
             });
           }, function(error) {
             deferred.reject(filters.errors(error));

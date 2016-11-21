@@ -65,8 +65,8 @@
     vm.isObserverListSelected = isObserverListSelected;
     vm.findIndexByListName = findIndexByListName;
 
-    var facilitatorsListName = "Facilitators";
-    var observersListName = "Observers";
+    var facilitatorsListName = "Hosts";
+    var observersListName = "Spectators";
 
     // required for correct list switching.
     var isSelected = false;

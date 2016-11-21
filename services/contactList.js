@@ -144,7 +144,7 @@ function removeFacilitatorFromList(sessionId, results) {
   let deferred = q.defer();
 
   _.map(results, function(result) {
-    if(result.name == "Facilitators"){
+    if(result.name == "Hosts"){
       models.SessionMember.find({
         where: {
           sessionId: sessionId,
@@ -244,8 +244,8 @@ function createDefaultLists(accountId, t) {
   let deferred = q.defer();
   ContactList.bulkCreate([
     { name: 'Account Managers', accountId: accountId, editable: false, role: 'accountManager' },
-    { name: 'Facilitators', accountId: accountId, editable: false, role: 'facilitator'},
-    { name: 'Observers', accountId: accountId, editable: false, role: 'observer' }
+    { name: 'Hosts', accountId: accountId, editable: false, role: 'facilitator'},
+    { name: 'Spectators', accountId: accountId, editable: false, role: 'observer' }
   ], { transaction: t, returning: true }).then(function(results) {
     deferred.resolve({results: results, transaction: t});
   }, function(err) {
