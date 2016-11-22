@@ -3,6 +3,7 @@
 var models = require('./../models');
 var filters = require('./../models/filters');
 var brandProjectConstants = require('../util/brandProjectConstants');
+const { getQueue } = require('./backgroundQueue');
 
 var Invite = models.Invite;
 var User = models.User;
@@ -63,12 +64,12 @@ function createBulkInvites(arrayParams) {
           invite.accountName = arrayParams.accountName;
           if (invite.AccountUser.ContactListUsers.length) {
             invite.unsubscribeMailUrl = mailUrlHelper.getUrl(invite.AccountUser.ContactListUsers[0].unsubscribeToken, null, '/unsubscribe/');
-
-            sendInvite(invite).then(function() {
-              callback();
-            }, function(error) {
-              callback(error);
-            });
+            getQueue.enqueue("invites", "invite", invite.id);
+            // sendInvite(invite).then(function() {
+            //   callback();
+            // }, function(error) {
+            //   callback(error);
+            // });
           } else {
             callback();
           }

@@ -33,7 +33,7 @@ const getQueue = () =>  {
   if (queue) {
     return queue
   } else {
-    throw "Queue not conected call 'setUpQueue' function "
+    throw "Queue not connected, call 'setUpQueue' function to connect Queue"
   }
 }
 
