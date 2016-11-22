@@ -94,8 +94,7 @@
     function removeResources(resourceIds) {
       GalleryServices.closedSessionResourcesRemoveCheck(resourceIds).then(function(result) {
         if (result.used_in_closed_session.items.length > 0) {
-          var confirmMessage = prepareMessage(result.used_in_closed_session);
-          $confirm({ text: confirmMessage }).then(function() {
+          $confirm({ text: result.used_in_closed_session.message }).then(function() {
             removeResourcesConfirmed(resourceIds);
           });
         } else {
@@ -117,27 +116,14 @@
           messenger.ok(result.removed.message);
         }
         if (result.not_removed_stock.items.length > 0) {
-          var notRemovedMessage = prepareMessage(result.not_removed_stock);
-          messenger.error(notRemovedMessage);
+          messenger.error(result.not_removed_stock.message);
         }
         if (result.not_removed_used.items.length > 0) {
-          var notRemovedMessage = prepareMessage(result.not_removed_used);
-          messenger.error(notRemovedMessage);
+          messenger.error(result.not_removed_used.message);
         }
       }, function(error) {
         messenger.error(error);
       });
-    }
-
-    function prepareMessage(data) {
-      var res = "";
-      data.items.map(function(item) {
-        if (res != "") {
-          res += ", ";
-        }
-        res += item.name;
-      });
-      return data.message.replace('{0}', res);
     }
 
     function zipResources() {
