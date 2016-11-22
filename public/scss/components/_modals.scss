@@ -303,4 +303,7 @@
 
 #messenger-area .media .media-body {
   word-break: break-word;
+  -ms-word-break: break-word
+  max-width: 280px;
+  word-wrap: break-word;
 }
