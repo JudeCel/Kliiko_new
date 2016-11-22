@@ -37,6 +37,7 @@ module.exports = {
   removeInvite: removeInvite,
   removeSessionMember: removeSessionMember,
   sendGenericEmail: sendGenericEmail,
+  sendCloseMail: sendCloseMail,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
   canAddObservers: canAddObservers
 };
@@ -108,7 +109,6 @@ function findSession(id, accountId) {
 
 function update(sessionId, accountId, params) {
   let deferred = q.defer();
-  let updatedSession;
 
   validators.hasValidSubscription(accountId).then(function() {
     return validators.subscription(accountId, 'session', 1, { sessionId: sessionId });
@@ -116,22 +116,14 @@ function update(sessionId, accountId, params) {
     return findSession(sessionId, accountId);
   }).then(function(session) {
     if (params["status"]) {
-      params["step"] = 'manageSessionParticipants'
+      params["step"] = 'manageSessionParticipants';
+      params["wasClosed"] = true;
     }
     return session.updateAttributes(params);
   }).then(function(result) {
-    updatedSession = result;
-    return sessionBuilderObject(updatedSession);
+    return sessionBuilderObject(result);
   }).then(function(sessionObject) {
-    if (updatedSession.status == 'closed') {
-      sendCloseSessionMail(updatedSession).then(function() {
-        deferred.resolve(sessionObject);
-      },function(error) {
-        deferred.reject(error);
-      });
-    } else {
-      deferred.resolve(sessionObject);
-    }
+    deferred.resolve(sessionObject);
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -139,7 +131,7 @@ function update(sessionId, accountId, params) {
   return deferred.promise;
 }
 
-function sendCloseSessionMail(session) {
+function sendCloseMail(sessionId, data, accountId) {
   let deferred = q.defer();
 
   models.SessionMember.find({
@@ -149,20 +141,21 @@ function sendCloseSessionMail(session) {
     },
     include: [AccountUser]
   }).then(function(facilitator) {
+    let ids = getEmailRecieversAccountUserIds(data.recievers);
     models.SessionMember.findAll({
       where: {
         sessionId: session.id,
-        role: ["participant", "observer"]
+        id: { $in: ids }
       },
       include: [AccountUser]
     }).then(function(sessionMembers) {
-      if(canSendCloseMails(session, facilitator, sessionMembers.length)){
-        sendToEachParticipant(session, facilitator, sessionMembers).then(function() {
-          deferred.resolve();
-        },function(errors) {
+      if (canSendCloseMails(session, facilitator, sessionMembers.length)) {
+        sendCloseMailToEachParticipant(session, facilitator, sessionMembers).then(function() {
+          deferred.resolve(`Sent ${sessionMembers.length} emails`);
+        }, function(errors) {
           deferred.reject(errors);
         })
-      }else{
+      } else {
         deferred.reject(MessagesUtil.sessionBuilder.errors.cantSendCloseMails);
       }
     }).catch(function(error) {
@@ -175,7 +168,7 @@ function sendCloseSessionMail(session) {
   return deferred.promise;
 }
 
-function sendToEachParticipant(session, facilitator,sessionMembers ) {
+function sendCloseMailToEachParticipant(session, facilitator, sessionMembers) {
   let deferred = q.defer();
   let errors = [];
 
@@ -492,7 +485,7 @@ function sendGenericEmailsAsync(params, accountUsers, session, deferred) {
   });
 }
 
-function getGenericEmailRecieversAccountUserIds(recievers) {
+function getEmailRecieversAccountUserIds(recievers) {
   let ids = [];
   for (let i=0; i<recievers.length; i++) {
     let reciever = recievers[i];
@@ -508,7 +501,7 @@ function sendGenericEmail(sessionId, data, accountId) {
   validators.hasValidSubscription(accountId).then(function() {
     getSessionParticipant(sessionId, 'facilitator').then(function(sessionMember) {
       if(sessionMember) {
-        let ids = getGenericEmailRecieversAccountUserIds(data.recievers);
+        let ids = getEmailRecieversAccountUserIds(data.recievers);
         AccountUser.findAll({
           where: {
             id: { $in: ids }

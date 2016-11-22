@@ -125,9 +125,14 @@
     function sendCloseEmail() {
       var data = findSelectedMembersClose();
 
-      if(data.length > 0) {
-        //todo: send email and change sent flag
-
+      if (data.length > 0) {
+        $confirm({ text: "Are you sure you want to send Close Email to Selected Participants?", title: "Send Close Email to Selected Participants?", wide: true }).then(function() {
+          vm.session.sendCloseEmail(data).then(function(res) {
+            messenger.ok(res.message);
+          }, function(error) {
+            messenger.error(error);
+          });
+        });
       } else {
         messenger.error(messagesUtil.sessionBuilder.noContacts);
       }

@@ -1,11 +1,11 @@
 <section id='step-4-participants' class='col-xs-12' ng-controller="SessionStep4-5Controller as lastStepsController" ng-init="lastStepsController.initStep(sbc.participants, sbc.observers)">
   <div class='row'>
     <div class='text-center'>
-      <div id='sessionBuilderParticipant' class='btn-standart btn-red increased-margin' ng-click='sbc.selectParticipantsClickHandle()' ng-show="lastStepsController.isParticipantPage() && !sbc.isSessionClosed()">
+      <div id='sessionBuilderParticipant' class='btn-standart btn-red increased-margin' ng-click='sbc.selectParticipantsClickHandle()' ng-show="lastStepsController.isParticipantPage() && sbc.canInvite()">
         <span ng-if='lastStepsController.stepMembers.length == 0'>Invite Participants From Contact List</span>
         <span ng-if='lastStepsController.stepMembers.length > 0'>Invite More Participants From Contacts List</span>
       </div>
-      <div id='sessionBuilderObserver' class='btn-standart btn-red increased-margin' ng-click='sbc.selectObserversClickHandle()' ng-show="!lastStepsController.isParticipantPage() && !sbc.isSessionClosed()">
+      <div id='sessionBuilderObserver' class='btn-standart btn-red increased-margin' ng-click='sbc.selectObserversClickHandle()' ng-show="!lastStepsController.isParticipantPage() && sbc.canInvite()">
         <span ng-if='lastStepsController.stepMembers.length == 0'>Invite Observers From Contact List</span>
         <span ng-if='lastStepsController.stepMembers.length > 0'>Invite More Observers From Contacts List</span>
       </div>
@@ -55,7 +55,7 @@
             <td>{{ member.mobile }}</td>
             <td class='col-xs-2' ng-if="!sbc.canSendCloseEmail()">
               <div ng-if='!lastStepsController.mouseOveringMember[$index]'>
-                {{ lastStepsController.getMembersStatusTranscription(member); }}
+                {{ lastStepsController.getMembersStatusTranscription(member) }}
               </div>
               <div ng-if='lastStepsController.mouseOveringMember[$index]'>
                 <img src='/icons/session_grey.png' ng-click='lastStepsController.modalWindowHandler("showSms", [member])' title="Send SMS" ng-if="lastStepsController.canSendSMS" />
@@ -64,7 +64,7 @@
               </div>
             </td>
             <td class='col-xs-2' ng-if="sbc.canSendCloseEmail()">
-              {{ lastStepsController.getMembersCloseEmailSentTranscription(member); }}
+              {{ lastStepsController.getMembersCloseEmailSentTranscription(member) }}
             </td>
           </tr>
         </tbody>
@@ -79,7 +79,7 @@
         <i class='fa fa-envelope' aria-hidden='true' /> Send Close Session Email
         ({{ lastStepsController.findSelectedMembersClose().length }})
       </div>
-      <div class='btn btn-standart btn-red btn-medium' ng-click='lastStepsController.inviteMembers()' ng-if='!sbc.canSendCloseEmail()'>
+      <div class='btn btn-standart btn-red btn-medium' ng-click='lastStepsController.inviteMembers()' ng-if='sbc.canInvite()'>
         <i class='fa fa-envelope' aria-hidden='true' /> Send Invite
         ({{ lastStepsController.findSelectedMembersInvite().length }})
       </div>

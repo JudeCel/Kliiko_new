@@ -19,6 +19,7 @@ module.exports = {
   removeInvite: removeInvite,
   removeSessionMember: removeSessionMember,
   sendGenericEmail: sendGenericEmail,
+  sendCloseEmail: sendCloseEmail,
   addTopics: addTopics,
   removeTopic: removeTopic,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
@@ -165,6 +166,17 @@ function sendGenericEmail(req, res, next) {
     }
   }, function(error) {
     res.send({error: error});
+  });
+
+}
+
+function sendCloseEmail(req, res, next) {
+  let accountId = res.locals.currentDomain.id;
+
+  sessionBuilderServices.sendCloseEmail(req.params.id, req.body, accountId).then(function(message) {
+    res.send({ message: message });
+  }, function(error) {
+    res.send({ error: error });
   });
 
 }

@@ -59,6 +59,7 @@
     vm.isSelectParticipantStep = isSelectParticipantStep;
     vm.isSessionClosed = isSessionClosed;
     vm.canSendCloseEmail = canSendCloseEmail;
+    vm.canInvite = canInvite;
 
     function closeSession() {
       if (vm.session.sessionData.showStatus != 'Pending' && vm.session.sessionData.showStatus != 'Closed') {
@@ -66,7 +67,6 @@
           vm.session.setOpen('closed').then(function(res) {
             initStep().then(function (step) {
               vm.currentStep = step;
-
             });
           }, function(err) {
             messenger.error(err);
@@ -338,6 +338,10 @@
 
     function isSessionClosed() {
       return vm.session.sessionData.showStatus == 'Closed';
+    }
+
+    function canInvite() {
+      return !vm.session.sessionData.wasClosed;
     }
 
     function canSendCloseEmail() {
