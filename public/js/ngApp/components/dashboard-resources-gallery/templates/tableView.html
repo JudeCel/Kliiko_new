@@ -34,11 +34,12 @@
 
         <td>
           <a ng-if='!typeOf.youtube' href='{{ resource.url.full }}' target='_blank'>
-            <p class='text-uppercase'>{{ resource.type }}/{{ resource.extension || resource.scope }}</p>
+            <span class='text-uppercase'>{{ resource.type }}/{{ resource.extension || resource.scope }}</span>
           </a>
           <a ng-if='typeOf.youtube' ng-href='{{ gc.normalYoutubeUrl(resource.url.full) }}' target='_blank'>
-            <p class='text-uppercase'>{{ resource.type }}/{{ resource.extension || resource.scope }}</p>
+            <span class='text-uppercase'>{{ resource.type }}/{{ resource.extension || resource.scope }}</span>
           </a>
+          <span ng-if='resource.stock && app.accountUser.isAdmin'>(<u ng-click='gc.replaceStockResource(resource, upload)'>Replace stock file</u>)</span>
         </td>
 
         <td>
