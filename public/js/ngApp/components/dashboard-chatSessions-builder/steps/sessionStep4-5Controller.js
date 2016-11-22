@@ -44,7 +44,6 @@
     vm.updateContact = updateContact;
     vm.returnMemberInviteStatus = returnMemberInviteStatus;
     vm.closeEditContactForm = closeEditContactForm;
-    vm.setMembersStatusTranscription = setMembersStatusTranscription;
 
     vm.stepMembers = [];
 
@@ -54,6 +53,16 @@
 
     vm.canSendSMSOnThisPage = function() {
       return vm.isParticipantPage() && vm.canSendSMS;
+    }
+
+    vm.getCurrentFilter = function(canSendCloseEmail) {
+      if (canSendCloseEmail) {
+        var res = !vm.filterInited ? undefined : { inviteStatus: 'confirmed' };
+        vm.filterInited = true;
+        return res;
+      } else {
+        return vm.currentFilter == 'all' ? undefined : { inviteStatus: vm.currentFilter };
+      }
     }
 
     vm.prepareData = function(participants, observers) {
@@ -311,12 +320,13 @@
       vm.contactData = {};
     }
 
-    function setMembersStatusTranscription(member) {
-      member.inviteStatusTranscription = vm.filterTypes[returnMemberInviteStatus(member)];
-    }
-
     vm.getMembersStatusTranscription = function(member) {
       return vm.filterTypes[returnMemberInviteStatus(member)];
+    }
+
+    vm.getMembersCloseEmailSentTranscription = function(member) {
+      returnMemberInviteStatus(member);
+      return "?"
     }
 
     function returnMemberInviteStatus(member) {
