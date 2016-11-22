@@ -57,7 +57,6 @@ function setAnonymous(req, res, next) {
   sessionServices.setAnonymous(sessionId, res.locals.currentDomain.id).then(function(result) {
     res.send(result);
   }, function(error) {
-    console.log(error);
     res.send({error: error});
   });
 }

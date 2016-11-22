@@ -58,9 +58,12 @@
     vm.isSelectObserverStep = isSelectObserverStep;
 
     function closeSession() {
-      if (vm.session.sessionData.showStatus != 'Pending') {
+      if (vm.session.sessionData.showStatus != 'Pending' && vm.session.sessionData.showStatus != 'Closed') {
         $confirm({ text: "You want to Close this Chat Session? You will be able to send the Close Email to Participants, and make Comments." }).then(function() {
           vm.session.setOpen('closed').then(function(res) {
+            initStep().then(function (step) {
+              vm.currentStep = step;
+            });
           }, function(err) {
             messenger.error(err);
           });
@@ -69,10 +72,14 @@
     }
 
     function openSession() {
-      vm.session.setOpen('open').then(function(res) {
-      }, function(err) {
-        messenger.error(err);
-      });
+      if (vm.session.sessionData.showStatus == 'Closed') {
+        $confirm({ text: "Do you want to Re-Open this Chat Session?" }).then(function() {
+          vm.session.setOpen('open').then(function(res) {
+          }, function(err) {
+            messenger.error(err);
+          });
+        });
+      }
     }
 
     function goToStep(step) {
