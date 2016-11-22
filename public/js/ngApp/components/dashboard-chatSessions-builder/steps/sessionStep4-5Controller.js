@@ -29,11 +29,13 @@
 
     // step 4 + 5
     vm.inviteMembers = inviteMembers;
+    vm.sendCloseEmail = sendCloseEmail;
     vm.modalWindowHandler = modalWindowHandler;
     vm.selectedAllMembers = selectedAllMembers;
     vm.findSelectedMembersSMS = findSelectedMembersSMS;
     vm.findSelectedMembersGenericEmail = findSelectedMembersGenericEmail;
     vm.findSelectedMembersInvite = findSelectedMembersInvite;
+    vm.findSelectedMembersClose = findSelectedMembersClose;
     vm.removeFromList = removeFromList;
     vm.sendGenericEmail = sendGenericEmail;
     vm.setMembersFilter = setMembersFilter;
@@ -109,6 +111,17 @@
 
     function fixInviteStatus(status) {
       return status.split(/(?=[A-Z])/).join(' ').toLowerCase();
+    }
+
+    function sendCloseEmail() {
+      var data = findSelectedMembersClose();
+
+      if(data.length > 0) {
+        //todo: send email and change sent flag
+
+      } else {
+        messenger.error(messagesUtil.sessionBuilder.noContacts);
+      }
     }
 
     function inviteMembers() {
@@ -193,15 +206,19 @@
     }
 
     function findSelectedMembersGenericEmail() {
-      return builderServices.findSelectedMembers(vm, false, false);
+      return builderServices.findSelectedMembers(vm, false, false, false);
     }
 
     function findSelectedMembersSMS() {
-      return builderServices.findSelectedMembers(vm, false, true);
+      return builderServices.findSelectedMembers(vm, false, true, false);
     }
 
     function findSelectedMembersInvite() {
-      return builderServices.findSelectedMembers(vm, true, false);
+      return builderServices.findSelectedMembers(vm, true, false, false);
+    }
+
+    function findSelectedMembersClose() {
+      return builderServices.findSelectedMembers(vm, false, false, true);
     }
 
     function removeFromList(member) {

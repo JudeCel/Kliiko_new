@@ -185,6 +185,7 @@
       self.updateStep({status: status}).then(
         function (res) {
           self.status = self.sessionData.status = status;
+          self.sessionData.showStatus = status == "open" ? "Open" : "Closed";
           self.currentStep = self.sessionData.step = res.sessionBuilder.currentStep;
           deferred.resolve(res);
         },

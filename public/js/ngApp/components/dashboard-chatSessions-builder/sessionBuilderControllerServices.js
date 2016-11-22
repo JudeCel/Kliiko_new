@@ -61,12 +61,13 @@
       return null;
     }
 
-    function findSelectedMembers(vm, skipInvited, onlyWithMobile) {
+    function findSelectedMembers(vm, skipInvited, onlyWithMobile, skipCloseEmailSent) {
       var array = [];
       var members = currentMemberList(vm);
 
       for (var i in members) {
         var member = members[i];
+        //todo: skipCloseEmailSent
         if(member.isSelected && (member.inviteStatus == "notInvited" || !skipInvited) && (!onlyWithMobile || member.mobile)) {
           array.push(member);
         }

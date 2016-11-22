@@ -56,6 +56,9 @@
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
     vm.selectObserversClickHandle = selectObserversClickHandle;
     vm.isSelectObserverStep = isSelectObserverStep;
+    vm.isSelectParticipantStep = isSelectParticipantStep;
+    vm.isSessionClosed = isSessionClosed;
+    vm.canSendCloseEmail = canSendCloseEmail;
 
     function closeSession() {
       if (vm.session.sessionData.showStatus != 'Pending' && vm.session.sessionData.showStatus != 'Closed') {
@@ -63,6 +66,7 @@
           vm.session.setOpen('closed').then(function(res) {
             initStep().then(function (step) {
               vm.currentStep = step;
+
             });
           }, function(err) {
             messenger.error(err);
@@ -75,6 +79,9 @@
       if (vm.session.sessionData.showStatus == 'Closed') {
         $confirm({ text: "Do you want to Re-Open this Chat Session?" }).then(function() {
           vm.session.setOpen('open').then(function(res) {
+            initStep().then(function (step) {
+              vm.currentStep = step;
+            });
           }, function(err) {
             messenger.error(err);
           });
@@ -323,6 +330,18 @@
 
     function isSelectObserverStep() {
       return vm.session.currentStep == "inviteSessionObservers";
+    }
+
+    function isSelectParticipantStep() {
+      return vm.session.currentStep == "manageSessionParticipants";
+    }
+
+    function isSessionClosed() {
+      return vm.session.sessionData.showStatus == 'Closed';
+    }
+
+    function canSendCloseEmail() {
+      return isSelectParticipantStep() && isSessionClosed();
     }
   }
 
