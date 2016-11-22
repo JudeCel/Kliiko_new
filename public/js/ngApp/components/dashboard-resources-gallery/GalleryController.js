@@ -4,8 +4,8 @@
   angular.module('KliikoApp').controller('GalleryController', GalleryController);
   angular.module('KliikoApp.Root').controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['$q', 'dbg', 'GalleryServices', 'domServices', 'messenger', '$sce', 'messagesUtil'];
-  function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce, messagesUtil) {
+  GalleryController.$inject = ['$q', 'dbg', 'GalleryServices', 'domServices', 'messenger', '$sce', 'messagesUtil', '$confirm'];
+  function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce, messagesUtil, $confirm) {
     dbg.log2('#GalleryController started');
     var vm = this;
 
@@ -32,9 +32,10 @@
     vm.init = initController;
     vm.listResources = GalleryServices.listResources;
     vm.removeResources = removeResources;
+    vm.replaceStockResource = replaceStockResource;
     vm.zipResources = zipResources;
     vm.refreshResource = refreshResource;
-    vm.createResource = createResource;
+    vm.createOrReplaceResource = createOrReplaceResource;
     vm.changeView = changeView;
     vm.isTypeOf = isTypeOf;
     vm.getUploadType = getUploadType;
@@ -76,15 +77,50 @@
       });
     }
 
-    function removeResources(resourceIds) {
-      GalleryServices.removeResources(resourceIds).then(function(result) {
-        result.ids.map(function(deleted) {
-          var removeIndex = vm.resourceList.map(function(resource) { return resource.id; }).indexOf(deleted.id);
-          ~removeIndex && vm.resourceList.splice(removeIndex, 1);
-        });
+    function replaceStockResource(resource, parent) {
+      var id = resource.id;
+      var type = null;
+      for (var i=0; i<=parent.types.length; i++ ) {
+        if (parent.types[i].type == resource.type && parent.types[i].scope == resource.scope) {
+          type = parent.types[i];
+          break;
+        }
+      }
+      if (type) {
+        openUploadModal(type, parent, resource);
+      }
+    }
 
-        filterResources(vm.currentPage.filter);
-        messenger.ok(result.message);
+    function removeResources(resourceIds) {
+      GalleryServices.closedSessionResourcesRemoveCheck(resourceIds).then(function(result) {
+        if (result.used_in_closed_session.items.length > 0) {
+          $confirm({ text: result.used_in_closed_session.message }).then(function() {
+            removeResourcesConfirmed(resourceIds);
+          });
+        } else {
+          removeResourcesConfirmed(resourceIds);
+        }
+      }, function(error) {
+        messenger.error(error);
+      });
+    }
+
+    function removeResourcesConfirmed(resourceIds) {
+      GalleryServices.removeResources(resourceIds).then(function(result) {
+        if (result.removed.items.length > 0) {
+          result.removed.items.map(function(deleted) {
+            var removeIndex = vm.resourceList.map(function(resource) { return resource.id; }).indexOf(deleted.id);
+            ~removeIndex && vm.resourceList.splice(removeIndex, 1);
+          });
+          filterResources(vm.currentPage.filter);
+          messenger.ok(result.removed.message);
+        }
+        if (result.not_removed_stock.items.length > 0) {
+          messenger.error(result.not_removed_stock.message);
+        }
+        if (result.not_removed_used.items.length > 0) {
+          messenger.error(result.not_removed_used.message);
+        }
       }, function(error) {
         messenger.error(error);
       });
@@ -98,7 +134,7 @@
         else {
           vm.modalWindowDisabled = true;
           GalleryServices.zipResources(vm.newResource.file, vm.newResource.name).then(function(result) {
-            closeModalAndSetVariables(result);
+            closeModalAndSetVariables(result, false);
           }, function(error) {
             vm.modalWindowDisabled = false;
             messenger.error(error);
@@ -122,15 +158,14 @@
       return deferred.promise;
     }
 
-    function createResource() {
+    function createOrReplaceResource() {
       validateResource(function(errors) {
         if(errors) {
           messenger.error(errors);
-        }
-        else {
+        } else {
           vm.modalWindowDisabled = true;
-          GalleryServices.createResource(vm.newResource).then(function(result) {
-            closeModalAndSetVariables(result.data);
+          GalleryServices.createOrReplaceResource(vm.newResource).then(function(result) {
+            closeModalAndSetVariables(result.data, vm.newResource.id ? true : false);
           }, function(error) {
             vm.modalWindowDisabled = false;
             messenger.error(error);
@@ -228,9 +263,17 @@
       domServices.modal('selectResource', 'close');
     }
 
-    function openUploadModal(current, parent) {
+    function openUploadModal(current, parent, replaceResource) {
       vm.newResource = { type: current.type, scope: current.scope };
       vm.currentPage.upload = current.id;
+      if (replaceResource) {
+        parent.modal.replace = true;
+        vm.newResource.stock = replaceResource.stock;
+        vm.newResource.name = replaceResource.name;
+        vm.newResource.id = replaceResource.id;
+      } else {
+        parent.modal.replace = false;
+      }
       domServices.modal('uploadResource');
       parent = parent || { modal: {} };
       vm.currentModalSet = parent.modal.set;
@@ -265,8 +308,7 @@
           default:
 
         }
-      }
-      else {
+      } else {
         messenger.error(messagesUtil.gallery.noResource);
       }
     }
@@ -280,21 +322,26 @@
     function getFilterResources(filter, key) {
       var array = [];
 
-      if(filter) {
-        var upload = getUploadType(filter);
-        for(var i in vm.resourceList) {
+      if (filter == 'stock') {
+        for (var i in vm.resourceList) {
           var resource = vm.resourceList[i];
-          if(resource.type == upload.type && resource.scope == upload.scope) {
-            if(key) {
+          if (resource.stock) {
+            array.push(resource);
+          }
+        }
+      } else if (filter) {
+        var upload = getUploadType(filter);
+        for (var i in vm.resourceList) {
+          var resource = vm.resourceList[i];
+          if (resource.type == upload.type && resource.scope == upload.scope) {
+            if (key) {
               array.push(resource[key]);
-            }
-            else {
+            } else {
               array.push(resource);
             }
           }
         }
-      }
-      else {
+      } else {
         array = vm.resourceList;
       }
 
@@ -348,15 +395,30 @@
       return !(string && string.length);
     }
 
-    function closeModalAndSetVariables(data) {
+    function closeModalAndSetVariables(data, replace) {
       vm.modalWindowDisabled = false;
-      vm.resourceList.push(data.resource);
-      vm.selectionList[vm.currentPage.upload].push(data.resource);
+      if (replace) {
+        for (var i=0; i<vm.resourceList.length; i++) {
+          if (vm.resourceList[i].id == data.resource.id) {
+            vm.resourceList[i] = data.resource;
+            break;
+          }
+        }
+        for (var i=0; i<vm.selectionList[vm.currentPage.upload].length; i++) {
+          if (vm.selectionList[vm.currentPage.upload][i].id == data.resource.id) {
+            vm.selectionList[vm.currentPage.upload][i] = data.resource;
+            break;
+          }
+        }
+      } else {
+        vm.resourceList.push(data.resource);
+        vm.selectionList[vm.currentPage.upload].push(data.resource);
+      }
       domServices.modal('uploadResource', 'close');
       setDependency(data.resource)
       filterResources(vm.currentPage.filter);
       messenger.ok(data.message);
-      if(vm.currentCallback) {
+      if (vm.currentCallback) {
         vm.currentCallback(data.resource);
       }
     }
