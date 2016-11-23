@@ -106,9 +106,20 @@ function findSession(id, accountId) {
   return deferred.promise;
 }
 
+function changeTimzone(time, from, to ){
+  return moment.tz(moment.tz(time, from).format('YYYY-MM-DD HH:mm:ss'), to)
+}
+function setTimeZone(params) {
+  if (params.startTime && params.endTime && params.timeZone) {
+    params.startTime = changeTimzone(params.startTime, "UTC", params.timeZone)
+    params.endTime = changeTimzone(params.endTime, "UTC", params.timeZone)
+  }
+}
+
 function update(sessionId, accountId, params) {
   let deferred = q.defer();
   let updatedSession;
+  setTimeZone(params)
 
   validators.hasValidSubscription(accountId).then(function() {
     return validators.subscription(accountId, 'session', 1, { sessionId: sessionId });
@@ -644,8 +655,8 @@ function stepsDefinition(session) {
     stepName: "setUp",
     name: session.name,
     type: session.type,
-    startTime: session.startTime,
-    endTime: session.endTime,
+    startTime: changeTimzone(session.startTime, session.timeZone, "UTC"),
+    endTime: changeTimzone(session.endTime, session.timeZone, "UTC"),
     timeZone: session.timeZone,
     resourceId: session.resourceId,
     anonymous: session.anonymous,
