@@ -9,10 +9,10 @@ module.exports = {
 function format(type, dateTime, timeZone) {
 
     if(type == 'date') {
-      return moment.utc(dateTime).format('dddd Do MMMM');
+      return moment.tz(dateTime, timeZone).format('dddd Do MMMM');
     }
     else if(type == 'time') {
-      let formated = moment.utc(dateTime).format('h:mma');
+      let formated = moment.tz(dateTime, timeZone).format('h:mma');
       return formated.replace(':00', '');
     }else {
       throw("unknown format");
