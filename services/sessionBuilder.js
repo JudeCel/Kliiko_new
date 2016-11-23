@@ -415,8 +415,7 @@ function removeInvite(params) {
   models.Invite.find({
     where: {
       id: params.inviteId,
-      sessionId: params.id,
-      status: 'pending'
+      sessionId: params.id
     }
   }).then(function(invite) {
     if(invite) {
@@ -425,8 +424,7 @@ function removeInvite(params) {
       }).catch(function(error) {
         deferred.reject(filters.errors(error));
       });
-    }
-    else {
+    } else {
       deferred.reject(MessagesUtil.sessionBuilder.inviteNotFound);
     }
   }).catch(function(error) {
