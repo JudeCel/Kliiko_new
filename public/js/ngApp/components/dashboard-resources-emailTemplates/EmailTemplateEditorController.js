@@ -110,7 +110,7 @@
       return object;
     }
 
-    function startEditingTemplate(templateIndex, inSession, templateId, template) {
+    function startEditingTemplate(templateIndex, templateId, template) {
 
       if (!templateId) {
         templateId = template ? template.id : vm.emailTemplates[templateIndex].id;
@@ -120,7 +120,7 @@
         mailTemplate.getMailTemplate({id:templateId}).then(function (res) {
           if (res.error) return;
 
-          if (vm.properties.brandLogoId && inSession) {
+          if (vm.properties.brandLogoId && vm.properties.sessionId) {
             fileUploader.show(vm.properties.brandLogoId).then(function(result) {
               populateTemplate(res);
               setContent(vm.currentTemplate.content);
