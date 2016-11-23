@@ -38,14 +38,14 @@
             <th ng-click="clc.changeTableSortingFilter('email')">Email</th>
             <th ng-click="clc.changeTableSortingFilter('mobile')">Mobile</th>
             <th ng-click="clc.changeTableSortingFilter('inviteStatusTranscription')" ng-if="!sbc.canSendCloseEmail()">Status</th>
-            <th ng-if="sbc.canSendCloseEmail()">Close Session Email</th>
+            <th ng-click="clc.changeTableSortingFilter('closeEmailSentStatus')" ng-if="sbc.canSendCloseEmail()">Close Session Email</th>
           </tr>
         </thead>
         <tbody>
           <tr ng-repeat="member in lastStepsController.stepMembers | filter: lastStepsController.getCurrentFilter(sbc.canSendCloseEmail()) | orderBy: clc.tableSort.by : clc.tableSort.reverse" ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
             <td>
               <div class='checkbox checkbox-xs checkbox-success'>
-                <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.isSelected' />
+                <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.isSelected' ng-disabled='lastStepsController.memberDisabled(member)' />
                 <label for='checkbox-{{ $index }}'>{{ member.firstName }}</label>
               </div>
             </td>

@@ -37,7 +37,7 @@ module.exports = {
   removeInvite: removeInvite,
   removeSessionMember: removeSessionMember,
   sendGenericEmail: sendGenericEmail,
-  sendCloseMail: sendCloseMail,
+  sendCloseEmail: sendCloseEmail,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
   canAddObservers: canAddObservers
 };
@@ -109,6 +109,7 @@ function findSession(id, accountId) {
 
 function update(sessionId, accountId, params) {
   let deferred = q.defer();
+  let updatedSession;
 
   validators.hasValidSubscription(accountId).then(function() {
     return validators.subscription(accountId, 'session', 1, { sessionId: sessionId });
@@ -121,9 +122,18 @@ function update(sessionId, accountId, params) {
     }
     return session.updateAttributes(params);
   }).then(function(result) {
-    return sessionBuilderObject(result);
+     updatedSession = result;
+    return sessionBuilderObject(updatedSession);
   }).then(function(sessionObject) {
-    deferred.resolve(sessionObject);
+    if (updatedSession.status == 'closed') {
+      sendCloseEmailToAllObservers(updatedSession).then(function() {
+        deferred.resolve(sessionObject);
+      }, function(error) {
+        deferred.reject(error);
+      });
+    } else {
+      deferred.resolve(sessionObject);
+    }
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -131,7 +141,44 @@ function update(sessionId, accountId, params) {
   return deferred.promise;
 }
 
-function sendCloseMail(sessionId, data, accountId) {
+function sendCloseEmailToAllObservers(session) {
+  let deferred = q.defer();
+
+  let where = {
+    sessionId: session.id,
+    role: "observer"
+  };
+  sendSessionCloseEmail(session, where).then(function() {
+    deferred.resolve();
+  },function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function sendCloseEmail(sessionId, data, accountId) {
+  let deferred = q.defer();
+
+  findSession(sessionId, accountId).then(function(session) {
+    let ids = getEmailRecieversAccountUserIds(data.recievers);
+    let where = {
+      sessionId: sessionId,
+      accountUserId: { $in: ids }
+    };
+    sendSessionCloseEmail(session, where).then(function(res) {
+      deferred.resolve(res);
+    },function(error) {
+      deferred.reject(error);
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function sendSessionCloseEmail(session, where) {
   let deferred = q.defer();
 
   models.SessionMember.find({
@@ -141,22 +188,14 @@ function sendCloseMail(sessionId, data, accountId) {
     },
     include: [AccountUser]
   }).then(function(facilitator) {
-    let ids = getEmailRecieversAccountUserIds(data.recievers);
     models.SessionMember.findAll({
-      where: {
-        sessionId: session.id,
-        id: { $in: ids }
-      },
+      where: where,
       include: [AccountUser]
     }).then(function(sessionMembers) {
-      if (canSendCloseMails(session, facilitator, sessionMembers.length)) {
-        sendCloseMailToEachParticipant(session, facilitator, sessionMembers).then(function() {
-          deferred.resolve(`Sent ${sessionMembers.length} emails`);
-        }, function(errors) {
-          deferred.reject(errors);
-        })
+      if (sessionMembers.length > 0) {
+        sendCloseEmailsAsync(sessionMembers, session, facilitator, deferred);
       } else {
-        deferred.reject(MessagesUtil.sessionBuilder.errors.cantSendCloseMails);
+        deferred.resolve();
       }
     }).catch(function(error) {
       deferred.reject(error);
@@ -168,29 +207,30 @@ function sendCloseMail(sessionId, data, accountId) {
   return deferred.promise;
 }
 
-function sendCloseMailToEachParticipant(session, facilitator, sessionMembers) {
-  let deferred = q.defer();
-  let errors = [];
+function sendCloseEmailsAsync(sessionMembers, session, facilitator, deferred) {
+  async.each(sessionMembers, function(sessionMember, callback) {
 
-  _.map(sessionMembers, function(sessionMember) {
-    mailHelper.sendSessionClose(prepareCloseSessionEmailParams(session, facilitator.AccountUser, sessionMember.AccountUser), function(error, result) {
-      if(error) {
-        errors.push({accournUserId: sessionMember.AccountUser.id, error: error})
-      }
-    })
-  })
+    let emailParams = prepareCloseSessionEmailParams(session, facilitator.AccountUser, sessionMember.AccountUser);
+    inviteService.populateMailParamsWithColors(emailParams, session).then(function (emailParamsRes) {
+      mailHelper.sendSessionClose(emailParamsRes, function(error, result) {
+        if (error) {
+          callback(error);
+        } else {
+          sessionMember.updateAttributes({closeEmailSent: true});
+          callback(null, result);
+        }
+      });
+    }, function (error) {
+      callback(error);
+    });
 
-  if(errors.length > 0){
-    deferred.reject(error);
-  }else{
-    deferred.resolve();
-  }
-
-  return deferred.promise;
-}
-
-function canSendCloseMails(session, facilitator, memberCount) {
-  return session && facilitator && memberCount > 0;
+  }, function(error) {
+    if (error) {
+      deferred.reject(error);
+    } else {
+      deferred.resolve(`Sent ${sessionMembers.length} emails`);
+    }
+  });
 }
 
 function prepareCloseSessionEmailParams(session, facilitator, receiver) {
