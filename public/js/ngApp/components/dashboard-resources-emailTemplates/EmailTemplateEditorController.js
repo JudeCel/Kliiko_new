@@ -257,9 +257,11 @@
       var contentFrame = $("#contentFrame").contents().find('html');
       domServices.modal('previewMailTemplateModal');
       mailTemplate.previewMailTemplate(vm.currentTemplate, vm.properties.sessionId).then(function(res) {
-        if (!res.error) {
-          contentFrame.html(res.template.content);
-          $("#mailTemplatePreviewSubject").html(res.template.subject);
+        if (!res.error || angular.equals({}, res.error)) {
+          //this is for case when preview button pressed after save but before server responce
+          var template = res.template || vm.currentTemplate;
+          contentFrame.html(template.content);
+          $("#mailTemplatePreviewSubject").html(template.subject);
         } else {
           messenger.error(res.error);
         }
