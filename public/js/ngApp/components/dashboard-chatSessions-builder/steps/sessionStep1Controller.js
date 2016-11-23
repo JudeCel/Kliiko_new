@@ -186,7 +186,7 @@
       vm.step1.startTime = vm.session.steps.step1.startTime;
       vm.step1.endTime = vm.session.steps.step1.endTime;
       vm.step1.timeZone = vm.session.steps.step1.timeZone;
-      vm.step1.ngModalOptions = { timezone: vm.session.steps.step1.timeZoneOffset };
+      vm.step1.ngModalOptions = { timezone: 'UTC' };
       initStep(null, 'initial');
       getAllContacts();
       vm.name = vm.session.steps.step1.name;

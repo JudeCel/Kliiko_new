@@ -249,6 +249,7 @@ function sendInvite(invite, deferred) {
       },
       include: [AccountUser]
     }).then(function(sessionMember) {
+
       let facilitator = sessionMember.AccountUser;
       let inviteParams = {
         sessionId: session.id,
@@ -261,12 +262,12 @@ function sendInvite(invite, deferred) {
         email: invite.AccountUser.email,
         sessionName: session.name,
         timeZone: session.timeZone,
-        orginalStartTime: moment(session.startTime).tz(session.timeZone).format(),
-        orginalEndTime: moment(session.endTime).tz(session.timeZone).format(),
-        startTime: emailDate.format('time', session.startTime, session.timeZone),
-        endTime: emailDate.format('time', session.endTime, session.timeZone),
-        startDate: emailDate.format('date', session.startTime, session.timeZone),
-        endDate: emailDate.format('date', session.endTime, session.timeZone),
+        orginalStartTime: moment.utc(session.startTime).format(),
+        orginalEndTime: moment.utc(session.endTime).format(),
+        startTime: emailDate.format('time', session.startTime),
+        endTime: emailDate.format('time', session.endTime),
+        startDate: emailDate.format('date', session.startTime),
+        endDate: emailDate.format('date', session.endTime),
         incentive: session.incentive_details,
         facilitatorFirstName: facilitator.firstName,
         facilitatorLastName: facilitator.lastName,
@@ -685,8 +686,8 @@ function prepareMailParams(invite, session, receiver, facilitator) {
     unsubscribeMailUrl: 'not-found',
     startTime: emailDate.format('time', session.startTime, session.timeZone),
     startDate: emailDate.format('date', session.startTime, session.timeZone),
-    orginalStartTime: session.startTime,
-    orginalEndTime: session.endTime,
+    orginalStartTime: moment(session.startTime).tz(session.timeZone).format(),
+    orginalEndTime: moment(session.endTime).tz(session.timeZone).format() ,
     logInUrl: mailUrlHelper.getUrl(invite.token, null, '/invite/') + '/accept/',
     confirmationCheckInUrl: mailUrlHelper.getUrl(invite.token, null, '/invite/') + '/accept/',
     participantMail: receiver.email,
