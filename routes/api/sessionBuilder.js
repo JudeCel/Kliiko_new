@@ -19,6 +19,7 @@ module.exports = {
   removeInvite: removeInvite,
   removeSessionMember: removeSessionMember,
   sendGenericEmail: sendGenericEmail,
+  sendCloseEmail: sendCloseEmail,
   addTopics: addTopics,
   removeTopic: removeTopic,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
@@ -57,7 +58,6 @@ function setAnonymous(req, res, next) {
   sessionServices.setAnonymous(sessionId, res.locals.currentDomain.id).then(function(result) {
     res.send(result);
   }, function(error) {
-    console.log(error);
     res.send({error: error});
   });
 }
@@ -147,23 +147,28 @@ function sendGenericEmail(req, res, next) {
   let accountId = res.locals.currentDomain.id;
   let sessionId = req.params.id;
 
-  sessionBuilderServices.sessionMailTemplateStatus(sessionId, accountId).then(function(result) {
-    var genericCreated = false;
-    for (var i=0; i<result.templates.length; i++) {
-      if (result.templates[i].name == "Generic") {
-        genericCreated = result.templates[i].created;
-        break;
-      }
-    }
-    if (genericCreated) {
-      sessionBuilderServices.sendGenericEmail(req.params.id, req.body, accountId).then(function(message) {
-        res.send({ message: message });
-      }, function(error) {
-        res.send({ error: error });
-      });
-    } else {
-      res.send({ genericTemplateNotCreated: true });
-    }
+  sessionBuilderServices.sessionMailTemplateExists(sessionId, accountId, "Generic").then(function(result) {
+    sessionBuilderServices.sendGenericEmail(req.params.id, req.body, accountId).then(function(message) {
+      res.send({ message: message });
+    }, function(error) {
+      res.send({ error: error });
+    });
+  }, function(error) {
+    res.send({ genericTemplateNotCreated: true });
+  });
+
+}
+
+function sendCloseEmail(req, res, next) {
+  let accountId = res.locals.currentDomain.id;
+  let sessionId = req.params.id;
+
+  sessionBuilderServices.sessionMailTemplateExists(sessionId, accountId, "Close Session").then(function() {
+    sessionBuilderServices.sendCloseEmail(sessionId, req.body, accountId).then(function(message) {
+      res.send({ message: message });
+    }, function(error) {
+      res.send({ error: error });
+    });
   }, function(error) {
     res.send({error: error});
   });

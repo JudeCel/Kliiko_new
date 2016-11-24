@@ -16,7 +16,8 @@ module.exports = (Sequelize, DataTypes) => {
     currentTopic: { type: DataTypes.JSONB, allowNull: false, defaultValue: { } },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionMemberRoles },
     comment: { type: DataTypes.TEXT, allowNull: true },
-    rating: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0, validate: { min: 0, max: 5 } }
+    rating: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0, validate: { min: 0, max: 5 } },
+    closeEmailSent: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
     indexes: [ { fields: ['token'] } ],
     timestamps: true,

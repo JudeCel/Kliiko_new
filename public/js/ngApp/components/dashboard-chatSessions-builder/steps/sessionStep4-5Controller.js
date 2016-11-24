@@ -29,11 +29,13 @@
 
     // step 4 + 5
     vm.inviteMembers = inviteMembers;
+    vm.sendCloseEmail = sendCloseEmail;
     vm.modalWindowHandler = modalWindowHandler;
     vm.selectedAllMembers = selectedAllMembers;
     vm.findSelectedMembersSMS = findSelectedMembersSMS;
     vm.findSelectedMembersGenericEmail = findSelectedMembersGenericEmail;
     vm.findSelectedMembersInvite = findSelectedMembersInvite;
+    vm.findSelectedMembersClose = findSelectedMembersClose;
     vm.removeFromList = removeFromList;
     vm.sendGenericEmail = sendGenericEmail;
     vm.setMembersFilter = setMembersFilter;
@@ -42,7 +44,7 @@
     vm.updateContact = updateContact;
     vm.returnMemberInviteStatus = returnMemberInviteStatus;
     vm.closeEditContactForm = closeEditContactForm;
-    vm.setMembersStatusTranscription = setMembersStatusTranscription;
+    vm.canSelectMember = canSelectMember;
 
     vm.stepMembers = [];
 
@@ -52,6 +54,16 @@
 
     vm.canSendSMSOnThisPage = function() {
       return vm.isParticipantPage() && vm.canSendSMS;
+    }
+
+    vm.getCurrentFilter = function(canSendCloseEmail) {
+      if (canSendCloseEmail) {
+        var res = !vm.filterInited ? undefined : { inviteStatus: 'confirmed' };
+        vm.filterInited = true;
+        return res;
+      } else {
+        return vm.currentFilter == 'all' ? undefined : { inviteStatus: vm.currentFilter };
+      }
     }
 
     vm.prepareData = function(participants, observers) {
@@ -109,6 +121,25 @@
 
     function fixInviteStatus(status) {
       return status.split(/(?=[A-Z])/).join(' ').toLowerCase();
+    }
+
+    function sendCloseEmail() {
+      var data = findSelectedMembersClose();
+      if (data.length > 0) {
+        $confirm({ text: "Are you sure you want to send Close Email to Selected Participants?", title: "Send Close Email to Selected Participants?", wide: true }).then(function() {
+          vm.session.sendCloseEmail(data).then(function(res) {
+            for(var i=0; i<data.length; i++) {
+              data[i].closeEmailSentStatus = "Sent";
+              data[i].isSelected = false;
+            }
+            messenger.ok(res.message);
+          }, function(error) {
+            messenger.error(error);
+          });
+        });
+      } else {
+        messenger.error(messagesUtil.sessionBuilder.noContacts);
+      }
     }
 
     function inviteMembers() {
@@ -188,8 +219,13 @@
     function selectedAllMembers() {
       var members = builderServices.currentMemberList(vm);
       for(var i in members) {
-        members[i].isSelected = vm.selectedAll;
+        members[i].isSelected = vm.selectedAll && canSelectMember(members[i]);
       }
+    }
+
+    function canSelectMember(member) {
+      return vm.session.sessionData.status == "open" || vm.session.currentStep == "inviteSessionObservers" ||
+        member.inviteStatus == "confirmed" && member.closeEmailSentStatus != "Sent";
     }
 
     function findSelectedMembersGenericEmail() {
@@ -202,6 +238,10 @@
 
     function findSelectedMembersInvite() {
       return builderServices.findSelectedMembers(vm, true, false);
+    }
+
+    function findSelectedMembersClose() {
+      return builderServices.findSelectedMembers(vm, false, false);
     }
 
     function removeFromList(member) {
@@ -294,12 +334,36 @@
       vm.contactData = {};
     }
 
-    function setMembersStatusTranscription(member) {
-      member.inviteStatusTranscription = vm.filterTypes[returnMemberInviteStatus(member)];
-    }
-
     vm.getMembersStatusTranscription = function(member) {
       return vm.filterTypes[returnMemberInviteStatus(member)];
+    }
+
+    vm.getMembersCloseEmailSentTranscription = function(member) {
+      return returnMemberCloseEmailSentStatus(member)
+    }
+
+    vm.memberDisabled = function(member) {
+      return vm.session.sessionData.status == "closed" && member.closeEmailSentStatus == "Sent";
+    }
+
+    function returnMemberCloseEmailSentStatus(member) {
+      if (member.closeEmailSentStatus) {
+        return member.closeEmailSentStatus;
+      } else {
+        var closeEmailSentStatus = "Not Sent";
+        var status = returnMemberInviteStatus(member);
+        if (status == "confirmed" && member.SessionMembers) {
+          for (var i=0; i<member.SessionMembers.length; i++) {
+            var sessionMember = member.SessionMembers[i];
+            if (sessionMember.sessionId == vm.session.id && sessionMember.role == "participant") {
+              closeEmailSentStatus = sessionMember.closeEmailSent ? "Sent" : "Not Sent";
+              break;
+            }
+          }
+        }
+        member.closeEmailSentStatus = closeEmailSentStatus;
+        return closeEmailSentStatus;
+      }
     }
 
     function returnMemberInviteStatus(member) {

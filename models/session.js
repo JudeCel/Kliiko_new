@@ -22,7 +22,8 @@ module.exports = (Sequelize, DataTypes) => {
     step: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionBuilderSteps, defaultValue: 'setUp' },
     status: { type: DataTypes.ENUM, allowNull: false, values: ['open', 'closed'], defaultValue: 'open' },
     type: { type: DataTypes.ENUM, values: ['focus', 'forum'] },
-    anonymous: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
+    anonymous: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    wasClosed: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
     timestamps: true,
     hooks: {
