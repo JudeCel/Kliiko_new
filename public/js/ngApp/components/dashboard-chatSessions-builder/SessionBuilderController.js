@@ -102,6 +102,8 @@
       function handlePreviousStep() {
         vm.cantMoveNextStep = false;
         vm.session.goPreviouseStep().then(function(result) {
+          vm.session.steps = result.data.sessionBuilder.steps;
+
           initStep().then(function (step) {
             vm.currentStep = step;
           });
