@@ -597,6 +597,7 @@ function inviteParams(sessionId, data) {
   }).then(function(clUsers) {
     let emails = [];
     let accountId = clUsers[0].AccountUser.AccountId;
+
     let params = _.map(clUsers, function(clUser) {
       emails.push(clUser.AccountUser.email);
       return {
@@ -604,23 +605,22 @@ function inviteParams(sessionId, data) {
         accountUserId: clUser.accountUserId,
         sessionId: sessionId,
         role: data.role,
+        userId: clUser.userId,
         userType: clUser.AccountUser.UserId ? 'existing' : 'new'
       }
     });
 
-
-    models.AccountUser.findAll({
+    models.User.findAll({
       where: {
         email: { $in: emails },
-        AccountId: { $ne: accountId },
-        UserId: { $ne: null }
       }
     }).then(function(results) {
-        _.each(results, function(accountUser) {
+        console.log(results);
+        _.each(results, function(user) {
           _.each(params, function(inviteParam) {
-            if(inviteParam.email == accountUser.email) {
+            if(inviteParam.email == user.email) {
               inviteParam.userType = 'existing';
-              inviteParam.userId = accountUser.UserId;
+              inviteParam.userId = user.id;
             }
           })
         });
@@ -634,7 +634,6 @@ function inviteParams(sessionId, data) {
 
   return deferred.promise;
 }
-
 
 function findCurrentStep(steps, currentStepName) {
   let output;
