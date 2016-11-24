@@ -48,7 +48,7 @@ function notAuthExit(res) {
 var PERMISSIONS = {
   admin: policy.authorized(['admin']),
   managerAdmin: policy.authorized(['accountManager', 'admin']),
-  facilitatorManagerAdmin: sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin'])
+  facilitatorManagerAdmin: sessionMemberMiddleware.hasAccess(['facilitator'], ['facilitator', 'accountManager', 'admin'])
 }
 
 router.post('/ping', (req, res, next) => { res.send({}); });
