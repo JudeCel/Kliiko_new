@@ -39,7 +39,8 @@ module.exports = {
   sendGenericEmail: sendGenericEmail,
   sendCloseEmail: sendCloseEmail,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
-  canAddObservers: canAddObservers
+  canAddObservers: canAddObservers,
+  sessionMailTemplateExists: sessionMailTemplateExists
 };
 
 function addDefaultObservers(session) {
@@ -199,18 +200,22 @@ function sendSessionCloseEmail(session, where) {
     },
     include: [AccountUser]
   }).then(function(facilitator) {
-    models.SessionMember.findAll({
-      where: where,
-      include: [AccountUser]
-    }).then(function(sessionMembers) {
-      if (sessionMembers.length > 0) {
-        sendCloseEmailsAsync(sessionMembers, session, facilitator, deferred);
-      } else {
-        deferred.resolve();
-      }
-    }).catch(function(error) {
-      deferred.reject(error);
-    });
+    if (facilitator) {
+      models.SessionMember.findAll({
+        where: where,
+        include: [AccountUser]
+      }).then(function(sessionMembers) {
+        if (sessionMembers.length > 0) {
+          sendCloseEmailsAsync(sessionMembers, session, facilitator, deferred);
+        } else {
+          deferred.resolve();
+        }
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
+    } else {
+      deferred.resolve();
+    }
   }).catch(function(error) {
     deferred.reject(error);
   })
@@ -1123,6 +1128,29 @@ function validateStepFour(params) {
     }).catch(function(error) {
       deferred.reject(filters.errors(error));
     });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function sessionMailTemplateExists(sessionId, accountId, templateName) {
+  let deferred = q.defer();
+
+  sessionMailTemplateStatus(sessionId, accountId).then(function(result) {
+    var templateExists = false;
+    for (var i=0; i<result.templates.length; i++) {
+      if (result.templates[i].name == templateName) {
+        templateExists = result.templates[i].created;
+        break;
+      }
+    }
+    if (templateExists) {
+      deferred.resolve()
+    } else {
+      deferred.reject(templateExists + " email template not saved");
+    }
   }, function(error) {
     deferred.reject(error);
   });

@@ -147,25 +147,14 @@ function sendGenericEmail(req, res, next) {
   let accountId = res.locals.currentDomain.id;
   let sessionId = req.params.id;
 
-  sessionBuilderServices.sessionMailTemplateStatus(sessionId, accountId).then(function(result) {
-    var genericCreated = false;
-    for (var i=0; i<result.templates.length; i++) {
-      if (result.templates[i].name == "Generic") {
-        genericCreated = result.templates[i].created;
-        break;
-      }
-    }
-    if (genericCreated) {
-      sessionBuilderServices.sendGenericEmail(req.params.id, req.body, accountId).then(function(message) {
-        res.send({ message: message });
-      }, function(error) {
-        res.send({ error: error });
-      });
-    } else {
-      res.send({ genericTemplateNotCreated: true });
-    }
+  sessionBuilderServices.sessionMailTemplateExists(sessionId, accountId, "Generic").then(function(result) {
+    sessionBuilderServices.sendGenericEmail(req.params.id, req.body, accountId).then(function(message) {
+      res.send({ message: message });
+    }, function(error) {
+      res.send({ error: error });
+    });
   }, function(error) {
-    res.send({error: error});
+    res.send({ genericTemplateNotCreated: true });
   });
 
 }
@@ -174,23 +163,12 @@ function sendCloseEmail(req, res, next) {
   let accountId = res.locals.currentDomain.id;
   let sessionId = req.params.id;
 
-  sessionBuilderServices.sessionMailTemplateStatus(sessionId, accountId).then(function(result) {
-    var closeSessionCreated = false;
-    for (var i=0; i<result.templates.length; i++) {
-      if (result.templates[i].name == "Close Session") {
-        closeSessionCreated = result.templates[i].created;
-        break;
-      }
-    }
-    if (closeSessionCreated) {
-      sessionBuilderServices.sendCloseEmail(sessionId, req.body, accountId).then(function(message) {
-        res.send({ message: message });
-      }, function(error) {
-        res.send({ error: error });
-      });
-    } else {
-      res.send({ error: "Close Session email template not saved" });
-    }
+  sessionBuilderServices.sessionMailTemplateExists(sessionId, accountId, "Close Session").then(function() {
+    sessionBuilderServices.sendCloseEmail(sessionId, req.body, accountId).then(function(message) {
+      res.send({ message: message });
+    }, function(error) {
+      res.send({ error: error });
+    });
   }, function(error) {
     res.send({error: error});
   });
