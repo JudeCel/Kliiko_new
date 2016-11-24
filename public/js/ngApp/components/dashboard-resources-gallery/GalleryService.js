@@ -8,11 +8,12 @@
     var upServices = {};
 
     upServices.listResources = listResources;
-    upServices.createResource = createResource;
+    upServices.createOrReplaceResource = createOrReplaceResource;
     upServices.removeResources = removeResources;
     upServices.zipResources = zipResources;
     upServices.refreshResource = refreshResource;
     upServices.surveyResources = surveyResources;
+    upServices.closedSessionResourcesRemoveCheck = closedSessionResourcesRemoveCheck;
 
     return upServices;
 
@@ -28,7 +29,7 @@
       return deferred.promise;
     }
 
-    function createResource(params) {
+    function createOrReplaceResource(params) {
       var deferred = $q.defer();
 
       fileUploader.upload(params).then(function(result) {
@@ -44,6 +45,18 @@
       var deferred = $q.defer();
 
       fileUploader.remove(resourceIds).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function closedSessionResourcesRemoveCheck(resourceIds) {
+      var deferred = $q.defer();
+
+      fileUploader.closedSessionResourcesRemoveCheck(resourceIds).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
         deferred.reject(error);

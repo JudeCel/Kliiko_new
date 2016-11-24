@@ -250,6 +250,7 @@ function sendInvite(invite, deferred) {
       },
       include: [AccountUser]
     }).then(function(sessionMember) {
+
       let facilitator = sessionMember.AccountUser;
       let inviteParams = {
         sessionId: session.id,
@@ -262,8 +263,8 @@ function sendInvite(invite, deferred) {
         email: invite.AccountUser.email,
         sessionName: session.name,
         timeZone: session.timeZone,
-        orginalStartTime: moment(session.startTime).tz(session.timeZone).format(),
-        orginalEndTime: moment(session.endTime).tz(session.timeZone).format(),
+        orginalStartTime: moment.tz(session.startTime, session.timeZone).format(),
+        orginalEndTime: moment.tz(session.endTime, session.timeZone).format(),
         startTime: emailDate.format('time', session.startTime, session.timeZone),
         endTime: emailDate.format('time', session.endTime, session.timeZone),
         startDate: emailDate.format('date', session.startTime, session.timeZone),
@@ -686,8 +687,8 @@ function prepareMailParams(invite, session, receiver, facilitator) {
     unsubscribeMailUrl: 'not-found',
     startTime: emailDate.format('time', session.startTime, session.timeZone),
     startDate: emailDate.format('date', session.startTime, session.timeZone),
-    orginalStartTime: session.startTime,
-    orginalEndTime: session.endTime,
+    orginalStartTime: moment(session.startTime).tz(session.timeZone).format(),
+    orginalEndTime: moment(session.endTime).tz(session.timeZone).format() ,
     logInUrl: mailUrlHelper.getUrl(invite.token, null, '/invite/') + '/accept/',
     confirmationCheckInUrl: mailUrlHelper.getUrl(invite.token, null, '/invite/') + '/accept/',
     participantMail: receiver.email,

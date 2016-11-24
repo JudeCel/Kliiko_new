@@ -300,3 +300,10 @@
 
   }
 }
+
+#messenger-area .media .media-body {
+  word-break: break-word;
+  -ms-word-break: break-word;
+  max-width: calc(20vw - 105px);
+  word-wrap: break-word;
+}
