@@ -48,7 +48,7 @@ function notAuthExit(res) {
 var PERMISSIONS = {
   admin: policy.authorized(['admin']),
   managerAdmin: policy.authorized(['accountManager', 'admin']),
-  facilitatorManagerAdmin: sessionMemberMiddleware.hasAccess(['facilitator'], ['accountManager', 'admin'])
+  facilitatorManagerAdmin: sessionMemberMiddleware.hasAccess(['facilitator'], ['facilitator', 'accountManager', 'admin'])
 }
 
 router.post('/ping', (req, res, next) => { res.send({}); });
@@ -168,7 +168,7 @@ router.delete('/sessionBuilder/:id', PERMISSIONS.facilitatorManagerAdmin, sessio
 router.post('/sessionBuilder/:id/sendSms', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sendSms);
 router.post('/sessionBuilder/:id/invite', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.inviteMembers);
 router.delete('/sessionBuilder/:id/removeInvite/:inviteId', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.removeInvite);
-router.delete('/sessionBuilder/:id/removeSessionMember/:sessionMemberId', PERMISSIONS.managerAdmin, sessionBuilder.removeSessionMember);
+router.delete('/sessionBuilder/:id/removeSessionMember/:sessionMemberId', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.removeSessionMember);
 router.post('/sessionBuilder/:id/sendGenericEmail', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sendGenericEmail);
 router.post('/sessionBuilder/:id/sendCloseEmail', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sendCloseEmail);
 router.get('/sessionBuilder/:id/sessionMailTemplateStatus', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sessionMailTemplateStatus);
