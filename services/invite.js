@@ -61,15 +61,13 @@ function createBulkInvites(arrayParams) {
         }, Account, User]
       }).then(function(invites) {
         async.each(invites, function(invite, callback) {
-          invite.accountName = arrayParams.accountName;
           if (invite.AccountUser.ContactListUsers.length) {
-            invite.unsubscribeMailUrl = mailUrlHelper.getUrl(invite.AccountUser.ContactListUsers[0].unsubscribeToken, null, '/unsubscribe/');
-            getQueue.enqueue("invites", "invite", invite.id);
-            // sendInvite(invite).then(function() {
-            //   callback();
-            // }, function(error) {
-            //   callback(error);
-            // });
+            // getQueue.enqueue("invites", "invite", [invite.id] );
+            sendInvite(invite).then(function() {
+              callback();
+            }, function(error) {
+              callback(error);
+            });
           } else {
             callback();
           }
@@ -181,22 +179,7 @@ function createInvite(params) {
     role: params.role,
     userType: params.userType
   }).then(function(result) {
-    Invite.find({
-      include: [{
-        model: AccountUser,
-        attributes:
-        constants.safeAccountUserParams
-      }, {
-        model: Session,
-        include: [Account]
-      }, Account, User],
-      where: {
-        token: token
-      }
-    }).then(function(invite) {
-      invite.accountName = params.accountName;
-      sendInvite(invite, deferred);
-    });
+    sendInvite(result.id, deferred);
   }).catch(function(error) {
     if(error.name == 'SequelizeUniqueConstraintError') {
       deferred.reject({ email: 'User has already been invited' });
@@ -213,73 +196,39 @@ function simpleParams(invite, message) {
   return { invite: invite, message: message }
 }
 
-function sendInvite(invite, deferred) {
-  if(!deferred) {
+function sendInvite(inviteId, deferred) {
+  if (!deferred) {
     deferred = q.defer();
   }
 
-  if(invite.accountId) {
-    let inviteParams = {
-      token: invite.token,
-      role: invite.role,
-      email: invite.AccountUser.email,
-      firstName: invite.AccountUser.firstName,
-      lastName: invite.AccountUser.lastName,
-      accountName: invite.Account.name,
-      accountId: invite.Account.id
-    };
-    populateMailParamsWithColors(inviteParams, invite.Session).then(function (params) {
-      inviteMailer.sendInviteAccountManager(params, function (error, data) {
-        if (error) {
-          deferred.reject(error);
-        }
-        else {
-          deferred.resolve(simpleParams(invite));
-        }
-      });
-    }, function (error) {
-      deferred.reject(filters.errors(error));
-    });
-  }
-  else {
-    let session = invite.Session;
-    models.SessionMember.find({
-      where: {
-        sessionId: session.id,
-        role: 'facilitator'
-      },
-      include: [AccountUser]
-    }).then(function(sessionMember) {
-
-      let facilitator = sessionMember.AccountUser;
+  Invite.find({
+    include: [{
+      model: AccountUser,
+      attributes:
+      constants.safeAccountUserParams,
+      include: {model: models.ContactListUser}
+    }, {
+      model: Session,
+      include: [Account]
+    }, Account, User],
+    where: {
+      id: inviteId
+    }
+  }).then(function(invite) {
+    invite.unsubscribeMailUrl = mailUrlHelper.getUrl(invite.AccountUser.ContactListUsers[0].unsubscribeToken, null, '/unsubscribe/');
+    if(invite.accountId) {
       let inviteParams = {
-        sessionId: session.id,
-        role: invite.role,
-        accountId: session.accountId,
         token: invite.token,
+        role: invite.role,
+        email: invite.AccountUser.email,
         firstName: invite.AccountUser.firstName,
         lastName: invite.AccountUser.lastName,
-        accountName: session.Account.name,
-        email: invite.AccountUser.email,
-        sessionName: session.name,
-        timeZone: session.timeZone,
-        orginalStartTime: moment.tz(session.startTime, session.timeZone).format(),
-        orginalEndTime: moment.tz(session.endTime, session.timeZone).format(),
-        startTime: emailDate.format('time', session.startTime, session.timeZone),
-        endTime: emailDate.format('time', session.endTime, session.timeZone),
-        startDate: emailDate.format('date', session.startTime, session.timeZone),
-        endDate: emailDate.format('date', session.endTime, session.timeZone),
-        incentive: session.incentive_details,
-        facilitatorFirstName: facilitator.firstName,
-        facilitatorLastName: facilitator.lastName,
-        facilitatorMail: facilitator.email,
-        facilitatorMobileNumber: facilitator.mobile,
-        unsubscribeMailUrl: invite.unsubscribeMailUrl
-      }
-
-      populateMailParamsWithColors(inviteParams, session).then(function (params) {
-        inviteMailer.sendInviteSession(params, function(error, data) {
-            if (error) {
+        accountName: invite.Account.name,
+        accountId: invite.Account.id
+      };
+      populateMailParamsWithColors(inviteParams, invite.Session).then(function (params) {
+        inviteMailer.sendInviteAccountManager(params, function (error, data) {
+          if (error) {
             deferred.reject(error);
           }
           else {
@@ -289,11 +238,61 @@ function sendInvite(invite, deferred) {
       }, function (error) {
         deferred.reject(filters.errors(error));
       });
+    }
+    else {
+      let session = invite.Session;
+      models.SessionMember.find({
+        where: {
+          sessionId: session.id,
+          role: 'facilitator'
+        },
+        include: [AccountUser]
+      }).then(function(sessionMember) {
 
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
-    });
-  }
+        let facilitator = sessionMember.AccountUser;
+        let inviteParams = {
+          sessionId: session.id,
+          role: invite.role,
+          accountId: session.accountId,
+          token: invite.token,
+          firstName: invite.AccountUser.firstName,
+          lastName: invite.AccountUser.lastName,
+          accountName: session.Account.name,
+          email: invite.AccountUser.email,
+          sessionName: session.name,
+          timeZone: session.timeZone,
+          orginalStartTime: moment.tz(session.startTime, session.timeZone).format(),
+          orginalEndTime: moment.tz(session.endTime, session.timeZone).format(),
+          startTime: emailDate.format('time', session.startTime, session.timeZone),
+          endTime: emailDate.format('time', session.endTime, session.timeZone),
+          startDate: emailDate.format('date', session.startTime, session.timeZone),
+          endDate: emailDate.format('date', session.endTime, session.timeZone),
+          incentive: session.incentive_details,
+          facilitatorFirstName: facilitator.firstName,
+          facilitatorLastName: facilitator.lastName,
+          facilitatorMail: facilitator.email,
+          facilitatorMobileNumber: facilitator.mobile,
+          unsubscribeMailUrl: invite.unsubscribeMailUrl
+        }
+
+        populateMailParamsWithColors(inviteParams, session).then(function (params) {
+          inviteMailer.sendInviteSession(params, function(error, data) {
+            if (error) {
+              deferred.reject(error);
+            }
+            else {
+              deferred.resolve(simpleParams(invite));
+            }
+          });
+        }, function (error) {
+          deferred.reject(filters.errors(error));
+        });
+
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+  });
 
   return deferred.promise;
 }
