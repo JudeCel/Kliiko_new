@@ -128,7 +128,7 @@ function update(sessionId, accountId, params) {
   }).then(function() {
     return findSession(sessionId, accountId);
   }).then(function(session) {
-    if (params["status"]) {
+    if (params["status"] != session.status) {
       params["step"] = 'manageSessionParticipants';
       params["wasClosed"] = true;
     }
