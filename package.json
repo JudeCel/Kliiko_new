@@ -79,7 +79,7 @@
     "gulp-utf8-convert": "*",
     "gulp-util": "^3.0.7",
     "gulp-watch": "^4.3.5",
-    "mocha": "^3.1.2",
+    "mocha": "^3.2.0",
     "should": "^8.0.2",
     "sinon": "^1.17.2",
     "yargs": "^4.4.0"

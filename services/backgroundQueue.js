@@ -4,12 +4,14 @@ const NR = require("node-resque")
 const connectionDetails = require('../config/backgroudServer.js')
 let Bluebird = require('bluebird')
 var queue = null
+const { sendInvite } = require('./invite.js')
 
 const jobs = {
   "invite": {
     perform: (inviteId, callback) => {
-      console.log("invite id:", inviteId)
-      callback(null)
+      sendInvite(inviteId).then(() => {
+        callback(null);
+      });
     },
   },
 }

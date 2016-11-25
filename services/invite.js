@@ -62,12 +62,8 @@ function createBulkInvites(arrayParams) {
       }).then(function(invites) {
         async.each(invites, function(invite, callback) {
           if (invite.AccountUser.ContactListUsers.length) {
-            // getQueue.enqueue("invites", "invite", [invite.id] );
-            sendInvite(invite).then(function() {
-              callback();
-            }, function(error) {
-              callback(error);
-            });
+            getQueue.enqueue("invites", "invite", [invite.id] );
+            callback();
           } else {
             callback();
           }
@@ -179,7 +175,8 @@ function createInvite(params) {
     role: params.role,
     userType: params.userType
   }).then(function(result) {
-    sendInvite(result.id, deferred);
+    getQueue.enqueue("invites", "invite", [result.id]);
+    deferred.resolve(result)
   }).catch(function(error) {
     if(error.name == 'SequelizeUniqueConstraintError') {
       deferred.reject({ email: 'User has already been invited' });
@@ -763,6 +760,7 @@ function removeAllAssociatedDataOnNewUser(invite, callback) {
 
 module.exports = {
   messages: MessagesUtil.invite,
+  sendInvite: sendInvite,
   createBulkInvites: createBulkInvites,
   createInvite: createInvite,
   findAndRemoveInvite: findAndRemoveInvite,
