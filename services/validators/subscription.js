@@ -57,32 +57,29 @@ module.exports = {
 
 function validate(accountId, type, count, params) {
   let deferred = q.defer();
-  if(!params) {
+  if (!params) {
     params = {};
   }
 
   validQuery(accountId).then(function(subscription) {
-    if(subscription) {
+    if (subscription) {
       let dependency = DEPENDENCIES[type];
-      if(dependency) {
+      if (dependency) {
         dependency.model.count(dependency.params(accountId, params.sessionId)).then(function(c) {
           let maxCount = subscription.SubscriptionPreference.data[dependency.key];
 
           if(c + count <= maxCount || maxCount == -1) {
             deferred.resolve();
-          }
-          else {
+          } else {
             deferred.reject(countMessage(type, maxCount));
           }
         }, function(error) {
           deferred.reject(filters.errors(error));
         });
-      }
-      else {
+      } else {
         deferred.reject(MessagesUtil.validators.subscription.notValidDependency);
       }
-    }
-    else {
+    } else {
       deferred.resolve();
     }
   }, function(error) {

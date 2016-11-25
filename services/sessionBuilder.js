@@ -124,29 +124,35 @@ function update(sessionId, accountId, params) {
   let updatedSession;
   setTimeZone(params)
 
-  validators.hasValidSubscription(accountId).then(function() {
-    return validators.subscription(accountId, 'session', 1, { sessionId: sessionId });
-  }).then(function() {
-    return findSession(sessionId, accountId);
-  }).then(function(session) {
-    if (params["status"] && params["status"] != session.status) {
-      params["step"] = 'manageSessionParticipants';
-    }
-    return session.updateAttributes(params);
-  }).then(function(result) {
-     updatedSession = result;
-    return sessionBuilderObject(updatedSession);
-  }).then(function(sessionObject) {
-    if (updatedSession.status == 'closed') {
-      sendCloseEmailToAllObservers(updatedSession).then(function() {
+  findSession(sessionId, accountId).then(function(originalSession) {
+    validators.hasValidSubscription(accountId).then(function() {
+      let count = 0;
+      if (params["status"] && params["status"] != originalSession.status && params["status"] == "open") {
+        count = 1;
+      }
+      return validators.subscription(accountId, 'session', count, { sessionId: sessionId });
+    }).then(function() {
+      if (params["status"] && params["status"] != originalSession.status) {
+        params["step"] = 'manageSessionParticipants';
+      }
+      return originalSession.updateAttributes(params);
+    }).then(function(result) {
+       updatedSession = result;
+      return sessionBuilderObject(updatedSession);
+    }).then(function(sessionObject) {
+      if (updatedSession.status == 'closed') {
+        sendCloseEmailToAllObservers(updatedSession).then(function() {
+          deferred.resolve(sessionObject);
+        }, function(error) {
+          deferred.reject(error);
+        });
+      } else {
         deferred.resolve(sessionObject);
-      }, function(error) {
-        deferred.reject(error);
-      });
-    } else {
-      deferred.resolve(sessionObject);
-    }
-  }).catch(function(error) {
+      }
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
+    });
+  }, function(error) {
     deferred.reject(filters.errors(error));
   });
 
@@ -615,7 +621,6 @@ function inviteParams(sessionId, data) {
         email: { $in: emails },
       }
     }).then(function(results) {
-        console.log(results);
         _.each(results, function(user) {
           _.each(params, function(inviteParam) {
             if(inviteParam.email == user.email) {
@@ -874,7 +879,7 @@ function canAddObservers(accountId) {
 function validate(session, params) {
   let deferred = q.defer();
 
-  validators.subscription(session.accountId, 'session', 1, { sessionId: session.id }).then(function() {
+  validators.subscription(session.accountId, 'session', 0, { sessionId: session.id }).then(function() {
     return findValidation(session.step, params);
   }).then(function() {
     deferred.resolve();
