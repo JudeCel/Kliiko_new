@@ -343,7 +343,7 @@
     }
 
     function canInvite() {
-      return isSelectParticipantStep() ? !vm.session.sessionData.wasClosed : !isSessionClosed();
+      return !isSessionClosed();
     }
 
     function canSendCloseEmail() {
