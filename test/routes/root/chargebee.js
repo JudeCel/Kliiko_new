@@ -15,26 +15,22 @@ describe('ROUTE - Chargebee Webhooks', function() {
   var testData, testSubscription;
 
   beforeEach(function(done) {
-    userFixture.createUserAndOwnerAccount().then(function(result) {
-      testData = result;
-      return subscriptionPlansFixture.createPlans();
-    }).then(function(results) {
-      subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function(subscription) {
-        testSubscription = subscription;
-        done();
-      }, function(error) {
+    models.sequelize.sync({ force: true }).then(function() {
+      userFixture.createUserAndOwnerAccount().then(function(result) {
+        testData = result;
+        return subscriptionPlansFixture.createPlans();
+      }).then(function(results) {
+        subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function(subscription) {
+          testSubscription = subscription;
+          done();
+        }, function(error) {
+          done(error);
+        });
+      }).catch(function(error) {
         done(error);
       });
-    }).catch(function(error) {
-      done(error);
     });
 
-  });
-
-  afterEach(function(done) {
-    models.sequelize.sync({ force: true }).then(function() {
-      done();
-    });
   });
 
   function successProvider(params) {
@@ -82,8 +78,12 @@ describe('ROUTE - Chargebee Webhooks', function() {
     function resObject(expectedStatus, done) {
       return {
         sendStatus: function(status) {
-          assert.equal(expectedStatus, status);
-          done();
+          try {
+            assert.equal(expectedStatus, status);
+            done();
+          } catch (e) {
+            done(e)
+          } 
         }
       };
     }

@@ -125,13 +125,24 @@ describe('SERVICE - SessionMember', function() {
     describe('sad path', function() {
       it('should fail on removing session member because none with that role', function (done) {
         SessionMember.count().then(function(c) {
-          assert.equal(c, 4);
-
+          try {
+            assert.equal(c, 4);
+          } catch (e) {
+            done(e)
+          }
           sessionMemberServices.removeByRole('observer', testData.session.id, testData.account.id).then(function(removed) {
-            assert.equal(removed, 1);
-
-            SessionMember.count().then(function(c) {
-              done();
+            try {
+              assert.equal(removed, 1);
+            } catch (e) {
+              done(e)
+            }
+            SessionMember.count().then(function() {
+              try {
+                assert.equal(removed, 1);
+                done();
+              } catch (e) {
+                done(e)
+              }
             });
           }, function(error) {
             done(error);

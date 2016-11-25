@@ -90,12 +90,21 @@ describe('MIDDLEWARE - Filters', function() {
           currentDomain: { id: accountId || testData.account.id, name: testData.account.name, roles: ['accountManager'] }
         },
         redirect: function(url) {
-          assert.include(url, matcher);
-          done();
+          try {
+            assert.include(url, matcher);
+            done();
+          } catch (e) {
+            done(e);
+          }
+
         },
         send: function(resp) {
-          assert.equal(resp.error, "No account found.");
-          done();
+          try {
+            assert.equal(resp.error, "No account found.");
+            done();
+          } catch (e) {
+            done(e);
+          }
         }
       }
     }

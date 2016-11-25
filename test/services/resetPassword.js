@@ -29,12 +29,6 @@ describe('Reset Password', function() {
     });
   });
 
-  afterEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
-      done();
-    });
-  });
-
   it('should return user for valid token', function (done) {
     resetPassword.checkTokenExpired(testToken, function(err, user){
       assert.equal(err, null);

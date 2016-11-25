@@ -105,12 +105,6 @@ describe('SERVICE - Invite', function() {
     ];
   }
 
-  afterEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
-      done();
-    });
-  });
-
   describe('#createInvite', function() {
     describe('sad path', function() {
       it('should fail without params', function (done) {

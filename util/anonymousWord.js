@@ -11,16 +11,21 @@ const parseFile = () => {
     if (fileIsALoaded) {
       resolve(wordsList);
     }else{
-      csv.fromPath(pathToFile, {
-        headers: true
-      }).on('data', function(data) {
-        wordsList.push(data.comet)
-      }).on('error', function(error) {
-        reject(error);
-      }).on('end', function() {
+      try {
+        csv.fromPath(pathToFile, {
+          headers: true
+        }).on('data', function(data) {
+          wordsList.push(data.comet)
+        }).on('error', function(error) {
+          reject(error);
+        }).on('end', function() {
+          fileIsALoaded = true;
+          resolve(_.uniq(wordsList));
+        });
+      } catch (e) {
         fileIsALoaded = true;
-        resolve(_.uniq(wordsList));
-      });
+        reject(e);
+      }
     }
   })
 }

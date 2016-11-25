@@ -19,17 +19,13 @@ var testData;
 
 describe('SERVICE - AccountManager', function() {
   beforeEach(function(done) {
-    userFixture.createUserAndOwnerAccount().then(function(result) {
-      testData = result;
-      done();
-    }).catch(function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
     models.sequelize.sync({ force: true }).then(function() {
-      done();
+      userFixture.createUserAndOwnerAccount().then(function(result) {
+        testData = result;
+        done();
+      }).catch(function(error) {
+        done(error);
+      });
     });
   });
 

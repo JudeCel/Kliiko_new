@@ -19,25 +19,21 @@ describe('SERVICE - Survey', function() {
   var testData;
 
   beforeEach(function(done) {
-    userFixture.createUserAndOwnerAccount().then(function(result) {
-      testData = result;
-      subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {
-        models.SubscriptionPreference.update({'data.surveyCount': 5, 'data.exportRecruiterSurveyData': true}, { where: { subscriptionId: subscription.id } }).then(function() {
-          done();
+    models.sequelize.sync({ force: true }).then(() => {
+      userFixture.createUserAndOwnerAccount().then(function(result) {
+        testData = result;
+        subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {
+          models.SubscriptionPreference.update({'data.surveyCount': 5, 'data.exportRecruiterSurveyData': true}, { where: { subscriptionId: subscription.id } }).then(function() {
+            done();
+          }, function(error) {
+            done(error);
+          })
         }, function(error) {
           done(error);
         })
-      }, function(error) {
+      }).catch(function(error) {
         done(error);
-      })
-    }).catch(function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
-      done();
+      });
     });
   });
 
@@ -183,33 +179,44 @@ describe('SERVICE - Survey', function() {
       it('should succeed on creating survey with questions', function (done) {
 
         ContactList.count().then(function(c) {
-          assert.equal(c, 3);
+          try {
+            assert.equal(c, 3);
+          } catch (e) {
+            done(e)
+          }
           let params = surveyParams();
 
           surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
             let survey = result.data;
+            try {
+              assert.equal(result.message, surveyServices.messages.created);
+              assert.equal(survey.name, 'Survey name');
+              assert.equal(survey.description, 'Survey description');
+              assert.equal(survey.thanks, 'Survey thanks');
+              assert.equal(survey.accountId, testData.account.id);
 
-            assert.equal(result.message, surveyServices.messages.created);
-            assert.equal(survey.name, 'Survey name');
-            assert.equal(survey.description, 'Survey description');
-            assert.equal(survey.thanks, 'Survey thanks');
-            assert.equal(survey.accountId, testData.account.id);
+              assert.equal(survey.SurveyQuestions[0].type, params.SurveyQuestions[0].type);
+              assert.equal(survey.SurveyQuestions[0].order, params.SurveyQuestions[0].order);
+              assert.equal(survey.SurveyQuestions[0].name, params.SurveyQuestions[0].name);
+              assert.equal(survey.SurveyQuestions[0].question, params.SurveyQuestions[0].question);
+              assert.deepEqual(survey.SurveyQuestions[0].answers, params.SurveyQuestions[0].answers);
 
-            assert.equal(survey.SurveyQuestions[0].type, params.SurveyQuestions[0].type);
-            assert.equal(survey.SurveyQuestions[0].order, params.SurveyQuestions[0].order);
-            assert.equal(survey.SurveyQuestions[0].name, params.SurveyQuestions[0].name);
-            assert.equal(survey.SurveyQuestions[0].question, params.SurveyQuestions[0].question);
-            assert.deepEqual(survey.SurveyQuestions[0].answers, params.SurveyQuestions[0].answers);
-
-            assert.equal(survey.SurveyQuestions[1].type, params.SurveyQuestions[1].type);
-            assert.equal(survey.SurveyQuestions[1].order, params.SurveyQuestions[1].order);
-            assert.equal(survey.SurveyQuestions[1].name, params.SurveyQuestions[1].name);
-            assert.equal(survey.SurveyQuestions[1].question, params.SurveyQuestions[1].question);
-            assert.deepEqual(survey.SurveyQuestions[1].answers, params.SurveyQuestions[1].answers);
+              assert.equal(survey.SurveyQuestions[1].type, params.SurveyQuestions[1].type);
+              assert.equal(survey.SurveyQuestions[1].order, params.SurveyQuestions[1].order);
+              assert.equal(survey.SurveyQuestions[1].name, params.SurveyQuestions[1].name);
+              assert.equal(survey.SurveyQuestions[1].question, params.SurveyQuestions[1].question);
+              assert.deepEqual(survey.SurveyQuestions[1].answers, params.SurveyQuestions[1].answers);
+            } catch (e) {
+              done(e)
+            }
 
             ContactList.count().then(function(c) {
-              assert.equal(c, 4);
-              done();
+              try {
+                assert.equal(c, 4);
+                done();
+              } catch (e) {
+                done(e);
+              }
             });
           }, function(error) {
             done(error);

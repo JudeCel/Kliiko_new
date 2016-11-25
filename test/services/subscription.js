@@ -73,8 +73,12 @@ describe('SERVICE - Subscription', function() {
         subscriptionServices.createSubscription(testData.account.id, testData.user.id, errorProvider('some error')).then(function() {
           done('Should not get here!');
         }, function(error) {
-          assert.deepEqual(error, { error: 'some error' });
-          done();
+          try {
+            assert.deepEqual(error, { error: 'some error' });
+            done();
+          } catch (e) {
+            done(e);
+          }
         });
       });
 
@@ -534,8 +538,12 @@ describe('SERVICE - Subscription', function() {
         subscriptionServices.createPortalSession(testData.account.id, 'callbackUrl', errorProvider('some error')).then(function(redirectUrl) {
           done('Should not get here!');
         }, function(error) {
-          assert.deepEqual(error, { error: 'some error' });
-          done();
+          try {
+            assert.deepEqual(error, { error: 'some error' });
+            done();
+          } catch (e) {
+            done(e);
+          }
         });
       });
 
@@ -711,14 +719,21 @@ describe('SERVICE - Subscription', function() {
           // after recurring preference model value should be currentSms + planSms (100)
           let currentSms = subscription.SubscriptionPreference.data.paidSmsCount;
           let planSms = subscription.SubscriptionPlan.paidSmsCount;
-          assert.equal(currentSms, planSms);
-
+          try {
+            assert.equal(currentSms, planSms);
+          } catch (e) {
+            done(e)
+          }
           subscriptionServices.recurringSubscription(subId, 'someEventId').then(function(result) {
             assert.equal(result.subscription.lastWebhookId, 'someEventId');
             return result.promise;
           }).then(function(result) {
-            assert.equal(result.SubscriptionPreference.data.paidSmsCount, currentSms + planSms);
-            done();
+            try {
+              assert.equal(result.SubscriptionPreference.data.paidSmsCount, currentSms + planSms);
+              done();
+            } catch (e) {
+              done(e);
+            }
           }).catch(function(error) {
             done(error);
           });
@@ -731,8 +746,12 @@ describe('SERVICE - Subscription', function() {
         subscriptionServices.recurringSubscription('someNonExistingId', 'someEventId').then(function() {
           done('Should not get here!');
         }, function(error) {
-          assert.deepEqual(error, subscriptionServices.messages.notFound.subscription);
-          done();
+          try {
+            assert.deepEqual(error, subscriptionServices.messages.notFound.subscription);
+            done();
+          } catch (e) {
+            done(e);
+          }
         });
       });
     });

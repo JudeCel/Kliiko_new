@@ -132,8 +132,12 @@ describe('SERVICE - Session', function() {
       describe('happy path', function() {
         it('should succeed on finding all sessions', function (done) {
           sessionServices.findAllSessions(testData.user.id, accountParams(), provider).then(function(result) {
-            assert.equal(result.data[0].accountId, testData.account.id);
-            done();
+            try {
+              assert.equal(result.data[0].accountId, testData.account.id);
+              done();
+            } catch (e) {
+              done(e);
+            }
           }, function(error) {
             done(error);
           });
