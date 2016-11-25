@@ -188,7 +188,6 @@
         function (res) {
           self.status = self.sessionData.status = status;
           self.sessionData.wasClosed = true;
-          self.sessionData.showStatus = status == "open" ? "Open" : "Closed";
           self.currentStep = self.sessionData.step = res.sessionBuilder.currentStep;
           deferred.resolve(res);
         },
@@ -254,6 +253,7 @@
         if (res.error) {
           deferred.reject(res.error);
         } else {
+          self.sessionData.showStatus = res.sessionBuilder.showStatus;
           deferred.resolve(res);
         }
       });

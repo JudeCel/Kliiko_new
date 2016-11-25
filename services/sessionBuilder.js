@@ -15,6 +15,7 @@ var mailUrlHelper = require('./../mailers/helpers');
 var validators = require('./../services/validators');
 var sessionMemberServices = require('./sessionMember');
 var MessagesUtil = require('./../util/messages');
+var sessionValidator = require('./validators/session');
 
 var async = require('async');
 var _ = require('lodash');
@@ -670,12 +671,17 @@ function sessionBuilderObject(session) {
   let deferred = q.defer();
 
   stepsDefinition(session).then(function(result) {
+    let sessionBuilder = {
+      steps: result,
+      currentStep: session.step,
+      status: session.status,
+      id: session.id,
+      startTime: session.startTime,
+      endTime: session.endTime,
+    };
+    sessionValidator.addShowStatus(sessionBuilder);
     deferred.resolve({
-      sessionBuilder: {
-        steps: result,
-        currentStep: session.step,
-        id: session.id
-      }
+      sessionBuilder: sessionBuilder
     });
   }, function(error) {
     deferred.reject(error);
