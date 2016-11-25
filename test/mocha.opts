@@ -2,6 +2,6 @@
 --recursive
 --check-leaks
 --colors
---timeout 10000
+--timeout 50000
 --slow 500
 --full-trace

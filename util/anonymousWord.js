@@ -4,13 +4,10 @@ var pathToFile = './util/files/V1-AnonymousCodeWords.csv'
 let Bluebird = require('bluebird');
 var _ = require('lodash')
 var wordsList = [];
-var fileIsALoaded = false;
 
 const parseFile = () => {
   return new Bluebird((resolve, reject) =>  {
-    if (fileIsALoaded) {
-      resolve(wordsList);
-    }else{
+    if (_.isEmpty(wordsList)) {
       try {
         csv.fromPath(pathToFile, {
           headers: true
@@ -19,13 +16,14 @@ const parseFile = () => {
         }).on('error', function(error) {
           reject(error);
         }).on('end', function() {
-          fileIsALoaded = true;
           resolve(_.uniq(wordsList));
         });
       } catch (e) {
-        fileIsALoaded = true;
+        wordsList = [];
         reject(e);
       }
+    }else{
+      resolve(wordsList);
     }
   })
 }

@@ -1,11 +1,9 @@
 var assert = require('chai').assert;
 var anonymousWord = require('../../util/anonymousWord.js')
-var anonymousWord2 = require('../../util/anonymousWord.js')
 
 describe('Anonymous Words', () => {
   describe('#parseFile', () => {
     it('get all names 232', (done) =>  {
-      anonymousWord2.parseFile()
       anonymousWord.parseFile().then((result) => {
         try {
           assert.equal(result.length, 232);
