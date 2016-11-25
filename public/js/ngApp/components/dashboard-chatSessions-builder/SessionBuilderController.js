@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom', 'messagesUtil'];
-  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom, messagesUtil) {
+  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom', 'messagesUtil', '$confirm'];
+  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom, messagesUtil, $confirm) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -56,19 +56,37 @@
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
     vm.selectObserversClickHandle = selectObserversClickHandle;
     vm.isSelectObserverStep = isSelectObserverStep;
+    vm.isSelectParticipantStep = isSelectParticipantStep;
+    vm.isSessionClosed = isSessionClosed;
+    vm.canSendCloseEmail = canSendCloseEmail;
+    vm.canInvite = canInvite;
 
     function closeSession() {
-      vm.session.setOpen('closed').then(function(res) {
-      }, function(err) {
-        messenger.error(err);
-      });
+      if (vm.session.sessionData.showStatus != 'Pending' && vm.session.sessionData.showStatus != 'Closed') {
+        $confirm({ text: "Do you want to Close this Chat Session? You will be able to send the Close Email to Participants, and make Comments." }).then(function() {
+          vm.session.setOpen('closed').then(function(res) {
+            initStep().then(function (step) {
+              vm.currentStep = step;
+            });
+          }, function(err) {
+            messenger.error(err);
+          });
+        });
+      }
     }
 
     function openSession() {
-      vm.session.setOpen('open').then(function(res) {
-      }, function(err) {
-        messenger.error(err);
-      });
+      if (vm.session.sessionData.showStatus == 'Closed') {
+        $confirm({ text: "Do you want to Re-Open this Chat Session?" }).then(function() {
+          vm.session.setOpen('open').then(function(res) {
+            initStep().then(function (step) {
+              vm.currentStep = step;
+            });
+          }, function(err) {
+            messenger.error(err);
+          });
+        });
+      }
     }
 
     function goToStep(step) {
@@ -84,6 +102,8 @@
       function handlePreviousStep() {
         vm.cantMoveNextStep = false;
         vm.session.goPreviouseStep().then(function(result) {
+          vm.session.steps = result.data.sessionBuilder.steps;
+
           initStep().then(function (step) {
             vm.currentStep = step;
           });
@@ -312,6 +332,22 @@
 
     function isSelectObserverStep() {
       return vm.session.currentStep == "inviteSessionObservers";
+    }
+
+    function isSelectParticipantStep() {
+      return vm.session.currentStep == "manageSessionParticipants";
+    }
+
+    function isSessionClosed() {
+      return vm.session.sessionData.showStatus == 'Closed';
+    }
+
+    function canInvite() {
+      return isSelectParticipantStep() ? !vm.session.sessionData.wasClosed : !isSessionClosed();
+    }
+
+    function canSendCloseEmail() {
+      return isSelectParticipantStep() && isSessionClosed();
     }
   }
 

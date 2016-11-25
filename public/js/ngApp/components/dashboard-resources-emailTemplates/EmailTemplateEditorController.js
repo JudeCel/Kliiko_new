@@ -110,7 +110,7 @@
       return object;
     }
 
-    function startEditingTemplate(templateIndex, inSession, templateId, template) {
+    function startEditingTemplate(templateIndex, templateId, template) {
 
       if (!templateId) {
         templateId = template ? template.id : vm.emailTemplates[templateIndex].id;
@@ -120,7 +120,7 @@
         mailTemplate.getMailTemplate({id:templateId}).then(function (res) {
           if (res.error) return;
 
-          if (vm.properties.brandLogoId && inSession) {
+          if (vm.properties.brandLogoId && vm.properties.sessionId) {
             fileUploader.show(vm.properties.brandLogoId).then(function(result) {
               populateTemplate(res);
               setContent(vm.currentTemplate.content);
@@ -257,9 +257,11 @@
       var contentFrame = $("#contentFrame").contents().find('html');
       domServices.modal('previewMailTemplateModal');
       mailTemplate.previewMailTemplate(vm.currentTemplate, vm.properties.sessionId).then(function(res) {
-        if (!res.error) {
-          contentFrame.html(res.template.content);
-          $("#mailTemplatePreviewSubject").html(res.template.subject);
+        if (!res.error || angular.equals({}, res.error)) {
+          //this is for case when preview button pressed after save but before server responce
+          var template = res.template || vm.currentTemplate;
+          contentFrame.html(template.content);
+          $("#mailTemplatePreviewSubject").html(template.subject);
         } else {
           messenger.error(res.error);
         }

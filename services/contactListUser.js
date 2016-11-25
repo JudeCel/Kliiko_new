@@ -200,7 +200,7 @@ function create(params, transaction) {
       }).then(function(accountUser) {
         if (accountUser && !_.has(errors, 'email')) {
           if(!accountUser.UserId) {
-            updateAccountUserIfUserFound(accountUser, params.defaultFields.email).then(function(au) {
+            updateAccountUserIfUserFound(accountUser, params.defaultFields.email, transaction).then(function(au) {
               ContactListUser.create(contactListUserParams(params, au), {transaction: transaction}).then(function(contactListUser) {
                 buildWrappedResponse(contactListUser.id, deferred, transaction);
               }, function(err) {
@@ -247,7 +247,7 @@ function createNewAccountUser(params, transaction) {
   let deferred = q.defer();
   ContactList.find({where: {id: params.contactListId}}).then(function(contactList) {
     AccountUserService.create(params.defaultFields, params.accountId, contactList.role, transaction).then(function(accountUser) {
-      updateAccountUserIfUserFound(accountUser, params.defaultFields.email).then(function(accountUser) {
+      updateAccountUserIfUserFound(accountUser, params.defaultFields.email, transaction).then(function(accountUser) {
         deferred.resolve(accountUser);
       }, function(error) {
         deferred.reject(error);
@@ -264,12 +264,12 @@ function createNewAccountUser(params, transaction) {
   return deferred.promise;
 }
 
-function updateAccountUserIfUserFound(accountUser, email) {
+function updateAccountUserIfUserFound(accountUser, email, transaction) {
   let deferred = q.defer();
 
   models.User.find({ where: { email: email } }).then(function(user) {
     if(user) {
-      accountUser.update({ UserId: user.id }, { returning: true }).then(function(au) {
+      accountUser.update({ UserId: user.id }, { transaction: transaction, returning: true }).then(function(au) {
         deferred.resolve(au);
       }, function(error) {
         deferred.reject(filters.errors(error));

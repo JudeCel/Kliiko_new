@@ -16,7 +16,8 @@
     "build_prod": "node ./node_modules/gulp/bin/gulp.js build-prod",
     "updateBaseMailTemplates": "node ./tasks/updateBaseMailTemplates.js",
     "enableDatabaseMonitoring": "node ./tasks/databaseMonitoring/enableDatabaseMonitoring.js",
-    "enableTableMonitoring": "node ./tasks/databaseMonitoring/enableTableMonitoring.js"
+    "enableTableMonitoring": "node ./tasks/databaseMonitoring/enableTableMonitoring.js",
+    "updateAccountUsersUserId": "node ./tasks/dataNormalization/updateAccountUsers.js"
   },
   "engineStrict": true,
   "engine": {
