@@ -14,6 +14,7 @@ var _ = require('lodash');
 var ejs = require('ejs');
 var q = require('q');
 var constants = require('../util/constants');
+var momentTimeZone = require('moment-timezone');
 
 module.exports = {
   validate: validate,
@@ -722,6 +723,7 @@ function formatTemplateString(str) {
   str = str.replace(/\{Close Session No In Future\}/ig, "<%= dontParticipateInFutureUrl %>");
   str = str.replace(/\{Confirmation Check In\}/ig, "<%= confirmationCheckInUrl %>");
   str = str.replace(/\{Login\}/ig, "<%= logInUrl %>");
+  str = str.replace(/\{Time Zone\}/ig, "<%= timeZone %>");
   str = str.replace(/\{Reset Password URL\}/ig, "<%= resetPasswordUrl %>");
   return str;
 }
@@ -750,7 +752,8 @@ function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
     dontParticipateInFutureUrl: "#/dontParticipateInFutureUrl",
     confirmationCheckInUrl: "#/confirmationCheckInUrl",
     logInUrl: "#/LogInUrl",
-    resetPasswordUrl: "#/resetPasswordUrl"
+    resetPasswordUrl: "#/resetPasswordUrl",
+    timeZone: ""
   };
   if (sessionId) {
     Session.find({
@@ -764,11 +767,13 @@ function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
         }]
        }).then(function (result) {
       if (result) {
-        mailPreviewVariables.startDate = emailDate.format("date", new Date(result.startTime), result.timeZone);
+        let startTime = new Date(result.startTime);
+        mailPreviewVariables.startDate = emailDate.format("date", startTime, result.timeZone);
         mailPreviewVariables.startTime = emailDate.format("time", new Date(result.startTime), result.timeZone);
         mailPreviewVariables.endDate = emailDate.format("date", new Date(result.endTime), result.timeZone);
         mailPreviewVariables.endTime = emailDate.format("time", new Date(result.endTime), result.timeZone);
         mailPreviewVariables.sessionName = result.name;
+        mailPreviewVariables.timeZone = momentTimeZone.tz(startTime, result.timeZone).format('zZ');
         mailPreviewVariables.incentive = result.incentive_details;
         if (result.SessionMembers[0]) {
           mailPreviewVariables.facilitatorFirstName = result.SessionMembers[0].AccountUser.firstName;
