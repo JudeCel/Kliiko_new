@@ -17,6 +17,7 @@
       removeInvite: { method: 'DELETE', params: { path: 'removeInvite' } },
       removeSessionMember: { method: 'DELETE', params: { path: 'removeSessionMember' } },
       sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } },
+      sendCloseEmail: { method: 'POST', params: { path: 'sendCloseEmail' } },
       setAnonymous: { method: 'POST', params: { path: 'setAnonymous' } },
       sessionMailTemplateStatus: { method: 'GET', params: { path: 'sessionMailTemplateStatus' } },
       addTopics: {method: 'POST',  params: {path: 'addTopics'} },
@@ -60,6 +61,7 @@
     SessionModel.prototype.inviteObservers = inviteObservers;
     SessionModel.prototype.removeMember = removeMember;
     SessionModel.prototype.sendGenericEmail = sendGenericEmail;
+    SessionModel.prototype.sendCloseEmail = sendCloseEmail;
     SessionModel.prototype.processStepResponse = processStepResponse;
     SessionModel.prototype.removeTopic = removeTopic;
     SessionModel.prototype.getSessionMailTemplateStatus = getSessionMailTemplateStatus;
@@ -185,7 +187,8 @@
       self.updateStep({status: status}).then(
         function (res) {
           self.status = self.sessionData.status = status;
-          deferred.resolve(res)
+          self.currentStep = self.sessionData.step = res.sessionBuilder.currentStep;
+          deferred.resolve(res);
         },
         function (err) {
           deferred.reject(err);
@@ -249,6 +252,7 @@
         if (res.error) {
           deferred.reject(res.error);
         } else {
+          self.sessionData.showStatus = res.sessionBuilder.showStatus;
           deferred.resolve(res);
         }
       });
@@ -378,6 +382,21 @@
           deferred.reject(res.error);
         }
         else deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
+
+    function sendCloseEmail(members) {
+      var self = this;
+      var deferred = $q.defer();
+
+      sessionBuilderRestApi.sendCloseEmail({ id: self.id }, { recievers: members }, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
+        }
       });
 
       return deferred.promise;

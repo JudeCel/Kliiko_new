@@ -48,8 +48,8 @@ describe('SERVICE - SessionBuilder', function() {
       id: data.sessionBuilder.id,
       accountId: testAccount.id,
       name: 'untitled',
-      startTime: (new Date()).toString(),
-      endTime: getNextDate().toString(),
+      startTime: (new Date()).toISOString(),
+      endTime: getNextDate().toISOString(),
       timeZone: 'Europe/Riga'
     };
   };
@@ -475,25 +475,6 @@ describe('SERVICE - SessionBuilder', function() {
           });
         });
       });
-
-      it('should fail on finding invite because status not pending', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = inviteParams(result.sessionBuilder.id);
-          params.status = 'confirmed';
-
-          models.Invite.create(params).then(function(invite) {
-
-            sessionBuilderServices.removeInvite({ id: result.sessionBuilder.id, inviteId: invite.id }).then(function(result) {
-              done('Should not get here!');
-            }, function(error) {
-              assert.equal(error, sessionBuilderServices.messages.inviteNotFound);
-              done();
-            });
-          }).catch(function(error) {
-            done(error);
-          });
-        });
-      });
     });
   });
 
@@ -843,6 +824,62 @@ describe('SERVICE - SessionBuilder', function() {
             done(error);
           });
         });
+      });
+    });
+  });
+
+  describe('#closeSession', function(done) {
+    describe('happy path', function(done) {
+      it('should go to fourth step', function(done) {
+          sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+            models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+              mailFixture.createMailTemplate().then(function() {
+                let params = sessionParams(result);
+                params.status = "closed";
+                sessionBuilderServices.update(params.id, params.accountId, params).then(function(closeResult) {
+                  assert.equal(closeResult.sessionBuilder.currentStep, "manageSessionParticipants");
+                  done();
+                }, function(error) {
+                  done(error);
+                });
+              });
+            });
+          }, function(error) {
+            done(error);
+          });
+      });
+    });
+  });
+
+  describe('#reopenSession', function(done) {
+    describe('happy path', function(done) {
+      it('should go to fourth step', function(done) {
+          sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+            models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+              mailFixture.createMailTemplate().then(function() {
+                let closeParams = sessionParams(result);
+                closeParams.status = "closed";
+                sessionBuilderServices.update(closeParams.id, closeParams.accountId, closeParams).then(function(closeResult) {
+                  sessionBuilderServices.prevStep(closeParams.id, closeParams.accountId).then(function(nextStepResult) {
+                    let openParams = sessionParams(result);
+                    openParams.status = "open";
+                    sessionBuilderServices.update(openParams.id, openParams.accountId, openParams).then(function(closeResult) {
+                      assert.equal(closeResult.sessionBuilder.currentStep, "manageSessionParticipants");
+                      done();
+                    }, function(error) {
+                      done(error);
+                    });
+                  }, function(error) {
+                    done(error);
+                  });
+                }, function(error) {
+                  done(error);
+                });
+              });
+            });
+          }, function(error) {
+            done(error);
+          });
       });
     });
   });

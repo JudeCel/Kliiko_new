@@ -82,21 +82,18 @@ function sendMailWithTemplate(template, mailParams, callback) {
 
 function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {
   let parsedTemplate = formatMailTemplate(template.content);
-
-    let cal = ical({domain: process.env.SERVER_DOMAIN, name: template.name});
+    let cal = ical({domain: process.env.SERVER_DOMAIN, name: template.name, timezone: mailParams.timeZone});
     let event = cal.createEvent({
-        start: new Date(moment.tz(mailParams.orginalStartTime, mailParams.timeZone)),
-        end:  new Date(moment.tz(mailParams.orginalEndTime, mailParams.timeZone)),
-        timestamp: new Date(moment.tz(mailParams.orginalStartTime, mailParams.timeZone)),
+        start: new Date(mailParams.orginalStartTime),
+        end:  new Date(mailParams.orginalEndTime),
         summary: template.name,
-        timezone: mailParams.timeZone,
         organizer: mailFrom
     });
 
     /*
     // add attendees to event when known
         event.attendees([
-        {email: 'warlockxins@gmail.com', name: 'Person A'},
+        {email: 'someMail@gmail.com', name: 'Person A'},
     ]);
     */
 

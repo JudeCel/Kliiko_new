@@ -17,7 +17,7 @@
       <div class='panel-heading mail-template-list-heading'>Email Templates</div>
       <div id='mail-template-list' class='mail-template-list'>
         <span ng-repeat='(key, t) in ec.emailTemplates track by $index'>
-          <a class='list-group-item border-radius-none' ng-click='ec.startEditingTemplate(key, true, t.id, t); sbc.showEmailsTemplateEditeor = true;'
+          <a class='list-group-item border-radius-none' ng-click='ec.startEditingTemplate(key, t.id, t); sbc.showEmailsTemplateEditeor = true;'
             ng-class="{'active': ec.isCurrentId(t.id), 'list-group-item-white': t.AccountId}" ng-if="(!t.AccountId && !t.isCopy) || (t.AccountId && t.sessionId)">
 
             <div ng-if='!t.AccountId && !t.isCopy'>

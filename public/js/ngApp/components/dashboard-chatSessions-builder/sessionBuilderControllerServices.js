@@ -67,7 +67,7 @@
 
       for (var i in members) {
         var member = members[i];
-        if(member.isSelected && (member.inviteStatus == "notInvited" || !skipInvited) && (!onlyWithMobile || member.mobile)) {
+        if (member.isSelected && (member.inviteStatus == "notInvited" || !skipInvited) && (!onlyWithMobile || member.mobile) && vm.canSelectMember(member)) {
           array.push(member);
         }
       }
@@ -86,7 +86,7 @@
     }
 
     function currentMemberList(vm) {
-        return vm.stepMembers;
+      return vm.stepMembers;
     }
 
     function selectMembers(listId, members) {

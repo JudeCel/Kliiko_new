@@ -15,6 +15,7 @@ var mailUrlHelper = require('./../mailers/helpers');
 var validators = require('./../services/validators');
 var sessionMemberServices = require('./sessionMember');
 var MessagesUtil = require('./../util/messages');
+var sessionValidator = require('./validators/session');
 
 var async = require('async');
 var _ = require('lodash');
@@ -37,8 +38,10 @@ module.exports = {
   removeInvite: removeInvite,
   removeSessionMember: removeSessionMember,
   sendGenericEmail: sendGenericEmail,
+  sendCloseEmail: sendCloseEmail,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
-  canAddObservers: canAddObservers
+  canAddObservers: canAddObservers,
+  sessionMailTemplateExists: sessionMailTemplateExists
 };
 
 function addDefaultObservers(session) {
@@ -106,38 +109,94 @@ function findSession(id, accountId) {
   return deferred.promise;
 }
 
+function changeTimzone(time, from, to ){
+  return moment.tz(moment.tz(time, from).format('YYYY-MM-DD HH:mm:ss'), to)
+}
+function setTimeZone(params) {
+  if (params.startTime && params.endTime && params.timeZone) {
+    params.startTime = changeTimzone(params.startTime, "UTC", params.timeZone)
+    params.endTime = changeTimzone(params.endTime, "UTC", params.timeZone)
+  }
+}
+
 function update(sessionId, accountId, params) {
   let deferred = q.defer();
   let updatedSession;
+  setTimeZone(params)
 
-  validators.hasValidSubscription(accountId).then(function() {
-    return validators.subscription(accountId, 'session', 1, { sessionId: sessionId });
-  }).then(function() {
-    return findSession(sessionId, accountId);
-  }).then(function(session) {
-    return session.updateAttributes(params);
-  }).then(function(result) {
-    updatedSession = result;
-    return sessionBuilderObject(updatedSession);
-  }).then(function(sessionObject) {
-    if(updatedSession.status == 'closed') {
-      sendCloseSessionMail(updatedSession).then(function() {
+  findSession(sessionId, accountId).then(function(originalSession) {
+    validators.hasValidSubscription(accountId).then(function() {
+      let count = 0;
+      if (params["status"] && params["status"] != originalSession.status && params["status"] == "open") {
+        count = 1;
+      }
+      return validators.subscription(accountId, 'session', count, { sessionId: sessionId });
+    }).then(function() {
+      if (params["status"] && params["status"] != originalSession.status) {
+        params["step"] = 'manageSessionParticipants';
+      }
+      return originalSession.updateAttributes(params);
+    }).then(function(result) {
+       updatedSession = result;
+      return sessionBuilderObject(updatedSession);
+    }).then(function(sessionObject) {
+      if (updatedSession.status == 'closed') {
+        sendCloseEmailToAllObservers(updatedSession).then(function() {
+          deferred.resolve(sessionObject);
+        }, function(error) {
+          deferred.reject(error);
+        });
+      } else {
         deferred.resolve(sessionObject);
-      },function(error) {
-        deferred.reject(error);
-      });
-    }
-    else {
-      deferred.resolve(sessionObject);
-    }
-  }).catch(function(error) {
+      }
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
+    });
+  }, function(error) {
     deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
 }
 
-function sendCloseSessionMail(session) {
+function sendCloseEmailToAllObservers(session) {
+  let deferred = q.defer();
+
+  let where = {
+    sessionId: session.id,
+    role: "observer"
+  };
+  sendSessionCloseEmail(session, where).then(function() {
+    deferred.resolve();
+  },function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function sendCloseEmail(sessionId, data, accountId) {
+  let deferred = q.defer();
+
+  findSession(sessionId, accountId).then(function(session) {
+    let ids = getEmailRecieversAccountUserIds(data.recievers);
+    let where = {
+      sessionId: sessionId,
+      accountUserId: { $in: ids }
+    };
+    sendSessionCloseEmail(session, where).then(function(res) {
+      deferred.resolve(res);
+    },function(error) {
+      deferred.reject(error);
+    });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function sendSessionCloseEmail(session, where) {
   let deferred = q.defer();
 
   models.SessionMember.find({
@@ -147,25 +206,22 @@ function sendCloseSessionMail(session) {
     },
     include: [AccountUser]
   }).then(function(facilitator) {
-    models.SessionMember.findAll({
-      where: {
-        sessionId: session.id,
-        role: ["participant", "observer"]
-      },
-      include: [AccountUser]
-    }).then(function(sessionMembers) {
-      if(canSendCloseMails(session, facilitator, sessionMembers.length)){
-        sendToEachParticipant(session, facilitator, sessionMembers).then(function() {
+    if (facilitator) {
+      models.SessionMember.findAll({
+        where: where,
+        include: [AccountUser]
+      }).then(function(sessionMembers) {
+        if (sessionMembers.length > 0) {
+          sendCloseEmailsAsync(sessionMembers, session, facilitator, deferred);
+        } else {
           deferred.resolve();
-        },function(errors) {
-          deferred.reject(errors);
-        })
-      }else{
-        deferred.reject(MessagesUtil.sessionBuilder.errors.cantSendCloseMails);
-      }
-    }).catch(function(error) {
-      deferred.reject(error);
-    });
+        }
+      }).catch(function(error) {
+        deferred.reject(error);
+      });
+    } else {
+      deferred.resolve();
+    }
   }).catch(function(error) {
     deferred.reject(error);
   })
@@ -173,29 +229,30 @@ function sendCloseSessionMail(session) {
   return deferred.promise;
 }
 
-function sendToEachParticipant(session, facilitator,sessionMembers ) {
-  let deferred = q.defer();
-  let errors = [];
+function sendCloseEmailsAsync(sessionMembers, session, facilitator, deferred) {
+  async.each(sessionMembers, function(sessionMember, callback) {
 
-  _.map(sessionMembers, function(sessionMember) {
-    mailHelper.sendSessionClose(prepareCloseSessionEmailParams(session, facilitator.AccountUser, sessionMember.AccountUser), function(error, result) {
-      if(error) {
-        errors.push({accournUserId: sessionMember.AccountUser.id, error: error})
-      }
-    })
-  })
+    let emailParams = prepareCloseSessionEmailParams(session, facilitator.AccountUser, sessionMember.AccountUser);
+    inviteService.populateMailParamsWithColors(emailParams, session).then(function (emailParamsRes) {
+      mailHelper.sendSessionClose(emailParamsRes, function(error, result) {
+        if (error) {
+          callback(error);
+        } else {
+          sessionMember.updateAttributes({closeEmailSent: true});
+          callback(null, result);
+        }
+      });
+    }, function (error) {
+      callback(error);
+    });
 
-  if(errors.length > 0){
-    deferred.reject(error);
-  }else{
-    deferred.resolve();
-  }
-
-  return deferred.promise;
-}
-
-function canSendCloseMails(session, facilitator, memberCount) {
-  return session && facilitator && memberCount > 0;
+  }, function(error) {
+    if (error) {
+      deferred.reject(error);
+    } else {
+      deferred.resolve(`Sent ${sessionMembers.length} emails`);
+    }
+  });
 }
 
 function prepareCloseSessionEmailParams(session, facilitator, receiver) {
@@ -404,8 +461,7 @@ function removeInvite(params) {
   models.Invite.find({
     where: {
       id: params.inviteId,
-      sessionId: params.id,
-      status: 'pending'
+      sessionId: params.id
     }
   }).then(function(invite) {
     if(invite) {
@@ -414,8 +470,7 @@ function removeInvite(params) {
       }).catch(function(error) {
         deferred.reject(filters.errors(error));
       });
-    }
-    else {
+    } else {
       deferred.reject(MessagesUtil.sessionBuilder.inviteNotFound);
     }
   }).catch(function(error) {
@@ -490,7 +545,7 @@ function sendGenericEmailsAsync(params, accountUsers, session, deferred) {
   });
 }
 
-function getGenericEmailRecieversAccountUserIds(recievers) {
+function getEmailRecieversAccountUserIds(recievers) {
   let ids = [];
   for (let i=0; i<recievers.length; i++) {
     let reciever = recievers[i];
@@ -506,7 +561,7 @@ function sendGenericEmail(sessionId, data, accountId) {
   validators.hasValidSubscription(accountId).then(function() {
     getSessionParticipant(sessionId, 'facilitator').then(function(sessionMember) {
       if(sessionMember) {
-        let ids = getGenericEmailRecieversAccountUserIds(data.recievers);
+        let ids = getEmailRecieversAccountUserIds(data.recievers);
         AccountUser.findAll({
           where: {
             id: { $in: ids }
@@ -548,6 +603,7 @@ function inviteParams(sessionId, data) {
   }).then(function(clUsers) {
     let emails = [];
     let accountId = clUsers[0].AccountUser.AccountId;
+
     let params = _.map(clUsers, function(clUser) {
       emails.push(clUser.AccountUser.email);
       return {
@@ -555,23 +611,21 @@ function inviteParams(sessionId, data) {
         accountUserId: clUser.accountUserId,
         sessionId: sessionId,
         role: data.role,
+        userId: clUser.userId,
         userType: clUser.AccountUser.UserId ? 'existing' : 'new'
       }
     });
 
-
-    models.AccountUser.findAll({
+    models.User.findAll({
       where: {
         email: { $in: emails },
-        AccountId: { $ne: accountId },
-        UserId: { $ne: null }
       }
     }).then(function(results) {
-        _.each(results, function(accountUser) {
+        _.each(results, function(user) {
           _.each(params, function(inviteParam) {
-            if(inviteParam.email == accountUser.email) {
+            if(inviteParam.email == user.email) {
               inviteParam.userType = 'existing';
-              inviteParam.userId = accountUser.UserId;
+              inviteParam.userId = user.id;
             }
           })
         });
@@ -585,7 +639,6 @@ function inviteParams(sessionId, data) {
 
   return deferred.promise;
 }
-
 
 function findCurrentStep(steps, currentStepName) {
   let output;
@@ -622,12 +675,17 @@ function sessionBuilderObject(session) {
   let deferred = q.defer();
 
   stepsDefinition(session).then(function(result) {
+    let sessionBuilder = {
+      steps: result,
+      currentStep: session.step,
+      status: session.status,
+      id: session.id,
+      startTime: session.startTime,
+      endTime: session.endTime,
+    };
+    sessionValidator.addShowStatus(sessionBuilder);
     deferred.resolve({
-      sessionBuilder: {
-        steps: result,
-        currentStep: session.step,
-        id: session.id
-      }
+      sessionBuilder: sessionBuilder
     });
   }, function(error) {
     deferred.reject(error);
@@ -644,9 +702,8 @@ function stepsDefinition(session) {
     stepName: "setUp",
     name: session.name,
     type: session.type,
-    startTime: moment(session.startTime).tz(session.timeZone).format(),
-    endTime: moment(session.endTime).tz(session.timeZone).format(),
-    timeZoneOffset: moment(session.endTime).tz(session.timeZone).format('ZZ'),
+    startTime: changeTimzone(session.startTime, session.timeZone, "UTC"),
+    endTime: changeTimzone(session.endTime, session.timeZone, "UTC"),
     timeZone: session.timeZone,
     resourceId: session.resourceId,
     anonymous: session.anonymous,
@@ -822,7 +879,7 @@ function canAddObservers(accountId) {
 function validate(session, params) {
   let deferred = q.defer();
 
-  validators.subscription(session.accountId, 'session', 1, { sessionId: session.id }).then(function() {
+  validators.subscription(session.accountId, 'session', 0, { sessionId: session.id }).then(function() {
     return findValidation(session.step, params);
   }).then(function() {
     deferred.resolve();
@@ -1080,6 +1137,29 @@ function validateStepFour(params) {
     }).catch(function(error) {
       deferred.reject(filters.errors(error));
     });
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function sessionMailTemplateExists(sessionId, accountId, templateName) {
+  let deferred = q.defer();
+
+  sessionMailTemplateStatus(sessionId, accountId).then(function(result) {
+    var templateExists = false;
+    for (var i=0; i<result.templates.length; i++) {
+      if (result.templates[i].name == templateName) {
+        templateExists = result.templates[i].created;
+        break;
+      }
+    }
+    if (templateExists) {
+      deferred.resolve()
+    } else {
+      deferred.reject(templateExists + " email template not saved");
+    }
   }, function(error) {
     deferred.reject(error);
   });

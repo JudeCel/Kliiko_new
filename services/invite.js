@@ -34,8 +34,7 @@ function createBulkInvites(arrayParams) {
   let deferred = q.defer();
 
   let expireDate = new Date();
-  // expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
-  expireDate.setMinutes(expireDate.getMinutes() + 30); // tmp changes for test need to be removed and of day
+  expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
   _.map(arrayParams, function(paramObject) {
     paramObject.token = uuid.v1();
     paramObject.sentAt = new Date();
@@ -250,6 +249,7 @@ function sendInvite(invite, deferred) {
       },
       include: [AccountUser]
     }).then(function(sessionMember) {
+
       let facilitator = sessionMember.AccountUser;
       let inviteParams = {
         sessionId: session.id,
@@ -261,9 +261,9 @@ function sendInvite(invite, deferred) {
         accountName: session.Account.name,
         email: invite.AccountUser.email,
         sessionName: session.name,
-        timeZone: session.timeZone,
-        orginalStartTime: moment(session.startTime).tz(session.timeZone).format(),
-        orginalEndTime: moment(session.endTime).tz(session.timeZone).format(),
+        timeZone: moment.tz(session.startTime, session.timeZone).format('zZ'),
+        orginalStartTime: moment.tz(session.startTime, session.timeZone).format(),
+        orginalEndTime: moment.tz(session.endTime, session.timeZone).format(),
         startTime: emailDate.format('time', session.startTime, session.timeZone),
         endTime: emailDate.format('time', session.endTime, session.timeZone),
         startDate: emailDate.format('date', session.startTime, session.timeZone),
@@ -392,16 +392,15 @@ function acceptInviteExisting(token, callback) {
 
           sessionMemberService.createWithTokenAndColour(params).then(function() {
             shouldUpdateRole(accountUser, invite.role).then(function() {
-              callback(null, invite, MessagesUtil.invite.confirmed);
+              callback(null, invite, MessagesUtil.invite.confirmed, invite.AccountUser.email);
             }, function(error) {
               callback(filters.errors(error));
             });
           }, function(error) {
             callback(filters.errors(error));
           });
-        }
-        else {
-          callback(null, invite, MessagesUtil.invite.confirmed);
+        } else {
+          callback(null, invite, MessagesUtil.invite.confirmed, invite.AccountUser.email);
         }
       }).catch(function(error) {
         callback(filters.errors(error));
@@ -427,16 +426,14 @@ function acceptInviteNew(token, params, callback) {
   findInvite(token, function(error, invite) {
     if(error) {
       return callback(error);
-    }
-    else if(invite.userType == 'existing') {
+    } else if(invite.userType == 'existing') {
       return callback(true);
     }
 
     updateUser({ password: params.password }, invite, function(error, user) {
-      if(error) {
+      if (error) {
         callback(error, invite);
-      }
-      else {
+      } else {
         invite.update({ status: 'confirmed' }).then(function() {
           callback(null, invite, user, MessagesUtil.invite.confirmed);
         }).catch(function(error) {
@@ -689,8 +686,9 @@ function prepareMailParams(invite, session, receiver, facilitator) {
     unsubscribeMailUrl: 'not-found',
     startTime: emailDate.format('time', session.startTime, session.timeZone),
     startDate: emailDate.format('date', session.startTime, session.timeZone),
-    orginalStartTime: session.startTime,
-    orginalEndTime: session.endTime,
+    timeZone: moment.tz(session.startTime, session.timeZone).format('zZ'),
+    orginalStartTime: moment(session.startTime).tz(session.timeZone).format(),
+    orginalEndTime: moment(session.endTime).tz(session.timeZone).format() ,
     logInUrl: mailUrlHelper.getUrl(invite.token, null, '/invite/') + '/accept/',
     confirmationCheckInUrl: mailUrlHelper.getUrl(invite.token, null, '/invite/') + '/accept/',
     participantMail: receiver.email,
