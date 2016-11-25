@@ -2,10 +2,10 @@ angular.module('KliikoApp').directive('altMaxlength', function() {
   return {
     require: 'ngModel',
     link: function (scope, element, attrs, ngModelCtrl) {
-      var maxlength = Number(attrs.altMaxlength);
       function fromUser(text) {
         var selectionEnd = element.context.selectionEnd;
-        var prevValue = ngModelCtrl.$modelValue;
+        var prevValue = ngModelCtrl.$modelValue || "";
+        var maxlength = Number(attrs.altMaxlength);
         if (text.length > maxlength && text.length > prevValue.length) {
           ngModelCtrl.$setViewValue(prevValue);
           ngModelCtrl.$render();
