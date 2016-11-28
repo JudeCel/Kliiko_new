@@ -10,6 +10,8 @@ var MessagesUtil = require('./../util/messages');
 var q = require('q');
 var _ = require('lodash');
 var uuid = require('node-uuid');
+var Bluebird = require('bluebird');
+var async = require('async');
 
 module.exports = {
   createToken: createToken,
@@ -17,7 +19,9 @@ module.exports = {
   removeByRole: removeByRole,
   createWithTokenAndColour: createWithTokenAndColour,
   messages: MessagesUtil.sessionMember,
-  processSessionMember: processSessionMember
+  processSessionMember: processSessionMember,
+  refreshAccountUsersRole: refreshAccountUsersRole,
+  findAllMembersIds: findAllMembersIds
 };
 
 function createWithTokenAndColour(params) {
@@ -116,7 +120,7 @@ function createToken(id) {
 function removeByIds(ids, sessionId, accountId) {
   let deferred = q.defer();
 
-  SessionMember.destroy({
+  let where = {
     where: {
       sessionId: sessionId,
       id: { $in: ids }
@@ -127,8 +131,17 @@ function removeByIds(ids, sessionId, accountId) {
         accountId: accountId
       }
     }]
-  }).then(function(removedCount) {
-    deferred.resolve(removedCount);
+  };
+
+  SessionMember.findAll(where).then(function(sessionMembers) {
+    let accountUserIds = _.map(sessionMembers, 'accountUserId');
+    SessionMember.destroy(where).then(function(removedCount) {
+      refreshAccountUsersRole(accountUserIds).then(function() {
+        deferred.resolve(removedCount);
+      });
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
+    });
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -162,12 +175,14 @@ function removeByRole(role, sessionId, accountId) {
     });
 
     let ids = _.map(members, 'id');
+    let accountUserIds = _.map(members, 'accountUserId');
     SessionMember.destroy({ where: { id: ids } }).then(function(removedCount) {
       _.map(managers, function(sessionMember) {
         sessionMember.update({ role: 'observer' });
       });
-
-      deferred.resolve(removedCount);
+      refreshAccountUsersRole(accountUserIds).then(function() {
+        deferred.resolve(removedCount);
+      });
     });
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
@@ -175,3 +190,68 @@ function removeByRole(role, sessionId, accountId) {
 
   return deferred.promise;
 };
+
+function findAllMembersIds(sessionId) {
+  return new Bluebird(function (resolve, reject) {
+    SessionMember.findAll({
+      where: {
+        sessionId: sessionId
+      }
+    }).then(function(sessionMembers) {
+      let ids = _.map(sessionMembers, 'accountUserId');
+      resolve(ids);
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
+function refreshAccountUsersRole(ids) {
+  return new Bluebird(function (resolve, reject) {
+    AccountUser.findAll({
+      where: {
+        id: { $in: ids },
+        role: { $in: ["facilitator", "participant", "observer"] }
+      },
+      include: [{
+        model: SessionMember
+      }]
+    }).then(function(accountUsers) {
+      refreshAccountUsersRoleAsync(accountUsers, resolve, reject);
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
+function refreshAccountUsersRoleAsync(accountUsers, resolve, reject) {
+  async.each(accountUsers, function(accountUser, callback) {
+
+    let role = "observer";
+    for (let i=0; i<accountUser.SessionMembers.length; i++) {
+      let sessionMember = accountUser.SessionMembers[i];
+      if (sessionMember.role == "participant" && role == "observer") {
+        role = "participant";
+      } else if (sessionMember.role == "facilitator") {
+        role = "facilitator";
+        break;
+      } 
+    }
+    if (role != accountUser.role) {
+      accountUser.updateAttributes({role: role}).then(function() {
+        callback(null);
+      }).catch(function(error) {
+        callback(error);
+      });
+    } else {
+      callback(null);
+    }
+
+  }, function(error) {
+    if (error) {
+      reject(error);
+    } else {
+      resolve();
+    }
+  });
+}

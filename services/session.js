@@ -241,9 +241,15 @@ function removeSession(sessionId, accountId, provider) {
   let deferred = q.defer();
 
     findSession(sessionId, accountId, provider).then(function(result) {
-      result.data.destroy().then(function() {
-        deferred.resolve(simpleParams(null, MessagesUtil.session.removed));
-      }).catch(function(error) {
+      sessionMemberServices.findAllMembersIds(sessionId).then(function(ids) {
+        result.data.destroy().then(function() {
+          sessionMemberServices.refreshAccountUsersRole(ids).then(function() {
+            deferred.resolve(simpleParams(null, MessagesUtil.session.removed));
+          });
+        }).catch(function(error) {
+          deferred.reject(filters.errors(error));
+        });
+      }, function(error) {
         deferred.reject(filters.errors(error));
       });
     }, function(error) {
