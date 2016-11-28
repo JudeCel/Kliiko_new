@@ -115,7 +115,9 @@ function prepareAccountUsers(accountUsers, protocol) {
   };
 
   _.map(accountUsers, function(accountUser) {
-    userSwitch(object, accountUser, protocol);
+    if (_.includes(['admin', 'accountManager'], accountUser.role)) {
+      userSwitch(object, accountUser, protocol);
+    }
 
     _.map(accountUser.SessionMembers, function(sessionMember) {
       let user = _.cloneDeep(accountUser);
