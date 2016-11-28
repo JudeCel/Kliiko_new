@@ -711,10 +711,10 @@ function formatTemplateString(str) {
   str = str.replace(/\{Facilitator Email\}/ig, "<%= facilitatorMail %>");
   str = str.replace(/\{Guest Email\}/ig, "<%= participantMail %>");
   str = str.replace(/\{Participant Email\}/ig, "<%= participantMail %>");
-  str = str.replace(/\{Guest First Name\}/ig, "<%= participantFirstName %>");
-  str = str.replace(/\{Participant First Name\}/ig, "<%= participantFirstName %>");
-  str = str.replace(/\{Guest Last Name\}/ig, "<%= participantLastName %>");
-  str = str.replace(/\{Participant Last Name\}/ig, "<%= participantFirstName %>");
+  str = str.replace(/\{Guest First Name\}/ig, "<%= firstName %>");
+  str = str.replace(/\{Participant First Name\}/ig, "<%= firstName %>");
+  str = str.replace(/\{Guest Last Name\}/ig, "<%= lastName %>");
+  str = str.replace(/\{Participant Last Name\}/ig, "<%= lastName %>");
   str = str.replace(/\{Host Mobile\}/ig, "<%= facilitatorMobileNumber %>");
   str = str.replace(/\{Facilitator Mobile\}/ig, "<%= facilitatorMobileNumber %>");
   str = str.replace(/\{Session Name\}/ig, "<%= sessionName %>");
@@ -780,7 +780,7 @@ function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
         mailPreviewVariables.endDate = emailDate.format("date", new Date(result.endTime), result.timeZone);
         mailPreviewVariables.endTime = emailDate.format("time", new Date(result.endTime), result.timeZone);
         mailPreviewVariables.sessionName = result.name;
-        mailPreviewVariables.timeZone = momentTimeZone.tz(startTime, result.timeZone).format('zZ');
+        mailPreviewVariables.timeZone = emailDate.format("timeZone", startTime, result.timeZone);
         mailPreviewVariables.incentive = result.incentive_details;
         if (result.SessionMembers[0]) {
           mailPreviewVariables.facilitatorFirstName = result.SessionMembers[0].AccountUser.firstName;
