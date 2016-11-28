@@ -190,7 +190,7 @@ function setEmailConfirmationToken(email, callback) {
     confirmationToken: token,
     confirmationSentAt: new Date()
   }, {
-    where: {email: email}
+    where: {email: { ilike: email }}
   })
   .then(function (result) {
     if (result[0] > 0) {
@@ -279,7 +279,7 @@ function setResetToken(email, callback) {
 
   var token = uuid.v1();
   User.find({
-    where: {email: email},
+    where: {email: { ilike: email }},
     include: {model: AccountUser, attributes: ['firstName']}
   }).done(function (foundUser) {
     if (!foundUser) {
@@ -290,7 +290,7 @@ function setResetToken(email, callback) {
       resetPasswordToken: token,
       resetPasswordSentAt: new Date()
     }, {
-      where: {email: email}
+      where: {email: { ilike: email }}
     })
     .then(function (result) {
       if (result[0] > 0) {

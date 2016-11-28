@@ -1,13 +1,13 @@
 <section id='step-4-participants' class='col-xs-12' ng-controller="SessionStep4-5Controller as lastStepsController" ng-init="lastStepsController.initStep(sbc.participants, sbc.observers)">
   <div class='row'>
     <div class='text-center'>
-      <div id='sessionBuilderParticipant' class='btn-standart btn-red increased-margin' ng-click='sbc.selectParticipantsClickHandle()' ng-show="lastStepsController.isParticipantPage() && sbc.canInvite()">
-        <span ng-if='lastStepsController.stepMembers.length == 0'>Invite Participants From Contact List</span>
-        <span ng-if='lastStepsController.stepMembers.length > 0'>Invite More Participants From Contacts List</span>
+      <div id='sessionBuilderParticipant' class='btn-standart btn-red increased-margin' ng-click='sbc.selectParticipantsClickHandle()' ng-show="lastStepsController.isParticipantPage()">
+        <span ng-if='lastStepsController.stepMembers.length == 0'>Invite Guests From Contact List</span>
+        <span ng-if='lastStepsController.stepMembers.length > 0'>Invite More Guests From Contacts List</span>
       </div>
-      <div id='sessionBuilderObserver' class='btn-standart btn-red increased-margin' ng-click='sbc.selectObserversClickHandle()' ng-show="!lastStepsController.isParticipantPage() && sbc.canInvite()">
-        <span ng-if='lastStepsController.stepMembers.length == 0'>Invite Observers From Contact List</span>
-        <span ng-if='lastStepsController.stepMembers.length > 0'>Invite More Observers From Contacts List</span>
+      <div id='sessionBuilderObserver' class='btn-standart btn-red increased-margin' ng-click='sbc.selectObserversClickHandle()' ng-show="!lastStepsController.isParticipantPage()">
+        <span ng-if='lastStepsController.stepMembers.length == 0'>Invite Spectators From Contact List</span>
+        <span ng-if='lastStepsController.stepMembers.length > 0'>Invite More Spectators From Contacts List</span>
       </div>
     </div>
   </div>

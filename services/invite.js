@@ -61,6 +61,7 @@ function createBulkInvites(arrayParams) {
         }, Account, User]
       }).then(function(invites) {
         async.each(invites, function(invite, callback) {
+          invite.accountName = arrayParams.accountName;
           if (invite.AccountUser.ContactListUsers.length) {
             getQueue.enqueue("invites", "invite", [invite.id] );
             callback();
@@ -116,7 +117,7 @@ function createFacilitatorInvite(params) {
             createInvite(facilitatorInviteParams(accountUser, params.sessionId)).then(function() {
               deferred.resolve();
             }, function(error) {
-              deferred.reject(filters.errors("Invite as Facilitator for " + accountUser.firstName + " " + accountUser.lastName + " were not sent."));
+              deferred.reject(filters.errors("Invite as Host for " + accountUser.firstName + " " + accountUser.lastName + " were not sent."));
             });
           }, function(error) {
             deferred.reject(filters.errors(error));
@@ -683,6 +684,7 @@ function prepareMailParams(invite, session, receiver, facilitator) {
     unsubscribeMailUrl: 'not-found',
     startTime: emailDate.format('time', session.startTime, session.timeZone),
     startDate: emailDate.format('date', session.startTime, session.timeZone),
+    timeZone: emailDate.format("timeZone", session.startTime, session.timeZone),
     orginalStartTime: moment(session.startTime).tz(session.timeZone).format(),
     orginalEndTime: moment(session.endTime).tz(session.timeZone).format() ,
     logInUrl: mailUrlHelper.getUrl(invite.token, null, '/invite/') + '/accept/',

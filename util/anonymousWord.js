@@ -2,25 +2,29 @@
 var csv = require('fast-csv');
 var pathToFile = './util/files/V1-AnonymousCodeWords.csv'
 let Bluebird = require('bluebird');
-var _ = require('lodash')
+var _ = require('lodash');
 var wordsList = [];
-var fileIsALoaded = false;
 
 const parseFile = () => {
   return new Bluebird((resolve, reject) =>  {
-    if (fileIsALoaded) {
-      resolve(wordsList);
+    if (_.isEmpty(wordsList)) {
+      try {
+        csv.fromPath(pathToFile, {
+          headers: true
+        }).on('data', function(data) {
+          wordsList.push(data.comet)
+        }).on('error', function(error) {
+          reject(error);
+        }).on('end', function() {
+          wordsList = _.uniq(wordsList);
+          resolve(wordsList);
+        });
+      } catch (e) {
+        wordsList = [];
+        reject(e);
+      }
     }else{
-      csv.fromPath(pathToFile, {
-        headers: true
-      }).on('data', function(data) {
-        wordsList.push(data.comet)
-      }).on('error', function(error) {
-        reject(error);
-      }).on('end', function() {
-        fileIsALoaded = true;
-        resolve(_.uniq(wordsList));
-      });
+      resolve(wordsList);
     }
   })
 }
@@ -58,5 +62,6 @@ function findCustomWordInLists(listFromFile, usedNamesList) {
 
 module.exports = {
   parseFile: parseFile,
-  getWord: getWord
+  getWord: getWord,
+  wordsList: wordsList
 }

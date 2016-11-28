@@ -5,8 +5,12 @@ describe('Anonymous Words', () => {
   describe('#parseFile', () => {
     it('get all names 232', (done) =>  {
       anonymousWord.parseFile().then((result) => {
-        assert.equal(result.length, 232);
-        done();
+        try {
+          assert.equal(result.length, 232);
+          done();
+        } catch (e) {
+          done(e);
+        }
       }, function(error) {
         done(error);
       })

@@ -2,7 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-  <title>Sytem Email Template - Observer Invitation</title>
+  <title>Sytem Email Template - Spectator Invitation</title>
+  <style>
+    .timeInfoPanel { background-color: #fbfbfb; border: 2px solid #d1d1d1; text-align: center; padding: 20px; border-top: none;}
+    .timeInfoPanelTitle { background-color: #a6a6a6; color: #ffffff; text-align: center; height: 50px; font-size: 16px; line-height: 50px;}
+  </style>
 </head>
 
 <body style="background-color:#efefef;">
@@ -79,13 +83,19 @@
                         <td style="font-family:Helvetica,arial,sans-serif;color:#58595B;">
                           <p>Dear {First Name} {Last Name},</p>
                           <br />
-                          <p>You are now confirmed as <b>Observer</b> for the  {Session Name} <b>Session</b> on <b>klzii</b>.</p>
-                          <p> From {Start Time} {Start Date} to {End Time} {End Date}.</p>
-                          <div style="background-color: #F4F4F4; border: 1px solid #D9D9D9; border-radius: 2px; display: inherit; line-height: normal;">
-                            <a href="{Calendar}" style="color: #333333 !important; text-decoration:none; font-size: 14px; padding: 10px; display: block;">
-                              <img src="/images/mail/calendar.png" alt="calendar" border="0" width="18" height="15" style="border:0; outline:0; text-decoration:none; margin-bottom: -1px; padding: 0px !important;" />
-                              <b>Add to Calendar</b>
-                            </a>
+                          <p>You are now confirmed as <b>Spectator</b> for the  {Session Name} <b>Session</b> on <b>klzii</b>.</p>
+                          <div class="timeInfoPanelTitle">Time of the Session</div>
+                          <div class="timeInfoPanel">
+                            <p> Open from {Start Time} {Start Date} to {End Time} {End Date}.</p>
+                            <p>
+                              Time Zone: {Time Zone}
+                            </p>
+                            <div style="background-color: #F4F4F4; border: 1px solid #D9D9D9; border-radius: 2px; display: inherit; line-height: normal;">
+                              <a href="{Calendar}" style="color: #333333 !important; text-decoration:none; font-size: 14px; padding: 10px; display: block;">
+                                <img src="/images/mail/calendar.png" alt="calendar" border="0" width="18" height="15" style="border:0; outline:0; text-decoration:none; margin-bottom: -1px; padding: 0px !important;" />
+                                <b>Add to Calendar</b>
+                              </a>
+                            </div>
                           </div>
                           <br/>
                         </td>
@@ -110,13 +120,13 @@
                       <tr>
                         <td align="left" style="font-family:Helvetica,arial,sans-serif;color:#58595B;">
                           <br>
-                          <p>Please note that during the Session you can view the conversation, but not interact with the Participants.</p>
-                          <p>They will not know that you personally are viewing, only that there may be Observers.</p>
-                          <p>For Privacy T&C requirements, you will not be able to identify the Participants, other than by
+                          <p>Please note that during the Session you can view the conversation, but not interact with the Guests.</p>
+                          <p>They will not know that you personally are viewing, only that there may be Spectators.</p>
+                          <p>For Privacy T&C requirements, you will not be able to identify the Guests, other than by
                             first name.</p>
-                          <p>For any follow-up questions or feedback, please contact the <b>Session-Facilitator</b> {Facilitator
-                            First Name} {Facilitator Last Name}</p>
-                          <p>insider user - at {Facilitator Email} {Facilitator Mobile}
+                          <p>For any follow-up questions or feedback, please contact the <b>Session-Host</b> {Host
+                            First Name} {Host Last Name}</p>
+                          <p>insider user - at {Host Email} {Host Mobile}
                         </td>
                       </tr>
 

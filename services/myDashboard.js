@@ -109,13 +109,15 @@ function prepareAsync(data, provider) {
 function prepareAccountUsers(accountUsers, protocol) {
   let object = {
     accountManager: { name: 'Account Managers', field: 'accountManager', data: [] },
-    facilitator: { name: 'Facilitators', field: 'facilitator', data: [] },
-    participant: { name: 'Participants', field: 'participant', data: [] },
-    observer: { name: 'Observers', field: 'observer', data: [] }
+    facilitator: { name: 'Hosts', field: 'facilitator', data: [] },
+    participant: { name: 'Guests', field: 'participant', data: [] },
+    observer: { name: 'Spectators', field: 'observer', data: [] }
   };
 
   _.map(accountUsers, function(accountUser) {
-    userSwitch(object, accountUser, protocol);
+    if (_.includes(['admin', 'accountManager'], accountUser.role)) {
+      userSwitch(object, accountUser, protocol);
+    }
 
     _.map(accountUser.SessionMembers, function(sessionMember) {
       let user = _.cloneDeep(accountUser);

@@ -67,7 +67,6 @@
       question[otherIndex] = otherObj;
     }
 
-    initConstants();
     changePage('index');
 
     function showPreview() {
@@ -94,6 +93,7 @@
     };
 
     function init() {
+      initConstants();
       surveyServices.getAllSurveys().then(function(res) {
         vm.surveys = res.data;
         vm.dateFormat = res.dateFormat;

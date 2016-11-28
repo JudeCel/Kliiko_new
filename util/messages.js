@@ -107,7 +107,7 @@ module.exports = {
     sessionClosed: "You can't send invites because session has been closed",
 
     errors: {
-      cantAddObservers: "Please Update your subscription plan, to invite Observers to your session.",
+      cantAddObservers: "Please Update your subscription plan, to invite Spectators to your session.",
       cantSendCloseMails: "Were not able to send emails to inform all participants, that session was closed.",
       firstStep: {
         nameRequired: 'Name must be provided',
@@ -116,7 +116,7 @@ module.exports = {
         endTimeRequired: 'End time must be provided',
         invalidDateRange: "Start date can't be higher then end date",
         invalidEndTime: "End time can't be equal to start time",
-        facilitator: 'No facilitator provided'
+        facilitator: 'No host provided'
       },
       secondStep: {
         topics: 'No topics selected'
@@ -125,10 +125,10 @@ module.exports = {
         emailTemplates: "You need to copy each of the required e-mail template."
       },
       fourthStep: {
-        participants: 'No participants invited'
+        participants: 'No guests invited'
       },
       fifthStep: {
-        observers: 'No observers invited'
+        observers: 'No specators invited'
       }
     }
   },
@@ -290,7 +290,7 @@ module.exports = {
       updateContactDetails: 'Contact details updated successfully.'
     },
     sessionMember: {
-      addFacilitator: 'Facilitator was successfully set'
+      addFacilitator: 'Host was successfully set'
     },
     contactList: {
       created: 'Successfully created contact list',
@@ -299,7 +299,7 @@ module.exports = {
     },
     contactListUser: {
       newUser: 'New contact was added sucessfully',
-      newFacilitator: 'New facilitator was added sucessfully',
+      newFacilitator: 'New host was added sucessfully',
       updated: 'Contact has been updated sucessfully',
       imported: 'Contacts has been imported sucessfully'
     },

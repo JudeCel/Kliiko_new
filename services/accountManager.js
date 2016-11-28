@@ -37,7 +37,7 @@ function createOrFindAccountManager(user, body, accountId) {
       return preValidate(user, accountId, params.email, errors);
     }).then(function(errors) {
       if(_.isEmpty(errors)) {
-        return User.find({ where: { email: params.email } });
+        return User.find({ where: { email: { ilike: params.email } } });
       }
       else {
         throw errors;
@@ -148,7 +148,7 @@ function preValidate(user, accountId, email, errors) {
     deferred.resolve(errors);
   } else if (email) {
     AccountUser.findAll({
-      where: { AccountId: accountId, role: "accountManager", email: email }
+      where: { AccountId: accountId, role: "accountManager", email: { ilike: email }  }
     }).then(function(accountUsers) {
       if(!_.isEmpty(accountUsers)) {
         errors.email = MessagesUtil.accountManager.error.alreadyInvited;

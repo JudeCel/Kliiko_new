@@ -14,6 +14,7 @@ var _ = require('lodash');
 var ejs = require('ejs');
 var q = require('q');
 var constants = require('../util/constants');
+var momentTimeZone = require('moment-timezone');
 
 module.exports = {
   validate: validate,
@@ -402,22 +403,22 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
 function variablesForTemplate(type) {
   switch (type) {
     case "firstInvitation":
-      return ["{First Name}", "{Session Name}", "{Start Time}", "{End Time}", "{Start Date}", "{End Date}", "{Incentive}", "{Accept Invitation}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Invitation Not This Time}", "{Invitation Not At All}"];
+      return ["{First Name}", "{Session Name}", "{Start Time}", "{End Time}", "{Start Date}", "{End Date}", "{Incentive}", "{Accept Invitation}", "{Host First Name}", "{Host Last Name}", "{Host Email}", "{Invitation Not This Time}", "{Invitation Not At All}"];
       break;
     case "closeSession":
-      return ["{First Name}", "{Incentive}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Close Session Yes In Future}", "{Close Session No In Future}"];
+      return ["{First Name}", "{Incentive}", "{Host First Name}", "{Host Last Name}", "{Host Email}", "{Close Session Yes In Future}", "{Close Session No In Future}"];
       break;
     case "confirmation":
-      return ["{Incentive}", "{First Name}", "{Start Time}", "{Start Date}", "{Confirmation Check In}", "{Participant Email}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
+      return ["{Incentive}", "{First Name}", "{Start Time}", "{Start Date}", "{Confirmation Check In}", "{Guest Email}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
       break;
     case "generic":
-      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
+      return ["{First Name}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
       break;
     case "notAtAll":
-      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
+      return ["{First Name}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
       break;
     case "notThisTime":
-      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
+      return ["{First Name}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
       break;
     case "accountManagerConfirmation":
       return ["{First Name}", "{Login}", "{Last Name}"];
@@ -702,12 +703,19 @@ function formatTemplateString(str) {
   str = str.replace(/\{Start Time\}/ig, "<%= startTime %>");
   str = str.replace(/\{End Date\}/ig, "<%= endDate %>");
   str = str.replace(/\{End Time\}/ig, "<%= endTime %>");
+  str = str.replace(/\{Host First Name\}/ig, "<%= facilitatorFirstName %>");
   str = str.replace(/\{Facilitator First Name\}/ig, "<%= facilitatorFirstName %>");
+  str = str.replace(/\{Host Last Name\}/ig, "<%= facilitatorLastName %>");
   str = str.replace(/\{Facilitator Last Name\}/ig, "<%= facilitatorLastName %>");
+  str = str.replace(/\{Host Email\}/ig, "<%= facilitatorMail %>");
   str = str.replace(/\{Facilitator Email\}/ig, "<%= facilitatorMail %>");
+  str = str.replace(/\{Guest Email\}/ig, "<%= participantMail %>");
   str = str.replace(/\{Participant Email\}/ig, "<%= participantMail %>");
-  str = str.replace(/\{Participant First Name\}/ig, "<%= participantFirstName %>");
-  str = str.replace(/\{Participant Last Name\}/ig, "<%= participantLastName %>");
+  str = str.replace(/\{Guest First Name\}/ig, "<%= firstName %>");
+  str = str.replace(/\{Participant First Name\}/ig, "<%= firstName %>");
+  str = str.replace(/\{Guest Last Name\}/ig, "<%= lastName %>");
+  str = str.replace(/\{Participant Last Name\}/ig, "<%= lastName %>");
+  str = str.replace(/\{Host Mobile\}/ig, "<%= facilitatorMobileNumber %>");
   str = str.replace(/\{Facilitator Mobile\}/ig, "<%= facilitatorMobileNumber %>");
   str = str.replace(/\{Session Name\}/ig, "<%= sessionName %>");
   str = str.replace(/\{Incentive\}/ig, "<%= incentive %>");
@@ -722,6 +730,7 @@ function formatTemplateString(str) {
   str = str.replace(/\{Close Session No In Future\}/ig, "<%= dontParticipateInFutureUrl %>");
   str = str.replace(/\{Confirmation Check In\}/ig, "<%= confirmationCheckInUrl %>");
   str = str.replace(/\{Login\}/ig, "<%= logInUrl %>");
+  str = str.replace(/\{Time Zone\}/ig, "<%= timeZone %>");
   str = str.replace(/\{Reset Password URL\}/ig, "<%= resetPasswordUrl %>");
   return str;
 }
@@ -750,7 +759,8 @@ function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
     dontParticipateInFutureUrl: "#/dontParticipateInFutureUrl",
     confirmationCheckInUrl: "#/confirmationCheckInUrl",
     logInUrl: "#/LogInUrl",
-    resetPasswordUrl: "#/resetPasswordUrl"
+    resetPasswordUrl: "#/resetPasswordUrl",
+    timeZone: ""
   };
   if (sessionId) {
     Session.find({
@@ -764,11 +774,13 @@ function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
         }]
        }).then(function (result) {
       if (result) {
-        mailPreviewVariables.startDate = emailDate.format("date", new Date(result.startTime), result.timeZone);
+        let startTime = new Date(result.startTime);
+        mailPreviewVariables.startDate = emailDate.format("date", startTime, result.timeZone);
         mailPreviewVariables.startTime = emailDate.format("time", new Date(result.startTime), result.timeZone);
         mailPreviewVariables.endDate = emailDate.format("date", new Date(result.endTime), result.timeZone);
         mailPreviewVariables.endTime = emailDate.format("time", new Date(result.endTime), result.timeZone);
         mailPreviewVariables.sessionName = result.name;
+        mailPreviewVariables.timeZone = emailDate.format("timeZone", startTime, result.timeZone);
         mailPreviewVariables.incentive = result.incentive_details;
         if (result.SessionMembers[0]) {
           mailPreviewVariables.facilitatorFirstName = result.SessionMembers[0].AccountUser.firstName;

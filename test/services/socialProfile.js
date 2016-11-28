@@ -25,12 +25,6 @@ describe('SERVICE - SocialProfile', function() {
       });
     });
 
-    afterEach(function(done) {
-      models.sequelize.sync({ force: true }).done(function(error, result) {
-        done();
-      });
-    });
-
     describe('happy path', function() {
       it('should succeed', function(done) {
         userServices.create(validAttrs, function(error, user) {

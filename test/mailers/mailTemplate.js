@@ -6,6 +6,7 @@ var mailFixture = require('./../fixtures/mailTemplates');
 var userFixture = require('./../fixtures/user');
 var constants = require('../../util/constants');
 var mailTemplateService = require('./../../services/mailTemplate');
+var momentTimeZone = require('moment-timezone');
 
 let accountId;
 let params = {
@@ -45,6 +46,7 @@ let params = {
   notThisTimeButton: '#4CBFE9',
   participantFirstName: 'Name',
   participantLastName: 'Last',
+  timeZone: momentTimeZone.tz.names()[0]
 };
 
 describe('send MailTemplates',  () => {
@@ -102,7 +104,7 @@ describe('send MailTemplates',  () => {
 
   describe('#Send mail templates', function() {
 
-    it('Send session slose mail', (done) =>  {
+    it('Send session close mail', (done) =>  {
       mailHelper.sendSessionClose(params, function(error){
         assert.isNull(error);
         done();

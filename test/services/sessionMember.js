@@ -2,6 +2,7 @@
 
 var models = require('./../../models');
 var SessionMember = models.SessionMember;
+var AccountUser = models.AccountUser;
 
 var sessionFixture = require('./../fixtures/session');
 var sessionMemberServices = require('./../../services/sessionMember');
@@ -80,6 +81,30 @@ describe('SERVICE - SessionMember', function() {
           });
         });
       });
+
+      it('should reset accountUser role on removing session member by ids', function (done) {
+        SessionMember.findAll().then(function(members) {
+          assert.equal(members.length, 4);
+          assert.equal(members[1].role, 'participant');
+          let accountUserId = members[1].accountUserId;
+          let id = members[1].id;
+
+          AccountUser.find({ where: { id: accountUserId} }).then(function(accountUser) {
+            assert.equal(accountUser.role, 'participant');
+
+            sessionMemberServices.removeByIds([id], testData.session.id, testData.account.id).then(function(removed) {
+              assert.equal(removed, 1);
+
+              AccountUser.find({ where: { id: accountUserId} }).then(function(accountUserRes) {
+                assert.equal(accountUserRes.role, 'observer');
+                done();
+              });
+            }, function(error) {
+              done(error);
+            });
+          });
+        });
+      });
     });
 
     describe('sad path', function() {
@@ -120,18 +145,52 @@ describe('SERVICE - SessionMember', function() {
           });
         });
       });
+
+      it('should reset accountUser role on removing session member by role', function (done) {
+        SessionMember.findAll().then(function(members) {
+          assert.equal(members.length, 4);
+          assert.equal(members[1].role, 'participant');
+          let accountUserId = members[1].accountUserId;
+
+          AccountUser.find({ where: { id: accountUserId} }).then(function(accountUser) {
+            assert.equal(accountUser.role, 'participant');
+
+            sessionMemberServices.removeByRole('participant', testData.session.id, testData.account.id).then(function(removed) {
+              assert.equal(removed, 2);
+
+              AccountUser.find({ where: { id: accountUserId} }).then(function(accountUserRes) {
+                assert.equal(accountUserRes.role, 'observer');
+                done();
+              });
+            }, function(error) {
+              done(error);
+            });
+          });
+        });
+      });
     });
 
     describe('sad path', function() {
       it('should fail on removing session member because none with that role', function (done) {
         SessionMember.count().then(function(c) {
-          assert.equal(c, 4);
-
+          try {
+            assert.equal(c, 4);
+          } catch (e) {
+            done(e)
+          }
           sessionMemberServices.removeByRole('observer', testData.session.id, testData.account.id).then(function(removed) {
-            assert.equal(removed, 1);
-
-            SessionMember.count().then(function(c) {
-              done();
+            try {
+              assert.equal(removed, 1);
+            } catch (e) {
+              done(e)
+            }
+            SessionMember.count().then(function() {
+              try {
+                assert.equal(removed, 1);
+                done();
+              } catch (e) {
+                done(e)
+              }
             });
           }, function(error) {
             done(error);

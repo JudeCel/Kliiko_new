@@ -8,6 +8,8 @@
     .notThisTimeButton { background-color:<%= notThisTimeButton %> }
     .notAtAllButton { background-color:<%= notAtAllButton %> }
     .mainBorder { border:2px solid <%= mainBorder %> }
+    .timeInfoPanel { background-color: #fbfbfb; border: 2px solid #d1d1d1; text-align: center; padding: 20px; border-top: none;}
+    .timeInfoPanelTitle { background-color: #a6a6a6; color: #ffffff; text-align: center; height: 50px; font-size: 16px; line-height: 50px;}
   </style>
   <title>First Invitation - Invitation Email Template</title>
 </head>
@@ -107,14 +109,21 @@
                               ======================
                             </span>
                             <br />
-                            <b>Open from {Start Time} to {End Time} on {Start Date}</b>
-                            <br />
-                            <b>Open from {Start Time} on {Start Date} to {End Time} on {End Date}</b>
-                            <div style="background-color: #F4F4F4; border: 1px solid #D9D9D9; border-radius: 2px; display: inherit; line-height: normal;">
-                              <a href="{Calendar}" style="color: #333333 !important; text-decoration:none; font-size: 14px; padding: 10px; display: block;">
-                                <img src="/images/mail/calendar.png" alt="calendar" border="0" width="18" height="15" style="border:0; outline:0; text-decoration:none; margin-bottom: -1px; padding: 0px !important;" />
-                                <b>Add to Calendar</b>
-                              </a>
+
+                            <div class="timeInfoPanelTitle">Time of the Session</div>
+                            <div class="timeInfoPanel">
+                              Open from {Start Time} to {End Time} on {Start Date}</b>
+                              <br />
+                              Open from {Start Time} on {Start Date} to {End Time} on {End Date}
+                              <p>
+                                Time Zone: {Time Zone}
+                              </p>
+                              <div style="background-color: #F4F4F4; border: 1px solid #D9D9D9; border-radius: 2px; display: inline-block; line-height: normal; margin-top: 10px;">
+                                <a href="{Calendar}" style="color: #333333 !important; text-decoration:none; font-size: 14px; padding: 10px; display: block;">
+                                  <img src="/images/mail/calendar.png" alt="calendar" border="0" width="18" height="15" style="border:0; outline:0; text-decoration:none; margin-bottom: -1px; padding: 0px !important;" />
+                                  <b>Add to Calendar</b>
+                                </a>
+                              </div>
                             </div>
                             <br /> It'll be easy and fun, taking about 15 minutes to complete activities, chatting with a small
                             group, and seeing everyone's opinions. All on your smartphone, tablet or computer. And there's
@@ -127,16 +136,16 @@
                             <br />
                             <br /> Many thanks,
                             <br />
-                            <i>{Facilitator First Name} {Facilitator Last Name}<br /></i> Facilitator
+                            <i>{Host First Name} {Host Last Name}<br /></i> Host
                             <br />
-                            <b>Email:</b> {Facilitator Email}
+                            <b>Email:</b> {Host Email}
                             <br />
                             <span style="color:red;">
                               ===================<br />
                               Optional-Delete if you don't want to share your mobile<br />
                               ===================<br />
                             </span>
-                            <b>Mobile:</b> {Facilitator Mobile}
+                            <b>Mobile:</b> {Host Mobile}
                           </p>
                         </td>
                       </tr>

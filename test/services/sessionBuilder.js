@@ -848,29 +848,6 @@ describe('SERVICE - SessionBuilder', function() {
             done(error);
           });
       });
-
-      it('should set wasClosed', function(done) {
-          sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-            models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
-              mailFixture.createMailTemplate().then(function() {
-                let params = sessionParams(result);
-                params.status = "closed";
-                sessionBuilderServices.update(params.id, params.accountId, params).then(function(closeResult) {
-                  sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
-                    assert.equal(session.wasClosed, true);
-                    done();
-                  }, function(error) {
-                    done(error);
-                  });
-                }, function(error) {
-                  done(error);
-                });
-              });
-            });
-          }, function(error) {
-            done(error);
-          });
-      });
     });
   });
 

@@ -14,20 +14,16 @@ describe('SERVICE - BrandColour', function() {
   var testData = {};
 
   beforeEach(function(done) {
-    sessionFixture.createChat().then(function(result) {
-      testData.user = result.user;
-      testData.account = result.account;
-      testData.session = result.session;
-      testData.preference = result.preference;
-      done();
-    }, function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
     models.sequelize.sync({ force: true }).then(() => {
-      done();
+      sessionFixture.createChat().then(function(result) {
+        testData.user = result.user;
+        testData.account = result.account;
+        testData.session = result.session;
+        testData.preference = result.preference;
+        done();
+      }, function(error) {
+        done(error);
+      });
     });
   });
 
@@ -64,9 +60,13 @@ describe('SERVICE - BrandColour', function() {
     describe('happy path', function() {
       it('should succeed on finding scheme', function (done) {
         brandColourServices.findScheme({ id: testData.preference.id }, accountParams()).then(function(result) {
-          assert.equal(result.data.accountId, accountParams());
-          testScheme(result.data);
-          done();
+          try {
+            assert.equal(result.data.accountId, accountParams());
+            testScheme(result.data);
+            done()
+          } catch (e) {
+            done(e)
+          }
         }, function(error) {
           done(error);
         });
@@ -78,8 +78,12 @@ describe('SERVICE - BrandColour', function() {
         brandColourServices.findScheme({ id: testData.preference.id + 100 }, accountParams()).then(function(result) {
           done('Should not get here!');
         }, function(error) {
-          assert.equal(error, brandColourServices.messages.notFound);
-          done();
+          try {
+            assert.equal(error, brandColourServices.messages.notFound);
+            done();
+          } catch (e) {
+              done(e);
+          }
         });
       });
     });
@@ -102,13 +106,20 @@ describe('SERVICE - BrandColour', function() {
     describe('happy path', function() {
       it('should succeed on creating scheme', function (done) {
         BrandProjectPreference.count(countWhere()).then(function(c) {
-          assert.equal(c, 2);
-
+          try {
+            assert.equal(c, 2);
+          } catch (e) {
+            done(e);
+          }
           brandColourServices.createScheme({ name: 'untitled' }, accountParams()).then(function(result) {
             testScheme(result.data, { name: 'untitled' });
             BrandProjectPreference.count(countWhere()).then(function(c) {
-              assert.equal(c, 3);
-              done();
+              try {
+                assert.equal(c, 3);
+                done();
+              } catch (e) {
+                done(e);
+              } 
             });
           }, function(error) {
             done(error);

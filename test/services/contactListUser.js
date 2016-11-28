@@ -23,12 +23,6 @@ describe('SERVICE - ContactListUser', () => {
       });
     });
 
-    afterEach(function(done) {
-      models.sequelize.sync({force: true}).done((error, result) => {
-        done();
-      });
-    });
-
     function successProvider(params) {
       return function() {
         return {

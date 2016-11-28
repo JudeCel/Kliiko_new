@@ -2,6 +2,8 @@
 
 var models = require('./../../models');
 var Session = models.Session;
+var SessionMember = models.SessionMember;
+var AccountUser = models.AccountUser;
 
 var sessionServices = require('./../../services/session');
 var sessionFixture = require('./../fixtures/session');
@@ -132,8 +134,12 @@ describe('SERVICE - Session', function() {
       describe('happy path', function() {
         it('should succeed on finding all sessions', function (done) {
           sessionServices.findAllSessions(testData.user.id, accountParams(), provider).then(function(result) {
-            assert.equal(result.data[0].accountId, testData.account.id);
-            done();
+            try {
+              assert.equal(result.data[0].accountId, testData.account.id);
+              done();
+            } catch (e) {
+              done(e);
+            }
           }, function(error) {
             done(error);
           });
@@ -156,6 +162,34 @@ describe('SERVICE - Session', function() {
               });
             }, function(error) {
               done(error);
+            });
+          });
+        });
+
+        it('should reset accountUser role on deleting session', function (done) {
+          Session.count().then(function(c) {
+            assert.equal(c, 1);
+
+            SessionMember.findAll().then(function(members) {
+              assert.equal(members.length, 4);
+              assert.equal(members[1].role, 'participant');
+              let accountUserId = members[1].accountUserId;
+
+              AccountUser.find({ where: { id: accountUserId} }).then(function(accountUser) {
+              assert.equal(accountUser.role, 'participant');
+            
+                sessionServices.removeSession(testData.session.id, testData.account.id, provider).then(function(result) {
+                  assert.equal(result.message, sessionServices.messages.removed);
+
+                  AccountUser.find({ where: { id: accountUserId} }).then(function(accountUserRes) {
+                    assert.equal(accountUserRes.role, 'observer');
+                    done();
+                  });
+                }, function(error) {
+                  done(error);
+                });
+
+              });
             });
           });
         });

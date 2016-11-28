@@ -79,21 +79,21 @@ let templateFiles = [
     fileName: 'SystemEmail_FacilitatorConfirmation.html',
     name: constants.mailTemplateType.facilitatorConfirmation,
     type: "facilitatorConfirmation",
-    subject: "Facilitator Confirmation",
+    subject: "Host Confirmation",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_ObserverInvitation.html',
     name: constants.mailTemplateType.observerInvitation,
     type: "observerInvitation",
-    subject: "Observer Invitation",
+    subject: "Spectator Invitation",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_FacilitatorOverQuota.html',
     name: constants.mailTemplateType.facilitatorOverQuota,
     type: "facilitatorOverQuota",
-    subject: "Facilitator Over-Quota",
+    subject: "Host Over-Quota",
     systemMessage: true
   },
   {

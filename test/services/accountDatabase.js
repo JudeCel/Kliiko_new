@@ -24,12 +24,6 @@ describe('SERVICE - AccountDatabase', function() {
     });
   });
 
-  afterEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
-      done();
-    });
-  });
-
   function csvData() {
     return {
       'Account Name': 'BLauris',

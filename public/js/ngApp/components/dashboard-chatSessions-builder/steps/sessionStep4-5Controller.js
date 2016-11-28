@@ -94,12 +94,12 @@
         }
 
         vm.stepMembers = vm.session.steps.step4.participants;
-        vm.pageTitle = "Participants";
+        vm.pageTitle = "Guests";
         deferred.resolve();
       } else {
         vm.stepMembers = vm.session.steps.step5.observers;
         vm.lastStep = true;
-        vm.pageTitle = "Observers";
+        vm.pageTitle = "Spectators";
         deferred.resolve();
       }
 

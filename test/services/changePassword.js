@@ -27,11 +27,6 @@ describe('Change Password', function() {
     });
   });
 
-  afterEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
-      done();
-    });
-  });
 
   it('fails on password mismatch', function (done) {
     let attrs = {
@@ -42,8 +37,12 @@ describe('Change Password', function() {
     }
 
     changePassword.save(attrs, function(errors, user){
-      assert.equal(errors.message, 'Passwords not equal');
-      done();
+      try {
+        assert.equal(errors.message, 'Passwords not equal');
+        done();
+      } catch (e) {
+        deone(e);
+      } 
     });
   });
 

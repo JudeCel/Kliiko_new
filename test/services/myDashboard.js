@@ -34,11 +34,15 @@ describe('SERVICE - MyDashboard', function() {
       it('should succeed on finding one of each role', function(done) {
         fillDashboardFixture.fill(testData.user, ['observer', 'facilitator', 'participant']).then(function() {
           myDashboardServices.getAllData(testData.user.id, 'http', provider).then(function(result) {
-            assert.equal(result.accountManager.data.length, 1);
-            assert.equal(result.observer.data.length, 1);
-            assert.equal(result.facilitator.data.length, 1);
-            assert.equal(result.participant.data.length, 1);
-            done();
+            try {
+              assert.equal(result.accountManager.data.length, 1);
+              assert.equal(result.observer.data.length, 1);
+              assert.equal(result.facilitator.data.length, 1);
+              assert.equal(result.participant.data.length, 1);
+              done();
+            } catch (e) {
+              done(e)
+            }
           }, function(error) {
             done(error);
           });
@@ -50,11 +54,15 @@ describe('SERVICE - MyDashboard', function() {
       it('should succeed on finding one of each except facilitator and participant', function(done) {
         fillDashboardFixture.fill(testData.user, ['observer']).then(function() {
           myDashboardServices.getAllData(testData.user.id, 'http', provider).then(function(result) {
-            assert.equal(result.accountManager.data.length, 1);
-            assert.equal(result.observer.data.length, 1);
-            assert.equal(result.facilitator, undefined);
-            assert.equal(result.participant, undefined);
-            done();
+            try {
+              assert.equal(result.accountManager.data.length, 1);
+              assert.equal(result.observer.data.length, 1);
+              assert.equal(result.facilitator, undefined);
+              assert.equal(result.participant, undefined);
+              done();
+            } catch (e) {
+              done(e);
+            } 
           }, function(error) {
             done(error);
           });

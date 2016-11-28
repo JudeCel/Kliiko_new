@@ -23,12 +23,6 @@ describe('User Service', () => {
       });
     });
 
-    afterEach(function(done) {
-      models.sequelize.sync({force: true}).done((error, result) => {
-        done();
-      });
-    });
-
     it('Succsess', (done) =>  {
       UserService.create(validAttrs, function(errors, user) {
         assert.equal(errors, null);

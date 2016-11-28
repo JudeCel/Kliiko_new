@@ -25,11 +25,15 @@ describe('Services -> ContactList', () => {
     describe("succsess", function() {
       it("createDefaultLists by default user flow", (done) => {
         testData.account.getContactLists().then(function(CLResults) {
-          assert.equal(CLResults.length, 3);
-          assert.equal(CLResults[0].editable, false);
-          assert.sameMembers(CLResults[0].defaultFields, constants.contactListDefaultFields);
-          assert.isArray(CLResults[0].customFields);
-          done()
+          try {
+            assert.equal(CLResults.length, 3);
+            assert.equal(CLResults[0].editable, false);
+            assert.sameMembers(CLResults[0].defaultFields, constants.contactListDefaultFields);
+            assert.isArray(CLResults[0].customFields);
+            done();
+          } catch (e) {
+            done(e);
+          }
         });
       });
 
@@ -79,7 +83,7 @@ describe('Services -> ContactList', () => {
       it("create", (done) => {
         let attrs = {
           accountId: testData.account.id,
-          name: "Facilitators",
+          name: "Hosts",
           customFields: ["one", "two", "three"]
         }
 

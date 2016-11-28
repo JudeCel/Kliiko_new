@@ -6,25 +6,17 @@ var AccountUser = models.AccountUser;
 
 var accountService = require('./../../services/account');
 var userFixture = require('./../fixtures/user');
-
-var assert = require('chai').assert;
-var async = require('async');
-
 var testData;
 
 describe('SERVICE - Account', function() {
   beforeEach(function(done) {
-    userFixture.createUserAndOwnerAccount().then(function(result) {
-      testData = result;
-      done();
-    }).catch(function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
     models.sequelize.sync({ force: true }).then(function() {
-      done();
+      userFixture.createUserAndOwnerAccount().then(function(result) {
+        testData = result;
+        done();
+      }).catch(function(error) {
+        done(error);
+      });
     });
   });
 

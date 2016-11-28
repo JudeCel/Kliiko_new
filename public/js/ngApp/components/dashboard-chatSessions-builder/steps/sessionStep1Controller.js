@@ -63,13 +63,13 @@
       if (!vm.selectedFacilitator || facilitator.email != vm.selectedFacilitator.email) {
         vm.selectedFacilitatorEmail = vm.selectedFacilitator ? vm.selectedFacilitator.email : null;
         var text = vm.selectedFacilitator ?
-          "<p>- If you have already sent Session Invitations, and started a Session, this may affect a Participant's level of engagement!</p>"
-            + "<p>- The Name & Contact details on the Email Templates signature will change to the new Facilitator on any future emails.</p>"
-            + "<p>- As will the Facilitator-Avatar Name in the Chat Room.</p>"
-            + "<p>- If unavoidable, we strongly recommend sending an SMS, Generic Email or Chat Room Private Message to Participants explaining the change.</p>" :
-          "Are you sure you want to select this Facilitator - <b>"
+          "<p>- If you have already sent Session Invitations, and started a Session, this may affect a Guest's level of engagement!</p>"
+            + "<p>- The Name & Contact details on the Email Templates signature will change to the new Host on any future emails.</p>"
+            + "<p>- As will the Host-Avatar Name in the Chat Room.</p>"
+            + "<p>- If unavoidable, we strongly recommend sending an SMS, Generic Email or Chat Room Private Message to Guests explaining the change.</p>" :
+          "Are you sure you want to select this Host - <b>"
             + facilitator.firstName + " " + facilitator.lastName
-            + "</b>?<br/> We strongly suggest that any change to the Facilitator later, may confuse Participants!";
+            + "</b>?<br/> We strongly suggest that any change to the Host later, may confuse Guests!";
         var leftAndWide = vm.selectedFacilitator ? true : false;
         $confirm({ text: text, htmlText: $sce.trustAsHtml(text), textLeft: leftAndWide, wide: leftAndWide }).then(function() {
           vm.session.addMembers(facilitator, 'facilitator').then(function(res) {
@@ -108,7 +108,7 @@
       }
 
       step1Service.createNewFcilitator(params).then(function(result) {
-        result.user.listName = "Facilitators";
+        result.user.listName = "Hosts";
         vm.allContacts.push(result.user);
         messenger.ok(result.facMessage);
         closeFacilitatorForm();
@@ -164,7 +164,7 @@
     function getAllContacts() {
       step1Service.getAllContacts(sessionId).then(function(results) {
         results.map(function(result) {
-          if (result.name == "Facilitators") {
+          if (result.name == "Hosts") {
             vm.facilitatorContactListId = result.id;
           }
           result.members.map(function(member) {

@@ -49,8 +49,13 @@ describe('MIDDLEWARE - Session Member', function() {
       res.status = function() {
         return {
           send: function(result) {
-            assert.equal(result, sessionMemberMiddleware.accessDeniedMessage);
-            done();
+            try {
+              assert.equal(result, sessionMemberMiddleware.accessDeniedMessage);
+              done();
+            } catch (e) {
+                done(e);
+            }
+
           }
         }
       }
