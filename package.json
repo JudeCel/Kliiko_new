@@ -17,7 +17,8 @@
     "updateBaseMailTemplates": "node ./tasks/updateBaseMailTemplates.js",
     "enableDatabaseMonitoring": "node ./tasks/databaseMonitoring/enableDatabaseMonitoring.js",
     "enableTableMonitoring": "node ./tasks/databaseMonitoring/enableTableMonitoring.js",
-    "updateAccountUsersUserId": "node ./tasks/dataNormalization/updateAccountUsers.js"
+    "updateAccountUsersUserId": "node ./tasks/dataNormalization/updateAccountUsers.js",
+	  "updateContactListNames": "node ./tasks/updateContactLists.js"
   },
   "engineStrict": true,
   "engine": {
