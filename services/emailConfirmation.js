@@ -67,7 +67,7 @@ function setEmailConfirmationToken(email, callback) {
     confirmationToken: token,
     confirmationSentAt: new Date()
   }, {
-    where: {email: email}
+    where: {email: { ilike: email } }
   }).then(function (result) {
     if (result[0] > 0) {
       callback(null, token);

@@ -164,7 +164,7 @@ function validateUniqEmail(params, transaction) {
       accountId: params.accountId
     },
     include: [{model: AccountUser, where: {
-      email: params.defaultFields.email
+      email: { ilike: params.defaultFields.email }
     }}]
   },{ transaction: transaction }).then(function(result) {
     if (result) {
@@ -194,7 +194,7 @@ function create(params, transaction) {
 
       AccountUser.find(
         { where: {
-          email: params.defaultFields.email,
+          email: { ilike: params.defaultFields.email },
           AccountId: params.accountId
         }
       }).then(function(accountUser) {
@@ -267,7 +267,7 @@ function createNewAccountUser(params, transaction) {
 function updateAccountUserIfUserFound(accountUser, email, transaction) {
   let deferred = q.defer();
 
-  models.User.find({ where: { email: email } }).then(function(user) {
+  models.User.find({ where: { email: { ilike: email } } }).then(function(user) {
     if(user) {
       accountUser.update({ UserId: user.id }, { transaction: transaction, returning: true }).then(function(au) {
         deferred.resolve(au);

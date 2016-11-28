@@ -8,7 +8,7 @@ function updateAccountUsersUserId() {
     User.findAll({attributes: ['id', 'email']}).then((result) => {
       Bluebird.each(result, (item) => {
         return new Bluebird(function (resolve, reject) {
-          AccountUser.update({"UserId": item.id}, {where: {"UserId": null, email: item.email }}).then(() =>{
+          AccountUser.update({"UserId": item.id}, {where: {"UserId": null, email: { ilike: item.email } }}).then(() =>{
             resolve();
           });
         });
