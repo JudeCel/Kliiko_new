@@ -9,9 +9,9 @@ var subscriptionFixture = require('./../fixtures/subscription');
 var assert = require('chai').assert;
 var async = require('async');
 
-describe.only('SERVICE - Invite', function() {
+describe('SERVICE - Invite', function() {
   var testUser = null, testUser2 = null, testAccount = null, accountUser2 = null;
-  let user1 = {
+  let user1Attrs = {
     accountName: "Lilo",
     firstName: "Lilu",
     lastName: "Dalas",
@@ -20,7 +20,7 @@ describe.only('SERVICE - Invite', function() {
     gender: "male"
   };
 
-  let user2 = {
+  let user2Attrs = {
     accountName: "DainisL",
     firstName: "Dainis",
     lastName: "Lapins",
@@ -32,11 +32,11 @@ describe.only('SERVICE - Invite', function() {
   beforeEach(function(done) {
 
     sequelize.sync({ force: true }).then(() => {
-      userService.create(attrs1, (err, user1) =>  {
+      userService.create(user1Attrs, (err, user1) =>  {
         testUser = user1;
         user1.getOwnerAccount().then((accounts) =>  {
           testAccount = accounts[0];
-          userService.create(attrs2, (err, user2) =>  {
+          userService.create(user2Attrs, (err, user2) =>  {
             user2.getAccountUsers().then( (results) => {
               accountUser2 = results[0],
               testUser2 = user2;
@@ -66,37 +66,30 @@ describe.only('SERVICE - Invite', function() {
       });
     });
 
-    // describe('happy path', function() {
-    //   it('should succeed and return invite', function (done) {
-    //     let body = {firstName: accountUser2.firstName,
-    //       lastName: accountUser2.lastName,
-    //       gender: accountUser2.gender,
-    //       email: accountUser2.email
-    //     };
-    //
-    //     subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function(subscription) {
-    //       models.SubscriptionPreference.update({'data.accountUserCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
-    //         validParams(testUser, testAccount, body).then(function(params) {
-    //           inviteService.createInvite(params).then(function(data) {
-    //             assert.equal(data.invite.userId, params.userId);
-    //             assert.equal(data.invite.role, params.role);
-    //             assert.equal(data.invite.userType, params.userType);
-    //             done();
-    //           }, function(error) {
-    //             done(error);
-    //           });
-    //         }, function(error) {
-    //           done(error);
-    //         });
-    //       }, function(error) {
-    //         done(error);
-    //       });
-    //     }, function(error) {
-    //       done(error);
-    //     });
-    //
-    //   });
-    // });
+    describe.only('happy path', function() {
+      it('should succeed and return invite', function (done) {
+        let params = {
+          accountUserId: accountUser2.id,
+          userId: accountUser2.userId,
+          accountId: accountUser2.AccountId,
+          role: 'facilitator',
+          userType: "existing"
+        }
+
+        inviteService.createInvite(params).then(function(invite) {
+          try {
+            assert.equal(invite.userId, params.userId);
+            assert.equal(invite.role, params.role);
+            assert.equal(invite.userType, params.userType);
+            done();
+          } catch (e) {
+            done(e);
+          }
+        }, function(error) {
+          done(error);
+          });
+      });
+    });
   });
 
   // describe('#removeInvite', function() {

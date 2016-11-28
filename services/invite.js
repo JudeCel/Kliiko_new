@@ -1,16 +1,10 @@
 'use strict';
 
-var models = require('./../models');
-var filters = require('./../models/filters');
-var brandProjectConstants = require('../util/brandProjectConstants');
+const models = require('./../models');
+const filters = require('./../models/filters');
+const brandProjectConstants = require('../util/brandProjectConstants');
 const { getQueue } = require('./backgroundQueue');
-
-var Invite = models.Invite;
-var User = models.User;
-var Account = models.Account;
-var AccountUser = models.AccountUser;
-var Session = models.Session;
-var BrandProjectPreference = models.BrandProjectPreference;
+const {Invite,User, Account, AccountUser,Session, BrandProjectPreference } = models;
 
 var moment = require('moment-timezone');
 var emailDate = require('./formats/emailDate');
@@ -22,7 +16,6 @@ var constants = require('../util/constants');
 var MessagesUtil = require('./../util/messages');
 
 var uuid = require('node-uuid');
-var crypto = require('crypto');
 var async = require('async');
 var _ = require('lodash');
 var q = require('q');
@@ -176,7 +169,7 @@ function createInvite(params) {
     role: params.role,
     userType: params.userType
   }).then(function(result) {
-    getQueue.enqueue("invites", "invite", [result.id]);
+    // getQueue.enqueue("invites", "invite", [result.id]);
     deferred.resolve(result)
   }).catch(function(error) {
     if(error.name == 'SequelizeUniqueConstraintError') {
@@ -195,6 +188,7 @@ function simpleParams(invite, message) {
 }
 
 function sendInvite(inviteId, deferred) {
+  console.log(inviteId);
   if (!deferred) {
     deferred = q.defer();
   }
@@ -213,6 +207,7 @@ function sendInvite(inviteId, deferred) {
       id: inviteId
     }
   }).then(function(invite) {
+    console.log(invite);
     invite.unsubscribeMailUrl = mailUrlHelper.getUrl(invite.AccountUser.ContactListUsers[0].unsubscribeToken, null, '/unsubscribe/');
     if(invite.accountId) {
       let inviteParams = {
