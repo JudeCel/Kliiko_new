@@ -780,7 +780,7 @@ function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
         mailPreviewVariables.endDate = emailDate.format("date", new Date(result.endTime), result.timeZone);
         mailPreviewVariables.endTime = emailDate.format("time", new Date(result.endTime), result.timeZone);
         mailPreviewVariables.sessionName = result.name;
-        mailPreviewVariables.timeZone = momentTimeZone.tz(startTime, result.timeZone).format('zZ');
+        mailPreviewVariables.timeZone = emailDate.format("timeZone", startTime, result.timeZone);
         mailPreviewVariables.incentive = result.incentive_details;
         if (result.SessionMembers[0]) {
           mailPreviewVariables.facilitatorFirstName = result.SessionMembers[0].AccountUser.firstName;
