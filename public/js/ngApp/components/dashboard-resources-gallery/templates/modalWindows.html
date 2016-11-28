@@ -1,6 +1,9 @@
 <div class='modal fade' id='uploadResource' role='dialog' ng-if='upload.modal.upload'>
   <div class='modal-dialog uploadResource'>
     <div class='modal-content border-green border-radius-none'>
+      <div ng-if="showSpinner" id='overlay'>
+        <i id='loading' class='fa fa-spinner fa-pulse fa-fw'></i>
+      </div>
       {{ typeOf = gc.isTypeOf(gc.newResource); "" }}
       <div class='modal-header'>
         <h2 class='modal-title text-center'>{{upload.modal.replace ? 'Replace resource.' : 'New resource.'}}</h2>
