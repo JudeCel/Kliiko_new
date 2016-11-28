@@ -1,6 +1,6 @@
 'use strict';
 
-var {Invite} = require('./../../models');
+var {Invite, sequelize} = require('./../../models');
 
 var userService = require('./../../services/users');
 var inviteService = require('./../../services/invite');
@@ -31,7 +31,7 @@ describe.only('SERVICE - Invite', function() {
 
   beforeEach(function(done) {
 
-    models.sequelize.sync({ force: true }).then(() => {
+    sequelize.sync({ force: true }).then(() => {
       userService.create(attrs1, (err, user1) =>  {
         testUser = user1;
         user1.getOwnerAccount().then((accounts) =>  {
