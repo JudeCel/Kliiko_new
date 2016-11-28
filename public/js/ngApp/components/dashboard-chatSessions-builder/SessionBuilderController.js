@@ -63,7 +63,7 @@
 
     function closeSession() {
       if (vm.session.sessionData.showStatus != 'Pending' && vm.session.sessionData.showStatus != 'Closed') {
-        $confirm({ text: "Do you want to Close this Chat Session? You will be able to send the Close Email to Participants, and make Comments." }).then(function() {
+        $confirm({ text: "Do you want to Close this Chat Session? You will be able to send the Close Email to Guests, and make Comments." }).then(function() {
           vm.session.setOpen('closed').then(function(res) {
             initStep().then(function (step) {
               vm.currentStep = step;
