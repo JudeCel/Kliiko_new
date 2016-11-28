@@ -138,11 +138,10 @@ function update(sessionId, accountId, params) {
       return originalSession.updateAttributes(params);
     }).then(function(result) {
        updatedSession = result;
-       updatedSession.startTime = changeTimzone(result.startTime, result.timeZone, "UTC")
-       updatedSession.endTime = changeTimzone(result.endTime, result.timeZone, "UTC")
       return sessionBuilderObject(updatedSession);
     }).then(function(sessionObject) {
-      if (updatedSession.status == 'closed') {
+
+      if (sessionObject.status == 'closed') {
         sendCloseEmailToAllObservers(updatedSession).then(function() {
           deferred.resolve(sessionObject);
         }, function(error) {
@@ -678,16 +677,16 @@ function findNewStep(step, previous) {
 
 function sessionBuilderObject(session) {
   let deferred = q.defer();
-
   stepsDefinition(session).then(function(result) {
     let sessionBuilder = {
       steps: result,
       currentStep: session.step,
       status: session.status,
       id: session.id,
-      startTime: session.startTime,
-      endTime: session.endTime,
+      startTime: changeTimzone(session.startTime, session.timeZone, "UTC"),
+      endTime: changeTimzone(session.endTime, session.timeZone, "UTC")
     };
+
     sessionValidator.addShowStatus(sessionBuilder);
     deferred.resolve({
       sessionBuilder: sessionBuilder
