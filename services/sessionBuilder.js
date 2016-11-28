@@ -138,6 +138,8 @@ function update(sessionId, accountId, params) {
       return originalSession.updateAttributes(params);
     }).then(function(result) {
        updatedSession = result;
+       updatedSession.startTime = changeTimzone(result.startTime, result.timeZone, "UTC")
+       updatedSession.endTime = changeTimzone(result.endTime, result.timeZone, "UTC")
       return sessionBuilderObject(updatedSession);
     }).then(function(sessionObject) {
       if (updatedSession.status == 'closed') {

@@ -73,6 +73,7 @@
       request: function(config) {
         if(config.transformResponse.length > 0) {
           $rootScope.progressbarStart();
+          $rootScope.showSpinner = true;
         }
 
         return config;
@@ -83,6 +84,7 @@
           alert('that is all folks');
         }
         if(response.config.transformResponse.length > 0) {
+          $rootScope.showSpinner = false;
           $rootScope.progressbarComplete();
         }
         return response;
