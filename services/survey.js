@@ -286,8 +286,7 @@ function updateSurvey(params, account) {
           let survey = result[1][0];
           return SurveyQuestion.destroy({
             where: {
-              surveyId: survey.id,
-              id: { $notIn: getIds(validParams.SurveyQuestions) }
+              surveyId: survey.id
             },
             transaction: t
           }).then(function() {
