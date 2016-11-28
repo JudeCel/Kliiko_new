@@ -37,9 +37,9 @@ module.exports = {
 };
 
 function isInviteSessionInvalid(resp) {
-  if ( new Date().getTime() < new Date(resp.Session.startTime).getTime() ) return 'Sorry, the '+res.Session.name+' Session is not yet open. Please check the Start Date & Time on your Confirmation email, or contact the Facilitator';
-  if ( res.Session.isFull) return 'Sorry, the available places for the '+res.Session.name+' Session have already been filled. The Facilitator will contact you ASAP';
-  if ( res.Session.status == "closed") return 'Sorry, the '+res.Session.name+' Session is now closed. For any queries, please contact the Facilitator';
+  if ( new Date().getTime() < new Date(resp.Session.startTime).getTime() ) return 'Sorry, the '+res.Session.name+' Session is not yet open. Please check the Start Date & Time on your Confirmation email, or contact the Host';
+  if ( res.Session.isFull) return 'Sorry, the available places for the '+res.Session.name+' Session have already been filled. The Host will contact you ASAP';
+  if ( res.Session.status == "closed") return 'Sorry, the '+res.Session.name+' Session is now closed. For any queries, please contact the Host';
 
   return null;
 }

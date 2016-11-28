@@ -403,22 +403,22 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
 function variablesForTemplate(type) {
   switch (type) {
     case "firstInvitation":
-      return ["{First Name}", "{Session Name}", "{Start Time}", "{End Time}", "{Start Date}", "{End Date}", "{Incentive}", "{Accept Invitation}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Invitation Not This Time}", "{Invitation Not At All}"];
+      return ["{First Name}", "{Session Name}", "{Start Time}", "{End Time}", "{Start Date}", "{End Date}", "{Incentive}", "{Accept Invitation}", "{Host First Name}", "{Host Last Name}", "{Host Email}", "{Invitation Not This Time}", "{Invitation Not At All}"];
       break;
     case "closeSession":
-      return ["{First Name}", "{Incentive}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Close Session Yes In Future}", "{Close Session No In Future}"];
+      return ["{First Name}", "{Incentive}", "{Host First Name}", "{Host Last Name}", "{Host Email}", "{Close Session Yes In Future}", "{Close Session No In Future}"];
       break;
     case "confirmation":
-      return ["{Incentive}", "{First Name}", "{Start Time}", "{Start Date}", "{Confirmation Check In}", "{Participant Email}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
+      return ["{Incentive}", "{First Name}", "{Start Time}", "{Start Date}", "{Confirmation Check In}", "{Guest Email}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
       break;
     case "generic":
-      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
+      return ["{First Name}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
       break;
     case "notAtAll":
-      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
+      return ["{First Name}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
       break;
     case "notThisTime":
-      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
+      return ["{First Name}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
       break;
     case "accountManagerConfirmation":
       return ["{First Name}", "{Login}", "{Last Name}"];
@@ -703,12 +703,19 @@ function formatTemplateString(str) {
   str = str.replace(/\{Start Time\}/ig, "<%= startTime %>");
   str = str.replace(/\{End Date\}/ig, "<%= endDate %>");
   str = str.replace(/\{End Time\}/ig, "<%= endTime %>");
+  str = str.replace(/\{Host First Name\}/ig, "<%= facilitatorFirstName %>");
   str = str.replace(/\{Facilitator First Name\}/ig, "<%= facilitatorFirstName %>");
+  str = str.replace(/\{Host Last Name\}/ig, "<%= facilitatorLastName %>");
   str = str.replace(/\{Facilitator Last Name\}/ig, "<%= facilitatorLastName %>");
+  str = str.replace(/\{Host Email\}/ig, "<%= facilitatorMail %>");
   str = str.replace(/\{Facilitator Email\}/ig, "<%= facilitatorMail %>");
+  str = str.replace(/\{Guest Email\}/ig, "<%= participantMail %>");
   str = str.replace(/\{Participant Email\}/ig, "<%= participantMail %>");
+  str = str.replace(/\{Guest First Name\}/ig, "<%= participantFirstName %>");
   str = str.replace(/\{Participant First Name\}/ig, "<%= participantFirstName %>");
-  str = str.replace(/\{Participant Last Name\}/ig, "<%= participantLastName %>");
+  str = str.replace(/\{Guest Last Name\}/ig, "<%= participantLastName %>");
+  str = str.replace(/\{Participant Last Name\}/ig, "<%= participantFirstName %>");
+  str = str.replace(/\{Host Mobile\}/ig, "<%= facilitatorMobileNumber %>");
   str = str.replace(/\{Facilitator Mobile\}/ig, "<%= facilitatorMobileNumber %>");
   str = str.replace(/\{Session Name\}/ig, "<%= sessionName %>");
   str = str.replace(/\{Incentive\}/ig, "<%= incentive %>");

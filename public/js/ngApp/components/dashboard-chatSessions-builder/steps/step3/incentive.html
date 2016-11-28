@@ -1,13 +1,13 @@
 <uib-accordion-group is-open='sbc.accordions.incentive'>
   <uib-accordion-heading>
     <div class='panel-label'>
-      Participant Incentive
+      Guest Incentive
       <i class='pull-right glyphicon' ng-class="{'glyphicon-chevron-down': sbc.accordions.incentive, 'glyphicon-chevron-right': !sbc.accordions.incentive}"></i>
       <span class='panel-value pull-right'>{{ sbc.session.steps.step3.incentive_details }}</span>
     </div>
   </uib-accordion-heading>
 
-  <label for='sessionBuilder-incentive'>Enter Participant Incentive</label>
+  <label for='sessionBuilder-incentive'>Enter Guest Incentive</label>
   <input id='sessionBuilder-incentive' type='text' ng-model='sbc.session.steps.step3.incentive_details'
          ng-blur="sbc.updateStep({'incentive_details':sbc.session.steps.step3.incentive_details});" ng-class="{'has-error':sbc.accordions.incentive == 'error'}"
          maxlength='50' placeholder='50 characters max'>

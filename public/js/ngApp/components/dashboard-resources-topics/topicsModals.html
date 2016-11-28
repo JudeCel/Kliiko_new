@@ -13,8 +13,8 @@
           </div>
 
           <div class='form-group'>
-            <label for='topicBoard'>Facilitator Billboard</label>
-            <textarea rows='3' class='form-control' id='topicBoard' placeholder='Facilitator Billboard' alt-maxlength='{{ topics.validations.boardMessage }}' required ng-model='topics.topicData.boardMessage' />
+            <label for='topicBoard'>Host Billboard</label>
+            <textarea rows='3' class='form-control' id='topicBoard' placeholder='Host Billboard' maxlength='{{ topics.validations.boardMessage }}' required ng-model='topics.topicData.boardMessage' />
             <span class='help-block'>Characters left: {{ topics.charactersLeft("boardMessage") }}</span>
           </div>
 

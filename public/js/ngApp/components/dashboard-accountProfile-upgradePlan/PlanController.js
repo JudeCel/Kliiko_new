@@ -41,7 +41,7 @@
       'Export Recruiter survey results',
       'Access klzii Forum',
       'Access klzii Focus',
-      'Observers can watch sessions',
+      'Spectators can watch sessions',
       'Paid SMS reminders for participants',
       'Tips for guiding discussions',
       'Whiteboard functionality',

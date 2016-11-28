@@ -136,11 +136,11 @@
       </code>
     </uib-accordion-group>
 
-    <!-- Facilitators -->
+    <!-- Hosts -->
     <uib-accordion-group is-open="step1Controller.accordions.facilitators">
       <uib-accordion-heading>
         <div class="panel-label">
-          {{ step1Controller.selectedFacilitator ? 'Replace Facilitator' : 'Select Facilitator' }}
+          {{ step1Controller.selectedFacilitator ? 'Replace Host' : 'Select Host' }}
           <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.sessionName, 'glyphicon-chevron-right': !step1Controller.accordions.sessionName}"></i>
           <span class="panel-value pull-right">
             {{ step1Controller.session.steps.step1.facilitator.firstName + ' ' + step1Controller.session.steps.step1.facilitator.lastName }}
@@ -149,7 +149,7 @@
       </uib-accordion-heading>
 
       <div ng-if='!step1Controller.canSelectFacilitator'>
-        You need to enter Session Name, Type, Date And Time before you can Select Facilitator
+        You need to enter Session Name, Type, Date And Time before you can Select Host
       </div>
 
       <div id='dashboard-contact-lists' ng-controller="ContactListController as clc" ng-if='step1Controller.canSelectFacilitator'>

@@ -83,7 +83,7 @@ describe('Services -> ContactList', () => {
       it("create", (done) => {
         let attrs = {
           accountId: testData.account.id,
-          name: "Facilitators",
+          name: "Hosts",
           customFields: ["one", "two", "three"]
         }
 
