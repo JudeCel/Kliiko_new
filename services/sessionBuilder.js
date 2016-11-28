@@ -439,8 +439,11 @@ function removeSessionMember(params) {
     }
   }).then(function(sessionMember) {
     if(sessionMember) {
+      let accountUserId = sessionMember.accountUserId;
       sessionMember.destroy().then(function() {
-        deferred.resolve(MessagesUtil.sessionBuilder.sessionMemberRemoved);
+        sessionMemberServices.refreshAccountUsersRole([accountUserId]).then(function() {
+          deferred.resolve(MessagesUtil.sessionBuilder.sessionMemberRemoved);
+        });
       }).catch(function(error) {
         deferred.reject(filters.errors(error));
       });
