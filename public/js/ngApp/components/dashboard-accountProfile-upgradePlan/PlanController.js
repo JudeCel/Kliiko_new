@@ -42,7 +42,7 @@
       'Access klzii Forum',
       'Access klzii Focus',
       'Spectators can watch sessions',
-      'Paid SMS reminders for participants',
+      'Paid SMS reminders for guests',
       'Tips for guiding discussions',
       'Whiteboard functionality',
       'Upload and store multimedia',
