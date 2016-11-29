@@ -28,60 +28,78 @@ const EXPIRE_AFTER_DAYS = 5;
 function createBulkInvites(arrayParams) {
   let deferred = q.defer();
 
-  let expireDate = new Date();
-  expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
-  _.map(arrayParams, function(paramObject) {
-    paramObject.token = uuid.v1();
-    paramObject.sentAt = new Date();
-    paramObject.expireAt = expireDate;
-  });
+  // let expireDate = new Date();
+  // expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
+  // _.map(arrayParams, function(paramObject) {
+  //   paramObject.token = uuid.v1();
+  //   paramObject.sentAt = new Date();
+  //   paramObject.expireAt = expireDate;
+  // });
 
-
-
-  Invite.bulkCreate(arrayParams, {
-    validate: true,
-    returning: true
-  }).then(function(results) {
-    if(results.length > 0) {
-      let ids = _.map(results, 'id');
-      Invite.findAll({
-        where: { id: { $in: ids } },
-        include: [{
-          model: AccountUser,
-          attributes:
-          constants.safeAccountUserParams,
-          include: {model: models.ContactListUser}
-        }, {
-          model: Session,
-          include: [Account]
-        }, Account, User]
-      }).then(function(invites) {
-        async.each(invites, function(invite, callback) {
-          invite.accountName = arrayParams.accountName;
-          if (invite.AccountUser.ContactListUsers.length) {
-            enqueue("invites", "invite", [invite.id] );
-            callback();
-          } else {
-            callback();
-          }
-        }, function(error) {
-          if(error) {
-            deferred.reject(error);
-          }
-          else {
-            deferred.resolve(results);
-          }
-        });
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
-      });
-    }
-    else {
-      deferred.reject("None created");
-    }
+  Bluebird.all(arrayParams, (params) => {
+    return createInvite(params);
+  }).then((result) => {
+        Invite.findAll({
+          where: { id: { $in: ids } },
+          include: [{
+            model: AccountUser,
+            attributes:
+            constants.safeAccountUserParams,
+            include: {model: models.ContactListUser}
+          }, {
+            model: Session,
+            include: [Account]
+          }, Account, User]
+        })
+    deferred.resolve(result);
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
+
+  // Invite.bulkCreate(arrayParams, {
+  //   validate: true,
+  //   returning: true
+  // }).then(function(results) {
+  //   if(results.length > 0) {
+  //     let ids = _.map(results, 'id');
+  //     Invite.findAll({
+  //       where: { id: { $in: ids } },
+  //       include: [{
+  //         model: AccountUser,
+  //         attributes:
+  //         constants.safeAccountUserParams,
+  //         include: {model: models.ContactListUser}
+  //       }, {
+  //         model: Session,
+  //         include: [Account]
+  //       }, Account, User]
+  //     }).then(function(invites) {
+  //       async.each(invites, function(invite, callback) {
+  //         invite.accountName = arrayParams.accountName;
+  //         if (invite.AccountUser.ContactListUsers.length) {
+  //           enqueue("invites", "invite", [invite.id] );
+  //           callback();
+  //         } else {
+  //           callback();
+  //         }
+  //       }, function(error) {
+  //         if(error) {
+  //           deferred.reject(error);
+  //         }
+  //         else {
+  //           deferred.resolve(results);
+  //         }
+  //       });
+  //     }).catch(function(error) {
+  //       deferred.reject(filters.errors(error));
+  //     });
+  //   }
+  //   else {
+  //     deferred.reject("None created");
+  //   }
+  // }).catch(function(error) {
+  //   deferred.reject(filters.errors(error));
+  // });
 
   return deferred.promise;
 }

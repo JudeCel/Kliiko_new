@@ -117,9 +117,12 @@ describe('SERVICE - Invite', function() {
             userType: "new"
           }
       ]
-        inviteService.createBulkInvites(invalidInviteParams).then(function(invite) {
-          done('Should not get here!');
+        inviteService.createBulkInvites(invalidInviteParams).then(function(invites) {
+          console.log(invites);
+          done();
         }, function(errors) {
+          console.log(errors);
+          done('Should not get here!');
           let errorParams = {
             accountUserId: "Account User Id can't be empty"
           };
