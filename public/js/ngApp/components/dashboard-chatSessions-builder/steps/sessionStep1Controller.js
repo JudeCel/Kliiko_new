@@ -316,7 +316,9 @@
           postUpdateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone });
         }
         initCanSelectFacilitator();
+        return;
       }
+      postUpdateStep(dataObj);
     }
 
     // Gallery stuff
