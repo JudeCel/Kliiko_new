@@ -318,7 +318,7 @@
         initCanSelectFacilitator();
         return;
       }
-      postUpdateStep(dataObj);
+      return postUpdateStep(dataObj);
     }
 
     // Gallery stuff
