@@ -95,6 +95,7 @@
         if(rejection.status == 404) {
           messenger.error(rejection.data);
         }
+        $rootScope.showSpinner = false;
         $rootScope.progressbarComplete();
         return $q.reject(rejection);
       }
