@@ -253,6 +253,7 @@
           deferred.reject(res.error);
         } else {
           self.sessionData.showStatus = res.sessionBuilder.showStatus;
+          self.steps = res.sessionBuilder.steps;
           deferred.resolve(res);
         }
       });
