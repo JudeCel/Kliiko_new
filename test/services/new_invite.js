@@ -5,6 +5,7 @@ var {Invite, sequelize} = require('./../../models');
 var userService = require('./../../services/users');
 var inviteService = require('./../../services/invite');
 var accountManagerService = require('./../../services/accountManager');
+var backgroundQueue = require('./../../services/backgroundQueue');
 var subscriptionFixture = require('./../fixtures/subscription');
 var assert = require('chai').assert;
 var async = require('async');
@@ -40,7 +41,9 @@ describe('SERVICE - Invite', function() {
             user2.getAccountUsers().then( (results) => {
               accountUser2 = results[0],
               testUser2 = user2;
-              done();
+              backgroundQueue.setUpQueue(null, null, () => {
+                done();
+              })
             })
           });
         })
@@ -59,14 +62,17 @@ describe('SERVICE - Invite', function() {
             role: "Role can't be empty",
             accountUserId: "Account User Id can't be empty"
           };
-
-          assert.deepEqual(error, errorParams);
-          done();
+          try {
+            assert.deepEqual(error, errorParams);
+            done();
+          } catch (e) {
+              done(e);
+          }
         });
       });
     });
 
-    describe.only('happy path', function() {
+    describe('happy path', function() {
       it('should succeed and return invite', function (done) {
         let params = {
           accountUserId: accountUser2.id,
@@ -90,6 +96,68 @@ describe('SERVICE - Invite', function() {
           });
       });
     });
+  });
+
+  describe.only('#createBulkInvites', function() {
+    describe('sad path', function() {
+      it('should fail without params', function (done) {
+        let invalidInviteParams = [
+          {
+            accountUserId: accountUser2.id,
+            userId: accountUser2.userId,
+            accountId: accountUser2.AccountId,
+            role: 'facilitator',
+            userType: "existing"
+          },
+          {
+            role: 'facilitator',
+            userType: "existing"
+          },{
+            role: 'participant',
+            userType: "new"
+          }
+      ]
+        inviteService.createBulkInvites(invalidInviteParams).then(function(invite) {
+          done('Should not get here!');
+        }, function(errors) {
+          let errorParams = {
+            accountUserId: "Account User Id can't be empty"
+          };
+          try {
+            assert.typeOf(errors,'array')
+            assert.deepEqual(errors[0], errorParams);
+            done();
+          } catch (e) {
+            done(e)
+          }
+        });
+      });
+    });
+
+    // describe('happy path', function() {
+    //   it('should succeed and return invite', function (done) {
+    //     let params = {
+    //       accountUserId: accountUser2.id,
+    //       userId: accountUser2.userId,
+    //       accountId: accountUser2.AccountId,
+    //       role: 'facilitator',
+    //       userType: "existing"
+    //     }
+    //
+    //     inviteService.createInvite(params).then(function(invite) {
+    //       try {
+    //         assert.equal(invite.userId, params.userId);
+    //         assert.equal(invite.role, params.role);
+    //         assert.equal(invite.userType, params.userType);
+    //         done();
+    //       } catch (e) {
+    //         done(e);
+    //       }
+    //     }, function(error) {
+    //       done(error);
+    //       });
+    //   });
+    // });
   });
 
   // describe('#removeInvite', function() {

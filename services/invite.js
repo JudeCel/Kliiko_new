@@ -3,7 +3,7 @@
 const models = require('./../models');
 const filters = require('./../models/filters');
 const brandProjectConstants = require('../util/brandProjectConstants');
-const { getQueue } = require('./backgroundQueue');
+const { enqueue } = require('./backgroundQueue');
 const {Invite,User, Account, AccountUser,Session, BrandProjectPreference } = models;
 
 var moment = require('moment-timezone');
@@ -19,6 +19,7 @@ var uuid = require('node-uuid');
 var async = require('async');
 var _ = require('lodash');
 var q = require('q');
+let Bluebird = require('bluebird')
 
 var mailUrlHelper = require('../mailers/helpers');
 
@@ -34,6 +35,8 @@ function createBulkInvites(arrayParams) {
     paramObject.sentAt = new Date();
     paramObject.expireAt = expireDate;
   });
+
+
 
   Invite.bulkCreate(arrayParams, {
     validate: true,
@@ -56,7 +59,7 @@ function createBulkInvites(arrayParams) {
         async.each(invites, function(invite, callback) {
           invite.accountName = arrayParams.accountName;
           if (invite.AccountUser.ContactListUsers.length) {
-            getQueue.enqueue("invites", "invite", [invite.id] );
+            enqueue("invites", "invite", [invite.id] );
             callback();
           } else {
             callback();
@@ -169,7 +172,7 @@ function createInvite(params) {
     role: params.role,
     userType: params.userType
   }).then(function(result) {
-    // getQueue.enqueue("invites", "invite", [result.id]);
+    enqueue("invites", "invite", [result.id]);
     deferred.resolve(result)
   }).catch(function(error) {
     if(error.name == 'SequelizeUniqueConstraintError') {
@@ -188,7 +191,6 @@ function simpleParams(invite, message) {
 }
 
 function sendInvite(inviteId, deferred) {
-  console.log(inviteId);
   if (!deferred) {
     deferred = q.defer();
   }
@@ -207,7 +209,6 @@ function sendInvite(inviteId, deferred) {
       id: inviteId
     }
   }).then(function(invite) {
-    console.log(invite);
     invite.unsubscribeMailUrl = mailUrlHelper.getUrl(invite.AccountUser.ContactListUsers[0].unsubscribeToken, null, '/unsubscribe/');
     if(invite.accountId) {
       let inviteParams = {

@@ -18,7 +18,7 @@ const jobs = {
 
 const setUpQueue = (_req, _res, next) => {
     if (queue) {
-      next()
+      next();
     }else {
       let tmpQueue = new NR.queue({connection: connectionDetails}, jobs)
       tmpQueue.connect(() => {
@@ -28,12 +28,13 @@ const setUpQueue = (_req, _res, next) => {
         next()
       })
     }
-
 }
 
-const getQueue = () =>  {
+const enqueue = (queueName, jobName, attrs) => {
   if (queue) {
-    return queue
+    if (process.env.NODE_ENV != "test") {
+      queue.enqueue(queueName, jobName, attrs);
+    }
   } else {
     throw "Queue not connected, call 'setUpQueue' function to connect Queue"
   }
@@ -41,6 +42,6 @@ const getQueue = () =>  {
 
 module.exports = {
   setUpQueue: setUpQueue,
-  getQueue: getQueue,
+  enqueue: enqueue,
   jobsList: jobs
 }
