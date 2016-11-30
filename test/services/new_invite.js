@@ -100,7 +100,7 @@ describe('SERVICE - Invite', function() {
 
   describe.only('#createBulkInvites', function() {
     describe('sad path', function() {
-      it('should fail without params', function (done) {
+      it('should fail with invalid params', function (done) {
         let invalidInviteParams = [
           {
             accountUserId: accountUser2.id,
@@ -118,11 +118,8 @@ describe('SERVICE - Invite', function() {
           }
       ]
         inviteService.createBulkInvites(invalidInviteParams).then(function(invites) {
-          console.log(invites);
-          done();
-        }, function(errors) {
-          console.log(errors);
           done('Should not get here!');
+        }, function(errors) {
           let errorParams = {
             accountUserId: "Account User Id can't be empty"
           };
@@ -137,30 +134,30 @@ describe('SERVICE - Invite', function() {
       });
     });
 
-    // describe('happy path', function() {
-    //   it('should succeed and return invite', function (done) {
-    //     let params = {
-    //       accountUserId: accountUser2.id,
-    //       userId: accountUser2.userId,
-    //       accountId: accountUser2.AccountId,
-    //       role: 'facilitator',
-    //       userType: "existing"
-    //     }
-    //
-    //     inviteService.createInvite(params).then(function(invite) {
-    //       try {
-    //         assert.equal(invite.userId, params.userId);
-    //         assert.equal(invite.role, params.role);
-    //         assert.equal(invite.userType, params.userType);
-    //         done();
-    //       } catch (e) {
-    //         done(e);
-    //       }
-    //     }, function(error) {
-    //       done(error);
-    //       });
-    //   });
-    // });
+    describe('happy path', function() {
+      it('should succeed and return invite', function (done) {
+        let params = [{
+          accountUserId: accountUser2.id,
+          userId: accountUser2.userId,
+          accountId: accountUser2.AccountId,
+          role: 'facilitator',
+          userType: "existing"
+        }]
+
+        inviteService.createBulkInvites(params).then(function(invites) {
+          try {
+            assert.equal(invites[0].userId, params[0].userId);
+            assert.equal(invites[0].role, params[0].role);
+            assert.equal(invites[0].userType, params[0].userType);
+            done();
+          } catch (e) {
+            done(e);
+          }
+        }, function(error) {
+          done(error);
+          });
+      });
+    });
   });
 
   // describe('#removeInvite', function() {
