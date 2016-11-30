@@ -4,7 +4,7 @@ const models = require('./../models');
 const filters = require('./../models/filters');
 const brandProjectConstants = require('../util/brandProjectConstants');
 const { enqueue } = require('./backgroundQueue');
-const {Invite,User, Account, AccountUser,Session, BrandProjectPreference } = models;
+const { Invite,User, Account, AccountUser,Session, BrandProjectPreference } = models;
 
 var moment = require('moment-timezone');
 var emailDate = require('./formats/emailDate');
@@ -56,10 +56,8 @@ function createBulkInvites(arrayParams) {
   return deferred.promise;
 }
 
-function createFacilitatorInvite(params) {
-  let deferred = q.defer();
-
-  models.Invite.destroy({
+function deleteFacilitato(params) {
+  return Invite.destroy({
     where: {
       sessionId: params.sessionId,
       accountUserId:  {
@@ -67,8 +65,13 @@ function createFacilitatorInvite(params) {
       },
       role: 'facilitator'
     }
-  }).then(function(result) {
-    models.Invite.find({
+  })
+}
+
+function createFacilitatorInvite(params) {
+  let deferred = q.defer();
+  deleteFacilitato(params).then(function() {
+    Invite.find({
       where: {
         sessionId: params.sessionId,
         accountUserId: params.accountUserId,
@@ -78,7 +81,7 @@ function createFacilitatorInvite(params) {
       if (invite) {
         deferred.resolve();
       } else {
-        models.AccountUser.find({ where: { id: params.accountUserId } }).then(function(accountUser) {
+        AccountUser.find({ where: { id: params.accountUserId } }).then(function(accountUser) {
           updateToFacilitator(accountUser).then(function() {
             createInvite(facilitatorInviteParams(accountUser, params.sessionId)).then(function() {
               deferred.resolve();
@@ -101,10 +104,10 @@ function createFacilitatorInvite(params) {
 function updateToFacilitator(accountUser) {
   let deferred = q.defer();
 
-  if (accountUser.role == 'accountManager' || accountUser.role == 'admin') {
+  if (_.includes(['admin', 'accountManager'], accountUser.role)) {
     deferred.resolve();
   } else {
-    models.AccountUser.update({role: 'facilitator'}, { where: { id: accountUser.id } }).then(function(res) {
+    AccountUser.update({role: 'facilitator'}, { where: { id: accountUser.id } }).then(function() {
       deferred.resolve();
     }, function(error) {
       deferred.reject(error);
@@ -114,13 +117,13 @@ function updateToFacilitator(accountUser) {
   return deferred.promise;
 }
 
-function facilitatorInviteParams(facilitator, sessionId) {
+function facilitatorInviteParams(accountUser, sessionId) {
   return {
-    accountUserId: facilitator.id,
-    userId: facilitator.UserId,
+    accountUserId: accountUser.id,
+    userId: accountUser.UserId,
     sessionId: sessionId,
     role: 'facilitator',
-    userType: facilitator.UserId ? 'existing' : 'new'
+    userType: accountUser.UserId ? 'existing' : 'new'
   }
 }
 

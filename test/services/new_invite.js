@@ -11,7 +11,7 @@ var assert = require('chai').assert;
 var async = require('async');
 
 describe('SERVICE - Invite', function() {
-  var testUser = null, testUser2 = null, testAccount = null, accountUser2 = null;
+  var testUser, accountUser, testUser2, testAccount, accountUser2 = null;
   let user1Attrs = {
     accountName: "Lilo",
     firstName: "Lilu",
@@ -37,6 +37,7 @@ describe('SERVICE - Invite', function() {
         testUser = user1;
         user1.getOwnerAccount().then((accounts) =>  {
           testAccount = accounts[0];
+          accountUser = accounts[0].AccountUser
           userService.create(user2Attrs, (err, user2) =>  {
             user2.getAccountUsers().then( (results) => {
               accountUser2 = results[0],
@@ -98,7 +99,7 @@ describe('SERVICE - Invite', function() {
     });
   });
 
-  describe.only('#createBulkInvites', function() {
+  describe('#createBulkInvites', function() {
     describe('sad path', function() {
       it('should fail with invalid params', function (done) {
         let invalidInviteParams = [
@@ -145,6 +146,76 @@ describe('SERVICE - Invite', function() {
         }]
 
         inviteService.createBulkInvites(params).then(function(invites) {
+          try {
+            assert.equal(invites[0].userId, params[0].userId);
+            assert.equal(invites[0].role, params[0].role);
+            assert.equal(invites[0].userType, params[0].userType);
+            done();
+          } catch (e) {
+            done(e);
+          }
+        }, function(error) {
+          done(error);
+          });
+      });
+    });
+  });
+
+
+  describe.only('#createFacilitatorInvite', function() {
+    beforeEach(function(done) {
+      inviteService.createInvite({}).then(function(invite) {
+        done('Should not get here!');
+      }, function(error) {
+        done((error)
+      });
+    })
+    describe('sad path', function() {
+      it('should fail with invalid params', function (done) {
+        let invalidInviteParams = [
+          {
+            accountUserId: accountUser2.id,
+            userId: accountUser2.userId,
+            accountId: accountUser2.AccountId,
+            role: 'facilitator',
+            userType: "existing"
+          },
+          {
+            role: 'facilitator',
+            userType: "existing"
+          },{
+            role: 'participant',
+            userType: "new"
+          }
+      ]
+        inviteService.createFacilitatorInvite(invalidInviteParams).then(function(invites) {
+          done('Should not get here!');
+        }, function(errors) {
+          let errorParams = {
+            accountUserId: "Account User Id can't be empty"
+          };
+          try {
+            assert.typeOf(errors,'array')
+            assert.deepEqual(errors[0], errorParams);
+            done();
+          } catch (e) {
+            done(e)
+          }
+        });
+      });
+    });
+
+    describe('happy path', function() {
+      it('should succeed and return invite', function (done) {
+        let params = [{
+          accountUserId: accountUser2.id,
+          userId: accountUser2.userId,
+          accountId: accountUser2.AccountId,
+          role: 'facilitator',
+          userType: "existing"
+        }]
+
+        inviteService.createFacilitatorInvite(params).then(function(invites) {
           try {
             assert.equal(invites[0].userId, params[0].userId);
             assert.equal(invites[0].role, params[0].role);
