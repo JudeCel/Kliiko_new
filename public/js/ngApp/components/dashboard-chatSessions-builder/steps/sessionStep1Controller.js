@@ -300,7 +300,6 @@
     function postUpdateStep(dataObj) {
       var deferred = $q.defer();
       vm.session.updateStep(dataObj).then(function(res) {
-        vm.step1.timeZone = vm.session.steps.step1.timeZone;
         deferred.resolve();
       }, function (err) {
         messenger.error(err);
@@ -312,13 +311,13 @@
 
     function updateStep(dataObj) {
       if (dataObj == 'startTime' || dataObj == 'endTime' || dataObj == 'timeZone') {
-        if(validateDate(vm.step1.startTime) && validateDate(vm.step1.endTime)) {
-          postUpdateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone });
-        }
         initCanSelectFacilitator();
+        if(validateDate(vm.step1.startTime) && validateDate(vm.step1.endTime)) {
+          return postUpdateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone });
+        }
         return;
       }
-      postUpdateStep(dataObj);
+      return postUpdateStep(dataObj);
     }
 
     // Gallery stuff
