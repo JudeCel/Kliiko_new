@@ -11,7 +11,32 @@ var models = require("../models");
 var stringHelpers = require('../util/stringHelpers.js');
 var q = require('q');
 var path = './seeders/mailTemplateFiles/';
+var constants = require('../util/constants');
+let Bluebird = require('bluebird');
 
+var templateNamesUpdateList = [
+  { name: constants.mailTemplateType.hostConfirmation, where: { name: 'Facilitator Confirmation'} },
+  { name: constants.mailTemplateType.spectatorInvitation,  where : { name: 'Observer Invitation' } },
+  { name: constants.mailTemplateType.hostOverQuota, where : { name: 'Facilitator Over-Quota' } }
+];
+
+function updateTemplateNames() {
+  return new Bluebird(function (resolve, reject) {
+    Bluebird.each(templateNamesUpdateList, (item) => {
+        return new Bluebird(function (resolve, reject) {
+           models.MailTemplateBase.update({ name : item.name }, { where: item.where }).then(() => {
+            models.MailTemplate.update({ name : item.name }, { where: item.where }).then(() => {
+              resolve();
+            });
+          });
+        });
+    }).then(function() {
+      resolve();
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
 
 function doUpdate(config) {
   let deferred = q.defer();
@@ -80,5 +105,6 @@ function processCallBack(infoDataObject) {
 
 module.exports = {
   doUpdate: doUpdate,
-  getTemplateFilesInfo: getTemplateFilesInfo
+  getTemplateFilesInfo: getTemplateFilesInfo,
+  updateTemplateNames: updateTemplateNames
 }
