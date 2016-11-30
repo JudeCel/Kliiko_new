@@ -1,6 +1,6 @@
 'use strict';
 
-var {Invite, sequelize, Session} = require('./../../models');
+var {Invite, sequelize, Session, AccountUser} = require('./../../models');
 
 var userService = require('./../../services/users');
 var inviteService = require('./../../services/invite');
@@ -220,6 +220,41 @@ describe.only('SERVICE - Invite', function() {
         }, function(error) {
           done(error);
           });
+      });
+    });
+  });
+
+  describe('#updateToFacilitator', function() {
+    describe('happy path', function() {
+      it('should succeed and change role to facilitator', function (done) {
+        AccountUser.update({role: 'participant'}, { where: { id: accountUser.id }, returning: true }).then(function(accountUserResp) {
+          inviteService.updateToFacilitator(accountUserResp[1][0]).then(function(result) {
+            try {
+              assert.equal(result.role, "facilitator");
+              done()
+            } catch (e) {
+              done(e);
+            }
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+
+      it('should succeed and not change role', function (done) {
+        inviteService.updateToFacilitator(accountUser).then(function(result) {
+          try {
+            assert.equal(accountUser.role, result.role);
+            assert.equal(accountUser.role, "accountManager");
+            done()
+          } catch (e) {
+            done(e);
+          }
+        }, function(error) {
+          done(error);
+        });
       });
     });
   });

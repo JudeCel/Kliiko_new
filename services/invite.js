@@ -104,11 +104,15 @@ function createFacilitatorInvite(params) {
 function updateToFacilitator(accountUser) {
   let deferred = q.defer();
 
-  if (_.includes(['admin', 'accountManager'], accountUser.role)) {
-    deferred.resolve();
+  if (_.includes(['admin', 'accountManager', 'facilitator'], accountUser.role)) {
+    deferred.resolve(accountUser);
   } else {
-    AccountUser.update({role: 'facilitator'}, { where: { id: accountUser.id } }).then(function() {
+    AccountUser.update({role: 'facilitator'}, { where: { id: accountUser.id }, returning: true  }).then(function(result) {
+      if (result[0] > 0) {
+        deferred.resolve(result[1][0]);
+      }else {
       deferred.resolve();
+      }
     }, function(error) {
       deferred.reject(error);
     });
@@ -744,5 +748,6 @@ module.exports = {
   acceptSessionInvite: acceptSessionInvite,
   sessionAccept: sessionAccept,
   createFacilitatorInvite: createFacilitatorInvite,
-  populateMailParamsWithColors: populateMailParamsWithColors
+  populateMailParamsWithColors: populateMailParamsWithColors,
+  updateToFacilitator: updateToFacilitator
 };
