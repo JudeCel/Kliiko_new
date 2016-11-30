@@ -126,7 +126,7 @@
     function sendCloseEmail() {
       var data = findSelectedMembersClose();
       if (data.length > 0) {
-        $confirm({ text: "Are you sure you want to send Close Email to Selected Participants?", title: "Send Close Email to Selected Participants?", wide: true }).then(function() {
+        $confirm({ text: "Are you sure you want to send Close Email to Selected Guests?", title: "Send Close Email to Selected Guests?", wide: true }).then(function() {
           vm.session.sendCloseEmail(data).then(function(res) {
             for(var i=0; i<data.length; i++) {
               data[i].closeEmailSentStatus = "Sent";
