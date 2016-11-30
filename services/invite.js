@@ -4,7 +4,7 @@ const models = require('./../models');
 const filters = require('./../models/filters');
 const brandProjectConstants = require('../util/brandProjectConstants');
 const { enqueue } = require('./backgroundQueue');
-const { Invite,User, Account, AccountUser,Session, BrandProjectPreference } = models;
+const { Invite,User, Account, AccountUser, Session, BrandProjectPreference } = models;
 
 var moment = require('moment-timezone');
 var emailDate = require('./formats/emailDate');
