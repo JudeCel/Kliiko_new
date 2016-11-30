@@ -15,9 +15,7 @@ function format(type, dateTime, timeZone) {
       return formated.replace(':00', '');
     } else if(type == 'timeZone') {
       let val = moment.tz(dateTime, timeZone);
-      let formated1 = val.format('z');
-      let formated2 = val.format('Z');
-      return formated1.indexOf('-') == 0 || formated1.indexOf('+') == 0 ? ("UTC" + formated2) : (formated1 + formated2);
+      return "UTC" + val.format('Z');
     } else {
       throw("unknown format");
     }

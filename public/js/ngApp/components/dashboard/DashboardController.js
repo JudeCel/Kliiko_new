@@ -81,8 +81,10 @@
     }
 
     function initTimer() {
+      var offset = -(new Date()).getTimezoneOffset()/60;
       $('#PendingSessionCountdown').countdown({
-        date: vm.theOnlyPendingSessionTime
+        date: vm.theOnlyPendingSessionTime,
+        offset: offset
       }, function () {
         vm.initMyDashboard();
       });
