@@ -10,7 +10,7 @@ var subscriptionFixture = require('./../fixtures/subscription');
 var assert = require('chai').assert;
 var async = require('async');
 
-describe('SERVICE - Invite', function() {
+describe.only('SERVICE - Invite', function() {
   var testUser, accountUser, testUser2, testAccount, session, accountUser2 = null;
   let user1Attrs = {
     accountName: "Lilo",
@@ -92,7 +92,7 @@ describe('SERVICE - Invite', function() {
       it('should succeed and return invite', function (done) {
         let params = {
           accountUserId: accountUser2.id,
-          userId: accountUser2.userId,
+          userId: accountUser2.UserId,
           accountId: accountUser2.AccountId,
           role: 'facilitator',
           userType: "existing"
@@ -120,7 +120,7 @@ describe('SERVICE - Invite', function() {
         let invalidInviteParams = [
           {
             accountUserId: accountUser2.id,
-            userId: accountUser2.userId,
+            userId: accountUser2.UserId,
             accountId: accountUser2.AccountId,
             role: 'facilitator',
             userType: "existing"
@@ -176,12 +176,12 @@ describe('SERVICE - Invite', function() {
     });
   });
 
-  describe.only('#createFacilitatorInvite', function() {
+  describe('#createFacilitatorInvite', function() {
     describe('sad paths', function() {
       it('should fail already sent invite', function (done) {
         let invaiteParams = {
           accountUserId: accountUser2.id,
-          userId: accountUser2.userId,
+          userId: accountUser2.UserId,
           accountId: accountUser2.AccountId,
           sessionId: session.id,
           role: 'facilitator',
@@ -204,30 +204,24 @@ describe('SERVICE - Invite', function() {
       });
     });
 
-    // describe('happy path', function() {
-      // it('should succeed and return invite', function (done) {
-      //   let params = [{
-      //     accountUserId: accountUser2.id,
-      //     userId: accountUser2.userId,
-      //     accountId: accountUser2.AccountId,
-      //     role: 'facilitator',
-      //     userType: "existing"
-      //   }
-      //
-      //   inviteService.createFacilitatorInvite(params).then(function(invites) {
-      //     try {
-      //       assert.equal(invites[0].userId, params[0].userId);
-      //       assert.equal(invites[0].role, params[0].role);
-      //       assert.equal(invites[0].userType, params[0].userType);
-      //       done();
-      //     } catch (e) {
-      //       done(e);
-      //     }
-      //   }, function(error) {
-      //     done(error);
-      //     });
-      // });
-    // });
+    describe('happy path', function() {
+      it('should succeed and return invite', function (done) {
+        let params = {
+          accountUserId: accountUser2.id,
+          userId: accountUser2.UserId,
+          accountId: accountUser2.AccountId,
+          role: 'facilitator',
+          sessionId: session.id,
+          userType: "existing"
+        }
+
+        inviteService.createFacilitatorInvite(params).then(function() {
+            done();
+        }, function(error) {
+          done(error);
+          });
+      });
+    });
   });
 
   // describe('#removeInvite', function() {
