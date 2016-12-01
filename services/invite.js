@@ -126,8 +126,7 @@ function facilitatorInviteParams(accountUser, sessionId) {
     accountUserId: accountUser.id,
     userId: accountUser.UserId,
     sessionId: sessionId,
-    role: 'facilitator',
-    userType: accountUser.UserId ? 'existing' : 'new'
+    role: 'facilitator'
   }
 }
 
@@ -146,8 +145,7 @@ function createInvite(params) {
     token: token,
     sentAt: new Date(),
     expireAt: expireDate,
-    role: params.role,
-    userType: params.userType
+    role: params.role
   }).then(function(result) {
     enqueue("invites", "invite", [result.id]);
     deferred.resolve(result)
@@ -268,31 +266,37 @@ function sendInvite(inviteId, deferred) {
   return deferred.promise;
 }
 
+function findAndRemoveInvite(params) {
+  return new Bluebird((resolve, reject) => {
+    let where = { accountUserId: params.accountUserId };
+    Invite.find({ where: where }).then(function(invite) {
+      if(invite) {
+        removeInvite(invite, (err, message) => {
+          if (err) {
+            reject(err);
+          }else {
+            resolve(message);
+          }
+        });
+      }else {
+        reject('Invite not found');
+      }
+    });
 
-function findAndRemoveInvite(params, callback) {
-  Invite.find({ where: params }).then(function(invite) {
-    if(invite) {
-      removeInvite(invite, function(err, message) {
-        callback(err, message);
-      });
-    }
-    else {
-      callback('Invite not found');
-    }
-  });
+  })
 }
 
 function removeInvite(invite, callback) {
-  if(invite.userType == 'new') {
-    removeAllAssociatedDataOnNewUser(invite, function(error, message) {
-      callback(error, message);
-    });
-  }
-  else {
+  // if(invite.userType == 'new') {
+  //   removeAllAssociatedDataOnNewUser(invite, function(error, message) {
+  //     callback(error, message);
+  //   });
+  // }
+  // else {
     destroyInvite(invite, function(error, message) {
       callback(error, message);
     });
-  }
+  // }
 };
 
 function destroyInvite(invite, callback) {

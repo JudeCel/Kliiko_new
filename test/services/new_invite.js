@@ -253,309 +253,57 @@ describe.only('SERVICE - Invite', function() {
     });
   });
 
-  // describe('#removeInvite', function() {
-  //   describe('existing user', function() {
-  //     it('should succeed on removing invite', function (done) {
-  //       let body = {firstName: accountUser2.firstName,
-  //         lastName: accountUser2.lastName,
-  //         gender: accountUser2.gender,
-  //         email: accountUser2.email
-  //       };
-  //
-  //       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function(subscription) {
-  //         models.SubscriptionPreference.update({'data.accountUserCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
-  //           validParams(testUser, testAccount, body).then(function(params) {
-  //             inviteService.createInvite(params).then(function(data) {
-  //               async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
-  //                 if(error) {
-  //                   done(error);
-  //                 }
-  //
-  //                 inviteService.removeInvite(data.invite, function(error, result) {
-  //                   if(error) {
-  //                     done(error);
-  //                   }
-  //
-  //                   assert.equal(result, inviteService.messages.removed);
-  //                   async.parallel(countTables({ invite: 0, account: 2, user: 2, accountUser: 3 }), function(error, result) {
-  //                     done(error);
-  //                   });
-  //                 });
-  //               });
-  //             }, function(error) {
-  //               done(error);
-  //             });
-  //           }, function(error) {
-  //             done(error);
-  //           });
-  //         }, function(error) {
-  //           done(error);
-  //         })
-  //       }, function(error) {
-  //         done(error);
-  //       });
-  //     });
-  //
-  //     it('should fail on removing invite because confirmed', function (done) {
-  //       let body = {firstName: accountUser2.firstName,
-  //         lastName: accountUser2.lastName,
-  //         gender: accountUser2.gender,
-  //         email: accountUser2.email
-  //       };
-  //
-  //       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function(subscription) {
-  //         models.SubscriptionPreference.update({'data.accountUserCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
-  //           validParams(testUser, testAccount, body).then(function(params) {
-  //             inviteService.createInvite(params).then(function(data) {
-  //               Invite.update({ status: 'confirmed' }, { where: { id: data.invite.id } }).then(function() {
-  //                 async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
-  //                   if(error) {
-  //                     done(error);
-  //                   }
-  //
-  //                   inviteService.removeInvite(data.invite, function(error, result) {
-  //                     assert.equal(error, inviteService.messages.cantRemove);
-  //                     async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
-  //                       done(error);
-  //                     });
-  //                   });
-  //                 });
-  //               });
-  //             }, function(error) {
-  //               done(error);
-  //             });
-  //           }, function(error) {
-  //             done(error);
-  //           });
-  //         }, function(error) {
-  //           done(error);
-  //         })
-  //       }, function(error) {
-  //         done(error);
-  //       });
-  //
-  //     });
-  //   });
-  //
-  //   describe('new user', function() {
-  //     it('should succeed on removing invite', function (done) {
-  //       let body = {firstName: "newName",
-  //         lastName: "newlastName",
-  //         gender: "male",
-  //         email: "newuser@gmail.com"
-  //       };
-  //
-  //       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function(subscription) {
-  //         models.SubscriptionPreference.update({'data.accountUserCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
-  //           validParams(testUser, testAccount, body).then(function(params) {
-  //             inviteService.createInvite(params).then(function(data) {
-  //               async.parallel(countTables({ invite: 1, account: 2, user: 3, accountUser: 3 }), function(error, result) {
-  //                 if(error) {
-  //                   done(error);
-  //                 }
-  //
-  //                 inviteService.removeInvite(data.invite, function(error, result) {
-  //                   if(error) {
-  //                     done(error);
-  //                   }
-  //
-  //                   assert.equal(result, inviteService.messages.removed);
-  //                   async.parallel(countTables({ invite: 0, account: 2, user: 2, accountUser: 2 }), function(error, result) {
-  //                     done(error);
-  //                   });
-  //                 });
-  //               });
-  //             }, function(error) {
-  //               done(error);
-  //             });
-  //           }, function(error) {
-  //             done(error);
-  //           });
-  //         }, function(error) {
-  //           done(error);
-  //         })
-  //       }, function(error) {
-  //         done(error);
-  //       });
-  //
-  //     });
-  //   });
-  // // });
+  describe.only('#findAndRemoveInvite', function() {
+    describe('happy path', function() {
+      it('should succeed remove invite for existing user', function (done) {
+        let params = {
+          accountUserId: accountUser2.id,
+          userId: accountUser2.UserId,
+          accountId: accountUser2.AccountId,
+          role: 'facilitator'
+        }
+        inviteService.createInvite(params).then(function(invite) {
+          inviteService.findAndRemoveInvite({ accountUserId: invite.accountUserId }).then((message) => {
+            AccountUser.count().then(function(c) {
+              try {
+                assert.equal(c, 2);
+                assert.equal(message, "Successfully removed Invite");
+                done();
+              } catch (e) {
+                done(e);
+              }
+            });
 
-  // describe('#findInvite', function() {
-  //   it('should succeed on finding invite', function (done) {
-  //     let body = {firstName: "newName",
-  //       lastName: "newlastName",
-  //       gender: "male",
-  //       email: "newuser@gmail.com"
-  //     }
-  //
-  //     subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function(subscription) {
-  //       models.SubscriptionPreference.update({'data.accountUserCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
-  //         validParams(testUser, testAccount, body).then(function(params) {
-  //           inviteService.createInvite(params).then(function(data) {
-  //             inviteService.findInvite(data.invite.token, function(error, result) {
-  //               assert.equal(error, null);
-  //               assert.equal(data.invite.id, result.id);
-  //               done();
-  //             });
-  //           }, function(error) {
-  //             done(error);
-  //           });
-  //         }, function(error) {
-  //           done(error);
-  //         });
-  //       }, function(error) {
-  //         done(error);
-  //       })
-  //     }, function(error) {
-  //       done(error);
-  //     });
-  //
-  //   });
-  //
-  //   it('should fail on finding invite', function (done) {
-  //     inviteService.findInvite('some token', function(error, result) {
-  //       assert.equal(error, 'Invite not found');
-  //       assert.equal(result, null);
-  //       done();
-  //     });
-  //   });
-  // });
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
 
-  // describe('#declineInvite', function() {
-  //   it('should succeed on declining invite', function (done) {
-  //     let body = {firstName: "newName",
-  //       lastName: "newlastName",
-  //       gender: "male",
-  //       email: "newuser@gmail.com"
-  //     };
-  //
-  //     subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function(subscription) {
-  //       models.SubscriptionPreference.update({'data.accountUserCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
-  //         validParams(testUser, testAccount, body).then(function(params) {
-  //           inviteService.createInvite(params).then(function(data) {
-  //             inviteService.declineInvite(data.invite.token, function(error, result, message) {
-  //               assert.equal(error, null);
-  //               assert.equal(data.invite.id, result.id);
-  //               assert.equal(message, inviteService.messages.declined);
-  //               done();
-  //             });
-  //           }, function(error) {
-  //             done(error);
-  //           });
-  //         }, function(error) {
-  //           done(error);
-  //         });
-  //       }, function(error) {
-  //         done(error);
-  //       })
-  //     }, function(error) {
-  //       done(error);
-  //     });
-  //
-  //   });
-  // });
+      it('should succeed remove invite for new user', function (done) {
+        let params = {
+          accountUserId: accountUser2.id,
+          userId: accountUser2.UserId,
+          accountId: accountUser2.AccountId,
+          role: 'facilitator'
+        }
+        inviteService.createInvite(params).then(function(invite) {
+          inviteService.findAndRemoveInvite({ accountUserId: invite.accountUserId }).then((message) => {
+            AccountUser.count().then(function(c) {
+              try {
+                assert.equal(c, 2);
+                assert.equal(message, "Successfully removed Invite");
+                done();
+              } catch (e) {
+                done(e);
+              }
+            });
 
-  // describe('#acceptInviteExisting', function() {
-  //   it('should succeed on accepting invite', function (done) {
-  //     let body = {firstName: accountUser2.firstName,
-  //       lastName: accountUser2.lastName,
-  //       gender: accountUser2.gender,
-  //       email: accountUser2.email
-  //     };
-  //
-  //     subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function(subscription) {
-  //       models.SubscriptionPreference.update({'data.accountUserCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
-  //         validParams(testUser, testAccount, body).then(function(params) {
-  //           inviteService.createInvite(params).then(function(data) {
-  //             async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
-  //               if(error) {
-  //                 done(error);
-  //               }
-  //
-  //               inviteService.acceptInviteExisting(data.invite.token, function(error, _result, message) {
-  //                 if(error) {
-  //                   done(error);
-  //                 }
-  //                 async.parallel(countTables({ invite: 1, account: 2, user: 2, accountUser: 3 }), function(error, result) {
-  //                   Invite.find({ where: { id: data.invite.id } }).then(function(invite) {
-  //                     assert.equal(invite.status, 'confirmed');
-  //                     done(error);
-  //                   });
-  //                 });
-  //               });
-  //             });
-  //           }, function(error) {
-  //             done(error);
-  //           });
-  //         }, function(error) {
-  //           done(error);
-  //         });
-  //       }, function(error) {
-  //         done(error);
-  //       })
-  //     }, function(error) {
-  //       done(error);
-  //     });
-  //   });
-  // });
-
-  // describe('#acceptInviteNew', function() {
-  //   it('should succeed on accepting invite', function (done) {
-  //     let body = { firstName: "newName",
-  //       lastName: "newlastName",
-  //       gender: "male",
-  //       email: "newuser@gmail.com"
-  //     };
-  //
-  //     subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function(subscription) {
-  //       models.SubscriptionPreference.update({'data.accountUserCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
-  //         validParams(testUser, testAccount, body).then(function(params) {
-  //           inviteService.createInvite(params).then(function(data) {
-  //             let oldPassword = data.invite.User.encryptedPassword;
-  //
-  //             async.parallel(countTables({ invite: 1, account: 2, user: 3, accountUser: 3 }), function(error, result) {
-  //               if(error) {
-  //                 done(error);
-  //               }
-  //
-  //               let userParams = { accountName: 'newname', password: 'newpassword' };
-  //               inviteService.acceptInviteNew(data.invite.token, userParams, function(error, message) {
-  //                 if(error) {
-  //                   done(error);
-  //                 }
-  //
-  //                 data.invite.User.reload().then(function(user) {
-  //                   assert.notEqual(user.encryptedPassword, oldPassword);
-  //
-  //                   user.getAccounts().then(function(accounts) {
-  //                     assert.equal(accounts[0].name, testAccount.name);
-  //                     async.parallel(countTables({ invite: 1, account: 2, user: 3, accountUser: 3 }), function(error, result) {
-  //                       Invite.find({ where: { id: data.invite.id } }).then(function(invite) {
-  //                         assert.equal(invite.status, 'confirmed');
-  //                         done(error);
-  //                       });
-  //                     });
-  //                   });
-  //                 });
-  //               });
-  //             });
-  //           }, function(error) {
-  //             done(error);
-  //           });
-  //         }, function(error) {
-  //           done(error);
-  //         });
-  //       }, function(error) {
-  //         done(error);
-  //       })
-  //
-  //     }, function(error) {
-  //       done(error);
-  //     });
-  //
-  //   });
-  // });
-
+          }, function(error) {
+            done(error);
+          });
+        })
+      });
+    });
+  });
 });
