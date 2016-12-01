@@ -281,13 +281,12 @@ function updateSurvey(params, account) {
       }).then(function(result) {
         if(result[0] == 0) {
           throw MessagesUtil.survey.notFound;
-        }
-        else {
+        } else {
           let survey = result[1][0];
+          let ids = getIds(validParams.SurveyQuestions);
+          let where = ids.length > 0 ? { surveyId: survey.id, id: { $notIn: ids } } : { surveyId: survey.id };
           return SurveyQuestion.destroy({
-            where: {
-              surveyId: survey.id
-            },
+            where: where,
             transaction: t
           }).then(function() {
             return bulkUpdateQuestions(survey.id, validParams.SurveyQuestions, t).then(function() {
@@ -674,7 +673,9 @@ function bulkUpdateQuestions(surveyId, questions, t) {
 function getIds(questions) {
   let ids = [];
   questions.forEach(function(question, index, array) {
-    ids.push(question.id);
+    if (question.id) {
+      ids.push(question.id);
+    }
   });
   return ids;
 };
