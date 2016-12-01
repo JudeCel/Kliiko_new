@@ -67,7 +67,6 @@ describe.only('SERVICE - Invite', function() {
     });
   });
 
-
   describe('#createInvite', function() {
     describe('sad path', function() {
       it('should fail without params', function (done) {
@@ -94,15 +93,13 @@ describe.only('SERVICE - Invite', function() {
           accountUserId: accountUser2.id,
           userId: accountUser2.UserId,
           accountId: accountUser2.AccountId,
-          role: 'facilitator',
-          userType: "existing"
+          role: 'facilitator'
         }
 
         inviteService.createInvite(params).then(function(invite) {
           try {
             assert.equal(invite.userId, params.userId);
             assert.equal(invite.role, params.role);
-            assert.equal(invite.userType, params.userType);
             done();
           } catch (e) {
             done(e);
@@ -122,15 +119,12 @@ describe.only('SERVICE - Invite', function() {
             accountUserId: accountUser2.id,
             userId: accountUser2.UserId,
             accountId: accountUser2.AccountId,
-            role: 'facilitator',
-            userType: "existing"
+            role: 'facilitator'
           },
           {
-            role: 'facilitator',
-            userType: "existing"
+            role: 'facilitator'
           },{
             role: 'participant',
-            userType: "new"
           }
       ]
         inviteService.createBulkInvites(invalidInviteParams).then(function(invites) {
@@ -156,15 +150,13 @@ describe.only('SERVICE - Invite', function() {
           accountUserId: accountUser2.id,
           userId: accountUser2.userId,
           accountId: accountUser2.AccountId,
-          role: 'facilitator',
-          userType: "existing"
+          role: 'facilitator'
         }]
 
         inviteService.createBulkInvites(params).then(function(invites) {
           try {
             assert.equal(invites[0].userId, params[0].userId);
             assert.equal(invites[0].role, params[0].role);
-            assert.equal(invites[0].userType, params[0].userType);
             done();
           } catch (e) {
             done(e);
@@ -184,8 +176,7 @@ describe.only('SERVICE - Invite', function() {
           userId: accountUser2.UserId,
           accountId: accountUser2.AccountId,
           sessionId: session.id,
-          role: 'facilitator',
-          userType: "existing"
+          role: 'facilitator'
         }
           inviteService.createFacilitatorInvite(invaiteParams).then((invites) =>  {
             inviteService.createFacilitatorInvite(invaiteParams).then(function(invites) {
@@ -211,8 +202,7 @@ describe.only('SERVICE - Invite', function() {
           userId: accountUser2.UserId,
           accountId: accountUser2.AccountId,
           role: 'facilitator',
-          sessionId: session.id,
-          userType: "existing"
+          sessionId: session.id
         }
 
         inviteService.createFacilitatorInvite(params).then(function() {
@@ -244,17 +234,21 @@ describe.only('SERVICE - Invite', function() {
       });
 
       it('should succeed and not change role', function (done) {
-        inviteService.updateToFacilitator(accountUser).then(function(result) {
-          try {
-            assert.equal(accountUser.role, result.role);
-            assert.equal(accountUser.role, "accountManager");
-            done()
-          } catch (e) {
-            done(e);
-          }
-        }, function(error) {
-          done(error);
-        });
+        try {
+          assert.equal(accountUser.role, "accountManager");
+          inviteService.updateToFacilitator(accountUser).then(function(result) {
+            try {
+              assert.equal(accountUser.role, "accountManager");
+              done()
+            } catch (e) {
+              done(e);
+            }
+          }, function(error) {
+            done(error);
+          });
+        } catch (e) {
+          done(e);
+        }
       });
     });
   });

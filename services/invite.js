@@ -675,8 +675,7 @@ function prepareMailParams(invite, session, receiver, facilitator) {
   return deferred.promise;
 }
 
-function populateMailParamsWithColors(params, session)
-{
+function populateMailParamsWithColors(params, session){
   let deferred = q.defer();
 
   _.each(brandProjectConstants.preferenceColours, function (value, key) {
