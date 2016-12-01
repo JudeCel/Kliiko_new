@@ -55,16 +55,16 @@ function sendGeneric(params, callback) {
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendFacilitatorEmailConfirmation(params, callback) {
-  sendEmail("facilitatorConfirmation", params, callback, false, true);
+  sendEmail("hostConfirmation", params, callback, false, true);
 };
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendParticipantOverquota(params, callback) {
-  sendEmail("facilitatorOverQuota", params, callback, false, false);
+  sendEmail("hostOverQuota", params, callback, false, false);
 };
 
 function sendObserverInvitation(params, callback) {
-  sendEmail("observerInvitation", params, callback, false, true);
+  sendEmail("spectatorInvitation", params, callback, false, true);
 };
 
 module.exports = {
