@@ -46,7 +46,7 @@ spec:
     spec:
       containers:
       - name: nginx-ssl-proxy
-        image: janjiss/nginx-ssl-proxy-websockets:latest
+        image: dainisl/nginx-ssl-proxy:latest
         env:
         - name: SERVICE_HOST_ENV_NAME
           value: ADMIN_SERVICE_HOST
