@@ -239,8 +239,7 @@ function sendInvite(invite, deferred) {
     }, function (error) {
       deferred.reject(filters.errors(error));
     });
-  }
-  else {
+  } else {
     let session = invite.Session;
     models.SessionMember.find({
       where: {
@@ -278,10 +277,9 @@ function sendInvite(invite, deferred) {
 
       populateMailParamsWithColors(inviteParams, session).then(function (params) {
         inviteMailer.sendInviteSession(params, function(error, data) {
-            if (error) {
+          if (error) {
             deferred.reject(error);
-          }
-          else {
+          } else {
             deferred.resolve(simpleParams(invite));
           }
         });

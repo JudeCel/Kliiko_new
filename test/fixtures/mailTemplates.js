@@ -77,22 +77,22 @@ let templateFiles = [
   },
   {
     fileName: 'SystemEmail_FacilitatorConfirmation.html',
-    name: constants.mailTemplateType.facilitatorConfirmation,
-    type: "facilitatorConfirmation",
+    name: constants.mailTemplateType.hostConfirmation,
+    type: "hostConfirmation",
     subject: "Host Confirmation",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_ObserverInvitation.html',
-    name: constants.mailTemplateType.observerInvitation,
-    type: "observerInvitation",
+    name: constants.mailTemplateType.spectatorInvitation,
+    type: "spectatorInvitation",
     subject: "Spectator Invitation",
     systemMessage: true
   },
   {
     fileName: 'SystemEmail_FacilitatorOverQuota.html',
-    name: constants.mailTemplateType.facilitatorOverQuota,
-    type: "facilitatorOverQuota",
+    name: constants.mailTemplateType.hostOverQuota,
+    type: "hostOverQuota",
     subject: "Host Over-Quota",
     systemMessage: true
   },
