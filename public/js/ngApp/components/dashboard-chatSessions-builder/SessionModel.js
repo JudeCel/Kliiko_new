@@ -342,9 +342,11 @@
       var deferred = $q.defer();
 
       sessionBuilderRestApi.inviteMembers({ id: self.id }, { members: members, role: 'observer' }, function(res) {
-        if (res.error) { deferred.reject(err);  return deferred.promise;}
-
-        deferred.resolve(res);
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
+        }
       });
 
       return deferred.promise;
