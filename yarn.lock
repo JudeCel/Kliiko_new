@@ -2981,11 +2981,11 @@ gulp-help@~1.6.1:
     object-assign "^3.0.0"
 
 gulp-htmlclean@*:
-  version "2.7.6"
-  resolved "https://registry.yarnpkg.com/gulp-htmlclean/-/gulp-htmlclean-2.7.6.tgz#ebb9dfb93b7c7232b5e909ee8c57c42cd0497d53"
+  version "2.7.8"
+  resolved "https://registry.yarnpkg.com/gulp-htmlclean/-/gulp-htmlclean-2.7.8.tgz#62d876ddd6cd22b71070424cb9eac5cb2b71b88b"
   dependencies:
     gulp-util "^3.0.0"
-    htmlclean "~2.7.6"
+    htmlclean "~2.7.8"
     through2 "^0.6.1"
 
 gulp-if@^2.0.0:
@@ -3461,8 +3461,8 @@ home-or-tmp@^1.0.0:
     user-home "^1.1.1"
 
 homedir-polyfill@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/homedir-polyfill/-/homedir-polyfill-1.0.0.tgz#2f07f0dc32bd6f0384cd8c2a103824917fc6e321"
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/homedir-polyfill/-/homedir-polyfill-1.0.1.tgz#4c2bbc8a758998feebf5ed68580f76d46768b4bc"
   dependencies:
     parse-passwd "^1.0.0"
 
@@ -3470,9 +3470,9 @@ hosted-git-info@^2.1.4:
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.1.5.tgz#0ba81d90da2e25ab34a332e6ec77936e1598118b"
 
-htmlclean@~2.7.6:
-  version "2.7.7"
-  resolved "https://registry.yarnpkg.com/htmlclean/-/htmlclean-2.7.7.tgz#f75865acb27761ab25370a044eaf9c73156f5e5c"
+htmlclean@~2.7.8:
+  version "2.7.8"
+  resolved "https://registry.yarnpkg.com/htmlclean/-/htmlclean-2.7.8.tgz#49bd3b9416297aaf6a8d25b43d5ac10d16919033"
   dependencies:
     commander "^2.6.0"
     glob "~4.4.0"
@@ -8131,8 +8131,8 @@ yargs-parser@^2.4.1:
     lodash.assign "^4.0.6"
 
 yargs-parser@^4.0.2:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-4.1.0.tgz#313df030f20124124aeae8fbab2da53ec28c56d7"
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-4.2.0.tgz#6ced869cd05a3dca6a1eaee38b68aeed4b0b4101"
   dependencies:
     camelcase "^3.0.0"
 
