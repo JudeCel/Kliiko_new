@@ -81,6 +81,5 @@ function processCallBack(infoDataObject) {
 
 module.exports = {
   doUpdate: doUpdate,
-  getTemplateFilesInfo: getTemplateFilesInfo,
-  updateTemplateNames: updateTemplateNames
+  getTemplateFilesInfo: getTemplateFilesInfo
 }
