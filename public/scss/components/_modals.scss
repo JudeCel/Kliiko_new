@@ -132,6 +132,22 @@
 
 .modal-dialog{
   min-width:300px;
+  
+  .modal-tabs {
+    margin-top: -46px;
+    text-align: center;
+
+    .modal-tab {
+      display: inline-block;
+      padding: 10px;
+      min-width: 160px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 15px;
+      margin: 0px 8px;
+      background: #fff;
+    }
+  }
 }
 
 @media (max-width: 1330px) {

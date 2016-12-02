@@ -44,6 +44,7 @@
     vm.removeDependency = removeDependency;
     vm.getResourceFromList = getResourceFromList;
     vm.openUploadModal = openUploadModal;
+    vm.openSelectOrUploadModal = openSelectOrUploadModal;
     vm.openSelectModal = openSelectModal;
     vm.selectAllResources = selectAllResources;
     vm.massAction = massAction;
@@ -52,6 +53,7 @@
     vm.youtubeUrl = youtubeUrl;
     vm.normalYoutubeUrl = normalYoutubeUrl;
     vm.resourceUrl = resourceUrl;
+    vm.fileSelected = fileSelected;
 
     function initController() {
       vm.currentPage.viewType = sessionStorage.getItem('viewType') || vm.currentPage.viewType;
@@ -263,6 +265,24 @@
       domServices.modal('selectResource', 'close');
     }
 
+    function openSelectOrUploadModal(current, parent) {
+      vm.newResource = { type: current.type, scope: current.scope };
+      vm.currentPage.upload = current.id;
+      parent.modal.replace = false;
+      domServices.modal('selectOrUploadResource');
+      parent = parent || { modal: {} };
+      vm.currentModalSet = parent.modal.set;
+      vm.currentDependency = parent.dependency;
+      vm.currentCallback = parent.callback;
+      vm.currentPage.canSelect = true;
+    }
+
+    function fileSelected() {
+      if ((!vm.newResource.name || vm.newResource.lastAutopopulatedName == vm.newResource.name) && vm.newResource.file) {
+        vm.newResource.lastAutopopulatedName = vm.newResource.name = vm.newResource.file.name;
+      }
+    }
+
     function openUploadModal(current, parent, replaceResource) {
       vm.newResource = { type: current.type, scope: current.scope };
       vm.currentPage.upload = current.id;
@@ -274,11 +294,12 @@
       } else {
         parent.modal.replace = false;
       }
-      domServices.modal('uploadResource');
+      domServices.modal('selectOrUploadResource');
       parent = parent || { modal: {} };
       vm.currentModalSet = parent.modal.set;
       vm.currentDependency = parent.dependency;
       vm.currentCallback = parent.callback;
+      vm.currentPage.canSelect = false;
     }
 
     function openSelectModal(parent) {

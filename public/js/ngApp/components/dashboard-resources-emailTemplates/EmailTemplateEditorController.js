@@ -55,7 +55,7 @@
             exec: function() {
               vm.currentUpload = 'image';
               $scope.$apply(function() {
-                vm.galleryController.openUploadModal(vm.uploadTypes.image, { modal: {}, callback: postUpload });
+                vm.galleryController.openSelectOrUploadModal(vm.uploadTypes.image, { modal: {}, callback: postUpload });
               });
             }
           }
@@ -70,7 +70,7 @@
         exec: function() {
           vm.currentUpload = 'video';
           $scope.$apply(function() {
-            vm.galleryController.openUploadModal(vm.uploadTypes.video, { modal: {}, callback: postUpload });
+            vm.galleryController.openSelectOrUploadModal(vm.uploadTypes.video, { modal: {}, callback: postUpload });
           });
         }
       });
