@@ -710,31 +710,31 @@ function populateMailParamsWithColors(params, session){
   return deferred.promise;
 }
 
-function removeAllAssociatedDataOnNewUser(invite, callback) {
-  async.waterfall([
-    function(cb) {
-      User.find({ where: { id: invite.userId } }).then(function(user) {
-        if(user) {
-          cb(null, user);
-        }
-        else {
-          cb('Not found user');
-        }
-      }).catch(function(error) {
-        cb(filters.errors(error));
-      });
-    },
-    function(user, cb) {
-      user.destroy().then(function() {
-        cb();
-      }).catch(function(error) {
-        cb(filters.errors(error));
-      });
-    }
-  ], function(error) {
-    callback(error, MessagesUtil.invite.removed);
-  });
-}
+// function removeAllAssociatedDataOnNewUser(invite, callback) {
+//   async.waterfall([
+//     function(cb) {
+//       User.find({ where: { id: invite.userId } }).then(function(user) {
+//         if(user) {
+//           cb(null, user);
+//         }
+//         else {
+//           cb('Not found user');
+//         }
+//       }).catch(function(error) {
+//         cb(filters.errors(error));
+//       });
+//     },
+//     function(user, cb) {
+//       user.destroy().then(function() {
+//         cb();
+//       }).catch(function(error) {
+//         cb(filters.errors(error));
+//       });
+//     }
+//   ], function(error) {
+//     callback(error, MessagesUtil.invite.removed);
+//   });
+// }
 
 module.exports = {
   messages: MessagesUtil.invite,
