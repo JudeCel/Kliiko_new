@@ -287,16 +287,9 @@ function findAndRemoveInvite(params) {
 }
 
 function removeInvite(invite, callback) {
-  // if(invite.userType == 'new') {
-  //   removeAllAssociatedDataOnNewUser(invite, function(error, message) {
-  //     callback(error, message);
-  //   });
-  // }
-  // else {
-    destroyInvite(invite, function(error, message) {
-      callback(error, message);
-    });
-  // }
+  destroyInvite(invite, function(error, message) {
+    callback(error, message);
+  });
 };
 
 function destroyInvite(invite, callback) {
@@ -317,15 +310,17 @@ function destroyInvite(invite, callback) {
   });
 }
 
-function findInvite(token, callback) {
-  Invite.find({ include: [Account, AccountUser, User], where: { token: token, $or: [{ status: 'pending' }, { status: 'inProgress' }] } }).then(function(result) {
-    if(result) {
-      callback(null, result);
-    }
-    else {
-      callback(MessagesUtil.invite.notFound);
-    }
-  });
+function findInvite(token) {
+  return new Bluebird((resolve, reject) => {
+    Invite.find({ include: [Account, AccountUser, User], where: { token: token, $or: [{ status: 'pending' }, { status: 'inProgress' }] } }).then(function(result) {
+      if(result) {
+        resolve(result);
+      }
+      else {
+        reject(MessagesUtil.invite.notFound);
+      }
+    });
+  })
 };
 
 function declineInvite(token, callback) {
@@ -343,197 +338,200 @@ function declineInvite(token, callback) {
   })
 };
 
-function acceptInviteExisting(token, callback) {
-  findInvite(token, function(error, invite) {
-    if(error) {
-      return callback(error);
-    }
-    else if(invite.userType == 'new') {
-      return callback(null, invite);
-    }
-    setAccountUserActive(invite, function(err, accountUser) {
-      if(err) {
-        return callback(err);
+function findUserInSystemByEmail(email) {
+  return User.find({where: {email: email}})
+}
+function checkUser(invite, user, params, transaction) {
+  return new Bluebird((resolve, reject) => {
+    if (user) {
+      resolve()
+    }else {
+      if (!params.password) {
+        reject("This invite is for new user need password for confirmation")
+      }else {
+        resolve()
       }
-
-      invite.update({ status: 'confirmed' }).then(function() {
-        if(invite.sessionId) {
-          let params = {
-            sessionId: invite.sessionId,
-            accountUserId: invite.accountUserId,
-            username: invite.AccountUser.firstName,
-            role: invite.role
-          };
-
-          sessionMemberService.createWithTokenAndColour(params).then(function() {
-            shouldUpdateRole(accountUser, invite.role).then(function() {
-              callback(null, invite, MessagesUtil.invite.confirmed, invite.AccountUser.email);
-            }, function(error) {
-              callback(filters.errors(error));
-            });
-          }, function(error) {
-            callback(filters.errors(error));
-          });
-        } else {
-          callback(null, invite, MessagesUtil.invite.confirmed, invite.AccountUser.email);
-        }
-      }).catch(function(error) {
-        callback(filters.errors(error));
-      });
-    });
-  });
-};
-
-function shouldUpdateRole(accountUser, newRole) {
-  let roles = ['observer', 'participant', 'facilitator', 'accountManager', 'admin'];
-
-  if(roles.indexOf(newRole) > roles.indexOf(accountUser.role)) {
-    return accountUser.update({ role: newRole });
-  }
-  else {
-    let deferred = q.defer();
-    deferred.resolve();
-    return deferred.promise;
-  }
-}
-
-function acceptInviteNew(token, params, callback) {
-  findInvite(token, function(error, invite) {
-    if(error) {
-      return callback(error);
-    } else if(invite.userType == 'existing') {
-      return callback(true);
-    }
-
-    updateUser({ password: params.password }, invite, function(error, user) {
-      if (error) {
-        callback(error, invite);
-      } else {
-        invite.update({ status: 'confirmed' }).then(function() {
-          callback(null, invite, user, MessagesUtil.invite.confirmed);
-        }).catch(function(error) {
-          callback(filters.errors(error));
-        });
-      };
-    });
-  });
-};
-function setAccountUserActive(invite, callback) {
-  AccountUser.update({active: true, status: 'active'}, { where:{ id: invite.accountUserId }, returning: true }).then(function(result) {
-    callback(null, result[1][0]);
-  },function(err) {
-    callback(filters.errors(error));
-  })
-}
-
-function updateUser(params, invite, callback) {
-  setAccountUserActive(invite, function(res, _) {
-    params.confirmedAt = new Date();
-    User.update(params, { where: { id: invite.userId }, returning: true }).then(function(result) {
-      callback(null, result[1][0]);
-    }).catch(function(error) {
-      callback(filters.errors(error));
-    });
-  })
-};
-
-function sessionAccept(token, body) {
-  let deferred = q.defer();
-
-  findInvite(token, function(error, invite) {
-    if(error) {
-      deferred.reject(error);
-    }
-    else {
-      canAddSessionMember(invite).then(function() {
-        return sessionAcceptFlow(invite, body);
-      }).then(function(result) {
-        deferred.resolve(result);
-      }).catch(function(error) {
-        deferred.reject(error);
-      });
     }
   });
-
-  return deferred.promise;
 }
 
-function sessionAcceptFlow(invite, body) {
-  let deferred = q.defer();
-  let user;
+function checSession(invite, user, params, transaction) {
+  return new Bluebird((resolve, reject) => {
+    if (!invite.sessionId) { return resolve()}
 
-  models.sequelize.transaction().then(function(t) {
-    return User.create({ email: invite.AccountUser.email, password: body.password, confirmedAt: new Date() }, { transaction: t }).then(function(result) {
-      user = result;
-      return invite.AccountUser.update({ UserId: user.id, active: true }, { transaction: t });
-    }).then(function() {
-      let params = sessionMemberParams(invite, t);
-      return sessionMemberService.createWithTokenAndColour(params);
-    }).then(function() {
-      return invite.update({ status: 'confirmed' }, { transaction: t });
-    }).then(function() {
-      if(body.social) {
-        body.social.user = { id: user.id };
-        return socialProfileService.createPromise(body.social, t);
-      }
-      else {
-        return t.commit();
-      }
-    }).catch(function(error) {
-      throw error;
-    });
-  }).then(function() {
-    deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
-  });
-
-  return deferred.promise;
-}
-
-function canAddSessionMember(invite) {
-  let deferred = q.defer();
-  let where = { where: { sessionId: invite.sessionId, role: invite.role } };
-
-  if(invite.role == 'facilitator') {
-    models.SessionMember.find(where).then(function(sessionMember) {
-      if(invite.accountUserId == sessionMember.accountUserId) {
-        deferred.resolve();
-      }
-      else {
-        deferred.reject(MessagesUtil.invite.inviteExpired);
-      }
-    });
-  }
-  else {
-    models.Session.find({ where: { id: invite.sessionId } }).then(function(session) {
-      models.SessionMember.count(where).then(function(c) {
-        let allowedCount = {
-          participant: session.type == 'forum' ? -1 : 8,
-          observer: -1
-        };
-
-        if(c < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
-          deferred.resolve();
+    let where = { where: { sessionId: invite.sessionId, role: invite.role }, transaction: transaction };
+    if(invite.role == 'facilitator') {
+      models.SessionMember.find(where).then(function(sessionMember) {
+        if(invite.accountUserId == sessionMember.accountUserId) {
+          resolve();
         }
         else {
-          deferred.reject(MessagesUtil.invite.sessionIsFull);
+          reject(MessagesUtil.invite.inviteExpired);
         }
       });
-    });
-  }
+    }
+    else {
+      models.Session.find({ where: { id: invite.sessionId }, transaction: transaction }).then(function(session) {
+        models.SessionMember.count(where).then(function(c) {
+          let allowedCount = {
+            participant: session.type == 'forum' ? -1 : 8,
+            observer: -1
+          };
 
-  return deferred.promise;
+          if(c < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
+            resolve();
+          }
+          else {
+            reject(MessagesUtil.invite.sessionIsFull);
+          }
+        });
+      });
+    }
+  })
 }
 
-function sessionMemberParams(invite, t) {
-  return {
-    sessionId: invite.sessionId,
-    accountUserId: invite.accountUserId,
-    username: invite.AccountUser.firstName,
-    role: invite.role,
-    t: t
-  };
+function createUserIfNecessary(invite, user, params, transaction) {
+  return new Bluebird((resolve, reject) => {
+    if (!user) {
+      let createParams = {
+        confirmedAt: new Date(),
+        password: params.password,
+        email: invite.AccountUser.email
+      }
+
+      User.create(createParams, { transaction: transaction } ).then((newUser) => {
+        let updateAssociateDate = [
+          (newUser, params, transaction) => {;
+            updateAccountUsers(newUser, transaction);
+          }
+        ]
+
+        if (params.social) {
+          let addSocialProfil = (user, params, transaction) => {
+            params.social.user = { id: user.id };
+            socialProfileService.createPromise(params.social, transaction)
+          }
+          updateAssociateDate.push(addSocialProfil)
+        }
+
+        Bluebird.each(updateAssociateDate, (step) => {
+          return step(newUser, params, transaction)
+        }).then(() => {
+          resolve(newUser)
+        }, (error) => {
+          reject(filters.errors(error))
+        })
+      }, (error) => {
+        reject(filters.errors(error))
+      })
+    }else{
+      resolve(user)
+    }
+  })
+}
+
+function createSessionMemberIfNecessary(invite, _user, _params, transaction) {
+  return new Bluebird((resolve, reject) => {
+    if(invite.sessionId) {
+      let params = {
+        sessionId: invite.sessionId,
+        accountUserId: invite.accountUserId,
+        username: invite.AccountUser.firstName,
+        role: invite.role,
+        t: transaction
+      };
+      sessionMemberService.createWithTokenAndColour(params).then(() => {
+        resolve();
+      }, function(error) {
+        reject(filters.errors(error));
+      });
+    } else {
+      resolve();
+    }
+  })
+}
+
+function updateAccountUsers(newUser, transaction) {
+  return new Bluebird((resolve, reject) => {
+    AccountUser.update({"UserId": newUser.id}, {where: {"UserId": null, email: { ilike: newUser.email } }, transaction: transaction}).then(() =>{
+      resolve();
+    });
+  })
+}
+
+function acceptInvite(token, params={}) {
+  return new Bluebird((resolve, reject) => {
+    let inviteAcceptFlow = [
+      (invite, user, params, transaction) => {
+        return checkUser(invite, user, params, transaction)
+      },
+      (invite, user, params, transaction) => {
+        return checSession(invite, user, params, transaction)
+      },
+      (invite, user, params, transaction) => {
+        return createUserIfNecessary(invite, user, params, transaction)
+      },
+      (invite, _user, _params, transaction) => {
+        return invite.update({ status: 'confirmed' }, {transaction: transaction})
+      },
+      (invite, _user, _params, transaction) => {
+        return setAccountUserActive(invite, transaction)
+      },
+      (invite, _user, _params, transaction) => {
+        return createSessionMemberIfNecessary(invite, transaction)
+      },
+      (invite, _user, _params, transaction) => {
+        return shouldUpdateRole(invite.AccountUser, invite.role, transaction)
+      }
+    ]
+
+    findInvite(token).then((invite) => {
+      findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
+        models.sequelize.transaction().then((transaction) => {
+          Bluebird.each(inviteAcceptFlow, (acceptStep) => {
+            return acceptStep(invite, user, params, transaction);
+          }).then(() => {
+            transaction.commit().then(() => {
+              resolve({invite, user, message: MessagesUtil.invite.confirmed});
+            })
+          }, (error) => {
+            transaction.rollback().then(() => {
+              reject(error);
+            });
+          });
+        });
+      });
+    }, (error) => {
+      reject(error)
+    });
+  })
+}
+
+function shouldUpdateRole(accountUser, newRole, transaction) {
+  return new Bluebird((resolve, reject) => {
+    let roles = ['observer', 'participant', 'facilitator', 'accountManager', 'admin'];
+
+    if(roles.indexOf(newRole) > roles.indexOf(accountUser.role)) {
+      accountUser.update({ role: newRole }, {transaction: transaction}).then(() => {
+        resolve()
+      },(error) => {
+        reject(filters.errors(error))
+      })
+    }
+    else {
+      resolve()
+    }
+  })
+}
+
+function setAccountUserActive(invite, transaction) {
+  return new Bluebird((resolve, reject) => {
+    AccountUser.update({active: true, status: 'active'}, { where: { id: invite.accountUserId }, transaction: transaction, returning: true }).then((result) => {
+      resolve(result[1][0]);
+    },(err) => {
+      reject(filters.errors(error));
+    })
+  })
 }
 
 function acceptSessionInvite(token) {
@@ -710,32 +708,6 @@ function populateMailParamsWithColors(params, session){
   return deferred.promise;
 }
 
-// function removeAllAssociatedDataOnNewUser(invite, callback) {
-//   async.waterfall([
-//     function(cb) {
-//       User.find({ where: { id: invite.userId } }).then(function(user) {
-//         if(user) {
-//           cb(null, user);
-//         }
-//         else {
-//           cb('Not found user');
-//         }
-//       }).catch(function(error) {
-//         cb(filters.errors(error));
-//       });
-//     },
-//     function(user, cb) {
-//       user.destroy().then(function() {
-//         cb();
-//       }).catch(function(error) {
-//         cb(filters.errors(error));
-//       });
-//     }
-//   ], function(error) {
-//     callback(error, MessagesUtil.invite.removed);
-//   });
-// }
-
 module.exports = {
   messages: MessagesUtil.invite,
   sendInvite: sendInvite,
@@ -744,12 +716,10 @@ module.exports = {
   findAndRemoveInvite: findAndRemoveInvite,
   removeInvite: removeInvite,
   findInvite: findInvite,
-  acceptInviteExisting: acceptInviteExisting,
-  acceptInviteNew: acceptInviteNew,
+  acceptInvite: acceptInvite,
   declineInvite: declineInvite,
   declineSessionInvite: declineSessionInvite,
   acceptSessionInvite: acceptSessionInvite,
-  sessionAccept: sessionAccept,
   createFacilitatorInvite: createFacilitatorInvite,
   populateMailParamsWithColors: populateMailParamsWithColors,
   updateToFacilitator: updateToFacilitator
