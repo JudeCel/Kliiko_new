@@ -80,6 +80,7 @@ var frontendScripts = [
   "public/js/vendors/angular/1.4.8/angular-touch.min.js",
 
   "public/js/vendors/angular-confirm/angular-confirm.js",
+  "public/js/vendors/angular-emoji-picker/emoji-picker.js",
 
   "public/js/vendors/angular-ui-sortable/sortable.js",
   "public/js/vendors/jquery-ui/*.js",
@@ -120,6 +121,7 @@ var frontendStyles = [
   "public/css/font-awesome.css",
   "public/css/main.css",
   "public/css/animate/animate.css",
+  "public/css/emoji-picker.css",
   "public/css/colorpicker/colorpicker.min.css",
   "public/js/vendors/intl-tel-input/src/intlTelInput.css",
   "public/js/vendors/ngProgress/ngProgress.css",

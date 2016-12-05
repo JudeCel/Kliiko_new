@@ -26,6 +26,7 @@
     'toggle-switch',
     'angular-confirm',
     'ngSanitize',
+    'vkEmojiPicker',
     // app modules
     'KliikoApp.user',
     'KliikoApp.account',
