@@ -1024,3 +1024,9 @@
 .emoji-groups .icon-grid:hover {
   opacity: 1;
 }
+
+.form-group .emoji-picker {
+  position: relative;
+  top: 40px;
+  right: -635px;
+}
