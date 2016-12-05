@@ -10,7 +10,7 @@ var subscriptionFixture = require('../../fixtures/subscription');
 var assert = require('chai').assert;
 var async = require('async');
 
-describe.only('SERVICE - Invite to Account', function() {
+describe('SERVICE - Invite to Account', function() {
   var testUser1, accountUser1, testUser2,
     testAccount1, accountUserWithoutUser, accountUserWithUser,
     accountUser2 = null;

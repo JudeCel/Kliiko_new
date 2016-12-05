@@ -316,18 +316,19 @@ function findInvite(token) {
   })
 };
 
-function declineInvite(token, callback) {
-  findInvite(token, function(error, invite) {
-    if(error) {
-      callback(error);
-    }
-    else {
-      invite.update({ status: 'rejected' }).then(function() {
-        callback(null, invite, MessagesUtil.invite.declined);
+function declineInvite(token) {
+  return new Bluebird((resolve, reject) => {
+    findInvite(token).then((invite) => {
+      invite.update({ status: 'rejected' }).then(() => {
+        resolve({invite, message: MessagesUtil.invite.declined});
+      }, (error) => {
+        reject(filters.errors(error))
       }).catch(function(error) {
-        callback(filters.errors(error));
+        reject(filters.errors(error))
       });
-    }
+    }, (error) => {
+      reject(error)
+    })
   })
 };
 
