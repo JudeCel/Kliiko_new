@@ -301,7 +301,7 @@ router.route('/VerifyEmail/:token/:accountUserId?')
     emailConfirmation.checkTokenExpired(req.params.token, function (err, user) {
       if (err || !user) {
         tplData.user = false;
-        tplData.errors.password = "Token expired";
+        tplData.errors.password = '';
         tplData.message = '';
         tplData.email = '';
         tplData.error = tplData.errors.password;

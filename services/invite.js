@@ -28,13 +28,9 @@ const EXPIRE_AFTER_DAYS = 5;
 function createBulkInvites(arrayParams) {
   let deferred = q.defer();
 
-  let expireDate = new Date();
-
-  expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
   _.map(arrayParams, function(paramObject) {
     paramObject.token = uuid.v1();
     paramObject.sentAt = new Date();
-    paramObject.expireAt = expireDate;
   });
 
   Invite.bulkCreate(arrayParams, {
@@ -134,8 +130,6 @@ function createInvite(params) {
   let deferred = q.defer();
 
   let token = uuid.v1();
-  let expireDate = new Date();
-  expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
 
   Invite.create({
     accountUserId: params.accountUserId,
@@ -144,7 +138,6 @@ function createInvite(params) {
     sessionId: params.sessionId,
     token: token,
     sentAt: new Date(),
-    expireAt: expireDate,
     role: params.role
   }).then(function(result) {
     enqueue("invites", "invite", [result.id]);

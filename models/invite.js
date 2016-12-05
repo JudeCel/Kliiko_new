@@ -7,7 +7,6 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     token: { type : DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     sentAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: true } },
-    expireAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: true } },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles },
 
     accountUserId: { type: DataTypes.INTEGER, allowNull: false },
