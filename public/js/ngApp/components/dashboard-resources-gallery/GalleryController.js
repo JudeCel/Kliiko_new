@@ -23,6 +23,7 @@
       { id: 'video',     type: 'video', text: 'Video',      scope: 'collage',   format: '.oog, .mp4' },
       { id: 'youtube',   type: 'link',  text: 'Youtube',    scope: 'youtube',   format: 'url' }
     ];
+    vm.modalTab = {}; 
 
     for(var i in vm.uploadTypes) {
       var upload = vm.uploadTypes[i];
@@ -54,6 +55,7 @@
     vm.normalYoutubeUrl = normalYoutubeUrl;
     vm.resourceUrl = resourceUrl;
     vm.fileSelected = fileSelected;
+    vm.setModalTab = setModalTab;
 
     function initController() {
       vm.currentPage.viewType = sessionStorage.getItem('viewType') || vm.currentPage.viewType;
@@ -161,6 +163,11 @@
     }
 
     function createOrReplaceResource() {
+      if (vm.currentPage.canSelect && vm.modalTab.link && vm.newResource.type == 'video') {
+        var type = vm.getUploadType("youtube");
+        vm.newResource.type = type.type;
+        vm.newResource.scope = type.scope;
+      }
       validateResource(function(errors) {
         if(errors) {
           messenger.error(errors);
@@ -266,6 +273,7 @@
     }
 
     function openSelectOrUploadModal(current, parent) {
+      var type = current.type == 'link' ? vm.getUploadType("video") : current;
       vm.newResource = { type: current.type, scope: current.scope };
       vm.currentPage.upload = current.id;
       parent.modal.replace = false;
@@ -275,6 +283,7 @@
       vm.currentDependency = parent.dependency;
       vm.currentCallback = parent.callback;
       vm.currentPage.canSelect = true;
+      vm.setModalTab('gallery');
     }
 
     function fileSelected() {
@@ -283,6 +292,11 @@
       }
     }
 
+    function setModalTab(modalTab) {
+      vm.modalTab = {};
+      vm.modalTab[modalTab] = true;
+    }
+    
     function openUploadModal(current, parent, replaceResource) {
       vm.newResource = { type: current.type, scope: current.scope };
       vm.currentPage.upload = current.id;
@@ -294,7 +308,7 @@
       } else {
         parent.modal.replace = false;
       }
-      domServices.modal('selectOrUploadResource');
+      domServices.modal('uploadResource');
       parent = parent || { modal: {} };
       vm.currentModalSet = parent.modal.set;
       vm.currentDependency = parent.dependency;

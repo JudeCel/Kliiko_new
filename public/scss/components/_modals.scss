@@ -146,6 +146,10 @@
       font-size: 15px;
       margin: 0px 8px;
       background: #fff;
+      &.active {
+        background: #2F9F69;
+        color: #fff;
+      }
     }
   }
 }

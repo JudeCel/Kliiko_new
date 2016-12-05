@@ -393,7 +393,7 @@
       vm.galleryController = gc;
       vm.uploadTypes = {
         image: gc.getUploadType('image'),
-        video: gc.getUploadType('youtube')
+        video: gc.getUploadType('video')
       };
     }
 
