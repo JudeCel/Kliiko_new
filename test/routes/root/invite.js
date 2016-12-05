@@ -94,7 +94,7 @@ describe('Routes - Invite',() => {
   });
 
   describe.only('Index ', () =>  {
-    it("existing user", (done) => {
+    it("new user", (done) => {
       let params = {
         accountUserId: accountUserWithoutUser.id,
         accountId: accountUserWithoutUser.AccountId,
@@ -105,7 +105,7 @@ describe('Routes - Invite',() => {
         let next = () => { done("Shyld not call next function") }
         let req = {params: {token: invite.token }}
         let res = {
-          render: (pathToView, viewParams) => {
+          render: (pathToView, _viewParams) => {
             try {
               assert.equal(pathToView, 'invite/newUser');
               done();
@@ -125,7 +125,7 @@ describe('Routes - Invite',() => {
       });
     })
 
-    it("new user", (done) => {
+    it("existing user", (done) => {
       let params = {
         accountUserId: accountUser2.id,
         userId: accountUser2.UserId,
@@ -137,7 +137,7 @@ describe('Routes - Invite',() => {
         let next = () => { done("Shyld not call next function") }
         let req = {params: {token: invite.token }}
         let res = {
-          render: (pathToView, viewParams) => {
+          render: (pathToView, _viewParams) => {
             try {
               assert.equal(pathToView, 'invite/index');
               done();
