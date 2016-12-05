@@ -13,6 +13,6 @@
    });
    },
    down: function (queryInterface, Sequelize) {
-     return queryInterface.addColumn('Invites', 'expireAt', { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: true } });
+     return queryInterface.addColumn('Invites', 'expireAt', { type : DataTypes.DATE, allowNull: true, validate: { notEmpty: true } });
    }
  };
