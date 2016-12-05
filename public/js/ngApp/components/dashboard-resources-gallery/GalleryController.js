@@ -25,10 +25,7 @@
     ];
     vm.modalTab = {}; 
 
-    for(var i in vm.uploadTypes) {
-      var upload = vm.uploadTypes[i];
-      vm.selectionList[upload.id] = [];
-    }
+    resetSelectionList();
 
     vm.init = initController;
     vm.listResources = GalleryServices.listResources;
@@ -56,6 +53,15 @@
     vm.resourceUrl = resourceUrl;
     vm.fileSelected = fileSelected;
     vm.setModalTab = setModalTab;
+    vm.preloadResources = preloadResources;
+
+    function resetSelectionList(params) {
+      vm.selectionList = {};
+      for(var i in vm.uploadTypes) {
+        var upload = vm.uploadTypes[i];
+        vm.selectionList[upload.id] = [];
+      }
+    }
 
     function initController() {
       vm.currentPage.viewType = sessionStorage.getItem('viewType') || vm.currentPage.viewType;
@@ -269,12 +275,17 @@
 
     function resourceSelected(resource) {
       setDependency(resource);
-      domServices.modal('selectResource', 'close');
+      if (vm.currentCallback) {
+        domServices.modal('selectOrUploadResource', 'close');
+        vm.currentCallback(resource);
+      } else {
+        domServices.modal('selectResource', 'close');
+      }
     }
 
     function openSelectOrUploadModal(current, parent) {
       var type = current.type == 'link' ? vm.getUploadType("video") : current;
-      vm.newResource = { type: current.type, scope: current.scope };
+      vm.newResource = { type: current.type, scope: current.scope, typeId: type.id };
       vm.currentPage.upload = current.id;
       parent.modal.replace = false;
       domServices.modal('selectOrUploadResource');
@@ -284,6 +295,25 @@
       vm.currentCallback = parent.callback;
       vm.currentPage.canSelect = true;
       vm.setModalTab('gallery');
+
+      var params = { type:[current.type], scope:[current.scope], stock: true };
+      if (current.type != type.type) {
+        params.type.push(type.type);
+        params.scope.push(type.scope);
+      }
+      preloadResources(params);
+    }
+
+    function preloadResources(params) {
+      vm.listResources(params).then(function(result) {
+        resetSelectionList();
+        vm.resourceList = result.resources;
+        for(var i in result.resources) {
+          var resource = result.resources[i];
+          var resType = vm.getUploadTypeFromResource(resource);
+          vm.selectionList[resType].push(resource);
+        }
+      });
     }
 
     function fileSelected() {
@@ -449,7 +479,7 @@
         vm.resourceList.push(data.resource);
         vm.selectionList[vm.currentPage.upload].push(data.resource);
       }
-      domServices.modal('uploadResource', 'close');
+      domServices.modal(vm.currentPage.canSelect ? 'selectOrUploadResource' :' uploadResource', 'close');
       setDependency(data.resource)
       filterResources(vm.currentPage.filter);
       messenger.ok(data.message);

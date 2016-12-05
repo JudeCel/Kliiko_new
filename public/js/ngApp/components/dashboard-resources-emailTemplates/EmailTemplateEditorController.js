@@ -379,11 +379,13 @@
     }
 
     function postUpload(resource) {
-      if(resource.type == 'image') {
+      if (resource.type == 'image') {
         var linkHTML = '<img src="' + resource.url.full + '" style="max-width:600px;"></img>';
         $('#templateContent').wysiwyg("insertHtml", linkHTML);
-      }
-      else {
+      } else if (resource.type == 'video') {
+        var linkHTML = '<a href="' + resource.url.full + '" target="_blank" style="display:block;text-decoration:none;color:#000;"><img src="/icons/header button icons/videoLink.png"></img> </a>';
+        $('#templateContent').wysiwyg("insertHtml", linkHTML);
+      } else {
         var linkHTML = '<a href="https://www.youtube.com/watch?v=' + resource.url.full + '" target="_blank" style="display:block;text-decoration:none;color:#000;"><img src="/icons/header button icons/videoLink.png"></img> </a>';
         $('#templateContent').wysiwyg("insertHtml", linkHTML);
       }

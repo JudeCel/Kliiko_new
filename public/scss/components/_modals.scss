@@ -152,6 +152,41 @@
       }
     }
   }
+
+  .selectItems {
+    margin-right: -10px;
+    margin-left: -10px;
+
+    .col-xs-4 {
+      padding: 0px 5px;
+    }
+    .panel {
+      margin-bottom: 10px;
+    }
+    .panel-name {
+      font-size: 13px;
+      padding: 0px 10px;
+      word-break: break-word;
+      word-wrap: break-word;
+    }
+    .panel-footer {
+      display: none;
+    }
+    .panel-body {
+      padding: 10px;
+
+      img {
+        max-height: 80px;
+        max-width: 100px;
+      }
+    }
+  }
+}
+
+#selectOrUploadResource {
+  .modal-dialog{
+    width:610px !important;
+  }
 }
 
 @media (max-width: 1330px) {

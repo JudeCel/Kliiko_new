@@ -364,14 +364,7 @@
         questions: [gc.getUploadType('video'), gc.getUploadType('audio'), gc.getUploadType('youtube')]
       }
 
-      gc.listResources({ type: ['image', 'video', 'audio', 'link'], scope: ['brandLogo', 'collage', 'youtube'], stock: true }).then(function(result) {
-        gc.resourceList = result.resources;
-        for(var i in result.resources) {
-          var resource = result.resources[i];
-          var type = gc.getUploadTypeFromResource(resource);
-          gc.selectionList[type].push(resource);
-        }
-      });
+      gc.preloadResources({ type: ['image', 'video', 'audio', 'link'], scope: ['brandLogo', 'collage', 'youtube'], stock: true });
     }
 
     function seedContactDetails(answer) {
