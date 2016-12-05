@@ -9,7 +9,7 @@ var backgroundQueue = require('../../../services/backgroundQueue');
 var inviteRoutes = require('../../../routes/root/invite.js');
 var assert = require('chai').assert;
 
-describe.only('ROUTE - Invite',() => {
+describe('ROUTE - Invite',() => {
   var testUser1, accountUser1, testUser2, session,
     testAccount1, accountUserWithoutUser, accountUserWithUser,
     accountUser2 = null

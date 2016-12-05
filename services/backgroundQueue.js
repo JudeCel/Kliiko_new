@@ -31,13 +31,19 @@ const setUpQueue = (_req, _res, next) => {
 }
 
 const enqueue = (queueName, jobName, attrs) => {
-  if (queue) {
-    if (process.env.NODE_ENV != "test") {
-      queue.enqueue(queueName, jobName, attrs);
+  return new Bluebird((resolve, reject) => {
+    if (queue) {
+      if (process.env.NODE_ENV != "test") {
+        resolve(queue.enqueue(queueName, jobName, attrs));
+      }else{
+        resolve();
+      }
+    } else {
+      setUpQueue(null, null, () => {
+        resolve();
+      });
     }
-  } else {
-    throw "Queue not connected, call 'setUpQueue' function to connect Queue"
-  }
+  })
 }
 
 module.exports = {

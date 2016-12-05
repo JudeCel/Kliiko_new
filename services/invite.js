@@ -37,10 +37,13 @@ function createBulkInvites(arrayParams) {
     validate: true,
     returning: true
   }).then((invites) => {
-    _.each(invites, (invite) => {
-      enqueue("invites", "invite", [invite.id] );
+    Bluebird.all(invites, (invite) => {
+      return enqueue("invites", "invite", [invite.id] );
+    }).then(() => {
+      deferred.resolve(invites);
+    }, (error) => {
+      deferred.reject(error);
     })
-    deferred.resolve(invites);
   }, (errors) => {
     let errorResp = _.map(errors, (error) => {
       return filters.errors(error.errors)
@@ -79,7 +82,7 @@ function createFacilitatorInvite(params) {
       } else {
         AccountUser.find({ where: { id: params.accountUserId } }).then(function(accountUser) {
           updateToFacilitator(accountUser).then(function() {
-            createInvite(facilitatorInviteParams(accountUser, params.sessionId)).then(function() {
+            createInvite(facilitatorInviteParams(accountUser, params.sessionId)).then(() => {
               deferred.resolve();
             }, function(error) {
               deferred.reject(filters.errors("Invite as Host for " + accountUser.firstName + " " + accountUser.lastName + " were not sent."));
@@ -127,31 +130,32 @@ function facilitatorInviteParams(accountUser, sessionId) {
 }
 
 function createInvite(params) {
-  let deferred = q.defer();
+  return new Bluebird((resolve, reject) => {
+    let token = uuid.v1();
 
-  let token = uuid.v1();
-
-  Invite.create({
-    accountUserId: params.accountUserId,
-    userId: params.userId,
-    accountId: params.accountId,
-    sessionId: params.sessionId,
-    token: token,
-    sentAt: new Date(),
-    role: params.role
-  }).then(function(result) {
-    enqueue("invites", "invite", [result.id]);
-    deferred.resolve(result)
-  }).catch(function(error) {
-    if(error.name == 'SequelizeUniqueConstraintError') {
-      deferred.reject({ email: 'User has already been invited' });
-    }
-    else {
-      deferred.reject(filters.errors(error));
-    }
-  });
-
-  return deferred.promise;
+    Invite.create({
+      accountUserId: params.accountUserId,
+      userId: params.userId,
+      accountId: params.accountId,
+      sessionId: params.sessionId,
+      token: token,
+      sentAt: new Date(),
+      role: params.role
+    }).then(function(result) {
+      enqueue("invites", "invite", [result.id]).then(() => {
+        resolve(result);
+      }, (error) => {
+        reject(error);
+      });
+    }).catch(function(error) {
+      if(error.name == 'SequelizeUniqueConstraintError') {
+        reject({ email: 'User has already been invited' });
+      }
+      else {
+        reject(filters.errors(error));
+      }
+    });
+  })
 };
 
 function simpleParams(invite, message) {

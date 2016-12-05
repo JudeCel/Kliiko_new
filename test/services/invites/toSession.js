@@ -5,7 +5,6 @@ var {Invite, sequelize, Session, AccountUser, Account, SessionMember} = require(
 var userService = require('../../../services/users');
 var inviteService = require('../../../services/invite');
 var accountManagerService = require('../../../services/accountManager');
-var backgroundQueue = require('../../../services/backgroundQueue');
 var subscriptionFixture = require('../../fixtures/subscription');
 var assert = require('chai').assert;
 var async = require('async');
@@ -44,52 +43,50 @@ describe('SERVICE - Invite to Session', function() {
             user2.getAccountUsers().then( (results) => {
               accountUser2 = results[0],
               testUser2 = user2;
-              backgroundQueue.setUpQueue(null, null, () => {
-                  let accountUserParamas = {
-                    email: "dainis+10@gmail.com",
-                    AccountId: accountUser1.AccountId,
-                    firstName: "Dainis",
-                    lastName: "Lapins",
-                    gender: "male",
-                    "role": "observer",
-                    active: false
-                  }
-                  let accountUserParams2 ={
-                    email: "dainis@gmail.com",
-                    AccountId: accountUser2.AccountId,
-                    firstName: "Dainis",
-                    lastName: "Lapins",
-                    gender: "male",
-                    "role": "observer",
-                    active: false
-                  }
+                let accountUserParamas = {
+                  email: "dainis+10@gmail.com",
+                  AccountId: accountUser1.AccountId,
+                  firstName: "Dainis",
+                  lastName: "Lapins",
+                  gender: "male",
+                  "role": "observer",
+                  active: false
+                }
+                let accountUserParams2 ={
+                  email: "dainis@gmail.com",
+                  AccountId: accountUser2.AccountId,
+                  firstName: "Dainis",
+                  lastName: "Lapins",
+                  gender: "male",
+                  "role": "observer",
+                  active: false
+                }
 
-                  let sessionParams = {
-                    name: "Test session",
-                    step: 'setUp',
-                    startTime: new Date,
-                    endTime: new Date,
-                    accountId: testAccount1.id,
-                    type: "focus",
-                    timeZone: 'America/Anchorage'
-                  }
+                let sessionParams = {
+                  name: "Test session",
+                  step: 'setUp',
+                  startTime: new Date,
+                  endTime: new Date,
+                  accountId: testAccount1.id,
+                  type: "focus",
+                  timeZone: 'America/Anchorage'
+                }
 
-                AccountUser.create(accountUserParamas).then((newaccountUser) => {
-                  accountUserWithoutUser = newaccountUser
-                  AccountUser.create(accountUserParams2).then((newaccountUser) => {
-                    accountUserWithUser = newaccountUser
-                    Session.create(sessionParams).then((result) =>  {
-                      session = result;
-                      done();
-                    }, (error) => {
-                      done(error);
-                    })
-                  })
-                })
-              })
-            })
+              AccountUser.create(accountUserParamas).then((newaccountUser) => {
+                accountUserWithoutUser = newaccountUser
+                AccountUser.create(accountUserParams2).then((newaccountUser) => {
+                  accountUserWithUser = newaccountUser
+                  Session.create(sessionParams).then((result) =>  {
+                    session = result;
+                    done();
+                  }, (error) => {
+                    done(error);
+                  });
+                });
+              });
+            });
           });
-        })
+        });
       });
     });
   });

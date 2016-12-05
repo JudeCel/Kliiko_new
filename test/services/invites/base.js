@@ -5,7 +5,6 @@ var {Invite, sequelize, Session, AccountUser, Account} = require('../../../model
 var userService = require('../../../services/users');
 var inviteService = require('../../../services/invite');
 var accountManagerService = require('../../../services/accountManager');
-var backgroundQueue = require('../../../services/backgroundQueue');
 var subscriptionFixture = require('../../fixtures/subscription');
 var assert = require('chai').assert;
 var async = require('async');
@@ -42,9 +41,7 @@ describe('SERVICE - Invite basic logic', function() {
             user2.getAccountUsers().then( (results) => {
               accountUser2 = results[0],
               testUser2 = user2;
-              backgroundQueue.setUpQueue(null, null, () => {
-                done();
-              })
+              done();
             })
           });
         })

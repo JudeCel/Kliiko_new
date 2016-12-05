@@ -5,7 +5,6 @@ var {Invite, sequelize, Session, AccountUser, Account, User} = require('../../..
 var userService = require('../../../services/users');
 var inviteService = require('../../../services/invite');
 var accountManagerService = require('../../../services/accountManager');
-var backgroundQueue = require('../../../services/backgroundQueue');
 var subscriptionFixture = require('../../fixtures/subscription');
 var assert = require('chai').assert;
 var async = require('async');
@@ -55,32 +54,30 @@ describe('SERVICE - Invite to Account', function() {
             user2.getAccountUsers().then( (results) => {
               accountUser2 = results[0],
               testUser2 = user2;
-              backgroundQueue.setUpQueue(null, null, () => {
-                  let accountUserParamas = {
-                    email: "dainis+10@gmail.com",
-                    AccountId: accountUser1.AccountId,
-                    firstName: "Dainis",
-                    lastName: "Lapins",
-                    gender: "male",
-                    "role": "observer",
-                    active: false
-                  }
-                  let accountUserParams2 ={
-                    email: "dainis@gmail.com",
-                    AccountId: accountUser2.AccountId,
-                    firstName: "Dainis",
-                    lastName: "Lapins",
-                    gender: "male",
-                    "role": "observer",
-                    active: false
-                  }
+              let accountUserParamas = {
+                email: "dainis+10@gmail.com",
+                AccountId: accountUser1.AccountId,
+                firstName: "Dainis",
+                lastName: "Lapins",
+                gender: "male",
+                "role": "observer",
+                active: false
+              }
+              let accountUserParams2 ={
+                email: "dainis@gmail.com",
+                AccountId: accountUser2.AccountId,
+                firstName: "Dainis",
+                lastName: "Lapins",
+                gender: "male",
+                "role": "observer",
+                active: false
+              }
 
-                AccountUser.create(accountUserParamas).then((newaccountUser) => {
-                  accountUserWithoutUser = newaccountUser
-                  AccountUser.create(accountUserParams2).then((newaccountUser) => {
-                    accountUserWithUser = newaccountUser
-                    done();
-                  })
+              AccountUser.create(accountUserParamas).then((newaccountUser) => {
+                accountUserWithoutUser = newaccountUser
+                AccountUser.create(accountUserParams2).then((newaccountUser) => {
+                  accountUserWithUser = newaccountUser
+                  done();
                 })
               })
             })
