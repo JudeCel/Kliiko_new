@@ -9,7 +9,7 @@ var backgroundQueue = require('../../../services/backgroundQueue');
 var inviteRoutes = require('../../../routes/root/invite.js');
 var assert = require('chai').assert;
 
-describe('Routes - Invite',() => {
+describe.only('Routes - Invite',() => {
   var testUser1, accountUser1, testUser2, session,
     testAccount1, accountUserWithoutUser, accountUserWithUser,
     accountUser2 = null
@@ -93,7 +93,7 @@ describe('Routes - Invite',() => {
     });
   });
 
-  describe.only('Index ', () =>  {
+  describe('Index ', () =>  {
     it("new user", (done) => {
       let params = {
         accountUserId: accountUserWithoutUser.id,
@@ -157,4 +157,40 @@ describe('Routes - Invite',() => {
       });
     })
   })
+
+  describe('decline ', () =>  {
+    it("new user", (done) => {
+      let params = {
+        accountUserId: accountUserWithoutUser.id,
+        accountId: accountUserWithoutUser.AccountId,
+        role: 'accountManager'
+      }
+
+      inviteService.createInvite(params).then(function(invite) {
+        let next = () => { done("Shyld not call next function") }
+        let req = {
+          params: { token: invite.token },
+          flash: (key, message) => {
+            assert.equal(key, 'message');
+            assert.equal(message, inviteService.messages.declined);
+          }
+        }
+
+        let res = {
+          redirect: (path) => {
+            assert.equal(path, '/login');
+            done();
+          }
+        }
+
+        try {
+          inviteRoutes.decline(req, res, next);
+        } catch (e) {
+          done(e);
+        }
+      }, function(error) {
+        done(error);
+      });
+    });
+  });
 });

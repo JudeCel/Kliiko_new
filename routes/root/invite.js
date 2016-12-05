@@ -24,41 +24,12 @@ function index(req, res, next) {
 }
 
 function decline(req, res, next) {
-  inviteService.declineInvite(req.params.token, function(error, invite, message) {
-    if(error) {
-      res.render(views_path('index'), simpleParams('Invite', invite, error));
-    }
-    else {
-      req.flash('message', message);
-      res.redirect('/login');
-    }
-  });
-}
-
-function acceptGet(req, res, next) {
-  inviteService.acceptInvite(req.params.token).then(({invite, user, message}) => {
-    // res.render(views_path('index'), simpleParams('Accept Invite', invite, {}));
-    req.flash('email', user.email);
-  }, (error) => {
+  inviteService.declineInvite(req.params.token).then(({invite, message}) => {
+    req.flash('message', message);
     res.redirect('/login');
+  }, (error) => {
+    res.render(views_path('index'), simpleParams('Invite', {}, error));
   });
-
-  // inviteService.acceptInvite(req.params.token, function(error, invite, message, email) {
-  //   if (error == MessagesUtil.invite.notFound) {
-  //     res.redirect('/login');
-  //   } else {
-  //     if (invite && invite.userType == 'new') {
-  //       res.render(views_path('index'), simpleParams('Accept Invite', invite, error));
-  //     } else {
-  //       if (email) {
-  //         req.flash('email', email);
-  //       } else {
-  //         req.flash('message', message);
-  //       }
-  //       res.redirect('/login');
-  //     }
-  //   }
-  // });
 }
 
 function acceptPost(req, res, next) {
@@ -118,7 +89,7 @@ function processedErrosMessage(errors) {
 function sessionAccept(req, res, next) {
   inviteService.acceptSessionInvite(req.params.token).then(function(result) {
     req.params.token = result.invite.token;
-    acceptGet(req, res, next);
+    // acceptGet(req, res, next);
   }, function(error) {
     req.flash('message', { inviteError: true});
     res.redirect('/login');
@@ -146,7 +117,7 @@ function sessionNotAtAll(req, res, next) {
 module.exports = {
   index: index,
   decline: decline,
-  acceptGet: acceptGet,
+  // acceptGet: acceptGet,
   acceptPost: acceptPost,
   sessionAccept: sessionAccept,
   sessionNotThisTime: sessionNotThisTime,
