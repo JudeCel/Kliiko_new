@@ -10,7 +10,7 @@ var subscriptionFixture = require('../../fixtures/subscription');
 var assert = require('chai').assert;
 var async = require('async');
 
-describe('SERVICE - Invite basic logic', function() {
+describe.only('SERVICE - Invite basic logic', function() {
   var testUser, accountUser, testUser2, testAccount, accountUser2 = null;
   let user1Attrs = {
     accountName: "Lilo",
@@ -177,6 +177,22 @@ describe('SERVICE - Invite basic logic', function() {
           }, function(error) {
             done(error);
           });
+        });
+      });
+    });
+  });
+  describe('#acceptInvite', function() {
+    describe('sad path', function() {
+      it('should faild, invite not found', function (done) {
+        inviteService.acceptInvite("token").then((response) => {
+          done("Should not get here")
+        }, function(error) {
+          try {
+            assert.equal(error, inviteService.messages.notFound)
+            done();
+          } catch (e) {
+            done(e);
+          }
         });
       });
     });

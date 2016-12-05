@@ -372,13 +372,14 @@ function checSession(invite, user, params, transaction) {
     }
     else {
       models.Session.find({ where: { id: invite.sessionId }, transaction: transaction }).then(function(session) {
-        models.SessionMember.count(where).then(function(c) {
-          let allowedCount = {
+        models.SessionMember.count(where).then(function(count) {
+          // TODO: Need to move to session member service or session service
+          const allowedCount = {
             participant: session.type == 'forum' ? -1 : 8,
             observer: -1
           };
 
-          if(c < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
+          if(count < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
             resolve();
           }
           else {
