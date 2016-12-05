@@ -12,18 +12,14 @@ function views_path(action) {
 }
 
 function index(req, res, next) {
-  inviteService.findInvite(req.params.token, function(error, invite) {
-    if(error == MessagesUtil.invite.notFound) {
-      res.redirect('/login');
+  inviteService.findInvite(req.params.token).then((invite) => {
+    if (invite.AccountUser.UserId) {
+      res.render(views_path('index'), simpleParams('Invite', invite, {}));
+    } else {
+      res.render(views_path('newUser'), simpleParams('Invite', invite, {}));
     }
-    else {
-      if(invite.userType == 'existing') {
-        acceptGet(req, res, next);
-      }
-      else {
-        res.render(views_path('index'), simpleParams('Invite', invite, error));
-      }
-    }
+  }, (error) => {
+    res.redirect('/login');
   });
 }
 
@@ -40,22 +36,29 @@ function decline(req, res, next) {
 }
 
 function acceptGet(req, res, next) {
-  inviteService.acceptInviteExisting(req.params.token, function(error, invite, message, email) {
-    if (error == MessagesUtil.invite.notFound) {
-      res.redirect('/login');
-    } else {
-      if (invite && invite.userType == 'new') {
-        res.render(views_path('index'), simpleParams('Accept Invite', invite, error));
-      } else {
-        if (email) {
-          req.flash('email', email);
-        } else {
-          req.flash('message', message);
-        }
-        res.redirect('/login');
-      }
-    }
+  inviteService.acceptInvite(req.params.token).then(({invite, user, message}) => {
+    // res.render(views_path('index'), simpleParams('Accept Invite', invite, {}));
+    req.flash('email', user.email);
+  }, (error) => {
+    res.redirect('/login');
   });
+
+  // inviteService.acceptInvite(req.params.token, function(error, invite, message, email) {
+  //   if (error == MessagesUtil.invite.notFound) {
+  //     res.redirect('/login');
+  //   } else {
+  //     if (invite && invite.userType == 'new') {
+  //       res.render(views_path('index'), simpleParams('Accept Invite', invite, error));
+  //     } else {
+  //       if (email) {
+  //         req.flash('email', email);
+  //       } else {
+  //         req.flash('message', message);
+  //       }
+  //       res.redirect('/login');
+  //     }
+  //   }
+  // });
 }
 
 function acceptPost(req, res, next) {

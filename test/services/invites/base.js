@@ -10,7 +10,7 @@ var subscriptionFixture = require('../../fixtures/subscription');
 var assert = require('chai').assert;
 var async = require('async');
 
-describe.only('SERVICE - Invite basic logic', function() {
+describe('SERVICE - Invite basic logic', function() {
   var testUser, accountUser, testUser2, testAccount, accountUser2 = null;
   let user1Attrs = {
     accountName: "Lilo",
@@ -91,7 +91,7 @@ describe.only('SERVICE - Invite basic logic', function() {
           }
         }, function(error) {
           done(error);
-          });
+        });
       });
     });
   });
