@@ -186,7 +186,7 @@ router.get('/auth/facebook/callback', function(req, res, next) {
 
         req.params.token = req.query.state.token;
         req.body.social = object;
-        inviteRoutes.acceptPost(req, res, next);
+        inviteRoutes.accept(req, res, next);
       }
     }
   })(req, res, next);
@@ -433,8 +433,8 @@ router.route('/invite/auth/:provider/:token').get(function(req, res, next) {
 
 router.route('/invite/:token').get(inviteRoutes.index);
 router.route('/invite/:token/decline').get(inviteRoutes.decline);
-router.route('/invite/:token/accept').get(inviteRoutes.acceptGet);
-router.route('/invite/:token/accept').post(inviteRoutes.acceptPost);
+router.route('/invite/:token/accept').get(inviteRoutes.accept);
+router.route('/invite/:token/accept').post(inviteRoutes.accept);
 
 router.route('/invite/:token/session').get(inviteRoutes.sessionAccept);
 router.route('/invite/:token/notThisTime').get(inviteRoutes.sessionNotThisTime);

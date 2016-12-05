@@ -9,7 +9,7 @@ var backgroundQueue = require('../../../services/backgroundQueue');
 var inviteRoutes = require('../../../routes/root/invite.js');
 var assert = require('chai').assert;
 
-describe.only('Routes - Invite',() => {
+describe.only('ROUTE - Invite',() => {
   var testUser1, accountUser1, testUser2, session,
     testAccount1, accountUserWithoutUser, accountUserWithUser,
     accountUser2 = null
@@ -102,7 +102,7 @@ describe.only('Routes - Invite',() => {
       }
 
       inviteService.createInvite(params).then(function(invite) {
-        let next = () => { done("Shyld not call next function") }
+        let next = () => { done("Should not call next function") }
         let req = {params: {token: invite.token }}
         let res = {
           render: (pathToView, _viewParams) => {
@@ -134,7 +134,7 @@ describe.only('Routes - Invite',() => {
       }
 
       inviteService.createInvite(params).then(function(invite) {
-        let next = () => { done("Shyld not call next function") }
+        let next = () => { done("Should not call next function") }
         let req = {params: {token: invite.token }}
         let res = {
           render: (pathToView, _viewParams) => {
@@ -159,7 +159,7 @@ describe.only('Routes - Invite',() => {
   })
 
   describe('decline ', () =>  {
-    it("new user", (done) => {
+    it("success", (done) => {
       let params = {
         accountUserId: accountUserWithoutUser.id,
         accountId: accountUserWithoutUser.AccountId,
@@ -167,7 +167,7 @@ describe.only('Routes - Invite',() => {
       }
 
       inviteService.createInvite(params).then(function(invite) {
-        let next = () => { done("Shyld not call next function") }
+        let next = () => { done("Should not call next function") }
         let req = {
           params: { token: invite.token },
           flash: (key, message) => {
@@ -192,5 +192,71 @@ describe.only('Routes - Invite',() => {
         done(error);
       });
     });
+  });
+
+  describe('accept ', () =>  {
+    describe('hapy path ', () =>  {
+      it("success", (done) => {
+        let params = {
+          accountUserId: accountUser2.id,
+          accountId: accountUser2.AccountId,
+          role: 'accountManager'
+        }
+
+        inviteService.createInvite(params).then((invite) => {
+          let next = () => { done() }
+          let req = {
+            params: { token: invite.token },
+            body: { password: "qwerty123" }
+          }
+
+          let res = {
+            redirect: (path) => {
+              assert.equal(path, '/login');
+              done();
+            }
+          }
+
+          try {
+            inviteRoutes.accept(req, res, next);
+          } catch (e) {
+            done(e);
+          }
+        }, function(error) {
+          done(error);
+        });
+      });
+    })
+    describe('sad path ', () =>  {
+      it("no password ", (done) => {
+        let params = {
+          accountUserId: accountUserWithoutUser.id,
+          accountId: accountUserWithoutUser.AccountId,
+          role: 'accountManager'
+        }
+
+        inviteService.createInvite(params).then((invite) => {
+          let next = () => { done("Should not call next function") }
+          let req = {
+            params: { token: invite.token }
+          }
+
+          let res = {
+            render: (pathToView, _viewParams) => {
+              assert.equal(pathToView, 'invite/newUser');
+              done();
+            }
+          }
+
+          try {
+            inviteRoutes.accept(req, res, next);
+          } catch (e) {
+            done(e);
+          }
+        }, function(error) {
+          done(error);
+        });
+      });
+    })
   });
 });

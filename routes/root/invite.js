@@ -32,27 +32,19 @@ function decline(req, res, next) {
   });
 }
 
-function acceptPost(req, res, next) {
-  inviteService.findInvite(req.params.token, function(error, invite) {
-    if(error) {
-      return res.render(views_path('index'), simpleParams('Invite', invite, error));
-    }
-
-    if (invite.sessionId) {
-      inviteService.sessionAccept(req.params.token, req.body).then(function(data) {
-        loginUser(req, res, next, data.user);
-      }, function(error) {
+function accept(req, res, next) {
+  inviteService.findInvite(req.params.token).then((invite) => {
+    inviteService.acceptInvite(req.params.token, req.body).then(({invite, user, message}) => {
+      loginUser(req, res, next, user);
+    }, (error) => {
+      if (invite.AccountUser.UserId) {
         res.render(views_path('index'), simpleParams('Invite', invite, error));
-      });
-    } else {
-      inviteService.acceptInviteNew(req.params.token, req.body, function(error, invite, user, message) {
-        if (error) {
-          res.render(views_path('index'), simpleParams('Invite', invite, error));
-        } else {
-          loginUser(req, res, next, user);
-        }
-      });
-    }
+      } else {
+        res.render(views_path('newUser'), simpleParams('Invite', invite, error));
+      }
+    });
+  }, (error) => {
+    res.redirect('/login');
   });
 };
 
@@ -118,7 +110,7 @@ module.exports = {
   index: index,
   decline: decline,
   // acceptGet: acceptGet,
-  acceptPost: acceptPost,
+  accept: accept,
   sessionAccept: sessionAccept,
   sessionNotThisTime: sessionNotThisTime,
   sessionNotAtAll: sessionNotAtAll
