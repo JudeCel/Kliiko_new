@@ -26,7 +26,7 @@ gulp.task('default', ['serve-dev', 'watch']);
 
 gulp.task('serve-dev', ['build-js', 'build-css'], function () {
   nodemon({
-    script: 'bin/www',
+    script: 'bin/server',
     ext: 'html js',
     ignore: ['public/**/*']
   })
