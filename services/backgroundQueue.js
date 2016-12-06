@@ -8,9 +8,18 @@ var queue = null
 const jobs = {
   "invite": {
     perform: (inviteId, callback) => {
-      require('./invite.js').sendInvite(inviteId).then(() => {
-        callback(null);
-      });
+      const { sendInvite }  = require('./invite.js')
+      try {
+        sendInvite(inviteId).then(() => {
+          callback(null);
+        }, (error) => {
+          callback(error);
+        }).catch(function(error) {
+          callback(error);
+        });
+      } catch (e) {
+        callback(e);
+      }
     },
   },
 }
