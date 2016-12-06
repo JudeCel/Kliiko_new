@@ -1,15 +1,14 @@
 'use strict'
 
-const NR = require("node-resque")
-const connectionDetails = require('../config/backgroudServer.js')
-let Bluebird = require('bluebird')
+const NR = require("node-resque");
+const connectionDetails = require('../config/backgroudServer.js');
+let Bluebird = require('bluebird');
 var queue = null
-const { sendInvite } = require('./invite.js')
 
 const jobs = {
   "invite": {
     perform: (inviteId, callback) => {
-      sendInvite(inviteId).then(() => {
+      require('./invite.js').sendInvite(inviteId).then(() => {
         callback(null);
       });
     },
