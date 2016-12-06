@@ -1,3 +1,75 @@
+<div class='modal fade' id='selectOrUploadResource' role='dialog' ng-if='upload.modal.upload'>
+  <div class='modal-dialog uploadResource'>
+    <div class='modal-content border-green border-radius-none'>
+      <div ng-if="showSpinner" id='overlay'>
+        <i id='loading' class='fa fa-spinner fa-pulse fa-fw'></i>
+      </div>
+      <div class='modal-tabs'>
+        <div class='modal-tab border-green' ng-class='gc.modalTab.gallery ? "active" : ""' ng-click="gc.setModalTab('gallery')">Gallery</div>
+        <div class='modal-tab border-green' ng-class='gc.modalTab.link ? "active" : ""' ng-click="gc.setModalTab('link')" ng-if='gc.newResource.type =="video"'>Add From URL</div>
+        <div class='modal-tab border-green' ng-class='gc.modalTab.upload ? "active" : ""'  ng-click="gc.setModalTab('upload')">Upload</div>
+      </div>
+      <div class='modal-header'>
+        <div ng-if="gc.modalTab.gallery">
+          <h2 class='modal-title text-center'>{{gc.getUploadType().text}} Gallery</h2>
+        </div>
+        <div ng-if="!gc.modalTab.gallery">
+          <h2 class='modal-title text-center'>{{upload.modal.replace ? 'Replace resource' : 'New resource'}}</h2>
+          <p class='modal-title text-center' ng-if='gc.modalTab.upload'>Maximum file size is 5MB</p>
+        </div>
+      </div>
+
+      <div class='modal-body'>
+        <div ng-if="gc.modalTab.gallery">
+          <div class='row selectItems'>
+            <div ng-repeat='resource in gc.pagination.items' ng-init='typeOf = gc.isTypeOf(resource); gc.hideElements = true'>
+              <div class='col-xs-4 cursor-pointer' ng-click='gc.resourceSelected(resource)'>
+                <ng-include src="gc.templatesDir + 'panel.html'"></ng-include>
+              </div>
+            </div>
+          </div>
+          <div ng-if="gc.pagination.totalItems > gc.pagination.itemsPerPage" class="paginator">
+            <uib-pagination total-items="gc.pagination.totalItems" ng-model="gc.pagination.currentPage" class="pagination-sm" items-per-page="gc.pagination.itemsPerPage" max-size="10" boundary-links="true" ng-click="gc.prepareCurrentPageItems()"></pagination>
+          </div>
+        </div>
+
+        <div ng-if="!gc.modalTab.gallery">
+          <div class='form-group'>
+            <label for='name'>Name</label>
+            <input ng-model='gc.newResource.name' type='text' class='form-control center-block border-radius-none' name='name' id='name' placeholder='Name' required>
+          </div>
+          
+          <div ng-if='gc.modalTab.link' class='form-group'>
+            <label for='youtube'>Youtube Url</label>
+            <input ng-model='gc.newResource.file' type='text' class='form-control center-block border-radius-none' name='youtube' id='youtube' placeholder='Youtube URL' required>
+          </div>
+
+          <div ng-if='gc.modalTab.upload' class='form-group'>
+            <label for='file'>File</label>
+            <div ngf-drop ngf-select ng-model='gc.newResource.file' class='drop-area' ngf-drag-over-class="'dragover'" accept='{{ gc.getUploadType().format }}' ngf-change="gc.fileSelected()">
+              Drop {{ gc.getUploadType().text }} file here or click to upload
+            </div>
+
+            <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
+            <div class='row'>
+              <div class='col-xs-10'>
+                <p class='text-max-width'>
+                  {{ gc.newResource.file.name }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class='modal-footer'>
+        <button class='btn btn-standart pull-left btn-red btn-small' data-dismiss='modal'>Cancel</button>
+        <button class='btn btn-standart pull-right btn-green btn-small' ng-click='gc.createOrReplaceResource()' ng-disabled='gc.modalWindowDisabled' ng-if="!gc.modalTab.gallery">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class='modal fade' id='uploadResource' role='dialog' ng-if='upload.modal.upload'>
   <div class='modal-dialog uploadResource'>
     <div class='modal-content border-green border-radius-none'>
@@ -23,7 +95,7 @@
 
         <div ng-if='!typeOf.youtube && !typeOf.zip' class='form-group'>
           <label for='file'>File</label>
-          <div ngf-drop ngf-select ng-model='gc.newResource.file' class='drop-area' ngf-drag-over-class="'dragover'" accept='{{ gc.getUploadType().format }}'>
+          <div ngf-drop ngf-select ng-model='gc.newResource.file' class='drop-area' ngf-drag-over-class="'dragover'" accept='{{ gc.getUploadType().format }}' ngf-change="gc.fileSelected()">
             Drop {{ gc.getUploadType().text }} file here or click to upload
           </div>
 
