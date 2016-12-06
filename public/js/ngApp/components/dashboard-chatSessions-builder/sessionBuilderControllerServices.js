@@ -32,9 +32,9 @@
     function saveComment(member) {
       var deferred = $q.defer();
 
-      dbg.log2('#ChatSessions > saveComment > make rest call');
+      dbg.log2('#SessionMember > saveComment > make rest call');
       sessionMemberApi.comment({ id: member.id }, { comment: member.comment }, function(res) {
-        dbg.log2('#ChatSessions > comment > rest call responds');
+        dbg.log2('#SessionMember > saveComment > rest call responds');
         deferred.resolve(res);
       });
 
@@ -43,9 +43,9 @@
 
     function rateSessionMember(data) {
       var deferred = $q.defer();
-      dbg.log2('#ChatSessions > rateSessionMember > make rest call');
+      dbg.log2('#SessionMember > rateSessionMember > make rest call');
       sessionMemberApi.rate(data, function(res) {
-        dbg.log2('#ChatSessions > rateSessionMember > rest call responds');
+        dbg.log2('#SessionMember > rateSessionMember > rest call responds');
         deferred.resolve(res);
       });
 
