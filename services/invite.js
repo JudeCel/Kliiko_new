@@ -37,7 +37,7 @@ function createBulkInvites(arrayParams) {
     validate: true,
     returning: true
   }).then((invites) => {
-    Bluebird.all(invites, (invite) => {
+    Bluebird.each(invites, (invite) => {
       return enqueue("invites", "invite", [invite.id] );
     }).then(() => {
       deferred.resolve(invites);
