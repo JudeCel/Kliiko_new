@@ -10,7 +10,8 @@ module.exports = (Sequelize, DataTypes) => {
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles },
 
     accountUserId: { type: DataTypes.INTEGER, allowNull: false },
-    status: { type: DataTypes.ENUM, allowNull: false, values: constants.inviteStatuses, defaultValue: 'pending' }
+    status: { type: DataTypes.ENUM, allowNull: false, values: constants.inviteStatuses, defaultValue: 'pending' },
+    emailStatus: { type: DataTypes.ENUM, allowNull: false, values: constants.inviteEmailStatuses, defaultValue: 'waiting' }
   }, {
     classMethods: {
       associate: function(models) {

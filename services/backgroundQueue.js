@@ -8,17 +8,33 @@ var queue = null
 const jobs = {
   "invite": {
     perform: (inviteId, callback) => {
-      const { sendInvite }  = require('./invite.js')
+      const { sendInvite, updateEmailStatus }  = require('./invite.js')
       try {
         sendInvite(inviteId).then(() => {
-          callback(null);
+          updateEmailStatus(inviteId, "done").then(() => {
+            callback(null);
+          }, (error) => {
+            callback(error);
+          })
+        }, (error) => {
+          updateEmailStatus(inviteId, "failed").then(() => {
+            callback(null);
+          }, (error) => {
+            callback(error);
+          })
+        }).catch(function(error) {
+          updateEmailStatus(inviteId, "failed").then(() => {
+            callback(error);
+          }, (error) => {
+            callback(error);
+          })
+        });
+      } catch (error) {
+        updateEmailStatus(inviteId, "failed").then(() => {
+          callback(error);
         }, (error) => {
           callback(error);
-        }).catch(function(error) {
-          callback(error);
-        });
-      } catch (e) {
-        callback(e);
+        })
       }
     },
   },

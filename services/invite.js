@@ -320,6 +320,18 @@ function findInvite(token) {
   })
 };
 
+function updateEmailStatus(id, emailStatus) {
+  return new Bluebird((resolve, reject) => {
+    Invite.update({ emailStatus: emailStatus }, {where: {id: id} }).then(() => {
+      resolve();
+    }, (error) => {
+      reject(error)
+    }).catch(function(error) {
+      reject(error)
+    });
+  })
+}
+
 function declineInvite(token) {
   return new Bluebird((resolve, reject) => {
     findInvite(token).then((invite) => {
@@ -710,6 +722,7 @@ function populateMailParamsWithColors(params, session){
 module.exports = {
   messages: MessagesUtil.invite,
   sendInvite: sendInvite,
+  updateEmailStatus: updateEmailStatus,
   createBulkInvites: createBulkInvites,
   createInvite: createInvite,
   findAndRemoveInvite: findAndRemoveInvite,
