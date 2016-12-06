@@ -23,11 +23,15 @@
       { id: 'video',     type: 'video', text: 'Video',      scope: 'collage',   format: '.oog, .mp4' },
       { id: 'youtube',   type: 'link',  text: 'Youtube',    scope: 'youtube',   format: 'url' }
     ];
-
-    for(var i in vm.uploadTypes) {
-      var upload = vm.uploadTypes[i];
-      vm.selectionList[upload.id] = [];
+    vm.modalTab = {}; 
+    vm.pagination = {
+      totalItems: 0,
+      currentPage: 1,
+      itemsPerPage: 3,
+      items: {}
     }
+
+    resetSelectionList();
 
     vm.init = initController;
     vm.listResources = GalleryServices.listResources;
@@ -44,6 +48,7 @@
     vm.removeDependency = removeDependency;
     vm.getResourceFromList = getResourceFromList;
     vm.openUploadModal = openUploadModal;
+    vm.openSelectOrUploadModal = openSelectOrUploadModal;
     vm.openSelectModal = openSelectModal;
     vm.selectAllResources = selectAllResources;
     vm.massAction = massAction;
@@ -52,6 +57,18 @@
     vm.youtubeUrl = youtubeUrl;
     vm.normalYoutubeUrl = normalYoutubeUrl;
     vm.resourceUrl = resourceUrl;
+    vm.fileSelected = fileSelected;
+    vm.setModalTab = setModalTab;
+    vm.preloadResources = preloadResources;
+    vm.prepareCurrentPageItems = prepareCurrentPageItems;
+
+    function resetSelectionList(params) {
+      vm.selectionList = {};
+      for(var i in vm.uploadTypes) {
+        var upload = vm.uploadTypes[i];
+        vm.selectionList[upload.id] = [];
+      }
+    }
 
     function initController() {
       vm.currentPage.viewType = sessionStorage.getItem('viewType') || vm.currentPage.viewType;
@@ -159,6 +176,11 @@
     }
 
     function createOrReplaceResource() {
+      if (vm.currentPage.canSelect && vm.modalTab.link && vm.newResource.type == 'video') {
+        var type = vm.getUploadType("youtube");
+        vm.newResource.type = type.type;
+        vm.newResource.scope = type.scope;
+      }
       validateResource(function(errors) {
         if(errors) {
           messenger.error(errors);
@@ -260,9 +282,77 @@
 
     function resourceSelected(resource) {
       setDependency(resource);
-      domServices.modal('selectResource', 'close');
+      if (vm.currentCallback) {
+        domServices.modal('selectOrUploadResource', 'close');
+        vm.currentCallback(resource);
+      } else {
+        domServices.modal('selectResource', 'close');
+      }
     }
 
+    function openSelectOrUploadModal(current, parent) {
+      var type = current.type == 'link' ? vm.getUploadType("video") : current;
+      vm.newResource = { type: current.type, scope: current.scope, typeId: type.id };
+      vm.currentPage.upload = current.id;
+      parent.modal.replace = false;
+      domServices.modal('selectOrUploadResource');
+      parent = parent || { modal: {} };
+      vm.currentModalSet = parent.modal.set;
+      vm.currentDependency = parent.dependency;
+      vm.currentCallback = parent.callback;
+      vm.currentPage.canSelect = true;
+      vm.setModalTab('gallery');
+
+      var params = { type:[current.type], scope:[current.scope], stock: true };
+      if (current.type != type.type) {
+        params.type.push(type.type);
+        params.scope.push(type.scope);
+      }
+      preloadResources(params).then(function() {
+        prepareCurrentPageItems();
+      });
+    }
+
+    function preloadResources(params) {
+      var deferred = $q.defer();
+      
+      vm.listResources(params).then(function(result) {
+        resetSelectionList();
+        vm.resourceList = result.resources;
+        for(var i in result.resources) {
+          var resource = result.resources[i];
+          var resType = vm.getUploadTypeFromResource(resource);
+          vm.selectionList[resType].push(resource);
+        }
+        deferred.resolve();
+      });
+
+      return deferred.promise;
+    }
+
+    function fileSelected() {
+      if ((!vm.newResource.name || vm.newResource.lastAutopopulatedName == vm.newResource.name) && vm.newResource.file) {
+        vm.newResource.lastAutopopulatedName = vm.newResource.name = vm.newResource.file.name;
+      }
+    }
+
+    function setModalTab(modalTab) {
+      vm.modalTab = {};
+      vm.modalTab[modalTab] = true;
+    }
+
+    function prepareCurrentPageItems() {
+      var items = vm.selectionList[vm.newResource.typeId];
+      if (items.length > 0) {
+        vm.pagination.totalItems = items.length;
+        vm.pagination.items = items.slice(((vm.pagination.currentPage - 1) * vm.pagination.itemsPerPage), ((vm.pagination.currentPage) * vm.pagination.itemsPerPage));
+      }
+      else {
+        vm.pagination.items = {};
+        vm.pagination.totalItems = 0;
+      }
+    }
+    
     function openUploadModal(current, parent, replaceResource) {
       vm.newResource = { type: current.type, scope: current.scope };
       vm.currentPage.upload = current.id;
@@ -279,6 +369,7 @@
       vm.currentModalSet = parent.modal.set;
       vm.currentDependency = parent.dependency;
       vm.currentCallback = parent.callback;
+      vm.currentPage.canSelect = false;
     }
 
     function openSelectModal(parent) {
@@ -414,7 +505,7 @@
         vm.resourceList.push(data.resource);
         vm.selectionList[vm.currentPage.upload].push(data.resource);
       }
-      domServices.modal('uploadResource', 'close');
+      domServices.modal(vm.currentPage.canSelect ? 'selectOrUploadResource' :' uploadResource', 'close');
       setDependency(data.resource)
       filterResources(vm.currentPage.filter);
       messenger.ok(data.message);

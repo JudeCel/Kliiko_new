@@ -331,15 +331,7 @@
 
     function initGallery(gc) {
       vm.uploadTypes = [gc.getUploadType('brandLogo')];
-
-      gc.listResources({ type: ['image'], scope: ['brandLogo'], stock: true }).then(function(result) {
-        gc.resourceList = result.resources;
-        for(var i in result.resources) {
-          var resource = result.resources[i];
-          var type = gc.getUploadTypeFromResource(resource);
-          gc.selectionList[type].push(resource);
-        }
-      });
+      gc.preloadResources({ type: ['image'], scope: ['brandLogo'], stock: true });
     }
 
     function galleryDropdownData(dependency) {
