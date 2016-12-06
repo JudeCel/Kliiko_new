@@ -19,8 +19,6 @@
     csServices.findAllSessions = findAllSessions;
     csServices.removeSession = removeSession;
     csServices.copySession = copySession;
-    csServices.rateSessionMember = rateSessionMember;
-    csServices.saveComment = saveComment;
     return csServices;
 
     function findAllSessions() {
@@ -34,18 +32,6 @@
 
       return deferred.promise;
     };
-
-    function saveComment(member) {
-      var deferred = $q.defer();
-
-      dbg.log2('#ChatSessions > saveComment > make rest call');
-      sessionMemberApi.comment({ id: member.id }, { comment: member.comment }, function(res) {
-        dbg.log2('#ChatSessions > comment > rest call responds');
-        deferred.resolve(res);
-      });
-
-      return deferred.promise;
-    }
 
     function removeSession(data) {
       var deferred = $q.defer();
@@ -71,15 +57,5 @@
       return deferred.promise;
     }
 
-    function rateSessionMember(data) {
-      var deferred = $q.defer();
-      dbg.log2('#ChatSessions > rateSessionMember > make rest call');
-      sessionMemberApi.rate(data, function(res) {
-        dbg.log2('#ChatSessions > rateSessionMember > rest call responds');
-        deferred.resolve(res);
-      });
-
-      return deferred.promise;
-    }
   };
 })();
