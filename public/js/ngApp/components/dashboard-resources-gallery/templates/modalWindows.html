@@ -20,11 +20,16 @@
       </div>
 
       <div class='modal-body'>
-        <div ng-if="gc.modalTab.gallery" class='row selectItems'>
-          <div ng-repeat='resource in gc.selectionList[gc.newResource.typeId]' ng-init='typeOf = gc.isTypeOf(resource); gc.hideElements = true'>
-            <div class='col-xs-4 cursor-pointer' ng-click='gc.resourceSelected(resource)'>
-              <ng-include src="gc.templatesDir + 'panel.html'"></ng-include>
+        <div ng-if="gc.modalTab.gallery">
+          <div class='row selectItems'>
+            <div ng-repeat='resource in gc.pagination.items' ng-init='typeOf = gc.isTypeOf(resource); gc.hideElements = true'>
+              <div class='col-xs-4 cursor-pointer' ng-click='gc.resourceSelected(resource)'>
+                <ng-include src="gc.templatesDir + 'panel.html'"></ng-include>
+              </div>
             </div>
+          </div>
+          <div ng-if="gc.pagination.totalItems > gc.pagination.itemsPerPage" class="paginator">
+            <pagination total-items="gc.pagination.totalItems" ng-model="gc.pagination.currentPage" class="pagination-sm" items-per-page="gc.pagination.itemsPerPage" max-size="10" boundary-links="true" ng-click="gc.prepareCurrentPageItems()"></pagination>
           </div>
         </div>
 

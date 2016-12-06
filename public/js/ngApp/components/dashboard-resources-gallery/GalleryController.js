@@ -24,6 +24,12 @@
       { id: 'youtube',   type: 'link',  text: 'Youtube',    scope: 'youtube',   format: 'url' }
     ];
     vm.modalTab = {}; 
+    vm.pagination = {
+      totalItems: 0,
+      currentPage: 1,
+      itemsPerPage: 3,
+      items: {}
+    }
 
     resetSelectionList();
 
@@ -54,6 +60,7 @@
     vm.fileSelected = fileSelected;
     vm.setModalTab = setModalTab;
     vm.preloadResources = preloadResources;
+    vm.prepareCurrentPageItems = prepareCurrentPageItems;
 
     function resetSelectionList(params) {
       vm.selectionList = {};
@@ -301,10 +308,14 @@
         params.type.push(type.type);
         params.scope.push(type.scope);
       }
-      preloadResources(params);
+      preloadResources(params).then(function() {
+        prepareCurrentPageItems();
+      });
     }
 
     function preloadResources(params) {
+      var deferred = $q.defer();
+      
       vm.listResources(params).then(function(result) {
         resetSelectionList();
         vm.resourceList = result.resources;
@@ -313,7 +324,10 @@
           var resType = vm.getUploadTypeFromResource(resource);
           vm.selectionList[resType].push(resource);
         }
+        deferred.resolve();
       });
+
+      return deferred.promise;
     }
 
     function fileSelected() {
@@ -325,6 +339,18 @@
     function setModalTab(modalTab) {
       vm.modalTab = {};
       vm.modalTab[modalTab] = true;
+    }
+
+    function prepareCurrentPageItems() {
+      var items = vm.selectionList[vm.newResource.typeId];
+      if (items.length > 0) {
+        vm.pagination.totalItems = items.length;
+        vm.pagination.items = items.slice(((vm.pagination.currentPage - 1) * vm.pagination.itemsPerPage), ((vm.pagination.currentPage) * vm.pagination.itemsPerPage));
+      }
+      else {
+        vm.pagination.items = {};
+        vm.pagination.totalItems = 0;
+      }
     }
     
     function openUploadModal(current, parent, replaceResource) {
