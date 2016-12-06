@@ -5,9 +5,9 @@
         <i id='loading' class='fa fa-spinner fa-pulse fa-fw'></i>
       </div>
       <div class='modal-tabs'>
-        <div class='modal-tab border-green {{gc.modalTab.gallery ? "active" : ""}}' ng-click="gc.setModalTab('gallery')">Gallery</div>
-        <div class='modal-tab border-green {{gc.modalTab.link ? "active" : ""}}' ng-click="gc.setModalTab('link')" ng-if='gc.newResource.type =="video"'>Add From URL</div>
-        <div class='modal-tab border-green {{gc.modalTab.upload ? "active" : ""}}' ng-click="gc.setModalTab('upload')">Upload</div>
+        <div class='modal-tab border-green' ng-class='gc.modalTab.gallery ? "active" : ""' ng-click="gc.setModalTab('gallery')">Gallery</div>
+        <div class='modal-tab border-green' ng-class='gc.modalTab.link ? "active" : ""' ng-click="gc.setModalTab('link')" ng-if='gc.newResource.type =="video"'>Add From URL</div>
+        <div class='modal-tab border-green' ng-class='gc.modalTab.upload ? "active" : ""'  ng-click="gc.setModalTab('upload')">Upload</div>
       </div>
       <div class='modal-header'>
         <div ng-if="gc.modalTab.gallery">
@@ -29,7 +29,7 @@
             </div>
           </div>
           <div ng-if="gc.pagination.totalItems > gc.pagination.itemsPerPage" class="paginator">
-            <pagination total-items="gc.pagination.totalItems" ng-model="gc.pagination.currentPage" class="pagination-sm" items-per-page="gc.pagination.itemsPerPage" max-size="10" boundary-links="true" ng-click="gc.prepareCurrentPageItems()"></pagination>
+            <uib-pagination total-items="gc.pagination.totalItems" ng-model="gc.pagination.currentPage" class="pagination-sm" items-per-page="gc.pagination.itemsPerPage" max-size="10" boundary-links="true" ng-click="gc.prepareCurrentPageItems()"></pagination>
           </div>
         </div>
 
