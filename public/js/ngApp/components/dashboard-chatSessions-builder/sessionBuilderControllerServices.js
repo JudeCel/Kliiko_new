@@ -43,6 +43,7 @@
 
     function rateSessionMember(data) {
       var deferred = $q.defer();
+
       dbg.log2('#SessionMember > rateSessionMember > make rest call');
       sessionMemberApi.rate(data, function(res) {
         dbg.log2('#SessionMember > rateSessionMember > rest call responds');

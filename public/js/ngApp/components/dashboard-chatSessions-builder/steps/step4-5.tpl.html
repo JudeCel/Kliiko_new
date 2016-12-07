@@ -38,8 +38,8 @@
             <th ng-click="clc.changeTableSortingFilter('email')">Email</th>
             <th ng-click="clc.changeTableSortingFilter('mobile')">Mobile</th>
             <th ng-click="clc.changeTableSortingFilter('inviteStatusTranscription')" ng-if="!sbc.canSendCloseEmail()">Status</th>
-            <th ng-if="lastStepsController.isParticipantPage()">Comment</th>
-            <th ng-if="lastStepsController.isParticipantPage()">Session rating</th>
+            <th ng-if="sbc.canCommentAndRate()">Comment</th>
+            <th ng-if="sbc.canCommentAndRate()">Session rating</th>
             <th ng-click="clc.changeTableSortingFilter('closeEmailSentStatus')" ng-if="sbc.canSendCloseEmail()">Close Session Email</th>
           </tr>
         </thead>
@@ -65,11 +65,11 @@
                 <img src='/icons/dashboardElement_remove.png' ng-click='lastStepsController.removeFromList(member)' />
               </div>
             </td>
-            <td ng-if="lastStepsController.isParticipantPage()">
+            <td ng-if="sbc.canCommentAndRate()">
               <img src='/icons/add_new_list_blue.png' alt='' ng-click='lastStepsController.openCommentModalWindow(member)'/>
               {{ member.sessionMember.comment | limitTo: 20 }}{{ member.sessionMember.comment.length > 20 ? '&hellip;' : '' }}
             </td>
-            <td ng-if="lastStepsController.isParticipantPage()">
+            <td ng-if="sbc.canCommentAndRate()">
               <uib-rating class='session-rating-stars text-vertical-middle' ng-model='member.sessionMember.rating' max='5' aria-labelledby='default-rating' ng-click='lastStepsController.rateMember(member)'>
               </uib-rating>
             </td>

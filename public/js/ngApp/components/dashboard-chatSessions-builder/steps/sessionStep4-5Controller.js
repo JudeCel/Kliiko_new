@@ -401,11 +401,13 @@
 
     function saveComment() {
       builderServices.saveComment(vm.currentMemberModal).then(function(res) {
-        messenger.ok(res.message);
-        vm.currentMemberModal = null;
-        domServices.modal('memberCommentModal', 1);
-      }, function(error) {
-        messenger.error(error);
+        if (res.error) {
+          messenger.error(res.error);
+        } else {
+          messenger.ok(res.message);
+          vm.currentMemberModal = null;
+          domServices.modal('memberCommentModal', 1);
+        }
       });
     }
 

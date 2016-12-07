@@ -59,6 +59,7 @@
     vm.isSelectParticipantStep = isSelectParticipantStep;
     vm.isSessionClosed = isSessionClosed;
     vm.canSendCloseEmail = canSendCloseEmail;
+    vm.canCommentAndRate = canCommentAndRate;
     vm.canInvite = canInvite;
 
     function closeSession() {
@@ -348,6 +349,11 @@
 
     function canSendCloseEmail() {
       return isSelectParticipantStep() && isSessionClosed();
+    }
+
+    function canCommentAndRate() {
+      //return isSelectParticipantStep() && isSessionClosed();
+      return true;
     }
   }
 

@@ -94,6 +94,7 @@ module.exports = {
     commentChanged: 'Comment updated successfully',
     cannotBeChanged: 'Session cannot be changed',
     cantRateSelf: "You can't rate your self",
+    sessionNotClosed: "You can't rate or comment participants because session in not closed",
   },
   sessionBuilder: {
     setUp: "You have successfully setted up your chat session.",
