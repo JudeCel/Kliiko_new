@@ -2,7 +2,7 @@ angular
     .module('KliikoApp')
     .directive('emojiPickerHelper', emojiPickerHelper);
 
-function emojiPickerHelper($timeout) {
+function emojiPickerHelper() {
     var directive = {
         restrict: 'A',
         link : function(scope, element, attrs) {
@@ -16,7 +16,7 @@ function emojiPickerHelper($timeout) {
           });
 
           element.on('click', function() {
-            focusTo(topicBoard);
+            focusTo(topicBoard, scope);
           });
         }
     };
@@ -30,12 +30,10 @@ function emojiPickerHelper($timeout) {
       }
     }
 
-    function focusTo(topicBoard) {
-      $timeout(function () {
-        var textArea = topicBoard[0];
-
-        textArea.focus();
-        textArea.selectionStart = textArea.selectionEnd = textArea.value.length;
-      });
+    function focusTo(topicBoard, scope) {
+      scope.$apply();
+      var textArea = topicBoard[0];
+      textArea.focus();
+      textArea.selectionStart = textArea.selectionEnd = textArea.value.length;
     }
 }
