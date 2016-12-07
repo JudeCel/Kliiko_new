@@ -27,7 +27,7 @@
     vm.pagination = {
       totalItems: 0,
       currentPage: 1,
-      itemsPerPage: 3,
+      itemsPerPage: 9,
       items: {}
     }
 
@@ -343,11 +343,11 @@
 
     function prepareCurrentPageItems() {
       var items = vm.selectionList[vm.newResource.typeId];
+      vm.pagination.currentPage = 1;
       if (items.length > 0) {
         vm.pagination.totalItems = items.length;
         vm.pagination.items = items.slice(((vm.pagination.currentPage - 1) * vm.pagination.itemsPerPage), ((vm.pagination.currentPage) * vm.pagination.itemsPerPage));
-      }
-      else {
+      } else {
         vm.pagination.items = {};
         vm.pagination.totalItems = 0;
       }
@@ -505,7 +505,7 @@
         vm.resourceList.push(data.resource);
         vm.selectionList[vm.currentPage.upload].push(data.resource);
       }
-      domServices.modal(vm.currentPage.canSelect ? 'selectOrUploadResource' :' uploadResource', 'close');
+      domServices.modal(vm.currentPage.canSelect ? 'selectOrUploadResource' : 'uploadResource', 'close');
       setDependency(data.resource)
       filterResources(vm.currentPage.filter);
       messenger.ok(data.message);
