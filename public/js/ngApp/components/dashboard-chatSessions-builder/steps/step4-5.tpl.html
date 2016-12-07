@@ -69,7 +69,7 @@
               <img src='/icons/add_new_list_blue.png' alt='' ng-click='lastStepsController.openCommentModalWindow(member)'/>
               {{ member.sessionMember.comment | limitTo: 20 }}{{ member.sessionMember.comment.length > 20 ? '&hellip;' : '' }}
             </td>
-            <td ng-if="sbc.canCommentAndRate()">
+            <td ng-if="sbc.canCommentAndRate()" class="tableRate">
               <uib-rating class='session-rating-stars text-vertical-middle' ng-model='member.sessionMember.rating' max='5' aria-labelledby='default-rating' ng-click='lastStepsController.rateMember(member)'>
               </uib-rating>
             </td>

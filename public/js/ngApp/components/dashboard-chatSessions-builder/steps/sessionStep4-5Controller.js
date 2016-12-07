@@ -396,12 +396,12 @@
     };
 
     function openCommentModalWindow(member) {
-      vm.currentMemberModal = member.sessionMember;
+      vm.currentMemberModal = member;
       domServices.modal('memberCommentModal');
     }
 
     function saveComment() {
-      builderServices.saveComment(vm.currentMemberModal).then(function(res) {
+      builderServices.saveComment(vm.currentMemberModal.sessionMember).then(function(res) {
         if (res.error) {
           messenger.error(res.error);
         } else {
