@@ -304,9 +304,10 @@
       vm.setModalTab('gallery');
 
       var params = { type:[current.type], scope:[current.scope], stock: true };
-      if (current.type != type.type) {
-        params.type.push(type.type);
-        params.scope.push(type.scope);
+      if (type.type == "video") {
+        var youtubeType = vm.getUploadType("youtube");
+        params.type.push(youtubeType.type);
+        params.scope.push(youtubeType.scope);
       }
       preloadResources(params).then(function() {
         prepareCurrentPageItems();
@@ -343,6 +344,9 @@
 
     function prepareCurrentPageItems() {
       var items = vm.selectionList[vm.newResource.typeId];
+      if (vm.newResource.typeId == "video") {
+        items = items.concat(vm.selectionList["youtube"]);
+      }
       vm.pagination.currentPage = 1;
       if (items.length > 0) {
         vm.pagination.totalItems = items.length;
