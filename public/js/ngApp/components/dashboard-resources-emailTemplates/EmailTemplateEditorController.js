@@ -66,7 +66,7 @@
         icon: "/icons/header button icons/addYoutubeVideo.png",
         visible: true,
         callbackArguments: [],
-        tooltip: 'Add YouTube link',
+        tooltip: 'Add Video',
         exec: function() {
           vm.currentUpload = 'video';
           $scope.$apply(function() {
