@@ -265,7 +265,7 @@
     function selectParticipantsClickHandle() {
       var id = vm.session.sessionData.participantListId;
       if(id) {
-        vm.listIgnoring = { includes: true, active: { id: id }, ids: [id] };
+        vm.listIgnoring = { include: true, active: { id: id }, ids: [id] };
       }
       else {
         vm.listIgnoring = false;
