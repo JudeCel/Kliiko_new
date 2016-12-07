@@ -352,8 +352,7 @@
     }
 
     function canCommentAndRate() {
-      //return isSelectParticipantStep() && isSessionClosed();
-      return true;
+      return isSelectParticipantStep() && isSessionClosed();
     }
   }
 
