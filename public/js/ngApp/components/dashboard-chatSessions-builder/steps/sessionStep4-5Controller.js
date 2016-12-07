@@ -26,6 +26,7 @@
       notAtAll: 'Not At All',
       pending: 'No Response',
     };
+    vm.maxCommentLength = 100;
 
     // step 4 + 5
     vm.inviteMembers = inviteMembers;
