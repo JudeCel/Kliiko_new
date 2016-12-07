@@ -295,7 +295,6 @@
       vm.newResource = { type: current.type, scope: current.scope, typeId: type.id };
       vm.currentPage.upload = current.id;
       parent.modal.replace = false;
-      domServices.modal('selectOrUploadResource');
       parent = parent || { modal: {} };
       vm.currentModalSet = parent.modal.set;
       vm.currentDependency = parent.dependency;
@@ -312,6 +311,7 @@
       vm.pagination.currentPage = 1;
       preloadResources(params).then(function() {
         prepareCurrentPageItems();
+        domServices.modal('selectOrUploadResource');
       });
     }
 
