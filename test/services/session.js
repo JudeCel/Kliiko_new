@@ -8,6 +8,7 @@ var AccountUser = models.AccountUser;
 var sessionServices = require('./../../services/session');
 var sessionFixture = require('./../fixtures/session');
 var subscriptionFixture = require('./../fixtures/subscription');
+var sessionBuilderServices = require('./../../services/sessionBuilder');
 
 var assert = require('chai').assert;
 describe('SERVICE - Session', function() {
@@ -250,33 +251,53 @@ describe('SERVICE - Session', function() {
     describe('#updateSessionMemberRating', function() {
       describe('happy path', function() {
         it('should succeed on updating rating', function (done) {
-          models.SessionMember.find({ where: { role: 'facilitator' } }).then(function(member) {
-            let params = { id: member.id, rating: 4 };
-
-            models.SessionMember.find({
-              where: {
-                role: 'participant'
-              },
-              include: [models.AccountUser]
-            }).then(function(member) {
-              sessionServices.updateSessionMemberRating(params, member.AccountUser.UserId, testData.account.id).then(function(result) {
-                assert.equal(result.data.rating, 4);
-                assert.equal(result.message, sessionServices.messages.rated);
-                done();
-              }, function(error) {
-                done(error);
+          sessionBuilderServices.update(testData.session.id, testData.session.accountId, {status: 'closed'}).then(function(closeResult) {
+            models.SessionMember.find({ where: { role: 'participant' } }).then(function(member) {
+              let params = { id: member.id, rating: 4 };
+              models.SessionMember.find({
+                where: {
+                  role: 'facilitator'
+                },
+                include: [models.AccountUser]
+              }).then(function(member) {
+                sessionServices.updateSessionMemberRating(params, member.AccountUser.UserId, testData.account.id).then(function(result) {
+                  assert.equal(result.data.rating, 4);
+                  assert.equal(result.message, sessionServices.messages.rated);
+                  done();
+                }, function(error) {
+                  done(error);
+                });
               });
-            })
-
-          })
+            });
+          }, function(error) {
+            done(error);
+          });
         });
       });
 
       describe('sad path', function() {
+        it('should fail because session not closed', function (done) {
+          models.SessionMember.find({ where: { role: 'participant' } }).then(function(member) {
+            let params = { id: member.id, rating: 4 };
+            models.SessionMember.find({
+              where: {
+                role: 'facilitator'
+              },
+              include: [models.AccountUser]
+            }).then(function(member) {
+              sessionServices.updateSessionMemberRating(params, member.AccountUser.UserId, testData.account.id).then(function(result) {
+                done('Should not get here!');
+              }, function(error) {
+                assert.equal(error, sessionServices.messages.sessionNotClosed);
+                done();
+              });
+            })
+          });
+        });
+
         it('should fail because not found', function (done) {
           sessionServices.findSession(testData.session.id, testData.account.id, provider).then(function(result) {
             let params = { id: result.data.dataValues.facilitator.id + 100, rating: 4 };
-
             sessionServices.updateSessionMemberRating(params, testData.user.id, testData.account.id).then(function(result) {
               done('Should not get here!');
             }, function(error) {
@@ -285,25 +306,51 @@ describe('SERVICE - Session', function() {
             });
           });
         });
+      });
+    });
 
-        it('should fail because cannot rate self', function (done) {
-          models.Subscription.find({ include: [{ model: models.Account, include: [{ model: models.AccountUser, include: [models.SessionMember] }] }] }).then(function(subscription) {
-            let accountId = subscription.Account.AccountUsers[0].AccountId;
-            let userId = subscription.Account.AccountUsers[0].UserId;
-
-            sessionServices.findSession(testData.session.id, accountId, provider).then(function(result) {
-              let params = { id: subscription.Account.AccountUsers[0].SessionMembers[0].id, rating: 4 };
-
-              sessionServices.updateSessionMemberRating(params, userId, accountId).then(function(result) {
-                done('Should not get here!');
-              }, function(error) {
-                assert.equal(error, sessionServices.messages.cantRateSelf);
+    describe('#changeComment', function() {
+      describe('happy path', function() {
+        it('should succeed on comment', function (done) {
+          sessionBuilderServices.update(testData.session.id, testData.session.accountId, {status: 'closed'}).then(function(closeResult) {
+            models.SessionMember.find({ where: { role: 'participant' } }).then(function(member) {
+              sessionServices.changeComment(member.id, "test", testData.account.id).then(function(result) {
+                assert.equal(result.message, sessionServices.messages.commentChanged);
                 done();
+              }, function(error) {
+                done(error);
               });
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+
+      describe('sad path', function() {
+        it('should fail because session not closed', function (done) {
+          models.SessionMember.find({ where: { role: 'participant' } }).then(function(member) {
+            sessionServices.changeComment(member.id, "test", testData.account.id).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              assert.equal(error, sessionServices.messages.sessionNotClosed);
+              done();
+            });
+          });
+        });
+
+        it('should fail because not found', function (done) {
+          sessionServices.findSession(testData.session.id, testData.account.id, provider).then(function(result) {
+            sessionServices.changeComment(result.data.dataValues.facilitator.id + 100, "test", testData.account.id).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              assert.equal(error, sessionServices.messages.sessionMemberNotFound);
+              done();
             });
           });
         });
       });
     });
+
   });
 });

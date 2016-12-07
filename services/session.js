@@ -112,20 +112,26 @@ function changeComment(id, comment, accountId) {
   let deferred = q.defer();
 
   SessionMember.find({
-    where: { id: id },
+    where: { 
+      id: id,
+      role: 'participant' 
+    },
     include: [{
       model: Session,
       where: { accountId: accountId }
     }]
   }).then(function(sessionMember) {
-    if(sessionMember) {
-      sessionMember.update({ comment: comment }).then(function() {
-        deferred.resolve(simpleParams(null, MessagesUtil.session.commentChanged));
-      }, function(error) {
-        deferred.reject(filters.errors(error));
-      });
-    }
-    else {
+    if (sessionMember) {
+      if (sessionMember.Session.status == "closed") {
+        sessionMember.update({ comment: comment }).then(function() {
+          deferred.resolve(simpleParams(null, MessagesUtil.session.commentChanged));
+        }, function(error) {
+          deferred.reject(filters.errors(error));
+        });
+      } else {
+        deferred.reject(MessagesUtil.session.sessionNotClosed);  
+      }
+    } else {
       deferred.reject(MessagesUtil.session.sessionMemberNotFound);
     }
   });
@@ -352,32 +358,36 @@ function updateSessionMemberRating(params, userId, accountId) {
   validators.hasValidSubscription(accountId).then(function() {
     SessionMember.find({
       where: {
-        id: params.id
+        id: params.id,
+        role: 'participant'
       },
       attributes: VALID_ATTRIBUTES.sessionMember,
-      returning: true
+      returning: true,
+      include: [Session]
     }).then(function(member) {
-      if(member) {
-        AccountUser.find({
-          where: {
-            id: member.accountUserId,
-            UserId: userId,
-            AccountId: accountId
-          }
-        }).then(function(accountUser) {
-          if(accountUser) {
-            deferred.reject(MessagesUtil.session.cantRateSelf);
-          }
-          else {
-            member.update({ rating: params.rating }, { returning: true }).then(function(sessionMember) {
-              deferred.resolve(simpleParams(member, MessagesUtil.session.rated));
-            }).catch(function(error) {
-              deferred.reject(filters.errors(error));
-            });
-          }
-        });
-      }
-      else {
+      if (member) {
+        if (member.Session.status == "closed") {
+          AccountUser.find({
+            where: {
+              id: member.accountUserId,
+              UserId: userId,
+              AccountId: accountId
+            }
+          }).then(function(accountUser) {
+            if (accountUser) {
+              deferred.reject(MessagesUtil.session.cantRateSelf);
+            } else {
+              member.update({ rating: params.rating }, { returning: true }).then(function(sessionMember) {
+                deferred.resolve(simpleParams(member, MessagesUtil.session.rated));
+              }).catch(function(error) {
+                deferred.reject(filters.errors(error));
+              });
+            }
+          });
+        } else {
+          deferred.reject(MessagesUtil.session.sessionNotClosed);  
+        }
+      } else {
         deferred.reject(MessagesUtil.session.sessionMemberNotFound);
       }
     }).catch(function(error) {
