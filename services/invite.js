@@ -181,6 +181,8 @@ function sendInvite(inviteId, deferred) {
       id: inviteId
     }
   }).then(function(invite) {
+    if (!invite) { return deferred.reject(MessagesUtil.invite.notFound) }
+
     invite.unsubscribeMailUrl = mailUrlHelper.getUrl(invite.AccountUser.ContactListUsers[0].unsubscribeToken, null, '/unsubscribe/');
     if(invite.accountId) {
       let inviteParams = {
@@ -276,7 +278,7 @@ function findAndRemoveInvite(params) {
           }
         });
       }else {
-        reject('Invite not found');
+        reject(MessagesUtil.invite.notFound);
       }
     });
 
@@ -324,10 +326,8 @@ function updateEmailStatus(id, emailStatus) {
   return new Bluebird((resolve, reject) => {
     Invite.update({ emailStatus: emailStatus }, {where: {id: id} }).then(() => {
       resolve();
-    }, (error) => {
-      reject(error)
-    }).catch(function(error) {
-      reject(error)
+    }).catch((error) => {
+      reject(error);
     });
   })
 }

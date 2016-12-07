@@ -182,7 +182,7 @@ describe('SERVICE - Invite basic logic', function() {
     describe('sad path', function() {
       it('should faild, invite not found', function (done) {
         inviteService.acceptInvite("token").then((response) => {
-          done("Should not get here")
+          done("Should not get here");
         }, function(error) {
           try {
             assert.equal(error, inviteService.messages.notFound)

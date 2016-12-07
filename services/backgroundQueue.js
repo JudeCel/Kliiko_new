@@ -4,38 +4,12 @@ const NR = require("node-resque");
 const connectionDetails = require('../config/backgroudServer.js');
 let Bluebird = require('bluebird');
 var queue = null
+const invitesJobs = require('./backgroundJobs/invites/index.js');
 
 const jobs = {
   "invite": {
     perform: (inviteId, callback) => {
-      const { sendInvite, updateEmailStatus }  = require('./invite.js')
-      try {
-        sendInvite(inviteId).then(() => {
-          updateEmailStatus(inviteId, "done").then(() => {
-            callback(null);
-          }, (error) => {
-            callback(error);
-          })
-        }, (error) => {
-          updateEmailStatus(inviteId, "failed").then(() => {
-            callback(null);
-          }, (error) => {
-            callback(error);
-          })
-        }).catch(function(error) {
-          updateEmailStatus(inviteId, "failed").then(() => {
-            callback(error);
-          }, (error) => {
-            callback(error);
-          })
-        });
-      } catch (error) {
-        updateEmailStatus(inviteId, "failed").then(() => {
-          callback(error);
-        }, (error) => {
-          callback(error);
-        })
-      }
+      invitesJobs.sendInvite(inviteId, callback);
     },
   },
 }
@@ -48,7 +22,7 @@ const setUpQueue = (_req, _res, next) => {
       tmpQueue.connect(() => {
         tmpQueue.on('error', (error) => { console.log(error) })
         queue = tmpQueue
-        console.log("node-resque succsess");
+        console.log("node-resque successfully started");
         next()
       })
     }
