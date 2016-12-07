@@ -987,7 +987,7 @@
   float: right;
   font-size: 24px;
   height: 30px;
-  margin-right: 10px;
+  margin-right: 5px;
   width: 30px;
 }
   .emoji-groups .btn-backspace:hover {
@@ -1025,8 +1025,8 @@
   opacity: 1;
 }
 
-.form-group .emoji-picker {
+.form-group > span > .emoji-picker {
   position: relative;
-  top: 40px;
+  bottom: -95px;
   right: -635px;
 }
