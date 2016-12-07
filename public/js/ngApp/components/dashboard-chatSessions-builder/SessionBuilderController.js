@@ -94,7 +94,11 @@
 
       if (!angular.isNumber(step)) {
         step = getStepIndex(step);
-        goToAcountHubChatSessionIfFinish(step);
+
+        if (step === 'finish') {
+          $state.go('account-hub.chatSessions');
+          return;
+        }
       }
 
       var routerProgressbar = ngProgressFactory.createInstance();
@@ -134,12 +138,6 @@
           return vm.currentStep + 1;
         } else {
           return step;
-        }
-      }
-
-      function goToAcountHubChatSessionIfFinish(step) {
-        if (step === 'finish') {
-          $state.go('account-hub.chatSessions');
         }
       }
     }
