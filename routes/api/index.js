@@ -175,5 +175,4 @@ router.get('/sessionBuilder/:id/sessionMailTemplateStatus', PERMISSIONS.facilita
 router.post('/sessionBuilder/:id/addTopics', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.addTopics);
 router.post('/sessionBuilder/:id/removeTopic', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.removeTopic);
 
-router.post('/sessionBuilder/:id/step/next', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.nextStep );
-router.post('/sessionBuilder/:id/step/previous', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.prevStep);
+router.post('/sessionBuilder/:id/step/:arg', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.goToStep);

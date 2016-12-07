@@ -91,42 +91,56 @@
 
     function goToStep(step) {
       vm.listIgnoring = null;
+
       if (!angular.isNumber(step)) {
-        if (step === 'back')  handlePreviousStep();
-        if (step === 'next') handleNextStep();
-        if (step === 'finish') {
-          $state.go('account-hub.chatSessions');
+        step = getStepIndex(step);
+        goToAcountHubChatSessionIfFinish(step);
+      }
+
+      var routerProgressbar = ngProgressFactory.createInstance();
+      routerProgressbar.start();
+
+      vm.session.goCertainStep(step).then(function(result) {
+        handleStepSwitch(result);
+        routerProgressbar.complete();
+      }, function(error) {
+        routerProgressbar.complete();
+        messenger.error(error);
+      });
+
+      function handleStepSwitch(result) {
+        var session = result.data.sessionBuilder;
+        var hasNoValidationErrors = true;
+
+        for (var i = vm.currentStep; i < step; i++) {
+          var stepPropertyName = "step" + i;
+          if (session.steps[stepPropertyName].error) {
+            messenger.error(session.steps[stepPropertyName].error);
+            hasNoValidationErrors = false;
+          }
+        }
+
+        if (hasNoValidationErrors) {
+          initStep().then(function(step) {
+            vm.currentStep = step;
+          });
         }
       }
 
-      function handlePreviousStep() {
-        vm.cantMoveNextStep = false;
-        vm.session.goPreviouseStep().then(function(result) {
-          vm.session.steps = result.data.sessionBuilder.steps;
-
-          initStep().then(function (step) {
-            vm.currentStep = step;
-          });
-        }, function(error) {
-          messenger.error(err)
-        }) ;
+      function getStepIndex(step) {
+        if (step === 'back') {
+          return vm.currentStep - 1;
+        } else if (step === 'next') {
+          return vm.currentStep + 1;
+        } else {
+          return step;
+        }
       }
 
-      function handleNextStep() {
-        var routerProgressbar = ngProgressFactory.createInstance();
-        routerProgressbar.start();
-        vm.session.goNextStep().then(
-          function (res) {
-            initStep().then(function(step) {
-              vm.currentStep = step;
-            });
-            routerProgressbar.complete();
-          },
-          function (err) {
-            routerProgressbar.complete();
-            messenger.error(err)
-          }
-        );
+      function goToAcountHubChatSessionIfFinish(step) {
+        if (step === 'finish') {
+          $state.go('account-hub.chatSessions');
+        }
       }
     }
 
