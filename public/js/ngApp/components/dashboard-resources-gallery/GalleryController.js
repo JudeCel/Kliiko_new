@@ -309,6 +309,7 @@
         params.type.push(youtubeType.type);
         params.scope.push(youtubeType.scope);
       }
+      vm.pagination.currentPage = 1;
       preloadResources(params).then(function() {
         prepareCurrentPageItems();
       });
@@ -347,7 +348,6 @@
       if (vm.newResource.typeId == "video") {
         items = items.concat(vm.selectionList["youtube"]);
       }
-      vm.pagination.currentPage = 1;
       if (items.length > 0) {
         vm.pagination.totalItems = items.length;
         vm.pagination.items = items.slice(((vm.pagination.currentPage - 1) * vm.pagination.itemsPerPage), ((vm.pagination.currentPage) * vm.pagination.itemsPerPage));
