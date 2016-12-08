@@ -23,7 +23,8 @@ var q = require('q');
 var bluebird = require('bluebird');
 
 const MIN_MAIL_TEMPLATES = 4;
-let MAX_STEP_INDEX = 4;
+const MAX_STEP_INDEX = 4;
+const FIRST_STEP_INDEX = 0;
 
 // Exports
 module.exports = {
@@ -305,7 +306,7 @@ function goToStep(id, accountId, destinationStep) {
     });
   }, function(error) {
     deferred.reject(error);
-  })
+  });
 
   return deferred.promise;
 }
@@ -328,7 +329,6 @@ function getDestinationStep(session, destinationStep) {
 }
 
 function isValidatedWithErrors(currentStepIndex, destinationStepIndex, steps) {
-  let firstStep = 1;
   if (currentStepIndex < destinationStepIndex) {
     let keys = Object.keys(steps);
 
@@ -340,11 +340,7 @@ function isValidatedWithErrors(currentStepIndex, destinationStepIndex, steps) {
     }
   }
 
-  if (destinationStepIndex < firstStep) {
-    return true;
-  }
-
-  return false;
+  return destinationStepIndex < FIRST_STEP_INDEX;
 }
 
 function openBuild(id, accountId) {
