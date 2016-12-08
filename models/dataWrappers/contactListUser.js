@@ -2,7 +2,7 @@
 var _ = require('lodash');
 
 var ContactListUser = class ContactListUser {
-  constructor(defaultFields, customFields, participantsFields, visibleFields,  data) {
+  constructor(defaultFields, customFields, participantsFields, visibleFields, data) {
     this.mapFields(defaultFields, customFields, participantsFields, data);
     this.assignIds(data);
   }
@@ -13,12 +13,12 @@ var ContactListUser = class ContactListUser {
     this.stubParticipantsFields(participantsFields)
   }
 
-  // TODO: This function is for stub participants history
-  // need change this after session builder invites US
   stubParticipantsFields(participantsFields) {
     _.map(participantsFields, (e) =>  {
-      let number =  _.random(0, 15);
-      this[e] = number;
+      if (e != "Comments") {
+        //todo: get values from accountUser.info
+        this[e] = 0;
+      }
     });
   }
 

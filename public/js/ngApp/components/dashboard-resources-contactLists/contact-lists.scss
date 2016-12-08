@@ -237,8 +237,10 @@
 
     th {
       span.th-name {
-        left: 9px;
+        left: 8px;
         position: relative;
+        white-space: nowrap;
+        margin-right: 5px;
       }
 
       &:hover {
@@ -264,6 +266,10 @@
 
       .kliiko-checkbox {
         margin-left: 4px;
+      }
+
+      .member-column {
+        padding-left: 15px;
       }
     }
   }

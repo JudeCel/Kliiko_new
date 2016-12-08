@@ -14,7 +14,7 @@ module.exports = (Sequelize, DataTypes) => {
     defaultFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false, defaultValue: constants.contactListDefaultFields },
     visibleFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false, defaultValue: constants.contactListDefaultFields },
     participantsFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false,
-      defaultValue: [ 'Invites', 'Confirmation', 'NotThisTime', 'NotAtAll', 'NoReply', 'Future', 'LastSession', 'Comment']
+      defaultValue: [ 'Invites', 'Accept', 'NotThisTime', 'NotAtAll', 'NoReply', 'Future', 'LastSession', 'Comments']
     },
     customFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false, defaultValue: [] }
   }, {

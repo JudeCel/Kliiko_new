@@ -4,18 +4,17 @@
         <tr>
             <th class="selection-column"></th>
             <th class="th-header druggable" ng-repeat="rowHeader in clc.lists.activeList.visibleFields track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)"
-                ng-drag="true" ng-drag-data="$index">
+                    ng-drag="true" ng-drag-data="$index" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)" ng-drag-success="clc.disableNextSortingFilter()">
                 <span class="sorting-order-arrow"><i class="glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
                 <span class="sorting-order-arrow"><i class="glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
-                <span class="th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader | human2Camel : true}}</span>
-
+                <span class="th-name">{{rowHeader | human2Camel : true}}</span>
             </th>
 
             <th ng-click="clc.showManageColumnsModal()"><img  src="/icons/grid.png" ></th>
         </tr>
         </thead>
         <tbody>
-        <tr class="member-row" ng-repeat='member in clc.lists.activeList.members | orderBy: clc.tableSort.by : clc.tableSort.reverse' ng-class="{'selected':member._selected}">
+        <tr class="member-row" ng-repeat='member in clc.lists.activeList.members | orderBy: clc.tableSort.by : clc.tableSort.reverse | startFrom: (clc.pagination.currentPage - 1) * clc.pagination.itemsPerPage | limitTo: clc.pagination.itemsPerPage' ng-class="{'selected':member._selected}">
             <td class="selection-column">
                 <div class="check">
                     <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-model="member._selected" ng-click="member.selected = !member.selected" type="checkbox" >
@@ -23,7 +22,12 @@
                 </div>
             </td>
 
-            <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index"> {{ member[tableRow] || '-' }}</td>
+            <td ng-repeat="tableRow in clc.lists.activeList.visibleFields track by $index" class="member-column">
+                <span ng-if="tableRow == 'Comments'">
+                    <input type="submit" class="btn btn-standart btn-green" value="Click to view Comments"/>
+                </span>
+                <span ng-if="tableRow != 'Comments'">{{ member[tableRow] || '-' }}</span>
+            </td>
 
             <td >
                 <span class='table-item-edit-group'>
@@ -36,3 +40,7 @@
         </tbody>
     </table>
 </section>
+
+<div ng-if="clc.lists.activeList.members.length > clc.pagination.itemsPerPage" class="paginator">
+    <uib-pagination total-items="clc.lists.activeList.members.length" ng-model="clc.pagination.currentPage" class="pagination-sm" items-per-page="clc.pagination.itemsPerPage" max-size="10" boundary-links="true"></pagination>
+</div>

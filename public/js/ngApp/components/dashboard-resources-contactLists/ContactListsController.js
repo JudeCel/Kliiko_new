@@ -1,5 +1,13 @@
 (function () {
   'use strict';
+
+  angular.module('KliikoApp').filter('startFrom', function(){
+    return function(data, start) {
+      start = +start; //parse to int
+      return data.slice(start);
+    }
+  });
+
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
   ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout', 'messagesUtil', '$confirm'];
@@ -19,6 +27,7 @@
     vm.importData = { excel:false, csv:false, fileToImport: null};
     vm.basePath = '/js/ngApp/components/dashboard-resources-contactLists/';
     vm.importErrorMessage = null;
+    vm.disableNextSortingEvent = false;
 
     vm.hideStuff = false;
     vm.hideModalStuff = false;
@@ -64,6 +73,12 @@
     vm.requireField = requireField;
     vm.isObserverListSelected = isObserverListSelected;
     vm.findIndexByListName = findIndexByListName;
+    vm.disableNextSortingFilter = disableNextSortingFilter;
+
+    vm.pagination = {
+      currentPage: 1,
+      itemsPerPage: 10
+    }
 
     var facilitatorsListName = "Hosts";
     var observersListName = "Spectators";
@@ -104,7 +119,6 @@
     function removeSpecificLists() {
       var array = []
       var activeList = null;
-      console.log(vm.listIgnoring);
 
       for(var i in vm.lists.items) {
         var item = vm.lists.items[i];
@@ -169,6 +183,7 @@
         vm.name = temp.name;
       }
       vm.allSelected = false;
+      vm.pagination.currentPage = 1;
     }
 
 
@@ -319,6 +334,11 @@
     function updateTableSorting(draggedIndex, droppedIndex) {
       dbg.log2('#ContactListController  > updateTableSorting > draggedIndex, droppedIndex : ',draggedIndex, droppedIndex );
       vm.lists.activeList.updateTableSortingByDragging(draggedIndex, droppedIndex);
+      vm.disableNextSortingEvent = false;
+    }
+
+    function disableNextSortingFilter() {
+      vm.disableNextSortingEvent = true;
     }
 
     /**
@@ -326,8 +346,12 @@
      * @param type {string}
      */
     function changeTableSortingFilter(type) {
-      vm.tableSort.by =  type;
-      vm.tableSort.reverse = !vm.tableSort.reverse;
+      if (vm.disableNextSortingEvent) {
+        vm.disableNextSortingEvent = false;
+      } else {
+        vm.tableSort.by =  type;
+        vm.tableSort.reverse = !vm.tableSort.reverse;
+      }
     }
 
     function showManageColumnsModal() {
