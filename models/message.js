@@ -10,7 +10,7 @@ module.exports = (Sequelize, DataTypes) => {
     emotion: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
     body: { type: DataTypes.TEXT, allowNull: false },
     star: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    childStars: { type: DataTypes.ARRAY(DataTypes.INTEGER), allowNull: false, defaultValue: [] }
+    childrenStars: { type: DataTypes.ARRAY(DataTypes.INTEGER), allowNull: false, defaultValue: [] }
   }, {
     timestamps: true,
     indexes: [
