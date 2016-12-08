@@ -9,7 +9,8 @@ module.exports = (Sequelize, DataTypes) => {
     replyLevel:  { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     emotion: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
     body: { type: DataTypes.TEXT, allowNull: false },
-    star: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
+    star: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    childrenStars: { type: DataTypes.ARRAY(DataTypes.INTEGER), allowNull: false, defaultValue: [] }
   }, {
     timestamps: true,
     indexes: [

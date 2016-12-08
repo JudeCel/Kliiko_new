@@ -26,6 +26,7 @@
       notAtAll: 'Not At All',
       pending: 'No Response',
     };
+    vm.maxCommentLength = 100;
 
     // step 4 + 5
     vm.inviteMembers = inviteMembers;
@@ -45,6 +46,9 @@
     vm.returnMemberInviteStatus = returnMemberInviteStatus;
     vm.closeEditContactForm = closeEditContactForm;
     vm.canSelectMember = canSelectMember;
+    vm.rateMember = rateMember;
+    vm.openCommentModalWindow = openCommentModalWindow;
+    vm.saveComment = saveComment;
 
     vm.stepMembers = [];
 
@@ -382,6 +386,31 @@
       }
       return member.inviteStatus;
     }
-  }
 
+    function rateMember(member) {
+      builderServices.rateSessionMember({ id: member.sessionMember.id, rating: member.sessionMember.rating }).then(function(res) {
+        if (res.error) {
+          messenger.error(res.error);
+        }
+      });
+    };
+
+    function openCommentModalWindow(member) {
+      vm.currentMemberModal = member;
+      domServices.modal('memberCommentModal');
+    }
+
+    function saveComment() {
+      builderServices.saveComment(vm.currentMemberModal.sessionMember).then(function(res) {
+        if (res.error) {
+          messenger.error(res.error);
+        } else {
+          messenger.ok(res.message);
+          vm.currentMemberModal = null;
+          domServices.modal('memberCommentModal', 1);
+        }
+      });
+    }
+
+  }
 })();

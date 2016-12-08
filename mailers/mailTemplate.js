@@ -11,13 +11,11 @@ var mailFrom = helpers.mailFrom();
 var { sendMail } = require('./adapter');
 
 function preparePathData (attribs, resources) {
-  let extentionArray = attribs.src.split(".");
-  let extension = "";
-  if (extentionArray.length) {
-    extension = extentionArray[extentionArray.length - 1];
-  }
   let filename = attribs.src.split('/');
-  let name = _.camelCase(filename[filename.length - 1])+"."+extension;
+  let realFilename = filename[filename.length - 1].split('?')[0];
+  let extentionArray = realFilename.split(".");
+  let extension = extentionArray.length ? extentionArray[extentionArray.length - 1] : "";
+  let name = _.camelCase(realFilename)+"."+extension;
   let path = attribs.src;
   if (path.indexOf("http://") == -1 && path.indexOf("https://") == -1) {
     path = "public" + path;

@@ -67,7 +67,6 @@
             <td>{{ session.showStatus }}</td>
             <td class='text-right col-xs-3'>
 
-              <span id='dashboard-session-rating' uib-popover-template="'averageRating.html'" popover-trigger='mouseenter' class='glyphicon glyphicon-star' aria-hidden='true' ng-if='csc.hasAccess(session.id, app.accountUser)' ng-click='csc.changePage("sessionRating", session)'></span>
               <img id='dashboard-copy-session' src='/icons/resources_grey.png' alt='' ng-click='csc.copySession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
               <img id='dashboard-edit-session' src='/icons/dashboardElement_edit.png' alt='' ng-if='csc.hasAccess(session.id, app.accountUser)' ui-sref="account-hub.chatSessions.builder({id:session.id})" ng-click=""/>
               <img src='/icons/dashboardElement_remove.png' alt='' ng-click='csc.removeSession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
@@ -87,9 +86,3 @@
   </div>
 </div>
 
-<script type='text/ng-template' id='averageRating.html'>
-  <div>
-    <uib-rating class='session-rating-stars text-vertical-middle no-pointer-events' ng-model='session.averageRating' max='5' aria-labelledby='default-rating' readonly='true' tabindex=''>
-    </uib-rating>
-  </div>
-</script>

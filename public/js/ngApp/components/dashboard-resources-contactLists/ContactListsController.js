@@ -104,18 +104,18 @@
     function removeSpecificLists() {
       var array = []
       var activeList = null;
+      console.log(vm.listIgnoring);
 
       for(var i in vm.lists.items) {
         var item = vm.lists.items[i];
-        if(vm.listIgnoring.includes) {
-          if(vm.listIgnoring.ids && vm.listIgnoring.ids.includes(item.id)
-          || vm.listIgnoring.names && vm.listIgnoring.names.includes(item.name)) {
+        if (vm.listIgnoring.include) {
+          if(vm.listIgnoring.ids && vm.listIgnoring.ids.indexOf(item.id) >= 0
+          || vm.listIgnoring.names && vm.listIgnoring.names.indexOf(item.name) >= 0) {
             array.push(item);
           }
-        }
-        else if(vm.listIgnoring.ignores) {
-          if(vm.listIgnoring.ids && !vm.listIgnoring.ids.includes(item.id)
-          || vm.listIgnoring.names && !vm.listIgnoring.names.includes(item.name)) {
+        } else if (vm.listIgnoring.ignore) {
+          if(vm.listIgnoring.ids && !vm.listIgnoring.ids.indexOf(item.id) >= 0
+          || vm.listIgnoring.names && !vm.listIgnoring.names.indexOf(item.name) >= 0) {
             array.push(item);
           }
         }

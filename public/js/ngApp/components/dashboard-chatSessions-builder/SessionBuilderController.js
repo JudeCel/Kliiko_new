@@ -59,6 +59,7 @@
     vm.isSelectParticipantStep = isSelectParticipantStep;
     vm.isSessionClosed = isSessionClosed;
     vm.canSendCloseEmail = canSendCloseEmail;
+    vm.canCommentAndRate = canCommentAndRate;
     vm.canInvite = canInvite;
 
     function closeSession() {
@@ -264,7 +265,7 @@
     function selectParticipantsClickHandle() {
       var id = vm.session.sessionData.participantListId;
       if(id) {
-        vm.listIgnoring = { includes: true, active: { id: id }, ids: [id] };
+        vm.listIgnoring = { include: true, active: { id: id }, ids: [id] };
       }
       else {
         vm.listIgnoring = false;
@@ -347,6 +348,10 @@
     }
 
     function canSendCloseEmail() {
+      return isSelectParticipantStep() && isSessionClosed();
+    }
+
+    function canCommentAndRate() {
       return isSelectParticipantStep() && isSessionClosed();
     }
   }
