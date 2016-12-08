@@ -770,7 +770,11 @@ function validateSessionCount(accountId, newPlan) {
   return function(cb) {
     models.Session.count({
       where: {
-        accountId: accountId
+        accountId: accountId,
+        status: 'open',
+        endTime: {
+          $gte: new Date()
+        }
       }
     }).then(function(c) {
       if(newPlan.sessionCount < c){
