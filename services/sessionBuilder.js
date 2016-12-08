@@ -310,8 +310,14 @@ function goToStep(id, accountId, destinationStep) {
 }
 
 function getDestinationStep(session, destinationStep) {
-  let currentStepIndex = constants.sessionBuilderSteps.indexOf(session.currentStep);
   let destinationStepIndex = destinationStep - 1;
+  let maxStepIndex = 4;
+
+  if (destinationStepIndex >= maxStepIndex) {
+    destinationStepIndex = maxStepIndex;
+  }
+
+  let currentStepIndex = constants.sessionBuilderSteps.indexOf(session.currentStep);
   let step = constants.sessionBuilderSteps[destinationStepIndex];
 
   if (isValidatedWithErrors(currentStepIndex, destinationStepIndex, session.steps)) {
@@ -322,6 +328,7 @@ function getDestinationStep(session, destinationStep) {
 }
 
 function isValidatedWithErrors(currentStepIndex, destinationStepIndex, steps) {
+  let firstStep = 1;
   if (currentStepIndex < destinationStepIndex) {
     let keys = Object.keys(steps);
 
@@ -331,6 +338,10 @@ function isValidatedWithErrors(currentStepIndex, destinationStepIndex, steps) {
         return true;
       }
     }
+  }
+
+  if (destinationStepIndex < firstStep) {
+    return true;
   }
 
   return false;
