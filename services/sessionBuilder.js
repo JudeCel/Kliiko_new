@@ -23,6 +23,7 @@ var q = require('q');
 var bluebird = require('bluebird');
 
 const MIN_MAIL_TEMPLATES = 4;
+let MAX_STEP_INDEX = 4;
 
 // Exports
 module.exports = {
@@ -311,10 +312,9 @@ function goToStep(id, accountId, destinationStep) {
 
 function getDestinationStep(session, destinationStep) {
   let destinationStepIndex = destinationStep - 1;
-  let maxStepIndex = 4;
 
-  if (destinationStepIndex >= maxStepIndex) {
-    destinationStepIndex = maxStepIndex;
+  if (destinationStepIndex > MAX_STEP_INDEX) {
+    destinationStepIndex = MAX_STEP_INDEX;
   }
 
   let currentStepIndex = constants.sessionBuilderSteps.indexOf(session.currentStep);
