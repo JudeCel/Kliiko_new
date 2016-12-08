@@ -357,7 +357,7 @@ function openBuild(id, accountId) {
     });
   }, function(error) {
     deferred.reject(error);
-  })
+  });
 
   return deferred.promise;
 }
