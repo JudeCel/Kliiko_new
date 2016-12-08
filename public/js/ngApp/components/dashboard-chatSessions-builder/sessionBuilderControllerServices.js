@@ -9,6 +9,11 @@
       canAddObservers: { method: 'GET', params: { path: 'canAddObservers' } },
     });
 
+    var sessionMemberApi = $resource(globalSettings.restUrl + '/sessionMember/:path/:id', null, {
+      comment: { method: 'post', params: { id: '@id', path: 'comment' } },
+      rate: { method: 'post', params: { id: '@id', path: 'rate' } }
+    });
+
     var Services = {};
 
     Services.getTimeSettings = getTimeSettings;
@@ -19,8 +24,34 @@
     Services.removeDuplicatesFromArray = removeDuplicatesFromArray;
     Services.canAddObservers = canAddObservers;
     Services.someMembersWereSelected = someMembersWereSelected;
+    Services.rateSessionMember = rateSessionMember;
+    Services.saveComment = saveComment;
 
     return Services;
+
+    function saveComment(member) {
+      var deferred = $q.defer();
+
+      dbg.log2('#SessionMember > saveComment > make rest call');
+      sessionMemberApi.comment({ id: member.id }, { comment: member.comment }, function(res) {
+        dbg.log2('#SessionMember > saveComment > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
+
+    function rateSessionMember(data) {
+      var deferred = $q.defer();
+
+      dbg.log2('#SessionMember > rateSessionMember > make rest call');
+      sessionMemberApi.rate(data, function(res) {
+        dbg.log2('#SessionMember > rateSessionMember > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
 
     function canAddObservers() {
       var deferred = $q.defer();

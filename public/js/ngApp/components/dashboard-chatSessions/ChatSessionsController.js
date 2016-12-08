@@ -13,16 +13,11 @@
 
     vm.removeSession = removeSession;
     vm.copySession = copySession;
-    vm.rateSessionMember = rateSessionMember;
 
     vm.changePage = changePage;
     vm.rowClass = rowClass;
     vm.hasAccess = hasAccess;
-    vm.mouseOver = mouseOver;
     vm.redirectToChatSession = redirectToChatSession;
-    vm.openModalWindow = openModalWindow;
-    vm.closeModal = closeModal;
-    vm.saveComment = saveComment;
     vm.changeOrder = changeOrder;
 
     vm.disablePlayButton = false;
@@ -49,24 +44,6 @@
     function changeOrder(type) {
       vm.reverseSort = !vm.reverseSort;
       vm.orderByField = vm.reverseSort ? '+' + type : '-' + type;
-    }
-
-    function openModalWindow(member) {
-      vm.currentMemberModal = member;
-      domServices.modal('chatSessionsModal');
-    }
-
-    function closeModal() {
-      domServices.modal('chatSessionsModal', 1);
-    }
-
-    function saveComment() {
-      chatSessionsServices.saveComment(vm.currentMemberModal).then(function(res) {
-        messenger.ok(res.message);
-        domServices.modal('chatSessionsModal', 1);
-      }, function(error) {
-        messenger.error(error);
-      });
     }
 
     function redirectToChatSession(sessionId) {
@@ -110,23 +87,6 @@
       }
     };
 
-    function rateSessionMember(sessionMember) {
-      chatSessionsServices.rateSessionMember({ id: sessionMember.id, rating: sessionMember.rating }).then(function(res) {
-        if(res.error) {
-          messenger.error(res.error);
-          for(var i in vm.originalSession.SessionMembers) {
-            var member = vm.originalSession.SessionMembers[i];
-            if(member.id == sessionMember.id) {
-              sessionMember.rating = member.rating;
-            }
-          }
-        }
-        else {
-          calculateSessionRating(vm.session);
-        }
-      });
-    };
-
     function rowClass(session, user) {
       return 'session-' + session.showStatus.toLowerCase();
     }
@@ -152,24 +112,7 @@
         init();
         vm.currentPage = { page: page };
       }
-      else if(page == 'sessionRating') {
-        calculateSessionRating(session);
-        vm.session = session;
-        angular.copy(session, vm.originalSession);
-        vm.currentPage = { page: page };
-      }
     };
 
-    function calculateSessionRating(session) {
-      var rating = session.SessionMembers.reduce(function(sum, member) {
-        return sum + member.rating;
-      }, 0);
-      vm.sessionRating = rating / (session.SessionMembers.length || 1);
-      session.averageRating = vm.sessionRating;
-    }
-
-    function mouseOver() {
-      return '/js/ngApp/components/dashboard-chatSessions/averageRating.html';
-    }
   }
 })();

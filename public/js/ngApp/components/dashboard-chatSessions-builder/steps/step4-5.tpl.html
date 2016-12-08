@@ -38,6 +38,8 @@
             <th ng-click="clc.changeTableSortingFilter('email')">Email</th>
             <th ng-click="clc.changeTableSortingFilter('mobile')">Mobile</th>
             <th ng-click="clc.changeTableSortingFilter('inviteStatusTranscription')" ng-if="!sbc.canSendCloseEmail()">Status</th>
+            <th ng-if="sbc.canCommentAndRate()">Comment</th>
+            <th ng-if="sbc.canCommentAndRate()">Session rating</th>
             <th ng-click="clc.changeTableSortingFilter('closeEmailSentStatus')" ng-if="sbc.canSendCloseEmail()">Close Session Email</th>
           </tr>
         </thead>
@@ -62,6 +64,14 @@
                 <img src='/icons/dashboardElement_edit.png' ng-click="lastStepsController.openEditContactModal(member)" />
                 <img src='/icons/dashboardElement_remove.png' ng-click='lastStepsController.removeFromList(member)' />
               </div>
+            </td>
+            <td ng-if="sbc.canCommentAndRate()">
+              <img src='/icons/add_new_list_blue.png' alt='' ng-click='lastStepsController.openCommentModalWindow(member)'/>
+              {{ member.sessionMember.comment | limitTo: 20 }}{{ member.sessionMember.comment.length > 20 ? '&hellip;' : '' }}
+            </td>
+            <td ng-if="sbc.canCommentAndRate()" class="tableRate">
+              <uib-rating class='session-rating-stars text-vertical-middle' ng-model='member.sessionMember.rating' max='5' aria-labelledby='default-rating' ng-click='lastStepsController.rateMember(member)'>
+              </uib-rating>
             </td>
             <td class='col-xs-2' ng-if="sbc.canSendCloseEmail()">
               {{ lastStepsController.getMembersCloseEmailSentTranscription(member) }}
@@ -95,5 +105,5 @@
   </div>
 
   <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/steps/step4-5/contactEditForm.html'"></ng-include>
-
+  <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/modals/memberCommentModal.html'"></ng-include>
 </section>
