@@ -33,6 +33,8 @@ module.exports = {
   findSession: findSession,
   update: update,
   goToStep: goToStep,
+  getDestinationStep: getDestinationStep,
+  isValidatedWithErrors: isValidatedWithErrors,
   openBuild: openBuild,
   destroy: destroy,
   sendSms: sendSms,
@@ -329,6 +331,7 @@ function getDestinationStep(session, destinationStep) {
 }
 
 function isValidatedWithErrors(currentStepIndex, destinationStepIndex, steps) {
+
   if (currentStepIndex < destinationStepIndex) {
     let keys = Object.keys(steps);
 

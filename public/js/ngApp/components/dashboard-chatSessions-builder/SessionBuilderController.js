@@ -45,6 +45,9 @@
     vm.stepsClassIsActive = stepsClassIsActive;
     vm.updateStep = updateStep;
     vm.goToStep = goToStep;
+    vm.goToNextStep = goToNextStep;
+    vm.goToPreviousStep = goToPreviousStep;
+    vm.finishSessionBuilder = finishSessionBuilder;
     vm.goToChat = goToChat;
     vm.canSeeGoToChat = canSeeGoToChat;
     vm.currentPageToDisplay = currentPageToDisplay;
@@ -61,6 +64,8 @@
     vm.canSendCloseEmail = canSendCloseEmail;
     vm.canCommentAndRate = canCommentAndRate;
     vm.canInvite = canInvite;
+
+    var stepNames = ["setUp", "facilitatiorAndTopics", "manageSessionEmails", "manageSessionParticipants", "inviteSessionObservers"];
 
     function closeSession() {
       if (vm.session.sessionData.showStatus != 'Pending' && vm.session.sessionData.showStatus != 'Closed') {
@@ -90,57 +95,47 @@
       }
     }
 
+    function goToNextStep() {
+      goToStep(vm.currentStep + 1);
+    }
+
+    function goToPreviousStep() {
+      goToStep(vm.currentStep - 1);
+    }
+
     function goToStep(step) {
       vm.listIgnoring = null;
-
-      if (!angular.isNumber(step)) {
-        step = getStepIndex(step);
-
-        if (step === 'finish') {
-          $state.go('account-hub.chatSessions');
-          return;
-        }
-      }
-
       var routerProgressbar = ngProgressFactory.createInstance();
       routerProgressbar.start();
 
       vm.session.goCertainStep(step).then(function(result) {
-        handleStepSwitch(result);
+        console.log("---------------------");
+        console.log(result);
+        handleStepSwitch(result, step);
         routerProgressbar.complete();
       }, function(error) {
         routerProgressbar.complete();
         messenger.error(error);
       });
+    }
 
-      function handleStepSwitch(result) {
-        var session = result.data.sessionBuilder;
-        var hasNoValidationErrors = true;
+    function finishSessionBuilder() {
+      $state.go('account-hub.chatSessions');
+    }
 
-        for (var i = vm.currentStep; i < step; i++) {
-          var stepPropertyName = "step" + i;
-          if (session.steps[stepPropertyName].error) {
-            messenger.error(session.steps[stepPropertyName].error);
-            hasNoValidationErrors = false;
-          }
-        }
+    function handleStepSwitch(result, step) {
+      var session = result.data.sessionBuilder;
 
-        if (hasNoValidationErrors) {
-          initStep().then(function(step) {
-            vm.currentStep = step;
-          });
+      for (var i = vm.currentStep; i < step; i++) {
+        var stepPropertyName = "step" + i;
+        if (session.steps[stepPropertyName].error) {
+          messenger.error(session.steps[stepPropertyName].error);
         }
       }
 
-      function getStepIndex(step) {
-        if (step === 'back') {
-          return vm.currentStep - 1;
-        } else if (step === 'next') {
-          return vm.currentStep + 1;
-        } else {
-          return step;
-        }
-      }
+      initStep().then(function() {
+        vm.currentStep = stepNames.indexOf(session.currentStep) + 1;
+      });
     }
 
     function goToChat(session) {
