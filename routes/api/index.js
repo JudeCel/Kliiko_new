@@ -128,6 +128,7 @@ router.delete('/contactLists/:id', PERMISSIONS.facilitatorManagerAdmin, contactL
 router.post('/contactListsUser', PERMISSIONS.facilitatorManagerAdmin, contactListUser.create);
 router.post('/contactListsUsersToRemove', PERMISSIONS.facilitatorManagerAdmin, contactListUser.destroy);
 router.put('/contactListsUser/:id', PERMISSIONS.facilitatorManagerAdmin, contactListUser.update);
+router.post('/contactListsUser/comments', PERMISSIONS.facilitatorManagerAdmin, contactListUser.comments);
 
 router.get('/topics', PERMISSIONS.facilitatorManagerAdmin, topic.get);
 router.post('/topic', PERMISSIONS.facilitatorManagerAdmin, topic.post);

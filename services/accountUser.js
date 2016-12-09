@@ -10,6 +10,7 @@ var SessionMember = models.SessionMember;
 var User = models.User;
 var _ = require('lodash');
 var q = require('q');
+var Bluebird = require('bluebird');
 
 const VALID_ATTRIBUTES = {
   accountUser: [
@@ -254,6 +255,51 @@ function prepareValidAccountUserParams() {
   return safeAccountUserParams;
 }
 
+function updateInfo(id, valueToIncrease) {
+  return new Bluebird(function (resolve, reject) {
+    AccountUser.find({
+      where: { id: id }
+    }).then(function(accountUser) {
+      let info = prepareInfo(accountUser.info, valueToIncrease);
+      AccountUser.update({info: info}, { where: { id: id } }).then(function (result) {
+        resolve();
+      }).catch(function (error) {
+        reject(error);
+      });
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
+function prepareInfo(info, valueToIncrease) {
+  if (valueToIncrease) {
+    if (!info[valueToIncrease]) {
+      info[valueToIncrease] = 1;
+    } else {
+      info[valueToIncrease]++;
+    }
+    if (!info["NoReply"]) {
+      info["NoReply"] = 0;
+    }
+    switch(valueToIncrease) {
+      case "Invites":
+        info["NoReply"]++;
+        break;
+      case "NotThisTime":
+      case "NotAtAll":
+        info["Future"] = "N";
+        info["NoReply"]--;
+        break;
+      case "Accept":
+        info["Future"] = "Y";
+        info["NoReply"]--;
+        break;
+    }
+  }
+  return info;
+}
+
 module.exports = {
   create: create,
   createAccountManager: createAccountManager,
@@ -262,5 +308,6 @@ module.exports = {
   findWithSessionMembers: findWithSessionMembers,
   validateParams: validateParams,
   findWithEmail: findWithEmail,
-  findById: findById
+  findById: findById, 
+  updateInfo: updateInfo
 }

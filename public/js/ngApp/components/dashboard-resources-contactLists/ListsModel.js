@@ -21,6 +21,7 @@
     ListsModel.prototype.addNewContact = addNewContact;
     ListsModel.prototype.updateContact = updateContact;
     ListsModel.prototype.deleteContacts = deleteContacts;
+    ListsModel.prototype.getContactComments = getContactComments;
 
     ListsModel.prototype.parseImportFile = parseImportFile;
     ListsModel.prototype.generateImportPreview = generateImportPreview;
@@ -327,6 +328,21 @@
           deferred.reject(err);
         }
       );
+      return deferred.promise;
+    }
+
+    function getContactComments(id) {
+      var deferred = $q.defer();
+
+      contactListServices.getContactComments(this.activeList.id, id).then(
+        function(res) {
+          deferred.resolve(res);
+        },
+        function(err) {
+          deferred.reject(err)
+        }
+      );
+
       return deferred.promise;
     }
 

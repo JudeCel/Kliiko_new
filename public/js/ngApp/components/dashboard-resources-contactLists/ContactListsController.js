@@ -34,6 +34,14 @@
     vm.importedFields = [];
     vm.contactListDropItems = [];
     vm.contactListToAdd = [];
+    vm.showContactComments = { 
+      pagination: {
+        currentPage: 1,
+        itemsPerPage: 5,
+        totalItems : 0,
+        items: {}
+      }
+    };
 
     vm.initLists = initLists;
     vm.changeActiveList = changeActiveList;
@@ -74,6 +82,8 @@
     vm.isObserverListSelected = isObserverListSelected;
     vm.findIndexByListName = findIndexByListName;
     vm.disableNextSortingFilter = disableNextSortingFilter;
+    vm.showContactCommentsModal = showContactCommentsModal; 
+    vm.prepareCurrentPageComments = prepareCurrentPageComments;
 
     vm.pagination = {
       currentPage: 1,
@@ -792,6 +802,31 @@
           return i;
         }
       }
+    }
+
+    function prepareCurrentPageComments() {
+      if (vm.showContactComments.comments.length > 0) {
+        vm.showContactComments.pagination.items =  vm.showContactComments.comments.slice((vm.showContactComments.pagination.currentPage - 1) * vm.showContactComments.pagination.itemsPerPage, 
+          vm.showContactComments.pagination.currentPage * vm.showContactComments.pagination.itemsPerPage);
+      } else {
+        vm.showContactComments.pagination.items = {};
+      }
+    }
+
+    function showContactCommentsModal(member) {
+      vm.showContactComments.contact = member;
+      vm.showContactComments.pagination.currentPage = 1;
+      vm.lists.getContactComments(member.id).then(
+        function (res) {
+          vm.showContactComments.comments = res;
+          vm.showContactComments.pagination.totalItems = res.length;
+          prepareCurrentPageComments();
+          domServices.modal('contactCommentsModal');
+        },
+        function (err) {
+          messenger.error(err);
+        }
+      );
     }
 
   }

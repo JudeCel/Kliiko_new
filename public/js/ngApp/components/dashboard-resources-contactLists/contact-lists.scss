@@ -364,6 +364,19 @@
     }
   }
 
+  .contactCommentsModal {
+    width: 700px;
+
+    .pagination-sm {
+      margin-bottom: 0px;
+    }
+
+    .modal-title {
+      margin: 0px;
+      margin-bottom: 20px;
+    }
+  }
+
   @import "particles/modals-excel-csv-import";
 
 }

@@ -7,7 +7,8 @@ var MessagesUtil = require('./../../util/messages');
 module.exports = {
   create: create,
   update: update,
-  destroy: destroy
+  destroy: destroy,
+  comments: comments
 };
 
 // Create Params example
@@ -44,15 +45,11 @@ function createBulk(req, res, next) {
   })
 }
 
-
-// Create Params example
-
-// destroy Params example
+// Destroy Params example
 // {
 //  ids: Array/required =>  [1,2,...]
 // }
 //
-
 function destroy(req, res, next) {
   validations.params(res, req.body.ids, 'query param @ids is missed');
 
@@ -82,6 +79,23 @@ function update(req, res, next) {
 
   contactListUserService.update(params).then(function(result) {
     res.send({success: true, data: result, message: MessagesUtil.routes.contactListUser.updated });
+  }, function(err) {
+    res.send({ error: err });
+  })
+}
+
+// Comments Params example
+// {
+//  id: INTEGER/required =>  1,
+//  contactListId: INTEGER/required =>  1
+// }
+//
+function comments(req, res, next) {
+  let params = req.body;
+  params.accountId = res.locals.currentDomain.id;
+  
+  contactListUserService.comments(params).then(function(result) {
+    res.send({ success: true, data: result });
   }, function(err) {
     res.send({ error: err });
   })

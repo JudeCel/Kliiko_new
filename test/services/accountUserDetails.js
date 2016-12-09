@@ -41,6 +41,32 @@ describe('Account User Service', () => {
         done();
       });
     });
+
+    describe('Update info',  () => {
+      it("Accept", (done) => {
+        AccountUserService.updateInfo(testAccountUser.id, "Accept").then(function() {
+          models.AccountUser.find({ where: { id: testAccountUser.id } }).then(function(accountUser) {
+            assert.equal(accountUser.info.Accept, 1);
+            assert.equal(accountUser.info.Future, "Y");
+            done();
+          });
+        }, function(err) {
+          done(err)
+        });
+      });
+
+      it("NotThisTime", (done) => {
+        AccountUserService.updateInfo(testAccountUser.id, "NotThisTime").then(function() {
+          models.AccountUser.find({ where: { id: testAccountUser.id } }).then(function(accountUser) {
+            assert.equal(accountUser.info.NotThisTime, 1);
+            assert.equal(accountUser.info.Future, "N");
+            done();
+          });
+        }, function(err) {
+          done(err)
+        });
+      });
+    });
   });
   
   describe('failed ', () => {

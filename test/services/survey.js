@@ -481,7 +481,7 @@ describe('SERVICE - Survey', function() {
         });
       });
 
-      it('should add another surveys question', function (done) {
+      it.only('should add another surveys question', function (done) {
         let params = surveyParams();
 
         surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
@@ -489,7 +489,7 @@ describe('SERVICE - Survey', function() {
           assert.equal(survey.SurveyQuestions.length, 2);
 
           params.id = survey.id;
-          params.SurveyQuestions.splice(1, 1);
+          params.SurveyQuestions.push(params.SurveyQuestions[1]);
 
           surveyServices.updateSurvey(params, testData.account).then(function(result) {
             let updatedSurvey = result.data;
@@ -499,10 +499,14 @@ describe('SERVICE - Survey', function() {
               assert.equal(result.data.id, updatedSurvey.id);
               assert.equal(result.data.SurveyQuestions.length, 3);
               done();
+            }, function(error) {
+              done(error);
             });
           }, function(error) {
             done(error);
           });
+        }, function(error) {
+          done(error);
         });
       });
     });
