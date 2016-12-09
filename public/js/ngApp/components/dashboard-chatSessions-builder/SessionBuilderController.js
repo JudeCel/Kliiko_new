@@ -131,8 +131,8 @@
         }
       }
 
-      initStep().then(function() {
-        vm.currentStep = stepNames.indexOf(session.currentStep) + 1;
+      initStep().then(function(stepNumber) {
+        vm.currentStep = stepNumber;
       });
     }
 
