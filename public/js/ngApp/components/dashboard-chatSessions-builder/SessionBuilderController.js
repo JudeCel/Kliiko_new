@@ -109,8 +109,6 @@
       routerProgressbar.start();
 
       vm.session.goCertainStep(step).then(function(result) {
-        console.log("---------------------");
-        console.log(result);
         handleStepSwitch(result, step);
         routerProgressbar.complete();
       }, function(error) {
