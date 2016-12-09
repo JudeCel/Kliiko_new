@@ -91,7 +91,6 @@
 
     vm.initStep = function(participants) {
       var deferred = $q.defer();
-      console.log("INIT!!!");
 
       vm.session = builderServices.session;
       vm.canSendSMS = vm.session.steps.step1.type != 'forum';
