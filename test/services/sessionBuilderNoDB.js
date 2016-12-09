@@ -33,6 +33,26 @@ describe('SERVICE - SessionBuilder', function() {
       });
     });
 
+    describe('current step is \"manageSessionEmails\" and we are trying to switch to step number 6', function(done) {
+        it('should return step we are at (\"manageSessionEmails\")', function(done) {
+          let manageSessionEmailsStep = constants.sessionBuilderSteps[2];
+          let session = getSession();
+          session.currentStep = manageSessionEmailsStep;
+          assertStepName(session, 6, manageSessionEmailsStep);
+          done();
+        });
+    });
+
+    describe('current step is \"facilitatiorAndTopics\" and we are trying to switch to step number -3', function(done) {
+        it('should return step we are at (\"facilitatiorAndTopics\")', function(done) {
+          let facilitatiorAndTopicsStep = constants.sessionBuilderSteps[1];
+          let session = getSession();
+          session.currentStep = facilitatiorAndTopicsStep;
+          assertStepName(session, -3, facilitatiorAndTopicsStep);
+          done();
+        });
+    });
+
     describe('get step name when step in the middle has validation error', function(done) {
         it('should return step we are at (\"setUp\")', function(done) {
           const errorStep = "step1";
