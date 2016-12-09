@@ -23,8 +23,7 @@
       addTopics: {method: 'POST',  params: {path: 'addTopics'} },
       removeTopic: {method: 'POST',  params: {path: 'removeTopic'} },
 
-      nextStep: {method: 'POST', params: {path: 'step'} },
-      previousStep: {method: 'POST', params: {path: 'step'} }
+      certainStep: {method: 'POST', params: {path: 'step'} }
     });
 
     var mailRestApi = {
@@ -50,8 +49,7 @@
     SessionModel.prototype.setAnonymous = setAnonymous;
   //  SessionModel.prototype.update = update;
 
-    SessionModel.prototype.goNextStep = goNextStep;
-    SessionModel.prototype.goPreviouseStep = goPreviousStep;
+    SessionModel.prototype.goCertainStep = goCertainStep;
 
     SessionModel.prototype.updateStep = updateStep;
     SessionModel.prototype.sendSms = sendSms;
@@ -222,22 +220,11 @@
       }
     }
 
-    function goNextStep(step) {
+    function goCertainStep(step) {
       var deferred = $q.defer();
       var self = this;
 
-      sessionBuilderRestApi.nextStep({id: self.id, arg: 'next'}, {}, function(res) {
-        self.processStepResponse(res, deferred);
-      });
-
-      return deferred.promise;
-    }
-
-    function goPreviousStep() {
-      var self = this;
-      var deferred = $q.defer();
-
-      sessionBuilderRestApi.previousStep({id: self.id, arg: 'previous'}, {}, function(res) {
+      sessionBuilderRestApi.certainStep({id: self.id, arg: step}, {}, function(res) {
         self.processStepResponse(res, deferred);
       });
 

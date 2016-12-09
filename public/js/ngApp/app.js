@@ -87,6 +87,7 @@
         if(response.config.transformResponse.length > 0) {
           $rootScope.showSpinner = false;
           $rootScope.progressbarComplete();
+          deactivateHelperNote();
         }
         return response;
       },
@@ -101,6 +102,12 @@
         return $q.reject(rejection);
       }
     };
+
+    function deactivateHelperNote() {
+      if (window.inline_manual_player) {
+        window.inline_manual_player.deactivate();
+      }
+    }
 
     return requestInterceptor;
   }
