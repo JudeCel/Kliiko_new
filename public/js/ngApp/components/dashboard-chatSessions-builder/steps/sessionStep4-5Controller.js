@@ -53,11 +53,11 @@
     vm.stepMembers = [];
 
     vm.isParticipantPage = function() {
-      return vm.session.sessionData.step == "manageSessionParticipants";
+      return vm.session.currentStep == "manageSessionParticipants";
     }
 
     vm.isObserverPage = function() {
-      return vm.session.sessionData.step == "inviteSessionObservers";
+      return vm.session.currentStep == "inviteSessionObservers";
     }
 
     vm.canSendSMSOnThisPage = function() {
@@ -82,10 +82,8 @@
 
       if (vm.isParticipantPage()) {
         vm.stepMembers = participants;
-      } else if(vm.isObserverPage()) {
-        vm.stepMembers = observers;
       } else {
-        vm.stepMembers = [];
+        vm.stepMembers = observers;
       }
 
       return vm.stepMembers;
@@ -93,6 +91,7 @@
 
     vm.initStep = function(participants) {
       var deferred = $q.defer();
+      console.log("INIT!!!");
 
       vm.session = builderServices.session;
       vm.canSendSMS = vm.session.steps.step1.type != 'forum';
