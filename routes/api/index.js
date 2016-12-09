@@ -163,7 +163,6 @@ router.post('/sessionBuilder', PERMISSIONS.managerAdmin, sessionBuilder.new);
 router.get('/sessionBuilder/:id', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.openBuild);
 router.put('/sessionBuilder/:id', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.update);
 router.post('/sessionBuilder/:id/setAnonymous', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.setAnonymous);
-router.post('/sessionBuilder/:id', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.nextStep);
 router.delete('/sessionBuilder/:id', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.cancel);
 router.post('/sessionBuilder/:id/sendSms', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sendSms);
 router.post('/sessionBuilder/:id/invite', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.inviteMembers);
@@ -175,5 +174,4 @@ router.get('/sessionBuilder/:id/sessionMailTemplateStatus', PERMISSIONS.facilita
 router.post('/sessionBuilder/:id/addTopics', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.addTopics);
 router.post('/sessionBuilder/:id/removeTopic', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.removeTopic);
 
-router.post('/sessionBuilder/:id/step/next', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.nextStep );
-router.post('/sessionBuilder/:id/step/previous', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.prevStep);
+router.post('/sessionBuilder/:id/step/:arg', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.goToStep);

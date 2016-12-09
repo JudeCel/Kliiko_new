@@ -10,8 +10,7 @@ let _ = require('lodash');
 module.exports = {
   new: initializeBuilder,
   update: update,
-  nextStep: nextStep,
-  prevStep: prevStep,
+  goToStep: goToStep,
   cancel: cancel,
   openBuild: openBuild,
   sendSms: sendSms,
@@ -80,24 +79,14 @@ function sessionMailTemplateStatus(req, res, next) {
   });
 }
 
-function nextStep(req, res, next) {
+function goToStep(req, res, next) {
   let accountId = res.locals.currentDomain.id;
 
-  sessionBuilderServices.nextStep(req.params.id, accountId).then(function(result) {
+  sessionBuilderServices.goToStep(req.params.id, accountId, req.params.arg).then(function(result) {
     res.send({ data: result });
   }, function(error) {
-    res.send({error: error});
+    res.send({ error: error });
   })
-}
-
-function prevStep(req, res, next) {
-  let accountId = res.locals.currentDomain.id;
-
-  sessionBuilderServices.prevStep(req.params.id, accountId).then(function(result) {
-    res.send({ data: result });
-  }, function(error) {
-    res.send({error: error});
-  });
 }
 
 function cancel(req, res, next) {
