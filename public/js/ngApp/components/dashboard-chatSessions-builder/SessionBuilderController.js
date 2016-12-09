@@ -124,6 +124,7 @@
 
     function handleStepSwitch(result, step) {
       var session = result.data.sessionBuilder;
+       vm.session.steps = session.steps;
 
       for (var i = vm.currentStep; i < step; i++) {
         var stepPropertyName = "step" + i;
