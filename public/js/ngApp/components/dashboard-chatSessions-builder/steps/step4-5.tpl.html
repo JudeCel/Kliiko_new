@@ -5,14 +5,14 @@
         <span ng-if='lastStepsController.stepMembers.length == 0'>Invite Guests From Contact List</span>
         <span ng-if='lastStepsController.stepMembers.length > 0'>Invite More Guests From Contacts List</span>
       </div>
-      <div id='sessionBuilderObserver' class='btn-standart btn-red increased-margin' ng-click='sbc.selectObserversClickHandle()' ng-show="!lastStepsController.isParticipantPage()">
+      <div id='sessionBuilderObserver' class='btn-standart btn-red increased-margin' ng-click='sbc.selectObserversClickHandle()' ng-show="lastStepsController.isObserverPage()">
         <span ng-if='lastStepsController.stepMembers.length == 0'>Invite Spectators From Contact List</span>
         <span ng-if='lastStepsController.stepMembers.length > 0'>Invite More Spectators From Contacts List</span>
       </div>
     </div>
   </div>
 
-  <div ng-if='lastStepsController.prepareData(sbc.participants, sbc.observers).length > 0' ng-controller='ContactListController as clc' ng-init='clc.hideModalStuff = true'>
+<div ng-if='lastStepsController.prepareData(sbc.participants, sbc.observers).length > 0' ng-controller='ContactListController as clc' ng-init='clc.hideModalStuff = true'>
     <div class="text-right filter-row" ng-if="!sbc.canSendCloseEmail()">
       <a ng-repeat='(key, value) in lastStepsController.filterTypes' ng-class='{ active: lastStepsController.currentFilter == key || key == "all" && !lastStepsController.currentFilter }' ng-click='lastStepsController.setMembersFilter(key)'>
         <span ng-if="key == 'all'">
