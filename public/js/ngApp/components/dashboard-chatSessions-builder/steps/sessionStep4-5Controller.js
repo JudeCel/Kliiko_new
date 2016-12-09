@@ -19,6 +19,8 @@
 
     vm.currentFilter = 'all';
     vm.filterTypes = {
+      waiting: "Sending, please wait...",
+      "failed": "Sending failed",
       all: 'All',
       notInvited: 'Not Invited',
       confirmed: 'Accepted',
@@ -373,16 +375,20 @@
     function returnMemberInviteStatus(member) {
       if (vm.beforeEditInviteStatus) {
         member.inviteStatus = vm.beforeEditInviteStatus;
-      } else if (member.inviteStatus == 'Not Invited') {
-        member.inviteStatus = "notInvited";
-      } else if (member.inviteStatus == "inProgress") {
-        member.inviteStatus = "pending";
-      } else if (member.inviteStatus) {
-        // Do Nothing
       } else if (member.invite) {
-        member.inviteStatus = member.invite.status;
+        switch (member.invite.emailStatus) {
+          case 'sent':
+            if (member.invite.status == "inProgress" ) {
+              member.inviteStatus = "pending";
+            }else{
+              member.inviteStatus = member.invite.status;
+            }
+            break;
+          default:
+            member.inviteStatus = member.invite.emailStatus;
+        }
       } else {
-        member.inviteStatus = "confirmed";
+        member.inviteStatus = member.invite.status;
       }
       return member.inviteStatus;
     }

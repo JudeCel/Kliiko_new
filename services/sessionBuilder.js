@@ -853,7 +853,7 @@ function step4and5Queries(session, role) {
             role: role,
             status: { $ne: 'confirmed' }
           },
-          attributes: ['id', 'status']
+          attributes: ['id', 'status', 'emailStatus']
         }]
       }).then(function(accountUsers) {
         _.map(accountUsers, function(accountUser) {
