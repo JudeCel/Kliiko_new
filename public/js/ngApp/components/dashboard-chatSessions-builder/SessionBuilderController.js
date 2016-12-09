@@ -144,7 +144,7 @@
 
     function isValidStep(step) {
       var stepPropertyName = "step" + step;
-      return vm.session.steps[stepPropertyName].error == null;
+      return vm.session.steps && vm.session.steps[stepPropertyName].error == null;
     }
 
     function isNotActiveStep(step) {
