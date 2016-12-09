@@ -20,8 +20,11 @@ var sessionValidator = require('./validators/session');
 var async = require('async');
 var _ = require('lodash');
 var q = require('q');
+var bluebird = require('bluebird');
 
 const MIN_MAIL_TEMPLATES = 4;
+const MAX_STEP_INDEX = 4;
+const FIRST_STEP_INDEX = 0;
 
 // Exports
 module.exports = {
@@ -29,8 +32,9 @@ module.exports = {
   initializeBuilder: initializeBuilder,
   findSession: findSession,
   update: update,
-  nextStep: nextStep,
-  prevStep: prevStep,
+  goToStep: goToStep,
+  getDestinationStep: getDestinationStep,
+  isValidatedWithErrors: isValidatedWithErrors,
   openBuild: openBuild,
   destroy: destroy,
   sendSms: sendSms,
@@ -274,18 +278,18 @@ function prepareCloseSessionEmailParams(session, facilitator, receiver) {
   }
 }
 
-function nextStep(id, accountId) {
+function goToStep(id, accountId, destinationStep) {
   let deferred = q.defer();
   validators.hasValidSubscription(accountId).then(function() {
     findSession(id, accountId).then(function(session) {
       sessionBuilderObject(session).then(function(sessionObj) {
-        let params = findCurrentStep(sessionObj.sessionBuilder.steps, session.step);
-        params.id = id;
-        params.accountId = accountId;
 
-        validate(session, params).then(function() {
-          session.updateAttributes({ step: findNewStep(session.step, false) }).then(function(updatedSession) {
-            sessionBuilderObject(updatedSession).then(function(result) {
+        validateMultipleSteps(session, sessionObj.sessionBuilder.steps).then(function(steps) {
+          sessionObj.sessionBuilder.steps = steps;
+          let step = getDestinationStep(sessionObj.sessionBuilder, destinationStep);
+
+          session.updateAttributes({ step: step }).then(function(updatedSession) {
+            sessionBuilderObject(updatedSession, steps).then(function(result) {
               deferred.resolve(result);
             }, function(error) {
               deferred.reject(error);
@@ -304,32 +308,42 @@ function nextStep(id, accountId) {
     });
   }, function(error) {
     deferred.reject(error);
-  })
+  });
 
   return deferred.promise;
 }
 
-function prevStep(id, accountId) {
-  let deferred = q.defer();
-  validators.hasValidSubscription(accountId).then(function() {
-    findSession(id, accountId).then(function(session) {
-      session.updateAttributes({ step: findNewStep(session.step, true) }).then(function(updatedSession) {
-        sessionBuilderObject(updatedSession).then(function(result) {
-          deferred.resolve(result);
-        }, function(error) {
-          deferred.reject(error);
-        });
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
-      });
-    }, function(error) {
-      deferred.reject(error);
-    });
-  }, function(error) {
-    deferred.reject(error);
-  })
+function getDestinationStep(session, destinationStep) {
+  let destinationStepIndex = destinationStep - 1;
 
-  return deferred.promise;
+  if (destinationStepIndex > MAX_STEP_INDEX) {
+    destinationStepIndex = MAX_STEP_INDEX;
+  }
+
+  let currentStepIndex = constants.sessionBuilderSteps.indexOf(session.currentStep);
+  let step = constants.sessionBuilderSteps[destinationStepIndex];
+
+  if (isValidatedWithErrors(currentStepIndex, destinationStepIndex, session.steps)) {
+    step = session.currentStep;
+  }
+
+  return step;
+}
+
+function isValidatedWithErrors(currentStepIndex, destinationStepIndex, steps) {
+
+  if (currentStepIndex < destinationStepIndex) {
+    let keys = Object.keys(steps);
+
+    for (let i = currentStepIndex; i < destinationStepIndex; i++) {
+      let key = keys[i];
+      if (steps[key].error) {
+        return true;
+      }
+    }
+  }
+
+  return destinationStepIndex < FIRST_STEP_INDEX;
 }
 
 function openBuild(id, accountId) {
@@ -346,7 +360,7 @@ function openBuild(id, accountId) {
     });
   }, function(error) {
     deferred.reject(error);
-  })
+  });
 
   return deferred.promise;
 }
@@ -650,9 +664,9 @@ function findNewStep(step, previous) {
   }
 }
 
-function sessionBuilderObject(session) {
+function sessionBuilderObject(session, steps) {
   let deferred = q.defer();
-  stepsDefinition(session).then(function(result) {
+  stepsDefinition(session, steps).then(function(result) {
     let sessionBuilder = {
       steps: result,
       currentStep: session.step,
@@ -673,7 +687,7 @@ function sessionBuilderObject(session) {
   return deferred.promise;
 }
 
-function stepsDefinition(session) {
+function stepsDefinition(session, steps) {
   let deferred = q.defer();
   let object = {};
 
@@ -687,9 +701,13 @@ function stepsDefinition(session) {
     resourceId: session.resourceId,
     anonymous: session.anonymous,
     brandProjectPreferenceId:  session.brandProjectPreferenceId,
+    error: getStepError(steps, "step1")
   };
 
-  object.step2 = { stepName: 'facilitatiorAndTopics' };
+  object.step2 = {
+    stepName: 'facilitatiorAndTopics',
+    error: getStepError(steps, "step2")
+  };
   async.parallel([
     function(cb) {
       async.parallel(step1Queries(session, object.step1), function(error, _result) {
@@ -705,7 +723,8 @@ function stepsDefinition(session) {
       object.step3 = {
         stepName: 'manageSessionEmails',
         incentive_details: session.incentive_details,
-        emailTemplates: []
+        emailTemplates: [],
+        error: getStepError(steps, "step3")
       };
       cb();
     },
@@ -717,7 +736,8 @@ function stepsDefinition(session) {
         else {
           object.step4 = {
             stepName: 'manageSessionParticipants',
-            participants: members
+            participants: members,
+            error: getStepError(steps, "step4")
           };
           cb();
         }
@@ -731,7 +751,8 @@ function stepsDefinition(session) {
         else {
           object.step5 = {
             stepName: 'inviteSessionObservers',
-            observers: members
+            observers: members,
+            error: getStepError(steps, "step5")
           };
           cb();
         }
@@ -742,6 +763,10 @@ function stepsDefinition(session) {
   });
 
   return deferred.promise;
+}
+
+function getStepError(steps, stepPropertyName) {
+  return steps ? steps[stepPropertyName].error : null;
 }
 
 function searchSessionMembers(sessionId, role) {
@@ -855,13 +880,38 @@ function canAddObservers(accountId) {
   return deferred.promise;
 }
 
-function validate(session, params) {
+function validateMultipleSteps(session, steps) {
+  let keys = Object.keys(steps);
+
+  return new bluebird(function (resolve, reject) {
+    bluebird.each(keys, (key) => {
+      let currentStep = steps[key];
+      let params = findCurrentStep(steps, currentStep.stepName);
+      params.id = session.id;
+      params.accountId = session.accountId;
+
+      return validate(session, params, currentStep.stepName).then(function(error) {
+        steps[key].error = error;
+      });
+    }).then(function() {
+      resolve(steps);
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
+function validate(session, params, step) {
   let deferred = q.defer();
 
+  if(!step) {
+    step = session.step;
+  }
+
   validators.subscription(session.accountId, 'session', 0, { sessionId: session.id }).then(function() {
-    return findValidation(session.step, params);
-  }).then(function() {
-    deferred.resolve();
+    return findValidation(step, params);
+  }).then(function(value) {
+    deferred.resolve(value);
   }).catch(function(error) {
     deferred.reject(error);
   });
@@ -875,28 +925,28 @@ function findValidation(step, params) {
     let error = validateStepOne(params).then(function() {
       deferred.resolve();
     }, function(error) {
-      deferred.reject(error);
+      deferred.resolve(error);
     });
   }
   else if(step == 'facilitatiorAndTopics') {
     validateStepTwo(params).then(function() {
       deferred.resolve();
     }, function(error) {
-      deferred.reject(error);
+      deferred.resolve(error);
     });
   }
   else if(step == 'manageSessionEmails') {
     validateStepThree(params).then(function() {
       deferred.resolve();
     }, function(error) {
-      deferred.reject(error);
+      deferred.resolve(error);
     });
   }
   else if(step == 'manageSessionParticipants') {
     validateStepFour(params).then(function() {
       deferred.resolve();
     }, function(error) {
-      deferred.reject(error);
+      deferred.resolve(error);
     });
   }
   else if(step == 'inviteSessionObservers') {

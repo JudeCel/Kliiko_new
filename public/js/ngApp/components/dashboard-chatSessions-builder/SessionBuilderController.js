@@ -45,6 +45,9 @@
     vm.stepsClassIsActive = stepsClassIsActive;
     vm.updateStep = updateStep;
     vm.goToStep = goToStep;
+    vm.goToNextStep = goToNextStep;
+    vm.goToPreviousStep = goToPreviousStep;
+    vm.finishSessionBuilder = finishSessionBuilder;
     vm.goToChat = goToChat;
     vm.canSeeGoToChat = canSeeGoToChat;
     vm.currentPageToDisplay = currentPageToDisplay;
@@ -61,6 +64,8 @@
     vm.canSendCloseEmail = canSendCloseEmail;
     vm.canCommentAndRate = canCommentAndRate;
     vm.canInvite = canInvite;
+
+    var stepNames = ["setUp", "facilitatiorAndTopics", "manageSessionEmails", "manageSessionParticipants", "inviteSessionObservers"];
 
     function closeSession() {
       if (vm.session.sessionData.showStatus != 'Pending' && vm.session.sessionData.showStatus != 'Closed') {
@@ -90,45 +95,45 @@
       }
     }
 
+    function goToNextStep() {
+      goToStep(vm.currentStep + 1);
+    }
+
+    function goToPreviousStep() {
+      goToStep(vm.currentStep - 1);
+    }
+
     function goToStep(step) {
       vm.listIgnoring = null;
-      if (!angular.isNumber(step)) {
-        if (step === 'back')  handlePreviousStep();
-        if (step === 'next') handleNextStep();
-        if (step === 'finish') {
-          $state.go('account-hub.chatSessions');
+      var routerProgressbar = ngProgressFactory.createInstance();
+      routerProgressbar.start();
+
+      vm.session.goCertainStep(step).then(function(result) {
+        handleStepSwitch(result, step);
+        routerProgressbar.complete();
+      }, function(error) {
+        routerProgressbar.complete();
+        messenger.error(error);
+      });
+    }
+
+    function finishSessionBuilder() {
+      $state.go('account-hub.chatSessions');
+    }
+
+    function handleStepSwitch(result, step) {
+      var session = result.data.sessionBuilder;
+
+      for (var i = vm.currentStep; i < step; i++) {
+        var stepPropertyName = "step" + i;
+        if (session.steps[stepPropertyName].error) {
+          messenger.error(session.steps[stepPropertyName].error);
         }
       }
 
-      function handlePreviousStep() {
-        vm.cantMoveNextStep = false;
-        vm.session.goPreviouseStep().then(function(result) {
-          vm.session.steps = result.data.sessionBuilder.steps;
-
-          initStep().then(function (step) {
-            vm.currentStep = step;
-          });
-        }, function(error) {
-          messenger.error(err)
-        }) ;
-      }
-
-      function handleNextStep() {
-        var routerProgressbar = ngProgressFactory.createInstance();
-        routerProgressbar.start();
-        vm.session.goNextStep().then(
-          function (res) {
-            initStep().then(function(step) {
-              vm.currentStep = step;
-            });
-            routerProgressbar.complete();
-          },
-          function (err) {
-            routerProgressbar.complete();
-            messenger.error(err)
-          }
-        );
-      }
+      initStep().then(function() {
+        vm.currentStep = stepNames.indexOf(session.currentStep) + 1;
+      });
     }
 
     function goToChat(session) {
