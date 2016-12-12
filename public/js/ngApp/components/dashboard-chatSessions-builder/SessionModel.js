@@ -6,8 +6,8 @@
    */
   angular.module('KliikoApp').factory('SessionModel', SessionModel);
 
-  SessionModel.$inject = ['$q', 'globalSettings', '$resource'];
-  function SessionModel($q, globalSettings, $resource)  {
+  SessionModel.$inject = ['$q', 'globalSettings', '$resource', 'fileUploader'];
+  function SessionModel($q, globalSettings, $resource, fileUploader)  {
     var apiPath = globalSettings.restUrl+'/sessionBuilder/:id/:path/:arg';
     var sessionBuilderRestApi = $resource(apiPath, { id : '@id', arg: '@arg' }, {
       post: { method: 'POST' },
@@ -75,9 +75,10 @@
      */
     function SessionModel(params) {
       var self = this;
-
       var params = params || {};
       self.id = null;
+      self.socket = null;
+      socketConnection(self);
       if (arguments && arguments.length && arguments.length == 1) {
         self.id = arguments[0];
       } else {
@@ -86,8 +87,21 @@
           if (params.hasOwnProperty(p)) self[p] = params[p];
         }
       }
+    }
 
+    function socketConnection(self) {
+      self.socket = new Phoenix.Socket('ws://127.0.0.1:3000/socketDashboard', {
+        params: {
+          token: fileUploader.token
+        },
+        logger: function(kind, msg, data) { console.log(kind +":"+ msg +":",  data) },
+      });
 
+      self.socket.onError( (event) => {
+        console.error(event);
+      });
+
+      self.socket.connect();
     }
 
     function init() {
@@ -102,8 +116,6 @@
         self.getRemoteData().then(resolve, reject);
       }
 
-      return deferred.promise;
-
       function resolve(res) {
         deferred.resolve(res);
       }
@@ -112,6 +124,7 @@
         deferred.reject(err);
       }
 
+      return deferred.promise;
     }
 
     function getSessionMailTemplateStatus() {

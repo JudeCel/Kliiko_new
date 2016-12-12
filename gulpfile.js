@@ -110,7 +110,8 @@ var frontendScripts = [
   "public/js/ngApp/appRouter.js",
   "public/js/ngApp/components/**/*.js",
   "public/js/ngApp/filters/**/*.js",
-  "public/js/ngApp/factories/**/*.js"
+  "public/js/ngApp/factories/**/*.js",
+  "node_modules/phoenix/priv/static/phoenix.js"
 ]
 
 var frontendStyles = [
