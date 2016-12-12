@@ -5,21 +5,27 @@ var ContactListUser = class ContactListUser {
   constructor(defaultFields, customFields, participantsFields, visibleFields, data) {
     this.mapFields(defaultFields, customFields, participantsFields, data);
     this.assignIds(data);
+    this.setCanInvite(data);
   }
 
   mapFields(defaultFields, customFields, participantsFields, data) {
     this.assignValues(defaultFields, data);
     this.assignValues(customFields, data);
-    this.stubParticipantsFields(participantsFields)
+    this.stubParticipantsFields(participantsFields, data)
   }
 
-  stubParticipantsFields(participantsFields) {
+  stubParticipantsFields(participantsFields, data) {
+    let info = data.AccountUser.info;
     _.map(participantsFields, (e) =>  {
       if (e != "Comments") {
-        //todo: get values from accountUser.info
-        this[e] = 0;
+        this[e] = info[e];
       }
     });
+  }
+
+  setCanInvite(data) {
+    let info = data.AccountUser.info;
+    this["canInvite"] = !info["NotAtAll"] && !info["NoInFuture"];
   }
 
   assignIds(data){
@@ -36,7 +42,7 @@ var ContactListUser = class ContactListUser {
   findValueInData(value, data){
     if (data.AccountUser) {
       return (data.AccountUser[value] || data.customFields[value]);
-    }else {
+    } else {
       return data.customFields[value]
     }
   }

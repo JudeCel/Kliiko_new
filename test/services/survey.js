@@ -481,7 +481,7 @@ describe('SERVICE - Survey', function() {
         });
       });
 
-      it.only('should add another surveys question', function (done) {
+      it('should add another surveys question', function (done) {
         let params = surveyParams();
 
         surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {

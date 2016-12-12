@@ -3,8 +3,12 @@
 
   angular.module('KliikoApp').filter('startFrom', function(){
     return function(data, start) {
-      start = +start; //parse to int
-      return data.slice(start);
+      if (data) {
+        start = +start; //parse to int
+        return data.slice(start);
+      } else {
+        return [];
+      }
     }
   });
 
@@ -63,6 +67,7 @@
 
     vm.selectAll = selectAll;
     vm.massDelete = massDelete;
+    vm.canSelectMember = canSelectMember;
 
     vm.startImport = startImport;
     vm.additionalMappingFieldname = "";
@@ -513,8 +518,12 @@
       if (!vm.lists.activeList || !vm.lists.activeList.members) return;
 
       for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
-        vm.lists.activeList.members[i]._selected = vm.allSelected;
+        vm.lists.activeList.members[i]._selected = vm.allSelected && canSelectMember(vm.lists.activeList.members[i]);
       }
+    }
+
+    function canSelectMember(member) {
+      return !vm.hideStuff || member.canInvite;
     }
 
     /**

@@ -44,10 +44,12 @@ describe('Account User Service', () => {
 
     describe('Update info',  () => {
       it("Accept", (done) => {
-        AccountUserService.updateInfo(testAccountUser.id, "Accept").then(function() {
+        var sessionName = "Test Session";
+        AccountUserService.updateInfo(testAccountUser.id, "Accept", sessionName).then(function() {
           models.AccountUser.find({ where: { id: testAccountUser.id } }).then(function(accountUser) {
             assert.equal(accountUser.info.Accept, 1);
             assert.equal(accountUser.info.Future, "Y");
+            assert.equal(accountUser.info.LastSession, sessionName);
             done();
           });
         }, function(err) {

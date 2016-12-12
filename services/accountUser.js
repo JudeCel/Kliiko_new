@@ -255,12 +255,13 @@ function prepareValidAccountUserParams() {
   return safeAccountUserParams;
 }
 
-function updateInfo(id, valueToIncrease) {
+//sessionName should be passed only if valueToIncrease == 'Accept'
+function updateInfo(id, valueToIncrease, sessionName) {
   return new Bluebird(function (resolve, reject) {
     AccountUser.find({
       where: { id: id }
     }).then(function(accountUser) {
-      let info = prepareInfo(accountUser.info, valueToIncrease);
+      let info = prepareInfo(accountUser.info, valueToIncrease, sessionName);
       AccountUser.update({info: info}, { where: { id: id } }).then(function (result) {
         resolve();
       }).catch(function (error) {
@@ -272,9 +273,9 @@ function updateInfo(id, valueToIncrease) {
   });
 }
 
-function prepareInfo(info, valueToIncrease) {
+function prepareInfo(info, valueToIncrease, sessionName) {
   if (valueToIncrease) {
-    if (!info[valueToIncrease]) {
+    if (!info[valueToIncrease] || valueToIncrease == "NoInFuture" || valueToIncrease == "NotAtAll") {
       info[valueToIncrease] = 1;
     } else {
       info[valueToIncrease]++;
@@ -286,6 +287,9 @@ function prepareInfo(info, valueToIncrease) {
       case "Invites":
         info["NoReply"]++;
         break;
+      case "NoInFuture":
+        info["Future"] = "N";
+        break;
       case "NotThisTime":
       case "NotAtAll":
         info["Future"] = "N";
@@ -294,6 +298,9 @@ function prepareInfo(info, valueToIncrease) {
       case "Accept":
         info["Future"] = "Y";
         info["NoReply"]--;
+        if (sessionName) {
+          info["LastSession"] = sessionName;
+        }
         break;
     }
   }

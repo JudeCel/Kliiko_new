@@ -31,7 +31,7 @@ module.exports = (Sequelize, DataTypes) => {
     },
     comment: { type: DataTypes.TEXT, allowNull: true, validate: { isLength: validations.length('comment', { max: 200 }) } },
     email: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true, is: constants.emailRegExp, isLength: validations.length('email', { max: 60 }) } },
-    info:	{ type: DataTypes.JSON, allowNull: false, defaultValue: { } }
+    info: { type: DataTypes.JSON, allowNull: false, defaultValue: { } }
   }, {
     indexes: [{
         name: 'compositeUserIdAndAccountIdAndEmail',

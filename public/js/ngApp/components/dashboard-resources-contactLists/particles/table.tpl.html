@@ -17,7 +17,7 @@
         <tr class="member-row" ng-repeat='member in clc.lists.activeList.members | orderBy: clc.tableSort.by : clc.tableSort.reverse | startFrom: (clc.pagination.currentPage - 1) * clc.pagination.itemsPerPage | limitTo: clc.pagination.itemsPerPage' ng-class="{'selected':member._selected}">
             <td class="selection-column">
                 <div class="check">
-                    <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-model="member._selected" ng-click="member.selected = !member.selected" type="checkbox" >
+                    <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-model="member._selected" type="checkbox" ng-disabled="!clc.canSelectMember(member)">
                     <label for="memberSelectet{{ $index }}" class="kliiko-checkbox" ></label>
                 </div>
             </td>
