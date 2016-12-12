@@ -331,12 +331,11 @@ function getDestinationStep(session, destinationStep) {
 }
 
 function isValidatedWithErrors(currentStepIndex, destinationStepIndex, steps) {
-
   if (currentStepIndex < destinationStepIndex) {
-    let keys = Object.keys(steps);
-
     for (let i = currentStepIndex; i < destinationStepIndex; i++) {
-      let key = keys[i];
+      let stepNumber = i + 1;
+      let key = "step" + stepNumber;
+
       if (steps[key].error) {
         return true;
       }
