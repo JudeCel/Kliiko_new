@@ -6,7 +6,7 @@
           <input type='checkbox' value='{{ resource.id }}' ng-click='resource.checked = !!resource.checked' ng-model='resource.checked' />
         </td>
 
-        <td ng-if='typeOf.video || typeOf.youtube'>
+        <td ng-if='typeOf.video || typeOf.videoService'>
           <span class='glyphicon glyphicon-facetime-video border-green' aria-hidden='true'></span>
         </td>
 
@@ -33,10 +33,10 @@
         </td>
 
         <td>
-          <a ng-if='!typeOf.youtube' href='{{ resource.url.full }}' target='_blank'>
+          <a ng-if='!typeOf.videoService' href='{{ resource.url.full }}' target='_blank'>
             <span class='text-uppercase'>{{ resource.type }}/{{ resource.extension || resource.scope }}</span>
           </a>
-          <a ng-if='typeOf.youtube' ng-href='{{ gc.normalYoutubeUrl(resource.url.full) }}' target='_blank'>
+          <a ng-if='typeOf.videoService' ng-href='{{ gc.normalYoutubeUrl(resource.url.full) }}' target='_blank'>
             <span class='text-uppercase'>{{ resource.type }}/{{ resource.extension || resource.scope }}</span>
           </a>
           <span ng-if='resource.stock && app.accountUser.isAdmin'>(<u ng-click='gc.replaceStockResource(resource, upload)'>Replace stock file</u>)</span>
@@ -47,7 +47,7 @@
             <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
           </button>
 
-          <div ng-if='resource.url.full && !typeOf.youtube'>
+          <div ng-if='resource.url.full && !typeOf.videoService'>
             <a href='{{ resource.url.full }}' download class='margin-left-5 btn btn-standart btn-green pull-right btn-small-x'>
               <span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span>
             </a>

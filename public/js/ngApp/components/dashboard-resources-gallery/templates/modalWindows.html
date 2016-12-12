@@ -43,8 +43,8 @@
           </div>
           
           <div ng-if='gc.modalTab.link' class='form-group'>
-            <label for='youtube'>Youtube Url</label>
-            <input ng-model='gc.newResource.file' type='text' class='form-control center-block border-radius-none' name='youtube' id='youtube' placeholder='Youtube URL' required>
+            <label for='videoService'>Youtube or Vimeo Url</label>
+            <input ng-model='gc.newResource.file' type='text' class='form-control center-block border-radius-none' name='videoService' id='videoService' placeholder='Youtube or Vimeo URL' required>
           </div>
 
           <div ng-if='gc.modalTab.upload' class='form-group'>
@@ -82,7 +82,7 @@
       {{ typeOf = gc.isTypeOf(gc.newResource); "" }}
       <div class='modal-header'>
         <h2 class='modal-title text-center'>{{upload.modal.replace ? 'Replace resource.' : 'New resource.'}}</h2>
-        <p class='modal-title text-center' ng-if='!typeOf.youtube && !typeOf.zip'>Maximum file size is 5MB.</p>
+        <p class='modal-title text-center' ng-if='!typeOf.videoService && !typeOf.zip'>Maximum file size is 5MB.</p>
       </div>
 
       <div class='modal-body'>
@@ -91,12 +91,12 @@
           <input ng-model='gc.newResource.name' type='text' class='form-control center-block border-radius-none' name='name' id='name' placeholder='Name' required>
         </div>
 
-        <div ng-if='typeOf.youtube' class='form-group'>
-          <label for='youtube'>Youtube Url</label>
-          <input ng-model='gc.newResource.file' type='text' class='form-control center-block border-radius-none' name='youtube' id='youtube' placeholder='Youtube URL' required>
+        <div ng-if='typeOf.videoService' class='form-group'>
+          <label for='videoService'>Youtube or Vimeo Url</label>
+          <input ng-model='gc.newResource.file' type='text' class='form-control center-block border-radius-none' name='videoService' id='videoService' placeholder='Youtube or Vimeo URL' required>
         </div>
 
-        <div ng-if='!typeOf.youtube && !typeOf.zip' class='form-group'>
+        <div ng-if='!typeOf.videoService && !typeOf.zip' class='form-group'>
           <label for='file'>File</label>
           <div ngf-drop ngf-select ng-model='gc.newResource.file' class='drop-area' ngf-drag-over-class="'dragover'" accept='{{ gc.getUploadType().format }}' ngf-change="gc.fileSelected()">
             Drop {{ gc.getUploadType().text }} file here or click to upload

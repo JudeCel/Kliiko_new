@@ -386,6 +386,7 @@
         var linkHTML = '<a href="' + resource.url.full + '" target="_blank" style="display:block;text-decoration:none;color:#000;"><img src="/icons/header button icons/videoLink.png"></img> </a>';
         $('#templateContent').wysiwyg("insertHtml", linkHTML);
       } else {
+        //todo: youtube or vimeo
         var linkHTML = '<a href="https://www.youtube.com/watch?v=' + resource.url.full + '" target="_blank" style="display:block;text-decoration:none;color:#000;"><img src="/icons/header button icons/videoLink.png"></img> </a>';
         $('#templateContent').wysiwyg("insertHtml", linkHTML);
       }

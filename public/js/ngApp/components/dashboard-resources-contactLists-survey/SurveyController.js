@@ -361,10 +361,10 @@
     function initGallery(gc) {
       vm.uploadTypes = {
         survey: [gc.getUploadType('brandLogo')],
-        questions: [gc.getUploadType('video'), gc.getUploadType('audio'), gc.getUploadType('youtube')]
+        questions: [gc.getUploadType('video'), gc.getUploadType('audio'), gc.getUploadType('videoService')]
       }
 
-      gc.preloadResources({ type: ['image', 'video', 'audio', 'link'], scope: ['brandLogo', 'collage', 'youtube'], stock: true });
+      gc.preloadResources({ type: ['image', 'video', 'audio', 'link'], scope: ['brandLogo', 'collage', 'videoService'], stock: true });
     }
 
     function seedContactDetails(answer) {

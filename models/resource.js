@@ -23,8 +23,9 @@ module.exports = (Sequelize, DataTypes) => {
       values: [ 'video', 'audio', 'image', 'file', 'link']
     },
     scope: { type: DataTypes.ENUM, allowNull: false,
+      //unused values like youtube should be removed after before prod db clear
       values: [ 'participant', 'facilitator', 'co-facilitator', 'observer', 'report', 'vote',
-        'collage', 'brandLogo', 'youtube', 'zip', 'pdf', 'csv', 'banner', 'txt', 'pinboard' ]
+        'collage', 'brandLogo', 'youtube', 'zip', 'pdf', 'csv', 'banner', 'txt', 'pinboard', 'videoService' ]
     }
   }, {
     timestamps: true,

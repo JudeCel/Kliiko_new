@@ -16,12 +16,12 @@
     vm.currentList = [];
     vm.currentPage = { page: 'index', viewType: 'panel', viewClass: 'glyphicon glyphicon-th-list', upload: null, filter: null };
     vm.uploadTypes = [
-      { id: 'image',     type: 'image', text: 'Image',      scope: 'collage',   format: '.gif, .jpeg, .jpg, .png, .bmp' },
-      { id: 'brandLogo', type: 'image', text: 'Brand Logo', scope: 'brandLogo', format: '.gif, .jpeg, .jpg, .png, .bmp' },
-      { id: 'audio',     type: 'audio', text: 'Audio',      scope: 'collage',   format: '.mpeg, .mp3' },
-      { id: 'pdf',       type: 'file',  text: 'PDF',        scope: 'pdf',       format: '.pdf' },
-      { id: 'video',     type: 'video', text: 'Video',      scope: 'collage',   format: '.oog, .mp4' },
-      { id: 'youtube',   type: 'link',  text: 'Youtube',    scope: 'youtube',   format: 'url' }
+      { id: 'image',         type: 'image', text: 'Image',             scope: 'collage',       format: '.gif, .jpeg, .jpg, .png, .bmp' },
+      { id: 'brandLogo',     type: 'image', text: 'Brand Logo',        scope: 'brandLogo',     format: '.gif, .jpeg, .jpg, .png, .bmp' },
+      { id: 'audio',         type: 'audio', text: 'Audio',             scope: 'collage',       format: '.mpeg, .mp3' },
+      { id: 'pdf',           type: 'file',  text: 'PDF',               scope: 'pdf',           format: '.pdf' },
+      { id: 'video',         type: 'video', text: 'Video',             scope: 'collage',       format: '.oog, .mp4' },
+      { id: 'videoService',  type: 'link',  text: 'Youtube or Vimeo',  scope: 'videoService',  format: 'url' }
     ];
     vm.modalTab = {}; 
     vm.pagination = {
@@ -177,7 +177,7 @@
 
     function createOrReplaceResource() {
       if (vm.currentPage.canSelect && vm.modalTab.link && vm.newResource.type == 'video') {
-        var type = vm.getUploadType("youtube");
+        var type = vm.getUploadType("videoService");
         vm.newResource.type = type.type;
         vm.newResource.scope = type.scope;
       }
@@ -218,7 +218,7 @@
         audio: resource.type == 'audio' && resource.scope == 'collage',
         video: resource.type == 'video' && resource.scope == 'collage',
         brandLogo: resource.type == 'image' && resource.scope == 'brandLogo',
-        youtube: resource.type == 'link' && resource.scope == 'youtube',
+        videoService: resource.type == 'link' && resource.scope == 'videoService',
         pdf: resource.type == 'file' && resource.scope == 'pdf',
         zip: resource.type == 'file' && resource.scope == 'zip',
       };
@@ -304,9 +304,9 @@
 
       var params = { type:[current.type], scope:[current.scope], stock: true };
       if (type.type == "video") {
-        var youtubeType = vm.getUploadType("youtube");
-        params.type.push(youtubeType.type);
-        params.scope.push(youtubeType.scope);
+        var videoServiceType = vm.getUploadType("videoService");
+        params.type.push(videoServiceType.type);
+        params.scope.push(videoServiceType.scope);
       }
       vm.pagination.currentPage = 1;
       preloadResources(params).then(function() {
@@ -346,7 +346,7 @@
     function prepareCurrentPageItems() {
       var items = vm.selectionList[vm.newResource.typeId];
       if (vm.newResource.typeId == "video") {
-        items = items.concat(vm.selectionList["youtube"]);
+        items = items.concat(vm.selectionList["videoService"]);
       }
       if (items.length > 0) {
         vm.pagination.totalItems = items.length;
