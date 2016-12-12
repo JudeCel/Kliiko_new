@@ -349,8 +349,11 @@ function openBuild(id, accountId) {
   let deferred = q.defer();
   validators.hasValidSubscription(accountId).then(function() {
     findSession(id, accountId).then(function(session) {
-      sessionBuilderObject(session).then(function(result) {
-        deferred.resolve(result);
+      sessionBuilderObject(session).then(function(sessionObj) {
+        validateMultipleSteps(session, sessionObj.sessionBuilder.steps).then(function(steps) {
+          sessionObj.sessionBuilder.steps = steps;
+          deferred.resolve(sessionObj);
+        });
       }, function(error) {
         deferred.reject(error);
       });
