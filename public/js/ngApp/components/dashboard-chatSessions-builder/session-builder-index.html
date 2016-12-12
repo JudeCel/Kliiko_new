@@ -30,40 +30,56 @@
         <div class=" col-md-12">
           <div id="steps-row" style="margin: 0 auto">
             <div class="step-container">
-              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(1), 'done':sbc.stepsClassIsDone(1)}">
+              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(1), 'done':sbc.stepsClassIsDone(1)}" ng-click="sbc.goToStep(1)">
                 1
               </span>
+              <div class="circle-container" ng-if="sbc.showOkMark(1)">
+                <span class="circle-ok glyphicon glyphicon-ok"></span>
+              </div>
               <span class="step-name" ng-class="{'active': sbc.stepsClassIsActive(1), 'done':sbc.stepsClassIsDone(1)}">
                 Set-Up Chat Session
               </span>
             </div>
             <div class="step-container">
-              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(2), 'done':sbc.stepsClassIsDone(2)}">
-                2</span>
+              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(2), 'done':sbc.stepsClassIsDone(2)}" ng-click="sbc.goToStep(2)">
+                2
+              </span>
+              <div class="circle-container" ng-if="sbc.showOkMark(2)">
+                <span class="circle-ok glyphicon glyphicon-ok"></span>
+              </div>
               <span class="step-name" ng-class="{'active': sbc.stepsClassIsActive(2), 'done':sbc.stepsClassIsDone(2)}">
                 Topics
               </span>
             </div>
             <div class="step-container">
-              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(3), 'done':sbc.stepsClassIsDone(3)}">
+              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(3), 'done':sbc.stepsClassIsDone(3)}" ng-click="sbc.goToStep(3)">
                 3
               </span>
+              <div class="circle-container" ng-if="sbc.showOkMark(3)">
+                <span class="circle-ok glyphicon glyphicon-ok"></span>
+              </div>
               <span class="step-name" ng-class="{'active': sbc.stepsClassIsActive(3), 'done':sbc.stepsClassIsDone(3)}">
                 Manage Session Emails
               </span>
             </div>
             <div class="step-container">
-              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(4), 'done':sbc.stepsClassIsDone(4)}">
+              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(4), 'done':sbc.stepsClassIsDone(4)}" ng-click="sbc.goToStep(4)">
                 4
               </span>
+              <div class="circle-container" ng-if="sbc.showOkMark(4)">
+                <span class="circle-ok glyphicon glyphicon-ok"></span>
+              </div>
               <span class="step-name" ng-class="{'active': sbc.stepsClassIsActive(4), 'done':sbc.stepsClassIsDone(4)}">
                 Invite Guests
               </span>
             </div>
             <div class="step-container">
-              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(5), 'done':sbc.stepsClassIsDone(5)}">
+              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(5), 'done':sbc.stepsClassIsDone(5)}" ng-click="sbc.goToStep(5)">
                 5
               </span>
+              <div class="circle-container" ng-if="sbc.showOkMark(5)">
+                <span class="circle-ok glyphicon glyphicon-ok"></span>
+              </div>
               <span class="step-name" ng-class="{'active': sbc.stepsClassIsActive(5), 'done':sbc.stepsClassIsDone(5)}">
                 Invite Spectators
               </span>

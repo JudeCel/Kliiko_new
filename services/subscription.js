@@ -50,7 +50,6 @@ function postQuote(params) {
   let deferred = q.defer();
   let errors = [];
 
-  console.log(params, getAQuoteFieldsNeeded);
   _.map(getAQuoteFieldsNeeded, function(field) {
     if(!params[field]) {
       if(!errors.length) {
@@ -64,11 +63,11 @@ function postQuote(params) {
     errors.push(MessagesUtil.subscription.emailFormat);
   }
 
-  if(!constants.urlRegExp.test(params.companyUrl)) {
+  if(params.companyUrl && params.companyUrl != "" && !constants.urlRegExp.test(params.companyUrl)) {
     errors.push(MessagesUtil.subscription.urlFormat);
   }
 
-  if(!constants.phoneRegExp.test(params.contactNumber)) {
+  if(params.contactNumber && params.contactNumber != "" && !constants.phoneRegExp.test(params.contactNumber)) {
     errors.push(MessagesUtil.subscription.contactNumberFormat);
   }
 
@@ -304,7 +303,6 @@ function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
       deferred.reject(error);
     });
   }).catch(function(error) {
-    console.log("-1");
     deferred.reject(error);
   });
 

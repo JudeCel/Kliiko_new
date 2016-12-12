@@ -64,6 +64,7 @@
     vm.canSendCloseEmail = canSendCloseEmail;
     vm.canCommentAndRate = canCommentAndRate;
     vm.canInvite = canInvite;
+    vm.showOkMark = showOkMark;
 
     var stepNames = ["setUp", "facilitatiorAndTopics", "manageSessionEmails", "manageSessionParticipants", "inviteSessionObservers"];
 
@@ -135,6 +136,19 @@
       initStep().then(function(stepNumber) {
         vm.currentStep = stepNumber;
       });
+    }
+
+    function showOkMark(step) {
+      return isValidStep(step) && isNotActiveStep(step);
+    }
+
+    function isValidStep(step) {
+      var stepPropertyName = "step" + step;
+      return vm.session.steps && vm.session.steps[stepPropertyName].error == null;
+    }
+
+    function isNotActiveStep(step) {
+      return  vm.currentStep !== step;
     }
 
     function goToChat(session) {
