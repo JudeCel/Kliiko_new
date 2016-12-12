@@ -154,7 +154,7 @@ module.exports = {
     alreadyExists: 'Subscription already exists',
     cantSwitchPlan: "Can't switch to current plan",
     successPlanUpdate: 'Plan was successfully updated.',
-    quoteSent: "Thanks, your email has been sent. We'll be in touch withing 24 hours.",
+    quoteSent: "Thanks, your email has been sent. We'll be in touch within 24 hours.",
     errorInField: 'Please provide: ',
     emailFormat: 'E-mail format is not valid',
     contactNumberFormat: 'Contact Number format is not valid',
