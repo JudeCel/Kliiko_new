@@ -1,6 +1,22 @@
 <div class='brandColours' ng-attr-style='color: {{ previewScheme.font }};'>
   <div class='row' ng-attr-style='background-color: {{ previewScheme.browserBackground }};'>
-    <div class='col-xs-12 header' ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/forum/header.html'"></div>
+    <div class='col-xs-12 header'>
+      <div class='row'>
+        <div class='col-xs-3'>
+          <label class='text-no-bold'>Category Name</label><br />
+          <div class='input-group'>
+            <input type='text' class='form-control border-radius-none ng-autofocus-skip' placeholder='Topic Name' disabled>
+            <span class='input-group-addon border-radius-none'><span class='glyphicon glyphicon-chevron-down' aria-hidden='true'></span></span>
+          </div>
+        </div>
+        <div class='col-xs-9'>
+          <img class='pull-right logo' width='20%' src='/icons/Klzii_RGB_72.png'/>
+          <span class='headerButtons pull-right glyphicon glyphicon-off' aria-hidden='true' ng-attr-style='background-color: {{ previewScheme.headerButton }};'></span>
+          <span class='headerButtons pull-right glyphicon glyphicon-question-sign' aria-hidden='true' ng-attr-style='background-color: {{ previewScheme.headerButton }};'></span>
+          <span class='headerButtons pull-right glyphicon glyphicon-comment' aria-hidden='true' ng-attr-style='background-color: {{ previewScheme.headerButton }};'></span>
+        </div>
+      </div>
+    </div>
 
     <div class='col-xs-12'>
       <div class='col-xs-4 chatContainer forumTypeLeft' ng-attr-style='background-color: {{ previewScheme.mainBackground }}; border-color: {{ previewScheme.mainBorder }};'>
@@ -29,7 +45,19 @@
             </div>
           </div>
         </div>
-        <div class='row' ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/forum/footer.html'"></div>
+        <div class='row'>
+          <div class='col-xs-12'>
+            <div class='input-group footer'>
+              <span class='input-group-addon circle-addon border-radius-none'>
+                <img src='/icons/smile.png' alt='Circle here' />
+              </span>
+              <input type='text' class='form-control message-input border-radius-none ng-autofocus-skip' placeholder='Message'>
+              <span class='input-group-addon border-radius-none post-button'>
+                POST
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
