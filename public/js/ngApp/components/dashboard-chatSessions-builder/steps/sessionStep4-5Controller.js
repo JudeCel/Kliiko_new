@@ -82,8 +82,10 @@
 
       if (vm.isParticipantPage()) {
         vm.stepMembers = participants;
-      } else {
+      } else if (vm.isObserverPage()) {
         vm.stepMembers = observers;
+      } else {
+        vm.stepMembers = [];
       }
 
       return vm.stepMembers;
