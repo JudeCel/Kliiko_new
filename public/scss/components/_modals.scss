@@ -366,6 +366,7 @@
   word-wrap: break-word;
   -ms-word-break: break-word;
   word-break: break-word;
+  min-width: 100px;
   @media (min-width: 768px) {
     max-width: calc(20vw - 105px);
   }
