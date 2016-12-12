@@ -55,7 +55,11 @@
     vm.stepMembers = [];
 
     vm.isParticipantPage = function() {
-      return vm.session.sessionData.step == "manageSessionParticipants";
+      return vm.session.currentStep == "manageSessionParticipants";
+    }
+
+    vm.isObserverPage = function() {
+      return vm.session.currentStep == "inviteSessionObservers";
     }
 
     vm.canSendSMSOnThisPage = function() {
@@ -80,8 +84,10 @@
 
       if (vm.isParticipantPage()) {
         vm.stepMembers = participants;
-      } else {
+      } else if (vm.isObserverPage()) {
         vm.stepMembers = observers;
+      } else {
+        vm.stepMembers = [];
       }
 
       return vm.stepMembers;

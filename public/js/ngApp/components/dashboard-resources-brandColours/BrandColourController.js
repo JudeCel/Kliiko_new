@@ -34,7 +34,7 @@
     vm.pagination = {
       schemesTotalItems: 0,
       schemesCurrentPage: 1,
-      schemesItemsPerPage: 12,
+      schemesItemsPerPage: 6,
       schemes: {}
     }
 

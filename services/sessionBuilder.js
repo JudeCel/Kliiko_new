@@ -315,12 +315,12 @@ function goToStep(id, accountId, destinationStep) {
 
 function getDestinationStep(session, destinationStep) {
   let destinationStepIndex = destinationStep - 1;
+  let currentStepIndex = constants.sessionBuilderSteps.indexOf(session.currentStep);
 
-  if (destinationStepIndex > MAX_STEP_INDEX) {
-    destinationStepIndex = MAX_STEP_INDEX;
+  if (destinationStepIndex > MAX_STEP_INDEX || destinationStepIndex < FIRST_STEP_INDEX) {
+    destinationStepIndex = currentStepIndex;
   }
 
-  let currentStepIndex = constants.sessionBuilderSteps.indexOf(session.currentStep);
   let step = constants.sessionBuilderSteps[destinationStepIndex];
 
   if (isValidatedWithErrors(currentStepIndex, destinationStepIndex, session.steps)) {
@@ -331,19 +331,18 @@ function getDestinationStep(session, destinationStep) {
 }
 
 function isValidatedWithErrors(currentStepIndex, destinationStepIndex, steps) {
-
   if (currentStepIndex < destinationStepIndex) {
-    let keys = Object.keys(steps);
-
     for (let i = currentStepIndex; i < destinationStepIndex; i++) {
-      let key = keys[i];
+      let stepNumber = i + 1;
+      let key = "step" + stepNumber;
+
       if (steps[key].error) {
         return true;
       }
     }
   }
 
-  return destinationStepIndex < FIRST_STEP_INDEX;
+  return false;
 }
 
 function openBuild(id, accountId) {

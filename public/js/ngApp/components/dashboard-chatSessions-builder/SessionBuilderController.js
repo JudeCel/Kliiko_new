@@ -123,6 +123,7 @@
 
     function handleStepSwitch(result, step) {
       var session = result.data.sessionBuilder;
+       vm.session.steps = session.steps;
 
       for (var i = vm.currentStep; i < step; i++) {
         var stepPropertyName = "step" + i;
@@ -131,8 +132,8 @@
         }
       }
 
-      initStep().then(function() {
-        vm.currentStep = stepNames.indexOf(session.currentStep) + 1;
+      initStep().then(function(stepNumber) {
+        vm.currentStep = stepNumber;
       });
     }
 
