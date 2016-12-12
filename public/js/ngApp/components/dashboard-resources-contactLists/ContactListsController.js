@@ -104,7 +104,6 @@
     function removeSpecificLists() {
       var array = []
       var activeList = null;
-      console.log(vm.listIgnoring);
 
       for(var i in vm.lists.items) {
         var item = vm.lists.items[i];
