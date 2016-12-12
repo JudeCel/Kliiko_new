@@ -20,7 +20,7 @@
     vm.currentFilter = 'all';
     vm.filterTypes = {
       waiting: "Sending, please wait...",
-      "failed": "Sending failed",
+      failed: "Sending failed",
       all: 'All',
       notInvited: 'Not Invited',
       confirmed: 'Accepted',
@@ -394,7 +394,7 @@
             member.inviteStatus = member.invite.emailStatus;
         }
       } else {
-        member.inviteStatus = member.invite.status;
+        member.inviteStatus = "notInvited"
       }
       return member.inviteStatus;
     }

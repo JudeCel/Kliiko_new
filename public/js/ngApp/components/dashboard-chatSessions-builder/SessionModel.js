@@ -78,7 +78,6 @@
       var params = params || {};
       self.id = null;
       self.socket = null;
-      socketConnection(self);
       if (arguments && arguments.length && arguments.length == 1) {
         self.id = arguments[0];
       } else {
@@ -97,11 +96,25 @@
         logger: function(kind, msg, data) { console.log(kind +":"+ msg +":",  data) },
       });
 
-      self.socket.onError( (event) => {
+      self.socket.onError( function(event){
         console.error(event);
       });
 
-      self.socket.connect();
+      if (self.id) {
+        var channel = self.socket.channel("sessionsBuilder:" + self.id);
+        if (channel.state != 'joined') {
+          channel.on("inviteUpdate", function(resp) {
+            self.steps.step4.participants.map(function(item) {
+              if(resp.id == item.invite.id ) {
+                item.invite.emailStatus = resp.emailStatus;
+                item.invite.status = resp.status;
+              }
+            });
+          });
+          channel.join();
+        }
+        self.socket.connect();
+      }
     }
 
     function init() {
@@ -117,6 +130,7 @@
       }
 
       function resolve(res) {
+        socketConnection(self)
         deferred.resolve(res);
       }
 
