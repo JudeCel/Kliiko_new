@@ -280,7 +280,7 @@ function adjustParamsForNewAccountUser(params, userId, accountId) {
 }
 
 function inviteParams(accountUserId, accountId, userId, type) {
-  return { userId: userId, accountUserId: accountUserId, accountId: accountId, userType: type, role: 'accountManager' };
+  return { userId: userId, accountUserId: accountUserId, accountId: accountId, role: 'accountManager' };
 }
 
 function prepareParams(body) {

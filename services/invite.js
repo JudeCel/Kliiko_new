@@ -1,15 +1,10 @@
 'use strict';
 
-var models = require('./../models');
-var filters = require('./../models/filters');
-var brandProjectConstants = require('../util/brandProjectConstants');
-
-var Invite = models.Invite;
-var User = models.User;
-var Account = models.Account;
-var AccountUser = models.AccountUser;
-var Session = models.Session;
-var BrandProjectPreference = models.BrandProjectPreference;
+const models = require('./../models');
+const filters = require('./../models/filters');
+const brandProjectConstants = require('../util/brandProjectConstants');
+const { enqueue } = require('./backgroundQueue');
+const { Invite,User, Account, AccountUser, Session, BrandProjectPreference } = models;
 
 var moment = require('moment-timezone');
 var emailDate = require('./formats/emailDate');
@@ -18,13 +13,14 @@ var socialProfileService = require('./socialProfile');
 var inviteMailer = require('../mailers/invite');
 var mailerHelpers = require('../mailers/mailHelper');
 var constants = require('../util/constants');
+var backgroundQueues = require('../util/backgroundQueue');
 var MessagesUtil = require('./../util/messages');
 
 var uuid = require('node-uuid');
-var crypto = require('crypto');
 var async = require('async');
 var _ = require('lodash');
 var q = require('q');
+let Bluebird = require('bluebird')
 
 var mailUrlHelper = require('../mailers/helpers');
 
@@ -33,71 +29,35 @@ const EXPIRE_AFTER_DAYS = 5;
 function createBulkInvites(arrayParams) {
   let deferred = q.defer();
 
-  let expireDate = new Date();
-  expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
   _.map(arrayParams, function(paramObject) {
     paramObject.token = uuid.v1();
     paramObject.sentAt = new Date();
-    paramObject.expireAt = expireDate;
   });
 
   Invite.bulkCreate(arrayParams, {
     validate: true,
     returning: true
-  }).then(function(results) {
-    if(results.length > 0) {
-      let ids = _.map(results, 'id');
-      Invite.findAll({
-        where: { id: { $in: ids } },
-        include: [{
-          model: AccountUser,
-          attributes:
-          constants.safeAccountUserParams,
-          include: {model: models.ContactListUser}
-        }, {
-          model: Session,
-          include: [Account]
-        }, Account, User]
-      }).then(function(invites) {
-        async.each(invites, function(invite, callback) {
-          invite.accountName = arrayParams.accountName;
-          if (invite.AccountUser.ContactListUsers.length) {
-            invite.unsubscribeMailUrl = mailUrlHelper.getUrl(invite.AccountUser.ContactListUsers[0].unsubscribeToken, null, '/unsubscribe/');
-
-            sendInvite(invite).then(function() {
-              callback();
-            }, function(error) {
-              callback(error);
-            });
-          } else {
-            callback();
-          }
-        }, function(error) {
-          if(error) {
-            deferred.reject(error);
-          }
-          else {
-            deferred.resolve(results);
-          }
-        });
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
-      });
-    }
-    else {
-      deferred.reject("None created");
-    }
+  }).then((invites) => {
+    Bluebird.each(invites, (invite) => {
+      return enqueue(backgroundQueues.queues.invites, "invite", [invite.id] );
+    }).then(() => {
+      deferred.resolve(invites);
+    }, (error) => {
+      deferred.reject(error);
+    })
+  }, (errors) => {
+    let errorResp = _.map(errors, (error) => {
+      return filters.errors(error.errors)
+    })
+    deferred.reject(errorResp);
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
-
   return deferred.promise;
 }
 
-function createFacilitatorInvite(params) {
-  let deferred = q.defer();
-
-  models.Invite.destroy({
+function deleteFacilitato(params) {
+  return Invite.destroy({
     where: {
       sessionId: params.sessionId,
       accountUserId:  {
@@ -105,8 +65,13 @@ function createFacilitatorInvite(params) {
       },
       role: 'facilitator'
     }
-  }).then(function(result) {
-    models.Invite.find({
+  })
+}
+
+function createFacilitatorInvite(params) {
+  let deferred = q.defer();
+  deleteFacilitato(params).then(function() {
+    Invite.find({
       where: {
         sessionId: params.sessionId,
         accountUserId: params.accountUserId,
@@ -116,9 +81,9 @@ function createFacilitatorInvite(params) {
       if (invite) {
         deferred.resolve();
       } else {
-        models.AccountUser.find({ where: { id: params.accountUserId } }).then(function(accountUser) {
+        AccountUser.find({ where: { id: params.accountUserId } }).then(function(accountUser) {
           updateToFacilitator(accountUser).then(function() {
-            createInvite(facilitatorInviteParams(accountUser, params.sessionId)).then(function() {
+            createInvite(facilitatorInviteParams(accountUser, params.sessionId)).then(() => {
               deferred.resolve();
             }, function(error) {
               deferred.reject(filters.errors("Invite as Host for " + accountUser.firstName + " " + accountUser.lastName + " were not sent."));
@@ -139,11 +104,15 @@ function createFacilitatorInvite(params) {
 function updateToFacilitator(accountUser) {
   let deferred = q.defer();
 
-  if (accountUser.role == 'accountManager' || accountUser.role == 'admin') {
-    deferred.resolve();
+  if (_.includes(['admin', 'accountManager', 'facilitator'], accountUser.role)) {
+    deferred.resolve(accountUser);
   } else {
-    models.AccountUser.update({role: 'facilitator'}, { where: { id: accountUser.id } }).then(function(res) {
+    AccountUser.update({role: 'facilitator'}, { where: { id: accountUser.id }, returning: true  }).then(function(result) {
+      if (result[0] > 0) {
+        deferred.resolve(result[1][0]);
+      }else {
       deferred.resolve();
+      }
     }, function(error) {
       deferred.reject(error);
     });
@@ -152,174 +121,176 @@ function updateToFacilitator(accountUser) {
   return deferred.promise;
 }
 
-function facilitatorInviteParams(facilitator, sessionId) {
+function facilitatorInviteParams(accountUser, sessionId) {
   return {
-    accountUserId: facilitator.id,
-    userId: facilitator.UserId,
+    accountUserId: accountUser.id,
+    userId: accountUser.UserId,
     sessionId: sessionId,
-    role: 'facilitator',
-    userType: facilitator.UserId ? 'existing' : 'new'
+    role: 'facilitator'
   }
 }
 
 function createInvite(params) {
-  let deferred = q.defer();
+  return new Bluebird((resolve, reject) => {
+    let token = uuid.v1();
 
-  let token = uuid.v1();
-  let expireDate = new Date();
-  expireDate.setDate(expireDate.getDate() + EXPIRE_AFTER_DAYS);
-
-  Invite.create({
-    accountUserId: params.accountUserId,
-    userId: params.userId,
-    accountId: params.accountId,
-    sessionId: params.sessionId,
-    token: token,
-    sentAt: new Date(),
-    expireAt: expireDate,
-    role: params.role,
-    userType: params.userType
-  }).then(function(result) {
-    Invite.find({
-      include: [{
-        model: AccountUser,
-        attributes:
-        constants.safeAccountUserParams
-      }, {
-        model: Session,
-        include: [Account]
-      }, Account, User],
-      where: {
-        token: token
+    Invite.create({
+      accountUserId: params.accountUserId,
+      userId: params.userId,
+      accountId: params.accountId,
+      sessionId: params.sessionId,
+      token: token,
+      sentAt: new Date(),
+      role: params.role
+    }).then(function(result) {
+      enqueue(backgroundQueues.queues.invites, "invite", [result.id]).then(() => {
+        resolve(result);
+      }, (error) => {
+        reject(error);
+      });
+    }).catch(function(error) {
+      if(error.name == 'SequelizeUniqueConstraintError') {
+        reject({ email: 'User has already been invited' });
       }
-    }).then(function(invite) {
-      invite.accountName = params.accountName;
-      sendInvite(invite, deferred);
+      else {
+        reject(filters.errors(error));
+      }
     });
-  }).catch(function(error) {
-    if(error.name == 'SequelizeUniqueConstraintError') {
-      deferred.reject({ email: 'User has already been invited' });
-    }
-    else {
-      deferred.reject(filters.errors(error));
-    }
-  });
-
-  return deferred.promise;
+  })
 };
 
 function simpleParams(invite, message) {
   return { invite: invite, message: message }
 }
 
-function sendInvite(invite, deferred) {
-  if(!deferred) {
+// TODO: Need explain function!
+function sendInvite(inviteId, deferred) {
+  if (!deferred) {
     deferred = q.defer();
   }
 
-  if(invite.accountId) {
-    let inviteParams = {
-      token: invite.token,
-      role: invite.role,
-      email: invite.AccountUser.email,
-      firstName: invite.AccountUser.firstName,
-      lastName: invite.AccountUser.lastName,
-      accountName: invite.Account.name,
-      accountId: invite.Account.id
-    };
-    populateMailParamsWithColors(inviteParams, invite.Session).then(function (params) {
-      inviteMailer.sendInviteAccountManager(params, function (error, data) {
-        if (error) {
-          deferred.reject(error);
-        }
-        else {
-          deferred.resolve(simpleParams(invite));
-        }
-      });
-    }, function (error) {
-      deferred.reject(filters.errors(error));
-    });
-  } else {
-    let session = invite.Session;
-    models.SessionMember.find({
-      where: {
-        sessionId: session.id,
-        role: 'facilitator'
-      },
-      include: [AccountUser]
-    }).then(function(sessionMember) {
+  Invite.find({
+    include: [{
+      model: AccountUser,
+      attributes:
+      constants.safeAccountUserParams,
+      include: {model: models.ContactListUser}
+    }, {
+      model: Session,
+      include: [Account]
+    }, Account, User],
+    where: {
+      id: inviteId
+    }
+  }).then(function(invite) {
+    if (!invite) { return deferred.reject(MessagesUtil.invite.notFound) }
 
-      let facilitator = sessionMember.AccountUser;
+    invite.unsubscribeMailUrl = mailUrlHelper.getUrl(invite.AccountUser.ContactListUsers[0].unsubscribeToken, null, '/unsubscribe/');
+    if(invite.accountId) {
       let inviteParams = {
-        sessionId: session.id,
-        role: invite.role,
-        accountId: session.accountId,
         token: invite.token,
+        role: invite.role,
+        email: invite.AccountUser.email,
         firstName: invite.AccountUser.firstName,
         lastName: invite.AccountUser.lastName,
-        accountName: session.Account.name,
-        email: invite.AccountUser.email,
-        sessionName: session.name,
-        timeZone: emailDate.format("timeZone", session.startTime, session.timeZone),
-        orginalStartTime: moment.tz(session.startTime, session.timeZone).format(),
-        orginalEndTime: moment.tz(session.endTime, session.timeZone).format(),
-        startTime: emailDate.format('time', session.startTime, session.timeZone),
-        endTime: emailDate.format('time', session.endTime, session.timeZone),
-        startDate: emailDate.format('date', session.startTime, session.timeZone),
-        endDate: emailDate.format('date', session.endTime, session.timeZone),
-        incentive: session.incentive_details,
-        facilitatorFirstName: facilitator.firstName,
-        facilitatorLastName: facilitator.lastName,
-        facilitatorMail: facilitator.email,
-        facilitatorMobileNumber: facilitator.mobile,
-        unsubscribeMailUrl: invite.unsubscribeMailUrl
-      }
-
-      populateMailParamsWithColors(inviteParams, session).then(function (params) {
-        inviteMailer.sendInviteSession(params, function(error, data) {
+        accountName: invite.Account.name,
+        accountId: invite.Account.id
+      };
+      populateMailParamsWithColors(inviteParams, invite.Session).then(function (params) {
+        inviteMailer.sendInviteAccountManager(params, function (error, data) {
           if (error) {
             deferred.reject(error);
-          } else {
+          }
+          else {
             deferred.resolve(simpleParams(invite));
           }
         });
       }, function (error) {
         deferred.reject(filters.errors(error));
       });
+    }
+    else {
+      let session = invite.Session;
+      models.SessionMember.find({
+        where: {
+          sessionId: session.id,
+          role: 'facilitator'
+        },
+        include: [AccountUser]
+      }).then(function(sessionMember) {
 
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
-    });
-  }
+        let facilitator = sessionMember.AccountUser;
+        let inviteParams = {
+          sessionId: session.id,
+          role: invite.role,
+          accountId: session.accountId,
+          token: invite.token,
+          firstName: invite.AccountUser.firstName,
+          lastName: invite.AccountUser.lastName,
+          accountName: session.Account.name,
+          email: invite.AccountUser.email,
+          sessionName: session.name,
+          timeZone: session.timeZone,
+          orginalStartTime: moment.tz(session.startTime, session.timeZone).format(),
+          orginalEndTime: moment.tz(session.endTime, session.timeZone).format(),
+          startTime: emailDate.format('time', session.startTime, session.timeZone),
+          endTime: emailDate.format('time', session.endTime, session.timeZone),
+          startDate: emailDate.format('date', session.startTime, session.timeZone),
+          endDate: emailDate.format('date', session.endTime, session.timeZone),
+          incentive: session.incentive_details,
+          facilitatorFirstName: facilitator.firstName,
+          facilitatorLastName: facilitator.lastName,
+          facilitatorMail: facilitator.email,
+          facilitatorMobileNumber: facilitator.mobile,
+          unsubscribeMailUrl: invite.unsubscribeMailUrl
+        }
+
+        populateMailParamsWithColors(inviteParams, session).then(function (params) {
+          inviteMailer.sendInviteSession(params, function(error, data) {
+            if (error) {
+              deferred.reject(error);
+            }
+            else {
+              deferred.resolve(simpleParams(invite));
+            }
+          });
+        }, function (error) {
+          deferred.reject(filters.errors(error));
+        });
+
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
+      });
+    }
+  });
 
   return deferred.promise;
 }
 
+function findAndRemoveInvite(params) {
+  return new Bluebird((resolve, reject) => {
+    let where = { accountUserId: params.accountUserId };
+    Invite.find({ where: where }).then(function(invite) {
+      if(invite) {
+        removeInvite(invite, (err, message) => {
+          if (err) {
+            reject(err);
+          }else {
+            resolve(message);
+          }
+        });
+      }else {
+        reject(MessagesUtil.invite.notFound);
+      }
+    });
 
-function findAndRemoveInvite(params, callback) {
-  Invite.find({ where: params }).then(function(invite) {
-    if(invite) {
-      removeInvite(invite, function(err, message) {
-        callback(err, message);
-      });
-    }
-    else {
-      callback('Invite not found');
-    }
-  });
+  })
 }
 
 function removeInvite(invite, callback) {
-  if(invite.userType == 'new') {
-    removeAllAssociatedDataOnNewUser(invite, function(error, message) {
-      callback(error, message);
-    });
-  }
-  else {
-    destroyInvite(invite, function(error, message) {
-      callback(error, message);
-    });
-  }
+  destroyInvite(invite, function(error, message) {
+    callback(error, message);
+  });
 };
 
 function destroyInvite(invite, callback) {
@@ -340,223 +311,240 @@ function destroyInvite(invite, callback) {
   });
 }
 
-function findInvite(token, callback) {
-  Invite.find({ include: [Account, AccountUser, User], where: { token: token, $or: [{ status: 'pending' }, { status: 'inProgress' }] } }).then(function(result) {
-    if(result) {
-      callback(null, result);
-    }
-    else {
-      callback(MessagesUtil.invite.notFound);
-    }
-  });
-};
-
-function declineInvite(token, callback) {
-  findInvite(token, function(error, invite) {
-    if(error) {
-      callback(error);
-    }
-    else {
-      invite.update({ status: 'rejected' }).then(function() {
-        callback(null, invite, MessagesUtil.invite.declined);
-      }).catch(function(error) {
-        callback(filters.errors(error));
-      });
-    }
-  })
-};
-
-function acceptInviteExisting(token, callback) {
-  findInvite(token, function(error, invite) {
-    if(error) {
-      return callback(error);
-    }
-    else if(invite.userType == 'new') {
-      return callback(null, invite);
-    }
-    setAccountUserActive(invite, function(err, accountUser) {
-      if(err) {
-        return callback(err);
-      }
-
-      invite.update({ status: 'confirmed' }).then(function() {
-        if(invite.sessionId) {
-          let params = {
-            sessionId: invite.sessionId,
-            accountUserId: invite.accountUserId,
-            username: invite.AccountUser.firstName,
-            role: invite.role
-          };
-
-          sessionMemberService.createWithTokenAndColour(params).then(function() {
-            shouldUpdateRole(accountUser, invite.role).then(function() {
-              callback(null, invite, MessagesUtil.invite.confirmed, invite.AccountUser.email);
-            }, function(error) {
-              callback(filters.errors(error));
-            });
-          }, function(error) {
-            callback(filters.errors(error));
-          });
-        } else {
-          callback(null, invite, MessagesUtil.invite.confirmed, invite.AccountUser.email);
-        }
-      }).catch(function(error) {
-        callback(filters.errors(error));
-      });
-    });
-  });
-};
-
-function shouldUpdateRole(accountUser, newRole) {
-  let roles = ['observer', 'participant', 'facilitator', 'accountManager', 'admin'];
-
-  if(roles.indexOf(newRole) > roles.indexOf(accountUser.role)) {
-    return accountUser.update({ role: newRole });
-  }
-  else {
-    let deferred = q.defer();
-    deferred.resolve();
-    return deferred.promise;
-  }
-}
-
-function acceptInviteNew(token, params, callback) {
-  findInvite(token, function(error, invite) {
-    if(error) {
-      return callback(error);
-    } else if(invite.userType == 'existing') {
-      return callback(true);
-    }
-
-    updateUser({ password: params.password }, invite, function(error, user) {
-      if (error) {
-        callback(error, invite);
-      } else {
-        invite.update({ status: 'confirmed' }).then(function() {
-          callback(null, invite, user, MessagesUtil.invite.confirmed);
-        }).catch(function(error) {
-          callback(filters.errors(error));
-        });
-      };
-    });
-  });
-};
-function setAccountUserActive(invite, callback) {
-  AccountUser.update({active: true, status: 'active'}, { where:{ id: invite.accountUserId }, returning: true }).then(function(result) {
-    callback(null, result[1][0]);
-  },function(err) {
-    callback(filters.errors(error));
-  })
-}
-
-function updateUser(params, invite, callback) {
-  setAccountUserActive(invite, function(res, _) {
-    params.confirmedAt = new Date();
-    User.update(params, { where: { id: invite.userId }, returning: true }).then(function(result) {
-      callback(null, result[1][0]);
-    }).catch(function(error) {
-      callback(filters.errors(error));
-    });
-  })
-};
-
-function sessionAccept(token, body) {
-  let deferred = q.defer();
-
-  findInvite(token, function(error, invite) {
-    if(error) {
-      deferred.reject(error);
-    }
-    else {
-      canAddSessionMember(invite).then(function() {
-        return sessionAcceptFlow(invite, body);
-      }).then(function(result) {
-        deferred.resolve(result);
-      }).catch(function(error) {
-        deferred.reject(error);
-      });
-    }
-  });
-
-  return deferred.promise;
-}
-
-function sessionAcceptFlow(invite, body) {
-  let deferred = q.defer();
-  let user;
-
-  models.sequelize.transaction().then(function(t) {
-    return User.create({ email: invite.AccountUser.email, password: body.password, confirmedAt: new Date() }, { transaction: t }).then(function(result) {
-      user = result;
-      return invite.AccountUser.update({ UserId: user.id, active: true }, { transaction: t });
-    }).then(function() {
-      let params = sessionMemberParams(invite, t);
-      return sessionMemberService.createWithTokenAndColour(params);
-    }).then(function() {
-      return invite.update({ status: 'confirmed' }, { transaction: t });
-    }).then(function() {
-      if(body.social) {
-        body.social.user = { id: user.id };
-        return socialProfileService.createPromise(body.social, t);
+function findInvite(token) {
+  return new Bluebird((resolve, reject) => {
+    Invite.find({ include: [Account, AccountUser, User], where: { token: token, $or: [{ status: 'pending' }, { status: 'inProgress' }] } }).then(function(result) {
+      if(result) {
+        resolve(result);
       }
       else {
-        return t.commit();
+        reject(MessagesUtil.invite.notFound);
       }
-    }).catch(function(error) {
-      throw error;
     });
-  }).then(function() {
-    deferred.resolve({ message: MessagesUtil.invite.confirmed, user: user });
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
-  });
+  })
+};
 
-  return deferred.promise;
+function updateEmailStatus(id, emailStatus) {
+  return new Bluebird((resolve, reject) => {
+    Invite.update({ emailStatus: emailStatus }, {where: {id: id} }).then(() => {
+      resolve();
+    }).catch((error) => {
+      reject(error);
+    });
+  })
 }
 
-function canAddSessionMember(invite) {
-  let deferred = q.defer();
-  let where = { where: { sessionId: invite.sessionId, role: invite.role } };
+function declineInvite(token) {
+  return new Bluebird((resolve, reject) => {
+    findInvite(token).then((invite) => {
+      invite.update({ status: 'rejected' }).then(() => {
+        resolve({invite, message: MessagesUtil.invite.declined});
+      }, (error) => {
+        reject(filters.errors(error))
+      }).catch(function(error) {
+        reject(filters.errors(error))
+      });
+    }, (error) => {
+      reject(error)
+    })
+  })
+};
 
-  if(invite.role == 'facilitator') {
-    models.SessionMember.find(where).then(function(sessionMember) {
-      if(invite.accountUserId == sessionMember.accountUserId) {
-        deferred.resolve();
+function findUserInSystemByEmail(email) {
+  return User.find({where: {email: email}})
+}
+function checkUser(invite, user, params, transaction) {
+  return new Bluebird((resolve, reject) => {
+    if (user) {
+      resolve()
+    }else {
+      if (!params.password) {
+        reject("This invite is for new user need password for confirmation")
+      }else {
+        resolve()
       }
-      else {
-        deferred.reject(MessagesUtil.invite.inviteExpired);
-      }
-    });
-  }
-  else {
-    models.Session.find({ where: { id: invite.sessionId } }).then(function(session) {
-      models.SessionMember.count(where).then(function(c) {
-        let allowedCount = {
-          participant: session.type == 'forum' ? -1 : 8,
-          observer: -1
-        };
+    }
+  });
+}
 
-        if(c < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
-          deferred.resolve();
+function checSession(invite, user, params, transaction) {
+  return new Bluebird((resolve, reject) => {
+    if (!invite.sessionId) { return resolve()}
+
+    let where = { where: { sessionId: invite.sessionId, role: invite.role }, transaction: transaction };
+    if(invite.role == 'facilitator') {
+      models.SessionMember.find(where).then(function(sessionMember) {
+        if(invite.accountUserId == sessionMember.accountUserId) {
+          resolve();
         }
         else {
-          deferred.reject(MessagesUtil.invite.sessionIsFull);
+          reject(MessagesUtil.invite.inviteExpired);
         }
       });
-    });
-  }
+    }
+    else {
+      models.Session.find({ where: { id: invite.sessionId }, transaction: transaction }).then(function(session) {
+        models.SessionMember.count(where).then(function(count) {
+          // TODO: Need to move to session member service or session service
+          const allowedCount = {
+            participant: session.type == 'forum' ? -1 : 8,
+            observer: -1
+          };
 
-  return deferred.promise;
+          if(count < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
+            resolve();
+          }
+          else {
+            reject(MessagesUtil.invite.sessionIsFull);
+          }
+        });
+      });
+    }
+  })
 }
 
-function sessionMemberParams(invite, t) {
-  return {
-    sessionId: invite.sessionId,
-    accountUserId: invite.accountUserId,
-    username: invite.AccountUser.firstName,
-    role: invite.role,
-    t: t
-  };
+function createUserIfNecessary(invite, user, params, transaction) {
+  return new Bluebird((resolve, reject) => {
+    if (!user) {
+      let createParams = {
+        confirmedAt: new Date(),
+        password: params.password,
+        email: invite.AccountUser.email
+      }
+
+      User.create(createParams, { transaction: transaction } ).then((newUser) => {
+        let updateAssociateDate = [
+          (newUser, params, transaction) => {;
+            updateAccountUsers(newUser, transaction);
+          }
+        ]
+
+        if (params.social) {
+          let addSocialProfil = (user, params, transaction) => {
+            params.social.user = { id: user.id };
+            socialProfileService.createPromise(params.social, transaction)
+          }
+          updateAssociateDate.push(addSocialProfil)
+        }
+
+        Bluebird.each(updateAssociateDate, (step) => {
+          return step(newUser, params, transaction)
+        }).then(() => {
+          resolve(newUser)
+        }, (error) => {
+          reject(filters.errors(error))
+        })
+      }, (error) => {
+        reject(filters.errors(error))
+      })
+    }else{
+      resolve(user)
+    }
+  })
+}
+
+function createSessionMemberIfNecessary(invite, _user, _params, transaction) {
+  return new Bluebird((resolve, reject) => {
+    if(invite.sessionId) {
+      let params = {
+        sessionId: invite.sessionId,
+        accountUserId: invite.accountUserId,
+        username: invite.AccountUser.firstName,
+        role: invite.role,
+        t: transaction
+      };
+      sessionMemberService.createWithTokenAndColour(params).then(() => {
+        resolve();
+      }, function(error) {
+        reject(filters.errors(error));
+      });
+    } else {
+      resolve();
+    }
+  })
+}
+
+function updateAccountUsers(newUser, transaction) {
+  return new Bluebird((resolve, reject) => {
+    AccountUser.update({"UserId": newUser.id}, {where: {"UserId": null, email: { ilike: newUser.email } }, transaction: transaction}).then(() =>{
+      resolve();
+    });
+  })
+}
+
+function acceptInvite(token, params={}) {
+  return new Bluebird((resolve, reject) => {
+    let inviteAcceptFlow = [
+      (invite, user, params, transaction) => {
+        return checkUser(invite, user, params, transaction)
+      },
+      (invite, user, params, transaction) => {
+        return checSession(invite, user, params, transaction)
+      },
+      (invite, user, params, transaction) => {
+        return createUserIfNecessary(invite, user, params, transaction)
+      },
+      (invite, _user, _params, transaction) => {
+        return invite.update({ status: 'confirmed' }, {transaction: transaction})
+      },
+      (invite, _user, _params, transaction) => {
+        return setAccountUserActive(invite, transaction)
+      },
+      (invite, _user, _params, transaction) => {
+        return createSessionMemberIfNecessary(invite, transaction)
+      },
+      (invite, _user, _params, transaction) => {
+        return shouldUpdateRole(invite.AccountUser, invite.role, transaction)
+      }
+    ]
+
+    findInvite(token).then((invite) => {
+      findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
+        models.sequelize.transaction().then((transaction) => {
+          Bluebird.each(inviteAcceptFlow, (acceptStep) => {
+            return acceptStep(invite, user, params, transaction);
+          }).then(() => {
+            transaction.commit().then(() => {
+              resolve({invite, user, message: MessagesUtil.invite.confirmed});
+            })
+          }, (error) => {
+            transaction.rollback().then(() => {
+              reject(error);
+            });
+          });
+        });
+      });
+    }, (error) => {
+      reject(error)
+    });
+  })
+}
+
+function shouldUpdateRole(accountUser, newRole, transaction) {
+  return new Bluebird((resolve, reject) => {
+    let roles = ['observer', 'participant', 'facilitator', 'accountManager', 'admin'];
+
+    if(roles.indexOf(newRole) > roles.indexOf(accountUser.role)) {
+      accountUser.update({ role: newRole }, {transaction: transaction}).then(() => {
+        resolve()
+      },(error) => {
+        reject(filters.errors(error))
+      })
+    }
+    else {
+      resolve()
+    }
+  })
+}
+
+function setAccountUserActive(invite, transaction) {
+  return new Bluebird((resolve, reject) => {
+    AccountUser.update({active: true, status: 'active'}, { where: { id: invite.accountUserId }, transaction: transaction, returning: true }).then((result) => {
+      resolve(result[1][0]);
+    },(err) => {
+      reject(filters.errors(error));
+    })
+  })
 }
 
 function acceptSessionInvite(token) {
@@ -702,8 +690,7 @@ function prepareMailParams(invite, session, receiver, facilitator) {
   return deferred.promise;
 }
 
-function populateMailParamsWithColors(params, session)
-{
+function populateMailParamsWithColors(params, session){
   let deferred = q.defer();
 
   _.each(brandProjectConstants.preferenceColours, function (value, key) {
@@ -734,45 +721,20 @@ function populateMailParamsWithColors(params, session)
   return deferred.promise;
 }
 
-function removeAllAssociatedDataOnNewUser(invite, callback) {
-  async.waterfall([
-    function(cb) {
-      User.find({ where: { id: invite.userId } }).then(function(user) {
-        if(user) {
-          cb(null, user);
-        }
-        else {
-          cb('Not found user');
-        }
-      }).catch(function(error) {
-        cb(filters.errors(error));
-      });
-    },
-    function(user, cb) {
-      user.destroy().then(function() {
-        cb();
-      }).catch(function(error) {
-        cb(filters.errors(error));
-      });
-    }
-  ], function(error) {
-    callback(error, MessagesUtil.invite.removed);
-  });
-}
-
 module.exports = {
   messages: MessagesUtil.invite,
+  sendInvite: sendInvite,
+  updateEmailStatus: updateEmailStatus,
   createBulkInvites: createBulkInvites,
   createInvite: createInvite,
   findAndRemoveInvite: findAndRemoveInvite,
   removeInvite: removeInvite,
   findInvite: findInvite,
-  acceptInviteExisting: acceptInviteExisting,
-  acceptInviteNew: acceptInviteNew,
+  acceptInvite: acceptInvite,
   declineInvite: declineInvite,
   declineSessionInvite: declineSessionInvite,
   acceptSessionInvite: acceptSessionInvite,
-  sessionAccept: sessionAccept,
   createFacilitatorInvite: createFacilitatorInvite,
-  populateMailParamsWithColors: populateMailParamsWithColors
+  populateMailParamsWithColors: populateMailParamsWithColors,
+  updateToFacilitator: updateToFacilitator
 };

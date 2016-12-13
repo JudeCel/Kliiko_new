@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 "use strict";
 /**
  * Module dependencies.
@@ -11,8 +10,6 @@ var express = require('express');
 var app = require('../app');
 var debug = require('debug')('kliiko:server');
 var http = require('http');
-var models = require("../models");
-var _ = require('lodash');
 
 /**
  * Get port from environment and store in Express.
@@ -21,8 +18,6 @@ var _ = require('lodash');
 var port = normalizePort(process.env.SERVER_PORT);
 var environment = process.env.NODE_ENV;
 app.set('port', port);
-
-
 
 switch (environment) {
   case 'build':
@@ -38,22 +33,11 @@ switch (environment) {
     break;
 }
 
-/**
- * Create HTTP server.
- */
- // if (cluster.isMaster && app.get('env') != "development") {
- //   console.log(`Cluster count: ${numCPUs}`);
- //  // Fork workers.
- //  for (var i = 0; i < numCPUs; i++) {
- //    cluster.fork();
- //  }
- //
- //  cluster.on('exit', (worker, code, signal) => {
- //    console.log(`worker ${worker.process.pid} died`);
- //  });
-// } else {
+ /** Create HTTP server.
   // Workers can share any TCP connection
   // In this case it is an HTTP server
+*/
+
   var server = http.createServer(app);
   /**
   * Listen on provided port, on all network interfaces.
@@ -61,8 +45,6 @@ switch (environment) {
   server.listen(port);
   server.on('error', onError);
   server.on('listening', onListening);
-
- // server.maxConnections = 20;
 
 /**
  * Normalize a port into a number, string, or false.

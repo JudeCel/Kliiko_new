@@ -134,6 +134,8 @@
       }
 
       initStep().then(function(stepNumber) {
+        vm.searchingParticipants = false;
+        vm.searchingObservers = false;
         vm.currentStep = stepNumber;
       });
     }
