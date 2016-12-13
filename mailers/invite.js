@@ -7,7 +7,7 @@ var mailHelper = require('./mailHelper');
 var mailTemplateService = require('../services/mailTemplate');
 
 var mailFrom = helpers.mailFrom();
-var transporter = helpers.createTransport();
+var { sendMail } = require('./adapter');
 
 function sendInviteAccountManager(inviteParams, callback) {
   let accountId = null;
@@ -28,7 +28,7 @@ function sendInviteAccountManager(inviteParams, callback) {
           return callback(error);
         }
 
-        transporter.sendMail({
+        sendMail({
           from: mailFrom,
           to: inviteParams.email,
           subject: process.env.MAIL_FROM_NAME + ' - Join account',

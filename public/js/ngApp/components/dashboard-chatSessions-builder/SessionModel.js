@@ -6,8 +6,8 @@
    */
   angular.module('KliikoApp').factory('SessionModel', SessionModel);
 
-  SessionModel.$inject = ['$q', 'globalSettings', '$resource'];
-  function SessionModel($q, globalSettings, $resource)  {
+  SessionModel.$inject = ['$q', 'globalSettings', '$resource', 'fileUploader'];
+  function SessionModel($q, globalSettings, $resource, fileUploader)  {
     var apiPath = globalSettings.restUrl+'/sessionBuilder/:id/:path/:arg';
     var sessionBuilderRestApi = $resource(apiPath, { id : '@id', arg: '@arg' }, {
       post: { method: 'POST' },
@@ -75,9 +75,9 @@
      */
     function SessionModel(params) {
       var self = this;
-
       var params = params || {};
       self.id = null;
+      self.socket = null;
       if (arguments && arguments.length && arguments.length == 1) {
         self.id = arguments[0];
       } else {
@@ -86,8 +86,35 @@
           if (params.hasOwnProperty(p)) self[p] = params[p];
         }
       }
+    }
 
+    function socketConnection(self) {
+      self.socket = new Phoenix.Socket(globalSettings.socketServerUrl, {
+        params: {
+          token: fileUploader.token
+        },
+        logger: function(kind, msg, data) { console.log(kind +":"+ msg +":",  data) },
+      });
 
+      self.socket.onError( function(event){
+        console.error(event);
+      });
+
+      if (self.id) {
+        var channel = self.socket.channel("sessionsBuilder:" + self.id);
+        if (channel.state != 'joined') {
+          channel.on("inviteUpdate", function(resp) {
+            self.steps.step4.participants.map(function(item) {
+              if(resp.id == item.invite.id ) {
+                item.invite.emailStatus = resp.emailStatus;
+                item.invite.status = resp.status;
+              }
+            });
+          });
+          channel.join();
+        }
+        self.socket.connect();
+      }
     }
 
     function init() {
@@ -102,9 +129,8 @@
         self.getRemoteData().then(resolve, reject);
       }
 
-      return deferred.promise;
-
       function resolve(res) {
+        socketConnection(self)
         deferred.resolve(res);
       }
 
@@ -112,6 +138,7 @@
         deferred.reject(err);
       }
 
+      return deferred.promise;
     }
 
     function getSessionMailTemplateStatus() {

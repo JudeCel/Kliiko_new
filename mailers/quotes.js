@@ -3,8 +3,7 @@
 var helpers = require('./helpers');
 var q = require('q');
 var mailFrom = helpers.mailFrom();
-var transporter = helpers.createTransport();
-
+var { sendMail } = require('./adapter');
 
 function sendQuote(params) {
   let deferred = q.defer();
@@ -13,7 +12,7 @@ function sendQuote(params) {
     if(err) {
       deferred.reject(err);
     }else{
-      transporter.sendMail({
+      sendMail({
         from: params.email,
         to: process.env.GET_A_QUOTE_EMAIL,
         subject: subject(params.firstName, params.lastName),

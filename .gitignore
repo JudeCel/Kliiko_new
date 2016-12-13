@@ -3,6 +3,7 @@
 /public/css/compiled/*
 /public/css/main.css
 /modelsTmp
+/logs
 /node_modules/*
 /bower_components/*
 /static/uploads/*
@@ -13,6 +14,7 @@
 /npm-debug.log
 /.tmp/templates.js
 .env
+/logs
 /chatRoom/public/uploads/*
 .vscode/settings.json
 **/.DS_Store
