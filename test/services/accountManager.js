@@ -86,12 +86,15 @@ describe('SERVICE - AccountManager', function() {
                   userId: accountUser.UserId,
                   accountUserId: accountUser.id,
                   accountId: data.accountId,
-                  userType: 'new',
                   role: accountUser.role
                 };
 
-                assert.deepEqual(params, returnParams);
-                done();
+                try {
+                  assert.deepEqual(params, returnParams);
+                  done();
+                } catch (e) {
+                  done(e);
+                }
               });
             }, function(error) {
               done(error);
@@ -157,28 +160,35 @@ describe('SERVICE - AccountManager', function() {
       subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {
         models.SubscriptionPreference.update({'data.accountUserCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
           accountManagerService.createOrFindAccountManager(data.user, data.body, data.accountId).then(function(params) {
-            inviteService.createInvite(params).then(function(result) {
-              let userParams = { accountName: 'newname', password: 'newpassword' };
-              inviteService.acceptInviteNew(result.invite.token, userParams, function(error, message) {
-                if(error) {
-                  done(error);
-                }
+            try {
+              inviteService.createInvite(params).then((invite) => {
+                let userParams = { password: 'newpassword' };
+                inviteService.acceptInvite(invite.token, userParams).then(({invite, user, message}) => {
+                  async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 2 }), function(error, result) {
+                    if(error) {
+                      done(error);
+                    }
+                    accountManagerService.findAccountManagers(data.accountId).then(function(results) {
+                      let subject = results[0];
+                      try {
+                        assert.equal(subject.status, 'active');
+                        assert.equal(subject.AccountId, data.accountId);
+                        done();
+                      } catch (e) {
+                        done(e);
+                      }
 
-                async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 2 }), function(error, result) {
-                  if(error) {
-                    done(error);
-                  }
-                  accountManagerService.findAccountManagers(data.accountId).then(function(results) {
-                    let subject = results[0];
-                    assert.equal(subject.status, 'active');
-                    assert.equal(subject.AccountId, data.accountId);
-                    done();
-                  }, function(error) {
-                    done(error);
+                    }, function(error) {
+                      done(error);
+                    });
                   });
+                }, (error) => {
+                  done(error);
                 });
               });
-            });
+            } catch (e) {
+              done(e);
+            }
           }, function(error) {
             done(error);
           });
@@ -235,11 +245,7 @@ describe('SERVICE - AccountManager', function() {
             AccountUser.find({ where: { email: data.body.email } }).then(function(accountUser) {
               inviteService.createInvite(params).then(function(result) {
                 let userParams = { accountName: 'newname', password: 'newpassword' };
-                inviteService.acceptInviteNew(result.invite.token, userParams, function(error, message) {
-                  if(error) {
-                    done(error);
-                  }
-
+                inviteService.acceptInvite(result.token, userParams).then((error, message) => {
                   async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 2 }), function(error, result) {
                     if(error) {
                       done(error);
@@ -255,6 +261,8 @@ describe('SERVICE - AccountManager', function() {
                       done(error);
                     });
                   });
+                }, (error) => {
+                  done(error);
                 });
               });
             });

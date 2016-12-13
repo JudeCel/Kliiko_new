@@ -621,42 +621,17 @@ function inviteParams(sessionId, data) {
     },
     include: [models.AccountUser]
   }).then(function(clUsers) {
-    let emails = [];
-    let accountId = clUsers[0].AccountUser.AccountId;
-
-    let params = _.map(clUsers, function(clUser) {
-      emails.push(clUser.AccountUser.email);
+    let params = _.map(clUsers, (clUser) => {
       return {
         email: clUser.AccountUser.email,
         accountUserId: clUser.accountUserId,
         sessionId: sessionId,
         role: data.role,
         userId: clUser.userId,
-        userType: clUser.AccountUser.UserId ? 'existing' : 'new'
       }
     });
-
-    models.User.findAll({
-      where: {
-        email: { $in: emails },
-      }
-    }).then(function(results) {
-        _.each(results, function(user) {
-          _.each(params, function(inviteParam) {
-            if(inviteParam.email == user.email) {
-              inviteParam.userType = 'existing';
-              inviteParam.userId = user.id;
-            }
-          })
-        });
-
       deferred.resolve(params);
     });
-
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
-  });
-
   return deferred.promise;
 }
 
@@ -880,7 +855,7 @@ function step4and5Queries(session, role) {
             role: role,
             status: { $ne: 'confirmed' }
           },
-          attributes: ['id', 'status']
+          attributes: ['id', 'status', 'emailStatus']
         }]
       }).then(function(accountUsers) {
         _.map(accountUsers, function(accountUser) {

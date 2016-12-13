@@ -82,11 +82,6 @@ function setEmailConfirmationToken(email, callback) {
 function checkTokenExpired(token, callback) {
   getUserByToken(token, function (err, user) {
     if (err || !user) { return callback(new Error(MessagesUtil.emailConfirmation.error.user)) };
-
-    let tokenCreated = new Date(user.get("confirmationToken"));
-    let tokenEnd = tokenCreated.setHours(tokenCreated.getHours() + 24);
-    let now = new Date().getTime();
-    if (now > tokenEnd) { user = null };
     callback(null, user);
   });
 }

@@ -8,7 +8,7 @@ var sanitizeHtml = require('sanitize-html');
 var _ = require('lodash');
 
 var mailFrom = helpers.mailFrom();
-var transporter = helpers.createTransport();
+var { sendMail } = require('./adapter');
 
 function preparePathData (attribs, resources) {
   let filename = attribs.src.split('/');
@@ -69,7 +69,7 @@ function formatMailTemplate(tepmlateHtml) {
 
 function sendMailWithTemplate(template, mailParams, callback) {
   let parsedTemplate = formatMailTemplate(template.content);
-  transporter.sendMail({
+  sendMail({
     from: mailFrom,
     to: mailParams.email,
     subject: template.subject,
@@ -98,7 +98,7 @@ function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {
     let calendarData =  cal.toString();
     let urlCalendarData = encodeURI(new Buffer(calendarData).toString('base64'));
 
-    transporter.sendMail({
+    sendMail({
       from: mailFrom,
       to: mailParams.email,
       subject: template.subject,

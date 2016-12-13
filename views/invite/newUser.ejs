@@ -1,0 +1,42 @@
+<% include ../header %>
+<div class='login-container center-block'>
+  <div class='tab-content border-yellow text-font-family'>
+    <div id='login' class='tab-pane fade in active'>
+      <h1 class='text-center text-gray-dark'>Choose Your Password</h1>
+        <h5 class='text-center text-gray-dark'>
+          Create your own memorable password with at least 7 characters.
+        </h5>
+        <div class='error-column has-error text-center' id='warning-email-password'>
+          <% errors.forEach(function(error) { %>
+            <div class="error-field"><%= error %></div>
+          <% }); %>
+          <button type="button" class="close">×</button>
+        </div>
+        <form class='non-resubmitable' method='post' action='/invite/<%= invite.token %>/accept' novalidate>
+          <div class='container-fluid'>
+            <div class='row'>
+              <div class='col-xs-12'>
+                <div class='form-group text-left text-gray-dark table-v-content-middle'>
+                  <div class='row'>
+                    <div class='col-xs-4'>
+                      <label class='pull-right' for='password'>Password <img src='/icons/lock.png' /></label>
+                    </div>
+                    <div class='col-xs-8'>
+                      <input type='password' class='form-control center-block border-brown' name='password' id='password' placeholder='Password'>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class='col-xs-12'>
+                <button type='submit' value='Submit' class='btn border-yellow text-brown-light background-transp pull-right'>Let's Go</button>
+              </div>
+              <div class='col-xs-12 invisible'>#</div>
+            </div>
+          </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+<% include ../footer %>

@@ -21,7 +21,6 @@
 
       usersRestApi.get({}, function (res) {
         dbg.log2('#KliikoApp.user > get user > server respond >', res);
-
         if(res.error) {
           deferred.reject(res.error);
         }

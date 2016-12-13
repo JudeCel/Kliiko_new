@@ -7,12 +7,11 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     token: { type : DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     sentAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: true } },
-    expireAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: true } },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles },
 
     accountUserId: { type: DataTypes.INTEGER, allowNull: false },
     status: { type: DataTypes.ENUM, allowNull: false, values: constants.inviteStatuses, defaultValue: 'pending' },
-    userType: { type: DataTypes.ENUM, allowNull: false, values: ['existing', 'new'], defaultValue: 'existing' },
+    emailStatus: { type: DataTypes.ENUM, allowNull: false, values: constants.inviteEmailStatuses, defaultValue: 'waiting' }
   }, {
     classMethods: {
       associate: function(models) {
