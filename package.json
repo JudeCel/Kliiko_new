@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/server",
-    "start_pm2": "./node_modules/.bin/pm2 start ./bin/server",
+    "start_pm2": "./node_modules/.bin/pm2 start ecosystem.config.js",
     "pm2_logs": "./node_modules/.bin/pm2 logs",
     "test": "./node_modules/.bin/mocha test",
     "gulp": "./node_modules/.bin/gulp",
