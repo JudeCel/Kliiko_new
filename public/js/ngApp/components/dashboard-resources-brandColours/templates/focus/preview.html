@@ -1,6 +1,22 @@
 <div class='brandColours' ng-attr-style='color: {{ previewScheme.font }};'>
   <div class='row' ng-attr-style='background-color: {{ previewScheme.browserBackground }};'>
-    <div class='col-xs-12 header' ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/focus/header.html'"></div>
+    <div class='col-xs-12 header'>
+      <div class='row'>
+        <div class='col-xs-3'>
+          <label class='text-no-bold'>Talk Radio</label><br />
+          <div class='input-group'>
+            <input type='text' class='form-control border-radius-none ng-autofocus-skip' placeholder='Morning Story' disabled>
+            <span class='input-group-addon border-radius-none'><span class='glyphicon glyphicon-chevron-down' aria-hidden='true'></span></span>
+          </div>
+        </div>
+        <div class='col-xs-9'>
+          <img class='pull-right logo' width='20%' src='/icons/Klzii_RGB_72.png'/>
+          <span class='headerButtons pull-right glyphicon glyphicon-off' aria-hidden='true' ng-attr-style='background-color: {{ previewScheme.headerButton }};'></span>
+          <span class='headerButtons pull-right glyphicon glyphicon-question-sign' aria-hidden='true' ng-attr-style='background-color: {{ previewScheme.headerButton }};'></span>
+          <span class='headerButtons pull-right glyphicon glyphicon-comment' aria-hidden='true' ng-attr-style='background-color: {{ previewScheme.headerButton }};'></span>
+        </div>
+      </div>
+    </div>
 
     <div class='col-xs-12'>
       <div class='col-xs-12 chatContainer focusType' ng-attr-style='background-color: {{ previewScheme.mainBackground }}; border-color: {{ previewScheme.mainBorder }};'>
@@ -23,8 +39,21 @@
               <span class="chatMiddleButtons glyphicon glyphicon-file" aria-hidden="true"></span>
             </div>
             <div class="participants">
-              <div ng-repeat="column in [1, 2, 3, 4]">
-                <span ng-repeat="index in [column * 2 - 1, column * 2]" ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/focus/participant.html'"></span>
+              <div>
+                <span><img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[0] }};" /></span>
+                <span><img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[1] }};" /></span>
+              </div>
+              <div>
+                <span><img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[2] }};" /></span>
+                <span><img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[3] }};" /></span>
+              </div>
+              <div>
+                <span><img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[4] }};" /></span>
+                <span><img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[5] }};" /></span>
+              </div>
+              <div>
+                <span><img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[6] }};" /></span>
+                <span><img src='/images/avatar.png' alt='avatar' ng-attr-style="border-color: {{ bcc.memberColours.participants[7] }};" /></span>
               </div>
             </div>
           </div>
@@ -38,7 +67,19 @@
             </div>
           </div>
         </div>
-        <div class='row bottomInput' ng-include="'/js/ngApp/components/dashboard-resources-brandColours/templates/focus/footer.html'"></div>
+        <div class='row bottomInput'>
+          <div class='col-xs-12'>
+            <div class='input-group'>
+              <span class='input-group-addon circle-addon border-radius-none'>
+                <img src='/icons/smile.png' alt='Circle here' />
+              </span>
+              <input type='text' class='form-control message-input border-radius-none ng-autofocus-skip' placeholder='Message'>
+              <span class='input-group-addon border-radius-none post-button'>
+                POST
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
