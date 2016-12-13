@@ -13,6 +13,7 @@ var socialProfileService = require('./socialProfile');
 var inviteMailer = require('../mailers/invite');
 var mailerHelpers = require('../mailers/mailHelper');
 var constants = require('../util/constants');
+var backgroundQueues = require('../util/backgroundQueue');
 var MessagesUtil = require('./../util/messages');
 
 var uuid = require('node-uuid');
@@ -38,7 +39,7 @@ function createBulkInvites(arrayParams) {
     returning: true
   }).then((invites) => {
     Bluebird.each(invites, (invite) => {
-      return enqueue("invites", "invite", [invite.id] );
+      return enqueue(backgroundQueues.queues.invites, "invite", [invite.id] );
     }).then(() => {
       deferred.resolve(invites);
     }, (error) => {
@@ -142,7 +143,7 @@ function createInvite(params) {
       sentAt: new Date(),
       role: params.role
     }).then(function(result) {
-      enqueue("invites", "invite", [result.id]).then(() => {
+      enqueue(backgroundQueues.queues.invites, "invite", [result.id]).then(() => {
         resolve(result);
       }, (error) => {
         reject(error);
@@ -162,6 +163,7 @@ function simpleParams(invite, message) {
   return { invite: invite, message: message }
 }
 
+// TODO: Need explain function!
 function sendInvite(inviteId, deferred) {
   if (!deferred) {
     deferred = q.defer();

@@ -1,11 +1,13 @@
 "use strict";
 const NR = require("node-resque");
+const _ = require('lodash')
 const connectionDetails = require('../config/backgroudServer.js');
-const { setUpQueue, jobsList} = require('../services/backgroundQueue.js');
+const {jobsList} = require('../services/backgroundQueue.js');
+const backgroundQueues = require('../util/backgroundQueue');
 
 const multiWorker = new NR.multiWorker({
   connection: connectionDetails,
-  queues: ['invites'],
+  queues: _.values(backgroundQueues.queues),
   minTaskProcessors:   1,
   maxTaskProcessors:   10,
   checkTimeout:        1000,

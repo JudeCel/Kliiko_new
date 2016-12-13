@@ -3,7 +3,7 @@
 const NR = require("node-resque");
 const connectionDetails = require('../config/backgroudServer.js');
 let Bluebird = require('bluebird');
-var queue = null
+let queue = null;
 const invitesJobs = require('./backgroundJobs/invites/index.js');
 
 const jobs = {
@@ -23,7 +23,7 @@ const setUpQueue = (_req, _res, next) => {
         tmpQueue.on('error', (error) => { console.log(error) })
         queue = tmpQueue
         console.log("node-resque successfully started");
-        next()
+        next();
       })
     }
 }
