@@ -13,6 +13,7 @@
 /npm-debug.log
 /.tmp/templates.js
 .env
+/logs
 /chatRoom/public/uploads/*
 .vscode/settings.json
 **/.DS_Store
