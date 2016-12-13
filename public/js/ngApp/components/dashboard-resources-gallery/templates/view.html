@@ -1,5 +1,5 @@
 {{ typeOf = gc.isTypeOf(resource); "" }}
-<iframe type='text/html' ng-src='{{ gc.youtubeUrl(resource.url.full) }}' frameBorder='0' ng-if='typeOf.videoService' />
+<iframe type='text/html' ng-src='{{ gc.videoServiceUrl(resource.url.full, resource.source) }}' frameBorder='0' ng-if='typeOf.videoService' />
 
 <img ng-src='{{ resource.url.thumb }}' ng-if='typeOf.image || typeOf.brandLogo'/>
 

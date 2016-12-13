@@ -36,7 +36,7 @@
           <a ng-if='!typeOf.videoService' href='{{ resource.url.full }}' target='_blank'>
             <span class='text-uppercase'>{{ resource.type }}/{{ resource.extension || resource.scope }}</span>
           </a>
-          <a ng-if='typeOf.videoService' ng-href='{{ gc.normalYoutubeUrl(resource.url.full) }}' target='_blank'>
+          <a ng-if='typeOf.videoService' ng-href='{{ gc.normalVideoServiceUrl(resource.url.full, resource.source) }}' target='_blank'>
             <span class='text-uppercase'>{{ resource.type }}/{{ resource.extension || resource.scope }}</span>
           </a>
           <span ng-if='resource.stock && app.accountUser.isAdmin'>(<u ng-click='gc.replaceStockResource(resource, upload)'>Replace stock file</u>)</span>

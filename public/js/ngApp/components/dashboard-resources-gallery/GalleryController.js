@@ -54,8 +54,8 @@
     vm.massAction = massAction;
     vm.filterResources = filterResources;
     vm.getFilterResources = getFilterResources;
-    vm.youtubeUrl = youtubeUrl;
-    vm.normalYoutubeUrl = normalYoutubeUrl;
+    vm.videoServiceUrl = videoServiceUrl;
+    vm.normalVideoServiceUrl = normalVideoServiceUrl;
     vm.resourceUrl = resourceUrl;
     vm.fileSelected = fileSelected;
     vm.setModalTab = setModalTab;
@@ -443,12 +443,26 @@
       return array;
     }
 
-    function normalYoutubeUrl(url) {
-      return 'https://www.youtube.com/watch?v=' + url;
+    function normalVideoServiceUrl(url, source) {
+      switch (source) {
+        case "youtube":
+          return 'https://www.youtube.com/watch?v=' + url;
+        case "vimeo":
+          return 'https://vimeo.com/' + url;
+        default:
+          return null;
+      }
     }
 
-    function youtubeUrl(url) {
-      return $sce.trustAsResourceUrl('https://www.youtube.com/embed/' + url);
+    function videoServiceUrl(url, source) {
+      switch (source) {
+        case "youtube":
+          return $sce.trustAsResourceUrl('https://www.youtube.com/embed/' + url);
+        case "vimeo":
+          return $sce.trustAsResourceUrl('https://player.vimeo.com/video/' + url);
+        default:
+          return null;
+      }
     }
 
     function resourceUrl(url) {
