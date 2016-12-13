@@ -89,7 +89,7 @@
     }
 
     function socketConnection(self) {
-      self.socket = new Phoenix.Socket('ws://127.0.0.1:3000/socketDashboard', {
+      self.socket = new Phoenix.Socket(globalSettings.socketServerUrl, {
         params: {
           token: fileUploader.token
         },
