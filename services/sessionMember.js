@@ -68,7 +68,8 @@ function processSessionMember(accountUser, sessionMember, session, params, defer
       correctFunction = updateHelper;
     }else{
       correctFunction = createHelper;
-      params.avatarData = accountUser.gender == 'male' ? constants.sessionMemberMan : constants.sessionMemberWoman;
+
+      params.avatarData = getAvatarData(accountUser.gender);
       if(sessionMemberParams.role == 'participant') {
         let participants = brandProjectConstants.memberColours.participants;
         let length = Object.keys(participants).length;
@@ -80,6 +81,16 @@ function processSessionMember(accountUser, sessionMember, session, params, defer
     correctFunction(deferred, sessionMemberParams, sessionMember);
   })
 
+}
+
+function getAvatarData(gender) {
+  if (gender == 'male') {
+    return constants.sessionMemberMan;
+  } else if (gender == 'female') {
+    return constants.sessionMemberWoman;
+  } else {
+    return constants.sessionMemberNoGender;
+  }
 }
 
 function updateHelper(deferred, params, sessionMember) {
@@ -235,7 +246,7 @@ function refreshAccountUsersRoleAsync(accountUsers, resolve, reject) {
       } else if (sessionMember.role == "facilitator") {
         role = "facilitator";
         break;
-      } 
+      }
     }
     if (role != accountUser.role) {
       accountUser.updateAttributes({role: role}).then(function() {
