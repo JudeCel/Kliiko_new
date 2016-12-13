@@ -438,7 +438,6 @@ describe('SERVICE - SessionBuilder', function() {
       return {
         token: 'randomtoken',
         sentAt: new Date(),
-        expireAt: new Date(),
         role: 'facilitator',
         sessionId: sessionId,
         accountUserId: testAccountUser.id
@@ -726,7 +725,6 @@ describe('SERVICE - SessionBuilder', function() {
       return {
         token: 'randomtoken',
         sentAt: new Date(),
-        expireAt: new Date(),
         role: 'participant',
         sessionId: sessionId,
         accountUserId: testAccountUser.id

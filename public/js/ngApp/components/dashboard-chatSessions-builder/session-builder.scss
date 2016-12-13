@@ -44,6 +44,23 @@
       }
     }
 
+    .circle-container {
+      height: 30px;
+
+      .circle-ok {
+        color: white;
+        position: relative;
+        top: -25px;
+        left: 25px;
+        border-radius: 50%;
+        background-color: $green;
+        width: 26px;
+        height: 26px;
+        padding: 5px;
+        font-size: 16px;
+      }
+    }
+
     span.step-name {
       color: $lightGray;
 

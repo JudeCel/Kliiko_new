@@ -19,21 +19,6 @@ describe('Mailer helpers', () => {
     });
   });
 
-  describe('createTransport ', () => {
-    describe('success ', () => {
-      it('creates a fake transport for testing', (done) =>  {
-
-        let fakeTrans = helpers.createTransport();
-        let fakeData = { datum1: "aString", datum2: 2, datum3: { iAmAnObject: true } };
-        fakeTrans.sendMail(fakeData, function(err, response){
-          assert.equal(response.data,fakeData);
-          done();
-        });
-
-      });
-    });
-  });
-
   describe('renderMailTemplate ', () => {
     describe('success ', () => {
       it('renders a template into a string', (done) =>  {

@@ -26,7 +26,7 @@ gulp.task('default', ['serve-dev', 'watch']);
 
 gulp.task('serve-dev', ['build-js', 'build-css'], function () {
   nodemon({
-    script: 'bin/www',
+    script: 'bin/server',
     ext: 'html js',
     ignore: ['public/**/*']
   })
@@ -110,7 +110,8 @@ var frontendScripts = [
   "public/js/ngApp/appRouter.js",
   "public/js/ngApp/components/**/*.js",
   "public/js/ngApp/filters/**/*.js",
-  "public/js/ngApp/factories/**/*.js"
+  "public/js/ngApp/factories/**/*.js",
+  "node_modules/phoenix/priv/static/phoenix.js"
 ]
 
 var frontendStyles = [

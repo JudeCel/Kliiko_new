@@ -359,9 +359,14 @@
 }
 
 #messenger-area .media .media-body {
-  word-break: break-word;
-  -ms-word-break: break-word;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
   word-wrap: break-word;
+  -ms-word-break: break-word;
+  word-break: break-word;
+  min-width: 100px;
   @media (min-width: 768px) {
     max-width: calc(20vw - 105px);
   }
