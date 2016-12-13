@@ -81,7 +81,6 @@ function processedErrosMessage(errors) {
 function sessionAccept(req, res, next) {
   inviteService.acceptSessionInvite(req.params.token).then(function(result) {
     req.params.token = result.invite.token;
-    // acceptGet(req, res, next);
   }, function(error) {
     req.flash('message', { inviteError: true});
     res.redirect('/login');
@@ -109,7 +108,6 @@ function sessionNotAtAll(req, res, next) {
 module.exports = {
   index: index,
   decline: decline,
-  // acceptGet: acceptGet,
   accept: accept,
   sessionAccept: sessionAccept,
   sessionNotThisTime: sessionNotThisTime,
