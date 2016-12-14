@@ -35,20 +35,8 @@ function createOrFindAccountManager(user, body, accountId) {
       errors = errors || {};
       delete params.role;
       return preValidate(user, accountId, params.email, errors);
-    }).then(function(errors) {
-      if(_.isEmpty(errors)) {
-        return User.find({ where: { email: { ilike: params.email } } });
-      }
-      else {
-        throw errors;
-      }
     }).then(function(existsUser) {
-      if(existsUser) {
-        return inviteExistingUser(existsUser, params, accountId);
-      }
-      else {
-        return inviteNewUser(params, accountId);
-      }
+      return addAccountUser(params, accountId);
     }).then(function(params) {
       deferred.resolve(params);
     }).catch(function(error) {
@@ -165,45 +153,13 @@ function preValidate(user, accountId, email, errors) {
   return deferred.promise;
 }
 
-function inviteNewUser(params, accountId) {
+function addAccountUser(params, accountId) {
   let deferred = q.defer();
 
   createAccountUser(params, null, 'new', accountId).then(function(data) {
-    User.create(userParams(params.email)).then(function(newUser) {
-      AccountUser.update({ UserId: newUser.id }, { where: { id: data.accountUserId } }).then(function() {
-        data.userId = newUser.id;
-        deferred.resolve(data);
-      }, function(error) {
-        deferred.reject(filters.errors(error));
-      });
-    }, function(error) {
-      deferred.reject(filters.errors(error));
-    });
+    deferred.resolve(data);
   }, function(error) {
     deferred.reject(filters.errors(error));
-  });
-
-  return deferred.promise;
-}
-
-function inviteExistingUser(existsUser, params, accountId) {
-  let deferred = q.defer();
-
-  existsUser.getAccounts({ where: { id: accountId } }).then(function(results) {
-    if(!_.isEmpty(results)) {
-      updateAccountUser(existsUser.id, accountId, results[0].AccountUser.id).then(function(params) {
-        deferred.resolve(params);
-      }, function(error) {
-        deferred.reject(filters.errors(error));
-      });
-    } else {
-      createAccountUser(params, existsUser.id, 'existing', accountId).then(function(params) {
-        deferred.resolve(params);
-      }, function(error) {
-        deferred.reject(filters.errors(error));
-      });
-    }
-
   });
 
   return deferred.promise;
