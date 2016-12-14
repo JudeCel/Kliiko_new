@@ -11,7 +11,7 @@ module.exports = (Sequelize, DataTypes) => {
     token: { type: DataTypes.STRING, allowNull: true, validate: { isUnique: validations.unique(Sequelize, 'SessionMember', 'token') } },
     username: { type: DataTypes.STRING, allowNull: false },
     colour: { type: DataTypes.STRING, allowNull: false },
-    avatarData: { type: DataTypes.JSONB, allowNull: false, defaultValue: constants.sessionMemberMan },
+    avatarData: { type: DataTypes.JSONB, allowNull: false, defaultValue: constants.sessionMemberNoGender },
     sessionTopicContext: { type: DataTypes.JSONB, allowNull: false, defaultValue: { } },
     currentTopic: { type: DataTypes.JSONB, allowNull: false, defaultValue: { } },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionMemberRoles },
