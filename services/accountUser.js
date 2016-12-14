@@ -82,7 +82,7 @@ function prepareAccountManagerParams(params, account, user) {
 function create(params, accountId, role, t) {
   let deferred = q.defer();
 
-  AccountUser.create(buidAttrs(validateParams(params, role), accountId, role), { transaction: t }).then(function(result) {
+  AccountUser.create(buidAttrs(validateParams(params), accountId, role), { transaction: t }).then(function(result) {
     deferred.resolve(result);
   }, function(error) {
     deferred.reject(error);
@@ -90,17 +90,14 @@ function create(params, accountId, role, t) {
   return deferred.promise;
 }
 
-function validateParams(params, role) {
-  return validateGender(params, role);
+function validateParams(params) {
+  return validateGender(params);
 }
 
-function validateGender(params, role) {
-  let roles = ['accountManager', 'facilitator', 'observer'];
+function validateGender(params) {
+  params.gender = params.gender ? params.gender : params.gender = "";
 
-  if (_.includes(roles, role)) {
-    params.gender = params.gender ? params.gender : params.gender = "";
-  };
-  return params
+  return params;
 }
 
 function buidAttrs(params, accountId, role) {

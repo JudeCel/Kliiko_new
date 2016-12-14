@@ -31,7 +31,7 @@ function createOrFindAccountManager(user, body, accountId) {
   delete params.id;
 
   canAddAccountManager(accountId).then(function() {
-    AccountUser.build(AccountUserService.validateParams(params, params.role)).validate().then(function(errors) {
+    AccountUser.build(AccountUserService.validateParams(params)).validate().then(function(errors) {
       errors = errors || {};
       delete params.role;
       return preValidate(user, accountId, params.email, errors);
