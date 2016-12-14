@@ -28,8 +28,8 @@ function createWithTokenAndColour(params) {
   let deferred = q.defer();
   params.token = params.token || uuid.v1();
 
-  AccountUser.find({ where: { id: params.accountUserId } }).then(function(accountUser) {
-    SessionMember.find({ where: { sessionId: params.sessionId, accountUserId: params.accountUserId } }).then(function(sessionMember) {
+  AccountUser.find({ where: { id: params.accountUserId }, transaction: params.t }).then(function(accountUser) {
+    SessionMember.find({ where: { sessionId: params.sessionId, accountUserId: params.accountUserId }, transaction: params.t }).then(function(sessionMember) {
       Session.find({ where: { id: params.sessionId} }).then(function(session) {
         processSessionMember(accountUser, sessionMember, session, params, deferred)
       });
@@ -38,11 +38,10 @@ function createWithTokenAndColour(params) {
   return deferred.promise;
 }
 
-
 function setMemberUserName(params, session) {
   let deferred = q.defer();
   SessionMember.findAll({ where: { sessionId: session.id, role: params.role },
-    attributes: ['username']
+    attributes: ['username'], transaction: params.t
   }).then((sessionMembers) => {
     if (session.anonymous && params.role == 'participant') {
       anonymousWord.parseFile().then((result) => {

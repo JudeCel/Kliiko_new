@@ -6,7 +6,7 @@ var mailTemplate = require('./mailTemplate');
 var mailTemplateService = require('../services/mailTemplate');
 
 var mailFrom = helpers.mailFrom();
-var transporter = helpers.createTransport();
+var { sendMail } = require('./adapter');
 var constants = require('../util/constants');
 
 users.sendReactivateOrDeactivate = function(params, callback){
@@ -21,7 +21,7 @@ users.sendReactivateOrDeactivate = function(params, callback){
         }
 
         let reactivatedorDeactivated = params.active ? 'Reactivated' : 'Deactivated';
-        transporter.sendMail({
+        sendMail({
           from: mailFrom,
           to: params.email,
           subject: reactivatedorDeactivated,
@@ -54,7 +54,7 @@ users.sendResetPasswordToken = function(params, callback) {
           return callback(err);
         }
 
-        transporter.sendMail({
+        sendMail({
           from: mailFrom,
           to: params.email,
           subject: process.env.MAIL_FROM_NAME + ' - Reset password',
@@ -87,7 +87,7 @@ users.sendEmailConfirmationToken = function(params, callback) {
           return callback(err);
         }
 
-        transporter.sendMail({
+        sendMail({
           from: mailFrom,
           to: params.email,
           subject: process.env.MAIL_FROM_NAME + ' - Verify Email Address',
@@ -116,7 +116,7 @@ users.sendEmailConfirmationSuccess = function(params, callback) {
           return callback(err);
         }
 
-        transporter.sendMail({
+        sendMail({
           from: mailFrom,
           to: params.email,
           subject: process.env.MAIL_FROM_NAME + ' - Email Confirmation Success',
@@ -139,7 +139,7 @@ users.sendPasswordChangedSuccess = function(params, callback) {
           return callback(err);
         }
 
-        transporter.sendMail({
+        sendMail({
           from: mailFrom,
           to: params.email,
           subject: process.env.MAIL_FROM_NAME + ' - Change password Success',
@@ -170,7 +170,7 @@ users.sendResetPasswordSuccess = function(params, callback) {
           return callback(err);
         }
 
-        transporter.sendMail({
+        sendMail({
           from: mailFrom,
           to: params.email,
           subject: process.env.MAIL_FROM_NAME + ' - Change password Success',

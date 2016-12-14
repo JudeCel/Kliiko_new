@@ -44,6 +44,8 @@ spec:
           value: "production"
         - name: SERVER_CHAT_DOMAIN_URL
           value: "http://chat.test.klzii.com"
+        - name: EVENT_SOCKET_SERVER_URL
+          value: "ws://chat.test.klzii.com/socketDashboard"
         - name: SERVER_CHAT_DOMAIN_PORT
           value: "80"
         - name: REDIS_PORT
