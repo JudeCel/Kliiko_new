@@ -202,7 +202,8 @@ module.exports = {
     updatedSessionTopic: 'Session Topic was successfully updated.',
     error: {
       relatedSession: "Can't delete topic is related session"
-    }
+    },
+    defaultTopicBillboardText: 'Exciting to see you all here, so let\'s get started! Click on the green button below to view the video on how to use this Chat Room.'
   },
   users: {
     agreeTOC: 'You must agree to the Terms & Conditions before Sign up.',

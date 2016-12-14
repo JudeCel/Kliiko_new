@@ -106,7 +106,7 @@ function create(object, callback) {
     contactListService.createDefaultLists(result.id, object.transaction).then(function(contactLists) {
       brandColourService.createDefaultForAccount({ accountId: result.id, type: 'focus', name: 'Default Focus Scheme', colours: {} }, object.transaction).then(function() {
         brandColourService.createDefaultForAccount({ accountId: result.id, type: 'forum', name: 'Default Forum Scheme', colours: {} }, object.transaction).then(function() {
-          topicsService.createDefaultForAccount({ accountId: result.id, name: 'Getting Started', boardMessage: 'Exciting to see you all here, so let\'s get started! Click on the green button below to view the video on how to use this Chat Room.'}, object.transaction).then(function() {
+          topicsService.createDefaultForAccount({ accountId: result.id, name: 'Getting Started', boardMessage: MessagesUtil.topics.defaultTopicBillboardText }, object.transaction).then(function() {
             object.account = result;
             object.contactLists = contactLists.results;
             callback(null, object);
