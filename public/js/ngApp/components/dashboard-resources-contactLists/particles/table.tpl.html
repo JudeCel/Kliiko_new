@@ -26,7 +26,7 @@
                 <span ng-if="tableRow == 'Comments'">
                     <input type="submit" class="btn btn-standart btn-green" value="Click to view Comments" ng-click="clc.showContactCommentsModal(member)"/>
                 </span>
-                <span ng-if="tableRow != 'Comments'">{{ member[tableRow] || '-' }}</span>
+                <span ng-if="tableRow != 'Comments'">{{ member[tableRow] == null ? '-' : member[tableRow] }}</span>
             </td>
 
             <td >

@@ -1,17 +1,6 @@
 (function () {
   'use strict';
 
-  angular.module('KliikoApp').filter('startFrom', function(){
-    return function(data, start) {
-      if (data) {
-        start = +start; //parse to int
-        return data.slice(start);
-      } else {
-        return [];
-      }
-    }
-  });
-
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
   ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout', 'messagesUtil', '$confirm'];

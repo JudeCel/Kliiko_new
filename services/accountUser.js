@@ -261,7 +261,7 @@ function updateInfo(id, valueToIncrease, sessionName) {
     AccountUser.find({
       where: { id: id }
     }).then(function(accountUser) {
-      let info = prepareInfo(accountUser.info, valueToIncrease, sessionName);
+      let info = prepareInfo(accountUser.invitesInfo, valueToIncrease, sessionName);
       AccountUser.update({info: info}, { where: { id: id } }).then(function (result) {
         resolve();
       }).catch(function (error) {
@@ -275,13 +275,10 @@ function updateInfo(id, valueToIncrease, sessionName) {
 
 function prepareInfo(info, valueToIncrease, sessionName) {
   if (valueToIncrease) {
-    if (!info[valueToIncrease] || valueToIncrease == "NoInFuture" || valueToIncrease == "NotAtAll") {
+    if (valueToIncrease == "NoInFuture" || valueToIncrease == "NotAtAll") {
       info[valueToIncrease] = 1;
     } else {
       info[valueToIncrease]++;
-    }
-    if (!info["NoReply"]) {
-      info["NoReply"] = 0;
     }
     switch(valueToIncrease) {
       case "Invites":

@@ -13,7 +13,7 @@ describe('Data Wrappers -> ContactListUser', () => {
       customFields: { mobile: "1234556" },
       AccountUser: {
         firstName: "Dainis",
-        info: {Invites: 1, NotAtAll: 0},
+        invitesInfo: {Invites: 1, NotAtAll: 0},
       }
     }
 
@@ -38,7 +38,7 @@ describe('Data Wrappers -> ContactListUser', () => {
     });
 
     it("can't invite", () => {
-      data.AccountUser.info.NotAtAll = 1;
+      data.AccountUser.invitesInfo.NotAtAll = 1;
       let instance2 = new ContactListUser(defaultValue, customFields, participantsFields, visibleFields, data);
       assert.equal(instance2.canInvite, false);
     });

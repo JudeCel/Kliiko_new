@@ -37,7 +37,7 @@ module.exports = {
   contactListDefaultFields: [
     "firstName", "lastName", "gender", "email", 'postalAddress',
     "city", "state", "country", "postCode", "companyName",
-    "landlineNumber", "mobile", "info"
+    "landlineNumber", "mobile"
   ],
   contactListReqiredFields: [
     "firstName", "lastName", "email"

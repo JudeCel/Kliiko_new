@@ -15,7 +15,7 @@ var ContactListUser = class ContactListUser {
   }
 
   stubParticipantsFields(participantsFields, data) {
-    let info = data.AccountUser.info;
+    let info = data.AccountUser.invitesInfo;
     _.map(participantsFields, (e) =>  {
       if (e != "Comments") {
         this[e] = info[e] || 0;
@@ -24,7 +24,7 @@ var ContactListUser = class ContactListUser {
   }
 
   setCanInvite(data) {
-    let info = data.AccountUser.info;
+    let info = data.AccountUser.invitesInfo;
     this["canInvite"] = !info["NotAtAll"] && !info["NoInFuture"];
   }
 
