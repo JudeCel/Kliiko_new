@@ -7,6 +7,7 @@ var filters = require('./../models/filters');
 var models = require('./../models');
 var Topic = models.Topic;
 var _ = require('lodash');
+let Bluebird = require('bluebird')
 var Session = models.Session;
 
 module.exports = {
@@ -20,7 +21,8 @@ module.exports = {
   removeFromSession: removeFromSession,
   removeAllFromSession: removeAllFromSession,
   removeAllAndAddNew: removeAllAndAddNew,
-  messages: MessagesUtil.topics
+  messages: MessagesUtil.topics,
+  createDefaultForAccount: createDefaultForAccount
 };
 
 function getAll(accountId) {
@@ -232,4 +234,15 @@ function update(params) {
 
 function sessionTopicUpdateParams(params) {
   return _.pick(params, ['name', 'boardMessage', 'sign', 'lastSign']);
+}
+
+function createDefaultForAccount(params, transaction) {
+  return new Bluebird((resolve, reject) => {
+    params["default"] = true;
+    Topic.create(params, { transaction: transaction }).then(function(topic) {
+      resolve(topic);
+    },function(error) {
+      reject(filters.errors(error));
+    });
+  });
 }
