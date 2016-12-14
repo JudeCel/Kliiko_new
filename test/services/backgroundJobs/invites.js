@@ -9,7 +9,7 @@ var assert = require('chai').assert;
 var async = require('async');
 
 
-describe.only('Background Jobs - Invites', function() {
+describe('Background Jobs - Invites', function() {
   var testUser, accountUser, testUser2, testAccount, accountUser2 = null;
   let user1Attrs = {
     accountName: "Lilo",
