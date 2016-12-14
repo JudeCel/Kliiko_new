@@ -386,14 +386,9 @@
         var linkHTML = '<a href="' + resource.url.full + '" target="_blank" style="display:block;text-decoration:none;color:#000;"><img src="/icons/header button icons/videoLink.png"></img> </a>';
         $('#templateContent').wysiwyg("insertHtml", linkHTML);
       } else {
-        var baseUrl = null;
-        if (resource.source == "youtube") {
-          baseUrl = "www.youtube.com/watch?v=";
-        } else if (resource.source == "vimeo") {
-          baseUrl = "vimeo.com/";
-        }
-        if (baseUrl != null) {
-          var linkHTML = '<a href="https://' + baseUrl + resource.url.full + '" target="_blank" style="display:block;text-decoration:none;color:#000;"><img src="/icons/header button icons/videoLink.png"></img> </a>';
+        var url = GalleryServices.prepareVideoServiceUrl(resource.url.full, resource.source);
+        if (url != null) {
+          var linkHTML = '<a href="' + url + '" target="_blank" style="display:block;text-decoration:none;color:#000;"><img src="/icons/header button icons/videoLink.png"></img> </a>';
           $('#templateContent').wysiwyg("insertHtml", linkHTML);
         }
       }

@@ -14,8 +14,20 @@
     upServices.refreshResource = refreshResource;
     upServices.surveyResources = surveyResources;
     upServices.closedSessionResourcesRemoveCheck = closedSessionResourcesRemoveCheck;
+    upServices.prepareVideoServiceUrl = prepareVideoServiceUrl;
 
     return upServices;
+
+    function prepareVideoServiceUrl(id, source) {
+      switch (source) {
+        case "youtube":
+          return 'https://www.youtube.com/watch?v=' + id;
+        case "vimeo":
+          return 'https://vimeo.com/' + id;
+        default:
+          return null;
+      }
+    }
 
     function listResources(params) {
       var deferred = $q.defer();

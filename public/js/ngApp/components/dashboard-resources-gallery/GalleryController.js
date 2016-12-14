@@ -444,14 +444,7 @@
     }
 
     function normalVideoServiceUrl(url, source) {
-      switch (source) {
-        case "youtube":
-          return 'https://www.youtube.com/watch?v=' + url;
-        case "vimeo":
-          return 'https://vimeo.com/' + url;
-        default:
-          return null;
-      }
+      return GalleryServices.prepareVideoServiceUrl;
     }
 
     function videoServiceUrl(url, source) {
