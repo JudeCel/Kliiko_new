@@ -77,6 +77,8 @@ Default user credentials email ``` admin@insider.com ``` or ``` user@insider.com
 
 2) Open browser: ``` http://insider.focus.com:8080/ ```
 
+## Live update Socket server
+To use live events in dashboard need start elixir server
 
 ### Tests
 Run

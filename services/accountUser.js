@@ -95,7 +95,7 @@ function validateParams(params, role) {
 }
 
 function validateGender(params, role) {
-  let roles = ['accountManager', 'facilitator'];
+  let roles = ['accountManager', 'facilitator', 'observer'];
 
   if (_.includes(roles, role)) {
     params.gender = params.gender ? params.gender : params.gender = "";
