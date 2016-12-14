@@ -14,6 +14,7 @@ var async = require('async');
 var _ = require('lodash');
 var crypto = require('crypto');
 var q = require('q');
+let Bluebird = require('bluebird');
 
 module.exports = {
   createOrFindAccountManager: createOrFindAccountManager,
@@ -30,23 +31,33 @@ function createOrFindAccountManager(user, body, accountId) {
   params.role = 'accountManager';
   delete params.id;
 
-  canAddAccountManager(accountId).then(function() {
-    AccountUser.build(AccountUserService.validateParams(params)).validate().then(function(errors) {
-      errors = errors || {};
-      delete params.role;
-      return preValidate(user, accountId, params.email, errors);
-    }).then(function(existsUser) {
+  let flow = [
+    (user, params, accountId) => {
+      return canAddAccountManager(accountId);
+    },
+    (user, params, accountId) => {
+      return new Bluebird((resolve, reject) => {
+        AccountUser.build(AccountUserService.validateParams(params)).validate().then((validateErrors) => {
+          delete params.role;
+          resolve(preValidate(user, accountId, params.email, (validateErrors || {})))
+        }, (error) => {
+          reject(error);
+        });
+      })
+    },
+    (user, params, accountId) => {
       return addAccountUser(params, accountId);
-    }).then(function(params) {
-      deferred.resolve(params);
-    }).catch(function(error) {
-      deferred.reject(error);
-    });
-  }, function(error) {
-    deferred.reject(error);
-  });
-
-  return deferred.promise;
+    },
+  ]
+  return new Bluebird((resolve, reject) => {
+    Bluebird.each(flow, (step) => {
+      return step(user, params, accountId);
+    }).then(() => {
+      resolve(params);
+    }, (error) => {
+      reject(error);
+    })
+  })
 }
 
 function canAddAccountManager(accountId) {
@@ -126,43 +137,42 @@ function updateAccountManager(data) {
 
 //Helpers
 function preValidate(user, accountId, email, errors) {
-  let deferred = q.defer();
   if(!_.isEmpty(errors)) {
     errors = filters.errors(errors);
   }
 
-  if(user.email == email) {
-    errors.email = MessagesUtil.accountManager.error.selfInvite;
-    deferred.resolve(errors);
-  } else if (email) {
-    AccountUser.findAll({
-      where: { AccountId: accountId, role: "accountManager", email: { ilike: email }  }
-    }).then(function(accountUsers) {
-      if(!_.isEmpty(accountUsers)) {
-        errors.email = MessagesUtil.accountManager.error.alreadyInvited;
-      }
-      deferred.resolve(errors);
-    }).catch(function(error) {
-      errors = _.merge(errors, filters.errors(error));
-      deferred.resolve(errors);
-    });
-  } else {
-    deferred.resolve(errors);
-  }
-
-  return deferred.promise;
+  return new Bluebird((resolve, reject) => {
+    if(user.email == email) {
+      errors.email = MessagesUtil.accountManager.error.selfInvite;
+      reject(errors);
+    } else if (email) {
+      AccountUser.findAll({
+        where: { AccountId: accountId, role: "accountManager", email: { ilike: email }  }
+      }).then(function(accountUsers) {
+        if(_.isEmpty(accountUsers)) {
+          resolve();
+        }else{
+          errors.email = MessagesUtil.accountManager.error.alreadyInvited;
+          reject(errors);
+        }
+      }).catch(function(error) {
+        errors = _.merge(errors, filters.errors(error));
+        reject(errors);
+      });
+    } else {
+      reject(errors);
+    }
+  })
 }
 
 function addAccountUser(params, accountId) {
-  let deferred = q.defer();
-
-  createAccountUser(params, null, 'new', accountId).then(function(data) {
-    deferred.resolve(data);
-  }, function(error) {
-    deferred.reject(filters.errors(error));
-  });
-
-  return deferred.promise;
+  return new Bluebird((resolve, reject) => {
+    createAccountUser(params, null, 'new', accountId).then((data) => {
+      resolve(data);
+    }, (error) => {
+      reject(filters.errors(error));
+    });
+  })
 }
 
 function updateAccountUser(userId, accountId, accountUserId) {
