@@ -10,6 +10,7 @@ var moment = require('moment-timezone');
 var emailDate = require('./formats/emailDate');
 var sessionMemberService = require('./sessionMember');
 var socialProfileService = require('./socialProfile');
+var accountUserService = require('./accountUser');
 var inviteMailer = require('../mailers/invite');
 var mailerHelpers = require('../mailers/mailHelper');
 var constants = require('../util/constants');
@@ -251,6 +252,7 @@ function sendInvite(inviteId, deferred) {
               deferred.reject(error);
             }
             else {
+              accountUserService.updateInfo(invite.accountUserId, "Invite", null);
               deferred.resolve(simpleParams(invite));
             }
           });
@@ -556,6 +558,13 @@ function acceptSessionInvite(token) {
     }
     else {
       invite.update({ token: uuid.v1(), status: 'inProgress' }, { returning: true }).then(function(invite) {
+        if (invite.sessionId) {
+          models.Session.find({ where: { id: invite.sessionId } }).then(function(session) {
+            accountUserService.updateInfo(invite.accountUserId, "Accept", session.name);
+          });
+        } else {
+          accountUserService.updateInfo(invite.accountUserId, "Accept", "-");
+        }
         deferred.resolve({ message: MessagesUtil.invite.confirmed, invite: invite });
       }, function(error) {
         deferred.reject(filters.errors(error));
@@ -579,7 +588,9 @@ function declineSessionInvite(token, status) {
           deferred.resolve({ message: MessagesUtil.invite.declined, invite: invite });
         }, function(error) {
           deferred.reject(error);
-        })
+        });
+        let preparedStatus = status.charAt(0).toUpperCase() + status.slice(1);
+        accountUserService.updateInfo(invite.accountUserId, preparedStatus, null);
       }, function(error) {
         deferred.reject(filters.errors(error));
       });

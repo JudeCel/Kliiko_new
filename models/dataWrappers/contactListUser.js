@@ -18,7 +18,7 @@ var ContactListUser = class ContactListUser {
     let info = data.AccountUser.info;
     _.map(participantsFields, (e) =>  {
       if (e != "Comments") {
-        this[e] = info[e];
+        this[e] = info[e] || 0;
       }
     });
   }
