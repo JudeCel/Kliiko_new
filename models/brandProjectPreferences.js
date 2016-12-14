@@ -10,7 +10,7 @@ module.exports = (Sequelize, DataTypes) => {
       validate: {
         notEmpty: true,
         isUnique: validations.unique(Sequelize, 'BrandProjectPreference', 'name', { accountContext: true }),
-        isLength: validations.length('name', { max: 20 })
+        isLength: validations.length('name', { max: 100 })
       }
     },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
