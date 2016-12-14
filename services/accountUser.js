@@ -10,6 +10,7 @@ var SessionMember = models.SessionMember;
 var User = models.User;
 var _ = require('lodash');
 var q = require('q');
+var Bluebird = require('bluebird');
 
 const VALID_ATTRIBUTES = {
   accountUser: [
@@ -254,6 +255,55 @@ function prepareValidAccountUserParams() {
   return safeAccountUserParams;
 }
 
+//sessionName should be passed only if valueToIncrease == 'Accept'
+function updateInfo(id, valueToIncrease, sessionName) {
+  return new Bluebird(function (resolve, reject) {
+    AccountUser.find({
+      where: { id: id }
+    }).then(function(accountUser) {
+      let info = prepareInfo(accountUser.invitesInfo, valueToIncrease, sessionName);
+      AccountUser.update({info: info}, { where: { id: id } }).then(function (result) {
+        resolve();
+      }).catch(function (error) {
+        reject(error);
+      });
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
+function prepareInfo(info, valueToIncrease, sessionName) {
+  if (valueToIncrease) {
+    if (valueToIncrease == "NoInFuture" || valueToIncrease == "NotAtAll") {
+      info[valueToIncrease] = 1;
+    } else {
+      info[valueToIncrease]++;
+    }
+    switch(valueToIncrease) {
+      case "Invites":
+        info["NoReply"]++;
+        break;
+      case "NoInFuture":
+        info["Future"] = "N";
+        break;
+      case "NotThisTime":
+      case "NotAtAll":
+        info["Future"] = "N";
+        info["NoReply"]--;
+        break;
+      case "Accept":
+        info["Future"] = "Y";
+        info["NoReply"]--;
+        if (sessionName) {
+          info["LastSession"] = sessionName;
+        }
+        break;
+    }
+  }
+  return info;
+}
+
 module.exports = {
   create: create,
   createAccountManager: createAccountManager,
@@ -262,5 +312,6 @@ module.exports = {
   findWithSessionMembers: findWithSessionMembers,
   validateParams: validateParams,
   findWithEmail: findWithEmail,
-  findById: findById
+  findById: findById, 
+  updateInfo: updateInfo
 }

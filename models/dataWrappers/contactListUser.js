@@ -2,24 +2,30 @@
 var _ = require('lodash');
 
 var ContactListUser = class ContactListUser {
-  constructor(defaultFields, customFields, participantsFields, visibleFields,  data) {
+  constructor(defaultFields, customFields, participantsFields, visibleFields, data) {
     this.mapFields(defaultFields, customFields, participantsFields, data);
     this.assignIds(data);
+    this.setCanInvite(data);
   }
 
   mapFields(defaultFields, customFields, participantsFields, data) {
     this.assignValues(defaultFields, data);
     this.assignValues(customFields, data);
-    this.stubParticipantsFields(participantsFields)
+    this.stubParticipantsFields(participantsFields, data)
   }
 
-  // TODO: This function is for stub participants history
-  // need change this after session builder invites US
-  stubParticipantsFields(participantsFields) {
+  stubParticipantsFields(participantsFields, data) {
+    let info = data.AccountUser.invitesInfo;
     _.map(participantsFields, (e) =>  {
-      let number =  _.random(0, 15);
-      this[e] = number;
+      if (e != "Comments") {
+        this[e] = info[e] || 0;
+      }
     });
+  }
+
+  setCanInvite(data) {
+    let info = data.AccountUser.invitesInfo;
+    this["canInvite"] = !info["NotAtAll"] && !info["NoInFuture"];
   }
 
   assignIds(data){
@@ -36,7 +42,7 @@ var ContactListUser = class ContactListUser {
   findValueInData(value, data){
     if (data.AccountUser) {
       return (data.AccountUser[value] || data.customFields[value]);
-    }else {
+    } else {
       return data.customFields[value]
     }
   }

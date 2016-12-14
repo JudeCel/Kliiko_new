@@ -2,7 +2,7 @@
 
 var contacLists = require('./updateContactListsLogic.js');
 
-contacLists.updateContactListNames().then(function() {
+contacLists.updateContactListFields().then(function() {
   process.exit();
 }, function(error){
   console.log(error);

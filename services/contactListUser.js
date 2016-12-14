@@ -12,6 +12,7 @@ var AccountUserService = require('./accountUser');
 var dataWrappers = require('./../models/dataWrappers');
 var validators = require('./validators');
 var async = require('async');
+var Bluebird = require('bluebird');
 
 module.exports = {
   findByContactList: findByContactList,
@@ -22,7 +23,8 @@ module.exports = {
   updatePositions: updatePositions,
   bulkCreate: bulkCreate,
   contactListUserParams: contactListUserParams,
-  destroyByToken: destroyByToken
+  destroyByToken: destroyByToken,
+  comments: comments
 };
 
 function wrappersContactListUser(item, list) {
@@ -316,4 +318,25 @@ function update(params) {
   })
 
   return deferred.promise;
+}
+
+function comments(params) {
+  return new Bluebird(function (resolve, reject) {
+    models.SessionMember.findAll({
+      include: [
+        { model: AccountUser, include: [{ model: ContactListUser, where: {id: params.id, contactListId: params.contactListId} }] },
+        { model: models.Session, attributes: ['name'] },
+      ], 
+      where: { $and: [{comment: {$ne: null}}, {comment: {$ne: ''}}] },
+      attributes: ['comment']
+    }).then(function(res) {
+      let result = [];
+      _.map(res, (item) => {
+        result.push({session: item.Session.dataValues.name, comment: item.dataValues.comment});
+      });
+      resolve(result);
+    }, function(error) {
+      reject(error);
+    });
+  });
 }

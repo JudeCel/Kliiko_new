@@ -15,6 +15,7 @@ var mailerHelpers = require('../mailers/mailHelper');
 var constants = require('../util/constants');
 var backgroundQueues = require('../util/backgroundQueue');
 var MessagesUtil = require('./../util/messages');
+var accountUserService = require('./accountUser');
 
 var uuid = require('node-uuid');
 var async = require('async');
@@ -251,6 +252,7 @@ function sendInvite(inviteId, deferred) {
               deferred.reject(error);
             }
             else {
+              accountUserService.updateInfo(invite.accountUserId, "Invite", null);
               deferred.resolve(simpleParams(invite));
             }
           });
@@ -555,6 +557,13 @@ function acceptSessionInvite(token) {
   return new Bluebird((resolve, reject) => {
     findInvite(token).then((invite) => {
       invite.update({ token: uuid.v1(), status: 'inProgress' }, { returning: true }).then((invite) => {
+        if (invite.sessionId) {
+          models.Session.find({ where: { id: invite.sessionId } }).then(function(session) {
+            accountUserService.updateInfo(invite.accountUserId, "Accept", session.name);
+          });
+        } else {
+          accountUserService.updateInfo(invite.accountUserId, "Accept", "-");
+        }
         resolve({ message: MessagesUtil.invite.confirmed, invite: invite });
       }, (error) => {
         reject(filters.errors(error));
@@ -573,14 +582,16 @@ function declineSessionInvite(token, status) {
           resolve({ message: MessagesUtil.invite.declined, invite: invite });
         }, (error) => {
           reject(error);
-        })
+        });
+        let preparedStatus = status.charAt(0).toUpperCase() + status.slice(1);
+        accountUserService.updateInfo(invite.accountUserId, preparedStatus, null);
+      }, function(error) {
+        deferred.reject(filters.errors(error));
       }, (error) =>  {
         reject(filters.errors(error));
       });
-    }, (error) => {
-      reject(error);
-    })
-  })
+    });
+  });
 }
 
 function sendEmail(status, invite) {

@@ -307,7 +307,7 @@
     }
 
     function finishSelectingMembers(activeList) {
-      if(!activeList) {
+      if (!activeList) {
         vm.searchingParticipants = false;
         vm.searchingObservers = false;
         return;

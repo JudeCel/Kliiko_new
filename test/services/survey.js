@@ -489,7 +489,7 @@ describe('SERVICE - Survey', function() {
           assert.equal(survey.SurveyQuestions.length, 2);
 
           params.id = survey.id;
-          params.SurveyQuestions.splice(1, 1);
+          params.SurveyQuestions.push(params.SurveyQuestions[1]);
 
           surveyServices.updateSurvey(params, testData.account).then(function(result) {
             let updatedSurvey = result.data;
@@ -499,10 +499,14 @@ describe('SERVICE - Survey', function() {
               assert.equal(result.data.id, updatedSurvey.id);
               assert.equal(result.data.SurveyQuestions.length, 3);
               done();
+            }, function(error) {
+              done(error);
             });
           }, function(error) {
             done(error);
           });
+        }, function(error) {
+          done(error);
         });
       });
     });

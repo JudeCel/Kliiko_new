@@ -1,5 +1,6 @@
 (function () {
   'use strict';
+
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
   ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout', 'messagesUtil', '$confirm'];
@@ -19,12 +20,21 @@
     vm.importData = { excel:false, csv:false, fileToImport: null};
     vm.basePath = '/js/ngApp/components/dashboard-resources-contactLists/';
     vm.importErrorMessage = null;
+    vm.disableNextSortingEvent = false;
 
     vm.hideStuff = false;
     vm.hideModalStuff = false;
     vm.importedFields = [];
     vm.contactListDropItems = [];
     vm.contactListToAdd = [];
+    vm.showContactComments = { 
+      pagination: {
+        currentPage: 1,
+        itemsPerPage: 5,
+        totalItems : 0,
+        items: {}
+      }
+    };
 
     vm.initLists = initLists;
     vm.changeActiveList = changeActiveList;
@@ -46,6 +56,7 @@
 
     vm.selectAll = selectAll;
     vm.massDelete = massDelete;
+    vm.canSelectMember = canSelectMember;
 
     vm.startImport = startImport;
     vm.additionalMappingFieldname = "";
@@ -64,6 +75,14 @@
     vm.requireField = requireField;
     vm.isObserverListSelected = isObserverListSelected;
     vm.findIndexByListName = findIndexByListName;
+    vm.disableNextSortingFilter = disableNextSortingFilter;
+    vm.showContactCommentsModal = showContactCommentsModal; 
+    vm.prepareCurrentPageComments = prepareCurrentPageComments;
+
+    vm.pagination = {
+      currentPage: 1,
+      itemsPerPage: 10
+    }
 
     var facilitatorsListName = "Hosts";
     var observersListName = "Spectators";
@@ -168,6 +187,7 @@
         vm.name = temp.name;
       }
       vm.allSelected = false;
+      vm.pagination.currentPage = 1;
     }
 
 
@@ -318,6 +338,11 @@
     function updateTableSorting(draggedIndex, droppedIndex) {
       dbg.log2('#ContactListController  > updateTableSorting > draggedIndex, droppedIndex : ',draggedIndex, droppedIndex );
       vm.lists.activeList.updateTableSortingByDragging(draggedIndex, droppedIndex);
+      vm.disableNextSortingEvent = false;
+    }
+
+    function disableNextSortingFilter() {
+      vm.disableNextSortingEvent = true;
     }
 
     /**
@@ -325,8 +350,12 @@
      * @param type {string}
      */
     function changeTableSortingFilter(type) {
-      vm.tableSort.by =  type;
-      vm.tableSort.reverse = !vm.tableSort.reverse;
+      if (vm.disableNextSortingEvent) {
+        vm.disableNextSortingEvent = false;
+      } else {
+        vm.tableSort.by =  type;
+        vm.tableSort.reverse = !vm.tableSort.reverse;
+      }
     }
 
     function showManageColumnsModal() {
@@ -478,8 +507,12 @@
       if (!vm.lists.activeList || !vm.lists.activeList.members) return;
 
       for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
-        vm.lists.activeList.members[i]._selected = vm.allSelected;
+        vm.lists.activeList.members[i]._selected = vm.allSelected && canSelectMember(vm.lists.activeList.members[i]);
       }
+    }
+
+    function canSelectMember(member) {
+      return !vm.hideStuff || member.canInvite;
     }
 
     /**
@@ -767,6 +800,31 @@
           return i;
         }
       }
+    }
+
+    function prepareCurrentPageComments() {
+      if (vm.showContactComments.comments.length > 0) {
+        vm.showContactComments.pagination.items =  vm.showContactComments.comments.slice((vm.showContactComments.pagination.currentPage - 1) * vm.showContactComments.pagination.itemsPerPage, 
+          vm.showContactComments.pagination.currentPage * vm.showContactComments.pagination.itemsPerPage);
+      } else {
+        vm.showContactComments.pagination.items = {};
+      }
+    }
+
+    function showContactCommentsModal(member) {
+      vm.showContactComments.contact = member;
+      vm.showContactComments.pagination.currentPage = 1;
+      vm.lists.getContactComments(member.id).then(
+        function (res) {
+          vm.showContactComments.comments = res;
+          vm.showContactComments.pagination.totalItems = res.length;
+          prepareCurrentPageComments();
+          domServices.modal('contactCommentsModal');
+        },
+        function (err) {
+          messenger.error(err);
+        }
+      );
     }
 
   }

@@ -122,10 +122,9 @@
 
     function selectMembers(listId, members) {
       var selected = [];
-      for(var i in members) {
+      for (var i in members) {
         var member = members[i];
-        if(member._selected) {
-
+        if (member._selected && member.canInvite) {
           member.listId = listId;
           selected.push(member);
         }
