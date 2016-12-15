@@ -79,9 +79,12 @@ function processedErrosMessage(errors) {
 }
 
 function sessionAccept(req, res, next) {
-  inviteService.acceptSessionInvite(req.params.token).then(function(result) {
-    req.params.token = result.invite.token;
-    accept(req, res, next);
+  inviteService.acceptSessionInvite(req.params.token).then(function({invite, message}) {
+    if (invite.AccountUser.UserId) {
+      res.render(views_path('index'), simpleParams('Invite', invite, {}));
+    } else {
+      res.render(views_path('newUser'), simpleParams('Invite', invite, {}));
+    }
   }, function(error) {
     req.flash('message', { inviteError: true});
     res.redirect('/login');

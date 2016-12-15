@@ -445,7 +445,7 @@ function createUserIfNecessary(invite, user, params, transaction) {
   })
 }
 
-function createSessionMemberIfNecessary(invite, _user, _params, transaction) {
+function createSessionMemberIfNecessary(invite, transaction) {
   return new Bluebird((resolve, reject) => {
     if(invite.sessionId) {
       let params = {
