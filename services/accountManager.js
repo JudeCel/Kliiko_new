@@ -49,11 +49,12 @@ function createOrFindAccountManager(user, body, accountId) {
       return addAccountUser(params, accountId);
     },
   ]
+
   return new Bluebird((resolve, reject) => {
-    Bluebird.each(flow, (step) => {
+    Bluebird.map(flow, (step) => {
       return step(user, params, accountId);
-    }).then(() => {
-      resolve(params);
+    }).then((result) => {
+      resolve(_.last(result));
     }, (error) => {
       reject(error);
     })
@@ -167,7 +168,7 @@ function preValidate(user, accountId, email, errors) {
 
 function addAccountUser(params, accountId) {
   return new Bluebird((resolve, reject) => {
-    createAccountUser(params, null, 'new', accountId).then((data) => {
+    createAccountUser(params, accountId).then((data) => {
       resolve(data);
     }, (error) => {
       reject(filters.errors(error));
@@ -175,11 +176,11 @@ function addAccountUser(params, accountId) {
   })
 }
 
-function updateAccountUser(userId, accountId, accountUserId) {
+function updateAccountUser(accountId, accountUserId) {
   let deferred = q.defer();
 
   AccountUser.update({ role: 'accountManager' }, { where: { id: accountUserId } }).then(function() {
-    deferred.resolve(inviteParams(accountUserId, accountId, userId, 'existing'));
+    deferred.resolve(inviteParams(accountUserId, accountId));
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -187,13 +188,13 @@ function updateAccountUser(userId, accountId, accountUserId) {
   return deferred.promise;
 }
 
-function createAccountUser(params, userId, type, accountId) {
+function createAccountUser(params, accountId) {
   let deferred = q.defer();
-  adjustParamsForNewAccountUser(params, userId, accountId);
+  adjustParamsForNewAccountUser(params, accountId);
 
   AccountUser.create(params).then(function(newAccountUser){
     addToContactList(newAccountUser).then(function() {
-      deferred.resolve(inviteParams(newAccountUser.id, accountId, userId, type));
+      deferred.resolve(inviteParams(newAccountUser.id, accountId));
     }, function(error) {
       deferred.reject(filters.errors(error));
     });
@@ -214,7 +215,6 @@ function addToContactList(accountUser) {
     }
   }).then(function(contactList) {
     let params = {
-      userId: accountUser.UserId,
       accountUserId: accountUser.id,
       accountId: accountUser.AccountId,
       contactListId: contactList.id
@@ -230,23 +230,15 @@ function addToContactList(accountUser) {
   return deferred.promise;
 }
 
-function userParams(email) {
-  return {
-    email: email,
-    password: crypto.randomBytes(16).toString('hex')
-  };
-}
-
-function adjustParamsForNewAccountUser(params, userId, accountId) {
+function adjustParamsForNewAccountUser(params, accountId) {
   params.status = 'invited';
   params.role = 'accountManager';
   params.AccountId = accountId;
-  params.UserId = userId;
   return params;
 }
 
-function inviteParams(accountUserId, accountId, userId, type) {
-  return { userId: userId, accountUserId: accountUserId, accountId: accountId, role: 'accountManager' };
+function inviteParams(accountUserId, accountId) {
+  return {accountUserId: accountUserId, accountId: accountId, role: 'accountManager' };
 }
 
 function prepareParams(body) {
