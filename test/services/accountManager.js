@@ -76,21 +76,16 @@ describe('SERVICE - AccountManager', function() {
 
   describe('#createOrFindAccountManager', function() {
     describe('happy path', function() {
-      it('should create new user', function(done) {
+      it('should create new account user', function(done) {
         let data = sampleData();
         subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {
           models.SubscriptionPreference.update({'data.accountUserCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
             accountManagerService.createOrFindAccountManager(data.user, data.body, data.accountId).then(function(params) {
               AccountUser.find({ where: { email: data.body.email } }).then(function(accountUser) {
-                let returnParams = {
-                  userId: accountUser.UserId,
-                  accountUserId: accountUser.id,
-                  accountId: data.accountId,
-                  role: accountUser.role
-                };
-
                 try {
-                  assert.deepEqual(params, returnParams);
+                  assert.equal(accountUser.AccountId, params.accountId);
+                  assert.equal(accountUser.id, params.accountUserId);
+                  assert.equal(accountUser.role, "accountManager");
                   done();
                 } catch (e) {
                   done(e);
@@ -185,6 +180,8 @@ describe('SERVICE - AccountManager', function() {
                 }, (error) => {
                   done(error);
                 });
+              }, (error) => {
+                done(error);
               });
             } catch (e) {
               done(e);
@@ -206,7 +203,7 @@ describe('SERVICE - AccountManager', function() {
         models.SubscriptionPreference.update({'data.accountUserCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
           accountManagerService.createOrFindAccountManager(data.user, data.body, data.accountId).then(function(params) {
             inviteService.createInvite(params).then(function(result) {
-              async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 2 }), function(error, result) {
+              async.parallel(countTables({ invite: 1, account: 1, user: 1, accountUser: 2 }), function(error, result) {
                 if(error) {
                   done(error);
                 }

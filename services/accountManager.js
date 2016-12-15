@@ -14,6 +14,7 @@ var async = require('async');
 var _ = require('lodash');
 var crypto = require('crypto');
 var q = require('q');
+let Bluebird = require('bluebird');
 
 module.exports = {
   createOrFindAccountManager: createOrFindAccountManager,
@@ -30,23 +31,34 @@ function createOrFindAccountManager(user, body, accountId) {
   params.role = 'accountManager';
   delete params.id;
 
-  canAddAccountManager(accountId).then(function() {
-    AccountUser.build(AccountUserService.validateParams(params)).validate().then(function(errors) {
-      errors = errors || {};
-      delete params.role;
-      return preValidate(user, accountId, params.email, errors);
-    }).then(function(existsUser) {
+  let flow = [
+    (user, params, accountId) => {
+      return canAddAccountManager(accountId);
+    },
+    (user, params, accountId) => {
+      return new Bluebird((resolve, reject) => {
+        AccountUser.build(AccountUserService.validateParams(params)).validate().then((validateErrors) => {
+          delete params.role;
+          resolve(preValidate(user, accountId, params.email, (validateErrors || {})))
+        }, (error) => {
+          reject(error);
+        });
+      })
+    },
+    (user, params, accountId) => {
       return addAccountUser(params, accountId);
-    }).then(function(params) {
-      deferred.resolve(params);
-    }).catch(function(error) {
-      deferred.reject(error);
-    });
-  }, function(error) {
-    deferred.reject(error);
-  });
+    },
+  ]
 
-  return deferred.promise;
+  return new Bluebird((resolve, reject) => {
+    Bluebird.map(flow, (step) => {
+      return step(user, params, accountId);
+    }).then((result) => {
+      resolve(_.last(result));
+    }, (error) => {
+      reject(error);
+    })
+  })
 }
 
 function canAddAccountManager(accountId) {
@@ -126,50 +138,49 @@ function updateAccountManager(data) {
 
 //Helpers
 function preValidate(user, accountId, email, errors) {
-  let deferred = q.defer();
   if(!_.isEmpty(errors)) {
     errors = filters.errors(errors);
   }
 
-  if(user.email == email) {
-    errors.email = MessagesUtil.accountManager.error.selfInvite;
-    deferred.resolve(errors);
-  } else if (email) {
-    AccountUser.findAll({
-      where: { AccountId: accountId, role: "accountManager", email: { ilike: email }  }
-    }).then(function(accountUsers) {
-      if(!_.isEmpty(accountUsers)) {
-        errors.email = MessagesUtil.accountManager.error.alreadyInvited;
-      }
-      deferred.resolve(errors);
-    }).catch(function(error) {
-      errors = _.merge(errors, filters.errors(error));
-      deferred.resolve(errors);
-    });
-  } else {
-    deferred.resolve(errors);
-  }
-
-  return deferred.promise;
+  return new Bluebird((resolve, reject) => {
+    if(user.email == email) {
+      errors.email = MessagesUtil.accountManager.error.selfInvite;
+      reject(errors);
+    } else if (email) {
+      AccountUser.findAll({
+        where: { AccountId: accountId, role: "accountManager", email: { ilike: email }  }
+      }).then(function(accountUsers) {
+        if(_.isEmpty(accountUsers)) {
+          resolve();
+        }else{
+          errors.email = MessagesUtil.accountManager.error.alreadyInvited;
+          reject(errors);
+        }
+      }).catch(function(error) {
+        errors = _.merge(errors, filters.errors(error));
+        reject(errors);
+      });
+    } else {
+      reject(errors);
+    }
+  })
 }
 
 function addAccountUser(params, accountId) {
-  let deferred = q.defer();
-
-  createAccountUser(params, null, 'new', accountId).then(function(data) {
-    deferred.resolve(data);
-  }, function(error) {
-    deferred.reject(filters.errors(error));
-  });
-
-  return deferred.promise;
+  return new Bluebird((resolve, reject) => {
+    createAccountUser(params, accountId).then((data) => {
+      resolve(data);
+    }, (error) => {
+      reject(filters.errors(error));
+    });
+  })
 }
 
-function updateAccountUser(userId, accountId, accountUserId) {
+function updateAccountUser(accountId, accountUserId) {
   let deferred = q.defer();
 
   AccountUser.update({ role: 'accountManager' }, { where: { id: accountUserId } }).then(function() {
-    deferred.resolve(inviteParams(accountUserId, accountId, userId, 'existing'));
+    deferred.resolve(inviteParams(accountUserId, accountId));
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -177,13 +188,13 @@ function updateAccountUser(userId, accountId, accountUserId) {
   return deferred.promise;
 }
 
-function createAccountUser(params, userId, type, accountId) {
+function createAccountUser(params, accountId) {
   let deferred = q.defer();
-  adjustParamsForNewAccountUser(params, userId, accountId);
+  adjustParamsForNewAccountUser(params, accountId);
 
   AccountUser.create(params).then(function(newAccountUser){
     addToContactList(newAccountUser).then(function() {
-      deferred.resolve(inviteParams(newAccountUser.id, accountId, userId, type));
+      deferred.resolve(inviteParams(newAccountUser.id, accountId));
     }, function(error) {
       deferred.reject(filters.errors(error));
     });
@@ -204,7 +215,6 @@ function addToContactList(accountUser) {
     }
   }).then(function(contactList) {
     let params = {
-      userId: accountUser.UserId,
       accountUserId: accountUser.id,
       accountId: accountUser.AccountId,
       contactListId: contactList.id
@@ -220,23 +230,15 @@ function addToContactList(accountUser) {
   return deferred.promise;
 }
 
-function userParams(email) {
-  return {
-    email: email,
-    password: crypto.randomBytes(16).toString('hex')
-  };
-}
-
-function adjustParamsForNewAccountUser(params, userId, accountId) {
+function adjustParamsForNewAccountUser(params, accountId) {
   params.status = 'invited';
   params.role = 'accountManager';
   params.AccountId = accountId;
-  params.UserId = userId;
   return params;
 }
 
-function inviteParams(accountUserId, accountId, userId, type) {
-  return { userId: userId, accountUserId: accountUserId, accountId: accountId, role: 'accountManager' };
+function inviteParams(accountUserId, accountId) {
+  return {accountUserId: accountUserId, accountId: accountId, role: 'accountManager' };
 }
 
 function prepareParams(body) {
