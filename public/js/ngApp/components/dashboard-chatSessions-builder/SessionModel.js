@@ -120,6 +120,7 @@
         self.socket.connect();
       }
     }
+
     function selectInviteList(steps, invite) {
       switch (invite.role) {
         case 'participant':
