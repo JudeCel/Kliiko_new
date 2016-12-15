@@ -33,8 +33,11 @@ function decline(req, res, next) {
 }
 
 function accept(req, res, next) {
+  console.log("36");
   inviteService.findInvite(req.params.token).then((invite) => {
+    console.log("38");
     inviteService.acceptInvite(req.params.token, req.body).then(({user}) => {
+      console.log("40");
       loginUser(req, res, next, user);
     }, (error) => {
       if (invite.AccountUser.UserId) {
@@ -79,9 +82,12 @@ function processedErrosMessage(errors) {
 }
 
 function sessionAccept(req, res, next) {
-  inviteService.acceptSessionInvite(req.params.token).then(function(result) {
-    req.params.token = result.invite.token;
-    accept(req, res, next);
+  inviteService.acceptSessionInvite(req.params.token).then(function({invite, message}) {
+    if (invite.AccountUser.UserId) {
+      res.render(views_path('index'), simpleParams('Invite', invite, {}));
+    } else {
+      res.render(views_path('newUser'), simpleParams('Invite', invite, {}));
+    }
   }, function(error) {
     req.flash('message', { inviteError: true});
     res.redirect('/login');
