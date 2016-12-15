@@ -16,6 +16,7 @@ var validators = require('./../services/validators');
 var sessionMemberServices = require('./sessionMember');
 var MessagesUtil = require('./../util/messages');
 var sessionValidator = require('./validators/session');
+var topicsService = require('./topics');
 
 var async = require('async');
 var _ = require('lodash');
@@ -49,15 +50,73 @@ module.exports = {
 };
 
 function addDefaultObservers(session) {
-  models.AccountUser.findAll({ where: { AccountId: session.accountId, role: { $in: ['admin', 'accountManager'] } } }).then(function(accountUsers) {
-    _.map(accountUsers, function(accountUser) {
-      sessionMemberServices.createWithTokenAndColour({
-        sessionId: session.id,
-        accountUserId: accountUser.id,
-        username: accountUser.firstName,
-        role: 'observer'
+  return new bluebird(function (resolve, reject) {
+    models.AccountUser.findAll({ where: { AccountId: session.accountId, role: { $in: ['admin', 'accountManager'] } } }).then(function(accountUsers) {
+      _.map(accountUsers, function(accountUser) {
+        sessionMemberServices.createWithTokenAndColour({
+          sessionId: session.id,
+          accountUserId: accountUser.id,
+          username: accountUser.firstName,
+          role: 'observer'
+        }).then(function(result) {
+          resolve(result);
+        }, function(error) {
+          reject(error);
+        });
       });
+    }, function(error) {
+      reject(error);
     });
+  });
+}
+
+function defaultTopicParams(session, topic) {
+  return {
+    topicId: topic.id, 
+    sessionId: session.id, 
+    order: 0, 
+    active: true, 
+    landing: true, 
+    boardMessage: topic.boardMessage, 
+    name: topic.name, 
+    sign: topic.sign
+  };
+}
+
+function defaultImageParams(sessionTopic, sessionMember) {
+  return {
+    sessionMemberId: sessionMember.id,
+    sessionTopicId: sessionTopic.id,
+    uid: "defaultImage" + sessionTopic.id,
+    event: {
+      id: "imageSiwq5b08s4t", 
+      action: "draw", 
+      element: {
+        attr: {
+          x: "10", 
+          y: "20", 
+          href: "/images/default-topic-image.gif?" + sessionTopic.id, 
+          width: "395", 
+          height: "304", 
+          transform: "matrix(1,0,0,1,262,26)", 
+          preserveAspectRatio: "none"
+        }, 
+        type: "image"
+      }
+    }
+  };
+}
+
+function addDefaultTopic(session, sessionMember) {
+  models.Topic.find({ where: { accountId: session.accountId, default: true } }).then(function(topic) {
+    if (topic) {
+      let topicParams = defaultTopicParams(session, topic);
+      models.SessionTopics.create(topicParams).then(function(sessionTopic) {
+        let imageParams = defaultImageParams(sessionTopic, sessionMember);
+        modelo.Shape.create(imageParams);
+        //todo: populate video
+      });
+    }
   });
 }
 
@@ -72,7 +131,9 @@ function initializeBuilder(params) {
       params.endTime = params.date;
 
       Session.create(params).then(function(session) {
-        addDefaultObservers(session, params);
+        addDefaultObservers(session).then(function(sessionMember) {
+          addDefaultTopic(session, sessionMember);
+        });
         sessionBuilderObject(session).then(function(result) {
           deferred.resolve(result);
         }, function(error) {
