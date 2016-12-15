@@ -73,14 +73,12 @@ describe('SERVICE - Invite basic logic', function() {
       it('should succeed and return invite', function (done) {
         let params = {
           accountUserId: accountUser2.id,
-          userId: accountUser2.UserId,
           accountId: accountUser2.AccountId,
           role: 'accountManager'
         }
 
         inviteService.createInvite(params).then(function(invite) {
           try {
-            assert.equal(invite.userId, params.userId);
             assert.equal(invite.role, params.role);
             done();
           } catch (e) {
