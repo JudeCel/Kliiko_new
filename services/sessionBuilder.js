@@ -17,6 +17,7 @@ var sessionMemberServices = require('./sessionMember');
 var MessagesUtil = require('./../util/messages');
 var sessionValidator = require('./validators/session');
 var topicsService = require('./topics');
+var resourcesService = require('./resources');
 
 var async = require('async');
 var _ = require('lodash');
@@ -83,13 +84,21 @@ function defaultTopicParams(session, topic) {
   };
 }
 
+function defaultVideoParams(resource, topic) {
+  return {
+    sessionTopicId: topic.id, 
+    videoId: resource.id,
+    pinboard: false
+  };
+}
+
 function defaultImageParams(sessionTopic, sessionMember) {
   return {
     sessionMemberId: sessionMember.id,
     sessionTopicId: sessionTopic.id,
     uid: "defaultImage" + sessionTopic.id,
     event: {
-      id: "imageSiwq5b08s4t", 
+      id: "defaultImage" + sessionTopic.id,
       action: "draw", 
       element: {
         attr: {
@@ -113,8 +122,21 @@ function addDefaultTopic(session, sessionMember) {
       let topicParams = defaultTopicParams(session, topic);
       models.SessionTopics.create(topicParams).then(function(sessionTopic) {
         let imageParams = defaultImageParams(sessionTopic, sessionMember);
-        modelo.Shape.create(imageParams);
-        //todo: populate video
+        models.Shape.create(imageParams);
+      });
+    }
+  });
+}
+
+function addDefaultTopicVideo(session) {
+  resourcesService.getDefaultVideo(session.type).then(function(resource) {
+    if (resource) {
+      models.SessionTopics.find({ where: { sessionId: session.id, landing: true } }).then(function(topic) {
+        if (topic) {
+          let videoParams = defaultVideoParams(resource, topic);
+          models.Console.create(videoParams);
+          models.SessionResource.create({ sessionId: session.id, resourceId: resource.id });
+        }
       });
     }
   });
@@ -202,10 +224,12 @@ function update(sessionId, accountId, params) {
       }
       return originalSession.updateAttributes(params);
     }).then(function(result) {
-       updatedSession = result;
+      updatedSession = result;
+      if (params["type"]) {
+        addDefaultTopicVideo(result);
+      }
       return sessionBuilderObject(updatedSession);
     }).then(function(sessionObject) {
-
       if (sessionObject.status == 'closed') {
         sendCloseEmailToAllObservers(updatedSession).then(function() {
           deferred.resolve(sessionObject);
