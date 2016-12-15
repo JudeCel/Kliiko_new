@@ -17,7 +17,7 @@ var async = require('async');
 
 var testData;
 
-describe.only('SERVICE - AccountManager', function() {
+describe('SERVICE - AccountManager', function() {
   beforeEach(function(done) {
     models.sequelize.sync({ force: true }).then(function() {
       userFixture.createUserAndOwnerAccount().then(function(result) {
