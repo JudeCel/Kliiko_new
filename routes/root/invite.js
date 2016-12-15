@@ -33,11 +33,8 @@ function decline(req, res, next) {
 }
 
 function accept(req, res, next) {
-  console.log("36");
   inviteService.findInvite(req.params.token).then((invite) => {
-    console.log("38");
     inviteService.acceptInvite(req.params.token, req.body).then(({user}) => {
-      console.log("40");
       loginUser(req, res, next, user);
     }, (error) => {
       if (invite.AccountUser.UserId) {
