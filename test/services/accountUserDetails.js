@@ -41,6 +41,34 @@ describe('Account User Service', () => {
         done();
       });
     });
+
+    describe('Update invites info',  () => {
+      it("Accept", (done) => {
+        var sessionName = "Test Session";
+        AccountUserService.updateInfo(testAccountUser.id, "Accept", sessionName).then(function() {
+          models.AccountUser.find({ where: { id: testAccountUser.id } }).then(function(accountUser) {
+            assert.equal(accountUser.invitesInfo.Accept, 1);
+            assert.equal(accountUser.invitesInfo.Future, "Y");
+            assert.equal(accountUser.invitesInfo.LastSession, sessionName);
+            done();
+          });
+        }, function(err) {
+          done(err)
+        });
+      });
+
+      it("NotThisTime", (done) => {
+        AccountUserService.updateInfo(testAccountUser.id, "NotThisTime").then(function() {
+          models.AccountUser.find({ where: { id: testAccountUser.id } }).then(function(accountUser) {
+            assert.equal(accountUser.invitesInfo.NotThisTime, 1);
+            assert.equal(accountUser.invitesInfo.Future, "N");
+            done();
+          });
+        }, function(err) {
+          done(err)
+        });
+      });
+    });
   });
   
   describe('failed ', () => {

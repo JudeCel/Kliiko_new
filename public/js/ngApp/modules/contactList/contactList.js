@@ -10,7 +10,8 @@
       contactListsUsersToRemove: $resource(globalSettings.restUrl +  '/contactListsUsersToRemove', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       contactListsUser: $resource(globalSettings.restUrl +  '/contactListsUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       contactListsImport: $resource(globalSettings.restUrl +  '/contactLists/:id/import', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      contactListsValidate: $resource(globalSettings.restUrl +  '/contactLists/:id/validate', {id:'@id'}, {post: {method: 'POST'}})
+      contactListsValidate: $resource(globalSettings.restUrl +  '/contactLists/:id/validate', {id:'@id'}, {post: {method: 'POST'}}),
+      contactComments: $resource(globalSettings.restUrl +  '/contactListsUser/comments', {}, {post: {method: 'POST'}})
     };
 
 
@@ -24,6 +25,7 @@
     publicServices.createUser = createUser;
     publicServices.updateUser = updateUser;
     publicServices.deleteUser = deleteUser;
+    publicServices.getContactComments = getContactComments;
 
     publicServices.parseImportFile = parseImportFile;
     publicServices.addImportedContacts = addImportedContacts;
@@ -281,6 +283,23 @@
           deferred.reject(res.error);
         } else {
           deferred.resolve(res);
+        }
+      });
+
+      return deferred.promise;
+    }
+
+    function getContactComments(contactListId, id) {
+      var deferred = $q.defer();
+
+      dbg.log2('#contactListServices > getContactComments > call to api');
+      contactListsApi.contactComments.post({},{ contactListId: contactListId, id: id },function(res) {
+        if (res.error) {
+          dbg.log1('#contactListServices > getContactComments > error: ', res.error);
+          deferred.reject(res.error);
+        } else {
+          dbg.log1('#contactListServices > getContactComments > success '); dbg.log2(res);
+          deferred.resolve(res.data);
         }
       });
 

@@ -19,8 +19,8 @@
     "enableDatabaseMonitoring": "node ./tasks/databaseMonitoring/enableDatabaseMonitoring.js",
     "enableTableMonitoring": "node ./tasks/databaseMonitoring/enableTableMonitoring.js",
     "updateAccountUsersUserId": "node ./tasks/dataNormalization/updateAccountUsers.js",
-    "updateContactListNames": "node ./tasks/updateContactLists.js",
-    "createDefaultTopics": "node ./tasks/createDefaultTopics.js"
+    "updateContactLists": "node ./tasks/updateContactLists.js,
+    "createDefaultTopics": "node ./tasks/createDefaultTopics.js",
   },
   "engineStrict": true,
   "engine": {
@@ -125,7 +125,7 @@
     "pg": "^6.1",
     "pg-hstore": "^2.3.2",
     "phoenix": "^1.2.1",
-    "pm2": "^2.1.4",
+    "pm2": "^2.1.6",
     "q": "^1.4.1",
     "request": "^2.74.0",
     "sanitize-html": "^1.5.3",

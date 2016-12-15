@@ -20,7 +20,7 @@
           <div class='panel-heading'>
             <div class='row'>
               <div class='col-xs-6'>
-                <h3 class='panel-title text-max-width'>{{ scheme.name }}</h3>
+                <h3 class='panel-title text-max-width'>{{ scheme.name | limitTo: 25 }}{{ scheme.name.length > 25 ? '&hellip;' : '' }}</h3>
               </div>
               <div class='col-xs-6 text-right dashboardElementsEditRemove'>
                 <img src='/icons/resources_grey.png' alt='' ng-click='bcc.copyScheme(scheme)' />
