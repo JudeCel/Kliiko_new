@@ -60,7 +60,6 @@
 
 
       function prepareCustomFieldsData(input) {
-        console.log(input.length, input);
         for (var i = 0; i < input.length ; i++) {
           for (var j = 0; j < input[i].members.length ; j++) {
             if (input[i].members[j].customFields) {
