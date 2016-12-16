@@ -92,9 +92,20 @@ describe('SERVICE - SessionBuilder', function() {
           done(error);
         });
       });
-    });
+      
+      it('should create default topic', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          setTimeout(() => {
+            models.SessionTopics.find({where: {sessionId: result.sessionBuilder.id}}).then(function(result) {
+              assert.isTrue(result != null);
+              done();
+            }, function(error) {
+              done(error);
+            });
+          }, 1000);
+        });
+      });
 
-    describe('happy path', function(done) {
       it('should create new session when expired session exists', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
@@ -106,9 +117,7 @@ describe('SERVICE - SessionBuilder', function() {
           done(error);
         });
       });
-    });
 
-    describe('happy path', function(done) {
       it('should new expired session when other open session exists', function(done) {
         models.SubscriptionPreference.update({'data.sessionCount': 1}, { where: { subscriptionId: subscriptionId } }).then(function(result) {
           sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
@@ -614,48 +623,28 @@ describe('SERVICE - SessionBuilder', function() {
     describe('sad path', function(done) {
       it('should fail because no topics', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = sessionParams(result);
-          let nextStepIndex = 3;
-          params.step = 'facilitatiorAndTopics';
-
-          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-            sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
-              assert.equal(result.sessionBuilder.steps.step2.error.topics, 'No topics selected');
-              done();
-            });
-          }, function(error) {
-            done(error);
-          });
-        });
-      });
-
-      it('should fail', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = sessionParams(result);
-          let nextStepIndex = 3;
-          params.step = 'facilitatiorAndTopics';
-
-          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-            createDependencies(params, { topics: true }, function(error) {
-              if(error) {
+          setTimeout(() => {
+            //remove default topic from DB
+            models.SessionTopics.destroy({where: {sessionId: result.sessionBuilder.id}}).then(function() {
+              let params = sessionParams(result);
+              let nextStepIndex = 3;
+              params.step = 'facilitatiorAndTopics';
+              sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+                sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
+                  assert.equal(result.sessionBuilder.steps.step2.error.topics, 'No topics selected');
+                  done();
+                });
+              }, function(error) {
                 done(error);
-              }
-              else {
-                mailFixture.createMailTemplate().then(function() {
-                  sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
-                    let error = result.sessionBuilder.steps.step2.error.topics;
-                    assert.equal(error, sessionBuilderServices.messages.errors.secondStep.topics);
-                    done();
-                  });
-                })
-              }
+              });
+            }, function(error) {
+              done(error);
             });
-          }, function(error) {
-            done(error);
-          });
+          }, 1000);
         });
       });
     });
+    
   });
 
   describe('#thirdStep', function(done) {
