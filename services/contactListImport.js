@@ -17,7 +17,7 @@ module.exports = {
   validateContactList: validateContactList
 };
 
-let requiredFields = ["firstName", "lastName", "gender", "email"];
+let requiredFields = ["firstName", "lastName", "email"];
 
 function validateContactList(id, list) {
   let deferred = q.defer();
