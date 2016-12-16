@@ -150,7 +150,6 @@ function update(sessionId, accountId, params) {
        updatedSession = result;
       return sessionBuilderObject(updatedSession);
     }).then(function(sessionObject) {
-
       if (sessionObject.status == 'closed') {
         sendCloseEmailToAllObservers(updatedSession).then(function() {
           deferred.resolve(sessionObject);
@@ -158,7 +157,12 @@ function update(sessionId, accountId, params) {
           deferred.reject(error);
         });
       } else {
-        deferred.resolve(sessionObject);
+        validateMultipleSteps(updatedSession, sessionObject.sessionBuilder.steps).then(function(steps) {
+          sessionObject.sessionBuilder.steps = steps;
+          deferred.resolve(sessionObject);
+        }, function(error) {
+          deferred.reject(error);
+        });
       }
     }).catch(function(error) {
       deferred.reject(filters.errors(error));

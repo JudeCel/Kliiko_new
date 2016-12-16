@@ -24,6 +24,84 @@ const VALID_ATTRIBUTES = {
   ]
 };
 
+function deleteOrRecalculate(id, accountId) {
+  return new Bluebird((resolve, reject) => {
+    // can't remove owner account user!
+    let query = {
+      where: {
+        id: id,
+        owner: false
+      },
+      include: [
+        { model: models.Account,
+          where: { id: accountId }
+        },
+        { model: SessionMember,
+          required: false
+        }
+      ]
+    }
+
+    AccountUser.find(query).then((accountUser) => {
+      if (_.isEmpty(accountUser.SessionMembers)) {
+        accountUser.destroy().then(() => {
+          resolve();
+        });
+      }else{
+        recalculateRole(accountUser, null, accountUser.role).then((role) => {
+          accountUser.update({role: role}).then(() => {
+            resolve();
+          }, (error) => {
+            reject(error);
+          });
+        }, (error) => {
+          reject(error);
+        });
+      }
+    });
+  })
+}
+
+function recalculateRole(accountUser, newRole, removeRole) {
+  return new Bluebird((resolve, reject) => {
+    const roles = ['admin', 'accountManager', 'facilitator', 'participant', 'observer'] // order is important!
+    if (newRole && removeRole) {
+      reject("Can do only add or remove at one time");
+    }
+
+    if (!_.includes(roles, (newRole || removeRole))) {
+      reject(`This role not falid: ${(newRole || removeRole)}`);
+    }
+    const currentRole = accountUser.role;
+    let  relatedRoles = _.uniq(accountUser.SessionMembers.map((sm) => { return sm.role }));
+
+    if (removeRole && roles.indexOf(currentRole) < roles.indexOf(removeRole)) {
+      relatedRoles.push(currentRole);
+    }
+
+    if (newRole && roles.indexOf(currentRole) > roles.indexOf(newRole)) {
+      relatedRoles.push(newRole);
+    }
+
+    if (newRole && roles.indexOf(currentRole) < roles.indexOf(newRole)) {
+      relatedRoles.push(currentRole);
+    }
+
+    let destinationRoll = null;
+    let index = 0;
+
+    while (index < roles.length) {
+      if (_.includes(relatedRoles, roles[index])) {
+        destinationRoll = roles[index];
+        break;
+      }
+      index++
+    };
+
+    resolve(destinationRoll);
+  })
+}
+
 function createAccountManager(object, callback) {
   object.errors = object.errors || {};
   if (object.errors.name) {
@@ -309,6 +387,8 @@ module.exports = {
   findWithSessionMembers: findWithSessionMembers,
   validateParams: validateParams,
   findWithEmail: findWithEmail,
-  findById: findById, 
-  updateInfo: updateInfo
+  findById: findById,
+  updateInfo: updateInfo,
+  deleteOrRecalculate: deleteOrRecalculate,
+  recalculateRole: recalculateRole
 }
