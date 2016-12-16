@@ -129,7 +129,7 @@
         if(result.error) {
           messenger.error(result.error);
         }else{
-          onSuccess(result.message)
+          onSuccess(result.message);
           vm.accountUsers.push(result.invite.AccountUser);
         }
       })
