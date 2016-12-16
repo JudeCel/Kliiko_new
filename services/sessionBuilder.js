@@ -74,7 +74,12 @@ function initializeBuilder(params) {
       Session.create(params).then(function(session) {
         addDefaultObservers(session, params);
         sessionBuilderObject(session).then(function(result) {
-          deferred.resolve(result);
+          validateMultipleSteps(session, result.sessionBuilder.steps).then(function(steps) {
+            result.sessionBuilder.steps = steps;
+            deferred.resolve(result);
+          }, function(error) {
+            deferred.reject(error);
+          });
         }, function(error) {
           deferred.reject(error);
         });

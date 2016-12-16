@@ -194,15 +194,7 @@ function prepareData(lists) {
 }
 
 function reqiredFieldsForList(list) {
-  let roles = ['accountManager','facilitator'];
-  let defaultList = constants.contactListReqiredFields;
-  if (_.includes(roles, list.role)) {
-    return defaultList;
-  }
-  else {
-    return   _.concat( defaultList, ["gender"])
-  }
-
+  return constants.contactListReqiredFields;
 }
 
 function create(params) {
