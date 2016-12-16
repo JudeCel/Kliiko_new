@@ -259,7 +259,7 @@ function updateInfo(id, valueToIncrease, sessionName) {
       where: { id: id }
     }).then(function(accountUser) {
       let info = prepareInfo(accountUser.invitesInfo, valueToIncrease, sessionName);
-      AccountUser.update({info: info}, { where: { id: id } }).then(function (result) {
+      AccountUser.update({invitesInfo: info}, { where: { id: id } }).then(function (result) {
         resolve();
       }).catch(function (error) {
         reject(error);

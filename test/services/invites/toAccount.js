@@ -73,10 +73,10 @@ describe('SERVICE - Invite to Account', function() {
                 active: false
               }
 
-              AccountUser.create(accountUserParamas).then((newaccountUser) => {
-                accountUserWithoutUser = newaccountUser
-                AccountUser.create(accountUserParams2).then((newaccountUser) => {
-                  accountUserWithUser = newaccountUser
+              AccountUser.create(accountUserParamas).then((newAccountUser) => {
+                accountUserWithoutUser = newAccountUser
+                AccountUser.create(accountUserParams2).then((newAccountUser2) => {
+                  accountUserWithUser = newAccountUser2
                   done();
                 })
               })
@@ -92,7 +92,6 @@ describe('SERVICE - Invite to Account', function() {
       it('should succeed remove invite for existing user', function (done) {
         let params = {
           accountUserId: accountUser2.id,
-          userId: accountUser2.UserId,
           accountId: accountUser2.AccountId,
           role: 'accountManager'
         }
@@ -145,7 +144,6 @@ describe('SERVICE - Invite to Account', function() {
       it('should succeed accept for existing user', function (done) {
         let params = {
           accountUserId: accountUserWithUser.id,
-          userId: accountUserWithUser.UserId,
           accountId: accountUserWithUser.AccountId,
           role: 'accountManager'
         }

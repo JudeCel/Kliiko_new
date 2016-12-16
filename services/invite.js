@@ -125,7 +125,6 @@ function updateToFacilitator(accountUser) {
 function facilitatorInviteParams(accountUser, sessionId) {
   return {
     accountUserId: accountUser.id,
-    userId: accountUser.UserId,
     sessionId: sessionId,
     role: 'facilitator'
   }
@@ -137,7 +136,6 @@ function createInvite(params) {
 
     Invite.create({
       accountUserId: params.accountUserId,
-      userId: params.userId,
       accountId: params.accountId,
       sessionId: params.sessionId,
       token: token,
@@ -315,7 +313,7 @@ function destroyInvite(invite, callback) {
 
 function findInvite(token) {
   return new Bluebird((resolve, reject) => {
-    Invite.find({ include: [Account, AccountUser, User], where: { token: token, $or: [{ status: 'pending' }, { status: 'inProgress' }] } }).then(function(result) {
+    Invite.find({ include: [Account, AccountUser], where: { token: token, $or: [{ status: 'pending' }, { status: 'inProgress' }] } }).then(function(result) {
       if(result) {
         resolve(result);
       }
@@ -353,7 +351,7 @@ function declineInvite(token) {
 };
 
 function findUserInSystemByEmail(email) {
-  return User.find({where: {email: email}})
+  return User.find({where: {email: { ilike: email }} })
 }
 function checkUser(invite, user, params, transaction) {
   return new Bluebird((resolve, reject) => {
@@ -405,43 +403,59 @@ function checSession(invite, user, params, transaction) {
   })
 }
 
+function createUser(invite, params, transaction) {
+  let createParams = {
+    confirmedAt: new Date(),
+    password: params.password,
+    email: invite.AccountUser.email
+  }
+  return User.create(createParams, { transaction: transaction });
+}
+
 function createUserIfNecessary(invite, user, params, transaction) {
+  let selectedUser = user;
   return new Bluebird((resolve, reject) => {
-    if (!user) {
-      let createParams = {
-        confirmedAt: new Date(),
-        password: params.password,
-        email: invite.AccountUser.email
-      }
-
-      User.create(createParams, { transaction: transaction } ).then((newUser) => {
-        let updateAssociateDate = [
-          (newUser, params, transaction) => {;
-            updateAccountUsers(newUser, transaction);
+    let flow = [
+      (invite, user, params, transaction) => {
+        return new Bluebird((resolve, reject) => {
+          if (!user) {
+            createUser(invite, params, transaction).then((newUser) => {
+              selectedUser = newUser;
+              resolve();
+            }, (error) => {
+              console.log(error);
+              reject(filters.errors(error));
+            })
+          }else{
+            resolve();
           }
-        ]
-
-        if (params.social) {
-          let addSocialProfil = (user, params, transaction) => {
-            params.social.user = { id: user.id };
-            socialProfileService.createPromise(params.social, transaction)
-          }
-          updateAssociateDate.push(addSocialProfil)
-        }
-
-        Bluebird.each(updateAssociateDate, (step) => {
-          return step(newUser, params, transaction)
-        }).then(() => {
-          resolve(newUser)
-        }, (error) => {
-          reject(filters.errors(error))
         })
-      }, (error) => {
-        reject(filters.errors(error))
-      })
-    }else{
-      resolve(user)
-    }
+      },
+      (_invite, user, _params, transaction) => {
+        return updateAccountUsers(user, transaction);
+      },
+      (_invite, user, params, transaction) => {
+        return new Bluebird((resolve, reject) => {
+          if (params.social) {
+            params.social.user = { id: user.id };
+            return socialProfileService.createPromise(params.social, transaction)
+          }else{
+            resolve();
+          }
+        })
+
+      }
+    ]
+
+    Bluebird.each(flow, (step) => {
+      return step(invite, selectedUser, params, transaction);
+    }).then(() => {
+      resolve(selectedUser);
+    }, (error) => {
+      console.log(error);
+      reject(filters.errors(error))
+    })
+
   })
 }
 
@@ -470,6 +484,8 @@ function updateAccountUsers(newUser, transaction) {
   return new Bluebird((resolve, reject) => {
     AccountUser.update({"UserId": newUser.id}, {where: {"UserId": null, email: { ilike: newUser.email } }, transaction: transaction}).then(() =>{
       resolve();
+    }, (error) => {
+      reject(error);
     });
   })
 }
@@ -478,24 +494,31 @@ function acceptInvite(token, params={}) {
   return new Bluebird((resolve, reject) => {
     let inviteAcceptFlow = [
       (invite, user, params, transaction) => {
+        console.log("Invite step: checkUser", invite.id);
         return checkUser(invite, user, params, transaction)
       },
       (invite, user, params, transaction) => {
+        console.log("Invite step: checSession", invite.id);
         return checSession(invite, user, params, transaction)
       },
       (invite, user, params, transaction) => {
+        console.log("Invite step: createUserIfNecessary", invite.id);
         return createUserIfNecessary(invite, user, params, transaction)
       },
       (invite, _user, _params, transaction) => {
+        console.log("Invite step: invite.update", invite.id);
         return invite.update({ status: 'confirmed' }, {transaction: transaction})
       },
       (invite, _user, _params, transaction) => {
+        console.log("Invite step: setAccountUserActive", invite.id);
         return setAccountUserActive(invite, transaction)
       },
       (invite, _user, _params, transaction) => {
+        console.log("Invite step: createSessionMemberIfNecessary", invite.id);
         return createSessionMemberIfNecessary(invite, transaction)
       },
       (invite, _user, _params, transaction) => {
+        console.log("Invite step: shouldUpdateRole", invite.id);
         return shouldUpdateRole(invite.AccountUser, invite.role, transaction)
       }
     ]
@@ -515,6 +538,7 @@ function acceptInvite(token, params={}) {
             })
           }, (error) => {
             transaction.rollback().then(() => {
+              console.log(error, "invite error" , invite.id);
               reject(error);
             });
           });
@@ -741,5 +765,6 @@ module.exports = {
   acceptSessionInvite: acceptSessionInvite,
   createFacilitatorInvite: createFacilitatorInvite,
   populateMailParamsWithColors: populateMailParamsWithColors,
-  updateToFacilitator: updateToFacilitator
+  updateToFacilitator: updateToFacilitator,
+  findUserInSystemByEmail: findUserInSystemByEmail
 };

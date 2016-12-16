@@ -13,11 +13,13 @@ function views_path(action) {
 
 function index(req, res, next) {
   inviteService.findInvite(req.params.token).then((invite) => {
-    if (invite.AccountUser.UserId) {
-      res.render(views_path('index'), simpleParams('Invite', invite, {}));
-    } else {
-      res.render(views_path('newUser'), simpleParams('Invite', invite, {}));
-    }
+    inviteService.findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
+      if (user) {
+        res.render(views_path('index'), simpleParams('Invite', invite, {}));
+      } else {
+        res.render(views_path('newUser'), simpleParams('Invite', invite, {}));
+      }
+    })
   }, (error) => {
     res.redirect('/login');
   });
@@ -37,11 +39,13 @@ function accept(req, res, next) {
     inviteService.acceptInvite(req.params.token, req.body).then(({user}) => {
       loginUser(req, res, next, user);
     }, (error) => {
-      if (invite.AccountUser.UserId) {
-        res.render(views_path('index'), simpleParams('Invite', invite, error));
-      } else {
-        res.render(views_path('newUser'), simpleParams('Invite', invite, error));
-      }
+      inviteService.findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
+        if (user) {
+          res.render(views_path('index'), simpleParams('Invite', invite, error));
+        } else {
+          res.render(views_path('newUser'), simpleParams('Invite', invite, error));
+        }
+      })
     });
   }, (error) => {
     res.redirect('/login');
