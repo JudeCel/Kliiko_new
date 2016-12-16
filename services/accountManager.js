@@ -92,7 +92,11 @@ function findAccountManagers(accountId) {
 
 function findAndRemoveAccountUser(id, accountId) {
   let deferred = q.defer();
-
+  AccountUserService.deleteOrRecalculate(id, accountId).then(() => {
+    deferred.resolve(MessagesUtil.accountManager.removed);
+  }, (error) => {
+    deferred.reject(filters.errors(error));
+  })
   AccountUser.find({
     where: {
       id: id,
@@ -103,15 +107,13 @@ function findAndRemoveAccountUser(id, accountId) {
       where: { id: accountId }
     }]
   }).then(function(result) {
+
     if(result) {
       result.destroy().then(function() {
         deferred.resolve(MessagesUtil.accountManager.removed);
       }, function(error) {
         deferred.reject(filters.errors(error));
       });
-    }
-    else {
-      deferred.reject(MessagesUtil.accountManager.notFoundOrOwner);
     }
   });
 
