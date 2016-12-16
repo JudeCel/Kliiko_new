@@ -97,8 +97,12 @@ describe('SERVICE - SessionBuilder', function() {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           setTimeout(() => {
             models.SessionTopics.find({where: {sessionId: result.sessionBuilder.id}}).then(function(result) {
-              assert.isTrue(result != null);
-              done();
+              try {
+                assert.isTrue(result != null);
+                done();
+              } catch (e) {
+                done(e);
+              }
             }, function(error) {
               done(error);
             });
