@@ -691,13 +691,15 @@ function sessionBuilderObjectSnapshotForStep1(stepData) {
 }
 
 function sessionBuilderObjectSnapshotForStep2(stepData) {
-  //todo:
   return { };
+  //todo: add topics
 }
 
 function sessionBuilderObjectSnapshotForStep3(stepData) {
-  //todo:
-  return { };
+  return { 
+    name: stringHelpers.hash(stepData.incentive_details)
+  };
+  //todo: add emails
 }
 
 function sessionBuilderObjectSnapshot(session, steps) {
