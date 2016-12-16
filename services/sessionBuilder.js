@@ -15,6 +15,7 @@ var mailUrlHelper = require('./../mailers/helpers');
 var validators = require('./../services/validators');
 var sessionMemberServices = require('./sessionMember');
 var MessagesUtil = require('./../util/messages');
+var stringHelpers = require('./../util/stringHelpers');
 var sessionValidator = require('./validators/session');
 
 var async = require('async');
@@ -671,6 +672,43 @@ function findNewStep(step, previous) {
   }
 }
 
+function sessionBuilderObjectSnapshotForStep1(stepData) {
+  return { 
+    name: stringHelpers.hash(stepData.name),
+    type: stringHelpers.hash(stepData.name),
+    startTime: stringHelpers.hash(stepData.startTime),
+    endTime: stringHelpers.hash(stepData.endTime),
+    timeZone: stringHelpers.hash(stepData.timeZone),
+    resourceId: stringHelpers.hash(stepData.resourceId),
+    anonymous: stringHelpers.hash(stepData.anonymous),
+    brandProjectPreferenceId: stringHelpers.hash(stepData.brandProjectPreferenceId),
+    facilitatorId: stringHelpers.hash(stepData.facilitator ? stepData.facilitator.id : null)
+  };
+}
+
+function sessionBuilderObjectSnapshotForStep2(stepData) {
+  //todo:
+  return { };
+}
+
+function sessionBuilderObjectSnapshotForStep3(stepData) {
+  //todo:
+  return { };
+}
+
+function sessionBuilderObjectSnapshot(session, steps) {
+  switch (session.step) {
+    case "setUp":
+      return sessionBuilderObjectSnapshotForStep1(steps.step1);
+    case "facilitatiorAndTopics":
+      return sessionBuilderObjectSnapshotForStep2(steps.step2);
+    case "manageSessionEmails":
+      return sessionBuilderObjectSnapshotForStep3(steps.step3);
+    default:
+      return { };
+  }
+}
+
 function sessionBuilderObject(session, steps) {
   let deferred = q.defer();
   stepsDefinition(session, steps).then(function(result) {
@@ -680,7 +718,8 @@ function sessionBuilderObject(session, steps) {
       status: session.status,
       id: session.id,
       startTime: changeTimzone(session.startTime, session.timeZone, "UTC"),
-      endTime: changeTimzone(session.endTime, session.timeZone, "UTC")
+      endTime: changeTimzone(session.endTime, session.timeZone, "UTC"),
+      snapshot: sessionBuilderObjectSnapshot(session, result)
     };
 
     sessionValidator.addShowStatus(sessionBuilder);
