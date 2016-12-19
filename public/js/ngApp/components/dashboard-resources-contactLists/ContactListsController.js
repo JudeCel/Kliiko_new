@@ -91,7 +91,7 @@
     var isSelected = false;
 
     function requireField(field) {
-      if (vm.lists.activeList && vm.lists.activeList.reqiredFields.indexOf(field) > -1) {
+      if (vm.lists.activeList && vm.lists.activeList.reqiredFields && vm.lists.activeList.reqiredFields.indexOf(field) > -1) {
         return "*"
       } else {
         return ""

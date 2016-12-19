@@ -88,79 +88,79 @@
       }
     }
 
-    function socketConnection(self) {
-      self.socket = new Phoenix.Socket(globalSettings.socketServerUrl, {
-        params: {
-          token: fileUploader.token
-        },
-        // logger: function(kind, msg, data) { console.log(kind +":"+ msg +":",  data) },
-      });
-
-      self.socket.onError( function(event){
-        console.error(event);
-      });
-
-      if (self.id) {
-        var channel = self.socket.channel("sessionsBuilder:" + self.id);
-        if (channel.state != 'joined') {
-
-          channel.on("inviteUpdate", function(resp) {
-            if (resp.role == 'participant' ) {
-              updateInvite(self.steps, resp)
-            }else {
-
-            }
-          });
-          channel.on("inviteDelete", function(resp) {
-            removeInvite(self.steps, resp);
-          });
-
-          channel.join();
-        }
-        self.socket.connect();
-      }
-    }
-    function selectInviteList(steps, invite) {
-      switch (invite.role) {
-        case 'participant':
-          return steps.step4.participants;
-        case 'observer':
-          return steps.step5.observers;
-        default:
-          return null;
-      }
-    }
-
-    function updateInvitesList(steps, newList, invite) {
-      switch (invite.role) {
-        case 'participant':
-          return steps.step4.participants = newList;
-        case 'observer':
-          return steps.step5.observers = newList;
-        default:
-          return null;
-      }
-    }
-
-    function removeInvite(steps, invite) {
-      var list = selectInviteList(steps, invite);
-      list.map(function(item) {
-        if(invite.id != item.invite.id ) {
-          newList.push(item);
-        }
-      });
-      updateInvitesList(steps, newList, invite);
-    }
-    function updateInvite(steps, invite) {
-      var list = selectInviteList(steps, invite);
-      list.map(function(item) {
-        if(invite.id == item.invite.id ) {
-          item.invite.emailStatus = invite.emailStatus;
-          item.invite.status = invite.status;
-        }
-      });
-      updateInvitesList(steps, list, invite);
-    }
+    // function socketConnection(self) {
+    //   self.socket = new Phoenix.Socket(globalSettings.socketServerUrl, {
+    //     params: {
+    //       token: fileUploader.token
+    //     },
+    //     // logger: function(kind, msg, data) { console.log(kind +":"+ msg +":",  data) },
+    //   });
+    //
+    //   self.socket.onError( function(event){
+    //     console.error(event);
+    //   });
+    //
+    //   if (self.id) {
+    //     var channel = self.socket.channel("sessionsBuilder:" + self.id);
+    //     if (channel.state != 'joined') {
+    //
+    //       channel.on("inviteUpdate", function(resp) {
+    //         if (resp.role == 'participant' ) {
+    //           updateInvite(self.steps, resp)
+    //         }else {
+    //
+    //         }
+    //       });
+    //       channel.on("inviteDelete", function(resp) {
+    //         removeInvite(self.steps, resp);
+    //       });
+    //
+    //       channel.join();
+    //     }
+    //     self.socket.connect();
+    //   }
+    // }
+    // function selectInviteList(steps, invite) {
+    //   switch (invite.role) {
+    //     case 'participant':
+    //       return steps.step4.participants;
+    //     case 'observer':
+    //       return steps.step5.observers;
+    //     default:
+    //       return null;
+    //   }
+    // }
+    //
+    // function updateInvitesList(steps, newList, invite) {
+    //   switch (invite.role) {
+    //     case 'participant':
+    //       return steps.step4.participants = newList;
+    //     case 'observer':
+    //       return steps.step5.observers = newList;
+    //     default:
+    //       return null;
+    //   }
+    // }
+    //
+    // function removeInvite(steps, invite) {
+    //   var list = selectInviteList(steps, invite);
+    //   list.map(function(item) {
+    //     if(invite.id != item.invite.id ) {
+    //       newList.push(item);
+    //     }
+    //   });
+    //   updateInvitesList(steps, newList, invite);
+    // }
+    // function updateInvite(steps, invite) {
+    //   var list = selectInviteList(steps, invite);
+    //   list.map(function(item) {
+    //     if(invite.id == item.invite.id ) {
+    //       item.invite.emailStatus = invite.emailStatus;
+    //       item.invite.status = invite.status;
+    //     }
+    //   });
+    //   updateInvitesList(steps, list, invite);
+    // }
 
     function init() {
       var self = this;
@@ -175,7 +175,6 @@
       }
 
       function resolve(res) {
-        socketConnection(self)
         deferred.resolve(res);
       }
 

@@ -23,7 +23,7 @@ function canAddAccountManager(req, res, next) {
 function post(req, res, next) {
   accountManagerService.createOrFindAccountManager(req.user, req.body, res.locals.currentDomain.id).then(function(params) {
     inviteService.createInvite(params).then(function(data) {
-      res.send({ invite: data.invite, message: MessagesUtil.routes.accountManager.invite });
+      res.send({ invite: data, message: MessagesUtil.routes.accountManager.invite });
     }, function(error) {
       res.send({ error: error });
     });

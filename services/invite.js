@@ -143,7 +143,11 @@ function createInvite(params) {
       role: params.role
     }).then(function(result) {
       enqueue(backgroundQueues.queues.invites, "invite", [result.id]).then(() => {
-        resolve(result);
+        Invite.find({where: {id: result.id}, include: { model: AccountUser, attributes: constants.safeAccountUserParams }}).then(function(invite) {
+          resolve(invite);
+        }, function(error) {
+          resolve(result);
+        });
       }, (error) => {
         reject(error);
       });
