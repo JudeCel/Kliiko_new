@@ -41,25 +41,15 @@ function addDefaultTopicVideo(accountUser, video, type) {
 
 function getDefaultVideo(type) {
   return new Bluebird((resolve, reject) => {
-    let video = null;
-    switch (type) {
-      case "forum": 
-        video = Constants.defaultTopic.video.forum;
-        break;
-      case "focus": 
-        video = Constants.defaultTopic.video.focus;
-        break;
-      default:
-        break;
-    }
-    if (video != null) {
+    let video = Constants.defaultTopic.video[type]
+    if (video) {
       models.Resource.find({ where: { scope: "videoService", source: video.source, link: video.link, stock: true } }).then(function(res) {
         resolve(res);
       }, function(error) {
         reject(error);
       });
     } else {
-      resolve(null);
+      resolve();
     }
   });
 }

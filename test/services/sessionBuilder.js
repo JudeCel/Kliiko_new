@@ -95,18 +95,16 @@ describe('SERVICE - SessionBuilder', function() {
       
       it('should create default topic', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          setTimeout(() => {
-            models.SessionTopics.find({where: {sessionId: result.sessionBuilder.id}}).then(function(result) {
-              try {
-                assert.isTrue(result != null);
-                done();
-              } catch (e) {
-                done(e);
-              }
-            }, function(error) {
-              done(error);
-            });
-          }, 1000);
+          models.SessionTopics.find({where: {sessionId: result.sessionBuilder.id}}).then(function(result) {
+            try {
+              assert.isTrue(result != null);
+              done();
+            } catch (e) {
+              done(e);
+            }
+          }, function(error) {
+            done(error);
+          });
         });
       });
 
@@ -627,24 +625,22 @@ describe('SERVICE - SessionBuilder', function() {
     describe('sad path', function(done) {
       it('should fail because no topics', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          setTimeout(() => {
-            //remove default topic from DB
-            models.SessionTopics.destroy({where: {sessionId: result.sessionBuilder.id}}).then(function() {
-              let params = sessionParams(result);
-              let nextStepIndex = 3;
-              params.step = 'facilitatiorAndTopics';
-              sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-                sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
-                  assert.equal(result.sessionBuilder.steps.step2.error.topics, 'No topics selected');
-                  done();
-                });
-              }, function(error) {
-                done(error);
+          //remove default topic from DB
+          models.SessionTopics.destroy({where: {sessionId: result.sessionBuilder.id}}).then(function() {
+            let params = sessionParams(result);
+            let nextStepIndex = 3;
+            params.step = 'facilitatiorAndTopics';
+            sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+              sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
+                assert.equal(result.sessionBuilder.steps.step2.error.topics, 'No topics selected');
+                done();
               });
             }, function(error) {
               done(error);
             });
-          }, 1000);
+          }, function(error) {
+            done(error);
+          });
         });
       });
     });
