@@ -25,7 +25,7 @@
           {{ upload = sc.galleryDropdownData("survey", sc.survey); resource = gc.getResourceFromList(sc.survey); "" }}
           <div ng-include="gc.templatesDir + 'viewRendered.html'" ng-if='resource'></div>
           <img ng-src='/icons/Klzii_RGB_72.png' ng-if='!resource'/></br>
-          <ng-include class="dropdown" src="gc.templatesDir + 'dropdown.html'" style="padding-bottom: 9px;" ng-init="uploadButtonText = 'Upload your Logo'"></ng-include>
+          <ng-include class="dropdown" src="gc.templatesDir + 'dropdown.html'" style="padding-bottom: 9px;" ng-init="uploadHeaderText = 'Upload your Logo'"></ng-include>
         </div>
       </div>
 
