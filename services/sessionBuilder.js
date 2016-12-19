@@ -17,6 +17,9 @@ var sessionMemberServices = require('./sessionMember');
 var MessagesUtil = require('./../util/messages');
 var stringHelpers = require('./../util/stringHelpers');
 var sessionValidator = require('./validators/session');
+var topicsService = require('./topics');
+var resourcesService = require('./resources');
+var whiteboardService = require('./whiteboard');
 
 var async = require('async');
 var _ = require('lodash');
@@ -50,14 +53,85 @@ module.exports = {
 };
 
 function addDefaultObservers(session) {
-  models.AccountUser.findAll({ where: { AccountId: session.accountId, role: { $in: ['admin', 'accountManager'] } } }).then(function(accountUsers) {
-    _.map(accountUsers, function(accountUser) {
-      sessionMemberServices.createWithTokenAndColour({
-        sessionId: session.id,
-        accountUserId: accountUser.id,
-        username: accountUser.firstName,
-        role: 'observer'
+  return new bluebird(function (resolve, reject) {
+    models.AccountUser.findAll({ where: { AccountId: session.accountId, role: { $in: ['admin', 'accountManager'] } } }).then(function(accountUsers) {
+      _.map(accountUsers, function(accountUser) {
+        sessionMemberServices.createWithTokenAndColour({
+          sessionId: session.id,
+          accountUserId: accountUser.id,
+          username: accountUser.firstName,
+          role: 'observer'
+        }).then(function(result) {
+          resolve(result);
+        }, function(error) {
+          reject(error);
+        });
       });
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
+function defaultTopicParams(session, topic) {
+  return {
+    topicId: topic.id, 
+    sessionId: session.id, 
+    order: 0, 
+    active: true, 
+    landing: true, 
+    boardMessage: topic.boardMessage, 
+    name: topic.name, 
+    sign: topic.sign
+  };
+}
+
+function defaultVideoParams(resource, topic) {
+  return {
+    sessionTopicId: topic.id, 
+    videoId: resource.id,
+    pinboard: false
+  };
+}
+
+function addDefaultTopic(session, sessionMember) {
+  models.Topic.find({ where: { accountId: session.accountId, default: true } }).then(function(topic) {
+    if (topic) {
+      let topicParams = defaultTopicParams(session, topic);
+      models.SessionTopics.create(topicParams).then(function(sessionTopic) {
+        let imageParams = whiteboardService.defaultTopicImageParams(sessionTopic, sessionMember);
+        models.Shape.create(imageParams);
+      });
+    }
+  });
+}
+
+function addDefaultTopicVideo(session) {
+  resourcesService.getDefaultVideo(session.type).then(function(resource) {
+    if (resource) {
+      models.SessionTopics.find({ where: { sessionId: session.id, landing: true } }).then(function(topic) {
+        if (topic) {
+          let videoParams = defaultVideoParams(resource, topic);
+          models.Console.create(videoParams);
+          models.SessionResource.create({ sessionId: session.id, resourceId: resource.id });
+        }
+      });
+    }
+  });
+}
+
+function createNewSessionDefaultItems(session) {
+  return new bluebird(function (resolve, reject) {
+    addDefaultObservers(session).then(function(sessionMember) {
+      addDefaultTopic(session, sessionMember).then(function(sessionMember) {
+        resolve();
+      }, function(error) {
+        resolve();
+      });
+    }, function(error) {
+      resolve();
+    }).catch(function(error) {
+      resolve();
     });
   });
 }
@@ -73,16 +147,12 @@ function initializeBuilder(params) {
       params.endTime = params.date;
 
       Session.create(params).then(function(session) {
-        addDefaultObservers(session, params);
-        sessionBuilderObject(session).then(function(result) {
-          validateMultipleSteps(session, result.sessionBuilder.steps).then(function(steps) {
-            result.sessionBuilder.steps = steps;
+        createNewSessionDefaultItems(session).then(function() {
+          sessionBuilderObject(session).then(function(result) {
             deferred.resolve(result);
           }, function(error) {
             deferred.reject(error);
           });
-        }, function(error) {
-          deferred.reject(error);
         });
       }).catch(function(error) {
         deferred.reject(filters.errors(error));
@@ -171,7 +241,9 @@ function doUpdate(originalSession, params) {
       return originalSession.updateAttributes(params);
     }).then(function(result) {
       updatedSession = result;
-      return sessionBuilderObject(updatedSession);
+      if (params["type"]) {
+        addDefaultTopicVideo(result);
+      }      return sessionBuilderObject(updatedSession);
     }).then(function(sessionObject) {
       if (sessionObject.status == 'closed') {
         sendCloseEmailToAllObservers(updatedSession).then(function() {

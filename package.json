@@ -19,7 +19,8 @@
     "enableDatabaseMonitoring": "node ./tasks/databaseMonitoring/enableDatabaseMonitoring.js",
     "enableTableMonitoring": "node ./tasks/databaseMonitoring/enableTableMonitoring.js",
     "updateAccountUsersUserId": "node ./tasks/dataNormalization/updateAccountUsers.js",
-    "updateContactLists": "node ./tasks/updateContactLists.js"
+    "updateContactLists": "node ./tasks/updateContactLists.js",
+    "createDefaultTopics": "node ./tasks/createDefaultTopics.js"
   },
   "engineStrict": true,
   "engine": {

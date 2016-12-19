@@ -49,7 +49,7 @@ describe('SERVICE - AccountUser with DB', function() {
 
   describe('#deleteOrRecalculate', () => {
     describe("when only one record", () => {
-      it("delete user without another role in the account", (done) =>{
+      it("set lower role in system if no other roles", (done) =>{
         let accountUserParams2 ={
           email: "dainis@gmail.com",
           AccountId: accountUser2.AccountId,
@@ -64,7 +64,7 @@ describe('SERVICE - AccountUser with DB', function() {
           accountUserService.deleteOrRecalculate(newAccountUser2.id, newAccountUser2.AccountId).then(() => {
             AccountUser.find({where: {id: newAccountUser2.id}}).then((accountUser) => {
               try {
-                assert.isNull(accountUser);
+                assert.equal(accountUser.role, 'observer');
                 done();
               } catch (e) {
                 done(e);

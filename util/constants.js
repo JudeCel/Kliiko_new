@@ -99,10 +99,23 @@ module.exports = {
     participantsFocus: 8,
     participantsForum: -1,
   },
+  defaultTopic: {
+    billboardText: 'Exciting to see you all here, so let\'s get started! Click on the green button below to view the video on how to use this Chat Room.',
+    video: {
+      focus: {
+        source: 'vimeo',
+        link: '187510116'
+      },
+      forum: {
+        source: 'vimeo',
+        link: '187585089'
+      }
+    }
+  },
   sessionBuilderValudateChanges: {
     session: {
       changableFields: ["name", "startTime", "endTime", "timeZone", "resourceId", "brandProjectPreferenceId", "incentive_details" ],
-      notChangableFields: ["type", "anonymous" ],
+      notChangableFields: ["type", "anonymous" ]
     }
   }
 }

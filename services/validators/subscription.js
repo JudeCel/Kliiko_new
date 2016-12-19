@@ -42,7 +42,7 @@ const DEPENDENCIES = {
     key: 'topicCount',
     model: models.Topic,
     params: function(accountId) {
-      return { where: { accountId: accountId } };
+      return { where: { accountId: accountId, default: false } };
     }
   }
 };

@@ -97,26 +97,7 @@ function findAndRemoveAccountUser(id, accountId) {
   }, (error) => {
     deferred.reject(filters.errors(error));
   })
-  AccountUser.find({
-    where: {
-      id: id,
-      owner: false
-    },
-    include: [{
-      model: Account,
-      where: { id: accountId }
-    }]
-  }).then(function(result) {
-
-    if(result) {
-      result.destroy().then(function() {
-        deferred.resolve(MessagesUtil.accountManager.removed);
-      }, function(error) {
-        deferred.reject(filters.errors(error));
-      });
-    }
-  });
-
+  
   return deferred.promise;
 }
 
