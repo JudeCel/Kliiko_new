@@ -74,20 +74,20 @@ function addDefaultObservers(session) {
 
 function defaultTopicParams(session, topic) {
   return {
-    topicId: topic.id, 
-    sessionId: session.id, 
-    order: 0, 
-    active: true, 
-    landing: true, 
-    boardMessage: topic.boardMessage, 
-    name: topic.name, 
+    topicId: topic.id,
+    sessionId: session.id,
+    order: 0,
+    active: true,
+    landing: true,
+    boardMessage: topic.boardMessage,
+    name: topic.name,
     sign: topic.sign
   };
 }
 
 function defaultVideoParams(resource, topic) {
   return {
-    sessionTopicId: topic.id, 
+    sessionTopicId: topic.id,
     videoId: resource.id,
     pinboard: false
   };
@@ -567,11 +567,13 @@ function removeInvite(params) {
     }
   }).then(function(invite) {
     if(invite) {
-      invite.destroy().then(function() {
-        deferred.resolve(MessagesUtil.sessionBuilder.inviteRemoved);
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
-      });
+      inviteService.removeInvite(invite, (error) => {
+        if (error) {
+          deferred.reject(error);
+        }else{
+          deferred.resolve(MessagesUtil.sessionBuilder.inviteRemoved);
+        }
+      })
     } else {
       deferred.reject(MessagesUtil.sessionBuilder.inviteNotFound);
     }
