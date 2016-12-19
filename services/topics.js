@@ -7,6 +7,7 @@ var filters = require('./../models/filters');
 var models = require('./../models');
 var Topic = models.Topic;
 var _ = require('lodash');
+let Bluebird = require('bluebird')
 var Session = models.Session;
 
 module.exports = {
@@ -20,7 +21,8 @@ module.exports = {
   removeFromSession: removeFromSession,
   removeAllFromSession: removeAllFromSession,
   removeAllAndAddNew: removeAllAndAddNew,
-  messages: MessagesUtil.topics
+  messages: MessagesUtil.topics,
+  createDefaultForAccount: createDefaultForAccount
 };
 
 function getAll(accountId) {
@@ -129,7 +131,7 @@ function joinToSession(ids, sessionId) {
 function removeFromSession(ids, sessionId) {
   let deferred = q.defer();
   Session.find({where: { id: sessionId } }).then(function(session) {
-    Topic.findAll({where: {id: ids}}).then(function(results) {
+    Topic.findAll({where: {id: ids, default: false}}).then(function(results) {
       session.removeTopics(results).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
@@ -151,7 +153,7 @@ function removeAllFromSession(sessionId) {
   Topic.findAll({
     include: [{
       model: models.Session,
-      where: { id: sessionId }
+      where: { id: sessionId, default: false }
     }]
   }).then(function(results) {
     let ids = _.map(results, 'id');
@@ -182,7 +184,9 @@ function removeAllAndAddNew(sessionId, topics) {
 function destroy(id) {
   let deferred = q.defer();
   Topic.find({where: { id: id }, include: [{model: models.Session }]}).then(function(topic) {
-    if (_.isEmpty(topic.Sessions)) {
+    if (topic.default) {
+      deferred.reject(MessagesUtil.topics.error.default);
+    } else if (_.isEmpty(topic.Sessions)) {
       Topic.destroy({where: { id: id } }).then(function(result) {
         deferred.resolve(result)
       },function(error) {
@@ -232,4 +236,15 @@ function update(params) {
 
 function sessionTopicUpdateParams(params) {
   return _.pick(params, ['name', 'boardMessage', 'sign', 'lastSign']);
+}
+
+function createDefaultForAccount(params, transaction) {
+  return new Bluebird((resolve, reject) => {
+    params["default"] = true;
+    Topic.create(params, { transaction: transaction }).then(function(topic) {
+      resolve(topic);
+    },function(error) {
+      reject(filters.errors(error));
+    });
+  });
 }

@@ -35,7 +35,7 @@
               </div>
 
               &nbsp;{{ topic.name }}
-              <img ng-drag="false" class="pull-right ic" ng-click="tc.deleteTopic(topic.id)" src="/icons/dashboardElement_remove.png" title="Delete">
+              <img ng-drag="false" class="pull-right ic" ng-click="tc.deleteTopic(topic.id)" ng-if="!topic.default" src="/icons/dashboardElement_remove.png" title="Delete">
               <img ng-drag="false" class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('edit', topic)">
             </div>
           </div>
@@ -55,7 +55,7 @@
                 {{ topic.sessionTopic.name }}
               </span>
 
-              <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.id)" src="/icons/dashboardElement_remove.png" title="Delete">
+              <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.id)" ng-if="!topic.default" src="/icons/dashboardElement_remove.png" title="Delete">
               <img class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('sessionTopic', topic.sessionTopic)">
               <toggle-switch
                 ng-model="topic.sessionTopic.active"
