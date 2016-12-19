@@ -691,11 +691,23 @@ function sessionBuilderObjectSnapshotForStep1(stepData) {
 }
 
 function sessionBuilderObjectSnapshotForStep2(stepData) {
-  return { };
-  //todo: add topics
+  let res = { };
+  for (let i=0; i<stepData.topics.length; i++) {
+    let topic = stepData.topics[i];
+    res[topic.id] = {
+      order: stringHelpers.hash(topic.order),
+      active: stringHelpers.hash(topic.active),
+      landing: stringHelpers.hash(topic.landing),
+      boardMessage: stringHelpers.hash(topic.boardMessage),
+      name: stringHelpers.hash(topic.name),
+      sign: stringHelpers.hash(topic.sign)
+    };
+  }
+  return res;
 }
 
 function sessionBuilderObjectSnapshotForStep3(stepData) {
+  //sconsole.log("step3", stepData);
   return { 
     name: stringHelpers.hash(stepData.incentive_details)
   };
