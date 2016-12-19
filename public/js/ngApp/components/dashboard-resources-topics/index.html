@@ -30,7 +30,7 @@
           <h3 class='panel-title'>
             {{ t.name }}
             <span ng-click="$event.stopPropagation()">
-              <img class='pull-right ic' ng-click='topics.deleteTopic(t.id)' src='/icons/dashboardElement_remove.png' title='Delete'>
+              <img class='pull-right ic' ng-click='topics.deleteTopic(t.id)' ng-if="!t.default" src='/icons/dashboardElement_remove.png' title='Delete'>
               <img class='pull-right ic' ng-click="topics.openModal('edit', t)" src='/icons/dashboardElement_edit.png' title='Edit'>
             </span>
           </h3>

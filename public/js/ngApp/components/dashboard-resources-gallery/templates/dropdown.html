@@ -2,7 +2,7 @@
     <button ng-if='upload.modal.upload' class='btn btn-standart btn-green btn-large btn-margin dropdown-toggle' id='uploadResourceDropdown'
             data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>
           <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
-          <span>Add New Resource</span>
+          <span>{{ uploadHeaderText || 'Add New Resource' }}</span>
     </button>
     <ul ng-if='upload.modal.upload' class='dropdown-menu' ng-class="gc.currentPage.main ? 'dropdown-menu-right' : '' " aria-labelledby='uploadResourceDropdown' style="width: 200px;">
       <li ng-repeat='u in upload.types' class='cursor-pointer' ng-if='u.format'>

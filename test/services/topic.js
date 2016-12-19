@@ -113,7 +113,7 @@ describe('Topic Service', function() {
       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
         topicService.create(attrs).then(function(topic){
           topicService.joinToSession([topic.id], testSession.id).then(function(_) {
-            topicService.removeFromSession([testSession.id], testSession.id).then(function(result) {
+            topicService.removeFromSession([topic.id], testSession.id).then(function(result) {
               assert.equal(result, 1)
               done()
             }, function(err) {

@@ -89,6 +89,14 @@
     }
 
     function changeActiveState(topic) {
+      if (topic.default && !topic.sessionTopic.active && topic.sessionTopic.landing) {
+        for(var i=0; i<vm.sessionTopicsArray.length; i++) {
+          if (vm.sessionTopicsArray[i].sessionTopic.active) {
+            changeLandingState(vm.sessionTopicsArray[i]);
+            return;
+          }
+        }
+      }
       saveTopics(vm.sessionTopicsArray);
     }
 

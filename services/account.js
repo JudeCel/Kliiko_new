@@ -7,6 +7,7 @@ var Account  = models.Account;
 var filters = require('./../models/filters');
 var contactListService  = require('./contactList');
 var brandColourService  = require('./brandColour');
+var topicsService  = require('./topics');
 var subscriptionPreferencesCosnt  = require('../util/planConstants.js')
 var accountUserService = require('./accountUser');
 var async = require('async');
@@ -105,9 +106,14 @@ function create(object, callback) {
     contactListService.createDefaultLists(result.id, object.transaction).then(function(contactLists) {
       brandColourService.createDefaultForAccount({ accountId: result.id, type: 'focus', name: 'Default Focus Scheme', colours: {} }, object.transaction).then(function() {
         brandColourService.createDefaultForAccount({ accountId: result.id, type: 'forum', name: 'Default Forum Scheme', colours: {} }, object.transaction).then(function() {
-          object.account = result;
-          object.contactLists = contactLists.results;
-          callback(null, object);
+          topicsService.createDefaultForAccount({ accountId: result.id, name: 'Getting Started', boardMessage: Constants.defaultTopic.billboardText }, object.transaction).then(function() {
+            object.account = result;
+            object.contactLists = contactLists.results;
+            callback(null, object);
+          }, function(error) {
+            _.merge(object.errors, filters.errors(error));
+            callback(null, object);
+          });
         }, function(error) {
           _.merge(object.errors, filters.errors(error));
           callback(null, object);
