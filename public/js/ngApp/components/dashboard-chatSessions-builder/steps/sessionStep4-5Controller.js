@@ -3,12 +3,12 @@
 
   angular.module('KliikoApp').controller('SessionStep4-5Controller', LastSessionStepController);
 
-  LastSessionStepController.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', '$rootScope', '$scope', 'angularConfirm', 'messagesUtil', '$confirm'];
-  function LastSessionStepController(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window,  $rootScope, $scope, angularConfirm, messagesUtil, $confirm) {
+  LastSessionStepController.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', '$rootScope', '$scope', 'angularConfirm', 'messagesUtil', '$confirm', 'socket'];
+  function LastSessionStepController(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window,  $rootScope, $scope, angularConfirm, messagesUtil, $confirm, socket) {
     dbg.log2('#SessionBuilderController 4-5 started');
 
     var vm = this;
-
+    vm.SocketChannel = null;
     vm.beforeEditInviteStatus = '';
     vm.accordions = {};
     vm.participants = [];
@@ -51,6 +51,7 @@
     vm.rateMember = rateMember;
     vm.openCommentModalWindow = openCommentModalWindow;
     vm.saveComment = saveComment;
+
 
     vm.stepMembers = [];
 
@@ -107,13 +108,16 @@
 
         vm.stepMembers = vm.session.steps.step4.participants;
         vm.pageTitle = "Guests";
-        deferred.resolve();
       } else {
         vm.stepMembers = vm.session.steps.step5.observers;
         vm.lastStep = true;
         vm.pageTitle = "Spectators";
-        deferred.resolve();
       }
+      socket.sessionsBuilderChannel(vm.session.id, function(channel) {
+        vm.SocketChannel = channel;
+        bindSocketEvents();
+        deferred.resolve();
+      })
 
       return deferred.promise;
     }
@@ -121,6 +125,18 @@
       setTimeout(function() {
         jQuery('.modal-backdrop.fade.in').hide();
       }, 10);
+    }
+
+    function bindSocketEvents() {
+      vm.SocketChannel.on("inviteUpdate", function(resp) {
+        vm.stepMembers.map(function(item) {
+          if(item.invite && resp.id == item.invite.id ) {
+            item.invite.emailStatus = resp.emailStatus;
+            item.invite.status = resp.status;
+          }
+        });
+      });
+      vm.SocketChannel.on("inviteDelete", function(resp) { });
     }
 
     function updateParticipantsList(value) {
