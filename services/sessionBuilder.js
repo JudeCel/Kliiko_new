@@ -194,14 +194,37 @@ function doUpdate(originalSession, params) {
   });
 }
 
-function isDataValid(snapshot, params, originalSession) {
+function isDataValid(snapshot, params, session) {
   return new bluebird(function (resolve, reject) { 
     let oldValueSnapshot = null;
     let currentValueSnapshot = null;
     let currentValue = null;
     let canChange = true;
+    let valueFound = false;
     
-    //todo: check
+    for (let i=0; i<constants.sessionBuilderValudateChanges.session.notChangableFields.length; i++) {
+      let fieldName = constants.sessionBuilderValudateChanges.session.notChangableFields[i];
+      if (params[fieldName]) {
+        oldValueSnapshot = snapshot[fieldName];
+        currentValue = session[fieldName];
+        valueFound = true;
+        break;
+      }
+    }
+    if (!valueFound) {
+      for (let i=0; i<constants.sessionBuilderValudateChanges.session.changableFields.length; i++) {
+        let fieldName = constants.sessionBuilderValudateChanges.session.changableFields[i];
+        if (params[fieldName]) {
+          oldValueSnapshot = snapshot[fieldName];
+          currentValue = session[fieldName];
+          valueFound = true;
+          break;
+        }
+      }
+    }
+    if (valueFound) {
+      currentValueSnapshot = stringHelpers.hash(currentValue);
+    }
 
     resolve({ 
       isValid: currentValueSnapshot == dbValueSnapshot, 
@@ -745,7 +768,6 @@ function sessionBuilderObjectSnapshotForStep2(stepData) {
 }
 
 function sessionBuilderObjectSnapshotForStep3(stepData) {
-  //sconsole.log("step3", stepData);
   return { 
     name: stringHelpers.hash(stepData.incentive_details)
   };

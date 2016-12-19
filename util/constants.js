@@ -98,5 +98,11 @@ module.exports = {
     observers: -1,
     participantsFocus: 8,
     participantsForum: -1,
+  },
+  sessionBuilderValudateChanges: {
+    session: {
+      changableFields: ["name", "startTime", "endTime", "timeZone", "resourceId", "brandProjectPreferenceId", "incentive_details" ],
+      notChangableFields: ["type", "anonymous" ],
+    }
   }
 }
