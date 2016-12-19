@@ -15,7 +15,7 @@
         </div>
         <div ng-if="!gc.modalTab.gallery">
           <h2 class='modal-title text-center'>{{upload.modal.replace ? 'Replace resource' : 'New resource'}}</h2>
-          <p class='modal-title text-center' ng-if='gc.modalTab.upload'>Maximum file size is 5MB</p>
+          <p class='modal-title text-center' ng-if='gc.modalTab.upload'>Maximum file size is 5MB.</p>
         </div>
       </div>
 
@@ -41,7 +41,7 @@
             <label for='name'>Name</label>
             <input ng-model='gc.newResource.name' type='text' class='form-control center-block border-radius-none' name='name' id='name' placeholder='Name' required>
           </div>
-          
+
           <div ng-if='gc.modalTab.link' class='form-group'>
             <label for='videoService'>Youtube or Vimeo Url</label>
             <input ng-model='gc.newResource.file' type='text' class='form-control center-block border-radius-none' name='videoService' id='videoService' placeholder='Youtube or Vimeo URL' required>
@@ -81,7 +81,7 @@
       </div>
       {{ typeOf = gc.isTypeOf(gc.newResource); "" }}
       <div class='modal-header'>
-        <h2 class='modal-title text-center'>{{upload.modal.replace ? 'Replace resource.' : 'New resource.'}}</h2>
+        <h2 class='modal-title text-center'>{{ gc.modalTitle }}</h2>
         <p class='modal-title text-center' ng-if='!typeOf.videoService && !typeOf.zip'>Maximum file size is 5MB.</p>
       </div>
 
