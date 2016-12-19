@@ -255,44 +255,14 @@ describe('Services -> ContactList', () => {
         });
       });
 
-      describe('should fail because missing fields: firstName, lastName, gender, email', function() {
+      describe('should fail because missing fields: firstName, lastName, email', function() {
         function failureFunction(filePath, callback) {
           ContactListService.create(defaultParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
               try {
                 assert.equal(result.invalid[2].validationErrors.firstName, 'Required');
                 assert.equal(result.invalid[2].validationErrors.lastName, 'Required');
-                assert.equal(result.invalid[2].validationErrors.gender, 'Required');
                 assert.equal(result.invalid[2].validationErrors.email, 'Required');
-                callback(null, true);
-              } catch (e) {
-                callback(e);
-              }
-            }, function(error) {
-              callback(error);
-            });
-          });
-        }
-
-        it('#parseCsv', function(done) {
-          failureFunction(testFileInvalid.csv, function(error) {
-            done(error);
-          });
-        });
-
-        it('#parseXls', function(done) {
-          failureFunction(testFileInvalid.xls, function(error) {
-            done(error);
-          });
-        });
-      });
-
-      describe('should fail because of missing gender data', function() {
-        function failureFunction(filePath, callback) {
-          ContactListService.create(defaultParams()).then(function(contactList) {
-            ContactListService.parseFile(contactList.id, filePath).then(function(result) {
-              try {
-                assert.equal(result.invalid[2].validationErrors.gender, 'Required');
                 callback(null, true);
               } catch (e) {
                 callback(e);

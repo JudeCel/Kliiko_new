@@ -54,7 +54,7 @@ describe('SERVICE - Invite to Session', function() {
                 }
                 let accountUserParams2 ={
                   email: "dainis@gmail.com",
-                  AccountId: accountUser2.AccountId,
+                  AccountId: accountUser1.AccountId,
                   firstName: "Dainis",
                   lastName: "Lapins",
                   gender: "male",
