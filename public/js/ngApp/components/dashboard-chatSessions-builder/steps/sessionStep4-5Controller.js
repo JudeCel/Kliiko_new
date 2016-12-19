@@ -135,7 +135,7 @@
             item.invite.status = resp.status;
           }
         });
-        vm.prepareData(vm.participants, vm.observers);
+        $scope.$apply();
       });
       vm.SocketChannel.on("inviteDelete", function(resp) { });
     }
