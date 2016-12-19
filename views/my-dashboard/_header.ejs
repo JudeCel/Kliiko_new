@@ -24,12 +24,6 @@
     </div>
     <div class='col-xs-12 col-md-7 btn-group remove-link-line nav-button-top-margin text-right' role='group'>
       <span id='welcome-user' class='hidden'>Welcome, {{ app.user.firstName }}!</span>
-      <a href='/my-dashboard/tour' ng-if="myDashboard.accountUsers.facilitator || myDashboard.accountUsers.accountManager">
-        <button class='btn-header-green' type='button'>
-          Tour Videos
-          <span class='glyphicon glyphicon-play' aria-hidden='true'></span>
-        </button>
-      </a>
 
       <button class='btn-header-red' type='button'>
         Help
