@@ -43,21 +43,15 @@ function deleteOrRecalculate(id, accountId) {
     }
 
     AccountUser.find(query).then((accountUser) => {
-      if (_.isEmpty(accountUser.SessionMembers)) {
-        accountUser.destroy().then(() => {
+      recalculateRole(accountUser, null, accountUser.role).then((role) => {
+        accountUser.update({role: role}).then(() => {
           resolve();
-        });
-      }else{
-        recalculateRole(accountUser, null, accountUser.role).then((role) => {
-          accountUser.update({role: role}).then(() => {
-            resolve();
-          }, (error) => {
-            reject(error);
-          });
         }, (error) => {
           reject(error);
         });
-      }
+      }, (error) => {
+        reject(error);
+      });
     });
   })
 }
@@ -87,7 +81,8 @@ function recalculateRole(accountUser, newRole, removeRole) {
       relatedRoles.push(currentRole);
     }
 
-    let destinationRoll = null;
+    // always starts with lowest role
+    let destinationRoll = 'observer';
     let index = 0;
 
     while (index < roles.length) {

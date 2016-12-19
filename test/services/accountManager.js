@@ -33,26 +33,42 @@ describe('SERVICE - AccountManager', function() {
     return [
       function(cb) {
         Invite.count().then(function(c) {
-          assert.equal(c, params.invite);
-          cb();
+          try {
+            assert.equal(c, params.invite);
+              cb();
+          } catch (e) {
+            cb(e);
+          }
         });
       },
       function(cb) {
         Account.count().then(function(c) {
-          assert.equal(c, params.account);
-          cb();
+          try {
+            assert.equal(c, params.account);
+            cb();
+          } catch (e) {
+            cb(e);
+          }
         });
       },
       function(cb) {
         User.count().then(function(c) {
-          assert.equal(c, params.user);
-          cb();
+          try {
+            assert.equal(c, params.user);
+            cb();
+          } catch (e) {
+            cb(e);
+          }
         });
       },
       function(cb) {
         AccountUser.count().then(function(c) {
-          assert.equal(c, params.accountUser);
-          cb();
+          try {
+            assert.equal(c, params.accountUser);
+            cb();
+          } catch (e) {
+            cb(e);
+          }
         });
       }
     ];
@@ -251,7 +267,7 @@ describe('SERVICE - AccountManager', function() {
                     accountManagerService.findAndRemoveAccountUser(accountUser.id, data.accountId).then(function(message) {
                       assert.equal(message, 'Successfully removed account from Account List');
 
-                      async.parallel(countTables({ invite: 0, account: 1, user: 2, accountUser: 1 }), function(error, result) {
+                      async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 2 }), function(error, result) {
                         done(error);
                       });
                     }, function(error) {

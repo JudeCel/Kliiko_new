@@ -104,6 +104,22 @@ describe('SERVICE - AccountUser without DB', function() {
           }
         })
       })
+
+      it("return lowest role in system if no other roles", (done) => {
+        let accountUser = {
+          role: "participant",
+          SessionMembers: []
+        }
+
+        accountUserService.recalculateRole(accountUser, null, 'participant').then((result) => {
+          try {
+            assert.equal(result, "observer");
+            done();
+          } catch (e) {
+            done(e);
+          }
+        })
+      })
     })
 
     describe("when add new role", () => {
