@@ -224,9 +224,9 @@
       var self = this;
       var deferred = $q.defer();
       sessionBuilderRestApi.get({id:self.id}, {}, function(res) {
-        if(res.error){
+        if (res.error) {
           deferred.reject(res.error);
-        }else{
+        } else {
           self.sessionData = angular.merge(self, res.sessionBuilder);
           // get current session data
 
@@ -241,10 +241,8 @@
             }
             deferred.resolve();
           });
-
+          
         }
-
-
       });
 
       return deferred.promise;
@@ -305,13 +303,18 @@
     function updateStep(stepDataObj) {
       var self = this;
       var deferred = $q.defer();
+      stepDataObj.snapshot = self.snapshot;
 
-      sessionBuilderRestApi.put({id:self.id}, stepDataObj,function(res) {
+      sessionBuilderRestApi.put({id:self.id}, stepDataObj, function(res) {
         if (res.error) {
           deferred.reject(res.error);
+        } else if (res.validation) {
+          alert("validation");
+          //todo:
         } else {
           self.sessionData.showStatus = res.sessionBuilder.showStatus;
           self.steps = res.sessionBuilder.steps;
+          self.snapshot = res.sessionBuilder.snapshot;
           deferred.resolve(res);
         }
       });

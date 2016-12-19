@@ -106,10 +106,9 @@ function findSession(id, accountId) {
       accountId: accountId
     }
   }).then(function(session) {
-    if(session) {
+    if (session) {
       deferred.resolve(session);
-    }
-    else {
+    } else {
       deferred.reject(MessagesUtil.sessionBuilder.notFound);
     }
   }).catch(function(error) {
@@ -130,48 +129,87 @@ function setTimeZone(params) {
 }
 
 function update(sessionId, accountId, params) {
-  let deferred = q.defer();
-  let updatedSession;
-  setTimeZone(params)
+  setTimeZone(params);
+  let snapshot = params.snapshot;
+  delete params.snapshot;
 
-  findSession(sessionId, accountId).then(function(originalSession) {
-    validators.hasValidSubscription(accountId).then(function() {
+  return new bluebird(function (resolve, reject) {
+    findSession(sessionId, accountId).then(function(originalSession) {
+      isDataValid(snapshot, params, originalSession).then(function(dataValidRes) {
+        if (dataValidRes.isValid) {
+          doUpdate(originalSession, params).then(function(res) {
+            resolve(res);
+          }, function(error) {
+            reject(error);
+          });
+        } else {
+          resolve({ validation: dataValidRes });
+        }
+      }, function(error) {
+        reject(filters.errors(error));
+      });
+    }, function(error) {
+      reject(filters.errors(error));
+    });
+  });
+}
+
+function doUpdate(originalSession, params) {
+  return new bluebird(function (resolve, reject) {
+  
+    let updatedSession;
+    validators.hasValidSubscription(originalSession.accountId).then(function() {
       let count = 0;
       if (params["status"] && params["status"] != originalSession.status && params["status"] == "open") {
         count = 1;
       }
-      return validators.subscription(accountId, 'session', count, { sessionId: sessionId });
+      return validators.subscription(originalSession.accountId, 'session', count, { sessionId: originalSession.id });
     }).then(function() {
       if (params["status"] && params["status"] != originalSession.status) {
         params["step"] = 'manageSessionParticipants';
       }
       return originalSession.updateAttributes(params);
     }).then(function(result) {
-       updatedSession = result;
+      updatedSession = result;
       return sessionBuilderObject(updatedSession);
     }).then(function(sessionObject) {
       if (sessionObject.status == 'closed') {
         sendCloseEmailToAllObservers(updatedSession).then(function() {
-          deferred.resolve(sessionObject);
+          resolve(sessionObject);
         }, function(error) {
-          deferred.reject(error);
+          reject(error);
         });
       } else {
         validateMultipleSteps(updatedSession, sessionObject.sessionBuilder.steps).then(function(steps) {
           sessionObject.sessionBuilder.steps = steps;
-          deferred.resolve(sessionObject);
+          resolve(sessionObject);
         }, function(error) {
-          deferred.reject(error);
+          reject(error);
         });
       }
     }).catch(function(error) {
-      deferred.reject(filters.errors(error));
+      reject(filters.errors(error));
     });
-  }, function(error) {
-    deferred.reject(filters.errors(error));
-  });
 
-  return deferred.promise;
+  });
+}
+
+function isDataValid(snapshot, params, originalSession) {
+  return new bluebird(function (resolve, reject) { 
+    let oldValueSnapshot = null;
+    let currentValueSnapshot = null;
+    let currentValue = null;
+    let canChange = true;
+    
+    //todo: check
+
+    resolve({ 
+      isValid: currentValueSnapshot == dbValueSnapshot, 
+      currentValue: currentValue, 
+      currentValueSnapshot: currentValueSnapshot,
+      canChange:canChange 
+    });
+  });
 }
 
 function sendCloseEmailToAllObservers(session) {
