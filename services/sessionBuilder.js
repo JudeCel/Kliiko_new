@@ -289,6 +289,7 @@ function isDataValid(snapshot, params, session) {
         if (params[fieldName]) {
           oldValueSnapshot = snapshot[fieldName];
           currentValue = session[fieldName];
+          canChange = false;
           valueFound = true;
           break;
         }
@@ -299,10 +300,10 @@ function isDataValid(snapshot, params, session) {
     }
 
     resolve({ 
-      isValid: currentValueSnapshot == dbValueSnapshot, 
+      isValid: currentValueSnapshot == oldValueSnapshot, 
       currentValue: currentValue, 
       currentValueSnapshot: currentValueSnapshot,
-      canChange:canChange 
+      canChange: canChange 
     });
   });
 }
