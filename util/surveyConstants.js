@@ -230,7 +230,7 @@ module.exports = {
     {
       order: 7,
       name: 'Contact Details',
-      question: 'e.g. If you answered Yes, please complete your Contact Details. All information is confidential and will not be shared with other parties.',
+      question: 'If you answered Yes, please complete your Contact Details. All information is confidential and will not be shared with other parties.',
       hardcodedName: true,
       hardcodedQuestion: true,
       required: true,
