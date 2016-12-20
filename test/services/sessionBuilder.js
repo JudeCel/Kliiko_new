@@ -92,7 +92,7 @@ describe('SERVICE - SessionBuilder', function() {
           done(error);
         });
       });
-      
+
       it('should create default topic', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           models.SessionTopics.find({where: {sessionId: result.sessionBuilder.id}}).then(function(result) {
@@ -406,44 +406,6 @@ describe('SERVICE - SessionBuilder', function() {
     });
   });
 
-  describe('#removeSessionMember', function(done) {
-    describe('happy path', function(done) {
-      it('should remove session member from session', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
-
-            sessionBuilderServices.removeSessionMember({ id: result.sessionBuilder.id, sessionMemberId: member.id }).then(function(result) {
-              assert.equal(result, sessionBuilderServices.messages.sessionMemberRemoved);
-              done();
-            }, function(error) {
-              done(error);
-            });
-          }).catch(function(error) {
-            done(error);
-          });
-        });
-      });
-    });
-
-    describe('sad path', function(done) {
-      it('should fail on finding session member to remove', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
-
-            sessionBuilderServices.removeSessionMember({ id: result.sessionBuilder.id + 100, sessionMemberId: member.id }).then(function(result) {
-              done('Should not get here!');
-            }, function(error) {
-              assert.equal(error, sessionBuilderServices.messages.sessionMemberNotFound);
-              done();
-            });
-          }).catch(function(error) {
-            done(error);
-          });
-        });
-      });
-    });
-  });
-
   describe('#removeInvite', function(done) {
     function inviteParams(sessionId) {
       return {
@@ -644,7 +606,7 @@ describe('SERVICE - SessionBuilder', function() {
         });
       });
     });
-    
+
   });
 
   describe('#thirdStep', function(done) {

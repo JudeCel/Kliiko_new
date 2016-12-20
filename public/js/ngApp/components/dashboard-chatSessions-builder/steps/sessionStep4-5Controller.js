@@ -130,14 +130,25 @@
     function bindSocketEvents() {
       vm.SocketChannel.on("inviteUpdate", function(resp) {
         vm.stepMembers.map(function(item) {
-          if(item.invite && resp.id == item.invite.id ) {
-            item.invite.emailStatus = resp.emailStatus;
-            item.invite.status = resp.status;
+          if(item.id == resp.accountUserId) {
+            item.invite = resp;
           }
         });
-        $scope.$apply();
+        if(!$scope.$$phase) {
+          $scope.$apply();
+        }
       });
-      vm.SocketChannel.on("inviteDelete", function(resp) { });
+      vm.SocketChannel.on("inviteDelete", function(resp) {
+        vm.stepMembers.map(function(item) {
+          if(item.invite && item.invite.id == resp.id) {
+            item.invite = null;
+          }
+        });
+        
+        if(!$scope.$$phase) {
+          $scope.$apply();
+        }
+      });
     }
 
     function updateParticipantsList(value) {
@@ -411,11 +422,7 @@
             member.inviteStatus = member.invite.emailStatus;
         }
       } else {
-        if (member.sessionMember) {
-          member.inviteStatus = "confirmed"
-        }else{
-          member.inviteStatus = "notInvited"
-        }
+        member.inviteStatus = "notInvited"
       }
       return member.inviteStatus;
     }

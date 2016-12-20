@@ -43,7 +43,6 @@ module.exports = {
   sendSms: sendSms,
   inviteMembers: inviteMembers,
   removeInvite: removeInvite,
-  removeSessionMember: removeSessionMember,
   sendGenericEmail: sendGenericEmail,
   sendCloseEmail: sendCloseEmail,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
@@ -528,35 +527,6 @@ function findAccountUsersByIds(ids, contactListUsersIds) {
   });
 }
 
-function removeSessionMember(params) {
-  let deferred = q.defer();
-
-  models.SessionMember.find({
-    where: {
-      id: params.sessionMemberId,
-      sessionId: params.id
-    }
-  }).then(function(sessionMember) {
-    if(sessionMember) {
-      let accountUserId = sessionMember.accountUserId;
-      sessionMember.destroy().then(function() {
-        sessionMemberServices.refreshAccountUsersRole([accountUserId]).then(function() {
-          deferred.resolve(MessagesUtil.sessionBuilder.sessionMemberRemoved);
-        });
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
-      });
-    }
-    else {
-      deferred.reject(MessagesUtil.sessionBuilder.sessionMemberNotFound);
-    }
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
-  });
-
-  return deferred.promise;
-}
-
 function removeInvite(params) {
   let deferred = q.defer();
 
@@ -567,13 +537,11 @@ function removeInvite(params) {
     }
   }).then(function(invite) {
     if(invite) {
-      inviteService.removeInvite(invite, (error) => {
-        if (error) {
-          deferred.reject(error);
-        }else{
-          deferred.resolve(MessagesUtil.sessionBuilder.inviteRemoved);
-        }
-      })
+      inviteService.removeInvite(invite).then(() =>{
+        deferred.resolve(MessagesUtil.sessionBuilder.inviteRemoved);
+      }, (error) => {
+        deferred.reject(error);
+      });
     } else {
       deferred.reject(MessagesUtil.sessionBuilder.inviteNotFound);
     }
@@ -857,13 +825,21 @@ function getStepError(steps, stepPropertyName) {
 
 function searchSessionMembers(sessionId, role) {
   return AccountUser.findAll({
-    include: [{
-      model: models.SessionMember,
-      where: {
-        sessionId: sessionId,
-        role: role
+    include: [
+      {
+        model: models.SessionMember,
+        required: false,
+        where: { sessionId: sessionId, role: role },
+      },{
+        model: models.Invite,
+        required: true,
+        where: {
+          sessionId: sessionId,
+          role: role
+        },
+        attributes: ['id', 'status', 'emailStatus', 'accountUserId']
       }
-    }]
+    ]
   });
 }
 
@@ -921,35 +897,17 @@ function step4and5Queries(session, role) {
   return [
     function(cb) {
       searchSessionMembers(session.id, role).then(function(accountUsers) {
-        _.map(accountUsers, function(accountUser) {
-          accountUser.dataValues.sessionMember = _.last(accountUser.SessionMembers);
-        });
-
         cb(null, accountUsers);
       }, function(error) {
         cb(error);
       });
     },
-    function(members, cb) {
-      AccountUser.findAll({
-        include: [{
-          model: models.Invite,
-          where: {
-            sessionId: session.id,
-            role: role,
-            status: { $ne: 'confirmed' }
-          },
-          attributes: ['id', 'status', 'emailStatus']
-        }]
-      }).then(function(accountUsers) {
-        _.map(accountUsers, function(accountUser) {
-          accountUser.dataValues.invite = _.last(accountUser.Invites);
-        });
-
-        cb(null, members.concat(accountUsers));
-      }).catch(function(error) {
-        cb(filters.errors(error));
+    function(accountUsers, cb) {
+      _.each(accountUsers, (accountUser) => {
+        accountUser.dataValues.invite = _.last(accountUser.Invites);
+        accountUser.dataValues.sessionMember = _.last(accountUser.SessionMembers);
       });
+      cb(null, accountUsers);
     }
   ];
 }
