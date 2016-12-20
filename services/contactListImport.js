@@ -266,13 +266,21 @@ function checkKeyValues(rowData, emails, key, row, uniqueRowListCounter, error) 
     if (!_.includes(constants.gender, rowData)) {
       error[key] = MessagesUtil.contactListImport.error.wrongGender;
     }
-  } else if (key == 'firstName' || key == 'lastName') {
-    if (rowData instanceof String) {
-      rowData = rowData.replace(/\s\s+/g, '');
-    }
-    if (!constants.validNameRegExp.test(rowData) || rowData.length < 2) {
-      error[key] = MessagesUtil.contactListImport.error.invalidFormat;
-    }
+  } else if (key == 'firstName') {
+    const firstNameMinLength = 2;
+    checkName(rowData, key, error, firstNameMinLength);
+  } else if (key == 'lastName') {
+    const surnameMinLength = 1;
+    checkName(rowData, key, error, surnameMinLength);
+  }
+}
+
+function checkName(rowData, key, error, nameLength) {
+  if (rowData instanceof String) {
+    rowData = rowData.replace(/\s\s+/g, '');
+  }
+  if (!constants.validNameRegExp.test(rowData) || rowData.length < nameLength) {
+    error[key] = MessagesUtil.contactListImport.error.invalidFormat;
   }
 }
 
