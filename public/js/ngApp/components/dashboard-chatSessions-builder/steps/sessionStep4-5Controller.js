@@ -21,6 +21,7 @@
     vm.filterTypes = {
       waiting: "Sending, please wait...",
       failed: "Sending failed",
+      sentDone: "Invitation Sent",
       all: 'All',
       notInvited: 'Not Invited',
       confirmed: 'Accepted',
@@ -127,24 +128,52 @@
       }, 10);
     }
 
-    function bindSocketEvents() {
-      vm.SocketChannel.on("inviteUpdate", function(resp) {
-        vm.stepMembers.map(function(item) {
+    function updateInviteItem(resp) {
+      setTimeout(function() {
+        var i = 0;
+        while (i < vm.stepMembers.length) {
+          var item = vm.stepMembers[i];
           if(item.id == resp.accountUserId) {
             item.invite = resp;
+            break;
           }
-        });
+          i++
+        }
+
+        if(!$scope.$$phase) {
+          $scope.$apply();
+        }
+
+      }, 2000);
+    }
+
+    function bindSocketEvents() {
+      vm.SocketChannel.on("inviteUpdate", function(resp) {
+        var i = 0;
+
+        while (i < vm.stepMembers.length) {
+          var item = vm.stepMembers[i];
+          if(item.id == resp.accountUserId) {
+            item.invite.emailStatus = "sentDone"
+            updateInviteItem(resp);
+            break;
+          }
+          i++
+        }
+
         if(!$scope.$$phase) {
           $scope.$apply();
         }
       });
+
+
       vm.SocketChannel.on("inviteDelete", function(resp) {
         vm.stepMembers.map(function(item) {
           if(item.invite && item.invite.id == resp.id) {
             item.invite = null;
           }
         });
-        
+
         if(!$scope.$$phase) {
           $scope.$apply();
         }
