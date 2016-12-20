@@ -55,7 +55,7 @@
             <td>{{ member.gender }}</td>
             <td>{{ member.email }}</td>
             <td>{{ member.mobile }}</td>
-            <td class='col-xs-2' ng-if="!sbc.canSendCloseEmail()">
+            <td class="invite-status-{{member.inviteStatus}} col-xs-2" ng-if="!sbc.canSendCloseEmail()">
               <div ng-if='!lastStepsController.mouseOveringMember[$index]'>
                 <div ng-if='lastStepsController.showSpinner(member)' style="display: inline;">
                   <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
