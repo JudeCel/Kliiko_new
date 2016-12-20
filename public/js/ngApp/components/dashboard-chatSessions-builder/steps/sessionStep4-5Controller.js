@@ -52,6 +52,7 @@
     vm.rateMember = rateMember;
     vm.openCommentModalWindow = openCommentModalWindow;
     vm.saveComment = saveComment;
+    vm.showSpinner = showSpinner;
 
 
     vm.stepMembers = [];
@@ -129,33 +130,35 @@
     }
 
     function updateInviteItem(resp) {
-      setTimeout(function() {
-        var i = 0;
-        while (i < vm.stepMembers.length) {
-          var item = vm.stepMembers[i];
-          if(item.id == resp.accountUserId) {
-            item.invite = resp;
-            break;
-          }
-          i++
+      var i = 0;
+      while (i < vm.stepMembers.length) {
+        var item = vm.stepMembers[i];
+        if(item.id == resp.accountUserId) {
+          item.invite = resp;
+          break;
         }
+        i++
+      }
 
-        if(!$scope.$$phase) {
-          $scope.$apply();
-        }
-
-      }, 2000);
+      if(!$scope.$$phase) {
+        $scope.$apply();
+      }
     }
 
     function bindSocketEvents() {
       vm.SocketChannel.on("inviteUpdate", function(resp) {
         var i = 0;
-
         while (i < vm.stepMembers.length) {
           var item = vm.stepMembers[i];
           if(item.id == resp.accountUserId) {
-            item.invite.emailStatus = "sentDone"
-            updateInviteItem(resp);
+            if (resp.emailStatus == "failed") {
+              item.invite = resp;
+            }else{
+              item.invite.emailStatus = "sentDone"
+              setTimeout(function() {
+                updateInviteItem(resp);
+              }, 2000);
+            }
             break;
           }
           i++
@@ -178,6 +181,10 @@
           $scope.$apply();
         }
       });
+    }
+    
+    function showSpinner(member) {
+      return member.invite.emailStatus == 'waiting'
     }
 
     function updateParticipantsList(value) {
