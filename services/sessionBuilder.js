@@ -49,7 +49,8 @@ module.exports = {
   sendCloseEmail: sendCloseEmail,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
   canAddObservers: canAddObservers,
-  sessionMailTemplateExists: sessionMailTemplateExists
+  sessionMailTemplateExists: sessionMailTemplateExists,
+  isFacilitatorDataValid: isFacilitatorDataValid
 };
 
 function addDefaultObservers(session) {
@@ -291,6 +292,26 @@ function isDataValid(snapshot, params, session) {
   }
 
   return { isValid: true };
+}
+
+function isFacilitatorDataValid(snapshot, facilitatorId, sessionId) {
+  return new bluebird(function (resolve, reject) {
+    searchSessionMembers(sessionId, 'facilitator').then(function(members) {
+      if(!_.isEmpty(members)) {
+        let facilitator = members[0];
+        if (facilitatorId == facilitator.id) {
+          resolve({ isValid: true });
+        } else {
+          let currentValueSnapshot = stringHelpers.hash(facilitator.id);
+          resolve({ isValid: currentValueSnapshot == snapshot.facilitatorId, canChange: true, fieldName: "facilitatorId", currentValueSnapshot: currentValueSnapshot });
+        }
+      } else {
+        resolve({ isValid: true });
+      }
+    }, function(error) {
+      reject(error);
+    });
+  });
 }
 
 function sendCloseEmailToAllObservers(session) {

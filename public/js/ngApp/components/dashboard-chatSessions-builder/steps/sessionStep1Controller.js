@@ -73,11 +73,13 @@
         var leftAndWide = vm.selectedFacilitator ? true : false;
         $confirm({ text: text, htmlText: $sce.trustAsHtml(text), textLeft: leftAndWide, wide: leftAndWide }).then(function() {
           vm.session.addMembers(facilitator, 'facilitator').then(function(res) {
-            vm.session.sessionData.facilitator = facilitator;
-            vm.session.steps.step1.facilitator = facilitator;
+            if (!res.ignored) {
+              vm.session.sessionData.facilitator = facilitator;
+              vm.session.steps.step1.facilitator = facilitator;
+              messenger.ok(res.message);
+            }
             vm.selectedFacilitator = vm.session.steps.step1.facilitator;
             vm.selectedFacilitatorEmail = vm.selectedFacilitator.email;
-            messenger.ok(res.message);
           }, function (err) {
             messenger.error(err);
           });

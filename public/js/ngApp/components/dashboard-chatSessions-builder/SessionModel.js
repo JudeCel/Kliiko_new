@@ -299,8 +299,8 @@
       return deferred.promise;
     }
 
-    function updateStep(stepDataObj) {
-      var self = this;
+    function updateStep(stepDataObj, selfParam) {
+      var self = selfParam || this;
       var deferred = $q.defer();
 
       if (!stepDataObj.snapshot) {
@@ -311,15 +311,10 @@
         if (res.error) {
           deferred.reject(res.error);
         } else if (res.validation && !res.validation.isValid) {
-          updateStepValidationConfirm(res.validation, function() {
-            stepDataObj.snapshot[res.validation.fieldName] = res.validation.currentValueSnapshot;
-            self.updateStep(stepDataObj).then(function(newRes) {
-              deferred.resolve(newRes);
-            });
-          }, function() {
-            self.getRemoteData().then(function() {
-              deferred.resolve({ ignored: true });
-            });
+          updateValidation(res, self.updateStep, stepDataObj, self).then(function(newRes) {
+            deferred.resolve(newRes);
+          }, function(err) {
+            deferred.reject(err);
           });
         } else {
           self.sessionData.showStatus = res.sessionBuilder.showStatus;
@@ -332,7 +327,24 @@
       return deferred.promise;
     }
 
-    function updateStepValidationConfirm(validation, saveMineCallback, saveTheirsCallback) {
+    function updateValidation(res, saveAgainCallback, data, self) {
+      var deferred = $q.defer();
+
+      updateValidationConfirm(res.validation, function() {
+        data.snapshot[res.validation.fieldName] = res.validation.currentValueSnapshot;
+        saveAgainCallback(data, self).then(function(newRes) {
+          deferred.resolve(newRes);
+        });
+      }, function() {
+        self.getRemoteData().then(function() {
+          deferred.resolve({ ignored: true });
+        });
+      });
+
+      return deferred.promise;
+    }
+
+    function updateValidationConfirm(validation, saveMineCallback, saveTheirsCallback) {
       if (validation.canChange) {
         $confirm({ 
           text: "What are the odds of you and someone else editing the same thing at the same time... so which edit do you want saved?", 
@@ -374,18 +386,39 @@
 
 
     function addMembers(member, role) {
-      var self = this;
       var deferred = $q.defer();
       var params = {
-        sessionId: self.id,
+        sessionId: this.id,
         role: role,
         username: member.firstName,
-        accountUserId: member.accountUserId
+        accountUserId: member.accountUserId,
+        snapshot: this.snapshot
       }
-
-      sessionMemberApi.post({},params,function(res) {
-        if (res.error) { deferred.reject(res.error);  return deferred.promise;}
+      addMembersByParams(params, this).then(function(res) {
         deferred.resolve(res);
+      }, function(err) {
+        deferred.reject(err);
+      });
+      return deferred.promise;
+    }
+
+    function addMembersByParams(params, self) {
+      var deferred = $q.defer();
+
+      sessionMemberApi.post({},params, function(res) {
+        if (res.error) { 
+          deferred.reject(res.error);  
+        } else if (res.validation && !res.validation.isValid) {
+
+          updateValidation(res, addMembersByParams, params, self).then(function(newRes) {
+            deferred.resolve(newRes);
+          }, function(err) {
+            deferred.reject(err);
+          });
+
+        } else {
+          deferred.resolve(res);
+        }
       });
 
       return deferred.promise;
