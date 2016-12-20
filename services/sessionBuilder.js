@@ -855,13 +855,21 @@ function getStepError(steps, stepPropertyName) {
 
 function searchSessionMembers(sessionId, role) {
   return AccountUser.findAll({
-    include: [{
-      model: models.SessionMember,
-      where: {
-        sessionId: sessionId,
-        role: role
+    include: [
+      {
+        model: models.SessionMember,
+        required: false,
+        where: { sessionId: sessionId, role: role },
+      },{
+        model: models.Invite,
+        required: true,
+        where: {
+          sessionId: sessionId,
+          role: role
+        },
+        attributes: ['id', 'status', 'emailStatus', 'accountUserId']
       }
-    }]
+    ]
   });
 }
 
@@ -919,35 +927,17 @@ function step4and5Queries(session, role) {
   return [
     function(cb) {
       searchSessionMembers(session.id, role).then(function(accountUsers) {
-        _.map(accountUsers, function(accountUser) {
-          accountUser.dataValues.sessionMember = _.last(accountUser.SessionMembers);
-        });
-
         cb(null, accountUsers);
       }, function(error) {
         cb(error);
       });
     },
-    function(members, cb) {
-      AccountUser.findAll({
-        include: [{
-          model: models.Invite,
-          where: {
-            sessionId: session.id,
-            role: role,
-            status: { $ne: 'confirmed' }
-          },
-          attributes: ['id', 'status', 'emailStatus']
-        }]
-      }).then(function(accountUsers) {
-        _.map(accountUsers, function(accountUser) {
-          accountUser.dataValues.invite = _.last(accountUser.Invites);
-        });
-
-        cb(null, members.concat(accountUsers));
-      }).catch(function(error) {
-        cb(filters.errors(error));
+    function(accountUsers, cb) {
+      _.each(accountUsers, (accountUser) => {
+        accountUser.dataValues.invite = _.last(accountUser.Invites);
+        accountUser.dataValues.sessionMember = _.last(accountUser.SessionMembers);
       });
+      cb(null, accountUsers);
     }
   ];
 }

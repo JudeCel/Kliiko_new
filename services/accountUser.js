@@ -33,12 +33,8 @@ function deleteOrRecalculate(id, accountId, addRole, removeRole, transaction) {
       },
       transaction: transaction,
       include: [
-        { model: models.Account,
-          where: { id: accountId }
-        },
-        { model: SessionMember,
-          required: false
-        }
+        { model: models.Account},
+        { model: SessionMember }
       ]
     }
 

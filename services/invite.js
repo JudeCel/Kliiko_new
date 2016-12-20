@@ -300,7 +300,7 @@ function cleanupInvite(invite, transaction) {
             sessionId: invite.sessionId
           }
         }).then((sessionMember) => {
-          sessionMember.destroy({transaction: transaction}).then(() =>{
+          sessionMember.destroy({transaction: transaction}).then(() => {
             AccountUserService.deleteOrRecalculate(invite.accountUserId, invite.accountId, null, invite.role, transaction).then(() => {
               resolve();
             }, (error) => {

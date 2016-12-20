@@ -130,9 +130,8 @@
     function bindSocketEvents() {
       vm.SocketChannel.on("inviteUpdate", function(resp) {
         vm.stepMembers.map(function(item) {
-          if(item.invite && resp.id == item.invite.id ) {
-            item.invite.emailStatus = resp.emailStatus;
-            item.invite.status = resp.status;
+          if(item.id == resp.accountUserId) {
+            item.invite = resp;
           }
         });
         $scope.$apply();
@@ -411,11 +410,7 @@
             member.inviteStatus = member.invite.emailStatus;
         }
       } else {
-        if (member.sessionMember) {
-          member.inviteStatus = "confirmed"
-        }else{
-          member.inviteStatus = "notInvited"
-        }
+        member.inviteStatus = "notInvited"
       }
       return member.inviteStatus;
     }
