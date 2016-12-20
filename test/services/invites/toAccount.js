@@ -87,7 +87,7 @@ describe('SERVICE - Invite to Account', function() {
     });
   });
 
-  describe('#findAndRemoveInvite', function() {
+  describe('#findAndRemoveAccountManagerInvite', function() {
     describe('happy path', function() {
       it('should succeed remove invite for existing user', function (done) {
         let params = {
@@ -96,7 +96,7 @@ describe('SERVICE - Invite to Account', function() {
           role: 'accountManager'
         }
         inviteService.createInvite(params).then(function(invite) {
-          inviteService.findAndRemoveInvite({ accountUserId: invite.accountUserId }).then((message) => {
+          inviteService.findAndRemoveAccountManagerInvite({ accountUserId: invite.accountUserId }).then((message) => {
             AccountUser.count().then(function(c) {
               try {
                 assert.equal(c, 4);
@@ -121,7 +121,7 @@ describe('SERVICE - Invite to Account', function() {
           }
 
           inviteService.createInvite(params).then(function(invite) {
-            inviteService.findAndRemoveInvite({ accountUserId: invite.accountUserId }).then((message) => {
+            inviteService.findAndRemoveAccountManagerInvite({ accountUserId: invite.accountUserId }).then((message) => {
               AccountUser.count().then(function(c) {
                 try {
                   assert.equal(c, 4);

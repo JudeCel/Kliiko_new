@@ -92,7 +92,7 @@ function findAccountManagers(accountId) {
 
 function findAndRemoveAccountUser(id, accountId) {
   let deferred = q.defer();
-  AccountUserService.deleteOrRecalculate(id, accountId, null, 'accountManager').then(() => {
+  AccountUserService.deleteOrRecalculate(id, null, 'accountManager').then(() => {
     deferred.resolve(MessagesUtil.accountManager.removed);
   }, (error) => {
     deferred.reject(filters.errors(error));

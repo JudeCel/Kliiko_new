@@ -136,7 +136,14 @@
         });
         $scope.$apply();
       });
-      vm.SocketChannel.on("inviteDelete", function(resp) { });
+      vm.SocketChannel.on("inviteDelete", function(resp) {
+        vm.stepMembers.map(function(item) {
+          if(item.invite && item.invite.id == resp.id) {
+            item.invite = null;
+          }
+        });
+        $scope.$apply();
+      });
     }
 
     function updateParticipantsList(value) {

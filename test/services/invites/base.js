@@ -148,7 +148,7 @@ describe.only('SERVICE - Invite basic logic', function() {
     });
   });
 
-  describe('#findAndRemoveInvite', function() {
+  describe('#findAndRemoveAccountManagerInvite', function() {
     describe('happy path', function() {
       it('should succeed remove invite for existing user', function (done) {
         let params = {
@@ -157,7 +157,7 @@ describe.only('SERVICE - Invite basic logic', function() {
           role: 'accountManager'
         }
         inviteService.createInvite(params).then(function(invite) {
-          inviteService.findAndRemoveInvite({ accountUserId: invite.accountUserId }).then((message) => {
+          inviteService.findAndRemoveAccountManagerInvite({ accountUserId: invite.accountUserId }).then((message) => {
             AccountUser.find({where: {id: invite.accountUserId}}).then(function(accountUser) {
               try {
                 assert.equal(accountUser.role, "accountManager");

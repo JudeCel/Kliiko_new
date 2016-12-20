@@ -105,7 +105,7 @@ function createFacilitatorInvite(params) {
 
 function updateToFacilitator(accountUser) {
   let deferred = q.defer();
-  AccountUserService.deleteOrRecalculate(accountUser.id, accountUser.AccountId, 'facilitator', null).then((result) => {
+  AccountUserService.deleteOrRecalculate(accountUser.id, 'facilitator', null).then((result) => {
     deferred.resolve(result);
   }, (error) => {
     deferred.reject(error);
@@ -262,10 +262,21 @@ function sendInvite(inviteId, deferred) {
   return deferred.promise;
 }
 
-function findAndRemoveInvite(params) {
+function findAndRemoveAccountManagerInvite(params) {
   return new Bluebird((resolve, reject) => {
-    let where = { accountUserId: params.accountUserId, status: 'pending', owner: false };
-    Invite.find({ where: where }).then(function(invite) {
+    let query = { where: {
+      accountUserId: params.accountUserId,
+      status: 'pending'
+    },
+      include: [
+        {
+          model: models.AccountUser,
+          required: true
+        }
+      ]
+    }
+
+    Invite.find(query).then(function(invite) {
       if(invite) {
         removeInvite(invite).then((message) => {
           resolve(message);
@@ -301,7 +312,7 @@ function cleanupInvite(invite, transaction) {
           }
         }).then((sessionMember) => {
           sessionMember.destroy({transaction: transaction}).then(() => {
-            AccountUserService.deleteOrRecalculate(invite.accountUserId, invite.accountId, null, invite.role, transaction).then(() => {
+            AccountUserService.deleteOrRecalculate(invite.accountUserId, null, invite.role, transaction).then(() => {
               resolve();
             }, (error) => {
               reject(filters.errors(error));
@@ -309,7 +320,7 @@ function cleanupInvite(invite, transaction) {
           });
         });
       }else{
-        AccountUserService.deleteOrRecalculate(invite.accountUserId, invite.accountId, null, invite.role, transaction).then(() => {
+        AccountUserService.deleteOrRecalculate(invite.accountUserId, null, invite.role, transaction).then(() => {
           resolve();
         }, (error) => {
           reject(filters.errors(error));
@@ -788,7 +799,7 @@ module.exports = {
   updateEmailStatus: updateEmailStatus,
   createBulkInvites: createBulkInvites,
   createInvite: createInvite,
-  findAndRemoveInvite: findAndRemoveInvite,
+  findAndRemoveAccountManagerInvite: findAndRemoveAccountManagerInvite,
   removeInvite: removeInvite,
   findInvite: findInvite,
   acceptInvite: acceptInvite,

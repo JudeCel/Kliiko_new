@@ -24,7 +24,7 @@ const VALID_ATTRIBUTES = {
   ]
 };
 
-function deleteOrRecalculate(id, accountId, addRole, removeRole, transaction) {
+function deleteOrRecalculate(id, addRole, removeRole, transaction) {
   return new Bluebird((resolve, reject) => {
     // can't remove owner account user!
     let query = {
@@ -41,8 +41,8 @@ function deleteOrRecalculate(id, accountId, addRole, removeRole, transaction) {
     AccountUser.find(query).then((accountUser) => {
       if (accountUser) {
         recalculateRole(accountUser, addRole, removeRole).then((newRole) => {
-          accountUser.update({role: newRole}, {transaction: transaction}).then(() => {
-            resolve();
+          accountUser.update({role: newRole}, {transaction: transaction}).then((updatedAccountUser) => {
+            resolve(updatedAccountUser);
           }, (error) => {
             reject(error);
           });
@@ -63,10 +63,14 @@ function recalculateRole(accountUser, newRole, removeRole) {
       reject("Can do only add or remove at one time");
     }
 
-    if (!_.includes(roles, (newRole || removeRole))) {
-      reject(`This role not falid: ${(newRole || removeRole)}`);
+    if (newRole || removeRole) {
+      if (!_.includes(roles, (newRole || removeRole))) {
+        reject(`This role not falid: ${(newRole || removeRole)}`);
+      }
     }
+
     const currentRole = accountUser.role;
+
     let  relatedRoles = _.uniq(accountUser.SessionMembers.map((sm) => { return sm.role }));
 
     if (removeRole && roles.indexOf(currentRole) < roles.indexOf(removeRole)) {
