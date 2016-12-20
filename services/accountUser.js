@@ -65,7 +65,7 @@ function recalculateRole(accountUser, newRole, removeRole) {
 
     if (newRole || removeRole) {
       if (!_.includes(roles, (newRole || removeRole))) {
-        reject(`This role not falid: ${(newRole || removeRole)}`);
+        reject(`This role not valid: ${(newRole || removeRole)}`);
       }
     }
 
