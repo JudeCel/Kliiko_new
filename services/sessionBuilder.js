@@ -856,8 +856,9 @@ function sessionBuilderObjectSnapshotForStep3(stepData) {
 }
 
 function sessionBuilderObjectSnapshotForStep4(stepData) {
-  return { };
-  //todo: participantListId
+  return {
+    participantListId: stringHelpers.hash(stepData.participantListId)
+  };
 }
 
 function sessionBuilderObjectSnapshot(session, steps) {
@@ -912,7 +913,7 @@ function stepsDefinition(session, steps) {
     timeZone: session.timeZone,
     resourceId: session.resourceId,
     anonymous: session.anonymous,
-    brandProjectPreferenceId:  session.brandProjectPreferenceId,
+    brandProjectPreferenceId: session.brandProjectPreferenceId,
     error: getStepError(steps, "step1")
   };
 
@@ -948,6 +949,7 @@ function stepsDefinition(session, steps) {
         else {
           object.step4 = {
             stepName: 'manageSessionParticipants',
+            participantListId: session.participantListId,
             participants: members,
             error: getStepError(steps, "step4")
           };
