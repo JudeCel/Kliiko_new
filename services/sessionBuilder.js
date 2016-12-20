@@ -567,13 +567,11 @@ function removeInvite(params) {
     }
   }).then(function(invite) {
     if(invite) {
-      inviteService.removeInvite(invite, (error) => {
-        if (error) {
-          deferred.reject(error);
-        }else{
-          deferred.resolve(MessagesUtil.sessionBuilder.inviteRemoved);
-        }
-      })
+      inviteService.removeInvite(invite).then(() =>{
+        deferred.resolve(MessagesUtil.sessionBuilder.inviteRemoved);
+      }, (error) => {
+        deferred.reject(error);
+      });
     } else {
       deferred.reject(MessagesUtil.sessionBuilder.inviteNotFound);
     }

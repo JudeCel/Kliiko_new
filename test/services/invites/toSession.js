@@ -237,7 +237,7 @@ describe('SERVICE - Invite to Session', function() {
 
   describe('#acceptInvite', function() {
     describe('happy path', function() {
-      it('should succeed and  accept participant invite to the session', function (done) {
+      it('should succeed and accept participant invite to the session', function (done) {
 
         let params = {
           accountUserId: accountUserWithUser.id,
@@ -297,6 +297,42 @@ describe('SERVICE - Invite to Session', function() {
               }
             });
           })
+        }, (error) => {
+          done(error)
+        });
+      });
+    });
+  });
+
+  describe('#removeInvite', function() {
+    describe('happy path', function() {
+      it('should succeed and remove invite and all dependencies', function (done) {
+
+        let params = {
+          accountUserId: accountUserWithUser.id,
+          userId: accountUserWithUser.UserId,
+          sessionId: session.id,
+          accountId: accountUserWithUser.AccountId,
+          role: 'participant'
+        }
+        inviteService.createInvite(params).then(function(invite) {
+          inviteService.acceptInvite(invite.token).then((response) => {
+            Invite.find({where: response.invite.id}).then((findInvite) => {
+              inviteService.removeInvite(findInvite).then((result) => {
+                AccountUser.find({where: findInvite.accountUserId, include: [SessionMember]}).then((accountUser) => {
+                  try {
+                    assert.isUndefined(accountUser.SessionMembers[0]);
+                    assert.equal(accountUser.role, "observer");
+                    done();
+                  } catch (e) {
+                    done(e);
+                  }
+                })
+              });
+            });
+          }, function(error) {
+            done(error);
+          });
         }, (error) => {
           done(error)
         });

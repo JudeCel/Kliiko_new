@@ -24,14 +24,14 @@ const VALID_ATTRIBUTES = {
   ]
 };
 
-function deleteOrRecalculate(id, accountId) {
+function deleteOrRecalculate(id, accountId, addRole, removeRole, transaction) {
   return new Bluebird((resolve, reject) => {
     // can't remove owner account user!
     let query = {
       where: {
-        id: id,
-        owner: false
+        id: id
       },
+      transaction: transaction,
       include: [
         { model: models.Account,
           where: { id: accountId }
@@ -43,15 +43,19 @@ function deleteOrRecalculate(id, accountId) {
     }
 
     AccountUser.find(query).then((accountUser) => {
-      recalculateRole(accountUser, null, accountUser.role).then((role) => {
-        accountUser.update({role: role}).then(() => {
-          resolve();
+      if (accountUser) {
+        recalculateRole(accountUser, addRole, removeRole).then((newRole) => {
+          accountUser.update({role: newRole}, {transaction: transaction}).then(() => {
+            resolve();
+          }, (error) => {
+            reject(error);
+          });
         }, (error) => {
           reject(error);
         });
-      }, (error) => {
-        reject(error);
-      });
+      }else{
+        reject("Account user not found");
+      }
     });
   })
 }
