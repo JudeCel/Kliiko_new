@@ -15,7 +15,6 @@
       sendSms: { method: 'POST', params: { path: 'sendSms' } },
       inviteMembers: { method: 'POST', params: { path: 'invite' } },
       removeInvite: { method: 'DELETE', params: { path: 'removeInvite' } },
-      removeSessionMember: { method: 'DELETE', params: { path: 'removeSessionMember' } },
       sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } },
       sendCloseEmail: { method: 'POST', params: { path: 'sendCloseEmail' } },
       setAnonymous: { method: 'POST', params: { path: 'setAnonymous' } },

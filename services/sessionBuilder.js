@@ -43,7 +43,6 @@ module.exports = {
   sendSms: sendSms,
   inviteMembers: inviteMembers,
   removeInvite: removeInvite,
-  removeSessionMember: removeSessionMember,
   sendGenericEmail: sendGenericEmail,
   sendCloseEmail: sendCloseEmail,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
@@ -526,35 +525,6 @@ function findAccountUsersByIds(ids, contactListUsersIds) {
       where: { contactListId: { $in: contactListUsersIds } }
     }]
   });
-}
-
-function removeSessionMember(params) {
-  let deferred = q.defer();
-
-  models.SessionMember.find({
-    where: {
-      id: params.sessionMemberId,
-      sessionId: params.id
-    }
-  }).then(function(sessionMember) {
-    if(sessionMember) {
-      let accountUserId = sessionMember.accountUserId;
-      sessionMember.destroy().then(function() {
-        sessionMemberServices.refreshAccountUsersRole([accountUserId]).then(function() {
-          deferred.resolve(MessagesUtil.sessionBuilder.sessionMemberRemoved);
-        });
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
-      });
-    }
-    else {
-      deferred.reject(MessagesUtil.sessionBuilder.sessionMemberNotFound);
-    }
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
-  });
-
-  return deferred.promise;
 }
 
 function removeInvite(params) {

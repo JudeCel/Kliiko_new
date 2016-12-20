@@ -16,7 +16,6 @@ module.exports = {
   sendSms: sendSms,
   inviteMembers: inviteMembers,
   removeInvite: removeInvite,
-  removeSessionMember: removeSessionMember,
   sendGenericEmail: sendGenericEmail,
   sendCloseEmail: sendCloseEmail,
   addTopics: addTopics,
@@ -118,14 +117,6 @@ function inviteMembers(req, res, next) {
 function removeInvite(req, res, next) {
   let accountId = res.locals.currentDomain.id;
   sessionBuilderServices.removeInvite(req.params, accountId).then(function(message) {
-    res.send({ message: message });
-  }, function(error) {
-    res.send({ error: error });
-  });
-}
-
-function removeSessionMember(req, res, next) {
-  sessionBuilderServices.removeSessionMember(req.params).then(function(message) {
     res.send({ message: message });
   }, function(error) {
     res.send({ error: error });
