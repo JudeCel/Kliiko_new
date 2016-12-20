@@ -50,7 +50,7 @@ function deleteOrRecalculate(id, addRole, removeRole, transaction) {
           reject(error);
         });
       }else{
-        reject("Account user not found");
+        reject(MessagesUtil.accountUser.notFound);
       }
     });
   })
