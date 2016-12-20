@@ -247,11 +247,10 @@
       return (vm.currentStep == step);
     }
 
-
     function updateStep(dataObj) {
         vm.session.updateStep(dataObj).then(null, function (err) {
-            messenger.error(err);
-          }
+          messenger.error(err);
+        }
       );
     }
 
@@ -318,19 +317,19 @@
       if (vm.searchingParticipants) {
         if(list.length > 0) {
           if(!vm.session.sessionData.participantListId) {
-            vm.session.sessionData.participantListId = activeList.id;
             vm.session.updateStep({ participantListId: activeList.id }).then(function(res) {
+              if (!res.ignored) {
+                vm.session.sessionData.participantListId = activeList.id;
+              }
             }, function (error) {
               messenger.error(error);
             });
           }
 
-          if(vm.session.sessionData.participantListId == activeList.id) {
-
+          if (vm.session.sessionData.participantListId == activeList.id) {
             vm.participants = vm.participants.concat(list);
             vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
-          }
-          else {
+          } else {
             messenger.error(messagesUtil.sessionBuilder.cantSelect);
           }
 

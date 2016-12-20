@@ -6,8 +6,8 @@
    */
   angular.module('KliikoApp').factory('SessionModel', SessionModel);
 
-  SessionModel.$inject = ['$q', 'globalSettings', '$resource', 'fileUploader'];
-  function SessionModel($q, globalSettings, $resource, fileUploader)  {
+  SessionModel.$inject = ['$q', 'globalSettings', '$resource', 'fileUploader', '$confirm'];
+  function SessionModel($q, globalSettings, $resource, fileUploader, $confirm)  {
     var apiPath = globalSettings.restUrl+'/sessionBuilder/:id/:path/:arg';
     var sessionBuilderRestApi = $resource(apiPath, { id : '@id', arg: '@arg' }, {
       post: { method: 'POST' },
@@ -47,10 +47,7 @@
     SessionModel.prototype.getRemoteData = getRemoteData;
     SessionModel.prototype.setOpen = setOpen;
     SessionModel.prototype.setAnonymous = setAnonymous;
-  //  SessionModel.prototype.update = update;
-
     SessionModel.prototype.goCertainStep = goCertainStep;
-
     SessionModel.prototype.updateStep = updateStep;
     SessionModel.prototype.sendSms = sendSms;
     SessionModel.prototype.addMembers = addMembers;
@@ -253,8 +250,10 @@
       var deferred = $q.defer();
       self.updateStep({status: status}).then(
         function (res) {
-          self.status = self.sessionData.status = status;
-          self.currentStep = self.sessionData.step = res.sessionBuilder.currentStep;
+          if (!res.ignored) {
+            self.status = self.sessionData.status = status;
+            self.currentStep = self.sessionData.step = res.sessionBuilder.currentStep;
+          }
           deferred.resolve(res);
         },
         function (err) {
@@ -303,14 +302,25 @@
     function updateStep(stepDataObj) {
       var self = this;
       var deferred = $q.defer();
-      stepDataObj.snapshot = self.snapshot;
+
+      if (!stepDataObj.snapshot) {
+        stepDataObj.snapshot = self.snapshot;
+      }
 
       sessionBuilderRestApi.put({id:self.id}, stepDataObj, function(res) {
         if (res.error) {
           deferred.reject(res.error);
-        } else if (res.validation) {
-          alert("validation");
-          //todo:
+        } else if (res.validation && !res.validation.isValid) {
+          updateStepValidationConfirm(res.validation, function() {
+            stepDataObj.snapshot[res.validation.fieldName] = res.validation.currentValueSnapshot;
+            self.updateStep(stepDataObj).then(function(newRes) {
+              deferred.resolve(newRes);
+            });
+          }, function() {
+            self.getRemoteData().then(function() {
+              deferred.resolve({ ignored: true });
+            });
+          });
         } else {
           self.sessionData.showStatus = res.sessionBuilder.showStatus;
           self.steps = res.sessionBuilder.steps;
@@ -322,6 +332,31 @@
       return deferred.promise;
     }
 
+    function updateStepValidationConfirm(validation, saveMineCallback, saveTheirsCallback) {
+      if (validation.canChange) {
+        $confirm({ 
+          text: "What are the odds of you and someone else editing the same thing at the same time... so which edit do you want saved?", 
+          title: "Yikes!", 
+          cancel: "Save Theirs", 
+          ok: "Save Mine",
+          choice: true, 
+        }).then(function() {
+          saveMineCallback();
+        }, function() {
+          saveTheirsCallback();
+        });
+      } else {
+        $confirm({ 
+          text: "Sorry, you can not change this option anymore, because it was already changed by someone else.", 
+          title: "Yikes!", 
+          closeOnly: true 
+        }).then(function() {
+          saveTheirsCallback();
+        }, function() {
+          saveTheirsCallback();
+        });
+      }
+    }
 
     function sendSms(recievers, message) {
       var self = this;

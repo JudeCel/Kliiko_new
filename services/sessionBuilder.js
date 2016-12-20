@@ -205,19 +205,16 @@ function update(sessionId, accountId, params) {
 
   return new bluebird(function (resolve, reject) {
     findSession(sessionId, accountId).then(function(originalSession) {
-      isDataValid(snapshot, params, originalSession).then(function(dataValidRes) {
-        if (dataValidRes.isValid) {
-          doUpdate(originalSession, params).then(function(res) {
-            resolve(res);
-          }, function(error) {
-            reject(error);
-          });
-        } else {
-          resolve({ validation: dataValidRes });
-        }
-      }, function(error) {
-        reject(filters.errors(error));
-      });
+      let validationRes = isDataValid(snapshot, params, originalSession);
+      if (validationRes.isValid) {
+        doUpdate(originalSession, params).then(function(res) {
+          resolve(res);
+        }, function(error) {
+          reject(error);
+        });
+      } else {
+        resolve({ validation: validationRes });
+      }
     }, function(error) {
       reject(filters.errors(error));
     });
@@ -267,45 +264,33 @@ function doUpdate(originalSession, params) {
 }
 
 function isDataValid(snapshot, params, session) {
-  return new bluebird(function (resolve, reject) { 
-    let oldValueSnapshot = null;
-    let currentValueSnapshot = null;
-    let currentValue = null;
-    let canChange = true;
-    let valueFound = false;
-    
-    for (let i=0; i<constants.sessionBuilderValudateChanges.session.notChangableFields.length; i++) {
-      let fieldName = constants.sessionBuilderValudateChanges.session.notChangableFields[i];
-      if (params[fieldName]) {
-        oldValueSnapshot = snapshot[fieldName];
-        currentValue = session[fieldName];
-        valueFound = true;
-        break;
+  for (let i=0; i<constants.sessionBuilderValudateChanges.session.notChangableFields.length; i++) {
+    let fieldName = constants.sessionBuilderValudateChanges.session.notChangableFields[i];
+    if (params[fieldName]) {
+      if (params[fieldName] == session[fieldName]) {
+        return { isValid: true };
+      } else {
+        let oldValueSnapshot = snapshot[fieldName];
+        let currentValueSnapshot = stringHelpers.hash(session[fieldName]);
+        return { isValid: currentValueSnapshot == oldValueSnapshot, canChange: false, fieldName: fieldName, currentValueSnapshot: currentValueSnapshot };
       }
     }
-    if (!valueFound) {
-      for (let i=0; i<constants.sessionBuilderValudateChanges.session.changableFields.length; i++) {
-        let fieldName = constants.sessionBuilderValudateChanges.session.changableFields[i];
-        if (params[fieldName]) {
-          oldValueSnapshot = snapshot[fieldName];
-          currentValue = session[fieldName];
-          canChange = false;
-          valueFound = true;
-          break;
-        }
-      }
-    }
-    if (valueFound) {
-      currentValueSnapshot = stringHelpers.hash(currentValue);
-    }
+  }
 
-    resolve({ 
-      isValid: currentValueSnapshot == oldValueSnapshot, 
-      currentValue: currentValue, 
-      currentValueSnapshot: currentValueSnapshot,
-      canChange: canChange 
-    });
-  });
+  for (let i=0; i<constants.sessionBuilderValudateChanges.session.changableFields.length; i++) {
+    let fieldName = constants.sessionBuilderValudateChanges.session.changableFields[i];
+    if (params[fieldName]) {
+      if (params[fieldName] == session[fieldName]) {
+        return { isValid: true };
+      } else {
+        let oldValueSnapshot = snapshot[fieldName];
+        let currentValueSnapshot = stringHelpers.hash(session[fieldName]);
+        return { isValid: currentValueSnapshot == oldValueSnapshot, canChange: true, fieldName: fieldName, currentValueSnapshot: currentValueSnapshot };
+      }
+    }
+  }
+
+  return { isValid: true };
 }
 
 function sendCloseEmailToAllObservers(session) {
@@ -849,6 +834,11 @@ function sessionBuilderObjectSnapshotForStep3(stepData) {
   //todo: add emails
 }
 
+function sessionBuilderObjectSnapshotForStep4(stepData) {
+  return { };
+  //todo: participantListId
+}
+
 function sessionBuilderObjectSnapshot(session, steps) {
   switch (session.step) {
     case "setUp":
@@ -857,6 +847,8 @@ function sessionBuilderObjectSnapshot(session, steps) {
       return sessionBuilderObjectSnapshotForStep2(steps.step2);
     case "manageSessionEmails":
       return sessionBuilderObjectSnapshotForStep3(steps.step3);
+    case "manageSessionParticipants":
+      return sessionBuilderObjectSnapshotForStep4(steps.step4);
     default:
       return { };
   }

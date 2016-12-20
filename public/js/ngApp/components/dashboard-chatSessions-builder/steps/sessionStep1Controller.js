@@ -235,8 +235,12 @@
     }
 
     vm.updateName = function() {
-      updateStep({name: vm.name}).then(function() {
-        vm.session.steps.step1.name = vm.name;
+      updateStep({name: vm.name}).then(function(res) {
+        if (!res.ignored) {
+          vm.session.steps.step1.name = vm.name;
+        } else {
+          vm.name = vm.session.steps.step1.name;
+        }
         initCanSelectFacilitator();
       }, function(err) {
         vm.name = vm.session.steps.step1.name;
@@ -254,8 +258,12 @@
     vm.updateType = function () {
       domServices.modal('sessionTypeModal', 'close');
       vm.type = vm.typeToConfirm;
-      updateStep({type: vm.type}).then(function() {
-        vm.session.steps.step1.type = vm.type;
+      updateStep({type: vm.type}).then(function(res) {
+        if (!res.ignored) {
+          vm.session.steps.step1.type = vm.type;
+        } else {
+          vm.type = vm.session.steps.step1.type;
+        }
         initCanSelectFacilitator();
       }, function(err) {
         vm.type = vm.session.steps.step1.type;
@@ -300,7 +308,7 @@
     function postUpdateStep(dataObj) {
       var deferred = $q.defer();
       vm.session.updateStep(dataObj).then(function(res) {
-        deferred.resolve();
+        deferred.resolve(res);
       }, function (err) {
         messenger.error(err);
         deferred.reject(err);
