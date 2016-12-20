@@ -311,7 +311,7 @@
         if (res.error) {
           deferred.reject(res.error);
         } else if (res.validation && !res.validation.isValid) {
-          updateValidation(res, self.updateStep, stepDataObj, self).then(function(newRes) {
+          updateValidationConfirm(res, self.updateStep, stepDataObj, self).then(function(newRes) {
             deferred.resolve(newRes);
           }, function(err) {
             deferred.reject(err);
@@ -327,10 +327,10 @@
       return deferred.promise;
     }
 
-    function updateValidation(res, saveAgainCallback, data, self) {
+    function updateValidationConfirm(res, saveAgainCallback, data, self) {
       var deferred = $q.defer();
 
-      updateValidationConfirm(res.validation, function() {
+      updateValidationConfirmDialog(res.validation, function() {
         data.snapshot[res.validation.fieldName] = res.validation.currentValueSnapshot;
         saveAgainCallback(data, self).then(function(newRes) {
           deferred.resolve(newRes);
@@ -344,7 +344,7 @@
       return deferred.promise;
     }
 
-    function updateValidationConfirm(validation, saveMineCallback, saveTheirsCallback) {
+    function updateValidationConfirmDialog(validation, saveMineCallback, saveTheirsCallback) {
       if (validation.canChange) {
         $confirm({ 
           text: "What are the odds of you and someone else editing the same thing at the same time... so which edit do you want saved?", 
@@ -410,7 +410,7 @@
           deferred.reject(res.error);  
         } else if (res.validation && !res.validation.isValid) {
 
-          updateValidation(res, addMembersByParams, params, self).then(function(newRes) {
+          updateValidationConfirm(res, addMembersByParams, params, self).then(function(newRes) {
             deferred.resolve(newRes);
           }, function(err) {
             deferred.reject(err);
