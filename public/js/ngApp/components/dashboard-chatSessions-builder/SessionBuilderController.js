@@ -306,6 +306,18 @@
       });
     }
 
+    function mapToAccountUser(list){
+      return list.map(function(i) {
+        return {
+          id: i.accountUserId,
+          firstName: i.firstName,
+          lastName: i.lastName,
+          email: i.email,
+          invite: null,
+        }
+      })
+    }
+
     function finishSelectingMembers(activeList) {
       if (!activeList) {
         vm.searchingParticipants = false;
@@ -326,8 +338,7 @@
           }
 
           if(vm.session.sessionData.participantListId == activeList.id) {
-
-            vm.participants = vm.participants.concat(list);
+            vm.participants = vm.participants.concat(mapToAccountUser(list));
             vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
           }
           else {
@@ -343,7 +354,7 @@
 
       if (vm.searchingObservers) {
         if(list.length > 0) {
-          vm.observers = vm.observers.concat(list);
+          vm.observers = vm.observers.concat(mapToAccountUser(list));
           vm.observers = builderServices.removeDuplicatesFromArray(vm.observers);
           vm.searchingObservers = false;
         }

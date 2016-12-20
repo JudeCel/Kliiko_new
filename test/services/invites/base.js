@@ -101,11 +101,8 @@ describe('SERVICE - Invite basic logic', function() {
             accountId: accountUser2.AccountId,
             role: 'accountManager'
           },
-          {
-            role: 'accountManager'
-          },{
-            role: 'participant',
-          }
+          { role: 'accountManager'},
+          { role: 'participant' }
       ]
         inviteService.createBulkInvites(invalidInviteParams).then(function(invites) {
           done('Should not get here!');
@@ -114,8 +111,7 @@ describe('SERVICE - Invite basic logic', function() {
             accountUserId: "Account User Id can't be empty"
           };
           try {
-            assert.typeOf(errors,'array')
-            assert.deepEqual(errors[0], errorParams);
+            assert.deepEqual(errors, errorParams);
             done();
           } catch (e) {
             done(e)
@@ -144,6 +140,32 @@ describe('SERVICE - Invite basic logic', function() {
         }, function(error) {
           done(error);
           });
+      });
+
+      it('should succeed and delete old invite', function (done) {
+        let params = [{
+          accountUserId: accountUser2.id,
+          userId: accountUser2.userId,
+          accountId: accountUser2.AccountId,
+          role: 'accountManager'
+        }]
+
+        inviteService.createBulkInvites(params).then((firstInvites) => {
+          inviteService.createBulkInvites(params).then(() => {
+            let ids = firstInvites.map((i) => {return i.id});
+            Invite.findAll({where: { id: { $in: ids }}}).then((result) => {
+              try {
+                console.log();
+                assert.equal(result.length, 0);
+                done();
+              } catch (e) {
+                done(e);
+              }
+            })
+          })
+        }, function(error) {
+          done(error);
+        });
       });
     });
   });

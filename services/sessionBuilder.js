@@ -499,15 +499,16 @@ function inviteMembers(sessionId, data, accountId, accountName) {
     params.accountName = accountName;
     return inviteService.createBulkInvites(params);
   }).then(function(invites) {
-    let ids = _.map(invites, 'accountUserId');
-    let contactListUsersIds = _.map(data.members, 'listId');
-    return findAccountUsersByIds(ids, contactListUsersIds);
-  }).then(function(accountUsers) {
-    _.map(accountUsers, function(accountUser) {
-      accountUser.dataValues.invite = _.last(accountUser.Invites);
+    let inviteList = _.map(invites, (invite) => {
+      return {
+        id: invite.id,
+        status: invite.status,
+        emailStatus: invite.emailStatus,
+        accountUserId: invite.accountUserId
+      }
     });
 
-    deferred.resolve(accountUsers);
+    deferred.resolve(inviteList);
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -667,19 +668,18 @@ function inviteParams(sessionId, data) {
   let deferred = q.defer();
   let ids = _.map(data.members, 'id');
 
-  models.ContactListUser.findAll({
+  models.AccountUser.findAll({
     where: {
       id: { $in: ids }
-    },
-    include: [models.AccountUser]
-  }).then(function(clUsers) {
-    let params = _.map(clUsers, (clUser) => {
+    }
+  }).then(function(accountUsers) {
+    let params = _.map(accountUsers, (accountUser) => {
       return {
-        email: clUser.AccountUser.email,
-        accountUserId: clUser.accountUserId,
+        email: accountUser.email,
+        accountUserId: accountUser.id,
         sessionId: sessionId,
         role: data.role,
-        userId: clUser.userId,
+        userId: accountUser.userId
       }
     });
       deferred.resolve(params);

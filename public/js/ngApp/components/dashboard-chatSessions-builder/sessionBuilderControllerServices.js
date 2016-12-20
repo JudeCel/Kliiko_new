@@ -95,15 +95,19 @@
     function findSelectedMembers(vm, skipInvited, onlyWithMobile) {
       var array = [];
       var members = currentMemberList(vm);
-
       for (var i in members) {
         var member = members[i];
-        if (member.isSelected && (member.inviteStatus == "notInvited" || !skipInvited) && (!onlyWithMobile || member.mobile) && vm.canSelectMember(member)) {
+        if (member.isSelected && (validStatusForInvitation(member) || !skipInvited) && (!onlyWithMobile || member.mobile) && vm.canSelectMember(member)) {
           array.push(member);
         }
       }
 
       return array;
+    }
+
+    function validStatusForInvitation(member) {
+      var validStatuses = ["notInvited", "failed"]
+      return validStatuses.indexOf(member.inviteStatus) > -1
     }
 
     function someMembersWereSelected(vm) {

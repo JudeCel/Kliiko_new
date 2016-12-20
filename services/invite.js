@@ -29,33 +29,15 @@ var mailUrlHelper = require('../mailers/helpers');
 const EXPIRE_AFTER_DAYS = 5;
 
 function createBulkInvites(arrayParams) {
-  let deferred = q.defer();
-
-  _.map(arrayParams, function(paramObject) {
-    paramObject.token = uuid.v1();
-    paramObject.sentAt = new Date();
-  });
-
-  Invite.bulkCreate(arrayParams, {
-    validate: true,
-    returning: true
-  }).then((invites) => {
-    Bluebird.each(invites, (invite) => {
-      return enqueue(backgroundQueues.queues.invites, "invite", [invite.id] );
-    }).then(() => {
-      deferred.resolve(invites);
+  return new Bluebird((resolve, reject) => {
+    Bluebird.map(arrayParams, (params) => {
+      return createInvite(params);
+    }).then((invites) => {
+      resolve(invites);
     }, (error) => {
-      deferred.reject(error);
-    })
-  }, (errors) => {
-    let errorResp = _.map(errors, (error) => {
-      return filters.errors(error.errors)
-    })
-    deferred.reject(errorResp);
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
+      reject(error);
+    });
   });
-  return deferred.promise;
 }
 
 function deleteFacilitato(params) {
@@ -123,33 +105,46 @@ function facilitatorInviteParams(accountUser, sessionId) {
 
 function createInvite(params) {
   return new Bluebird((resolve, reject) => {
-    let token = uuid.v1();
+    let sql = {
+      where: {
+        accountUserId: parseInt(params.accountUserId)
+      }
+    }
 
-    Invite.create({
-      accountUserId: params.accountUserId,
-      accountId: params.accountId,
-      sessionId: params.sessionId,
-      token: token,
-      sentAt: new Date(),
-      role: params.role
-    }).then(function(result) {
-      enqueue(backgroundQueues.queues.invites, "invite", [result.id]).then(() => {
-        Invite.find({where: {id: result.id}, include: { model: AccountUser, attributes: constants.safeAccountUserParams }}).then(function(invite) {
-          resolve(invite);
-        }, function(error) {
-          resolve(result);
+    if (params.accountId) {
+      sql.where.accountId = parseInt(params.accountId)
+    }
+    if (params.sessionId) {
+      sql.where.sessionId = parseInt(params.sessionId)
+    }
+
+    Invite.destroy(sql).then((result) => {
+      Invite.create({
+        accountUserId: params.accountUserId,
+        accountId: params.accountId,
+        sessionId: params.sessionId,
+        token: uuid.v1(),
+        sentAt: new Date(),
+        role: params.role
+      }).then(function(result) {
+        enqueue(backgroundQueues.queues.invites, "invite", [result.id]).then(() => {
+          Invite.find({where: {id: result.id}, include: { model: AccountUser, attributes: constants.safeAccountUserParams }}).then(function(invite) {
+            resolve(invite);
+          }, function(error) {
+            resolve(result);
+          });
+        }, (error) => {
+          reject(error);
         });
-      }, (error) => {
-        reject(error);
+      }).catch(function(error) {
+        if(error.name == 'SequelizeUniqueConstraintError') {
+          reject({ email: 'User has already been invited' });
+        }
+        else {
+          reject(filters.errors(error));
+        }
       });
-    }).catch(function(error) {
-      if(error.name == 'SequelizeUniqueConstraintError') {
-        reject({ email: 'User has already been invited' });
-      }
-      else {
-        reject(filters.errors(error));
-      }
-    });
+    })
   })
 };
 

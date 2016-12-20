@@ -151,14 +151,18 @@
         while (i < vm.stepMembers.length) {
           var item = vm.stepMembers[i];
           if(item.id == resp.accountUserId) {
-            if (resp.emailStatus == "failed") {
-              item.invite = resp;
-            }else{
+            item.invite = (item.invite || {});
+
+            if (resp.emailStatus == "sent") {
               item.invite.emailStatus = "sentDone"
               setTimeout(function() {
                 updateInviteItem(resp);
               }, 2000);
+
+            }else{
+              item.invite = resp;
             }
+            item.isSelected = false;
             break;
           }
           i++
@@ -182,9 +186,9 @@
         }
       });
     }
-    
+
     function showSpinner(member) {
-      return member.invite.emailStatus == 'waiting'
+      return member.invite && member.invite.emailStatus == 'waiting'
     }
 
     function updateParticipantsList(value) {
@@ -223,6 +227,7 @@
 
       if(data.length > 0) {
         var promise;
+
         if (vm.isParticipantPage()) {
           promise = vm.session.inviteParticipants(data);
         } else {
@@ -230,18 +235,17 @@
         }
 
         promise.then(function(res) {
-
           for(var i in data) {
             var member = data[i];
              for(var j in res.data) {
-               if (member.email == res.data[j].email) {
-                  data[i] = angular.extend(member, res.data[j]);
+               if (member.id == res.data[j].accountUserId) {
+                  member.invite = res.data[j];
                   member.isSelected = false;
-                  member.inviteStatus = res.data[j].invite.status
+                  data[i] = angular.extend(member, data[i]);
+                  break;
                }
              }
           }
-
           messenger.ok(res.message);
         }, function(error) {
           messenger.error(error);
