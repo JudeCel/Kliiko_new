@@ -134,7 +134,9 @@
             item.invite = resp;
           }
         });
-        $scope.$apply();
+        if(!$scope.$$phase) {
+          $scope.$apply();
+        }
       });
       vm.SocketChannel.on("inviteDelete", function(resp) {
         vm.stepMembers.map(function(item) {
@@ -142,7 +144,10 @@
             item.invite = null;
           }
         });
-        $scope.$apply();
+        
+        if(!$scope.$$phase) {
+          $scope.$apply();
+        }
       });
     }
 
