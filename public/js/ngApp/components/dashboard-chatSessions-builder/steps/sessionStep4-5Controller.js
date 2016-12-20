@@ -135,6 +135,7 @@
             item.invite.status = resp.status;
           }
         });
+        $scope.$apply();
       });
       vm.SocketChannel.on("inviteDelete", function(resp) { });
     }
@@ -410,7 +411,11 @@
             member.inviteStatus = member.invite.emailStatus;
         }
       } else {
-        member.inviteStatus = "notInvited"
+        if (member.sessionMember) {
+          member.inviteStatus = "confirmed"
+        }else{
+          member.inviteStatus = "notInvited"
+        }
       }
       return member.inviteStatus;
     }

@@ -300,8 +300,7 @@ function removeInvite(invite, callback) {
 function destroyInvite(invite, callback) {
   Invite.destroy({
     where: {
-      id: invite.id,
-      status: 'pending'
+      id: invite.id
     }
   }).then(function(res) {
     if(res > 0) {

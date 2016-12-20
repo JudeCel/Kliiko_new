@@ -23,7 +23,7 @@
       { id: 'video',         type: 'video', text: 'Video',             scope: 'collage',       format: '.oog, .mp4' },
       { id: 'videoService',  type: 'link',  text: 'Youtube or Vimeo',  scope: 'videoService',  format: 'url' }
     ];
-    vm.modalTab = {}; 
+    vm.modalTab = {};
     vm.pagination = {
       totalItems: 0,
       currentPage: 1,
@@ -317,7 +317,7 @@
 
     function preloadResources(params) {
       var deferred = $q.defer();
-      
+
       vm.listResources(params).then(function(result) {
         resetSelectionList();
         vm.resourceList = result.resources;
@@ -356,18 +356,25 @@
         vm.pagination.totalItems = 0;
       }
     }
-    
-    function openUploadModal(current, parent, replaceResource) {
+
+    function openUploadModal(current, parent, replaceResource, modalTitle) {
       vm.newResource = { type: current.type, scope: current.scope };
       vm.currentPage.upload = current.id;
       if (replaceResource) {
+        vm.modalTitle = "Replace resource";
         parent.modal.replace = true;
         vm.newResource.stock = replaceResource.stock;
         vm.newResource.name = replaceResource.name;
         vm.newResource.id = replaceResource.id;
       } else {
-        parent.modal.replace = false;
+        vm.modalTitle = "New resource";
+        parent.modal.replace = true;
       }
+
+      if (modalTitle) {
+        vm.modalTitle = modalTitle;
+      }
+
       domServices.modal('uploadResource');
       parent = parent || { modal: {} };
       vm.currentModalSet = parent.modal.set;

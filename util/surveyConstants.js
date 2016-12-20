@@ -131,7 +131,7 @@ module.exports = {
     {
       order: 0,
       name: 'First Choice',
-      question: 'Which ONE of these is your FIRST choice for (product/service type)?',
+      question: 'e.g. Which ONE of these is your FIRST choice for (product/service type)?',
       answers: [
         { name: 'Brand Name', order: 0 },
         { name: 'Brand Name', order: 1 },
@@ -145,7 +145,7 @@ module.exports = {
     {
       order: 1,
       name: 'Second Choice',
-      question: 'Which ONE of these is your SECOND choice for (product/service type)?',
+      question: 'e.g. Which ONE of these is your SECOND choice for (product/service type)?',
       answers: [
         { name: 'Brand Name', order: 0 },
         { name: 'Brand Name', order: 1 },
@@ -159,7 +159,7 @@ module.exports = {
     {
       order: 2,
       name: 'Advice',
-      question: 'What advice would you like to give to (Brand Name) to improve (product/service)?',
+      question: 'e.g. What advice would you like to give to (Brand Name) to improve (product/service)?',
       answers: [ { placeHolder: 'Answer - 200 Character Limit', order: 0 } ],
       textArea: true,
       minAnswers: 1,
@@ -168,7 +168,7 @@ module.exports = {
     {
       order: 3,
       name: 'Like-Dislike',
-      question: 'Please play the audio/video clip first, and then select how much you like or dislike (subject description)?',
+      question: 'e.g. Please play the audio/video clip first, and then select how much you like or dislike (subject description)?',
       answers: [
         { name: 'Like A Lot', order: 0 },
         { name: 'Like', order: 1 },
@@ -185,7 +185,7 @@ module.exports = {
     {
       order: 4,
       name: 'Importance',
-      question: 'How important is it for (brand/organisation) to provide (product/service)?',
+      question: 'e.g. How important is it for (brand/organisation) to provide (product/service)?',
       answers: [
         { name: 'Very Important', order: 0 },
         { name: 'Fairly Important', order: 1 },
@@ -201,12 +201,12 @@ module.exports = {
     {
       order: 5,
       name: 'Most Important',
-      question: 'Which ONE of these product/service features is the MOST important to you?',
+      question: 'e.g. Which ONE of these product/service features is the MOST important to you?',
       answers: [
         { name: 'Feature', order: 0 },
         { name: 'Feature', order: 1 },
         { name: 'Feature', order: 2 },
-        { name: 'Feature', order: 3 }
+        { name: 'Don\'t know', order: 3 }
       ],
       input: true,
       minAnswers: 2,
@@ -215,7 +215,7 @@ module.exports = {
     {
       order: 6,
       name: 'Interest',
-      question: "Are you interested in taking part in a future online discussion group, about (brand/product/service)?\nIt'll be easy and fun, chatting with others and making a difference.\nIf Yes, we'll need your Contact Details, so we can keep in touch.\nPlease also see our Privacy Policy below.\nYou must be aged 18 or over to participate.",
+      question: "e.g. Are you interested in taking part in a future online discussion group, about (brand/product/service)?\nIt'll be easy and fun, chatting with others and making a difference.\nIf Yes, we'll need your Contact Details, so we can keep in touch.\nPlease also see our Privacy Policy below.\nYou must be aged 18 or over to participate.",
       hardcodedName: true,
       answers: [
         { name: 'Yes - I am aged 18 or over & give you permission to contact me in future about a discussion group', order: 0, tag: 'InterestYesTag' },
