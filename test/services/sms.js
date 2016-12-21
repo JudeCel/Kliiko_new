@@ -1,8 +1,4 @@
 'use strict';
-// var models = require('./../../models');
-// var Account = models.Account;
-// var AccountUser = models.AccountUser;
-
 var assert = require('chai').assert;
 var smsService = require('./../../services/sms');
 
