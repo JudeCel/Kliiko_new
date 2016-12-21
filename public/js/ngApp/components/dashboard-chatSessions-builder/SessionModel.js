@@ -399,6 +399,7 @@
         if (res.error) {
           deferred.reject(res.error);
         } else {
+          delete self.snapshot[topicId.toString()];
           deferred.resolve(res.data);
         }
       });

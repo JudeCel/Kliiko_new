@@ -74,8 +74,9 @@ function updateSessionTopics(sessionId, topicsArray) {
       Bluebird.each(sessionTopics, (sessionTopic) => {
 
         return new Bluebird(function (resolveInternal, rejectInternal) {
-          _.map(topicsArray, function(topic) {
-            if(topic.id == sessionTopic.topicId) {
+          Bluebird.each(topicsArray, (topic) => {
+
+            if (topic.id == sessionTopic.topicId) {
               let params = {
                 order: topic.sessionTopic.order,
                 active: topic.sessionTopic.active,
@@ -86,12 +87,14 @@ function updateSessionTopics(sessionId, topicsArray) {
                 lastSign: topic.sessionTopic.lastSign,
               }
 
-              sessionTopic.update(params).then(() =>{
+              return sessionTopic.update(params).then(() =>{
                 topic.SessionTopics = [sessionTopic];
                 returning.push(topic);
-                resolveInternal();
               });
             }
+
+          }).then(function() {
+            resolveInternal();
           }, function(error) {
             rejectInternal(error);
           });

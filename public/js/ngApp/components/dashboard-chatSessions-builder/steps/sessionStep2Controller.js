@@ -162,9 +162,13 @@
 
     function saveTopics(list) {
       vm.session.saveTopics(list).then(function(result) {
-        orderByFilter(result, "id").map(function(topic) {
-          addSessionTopic(topic);
-        });
+        if (!result.ignored) {
+          orderByFilter(result, "id").map(function(topic) {
+            addSessionTopic(topic);
+          });
+        } else {
+          init(vm.topicController);
+        }
       }, function(error) {
         messenger.error(error);
       });

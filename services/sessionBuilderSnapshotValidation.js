@@ -77,10 +77,10 @@ function getTopicsSnapshotWithOrdersOnly(snapshot) {
   return snapshot;
 }
 
-function getTopic(topics, id) {
+function getSessionTopic(topics, id) {
   for (let i=0; i<topics.length; i++) {
     if (topics[i].id == id) {
-      return topics[i];
+      return topics[i].sessionTopic;
     }
   }
   return { };
@@ -92,7 +92,7 @@ function isTopicsDataValid(snapshot, sessionId, accountId, topics, sessionBuilde
       let ids = Object.keys(snapshot);
       for (let i=0; i<ids.length; i++) {
         let id = ids[i];
-        if (!(id in snapshotResult) || snapshot[id].order != snapshotResult[id].order && stringHelpers.hash(getTopic(topics, id).sessionTopic.order) != snapshotResult[id].order) {
+        if (!(id in snapshotResult) || snapshot[id].order != snapshotResult[id].order && stringHelpers.hash(getSessionTopic(topics, id).order) != snapshotResult[id].order) {
           resolve({ isValid: false, canChange: true, currentSnapshotChanges: getTopicsSnapshotWithOrdersOnly(snapshotResult) });
           return;
         }
