@@ -56,7 +56,7 @@ function calculateSmsCountParams(data, decreaseNumber) {
 
   if (planSmsCount < decreaseNumber) {
     subscriptionPreferenceParams['data.planSmsCount'] = 0;
-    subscriptionPreferenceParams['data.paidSmsCount'] = (paidSmsCount - (decreaseNumber -planSmsCount));
+    subscriptionPreferenceParams['data.paidSmsCount'] = (paidSmsCount - (decreaseNumber - planSmsCount));
   }
   return subscriptionPreferenceParams;
 }
