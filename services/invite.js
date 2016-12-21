@@ -22,7 +22,7 @@ var uuid = require('node-uuid');
 var async = require('async');
 var _ = require('lodash');
 var q = require('q');
-let Bluebird = require('bluebird')
+let Bluebird = require('bluebird');
 
 var mailUrlHelper = require('../mailers/helpers');
 

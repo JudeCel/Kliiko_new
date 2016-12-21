@@ -5,15 +5,12 @@ var filters = require('./../models/filters');
 var airbrake = require('./../lib/airbrake').instance;
 var quotesMailer = require('../mailers/quotes');
 
-var Subscription = models.Subscription;
-var AccountUser = models.AccountUser;
-var Account = models.Account;
-var SubscriptionPlan = models.SubscriptionPlan;
-var SubscriptionPreference = models.SubscriptionPreference;
+const { Subscription, AccountUser, Account, SubscriptionPlan, SubscriptionPreference} = models
 
 var q = require('q');
 var _ = require('lodash');
 var async = require('async');
+let Bluebird = require('bluebird');
 var chargebee = require('./../lib/chargebee').instance;
 var planConstants = require('./../util/planConstants');
 var constants = require('../util/constants');
@@ -708,7 +705,7 @@ function recurringSubDependencies(subscription) {
 function prepareRecurringParams(plan, preference) {
   return {
     data: {
-      paidSmsCount: preference.data.paidSmsCount + plan.paidSmsCount
+      planSmsCount: plan.planSmsCount
     }
   }
 }

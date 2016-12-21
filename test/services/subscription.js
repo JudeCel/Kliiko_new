@@ -12,7 +12,7 @@ var async = require('async');
 var assert = require('chai').assert;
 var _ = require('lodash');
 
-describe('SERVICE - Subscription', function() {
+describe.only('SERVICE - Subscription', function() {
   var testData;
   var currentSubPlanId;
 
@@ -199,11 +199,15 @@ describe('SERVICE - Subscription', function() {
         }
 
         subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: testData.subscriptionPlan.chargebeePlanId}, providers).then(function(result) {
-          assert.equal(result.redirect, true);
-          assert.equal(result.hosted_page.object, "hosted_page");
-          assert.equal(result.hosted_page.id, "SomeUniqueID");
-          assert.equal(result.hosted_page.url, "https://yourapp.chargebee.com/pages/v2/EmKrsbXtONZfPVXmoSHLVpfBJYlsIIut/checkout");
-          done();
+          try {
+            assert.equal(result.redirect, true);
+            assert.equal(result.hosted_page.object, "hosted_page");
+            assert.equal(result.hosted_page.id, "SomeUniqueID");
+            assert.equal(result.hosted_page.url, "https://yourapp.chargebee.com/pages/v2/EmKrsbXtONZfPVXmoSHLVpfBJYlsIIut/checkout");
+            done();
+          } catch (e) {
+            done(e);
+          }
         }, function(error) {
           done(error);
         });
@@ -715,10 +719,9 @@ describe('SERVICE - Subscription', function() {
     describe('happy path', function() {
       it('should succeed on changed subscription preferences', function(done) {
         subscriptionServices.findSubscriptionByChargebeeId(subId).then(function(subscription) {
-          // currentSms (50) and planSms (50) should be equal,
-          // after recurring preference model value should be currentSms + planSms (100)
-          let currentSms = subscription.SubscriptionPreference.data.paidSmsCount;
-          let planSms = subscription.SubscriptionPlan.paidSmsCount;
+          // if no addition SMS then current sms count should be the same within the current plan
+          let currentSms = subscription.SubscriptionPreference.data.planSmsCount;
+          let planSms = subscription.SubscriptionPlan.planSmsCount;
           try {
             assert.equal(currentSms, planSms);
           } catch (e) {
@@ -729,8 +732,12 @@ describe('SERVICE - Subscription', function() {
             return result.promise;
           }).then(function(result) {
             try {
-              assert.equal(result.SubscriptionPreference.data.paidSmsCount, currentSms + planSms);
-              done();
+              try {
+                assert.equal(result.SubscriptionPreference.data.planSmsCount, planSms);
+                done()
+              } catch (e) {
+                done(e);
+              }
             } catch (e) {
               done(e);
             }
