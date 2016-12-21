@@ -433,15 +433,7 @@ function updateSubscriptionData(passThruContent){
     subscription.update({planId: passThruContent.planId, subscriptionPlanId: passThruContent.subscriptionPlanId, active: true}).then(function(updatedSub) {
 
       let params = _.cloneDeep(planConstants[passThruContent.planId]);
-      if(passThruContent.oldPriority > params.priority || passThruContent.oldPriority == -1) {
-        params.paidSmsCount = params.paidSmsCount + passThruContent.paidSmsCount;
-      }
-      else {
-        let smsCount = passThruContent.paidSmsCount - passThruContent.planSmsCount;
-        smsCount = smsCount > 0 ? smsCount : 0;
-        params.paidSmsCount = params.paidSmsCount > smsCount ? params.paidSmsCount : smsCount;
-      }
-
+        params.planSmsCount = passThruContent.planSmsCount;
       updatedSub.SubscriptionPreference.update({ data: params }).then(function(preference) {
         deferred.resolve({subscription: updatedSub, redirect: false});
       }, function(error) {
