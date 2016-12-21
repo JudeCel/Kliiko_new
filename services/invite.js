@@ -107,45 +107,58 @@ function createInvite(params) {
   return new Bluebird((resolve, reject) => {
     let sql = {
       where: {
-        accountUserId: parseInt(params.accountUserId)
+        accountUserId: params.accountUserId
       }
     }
 
     if (params.accountId) {
       sql.where.accountId = parseInt(params.accountId)
     }
+
     if (params.sessionId) {
       sql.where.sessionId = parseInt(params.sessionId)
     }
 
-    Invite.destroy(sql).then((result) => {
-      Invite.create({
-        accountUserId: params.accountUserId,
-        accountId: params.accountId,
-        sessionId: params.sessionId,
-        token: uuid.v1(),
-        sentAt: new Date(),
-        role: params.role
-      }).then(function(result) {
-        enqueue(backgroundQueues.queues.invites, "invite", [result.id]).then(() => {
-          Invite.find({where: {id: result.id}, include: { model: AccountUser, attributes: constants.safeAccountUserParams }}).then(function(invite) {
-            resolve(invite);
-          }, function(error) {
-            resolve(result);
+    let buildAttrs = {
+      accountUserId: params.accountUserId,
+      accountId: params.accountId,
+      sessionId: params.sessionId,
+      token: uuid.v1(),
+      sentAt: new Date(),
+      role: params.role
+    }
+
+    models.sequelize.transaction().then((transaction) => {
+      Invite.build(buildAttrs).validate().done(() => {
+        sql.transaction = transaction;
+        Invite.destroy(sql).then((result) => {
+          Invite.create(buildAttrs, {transaction: transaction}).then((result) => {
+            enqueue(backgroundQueues.queues.invites, "invite", [result.id]).then(() => {
+              Invite.find({where: {id: result.id}, include: { model: AccountUser, attributes: constants.safeAccountUserParams }, transaction: transaction}).then((invite)=> {
+                transaction.commit().then(() => {
+                  resolve(invite);
+                });
+              }, (error) => {
+                resolve(result);
+              });
+            }, (error) => {
+              reject(error);
+            });
+          }).catch(function(error) {
+            transaction.rollback().then(() => {
+              if(error.name == 'SequelizeUniqueConstraintError') {
+                reject({ email: 'User has already been invited' });
+              }else {
+                reject(filters.errors(error));
+              }
+            });
           });
-        }, (error) => {
-          reject(error);
         });
-      }).catch(function(error) {
-        if(error.name == 'SequelizeUniqueConstraintError') {
-          reject({ email: 'User has already been invited' });
-        }
-        else {
-          reject(filters.errors(error));
-        }
+      }, (error) => {
+        reject(filters.errors(error));
       });
-    })
-  })
+    });
+  });
 };
 
 function simpleParams(invite, message) {
