@@ -110,6 +110,7 @@
     vm.planOptionColor = planOptionColor;
     vm.selectPlanBtnColor = selectPlanBtnColor;
     vm.mostPopular = mostPopular;
+    vm.upgradePlanText = upgradePlanText;
 
     init();
 
@@ -164,6 +165,7 @@
     }
 
     function canPush(period, subPlan) {
+    //  console.log("---", subPlan.plan.period_unit);
       return subPlan.plan.period_unit == period && subPlan.additionalParams.priority > 0;
     }
 
@@ -336,6 +338,10 @@
 
     function mostPopular(planId) {
       return 'core_monthly' == planId;
+    }
+
+    function upgradePlanText(plan) {
+      return plan.price?"BUY NOW":"GET STARTED"
     }
   }
 })();

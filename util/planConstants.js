@@ -1,5 +1,33 @@
 'use strict';
 module.exports = {
+  features: [
+    {name: "sessionCount", description: "Number of Chat Sessions"},
+    {name: "contactListCount", description: "Number of Contact Lists"},
+    {name: "recruiterContactListCount", description: "Recruiter lists (build Contact Lists on demand)"},
+    {name: "importDatabase", description: "Import&Map Contacts"},
+    {name: "brandLogoAndCustomColors", description: "Custom Logo & Colors"},
+
+    //{name: "contactListMemberCount", description: "Number of Chat Sessions"},
+    //{name: "accountUserCount", description: "Number of Chat Sessions"},
+    {name: "exportContactListAndParticipantHistory", description: "Export Contacts"},
+    {name: "exportRecruiterSurveyData", description: "Export Recruiter Data"},
+    {name: "accessKlzziForum", description: "Access klzii Forum"},
+    {name: "accessKlzziFocus", description: "Access klzii Focus"},
+    {name: "canInviteObserversToSession", description: "Observers"},
+    {name: "planSmsCount", description: "SMS Alerts (Focus)"},
+
+    {name: "discussionGuideTips", description: "Number of Chat Sessions"},
+    {name: "whiteboardFunctionality", description: "Number of Chat Sessions"},
+    {name: "uploadToGallery", description: "Number of Chat Sessions"},
+    {name: "reportingFunctions", description: "Number of Chat Sessions"},
+    {name: "availableOnTabletAndMobilePlatforms", description: "Number of Chat Sessions"},
+    {name: "customEmailInvitationAndReminderMessages", description: "Number of Chat Sessions"},
+    {name: "topicCount", description: "Number of Chat Sessions"},
+
+    {name: "priority", description: "Number of Chat Sessions"},
+    {name: "surveyCount", description: "Number of Chat Sessions"},
+    {name: "secureSsl", description: "Number of Chat Sessions"}
+  ],
   free_trial: {
     sessionCount: 1,
     contactListCount: 1,
@@ -48,7 +76,7 @@ module.exports = {
     availableOnTabletAndMobilePlatforms: true,
     customEmailInvitationAndReminderMessages: true,
     topicCount: 5,
-    priority: -1,
+    priority: 1,
     surveyCount: 1,
     secureSsl: true
   },

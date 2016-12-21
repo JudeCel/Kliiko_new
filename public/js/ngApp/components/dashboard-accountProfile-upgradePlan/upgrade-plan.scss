@@ -6,12 +6,12 @@
   .most-popular{
     position: absolute;
     display: block;
-    width: 75px;
-    height: 73px;
+    width: 60px;
+    height: 60px;
     background-repeat: no-repeat;
     background-size: contain;
-    top: -14px;
-    left: -40px;
+    top: -75px;
+    right: 15px;
     background-image: url('/icons/MostPopular.png');
   }
 
@@ -65,7 +65,7 @@
     display: table;
     width: 100%;
     height: 60px;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
   }
 
   .align-vertical-child {
@@ -77,6 +77,7 @@
   }
 
   .plan-option-list{
+    padding-right: 2px;
     .option-btn-red{
       margin-top: 110px;
       display: inline-block;
@@ -184,7 +185,6 @@
         margin-left: -70px;
         margin-top: 5px;
         position: absolute;
-       // background: url('./../icons/ic_tick.png') no-repeat;
       }
     }
   }
@@ -193,9 +193,18 @@
 
   .plans-table {
     .plan-block {
-      display: block;
       padding-left: 0px;
-      padding-right: 15px;
+      padding-right: 2px;
+      width: 18%;
+
+      h4 {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 10px;
+        font-size: 2.3rem;
+        font-weight: bold;
+        font-style: italic;
+      }
     }
 
     .included-plan-fader {
@@ -236,15 +245,7 @@
       z-index: 100;
     }
 
-    h4 {
-      max-width: 70%;
-      margin: 0 auto;
-      margin-bottom: 5px;
-      padding: 6px;
-      font-size: 2.3rem;
-      font-weight: bold;
-      font-style: italic;
-    }
+
 
     .price-label {
       display: block;
@@ -293,16 +294,24 @@
       margin-bottom: 3px;
     }
 
-    .junior_monthly_dark, .junior_yearly_dark{background-color: #6ebc95;}
-    .junior_monthly_light, .junior_yearly_light{background-color: #d6ece0;}
+    .junior_monthly_dark, .junior_yearly_dark{background-color: #cae8c8;}
+    .junior_monthly_light, .junior_yearly_light{background-color: #dbf1dc;}
 
-    .core_monthly_dark, .core_yearly_dark{background-color: #4CC0E9;}
-    .core_monthly_light, .core_yearly_light{background-color: #A5DFF3;}
+    .core_monthly_dark, .core_yearly_dark{background-color: #afe3f6;}
+    .core_monthly_light, .core_yearly_light{background-color: #caecf9;}
 
-    .senior_monthly_dark, .senior_yearly_dark{background-color: #82cc81;}
+    .senior_monthly_dark, .senior_yearly_dark{background-color: #cae8c8;}
     .senior_monthly_light, .senior_yearly_light{background-color: #dbf1dc;}
 
-    .junior_monthly_btn, .junior_yearly_btn{
+    .free_account_light {background-color: #fdfad7;}
+    .free_account_dark {background-color: #faf8c3;}
+
+    .junior_monthly_header, .junior_yearly_header{background-color: #72c46e;}
+    .core_monthly_header, .core_yearly_header{background-color: #41b2e3;}
+    .senior_monthly_header, .senior_yearly_header{background-color: #72c46e;}
+    .free_account_header {background-color: #f5f072; margin-top: 45px;}
+
+    .junior_monthly_btn, .junior_yearly_btn {
       border-color: #6ebc95 !important;
       background-color: #fff !important;
       color: #6ebc95 !important;
