@@ -4,6 +4,7 @@ var MessagesUtil = require('./../../util/messages');
 var sessionMemberService = require('./../../services/sessionMember');
 var inviteService = require('./../../services/invite');
 var sessionBuilderService = require('./../../services/sessionBuilder');
+var sessionBuilderSnapshotValidationService = require('./../../services/sessionBuilderSnapshotValidation');
 
 module.exports = {
   addFacilitator: addFacilitator
@@ -12,7 +13,7 @@ module.exports = {
 function addFacilitator(req, res, next) {
   let params = req.body;
 
-  sessionBuilderService.isFacilitatorDataValid(params.snapshot, params.accountUserId, params.sessionId).then(function(validationRes) {
+  sessionBuilderSnapshotValidationService.isFacilitatorDataValid(params.snapshot, params.accountUserId, params.sessionId, sessionBuilderService).then(function(validationRes) {
 
     if (validationRes.isValid) {
       sessionMemberService.removeByRole('facilitator', params.sessionId, res.locals.currentDomain.id).then(function() {

@@ -21,7 +21,6 @@
       sessionMailTemplateStatus: { method: 'GET', params: { path: 'sessionMailTemplateStatus' } },
       addTopics: {method: 'POST',  params: {path: 'addTopics'} },
       removeTopic: {method: 'POST',  params: {path: 'removeTopic'} },
-
       certainStep: {method: 'POST', params: {path: 'step'} }
     });
 
@@ -256,7 +255,12 @@
       var deferred = $q.defer();
 
       updateValidationConfirmDialog(res.validation, function() {
-        data.snapshot[res.validation.fieldName] = res.validation.currentValueSnapshot;
+        if (res.validation.fieldName) {
+          data.snapshot[res.validation.fieldName] = res.validation.currentValueSnapshot;
+        }
+        if (res.validation.currentSnapshotChanges) {
+          angular.merge(data.snapshot, res.validation.currentSnapshotChanges);
+        }
         saveAgainCallback(data, self).then(function(newRes) {
           deferred.resolve(newRes);
         });
@@ -330,7 +334,7 @@
     function addMembersByParams(params, self) {
       var deferred = $q.defer();
 
-      sessionMemberApi.post({},params, function(res) {
+      sessionMemberApi.post({}, params, function(res) {
         if (res.error) { 
           deferred.reject(res.error);  
         } else if (res.validation && !res.validation.isValid) {
@@ -350,16 +354,41 @@
     }
 
     function saveTopics(topicsArray) {
-      var self = this;
       var deferred = $q.defer();
-      sessionBuilderRestApi.addTopics({id: self.id}, { topicsArray: topicsArray }, function(res) {
-        if (res.error) {
-          deferred.reject(res.error);
+
+      var params = {
+        topicsArray: topicsArray, 
+        snapshot: this.snapshot
+      }
+      saveTopicsByParams(params, this).then(function(res) {
+        deferred.resolve(res);
+      }, function(err) {
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
+    }
+
+    function saveTopicsByParams(params, self) {
+      var deferred = $q.defer();
+
+      sessionBuilderRestApi.addTopics({id: self.id}, params, function(res) {
+        if (res.error) { 
+          deferred.reject(res.error);  
+        } else if (res.validation && !res.validation.isValid) {
+
+          updateValidationConfirm(res, saveTopicsByParams, params, self).then(function(newRes) {
+            deferred.resolve(newRes);
+          }, function(err) {
+            deferred.reject(err);
+          });
+
         } else {
-          self.steps.step2.topics = topicsArray
+          self.snapshot = res.snapshot;
           deferred.resolve(res.data);
         }
       });
+
       return deferred.promise;
     }
 

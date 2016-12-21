@@ -67,36 +67,45 @@ function updateSessionTopic(params) {
 }
 
 function updateSessionTopics(sessionId, topicsArray) {
-  let deferred = q.defer();
-  let ids = _.map(topicsArray, 'id');
-  let returning = [];
-  joinToSession(ids, sessionId, topicsArray).then(function(sessionTopics) {
-    _.map(sessionTopics, function(sessionTopic) {
-      _.map(topicsArray, function(topic) {
-        if(topic.id == sessionTopic.topicId) {
-          let params = {
-            order: topic.sessionTopic.order,
-            active: topic.sessionTopic.active,
-            landing: topic.sessionTopic.landing,
-            name: topic.sessionTopic.name,
-            boardMessage: topic.sessionTopic.boardMessage,
-            sign: topic.sessionTopic.sign,
-            lastSign: topic.sessionTopic.lastSign,
-          }
+  return new Bluebird(function (resolve, reject) {
+    let ids = _.map(topicsArray, 'id');
+    let returning = [];
+    joinToSession(ids, sessionId, topicsArray).then(function(sessionTopics) {
+      Bluebird.each(sessionTopics, (sessionTopic) => {
 
-          sessionTopic.update(params);
-          topic.SessionTopics = [sessionTopic];
-          returning.push(topic);
-        }
+        return new Bluebird(function (resolveInternal, rejectInternal) {
+          _.map(topicsArray, function(topic) {
+            if(topic.id == sessionTopic.topicId) {
+              let params = {
+                order: topic.sessionTopic.order,
+                active: topic.sessionTopic.active,
+                landing: topic.sessionTopic.landing,
+                name: topic.sessionTopic.name,
+                boardMessage: topic.sessionTopic.boardMessage,
+                sign: topic.sessionTopic.sign,
+                lastSign: topic.sessionTopic.lastSign,
+              }
+
+              sessionTopic.update(params).then(() =>{
+                topic.SessionTopics = [sessionTopic];
+                returning.push(topic);
+                resolveInternal();
+              });
+            }
+          }, function(error) {
+            rejectInternal(error);
+          });
+        });
+
+      }).then(function() {
+        resolve(returning);
+      }, function(error) {
+        reject(filters.errors(error));
       });
+    }, function(error) {
+      reject(filters.errors(error));
     });
-
-    deferred.resolve(returning);
-  }, function(error) {
-    deferred.reject(filters.errors(error));
   });
-
-  return deferred.promise;
 }
 
 function joinToSession(ids, sessionId) {

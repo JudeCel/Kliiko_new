@@ -386,6 +386,5 @@
     function canCommentAndRate() {
       return isSelectParticipantStep() && isSessionClosed();
     }
-  }
 
 })();

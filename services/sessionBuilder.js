@@ -20,6 +20,7 @@ var sessionValidator = require('./validators/session');
 var topicsService = require('./topics');
 var resourcesService = require('./resources');
 var whiteboardService = require('./whiteboard');
+var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
 
 var async = require('async');
 var _ = require('lodash');
@@ -49,7 +50,8 @@ module.exports = {
   sessionMailTemplateStatus: sessionMailTemplateStatus,
   canAddObservers: canAddObservers,
   sessionMailTemplateExists: sessionMailTemplateExists,
-  isFacilitatorDataValid: isFacilitatorDataValid
+  searchSessionMembers: searchSessionMembers,
+  sessionBuilderObjectStepSnapshot: sessionBuilderObjectStepSnapshot
 };
 
 function addDefaultObservers(session) {
@@ -205,7 +207,7 @@ function update(sessionId, accountId, params) {
 
   return new bluebird(function (resolve, reject) {
     findSession(sessionId, accountId).then(function(originalSession) {
-      let validationRes = isDataValid(snapshot, params, originalSession);
+      let validationRes = sessionBuilderSnapshotValidation.isDataValid(snapshot, params, originalSession);
       if (validationRes.isValid) {
         doUpdate(originalSession, params).then(function(res) {
           resolve(res);
@@ -260,56 +262,6 @@ function doUpdate(originalSession, params) {
       reject(filters.errors(error));
     });
 
-  });
-}
-
-function isDataValid(snapshot, params, session) {
-  for (let i=0; i<constants.sessionBuilderValudateChanges.session.notChangableFields.length; i++) {
-    let fieldName = constants.sessionBuilderValudateChanges.session.notChangableFields[i];
-    if (params[fieldName]) {
-      if (params[fieldName] == session[fieldName]) {
-        return { isValid: true };
-      } else {
-        let oldValueSnapshot = snapshot[fieldName];
-        let currentValueSnapshot = stringHelpers.hash(session[fieldName]);
-        return { isValid: currentValueSnapshot == oldValueSnapshot, canChange: false, fieldName: fieldName, currentValueSnapshot: currentValueSnapshot };
-      }
-    }
-  }
-
-  for (let i=0; i<constants.sessionBuilderValudateChanges.session.changableFields.length; i++) {
-    let fieldName = constants.sessionBuilderValudateChanges.session.changableFields[i];
-    if (params[fieldName]) {
-      if (params[fieldName] == session[fieldName]) {
-        return { isValid: true };
-      } else {
-        let oldValueSnapshot = snapshot[fieldName];
-        let currentValueSnapshot = stringHelpers.hash(session[fieldName]);
-        return { isValid: currentValueSnapshot == oldValueSnapshot, canChange: true, fieldName: fieldName, currentValueSnapshot: currentValueSnapshot };
-      }
-    }
-  }
-
-  return { isValid: true };
-}
-
-function isFacilitatorDataValid(snapshot, facilitatorId, sessionId) {
-  return new bluebird(function (resolve, reject) {
-    searchSessionMembers(sessionId, 'facilitator').then(function(members) {
-      if(!_.isEmpty(members)) {
-        let facilitator = members[0];
-        if (facilitatorId == facilitator.id) {
-          resolve({ isValid: true });
-        } else {
-          let currentValueSnapshot = stringHelpers.hash(facilitator.id);
-          resolve({ isValid: currentValueSnapshot == snapshot.facilitatorId, canChange: true, fieldName: "facilitatorId", currentValueSnapshot: currentValueSnapshot });
-        }
-      } else {
-        resolve({ isValid: true });
-      }
-    }, function(error) {
-      reject(error);
-    });
   });
 }
 
@@ -803,8 +755,8 @@ function sessionBuilderObjectSnapshotForStep1(stepData) {
 function sessionBuilderObjectSnapshotForStep2(stepData) {
   let res = { };
   for (let i=0; i<stepData.topics.length; i++) {
-    let topic = stepData.topics[i];
-    res[topic.id] = {
+    let topic = stepData.topics[i].SessionTopics[0];
+    res[topic.topicId] = {
       order: stringHelpers.hash(topic.order),
       active: stringHelpers.hash(topic.active),
       landing: stringHelpers.hash(topic.landing),
@@ -829,8 +781,8 @@ function sessionBuilderObjectSnapshotForStep4(stepData) {
   };
 }
 
-function sessionBuilderObjectSnapshot(session, steps) {
-  switch (session.step) {
+function sessionBuilderObjectSnapshot(session, steps, stepName) {
+  switch (stepName || session.step) {
     case "setUp":
       return sessionBuilderObjectSnapshotForStep1(steps.step1);
     case "facilitatiorAndTopics":
@@ -842,6 +794,21 @@ function sessionBuilderObjectSnapshot(session, steps) {
     default:
       return { };
   }
+}
+
+function sessionBuilderObjectStepSnapshot(sessionId, accountId, stepName) {
+  return new bluebird(function (resolve, reject) {
+    findSession(sessionId, accountId).then(function(session) {
+      stepsDefinition(session).then(function(result) {
+        let snapshot = sessionBuilderObjectSnapshot(session, result, stepName);
+        resolve(snapshot);
+      }, function(error) {
+        reject(filters.errors(error));
+      });
+    }, function(error) {
+      reject(filters.errors(error));
+    });
+  });
 }
 
 function sessionBuilderObject(session, steps) {
