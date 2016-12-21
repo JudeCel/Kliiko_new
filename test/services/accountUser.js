@@ -61,7 +61,7 @@ describe('SERVICE - AccountUser with DB', function() {
         }
 
         AccountUser.create(accountUserParams2).then((newAccountUser2) => {
-          accountUserService.deleteOrRecalculate(newAccountUser2.id, newAccountUser2.AccountId).then(() => {
+          accountUserService.deleteOrRecalculate(newAccountUser2.id).then(() => {
             AccountUser.find({where: {id: newAccountUser2.id}}).then((accountUser) => {
               try {
                 assert.equal(accountUser.role, 'observer');
@@ -105,7 +105,7 @@ describe('SERVICE - AccountUser with DB', function() {
               role: 'participant'
             }
             sessionMemberService.createWithTokenAndColour(sessionMemberParams).then(() => {
-              accountUserService.deleteOrRecalculate(newAccountUser2.id, newAccountUser2.AccountId).then(() => {
+              accountUserService.deleteOrRecalculate(newAccountUser2.id).then(() => {
                 AccountUser.find({where: {id: newAccountUser2.id}}).then((accountUser) => {
                   try {
                     assert.equal(accountUser.role, 'participant');

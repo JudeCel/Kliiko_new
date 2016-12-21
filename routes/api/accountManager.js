@@ -43,7 +43,7 @@ function put(req, res, next) {
 function removeInvite(req, res, next) {
   var params = { accountUserId: req.query.id };
 
-  inviteService.findAndRemoveInvite(params, function(error, message) {
+  inviteService.findAndRemoveAccountManagerInvite(params, function(error, message) {
     if(error) {
       res.send({ error: error });
     }

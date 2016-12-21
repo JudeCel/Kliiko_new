@@ -8,6 +8,7 @@ const { Invite,User, Account, AccountUser, Session, BrandProjectPreference } = m
 
 var moment = require('moment-timezone');
 var emailDate = require('./formats/emailDate');
+var AccountUserService = require('./accountUser');
 var sessionMemberService = require('./sessionMember');
 var socialProfileService = require('./socialProfile');
 var inviteMailer = require('../mailers/invite');
@@ -28,33 +29,15 @@ var mailUrlHelper = require('../mailers/helpers');
 const EXPIRE_AFTER_DAYS = 5;
 
 function createBulkInvites(arrayParams) {
-  let deferred = q.defer();
-
-  _.map(arrayParams, function(paramObject) {
-    paramObject.token = uuid.v1();
-    paramObject.sentAt = new Date();
-  });
-
-  Invite.bulkCreate(arrayParams, {
-    validate: true,
-    returning: true
-  }).then((invites) => {
-    Bluebird.each(invites, (invite) => {
-      return enqueue(backgroundQueues.queues.invites, "invite", [invite.id] );
-    }).then(() => {
-      deferred.resolve(invites);
+  return new Bluebird((resolve, reject) => {
+    Bluebird.map(arrayParams, (params) => {
+      return createInvite(params);
+    }).then((invites) => {
+      resolve(invites);
     }, (error) => {
-      deferred.reject(error);
-    })
-  }, (errors) => {
-    let errorResp = _.map(errors, (error) => {
-      return filters.errors(error.errors)
-    })
-    deferred.reject(errorResp);
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
+      reject(error);
+    });
   });
-  return deferred.promise;
 }
 
 function deleteFacilitato(params) {
@@ -104,21 +87,11 @@ function createFacilitatorInvite(params) {
 
 function updateToFacilitator(accountUser) {
   let deferred = q.defer();
-
-  if (_.includes(['admin', 'accountManager', 'facilitator'], accountUser.role)) {
-    deferred.resolve(accountUser);
-  } else {
-    AccountUser.update({role: 'facilitator'}, { where: { id: accountUser.id }, returning: true  }).then(function(result) {
-      if (result[0] > 0) {
-        deferred.resolve(result[1][0]);
-      }else {
-      deferred.resolve();
-      }
-    }, function(error) {
-      deferred.reject(error);
-    });
-  }
-
+  AccountUserService.deleteOrRecalculate(accountUser.id, 'facilitator', null).then((result) => {
+    deferred.resolve(result);
+  }, (error) => {
+    deferred.reject(error);
+  });
   return deferred.promise;
 }
 
@@ -132,33 +105,46 @@ function facilitatorInviteParams(accountUser, sessionId) {
 
 function createInvite(params) {
   return new Bluebird((resolve, reject) => {
-    let token = uuid.v1();
+    let sql = {
+      where: {
+        accountUserId: parseInt(params.accountUserId)
+      }
+    }
 
-    Invite.create({
-      accountUserId: params.accountUserId,
-      accountId: params.accountId,
-      sessionId: params.sessionId,
-      token: token,
-      sentAt: new Date(),
-      role: params.role
-    }).then(function(result) {
-      enqueue(backgroundQueues.queues.invites, "invite", [result.id]).then(() => {
-        Invite.find({where: {id: result.id}, include: { model: AccountUser, attributes: constants.safeAccountUserParams }}).then(function(invite) {
-          resolve(invite);
-        }, function(error) {
-          resolve(result);
+    if (params.accountId) {
+      sql.where.accountId = parseInt(params.accountId)
+    }
+    if (params.sessionId) {
+      sql.where.sessionId = parseInt(params.sessionId)
+    }
+
+    Invite.destroy(sql).then((result) => {
+      Invite.create({
+        accountUserId: params.accountUserId,
+        accountId: params.accountId,
+        sessionId: params.sessionId,
+        token: uuid.v1(),
+        sentAt: new Date(),
+        role: params.role
+      }).then(function(result) {
+        enqueue(backgroundQueues.queues.invites, "invite", [result.id]).then(() => {
+          Invite.find({where: {id: result.id}, include: { model: AccountUser, attributes: constants.safeAccountUserParams }}).then(function(invite) {
+            resolve(invite);
+          }, function(error) {
+            resolve(result);
+          });
+        }, (error) => {
+          reject(error);
         });
-      }, (error) => {
-        reject(error);
+      }).catch(function(error) {
+        if(error.name == 'SequelizeUniqueConstraintError') {
+          reject({ email: 'User has already been invited' });
+        }
+        else {
+          reject(filters.errors(error));
+        }
       });
-    }).catch(function(error) {
-      if(error.name == 'SequelizeUniqueConstraintError') {
-        reject({ email: 'User has already been invited' });
-      }
-      else {
-        reject(filters.errors(error));
-      }
-    });
+    })
   })
 };
 
@@ -271,17 +257,26 @@ function sendInvite(inviteId, deferred) {
   return deferred.promise;
 }
 
-function findAndRemoveInvite(params) {
+function findAndRemoveAccountManagerInvite(params) {
   return new Bluebird((resolve, reject) => {
-    let where = { accountUserId: params.accountUserId };
-    Invite.find({ where: where }).then(function(invite) {
+    let query = { where: {
+      accountUserId: params.accountUserId,
+      status: 'pending'
+    },
+      include: [
+        {
+          model: models.AccountUser,
+          required: true
+        }
+      ]
+    }
+
+    Invite.find(query).then(function(invite) {
       if(invite) {
-        removeInvite(invite, (err, message) => {
-          if (err) {
-            reject(err);
-          }else {
-            resolve(message);
-          }
+        removeInvite(invite).then((message) => {
+          resolve(message);
+        }, (error) => {
+          reject(err);
         });
       }else {
         reject(MessagesUtil.invite.notFound);
@@ -291,26 +286,66 @@ function findAndRemoveInvite(params) {
   })
 }
 
-function removeInvite(invite, callback) {
-  destroyInvite(invite, function(error, message) {
-    callback(error, message);
+function removeInvite(invite) {
+  return new Bluebird((resolve, reject) => {
+    destroyInvite(invite).then((message) => {
+      resolve(message);
+    }, (error) => {
+      reject(error);
+    });
   });
 };
 
-function destroyInvite(invite, callback) {
-  Invite.destroy({
-    where: {
-      id: invite.id
+function cleanupInvite(invite, transaction) {
+  return new Bluebird((resolve, reject) => {
+    if (invite.status == "confirmed") {
+      if (invite.sessionId) {
+        models.SessionMember.find({
+          where: {
+            accountUserId: invite.accountUserId,
+            sessionId: invite.sessionId
+          }
+        }).then((sessionMember) => {
+          sessionMember.destroy({transaction: transaction}).then(() => {
+            AccountUserService.deleteOrRecalculate(invite.accountUserId, null, invite.role, transaction).then(() => {
+              resolve();
+            }, (error) => {
+              reject(filters.errors(error));
+            });
+          });
+        });
+      }else{
+        AccountUserService.deleteOrRecalculate(invite.accountUserId, null, invite.role, transaction).then(() => {
+          resolve();
+        }, (error) => {
+          reject(filters.errors(error));
+        });
+      }
+    }else{
+      resolve();
     }
-  }).then(function(res) {
-    if(res > 0) {
-      callback(null, MessagesUtil.invite.removed);
-    }
-    else {
-      callback(MessagesUtil.invite.cantRemove);
-    }
-  }).catch(function(error) {
-    callback(filters.errors(error));
+  })
+}
+
+function destroyInvite(invite) {
+  return new Bluebird((resolve, reject) => {
+    models.sequelize.transaction().then((transaction) => {
+      invite.destroy({transaction: transaction}).then(() =>  {
+        cleanupInvite(invite, transaction).then(() => {
+          transaction.commit().then(() => {
+            resolve(MessagesUtil.invite.removed);
+          });
+        }, (error) => {
+          transaction.rollback().then(() => {
+            reject(filters.errors(error));
+          });
+        });
+      }, (error) => {
+        reject(MessagesUtil.invite.cantRemove);
+      }).catch((error) => {
+        reject(filters.errors(error));
+      });
+    });
   });
 }
 
@@ -759,7 +794,7 @@ module.exports = {
   updateEmailStatus: updateEmailStatus,
   createBulkInvites: createBulkInvites,
   createInvite: createInvite,
-  findAndRemoveInvite: findAndRemoveInvite,
+  findAndRemoveAccountManagerInvite: findAndRemoveAccountManagerInvite,
   removeInvite: removeInvite,
   findInvite: findInvite,
   acceptInvite: acceptInvite,

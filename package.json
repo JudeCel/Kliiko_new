@@ -9,7 +9,7 @@
     "pm2_logs": "./node_modules/.bin/pm2 logs",
     "test": "./node_modules/.bin/mocha test",
     "gulp": "./node_modules/.bin/gulp",
-    "reset": "node ./lib/tasks/dbReset && node ./seeders/users && node ./seeders/chatSession && node ./seeders/mailTemplates",
+    "reset": "node ./lib/tasks/dbReset && node ./seeders/users && node ./seeders/chatSession && node ./seeders/mailTemplates && node ./tasks/databaseMonitoring/enableDatabaseMonitoring.js && node ./tasks/databaseMonitoring/enableTableMonitoring.js",
     "reset_test_db": "NODE_ENV=test node ./tasks/prepareDbForTests",
     "reset_test_db_windows": "set NODE_ENV=test&&node ./tasks/prepareDbForTests",
     "migrations": "node ./node_modules/.bin/sequelize db:migrate",

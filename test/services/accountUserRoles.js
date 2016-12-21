@@ -122,6 +122,29 @@ describe('SERVICE - AccountUser without DB', function() {
       })
     })
 
+    describe("when no role given", () => {
+      it("return highest role from accountManager", (done) => {
+        let accountUser = {
+          role: "participant",
+          SessionMembers: [
+            {role: 'facilitator'},
+            {role: 'participant'},
+            {role: 'observer'},
+            {role: 'observer'},
+          ]
+        }
+
+        accountUserService.recalculateRole(accountUser).then((result) => {
+          try {
+            assert.equal(result, "facilitator");
+            done();
+          } catch (e) {
+            done(e);
+          }
+        });
+      });
+    }),
+
     describe("when add new role", () => {
       it("return highest role accountManager, current role not chenges ", (done) => {
         let accountUser = {

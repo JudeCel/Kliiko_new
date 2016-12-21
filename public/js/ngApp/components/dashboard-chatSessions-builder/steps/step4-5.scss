@@ -5,7 +5,7 @@
     margin-top: 10px;
     margin-bottom: 20px;
   }
-  
+
   .tableRate {
     white-space: nowrap !important;
     .session-rating-stars i {
@@ -46,6 +46,15 @@
 #step-4-participants,
 #step-5-observers {
   font-size: 14px;
+  .invite-status-sentDone{
+    color: #2f9f69;
+  }
+  .invite-status-waiting{
+    color: #f6c560;
+  }
+  .invite-status-failed{
+    color: #ff0000;
+  }
   #list-of-contacts {
     margin-top: -5px;
   }
