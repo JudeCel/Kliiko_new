@@ -238,10 +238,10 @@
 
     vm.updateName = function() {
       updateStep({name: vm.name}).then(function(res) {
-        if (!res.ignored) {
-          vm.session.steps.step1.name = vm.name;
-        } else {
+        if (res.ignored) {
           vm.name = vm.session.steps.step1.name;
+        } else {
+          vm.session.steps.step1.name = vm.name;
         }
         initCanSelectFacilitator();
       }, function(err) {
@@ -261,10 +261,10 @@
       domServices.modal('sessionTypeModal', 'close');
       vm.type = vm.typeToConfirm;
       updateStep({type: vm.type}).then(function(res) {
-        if (!res.ignored) {
-          vm.session.steps.step1.type = vm.type;
-        } else {
+        if (res.ignored) {
           vm.type = vm.session.steps.step1.type;
+        } else {
+          vm.session.steps.step1.type = vm.type;
         }
         initCanSelectFacilitator();
       }, function(err) {

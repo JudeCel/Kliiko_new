@@ -13,8 +13,8 @@ module.exports = {
 };
 
 function isDataValid(snapshot, params, session) {
-  for (let i=0; i<constants.sessionBuilderValudateChanges.session.notChangableFields.length; i++) {
-    let fieldName = constants.sessionBuilderValudateChanges.session.notChangableFields[i];
+  for (let i=0; i<constants.sessionBuilderValidateChanges.session.notChangableFields.length; i++) {
+    let fieldName = constants.sessionBuilderValidateChanges.session.notChangableFields[i];
     if (params[fieldName]) {
       if (params[fieldName] == session[fieldName]) {
         return { isValid: true };
@@ -26,8 +26,8 @@ function isDataValid(snapshot, params, session) {
     }
   }
 
-  for (let i=0; i<constants.sessionBuilderValudateChanges.session.changableFields.length; i++) {
-    let fieldName = constants.sessionBuilderValudateChanges.session.changableFields[i];
+  for (let i=0; i<constants.sessionBuilderValidateChanges.session.changableFields.length; i++) {
+    let fieldName = constants.sessionBuilderValidateChanges.session.changableFields[i];
     if (params[fieldName]) {
       if (params[fieldName] == session[fieldName]) {
         return { isValid: true };
@@ -62,14 +62,14 @@ function isFacilitatorDataValid(snapshot, facilitatorId, sessionId, sessionBuild
   });
 }
 
-function getTopicsSnapshotWithOrdersOnly(snapshot) {
+function getTopicsSnapshotWithoutProperties(snapshot) {
   let ids = Object.keys(snapshot);
   for (let i=0; i<ids.length; i++) {
     let id = ids[i];
     let values = Object.keys(snapshot[id]);
     for (let i2=0; i2<values.length; i2++) {
       let value = values[i2];
-      if (value != "order") {
+      if (constants.sessionBuilderValidateChanges.topic.listFields.indexOf(value) == -1) {
         delete snapshot[id][value];
       }
     }
@@ -86,14 +86,28 @@ function getSessionTopic(topics, id) {
   return { };
 }
 
+function isTopicDataValid(currentSnapshot, oldSnapshot, topics, id) {
+  if (!(id in currentSnapshot)) {
+    return false;
+  }
+  let sessionTopic = getSessionTopic(topics, id);
+  for (let i=0; i<constants.sessionBuilderValidateChanges.topic.listFields.length; i++) {
+    let fieldName = constants.sessionBuilderValidateChanges.topic.listFields[i];
+    if (oldSnapshot[id][fieldName] != currentSnapshot[id][fieldName] && stringHelpers.hash(sessionTopic[fieldName]) != currentSnapshot[id][fieldName]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function isTopicsDataValid(snapshot, sessionId, accountId, topics, sessionBuilderService) {
   return new bluebird(function (resolve, reject) {
     sessionBuilderService.sessionBuilderObjectStepSnapshot(sessionId, accountId, "facilitatiorAndTopics").then(function(snapshotResult) {
       let ids = Object.keys(snapshot);
       for (let i=0; i<ids.length; i++) {
         let id = ids[i];
-        if (!(id in snapshotResult) || snapshot[id].order != snapshotResult[id].order && stringHelpers.hash(getSessionTopic(topics, id).order) != snapshotResult[id].order) {
-          resolve({ isValid: false, canChange: true, currentSnapshotChanges: getTopicsSnapshotWithOrdersOnly(snapshotResult) });
+        if (!isTopicDataValid(snapshotResult, snapshot, topics, id)) {
+          resolve({ isValid: false, canChange: true, currentSnapshotChanges: getTopicsSnapshotWithoutProperties(snapshotResult) });
           return;
         }
       }
