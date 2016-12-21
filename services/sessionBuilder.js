@@ -803,10 +803,10 @@ function sessionBuilderObjectStepSnapshot(sessionId, accountId, stepName) {
         let snapshot = sessionBuilderObjectSnapshot(session, result, stepName);
         resolve(snapshot);
       }, function(error) {
-        reject(filters.errors(error));
+        resolve(null);
       });
     }, function(error) {
-      reject(filters.errors(error));
+      resolve(null);
     });
   });
 }

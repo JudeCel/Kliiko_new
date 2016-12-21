@@ -21,6 +21,7 @@
     vm.topicModalTitle = '';
     vm.topicData = {};
     vm.editTopicIndex = null;
+    vm.session = null;
 
     vm.deleteTopic = deleteTopic;
     vm.openModal = openModal;
@@ -92,9 +93,13 @@
     }
 
     function updateSessionTopic() {
-      topicsAndSessions.updateSessionTopic(vm.topicData).then(function (res) {
-        angular.copy(vm.topicData, vm.originalReference);
-        messenger.ok(res.message);
+      topicsAndSessions.updateSessionTopic(vm.topicData, vm.session).then(function (res) {
+        if (res.ignored && vm.resetSessionTopics) {
+          vm.resetSessionTopics(vm);
+        } else {
+          angular.copy(vm.topicData, vm.originalReference);
+          messenger.ok(res.message);
+        }
         domServices.modal('topicModalWindow', 'close');
         vm.topicData = {};
       }, function(error) {

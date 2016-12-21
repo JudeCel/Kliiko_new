@@ -5,6 +5,7 @@ let q = require('q');
 var validators = require('./../services/validators');
 var filters = require('./../models/filters');
 var models = require('./../models');
+var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
 var Topic = models.Topic;
 var _ = require('lodash');
 let Bluebird = require('bluebird')
@@ -48,18 +49,29 @@ function getAll(accountId) {
 
 function updateSessionTopic(params) {
   let deferred = q.defer();
+  let snapshot = params.snapshot;
+  delete params.snapshot;
 
   models.SessionTopics.find({ where: { id: params.id } }).then(function(sessionTopic) {
-    if(sessionTopic) {
+    if (sessionTopic) {
       let validParams = sessionTopicUpdateParams(params);
-      return sessionTopic.update(validParams, { returning: true });
-    }
-    else {
+
+      let validationRes = sessionBuilderSnapshotValidation.isTopicDataValid(snapshot, validParams, sessionTopic);
+      if (validationRes.isValid) {
+        sessionTopic.update(validParams, { returning: true }).then(function(res){
+          deferred.resolve({ sessionTopic: res, message: MessagesUtil.topics.updatedSessionTopic });
+        }, function(error) {
+          deferred.reject(filters.errors(error));
+        });
+      } else {
+        deferred.resolve({ validation: validationRes });
+      }
+
+    } else {
       deferred.reject(MessagesUtil.topics.notFoundSessionTopic);
     }
-  }).then(function(sessionTopic) {
-    deferred.resolve({ sessionTopic: sessionTopic, message: MessagesUtil.topics.updatedSessionTopic });
-  }).catch(function(error) {
+  }, function(error) {
+    console.log(params.id);
     deferred.reject(filters.errors(error));
   });
 

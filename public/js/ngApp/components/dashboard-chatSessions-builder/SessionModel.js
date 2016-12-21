@@ -58,6 +58,7 @@
     SessionModel.prototype.processStepResponse = processStepResponse;
     SessionModel.prototype.removeTopic = removeTopic;
     SessionModel.prototype.getSessionMailTemplateStatus = getSessionMailTemplateStatus;
+    SessionModel.prototype.updateValidationConfirm = updateValidationConfirm;
 
     return SessionModel;
 

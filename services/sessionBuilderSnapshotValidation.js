@@ -9,7 +9,8 @@ var bluebird = require('bluebird');
 module.exports = {
   isDataValid: isDataValid,
   isFacilitatorDataValid: isFacilitatorDataValid, 
-  isTopicsDataValid: isTopicsDataValid
+  isTopicsDataValid: isTopicsDataValid,
+  isTopicDataValid: isTopicDataValid,
 };
 
 function isDataValid(snapshot, params, session) {
@@ -86,7 +87,33 @@ function getSessionTopic(topics, id) {
   return { };
 }
 
-function isTopicDataValid(currentSnapshot, oldSnapshot, topics, id) {
+function getTopicSnapshot(sessionTopic) {
+  let topicRes = { };
+  let fields = constants.sessionBuilderValidateChanges.topic.propertyFields.concat(constants.sessionBuilderValidateChanges.topic.listFields);
+  for (let i=0; i<fields.length; i++) {
+    let fieldName = fields[i];
+    topicRes[fieldName] = stringHelpers.hash(sessionTopic[fieldName]);
+  }
+  let res = { };
+  res[sessionTopic.topicId] = topicRes;
+  return res;
+}
+
+function isTopicDataValid(snapshot, params, sessionTopic) {
+  for (let i=0; i<constants.sessionBuilderValidateChanges.topic.propertyFields.length; i++) {
+    let fieldName = constants.sessionBuilderValidateChanges.topic.propertyFields[i];
+    if (params[fieldName] && params[fieldName] != sessionTopic[fieldName]) {
+        let oldValueSnapshot = snapshot[sessionTopic.topicId][fieldName];
+        let currentValueSnapshot = stringHelpers.hash(sessionTopic[fieldName]);
+        if (currentValueSnapshot != oldValueSnapshot) {
+          return { isValid: false, canChange: true, currentSnapshotChanges: getTopicSnapshot(sessionTopic) };
+        }
+    }
+  }
+  return { isValid: true };
+}
+
+function isTopicListDataValid(currentSnapshot, oldSnapshot, topics, id) {
   if (!(id in currentSnapshot)) {
     return false;
   }
@@ -106,14 +133,12 @@ function isTopicsDataValid(snapshot, sessionId, accountId, topics, sessionBuilde
       let ids = Object.keys(snapshot);
       for (let i=0; i<ids.length; i++) {
         let id = ids[i];
-        if (!isTopicDataValid(snapshotResult, snapshot, topics, id)) {
+        if (!isTopicListDataValid(snapshotResult, snapshot, topics, id)) {
           resolve({ isValid: false, canChange: true, currentSnapshotChanges: getTopicsSnapshotWithoutProperties(snapshotResult) });
           return;
         }
       }
       resolve({ isValid: true });
-    }, function(error) {
-      reject(error);
     });
   });
 }

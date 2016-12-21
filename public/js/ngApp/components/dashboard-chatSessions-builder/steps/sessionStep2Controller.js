@@ -38,6 +38,8 @@
       vm.session = sessionBuilderControllerServices.session;
       vm.topics = vm.session.steps.step2.topics;
       vm.topicController = topicController;
+      vm.topicController.session = vm.session;
+      vm.topicController.resetSessionTopics = vm.init;
 
       vm.topics.map(function(topic) {
         addSessionTopic(topic);

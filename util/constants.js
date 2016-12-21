@@ -118,7 +118,8 @@ module.exports = {
       notChangableFields: ["type", "anonymous" ]
     },
     topic: {
-      listFields: ["order", "landing", "active"]
+      listFields: ["order", "landing", "active"],
+      propertyFields: ["name", "boardMessage", "sign"]
     }
   }
 }

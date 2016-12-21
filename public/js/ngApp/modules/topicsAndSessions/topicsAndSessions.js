@@ -23,16 +23,29 @@
 
     return topicsAndSessionsFactory;
 
-    function updateSessionTopic(params) {
+    function updateSessionTopic(params, session) {
       var deferred = $q.defer();
 
+      if (!params.snapshot) {
+        params.snapshot = session.snapshot;
+      }
+
       restApi.sessionTopic.put({}, params, function(result) {
-        if(result.error) {
+        if (result.error) {
           deferred.reject(result.error);
-        }else{
-          deferred.resolve(result);
+        } else if (result.validation && !result.validation.isValid) {
+          session.updateValidationConfirm(result, updateSessionTopic, params, session).then(function(newRes) {
+            deferred.resolve(newRes);
+          }, function(err) {
+            deferred.reject(err);
+          });
+        } else {
+          if (result.snapshot) {
+            session.snapshot = result.snapshot;
+          }
+          deferred.resolve(result.data);
         }
-      })
+      });
 
       return deferred.promise;
     }
