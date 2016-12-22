@@ -17,7 +17,7 @@ module.exports = (Sequelize, DataTypes) => {
     accessKlzziForum: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     accessKlzziFocus: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     canInviteObserversToSession: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    paidSmsCount: { type: DataTypes.INTEGER, allowNull: false },
+    planSmsCount: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     discussionGuideTips: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     whiteboardFunctionality: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     uploadToGallery: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },

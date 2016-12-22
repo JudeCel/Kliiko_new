@@ -199,7 +199,7 @@ describe('SERVICE - Invite basic logic', function() {
   });
   describe('#acceptInvite', function() {
     describe('sad path', function() {
-      it('should faild, invite not found', function (done) {
+      it('should failed, invite not found', function (done) {
         inviteService.acceptInvite("token").then((response) => {
           done("Should not get here");
         }, function(error) {
