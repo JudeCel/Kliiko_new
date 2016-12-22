@@ -4,6 +4,7 @@ var constants = require('./../util/constants');
 var _ = require('lodash');
 var stringHelpers = require('./../util/stringHelpers');
 var bluebird = require('bluebird');
+var models = require('./../models');
 
 // Exports
 module.exports = {
@@ -11,6 +12,10 @@ module.exports = {
   isFacilitatorDataValid: isFacilitatorDataValid, 
   isTopicsDataValid: isTopicsDataValid,
   isTopicDataValid: isTopicDataValid,
+  isMailTemplateDataValid: isMailTemplateDataValid,
+  getMailTemplateSnapshot: getMailTemplateSnapshot,
+  getTopicSnapshot: getTopicSnapshot,
+  getSessionSnapshot: getSessionSnapshot
 };
 
 function isDataValid(snapshot, params, session) {
@@ -87,6 +92,15 @@ function getSessionTopic(topics, id) {
   return { };
 }
 
+function getMailTemplateSnapshot(mailTemplate) {
+  let res = { };
+  for (let i=0; i<constants.sessionBuilderValidateChanges.mailTemplate.fields.length; i++) {
+    let fieldName = constants.sessionBuilderValidateChanges.mailTemplate.fields[i];
+    res[fieldName] = stringHelpers.hash(mailTemplate[fieldName]);
+  }
+  return res;
+}
+
 function getTopicSnapshot(sessionTopic) {
   let topicRes = { };
   let fields = constants.sessionBuilderValidateChanges.topic.propertyFields.concat(constants.sessionBuilderValidateChanges.topic.listFields);
@@ -99,15 +113,35 @@ function getTopicSnapshot(sessionTopic) {
   return res;
 }
 
+function getSessionSnapshot(session) {
+  let res = { };
+  let fields = constants.sessionBuilderValidateChanges.session.changableFields.concat(constants.sessionBuilderValidateChanges.session.notChangableFields);
+  for (let i=0; i<fields.length; i++) {
+    let fieldName = fields[i];
+    res[fieldName] = stringHelpers.hash(session[fieldName]);
+  }
+  return res;
+}
+
+function isMailTemplateDataValid(snapshot, params, mailTemplate) {
+  let currentSnapshot = getTopicSnapshot(sessionTopic)
+  for (let i=0; i<constants.sessionBuilderValidateChanges.mailTemplate.fields.length; i++) {
+    let fieldName = constants.sessionBuilderValidateChanges.mailTemplate.fields[i];
+    if (params[fieldName] && params[fieldName] != mailTemplate[fieldName] && snapshot[fieldName] != currentSnapshot[fieldName]) {
+      return { isValid: false, canChange: true, currentSnapshotChanges: currentSnapshot };
+    }
+  }
+  return { isValid: true };
+}
+
 function isTopicDataValid(snapshot, params, sessionTopic) {
+  let currentSnapshotObj = getTopicSnapshot(sessionTopic) = getTopicSnapshot(sessionTopic);
+  let currentSnapshot = currentSnapshotObj[sessionTopic.topicId];
+  let oldSnapshot = snapshot[sessionTopic.topicId];
   for (let i=0; i<constants.sessionBuilderValidateChanges.topic.propertyFields.length; i++) {
     let fieldName = constants.sessionBuilderValidateChanges.topic.propertyFields[i];
-    if (params[fieldName] && params[fieldName] != sessionTopic[fieldName]) {
-        let oldValueSnapshot = snapshot[sessionTopic.topicId][fieldName];
-        let currentValueSnapshot = stringHelpers.hash(sessionTopic[fieldName]);
-        if (currentValueSnapshot != oldValueSnapshot) {
-          return { isValid: false, canChange: true, currentSnapshotChanges: getTopicSnapshot(sessionTopic) };
-        }
+    if (params[fieldName] && params[fieldName] != sessionTopic[fieldName] && oldSnapshot[fieldName] != currentSnapshot[fieldName]) {
+      return { isValid: false, canChange: true, currentSnapshotChanges: currentSnapshotObj };
     }
   }
   return { isValid: true };
@@ -127,14 +161,19 @@ function isTopicListDataValid(currentSnapshot, oldSnapshot, topics, id) {
   return true;
 }
 
-function isTopicsDataValid(snapshot, sessionId, accountId, topics, sessionBuilderService) {
+function isTopicsDataValid(snapshot, sessionId, accountId, topics) {
   return new bluebird(function (resolve, reject) {
-    sessionBuilderService.sessionBuilderObjectStepSnapshot(sessionId, accountId, "facilitatiorAndTopics").then(function(snapshotResult) {
+    models.SessionTopics.findAll({ where: { sessionId: sessionId } }).then(function(currentTopics) {
+      let currentSnapshot = { };
+      for (let i=0; i<currentTopics.length; i++) {
+        let topic = currentTopics[i];
+        currentSnapshot[topic.topicId] = getTopicSnapshot(topic)[topic.topicId];
+      }
       let ids = Object.keys(snapshot);
       for (let i=0; i<ids.length; i++) {
         let id = ids[i];
-        if (!isTopicListDataValid(snapshotResult, snapshot, topics, id)) {
-          resolve({ isValid: false, canChange: true, currentSnapshotChanges: getTopicsSnapshotWithoutProperties(snapshotResult) });
+        if (!isTopicListDataValid(currentSnapshot, snapshot, topics, id)) {
+          resolve({ isValid: false, canChange: true, currentSnapshotChanges: getTopicsSnapshotWithoutProperties(currentSnapshot) });
           return;
         }
       }

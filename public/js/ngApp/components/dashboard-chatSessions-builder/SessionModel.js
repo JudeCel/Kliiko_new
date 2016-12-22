@@ -150,6 +150,7 @@
           deferred.reject(res.error);
         } else {
           self.sessionData = angular.merge(self, res.sessionBuilder);
+          self.snapshot = res.sessionBuilder.snapshot;
           // get current session data
 
           chatSessionApi.get({}, function(sessionApiRes) {

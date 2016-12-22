@@ -163,7 +163,7 @@ function addTopics(req, res, next) {
   let snapshot = req.body.snapshot;
   if(!topics) { res.send({error:'Required body param @topicsArray is missed'}); return };
 
-  sessionBuilderSnapshotValidationService.isTopicsDataValid(snapshot, sessionId, accountId, topics, sessionBuilderServices).then(function(validationRes) {
+  sessionBuilderSnapshotValidationService.isTopicsDataValid(snapshot, sessionId, accountId, topics).then(function(validationRes) {
 
     if (validationRes.isValid) {
       topicsService.removeAllAndAddNew(sessionId, topics).then(function(result) {

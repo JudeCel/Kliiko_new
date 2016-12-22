@@ -120,6 +120,9 @@ module.exports = {
     topic: {
       listFields: ["order", "landing", "active"],
       propertyFields: ["name", "boardMessage", "sign"]
+    },
+    mailTemplate: {
+      fields: ["content", "name"]
     }
   }
 }

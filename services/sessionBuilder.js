@@ -743,31 +743,25 @@ function sessionBuilderObjectSnapshotForStep1(stepData) {
     timeZone: stepData.timeZone
   }
   setTimeZone(params);
-  return { 
-    name: stringHelpers.hash(stepData.name),
-    type: stringHelpers.hash(stepData.name),
-    startTime: stringHelpers.hash(new Date(params.startTime)),
-    endTime: stringHelpers.hash(new Date(params.endTime)),
-    timeZone: stringHelpers.hash(stepData.timeZone),
-    resourceId: stringHelpers.hash(stepData.resourceId),
-    anonymous: stringHelpers.hash(stepData.anonymous),
-    brandProjectPreferenceId: stringHelpers.hash(stepData.brandProjectPreferenceId),
-    facilitatorId: stringHelpers.hash(stepData.facilitator ? stepData.facilitator.id : null)
-  };
+  let sessionData = {
+    startTime: new Date(params.startTime),
+    endTime: new Date(params.endTime),
+    timeZone: params.timeZone,
+    name: stepData.name,
+    type: stepData.type,
+    resourceId: stepData.resourceId,
+    anonymous: stepData.anonymous,
+    brandProjectPreferenceId: stepData.brandProjectPreferenceId,
+    facilitatorId: stepData.facilitator ? stepData.facilitator.id : null
+  }
+  return sessionBuilderSnapshotValidation.getSessionSnapshot(sessionData);
 }
 
 function sessionBuilderObjectSnapshotForStep2(stepData) {
   let res = { };
   for (let i=0; i<stepData.topics.length; i++) {
     let topic = stepData.topics[i].SessionTopics[0];
-    res[topic.topicId] = {
-      order: stringHelpers.hash(topic.order),
-      active: stringHelpers.hash(topic.active),
-      landing: stringHelpers.hash(topic.landing),
-      boardMessage: stringHelpers.hash(topic.boardMessage),
-      name: stringHelpers.hash(topic.name),
-      sign: stringHelpers.hash(topic.sign)
-    };
+    res[topic.topicId] = sessionBuilderSnapshotValidation.getTopicSnapshot(topic)[topic.topicId];
   }
   return res;
 }
@@ -776,7 +770,6 @@ function sessionBuilderObjectSnapshotForStep3(stepData) {
   return { 
     incentive_details: stringHelpers.hash(stepData.incentive_details)
   };
-  //todo: add emails
 }
 
 function sessionBuilderObjectSnapshotForStep4(stepData) {

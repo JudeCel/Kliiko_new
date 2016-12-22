@@ -4,6 +4,7 @@ var MailTemplateService = require('./../../services/mailTemplate');
 var BrandColourService = require('./../../services/brandColour');
 var MessagesUtil = require('./../../util/messages');
 var policy = require('./../../middleware/policy.js');
+var sessionBuilderSnapshotValidationService = require('./../../services/sessionBuilderSnapshotValidation');
 var _ = require('lodash');
 
 module.exports = {
@@ -81,7 +82,12 @@ function allMailTemplatesWithColorsGet(req, res, next) {
 //get mail template by "id"
 function mailTemplatePost(req, res, next) {
   MailTemplateService.getMailTemplate(req.body.mailTemplate, function(error, result) {
-    res.send({error: error, template: result});
+    if (result.sessionId) {
+      let snapshot = sessionBuilderSnapshotValidationService.getMailTemplateSnapshot(result);
+      res.send({error: error, template: result, snapshot: snapshot});
+    } else {
+      res.send({error: error, template: result});
+    }
   });
 }
 
