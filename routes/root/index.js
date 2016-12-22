@@ -22,6 +22,7 @@ var constants = require('../../util/constants');
 var appData = require('../../services/webAppData');
 var contactListUserRoutes = require('./contactListUser');
 var ics = require('./ics');
+var generator = require('generate-password');
 
 router.route('/ics').get(ics.render);
 
@@ -148,49 +149,71 @@ router.get("/auth/facebookPaiedPlanRegistration", function (req, res, next) {
 }, function() {});
 
 router.get('/auth/facebook/callback', function(req, res, next) {
+  handleSocialCallback(req, res, next, 'facebook');
+});
+
+router.get('/auth/google/callback', function(req, res, next) {
+  handleSocialCallback(req, res, next, 'google');
+});
+
+function handleSocialCallback (req, res, next, provider) {
   let returnParams = JSON.parse(req.query.state);
-  passport.authenticate('facebook', function(err, user, info) {
+  passport.authenticate(provider, function(err, user, info) {
     if (err) {
       return res.render('login', { title: 'Login', error: err.message, message: "", email: "" });
     }
+
     if (user) {
       req.login(user, function(err) {
         middlewareFilters.myDashboardPage(req, res, next);
-      })
-    }else{
+      });
+    } else {
       req.query.state = JSON.parse(req.query.state);
-      if(req.query.state.type == 'registration') {
-        res.locals = usersRepo.prepareParams(req);
-        socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
-          if (returnParams.page == 'freeTrialRegistration') {
-            res.render('freeTrialRegistration', {appData: res.locals, error: {}});
-          }else if(returnParams.page == 'paidPlanRegistration'){
-            res.locals.selectedPlanOnRegistration = returnParams.selectedPlanOnRegistration;
-            res.render("paidPlanRegistration", {appData: res.locals, error: {}});
-          }else{
-            res.render("registration", {appData: res.locals, error: {}});
-          }
-        }, function(err) {
-          next(err);
-        })
+      if (isInviteSocialCallback(req.query.state.type)) {
+        req.params.token = returnParams.token;
+        acceptInviteViaSocial(req, res, next, info, provider);
       }
-      else {
-        let object = {
-          params: {
-            socialProfile: {
-              id: info.id,
-              provider: info.provider
-            }
-          }
-        };
 
-        req.params.token = req.query.state.token;
-        req.body.social = object;
-        inviteRoutes.accept(req, res, next);
+      if(isRegistrationSocialCallback(req.query.state.type)) {
+        registerUsingSocialData(res, req, returnParams, info);
       }
     }
   })(req, res, next);
-});
+}
+
+function acceptInviteViaSocial(req, res, next, info, provider) {
+  var password = generator.generate({ length: 8, numbers: true });
+  req.body.password = password;
+  req.body.social = {
+    user: {},
+    params: {socialProfile: { provider: provider, id: info.id }}
+  };
+  inviteRoutes.accept(req, res, next);
+}
+
+function registerUsingSocialData(res, req, returnParams, info) {
+  res.locals = usersRepo.prepareParams(req);
+  socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
+    if (returnParams.page == 'freeTrialRegistration') {
+      res.render('freeTrialRegistration', {appData: res.locals, error: {}});
+    }else if(returnParams.page == 'paidPlanRegistration'){
+      res.locals.selectedPlanOnRegistration = returnParams.selectedPlanOnRegistration;
+      res.render("paidPlanRegistration", {appData: res.locals, error: {}});
+    }else{
+      res.render("registration", {appData: res.locals, error: {}});
+    }
+  }, function(err) {
+    next(err);
+  });
+}
+
+function isInviteSocialCallback(type) {
+  return type == 'invite';
+}
+
+function isRegistrationSocialCallback(type) {
+  return type == 'registration';
+}
 
 router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'], state: registrationState }));
 router.get('/auth/googleFreeTrialRegistration', passport.authenticate(
@@ -208,57 +231,6 @@ router.get("/auth/googlePaiedPlanRegistration", function (req, res, next) {
     })
   })(req, res, next)
 }, function() {});
-
-router.get('/auth/google/callback', function(req, res, next) {
-  let returnParams = JSON.parse(req.query.state);
-  passport.authenticate('google', function(err, user, info) {
-    if (err) {
-      return res.render('login', { title: 'Login', error: err.message, message: "", email: "" });
-    }
-    if (user) {
-      req.login(user, function(err) {
-        middlewareFilters.myDashboardPage(req, res, next);
-      })
-    }else{
-      res.locals = usersRepo.prepareParams(req);
-      socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
-        if (returnParams.page == 'freeTrialRegistration') {
-          res.render('freeTrialRegistration', {appData: res.locals, error: {}});
-        }else if(returnParams.page == 'paidPlanRegistration'){
-          res.locals.selectedPlanOnRegistration = returnParams.selectedPlanOnRegistration;
-          res.render("paidPlanRegistration", {appData: res.locals, error: {}});
-        }else{
-          res.render("registration", {appData: res.locals, error: {}});
-        }
-      }, function(err) {
-        next(err)
-      });
-    }
-  })(req, res, next);
-});
-
-router.get('/auth/facebook/callback_invite', function(req, res, next) {
-  let returnParams = JSON.parse(req.query.state);
-  passport.authenticate('facebook', function(err, user, info) {
-    if (err) {
-      return res.render('login', { title: 'Login', error: err.message, message: "", email: "" });
-    }
-    if (user) {
-      req.login(user, function(err) {
-        middlewareFilters.myDashboardPage(req, res, next);
-      })
-    }else{
-      req.params.token = returnParams.token;
-      let password = Math.random().toString(36).slice(-8);
-      req.body.password = password;
-      req.body.social = {
-        user: {},
-        params: {socialProfile: { provider: 'facebook', id: info.id }}
-      };
-      inviteRoutes.accept(req, res, next);
-    }
-  })(req, res, next);
-});
 
 function createUserAndSendEmail(req, res, userParams, renderInfo) {
   usersRepo.create(userParams, function(error, result) {
@@ -447,15 +419,7 @@ router.route('/invite/auth/:provider/:token').get(function(req, res, next) {
       return passport.authenticate('google', { scope : ['profile', 'email'], state: state })(req, res, next);
       break;
     case 'facebook':
-      console.log("TOKEN: ", req.params.token);
-      return passport.authenticate(
-        'facebook',
-        {
-          scope : ['email'],
-          state: state ,
-          callbackURL: '/auth/facebook/callback_invite'
-        }
-      )(req, res, next);
+      return passport.authenticate('facebook', { scope : ['email'], state: state })(req, res, next);
       break;
     default:
       req.redirect('/login');

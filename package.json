@@ -102,6 +102,7 @@
     "express": "^4.14.0",
     "express-session": "^1.14.2",
     "fast-csv": "^2.3.0",
+    "generate-password": "^1.2.0",
     "gulp": "^3.9.1",
     "gulp-less": "^3.0.3",
     "ical-generator": "^0.2.7",

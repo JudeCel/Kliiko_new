@@ -477,11 +477,11 @@ function createUserIfNecessary(invite, user, params, transaction) {
         return new Bluebird((resolve, reject) => {
           if (params.social) {
             params.social.user = { id: user.id };
-            return socialProfileService.createPromise(params.social, transaction)
+            resolve(socialProfileService.createPromise(params.social, transaction));
           }else{
             resolve();
           }
-        })
+        });
 
       }
     ]
@@ -491,7 +491,6 @@ function createUserIfNecessary(invite, user, params, transaction) {
     }).then(() => {
       resolve(selectedUser);
     }, (error) => {
-      console.log(error);
       reject(filters.errors(error))
     })
 
