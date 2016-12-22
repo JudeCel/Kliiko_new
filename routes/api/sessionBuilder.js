@@ -98,7 +98,7 @@ function cancel(req, res, next) {
 }
 
 function sendSms(req, res, next) {
-  sessionBuilderServices.sendSms(req.body).then(function(result) {
+  sessionBuilderServices.sendSms(res.locals.currentDomain.id, req.body).then(function(result) {
     res.send({ message: result });
   }, function(error) {
     res.send({ error: error });

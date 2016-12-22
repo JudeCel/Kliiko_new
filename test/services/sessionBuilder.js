@@ -378,20 +378,38 @@ describe('SERVICE - SessionBuilder', function() {
       };
 
       it('should send sms to numbers', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = {
-            message: 'random message',
-            recievers: [{
-              mobile: mobileNumber
-            }, {
-              mobile: mobileNumber
-            }]
-          };
+        const smsParams = {
+          message: 'random message',
+          recievers: [{
+            mobile: mobileNumber
+          }, {
+            mobile: mobileNumber
+          }]
+        };
 
-          sessionBuilderServices.sendSms(params, provider).then(function(result) {
-            assert.equal(result, 'All sms have been sent');
-            done();
-          }, function(error) {
+        const subscriptionPreferenceParams = {
+          'data.sessionCount': 10,
+          'data.planSmsCount': 1,
+          'data.paidSmsCount': 1
+
+        }
+        models.SubscriptionPreference.update(subscriptionPreferenceParams, { where: { subscriptionId: subscriptionId } }).then(() => {
+          sessionBuilderServices.initializeBuilder(accountParams()).then(() => {
+            sessionBuilderServices.sendSms(testAccount.id, smsParams, provider).then((result) => {
+              models.SubscriptionPreference.find({ where: { subscriptionId: subscriptionId } }).then((sp) => {
+                try {
+                  assert.equal(result, 'All sms have been sent');
+                  assert.equal(sp.data.planSmsCount, 0);
+                  assert.equal(sp.data.paidSmsCount, 0);
+                  done();
+                } catch (e) {
+                  done(e);
+                }
+              });
+            }, function(error) {
+              done(error);
+            });
+          }, (error) => {
             done(error);
           });
         });

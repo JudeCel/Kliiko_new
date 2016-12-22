@@ -5,15 +5,12 @@ var filters = require('./../models/filters');
 var airbrake = require('./../lib/airbrake').instance;
 var quotesMailer = require('../mailers/quotes');
 
-var Subscription = models.Subscription;
-var AccountUser = models.AccountUser;
-var Account = models.Account;
-var SubscriptionPlan = models.SubscriptionPlan;
-var SubscriptionPreference = models.SubscriptionPreference;
+const { Subscription, AccountUser, Account, SubscriptionPlan, SubscriptionPreference} = models
 
 var q = require('q');
 var _ = require('lodash');
 var async = require('async');
+let Bluebird = require('bluebird');
 var chargebee = require('./../lib/chargebee').instance;
 var planConstants = require('./../util/planConstants');
 var constants = require('../util/constants');
@@ -436,15 +433,7 @@ function updateSubscriptionData(passThruContent){
     subscription.update({planId: passThruContent.planId, subscriptionPlanId: passThruContent.subscriptionPlanId, active: true}).then(function(updatedSub) {
 
       let params = _.cloneDeep(planConstants[passThruContent.planId]);
-      if(passThruContent.oldPriority > params.priority || passThruContent.oldPriority == -1) {
-        params.paidSmsCount = params.paidSmsCount + passThruContent.paidSmsCount;
-      }
-      else {
-        let smsCount = passThruContent.paidSmsCount - passThruContent.planSmsCount;
-        smsCount = smsCount > 0 ? smsCount : 0;
-        params.paidSmsCount = params.paidSmsCount > smsCount ? params.paidSmsCount : smsCount;
-      }
-
+        params.planSmsCount = passThruContent.planSmsCount;
       updatedSub.SubscriptionPreference.update({ data: params }).then(function(preference) {
         deferred.resolve({subscription: updatedSub, redirect: false});
       }, function(error) {
@@ -708,7 +697,7 @@ function recurringSubDependencies(subscription) {
 function prepareRecurringParams(plan, preference) {
   return {
     data: {
-      paidSmsCount: preference.data.paidSmsCount + plan.paidSmsCount
+      planSmsCount: plan.planSmsCount
     }
   }
 }

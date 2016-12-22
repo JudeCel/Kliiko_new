@@ -9,7 +9,7 @@ var AccountUser = models.AccountUser;
 var constants = require('./../util/constants');
 var inviteService = require('./invite');
 var mailTemplateService = require('./mailTemplate');
-var twilioLib = require('./../lib/twilio');
+var smsService = require('./sms');
 var mailHelper = require('./../mailers/mailHelper');
 var mailUrlHelper = require('./../mailers/helpers');
 var validators = require('./../services/validators');
@@ -489,11 +489,9 @@ function destroy(id, accountId) {
   return deferred.promise;
 }
 
-function sendSms(data, provider) {
+function sendSms(accountId, data, provider) {
   let deferred = q.defer();
-  let numbers = _.map(data.recievers, 'mobile');
-
-  twilioLib.sendSms(numbers, data.message, provider).then(function(result) {
+  smsService.send(accountId, data, provider).then((result) => {
     deferred.resolve(result);
   }, function(error) {
     deferred.reject(error);

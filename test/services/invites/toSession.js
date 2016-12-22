@@ -275,7 +275,7 @@ describe('SERVICE - Invite to Session', function() {
       });
     });
     describe('sad path', function() {
-      it('should faild, session not found', function (done) {
+      it('should failed, session not found', function (done) {
         let params = {
           accountUserId: accountUserWithUser.id,
           userId: accountUserWithUser.UserId,
