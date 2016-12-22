@@ -181,10 +181,10 @@ function handleSocialCallback (req, res, next, provider) {
       if (isInviteSocialCallback(req.query.state.type)) {
         req.params.token = returnParams.token;
         acceptInviteViaSocial(req, res, next, info, provider);
-      }
-
-      if(isRegistrationSocialCallback(req.query.state.type)) {
+      } else if(isRegistrationSocialCallback(req.query.state.type)) {
         registerUsingSocialData(res, req, returnParams, info);
+      } else {
+        return res.render('login', { title: 'Login' });
       }
     }
   })(req, res, next);
