@@ -3,20 +3,20 @@
  let validateError = require('./helpers/errorFilter.js').validateError
 
 module.exports = {
-  up: function (queryInterface, Sequelize) {
-    return new Bluebird(function (resolve, reject) {
-      queryInterface.renameColumn('SubscriptionPlans', 'paidSmsCount', 'planSmsCount').then(function() {
-        resolve();
-      },function(error) {
+  up: (queryInterface, Sequelize) => {
+    return new Bluebird((resolve, reject) => {
+      queryInterface.renameColumn('SubscriptionPlans', 'paidSmsCount', 'planSmsCount').then(() => {
+        resolve(queryInterface.changeColumn('SubscriptionPlans', 'planSmsCount', { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 }));
+      },(error) => {
         validateError(error, resolve, reject);
       });
     });
  },
- down: function (queryInterface, Sequelize) {
-    return new Bluebird(function (resolve, reject) {
-      queryInterface.changeColumn('SubscriptionPlan', 'planSmsCount',  'paidSmsCount').then(function() {
+ down: (queryInterface, Sequelize) => {
+    return new Bluebird((resolve, reject) => {
+      queryInterface.renameColumn('SubscriptionPlans', 'planSmsCount',  'paidSmsCount').then(() => {
         resolve();
-      },function(error) {
+      }, (error) => {
         validateError(error, resolve, reject);
       });
     });

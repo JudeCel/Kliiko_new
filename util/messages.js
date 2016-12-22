@@ -277,7 +277,7 @@ module.exports = {
   },
   smsService: {
     validation: {
-      faild: "You want to send ${smsCount} SMS but current available SMS count is ${currentSmsCount}"
+      failed: "You want to send ${smsCount} SMS but current available SMS count is ${currentSmsCount}"
     }
   },
   routes: {

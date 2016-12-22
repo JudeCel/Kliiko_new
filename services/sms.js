@@ -73,7 +73,7 @@ function validate(smsCount, data) {
 }
 
 function buildErrorMessage(smsCount, currentSmsCount) {
-  let message = MessagesUtil.smsService.validation.faild
+  let message = MessagesUtil.smsService.validation.failed
   message = message.replace("${smsCount}", smsCount);
   message = message.replace("${currentSmsCount}", currentSmsCount);
   return message;
