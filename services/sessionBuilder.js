@@ -142,7 +142,7 @@ function initializeBuilder(params) {
   let deferred = q.defer();
 
   validators.hasValidSubscription(params.accountId).then(function() {
-    validators.subscription(params.accountId, 'session', 1).then(function() {
+    validators.subscription(params.accountId, 'session', 0).then(function() {
 
       params.step = 'setUp';
       params.startTime = params.date;
@@ -229,7 +229,7 @@ function doUpdate(originalSession, params) {
     let updatedSession;
     validators.hasValidSubscription(originalSession.accountId).then(function() {
       let count = 0;
-      if (params["status"] && params["status"] != originalSession.status && params["status"] == "open") {
+      if (params["status"] && params["status"] != originalSession.status && params["status"] == "open" || params["endTime"] && (new Date(params["endTime"]) > new Date())) {
         count = 1;
       }
       return validators.subscription(originalSession.accountId, 'session', count, { sessionId: originalSession.id });
@@ -923,11 +923,11 @@ function searchSessionMembers(sessionId, role) {
     include: [
       {
         model: models.SessionMember,
-        required: false,
+        required: true,
         where: { sessionId: sessionId, role: role },
       },{
         model: models.Invite,
-        required: true,
+        required: false,
         where: {
           sessionId: sessionId,
           role: role

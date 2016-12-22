@@ -50,7 +50,8 @@ describe('SERVICE - SessionBuilder', function() {
       name: 'untitled',
       startTime: (new Date()).toISOString(),
       endTime: getNextDate().toISOString(),
-      timeZone: 'Europe/Riga'
+      timeZone: 'Europe/Riga',
+      snapshot: data.sessionBuilder.snapshot
     };
   };
 
@@ -74,20 +75,25 @@ describe('SERVICE - SessionBuilder', function() {
     describe('happy path', function(done) {
       it('should initialize builder', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          assert.equal(result.sessionBuilder.currentStep, 'setUp');
-          assert.equal(result.sessionBuilder.steps.step1.stepName, 'setUp');
-          assert.equal(result.sessionBuilder.steps.step1.name, '');
-          assert.equal(result.sessionBuilder.steps.step2.stepName, 'facilitatiorAndTopics');
-          assert.equal(result.sessionBuilder.steps.step2.facilitator, null);
-          assert.deepEqual(result.sessionBuilder.steps.step2.topics, []);
-          assert.equal(result.sessionBuilder.steps.step3.stepName, 'manageSessionEmails');
-          assert.equal(result.sessionBuilder.steps.step3.incentive_details, null);
-          assert.deepEqual(result.sessionBuilder.steps.step3.emailTemplates, []);
-          assert.equal(result.sessionBuilder.steps.step4.stepName, 'manageSessionParticipants');
-          assert.deepEqual(result.sessionBuilder.steps.step4.participants, []);
-          assert.equal(result.sessionBuilder.steps.step5.stepName, 'inviteSessionObservers');
-          assert.deepEqual(result.sessionBuilder.steps.step5.observers, []);
-          done();
+          try {
+            assert.equal(result.sessionBuilder.currentStep, 'setUp');
+            assert.equal(result.sessionBuilder.steps.step1.stepName, 'setUp');
+            assert.equal(result.sessionBuilder.steps.step1.name, '');
+            assert.equal(result.sessionBuilder.steps.step1.facilitator, null);
+            assert.equal(result.sessionBuilder.steps.step2.stepName, 'facilitatiorAndTopics');
+            assert.deepEqual(result.sessionBuilder.steps.step2.topics, []);
+            assert.equal(result.sessionBuilder.steps.step3.stepName, 'manageSessionEmails');
+            assert.equal(result.sessionBuilder.steps.step3.incentive_details, null);
+            assert.deepEqual(result.sessionBuilder.steps.step3.emailTemplates, []);
+            assert.equal(result.sessionBuilder.steps.step4.stepName, 'manageSessionParticipants');
+            assert.deepEqual(result.sessionBuilder.steps.step4.participants, []);
+            assert.equal(result.sessionBuilder.steps.step5.stepName, 'inviteSessionObservers');
+            assert.equal(result.sessionBuilder.steps.step5.observers.length, 1);
+            assert.isObject(result.sessionBuilder.snapshot);
+            done();
+          } catch (e) {
+            done(e);
+          }
         }, function(error) {
           done(error);
         });
@@ -126,13 +132,9 @@ describe('SERVICE - SessionBuilder', function() {
             let params = sessionParams(result);
             sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
               sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-                sessionBuilderServices.update(params2.id, params2.accountId, params2).then(function(result) {
-                  done();
-                }, function(error) {
-                  done(error);
-                });
-              }, function(error) {
                 done();
+              }, function(error) {
+                done(error);
               });
             }, function(error) {
               done(error);
@@ -157,10 +159,10 @@ describe('SERVICE - SessionBuilder', function() {
                 sessionBuilderServices.update(params2.id, params2.accountId, params2).then(function(result) {
                   done('Should not open second session!');
                 }, function(error) {
-                  done(error);
+                  done();
                 });
               }, function(error) {
-                done();
+                done(error);
               });
             }, function(error) {
               done(error);
@@ -462,23 +464,21 @@ describe('SERVICE - SessionBuilder', function() {
           let nextStepIndex = 2;
           params.name = 'My first session';
 
-          models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
-            mailFixture.createMailTemplate().then(function() {
-              sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-                sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
-                  sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
-                    assert.equal(session.step, 'facilitatiorAndTopics');
-                    done();
-                  }, function(error) {
-                    done(error);
-                  });
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+            models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+              sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
+                sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
+                  assert.equal(session.step, 'facilitatiorAndTopics');
+                  done();
                 }, function(error) {
                   done(error);
                 });
               }, function(error) {
                 done(error);
               });
-            })
+            }, function(error) {
+              done(error);
+            });
           }, function(error) {
             done(error);
           });
