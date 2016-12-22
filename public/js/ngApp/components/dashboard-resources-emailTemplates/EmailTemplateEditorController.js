@@ -148,6 +148,7 @@
         vm.currentTemplate.content = res.template.content;
         vm.currentTemplate.index = templateIndex;
         vm.currentTemplate.subject = res.template.subject;
+        vm.currentTemplate.snapshot = res.snapshot;
 
         if(!vm.currentTemplate.isCopy) {
           vm.viewingTemplateId = vm.currentTemplate.id;

@@ -122,7 +122,7 @@ module.exports = {
       propertyFields: ["name", "boardMessage", "sign"]
     },
     mailTemplate: {
-      fields: ["content", "name"]
+      fields: ["content", "subject"]
     }
   }
 }
