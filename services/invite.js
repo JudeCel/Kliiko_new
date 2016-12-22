@@ -447,6 +447,7 @@ function createUser(invite, params, transaction) {
     password: params.password,
     email: invite.AccountUser.email
   }
+
   return User.create(createParams, { transaction: transaction });
 }
 
@@ -540,7 +541,6 @@ function acceptInvite(token, params={}) {
         return checSession(invite, user, params, transaction)
       },
       (invite, user, params, transaction) => {
-        console.log("Invite step: createUserIfNecessary", invite.id);
         return createUserIfNecessary(invite, user, params, transaction)
       },
       (invite, _user, _params, transaction) => {

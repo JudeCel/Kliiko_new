@@ -237,6 +237,29 @@ router.get('/auth/google/callback', function(req, res, next) {
   })(req, res, next);
 });
 
+router.get('/auth/facebook/callback_invite', function(req, res, next) {
+  let returnParams = JSON.parse(req.query.state);
+  passport.authenticate('facebook', function(err, user, info) {
+    if (err) {
+      return res.render('login', { title: 'Login', error: err.message, message: "", email: "" });
+    }
+    if (user) {
+      req.login(user, function(err) {
+        middlewareFilters.myDashboardPage(req, res, next);
+      })
+    }else{
+      req.params.token = returnParams.token;
+      let password = Math.random().toString(36).slice(-8);
+      req.body.password = password;
+      req.body.social = {
+        user: {},
+        params: {socialProfile: { provider: 'facebook', id: info.id }}
+      };
+      inviteRoutes.accept(req, res, next);
+    }
+  })(req, res, next);
+});
+
 function createUserAndSendEmail(req, res, userParams, renderInfo) {
   usersRepo.create(userParams, function(error, result) {
     if(error) {
@@ -424,7 +447,15 @@ router.route('/invite/auth/:provider/:token').get(function(req, res, next) {
       return passport.authenticate('google', { scope : ['profile', 'email'], state: state })(req, res, next);
       break;
     case 'facebook':
-      return passport.authenticate('facebook', { scope : ['email'], state: state })(req, res, next);
+      console.log("TOKEN: ", req.params.token);
+      return passport.authenticate(
+        'facebook',
+        {
+          scope : ['email'],
+          state: state ,
+          callbackURL: '/auth/facebook/callback_invite'
+        }
+      )(req, res, next);
       break;
     default:
       req.redirect('/login');

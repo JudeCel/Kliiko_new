@@ -5,6 +5,7 @@ var models  = require('./../models');
 var filters = require('./../models/filters');
 var User = models.User;
 var SocialProfile  = models.SocialProfile;
+var q = require('q');
 
 var _ = require('lodash');
 
@@ -53,6 +54,9 @@ function create(object, callback) {
 
 function createPromise(params, t) {
   let deferred = q.defer();
+  console.log("-------------------");
+  console.log("SOCIAL PARAMS: ");
+  console.log(socialParams(params));
 
   SocialProfile.create(socialParams(params), { transaction: t }).then(function(result) {
     deferred.resolve();
@@ -68,5 +72,5 @@ function socialParams(object) {
     providerUserId: object.params.socialProfile.id,
     provider: object.params.socialProfile.provider,
     userId: object.user.id
-  }
+  };
 }
