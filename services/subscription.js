@@ -433,7 +433,8 @@ function updateSubscriptionData(passThruContent){
     subscription.update({planId: passThruContent.planId, subscriptionPlanId: passThruContent.subscriptionPlanId, active: true}).then(function(updatedSub) {
 
       let params = _.cloneDeep(planConstants[passThruContent.planId]);
-        params.planSmsCount = passThruContent.planSmsCount;
+      params.paidSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
+      
       updatedSub.SubscriptionPreference.update({ data: params }).then(function(preference) {
         deferred.resolve({subscription: updatedSub, redirect: false});
       }, function(error) {

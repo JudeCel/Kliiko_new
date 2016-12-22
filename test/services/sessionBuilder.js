@@ -431,15 +431,26 @@ describe('SERVICE - SessionBuilder', function() {
               mobile: 'nonNumberMobile'
             }]
           };
+          const subscriptionPreferenceParams = {
+            'data.sessionCount': 1,
+            'data.planSmsCount': 10,
+            'data.paidSmsCount': 10
+
+          }
 
           let errorMessage = "The 'To' number nonNumberMobile is not a valid phone number.";
           let provider = errorProvider(errorMessage);
-
-          sessionBuilderServices.sendSms(params, provider).then(function(result) {
-            done('Should not get here!');
-          }, function(error) {
-            assert.equal(error, errorMessage);
-            done();
+          models.SubscriptionPreference.update(subscriptionPreferenceParams, { where: { subscriptionId: subscriptionId } }).then(() => {
+            sessionBuilderServices.sendSms(testAccount.id, params, provider).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              try {
+                assert.equal(error, errorMessage);
+                done();
+              } catch (e) {
+                done(e);
+              }
+            });
           });
         });
       });
