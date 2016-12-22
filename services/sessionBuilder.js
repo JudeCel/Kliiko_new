@@ -774,7 +774,7 @@ function sessionBuilderObjectSnapshotForStep2(stepData) {
 
 function sessionBuilderObjectSnapshotForStep3(stepData) {
   return { 
-    name: stringHelpers.hash(stepData.incentive_details)
+    incentive_details: stringHelpers.hash(stepData.incentive_details)
   };
   //todo: add emails
 }

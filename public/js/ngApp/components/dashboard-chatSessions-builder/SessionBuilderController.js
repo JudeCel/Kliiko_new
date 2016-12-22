@@ -327,26 +327,27 @@
       var list = builderServices.selectMembers(activeList.id, activeList.members);
 
       if (vm.searchingParticipants) {
-        if(list.length > 0) {
-          if(!vm.session.sessionData.participantListId) {
+        if (list.length > 0) {
+          if (!vm.session.sessionData.participantListId) {
             vm.session.updateStep({ participantListId: activeList.id }).then(function(res) {
               if (!res.ignored) {
                 vm.session.sessionData.participantListId = activeList.id;
+                vm.participants = vm.participants.concat(mapToAccountUser(list));
+                vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
               }
             }, function (error) {
               messenger.error(error);
             });
-          }
-
-            vm.participants = vm.participants.concat(mapToAccountUser(list));
-            vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
           } else {
-            messenger.error(messagesUtil.sessionBuilder.cantSelect);
+            if (vm.session.sessionData.participantListId == activeList.id) {
+              vm.participants = vm.participants.concat(mapToAccountUser(list));
+              vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
+            } else {
+              messenger.error(messagesUtil.sessionBuilder.cantSelect);
+            }
           }
-
           vm.searchingParticipants = false;
-        }
-        else {
+        } else {
           messenger.error(messagesUtil.sessionBuilder.noContacts);
         }
       }
@@ -386,5 +387,6 @@
     function canCommentAndRate() {
       return isSelectParticipantStep() && isSessionClosed();
     }
+  }
 
 })();
