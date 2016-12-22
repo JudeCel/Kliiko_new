@@ -153,7 +153,7 @@
           if(item.id == resp.accountUserId) {
             item.invite = (item.invite || {});
 
-            if (resp.emailStatus == "sent") {
+            if (item.invite.emailStatus == 'waiting' && resp.emailStatus == "sent") {
               item.invite.emailStatus = "sentDone"
               setTimeout(function() {
                 updateInviteItem(resp);

@@ -115,8 +115,7 @@ describe('SERVICE - Invite to Session', function() {
             accountUserId: "Account User Id can't be empty"
           };
           try {
-            assert.typeOf(errors,'array')
-            assert.deepEqual(errors[0], errorParams);
+            assert.deepEqual(errors, errorParams);
             done();
           } catch (e) {
             done(e)
