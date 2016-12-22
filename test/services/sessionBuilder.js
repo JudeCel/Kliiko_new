@@ -149,6 +149,26 @@ describe('SERVICE - SessionBuilder', function() {
     });
 
     describe('sad path', function(done) {
+      it('should fail update without valid snapshot', function(done) {
+        models.SubscriptionPreference.update({'data.sessionCount': 1}, { where: { subscriptionId: subscriptionId } }).then(function(result) {
+          sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+            let params = sessionParams(result);
+            params.snapshot = { test: true }
+            sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+              assert.isObject(result.validation);
+              assert.equal(result.validation.isValid, false);
+              done();
+            }, function(error) {
+              done(error);
+            });
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+
       it('should fail opening new session when other open session exists', function(done) {
         models.SubscriptionPreference.update({'data.sessionCount': 1}, { where: { subscriptionId: subscriptionId } }).then(function(result) {
           sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
