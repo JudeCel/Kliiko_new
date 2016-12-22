@@ -116,7 +116,7 @@ function getAllPlans(accountId) {
             currentPlan = currentSub.SubscriptionPlan;
           }
           addPlanEstimateChargeAndConstants(result.list, accountId).then(function(planWithConstsAndEstimates) {
-            deferred.resolve({currentPlan: currentPlan, plans: planWithConstsAndEstimates});
+            deferred.resolve({currentPlan: currentPlan, plans: planWithConstsAndEstimates, features: planConstants.features});
           })
         }, function(error) {
           deferred.reject(filters.errors(error));

@@ -28,6 +28,7 @@
 
           <div class="{{ subscriptionPlan.plan.id + '_header' }} price-label" ng-if= "!subscriptionPlan.plan.price">
             {{subscriptionPlan.plan.name}}
+            <div ng-include="'upgradePlanButton.html'"></div>
           </div>
         </div>
       </div>
@@ -183,12 +184,6 @@
                   <span ng-if="!subscriptionPlan.additionalParams.secureSsl">-</span>
                 </span>
               </div>
-              <!-- <div class="list-group-item-text buttons-area">
-                <div class="{{ up.selectPlanBtnColor(subscriptionPlan.plan.id) }} btn-dashboard-plans want" ng-click="up.wantThisPlan(subscriptionPlan)">
-                  Upgrade Plan
-                </div>
-              </div>
-               -->
                <div ng-include="'upgradePlanButton.html'"></div>
             </div>
           </div>
