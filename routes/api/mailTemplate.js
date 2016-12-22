@@ -97,6 +97,7 @@ function saveMailTemplatePost(req, res, next) {
   let makeCopy = canOverwrite && !sessionId ? false : req.body.copy;
   var accountId = canOverwrite && !sessionId ? null : res.locals.currentDomain.id;
   MailTemplateService.saveMailTemplate(req.body.mailTemplate, makeCopy, accountId,function(error, result) {
+    //todo: let snapshot = sessionBuilderSnapshotValidationService.getMailTemplateSnapshot(result);
     res.send({error: error, templates: result, message: MessagesUtil.routes.mailTemplates.saved });
   });
 }

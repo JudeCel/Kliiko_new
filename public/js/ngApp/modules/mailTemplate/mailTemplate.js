@@ -84,7 +84,6 @@
     function saveMailTemplate(mTemplate, createCopy) {
       dbg.log2('#KliikoApp.mailTemplate > save mail template', mTemplate);
       var deferred = $q.defer();
-
       mailRestApi.saveMailTemplate.post({mailTemplate:mTemplate, copy: createCopy}, function (res) {
         dbg.log2('#KliikoApp.mailTemplate > save mail template> server respond >');
         deferred.resolve(res);
