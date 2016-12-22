@@ -102,15 +102,14 @@
     vm.switchPlan = switchPlan;
     vm.showCalculatedPrice = showCalculatedPrice;
     vm.checkRadioButton = checkRadioButton;
-    vm.optionBackground = optionBackground;
     vm.openGetQuoteModal = openGetQuoteModal;
     vm.submitContactusForm = submitContactusForm;
     vm.buttonClassName = buttonClassName;
     vm.switchPlanView = switchPlanView;
-    vm.planOptionColor = planOptionColor;
     vm.selectPlanBtnColor = selectPlanBtnColor;
     vm.mostPopular = mostPopular;
     vm.upgradePlanText = upgradePlanText;
+    vm.displayFeatureValue = displayFeatureValue;
 
     init();
 
@@ -159,13 +158,14 @@
 
           vm.annualOrMonthly = 'monthly';
           vm.subPlans = vm.monthlyPlans;
+
           vm.currentPlan = result.currentPlan;
+          vm.features = result.features;
         }
       })
     }
 
     function canPush(period, subPlan) {
-    //  console.log("---", subPlan.plan.period_unit);
       return subPlan.plan.period_unit == period && subPlan.additionalParams.priority > 0;
     }
 
@@ -229,10 +229,8 @@
     }
 
     function checkTheCount(count) {
-      if(count == -1){
+      if(count < 0){
         return "Unlimited";
-      } else if(count == 0) {
-        return "false";
       }else{
         return count;
       }
@@ -278,14 +276,6 @@
       return price / 100;
     }
 
-    function optionBackground(index) {
-      if(index%2 > 0) {
-        return "plan-option-dark-grey"
-      }else{
-        return "plan-option-light-grey"
-      }
-    }
-
     function openGetQuoteModal(user) {
       vm.contactUsUser = {
         firstName: user.firstName,
@@ -323,15 +313,6 @@
       });
     }
 
-    function planOptionColor(plan, number) {
-      if (number == 'odd') {
-        return plan + "_light";
-      }
-      if (number == "even") {
-        return plan + "_dark";
-      }
-    }
-
     function selectPlanBtnColor(plan) {
       return plan + "_btn"
     }
@@ -342,6 +323,18 @@
 
     function upgradePlanText(plan) {
       return plan.price?"BUY NOW":"GET STARTED"
+    }
+
+    function displayFeatureValue(key, planParameters) {
+      var result = checkTheCount(planParameters[key]);
+      if (key == 'planSmsCount') {
+        if (result) {
+          result = 'up to ' + result + "/mth";
+        } else {
+          result = '';
+        }
+      }
+      return result;
     }
   }
 })();
