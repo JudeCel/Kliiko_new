@@ -275,6 +275,11 @@ module.exports = {
       allSmsSent: 'All sms have been sent'
     }
   },
+  smsService: {
+    validation: {
+      failed: "You want to send ${smsCount} SMS but current available SMS count is ${currentSmsCount}"
+    }
+  },
   routes: {
     accountDatabase: {
       success: 'Successfully updated account user'
