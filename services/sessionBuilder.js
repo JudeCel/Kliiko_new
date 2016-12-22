@@ -229,7 +229,7 @@ function doUpdate(originalSession, params) {
     let updatedSession;
     validators.hasValidSubscription(originalSession.accountId).then(function() {
       let count = 0;
-      if (params["status"] && params["status"] != originalSession.status && params["status"] == "open" || params["endTime"] && (new Date(params["endTime"]) > new Date())) {
+      if (params["status"] && params["status"] == "open" || params["endTime"] && (new Date(params["endTime"]) > new Date())) {
         count = 1;
       }
       return validators.subscription(originalSession.accountId, 'session', count, { sessionId: originalSession.id });
@@ -739,11 +739,17 @@ function findNewStep(step, previous) {
 }
 
 function sessionBuilderObjectSnapshotForStep1(stepData) {
+  let params = {
+    startTime: stepData.startTime,
+    endTime: stepData.endTime,
+    timeZone: stepData.timeZone
+  }
+  setTimeZone(params);
   return { 
     name: stringHelpers.hash(stepData.name),
     type: stringHelpers.hash(stepData.name),
-    startTime: stringHelpers.hash(stepData.startTime),
-    endTime: stringHelpers.hash(stepData.endTime),
+    startTime: stringHelpers.hash(new Date(params.startTime)),
+    endTime: stringHelpers.hash(new Date(params.endTime)),
     timeZone: stringHelpers.hash(stepData.timeZone),
     resourceId: stringHelpers.hash(stepData.resourceId),
     anonymous: stringHelpers.hash(stepData.anonymous),

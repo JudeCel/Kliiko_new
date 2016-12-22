@@ -323,7 +323,13 @@
       if (dataObj == 'startTime' || dataObj == 'endTime' || dataObj == 'timeZone') {
         initCanSelectFacilitator();
         if(validateDate(vm.step1.startTime) && validateDate(vm.step1.endTime)) {
-          return postUpdateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone });
+          postUpdateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone }).then(function(res) {
+            if (res.ignored) {
+              vm.step1.startTime = vm.session.steps.step1.startTime;
+              vm.step1.endTime = vm.session.steps.step1.endTime;
+              vm.step1.timeZone = vm.session.steps.step1.timeZone;
+            }
+          });
         }
         return;
       }
