@@ -69,7 +69,9 @@ function simpleParams(title, invite, errors, message) {
     invite: invite || {},
     errors: processedErrosMessage(errors || {}),
     message: message || '',
-    applicationName: process.env.MAIL_FROM_NAME
+    applicationName: process.env.MAIL_FROM_NAME,
+    googleUrl: '/invite/auth/google/' + invite.token,
+    facebookUrl: '/invite/auth/facebook/' + invite.token,
   };
 };
 function processedErrosMessage(errors) {

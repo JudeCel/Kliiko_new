@@ -5,6 +5,7 @@ var models  = require('./../models');
 var filters = require('./../models/filters');
 var User = models.User;
 var SocialProfile  = models.SocialProfile;
+let Bluebird = require('bluebird')
 
 var _ = require('lodash');
 
@@ -52,15 +53,13 @@ function create(object, callback) {
 }
 
 function createPromise(params, t) {
-  let deferred = q.defer();
-
-  SocialProfile.create(socialParams(params), { transaction: t }).then(function(result) {
-    deferred.resolve();
-  }, function(error) {
-    deferred.reject(filters.errors(error));
+  return new Bluebird((resolve, reject) => {
+    SocialProfile.create(socialParams(params), { transaction: t }).then(function(result) {
+      resolve();
+    }, function(error) {
+      reject(filters.errors(error));
+    });
   });
-
-  return deferred.promise;
 }
 
 function socialParams(object) {
@@ -68,5 +67,5 @@ function socialParams(object) {
     providerUserId: object.params.socialProfile.id,
     provider: object.params.socialProfile.provider,
     userId: object.user.id
-  }
+  };
 }
