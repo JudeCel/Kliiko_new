@@ -5,7 +5,6 @@ var models  = require('./../models');
 var filters = require('./../models/filters');
 var User = models.User;
 var SocialProfile  = models.SocialProfile;
-var q = require('q');
 let Bluebird = require('bluebird')
 
 var _ = require('lodash');

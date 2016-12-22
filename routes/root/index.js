@@ -22,7 +22,10 @@ var constants = require('../../util/constants');
 var appData = require('../../services/webAppData');
 var contactListUserRoutes = require('./contactListUser');
 var ics = require('./ics');
-var generator = require('generate-password');
+var uuid = require('node-uuid');
+
+const facebookUrl = '/auth/facebook';
+const googleUrl = '/auth/google';
 
 router.route('/ics').get(ics.render);
 
@@ -93,21 +96,19 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/registration', function (req, res, next) {
-  let params = usersRepo.prepareParams(req);
-
+  let params = getParams(req);
   params.phoneCountryData = replaceToString(params.phoneCountryData);
   params.landlineNumberCountryData = replaceToString(params.landlineNumberCountryData);
   res.render('registration', params);
 });
 
 router.get('/freeTrialRegistration', function (req, res, next) {
-  let params = usersRepo.prepareParams(req);
-
+  let params = getParams(req);
   res.render('freeTrialRegistration', params);
 });
 
 router.get('/paidPlanRegistration', function (req, res, next) {
-  let params = usersRepo.prepareParams(req);
+  let params = getParams(req);
 
   if(req.query.selected_plan) {
     params.selectedPlanOnRegistration = req.query.selected_plan;
@@ -118,6 +119,14 @@ router.get('/paidPlanRegistration', function (req, res, next) {
 
   res.render('paidPlanRegistration', params);
 });
+
+function getParams(req) {
+  let params = usersRepo.prepareParams(req);
+  params.facebookUrl = facebookUrl;
+  params.googleUrl = googleUrl;
+
+  return params;
+}
 
 function replaceToString(value) {
   if(_.isEmpty(value)) {
@@ -182,7 +191,7 @@ function handleSocialCallback (req, res, next, provider) {
 }
 
 function acceptInviteViaSocial(req, res, next, info, provider) {
-  var password = generator.generate({ length: 8, numbers: true });
+  var password = uuid.v1();
   req.body.password = password;
   req.body.social = {
     user: {},
@@ -280,7 +289,14 @@ router.post('/login', function(req, res, next) {
 });
 
 router.get('/login', function (req, res, next) {
-  res.render('login', { title: 'Login', error: '', message: req.flash('message')[0], email: req.flash('email')[0] });
+  res.render('login', {
+    title: 'Login',
+    error: '',
+    message: req.flash('message')[0],
+    email: req.flash('email')[0],
+    googleUrl: googleUrl,
+    facebookUrl: facebookUrl
+   });
 });
 
 router.route('/VerifyEmail/:token/:accountUserId?')
