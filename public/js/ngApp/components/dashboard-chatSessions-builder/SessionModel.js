@@ -6,8 +6,8 @@
    */
   angular.module('KliikoApp').factory('SessionModel', SessionModel);
 
-  SessionModel.$inject = ['$q', 'globalSettings', '$resource', 'fileUploader', '$confirm'];
-  function SessionModel($q, globalSettings, $resource, fileUploader, $confirm)  {
+  SessionModel.$inject = ['$q', 'globalSettings', '$resource', 'fileUploader', 'changesValidation'];
+  function SessionModel($q, globalSettings, $resource, fileUploader, changesValidation)  {
     var apiPath = globalSettings.restUrl+'/sessionBuilder/:id/:path/:arg';
     var sessionBuilderRestApi = $resource(apiPath, { id : '@id', arg: '@arg' }, {
       post: { method: 'POST' },
@@ -58,7 +58,6 @@
     SessionModel.prototype.processStepResponse = processStepResponse;
     SessionModel.prototype.removeTopic = removeTopic;
     SessionModel.prototype.getSessionMailTemplateStatus = getSessionMailTemplateStatus;
-    SessionModel.prototype.updateValidationConfirm = updateValidationConfirm;
 
     return SessionModel;
 
@@ -237,7 +236,7 @@
         if (res.error) {
           deferred.reject(res.error);
         } else if (res.validation && !res.validation.isValid) {
-          updateValidationConfirm(res, self.updateStep, stepDataObj, self).then(function(newRes) {
+          changesValidation.validationConfirm(res, self.updateStep, stepDataObj, self).then(function(newRes) {
             deferred.resolve(newRes);
           }, function(err) {
             deferred.reject(err);
@@ -251,54 +250,6 @@
       });
 
       return deferred.promise;
-    }
-
-    function updateValidationConfirm(res, saveAgainCallback, data, self) {
-      var deferred = $q.defer();
-
-      updateValidationConfirmDialog(res.validation, function() {
-        if (res.validation.fieldName) {
-          data.snapshot[res.validation.fieldName] = res.validation.currentValueSnapshot;
-        }
-        if (res.validation.currentSnapshotChanges) {
-          angular.merge(data.snapshot, res.validation.currentSnapshotChanges);
-        }
-        saveAgainCallback(data, self).then(function(newRes) {
-          deferred.resolve(newRes);
-        });
-      }, function() {
-        self.getRemoteData().then(function() {
-          deferred.resolve({ ignored: true });
-        });
-      });
-
-      return deferred.promise;
-    }
-
-    function updateValidationConfirmDialog(validation, saveMineCallback, saveTheirsCallback) {
-      if (validation.canChange) {
-        $confirm({ 
-          text: "What are the odds of you and someone else editing the same thing at the same time... so which edit do you want saved?", 
-          title: "Yikes!", 
-          cancel: "Save Theirs", 
-          ok: "Save Mine",
-          choice: true, 
-        }).then(function() {
-          saveMineCallback();
-        }, function() {
-          saveTheirsCallback();
-        });
-      } else {
-        $confirm({ 
-          text: "Sorry, you can not change this option anymore, because it was already changed by someone else.", 
-          title: "Yikes!", 
-          closeOnly: true 
-        }).then(function() {
-          saveTheirsCallback();
-        }, function() {
-          saveTheirsCallback();
-        });
-      }
     }
 
     function sendSms(recievers, message) {
@@ -341,7 +292,7 @@
           deferred.reject(res.error);  
         } else if (res.validation && !res.validation.isValid) {
 
-          updateValidationConfirm(res, addMembersByParams, params, self).then(function(newRes) {
+          changesValidation.validationConfirm(res, addMembersByParams, params, self).then(function(newRes) {
             deferred.resolve(newRes);
           }, function(err) {
             deferred.reject(err);
@@ -379,7 +330,7 @@
           deferred.reject(res.error);  
         } else if (res.validation && !res.validation.isValid) {
 
-          updateValidationConfirm(res, saveTopicsByParams, params, self).then(function(newRes) {
+          changesValidation.validationConfirm(res, saveTopicsByParams, params, self).then(function(newRes) {
             deferred.resolve(newRes);
           }, function(err) {
             deferred.reject(err);

@@ -96,9 +96,13 @@ function saveMailTemplatePost(req, res, next) {
   let sessionId = req.body.mailTemplate.properties && req.body.mailTemplate.properties.sessionId;
   let makeCopy = canOverwrite && !sessionId ? false : req.body.copy;
   var accountId = canOverwrite && !sessionId ? null : res.locals.currentDomain.id;
-  MailTemplateService.saveMailTemplate(req.body.mailTemplate, makeCopy, accountId,function(error, result) {
-    //todo: let snapshot = sessionBuilderSnapshotValidationService.getMailTemplateSnapshot(result);
-    res.send({error: error, templates: result, message: MessagesUtil.routes.mailTemplates.saved });
+  MailTemplateService.saveMailTemplate(req.body.mailTemplate, makeCopy, accountId, function(error, result) {
+    if (result.validation && !result.validation.isValid) {
+      res.send({ validation: validationRes });
+    } else {
+      let snapshot = sessionBuilderSnapshotValidationService.getMailTemplateSnapshot(result);
+      res.send({error: error, templates: result, message: MessagesUtil.routes.mailTemplates.saved, snapshot: snapshot });
+    }
   });
 }
 

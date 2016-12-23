@@ -32,6 +32,7 @@
     'KliikoApp.account',
     'KliikoApp.accountUser',
     'KliikoApp.fileUploader',
+    'KliikoApp.changesValidation',
     'KliikoApp.goToChatroom',
     'KliikoApp.mailTemplate',
     'KliikoApp.sessionExpire'

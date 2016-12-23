@@ -555,7 +555,7 @@ function saveMailTemplate(template, createCopy, accountId, callback) {
         if (!createCopy && result && result.length > 0) {
           let validationRes = sessionBuilderSnapshotValidation.isMailTemplateDataValid(template.snapshot, templateObject, result[0]);
           if (!validationRes.isValid) {
-            callback({ validation: validationRes });
+            callback(null, { validation: validationRes });
             return;
           }
           ids = _.map(result, 'id');

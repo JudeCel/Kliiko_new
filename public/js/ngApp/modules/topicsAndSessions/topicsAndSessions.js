@@ -4,8 +4,8 @@
   angular.module('topicsAndSessions', [])
     .factory('topicsAndSessions', topicsAndSessionsFactory);
 
-  topicsAndSessionsFactory.$inject = ['dbg', 'globalSettings','$q', '$resource'];
-  function topicsAndSessionsFactory(dbg, globalSettings, $q, $resource) {
+  topicsAndSessionsFactory.$inject = ['dbg', 'globalSettings','$q', '$resource', 'changesValidation'];
+  function topicsAndSessionsFactory(dbg, globalSettings, $q, $resource, changesValidation) {
     var restApi = {
       topics: $resource(globalSettings.restUrl +'/topics'),
       topic: $resource(globalSettings.restUrl +'/topic/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
@@ -34,7 +34,7 @@
         if (result.error) {
           deferred.reject(result.error);
         } else if (result.validation && !result.validation.isValid) {
-          session.updateValidationConfirm(result, updateSessionTopic, params, session).then(function(newRes) {
+          changesValidation.validationConfirm(result, updateSessionTopic, params, session).then(function(newRes) {
             deferred.resolve(newRes);
           }, function(err) {
             deferred.reject(err);

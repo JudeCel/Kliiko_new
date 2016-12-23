@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp.mailTemplate', []).factory('mailTemplate', mailTemplateFactory);
 
-  mailTemplateFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg', '$rootScope'];
-  function mailTemplateFactory($q, globalSettings, $resource, dbg, $rootScope) {
+  mailTemplateFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg', '$rootScope', 'changesValidation'];
+  function mailTemplateFactory($q, globalSettings, $resource, dbg, $rootScope, changesValidation) {
 
     var mailRestApi = {
       mailTemplates: $resource(globalSettings.restUrl + '/mailTemplates', {}, {get: {method: 'GET'}}),
@@ -86,6 +86,7 @@
       var deferred = $q.defer();
       mailRestApi.saveMailTemplate.post({mailTemplate:mTemplate, copy: createCopy}, function (res) {
         dbg.log2('#KliikoApp.mailTemplate > save mail template> server respond >');
+        //todo: changesValidation
         deferred.resolve(res);
       });
       return deferred.promise;
