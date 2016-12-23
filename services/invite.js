@@ -460,6 +460,7 @@ function createUser(invite, params, transaction) {
     password: params.password,
     email: invite.AccountUser.email
   }
+
   return User.create(createParams, { transaction: transaction });
 }
 
@@ -489,11 +490,11 @@ function createUserIfNecessary(invite, user, params, transaction) {
         return new Bluebird((resolve, reject) => {
           if (params.social) {
             params.social.user = { id: user.id };
-            return socialProfileService.createPromise(params.social, transaction)
+            resolve(socialProfileService.createPromise(params.social, transaction));
           }else{
             resolve();
           }
-        })
+        });
 
       }
     ]
@@ -503,7 +504,6 @@ function createUserIfNecessary(invite, user, params, transaction) {
     }).then(() => {
       resolve(selectedUser);
     }, (error) => {
-      console.log(error);
       reject(filters.errors(error))
     })
 
@@ -553,7 +553,6 @@ function acceptInvite(token, params={}) {
         return checSession(invite, user, params, transaction)
       },
       (invite, user, params, transaction) => {
-        console.log("Invite step: createUserIfNecessary", invite.id);
         return createUserIfNecessary(invite, user, params, transaction)
       },
       (invite, _user, _params, transaction) => {

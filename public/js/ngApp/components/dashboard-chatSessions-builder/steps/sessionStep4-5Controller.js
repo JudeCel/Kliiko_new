@@ -56,6 +56,7 @@
 
 
     vm.stepMembers = [];
+    vm.emailSentFailedTooltip = "Sorry, failed to send your email. Please check for typos in the email address, or refer to this <a>Help Topic</a>";
 
     vm.isParticipantPage = function() {
       return vm.session.currentStep == "manageSessionParticipants";

@@ -7,7 +7,10 @@
             Back to Sessions Tab
           </div>
         </div>
-        <div class="col-md-6"><h1>Chat Session Builder</h1></div>
+        <div class="col-md-6">
+          <h3 class="session-name">{{sbc.session.steps.step1.name}}</h3>
+          <h1>Chat Session Builder</h1>
+        </div>
 
         <div class="col-md-3">
           <div ng-show="sbc.session.sessionData.status == 'open'" ng-disabled="sbc.session.sessionData.showStatus == 'Pending'" class="btn btn-standart btn-red btn-large" ng-click="sbc.closeSession()">
