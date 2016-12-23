@@ -51,6 +51,7 @@
           </td>
           <!-- row content -->
           <td ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' " class="{{ subscriptionPlan.plan.id }}">
+            <!-- <div class="included-plan-fader" ng-show="up.isCurrentPlan(subscriptionPlan)"><div class="label">CURRENT</div></div> -->
             <span class="align-vertical-child">
               <span ng-if="feature.type=='Number'">
                 {{up.displayFeatureValue(feature.key, subscriptionPlan.additionalParams)}}

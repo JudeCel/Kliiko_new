@@ -102,6 +102,14 @@ function getChargebeeSubscription(subscriptionId, provider) {
   return deferred.promise;
 }
 
+function processFreeTrialPlanInformation(currentPlan) {
+  if (currentPlan.chargebeePlanId == 'free_trial') {
+    var timeDiff = Math.abs(new Date().getTime() - new Date(currentPlan.createdAt).getTime());
+    var diffDays = Math.floor(timeDiff / (1000 * 3600 * 24));
+    currentPlan.dataValues.daysLeft = constants.trialAccountDays - diffDays;
+  }
+}
+
 function getAllPlans(accountId) {
   let deferred = q.defer();
   let currentPlan = {};
@@ -114,6 +122,7 @@ function getAllPlans(accountId) {
         findSubscription(accountId).then(function(currentSub) {
           if(currentSub.active){
             currentPlan = currentSub.SubscriptionPlan;
+            processFreeTrialPlanInformation(currentPlan);
           }
           addPlanEstimateChargeAndConstants(result.list, accountId).then(function(planWithConstsAndEstimates) {
             deferred.resolve({currentPlan: currentPlan, plans: planWithConstsAndEstimates, features: planConstants.features});

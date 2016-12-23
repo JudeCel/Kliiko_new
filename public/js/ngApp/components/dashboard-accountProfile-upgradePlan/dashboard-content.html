@@ -1,4 +1,11 @@
 <section id="upgrade-plan-content" ng-controller="PlanController as up">
+
+  <div class="row row-centered">
+    <div class='col-md-offset-1 col-md-10 сol-centered text-center'>
+       <p class="warning" ng-if="up.currentPlan.daysLeft"> Your Free Trial will end in {{up.currentPlan.daysLeft}} day<span ng-if="up.currentPlan.daysLeft > 1">s</span> </p>
+    </div>
+  </div>
+
   <div class="row row-centered">
     <div class='col-xs-12 сol-centered dashboard-index text-center'>
       <h1>Upgrade Plan</h1>
