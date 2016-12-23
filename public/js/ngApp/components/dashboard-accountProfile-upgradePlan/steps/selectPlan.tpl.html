@@ -41,6 +41,8 @@
                 <div ng-include="'upgradePlanButton.html'"></div>
               </div>
             </div>
+
+            <span ng-show="up.isCurrentPlan(subscriptionPlan)">Current</span>
           </th>
         </tr>
         <!-- Table content-->
