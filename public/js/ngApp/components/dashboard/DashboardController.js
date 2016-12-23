@@ -75,7 +75,6 @@
           vm.theOnlySessionIsPending = res.theOnlySessionIsPending;
           vm.theOnlyPendingSessionTime = res.theOnlyPendingSessionTime;
           vm.hideTabs = !vm.hasRoles || res.theOnlySessionIsPending || res.theOnlySessionIsClosed;
-          setInitialTab();
         }
       });
     }
@@ -100,20 +99,6 @@
 
     function activeClass(tab) {
       return isTabActive(tab) ? 'active' : '';
-    }
-
-    function setInitialTab() {
-      var array = ['accountManager', 'facilitator', 'participant', 'observer'];
-
-      if(vm.accountUsers) {
-        for(var i in array) {
-          var role = array[i];
-          if(vm.accountUsers[role]) {
-            vm.currentTab = role;
-            break;
-          }
-        }
-      }
     }
   }
 })();
