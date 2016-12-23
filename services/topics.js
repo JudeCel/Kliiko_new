@@ -71,7 +71,6 @@ function updateSessionTopic(params) {
       deferred.reject(MessagesUtil.topics.notFoundSessionTopic);
     }
   }, function(error) {
-    console.log(params.id);
     deferred.reject(filters.errors(error));
   });
 

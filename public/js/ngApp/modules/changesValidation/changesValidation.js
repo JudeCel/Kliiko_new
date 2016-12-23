@@ -36,7 +36,7 @@
 
     function validationConfirmAlternative(res, saveAgainCallback, data, param1) {
       var deferred = $q.defer();
-console.log(res);
+
       validationConfirmDialog(res.validation, function() {
         if (res.validation.currentSnapshotChanges) {
           angular.merge(data.snapshot, res.validation.currentSnapshotChanges);
