@@ -92,7 +92,14 @@ router.get('/ping', function(req, res, next) {
 });
 
 router.get('/', function (req, res, next) {
-  res.render('login', {title: 'Login', error: "", message: '', email: ''});
+  res.render('login', {
+    title: 'Login',
+    error: "",
+    message: '',
+    email: '',
+    googleUrl: googleUrl,
+    facebookUrl: facebookUrl
+  });
 });
 
 router.get('/registration', function (req, res, next) {
@@ -169,7 +176,14 @@ function handleSocialCallback (req, res, next, provider) {
   let returnParams = JSON.parse(req.query.state);
   passport.authenticate(provider, function(err, user, info) {
     if (err) {
-      return res.render('login', { title: 'Login', error: err.message, message: "", email: "" });
+      return res.render('login', {
+        title: 'Login',
+        error: err.message,
+        message: "",
+        email: "",
+        googleUrl: googleUrl,
+        facebookUrl: facebookUrl
+       });
     }
 
     if (user) {
@@ -184,7 +198,11 @@ function handleSocialCallback (req, res, next, provider) {
       } else if(isRegistrationSocialCallback(req.query.state.type)) {
         registerUsingSocialData(res, req, returnParams, info);
       } else {
-        return res.render('login', { title: 'Login' });
+        return res.render('login', {
+          title: 'Login',
+          googleUrl: googleUrl,
+          facebookUrl: facebookUrl
+         });
       }
     }
   })(req, res, next);
@@ -316,6 +334,8 @@ router.route('/VerifyEmail/:token/:accountUserId?')
         tplData.message = '';
         tplData.email = '';
         tplData.error = tplData.errors.password;
+        tplData.googleUrl = googleUrl;
+        tplData.facebookUrl = facebookUrl;
         res.render('login', tplData);
       } else {
         let accountUserId = tplData.accountUserId ? parseInt(new Buffer(tplData.accountUserId, 'base64').toString('ascii')) : null;
