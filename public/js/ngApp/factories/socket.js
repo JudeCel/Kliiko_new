@@ -9,16 +9,21 @@ function socket($rootScope, globalSettings, fileUploader) {
     },
     // logger: function(kind, msg, data) { console.log(kind +":"+ msg +":",  data) },
   });
+  var channel = null;
 
   socket.onError( function(event){
     console.error(event);
   });
 
-  socket.connect();
+  if (!socket.isConnected()) {
+    socket.connect();
+  }
 
   return {
     sessionsBuilderChannel: function (sessionId, callback) {
-      var channel = socket.channel("sessionsBuilder:" + sessionId);
+      if (!channel) {
+        channel = socket.channel("sessionsBuilder:" + sessionId);
+      }
       if (channel.state != 'joined') {
         channel.join();
       }

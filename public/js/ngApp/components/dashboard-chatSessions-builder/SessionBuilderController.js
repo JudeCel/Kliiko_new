@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom', 'messagesUtil', '$confirm'];
-  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom, messagesUtil, $confirm) {
+  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom', 'messagesUtil', '$confirm', 'socket'];
+  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom, messagesUtil, $confirm, socket) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -32,6 +32,8 @@
       initStep().then(function (step) {
         vm.currentStep = step;
       });
+
+      subscribeCannel();
     }, function (error) {
       window.history.back();
       messenger.error(error);
@@ -67,6 +69,60 @@
     vm.showOkMark = showOkMark;
 
     var stepNames = ["setUp", "facilitatiorAndTopics", "manageSessionEmails", "manageSessionParticipants", "inviteSessionObservers"];
+
+    var currentState = { };
+    var onlineUsers = [];
+    vm.onlineUsers = onlineUsers;
+
+    function subscribeCannel() {
+      socket.sessionsBuilderChannel(vm.session.id, function(channel) {
+
+        function syncState(state) {
+          if (state) {
+            currentState = Phoenix.Presence.syncState(currentState, state, onJoin(state), onLeave(state));
+          }
+        }
+
+        function syncDiff(diff) {
+          if (diff) {
+            currentState = Phoenix.Presence.syncDiff(currentState, diff, onJoin(diff), onLeave(diff));
+          }
+        }
+
+        function onJoin(state) {
+          return (id, current, newPres) => {
+            if (!current) {
+              //todo: change this
+             onlineUsers.push(newPres.accountUser.email);
+            }
+          }
+        }
+
+        function onLeave(state) {
+          return (id, current, leftPres) => {
+            console.log("onLeave", id, current, leftPres);
+            if (current.metas.length == 0) {
+              //todo: change this
+              var index = onlineUsers.indexOf(current.accountUser.email);
+              if (index > -1) {
+                onlineUsers.splice(index, 1);
+              }
+            }
+          }
+        }
+
+        channel.on("presence_state", (state) =>{
+          //console.log("presence_state", state);
+          syncState(state);
+        });
+
+        channel.on("presence_diff", (diff) =>{
+          //console.log("presence_diff", diff);
+          syncDiff(diff)
+        });
+
+      });
+    }
 
     function closeSession() {
       if (vm.session.sessionData.showStatus != 'Pending' && vm.session.sessionData.showStatus != 'Closed') {
