@@ -86,8 +86,15 @@
       var deferred = $q.defer();
       mailRestApi.saveMailTemplate.post({mailTemplate:mTemplate, copy: createCopy}, function (res) {
         dbg.log2('#KliikoApp.mailTemplate > save mail template> server respond >');
-        //todo: changesValidation
-        deferred.resolve(res);
+        if (res.validation && !res.validation.isValid) {
+          changesValidation.validationConfirmAlternative(res, saveMailTemplate, mTemplate, createCopy).then(function(newRes) {
+            deferred.resolve(newRes);
+          }, function(err) {
+            deferred.reject(err);
+          });
+        } else {
+          deferred.resolve(res);
+        }
       });
       return deferred.promise;
     }

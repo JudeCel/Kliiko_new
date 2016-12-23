@@ -124,10 +124,10 @@ function getSessionSnapshot(session) {
 }
 
 function isMailTemplateDataValid(snapshot, params, mailTemplate) {
-  let currentSnapshot = getTopicSnapshot(sessionTopic)
+  let currentSnapshot = getMailTemplateSnapshot(mailTemplate);
   for (let i=0; i<constants.sessionBuilderValidateChanges.mailTemplate.fields.length; i++) {
     let fieldName = constants.sessionBuilderValidateChanges.mailTemplate.fields[i];
-    if (params[fieldName] && params[fieldName] != mailTemplate[fieldName] && snapshot[fieldName] != currentSnapshot[fieldName]) {
+    if (params.template[fieldName] && params.template[fieldName] != mailTemplate[fieldName] && snapshot[fieldName] != currentSnapshot[fieldName]) {
       return { isValid: false, canChange: true, currentSnapshotChanges: currentSnapshot };
     }
   }

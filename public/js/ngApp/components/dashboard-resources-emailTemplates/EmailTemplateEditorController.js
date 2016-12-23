@@ -202,9 +202,23 @@
         template.properties = vm.properties;
         template.properties.createdWithCustomName = createdFromModal;
         template.properties.templateName = templateName;
+        template.snapshot = vm.currentTemplate.snapshot;
       }
       mailTemplate.saveMailTemplate(template, createCopy).then(function (res) {
-        if (!res.error) {
+        if (res.error) {
+          template.error = null;
+          template.properties = null;
+          messenger.error(res.error);
+          deferred.reject();
+        } else if (res.ignored) {
+          refreshTemplateList(function() {
+            var index = getIndexOfMailTemplateWithId(template.id);
+            if (index != -1) {
+              vm.startEditingTemplate(index);
+            }
+          });
+          deferred.resolve();
+        } else {
           refreshTemplateList(function() {
             var index = getIndexOfMailTemplateWithId(res.templates.id);
             if (index != -1) {
@@ -213,11 +227,6 @@
           });
           messenger.ok(res.message);
           deferred.resolve();
-        } else {
-          template.error = null;
-          template.properties = null;
-          messenger.error(res.error);
-          deferred.reject();
         }
       });
 
