@@ -4,11 +4,10 @@
   angular.module('KliikoApp').controller('GalleryController', GalleryController);
   angular.module('KliikoApp.Root').controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['$q', 'dbg', 'GalleryServices', 'domServices', 'messenger', '$sce', 'messagesUtil', '$confirm'];
-  function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce, messagesUtil, $confirm) {
+  GalleryController.$inject = ['$q', 'dbg', 'GalleryServices', 'domServices', 'messenger', '$sce', 'messagesUtil', '$confirm', 'account'];
+  function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce, messagesUtil, $confirm, account) {
     dbg.log2('#GalleryController started');
     var vm = this;
-
     vm.templatesDir = '/js/ngApp/components/dashboard-resources-gallery/templates/';
     vm.newResource = {};
     vm.resourceList = [];
