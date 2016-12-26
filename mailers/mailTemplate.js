@@ -75,7 +75,11 @@ function sendMailWithTemplate(template, mailParams, callback) {
     subject: template.subject,
     html: parsedTemplate.html,//template.content
     attachments: parsedTemplate.resources
-  }, callback);
+  }).then((resp) => {
+    callback(null, resp);
+  }, (error) => {
+    callback(error);
+  });
 }
 
 function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {
@@ -116,7 +120,11 @@ function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {
         cid: "event.ics@att"
       }]
       */
-    }, callback);
+    }).then((resp) => {
+      callback(null, resp);
+    }, (error) => {
+      callback(error);
+    });
 }
 
 module.exports = {

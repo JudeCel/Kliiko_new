@@ -1,13 +1,20 @@
 "use strict";
 const { createTransport } = require('nodemailer');
+let Bluebird = require('bluebird');
 var transport = null;
 
-const sendMail = (content, cb) => {
+const sendMail = (content) => {
   if (!transport) {
     transport = createTransport(config());
   }
 
-  return transport.sendMail(content, cb)
+  return new Bluebird((resolve, reject) => {
+    transport.sendMail(content).then((data) => {
+      resolve(data);
+    }, (error) => {
+      reject(error);
+    });
+  });
 }
 
 const testTransporter = {

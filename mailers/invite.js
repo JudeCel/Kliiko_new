@@ -38,7 +38,11 @@ function sendInviteAccountManager(inviteParams, callback) {
             path: 'public/images/mail/system_header.png',
             cid: 'systemHeader@attachment'
           }]
-        }, callback);
+        }).then((resp) => {
+          callback(null, resp);
+        }, (error) => {
+          callback(error);
+        })
       });
     } else {
       // found template in db
