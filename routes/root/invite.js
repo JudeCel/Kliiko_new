@@ -15,7 +15,7 @@ function index(req, res, next) {
   inviteService.findInvite(req.params.token).then((invite) => {
     inviteService.findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
       if (user) {
-        res.render(views_path('index'), simpleParams('Invite', invite, {}));
+        loginUser(req, res, next, user);
       } else {
         res.render(views_path('newUser'), simpleParams('Invite', invite, {}));
       }
