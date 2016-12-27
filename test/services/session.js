@@ -12,33 +12,7 @@ var sessionBuilderServices = require('./../../services/sessionBuilder');
 
 var assert = require('chai').assert;
 describe('SERVICE - Session', function() {
-
   describe('#canChangeAnonymous', function() {
-    it('when session closed', function (done) {
-      let tmpSession = {status: 'closed'}
-      let result = sessionServices.canChangeAnonymous(tmpSession)
-      try {
-        assert.equal(result, false);
-        done()
-      } catch (e) {
-        done(e)
-      }
-    });
-
-    it('when session expired', function (done) {
-      let startTime = new Date();
-      let endTime = startTime.setHours(startTime.getHours() - 2000)
-
-      let tmpSession = {endTime: endTime}
-      let result = sessionServices.canChangeAnonymous(tmpSession)
-      try {
-        assert.equal(result, false);
-        done()
-      } catch (e) {
-        done(e)
-      }
-    });
-
     it('when session is anonymous', function (done) {
       let tmpSession = {anonymous: true}
       let result = sessionServices.canChangeAnonymous(tmpSession)
@@ -48,23 +22,8 @@ describe('SERVICE - Session', function() {
       } catch (e) {
         done(e)
       }
-    });
-
-    it('when session is valid', function (done) {
-      let startTime = new Date();
-      let endTime = startTime.setHours(startTime.getHours() + 2000)
-
-      let tmpSession = {anonymous: false, status: 'open', endTime: endTime}
-      let result = sessionServices.canChangeAnonymous(tmpSession)
-      try {
-        assert.equal(result, true);
-        done()
-      } catch (e) {
-        done(e)
-      }
-    });
+     });
   })
-
   describe('Session with DB call', function() {
     var testData = {};
 
@@ -178,7 +137,7 @@ describe('SERVICE - Session', function() {
 
               AccountUser.find({ where: { id: accountUserId} }).then(function(accountUser) {
               assert.equal(accountUser.role, 'participant');
-            
+
                 sessionServices.removeSession(testData.session.id, testData.account.id, provider).then(function(result) {
                   assert.equal(result.message, sessionServices.messages.removed);
 
