@@ -12,6 +12,18 @@ var sessionBuilderServices = require('./../../services/sessionBuilder');
 
 var assert = require('chai').assert;
 describe('SERVICE - Session', function() {
+  describe('#canChangeAnonymous', function() {
+    it('when session is anonymous', function (done) {
+      let tmpSession = {anonymous: true}
+      let result = sessionServices.canChangeAnonymous(tmpSession)
+      try {
+        assert.equal(result, false);
+        done()
+      } catch (e) {
+        done(e)
+      }
+     });
+  })
   describe('Session with DB call', function() {
     var testData = {};
 

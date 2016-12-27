@@ -32,7 +32,8 @@ module.exports = {
   getAllSessionRatings: getAllSessionRatings,
   changeComment: changeComment,
   getSessionByInvite: getSessionByInvite,
-  setAnonymous: setAnonymous
+  setAnonymous: setAnonymous,
+  canChangeAnonymous: canChangeAnonymous
 };
 
 function isInviteSessionInvalid(resp) {
@@ -58,14 +59,19 @@ function setAnonymous(sessionId, accountId) {
     }]
   }).then(function(session) {
     if(session) {
-      session.update({ anonymous: true }).then(function(updatedSession) {
-        let promises = _.map(session.SessionMembers, (member) => {
-          sessionMemberServices.processSessionMember(member.AccountUser, member, updatedSession, {role: member.role}, q.defer());
-        });
-        q.allSettled(promises).then(function () {
-          deferred.resolve(updatedSession);
-        });
-      })
+      if (canChangeAnonymous(session)) {
+        session.update({ anonymous: true }).then(function(updatedSession) {
+          let promises = _.map(session.SessionMembers, (member) => {
+            sessionMemberServices.processSessionMember(member.AccountUser, member, updatedSession, {role: member.role}, q.defer());
+          });
+          q.allSettled(promises).then(function () {
+            deferred.resolve(updatedSession);
+          });
+        })
+      }else{
+        deferred.reject(MessagesUtil.session.cannotBeChanged);
+      }
+
     } else {
       deferred.reject(MessagesUtil.session.notFound);
     }
@@ -74,6 +80,11 @@ function setAnonymous(sessionId, accountId) {
   });
 
   return deferred.promise;
+}
+
+function canChangeAnonymous(session) {
+  if (session.anonymous == true) { return false };
+  return true;
 }
 
 function getSessionByInvite(token) {
