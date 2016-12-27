@@ -13,6 +13,7 @@ var MessagesUtil = require('./../util/messages');
 var async = require('async');
 var q = require('q');
 var _ = require('lodash');
+var bluebird = require('bluebird');
 var surveyConstants = require('../util/surveyConstants');
 
 const VALID_ATTRIBUTES = {
@@ -708,6 +709,20 @@ function validateParams(params, attributes) {
   return _.pick(params, attributes);
 };
 
+function canCreate(params, account) {
+  let deferred = q.defer();
+  validators.hasValidSubscription(account.id).then(function() {
+    validators.subscription(account.id, 'survey', 1).then(function() {
+        deferred.resolve({canCreateSurvey: true});
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }, function(error) {
+        deferred.reject(error);
+    });
+  return deferred.promise;
+};
+
 module.exports = {
   messages: MessagesUtil.survey,
   findAllSurveys: findAllSurveys,
@@ -721,5 +736,6 @@ module.exports = {
   confirmSurvey: confirmSurvey,
   exportSurvey: exportSurvey,
   constantsSurvey: constantsSurvey,
-  canExportSurveyData: canExportSurveyData
+  canExportSurveyData: canExportSurveyData,
+  canCreate: canCreate
 };

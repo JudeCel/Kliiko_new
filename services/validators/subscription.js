@@ -52,7 +52,8 @@ module.exports = {
   validate: validate,
   planAllowsToDoIt: planAllowsToDoIt,
   canAddAccountUsers: canAddAccountUsers,
-  countMessage: countMessage
+  countMessage: countMessage,
+  countRecruiterMessage: countRecruiterMessage
 };
 
 function validate(accountId, type, count, params) {
@@ -71,7 +72,11 @@ function validate(accountId, type, count, params) {
           if(c + count <= maxCount || maxCount == -1) {
             deferred.resolve();
           } else {
-            deferred.reject(countMessage(type, maxCount));
+            if (type == "survey") {
+              deferred.reject(countRecruiterMessage(subscription, maxCount));
+            } else {
+              deferred.reject(countMessage(type, maxCount));
+            }
           }
         }, function(error) {
           deferred.reject(filters.errors(error));
@@ -185,4 +190,29 @@ function countMessage(type, maxCount) {
   message = message.replace('XXX', _.startCase(type));
   message = message.replace('YYY', maxCount);
   return message;
+}
+
+function countRecruiterMessage(subscription, maxCount) {
+  let subscriptionType = 'free_trial';
+  if (subscription) {
+    subscriptionType = subscription.dataValues.planId;
+  }
+
+  let message = MessagesUtil.validators.subscription.recruiterCountLimitJunior_Trial;
+  if (_.includes(subscriptionType, 'free_')) {
+    if (_.includes(subscriptionType, 'trial')) {
+      message = MessagesUtil.validators.subscription.recruiterCountLimitJunior_Trial + "Free Trial Plan";
+    } else {
+      message = MessagesUtil.validators.subscription.recruiterCountLimitJunior_Trial + "Free Account Plan";
+    }
+  } else if (_.includes(subscriptionType, 'junior_')) {
+    message = MessagesUtil.validators.subscription.recruiterCountLimitJunior_Trial + "Junior Plan";
+  } else if (_.includes(subscriptionType, 'core_')) {
+    message = MessagesUtil.validators.subscription.recruiterCountLimitCore;
+  } else if (_.includes(subscriptionType, 'senior_')) {
+    message = MessagesUtil.validators.subscription.recruiterCountLimitSenior;
+  }
+
+  message = message.replace('YYY', maxCount);
+  return { dialog: message };
 }

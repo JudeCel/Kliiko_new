@@ -2,9 +2,9 @@
   'use strict';
 
   angular.module('KliikoApp').controller('SurveyController', SurveyController);
-  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$interval', '$anchorScroll', '$location', '$window'];
+  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$interval', '$anchorScroll', '$location', '$window', '$confirm'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $interval, $anchorScroll, $location, $window) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $interval, $anchorScroll, $location, $window, $confirm) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
@@ -207,7 +207,7 @@
 
         if (res.error) {
           if (!autoSave) {
-            messenger.error(res.error);
+            showError(res.error);
           }
         } else {
           survey.id = res.data.id;
@@ -241,12 +241,20 @@
       });
     };
 
+    function showError(error) {
+      if (error.dialog) {
+        $confirm({ title: "Sorry", text: error.dialog, closeOnly: true });
+      } else {
+        messenger.error(error);
+      }
+    }
+
     function copySurvey(survey) {
       surveyServices.copySurvey({ id: survey.id }).then(function(res) {
         dbg.log2('#SurveyController > copySurvey > res ', res);
 
         if(res.error) {
-          messenger.error(res.error);
+          showError(res.error);
         }
         else {
           vm.surveys.push(res.data);
@@ -433,16 +441,31 @@
           vm.currentSurveyMode = 'Edit';
         }
         else {
-          vm.currentSurveyMode = 'Create';
+          return showCreatePage(page);
         }
 
-        vm.submitError = null;
-        vm.currentContacts = null;
-        vm.survey = survey || defaultSurveyData();
-        vm.currentPage = { page: 'manage', type: page };
-        moveBrowserTo('');
+        submitPageData(page, survey);
       }
     };
+
+    function showCreatePage(page) {
+      vm.currentSurveyMode = 'Create';
+      surveyServices.canCreate().then(function(res) {
+        if (res.error) {
+          showError(res.error);
+        } else {
+          submitPageData(page);
+        }
+      });
+    }
+
+    function submitPageData(page, survey) {
+      vm.submitError = null;
+      vm.currentContacts = null;
+      vm.survey = survey || defaultSurveyData();
+      vm.currentPage = { page: 'manage', type: page };
+      moveBrowserTo('');
+    }
 
     function defaultQuestionParams(question) {
       return {

@@ -89,6 +89,13 @@ function getResponses(res) {
   };
 }
 
+function canCreate(req, res) {
+  surveyService.canCreate(req.body, res.locals.currentDomain).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+}
+
 module.exports = {
   get: get,
   find: find,
@@ -100,5 +107,6 @@ module.exports = {
   answer: answer,
   confirm: confirm,
   getConstants: getConstants,
-  canExportSurveyData: canExportSurveyData
+  canExportSurveyData: canExportSurveyData,
+  canCreate, canCreate
 };

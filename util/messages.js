@@ -224,7 +224,10 @@ module.exports = {
       notFound: 'No subscription found',
       notValidDependency: 'Not valid dependency',
       inactiveSubscription: 'Your subscription is expired, please update your subscription plan.',
-      countLimit: 'You have reached limit for XXXs (max: YYY)'
+      countLimit: 'You have reached limit for XXXs (max: YYY)',
+      recruiterCountLimitJunior_Trial: 'Please upgrade your Plan. You can only have YYY Open Social OR Survey Recruiter on the ',
+      recruiterCountLimitCore: 'Please upgrade your Plan. You can only have YYY Open Social OR Survey Recruiter OR a combination of one each on the Core Plan.',
+      recruiterCountLimitSenior: 'Please upgrade your Plan. You can only have YYY Open Social OR Survey Recruiters OR a combination on the Senior Plan.'
     }
   },
   models: {

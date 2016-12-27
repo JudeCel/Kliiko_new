@@ -97,6 +97,7 @@ router.put('/survey', PERMISSIONS.facilitatorManagerAdmin, survey.update);
 router.post('/survey/copy', PERMISSIONS.facilitatorManagerAdmin, survey.copy);
 router.put('/survey/status', PERMISSIONS.facilitatorManagerAdmin, survey.status);
 router.get('/survey/find', survey.find);
+router.get('/survey/canCreate', PERMISSIONS.facilitatorManagerAdmin, survey.canCreate);
 router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', PERMISSIONS.facilitatorManagerAdmin, survey.confirm);
 router.get('/survey/constants', survey.getConstants);
