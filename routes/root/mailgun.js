@@ -1,6 +1,7 @@
 'use strict';
 
 const models =  require('./../models');
+var inviteService = require('../../services/invite');
 
 const { Invite } = models;
 module.exports = {
@@ -8,17 +9,9 @@ module.exports = {
 };
 
 function webhook(req, res, next) {
-  let mailMessageId = res.params["Message-Id"].replace(/[<>]/g, "");
-  let emailStatus = null;
-  
-  if (res.params.event == "dropped") {
-    emailStatus = "failed";
-  }
-  if (res.params.event == "dropped") {
-    emailStatus = "sent";
-  }
-
-  Invite.update({emailStatus: emailStatus }, {where: {mailMessageId: mailMessageId}}).then(() => {
+  inviteService.processMailWebhook(res.params).then(() => {
     res.sendStatus(200);
+  }, (error) => {
+    res.sendStatus(error.code);
   });
 }

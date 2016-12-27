@@ -380,14 +380,10 @@ function processEmailStatus(id, apiResp, emailStatus) {
     Invite.find({where: {id: id}, include: [AccountUser]}).then((invite) => {
       if (!invite) { return reject(MessagesUtil.invite.notFound) }
 
-      let updateParams = { emailStatus: emailStatus }
+      let updateParams = {}
 
       if (apiResp) {
         updateParams.mailMessageId = apiResp.messageId;
-
-        if (_.includes(apiResp.accepted, invite.AccountUser.email)) {
-          updateParams.emailStatus = "sent";
-        }
         if (_.includes(apiResp.rejected, invite.AccountUser.email)) {
           updateParams.emailStatus = "failed";
         }
@@ -400,6 +396,24 @@ function processEmailStatus(id, apiResp, emailStatus) {
       });
     })
   })
+}
+function processMailWebhook(webhookParams) {
+  let updateParams = {}
+
+  let mailMessageId = webhookParams["Message-Id"].replace(/[<>]/g, "");
+
+  if (webhookParams.event == "dropped") {
+    updateParams.emailStatus = "failed";
+  }
+  if (webhookParams.event == "dropped") {
+    updateParams.emailStatus = "sent";
+  }
+
+  return new Bluebird((resolve, reject) => {
+    Invite.update({emailStatus: emailStatus }, {where: {mailMessageId: mailMessageId}}).then(() => {
+      resolve();
+    });
+  });
 }
 
 function declineInvite(token) {
@@ -821,6 +835,7 @@ module.exports = {
   messages: MessagesUtil.invite,
   sendInvite: sendInvite,
   processEmailStatus: processEmailStatus,
+  processMailWebhook: processMailWebhook,
   createBulkInvites: createBulkInvites,
   createInvite: createInvite,
   findAndRemoveAccountManagerInvite: findAndRemoveAccountManagerInvite,
