@@ -253,7 +253,7 @@ function sendInvite(inviteId, deferred) {
               deferred.reject(error);
             }
             else {
-              accountUserService.updateInfo(invite.accountUserId, "Invite", null);
+              accountUserService.updateInfo(invite.accountUserId, "Invites", null);
               deferred.resolve(simpleParams(invite));
             }
           });
