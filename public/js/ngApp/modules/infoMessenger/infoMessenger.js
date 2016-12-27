@@ -28,10 +28,10 @@
     }
 
     function initMessage(message) {
-      element = jQuery("#infoMessage");
+      element = jQuery("body > #infoMessage");
       if (element.length == 0) {
         jQuery('body').append('<div id="infoMessage" class="hidden"></div>');
-        element = jQuery("#infoMessage");
+        element = jQuery("body > #infoMessage");
       }
     }
 

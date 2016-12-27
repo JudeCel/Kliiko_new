@@ -29,6 +29,8 @@ function updateSessionTopic(req, res, next) {
       let sessionId = response.sessionTopic.sessionId;
       sessionBuilderServices.sessionBuilderObjectStepSnapshot(sessionId, accountId, "facilitatiorAndTopics").then(function(snapshotResult) {
         res.send({data: response, snapshot: snapshotResult});
+      }, function (error) {
+        res.send({ error: error });
       });
     } else {
       res.send(response);

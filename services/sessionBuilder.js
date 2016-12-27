@@ -761,7 +761,7 @@ function sessionBuilderObjectSnapshotForStep2(stepData) {
   let res = { };
   for (let i=0; i<stepData.topics.length; i++) {
     let topic = stepData.topics[i].SessionTopics[0];
-    res[topic.topicId] = sessionBuilderSnapshotValidation.getTopicSnapshot(topic)[topic.topicId];
+    res[topic.topicId] = sessionBuilderSnapshotValidation.getTopicSnapshot(topic);
   }
   return res;
 }
@@ -803,7 +803,7 @@ function sessionBuilderObjectStepSnapshot(sessionId, accountId, stepName) {
         resolve(null);
       });
     }, function(error) {
-      resolve(null);
+      reject(error);
     });
   });
 }
@@ -920,11 +920,11 @@ function searchSessionMembers(sessionId, role) {
     include: [
       {
         model: models.SessionMember,
-        required: true,
+        required: false,
         where: { sessionId: sessionId, role: role },
       },{
         model: models.Invite,
-        required: false,
+        required: true,
         where: {
           sessionId: sessionId,
           role: role

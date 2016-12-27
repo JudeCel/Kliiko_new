@@ -108,9 +108,7 @@ function getTopicSnapshot(sessionTopic) {
     let fieldName = fields[i];
     topicRes[fieldName] = stringHelpers.hash(sessionTopic[fieldName]);
   }
-  let res = { };
-  res[sessionTopic.topicId] = topicRes;
-  return res;
+  return topicRes;
 }
 
 function getSessionSnapshot(session) {
@@ -135,13 +133,14 @@ function isMailTemplateDataValid(snapshot, params, mailTemplate) {
 }
 
 function isTopicDataValid(snapshot, params, sessionTopic) {
-  let currentSnapshotObj = getTopicSnapshot(sessionTopic) = getTopicSnapshot(sessionTopic);
-  let currentSnapshot = currentSnapshotObj[sessionTopic.topicId];
+  let currentSnapshot = getTopicSnapshot(sessionTopic);
   let oldSnapshot = snapshot[sessionTopic.topicId];
   for (let i=0; i<constants.sessionBuilderValidateChanges.topic.propertyFields.length; i++) {
     let fieldName = constants.sessionBuilderValidateChanges.topic.propertyFields[i];
     if (params[fieldName] && params[fieldName] != sessionTopic[fieldName] && oldSnapshot[fieldName] != currentSnapshot[fieldName]) {
-      return { isValid: false, canChange: true, currentSnapshotChanges: currentSnapshotObj };
+      let currentSnapshotChanges = { };
+      currentSnapshotChanges[sessionTopic.topicId] = currentSnapshot;
+      return { isValid: false, canChange: true, currentSnapshotChanges: currentSnapshotChanges };
     }
   }
   return { isValid: true };
@@ -167,7 +166,7 @@ function isTopicsDataValid(snapshot, sessionId, accountId, topics) {
       let currentSnapshot = { };
       for (let i=0; i<currentTopics.length; i++) {
         let topic = currentTopics[i];
-        currentSnapshot[topic.topicId] = getTopicSnapshot(topic)[topic.topicId];
+        currentSnapshot[topic.topicId] = getTopicSnapshot(topic);
       }
       let ids = Object.keys(snapshot);
       for (let i=0; i<ids.length; i++) {
