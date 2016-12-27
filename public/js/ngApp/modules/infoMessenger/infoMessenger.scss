@@ -1,0 +1,16 @@
+
+#infoMessage {
+  position: fixed;
+  right: 0;
+  left: 0;
+  top: 0;
+  text-align: center;
+  z-index: 99999999;
+  background: rgba(10, 10, 10, 0.8);
+  padding: 10px;
+  color: #fff;
+
+  .hidden {
+    display: none;
+  }
+}

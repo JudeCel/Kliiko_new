@@ -13,6 +13,7 @@
     'debModule',
     'domServices',
     'messenger',
+    'infoMessenger',
     'ngMessages',
     'ngCookies',
     'colorpicker.module',
