@@ -11,7 +11,7 @@ var subscriptionFixture = require('./../fixtures/subscription');
 var sessionBuilderServices = require('./../../services/sessionBuilder');
 
 var assert = require('chai').assert;
-describe.only('SERVICE - Session', function() {
+describe('SERVICE - Session', function() {
   describe('Session with DB call', function() {
     var testData = {};
 
