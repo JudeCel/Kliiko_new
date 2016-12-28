@@ -130,6 +130,11 @@
       }, 10);
     }
 
+    function populateSessionMember(accountUserId) {
+      //var sessionId = vm.session.id;
+      //todo:
+    }
+
     function updateInviteItem(resp) {
       var i = 0;
       while (i < vm.stepMembers.length) {
@@ -167,6 +172,10 @@
             break;
           }
           i++
+        }
+        
+        if (resp.invite.status == "confirmed") {
+          populateSessionMember(resp.accountUserId);
         }
 
         if(!$scope.$$phase) {
