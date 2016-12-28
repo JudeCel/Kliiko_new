@@ -75,6 +75,7 @@
           vm.theOnlySessionIsPending = res.theOnlySessionIsPending;
           vm.theOnlyPendingSessionTime = res.theOnlyPendingSessionTime;
           vm.hideTabs = !vm.hasRoles || res.theOnlySessionIsPending || res.theOnlySessionIsClosed;
+          setInitialTab();
         }
       });
     }
@@ -99,6 +100,38 @@
 
     function activeClass(tab) {
       return isTabActive(tab) ? 'active' : '';
+    }
+
+    function setInitialTab() {
+      var rolesInfo = getRolesInfo();
+
+      if (hasOnlyOneRole(rolesInfo)) {
+        vm.currentTab = rolesInfo.currentRole;
+      }
+    }
+
+    function getRolesInfo() {
+      var rolesInfo = {
+        rolesCount: 0,
+        currentRole: ""
+      };
+      var roleNames = ['accountManager', 'facilitator', 'participant', 'observer'];
+
+      if(vm.accountUsers) {
+        for(var i in roleNames) {
+          var roleName = roleNames[i];
+          if(vm.accountUsers[roleName]) {
+            rolesInfo.rolesCount++;
+            rolesInfo.currentRole = roleName;
+          }
+        }
+      }
+
+      return rolesInfo;
+    }
+
+    function hasOnlyOneRole(rolesInfo) {
+      return rolesInfo.rolesCount == 1;
     }
   }
 })();
