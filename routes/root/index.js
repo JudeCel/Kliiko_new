@@ -271,7 +271,14 @@ router.get("/auth/googlePaiedPlanRegistration", function (req, res, next) {
 function createUserAndSendEmail(req, res, userParams, renderInfo) {
   usersRepo.create(userParams, function(error, result) {
     if(error) {
-      res.render(renderInfo.failed, usersRepo.prepareParams(req, error));
+      let params = usersRepo.prepareParams(req, error);
+
+      if (renderInfo.failed == "registration") {
+        params.facebookUrl = facebookUrl;
+        params.googleUrl = googleUrl;
+      }
+
+      res.render(renderInfo.failed, params);
     }
     else {
       let tplData = {
@@ -296,18 +303,19 @@ function createUserAndSendEmail(req, res, userParams, renderInfo) {
 }
 
 router.post('/paidPlanRegistration', function (req, res, next) {
-  let userParams = usersRepo.prepareParams(req);
+  let userParams = getParams(req);
   createUserAndSendEmail(req, res, userParams, { failed: 'paidPlanRegistration', success: 'welcome' });
 });
 
 router.post('/freeTrialRegistration', function (req, res, next) {
-  let userParams = usersRepo.prepareParams(req);
+  let userParams = getParams(req);
   userParams.selectedPlanOnRegistration = 'free_trial';
   createUserAndSendEmail(req, res, userParams, { failed: 'freeTrialRegistration', success: 'welcome' });
 });
 
 router.post('/registration', function (req, res, next) {
-  let userParams = usersRepo.prepareParams(req);
+  let userParams = getParams(req);
+  console.log("FFFFFFFFFFFFFFFFFF");
   createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
 });
 
