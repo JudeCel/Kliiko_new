@@ -151,7 +151,6 @@
         dbg.log2('#surveyServices > canCreate > rest call responds', res);
         deferred.resolve(res);
       });
-
       return deferred.promise;
     }
 

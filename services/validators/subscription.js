@@ -35,7 +35,7 @@ const DEPENDENCIES = {
     key: 'surveyCount',
     model: models.Survey,
     params: function(accountId) {
-      return { where: { accountId: accountId } };
+      return { where: { accountId: accountId, closed: false, confirmedAt: {$ne: null} } };
     }
   },
   topic: {

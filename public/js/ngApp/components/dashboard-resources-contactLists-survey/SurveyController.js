@@ -123,15 +123,14 @@
     }
 
     function changeStatus(survey) {
-      var closedAt = survey.closed ? null : new Date();
-      surveyServices.changeStatus({ id: survey.id, closed: !survey.closed, closedAt: closedAt }).then(function(res) {
+      surveyServices.changeStatus({ id: survey.id, closed: survey.closed }).then(function(res) {
         dbg.log2('#SurveyController > changeStatus > res ', res);
 
         if(res.error) {
-          messenger.error(res.error);
-        } else {
-          survey.closedAt = closedAt;
           survey.closed = !survey.closed;
+          showError(res.error);
+        } else {
+          survey.closedAt = res.data.closedAt;
           messenger.ok(res.message);
         }
       });
@@ -265,13 +264,13 @@
 
     function confirmSurvey(survey) {
       var date = new Date();
-      surveyServices.confirmSurvey({ id: survey.id, confirmedAt: date }).then(function(res) {
+      surveyServices.confirmSurvey({ id: survey.id }).then(function(res) {
         dbg.log2('#SurveyController > confirmSurvey > res ', res);
 
         if (res.error) {
-          messenger.error(res.error);
+          showError(res.error);
         } else {
-          survey.confirmedAt = date;
+          survey.confirmedAt = res.data.confirmedAt;
           messenger.ok(res.message);
           changePage('index');
         }
@@ -450,13 +449,7 @@
 
     function showCreatePage(page) {
       vm.currentSurveyMode = 'Create';
-      surveyServices.canCreate().then(function(res) {
-        if (res.error) {
-          showError(res.error);
-        } else {
-          submitPageData(page);
-        }
-      });
+      submitPageData(page);
     }
 
     function submitPageData(page, survey) {
