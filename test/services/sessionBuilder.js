@@ -8,6 +8,7 @@ var constants = require('../../util/constants');
 var models = require('./../../models');
 
 var sessionBuilderServices = require('./../../services/sessionBuilder');
+var inviteService = require('./../../services/invite');
 var async = require('async');
 var _ = require('lodash');
 
@@ -88,7 +89,7 @@ describe('SERVICE - SessionBuilder', function() {
             assert.equal(result.sessionBuilder.steps.step4.stepName, 'manageSessionParticipants');
             assert.deepEqual(result.sessionBuilder.steps.step4.participants, []);
             assert.equal(result.sessionBuilder.steps.step5.stepName, 'inviteSessionObservers');
-            assert.equal(result.sessionBuilder.steps.step5.observers.length, 1);
+            assert.deepEqual(result.sessionBuilder.steps.step5.observers, []);
             assert.isObject(result.sessionBuilder.snapshot);
             done();
           } catch (e) {
@@ -512,13 +513,16 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           let nextStepIndex = 2;
           params.name = 'My first session';
-
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
-              sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
-                sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
-                  assert.equal(session.step, 'facilitatiorAndTopics');
-                  done();
+              inviteService.createFacilitatorInvite({sessionId: member.sessionId, accountUserId: member.accountUserId}).then(function() {
+                sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
+                  sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
+                    assert.equal(session.step, 'facilitatiorAndTopics');
+                    done();
+                  }, function(error) {
+                    done(error);
+                  });
                 }, function(error) {
                   done(error);
                 });
@@ -531,6 +535,8 @@ describe('SERVICE - SessionBuilder', function() {
           }, function(error) {
             done(error);
           });
+        }, function(error) {
+          done(error);
         });
       });
     });
