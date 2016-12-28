@@ -303,19 +303,18 @@ function createUserAndSendEmail(req, res, userParams, renderInfo) {
 }
 
 router.post('/paidPlanRegistration', function (req, res, next) {
-  let userParams = getParams(req);
+  let userParams = usersRepo.prepareParams(req);
   createUserAndSendEmail(req, res, userParams, { failed: 'paidPlanRegistration', success: 'welcome' });
 });
 
 router.post('/freeTrialRegistration', function (req, res, next) {
-  let userParams = getParams(req);
+  let userParams = usersRepo.prepareParams(req);
   userParams.selectedPlanOnRegistration = 'free_trial';
   createUserAndSendEmail(req, res, userParams, { failed: 'freeTrialRegistration', success: 'welcome' });
 });
 
 router.post('/registration', function (req, res, next) {
-  let userParams = getParams(req);
-  console.log("FFFFFFFFFFFFFFFFFF");
+  let userParams = usersRepo.prepareParams(req);
   createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
 });
 
