@@ -204,7 +204,7 @@ function sendInvite(inviteId, deferred) {
             deferred.reject(error);
           }
           else {
-            deferred.resolve(data);
+            deferred.resolve(simpleParams(invite));
           }
         });
       }, function (error) {
@@ -253,8 +253,8 @@ function sendInvite(inviteId, deferred) {
               deferred.reject(error);
             }
             else {
-              accountUserService.updateInfo(invite.accountUserId, "Invite", null);
-              deferred.resolve(data);
+              accountUserService.updateInfo(invite.accountUserId, "Invites", null);
+              deferred.resolve(simpleParams(invite));
             }
           });
         }, function (error) {

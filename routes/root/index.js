@@ -223,16 +223,25 @@ function registerUsingSocialData(res, req, returnParams, info) {
   res.locals = usersRepo.prepareParams(req);
   socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
     if (returnParams.page == 'freeTrialRegistration') {
-      res.render('freeTrialRegistration', {appData: res.locals, error: {}});
+      res.render('freeTrialRegistration', getRegistrationPageParams(res.locals));
     }else if(returnParams.page == 'paidPlanRegistration'){
       res.locals.selectedPlanOnRegistration = returnParams.selectedPlanOnRegistration;
-      res.render("paidPlanRegistration", {appData: res.locals, error: {}});
+      res.render("paidPlanRegistration", getRegistrationPageParams(res.locals));
     }else{
-      res.render("registration", {appData: res.locals, error: {}});
+      res.render("registration", getRegistrationPageParams(res.locals));
     }
   }, function(err) {
     next(err);
   });
+}
+
+function getRegistrationPageParams (appData) {
+  return {
+    appData: appData,
+    error: {},
+    googleUrl: googleUrl,
+    facebookUrl: facebookUrl
+  };
 }
 
 function isInviteSocialCallback(type) {
@@ -263,7 +272,14 @@ router.get("/auth/googlePaiedPlanRegistration", function (req, res, next) {
 function createUserAndSendEmail(req, res, userParams, renderInfo) {
   usersRepo.create(userParams, function(error, result) {
     if(error) {
-      res.render(renderInfo.failed, usersRepo.prepareParams(req, error));
+      let params = usersRepo.prepareParams(req, error);
+
+      if (renderInfo.failed == "registration") {
+        params.facebookUrl = facebookUrl;
+        params.googleUrl = googleUrl;
+      }
+
+      res.render(renderInfo.failed, params);
     }
     else {
       let tplData = {
