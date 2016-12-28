@@ -222,16 +222,25 @@ function registerUsingSocialData(res, req, returnParams, info) {
   res.locals = usersRepo.prepareParams(req);
   socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
     if (returnParams.page == 'freeTrialRegistration') {
-      res.render('freeTrialRegistration', {appData: res.locals, error: {}});
+      res.render('freeTrialRegistration', getRegistrationPageParams(res.locals));
     }else if(returnParams.page == 'paidPlanRegistration'){
       res.locals.selectedPlanOnRegistration = returnParams.selectedPlanOnRegistration;
-      res.render("paidPlanRegistration", {appData: res.locals, error: {}});
+      res.render("paidPlanRegistration", getRegistrationPageParams(res.locals));
     }else{
-      res.render("registration", {appData: res.locals, error: {}});
+      res.render("registration", getRegistrationPageParams(res.locals));
     }
   }, function(err) {
     next(err);
   });
+}
+
+function getRegistrationPageParams (appData) {
+  return {
+    appData: appData,
+    error: {},
+    googleUrl: googleUrl,
+    facebookUrl: facebookUrl
+  };
 }
 
 function isInviteSocialCallback(type) {

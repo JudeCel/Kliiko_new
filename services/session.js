@@ -71,6 +71,7 @@ function setAnonymous(sessionId, accountId) {
       }else{
         deferred.reject(MessagesUtil.session.cannotBeChanged);
       }
+
     } else {
       deferred.reject(MessagesUtil.session.notFound);
     }
@@ -82,8 +83,6 @@ function setAnonymous(sessionId, accountId) {
 }
 
 function canChangeAnonymous(session) {
-  if (new Date().getTime() > new Date(session.endTime).getTime() ) { return false };
-  if (session.status == "closed") { return false };
   if (session.anonymous == true) { return false };
   return true;
 }
@@ -112,9 +111,9 @@ function changeComment(id, comment, accountId) {
   let deferred = q.defer();
 
   SessionMember.find({
-    where: { 
+    where: {
       id: id,
-      role: 'participant' 
+      role: 'participant'
     },
     include: [{
       model: Session,
@@ -129,7 +128,7 @@ function changeComment(id, comment, accountId) {
           deferred.reject(filters.errors(error));
         });
       } else {
-        deferred.reject(MessagesUtil.session.sessionNotClosed);  
+        deferred.reject(MessagesUtil.session.sessionNotClosed);
       }
     } else {
       deferred.reject(MessagesUtil.session.sessionMemberNotFound);
@@ -385,7 +384,7 @@ function updateSessionMemberRating(params, userId, accountId) {
             }
           });
         } else {
-          deferred.reject(MessagesUtil.session.sessionNotClosed);  
+          deferred.reject(MessagesUtil.session.sessionNotClosed);
         }
       } else {
         deferred.reject(MessagesUtil.session.sessionMemberNotFound);
