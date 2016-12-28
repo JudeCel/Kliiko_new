@@ -16,6 +16,7 @@ var validators = require('./../services/validators');
 var sessionMemberServices = require('./sessionMember');
 var MessagesUtil = require('./../util/messages');
 var sessionValidator = require('./validators/session');
+var subscriptionValidator = require('./validators/subscription');
 var topicsService = require('./topics');
 var resourcesService = require('./resources');
 var whiteboardService = require('./whiteboard');
@@ -200,7 +201,7 @@ function setTimeZone(params) {
 function update(sessionId, accountId, params) {
   let deferred = q.defer();
   let updatedSession;
-  setTimeZone(params)
+  setTimeZone(params);
 
   findSession(sessionId, accountId).then(function(originalSession) {
     validators.hasValidSubscription(accountId).then(function() {
@@ -209,6 +210,15 @@ function update(sessionId, accountId, params) {
         count = 1;
       }
       return validators.subscription(accountId, 'session', count, { sessionId: sessionId });
+    }).then(function(result) {
+      let canChangeResult = subscriptionValidator.canChangeColorScheme(result);
+      
+      if (params["brandProjectPreferenceId"]) {
+        if (canChangeResult.error) {
+          return deferred.reject({error: canChangeResult.error});
+        }
+      }
+      return result;
     }).then(function() {
       if (params["status"] && params["status"] != originalSession.status) {
         params["step"] = 'manageSessionParticipants';

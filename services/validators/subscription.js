@@ -53,8 +53,24 @@ module.exports = {
   planAllowsToDoIt: planAllowsToDoIt,
   canAddAccountUsers: canAddAccountUsers,
   countMessage: countMessage,
-  countRecruiterMessage: countRecruiterMessage
+  countRecruiterMessage: countRecruiterMessage,
+  canChangeColorScheme: canChangeColorScheme
 };
+
+function canChangeColorScheme(subscription) {
+  if (subscription) {
+    if (subscription.dataValues.SubscriptionPreference.brandLogoAndCustomColors) {
+      return { canChange: true };
+    } else {
+      let planName = _.capitalize(_.lowerCase(subscription.dataValues.planId));
+      let error = MessagesUtil.validators.subscription.brandLogoAndColorSchemeLimit.replace('XXX', planName);
+      return { error: error };
+    }
+  } else {
+    return { canChange: true };
+  }
+}
+
 
 function validate(accountId, type, count, params) {
   let deferred = q.defer();
@@ -70,7 +86,7 @@ function validate(accountId, type, count, params) {
           let maxCount = subscription.SubscriptionPreference.data[dependency.key];
 
           if(c + count <= maxCount || maxCount == -1) {
-            deferred.resolve();
+            deferred.resolve(subscription);
           } else {
             if (type == "survey") {
               deferred.reject(countRecruiterMessage(subscription, maxCount));
@@ -85,7 +101,7 @@ function validate(accountId, type, count, params) {
         deferred.reject(MessagesUtil.validators.subscription.notValidDependency);
       }
     } else {
-      deferred.resolve();
+      deferred.resolve(subscription);
     }
   }, function(error) {
     deferred.reject(error);

@@ -5,7 +5,7 @@
   angular.module('KliikoApp.Root').controller('GalleryController', GalleryController);
 
   GalleryController.$inject = ['$q', 'dbg', 'GalleryServices', 'domServices', 'messenger', '$sce', 'messagesUtil', '$confirm', 'account'];
-  function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce, messagesUtil, $confirm, account) {
+  function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce, messagesUtil, $confirm, accountData) {
     dbg.log2('#GalleryController started');
     var vm = this;
     vm.templatesDir = '/js/ngApp/components/dashboard-resources-gallery/templates/';
@@ -60,6 +60,7 @@
     vm.setModalTab = setModalTab;
     vm.preloadResources = preloadResources;
     vm.prepareCurrentPageItems = prepareCurrentPageItems;
+    vm.handleUploadPermission = handleUploadPermission;
 
     function resetSelectionList(params) {
       vm.selectionList = {};
@@ -353,6 +354,12 @@
       } else {
         vm.pagination.items = {};
         vm.pagination.totalItems = 0;
+      }
+    }
+
+    function handleUploadPermission() {
+      if (accountData.account.permissions.uploadToGallery == false) {
+        
       }
     }
 
