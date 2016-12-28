@@ -5,8 +5,8 @@ Snapshot is the object that contains all the fields hashes.
 
 Client side code should send to server the snapshot together with data to change.
 Server should validate snapshot (using sessionBuilderSnapshotValidation) to check does it include hashes of current database values.
-If no – it should return validation information to client, otherwise it can apply changes.
+If no - it should return validation information to client, otherwise it can apply changes.
 
 If client retrieved validation information from server than it should display confirmation dialog. 
-If user clicked to save existing changes than client should ignore current user’s changes and aks server for current values. 
+If user clicked to save existing changes than client should ignore current user's changes and aks server for current values. 
 If user clicked to save his changes than client should update snapshot with values included in validation information and send request to server again.
