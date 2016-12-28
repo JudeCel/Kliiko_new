@@ -399,20 +399,37 @@ function processEmailStatus(id, apiResp, emailStatus) {
 }
 function processMailWebhook(webhookParams) {
   let updateParams = {}
-
-  let mailMessageId = webhookParams["Message-Id"].replace(/[<>]/g, "");
-
+  
   if (webhookParams.event == "dropped") {
+    updateParams.webhookMessage = webhookParams.reason
+    updateParams.webhookEvent = webhookParams.event
+    updateParams.webhookTime = new Date()
     updateParams.emailStatus = "failed";
   }
-  if (webhookParams.event == "dropped") {
+
+  if (webhookParams.event == "bounced") {
+    updateParams.webhookMessage = webhookParams.error
+    updateParams.webhookEvent = webhookParams.event
+    updateParams.webhookTime = new Date()
+    updateParams.emailStatus = "failed";
+  }
+
+  if (webhookParams.event == "delivered") {
     updateParams.emailStatus = "sent";
   }
 
   return new Bluebird((resolve, reject) => {
-    Invite.update({emailStatus: emailStatus }, {where: {mailMessageId: mailMessageId}}).then(() => {
-      resolve();
-    });
+    if (updateParams.emailStatus) {
+      let mailMessageId = webhookParams["Message-Id"].replace(/[<>]/g, "");
+
+      Invite.update(updateParams, {where: {mailMessageId: mailMessageId}}).then((result) => {
+        resolve(result);
+      }, (error) => {
+        reject(filters.errors(error))
+      });
+    }else{
+      resolve([0]);
+    }
   });
 }
 
