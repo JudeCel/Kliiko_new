@@ -101,6 +101,8 @@
 
         function onLeave(state) {
           return (id, current, leftPres) => {
+            //if current.metas exists than user has other instances opened
+            //https://hexdocs.pm/phoenix/Phoenix.Presence.html
             if (current.metas.length == 0) {
               for (var i=0; i<onlineUsers.length; i++) {
                 if (onlineUsers[i].id == current.accountUser.id) {
@@ -329,7 +331,7 @@
     }
 
     function updateStep(dataObj) {
-        vm.session.updateStep(dataObj).then(null, function (err) {
+        vm.session.updateStep(dataObj, vm.session).then(null, function (err) {
           messenger.error(err);
         }
       );
@@ -398,6 +400,11 @@
       })
     }
 
+    function addParticipantsFromList(list) {
+      vm.participants = vm.participants.concat(mapToAccountUser(list));
+      vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
+    }
+
     function finishSelectingMembers(activeList) {
       if (!activeList) {
         vm.searchingParticipants = false;
@@ -410,19 +417,17 @@
       if (vm.searchingParticipants) {
         if (list.length > 0) {
           if (!vm.session.sessionData.participantListId) {
-            vm.session.updateStep({ participantListId: activeList.id }).then(function(res) {
+            vm.session.updateStep({ participantListId: activeList.id }, vm.session).then(function(res) {
               if (!res.ignored) {
                 vm.session.sessionData.participantListId = activeList.id;
-                vm.participants = vm.participants.concat(mapToAccountUser(list));
-                vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
+                addParticipantsFromList(list);
               }
             }, function (error) {
               messenger.error(error);
             });
           } else {
             if (vm.session.sessionData.participantListId == activeList.id) {
-              vm.participants = vm.participants.concat(mapToAccountUser(list));
-              vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
+              addParticipantsFromList(list);
             } else {
               messenger.error(messagesUtil.sessionBuilder.cantSelect);
             }

@@ -1,6 +1,7 @@
 'use strict';
 
 var constants = require('./../util/constants');
+var messages = require('./../util/messages');
 var _ = require('lodash');
 var stringHelpers = require('./../util/stringHelpers');
 var bluebird = require('bluebird');
@@ -18,16 +19,32 @@ module.exports = {
   getSessionSnapshot: getSessionSnapshot
 };
 
+//if isValid == true than all other params are not required
+function result(isValid, canChange, currentSnapshotChanges, fieldName, currentValueSnapshot) {
+  if (isValid) {
+    return { isValid: true };
+  } else {
+    return { 
+      isValid: false, 
+      canChange: canChange, 
+      fieldName: fieldName, 
+      currentValueSnapshot: currentValueSnapshot, 
+      currentSnapshotChanges: currentSnapshotChanges, 
+      message: canChange ? messages.sessionBuilderValidateChanges.canChange : messages.sessionBuilderValidateChanges.canNotChange
+    };
+  }
+}
+
 function isDataValid(snapshot, params, session) {
   for (let i=0; i<constants.sessionBuilderValidateChanges.session.notChangableFields.length; i++) {
     let fieldName = constants.sessionBuilderValidateChanges.session.notChangableFields[i];
     if (params[fieldName]) {
       if (params[fieldName] == session[fieldName]) {
-        return { isValid: true };
+        return result(true);
       } else {
         let oldValueSnapshot = snapshot[fieldName];
         let currentValueSnapshot = stringHelpers.hash(session[fieldName]);
-        return { isValid: currentValueSnapshot == oldValueSnapshot, canChange: false, fieldName: fieldName, currentValueSnapshot: currentValueSnapshot };
+        return result(currentValueSnapshot == oldValueSnapshot, false, null, fieldName, currentValueSnapshot);
       }
     }
   }
@@ -36,16 +53,16 @@ function isDataValid(snapshot, params, session) {
     let fieldName = constants.sessionBuilderValidateChanges.session.changableFields[i];
     if (params[fieldName]) {
       if (params[fieldName] == session[fieldName]) {
-        return { isValid: true };
+        return result(true);
       } else {
         let oldValueSnapshot = snapshot[fieldName];
         let currentValueSnapshot = stringHelpers.hash(session[fieldName]);
-        return { isValid: currentValueSnapshot == oldValueSnapshot, canChange: true, fieldName: fieldName, currentValueSnapshot: currentValueSnapshot };
+        return result(currentValueSnapshot == oldValueSnapshot, true, null, fieldName, currentValueSnapshot);
       }
     }
   }
 
-  return { isValid: true };
+  return result(true);
 }
 
 function isFacilitatorDataValid(snapshot, facilitatorId, sessionId, sessionBuilderService) {
@@ -54,13 +71,13 @@ function isFacilitatorDataValid(snapshot, facilitatorId, sessionId, sessionBuild
       if(!_.isEmpty(members)) {
         let facilitator = members[0];
         if (facilitatorId == facilitator.id) {
-          resolve({ isValid: true });
+          return result(true);
         } else {
           let currentValueSnapshot = stringHelpers.hash(facilitator.id);
-          resolve({ isValid: currentValueSnapshot == snapshot.facilitatorId, canChange: true, fieldName: "facilitatorId", currentValueSnapshot: currentValueSnapshot });
+          resolve(result(currentValueSnapshot == snapshot.facilitatorId, true, null, "facilitatorId", currentValueSnapshot));
         }
       } else {
-        resolve({ isValid: true });
+        resolve(result(true));
       }
     }, function(error) {
       reject(error);
@@ -126,10 +143,10 @@ function isMailTemplateDataValid(snapshot, params, mailTemplate) {
   for (let i=0; i<constants.sessionBuilderValidateChanges.mailTemplate.fields.length; i++) {
     let fieldName = constants.sessionBuilderValidateChanges.mailTemplate.fields[i];
     if (params.template[fieldName] && params.template[fieldName] != mailTemplate[fieldName] && snapshot[fieldName] != currentSnapshot[fieldName]) {
-      return { isValid: false, canChange: true, currentSnapshotChanges: currentSnapshot };
+      return result(false, true, currentSnapshot, null, null);
     }
   }
-  return { isValid: true };
+  return result(true);
 }
 
 function isTopicDataValid(snapshot, params, sessionTopic) {
@@ -140,10 +157,10 @@ function isTopicDataValid(snapshot, params, sessionTopic) {
     if (params[fieldName] && params[fieldName] != sessionTopic[fieldName] && oldSnapshot[fieldName] != currentSnapshot[fieldName]) {
       let currentSnapshotChanges = { };
       currentSnapshotChanges[sessionTopic.topicId] = currentSnapshot;
-      return { isValid: false, canChange: true, currentSnapshotChanges: currentSnapshotChanges };
+      return result(false, true, currentSnapshotChanges, null, null);
     }
   }
-  return { isValid: true };
+  return result(true);
 }
 
 function isTopicListDataValid(currentSnapshot, oldSnapshot, topics, id) {
@@ -153,7 +170,9 @@ function isTopicListDataValid(currentSnapshot, oldSnapshot, topics, id) {
   let sessionTopic = getSessionTopic(topics, id);
   for (let i=0; i<constants.sessionBuilderValidateChanges.topic.listFields.length; i++) {
     let fieldName = constants.sessionBuilderValidateChanges.topic.listFields[i];
-    if (oldSnapshot[id][fieldName] != currentSnapshot[id][fieldName] && stringHelpers.hash(sessionTopic[fieldName]) != currentSnapshot[id][fieldName]) {
+    let newValueSnapshot = stringHelpers.hash(sessionTopic[fieldName]);
+    let currentSnapshotValue = currentSnapshot[id][fieldName];
+    if (oldSnapshot[id][fieldName] != currentSnapshotValue && newValueSnapshot != currentSnapshotValue) {
       return false;
     }
   }
@@ -172,11 +191,11 @@ function isTopicsDataValid(snapshot, sessionId, accountId, topics) {
       for (let i=0; i<ids.length; i++) {
         let id = ids[i];
         if (!isTopicListDataValid(currentSnapshot, snapshot, topics, id)) {
-          resolve({ isValid: false, canChange: true, currentSnapshotChanges: getTopicsSnapshotWithoutProperties(currentSnapshot) });
+          resolve(result(false, true, getTopicsSnapshotWithoutProperties(currentSnapshot), null, null));
           return;
         }
       }
-      resolve({ isValid: true });
+      resolve(result(true));
     });
   });
 }

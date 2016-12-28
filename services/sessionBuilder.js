@@ -778,8 +778,8 @@ function sessionBuilderObjectSnapshotForStep4(stepData) {
   };
 }
 
-function sessionBuilderObjectSnapshot(session, steps, stepName) {
-  switch (stepName || session.step) {
+function sessionBuilderObjectSnapshot(steps, stepName) {
+  switch (stepName) {
     case "setUp":
       return sessionBuilderObjectSnapshotForStep1(steps.step1);
     case "facilitatiorAndTopics":
@@ -788,8 +788,10 @@ function sessionBuilderObjectSnapshot(session, steps, stepName) {
       return sessionBuilderObjectSnapshotForStep3(steps.step3);
     case "manageSessionParticipants":
       return sessionBuilderObjectSnapshotForStep4(steps.step4);
-    default:
+    case "inviteSessionObservers":
       return { };
+    default:
+      throw MessagesUtil.sessionBuilder.errors.invalidStep;
   }
 }
 
@@ -797,10 +799,10 @@ function sessionBuilderObjectStepSnapshot(sessionId, accountId, stepName) {
   return new bluebird(function (resolve, reject) {
     findSession(sessionId, accountId).then(function(session) {
       stepsDefinition(session).then(function(result) {
-        let snapshot = sessionBuilderObjectSnapshot(session, result, stepName);
+        let snapshot = sessionBuilderObjectSnapshot(result, stepName);
         resolve(snapshot);
       }, function(error) {
-        resolve(null);
+        reject(error);
       });
     }, function(error) {
       reject(error);
@@ -818,7 +820,7 @@ function sessionBuilderObject(session, steps) {
       id: session.id,
       startTime: changeTimzone(session.startTime, session.timeZone, "UTC"),
       endTime: changeTimzone(session.endTime, session.timeZone, "UTC"),
-      snapshot: sessionBuilderObjectSnapshot(session, result)
+      snapshot: sessionBuilderObjectSnapshot(result, session.step)
     };
 
     sessionValidator.addShowStatus(sessionBuilder);

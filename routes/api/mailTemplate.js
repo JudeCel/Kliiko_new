@@ -100,8 +100,7 @@ function saveMailTemplatePost(req, res, next) {
     if (result.validation && !result.validation.isValid) {
       res.send(result);
     } else {
-      let snapshot = sessionBuilderSnapshotValidationService.getMailTemplateSnapshot(result);
-      res.send({error: error, templates: result, message: MessagesUtil.routes.mailTemplates.saved, snapshot: snapshot });
+      res.send({error: error, templates: result, message: MessagesUtil.routes.mailTemplates.saved });
     }
   });
 }

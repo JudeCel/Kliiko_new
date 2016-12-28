@@ -309,7 +309,7 @@
 
     function postUpdateStep(dataObj) {
       var deferred = $q.defer();
-      vm.session.updateStep(dataObj).then(function(res) {
+      vm.session.updateStep(dataObj, vm.session).then(function(res) {
         deferred.resolve(res);
       }, function (err) {
         messenger.error(err);

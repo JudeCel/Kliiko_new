@@ -173,7 +173,7 @@
     function setOpen(status) {
       var self = this;
       var deferred = $q.defer();
-      self.updateStep({status: status}).then(
+      self.updateStep({status: status}, self).then(
         function (res) {
           if (!res.ignored) {
             self.status = self.sessionData.status = status;
@@ -224,27 +224,26 @@
       return deferred.promise;
     }
 
-    function updateStep(stepDataObj, selfParam) {
-      var self = selfParam || this;
+    function updateStep(stepDataObj, sessionModel) {
       var deferred = $q.defer();
 
       if (!stepDataObj.snapshot) {
-        stepDataObj.snapshot = self.snapshot;
+        stepDataObj.snapshot = sessionModel.snapshot;
       }
 
-      sessionBuilderRestApi.put({id:self.id}, stepDataObj, function(res) {
+      sessionBuilderRestApi.put({id:sessionModel.id}, stepDataObj, function(res) {
         if (res.error) {
           deferred.reject(res.error);
         } else if (res.validation && !res.validation.isValid) {
-          changesValidation.validationConfirm(res, self.updateStep, stepDataObj, self).then(function(newRes) {
+          changesValidation.validationConfirm(res, sessionModel.updateStep, stepDataObj, sessionModel).then(function(newRes) {
             deferred.resolve(newRes);
           }, function(err) {
             deferred.reject(err);
           });
         } else {
-          self.sessionData.showStatus = res.sessionBuilder.showStatus;
-          self.steps = res.sessionBuilder.steps;
-          self.snapshot = res.sessionBuilder.snapshot;
+          sessionModel.sessionData.showStatus = res.sessionBuilder.showStatus;
+          sessionModel.steps = res.sessionBuilder.steps;
+          sessionModel.snapshot = res.sessionBuilder.snapshot;
           deferred.resolve(res);
         }
       });

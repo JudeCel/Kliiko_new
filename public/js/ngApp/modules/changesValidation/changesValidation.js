@@ -12,7 +12,7 @@
     changesValidationService.validationConfirmAlternative = validationConfirmAlternative;
     return changesValidationService;
 
-    function validationConfirm(res, saveAgainCallback, data, sessionModel) {
+    function validationConfirm(res, saveAgainFunction, data, sessionModel) {
       var deferred = $q.defer();
 
       validationConfirmDialog(res.validation, function() {
@@ -22,27 +22,33 @@
         if (res.validation.currentSnapshotChanges) {
           angular.merge(data.snapshot, res.validation.currentSnapshotChanges);
         }
-        saveAgainCallback(data, sessionModel).then(function(newRes) {
+        saveAgainFunction(data, sessionModel).then(function(newRes) {
           deferred.resolve(newRes);
+        }, function(error) {
+          deferred.reject(error);
         });
       }, function() {
         sessionModel.getRemoteData().then(function() {
           deferred.resolve({ ignored: true });
+        }, function(error) {
+          deferred.reject(error);
         });
       });
 
       return deferred.promise;
     }
 
-    function validationConfirmAlternative(res, saveAgainCallback, data, param1) {
+    function validationConfirmAlternative(res, saveAgainFunction, data, optionalParamForSaveAgainFunction) {
       var deferred = $q.defer();
 
       validationConfirmDialog(res.validation, function() {
         if (res.validation.currentSnapshotChanges) {
           angular.merge(data.snapshot, res.validation.currentSnapshotChanges);
         }
-        saveAgainCallback(data, param1).then(function(newRes) {
+        saveAgainFunction(data, optionalParamForSaveAgainFunction).then(function(newRes) {
           deferred.resolve(newRes);
+        }, function(error) {
+          deferred.reject(error);
         });
       }, function() {
         deferred.resolve({ ignored: true });
@@ -54,7 +60,7 @@
     function validationConfirmDialog(validation, saveMineCallback, saveTheirsCallback) {
       if (validation.canChange) {
         $confirm({ 
-          text: "What are the odds of you and someone else editing the same thing at the same time... so which edit do you want saved?", 
+          text: validation.message, 
           title: "Yikes!", 
           cancel: "Save Theirs", 
           ok: "Save Mine",
@@ -66,7 +72,7 @@
         });
       } else {
         $confirm({ 
-          text: "Sorry, you can not change this option anymore, because it was already changed by someone else.", 
+          text: validation.message, 
           title: "Yikes!", 
           closeOnly: true 
         }).then(function() {
