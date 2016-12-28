@@ -271,7 +271,14 @@ router.get("/auth/googlePaiedPlanRegistration", function (req, res, next) {
 function createUserAndSendEmail(req, res, userParams, renderInfo) {
   usersRepo.create(userParams, function(error, result) {
     if(error) {
-      res.render(renderInfo.failed, usersRepo.prepareParams(req, error));
+      let params = usersRepo.prepareParams(req, error);
+
+      if (renderInfo.failed == "registration") {
+        params.facebookUrl = facebookUrl;
+        params.googleUrl = googleUrl;
+      }
+
+      res.render(renderInfo.failed, params);
     }
     else {
       let tplData = {
