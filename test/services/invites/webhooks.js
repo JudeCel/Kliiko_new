@@ -58,22 +58,22 @@ describe('SERVICE - Invite Webhook', function() {
 
         inviteService.createInvite(params).then((invite) => {
           backgroundJobsInvite.sendInvite(invite.id, () => {
-            try {
               let webhookParams = {
                 "Message-Id": '<7fd443ff-d8a0-6fa0-ee5f-726935200fce@noreply.klzii.com>',
                 event: "delivered"
               }
               inviteService.processMailWebhook(webhookParams).then(() => {
                 Invite.find({where: {id: invite.id}}).then((inviteLastV) => {
-                  assert.equal(inviteLastV.emailStatus, "sent")
-                  done();
+                  try {
+                    assert.equal(inviteLastV.emailStatus, "sent")
+                    done();
+                  } catch (e) {
+                    done(e);
+                  }
                 })
               }, (error) => {
                 done(error);
               })
-            } catch (e) {
-              done(e);
-            }
           });
         }, (error) => {
           done(error);
@@ -89,7 +89,6 @@ describe('SERVICE - Invite Webhook', function() {
 
         inviteService.createInvite(params).then((invite) => {
           backgroundJobsInvite.sendInvite(invite.id, () => {
-            try {
               let webhookParams = {
                 "Message-Id": '<7fd443ff-d8a0-6fa0-ee5f-726935200fce@noreply.klzii.com>',
                 event: "dropped",
@@ -97,18 +96,19 @@ describe('SERVICE - Invite Webhook', function() {
               }
               inviteService.processMailWebhook(webhookParams).then(() => {
                 Invite.find({where: {id: invite.id}}).then((inviteLastV) => {
-                  assert.equal(inviteLastV.emailStatus, "failed")
-                  assert.equal(inviteLastV.webhookMessage, webhookParams.reason)
-                  assert.equal(inviteLastV.webhookEvent, "dropped")
-                  assert.isNotNull(inviteLastV.webhookTime)
-                  done();
+                  try {
+                    assert.equal(inviteLastV.emailStatus, "failed")
+                    assert.equal(inviteLastV.webhookMessage, webhookParams.reason)
+                    assert.equal(inviteLastV.webhookEvent, "dropped")
+                    assert.isNotNull(inviteLastV.webhookTime)
+                    done();
+                  } catch (e) {
+                    done(e);
+                  }
                 })
               }, (error) => {
                 done(error);
               })
-            } catch (e) {
-              done(e);
-            }
           });
         }, (error) => {
           done(error);
@@ -124,7 +124,6 @@ describe('SERVICE - Invite Webhook', function() {
 
         inviteService.createInvite(params).then((invite) => {
           backgroundJobsInvite.sendInvite(invite.id, () => {
-            try {
               let webhookParams = {
                 "Message-Id": '<7fd443ff-d8a0-6fa0-ee5f-726935200fce@noreply.klzii.com>',
                 event: "bounced",
@@ -132,18 +131,19 @@ describe('SERVICE - Invite Webhook', function() {
               }
               inviteService.processMailWebhook(webhookParams).then(() => {
                 Invite.find({where: {id: invite.id}}).then((inviteLastV) => {
-                  assert.equal(inviteLastV.emailStatus, "failed")
-                  assert.equal(inviteLastV.webhookMessage, webhookParams.error)
-                  assert.equal(inviteLastV.webhookEvent, webhookParams.event)
-                  assert.isNotNull(inviteLastV.webhookTime)
-                  done();
+                  try {
+                    assert.equal(inviteLastV.emailStatus, "failed")
+                    assert.equal(inviteLastV.webhookMessage, webhookParams.error)
+                    assert.equal(inviteLastV.webhookEvent, webhookParams.event)
+                    assert.isNotNull(inviteLastV.webhookTime)
+                    done();
+                  } catch (e) {
+                    done(e);
+                  }
                 })
               }, (error) => {
                 done(error);
               })
-            } catch (e) {
-              done(e);
-            }
           });
         }, (error) => {
           done(error);

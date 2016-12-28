@@ -204,7 +204,7 @@ function sendInvite(inviteId, deferred) {
             deferred.reject(error);
           }
           else {
-            deferred.resolve(simpleParams(invite));
+            deferred.resolve(data);
           }
         });
       }, function (error) {
@@ -254,7 +254,7 @@ function sendInvite(inviteId, deferred) {
             }
             else {
               accountUserService.updateInfo(invite.accountUserId, "Invites", null);
-              deferred.resolve(simpleParams(invite));
+              deferred.resolve(data);
             }
           });
         }, function (error) {
@@ -399,7 +399,7 @@ function processEmailStatus(id, apiResp, emailStatus) {
 }
 function processMailWebhook(webhookParams) {
   let updateParams = {}
-  
+
   if (webhookParams.event == "dropped") {
     updateParams.webhookMessage = webhookParams.reason
     updateParams.webhookEvent = webhookParams.event
@@ -416,6 +416,9 @@ function processMailWebhook(webhookParams) {
 
   if (webhookParams.event == "delivered") {
     updateParams.emailStatus = "sent";
+    updateParams.webhookEvent = webhookParams.event
+    updateParams.webhookTime = new Date()
+    updateParams.webhookMessage = "Delivered"
   }
 
   return new Bluebird((resolve, reject) => {
