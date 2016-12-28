@@ -71,13 +71,14 @@ function isFacilitatorDataValid(snapshot, facilitatorId, sessionId, sessionBuild
       if(!_.isEmpty(members)) {
         let facilitator = members[0];
         if (facilitatorId == facilitator.id) {
-          return result(true);
+          resolve(result(true));
         } else {
           let currentValueSnapshot = stringHelpers.hash(facilitator.id);
           resolve(result(currentValueSnapshot == snapshot.facilitatorId, true, null, "facilitatorId", currentValueSnapshot));
         }
       } else {
-        resolve(result(true));
+        let currentValueSnapshot = stringHelpers.hash(null);
+        resolve(result(currentValueSnapshot == snapshot.facilitatorId, true, null, "facilitatorId", currentValueSnapshot));
       }
     }, function(error) {
       reject(error);
