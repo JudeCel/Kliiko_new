@@ -142,7 +142,7 @@
             var sessionMember = res[i];
             updateSessionMember(sessionMember);
             for (var j=0; j<vm.populateSessionMemberQueue.length; j++) {
-              if (vm.populateSessionMemberQueue[j].accountUserId == sessionMember.accountUserId) {
+              if (vm.populateSessionMemberQueue[j] == sessionMember.accountUserId) {
                 vm.populateSessionMemberQueue.splice(j, 1);
                 break;
               }

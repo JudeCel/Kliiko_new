@@ -29,8 +29,8 @@ function addFacilitator(req, res, next) {
 
 function getSessionMembers(req, res, next) {
   let params = req.body;
-  sessionMemberService.getSessionMembers(params.sessionId, params.acountUserIds).then(function(res) {
-    res.send(res);
+  sessionMemberService.getSessionMembers(params.sessionId, params.acountUserIds).then(function(members) {
+    res.send({members: members});
   }, function (err) {
     res.send({error:err});
   });

@@ -12,7 +12,7 @@
     var sessionMemberApi = $resource(globalSettings.restUrl + '/sessionMember/:path/:id', null, {
       comment: { method: 'post', params: { id: '@id', path: 'comment' } },
       rate: { method: 'post', params: { id: '@id', path: 'rate' } },
-      getMembers:  { method: 'post', params: { id: '@sessionId', path: 'members' } },
+      getMembers: { method: 'post', params: { path: 'members' } },
     });
 
     var Services = {};
@@ -35,9 +35,9 @@
       var deferred = $q.defer();
 
       dbg.log2('#SessionMember > getSessionMembers > make rest call');
-      sessionMemberApi.getMembers({ sessionId: sessionId}, { acountUserIds: acountUserIds }, function(res) {
+      sessionMemberApi.getMembers({ }, { acountUserIds: acountUserIds, sessionId: sessionId }, function(res) {
         dbg.log2('#SessionMember > getSessionMembers > rest call responds');
-        deferred.resolve(res);
+        deferred.resolve(res.members);
       });
 
       return deferred.promise;
