@@ -7,12 +7,14 @@
   function brandColourServices(globalSettings, $q, $resource, dbg) {
     var brandColorApi = $resource(globalSettings.restUrl + '/brandColour/:path', null, {
       update: { method: 'PUT' },
+      reset: { method: 'PUT', params: { path: 'default' } },
       copy: { method: 'POST', params: { path: 'copy' } },
       canCreateCustomColors: { method: 'GET', params: { path: 'canCreateCustomColors' } },
     });
 
     var upServices = {};
     upServices.getAllSchemes = getAllSchemes;
+    upServices.resetScheme = resetScheme;
     upServices.updateScheme = updateScheme;
     upServices.createScheme = createScheme;
     upServices.removeScheme = removeScheme;
@@ -43,6 +45,18 @@
 
       return deferred.promise;
     }
+
+    function resetScheme(data) {
+      var deferred = $q.defer();
+
+      dbg.log2('#brandColourServices > resetScheme > make rest call');
+      brandColorApi.reset(data, function(res) {
+        dbg.log2('#brandColourServices > resetScheme > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    };
 
     function updateScheme(data) {
       var deferred = $q.defer();

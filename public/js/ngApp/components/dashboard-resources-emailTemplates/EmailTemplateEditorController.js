@@ -42,7 +42,6 @@
     vm.init = function () {
       vm.emailTemplates = vm.emailTemplates.concat(vm.constantEmailTemplates);
       $('#templateContent').wysiwyg({
-        rmUnusedControls: true,
         controls: {
           bold: { visible : true },
           italic: { visible : true },
@@ -97,6 +96,7 @@
 
     function setContent(content) {
       $('#templateContent').wysiwyg('setContent', content);
+      vm.currentWysiwygProccessedTemplate = $('#templateContent').wysiwyg('getContent');
     }
 
     function getColors() {
@@ -110,7 +110,11 @@
       return object;
     }
 
-    function startEditingTemplate(templateIndex, templateId, template) {
+    function startEditingTemplate(templateIndex, templateId, template, isResetingOrSaving) {
+      if (isChangedAndNotSaved(isResetingOrSaving)) {
+        domServices.modal('unsavedTemplateMsg');
+        return;
+      }
 
       if (!templateId) {
         templateId = template ? template.id : vm.emailTemplates[templateIndex].id;
@@ -132,6 +136,12 @@
             setContent(vm.currentTemplate.content);
           }
         });
+      }
+
+      function isChangedAndNotSaved(isResetingOrSaving) {
+        var actualContent = $('#templateContent').wysiwyg('getContent');
+        var initialContent = vm.currentWysiwygProccessedTemplate;
+        return initialContent !== undefined && initialContent != actualContent && !isResetingOrSaving;
       }
 
       function populateContentWithColors() {
@@ -222,7 +232,7 @@
           refreshTemplateList(function() {
             var index = getIndexOfMailTemplateWithId(res.templates.id);
             if (index != -1) {
-              vm.startEditingTemplate(index);
+              vm.startEditingTemplate(index, null, null, true);
             }
           });
           messenger.ok(res.message);
@@ -250,7 +260,7 @@
       mailTemplate.resetMailTemplate(vm.currentTemplate).then(function (res) {
         if (!res.error) {
           refreshTemplateList(function() {
-            vm.startEditingTemplate(vm.currentTemplate.index);
+            vm.startEditingTemplate(vm.currentTemplate.index, null, null, true);
             deferred.resolve();
           });
         } else {

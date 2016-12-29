@@ -45,11 +45,10 @@ describe('SERVICE - BrandColour', function() {
     assert.equal(data.colours.font, params.colours.font || '#58595B');
     assert.equal(data.colours.headerButton, params.colours.headerButton || '#4CBFE9');
     assert.equal(data.colours.consoleButtonActive, params.colours.consoleButtonActive || '#4CB649');
-    assert.equal(data.colours.hyperlinks, params.colours.email.hyperlinks || '#2F9F69');
-    assert.equal(data.colours.hyperlinks, params.colours.email.hyperlinks || '#2F9F69');
-    assert.equal(data.colours.notAtAllButton, params.colours.email.notAtAllButton || '#E51D39');
-    assert.equal(data.colours.acceptButton, params.colours.email.acceptButton || '#4CB649');
-    assert.equal(data.colours.notThisTimeButton, params.colours.email.notThisTimeButton || '#4CBFE9');
+    assert.equal(data.colours.hyperlinks, params.colours.hyperlinks || '#2F9F69');
+    assert.equal(data.colours.notAtAllButton, params.colours.notAtAllButton || '#E51D39');
+    assert.equal(data.colours.acceptButton, params.colours.acceptButton || '#4CB649');
+    assert.equal(data.colours.notThisTimeButton, params.colours.notThisTimeButton || '#4CBFE9');
   }
 
   function countWhere() {
@@ -119,7 +118,7 @@ describe('SERVICE - BrandColour', function() {
                 done();
               } catch (e) {
                 done(e);
-              } 
+              }
             });
           }, function(error) {
             done(error);
@@ -139,6 +138,23 @@ describe('SERVICE - BrandColour', function() {
             assert.deepEqual(error, { browserBackground: 'Browser Background: Not valid colour' });
             done();
           });
+        });
+      });
+    });
+  });
+
+  describe('#resetToDefaultScheme', function() {
+    describe('happy path', function() {
+      it('should succeed on reseting scheme', function (done) {
+        let attrs = sessionFixture.brandProjectPreferenceParams(accountParams());
+        attrs.id = testData.preference.id;
+        attrs.name = 'Test name';
+
+        brandColourServices.resetToDefaultScheme(attrs, accountParams()).then(function(result) {
+          testScheme(result.data, { name: attrs.name });
+          done();
+        }, function(error) {
+          done(error);
         });
       });
     });
@@ -267,7 +283,7 @@ describe('SERVICE - BrandColour', function() {
     describe('happy path', function() {
       it('should succeed on returning fields', function (done) {
         let fields = brandColourServices.manageFields();
-        assert.equal(fields.chatRoom.length, 6);
+        assert.equal(fields.chatRoom.length, 10);
         done();
       });
     });
