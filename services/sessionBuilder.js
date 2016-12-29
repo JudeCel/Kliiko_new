@@ -211,11 +211,12 @@ function update(sessionId, accountId, params) {
       }
       return validators.subscription(accountId, 'session', count, { sessionId: sessionId });
     }).then(function(result) {
-      let canChangeResult = subscriptionValidator.canChangeColorScheme(result);
-      
+
+
       if (params["brandProjectPreferenceId"]) {
+        let canChangeResult = subscriptionValidator.canChangeColorScheme(result);
         if (canChangeResult.error) {
-          return deferred.reject({error: canChangeResult.error});
+          throw canChangeResult.error;
         }
       }
       return result;

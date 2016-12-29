@@ -62,8 +62,11 @@ function canChangeColorScheme(subscription) {
     if (subscription.dataValues.SubscriptionPreference.brandLogoAndCustomColors) {
       return { canChange: true };
     } else {
-      let planName = _.capitalize(_.lowerCase(subscription.dataValues.planId));
-      let error = MessagesUtil.validators.subscription.brandLogoAndColorSchemeLimit.replace('XXX', planName);
+      let planName = _.startCase(_.lowerCase(subscription.dataValues.planId));
+      let error = new Error();
+      error.name = 'dialog';
+      error.message =  MessagesUtil.validators.subscription.brandLogoAndColorSchemeLimit.replace('XXX', planName);
+
       return { error: error };
     }
   } else {
@@ -88,6 +91,7 @@ function validate(accountId, type, count, params) {
           if(c + count <= maxCount || maxCount == -1) {
             deferred.resolve(subscription);
           } else {
+            //TODO - ALEX
             if (type == "survey") {
               deferred.reject(countRecruiterMessage(subscription, maxCount));
             } else {

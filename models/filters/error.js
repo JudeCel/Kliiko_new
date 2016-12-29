@@ -30,7 +30,7 @@ function filterErrors(errorsObject) {
 function parseErrorMessage(error, object) {
   let message = error.message;
   if (!message) return;
-  let path = error.path || (error.parent && error.parent.column) || 'unhandled';
+  let path = error.path || (error.parent && error.parent.column) || error.name || 'unhandled';
   let field = modifyFieldName(path);
 
   switch(true) {

@@ -247,11 +247,18 @@
       return (vm.currentStep == step);
     }
 
+    function showError(error) {
+      if (error.dialog) {
+        $confirm({ title: "Sorry", text: error.dialog, closeOnly: true });
+      } else {
+        messenger.error(error);
+      }
+    }
 
     function updateStep(dataObj) {
         vm.session.updateStep(dataObj).then(null, function (err) {
-            messenger.error(err);
-          }
+          showError(err);
+        }
       );
     }
 
