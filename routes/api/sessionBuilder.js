@@ -3,6 +3,7 @@
 var MessagesUtil = require('./../../util/messages');
 var constants = require('../../util/constants');
 var sessionBuilderServices = require('./../../services/sessionBuilder');
+var sessionBuilderSnapshotValidationService = require('./../../services/sessionBuilderSnapshotValidation');
 var sessionServices = require('./../../services/session');
 let topicsService = require('./../../services/topics');
 let _ = require('lodash');
@@ -156,14 +157,30 @@ function sendCloseEmail(req, res, next) {
 }
 
 function addTopics(req, res, next) {
+  let accountId = res.locals.currentDomain.id;
+  let sessionId = req.params.id;
   let topics = req.body.topicsArray;
+  let snapshot = req.body.snapshot;
   if(!topics) { res.send({error:'Required body param @topicsArray is missed'}); return };
 
+  sessionBuilderSnapshotValidationService.isTopicsDataValid(snapshot, sessionId, accountId, topics).then(function(validationRes) {
 
-  topicsService.removeAllAndAddNew(req.params.id, req.body.topicsArray).then(function(result) {
-    res.send({succuss:true, data:result});
-  }, function(error) {
-    res.send({ error: error });
+    if (validationRes.isValid) {
+      topicsService.removeAllAndAddNew(sessionId, topics).then(function(result) {
+        sessionBuilderServices.sessionBuilderObjectStepSnapshot(sessionId, accountId, "facilitatiorAndTopics").then(function(snapshotResult) {
+          res.send({succuss:true, data:result, snapshot:snapshotResult});
+        }, function (error) {
+          res.send({ error: error });
+        });
+      }, function(error) {
+        res.send({ error: error });
+      });
+    } else {
+      res.send({ validation: validationRes });
+    }
+
+  }, function (err) {
+    res.send({error: err});
   });
 }
 

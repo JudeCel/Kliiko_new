@@ -130,7 +130,8 @@ module.exports = {
       },
       fifthStep: {
         observers: 'No specators invited'
-      }
+      },
+      invalidStep: "Invalid step"
     }
   },
   sessionMember: {
@@ -315,5 +316,9 @@ module.exports = {
       updated: 'Topic updated successfully',
       removed: 'Topic removed successfully',
     }
+  },
+  sessionBuilderValidateChanges: {
+    canChange: "What are the odds of you and someone else editing the same thing at the same time... so which edit do you want saved?",
+    canNotChange: "Sorry, you can not change this option anymore, because it was already changed by someone else."
   }
 };

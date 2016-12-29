@@ -6,8 +6,8 @@
    */
   angular.module('KliikoApp').factory('SessionModel', SessionModel);
 
-  SessionModel.$inject = ['$q', 'globalSettings', '$resource', 'fileUploader'];
-  function SessionModel($q, globalSettings, $resource, fileUploader)  {
+  SessionModel.$inject = ['$q', 'globalSettings', '$resource', 'fileUploader', 'changesValidation'];
+  function SessionModel($q, globalSettings, $resource, fileUploader, changesValidation)  {
     var apiPath = globalSettings.restUrl+'/sessionBuilder/:id/:path/:arg';
     var sessionBuilderRestApi = $resource(apiPath, { id : '@id', arg: '@arg' }, {
       post: { method: 'POST' },
@@ -21,7 +21,6 @@
       sessionMailTemplateStatus: { method: 'GET', params: { path: 'sessionMailTemplateStatus' } },
       addTopics: {method: 'POST',  params: {path: 'addTopics'} },
       removeTopic: {method: 'POST',  params: {path: 'removeTopic'} },
-
       certainStep: {method: 'POST', params: {path: 'step'} }
     });
 
@@ -46,10 +45,7 @@
     SessionModel.prototype.getRemoteData = getRemoteData;
     SessionModel.prototype.setOpen = setOpen;
     SessionModel.prototype.setAnonymous = setAnonymous;
-  //  SessionModel.prototype.update = update;
-
     SessionModel.prototype.goCertainStep = goCertainStep;
-
     SessionModel.prototype.updateStep = updateStep;
     SessionModel.prototype.sendSms = sendSms;
     SessionModel.prototype.addMembers = addMembers;
@@ -149,10 +145,11 @@
       var self = this;
       var deferred = $q.defer();
       sessionBuilderRestApi.get({id:self.id}, {}, function(res) {
-        if(res.error){
+        if (res.error) {
           deferred.reject(res.error);
-        }else{
+        } else {
           self.sessionData = angular.merge(self, res.sessionBuilder);
+          self.snapshot = res.sessionBuilder.snapshot;
           // get current session data
 
           chatSessionApi.get({}, function(sessionApiRes) {
@@ -166,10 +163,8 @@
             }
             deferred.resolve();
           });
-
+          
         }
-
-
       });
 
       return deferred.promise;
@@ -178,10 +173,12 @@
     function setOpen(status) {
       var self = this;
       var deferred = $q.defer();
-      self.updateStep({status: status}).then(
+      self.updateStep({status: status}, self).then(
         function (res) {
-          self.status = self.sessionData.status = status;
-          self.currentStep = self.sessionData.step = res.sessionBuilder.currentStep;
+          if (!res.ignored) {
+            self.status = self.sessionData.status = status;
+            self.currentStep = self.sessionData.step = res.sessionBuilder.currentStep;
+          }
           deferred.resolve(res);
         },
         function (err) {
@@ -227,23 +224,32 @@
       return deferred.promise;
     }
 
-    function updateStep(stepDataObj) {
-      var self = this;
+    function updateStep(stepDataObj, sessionModel) {
       var deferred = $q.defer();
 
-      sessionBuilderRestApi.put({id:self.id}, stepDataObj,function(res) {
+      if (!stepDataObj.snapshot) {
+        stepDataObj.snapshot = sessionModel.snapshot;
+      }
+
+      sessionBuilderRestApi.put({id:sessionModel.id}, stepDataObj, function(res) {
         if (res.error) {
           deferred.reject(res.error);
+        } else if (res.validation && !res.validation.isValid) {
+          changesValidation.validationConfirm(res, sessionModel.updateStep, stepDataObj, sessionModel).then(function(newRes) {
+            deferred.resolve(newRes);
+          }, function(err) {
+            deferred.reject(err);
+          });
         } else {
-          self.sessionData.showStatus = res.sessionBuilder.showStatus;
-          self.steps = res.sessionBuilder.steps;
+          sessionModel.sessionData.showStatus = res.sessionBuilder.showStatus;
+          sessionModel.steps = res.sessionBuilder.steps;
+          sessionModel.snapshot = res.sessionBuilder.snapshot;
           deferred.resolve(res);
         }
       });
 
       return deferred.promise;
     }
-
 
     function sendSms(recievers, message) {
       var self = this;
@@ -261,34 +267,80 @@
 
 
     function addMembers(member, role) {
-      var self = this;
       var deferred = $q.defer();
       var params = {
-        sessionId: self.id,
+        sessionId: this.id,
         role: role,
         username: member.firstName,
-        accountUserId: member.accountUserId
+        accountUserId: member.accountUserId,
+        snapshot: this.snapshot
       }
-
-      sessionMemberApi.post({},params,function(res) {
-        if (res.error) { deferred.reject(res.error);  return deferred.promise;}
+      addMembersByParams(params, this).then(function(res) {
         deferred.resolve(res);
+      }, function(err) {
+        deferred.reject(err);
+      });
+      return deferred.promise;
+    }
+
+    function addMembersByParams(params, self) {
+      var deferred = $q.defer();
+
+      sessionMemberApi.post({}, params, function(res) {
+        if (res.error) { 
+          deferred.reject(res.error);  
+        } else if (res.validation && !res.validation.isValid) {
+
+          changesValidation.validationConfirm(res, addMembersByParams, params, self).then(function(newRes) {
+            deferred.resolve(newRes);
+          }, function(err) {
+            deferred.reject(err);
+          });
+
+        } else {
+          deferred.resolve(res);
+        }
       });
 
       return deferred.promise;
     }
 
     function saveTopics(topicsArray) {
-      var self = this;
       var deferred = $q.defer();
-      sessionBuilderRestApi.addTopics({id: self.id}, { topicsArray: topicsArray }, function(res) {
-        if (res.error) {
-          deferred.reject(res.error);
+
+      var params = {
+        topicsArray: topicsArray, 
+        snapshot: this.snapshot
+      }
+      saveTopicsByParams(params, this).then(function(res) {
+        deferred.resolve(res);
+      }, function(err) {
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
+    }
+
+    function saveTopicsByParams(params, self) {
+      var deferred = $q.defer();
+
+      sessionBuilderRestApi.addTopics({id: self.id}, params, function(res) {
+        if (res.error) { 
+          deferred.reject(res.error);  
+        } else if (res.validation && !res.validation.isValid) {
+
+          changesValidation.validationConfirm(res, saveTopicsByParams, params, self).then(function(newRes) {
+            deferred.resolve(newRes);
+          }, function(err) {
+            deferred.reject(err);
+          });
+
         } else {
-          self.steps.step2.topics = topicsArray
+          self.snapshot = res.snapshot;
           deferred.resolve(res.data);
         }
       });
+
       return deferred.promise;
     }
 
@@ -299,6 +351,7 @@
         if (res.error) {
           deferred.reject(res.error);
         } else {
+          delete self.snapshot[topicId.toString()];
           deferred.resolve(res.data);
         }
       });

@@ -13,6 +13,7 @@
     'debModule',
     'domServices',
     'messenger',
+    'infoMessenger',
     'ngMessages',
     'ngCookies',
     'colorpicker.module',
@@ -32,6 +33,7 @@
     'KliikoApp.account',
     'KliikoApp.accountUser',
     'KliikoApp.fileUploader',
+    'KliikoApp.changesValidation',
     'KliikoApp.goToChatroom',
     'KliikoApp.mailTemplate',
     'KliikoApp.sessionExpire'

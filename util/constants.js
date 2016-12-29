@@ -111,5 +111,18 @@ module.exports = {
         link: '187585089'
       }
     }
+  },
+  sessionBuilderValidateChanges: {
+    session: {
+      changableFields: ["name", "startTime", "endTime", "timeZone", "resourceId", "brandProjectPreferenceId", "incentive_details" ],
+      notChangableFields: ["type", "anonymous" ]
+    },
+    topic: {
+      listFields: ["order", "landing", "active"],
+      propertyFields: ["name", "boardMessage", "sign"]
+    },
+    mailTemplate: {
+      fields: ["content", "subject"]
+    }
   }
 }
