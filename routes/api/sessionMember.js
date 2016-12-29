@@ -7,7 +7,8 @@ var sessionBuilderService = require('./../../services/sessionBuilder');
 var sessionBuilderSnapshotValidationService = require('./../../services/sessionBuilderSnapshotValidation');
 
 module.exports = {
-  addFacilitator: addFacilitator
+  addFacilitator: addFacilitator,
+  getSessionMembers: getSessionMembers
 };
 
 function addFacilitator(req, res, next) {
@@ -37,4 +38,13 @@ function addFacilitator(req, res, next) {
     res.send({error: err});
   });
   
+}
+
+function getSessionMembers(req, res, next) {
+  let params = req.body;
+  sessionMemberService.getSessionMembers(params.sessionId, params.acountUserIds).then(function(members) {
+    res.send({members: members});
+  }, function (err) {
+    res.send({error:err});
+  });
 }

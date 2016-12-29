@@ -21,7 +21,8 @@ module.exports = {
   messages: MessagesUtil.sessionMember,
   processSessionMember: processSessionMember,
   refreshAccountUsersRole: refreshAccountUsersRole,
-  findAllMembersIds: findAllMembersIds
+  findAllMembersIds: findAllMembersIds,
+  getSessionMembers: getSessionMembers
 };
 
 function createWithTokenAndColour(params) {
@@ -263,5 +264,20 @@ function refreshAccountUsersRoleAsync(accountUsers, resolve, reject) {
     } else {
       resolve();
     }
+  });
+}
+
+function getSessionMembers(sessionId, acountUserIds) {
+  return new Bluebird(function (resolve, reject) {
+    SessionMember.findAll({
+      where: {
+        sessionId: sessionId,
+        accountUserId: { $in: acountUserIds }
+      }
+    }).then(function(sessionMembers) {
+      resolve(sessionMembers);
+    }, function(error) {
+      reject(error);
+    });
   });
 }

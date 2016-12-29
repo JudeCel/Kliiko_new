@@ -154,6 +154,7 @@ router.post('/session/:id', PERMISSIONS.managerAdmin, session.copy);
 // Session Member
 router.post('/sessionMember/comment/:id', PERMISSIONS.facilitatorManagerAdmin, session.comment);
 router.post('/sessionMember/rate/:id', PERMISSIONS.facilitatorManagerAdmin, session.updateRating);
+router.post('/sessionMember/members', PERMISSIONS.facilitatorManagerAdmin, sessionMember.getSessionMembers);
 router.post('/sessionMember/addFacilitator', PERMISSIONS.managerAdmin, sessionMember.addFacilitator);
 
 
