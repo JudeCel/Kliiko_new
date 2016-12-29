@@ -87,28 +87,14 @@ function isFacilitatorDataValid(snapshot, facilitatorId, sessionId, sessionBuild
   });
 }
 
-function getTopicsSnapshotWithoutProperties(snapshot) {
-  let ids = Object.keys(snapshot);
-  for (let i=0; i<ids.length; i++) {
-    let id = ids[i];
-    let values = Object.keys(snapshot[id]);
-    for (let i2=0; i2<values.length; i2++) {
-      let value = values[i2];
-      if (constants.sessionBuilderValidateChanges.topic.listFields.indexOf(value) == -1) {
-        delete snapshot[id][value];
-      }
-    }
-  }
-  return snapshot;
-}
-
 function getSessionTopic(topics, id) {
-  for (let i=0; i<topics.length; i++) {
+  var res = _.find(topics, function(topic){ 
     if (topics[i].id == id) {
       return topics[i].sessionTopic;
     }
-  }
-  return { };
+  });
+  
+  return res || { };
 }
 
 function getMailTemplateSnapshot(mailTemplate) {
@@ -119,9 +105,10 @@ function getMailTemplateSnapshot(mailTemplate) {
   return res;
 }
 
-function getTopicSnapshot(sessionTopic) {
+function getTopicSnapshot(sessionTopic, onlyListFields) {
   let res = { };
-  let fields = constants.sessionBuilderValidateChanges.topic.propertyFields.concat(constants.sessionBuilderValidateChanges.topic.listFields);
+  let topicFields = constants.sessionBuilderValidateChanges.topic;
+  let fields = onlyListFields ? topicFields.listFields : topicFields.propertyFields.concat(topicFields.listFields);
   _.each(fields, (fieldName) => {
     res[fieldName] = stringHelpers.hash(sessionTopic[fieldName]);
   });
@@ -184,13 +171,13 @@ function isTopicsDataValid(snapshot, sessionId, accountId, topics) {
       let currentSnapshot = { };
       for (let i=0; i<currentTopics.length; i++) {
         let topic = currentTopics[i];
-        currentSnapshot[topic.topicId] = getTopicSnapshot(topic);
+        currentSnapshot[topic.topicId] = getTopicSnapshot(topic, true);
       }
       let ids = Object.keys(snapshot);
       for (let i=0; i<ids.length; i++) {
         let id = ids[i];
         if (!isTopicListDataValid(currentSnapshot, snapshot, topics, id)) {
-          return resolve(result(false, true, getTopicsSnapshotWithoutProperties(currentSnapshot), null, null));
+          return resolve(result(false, true, currentSnapshot, null, null));
         }
       }
       resolve(result(true));
