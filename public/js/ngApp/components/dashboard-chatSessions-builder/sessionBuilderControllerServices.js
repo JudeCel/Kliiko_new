@@ -11,7 +11,8 @@
 
     var sessionMemberApi = $resource(globalSettings.restUrl + '/sessionMember/:path/:id', null, {
       comment: { method: 'post', params: { id: '@id', path: 'comment' } },
-      rate: { method: 'post', params: { id: '@id', path: 'rate' } }
+      rate: { method: 'post', params: { id: '@id', path: 'rate' } },
+      getMembers: { method: 'post', params: { path: 'members' } },
     });
 
     var Services = {};
@@ -26,8 +27,21 @@
     Services.someMembersWereSelected = someMembersWereSelected;
     Services.rateSessionMember = rateSessionMember;
     Services.saveComment = saveComment;
+    Services.getSessionMembers = getSessionMembers;
 
     return Services;
+
+    function getSessionMembers(sessionId, acountUserIds) {
+      var deferred = $q.defer();
+
+      dbg.log2('#SessionMember > getSessionMembers > make rest call');
+      sessionMemberApi.getMembers({ }, { acountUserIds: acountUserIds, sessionId: sessionId }, function(res) {
+        dbg.log2('#SessionMember > getSessionMembers > rest call responds');
+        deferred.resolve(res.members);
+      });
+
+      return deferred.promise;
+    }
 
     function saveComment(member) {
       var deferred = $q.defer();
