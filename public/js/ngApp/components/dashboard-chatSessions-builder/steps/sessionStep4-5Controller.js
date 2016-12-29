@@ -149,7 +149,7 @@
     }
 
     function removeFromPopulateSessionMemberQueue(accountUserId) {
-      for (var i=0; j<vm.populateSessionMemberQueue.length; i++) {
+      for (var i=0; i<vm.populateSessionMemberQueue.length; i++) {
         if (vm.populateSessionMemberQueue[i] == accountUserId) {
           vm.populateSessionMemberQueue.splice(i, 1);
           break;
@@ -173,20 +173,8 @@
       }
     }
 
-    function isSessionMemberPopulated(accountUserId) {
-      var i = 0;
-      while (i < vm.stepMembers.length) {
-        var item = vm.stepMembers[i];
-        if (item.id == sessionMember.accountUserId) {
-          return item.sessionMember ? true : false;
-        }
-        i++;
-      }
-      return false;
-    }
-
     function populateSessionMember(accountUserId) {
-      if (vm.populateSessionMemberQueue.indexOf(accountUserId) == -1 && !isSessionMemberPopulated(accountUserId)) {
+      if (vm.populateSessionMemberQueue.indexOf(accountUserId) == -1) {
         if (!vm.populateSessionMembersScheduled) {
           vm.populateSessionMembersScheduled = true;
           setTimeout(populateSessionMemberBulk, 2000);
@@ -214,6 +202,7 @@
     function bindSocketEvents() {
       vm.SocketChannel.on("inviteUpdate", function(resp) {
         var i = 0;
+        var needUpdateItem  = null;
         while (i < vm.stepMembers.length) {
           var item = vm.stepMembers[i];
           if(item.id == resp.accountUserId) {
@@ -221,6 +210,7 @@
 
             if (item.invite.emailStatus == 'waiting' && resp.emailStatus == "sent") {
               item.invite.emailStatus = "sentDone"
+
               setTimeout(function() {
                 updateInviteItem(resp);
               }, 2000);
@@ -229,13 +219,18 @@
               item.invite = resp;
             }
             item.isSelected = false;
+
+            if (!item.sessionMember) {
+              needUpdateItem = item.id ;
+            }
+
             break;
           }
           i++
         }
-        
-        if (resp.invite.status == "confirmed") {
-          populateSessionMember(resp.accountUserId);
+
+        if (resp.status == "confirmed" && needUpdateItem) {
+          populateSessionMember(needUpdateItem);
         }
 
         if(!$scope.$$phase) {
