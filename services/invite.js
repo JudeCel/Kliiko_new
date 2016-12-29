@@ -380,7 +380,11 @@ function processEmailStatus(id, apiResp, emailStatus) {
     Invite.find({where: {id: id}, include: [AccountUser]}).then((invite) => {
       if (!invite) { return reject(MessagesUtil.invite.notFound) }
 
-      let updateParams = {}
+      let updateParams = { };
+
+      if (emailStatus) {
+        updateParams.emailStatus = emailStatus;
+      }
 
       if (apiResp) {
         updateParams.mailMessageId = apiResp.messageId;
@@ -389,11 +393,15 @@ function processEmailStatus(id, apiResp, emailStatus) {
         }
       }
 
-      invite.update(updateParams).then(() => {
+      if (_.isEmpty(Object.keys(updateParams))) {
         resolve();
-      }).catch((error) => {
-        reject(error);
-      });
+      }else{
+        invite.update(updateParams).then(() => {
+          resolve();
+        }).catch((error) => {
+          reject(error);
+        });
+      }
     })
   })
 }
@@ -428,7 +436,7 @@ function processMailWebhook(webhookParams) {
       Invite.update(updateParams, {where: {mailMessageId: mailMessageId}}).then((result) => {
         resolve(result);
       }, (error) => {
-        reject(filters.errors(error))
+        reject(filters.errors(error));
       });
     }else{
       resolve([0]);
