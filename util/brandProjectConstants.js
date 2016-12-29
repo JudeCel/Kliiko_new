@@ -24,11 +24,9 @@ module.exports = {
     headerButton: '#4CBFE9',
     mainBorder: '#C3BE2E',
     consoleButtonActive: '#4CB649',
-    email: {
-        hyperlinks: '#2F9F69',
-        notAtAllButton: '#E51D39',
-        acceptButton: '#4CB649',
-        notThisTimeButton: '#4CBFE9',
-    },
+    hyperlinks: '#2F9F69',
+    notAtAllButton: '#E51D39',
+    acceptButton: '#4CB649',
+    notThisTimeButton: '#4CBFE9',
   },
 }

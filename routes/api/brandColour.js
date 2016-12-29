@@ -37,6 +37,13 @@ function create(req, res, next) {
   );
 };
 
+function reset(req, res, next) {
+  brandColourServices.resetToDefaultScheme(req.body, res.locals.currentDomain.id).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+};
+
 function update(req, res, next) {
   brandColourServices.updateScheme(req.body, res.locals.currentDomain.id).then(
     getResponses(res).onSuccess,
@@ -69,5 +76,6 @@ module.exports = {
   copy: copy,
   create: create,
   update: update,
+  reset: reset,
   canCreateCustomColors: canCreateCustomColors
 };
