@@ -165,7 +165,7 @@
           item.sessionMember = sessionMember;
           break;
         }
-        i++
+        i++;
       }
 
       if(!$scope.$$phase) {
@@ -173,8 +173,20 @@
       }
     }
 
+    function isSessionMemberPopulated(accountUserId) {
+      var i = 0;
+      while (i < vm.stepMembers.length) {
+        var item = vm.stepMembers[i];
+        if (item.id == sessionMember.accountUserId) {
+          return item.sessionMember ? true : false;
+        }
+        i++;
+      }
+      return false;
+    }
+
     function populateSessionMember(accountUserId) {
-      if (vm.populateSessionMemberQueue.indexOf(accountUserId) == -1) {
+      if (vm.populateSessionMemberQueue.indexOf(accountUserId) == -1 && !isSessionMemberPopulated(accountUserId)) {
         if (!vm.populateSessionMembersScheduled) {
           vm.populateSessionMembersScheduled = true;
           setTimeout(populateSessionMemberBulk, 2000);
@@ -191,7 +203,7 @@
           item.invite = resp;
           break;
         }
-        i++
+        i++;
       }
 
       if(!$scope.$$phase) {
