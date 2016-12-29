@@ -53,7 +53,8 @@
     vm.openCommentModalWindow = openCommentModalWindow;
     vm.saveComment = saveComment;
     vm.showSpinner = showSpinner;
-
+    vm.populateSessionMemberQueue = [];
+    vm.populateSessionMembersScheduled = false;
 
     vm.stepMembers = [];
     vm.emailSentFailedTooltip = "Sorry, failed to send your email. Please check for typos in the email address, or refer to this <a>Help Topic</a>";
@@ -130,9 +131,49 @@
       }, 10);
     }
 
+    function populateSessionMemberBulk() {
+      vm.populateSessionMembersScheduled = false;
+      var sessionId = vm.session.id;
+      builderServices.getSessionMembers(sessionId, vm.populateSessionMemberQueue).then(function(res) {
+        if (res.error) {
+          messenger.error(res.error);
+        } else {
+          for(var i=0; i<res.length; i++) {
+            var sessionMember = res[i];
+            updateSessionMember(sessionMember);
+            for (var j=0; j<vm.populateSessionMemberQueue.length; j++) {
+              if (vm.populateSessionMemberQueue[j].accountUserId == sessionMember.accountUserId) {
+                vm.populateSessionMemberQueue.splice(j, 1);
+                break;
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function updateSessionMember(sessionMember) {
+      var i = 0;
+      while (i < vm.stepMembers.length) {
+        var item = vm.stepMembers[i];
+        if (item.id == sessionMember.accountUserId) {
+          item.sessionMember = sessionMember;
+          break;
+        }
+        i++
+      }
+
+      if(!$scope.$$phase) {
+        $scope.$apply();
+      }
+    }
+
     function populateSessionMember(accountUserId) {
-      //var sessionId = vm.session.id;
-      //todo:
+      if (!vm.populateSessionMembersScheduled) {
+        vm.populateSessionMembersScheduled = true;
+        setTimeout(populateSessionMemberBulk, 2000);
+      }
+      vm.populateSessionMemberQueue.push(accountUserId);
     }
 
     function updateInviteItem(resp) {
@@ -442,14 +483,8 @@
       } else {
         var closeEmailSentStatus = "Not Sent";
         var status = returnMemberInviteStatus(member);
-        if (status == "confirmed" && member.SessionMembers) {
-          for (var i=0; i<member.SessionMembers.length; i++) {
-            var sessionMember = member.SessionMembers[i];
-            if (sessionMember.sessionId == vm.session.id && sessionMember.role == "participant") {
-              closeEmailSentStatus = sessionMember.closeEmailSent ? "Sent" : "Not Sent";
-              break;
-            }
-          }
+        if (status == "confirmed" && member.sessionMember) {
+          closeEmailSentStatus = member.sessionMember.closeEmailSent ? "Sent" : "Not Sent";
         }
         member.closeEmailSentStatus = closeEmailSentStatus;
         return closeEmailSentStatus;
