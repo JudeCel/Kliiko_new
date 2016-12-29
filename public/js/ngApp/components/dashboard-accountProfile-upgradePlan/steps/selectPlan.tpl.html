@@ -29,8 +29,7 @@
                   <div ng-if="up.mostPopular(subscriptionPlan.plan.id)" class="most-popular pull-right"></div>
                 </div>
                 <h5 class="outline">
-                  <sup>$US</sup>
-                  {{subscriptionPlan.plan.price | price:'':0 }}
+                  ${{subscriptionPlan.plan.price | price:'':0 }}
                   <sub>/{{ up.pricePerEnding[up.annualOrMonthly] }}</sub>
                 </h5>
                 <p>Get 2 Moths FREE on all annual plans</p>
@@ -76,7 +75,7 @@
     </div>
 
     <script type="text/ng-template" id="upgradePlanButton.html">
-      <div class="list-group-item-text buttons-area">
+      <div class="list-group-item-text buttons-area" ng-show="!up.isCurrentPlan(subscriptionPlan)">
         <div class="{{ up.selectPlanBtnColor(subscriptionPlan.plan.id) }} btn-dashboard-plans want" ng-click="up.wantThisPlan(subscriptionPlan)">
           {{up.upgradePlanText(subscriptionPlan.plan)}}
         </div>

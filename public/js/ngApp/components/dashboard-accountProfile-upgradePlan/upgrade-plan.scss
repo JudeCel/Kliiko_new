@@ -68,7 +68,7 @@
   }
 
   .align-vertical-child {
-    font-size: 20px;
+    font-size: 15px;
     vertical-align: middle;
     padding: 0 0 0 5px;
     text-align: center;
@@ -194,10 +194,19 @@
       th {
         text-align: center;
         width: 20%;
+        border-right: 2px solid #ffffff;
       }
 
       th.plan-option-price-block {
         min-height: 100px;
+      }
+
+      td {
+        border: 2px solid #ffffff;
+      }
+
+      td {
+        font-size: 15px;
       }
 
       .plan-option-feature {
@@ -225,15 +234,15 @@
 
     .plan-block {
       padding-left: 0px;
-      padding-right: 2px;
 
       h4 {
         max-width: 100%;
         margin: 0 auto;
         padding: 10px;
-        font-size: 2.3rem;
+        font-size: 22px;
         font-weight: bold;
         font-style: italic;
+        font-family: 'Source Sans Pro', sans-serif
       }
     }
 
@@ -283,10 +292,14 @@
       padding: 10px 0px;
 
       h5 {
-        font-size: 3rem;
+        font-size: 35px;
         font-weight: 900;
         color: white;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
+        padding: 10px;
+        sub {
+          font-size: 14px;
+        }
       }
       .outline {
         color: white;
@@ -311,7 +324,7 @@
       }
 
       p {
-        font-size: 1.5rem;
+        font-size: 12px;
         color: #fff;
         margin-bottom: 0px;
       }
@@ -323,18 +336,6 @@
       font-size: 16px;
       margin-bottom: 3px;
     }
-
-    // .junior_monthly_dark, .junior_yearly_dark{background-color: #cae8c8;}
-    // .junior_monthly_light, .junior_yearly_light{background-color: #dbf1dc;}
-    //
-    // .core_monthly_dark, .core_yearly_dark{background-color: #afe3f6;}
-    // .core_monthly_light, .core_yearly_light{background-color: #caecf9;}
-    //
-    // .senior_monthly_dark, .senior_yearly_dark{background-color: #cae8c8;}
-    // .senior_monthly_light, .senior_yearly_light{background-color: #dbf1dc;}
-    //
-    // .free_account_light {background-color: #fdfad7;}
-    // .free_account_dark {background-color: #faf8c3;}
 
     .junior_monthly_header, .junior_yearly_header{background-color: #72c46e;}
     .core_monthly_header, .core_yearly_header{background-color: #41b2e3;}

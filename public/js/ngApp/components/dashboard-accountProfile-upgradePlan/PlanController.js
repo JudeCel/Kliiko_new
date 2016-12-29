@@ -25,8 +25,8 @@
     vm.annualPlans = [];
 
     vm.pricePerEnding = {
-      monthly: 'mth',
-      annual: 'year'
+      monthly: 'MONTH',
+      annual: 'YEAR'
     }
 
     vm.planOptions = [
