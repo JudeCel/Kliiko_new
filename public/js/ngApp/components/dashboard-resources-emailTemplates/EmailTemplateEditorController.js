@@ -3,7 +3,7 @@
 
   angular.module('KliikoApp').controller('EmailTemplateEditorController', EmailTemplateEditorController);
 
-  EmailTemplateEditorController.$inject = ['dbg', 'sessionBuilderControllerServices', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', '$q', 'fileUploader', '$confirm'];
+  EmailTemplateEditorController.$inject = ['dbg', 'sessionBuilderControllerServices', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', '$q', 'fileUploader'];
   //necessary to bypass email editors restrictions
   jQuery.browser = {};
     (function () {
@@ -15,7 +15,7 @@
         }
     })();
 
-  function EmailTemplateEditorController(dbg, builderServices, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q, fileUploader, $confirm) {
+  function EmailTemplateEditorController(dbg, builderServices, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q, fileUploader) {
     dbg.log2('#EmailTemplateEditorController started');
 
     var vm = this;
