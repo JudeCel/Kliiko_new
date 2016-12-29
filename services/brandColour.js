@@ -211,13 +211,7 @@ function assignDefaultColours(colours) {
   let object = { };
 
   _.each(brandProjectConstants.preferenceColours, function (value, key) {
-    if (typeof(value) == "object") {
-      _.each(value, function (objValue, objKey) {
-        object[objKey] = objValue;
-      });
-    } else {
       object[key] = value;
-    }
   });
 
   return _.assign(object, colours || {});
