@@ -3,7 +3,7 @@
 
   angular.module('KliikoApp').controller('EmailTemplateEditorController', EmailTemplateEditorController);
 
-  EmailTemplateEditorController.$inject = ['dbg', 'sessionBuilderControllerServices', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', '$q', 'fileUploader'];
+  EmailTemplateEditorController.$inject = ['dbg', 'sessionBuilderControllerServices', 'domServices', '$state', '$stateParams', '$scope', 'mailTemplate', 'GalleryServices', 'messenger', '$q', 'fileUploader', '$confirm'];
   //necessary to bypass email editors restrictions
   jQuery.browser = {};
     (function () {
@@ -15,7 +15,7 @@
         }
     })();
 
-  function EmailTemplateEditorController(dbg, builderServices, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q, fileUploader) {
+  function EmailTemplateEditorController(dbg, builderServices, domServices, $state, $stateParams, $scope, mailTemplate, GalleryServices, messenger, $q, fileUploader, $confirm) {
     dbg.log2('#EmailTemplateEditorController started');
 
     var vm = this;
@@ -42,7 +42,6 @@
     vm.init = function () {
       vm.emailTemplates = vm.emailTemplates.concat(vm.constantEmailTemplates);
       $('#templateContent').wysiwyg({
-        rmUnusedControls: true,
         controls: {
           bold: { visible : true },
           italic: { visible : true },
@@ -97,6 +96,7 @@
 
     function setContent(content) {
       $('#templateContent').wysiwyg('setContent', content);
+      vm.currentWysiwygProccessedTemplate = $('#templateContent').wysiwyg('getContent');
     }
 
     function getColors() {
@@ -110,7 +110,15 @@
       return object;
     }
 
-    function startEditingTemplate(templateIndex, templateId, template) {
+    function startEditingTemplate(templateIndex, templateId, template, isResetingOrSaving) {
+      if (isChangedAndNotSaved(isResetingOrSaving)) {
+        $confirm({
+          text: 'If you want to save the changes you have made to your email, you need to Apply it to this Session, or Save As',
+          title: '',
+        });
+
+        return;
+      }
 
       if (!templateId) {
         templateId = template ? template.id : vm.emailTemplates[templateIndex].id;
@@ -132,6 +140,12 @@
             setContent(vm.currentTemplate.content);
           }
         });
+      }
+
+      function isChangedAndNotSaved(isResetingOrSaving) {
+        var actualContent = $('#templateContent').wysiwyg('getContent');
+        var initialContent = vm.currentWysiwygProccessedTemplate;
+        return initialContent !== undefined && initialContent != actualContent && !isResetingOrSaving;
       }
 
       function populateContentWithColors() {
@@ -207,7 +221,7 @@
           refreshTemplateList(function() {
             var index = getIndexOfMailTemplateWithId(res.templates.id);
             if (index != -1) {
-              vm.startEditingTemplate(index);
+              vm.startEditingTemplate(index, null, null, true);
             }
           });
           messenger.ok(res.message);
@@ -240,7 +254,7 @@
       mailTemplate.resetMailTemplate(vm.currentTemplate).then(function (res) {
         if (!res.error) {
           refreshTemplateList(function() {
-            vm.startEditingTemplate(vm.currentTemplate.index);
+            vm.startEditingTemplate(vm.currentTemplate.index, null, null, true);
             deferred.resolve();
           });
         } else {
