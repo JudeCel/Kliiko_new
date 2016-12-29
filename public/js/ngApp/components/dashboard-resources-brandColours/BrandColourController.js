@@ -196,8 +196,7 @@
         if(res.error) {
           messenger.error(res.error);
         } else {
-          angular.copy(res.data, vm.scheme);
-          vm.previewScheme = vm.scheme;
+          angular.copy(res.data, vm.scheme, vm.previewScheme);
         }
       });
     };
